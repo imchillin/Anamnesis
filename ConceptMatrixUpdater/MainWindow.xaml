@@ -1,0 +1,39 @@
+﻿<mah:MetroWindow x:Class="ConceptMatrixUpdater.MainWindow"
+		xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ConceptMatrixUpdater"
+		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Concept Matrix Updater"
+        Width="720"
+        Height="350"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+		TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="13"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+		Icon="cmupdater-icon.ico">
+	<StackPanel Orientation="Horizontal">
+        <Image Margin="10,20,20,0" Width="80" Height="80" VerticalAlignment="Top" Source="/ConceptMatrixUpdater;component/cmupdater-largeicon.ico" />
+		<StackPanel Margin="-12,10,10,10" Width="600">
+			<Label Content="A new version of Concept Matrix is available!" FontWeight="Bold" FontSize="14" />
+			<Label Content="{Binding StatusLabel, FallbackValue='Would you like to download it now?'}" />
+			<ProgressBar Name="DownloadProgress" Style="{DynamicResource MaterialDesignLinearProgressBar}" Height="10" Value="0" Maximum="100" />
+			<Label Content="Release Notes:" FontWeight="Bold" />
+			<Border Margin="0 10" BorderBrush="#FFBCBCBC" Background="#FFBCBCBC">
+				<WebBrowser Margin="1" Height="150" local:BrowserBehavior.Html="{Binding HTML}" />
+			</Border>
+			<DockPanel>
+				<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+					<Button Style="{DynamicResource MaterialDesignFlatButton}" Margin="0 0 2 0" Padding="20 2" IsEnabled="{Binding ButtonEnabled}" Click="OnNoClick">No thanks</Button>
+					<Button Margin="10 0 0 0" Padding="20 2" IsEnabled="{Binding ButtonEnabled}" Click="OnInstallClick">Install Update</Button>
+				</StackPanel>
+			</DockPanel>
+		</StackPanel>
+	</StackPanel>
+</mah:MetroWindow>

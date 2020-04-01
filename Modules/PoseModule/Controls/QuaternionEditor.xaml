@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="ConceptMatrix.PoseModule.Controls.QuaternionEditor"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule.Controls"
+			 mc:Ignorable="d" 
+			 d:DesignWidth="250">
+	<Grid x:Name="ContentArea">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="150"/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Row="0" Grid.ColumnSpan="2" MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseLeave="OnViewportMouseLeave" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportMouseWheel">
+			<Rectangle Fill="Transparent"/>
+			<Viewport3D x:Name="Viewport"/>
+		</Grid>
+		
+		<Label Grid.Row="1" Grid.Column="0" Content="X" VerticalContentAlignment="Center"/>
+		<local:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding EulerX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360"/>
+
+		<Label Grid.Row="2" Grid.Column="0" Content="Y" VerticalContentAlignment="Center"/>
+		<local:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding EulerY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360"/>
+
+		<Label Grid.Row="3" Grid.Column="0" Content="Z" VerticalContentAlignment="Center"/>
+		<local:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding EulerZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360"/>
+	</Grid>
+</UserControl>

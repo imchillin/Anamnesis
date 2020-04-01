@@ -1,0 +1,11 @@
+
+\.vs/
+ConceptMatrix/obj/
+ConceptMatrix/bin/
+ConceptMatrixUpdater/obj
+packages/
+ConceptMatrixUpdater/bin/
+lib/SaintCoinach
+*.user
+bin/
+obj/

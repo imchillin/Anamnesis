@@ -1,0 +1,38 @@
+<Window x:Class="ConceptMatrix.SplashWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+		xmlns:fa="http://schemas.fontawesome.io/icons/"
+		mc:Ignorable="d"
+		Height="200"
+		Width="200"
+		Icon="cmtool-icon.ico"
+		ResizeMode="NoResize"
+		WindowStyle="None"
+		Background="Transparent"
+		AllowsTransparency="True"
+		Title="Starting..."
+		WindowStartupLocation="CenterScreen"
+		MouseDown="OnMouseDown">
+
+	<Border Background="{StaticResource MaterialDesignBackground}" Margin="10" CornerRadius="2">
+		<Border.Effect>
+			<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.5"/>
+		</Border.Effect>
+
+		<Grid>
+			<Button Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="6" 
+					Background="Transparent"
+						Style="{StaticResource MetroWindowButtonStyle}">
+				<fa:ImageAwesome Icon="Times" Opacity="0.5"/>
+			</Button>
+
+			<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" Width="100" Height="100"/>
+
+			<Label HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="Loading..." HorizontalContentAlignment="Center"/>
+		</Grid>
+	</Border>
+</Window>

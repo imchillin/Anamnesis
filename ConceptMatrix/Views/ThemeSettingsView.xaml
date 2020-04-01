@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="ConceptMatrix.GUI.Views.ThemeSettingsView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
+			 xmlns:materialDesignColors="clr-namespace:MaterialDesignColors;assembly=MaterialDesignColors"
+			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="232">
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Label Grid.Column="0" Grid.Row="0" Content="Zodiark Theme"/>
+		<ToggleButton Grid.Column="1" Grid.Row="0" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Stretch" IsChecked="{Binding Zodiark}"/>
+
+		<ListBox Grid.ColumnSpan="2" Grid.Row="1" ItemsSource="{Binding Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid Width="223">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<Border Grid.ColumnSpan="2">
+							<Border.Background>
+								<SolidColorBrush Color="{Binding ExemplarHue.Color, Mode=OneTime}" />
+							</Border.Background>
+						</Border>
+						<Border Grid.Column="1" Visibility="{Binding IsAccented, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
+							<Border.Background>
+								<SolidColorBrush Color="{Binding AccentExemplarHue.Color, Mode=OneTime}" />
+							</Border.Background>
+						</Border>
+
+						<TextBlock Text="{Binding Name}" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="6">
+							<TextBlock.Foreground>
+								<SolidColorBrush Color="{Binding ExemplarHue.Foreground, Mode=OneTime}" />
+							</TextBlock.Foreground>
+						</TextBlock>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
+
+</UserControl>
