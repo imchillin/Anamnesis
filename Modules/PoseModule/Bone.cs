@@ -33,9 +33,9 @@ namespace ConceptMatrix.PoseModule
 			this.rotationMemory = injection.GetMemory<Quaternion>(Offsets.BaseAddresses.GPose, injection.Offsets.Character.Body.Base, boneOffset);
 		}
 
-		#pragma warning disable CS0067
+#pragma warning disable CS0067
 		public event PropertyChangedEventHandler PropertyChanged;
-		#pragma warning restore
+#pragma warning restore
 
 		public string BoneName { get; private set; }
 		public bool IsEnabled { get; set; } = true;

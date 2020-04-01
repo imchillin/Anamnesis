@@ -10,7 +10,7 @@
 			 MouseEnter="OnMouseEnter"
 			 MouseLeave="OnMouseLeave"
 			 MouseUp="OnMouseUp"
-			 IsEnabled="{Binding IsEnabled}">
+			 IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}">
 	<Grid>
 		<Ellipse Stroke="Gray" StrokeThickness="1" Fill="#404040" x:Name="BackgroundElipse"/>
 		<Ellipse Fill="Gray" Margin="4" x:Name="ForegroundElipse" Visibility="Hidden"/>

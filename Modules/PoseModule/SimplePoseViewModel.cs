@@ -14,7 +14,6 @@ namespace ConceptMatrix.PoseModule
 	using ConceptMatrix;
 	using ConceptMatrix.Services;
 	using ConceptMatrix.ThreeD;
-	using PropertyChanged;
 
 	public class SimplePoseViewModel : INotifyPropertyChanged
 	{
@@ -37,9 +36,9 @@ namespace ConceptMatrix.PoseModule
 			this.GenerateBones();
 		}
 
-		#pragma warning disable CS0067
+#pragma warning disable CS0067
 		public event PropertyChangedEventHandler PropertyChanged;
-		#pragma warning restore
+#pragma warning restore
 
 		public bool IsEnabled
 		{
