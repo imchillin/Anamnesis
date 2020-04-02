@@ -26,22 +26,27 @@ namespace ConceptMatrix.GUI
 			this.InitializeComponent();
 
 			this.viewService = App.Services.Get<ViewService>();
-
-			this.viewService.AddingView += this.OnAddView;
 			this.viewService.ShowingDrawer += this.OnShowDrawer;
+			this.viewService.ShowingView += this.OnShowView;
 
-			foreach (string path in this.viewService.ViewPaths)
-			{
-				this.OnAddView(path);
-			}
+			this.OnShowView("Home", typeof(HomeView));
 		}
 
-		private void OnAddView(string path)
+		private void OnShowView(string path, Type type)
 		{
-			Application.Current?.Dispatcher.Invoke(() =>
+			try
 			{
-				this.ViewList.Items.Add(path);
-			});
+				this.currentView = (UserControl)Activator.CreateInstance(type);
+				this.ViewArea.Content = this.currentView;
+			}
+			catch (TargetInvocationException ex)
+			{
+				Log.Write(new Exception($"Failed to create view: {type}", ex.InnerException));
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception($"Failed to create view: {type}", ex));
+			}
 		}
 
 		private void OnShowDrawer(string title, Type viewType, DrawerDirection direction)
@@ -93,26 +98,6 @@ namespace ConceptMatrix.GUI
 					this.DrawerHost.IsBottomDrawerOpen = true;
 					break;
 				}
-			}
-		}
-
-		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			string path = (string)this.ViewList.SelectedItem;
-			Type viewType = this.viewService.GetView(path);
-
-			try
-			{
-				this.currentView = (UserControl)Activator.CreateInstance(viewType);
-				this.ViewArea.Content = this.currentView;
-			}
-			catch (TargetInvocationException ex)
-			{
-				Log.Write(new Exception($"Failed to create view: {viewType}", ex.InnerException));
-			}
-			catch (Exception ex)
-			{
-				Log.Write(new Exception($"Failed to create view: {viewType}", ex));
 			}
 		}
 

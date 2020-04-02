@@ -47,6 +47,7 @@ namespace ConceptMatrix
 		{
 			Task t = serviceManager.ShutdownServices();
 			t.Wait();
+			Log.Write("Bye!");
 		}
 
 		private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
@@ -100,12 +101,6 @@ namespace ConceptMatrix
 				dlg.Owner = this.MainWindow;
 				dlg.ShowDialog();
 			});
-		}
-
-		private void OnAppExit(object sender, ExitEventArgs e)
-		{
-			Task t = serviceManager.ShutdownServices();
-			t.Wait();
 		}
 	}
 }

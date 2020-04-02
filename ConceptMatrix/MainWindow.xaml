@@ -59,9 +59,10 @@
 
 				<views:TargetView Margin="10"/>
 
-				<ListBox Grid.Row="1" x:Name="ViewList" SelectionChanged="OnSelectionChanged"/>
-			</Grid>
+				<views:NavigationMenu Grid.Row="1"/>
 
+			</Grid>
+			
 			<materialdesign:DrawerHost Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DrawerHost">
 				<materialdesign:DrawerHost.RightDrawerContent>
 					<Grid Width="256"  Margin="12">

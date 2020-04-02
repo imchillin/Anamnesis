@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="ConceptMatrix.GUI.Views.NavigationMenu"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="200">
+
+	<UserControl.Resources>
+
+		<Style x:Key="ExpanderStyle" TargetType="{x:Type Expander}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Expander}">
+
+						<Border CornerRadius="3" Margin="10, 5, 10, 5" Background="{DynamicResource MaterialDesignPaper}" BorderBrush="#01000000" BorderThickness="1">
+
+							<Border.Effect>
+								<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.25"/>
+							</Border.Effect>
+
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"/>
+									<RowDefinition/>
+								</Grid.RowDefinitions>
+
+								<Border Grid.Row="0" Name="HeaderSite" Background="{DynamicResource PrimaryHueMidBrush}" CornerRadius="3, 3, 0, 0">
+									<ToggleButton Name="ToggleSite" IsChecked="{Binding IsExpanded , Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{DynamicResource MaterialDesignExpanderDownHeaderStyle}" Foreground="{DynamicResource MaterialDesignPaper}">
+										<Label Content="{TemplateBinding Header}" Height="24" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" FontWeight="DemiBold"/>
+									</ToggleButton>
+								</Border>
+		
+								<ContentPresenter Grid.Row="1" Name="ExpandSite" Visibility="Collapsed" Margin="0" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+
+							</Grid>
+						</Border>
+
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsExpanded" Value="true">
+								<Setter TargetName="ExpandSite" Property="Visibility" Value="Visible" />
+								<Setter TargetName="HeaderSite" Property="CornerRadius" Value="3, 3, 0, 0"/>
+							</Trigger>
+							<Trigger Property="IsExpanded" Value="false">
+								<Setter TargetName="ExpandSite" Property="Visibility" Value="Collapsed" />
+								<Setter TargetName="HeaderSite" Property="CornerRadius" Value="3"/>
+							</Trigger>
+							<Trigger Property="IsEnabled" Value="false">
+								<Setter Value="{DynamicResource {x:Static SystemColors.GrayTextBrush}}" Property="Foreground" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+						
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="ContainerStyle" TargetType="{x:Type GroupItem}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Expander Header="{Binding Name}" IsExpanded="True" Style="{StaticResource ExpanderStyle}" BorderThickness="0" Background="{DynamicResource PrimaryHueMidBrush}">
+							<ItemsPresenter />
+						</Expander>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</UserControl.Resources>
+	
+	<Grid>
+		<ListBox Grid.Row="1" x:Name="ViewList" SelectionChanged="OnSelectionChanged">
+			<ListBox.GroupStyle>
+				<GroupStyle ContainerStyle="{StaticResource ContainerStyle}"/>
+			</ListBox.GroupStyle>
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}"/>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
+</UserControl>
