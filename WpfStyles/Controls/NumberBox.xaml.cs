@@ -28,9 +28,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.ContentArea.DataContext = this;
 		}
 
-#pragma warning disable CS0067
 		public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore
 
 		public double TickFrequency
 		{

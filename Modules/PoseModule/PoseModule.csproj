@@ -54,6 +54,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LegacyPoseFile.cs" />
+    <Compile Include="PoseFile.cs" />
     <Compile Include="SimplePoseBoneView.xaml.cs">
       <DependentUpon>SimplePoseBoneView.xaml</DependentUpon>
     </Compile>

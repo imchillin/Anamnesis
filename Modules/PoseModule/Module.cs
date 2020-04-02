@@ -8,6 +8,7 @@ namespace ConceptMatrix.PoseModule
 	using ConceptMatrix;
 	using ConceptMatrix.Modules;
 	using ConceptMatrix.Services;
+
 	public class Module : ModuleBase
 	{
 		public override async Task Initialize(IServices services)

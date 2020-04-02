@@ -75,6 +75,7 @@
     <Compile Include="Extensions\PaletteHelperExtensions.cs" />
     <Compile Include="MainApplicationSettings.cs" />
     <Compile Include="ServiceManager.cs" />
+    <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\InjectionService.cs" />
     <Compile Include="Services\ModuleService.cs" />
     <Compile Include="Services\SelectionService.cs" />

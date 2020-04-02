@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule"
 			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
-			 xmlns:converters="clr-namespace:ConceptMatrix.PoseModule.Converters"
+			 xmlns:converters="clr-namespace:ConceptMatrix.PoseModule.Converters" xmlns:fa="http://schemas.fontawesome.io/icons/"
 			 mc:Ignorable="d" 
 			 Unloaded="OnUnloaded"
 			 d:DesignHeight="512" d:DesignWidth="1024">
@@ -402,6 +402,7 @@
 							<RowDefinition/>
 							<RowDefinition/>
 							<RowDefinition/>
+							<RowDefinition/>
 						</Grid.RowDefinitions>
 
 						<Label Grid.Row="0" Grid.Column="0" Content="Enable" VerticalContentAlignment="Center"/>
@@ -410,6 +411,16 @@
 						<Label Grid.Row="1" Grid.Column="0" Content="Flip Sidex" VerticalContentAlignment="Center"/>
 						<ToggleButton Grid.Row="1" Grid.Column="1" IsChecked="{Binding FlipSides}"/>
 
+						<Grid Grid.Row="3" Grid.ColumnSpan="2"  Margin="0, 6, 0, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<cm3:IconButton Grid.Column="0" Icon="Upload" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
+							<cm3:IconButton Grid.Column="1" Icon="Download" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
+
+						</Grid>
 					</Grid>
 
 				</GroupBox>

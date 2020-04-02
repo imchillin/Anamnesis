@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix.PoseModule
 {
+	using System;
+	using System.Collections.Generic;
 	using System.Threading;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -53,6 +55,28 @@ namespace ConceptMatrix.PoseModule
 				return;
 
 			this.ViewModel.IsEnabled = false;
+		}
+
+		private async void OnOpenClicked(object sender, RoutedEventArgs e)
+		{
+			IFileService fileService = Module.Services.Get<IFileService>();
+			FileBase file = await fileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
+
+			if (file is LegacyPoseFile legacyFile)
+			{
+				file = legacyFile.Upgrade();
+			}
+
+			if (file is PoseFile poseFile)
+			{
+				// load the pose...
+				throw new NotImplementedException();
+			}
+		}
+
+		private void OnSaveClicked(object sender, RoutedEventArgs e)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
