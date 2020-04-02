@@ -15,7 +15,9 @@
 		AllowsTransparency="True"
 		Background="Transparent"
 		Activated="Window_Activated"
-		Deactivated="Window_Deactivated">
+		Deactivated="Window_Deactivated"
+		
+		TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
 
 	<Grid Margin="10">
 		<Border Background="{DynamicResource MaterialDesignCardBackground}"
