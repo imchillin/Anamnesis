@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConceptMatrix", "ConceptMat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoseModule", "Modules\PoseModule\PoseModule.csproj", "{7E689B8B-1DF7-4F1B-A2A6-1375425D522F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfStyles", "WPFStyles\WpfStyles.csproj", "{F76C98A0-59BF-4BF8-AB41-0218859A89BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -120,6 +122,18 @@ Global
 		{7E689B8B-1DF7-4F1B-A2A6-1375425D522F}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
 		{7E689B8B-1DF7-4F1B-A2A6-1375425D522F}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
 		{7E689B8B-1DF7-4F1B-A2A6-1375425D522F}.Release-Unsigned|x64.Build.0 = Release|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Debug|x64.Build.0 = Debug|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Release|x64.ActiveCfg = Release|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Release|x64.Build.0 = Release|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Release-Unsigned|Any CPU.ActiveCfg = Release|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD}.Release-Unsigned|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
