@@ -5,6 +5,7 @@ namespace ConceptMatrix.Injection.Memory
 {
 	using System;
 	using System.ComponentModel;
+	using ConceptMatrix;
 
 	public abstract class MemoryBase<T> : MemoryBase, IMemory<T>
 	{
@@ -19,6 +20,7 @@ namespace ConceptMatrix.Injection.Memory
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+		public event ValueChangedEventHandler ValueChanged;
 
 		public T Value
 		{
@@ -32,6 +34,7 @@ namespace ConceptMatrix.Injection.Memory
 				this.value = value;
 				this.Write(value);
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+				this.ValueChanged.Invoke(this, value);
 			}
 		}
 
@@ -68,6 +71,7 @@ namespace ConceptMatrix.Injection.Memory
 				{
 					this.value = newValue;
 					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+					this.ValueChanged?.Invoke(this, this.value);
 				}
 			}
 		}

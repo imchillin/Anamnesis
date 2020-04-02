@@ -8,6 +8,8 @@ namespace ConceptMatrix
 
 	public interface IMemory<T> : INotifyPropertyChanged, IDisposable
 	{
+		event ValueChangedEventHandler ValueChanged;
+
 		/// <summary>
 		/// Gets or sets the value in memory.
 		/// </summary>
@@ -18,4 +20,7 @@ namespace ConceptMatrix
 		/// </summary>
 		bool Freeze { get; set; }
 	}
+
+	#pragma warning disable SA1201
+	public delegate void ValueChangedEventHandler(object sender, object value);
 }
