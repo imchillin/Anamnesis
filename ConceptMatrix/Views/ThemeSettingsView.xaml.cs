@@ -75,17 +75,9 @@ namespace ConceptMatrix.GUI.Views
 
 			public void Read(ITheme theme)
 			{
-				this.Zodiark = theme.Background == Theme.Dark.MaterialDesignBackground;
-
-				foreach (Swatch swatch in this.Swatches)
-				{
-					if (theme.PrimaryMid.Color == swatch.ExemplarHue.Color &&
-						theme.SecondaryMid.Color == swatch.AccentExemplarHue.Color)
-					{
-						this.SelectedSwatch = swatch;
-						break;
-					}
-				}
+				PaletteHelper pallete = new PaletteHelper();
+				this.Zodiark = pallete.IsDark();
+				this.SelectedSwatch = pallete.GetCurrentSwatch();
 
 				if (this.SelectedSwatch == null)
 				{
@@ -95,13 +87,11 @@ namespace ConceptMatrix.GUI.Views
 
 			public void Write(ITheme theme)
 			{
-				theme.SetBaseTheme(this.Zodiark ? Theme.Dark : Theme.Light);
-				theme.SetPrimaryColor(this.SelectedSwatch.ExemplarHue.Color);
-
-				if (this.SelectedSwatch.AccentExemplarHue != null)
-				{
-					theme.SetSecondaryColor(this.SelectedSwatch.AccentExemplarHue.Color);
-				}
+				PaletteHelper pallete = new PaletteHelper();
+				pallete.Apply(this.SelectedSwatch, this.Zodiark);
+				App.Settings.ThemeSwatch = this.SelectedSwatch.Name;
+				App.Settings.ThemeDark = this.Zodiark;
+				App.Settings.Save();
 			}
 		}
 	}

@@ -29,6 +29,8 @@ namespace ConceptMatrix.GUI
 			this.viewService.ShowingDrawer += this.OnShowDrawer;
 			this.viewService.ShowingView += this.OnShowView;
 
+			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
+
 			this.OnShowView("Home", typeof(HomeView));
 		}
 
@@ -139,11 +141,15 @@ namespace ConceptMatrix.GUI
 		private void OnAlwaysOnTopChecked(object sender, RoutedEventArgs e)
 		{
 			this.Topmost = true;
+			App.Settings.AlwaysOnTop = true;
+			App.Settings.Save();
 		}
 
 		private void OnAlwaysOnTopUnchecked(object sender, RoutedEventArgs e)
 		{
 			this.Topmost = false;
+			App.Settings.AlwaysOnTop = false;
+			App.Settings.Save();
 		}
 	}
 }

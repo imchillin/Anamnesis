@@ -65,6 +65,7 @@ namespace ConceptMatrix.GUI
 
 		public async Task InitializeServices()
 		{
+			await this.AddService<SettingsService>();
 			await this.AddService<InjectionService>();
 			await this.AddService<ViewService>();
 			await this.AddService<SelectionService>();

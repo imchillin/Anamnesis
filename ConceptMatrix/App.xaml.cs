@@ -8,7 +8,7 @@ namespace ConceptMatrix
 	using System.Windows;
 	using System.Windows.Threading;
 	using ConceptMatrix.GUI;
-
+	using ConceptMatrix.Services;
 	using Application = System.Windows.Application;
 
 	/// <summary>
@@ -16,14 +16,12 @@ namespace ConceptMatrix
 	/// </summary>
 	public partial class App : Application
 	{
-		private static ServiceManager serviceManager = new ServiceManager();
+		public static readonly ServiceManager Services = new ServiceManager();
 
-		public static ServiceManager Services
+		public static MainApplicationSettings Settings
 		{
-			get
-			{
-				return serviceManager;
-			}
+			get;
+			private set;
 		}
 
 		protected override void OnStartup(StartupEventArgs e)
@@ -45,7 +43,7 @@ namespace ConceptMatrix
 
 		private void OnExit(object sender, ExitEventArgs e)
 		{
-			Task t = serviceManager.ShutdownServices();
+			Task t = Services.ShutdownServices();
 			t.Wait();
 			Log.Write("Bye!");
 		}
@@ -74,7 +72,9 @@ namespace ConceptMatrix
 		{
 			try
 			{
-				await serviceManager.InitializeServices();
+				await Services.InitializeServices();
+
+				Settings = await App.Services.Get<ISettingsService>().Load<MainApplicationSettings>();
 
 				Application.Current.Dispatcher.Invoke(() =>
 				{

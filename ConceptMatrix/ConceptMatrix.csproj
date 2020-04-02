@@ -72,10 +72,13 @@
     <Compile Include="ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\PaletteHelperExtensions.cs" />
+    <Compile Include="MainApplicationSettings.cs" />
     <Compile Include="ServiceManager.cs" />
     <Compile Include="Services\InjectionService.cs" />
     <Compile Include="Services\ModuleService.cs" />
     <Compile Include="Services\SelectionService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\ViewService.cs" />
     <Compile Include="SplashWindow.xaml.cs">
       <DependentUpon>SplashWindow.xaml</DependentUpon>
@@ -175,6 +178,9 @@
       <Version>6.1.1</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="PropertyChanged.Fody">
       <Version>3.2.7</Version>
