@@ -177,6 +177,14 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
+		public bool HasTailOrEars
+		{
+			get
+			{
+				return this.IsViera || this.HasTail;
+			}
+		}
+
 		public IEnumerable<Bone> Bones
 		{
 			get
