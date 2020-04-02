@@ -6,6 +6,7 @@
 		xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
 		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 		xmlns:fa="http://schemas.fontawesome.io/icons/"
+		xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
 		mc:Ignorable="d"
 		Height="200"
 		Width="200"
@@ -18,21 +19,22 @@
 		WindowStartupLocation="CenterScreen"
 		MouseDown="OnMouseDown">
 
-	<Border Background="{StaticResource MaterialDesignBackground}" Margin="10" CornerRadius="2">
+	<Border Background="#262626" Margin="10" CornerRadius="2">
 		<Border.Effect>
 			<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.5"/>
 		</Border.Effect>
 
 		<Grid>
+			<!--<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" Width="100" Height="100"/>-->
+			<Image gif:AnimationBehavior.SourceUri="Assets/Loading.gif" Width="128" Height="133" Margin="50,0,0,0"/>
+
+			<Label HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="Loading..." Foreground="Gray" HorizontalContentAlignment="Center"/>
+
 			<Button Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="6" 
 					Background="Transparent"
 						Style="{StaticResource MetroWindowButtonStyle}">
 				<fa:ImageAwesome Icon="Times" Opacity="0.5"/>
 			</Button>
-
-			<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" Width="100" Height="100"/>
-
-			<Label HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="Loading..." HorizontalContentAlignment="Center"/>
 		</Grid>
 	</Border>
 </Window>
