@@ -82,8 +82,11 @@ namespace ConceptMatrix.GUI.Services
 			{
 				await Task.Delay(100);
 
-				IMemory<string> actorIdMem = injection.GetMemory<string>(BaseAddresses.GPose, injection.Offsets.Character.ActorID);
-				string actorId = actorIdMem.Value;
+				string actorId;
+				using (IMemory<string> actorIdMem = injection.GetMemory<string>(BaseAddresses.GPose, injection.Offsets.Character.ActorID))
+				{
+					actorId = actorIdMem.Value;
+				}
 
 				if (string.IsNullOrEmpty(actorId))
 				{
@@ -93,8 +96,11 @@ namespace ConceptMatrix.GUI.Services
 
 				if (this.CurrentGameTarget == null || this.CurrentGameTarget.ActorId != actorId)
 				{
-					IMemory<string> nameMem = injection.GetMemory<string>(BaseAddresses.GPose, injection.Offsets.Character.Name);
-					string name = nameMem.Value;
+					string name;
+					using (IMemory<string> nameMem = injection.GetMemory<string>(BaseAddresses.GPose, injection.Offsets.Character.Name))
+					{
+						name = nameMem.Value;
+					}
 
 					this.CurrentGameTarget = new Selection(Selection.Types.Character, BaseAddresses.GPose, actorId, name);
 				}
