@@ -51,7 +51,7 @@ namespace ConceptMatrix.PoseModule
 
 		public void GetRotation()
 		{
-			this.Rotation = this.rotationMemory.Get();
+			this.Rotation = this.rotationMemory.Value;
 		}
 
 		public void SetRotation()
@@ -64,8 +64,8 @@ namespace ConceptMatrix.PoseModule
 
 			Quaternion newRotation = this.Rotation;
 
-			Quaternion oldrotation = this.rotationMemory.Get();
-			this.rotationMemory.Set(newRotation);
+			Quaternion oldrotation = this.rotationMemory.Value;
+			this.rotationMemory.Value = newRotation;
 			Quaternion oldRotationConjugate = oldrotation;
 			oldRotationConjugate.Conjugate();
 
@@ -80,14 +80,14 @@ namespace ConceptMatrix.PoseModule
 			if (!this.IsEnabled)
 				return;
 
-			this.Rotation = this.rotationMemory.Get();
+			this.Rotation = this.rotationMemory.Value;
 			Quaternion newRotation = sourceNew * (sourceOldCnj * this.Rotation);
 
 			if (this.Rotation == newRotation)
 				return;
 
 			this.Rotation = newRotation;
-			this.rotationMemory.Set(this.Rotation);
+			this.rotationMemory.Value = this.Rotation;
 
 			foreach (Bone child in this.Children)
 			{

@@ -60,11 +60,11 @@ namespace ConceptMatrix.PoseModule
 
 				if (this.enabled)
 				{
-					skeleton.Set(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
-					skeleton2.Set(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
-					skeleton3.Set(new byte[] { 0x90, 0x90, 0x90, 0x90 });
-					physics.Set(new byte[] { 0x90, 0x90, 0x90, 0x90 });
-					physics2.Set(new byte[] { 0x90, 0x90, 0x90 });
+					skeleton.Value = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+					skeleton2.Value = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+					skeleton3.Value = new byte[] { 0x90, 0x90, 0x90, 0x90 };
+					physics.Value = new byte[] { 0x90, 0x90, 0x90, 0x90 };
+					physics2.Value = new byte[] { 0x90, 0x90, 0x90 };
 
 					// Poll changes thread
 					new Thread(new ThreadStart(this.PollChanges)).Start();
@@ -74,11 +74,11 @@ namespace ConceptMatrix.PoseModule
 				}
 				else
 				{
-					skeleton.Set(new byte[] { 0x41, 0x0F, 0x29, 0x5C, 0x12, 0x10 });
-					skeleton2.Set(new byte[] { 0x43, 0x0F, 0x29, 0x5C, 0x18, 0x10 });
-					skeleton3.Set(new byte[] { 0x0F, 0x29, 0x5E, 0x10 });
-					physics.Set(new byte[] { 0x0F, 0x29, 0x48, 0x10 });
-					physics2.Set(new byte[] { 0x0F, 0x29, 0x00 });
+					skeleton.Value = new byte[] { 0x41, 0x0F, 0x29, 0x5C, 0x12, 0x10 };
+					skeleton2.Value = new byte[] { 0x43, 0x0F, 0x29, 0x5C, 0x18, 0x10 };
+					skeleton3.Value = new byte[] { 0x0F, 0x29, 0x5E, 0x10 };
+					physics.Value = new byte[] { 0x0F, 0x29, 0x48, 0x10 };
+					physics2.Value = new byte[] { 0x0F, 0x29, 0x00 };
 				}
 			}
 		}
@@ -125,7 +125,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Get() == 4 || this.race.Get() == 6 || this.race.Get() == 7;
+				return this.race.Value == 4 || this.race.Value == 6 || this.race.Value == 7;
 			}
 		}
 
@@ -133,7 +133,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Get() == 8;
+				return this.race.Value == 8;
 			}
 		}
 
@@ -141,7 +141,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Get() == 8 && this.tailType.Get() <= 1;
+				return this.race.Value == 8 && this.tailType.Value <= 1;
 			}
 		}
 
@@ -149,7 +149,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Get() == 8 && this.tailType.Get() == 2;
+				return this.race.Value == 8 && this.tailType.Value == 2;
 			}
 		}
 
@@ -157,7 +157,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Get() == 8 && this.tailType.Get() == 3;
+				return this.race.Value == 8 && this.tailType.Value == 3;
 			}
 		}
 
@@ -165,7 +165,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Get() == 8 && this.tailType.Get() == 4;
+				return this.race.Value == 8 && this.tailType.Value == 4;
 			}
 		}
 
@@ -173,7 +173,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Get() == 7;
+				return this.race.Value == 7;
 			}
 		}
 
@@ -526,9 +526,9 @@ namespace ConceptMatrix.PoseModule
 			{
 				Vector3D camEuler = default(Vector3D);
 
-				camEuler.Y = MathUtils.RadiansToDegrees(camX.Get());
-				camEuler.Z = -MathUtils.RadiansToDegrees(camY.Get());
-				camEuler.X = MathUtils.RadiansToDegrees(camZ.Get());
+				camEuler.Y = MathUtils.RadiansToDegrees(camX.Value);
+				camEuler.Z = -MathUtils.RadiansToDegrees(camY.Value);
+				camEuler.X = MathUtils.RadiansToDegrees(camZ.Value);
 
 				try
 				{

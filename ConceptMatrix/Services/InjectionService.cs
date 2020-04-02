@@ -7,6 +7,7 @@ namespace ConceptMatrix.GUI.Services
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Reflection;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.Injection;
@@ -17,8 +18,8 @@ namespace ConceptMatrix.GUI.Services
 	public class InjectionService : IInjectionService
 	{
 		private ProcessInjection process;
-
 		private Dictionary<Type, Type> memoryTypeLookup = new Dictionary<Type, Type>();
+		private bool isActive;
 
 		public OffsetsRoot Offsets
 		{
@@ -28,6 +29,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Initialize(IServices services)
 		{
+			this.isActive = true;
 			this.memoryTypeLookup.Clear();
 
 			// Gets all Memory types (Like IntMemory, FloatMemory) and puts them in the lookup
@@ -72,11 +74,13 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Start()
 		{
+			new Thread(new ThreadStart(this.TickMemoryThread)).Start();
 			return Task.CompletedTask;
 		}
 
 		public Task Shutdown()
 		{
+			this.isActive = false;
 			return Task.CompletedTask;
 		}
 
@@ -114,6 +118,22 @@ namespace ConceptMatrix.GUI.Services
 				throw new Exception($"No memory wrapper for type: {type}");
 
 			return this.memoryTypeLookup[type];
+		}
+
+		private void TickMemoryThread()
+		{
+			try
+			{
+				while (this.isActive)
+				{
+					Thread.Sleep(16);
+					MemoryBase.TickAllActiveMemory();
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception("Memory thread exception", ex));
+			}
 		}
 	}
 }

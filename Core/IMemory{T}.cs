@@ -3,18 +3,19 @@
 
 namespace ConceptMatrix
 {
-	public interface IMemory<T>
+	using System;
+	using System.ComponentModel;
+
+	public interface IMemory<T> : INotifyPropertyChanged, IDisposable
 	{
-		T Value { get; }
+		/// <summary>
+		/// Gets or sets the value in memory.
+		/// </summary>
+		T Value { get; set; }
 
 		/// <summary>
-		/// Gets the current value from the process.
+		/// Gets or sets a value indicating whether the value should be frozen in memory, preventing ffxiv from overwriting it.
 		/// </summary>
-		T Get();
-
-		/// <summary>
-		/// Writes a new value to the process, and returns the old value.
-		/// </summary>
-		void Set(T value);
+		bool Freeze { get; set; }
 	}
 }

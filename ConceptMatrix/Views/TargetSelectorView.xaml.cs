@@ -64,7 +64,7 @@ namespace ConceptMatrix.GUI.Views
 				if (isGpose)
 				{
 					IMemory<int> countMem = this.injection.GetMemory<int>(BaseAddresses.GPoseEntity);
-					int count = countMem.Get();
+					int count = countMem.Value;
 
 					for (int i = 0; i < count; i++)
 					{
@@ -76,8 +76,8 @@ namespace ConceptMatrix.GUI.Views
 						IMemory<string> actorIdMem = this.injection.GetMemory<string>(BaseAddresses.GPose, this.injection.Offsets.Character.ActorID);
 						IMemory<string> nameMem = this.injection.GetMemory<string>(addr, this.injection.Offsets.Character.Name);
 
-						string name = nameMem.Get();
-						string actorId = actorIdMem.Get();
+						string name = nameMem.Value;
+						string actorId = actorIdMem.Value;
 
 						PossibleSelection selection = new PossibleSelection(Selection.Types.Character, BaseAddresses.GPose, actorId, name);
 						selection.IsSelected = !this.selection.UseGameTarget && this.selection.CurrentSelection != null && this.selection.CurrentSelection.Name == name;

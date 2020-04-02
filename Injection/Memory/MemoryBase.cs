@@ -4,6 +4,7 @@
 namespace ConceptMatrix.Injection.Memory
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Runtime.InteropServices;
 
 	public abstract class MemoryBase
@@ -11,10 +12,31 @@ namespace ConceptMatrix.Injection.Memory
 		protected ProcessInjection process;
 		protected UIntPtr address;
 
+		private static List<MemoryBase> activeMemory = new List<MemoryBase>();
+
 		public MemoryBase(ProcessInjection process, UIntPtr address)
 		{
 			this.process = process;
 			this.address = address;
+
+			lock (activeMemory)
+			{
+				activeMemory.Add(this);
+			}
+		}
+
+		public static void TickAllActiveMemory()
+		{
+			List<MemoryBase> memories;
+			lock (activeMemory)
+			{
+				memories = new List<MemoryBase>(activeMemory);
+			}
+
+			foreach (MemoryBase memory in memories)
+			{
+				memory.Tick();
+			}
 		}
 
 		/// <summary>
@@ -40,6 +62,16 @@ namespace ConceptMatrix.Injection.Memory
 
 			return bytes;
 		}
+
+		public void Dispose()
+		{
+			lock (activeMemory)
+			{
+				activeMemory.Remove(this);
+			}
+		}
+
+		protected abstract void Tick();
 
 		[DllImport("kernel32.dll")]
 		private static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead);
