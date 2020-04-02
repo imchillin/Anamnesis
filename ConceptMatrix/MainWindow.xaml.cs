@@ -135,5 +135,15 @@ namespace ConceptMatrix.GUI
 		{
 			App.Services.Get<IViewService>().ShowDrawer<ThemeSettingsView>("Theme");
 		}
+
+		private void OnAlwaysOnTopChecked(object sender, RoutedEventArgs e)
+		{
+			this.Topmost = true;
+		}
+
+		private void OnAlwaysOnTopUnchecked(object sender, RoutedEventArgs e)
+		{
+			this.Topmost = false;
+		}
 	}
 }

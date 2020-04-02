@@ -104,6 +104,31 @@
 						<fa:ImageAwesome Icon="PaintBrush" Opacity="0.35"/>
 					</Button>
 
+					<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" 
+								  Margin="3,0,0,0" 
+								  Width="28" 
+								  Height="28" 
+								  Padding="0" 
+								  Background="Transparent" 
+								  BorderThickness="0"
+								  Checked="OnAlwaysOnTopChecked"
+								  Unchecked="OnAlwaysOnTopUnchecked">
+						
+						<ToggleButton.Content>
+							<Grid Width="28" Height="28">
+								<fa:ImageAwesome Icon="ThumbTack" Opacity="0.35" Margin="6, 7, 6, 6"/>
+							</Grid>
+						</ToggleButton.Content>
+						<materialdesign:ToggleButtonAssist.OnContent>
+							<Grid Width="28" Height="28">
+								<Ellipse Stroke="Black" Fill="Black" StrokeThickness="1" Margin="4" Opacity="0.35"/>
+								<fa:ImageAwesome Foreground="{DynamicResource SecondaryAccentBrush}" Icon="ThumbTack" Margin="6, 7, 6, 6"/>
+							</Grid>
+						</materialdesign:ToggleButtonAssist.OnContent>
+
+					
+					</ToggleButton>
+
 					<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnMinimiseClick">
 						<fa:ImageAwesome Icon="WindowMinimize" Opacity="0.35"/>
 					</Button>
