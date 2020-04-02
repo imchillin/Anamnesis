@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Controls
+namespace ConceptMatrix.WpfStyles.Controls
 {
 	using System.ComponentModel;
 	using System.Windows;

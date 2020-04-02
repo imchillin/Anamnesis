@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule"
-			 xmlns:controls="clr-namespace:ConceptMatrix.PoseModule.Controls"
+			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 xmlns:converters="clr-namespace:ConceptMatrix.PoseModule.Converters"
 			 mc:Ignorable="d" 
 			 Unloaded="OnUnloaded"
@@ -403,7 +403,7 @@
 				</GroupBox>
 
 				<GroupBox Header="{Binding CurrentBone.Tooltip, FallbackValue=''}" Margin="6"  Padding="4" IsEnabled="{Binding IsEnabled}">
-					<controls:QuaternionEditor Value="{Binding CurrentBone.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
+					<cm3:QuaternionEditor Value="{Binding CurrentBone.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
 				</GroupBox>
 			</StackPanel>
 		</Grid>

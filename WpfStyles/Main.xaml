@@ -48,9 +48,15 @@
 		<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TreeView.xaml" />
 		<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Thumb.xaml" />
 		<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ValidationErrorTemplate.xaml" />
+		
 		<!-- Material Design: MahApps Compatibility -->
 		<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.Defaults.xaml" />
+
+		<!-- Custom -->
+		<ResourceDictionary Source="GroupBoxStyles.xaml"/>
+
 	</ResourceDictionary.MergedDictionaries>
+	
 	<!-- Material Design:Styles-->
 	<Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedButton}" />
 	<Style TargetType="{x:Type Calendar}" BasedOn="{StaticResource MaterialDesignCalendarPortrait}" />
@@ -66,7 +72,6 @@
 	<Style TargetType="{x:Type DatePicker}" BasedOn="{StaticResource MaterialDesignDatePicker}" />
 	<Style TargetType="{x:Type Expander}" BasedOn="{StaticResource MaterialDesignExpander}" />
 	<Style TargetType="{x:Type GridSplitter}" BasedOn="{StaticResource MaterialDesignGridSplitter}" />
-	<Style TargetType="{x:Type GroupBox}" BasedOn="{StaticResource MaterialDesignGroupBox}" />
 	<Style TargetType="{x:Type Label}" BasedOn="{StaticResource MaterialDesignLabel}" />
 	<Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource MaterialDesignListBox}" />
 	<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}" />
@@ -87,6 +92,7 @@
 	<Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}" />
 	<Style TargetType="{x:Type Menu}" BasedOn="{StaticResource MaterialDesignMenu}" />
 	<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MaterialDesignMenuItem}" />
+	
 	<!-- MahApps Brushes -->
 	<SolidColorBrush x:Key="HighlightBrush" Color="{DynamicResource Primary700}"/>
 	<SolidColorBrush x:Key="AccentBaseColorBrush" Color="{DynamicResource Primary600}" />

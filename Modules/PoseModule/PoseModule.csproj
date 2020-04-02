@@ -65,14 +65,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\NumberBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\QuaternionEditor.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="SimplePoseBoneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -82,12 +74,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Bone.cs" />
-    <Compile Include="Controls\NumberBox.xaml.cs">
-      <DependentUpon>NumberBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\QuaternionEditor.xaml.cs">
-      <DependentUpon>QuaternionEditor.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Converters\InvertedBoolToVisibilityConverter.cs" />
   </ItemGroup>
   <ItemGroup>
