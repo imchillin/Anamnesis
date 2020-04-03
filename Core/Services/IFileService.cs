@@ -15,6 +15,8 @@ namespace ConceptMatrix.Services
 
 		Task<FileBase> OpenAny(params FileType[] fileTypes);
 
+		Task<string> OpenDirectory(string title, params string[] defaults);
+
 		Task Save(FileBase file);
 		Task SaveAs(FileBase file);
 	}
@@ -32,8 +34,8 @@ namespace ConceptMatrix.Services
 
 		public FileType(string extension, string name, Type type)
 		{
-			if (!extension.StartsWith("."))
-				extension = "." + extension;
+			if (extension.StartsWith("."))
+				extension = extension.Substring(1, extension.Length - 1);
 
 			this.Extension = extension;
 			this.Name = name;

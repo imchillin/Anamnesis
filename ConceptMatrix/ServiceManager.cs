@@ -36,7 +36,7 @@ namespace ConceptMatrix.GUI
 			throw new Exception($"Failed to find service: {typeof(T)}");
 		}
 
-		public async Task AddService<T>()
+		public async Task Add<T>()
 			where T : IService, new()
 		{
 			try
@@ -65,12 +65,12 @@ namespace ConceptMatrix.GUI
 
 		public async Task InitializeServices()
 		{
-			await this.AddService<SettingsService>();
-			await this.AddService<InjectionService>();
-			await this.AddService<ViewService>();
-			await this.AddService<SelectionService>();
-			await this.AddService<FileService>();
-			await this.AddService<ModuleService>();
+			await this.Add<SettingsService>();
+			await this.Add<InjectionService>();
+			await this.Add<ViewService>();
+			await this.Add<SelectionService>();
+			await this.Add<FileService>();
+			await this.Add<ModuleService>();
 
 			this.IsInitialized = true;
 			Log.Write($"Services Initialized", "Services");

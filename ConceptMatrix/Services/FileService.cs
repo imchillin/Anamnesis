@@ -9,7 +9,7 @@ namespace ConceptMatrix.GUI.Services
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.Services;
-	using Microsoft.Win32;
+	using Microsoft.WindowsAPICodePack.Dialogs;
 	using Newtonsoft.Json;
 
 	public class FileService : IFileService
@@ -34,14 +34,22 @@ namespace ConceptMatrix.GUI.Services
 		{
 			try
 			{
-				OpenFileDialog dlg = new OpenFileDialog();
-				dlg.Filter = ToFilter(fileType);
-				bool? selected = dlg.ShowDialog();
+				string path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
+				{
+					CommonOpenFileDialog dlg = new CommonOpenFileDialog();
+					dlg.Filters.Add(ToFilter(fileType));
+					CommonFileDialogResult selected = dlg.ShowDialog();
 
-				if (selected == false)
+					if (selected != CommonFileDialogResult.Ok)
+						return null;
+
+					return dlg.FileName;
+				});
+
+				if (path == null)
 					return null;
 
-				FileBase file = await Open(dlg.FileName, fileType);
+				FileBase file = await Open(path, fileType);
 				if (file is T tFile)
 					return tFile;
 
@@ -59,18 +67,29 @@ namespace ConceptMatrix.GUI.Services
 		{
 			try
 			{
-				OpenFileDialog dlg = new OpenFileDialog();
-				dlg.Filter = ToFilter(fileTypes);
-				bool? selected = dlg.ShowDialog();
+				string path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
+				{
+					CommonOpenFileDialog dlg = new CommonOpenFileDialog();
+					dlg.Filters.Add(ToAnyFilter(fileTypes));
 
-				if (selected == false)
+					foreach (FileType fileType in fileTypes)
+						dlg.Filters.Add(ToFilter(fileType));
+
+					CommonFileDialogResult selected = dlg.ShowDialog();
+
+					if (selected != CommonFileDialogResult.Ok)
+						return null;
+
+					return dlg.FileName;
+				});
+
+				if (path == null)
 					return null;
 
-				string filePath = dlg.FileName;
-				string extension = Path.GetExtension(filePath);
+				string extension = Path.GetExtension(path);
 				FileType type = GetFileType(fileTypes, extension);
 
-				return await Open(filePath, type);
+				return await Open(path, type);
 			}
 			catch (Exception ex)
 			{
@@ -80,7 +99,7 @@ namespace ConceptMatrix.GUI.Services
 			return null;
 		}
 
-		public Task Save(FileBase file)
+		public async Task Save(FileBase file)
 		{
 			try
 			{
@@ -90,14 +109,22 @@ namespace ConceptMatrix.GUI.Services
 
 				if (path == null)
 				{
-					SaveFileDialog dlg = new SaveFileDialog();
-					dlg.Filter = ToFilter(type);
-					bool? selected = dlg.ShowDialog();
+					path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
+					{
+						CommonSaveFileDialog dlg = new CommonSaveFileDialog();
+						dlg.Filters.Add(ToFilter(type));
+						CommonFileDialogResult selected = dlg.ShowDialog();
 
-					if (selected == false)
-						return Task.CompletedTask;
+						if (selected != CommonFileDialogResult.Ok)
+							return null;
 
-					path = dlg.FileName;
+						return dlg.FileName;
+					});
+
+					if (path == null)
+					{
+						return;
+					}
 				}
 
 				using (FileStream stream = new FileStream(path, FileMode.Create))
@@ -120,14 +147,39 @@ namespace ConceptMatrix.GUI.Services
 			{
 				Log.Write(new Exception("Failed to save file", ex));
 			}
-
-			return Task.CompletedTask;
 		}
 
 		public Task SaveAs(FileBase file)
 		{
 			file.Path = null;
 			return this.Save(file);
+		}
+
+		public async Task<string> OpenDirectory(string title, params string[] defaults)
+		{
+			string defaultDir = null;
+			foreach (string pDefaultDir in defaults)
+			{
+				if (Directory.Exists(pDefaultDir))
+				{
+					defaultDir = pDefaultDir;
+					break;
+				}
+			}
+
+			return await App.Current.Dispatcher.InvokeAsync<string>(() =>
+			{
+				CommonOpenFileDialog dlg = new CommonOpenFileDialog();
+				dlg.IsFolderPicker = true;
+				dlg.Title = title;
+				dlg.DefaultDirectory = defaultDir;
+				CommonFileDialogResult selected = dlg.ShowDialog();
+
+				if (selected != CommonFileDialogResult.Ok)
+					return null;
+
+				return dlg.FileName;
+			});
 		}
 
 		private static Task<FileBase> Open(string path, FileType type)
@@ -170,58 +222,25 @@ namespace ConceptMatrix.GUI.Services
 			throw new Exception($"Unable to determine file type from extension: \"{extension}\"");
 		}
 
-		private static string ToFilter(FileType fileType)
+		private static CommonFileDialogFilter ToAnyFilter(params FileType[] types)
 		{
-			StringBuilder filterbuilder = new StringBuilder();
-			filterbuilder.Append(fileType.Name);
-			filterbuilder.Append(" (*");
-			filterbuilder.Append(fileType.Extension);
-			filterbuilder.Append(")|*");
-			filterbuilder.Append(fileType.Extension);
-			return filterbuilder.ToString();
+			CommonFileDialogFilter filter = new CommonFileDialogFilter();
+			filter.DisplayName = "Any";
+
+			foreach (FileType type in types)
+				filter.Extensions.Add(type.Extension);
+
+			filter.ShowExtensions = true;
+			return filter;
 		}
 
-		private static string ToFilter(FileType[] fileTypes)
+		private static CommonFileDialogFilter ToFilter(FileType fileType)
 		{
-			StringBuilder filterbuilder = new StringBuilder();
-
-			if (fileTypes.Length > 1)
-			{
-				filterbuilder.Append("All Files (*");
-				for (int i = 0; i < fileTypes.Length; i++)
-				{
-					if (i > 0)
-						filterbuilder.Append(", *");
-
-					filterbuilder.Append(fileTypes[i].Extension);
-				}
-
-				filterbuilder.Append(")|*");
-
-				for (int i = 0; i < fileTypes.Length; i++)
-				{
-					if (i > 0)
-						filterbuilder.Append(";*");
-
-					filterbuilder.Append(fileTypes[i].Extension);
-				}
-
-				filterbuilder.Append("|");
-			}
-
-			for (int i = 0; i < fileTypes.Length; i++)
-			{
-				if (i > 0)
-					filterbuilder.Append("|");
-
-				filterbuilder.Append(fileTypes[i].Name);
-				filterbuilder.Append("(*");
-				filterbuilder.Append(fileTypes[i].Extension);
-				filterbuilder.Append(")|*");
-				filterbuilder.Append(fileTypes[i].Extension);
-			}
-
-			return filterbuilder.ToString();
+			CommonFileDialogFilter filter = new CommonFileDialogFilter();
+			filter.DisplayName = fileType.Name;
+			filter.Extensions.Add(fileType.Extension);
+			filter.ShowExtensions = true;
+			return filter;
 		}
 	}
 }

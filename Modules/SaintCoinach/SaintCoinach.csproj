@@ -1,0 +1,72 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>ConceptMatrix.SaintCoinachModule</RootNamespace>
+		<AssemblyName>ConceptMatrix.SaintCoinach</AssemblyName>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<OutputPath>..\..\bin\Modules</OutputPath>
+		<DocumentationFile>..\..\bin\Modules\ConceptMatrix.SaintCoinach</DocumentationFile>
+		<WarningsAsErrors />
+		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;</NoWarn>
+		
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="Core">
+			<HintPath>..\..\bin\Core.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="SaintCoinach">
+			<HintPath>SaintCoinach\SaintCoinach.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="stylecop.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="stylecop.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="SaintCoinach\Definitions.zip">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SaintCoinach\DotNetZip.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SaintCoinach\DotSquish.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SaintCoinach\EntityFramework.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SaintCoinach\EntityFramework.SqlServer.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SaintCoinach\SaintCoinach.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SaintCoinach\System.Data.SQLite.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SaintCoinach\System.Data.SQLite.EF6.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SaintCoinach\System.Data.SQLite.Linq.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+</Project>
