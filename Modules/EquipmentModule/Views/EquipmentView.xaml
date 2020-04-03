@@ -6,7 +6,37 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.EquipmentModule.Views"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
-	<Grid>
-		<Button Content="Click Me" Width="128" Click="Button_Click"/>
+	<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<local:ItemView Grid.Column="0" Grid.Row="0" Slot="MainHand" x:Name="MainHandEq"/>
+		
+		<local:ItemView Grid.Column="0" Grid.Row="1" Slot="Head"/>
+		<local:ItemView Grid.Column="0" Grid.Row="2" Slot="Body"/>
+		<local:ItemView Grid.Column="0" Grid.Row="3" Slot="Hands"/>
+		<local:ItemView Grid.Column="0" Grid.Row="4" Slot="Waist"/>
+		<local:ItemView Grid.Column="0" Grid.Row="5" Slot="Legs"/>
+		<local:ItemView Grid.Column="0" Grid.Row="6" Slot="Feet"/>
+
+		<local:ItemView Grid.Column="1" Grid.Row="1" Slot="OffHand"/>
+		<local:ItemView Grid.Column="1" Grid.Row="2" Slot="Ears"/>
+		<local:ItemView Grid.Column="1" Grid.Row="3" Slot="Neck"/>
+		<local:ItemView Grid.Column="1" Grid.Row="4" Slot="Wrists"/>
+		<local:ItemView Grid.Column="1" Grid.Row="5" Slot="RightRing"/>
+		<local:ItemView Grid.Column="1" Grid.Row="6" Slot="LeftRing"/>
+
 	</Grid>
 </UserControl>

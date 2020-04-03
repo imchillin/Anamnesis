@@ -15,13 +15,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 		public EquipmentView()
 		{
 			this.InitializeComponent();
-		}
 
-		private void Button_Click(object sender, RoutedEventArgs e)
-		{
-			IViewService viewService = Module.Services.Get<IViewService>();
-			EquipmentSelector selector = new EquipmentSelector(ItemSlots.Head);
-			viewService.ShowDrawer(selector, "Select Equipment");
+			IGameDataService gameData = Module.Services.Get<IGameDataService>();
+
+			this.MainHandEq.Value = gameData.Items.Get(29412);
 		}
 	}
 }

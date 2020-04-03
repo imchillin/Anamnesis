@@ -68,10 +68,11 @@ namespace ConceptMatrix.Services
 		Feet,
 
 		OffHand,
+		Ears,
 		Neck,
 		Wrists,
 		RightRing,
-		LeftWing,
+		LeftRing,
 	}
 
 	public interface IStain : IDataObject
