@@ -37,20 +37,22 @@ namespace ConceptMatrix.SaintCoinachModule
 		internal class ImageWrapper : IImage, IDisposable
 		{
 			private Bitmap bitmap;
+			private IntPtr ptr;
 
 			public ImageWrapper(Bitmap bmp)
 			{
 				this.bitmap = bmp;
+				this.ptr = this.bitmap.GetHbitmap();
 			}
 
 			public IntPtr HBitmap
 			{
 				get
 				{
-					if (this.bitmap == null)
+					if (this.ptr == null)
 						throw new Exception("Cannot access a disposed object");
 
-					return this.bitmap.GetHbitmap();
+					return this.ptr;
 				}
 			}
 

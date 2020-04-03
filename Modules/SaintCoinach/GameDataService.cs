@@ -20,73 +20,73 @@ namespace ConceptMatrix.SaintCoinachModule
 
 	public class GameDataService : IGameDataService, IProgress<UpdateProgress>
 	{
-		public IEnumerable<IRace> Races
+		public IData<IRace> Races
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<ITribe> Tribes
+		public IData<ITribe> Tribes
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<IItem> Items
+		public IData<IItem> Items
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<IStain> Stains
+		public IData<IStain> Stains
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<INpcBase> BaseNPCs
+		public IData<INpcBase> BaseNPCs
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<ITerritoryType> Territories
+		public IData<ITerritoryType> Territories
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<IWeather> Weathers
+		public IData<IWeather> Weathers
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<ICharaMakeCustomize> CharacterMakeCustomize
+		public IData<ICharaMakeCustomize> CharacterMakeCustomize
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<ICharaMakeType> CharacterMakeTypes
+		public IData<ICharaMakeType> CharacterMakeTypes
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<INpcResident> ResidentNPCs
+		public IData<INpcResident> ResidentNPCs
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<ITitle> Titles
+		public IData<ITitle> Titles
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<IStatus> Statuses
+		public IData<IStatus> Statuses
 		{
 			get;
 			private set;
@@ -135,18 +135,18 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			Log.Write("Reading data", @"Saint Coinach");
 
-			this.Items = this.Load<Item, ItemWrapper>(realm);
-			this.Races = this.Load<Race, RaceWrapper>(realm);
-			this.Tribes = this.Load<Tribe, TribeWrapper>(realm);
-			this.Stains = this.Load<Stain, StainWrapper>(realm);
-			this.BaseNPCs = this.Load<ENpcBase, NpcBaseWrapper>(realm);
-			this.Territories = this.Load<TerritoryType, TerritoryTypeWrapper>(realm);
-			this.Weathers = this.Load<Weather, WeatherWrapper>(realm);
-			this.CharacterMakeCustomize = this.Load<CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm);
-			this.CharacterMakeTypes = this.Load<CharaMakeType, CharacterMakeTypeWrapper>(realm);
-			this.ResidentNPCs = this.Load<ENpcResident, NpcResidentWrapper>(realm);
-			this.Titles = this.Load<Title, TitleWrapper>(realm);
-			this.Statuses = this.Load<Status, StatusWrapper>(realm);
+			this.Items = this.Load<IItem, Item, ItemWrapper>(realm);
+			this.Races = this.Load<IRace, Race, RaceWrapper>(realm);
+			this.Tribes = this.Load<ITribe, Tribe, TribeWrapper>(realm);
+			this.Stains = this.Load<IStain, Stain, StainWrapper>(realm);
+			this.BaseNPCs = this.Load<INpcBase, ENpcBase, NpcBaseWrapper>(realm);
+			this.Territories = this.Load<ITerritoryType, TerritoryType, TerritoryTypeWrapper>(realm);
+			this.Weathers = this.Load<IWeather, Weather, WeatherWrapper>(realm);
+			this.CharacterMakeCustomize = this.Load<ICharaMakeCustomize, CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm);
+			this.CharacterMakeTypes = this.Load<ICharaMakeType, CharaMakeType, CharacterMakeTypeWrapper>(realm);
+			this.ResidentNPCs = this.Load<INpcResident, ENpcResident, NpcResidentWrapper>(realm);
+			this.Titles = this.Load<ITitle, Title, TitleWrapper>(realm);
+			this.Statuses = this.Load<IStatus, Status, StatusWrapper>(realm);
 
 			Log.Write("Finished Reading data", @"Saint Coinach");
 			Log.Write("Initialization took " + sw.ElapsedMilliseconds + "ms", @"Saint Coinach");
@@ -157,19 +157,16 @@ namespace ConceptMatrix.SaintCoinachModule
 			// this never seems to be called
 		}
 
-		public IEnumerable<T2> Load<T, T2>(ARealmReversed realm)
-			where T : XivRow
+		internal Table<TInterface> Load<TInterface, TRow, TWrapper>(ARealmReversed realm)
+			where TRow : XivRow
+			where TInterface : IDataObject
+			where TWrapper : ObjectWrapper, TInterface
 		{
-			List<T2> results = new List<T2>();
+			Table<TInterface> table = new Table<TInterface>();
 
-			IXivSheet<T> sheet = realm.GameData.GetSheet<T>();
-			foreach (T row in sheet)
-			{
-				results.Add((T2)Activator.CreateInstance(typeof(T2), row));
-			}
-
-			Log.Write("Loaded " + results.Count + " " + typeof(T), @"Saint Coinach");
-			return results;
+			IXivSheet<TRow> sheet = realm.GameData.GetSheet<TRow>();
+			table.Import<TRow, TWrapper>(sheet);
+			return table;
 		}
 
 		private static async Task<string> GetInstallationDirectory()
@@ -222,6 +219,49 @@ namespace ConceptMatrix.SaintCoinachModule
 				return false;
 
 			return true;
+		}
+
+		internal class Table<T> : IData<T>
+			where T : IDataObject
+		{
+			private Dictionary<int, T> data = new Dictionary<int, T>();
+
+			public IEnumerable<T> All
+			{
+				get
+				{
+					return this.data.Values;
+				}
+			}
+
+			public int Count
+			{
+				get
+				{
+					return this.data.Count;
+				}
+			}
+
+			public T Get(int key)
+			{
+				if (this.data.ContainsKey(key))
+					return this.data[key];
+
+				return default(T);
+			}
+
+			internal void Import<TRow, TWrapper>(IXivSheet<TRow> sheet)
+				where TRow : XivRow
+				where TWrapper : ObjectWrapper, T
+			{
+				foreach (TRow row in sheet)
+				{
+					TWrapper wrapper = (TWrapper)Activator.CreateInstance(typeof(TWrapper), row);
+					this.data.Add(wrapper.Key, wrapper);
+				}
+
+				Log.Write("Loaded " + this.Count + " " + typeof(T).Name, @"Saint Coinach");
+			}
 		}
 	}
 }

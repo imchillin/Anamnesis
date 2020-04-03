@@ -8,18 +8,26 @@ namespace ConceptMatrix.Services
 
 	public interface IGameDataService : IService
 	{
-		IEnumerable<IRace> Races { get; }
-		IEnumerable<ITribe> Tribes { get; }
-		IEnumerable<IItem> Items { get; }
-		IEnumerable<IStain> Stains { get; }
-		IEnumerable<INpcBase> BaseNPCs { get; }
-		IEnumerable<ITerritoryType> Territories { get; }
-		IEnumerable<IWeather> Weathers { get; }
-		IEnumerable<ICharaMakeCustomize> CharacterMakeCustomize { get; }
-		IEnumerable<ICharaMakeType> CharacterMakeTypes { get; }
-		IEnumerable<INpcResident> ResidentNPCs { get; }
-		IEnumerable<ITitle> Titles { get; }
-		IEnumerable<IStatus> Statuses { get; }
+		IData<IRace> Races { get; }
+		IData<ITribe> Tribes { get; }
+		IData<IItem> Items { get; }
+		IData<IStain> Stains { get; }
+		IData<INpcBase> BaseNPCs { get; }
+		IData<ITerritoryType> Territories { get; }
+		IData<IWeather> Weathers { get; }
+		IData<ICharaMakeCustomize> CharacterMakeCustomize { get; }
+		IData<ICharaMakeType> CharacterMakeTypes { get; }
+		IData<INpcResident> ResidentNPCs { get; }
+		IData<ITitle> Titles { get; }
+		IData<IStatus> Statuses { get; }
+	}
+
+	public interface IData<T>
+		where T : IDataObject
+	{
+		IEnumerable<T> All { get; }
+
+		T Get(int key);
 	}
 
 	public interface IDataObject
