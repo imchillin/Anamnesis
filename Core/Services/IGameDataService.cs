@@ -6,6 +6,9 @@ namespace ConceptMatrix.Services
 	using System;
 	using System.Collections.Generic;
 
+	// TODO: split into multiple files.
+	#pragma warning disable SA1201
+
 	public interface IGameDataService : IService
 	{
 		IData<IRace> Races { get; }
@@ -48,6 +51,27 @@ namespace ConceptMatrix.Services
 		string Name { get; }
 		string Description { get; }
 		IImage Icon { get; }
+		string MainModelQuad { get; }
+		string SubModelQuad { get; }
+		bool FitsInSlot(ItemSlots slot);
+	}
+
+	public enum ItemSlots
+	{
+		MainHand,
+
+		Head,
+		Body,
+		Hands,
+		Waist,
+		Legs,
+		Feet,
+
+		OffHand,
+		Neck,
+		Wrists,
+		RightRing,
+		LeftWing,
 	}
 
 	public interface IStain : IDataObject

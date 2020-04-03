@@ -58,7 +58,8 @@
 
 						<Image Grid.RowSpan="2" Source="{Binding Icon, Converter={StaticResource IImageConverter}}"/>
 						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold"/>
-
+						<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MainModelQuad}" Margin="6, 0, 0, 0" FontWeight="Light"/>
+						
 						<Rectangle Grid.ColumnSpan="2" 
 								   Grid.RowSpan="2" 
 								   Fill="Transparent" 

@@ -3,7 +3,6 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
-	using System.Drawing;
 	using ConceptMatrix.Services;
 	using SaintCoinach.Xiv;
 
@@ -36,6 +35,35 @@ namespace ConceptMatrix.SaintCoinachModule
 			{
 				return this.Value.Icon.ToIImage();
 			}
+		}
+
+		public string MainModelQuad
+		{
+			get
+			{
+				return this.Value.ModelMain.ToString();
+			}
+		}
+
+		public string SubModelQuad
+		{
+			get
+			{
+				return this.Value.ModelSub.ToString();
+			}
+		}
+
+		public bool FitsInSlot(ItemSlots slot)
+		{
+			foreach (EquipSlot equipSlot in this.Value.EquipSlotCategory.PossibleSlots)
+			{
+				if (equipSlot.IsSlot(slot))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }
