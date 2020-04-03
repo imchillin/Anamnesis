@@ -4,6 +4,7 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.IO.Compression;
 	using System.Threading.Tasks;
@@ -11,9 +12,21 @@ namespace ConceptMatrix.SaintCoinachModule
 	using SaintCoinach;
 	using SaintCoinach.Ex;
 	using SaintCoinach.Ex.Relational.Update;
+	using SaintCoinach.Xiv;
+
+	using Directory = System.IO.Directory;
+	using File = System.IO.File;
 
 	public class GameDataService : IGameDataService, IProgress<UpdateProgress>
 	{
+		private ARealmReversed realm;
+
+		public IEnumerable<IItem> Items
+		{
+			get;
+			private set;
+		}
+
 		public Task Initialize(IServices services)
 		{
 			return Task.CompletedTask;
@@ -36,24 +49,41 @@ namespace ConceptMatrix.SaintCoinachModule
 			ZipFile.ExtractToDirectory("./Modules/SaintCoinach/Definitions.zip", "./Definitions/");
 
 			// TODO get language from language service?
-			ARealmReversed realm = new ARealmReversed(directory, Language.English);
+			this.realm = new ARealmReversed(directory, Language.English);
 
 			try
 			{
-				if (!realm.IsCurrentVersion)
+				if (!this.realm.IsCurrentVersion)
 				{
-					realm.Update(true, this);
+					this.realm.Update(true, this);
 				}
 			}
 			catch (Exception ex)
 			{
 				throw new Exception(@"Failed to update Saint Coinach", ex);
 			}
+
+			Log.Write("Reading data", @"Saint Coinach");
+			this.Items = this.Load<Item, ItemWrapper>();
 		}
 
 		public void Report(UpdateProgress value)
 		{
 			// this never seems to be called
+		}
+
+		public List<T2> Load<T, T2>()
+			where T : XivRow
+		{
+			List<T2> results = new List<T2>();
+
+			IXivSheet<T> sheet = this.realm.GameData.GetSheet<T>();
+			foreach (T row in sheet)
+			{
+				results.Add((T2)Activator.CreateInstance(typeof(T2), row));
+			}
+
+			return results;
 		}
 
 		private static async Task<string> GetInstallationDirectory()
@@ -65,7 +95,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			while (!IsValidInstallation(installationPath))
 			{
-				// TODO: dialog popup explaining to select game folder?
+				// TODO: dialog explaining to select game folder?
 				IFileService fileService = Module.Services.Get<IFileService>();
 				string dir = await fileService.OpenDirectory(
 					"Select game installation",

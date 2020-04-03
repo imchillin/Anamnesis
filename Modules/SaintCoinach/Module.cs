@@ -3,11 +3,9 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
-	using System;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.Modules;
-	using ConceptMatrix.Services;
 
 	public class Module : ModuleBase
 	{

@@ -3,11 +3,19 @@
 
 namespace ConceptMatrix.Services
 {
-	using System;
 	using System.Collections.Generic;
-	using System.Text;
 
 	public interface IGameDataService : IService
+	{
+		IEnumerable<IItem> Items { get; }
+	}
+
+	public interface IDataObject
+	{
+		string Name { get; }
+	}
+
+	public interface IItem : IDataObject
 	{
 	}
 }
