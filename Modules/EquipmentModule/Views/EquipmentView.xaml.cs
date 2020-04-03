@@ -20,7 +20,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
 			IViewService viewService = Module.Services.Get<IViewService>();
-			EquipmentSelector selector = new EquipmentSelector();
+			EquipmentSelector selector = new EquipmentSelector(ItemSlots.Head);
 			viewService.ShowDrawer(selector, "Select Equipment");
 		}
 	}

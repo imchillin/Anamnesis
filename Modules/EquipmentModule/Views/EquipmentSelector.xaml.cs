@@ -7,6 +7,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -17,57 +18,29 @@ namespace ConceptMatrix.EquipmentModule.Views
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
 	/// </summary>
-	public partial class EquipmentSelector : UserControl
+	public partial class EquipmentSelector : UserControl, INotifyPropertyChanged
 	{
 		private IGameDataService gameData;
-		private ICollectionView collecitonView;
 
+		private ItemSlots slot;
 		private string[] searchQuerry;
-		private Task searchTask;
+		private bool searching = false;
 
-		public EquipmentSelector()
+		public EquipmentSelector(ItemSlots slot)
 		{
+			this.slot = slot;
+
 			this.InitializeComponent();
 			this.DataContext = this;
 
 			this.gameData = Module.Services.Get<IGameDataService>();
 
-			foreach (IItem item in this.gameData.Items.All)
-			{
-				this.Items.Add(item);
-			}
-
-			this.collecitonView = CollectionViewSource.GetDefaultView(this.Items);
-			this.collecitonView.Filter = this.ItemFilter;
+			Task.Run(this.Filter);
 		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		public ObservableCollection<IItem> Items { get; set; } = new ObservableCollection<IItem>();
-
-		private bool ItemFilter(object obj)
-		{
-			if (obj is IItem item)
-			{
-				// skip items without names
-				if (string.IsNullOrEmpty(item.Name))
-					return false;
-
-				if (this.searchQuerry != null)
-				{
-					bool matchesSearch = true;
-					foreach (string str in this.searchQuerry)
-						matchesSearch &= item.Name.ToLower().Contains(str);
-
-					if (!matchesSearch)
-					{
-						return false;
-					}
-				}
-
-				return true;
-			}
-
-			return false;
-		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -77,7 +50,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 		private void OnSearchChanged(object sender, TextChangedEventArgs e)
 		{
 			string str = this.SearchBox.Text;
-			this.searchTask = Task.Run(async () => { await this.Search(str); });
+			Task.Run(async () => { await this.Search(str); });
 		}
 
 		private async Task Search(string str)
@@ -86,6 +59,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 			try
 			{
+				while (this.searching)
+					await Task.Delay(100);
+
+				this.searching = true;
 				string currentInput = await App.Current.Dispatcher.InvokeAsync<string>(() =>
 				{
 					return this.SearchBox.Text;
@@ -93,7 +70,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 				// If the input was changed, abort this task
 				if (str != currentInput)
+				{
+					this.searching = false;
 					return;
+				}
 
 				if (string.IsNullOrEmpty(str))
 				{
@@ -105,15 +85,56 @@ namespace ConceptMatrix.EquipmentModule.Views
 					this.searchQuerry = str.Split(' ');
 				}
 
-				await App.Current.Dispatcher.InvokeAsync(() =>
-				{
-					this.collecitonView.Refresh();
-				});
+				await Task.Run(this.Filter);
+				this.searching = false;
 			}
 			catch (Exception ex)
 			{
 				Log.Write(ex);
 			}
+		}
+
+		private void Filter()
+		{
+			ObservableCollection<IItem> filteredItems = new ObservableCollection<IItem>();
+
+			foreach (IItem item in this.gameData.Items.All)
+			{
+				if (!this.ItemFilter(item))
+					continue;
+
+				filteredItems.Add(item);
+			}
+
+			App.Current.Dispatcher.InvokeAsync(() =>
+			{
+				this.Items = filteredItems;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Items)));
+			});
+		}
+
+		private bool ItemFilter(IItem item)
+		{
+			// skip items without names
+			if (string.IsNullOrEmpty(item.Name))
+				return false;
+
+			if (!item.FitsInSlot(this.slot))
+				return false;
+
+			if (this.searchQuerry != null)
+			{
+				bool matchesSearch = true;
+				foreach (string str in this.searchQuerry)
+					matchesSearch &= item.Name.ToLower().Contains(str);
+
+				if (!matchesSearch)
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 	}
 }
