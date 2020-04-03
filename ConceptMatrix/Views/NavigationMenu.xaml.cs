@@ -41,7 +41,6 @@ namespace ConceptMatrix.GUI.Views
 
 			// Temp
 			this.viewService.AddView<HomeView>("Character/Appearance");
-			this.viewService.AddView<HomeView>("Character/Equipment");
 			this.viewService.AddView<HomeView>("Character/Model Data");
 			this.viewService.AddView<HomeView>("Character/Properties");
 			this.viewService.AddView<HomeView>("Character/Equipment Properties");
