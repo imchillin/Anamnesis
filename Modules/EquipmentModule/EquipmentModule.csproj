@@ -38,10 +38,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ConceptMatrix.WpfStyles">
-      <HintPath>..\..\bin\ConceptMatrix.WpfStyles.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -132,29 +128,27 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\IconBorder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\IconBorderSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{12021F91-2ADB-4897-9671-356F7D7B77B6}</Project>
+      <Project>{12021f91-2adb-4897-9671-356f7d7b77b6}</Project>
       <Name>Core</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Offsets\Offsets.csproj">
       <Project>{b554e2ff-5572-4fd2-bd15-6f532a7f840a}</Project>
       <Name>Offsets</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ThreeD\ThreeD.csproj">
-      <Project>{57b50980-3643-4d41-a8ac-045646da7310}</Project>
-      <Name>ThreeD</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\WPFStyles\WpfStyles.csproj">
       <Project>{f76c98a0-59bf-4bf8-ab41-0218859a89bd}</Project>
       <Name>WpfStyles</Name>
       <Private>False</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\IconBorder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\IconBorderSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

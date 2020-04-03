@@ -4,19 +4,12 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.EquipmentModule.Views"
-			 xmlns:converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="350"
 			 Margin="0">
 
-	<UserControl.Resources>
-		<ResourceDictionary Source="pack://application:,,,/ConceptMatrix.WpfStyles;component/Main.xaml" />
-	</UserControl.Resources>
-
 	<Button HorizontalContentAlignment="Stretch" Click="OnClick" Height="75" Width="256" 
-			BorderBrush="Transparent"
-			BorderThickness="0"
-			Style="{DynamicResource MaterialDesignOutlinedButton}">
+			Style="{DynamicResource MaterialDesignFlatButton}">
 		<Grid Margin="3">
 			
 			<Grid.ColumnDefinitions>
@@ -39,8 +32,8 @@
 				</Grid>
 			</Border>
 
-			<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Value.Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
-			<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Value.MainModelQuad}" Margin="6, 0, 0, 0" FontWeight="Light"  Foreground="{DynamicResource MaterialDesignBody}"/>
+			<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Value.Name}" Margin="6, 0, 0, 0" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBody}"/>
+			<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Value.MainModelQuad}" Margin="6, 0, 0, 0" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBody}"/>
 
 			<Rectangle 
 				Grid.ColumnSpan="2"

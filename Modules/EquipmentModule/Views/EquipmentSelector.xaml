@@ -9,14 +9,6 @@
 			 d:DesignHeight="450" d:DesignWidth="232"
 			 Loaded="OnLoaded">
 
-	<UserControl.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="pack://application:,,,/ConceptMatrix.WpfStyles;component/Main.xaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</UserControl.Resources>
-
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
