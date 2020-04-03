@@ -5,6 +5,7 @@ namespace ConceptMatrix.SaintCoinachModule
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.IO;
 	using System.IO.Compression;
 	using System.Threading.Tasks;
@@ -19,9 +20,73 @@ namespace ConceptMatrix.SaintCoinachModule
 
 	public class GameDataService : IGameDataService, IProgress<UpdateProgress>
 	{
-		private ARealmReversed realm;
+		public IEnumerable<IRace> Races
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<ITribe> Tribes
+		{
+			get;
+			private set;
+		}
 
 		public IEnumerable<IItem> Items
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<IStain> Stains
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<INpcBase> BaseNPCs
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<ITerritoryType> Territories
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<IWeather> Weathers
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<ICharaMakeCustomize> CharacterMakeCustomize
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<ICharaMakeType> CharacterMakeTypes
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<INpcResident> ResidentNPCs
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<ITitle> Titles
+		{
+			get;
+			private set;
+		}
+
+		public IEnumerable<IStatus> Statuses
 		{
 			get;
 			private set;
@@ -41,6 +106,9 @@ namespace ConceptMatrix.SaintCoinachModule
 		{
 			string directory = await GetInstallationDirectory();
 
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+
 			if (File.Exists("SaintCoinach.History.zip"))
 				File.Delete("SaintCoinach.History.zip");
 
@@ -49,13 +117,13 @@ namespace ConceptMatrix.SaintCoinachModule
 			ZipFile.ExtractToDirectory("./Modules/SaintCoinach/Definitions.zip", "./Definitions/");
 
 			// TODO get language from language service?
-			this.realm = new ARealmReversed(directory, Language.English);
+			ARealmReversed realm = new ARealmReversed(directory, Language.English);
 
 			try
 			{
-				if (!this.realm.IsCurrentVersion)
+				if (!realm.IsCurrentVersion)
 				{
-					this.realm.Update(true, this);
+					realm.Update(true, this);
 				}
 			}
 			catch (Exception ex)
@@ -64,7 +132,22 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 
 			Log.Write("Reading data", @"Saint Coinach");
-			this.Items = this.Load<Item, ItemWrapper>();
+
+			this.Items = this.Load<Item, ItemWrapper>(realm);
+			this.Races = this.Load<Race, RaceWrapper>(realm);
+			this.Tribes = this.Load<Tribe, TribeWrapper>(realm);
+			this.Stains = this.Load<Stain, StainWrapper>(realm);
+			this.BaseNPCs = this.Load<ENpcBase, NpcBaseWrapper>(realm);
+			this.Territories = this.Load<TerritoryType, TerritoryTypeWrapper>(realm);
+			this.Weathers = this.Load<Weather, WeatherWrapper>(realm);
+			this.CharacterMakeCustomize = this.Load<CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm);
+			this.CharacterMakeTypes = this.Load<CharaMakeType, CharacterMakeTypeWrapper>(realm);
+			this.ResidentNPCs = this.Load<ENpcResident, NpcResidentWrapper>(realm);
+			this.Titles = this.Load<Title, TitleWrapper>(realm);
+			this.Statuses = this.Load<Status, StatusWrapper>(realm);
+
+			Log.Write("Finished Reading data", @"Saint Coinach");
+			Log.Write("Initialization took " + sw.ElapsedMilliseconds + "ms", @"Saint Coinach");
 		}
 
 		public void Report(UpdateProgress value)
@@ -72,17 +155,18 @@ namespace ConceptMatrix.SaintCoinachModule
 			// this never seems to be called
 		}
 
-		public List<T2> Load<T, T2>()
+		public IEnumerable<T2> Load<T, T2>(ARealmReversed realm)
 			where T : XivRow
 		{
 			List<T2> results = new List<T2>();
 
-			IXivSheet<T> sheet = this.realm.GameData.GetSheet<T>();
+			IXivSheet<T> sheet = realm.GameData.GetSheet<T>();
 			foreach (T row in sheet)
 			{
 				results.Add((T2)Activator.CreateInstance(typeof(T2), row));
 			}
 
+			Log.Write("Loaded " + results.Count + " " + typeof(T), @"Saint Coinach");
 			return results;
 		}
 

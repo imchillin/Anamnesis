@@ -6,20 +6,18 @@ namespace ConceptMatrix.SaintCoinachModule
 	using ConceptMatrix.Services;
 	using SaintCoinach.Xiv;
 
-	public class ItemWrapper : IItem
+	internal class ItemWrapper : ObjectWrapper<Item>, IItem
 	{
-		private Item item;
-
-		public ItemWrapper(Item item)
+		public ItemWrapper(Item value)
+			: base(value)
 		{
-			this.item = item;
 		}
 
 		public string Name
 		{
 			get
 			{
-				return this.item.Name;
+				return this.Value.Name;
 			}
 		}
 	}
