@@ -22,13 +22,19 @@ namespace ConceptMatrix.SaintCoinachModule
 			int height = file.Height;
 			byte[] argb = ImageConverter.GetA8R8G8B8(src, format, width, height);
 
-			ImageWrapper wrapper;
+			ImageWrapper wrapper = null;
 
-			fixed (byte* p = argb)
+			try
 			{
-				IntPtr ptr = (IntPtr)p;
-				Bitmap tempImage = new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, ptr);
-				wrapper = new ImageWrapper(tempImage);
+				fixed (byte* p = argb)
+				{
+					IntPtr ptr = (IntPtr)p;
+					Bitmap tempImage = new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, ptr);
+					wrapper = new ImageWrapper(tempImage);
+				}
+			}
+			catch (Exception)
+			{
 			}
 
 			return wrapper;

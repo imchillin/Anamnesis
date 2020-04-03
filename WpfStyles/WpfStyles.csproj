@@ -75,6 +75,7 @@
       <DependentUpon>QuaternionEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\IImageToImageSourceConverter.cs" />
+    <Compile Include="Converters\StringHasContentToVisibilityConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

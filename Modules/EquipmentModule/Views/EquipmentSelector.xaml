@@ -1,12 +1,73 @@
 ﻿<UserControl x:Class="ConceptMatrix.EquipmentModule.Views.EquipmentSelector"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ConceptMatrix.EquipmentModule.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="232">
-    <Grid>
-            
-    </Grid>
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.EquipmentModule.Views"
+			 xmlns:fa="http://schemas.fontawesome.io/icons/"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="232"
+			 Loaded="OnLoaded">
+
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/ConceptMatrix.WpfStyles;component/Main.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Row="0" Margin="3, 0, 12, 0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="32"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<fa:ImageAwesome  Icon="Search" Width="16"/>
+
+			<TextBox Grid.Row="0" Grid.Column="1" x:Name="SearchBox" 
+				 Style="{DynamicResource MaterialDesignTextBox}"
+				 Margin="0, 6, 0, 6"
+				 TextChanged="OnSearchChanged"/>
+
+		</Grid>
+
+		<ListBox ItemsSource="{Binding Items, FallbackValue=1}" 
+				 VirtualizingStackPanel.IsVirtualizing="True" 
+				 HorizontalContentAlignment="Stretch"
+				 Grid.Row="1">
+			
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid Height="32">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="32"/>
+							<ColumnDefinition Width="1*" />
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<Image Grid.RowSpan="2" Source="{Binding Icon, Converter={StaticResource IImageConverter}}"/>
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold"/>
+
+						<Rectangle Grid.ColumnSpan="2" 
+								   Grid.RowSpan="2" 
+								   Fill="Transparent" 
+								   Visibility="{Binding Description, Converter={StaticResource StringHasContentToVisibility}}" 
+								   ToolTipService.ToolTip="{Binding Description}"/>
+
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
 </UserControl>
