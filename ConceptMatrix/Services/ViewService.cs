@@ -5,6 +5,7 @@ namespace ConceptMatrix.GUI.Services
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Reflection;
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using ConceptMatrix;
@@ -15,7 +16,7 @@ namespace ConceptMatrix.GUI.Services
 		private Dictionary<string, Type> views = new Dictionary<string, Type>();
 
 		public delegate void ViewEvent(string path, Type type);
-		public delegate void DrawerEvent(string title, Type drawerType, DrawerDirection direction);
+		public delegate void DrawerEvent(string title, UserControl drawer, DrawerDirection direction);
 
 		public event ViewEvent AddingView;
 		public event DrawerEvent ShowingDrawer;
@@ -67,12 +68,38 @@ namespace ConceptMatrix.GUI.Services
 
 		public void ShowDrawer<T>(string title, DrawerDirection direction)
 		{
-			Type view = typeof(T);
+			Type viewType = typeof(T);
 
-			if (!typeof(UserControl).IsAssignableFrom(view))
-				throw new Exception($"View: {view} does not extend from UserControl.");
+			if (!typeof(UserControl).IsAssignableFrom(viewType))
+				throw new Exception($"View: {viewType} does not extend from UserControl.");
 
-			this.ShowingDrawer?.Invoke(title, typeof(T), direction);
+			UserControl view;
+			try
+			{
+				view = (UserControl)Activator.CreateInstance(viewType);
+			}
+			catch (TargetInvocationException ex)
+			{
+				Log.Write(new Exception($"Failed to create view: {viewType}", ex.InnerException));
+				return;
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception($"Failed to create view: {viewType}", ex));
+				return;
+			}
+
+			this.ShowingDrawer?.Invoke(title, view, direction);
+		}
+
+		public void ShowDrawer(object view, string title, DrawerDirection direction)
+		{
+			UserControl control = view as UserControl;
+
+			if (control == null)
+				throw new Exception("Invalid view");
+
+			this.ShowingDrawer?.Invoke(title, control, direction);
 		}
 
 		private Type GetView(string path)

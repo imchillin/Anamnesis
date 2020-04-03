@@ -51,24 +51,8 @@ namespace ConceptMatrix.GUI
 			}
 		}
 
-		private void OnShowDrawer(string title, Type viewType, DrawerDirection direction)
+		private void OnShowDrawer(string title, UserControl view, DrawerDirection direction)
 		{
-			UserControl view = null;
-			try
-			{
-				view = (UserControl)Activator.CreateInstance(viewType);
-			}
-			catch (TargetInvocationException ex)
-			{
-				Log.Write(new Exception($"Failed to create view: {viewType}", ex.InnerException));
-				return;
-			}
-			catch (Exception ex)
-			{
-				Log.Write(new Exception($"Failed to create view: {viewType}", ex));
-				return;
-			}
-
 			switch (direction)
 			{
 				case DrawerDirection.Left:

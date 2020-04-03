@@ -29,5 +29,13 @@ namespace ConceptMatrix.Services
 		/// <param name="title">the title to show at the top of the menu.</param>
 		/// <param name="direction">the edge of the window the drawer will appear from.</param>
 		void ShowDrawer<T>(string title = null, DrawerDirection direction = DrawerDirection.Right);
+
+		/// <summary>
+		/// Opens a drawer (flyout) menu on the main application window.
+		/// </summary>
+		/// <param name="view"> the view to place in the drawer.</param>
+		/// <param name="title">the title to show at the top of the menu.</param>
+		/// <param name="direction">the edge of the window the drawer will appear from.</param>
+		void ShowDrawer(object view, string title = null, DrawerDirection direction = DrawerDirection.Right);
 	}
 }
