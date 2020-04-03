@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
+	using System.Drawing;
 	using ConceptMatrix.Services;
 	using SaintCoinach.Xiv;
 
@@ -18,6 +19,22 @@ namespace ConceptMatrix.SaintCoinachModule
 			get
 			{
 				return this.Value.Name;
+			}
+		}
+
+		public string Description
+		{
+			get
+			{
+				return this.Value.Description;
+			}
+		}
+
+		public IImage Icon
+		{
+			get
+			{
+				return this.Value.Icon.ToIImage();
 			}
 		}
 	}

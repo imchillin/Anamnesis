@@ -113,7 +113,9 @@ namespace ConceptMatrix.SaintCoinachModule
 				File.Delete("SaintCoinach.History.zip");
 
 			// Unzip definitions
-			Directory.Delete("./Definitions/", true);
+			if (Directory.Exists("./Definitions/"))
+				Directory.Delete("./Definitions/", true);
+
 			ZipFile.ExtractToDirectory("./Modules/SaintCoinach/Definitions.zip", "./Definitions/");
 
 			// TODO get language from language service?

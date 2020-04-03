@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.Services
 {
+	using System;
 	using System.Collections.Generic;
 
 	public interface IGameDataService : IService
@@ -37,6 +38,8 @@ namespace ConceptMatrix.Services
 	public interface IItem : IDataObject
 	{
 		string Name { get; }
+		string Description { get; }
+		IImage Icon { get; }
 	}
 
 	public interface IStain : IDataObject
@@ -73,5 +76,12 @@ namespace ConceptMatrix.Services
 
 	public interface IStatus : IDataObject
 	{
+	}
+
+	public interface IImage
+	{
+		IntPtr HBitmap { get; }
+		int Width { get; }
+		int Height { get; }
 	}
 }
