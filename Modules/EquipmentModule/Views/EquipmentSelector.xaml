@@ -23,14 +23,21 @@
 
 			<fa:ImageAwesome  Icon="Search" Width="16"/>
 
-			<TextBox Grid.Row="0" Grid.Column="1" x:Name="SearchBox" 
-				 Style="{DynamicResource MaterialDesignTextBox}"
-				 Margin="0, 6, 0, 6"
-				 TextChanged="OnSearchChanged"/>
+			<TextBox 
+				Grid.Row="0" 
+				Grid.Column="1" 
+				x:Name="SearchBox" 
+				Style="{DynamicResource MaterialDesignTextBox}"
+				KeyDown="OnSearchBoxKeyDown"
+				AcceptsReturn="False"
+				Margin="0, 6, 0, 6"
+				TextChanged="OnSearchChanged"/>
 
 		</Grid>
 
 		<ListBox ItemsSource="{Binding Items, FallbackValue=1}" 
+				 SelectedItem="{Binding Value}"
+				 SelectionChanged="OnSelectionChanged"
 				 VirtualizingStackPanel.IsVirtualizing="True" 
 				 HorizontalContentAlignment="Stretch"
 				 Grid.Row="1">

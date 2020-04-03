@@ -66,11 +66,14 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
-		private void OnClick(object sender, RoutedEventArgs e)
+		private async void OnClick(object sender, RoutedEventArgs e)
 		{
 			IViewService viewService = Module.Services.Get<IViewService>();
+
 			EquipmentSelector selector = new EquipmentSelector(this.Slot);
-			viewService.ShowDrawer(selector, "Select " + this.SlotName);
+			selector.Value = this.Value;
+			await viewService.ShowDrawer(selector, "Select " + this.SlotName);
+			this.Value = selector.Value;
 		}
 	}
 }

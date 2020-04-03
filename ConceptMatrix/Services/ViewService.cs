@@ -16,7 +16,7 @@ namespace ConceptMatrix.GUI.Services
 		private Dictionary<string, Type> views = new Dictionary<string, Type>();
 
 		public delegate void ViewEvent(string path, Type type);
-		public delegate void DrawerEvent(string title, UserControl drawer, DrawerDirection direction);
+		public delegate Task DrawerEvent(string title, UserControl drawer, DrawerDirection direction);
 
 		public event ViewEvent AddingView;
 		public event DrawerEvent ShowingDrawer;
@@ -66,7 +66,23 @@ namespace ConceptMatrix.GUI.Services
 			this.ShowingView?.Invoke(path, type);
 		}
 
-		public void ShowDrawer<T>(string title, DrawerDirection direction)
+		public Task ShowDrawer<T>(string title, DrawerDirection direction)
+		{
+			UserControl view = this.CreateView<T>();
+			return this.ShowingDrawer?.Invoke(title, view, direction);
+		}
+
+		public Task ShowDrawer(object view, string title, DrawerDirection direction)
+		{
+			UserControl control = view as UserControl;
+
+			if (control == null)
+				throw new Exception("Invalid view");
+
+			return this.ShowingDrawer?.Invoke(title, control, direction);
+		}
+
+		private UserControl CreateView<T>()
 		{
 			Type viewType = typeof(T);
 
@@ -81,25 +97,15 @@ namespace ConceptMatrix.GUI.Services
 			catch (TargetInvocationException ex)
 			{
 				Log.Write(new Exception($"Failed to create view: {viewType}", ex.InnerException));
-				return;
+				return null;
 			}
 			catch (Exception ex)
 			{
 				Log.Write(new Exception($"Failed to create view: {viewType}", ex));
-				return;
+				return null;
 			}
 
-			this.ShowingDrawer?.Invoke(title, view, direction);
-		}
-
-		public void ShowDrawer(object view, string title, DrawerDirection direction)
-		{
-			UserControl control = view as UserControl;
-
-			if (control == null)
-				throw new Exception("Invalid view");
-
-			this.ShowingDrawer?.Invoke(title, control, direction);
+			return view;
 		}
 
 		private Type GetView(string path)

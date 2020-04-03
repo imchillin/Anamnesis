@@ -5,6 +5,7 @@ namespace ConceptMatrix.GUI
 {
 	using System;
 	using System.Reflection;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
@@ -51,8 +52,23 @@ namespace ConceptMatrix.GUI
 			}
 		}
 
-		private void OnShowDrawer(string title, UserControl view, DrawerDirection direction)
+		private async Task OnShowDrawer(string title, UserControl view, DrawerDirection direction)
 		{
+			// Close all current drawers.
+			this.DrawerHost.IsLeftDrawerOpen = false;
+			this.DrawerHost.IsTopDrawerOpen = false;
+			this.DrawerHost.IsRightDrawerOpen = false;
+			this.DrawerHost.IsBottomDrawerOpen = false;
+
+			// If this is a drawer view, bind to its events.
+			if (view is IDrawer drawer)
+			{
+				drawer.Close += () => this.DrawerHost.IsLeftDrawerOpen = false;
+				drawer.Close += () => this.DrawerHost.IsTopDrawerOpen = false;
+				drawer.Close += () => this.DrawerHost.IsRightDrawerOpen = false;
+				drawer.Close += () => this.DrawerHost.IsBottomDrawerOpen = false;
+			}
+
 			switch (direction)
 			{
 				case DrawerDirection.Left:
@@ -84,6 +100,15 @@ namespace ConceptMatrix.GUI
 					this.DrawerHost.IsBottomDrawerOpen = true;
 					break;
 				}
+			}
+
+			// Wait while any of the drawer areas remain open
+			while (this.DrawerHost.IsLeftDrawerOpen
+				|| this.DrawerHost.IsRightDrawerOpen
+				|| this.DrawerHost.IsBottomDrawerOpen
+				|| this.DrawerHost.IsTopDrawerOpen)
+			{
+				await Task.Delay(250);
 			}
 		}
 

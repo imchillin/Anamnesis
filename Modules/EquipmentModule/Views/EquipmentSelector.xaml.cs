@@ -18,13 +18,16 @@ namespace ConceptMatrix.EquipmentModule.Views
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
 	/// </summary>
-	public partial class EquipmentSelector : UserControl, INotifyPropertyChanged
+	public partial class EquipmentSelector : UserControl, INotifyPropertyChanged, IDrawer
 	{
+		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(IItem), typeof(EquipmentSelector), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
+
 		private IGameDataService gameData;
 
 		private ItemSlots slot;
 		private string[] searchQuerry;
 		private bool searching = false;
+		private IItem oldValue;
 
 		public EquipmentSelector(ItemSlots slot)
 		{
@@ -39,8 +42,31 @@ namespace ConceptMatrix.EquipmentModule.Views
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+		public event DrawerEvent Close;
 
 		public ObservableCollection<IItem> Items { get; set; } = new ObservableCollection<IItem>();
+
+		public IItem Value
+		{
+			get
+			{
+				return (IItem)this.GetValue(ValueProperty);
+			}
+
+			set
+			{
+				this.SetValue(ValueProperty, value);
+				this.oldValue = value;
+			}
+		}
+
+		private static void OnValueChangedStatic(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (sender is EquipmentSelector view)
+			{
+				view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(e.Property.Name));
+			}
+		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -135,6 +161,28 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 
 			return true;
+		}
+
+		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count <= 0 || e.AddedItems[0] == this.oldValue)
+				return;
+
+			if (this.searching)
+				return;
+
+			this.Close?.Invoke();
+		}
+
+		private void OnSearchBoxKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key != Key.Enter)
+				return;
+
+			if (this.Items.Count <= 0)
+				return;
+
+			this.Value = this.Items[0];
 		}
 	}
 }
