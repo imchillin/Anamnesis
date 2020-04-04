@@ -43,6 +43,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 			set
 			{
 				this.SetValue(SlotProperty, value);
+				this.SlotIcon.Source = value.GetIcon();
 			}
 		}
 
@@ -164,6 +165,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 			if (sender is ItemView view)
 			{
 				view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(e.Property.Name));
+
+				if (e.Property.Name == nameof(view.Slot))
+				{
+					view.SlotIcon.Source = view.Slot.GetIcon();
+				}
 			}
 		}
 
@@ -185,6 +191,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 			selector.Value = this.Dye;
 			await viewService.ShowDrawer(selector, "Select Dye");
 			this.Dye = selector.Value;
+
+			if (this.Dye?.Key == 0)
+			{
+				this.Dye = null;
+			}
 		}
 
 		private void OnPreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)

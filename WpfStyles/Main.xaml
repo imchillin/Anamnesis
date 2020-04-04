@@ -121,5 +121,6 @@
 	<!-- Custom converters -->
 	<converters:IImageToImageSourceConverter x:Key="IImageConverter" />
 	<converters:StringHasContentToVisibilityConverter x:Key="StringHasContentToVisibility" />
-	
+	<converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityconverter"/>
+
 </ResourceDictionary>

@@ -8,104 +8,116 @@
 			 mc:Ignorable="d"
 			 Margin="0">
 
-	<Grid Margin="12, 12, 32, 12">
-
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition/>
-		</Grid.ColumnDefinitions>
-
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition/>
-		</Grid.RowDefinitions>
-
-		<Button 
-			Grid.Row="1" 
-			Grid.RowSpan="2"
-			HorizontalContentAlignment="Stretch" 
-			Click="OnClick"
-			Style="{DynamicResource MaterialDesignFlatButton}"
-			Width="56"
-			Height="56"
-			Padding="3">
-			<Grid>
-				<Border Background="#444444" CornerRadius="3">
-					<Grid>
-						<Image Source="{Binding Value.Icon, Converter={StaticResource IImageConverter}}"/>
-						<Image Source="/EquipmentModule;component/Assets/IconBorder.png" Margin="-2, -1, -2, -4"/>
-					</Grid>
-				</Border>
-
-				<Rectangle 
-					Grid.Column="0"
-					Grid.Row="1"
-					Grid.RowSpan="2" 
-					Fill="Transparent" 
-					Visibility="{Binding Value.Description, Converter={StaticResource StringHasContentToVisibility}}" 
-					ToolTipService.ToolTip="{Binding Description}"/>
-			</Grid>
-		</Button>
-
-		<Grid Grid.Row="1" Grid.Column="1">
-
-			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-			</Grid.RowDefinitions>
-
+	<Border Background="#22000000" CornerRadius="6" Margin="6">
+		
+		<Grid Margin="6" >
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="50"/>
-				<ColumnDefinition Width="42"/>
-				<ColumnDefinition Width="42"/>
-				<ColumnDefinition Width="42"/>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
-			<Grid Grid.Row="0" Grid.ColumnSpan="5">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+
+			<Button 
+				Grid.Row="1" 
+				Grid.RowSpan="2"
+				HorizontalContentAlignment="Stretch" 
+				Click="OnClick"
+				Style="{DynamicResource MaterialDesignFlatButton}"
+				Width="56"
+				Height="56"
+				Padding="3">
+				<Grid>
+					<Border Background="#10FFFFFF" CornerRadius="3" BorderThickness="1" BorderBrush="#44222222">
+						<Grid>
+							<Image x:Name="SlotIcon" Source="/EquipmentModule;component/Assets/Slots/Body.png" Margin="6" Opacity="0.4"/>
+							<Image Source="{Binding Value.Icon, Converter={StaticResource IImageConverter}}"/>
+							<Image Source="/EquipmentModule;component/Assets/IconBorder.png" Margin="-2, -1, -2, -4" Visibility="{Binding Value, Converter={StaticResource NotNullToVisibilityconverter}}"/>
+
+							<Grid.ToolTip>
+								<StackPanel>
+									<TextBlock Text="{Binding Value.Name}" FontWeight="DemiBold"/>
+									<TextBlock Text="{Binding Value.Description}" Visibility="{Binding Value.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+								</StackPanel>
+							</Grid.ToolTip>
+
+						</Grid>
+					</Border>
+				</Grid>
+			</Button>
+
+			<Grid Grid.Row="1" Grid.Column="1">
+
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="50"/>
+					<ColumnDefinition Width="42"/>
+					<ColumnDefinition Width="42"/>
+					<ColumnDefinition Width="42"/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 
-				<TextBlock Grid.Column="0" Text="{Binding SlotName, FallbackValue='Equipment Slot'}" FontWeight="SemiBold" Margin="3,0,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
-				<TextBlock Grid.Column="1" Text=":" FontWeight="SemiBold" Margin="0,0,3,0" Foreground="{DynamicResource MaterialDesignBody}"/>
-				<TextBlock Grid.Column="2" Text="{Binding Value.Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBody}"/>
+				<Grid Grid.Row="0" Grid.ColumnSpan="5">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+
+					<TextBlock Grid.Column="0" Text="{Binding SlotName, FallbackValue='Equipment Slot'}" FontWeight="SemiBold" Margin="3,0,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
+					<TextBlock Grid.Column="1" Text=":" FontWeight="SemiBold" Margin="0,0,3,0" Foreground="{DynamicResource MaterialDesignBody}"/>
+					<TextBlock Grid.Column="2" Text="{Binding Value.Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBody}"/>
+				</Grid>
+
+				<TextBox Grid.Column="0" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding Key}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}"/>
+				<TextBox Grid.Column="1" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding ModelBaseId}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}"/>
+				<TextBox Grid.Column="2" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding ModelVariantId}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}"/>
+				<TextBox Grid.Column="3" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding ModelId}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}" Visibility="{Binding HasModelId, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+				<Button 
+					Grid.Column="4" Grid.Row="1"
+					HorizontalContentAlignment="Stretch" 
+					Click="OnDyeClick"
+					Style="{DynamicResource MaterialDesignFlatButton}"
+					Width="30"
+					Height="30"
+					Padding="3"
+					VerticalContentAlignment="Stretch"
+					Visibility="{Binding CanDye, Converter={StaticResource BoolToVisibilityConverter}}">
+
+					<Border Background="#10FFFFFF" CornerRadius="3" BorderThickness="1" BorderBrush="#44222222">
+						<Grid>
+							<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}"/>
+							<Image Source="/EquipmentModule;component/Assets/IconBorderSmall.png" Margin="-2, -1, -2, -3" Visibility="{Binding Dye, Converter={StaticResource NotNullToVisibilityconverter}}"/>
+
+							<Grid.ToolTip>
+								<StackPanel>
+									<TextBlock Text="{Binding Dye.Name}" FontWeight="DemiBold"/>
+									<TextBlock Text="{Binding Dye.Description}" Visibility="{Binding Dye.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+								</StackPanel>
+							</Grid.ToolTip>
+		
+						</Grid>
+					</Border>
+				</Button>
+
+				<Label Grid.Column="0" Grid.Row="2" Content="Item" FontSize="10" Padding="0" Margin="2, -3, 3, -3"/>
+				<Label Grid.Column="1" Grid.Row="2" Content="Base" FontSize="10" Padding="0" Margin="2, -3, 3, -3"/>
+				<Label Grid.Column="2" Grid.Row="2" Content="Variant" FontSize="10" Padding="0" Margin="2, -3, 3, -3"/>
+				<Label Grid.Column="3" Grid.Row="2" Content="Model" FontSize="10" Padding="0" Margin="2, -3, 3, -3" Visibility="{Binding HasModelId, Converter={StaticResource BoolToVisibilityConverter}}"/>
+				<Label Grid.Column="4" Grid.Row="2" Content="Dye" FontSize="10" Padding="0" Margin="4, -3, 3, -3" Visibility="{Binding CanDye, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+
 			</Grid>
-
-			<TextBox Grid.Column="0" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding Key}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}"/>
-			<TextBox Grid.Column="1" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding ModelBaseId}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}"/>
-			<TextBox Grid.Column="2" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding ModelVariantId}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}"/>
-			<TextBox Grid.Column="3" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding ModelId}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}" Visibility="{Binding HasModelId, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-			<Button 
-				Grid.Column="4" Grid.Row="1"
-				HorizontalContentAlignment="Stretch" 
-				Click="OnDyeClick"
-				Style="{DynamicResource MaterialDesignFlatButton}"
-				Width="30"
-				Height="30"
-				Padding="3"
-				Visibility="{Binding CanDye, Converter={StaticResource BoolToVisibilityConverter}}">
-				
-				<Border  Background="#444444" CornerRadius="3">
-					<Grid>
-						<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}"/>
-						<Image Source="/EquipmentModule;component/Assets/IconBorderSmall.png" Margin="-2, -1, -2, -3"/>
-					</Grid>
-				</Border>
-			</Button>
-
-			<Label Grid.Column="0" Grid.Row="2" Content="Item" FontSize="10" Padding="0" Margin="2, -3, 3, -3"/>
-			<Label Grid.Column="1" Grid.Row="2" Content="Base" FontSize="10" Padding="0" Margin="2, -3, 3, -3"/>
-			<Label Grid.Column="2" Grid.Row="2" Content="Variant" FontSize="10" Padding="0" Margin="2, -3, 3, -3"/>
-			<Label Grid.Column="3" Grid.Row="2" Content="Model" FontSize="10" Padding="0" Margin="2, -3, 3, -3" Visibility="{Binding HasModelId, Converter={StaticResource BoolToVisibilityConverter}}"/>
-			<Label Grid.Column="4" Grid.Row="2" Content="Dye" FontSize="10" Padding="0" Margin="4, -3, 3, -3" Visibility="{Binding CanDye, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-
 		</Grid>
-	</Grid>
+	</Border>
 </UserControl>

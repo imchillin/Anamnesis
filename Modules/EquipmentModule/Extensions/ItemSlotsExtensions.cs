@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix.EquipmentModule
 {
+	using System;
+	using System.Windows.Media.Imaging;
 	using ConceptMatrix.Services;
 
 	public static class ItemSlotsExtensions
@@ -18,6 +20,16 @@ namespace ConceptMatrix.EquipmentModule
 			}
 
 			return self.ToString();
+		}
+
+		public static BitmapImage GetIcon(this ItemSlots self)
+		{
+			BitmapImage logo = new BitmapImage();
+			logo.BeginInit();
+			logo.UriSource = new Uri("pack://application:,,,/EquipmentModule;component/Assets/Slots/" + self.ToString() + ".png");
+			logo.EndInit();
+
+			return logo;
 		}
 	}
 }

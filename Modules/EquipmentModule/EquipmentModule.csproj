@@ -157,5 +157,22 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Slots\Body.png" />
+    <Resource Include="Assets\Slots\Ears.png" />
+    <Resource Include="Assets\Slots\Feet.png" />
+    <Resource Include="Assets\Slots\Hands.png" />
+    <Resource Include="Assets\Slots\Head.png" />
+    <Resource Include="Assets\Slots\Legs.png" />
+    <Resource Include="Assets\Slots\MainHand.png" />
+    <Resource Include="Assets\Slots\Neck.png" />
+    <Resource Include="Assets\Slots\OffHand.png" />
+    <Resource Include="Assets\Slots\RightRing.png" />
+    <Resource Include="Assets\Slots\Waist.png" />
+    <Resource Include="Assets\Slots\Wrists.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Slots\LeftRing.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
