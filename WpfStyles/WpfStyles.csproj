@@ -31,6 +31,7 @@
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
+    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,6 +39,7 @@
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
+    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>
@@ -73,6 +75,9 @@
     </Compile>
     <Compile Include="Controls\QuaternionEditor.xaml.cs">
       <DependentUpon>QuaternionEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SelectorDrawer.xaml.cs">
+      <DependentUpon>SelectorDrawer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\IImageToImageSourceConverter.cs" />
     <Compile Include="Converters\StringHasContentToVisibilityConverter.cs" />
@@ -162,6 +167,10 @@
     <Page Include="Controls\QuaternionEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\SelectorDrawer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="GroupBoxStyles.xaml">
       <SubType>Designer</SubType>

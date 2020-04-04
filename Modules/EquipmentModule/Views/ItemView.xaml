@@ -83,12 +83,22 @@
 			<TextBox Grid.Column="2" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding ModelVariantId}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}"/>
 			<TextBox Grid.Column="3" Grid.Row="1" Style="{DynamicResource MaterialDesignTextBox}" Text="{Binding ModelId}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}"/>
 
-			<Border Grid.Column="4" Grid.Row="1" Background="#444444" CornerRadius="3" Width="22" Height="22" Margin="3">
-				<Grid>
-					<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}"/>
-					<Image Source="/EquipmentModule;component/Assets/IconBorderSmall.png" Margin="-2, -1, -2, -3"/>
-				</Grid>
-			</Border>
+			<Button 
+				Grid.Column="4" Grid.Row="1"
+				HorizontalContentAlignment="Stretch" 
+				Click="OnDyeClick"
+				Style="{DynamicResource MaterialDesignFlatButton}"
+				Width="30"
+				Height="30"
+				Padding="3">
+				
+				<Border  Background="#444444" CornerRadius="3">
+					<Grid>
+						<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}"/>
+						<Image Source="/EquipmentModule;component/Assets/IconBorderSmall.png" Margin="-2, -1, -2, -3"/>
+					</Grid>
+				</Border>
+			</Button>
 
 			<Label Grid.Column="0" Grid.Row="2" Content="Item" FontSize="10" Padding="0" Margin="2, -3, 3, -3"/>
 			<Label Grid.Column="1" Grid.Row="2" Content="Base" FontSize="10" Padding="0" Margin="2, -3, 3, -3"/>

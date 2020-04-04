@@ -3,34 +3,21 @@
 
 namespace ConceptMatrix.EquipmentModule.Views
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.ComponentModel;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using System.Windows;
 	using System.Windows.Controls;
-	using System.Windows.Data;
-	using System.Windows.Input;
 	using ConceptMatrix.Services;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
 	/// </summary>
-	public partial class EquipmentSelector : UserControl, IDrawer
+	public partial class DyeSelector : UserControl, IDrawer
 	{
-		private ItemSlots slot;
-
-		public EquipmentSelector(ItemSlots slot)
+		public DyeSelector()
 		{
-			this.slot = slot;
-
 			this.InitializeComponent();
 			this.DataContext = this;
 
 			IGameDataService gameData = Module.Services.Get<IGameDataService>();
-			foreach (IItem item in gameData.Items.All)
+			foreach (IDye item in gameData.Dyes.All)
 			{
 				this.Selector.Items.Add(item);
 			}
@@ -40,11 +27,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		public event DrawerEvent Close;
 
-		public IItem Value
+		public IDye Value
 		{
 			get
 			{
-				return (IItem)this.Selector.Value;
+				return (IDye)this.Selector.Value;
 			}
 
 			set
@@ -60,16 +47,13 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		private bool OnFilter(object obj, string[] search = null)
 		{
-			if (obj is IItem item)
+			if (obj is IDye dye)
 			{
 				// skip items without names
-				if (string.IsNullOrEmpty(item.Name))
+				if (string.IsNullOrEmpty(dye.Name))
 					return false;
 
-				if (!item.FitsInSlot(this.slot))
-					return false;
-
-				if (!SearchUtility.Matches(item.Name, search))
+				if (!SearchUtility.Matches(dye.Name, search))
 					return false;
 
 				return true;

@@ -27,8 +27,6 @@ namespace ConceptMatrix.EquipmentModule.Views
 			this.DataContext = this;
 
 			this.gameData = Module.Services.Get<IGameDataService>();
-
-			this.Dye = this.gameData.Dyes.Get(1);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -149,6 +147,16 @@ namespace ConceptMatrix.EquipmentModule.Views
 			selector.Value = this.Value;
 			await viewService.ShowDrawer(selector, "Select " + this.SlotName);
 			this.Value = selector.Value;
+		}
+
+		private async void OnDyeClick(object sender, RoutedEventArgs e)
+		{
+			IViewService viewService = Module.Services.Get<IViewService>();
+
+			DyeSelector selector = new DyeSelector();
+			selector.Value = this.Dye;
+			await viewService.ShowDrawer(selector, "Select Dye");
+			this.Dye = selector.Value;
 		}
 
 		private void OnPreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)

@@ -52,14 +52,14 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			if (this.item == null)
 			{
-				// Try to get the item directly from saint coinach. this always seems to error though.
-				try
+				// This always causes an exception from within SC library.
+				/*try
 				{
 					this.item = new ItemWrapper(this.Value.Item);
 				}
 				catch (Exception)
 				{
-				}
+				}*/
 
 				// use the item id lookup
 				if (this.item == null)

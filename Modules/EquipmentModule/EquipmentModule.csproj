@@ -58,6 +58,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\ItemSlotsExtensions.cs" />
+    <Compile Include="Views\DyeSelector.xaml.cs">
+      <DependentUpon>DyeSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EquipmentSelector.xaml.cs">
       <DependentUpon>EquipmentSelector.xaml</DependentUpon>
     </Compile>
@@ -68,6 +71,10 @@
       <DependentUpon>ItemView.xaml</DependentUpon>
     </Compile>
     <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DyeSelector.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
