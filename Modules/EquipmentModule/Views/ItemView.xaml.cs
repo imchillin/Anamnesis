@@ -18,6 +18,8 @@ namespace ConceptMatrix.EquipmentModule.Views
 		public static readonly DependencyProperty SlotProperty = DependencyProperty.Register(nameof(Slot), typeof(ItemSlots), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(IItem), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty DyeProperty = DependencyProperty.Register(nameof(Dye), typeof(IDye), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
+		public static readonly DependencyProperty CanDyeProperty = DependencyProperty.Register(nameof(CanDye), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
+		public static readonly DependencyProperty HasModelIdProperty = DependencyProperty.Register(nameof(HasModelId), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 
 		private IGameDataService gameData;
 
@@ -128,6 +130,32 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 			set
 			{
+			}
+		}
+
+		public bool CanDye
+		{
+			get
+			{
+				return (bool)this.GetValue(CanDyeProperty);
+			}
+
+			set
+			{
+				this.SetValue(CanDyeProperty, value);
+			}
+		}
+
+		public bool HasModelId
+		{
+			get
+			{
+				return (bool)this.GetValue(HasModelIdProperty);
+			}
+
+			set
+			{
+				this.SetValue(HasModelIdProperty, value);
 			}
 		}
 

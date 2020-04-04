@@ -26,7 +26,7 @@ namespace SaintCoinach.Xiv
 				case ItemSlots.Neck: return self.Name == "Neck";
 				case ItemSlots.Wrists: return self.Name == "Wrists";
 				case ItemSlots.RightRing: return self.Name == "Right Ring";
-				case ItemSlots.LeftRing: return self.Name == "Left Wing";
+				case ItemSlots.LeftRing: return self.Name == "Left Ring";
 			}
 
 			throw new Exception($"Unknown item slot: {slot}");

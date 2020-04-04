@@ -115,7 +115,9 @@
 	<SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchBrush.Win10" Color="{DynamicResource Primary500}" />
 	<SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchMouseOverBrush.Win10" Color="{DynamicResource Primary400}" />
 	<SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.ThumbIndicatorCheckedBrush.Win10" Color="{DynamicResource Primary500Foreground}" />
-	
+
+	<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
 	<!-- Custom converters -->
 	<converters:IImageToImageSourceConverter x:Key="IImageConverter" />
 	<converters:StringHasContentToVisibilityConverter x:Key="StringHasContentToVisibility" />
