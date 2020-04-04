@@ -22,6 +22,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private string[] searchQuerry;
 		private bool searching = false;
+		private bool idle = true;
 		private object oldValue;
 
 		public SelectorDrawer()
@@ -103,6 +104,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private async Task Search(string str)
 		{
+			this.idle = false;
 			await Task.Delay(250);
 
 			try
@@ -140,10 +142,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 			{
 				Log.Write(ex);
 			}
+
+			this.idle = true;
 		}
 
 		private void DoFilter()
 		{
+			this.idle = false;
 			ObservableCollection<object> filteredItems = new ObservableCollection<object>();
 
 			foreach (object item in this.Items)
@@ -159,6 +164,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 				this.FilteredItems = filteredItems;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.FilteredItems)));
 			});
+
+			this.idle = true;
 		}
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -172,10 +179,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.Close?.Invoke();
 		}
 
-		private void OnSearchBoxKeyDown(object sender, KeyEventArgs e)
+		private async void OnSearchBoxKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key != Key.Enter)
 				return;
+
+			while (!this.idle)
+				await Task.Delay(10);
 
 			if (this.FilteredItems.Count <= 0)
 				return;
