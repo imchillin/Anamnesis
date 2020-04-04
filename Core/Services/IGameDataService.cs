@@ -14,7 +14,7 @@ namespace ConceptMatrix.Services
 		IData<IRace> Races { get; }
 		IData<ITribe> Tribes { get; }
 		IData<IItem> Items { get; }
-		IData<IStain> Stains { get; }
+		IData<IDye> Dyes { get; }
 		IData<INpcBase> BaseNPCs { get; }
 		IData<ITerritoryType> Territories { get; }
 		IData<IWeather> Weathers { get; }
@@ -51,8 +51,11 @@ namespace ConceptMatrix.Services
 		string Name { get; }
 		string Description { get; }
 		IImage Icon { get; }
-		string MainModelQuad { get; }
-		string SubModelQuad { get; }
+
+		int ModelBaseId { get; }
+		int ModelVariantId { get; }
+		int ModelId { get; }
+
 		bool FitsInSlot(ItemSlots slot);
 	}
 
@@ -75,8 +78,11 @@ namespace ConceptMatrix.Services
 		LeftRing,
 	}
 
-	public interface IStain : IDataObject
+	public interface IDye : IDataObject
 	{
+		string Name { get; }
+		string Description { get; }
+		IImage Icon { get; }
 	}
 
 	public interface INpcBase : IDataObject

@@ -38,7 +38,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			private set;
 		}
 
-		public IData<IStain> Stains
+		public IData<IDye> Dyes
 		{
 			get;
 			private set;
@@ -138,7 +138,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			this.Items = this.Load<IItem, Item, ItemWrapper>(realm);
 			this.Races = this.Load<IRace, Race, RaceWrapper>(realm);
 			this.Tribes = this.Load<ITribe, Tribe, TribeWrapper>(realm);
-			this.Stains = this.Load<IStain, Stain, StainWrapper>(realm);
+			this.Dyes = this.Load<IDye, Stain, DyeWrapper>(realm);
 			this.BaseNPCs = this.Load<INpcBase, ENpcBase, NpcBaseWrapper>(realm);
 			this.Territories = this.Load<ITerritoryType, TerritoryType, TerritoryTypeWrapper>(realm);
 			this.Weathers = this.Load<IWeather, Weather, WeatherWrapper>(realm);

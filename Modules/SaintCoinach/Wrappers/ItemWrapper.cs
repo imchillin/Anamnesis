@@ -37,19 +37,27 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
-		public string MainModelQuad
+		public int ModelBaseId
 		{
 			get
 			{
-				return this.Value.ModelMain.ToString();
+				return this.Value.ModelMain.Value2;
 			}
 		}
 
-		public string SubModelQuad
+		public int ModelVariantId
 		{
 			get
 			{
-				return this.Value.ModelSub.ToString();
+				return this.Value.ModelMain.Value3;
+			}
+		}
+
+		public int ModelId
+		{
+			get
+			{
+				return this.Value.ModelMain.Value1;
 			}
 		}
 

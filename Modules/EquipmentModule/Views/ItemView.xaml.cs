@@ -4,9 +4,11 @@
 namespace ConceptMatrix.EquipmentModule.Views
 {
 	using System.ComponentModel;
+	using System.Text.RegularExpressions;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.Services;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for ItemView.xaml.
@@ -15,11 +17,18 @@ namespace ConceptMatrix.EquipmentModule.Views
 	{
 		public static readonly DependencyProperty SlotProperty = DependencyProperty.Register(nameof(Slot), typeof(ItemSlots), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(IItem), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
+		public static readonly DependencyProperty DyeProperty = DependencyProperty.Register(nameof(Dye), typeof(IDye), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
+
+		private IGameDataService gameData;
 
 		public ItemView()
 		{
 			this.InitializeComponent();
 			this.DataContext = this;
+
+			this.gameData = Module.Services.Get<IGameDataService>();
+
+			this.Dye = this.gameData.Dyes.Get(1);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -50,11 +59,77 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
+		public IDye Dye
+		{
+			get
+			{
+				return (IDye)this.GetValue(DyeProperty);
+			}
+
+			set
+			{
+				this.SetValue(DyeProperty, value);
+			}
+		}
+
+		[DependsOn(nameof(Slot))]
 		public string SlotName
 		{
 			get
 			{
 				return this.Slot.ToDisplayName();
+			}
+		}
+
+		[DependsOn(nameof(Value))]
+		public string Key
+		{
+			get
+			{
+				return this.Value?.Key.ToString();
+			}
+			set
+			{
+				int val = int.Parse(value);
+				this.Value = this.gameData.Items.Get(val);
+			}
+		}
+
+		[DependsOn(nameof(Value))]
+		public string ModelBaseId
+		{
+			get
+			{
+				return this.Value?.ModelBaseId.ToString();
+			}
+			set
+			{
+			}
+		}
+
+		[DependsOn(nameof(Value))]
+		public string ModelVariantId
+		{
+			get
+			{
+				return this.Value?.ModelVariantId.ToString();
+			}
+
+			set
+			{
+			}
+		}
+
+		[DependsOn(nameof(Value))]
+		public string ModelId
+		{
+			get
+			{
+				return this.Value?.ModelId.ToString();
+			}
+
+			set
+			{
 			}
 		}
 
@@ -74,6 +149,12 @@ namespace ConceptMatrix.EquipmentModule.Views
 			selector.Value = this.Value;
 			await viewService.ShowDrawer(selector, "Select " + this.SlotName);
 			this.Value = selector.Value;
+		}
+
+		private void OnPreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+		{
+			Regex regex = new Regex("[^0-9]+");
+			e.Handled = regex.IsMatch(e.Text);
 		}
 	}
 }
