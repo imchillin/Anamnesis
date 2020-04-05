@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;</NoWarn>
+    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>..\..\bin\Modules\EquipmentModule.xml</DocumentationFile>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;</NoWarn>
+    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;</NoWarn>
     <DocumentationFile>..\..\bin\Modules\EquipmentModule.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -70,6 +70,7 @@
     <Compile Include="Views\ItemView.xaml.cs">
       <DependentUpon>ItemView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ItemViewModel.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -6,7 +6,7 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.WpfStyles.Controls"
 			 mc:Ignorable="d"
 			 d:DesignWidth="256">
-	<Grid>
+	<Grid x:Name="ContentArea">
 
 
 		<Grid.ColumnDefinitions>
@@ -19,11 +19,11 @@
 		</Grid.ColumnDefinitions>
 
 		<Label Grid.Column="0" Content="X:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Grid.Column="1"/>
+		<local:NumberBox Value="{Binding Value.X}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="False" Grid.Column="1"/>
 		<Label Grid.Column="2" Content="Y:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Grid.Column="3"/>
+		<local:NumberBox Value="{Binding Value.Y}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="False" Grid.Column="3"/>
 		<Label Grid.Column="4" Content="Z:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Grid.Column="5"/>
+		<local:NumberBox Value="{Binding Value.Z}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="False" Grid.Column="5"/>
 
 	</Grid>
 </UserControl>

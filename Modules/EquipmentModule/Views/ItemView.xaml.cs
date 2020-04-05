@@ -15,20 +15,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 	/// </summary>
 	public partial class ItemView : UserControl, INotifyPropertyChanged
 	{
-		public static readonly DependencyProperty SlotProperty = DependencyProperty.Register(nameof(Slot), typeof(ItemSlots), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
-		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(IItem), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
-		public static readonly DependencyProperty DyeProperty = DependencyProperty.Register(nameof(Dye), typeof(IDye), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
-		public static readonly DependencyProperty CanDyeProperty = DependencyProperty.Register(nameof(CanDye), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
-		public static readonly DependencyProperty CanScaleProperty = DependencyProperty.Register(nameof(CanScale), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
-		public static readonly DependencyProperty HasModelIdProperty = DependencyProperty.Register(nameof(HasModelId), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
-		public static readonly DependencyProperty CanColorProperty = DependencyProperty.Register(nameof(CanColor), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
-
 		private IGameDataService gameData;
 
 		public ItemView()
 		{
 			this.InitializeComponent();
-			this.DataContext = this;
 
 			if (DesignerProperties.GetIsInDesignMode(this))
 				return;
@@ -38,156 +29,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public ItemSlots Slot
+		public ItemViewModel ViewModel
 		{
 			get
 			{
-				return (ItemSlots)this.GetValue(SlotProperty);
-			}
-
-			set
-			{
-				this.SetValue(SlotProperty, value);
-				this.SlotIcon.Source = value.GetIcon();
-			}
-		}
-
-		public IItem Value
-		{
-			get
-			{
-				return (IItem)this.GetValue(ValueProperty);
-			}
-
-			set
-			{
-				this.SetValue(ValueProperty, value);
-			}
-		}
-
-		public IDye Dye
-		{
-			get
-			{
-				return (IDye)this.GetValue(DyeProperty);
-			}
-
-			set
-			{
-				this.SetValue(DyeProperty, value);
-			}
-		}
-
-		[DependsOn(nameof(Slot))]
-		public string SlotName
-		{
-			get
-			{
-				return this.Slot.ToDisplayName();
-			}
-		}
-
-		[DependsOn(nameof(Value))]
-		public string Key
-		{
-			get
-			{
-				return this.Value?.Key.ToString();
-			}
-			set
-			{
-				int val = int.Parse(value);
-				this.Value = this.gameData.Items.Get(val);
-			}
-		}
-
-		[DependsOn(nameof(Value))]
-		public string ModelBaseId
-		{
-			get
-			{
-				return this.Value?.ModelBaseId.ToString();
-			}
-			set
-			{
-			}
-		}
-
-		[DependsOn(nameof(Value))]
-		public string ModelVariantId
-		{
-			get
-			{
-				return this.Value?.ModelVariantId.ToString();
-			}
-
-			set
-			{
-			}
-		}
-
-		[DependsOn(nameof(Value))]
-		public string ModelId
-		{
-			get
-			{
-				return this.Value?.ModelId.ToString();
-			}
-
-			set
-			{
-			}
-		}
-
-		public bool CanDye
-		{
-			get
-			{
-				return (bool)this.GetValue(CanDyeProperty);
-			}
-
-			set
-			{
-				this.SetValue(CanDyeProperty, value);
-			}
-		}
-
-		public bool CanScale
-		{
-			get
-			{
-				return (bool)this.GetValue(CanScaleProperty);
-			}
-
-			set
-			{
-				this.SetValue(CanScaleProperty, value);
-			}
-		}
-
-		public bool CanColor
-		{
-			get
-			{
-				return (bool)this.GetValue(CanColorProperty);
-			}
-
-			set
-			{
-				this.SetValue(CanColorProperty, value);
-			}
-		}
-
-		public bool HasModelId
-		{
-			get
-			{
-				return (bool)this.GetValue(HasModelIdProperty);
-			}
-
-			set
-			{
-				this.SetValue(HasModelIdProperty, value);
+				return this.DataContext as ItemViewModel;
 			}
 		}
 
@@ -196,11 +42,6 @@ namespace ConceptMatrix.EquipmentModule.Views
 			if (sender is ItemView view)
 			{
 				view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(e.Property.Name));
-
-				if (e.Property.Name == nameof(view.Slot))
-				{
-					view.SlotIcon.Source = view.Slot.GetIcon();
-				}
 			}
 		}
 
@@ -208,10 +49,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 		{
 			IViewService viewService = Module.Services.Get<IViewService>();
 
-			EquipmentSelector selector = new EquipmentSelector(this.Slot);
-			selector.Value = this.Value;
-			await viewService.ShowDrawer(selector, "Select " + this.SlotName);
-			this.Value = selector.Value;
+			EquipmentSelector selector = new EquipmentSelector(this.ViewModel.Slot);
+			selector.Value = this.ViewModel.Item;
+			await viewService.ShowDrawer(selector, "Select " + this.ViewModel.SlotName);
+			this.ViewModel.Item = selector.Value;
 		}
 
 		private async void OnDyeClick(object sender, RoutedEventArgs e)
@@ -219,20 +60,20 @@ namespace ConceptMatrix.EquipmentModule.Views
 			IViewService viewService = Module.Services.Get<IViewService>();
 
 			DyeSelector selector = new DyeSelector();
-			selector.Value = this.Dye;
+			selector.Value = this.ViewModel.Dye;
 			await viewService.ShowDrawer(selector, "Select Dye");
-			this.Dye = selector.Value;
-
-			if (this.Dye?.Key == 0)
-			{
-				this.Dye = null;
-			}
+			this.ViewModel.Dye = selector.Value;
 		}
 
 		private void OnPreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
 		{
 			Regex regex = new Regex("[^0-9]+");
 			e.Handled = regex.IsMatch(e.Text);
+		}
+
+		private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			this.SlotIcon.Source = this.ViewModel.Slot.GetIcon();
 		}
 	}
 }

@@ -19,6 +19,9 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty TickFrequencyProperty = DependencyProperty.Register(nameof(TickFrequency), typeof(double), typeof(NumberBox));
 		public static readonly DependencyProperty SliderProperty = DependencyProperty.Register(nameof(Slider), typeof(bool), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
+		public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
+		public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
+		public static readonly DependencyProperty WrapProperty = DependencyProperty.Register(nameof(Wrap), typeof(bool), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
 
 		private string inputString;
 		private Key keyHeld = Key.None;
@@ -28,6 +31,10 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.InitializeComponent();
 			this.TickFrequency = 1;
 			this.ContentArea.DataContext = this;
+
+			this.Minimum = double.MinValue;
+			this.Maximum = double.MaxValue;
+			this.Wrap = false;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -57,9 +64,44 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
-		public double Minimum { get; set; } = 0;
-		public double Maximum { get; set; } = 100;
-		public bool Wrap { get; set; } = true;
+		public double Minimum
+		{
+			get
+			{
+				return (double)this.GetValue(MinimumProperty);
+			}
+
+			set
+			{
+				this.SetValue(MinimumProperty, value);
+			}
+		}
+
+		public double Maximum
+		{
+			get
+			{
+				return (double)this.GetValue(MaximumProperty);
+			}
+
+			set
+			{
+				this.SetValue(MaximumProperty, value);
+			}
+		}
+
+		public bool Wrap
+		{
+			get
+			{
+				return (bool)this.GetValue(WrapProperty);
+			}
+
+			set
+			{
+				this.SetValue(WrapProperty, value);
+			}
+		}
 
 		public string Text
 		{

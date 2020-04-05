@@ -20,12 +20,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 	public partial class ColorEditor : UserControl, INotifyPropertyChanged
 	{
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(Color), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
+
+		private Color oldValue;
+
 		public ColorEditor()
 		{
 			this.InitializeComponent();
-
-			this.Value = new Color();
-			this.DataContext = this;
+			this.ContentArea.DataContext = this;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -39,11 +40,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			set
 			{
-				if (value != null)
-					value.PropertyChanged -= this.Value_PropertyChanged;
-
+				this.ListenToColor(value);
 				this.SetValue(ValueProperty, value);
-				value.PropertyChanged += this.Value_PropertyChanged;
 				this.UpdatePreview();
 			}
 		}
@@ -60,7 +58,22 @@ namespace ConceptMatrix.WpfStyles.Controls
 			if (sender is ColorEditor view)
 			{
 				view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(e.Property.Name));
+
+				if (e.Property.Name == nameof(Value))
+				{
+					view.ListenToColor(view.Value);
+				}
 			}
+		}
+
+		private void ListenToColor(Color value)
+		{
+			if (this.oldValue != null)
+				this.oldValue.PropertyChanged -= this.Value_PropertyChanged;
+
+			this.oldValue = value;
+			value.PropertyChanged += this.Value_PropertyChanged;
+			this.UpdatePreview();
 		}
 
 		private void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)

@@ -16,24 +16,24 @@
 
 
 		<StackPanel Grid.Column="0">
-			<local:ItemView Grid.Row="0" Grid.Column="1" Slot="MainHand" x:Name="MainHandEq" CanDye="True" HasModelId="True" CanScale="True" CanColor="True"/>
-			<local:ItemView Slot="Head" CanDye="True"/>
-			<local:ItemView Slot="Body" CanDye="True"/>
-			<local:ItemView Slot="Hands" CanDye="True"/>
-			<local:ItemView Slot="Legs" CanDye="True"/>
-			<local:ItemView Slot="Feet" CanDye="True"/>
+			<local:ItemView Grid.Row="0" Grid.Column="1" DataContext="{Binding MainHand}"/>
+			<local:ItemView DataContext="{Binding Head}"/>
+			<local:ItemView DataContext="{Binding Body}"/>
+			<local:ItemView DataContext="{Binding Hands}"/>
+			<local:ItemView DataContext="{Binding Legs}"/>
+			<local:ItemView DataContext="{Binding Feet}"/>
 		</StackPanel>
 
 		<StackPanel Grid.Column="1">
-			<local:ItemView Grid.Row="1" Grid.Column="1" Slot="OffHand" CanDye="True" HasModelId="True" CanScale="True" CanColor="True"/>
-			<local:ItemView Grid.Row="2" Grid.Column="1" Slot="Ears" Margin="0, 13, 0, 0"/>
-			<local:ItemView Grid.Row="3" Grid.Column="1" Slot="Neck"/>
-			<local:ItemView Grid.Row="4" Grid.Column="1" Slot="Wrists"/>
-			<local:ItemView Grid.Row="2" Grid.Column="2" Slot="RightRing"/>
-			<local:ItemView Grid.Row="3" Grid.Column="2" Slot="LeftRing"/>
+			<local:ItemView Grid.Row="1" Grid.Column="1" DataContext="{Binding OffHand}"/>
+			<local:ItemView Grid.Row="2" Grid.Column="1" DataContext="{Binding Ears}" Margin="0, 13, 0, 0"/>
+			<local:ItemView Grid.Row="3" Grid.Column="1" DataContext="{Binding Neck}"/>
+			<local:ItemView Grid.Row="4" Grid.Column="1" DataContext="{Binding Wrists}"/>
+			<local:ItemView Grid.Row="2" Grid.Column="2" DataContext="{Binding RightRing}"/>
+			<local:ItemView Grid.Row="3" Grid.Column="2" DataContext="{Binding LeftRing}"/>
 		</StackPanel>
 
-		<local:ItemView Grid.Column="1" VerticalAlignment="Bottom" Slot="Waist" CanDye="True"/>
+		<local:ItemView Grid.Column="1" VerticalAlignment="Bottom" DataContext="{Binding Waist}"/>
 
 		<GroupBox Grid.Column="2" Margin="6, 0, 0, 0"/>
 
