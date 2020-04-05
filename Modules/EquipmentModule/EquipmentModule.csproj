@@ -147,11 +147,6 @@
       <Name>Core</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\Offsets\Offsets.csproj">
-      <Project>{b554e2ff-5572-4fd2-bd15-6f532a7f840a}</Project>
-      <Name>Offsets</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\WPFStyles\WpfStyles.csproj">
       <Project>{f76c98a0-59bf-4bf8-ab41-0218859a89bd}</Project>
       <Name>WpfStyles</Name>

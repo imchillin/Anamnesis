@@ -7,6 +7,7 @@ namespace ConceptMatrix.GUI
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using ConceptMatrix.GUI.Services;
+	using ConceptMatrix.Injection;
 	using ConceptMatrix.Services;
 
 	public class ServiceManager : IServices

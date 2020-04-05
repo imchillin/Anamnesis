@@ -3,8 +3,6 @@
 
 namespace ConceptMatrix.Services
 {
-	using ConceptMatrix.Offsets;
-
 	public delegate void SelectionEvent(Selection selection);
 
 	public interface ISelectionService : IService
@@ -19,10 +17,10 @@ namespace ConceptMatrix.Services
 
 	public class Selection
 	{
-		public readonly BaseAddresses BaseAddress;
+		public readonly IBaseMemoryOffset BaseAddress;
 		public readonly string ActorId;
 
-		public Selection(Types type, BaseAddresses address, string actorId, string name)
+		public Selection(Types type, IBaseMemoryOffset address, string actorId, string name)
 		{
 			this.Type = type;
 			this.BaseAddress = address;

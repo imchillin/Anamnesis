@@ -7,15 +7,15 @@ namespace ConceptMatrix
 
 	public class Color : INotifyPropertyChanged
 	{
-		private double r = 1;
-		private double g = 1;
-		private double b = 1;
+		private float r = 1;
+		private float g = 1;
+		private float b = 1;
 
 		public Color()
 		{
 		}
 
-		public Color(double r, double g, double b)
+		public Color(float r, float g, float b)
 		{
 			this.r = r;
 			this.g = g;
@@ -24,7 +24,7 @@ namespace ConceptMatrix
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public double R
+		public float R
 		{
 			get
 			{
@@ -38,7 +38,7 @@ namespace ConceptMatrix
 			}
 		}
 
-		public double G
+		public float G
 		{
 			get
 			{
@@ -52,7 +52,7 @@ namespace ConceptMatrix
 			}
 		}
 
-		public double B
+		public float B
 		{
 			get
 			{

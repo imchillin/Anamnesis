@@ -76,14 +76,20 @@ namespace ConceptMatrix.GUI.Services
 
 		private async Task Watch()
 		{
+			await Task.Delay(100);
 			IInjectionService injection = App.Services.Get<IInjectionService>();
 
 			while (this.IsAlive)
 			{
 				await Task.Delay(100);
 
+				////IMemory<string> actorIdMem1 = Offsets.ActorID.GetMemory(Offsets.TargetOffset);
+				////IMemory<string> actorIdMem2 = Offsets.TargetOffset.GetMemory(Offsets.ActorID);
+
+				IBaseMemoryOffset baseOffset = Offsets.TargetOffset;
+
 				string actorId;
-				using (IMemory<string> actorIdMem = injection.GetMemory<string>(BaseAddresses.GPose, injection.Offsets.Character.ActorID))
+				using (IMemory<string> actorIdMem = Offsets.TargetOffset.GetMemory(Offsets.ActorID))
 				{
 					actorId = actorIdMem.Value;
 				}
@@ -97,12 +103,12 @@ namespace ConceptMatrix.GUI.Services
 				if (this.CurrentGameTarget == null || this.CurrentGameTarget.ActorId != actorId)
 				{
 					string name;
-					using (IMemory<string> nameMem = injection.GetMemory<string>(BaseAddresses.GPose, injection.Offsets.Character.Name))
+					using (IMemory<string> nameMem = injection.GetMemory<string>(baseOffset, Offsets.Name))
 					{
 						name = nameMem.Value;
 					}
 
-					this.CurrentGameTarget = new Selection(Selection.Types.Character, BaseAddresses.GPose, actorId, name);
+					this.CurrentGameTarget = new Selection(Selection.Types.Character, baseOffset, actorId, name);
 				}
 
 				if (this.UseGameTarget && this.CurrentSelection != this.CurrentGameTarget)

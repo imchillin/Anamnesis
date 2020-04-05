@@ -6,16 +6,11 @@ namespace ConceptMatrix.Injection
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
-	using System.Globalization;
-	using System.Linq;
 	using System.Runtime.InteropServices;
-	using System.Text;
-	using ConceptMatrix.Injection.Memory;
+	using ConceptMatrix.Services;
 
 	public class ProcessInjection
 	{
-		private Process process;
-
 		private ProcessModule mainModule;
 		private Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
 		private bool is64Bit;
@@ -26,9 +21,15 @@ namespace ConceptMatrix.Injection
 			private set;
 		}
 
+		public Process Process
+		{
+			get;
+			private set;
+		}
+
 		public void OpenProcess(string contains)
 		{
-			Process[] processlist = Process.GetProcesses();
+			Process[] processlist = System.Diagnostics.Process.GetProcesses();
 			foreach (Process process in processlist)
 			{
 				if (process.ProcessName.ToLower().Contains(contains))
@@ -49,16 +50,16 @@ namespace ConceptMatrix.Injection
 			if (pid <= 0)
 				throw new Exception($"Invalid process id: {pid}");
 
-			this.process = Process.GetProcessById(pid);
+			this.Process = Process.GetProcessById(pid);
 
-			if (this.process == null)
+			if (this.Process == null)
 				throw new Exception($"Failed to get process: {pid}");
 
-			if (!this.process.Responding)
+			if (!this.Process.Responding)
 				throw new Exception("Target process id not responding");
 
 			this.Handle = OpenProcess(0x001F0FFF, true, pid);
-			Process.EnterDebugMode();
+			System.Diagnostics.Process.EnterDebugMode();
 
 			if (this.Handle == IntPtr.Zero)
 			{
@@ -66,11 +67,11 @@ namespace ConceptMatrix.Injection
 			}
 
 			// Set main module
-			this.mainModule = this.process.MainModule;
+			this.mainModule = this.Process.MainModule;
 
 			// Set all modules
 			this.modules.Clear();
-			foreach (ProcessModule module in this.process.Modules)
+			foreach (ProcessModule module in this.Process.Modules)
 			{
 				if (string.IsNullOrEmpty(module.ModuleName))
 					continue;
@@ -86,18 +87,32 @@ namespace ConceptMatrix.Injection
 			Debug.WriteLine($"Attached to process: {pid}");
 		}
 
-		public UIntPtr GetAddress(params string[] offsets)
+		public UIntPtr GetAddress(params IMemoryOffset[] offsets)
 		{
-			string offset = GetOffset(offsets);
-			return this.GetAddress(offset);
-		}
+			int size = 16;
 
-		public string GetBaseAddress(string offset)
-		{
-			// this is a little weird, but its how it worked in CM2, so lets not mess with it.
-			long offsetL = int.Parse(offset, NumberStyles.HexNumber);
-			long value = this.process.MainModule.BaseAddress.ToInt64() + offsetL;
-			return value.ToString("X");
+			List<ulong> offsetsList = new List<ulong>();
+			foreach (IMemoryOffset offset in offsets)
+			{
+				offsetsList.AddRange(offset.Offsets);
+			}
+
+			ulong[] longOffsets = offsetsList.ToArray();
+			byte[] memoryAddress = new byte[size];
+			ReadProcessMemory(this.Handle, (UIntPtr)longOffsets[0], memoryAddress, (UIntPtr)size, IntPtr.Zero);
+
+			long num1 = BitConverter.ToInt64(memoryAddress, 0);
+
+			UIntPtr base1 = (UIntPtr)0;
+
+			for (int i = 1; i < offsets.Length; i++)
+			{
+				base1 = new UIntPtr(Convert.ToUInt64(num1 + (long)longOffsets[i]));
+				ReadProcessMemory(this.Handle, base1, memoryAddress, (UIntPtr)size, IntPtr.Zero);
+				num1 = BitConverter.ToInt64(memoryAddress, 0);
+			}
+
+			return base1;
 		}
 
 		[DllImport("kernel32.dll", SetLastError = true)]
@@ -108,148 +123,5 @@ namespace ConceptMatrix.Injection
 
 		[DllImport("kernel32.dll")]
 		private static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead);
-
-		private static string GetOffset(params string[] offsets)
-		{
-			string ret = string.Empty;
-
-			foreach (string a in offsets)
-				ret += a + ",";
-
-			return ret.TrimEnd(',');
-		}
-
-		/// <summary>
-		/// Convert code from string to real address.
-		/// </summary>
-		private UIntPtr GetAddress(string name, int size = 16)
-		{
-			string theCode = name;
-
-			if (string.IsNullOrEmpty(theCode))
-				return UIntPtr.Zero;
-
-			string newOffsets = theCode;
-			if (theCode.Contains("+"))
-				newOffsets = theCode.Substring(theCode.IndexOf('+') + 1);
-
-			byte[] memoryAddress = new byte[size];
-
-			if (!theCode.Contains("+") && !theCode.Contains(","))
-				return new UIntPtr(Convert.ToUInt64(theCode, 16));
-
-			if (newOffsets.Contains(','))
-			{
-				List<long> offsetsList = new List<long>();
-
-				string[] newerOffsets = newOffsets.Split(',');
-				foreach (string oldOffsets in newerOffsets)
-				{
-					string test = oldOffsets;
-					if (oldOffsets.Contains("0x"))
-						test = oldOffsets.Replace("0x", string.Empty);
-
-					long preParse = 0;
-					if (!oldOffsets.Contains("-"))
-					{
-						preParse = long.Parse(test, NumberStyles.AllowHexSpecifier);
-					}
-					else
-					{
-						test = test.Replace("-", string.Empty);
-						preParse = long.Parse(test, NumberStyles.AllowHexSpecifier);
-						preParse = preParse * -1;
-					}
-
-					offsetsList.Add(preParse);
-				}
-
-				long[] offsets = offsetsList.ToArray();
-
-				if (theCode.Contains("base") || theCode.Contains("main"))
-				{
-					ReadProcessMemory(this.Handle, (UIntPtr)((long)this.mainModule.BaseAddress + offsets[0]), memoryAddress, (UIntPtr)size, IntPtr.Zero);
-				}
-				else if (!theCode.Contains("base") && !theCode.Contains("main") && theCode.Contains("+"))
-				{
-					string[] moduleName = theCode.Split('+');
-					IntPtr altModule = IntPtr.Zero;
-					if (!moduleName[0].Contains(".dll") && !moduleName[0].Contains(".exe"))
-					{
-						altModule = (IntPtr)long.Parse(moduleName[0], System.Globalization.NumberStyles.HexNumber);
-					}
-					else
-					{
-						try
-						{
-							altModule = this.modules[moduleName[0]];
-						}
-						catch
-						{
-							Debug.WriteLine("Module " + moduleName[0] + " was not found in module list!");
-							Debug.WriteLine("Modules: " + string.Join(",", this.modules));
-						}
-					}
-
-					ReadProcessMemory(this.Handle, (UIntPtr)((long)altModule + offsets[0]), memoryAddress, (UIntPtr)size, IntPtr.Zero);
-				}
-				else
-				{
-					// no offsets
-					ReadProcessMemory(this.Handle, (UIntPtr)offsets[0], memoryAddress, (UIntPtr)size, IntPtr.Zero);
-				}
-
-				long num1 = BitConverter.ToInt64(memoryAddress, 0);
-
-				UIntPtr base1 = (UIntPtr)0;
-
-				for (int i = 1; i < offsets.Length; i++)
-				{
-					base1 = new UIntPtr(Convert.ToUInt64(num1 + offsets[i]));
-					ReadProcessMemory(this.Handle, base1, memoryAddress, (UIntPtr)size, IntPtr.Zero);
-					num1 = BitConverter.ToInt64(memoryAddress, 0);
-				}
-
-				return base1;
-			}
-			else
-			{
-				long trueCode = Convert.ToInt64(newOffsets, 16);
-				IntPtr altModule = IntPtr.Zero;
-				if (theCode.Contains("base") || theCode.Contains("main"))
-				{
-					altModule = this.mainModule.BaseAddress;
-				}
-				else if (!theCode.Contains("base") && !theCode.Contains("main") && theCode.Contains("+"))
-				{
-					string[] moduleName = theCode.Split('+');
-					if (!moduleName[0].Contains(".dll") && !moduleName[0].Contains(".exe"))
-					{
-						string theAddr = moduleName[0];
-						if (theAddr.Contains("0x"))
-							theAddr = theAddr.Replace("0x", string.Empty);
-						altModule = (IntPtr)long.Parse(theAddr, NumberStyles.HexNumber);
-					}
-					else
-					{
-						try
-						{
-							altModule = this.modules[moduleName[0]];
-						}
-						catch
-						{
-							Debug.WriteLine("Module " + moduleName[0] + " was not found in module list!");
-							Debug.WriteLine("Modules: " + string.Join(",", this.modules));
-						}
-					}
-				}
-				else
-				{
-					altModule = this.modules[theCode.Split('+')[0]];
-				}
-
-				return (UIntPtr)((long)altModule + trueCode);
-			}
-		}
 	}
 }

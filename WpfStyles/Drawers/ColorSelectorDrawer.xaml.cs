@@ -79,7 +79,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 
 			public ConceptMatrix.Color AsColor()
 			{
-				return new ConceptMatrix.Color(this.Color.R / 255.0, this.Color.G / 255.0, this.Color.B / 255.0);
+				return new ConceptMatrix.Color(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f);
 			}
 		}
 	}

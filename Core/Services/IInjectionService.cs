@@ -3,12 +3,26 @@
 
 namespace ConceptMatrix.Services
 {
-	using ConceptMatrix.Offsets;
-
 	public interface IInjectionService : IService
 	{
-		OffsetsRoot Offsets { get; }
-		IMemory<T> GetMemory<T>(BaseAddresses baseAddress, params string[] offsets);
-		IMemory<T> GetMemory<T>(string baseAddress, params string[] offsets);
+		IMemory<T> GetMemory<T>(IBaseMemoryOffset baseAddress, params IMemoryOffset[] offsets);
+	}
+
+	public interface IMemoryOffset
+	{
+		ulong[] Offsets
+		{
+			get;
+		}
+	}
+
+	public interface IMemoryOffset<T> : IMemoryOffset
+	{
+		IMemory<T> GetMemory(IBaseMemoryOffset baseOffset);
+	}
+
+	public interface IBaseMemoryOffset : IMemoryOffset
+	{
+		IMemory<T> GetMemory<T>(IMemoryOffset<T> offset);
 	}
 }

@@ -56,7 +56,8 @@ namespace ConceptMatrix.GUI.Views
 		{
 			try
 			{
-				bool isGpose = true;
+				throw new NotImplementedException();
+				/*bool isGpose = true;
 
 				// clear the entity list
 				this.Entities.Clear();
@@ -73,13 +74,13 @@ namespace ConceptMatrix.GUI.Views
 
 						////IMemory<Vector3D> positionMem = this.injection.GetMemory<Vector3D>(addr, this.injection.Offsets.Character.Body.Base, this.injection.Offsets.Character.Body.Position.X)
 
-						IMemory<string> actorIdMem = this.injection.GetMemory<string>(BaseAddresses.GPose, this.injection.Offsets.Character.ActorID);
+						IMemory<string> actorIdMem = this.injection.GetMemory<string>(BaseAddresses.GPoseTarget, this.injection.Offsets.Character.ActorID);
 						IMemory<string> nameMem = this.injection.GetMemory<string>(addr, this.injection.Offsets.Character.Name);
 
 						string name = nameMem.Value;
 						string actorId = actorIdMem.Value;
 
-						PossibleSelection selection = new PossibleSelection(Selection.Types.Character, BaseAddresses.GPose, actorId, name);
+						PossibleSelection selection = new PossibleSelection(Selection.Types.Character, BaseAddresses.GPoseTarget, actorId, name);
 						selection.IsSelected = !this.selection.UseGameTarget && this.selection.CurrentSelection != null && this.selection.CurrentSelection.Name == name;
 						this.Entities.Add(selection);
 					}
@@ -90,7 +91,7 @@ namespace ConceptMatrix.GUI.Views
 				}
 
 				this.AutoRadio.IsChecked = this.selection.UseGameTarget;
-				this.InGameSelection = this.selection.CurrentGameTarget?.Name;
+				this.InGameSelection = this.selection.CurrentGameTarget?.Name;*/
 			}
 			catch (Exception ex)
 			{
@@ -116,7 +117,7 @@ namespace ConceptMatrix.GUI.Views
 
 		public class PossibleSelection : Selection
 		{
-			public PossibleSelection(Types type, BaseAddresses address, string actorId, string name)
+			public PossibleSelection(Types type, IBaseMemoryOffset address, string actorId, string name)
 				: base(type, address, actorId, name)
 			{
 			}

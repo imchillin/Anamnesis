@@ -26,10 +26,4 @@
 	  </PackageReference>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Offsets\Offsets.csproj">
-	    <Private>false</Private>
-	  </ProjectReference>
-	</ItemGroup>
-
 </Project>

@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.GUI.Services
+namespace ConceptMatrix.Injection
 {
 	using System;
 	using System.Collections.Generic;
@@ -10,7 +10,6 @@ namespace ConceptMatrix.GUI.Services
 	using System.Threading;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
-	using ConceptMatrix.Injection;
 	using ConceptMatrix.Injection.Memory;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
@@ -21,7 +20,7 @@ namespace ConceptMatrix.GUI.Services
 		private Dictionary<Type, Type> memoryTypeLookup = new Dictionary<Type, Type>();
 		private bool isActive;
 
-		public OffsetsRoot Offsets
+		public static InjectionService Instance
 		{
 			get;
 			private set;
@@ -29,6 +28,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Initialize(IServices services)
 		{
+			Instance = this;
 			this.isActive = true;
 			this.memoryTypeLookup.Clear();
 
@@ -66,9 +66,6 @@ namespace ConceptMatrix.GUI.Services
 				throw new Exception("Failed to find FFXIV process", ex);
 			}
 
-			// TODO: allow for region selection
-			this.Offsets = OffsetsManager.LoadSettings(OffsetsManager.Regions.Live);
-
 			return Task.CompletedTask;
 		}
 
@@ -84,20 +81,15 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public IMemory<T> GetMemory<T>(BaseAddresses baseAddress, params string[] offsets)
+		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
 		{
-			return this.GetMemory<T>(baseAddress.GetOffset(this.Offsets), offsets);
-		}
-
-		public IMemory<T> GetMemory<T>(string baseAddress, params string[] offsets)
-		{
-			List<string> newOffsets = new List<string>();
-			newOffsets.Add(this.GetBaseAddress(baseAddress));
+			List<IMemoryOffset> newOffsets = new List<IMemoryOffset>();
+			newOffsets.Add(new MappedBaseOffset(this.process.Process, (BaseOffset)baseOffset));
 			newOffsets.AddRange(offsets);
 			return this.GetMemory<T>(newOffsets.ToArray());
 		}
 
-		public IMemory<T> GetMemory<T>(params string[] offsets)
+		public IMemory<T> GetMemory<T>(params IMemoryOffset[] offsets)
 		{
 			UIntPtr address = this.process.GetAddress(offsets);
 
@@ -105,11 +97,6 @@ namespace ConceptMatrix.GUI.Services
 			IMemory<T> memory = (IMemory<T>)Activator.CreateInstance(wrapperType, this.process, address);
 
 			return memory;
-		}
-
-		public string GetBaseAddress(string address)
-		{
-			return this.process.GetBaseAddress(address);
 		}
 
 		private Type GetMemoryType(Type type)
@@ -133,6 +120,28 @@ namespace ConceptMatrix.GUI.Services
 			catch (Exception ex)
 			{
 				Log.Write(new Exception("Memory thread exception", ex));
+			}
+		}
+
+		public class MappedBaseOffset : IBaseMemoryOffset
+		{
+			public MappedBaseOffset(Process process, BaseOffset offset)
+			{
+				if (offset.Offsets == null || offset.Offsets.Length <= 0)
+					throw new Exception("Invalid base offset");
+
+				this.Offsets = new[] { ((ulong)process.MainModule.BaseAddress.ToInt64()) + offset.Offsets[0] };
+			}
+
+			public ulong[] Offsets
+			{
+				get;
+				private set;
+			}
+
+			public IMemory<T> GetMemory<T>(IMemoryOffset<T> offset)
+			{
+				throw new NotImplementedException();
 			}
 		}
 	}

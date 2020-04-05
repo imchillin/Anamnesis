@@ -30,7 +30,7 @@ namespace ConceptMatrix.PoseModule
 				throw new Exception("Failed to get bone axis: \"" + propertyName + "\"");
 
 			string boneOffset = (string)property.GetValue(injection.Offsets.Character.Body.Bones);
-			this.rotationMemory = injection.GetMemory<Quaternion>(Offsets.BaseAddresses.GPose, injection.Offsets.Character.Body.Base, boneOffset);
+			this.rotationMemory = injection.GetMemory<Quaternion>(Offsets.BaseAddresses.GPoseTarget, injection.Offsets.Character.Body.Base, boneOffset);
 		}
 
 #pragma warning disable CS0067
