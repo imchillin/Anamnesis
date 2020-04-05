@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.EquipmentModule.Views
 {
+	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.Services;
@@ -16,8 +17,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 		{
 			this.InitializeComponent();
 
-			IGameDataService gameData = Module.Services.Get<IGameDataService>();
+			if (DesignerProperties.GetIsInDesignMode(this))
+				return;
 
+			IGameDataService gameData = Module.Services.Get<IGameDataService>();
 			this.MainHandEq.Value = gameData.Items.Get(29412);
 		}
 	}

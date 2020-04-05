@@ -4,38 +4,39 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.EquipmentModule.Views"
-			 mc:Ignorable="d">
-	<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+			 mc:Ignorable="d"
+			 d:DesignHeight="600" d:DesignWidth="1024">
+
+	<Grid Margin="6" VerticalAlignment="Center">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
 
-		<local:ItemView Grid.Column="0" Grid.Row="0" Slot="MainHand" x:Name="MainHandEq" CanDye="True" HasModelId="True"/>
+		<StackPanel Grid.Column="0">
+			<local:ItemView Grid.Row="0" Grid.Column="1" Slot="MainHand" x:Name="MainHandEq" CanDye="True" HasModelId="True" CanScale="True" CanColor="True"/>
+			<local:ItemView Slot="Head" CanDye="True"/>
+			<local:ItemView Slot="Body" CanDye="True"/>
+			<local:ItemView Slot="Hands" CanDye="True"/>
+			<local:ItemView Slot="Legs" CanDye="True"/>
+			<local:ItemView Slot="Feet" CanDye="True"/>
+		</StackPanel>
 
-		<local:ItemView Grid.Column="0" Grid.Row="1" Slot="Head" CanDye="True"/>
-		<local:ItemView Grid.Column="0" Grid.Row="2" Slot="Body" CanDye="True"/>
-		<local:ItemView Grid.Column="0" Grid.Row="3" Slot="Hands" CanDye="True"/>
-		<local:ItemView Grid.Column="0" Grid.Row="4" Slot="Waist" CanDye="True"/>
-		<local:ItemView Grid.Column="0" Grid.Row="5" Slot="Legs" CanDye="True"/>
-		<local:ItemView Grid.Column="0" Grid.Row="6" Slot="Feet" CanDye="True"/>
+		<StackPanel Grid.Column="1">
+			<local:ItemView Grid.Row="1" Grid.Column="1" Slot="OffHand" CanDye="True" HasModelId="True" CanScale="True" CanColor="True"/>
+			<local:ItemView Grid.Row="2" Grid.Column="1" Slot="Ears" Margin="0, 13, 0, 0"/>
+			<local:ItemView Grid.Row="3" Grid.Column="1" Slot="Neck"/>
+			<local:ItemView Grid.Row="4" Grid.Column="1" Slot="Wrists"/>
+			<local:ItemView Grid.Row="2" Grid.Column="2" Slot="RightRing"/>
+			<local:ItemView Grid.Row="3" Grid.Column="2" Slot="LeftRing"/>
+		</StackPanel>
 
-		<local:ItemView Grid.Column="1" Grid.Row="1" Slot="OffHand" CanDye="True" HasModelId="True"/>
-		<local:ItemView Grid.Column="1" Grid.Row="2" Slot="Ears"/>
-		<local:ItemView Grid.Column="1" Grid.Row="3" Slot="Neck"/>
-		<local:ItemView Grid.Column="1" Grid.Row="4" Slot="Wrists"/>
-		<local:ItemView Grid.Column="1" Grid.Row="5" Slot="RightRing"/>
-		<local:ItemView Grid.Column="1" Grid.Row="6" Slot="LeftRing"/>
+		<local:ItemView Grid.Column="1" VerticalAlignment="Bottom" Slot="Waist" CanDye="True"/>
+
+		<GroupBox Grid.Column="2" Margin="6, 0, 0, 0"/>
 
 	</Grid>
+
 </UserControl>

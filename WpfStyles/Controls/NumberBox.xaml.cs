@@ -18,6 +18,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	{
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty TickFrequencyProperty = DependencyProperty.Register(nameof(TickFrequency), typeof(double), typeof(NumberBox));
+		public static readonly DependencyProperty SliderProperty = DependencyProperty.Register(nameof(Slider), typeof(bool), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
 
 		private string inputString;
 		private Key keyHeld = Key.None;
@@ -25,6 +26,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public NumberBox()
 		{
 			this.InitializeComponent();
+			this.TickFrequency = 1;
 			this.ContentArea.DataContext = this;
 		}
 
@@ -39,6 +41,19 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set
 			{
 				this.SetValue(TickFrequencyProperty, value);
+			}
+		}
+
+		public bool Slider
+		{
+			get
+			{
+				return (bool)this.GetValue(SliderProperty);
+			}
+
+			set
+			{
+				this.SetValue(SliderProperty, value);
 			}
 		}
 
@@ -140,6 +155,14 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
+		private static void OnChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (sender is NumberBox numberBox)
+			{
+				numberBox.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(e.Property.Name));
+			}
+		}
+
 		private void OnLostFocus(object sender, RoutedEventArgs e)
 		{
 			this.Commit(false);
@@ -147,7 +170,16 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private void Commit(bool refocus)
 		{
-			this.Value = Convert.ToDouble(new DataTable().Compute(this.inputString, null));
+			try
+			{
+				this.Value = Convert.ToDouble(new DataTable().Compute(this.inputString, null));
+				this.ErrorDisplay.Visibility = Visibility.Collapsed;
+			}
+			catch (Exception)
+			{
+				this.ErrorDisplay.Visibility = Visibility.Visible;
+			}
+
 			this.Text = this.Value.ToString("0.##");
 
 			if (refocus)

@@ -67,6 +67,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ColorEditor.xaml.cs">
+      <DependentUpon>ColorEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\IconButton.xaml.cs">
       <DependentUpon>IconButton.xaml</DependentUpon>
     </Compile>
@@ -78,6 +81,9 @@
     </Compile>
     <Compile Include="Controls\SelectorDrawer.xaml.cs">
       <DependentUpon>SelectorDrawer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Vector3DEditor.xaml.cs">
+      <DependentUpon>Vector3DEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\IImageToImageSourceConverter.cs" />
     <Compile Include="Converters\NotNullToVisibilityConverter.cs" />
@@ -157,6 +163,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\ColorEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\IconButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -170,6 +180,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\SelectorDrawer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Vector3DEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

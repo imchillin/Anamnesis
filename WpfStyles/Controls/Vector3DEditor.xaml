@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="ConceptMatrix.WpfStyles.Controls.Vector3DEditor"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.WpfStyles.Controls"
+			 mc:Ignorable="d"
+			 d:DesignWidth="256">
+	<Grid>
+
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="20"/>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="20"/>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="20"/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<Label Grid.Column="0" Content="X:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+		<local:NumberBox Grid.Column="1"/>
+		<Label Grid.Column="2" Content="Y:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+		<local:NumberBox Grid.Column="3"/>
+		<Label Grid.Column="4" Content="Z:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+		<local:NumberBox Grid.Column="5"/>
+
+	</Grid>
+</UserControl>

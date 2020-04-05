@@ -8,20 +8,44 @@
 			 d:DesignWidth="128">
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition Width="50"/>
+			<ColumnDefinition>
+				<ColumnDefinition.Style>
+					<Style TargetType="ColumnDefinition">
+						<Setter Property="Width" Value="*" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding Slider}" Value="False">
+								<Setter Property="Width" Value="0" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ColumnDefinition.Style>
+			</ColumnDefinition>
+			<ColumnDefinition Width="50">
+				<ColumnDefinition.Style>
+					<Style TargetType="ColumnDefinition">
+						<Setter Property="Width" Value="*" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding Slider}" Value="False">
+								<Setter Property="Width" Value="1*" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ColumnDefinition.Style>
+			</ColumnDefinition>
 		</Grid.ColumnDefinitions>
 
 		<Slider
 			x:Name="InputSlider"
 			Grid.Row="0"
 			Grid.Column="0"
-			Margin="3"
+			Margin="3, 0, 3, 0"
+			HorizontalAlignment="Stretch"
 			Value="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 			Minimum="{Binding Minimum}"
 			Maximum="{Binding Maximum}"
 			TickFrequency="{Binding TickFrequency}"
 			Focusable="False"
+			Visibility="{Binding Slider, Converter={StaticResource BoolToVisibilityConverter}}"
 			VerticalAlignment="Center"/>
 
 		<TextBox
@@ -31,7 +55,7 @@
 			Style="{DynamicResource MaterialDesignTextBox}"
 			Foreground="{DynamicResource MaterialDesignBody}"
 			Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=000.00}"
-			Margin="3"
+			Margin="3, 0, 0, 0"
 			LostFocus="OnLostFocus"
 			LostKeyboardFocus="OnLostFocus"/>
 		
@@ -44,8 +68,8 @@
 			VerticalAlignment="Bottom"
 			HorizontalAlignment="Stretch"
 			Stretch="Fill"
-			StrokeThickness="2"
+			StrokeThickness="1"
 			Stroke="Red"
-			Margin="2,0,2,3"/>
+			Margin="2,0,0,0"/>
 	</Grid>
 </UserControl>

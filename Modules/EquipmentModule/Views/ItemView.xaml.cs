@@ -19,7 +19,9 @@ namespace ConceptMatrix.EquipmentModule.Views
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(IItem), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty DyeProperty = DependencyProperty.Register(nameof(Dye), typeof(IDye), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty CanDyeProperty = DependencyProperty.Register(nameof(CanDye), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
+		public static readonly DependencyProperty CanScaleProperty = DependencyProperty.Register(nameof(CanScale), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty HasModelIdProperty = DependencyProperty.Register(nameof(HasModelId), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
+		public static readonly DependencyProperty CanColorProperty = DependencyProperty.Register(nameof(CanColor), typeof(bool), typeof(ItemView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 
 		private IGameDataService gameData;
 
@@ -27,6 +29,9 @@ namespace ConceptMatrix.EquipmentModule.Views
 		{
 			this.InitializeComponent();
 			this.DataContext = this;
+
+			if (DesignerProperties.GetIsInDesignMode(this))
+				return;
 
 			this.gameData = Module.Services.Get<IGameDataService>();
 		}
@@ -144,6 +149,32 @@ namespace ConceptMatrix.EquipmentModule.Views
 			set
 			{
 				this.SetValue(CanDyeProperty, value);
+			}
+		}
+
+		public bool CanScale
+		{
+			get
+			{
+				return (bool)this.GetValue(CanScaleProperty);
+			}
+
+			set
+			{
+				this.SetValue(CanScaleProperty, value);
+			}
+		}
+
+		public bool CanColor
+		{
+			get
+			{
+				return (bool)this.GetValue(CanColorProperty);
+			}
+
+			set
+			{
+				this.SetValue(CanColorProperty, value);
 			}
 		}
 

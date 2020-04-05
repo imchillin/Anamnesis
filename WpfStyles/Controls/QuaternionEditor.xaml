@@ -25,12 +25,12 @@
 		</Grid>
 		
 		<Label Grid.Row="1" Grid.Column="0" Content="X" VerticalContentAlignment="Center"/>
-		<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding EulerX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360"/>
+		<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding EulerX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True"/>
 
 		<Label Grid.Row="2" Grid.Column="0" Content="Y" VerticalContentAlignment="Center"/>
-		<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding EulerY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360"/>
+		<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding EulerY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True"/>
 
 		<Label Grid.Row="3" Grid.Column="0" Content="Z" VerticalContentAlignment="Center"/>
-		<cm3:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding EulerZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360"/>
+		<cm3:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding EulerZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True"/>
 	</Grid>
 </UserControl>
