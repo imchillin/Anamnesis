@@ -116,11 +116,4 @@ namespace ConceptMatrix.Services
 	public interface IStatus : IDataObject
 	{
 	}
-
-	public interface IImage
-	{
-		IntPtr HBitmap { get; }
-		int Width { get; }
-		int Height { get; }
-	}
 }

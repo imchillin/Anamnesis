@@ -3,11 +3,16 @@
 
 namespace ConceptMatrix.WpfStyles.Controls
 {
+	using System;
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using PropertyChanged;
+
+	using Color = ConceptMatrix.Color;
+	using WpfColor = System.Windows.Media.Color;
+	using WpfColors = System.Windows.Media.Colors;
 
 	/// <summary>
 	/// Interaction logic for ColorEditor.xaml.
@@ -15,19 +20,12 @@ namespace ConceptMatrix.WpfStyles.Controls
 	public partial class ColorEditor : UserControl, INotifyPropertyChanged
 	{
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(Color), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
-		public static readonly DependencyProperty RProperty = DependencyProperty.Register(nameof(ValueR), typeof(double), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
-		public static readonly DependencyProperty GProperty = DependencyProperty.Register(nameof(ValueG), typeof(double), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
-		public static readonly DependencyProperty BProperty = DependencyProperty.Register(nameof(ValueB), typeof(double), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
-
 		public ColorEditor()
 		{
 			this.InitializeComponent();
-			this.Value = Colors.White;
-			this.DataContext = this;
 
-			this.RBox.PropertyChanged += this.OnRChanged;
-			this.GBox.PropertyChanged += this.OnGChanged;
-			this.BBox.PropertyChanged += this.OnBchanged;
+			this.Value = new Color();
+			this.DataContext = this;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -41,59 +39,20 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			set
 			{
+				if (value != null)
+					value.PropertyChanged -= this.Value_PropertyChanged;
+
 				this.SetValue(ValueProperty, value);
-				this.RBox.Value = this.ValueR;
-				this.GBox.Value = this.ValueG;
-				this.BBox.Value = this.ValueB;
+				value.PropertyChanged += this.Value_PropertyChanged;
+				this.UpdatePreview();
 			}
 		}
 
-		public double ValueR
+		private static double Clamp(double v)
 		{
-			get
-			{
-				return (double)this.GetValue(RProperty);
-			}
-
-			set
-			{
-				this.SetValue(RProperty, value);
-				Color c = this.Value;
-				c.R = (byte)(value * 255);
-				this.Value = c;
-			}
-		}
-
-		public double ValueG
-		{
-			get
-			{
-				return (double)this.GetValue(GProperty);
-			}
-
-			set
-			{
-				this.SetValue(GProperty, value);
-				Color c = this.Value;
-				c.G = (byte)(value * 255);
-				this.Value = c;
-			}
-		}
-
-		public double ValueB
-		{
-			get
-			{
-				return (double)this.GetValue(BProperty);
-			}
-
-			set
-			{
-				this.SetValue(BProperty, value);
-				Color c = this.Value;
-				c.B = (byte)(value * 255);
-				this.Value = c;
-			}
+			v = Math.Min(v, 1);
+			v = Math.Max(v, 0);
+			return v;
 		}
 
 		private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -104,19 +63,21 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
-		private void OnRChanged(object sender, PropertyChangedEventArgs e)
+		private void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			this.ValueR = this.RBox.Value;
+			this.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.Value)));
+			this.UpdatePreview();
 		}
 
-		private void OnGChanged(object sender, PropertyChangedEventArgs e)
+		private void UpdatePreview()
 		{
-			this.ValueG = this.GBox.Value;
-		}
+			WpfColor c = default(WpfColor);
+			c.R = (byte)(Clamp(this.Value.R) * 255);
+			c.G = (byte)(Clamp(this.Value.G) * 255);
+			c.B = (byte)(Clamp(this.Value.B) * 255);
+			c.A = 255;
 
-		private void OnBchanged(object sender, PropertyChangedEventArgs e)
-		{
-			this.ValueB = this.BBox.Value;
+			this.Preview.Background = new SolidColorBrush(c);
 		}
 	}
 }

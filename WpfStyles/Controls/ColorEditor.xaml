@@ -24,21 +24,17 @@
 			VerticalAlignment="Stretch"
 			Padding="0"
 			Height="24"
-			
 			Style="{DynamicResource MaterialDesignFlatButton}">
-			<Border CornerRadius="3" BorderBrush="{DynamicResource MaterialDesignBody}" BorderThickness="1" Height="{Binding FontSize, FallbackValue=12}">
-				<Border.Background>
-					<SolidColorBrush Color="{Binding Value}"/>
-				</Border.Background>
-			</Border>
+			
+			<Border x:Name="Preview" CornerRadius="3" BorderBrush="{DynamicResource MaterialDesignBody}" BorderThickness="1" Height="{Binding FontSize, FallbackValue=12}"/>
 		</Button>
 		
 		<Label Grid.Column="1" Content="R:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox x:Name="RBox" Grid.Column="2" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
+		<local:NumberBox Value="{Binding Value.R, Mode=TwoWay}" Grid.Column="2" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
 		<Label Grid.Column="3" Content="G:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox x:Name="GBox" Grid.Column="4" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
+		<local:NumberBox Value="{Binding Value.G, Mode=TwoWay}" Grid.Column="4" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
 		<Label Grid.Column="5" Content="B:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox x:Name="BBox" Grid.Column="6" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
+		<local:NumberBox Value="{Binding Value.B, Mode=TwoWay}" Grid.Column="6" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
 
 	</Grid>
 </UserControl>

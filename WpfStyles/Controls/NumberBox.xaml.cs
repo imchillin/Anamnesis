@@ -94,6 +94,24 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			set
 			{
+				if (this.Wrap)
+				{
+					if (value > this.Maximum)
+					{
+						value = this.Minimum;
+					}
+
+					if (value < this.Minimum)
+					{
+						value = this.Maximum;
+					}
+				}
+				else
+				{
+					value = Math.Min(value, this.Maximum);
+					value = Math.Max(value, this.Minimum);
+				}
+
 				value = Math.Round(value / this.TickFrequency) * this.TickFrequency;
 
 				this.SetValue(ValueProperty, value);
@@ -225,24 +243,6 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			double value = this.Value;
 			value += delta;
-
-			if (this.Wrap)
-			{
-				while (value > this.Maximum)
-				{
-					value -= this.Maximum;
-				}
-
-				while (value < this.Minimum)
-				{
-					value += this.Maximum;
-				}
-			}
-			else
-			{
-				value = Math.Min(value, this.Maximum);
-				value = Math.Max(value, this.Minimum);
-			}
 
 			this.Value = value;
 		}
