@@ -55,7 +55,8 @@
 		<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.Defaults.xaml" />
 
 		<!-- Custom -->
-		<ResourceDictionary Source="GroupBoxStyles.xaml"/>
+		<ResourceDictionary Source="Styles/GroupBoxStyles.xaml"/>
+		<ResourceDictionary Source="Styles/ButtonStyles.xaml"/>
 
 	</ResourceDictionary.MergedDictionaries>
 	

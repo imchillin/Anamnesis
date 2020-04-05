@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="ConceptMatrix.WpfStyles.Drawers.ColorSelectorDrawer"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.WpfStyles.Drawers"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450"
+			 d:DesignWidth="232">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<!-- <ColorPicker/> -->
+
+		<local:SelectorDrawer x:Name="Selector" Grid.Row="1" Close="OnSelectorClose" Filter="OnFilter">
+			<local:SelectorDrawer.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="32"/>
+							<ColumnDefinition Width="1*" />
+						</Grid.ColumnDefinitions>
+
+						<Border Grid.RowSpan="2" CornerRadius="3">
+							<Border.Background>
+								<SolidColorBrush Color="{Binding Color}"/>
+							</Border.Background>
+						</Border>
+
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" Foreground="{DynamicResource MaterialDesignBody}"/>
+					</Grid>
+				</DataTemplate>
+			</local:SelectorDrawer.ItemTemplate>
+		</local:SelectorDrawer>
+	</Grid>
+</UserControl>

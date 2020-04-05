@@ -20,6 +20,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	public partial class ColorEditor : UserControl, INotifyPropertyChanged
 	{
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(Color), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
+		public static readonly DependencyProperty SelectorProperty = DependencyProperty.Register(nameof(EnableSelector), typeof(bool), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
 
 		private Color oldValue;
 
@@ -43,6 +44,19 @@ namespace ConceptMatrix.WpfStyles.Controls
 				this.ListenToColor(value);
 				this.SetValue(ValueProperty, value);
 				this.UpdatePreview();
+			}
+		}
+
+		public bool EnableSelector
+		{
+			get
+			{
+				return (bool)this.GetValue(SelectorProperty);
+			}
+
+			set
+			{
+				this.SetValue(SelectorProperty, value);
 			}
 		}
 
@@ -72,7 +86,10 @@ namespace ConceptMatrix.WpfStyles.Controls
 				this.oldValue.PropertyChanged -= this.Value_PropertyChanged;
 
 			this.oldValue = value;
-			value.PropertyChanged += this.Value_PropertyChanged;
+
+			if (value != null)
+				value.PropertyChanged += this.Value_PropertyChanged;
+
 			this.UpdatePreview();
 		}
 
@@ -84,6 +101,12 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private void UpdatePreview()
 		{
+			if (this.Value == null)
+			{
+				this.Preview.Background = new SolidColorBrush(WpfColors.Transparent);
+				return;
+			}
+
 			WpfColor c = default(WpfColor);
 			c.R = (byte)(Clamp(this.Value.R) * 255);
 			c.G = (byte)(Clamp(this.Value.G) * 255);

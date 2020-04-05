@@ -6,15 +6,16 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.EquipmentModule.Views"
 			 xmlns:fa="http://schemas.fontawesome.io/icons/"
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
+			 xmlns:cm3Drawers="clr-namespace:ConceptMatrix.WpfStyles.Drawers;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="232">
 
-	<cm3Controls:SelectorDrawer 
+	<cm3Drawers:SelectorDrawer 
 		x:Name="Selector"
 		Close="OnClose" 
 		Filter="OnFilter">
-		
-		<cm3Controls:SelectorDrawer.ItemTemplate>
+
+		<cm3Drawers:SelectorDrawer.ItemTemplate>
 			<DataTemplate>
 				<Grid Height="32">
 					<Grid.ColumnDefinitions>
@@ -47,6 +48,6 @@
 
 				</Grid>
 			</DataTemplate>
-		</cm3Controls:SelectorDrawer.ItemTemplate>
-	</cm3Controls:SelectorDrawer>
+		</cm3Drawers:SelectorDrawer.ItemTemplate>
+	</cm3Drawers:SelectorDrawer>
 </UserControl>

@@ -11,6 +11,17 @@ namespace ConceptMatrix
 		private double g = 1;
 		private double b = 1;
 
+		public Color()
+		{
+		}
+
+		public Color(double r, double g, double b)
+		{
+			this.r = r;
+			this.g = g;
+			this.b = b;
+		}
+
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public double R

@@ -7,7 +7,9 @@ namespace ConceptMatrix.EquipmentModule.Views
 	using System.Text.RegularExpressions;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Media.Media3D;
 	using ConceptMatrix.Services;
+	using ConceptMatrix.WpfStyles.Drawers;
 	using PropertyChanged;
 
 	/// <summary>
@@ -65,6 +67,16 @@ namespace ConceptMatrix.EquipmentModule.Views
 			this.ViewModel.Dye = selector.Value;
 		}
 
+		private async void OnColorClick(object sender, RoutedEventArgs e)
+		{
+			IViewService viewService = Module.Services.Get<IViewService>();
+
+			ColorSelectorDrawer selector = new ColorSelectorDrawer();
+			selector.Value = this.ViewModel.Color;
+			await viewService.ShowDrawer(selector, "Color");
+			this.ViewModel.Color = selector.Value;
+		}
+
 		private void OnPreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
 		{
 			Regex regex = new Regex("[^0-9]+");
@@ -74,6 +86,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 		private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			this.SlotIcon.Source = this.ViewModel.Slot.GetIcon();
+		}
+
+		private void OnZeroScaleClick(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.Scale = new Vector3D(0, 0, 0);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.WpfStyles.Controls
+namespace ConceptMatrix.WpfStyles.Drawers
 {
 	using System;
 	using System.Collections.ObjectModel;
@@ -153,7 +153,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			foreach (object item in this.Items)
 			{
-				if (!this.Filter.Invoke(item, this.searchQuerry))
+				if (this.Filter != null && !this.Filter.Invoke(item, this.searchQuerry))
 					continue;
 
 				filteredItems.Add(item);

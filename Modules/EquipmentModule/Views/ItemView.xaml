@@ -13,17 +13,14 @@
 
 	<Border Background="#22000000" CornerRadius="6" Margin="3">
 
-		<StackPanel Margin="3">
+		<StackPanel Margin="2">
 
 			<!-- Slot label -->
 			<Button 
-					HorizontalContentAlignment="Stretch"
-					HorizontalAlignment="Stretch"
-					Click="OnClick"
-					Padding="0"
-					Height="56"
-					Style="{DynamicResource MaterialDesignFlatButton}"
-					VerticalContentAlignment="Stretch">
+				Click="OnClick"
+				Height="56"
+				Style="{DynamicResource TransparentButton}"
+				Background="Transparent">
 
 				<Grid Height="56">
 					<Grid.ColumnDefinitions>
@@ -89,14 +86,11 @@
 
 			<!-- Dye -->
 			<Button 
-					Visibility="{Binding CanDye, Converter={StaticResource BoolToVisibilityConverter}}"
-					HorizontalContentAlignment="Stretch"
-					HorizontalAlignment="Stretch"
-					Click="OnDyeClick"
-					Padding="0"
-					Height="24"
-					Style="{DynamicResource MaterialDesignFlatButton}"
-					VerticalContentAlignment="Stretch">
+				Visibility="{Binding CanDye, Converter={StaticResource BoolToVisibilityConverter}}"
+				Click="OnDyeClick"
+				Height="24"
+				Style="{DynamicResource TransparentButton}"
+				Background="Transparent">
 
 				<Grid>
 					<Grid.ColumnDefinitions>
@@ -105,8 +99,7 @@
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>
 
-					<Line Grid.ColumnSpan="3" X1="0" X2="1" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True"/>
-					<Label Grid.Row="1" Grid.Column="0" Content="Dye:" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Normal" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+					<Label Grid.Column="0" Content="Dye:" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Normal" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
 
 					<Border Grid.Column="1" Background="#10FFFFFF" CornerRadius="3" BorderThickness="1" BorderBrush="#44222222" Width="20" Height="20" Margin="1, 2, 1, 0">
 						<Grid>
@@ -123,7 +116,7 @@
 						</Grid>
 					</Border>
 
-
+					<Line Grid.ColumnSpan="3" X1="0" X2="1" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, 0, 3, 0"/>
 					<Label Grid.Column="2" Content="{Binding Dye.Name}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="12" FontWeight="Thin"/>
 				</Grid>
 			</Button>
@@ -132,25 +125,37 @@
 			<Grid Height="24" Visibility="{Binding CanScale, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Visible}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="56"/>
+					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 
-				<Line Grid.Row="2" X1="0" X2="1" Grid.ColumnSpan="2" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True"/>
-				<Label Grid.Row="2" Grid.Column="0" Content="Scale:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 3, 3, 0" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-				<cm3Controls:Vector3DEditor Value="{Binding Scale}" Minimum="-100" Maximum="100" TickFrequency="0.01" Grid.Row="2" Grid.Column="1" Margin="0, 0, 3, 2" FontSize="12"/>
+				<Line X1="0" X2="1" Grid.ColumnSpan="3" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, 0, 3, 0"/>
+				<Label Grid.Column="0" Content="Scale:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 3, 3, 0" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+				<Button Grid.Column="1" Width="22" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" Click="OnZeroScaleClick" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<cm3Controls:Vector3DEditor Value="{Binding Scale}" Minimum="-100" Maximum="100" TickFrequency="0.01" Grid.Column="2" FontSize="12" Margin="0, 0, 3, 0"/>
 			</Grid>
 
 			<!-- Color -->
-			<Grid Height="24" Visibility="{Binding CanColor, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Visible}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="56"/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
+			<Button 
+				Visibility="{Binding CanColor, Converter={StaticResource BoolToVisibilityConverter}}"
+				Click="OnColorClick"
+				Height="24"
+				Style="{DynamicResource TransparentButton}"
+				Background="Transparent">
 
-				<Line Grid.Row="2" X1="0" X2="1" Grid.ColumnSpan="2" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True"/>
-				<Label Grid.Row="2" Grid.Column="0" Content="Color:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 3, 3, 0" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-				<cm3Controls:ColorEditor Value="{Binding Color}" Grid.Row="2" Grid.Column="1" Margin="0, 0, 3, 2" FontSize="12"/>
-			</Grid>
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="56"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+
+					<Label Grid.Column="0" Content="Color:" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Normal" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+					<cm3Controls:ColorEditor Value="{Binding Color}" Grid.Column="1" FontSize="12" Margin="0, 0, 3, 0" EnableSelector="False"/>
+					<Line Grid.ColumnSpan="3" X1="0" X2="1" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, 0, 3, 0"/>
+				</Grid>
+			</Button>
+
 
 		</StackPanel>
 	</Border>

@@ -8,7 +8,7 @@
 	<Grid x:Name="ContentArea">
 		
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="{Binding FontSize, FallbackValue=12}"/>
+			<ColumnDefinition Width="24"/>
 			<ColumnDefinition Width="20"/>
 			<ColumnDefinition/>
 			<ColumnDefinition Width="20"/>
@@ -18,23 +18,18 @@
 		</Grid.ColumnDefinitions>
 
 		<Button
-			HorizontalContentAlignment="Stretch"
-			VerticalContentAlignment="Stretch"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch"
-			Padding="0"
-			Height="24"
-			Style="{DynamicResource MaterialDesignFlatButton}">
-			
-			<Border x:Name="Preview" CornerRadius="3" BorderBrush="{DynamicResource MaterialDesignBody}" BorderThickness="1" Height="{Binding FontSize, FallbackValue=12}"/>
+			IsEnabled="{Binding EnableSelector}"
+			Margin="0, 0, 0, -2"
+			Style="{DynamicResource TransparentButton}">
+			<Border x:Name="Preview" CornerRadius="3" BorderBrush="{DynamicResource MaterialDesignBody}" BorderThickness="1" Margin="4"/>
 		</Button>
 		
 		<Label Grid.Column="1" Content="R:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding Value.R, Mode=TwoWay}" Grid.Column="2" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
+		<local:NumberBox Value="{Binding Value.R, Mode=TwoWay}" Grid.Column="2" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
 		<Label Grid.Column="3" Content="G:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding Value.G, Mode=TwoWay}" Grid.Column="4" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
+		<local:NumberBox Value="{Binding Value.G, Mode=TwoWay}" Grid.Column="4" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
 		<Label Grid.Column="5" Content="B:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding Value.B, Mode=TwoWay}" Grid.Column="6" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
+		<local:NumberBox Value="{Binding Value.B, Mode=TwoWay}" Grid.Column="6" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
 
 	</Grid>
 </UserControl>
