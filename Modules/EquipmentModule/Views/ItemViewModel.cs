@@ -6,6 +6,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 	using System;
 	using System.ComponentModel;
 	using System.Windows.Media.Media3D;
+	using ConceptMatrix;
 	using ConceptMatrix.Injection;
 	using ConceptMatrix.Services;
 
@@ -51,6 +52,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 					this.Item = tItem;
 					break;
 				}
+			}
+
+			if (this.Item == null)
+			{
+				this.Item = new DummyItem(item);
 			}
 		}
 
@@ -166,6 +172,70 @@ namespace ConceptMatrix.EquipmentModule.Views
 			set
 			{
 				throw new NotImplementedException();
+			}
+		}
+
+		public class DummyItem : IItem
+		{
+			public DummyItem(Equipment.Item item)
+			{
+				this.ModelBaseId = item.Base;
+				this.ModelVariantId = item.Varaint;
+			}
+
+			public string Name
+			{
+				get
+				{
+					return "Unknown";
+				}
+			}
+
+			public string Description
+			{
+				get
+				{
+					return null;
+				}
+			}
+
+			public IImage Icon
+			{
+				get
+				{
+					return null;
+				}
+			}
+
+			public ushort ModelBaseId
+			{
+				get;
+				private set;
+			}
+
+			public byte ModelVariantId
+			{
+				get;
+				private set;
+			}
+
+			public byte ModelId
+			{
+				get;
+				private set;
+			}
+
+			public int Key
+			{
+				get
+				{
+					return 0;
+				}
+			}
+
+			public bool FitsInSlot(ItemSlots slot)
+			{
+				return true;
 			}
 		}
 	}

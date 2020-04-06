@@ -52,7 +52,7 @@ namespace ConceptMatrix.Services
 		string Description { get; }
 		IImage Icon { get; }
 
-		short ModelBaseId { get; }
+		ushort ModelBaseId { get; }
 		byte ModelVariantId { get; }
 		byte ModelId { get; }
 

@@ -55,7 +55,7 @@ namespace ConceptMatrix.Injection.Memory
 
 		private static void Read(int index, Equipment.Item item, byte[] data)
 		{
-			item.Base = BitConverter.ToInt16(data, index);
+			item.Base = BitConverter.ToUInt16(data, index);
 			item.Varaint = data[index + 2];
 			item.Dye = data[index + 3];
 		}

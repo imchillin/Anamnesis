@@ -46,11 +46,11 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
-		public short ModelBaseId
+		public ushort ModelBaseId
 		{
 			get
 			{
-				return this.Value.ModelMain.Value1;
+				return (ushort)this.Value.ModelMain.Value1;
 			}
 		}
 
