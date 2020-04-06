@@ -40,7 +40,7 @@ namespace ConceptMatrix.Injection
 		public class Item
 		{
 			public ushort Base;
-			public byte Varaint;
+			public byte Variant;
 			public byte Dye;
 		}
 	}

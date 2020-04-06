@@ -52,9 +52,9 @@ namespace ConceptMatrix.Services
 		string Description { get; }
 		IImage Icon { get; }
 
-		ushort ModelBaseId { get; }
-		byte ModelVariantId { get; }
-		byte ModelId { get; }
+		ushort ModelBase { get; }
+		ushort ModelVariant { get; }
+		ushort WeaponSet { get; }
 
 		bool FitsInSlot(ItemSlots slot);
 	}

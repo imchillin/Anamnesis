@@ -10,29 +10,13 @@ namespace ConceptMatrix.EquipmentModule.Views
 	using ConceptMatrix.Injection;
 	using ConceptMatrix.Services;
 
-	public class ItemViewModel : INotifyPropertyChanged
+	public class EquipmentItemViewModel : INotifyPropertyChanged
 	{
 		private IGameDataService gameData;
 
-		public ItemViewModel(Equipment target, ItemSlots slot)
+		public EquipmentItemViewModel(Equipment target, ItemSlots slot)
+			: this(slot)
 		{
-			this.gameData = Module.Services.Get<IGameDataService>();
-			this.Slot = slot;
-
-			this.HasModelId = slot == ItemSlots.MainHand || slot == ItemSlots.OffHand;
-			this.CanScale = slot == ItemSlots.MainHand || slot == ItemSlots.OffHand;
-			this.CanColor = slot == ItemSlots.MainHand || slot == ItemSlots.OffHand;
-
-			this.CanDye = slot != ItemSlots.Ears
-				&& slot != ItemSlots.Neck
-				&& slot != ItemSlots.Wrists
-				&& slot != ItemSlots.LeftRing
-				&& slot != ItemSlots.RightRing;
-
-			this.Color = new Color();
-			this.Scale = new Vector3D(1, 1, 1);
-			////this.Item = this.gameData.Items.Get(1);
-
 			Equipment.Item item = target.GetItem(slot);
 
 			if (item == null)
@@ -40,6 +24,20 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 			this.Item = this.GetItem(item, slot);
 			this.Dye = this.GetDye(item);
+		}
+
+		public EquipmentItemViewModel(ItemSlots slot)
+		{
+			this.gameData = Module.Services.Get<IGameDataService>();
+			this.Slot = slot;
+
+			// hmm. doesn't seem to be any reason you _cant_ dye accessories...
+			// TODO: test what happens when you dye an accessory.
+			this.CanDye = slot != ItemSlots.Ears
+				&& slot != ItemSlots.Neck
+				&& slot != ItemSlots.Wrists
+				&& slot != ItemSlots.LeftRing
+				&& slot != ItemSlots.RightRing;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -76,8 +74,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		public bool CanColor
 		{
-			get;
-			set;
+			get
+			{
+				return false;
+			}
 		}
 
 		public Vector3D Scale
@@ -88,14 +88,18 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		public bool CanScale
 		{
-			get;
-			set;
+			get
+			{
+				return false;
+			}
 		}
 
-		public bool HasModelId
+		public bool HasModelSet
 		{
-			get;
-			set;
+			get
+			{
+				return false;
+			}
 		}
 
 		public string SlotName
@@ -119,11 +123,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
-		public string ModelBaseId
+		public string ModelBase
 		{
 			get
 			{
-				return this.Item?.ModelBaseId.ToString();
+				return this.Item?.ModelBase.ToString();
 			}
 			set
 			{
@@ -131,11 +135,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
-		public string ModelVariantId
+		public string ModelVariant
 		{
 			get
 			{
-				return this.Item?.ModelVariantId.ToString();
+				return this.Item?.ModelVariant.ToString();
 			}
 
 			set
@@ -144,16 +148,14 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
-		public string ModelId
+		public string ModelSet
 		{
 			get
 			{
-				return this.Item?.ModelId.ToString();
+				return null;
 			}
-
 			set
 			{
-				throw new NotImplementedException();
 			}
 		}
 
@@ -168,7 +170,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 				if (slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
 					continue;
 
-				if (tItem.ModelBaseId == item.Base && tItem.ModelVariantId == item.Varaint)
+				if (tItem.ModelBase == item.Base && tItem.ModelVariant == item.Variant)
 				{
 					return tItem;
 				}
@@ -198,8 +200,8 @@ namespace ConceptMatrix.EquipmentModule.Views
 		{
 			public DummyItem(Equipment.Item item)
 			{
-				this.ModelBaseId = item.Base;
-				this.ModelVariantId = item.Varaint;
+				this.ModelBase = item.Base;
+				this.ModelVariant = item.Variant;
 			}
 
 			public string Name
@@ -226,22 +228,24 @@ namespace ConceptMatrix.EquipmentModule.Views
 				}
 			}
 
-			public ushort ModelBaseId
+			public ushort ModelBase
 			{
 				get;
 				private set;
 			}
 
-			public byte ModelVariantId
+			public ushort ModelVariant
 			{
 				get;
 				private set;
 			}
 
-			public byte ModelId
+			public ushort WeaponSet
 			{
-				get;
-				private set;
+				get
+				{
+					return 0;
+				}
 			}
 
 			public int Key

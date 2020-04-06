@@ -16,6 +16,8 @@ namespace ConceptMatrix.EquipmentModule.Views
 	/// </summary>
 	public partial class EquipmentView : UserControl
 	{
+		private IMemory<Equipment> eqMem;
+
 		public EquipmentView()
 		{
 			this.InitializeComponent();
@@ -26,40 +28,47 @@ namespace ConceptMatrix.EquipmentModule.Views
 			ISelectionService selection = Module.Services.Get<ISelectionService>();
 			selection.SelectionChanged += this.OnSelectionChanged;
 			this.OnSelectionChanged(selection.CurrentSelection);
-
-			////this.MainHandEq.Value = gameData.Items.Get(29412);
 		}
 
-		public ItemViewModel MainHand { get; set; }
-		public ItemViewModel OffHand { get; set; }
-		public ItemViewModel Head { get; set; }
-		public ItemViewModel Body { get; set; }
-		public ItemViewModel Hands { get; set; }
-		public ItemViewModel Legs { get; set; }
-		public ItemViewModel Feet { get; set; }
-		public ItemViewModel Ears { get; set; }
-		public ItemViewModel Neck { get; set; }
-		public ItemViewModel Wrists { get; set; }
-		public ItemViewModel LeftRing { get; set; }
-		public ItemViewModel RightRing { get; set; }
+		public EquipmentWeaponViewModel MainHand { get; set; }
+		public EquipmentWeaponViewModel OffHand { get; set; }
+		public EquipmentItemViewModel Head { get; set; }
+		public EquipmentItemViewModel Body { get; set; }
+		public EquipmentItemViewModel Hands { get; set; }
+		public EquipmentItemViewModel Legs { get; set; }
+		public EquipmentItemViewModel Feet { get; set; }
+		public EquipmentItemViewModel Ears { get; set; }
+		public EquipmentItemViewModel Neck { get; set; }
+		public EquipmentItemViewModel Wrists { get; set; }
+		public EquipmentItemViewModel LeftRing { get; set; }
+		public EquipmentItemViewModel RightRing { get; set; }
 
 		private void OnSelectionChanged(Selection selection)
 		{
-			IMemory<Equipment> eqMem = Offsets.ActorEquipment.GetMemory(selection.BaseAddress);
-			Equipment eq = eqMem.Value;
+			if (this.eqMem != null)
+				this.eqMem.Dispose();
 
-			this.MainHand = new ItemViewModel(eq, ItemSlots.MainHand);
-			this.OffHand = new ItemViewModel(eq, ItemSlots.OffHand);
-			this.Head = new ItemViewModel(eq, ItemSlots.Head);
-			this.Body = new ItemViewModel(eq, ItemSlots.Body);
-			this.Hands = new ItemViewModel(eq, ItemSlots.Hands);
-			this.Legs = new ItemViewModel(eq, ItemSlots.Legs);
-			this.Feet = new ItemViewModel(eq, ItemSlots.Feet);
-			this.Ears = new ItemViewModel(eq, ItemSlots.Ears);
-			this.Neck = new ItemViewModel(eq, ItemSlots.Neck);
-			this.Wrists = new ItemViewModel(eq, ItemSlots.Wrists);
-			this.LeftRing = new ItemViewModel(eq, ItemSlots.LeftRing);
-			this.RightRing = new ItemViewModel(eq, ItemSlots.RightRing);
+			this.eqMem = selection.BaseAddress.GetMemory(Offsets.ActorEquipment);
+			Equipment eq = this.eqMem.Value;
+
+			IMemory<Weapon> mhMem = selection.BaseAddress.GetMemory(Offsets.MainHand);
+			IMemory<Weapon> ohMem = selection.BaseAddress.GetMemory(Offsets.OffHand);
+
+			// Weapon slots
+			this.MainHand = new EquipmentWeaponViewModel(mhMem.Value, ItemSlots.MainHand);
+			this.OffHand = new EquipmentWeaponViewModel(ohMem.Value, ItemSlots.OffHand);
+
+			// Equipment slots
+			this.Head = new EquipmentItemViewModel(eq, ItemSlots.Head);
+			this.Body = new EquipmentItemViewModel(eq, ItemSlots.Body);
+			this.Hands = new EquipmentItemViewModel(eq, ItemSlots.Hands);
+			this.Legs = new EquipmentItemViewModel(eq, ItemSlots.Legs);
+			this.Feet = new EquipmentItemViewModel(eq, ItemSlots.Feet);
+			this.Ears = new EquipmentItemViewModel(eq, ItemSlots.Ears);
+			this.Neck = new EquipmentItemViewModel(eq, ItemSlots.Neck);
+			this.Wrists = new EquipmentItemViewModel(eq, ItemSlots.Wrists);
+			this.LeftRing = new EquipmentItemViewModel(eq, ItemSlots.LeftRing);
+			this.RightRing = new EquipmentItemViewModel(eq, ItemSlots.RightRing);
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{

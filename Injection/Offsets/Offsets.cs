@@ -51,8 +51,8 @@ namespace ConceptMatrix.Offsets
 		public static Offset StatusEffect = 0x1C1C;
 
 		public static Offset Transparency = 0x1704;
-		public static Offset MainHand = 0x1450;
-		public static Offset OffHand = 0x14B8;
+		public static Offset<Weapon> MainHand = 0x1450;
+		public static Offset<Weapon> OffHand = 0x14B8;
 		public static Offset<Equipment> ActorEquipment = 0x1708; // Starting position is Head Piece Address Offset'
 
 		public static Offset ForceAnimation = 0xC60;

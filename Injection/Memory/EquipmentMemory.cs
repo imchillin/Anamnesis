@@ -49,14 +49,14 @@ namespace ConceptMatrix.Injection.Memory
 		private static void Write(int index, Equipment.Item item, byte[] data)
 		{
 			Array.Copy(BitConverter.GetBytes(item.Base), 0, data, index, 2);
-			Array.Copy(BitConverter.GetBytes(item.Varaint), 0, data, index + 2, 1);
+			Array.Copy(BitConverter.GetBytes(item.Variant), 0, data, index + 2, 1);
 			Array.Copy(BitConverter.GetBytes(item.Dye), 0, data, index + 3, 1);
 		}
 
 		private static void Read(int index, Equipment.Item item, byte[] data)
 		{
 			item.Base = BitConverter.ToUInt16(data, index);
-			item.Varaint = data[index + 2];
+			item.Variant = data[index + 2];
 			item.Dye = data[index + 3];
 		}
 	}

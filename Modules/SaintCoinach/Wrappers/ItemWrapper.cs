@@ -46,27 +46,35 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
-		public ushort ModelBaseId
+		public bool IsWeapon
+		{
+			get
+			{
+				return this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
+			}
+		}
+
+		public ushort ModelBase
+		{
+			get
+			{
+				return this.IsWeapon ? (ushort)this.Value.ModelMain.Value2 : (ushort)this.Value.ModelMain.Value1;
+			}
+		}
+
+		public ushort ModelVariant
+		{
+			get
+			{
+				return this.IsWeapon ? (ushort)this.Value.ModelMain.Value3 : (ushort)this.Value.ModelMain.Value2;
+			}
+		}
+
+		public ushort WeaponSet
 		{
 			get
 			{
 				return (ushort)this.Value.ModelMain.Value1;
-			}
-		}
-
-		public byte ModelVariantId
-		{
-			get
-			{
-				return (byte)this.Value.ModelMain.Value2;
-			}
-		}
-
-		public byte ModelId
-		{
-			get
-			{
-				return (byte)this.Value.ModelMain.Value3;
 			}
 		}
 

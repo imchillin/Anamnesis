@@ -70,7 +70,8 @@
     <Compile Include="Views\ItemView.xaml.cs">
       <DependentUpon>ItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ItemViewModel.cs" />
+    <Compile Include="Views\EquipmentWeaponViewModel.cs" />
+    <Compile Include="Views\EquipmentItemViewModel.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
