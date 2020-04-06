@@ -48,6 +48,9 @@ namespace ConceptMatrix.EquipmentModule.Views
 			if (this.eqMem != null)
 				this.eqMem.Dispose();
 
+			if (selection == null)
+				return;
+
 			this.eqMem = selection.BaseAddress.GetMemory(Offsets.ActorEquipment);
 			Equipment eq = this.eqMem.Value;
 
