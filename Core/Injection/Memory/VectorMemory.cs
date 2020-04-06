@@ -8,28 +8,24 @@ namespace ConceptMatrix.Injection.Memory
 	public class VectorMemory : MemoryBase<Vector>
 	{
 		public VectorMemory(ProcessInjection process, UIntPtr address)
-			: base(process, address)
+			: base(process, address, 12)
 		{
 		}
 
-		protected override Vector Read()
+		protected override Vector Read(ref byte[] data)
 		{
-			byte[] bytearray = this.ReadBytes(12);
-
 			Vector value = default(Vector);
-			value.X = BitConverter.ToSingle(bytearray, 0);
-			value.Y = BitConverter.ToSingle(bytearray, 4);
-			value.Z = BitConverter.ToSingle(bytearray, 8);
+			value.X = BitConverter.ToSingle(data, 0);
+			value.Y = BitConverter.ToSingle(data, 4);
+			value.Z = BitConverter.ToSingle(data, 8);
 			return value;
 		}
 
-		protected override void Write(Vector value)
+		protected override void Write(Vector value, ref byte[] data)
 		{
-			byte[] bytearray = new byte[16];
-			Array.Copy(BitConverter.GetBytes((float)value.X), bytearray, 4);
-			Array.Copy(BitConverter.GetBytes((float)value.Y), 0, bytearray, 4, 4);
-			Array.Copy(BitConverter.GetBytes((float)value.Z), 0, bytearray, 8, 4);
-			this.WriteBytes(bytearray);
+			Array.Copy(BitConverter.GetBytes((float)value.X), data, 4);
+			Array.Copy(BitConverter.GetBytes((float)value.Y), 0, data, 4, 4);
+			Array.Copy(BitConverter.GetBytes((float)value.Z), 0, data, 8, 4);
 		}
 	}
 }

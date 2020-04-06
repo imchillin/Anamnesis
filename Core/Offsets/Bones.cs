@@ -7,8 +7,8 @@ namespace ConceptMatrix.Offsets
 
 	public static class Bones
 	{
-		public static Offset<int> ExHair = new[] { 0xF0, 0xA0, 0x68, 0x4C0, 0x10 };
-		public static Offset<int> ExMet = new[] { 0xF0, 0xA0, 0x68, 0x680, 0x10 };
+		public static Offset ExHair = new[] { 0xF0, 0xA0, 0x68, 0x4C0, 0x10 };
+		public static Offset ExMet = new[] { 0xF0, 0xA0, 0x68, 0x680, 0x10 };
 		public static Offset ExTop = new[] { 0xF0, 0xA0, 0x68, 0x840, 0x10 };
 
 		public static TransformOffset Abdomen = new TransformOffset()

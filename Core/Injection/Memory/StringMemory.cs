@@ -8,35 +8,32 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class StringMemory : MemoryBase<string>
 	{
-		private int length = 32;
 		private bool zeroTerminated = true;
 
 		public StringMemory(ProcessInjection process, UIntPtr address)
-			: base(process, address)
+			: base(process, address, 32)
 		{
 		}
 
-		protected override string Read()
+		protected override string Read(ref byte[] data)
 		{
-			byte[] read = this.ReadBytes(this.length);
-
 			if (this.zeroTerminated)
 			{
-				return Encoding.UTF8.GetString(read).Split('\0')[0];
+				return Encoding.UTF8.GetString(data).Split('\0')[0];
 			}
 			else
 			{
-				return Encoding.UTF8.GetString(read);
+				return Encoding.UTF8.GetString(data);
 			}
 		}
 
-		protected override void Write(string value)
+		protected override void Write(string value, ref byte[] data)
 		{
+			// I don't even know, but here we are.
 			value = value.Replace("\0", string.Empty);
 			value += "\0\0\0\0";
 
-			byte[] data = Encoding.UTF8.GetBytes(value);
-			this.WriteBytes(data);
+			Array.Copy(Encoding.UTF8.GetBytes(value), data, 32);
 		}
 	}
 }

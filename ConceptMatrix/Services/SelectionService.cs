@@ -14,7 +14,7 @@ namespace ConceptMatrix.GUI.Services
 		private Selection currentSelection;
 
 		private IMemory<bool> gposeMem;
-		private IMemory<int> gposeMem2;
+		private IMemory<ushort> gposeMem2;
 
 		public event SelectionEvent SelectionChanged;
 
@@ -100,7 +100,7 @@ namespace ConceptMatrix.GUI.Services
 
 			while (this.IsAlive)
 			{
-				await Task.Delay(100);
+				await Task.Delay(1000);
 
 				Selection.Modes mode = this.GetMode();
 				IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Gpose : Offsets.Target;

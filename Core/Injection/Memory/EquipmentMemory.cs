@@ -8,42 +8,38 @@ namespace ConceptMatrix.Injection.Memory
 	public class EquipmentMemory : MemoryBase<Equipment>
 	{
 		public EquipmentMemory(ProcessInjection process, UIntPtr address)
-			: base(process, address)
+			: base(process, address, 40)
 		{
 		}
 
-		protected override Equipment Read()
+		protected override Equipment Read(ref byte[] data)
 		{
-			byte[] bytearray = this.ReadBytes(40);
-
 			Equipment value = new Equipment();
-			Read(0, value.Head, bytearray);
-			Read(4, value.Chest, bytearray);
-			Read(8, value.Arms, bytearray);
-			Read(12, value.Legs, bytearray);
-			Read(16, value.Feet, bytearray);
-			Read(20, value.Ear, bytearray);
-			Read(24, value.Neck, bytearray);
-			Read(28, value.Wrist, bytearray);
-			Read(32, value.RFinger, bytearray);
-			Read(36, value.LFinger, bytearray);
+			Read(0, value.Head, data);
+			Read(4, value.Chest, data);
+			Read(8, value.Arms, data);
+			Read(12, value.Legs, data);
+			Read(16, value.Feet, data);
+			Read(20, value.Ear, data);
+			Read(24, value.Neck, data);
+			Read(28, value.Wrist, data);
+			Read(32, value.RFinger, data);
+			Read(36, value.LFinger, data);
 			return value;
 		}
 
-		protected override void Write(Equipment value)
+		protected override void Write(Equipment value, ref byte[] data)
 		{
-			byte[] bytearray = new byte[40];
-			Write(0, value.Head, bytearray);
-			Write(4, value.Chest, bytearray);
-			Write(8, value.Arms, bytearray);
-			Write(12, value.Legs, bytearray);
-			Write(16, value.Feet, bytearray);
-			Write(20, value.Ear, bytearray);
-			Write(24, value.Neck, bytearray);
-			Write(28, value.Wrist, bytearray);
-			Write(32, value.RFinger, bytearray);
-			Write(36, value.LFinger, bytearray);
-			this.WriteBytes(bytearray);
+			Write(0, value.Head, data);
+			Write(4, value.Chest, data);
+			Write(8, value.Arms, data);
+			Write(12, value.Legs, data);
+			Write(16, value.Feet, data);
+			Write(20, value.Ear, data);
+			Write(24, value.Neck, data);
+			Write(28, value.Wrist, data);
+			Write(32, value.RFinger, data);
+			Write(36, value.LFinger, data);
 		}
 
 		private static void Write(int index, Equipment.Item item, byte[] data)

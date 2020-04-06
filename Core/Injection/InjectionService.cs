@@ -7,12 +7,12 @@ namespace ConceptMatrix.Injection
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Reflection;
+	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.Injection.Memory;
 	using ConceptMatrix.Injection.Offsets;
-	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
 
 	public class InjectionService : IInjectionService
@@ -99,6 +99,12 @@ namespace ConceptMatrix.Injection
 
 			return memory;
 		}
+
+		[DllImport("kernel32.dll")]
+		internal static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead);
+
+		[DllImport("kernel32.dll")]
+		internal static extern bool WriteProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten);
 
 		private Type GetMemoryType(Type type)
 		{

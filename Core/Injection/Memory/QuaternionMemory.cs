@@ -8,30 +8,26 @@ namespace ConceptMatrix.Injection.Memory
 	public class QuaternionMemory : MemoryBase<Quaternion>
 	{
 		public QuaternionMemory(ProcessInjection process, UIntPtr address)
-			: base(process, address)
+			: base(process, address, 16)
 		{
 		}
 
-		protected override Quaternion Read()
+		protected override Quaternion Read(ref byte[] data)
 		{
-			byte[] bytearray = this.ReadBytes(16);
-
 			Quaternion value = default(Quaternion);
-			value.X = BitConverter.ToSingle(bytearray, 0);
-			value.Y = BitConverter.ToSingle(bytearray, 4);
-			value.Z = BitConverter.ToSingle(bytearray, 8);
-			value.W = BitConverter.ToSingle(bytearray, 12);
+			value.X = BitConverter.ToSingle(data, 0);
+			value.Y = BitConverter.ToSingle(data, 4);
+			value.Z = BitConverter.ToSingle(data, 8);
+			value.W = BitConverter.ToSingle(data, 12);
 			return value;
 		}
 
-		protected override void Write(Quaternion value)
+		protected override void Write(Quaternion value, ref byte[] data)
 		{
-			byte[] bytearray = new byte[16];
-			Array.Copy(BitConverter.GetBytes(value.X), bytearray, 4);
-			Array.Copy(BitConverter.GetBytes(value.Y), 0, bytearray, 4, 4);
-			Array.Copy(BitConverter.GetBytes(value.Z), 0, bytearray, 8, 4);
-			Array.Copy(BitConverter.GetBytes(value.W), 0, bytearray, 12, 4);
-			this.WriteBytes(bytearray);
+			Array.Copy(BitConverter.GetBytes(value.X), data, 4);
+			Array.Copy(BitConverter.GetBytes(value.Y), 0, data, 4, 4);
+			Array.Copy(BitConverter.GetBytes(value.Z), 0, data, 8, 4);
+			Array.Copy(BitConverter.GetBytes(value.W), 0, data, 12, 4);
 		}
 	}
 }

@@ -8,30 +8,26 @@ namespace ConceptMatrix.Injection.Memory
 	public class WeaponMemory : MemoryBase<Weapon>
 	{
 		public WeaponMemory(ProcessInjection process, UIntPtr address)
-			: base(process, address)
+			: base(process, address, 7)
 		{
 		}
 
-		protected override Weapon Read()
+		protected override Weapon Read(ref byte[] data)
 		{
-			byte[] bytearray = this.ReadBytes(7);
-
 			Weapon value = new Weapon();
-			value.Set = BitConverter.ToUInt16(bytearray, 0);
-			value.Base = BitConverter.ToUInt16(bytearray, 2);
-			value.Variant = BitConverter.ToUInt16(bytearray, 4);
-			value.Dye = bytearray[6];
+			value.Set = BitConverter.ToUInt16(data, 0);
+			value.Base = BitConverter.ToUInt16(data, 2);
+			value.Variant = BitConverter.ToUInt16(data, 4);
+			value.Dye = data[6];
 			return value;
 		}
 
-		protected override void Write(Weapon value)
+		protected override void Write(Weapon value, ref byte[] data)
 		{
-			byte[] bytearray = new byte[7];
-			Array.Copy(BitConverter.GetBytes(value.Set), bytearray, 2);
-			Array.Copy(BitConverter.GetBytes(value.Base), 0, bytearray, 2, 2);
-			Array.Copy(BitConverter.GetBytes(value.Variant), 0, bytearray, 4, 2);
-			bytearray[6] = value.Dye;
-			this.WriteBytes(bytearray);
+			Array.Copy(BitConverter.GetBytes(value.Set), data, 2);
+			Array.Copy(BitConverter.GetBytes(value.Base), 0, data, 2, 2);
+			Array.Copy(BitConverter.GetBytes(value.Variant), 0, data, 4, 2);
+			data[6] = value.Dye;
 		}
 	}
 }

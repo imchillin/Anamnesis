@@ -8,19 +8,20 @@ namespace ConceptMatrix.Injection.Memory
 	public class FloatMemory : MemoryBase<float>
 	{
 		public FloatMemory(ProcessInjection process, UIntPtr address)
-			: base(process, address)
+			: base(process, address, 4)
 		{
 		}
 
-		protected override float Read()
+		protected override float Read(ref byte[] data)
 		{
-			byte[] bytearray = this.ReadBytes(4);
-			return BitConverter.ToSingle(bytearray, 0);
+			return BitConverter.ToSingle(data, 0);
 		}
 
-		protected override void Write(float value)
+		protected override void Write(float value, ref byte[] data)
 		{
-			this.WriteBytes(BitConverter.GetBytes(value));
+			// TODO: GetBytes creates a new 4 byte array.
+			// consider getting the float into data directly... somehow.
+			Array.Copy(BitConverter.GetBytes(value), data, 4);
 		}
 	}
 }

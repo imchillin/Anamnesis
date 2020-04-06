@@ -4,9 +4,6 @@
 namespace ConceptMatrix.EquipmentModule.Views
 {
 	using System;
-	using System.ComponentModel;
-	using System.Windows.Media.Media3D;
-	using ConceptMatrix;
 	using ConceptMatrix.Injection;
 	using ConceptMatrix.Services;
 
@@ -20,6 +17,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 			if (item == null)
 				return;
 
+			this.modelBase = item.Base;
+			this.modelVariant = item.Variant;
+			this.dyeId = item.Dye;
+
 			// hmm. doesn't seem to be any reason you _cant_ dye accessories...
 			// TODO: test what happens when you dye an accessory.
 			this.CanDye = slot != ItemSlots.Ears
@@ -30,28 +31,13 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 			this.CanColor = false;
 			this.CanScale = false;
+			this.HasModelSet = false;
+
+			this.Item = this.GetItem();
 		}
 
 		protected override void Apply()
 		{
-			throw new NotImplementedException();
-		}
-
-		private IDye GetDye(Equipment.Item item)
-		{
-			// None
-			if (item.Dye == 0)
-				return null;
-
-			foreach (IDye dye in this.gameData.Dyes.All)
-			{
-				if (dye.Id == item.Dye)
-				{
-					return dye;
-				}
-			}
-
-			return null;
 		}
 	}
 }

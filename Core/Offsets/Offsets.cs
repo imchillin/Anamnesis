@@ -14,7 +14,7 @@ namespace ConceptMatrix.Offsets
 		public static ActorTableOffset GposeActorTable = 0x1C65F80;
 		public static BaseOffset Gpose = 0x1C630E8;
 		public static BaseOffset<bool> GposeCheck = 0x1CB3C1A;
-		public static BaseOffset<int> GposeCheck2 = 0x1C66CD0;
+		public static BaseOffset<ushort> GposeCheck2 = 0x1C66CD0;
 		public static BaseOffset Target = 0x1C63150;
 		public static BaseOffset CameraOffset = 0x1C62F00;
 		public static BaseOffset Time = 0x1C43A78;

@@ -8,18 +8,18 @@ namespace ConceptMatrix.Injection.Memory
 	public class BoolMemory : MemoryBase<bool>
 	{
 		public BoolMemory(ProcessInjection process, UIntPtr address)
-			: base(process, address)
+			: base(process, address, 1)
 		{
 		}
 
-		protected override bool Read()
+		protected override bool Read(ref byte[] data)
 		{
-			return this.ReadByte() == 1;
+			return data[0] == 1;
 		}
 
-		protected override void Write(bool value)
+		protected override void Write(bool value, ref byte[] data)
 		{
-			this.WriteByte((byte)(value ? 1 : 0));
+			data[0] = (byte)(value ? 1 : 0);
 		}
 	}
 }
