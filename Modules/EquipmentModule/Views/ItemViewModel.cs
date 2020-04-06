@@ -6,13 +6,14 @@ namespace ConceptMatrix.EquipmentModule.Views
 	using System;
 	using System.ComponentModel;
 	using System.Windows.Media.Media3D;
+	using ConceptMatrix.Injection;
 	using ConceptMatrix.Services;
 
 	public class ItemViewModel : INotifyPropertyChanged
 	{
 		private IGameDataService gameData;
 
-		public ItemViewModel(ItemSlots slot)
+		public ItemViewModel(Equipment target, ItemSlots slot)
 		{
 			this.gameData = Module.Services.Get<IGameDataService>();
 			this.Slot = slot;
@@ -29,7 +30,28 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 			this.Color = new Color();
 			this.Scale = new Vector3D(1, 1, 1);
-			this.Item = this.gameData.Items.Get(1);
+			////this.Item = this.gameData.Items.Get(1);
+
+			Equipment.Item item = target.GetItem(slot);
+
+			if (item == null)
+				return;
+
+			foreach (IItem tItem in this.gameData.Items.All)
+			{
+				if (!tItem.FitsInSlot(slot))
+					continue;
+
+				// Big old hack, but we prefer the emperors bracelets to the promise bracelets (even though they are the same model)
+				if (slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
+					continue;
+
+				if (tItem.ModelBaseId == item.Base && tItem.ModelVariantId == item.Varaint)
+				{
+					this.Item = tItem;
+					break;
+				}
+			}
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

@@ -5,6 +5,7 @@ namespace ConceptMatrix.Offsets
 {
 	using System;
 	using System.Windows.Media.Media3D;
+	using ConceptMatrix.Injection;
 
 	[Serializable]
 	public static class Offsets
@@ -52,7 +53,7 @@ namespace ConceptMatrix.Offsets
 		public static Offset Transparency = 0x1704;
 		public static Offset MainHand = 0x1450;
 		public static Offset OffHand = 0x14B8;
-		public static Offset ActorEquipment = 0x1708; // Starting position is Head Piece Address Offset'
+		public static Offset<Equipment> ActorEquipment = 0x1708; // Starting position is Head Piece Address Offset'
 
 		public static Offset ForceAnimation = 0xC60;
 		public static Offset IdleAnimation = 0x18BE;

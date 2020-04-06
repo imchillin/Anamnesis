@@ -7,7 +7,7 @@
 			 mc:Ignorable="d"
 			 d:DesignHeight="600" d:DesignWidth="1024">
 
-	<Grid Margin="6" VerticalAlignment="Center">
+	<Grid Margin="6" VerticalAlignment="Center" x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
@@ -32,8 +32,6 @@
 			<local:ItemView Grid.Row="2" Grid.Column="2" DataContext="{Binding RightRing}"/>
 			<local:ItemView Grid.Row="3" Grid.Column="2" DataContext="{Binding LeftRing}"/>
 		</StackPanel>
-
-		<local:ItemView Grid.Column="1" VerticalAlignment="Bottom" DataContext="{Binding Waist}"/>
 
 		<GroupBox Grid.Column="2" Margin="6, 0, 0, 0"/>
 

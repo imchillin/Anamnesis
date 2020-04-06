@@ -147,6 +147,10 @@
       <Name>Core</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\Injection\Injection.csproj">
+      <Project>{09111299-b0d7-4bad-842d-c26da2e6830f}</Project>
+      <Name>Injection</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\WPFStyles\WpfStyles.csproj">
       <Project>{f76c98a0-59bf-4bf8-ab41-0218859a89bd}</Project>
       <Name>WpfStyles</Name>

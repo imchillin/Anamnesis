@@ -209,7 +209,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private static void OnValueChangedStatic(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
-			if (sender is NumberBox numberBox)
+			if (sender is NumberBox numberBox && e.Property.Name == nameof(Value))
 			{
 				numberBox.Text = numberBox.Value.ToString("0.##");
 			}

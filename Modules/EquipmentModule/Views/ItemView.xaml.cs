@@ -85,6 +85,9 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
+			if (this.ViewModel == null)
+				return;
+
 			this.SlotIcon.Source = this.ViewModel.Slot.GetIcon();
 		}
 
