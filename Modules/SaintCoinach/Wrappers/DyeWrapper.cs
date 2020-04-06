@@ -4,8 +4,6 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System;
-	using System.Collections.Generic;
-	using System.Text;
 	using ConceptMatrix.Services;
 	using SaintCoinach.Xiv;
 
@@ -42,6 +40,14 @@ namespace ConceptMatrix.SaintCoinachModule
 			get
 			{
 				return this.GetDyeItem()?.Icon;
+			}
+		}
+
+		public byte Id
+		{
+			get
+			{
+				return (byte)this.Value.Key;
 			}
 		}
 

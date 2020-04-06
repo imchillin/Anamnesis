@@ -38,26 +38,8 @@ namespace ConceptMatrix.EquipmentModule.Views
 			if (item == null)
 				return;
 
-			foreach (IItem tItem in this.gameData.Items.All)
-			{
-				if (!tItem.FitsInSlot(slot))
-					continue;
-
-				// Big old hack, but we prefer the emperors bracelets to the promise bracelets (even though they are the same model)
-				if (slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
-					continue;
-
-				if (tItem.ModelBaseId == item.Base && tItem.ModelVariantId == item.Varaint)
-				{
-					this.Item = tItem;
-					break;
-				}
-			}
-
-			if (this.Item == null)
-			{
-				this.Item = new DummyItem(item);
-			}
+			this.Item = this.GetItem(item, slot);
+			this.Dye = this.GetDye(item);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -173,6 +155,43 @@ namespace ConceptMatrix.EquipmentModule.Views
 			{
 				throw new NotImplementedException();
 			}
+		}
+
+		private IItem GetItem(Equipment.Item item, ItemSlots slot)
+		{
+			foreach (IItem tItem in this.gameData.Items.All)
+			{
+				if (!tItem.FitsInSlot(slot))
+					continue;
+
+				// Big old hack, but we prefer the emperors bracelets to the promise bracelets (even though they are the same model)
+				if (slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
+					continue;
+
+				if (tItem.ModelBaseId == item.Base && tItem.ModelVariantId == item.Varaint)
+				{
+					return tItem;
+				}
+			}
+
+			return new DummyItem(item);
+		}
+
+		private IDye GetDye(Equipment.Item item)
+		{
+			// None
+			if (item.Dye == 0)
+				return null;
+
+			foreach (IDye dye in this.gameData.Dyes.All)
+			{
+				if (dye.Id == item.Dye)
+				{
+					return dye;
+				}
+			}
+
+			return null;
 		}
 
 		public class DummyItem : IItem
