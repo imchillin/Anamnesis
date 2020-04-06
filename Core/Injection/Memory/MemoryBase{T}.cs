@@ -34,7 +34,7 @@ namespace ConceptMatrix.Injection.Memory
 				this.value = value;
 				this.Write(value);
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
-				this.ValueChanged.Invoke(this, value);
+				this.ValueChanged?.Invoke(this, value);
 			}
 		}
 

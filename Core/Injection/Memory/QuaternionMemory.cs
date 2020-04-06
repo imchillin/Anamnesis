@@ -4,7 +4,6 @@
 namespace ConceptMatrix.Injection.Memory
 {
 	using System;
-	using System.Windows.Media.Media3D;
 
 	public class QuaternionMemory : MemoryBase<Quaternion>
 	{
@@ -28,10 +27,10 @@ namespace ConceptMatrix.Injection.Memory
 		protected override void Write(Quaternion value)
 		{
 			byte[] bytearray = new byte[16];
-			Array.Copy(BitConverter.GetBytes((float)value.X), bytearray, 4);
-			Array.Copy(BitConverter.GetBytes((float)value.Y), 0, bytearray, 4, 4);
-			Array.Copy(BitConverter.GetBytes((float)value.Z), 0, bytearray, 8, 4);
-			Array.Copy(BitConverter.GetBytes((float)value.W), 0, bytearray, 12, 4);
+			Array.Copy(BitConverter.GetBytes(value.X), bytearray, 4);
+			Array.Copy(BitConverter.GetBytes(value.Y), 0, bytearray, 4, 4);
+			Array.Copy(BitConverter.GetBytes(value.Z), 0, bytearray, 8, 4);
+			Array.Copy(BitConverter.GetBytes(value.W), 0, bytearray, 12, 4);
 			this.WriteBytes(bytearray);
 		}
 	}

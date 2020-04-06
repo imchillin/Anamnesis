@@ -1,8 +1,9 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Offsets
+namespace ConceptMatrix.Injection.Offsets
 {
+	using System;
 	using ConceptMatrix.Injection;
 
 	public class ActorTableOffset : BaseOffset<int>
@@ -23,6 +24,7 @@ namespace ConceptMatrix.Offsets
 		}
 
 		public IMemory<T> GetActorMemory<T>(int i, params Offset[] offsets)
+			where T : IEquatable<T>
 		{
 			BaseOffset addr = new BaseOffset(this.Offsets[0] + (ulong)((i + 1) * 8));
 			return InjectionService.Instance.GetMemory<T>(addr, offsets);

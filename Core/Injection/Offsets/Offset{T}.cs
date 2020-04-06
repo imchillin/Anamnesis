@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Offsets
+namespace ConceptMatrix.Injection.Offsets
 {
 	using System;
 	using System.Collections.Generic;

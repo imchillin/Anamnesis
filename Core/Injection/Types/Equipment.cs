@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.Injection
 {
+	using System;
 	using ConceptMatrix.Services;
 
 	public class Equipment

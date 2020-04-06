@@ -37,7 +37,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 
 		public event DrawerEvent Close;
 
-		public ConceptMatrix.Color Value
+		public Injection.Color Value
 		{
 			get
 			{
@@ -77,9 +77,9 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			public string Name { get; set; }
 			public Color Color { get; set; }
 
-			public ConceptMatrix.Color AsColor()
+			public Injection.Color AsColor()
 			{
-				return new ConceptMatrix.Color(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f);
+				return new Injection.Color(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f);
 			}
 		}
 	}

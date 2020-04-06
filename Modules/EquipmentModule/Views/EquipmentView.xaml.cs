@@ -6,7 +6,6 @@ namespace ConceptMatrix.EquipmentModule.Views
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
-	using System.Windows.Media.Media3D;
 	using ConceptMatrix.Injection;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
@@ -58,8 +57,8 @@ namespace ConceptMatrix.EquipmentModule.Views
 			IMemory<Weapon> ohMem = selection.BaseAddress.GetMemory(Offsets.OffHand);
 
 			// Weapon slots
-			this.MainHand = new EquipmentWeaponViewModel(mhMem.Value, ItemSlots.MainHand);
-			this.OffHand = new EquipmentWeaponViewModel(ohMem.Value, ItemSlots.OffHand);
+			this.MainHand = new EquipmentWeaponViewModel(mhMem, ItemSlots.MainHand);
+			this.OffHand = new EquipmentWeaponViewModel(ohMem, ItemSlots.OffHand);
 
 			// Equipment slots
 			this.Head = new EquipmentItemViewModel(eq, ItemSlots.Head);

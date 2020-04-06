@@ -1,8 +1,9 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix
+namespace ConceptMatrix.Injection
 {
+	using System;
 	using System.ComponentModel;
 
 	public class Color : INotifyPropertyChanged
@@ -34,7 +35,7 @@ namespace ConceptMatrix
 			set
 			{
 				this.r = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Color.R)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.R)));
 			}
 		}
 
@@ -48,7 +49,7 @@ namespace ConceptMatrix
 			set
 			{
 				this.g = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Color.G)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.G)));
 			}
 		}
 
@@ -62,7 +63,7 @@ namespace ConceptMatrix
 			set
 			{
 				this.b = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Color.B)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.B)));
 			}
 		}
 	}

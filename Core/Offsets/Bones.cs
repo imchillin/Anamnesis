@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix.Offsets
 {
+	using ConceptMatrix.Injection.Offsets;
+
 	public static class Bones
 	{
 		public static Offset<int> ExHair = new[] { 0xF0, 0xA0, 0x68, 0x4C0, 0x10 };

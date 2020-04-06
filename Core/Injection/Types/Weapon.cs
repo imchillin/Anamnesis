@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix.Injection
 {
+	using System;
+
 	public class Weapon
 	{
 		public ushort Set;

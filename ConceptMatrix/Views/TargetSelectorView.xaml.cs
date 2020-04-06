@@ -22,6 +22,7 @@ namespace ConceptMatrix.GUI.Views
 	using System.Windows.Navigation;
 	using System.Windows.Shapes;
 	using ConceptMatrix.GUI.Services;
+	using ConceptMatrix.Injection.Offsets;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
 	using PropertyChanged;

@@ -4,8 +4,8 @@
 namespace ConceptMatrix.Offsets
 {
 	using System;
-	using System.Windows.Media.Media3D;
 	using ConceptMatrix.Injection;
+	using ConceptMatrix.Injection.Offsets;
 
 	[Serializable]
 	public static class Offsets
@@ -41,7 +41,7 @@ namespace ConceptMatrix.Offsets
 		public static Offset ActorType = 0x8C;
 		public static Offset ActorRender = 0x104;
 
-		public static Offset<Vector3D> Camera = 0xA0;
+		public static Offset<Vector> Camera = 0xA0;
 
 		public static Offset ActorAppearance = 0x17B8; // Starting postion is Race Address Offset
 		public static Offset FCTag = 0x17D2;
@@ -64,20 +64,20 @@ namespace ConceptMatrix.Offsets
 		public static Offset DataPath = new[] { 0xF0, 0X938 };
 		public static Offset DataHead = new[] { 0xF0, 0X93C };
 
-		public static Offset<Vector3D> Position = new[] { 0xF0, 0X50 };
+		public static Offset<Vector> Position = new[] { 0xF0, 0X50 };
 		public static Offset Rotation = new[] { 0xF0, 0X60 };
 		public static Offset Height = new[] { 0xF0, 0X26C };
 		public static Offset Wetness = new[] { 0xF0, 0X2B0 };
 		public static Offset Drenched = new[] { 0xF0, 0X2BC };
 
-		public static Offset<Vector3D> BustScale = new[] { 0xF0, 0X148, 0x68 };
+		public static Offset<Vector> BustScale = new[] { 0xF0, 0X148, 0x68 };
 		public static Offset UniqueFeatureScale = new[] { 0xF0, 0X148, 0x74 }; // Tail & Ears.
 		public static Offset MuscleTone = new[] { 0xF0, 0X240, 0x28, 0x20, 0x0C };
-		public static Offset<Vector3D> Scale = new[] { 0xF0, 0x70 };
+		public static Offset<Vector> Scale = new[] { 0xF0, 0x70 };
 
-		public static Offset<Vector3D> MainHandScale = new[] { 0xF0, 0x30, 0x70 };
+		public static Offset<Vector> MainHandScale = new[] { 0xF0, 0x30, 0x70 };
 		public static Offset<Color> MainHandColor = new[] { 0xF0, 0x30, 0x258 };
-		public static Offset<Vector3D> OffhandScale = new[] { 0xF0, 0x30, 0x28, 0x70 };
+		public static Offset<Vector> OffhandScale = new[] { 0xF0, 0x30, 0x28, 0x70 };
 		public static Offset<Color> OffhandColor = new[] { 0xF0, 0x30, 0x28, 0x258 };
 
 		// Actor's RGB Values
@@ -92,7 +92,7 @@ namespace ConceptMatrix.Offsets
 		public static Offset<float> MouthGloss = new[] { 0xF0, 0x240, 0x28, 0x20, 0x2C };
 		public static Offset<Color> LimbalColor = new[] { 0xF0, 0x240, 0x28, 0x20, 0x80 };
 
-		public static Offset<Vector3D> CameraView = 0x180;
+		public static Offset<Vector> CameraView = 0x180;
 		public static Offset CameraCurrentZoom = 0x114;
 		public static Offset CameraMinZoom = 0x118;
 		public static Offset CameraMaxZoom = 0x11c;

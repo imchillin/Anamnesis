@@ -11,6 +11,7 @@ namespace ConceptMatrix.Injection
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.Injection.Memory;
+	using ConceptMatrix.Injection.Offsets;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
 

@@ -31,11 +31,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public EquipmentItemViewModel ViewModel
+		public EquipmentBaseViewModel ViewModel
 		{
 			get
 			{
-				return this.DataContext as EquipmentItemViewModel;
+				return this.DataContext as EquipmentBaseViewModel;
 			}
 		}
 
