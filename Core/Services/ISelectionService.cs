@@ -20,12 +20,13 @@ namespace ConceptMatrix.Services
 		public readonly IBaseMemoryOffset BaseAddress;
 		public readonly string ActorId;
 
-		public Selection(Types type, IBaseMemoryOffset address, string actorId, string name)
+		public Selection(Types type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
 		{
 			this.Type = type;
 			this.BaseAddress = address;
 			this.ActorId = actorId;
 			this.Name = name;
+			this.Mode = mode;
 		}
 
 		public enum Types
@@ -33,8 +34,16 @@ namespace ConceptMatrix.Services
 			Character,
 		}
 
+		public enum Modes
+		{
+			Overworld,
+			GPose,
+		}
+
 		public Types Type { get; private set; }
 
 		public string Name { get; private set; }
+
+		public Modes Mode { get; private set; }
 	}
 }

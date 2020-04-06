@@ -98,21 +98,29 @@ namespace ConceptMatrix.Injection
 			}
 
 			ulong[] longOffsets = offsetsList.ToArray();
-			byte[] memoryAddress = new byte[size];
-			ReadProcessMemory(this.Handle, (UIntPtr)longOffsets[0], memoryAddress, (UIntPtr)size, IntPtr.Zero);
 
-			long num1 = BitConverter.ToInt64(memoryAddress, 0);
-
-			UIntPtr base1 = (UIntPtr)0;
-
-			for (int i = 1; i < offsets.Length; i++)
+			if (longOffsets.Length > 1)
 			{
-				base1 = new UIntPtr(Convert.ToUInt64(num1 + (long)longOffsets[i]));
-				ReadProcessMemory(this.Handle, base1, memoryAddress, (UIntPtr)size, IntPtr.Zero);
-				num1 = BitConverter.ToInt64(memoryAddress, 0);
-			}
+				byte[] memoryAddress = new byte[size];
+				ReadProcessMemory(this.Handle, (UIntPtr)longOffsets[0], memoryAddress, (UIntPtr)size, IntPtr.Zero);
 
-			return base1;
+				long num1 = BitConverter.ToInt64(memoryAddress, 0);
+
+				UIntPtr base1 = (UIntPtr)0;
+
+				for (int i = 1; i < longOffsets.Length; i++)
+				{
+					base1 = new UIntPtr(Convert.ToUInt64(num1 + (long)longOffsets[i]));
+					ReadProcessMemory(this.Handle, base1, memoryAddress, (UIntPtr)size, IntPtr.Zero);
+					num1 = BitConverter.ToInt64(memoryAddress, 0);
+				}
+
+				return base1;
+			}
+			else
+			{
+				return (UIntPtr)longOffsets[0];
+			}
 		}
 
 		[DllImport("kernel32.dll", SetLastError = true)]

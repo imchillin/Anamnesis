@@ -9,16 +9,17 @@ namespace ConceptMatrix.Offsets
 	[Serializable]
 	public static class Offsets
 	{
-		public static BaseOffset ActorTableOffset = 0x1C644F0;
-		public static BaseOffset GposeOffset = 0x1C630E8;
-		public static BaseOffset GposeCheckOffset = 0x1CB3C1A;
-		public static BaseOffset GposeCheck2Offset = 0x1C66CD0;
-		public static BaseOffset TargetOffset = 0x1C63150;
+		public static ActorTableOffset ActorTable = 0x1C644F0;
+		public static ActorTableOffset GposeActorTable = 0x1C65F80;
+		public static BaseOffset Gpose = 0x1C630E8;
+		public static BaseOffset<bool> GposeCheck = 0x1CB3C1A;
+		public static BaseOffset<int> GposeCheck2 = 0x1C66CD0;
+		public static BaseOffset Target = 0x1C63150;
 		public static BaseOffset CameraOffset = 0x1C62F00;
-		public static BaseOffset TimeOffset = 0x1C43A78;
+		public static BaseOffset Time = 0x1C43A78;
 		public static BaseOffset WeatherOffset = 0x1C1A858;
 		public static BaseOffset TerritoryOFfset = 0x1C413B0;
-		public static BaseOffset GposeFiltersOffset = 0x1C41B38;
+		public static BaseOffset GposeFilters = 0x1C41B38;
 		public static BaseOffset MusicOffset = 0x1C80C28;
 		public static BaseOffset SkeletonOffset1 = 0x1381A40; // Base
 		public static BaseOffset SkeletonOffset2 = 0x1382B6D;

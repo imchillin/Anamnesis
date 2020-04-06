@@ -56,42 +56,58 @@ namespace ConceptMatrix.GUI.Views
 		{
 			try
 			{
-				throw new NotImplementedException();
-				/*bool isGpose = true;
+				Selection.Modes mode = this.selection.GetMode();
+				ActorTableOffset actorTableOffset;
+				BaseOffset targetOffset;
 
 				// clear the entity list
 				this.Entities.Clear();
 
-				if (isGpose)
+				if (mode == Selection.Modes.GPose)
 				{
-					IMemory<int> countMem = this.injection.GetMemory<int>(BaseAddresses.GPoseEntity);
-					int count = countMem.Value;
-
-					for (int i = 0; i < count; i++)
-					{
-						// ew
-						string addr = (long.Parse(this.injection.Offsets.GposeEntityOffset, NumberStyles.HexNumber) + long.Parse(((i + 1) * 8).ToString("X"), NumberStyles.HexNumber)).ToString("X");
-
-						////IMemory<Vector3D> positionMem = this.injection.GetMemory<Vector3D>(addr, this.injection.Offsets.Character.Body.Base, this.injection.Offsets.Character.Body.Position.X)
-
-						IMemory<string> actorIdMem = this.injection.GetMemory<string>(BaseAddresses.GPoseTarget, this.injection.Offsets.Character.ActorID);
-						IMemory<string> nameMem = this.injection.GetMemory<string>(addr, this.injection.Offsets.Character.Name);
-
-						string name = nameMem.Value;
-						string actorId = actorIdMem.Value;
-
-						PossibleSelection selection = new PossibleSelection(Selection.Types.Character, BaseAddresses.GPoseTarget, actorId, name);
-						selection.IsSelected = !this.selection.UseGameTarget && this.selection.CurrentSelection != null && this.selection.CurrentSelection.Name == name;
-						this.Entities.Add(selection);
-					}
+					actorTableOffset = Offsets.GposeActorTable;
+					targetOffset = Offsets.Gpose;
+				}
+				else if (mode == Selection.Modes.Overworld)
+				{
+					actorTableOffset = Offsets.ActorTable;
+					targetOffset = Offsets.Target;
 				}
 				else
 				{
-					throw new NotImplementedException();
+					throw new Exception("Unknown selection mode: " + mode);
+				}
+
+				using (IMemory<int> countMem = actorTableOffset.GetCountMemory())
+				{
+					int count = countMem.Value;
+
+					HashSet<string> ids = new HashSet<string>();
+
+					for (int i = 0; i < count; i++)
+					{
+						using (IMemory<string> nameMem = actorTableOffset.GetActorMemory<string>(i, Offsets.Name))
+						{
+							string name = nameMem.Value;
+							string id = mode.ToString() + "_" + name;
+
+							if (ids.Contains(id))
+								continue;
+
+							ids.Add(id);
+
+							if (string.IsNullOrEmpty(name))
+								name = "Unknown";
+
+							PossibleSelection selection = new PossibleSelection(Selection.Types.Character, targetOffset, id, name, mode);
+							selection.IsSelected = !this.selection.UseGameTarget && this.selection.CurrentSelection != null && this.selection.CurrentSelection.Name == name;
+							this.Entities.Add(selection);
+						}
+					}
 				}
 
 				this.AutoRadio.IsChecked = this.selection.UseGameTarget;
-				this.InGameSelection = this.selection.CurrentGameTarget?.Name;*/
+				this.InGameSelection = this.selection.CurrentGameTarget?.Name;
 			}
 			catch (Exception ex)
 			{
@@ -117,8 +133,8 @@ namespace ConceptMatrix.GUI.Views
 
 		public class PossibleSelection : Selection
 		{
-			public PossibleSelection(Types type, IBaseMemoryOffset address, string actorId, string name)
-				: base(type, address, actorId, name)
+			public PossibleSelection(Types type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
+				: base(type, address, actorId, name, mode)
 			{
 			}
 

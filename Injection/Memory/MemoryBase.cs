@@ -48,6 +48,14 @@ namespace ConceptMatrix.Injection.Memory
 		}
 
 		/// <summary>
+		/// Write byte array to address.
+		/// </summary>
+		public void WriteByte(byte write)
+		{
+			WriteProcessMemory(this.process.Handle, this.address, new[] { write }, (UIntPtr)1, out IntPtr bytesRead);
+		}
+
+		/// <summary>
 		/// Read byte array from the address.
 		/// </summary>
 		public byte[] ReadBytes(long length)
@@ -61,6 +69,15 @@ namespace ConceptMatrix.Injection.Memory
 			}
 
 			return bytes;
+		}
+
+		/// <summary>
+		/// Read a single byte from the address.
+		/// </summary>
+		public byte ReadByte()
+		{
+			byte[] bytes = this.ReadBytes(1);
+			return bytes[0];
 		}
 
 		public void Dispose()

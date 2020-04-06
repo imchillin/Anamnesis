@@ -13,6 +13,9 @@ namespace ConceptMatrix.GUI.Services
 	{
 		private Selection currentSelection;
 
+		private IMemory<bool> gposeMem;
+		private IMemory<int> gposeMem2;
+
 		public event SelectionEvent SelectionChanged;
 
 		public bool IsAlive
@@ -70,8 +73,24 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Start()
 		{
+			this.gposeMem = Offsets.GposeCheck.GetMemory();
+			this.gposeMem2 = Offsets.GposeCheck2.GetMemory();
+
 			Task.Run(this.Watch);
+
 			return Task.CompletedTask;
+		}
+
+		public Selection.Modes GetMode()
+		{
+			if (this.gposeMem.Value && this.gposeMem2.Value == 4)
+			{
+				return Selection.Modes.GPose;
+			}
+			else
+			{
+				return Selection.Modes.Overworld;
+			}
 		}
 
 		private async Task Watch()
@@ -83,16 +102,16 @@ namespace ConceptMatrix.GUI.Services
 			{
 				await Task.Delay(100);
 
-				////IMemory<string> actorIdMem1 = Offsets.ActorID.GetMemory(Offsets.TargetOffset);
-				////IMemory<string> actorIdMem2 = Offsets.TargetOffset.GetMemory(Offsets.ActorID);
+				Selection.Modes mode = this.GetMode();
+				IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Gpose : Offsets.Target;
 
-				IBaseMemoryOffset baseOffset = Offsets.TargetOffset;
-
-				string actorId;
-				using (IMemory<string> actorIdMem = Offsets.TargetOffset.GetMemory(Offsets.ActorID))
+				string name;
+				using (IMemory<string> nameMem = injection.GetMemory<string>(baseOffset, Offsets.Name))
 				{
-					actorId = actorIdMem.Value;
+					name = nameMem.Value;
 				}
+
+				string actorId = mode.ToString() + "_" + name;
 
 				if (string.IsNullOrEmpty(actorId))
 				{
@@ -100,15 +119,11 @@ namespace ConceptMatrix.GUI.Services
 					continue;
 				}
 
-				if (this.CurrentGameTarget == null || this.CurrentGameTarget.ActorId != actorId)
+				if (this.CurrentGameTarget == null
+					|| this.CurrentGameTarget.ActorId != actorId
+					|| this.CurrentGameTarget.Mode != mode)
 				{
-					string name;
-					using (IMemory<string> nameMem = injection.GetMemory<string>(baseOffset, Offsets.Name))
-					{
-						name = nameMem.Value;
-					}
-
-					this.CurrentGameTarget = new Selection(Selection.Types.Character, baseOffset, actorId, name);
+					this.CurrentGameTarget = new Selection(Selection.Types.Character, baseOffset, actorId, name, mode);
 				}
 
 				if (this.UseGameTarget && this.CurrentSelection != this.CurrentGameTarget)

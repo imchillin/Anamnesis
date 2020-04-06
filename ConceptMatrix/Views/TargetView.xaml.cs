@@ -32,16 +32,20 @@ namespace ConceptMatrix.GUI.Views
 		{
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				this.ModeLabel.Content = this.selection.UseGameTarget ? "Auto Selection" : "Manual Selection";
+				string modeLabel = string.Empty;
 
 				if (newSelection != null)
 				{
 					this.NameLabel.Content = newSelection.Name;
+					modeLabel = newSelection.Mode.ToString() + " - ";
 				}
 				else
 				{
 					this.NameLabel.Content = "None";
 				}
+
+				modeLabel += this.selection.UseGameTarget ? "Auto" : "Manual";
+				this.ModeLabel.Content = modeLabel;
 			});
 		}
 
