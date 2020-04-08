@@ -38,17 +38,6 @@ namespace ConceptMatrix.GUI.Views
 			{
 				this.OnAddView(path, null);
 			}
-
-			// Temp
-			this.viewService.AddView<HomeView>("Character/Appearance");
-			this.viewService.AddView<HomeView>("Character/Model Data");
-			this.viewService.AddView<HomeView>("Character/Properties");
-			this.viewService.AddView<HomeView>("Character/Equipment Properties");
-			this.viewService.AddView<HomeView>("Character/Posing Matrix");
-			this.viewService.AddView<HomeView>("World/Camera Settings");
-			this.viewService.AddView<HomeView>("World/Instance Settings");
-			this.viewService.AddView<HomeView>("World/GPose Filters");
-			this.viewService.AddView<HomeView>("Housing/Furniture Mover");
 		}
 
 		public ObservableCollection<NavigationItem> Items { get; set; } = new ObservableCollection<NavigationItem>();
