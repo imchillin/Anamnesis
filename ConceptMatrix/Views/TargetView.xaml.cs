@@ -8,6 +8,7 @@ namespace ConceptMatrix.GUI.Views
 	using System.Windows.Controls;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.Services;
+	using FontAwesome.Sharp;
 
 	/// <summary>
 	/// Interaction logic for TargetView.xaml.
@@ -36,13 +37,15 @@ namespace ConceptMatrix.GUI.Views
 
 				if (newSelection != null)
 				{
-					////this.Icon.Icon = this.GetIcon(newSelection.Type);
+					this.Icon.Icon = this.GetIcon(newSelection.Type);
+					this.Icon.ToolTip = newSelection.Type.ToString();
 					this.NameLabel.Content = newSelection.Name;
 					modeLabel = newSelection.Mode.ToString() + " - ";
 				}
 				else
 				{
-					////this.Icon.Icon = FontAwesomeIcon.None;
+					this.Icon.Icon = IconChar.None;
+					this.Icon.ToolTip = null;
 					this.NameLabel.Content = "None";
 				}
 
@@ -56,26 +59,22 @@ namespace ConceptMatrix.GUI.Views
 			App.Services.Get<IViewService>().ShowDrawer<TargetSelectorView>("Selection", DrawerDirection.Left);
 		}
 
-		/*private FontAwesomeIcon GetIcon(ActorTypes type)
+		private IconChar GetIcon(ActorTypes type)
 		{
 			switch (type)
 			{
-				case ActorTypes.None: return FontAwesomeIcon.None;
-				case ActorTypes.Player: return FontAwesomeIcon.User;
-				case ActorTypes.BattleNpc: return FontAwesomeIcon.user
-				case ActorTypes.EventNpc:
-				case ActorTypes.Treasure:
-				case ActorTypes.Aetheryte:
-				case ActorTypes.GatheringPoint:
-				case ActorTypes.EventObj:
-				case ActorTypes.MountType:
-				case ActorTypes.Companion:
-				case ActorTypes.Retainer:
-				case ActorTypes.Area:
-				case ActorTypes.Housing:
-				case ActorTypes.Cutscene:
-				case ActorTypes.CardStand:
+				case ActorTypes.None: return IconChar.None;
+				case ActorTypes.Player: return IconChar.User;
+				case ActorTypes.BattleNpc: return IconChar.UserShield;
+				case ActorTypes.EventNpc: return IconChar.UserNinja;
+				case ActorTypes.Treasure: return IconChar.Coins;
+				case ActorTypes.Aetheryte: return IconChar.Gem;
+				case ActorTypes.Companion: return IconChar.Cat;
+				case ActorTypes.Retainer: return IconChar.ConciergeBell;
+				case ActorTypes.Housing: return IconChar.Chair;
 			}
-		}*/
+
+			return IconChar.Question;
+		}
 	}
 }
