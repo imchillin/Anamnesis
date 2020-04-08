@@ -103,7 +103,7 @@
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
 					<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnThemeClick" BorderThickness="0">
-						<fa:IconBlock Icon="PaintBrush" Opacity="0.35"/>
+						<fa:IconBlock Icon="PaintBrush" Opacity="0.35" FontSize="12"/>
 					</Button>
 
 					<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" 
@@ -119,13 +119,13 @@
 						
 						<ToggleButton.Content>
 							<Grid Width="28" Height="28">
-								<fa:IconBlock Icon="ThumbTack" Opacity="0.35" Margin="6, 7, 6, 6"/>
+								<fa:IconBlock Icon="ThumbTack" Opacity="0.35" Margin="6, 7, 6, 6" FontSize="12"/>
 							</Grid>
 						</ToggleButton.Content>
 						<materialdesign:ToggleButtonAssist.OnContent>
 							<Grid Width="28" Height="28">
 								<Ellipse Stroke="Black" Fill="Black" StrokeThickness="1" Margin="4" Opacity="0.35"/>
-								<fa:IconBlock Foreground="{DynamicResource SecondaryAccentBrush}" Icon="ThumbTack" Margin="6, 7, 6, 6"/>
+								<fa:IconBlock Foreground="{DynamicResource SecondaryAccentBrush}" Icon="ThumbTack" Margin="6, 7, 6, 6" FontSize="12"/>
 							</Grid>
 						</materialdesign:ToggleButtonAssist.OnContent>
 
@@ -133,11 +133,11 @@
 					</ToggleButton>
 
 					<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnMinimiseClick">
-						<fa:IconBlock Icon="WindowMinimize" Opacity="0.35"/>
+						<fa:IconBlock Icon="WindowMinimize" Opacity="0.35" FontSize="12"/>
 					</Button>
 
 					<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnCloseClick">
-						<fa:IconBlock Icon="Times" Opacity="0.35"/>
+						<fa:IconBlock Icon="Times" Opacity="0.35" FontSize="12"/>
 					</Button>
 
 				</StackPanel>

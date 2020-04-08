@@ -20,7 +20,7 @@
 			</Grid.ColumnDefinitions>
 
 			<Grid Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-				<fa:IconBlock x:Name="Icon" Icon="User" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
+				<fa:IconBlock x:Name="Icon" Icon="User" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" FontSize="22"/>
 			</Grid>
 
 			<Label Grid.Column="1" Grid.Row="0" x:Name="ModeLabel" Content="Auto Selection" FontWeight="Light" Margin="3,0,0,0" Padding="0" VerticalAlignment="Center" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
