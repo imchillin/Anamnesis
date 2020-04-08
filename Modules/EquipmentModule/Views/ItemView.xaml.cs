@@ -54,6 +54,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 			EquipmentSelector selector = new EquipmentSelector(this.ViewModel.Slot);
 			selector.Value = this.ViewModel.Item;
 			await viewService.ShowDrawer(selector, "Select " + this.ViewModel.SlotName);
+
+			if (selector.Value == null)
+				return;
+
 			this.ViewModel.Item = selector.Value;
 		}
 
@@ -64,6 +68,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 			DyeSelector selector = new DyeSelector();
 			selector.Value = this.ViewModel.Dye;
 			await viewService.ShowDrawer(selector, "Select Dye");
+
+			if (selector.Value == null)
+				return;
+
 			this.ViewModel.Dye = selector.Value;
 		}
 
@@ -74,6 +82,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 			ColorSelectorDrawer selector = new ColorSelectorDrawer();
 			selector.Value = this.ViewModel.Color;
 			await viewService.ShowDrawer(selector, "Color");
+
+			if (selector.Value == null)
+				return;
+
 			this.ViewModel.Color = selector.Value;
 		}
 
