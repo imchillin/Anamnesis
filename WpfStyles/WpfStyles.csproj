@@ -91,6 +91,7 @@
     <Compile Include="Drawers\ColorSelectorDrawer.xaml.cs">
       <DependentUpon>ColorSelectorDrawer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\ActorTypesExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

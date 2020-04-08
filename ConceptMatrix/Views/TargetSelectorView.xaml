@@ -4,10 +4,11 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="232">
 
-	<Grid>
+	<Grid Margin="12, 0, 12, 12">
 
 
 		<Grid.RowDefinitions>
@@ -17,14 +18,20 @@
 		
 
 		<RadioButton x:Name="AutoRadio" Grid.Column="0" Grid.Row="0" Margin="0, 12, 0, 10" GroupName="SelectionGroup" Checked="OnAutoSelected">
-			<Grid VerticalAlignment="Center" Margin="5, -10, 0, 0">
+			<Grid VerticalAlignment="Center" Margin="0, -10, 0, 0">
 				<Grid.RowDefinitions>
 					<RowDefinition/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 				
-				<Label Grid.Row="0" Content="In-game Selection (Auto)" VerticalAlignment="Center" Padding="0"/>
-				<Label Grid.Row="1" Content="{Binding InGameSelection}" VerticalAlignment="Center" Padding="0" FontWeight="DemiBold"/>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="20"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+
+				<Label Grid.ColumnSpan="2" Grid.Row="0" Content="In-game Selection (Auto)" VerticalAlignment="Center" Padding="0" Margin="5, 0, 0, 0"/>
+				<fa:IconBlock Grid.Row="1" Grid.Column="0" Icon="{Binding InGameIcon}"/>
+				<Label Grid.Column="1" Grid.Row="1" Content="{Binding InGameSelection}" VerticalAlignment="Center" Padding="0" FontWeight="DemiBold"/>
 			</Grid>
 		</RadioButton>
 
@@ -33,7 +40,13 @@
 				<DataTemplate>
 					<RadioButton Margin="0, 6, 0, 6"  IsChecked="{Binding IsSelected}" GroupName="SelectionGroup" Checked="OnSelected">
 						<Grid VerticalAlignment="Center" Margin="0, -7, 0, 0">
-							<Label Content="{Binding Name, FallbackValue='Some Actor'}" VerticalAlignment="Center"/>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="20"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}"/>
+							<Label Grid.Column="1" Content="{Binding Name, FallbackValue='Some Actor'}" VerticalAlignment="Center"/>
 						</Grid>
 					</RadioButton>
 				</DataTemplate>

@@ -25,6 +25,8 @@ namespace ConceptMatrix.GUI.Views
 	using ConceptMatrix.Injection.Offsets;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
+	using ConceptMatrix.WpfStyles;
+	using FontAwesome.Sharp;
 	using PropertyChanged;
 
 	/// <summary>
@@ -52,6 +54,7 @@ namespace ConceptMatrix.GUI.Views
 
 		public ObservableCollection<PossibleSelection> Entities { get; set; } = new ObservableCollection<PossibleSelection>();
 		public string InGameSelection { get; set; }
+		public IconChar InGameIcon { get; set; }
 
 		private void GetEntities()
 		{
@@ -79,13 +82,13 @@ namespace ConceptMatrix.GUI.Views
 					throw new Exception("Unknown selection mode: " + mode);
 				}
 
-				int count = actorTableOffset.GetCount();
+				byte count = actorTableOffset.GetCount();
 				HashSet<string> ids = new HashSet<string>();
 
-				for (int i = 0; i < count; i++)
+				for (byte i = 0; i < count; i++)
 				{
-					ActorTypes type = actorTableOffset.GetValue(Offsets.ActorType);
-					string name = actorTableOffset.GetValue(Offsets.Name);
+					ActorTypes type = actorTableOffset.GetActorValue(i, Offsets.ActorType);
+					string name = actorTableOffset.GetActorValue(i, Offsets.Name);
 
 					string id = mode.ToString() + "_" + type + "_" + name;
 
@@ -103,7 +106,17 @@ namespace ConceptMatrix.GUI.Views
 				}
 
 				this.AutoRadio.IsChecked = this.selection.UseGameTarget;
-				this.InGameSelection = this.selection.CurrentGameTarget?.Name;
+
+				if (this.selection.CurrentGameTarget != null)
+				{
+					this.InGameSelection = this.selection.CurrentGameTarget.Name;
+					this.InGameIcon = this.selection.CurrentGameTarget.Type.GetIcon();
+				}
+				else
+				{
+					this.InGameSelection = null;
+					this.InGameIcon = IconChar.None;
+				}
 			}
 			catch (Exception ex)
 			{
@@ -135,6 +148,14 @@ namespace ConceptMatrix.GUI.Views
 			}
 
 			public bool IsSelected { get; set; }
+
+			public IconChar Icon
+			{
+				get
+				{
+					return this.Type.GetIcon();
+				}
+			}
 		}
 	}
 }
