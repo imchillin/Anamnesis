@@ -4,10 +4,12 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Text;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
+	using ConceptMatrix.GUI.Serialization;
 	using ConceptMatrix.Services;
 	using Microsoft.WindowsAPICodePack.Dialogs;
 	using Newtonsoft.Json;
@@ -127,6 +129,8 @@ namespace ConceptMatrix.GUI.Services
 					}
 				}
 
+				path += "." + type.Extension;
+
 				using (FileStream stream = new FileStream(path, FileMode.Create))
 				{
 					if (type.Serialize != null)
@@ -137,7 +141,7 @@ namespace ConceptMatrix.GUI.Services
 					{
 						using (TextWriter writer = new StreamWriter(stream))
 						{
-							string json = JsonConvert.SerializeObject(file, Formatting.Indented);
+							string json = Serializer.Serialize(file);
 							writer.Write(json);
 						}
 					}
@@ -196,7 +200,7 @@ namespace ConceptMatrix.GUI.Services
 					using (TextReader reader = new StreamReader(stream))
 					{
 						string json = reader.ReadToEnd();
-						file = (FileBase)JsonConvert.DeserializeObject(json, type.Type);
+						file = (FileBase)Serializer.Deserialize(json, type.Type);
 					}
 				}
 			}

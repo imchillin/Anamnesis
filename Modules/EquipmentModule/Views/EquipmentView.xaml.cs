@@ -99,20 +99,43 @@ namespace ConceptMatrix.EquipmentModule.Views
 			FileBase file = await fileService.OpenAny(EquipmentSetFile.FileType, LegacyEquipmentSetFile.FileType);
 
 			if (file is LegacyEquipmentSetFile legacyFile)
-			{
 				file = legacyFile.Upgrade();
-			}
 
-			if (file is EquipmentSetFile poseFile)
+			if (file is EquipmentSetFile eqFile)
 			{
-				// load the equipment....
-				throw new NotImplementedException();
+				eqFile.MainHand.Write(this.MainHand);
+				eqFile.OffHand.Write(this.OffHand);
+				eqFile.Head.Write(this.Head);
+				eqFile.Body.Write(this.Body);
+				eqFile.Hands.Write(this.Hands);
+				eqFile.Legs.Write(this.Legs);
+				eqFile.Feet.Write(this.Feet);
+				eqFile.Ears.Write(this.Ears);
+				eqFile.Neck.Write(this.Neck);
+				eqFile.Wrists.Write(this.Wrists);
+				eqFile.LeftRing.Write(this.LeftRing);
+				eqFile.RightRing.Write(this.RightRing);
 			}
 		}
 
 		private void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
+			IFileService fileService = Module.Services.Get<IFileService>();
+			EquipmentSetFile eqFile = new EquipmentSetFile();
+			eqFile.MainHand.Read(this.MainHand);
+			eqFile.OffHand.Read(this.OffHand);
+			eqFile.Head.Read(this.Head);
+			eqFile.Body.Read(this.Body);
+			eqFile.Hands.Read(this.Hands);
+			eqFile.Legs.Read(this.Legs);
+			eqFile.Feet.Read(this.Feet);
+			eqFile.Ears.Read(this.Ears);
+			eqFile.Neck.Read(this.Neck);
+			eqFile.Wrists.Read(this.Wrists);
+			eqFile.LeftRing.Read(this.LeftRing);
+			eqFile.RightRing.Read(this.RightRing);
+
+			fileService.Save(eqFile);
 		}
 	}
 }

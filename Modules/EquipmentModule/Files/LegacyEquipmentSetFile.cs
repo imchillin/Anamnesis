@@ -90,6 +90,8 @@ namespace ConceptMatrix.EquipmentModule.Files
 				item.ModelBase = this.Item2;
 				item.ModelVariant = this.Item3;
 				item.DyeId = (byte)this.Item4;
+				item.Scale = Vector.One;
+				item.Color = Color.White;
 				return item;
 			}
 		}
