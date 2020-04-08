@@ -39,18 +39,18 @@ namespace ConceptMatrix.GUI.Views
 				{
 					this.Icon.Icon = this.GetIcon(newSelection.Type);
 					this.Icon.ToolTip = newSelection.Type.ToString();
-					this.NameLabel.Content = newSelection.Name;
+					this.NameLabel.Text = newSelection.Name;
 					modeLabel = newSelection.Mode.ToString() + " - ";
 				}
 				else
 				{
 					this.Icon.Icon = IconChar.None;
 					this.Icon.ToolTip = null;
-					this.NameLabel.Content = "None";
+					this.NameLabel.Text = "None";
 				}
 
 				modeLabel += this.selection.UseGameTarget ? "Auto" : "Manual";
-				this.ModeLabel.Content = modeLabel;
+				this.ModeLabel.Text = modeLabel;
 			});
 		}
 
