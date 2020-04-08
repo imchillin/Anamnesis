@@ -5,11 +5,14 @@ namespace ConceptMatrix.EquipmentModule.Views
 {
 	using System.ComponentModel;
 	using System.Windows.Media.Media3D;
-	using ConceptMatrix.Injection;
+	using ConceptMatrix;
 	using ConceptMatrix.Services;
 
 	public abstract class EquipmentBaseViewModel : INotifyPropertyChanged
 	{
+		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
+		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
+
 		protected IGameDataService gameData;
 
 		protected ushort modelBase;
@@ -18,14 +21,20 @@ namespace ConceptMatrix.EquipmentModule.Views
 		protected byte dyeId;
 
 		private IItem item;
+		private IDye dye;
+		private Selection target;
 
-		public EquipmentBaseViewModel(ItemSlots slot)
+		public EquipmentBaseViewModel(ItemSlots slot, Selection selection)
 		{
+			this.target = selection;
 			this.gameData = Module.Services.Get<IGameDataService>();
 			this.Slot = slot;
 		}
 
+		public delegate void ChangedHandler();
+
 		public event PropertyChangedEventHandler PropertyChanged;
+		public event ChangedHandler Changed;
 
 		public ItemSlots Slot
 		{
@@ -42,19 +51,49 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 			set
 			{
+				IItem oldItem = this.item;
 				this.item = value;
-				this.modelSet = value.WeaponSet;
-				this.modelBase = value.ModelBase;
-				this.modelVariant = value.ModelVariant;
 
-				this.Apply();
+				if (value != null)
+				{
+					this.modelSet = value.WeaponSet;
+					this.modelBase = value.ModelBase;
+					this.modelVariant = value.ModelVariant;
+				}
+				else
+				{
+					this.modelSet = 0;
+					this.modelBase = 0;
+					this.modelVariant = 0;
+				}
+
+				if (oldItem != null && oldItem != this.item)
+				{
+					this.Apply();
+					this.target.ActorRefresh();
+				}
 			}
 		}
 
 		public IDye Dye
 		{
-			get;
-			set;
+			get
+			{
+				return this.dye;
+			}
+
+			set
+			{
+				IDye oldDye = this.dye;
+				this.dye = value;
+				this.dyeId = this.dye != null ? value.Id : (byte)0;
+
+				if (oldDye != null && oldDye != this.dye)
+				{
+					this.Apply();
+					this.target.ActorRefresh();
+				}
+			}
 		}
 
 		public bool CanDye
@@ -72,7 +111,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 			set
 			{
 				this.dyeId = value;
-				this.Dye = this.GetDye(this.DyeId);
+				this.Dye = this.GetDye();
 			}
 		}
 
@@ -171,6 +210,9 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		protected IItem GetItem()
 		{
+			if (this.ModelBase == 0 && this.modelVariant == 0 && this.modelSet == 0)
+				return NoneItem;
+
 			foreach (IItem tItem in this.gameData.Items.All)
 			{
 				if (!tItem.FitsInSlot(this.Slot))
@@ -180,7 +222,10 @@ namespace ConceptMatrix.EquipmentModule.Views
 				if (this.Slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
 					continue;
 
-				if (tItem.ModelBase == this.ModelBase && tItem.ModelVariant == this.ModelVariant && (this.HasModelSet && tItem.WeaponSet == this.ModelSet))
+				if (this.HasModelSet && tItem.WeaponSet != this.ModelSet)
+					continue;
+
+				if (tItem.ModelBase == this.ModelBase && tItem.ModelVariant == this.ModelVariant)
 				{
 					return tItem;
 				}
@@ -189,21 +234,115 @@ namespace ConceptMatrix.EquipmentModule.Views
 			return new DummyItem(this.ModelSet, this.ModelBase, this.ModelVariant);
 		}
 
-		private IDye GetDye(byte dyeId)
+		protected IDye GetDye()
 		{
 			// None
-			if (dyeId == 0)
-				return null;
+			if (this.DyeId == 0)
+				return NoneDye;
 
 			foreach (IDye dye in this.gameData.Dyes.All)
 			{
-				if (dye.Id == dyeId)
+				if (dye.Id == this.DyeId)
 				{
 					return dye;
 				}
 			}
 
-			return null;
+			return NoneDye;
+		}
+
+		public class DummyNoneItem : IItem
+		{
+			public string Name
+			{
+				get
+				{
+					return "None";
+				}
+			}
+
+			public string Description
+			{
+				get
+				{
+					return null;
+				}
+			}
+
+			public IImage Icon
+			{
+				get
+				{
+					return null;
+				}
+			}
+
+			public ushort ModelBase
+			{
+				get
+				{
+					return 0;
+				}
+			}
+
+			public ushort ModelVariant
+			{
+				get
+				{
+					return 0;
+				}
+			}
+
+			public ushort WeaponSet
+			{
+				get
+				{
+					return 0;
+				}
+			}
+
+			public int Key
+			{
+				get
+				{
+					return 0;
+				}
+			}
+
+			public bool FitsInSlot(ItemSlots slot)
+			{
+				return true;
+			}
+		}
+
+		public class DummyNoneDye : IDye
+		{
+			public byte Id
+			{
+				get
+				{
+					return 0;
+				}
+			}
+
+			public string Name
+			{
+				get
+				{
+					return "None";
+				}
+			}
+
+			public string Description { get; }
+			public IImage Icon { get; }
+
+			public int Key
+			{
+				get
+				{
+					return 0;
+				}
+			}
 		}
 
 		public class DummyItem : IItem

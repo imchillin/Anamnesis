@@ -40,7 +40,7 @@
 						<Grid>
 							<Image x:Name="SlotIcon" Source="/EquipmentModule;component/Assets/Slots/Body.png" Margin="6" Opacity="0.4"/>
 							<Image Source="{Binding Item.Icon, Converter={StaticResource IImageConverter}}" Margin="1"/>
-							<Image Source="/EquipmentModule;component/Assets/IconBorder.png" Margin="-2, -1, -2, -4" Visibility="{Binding Item, Converter={StaticResource NotNullToVisibilityconverter}}"/>
+							<Image Source="/EquipmentModule;component/Assets/IconBorder.png" Margin="-2, -1, -2, -4" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityconverter}}"/>
 
 							<Grid.ToolTip>
 								<StackPanel>
@@ -104,7 +104,7 @@
 					<Border Grid.Column="1" Background="#10FFFFFF" CornerRadius="3" BorderThickness="1" BorderBrush="#44222222" Width="20" Height="20" Margin="1, 2, 1, 0">
 						<Grid>
 							<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}"/>
-							<Image Source="/EquipmentModule;component/Assets/IconBorderSmall.png" Margin="-2, -1, -2, -3" Visibility="{Binding Dye, Converter={StaticResource NotNullToVisibilityconverter}}"/>
+							<Image Source="/EquipmentModule;component/Assets/IconBorderSmall.png" Margin="-2, -1, -2, -3" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityconverter}}"/>
 
 							<Grid.ToolTip>
 								<StackPanel>

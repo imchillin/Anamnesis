@@ -21,6 +21,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 			this.DataContext = this;
 
 			IGameDataService gameData = Module.Services.Get<IGameDataService>();
+			this.Selector.Items.Add(EquipmentBaseViewModel.NoneItem);
 			foreach (IItem item in gameData.Items.All)
 			{
 				this.Selector.Items.Add(item);

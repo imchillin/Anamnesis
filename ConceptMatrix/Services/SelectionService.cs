@@ -139,10 +139,5 @@ namespace ConceptMatrix.GUI.Services
 				}
 			}
 		}
-
-		private void ActorRefresh(Selection selection)
-		{
-			// ....
-		}
 	}
 }

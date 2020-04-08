@@ -9,10 +9,13 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 	public class EquipmentItemViewModel : EquipmentBaseViewModel
 	{
-		public EquipmentItemViewModel(Equipment target, ItemSlots slot)
-			: base(slot)
+		private IMemory<Equipment> memory;
+
+		public EquipmentItemViewModel(IMemory<Equipment> equipmentMemory, ItemSlots slot, Selection selection)
+			: base(slot, selection)
 		{
-			Equipment.Item item = target.GetItem(slot);
+			this.memory = equipmentMemory;
+			Equipment.Item item = equipmentMemory.Value.GetItem(slot);
 
 			if (item == null)
 				return;
@@ -34,10 +37,19 @@ namespace ConceptMatrix.EquipmentModule.Views
 			this.HasModelSet = false;
 
 			this.Item = this.GetItem();
+			this.Dye = this.GetDye();
 		}
 
 		protected override void Apply()
 		{
+			Equipment eq = this.memory.Value;
+
+			Equipment.Item i = eq.GetItem(this.Slot);
+			i.Base = this.ModelBase;
+			i.Dye = this.DyeId;
+			i.Variant = (byte)this.ModelVariant;
+
+			this.memory.Value = eq;
 		}
 	}
 }
