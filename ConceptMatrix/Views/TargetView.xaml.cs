@@ -36,11 +36,13 @@ namespace ConceptMatrix.GUI.Views
 
 				if (newSelection != null)
 				{
+					////this.Icon.Icon = this.GetIcon(newSelection.Type);
 					this.NameLabel.Content = newSelection.Name;
 					modeLabel = newSelection.Mode.ToString() + " - ";
 				}
 				else
 				{
+					////this.Icon.Icon = FontAwesomeIcon.None;
 					this.NameLabel.Content = "None";
 				}
 
@@ -53,5 +55,27 @@ namespace ConceptMatrix.GUI.Views
 		{
 			App.Services.Get<IViewService>().ShowDrawer<TargetSelectorView>("Selection", DrawerDirection.Left);
 		}
+
+		/*private FontAwesomeIcon GetIcon(ActorTypes type)
+		{
+			switch (type)
+			{
+				case ActorTypes.None: return FontAwesomeIcon.None;
+				case ActorTypes.Player: return FontAwesomeIcon.User;
+				case ActorTypes.BattleNpc: return FontAwesomeIcon.user
+				case ActorTypes.EventNpc:
+				case ActorTypes.Treasure:
+				case ActorTypes.Aetheryte:
+				case ActorTypes.GatheringPoint:
+				case ActorTypes.EventObj:
+				case ActorTypes.MountType:
+				case ActorTypes.Companion:
+				case ActorTypes.Retainer:
+				case ActorTypes.Area:
+				case ActorTypes.Housing:
+				case ActorTypes.Cutscene:
+				case ActorTypes.CardStand:
+			}
+		}*/
 	}
 }

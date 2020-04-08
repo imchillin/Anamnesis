@@ -5,8 +5,8 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
 		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-		xmlns:fa="http://schemas.fontawesome.io/icons/"
 		xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
+		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		mc:Ignorable="d"
 		Height="200"
 		Width="200"
@@ -33,7 +33,7 @@
 			<Button Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="6" 
 					Background="Transparent"
 						Style="{StaticResource MetroWindowButtonStyle}">
-				<fa:ImageAwesome Icon="Times" Opacity="0.5"/>
+				<fa:IconBlock Icon="Times" Opacity="0.5"/>
 			</Button>
 		</Grid>
 	</Border>

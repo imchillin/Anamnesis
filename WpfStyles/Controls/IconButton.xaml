@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.WpfStyles.Controls"
-			 xmlns:fa="http://schemas.fontawesome.io/icons/"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="128">
 
@@ -15,7 +15,7 @@
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
-			<fa:ImageAwesome Grid.Column="0" Icon="{Binding Icon, FallbackValue=Upload}" Margin="6" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" VerticalAlignment="Center"/>
+			<fa:IconBlock Grid.Column="0" Icon="{Binding Icon, FallbackValue=Upload}" Margin="6" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" VerticalAlignment="Center"/>
 			<TextBlock Grid.Column="1" Text="{Binding Text, FallbackValue=Button}" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" VerticalAlignment="Center" Margin="2, 0, 0, 2"/>
 		</Grid>
 

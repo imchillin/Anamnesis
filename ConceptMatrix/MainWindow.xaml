@@ -4,8 +4,8 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:views="clr-namespace:ConceptMatrix.GUI.Views"
-		xmlns:fa="http://schemas.fontawesome.io/icons/"
 		xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		mc:Ignorable="d"
 		Title="MainWindow"
 		Height="670"
@@ -103,7 +103,7 @@
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
 					<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnThemeClick" BorderThickness="0">
-						<fa:ImageAwesome Icon="PaintBrush" Opacity="0.35"/>
+						<fa:IconBlock Icon="PaintBrush" Opacity="0.35"/>
 					</Button>
 
 					<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" 
@@ -119,13 +119,13 @@
 						
 						<ToggleButton.Content>
 							<Grid Width="28" Height="28">
-								<fa:ImageAwesome Icon="ThumbTack" Opacity="0.35" Margin="6, 7, 6, 6"/>
+								<fa:IconBlock Icon="ThumbTack" Opacity="0.35" Margin="6, 7, 6, 6"/>
 							</Grid>
 						</ToggleButton.Content>
 						<materialdesign:ToggleButtonAssist.OnContent>
 							<Grid Width="28" Height="28">
 								<Ellipse Stroke="Black" Fill="Black" StrokeThickness="1" Margin="4" Opacity="0.35"/>
-								<fa:ImageAwesome Foreground="{DynamicResource SecondaryAccentBrush}" Icon="ThumbTack" Margin="6, 7, 6, 6"/>
+								<fa:IconBlock Foreground="{DynamicResource SecondaryAccentBrush}" Icon="ThumbTack" Margin="6, 7, 6, 6"/>
 							</Grid>
 						</materialdesign:ToggleButtonAssist.OnContent>
 
@@ -133,11 +133,11 @@
 					</ToggleButton>
 
 					<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnMinimiseClick">
-						<fa:ImageAwesome Icon="WindowMinimize" Opacity="0.35"/>
+						<fa:IconBlock Icon="WindowMinimize" Opacity="0.35"/>
 					</Button>
 
 					<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnCloseClick">
-						<fa:ImageAwesome Icon="Times" Opacity="0.35"/>
+						<fa:IconBlock Icon="Times" Opacity="0.35"/>
 					</Button>
 
 				</StackPanel>

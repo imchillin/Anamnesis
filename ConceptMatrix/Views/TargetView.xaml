@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
-			 xmlns:fa="http://schemas.fontawesome.io/icons/"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="250">
 	<Button Height="40" Padding="0" HorizontalContentAlignment="Stretch" Click="OnClicked">
@@ -20,7 +20,7 @@
 			</Grid.ColumnDefinitions>
 
 			<Grid Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-				<fa:ImageAwesome Icon="User" Margin="3" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
+				<fa:IconBlock x:Name="Icon" Icon="User" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
 			</Grid>
 
 			<Label Grid.Column="1" Grid.Row="0" x:Name="ModeLabel" Content="Auto Selection" FontWeight="Light" Margin="3,0,0,0" Padding="0" VerticalAlignment="Center" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>

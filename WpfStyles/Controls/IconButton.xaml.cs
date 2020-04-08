@@ -6,7 +6,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
-	using FontAwesome.WPF;
+	using FontAwesome.Sharp;
 
 	/// <summary>
 	/// Interaction logic for IconButton.xaml.
@@ -14,7 +14,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	public partial class IconButton : UserControl, INotifyPropertyChanged
 	{
 		public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(IconButton), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
-		public static readonly DependencyProperty IconProperty = DependencyProperty.Register(nameof(Icon), typeof(FontAwesomeIcon), typeof(IconButton), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
+		public static readonly DependencyProperty IconProperty = DependencyProperty.Register(nameof(Icon), typeof(IconChar), typeof(IconButton), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
 		public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent(nameof(Click), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(IconButton));
 
 		public IconButton()
@@ -52,11 +52,11 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
-		public FontAwesomeIcon Icon
+		public IconChar Icon
 		{
 			get
 			{
-				return (FontAwesomeIcon)this.GetValue(IconProperty);
+				return (IconChar)this.GetValue(IconProperty);
 			}
 			set
 			{
