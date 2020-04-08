@@ -44,7 +44,25 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		private void OnSelectionChanged(Selection selection)
 		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				this.IsEnabled = selection != null;
+			});
+
 			this.eqMem?.Dispose();
+			this.MainHand?.Dispose();
+			this.OffHand?.Dispose();
+			this.eqMem?.Dispose();
+			this.Head?.Dispose();
+			this.Body?.Dispose();
+			this.Hands?.Dispose();
+			this.Legs?.Dispose();
+			this.Feet?.Dispose();
+			this.Ears?.Dispose();
+			this.Neck?.Dispose();
+			this.Wrists?.Dispose();
+			this.LeftRing?.Dispose();
+			this.RightRing?.Dispose();
 
 			if (selection == null)
 				return;

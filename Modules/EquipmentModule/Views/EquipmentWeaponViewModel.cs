@@ -37,10 +37,21 @@ namespace ConceptMatrix.EquipmentModule.Views
 			this.Dye = this.GetDye();
 		}
 
+		public bool HasWeapon
+		{
+			get
+			{
+				return this.ModelBase != 0;
+			}
+		}
+
 		public override Vector Scale
 		{
 			get
 			{
+				if (!this.HasWeapon)
+					return Vector.One;
+
 				return this.scaleMem.Value;
 			}
 
@@ -54,6 +65,9 @@ namespace ConceptMatrix.EquipmentModule.Views
 		{
 			get
 			{
+				if (!this.HasWeapon)
+					return Color.White;
+
 				return this.colorMem.Value;
 			}
 
@@ -63,8 +77,18 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
+		public override void Dispose()
+		{
+			this.memory.Dispose();
+			this.colorMem.Dispose();
+			this.scaleMem.Dispose();
+		}
+
 		protected override void Apply()
 		{
+			if (!this.HasWeapon)
+				return;
+
 			Weapon w = this.memory.Value;
 			w.Base = this.ModelBase;
 			w.Dye = this.DyeId;

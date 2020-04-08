@@ -40,6 +40,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 			this.Dye = this.GetDye();
 		}
 
+		public override void Dispose()
+		{
+			this.memory.Dispose();
+		}
+
 		protected override void Apply()
 		{
 			Equipment eq = this.memory.Value;

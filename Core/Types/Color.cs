@@ -3,11 +3,11 @@
 
 namespace ConceptMatrix
 {
-	using System;
-	using System.ComponentModel;
-
 	public struct Color
 	{
+		public static readonly Color White = new Color(1, 1, 1);
+		public static readonly Color Black = new Color(0, 0, 0);
+
 		public Color(float r = 1, float g = 1, float b = 1)
 		{
 			this.R = r;

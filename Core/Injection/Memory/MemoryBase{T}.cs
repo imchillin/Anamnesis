@@ -104,6 +104,8 @@ namespace ConceptMatrix.Injection.Memory
 			catch (Exception ex)
 			{
 				this.lastException = ex;
+				this.Dispose();
+				Log.Write("Disposing of memory due to exception: " + ex.Message);
 			}
 		}
 

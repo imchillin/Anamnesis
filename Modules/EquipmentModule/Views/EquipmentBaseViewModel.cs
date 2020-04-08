@@ -3,12 +3,14 @@
 
 namespace ConceptMatrix.EquipmentModule.Views
 {
+	using System;
 	using System.ComponentModel;
 	using System.Windows.Media.Media3D;
 	using ConceptMatrix;
 	using ConceptMatrix.Services;
+	using PropertyChanged;
 
-	public abstract class EquipmentBaseViewModel : INotifyPropertyChanged
+	public abstract class EquipmentBaseViewModel : INotifyPropertyChanged, IDisposable
 	{
 		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
@@ -153,6 +155,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
+		[DependsOn(nameof(EquipmentBaseViewModel.Item))]
 		public string Key
 		{
 			get
@@ -164,13 +167,14 @@ namespace ConceptMatrix.EquipmentModule.Views
 				int val = int.Parse(value);
 				IItem item = this.gameData.Items.Get(val);
 
-				if (item.FitsInSlot(this.Slot))
+				if (item != null && item.FitsInSlot(this.Slot))
 				{
 					this.Item = item;
 				}
 			}
 		}
 
+		[DependsOn(nameof(EquipmentBaseViewModel.Item))]
 		public ushort ModelBase
 		{
 			get
@@ -184,6 +188,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
+		[DependsOn(nameof(EquipmentBaseViewModel.Item))]
 		public ushort ModelVariant
 		{
 			get
@@ -198,6 +203,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
+		[DependsOn(nameof(EquipmentBaseViewModel.Item))]
 		public ushort ModelSet
 		{
 			get
@@ -210,6 +216,8 @@ namespace ConceptMatrix.EquipmentModule.Views
 				this.Item = this.GetItem();
 			}
 		}
+
+		public abstract void Dispose();
 
 		protected abstract void Apply();
 
