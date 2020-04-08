@@ -19,10 +19,12 @@ namespace ConceptMatrix.Services
 	public interface IMemoryOffset<T> : IMemoryOffset
 	{
 		IMemory<T> GetMemory(IBaseMemoryOffset baseOffset);
+		T GetValue(IBaseMemoryOffset offset);
 	}
 
 	public interface IBaseMemoryOffset : IMemoryOffset
 	{
 		IMemory<T> GetMemory<T>(IMemoryOffset<T> offset);
+		T GetValue<T>(IMemoryOffset<T> offset);
 	}
 }

@@ -95,9 +95,15 @@ namespace ConceptMatrix.Injection
 			UIntPtr address = this.process.GetAddress(offsets);
 
 			Type wrapperType = this.GetMemoryType(typeof(T));
-			IMemory<T> memory = (IMemory<T>)Activator.CreateInstance(wrapperType, this.process, address);
-
-			return memory;
+			try
+			{
+				IMemory<T> memory = (IMemory<T>)Activator.CreateInstance(wrapperType, this.process, address);
+				return memory;
+			}
+			catch (TargetInvocationException ex)
+			{
+				throw ex.InnerException;
+			}
 		}
 
 		[DllImport("kernel32.dll")]
@@ -147,6 +153,11 @@ namespace ConceptMatrix.Injection
 			}
 
 			public IMemory<T> GetMemory<T>(IMemoryOffset<T> offset)
+			{
+				throw new NotImplementedException();
+			}
+
+			public T GetValue<T>(IMemoryOffset<T> offset)
 			{
 				throw new NotImplementedException();
 			}

@@ -19,6 +19,8 @@ namespace ConceptMatrix.GUI
 		{
 			this.InitializeComponent();
 
+			Count++;
+
 			StringBuilder builder = new StringBuilder();
 			while (ex != null)
 			{
@@ -34,6 +36,12 @@ namespace ConceptMatrix.GUI
 			#if DEBUG
 			this.DetailsExpander.IsExpanded = true;
 			#endif
+		}
+
+		public static int Count
+		{
+			get;
+			private set;
 		}
 
 		private void StackTraceFormatter(string stackTrace)
@@ -64,6 +72,7 @@ namespace ConceptMatrix.GUI
 
 		private void OnOkClick(object sender, RoutedEventArgs e)
 		{
+			Count--;
 			this.Close();
 			Application.Current.Shutdown(2);
 		}

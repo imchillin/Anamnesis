@@ -10,7 +10,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System.Windows.Media;
 	using PropertyChanged;
 
-	using Color = ConceptMatrix.Injection.Color;
+	using Color = ConceptMatrix.Color;
 	using WpfColor = System.Windows.Media.Color;
 	using WpfColors = System.Windows.Media.Colors;
 

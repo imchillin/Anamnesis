@@ -79,32 +79,27 @@ namespace ConceptMatrix.GUI.Views
 					throw new Exception("Unknown selection mode: " + mode);
 				}
 
-				using (IMemory<int> countMem = actorTableOffset.GetCountMemory())
+				int count = actorTableOffset.GetCount();
+				HashSet<string> ids = new HashSet<string>();
+
+				for (int i = 0; i < count; i++)
 				{
-					int count = countMem.Value;
+					ActorTypes type = actorTableOffset.GetValue(Offsets.ActorType);
+					string name = actorTableOffset.GetValue(Offsets.Name);
 
-					HashSet<string> ids = new HashSet<string>();
+					string id = mode.ToString() + "_" + type + "_" + name;
 
-					for (int i = 0; i < count; i++)
-					{
-						using (IMemory<string> nameMem = actorTableOffset.GetActorMemory<string>(i, Offsets.Name))
-						{
-							string name = nameMem.Value;
-							string id = mode.ToString() + "_" + name;
+					if (ids.Contains(id))
+						continue;
 
-							if (ids.Contains(id))
-								continue;
+					ids.Add(id);
 
-							ids.Add(id);
+					if (string.IsNullOrEmpty(name))
+						name = "Unknown";
 
-							if (string.IsNullOrEmpty(name))
-								name = "Unknown";
-
-							PossibleSelection selection = new PossibleSelection(Selection.Types.Character, targetOffset, id, name, mode);
-							selection.IsSelected = !this.selection.UseGameTarget && this.selection.CurrentSelection != null && this.selection.CurrentSelection.Name == name;
-							this.Entities.Add(selection);
-						}
-					}
+					PossibleSelection selection = new PossibleSelection(type, targetOffset, id, name, mode);
+					selection.IsSelected = !this.selection.UseGameTarget && this.selection.CurrentSelection != null && this.selection.CurrentSelection.Name == name;
+					this.Entities.Add(selection);
 				}
 
 				this.AutoRadio.IsChecked = this.selection.UseGameTarget;
@@ -134,7 +129,7 @@ namespace ConceptMatrix.GUI.Views
 
 		public class PossibleSelection : Selection
 		{
-			public PossibleSelection(Types type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
+			public PossibleSelection(ActorTypes type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
 				: base(type, address, actorId, name, mode)
 			{
 			}

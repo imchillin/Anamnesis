@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix.Services
 {
+	using ConceptMatrix.Injection;
+
 	public delegate void SelectionEvent(Selection selection);
 
 	public interface ISelectionService : IService
@@ -20,7 +22,7 @@ namespace ConceptMatrix.Services
 		public readonly IBaseMemoryOffset BaseAddress;
 		public readonly string ActorId;
 
-		public Selection(Types type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
+		public Selection(ActorTypes type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
 		{
 			this.Type = type;
 			this.BaseAddress = address;
@@ -29,18 +31,13 @@ namespace ConceptMatrix.Services
 			this.Mode = mode;
 		}
 
-		public enum Types
-		{
-			Character,
-		}
-
 		public enum Modes
 		{
 			Overworld,
 			GPose,
 		}
 
-		public Types Type { get; private set; }
+		public ActorTypes Type { get; private set; }
 
 		public string Name { get; private set; }
 

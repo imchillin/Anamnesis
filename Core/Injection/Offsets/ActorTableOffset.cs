@@ -23,6 +23,14 @@ namespace ConceptMatrix.Injection.Offsets
 			return InjectionService.Instance.GetMemory<int>(this);
 		}
 
+		public int GetCount()
+		{
+			using (IMemory<int> mem = this.GetCountMemory())
+			{
+				return mem.Value;
+			}
+		}
+
 		public IMemory<T> GetActorMemory<T>(int i, params Offset[] offsets)
 			where T : IEquatable<T>
 		{

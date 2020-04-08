@@ -24,5 +24,13 @@ namespace ConceptMatrix.Injection.Offsets
 		{
 			return InjectionService.Instance.GetMemory<T>(this, offset);
 		}
+
+		public T GetValue<T>(IMemoryOffset<T> offset)
+		{
+			using (IMemory<T> mem = this.GetMemory(offset))
+			{
+				return mem.Value;
+			}
+		}
 	}
 }

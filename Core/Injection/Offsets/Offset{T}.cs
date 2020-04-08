@@ -41,5 +41,13 @@ namespace ConceptMatrix.Injection.Offsets
 		{
 			return InjectionService.Instance.GetMemory<T>(baseAddress, this);
 		}
+
+		public T GetValue(IBaseMemoryOffset baseOffset)
+		{
+			using (IMemory<T> mem = this.GetMemory(baseOffset))
+			{
+				return mem.Value;
+			}
+		}
 	}
 }

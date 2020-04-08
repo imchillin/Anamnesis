@@ -5,7 +5,9 @@ namespace ConceptMatrix.Injection.Memory
 {
 	using System;
 	using System.ComponentModel;
+	using System.Runtime.InteropServices;
 	using ConceptMatrix;
+	using ConceptMatrix.Exceptions;
 
 	public abstract class MemoryBase<T> : MemoryBase, IMemory<T>
 	{
@@ -15,6 +17,8 @@ namespace ConceptMatrix.Injection.Memory
 		private ulong length;
 		private byte[] oldData;
 		private byte[] newData;
+
+		private Exception lastException;
 
 		public MemoryBase(ProcessInjection process, UIntPtr address, ulong length)
 			: base(process, address)
@@ -36,6 +40,9 @@ namespace ConceptMatrix.Injection.Memory
 		{
 			get
 			{
+				if (this.lastException != null)
+					throw this.lastException;
+
 				return this.value;
 			}
 
@@ -70,24 +77,33 @@ namespace ConceptMatrix.Injection.Memory
 
 		protected override void Tick()
 		{
-			if (this.Freeze)
+			try
 			{
-				// Frozen values get written constantly
-				this.DoWrite(this.value);
-			}
-			else
-			{
-				// unfrozen values get read constantly
-				this.DoRead();
+				this.lastException = null;
 
-				if (!Equals(this.newData, this.oldData))
+				if (this.Freeze)
 				{
-					this.value = this.Read(ref this.newData);
-					Array.Copy(this.newData, this.oldData, (int)this.length);
-
-					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
-					this.ValueChanged?.Invoke(this, this.value);
+					// Frozen values get written constantly
+					this.DoWrite(this.value);
 				}
+				else
+				{
+					// unfrozen values get read constantly
+					this.DoRead();
+
+					if (!Equals(this.newData, this.oldData))
+					{
+						this.value = this.Read(ref this.newData);
+						Array.Copy(this.newData, this.oldData, (int)this.length);
+
+						this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+						this.ValueChanged?.Invoke(this, this.value);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				this.lastException = ex;
 			}
 		}
 
@@ -116,7 +132,13 @@ namespace ConceptMatrix.Injection.Memory
 		{
 			if (!InjectionService.ReadProcessMemory(this.process.Handle, this.address, this.newData, (UIntPtr)this.length, IntPtr.Zero))
 			{
-				throw new Exception("Failed to read process memory");
+				int code = Marshal.GetLastWin32Error();
+
+				// code 0 means success. ooh boy Win32 legacy API's.
+				if (code == 0)
+					return;
+
+				throw new MemoryException("Failed to read process memory", new Win32Exception(code));
 			}
 		}
 	}

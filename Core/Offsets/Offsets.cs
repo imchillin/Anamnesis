@@ -36,9 +36,9 @@ namespace ConceptMatrix.Offsets
 		public static Offset RenderOffset1 = 0x431330;
 		public static Offset RenderOffset2 = 0x431326;
 
-		public static Offset Name = 0x30;
+		public static Offset<string> Name = 0x30;
 		public static Offset<string> ActorID = 0x34;
-		public static Offset ActorType = 0x8C;
+		public static Offset<ActorTypes> ActorType = 0x8C;
 		public static Offset ActorRender = 0x104;
 
 		public static Offset<Vector> Camera = 0xA0;

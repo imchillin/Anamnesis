@@ -8,6 +8,8 @@ namespace ConceptMatrix.WpfStyles.Drawers
 	using System.Windows.Media;
 	using ConceptMatrix.Services;
 
+	using CmColor = ConceptMatrix.Color;
+
 	/// <summary>
 	/// Interaction logic for ColorSelectorDrawer.xaml.
 	/// </summary>
@@ -37,7 +39,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 
 		public event DrawerEvent Close;
 
-		public Injection.Color Value
+		public CmColor Value
 		{
 			get
 			{
@@ -63,10 +65,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 		{
 			if (obj is ColorOption color)
 			{
-				if (!SearchUtility.Matches(color.Name, search))
-					return false;
-
-				return true;
+				return SearchUtility.Matches(color.Name, search);
 			}
 
 			return false;
@@ -77,9 +76,9 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			public string Name { get; set; }
 			public Color Color { get; set; }
 
-			public Injection.Color AsColor()
+			public CmColor AsColor()
 			{
-				return new Injection.Color(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f);
+				return new CmColor(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f);
 			}
 		}
 	}

@@ -6,6 +6,8 @@ namespace ConceptMatrix.GUI.Services
 	using System;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
+	using ConceptMatrix.Exceptions;
+	using ConceptMatrix.Injection;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
 
@@ -83,54 +85,64 @@ namespace ConceptMatrix.GUI.Services
 
 		public Selection.Modes GetMode()
 		{
-			if (this.gposeMem.Value && this.gposeMem2.Value == 4)
-			{
-				return Selection.Modes.GPose;
-			}
-			else
-			{
-				return Selection.Modes.Overworld;
-			}
+			return this.gposeMem.Value && this.gposeMem2.Value == 4 ? Selection.Modes.GPose : Selection.Modes.Overworld;
 		}
 
 		private async Task Watch()
 		{
-			await Task.Delay(100);
+			await Task.Delay(500);
 			IInjectionService injection = App.Services.Get<IInjectionService>();
 
 			while (this.IsAlive)
 			{
-				await Task.Delay(1000);
-
-				Selection.Modes mode = this.GetMode();
-				IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Gpose : Offsets.Target;
-
-				string name;
-				using (IMemory<string> nameMem = injection.GetMemory<string>(baseOffset, Offsets.Name))
+				try
 				{
-					name = nameMem.Value;
+					await Task.Delay(1000);
+
+					Selection.Modes mode = this.GetMode();
+					IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Gpose : Offsets.Target;
+
+					ActorTypes type = baseOffset.GetValue(Offsets.ActorType);
+					string name = baseOffset.GetValue(Offsets.Name);
+
+					string actorId = mode.ToString() + "_" + name;
+
+					if (string.IsNullOrEmpty(actorId))
+					{
+						this.CurrentGameTarget = null;
+						continue;
+					}
+
+					if (this.CurrentGameTarget == null
+						|| this.CurrentGameTarget.Type != type
+						|| this.CurrentGameTarget.ActorId != actorId
+						|| this.CurrentGameTarget.Mode != mode)
+					{
+						this.CurrentGameTarget = new Selection(type, baseOffset, actorId, name, mode);
+					}
+
+					if (this.UseGameTarget && this.CurrentSelection != this.CurrentGameTarget)
+					{
+						this.CurrentSelection = this.CurrentGameTarget;
+					}
 				}
-
-				string actorId = mode.ToString() + "_" + name;
-
-				if (string.IsNullOrEmpty(actorId))
+				catch (MemoryException)
 				{
-					this.CurrentGameTarget = null;
-					continue;
+					// If the user has _never_ selected anything in game, then the memory wont be read correctly.
+					// once the user has selected something, even if they then select nothing, the memory will work
+					// fine, leaving the old selected behind.
+					// so in this case, we just swallow the error, and let the thread loop.
 				}
-
-				if (this.CurrentGameTarget == null
-					|| this.CurrentGameTarget.ActorId != actorId
-					|| this.CurrentGameTarget.Mode != mode)
+				catch (Exception ex)
 				{
-					this.CurrentGameTarget = new Selection(Selection.Types.Character, baseOffset, actorId, name, mode);
-				}
-
-				if (this.UseGameTarget && this.CurrentSelection != this.CurrentGameTarget)
-				{
-					this.CurrentSelection = this.CurrentGameTarget;
+					Log.Write(ex);
 				}
 			}
+		}
+
+		private void ActorRefresh(Selection selection)
+		{
+			// ....
 		}
 	}
 }

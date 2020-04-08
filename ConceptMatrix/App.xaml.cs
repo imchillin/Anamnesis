@@ -76,6 +76,9 @@ namespace ConceptMatrix
 
 				Settings = await App.Services.Get<ISettingsService>().Load<MainApplicationSettings>();
 
+				while (ErrorDialog.Count > 0)
+					await Task.Delay(500);
+
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					Window oldwindow = this.MainWindow;
