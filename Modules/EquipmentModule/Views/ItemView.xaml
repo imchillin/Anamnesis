@@ -70,10 +70,10 @@
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
-						<TextBox Grid.Column="0" Grid.Row="0" Style="{DynamicResource MaterialDesignTextBox}" Width="50" Text="{Binding Key}" PreviewTextInput="OnPreviewTextInput" Margin="2, 2, 22, 2" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12" FontWeight="Light"/>
-						<TextBox Grid.Column="1" Grid.Row="0" Style="{DynamicResource MaterialDesignTextBox}" Width="42" Text="{Binding ModelSet}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}"  FontSize="12"  FontWeight="Light" Visibility="{Binding HasModelSet, Converter={StaticResource BoolToVisibilityConverter}}"/>
-						<TextBox Grid.Column="2" Grid.Row="0" Style="{DynamicResource MaterialDesignTextBox}" Width="42" Text="{Binding ModelBase}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12" FontWeight="Light"/>
-						<TextBox Grid.Column="3" Grid.Row="0" Style="{DynamicResource MaterialDesignTextBox}" Width="42" Text="{Binding ModelVariant}" PreviewTextInput="OnPreviewTextInput" Margin="2" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12" FontWeight="Light"/>
+						<cm3Controls:NumberBox Grid.Column="0" Grid.Row="0" Width="50" Value="{Binding Key}" PreviewTextInput="OnPreviewTextInput" Margin="2, 2, 22, 2" FontSize="12" FontWeight="Light"/>
+						<cm3Controls:NumberBox Grid.Column="1" Grid.Row="0" Width="42" Value="{Binding ModelSet}" PreviewTextInput="OnPreviewTextInput" Margin="2" FontSize="12"  FontWeight="Light" Visibility="{Binding HasModelSet, Converter={StaticResource BoolToVisibilityConverter}}"/>
+						<cm3Controls:NumberBox Grid.Column="2" Grid.Row="0" Width="42" Value="{Binding ModelBase}" PreviewTextInput="OnPreviewTextInput" Margin="2" FontSize="12" FontWeight="Light"/>
+						<cm3Controls:NumberBox Grid.Column="3" Grid.Row="0" Width="42" Value="{Binding ModelVariant}" PreviewTextInput="OnPreviewTextInput" Margin="2" FontSize="12" FontWeight="Light"/>
 						
 						<Label Grid.Column="0" Grid.Row="1" Content="Item Id" FontSize="10" Padding="0" Margin="2, -3, 3, 0" FontWeight="UltraLight" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
 						<Label Grid.Column="1" Grid.Row="1" Content="Set" FontSize="10" Padding="0" Margin="2, -3, 3, 0"  FontWeight="UltraLight" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding HasModelSet, Converter={StaticResource BoolToVisibilityConverter}}"/>
@@ -126,13 +126,16 @@
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="56"/>
 					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 
-				<Line X1="0" X2="1" Grid.ColumnSpan="3" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, 0, 3, 0"/>
+				<Line X1="0" X2="1" Grid.ColumnSpan="4" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, 0, 3, 0"/>
 				<Label Grid.Column="0" Content="Scale:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 3, 3, 0" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-				<Button Grid.Column="1" Width="22" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" Click="OnZeroScaleClick" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<cm3Controls:Vector3DEditor Value="{Binding Scale}" Minimum="-100" Maximum="100" TickFrequency="0.01" Grid.Column="2" FontSize="12" Margin="0, 0, 3, 0"/>
+				<Button Grid.Column="1" Width="22" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" Click="OnZeroScaleClick" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0, 2, 0, 0"/>
+				<Button Grid.Column="2" Width="22" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" Click="OnOneScaleClick" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 2, 0, 0"/>
+
+				<cm3Controls:VectorEditor Value="{Binding Scale, Mode=TwoWay}" Minimum="-100" Maximum="100" TickFrequency="0.01" Grid.Column="3" FontSize="12" Margin="0, 0, 3, 0"/>
 			</Grid>
 
 			<!-- Color -->
@@ -146,13 +149,14 @@
 				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="56"/>
+						<ColumnDefinition Width="22"/>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>
 
 					<Label Grid.Column="0" Content="Color:" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Normal" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-					<cm3Controls:ColorEditor Value="{Binding Color}" Grid.Column="1" FontSize="12" Margin="0, 0, 3, 0" EnableSelector="False"/>
-					<Line Grid.ColumnSpan="3" X1="0" X2="1" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, 0, 3, 0"/>
+					<cm3Controls:ColorEditor Value="{Binding Color, Mode=TwoWay}" Grid.Column="2" FontSize="12" Margin="0, 0, 3, 0" EnableSelector="False"/>
+					<Line Grid.ColumnSpan="4" X1="0" X2="1" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, 0, 3, 0"/>
 				</Grid>
 			</Button>
 

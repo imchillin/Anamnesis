@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ConceptMatrix.WpfStyles.Controls.Vector3DEditor"
+﻿<UserControl x:Class="ConceptMatrix.WpfStyles.Controls.VectorEditor"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -19,11 +19,11 @@
 		</Grid.ColumnDefinitions>
 
 		<Label Grid.Column="0" Content="X:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding Value.X}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="False" Grid.Column="1" Margin="0, 0, 0, 2"/>
+		<local:NumberBox Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="False" Grid.Column="1" Margin="0, 0, 0, 2"/>
 		<Label Grid.Column="2" Content="Y:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding Value.Y}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="False" Grid.Column="3" Margin="0, 0, 0, 2"/>
+		<local:NumberBox Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="False" Grid.Column="3" Margin="0, 0, 0, 2"/>
 		<Label Grid.Column="4" Content="Z:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding Value.Z}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="False" Grid.Column="5" Margin="0, 0, 0, 2"/>
+		<local:NumberBox Value="{Binding Z, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="False" Grid.Column="5" Margin="0, 0, 0, 2"/>
 
 	</Grid>
 </UserControl>

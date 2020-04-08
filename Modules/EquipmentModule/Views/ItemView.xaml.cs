@@ -7,15 +7,15 @@ namespace ConceptMatrix.EquipmentModule.Views
 	using System.Text.RegularExpressions;
 	using System.Windows;
 	using System.Windows.Controls;
-	using System.Windows.Media.Media3D;
 	using ConceptMatrix.Services;
 	using ConceptMatrix.WpfStyles.Drawers;
-	using PropertyChanged;
+
+	using Vector = ConceptMatrix.Vector;
 
 	/// <summary>
 	/// Interaction logic for ItemView.xaml.
 	/// </summary>
-	public partial class ItemView : UserControl, INotifyPropertyChanged
+	public partial class ItemView : UserControl
 	{
 		private IGameDataService gameData;
 
@@ -29,21 +29,11 @@ namespace ConceptMatrix.EquipmentModule.Views
 			this.gameData = Module.Services.Get<IGameDataService>();
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
 		public EquipmentBaseViewModel ViewModel
 		{
 			get
 			{
 				return this.DataContext as EquipmentBaseViewModel;
-			}
-		}
-
-		private static void OnValueChangedStatic(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (sender is ItemView view)
-			{
-				view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(e.Property.Name));
 			}
 		}
 
@@ -82,10 +72,6 @@ namespace ConceptMatrix.EquipmentModule.Views
 			ColorSelectorDrawer selector = new ColorSelectorDrawer();
 			selector.Value = this.ViewModel.Color;
 			await viewService.ShowDrawer(selector, "Color");
-
-			if (selector.Value == null)
-				return;
-
 			this.ViewModel.Color = selector.Value;
 		}
 
@@ -105,7 +91,12 @@ namespace ConceptMatrix.EquipmentModule.Views
 
 		private void OnZeroScaleClick(object sender, RoutedEventArgs e)
 		{
-			this.ViewModel.Scale = new Vector3D(0, 0, 0);
+			this.ViewModel.Scale = Vector.Zero;
+		}
+
+		private void OnOneScaleClick(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.Scale = Vector.One;
 		}
 	}
 }

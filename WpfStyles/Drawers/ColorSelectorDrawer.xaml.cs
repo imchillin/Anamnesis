@@ -46,7 +46,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 				ColorOption selected = this.Selector.Value as ColorOption;
 
 				if (selected == null)
-					return null;
+					return default(CmColor);
 
 				return selected.AsColor();
 			}

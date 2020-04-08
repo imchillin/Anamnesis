@@ -115,7 +115,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 			}
 		}
 
-		public Color Color
+		public virtual Color Color
 		{
 			get;
 			set;
@@ -127,7 +127,7 @@ namespace ConceptMatrix.EquipmentModule.Views
 			set;
 		}
 
-		public Vector3D Scale
+		public virtual Vector Scale
 		{
 			get;
 			set;
@@ -162,7 +162,12 @@ namespace ConceptMatrix.EquipmentModule.Views
 			set
 			{
 				int val = int.Parse(value);
-				this.Item = this.gameData.Items.Get(val);
+				IItem item = this.gameData.Items.Get(val);
+
+				if (item.FitsInSlot(this.Slot))
+				{
+					this.Item = item;
+				}
 			}
 		}
 

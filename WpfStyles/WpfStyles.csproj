@@ -82,8 +82,8 @@
     <Compile Include="Drawers\SelectorDrawer.xaml.cs">
       <DependentUpon>SelectorDrawer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Vector3DEditor.xaml.cs">
-      <DependentUpon>Vector3DEditor.xaml</DependentUpon>
+    <Compile Include="Controls\VectorEditor.xaml.cs">
+      <DependentUpon>VectorEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\IImageToImageSourceConverter.cs" />
     <Compile Include="Converters\NotNullToVisibilityConverter.cs" />
@@ -179,7 +179,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Vector3DEditor.xaml">
+    <Page Include="Controls\VectorEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

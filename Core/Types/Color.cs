@@ -6,65 +6,17 @@ namespace ConceptMatrix
 	using System;
 	using System.ComponentModel;
 
-	public class Color : INotifyPropertyChanged
+	public struct Color
 	{
-		private float r = 1;
-		private float g = 1;
-		private float b = 1;
-
-		public Color()
+		public Color(float r = 1, float g = 1, float b = 1)
 		{
+			this.R = r;
+			this.G = g;
+			this.B = b;
 		}
 
-		public Color(float r, float g, float b)
-		{
-			this.r = r;
-			this.g = g;
-			this.b = b;
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public float R
-		{
-			get
-			{
-				return this.r;
-			}
-
-			set
-			{
-				this.r = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.R)));
-			}
-		}
-
-		public float G
-		{
-			get
-			{
-				return this.g;
-			}
-
-			set
-			{
-				this.g = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.G)));
-			}
-		}
-
-		public float B
-		{
-			get
-			{
-				return this.b;
-			}
-
-			set
-			{
-				this.b = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.B)));
-			}
-		}
+		public float R { get; set; }
+		public float G { get; set; }
+		public float B { get; set; }
 	}
 }

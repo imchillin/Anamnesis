@@ -16,8 +16,6 @@ namespace ConceptMatrix.EquipmentModule.Views
 	public partial class EquipmentView : UserControl
 	{
 		private IMemory<Equipment> eqMem;
-		private IMemory<Weapon> mhMem;
-		private IMemory<Weapon> ohMem;
 
 		public EquipmentView()
 		{
@@ -47,18 +45,13 @@ namespace ConceptMatrix.EquipmentModule.Views
 		private void OnSelectionChanged(Selection selection)
 		{
 			this.eqMem?.Dispose();
-			this.mhMem?.Dispose();
-			this.ohMem?.Dispose();
 
 			if (selection == null)
 				return;
 
 			// Weapon slots
-			this.mhMem = selection.BaseAddress.GetMemory(Offsets.MainHand);
-			this.MainHand = new EquipmentWeaponViewModel(this.mhMem, ItemSlots.MainHand, selection);
-
-			this.ohMem = selection.BaseAddress.GetMemory(Offsets.OffHand);
-			this.OffHand = new EquipmentWeaponViewModel(this.ohMem, ItemSlots.OffHand, selection);
+			this.MainHand = new EquipmentWeaponViewModel(ItemSlots.MainHand, selection);
+			this.OffHand = new EquipmentWeaponViewModel(ItemSlots.OffHand, selection);
 
 			// Equipment slots
 			this.eqMem = selection.BaseAddress.GetMemory(Offsets.ActorEquipment);

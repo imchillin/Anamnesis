@@ -16,12 +16,41 @@ namespace ConceptMatrix.WpfStyles.Controls
 	/// </summary>
 	public partial class NumberBox : UserControl, INotifyPropertyChanged
 	{
-		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
+		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+			nameof(Value),
+			typeof(double),
+			typeof(NumberBox),
+			new FrameworkPropertyMetadata()
+			{
+				BindsTwoWayByDefault = true,
+				DefaultUpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged,
+				PropertyChangedCallback = new PropertyChangedCallback(OnValueChangedStatic),
+			});
+
 		public static readonly DependencyProperty TickFrequencyProperty = DependencyProperty.Register(nameof(TickFrequency), typeof(double), typeof(NumberBox));
-		public static readonly DependencyProperty SliderProperty = DependencyProperty.Register(nameof(Slider), typeof(bool), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
-		public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
-		public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
-		public static readonly DependencyProperty WrapProperty = DependencyProperty.Register(nameof(Wrap), typeof(bool), typeof(NumberBox), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
+		public static readonly DependencyProperty SliderProperty = DependencyProperty.Register(
+			nameof(Slider),
+			typeof(bool),
+			typeof(NumberBox),
+			new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
+
+		public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(
+			nameof(Minimum),
+			typeof(double),
+			typeof(NumberBox),
+			new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
+
+		public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(
+			nameof(Maximum),
+			typeof(double),
+			typeof(NumberBox),
+			new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
+
+		public static readonly DependencyProperty WrapProperty = DependencyProperty.Register(
+			nameof(Wrap),
+			typeof(bool),
+			typeof(NumberBox),
+			new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
 
 		private string inputString;
 		private Key keyHeld = Key.None;

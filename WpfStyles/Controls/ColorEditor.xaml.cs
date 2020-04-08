@@ -22,8 +22,6 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(Color), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
 		public static readonly DependencyProperty SelectorProperty = DependencyProperty.Register(nameof(EnableSelector), typeof(bool), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
 
-		private Color oldValue;
-
 		public ColorEditor()
 		{
 			this.InitializeComponent();
@@ -32,6 +30,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		[AlsoNotifyFor(nameof(ColorEditor.R), nameof(ColorEditor.G), nameof(ColorEditor.B))]
 		public Color Value
 		{
 			get
@@ -41,8 +40,55 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			set
 			{
-				this.ListenToColor(value);
 				this.SetValue(ValueProperty, value);
+				this.UpdatePreview();
+			}
+		}
+
+		[AlsoNotifyFor(nameof(ColorEditor.Value))]
+		[DependsOn(nameof(ColorEditor.Value))]
+		public float R
+		{
+			get
+			{
+				return this.Value.R;
+			}
+
+			set
+			{
+				this.Value = new Color(value, this.G, this.B);
+				this.UpdatePreview();
+			}
+		}
+
+		[AlsoNotifyFor(nameof(ColorEditor.Value))]
+		[DependsOn(nameof(ColorEditor.Value))]
+		public float G
+		{
+			get
+			{
+				return this.Value.G;
+			}
+
+			set
+			{
+				this.Value = new Color(this.R, value, this.B);
+				this.UpdatePreview();
+			}
+		}
+
+		[AlsoNotifyFor(nameof(ColorEditor.Value))]
+		[DependsOn(nameof(ColorEditor.Value))]
+		public float B
+		{
+			get
+			{
+				return this.Value.B;
+			}
+
+			set
+			{
+				this.Value = new Color(this.R, this.G, value);
 				this.UpdatePreview();
 			}
 		}
@@ -75,22 +121,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 				if (e.Property.Name == nameof(Value))
 				{
-					view.ListenToColor(view.Value);
+					view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.R)));
+					view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.G)));
+					view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.B)));
 				}
+
+				view.UpdatePreview();
 			}
-		}
-
-		private void ListenToColor(Color value)
-		{
-			if (this.oldValue != null)
-				this.oldValue.PropertyChanged -= this.Value_PropertyChanged;
-
-			this.oldValue = value;
-
-			if (value != null)
-				value.PropertyChanged += this.Value_PropertyChanged;
-
-			this.UpdatePreview();
 		}
 
 		private void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -101,12 +138,6 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private void UpdatePreview()
 		{
-			if (this.Value == null)
-			{
-				this.Preview.Background = new SolidColorBrush(WpfColors.Transparent);
-				return;
-			}
-
 			WpfColor c = default(WpfColor);
 			c.R = (byte)(Clamp(this.Value.R) * 255);
 			c.G = (byte)(Clamp(this.Value.G) * 255);
