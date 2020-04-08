@@ -3,9 +3,11 @@
 
 namespace ConceptMatrix.EquipmentModule.Views
 {
+	using System;
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
+	using ConceptMatrix.EquipmentModule.Files;
 	using ConceptMatrix.Injection;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
@@ -89,6 +91,28 @@ namespace ConceptMatrix.EquipmentModule.Views
 				this.ContentArea.DataContext = null;
 				this.ContentArea.DataContext = this;
 			});
+		}
+
+		private async void OnOpenClicked(object sender, RoutedEventArgs e)
+		{
+			IFileService fileService = Module.Services.Get<IFileService>();
+			FileBase file = await fileService.OpenAny(EquipmentSetFile.FileType, LegacyEquipmentSetFile.FileType);
+
+			if (file is LegacyEquipmentSetFile legacyFile)
+			{
+				file = legacyFile.Upgrade();
+			}
+
+			if (file is EquipmentSetFile poseFile)
+			{
+				// load the equipment....
+				throw new NotImplementedException();
+			}
+		}
+
+		private void OnSaveClicked(object sender, RoutedEventArgs e)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

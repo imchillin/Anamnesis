@@ -211,6 +211,9 @@ namespace ConceptMatrix.GUI.Services
 
 		private static FileType GetFileType(FileType[] fileTypes, string extension)
 		{
+			if (extension.StartsWith("."))
+				extension = extension.Substring(1, extension.Length - 1);
+
 			foreach (FileType fileType in fileTypes)
 			{
 				if (fileType.Extension == extension)

@@ -156,16 +156,18 @@ namespace ConceptMatrix.EquipmentModule.Views
 		}
 
 		[DependsOn(nameof(EquipmentBaseViewModel.Item))]
-		public string Key
+		public int Key
 		{
 			get
 			{
-				return this.Item?.Key.ToString();
+				if (this.item == null)
+					return 0;
+
+				return this.Item.Key;
 			}
 			set
 			{
-				int val = int.Parse(value);
-				IItem item = this.gameData.Items.Get(val);
+				IItem item = this.gameData.Items.Get(value);
 
 				if (item != null && item.FitsInSlot(this.Slot))
 				{

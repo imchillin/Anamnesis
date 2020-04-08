@@ -58,6 +58,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\ItemSlotsExtensions.cs" />
+    <Compile Include="Files\LegacyEquipmentSetFile.cs" />
+    <Compile Include="Files\EquipmentSetFile.cs" />
     <Compile Include="Views\DyeSelector.xaml.cs">
       <DependentUpon>DyeSelector.xaml</DependentUpon>
     </Compile>

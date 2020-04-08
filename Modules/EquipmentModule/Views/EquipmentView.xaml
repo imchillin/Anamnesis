@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.EquipmentModule.Views"
+			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d"
 			 d:DesignHeight="600" d:DesignWidth="1024">
 
@@ -33,7 +34,37 @@
 			<local:ItemView Grid.Row="3" Grid.Column="2" DataContext="{Binding LeftRing}"/>
 		</StackPanel>
 
-		<GroupBox Grid.Column="2" Margin="6, 0, 0, 0"/>
+		<StackPanel Grid.Column="2">
+			<GroupBox Header="Options" Margin="6" Padding="4">
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<Grid Grid.Row="3" Grid.ColumnSpan="2"  Margin="0, 6, 0, 0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<cm3:IconButton Grid.Column="0" Icon="Upload" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
+						<cm3:IconButton Grid.Column="1" Icon="Download" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
+
+					</Grid>
+				</Grid>
+
+			</GroupBox>
+
+		</StackPanel>
 
 	</Grid>
 
