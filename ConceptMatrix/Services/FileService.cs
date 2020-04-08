@@ -120,7 +120,7 @@ namespace ConceptMatrix.GUI.Services
 						if (selected != CommonFileDialogResult.Ok)
 							return null;
 
-						return dlg.FileName;
+						return Path.GetFileNameWithoutExtension(dlg.FileName);
 					});
 
 					if (path == null)
