@@ -43,7 +43,7 @@ namespace ConceptMatrix.Offsets
 
 		public static Offset<Vector> Camera = 0xA0;
 
-		public static Offset ActorAppearance = 0x17B8; // Starting postion is Race Address Offset
+		public static Offset<Appearance> ActorAppearance = 0x17B8; // Starting postion is Race Address Offset
 		public static Offset FCTag = 0x17D2;
 		public static Offset Title = 0x18B2;
 		public static Offset ModelChara = 0x1888;

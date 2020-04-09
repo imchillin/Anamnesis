@@ -31,6 +31,7 @@ namespace ConceptMatrix.Services
 		IEnumerable<T> All { get; }
 
 		T Get(int key);
+		T Get(byte key);
 	}
 
 	public interface IDataObject

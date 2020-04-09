@@ -150,6 +150,12 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			Log.Write("Finished Reading data", @"Saint Coinach");
 			Log.Write("Initialization took " + sw.ElapsedMilliseconds + "ms", @"Saint Coinach");
+
+			IXivSheet<Tribe> sheet = realm.GameData.GetSheet<Tribe>();
+			foreach (Tribe race in sheet)
+			{
+				Console.WriteLine(">> " + race.Masculine + " - " + race.Feminine + " - " + race.Key);
+			}
 		}
 
 		public void Report(UpdateProgress value)
@@ -248,6 +254,11 @@ namespace ConceptMatrix.SaintCoinachModule
 					return this.data[key];
 
 				return default(T);
+			}
+
+			public T Get(byte key)
+			{
+				return this.Get((int)key);
 			}
 
 			internal void Import<TRow, TWrapper>(IXivSheet<TRow> sheet)
