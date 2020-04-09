@@ -20,6 +20,8 @@ namespace ConceptMatrix.PoseModule
 		{
 			this.BoneName = name;
 			this.transformMem = transformMem;
+
+			this.Rotation = this.LiveRotation;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
