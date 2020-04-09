@@ -15,11 +15,6 @@ namespace ConceptMatrix.SaintCoinachModule
 		public ItemWrapper(Item value)
 			: base(value)
 		{
-			// Warm the slotcache for all items to save time later
-			foreach (ItemSlots slot in Enum.GetValues(typeof(ItemSlots)))
-			{
-				this.FitsInSlot(slot);
-			}
 		}
 
 		public string Name

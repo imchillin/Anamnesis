@@ -150,12 +150,6 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			Log.Write("Finished Reading data", @"Saint Coinach");
 			Log.Write("Initialization took " + sw.ElapsedMilliseconds + "ms", @"Saint Coinach");
-
-			IXivSheet<Tribe> sheet = realm.GameData.GetSheet<Tribe>();
-			foreach (Tribe race in sheet)
-			{
-				Console.WriteLine(">> " + race.Masculine + " - " + race.Feminine + " - " + race.Key);
-			}
 		}
 
 		public void Report(UpdateProgress value)
@@ -172,6 +166,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			IXivSheet<TRow> sheet = realm.GameData.GetSheet<TRow>();
 			table.Import<TRow, TWrapper>(sheet);
+
 			return table;
 		}
 
@@ -265,13 +260,12 @@ namespace ConceptMatrix.SaintCoinachModule
 				where TRow : XivRow
 				where TWrapper : ObjectWrapper, T
 			{
+				Type type = typeof(TWrapper);
 				foreach (TRow row in sheet)
 				{
-					TWrapper wrapper = (TWrapper)Activator.CreateInstance(typeof(TWrapper), row);
+					TWrapper wrapper = (TWrapper)Activator.CreateInstance(type, row);
 					this.data.Add(wrapper.Key, wrapper);
 				}
-
-				Log.Write("Loaded " + this.Count + " " + typeof(T).Name, @"Saint Coinach");
 			}
 		}
 	}
