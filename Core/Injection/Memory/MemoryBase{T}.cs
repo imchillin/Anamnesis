@@ -72,6 +72,11 @@ namespace ConceptMatrix.Injection.Memory
 			}
 		}
 
+		protected static bool Equals(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2)
+		{
+			return a1.SequenceEqual(a2);
+		}
+
 		protected abstract T Read(ref byte[] data);
 		protected abstract void Write(T value, ref byte[] data);
 
@@ -107,11 +112,6 @@ namespace ConceptMatrix.Injection.Memory
 				this.Dispose();
 				Log.Write("Disposing of memory due to exception: " + ex.Message);
 			}
-		}
-
-		private static bool Equals(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2)
-		{
-			return a1.SequenceEqual(a2);
 		}
 
 		// writes value to oldData and to memory

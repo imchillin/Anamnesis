@@ -21,6 +21,16 @@ namespace ConceptMatrix
 		public float Y { get; set; }
 		public float Z { get; set; }
 
+		public static Vector operator *(Vector left, Vector right)
+		{
+			return new Vector(left.X * right.X, left.Y * right.Y, left.Z * right.Z);
+		}
+
+		public static Vector operator *(Vector left, float right)
+		{
+			return new Vector(left.X * right, left.Y * right, left.Z * right);
+		}
+
 		public static Vector FromString(string str)
 		{
 			string[] parts = str.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
@@ -35,9 +45,27 @@ namespace ConceptMatrix
 			return v;
 		}
 
+		public void NormalizeAngles()
+		{
+			this.X = NormalizeAngle(this.X);
+			this.Y = NormalizeAngle(this.Y);
+			this.Z = NormalizeAngle(this.Z);
+		}
+
 		public override string ToString()
 		{
 			return this.X + ", " + this.Y + ", " + this.Z;
+		}
+
+		private static float NormalizeAngle(float angle)
+		{
+			while (angle > 360)
+				angle -= 360;
+
+			while (angle < 0)
+				angle += 360;
+
+			return angle;
 		}
 	}
 }

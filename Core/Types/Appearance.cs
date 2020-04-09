@@ -29,7 +29,7 @@ namespace ConceptMatrix
 		public byte Lips;
 		public byte LipsTone;
 		public byte Muscle;
-		public byte TailType;
+		public byte TailEarsType;
 		public byte Bust;
 		public byte FacePaint;
 		public byte FacePaintColor;

@@ -22,16 +22,16 @@ namespace ConceptMatrix.Offsets
 		public static BaseOffset TerritoryOFfset = 0x1C42430;
 		public static BaseOffset GposeFilters = 0x1C42BB8;
 		public static BaseOffset MusicOffset = 0x1C81CA8;
-		public static BaseOffset SkeletonOffset1 = 0x1382290; // Base
-		public static BaseOffset SkeletonOffset2 = 0x13833BD;
-		public static BaseOffset SkeletonOffset3 = 0x1391024;
-		public static BaseOffset SkeletonOffset4 = 0x1381A50; // Scale
-		public static BaseOffset SkeletonOffset5 = 0x13819CB; // Position
-		public static BaseOffset SkeletonOffset6 = 0x1382B7D; // Scale 2
+		public static FlagOffset SkeletonOffset1 = new FlagOffset(0x1382290, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, new byte[] { 0x41, 0x0F, 0x29, 0x5C, 0x12, 0x10 }); // Base
+		public static FlagOffset SkeletonOffset2 = new FlagOffset(0x13833BD, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, new byte[] { 0x43, 0x0F, 0x29, 0x5C, 0x18, 0x10 });
+		public static FlagOffset SkeletonOffset3 = new FlagOffset(0x1391024, new byte[] { 0x90, 0x90, 0x90, 0x90 }, new byte[] { 0x0F, 0x29, 0x5E, 0x10 });
+		public static FlagOffset SkeletonOffset4 = new FlagOffset(0x13822A0, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, new byte[] { 0x41, 0x0F, 0x29, 0x44, 0x12, 0x20 }); // Scale
+		public static FlagOffset SkeletonOffset5 = new FlagOffset(0x138221B, new byte[] { }, new byte[] { }); // Position
+		public static FlagOffset SkeletonOffset6 = new FlagOffset(0x13833CD, new byte[] { }, new byte[] { 0x43, 0x0F, 0x29, 0x44, 0x18, 0x20 }); // Scale 2
 
-		public static Offset PhysicsOffset1 = 0x37AA48;
-		public static Offset PhysicsOffset2 = 0x37A86F;
-		public static Offset PhysicsOffset3 = 0x37A882;
+		public static FlagOffset PhysicsOffset1 = new FlagOffset(0x37AA48, new byte[] { 0x90, 0x90, 0x90, 0x90 }, new byte[] { 0x0F, 0x29, 0x48, 0x10 });
+		public static FlagOffset PhysicsOffset2 = new FlagOffset(0x37AA3F, new byte[] { 0x90, 0x90, 0x90 }, new byte[] { 0x0F, 0x29, 0x00 });
+		public static FlagOffset PhysicsOffset3 = new FlagOffset(0x37AA52, new byte[] { 0x90, 0x90, 0x90, 0x90 }, new byte[] { 0x0F, 0x29, 0x40, 0x20 });
 
 		public static Offset RenderOffset1 = 0x431330;
 		public static Offset RenderOffset2 = 0x431326;
@@ -99,11 +99,11 @@ namespace ConceptMatrix.Offsets
 		public static Offset FOVCurrent = 0x120;
 		public static Offset FOVCurrent2 = 0x124;
 		public static Offset FOV2 = 0x12c;
-		public static Offset CameraAngleX = 0x130;
-		public static Offset CameraAngleY = 0x134;
+		public static Offset<float> CameraAngleX = 0x130;
+		public static Offset<float> CameraAngleY = 0x134;
 		public static Offset CameraYMin = 0x14C;
 		public static Offset CameraYMax = 0x148;
-		public static Offset CameraRotation = 0x164;
+		public static Offset<float> CameraRotation = 0x164;
 		public static Offset CameraUpDown = 0x218;
 		public static Offset CameraPanX = 0x150;
 		public static Offset CameraPanY = 0x154;

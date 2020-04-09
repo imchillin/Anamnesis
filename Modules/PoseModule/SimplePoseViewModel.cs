@@ -10,35 +10,45 @@ namespace ConceptMatrix.PoseModule
 	using System.Reflection;
 	using System.Threading;
 	using System.Windows;
-	using System.Windows.Media.Media3D;
 	using ConceptMatrix;
+	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
 	using ConceptMatrix.ThreeD;
+
+	using Vector = ConceptMatrix.Vector;
 
 	public class SimplePoseViewModel : INotifyPropertyChanged
 	{
 		private static IInjectionService injection;
 
+		private IMemory<Flag> skel1Mem;
+		private IMemory<Flag> skel2Mem;
+		private IMemory<Flag> skel3Mem;
+		private IMemory<Flag> phys1Mem;
+		private IMemory<Flag> phys2Mem;
+
 		private Dictionary<string, Bone> bones;
 		private Bone currentBone;
 		private bool enabled;
 
-		private IMemory<int> race;
-		private IMemory<int> tailType;
+		private IMemory<Appearance> appearance;
 
 		public SimplePoseViewModel(Selection selection)
 		{
 			injection = Module.Services.Get<IInjectionService>();
 
-			this.race = injection.GetMemory<int>(selection.BaseAddress, injection.Offsets.Character.Race);
-			this.tailType = injection.GetMemory<int>(selection.BaseAddress, injection.Offsets.Character.TailType);
+			this.skel1Mem = Offsets.SkeletonOffset1.GetMemory();
+			this.skel2Mem = Offsets.SkeletonOffset2.GetMemory();
+			this.skel3Mem = Offsets.SkeletonOffset3.GetMemory();
+			this.phys1Mem = Offsets.PhysicsOffset1.GetMemory();
+			this.phys2Mem = Offsets.PhysicsOffset2.GetMemory();
 
-			this.GenerateBones();
+			this.appearance = selection.BaseAddress.GetMemory(Offsets.ActorAppearance);
+
+			this.GenerateBones(selection);
 		}
 
-#pragma warning disable CS0067
 		public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore
 
 		public bool IsEnabled
 		{
@@ -52,19 +62,13 @@ namespace ConceptMatrix.PoseModule
 				this.CurrentBone = null;
 				this.enabled = value;
 
-				IMemory<byte[]> skeleton = injection.GetMemory<byte[]>(Offsets.BaseAddresses.Skeleton);
-				IMemory<byte[]> skeleton2 = injection.GetMemory<byte[]>(Offsets.BaseAddresses.Skeleton2);
-				IMemory<byte[]> skeleton3 = injection.GetMemory<byte[]>(Offsets.BaseAddresses.Skeleton3);
-				IMemory<byte[]> physics = injection.GetMemory<byte[]>(Offsets.BaseAddresses.Physics);
-				IMemory<byte[]> physics2 = injection.GetMemory<byte[]>(Offsets.BaseAddresses.Physics2);
-
 				if (this.enabled)
 				{
-					skeleton.Value = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
-					skeleton2.Value = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
-					skeleton3.Value = new byte[] { 0x90, 0x90, 0x90, 0x90 };
-					physics.Value = new byte[] { 0x90, 0x90, 0x90, 0x90 };
-					physics2.Value = new byte[] { 0x90, 0x90, 0x90 };
+					this.skel1Mem.Value = Flag.Enabled;
+					this.skel2Mem.Value = Flag.Enabled;
+					this.skel3Mem.Value = Flag.Enabled;
+					this.phys1Mem.Value = Flag.Enabled;
+					this.phys2Mem.Value = Flag.Enabled;
 
 					// Poll changes thread
 					new Thread(new ThreadStart(this.PollChanges)).Start();
@@ -74,11 +78,11 @@ namespace ConceptMatrix.PoseModule
 				}
 				else
 				{
-					skeleton.Value = new byte[] { 0x41, 0x0F, 0x29, 0x5C, 0x12, 0x10 };
-					skeleton2.Value = new byte[] { 0x43, 0x0F, 0x29, 0x5C, 0x18, 0x10 };
-					skeleton3.Value = new byte[] { 0x0F, 0x29, 0x5E, 0x10 };
-					physics.Value = new byte[] { 0x0F, 0x29, 0x48, 0x10 };
-					physics2.Value = new byte[] { 0x0F, 0x29, 0x00 };
+					this.skel1Mem.Value = Flag.Disabled;
+					this.skel2Mem.Value = Flag.Disabled;
+					this.skel3Mem.Value = Flag.Disabled;
+					this.phys1Mem.Value = Flag.Disabled;
+					this.phys2Mem.Value = Flag.Disabled;
 				}
 			}
 		}
@@ -105,10 +109,6 @@ namespace ConceptMatrix.PoseModule
 				if (this.currentBone != null)
 					this.currentBone.SetRotation();
 
-				// Ensure we have the correct rotation for a bone before we edit it
-				if (value != null)
-					value.GetRotation();
-
 				this.currentBone = value;
 			}
 		}
@@ -121,11 +121,19 @@ namespace ConceptMatrix.PoseModule
 			set;
 		}
 
+		public Appearance.Races Race
+		{
+			get
+			{
+				return this.appearance.Value.Race;
+			}
+		}
+
 		public bool HasTail
 		{
 			get
 			{
-				return this.race.Value == 4 || this.race.Value == 6 || this.race.Value == 7;
+				return this.Race == Appearance.Races.Miqote || this.Race == Appearance.Races.AuRa || this.Race == Appearance.Races.Hrothgar;
 			}
 		}
 
@@ -133,7 +141,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Value == 8;
+				return this.Race == Appearance.Races.Vierra;
 			}
 		}
 
@@ -141,7 +149,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Value == 8 && this.tailType.Value <= 1;
+				return this.IsViera && this.appearance.Value.TailEarsType <= 1;
 			}
 		}
 
@@ -149,7 +157,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Value == 8 && this.tailType.Value == 2;
+				return this.IsViera && this.appearance.Value.TailEarsType == 2;
 			}
 		}
 
@@ -157,7 +165,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Value == 8 && this.tailType.Value == 3;
+				return this.IsViera && this.appearance.Value.TailEarsType == 3;
 			}
 		}
 
@@ -165,7 +173,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Value == 8 && this.tailType.Value == 4;
+				return this.IsViera && this.appearance.Value.TailEarsType == 4;
 			}
 		}
 
@@ -173,7 +181,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.race.Value == 7;
+				return this.Race == Appearance.Races.Hrothgar;
 			}
 		}
 
@@ -256,32 +264,45 @@ namespace ConceptMatrix.PoseModule
 		}
 
 		// gets all bones defined in BonesOffsets.
-		private void GenerateBones()
+		private void GenerateBones(Selection selection)
 		{
-			this.bones = new Dictionary<string, Bone>();
-			Offsets.Character c = injection.Offsets.Character;
-			PropertyInfo[] boneProperties = typeof(Offsets.Bones).GetProperties();
-			foreach (PropertyInfo boneProperty in boneProperties)
+			if (this.bones != null)
 			{
-				if (!boneProperty.Name.Contains("_X"))
-					continue;
+				foreach (Bone bone in this.bones.Values)
+				{
+					bone.Dispose();
+				}
+			}
 
-				string boneName = boneProperty.Name.Replace("_X", string.Empty);
+			this.bones = new Dictionary<string, Bone>();
+			FieldInfo[] members = typeof(Bones).GetFields(BindingFlags.Static | BindingFlags.Public);
+
+			if (members.Length <= 0)
+				throw new Exception("Failed to extract bone offsets");
+
+			foreach (FieldInfo bone in members)
+			{
+				string boneName = bone.Name;
 
 				if (this.bones.ContainsKey(boneName))
 					throw new Exception("Duplicate bone: \"" + boneName + "\"");
 
-				this.bones[boneName] = new Bone(boneName);
+				object offsetObj = bone.GetValue(null);
+				if (offsetObj is IMemoryOffset<Transform> transOffset)
+				{
+					IMemory<Transform> transMem = selection.BaseAddress.GetMemory(transOffset);
+					this.bones[boneName] = new Bone(boneName, transMem);
 
-				// bit of a hack...
-				if (boneName.Contains(@"Hroth"))
-					this.bones[boneName].IsEnabled = this.IsHrothgar;
+					// bit of a hack...
+					if (boneName.Contains(@"Hroth"))
+						this.bones[boneName].IsEnabled = this.IsHrothgar;
 
-				if (boneName.Contains(@"Viera"))
-					this.bones[boneName].IsEnabled = this.IsViera;
+					if (boneName.Contains(@"Viera"))
+						this.bones[boneName].IsEnabled = this.IsViera;
 
-				if (boneName.Contains(@"Tail"))
-					this.bones[boneName].IsEnabled = this.HasTail;
+					if (boneName.Contains(@"Tail"))
+						this.bones[boneName].IsEnabled = this.HasTail;
+				}
 			}
 
 			// special case for Viera lips
@@ -518,23 +539,25 @@ namespace ConceptMatrix.PoseModule
 
 		private void WatchCamera()
 		{
-			IMemory<float> camX = injection.GetMemory<float>(Offsets.BaseAddresses.Camera, injection.Offsets.Character.CamAngleX);
-			IMemory<float> camY = injection.GetMemory<float>(Offsets.BaseAddresses.Camera, injection.Offsets.Character.CamAngleY);
-			IMemory<float> camZ = injection.GetMemory<float>(Offsets.BaseAddresses.Camera, injection.Offsets.Character.CameraHeight2);
+			IMemory<float> camX = Offsets.CameraOffset.GetMemory(Offsets.CameraAngleX);
+			IMemory<float> camY = Offsets.CameraOffset.GetMemory(Offsets.CameraAngleY);
+			IMemory<float> camZ = Offsets.CameraOffset.GetMemory(Offsets.CameraRotation);
 
 			while (this.IsEnabled && Application.Current != null)
 			{
-				Vector3D camEuler = default(Vector3D);
+				Vector camEuler = default;
 
-				camEuler.Y = MathUtils.RadiansToDegrees(camX.Value);
-				camEuler.Z = -MathUtils.RadiansToDegrees(camY.Value);
-				camEuler.X = MathUtils.RadiansToDegrees(camZ.Value);
+				// It's weird that these would be in radians. maybe the memory is actually a quaternion?
+				// TODO: investigate.
+				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camX.Value);
+				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camY.Value);
+				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
 
 				try
 				{
 					Application.Current.Dispatcher.Invoke(() =>
 					{
-						this.CameraRotation = camEuler.ToQuaternion();
+						this.CameraRotation = Quaternion.FromEuler(camEuler);
 					});
 				}
 				catch (Exception)

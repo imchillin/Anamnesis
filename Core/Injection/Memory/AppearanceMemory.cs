@@ -37,7 +37,7 @@ namespace ConceptMatrix.Injection.Memory
 			value.Lips = data[19];
 			value.LipsTone = data[20];
 			value.Muscle = data[21];
-			value.TailType = data[22];
+			value.TailEarsType = data[22];
 			value.Bust = data[23];
 			value.FacePaint = data[24];
 			value.FacePaintColor = data[25];
@@ -68,7 +68,7 @@ namespace ConceptMatrix.Injection.Memory
 			data[19] = value.Lips;
 			data[20] = value.LipsTone;
 			data[21] = value.Muscle;
-			data[22] = value.TailType;
+			data[22] = value.TailEarsType;
 			data[23] = value.Bust;
 			data[24] = value.FacePaint;
 			data[25] = value.FacePaintColor;

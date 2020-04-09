@@ -17,11 +17,16 @@ namespace ConceptMatrix.Injection
 
 	public class InjectionService : IInjectionService
 	{
-		private ProcessInjection process;
 		private Dictionary<Type, Type> memoryTypeLookup = new Dictionary<Type, Type>();
 		private bool isActive;
 
 		public static InjectionService Instance
+		{
+			get;
+			private set;
+		}
+
+		public ProcessInjection Process
 		{
 			get;
 			private set;
@@ -55,12 +60,12 @@ namespace ConceptMatrix.Injection
 				}
 			}
 
-			this.process = new ProcessInjection();
+			this.Process = new ProcessInjection();
 
 			// TODO: allow for process selection
 			try
 			{
-				this.process.OpenProcess("ffxiv_dx11");
+				this.Process.OpenProcess("ffxiv_dx11");
 			}
 			catch (Exception ex)
 			{
@@ -85,25 +90,30 @@ namespace ConceptMatrix.Injection
 		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
 		{
 			List<IMemoryOffset> newOffsets = new List<IMemoryOffset>();
-			newOffsets.Add(new MappedBaseOffset(this.process.Process, (BaseOffset)baseOffset));
+			newOffsets.Add(new MappedBaseOffset(this.Process.Process, (BaseOffset)baseOffset));
 			newOffsets.AddRange(offsets);
 			return this.GetMemory<T>(newOffsets.ToArray());
 		}
 
 		public IMemory<T> GetMemory<T>(params IMemoryOffset[] offsets)
 		{
-			UIntPtr address = this.process.GetAddress(offsets);
+			UIntPtr address = this.GetAddress(offsets);
 
 			Type wrapperType = this.GetMemoryType(typeof(T));
 			try
 			{
-				IMemory<T> memory = (IMemory<T>)Activator.CreateInstance(wrapperType, this.process, address);
+				IMemory<T> memory = (IMemory<T>)Activator.CreateInstance(wrapperType, this.Process, address);
 				return memory;
 			}
 			catch (TargetInvocationException ex)
 			{
 				throw ex.InnerException;
 			}
+		}
+
+		public UIntPtr GetAddress(params IMemoryOffset[] offsets)
+		{
+			return this.Process.GetAddress(offsets);
 		}
 
 		[DllImport("kernel32.dll")]

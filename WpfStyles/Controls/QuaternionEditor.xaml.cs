@@ -14,14 +14,17 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using ConceptMatrix.ThreeD.Lines;
 	using PropertyChanged;
 
+	using CmQuaterion = ConceptMatrix.Quaternion;
+	using Vector = ConceptMatrix.Vector;
+
 	/// <summary>
 	/// Interaction logic for QuaternionEditor.xaml.
 	/// </summary>
 	public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 	{
-		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(Quaternion), typeof(QuaternionEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
+		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(ConceptMatrix.Quaternion), typeof(QuaternionEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty TickFrequencyProperty = DependencyProperty.Register(nameof(TickFrequency), typeof(double), typeof(QuaternionEditor));
-		public static readonly DependencyProperty CameraRotationProperty = DependencyProperty.Register(nameof(CameraRotation), typeof(Quaternion), typeof(QuaternionEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnCameraRotationChangedStatic)));
+		public static readonly DependencyProperty CameraRotationProperty = DependencyProperty.Register(nameof(CameraRotation), typeof(ConceptMatrix.Quaternion), typeof(QuaternionEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnCameraRotationChangedStatic)));
 
 		private Vector3D euler;
 		private bool eulerLock = false;
@@ -56,34 +59,63 @@ namespace ConceptMatrix.WpfStyles.Controls
 		}
 
 		[AlsoNotifyFor(nameof(EulerX), nameof(EulerY), nameof(EulerZ))]
-		public Quaternion Value
+		public CmQuaterion Value
 		{
 			get
 			{
-				return (Quaternion)this.GetValue(ValueProperty);
+				return (CmQuaterion)this.GetValue(ValueProperty);
 			}
 
 			set
 			{
 				if (!this.eulerLock)
-					this.euler = value.ToEulerAngles();
+				{
+					Vector euler = value.ToEuler();
+					this.euler = new Vector3D(euler.X, euler.Y, euler.Z);
+				}
 
 				this.SetValue(ValueProperty, value);
-				this.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(value));
+				this.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(this.ValueQuat));
 			}
 		}
 
-		public Quaternion CameraRotation
+		public Quaternion ValueQuat
 		{
 			get
 			{
-				return (Quaternion)this.GetValue(CameraRotationProperty);
+				return new Quaternion(this.Value.X, this.Value.Y, this.Value.Z, this.Value.W);
+			}
+
+			set
+			{
+				this.Value = new CmQuaterion((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
+			}
+		}
+
+		public CmQuaterion CameraRotation
+		{
+			get
+			{
+				return (CmQuaterion)this.GetValue(CameraRotationProperty);
 			}
 
 			set
 			{
 				this.SetValue(CameraRotationProperty, value);
-				this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(value));
+				this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(this.CamQuat));
+			}
+		}
+
+		public Quaternion CamQuat
+		{
+			get
+			{
+				return new Quaternion(this.CameraRotation.X, this.CameraRotation.Y, this.CameraRotation.Z, this.CameraRotation.W);
+			}
+
+			set
+			{
+				this.CameraRotation = new CmQuaterion((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
 			}
 		}
 
@@ -97,7 +129,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			{
 				this.eulerLock = true;
 				this.euler.X = value;
-				this.Value = this.euler.ToQuaternion();
+				this.ValueQuat = this.euler.ToQuaternion();
 				this.eulerLock = false;
 			}
 		}
@@ -112,7 +144,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			{
 				this.eulerLock = true;
 				this.euler.Y = value;
-				this.Value = this.euler.ToQuaternion();
+				this.ValueQuat = this.euler.ToQuaternion();
 				this.eulerLock = false;
 			}
 		}
@@ -127,7 +159,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			{
 				this.eulerLock = true;
 				this.euler.Z = value;
-				this.Value = this.euler.ToQuaternion();
+				this.ValueQuat = this.euler.ToQuaternion();
 				this.eulerLock = false;
 			}
 		}
@@ -139,8 +171,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 				if (quaternionEditor.eulerLock)
 					return;
 
-				quaternionEditor.euler = quaternionEditor.Value.ToEulerAngles();
-				quaternionEditor.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(quaternionEditor.Value));
+				quaternionEditor.euler = quaternionEditor.ValueQuat.ToEulerAngles();
+				quaternionEditor.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(quaternionEditor.ValueQuat));
 
 				quaternionEditor.PropertyChanged.Invoke(sender, new PropertyChangedEventArgs(nameof(Value)));
 				quaternionEditor.PropertyChanged.Invoke(sender, new PropertyChangedEventArgs(nameof(EulerX)));
@@ -153,7 +185,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			if (sender is QuaternionEditor quaternionEditor)
 			{
-				quaternionEditor.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(quaternionEditor.CameraRotation));
+				quaternionEditor.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(quaternionEditor.CamQuat));
 
 				quaternionEditor.PropertyChanged.Invoke(sender, new PropertyChangedEventArgs(nameof(CameraRotation)));
 			}
@@ -279,7 +311,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 				angleEuler.Z *= -1;
 
 				Quaternion angle = angleEuler.ToQuaternion();
-				this.target.Value *= angle;
+				this.target.ValueQuat *= angle;
 			}
 		}
 
