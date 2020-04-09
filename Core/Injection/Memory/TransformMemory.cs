@@ -35,7 +35,7 @@ namespace ConceptMatrix.Injection.Memory
 			scale.X = BitConverter.ToSingle(data, 32);
 			scale.Y = BitConverter.ToSingle(data, 36);
 			scale.Z = BitConverter.ToSingle(data, 40);
-			value.Position = pos;
+			value.Scale = scale;
 
 			return value;
 		}
@@ -54,7 +54,7 @@ namespace ConceptMatrix.Injection.Memory
 			Array.Copy(BitConverter.GetBytes(value.Rotation.X), 0, data, 16, 4);
 			Array.Copy(BitConverter.GetBytes(value.Rotation.Y), 0, data, 20, 4);
 			Array.Copy(BitConverter.GetBytes(value.Rotation.Z), 0, data, 24, 4);
-			Array.Copy(BitConverter.GetBytes(value.Rotation.Z), 0, data, 28, 4);
+			Array.Copy(BitConverter.GetBytes(value.Rotation.W), 0, data, 28, 4);
 
 			// scale
 			Array.Copy(BitConverter.GetBytes(value.Scale.X), 0, data, 32, 4);
