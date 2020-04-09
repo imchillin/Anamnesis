@@ -111,6 +111,12 @@ namespace ConceptMatrix.Injection
 			}
 		}
 
+		public UIntPtr GetAddress(IBaseMemoryOffset offset)
+		{
+			IMemoryOffset newOffset = new MappedBaseOffset(this.Process.Process, (BaseOffset)offset);
+			return this.Process.GetAddress(newOffset);
+		}
+
 		public UIntPtr GetAddress(params IMemoryOffset[] offsets)
 		{
 			return this.Process.GetAddress(offsets);
