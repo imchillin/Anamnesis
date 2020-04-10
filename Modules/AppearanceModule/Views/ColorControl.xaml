@@ -6,7 +6,7 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 mc:Ignorable="d" >
 	<Button Padding="0" Style="{DynamicResource TransparentButton}" x:Name="ContentArea" Click="OnClick">
-		<Border Width="28" Height="21" Margin="0" CornerRadius="3">
+		<Border MinWidth="28" MinHeight="21" Margin="0" CornerRadius="3">
 			<Border.Background>
 				<SolidColorBrush Color="{Binding WpfColor, FallbackValue=White}"/>
 			</Border.Background>

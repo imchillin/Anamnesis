@@ -98,8 +98,13 @@
 			<ComboBox Grid.Column="1" Grid.Row="2" x:Name="TribeComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Tribe}" ItemTemplate="{StaticResource GenderedComboBoxItem}"/>
 
 			<TextBlock Grid.Column="0" Grid.Row="3" Text="Eye Color:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<controls:ColorControl Grid.Column="1" Grid.Row="3" Margin="6" Value="{Binding EyeColorL}" Type="Eyes" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+			<StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal">
+				<controls:ColorControl Margin="6" Value="{Binding EyeColorL}" Type="Eyes" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+				<controls:ColorControl Margin="6" Value="{Binding EyeColorR}" Type="Eyes" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+			</StackPanel>
 
+			<TextBlock Grid.Column="0" Grid.Row="4" Text="Skintone:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<controls:ColorControl Grid.Column="1" Grid.Row="4" Margin="6" Value="{Binding Skintone}" Type="Skin" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
 
 		</Grid>
 

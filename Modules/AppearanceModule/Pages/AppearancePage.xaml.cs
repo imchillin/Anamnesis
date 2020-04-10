@@ -10,11 +10,13 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	using ConceptMatrix.AppearanceModule.Utilities;
 	using ConceptMatrix.AppearanceModule.Views;
 	using ConceptMatrix.Services;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
-	public partial class AppearancePage : UserControl, INotifyPropertyChanged
+	[AddINotifyPropertyChangedInterface]
+	public partial class AppearancePage : UserControl
 	{
 		private IRace race;
 
@@ -33,8 +35,6 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 			this.Gender = Appearance.Genders.Feminine;
 		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
 
 		public Appearance.Genders Gender
 		{
@@ -57,7 +57,11 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			}
 		}
 
-		public ITribe Tribe { get; set; }
+		public ITribe Tribe
+		{
+			get;
+			set;
+		}
 
 		public byte Skintone { get; set; }
 		public byte EyeColorL { get; set; }

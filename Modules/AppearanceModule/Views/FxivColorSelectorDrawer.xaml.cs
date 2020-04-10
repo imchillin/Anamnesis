@@ -14,20 +14,26 @@ namespace ConceptMatrix.AppearanceModule.Views
 	/// </summary>
 	public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 	{
+		private bool locked = false;
+
 		public FxivColorSelectorDrawer(ColorData.Entry[] colors, int selectedIndex)
 		{
 			this.InitializeComponent();
 
-			////ReadOnlySpan<ColorData.Entry> colors = ColorData.GetEyeColors();
+			this.locked = true;
 			this.List.ItemsSource = colors;
 			this.List.SelectedIndex = selectedIndex;
+			this.locked = false;
 		}
 
 		public event DrawerEvent Close;
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			this.Close.Invoke();
+			if (this.locked)
+				return;
+
+			this.Close?.Invoke();
 		}
 	}
 }
