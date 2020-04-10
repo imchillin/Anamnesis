@@ -30,7 +30,7 @@ namespace ConceptMatrix
 			this.Dispatcher.UnhandledException += this.DispatcherOnUnhandledException;
 			Application.Current.DispatcherUnhandledException += this.CurrentOnDispatcherUnhandledException;
 			TaskScheduler.UnobservedTaskException += this.TaskSchedulerOnUnobservedTaskException;
-			Log.OnError += this.OnError;
+			Log.OnException += this.OnException;
 			this.Exit += this.OnExit;
 
 			base.OnStartup(e);
@@ -50,22 +50,22 @@ namespace ConceptMatrix
 
 		private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
 		{
-			this.OnError(e.Exception as Exception, "Unhandled");
+			Log.Write(e.Exception, @"Unhandled Task", Log.Severity.Critical);
 		}
 
 		private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
-			this.OnError(e.Exception as Exception, "Unhandled");
+			Log.Write(e.Exception, @"Unhandled Current Dispatcher", Log.Severity.Critical);
 		}
 
 		private void DispatcherOnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
-			this.OnError(e.Exception as Exception, "Unhandled");
+			Log.Write(e.Exception, @"Unhandled Dispatcher", Log.Severity.Critical);
 		}
 
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			this.OnError(e.ExceptionObject as Exception, "Unhandled");
+			Log.Write(e.ExceptionObject as Exception, @"Unhandled", Log.Severity.Critical);
 		}
 
 		private async Task Start()
@@ -93,14 +93,14 @@ namespace ConceptMatrix
 			}
 		}
 
-		private void OnError(Exception ex, string category)
+		private void OnException(Exception ex, Log.Severity severity, string category)
 		{
 			if (Application.Current == null)
 				return;
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				ErrorDialog dlg = new ErrorDialog(ex);
+				ErrorDialog dlg = new ErrorDialog(ex, severity == Log.Severity.Critical);
 				dlg.Owner = this.MainWindow;
 				dlg.ShowDialog();
 			});

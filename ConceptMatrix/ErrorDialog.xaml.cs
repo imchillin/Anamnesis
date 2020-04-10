@@ -15,9 +15,12 @@ namespace ConceptMatrix.GUI
 	/// </summary>
 	public partial class ErrorDialog : Window
 	{
-		public ErrorDialog(Exception ex)
+		public ErrorDialog(Exception ex, bool isCritical)
 		{
 			this.InitializeComponent();
+
+			this.OkButton.Visibility = isCritical ? Visibility.Collapsed : Visibility.Visible;
+			this.DetailsExpander.Header = isCritical ? "A critical error has occurred. The application must quit" : ex.Message;
 
 			Count++;
 
@@ -70,11 +73,16 @@ namespace ConceptMatrix.GUI
 			}
 		}
 
+		private void OnQuitClick(object sender, RoutedEventArgs e)
+		{
+			this.OnOkClick(sender, e);
+			Application.Current.Shutdown(2);
+		}
+
 		private void OnOkClick(object sender, RoutedEventArgs e)
 		{
 			Count--;
 			this.Close();
-			Application.Current.Shutdown(2);
 		}
 
 		private void OnExpanded(object sender, RoutedEventArgs e)
