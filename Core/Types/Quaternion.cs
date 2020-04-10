@@ -7,6 +7,8 @@ namespace ConceptMatrix
 
 	public struct Quaternion : IEquatable<Quaternion>
 	{
+		public static readonly Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
 		private static float deg2Rad = ((float)Math.PI * 2) / 360;
 		private static float rad2Deg = 360 / ((float)Math.PI * 2);
 

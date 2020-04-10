@@ -4,19 +4,20 @@
 namespace ConceptMatrix.PoseModule
 {
 	using System;
-	using System.Windows.Media.Media3D;
+	using System.Reflection;
 	using ConceptMatrix.Services;
 
 	public class LegacyPoseFile : FileBase
 	{
 		public static readonly FileType FileType = new FileType(@"cmp", "CM2 Pose File", typeof(LegacyPoseFile));
 
-		public string Description { get; set; }
+		/*public string Description { get; set; }
 		public string DateCreated { get; set; }
 		public string CMPVersion { get; set; }
 		public string Race { get; set; }
 		public string Clan { get; set; }
-		public string Body { get; set; }
+		public string Body { get; set; }*/
+
 		public string Root { get; set; }
 		public string Abdomen { get; set; }
 		public string Throw { get; set; }
@@ -222,6 +223,211 @@ namespace ConceptMatrix.PoseModule
 		public string ExTopH { get; set; }
 		public string ExTopI { get; set; }
 
+		public string RootSize { get; set; }
+		public string AbdomenSize { get; set; }
+		public string ThrowSize { get; set; }
+		public string WaistSize { get; set; }
+		public string SpineASize { get; set; }
+		public string LegLeftSize { get; set; }
+		public string LegRightSize { get; set; }
+		public string HolsterLeftSize { get; set; }
+		public string HolsterRightSize { get; set; }
+		public string SheatheLeftSize { get; set; }
+		public string SheatheRightSize { get; set; }
+		public string SpineBSize { get; set; }
+		public string ClothBackALeftSize { get; set; }
+		public string ClothBackARightSize { get; set; }
+		public string ClothFrontALeftSize { get; set; }
+		public string ClothFrontARightSize { get; set; }
+		public string ClothSideALefSizet { get; set; }
+		public string ClothSideARightSize { get; set; }
+		public string KneeLeftSize { get; set; }
+		public string KneeRightSize { get; set; }
+		public string BreastLeftSize { get; set; }
+		public string BreastRightSize { get; set; }
+		public string SpineCSize { get; set; }
+		public string ClothBackBLeftSize { get; set; }
+		public string ClothBackBRightSize { get; set; }
+		public string ClothFrontBLeftSize { get; set; }
+		public string ClothFrontBRightSize { get; set; }
+		public string ClothSideBLeftSize { get; set; }
+		public string ClothSideBRightSize { get; set; }
+		public string CalfLeftSize { get; set; }
+		public string CalfRightSize { get; set; }
+		public string ScabbardLeftSize { get; set; }
+		public string ScabbardRightSize { get; set; }
+		public string NeckSize { get; set; }
+		public string ClavicleLeftSize { get; set; }
+		public string ClavicleRightSize { get; set; }
+		public string ClothBackCLeftSize { get; set; }
+		public string ClothBackCRightSize { get; set; }
+		public string ClothFrontCLeftSize { get; set; }
+		public string ClothFrontCRightSize { get; set; }
+		public string ClothSideCLeftSize { get; set; }
+		public string ClothSideCRightSize { get; set; }
+		public string PoleynLeftSize { get; set; }
+		public string PoleynRightSize { get; set; }
+		public string FootLeftSize { get; set; }
+		public string FootRightSize { get; set; }
+		public string HeadSize { get; set; }
+		public string ArmLeftSize { get; set; }
+		public string ArmRightSize { get; set; }
+		public string PauldronLeftSize { get; set; }
+		public string PauldronRightSize { get; set; }
+		public string Unknown00Size { get; set; }
+		public string ToesLeftSize { get; set; }
+		public string ToesRightSize { get; set; }
+		public string HairASize { get; set; }
+		public string HairFrontLeftSize { get; set; }
+		public string HairFrontRightSize { get; set; }
+		public string EarLeftSize { get; set; }
+		public string EarRightSize { get; set; }
+		public string ForearmLeftSize { get; set; }
+		public string ForearmRightSize { get; set; }
+		public string ShoulderLeftSize { get; set; }
+		public string ShoulderRightSize { get; set; }
+		public string HairBSize { get; set; }
+		public string HandLeftSize { get; set; }
+		public string HandRightSize { get; set; }
+		public string ShieldLeftSize { get; set; }
+		public string ShieldRightSize { get; set; }
+		public string EarringALeftSize { get; set; }
+		public string EarringARightSize { get; set; }
+		public string ElbowLeftSize { get; set; }
+		public string ElbowRightSize { get; set; }
+		public string CouterLeftSize { get; set; }
+		public string CouterRightSize { get; set; }
+		public string WristLeftSize { get; set; }
+		public string WristRightSize { get; set; }
+		public string IndexALeftSize { get; set; }
+		public string IndexARightSize { get; set; }
+		public string PinkyALeftSize { get; set; }
+		public string PinkyARightSize { get; set; }
+		public string RingALeftSize { get; set; }
+		public string RingARightSize { get; set; }
+		public string MiddleALeftSize { get; set; }
+		public string MiddleARightSize { get; set; }
+		public string ThumbALeftSize { get; set; }
+		public string ThumbARightSize { get; set; }
+		public string WeaponLeftSize { get; set; }
+		public string WeaponRightSize { get; set; }
+		public string EarringBLeftSize { get; set; }
+		public string EarringBRightSize { get; set; }
+		public string IndexBLeftSize { get; set; }
+		public string IndexBRightSize { get; set; }
+		public string PinkyBLeftSize { get; set; }
+		public string PinkyBRightSize { get; set; }
+		public string RingBLeftSize { get; set; }
+		public string RingBRightSize { get; set; }
+		public string MiddleBLeftSize { get; set; }
+		public string MiddleBRightSize { get; set; }
+		public string ThumbBLeftSize { get; set; }
+		public string ThumbBRightSize { get; set; }
+		public string TailASize { get; set; }
+		public string TailBSize { get; set; }
+		public string TailCSize { get; set; }
+		public string TailDSize { get; set; }
+		public string TailESize { get; set; }
+		public string RootHeadSize { get; set; }
+		public string JawSize { get; set; }
+		public string EyelidLowerLeftSize { get; set; }
+		public string EyelidLowerRightSize { get; set; }
+		public string EyeLeftSize { get; set; }
+		public string EyeRightSize { get; set; }
+		public string NoseSize { get; set; }
+		public string CheekLeftSize { get; set; }
+		public string HrothWhiskersLeftSize { get; set; }
+		public string CheekRightSize { get; set; }
+		public string HrothWhiskersRightSize { get; set; }
+		public string LipsLeftSize { get; set; }
+		public string HrothEyebrowLeftSize { get; set; }
+		public string LipsRightSize { get; set; }
+		public string HrothEyebrowRightSize { get; set; }
+		public string EyebrowLeftSize { get; set; }
+		public string HrothBridgeSize { get; set; }
+		public string EyebrowRightSize { get; set; }
+		public string HrothBrowLeftSize { get; set; }
+		public string BridgeSize { get; set; }
+		public string HrothBrowRightSize { get; set; }
+		public string BrowLeftSize { get; set; }
+		public string HrothJawUpperSize { get; set; }
+		public string BrowRightSize { get; set; }
+		public string HrothLipUpperSize { get; set; }
+		public string LipUpperASize { get; set; }
+		public string HrothEyelidUpperLeftSize { get; set; }
+		public string EyelidUpperLeftSize { get; set; }
+		public string HrothEyelidUpperRightSize { get; set; }
+		public string EyelidUpperRightSize { get; set; }
+		public string HrothLipsLeftSize { get; set; }
+		public string LipLowerASize { get; set; }
+		public string HrothLipsRightSize { get; set; }
+		public string VieraEar01ALeftSize { get; set; }
+		public string LipUpperBSize { get; set; }
+		public string HrothLipUpperLeftSize { get; set; }
+		public string VieraEar01ARightSize { get; set; }
+		public string LipLowerBSize { get; set; }
+		public string HrothLipUpperRightSize { get; set; }
+		public string VieraEar02ALeftSize { get; set; }
+		public string HrothLipLowerSize { get; set; }
+		public string VieraEar02ARightSize { get; set; }
+		public string VieraEar03ALeftSize { get; set; }
+		public string VieraEar03ARightSize { get; set; }
+		public string VieraEar04ALeftSize { get; set; }
+		public string VieraEar04ARightSize { get; set; }
+		public string VieraLipLowerASize { get; set; }
+		public string VieraLipUpperBSize { get; set; }
+		public string VieraEar01BLeftSize { get; set; }
+		public string VieraEar01BRightSize { get; set; }
+		public string VieraEar02BLeftSize { get; set; }
+		public string VieraEar02BRightSize { get; set; }
+		public string VieraEar03BLeftSize { get; set; }
+		public string VieraEar03BRightSize { get; set; }
+		public string VieraEar04BLeftSize { get; set; }
+		public string VieraEar04BRightSize { get; set; }
+		public string VieraLipLowerBSize { get; set; }
+		public string ExRootHairSize { get; set; }
+		public string ExHairASize { get; set; }
+		public string ExHairBSize { get; set; }
+		public string ExHairCSize { get; set; }
+		public string ExHairDSize { get; set; }
+		public string ExHairESize { get; set; }
+		public string ExHairFSize { get; set; }
+		public string ExHairGSize { get; set; }
+		public string ExHairHSize { get; set; }
+		public string ExHairISize { get; set; }
+		public string ExHairJSize { get; set; }
+		public string ExHairKSize { get; set; }
+		public string ExHairLSize { get; set; }
+		public string ExRootMetSize { get; set; }
+		public string ExMetASize { get; set; }
+		public string ExMetBSize { get; set; }
+		public string ExMetCSize { get; set; }
+		public string ExMetDSize { get; set; }
+		public string ExMetESize { get; set; }
+		public string ExMetFSize { get; set; }
+		public string ExMetGSize { get; set; }
+		public string ExMetHSize { get; set; }
+		public string ExMetISize { get; set; }
+		public string ExMetJSize { get; set; }
+		public string ExMetKSize { get; set; }
+		public string ExMetLSize { get; set; }
+		public string ExMetMSize { get; set; }
+		public string ExMetNSize { get; set; }
+		public string ExMetOSize { get; set; }
+		public string ExMetPSize { get; set; }
+		public string ExMetQSize { get; set; }
+		public string ExMetRSize { get; set; }
+		public string ExRootTopSize { get; set; }
+		public string ExTopASize { get; set; }
+		public string ExTopBSize { get; set; }
+		public string ExTopCSize { get; set; }
+		public string ExTopDSize { get; set; }
+		public string ExTopESize { get; set; }
+		public string ExTopFSize { get; set; }
+		public string ExTopGSize { get; set; }
+		public string ExTopHSize { get; set; }
+		public string ExTopISize { get; set; }
+
 		public override FileType GetFileType()
 		{
 			return FileType;
@@ -230,251 +436,85 @@ namespace ConceptMatrix.PoseModule
 		public PoseFile Upgrade()
 		{
 			PoseFile file = new PoseFile();
-			file.Description = this.Description;
 
-			file.Race = int.Parse(this.Race);
-			file.Clan = int.Parse(this.Clan);
-			file.Body = int.Parse(this.Body);
+			file.Root = StringToBone(this.Root, this.RootSize);
 
-			file.Root = StringToBone(this.Root);
-			file.Abdomen = StringToBone(this.Abdomen);
-			file.Throw = StringToBone(this.Throw);
-			file.Waist = StringToBone(this.Waist);
-			file.SpineA = StringToBone(this.SpineA);
-			file.LegLeft = StringToBone(this.LegLeft);
-			file.LegRight = StringToBone(this.LegRight);
-			file.HolsterLeft = StringToBone(this.HolsterLeft);
-			file.HolsterRight = StringToBone(this.HolsterRight);
-			file.SheatheLeft = StringToBone(this.SheatheLeft);
-			file.SheatheRight = StringToBone(this.SheatheRight);
-			file.SpineB = StringToBone(this.SpineB);
-			file.ClothBackALeft = StringToBone(this.ClothBackALeft);
-			file.ClothBackARight = StringToBone(this.ClothBackARight);
-			file.ClothFrontALeft = StringToBone(this.ClothFrontALeft);
-			file.ClothFrontARight = StringToBone(this.ClothFrontARight);
-			file.ClothSideALeft = StringToBone(this.ClothSideALeft);
-			file.ClothSideARight = StringToBone(this.ClothSideARight);
-			file.KneeLeft = StringToBone(this.KneeLeft);
-			file.KneeRight = StringToBone(this.KneeRight);
-			file.BreastLeft = StringToBone(this.BreastLeft);
-			file.BreastRight = StringToBone(this.BreastRight);
-			file.SpineC = StringToBone(this.SpineC);
-			file.ClothBackBLeft = StringToBone(this.ClothBackBLeft);
-			file.ClothBackBRight = StringToBone(this.ClothBackBRight);
-			file.ClothFrontBLeft = StringToBone(this.ClothFrontBLeft);
-			file.ClothFrontBRight = StringToBone(this.ClothFrontBRight);
-			file.ClothSideBLeft = StringToBone(this.ClothSideBLeft);
-			file.ClothSideBRight = StringToBone(this.ClothSideBRight);
-			file.CalfLeft = StringToBone(this.CalfLeft);
-			file.CalfRight = StringToBone(this.CalfRight);
-			file.ScabbardLeft = StringToBone(this.ScabbardLeft);
-			file.ScabbardRight = StringToBone(this.ScabbardRight);
-			file.Neck = StringToBone(this.Neck);
-			file.ClavicleLeft = StringToBone(this.ClavicleLeft);
-			file.ClavicleRight = StringToBone(this.ClavicleRight);
-			file.ClothBackCLeft = StringToBone(this.ClothBackCLeft);
-			file.ClothBackCRight = StringToBone(this.ClothBackCRight);
-			file.ClothFrontCLeft = StringToBone(this.ClothFrontCLeft);
-			file.ClothFrontCRight = StringToBone(this.ClothFrontCRight);
-			file.ClothSideCLeft = StringToBone(this.ClothSideCLeft);
-			file.ClothSideCRight = StringToBone(this.ClothSideCRight);
-			file.PoleynLeft = StringToBone(this.PoleynLeft);
-			file.PoleynRight = StringToBone(this.PoleynRight);
-			file.FootLeft = StringToBone(this.FootLeft);
-			file.FootRight = StringToBone(this.FootRight);
-			file.Head = StringToBone(this.Head);
-			file.ArmLeft = StringToBone(this.ArmLeft);
-			file.ArmRight = StringToBone(this.ArmRight);
-			file.PauldronLeft = StringToBone(this.PauldronLeft);
-			file.PauldronRight = StringToBone(this.PauldronRight);
-			file.Unknown00 = StringToBone(this.Unknown00);
-			file.ToesLeft = StringToBone(this.ToesLeft);
-			file.ToesRight = StringToBone(this.ToesRight);
-			file.HairA = StringToBone(this.HairA);
-			file.HairFrontLeft = StringToBone(this.HairFrontLeft);
-			file.HairFrontRight = StringToBone(this.HairFrontRight);
-			file.EarLeft = StringToBone(this.EarLeft);
-			file.EarRight = StringToBone(this.EarRight);
-			file.ForearmLeft = StringToBone(this.ForearmLeft);
-			file.ForearmRight = StringToBone(this.ForearmRight);
-			file.ShoulderLeft = StringToBone(this.ShoulderLeft);
-			file.ShoulderRight = StringToBone(this.ShoulderRight);
-			file.HairB = StringToBone(this.HairB);
-			file.HandLeft = StringToBone(this.HandLeft);
-			file.HandRight = StringToBone(this.HandRight);
-			file.ShieldLeft = StringToBone(this.ShieldLeft);
-			file.ShieldRight = StringToBone(this.ShieldRight);
-			file.EarringALeft = StringToBone(this.EarringALeft);
-			file.EarringARight = StringToBone(this.EarringARight);
-			file.ElbowLeft = StringToBone(this.ElbowLeft);
-			file.ElbowRight = StringToBone(this.ElbowRight);
-			file.CouterLeft = StringToBone(this.CouterLeft);
-			file.CouterRight = StringToBone(this.CouterRight);
-			file.WristLeft = StringToBone(this.WristLeft);
-			file.WristRight = StringToBone(this.WristRight);
-			file.IndexALeft = StringToBone(this.IndexALeft);
-			file.IndexARight = StringToBone(this.IndexARight);
-			file.PinkyALeft = StringToBone(this.PinkyALeft);
-			file.PinkyARight = StringToBone(this.PinkyARight);
-			file.RingALeft = StringToBone(this.RingALeft);
-			file.RingARight = StringToBone(this.RingARight);
-			file.MiddleALeft = StringToBone(this.MiddleALeft);
-			file.MiddleARight = StringToBone(this.MiddleARight);
-			file.ThumbALeft = StringToBone(this.ThumbALeft);
-			file.ThumbARight = StringToBone(this.ThumbARight);
-			file.WeaponLeft = StringToBone(this.WeaponLeft);
-			file.WeaponRight = StringToBone(this.WeaponRight);
-			file.EarringBLeft = StringToBone(this.EarringBLeft);
-			file.EarringBRight = StringToBone(this.EarringBRight);
-			file.IndexBLeft = StringToBone(this.IndexBLeft);
-			file.IndexBRight = StringToBone(this.IndexBRight);
-			file.PinkyBLeft = StringToBone(this.PinkyBLeft);
-			file.PinkyBRight = StringToBone(this.PinkyBRight);
-			file.RingBLeft = StringToBone(this.RingBLeft);
-			file.RingBRight = StringToBone(this.RingBRight);
-			file.MiddleBLeft = StringToBone(this.MiddleBLeft);
-			file.MiddleBRight = StringToBone(this.MiddleBRight);
-			file.ThumbBLeft = StringToBone(this.ThumbBLeft);
-			file.ThumbBRight = StringToBone(this.ThumbBRight);
-			file.TailA = StringToBone(this.TailA);
-			file.TailB = StringToBone(this.TailB);
-			file.TailC = StringToBone(this.TailC);
-			file.TailD = StringToBone(this.TailD);
-			file.TailE = StringToBone(this.TailE);
-			file.RootHead = StringToBone(this.RootHead);
-			file.Jaw = StringToBone(this.Jaw);
-			file.EyelidLowerLeft = StringToBone(this.EyelidLowerLeft);
-			file.EyelidLowerRight = StringToBone(this.EyelidLowerRight);
-			file.EyeLeft = StringToBone(this.EyeLeft);
-			file.EyeRight = StringToBone(this.EyeRight);
-			file.Nose = StringToBone(this.Nose);
-			file.CheekLeft = StringToBone(this.CheekLeft);
-			file.HrothWhiskersLeft = StringToBone(this.HrothWhiskersLeft);
-			file.CheekRight = StringToBone(this.CheekRight);
-			file.HrothWhiskersRight = StringToBone(this.HrothWhiskersRight);
-			file.LipsLeft = StringToBone(this.LipsLeft);
-			file.HrothEyebrowLeft = StringToBone(this.HrothEyebrowLeft);
-			file.LipsRight = StringToBone(this.LipsRight);
-			file.HrothEyebrowRight = StringToBone(this.HrothEyebrowRight);
-			file.EyebrowLeft = StringToBone(this.EyebrowLeft);
-			file.HrothBridge = StringToBone(this.HrothBridge);
-			file.EyebrowRight = StringToBone(this.EyebrowRight);
-			file.HrothBrowLeft = StringToBone(this.HrothBrowLeft);
-			file.Bridge = StringToBone(this.Bridge);
-			file.HrothBrowRight = StringToBone(this.HrothBrowRight);
-			file.BrowLeft = StringToBone(this.BrowLeft);
-			file.HrothJawUpper = StringToBone(this.HrothJawUpper);
-			file.BrowRight = StringToBone(this.BrowRight);
-			file.HrothLipUpper = StringToBone(this.HrothLipUpper);
-			file.LipUpperA = StringToBone(this.LipUpperA);
-			file.HrothEyelidUpperLeft = StringToBone(this.HrothEyelidUpperLeft);
-			file.EyelidUpperLeft = StringToBone(this.EyelidUpperLeft);
-			file.HrothEyelidUpperRight = StringToBone(this.HrothEyelidUpperRight);
-			file.EyelidUpperRight = StringToBone(this.EyelidUpperRight);
-			file.HrothLipsLeft = StringToBone(this.HrothLipsLeft);
-			file.LipLowerA = StringToBone(this.LipLowerA);
-			file.HrothLipsRight = StringToBone(this.HrothLipsRight);
-			file.VieraEar01ALeft = StringToBone(this.VieraEar01ALeft);
-			file.LipUpperB = StringToBone(this.LipUpperB);
-			file.HrothLipUpperLeft = StringToBone(this.HrothLipUpperLeft);
-			file.VieraEar01ARight = StringToBone(this.VieraEar01ARight);
-			file.LipLowerB = StringToBone(this.LipLowerB);
-			file.HrothLipUpperRight = StringToBone(this.HrothLipUpperRight);
-			file.VieraEar02ALeft = StringToBone(this.VieraEar02ALeft);
-			file.HrothLipLower = StringToBone(this.HrothLipLower);
-			file.VieraEar02ARight = StringToBone(this.VieraEar02ARight);
-			file.VieraEar03ALeft = StringToBone(this.VieraEar03ALeft);
-			file.VieraEar03ARight = StringToBone(this.VieraEar03ARight);
-			file.VieraEar04ALeft = StringToBone(this.VieraEar04ALeft);
-			file.VieraEar04ARight = StringToBone(this.VieraEar04ARight);
-			file.VieraLipLowerA = StringToBone(this.VieraLipLowerA);
-			file.VieraLipUpperB = StringToBone(this.VieraLipUpperB);
-			file.VieraEar01BLeft = StringToBone(this.VieraEar01BLeft);
-			file.VieraEar01BRight = StringToBone(this.VieraEar01BRight);
-			file.VieraEar02BLeft = StringToBone(this.VieraEar02BLeft);
-			file.VieraEar02BRight = StringToBone(this.VieraEar02BRight);
-			file.VieraEar03BLeft = StringToBone(this.VieraEar03BLeft);
-			file.VieraEar03BRight = StringToBone(this.VieraEar03BRight);
-			file.VieraEar04BLeft = StringToBone(this.VieraEar04BLeft);
-			file.VieraEar04BRight = StringToBone(this.VieraEar04BRight);
-			file.VieraLipLowerB = StringToBone(this.VieraLipLowerB);
-			file.ExRootHair = StringToBone(this.ExRootHair);
-			file.ExHairA = StringToBone(this.ExHairA);
-			file.ExHairB = StringToBone(this.ExHairB);
-			file.ExHairC = StringToBone(this.ExHairC);
-			file.ExHairD = StringToBone(this.ExHairD);
-			file.ExHairE = StringToBone(this.ExHairE);
-			file.ExHairF = StringToBone(this.ExHairF);
-			file.ExHairG = StringToBone(this.ExHairG);
-			file.ExHairH = StringToBone(this.ExHairH);
-			file.ExHairI = StringToBone(this.ExHairI);
-			file.ExHairJ = StringToBone(this.ExHairJ);
-			file.ExHairK = StringToBone(this.ExHairK);
-			file.ExHairL = StringToBone(this.ExHairL);
-			file.ExRootMet = StringToBone(this.ExRootMet);
-			file.ExMetA = StringToBone(this.ExMetA);
-			file.ExMetB = StringToBone(this.ExMetB);
-			file.ExMetC = StringToBone(this.ExMetC);
-			file.ExMetD = StringToBone(this.ExMetD);
-			file.ExMetE = StringToBone(this.ExMetE);
-			file.ExMetF = StringToBone(this.ExMetF);
-			file.ExMetG = StringToBone(this.ExMetG);
-			file.ExMetH = StringToBone(this.ExMetH);
-			file.ExMetI = StringToBone(this.ExMetI);
-			file.ExMetJ = StringToBone(this.ExMetJ);
-			file.ExMetK = StringToBone(this.ExMetK);
-			file.ExMetL = StringToBone(this.ExMetL);
-			file.ExMetM = StringToBone(this.ExMetM);
-			file.ExMetN = StringToBone(this.ExMetN);
-			file.ExMetO = StringToBone(this.ExMetO);
-			file.ExMetP = StringToBone(this.ExMetP);
-			file.ExMetQ = StringToBone(this.ExMetQ);
-			file.ExMetR = StringToBone(this.ExMetR);
-			file.ExRootTop = StringToBone(this.ExRootTop);
-			file.ExTopA = StringToBone(this.ExTopA);
-			file.ExTopB = StringToBone(this.ExTopB);
-			file.ExTopC = StringToBone(this.ExTopC);
-			file.ExTopD = StringToBone(this.ExTopD);
-			file.ExTopE = StringToBone(this.ExTopE);
-			file.ExTopF = StringToBone(this.ExTopF);
-			file.ExTopG = StringToBone(this.ExTopG);
-			file.ExTopH = StringToBone(this.ExTopH);
-			file.ExTopI = StringToBone(this.ExTopI);
+			Type legacyType = this.GetType();
+
+			PropertyInfo[] props = file.GetType().GetProperties();
+			foreach (PropertyInfo propertyInfo in props)
+			{
+				PropertyInfo rotProp = legacyType.GetProperty(propertyInfo.Name);
+				PropertyInfo scaleProp = legacyType.GetProperty(propertyInfo.Name + "Size");
+
+				string rotString = null;
+				string scaleString = null;
+
+				if (rotProp != null)
+					rotString = (string)rotProp.GetValue(this);
+
+				if (scaleProp != null)
+					scaleString = (string)scaleProp.GetValue(this);
+
+				Transform bone = StringToBone(rotString, scaleString);
+			}
 
 			return file;
 		}
 
-		private static PoseFile.Bone StringToBone(string input)
+		private static Transform StringToBone(string rot = null, string scale = null, string position = null)
 		{
-			if (input == "null")
-				return null;
+			Transform trans = default;
+			trans.Scale = Vector.One;
+			trans.Position = Vector.Zero;
+			trans.Rotation = Quaternion.Identity;
 
-			input = input.Replace(" ", string.Empty);
-			byte[] data = StringToByteArray(input);
+			if (!string.IsNullOrEmpty(rot) && rot != "null")
+			{
+				rot = rot.Replace(" ", string.Empty);
+				byte[] data = StringToByteArray(rot);
 
-			PoseFile.Bone bone = new PoseFile.Bone();
+				Quaternion value = default(Quaternion);
+				value.X = BitConverter.ToSingle(data, 0);
+				value.Y = BitConverter.ToSingle(data, 4);
+				value.Z = BitConverter.ToSingle(data, 8);
+				value.W = BitConverter.ToSingle(data, 12);
+				trans.Rotation = value;
+			}
 
-			Quaternion value = default(Quaternion);
-			value.X = BitConverter.ToSingle(data, 0);
-			value.Y = BitConverter.ToSingle(data, 4);
-			value.Z = BitConverter.ToSingle(data, 8);
-			value.W = BitConverter.ToSingle(data, 12);
-			bone.Rotation = value;
+			if (!string.IsNullOrEmpty(scale) && scale != "null")
+			{
+				scale = rot.Replace(" ", string.Empty);
+				byte[] data = StringToByteArray(scale);
 
-			return bone;
+				Vector value = default(Vector);
+				value.X = BitConverter.ToSingle(data, 0);
+				value.Y = BitConverter.ToSingle(data, 4);
+				value.Z = BitConverter.ToSingle(data, 8);
+				trans.Scale = value;
+			}
+
+			return trans;
 		}
 
 		private static byte[] StringToByteArray(string hex)
 		{
-			int numChars = hex.Length;
-			byte[] bytes = new byte[numChars / 2];
-
-			for (int i = 0; i < numChars; i += 2)
+			try
 			{
-				bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-			}
+				int numChars = hex.Length;
+				byte[] bytes = new byte[numChars / 2];
 
-			return bytes;
+				for (int i = 0; i < numChars; i += 2)
+				{
+					bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+				}
+
+				return bytes;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to parse string: {hex} to byte array", ex);
+			}
 		}
 	}
 }

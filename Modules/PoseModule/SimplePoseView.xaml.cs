@@ -59,18 +59,25 @@ namespace ConceptMatrix.PoseModule
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
-			IFileService fileService = Module.Services.Get<IFileService>();
-			FileBase file = await fileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
-
-			if (file is LegacyPoseFile legacyFile)
+			try
 			{
-				file = legacyFile.Upgrade();
+				IFileService fileService = Module.Services.Get<IFileService>();
+				FileBase file = await fileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
+
+				if (file is LegacyPoseFile legacyFile)
+				{
+					file = legacyFile.Upgrade();
+				}
+
+				if (file is PoseFile poseFile)
+				{
+					// load the pose...
+					throw new NotImplementedException();
+				}
 			}
-
-			if (file is PoseFile poseFile)
+			catch (Exception ex)
 			{
-				// load the pose...
-				throw new NotImplementedException();
+				Log.Write(ex, "Pose", Log.Severity.Error);
 			}
 		}
 
