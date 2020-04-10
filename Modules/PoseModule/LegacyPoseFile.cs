@@ -4,6 +4,7 @@
 namespace ConceptMatrix.PoseModule
 {
 	using System;
+	using System.Globalization;
 	using System.Reflection;
 	using ConceptMatrix.Services;
 
@@ -437,15 +438,18 @@ namespace ConceptMatrix.PoseModule
 		{
 			PoseFile file = new PoseFile();
 
-			file.Root = StringToBone(this.Root, this.RootSize);
-
+			// This whole function just does this:
+			// file.Root = StringToBone(this.Root, this.RootSize);
+			// but for every bone in the file.
 			Type legacyType = this.GetType();
+			Type newType = typeof(PoseFile);
 
 			PropertyInfo[] props = file.GetType().GetProperties();
 			foreach (PropertyInfo propertyInfo in props)
 			{
 				PropertyInfo rotProp = legacyType.GetProperty(propertyInfo.Name);
 				PropertyInfo scaleProp = legacyType.GetProperty(propertyInfo.Name + "Size");
+				PropertyInfo transProp = newType.GetProperty(propertyInfo.Name);
 
 				string rotString = null;
 				string scaleString = null;
@@ -457,6 +461,7 @@ namespace ConceptMatrix.PoseModule
 					scaleString = (string)scaleProp.GetValue(this);
 
 				Transform bone = StringToBone(rotString, scaleString);
+				transProp.SetValue(file, bone);
 			}
 
 			return file;
@@ -471,7 +476,6 @@ namespace ConceptMatrix.PoseModule
 
 			if (!string.IsNullOrEmpty(rot) && rot != "null")
 			{
-				rot = rot.Replace(" ", string.Empty);
 				byte[] data = StringToByteArray(rot);
 
 				Quaternion value = default(Quaternion);
@@ -484,7 +488,6 @@ namespace ConceptMatrix.PoseModule
 
 			if (!string.IsNullOrEmpty(scale) && scale != "null")
 			{
-				scale = rot.Replace(" ", string.Empty);
 				byte[] data = StringToByteArray(scale);
 
 				Vector value = default(Vector);
@@ -501,15 +504,16 @@ namespace ConceptMatrix.PoseModule
 		{
 			try
 			{
-				int numChars = hex.Length;
-				byte[] bytes = new byte[numChars / 2];
+				hex = hex.Trim();
+				string[] parts = hex.Split(' ');
+				byte[] data = new byte[parts.Length];
 
-				for (int i = 0; i < numChars; i += 2)
+				for (int i = 0; i < parts.Length; i++)
 				{
-					bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+					data[i] = byte.Parse(parts[i], NumberStyles.HexNumber);
 				}
 
-				return bytes;
+				return data;
 			}
 			catch (Exception ex)
 			{
