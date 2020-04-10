@@ -5,7 +5,8 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule"
 			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
-			 xmlns:converters="clr-namespace:ConceptMatrix.PoseModule.Converters" xmlns:fa="http://schemas.fontawesome.io/icons/"
+			 xmlns:converters="clr-namespace:ConceptMatrix.PoseModule.Converters"
+			 xmlns:fa="http://schemas.fontawesome.io/icons/"
 			 mc:Ignorable="d" 
 			 Unloaded="OnUnloaded"
 			 d:DesignHeight="512" d:DesignWidth="1024">
@@ -119,7 +120,7 @@
 		<Viewbox Grid.Column="1" Margin="-20, 0, -20, 0" Width="256">
 			<Canvas Height="512" Width="256">
 				<Canvas.Background>
-					<ImageBrush ImageSource="Assets/PoseCharacterClothesBackground.png" Opacity="0.15" Stretch="Uniform"/>
+					<ImageBrush ImageSource="../Assets/PoseCharacterClothesBackground.png" Opacity="0.15" Stretch="Uniform"/>
 				</Canvas.Background>
 
 				<local:SimplePoseBoneView Canvas.Left="120" Canvas.Top="202" BoneName="Waist"/>
@@ -176,7 +177,7 @@
 			<Viewbox Grid.Row="0" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}, FallbackValue=Hidden}">
 				<Canvas Width="300" Height="300" >
 					<Canvas.Background>
-						<ImageBrush ImageSource="Assets/PoseCharacterHrothFaceBackground.png" Opacity="0.15" Stretch="Uniform"/>
+						<ImageBrush ImageSource="../Assets/PoseCharacterHrothFaceBackground.png" Opacity="0.15" Stretch="Uniform"/>
 					</Canvas.Background>
 
 					<local:SimplePoseBoneView Canvas.Left="72" Canvas.Top="148" BoneName="HrothWhiskersLeft"/>
@@ -209,7 +210,7 @@
 			<Viewbox Grid.Row="0" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}, FallbackValue=Visible}"  Height="300">
 				<Canvas Height="300" Width="300">
 					<Canvas.Background>
-						<ImageBrush ImageSource="Assets/PoseCharacterFaceBackground.png" Opacity="0.15" Stretch="Uniform"/>
+						<ImageBrush ImageSource="../Assets/PoseCharacterFaceBackground.png" Opacity="0.15" Stretch="Uniform"/>
 					</Canvas.Background>
 
 					<local:SimplePoseBoneView Canvas.Left="141" Canvas.Top="278" BoneName="Jaw"/>
@@ -261,7 +262,7 @@
 				<Viewbox Grid.Column="0">
 					<Canvas Height="200" Width="128">
 						<Canvas.Background>
-							<ImageBrush ImageSource="Assets/PoseCharacterHandBackground.png" Opacity="0.15" Stretch="Uniform"/>
+							<ImageBrush ImageSource="../Assets/PoseCharacterHandBackground.png" Opacity="0.15" Stretch="Uniform"/>
 						</Canvas.Background>
 
 						<local:SimplePoseBoneView Canvas.Left="45" Canvas.Top="170" BoneName="WristLeft"/>
@@ -284,7 +285,7 @@
 				<Viewbox Grid.Column="1">
 					<Canvas Height="200" Width="128">
 						<Canvas.Background>
-							<ImageBrush ImageSource="Assets/PoseCharacterHandBackground.png" Opacity="0.15" Stretch="Uniform">
+							<ImageBrush ImageSource="../Assets/PoseCharacterHandBackground.png" Opacity="0.15" Stretch="Uniform">
 								<ImageBrush.RelativeTransform>
 									<TransformGroup>
 										<ScaleTransform ScaleX="-1"/>
@@ -318,7 +319,7 @@
 				<Viewbox Visibility="{Binding HasTail, Converter={StaticResource B2V}, FallbackValue=Visible}">
 					<Canvas Height="200" Width="128">
 						<Canvas.Background>
-							<ImageBrush ImageSource="Assets/PoseCharacterTailBackground.png" Opacity="0.15" Stretch="Uniform"/>
+							<ImageBrush ImageSource="../Assets/PoseCharacterTailBackground.png" Opacity="0.15" Stretch="Uniform"/>
 						</Canvas.Background>
 
 						<local:SimplePoseBoneView Canvas.Left="46" Canvas.Top="4" BoneName="TailA"/>
@@ -334,7 +335,7 @@
 				<Viewbox Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Margin="0, -40, 0, 0">
 					<Canvas Width="138" Height="196">
 						<Canvas.Background>
-							<ImageBrush ImageSource="Assets/PoseCharacterVieraEars01Background.png" Opacity="0.15" Stretch="Uniform"/>
+							<ImageBrush ImageSource="../Assets/PoseCharacterVieraEars01Background.png" Opacity="0.15" Stretch="Uniform"/>
 						</Canvas.Background>
 
 						<local:SimplePoseBoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar01ALeft"/>
@@ -348,7 +349,7 @@
 				<Viewbox Visibility="{Binding IsVieraEars02, Converter={StaticResource B2V}, FallbackValue=Collapsed}">
 					<Canvas Width="163" Height="232">
 						<Canvas.Background>
-							<ImageBrush ImageSource="Assets/PoseCharacterVieraEars02Background.png" Opacity="0.15" Stretch="Uniform"/>
+							<ImageBrush ImageSource="../Assets/PoseCharacterVieraEars02Background.png" Opacity="0.15" Stretch="Uniform"/>
 						</Canvas.Background>
 
 						<local:SimplePoseBoneView Canvas.Left="47" Canvas.Top="169" BoneName="VieraEar02ALeft"/>
@@ -362,7 +363,7 @@
 				<Viewbox Width="150" Visibility="{Binding IsVieraEars03, Converter={StaticResource B2V}, FallbackValue=Visible}">
 					<Canvas Width="256" Height="122" Margin="-20, 0, -20, 0">
 						<Canvas.Background>
-							<ImageBrush ImageSource="Assets/PoseCharacterVieraEars03Background.png" Opacity="0.15" Stretch="Uniform"/>
+							<ImageBrush ImageSource="../Assets/PoseCharacterVieraEars03Background.png" Opacity="0.15" Stretch="Uniform"/>
 						</Canvas.Background>
 
 						<local:SimplePoseBoneView Canvas.Left="90" Canvas.Top="58" BoneName="VieraEar03ALeft"/>
@@ -376,7 +377,7 @@
 				<Viewbox Visibility="{Binding IsVieraEars04, Converter={StaticResource B2V}, FallbackValue=Collapsed}">
 					<Canvas Width="149" Height="232">
 						<Canvas.Background>
-							<ImageBrush ImageSource="Assets/PoseCharacterVieraEars04Background.png" Opacity="0.15" Stretch="Uniform"/>
+							<ImageBrush ImageSource="../Assets/PoseCharacterVieraEars04Background.png" Opacity="0.15" Stretch="Uniform"/>
 						</Canvas.Background>
 
 						<local:SimplePoseBoneView Canvas.Left="44" Canvas.Top="170" BoneName="VieraEar04ALeft"/>
