@@ -8,6 +8,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Files;
+	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
 

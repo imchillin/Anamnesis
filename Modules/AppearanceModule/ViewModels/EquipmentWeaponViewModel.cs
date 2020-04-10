@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System.Windows.Media.Media3D;
 	using ConceptMatrix;

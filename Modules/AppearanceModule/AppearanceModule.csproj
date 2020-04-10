@@ -63,18 +63,18 @@
     <Compile Include="Views\DyeSelector.xaml.cs">
       <DependentUpon>DyeSelector.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EquipmentBaseViewModel.cs" />
+    <Compile Include="ViewModels\EquipmentBaseViewModel.cs" />
     <Compile Include="Views\EquipmentSelector.xaml.cs">
       <DependentUpon>EquipmentSelector.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EquipmentPage.xaml.cs">
+    <Compile Include="Pages\EquipmentPage.xaml.cs">
       <DependentUpon>EquipmentPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ItemView.xaml.cs">
       <DependentUpon>ItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EquipmentWeaponViewModel.cs" />
-    <Compile Include="Views\EquipmentItemViewModel.cs" />
+    <Compile Include="ViewModels\EquipmentWeaponViewModel.cs" />
+    <Compile Include="ViewModels\EquipmentItemViewModel.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -87,7 +87,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EquipmentPage.xaml">
+    <Page Include="Pages\EquipmentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -4,6 +4,7 @@
 namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.Windows.Controls;
+	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.Services;
 
 	/// <summary>

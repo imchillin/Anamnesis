@@ -7,6 +7,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Text.RegularExpressions;
 	using System.Windows;
 	using System.Windows.Controls;
+	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.Services;
 	using ConceptMatrix.WpfStyles.Drawers;
 
