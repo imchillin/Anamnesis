@@ -525,11 +525,13 @@ namespace ConceptMatrix.PoseModule
 			this.ParentBone("SheatheRight", "ScabbardRight");
 
 			// tail bones tree
-			this.ParentBone("Waist", "TailA");
-			this.ParentBone("TailA", "TailB");
-			this.ParentBone("TailB", "TailC");
-			this.ParentBone("TailC", "TailD");
-			this.ParentBone("TailD", "TailE");
+			if (this.HasTail)
+			{
+				this.ParentBone("Waist", "TailA");
+				this.ParentBone("TailA", "TailB");
+				this.ParentBone("TailB", "TailC");
+				this.ParentBone("TailC", "TailD");
+			}
 		}
 
 		private void ParentBone(string parentName, string childName)
