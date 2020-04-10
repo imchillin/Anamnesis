@@ -36,6 +36,22 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			this.Gender = Appearance.Genders.Feminine;
 		}
 
+		public bool HasFur
+		{
+			get
+			{
+				return this.Race.Race == Appearance.Races.Hrothgar;
+			}
+		}
+
+		public bool HasLimbal
+		{
+			get
+			{
+				return this.Race.Race == Appearance.Races.AuRa;
+			}
+		}
+
 		public Appearance.Genders Gender
 		{
 			get;
@@ -69,6 +85,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		public byte FacePaintColor { get; set; }
 		public byte LimbalTattooColor { get; set; }
 		public byte HairColor { get; set; }
-		public byte HighlightColor { get; set; }
+		public byte HairHighlights { get; set; }
+		public byte LipsColor { get; set; }
 	}
 }

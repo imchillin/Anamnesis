@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule"
 			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
-			 xmlns:converters="clr-namespace:ConceptMatrix.PoseModule.Converters"
+			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=ConceptMatrix.WpfStyles"
 			 xmlns:fa="http://schemas.fontawesome.io/icons/"
 			 mc:Ignorable="d" 
 			 Unloaded="OnUnloaded"
@@ -13,7 +13,7 @@
 
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="B2V"/>
-		<converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
 	</UserControl.Resources>
 
 	<!--

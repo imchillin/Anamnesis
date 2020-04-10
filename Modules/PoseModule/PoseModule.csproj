@@ -94,7 +94,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Bone.cs" />
-    <Compile Include="Converters\InvertedBoolToVisibilityConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Module.cs" />
