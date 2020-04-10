@@ -30,8 +30,8 @@ namespace ConceptMatrix
 
 			Color v = default;
 			v.R = float.Parse(parts[0]);
-			v.G = float.Parse(parts[0]);
-			v.B = float.Parse(parts[0]);
+			v.G = float.Parse(parts[1]);
+			v.B = float.Parse(parts[2]);
 			return v;
 		}
 

@@ -44,6 +44,21 @@ namespace ConceptMatrix
 			return new Quaternion(x, y, z, w);
 		}
 
+		public static Quaternion FromString(string str)
+		{
+			string[] parts = str.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+
+			if (parts.Length != 4)
+				throw new FormatException();
+
+			Quaternion v = default;
+			v.X = float.Parse(parts[0]);
+			v.Y = float.Parse(parts[1]);
+			v.Z = float.Parse(parts[2]);
+			v.W = float.Parse(parts[3]);
+			return v;
+		}
+
 		/// <summary>
 		/// Convert into a Quaternion assuming the Vector represents euler angles.
 		/// </summary>
@@ -145,6 +160,11 @@ namespace ConceptMatrix
 			this.Y /= num;
 			this.Z /= num;
 			this.W /= num;
+		}
+
+		public override string ToString()
+		{
+			return this.X + ", " + this.Y + ", " + this.Z + ", " + this.W;
 		}
 	}
 }

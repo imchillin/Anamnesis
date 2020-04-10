@@ -48,6 +48,7 @@ namespace ConceptMatrix.PoseModule
 			set
 			{
 				this.transformMem.Value = value;
+				this.Rotation = this.LiveRotation;
 			}
 		}
 

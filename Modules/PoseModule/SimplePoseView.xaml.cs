@@ -65,14 +65,13 @@ namespace ConceptMatrix.PoseModule
 				FileBase file = await fileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
 
 				if (file is LegacyPoseFile legacyFile)
-				{
 					file = legacyFile.Upgrade();
-				}
+
+				this.ViewModel.IsEnabled = true;
 
 				if (file is PoseFile poseFile)
 				{
-					// load the pose...
-					throw new NotImplementedException();
+					poseFile.Write(this.ViewModel.Bones);
 				}
 			}
 			catch (Exception ex)
@@ -81,9 +80,14 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
-		private void OnSaveClicked(object sender, RoutedEventArgs e)
+		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
+			IFileService fileService = Module.Services.Get<IFileService>();
+
+			PoseFile file = new PoseFile();
+			file.Read(this.ViewModel.Bones);
+
+			await fileService.SaveAs(file);
 		}
 	}
 }

@@ -19,6 +19,7 @@ namespace ConceptMatrix.GUI.Serialization
 			{
 				new ColorConverter(),
 				new VectorConverter(),
+				new QuaternionConverter(),
 			},
 		};
 

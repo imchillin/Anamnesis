@@ -40,8 +40,8 @@ namespace ConceptMatrix
 
 			Vector v = default;
 			v.X = float.Parse(parts[0]);
-			v.Y = float.Parse(parts[0]);
-			v.Z = float.Parse(parts[0]);
+			v.Y = float.Parse(parts[1]);
+			v.Z = float.Parse(parts[2]);
 			return v;
 		}
 

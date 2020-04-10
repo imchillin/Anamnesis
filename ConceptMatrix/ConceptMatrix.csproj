@@ -78,6 +78,7 @@
     <Compile Include="Extensions\PaletteHelperExtensions.cs" />
     <Compile Include="MainApplicationSettings.cs" />
     <Compile Include="Serialization\Converters\ColorConverter.cs" />
+    <Compile Include="Serialization\Converters\QuaternionConverter.cs" />
     <Compile Include="Serialization\Converters\VectorConverter.cs" />
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="ServiceManager.cs" />

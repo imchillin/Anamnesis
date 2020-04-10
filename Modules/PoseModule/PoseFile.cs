@@ -3,12 +3,16 @@
 
 namespace ConceptMatrix.PoseModule
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Reflection;
 	using ConceptMatrix.Services;
 
 	public class PoseFile : FileBase
 	{
 		public static readonly FileType FileType = new FileType(@"cm3p", "CM3 Pose File", typeof(PoseFile));
 
+		// These names must match the names of the Offsets.Bones class!
 		public Transform Root { get; set; }
 		public Transform Abdomen { get; set; }
 		public Transform Throw { get; set; }
@@ -217,6 +221,37 @@ namespace ConceptMatrix.PoseModule
 		public override FileType GetFileType()
 		{
 			return FileType;
+		}
+
+		public void Read(IEnumerable<Bone> bones)
+		{
+			Type type = typeof(PoseFile);
+
+			foreach (Bone bone in bones)
+			{
+				PropertyInfo prop = type.GetProperty(bone.BoneName);
+
+				if (prop == null)
+					throw new Exception("No save for bone: " + bone.BoneName);
+
+				prop.SetValue(this, bone.Transform);
+			}
+		}
+
+		public void Write(IEnumerable<Bone> bones)
+		{
+			Type type = typeof(PoseFile);
+
+			foreach (Bone bone in bones)
+			{
+				PropertyInfo prop = type.GetProperty(bone.BoneName);
+
+				if (prop == null)
+					throw new Exception("No save for bone: " + bone.BoneName);
+
+				Transform trans = (Transform)prop.GetValue(this);
+				bone.Transform = trans;
+			}
 		}
 	}
 }
