@@ -13,9 +13,9 @@ namespace ConceptMatrix.PoseModule
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
 	/// </summary>
-	public partial class SimplePoseView : UserControl
+	public partial class SimplePosePage : UserControl
 	{
-		public SimplePoseView()
+		public SimplePosePage()
 		{
 			this.InitializeComponent();
 

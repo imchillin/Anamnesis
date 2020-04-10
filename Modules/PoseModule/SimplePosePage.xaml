@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ConceptMatrix.PoseModule.SimplePoseView"
+﻿<UserControl x:Class="ConceptMatrix.PoseModule.SimplePosePage"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -426,7 +426,18 @@
 				</GroupBox>
 
 				<GroupBox Header="{Binding CurrentBone.Tooltip, FallbackValue=''}" Margin="6"  Padding="4" IsEnabled="{Binding IsEnabled}">
-					<cm3:QuaternionEditor Value="{Binding CurrentBone.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
+					<StackPanel>
+						<Label Content="Rotation"/>
+						<cm3:QuaternionEditor Value="{Binding CurrentBone.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
+
+						<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
+						<Label Content="Scale"/>
+						<cm3:VectorEditor Value="{Binding CurrentBone.Scale, Mode=TwoWay}" Expanded="True"/>
+
+						<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
+						<Label Content="Position"/>
+						<cm3:VectorEditor Value="{Binding CurrentBone.Position, Mode=TwoWay}" Expanded="True"/>
+					</StackPanel>
 				</GroupBox>
 			</StackPanel>
 		</Grid>

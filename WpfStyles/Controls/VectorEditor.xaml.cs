@@ -15,6 +15,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	/// </summary>
 	public partial class VectorEditor : UserControl, INotifyPropertyChanged
 	{
+		public static readonly DependencyProperty ExpandedProperty = DependencyProperty.Register(nameof(Expanded), typeof(bool), typeof(VectorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(Vector), typeof(VectorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
 		public static readonly DependencyProperty TickFrequencyProperty = DependencyProperty.Register(nameof(TickFrequency), typeof(double), typeof(VectorEditor));
 
@@ -28,6 +29,19 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		public double Minimum { get; set; } = 0;
 		public double Maximum { get; set; } = 100;
+
+		public bool Expanded
+		{
+			get
+			{
+				return (bool)this.GetValue(ExpandedProperty);
+			}
+
+			set
+			{
+				this.SetValue(ExpandedProperty, value);
+			}
+		}
 
 		[AlsoNotifyFor(nameof(VectorEditor.X), nameof(VectorEditor.Y), nameof(VectorEditor.Z))]
 		public Vector Value

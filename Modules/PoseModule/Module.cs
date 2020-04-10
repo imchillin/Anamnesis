@@ -16,7 +16,7 @@ namespace ConceptMatrix.PoseModule
 			await base.Initialize(services);
 
 			IViewService viewService = services.Get<IViewService>();
-			viewService.AddView<SimplePoseView>("Character/Simple Pose");
+			viewService.AddPage<SimplePosePage>("Character/Simple Pose");
 		}
 
 		public override Task Shutdown()

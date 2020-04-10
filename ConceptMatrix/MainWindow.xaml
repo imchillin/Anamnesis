@@ -62,7 +62,6 @@
 				<views:TargetView Margin="10"/>
 
 				<views:NavigationMenu Grid.Row="1"/>
-
 			</Grid>
 			
 			<materialdesign:DrawerHost Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DrawerHost">

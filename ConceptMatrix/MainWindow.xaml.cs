@@ -28,27 +28,27 @@ namespace ConceptMatrix.GUI
 
 			this.viewService = App.Services.Get<ViewService>();
 			this.viewService.ShowingDrawer += this.OnShowDrawer;
-			this.viewService.ShowingView += this.OnShowView;
+			this.viewService.ShowingPage += this.OnShowPage;
 
 			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
 
-			this.OnShowView("Home", typeof(HomeView));
+			this.OnShowPage("Home", typeof(HomeView));
 		}
 
-		private void OnShowView(string path, Type type)
+		private void OnShowPage(string path, Type pageType)
 		{
 			try
 			{
-				this.currentView = (UserControl)Activator.CreateInstance(type);
+				this.currentView = (UserControl)Activator.CreateInstance(pageType);
 				this.ViewArea.Content = this.currentView;
 			}
 			catch (TargetInvocationException ex)
 			{
-				Log.Write(new Exception($"Failed to create view: {type}", ex.InnerException));
+				Log.Write(new Exception($"Failed to create view: {pageType}", ex.InnerException));
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception($"Failed to create view: {type}", ex));
+				Log.Write(new Exception($"Failed to create view: {pageType}", ex));
 			}
 		}
 

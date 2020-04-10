@@ -32,17 +32,17 @@ namespace ConceptMatrix.GUI.Views
 			this.ViewList.ItemsSource = view;
 
 			this.viewService = App.Services.Get<ViewService>();
-			this.viewService.AddingView += this.OnAddView;
+			this.viewService.AddingPage += this.OnAddPage;
 
-			foreach (string path in this.viewService.ViewPaths)
+			foreach (string path in this.viewService.PagePaths)
 			{
-				this.OnAddView(path, null);
+				this.OnAddPage(path, null);
 			}
 		}
 
 		public ObservableCollection<NavigationItem> Items { get; set; } = new ObservableCollection<NavigationItem>();
 
-		private void OnAddView(string path, Type type)
+		private void OnAddPage(string path, Type pageType)
 		{
 			this.Items.Add(new NavigationItem(path));
 		}
@@ -50,7 +50,7 @@ namespace ConceptMatrix.GUI.Views
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			NavigationItem item = (NavigationItem)this.ViewList.SelectedItem;
-			this.viewService.ShowView(item.Path);
+			this.viewService.ShowPage(item.Path);
 		}
 
 		public class NavigationItem : INotifyPropertyChanged

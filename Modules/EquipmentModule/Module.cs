@@ -17,7 +17,7 @@ namespace ConceptMatrix.EquipmentModule
 			await base.Initialize(services);
 
 			IViewService viewService = services.Get<IViewService>();
-			viewService.AddView<EquipmentView>("Character/Equipment");
+			viewService.AddPage<EquipmentView>("Character/Equipment");
 		}
 
 		public override Task Shutdown()
