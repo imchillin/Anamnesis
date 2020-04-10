@@ -10,7 +10,6 @@ namespace ConceptMatrix.PoseModule
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Shapes;
-	using MaterialDesignThemes.Wpf;
 
 	/// <summary>
 	/// Interaction logic for SimplePoseViewBone.xaml.
@@ -205,11 +204,8 @@ namespace ConceptMatrix.PoseModule
 			bool parentSelected = this.viewModel.GetIsBoneParentsSelected(this.bone);
 			bool hovered = this.viewModel.GetIsBoneParentsHovered(this.bone);
 
-			PaletteHelper h = new PaletteHelper();
-			ITheme theme = h.GetTheme();
-
 			// TODO: get the current theme FG color instead of sky blue
-			Brush color = hovered ? new SolidColorBrush(theme.SecondaryMid.Color) : Brushes.Gray;
+			Brush color = hovered ? Brushes.AliceBlue : Brushes.Gray;
 			int thickenss = parentSelected || selected || hovered ? 2 : 1;
 
 			this.ForegroundElipse.Visibility = selected ? Visibility.Visible : Visibility.Hidden;

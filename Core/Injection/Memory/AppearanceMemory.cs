@@ -16,7 +16,7 @@ namespace ConceptMatrix.Injection.Memory
 		{
 			Appearance value = default;
 			value.Race = (Appearance.Races)data[0];
-			value.Gender = data[1];
+			value.Gender = (Appearance.Genders)data[1];
 			value.Body = data[2];
 			value.Height = data[3];
 			value.Tribe = (Appearance.Tribes)data[4];
@@ -47,7 +47,7 @@ namespace ConceptMatrix.Injection.Memory
 		protected override void Write(Appearance value, ref byte[] data)
 		{
 			data[0] = (byte)value.Race;
-			data[1] = value.Gender;
+			data[1] = (byte)value.Gender;
 			data[2] = value.Body;
 			data[3] = value.Height;
 			data[4] = (byte)value.Tribe;

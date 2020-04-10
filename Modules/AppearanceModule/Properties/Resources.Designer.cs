@@ -59,5 +59,15 @@ namespace ConceptMatrix.AppearanceModule.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] colors {
+            get {
+                object obj = ResourceManager.GetObject("colors", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

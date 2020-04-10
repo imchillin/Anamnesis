@@ -178,8 +178,10 @@
     <Resource Include="cmtool-icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody">
-      <Version>4.1.0</Version>
+    <PackageReference Include="AutoDependencyProperty.Fody">
+      <Version>1.2.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Fody">
       <Version>6.1.1</Version>
@@ -223,6 +225,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Loading.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

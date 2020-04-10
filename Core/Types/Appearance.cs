@@ -8,7 +8,7 @@ namespace ConceptMatrix
 	public struct Appearance
 	{
 		public Races Race;
-		public byte Gender;
+		public Genders Gender;
 		public byte Body;
 		public byte Height;
 		public Tribes Tribe;
@@ -33,6 +33,12 @@ namespace ConceptMatrix
 		public byte Bust;
 		public byte FacePaint;
 		public byte FacePaintColor;
+
+		public enum Genders : byte
+		{
+			Masculine = 0,
+			Feminine = 1,
+		}
 
 		public enum Races : byte
 		{

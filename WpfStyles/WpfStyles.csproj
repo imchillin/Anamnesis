@@ -32,6 +32,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;</NoWarn>
+    <OutputPath>bin\</OutputPath>
+    <DocumentationFile>bin\ConceptMatrix.WpfStyles.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -40,6 +42,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;</NoWarn>
+    <OutputPath>bin\</OutputPath>
+    <DocumentationFile>bin\ConceptMatrix.WpfStyles.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>
@@ -79,6 +83,8 @@
     <Compile Include="Controls\QuaternionEditor.xaml.cs">
       <DependentUpon>QuaternionEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DependencyProperties\DependencyProperty{TValue}.cs" />
+    <Compile Include="DependencyProperties\IBind{TValue}.cs" />
     <Compile Include="Drawers\SelectorDrawer.xaml.cs">
       <DependentUpon>SelectorDrawer.xaml</DependentUpon>
     </Compile>
@@ -92,6 +98,7 @@
       <DependentUpon>ColorSelectorDrawer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\ActorTypesExtensions.cs" />
+    <Compile Include="Extensions\UserControlExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -105,6 +112,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="DependencyProperties\Binder.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -116,6 +124,11 @@
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AutoDependencyProperty.Fody">
+      <Version>1.2.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Fody">
       <Version>6.1.1</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -199,6 +212,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

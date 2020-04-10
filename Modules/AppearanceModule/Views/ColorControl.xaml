@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="ConceptMatrix.AppearanceModule.Views.ColorControl"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
+			 mc:Ignorable="d" >
+	<Button Padding="0" Style="{DynamicResource TransparentButton}" x:Name="ContentArea" Click="OnClick">
+		<Border Width="28" Height="21" Margin="0" CornerRadius="3">
+			<Border.Background>
+				<SolidColorBrush Color="{Binding WpfColor, FallbackValue=White}"/>
+			</Border.Background>
+		</Border>
+	</Button>
+</UserControl>

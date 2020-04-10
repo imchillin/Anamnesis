@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>..\..\bin\Modules\AppearanceModule.xml</DocumentationFile>
+    <DocumentationFile>bin\AppearanceModule.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,10 +34,22 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;</NoWarn>
-    <DocumentationFile>..\..\bin\Modules\AppearanceModule.xml</DocumentationFile>
+    <DocumentationFile>bin\AppearanceModule.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ConceptMatrix.WpfStyles">
+      <HintPath>..\..\bin\ConceptMatrix.WpfStyles.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Core">
+      <HintPath>..\..\bin\Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FontAwesome.Sharp">
+      <HintPath>..\..\bin\FontAwesome.Sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -57,11 +69,18 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\MasculineGenderToVisibilityConverter.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\ItemSlotsExtensions.cs" />
     <Compile Include="Files\LegacyEquipmentSetFile.cs" />
     <Compile Include="Files\EquipmentSetFile.cs" />
     <Compile Include="Pages\AppearancePage.xaml.cs">
       <DependentUpon>AppearancePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\FeminineGenderToVisibilityConverter.cs" />
+    <Compile Include="Utilities\ColorData.cs" />
+    <Compile Include="Views\ColorControl.xaml.cs">
+      <DependentUpon>ColorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DyeSelector.xaml.cs">
       <DependentUpon>DyeSelector.xaml</DependentUpon>
@@ -72,6 +91,9 @@
     </Compile>
     <Compile Include="Pages\EquipmentPage.xaml.cs">
       <DependentUpon>EquipmentPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FxivColorSelectorDrawer.xaml.cs">
+      <DependentUpon>FxivColorSelectorDrawer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ItemView.xaml.cs">
       <DependentUpon>ItemView.xaml</DependentUpon>
@@ -86,6 +108,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ColorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\DyeSelector.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -95,6 +121,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\EquipmentPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FxivColorSelectorDrawer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -122,6 +152,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Assets\colors.dat" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -129,8 +160,10 @@
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody">
-      <Version>4.1.0</Version>
+    <PackageReference Include="AutoDependencyProperty.Fody">
+      <Version>1.2.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Fody">
       <Version>6.1.1</Version>
@@ -153,18 +186,6 @@
     <Resource Include="Assets\IconBorderSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{12021f91-2adb-4897-9671-356f7d7b77b6}</Project>
-      <Name>Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WPFStyles\WpfStyles.csproj">
-      <Project>{f76c98a0-59bf-4bf8-ab41-0218859a89bd}</Project>
-      <Name>WpfStyles</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Assets\Slots\Body.png" />
     <Resource Include="Assets\Slots\Ears.png" />
     <Resource Include="Assets\Slots\Feet.png" />
@@ -180,6 +201,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Slots\LeftRing.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -78,7 +78,7 @@
 		<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256">
 			<Canvas Height="512" Width="256">
 				<Canvas.Background>
-					<ImageBrush ImageSource="Assets/PoseCharacterBodyBackground.png" Opacity="0.15" Stretch="Uniform"/>
+					<ImageBrush ImageSource="../Assets/PoseCharacterBodyBackground.png" Opacity="0.15" Stretch="Uniform"/>
 				</Canvas.Background>
 
 				<local:SimplePoseBoneView Canvas.Left="118" Canvas.Top="50" BoneName="Head"/>

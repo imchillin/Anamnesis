@@ -4,10 +4,33 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Pages"
+			 xmlns:converters="clr-namespace:ConceptMatrix.AppearanceModule.Converters"
+			 xmlns:controls="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 mc:Ignorable="d" 
 			 TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024">
+
+	<UserControl.Resources>
+
+		<converters:MasculineGenderToVisibilityConverter x:Key="mGenderVis"/>
+		<converters:MasculineGenderToVisibilityConverter x:Key="fGenderVis"/>
+
+		<DataTemplate x:Key="GenderedComboBoxItem">
+			<Grid>
+				<TextBlock Text="{Binding Feminine}" Visibility="{Binding DataContext.Gender, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AppearancePage}}, Converter={StaticResource fGenderVis}}"/>
+				<TextBlock Text="{Binding Masculine}" Visibility="{Binding DataContext.Gender, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AppearancePage}}, Converter={StaticResource mGenderVis}}"/>
+			</Grid>
+		</DataTemplate>
+
+		<DataTemplate x:Key="DisplayNameComboBox">
+			<Grid>
+				<TextBlock Text="{Binding DisplayName}"/>
+			</Grid>
+		</DataTemplate>
+
+	</UserControl.Resources>
+	
 	<Grid x:Name="ContentArea">
 		<!--
 		Race
@@ -55,15 +78,28 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 
-			<TextBlock Grid.Column="0" Grid.Row="0" Text="Race:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<ComboBox Grid.Column="1" Grid.Row="0" x:Name="RaceComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Race}"/>
+			<TextBlock Grid.Column="0" Grid.Row="0" Text="Gender:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<ComboBox Grid.Column="1" Grid.Row="0" x:Name="GenderComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Gender}"/>
 
-			<TextBlock Grid.Column="0" Grid.Row="1" Text="Tribe:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<ComboBox Grid.Column="1" Grid.Row="1" x:Name="TribeComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Tribe}"/>
+			<TextBlock Grid.Column="0" Grid.Row="1" Text="Race:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<ComboBox Grid.Column="1" Grid.Row="1" x:Name="RaceComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Race}" ItemTemplate="{StaticResource GenderedComboBoxItem}"/>
+
+			<TextBlock Grid.Column="0" Grid.Row="2" Text="Tribe:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<ComboBox Grid.Column="1" Grid.Row="2" x:Name="TribeComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Tribe}" ItemTemplate="{StaticResource GenderedComboBoxItem}"/>
+
+			<TextBlock Grid.Column="0" Grid.Row="3" Text="Eye Color:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<controls:ColorControl Grid.Column="1" Grid.Row="3" Margin="6" Value="{Binding EyeColorL}" Type="Eyes" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+
 
 		</Grid>
 

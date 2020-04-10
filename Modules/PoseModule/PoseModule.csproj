@@ -36,6 +36,18 @@
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ConceptMatrix.WpfStyles">
+      <HintPath>..\..\bin\ConceptMatrix.WpfStyles.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Core">
+      <HintPath>..\..\bin\Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FontAwesome.Sharp">
+      <HintPath>..\..\bin\FontAwesome.Sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -46,6 +58,11 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="ThreeD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\ThreeD.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -135,8 +152,10 @@
     <Resource Include="Assets\PoseCharacterVieraEars04Background.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody">
-      <Version>4.1.0</Version>
+    <PackageReference Include="AutoDependencyProperty.Fody">
+      <Version>1.2.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>none</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Fody">
       <Version>6.1.1</Version>
@@ -153,23 +172,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{12021F91-2ADB-4897-9671-356F7D7B77B6}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Offsets\Offsets.csproj">
-      <Project>{b554e2ff-5572-4fd2-bd15-6f532a7f840a}</Project>
-      <Name>Offsets</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ThreeD\ThreeD.csproj">
-      <Project>{57b50980-3643-4d41-a8ac-045646da7310}</Project>
-      <Name>ThreeD</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WPFStyles\WpfStyles.csproj">
-      <Project>{f76c98a0-59bf-4bf8-ab41-0218859a89bd}</Project>
-      <Name>WpfStyles</Name>
-      <Private>False</Private>
-    </ProjectReference>
+    <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
