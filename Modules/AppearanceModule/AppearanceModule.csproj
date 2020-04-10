@@ -67,8 +67,8 @@
     <Compile Include="Views\EquipmentSelector.xaml.cs">
       <DependentUpon>EquipmentSelector.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EquipmentView.xaml.cs">
-      <DependentUpon>EquipmentView.xaml</DependentUpon>
+    <Compile Include="Views\EquipmentPage.xaml.cs">
+      <DependentUpon>EquipmentPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ItemView.xaml.cs">
       <DependentUpon>ItemView.xaml</DependentUpon>
@@ -87,7 +87,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EquipmentView.xaml">
+    <Page Include="Views\EquipmentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

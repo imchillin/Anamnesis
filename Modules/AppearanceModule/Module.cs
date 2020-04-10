@@ -6,7 +6,7 @@ namespace ConceptMatrix.AppearanceModule
 	using System;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
-	using ConceptMatrix.AppearanceModule.Views;
+	using ConceptMatrix.AppearanceModule.Pages;
 	using ConceptMatrix.Modules;
 	using ConceptMatrix.Services;
 
@@ -17,7 +17,7 @@ namespace ConceptMatrix.AppearanceModule
 			await base.Initialize(services);
 
 			IViewService viewService = services.Get<IViewService>();
-			viewService.AddPage<EquipmentView>("Character/Equipment");
+			viewService.AddPage<EquipmentPage>("Character/Equipment");
 		}
 
 		public override Task Shutdown()

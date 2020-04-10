@@ -1,25 +1,24 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace ConceptMatrix.AppearanceModule.Pages
 {
 	using System;
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Files;
-	using ConceptMatrix.Injection;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;
 
 	/// <summary>
 	/// Interaction logic for EquipmentView.xaml.
 	/// </summary>
-	public partial class EquipmentView : UserControl
+	public partial class EquipmentPage : UserControl
 	{
 		private IMemory<Equipment> eqMem;
 
-		public EquipmentView()
+		public EquipmentPage()
 		{
 			this.InitializeComponent();
 
