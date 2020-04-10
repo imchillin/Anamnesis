@@ -4,7 +4,6 @@
 namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System;
-	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Utilities;
@@ -16,9 +15,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 	/// Interaction logic for ColorControl.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	////[AutoDependencyProperty]
 	public partial class ColorControl : UserControl
 	{
+		public static readonly IBind<byte> ValueDp = Binder.Register<byte, ColorControl>(nameof(Value));
+		public static readonly IBind<Appearance.Genders> GenderDp = Binder.Register<Appearance.Genders, ColorControl>(nameof(Gender));
+		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, ColorControl>(nameof(Tribe));
+
 		public ColorControl()
 		{
 			this.InitializeComponent();
@@ -42,20 +44,39 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		public Appearance.Genders Gender
 		{
-			get;
-			set;
+			get
+			{
+				return GenderDp.Get(this);
+			}
+			set
+			{
+				GenderDp.Set(this, value);
+			}
 		}
 
 		public Appearance.Tribes Tribe
 		{
-			get;
-			set;
+			get
+			{
+				return TribeDp.Get(this);
+			}
+
+			set
+			{
+				TribeDp.Set(this, value);
+			}
 		}
 
 		public byte Value
 		{
-			get;
-			set;
+			get
+			{
+				return ValueDp.Get(this);
+			}
+			set
+			{
+				ValueDp.Set(this, value);
+			}
 		}
 
 		private async void OnClick(object sender, RoutedEventArgs e)

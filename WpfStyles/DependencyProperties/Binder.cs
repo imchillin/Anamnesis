@@ -8,9 +8,15 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 
 	public class Binder
 	{
-		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, Action<DependencyObject, DependencyPropertyChangedEventArgs> changed)
+		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, Action<DependencyObject, DependencyPropertyChangedEventArgs> changed = null)
 		{
-			DependencyProperty dp = DependencyProperty.Register(propertyName, typeof(TValue), typeof(TOwner), new FrameworkPropertyMetadata(new PropertyChangedCallback(changed)));
+			PropertyChangedCallback changedCallback = null;
+			if (changed != null)
+				changedCallback = new PropertyChangedCallback(changed);
+
+			FrameworkPropertyMetadata meta = new FrameworkPropertyMetadata(changedCallback);
+
+			DependencyProperty dp = DependencyProperty.Register(propertyName, typeof(TValue), typeof(TOwner), meta);
 			DependencyProperty<TValue> dpv = new DependencyProperty<TValue>(dp);
 			return dpv;
 		}

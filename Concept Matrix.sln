@@ -28,6 +28,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SaintCoinach", "Modules\SaintCoinach\SaintCoinach.csproj", "{9AFE6672-89F6-47CA-ABD7-353A5238E98E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppearanceModule", "Modules\AppearanceModule\AppearanceModule.csproj", "{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{12021F91-2ADB-4897-9671-356F7D7B77B6} = {12021F91-2ADB-4897-9671-356F7D7B77B6}
+		{F76C98A0-59BF-4BF8-AB41-0218859A89BD} = {F76C98A0-59BF-4BF8-AB41-0218859A89BD}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
