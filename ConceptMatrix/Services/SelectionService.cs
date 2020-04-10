@@ -105,6 +105,11 @@ namespace ConceptMatrix.GUI.Services
 					ActorTypes type = baseOffset.GetValue(Offsets.ActorType);
 					string name = baseOffset.GetValue(Offsets.Name);
 
+					// Hide name while debugging
+					#if DEBUG
+					name = "Tester";
+					#endif
+
 					string actorId = mode.ToString() + "_" + name;
 
 					if (string.IsNullOrEmpty(actorId))

@@ -60,9 +60,6 @@
     <Compile Include="SimplePoseBoneView.xaml.cs">
       <DependentUpon>SimplePoseBoneView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SimplePoseOptions.xaml.cs">
-      <DependentUpon>SimplePoseOptions.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SimplePosePage.xaml.cs">
       <DependentUpon>SimplePosePage.xaml</DependentUpon>
     </Compile>
@@ -74,10 +71,6 @@
     <Page Include="SimplePoseBoneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="SimplePoseOptions.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SimplePosePage.xaml">
       <Generator>MSBuild:Compile</Generator>

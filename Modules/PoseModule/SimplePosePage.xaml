@@ -432,11 +432,11 @@
 
 						<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
 						<Label Content="Scale"/>
-						<cm3:VectorEditor Value="{Binding CurrentBone.Scale, Mode=TwoWay}" Expanded="True"/>
+						<cm3:VectorEditor Value="{Binding CurrentBone.Scale, Mode=TwoWay}" Expanded="False"/>
 
 						<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
 						<Label Content="Position"/>
-						<cm3:VectorEditor Value="{Binding CurrentBone.Position, Mode=TwoWay}" Expanded="True"/>
+						<cm3:VectorEditor Value="{Binding CurrentBone.Position, Mode=TwoWay}" Expanded="False"/>
 					</StackPanel>
 				</GroupBox>
 			</StackPanel>
