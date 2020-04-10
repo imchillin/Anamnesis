@@ -1,12 +1,12 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.EquipmentModule
+namespace ConceptMatrix.AppearanceModule
 {
 	using System;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
-	using ConceptMatrix.EquipmentModule.Views;
+	using ConceptMatrix.AppearanceModule.Views;
 	using ConceptMatrix.Modules;
 	using ConceptMatrix.Services;
 

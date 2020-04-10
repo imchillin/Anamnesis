@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.EquipmentModule.Views
+namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System;
 	using System.ComponentModel;

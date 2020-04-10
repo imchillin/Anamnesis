@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}</ProjectGuid>
     <OutputType>library</OutputType>
-    <RootNamespace>ConceptMatrix.EquipmentModule</RootNamespace>
-    <AssemblyName>EquipmentModule</AssemblyName>
+    <RootNamespace>ConceptMatrix.AppearanceModule</RootNamespace>
+    <AssemblyName>AppearanceModule</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>..\..\bin\Modules\EquipmentModule.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\Modules\AppearanceModule.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,7 +34,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;</NoWarn>
-    <DocumentationFile>..\..\bin\Modules\EquipmentModule.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\Modules\AppearanceModule.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>

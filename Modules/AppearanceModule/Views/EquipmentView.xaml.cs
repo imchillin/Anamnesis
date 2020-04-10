@@ -1,13 +1,13 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.EquipmentModule.Views
+namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System;
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix.EquipmentModule.Files;
+	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.Injection;
 	using ConceptMatrix.Offsets;
 	using ConceptMatrix.Services;

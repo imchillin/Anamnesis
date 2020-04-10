@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.EquipmentModule
+namespace ConceptMatrix.AppearanceModule
 {
 	using System;
 	using System.Windows.Media.Imaging;
@@ -26,7 +26,7 @@ namespace ConceptMatrix.EquipmentModule
 		{
 			BitmapImage logo = new BitmapImage();
 			logo.BeginInit();
-			logo.UriSource = new Uri("pack://application:,,,/EquipmentModule;component/Assets/Slots/" + self.ToString() + ".png");
+			logo.UriSource = new Uri("pack://application:,,,/AppearanceModule;component/Assets/Slots/" + self.ToString() + ".png");
 			logo.EndInit();
 
 			return logo;

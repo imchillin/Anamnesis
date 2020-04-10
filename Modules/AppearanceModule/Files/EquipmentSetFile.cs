@@ -1,10 +1,10 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.EquipmentModule.Files
+namespace ConceptMatrix.AppearanceModule.Files
 {
 	using System;
-	using ConceptMatrix.EquipmentModule.Views;
+	using ConceptMatrix.AppearanceModule.Views;
 	using ConceptMatrix.Services;
 
 	[Serializable]

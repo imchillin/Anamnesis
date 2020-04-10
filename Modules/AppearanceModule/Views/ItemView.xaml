@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="ConceptMatrix.EquipmentModule.Views.ItemView"
+﻿<UserControl x:Class="ConceptMatrix.AppearanceModule.Views.ItemView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:ConceptMatrix.EquipmentModule.Views"
+			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d"
@@ -38,9 +38,9 @@
 
 					<Border Grid.RowSpan="2" Height="52" Width="52" Background="#10FFFFFF" CornerRadius="3" BorderThickness="1" BorderBrush="#44222222">
 						<Grid>
-							<Image x:Name="SlotIcon" Source="/EquipmentModule;component/Assets/Slots/Body.png" Margin="6" Opacity="0.4"/>
+							<Image x:Name="SlotIcon" Source="/AppearanceModule;component/Assets/Slots/Body.png" Margin="6" Opacity="0.4"/>
 							<Image Source="{Binding Item.Icon, Converter={StaticResource IImageConverter}}" Margin="1"/>
-							<Image Source="/EquipmentModule;component/Assets/IconBorder.png" Margin="-2, -1, -2, -4" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityconverter}}"/>
+							<Image Source="/AppearanceModule;component/Assets/IconBorder.png" Margin="-2, -1, -2, -4" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityconverter}}"/>
 
 							<Grid.ToolTip>
 								<StackPanel>
@@ -104,7 +104,7 @@
 					<Border Grid.Column="1" Background="#10FFFFFF" CornerRadius="3" BorderThickness="1" BorderBrush="#44222222" Width="20" Height="20" Margin="1, 2, 1, 0">
 						<Grid>
 							<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}"/>
-							<Image Source="/EquipmentModule;component/Assets/IconBorderSmall.png" Margin="-2, -1, -2, -3" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityconverter}}"/>
+							<Image Source="/AppearanceModule;component/Assets/IconBorderSmall.png" Margin="-2, -1, -2, -3" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityconverter}}"/>
 
 							<Grid.ToolTip>
 								<StackPanel>
