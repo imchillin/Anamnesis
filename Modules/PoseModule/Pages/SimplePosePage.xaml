@@ -14,7 +14,7 @@
 		<BooleanToVisibilityConverter x:Key="B2V"/>
 		<converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
 	</UserControl.Resources>
-	
+
 	<!--
 	Missing Bones:
 		ShieldLeft

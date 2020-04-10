@@ -41,10 +41,20 @@ namespace ConceptMatrix.Services
 
 	public interface IRace : IDataObject
 	{
+		Appearance.Races Race { get; }
+		string Feminine { get; }
+		string Masculine { get; }
+		string DisplayName { get; }
+
+		IEnumerable<ITribe> Tribes { get; }
 	}
 
 	public interface ITribe : IDataObject
 	{
+		Appearance.Tribes Tribe { get; }
+		string Feminine { get; }
+		string Masculine { get; }
+		string DisplayName { get; }
 	}
 
 	public interface IItem : IDataObject

@@ -60,6 +60,9 @@
     <Compile Include="Extensions\ItemSlotsExtensions.cs" />
     <Compile Include="Files\LegacyEquipmentSetFile.cs" />
     <Compile Include="Files\EquipmentSetFile.cs" />
+    <Compile Include="Pages\AppearancePage.xaml.cs">
+      <DependentUpon>AppearancePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DyeSelector.xaml.cs">
       <DependentUpon>DyeSelector.xaml</DependentUpon>
     </Compile>
@@ -78,6 +81,10 @@
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\AppearancePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DyeSelector.xaml">
       <Generator>MSBuild:Compile</Generator>

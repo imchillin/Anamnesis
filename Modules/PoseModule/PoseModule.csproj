@@ -55,12 +55,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LegacyPoseFile.cs" />
-    <Compile Include="PoseFile.cs" />
+    <Compile Include="Files\LegacyPoseFile.cs" />
+    <Compile Include="Files\PoseFile.cs" />
     <Compile Include="SimplePoseBoneView.xaml.cs">
       <DependentUpon>SimplePoseBoneView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SimplePosePage.xaml.cs">
+    <Compile Include="Pages\SimplePosePage.xaml.cs">
       <DependentUpon>SimplePosePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SimplePoseViewModel.cs" />
@@ -72,7 +72,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SimplePosePage.xaml">
+    <Page Include="Pages\SimplePosePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

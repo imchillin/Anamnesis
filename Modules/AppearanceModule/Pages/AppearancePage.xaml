@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="ConceptMatrix.AppearanceModule.Pages.AppearancePage"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Pages"
+			 mc:Ignorable="d" 
+			 TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
+			 d:DesignHeight="600"
+			 d:DesignWidth="1024">
+	<Grid x:Name="ContentArea">
+		<!--
+		Race
+		Tribe
+		Gender
+		Skintone
+		Eye Color (L/R)
+		FacialFeatures
+		Lips Color / Fur Pattern
+		Face Paint / Tattoo
+		Face Paint Color
+		Limbal / Tattoo Color
+		Hairstyle
+		Hair color
+		Highlights
+		Height
+		Bust Size
+		Body Type
+		Head Type
+		Jaw Type
+		Eyebrows Type
+		Eyes Type
+		Nose Type
+		MouthType
+		Ear/Tail Type
+		Ear/Muscle/Tail Size
+		Voice Type
+		ModelType
+		-->
+		
+		<!--
+		Overall Scale
+		Bust Scale (XYZ)
+		Ear/Tail Scale
+		Muscle Tone
+		Transparency
+		-->
+
+		<Grid Width="256" Height="256">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+
+			<TextBlock Grid.Column="0" Grid.Row="0" Text="Race:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<ComboBox Grid.Column="1" Grid.Row="0" x:Name="RaceComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Race}"/>
+
+			<TextBlock Grid.Column="0" Grid.Row="1" Text="Tribe:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<ComboBox Grid.Column="1" Grid.Row="1" x:Name="TribeComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Tribe}"/>
+
+		</Grid>
+
+	</Grid>
+</UserControl>

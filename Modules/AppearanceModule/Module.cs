@@ -17,6 +17,7 @@ namespace ConceptMatrix.AppearanceModule
 			await base.Initialize(services);
 
 			IViewService viewService = services.Get<IViewService>();
+			viewService.AddPage<AppearancePage>("Character/Appearance");
 			viewService.AddPage<EquipmentPage>("Character/Equipment");
 		}
 

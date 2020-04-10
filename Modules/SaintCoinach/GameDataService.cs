@@ -263,6 +263,9 @@ namespace ConceptMatrix.SaintCoinachModule
 				Type type = typeof(TWrapper);
 				foreach (TRow row in sheet)
 				{
+					if (row.Key == 0)
+						continue;
+
 					TWrapper wrapper = (TWrapper)Activator.CreateInstance(type, row);
 					this.data.Add(wrapper.Key, wrapper);
 				}
