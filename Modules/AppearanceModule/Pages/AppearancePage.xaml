@@ -7,6 +7,7 @@
 			 xmlns:converters="clr-namespace:ConceptMatrix.AppearanceModule.Converters"
 			 xmlns:controls="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=ConceptMatrix.WpfStyles"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d" 
 			 TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 			 d:DesignHeight="600"
@@ -35,48 +36,13 @@
 		</DataTemplate>
 
 	</UserControl.Resources>
-	
-	<Grid x:Name="ContentArea">
-		<!--
-		Race
-		Tribe
-		Gender
-		Skintone
-		Eye Color (L/R)
-		FacialFeatures
-		Lips Color / Fur Pattern
-		Face Paint / Tattoo
-		Face Paint Color
-		Limbal / Tattoo Color
-		Hairstyle
-		Hair color
-		Highlights
-		Height
-		Bust Size
-		Body Type
-		Head Type
-		Jaw Type
-		Eyebrows Type
-		Eyes Type
-		Nose Type
-		MouthType
-		Ear/Tail Type
-		Ear/Muscle/Tail Size
-		Voice Type
-		ModelType
-		-->
-		
-		<!--
-		Overall Scale
-		Bust Scale (XYZ)
-		Ear/Tail Scale
-		Muscle Tone
-		Transparency
-		-->
 
-		<Grid Width="256">
+	<GroupBox Margin="6">
+		<Grid x:Name="ContentArea" Width="256">
+
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="auto"/>
+				<ColumnDefinition Width="12"/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
@@ -96,58 +62,165 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 
-			<TextBlock Grid.Column="0" Grid.Row="0" Text="Gender:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<ComboBox Grid.Column="1" Grid.Row="0" x:Name="GenderComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Gender}"/>
+			<TextBlock Grid.Column="0" Grid.Row="0" Text="Model:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<cm3Controls:NumberBox Grid.Column="2" Grid.Row="0"/>
 
-			<TextBlock Grid.Column="0" Grid.Row="1" Text="Race:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<ComboBox Grid.Column="1" Grid.Row="1" x:Name="RaceComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Race}" ItemTemplate="{StaticResource GenderedComboBoxItem}"/>
+			<TextBlock Grid.Column="0" Grid.Row="1" Text="Gender:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<ComboBox Grid.Column="2" Grid.Row="1" x:Name="GenderComboBox" SelectedItem="{Binding Gender}"/>
 
 			<TextBlock Grid.Column="0" Grid.Row="2" Text="Tribe:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<ComboBox Grid.Column="1" Grid.Row="2" x:Name="TribeComboBox" Margin="20, 6, 6, 6" SelectedItem="{Binding Tribe}" ItemTemplate="{StaticResource GenderedComboBoxItem}"/>
 
-			<TextBlock Grid.Column="0" Grid.Row="3" Text="Skintone:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<controls:ColorControl Grid.Column="1" Grid.Row="3" Margin="6" Value="{Binding Skintone}" Type="Skin" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
-
-			<TextBlock Grid.Column="0" Grid.Row="4" Text="Eye Color:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal">
-				<controls:ColorControl Margin="6" Value="{Binding EyeColorL}" Type="Eyes" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
-				<controls:ColorControl Margin="6" Value="{Binding EyeColorR}" Type="Eyes" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+			<StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal">
+				<ComboBox x:Name="RaceComboBox" SelectedItem="{Binding Race}" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="75" Margin="0, 0, 10, 0"/>
+				<ComboBox x:Name="TribeComboBox" SelectedItem="{Binding Tribe}" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="75"/>
 			</StackPanel>
 
-			<TextBlock Grid.Column="0" Grid.Row="5" Text="Facial Features:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<!-- TODO --> <Button Grid.Column="1" Grid.Row="5" Style="{StaticResource TransparentButton}" Height="28"/>
+			<TextBlock Grid.Column="0" Grid.Row="4" Text="Skintone:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<controls:ColorControl Grid.Column="2" Grid.Row="4" Margin="6" Value="{Binding Skintone}" Type="Skin" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
 
-			<TextBlock Grid.Column="0" Grid.Row="6" Text="Lips Color:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}"/>
-			<controls:ColorControl Grid.Column="1" Grid.Row="6" Margin="6" Value="{Binding LipsColor}" Type="Lips" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+			<TextBlock Grid.Column="0" Grid.Row="5" Text="Eye Color:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<StackPanel Grid.Column="2" Grid.Row="5" Orientation="Horizontal">
+				<TextBlock Text="L" VerticalAlignment="Center"/>
+				<controls:ColorControl Margin="6" Value="{Binding EyeColorL}" Type="Eyes" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+				<TextBlock Text="R" VerticalAlignment="Center"/>
+				<controls:ColorControl Margin="6" Value="{Binding EyeColorR}" Type="Eyes" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+				<TextBlock Text="Li" VerticalAlignment="Center" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+				<controls:ColorControl Margin="6" Value="{Binding EyeColorR}" Type="Eyes" Gender="{Binding Gender}" Tribe="{Binding Tribe}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+			</StackPanel>
+
+			<TextBlock Grid.Column="0" Grid.Row="6" Text="Facial Features:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<cm3Controls:NumberBox Grid.Column="2" Grid.Row="6"/>
+
 			
-			<TextBlock Grid.Column="0" Grid.Row="7" Text="Fur Pattern:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
-			<!-- TODO --> <Button Grid.Column="1" Grid.Row="7" Style="{StaticResource TransparentButton}" Height="28"/>
-			
+			<TextBlock Grid.Column="0" Grid.Row="9" Text="Face Paint:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<StackPanel Grid.Column="2" Grid.Row="9" Orientation="Horizontal">
+				<!-- TODO -->
+				<cm3Controls:NumberBox />
+				<controls:ColorControl Margin="6" Value="{Binding FacePaintColor}" Type="Hair" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+			</StackPanel>
 
-			<TextBlock Grid.Column="0" Grid.Row="8" Text="Face Paint" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<!-- TODO --> <Button Grid.Column="1" Grid.Row="8" Style="{StaticResource TransparentButton}" Height="28"/>
+			<TextBlock Grid.Column="0" Grid.Row="11" Text="Hair:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<StackPanel Grid.Column="2" Grid.Row="11" Orientation="Horizontal">
+				<!-- TODO: Style -->
+				<cm3Controls:NumberBox/>
+				<controls:ColorControl Grid.Column="2" Grid.Row="11" Margin="6" Value="{Binding HairColor}" Type="Hair" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+				<!-- TODO: Highlights Enable -->
+				<ToggleButton Width="25"/>
+				<controls:ColorControl Grid.Column="2" Grid.Row="11" Margin="6" Value="{Binding HairHighlights}" Type="Hair" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+			</StackPanel>
 
-			<TextBlock Grid.Column="0" Grid.Row="9" Text="Limbal Color" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
-			<!-- TODO --> <Button Grid.Column="1" Grid.Row="9" Style="{StaticResource TransparentButton}" Height="28"/>
+			<TextBlock Grid.Column="0" Grid.Row="12" Text="Height:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<cm3Controls:NumberBox  Grid.Column="2" Grid.Row="12" Slider="True" Minimum="0" Maximum="100"/>
 
-			<TextBlock Grid.Column="0" Grid.Row="10" Text="Tattoo Color" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasLimbal, Converter={StaticResource !B2V}}"/>
-			<!-- TODO --> <Button Grid.Column="1" Grid.Row="10" Style="{StaticResource TransparentButton}" Height="28"/>
+			<TextBlock Grid.Column="0" Grid.Row="13" Text="Bust Size:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<cm3Controls:NumberBox  Grid.Column="2" Grid.Row="13" Slider="True" Minimum="0" Maximum="100"/>
 
-			<TextBlock Grid.Column="0" Grid.Row="11" Text="Hairstyle" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<!-- TODO --> <Button Grid.Column="1" Grid.Row="11" Style="{StaticResource TransparentButton}" Height="28"/>
+			<Grid Grid.Row="14" Grid.ColumnSpan="3">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="12"/>
+					<ColumnDefinition/>
 
-			<TextBlock Grid.Column="0" Grid.Row="12" Text="Hair Color" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<controls:ColorControl Grid.Column="1" Grid.Row="12" Margin="6" Value="{Binding HairColor}" Type="Hair" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="12"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
 
-			<TextBlock Grid.Column="0" Grid.Row="13" Text="Hair highlights" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<controls:ColorControl Grid.Column="1" Grid.Row="13" Margin="6" Value="{Binding HairHighlights}" Type="Hair" Gender="{Binding Gender}" Tribe="{Binding Tribe}"/>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
 
+				<!-- Body Type -->
+				<TextBlock Grid.Column="0" Grid.Row="0" Text="Body:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+				<cm3Controls:NumberBox  Grid.Column="2" Grid.Row="0"/>
+
+				<!-- Head Type -->
+				<TextBlock Grid.Column="3" Grid.Row="0" Text="Head:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+				<cm3Controls:NumberBox  Grid.Column="5" Grid.Row="0"/>
+
+				<!-- Jaw Type -->
+				<TextBlock Grid.Column="0" Grid.Row="1" Text="Jaw:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+				<cm3Controls:NumberBox Grid.Column="2" Grid.Row="1"/>
+
+				<!-- Eyebrows type -->
+				<TextBlock Grid.Column="3" Grid.Row="1" Text="Eyebrows:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+				<cm3Controls:NumberBox  Grid.Column="5" Grid.Row="1"/>
+
+				<!-- Eye type -->
+				<TextBlock Grid.Column="0" Grid.Row="2" Text="Eyes:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+				<cm3Controls:NumberBox  Grid.Column="2" Grid.Row="2"/>
+
+				<!-- Nose Type -->
+				<TextBlock Grid.Column="3" Grid.Row="2" Text="Nose:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+				<cm3Controls:NumberBox  Grid.Column="5" Grid.Row="2"/>
+
+				<!-- Mouth Type -->
+				<TextBlock Grid.Column="0" Grid.Row="3" Text="Mouth:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+				<cm3Controls:NumberBox  Grid.Column="2" Grid.Row="3"/>
+
+				<!-- Muscle Size -->
+				<TextBlock Grid.Column="3" Grid.Row="3" Text="Muscle Size:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox  Grid.Column="5" Grid.Row="3" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
+
+				<!-- Ear Type -->
+				<TextBlock Grid.Column="0" Grid.Row="4" Text="Ears:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox  Grid.Column="2" Grid.Row="4" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
+
+				<!-- Ears Size -->
+				<TextBlock Grid.Column="3" Grid.Row="4" Text="Ears Size:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox  Grid.Column="5" Grid.Row="4" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
+
+				<!-- Tail Type -->
+				<TextBlock Grid.Column="0" Grid.Row="4" Text="Tail:" VerticalAlignment="Center" HorizontalAlignment="Right"  Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox  Grid.Column="2" Grid.Row="4"  Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
+
+				<!-- Tail Size -->
+				<TextBlock Grid.Column="3" Grid.Row="4" Text="Tail size:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox  Grid.Column="5" Grid.Row="4" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
+
+				<!-- Voice Type -->
+				<TextBlock Grid.Column="0" Grid.Row="6" Text="Voice:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+				<cm3Controls:NumberBox  Grid.Column="2" Grid.Row="6"/>
+
+				<!-- Fur pattern -->
+				<TextBlock Grid.Column="3" Grid.Row="6" Text="Fur Pattern:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox  Grid.Column="5" Grid.Row="6" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
+
+				<!-- Lips Color -->
+				<TextBlock Grid.Column="3" Grid.Row="6" Text="Lips Color:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}"/>
+				<controls:ColorControl Grid.Column="5" Grid.Row="6" Margin="6" Value="{Binding LipsColor}" Type="Lips" Gender="{Binding Gender}" Tribe="{Binding Tribe}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}"/>
+
+			</Grid>
 
 		</Grid>
-
-	</Grid>
+	</GroupBox>
 </UserControl>

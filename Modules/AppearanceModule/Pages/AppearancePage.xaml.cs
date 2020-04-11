@@ -36,19 +36,60 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			this.Gender = Appearance.Genders.Feminine;
 		}
 
+		[DependsOn(nameof(Race))]
 		public bool HasFur
 		{
 			get
 			{
+				if (this.Race == null)
+					return false;
+
 				return this.Race.Race == Appearance.Races.Hrothgar;
 			}
 		}
 
+		[DependsOn(nameof(Race))]
 		public bool HasLimbal
 		{
 			get
 			{
+				if (this.Race == null)
+					return false;
+
 				return this.Race.Race == Appearance.Races.AuRa;
+			}
+		}
+
+		[DependsOn(nameof(Race))]
+		public bool HasTail
+		{
+			get
+			{
+				if (this.Race == null)
+					return false;
+
+				return this.Race.Race == Appearance.Races.Hrothgar || this.Race.Race == Appearance.Races.Miqote || this.Race.Race == Appearance.Races.AuRa;
+			}
+		}
+
+		[DependsOn(nameof(Race))]
+		public bool HasEars
+		{
+			get
+			{
+				if (this.Race == null)
+					return false;
+
+				return this.race.Race == Appearance.Races.Vierra;
+			}
+		}
+
+		[DependsOn(nameof(Race))]
+		public bool HasMuscles
+		{
+			get
+			{
+				return !this.HasEars && !this.HasTail;
 			}
 		}
 
@@ -73,6 +114,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			}
 		}
 
+		[DependsOn(nameof(Race))]
 		public ITribe Tribe
 		{
 			get;
