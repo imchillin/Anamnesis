@@ -115,6 +115,8 @@ namespace ConceptMatrix.Services
 
 	public interface ICharaMakeCustomize : IDataObject
 	{
+		IImage Icon { get; }
+		byte FeatureId { get; }
 	}
 
 	public interface ICharaMakeType : IDataObject

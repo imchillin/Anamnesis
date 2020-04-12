@@ -7,17 +7,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Collections.Generic;
 	using System.Drawing;
 	using System.Linq;
-	using System.Text;
-	using System.Threading.Tasks;
-	using System.Windows;
 	using System.Windows.Controls;
-	using System.Windows.Data;
-	using System.Windows.Documents;
-	using System.Windows.Input;
-	using System.Windows.Media;
-	using System.Windows.Media.Imaging;
-	using System.Windows.Navigation;
-	using System.Windows.Shapes;
 	using ConceptMatrix;
 	using ConceptMatrix.Services;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
@@ -31,7 +21,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	{
 		public static readonly IBind<byte> ValueDp = Binder.Register<byte, FacialFeaturesControl>(nameof(Value), OnValueChanged);
 		public static readonly IBind<Appearance.Genders> GenderDp = Binder.Register<Appearance.Genders, FacialFeaturesControl>(nameof(Gender), OnGenderChanged);
-		public static readonly IBind<ITribe> TribeDp = Binder.Register<ITribe, FacialFeaturesControl>(nameof(Tribe), OnTribeChanged);
+		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, FacialFeaturesControl>(nameof(Tribe), OnTribeChanged);
 		public static readonly IBind<byte> HeadDp = Binder.Register<byte, FacialFeaturesControl>(nameof(Head), OnHeadChanged);
 
 		public FacialFeaturesControl()
@@ -45,7 +35,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			set => GenderDp.Set(this, value);
 		}
 
-		public ITribe Tribe
+		public Appearance.Tribes Tribe
 		{
 			get => TribeDp.Get(this);
 			set => TribeDp.Set(this, value);
@@ -68,7 +58,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			sender.GetFeatures();
 		}
 
-		private static void OnTribeChanged(FacialFeaturesControl sender, ITribe value)
+		private static void OnTribeChanged(FacialFeaturesControl sender, Appearance.Tribes value)
 		{
 			sender.GetFeatures();
 		}
@@ -85,7 +75,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void GetFeatures()
 		{
-			if (this.Tribe == null)
+			if (this.Tribe == 0)
 				return;
 
 			IGameDataService dataService = Module.Services.Get<IGameDataService>();
@@ -93,7 +83,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			IImage[] facialFeatures = null;
 			foreach (ICharaMakeType set in dataService.CharacterMakeTypes.All)
 			{
-				if (set.Tribe != this.Tribe.Tribe)
+				if (set.Tribe != this.Tribe)
 					continue;
 
 				if (set.Gender != this.Gender)

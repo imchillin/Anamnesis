@@ -3,131 +3,137 @@
 
 namespace ConceptMatrix.AppearanceModule.Pages
 {
+	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix.AppearanceModule.Utilities;
-	using ConceptMatrix.AppearanceModule.Views;
+	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.Services;
 	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
-	[AddINotifyPropertyChangedInterface]
-	public partial class AppearancePage : UserControl
+	public partial class AppearancePage : UserControl, INotifyPropertyChanged
 	{
-		private IRace race;
+		private IGameDataService gameDataService;
 
 		public AppearancePage()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			IGameDataService gameDataService = Module.Services.Get<IGameDataService>();
+			this.gameDataService = Module.Services.Get<IGameDataService>();
+			ISelectionService selectionService = Module.Services.Get<ISelectionService>();
 
-			this.GenderComboBox.ItemsSource = new[] { Appearance.Genders.Masculine, Appearance.Genders.Feminine };
-			this.RaceComboBox.ItemsSource = gameDataService.Races.All;
-			this.TribeComboBox.ItemsSource = gameDataService.Tribes.All;
+			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Genders));
+			this.RaceComboBox.ItemsSource = this.gameDataService.Races.All;
+			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Ages));
 
-			ColorData.GetSkin(Appearance.Tribes.Highlander, Appearance.Genders.Feminine);
-
-			this.Gender = Appearance.Genders.Feminine;
+			selectionService.SelectionChanged += this.OnSelectionChanged;
+			this.OnSelectionChanged(selectionService.CurrentSelection);
 		}
 
-		[DependsOn(nameof(Race))]
-		public bool HasFur
-		{
-			get
-			{
-				if (this.Race == null)
-					return false;
+		public event PropertyChangedEventHandler PropertyChanged;
 
-				return this.Race.Race == Appearance.Races.Hrothgar;
-			}
-		}
-
-		[DependsOn(nameof(Race))]
-		public bool HasLimbal
-		{
-			get
-			{
-				if (this.Race == null)
-					return false;
-
-				return this.Race.Race == Appearance.Races.AuRa;
-			}
-		}
-
-		[DependsOn(nameof(Race))]
-		public bool HasTail
-		{
-			get
-			{
-				if (this.Race == null)
-					return false;
-
-				return this.Race.Race == Appearance.Races.Hrothgar || this.Race.Race == Appearance.Races.Miqote || this.Race.Race == Appearance.Races.AuRa;
-			}
-		}
-
-		[DependsOn(nameof(Race))]
-		public bool HasEars
-		{
-			get
-			{
-				if (this.Race == null)
-					return false;
-
-				return this.race.Race == Appearance.Races.Vierra;
-			}
-		}
-
-		[DependsOn(nameof(Race))]
-		public bool HasMuscles
-		{
-			get
-			{
-				return !this.HasEars && !this.HasTail;
-			}
-		}
-
-		public Appearance.Genders Gender
-		{
-			get;
-			set;
-		}
+		public bool HasFur { get; set; }
+		public bool HasLimbal { get; set; }
+		public bool HasTail { get; set; }
+		public bool HasEars { get; set; }
+		public bool HasMuscles { get; set; }
+		public bool CanAge { get; set; }
 
 		public IRace Race
 		{
 			get
 			{
-				return this.race;
+				if (this.ViewModel == null)
+					return null;
+
+				return this.gameDataService.Races.Get((int)this.ViewModel.Race);
 			}
 
 			set
 			{
-				this.race = value;
-				this.TribeComboBox.ItemsSource = this.race.Tribes;
-				this.Tribe = this.race.Tribes.First();
+				if (value == null)
+					return;
+
+				this.ViewModel.Race = value.Race;
+				this.TribeComboBox.ItemsSource = value.Tribes;
+				this.Tribe = value.Tribes.First();
 			}
 		}
 
-		[DependsOn(nameof(Race))]
 		public ITribe Tribe
 		{
-			get;
-			set;
+			get
+			{
+				if (this.ViewModel == null)
+					return null;
+
+				return this.gameDataService.Tribes.Get((int)this.ViewModel.Tribe);
+			}
+
+			set
+			{
+				if (value == null)
+					return;
+
+				this.ViewModel.Tribe = value.Tribe;
+			}
 		}
 
-		public byte Skintone { get; set; }
-		public byte EyeColorL { get; set; }
-		public byte EyeColorR { get; set; }
-		public byte FacePaintColor { get; set; }
-		public byte LimbalTattooColor { get; set; }
-		public byte HairColor { get; set; }
-		public byte HairHighlights { get; set; }
-		public byte LipsColor { get; set; }
+		public AppearanceViewModel ViewModel
+		{
+			get;
+			private set;
+		}
+
+		private void OnSelectionChanged(Selection selection)
+		{
+			if (this.ViewModel != null)
+			{
+				this.ViewModel.SubPropertyChanged -= this.OnViewModelPropertyChanged;
+				this.ViewModel.Dispose();
+			}
+
+			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
+			this.ViewModel = null;
+
+			if (selection == null)
+				return;
+
+			this.ViewModel = new AppearanceViewModel(selection);
+			this.ViewModel.SubPropertyChanged += this.OnViewModelPropertyChanged;
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.IsEnabled = true;
+
+				this.Race = this.gameDataService.Races.Get((byte)this.ViewModel.Race);
+				this.TribeComboBox.ItemsSource = this.Race.Tribes;
+				this.Tribe = this.gameDataService.Tribes.Get((byte)this.ViewModel.Tribe);
+
+				this.OnViewModelPropertyChanged(null, null);
+			});
+		}
+
+		private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e == null || e.PropertyName == nameof(AppearanceViewModel.Race) || e.PropertyName == nameof(AppearanceViewModel.Tribe) || e.PropertyName == nameof(AppearanceViewModel.Gender))
+			{
+				this.HasFur = this.ViewModel.Race == Appearance.Races.Hrothgar;
+				this.HasTail = this.ViewModel.Race == Appearance.Races.Hrothgar || this.ViewModel.Race == Appearance.Races.Miqote || this.ViewModel.Race == Appearance.Races.AuRa;
+				this.HasLimbal = this.ViewModel.Race == Appearance.Races.AuRa;
+				this.HasEars = this.ViewModel.Race == Appearance.Races.Vierra;
+				this.HasMuscles = !this.HasEars && !this.HasTail;
+
+				bool canAge = this.ViewModel.Tribe == Appearance.Tribes.Midlander;
+				canAge |= this.ViewModel.Race == Appearance.Races.Miqote && this.ViewModel.Gender == Appearance.Genders.Feminine;
+				canAge |= this.ViewModel.Race == Appearance.Races.Elezen;
+				canAge |= this.ViewModel.Race == Appearance.Races.AuRa && this.ViewModel.Gender == Appearance.Genders.Feminine;
+				this.CanAge = canAge;
+			}
+		}
 	}
 }

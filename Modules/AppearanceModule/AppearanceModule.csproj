@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="Converters\FeminineGenderToVisibilityConverter.cs" />
     <Compile Include="Utilities\ColorData.cs" />
+    <Compile Include="ViewModels\AppearanceViewModel.cs" />
     <Compile Include="Views\ColorControl.xaml.cs">
       <DependentUpon>ColorControl.xaml</DependentUpon>
     </Compile>

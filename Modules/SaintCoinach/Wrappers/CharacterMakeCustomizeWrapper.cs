@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
+	using ConceptMatrix;
 	using ConceptMatrix.Services;
 	using SaintCoinach.Xiv;
 
@@ -11,6 +12,11 @@ namespace ConceptMatrix.SaintCoinachModule
 		public CharacterMakeCustomizeWrapper(CharaMakeCustomize value)
 			: base(value)
 		{
+			this.Icon = value.Icon.ToIImage();
+			this.FeatureId = (byte)value.FeatureID;
 		}
+
+		public IImage Icon { get; private set; }
+		public byte FeatureId { get; private set; }
 	}
 }

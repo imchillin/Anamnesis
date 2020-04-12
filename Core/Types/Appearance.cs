@@ -9,7 +9,7 @@ namespace ConceptMatrix
 	{
 		public Races Race;
 		public Genders Gender;
-		public byte Body;
+		public Ages Age;
 		public byte Height;
 		public Tribes Tribe;
 		public byte Head;
@@ -27,8 +27,8 @@ namespace ConceptMatrix
 		public byte Nose;
 		public byte Jaw;
 		public byte Lips;
-		public byte LipsTone;
-		public byte Muscle;
+		public byte LipsToneFurPattern;
+		public byte EarMuscleTailSize;
 		public byte TailEarsType;
 		public byte Bust;
 		public byte FacePaint;
@@ -70,6 +70,13 @@ namespace ConceptMatrix
 			TheLost = 14,
 			Rava = 15,
 			Veena = 16,
+		}
+
+		public enum Ages : byte
+		{
+			Normal = 1,
+			Old = 3,
+			Young = 4,
 		}
 	}
 

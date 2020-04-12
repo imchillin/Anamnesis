@@ -17,7 +17,7 @@ namespace ConceptMatrix.Injection.Memory
 			Appearance value = default;
 			value.Race = (Appearance.Races)data[0];
 			value.Gender = (Appearance.Genders)data[1];
-			value.Body = data[2];
+			value.Age = (Appearance.Ages)data[2];
 			value.Height = data[3];
 			value.Tribe = (Appearance.Tribes)data[4];
 			value.Head = data[5];
@@ -35,8 +35,8 @@ namespace ConceptMatrix.Injection.Memory
 			value.Nose = data[17];
 			value.Jaw = data[18];
 			value.Lips = data[19];
-			value.LipsTone = data[20];
-			value.Muscle = data[21];
+			value.LipsToneFurPattern = data[20];
+			value.EarMuscleTailSize = data[21];
 			value.TailEarsType = data[22];
 			value.Bust = data[23];
 			value.FacePaint = data[24];
@@ -48,7 +48,7 @@ namespace ConceptMatrix.Injection.Memory
 		{
 			data[0] = (byte)value.Race;
 			data[1] = (byte)value.Gender;
-			data[2] = value.Body;
+			data[2] = (byte)value.Age;
 			data[3] = value.Height;
 			data[4] = (byte)value.Tribe;
 			data[5] = value.Head;
@@ -66,8 +66,8 @@ namespace ConceptMatrix.Injection.Memory
 			data[17] = value.Nose;
 			data[18] = value.Jaw;
 			data[19] = value.Lips;
-			data[20] = value.LipsTone;
-			data[21] = value.Muscle;
+			data[20] = value.LipsToneFurPattern;
+			data[21] = value.EarMuscleTailSize;
 			data[22] = value.TailEarsType;
 			data[23] = value.Bust;
 			data[24] = value.FacePaint;

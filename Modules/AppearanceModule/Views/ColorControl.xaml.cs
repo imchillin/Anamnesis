@@ -21,7 +21,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	{
 		public static readonly IBind<byte> ValueDp = Binder.Register<byte, ColorControl>(nameof(Value), OnValueChanged);
 		public static readonly IBind<Appearance.Genders> GenderDp = Binder.Register<Appearance.Genders, ColorControl>(nameof(Gender), OnGenderChanged);
-		public static readonly IBind<ITribe> TribeDp = Binder.Register<ITribe, ColorControl>(nameof(Tribe), OnTribeChanged);
+		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, ColorControl>(nameof(Tribe), OnTribeChanged);
 
 		private ColorData.Entry[] colors;
 
@@ -53,7 +53,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			set => GenderDp.Set(this, value);
 		}
 
-		public ITribe Tribe
+		public Appearance.Tribes Tribe
 		{
 			get => TribeDp.Get(this);
 			set => TribeDp.Set(this, value);
@@ -82,7 +82,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			sender.colors = sender.GetColors();
 		}
 
-		private static void OnTribeChanged(ColorControl sender, ITribe value)
+		private static void OnTribeChanged(ColorControl sender, Appearance.Tribes value)
 		{
 			sender.colors = sender.GetColors();
 		}
@@ -107,16 +107,16 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private ColorData.Entry[] GetColors()
 		{
-			if (this.Tribe == null)
+			if (this.Tribe == 0)
 				return null;
 
 			switch (this.Type)
 			{
-				case ColorType.Skin: return ColorData.GetSkin(this.Tribe.Tribe, this.Gender);
+				case ColorType.Skin: return ColorData.GetSkin(this.Tribe, this.Gender);
 				case ColorType.Eyes: return ColorData.GetEyeColors();
 				case ColorType.Lips: return ColorData.GetLipColors();
 				case ColorType.FacePaint: return ColorData.GetFacePaintColor();
-				case ColorType.Hair: return ColorData.GetHair(this.Tribe.Tribe, this.Gender);
+				case ColorType.Hair: return ColorData.GetHair(this.Tribe, this.Gender);
 				case ColorType.HairHighlights: return ColorData.GetHairHighlights();
 			}
 
