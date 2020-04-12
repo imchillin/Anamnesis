@@ -11,7 +11,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 	internal class CharacterMakeTypeWrapper : ObjectWrapper<CharaMakeType>, ICharaMakeType
 	{
-		private List<FacialFeatureWrapper> facialFeatureList;
+		private List<IImage> facialFeatureList;
 
 		public CharacterMakeTypeWrapper(CharaMakeType row)
 			: base(row)
@@ -42,13 +42,13 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
-		public IEnumerable<IFacialFeature> FacialFeatures
+		public IEnumerable<IImage> FacialFeatures
 		{
 			get
 			{
 				if (this.facialFeatureList == null)
 				{
-					this.facialFeatureList = new List<FacialFeatureWrapper>();
+					this.facialFeatureList = new List<IImage>();
 
 					try
 					{
@@ -60,10 +60,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 							if (imageFile is null)
 								continue;
-
-							FacialFeatureWrapper feature = new FacialFeatureWrapper();
-							feature.Icon = imageFile.ToIImage();
-							this.facialFeatureList.Add(feature);
+							this.facialFeatureList.Add(imageFile.ToIImage());
 						}
 					}
 					catch (Exception ex)
@@ -73,21 +70,6 @@ namespace ConceptMatrix.SaintCoinachModule
 				}
 
 				return this.facialFeatureList;
-			}
-		}
-
-		internal class FacialFeatureWrapper : IFacialFeature
-		{
-			public int Value
-			{
-				get;
-				set;
-			}
-
-			public IImage Icon
-			{
-				get;
-				set;
 			}
 		}
 	}

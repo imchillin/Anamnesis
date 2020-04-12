@@ -122,13 +122,7 @@ namespace ConceptMatrix.Services
 		Appearance.Genders Gender { get; }
 		Appearance.Races Race { get; }
 		Appearance.Tribes Tribe { get; }
-		IEnumerable<IFacialFeature> FacialFeatures { get; }
-	}
-
-	public interface IFacialFeature
-	{
-		int Value { get; }
-		IImage Icon { get; }
+		IEnumerable<IImage> FacialFeatures { get; }
 	}
 
 	public interface ITitle : IDataObject

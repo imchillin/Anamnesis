@@ -3,9 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule.Views
 {
-	using System;
 	using System.Windows.Controls;
-	using System.Windows.Media;
 	using ConceptMatrix.AppearanceModule.Utilities;
 	using ConceptMatrix.Services;
 
@@ -27,6 +25,14 @@ namespace ConceptMatrix.AppearanceModule.Views
 		}
 
 		public event DrawerEvent Close;
+
+		public int Selected
+		{
+			get
+			{
+				return this.List.SelectedIndex;
+			}
+		}
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{

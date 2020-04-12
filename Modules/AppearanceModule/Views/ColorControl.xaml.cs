@@ -11,19 +11,24 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
+	using WpfColor = System.Windows.Media.Color;
+
 	/// <summary>
 	/// Interaction logic for ColorControl.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
 	public partial class ColorControl : UserControl
 	{
-		public static readonly IBind<byte> ValueDp = Binder.Register<byte, ColorControl>(nameof(Value));
-		public static readonly IBind<Appearance.Genders> GenderDp = Binder.Register<Appearance.Genders, ColorControl>(nameof(Gender));
-		public static readonly IBind<ITribe> TribeDp = Binder.Register<ITribe, ColorControl>(nameof(Tribe));
+		public static readonly IBind<byte> ValueDp = Binder.Register<byte, ColorControl>(nameof(Value), OnValueChanged);
+		public static readonly IBind<Appearance.Genders> GenderDp = Binder.Register<Appearance.Genders, ColorControl>(nameof(Gender), OnGenderChanged);
+		public static readonly IBind<ITribe> TribeDp = Binder.Register<ITribe, ColorControl>(nameof(Tribe), OnTribeChanged);
+
+		private ColorData.Entry[] colors;
 
 		public ColorControl()
 		{
 			this.InitializeComponent();
+			this.ContentArea.DataContext = this;
 		}
 
 		public enum ColorType
@@ -44,51 +49,67 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		public Appearance.Genders Gender
 		{
-			get
-			{
-				return GenderDp.Get(this);
-			}
-			set
-			{
-				GenderDp.Set(this, value);
-			}
+			get => GenderDp.Get(this);
+			set => GenderDp.Set(this, value);
 		}
 
 		public ITribe Tribe
 		{
-			get
-			{
-				return TribeDp.Get(this);
-			}
-
-			set
-			{
-				TribeDp.Set(this, value);
-			}
+			get => TribeDp.Get(this);
+			set => TribeDp.Set(this, value);
 		}
 
+		[AlsoNotifyFor(nameof(WpfColor))]
 		public byte Value
+		{
+			get => ValueDp.Get(this);
+			set => ValueDp.Set(this, value);
+		}
+
+		public WpfColor WpfColor
 		{
 			get
 			{
-				return ValueDp.Get(this);
+				if (this.colors == null)
+					return System.Windows.Media.Colors.Transparent;
+
+				return this.colors[this.Value].WpfColor;
 			}
-			set
-			{
-				ValueDp.Set(this, value);
-			}
+		}
+
+		private static void OnGenderChanged(ColorControl sender, Appearance.Genders value)
+		{
+			sender.colors = sender.GetColors();
+		}
+
+		private static void OnTribeChanged(ColorControl sender, ITribe value)
+		{
+			sender.colors = sender.GetColors();
+		}
+
+		private static void OnValueChanged(ColorControl sender, byte value)
+		{
+			sender.PreviewColor.Color = sender.WpfColor;
 		}
 
 		private async void OnClick(object sender, RoutedEventArgs e)
 		{
 			IViewService viewService = Module.Services.Get<IViewService>();
 
-			FxivColorSelectorDrawer selector = new FxivColorSelectorDrawer(this.GetColors(), this.Value);
+			FxivColorSelectorDrawer selector = new FxivColorSelectorDrawer(this.colors, this.Value);
 			await viewService.ShowDrawer(selector, "Color");
+
+			if (selector.Selected < 0 || selector.Selected >= this.colors.Length)
+				return;
+
+			this.Value = (byte)selector.Selected;
 		}
 
 		private ColorData.Entry[] GetColors()
 		{
+			if (this.Tribe == null)
+				return null;
+
 			switch (this.Type)
 			{
 				case ColorType.Skin: return ColorData.GetSkin(this.Tribe.Tribe, this.Gender);

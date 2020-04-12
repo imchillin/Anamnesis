@@ -71,6 +71,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitmapIImage.cs" />
     <Compile Include="Controls\ColorEditor.xaml.cs">
       <DependentUpon>ColorEditor.xaml</DependentUpon>
     </Compile>
@@ -99,6 +100,7 @@
       <DependentUpon>ColorSelectorDrawer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\ActorTypesExtensions.cs" />
+    <Compile Include="Extensions\BitmapExtensions.cs" />
     <Compile Include="Extensions\UserControlExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

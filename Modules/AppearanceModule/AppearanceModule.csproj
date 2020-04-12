@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;</NoWarn>
+    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>bin\AppearanceModule.xml</DocumentationFile>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;</NoWarn>
+    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;</NoWarn>
     <DocumentationFile>bin\AppearanceModule.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -52,6 +52,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -92,6 +93,9 @@
     <Compile Include="Pages\EquipmentPage.xaml.cs">
       <DependentUpon>EquipmentPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FacialFeaturesControl.xaml.cs">
+      <DependentUpon>FacialFeaturesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FxivColorSelectorDrawer.xaml.cs">
       <DependentUpon>FxivColorSelectorDrawer.xaml</DependentUpon>
     </Compile>
@@ -121,6 +125,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\EquipmentPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FacialFeaturesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -199,6 +207,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\LegacyTattoo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
