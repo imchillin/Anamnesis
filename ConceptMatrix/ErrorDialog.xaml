@@ -50,6 +50,7 @@
 					
 					<TextBlock x:Name="StackTraceBlock"
 							   Margin="10" 
+							   TextWrapping="Wrap"
 							   Foreground="{DynamicResource MaterialDesignBody}"/>
 				</ScrollViewer>
 			</Expander>
