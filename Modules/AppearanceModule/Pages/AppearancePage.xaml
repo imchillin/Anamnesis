@@ -69,14 +69,14 @@
 			<ComboBox Grid.Column="2" Grid.Row="0" x:Name="GenderComboBox" SelectedItem="{Binding ViewModel.Gender}"/>
 
 			<!-- Race / TribeId -->
-			<TextBlock Grid.Column="0" Grid.Row="1" Text="TribeId:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<TextBlock Grid.Column="0" Grid.Row="1" Text="Tribe:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 			<StackPanel Grid.Column="2" Grid.Row="1" Orientation="Horizontal">
 				<ComboBox x:Name="RaceComboBox" SelectedItem="{Binding Race}" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="75" Margin="0, 0, 10, 0"/>
 				<ComboBox x:Name="TribeComboBox" SelectedItem="{Binding Tribe}" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="100"/>
 			</StackPanel>
 
 			<!-- Skintone -->
-			<TextBlock Grid.Column="0" Grid.Row="2" Text="Skintone:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+			<TextBlock Grid.Column="0" Grid.Row="2" Text="Skin:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 			<controls:ColorControl Grid.Column="2" Grid.Row="2" Value="{Binding ViewModel.Skintone}" Type="Skin" Gender="{Binding Gender}" Tribe="{Binding TribeId}"/>
 
 			<!-- Eye Color -->
