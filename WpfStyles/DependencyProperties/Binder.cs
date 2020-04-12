@@ -9,11 +9,14 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 
 	public class Binder
 	{
-		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, Action<DependencyObject, DependencyPropertyChangedEventArgs> changed = null)
+		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, Action<TOwner, TValue> changed = null)
 		{
 			Action<DependencyObject, DependencyPropertyChangedEventArgs> changedb = (d, e) =>
 			{
-				changed?.Invoke(d, e);
+				if (d is TOwner owner && e.NewValue is TValue value)
+				{
+					changed?.Invoke(owner, value);
+				}
 
 				PropertyInfo prop = d.GetType().GetProperty(propertyName);
 				prop.SetValue(d, e.NewValue);
