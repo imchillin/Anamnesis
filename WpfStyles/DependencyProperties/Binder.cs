@@ -6,6 +6,7 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 	using System;
 	using System.Reflection;
 	using System.Windows;
+	using System.Windows.Data;
 
 	public class Binder
 	{
@@ -23,6 +24,8 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 			};
 
 			FrameworkPropertyMetadata meta = new FrameworkPropertyMetadata(new PropertyChangedCallback(changedb));
+			meta.BindsTwoWayByDefault = true;
+			meta.DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 			DependencyProperty dp = DependencyProperty.Register(propertyName, typeof(TValue), typeof(TOwner), meta);
 			DependencyProperty<TValue> dpv = new DependencyProperty<TValue>(dp);
 			return dpv;

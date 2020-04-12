@@ -112,10 +112,10 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set => this.appearance.LimbalEyes = value;
 		}
 
-		public byte EyeBrows
+		public byte Eyebrows
 		{
-			get => this.appearance.EyeBrows;
-			set => this.appearance.EyeBrows = value;
+			get => this.appearance.Eyebrows;
+			set => this.appearance.Eyebrows = value;
 		}
 
 		public byte HighlightTone

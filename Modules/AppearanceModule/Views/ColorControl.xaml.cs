@@ -80,11 +80,13 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private static void OnGenderChanged(ColorControl sender, Appearance.Genders value)
 		{
 			sender.colors = sender.GetColors();
+			sender.PreviewColor.Color = sender.WpfColor;
 		}
 
 		private static void OnTribeChanged(ColorControl sender, Appearance.Tribes value)
 		{
 			sender.colors = sender.GetColors();
+			sender.PreviewColor.Color = sender.WpfColor;
 		}
 
 		private static void OnValueChanged(ColorControl sender, byte value)

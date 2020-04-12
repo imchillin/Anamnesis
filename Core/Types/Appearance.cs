@@ -21,7 +21,7 @@ namespace ConceptMatrix
 		public byte HighlightTone;
 		public byte FacialFeatures;
 		public byte LimbalEyes;
-		public byte EyeBrows;
+		public byte Eyebrows;
 		public byte LEyeColor;
 		public byte Eyes;
 		public byte Nose;

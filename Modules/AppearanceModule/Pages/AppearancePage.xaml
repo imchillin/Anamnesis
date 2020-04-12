@@ -68,7 +68,7 @@
 			<TextBlock Grid.Column="0" Grid.Row="0" Text="Gender:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 			<ComboBox Grid.Column="2" Grid.Row="0" x:Name="GenderComboBox" SelectedItem="{Binding ViewModel.Gender}"/>
 
-			<!-- Race / TribeId -->
+			<!-- Race / Tribe -->
 			<TextBlock Grid.Column="0" Grid.Row="1" Text="Tribe:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 			<StackPanel Grid.Column="2" Grid.Row="1" Orientation="Horizontal">
 				<ComboBox x:Name="RaceComboBox" SelectedItem="{Binding Race}" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="75" Margin="0, 0, 10, 0"/>
@@ -77,7 +77,7 @@
 
 			<!-- Skintone -->
 			<TextBlock Grid.Column="0" Grid.Row="2" Text="Skin:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<controls:ColorControl Grid.Column="2" Grid.Row="2" Value="{Binding ViewModel.Skintone}" Type="Skin" Gender="{Binding Gender}" Tribe="{Binding TribeId}"/>
+			<controls:ColorControl Grid.Column="2" Grid.Row="2" Value="{Binding ViewModel.Skintone}" Type="Skin" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
 
 			<!-- Eye Color -->
 			<TextBlock Grid.Column="0" Grid.Row="3" Text="Eye Color:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
@@ -92,7 +92,7 @@
 
 			<!-- Face Type -->
 			<TextBlock Grid.Column="0" Grid.Row="4" Text="Face:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-			<cm3Controls:NumberBox Value="{Binding ViewModel.Head}" Grid.Column="2" Grid.Row="4"/>
+			<cm3Controls:NumberBox Value="{Binding ViewModel.Head}" Grid.Column="2" Grid.Row="4" Minimum="0" Maximum="255"/>
 
 			<!-- Facial Features -->
 			<TextBlock Grid.Column="0" Grid.Row="5" Text="Features:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
@@ -102,14 +102,14 @@
 			<TextBlock Grid.Column="0" Grid.Row="6" Text="Face Paint:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 			<StackPanel Grid.Column="2" Grid.Row="6" Orientation="Horizontal">
 				<!-- TODO -->
-				<cm3Controls:NumberBox Value="{Binding ViewModel.FacePaint}"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.FacePaint}" Minimum="0" Maximum="255"/>
 				<controls:ColorControl Value="{Binding ViewModel.FacePaintColor}" Type="Hair" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
 			</StackPanel>
 
 			<!-- Hair -->
 			<TextBlock Grid.Column="0" Grid.Row="7" Text="Hair:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 			<StackPanel Grid.Column="2" Grid.Row="7" Orientation="Horizontal">
-				<cm3Controls:NumberBox Value="{Binding ViewModel.Hair}"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.Hair}" Minimum="0" Maximum="255"/>
 				<controls:ColorControl Grid.Column="2" Grid.Row="11"  Value="{Binding ViewModel.HairTone}" Type="Hair" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
 				<controls:ColorControl Grid.Column="2" Grid.Row="11"  Value="{Binding ViewModel.Highlights}" Type="Hair" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
 			</StackPanel>
@@ -151,51 +151,51 @@
 
 				<!-- Jaw Type -->
 				<TextBlock Grid.Column="0" Grid.Row="1" Text="Jaw:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.Jaw}" Grid.Column="2" Grid.Row="1"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.Jaw}" Grid.Column="2" Grid.Row="1" Minimum="0" Maximum="255"/>
 
 				<!-- Eyebrows type -->
 				<TextBlock Grid.Column="3" Grid.Row="1" Text="Eyebrows:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.Eyebrows}" Grid.Column="5" Grid.Row="1"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.Eyebrows}" Grid.Column="5" Grid.Row="1" Minimum="0" Maximum="255"/>
 
 				<!-- Eye type -->
 				<TextBlock Grid.Column="0" Grid.Row="2" Text="Eyes:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.Eyes}" Grid.Column="2" Grid.Row="2"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.Eyes}" Grid.Column="2" Grid.Row="2" Minimum="0" Maximum="255"/>
 
 				<!-- Nose Type -->
 				<TextBlock Grid.Column="3" Grid.Row="2" Text="Nose:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.Nose}" Grid.Column="5" Grid.Row="2"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.Nose}" Grid.Column="5" Grid.Row="2" Minimum="0" Maximum="255"/>
 
 				<!-- Mouth Type -->
-				<TextBlock Grid.Column="0" Grid.Row="3" Text="Mouth:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.Mouth}" Grid.Column="2" Grid.Row="3"/>
+				<TextBlock Grid.Column="0" Grid.Row="3" Text="Lips:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.Lips}" Grid.Column="2" Grid.Row="3" Minimum="0" Maximum="255"/>
 
 				<!-- Muscle Size -->
 				<TextBlock Grid.Column="3" Grid.Row="3" Text="Muscle Size:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.EarMuscleTailSize}" Grid.Column="5" Grid.Row="3" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.EarMuscleTailSize}" Grid.Column="5" Grid.Row="3" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="255"/>
 
 				<!-- Ear Type -->
 				<TextBlock Grid.Column="0" Grid.Row="4" Text="Ears:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.TailEarsType}" Grid.Column="2" Grid.Row="4" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.TailEarsType}" Grid.Column="2" Grid.Row="4" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="255"/>
 
 				<!-- Ears Size -->
 				<TextBlock Grid.Column="3" Grid.Row="4" Text="Ears Size:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.EarMuscleTailSize}" Grid.Column="5" Grid.Row="4" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.EarMuscleTailSize}" Grid.Column="5" Grid.Row="4" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="255"/>
 
 				<!-- Tail Type -->
 				<TextBlock Grid.Column="0" Grid.Row="4" Text="Tail:" VerticalAlignment="Center" HorizontalAlignment="Right"  Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.TailEarsType}" Grid.Column="2" Grid.Row="4"  Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.TailEarsType}" Grid.Column="2" Grid.Row="4"  Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="255"/>
 
 				<!-- Tail Size -->
 				<TextBlock Grid.Column="3" Grid.Row="4" Text="Tail size:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.EarMuscleTailSize}" Grid.Column="5" Grid.Row="4" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.EarMuscleTailSize}" Grid.Column="5" Grid.Row="4" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="255"/>
 
 				<!-- Fur pattern -->
 				<TextBlock Grid.Column="3" Grid.Row="6" Text="Fur Pattern:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding ViewModel.LipsToneFurPattern}" Grid.Column="5" Grid.Row="6" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
+				<cm3Controls:NumberBox Value="{Binding ViewModel.LipsToneFurPattern}" Grid.Column="5" Grid.Row="6" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" Minimum="0" Maximum="255"/>
 
 				<!-- Lips Color -->
 				<TextBlock Grid.Column="3" Grid.Row="6" Text="Lips Color:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}"/>
-				<controls:ColorControl Value="{Binding ViewModel.LipsToneFurPattern}" Grid.Column="5" Grid.Row="6" Type="Lips" Gender="{Binding Gender}" Tribe="{Binding ViewModel.Tribe}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}"/>
+				<controls:ColorControl Value="{Binding ViewModel.LipsToneFurPattern}" Grid.Column="5" Grid.Row="6" Type="Lips" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}" Minimum="0" Maximum="255"/>
 
 			</Grid>
 
