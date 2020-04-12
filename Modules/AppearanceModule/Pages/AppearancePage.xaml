@@ -195,7 +195,7 @@
 
 				<!-- Lips Color -->
 				<TextBlock Grid.Column="3" Grid.Row="6" Text="Lips Color:" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}"/>
-				<controls:ColorControl Value="{Binding ViewModel.LipsToneFurPattern}" Grid.Column="5" Grid.Row="6" Type="Lips" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}" Minimum="0" Maximum="255"/>
+				<controls:ColorControl Value="{Binding ViewModel.LipsToneFurPattern}" Grid.Column="5" Grid.Row="6" Type="Lips" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}"/>
 
 			</Grid>
 
