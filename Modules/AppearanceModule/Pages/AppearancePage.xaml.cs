@@ -122,6 +122,9 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		{
 			if (e == null || e.PropertyName == nameof(AppearanceViewModel.Race) || e.PropertyName == nameof(AppearanceViewModel.Tribe) || e.PropertyName == nameof(AppearanceViewModel.Gender))
 			{
+				this.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(AppearancePage.Race)));
+				this.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(AppearancePage.Tribe)));
+
 				this.HasFur = this.ViewModel.Race == Appearance.Races.Hrothgar;
 				this.HasTail = this.ViewModel.Race == Appearance.Races.Hrothgar || this.ViewModel.Race == Appearance.Races.Miqote || this.ViewModel.Race == Appearance.Races.AuRa;
 				this.HasLimbal = this.ViewModel.Race == Appearance.Races.AuRa;
