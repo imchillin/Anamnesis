@@ -8,6 +8,7 @@ namespace ConceptMatrix.SaintCoinachModule
 	using System.Diagnostics;
 	using System.IO;
 	using System.IO.Compression;
+	using System.Reflection;
 	using System.Threading.Tasks;
 	using ConceptMatrix.Services;
 	using SaintCoinach;
@@ -260,14 +261,21 @@ namespace ConceptMatrix.SaintCoinachModule
 				where TRow : XivRow
 				where TWrapper : ObjectWrapper, T
 			{
-				Type type = typeof(TWrapper);
-				foreach (TRow row in sheet)
+				try
 				{
-					if (row.Key == 0)
-						continue;
+					Type type = typeof(TWrapper);
+					foreach (TRow row in sheet)
+					{
+						if (row.Key == 0)
+							continue;
 
-					TWrapper wrapper = (TWrapper)Activator.CreateInstance(type, row);
-					this.data.Add(wrapper.Key, wrapper);
+						TWrapper wrapper = (TWrapper)Activator.CreateInstance(type, row);
+						this.data.Add(wrapper.Key, wrapper);
+					}
+				}
+				catch (TargetInvocationException ex)
+				{
+					throw ex.InnerException;
 				}
 			}
 		}

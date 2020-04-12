@@ -119,6 +119,16 @@ namespace ConceptMatrix.Services
 
 	public interface ICharaMakeType : IDataObject
 	{
+		Appearance.Genders Gender { get; }
+		Appearance.Races Race { get; }
+		Appearance.Tribes Tribe { get; }
+		IEnumerable<IFacialFeature> FacialFeatures { get; }
+	}
+
+	public interface IFacialFeature
+	{
+		int Value { get; }
+		IImage Icon { get; }
 	}
 
 	public interface ITitle : IDataObject

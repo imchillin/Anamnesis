@@ -50,7 +50,7 @@
 
 	<ItemGroup>
 	  <None Update="SaintCoinach\Definitions.zip">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="SaintCoinach\DotNetZip.dll">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -65,7 +65,7 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="SaintCoinach\SaintCoinach.dll">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="SaintCoinach\System.Data.SQLite.dll">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
