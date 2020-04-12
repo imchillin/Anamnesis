@@ -18,7 +18,6 @@ namespace ConceptMatrix.AppearanceModule
 
 			IViewService viewService = services.Get<IViewService>();
 			viewService.AddPage<AppearancePage>("Character/Appearance");
-			viewService.AddPage<EquipmentPage>("Character/Equipment");
 		}
 
 		public override Task Shutdown()

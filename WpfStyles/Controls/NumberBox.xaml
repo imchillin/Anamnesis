@@ -20,7 +20,7 @@
 					</Style>
 				</ColumnDefinition.Style>
 			</ColumnDefinition>
-			<ColumnDefinition Width="50">
+			<ColumnDefinition Width="47">
 				<ColumnDefinition.Style>
 					<Style TargetType="ColumnDefinition">
 						<Setter Property="Width" Value="*" />

@@ -78,6 +78,9 @@
     <Compile Include="Pages\AppearancePage.xaml.cs">
       <DependentUpon>AppearancePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AppearanceEditor.xaml.cs">
+      <DependentUpon>AppearanceEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\FeminineGenderToVisibilityConverter.cs" />
     <Compile Include="Utilities\ColorData.cs" />
     <Compile Include="ViewModels\AppearanceViewModel.cs" />
@@ -91,8 +94,8 @@
     <Compile Include="Views\EquipmentSelector.xaml.cs">
       <DependentUpon>EquipmentSelector.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\EquipmentPage.xaml.cs">
-      <DependentUpon>EquipmentPage.xaml</DependentUpon>
+    <Compile Include="Views\EquipmentEditor.xaml.cs">
+      <DependentUpon>EquipmentEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FacialFeaturesControl.xaml.cs">
       <DependentUpon>FacialFeaturesControl.xaml</DependentUpon>
@@ -113,6 +116,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\AppearanceEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ColorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -125,7 +132,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\EquipmentPage.xaml">
+    <Page Include="Views\EquipmentEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

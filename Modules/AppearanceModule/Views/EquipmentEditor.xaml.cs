@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Pages
+namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System;
 	using System.ComponentModel;
@@ -15,11 +15,11 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	/// <summary>
 	/// Interaction logic for EquipmentView.xaml.
 	/// </summary>
-	public partial class EquipmentPage : UserControl
+	public partial class EquipmentEditor : UserControl
 	{
 		private IMemory<Equipment> eqMem;
 
-		public EquipmentPage()
+		public EquipmentEditor()
 		{
 			this.InitializeComponent();
 
@@ -43,6 +43,41 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		public EquipmentItemViewModel Wrists { get; set; }
 		public EquipmentItemViewModel LeftRing { get; set; }
 		public EquipmentItemViewModel RightRing { get; set; }
+
+		public void Load(EquipmentSetFile eqFile)
+		{
+			eqFile.MainHand.Write(this.MainHand);
+			eqFile.OffHand.Write(this.OffHand);
+			eqFile.Head.Write(this.Head);
+			eqFile.Body.Write(this.Body);
+			eqFile.Hands.Write(this.Hands);
+			eqFile.Legs.Write(this.Legs);
+			eqFile.Feet.Write(this.Feet);
+			eqFile.Ears.Write(this.Ears);
+			eqFile.Neck.Write(this.Neck);
+			eqFile.Wrists.Write(this.Wrists);
+			eqFile.LeftRing.Write(this.LeftRing);
+			eqFile.RightRing.Write(this.RightRing);
+		}
+
+		public EquipmentSetFile Save()
+		{
+			EquipmentSetFile eqFile = new EquipmentSetFile();
+			eqFile.MainHand.Read(this.MainHand);
+			eqFile.OffHand.Read(this.OffHand);
+			eqFile.Head.Read(this.Head);
+			eqFile.Body.Read(this.Body);
+			eqFile.Hands.Read(this.Hands);
+			eqFile.Legs.Read(this.Legs);
+			eqFile.Feet.Read(this.Feet);
+			eqFile.Ears.Read(this.Ears);
+			eqFile.Neck.Read(this.Neck);
+			eqFile.Wrists.Read(this.Wrists);
+			eqFile.LeftRing.Read(this.LeftRing);
+			eqFile.RightRing.Read(this.RightRing);
+
+			return eqFile;
+		}
 
 		private void OnSelectionChanged(Selection selection)
 		{
@@ -91,51 +126,6 @@ namespace ConceptMatrix.AppearanceModule.Pages
 				this.ContentArea.DataContext = null;
 				this.ContentArea.DataContext = this;
 			});
-		}
-
-		private async void OnOpenClicked(object sender, RoutedEventArgs e)
-		{
-			IFileService fileService = Module.Services.Get<IFileService>();
-			FileBase file = await fileService.OpenAny(EquipmentSetFile.FileType, LegacyEquipmentSetFile.FileType);
-
-			if (file is LegacyEquipmentSetFile legacyFile)
-				file = legacyFile.Upgrade();
-
-			if (file is EquipmentSetFile eqFile)
-			{
-				eqFile.MainHand.Write(this.MainHand);
-				eqFile.OffHand.Write(this.OffHand);
-				eqFile.Head.Write(this.Head);
-				eqFile.Body.Write(this.Body);
-				eqFile.Hands.Write(this.Hands);
-				eqFile.Legs.Write(this.Legs);
-				eqFile.Feet.Write(this.Feet);
-				eqFile.Ears.Write(this.Ears);
-				eqFile.Neck.Write(this.Neck);
-				eqFile.Wrists.Write(this.Wrists);
-				eqFile.LeftRing.Write(this.LeftRing);
-				eqFile.RightRing.Write(this.RightRing);
-			}
-		}
-
-		private void OnSaveClicked(object sender, RoutedEventArgs e)
-		{
-			IFileService fileService = Module.Services.Get<IFileService>();
-			EquipmentSetFile eqFile = new EquipmentSetFile();
-			eqFile.MainHand.Read(this.MainHand);
-			eqFile.OffHand.Read(this.OffHand);
-			eqFile.Head.Read(this.Head);
-			eqFile.Body.Read(this.Body);
-			eqFile.Hands.Read(this.Hands);
-			eqFile.Legs.Read(this.Legs);
-			eqFile.Feet.Read(this.Feet);
-			eqFile.Ears.Read(this.Ears);
-			eqFile.Neck.Read(this.Neck);
-			eqFile.Wrists.Read(this.Wrists);
-			eqFile.LeftRing.Read(this.LeftRing);
-			eqFile.RightRing.Read(this.RightRing);
-
-			fileService.Save(eqFile);
 		}
 	}
 }
