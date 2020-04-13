@@ -37,6 +37,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		public bool HasGender { get; set; }
 		public bool HasFur { get; set; }
 		public bool HasLimbal { get; set; }
 		public bool HasTail { get; set; }
@@ -59,6 +60,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 			{
 				if (value == null)
 					return;
+
+				if (value.Race == Appearance.Races.Hrothgar)
+					this.ViewModel.Gender = Appearance.Genders.Masculine;
+
+				if (value.Race == Appearance.Races.Vierra)
+					this.ViewModel.Gender = Appearance.Genders.Feminine;
 
 				this.ViewModel.Race = value.Race;
 				this.TribeComboBox.ItemsSource = value.Tribes;
@@ -131,15 +138,17 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.HasLimbal = this.ViewModel.Race == Appearance.Races.AuRa;
 				this.HasEars = this.ViewModel.Race == Appearance.Races.Vierra;
 				this.HasMuscles = !this.HasEars && !this.HasTail;
+				this.HasGender = this.ViewModel.Race != Appearance.Races.Hrothgar && this.ViewModel.Race != Appearance.Races.Vierra;
 
 				bool canAge = this.ViewModel.Tribe == Appearance.Tribes.Midlander;
 				canAge |= this.ViewModel.Race == Appearance.Races.Miqote && this.ViewModel.Gender == Appearance.Genders.Feminine;
 				canAge |= this.ViewModel.Race == Appearance.Races.Elezen;
 				canAge |= this.ViewModel.Race == Appearance.Races.AuRa && this.ViewModel.Gender == Appearance.Genders.Feminine;
 				this.CanAge = canAge;
-			}
 
-			if (e == null || e.PropertyName == nameof(AppearanceViewModel.Hair))
+				this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.ViewModel.Tribe, this.ViewModel.Gender, this.ViewModel.Hair);
+			}
+			else if (e.PropertyName == nameof(AppearanceViewModel.Hair))
 			{
 				this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.ViewModel.Tribe, this.ViewModel.Gender, this.ViewModel.Hair);
 			}

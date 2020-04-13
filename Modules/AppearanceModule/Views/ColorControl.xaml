@@ -6,24 +6,24 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d"
+			 Margin="1, 0, 3, 0"
 			 Width="53"
-			 Margin="1"
 			 HorizontalAlignment="Left">
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="24"/>
+			<ColumnDefinition Width="22"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 		
-		<Button Grid.Column="0" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="0">
-			<Border MinHeight="20" CornerRadius="3" BorderBrush="{DynamicResource MaterialDesignBody}" BorderThickness="1" Margin="2">
+		<Button Grid.Column="0" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="0" Background="Transparent">
+			<Border Height="20" CornerRadius="3" BorderBrush="#22000000" BorderThickness="1" Margin="1">
 				<Border.Background>
 					<SolidColorBrush x:Name="PreviewColor" Color="{Binding WpfColor, FallbackValue=White}"/>
 				</Border.Background>
 			</Border>
 		</Button>
 
-		<cm3Controls:NumberBox Grid.Column="1" MinWidth="20" Value="{Binding Value}"/>
+		<cm3Controls:NumberBox Grid.Column="1" MinWidth="20" Value="{Binding Value}" Margin="0, 0, 3, 3" Height="22"/>
 
 	</Grid>
 </UserControl>

@@ -77,6 +77,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private async void GetFeatures()
 		{
 			this.FeaturesList.SelectionChanged -= this.OnSelectionChanged;
+			this.FeaturesList.ItemsSource = null;
+
 			if (this.Tribe == 0)
 				return;
 
@@ -96,7 +98,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 
 			if (facialFeatures == null)
-				throw new Exception("No facial features found");
+				return;
 
 			List<Option> features = new List<Option>();
 			for (byte i = 0; i < 7; i++)

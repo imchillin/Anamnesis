@@ -4,8 +4,14 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.WpfStyles.Controls"
+			 xmlns:converters="clr-namespace:ConceptMatrix.WpfStyles.Converters"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="128">
+
+	<UserControl.Resources>
+		<converters:BoolToIntConverter x:Key="B2I"/>
+	</UserControl.Resources>
+	
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition>
@@ -56,6 +62,7 @@
 			Foreground="{DynamicResource MaterialDesignBody}"
 			Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=000.00}"
 			Margin="3, 0, 0, 0"
+			Height="22"
 			LostFocus="OnLostFocus"
 			LostKeyboardFocus="OnLostFocus"/>
 		

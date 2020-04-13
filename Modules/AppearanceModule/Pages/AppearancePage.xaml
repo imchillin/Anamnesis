@@ -16,7 +16,7 @@
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
-		<Border Background="#20000000" CornerRadius="6" Padding="6" Margin="0, 10, 0, 6">
+		<Border Background="#20000000" CornerRadius="6" Padding="3" Margin="0, 10, 0, 6">
 			<views:AppearanceEditor x:Name="Appearance" Grid.Column="0"/>
 		</Border>
 

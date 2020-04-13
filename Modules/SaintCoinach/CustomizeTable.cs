@@ -74,6 +74,9 @@ namespace ConceptMatrix.SaintCoinachModule
 			{
 				ICharaMakeCustomize feature = this.Get(i);
 
+				if (feature == null)
+					continue;
+
 				if (feature.FeatureId == value)
 				{
 					return feature;

@@ -84,6 +84,7 @@
     <Compile Include="Controls\QuaternionEditor.xaml.cs">
       <DependentUpon>QuaternionEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BoolToIntConverter.cs" />
     <Compile Include="Converters\InvertedBoolToVisibilityConverter.cs" />
     <Compile Include="DependencyProperties\DependencyProperty{TValue}.cs" />
     <Compile Include="DependencyProperties\IBind{TValue}.cs" />

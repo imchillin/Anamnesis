@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
-			 mc:Ignorable="d" 
+			 mc:Ignorable="d"
 			 d:DesignWidth="256">
 	<UserControl.Resources>
 
@@ -18,7 +18,7 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid Margin="6">
+	<Grid>
 		<ListBox x:Name="FeaturesList" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionMode="Multiple" ScrollViewer.VerticalScrollBarVisibility="Hidden" MaxHeight="256">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
