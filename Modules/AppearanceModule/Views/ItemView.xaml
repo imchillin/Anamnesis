@@ -52,7 +52,7 @@
 					</Border>
 				</Button>
 
-				<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SlotName, FallbackValue='Main Hand'}" FontWeight="Light" Margin="3,0,0,0" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12"/>
+				<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SlotName}" FontWeight="Light" Margin="3,0,0,0" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12"/>
 				<TextBlock Grid.Row="0" Grid.Column="2" Text=":" FontWeight="Light" Margin="0,0,3,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
 				<TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding Item.Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
 
@@ -75,7 +75,7 @@
 					<Button 
 						Grid.Column="0"
 						Grid.RowSpan="2"
-						Visibility="{Binding CanDye, Converter={StaticResource BoolToVisibilityConverter}}"
+						Visibility="{Binding CanDye, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
 						Click="OnDyeClick"
 						Height="34"
 						VerticalAlignment="Top"
@@ -115,7 +115,7 @@
 			</Grid>
 
 			<!-- Scale -->
-			<Grid Height="24" Visibility="{Binding CanScale, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Visible}" Margin="0, 4, 0, 2">
+			<Grid Height="24" Visibility="{Binding CanScale, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" Margin="0, 4, 0, 2">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="56"/>
 					<ColumnDefinition Width="Auto"/>
@@ -134,7 +134,7 @@
 			<!-- Color -->
 			<Grid 
 				Margin="0, 2"
-				Visibility="{Binding CanColor, Converter={StaticResource BoolToVisibilityConverter}}"
+				Visibility="{Binding CanColor, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
 				Height="24">
 			
 				<Grid.ColumnDefinitions>

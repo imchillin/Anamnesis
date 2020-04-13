@@ -15,6 +15,10 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		public AppearancePage()
 		{
 			this.InitializeComponent();
+
+			ISelectionService selectionService = Services.Get<ISelectionService>();
+			selectionService.SelectionChanged += this.OnSelectionChanged;
+			this.OnSelectionChanged(selectionService.CurrentSelection);
 		}
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
@@ -71,6 +75,19 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			file.Appearance.Read(this.Appearance.ViewModel);
 			file.Equipment.Read(this.Equipment);
 			await fileService.Save(file);
+		}
+
+		private void OnSelectionChanged(Selection selection)
+		{
+			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
+
+			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.BattleNpc && selection.Type != ActorTypes.EventNpc))
+				return;
+
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.IsEnabled = true;
+			});
 		}
 	}
 }
