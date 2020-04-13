@@ -46,7 +46,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			App.Current.Dispatcher.Invoke(() =>
 			{
-				this.IsEnabled = selection != null;
+				this.IsEnabled = false;
 			});
 
 			this.eqMem?.Dispose();
@@ -88,6 +88,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			{
 				this.ContentArea.DataContext = null;
 				this.ContentArea.DataContext = this;
+				this.IsEnabled = true;
 			});
 		}
 	}
