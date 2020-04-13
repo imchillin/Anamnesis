@@ -22,11 +22,11 @@ namespace ConceptMatrix.Injection.Memory
 			value.Tribe = (Appearance.Tribes)data[4];
 			value.Head = data[5];
 			value.Hair = data[6];
-			value.Highlights = data[7];
+			value.EnableHighlights = data[7] != 0;
 			value.Skintone = data[8];
 			value.REyeColor = data[9];
 			value.HairTone = data[10];
-			value.HighlightTone = data[11];
+			value.Highlights = data[11];
 			value.FacialFeatures = (Appearance.FacialFeature)data[12];
 			value.LimbalEyes = data[13];
 			value.Eyebrows = data[14];
@@ -53,11 +53,11 @@ namespace ConceptMatrix.Injection.Memory
 			data[4] = (byte)value.Tribe;
 			data[5] = value.Head;
 			data[6] = value.Hair;
-			data[7] = value.Highlights;
+			data[7] = (byte)(value.EnableHighlights ? 0x80 : 0);
 			data[8] = value.Skintone;
 			data[9] = value.REyeColor;
 			data[10] = value.HairTone;
-			data[11] = value.HighlightTone;
+			data[11] = value.Highlights;
 			data[12] = (byte)value.FacialFeatures;
 			data[13] = value.LimbalEyes;
 			data[14] = value.Eyebrows;

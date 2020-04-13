@@ -14,11 +14,11 @@ namespace ConceptMatrix
 		public Tribes Tribe;
 		public byte Head;
 		public byte Hair;
-		public byte Highlights;
+		public bool EnableHighlights;
 		public byte Skintone;
 		public byte REyeColor;
 		public byte HairTone;
-		public byte HighlightTone;
+		public byte Highlights;
 		public FacialFeature FacialFeatures;
 		public byte LimbalEyes;
 		public byte Eyebrows;

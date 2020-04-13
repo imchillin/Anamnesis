@@ -117,10 +117,10 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set => this.appearance.Eyebrows = value;
 		}
 
-		public byte HighlightTone
+		public byte Highlights
 		{
-			get => this.appearance.HighlightTone;
-			set => this.appearance.HighlightTone = value;
+			get => this.appearance.Highlights;
+			set => this.appearance.Highlights = value;
 		}
 
 		public byte HairTone
@@ -141,10 +141,10 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set => this.appearance.Skintone = value;
 		}
 
-		public byte Highlights
+		public bool EnableHighlights
 		{
-			get => this.appearance.Highlights;
-			set => this.appearance.Highlights = value;
+			get => this.appearance.EnableHighlights;
+			set => this.appearance.EnableHighlights = value;
 		}
 
 		public byte Hair
