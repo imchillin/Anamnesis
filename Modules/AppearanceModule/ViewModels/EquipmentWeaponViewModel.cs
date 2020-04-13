@@ -77,6 +77,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		public override void Dispose()
 		{
+			this.memory.ValueChanged -= this.Memory_ValueChanged;
 			this.memory.Dispose();
 			this.colorMem.Dispose();
 			this.scaleMem.Dispose();

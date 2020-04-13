@@ -64,7 +64,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.LeftRing?.Dispose();
 			this.RightRing?.Dispose();
 
-			if (selection == null)
+			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.BattleNpc && selection.Type != ActorTypes.EventNpc))
 				return;
 
 			// Weapon slots

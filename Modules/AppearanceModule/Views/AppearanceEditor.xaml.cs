@@ -109,7 +109,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 			this.ViewModel = null;
 
-			if (selection == null)
+			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.BattleNpc && selection.Type != ActorTypes.EventNpc))
 				return;
 
 			this.ViewModel = new AppearanceViewModel(selection);
