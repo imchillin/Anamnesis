@@ -7,11 +7,11 @@
 			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d"
-			 Margin="0"
+			 Margin="3, 4"
 			 d:DesignWidth="300"
 			 DataContextChanged="UserControl_DataContextChanged">
 
-	<Border Background="#22000000" CornerRadius="6" Margin="3, 4">
+	<Border Background="#22000000" CornerRadius="6">
 
 		<StackPanel Margin="2, 3">
 

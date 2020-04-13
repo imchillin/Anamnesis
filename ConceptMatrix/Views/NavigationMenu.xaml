@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
+			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="200">
 
@@ -14,37 +15,28 @@
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type Expander}">
 
-						<Border CornerRadius="3" Margin="10, 5, 10, 5" Background="{DynamicResource MaterialDesignPaper}" BorderBrush="#01000000" BorderThickness="1">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition/>
+							</Grid.RowDefinitions>
 
-							<Border.Effect>
-								<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.25"/>
-							</Border.Effect>
+							<Border Grid.Row="0" Name="HeaderSite" Background="{DynamicResource MaterialDesignCardBackground}" Opacity="0.5">
+								<ToggleButton Name="ToggleSite" IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{DynamicResource MaterialDesignExpanderDownHeaderStyle}">
+									<Label Content="{TemplateBinding Header}" Height="28" Foreground="Black" FontWeight="Bold" Opacity="0.75" HorizontalAlignment="Center"/>
+								</ToggleButton>
+							</Border>
 
-							<Grid>
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition/>
-								</Grid.RowDefinitions>
-
-								<Border Grid.Row="0" Name="HeaderSite" Background="{DynamicResource PrimaryHueMidBrush}" CornerRadius="3, 3, 0, 0">
-									<ToggleButton Name="ToggleSite" IsChecked="{Binding IsExpanded , Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{DynamicResource MaterialDesignExpanderDownHeaderStyle}" Foreground="{DynamicResource MaterialDesignPaper}">
-										<Label Content="{TemplateBinding Header}" Height="24" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" FontWeight="DemiBold"/>
-									</ToggleButton>
-								</Border>
-		
-								<ContentPresenter Grid.Row="1" Name="ExpandSite" Visibility="Collapsed" Margin="0" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
-
-							</Grid>
-						</Border>
+							<ContentPresenter Grid.Row="1" Name="ExpandSite" Visibility="Collapsed" Margin="0" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+						</Grid>
+			
 
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsExpanded" Value="true">
 								<Setter TargetName="ExpandSite" Property="Visibility" Value="Visible" />
-								<Setter TargetName="HeaderSite" Property="CornerRadius" Value="3, 3, 0, 0"/>
 							</Trigger>
 							<Trigger Property="IsExpanded" Value="false">
 								<Setter TargetName="ExpandSite" Property="Visibility" Value="Collapsed" />
-								<Setter TargetName="HeaderSite" Property="CornerRadius" Value="3"/>
 							</Trigger>
 							<Trigger Property="IsEnabled" Value="false">
 								<Setter Value="{DynamicResource {x:Static SystemColors.GrayTextBrush}}" Property="Foreground" />
@@ -67,10 +59,104 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
+
+		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+			<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="SnapsToDevicePixels" Value="True"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type ListBoxItem}">
+						<Border Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							Margin="{TemplateBinding Margin}"
+							ClipToBounds="{TemplateBinding ClipToBounds}">
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup Name="CommonStates">
+									<VisualStateGroup.Transitions>
+										<VisualTransition GeneratedDuration="0:0:0.3" To="Normal">
+											<VisualTransition.GeneratedEasingFunction>
+												<CircleEase EasingMode="EaseOut"/>
+											</VisualTransition.GeneratedEasingFunction>
+										</VisualTransition>
+									</VisualStateGroup.Transitions>
+									<VisualState Name="Normal"/>
+									<VisualState Name="MouseOver">
+										<Storyboard>
+											<DoubleAnimation Storyboard.TargetName="MouseOverBorder" Storyboard.TargetProperty="Opacity"
+															 To="0.1" Duration="0"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState Name="Disabled"/>
+								</VisualStateGroup>
+								<VisualStateGroup Name="SelectionStates">
+									<VisualStateGroup.Transitions>
+										<VisualTransition GeneratedDuration="0:0:0.6"/>
+									</VisualStateGroup.Transitions>
+									<VisualState Name="Selected">
+										<Storyboard>
+											<DoubleAnimation Storyboard.TargetName="SelectedBorder"
+														 Storyboard.TargetProperty="Opacity"
+														 To="1" Duration="0"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState Name="Unselected"/>
+									<VisualState Name="SelectedUnfocused">
+										<Storyboard>
+											<DoubleAnimation Storyboard.TargetName="SelectedBorder"
+														 Storyboard.TargetProperty="Opacity"
+														 To="1" Duration="0"/>
+										</Storyboard>
+									</VisualState>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<Grid>
+								<Border x:Name="MouseOverBorder"
+									Opacity="0"
+									Background="{TemplateBinding Foreground, Converter={StaticResource BrushRoundConverter}}"/>
+
+								<Border x:Name="SelectedBorder"
+									Opacity="0"
+									Background="{DynamicResource MaterialDesignCardBackground}"
+									RenderTransformOrigin="0.5,0.5">
+
+									<Border.Effect>
+										<DropShadowEffect BlurRadius="10" Opacity="0.25"/>
+									</Border.Effect>
+									
+									<Border.RenderTransform>
+										<ScaleTransform ScaleX="1"/>
+									</Border.RenderTransform>
+								</Border>
+								<wpf:Ripple Feedback="{TemplateBinding Foreground, Converter={StaticResource BrushRoundConverter}}"
+										Focusable="False"
+										Content="{TemplateBinding Content}"
+										ContentTemplate="{TemplateBinding ContentTemplate}"
+										ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+										SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+										HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+										VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+										Padding="{TemplateBinding Padding}"
+										RecognizesAccessKey="False"/>
+							</Grid>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsEnabled" Value="False">
+								<Setter Property="Opacity" Value=".56" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 	</UserControl.Resources>
 	
 	<Grid>
-		<ListBox Grid.Row="1" x:Name="ViewList" SelectionChanged="OnSelectionChanged">
+		<ListBox Grid.Row="1" x:Name="ViewList" SelectionChanged="OnSelectionChanged" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
 			<ListBox.GroupStyle>
 				<GroupStyle ContainerStyle="{StaticResource ContainerStyle}"/>
 			</ListBox.GroupStyle>

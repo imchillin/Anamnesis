@@ -51,13 +51,21 @@
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 
-			<ContentPresenter Grid.Row="1" Grid.Column="1" x:Name="ViewArea"/>
-
+			<Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}">
+				<Border.Effect>
+					<DropShadowEffect ShadowDepth="0" BlurRadius="20" Opacity="0.5"/>
+				</Border.Effect>
+				
+				<ContentPresenter x:Name="ViewArea" Margin="6"/>
+			</Border>
+			
 			<Grid Grid.Row="1">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
+
+				<Rectangle Fill="Black" Grid.RowSpan="2" Opacity="0.25"/>
 
 				<views:TargetView Margin="10"/>
 
