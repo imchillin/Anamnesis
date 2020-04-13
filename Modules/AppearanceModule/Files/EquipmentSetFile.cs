@@ -5,6 +5,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 {
 	using System;
 	using ConceptMatrix.AppearanceModule.ViewModels;
+	using ConceptMatrix.AppearanceModule.Views;
 
 	[Serializable]
 	public class EquipmentSetFile : FileBase
@@ -28,6 +29,42 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public override FileType GetFileType()
 		{
 			return FileType;
+		}
+
+		public void Read(EquipmentEditor vm)
+		{
+			this.MainHand.Read(vm.MainHand);
+			this.OffHand.Read(vm.OffHand);
+			this.Head.Read(vm.Head);
+			this.Body.Read(vm.Body);
+			this.Hands.Read(vm.Hands);
+			this.Legs.Read(vm.Legs);
+			this.Feet.Read(vm.Feet);
+			this.Ears.Read(vm.Ears);
+			this.Neck.Read(vm.Neck);
+			this.Wrists.Read(vm.Wrists);
+			this.LeftRing.Read(vm.LeftRing);
+			this.RightRing.Read(vm.RightRing);
+		}
+
+		public void Write(EquipmentEditor vm)
+		{
+			if (this.MainHand.ModelSet != 0)
+				this.MainHand.Write(vm.MainHand);
+
+			if (vm.OffHand.ModelSet != 0)
+				this.OffHand.Write(vm.OffHand);
+
+			this.Head.Write(vm.Head);
+			this.Body.Write(vm.Body);
+			this.Hands.Write(vm.Hands);
+			this.Legs.Write(vm.Legs);
+			this.Feet.Write(vm.Feet);
+			this.Ears.Write(vm.Ears);
+			this.Neck.Write(vm.Neck);
+			this.Wrists.Write(vm.Wrists);
+			this.LeftRing.Write(vm.LeftRing);
+			this.RightRing.Write(vm.RightRing);
 		}
 
 		[Serializable]

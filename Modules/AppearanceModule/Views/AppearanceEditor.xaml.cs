@@ -8,6 +8,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
+	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
 
@@ -116,6 +117,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.IsEnabled = true;
+
+				if (this.ViewModel.Race == 0)
+					this.ViewModel.Race = Appearance.Races.Hyur;
 
 				this.Race = this.gameDataService.Races.Get((byte)this.ViewModel.Race);
 				this.TribeComboBox.ItemsSource = this.Race.Tribes;

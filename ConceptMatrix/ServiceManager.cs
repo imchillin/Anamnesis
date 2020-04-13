@@ -75,6 +75,7 @@ namespace ConceptMatrix.GUI
 			await this.Add<ViewService>();
 			await this.Add<SelectionService>();
 			await this.Add<FileService>();
+			await this.Add<ActorRefreshService>();
 			await this.Add<ModuleService>();
 
 			this.IsInitialized = true;

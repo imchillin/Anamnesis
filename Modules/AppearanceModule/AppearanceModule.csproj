@@ -73,6 +73,9 @@
     <Compile Include="Converters\MasculineGenderToVisibilityConverter.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\ItemSlotsExtensions.cs" />
+    <Compile Include="Files\AllFile.cs" />
+    <Compile Include="Files\AppearanceSetFile.cs" />
+    <Compile Include="Files\LegacyAllFile.cs" />
     <Compile Include="Files\LegacyEquipmentSetFile.cs" />
     <Compile Include="Files\EquipmentSetFile.cs" />
     <Compile Include="Pages\AppearancePage.xaml.cs">

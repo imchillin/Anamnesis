@@ -82,6 +82,7 @@
     <Compile Include="Serialization\Converters\VectorConverter.cs" />
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="ServiceManager.cs" />
+    <Compile Include="Services\ActorRefreshService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\ModuleService.cs" />
     <Compile Include="Services\SelectionService.cs" />

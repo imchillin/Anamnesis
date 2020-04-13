@@ -22,32 +22,25 @@
 
 		<views:EquipmentEditor x:Name="Equipment" Grid.Column="1" VerticalAlignment="Top"/>
 
-		<StackPanel Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="326">
+		<StackPanel Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="326" Margin="6">
 
-			<Grid Margin="6">
+
+
+			<cm3:IconButton Grid.Column="1" Icon="Upload" Text="Open..." Margin="3" Click="OnOpenClicked"/>
+
+
+			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
 					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 
-				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-
-				<Grid Grid.Row="3" Grid.ColumnSpan="2"  Margin="0, 6, 0, 0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
-
-					<cm3:IconButton Grid.Column="0" Icon="Upload" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
-					<cm3:IconButton Grid.Column="1" Icon="Download" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
-
-				</Grid>
+				<cm3:IconButton Grid.Column="0" Icon="Save" Text="Equipment" Margin="3" Click="OnSaveEquipmentClicked"/>
+				<cm3:IconButton Grid.Column="1" Icon="Save" Text="Appearance" Margin="3" Click="OnSaveAppearanceClicked"/>
+				<cm3:IconButton Grid.Column="2" Icon="Save" Text="All" Margin="3" Click="OnSaveAllClicked"/>
 			</Grid>
+
 
 		</StackPanel>
 	</Grid>

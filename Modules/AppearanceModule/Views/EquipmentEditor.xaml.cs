@@ -42,41 +42,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public EquipmentItemViewModel LeftRing { get; set; }
 		public EquipmentItemViewModel RightRing { get; set; }
 
-		public void Load(EquipmentSetFile eqFile)
-		{
-			eqFile.MainHand.Write(this.MainHand);
-			eqFile.OffHand.Write(this.OffHand);
-			eqFile.Head.Write(this.Head);
-			eqFile.Body.Write(this.Body);
-			eqFile.Hands.Write(this.Hands);
-			eqFile.Legs.Write(this.Legs);
-			eqFile.Feet.Write(this.Feet);
-			eqFile.Ears.Write(this.Ears);
-			eqFile.Neck.Write(this.Neck);
-			eqFile.Wrists.Write(this.Wrists);
-			eqFile.LeftRing.Write(this.LeftRing);
-			eqFile.RightRing.Write(this.RightRing);
-		}
-
-		public EquipmentSetFile Save()
-		{
-			EquipmentSetFile eqFile = new EquipmentSetFile();
-			eqFile.MainHand.Read(this.MainHand);
-			eqFile.OffHand.Read(this.OffHand);
-			eqFile.Head.Read(this.Head);
-			eqFile.Body.Read(this.Body);
-			eqFile.Hands.Read(this.Hands);
-			eqFile.Legs.Read(this.Legs);
-			eqFile.Feet.Read(this.Feet);
-			eqFile.Ears.Read(this.Ears);
-			eqFile.Neck.Read(this.Neck);
-			eqFile.Wrists.Read(this.Wrists);
-			eqFile.LeftRing.Read(this.LeftRing);
-			eqFile.RightRing.Read(this.RightRing);
-
-			return eqFile;
-		}
-
 		private void OnSelectionChanged(Selection selection)
 		{
 			App.Current.Dispatcher.Invoke(() =>

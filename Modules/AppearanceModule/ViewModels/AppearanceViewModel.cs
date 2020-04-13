@@ -9,20 +9,14 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 	public class AppearanceViewModel : IDisposable, INotifyPropertyChanged
 	{
-		// how long to wait after a change before calling Apply()
-		private const int ApplyDelay = 500;
-
+		public Appearance Appearance;
 		private IMemory<Appearance> appearanceMem;
-		private Appearance appearance;
 		private Selection selection;
-
-		private int applyCountdown = 0;
-		private Task applyTask;
 
 		public AppearanceViewModel(Selection selection)
 		{
 			this.appearanceMem = selection.BaseAddress.GetMemory(Offsets.ActorAppearance);
-			this.appearance = this.appearanceMem.Value;
+			this.Appearance = this.appearanceMem.Value;
 			this.selection = selection;
 
 			this.PropertyChanged += this.OnSelfPropertyChanged;
@@ -32,158 +26,158 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		public Appearance.Races Race
 		{
-			get => this.appearance.Race;
-			set => this.appearance.Race = value;
+			get => this.Appearance.Race;
+			set => this.Appearance.Race = value;
 		}
 
 		public byte FacePaintColor
 		{
-			get => this.appearance.FacePaintColor;
-			set => this.appearance.FacePaintColor = value;
+			get => this.Appearance.FacePaintColor;
+			set => this.Appearance.FacePaintColor = value;
 		}
 
 		public byte FacePaint
 		{
-			get => this.appearance.FacePaint;
-			set => this.appearance.FacePaint = value;
+			get => this.Appearance.FacePaint;
+			set => this.Appearance.FacePaint = value;
 		}
 
 		public byte Bust
 		{
-			get => this.appearance.Bust;
-			set => this.appearance.Bust = value;
+			get => this.Appearance.Bust;
+			set => this.Appearance.Bust = value;
 		}
 
 		public byte TailEarsType
 		{
-			get => this.appearance.TailEarsType;
-			set => this.appearance.TailEarsType = value;
+			get => this.Appearance.TailEarsType;
+			set => this.Appearance.TailEarsType = value;
 		}
 
 		public byte EarMuscleTailSize
 		{
-			get => this.appearance.EarMuscleTailSize;
-			set => this.appearance.EarMuscleTailSize = value;
+			get => this.Appearance.EarMuscleTailSize;
+			set => this.Appearance.EarMuscleTailSize = value;
 		}
 
 		public byte LipsToneFurPattern
 		{
-			get => this.appearance.LipsToneFurPattern;
-			set => this.appearance.LipsToneFurPattern = value;
+			get => this.Appearance.LipsToneFurPattern;
+			set => this.Appearance.LipsToneFurPattern = value;
 		}
 
 		public byte Lips
 		{
-			get => this.appearance.Lips;
-			set => this.appearance.Lips = value;
+			get => this.Appearance.Lips;
+			set => this.Appearance.Lips = value;
 		}
 
 		public byte Jaw
 		{
-			get => this.appearance.Jaw;
-			set => this.appearance.Jaw = value;
+			get => this.Appearance.Jaw;
+			set => this.Appearance.Jaw = value;
 		}
 
 		public byte Nose
 		{
-			get => this.appearance.Nose;
-			set => this.appearance.Nose = value;
+			get => this.Appearance.Nose;
+			set => this.Appearance.Nose = value;
 		}
 
 		public byte Eyes
 		{
-			get => this.appearance.Eyes;
-			set => this.appearance.Eyes = value;
+			get => this.Appearance.Eyes;
+			set => this.Appearance.Eyes = value;
 		}
 
 		public byte LEyeColor
 		{
-			get => this.appearance.LEyeColor;
-			set => this.appearance.LEyeColor = value;
+			get => this.Appearance.LEyeColor;
+			set => this.Appearance.LEyeColor = value;
 		}
 
 		public byte LimbalEyes
 		{
-			get => this.appearance.LimbalEyes;
-			set => this.appearance.LimbalEyes = value;
+			get => this.Appearance.LimbalEyes;
+			set => this.Appearance.LimbalEyes = value;
 		}
 
 		public byte Eyebrows
 		{
-			get => this.appearance.Eyebrows;
-			set => this.appearance.Eyebrows = value;
+			get => this.Appearance.Eyebrows;
+			set => this.Appearance.Eyebrows = value;
 		}
 
 		public byte Highlights
 		{
-			get => this.appearance.Highlights;
-			set => this.appearance.Highlights = value;
+			get => this.Appearance.Highlights;
+			set => this.Appearance.Highlights = value;
 		}
 
 		public byte HairTone
 		{
-			get => this.appearance.HairTone;
-			set => this.appearance.HairTone = value;
+			get => this.Appearance.HairTone;
+			set => this.Appearance.HairTone = value;
 		}
 
 		public byte REyeColor
 		{
-			get => this.appearance.REyeColor;
-			set => this.appearance.REyeColor = value;
+			get => this.Appearance.REyeColor;
+			set => this.Appearance.REyeColor = value;
 		}
 
 		public byte Skintone
 		{
-			get => this.appearance.Skintone;
-			set => this.appearance.Skintone = value;
+			get => this.Appearance.Skintone;
+			set => this.Appearance.Skintone = value;
 		}
 
 		public bool EnableHighlights
 		{
-			get => this.appearance.EnableHighlights;
-			set => this.appearance.EnableHighlights = value;
+			get => this.Appearance.EnableHighlights;
+			set => this.Appearance.EnableHighlights = value;
 		}
 
 		public byte Hair
 		{
-			get => this.appearance.Hair;
-			set => this.appearance.Hair = value;
+			get => this.Appearance.Hair;
+			set => this.Appearance.Hair = value;
 		}
 
 		public byte Head
 		{
-			get => this.appearance.Head;
-			set => this.appearance.Head = value;
+			get => this.Appearance.Head;
+			set => this.Appearance.Head = value;
 		}
 
 		public Appearance.Tribes Tribe
 		{
-			get => this.appearance.Tribe;
-			set => this.appearance.Tribe = value;
+			get => this.Appearance.Tribe;
+			set => this.Appearance.Tribe = value;
 		}
 
 		public byte Height
 		{
-			get => this.appearance.Height;
-			set => this.appearance.Height = value;
+			get => this.Appearance.Height;
+			set => this.Appearance.Height = value;
 		}
 
 		public Appearance.Ages Age
 		{
-			get => this.appearance.Age;
-			set => this.appearance.Age = value;
+			get => this.Appearance.Age;
+			set => this.Appearance.Age = value;
 		}
 
 		public Appearance.Genders Gender
 		{
-			get => this.appearance.Gender;
-			set => this.appearance.Gender = value;
+			get => this.Appearance.Gender;
+			set => this.Appearance.Gender = value;
 		}
 
 		public Appearance.FacialFeature FacialFeatures
 		{
-			get => this.appearance.FacialFeatures;
-			set => this.appearance.FacialFeatures = value;
+			get => this.Appearance.FacialFeatures;
+			set => this.Appearance.FacialFeatures = value;
 		}
 
 		public void Dispose()
@@ -194,31 +188,10 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			this.applyCountdown = ApplyDelay;
-
-			if (this.applyTask == null || this.applyTask.IsCompleted)
-			{
-				this.applyTask = this.ApplyAfterDelay();
-			}
-		}
-
-		private async Task ApplyAfterDelay()
-		{
-			while (this.applyCountdown > 0)
-			{
-				this.applyCountdown -= 100;
-				await Task.Delay(100);
-			}
-
-			this.Apply();
-		}
-
-		private void Apply()
-		{
-			if (this.appearanceMem == null)
+			if (this.appearanceMem == null || this.selection == null)
 				return;
 
-			this.appearanceMem.Value = this.appearance;
+			this.appearanceMem.Value = this.Appearance;
 			this.selection.ActorRefresh();
 		}
 	}

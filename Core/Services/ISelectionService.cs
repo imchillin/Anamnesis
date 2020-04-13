@@ -3,8 +3,6 @@
 
 namespace ConceptMatrix
 {
-	using System.Threading.Tasks;
-
 	public delegate void SelectionEvent(Selection selection);
 
 	public interface ISelectionService : IService
@@ -43,34 +41,14 @@ namespace ConceptMatrix
 
 		public Modes Mode { get; private set; }
 
+		/// <summary>
+		/// Marks the selected actor to be refreshed after a short delay.
+		/// it is safe to call this repeatedly.
+		/// </summary>
 		public void ActorRefresh()
 		{
-			Task.Run(this.ActorRefreshAsync);
-		}
-
-		public async Task ActorRefreshAsync()
-		{
-			using (IMemory<ActorTypes> actorTypeMem = this.BaseAddress.GetMemory(Offsets.ActorType))
-			{
-				using (IMemory<byte> actorRenderMem = this.BaseAddress.GetMemory(Offsets.ActorRender))
-				{
-					if (actorTypeMem.Value == ActorTypes.Player)
-					{
-						actorTypeMem.Value = ActorTypes.BattleNpc;
-						actorRenderMem.Value = 2;
-						await Task.Delay(50);
-						actorRenderMem.Value = 0;
-						await Task.Delay(50);
-						actorTypeMem.Value = ActorTypes.Player;
-					}
-					else
-					{
-						actorRenderMem.Value = 2;
-						await Task.Delay(50);
-						actorRenderMem.Value = 0;
-					}
-				}
-			}
+			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
+			refreshService.Refresh(this.BaseAddress);
 		}
 	}
 }

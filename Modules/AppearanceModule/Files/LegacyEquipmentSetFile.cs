@@ -30,12 +30,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 			file.MainHand = this.MainHand.Upgrade();
 			file.OffHand = this.OffHand.Upgrade();
 
-			string[] parts = this.EquipmentBytes.Split(' ');
-			byte[] data = new byte[parts.Length];
-			for (int i = 0; i < parts.Length; i++)
-			{
-				data[i] = byte.Parse(parts[i], NumberStyles.HexNumber);
-			}
+			byte[] data = this.StringtoBytes(this.EquipmentBytes);
 
 			// From CM2: CharacterDetailsView2.xaml.cs line 801
 			file.Head.ModelBase = (ushort)(data[0] + (data[1] * 256));
@@ -65,6 +60,18 @@ namespace ConceptMatrix.AppearanceModule.Files
 			file.LeftRing.ModelVariant = data[38];
 
 			return file;
+		}
+
+		protected byte[] StringtoBytes(string str)
+		{
+			string[] parts = str.Split(' ');
+			byte[] data = new byte[parts.Length];
+			for (int i = 0; i < parts.Length; i++)
+			{
+				data[i] = byte.Parse(parts[i], NumberStyles.HexNumber);
+			}
+
+			return data;
 		}
 
 		[Serializable]
