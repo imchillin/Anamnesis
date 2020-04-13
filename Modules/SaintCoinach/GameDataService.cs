@@ -63,7 +63,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			private set;
 		}
 
-		public IData<ICharaMakeCustomize> CharacterMakeCustomize
+		public ICharaMakeCustomizeData CharacterMakeCustomize
 		{
 			get;
 			private set;
@@ -136,18 +136,18 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			Log.Write("Reading data", @"Saint Coinach");
 
-			this.Items = this.Load<IItem, Item, ItemWrapper>(realm);
-			this.Races = this.Load<IRace, Race, RaceWrapper>(realm);
-			this.Tribes = this.Load<ITribe, Tribe, TribeWrapper>(realm);
-			this.Dyes = this.Load<IDye, Stain, DyeWrapper>(realm);
-			this.BaseNPCs = this.Load<INpcBase, ENpcBase, NpcBaseWrapper>(realm);
-			this.Territories = this.Load<ITerritoryType, TerritoryType, TerritoryTypeWrapper>(realm);
-			this.Weathers = this.Load<IWeather, Weather, WeatherWrapper>(realm);
-			this.CharacterMakeCustomize = this.Load<ICharaMakeCustomize, CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm);
-			this.CharacterMakeTypes = this.Load<ICharaMakeType, CharaMakeType, CharacterMakeTypeWrapper>(realm);
-			this.ResidentNPCs = this.Load<INpcResident, ENpcResident, NpcResidentWrapper>(realm);
-			this.Titles = this.Load<ITitle, Title, TitleWrapper>(realm);
-			this.Statuses = this.Load<IStatus, Status, StatusWrapper>(realm);
+			this.Items = this.Load<Table<IItem>, IItem, Item, ItemWrapper>(realm);
+			this.Races = this.Load<Table<IRace>, IRace, Race, RaceWrapper>(realm);
+			this.Tribes = this.Load<Table<ITribe>, ITribe, Tribe, TribeWrapper>(realm);
+			this.Dyes = this.Load<Table<IDye>, IDye, Stain, DyeWrapper>(realm);
+			this.BaseNPCs = this.Load<Table<INpcBase>, INpcBase, ENpcBase, NpcBaseWrapper>(realm);
+			this.Territories = this.Load<Table<ITerritoryType>, ITerritoryType, TerritoryType, TerritoryTypeWrapper>(realm);
+			this.Weathers = this.Load<Table<IWeather>, IWeather, Weather, WeatherWrapper>(realm);
+			this.CharacterMakeCustomize = this.Load<CustomizeTable, ICharaMakeCustomize, CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm);
+			this.CharacterMakeTypes = this.Load<Table<ICharaMakeType>, ICharaMakeType, CharaMakeType, CharacterMakeTypeWrapper>(realm);
+			this.ResidentNPCs = this.Load<Table<INpcResident>, INpcResident, ENpcResident, NpcResidentWrapper>(realm);
+			this.Titles = this.Load<Table<ITitle>, ITitle, Title, TitleWrapper>(realm);
+			this.Statuses = this.Load<Table<IStatus>, IStatus, Status, StatusWrapper>(realm);
 
 			Log.Write("Finished Reading data", @"Saint Coinach");
 			Log.Write("Initialization took " + sw.ElapsedMilliseconds + "ms", @"Saint Coinach");
@@ -158,12 +158,13 @@ namespace ConceptMatrix.SaintCoinachModule
 			// this never seems to be called
 		}
 
-		internal Table<TInterface> Load<TInterface, TRow, TWrapper>(ARealmReversed realm)
+		internal TTable Load<TTable, TInterface, TRow, TWrapper>(ARealmReversed realm)
 			where TRow : XivRow
 			where TInterface : IDataObject
+			where TTable : Table<TInterface>
 			where TWrapper : ObjectWrapper, TInterface
 		{
-			Table<TInterface> table = new Table<TInterface>();
+			TTable table = Activator.CreateInstance<TTable>();
 
 			IXivSheet<TRow> sheet = realm.GameData.GetSheet<TRow>();
 			table.Import<TRow, TWrapper>(sheet);
@@ -221,63 +222,6 @@ namespace ConceptMatrix.SaintCoinachModule
 				return false;
 
 			return true;
-		}
-
-		internal class Table<T> : IData<T>
-			where T : IDataObject
-		{
-			private Dictionary<int, T> data = new Dictionary<int, T>();
-
-			public IEnumerable<T> All
-			{
-				get
-				{
-					return this.data.Values;
-				}
-			}
-
-			public int Count
-			{
-				get
-				{
-					return this.data.Count;
-				}
-			}
-
-			public T Get(int key)
-			{
-				if (this.data.ContainsKey(key))
-					return this.data[key];
-
-				return default(T);
-			}
-
-			public T Get(byte key)
-			{
-				return this.Get((int)key);
-			}
-
-			internal void Import<TRow, TWrapper>(IXivSheet<TRow> sheet)
-				where TRow : XivRow
-				where TWrapper : ObjectWrapper, T
-			{
-				try
-				{
-					Type type = typeof(TWrapper);
-					foreach (TRow row in sheet)
-					{
-						if (row.Key == 0)
-							continue;
-
-						TWrapper wrapper = (TWrapper)Activator.CreateInstance(type, row);
-						this.data.Add(wrapper.Key, wrapper);
-					}
-				}
-				catch (TargetInvocationException ex)
-				{
-					throw ex.InnerException;
-				}
-			}
 		}
 	}
 }

@@ -103,6 +103,9 @@
     <Compile Include="Views\FxivColorSelectorDrawer.xaml.cs">
       <DependentUpon>FxivColorSelectorDrawer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HairSelectorDrawer.xaml.cs">
+      <DependentUpon>HairSelectorDrawer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ItemView.xaml.cs">
       <DependentUpon>ItemView.xaml</DependentUpon>
     </Compile>
@@ -141,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FxivColorSelectorDrawer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HairSelectorDrawer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

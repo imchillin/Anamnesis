@@ -106,12 +106,34 @@
 
 		<!-- Hair -->
 		<TextBlock Grid.Column="0" Grid.Row="7" Text="Hair:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-		<StackPanel Grid.Column="2" Grid.Row="7" Orientation="Horizontal">
-			<cm3Controls:NumberBox Value="{Binding ViewModel.Hair}" Minimum="0" Maximum="255"/>
-			<controls:ColorControl Value="{Binding ViewModel.HairTone}" Type="Hair" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
-			<ToggleButton IsChecked="{Binding ViewModel.EnableHighlights}"/>
-			<controls:ColorControl Value="{Binding ViewModel.Highlights}" Type="HairHighlights" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" IsEnabled="{Binding ViewModel.EnableHighlights}"/>
-		</StackPanel>
+
+		<Grid Grid.Column="2" Grid.Row="7" >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="22"/>
+				<RowDefinition Height="4"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+
+			<Button Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked">
+				<Border Width="54" Height="54">
+					<Image Source="{Binding Hair.Icon, Converter={StaticResource IImageConverter}}"/>
+				</Border>
+			</Button>
+
+			<cm3Controls:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding ViewModel.Hair}" Minimum="0" Maximum="255" FontWeight="Light" FontSize="12"/>
+			
+			<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding ViewModel.HairTone}" Type="Hair" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
+			<CheckBox Grid.Column="2" Grid.Row="2" IsChecked="{Binding ViewModel.EnableHighlights}" Margin="12,0,0,0"/>
+			<controls:ColorControl Grid.Column="3" Grid.Row="2" Value="{Binding ViewModel.Highlights}" Type="HairHighlights" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" IsEnabled="{Binding ViewModel.EnableHighlights}"/>
+
+		</Grid>
 
 		<!-- Height -->
 		<TextBlock Grid.Column="0" Grid.Row="8" Text="Height:" VerticalAlignment="Center" HorizontalAlignment="Right"/>

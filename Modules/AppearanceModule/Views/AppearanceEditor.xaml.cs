@@ -43,6 +43,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public bool HasEars { get; set; }
 		public bool HasMuscles { get; set; }
 		public bool CanAge { get; set; }
+		public ICharaMakeCustomize Hair { get; set; }
 
 		public IRace Race
 		{
@@ -94,7 +95,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			if (this.ViewModel != null)
 			{
-				this.ViewModel.SubPropertyChanged -= this.OnViewModelPropertyChanged;
+				this.ViewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
 				this.ViewModel.Dispose();
 			}
 
@@ -105,7 +106,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 				return;
 
 			this.ViewModel = new AppearanceViewModel(selection);
-			this.ViewModel.SubPropertyChanged += this.OnViewModelPropertyChanged;
+			this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.IsEnabled = true;
@@ -137,6 +138,19 @@ namespace ConceptMatrix.AppearanceModule.Views
 				canAge |= this.ViewModel.Race == Appearance.Races.AuRa && this.ViewModel.Gender == Appearance.Genders.Feminine;
 				this.CanAge = canAge;
 			}
+
+			if (e == null || e.PropertyName == nameof(AppearanceViewModel.Hair))
+			{
+				this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.ViewModel.Tribe, this.ViewModel.Gender, this.ViewModel.Hair);
+			}
+		}
+
+		private async void OnHairClicked(object sender, RoutedEventArgs e)
+		{
+			IViewService viewService = Module.Services.Get<IViewService>();
+			HairSelectorDrawer selector = new HairSelectorDrawer(this.ViewModel.Gender, this.ViewModel.Tribe, this.ViewModel.Hair);
+			await viewService.ShowDrawer(selector, "Hair");
+			this.ViewModel.Hair = (byte)selector.Selected;
 		}
 	}
 }

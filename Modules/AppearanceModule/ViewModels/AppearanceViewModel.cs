@@ -30,7 +30,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.PropertyChanged += this.OnSelfPropertyChanged;
 		}
 
-		public event PropertyChangedEventHandler SubPropertyChanged;
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public Appearance.Races Race
