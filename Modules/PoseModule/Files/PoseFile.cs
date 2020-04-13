@@ -6,7 +6,6 @@ namespace ConceptMatrix.PoseModule
 	using System;
 	using System.Collections.Generic;
 	using System.Reflection;
-	using ConceptMatrix.Services;
 
 	public class PoseFile : FileBase
 	{

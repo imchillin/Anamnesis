@@ -12,7 +12,6 @@ namespace ConceptMatrix.GUI
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
-	using ConceptMatrix.Services;
 
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml.

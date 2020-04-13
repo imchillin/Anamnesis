@@ -4,18 +4,21 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System.Threading.Tasks;
-	using ConceptMatrix;
 	using ConceptMatrix.Modules;
 
-	public class Module : ModuleBase
+	public class Module : IModule
 	{
-		public override async Task Initialize(IServices services)
+		public async Task Initialize()
 		{
-			await base.Initialize(services);
-			await services.Add<GameDataService>();
+			await Services.Add<GameDataService>();
 		}
 
-		public override Task Shutdown()
+		public Task Start()
+		{
+			return Task.CompletedTask;
+		}
+
+		public Task Shutdown()
 		{
 			return Task.CompletedTask;
 		}

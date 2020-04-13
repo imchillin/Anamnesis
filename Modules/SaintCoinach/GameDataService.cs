@@ -4,13 +4,11 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
 	using System.IO.Compression;
-	using System.Reflection;
 	using System.Threading.Tasks;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using SaintCoinach;
 	using SaintCoinach.Ex;
 	using SaintCoinach.Ex.Relational.Update;
@@ -174,7 +172,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 		private static async Task<string> GetInstallationDirectory()
 		{
-			ISettingsService settingsService = Module.Services.Get<ISettingsService>();
+			ISettingsService settingsService = Services.Get<ISettingsService>();
 			GameDataSettings settings = await settingsService.Load<GameDataSettings>();
 
 			string installationPath = settings.InstallationPath;
@@ -182,7 +180,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			while (!IsValidInstallation(installationPath))
 			{
 				// TODO: dialog explaining to select game folder?
-				IFileService fileService = Module.Services.Get<IFileService>();
+				IFileService fileService = Services.Get<IFileService>();
 				string dir = await fileService.OpenDirectory(
 					"Select game installation",
 					@"C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\",

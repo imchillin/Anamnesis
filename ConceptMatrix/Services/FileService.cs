@@ -4,15 +4,11 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System;
-	using System.Collections.Generic;
 	using System.IO;
-	using System.Text;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Serialization;
-	using ConceptMatrix.Services;
 	using Microsoft.WindowsAPICodePack.Dialogs;
-	using Newtonsoft.Json;
 
 	public class FileService : IFileService
 	{

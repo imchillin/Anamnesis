@@ -4,7 +4,7 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
 
 	internal class DyeWrapper : ObjectWrapper<Stain>, IDye
@@ -70,7 +70,7 @@ namespace ConceptMatrix.SaintCoinachModule
 				// use the item id lookup
 				if (this.item == null)
 				{
-					IGameDataService gd = Module.Services.Get<IGameDataService>();
+					IGameDataService gd = Services.Get<IGameDataService>();
 					this.item = gd.Items.Get(DyeToItemKey(this.Key));
 				}
 			}

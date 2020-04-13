@@ -9,7 +9,6 @@ namespace ConceptMatrix.GUI.Services
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using ConceptMatrix;
-	using ConceptMatrix.Services;
 
 	public class ViewService : IViewService
 	{

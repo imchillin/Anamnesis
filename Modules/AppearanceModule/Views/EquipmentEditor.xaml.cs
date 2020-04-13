@@ -3,14 +3,12 @@
 
 namespace ConceptMatrix.AppearanceModule.Views
 {
-	using System;
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.AppearanceModule.ViewModels;
-	using ConceptMatrix.Offsets;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	/// <summary>
 	/// Interaction logic for EquipmentView.xaml.
@@ -26,7 +24,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (DesignerProperties.GetIsInDesignMode(this))
 				return;
 
-			ISelectionService selection = Module.Services.Get<ISelectionService>();
+			ISelectionService selection = Services.Get<ISelectionService>();
 			selection.SelectionChanged += this.OnSelectionChanged;
 			this.OnSelectionChanged(selection.CurrentSelection);
 		}

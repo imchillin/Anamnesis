@@ -3,10 +3,8 @@
 
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
-	using System.Windows.Media.Media3D;
 	using ConceptMatrix;
-	using ConceptMatrix.Offsets;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	public class EquipmentWeaponViewModel : EquipmentBaseViewModel
 	{

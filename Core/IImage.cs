@@ -4,8 +4,6 @@
 namespace ConceptMatrix
 {
 	using System;
-	using System.Collections.Generic;
-	using System.Text;
 
 	public interface IImage
 	{

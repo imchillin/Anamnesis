@@ -7,9 +7,6 @@ namespace ConceptMatrix.GUI.Services
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.Exceptions;
-	using ConceptMatrix.Injection;
-	using ConceptMatrix.Offsets;
-	using ConceptMatrix.Services;
 
 	public class SelectionService : ISelectionService
 	{

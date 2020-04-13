@@ -13,7 +13,6 @@ namespace ConceptMatrix.Injection
 	using ConceptMatrix;
 	using ConceptMatrix.Injection.Memory;
 	using ConceptMatrix.Injection.Offsets;
-	using ConceptMatrix.Services;
 
 	public class InjectionService : IInjectionService
 	{

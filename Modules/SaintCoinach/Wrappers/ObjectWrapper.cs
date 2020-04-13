@@ -3,7 +3,7 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
 
 	internal class ObjectWrapper : IDataObject

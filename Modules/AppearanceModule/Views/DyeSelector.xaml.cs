@@ -4,7 +4,7 @@
 namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.Windows.Controls;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
@@ -16,7 +16,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			IGameDataService gameData = Module.Services.Get<IGameDataService>();
+			IGameDataService gameData = Services.Get<IGameDataService>();
 			foreach (IDye item in gameData.Dyes.All)
 			{
 				this.Selector.Items.Add(item);

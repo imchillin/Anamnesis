@@ -5,9 +5,8 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
 	using System.ComponentModel;
-	using System.Windows.Media.Media3D;
 	using ConceptMatrix;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using PropertyChanged;
 
 	public abstract class EquipmentBaseViewModel : INotifyPropertyChanged, IDisposable
@@ -29,7 +28,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		public EquipmentBaseViewModel(ItemSlots slot, Selection selection)
 		{
 			this.target = selection;
-			this.gameData = Module.Services.Get<IGameDataService>();
+			this.gameData = Services.Get<IGameDataService>();
 			this.Slot = slot;
 		}
 

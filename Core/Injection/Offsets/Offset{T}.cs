@@ -7,7 +7,6 @@ namespace ConceptMatrix.Injection.Offsets
 	using System.Collections.Generic;
 	using ConceptMatrix;
 	using ConceptMatrix.Injection;
-	using ConceptMatrix.Services;
 
 	public class Offset<T> : Offset, IMemoryOffset<T>
 	{

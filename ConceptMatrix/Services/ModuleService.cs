@@ -9,13 +9,10 @@ namespace ConceptMatrix.GUI.Services
 	using System.Reflection;
 	using System.Threading.Tasks;
 	using ConceptMatrix.Modules;
-	using ConceptMatrix.Services;
-
-	using static ConceptMatrix.Modules.ModuleBase;
 
 	public class ModuleService : IService
 	{
-		private List<ModuleBase> modules = new List<ModuleBase>();
+		private List<IModule> modules = new List<IModule>();
 
 		public Task Initialize(IServices services)
 		{
@@ -24,7 +21,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public async Task Start()
 		{
-			foreach (ModuleBase module in this.modules)
+			foreach (IModule module in this.modules)
 			{
 				await module.Start();
 			}
@@ -59,10 +56,10 @@ namespace ConceptMatrix.GUI.Services
 					if (type.IsAbstract || type.IsInterface)
 						continue;
 
-					if (typeof(ModuleBase).IsAssignableFrom(type))
+					if (typeof(IModule).IsAssignableFrom(type))
 					{
-						ModuleBase module = (ModuleBase)Activator.CreateInstance(type);
-						await module.Initialize(services);
+						IModule module = (IModule)Activator.CreateInstance(type);
+						await module.Initialize();
 					}
 				}
 			}
@@ -74,7 +71,7 @@ namespace ConceptMatrix.GUI.Services
 
 		private async Task ShutdownModules()
 		{
-			foreach (ModuleBase module in this.modules)
+			foreach (IModule module in this.modules)
 			{
 				await module.Shutdown();
 			}

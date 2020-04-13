@@ -4,7 +4,7 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using ConceptMatrix;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
 
 	internal class CharacterMakeCustomizeWrapper : ObjectWrapper<CharaMakeCustomize>, ICharaMakeCustomize

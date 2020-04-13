@@ -8,19 +8,19 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
+	using ConceptMatrix.WpfStyles.DependencyProperties;
+	using ConceptMatrix.WpfStyles.Drawers;
 	using PropertyChanged;
 
 	using Color = ConceptMatrix.Color;
 	using WpfColor = System.Windows.Media.Color;
-	using WpfColors = System.Windows.Media.Colors;
 
 	/// <summary>
 	/// Interaction logic for ColorEditor.xaml.
 	/// </summary>
 	public partial class ColorEditor : UserControl, INotifyPropertyChanged
 	{
-		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(Color), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
-		public static readonly DependencyProperty SelectorProperty = DependencyProperty.Register(nameof(EnableSelector), typeof(bool), typeof(ColorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
+		public static readonly IBind<Color> ValueDp = Binder.Register<Color, ColorEditor>(nameof(Value), OnValueChanged);
 
 		public ColorEditor()
 		{
@@ -33,16 +33,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 		[AlsoNotifyFor(nameof(ColorEditor.R), nameof(ColorEditor.G), nameof(ColorEditor.B))]
 		public Color Value
 		{
-			get
-			{
-				return (Color)this.GetValue(ValueProperty);
-			}
-
-			set
-			{
-				this.SetValue(ValueProperty, value);
-				this.UpdatePreview();
-			}
+			get => ValueDp.Get(this);
+			set => ValueDp.Set(this, value);
 		}
 
 		[AlsoNotifyFor(nameof(ColorEditor.Value))]
@@ -93,19 +85,6 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
-		public bool EnableSelector
-		{
-			get
-			{
-				return (bool)this.GetValue(SelectorProperty);
-			}
-
-			set
-			{
-				this.SetValue(SelectorProperty, value);
-			}
-		}
-
 		private static double Clamp(double v)
 		{
 			v = Math.Min(v, 1);
@@ -113,21 +92,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 			return v;
 		}
 
-		private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+		private static void OnValueChanged(ColorEditor sender, Color v)
 		{
-			if (sender is ColorEditor view)
-			{
-				view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(e.Property.Name));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.R)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.G)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.B)));
 
-				if (e.Property.Name == nameof(Value))
-				{
-					view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.R)));
-					view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.G)));
-					view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.B)));
-				}
-
-				view.UpdatePreview();
-			}
+			sender.UpdatePreview();
 		}
 
 		private void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -145,6 +116,16 @@ namespace ConceptMatrix.WpfStyles.Controls
 			c.A = 255;
 
 			this.Preview.Background = new SolidColorBrush(c);
+		}
+
+		private async void OnClick(object sender, RoutedEventArgs e)
+		{
+			IViewService viewService = Services.Get<IViewService>();
+
+			ColorSelectorDrawer selector = new ColorSelectorDrawer();
+			selector.Value = this.Value;
+			await viewService.ShowDrawer(selector, "Color");
+			this.Value = selector.Value;
 		}
 	}
 }

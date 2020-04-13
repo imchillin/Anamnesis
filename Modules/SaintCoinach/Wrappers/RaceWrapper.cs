@@ -5,7 +5,7 @@ namespace ConceptMatrix.SaintCoinachModule
 {
 	using System.Collections.Generic;
 	using ConceptMatrix;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
 
 	internal class RaceWrapper : ObjectWrapper<Race>, IRace
@@ -61,7 +61,7 @@ namespace ConceptMatrix.SaintCoinachModule
 		{
 			get
 			{
-				GameDataService service = Module.Services.Get<GameDataService>();
+				GameDataService service = Services.Get<GameDataService>();
 
 				List<ITribe> tribes = new List<ITribe>();
 				foreach (Appearance.Tribes tribe in this.Race.GetTribes())

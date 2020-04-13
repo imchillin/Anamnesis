@@ -3,7 +3,6 @@
 
 namespace ConceptMatrix.Injection.Offsets
 {
-	using System;
 	using ConceptMatrix.Injection;
 
 	public class ActorTableOffset : BaseOffset<byte>

@@ -3,8 +3,7 @@
 
 namespace ConceptMatrix
 {
-	using System;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	public class Equipment
 	{

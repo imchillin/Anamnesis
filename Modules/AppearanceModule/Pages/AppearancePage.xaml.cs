@@ -6,7 +6,6 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Files;
-	using ConceptMatrix.Services;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
@@ -20,7 +19,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
-			IFileService fileService = Module.Services.Get<IFileService>();
+			IFileService fileService = Services.Get<IFileService>();
 			FileBase file = await fileService.OpenAny(EquipmentSetFile.FileType, LegacyEquipmentSetFile.FileType);
 
 			if (file is LegacyEquipmentSetFile legacyFile)
@@ -34,7 +33,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 		private void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			IFileService fileService = Module.Services.Get<IFileService>();
+			IFileService fileService = Services.Get<IFileService>();
 			EquipmentSetFile eqFile = this.Equipment.Save();
 			fileService.Save(eqFile);
 		}

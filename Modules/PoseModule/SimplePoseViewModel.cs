@@ -6,13 +6,10 @@ namespace ConceptMatrix.PoseModule
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
-	using System.Globalization;
 	using System.Reflection;
 	using System.Threading;
 	using System.Windows;
 	using ConceptMatrix;
-	using ConceptMatrix.Offsets;
-	using ConceptMatrix.Services;
 	using ConceptMatrix.ThreeD;
 
 	using Vector = ConceptMatrix.Vector;
@@ -35,7 +32,7 @@ namespace ConceptMatrix.PoseModule
 
 		public SimplePoseViewModel(Selection selection)
 		{
-			injection = Module.Services.Get<IInjectionService>();
+			injection = Services.Get<IInjectionService>();
 
 			this.skel1Mem = Offsets.SkeletonOffset1.GetMemory();
 			this.skel2Mem = Offsets.SkeletonOffset2.GetMemory();
@@ -275,7 +272,7 @@ namespace ConceptMatrix.PoseModule
 			}
 
 			this.bones = new Dictionary<string, Bone>();
-			FieldInfo[] members = typeof(Bones).GetFields(BindingFlags.Static | BindingFlags.Public);
+			FieldInfo[] members = typeof(BoneOffsets).GetFields(BindingFlags.Static | BindingFlags.Public);
 
 			if (members.Length <= 0)
 				throw new Exception("Failed to extract bone offsets");

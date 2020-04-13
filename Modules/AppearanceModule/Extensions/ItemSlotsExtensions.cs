@@ -5,7 +5,7 @@ namespace ConceptMatrix.AppearanceModule
 {
 	using System;
 	using System.Windows.Media.Imaging;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	public static class ItemSlotsExtensions
 	{

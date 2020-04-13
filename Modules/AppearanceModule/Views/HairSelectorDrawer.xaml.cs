@@ -3,10 +3,8 @@
 
 namespace ConceptMatrix.AppearanceModule.Views
 {
-	using System;
-	using System.Collections.Generic;
 	using System.Windows.Controls;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	/// <summary>
 	/// Interaction logic for HairSelector.xaml.
@@ -19,7 +17,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			this.ContentArea.DataContext = this;
 
-			IGameDataService gameData = Module.Services.Get<IGameDataService>();
+			IGameDataService gameData = Services.Get<IGameDataService>();
 
 			this.List.ItemsSource = gameData.CharacterMakeCustomize.GetHair(tribe, gender);
 			this.List.SelectedItem = gameData.CharacterMakeCustomize.GetHair(tribe, gender, value);

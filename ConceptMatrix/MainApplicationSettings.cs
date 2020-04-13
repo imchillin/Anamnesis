@@ -4,7 +4,6 @@
 namespace ConceptMatrix.GUI
 {
 	using System.Threading.Tasks;
-	using ConceptMatrix.Services;
 	using MaterialDesignThemes.Wpf;
 
 	public class MainApplicationSettings : SettingsBase

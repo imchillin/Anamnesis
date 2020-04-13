@@ -3,10 +3,7 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Text;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
 
 	internal class NpcResidentWrapper : ObjectWrapper<ENpcResident>, INpcResident

@@ -7,7 +7,6 @@ namespace ConceptMatrix.GUI.Services
 	using System.IO;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
-	using ConceptMatrix.Services;
 	using Newtonsoft.Json;
 
 	public class SettingsService : ISettingsService

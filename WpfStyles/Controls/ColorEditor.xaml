@@ -20,7 +20,8 @@
 		<Button
 			IsEnabled="{Binding EnableSelector}"
 			Margin="0, 0, 0, -2"
-			Style="{DynamicResource TransparentButton}">
+			Style="{DynamicResource TransparentButton}"
+			Click="OnClick">
 			<Border x:Name="Preview" CornerRadius="3" BorderBrush="{DynamicResource MaterialDesignBody}" BorderThickness="1" Margin="4"/>
 		</Button>
 		

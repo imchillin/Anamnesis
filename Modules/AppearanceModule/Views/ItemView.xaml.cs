@@ -8,8 +8,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.ViewModels;
-	using ConceptMatrix.Services;
-	using ConceptMatrix.WpfStyles.Drawers;
+	using ConceptMatrix.GameData;
 
 	using Vector = ConceptMatrix.Vector;
 
@@ -27,7 +26,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (DesignerProperties.GetIsInDesignMode(this))
 				return;
 
-			this.gameData = Module.Services.Get<IGameDataService>();
+			this.gameData = Services.Get<IGameDataService>();
 		}
 
 		public EquipmentBaseViewModel ViewModel
@@ -40,7 +39,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private async void OnClick(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Module.Services.Get<IViewService>();
+			IViewService viewService = Services.Get<IViewService>();
 
 			EquipmentSelector selector = new EquipmentSelector(this.ViewModel.Slot);
 			selector.Value = this.ViewModel.Item;
@@ -54,7 +53,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private async void OnDyeClick(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Module.Services.Get<IViewService>();
+			IViewService viewService = Services.Get<IViewService>();
 
 			DyeSelector selector = new DyeSelector();
 			selector.Value = this.ViewModel.Dye;
@@ -64,16 +63,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 				return;
 
 			this.ViewModel.Dye = selector.Value;
-		}
-
-		private async void OnColorClick(object sender, RoutedEventArgs e)
-		{
-			IViewService viewService = Module.Services.Get<IViewService>();
-
-			ColorSelectorDrawer selector = new ColorSelectorDrawer();
-			selector.Value = this.ViewModel.Color;
-			await viewService.ShowDrawer(selector, "Color");
-			this.ViewModel.Color = selector.Value;
 		}
 
 		private void OnPreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)

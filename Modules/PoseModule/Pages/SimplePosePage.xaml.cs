@@ -4,11 +4,8 @@
 namespace ConceptMatrix.PoseModule
 {
 	using System;
-	using System.Collections.Generic;
-	using System.Threading;
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix.Services;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
@@ -19,7 +16,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			this.InitializeComponent();
 
-			ISelectionService selectionService = Module.Services.Get<ISelectionService>();
+			ISelectionService selectionService = Services.Get<ISelectionService>();
 			selectionService.SelectionChanged += this.OnSelectionChanged;
 
 			Application.Current.Exit += this.OnApplicationExiting;
@@ -61,7 +58,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			try
 			{
-				IFileService fileService = Module.Services.Get<IFileService>();
+				IFileService fileService = Services.Get<IFileService>();
 				FileBase file = await fileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
 
 				if (file is LegacyPoseFile legacyFile)
@@ -82,7 +79,7 @@ namespace ConceptMatrix.PoseModule
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			IFileService fileService = Module.Services.Get<IFileService>();
+			IFileService fileService = Services.Get<IFileService>();
 
 			PoseFile file = new PoseFile();
 			file.Read(this.ViewModel.Bones);

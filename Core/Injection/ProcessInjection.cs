@@ -7,7 +7,6 @@ namespace ConceptMatrix.Injection
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Runtime.InteropServices;
-	using ConceptMatrix.Services;
 
 	public class ProcessInjection
 	{

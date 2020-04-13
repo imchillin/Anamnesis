@@ -8,11 +8,15 @@ namespace ConceptMatrix.GUI
 	using System.Threading.Tasks;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.Injection;
-	using ConceptMatrix.Services;
 
 	public class ServiceManager : IServices
 	{
 		private List<IService> services = new List<IService>();
+
+		public ServiceManager()
+		{
+			ConceptMatrix.Services.RegisterServicesProvider(this);
+		}
 
 		public delegate void ServiceEvent(string serviceName);
 

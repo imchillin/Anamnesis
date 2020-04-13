@@ -3,10 +3,8 @@
 
 namespace ConceptMatrix.Injection.Offsets
 {
-	using System;
 	using ConceptMatrix;
 	using ConceptMatrix.Injection;
-	using ConceptMatrix.Services;
 
 	public class BaseOffset : Offset, IBaseMemoryOffset
 	{

@@ -4,7 +4,6 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System;
-	using ConceptMatrix.Services;
 
 	[Serializable]
 	public class GameDataSettings : SettingsBase

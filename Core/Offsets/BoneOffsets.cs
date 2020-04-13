@@ -1,11 +1,11 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Offsets
+namespace ConceptMatrix
 {
 	using ConceptMatrix.Injection.Offsets;
 
-	public static class Bones
+	public static class BoneOffsets
 	{
 		public static Offset<Transform> Root = new[] { 0xF0, 0xA0, 0x68, 0x140, 0x18, 0x00 };
 		public static Offset<Transform> Abdomen = new[] { 0xF0, 0xA0, 0x68, 0x140, 0x18, 0x30 };

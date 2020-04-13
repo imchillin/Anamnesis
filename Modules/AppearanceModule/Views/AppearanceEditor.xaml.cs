@@ -9,8 +9,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.ViewModels;
-	using ConceptMatrix.Services;
-	using PropertyChanged;
+	using ConceptMatrix.GameData;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
@@ -24,8 +23,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			this.gameDataService = Module.Services.Get<IGameDataService>();
-			ISelectionService selectionService = Module.Services.Get<ISelectionService>();
+			this.gameDataService = Services.Get<IGameDataService>();
+			ISelectionService selectionService = Services.Get<ISelectionService>();
 
 			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Genders));
 			this.RaceComboBox.ItemsSource = this.gameDataService.Races.All;
@@ -156,7 +155,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private async void OnHairClicked(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Module.Services.Get<IViewService>();
+			IViewService viewService = Services.Get<IViewService>();
 			HairSelectorDrawer selector = new HairSelectorDrawer(this.ViewModel.Gender, this.ViewModel.Tribe, this.ViewModel.Hair);
 			await viewService.ShowDrawer(selector, "Hair");
 			this.ViewModel.Hair = (byte)selector.Selected;

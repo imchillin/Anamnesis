@@ -5,7 +5,6 @@ namespace ConceptMatrix.Injection.Offsets
 {
 	using System;
 	using System.Collections.Generic;
-	using ConceptMatrix.Services;
 
 	[Serializable]
 	public class Offset : IMemoryOffset

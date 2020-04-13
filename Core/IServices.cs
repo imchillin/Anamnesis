@@ -4,7 +4,6 @@
 namespace ConceptMatrix
 {
 	using System.Threading.Tasks;
-	using ConceptMatrix.Services;
 
 	public interface IServices
 	{

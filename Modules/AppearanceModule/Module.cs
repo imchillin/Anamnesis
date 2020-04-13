@@ -3,24 +3,26 @@
 
 namespace ConceptMatrix.AppearanceModule
 {
-	using System;
 	using System.Threading.Tasks;
-	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.Pages;
 	using ConceptMatrix.Modules;
-	using ConceptMatrix.Services;
 
-	public class Module : ModuleBase
+	public class Module : IModule
 	{
-		public override async Task Initialize(IServices services)
+		public Task Initialize()
 		{
-			await base.Initialize(services);
-
-			IViewService viewService = services.Get<IViewService>();
+			IViewService viewService = Services.Get<IViewService>();
 			viewService.AddPage<AppearancePage>("Character/Appearance");
+
+			return Task.CompletedTask;
 		}
 
-		public override Task Shutdown()
+		public Task Start()
+		{
+			return Task.CompletedTask;
+		}
+
+		public Task Shutdown()
 		{
 			return Task.CompletedTask;
 		}

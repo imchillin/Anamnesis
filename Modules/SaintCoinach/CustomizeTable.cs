@@ -6,7 +6,7 @@ namespace ConceptMatrix.SaintCoinachModule
 	using System;
 	using System.Collections.Generic;
 	using ConceptMatrix;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	internal class CustomizeTable : Table<ICharaMakeCustomize>, ICharaMakeCustomizeData
 	{

@@ -7,7 +7,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Utilities;
-	using ConceptMatrix.Services;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
@@ -96,7 +95,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private async void OnClick(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Module.Services.Get<IViewService>();
+			IViewService viewService = Services.Get<IViewService>();
 
 			FxivColorSelectorDrawer selector = new FxivColorSelectorDrawer(this.colors, this.Value);
 			await viewService.ShowDrawer(selector, "Color");

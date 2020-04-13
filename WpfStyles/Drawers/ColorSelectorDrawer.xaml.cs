@@ -6,7 +6,6 @@ namespace ConceptMatrix.WpfStyles.Drawers
 	using System.Reflection;
 	using System.Windows.Controls;
 	using System.Windows.Media;
-	using ConceptMatrix.Services;
 
 	using CmColor = ConceptMatrix.Color;
 

@@ -8,7 +8,6 @@ namespace ConceptMatrix.GUI
 	using System.Windows;
 	using System.Windows.Documents;
 	using System.Windows.Input;
-	using System.Windows.Media;
 
 	/// <summary>
 	/// Interaction logic for ErrorDialog.xaml.

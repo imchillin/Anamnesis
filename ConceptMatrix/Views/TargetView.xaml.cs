@@ -7,7 +7,6 @@ namespace ConceptMatrix.GUI.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.GUI.Services;
-	using ConceptMatrix.Services;
 	using ConceptMatrix.WpfStyles;
 	using FontAwesome.Sharp;
 

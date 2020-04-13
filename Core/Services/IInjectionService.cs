@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Services
+namespace ConceptMatrix
 {
 	public interface IInjectionService : IService
 	{

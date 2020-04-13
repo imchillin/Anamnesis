@@ -10,7 +10,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using ConceptMatrix;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
@@ -82,7 +82,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (this.Tribe == 0)
 				return;
 
-			IGameDataService dataService = Module.Services.Get<IGameDataService>();
+			IGameDataService dataService = Services.Get<IGameDataService>();
 
 			IImage[] facialFeatures = null;
 			foreach (ICharaMakeType set in dataService.CharacterMakeTypes.All)

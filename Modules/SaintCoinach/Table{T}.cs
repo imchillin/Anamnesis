@@ -6,7 +6,7 @@ namespace ConceptMatrix.SaintCoinachModule
 	using System;
 	using System.Collections.Generic;
 	using System.Reflection;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
 
 	internal class Table<T> : IData<T>

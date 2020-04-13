@@ -4,8 +4,7 @@
 namespace SaintCoinach.Xiv
 {
 	using System;
-	using ConceptMatrix;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	public static class EquipSlotExtensions
 	{

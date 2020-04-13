@@ -6,7 +6,6 @@ namespace ConceptMatrix.SaintCoinachModule
 	using System;
 	using System.Drawing;
 	using System.Drawing.Imaging;
-	using ConceptMatrix.Services;
 	using SaintCoinach.Imaging;
 
 	public static class ImageFileExtensions

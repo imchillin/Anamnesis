@@ -5,7 +5,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Utilities;
-	using ConceptMatrix.Services;
 
 	/// <summary>
 	/// Interaction logic for FxivColorSelectorDrawer.xaml.

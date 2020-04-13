@@ -5,7 +5,6 @@ namespace ConceptMatrix.AppearanceModule.Files
 {
 	using System;
 	using ConceptMatrix.AppearanceModule.ViewModels;
-	using ConceptMatrix.Services;
 
 	[Serializable]
 	public class EquipmentSetFile : FileBase

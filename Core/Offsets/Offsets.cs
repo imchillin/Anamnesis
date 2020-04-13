@@ -1,10 +1,9 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Offsets
+namespace ConceptMatrix
 {
 	using System;
-	using ConceptMatrix.Injection;
 	using ConceptMatrix.Injection.Offsets;
 
 	[Serializable]

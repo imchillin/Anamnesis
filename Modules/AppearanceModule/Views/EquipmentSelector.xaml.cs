@@ -5,7 +5,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.ViewModels;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
@@ -21,7 +21,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			IGameDataService gameData = Module.Services.Get<IGameDataService>();
+			IGameDataService gameData = Services.Get<IGameDataService>();
 			this.Selector.Items.Add(EquipmentBaseViewModel.NoneItem);
 			foreach (IItem item in gameData.Items.All)
 			{

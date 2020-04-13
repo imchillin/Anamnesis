@@ -3,9 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
-	using System;
-	using ConceptMatrix.Injection;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 
 	public class EquipmentItemViewModel : EquipmentBaseViewModel
 	{

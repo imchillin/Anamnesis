@@ -3,8 +3,6 @@
 
 namespace ConceptMatrix
 {
-	using System;
-
 	public class Weapon
 	{
 		public ushort Set;

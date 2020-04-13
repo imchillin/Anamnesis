@@ -3,9 +3,8 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
-	using System;
 	using System.Collections.Generic;
-	using ConceptMatrix.Services;
+	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
 
 	internal class ItemWrapper : ObjectWrapper<Item>, IItem

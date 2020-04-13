@@ -8,7 +8,6 @@ namespace ConceptMatrix
 	using System.Windows;
 	using System.Windows.Threading;
 	using ConceptMatrix.GUI;
-	using ConceptMatrix.Services;
 	using Application = System.Windows.Application;
 
 	/// <summary>

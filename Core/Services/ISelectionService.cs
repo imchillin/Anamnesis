@@ -1,10 +1,9 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Services
+namespace ConceptMatrix
 {
 	using System.Threading.Tasks;
-	using ConceptMatrix.Offsets;
 
 	public delegate void SelectionEvent(Selection selection);
 

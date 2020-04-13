@@ -6,8 +6,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	using System;
 	using System.ComponentModel;
 	using System.Threading.Tasks;
-	using ConceptMatrix.Offsets;
-	using ConceptMatrix.Services;
 
 	public class AppearanceViewModel : IDisposable, INotifyPropertyChanged
 	{
