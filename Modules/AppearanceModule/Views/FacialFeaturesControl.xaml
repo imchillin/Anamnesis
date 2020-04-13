@@ -28,7 +28,7 @@
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid Margin="1">
-						<Border Width="41" Height="41">
+						<Border Width="41" Height="41" Cursor="Hand">
 							<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}"/>
 						</Border>
 						<Image Margin="-3" Width="45" Height="45" Source="/AppearanceModule;component/Assets/FeatureSelectionborder.png" Visibility="{Binding Selected, Converter={StaticResource B2V}}"/>
