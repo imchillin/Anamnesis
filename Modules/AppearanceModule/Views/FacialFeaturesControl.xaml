@@ -7,8 +7,14 @@
 			 mc:Ignorable="d" 
 			 d:DesignWidth="256">
 	<UserControl.Resources>
+
+		<BooleanToVisibilityConverter x:Key="B2V"/>
+
 		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
 			<Setter Property="Padding" Value="0"/>
+			<Setter Property="IsSelected" Value="{Binding Selected}"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Background" Value="Transparent"/>
 		</Style>
 	</UserControl.Resources>
 
@@ -21,9 +27,12 @@
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Border Width="41" Height="41">
-						<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}"/>
-					</Border>
+					<Grid Margin="1">
+						<Border Width="41" Height="41">
+							<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}"/>
+						</Border>
+						<Image Margin="-3" Width="45" Height="45" Source="/AppearanceModule;component/Assets/FeatureSelectionborder.png" Visibility="{Binding Selected, Converter={StaticResource B2V}}"/>
+					</Grid>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>

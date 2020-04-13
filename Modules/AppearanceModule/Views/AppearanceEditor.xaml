@@ -90,11 +90,11 @@
 
 		<!-- Face Type -->
 		<TextBlock Grid.Column="0" Grid.Row="4" Text="Face:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-		<cm3Controls:NumberBox Value="{Binding ViewModel.Head}" Grid.Column="2" Grid.Row="4" Minimum="0" Maximum="255"/>
+		<cm3Controls:NumberBox Value="{Binding ViewModel.Head}" Grid.Column="2" Grid.Row="4" Minimum="1" Maximum="255"/>
 
 		<!-- Facial Features -->
 		<TextBlock Grid.Column="0" Grid.Row="5" Text="Features:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-		<controls:FacialFeaturesControl Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" Grid.Column="2" Grid.Row="5"/>
+		<controls:FacialFeaturesControl Value="{Binding ViewModel.FacialFeatures}" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" Head="{Binding ViewModel.Head}" Grid.Column="2" Grid.Row="5"/>
 
 		<!-- Face Paint  -->
 		<TextBlock Grid.Column="0" Grid.Row="6" Text="Face Paint:" VerticalAlignment="Center" HorizontalAlignment="Right"/>

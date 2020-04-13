@@ -219,5 +219,8 @@
   <ItemGroup>
     <Resource Include="Assets\LegacyTattoo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\FeatureSelectionborder.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

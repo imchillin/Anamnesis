@@ -7,6 +7,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Collections.Generic;
 	using System.Drawing;
 	using System.Linq;
+	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using ConceptMatrix;
 	using ConceptMatrix.Services;
@@ -19,7 +20,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FacialFeaturesControl : UserControl
 	{
-		public static readonly IBind<byte> ValueDp = Binder.Register<byte, FacialFeaturesControl>(nameof(Value), OnValueChanged);
+		public static readonly IBind<Appearance.FacialFeature> ValueDp = Binder.Register<Appearance.FacialFeature, FacialFeaturesControl>(nameof(Value), OnValueChanged);
 		public static readonly IBind<Appearance.Genders> GenderDp = Binder.Register<Appearance.Genders, FacialFeaturesControl>(nameof(Gender), OnGenderChanged);
 		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, FacialFeaturesControl>(nameof(Tribe), OnTribeChanged);
 		public static readonly IBind<byte> HeadDp = Binder.Register<byte, FacialFeaturesControl>(nameof(Head), OnHeadChanged);
@@ -47,7 +48,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			set => HeadDp.Set(this, value);
 		}
 
-		public byte Value
+		public Appearance.FacialFeature Value
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
@@ -68,13 +69,14 @@ namespace ConceptMatrix.AppearanceModule.Views
 			sender.GetFeatures();
 		}
 
-		private static void OnValueChanged(FacialFeaturesControl sender, byte value)
+		private static void OnValueChanged(FacialFeaturesControl sender, Appearance.FacialFeature value)
 		{
 			sender.GetFeatures();
 		}
 
-		private void GetFeatures()
+		private async void GetFeatures()
 		{
+			this.FeaturesList.SelectionChanged -= this.OnSelectionChanged;
 			if (this.Tribe == 0)
 				return;
 
@@ -99,46 +101,61 @@ namespace ConceptMatrix.AppearanceModule.Views
 			List<Option> features = new List<Option>();
 			for (byte i = 0; i < 7; i++)
 			{
-				int id = this.Head + (i * 4);
+				int id = (this.Head - 1) + (i * 4);
 
-				if (id < 0 || id > facialFeatures.Length)
+				if (id < 0 || id >= facialFeatures.Length)
 					continue;
 
 				Option op = new Option();
 				op.Icon = facialFeatures[id];
 				op.Value = this.GetValue(i);
+				op.Selected = this.Value.HasFlag(op.Value);
 				features.Add(op);
 			}
 
 			Option legacyTattoo = new Option();
 			legacyTattoo.Icon = Properties.Resources.LegacyTattoo.ToIImage();
-			legacyTattoo.Value = 128;
+			legacyTattoo.Value = Appearance.FacialFeature.LegacyTattoo;
+			legacyTattoo.Selected = this.Value.HasFlag(legacyTattoo.Value);
 			features.Add(legacyTattoo);
 
 			this.FeaturesList.ItemsSource = features;
+			await Task.Delay(500);
+			this.FeaturesList.SelectionChanged += this.OnSelectionChanged;
 		}
 
-		private byte GetValue(int index)
+		private Appearance.FacialFeature GetValue(int index)
 		{
 			switch (index)
 			{
-				case 0: return 0;
-				case 1: return 1;
-				case 2: return 2;
-				case 3: return 4;
-				case 4: return 8;
-				case 5: return 16;
-				case 6: return 32;
-				case 7: return 64;
+				case 0: return Appearance.FacialFeature.First;
+				case 1: return Appearance.FacialFeature.Second;
+				case 2: return Appearance.FacialFeature.Third;
+				case 3: return Appearance.FacialFeature.Fourth;
+				case 4: return Appearance.FacialFeature.Fifth;
+				case 5: return Appearance.FacialFeature.Sixth;
+				case 6: return Appearance.FacialFeature.Seventh;
 			}
 
 			throw new Exception("Invalid index value");
 		}
 
+		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			Appearance.FacialFeature flags = Appearance.FacialFeature.None;
+			foreach (Option op in this.FeaturesList.SelectedItems)
+			{
+				flags |= op.Value;
+			}
+
+			this.Value = flags;
+		}
+
 		private class Option
 		{
-			public byte Value { get; set; }
+			public Appearance.FacialFeature Value { get; set; }
 			public IImage Icon { get; set; }
+			public bool Selected { get; set; }
 		}
 	}
 }

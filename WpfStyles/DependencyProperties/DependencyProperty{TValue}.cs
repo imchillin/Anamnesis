@@ -21,6 +21,11 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 
 		public void Set(DependencyObject control, TValue value)
 		{
+			TValue old = this.Get(control);
+
+			if (old.Equals(value))
+				return;
+
 			control.SetValue(this.dp, value);
 		}
 	}

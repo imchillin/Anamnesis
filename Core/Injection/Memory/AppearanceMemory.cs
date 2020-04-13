@@ -27,7 +27,7 @@ namespace ConceptMatrix.Injection.Memory
 			value.REyeColor = data[9];
 			value.HairTone = data[10];
 			value.HighlightTone = data[11];
-			value.FacialFeatures = data[12];
+			value.FacialFeatures = (Appearance.FacialFeature)data[12];
 			value.LimbalEyes = data[13];
 			value.Eyebrows = data[14];
 			value.LEyeColor = data[15];
@@ -58,7 +58,7 @@ namespace ConceptMatrix.Injection.Memory
 			data[9] = value.REyeColor;
 			data[10] = value.HairTone;
 			data[11] = value.HighlightTone;
-			data[12] = value.FacialFeatures;
+			data[12] = (byte)value.FacialFeatures;
 			data[13] = value.LimbalEyes;
 			data[14] = value.Eyebrows;
 			data[15] = value.LEyeColor;

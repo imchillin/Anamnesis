@@ -31,7 +31,7 @@
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;</NoWarn>
+    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;IDE0027;</NoWarn>
     <OutputPath>bin\</OutputPath>
     <DocumentationFile>bin\ConceptMatrix.WpfStyles.xml</DocumentationFile>
   </PropertyGroup>
@@ -41,7 +41,7 @@
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;</NoWarn>
+    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;IDE0027;</NoWarn>
     <OutputPath>bin\</OutputPath>
     <DocumentationFile>bin\ConceptMatrix.WpfStyles.xml</DocumentationFile>
   </PropertyGroup>

@@ -27,8 +27,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.appearance = this.appearanceMem.Value;
 			this.selection = selection;
 
-			this.PropertyChanged += this.OnPropertyChanged;
-			this.SubPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+			this.PropertyChanged += this.OnSelfPropertyChanged;
 		}
 
 		public event PropertyChangedEventHandler SubPropertyChanged;
@@ -184,7 +183,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set => this.appearance.Gender = value;
 		}
 
-		public byte FacialFeatures
+		public Appearance.FacialFeature FacialFeatures
 		{
 			get => this.appearance.FacialFeatures;
 			set => this.appearance.FacialFeatures = value;
@@ -196,7 +195,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.appearanceMem = null;
 		}
 
-		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			this.applyCountdown = ApplyDelay;
 
@@ -204,8 +203,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			{
 				this.applyTask = this.ApplyAfterDelay();
 			}
-
-			this.SubPropertyChanged?.Invoke(this, e);
 		}
 
 		private async Task ApplyAfterDelay()

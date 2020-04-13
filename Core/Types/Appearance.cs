@@ -19,7 +19,7 @@ namespace ConceptMatrix
 		public byte REyeColor;
 		public byte HairTone;
 		public byte HighlightTone;
-		public byte FacialFeatures;
+		public FacialFeature FacialFeatures;
 		public byte LimbalEyes;
 		public byte Eyebrows;
 		public byte LEyeColor;
@@ -77,6 +77,20 @@ namespace ConceptMatrix
 			Normal = 1,
 			Old = 3,
 			Young = 4,
+		}
+
+		[Flags]
+		public enum FacialFeature : byte
+		{
+			None = 0,
+			First = 1,
+			Second = 2,
+			Third = 4,
+			Fourth = 8,
+			Fifth = 16,
+			Sixth = 32,
+			Seventh = 64,
+			LegacyTattoo = 128,
 		}
 	}
 
