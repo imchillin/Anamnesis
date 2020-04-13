@@ -13,6 +13,8 @@
 		WindowStyle="None"
 		ResizeMode="NoResize"
 		AllowsTransparency="True"
+		MouseEnter="Window_MouseEnter"
+		MouseLeave="Window_MouseLeave"
 		Background="Transparent"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"

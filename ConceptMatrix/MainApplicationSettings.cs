@@ -11,6 +11,7 @@ namespace ConceptMatrix.GUI
 		public bool AlwaysOnTop { get; set; } = true;
 		public bool ThemeDark { get; set; } = false;
 		public string ThemeSwatch { get; set; } = @"deeppurple";
+		public double Opacity { get; set; } = 1.0;
 
 		public override async Task OnLoaded(ISettingsService settingsService)
 		{

@@ -11,19 +11,24 @@
 
 	<Grid>
 		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Label Grid.Column="0" Grid.Row="0" Content="Zodiark Theme"/>
-		<ToggleButton Grid.Column="1" Grid.Row="0" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Stretch" IsChecked="{Binding Zodiark}"/>
+		<Label Grid.Column="0" Grid.Row="0" Content="Window Opacity"/>
+		<Slider Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="6" Value="{Binding Opacity}" Minimum="0.1" Maximum="1"/>
+		
+		<Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Content="Zodiark Theme"/>
+		<ToggleButton Grid.Column="2" Grid.Row="1" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Stretch" IsChecked="{Binding Zodiark}"/>
 
-		<ListBox Grid.ColumnSpan="2" Grid.Row="1" ItemsSource="{Binding Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
+		<ListBox Grid.ColumnSpan="3" Grid.Row="2" ItemsSource="{Binding Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid Width="223">

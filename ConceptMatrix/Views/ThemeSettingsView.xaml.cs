@@ -56,6 +56,12 @@ namespace ConceptMatrix.GUI.Views
 				set;
 			}
 
+			public double Opacity
+			{
+				get;
+				set;
+			}
+
 			public Swatch SelectedSwatch
 			{
 				get;
@@ -64,6 +70,8 @@ namespace ConceptMatrix.GUI.Views
 
 			public void Read(ITheme theme)
 			{
+				this.Opacity = App.Settings.Opacity;
+
 				PaletteHelper pallete = new PaletteHelper();
 				this.Zodiark = pallete.IsDark();
 				this.SelectedSwatch = pallete.GetCurrentSwatch();
@@ -80,6 +88,7 @@ namespace ConceptMatrix.GUI.Views
 				pallete.Apply(this.SelectedSwatch, this.Zodiark);
 				App.Settings.ThemeSwatch = this.SelectedSwatch.Name;
 				App.Settings.ThemeDark = this.Zodiark;
+				App.Settings.Opacity = this.Opacity;
 				App.Settings.Save();
 			}
 		}

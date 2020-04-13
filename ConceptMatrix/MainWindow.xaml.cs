@@ -30,6 +30,7 @@ namespace ConceptMatrix.GUI
 			this.viewService.ShowingPage += this.OnShowPage;
 
 			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
+			this.Opacity = App.Settings.Opacity;
 
 			this.OnShowPage("Home", typeof(HomeView));
 		}
@@ -158,6 +159,16 @@ namespace ConceptMatrix.GUI
 			this.Topmost = false;
 			App.Settings.AlwaysOnTop = false;
 			App.Settings.Save();
+		}
+
+		private void Window_MouseEnter(object sender, MouseEventArgs e)
+		{
+			this.Opacity = 1.0;
+		}
+
+		private void Window_MouseLeave(object sender, MouseEventArgs e)
+		{
+			this.Opacity = App.Settings.Opacity;
 		}
 	}
 }
