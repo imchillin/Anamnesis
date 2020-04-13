@@ -18,9 +18,6 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 				{
 					changed?.Invoke(owner, value);
 				}
-
-				PropertyInfo prop = d.GetType().GetProperty(propertyName);
-				prop.SetValue(d, e.NewValue);
 			};
 
 			FrameworkPropertyMetadata meta = new FrameworkPropertyMetadata(new PropertyChangedCallback(changedb));
