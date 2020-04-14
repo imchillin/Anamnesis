@@ -7,6 +7,7 @@
 			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 xmlns:views="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 mc:Ignorable="d" 
+			 Unloaded="OnUnloaded"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024">
 	<Grid>

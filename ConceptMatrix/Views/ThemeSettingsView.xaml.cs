@@ -45,7 +45,6 @@ namespace ConceptMatrix.GUI.Views
 				this.Swatches = new SwatchesProvider().Swatches;
 			}
 
-			#pragma warning disable CS0067
 			public event PropertyChangedEventHandler PropertyChanged;
 
 			public IEnumerable<Swatch> Swatches { get; }

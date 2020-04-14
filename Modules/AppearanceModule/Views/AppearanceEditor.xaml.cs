@@ -162,6 +162,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 			IViewService viewService = Services.Get<IViewService>();
 			HairSelectorDrawer selector = new HairSelectorDrawer(this.ViewModel.Gender, this.ViewModel.Tribe, this.ViewModel.Hair);
 			await viewService.ShowDrawer(selector, "Hair");
+
+			if (selector.Selected <= 0)
+				return;
+
 			this.ViewModel.Hair = (byte)selector.Selected;
 		}
 	}

@@ -69,7 +69,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			get
 			{
-				if (this.colors == null)
+				if (this.colors == null || this.colors.Length <= 0 || this.Value >= this.colors.Length)
 					return System.Windows.Media.Colors.Transparent;
 
 				return this.colors[this.Value].WpfColor;

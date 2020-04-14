@@ -48,6 +48,10 @@ namespace ConceptMatrix.PoseModule
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
+			ISelectionService selectionService = Services.Get<ISelectionService>();
+			selectionService.SelectionChanged -= this.OnSelectionChanged;
+			Application.Current.Exit -= this.OnApplicationExiting;
+
 			if (this.ViewModel == null)
 				return;
 

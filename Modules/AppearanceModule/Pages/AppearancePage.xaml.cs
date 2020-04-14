@@ -21,6 +21,12 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			this.OnSelectionChanged(selectionService.CurrentSelection);
 		}
 
+		private void OnUnloaded(object sender, RoutedEventArgs e)
+		{
+			ISelectionService selectionService = Services.Get<ISelectionService>();
+			selectionService.SelectionChanged -= this.OnSelectionChanged;
+		}
+
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
 			IFileService fileService = Services.Get<IFileService>();
