@@ -135,6 +135,12 @@ namespace ConceptMatrix.GUI
 
 		private void OnThemeClick(object sender, RoutedEventArgs e)
 		{
+			if (this.DrawerHost.IsRightDrawerOpen)
+			{
+				this.DrawerHost.IsRightDrawerOpen = false;
+				return;
+			}
+
 			App.Services.Get<IViewService>().ShowDrawer<ThemeSettingsView>("Theme");
 		}
 
