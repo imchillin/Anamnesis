@@ -19,7 +19,7 @@
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -33,7 +33,7 @@
     <DocumentationFile>..\bin\ConceptMatrix.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\</OutputPath>
@@ -42,6 +42,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;</NoWarn>
     <DocumentationFile>..\bin\ConceptMatrix.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>cmtool-icon.ico</ApplicationIcon>
