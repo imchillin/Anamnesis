@@ -19,7 +19,7 @@
 	</UserControl.Resources>
 
 	<Grid>
-		<ListBox x:Name="FeaturesList" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionMode="Multiple" ScrollViewer.VerticalScrollBarVisibility="Hidden" MaxHeight="256">
+		<ListBox x:Name="FeaturesList" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionMode="Multiple" ScrollViewer.VerticalScrollBarVisibility="Hidden" MaxHeight="256" SelectionChanged="OnSelectionChanged">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
 					<WrapPanel/>

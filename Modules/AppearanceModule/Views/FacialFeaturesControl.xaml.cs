@@ -25,9 +25,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, FacialFeaturesControl>(nameof(Tribe), OnTribeChanged);
 		public static readonly IBind<byte> HeadDp = Binder.Register<byte, FacialFeaturesControl>(nameof(Head), OnHeadChanged);
 
+		private List<Option> features = new List<Option>();
+
 		public FacialFeaturesControl()
 		{
 			this.InitializeComponent();
+			OnValueChanged(this, this.Value);
 		}
 
 		public Appearance.Genders Gender
@@ -57,26 +60,31 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private static void OnGenderChanged(FacialFeaturesControl sender, Appearance.Genders value)
 		{
 			sender.GetFeatures();
+			OnValueChanged(sender, sender.Value);
 		}
 
 		private static void OnTribeChanged(FacialFeaturesControl sender, Appearance.Tribes value)
 		{
 			sender.GetFeatures();
+			OnValueChanged(sender, sender.Value);
 		}
 
 		private static void OnHeadChanged(FacialFeaturesControl sender, byte value)
 		{
 			sender.GetFeatures();
+			OnValueChanged(sender, sender.Value);
 		}
 
 		private static void OnValueChanged(FacialFeaturesControl sender, Appearance.FacialFeature value)
 		{
-			sender.GetFeatures();
+			foreach (Option op in sender.features)
+			{
+				op.Selected = sender.Value.HasFlag(op.Value);
+			}
 		}
 
-		private async void GetFeatures()
+		private void GetFeatures()
 		{
-			this.FeaturesList.SelectionChanged -= this.OnSelectionChanged;
 			this.FeaturesList.ItemsSource = null;
 
 			if (this.Tribe == 0)
@@ -100,7 +108,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (facialFeatures == null)
 				return;
 
-			List<Option> features = new List<Option>();
+			this.features.Clear();
 			for (byte i = 0; i < 7; i++)
 			{
 				int id = (this.Head - 1) + (i * 4);
@@ -111,19 +119,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 				Option op = new Option();
 				op.Icon = facialFeatures[id];
 				op.Value = this.GetValue(i);
-				op.Selected = this.Value.HasFlag(op.Value);
-				features.Add(op);
+				this.features.Add(op);
 			}
 
 			Option legacyTattoo = new Option();
 			legacyTattoo.Icon = Properties.Resources.LegacyTattoo.ToIImage();
 			legacyTattoo.Value = Appearance.FacialFeature.LegacyTattoo;
-			legacyTattoo.Selected = this.Value.HasFlag(legacyTattoo.Value);
-			features.Add(legacyTattoo);
+			this.features.Add(legacyTattoo);
 
-			this.FeaturesList.ItemsSource = features;
-			await Task.Delay(500);
-			this.FeaturesList.SelectionChanged += this.OnSelectionChanged;
+			this.FeaturesList.ItemsSource = this.features;
 		}
 
 		private Appearance.FacialFeature GetValue(int index)
@@ -153,6 +157,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.Value = flags;
 		}
 
+		[AddINotifyPropertyChangedInterface]
 		private class Option
 		{
 			public Appearance.FacialFeature Value { get; set; }
