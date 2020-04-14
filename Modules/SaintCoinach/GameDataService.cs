@@ -101,9 +101,11 @@ namespace ConceptMatrix.SaintCoinachModule
 			return Task.CompletedTask;
 		}
 
-		public async Task Start()
+		public Task Start()
 		{
-			string directory = await GetInstallationDirectory();
+			IInjectionService injection = Services.Get<IInjectionService>();
+			Process process = injection.GetGameProcess();
+			string directory = Path.GetDirectoryName(process.MainModule.FileName) + "\\..\\";
 
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
@@ -149,6 +151,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			Log.Write("Finished Reading data", @"Saint Coinach");
 			Log.Write("Initialization took " + sw.ElapsedMilliseconds + "ms", @"Saint Coinach");
+			return Task.CompletedTask;
 		}
 
 		public void Report(UpdateProgress value)
@@ -168,37 +171,6 @@ namespace ConceptMatrix.SaintCoinachModule
 			table.Import<TRow, TWrapper>(sheet);
 
 			return table;
-		}
-
-		private static async Task<string> GetInstallationDirectory()
-		{
-			ISettingsService settingsService = Services.Get<ISettingsService>();
-			GameDataSettings settings = await settingsService.Load<GameDataSettings>();
-
-			string installationPath = settings.InstallationPath;
-
-			while (!IsValidInstallation(installationPath))
-			{
-				// TODO: dialog explaining to select game folder?
-				IFileService fileService = Services.Get<IFileService>();
-				string dir = await fileService.OpenDirectory(
-					"Select game installation",
-					@"C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\",
-					@"C:\Program Files (x86)\Steam\steamapps\common\FINAL FANTASY XIV Online\");
-
-				if (string.IsNullOrEmpty(dir))
-				{
-					// TODO: graceful shutdown? work without data?
-					throw new Exception("Invalid installation");
-				}
-
-				installationPath = dir;
-			}
-
-			settings.InstallationPath = installationPath;
-			await settings.SaveAsync();
-
-			return installationPath;
 		}
 
 		private static bool IsValidInstallation(string path)

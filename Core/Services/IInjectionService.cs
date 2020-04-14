@@ -3,9 +3,13 @@
 
 namespace ConceptMatrix
 {
+	using System.Diagnostics;
+
 	public interface IInjectionService : IService
 	{
 		IMemory<T> GetMemory<T>(IBaseMemoryOffset baseAddress, params IMemoryOffset[] offsets);
+
+		Process GetGameProcess();
 	}
 
 	public interface IMemoryOffset

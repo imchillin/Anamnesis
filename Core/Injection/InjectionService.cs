@@ -86,6 +86,11 @@ namespace ConceptMatrix.Injection
 			return Task.CompletedTask;
 		}
 
+		public Process GetGameProcess()
+		{
+			return this.Process.Process;
+		}
+
 		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
 		{
 			List<IMemoryOffset> newOffsets = new List<IMemoryOffset>();
