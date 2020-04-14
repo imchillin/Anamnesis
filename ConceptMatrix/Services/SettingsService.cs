@@ -13,7 +13,7 @@ namespace ConceptMatrix.GUI.Services
 	{
 		public const string SettingsDirectory = "./Settings/";
 
-		public Task Initialize(IServices services)
+		public Task Initialize()
 		{
 			if (!Directory.Exists(SettingsDirectory))
 				Directory.CreateDirectory(SettingsDirectory);

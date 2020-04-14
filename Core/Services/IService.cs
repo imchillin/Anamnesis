@@ -7,7 +7,7 @@ namespace ConceptMatrix
 
 	public interface IService
 	{
-		Task Initialize(IServices services);
+		Task Initialize();
 		Task Start();
 		Task Shutdown();
 	}

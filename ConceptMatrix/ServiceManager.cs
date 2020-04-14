@@ -53,7 +53,7 @@ namespace ConceptMatrix.GUI
 				this.services.Add(service);
 
 				OnServiceInitializing?.Invoke(serviceName);
-				await service.Initialize(this);
+				await service.Initialize();
 
 				// If we've already started, and this service is being added late (possibly by a module from its start method) start the service immediately.
 				if (this.IsStarted)
@@ -88,6 +88,7 @@ namespace ConceptMatrix.GUI
 		{
 			// Since starting a service _can_ add new services, copy the list first.
 			List<IService> services = new List<IService>(this.services);
+			services.Reverse();
 			foreach (IService service in services)
 			{
 				OnServiceStarting?.Invoke(GetServiceName(service.GetType()));

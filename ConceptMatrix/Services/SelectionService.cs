@@ -62,7 +62,7 @@ namespace ConceptMatrix.GUI.Services
 			private set;
 		}
 
-		public Task Initialize(IServices services)
+		public Task Initialize()
 		{
 			this.IsAlive = true;
 			this.UseGameTarget = true;
@@ -108,9 +108,9 @@ namespace ConceptMatrix.GUI.Services
 					string name = baseOffset.GetValue(Offsets.Name);
 
 					// Hide name while debugging
-					#if DEBUG
+#if DEBUG
 					name = "Tester";
-					#endif
+#endif
 
 					string actorId = mode.ToString() + "_" + name;
 

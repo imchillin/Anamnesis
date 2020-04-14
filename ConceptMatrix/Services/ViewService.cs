@@ -12,9 +12,11 @@ namespace ConceptMatrix.GUI.Services
 
 	public class ViewService : IViewService
 	{
-		private Dictionary<string, Type> pages = new Dictionary<string, Type>();
+		private Dictionary<string, Type> pendingPages = new Dictionary<string, Type>();
+		private Dictionary<string, UserControl> pages = new Dictionary<string, UserControl>();
+		private bool isStarted = false;
 
-		public delegate void PageEvent(string path, Type pageType);
+		public delegate void PageEvent(string path, UserControl page);
 		public delegate Task DrawerEvent(string title, UserControl drawer, DrawerDirection direction);
 
 		public event PageEvent AddingPage;
@@ -29,7 +31,7 @@ namespace ConceptMatrix.GUI.Services
 			}
 		}
 
-		public Task Initialize(IServices services)
+		public Task Initialize()
 		{
 			return Task.CompletedTask;
 		}
@@ -41,27 +43,40 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Start()
 		{
+			foreach ((string path, Type pageType) in this.pendingPages)
+			{
+				this.CreatePage(path, pageType);
+			}
+
+			this.pendingPages.Clear();
+
+			this.isStarted = true;
 			return Task.CompletedTask;
 		}
 
 		public void AddPage<T>(string path)
 		{
-			Type view = typeof(T);
+			Type pageType = typeof(T);
 
 			if (this.pages.ContainsKey(path))
 				throw new Exception($"Page already registered at path: {path}");
 
-			if (!typeof(UserControl).IsAssignableFrom(view))
-				throw new Exception($"Page: {view} does not extend from UserControl.");
+			if (!typeof(UserControl).IsAssignableFrom(pageType))
+				throw new Exception($"Page: {pageType} does not extend from UserControl.");
 
-			this.pages.Add(path, view);
-
-			this.AddingPage?.Invoke(path, view);
+			if (!this.isStarted)
+			{
+				this.pendingPages.Add(path, pageType);
+			}
+			else
+			{
+				this.CreatePage(path, pageType);
+			}
 		}
 
 		public void ShowPage(string path)
 		{
-			Type page = this.GetPage(path);
+			UserControl page = this.GetPage(path);
 			this.ShowingPage?.Invoke(path, page);
 		}
 
@@ -107,7 +122,33 @@ namespace ConceptMatrix.GUI.Services
 			return view;
 		}
 
-		private Type GetPage(string path)
+		private void CreatePage(string path, Type type)
+		{
+			UserControl page = null;
+
+			try
+			{
+				App.Current.Dispatcher.Invoke(() =>
+				{
+					page = Activator.CreateInstance(type) as UserControl;
+				});
+			}
+			catch (TargetInvocationException ex)
+			{
+				Log.Write(new Exception($"Failed to create page: {type}", ex.InnerException));
+				return;
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception($"Failed to create page: {type}", ex));
+				return;
+			}
+
+			this.pages.Add(path, page);
+			this.AddingPage?.Invoke(path, page);
+		}
+
+		private UserControl GetPage(string path)
 		{
 			if (!this.pages.ContainsKey(path))
 				throw new Exception($"View not found for path: {path}");

@@ -35,9 +35,9 @@ namespace ConceptMatrix.GUI
 				ex = ex.InnerException;
 			}
 
-			#if DEBUG
+#if DEBUG
 			this.DetailsExpander.IsExpanded = true;
-			#endif
+#endif
 		}
 
 		public static int Count

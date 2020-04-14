@@ -14,9 +14,9 @@ namespace ConceptMatrix.GUI.Services
 	{
 		private List<IModule> modules = new List<IModule>();
 
-		public Task Initialize(IServices services)
+		public Task Initialize()
 		{
-			return this.InitializeModules("./Modules/", services);
+			return this.InitializeModules("./Modules/");
 		}
 
 		public async Task Start()
@@ -32,7 +32,7 @@ namespace ConceptMatrix.GUI.Services
 			return this.ShutdownModules();
 		}
 
-		private async Task InitializeModules(string directory, IServices services)
+		private async Task InitializeModules(string directory)
 		{
 			if (!Directory.Exists(directory))
 				Directory.CreateDirectory(directory);
@@ -43,11 +43,11 @@ namespace ConceptMatrix.GUI.Services
 			foreach (FileInfo assemblyInfo in assemblies)
 			{
 				Assembly assembly = Assembly.LoadFrom(assemblyInfo.FullName);
-				await this.InitializeModules(assembly, services);
+				await this.InitializeModules(assembly);
 			}
 		}
 
-		private async Task InitializeModules(Assembly targetAssembly, IServices services)
+		private async Task InitializeModules(Assembly targetAssembly)
 		{
 			try
 			{

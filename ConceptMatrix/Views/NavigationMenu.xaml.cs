@@ -41,7 +41,7 @@ namespace ConceptMatrix.GUI.Views
 
 		public ObservableCollection<NavigationItem> Items { get; set; } = new ObservableCollection<NavigationItem>();
 
-		private void OnAddPage(string path, Type pageType)
+		private void OnAddPage(string path, UserControl page)
 		{
 			this.Items.Add(new NavigationItem(path));
 		}

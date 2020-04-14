@@ -31,7 +31,7 @@ namespace ConceptMatrix.Injection
 			private set;
 		}
 
-		public Task Initialize(IServices services)
+		public Task Initialize()
 		{
 			Instance = this;
 			this.isActive = true;

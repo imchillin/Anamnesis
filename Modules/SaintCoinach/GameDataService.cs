@@ -91,7 +91,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			private set;
 		}
 
-		public Task Initialize(IServices services)
+		public Task Initialize()
 		{
 			return Task.CompletedTask;
 		}

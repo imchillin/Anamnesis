@@ -186,7 +186,6 @@
     </Page>
     <Page Include="Controls\NumberBox.xaml">
       <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\QuaternionEditor.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -12,7 +12,7 @@ namespace ConceptMatrix.GUI.Services
 
 	public class FileService : IFileService
 	{
-		public Task Initialize(IServices services)
+		public Task Initialize()
 		{
 			return Task.CompletedTask;
 		}

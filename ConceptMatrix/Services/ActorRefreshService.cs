@@ -13,7 +13,7 @@ namespace ConceptMatrix.GUI.Services
 		private int applyCountdown = 0;
 		private Task applyTask;
 
-		public Task Initialize(IServices services)
+		public Task Initialize()
 		{
 			return Task.CompletedTask;
 		}

@@ -43,6 +43,7 @@
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;NU1608;CS0067;</NoWarn>
     <DocumentationFile>..\bin\ConceptMatrix.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>cmtool-icon.ico</ApplicationIcon>

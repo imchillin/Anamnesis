@@ -4,7 +4,7 @@
 namespace ConceptMatrix.GUI
 {
 	using System;
-	using System.Reflection;
+	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -21,6 +21,8 @@ namespace ConceptMatrix.GUI
 		private UserControl currentView;
 		private ViewService viewService;
 
+		private Dictionary<Type, UserControl> pageCache = new Dictionary<Type, UserControl>();
+
 		public MainWindow()
 		{
 			this.InitializeComponent();
@@ -32,24 +34,13 @@ namespace ConceptMatrix.GUI
 			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
 			this.Opacity = App.Settings.Opacity;
 
-			this.OnShowPage("Home", typeof(HomeView));
+			this.OnShowPage("Home", new HomeView());
 		}
 
-		private void OnShowPage(string path, Type pageType)
+		private void OnShowPage(string path, UserControl page)
 		{
-			try
-			{
-				this.currentView = (UserControl)Activator.CreateInstance(pageType);
-				this.ViewArea.Content = this.currentView;
-			}
-			catch (TargetInvocationException ex)
-			{
-				Log.Write(new Exception($"Failed to create view: {pageType}", ex.InnerException));
-			}
-			catch (Exception ex)
-			{
-				Log.Write(new Exception($"Failed to create view: {pageType}", ex));
-			}
+			this.currentView = page;
+			this.ViewArea.Content = this.currentView;
 		}
 
 		private async Task OnShowDrawer(string title, UserControl view, DrawerDirection direction)
