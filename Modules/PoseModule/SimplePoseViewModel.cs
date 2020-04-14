@@ -8,6 +8,7 @@ namespace ConceptMatrix.PoseModule
 	using System.ComponentModel;
 	using System.Reflection;
 	using System.Threading;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using ConceptMatrix;
 	using ConceptMatrix.ThreeD;

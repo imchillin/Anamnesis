@@ -56,6 +56,9 @@ namespace ConceptMatrix.PoseModule
 
 		private void BindDataContext()
 		{
+			if (!this.IsVisible)
+				return;
+
 			try
 			{
 				if (this.DataContext is SimplePoseViewModel viewModel)
@@ -226,6 +229,11 @@ namespace ConceptMatrix.PoseModule
 				line.Stroke = stroke;
 				line.StrokeThickness = thickness;
 			}
+		}
+
+		private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			this.BindDataContext();
 		}
 	}
 }
