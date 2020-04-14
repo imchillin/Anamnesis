@@ -6,7 +6,7 @@
 		<AssemblyName>ConceptMatrix.SaintCoinach</AssemblyName>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<OutputPath>..\..\bin\Modules</OutputPath>
+		<OutputPath>bin\</OutputPath>
 		<DocumentationFile>bin\ConceptMatrix.SaintCoinach</DocumentationFile>
 		<WarningsAsErrors />
 		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;</NoWarn>
@@ -22,17 +22,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Reference Include="Core">
-			<HintPath>..\..\bin\Core.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="SaintCoinach">
-			<HintPath>SaintCoinach\SaintCoinach.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Remove="stylecop.json" />
 	</ItemGroup>
 
@@ -46,6 +35,17 @@
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 	  <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Core\Core.csproj" />
+	  <ProjectReference Include="..\..\WPFStyles\WpfStyles.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="SaintCoinach">
+	    <HintPath>SaintCoinach\SaintCoinach.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -77,5 +77,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="md &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;xcopy /s /i /y &quot;$(TargetDir)SaintCoinach&quot; &quot;$(SolutionDir)bin\Modules\SaintCoinach&quot;" />
+	</Target>
 
 </Project>

@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<RootNamespace>ConceptMatrix</RootNamespace>
-		<DocumentationFile>\bin\ConceptMatrix.Core</DocumentationFile>
+		<DocumentationFile>bin\ConceptMatrix.Core</DocumentationFile>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<OutputPath>bin\</OutputPath>

@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Modules\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Modules\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -38,14 +38,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ConceptMatrix.WpfStyles">
-      <HintPath>..\..\bin\ConceptMatrix.WpfStyles.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Core">
-      <HintPath>..\..\bin\Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="FontAwesome.Sharp">
       <HintPath>..\..\bin\FontAwesome.Sharp.dll</HintPath>
       <Private>False</Private>
@@ -232,5 +224,20 @@
   <ItemGroup>
     <Resource Include="Assets\FeatureSelectionborder.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Core.csproj">
+      <Project>{12021f91-2adb-4897-9671-356f7d7b77b6}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WPFStyles\WpfStyles.csproj">
+      <Project>{f76c98a0-59bf-4bf8-ab41-0218859a89bd}</Project>
+      <Name>WpfStyles</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>md "$(SolutionDir)bin\Modules\"
+copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)bin\Modules\"
+copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin\Modules\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
