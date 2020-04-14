@@ -21,7 +21,7 @@
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
 
 	<Grid Margin="10">
-		<Border Background="{DynamicResource MaterialDesignCardBackground}"
+		<Border Background="{DynamicResource MaterialDesignPaper}"
 			BorderBrush="{DynamicResource PrimaryHueMidBrush}"
 			BorderThickness="1"
 			CornerRadius="3"
@@ -31,8 +31,8 @@
 			</Border.Effect>
 		</Border>
 
-		<Border Background="{DynamicResource MaterialDesignCardBackground}"
-			BorderBrush="LightGray"
+		<Border Background="{DynamicResource MaterialDesignPaper}"
+			BorderBrush="#50000000"
 			BorderThickness="1"
 			CornerRadius="3"
 			x:Name="InActiveBorder">
@@ -52,28 +52,89 @@
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 
-			<Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}">
+			<Border Grid.Column="0" Grid.RowSpan="2" Height="150" VerticalAlignment="Top" HorizontalAlignment="Left">
+				<Image Source="cmtool-icon.ico" Grid.Row="0" VerticalAlignment="Top" Margin="0" Opacity="0.5"/>
+			</Border>
+			
+			<!-- Main Area -->
+			<Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0">
 				<Border.Effect>
-					<DropShadowEffect ShadowDepth="0" BlurRadius="20" Opacity="0.5"/>
+					<DropShadowEffect ShadowDepth="0" BlurRadius="10" Direction="180" Opacity="0.25"/>
 				</Border.Effect>
 				
 				<ContentPresenter x:Name="ViewArea" Margin="6"/>
 			</Border>
 			
-			<Grid Grid.Row="1">
+			<!-- Side Bar-->
+			<Grid Grid.Row="0" Grid.RowSpan="2">
 				<Grid.RowDefinitions>
+					<RowDefinition Height="100"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 
-				<Rectangle Fill="Black" Grid.RowSpan="2" Opacity="0.25"/>
+				<views:TargetView Margin="10" Grid.Row="1"/>
 
-				<views:TargetView Margin="10"/>
-
-				<views:NavigationMenu Grid.Row="1"/>
+				<views:NavigationMenu Grid.Row="2"/>
 			</Grid>
-			
-			<materialdesign:DrawerHost Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DrawerHost">
+
+			<!-- TitleBar -->
+			<TextBlock Grid.Column="1" Text="Concept Matrix 3.0" VerticalAlignment="Center" Margin="3, 0, 0, 0" Opacity="0.25" Foreground="{DynamicResource MaterialDesignBody}"/>
+
+			<Border Background="Transparent" 
+				CornerRadius="2, 2, 0, 0"
+				Grid.ColumnSpan="2"
+				VerticalAlignment="Top"
+				MouseDown="OnTitleBarMouseDown">
+
+				<Grid>
+
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+						<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnThemeClick" BorderThickness="0">
+							<fa:IconBlock Icon="PaintBrush" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
+						</Button>
+
+						<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" 
+									  x:Name="AlwaysOnTopToggle"
+									  Margin="3,0,0,0" 
+									  Width="28" 
+									  Height="28" 
+									  Padding="0" 
+									  Background="Transparent" 
+									  BorderThickness="0"
+									  Checked="OnAlwaysOnTopChecked"
+									  Unchecked="OnAlwaysOnTopUnchecked">
+						
+							<ToggleButton.Content>
+								<Grid Width="28" Height="28">
+									<fa:IconBlock Icon="ThumbTack" Opacity="0.5" Margin="6, 7, 6, 6" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
+								</Grid>
+							</ToggleButton.Content>
+							<materialdesign:ToggleButtonAssist.OnContent>
+								<Grid Width="28" Height="28">
+									<Ellipse Stroke="Black" Fill="Black" StrokeThickness="1" Margin="4" Opacity="0.35"/>
+									<fa:IconBlock Foreground="{DynamicResource SecondaryAccentBrush}" Icon="ThumbTack" Margin="6, 7, 6, 6" FontSize="12"/>
+								</Grid>
+							</materialdesign:ToggleButtonAssist.OnContent>
+
+					
+						</ToggleButton>
+
+						<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnMinimiseClick">
+							<fa:IconBlock Icon="WindowMinimize" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
+						</Button>
+
+						<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnCloseClick">
+							<fa:IconBlock Icon="Times" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
+						</Button>
+
+					</StackPanel>
+				</Grid>
+			</Border>
+
+			<!-- Drawer flyouts -->
+			<materialdesign:DrawerHost Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DrawerHost" Margin="1">
 				<materialdesign:DrawerHost.RightDrawerContent>
 					<Grid Width="256">
 						<Grid.RowDefinitions>
@@ -101,56 +162,7 @@
 					<ContentPresenter Height="128" x:Name="DrawerBottom" Margin="12"/>
 				</materialdesign:DrawerHost.BottomDrawerContent>
 			</materialdesign:DrawerHost>
-
-			<Border Background="{DynamicResource SecondaryAccentBrush}" 
-				CornerRadius="2, 2, 0, 0"
-				Grid.ColumnSpan="2"
-				VerticalAlignment="Top"
-				MouseDown="OnTitleBarMouseDown">
-
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-
-					<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnThemeClick" BorderThickness="0">
-						<fa:IconBlock Icon="PaintBrush" Opacity="0.5" FontSize="12"/>
-					</Button>
-
-					<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" 
-								  x:Name="AlwaysOnTopToggle"
-								  Margin="3,0,0,0" 
-								  Width="28" 
-								  Height="28" 
-								  Padding="0" 
-								  Background="Transparent" 
-								  BorderThickness="0"
-								  Checked="OnAlwaysOnTopChecked"
-								  Unchecked="OnAlwaysOnTopUnchecked">
-						
-						<ToggleButton.Content>
-							<Grid Width="28" Height="28">
-								<fa:IconBlock Icon="ThumbTack" Opacity="0.35" Margin="6, 7, 6, 6" FontSize="12"/>
-							</Grid>
-						</ToggleButton.Content>
-						<materialdesign:ToggleButtonAssist.OnContent>
-							<Grid Width="28" Height="28">
-								<Ellipse Stroke="Black" Fill="Black" StrokeThickness="1" Margin="4" Opacity="0.35"/>
-								<fa:IconBlock Foreground="{DynamicResource SecondaryAccentBrush}" Icon="ThumbTack" Margin="6, 7, 6, 6" FontSize="12"/>
-							</Grid>
-						</materialdesign:ToggleButtonAssist.OnContent>
-
-					
-					</ToggleButton>
-
-					<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnMinimiseClick">
-						<fa:IconBlock Icon="WindowMinimize" Opacity="0.35" FontSize="12"/>
-					</Button>
-
-					<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnCloseClick">
-						<fa:IconBlock Icon="Times" Opacity="0.35" FontSize="12"/>
-					</Button>
-
-				</StackPanel>
-			</Border>
-
+			
 		</Grid>
 	</Grid>
 </Window>

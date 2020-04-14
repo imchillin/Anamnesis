@@ -22,11 +22,11 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Label Grid.Column="0" Grid.Row="0" Content="Window Opacity"/>
-		<Slider x:Name="OpacitySlider" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsMoveToPointEnabled="False" VerticalAlignment="Center" Margin="6" PreviewMouseUp="Slider_MouseUp" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
+		<Label Margin="10,0,0,0" Grid.Column="0" Grid.Row="0" Content="Window Opacity"/>
+		<Slider Margin="6, 6, 7, 6" x:Name="OpacitySlider" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsMoveToPointEnabled="False" VerticalAlignment="Center" PreviewMouseUp="Slider_MouseUp" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
 		
-		<Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Content="Zodiark Theme"/>
-		<ToggleButton Grid.Column="2" Grid.Row="1" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Stretch" IsChecked="{Binding Zodiark}"/>
+		<Label Margin="10,0,0,0" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Content="Zodiark Theme"/>
+		<ToggleButton Margin="0, 0, 6, 10" Grid.Column="2" Grid.Row="1" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Stretch" IsChecked="{Binding Zodiark}"/>
 
 		<ListBox Grid.ColumnSpan="3" Grid.Row="2" ItemsSource="{Binding Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
 			<ListBox.ItemTemplate>
