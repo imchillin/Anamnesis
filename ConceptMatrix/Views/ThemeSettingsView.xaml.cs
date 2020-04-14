@@ -29,6 +29,8 @@ namespace ConceptMatrix.GUI.Views
 			this.themeViewModel.Read(this.paletteHelper.GetTheme());
 			this.DataContext = this.themeViewModel;
 			this.themeViewModel.PropertyChanged += this.OnPropertyChanged;
+
+			this.OpacitySlider.Value = this.themeViewModel.Opacity;
 		}
 
 		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -36,6 +38,11 @@ namespace ConceptMatrix.GUI.Views
 			ITheme theme = this.paletteHelper.GetTheme();
 			this.themeViewModel.Write(theme);
 			this.paletteHelper.SetTheme(theme);
+		}
+
+		private void Slider_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			this.themeViewModel.Opacity = this.OpacitySlider.Value;
 		}
 
 		public class ThemeViewModel : INotifyPropertyChanged
