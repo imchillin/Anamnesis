@@ -4,6 +4,7 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System;
+	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.Exceptions;
@@ -42,7 +43,11 @@ namespace ConceptMatrix.GUI.Services
 
 				try
 				{
+					Stopwatch sw = new Stopwatch();
+					sw.Start();
 					this.SelectionChanged?.Invoke(this.currentSelection);
+					sw.Stop();
+					Log.Write("took " + sw.ElapsedMilliseconds + "ms to change selection");
 				}
 				catch (Exception ex)
 				{
@@ -94,7 +99,7 @@ namespace ConceptMatrix.GUI.Services
 			{
 				try
 				{
-					await Task.Delay(1000);
+					await Task.Delay(250);
 
 					Selection.Modes mode = this.GetMode();
 					IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Gpose : Offsets.Target;

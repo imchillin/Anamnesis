@@ -4,15 +4,18 @@
 namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.ComponentModel;
+	using System.Diagnostics;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for EquipmentView.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
 	public partial class EquipmentEditor : UserControl
 	{
 		private IMemory<Equipment> eqMem;
@@ -86,7 +89,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				this.ContentArea.DataContext = null;
+				////this.ContentArea.DataContext = null;
 				this.ContentArea.DataContext = this;
 				this.IsEnabled = true;
 			});

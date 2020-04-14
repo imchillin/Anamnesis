@@ -8,10 +8,6 @@
 			 mc:Ignorable="d" 
 			 d:DesignWidth="128">
 
-	<UserControl.Resources>
-		<converters:BoolToIntConverter x:Key="B2I"/>
-	</UserControl.Resources>
-	
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition>
