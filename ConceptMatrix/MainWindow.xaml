@@ -112,7 +112,7 @@
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
 					<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnThemeClick" BorderThickness="0">
-						<fa:IconBlock Icon="PaintBrush" Opacity="0.35" FontSize="12"/>
+						<fa:IconBlock Icon="PaintBrush" Opacity="0.5" FontSize="12"/>
 					</Button>
 
 					<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" 
