@@ -9,6 +9,7 @@ namespace ConceptMatrix.GUI
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
+	using System.Windows.Media.Animation;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
@@ -160,12 +161,21 @@ namespace ConceptMatrix.GUI
 
 		private void Window_MouseEnter(object sender, MouseEventArgs e)
 		{
-			this.Opacity = 1.0;
+			if (App.Settings.Opacity == 1.0)
+			{
+				this.Opacity = 1.0;
+				return;
+			}
+
+			this.Animate(Window.OpacityProperty, 1.0, 100);
 		}
 
 		private void Window_MouseLeave(object sender, MouseEventArgs e)
 		{
-			this.Opacity = App.Settings.Opacity;
+			if (App.Settings.Opacity == 1.0)
+				return;
+
+			this.Animate(Window.OpacityProperty, App.Settings.Opacity, 250);
 		}
 	}
 }

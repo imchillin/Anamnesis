@@ -102,6 +102,7 @@
     </Compile>
     <Compile Include="Extensions\ActorTypesExtensions.cs" />
     <Compile Include="Extensions\BitmapExtensions.cs" />
+    <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\UserControlExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

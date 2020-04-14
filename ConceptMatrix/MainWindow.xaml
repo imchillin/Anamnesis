@@ -18,7 +18,6 @@
 		Background="Transparent"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"
-		
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
 
 	<Grid Margin="10">
