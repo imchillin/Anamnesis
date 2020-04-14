@@ -94,12 +94,16 @@ namespace ConceptMatrix.GUI.Services
 		{
 			await Task.Delay(500);
 			IInjectionService injection = App.Services.Get<IInjectionService>();
+			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
 
 			while (this.IsAlive)
 			{
 				try
 				{
 					await Task.Delay(250);
+
+					while (refreshService.IsRefreshing)
+						await Task.Delay(250);
 
 					Selection.Modes mode = this.GetMode();
 					IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Gpose : Offsets.Target;

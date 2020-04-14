@@ -13,6 +13,12 @@ namespace ConceptMatrix.GUI.Services
 		private int applyCountdown = 0;
 		private Task applyTask;
 
+		public bool IsRefreshing
+		{
+			get;
+			private set;
+		}
+
 		public Task Initialize()
 		{
 			return Task.CompletedTask;
@@ -48,6 +54,8 @@ namespace ConceptMatrix.GUI.Services
 					await Task.Delay(100);
 				}
 
+				this.IsRefreshing = true;
+
 				using (IMemory<ActorTypes> actorTypeMem = actorOffset.GetMemory(Offsets.ActorType))
 				{
 					using (IMemory<byte> actorRenderMem = actorOffset.GetMemory(Offsets.ActorRender))
@@ -69,6 +77,8 @@ namespace ConceptMatrix.GUI.Services
 						}
 					}
 				}
+
+				this.IsRefreshing = false;
 			}
 		}
 	}

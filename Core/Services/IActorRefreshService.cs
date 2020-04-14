@@ -5,6 +5,11 @@ namespace ConceptMatrix
 {
 	public interface IActorRefreshService : IService
 	{
+		bool IsRefreshing
+		{
+			get;
+		}
+
 		void Refresh(IBaseMemoryOffset offset);
 	}
 }
