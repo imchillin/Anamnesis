@@ -4,6 +4,7 @@
 namespace ConceptMatrix.Injection.Memory
 {
 	using System;
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Runtime.InteropServices;
 	using ConceptMatrix;
@@ -20,6 +21,8 @@ namespace ConceptMatrix.Injection.Memory
 
 		private Exception lastException;
 
+		private string guid;
+
 		public MemoryBase(ProcessInjection process, UIntPtr address, ulong length)
 			: base(process, address)
 		{
@@ -31,6 +34,8 @@ namespace ConceptMatrix.Injection.Memory
 
 			// Tick once to ensure current value is valid
 			this.Tick();
+
+			this.guid = Guid.NewGuid().ToString();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -40,6 +45,9 @@ namespace ConceptMatrix.Injection.Memory
 		{
 			get
 			{
+				if (!this.Active)
+					throw new Exception("Cannot access disposed memory");
+
 				if (this.lastException != null)
 					throw this.lastException;
 
@@ -48,13 +56,22 @@ namespace ConceptMatrix.Injection.Memory
 
 			set
 			{
+				if (!this.Active)
+					throw new Exception("Cannot access disposed memory");
+
 				this.value = value;
-				if (this.DoWrite(value))
+
+				bool changed = false;
+				lock (this)
 				{
-					this.ValueChanged?.Invoke(this, value);
+					changed = this.DoWrite(value);
 				}
 
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+				if (changed)
+				{
+					this.ValueChanged?.Invoke(this, value);
+					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+				}
 			}
 		}
 
@@ -62,11 +79,17 @@ namespace ConceptMatrix.Injection.Memory
 		{
 			get
 			{
+				if (!this.Active)
+					throw new Exception("Cannot access disposed memory");
+
 				return this.freeze;
 			}
 
 			set
 			{
+				if (!this.Active)
+					throw new Exception("Cannot access disposed memory");
+
 				this.freeze = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
 			}
@@ -84,26 +107,37 @@ namespace ConceptMatrix.Injection.Memory
 		{
 			try
 			{
-				this.lastException = null;
+				if (!this.Active)
+					throw new Exception("Cannot access disposed memory");
 
-				if (this.Freeze)
+				bool changed = false;
+				lock (this)
 				{
-					// Frozen values get written constantly
-					this.DoWrite(this.value);
-				}
-				else
-				{
-					// unfrozen values get read constantly
-					this.DoRead();
+					this.lastException = null;
 
-					if (!Equals(this.newData, this.oldData))
+					if (this.Freeze)
 					{
-						this.value = this.Read(ref this.newData);
-						Array.Copy(this.newData, this.oldData, (int)this.length);
-
-						this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
-						this.ValueChanged?.Invoke(this, this.value);
+						// Frozen values get written constantly
+						this.DoWrite(this.value);
 					}
+					else
+					{
+						// unfrozen values get read constantly
+						this.DoRead();
+
+						if (!Equals(this.newData, this.oldData))
+						{
+							this.value = this.Read(ref this.newData);
+							Array.Copy(this.newData, this.oldData, (int)this.length);
+							changed = true;
+						}
+					}
+				}
+
+				if (changed)
+				{
+					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+					this.ValueChanged?.Invoke(this, this.value);
 				}
 			}
 			catch (Exception ex)

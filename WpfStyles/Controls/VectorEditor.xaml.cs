@@ -6,6 +6,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
+	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
 	using Vector = ConceptMatrix.Vector;
@@ -15,9 +16,9 @@ namespace ConceptMatrix.WpfStyles.Controls
 	/// </summary>
 	public partial class VectorEditor : UserControl, INotifyPropertyChanged
 	{
-		public static readonly DependencyProperty ExpandedProperty = DependencyProperty.Register(nameof(Expanded), typeof(bool), typeof(VectorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
-		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(Vector), typeof(VectorEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnPropertyChanged)));
-		public static readonly DependencyProperty TickFrequencyProperty = DependencyProperty.Register(nameof(TickFrequency), typeof(double), typeof(VectorEditor));
+		public static readonly IBind<bool> ExpandedDp = Binder.Register<bool, VectorEditor>(nameof(Expanded));
+		public static readonly IBind<Vector> ValueDp = Binder.Register<Vector, VectorEditor>(nameof(Value), OnValueChanged);
+		public static readonly IBind<double> TickFrequencyDp = Binder.Register<double, VectorEditor>(nameof(TickFrequency));
 
 		public VectorEditor()
 		{
@@ -32,29 +33,20 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		public bool Expanded
 		{
-			get
-			{
-				return (bool)this.GetValue(ExpandedProperty);
-			}
-
-			set
-			{
-				this.SetValue(ExpandedProperty, value);
-			}
+			get => ExpandedDp.Get(this);
+			set => ExpandedDp.Set(this, value);
 		}
 
-		[AlsoNotifyFor(nameof(VectorEditor.X), nameof(VectorEditor.Y), nameof(VectorEditor.Z))]
 		public Vector Value
 		{
-			get
-			{
-				return (Vector)this.GetValue(ValueProperty);
-			}
+			get => ValueDp.Get(this);
+			set => ValueDp.Set(this, value);
+		}
 
-			set
-			{
-				this.SetValue(ValueProperty, value);
-			}
+		public double TickFrequency
+		{
+			get => TickFrequencyDp.Get(this);
+			set => TickFrequencyDp.Set(this, value);
 		}
 
 		[AlsoNotifyFor(nameof(VectorEditor.Value))]
@@ -102,31 +94,11 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
-		public double TickFrequency
+		private static void OnValueChanged(VectorEditor sender, Vector value)
 		{
-			get
-			{
-				return (double)this.GetValue(TickFrequencyProperty);
-			}
-			set
-			{
-				this.SetValue(TickFrequencyProperty, value);
-			}
-		}
-
-		private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (sender is VectorEditor view)
-			{
-				view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(e.Property.Name));
-
-				if (e.Property.Name == nameof(Value))
-				{
-					view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.X)));
-					view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.Y)));
-					view.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.Z)));
-				}
-			}
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.X)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.Y)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.Z)));
 		}
 	}
 }

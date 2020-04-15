@@ -5,7 +5,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
+	using PropertyChanged;
 
+	[AddINotifyPropertyChangedInterface]
 	public class EquipmentWeaponViewModel : EquipmentBaseViewModel
 	{
 		private IMemory<Weapon> memory;
@@ -20,6 +22,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 			this.colorMem = selection.BaseAddress.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandColor : Offsets.OffhandColor);
 			this.scaleMem = selection.BaseAddress.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandScale : Offsets.OffhandScale);
+			this.scaleMem.ValueChanged += this.ScaleMem_ValueChanged;
 
 			this.modelSet = this.memory.Value.Set;
 			this.modelBase = this.memory.Value.Base;
@@ -43,23 +46,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			}
 		}
 
-		public override Vector Scale
-		{
-			get
-			{
-				if (!this.HasWeapon)
-					return Vector.One;
-
-				return this.scaleMem.Value;
-			}
-
-			set
-			{
-				this.scaleMem.Value = value;
-			}
-		}
-
-		public override Color Color
+		/*public override Color Color
 		{
 			get
 			{
@@ -73,11 +60,12 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			{
 				this.colorMem.Value = value;
 			}
-		}
+		}*/
 
 		public override void Dispose()
 		{
 			this.memory.ValueChanged -= this.Memory_ValueChanged;
+			this.scaleMem.ValueChanged -= this.ScaleMem_ValueChanged;
 			this.memory.Dispose();
 			this.colorMem.Dispose();
 			this.scaleMem.Dispose();
@@ -95,6 +83,8 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			w.Set = this.ModelSet;
 			w.Variant = this.ModelVariant;
 			this.memory.Value = w;
+
+			this.scaleMem.Value = this.Scale;
 		}
 
 		private void Memory_ValueChanged(object sender, object value)
@@ -106,6 +96,11 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 			this.Item = this.GetItem();
 			this.Dye = this.GetDye();
+		}
+
+		private void ScaleMem_ValueChanged(object sender, object value)
+		{
+			this.Scale = (Vector)value;
 		}
 	}
 }

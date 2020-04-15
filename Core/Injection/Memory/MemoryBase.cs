@@ -22,6 +22,14 @@ namespace ConceptMatrix.Injection.Memory
 			{
 				activeMemory.Add(this);
 			}
+
+			this.Active = true;
+		}
+
+		public bool Active
+		{
+			get;
+			private set;
 		}
 
 		public static void TickAllActiveMemory()
@@ -38,12 +46,14 @@ namespace ConceptMatrix.Injection.Memory
 			}
 		}
 
-		public void Dispose()
+		public virtual void Dispose()
 		{
 			lock (activeMemory)
 			{
 				activeMemory.Remove(this);
 			}
+
+			this.Active = false;
 		}
 
 		protected abstract void Tick();

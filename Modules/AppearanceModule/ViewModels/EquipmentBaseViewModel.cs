@@ -9,7 +9,8 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	using ConceptMatrix.GameData;
 	using PropertyChanged;
 
-	public abstract class EquipmentBaseViewModel : INotifyPropertyChanged, IDisposable
+	[AddINotifyPropertyChangedInterface]
+	public abstract class EquipmentBaseViewModel : IDisposable
 	{
 		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
@@ -24,6 +25,8 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		private IItem item;
 		private IDye dye;
 		private Selection target;
+		private Vector scale;
+		private Color color;
 
 		public EquipmentBaseViewModel(ItemSlots slot, Selection selection)
 		{
@@ -34,7 +37,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		public delegate void ChangedHandler();
 
-		public event PropertyChangedEventHandler PropertyChanged;
 		public event ChangedHandler Changed;
 
 		public ItemSlots Slot
@@ -116,19 +118,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			}
 		}
 
-		public virtual Color Color
-		{
-			get;
-			set;
-		}
-
 		public bool CanColor
-		{
-			get;
-			set;
-		}
-
-		public virtual Vector Scale
 		{
 			get;
 			set;
@@ -151,6 +141,32 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			get
 			{
 				return this.Slot.ToDisplayName();
+			}
+		}
+
+		public Vector Scale
+		{
+			get
+			{
+				return this.scale;
+			}
+			set
+			{
+				this.scale = value;
+				this.Apply();
+			}
+		}
+
+		public Color Color
+		{
+			get
+			{
+				return this.color;
+			}
+			set
+			{
+				this.color = value;
+				this.Apply();
 			}
 		}
 

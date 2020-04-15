@@ -12,6 +12,10 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 	{
 		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, Action<TOwner, TValue> changed = null)
 		{
+			PropertyInfo property = typeof(TOwner).GetProperty(propertyName);
+			if (property == null)
+				throw new Exception("Failed to locate property: \"" + propertyName + "\" on type: \"" + typeof(TOwner) + "\" for binding.");
+
 			Action<DependencyObject, DependencyPropertyChangedEventArgs> changedb = (d, e) =>
 			{
 				if (d is TOwner owner && e.NewValue is TValue value)
