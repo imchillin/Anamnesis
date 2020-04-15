@@ -82,11 +82,6 @@ namespace ConceptMatrix.GUI.Services
 				}
 
 				this.IsRefreshing = false;
-
-				if (selectionService.CurrentSelection != null && selectionService.CurrentSelection.BaseAddress == actorOffset)
-				{
-					selectionService.ResetSelection();
-				}
 			}
 		}
 	}
