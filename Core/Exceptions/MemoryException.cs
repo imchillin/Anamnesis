@@ -11,5 +11,10 @@ namespace ConceptMatrix.Exceptions
 			: base(message, innerException)
 		{
 		}
+
+		public MemoryException(string message)
+			: base(message)
+		{
+		}
 	}
 }

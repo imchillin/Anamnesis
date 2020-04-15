@@ -13,7 +13,11 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public static readonly FileType FileType = new FileType("cm3eq", "Equipment Set", typeof(EquipmentSetFile));
 
 		public Weapon MainHand { get; set; } = new Weapon();
+		public Vector MainHandScale { get; set; } = Vector.One;
+		public Color MainHandColor { get; set; } = Color.White;
 		public Weapon OffHand { get; set; } = new Weapon();
+		public Vector OffHandScale { get; set; } = Vector.One;
+		public Color OffHandColor { get; set; } = Color.White;
 
 		public Item Head { get; set; } = new Item();
 		public Item Body { get; set; } = new Item();
@@ -34,7 +38,13 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public void Read(EquipmentEditor vm)
 		{
 			this.MainHand.Read(vm.MainHand);
+			this.MainHandScale = vm.MainHand.Scale;
+			this.MainHandColor = vm.MainHand.Color;
+
 			this.OffHand.Read(vm.OffHand);
+			this.OffHandScale = vm.OffHand.Scale;
+			this.OffHandColor = vm.OffHand.Color;
+
 			this.Head.Read(vm.Head);
 			this.Body.Read(vm.Body);
 			this.Hands.Read(vm.Hands);
@@ -52,8 +62,12 @@ namespace ConceptMatrix.AppearanceModule.Files
 			if (this.MainHand.ModelSet != 0)
 				this.MainHand.Write(vm.MainHand);
 
-			if (vm.OffHand.ModelSet != 0)
-				this.OffHand.Write(vm.OffHand);
+			vm.MainHand.Scale = this.MainHandScale;
+			vm.MainHand.Color = this.MainHandColor;
+
+			this.OffHand.Write(vm.OffHand);
+			vm.OffHand.Scale = this.OffHandScale;
+			vm.OffHand.Color = this.OffHandColor;
 
 			this.Head.Write(vm.Head);
 			this.Body.Write(vm.Body);

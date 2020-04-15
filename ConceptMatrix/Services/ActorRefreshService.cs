@@ -4,6 +4,7 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System.Threading.Tasks;
+	using ConceptMatrix;
 
 	public class ActorRefreshService : IActorRefreshService
 	{
@@ -46,6 +47,8 @@ namespace ConceptMatrix.GUI.Services
 
 		private async Task ApplyAfterDelay(IBaseMemoryOffset actorOffset)
 		{
+			ISelectionService selectionService = Services.Get<ISelectionService>();
+
 			while (this.applyCountdown > 0)
 			{
 				while (this.applyCountdown > 0)
@@ -79,6 +82,11 @@ namespace ConceptMatrix.GUI.Services
 				}
 
 				this.IsRefreshing = false;
+
+				if (selectionService.CurrentSelection != null && selectionService.CurrentSelection.BaseAddress == actorOffset)
+				{
+					selectionService.ResetSelection();
+				}
 			}
 		}
 	}

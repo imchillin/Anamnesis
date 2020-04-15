@@ -13,6 +13,8 @@ namespace ConceptMatrix
 		{
 			get;
 		}
+
+		void ResetSelection();
 	}
 
 	public class Selection

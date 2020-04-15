@@ -90,6 +90,11 @@ namespace ConceptMatrix.GUI.Services
 			return this.gposeMem.Value && this.gposeMem2.Value == 4 ? Selection.Modes.GPose : Selection.Modes.Overworld;
 		}
 
+		public void ResetSelection()
+		{
+			this.CurrentGameTarget = null;
+		}
+
 		private async Task Watch()
 		{
 			await Task.Delay(500);
@@ -143,6 +148,7 @@ namespace ConceptMatrix.GUI.Services
 					// once the user has selected something, even if they then select nothing, the memory will work
 					// fine, leaving the old selected behind.
 					// so in this case, we just swallow the error, and let the thread loop.
+					await Task.Delay(750);
 				}
 				catch (Exception ex)
 				{

@@ -46,7 +46,7 @@ namespace ConceptMatrix.Injection.Memory
 			get
 			{
 				if (!this.Active)
-					throw new Exception("Cannot access disposed memory");
+					throw new MemoryException("Cannot access disposed memory");
 
 				if (this.lastException != null)
 					throw this.lastException;
@@ -57,7 +57,7 @@ namespace ConceptMatrix.Injection.Memory
 			set
 			{
 				if (!this.Active)
-					throw new Exception("Cannot access disposed memory");
+					throw new MemoryException("Cannot access disposed memory");
 
 				this.value = value;
 
@@ -80,7 +80,7 @@ namespace ConceptMatrix.Injection.Memory
 			get
 			{
 				if (!this.Active)
-					throw new Exception("Cannot access disposed memory");
+					throw new MemoryException("Cannot access disposed memory");
 
 				return this.freeze;
 			}
@@ -88,7 +88,7 @@ namespace ConceptMatrix.Injection.Memory
 			set
 			{
 				if (!this.Active)
-					throw new Exception("Cannot access disposed memory");
+					throw new MemoryException("Cannot access disposed memory");
 
 				this.freeze = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
@@ -108,7 +108,7 @@ namespace ConceptMatrix.Injection.Memory
 			try
 			{
 				if (!this.Active)
-					throw new Exception("Cannot access disposed memory");
+					throw new MemoryException("Cannot access disposed memory");
 
 				bool changed = false;
 				lock (this)

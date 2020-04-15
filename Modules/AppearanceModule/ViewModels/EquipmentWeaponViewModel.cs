@@ -33,6 +33,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.CanColor = true;
 			this.CanScale = true;
 			this.CanDye = true;
+			this.Scale = this.scaleMem.Value;
 
 			this.Item = this.GetItem();
 			this.Dye = this.GetDye();
