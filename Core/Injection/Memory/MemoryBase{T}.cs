@@ -118,7 +118,7 @@ namespace ConceptMatrix.Injection.Memory
 					if (this.Freeze)
 					{
 						// Frozen values get written constantly
-						this.DoWrite(this.value);
+						this.DoWrite(this.value, true);
 					}
 					else
 					{
@@ -149,11 +149,11 @@ namespace ConceptMatrix.Injection.Memory
 		}
 
 		// writes value to oldData and to memory
-		private bool DoWrite(T val)
+		private bool DoWrite(T val, bool force = false)
 		{
 			this.Write(val, ref this.newData);
 
-			if (!Equals(this.newData, this.oldData))
+			if (!Equals(this.newData, this.oldData) || force)
 			{
 				Array.Copy(this.newData, this.oldData, (int)this.length);
 				InjectionService.WriteProcessMemory(this.process.Handle, this.address, this.oldData, (UIntPtr)this.length, out IntPtr bytesRead);

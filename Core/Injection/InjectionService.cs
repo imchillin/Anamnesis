@@ -144,9 +144,15 @@ namespace ConceptMatrix.Injection
 		{
 			try
 			{
+				IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
+
 				while (this.isActive)
 				{
 					Thread.Sleep(16);
+
+					while (refreshService.IsRefreshing)
+						Thread.Sleep(64);
+
 					MemoryBase.TickAllActiveMemory();
 				}
 			}

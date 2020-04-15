@@ -45,6 +45,11 @@ namespace ConceptMatrix.GUI.Services
 			}
 		}
 
+		public void PendingRefreshImmediate()
+		{
+			this.applyCountdown = 0;
+		}
+
 		private async Task ApplyAfterDelay(IBaseMemoryOffset actorOffset)
 		{
 			ISelectionService selectionService = Services.Get<ISelectionService>();
@@ -53,8 +58,8 @@ namespace ConceptMatrix.GUI.Services
 			{
 				while (this.applyCountdown > 0)
 				{
-					this.applyCountdown -= 100;
-					await Task.Delay(100);
+					this.applyCountdown -= 50;
+					await Task.Delay(50);
 				}
 
 				this.IsRefreshing = true;

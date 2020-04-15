@@ -56,6 +56,9 @@ namespace ConceptMatrix.AppearanceModule.Pages
 				allFile.Appearance.Write(this.Appearance.ViewModel);
 				allFile.Equipment.Write(this.Equipment);
 			}
+
+			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
+			refreshService.PendingRefreshImmediate();
 		}
 
 		private async void OnSaveEquipmentClicked(object sender, RoutedEventArgs e)

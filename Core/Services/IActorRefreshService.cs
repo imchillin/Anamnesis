@@ -11,5 +11,6 @@ namespace ConceptMatrix
 		}
 
 		void Refresh(IBaseMemoryOffset offset);
+		void PendingRefreshImmediate();
 	}
 }

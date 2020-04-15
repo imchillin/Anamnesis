@@ -20,10 +20,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.memory = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHand : Offsets.OffHand);
 			this.memory.ValueChanged += this.Memory_ValueChanged;
 
-			this.colorMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandColor : Offsets.OffhandColor);
-			this.scaleMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandScale : Offsets.OffhandScale);
-			this.scaleMem.ValueChanged += this.ScaleMem_ValueChanged;
-
 			this.modelSet = this.memory.Value.Set;
 			this.modelBase = this.memory.Value.Base;
 			this.modelVariant = this.memory.Value.Variant;
@@ -35,7 +31,22 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.CanDye = true;
 
 			if (this.HasWeapon)
+			{
+				this.scaleMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandScale : Offsets.OffhandScale);
+				this.scaleMem.ValueChanged += this.ScaleMem_ValueChanged;
+				this.scaleMem.Freeze = true;
+
+				this.colorMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandColor : Offsets.OffhandColor);
+				this.colorMem.ValueChanged += this.ColorMem_ValueChanged;
+				this.colorMem.Freeze = true;
+
 				this.Scale = this.scaleMem.Value;
+				this.Color = this.colorMem.Value;
+
+				// for some reason, the initial value of the color memory is always 0 - black.
+				// I'm not sure why this would be
+				this.Color = Color.White;
+			}
 
 			this.Item = this.GetItem();
 			this.Dye = this.GetDye();
@@ -49,29 +60,22 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			}
 		}
 
-		/*public override Color Color
-		{
-			get
-			{
-				if (!this.HasWeapon)
-					return Color.White;
-
-				return this.colorMem.Value;
-			}
-
-			set
-			{
-				this.colorMem.Value = value;
-			}
-		}*/
-
 		public override void Dispose()
 		{
 			this.memory.ValueChanged -= this.Memory_ValueChanged;
-			this.scaleMem.ValueChanged -= this.ScaleMem_ValueChanged;
 			this.memory.Dispose();
-			this.colorMem.Dispose();
-			this.scaleMem.Dispose();
+
+			if (this.scaleMem != null)
+			{
+				this.scaleMem.ValueChanged -= this.ScaleMem_ValueChanged;
+				this.scaleMem.Dispose();
+			}
+
+			if (this.colorMem != null)
+			{
+				this.colorMem.ValueChanged -= this.ColorMem_ValueChanged;
+				this.colorMem.Dispose();
+			}
 		}
 
 		protected override void Apply()
@@ -80,14 +84,18 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			if (this.Slot == ItemSlots.MainHand && !this.HasWeapon)
 				return;
 
+			if (this.scaleMem != null)
+				this.scaleMem.Value = this.Scale;
+
+			if (this.colorMem != null)
+				this.colorMem.Value = this.Color;
+
 			Weapon w = this.memory.Value;
 			w.Base = this.ModelBase;
 			w.Dye = this.DyeId;
 			w.Set = this.ModelSet;
 			w.Variant = this.ModelVariant;
 			this.memory.Value = w;
-
-			this.scaleMem.Value = this.Scale;
 		}
 
 		private void Memory_ValueChanged(object sender, object value)
@@ -104,6 +112,11 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		private void ScaleMem_ValueChanged(object sender, object value)
 		{
 			this.Scale = (Vector)value;
+		}
+
+		private void ColorMem_ValueChanged(object sender, object value)
+		{
+			this.Color = (Color)value;
 		}
 	}
 }

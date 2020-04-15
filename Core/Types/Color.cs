@@ -5,7 +5,7 @@ namespace ConceptMatrix
 {
 	using System;
 
-	public struct Color
+	public struct Color : IEquatable<Color>
 	{
 		public static readonly Color White = new Color(1, 1, 1);
 		public static readonly Color Black = new Color(0, 0, 0);
@@ -20,6 +20,16 @@ namespace ConceptMatrix
 		public float R { get; set; }
 		public float G { get; set; }
 		public float B { get; set; }
+
+		public static bool operator ==(Color a, Color b)
+		{
+			return a.Equals(b);
+		}
+
+		public static bool operator !=(Color a, Color b)
+		{
+			return !a.Equals(b);
+		}
 
 		public static Color FromString(string str)
 		{
@@ -38,6 +48,27 @@ namespace ConceptMatrix
 		public override string ToString()
 		{
 			return this.R + ", " + this.G + ", " + this.B;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is Color color && this.Equals(color);
+		}
+
+		public bool Equals(Color other)
+		{
+			return this.R == other.R &&
+				   this.G == other.G &&
+				   this.B == other.B;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = -1520100960;
+			hashCode = (hashCode * -1521134295) + this.R.GetHashCode();
+			hashCode = (hashCode * -1521134295) + this.G.GetHashCode();
+			hashCode = (hashCode * -1521134295) + this.B.GetHashCode();
+			return hashCode;
 		}
 	}
 }
