@@ -4,7 +4,6 @@
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
-	using System.ComponentModel;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
 	using PropertyChanged;
@@ -24,13 +23,13 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		private IItem item;
 		private IDye dye;
-		private Selection target;
+		private IBaseMemoryOffset baseOffset;
 		private Vector scale;
 		private Color color;
 
-		public EquipmentBaseViewModel(ItemSlots slot, Selection selection)
+		public EquipmentBaseViewModel(ItemSlots slot, IBaseMemoryOffset baseOffset)
 		{
-			this.target = selection;
+			this.baseOffset = baseOffset;
 			this.gameData = Services.Get<IGameDataService>();
 			this.Slot = slot;
 		}
@@ -73,7 +72,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				if (oldItem != null && oldItem != this.item)
 				{
 					this.Apply();
-					this.target.ActorRefresh();
+					Services.Get<IActorRefreshService>().Refresh(this.baseOffset);
 				}
 			}
 		}
@@ -94,7 +93,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				if (oldDye != null && oldDye != this.dye)
 				{
 					this.Apply();
-					this.target.ActorRefresh();
+					Services.Get<IActorRefreshService>().Refresh(this.baseOffset);
 				}
 			}
 		}

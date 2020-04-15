@@ -45,6 +45,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public EquipmentItemViewModel LeftRing { get; set; }
 		public EquipmentItemViewModel RightRing { get; set; }
 
+		public IBaseMemoryOffset BaseOffset
+		{
+			get;
+			private set;
+		}
+
 		private void OnSelectionChanged(Selection selection)
 		{
 			App.Current.Dispatcher.Invoke(() =>
@@ -70,22 +76,24 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.BattleNpc && selection.Type != ActorTypes.EventNpc))
 				return;
 
+			this.BaseOffset = selection.BaseAddress;
+
 			// Weapon slots
-			this.MainHand = new EquipmentWeaponViewModel(ItemSlots.MainHand, selection);
-			this.OffHand = new EquipmentWeaponViewModel(ItemSlots.OffHand, selection);
+			this.MainHand = new EquipmentWeaponViewModel(ItemSlots.MainHand, this.BaseOffset);
+			this.OffHand = new EquipmentWeaponViewModel(ItemSlots.OffHand, this.BaseOffset);
 
 			// Equipment slots
 			this.eqMem = selection.BaseAddress.GetMemory(Offsets.ActorEquipment);
-			this.Head = new EquipmentItemViewModel(this.eqMem, ItemSlots.Head, selection);
-			this.Body = new EquipmentItemViewModel(this.eqMem, ItemSlots.Body, selection);
-			this.Hands = new EquipmentItemViewModel(this.eqMem, ItemSlots.Hands, selection);
-			this.Legs = new EquipmentItemViewModel(this.eqMem, ItemSlots.Legs, selection);
-			this.Feet = new EquipmentItemViewModel(this.eqMem, ItemSlots.Feet, selection);
-			this.Ears = new EquipmentItemViewModel(this.eqMem, ItemSlots.Ears, selection);
-			this.Neck = new EquipmentItemViewModel(this.eqMem, ItemSlots.Neck, selection);
-			this.Wrists = new EquipmentItemViewModel(this.eqMem, ItemSlots.Wrists, selection);
-			this.LeftRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.LeftRing, selection);
-			this.RightRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.RightRing, selection);
+			this.Head = new EquipmentItemViewModel(this.eqMem, ItemSlots.Head, this.BaseOffset);
+			this.Body = new EquipmentItemViewModel(this.eqMem, ItemSlots.Body, this.BaseOffset);
+			this.Hands = new EquipmentItemViewModel(this.eqMem, ItemSlots.Hands, this.BaseOffset);
+			this.Legs = new EquipmentItemViewModel(this.eqMem, ItemSlots.Legs, this.BaseOffset);
+			this.Feet = new EquipmentItemViewModel(this.eqMem, ItemSlots.Feet, this.BaseOffset);
+			this.Ears = new EquipmentItemViewModel(this.eqMem, ItemSlots.Ears, this.BaseOffset);
+			this.Neck = new EquipmentItemViewModel(this.eqMem, ItemSlots.Neck, this.BaseOffset);
+			this.Wrists = new EquipmentItemViewModel(this.eqMem, ItemSlots.Wrists, this.BaseOffset);
+			this.LeftRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.LeftRing, this.BaseOffset);
+			this.RightRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.RightRing, this.BaseOffset);
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{

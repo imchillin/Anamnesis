@@ -14,14 +14,14 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		private IMemory<Color> colorMem;
 		private IMemory<Vector> scaleMem;
 
-		public EquipmentWeaponViewModel(ItemSlots slot, Selection selection)
-			: base(slot, selection)
+		public EquipmentWeaponViewModel(ItemSlots slot, IBaseMemoryOffset baseOffset)
+			: base(slot, baseOffset)
 		{
-			this.memory = selection.BaseAddress.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHand : Offsets.OffHand);
+			this.memory = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHand : Offsets.OffHand);
 			this.memory.ValueChanged += this.Memory_ValueChanged;
 
-			this.colorMem = selection.BaseAddress.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandColor : Offsets.OffhandColor);
-			this.scaleMem = selection.BaseAddress.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandScale : Offsets.OffhandScale);
+			this.colorMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandColor : Offsets.OffhandColor);
+			this.scaleMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandScale : Offsets.OffhandScale);
 			this.scaleMem.ValueChanged += this.ScaleMem_ValueChanged;
 
 			this.modelSet = this.memory.Value.Set;
@@ -33,7 +33,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.CanColor = true;
 			this.CanScale = true;
 			this.CanDye = true;
-			this.Scale = this.scaleMem.Value;
+
+			if (this.HasWeapon)
+				this.Scale = this.scaleMem.Value;
 
 			this.Item = this.GetItem();
 			this.Dye = this.GetDye();
