@@ -63,6 +63,7 @@ namespace ConceptMatrix.GUI.Services
 				}
 
 				this.IsRefreshing = true;
+				Log.Write("Refresh Begin", "Actor Refresh");
 
 				using (IMemory<ActorTypes> actorTypeMem = actorOffset.GetMemory(Offsets.ActorType))
 				{
@@ -86,6 +87,9 @@ namespace ConceptMatrix.GUI.Services
 					}
 				}
 
+				await Task.Delay(250);
+
+				Log.Write("Refresh Complete", "Actor Refresh");
 				this.IsRefreshing = false;
 			}
 		}
