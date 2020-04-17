@@ -55,11 +55,16 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			}
 			else if (file is AppearanceSetFile apFile)
 			{
-				apFile.Write(this.Appearance.ViewModel);
+				if (this.Appearance.ViewModel != null)
+				{
+					apFile.Write(this.Appearance.ViewModel);
+				}
 			}
 			else if (file is AllFile allFile)
 			{
-				allFile.Appearance.Write(this.Appearance.ViewModel);
+				if (this.Appearance.ViewModel != null)
+					allFile.Appearance.Write(this.Appearance.ViewModel);
+
 				allFile.Equipment.WritePreRefresh(this.Equipment);
 				await refreshService.RefreshAsync(this.baseOffset);
 				allFile.Equipment.WritePostRefresh(this.Equipment);
