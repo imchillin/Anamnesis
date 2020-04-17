@@ -184,7 +184,7 @@ namespace ConceptMatrix.Injection.Memory
 				int code = Marshal.GetLastWin32Error();
 
 				// code 0 means success. ooh boy Win32 legacy API's.
-				if (code == 0)
+				if (code == 0 || code == 299)
 					return;
 
 				throw new MemoryException("Failed to read process memory", new Win32Exception(code));
