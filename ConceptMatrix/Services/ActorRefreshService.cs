@@ -87,6 +87,8 @@ namespace ConceptMatrix.GUI.Services
 					}
 				}
 
+				Services.Get<ISelectionService>().ResetSelection();
+
 				await Task.Delay(250);
 
 				Log.Write("Refresh Complete", "Actor Refresh");
