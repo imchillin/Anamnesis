@@ -57,14 +57,14 @@
 			</Border>
 			
 			<!-- Main Area -->
-			<Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0">
+			<Border x:Name="MainArea" Grid.Row="1" Grid.Column="1" CornerRadius="3, 0, 0, 0" Background="{DynamicResource MaterialDesignCardBackground}">
 				<Border.Effect>
 					<DropShadowEffect ShadowDepth="0" BlurRadius="10" Direction="180" Opacity="0.25"/>
 				</Border.Effect>
-				
-				<ContentPresenter x:Name="ViewArea" Margin="6"/>
+
+				<ContentPresenter Grid.Row="1" Grid.Column="1" x:Name="ViewArea"/>
 			</Border>
-			
+
 			<!-- Side Bar-->
 			<Grid Grid.Row="0" Grid.RowSpan="2">
 				<Grid.RowDefinitions>

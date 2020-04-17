@@ -11,7 +11,7 @@
 			 d:DesignWidth="300"
 			 DataContextChanged="UserControl_DataContextChanged">
 
-	<Border Background="#22000000" CornerRadius="6">
+	<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3">
 
 		<StackPanel Margin="2, 3">
 

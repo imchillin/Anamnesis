@@ -10,36 +10,43 @@
 			 Unloaded="OnUnloaded"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024">
-	<Grid>
+	<Grid Margin="0, 0, 6, 6">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
-		<Border Background="#20000000" CornerRadius="6" Padding="3" Margin="0, 0, 3, 0">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Padding="3" Margin="0, 0, 3, 0" Grid.Column="0" Grid.RowSpan="2">
 			<views:AppearanceEditor x:Name="Appearance" Grid.Column="0"/>
 		</Border>
 
-		<views:EquipmentEditor x:Name="Equipment" Grid.Column="1" VerticalAlignment="Top"/>
+		<views:EquipmentEditor x:Name="Equipment" Grid.Column="1"/>
 
-		<StackPanel Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="320">
+		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Padding="3" Margin="3, 3, 0, 0" Grid.Column="1" Grid.Row="1">
+			
+			<StackPanel  VerticalAlignment="Bottom" HorizontalAlignment="Right">
+				<cm3:IconButton Grid.Column="1" Icon="Upload" Text="Open..." Margin="3" Click="OnOpenClicked"/>
 
-			<cm3:IconButton Grid.Column="1" Icon="Upload" Text="Open..." Margin="3" Click="OnOpenClicked"/>
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="75"/>
+					</Grid.ColumnDefinitions>
 
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-
-				<cm3:IconButton Grid.Column="0" Icon="Save" Text="Equipment" Margin="3" Click="OnSaveEquipmentClicked"/>
-				<cm3:IconButton Grid.Column="1" Icon="Save" Text="Appearance" Margin="3" Click="OnSaveAppearanceClicked"/>
-				<cm3:IconButton Grid.Column="2" Icon="Save" Text="All" Margin="3" Click="OnSaveAllClicked"/>
-			</Grid>
+					<cm3:IconButton Grid.Column="0" Icon="Save" Text="Equipment" Margin="3" Click="OnSaveEquipmentClicked"/>
+					<cm3:IconButton Grid.Column="1" Icon="Save" Text="Appearance" Margin="3" Click="OnSaveAppearanceClicked"/>
+					<cm3:IconButton Grid.Column="2" Icon="Save" Text="All" Margin="3" Click="OnSaveAllClicked"/>
+				</Grid>
 
 
-		</StackPanel>
+			</StackPanel>
+		</Border>
 	</Grid>
 </UserControl>

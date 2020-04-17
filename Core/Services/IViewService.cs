@@ -22,9 +22,10 @@ namespace ConceptMatrix
 		/// </summary>
 		/// <typeparam name="T">the type of view to add. Should extend UserControl.</typeparam>
 		/// <param name="path">the path to add the menu item in the navigation sidebar.</param>
+		/// <param name="drawBackground">weather the main window should draw a background for this page.</param>
 		// Although we could (where T : UserControl) to require correct types, doing so would
 		// require the core library to reference the WPF libs, and for simplicity, lets not.
-		void AddPage<T>(string path);
+		void AddPage<T>(string path, bool drawBackground = true);
 
 		/// <summary>
 		/// Opens a drawer (flyout) menu on the main application window.

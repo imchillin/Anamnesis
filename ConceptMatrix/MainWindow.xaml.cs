@@ -9,10 +9,12 @@ namespace ConceptMatrix.GUI
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
+	using System.Windows.Media;
 	using System.Windows.Media.Animation;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
+	using MaterialDesignThemes.Wpf;
 
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml.
@@ -35,13 +37,18 @@ namespace ConceptMatrix.GUI
 			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
 			this.Opacity = App.Settings.Opacity;
 
-			this.OnShowPage("Home", new HomeView());
+			this.currentView = new HomeView();
+			this.ViewArea.Content = this.currentView;
 		}
 
-		private void OnShowPage(string path, UserControl page)
+		private void OnShowPage(ViewService.Page page)
 		{
-			this.currentView = page;
+			this.currentView = page.Instance;
 			this.ViewArea.Content = this.currentView;
+
+			PaletteHelper ph = new PaletteHelper();
+
+			this.MainArea.Background = new SolidColorBrush(page.DrawBackground ? ph.GetTheme().CardBackground : Colors.Transparent);
 		}
 
 		private async Task OnShowDrawer(string title, UserControl view, DrawerDirection direction)

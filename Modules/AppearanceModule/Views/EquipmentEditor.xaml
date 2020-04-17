@@ -8,30 +8,37 @@
 			 mc:Ignorable="d"
 			 d:DesignHeight="600">
 
-	<Grid VerticalAlignment="Center" x:Name="ContentArea">
+	<Grid x:Name="ContentArea" Margin="3, 0, 0, 3">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition />
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Column="0">
-			<local:ItemView Margin="3, 0, 3, 4" Grid.Row="0" Grid.Column="1" DataContext="{Binding MainHand}"/>
-			<local:ItemView Grid.Row="1" Grid.Column="1" DataContext="{Binding OffHand}"/>
-			<local:ItemView Margin="3, 13, 3, 4" DataContext="{Binding Head}"/>
-			<local:ItemView DataContext="{Binding Body}"/>
-			<local:ItemView DataContext="{Binding Hands}"/>
-			<local:ItemView DataContext="{Binding Legs}"/>
-			<local:ItemView DataContext="{Binding Feet}"/>
-		</StackPanel>
 
-		<StackPanel Grid.Column="1">
-			<local:ItemView Margin="3, 0, 3, 4" Grid.Row="2" Grid.Column="1" DataContext="{Binding Ears}"/>
-			<local:ItemView Grid.Row="3" Grid.Column="1" DataContext="{Binding Neck}"/>
-			<local:ItemView Grid.Row="4" Grid.Column="1" DataContext="{Binding Wrists}"/>
-			<local:ItemView Grid.Row="2" Grid.Column="2" DataContext="{Binding RightRing}"/>
-			<local:ItemView Grid.Row="3" Grid.Column="2" DataContext="{Binding LeftRing}"/>
-		</StackPanel>
+		<local:ItemView Grid.Row="0" Grid.Column="0" DataContext="{Binding MainHand}" Margin="0, 0, 3, 3"/>
+		<local:ItemView Grid.Row="0" Grid.Column="1" DataContext="{Binding OffHand}" Margin="3, 0, 0, 3"/>
+
+		<local:ItemView Grid.Row="1" Grid.Column="0" DataContext="{Binding Head}" Margin="0, 3, 3, 3"/>
+		<local:ItemView Grid.Row="2" Grid.Column="0" DataContext="{Binding Body}" Margin="0, 3, 3, 3"/>
+		<local:ItemView Grid.Row="3" Grid.Column="0" DataContext="{Binding Hands}" Margin="0, 3, 3, 3"/>
+		<local:ItemView Grid.Row="4" Grid.Column="0" DataContext="{Binding Legs}" Margin="0, 3, 3, 3"/>
+		<local:ItemView Grid.Row="5" Grid.Column="0" DataContext="{Binding Feet}" Margin="0, 3, 3, 0"/>
+
+		<local:ItemView Grid.Row="1" Grid.Column="1" DataContext="{Binding Ears}" Margin="3, 3, 0, 3"/>
+		<local:ItemView Grid.Row="2" Grid.Column="1" DataContext="{Binding Neck}" Margin="3, 3, 0, 3"/>
+		<local:ItemView Grid.Row="3" Grid.Column="1" DataContext="{Binding Wrists}" Margin="3, 3, 0, 3"/>
+		<local:ItemView Grid.Row="4" Grid.Column="1" DataContext="{Binding RightRing}" Margin="3, 3, 0, 3"/>
+		<local:ItemView Grid.Row="5" Grid.Column="1" DataContext="{Binding LeftRing}" Margin="3, 3, 0, 0"/>
+
 	</Grid>
 
 </UserControl>

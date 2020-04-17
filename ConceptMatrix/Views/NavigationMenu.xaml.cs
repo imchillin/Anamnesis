@@ -33,17 +33,17 @@ namespace ConceptMatrix.GUI.Views
 			this.viewService = App.Services.Get<ViewService>();
 			this.viewService.AddingPage += this.OnAddPage;
 
-			foreach (string path in this.viewService.PagePaths)
+			foreach (ViewService.Page page in this.viewService.Pages)
 			{
-				this.OnAddPage(path, null);
+				this.OnAddPage(page);
 			}
 		}
 
 		public ObservableCollection<NavigationItem> Items { get; set; } = new ObservableCollection<NavigationItem>();
 
-		private void OnAddPage(string path, UserControl page)
+		private void OnAddPage(ViewService.Page page)
 		{
-			this.Items.Add(new NavigationItem(path));
+			this.Items.Add(new NavigationItem(page.Path));
 		}
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
