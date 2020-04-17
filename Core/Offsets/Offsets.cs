@@ -64,7 +64,7 @@ namespace ConceptMatrix
 		public static Offset DataHead = new[] { 0xF0, 0X93C };
 
 		public static Offset<Vector> Position = new[] { 0xF0, 0X50 };
-		public static Offset Rotation = new[] { 0xF0, 0X60 };
+		public static Offset<Quaternion> Rotation = new[] { 0xF0, 0X60 };
 		public static Offset Height = new[] { 0xF0, 0X26C };
 		public static Offset Wetness = new[] { 0xF0, 0X2B0 };
 		public static Offset Drenched = new[] { 0xF0, 0X2BC };

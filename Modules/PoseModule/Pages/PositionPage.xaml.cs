@@ -14,6 +14,7 @@ namespace ConceptMatrix.PoseModule.Pages
 	public partial class PositionPage : UserControl
 	{
 		private IMemory<Vector> posMem;
+		private IMemory<Quaternion> rotMem;
 
 		public PositionPage()
 		{
@@ -31,6 +32,12 @@ namespace ConceptMatrix.PoseModule.Pages
 			set;
 		}
 
+		public Quaternion Rotation
+		{
+			get;
+			set;
+		}
+
 		private void OnSelectionChanged(Selection selection)
 		{
 			if (this.posMem != null)
@@ -43,6 +50,9 @@ namespace ConceptMatrix.PoseModule.Pages
 
 			this.posMem = selection.BaseAddress.GetMemory(Offsets.Position);
 			this.posMem.Bind(this, nameof(PositionPage.Position));
+
+			this.rotMem = selection.BaseAddress.GetMemory(Offsets.Rotation);
+			this.rotMem.Bind(this, nameof(PositionPage.Rotation));
 		}
 	}
 }

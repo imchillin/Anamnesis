@@ -7,6 +7,9 @@
 			 xmlns:controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d" >
 	<Grid x:Name="ContentArea" VerticalAlignment="Center" HorizontalAlignment="Center">
-		<controls:VectorEditor Value="{Binding Position}" Minimum="-1000" Maximum="1000"/>
+		<StackPanel>
+			<controls:QuaternionEditor Value="{Binding Rotation}"/>
+			<controls:VectorEditor Value="{Binding Position}" Minimum="-1000" Maximum="1000"/>
+		</StackPanel>
 	</Grid>
 </UserControl>
