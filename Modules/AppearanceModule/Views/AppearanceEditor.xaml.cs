@@ -149,7 +149,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 				canAge |= this.ViewModel.Race == Appearance.Races.AuRa && this.ViewModel.Gender == Appearance.Genders.Feminine;
 				this.CanAge = canAge;
 
-				this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.ViewModel.Tribe, this.ViewModel.Gender, this.ViewModel.Hair);
+				if (this.ViewModel.Tribe > 0)
+				{
+					this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.ViewModel.Tribe, this.ViewModel.Gender, this.ViewModel.Hair);
+				}
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.Hair))
 			{
