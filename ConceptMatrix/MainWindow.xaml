@@ -8,8 +8,8 @@
 		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		mc:Ignorable="d"
 		Title="MainWindow"
-		Height="670"
-		Width="1140"
+		Height="576"
+		Width="1024"
 		WindowStyle="None"
 		ResizeMode="NoResize"
 		AllowsTransparency="True"
@@ -43,7 +43,7 @@
 
 		<Grid Margin="1">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="200"/>
+				<ColumnDefinition Width="128"/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 

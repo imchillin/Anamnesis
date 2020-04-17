@@ -29,24 +29,17 @@
 		<views:EquipmentEditor x:Name="Equipment" Grid.Column="1"/>
 
 		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Padding="3" Margin="3, 3, 0, 0" Grid.Column="1" Grid.Row="1">
-			
-			<StackPanel  VerticalAlignment="Bottom" HorizontalAlignment="Right">
-				<cm3:IconButton Grid.Column="1" Icon="Upload" Text="Open..." Margin="3" Click="OnOpenClicked"/>
+			<Grid Margin="3, 0, 3, 0">
+				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+					<cm3:IconButton Grid.Column="1" Icon="Upload" Text="Open..." Margin="3" Click="OnOpenClicked"/>
+				</StackPanel>
 
-				<Grid>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="75"/>
-					</Grid.ColumnDefinitions>
-
-					<cm3:IconButton Grid.Column="0" Icon="Save" Text="Equipment" Margin="3" Click="OnSaveEquipmentClicked"/>
-					<cm3:IconButton Grid.Column="1" Icon="Save" Text="Appearance" Margin="3" Click="OnSaveAppearanceClicked"/>
-					<cm3:IconButton Grid.Column="2" Icon="Save" Text="All" Margin="3" Click="OnSaveAllClicked"/>
-				</Grid>
-
-
-			</StackPanel>
+				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
+					<cm3:IconButton Grid.Column="0" Icon="Save" Text="Equipment..." Margin="3" Click="OnSaveEquipmentClicked"/>
+					<cm3:IconButton Grid.Column="1" Icon="Save" Text="Appearance..." Margin="3" Click="OnSaveAppearanceClicked"/>
+					<cm3:IconButton Grid.Column="2" Icon="Save" Text="All..." Margin="3" Click="OnSaveAllClicked"/>
+				</StackPanel>
+			</Grid>
 		</Border>
 	</Grid>
 </UserControl>
