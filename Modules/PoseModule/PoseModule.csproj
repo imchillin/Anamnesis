@@ -59,6 +59,9 @@
     </Compile>
     <Compile Include="Files\LegacyPoseFile.cs" />
     <Compile Include="Files\PoseFile.cs" />
+    <Compile Include="Pages\PositionPage.xaml.cs">
+      <DependentUpon>PositionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SimplePoseBoneView.xaml.cs">
       <DependentUpon>SimplePoseBoneView.xaml</DependentUpon>
     </Compile>
@@ -69,6 +72,10 @@
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\PositionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SimplePoseBoneView.xaml">
       <Generator>MSBuild:Compile</Generator>

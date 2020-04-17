@@ -173,8 +173,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 				v = Math.Max(v, this.Minimum);
 			}
 
-			if (this.TickFrequency != 0)
-				v = Math.Round(v / this.TickFrequency) * this.TickFrequency;
+			////if (this.TickFrequency != 0)
+			////	v = Math.Round(v / this.TickFrequency) * this.TickFrequency;
 
 			return v;
 		}
@@ -238,6 +238,9 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			if (Keyboard.IsKeyDown(Key.LeftShift))
 				delta *= 10;
+
+			if (Keyboard.IsKeyDown(Key.LeftCtrl))
+				delta /= 10;
 
 			double value = this.Value;
 			double newValue = value + delta;

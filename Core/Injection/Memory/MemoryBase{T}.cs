@@ -38,6 +38,7 @@ namespace ConceptMatrix.Injection.Memory
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event ValueChangedEventHandler ValueChanged;
+		public event DisposingEventHandler Disposing;
 
 		public T Value
 		{
@@ -91,6 +92,12 @@ namespace ConceptMatrix.Injection.Memory
 				this.freeze = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
 			}
+		}
+
+		public override void Dispose()
+		{
+			this.Disposing?.Invoke();
+			base.Dispose();
 		}
 
 		protected static bool Equals(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2)

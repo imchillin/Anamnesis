@@ -9,6 +9,7 @@ namespace ConceptMatrix
 	public interface IMemory<T> : INotifyPropertyChanged, IDisposable
 	{
 		event ValueChangedEventHandler ValueChanged;
+		event DisposingEventHandler Disposing;
 
 		/// <summary>
 		/// Gets or sets a value used to identify this memory when logging. Does not need to be set.
@@ -28,4 +29,5 @@ namespace ConceptMatrix
 
 	#pragma warning disable SA1201
 	public delegate void ValueChangedEventHandler(object sender, object value);
+	public delegate void DisposingEventHandler();
 }

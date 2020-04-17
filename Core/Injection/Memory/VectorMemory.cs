@@ -23,7 +23,7 @@ namespace ConceptMatrix.Injection.Memory
 
 		protected override void Write(Vector value, ref byte[] data)
 		{
-			Array.Copy(BitConverter.GetBytes(value.X), data, 4);
+			Array.Copy(BitConverter.GetBytes(value.X), 0, data, 0, 4);
 			Array.Copy(BitConverter.GetBytes(value.Y), 0, data, 4, 4);
 			Array.Copy(BitConverter.GetBytes(value.Z), 0, data, 8, 4);
 		}

@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="ConceptMatrix.PoseModule.Pages.PositionPage"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule.Pages"
+			 xmlns:controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
+			 mc:Ignorable="d" >
+	<Grid x:Name="ContentArea" VerticalAlignment="Center" HorizontalAlignment="Center">
+		<controls:VectorEditor Value="{Binding Position}" Minimum="-1000" Maximum="1000"/>
+	</Grid>
+</UserControl>

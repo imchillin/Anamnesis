@@ -24,6 +24,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
+			this.TickFrequency = 0.1;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
