@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix
 {
+	using System.Threading.Tasks;
+
 	public delegate void SelectionEvent(Selection selection);
 
 	public interface ISelectionService : IService
@@ -15,6 +17,7 @@ namespace ConceptMatrix
 		}
 
 		void ResetSelection();
+		Task ResetSelectionAsync();
 	}
 
 	public class Selection

@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix
 {
+	using System.Threading.Tasks;
+
 	public interface IActorRefreshService : IService
 	{
 		bool IsRefreshing
@@ -11,6 +13,7 @@ namespace ConceptMatrix
 		}
 
 		void Refresh(IBaseMemoryOffset offset);
+		Task RefreshAsync(IBaseMemoryOffset offset);
 		void PendingRefreshImmediate();
 	}
 }

@@ -57,18 +57,12 @@ namespace ConceptMatrix.AppearanceModule.Files
 			this.RightRing.Read(vm.RightRing);
 		}
 
-		public void Write(EquipmentEditor vm)
+		public void WritePreRefresh(EquipmentEditor vm)
 		{
 			if (this.MainHand.ModelSet != 0)
 				this.MainHand.Write(vm.MainHand);
 
-			vm.MainHand.Scale = this.MainHandScale;
-			vm.MainHand.Color = this.MainHandColor;
-
 			this.OffHand.Write(vm.OffHand);
-			vm.OffHand.Scale = this.OffHandScale;
-			vm.OffHand.Color = this.OffHandColor;
-
 			this.Head.Write(vm.Head);
 			this.Body.Write(vm.Body);
 			this.Hands.Write(vm.Hands);
@@ -79,6 +73,17 @@ namespace ConceptMatrix.AppearanceModule.Files
 			this.Wrists.Write(vm.Wrists);
 			this.LeftRing.Write(vm.LeftRing);
 			this.RightRing.Write(vm.RightRing);
+		}
+
+		public void WritePostRefresh(EquipmentEditor vm)
+		{
+			// These values are reset by the game when refreshing the actor
+			// (required to change equipment) to we must write them again
+			// once the refresh is complete.
+			vm.MainHand.Scale = this.MainHandScale;
+			vm.MainHand.Color = this.MainHandColor;
+			vm.OffHand.Scale = this.OffHandScale;
+			vm.OffHand.Color = this.OffHandColor;
 		}
 
 		[Serializable]

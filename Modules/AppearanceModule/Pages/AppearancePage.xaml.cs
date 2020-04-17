@@ -12,6 +12,8 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	/// </summary>
 	public partial class AppearancePage : UserControl
 	{
+		private IBaseMemoryOffset baseOffset;
+
 		public AppearancePage()
 		{
 			this.InitializeComponent();
@@ -29,7 +31,9 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
+			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
 			IFileService fileService = Services.Get<IFileService>();
+
 			FileBase file = await fileService.OpenAny(
 				EquipmentSetFile.FileType,
 				LegacyEquipmentSetFile.FileType,
@@ -45,7 +49,9 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 			if (file is EquipmentSetFile eqFile)
 			{
-				eqFile.Write(this.Equipment);
+				eqFile.WritePreRefresh(this.Equipment);
+				await refreshService.RefreshAsync(this.baseOffset);
+				eqFile.WritePostRefresh(this.Equipment);
 			}
 			else if (file is AppearanceSetFile apFile)
 			{
@@ -54,11 +60,10 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			else if (file is AllFile allFile)
 			{
 				allFile.Appearance.Write(this.Appearance.ViewModel);
-				allFile.Equipment.Write(this.Equipment);
+				allFile.Equipment.WritePreRefresh(this.Equipment);
+				await refreshService.RefreshAsync(this.baseOffset);
+				allFile.Equipment.WritePostRefresh(this.Equipment);
 			}
-
-			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
-			refreshService.PendingRefreshImmediate();
 		}
 
 		private async void OnSaveEquipmentClicked(object sender, RoutedEventArgs e)
@@ -88,14 +93,14 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 		private void OnSelectionChanged(Selection selection)
 		{
-			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
+			bool hasValidSelection = selection != null && (selection.Type == ActorTypes.Player || selection.Type == ActorTypes.BattleNpc || selection.Type == ActorTypes.EventNpc);
 
-			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.BattleNpc && selection.Type != ActorTypes.EventNpc))
-				return;
+			if (hasValidSelection)
+				this.baseOffset = selection.BaseAddress;
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				this.IsEnabled = true;
+				this.IsEnabled = hasValidSelection;
 			});
 		}
 	}

@@ -15,6 +15,7 @@ namespace ConceptMatrix.GUI.Services
 
 		private IMemory<bool> gposeMem;
 		private IMemory<ushort> gposeMem2;
+		private bool isResetting = false;
 
 		public event SelectionEvent SelectionChanged;
 
@@ -94,7 +95,19 @@ namespace ConceptMatrix.GUI.Services
 
 		public void ResetSelection()
 		{
+			this.isResetting = true;
 			this.CurrentGameTarget = null;
+		}
+
+		public async Task ResetSelectionAsync()
+		{
+			this.isResetting = true;
+			this.CurrentGameTarget = null;
+
+			while (this.isResetting)
+			{
+				await Task.Delay(100);
+			}
 		}
 
 		private async Task Watch()
@@ -107,7 +120,7 @@ namespace ConceptMatrix.GUI.Services
 			{
 				await Task.Delay(250);
 
-				while (refreshService.IsRefreshing)
+				while (refreshService.IsRefreshing && !this.isResetting)
 					await Task.Delay(250);
 
 				Selection.Modes mode = this.GetMode();
@@ -123,6 +136,7 @@ namespace ConceptMatrix.GUI.Services
 					if (string.IsNullOrEmpty(actorId))
 					{
 						this.CurrentGameTarget = null;
+						this.isResetting = false;
 						continue;
 					}
 
@@ -132,6 +146,7 @@ namespace ConceptMatrix.GUI.Services
 						|| this.CurrentGameTarget.Mode != mode)
 					{
 						this.CurrentGameTarget = new Selection(type, baseOffset, actorId, name, mode);
+						this.isResetting = false;
 					}
 
 					if (this.UseGameTarget && this.CurrentSelection != this.CurrentGameTarget)

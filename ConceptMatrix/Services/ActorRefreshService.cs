@@ -45,6 +45,22 @@ namespace ConceptMatrix.GUI.Services
 			}
 		}
 
+		public async Task RefreshAsync(IBaseMemoryOffset offset)
+		{
+			while (this.IsRefreshing)
+				await Task.Delay(100);
+
+			this.Refresh(offset);
+			this.PendingRefreshImmediate();
+
+			await Task.Delay(50);
+
+			while (this.IsRefreshing)
+				await Task.Delay(100);
+
+			await Task.Delay(50);
+		}
+
 		public void PendingRefreshImmediate()
 		{
 			this.applyCountdown = 0;
@@ -87,9 +103,7 @@ namespace ConceptMatrix.GUI.Services
 					}
 				}
 
-				Services.Get<ISelectionService>().ResetSelection();
-
-				await Task.Delay(250);
+				await Services.Get<ISelectionService>().ResetSelectionAsync();
 
 				Log.Write("Refresh Complete", "Actor Refresh");
 				this.IsRefreshing = false;
