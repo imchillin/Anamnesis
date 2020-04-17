@@ -105,7 +105,7 @@ namespace ConceptMatrix.PoseModule
 
 				// Ensure we have written any pending rotations before changing bone targets
 				if (this.currentBone != null)
-					this.currentBone.SetRotation();
+					this.currentBone.ApplyTransform();
 
 				this.currentBone = value;
 			}
@@ -562,7 +562,7 @@ namespace ConceptMatrix.PoseModule
 				if (this.CurrentBone == null)
 					continue;
 
-				this.CurrentBone.SetRotation();
+				this.CurrentBone.ApplyTransform();
 			}
 		}
 

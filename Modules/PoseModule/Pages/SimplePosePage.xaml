@@ -416,7 +416,7 @@
 						<Label Grid.Row="0" Grid.Column="0" Content="Enable" VerticalContentAlignment="Center"/>
 						<ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsEnabled}"/>
 
-						<Label Grid.Row="1" Grid.Column="0" Content="Flip Sidex" VerticalContentAlignment="Center"/>
+						<Label Grid.Row="1" Grid.Column="0" Content="Flip Sides" VerticalContentAlignment="Center"/>
 						<ToggleButton Grid.Row="1" Grid.Column="1" IsChecked="{Binding FlipSides}"/>
 
 						<Grid Grid.Row="3" Grid.ColumnSpan="2"  Margin="0, 6, 0, 0">
@@ -440,11 +440,11 @@
 
 						<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
 						<Label Content="Scale"/>
-						<cm3:VectorEditor Value="{Binding CurrentBone.Scale, Mode=TwoWay}" Expanded="False"/>
+						<cm3:VectorEditor Value="{Binding CurrentBone.Scale, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
 
 						<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
 						<Label Content="Position"/>
-						<cm3:VectorEditor Value="{Binding CurrentBone.Position, Mode=TwoWay}" Expanded="False"/>
+						<cm3:VectorEditor Value="{Binding CurrentBone.Position, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
 					</StackPanel>
 				</GroupBox>
 			</StackPanel>

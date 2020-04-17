@@ -173,7 +173,9 @@ namespace ConceptMatrix.WpfStyles.Controls
 				v = Math.Max(v, this.Minimum);
 			}
 
-			v = Math.Round(v / this.TickFrequency) * this.TickFrequency;
+			if (this.TickFrequency != 0)
+				v = Math.Round(v / this.TickFrequency) * this.TickFrequency;
+
 			return v;
 		}
 

@@ -26,7 +26,10 @@ namespace ConceptMatrix.PoseModule
 
 		public string BoneName { get; private set; }
 		public bool IsEnabled { get; set; } = true;
+
 		public Quaternion Rotation { get; set; }
+		public Vector Scale { get; set; }
+		public Vector Position { get; set; }
 
 		public string Tooltip
 		{
@@ -47,6 +50,8 @@ namespace ConceptMatrix.PoseModule
 			{
 				this.transformMem.Value = value;
 				this.Rotation = this.LiveRotation;
+				this.Scale = this.LiveScale;
+				this.Position = this.LivePosition;
 			}
 		}
 
@@ -65,24 +70,65 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
-		public void SetRotation()
+		public Vector LiveScale
+		{
+			get
+			{
+				return this.Transform.Scale;
+			}
+
+			set
+			{
+				Transform trans = this.Transform;
+				trans.Scale = value;
+				this.Transform = trans;
+			}
+		}
+
+		public Vector LivePosition
+		{
+			get
+			{
+				return this.Transform.Position;
+			}
+
+			set
+			{
+				Transform trans = this.Transform;
+				trans.Position = value;
+				this.Transform = trans;
+			}
+		}
+
+		public void ApplyTransform()
 		{
 			if (!this.IsEnabled)
 				return;
 
-			if (this.LiveRotation == this.Rotation)
-				return;
-
-			Quaternion newRotation = this.Rotation;
-			Quaternion oldrotation = this.LiveRotation;
-			this.LiveRotation = newRotation;
-			Quaternion oldRotationConjugate = oldrotation;
-			oldRotationConjugate.Conjugate();
-
-			foreach (Bone child in this.Children)
+			// TODO: Build a matrix4x4 and apply it to every bone
+			if (this.LiveRotation != this.Rotation)
 			{
-				child.Rotate(oldRotationConjugate, newRotation);
+				Quaternion newRotation = this.Rotation;
+				Quaternion oldrotation = this.LiveRotation;
+				this.LiveRotation = newRotation;
+				Quaternion oldRotationConjugate = oldrotation;
+				oldRotationConjugate.Conjugate();
+
+				foreach (Bone child in this.Children)
+				{
+					child.Rotate(oldRotationConjugate, newRotation);
+				}
 			}
+
+			/*if (this.LiveScale != this.Scale)
+			{
+				this.LiveScale = this.Scale;
+			}
+
+			if (this.LivePosition != this.Position)
+			{
+				this.LivePosition = this.Position;
+			}*/
 		}
 
 		public void Dispose()
