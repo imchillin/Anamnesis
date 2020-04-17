@@ -12,6 +12,14 @@ namespace ConceptMatrix.WpfStyles.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
+			if (value is string str)
+			{
+				if (string.IsNullOrEmpty(str))
+				{
+					value = null;
+				}
+			}
+
 			return value == null ? Visibility.Collapsed : Visibility.Visible;
 		}
 
