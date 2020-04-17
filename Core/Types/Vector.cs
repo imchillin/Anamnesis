@@ -21,6 +21,16 @@ namespace ConceptMatrix
 		public float Y { get; set; }
 		public float Z { get; set; }
 
+		public static bool operator !=(Vector lhs, Vector rhs)
+		{
+			return !lhs.Equals(rhs);
+		}
+
+		public static bool operator ==(Vector lhs, Vector rhs)
+		{
+			return lhs.Equals(rhs);
+		}
+
 		public static Vector operator *(Vector left, Vector right)
 		{
 			return new Vector(left.X * right.X, left.Y * right.Y, left.Z * right.Z);
@@ -50,6 +60,27 @@ namespace ConceptMatrix
 			this.X = NormalizeAngle(this.X);
 			this.Y = NormalizeAngle(this.Y);
 			this.Z = NormalizeAngle(this.Z);
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is Vector quaternion && this.Equals(quaternion);
+		}
+
+		public bool Equals(Vector other)
+		{
+			return this.X == other.X
+				&& this.Y == other.Y
+				&& this.Z == other.Z;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = 707706286;
+			hashCode = (hashCode * -1521134295) + this.X.GetHashCode();
+			hashCode = (hashCode * -1521134295) + this.Y.GetHashCode();
+			hashCode = (hashCode * -1521134295) + this.Z.GetHashCode();
+			return hashCode;
 		}
 
 		public override string ToString()
