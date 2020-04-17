@@ -10,6 +10,7 @@ namespace ConceptMatrix.PoseModule
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Shapes;
+	using MaterialDesignThemes.Wpf;
 
 	/// <summary>
 	/// Interaction logic for SimplePoseViewBone.xaml.
@@ -41,6 +42,21 @@ namespace ConceptMatrix.PoseModule
 			set
 			{
 				this.SetValue(BoneNameProperty, value);
+			}
+		}
+
+		public new bool IsEnabled
+		{
+			get
+			{
+				if (this.viewModel != null && !this.viewModel.IsEnabled)
+					return false;
+
+				return base.IsEnabled;
+			}
+			set
+			{
+				base.IsEnabled = value;
 			}
 		}
 
@@ -78,7 +94,6 @@ namespace ConceptMatrix.PoseModule
 				this.IsEnabled = false;
 				this.ToolTip = ex.Message;
 				Console.WriteLine(ex.Message);
-				this.BackgroundElipse.Stroke = Brushes.Red;
 			}
 		}
 
@@ -123,6 +138,9 @@ namespace ConceptMatrix.PoseModule
 
 		private void OnViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
+			if (e.PropertyName == nameof(this.viewModel.CameraRotation))
+				return;
+
 			this.UpdateState();
 
 			if (e.PropertyName == nameof(this.viewModel.FlipSides))
@@ -203,25 +221,33 @@ namespace ConceptMatrix.PoseModule
 				return;
 			}
 
+			PaletteHelper ph = new PaletteHelper();
+			ITheme theme = ph.GetTheme();
+
+			if (!this.IsEnabled)
+			{
+				this.Visibility = Visibility.Hidden;
+				this.SetState(new SolidColorBrush(Colors.Transparent), 1);
+				return;
+			}
+
+			this.Visibility = Visibility.Visible;
+
+			bool hovered = this.viewModel.GetIsBoneHovered(this.bone);
 			bool selected = this.viewModel.GetIsBoneSelected(this.bone);
 			bool parentSelected = this.viewModel.GetIsBoneParentsSelected(this.bone);
-			bool hovered = this.viewModel.GetIsBoneParentsHovered(this.bone);
+			bool parentHovered = this.viewModel.GetIsBoneParentsHovered(this.bone);
 
-			// TODO: get the current theme FG color instead of sky blue
-			Brush color = hovered ? Brushes.AliceBlue : Brushes.Gray;
-			int thickenss = parentSelected || selected || hovered ? 2 : 1;
+			Color color = parentHovered ? theme.PrimaryMid.Color : theme.BodyLight;
+			int thickenss = parentSelected || selected || parentHovered ? 2 : 1;
 
-			this.ForegroundElipse.Visibility = selected ? Visibility.Visible : Visibility.Hidden;
-			this.ForegroundElipse.Fill = Brushes.SkyBlue;
-			this.SetState(color, thickenss);
+			this.ForegroundElipse.Visibility = (selected || hovered) ? Visibility.Visible : Visibility.Hidden;
+			this.BackgroundElipse.Stroke = new SolidColorBrush(theme.PrimaryMid.Color);
+			this.SetState(new SolidColorBrush(color), thickenss);
 		}
 
 		private void SetState(Brush stroke, int thickness)
 		{
-			if (this.BackgroundElipse.Stroke == stroke && this.BackgroundElipse.StrokeThickness == thickness)
-				return;
-
-			this.BackgroundElipse.Stroke = stroke;
 			this.BackgroundElipse.StrokeThickness = thickness;
 
 			foreach (Line line in this.linesToChildren)
