@@ -13,7 +13,7 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid Margin="6">
+	<Grid Margin="6, 3, 0, 0">
 		<ListBox Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionChanged="OnSelectionChanged">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
@@ -22,7 +22,7 @@
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Rectangle Width="28" Height="21" Margin="0">
+					<Rectangle Width="29" Height="19" Margin="0">
 						<Rectangle.Fill>
 							<SolidColorBrush Color="{Binding WpfColor}"/>
 						</Rectangle.Fill>
