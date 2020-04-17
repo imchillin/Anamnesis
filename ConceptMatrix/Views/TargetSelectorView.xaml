@@ -8,7 +8,7 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="232">
 
-	<Grid Margin="12, 0, 12, 12">
+	<Grid Margin="6, 0, 0, 0">
 
 
 		<Grid.RowDefinitions>
@@ -35,22 +35,24 @@
 			</Grid>
 		</RadioButton>
 
-		<ItemsControl Grid.ColumnSpan="2" Grid.Row="1" ItemsSource="{Binding Entities, FallbackValue=123}" Margin="0" Padding="0">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<RadioButton Margin="0, 6, 0, 6"  IsChecked="{Binding IsSelected}" GroupName="SelectionGroup" Checked="OnSelected">
-						<Grid VerticalAlignment="Center" Margin="0, -7, 0, 0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="20"/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
+		<ScrollViewer Grid.ColumnSpan="2" Grid.Row="1">
+			<ItemsControl ItemsSource="{Binding Entities, FallbackValue=123}" Margin="0" Padding="0">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<RadioButton Margin="0, 6, 0, 6"  IsChecked="{Binding IsSelected}" GroupName="SelectionGroup" Checked="OnSelected">
+							<Grid VerticalAlignment="Center" Margin="0, -7, 0, 0">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="20"/>
+									<ColumnDefinition/>
+								</Grid.ColumnDefinitions>
 
-							<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}"/>
-							<Label Grid.Column="1" Content="{Binding Name, FallbackValue='Some Actor'}" VerticalAlignment="Center"/>
-						</Grid>
-					</RadioButton>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
+								<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}"/>
+								<Label Grid.Column="1" Content="{Binding Name, FallbackValue='Some Actor'}" VerticalAlignment="Center"/>
+							</Grid>
+						</RadioButton>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
 	</Grid>
 </UserControl>

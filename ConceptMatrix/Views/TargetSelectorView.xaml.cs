@@ -9,6 +9,7 @@ namespace ConceptMatrix.GUI.Views
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
+	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.Injection.Offsets;
 	using ConceptMatrix.WpfStyles;
@@ -17,7 +18,7 @@ namespace ConceptMatrix.GUI.Views
 	/// <summary>
 	/// Interaction logic for TargetSelectorView.xaml.
 	/// </summary>
-	public partial class TargetSelectorView : UserControl
+	public partial class TargetSelectorView : UserControl, IDrawer
 	{
 		private SelectionService selection;
 		private IInjectionService injection;
@@ -36,6 +37,8 @@ namespace ConceptMatrix.GUI.Views
 
 			this.GetEntities();
 		}
+
+		public event DrawerEvent Close;
 
 		public ObservableCollection<PossibleSelection> Entities { get; set; } = new ObservableCollection<PossibleSelection>();
 		public string InGameSelection { get; set; }
@@ -85,7 +88,7 @@ namespace ConceptMatrix.GUI.Views
 					if (string.IsNullOrEmpty(name))
 						name = "Unknown";
 
-					PossibleSelection selection = new PossibleSelection(type, targetOffset, id, name, mode);
+					PossibleSelection selection = new PossibleSelection(type, actorTableOffset.GetBaseOffset(i), id, name, mode);
 					selection.IsSelected = !this.selection.UseGameTarget && this.selection.CurrentSelection != null && this.selection.CurrentSelection.Name == name;
 					this.Entities.Add(selection);
 				}
@@ -122,6 +125,8 @@ namespace ConceptMatrix.GUI.Views
 				PossibleSelection selection = btn.DataContext as PossibleSelection;
 				this.selection.UseGameTarget = false;
 				this.selection.CurrentSelection = selection;
+
+				this.Close?.Invoke();
 			}
 		}
 

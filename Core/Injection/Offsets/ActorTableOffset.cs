@@ -17,6 +17,11 @@ namespace ConceptMatrix.Injection.Offsets
 			return new ActorTableOffset(offset);
 		}
 
+		public BaseOffset GetBaseOffset(byte i)
+		{
+			return new BaseOffset(this.Offsets[0] + (ulong)((i + 1) * 8));
+		}
+
 		public IMemory<byte> GetCountMemory()
 		{
 			return InjectionService.Instance.GetMemory<byte>(this);
@@ -32,8 +37,7 @@ namespace ConceptMatrix.Injection.Offsets
 
 		public IMemory<T> GetActorMemory<T>(byte i, params Offset[] offsets)
 		{
-			BaseOffset addr = new BaseOffset(this.Offsets[0] + (ulong)((i + 1) * 8));
-			return InjectionService.Instance.GetMemory<T>(addr, offsets);
+			return InjectionService.Instance.GetMemory<T>(this.GetBaseOffset(i), offsets);
 		}
 
 		public T GetActorValue<T>(byte i, Offset<T> offset)
