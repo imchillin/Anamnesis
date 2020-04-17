@@ -12,6 +12,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using ConceptMatrix.Three3D;
 	using ConceptMatrix.ThreeD;
 	using ConceptMatrix.ThreeD.Lines;
+	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
 	using CmQuaterion = ConceptMatrix.Quaternion;
@@ -20,14 +21,22 @@ namespace ConceptMatrix.WpfStyles.Controls
 	/// <summary>
 	/// Interaction logic for QuaternionEditor.xaml.
 	/// </summary>
-	public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
+	[AddINotifyPropertyChangedInterface]
+	public partial class QuaternionEditor : UserControl
 	{
-		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(ConceptMatrix.Quaternion), typeof(QuaternionEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
-		public static readonly DependencyProperty TickFrequencyProperty = DependencyProperty.Register(nameof(TickFrequency), typeof(double), typeof(QuaternionEditor));
-		public static readonly DependencyProperty CameraRotationProperty = DependencyProperty.Register(nameof(CameraRotation), typeof(ConceptMatrix.Quaternion), typeof(QuaternionEditor), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnCameraRotationChangedStatic)));
+		public static readonly IBind<CmQuaterion> ValueDp = Binder.Register<CmQuaterion, QuaternionEditor>(nameof(Value), OnValueChanged);
+		public static readonly IBind<double> TickDp = Binder.Register<double, QuaternionEditor>(nameof(TickFrequency));
+		public static readonly IBind<CmQuaterion> CameraRotationDp = Binder.Register<CmQuaterion, QuaternionEditor>(nameof(CameraRotation), OnCameraRotationChanged);
 
-		private Vector3D euler;
-		private bool eulerLock = false;
+		public static readonly IBind<Quaternion> ValueQuatDp = Binder.Register<Quaternion, QuaternionEditor>(nameof(ValueQuat), OnValueQuatChanged);
+		public static readonly IBind<Quaternion> CamQuatDp = Binder.Register<Quaternion, QuaternionEditor>(nameof(CamQuat), OnCamQuatChanged);
+
+		public static readonly IBind<double> EulerXDp = Binder.Register<double, QuaternionEditor>(nameof(EulerX), OnEulerChanged);
+		public static readonly IBind<double> EulerYDp = Binder.Register<double, QuaternionEditor>(nameof(EulerY), OnEulerChanged);
+		public static readonly IBind<double> EulerZDp = Binder.Register<double, QuaternionEditor>(nameof(EulerZ), OnEulerChanged);
+
+		////private Vector3D euler;
+		private bool lockdp = false;
 		private RotationGizmo rotationGizmo;
 		private bool mouseDown = false;
 
@@ -44,151 +53,123 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.Viewport.Camera = new PerspectiveCamera(new Point3D(0, 0, -2.5), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
 		public double TickFrequency
 		{
-			get
-			{
-				return (double)this.GetValue(TickFrequencyProperty);
-			}
-			set
-			{
-				this.SetValue(TickFrequencyProperty, value);
-			}
+			get => TickDp.Get(this);
+			set => TickDp.Set(this, value);
 		}
 
-		[AlsoNotifyFor(nameof(EulerX), nameof(EulerY), nameof(EulerZ))]
 		public CmQuaterion Value
 		{
-			get
-			{
-				return (CmQuaterion)this.GetValue(ValueProperty);
-			}
-
-			set
-			{
-				if (!this.eulerLock)
-				{
-					Vector euler = value.ToEuler();
-					this.euler = new Vector3D(euler.X, euler.Y, euler.Z);
-				}
-
-				this.SetValue(ValueProperty, value);
-				this.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(this.ValueQuat));
-			}
-		}
-
-		public Quaternion ValueQuat
-		{
-			get
-			{
-				return new Quaternion(this.Value.X, this.Value.Y, this.Value.Z, this.Value.W);
-			}
-
-			set
-			{
-				this.Value = new CmQuaterion((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
-			}
+			get => ValueDp.Get(this);
+			set => ValueDp.Set(this, value);
 		}
 
 		public CmQuaterion CameraRotation
 		{
-			get
-			{
-				return (CmQuaterion)this.GetValue(CameraRotationProperty);
-			}
+			get => CameraRotationDp.Get(this);
+			set => CameraRotationDp.Set(this, value);
+		}
 
-			set
-			{
-				this.SetValue(CameraRotationProperty, value);
-				this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(this.CamQuat));
-			}
+		public Quaternion ValueQuat
+		{
+			get => ValueQuatDp.Get(this);
+			set => ValueQuatDp.Set(this, value);
 		}
 
 		public Quaternion CamQuat
 		{
-			get
-			{
-				return new Quaternion(this.CameraRotation.X, this.CameraRotation.Y, this.CameraRotation.Z, this.CameraRotation.W);
-			}
-
-			set
-			{
-				this.CameraRotation = new CmQuaterion((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
-			}
+			get => CamQuatDp.Get(this);
+			set => CamQuatDp.Set(this, value);
 		}
 
 		public double EulerX
 		{
-			get
-			{
-				return this.euler.X;
-			}
-			set
-			{
-				this.eulerLock = true;
-				this.euler.X = value;
-				this.ValueQuat = this.euler.ToQuaternion();
-				this.eulerLock = false;
-			}
+			get => EulerXDp.Get(this);
+			set => EulerXDp.Set(this, value);
 		}
 
 		public double EulerY
 		{
-			get
-			{
-				return this.euler.Y;
-			}
-			set
-			{
-				this.eulerLock = true;
-				this.euler.Y = value;
-				this.ValueQuat = this.euler.ToQuaternion();
-				this.eulerLock = false;
-			}
+			get => EulerYDp.Get(this);
+			set => EulerYDp.Set(this, value);
 		}
 
 		public double EulerZ
 		{
-			get
-			{
-				return this.euler.Z;
-			}
-			set
-			{
-				this.eulerLock = true;
-				this.euler.Z = value;
-				this.ValueQuat = this.euler.ToQuaternion();
-				this.eulerLock = false;
-			}
+			get => EulerZDp.Get(this);
+			set => EulerZDp.Set(this, value);
 		}
 
-		private static void OnValueChangedStatic(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+		private static void OnValueChanged(QuaternionEditor sender, CmQuaterion value)
 		{
-			if (sender is QuaternionEditor quaternionEditor)
-			{
-				if (quaternionEditor.eulerLock)
-					return;
+			sender.ValueQuat = new Quaternion(sender.Value.X, sender.Value.Y, sender.Value.Z, sender.Value.W);
+			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(sender.ValueQuat));
 
-				quaternionEditor.euler = quaternionEditor.ValueQuat.ToEulerAngles();
-				quaternionEditor.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(quaternionEditor.ValueQuat));
+			if (sender.lockdp)
+				return;
 
-				quaternionEditor.PropertyChanged.Invoke(sender, new PropertyChangedEventArgs(nameof(Value)));
-				quaternionEditor.PropertyChanged.Invoke(sender, new PropertyChangedEventArgs(nameof(EulerX)));
-				quaternionEditor.PropertyChanged.Invoke(sender, new PropertyChangedEventArgs(nameof(EulerY)));
-				quaternionEditor.PropertyChanged.Invoke(sender, new PropertyChangedEventArgs(nameof(EulerZ)));
-			}
+			sender.lockdp = true;
+
+			Vector euler = sender.Value.ToEuler();
+			sender.EulerX = euler.X;
+			sender.EulerY = euler.Y;
+			sender.EulerZ = euler.Z;
+
+			sender.lockdp = false;
 		}
 
-		private static void OnCameraRotationChangedStatic(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+		private static void OnValueQuatChanged(QuaternionEditor sender, Quaternion value)
 		{
-			if (sender is QuaternionEditor quaternionEditor)
-			{
-				quaternionEditor.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(quaternionEditor.CamQuat));
+			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(sender.ValueQuat));
 
-				quaternionEditor.PropertyChanged.Invoke(sender, new PropertyChangedEventArgs(nameof(CameraRotation)));
-			}
+			if (sender.lockdp)
+				return;
+
+			sender.lockdp = true;
+
+			sender.Value = new CmQuaterion((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
+
+			Vector euler = sender.Value.ToEuler();
+			sender.EulerX = euler.X;
+			sender.EulerY = euler.Y;
+			sender.EulerZ = euler.Z;
+
+			sender.lockdp = false;
+		}
+
+		private static void OnCameraRotationChanged(QuaternionEditor sender, CmQuaterion value)
+		{
+			if (sender.lockdp)
+				return;
+
+			sender.lockdp = true;
+
+			sender.CamQuat = new Quaternion(sender.CameraRotation.X, sender.CameraRotation.Y, sender.CameraRotation.Z, sender.CameraRotation.W);
+			sender.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(sender.CamQuat));
+
+			sender.lockdp = false;
+		}
+
+		private static void OnCamQuatChanged(QuaternionEditor sender, Quaternion value)
+		{
+			if (sender.lockdp)
+				return;
+
+			sender.lockdp = true;
+			sender.CameraRotation = new CmQuaterion((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
+			sender.lockdp = false;
+		}
+
+		private static void OnEulerChanged(QuaternionEditor sender, double val)
+		{
+			if (sender.lockdp)
+				return;
+
+			sender.lockdp = true;
+			Vector euler = new Vector((float)sender.EulerX, (float)sender.EulerY, (float)sender.EulerZ);
+			sender.Value = CmQuaterion.FromEuler(euler);
+			sender.lockdp = false;
 		}
 
 		private void OnViewportMouseDown(object sender, MouseButtonEventArgs e)
