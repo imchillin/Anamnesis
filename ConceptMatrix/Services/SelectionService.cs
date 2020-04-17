@@ -44,13 +44,9 @@ namespace ConceptMatrix.GUI.Services
 
 				try
 				{
-					Log.Write("Changing Selection: " + value.ActorId + "(" + value.BaseAddress + ")", "Selection");
+					Log.Write("Changing Selection: " + value?.ActorId + "(" + value?.BaseAddress + ")", "Selection");
 
-					Stopwatch sw = new Stopwatch();
-					sw.Start();
 					this.SelectionChanged?.Invoke(this.currentSelection);
-					sw.Stop();
-					Log.Write("took " + sw.ElapsedMilliseconds + "ms to change selection");
 				}
 				catch (Exception ex)
 				{
