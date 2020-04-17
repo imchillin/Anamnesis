@@ -36,19 +36,13 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				this.scaleMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandScale : Offsets.OffhandScale);
 				this.scaleMem.Name = slot.ToString() + "_Scale";
 				this.scaleMem.ValueChanged += this.ScaleMem_ValueChanged;
-				this.scaleMem.Freeze = true;
 
 				this.colorMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandColor : Offsets.OffhandColor);
 				this.colorMem.Name = slot.ToString() + "_Color";
 				this.colorMem.ValueChanged += this.ColorMem_ValueChanged;
-				this.colorMem.Freeze = true;
 
-				this.Scale = this.scaleMem.Value;
-				this.Color = this.colorMem.Value;
-
-				// for some reason, the initial value of the color memory is always 0 - black.
-				// I'm not sure why this would be
-				this.Color = Color.White;
+				this.scale = this.scaleMem.Value;
+				this.color = this.colorMem.Value;
 			}
 
 			this.Item = this.GetItem();

@@ -16,6 +16,8 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		protected IGameDataService gameData;
 
+		protected Vector scale;
+		protected Color color;
 		protected ushort modelBase;
 		protected ushort modelSet;
 		protected ushort modelVariant;
@@ -24,8 +26,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		private IItem item;
 		private IDye dye;
 		private IBaseMemoryOffset baseOffset;
-		private Vector scale;
-		private Color color;
 
 		public EquipmentBaseViewModel(ItemSlots slot, IBaseMemoryOffset baseOffset)
 		{
@@ -151,6 +151,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			}
 			set
 			{
+				if (this.scale == value)
+					return;
+
 				this.scale = value;
 				this.Apply();
 			}
@@ -164,6 +167,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			}
 			set
 			{
+				if (this.color == value)
+					return;
+
 				this.color = value;
 				this.Apply();
 			}
