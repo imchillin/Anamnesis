@@ -184,10 +184,12 @@ namespace ConceptMatrix.Injection.Memory
 				int code = Marshal.GetLastWin32Error();
 
 				// code 0 means success. ooh boy Win32 legacy API's.
+				// code 299 means part of a ReadProcessMemory or WriteProcessMemory request was completed.
+				// code 998 is an Invalid access to memory location.
 				if (code == 0 || code == 299)
 					return;
 
-				throw new MemoryException("Failed to read process memory", new Win32Exception(code));
+				throw new MemoryException($"Failed to read process memory {code}", new Win32Exception(code));
 			}
 		}
 	}

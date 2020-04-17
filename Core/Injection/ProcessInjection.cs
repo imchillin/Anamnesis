@@ -71,8 +71,8 @@ namespace ConceptMatrix.Injection
 			if (!this.Process.Responding)
 				throw new Exception("Target process id not responding");
 
-			this.Handle = OpenProcess(0x001F0FFF, true, pid);
 			System.Diagnostics.Process.EnterDebugMode();
+			this.Handle = OpenProcess(0x001F0FFF, true, pid);
 
 			if (this.Handle == IntPtr.Zero)
 			{
