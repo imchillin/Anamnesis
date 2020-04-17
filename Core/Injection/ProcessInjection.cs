@@ -26,6 +26,20 @@ namespace ConceptMatrix.Injection
 			private set;
 		}
 
+		public bool IsAlive
+		{
+			get
+			{
+				if (this.Process.HasExited)
+					return false;
+
+				if (!this.Process.Responding)
+					return false;
+
+				return true;
+			}
+		}
+
 		public void OpenProcess(string contains)
 		{
 			Process[] processlist = System.Diagnostics.Process.GetProcesses();

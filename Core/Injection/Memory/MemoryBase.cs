@@ -32,6 +32,8 @@ namespace ConceptMatrix.Injection.Memory
 			private set;
 		}
 
+		public string Name { get; set; }
+
 		public static void TickAllActiveMemory()
 		{
 			List<MemoryBase> memories;
@@ -42,6 +44,9 @@ namespace ConceptMatrix.Injection.Memory
 
 			foreach (MemoryBase memory in memories)
 			{
+				if (!InjectionService.ProcessIsAlive)
+					return;
+
 				memory.Tick();
 			}
 		}

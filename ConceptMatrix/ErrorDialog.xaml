@@ -55,6 +55,10 @@
 				</ScrollViewer>
 			</Expander>
 
+			<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="LEft" Margin="0, 7, 0, 0">
+				<Button Content="Show Log" Width="75" Click="OnLogClick" Margin="3"/>
+			</StackPanel>
+
 			<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 7, 0, 0">
 				<Button x:Name="QuitButton" Content="Quit" Width="75" Click="OnQuitClick" Background="#DD2020" BorderBrush="#CC1010" Margin="3"/>
 				<Button x:Name="OkButton" Content="OK" Width="75" Click="OnOkClick" Margin="3"/>

@@ -86,6 +86,7 @@
     <Compile Include="ServiceManager.cs" />
     <Compile Include="Services\ActorRefreshService.cs" />
     <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\ModuleService.cs" />
     <Compile Include="Services\SelectionService.cs" />
     <Compile Include="Services\SettingsService.cs" />

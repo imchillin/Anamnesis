@@ -4,10 +4,12 @@
 namespace ConceptMatrix.GUI
 {
 	using System;
+	using System.Diagnostics;
 	using System.Text;
 	using System.Windows;
 	using System.Windows.Documents;
 	using System.Windows.Input;
+	using ConceptMatrix.GUI.Services;
 
 	/// <summary>
 	/// Interaction logic for ErrorDialog.xaml.
@@ -82,6 +84,11 @@ namespace ConceptMatrix.GUI
 		{
 			Count--;
 			this.Close();
+		}
+
+		private void OnLogClick(object sender, RoutedEventArgs e)
+		{
+			Process.Start(LogService.LogfilePath);
 		}
 
 		private void OnExpanded(object sender, RoutedEventArgs e)

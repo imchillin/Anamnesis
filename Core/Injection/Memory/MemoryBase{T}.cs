@@ -12,6 +12,8 @@ namespace ConceptMatrix.Injection.Memory
 
 	public abstract class MemoryBase<T> : MemoryBase, IMemory<T>
 	{
+		public string Description;
+
 		private T value;
 		private bool freeze;
 
@@ -20,8 +22,6 @@ namespace ConceptMatrix.Injection.Memory
 		private byte[] newData;
 
 		private Exception lastException;
-
-		private string guid;
 
 		public MemoryBase(ProcessInjection process, UIntPtr address, ulong length)
 			: base(process, address)
@@ -34,8 +34,6 @@ namespace ConceptMatrix.Injection.Memory
 
 			// Tick once to ensure current value is valid
 			this.Tick();
-
-			this.guid = Guid.NewGuid().ToString();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -151,11 +149,16 @@ namespace ConceptMatrix.Injection.Memory
 		// writes value to oldData and to memory
 		private bool DoWrite(T val, bool force = false)
 		{
+			if (!InjectionService.ProcessIsAlive)
+				throw new Exception("no FFXIV process");
+
 			this.Write(val, ref this.newData);
 
 			if (!Equals(this.newData, this.oldData) || force)
 			{
 				Array.Copy(this.newData, this.oldData, (int)this.length);
+
+				Log.Write("Write memory " + this.Name + " - " + this.Description, "Injection");
 				InjectionService.WriteProcessMemory(this.process.Handle, this.address, this.oldData, (UIntPtr)this.length, out IntPtr bytesRead);
 				return true;
 			}
@@ -166,6 +169,9 @@ namespace ConceptMatrix.Injection.Memory
 		// Reads memory into newData array
 		private void DoRead()
 		{
+			if (!InjectionService.ProcessIsAlive)
+				throw new Exception("no FFXIV process");
+
 			if (!InjectionService.ReadProcessMemory(this.process.Handle, this.address, this.newData, (UIntPtr)this.length, IntPtr.Zero))
 			{
 				int code = Marshal.GetLastWin32Error();

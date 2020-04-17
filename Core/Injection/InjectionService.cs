@@ -25,6 +25,17 @@ namespace ConceptMatrix.Injection
 			private set;
 		}
 
+		public static bool ProcessIsAlive
+		{
+			get
+			{
+				if (Instance.Process == null)
+					return false;
+
+				return Instance.Process.IsAlive;
+			}
+		}
+
 		public ProcessInjection Process
 		{
 			get;
@@ -77,6 +88,7 @@ namespace ConceptMatrix.Injection
 		public Task Start()
 		{
 			new Thread(new ThreadStart(this.TickMemoryThread)).Start();
+			new Thread(new ThreadStart(this.ProcessWatcherThread)).Start();
 			return Task.CompletedTask;
 		}
 
@@ -103,10 +115,19 @@ namespace ConceptMatrix.Injection
 		{
 			UIntPtr address = this.GetAddress(offsets);
 
+			string offsetString = string.Empty;
+			foreach (IMemoryOffset offset in offsets)
+			{
+				offsetString += " " + GetString(offset) + ",";
+			}
+
+			offsetString = offsetString.Trim(' ', ',');
+
 			Type wrapperType = this.GetMemoryType(typeof(T));
 			try
 			{
-				IMemory<T> memory = (IMemory<T>)Activator.CreateInstance(wrapperType, this.Process, address);
+				MemoryBase<T> memory = (MemoryBase<T>)Activator.CreateInstance(wrapperType, this.Process, address);
+				memory.Description = offsetString + " (" + address + ")";
 				return memory;
 			}
 			catch (TargetInvocationException ex)
@@ -132,6 +153,40 @@ namespace ConceptMatrix.Injection
 		[DllImport("kernel32.dll")]
 		internal static extern bool WriteProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten);
 
+		private static string GetString(IMemoryOffset offset)
+		{
+			Type type = offset.GetType();
+			string typeName = type.Name;
+
+			if (type.IsGenericType)
+			{
+				typeName = typeName.Split('`')[0];
+				typeName += "<";
+
+				Type[] generics = type.GetGenericArguments();
+				for (int i = 0; i < generics.Length; i++)
+				{
+					if (i > 1)
+						typeName += ", ";
+
+					typeName += generics[i].Name;
+				}
+
+				typeName += ">";
+			}
+
+			string val = string.Empty;
+			for (int i = 0; i < offset.Offsets.Length; i++)
+			{
+				if (i > 1)
+					val += ", ";
+
+				val += offset.Offsets[i].ToString("X2");
+			}
+
+			return typeName + " [" + val + "]";
+		}
+
 		private Type GetMemoryType(Type type)
 		{
 			if (!this.memoryTypeLookup.ContainsKey(type))
@@ -150,6 +205,9 @@ namespace ConceptMatrix.Injection
 				{
 					Thread.Sleep(16);
 
+					if (!ProcessIsAlive)
+						return;
+
 					while (refreshService.IsRefreshing)
 						Thread.Sleep(64);
 
@@ -159,6 +217,17 @@ namespace ConceptMatrix.Injection
 			catch (Exception ex)
 			{
 				Log.Write(new Exception("Memory thread exception", ex));
+			}
+		}
+
+		private void ProcessWatcherThread()
+		{
+			while (this.isActive)
+			{
+				if (!ProcessIsAlive)
+				{
+					Log.Write(new Exception("FFXIV Process has terminated"), "Injection");
+				}
 			}
 		}
 

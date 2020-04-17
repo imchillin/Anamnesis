@@ -18,6 +18,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			: base(slot, baseOffset)
 		{
 			this.memory = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHand : Offsets.OffHand);
+			this.memory.Name = slot.ToString();
 			this.memory.ValueChanged += this.Memory_ValueChanged;
 
 			this.modelSet = this.memory.Value.Set;
@@ -33,10 +34,12 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			if (this.HasWeapon)
 			{
 				this.scaleMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandScale : Offsets.OffhandScale);
+				this.scaleMem.Name = slot.ToString() + "_Scale";
 				this.scaleMem.ValueChanged += this.ScaleMem_ValueChanged;
 				this.scaleMem.Freeze = true;
 
 				this.colorMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandColor : Offsets.OffhandColor);
+				this.colorMem.Name = slot.ToString() + "_Color";
 				this.colorMem.ValueChanged += this.ColorMem_ValueChanged;
 				this.colorMem.Freeze = true;
 

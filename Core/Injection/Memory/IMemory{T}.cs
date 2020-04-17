@@ -11,6 +11,11 @@ namespace ConceptMatrix
 		event ValueChangedEventHandler ValueChanged;
 
 		/// <summary>
+		/// Gets or sets a value used to identify this memory when logging. Does not need to be set.
+		/// </summary>
+		string Name { get; set; }
+
+		/// <summary>
 		/// Gets or sets the value in memory.
 		/// </summary>
 		T Value { get; set; }
