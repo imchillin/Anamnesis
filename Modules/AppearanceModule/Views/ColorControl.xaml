@@ -9,14 +9,14 @@
 			 Margin="1, 0, 3, 0"
 			 Width="53"
 			 HorizontalAlignment="Left">
-	<Grid x:Name="ContentArea">
+	<Grid x:Name="ContentArea" SnapsToDevicePixels="True">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="22"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 		
-		<Button Grid.Column="0" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="0" Background="Transparent">
-			<Border Height="20" CornerRadius="3" BorderBrush="#22000000" BorderThickness="1" Margin="1">
+		<Button Grid.Column="0" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="2" VerticalAlignment="Center" Background="Transparent">
+			<Border Height="15" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1">
 				<Border.Background>
 					<SolidColorBrush x:Name="PreviewColor" Color="{Binding WpfColor, FallbackValue=White}"/>
 				</Border.Background>

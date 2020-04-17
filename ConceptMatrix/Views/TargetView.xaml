@@ -6,7 +6,8 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="250">
-	<Button Height="40" Padding="0" HorizontalContentAlignment="Stretch" Click="OnClicked">
+
+	<Button Height="40" Padding="0" HorizontalContentAlignment="Stretch" Click="OnClicked" Margin="3">
 		<Grid Margin="3">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
@@ -14,16 +15,14 @@
 			</Grid.RowDefinitions>
 
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="32"/>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
-			<Grid Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-				<fa:IconImage x:Name="Icon" Icon="User" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
-			</Grid>
+			<TextBlock Grid.ColumnSpan="2" Grid.Row="0" x:Name="ModeLabel" Text="Auto Selection" FontWeight="Light" Margin="3,0,0,0" Padding="0" VerticalAlignment="Center"/>
 
-			<TextBlock Grid.Column="1" Grid.Row="0" x:Name="ModeLabel" Text="Auto Selection" FontWeight="Light" Margin="3,0,0,0" Padding="0" VerticalAlignment="Center" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
-			<TextBlock Grid.Column="1" Grid.Row="1" x:Name="NameLabel" Text="Something" TextTrimming="CharacterEllipsis" FontWeight="Medium" Margin="3,-4,0,0" Padding="0" VerticalAlignment="Center" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
+			<fa:IconImage Margin="0, 2, 2, 2" Grid.Column="0" Grid.Row="1" x:Name="Icon" Icon="User" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
+			<TextBlock Grid.Column="1" Grid.Row="1" x:Name="NameLabel" Text="Something" TextTrimming="CharacterEllipsis" FontWeight="Medium" Margin="0" Padding="0" VerticalAlignment="Center" FontSize="14"/>
 		</Grid>
 	</Button>
 </UserControl>

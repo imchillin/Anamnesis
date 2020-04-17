@@ -86,6 +86,7 @@
     </Compile>
     <Compile Include="Converters\BoolToIntConverter.cs" />
     <Compile Include="Converters\InvertedBoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="DependencyProperties\DependencyProperty{TValue}.cs" />
     <Compile Include="DependencyProperties\IBind{TValue}.cs" />
     <Compile Include="Drawers\SelectorDrawer.xaml.cs">

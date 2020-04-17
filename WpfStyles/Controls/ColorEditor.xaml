@@ -8,7 +8,7 @@
 	<Grid x:Name="ContentArea">
 		
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="24"/>
+			<ColumnDefinition Width="20"/>
 			<ColumnDefinition Width="20"/>
 			<ColumnDefinition/>
 			<ColumnDefinition Width="20"/>
@@ -18,10 +18,10 @@
 		</Grid.ColumnDefinitions>
 
 		<Button
-			Margin="0, 0, 0, -2"
 			Style="{DynamicResource TransparentButton}"
+			Margin="0, 3, 0, 0"
 			Click="OnClick">
-			<Border x:Name="Preview" CornerRadius="3" BorderBrush="{DynamicResource MaterialDesignBody}" BorderThickness="1" Margin="4"/>
+			<Border x:Name="Preview" CornerRadius="2" Margin="2"/>
 		</Button>
 		
 		<Label Grid.Column="1" Content="R:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>

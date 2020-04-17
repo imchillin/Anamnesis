@@ -16,7 +16,7 @@
 			</Grid.ColumnDefinitions>
 
 			<fa:IconBlock Grid.Column="0" Icon="{Binding Icon, FallbackValue=Upload}" Margin="3, 0, 3, 0" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" VerticalAlignment="Center"/>
-			<TextBlock Grid.Column="1" Text="{Binding Text, FallbackValue=Button}" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" VerticalAlignment="Center" Margin="6, 0, 6, 0" FontWeight="Light" Visibility="{Binding Text, Converter={StaticResource NotNullToVisibilityconverter}}"/>
+			<TextBlock Grid.Column="1" Text="{Binding Text, FallbackValue=Button}" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" VerticalAlignment="Center" Margin="6, 0, 6, 0" FontWeight="Light" Visibility="{Binding Text, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 		</Grid>
 
 	</Button>

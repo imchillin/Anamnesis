@@ -137,7 +137,7 @@
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 
-			<Button Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked">
+			<Button Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked" BorderBrush="Transparent">
 				<Border Width="54" Height="54">
 					<Image Source="{Binding Hair.Icon, Converter={StaticResource IImageConverter}}"/>
 				</Border>

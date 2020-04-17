@@ -64,7 +64,7 @@ namespace MaterialDesignThemes.Wpf
 			foreach (Swatch swatch in self.GetSwatches())
 			{
 				if (theme.PrimaryMid.Color == swatch.ExemplarHue.Color &&
-					theme.SecondaryMid.Color == swatch.AccentExemplarHue.Color)
+					theme.SecondaryMid.Color == swatch.AccentExemplarHue?.Color)
 				{
 					return swatch;
 				}

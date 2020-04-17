@@ -34,29 +34,28 @@
 					Click="OnClick"
 					Grid.RowSpan="2"
 					Style="{DynamicResource TransparentButton}"
-					Background="Transparent">
-					<Border  Height="52" Width="52" Background="#10FFFFFF" CornerRadius="3" BorderThickness="1" BorderBrush="#44222222">
-						<Grid>
-							<Image x:Name="SlotIcon" Source="/AppearanceModule;component/Assets/Slots/Body.png" Margin="6" Opacity="0.4"/>
-							<Image Source="{Binding Item.Icon, Converter={StaticResource IImageConverter}}" Margin="1"/>
-							<Image Source="/AppearanceModule;component/Assets/IconBorder.png" Margin="-2, -1, -2, -4" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityconverter}}"/>
+					BorderBrush="Transparent">
+					<Grid>
+						<Border BorderThickness="1" CornerRadius="3" BorderBrush="{DynamicResource PrimaryHueMidBrush}" Visibility="{Binding Item.Icon, Converter={StaticResource NullToVisibilityConverter}}"/>
+						<Image x:Name="SlotIcon" Source="/AppearanceModule;component/Assets/Slots/Body.png" Margin="6" Opacity="0.3"/>
+						<Image Source="{Binding Item.Icon, Converter={StaticResource IImageConverter}}" Margin="1"/>
+						<Image Source="/AppearanceModule;component/Assets/IconBorder.png" Margin="-2, -1, -2, -4" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
-							<Grid.ToolTip>
-								<StackPanel>
-									<TextBlock Text="{Binding Item.Name}" FontWeight="DemiBold"/>
-									<TextBlock Text="{Binding Item.Description}" Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
-								</StackPanel>
-							</Grid.ToolTip>
+						<Grid.ToolTip>
+							<StackPanel>
+								<TextBlock Text="{Binding Item.Name}" FontWeight="DemiBold"/>
+								<TextBlock Text="{Binding Item.Description}" Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+							</StackPanel>
+						</Grid.ToolTip>
 
-						</Grid>
-					</Border>
+					</Grid>
 				</Button>
 
 				<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SlotName}" FontWeight="Light" Margin="3,0,0,0" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12"/>
 				<TextBlock Grid.Row="0" Grid.Column="2" Text=":" FontWeight="Light" Margin="0,0,3,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
 				<TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding Item.Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
 
-				<Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="0, -2, 0, 3">
+				<Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="0, -2, 0, 0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
@@ -73,32 +72,32 @@
 
 					<!-- Dye -->
 					<Button 
+						Margin="2, 4, 0, 0"
 						Grid.Column="0"
 						Grid.RowSpan="2"
 						Visibility="{Binding CanDye, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
 						Click="OnDyeClick"
 						Height="34"
 						VerticalAlignment="Top"
+						BorderBrush="Transparent"
 						Style="{DynamicResource TransparentButton}"
 						Background="Transparent">
 
-						<Border Grid.Column="1" Background="#10FFFFFF" CornerRadius="3" BorderThickness="1" BorderBrush="#44222222" Width="32" Height="32" Margin="1">
-							<Grid>
-								<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}"/>
-								<Image Source="/AppearanceModule;component/Assets/IconBorderSmall.png" Margin="-2, -1, -2, -3" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityconverter}}"/>
+						<Grid Width="32" Height="32">
+							<Border BorderThickness="1" CornerRadius="3" BorderBrush="{DynamicResource PrimaryHueMidBrush}" Visibility="{Binding Dye.Icon, Converter={StaticResource NullToVisibilityConverter}}"/>
+							<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}" Margin="0"/>
+							<Image Source="/AppearanceModule;component/Assets/IconBorderSmall.png" Margin="-3, -2, -3, -5" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
-								<Grid.ToolTip>
-									<StackPanel>
-										<TextBlock Text="{Binding Dye.Name}" FontWeight="DemiBold"/>
-										<TextBlock Text="{Binding Dye.Description}" Visibility="{Binding Dye.Description, Converter={StaticResource StringHasContentToVisibility}}" />
-									</StackPanel>
-								</Grid.ToolTip>
-
-							</Grid>
-						</Border>
+							<Grid.ToolTip>
+								<StackPanel>
+									<TextBlock Text="{Binding Dye.Name}" FontWeight="DemiBold"/>
+									<TextBlock Text="{Binding Dye.Description}" Visibility="{Binding Dye.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+								</StackPanel>
+							</Grid.ToolTip>
+						</Grid>
 					</Button>
 
-					<cm3Controls:NumberBox Grid.Column="1" Grid.Row="0" Width="50" Value="{Binding Key}" PreviewTextInput="OnPreviewTextInput" Margin="2, 0, 25, 2" FontSize="12" FontWeight="Light"/>
+					<cm3Controls:NumberBox Grid.Column="1" Grid.Row="0" Width="50" Value="{Binding Key}" PreviewTextInput="OnPreviewTextInput" Margin="2, 0, 10, 2" FontSize="12" FontWeight="Light"/>
 					<cm3Controls:NumberBox Grid.Column="2" Grid.Row="0" Width="42" Value="{Binding ModelSet}" PreviewTextInput="OnPreviewTextInput" Margin="2, 0, 2, 2" FontSize="12"  FontWeight="Light" Visibility="{Binding HasModelSet, Converter={StaticResource BoolToVisibilityConverter}}"/>
 					<cm3Controls:NumberBox Grid.Column="3" Grid.Row="0" Width="42" Value="{Binding ModelBase}" PreviewTextInput="OnPreviewTextInput" Margin="2, 0, 2, 2" FontSize="12" FontWeight="Light"/>
 					<cm3Controls:NumberBox Grid.Column="4" Grid.Row="0" Width="42" Value="{Binding ModelVariant}" PreviewTextInput="OnPreviewTextInput" Margin="2, 0, 2, 2" FontSize="12" FontWeight="Light"/>
@@ -117,7 +116,7 @@
 			<!-- Scale -->
 			<Grid Height="24" Visibility="{Binding CanScale, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" Margin="0, 4, 0, 2">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="56"/>
+					<ColumnDefinition Width="58"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition/>
@@ -138,14 +137,13 @@
 				Height="24">
 			
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="56"/>
-					<ColumnDefinition Width="22"/>
+					<ColumnDefinition Width="58"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 
 				<Label Grid.Column="0" Content="Color:" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Normal" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-				<cm3Controls:ColorEditor Value="{Binding Color, Mode=TwoWay}" Grid.Column="2" FontSize="12" Margin="0, 0, 3, 0"/>
+				<cm3Controls:ColorEditor Value="{Binding Color, Mode=TwoWay}" Grid.Column="1" FontSize="12" Margin="0, 0, 3, 0"/>
 				<Line Grid.ColumnSpan="4" X1="0" X2="1" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, 0, 3, 0"/>
 			</Grid>
 

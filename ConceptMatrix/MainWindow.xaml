@@ -73,7 +73,7 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 
-				<views:TargetView Margin="10" Grid.Row="1"/>
+				<views:TargetView Margin="0" Grid.Row="1"/>
 
 				<views:NavigationMenu Grid.Row="2"/>
 			</Grid>
