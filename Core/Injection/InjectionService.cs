@@ -27,13 +27,8 @@ namespace ConceptMatrix.Injection
 
 		public static bool ProcessIsAlive
 		{
-			get
-			{
-				if (Instance.Process == null)
-					return false;
-
-				return Instance.Process.IsAlive;
-			}
+			get;
+			private set;
 		}
 
 		public ProcessInjection Process
@@ -76,6 +71,7 @@ namespace ConceptMatrix.Injection
 			try
 			{
 				this.Process.OpenProcess("ffxiv_dx11");
+				ProcessIsAlive = true;
 			}
 			catch (Exception ex)
 			{
@@ -224,6 +220,8 @@ namespace ConceptMatrix.Injection
 		{
 			while (this.isActive)
 			{
+				ProcessIsAlive = this.Process.IsAlive;
+
 				if (!ProcessIsAlive)
 				{
 					Log.Write(new Exception("FFXIV Process has terminated"), "Injection");

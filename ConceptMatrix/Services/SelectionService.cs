@@ -43,6 +43,8 @@ namespace ConceptMatrix.GUI.Services
 
 				try
 				{
+					Log.Write("Changing Selection: " + value.ActorId + "(" + value.BaseAddress + ")", "Selection");
+
 					Stopwatch sw = new Stopwatch();
 					sw.Start();
 					this.SelectionChanged?.Invoke(this.currentSelection);
@@ -103,16 +105,16 @@ namespace ConceptMatrix.GUI.Services
 
 			while (this.IsAlive)
 			{
-				try
-				{
+				await Task.Delay(250);
+
+				while (refreshService.IsRefreshing)
 					await Task.Delay(250);
 
-					while (refreshService.IsRefreshing)
-						await Task.Delay(250);
+				Selection.Modes mode = this.GetMode();
+				IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Gpose : Offsets.Target;
 
-					Selection.Modes mode = this.GetMode();
-					IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Gpose : Offsets.Target;
-
+				try
+				{
 					ActorTypes type = baseOffset.GetValue(Offsets.ActorType);
 					string name = baseOffset.GetValue(Offsets.Name);
 
