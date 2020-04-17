@@ -71,9 +71,18 @@ namespace ConceptMatrix.Injection
 			if (!this.Process.Responding)
 				throw new Exception("Target process id not responding");
 
-			System.Diagnostics.Process.EnterDebugMode();
-			this.Handle = OpenProcess(0x001F0FFF, true, pid);
+			Process.EnterDebugMode();
+			var debugPrivilegeCheck = CheckSeDebugPrivilege(out var isDebugEnabled);
+			if (debugPrivilegeCheck != 0)
+			{
+				throw new Exception($"ERROR: CheckSeDebugPrivilege failed with error: {debugPrivilegeCheck}");
+			}
+			else if (!isDebugEnabled)
+			{
+				throw new Exception("ERROR: SeDebugPrivilege not enabled. Please report this!");
+			}
 
+			this.Handle = OpenProcess(0x001F0FFF, true, pid);
 			if (this.Handle == IntPtr.Zero)
 			{
 				int eCode = Marshal.GetLastWin32Error();
@@ -136,13 +145,89 @@ namespace ConceptMatrix.Injection
 			}
 		}
 
+		private static int CheckSeDebugPrivilege(out bool isDebugEnabled)
+		{
+			isDebugEnabled = false;
+
+			if (!OpenProcessToken(GetCurrentProcess(), 0x8 /*TOKEN_QUERY*/, out var tokenHandle))
+				return Marshal.GetLastWin32Error();
+
+			var luidDebugPrivilege = default(LUID);
+			if (!LookupPrivilegeValue(null, "SeDebugPrivilege", ref luidDebugPrivilege))
+				return Marshal.GetLastWin32Error();
+
+			var requiredPrivileges = new PRIVILEGE_SET
+			{
+				PrivilegeCount = 1,
+				Control = 1 /* PRIVILEGE_SET_ALL_NECESSARY */,
+				Privilege = new LUID_AND_ATTRIBUTES[1],
+			};
+
+			requiredPrivileges.Privilege[0].Luid = luidDebugPrivilege;
+			requiredPrivileges.Privilege[0].Attributes = 2 /* SE_PRIVILEGE_ENABLED */;
+
+			if (!PrivilegeCheck(tokenHandle, ref requiredPrivileges, out var bResult))
+				return Marshal.GetLastWin32Error();
+
+			// bResult == true => SeDebugPrivilege is on; otherwise it's off
+			isDebugEnabled = bResult;
+
+			CloseHandle(tokenHandle);
+
+			return 0;
+		}
+
 		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern IntPtr OpenProcess(uint processAccess, bool bInheritHandle, int processId);
+		private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int processId);
 
 		[DllImport("kernel32.dll")]
 		private static extern bool IsWow64Process(IntPtr hProcess, out bool lpSystemInfo);
 
 		[DllImport("kernel32.dll")]
 		private static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern IntPtr GetCurrentProcess();
+
+		[DllImport("advapi32.dll", SetLastError = true)]
+		private static extern bool OpenProcessToken(
+			IntPtr processHandle,
+			uint desiredAccess,
+			out IntPtr tokenHandle);
+
+		[DllImport("advapi32.dll", SetLastError = true)]
+		private static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, ref LUID lpLuid);
+
+		[DllImport("advapi32.dll", SetLastError = true)]
+		private static extern bool PrivilegeCheck(
+			IntPtr clientToken,
+			ref PRIVILEGE_SET requiredPrivileges,
+			out bool pfResult);
+
+		[DllImport("kernel32.dll")]
+		private static extern int CloseHandle(
+		IntPtr hObject);
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct LUID
+		{
+			public uint LowPart;
+			public int HighPart;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct PRIVILEGE_SET
+		{
+			public uint PrivilegeCount;
+			public uint Control;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+			public LUID_AND_ATTRIBUTES[] Privilege;
+		}
+
+		private struct LUID_AND_ATTRIBUTES
+		{
+			public LUID Luid;
+			public uint Attributes;
+		}
 	}
 }
