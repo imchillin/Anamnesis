@@ -81,14 +81,14 @@
 
 		<!-- Race / Tribe -->
 		<TextBlock Grid.Column="0" Grid.Row="0" Text="Tribe:" Style="{StaticResource Label}"/>
-		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0, -3, 0, 0">
 			<ComboBox x:Name="RaceComboBox" SelectedItem="{Binding Race}" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="75" Margin="3, 0, 6, 3"/>
 			<ComboBox x:Name="TribeComboBox" SelectedItem="{Binding Tribe}" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="100"  Margin="3, 0, 3, 3"/>
 		</StackPanel>
 
 		<!-- Gender -->
 		<TextBlock Grid.Column="0" Grid.Row="1" Text="Gender:" Style="{StaticResource Label}" Visibility="{Binding HasGender, Converter={StaticResource B2V}}"/>
-		<ComboBox Grid.Column="1" Grid.Row="1" x:Name="GenderComboBox" SelectedItem="{Binding ViewModel.Gender}" Margin="3, 0, 3, 3" Visibility="{Binding HasGender, Converter={StaticResource B2V}}"/>
+		<ComboBox Grid.Column="1" Grid.Row="1" x:Name="GenderComboBox" SelectedItem="{Binding ViewModel.Gender}" Margin="3, -2, 3, 3" Visibility="{Binding HasGender, Converter={StaticResource B2V}}"/>
 
 		<!-- Skintone -->
 		<TextBlock Grid.Column="0" Grid.Row="2" Text="Skin:" Style="{StaticResource Label}"/>
