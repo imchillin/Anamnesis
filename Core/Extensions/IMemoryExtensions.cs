@@ -26,6 +26,7 @@ namespace ConceptMatrix
 			private PropertyInfo property;
 			private object owner;
 			private INotifyPropertyChanged ownerNotifier;
+			private bool bindLock = false;
 
 			public BindWrapper(IMemory<T> target, object owner, string propertyName)
 			{
@@ -53,6 +54,9 @@ namespace ConceptMatrix
 
 			private void OwnerNotifier_PropertyChanged(object sender, PropertyChangedEventArgs e)
 			{
+				if (this.bindLock)
+					return;
+
 				if (e.PropertyName == this.property.Name)
 				{
 					this.target.Value = (T)this.property.GetValue(this.owner);
@@ -61,7 +65,9 @@ namespace ConceptMatrix
 
 			private void Target_ValueChanged(object sender, object value)
 			{
+				this.bindLock = true;
 				this.property.SetValue(this.owner, value);
+				this.bindLock = false;
 			}
 
 			private void Target_Disposing()
