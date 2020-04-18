@@ -65,7 +65,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 			this.Eyes = vm.Eyes;
 			this.Nose = vm.Nose;
 			this.Jaw = vm.Jaw;
-			this.Lips = vm.Lips;
+			this.Lips = vm.Mouth;
 			this.LipsToneFurPattern = vm.LipsToneFurPattern;
 			this.EarMuscleTailSize = vm.EarMuscleTailSize;
 			this.TailEarsType = vm.TailEarsType;
@@ -95,7 +95,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 			vm.Eyes = this.Eyes;
 			vm.Nose = this.Nose;
 			vm.Jaw = this.Jaw;
-			vm.Lips = this.Lips;
+			vm.Mouth = this.Lips;
 			vm.LipsToneFurPattern = this.LipsToneFurPattern;
 			vm.EarMuscleTailSize = this.EarMuscleTailSize;
 			vm.TailEarsType = this.TailEarsType;

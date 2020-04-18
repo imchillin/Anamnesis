@@ -72,6 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitmapIImage.cs" />
+    <Compile Include="Controls\RgbaColorControl.xaml.cs">
+      <DependentUpon>RgbaColorControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\RgbColorControl.xaml.cs">
       <DependentUpon>RgbColorControl.xaml</DependentUpon>
     </Compile>
@@ -181,6 +184,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\RgbaColorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\RgbColorControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

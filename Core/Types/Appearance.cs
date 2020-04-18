@@ -26,7 +26,7 @@ namespace ConceptMatrix
 		public byte Eyes;
 		public byte Nose;
 		public byte Jaw;
-		public byte Lips;
+		public byte Mouth;
 		public byte LipsToneFurPattern;
 		public byte EarMuscleTailSize;
 		public byte TailEarsType;

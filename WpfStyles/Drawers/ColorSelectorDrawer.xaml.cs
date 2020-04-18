@@ -12,7 +12,6 @@ namespace ConceptMatrix.WpfStyles.Drawers
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 
 	using Binder = ConceptMatrix.WpfStyles.DependencyProperties.Binder;
-	using CmColor = ConceptMatrix.Color;
 	using WpfColor = System.Windows.Media.Color;
 
 	/// <summary>
@@ -20,14 +19,18 @@ namespace ConceptMatrix.WpfStyles.Drawers
 	/// </summary>
 	public partial class ColorSelectorDrawer : UserControl, IDrawer
 	{
-		public static readonly IBind<CmColor> ValueDp = Binder.Register<CmColor, ColorSelectorDrawer>(nameof(Value), OnValueChanged);
+		public static readonly IBind<Color4> ValueDp = Binder.Register<Color4, ColorSelectorDrawer>(nameof(Value), OnValueChanged);
 		public static readonly IBind<WpfColor> WpfColorDp = Binder.Register<WpfColor, ColorSelectorDrawer>(nameof(WpfColor), OnWpfColorChanged);
+
+		public static readonly IBind<bool> EnableAlphaDp = Binder.Register<bool, ColorSelectorDrawer>(nameof(EnableAlpha));
 
 		public static readonly IBind<float> ChannelRDp = Binder.Register<float, ColorSelectorDrawer>(nameof(R), OnChanelChanged);
 		public static readonly IBind<float> ChannelGDp = Binder.Register<float, ColorSelectorDrawer>(nameof(G), OnChanelChanged);
 		public static readonly IBind<float> ChannelBDp = Binder.Register<float, ColorSelectorDrawer>(nameof(B), OnChanelChanged);
+		public static readonly IBind<float> ChannelADp = Binder.Register<float, ColorSelectorDrawer>(nameof(A), OnChanelChanged);
 
 		private bool propertyLock = false;
+		private bool draggingPicker = false;
 
 		public ColorSelectorDrawer()
 		{
@@ -41,20 +44,16 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			foreach (PropertyInfo property in properties)
 			{
 				Color c = (Color)property.GetValue(null);
-
-				if (c.A <= 0)
-					continue;
-
 				this.List.Items.Add(new ColorOption(c, property.Name));
 			}
 		}
 
-		public delegate void ValueChangedEventHandler(CmColor value);
+		public delegate void ValueChangedEventHandler(Color4 value);
 
 		public event ValueChangedEventHandler ValueChanged;
 		public event DrawerEvent Close;
 
-		public CmColor Value
+		public Color4 Value
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
@@ -84,7 +83,19 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			set => ChannelBDp.Set(this, value);
 		}
 
-		private static void OnValueChanged(ColorSelectorDrawer sender, CmColor value)
+		public float A
+		{
+			get => ChannelADp.Get(this);
+			set => ChannelADp.Set(this, value);
+		}
+
+		public bool EnableAlpha
+		{
+			get => EnableAlphaDp.Get(this);
+			set => EnableAlphaDp.Set(this, value);
+		}
+
+		private static void OnValueChanged(ColorSelectorDrawer sender, Color4 value)
 		{
 			sender.ValueChanged?.Invoke(value);
 
@@ -96,6 +107,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			sender.R = value.R;
 			sender.G = value.G;
 			sender.B = value.B;
+			sender.A = value.A;
 			sender.propertyLock = false;
 		}
 
@@ -109,17 +121,18 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			sender.R = sender.Value.R;
 			sender.G = sender.Value.G;
 			sender.B = sender.Value.B;
+			sender.A = sender.Value.A;
 			sender.propertyLock = false;
 		}
 
 		private static void OnChanelChanged(ColorSelectorDrawer sender, float value)
 		{
-			sender.Value = new CmColor(sender.R, sender.G, sender.B);
+			sender.Value = new Color4(sender.R, sender.G, sender.B, sender.A);
 		}
 
-		private static CmColor ToCmColor(WpfColor wpfColor)
+		private static Color4 ToCmColor(WpfColor wpfColor)
 		{
-			return new CmColor(wpfColor.R / 255.0f, wpfColor.G / 255.0f, wpfColor.B / 255.0f);
+			return new Color4(wpfColor.R / 255.0f, wpfColor.G / 255.0f, wpfColor.B / 255.0f, wpfColor.A / 255.0f);
 		}
 
 		private static float Clamp(float v)
@@ -129,23 +142,39 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			return v;
 		}
 
-		private static WpfColor ToWpfColor(CmColor cmColor)
+		private static WpfColor ToWpfColor(Color4 cmColor)
 		{
 			WpfColor v = default;
-			v.A = 255;
 			v.R = (byte)(Clamp(cmColor.R) * 255);
 			v.G = (byte)(Clamp(cmColor.G) * 255);
 			v.B = (byte)(Clamp(cmColor.B) * 255);
+			v.A = (byte)(Clamp(cmColor.A) * 255);
 			return v;
+		}
+
+		private void Picker_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			this.draggingPicker = true;
+		}
+
+		private void Picker_MouseUp(object sender, MouseButtonEventArgs e)
+		{
+			this.draggingPicker = false;
 		}
 
 		private void ColorPicker_MouseMove(object sender, MouseEventArgs e)
 		{
+			if (!this.draggingPicker)
+				return;
+
 			this.propertyLock = true;
-			this.Value = ToCmColor(this.Picker.Color);
+			Color4 val = ToCmColor(this.Picker.Color);
+			val.A = this.Value.A;
+			this.Value = val;
 			this.R = this.Value.R;
 			this.G = this.Value.G;
 			this.B = this.Value.B;
+			this.A = this.Value.A;
 			this.propertyLock = false;
 		}
 
@@ -166,9 +195,9 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			public Color Color { get; set; }
 			public string Name { get; set; }
 
-			public CmColor AsColor()
+			public Color4 AsColor()
 			{
-				return new CmColor(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f);
+				return new Color4(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f, this.Color.A);
 			}
 		}
 	}

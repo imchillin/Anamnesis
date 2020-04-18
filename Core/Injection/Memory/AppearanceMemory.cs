@@ -34,7 +34,7 @@ namespace ConceptMatrix.Injection.Memory
 			value.Eyes = data[16];
 			value.Nose = data[17];
 			value.Jaw = data[18];
-			value.Lips = data[19];
+			value.Mouth = data[19];
 			value.LipsToneFurPattern = data[20];
 			value.EarMuscleTailSize = data[21];
 			value.TailEarsType = data[22];
@@ -65,7 +65,7 @@ namespace ConceptMatrix.Injection.Memory
 			data[16] = value.Eyes;
 			data[17] = value.Nose;
 			data[18] = value.Jaw;
-			data[19] = value.Lips;
+			data[19] = value.Mouth;
 			data[20] = value.LipsToneFurPattern;
 			data[21] = value.EarMuscleTailSize;
 			data[22] = value.TailEarsType;

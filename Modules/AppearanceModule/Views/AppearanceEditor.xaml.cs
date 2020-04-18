@@ -26,6 +26,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private IMemory<Color> hairTintColorMem;
 		private IMemory<Color> hairGlowColorMem;
 		private IMemory<Color> highlightTintColorMem;
+		private IMemory<Color> lipTintMem;
+		private IMemory<float> lipGlossMem;
 
 		public AppearanceEditor()
 		{
@@ -41,6 +43,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			selectionService.SelectionChanged += this.OnSelectionChanged;
 			this.OnSelectionChanged(selectionService.CurrentSelection);
+
+			this.PropertyChanged += this.AppearanceEditor_PropertyChanged;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -108,6 +112,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public Color HairTint { get; set; }
 		public Color HairGlow { get; set; }
 		public Color HighlightTint { get; set; }
+		public Color4 LipTint { get; set; }
 
 		public AppearanceViewModel ViewModel
 		{
@@ -132,6 +137,18 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.hairGlowColorMem?.Dispose();
 			this.highlightTintColorMem?.Dispose();
 
+			if (this.lipTintMem != null)
+			{
+				this.lipTintMem?.Dispose();
+				this.lipTintMem.ValueChanged -= this.OnLipTintMemChanged;
+			}
+
+			if (this.lipGlossMem != null)
+			{
+				this.lipGlossMem?.Dispose();
+				this.lipGlossMem.ValueChanged -= this.OnLipTintMemChanged;
+			}
+
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 			this.ViewModel = null;
 
@@ -155,6 +172,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.highlightTintColorMem = selection.BaseAddress.GetMemory(Offsets.HairHiglight);
 			this.highlightTintColorMem.Bind(this, nameof(AppearanceEditor.HighlightTint));
 
+			this.lipTintMem = selection.BaseAddress.GetMemory(Offsets.MouthColor);
+			this.lipTintMem.ValueChanged += this.OnLipTintMemChanged;
+			this.lipGlossMem = selection.BaseAddress.GetMemory(Offsets.MouthGloss);
+			this.lipGlossMem.ValueChanged += this.OnLipTintMemChanged;
+			this.OnLipTintMemChanged(null, null);
+
 			this.ViewModel = new AppearanceViewModel(selection);
 			this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
 			Application.Current.Dispatcher.Invoke(() =>
@@ -170,6 +193,20 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 				this.OnViewModelPropertyChanged(null, null);
 			});
+		}
+
+		private void OnLipTintMemChanged(object sender, object value)
+		{
+			this.LipTint = new Color4(this.lipTintMem.Value, this.lipGlossMem.Value);
+		}
+
+		private void AppearanceEditor_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AppearanceEditor.LipTint))
+			{
+				this.lipTintMem.Value = this.LipTint.Color;
+				this.lipGlossMem.Value = this.LipTint.A;
+			}
 		}
 
 		private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)

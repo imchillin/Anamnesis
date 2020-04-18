@@ -12,19 +12,18 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using ConceptMatrix.WpfStyles.Drawers;
 	using PropertyChanged;
 
-	using CmColor = ConceptMatrix.Color;
 	using WpfColor = System.Windows.Media.Color;
 
 	/// <summary>
 	/// Interaction logic for ColorControl.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	public partial class RgbColorControl : UserControl
+	public partial class RgbaColorControl : UserControl
 	{
-		public static readonly IBind<CmColor> ValueDp = Binder.Register<CmColor, RgbColorControl>(nameof(Value), OnValueChanged);
-		public static readonly IBind<string> NameDp = Binder.Register<string, RgbColorControl>(nameof(DisplayName));
+		public static readonly IBind<Color4> ValueDp = Binder.Register<Color4, RgbaColorControl>(nameof(Value), OnValueChanged);
+		public static readonly IBind<string> NameDp = Binder.Register<string, RgbaColorControl>(nameof(DisplayName));
 
-		public RgbColorControl()
+		public RgbaColorControl()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
@@ -37,13 +36,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set => NameDp.Set(this, value);
 		}
 
-		public CmColor Value
+		public Color4 Value
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
 		}
 
-		private static void OnValueChanged(RgbColorControl sender, CmColor value)
+		private static void OnValueChanged(RgbaColorControl sender, Color4 value)
 		{
 			sender.UpdatePreview();
 		}
@@ -60,12 +59,12 @@ namespace ConceptMatrix.WpfStyles.Controls
 			IViewService viewService = Services.Get<IViewService>();
 
 			ColorSelectorDrawer selector = new ColorSelectorDrawer();
-			selector.EnableAlpha = false;
-			selector.Value = new Color4(this.Value);
+			selector.EnableAlpha = true;
+			selector.Value = this.Value;
 
 			selector.ValueChanged += (v) =>
 			{
-				this.Value = v.Color;
+				this.Value = v;
 			};
 
 			await viewService.ShowDrawer(selector, this.DisplayName);
@@ -77,7 +76,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			c.R = (byte)(Clamp(this.Value.R) * 255);
 			c.G = (byte)(Clamp(this.Value.G) * 255);
 			c.B = (byte)(Clamp(this.Value.B) * 255);
-			c.A = 255;
+			c.A = (byte)(Clamp(this.Value.A) * 255);
 
 			this.PreviewColor.Color = c;
 		}

@@ -123,9 +123,9 @@ namespace ConceptMatrix.WpfStyles.Controls
 			IViewService viewService = Services.Get<IViewService>();
 
 			ColorSelectorDrawer selector = new ColorSelectorDrawer();
-			selector.Value = this.Value;
+			selector.Value = new Color4(this.Value);
 			await viewService.ShowDrawer(selector, "Color");
-			this.Value = selector.Value;
+			this.Value = selector.Value.Color;
 		}
 	}
 }

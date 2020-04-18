@@ -67,10 +67,10 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set => this.Appearance.LipsToneFurPattern = value;
 		}
 
-		public byte Lips
+		public byte Mouth
 		{
-			get => this.Appearance.Lips;
-			set => this.Appearance.Lips = value;
+			get => this.Appearance.Mouth;
+			set => this.Appearance.Mouth = value;
 		}
 
 		public byte Jaw
