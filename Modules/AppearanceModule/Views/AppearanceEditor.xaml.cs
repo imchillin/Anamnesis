@@ -204,8 +204,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			if (e.PropertyName == nameof(AppearanceEditor.LipTint))
 			{
-				this.lipTintMem.Value = this.LipTint.Color;
-				this.lipGlossMem.Value = this.LipTint.A;
+				Color4 val = this.LipTint;
+				this.lipTintMem.Value = val.Color;
+				this.lipGlossMem.Value = val.A;
 			}
 		}
 

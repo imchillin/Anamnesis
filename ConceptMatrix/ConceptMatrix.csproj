@@ -79,6 +79,7 @@
     </Compile>
     <Compile Include="Extensions\PaletteHelperExtensions.cs" />
     <Compile Include="MainApplicationSettings.cs" />
+    <Compile Include="Serialization\Converters\Color4Converter.cs" />
     <Compile Include="Serialization\Converters\ColorConverter.cs" />
     <Compile Include="Serialization\Converters\QuaternionConverter.cs" />
     <Compile Include="Serialization\Converters\VectorConverter.cs" />

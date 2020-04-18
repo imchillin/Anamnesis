@@ -52,6 +52,9 @@ namespace ConceptMatrix
 
 		public static Color4 FromString(string str)
 		{
+			if (str == null)
+				return Color4.Transparent;
+
 			string[] parts = str.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
 
 			if (parts.Length != 4)
