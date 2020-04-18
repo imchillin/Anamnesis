@@ -43,6 +43,9 @@ namespace ConceptMatrix.PoseModule.Pages
 			if (this.posMem != null)
 				this.posMem.Dispose();
 
+			if (this.rotMem != null)
+				this.rotMem.Dispose();
+
 			App.Current.Dispatcher.Invoke(() => { this.IsEnabled = selection != null; });
 
 			if (selection == null)
