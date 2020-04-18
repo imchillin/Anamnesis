@@ -554,7 +554,7 @@ namespace ConceptMatrix.PoseModule
 
 		private void PollChanges()
 		{
-			while (this.IsEnabled)
+			while (this.IsEnabled && Application.Current != null)
 			{
 				Thread.Sleep(32);
 
@@ -566,6 +566,8 @@ namespace ConceptMatrix.PoseModule
 
 				this.CurrentBone.ApplyTransform();
 			}
+
+			this.IsEnabled = false;
 		}
 
 		private void WatchCamera()
