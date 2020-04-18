@@ -97,11 +97,15 @@ namespace ConceptMatrix
 			if (Application.Current == null)
 				return;
 
-			Application.Current.Dispatcher.Invoke(() =>
+			// Don't block the thread
+			Task.Run(() =>
 			{
-				ErrorDialog dlg = new ErrorDialog(ex, severity == Log.Severity.Critical);
-				dlg.Owner = this.MainWindow;
-				dlg.ShowDialog();
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					ErrorDialog dlg = new ErrorDialog(ex, severity == Log.Severity.Critical);
+					dlg.Owner = this.MainWindow;
+					dlg.ShowDialog();
+				});
 			});
 		}
 	}
