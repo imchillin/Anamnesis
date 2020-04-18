@@ -23,6 +23,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private IMemory<Color> leftEyeColorMem;
 		private IMemory<Color> rightEyeColorMem;
 		private IMemory<Color> limbalRingColorMem;
+		private IMemory<Color> hairTintColorMem;
+		private IMemory<Color> hairGlowColorMem;
+		private IMemory<Color> highlightTintColorMem;
 
 		public AppearanceEditor()
 		{
@@ -102,6 +105,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public Color LeftEyeColor { get; set; }
 		public Color RightEyeColor { get; set; }
 		public Color LimbalRingColor { get; set; }
+		public Color HairTint { get; set; }
+		public Color HairGlow { get; set; }
+		public Color HighlightTint { get; set; }
 
 		public AppearanceViewModel ViewModel
 		{
@@ -122,6 +128,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.leftEyeColorMem?.Dispose();
 			this.rightEyeColorMem?.Dispose();
 			this.limbalRingColorMem?.Dispose();
+			this.hairTintColorMem?.Dispose();
+			this.hairGlowColorMem?.Dispose();
+			this.highlightTintColorMem?.Dispose();
 
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 			this.ViewModel = null;
@@ -139,6 +148,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.rightEyeColorMem.Bind(this, nameof(AppearanceEditor.RightEyeColor));
 			this.limbalRingColorMem = selection.BaseAddress.GetMemory(Offsets.LimbalColor);
 			this.limbalRingColorMem.Bind(this, nameof(AppearanceEditor.LimbalRingColor));
+			this.hairTintColorMem = selection.BaseAddress.GetMemory(Offsets.HairColor);
+			this.hairTintColorMem.Bind(this, nameof(AppearanceEditor.HairTint));
+			this.hairGlowColorMem = selection.BaseAddress.GetMemory(Offsets.HairGloss);
+			this.hairGlowColorMem.Bind(this, nameof(AppearanceEditor.HairGlow));
+			this.highlightTintColorMem = selection.BaseAddress.GetMemory(Offsets.HairHiglight);
+			this.highlightTintColorMem.Bind(this, nameof(AppearanceEditor.HighlightTint));
 
 			this.ViewModel = new AppearanceViewModel(selection);
 			this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;

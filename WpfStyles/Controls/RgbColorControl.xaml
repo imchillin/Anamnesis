@@ -6,8 +6,9 @@
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d"
 			 Margin="1, 0, 3, 0"
-			 Width="53"
+			 MinWidth="22"
 			 HorizontalAlignment="Left">
+	
 	<Grid x:Name="ContentArea" SnapsToDevicePixels="True">
 		<Button Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="2" VerticalAlignment="Center" Background="Transparent">
 			<Border Height="15" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1">

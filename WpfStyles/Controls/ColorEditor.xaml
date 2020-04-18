@@ -24,12 +24,12 @@
 			<Border x:Name="Preview" CornerRadius="2" Margin="2"/>
 		</Button>
 		
-		<!--<Label Grid.Column="1" Content="R:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+		<Label Grid.Column="1" Content="R:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
 		<local:NumberBox Value="{Binding R, Mode=TwoWay}" Grid.Column="2" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
 		<Label Grid.Column="3" Content="G:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
 		<local:NumberBox Value="{Binding G, Mode=TwoWay}" Grid.Column="4" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
 		<Label Grid.Column="5" Content="B:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding B, Mode=TwoWay}" Grid.Column="6" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>-->
+		<local:NumberBox Value="{Binding B, Mode=TwoWay}" Grid.Column="6" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
 
 	</Grid>
 </UserControl>

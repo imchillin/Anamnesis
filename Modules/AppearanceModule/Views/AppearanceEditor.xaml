@@ -99,7 +99,7 @@
 				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding ViewModel.Skintone}" Type="Skin" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
 			</StackPanel>
 
-			<StackPanel Orientation="Horizontal" ToolTip="Tint Color" Background="Transparent" Margin="0, 0, 32, 0">
+			<StackPanel Orientation="Horizontal" ToolTip="Tint Color" Background="Transparent" Margin="0, 0, 20, 0">
 				<TextBlock Text="T" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
 				<cm3Controls:RgbColorControl Value="{Binding SkinTint}" Width="22" DisplayName="Skin Tint Color"/>
 			</StackPanel>
@@ -163,7 +163,8 @@
 		<Grid Grid.Column="1" Grid.Row="7" Margin="0, 3, 3, 3">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
@@ -179,12 +180,16 @@
 				</Border>
 			</Button>
 
-			<cm3Controls:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding ViewModel.Hair}" Minimum="0" Maximum="255" FontWeight="Light" FontSize="12" Width="35" HorizontalAlignment="Left"/>
-			
-			<controls:ColorControl Grid.Column="3" Grid.Row="0" Value="{Binding ViewModel.HairTone}" Type="Hair" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
-			<CheckBox Grid.Column="2" Grid.Row="1" IsChecked="{Binding ViewModel.EnableHighlights}" Margin="6,0,0,0"/>
-			<controls:ColorControl Grid.Column="3" Grid.Row="1" Value="{Binding ViewModel.Highlights}" Type="HairHighlights" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" IsEnabled="{Binding ViewModel.EnableHighlights}"/>
+			<cm3Controls:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding ViewModel.Hair}" Minimum="0" Maximum="255" FontWeight="Light" FontSize="12" Width="30" HorizontalAlignment="Left"/>
 
+			<controls:ColorControl Grid.Column="2" Grid.Row="0" Value="{Binding ViewModel.HairTone}" Type="Hair" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" ToolTip="Hair Color"/>
+			<cm3Controls:RgbColorControl Grid.Column="3" Grid.Row="0" Value="{Binding HairTint}" DisplayName="Hair Tint Color" ToolTip="Hair Tint" Margin="0"/>
+			<cm3Controls:RgbColorControl Grid.Column="4" Grid.Row="0" Value="{Binding HairGlow}" DisplayName="Hair Glow Color" ToolTip="Hair Glow" Margin="0"/>
+
+			<CheckBox Grid.Column="1" Grid.Row="1" IsChecked="{Binding ViewModel.EnableHighlights}" ToolTip="Enable Highlights" HorizontalAlignment="Center"/>
+			<controls:ColorControl Grid.Column="2" Grid.Row="1" Value="{Binding ViewModel.Highlights}" Type="HairHighlights" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" IsEnabled="{Binding ViewModel.EnableHighlights}" ToolTip="Highlight Color"/>
+			<cm3Controls:RgbColorControl Grid.Column="3" Grid.Row="1" Value="{Binding HighlightTint}" DisplayName="Highlights Color" ToolTip="Highlight Tint" Margin="0"/>
+			
 		</Grid>
 
 		<!-- Height -->
