@@ -49,6 +49,16 @@ namespace ConceptMatrix.AppearanceModule.Files
 			allFile.Appearance.FacePaint = data[24];
 			allFile.Appearance.FacePaintColor = data[25];
 
+			allFile.Appearance.SkinTint = new Color((float)this.characterDetails.SkinRedPigment.value, (float)this.characterDetails.SkinGreenPigment.value, (float)this.characterDetails.SkinBluePigment.value);
+			allFile.Appearance.SkinGlow = new Color((float)this.characterDetails.SkinRedGloss.value, (float)this.characterDetails.SkinGreenGloss.value, (float)this.characterDetails.SkinBlueGloss.value);
+			allFile.Appearance.LeftEyeColor = new Color((float)this.characterDetails.LeftEyeRed.value, (float)this.characterDetails.LeftEyeGreen.value, (float)this.characterDetails.LeftEyeBlue.value);
+			allFile.Appearance.RightEyeColor = new Color((float)this.characterDetails.RightEyeRed.value, (float)this.characterDetails.RightEyeGreen.value, (float)this.characterDetails.RightEyeBlue.value);
+			allFile.Appearance.LimbalRingColor = new Color((float)this.characterDetails.LimbalR.value, (float)this.characterDetails.LimbalG.value, (float)this.characterDetails.LimbalB.value);
+			allFile.Appearance.HairTint = new Color((float)this.characterDetails.HairRedPigment.value, (float)this.characterDetails.HairGreenPigment.value, (float)this.characterDetails.HairBluePigment.value);
+			allFile.Appearance.HairGlow = new Color((float)this.characterDetails.HairGlowRed.value, (float)this.characterDetails.HairGlowGreen.value, (float)this.characterDetails.HairGlowBlue.value);
+			allFile.Appearance.HighlightTint = new Color((float)this.characterDetails.HighlightRedPigment.value, (float)this.characterDetails.HighlightGreenPigment.value, (float)this.characterDetails.HighlightBluePigment.value);
+			allFile.Appearance.LipTint = new Color4((float)this.characterDetails.LipsR.value, (float)this.characterDetails.LipsG.value, (float)this.characterDetails.LipsB.value, (float)this.characterDetails.LipsBrightness.value);
+
 			// If this file has no actor data, treat it as an equipment file
 			if (allFile.Appearance.Race == 0)
 				return allFile.Equipment;
@@ -96,7 +106,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 			public Entry HairGlowBlue { get; set; }
 			public Entry HighlightRedPigment { get; set; }
 			public Entry HighlightGreenPigment { get; set; }
-			public Entry HighhlightBluePigment { get; set; }
+			public Entry HighlightBluePigment { get; set; }
 			public Entry LeftEyeRed { get; set; }
 			public Entry LeftEyeGreen { get; set; }
 			public Entry LeftEyeBlue { get; set; }

@@ -5,7 +5,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 {
 	using System;
 	using ConceptMatrix;
-	using ConceptMatrix.AppearanceModule.ViewModels;
+	using ConceptMatrix.AppearanceModule.Views;
 
 	[Serializable]
 	public class AppearanceSetFile : FileBase
@@ -39,69 +39,102 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public byte FacePaint { get; set; }
 		public byte FacePaintColor { get; set; }
 
+		public Color SkinTint { get; set; }
+		public Color SkinGlow { get; set; }
+		public Color LeftEyeColor { get; set; }
+		public Color RightEyeColor { get; set; }
+		public Color LimbalRingColor { get; set; }
+		public Color HairTint { get; set; }
+		public Color HairGlow { get; set; }
+		public Color HighlightTint { get; set; }
+		public Color4 LipTint { get; set; }
+
 		public override FileType GetFileType()
 		{
 			return FileType;
 		}
 
-		public void Read(AppearanceViewModel vm)
+		public void Read(AppearanceEditor ed)
 		{
-			this.Race = vm.Race;
-			this.Gender = vm.Gender;
-			this.Age = vm.Age;
-			this.Height = vm.Height;
-			this.Tribe = vm.Tribe;
-			this.Head = vm.Head;
-			this.Hair = vm.Hair;
-			this.EnableHighlights = vm.EnableHighlights;
-			this.Skintone = vm.Skintone;
-			this.REyeColor = vm.REyeColor;
-			this.HairTone = vm.HairTone;
-			this.Highlights = vm.Highlights;
-			this.FacialFeatures = vm.FacialFeatures;
-			this.LimbalEyes = vm.LimbalEyes;
-			this.Eyebrows = vm.Eyebrows;
-			this.LEyeColor = vm.LEyeColor;
-			this.Eyes = vm.Eyes;
-			this.Nose = vm.Nose;
-			this.Jaw = vm.Jaw;
-			this.Lips = vm.Mouth;
-			this.LipsToneFurPattern = vm.LipsToneFurPattern;
-			this.EarMuscleTailSize = vm.EarMuscleTailSize;
-			this.TailEarsType = vm.TailEarsType;
-			this.Bust = vm.Bust;
-			this.FacePaint = vm.FacePaint;
-			this.FacePaintColor = vm.FacePaintColor;
+			this.Race = ed.Appearance.Race;
+			this.Gender = ed.Appearance.Gender;
+			this.Age = ed.Appearance.Age;
+			this.Height = ed.Appearance.Height;
+			this.Tribe = ed.Appearance.Tribe;
+			this.Head = ed.Appearance.Head;
+			this.Hair = ed.Appearance.Hair;
+			this.EnableHighlights = ed.Appearance.EnableHighlights;
+			this.Skintone = ed.Appearance.Skintone;
+			this.REyeColor = ed.Appearance.REyeColor;
+			this.HairTone = ed.Appearance.HairTone;
+			this.Highlights = ed.Appearance.Highlights;
+			this.FacialFeatures = ed.Appearance.FacialFeatures;
+			this.LimbalEyes = ed.Appearance.LimbalEyes;
+			this.Eyebrows = ed.Appearance.Eyebrows;
+			this.LEyeColor = ed.Appearance.LEyeColor;
+			this.Eyes = ed.Appearance.Eyes;
+			this.Nose = ed.Appearance.Nose;
+			this.Jaw = ed.Appearance.Jaw;
+			this.Lips = ed.Appearance.Mouth;
+			this.LipsToneFurPattern = ed.Appearance.LipsToneFurPattern;
+			this.EarMuscleTailSize = ed.Appearance.EarMuscleTailSize;
+			this.TailEarsType = ed.Appearance.TailEarsType;
+			this.Bust = ed.Appearance.Bust;
+			this.FacePaint = ed.Appearance.FacePaint;
+			this.FacePaintColor = ed.Appearance.FacePaintColor;
+
+			this.SkinTint = ed.SkinTint;
+			this.SkinGlow = ed.SkinGlow;
+			this.LeftEyeColor = ed.LeftEyeColor;
+			this.RightEyeColor = ed.RightEyeColor;
+			this.LimbalRingColor = ed.LimbalRingColor;
+			this.HairTint = ed.HairTint;
+			this.HairGlow = ed.HairGlow;
+			this.HighlightTint = ed.HighlightTint;
+			this.LipTint = ed.LipTint;
 		}
 
-		public void Write(AppearanceViewModel vm)
+		public void WritePreRefresh(AppearanceEditor ed)
 		{
-			vm.Race = this.Race;
-			vm.Gender = this.Gender;
-			vm.Age = this.Age;
-			vm.Height = this.Height;
-			vm.Tribe = this.Tribe;
-			vm.Head = this.Head;
-			vm.Hair = this.Hair;
-			vm.EnableHighlights = this.EnableHighlights;
-			vm.Skintone = this.Skintone;
-			vm.REyeColor = this.REyeColor;
-			vm.HairTone = this.HairTone;
-			vm.Highlights = this.Highlights;
-			vm.FacialFeatures = this.FacialFeatures;
-			vm.LimbalEyes = this.LimbalEyes;
-			vm.Eyebrows = this.Eyebrows;
-			vm.LEyeColor = this.LEyeColor;
-			vm.Eyes = this.Eyes;
-			vm.Nose = this.Nose;
-			vm.Jaw = this.Jaw;
-			vm.Mouth = this.Lips;
-			vm.LipsToneFurPattern = this.LipsToneFurPattern;
-			vm.EarMuscleTailSize = this.EarMuscleTailSize;
-			vm.TailEarsType = this.TailEarsType;
-			vm.Bust = this.Bust;
-			vm.FacePaint = this.FacePaint;
-			vm.FacePaintColor = this.FacePaintColor;
+			ed.Appearance.Race = this.Race;
+			ed.Appearance.Gender = this.Gender;
+			ed.Appearance.Age = this.Age;
+			ed.Appearance.Height = this.Height;
+			ed.Appearance.Tribe = this.Tribe;
+			ed.Appearance.Head = this.Head;
+			ed.Appearance.Hair = this.Hair;
+			ed.Appearance.EnableHighlights = this.EnableHighlights;
+			ed.Appearance.Skintone = this.Skintone;
+			ed.Appearance.REyeColor = this.REyeColor;
+			ed.Appearance.HairTone = this.HairTone;
+			ed.Appearance.Highlights = this.Highlights;
+			ed.Appearance.FacialFeatures = this.FacialFeatures;
+			ed.Appearance.LimbalEyes = this.LimbalEyes;
+			ed.Appearance.Eyebrows = this.Eyebrows;
+			ed.Appearance.LEyeColor = this.LEyeColor;
+			ed.Appearance.Eyes = this.Eyes;
+			ed.Appearance.Nose = this.Nose;
+			ed.Appearance.Jaw = this.Jaw;
+			ed.Appearance.Mouth = this.Lips;
+			ed.Appearance.LipsToneFurPattern = this.LipsToneFurPattern;
+			ed.Appearance.EarMuscleTailSize = this.EarMuscleTailSize;
+			ed.Appearance.TailEarsType = this.TailEarsType;
+			ed.Appearance.Bust = this.Bust;
+			ed.Appearance.FacePaint = this.FacePaint;
+			ed.Appearance.FacePaintColor = this.FacePaintColor;
+		}
+
+		public void WritePostRefresh(AppearanceEditor ed)
+		{
+			ed.SkinTint = this.SkinTint;
+			ed.SkinGlow = this.SkinGlow;
+			ed.LeftEyeColor = this.LeftEyeColor;
+			ed.RightEyeColor = this.RightEyeColor;
+			ed.LimbalRingColor = this.LimbalRingColor;
+			ed.HairTint = this.HairTint;
+			ed.HairGlow = this.HairGlow;
+			ed.HighlightTint = this.HighlightTint;
+			ed.LipTint = this.LipTint;
 		}
 	}
 }

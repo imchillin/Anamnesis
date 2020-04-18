@@ -55,18 +55,16 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			}
 			else if (file is AppearanceSetFile apFile)
 			{
-				if (this.Appearance.ViewModel != null)
-				{
-					apFile.Write(this.Appearance.ViewModel);
-				}
+				apFile.WritePreRefresh(this.Appearance);
+				await refreshService.RefreshAsync(this.baseOffset);
+				apFile.WritePostRefresh(this.Appearance);
 			}
 			else if (file is AllFile allFile)
 			{
-				if (this.Appearance.ViewModel != null)
-					allFile.Appearance.Write(this.Appearance.ViewModel);
-
+				allFile.Appearance.WritePreRefresh(this.Appearance);
 				allFile.Equipment.WritePreRefresh(this.Equipment);
 				await refreshService.RefreshAsync(this.baseOffset);
+				allFile.Appearance.WritePostRefresh(this.Appearance);
 				allFile.Equipment.WritePostRefresh(this.Equipment);
 			}
 		}
@@ -83,7 +81,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		{
 			IFileService fileService = Services.Get<IFileService>();
 			AppearanceSetFile file = new AppearanceSetFile();
-			file.Read(this.Appearance.ViewModel);
+			file.Read(this.Appearance);
 			await fileService.Save(file);
 		}
 
@@ -91,7 +89,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		{
 			IFileService fileService = Services.Get<IFileService>();
 			AllFile file = new AllFile();
-			file.Appearance.Read(this.Appearance.ViewModel);
+			file.Appearance.Read(this.Appearance);
 			file.Equipment.Read(this.Equipment);
 			await fileService.Save(file);
 		}
