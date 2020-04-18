@@ -72,6 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitmapIImage.cs" />
+    <Compile Include="Controls\RgbColorControl.xaml.cs">
+      <DependentUpon>RgbColorControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ColorEditor.xaml.cs">
       <DependentUpon>ColorEditor.xaml</DependentUpon>
     </Compile>
@@ -178,6 +181,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\RgbColorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\ColorEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

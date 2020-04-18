@@ -23,7 +23,7 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 		{
 			TValue old = this.Get(control);
 
-			if (old.Equals(value))
+			if (old != null && old.Equals(value))
 				return;
 
 			control.SetValue(this.dp, value);

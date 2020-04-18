@@ -92,17 +92,43 @@
 
 		<!-- Skintone -->
 		<TextBlock Grid.Column="0" Grid.Row="2" Text="Skin:" Style="{StaticResource Label}"/>
-		<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding ViewModel.Skintone}" Type="Skin" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
+		<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
 
+			<StackPanel Orientation="Horizontal" ToolTip="Base Color" Background="Transparent">
+				<TextBlock Text="B" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
+				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding ViewModel.Skintone}" Type="Skin" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" ToolTip="Tint Color" Background="Transparent" Margin="0, 0, 32, 0">
+				<TextBlock Text="T" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
+				<cm3Controls:RgbColorControl Width="22" DisplayName="Skin Tint Color"/>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" ToolTip="Glow Color" Background="Transparent">
+				<TextBlock Text="G" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
+				<cm3Controls:RgbColorControl Width="22" DisplayName="Skin Glow Color"/>
+			</StackPanel>
+			
+		</StackPanel>
+		
 		<!-- Eye Color -->
 		<TextBlock Grid.Column="0" Grid.Row="3" Text="Eye Color:" Style="{StaticResource Label}"/>
 		<StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal">
-			<TextBlock Text="L" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light" ToolTip="Left Eye Color"/>
-			<controls:ColorControl Value="{Binding ViewModel.LEyeColor}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" ToolTip="Left Eye Color"/>
-			<TextBlock Text="R" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light" ToolTip="Right Eye Color"/>
-			<controls:ColorControl Value="{Binding ViewModel.REyeColor}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" ToolTip="right Eye Color"/>
-			<TextBlock Text="O" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}" ToolTip="Limbal Color"/>
-			<controls:ColorControl Value="{Binding ViewModel.LimbalEyes}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}" ToolTip="Limbal Color"/>
+			
+			<StackPanel Orientation="Horizontal" ToolTip="Left Eye Color" Background="Transparent">
+				<TextBlock Text="L" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
+				<controls:ColorControl Value="{Binding ViewModel.LEyeColor}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" ToolTip="Right Eye Color" Background="Transparent">
+				<TextBlock Text="R" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
+				<controls:ColorControl Value="{Binding ViewModel.REyeColor}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" ToolTip="Limbal Ring Color" Background="Transparent"  Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}">
+				<TextBlock Text="O" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
+				<controls:ColorControl Value="{Binding ViewModel.LimbalEyes}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
+			</StackPanel>
 		</StackPanel>
 
 		<!-- Face Type -->
