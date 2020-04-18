@@ -112,24 +112,34 @@
 		</StackPanel>
 		
 		<!-- Eye Color -->
-		<TextBlock Grid.Column="0" Grid.Row="3" Text="Eye Color:" Style="{StaticResource Label}"/>
-		<StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal">
-			
-			<StackPanel Orientation="Horizontal" ToolTip="Left Eye Color" Background="Transparent">
-				<TextBlock Text="L" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
-				<controls:ColorControl Value="{Binding ViewModel.LEyeColor}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
-			</StackPanel>
+		<TextBlock Grid.Column="0" Grid.Row="3" Text="Eyes:" Style="{StaticResource Label}"/>
+		<Grid Grid.Column="1" Grid.Row="3">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
 
-			<StackPanel Orientation="Horizontal" ToolTip="Right Eye Color" Background="Transparent">
-				<TextBlock Text="R" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
-				<controls:ColorControl Value="{Binding ViewModel.REyeColor}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
-			</StackPanel>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
 
-			<StackPanel Orientation="Horizontal" ToolTip="Limbal Ring Color" Background="Transparent"  Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}">
-				<TextBlock Text="O" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
-				<controls:ColorControl Value="{Binding ViewModel.LimbalEyes}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
-			</StackPanel>
-		</StackPanel>
+			<cm3Controls:NumberBox Grid.Row="0" Grid.Column="0" Value="{Binding ViewModel.Eyes}" Minimum="0" Maximum="255"/>
+
+			<!-- Left -->
+			<controls:ColorControl Grid.Row="0" Grid.Column="1" ToolTip="Left Eye Color" Value="{Binding ViewModel.LEyeColor}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
+			<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="1" ToolTip="Left Eye Tint" Width="22"/>
+
+			<!-- Right -->
+			<controls:ColorControl Grid.Row="0" Grid.Column="2" ToolTip="Right Eye Color" Value="{Binding ViewModel.REyeColor}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}"/>
+			<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="2" ToolTip="Right Eye Tint" Width="22"/>
+
+			<!-- Limbal Ring -->
+			<controls:ColorControl Grid.Row="1" Grid.Column="3" ToolTip="Limbal Ring Color" Value="{Binding ViewModel.LimbalEyes}" Type="Eyes" Gender="{Binding ViewModel.Gender}" Tribe="{Binding ViewModel.Tribe}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+			<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="3" ToolTip="Limbal Ring Tint" Width="22" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+		</Grid>
 
 		<!-- Face Type -->
 		<TextBlock Grid.Column="0" Grid.Row="4" Text="Face:" Style="{StaticResource Label}"/>
@@ -227,10 +237,6 @@
 			<!-- Eyebrows type -->
 			<TextBlock Grid.Column="2" Grid.Row="1" Text="Eyebrows:" Style="{StaticResource Label}"/>
 			<cm3Controls:NumberBox Value="{Binding ViewModel.Eyebrows}" Grid.Column="3" Grid.Row="1" Minimum="0" Maximum="255"/>
-
-			<!-- Eye type -->
-			<TextBlock Grid.Column="0" Grid.Row="2" Text="Eyes:" Style="{StaticResource Label}"/>
-			<cm3Controls:NumberBox Value="{Binding ViewModel.Eyes}" Grid.Column="1" Grid.Row="2" Minimum="0" Maximum="255"/>
 
 			<!-- Nose Type -->
 			<TextBlock Grid.Column="2" Grid.Row="2" Text="Nose:" Style="{StaticResource Label}"/>

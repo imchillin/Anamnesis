@@ -8,7 +8,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
 
@@ -21,6 +20,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private IMemory<Color> skinColorMem;
 		private IMemory<Color> skinGlowMem;
+		private IMemory<Color> leftEyeColorMem;
+		private IMemory<Color> rightEyeColorMem;
+		private IMemory<Color> limbalRingColorMem;
 
 		public AppearanceEditor()
 		{
@@ -95,37 +97,11 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
-		public Color SkinTint
-		{
-			get
-			{
-				if (this.skinColorMem == null)
-					return Color.White;
-
-				return this.skinColorMem.Value;
-			}
-
-			set
-			{
-				this.skinColorMem.Value = value;
-			}
-		}
-
-		public Color SkinGlow
-		{
-			get
-			{
-				if (this.skinGlowMem == null)
-					return Color.White;
-
-				return this.skinGlowMem.Value;
-			}
-
-			set
-			{
-				this.skinGlowMem.Value = value;
-			}
-		}
+		public Color SkinTint { get; set; }
+		public Color SkinGlow { get; set; }
+		public Color LeftEyeColor { get; set; }
+		public Color RightEyeColor { get; set; }
+		public Color LimbalRingColor { get; set; }
 
 		public AppearanceViewModel ViewModel
 		{
@@ -141,11 +117,11 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.ViewModel.Dispose();
 			}
 
-			if (this.skinColorMem != null)
-				this.skinColorMem.Dispose();
-
-			if (this.skinGlowMem != null)
-				this.skinGlowMem.Dispose();
+			this.skinColorMem?.Dispose();
+			this.skinGlowMem?.Dispose();
+			this.leftEyeColorMem?.Dispose();
+			this.rightEyeColorMem?.Dispose();
+			this.limbalRingColorMem?.Dispose();
 
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 			this.ViewModel = null;
@@ -154,7 +130,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 				return;
 
 			this.skinColorMem = selection.BaseAddress.GetMemory(Offsets.SkinColor);
+			this.skinColorMem.Bind(this, nameof(AppearanceEditor.SkinTint));
 			this.skinGlowMem = selection.BaseAddress.GetMemory(Offsets.SkinGloss);
+			this.skinColorMem.Bind(this, nameof(AppearanceEditor.SkinGlow));
+			this.leftEyeColorMem = selection.BaseAddress.GetMemory(Offsets.LeftEyeColor);
+			this.leftEyeColorMem.Bind(this, nameof(AppearanceEditor.LeftEyeColor));
+			this.rightEyeColorMem = selection.BaseAddress.GetMemory(Offsets.RightEyeColor);
+			this.rightEyeColorMem.Bind(this, nameof(AppearanceEditor.RightEyeColor));
+			this.limbalRingColorMem = selection.BaseAddress.GetMemory(Offsets.LimbalColor);
+			this.limbalRingColorMem.Bind(this, nameof(AppearanceEditor.LimbalRingColor));
 
 			this.ViewModel = new AppearanceViewModel(selection);
 			this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
