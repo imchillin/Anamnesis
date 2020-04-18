@@ -19,6 +19,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 	{
 		private IGameDataService gameDataService;
 
+		private IMemory<Color> skinColorMem;
+		private IMemory<Color> skinGlowMem;
+
 		public AppearanceEditor()
 		{
 			this.InitializeComponent();
@@ -92,6 +95,38 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
+		public Color SkinTint
+		{
+			get
+			{
+				if (this.skinColorMem == null)
+					return Color.White;
+
+				return this.skinColorMem.Value;
+			}
+
+			set
+			{
+				this.skinColorMem.Value = value;
+			}
+		}
+
+		public Color SkinGlow
+		{
+			get
+			{
+				if (this.skinGlowMem == null)
+					return Color.White;
+
+				return this.skinGlowMem.Value;
+			}
+
+			set
+			{
+				this.skinGlowMem.Value = value;
+			}
+		}
+
 		public AppearanceViewModel ViewModel
 		{
 			get;
@@ -106,11 +141,20 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.ViewModel.Dispose();
 			}
 
+			if (this.skinColorMem != null)
+				this.skinColorMem.Dispose();
+
+			if (this.skinGlowMem != null)
+				this.skinGlowMem.Dispose();
+
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 			this.ViewModel = null;
 
 			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.EventNpc))
 				return;
+
+			this.skinColorMem = selection.BaseAddress.GetMemory(Offsets.SkinColor);
+			this.skinGlowMem = selection.BaseAddress.GetMemory(Offsets.SkinGloss);
 
 			this.ViewModel = new AppearanceViewModel(selection);
 			this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;

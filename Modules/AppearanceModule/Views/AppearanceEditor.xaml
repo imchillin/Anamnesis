@@ -101,12 +101,12 @@
 
 			<StackPanel Orientation="Horizontal" ToolTip="Tint Color" Background="Transparent" Margin="0, 0, 32, 0">
 				<TextBlock Text="T" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
-				<cm3Controls:RgbColorControl Width="22" DisplayName="Skin Tint Color"/>
+				<cm3Controls:RgbColorControl Value="{Binding SkinTint}" Width="22" DisplayName="Skin Tint Color"/>
 			</StackPanel>
 
 			<StackPanel Orientation="Horizontal" ToolTip="Glow Color" Background="Transparent">
 				<TextBlock Text="G" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" FontWeight="Light"/>
-				<cm3Controls:RgbColorControl Width="22" DisplayName="Skin Glow Color"/>
+				<cm3Controls:RgbColorControl Value="{Binding SkinGlow}" Width="22" DisplayName="Skin Glow Color"/>
 			</StackPanel>
 			
 		</StackPanel>

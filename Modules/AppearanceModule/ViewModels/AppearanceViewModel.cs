@@ -5,17 +5,18 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
 	using System.ComponentModel;
-	using System.Threading.Tasks;
 
 	public class AppearanceViewModel : IDisposable, INotifyPropertyChanged
 	{
 		public Appearance Appearance;
 		private IMemory<Appearance> appearanceMem;
+
 		private Selection selection;
 
 		public AppearanceViewModel(Selection selection)
 		{
 			this.appearanceMem = selection.BaseAddress.GetMemory(Offsets.ActorAppearance);
+
 			this.Appearance = this.appearanceMem.Value;
 			this.selection = selection;
 
