@@ -8,7 +8,6 @@
 			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=ConceptMatrix.WpfStyles"
 			 xmlns:fa="http://schemas.fontawesome.io/icons/"
 			 mc:Ignorable="d" 
-			 Unloaded="OnUnloaded"
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
 	<UserControl.Resources>

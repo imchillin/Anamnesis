@@ -46,7 +46,7 @@ namespace ConceptMatrix.PoseModule
 			this.ViewModel.IsEnabled = false;
 		}
 
-		private void OnUnloaded(object sender, RoutedEventArgs e)
+		/*private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
 			ISelectionService selectionService = Services.Get<ISelectionService>();
 			selectionService.SelectionChanged -= this.OnSelectionChanged;
@@ -56,7 +56,7 @@ namespace ConceptMatrix.PoseModule
 				return;
 
 			this.ViewModel.IsEnabled = false;
-		}
+		}*/
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
