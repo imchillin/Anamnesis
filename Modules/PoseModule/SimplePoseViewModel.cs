@@ -313,6 +313,8 @@ namespace ConceptMatrix.PoseModule
 				}
 			}
 
+			this.GetBone("Root").IsEnabled = false;
+
 			// special case for Viera lips
 			// disable lip bones if Viera, as they have their own set of lip bones...
 			this.GetBone("LipLowerA").IsEnabled = !this.IsViera;
