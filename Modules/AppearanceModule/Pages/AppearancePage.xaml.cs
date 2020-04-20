@@ -30,7 +30,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			selectionService.SelectionChanged -= this.OnSelectionChanged;
 		}
 
-		private async void OnOpenClicked(object sender, RoutedEventArgs e)
+		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
 			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
 			IFileService fileService = Services.Get<IFileService>();
@@ -63,7 +63,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
 			IViewService viewService = Services.Get<IViewService>();
-			AppearanceFile.SaveModes mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Load Appearance...");
+			AppearanceFile.SaveModes mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Save Appearance...");
 
 			if (mode == AppearanceFile.SaveModes.None)
 				return;

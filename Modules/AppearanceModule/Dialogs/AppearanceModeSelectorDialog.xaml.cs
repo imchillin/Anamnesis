@@ -60,15 +60,25 @@ namespace ConceptMatrix.AppearanceModule.Dialogs
 			set => this.Result = this.Result.SetFlag(AppearanceFile.SaveModes.AppearanceBody, value);
 		}
 
-		private void OnOKClick(object sender, RoutedEventArgs e)
+		public void Cancel()
+		{
+			this.Result = AppearanceFile.SaveModes.None;
+			this.Close?.Invoke();
+		}
+
+		public void Confirm()
 		{
 			this.Close?.Invoke();
 		}
 
+		private void OnOKClick(object sender, RoutedEventArgs e)
+		{
+			this.Confirm();
+		}
+
 		private void OnCancelClick(object sender, RoutedEventArgs e)
 		{
-			this.Result = AppearanceFile.SaveModes.None;
-			this.Close?.Invoke();
+			this.Cancel();
 		}
 	}
 

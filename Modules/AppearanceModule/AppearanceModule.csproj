@@ -59,8 +59,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\MasculineGenderToVisibilityConverter.cs" />
-    <Compile Include="Dialogs\AppearnceModeSelectorDialog.xaml.cs">
-      <DependentUpon>AppearnceModeSelectorDialog.xaml</DependentUpon>
+    <Compile Include="Dialogs\AppearanceModeSelectorDialog.xaml.cs">
+      <DependentUpon>AppearanceModeSelectorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\ItemSlotsExtensions.cs" />
@@ -107,7 +107,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\AppearnceModeSelectorDialog.xaml">
+    <Page Include="Dialogs\AppearanceModeSelectorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

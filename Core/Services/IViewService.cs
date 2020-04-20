@@ -60,10 +60,16 @@ namespace ConceptMatrix
 		event DrawerEvent Close;
 	}
 
-	public interface IDialog<TResult>
+	public interface IDialog<TResult> : IDialog
+	{
+		TResult Result { get; }
+	}
+
+	public interface IDialog
 	{
 		event DialogEvent Close;
 
-		TResult Result { get; }
+		void Cancel();
+		void Confirm();
 	}
 }

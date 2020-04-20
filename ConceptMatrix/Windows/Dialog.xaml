@@ -15,7 +15,8 @@
 		Width="450"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"
-		TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
+		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
+		WindowStartupLocation="CenterOwner">
 	
 	<Grid Margin="12">
 		<Border Background="{DynamicResource MaterialDesignPaper}"

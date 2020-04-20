@@ -103,37 +103,20 @@ namespace ConceptMatrix.GUI.Services
 			return this.ShowingDrawer?.Invoke(title, control, direction);
 		}
 
-		public async Task<TResult> ShowDialog<TView, TResult>(string title)
+		public Task<TResult> ShowDialog<TView, TResult>(string title)
 			where TView : IDialog<TResult>
 		{
-			UserControl control = this.CreateView<TView>();
-			IDialog<TResult> dialogInterface = control as IDialog<TResult>;
-
 			Dialog dlg = new Dialog();
-			dlg.ContentArea.Content = control;
+			dlg.ContentArea.Content = this.CreateView<TView>();
 			dlg.TitleText.Text = title;
-			dlg.Show();
 			dlg.Owner = App.Current.MainWindow;
 
-			bool open = true;
-			TResult result = default;
+			IDialog<TResult> dialogInterface = dlg.ContentArea.Content as IDialog<TResult>;
+			dialogInterface.Close += () => dlg.Close();
 
-			dialogInterface.Close += () =>
-			{
-				result = dialogInterface.Result;
-				dlg.Close();
-				open = false;
-			};
+			dlg.ShowDialog();
 
-			dlg.Closing += (s, a) =>
-			{
-				open = false;
-			};
-
-			while (open)
-				await Task.Delay(100);
-
-			return result;
+			return Task.FromResult(dialogInterface.Result);
 		}
 
 		private UserControl CreateView<T>()

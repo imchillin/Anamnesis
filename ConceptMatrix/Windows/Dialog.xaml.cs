@@ -39,6 +39,12 @@ namespace ConceptMatrix.GUI.Windows
 
 		private void OnCloseClick(object sender, RoutedEventArgs e)
 		{
+			if (this.ContentArea.Content is IDialog dlg)
+			{
+				dlg.Cancel();
+				return;
+			}
+
 			this.Close();
 		}
 	}

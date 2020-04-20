@@ -31,7 +31,7 @@
 		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Padding="3" Margin="3, 3, 0, 0" Grid.Column="1" Grid.Row="1">
 			<Grid Margin="3, 0, 3, 0">
 				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
-					<cm3:IconButton Grid.Column="1" Icon="Upload" Text="Open..." Margin="3" Click="OnOpenClicked"/>
+					<cm3:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
 				</StackPanel>
 
 				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">

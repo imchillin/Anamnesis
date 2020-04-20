@@ -13,7 +13,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<TextBlock Text="The following appearance elements will be loaded:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<TextBlock Text="Include these appearance elements:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
 		<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 0, 12">
 			<CheckBox Content="Equipment: Gear" IsChecked="{Binding EquipmentGear}"/>
