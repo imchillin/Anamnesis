@@ -5,6 +5,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 {
 	using System.Windows;
 	using System.Windows.Controls;
+	using ConceptMatrix.AppearanceModule.Dialogs;
 	using ConceptMatrix.AppearanceModule.Files;
 
 	/// <summary>
@@ -33,64 +34,43 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		{
 			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
 			IFileService fileService = Services.Get<IFileService>();
+			IViewService viewService = Services.Get<IViewService>();
 
 			FileBase file = await fileService.OpenAny(
-				EquipmentSetFile.FileType,
 				LegacyEquipmentSetFile.FileType,
-				AppearanceSetFile.FileType,
-				AllFile.FileType,
-				LegacyAllFile.AllFileType);
+				LegacyAppearanceFile.AllFileType,
+				AppearanceFile.FileType);
 
-			if (file is LegacyAllFile legacyAllFile)
+			if (file is LegacyAppearanceFile legacyAllFile)
 				file = legacyAllFile.Upgrade();
 
 			if (file is LegacyEquipmentSetFile legacyEquipmentFile)
 				file = legacyEquipmentFile.Upgrade();
 
-			if (file is EquipmentSetFile eqFile)
+			if (file is AppearanceFile apFile)
 			{
-				eqFile.WritePreRefresh(this.Equipment);
+				AppearanceFile.SaveModes mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Load Appearance...");
+
+				if (mode == AppearanceFile.SaveModes.None)
+					return;
+
+				apFile.WritePreRefresh(this.Appearance, this.Equipment, mode);
 				await refreshService.RefreshAsync(this.baseOffset);
-				eqFile.WritePostRefresh(this.Equipment);
-			}
-			else if (file is AppearanceSetFile apFile)
-			{
-				apFile.WritePreRefresh(this.Appearance);
-				await refreshService.RefreshAsync(this.baseOffset);
-				apFile.WritePostRefresh(this.Appearance);
-			}
-			else if (file is AllFile allFile)
-			{
-				allFile.Appearance.WritePreRefresh(this.Appearance);
-				allFile.Equipment.WritePreRefresh(this.Equipment);
-				await refreshService.RefreshAsync(this.baseOffset);
-				allFile.Appearance.WritePostRefresh(this.Appearance);
-				allFile.Equipment.WritePostRefresh(this.Equipment);
+				apFile.WritePostRefresh(this.Appearance, this.Equipment, mode);
 			}
 		}
 
-		private async void OnSaveEquipmentClicked(object sender, RoutedEventArgs e)
+		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			IFileService fileService = Services.Get<IFileService>();
-			EquipmentSetFile file = new EquipmentSetFile();
-			file.Read(this.Equipment);
-			await fileService.Save(file);
-		}
+			IViewService viewService = Services.Get<IViewService>();
+			AppearanceFile.SaveModes mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Load Appearance...");
 
-		private async void OnSaveAppearanceClicked(object sender, RoutedEventArgs e)
-		{
-			IFileService fileService = Services.Get<IFileService>();
-			AppearanceSetFile file = new AppearanceSetFile();
-			file.Read(this.Appearance);
-			await fileService.Save(file);
-		}
+			if (mode == AppearanceFile.SaveModes.None)
+				return;
 
-		private async void OnSaveAllClicked(object sender, RoutedEventArgs e)
-		{
 			IFileService fileService = Services.Get<IFileService>();
-			AllFile file = new AllFile();
-			file.Appearance.Read(this.Appearance);
-			file.Equipment.Read(this.Equipment);
+			AppearanceFile file = new AppearanceFile();
+			file.Read(this.Appearance, this.Equipment, mode);
 			await fileService.Save(file);
 		}
 

@@ -9,6 +9,7 @@ namespace ConceptMatrix.GUI.Services
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using ConceptMatrix;
+	using ConceptMatrix.GUI.Windows;
 
 	public class ViewService : IViewService
 	{
@@ -100,6 +101,39 @@ namespace ConceptMatrix.GUI.Services
 				throw new Exception("Invalid view");
 
 			return this.ShowingDrawer?.Invoke(title, control, direction);
+		}
+
+		public async Task<TResult> ShowDialog<TView, TResult>(string title)
+			where TView : IDialog<TResult>
+		{
+			UserControl control = this.CreateView<TView>();
+			IDialog<TResult> dialogInterface = control as IDialog<TResult>;
+
+			Dialog dlg = new Dialog();
+			dlg.ContentArea.Content = control;
+			dlg.TitleText.Text = title;
+			dlg.Show();
+			dlg.Owner = App.Current.MainWindow;
+
+			bool open = true;
+			TResult result = default;
+
+			dialogInterface.Close += () =>
+			{
+				result = dialogInterface.Result;
+				dlg.Close();
+				open = false;
+			};
+
+			dlg.Closing += (s, a) =>
+			{
+				open = false;
+			};
+
+			while (open)
+				await Task.Delay(100);
+
+			return result;
 		}
 
 		private UserControl CreateView<T>()

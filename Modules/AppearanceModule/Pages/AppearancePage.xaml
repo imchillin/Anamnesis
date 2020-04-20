@@ -35,9 +35,7 @@
 				</StackPanel>
 
 				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
-					<cm3:IconButton Grid.Column="0" Icon="Save" Text="Equipment..." Margin="3" Click="OnSaveEquipmentClicked"/>
-					<cm3:IconButton Grid.Column="1" Icon="Save" Text="Appearance..." Margin="3" Click="OnSaveAppearanceClicked"/>
-					<cm3:IconButton Grid.Column="2" Icon="Save" Text="All..." Margin="3" Click="OnSaveAllClicked"/>
+					<cm3:IconButton Grid.Column="2" Icon="Save" Text="Save..." Margin="3" Click="OnSaveClicked"/>
 				</StackPanel>
 			</Grid>
 		</Border>

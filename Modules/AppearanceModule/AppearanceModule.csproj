@@ -59,13 +59,14 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\MasculineGenderToVisibilityConverter.cs" />
+    <Compile Include="Dialogs\AppearnceModeSelectorDialog.xaml.cs">
+      <DependentUpon>AppearnceModeSelectorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\ItemSlotsExtensions.cs" />
-    <Compile Include="Files\AllFile.cs" />
-    <Compile Include="Files\AppearanceSetFile.cs" />
-    <Compile Include="Files\LegacyAllFile.cs" />
+    <Compile Include="Files\AppearanceFile.cs" />
+    <Compile Include="Files\LegacyAppearanceFile.cs" />
     <Compile Include="Files\LegacyEquipmentSetFile.cs" />
-    <Compile Include="Files\EquipmentSetFile.cs" />
     <Compile Include="Pages\AppearancePage.xaml.cs">
       <DependentUpon>AppearancePage.xaml</DependentUpon>
     </Compile>
@@ -105,6 +106,10 @@
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\AppearnceModeSelectorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\AppearancePage.xaml">
       <SubType>Designer</SubType>
@@ -230,6 +235,7 @@
       <Name>WpfStyles</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>md "$(SolutionDir)bin\Modules\"
