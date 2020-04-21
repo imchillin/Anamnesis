@@ -103,7 +103,7 @@ namespace ConceptMatrix
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					ErrorDialog dlg = new ErrorDialog(ex, severity == Log.Severity.Critical);
-					dlg.Owner = this.MainWindow;
+					////dlg.Owner = this.MainWindow;
 					dlg.ShowDialog();
 				});
 			});
