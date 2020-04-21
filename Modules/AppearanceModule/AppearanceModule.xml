@@ -1,179 +1,44 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>AppearanceModule</name>
+        <name>PoseModule</name>
     </assembly>
     <members>
-        <member name="T:ConceptMatrix.AppearanceModule.Dialogs.AppearanceModeSelectorDialog">
+        <member name="T:ConceptMatrix.PoseModule.Pages.PositionPage">
             <summary>
-            Interaction logic for AppearnceModeSelectorDialog.xaml.
+            Interaction logic for PositionPage.xaml.
             </summary>
             <summary>
-            AppearanceModeSelectorDialog
+            PositionPage
             </summary>
         </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Dialogs.AppearanceModeSelectorDialog.InitializeComponent">
+        <member name="M:ConceptMatrix.PoseModule.Pages.PositionPage.InitializeComponent">
             <summary>
             InitializeComponent
             </summary>
         </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Files.LegacyEquipmentSetFile.Upgrade">
+        <member name="T:ConceptMatrix.PoseModule.SimplePosePage">
             <summary>
-            Upgrades a CM2 equipment set to a CM3 equipment set file.
+            Interaction logic for CharacterPoseView.xaml.
+            </summary>
+            <summary>
+            SimplePosePage
             </summary>
         </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Pages.AppearancePage">
-            <summary>
-            Interaction logic for AppearancePage.xaml.
-            </summary>
-            <summary>
-            AppearancePage
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Pages.AppearancePage.InitializeComponent">
+        <member name="M:ConceptMatrix.PoseModule.SimplePosePage.InitializeComponent">
             <summary>
             InitializeComponent
             </summary>
         </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Resources">
+        <member name="T:ConceptMatrix.PoseModule.SimplePoseBoneView">
             <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
+            Interaction logic for SimplePoseViewBone.xaml.
+            </summary>
+            <summary>
+            SimplePoseBoneView
             </summary>
         </member>
-        <member name="P:ConceptMatrix.AppearanceModule.Resources.ResourceManager">
-            <summary>
-              Returns the cached ResourceManager instance used by this class.
-            </summary>
-        </member>
-        <member name="P:ConceptMatrix.AppearanceModule.Resources.Culture">
-            <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
-            </summary>
-        </member>
-        <member name="P:ConceptMatrix.AppearanceModule.Resources.colors">
-            <summary>
-              Looks up a localized resource of type System.Byte[].
-            </summary>
-        </member>
-        <member name="P:ConceptMatrix.AppearanceModule.Resources.LegacyTattoo">
-            <summary>
-              Looks up a localized resource of type System.Drawing.Bitmap.
-            </summary>
-        </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Views.AppearanceEditor">
-            <summary>
-            Interaction logic for AppearancePage.xaml.
-            </summary>
-            <summary>
-            AppearanceEditor
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Views.AppearanceEditor.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Views.ColorControl">
-            <summary>
-            Interaction logic for ColorControl.xaml.
-            </summary>
-            <summary>
-            ColorControl
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Views.ColorControl.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Views.DyeSelector">
-            <summary>
-            Interaction logic for EquipmentSelector.xaml.
-            </summary>
-            <summary>
-            DyeSelector
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Views.DyeSelector.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Views.EquipmentEditor">
-            <summary>
-            Interaction logic for EquipmentView.xaml.
-            </summary>
-            <summary>
-            EquipmentEditor
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Views.EquipmentEditor.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Views.EquipmentSelector">
-            <summary>
-            Interaction logic for EquipmentSelector.xaml.
-            </summary>
-            <summary>
-            EquipmentSelector
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Views.EquipmentSelector.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Views.FacialFeaturesControl">
-            <summary>
-            Interaction logic for FacialFeaturesControl.xaml.
-            </summary>
-            <summary>
-            FacialFeaturesControl
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Views.FacialFeaturesControl.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Views.FxivColorSelectorDrawer">
-            <summary>
-            Interaction logic for FxivColorSelectorDrawer.xaml.
-            </summary>
-            <summary>
-            FxivColorSelectorDrawer
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Views.FxivColorSelectorDrawer.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Views.HairSelectorDrawer">
-            <summary>
-            Interaction logic for HairSelector.xaml.
-            </summary>
-            <summary>
-            HairSelectorDrawer
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Views.HairSelectorDrawer.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:ConceptMatrix.AppearanceModule.Views.ItemView">
-            <summary>
-            Interaction logic for ItemView.xaml.
-            </summary>
-            <summary>
-            ItemView
-            </summary>
-        </member>
-        <member name="M:ConceptMatrix.AppearanceModule.Views.ItemView.InitializeComponent">
+        <member name="M:ConceptMatrix.PoseModule.SimplePoseBoneView.InitializeComponent">
             <summary>
             InitializeComponent
             </summary>

@@ -4,12 +4,12 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule.Pages"
-			 xmlns:controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d" >
 	<Grid x:Name="ContentArea" VerticalAlignment="Center" HorizontalAlignment="Center">
 		<StackPanel>
-			<controls:QuaternionEditor Value="{Binding Rotation}"/>
-			<controls:VectorEditor Value="{Binding Position}" Minimum="-1000" Maximum="1000"/>
+			<cm3Controls:QuaternionEditor Value="{Binding Rotation}"/>
+			<cm3Controls:VectorEditor Value="{Binding Position}" Minimum="-1000" Maximum="1000"/>
 		</StackPanel>
 	</Grid>
 </UserControl>

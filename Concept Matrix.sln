@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Styles", "Styles\Styles.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Style3D", "Style3D\Style3D.csproj", "{9786F47C-B55D-4967-91D8-957991F6CD06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppearanceModule", "Modules\AppearanceModule\AppearanceModule.csproj", "{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppearanceModule", "Modules\AppearanceModule\AppearanceModule.csproj", "{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,9 +4,9 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule"
-			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
-			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=ConceptMatrix.WpfStyles"
 			 xmlns:fa="http://schemas.fontawesome.io/icons/"
+			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
@@ -405,15 +405,15 @@
 			<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 0, 3, 3" >
 				<StackPanel Margin="3">
 					<Label Content="Rotation"/>
-					<cm3:QuaternionEditor Value="{Binding CurrentBone.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
+					<cm3Controls:QuaternionEditor Value="{Binding CurrentBone.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
 
 					<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
 					<Label Content="Scale"/>
-					<cm3:VectorEditor Value="{Binding CurrentBone.Scale, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+					<cm3Controls:VectorEditor Value="{Binding CurrentBone.Scale, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
 
 					<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
 					<Label Content="Position"/>
-					<cm3:VectorEditor Value="{Binding CurrentBone.Position, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+					<cm3Controls:VectorEditor Value="{Binding CurrentBone.Position, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
 				</StackPanel>
 			</Border>
 
@@ -444,8 +444,8 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 
-						<cm3:IconButton Grid.Column="0" Icon="Upload" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
-						<cm3:IconButton Grid.Column="1" Icon="Download" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
+						<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
+						<cm3Controls:IconButton Grid.Column="1" Icon="Download" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
 
 					</Grid>
 				</Grid>

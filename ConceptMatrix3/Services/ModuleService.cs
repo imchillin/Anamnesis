@@ -37,8 +37,17 @@ namespace ConceptMatrix.GUI.Services
 			if (!Directory.Exists(directory))
 				Directory.CreateDirectory(directory);
 
-			DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+			// Hack test
+			DirectoryInfo directoryInfo = new DirectoryInfo(directory + "/SaintCoinach/");
 			FileInfo[] assemblies = directoryInfo.GetFiles("*.dll", SearchOption.AllDirectories);
+			foreach (FileInfo assemblyInfo in assemblies)
+			{
+				Log.Write("Load assembly: " + assemblyInfo.FullName);
+				Assembly assembly = Assembly.LoadFrom(assemblyInfo.FullName);
+			}
+
+			directoryInfo = new DirectoryInfo(directory);
+			assemblies = directoryInfo.GetFiles("*.dll", SearchOption.AllDirectories);
 
 			foreach (FileInfo assemblyInfo in assemblies)
 			{
