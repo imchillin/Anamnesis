@@ -5,8 +5,6 @@ namespace ConceptMatrix.AppearanceModule.Utilities
 {
 	using System;
 	using System.Collections.Generic;
-	using ConceptMatrix.AppearanceModule.Properties;
-
 	using cmColor = ConceptMatrix.Color;
 	using wpfColor = System.Windows.Media.Color;
 

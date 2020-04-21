@@ -123,7 +123,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 
 			Option legacyTattoo = new Option();
-			legacyTattoo.Icon = Properties.Resources.LegacyTattoo.ToIImage();
+			legacyTattoo.Icon = ConceptMatrix.AppearanceModule.Resources.LegacyTattoo.ToIImage();
 			legacyTattoo.Value = Appearance.FacialFeature.LegacyTattoo;
 			this.features.Add(legacyTattoo);
 

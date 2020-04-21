@@ -26,7 +26,7 @@
 
 		<Grid>
 			<!--<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" Width="100" Height="100"/>-->
-			<Image gif:AnimationBehavior.SourceUri="Assets/Loading.gif" Width="128" Height="133" Margin="50,0,0,0"/>
+			<!--<Image gif:AnimationBehavior.SourceUri="Assets/Loading.gif" Width="128" Height="133" Margin="50,0,0,0"/>-->
 
 			<Label HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="Loading..." Foreground="Gray" HorizontalContentAlignment="Center"/>
 

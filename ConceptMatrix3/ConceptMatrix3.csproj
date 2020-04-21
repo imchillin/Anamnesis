@@ -1,125 +1,139 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<AppendTargetFramework>False</AppendTargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Assets\Loading.gif" />
-    <None Remove="cmtool-icon.ico" />
-    <None Remove="FodyWeavers.xml" />
-    <None Remove="stylecop.json" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>D:\Projects\CM3\bin\</OutputPath>
+		<DocumentationFile>D:\Projects\CM3\ConceptMatrix3\ConceptMatrix3.xml</DocumentationFile>
+		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;</NoWarn>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>D:\Projects\CM3\bin\</OutputPath>
+		<DocumentationFile>D:\Projects\CM3\ConceptMatrix3\ConceptMatrix3.xml</DocumentationFile>
+		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;</NoWarn>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Fody" Version="6.1.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.2.8" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
-    <PackageReference Include="XamlAnimatedGif" Version="1.2.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Assets\Loading.gif" />
+		<None Remove="cmtool-icon.ico" />
+		<None Remove="FodyWeavers.xml" />
+		<None Remove="stylecop.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\Styles\Styles.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="stylecop.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Assets\Loading.gif" />
-    <Resource Include="cmtool-icon.ico" />
-    <Resource Include="FodyWeavers.xml" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Fody" Version="6.1.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="PropertyChanged.Fody" Version="3.2.8" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ApplicationDefinition Update="App.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </ApplicationDefinition>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Core\Core.csproj" />
+		<ProjectReference Include="..\Styles\Styles.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="App.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ErrorDialog.xaml.cs">
-      <DependentUpon>ErrorDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="MainWindow.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="SplashWindow.xaml.cs">
-      <DependentUpon>SplashWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\HomeView.xaml.cs">
-      <DependentUpon>HomeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\NavigationMenu.xaml.cs">
-      <DependentUpon>NavigationMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\TargetSelectorView.xaml.cs">
-      <DependentUpon>TargetSelectorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\TargetView.xaml.cs">
-      <DependentUpon>TargetView.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\ThemeSettingsView.xaml.cs">
-      <DependentUpon>ThemeSettingsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Windows\Dialog.xaml.cs">
-      <DependentUpon>Dialog.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Assets\Loading.gif" />
+		<Resource Include="cmtool-icon.ico" />
+		<Resource Include="FodyWeavers.xml" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Page Update="ErrorDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="MainWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="SplashWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\HomeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\NavigationMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\TargetSelectorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\TargetView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\ThemeSettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Windows\Dialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
+	<ItemGroup>
+		<ApplicationDefinition Update="App.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</ApplicationDefinition>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="App.xaml.cs">
+			<SubType>Code</SubType>
+			<DependentUpon>App.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="ErrorDialog.xaml.cs">
+			<DependentUpon>ErrorDialog.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="MainWindow.xaml.cs">
+			<SubType>Code</SubType>
+			<DependentUpon>MainWindow.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="SplashWindow.xaml.cs">
+			<DependentUpon>SplashWindow.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\HomeView.xaml.cs">
+			<DependentUpon>HomeView.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\NavigationMenu.xaml.cs">
+			<DependentUpon>NavigationMenu.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\TargetSelectorView.xaml.cs">
+			<DependentUpon>TargetSelectorView.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\TargetView.xaml.cs">
+			<DependentUpon>TargetView.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\ThemeSettingsView.xaml.cs">
+			<DependentUpon>ThemeSettingsView.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Windows\Dialog.xaml.cs">
+			<DependentUpon>Dialog.xaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Update="ErrorDialog.xaml">
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="MainWindow.xaml">
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="SplashWindow.xaml">
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\HomeView.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\NavigationMenu.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\TargetSelectorView.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\TargetView.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\ThemeSettingsView.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Windows\Dialog.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
 
 </Project>

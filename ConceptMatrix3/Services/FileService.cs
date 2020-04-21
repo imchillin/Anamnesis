@@ -8,7 +8,6 @@ namespace ConceptMatrix.GUI.Services
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Serialization;
-	using Microsoft.WindowsAPICodePack.Dialogs;
 
 	public class FileService : IFileService
 	{
@@ -27,10 +26,11 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public async Task<T> Open<T>(FileType fileType)
+		public Task<T> Open<T>(FileType fileType)
 			where T : FileBase
 		{
-			try
+			throw new NotImplementedException();
+			/*try
 			{
 				string path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
 				{
@@ -58,12 +58,13 @@ namespace ConceptMatrix.GUI.Services
 				Log.Write(new Exception("Failed to open file", ex));
 			}
 
-			return null;
+			return null;*/
 		}
 
-		public async Task<FileBase> OpenAny(params FileType[] fileTypes)
+		public Task<FileBase> OpenAny(params FileType[] fileTypes)
 		{
-			try
+			throw new NotImplementedException();
+			/*try
 			{
 				string path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
 				{
@@ -94,12 +95,13 @@ namespace ConceptMatrix.GUI.Services
 				Log.Write(new Exception("Failed to open file", ex));
 			}
 
-			return null;
+			return null;*/
 		}
 
-		public async Task Save(FileBase file)
+		public Task Save(FileBase file)
 		{
-			try
+			throw new NotImplementedException();
+			/*try
 			{
 				FileType type = file.GetFileType();
 
@@ -146,7 +148,7 @@ namespace ConceptMatrix.GUI.Services
 			catch (Exception ex)
 			{
 				Log.Write(new Exception("Failed to save file", ex));
-			}
+			}*/
 		}
 
 		public Task SaveAs(FileBase file)
@@ -155,9 +157,10 @@ namespace ConceptMatrix.GUI.Services
 			return this.Save(file);
 		}
 
-		public async Task<string> OpenDirectory(string title, params string[] defaults)
+		public Task<string> OpenDirectory(string title, params string[] defaults)
 		{
-			string defaultDir = null;
+			throw new NotImplementedException();
+			/*string defaultDir = null;
 			foreach (string pDefaultDir in defaults)
 			{
 				if (Directory.Exists(pDefaultDir))
@@ -179,7 +182,7 @@ namespace ConceptMatrix.GUI.Services
 					return null;
 
 				return dlg.FileName;
-			});
+			});*/
 		}
 
 		private static Task<FileBase> Open(string path, FileType type)
@@ -193,11 +196,9 @@ namespace ConceptMatrix.GUI.Services
 				}
 				else
 				{
-					using (TextReader reader = new StreamReader(stream))
-					{
-						string json = reader.ReadToEnd();
-						file = (FileBase)Serializer.Deserialize(json, type.Type);
-					}
+					using TextReader reader = new StreamReader(stream);
+					string json = reader.ReadToEnd();
+					file = (FileBase)Serializer.Deserialize(json, type.Type);
 				}
 			}
 
@@ -225,7 +226,7 @@ namespace ConceptMatrix.GUI.Services
 			throw new Exception($"Unable to determine file type from extension: \"{extension}\"");
 		}
 
-		private static CommonFileDialogFilter ToAnyFilter(params FileType[] types)
+		/*private static CommonFileDialogFilter ToAnyFilter(params FileType[] types)
 		{
 			CommonFileDialogFilter filter = new CommonFileDialogFilter();
 			filter.DisplayName = "Any";
@@ -244,6 +245,6 @@ namespace ConceptMatrix.GUI.Services
 			filter.Extensions.Add(fileType.Extension);
 			filter.ShowExtensions = true;
 			return filter;
-		}
+		}*/
 	}
 }

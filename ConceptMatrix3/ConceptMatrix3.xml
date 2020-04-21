@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ConceptMatrix3</name>
+    </assembly>
+    <members>
+        <member name="T:ConceptMatrix.App">
+            <summary>
+            Interaction logic for App.xaml.
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="T:ConceptMatrix.GUI.ErrorDialog">
+            <summary>
+            Interaction logic for ErrorDialog.xaml.
+            </summary>
+            <summary>
+            ErrorDialog
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.GUI.ErrorDialog.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:ConceptMatrix.GUI.MainWindow">
+            <summary>
+            Interaction logic for MainWindow.xaml.
+            </summary>
+            <summary>
+            MainWindow
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.GUI.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:ConceptMatrix.GUI.Views.HomeView">
+            <summary>
+            Interaction logic for HomeView.xaml.
+            </summary>
+            <summary>
+            HomeView
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.GUI.Views.HomeView.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:ConceptMatrix.GUI.Views.NavigationMenu">
+            <summary>
+            Interaction logic for NavigationMenu.xaml.
+            </summary>
+            <summary>
+            NavigationMenu
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.GUI.Views.NavigationMenu.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:ConceptMatrix.GUI.Views.TargetSelectorView">
+            <summary>
+            Interaction logic for TargetSelectorView.xaml.
+            </summary>
+            <summary>
+            TargetSelectorView
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.GUI.Views.TargetSelectorView.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:ConceptMatrix.GUI.Views.TargetView">
+            <summary>
+            Interaction logic for TargetView.xaml.
+            </summary>
+            <summary>
+            TargetView
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.GUI.Views.TargetView.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:ConceptMatrix.GUI.Views.ThemeSettingsView">
+            <summary>
+            Interaction logic for ThemeSettingsView.xaml.
+            </summary>
+            <summary>
+            ThemeSettingsView
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.GUI.Views.ThemeSettingsView.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:ConceptMatrix.GUI.Windows.Dialog">
+            <summary>
+            Interaction logic for Dialog.xaml.
+            </summary>
+            <summary>
+            Dialog
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.GUI.Windows.Dialog.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:ConceptMatrix.SplashWindow">
+            <summary>
+            Interaction logic for MainWindow.xaml.
+            </summary>
+            <summary>
+            SplashWindow
+            </summary>
+        </member>
+        <member name="M:ConceptMatrix.SplashWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XamlGeneratedNamespace.GeneratedInternalTypeHelper">
+            <summary>
+            GeneratedInternalTypeHelper
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateInstance(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            CreateInstance
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.GetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            GetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.SetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            SetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate(System.Type,System.Object,System.String)">
+            <summary>
+            CreateDelegate
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.AddEventHandler(System.Reflection.EventInfo,System.Object,System.Delegate)">
+            <summary>
+            AddEventHandler
+            </summary>
+        </member>
+    </members>
+</doc>

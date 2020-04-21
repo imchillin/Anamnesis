@@ -6,8 +6,8 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Pages"
 			 xmlns:converters="clr-namespace:ConceptMatrix.AppearanceModule.Converters"
 			 xmlns:controls="clr-namespace:ConceptMatrix.AppearanceModule.Views"
-			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=ConceptMatrix.WpfStyles"
-			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
+			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d" 
 			 TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
 

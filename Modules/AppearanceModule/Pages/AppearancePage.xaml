@@ -4,7 +4,9 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Pages"
-			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
+			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
+			 xmlns:cm3Drawers="clr-namespace:ConceptMatrix.WpfStyles.Drawers;assembly=Styles"
 			 xmlns:views="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 mc:Ignorable="d" 
 			 Unloaded="OnUnloaded"
@@ -31,11 +33,11 @@
 		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Padding="3" Margin="3, 3, 0, 0" Grid.Column="1" Grid.Row="1">
 			<Grid Margin="3, 0, 3, 0">
 				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
-					<cm3:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
+					<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
 				</StackPanel>
 
 				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
-					<cm3:IconButton Grid.Column="2" Icon="Save" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+					<cm3Controls:IconButton Grid.Column="2" Icon="Save" Text="Save..." Margin="3" Click="OnSaveClicked"/>
 				</StackPanel>
 			</Grid>
 		</Border>

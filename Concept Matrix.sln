@@ -13,16 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoseModule", "Modules\PoseM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SaintCoinach", "Modules\SaintCoinach\SaintCoinach.csproj", "{9AFE6672-89F6-47CA-ABD7-353A5238E98E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppearanceModule", "Modules\AppearanceModule\AppearanceModule.csproj", "{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{12021F91-2ADB-4897-9671-356F7D7B77B6} = {12021F91-2ADB-4897-9671-356F7D7B77B6}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConceptMatrix3", "ConceptMatrix3\ConceptMatrix3.csproj", "{C0167AFD-D3B9-45F1-A365-E7FAF1C46BA2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Styles", "Styles\Styles.csproj", "{F103C110-7936-49D5-A48C-42AD3324BA5D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Style3D", "Style3D\Style3D.csproj", "{9786F47C-B55D-4967-91D8-957991F6CD06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppearanceModule", "Modules\AppearanceModule\AppearanceModule.csproj", "{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,18 +79,6 @@ Global
 		{9AFE6672-89F6-47CA-ABD7-353A5238E98E}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
 		{9AFE6672-89F6-47CA-ABD7-353A5238E98E}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
 		{9AFE6672-89F6-47CA-ABD7-353A5238E98E}.Release-Unsigned|x64.Build.0 = Release|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Debug|x64.Build.0 = Debug|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Release|x64.ActiveCfg = Release|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Release|x64.Build.0 = Release|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Release-Unsigned|Any CPU.ActiveCfg = Release|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A}.Release-Unsigned|x64.Build.0 = Release|Any CPU
 		{C0167AFD-D3B9-45F1-A365-E7FAF1C46BA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C0167AFD-D3B9-45F1-A365-E7FAF1C46BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0167AFD-D3B9-45F1-A365-E7FAF1C46BA2}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -130,6 +115,18 @@ Global
 		{9786F47C-B55D-4967-91D8-957991F6CD06}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
 		{9786F47C-B55D-4967-91D8-957991F6CD06}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
 		{9786F47C-B55D-4967-91D8-957991F6CD06}.Release-Unsigned|x64.Build.0 = Release|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Debug|x64.Build.0 = Debug|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release|x64.ActiveCfg = Release|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release|x64.Build.0 = Release|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release-Unsigned|Any CPU.ActiveCfg = Release|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release-Unsigned|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,7 +134,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7E689B8B-1DF7-4F1B-A2A6-1375425D522F} = {CB926960-17D7-43DE-BB8A-75ACD5182FF0}
 		{9AFE6672-89F6-47CA-ABD7-353A5238E98E} = {CB926960-17D7-43DE-BB8A-75ACD5182FF0}
-		{3A62A9B4-1E08-45EA-9337-EC1D7B68F93A} = {CB926960-17D7-43DE-BB8A-75ACD5182FF0}
+		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC} = {CB926960-17D7-43DE-BB8A-75ACD5182FF0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80787A01-DA91-424D-8871-9EB93B79BD31}

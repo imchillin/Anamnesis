@@ -53,7 +53,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnSelectionChanged(Selection selection)
 		{
-			App.Current.Dispatcher.Invoke(() =>
+			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.IsEnabled = false;
 			});
