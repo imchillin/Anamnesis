@@ -5,9 +5,11 @@ namespace ConceptMatrix.GUI.Services
 {
 	using System;
 	using System.IO;
+	using System.Text;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Serialization;
+	using Microsoft.Win32;
 
 	public class FileService : IFileService
 	{
@@ -26,19 +28,18 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public Task<T> Open<T>(FileType fileType)
+		public async Task<T> Open<T>(FileType fileType)
 			where T : FileBase
 		{
-			throw new NotImplementedException();
-			/*try
+			try
 			{
 				string path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
 				{
-					CommonOpenFileDialog dlg = new CommonOpenFileDialog();
-					dlg.Filters.Add(ToFilter(fileType));
-					CommonFileDialogResult selected = dlg.ShowDialog();
+					OpenFileDialog dlg = new OpenFileDialog();
+					dlg.Filter = ToFilter(fileType);
+					bool? result = dlg.ShowDialog();
 
-					if (selected != CommonFileDialogResult.Ok)
+					if (result != true)
 						return null;
 
 					return dlg.FileName;
@@ -58,25 +59,20 @@ namespace ConceptMatrix.GUI.Services
 				Log.Write(new Exception("Failed to open file", ex));
 			}
 
-			return null;*/
+			return null;
 		}
 
-		public Task<FileBase> OpenAny(params FileType[] fileTypes)
+		public async Task<FileBase> OpenAny(params FileType[] fileTypes)
 		{
-			throw new NotImplementedException();
-			/*try
+			try
 			{
 				string path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
 				{
-					CommonOpenFileDialog dlg = new CommonOpenFileDialog();
-					dlg.Filters.Add(ToAnyFilter(fileTypes));
+					OpenFileDialog dlg = new OpenFileDialog();
+					dlg.Filter = ToAnyFilter(fileTypes);
+					bool? result = dlg.ShowDialog();
 
-					foreach (FileType fileType in fileTypes)
-						dlg.Filters.Add(ToFilter(fileType));
-
-					CommonFileDialogResult selected = dlg.ShowDialog();
-
-					if (selected != CommonFileDialogResult.Ok)
+					if (result != true)
 						return null;
 
 					return dlg.FileName;
@@ -95,13 +91,12 @@ namespace ConceptMatrix.GUI.Services
 				Log.Write(new Exception("Failed to open file", ex));
 			}
 
-			return null;*/
+			return null;
 		}
 
-		public Task Save(FileBase file)
+		public async Task Save(FileBase file)
 		{
-			throw new NotImplementedException();
-			/*try
+			try
 			{
 				FileType type = file.GetFileType();
 
@@ -111,11 +106,11 @@ namespace ConceptMatrix.GUI.Services
 				{
 					path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
 					{
-						CommonSaveFileDialog dlg = new CommonSaveFileDialog();
-						dlg.Filters.Add(ToFilter(type));
-						CommonFileDialogResult selected = dlg.ShowDialog();
+						SaveFileDialog dlg = new SaveFileDialog();
+						dlg.Filter = ToFilter(type);
+						bool? result = dlg.ShowDialog();
 
-						if (selected != CommonFileDialogResult.Ok)
+						if (result != true)
 							return null;
 
 						return Path.Combine(Path.GetDirectoryName(dlg.FileName), Path.GetFileNameWithoutExtension(dlg.FileName));
@@ -129,26 +124,22 @@ namespace ConceptMatrix.GUI.Services
 
 				path += "." + type.Extension;
 
-				using (FileStream stream = new FileStream(path, FileMode.Create))
+				using FileStream stream = new FileStream(path, FileMode.Create);
+				if (type.Serialize != null)
 				{
-					if (type.Serialize != null)
-					{
-						type.Serialize.Invoke(stream, file);
-					}
-					else
-					{
-						using (TextWriter writer = new StreamWriter(stream))
-						{
-							string json = Serializer.Serialize(file);
-							writer.Write(json);
-						}
-					}
+					type.Serialize.Invoke(stream, file);
+				}
+				else
+				{
+					using TextWriter writer = new StreamWriter(stream);
+					string json = Serializer.Serialize(file);
+					writer.Write(json);
 				}
 			}
 			catch (Exception ex)
 			{
 				Log.Write(new Exception("Failed to save file", ex));
-			}*/
+			}
 		}
 
 		public Task SaveAs(FileBase file)
@@ -159,8 +150,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task<string> OpenDirectory(string title, params string[] defaults)
 		{
-			throw new NotImplementedException();
-			/*string defaultDir = null;
+			string defaultDir = null;
 			foreach (string pDefaultDir in defaults)
 			{
 				if (Directory.Exists(pDefaultDir))
@@ -170,15 +160,17 @@ namespace ConceptMatrix.GUI.Services
 				}
 			}
 
-			return await App.Current.Dispatcher.InvokeAsync<string>(() =>
+			throw new NotImplementedException();
+
+			/*return await App.Current.Dispatcher.InvokeAsync<string>(() =>
 			{
-				CommonOpenFileDialog dlg = new CommonOpenFileDialog();
+				OpenFileDialog dlg = new OpenFileDialog();
 				dlg.IsFolderPicker = true;
 				dlg.Title = title;
 				dlg.DefaultDirectory = defaultDir;
-				CommonFileDialogResult selected = dlg.ShowDialog();
+				bool? result = dlg.ShowDialog();
 
-				if (selected != CommonFileDialogResult.Ok)
+				if (result != true)
 					return null;
 
 				return dlg.FileName;
@@ -226,25 +218,32 @@ namespace ConceptMatrix.GUI.Services
 			throw new Exception($"Unable to determine file type from extension: \"{extension}\"");
 		}
 
-		/*private static CommonFileDialogFilter ToAnyFilter(params FileType[] types)
+		private static string ToAnyFilter(params FileType[] types)
 		{
-			CommonFileDialogFilter filter = new CommonFileDialogFilter();
-			filter.DisplayName = "Any";
+			StringBuilder builder = new StringBuilder();
+			builder.Append("Any|");
 
 			foreach (FileType type in types)
-				filter.Extensions.Add(type.Extension);
+				builder.Append("*." + type.Extension + ";");
 
-			filter.ShowExtensions = true;
-			return filter;
+			foreach (FileType type in types)
+			{
+				builder.Append("|");
+				builder.Append(type.Name);
+				builder.Append("|");
+				builder.Append("*." + type.Extension);
+			}
+
+			return builder.ToString();
 		}
 
-		private static CommonFileDialogFilter ToFilter(FileType fileType)
+		private static string ToFilter(FileType fileType)
 		{
-			CommonFileDialogFilter filter = new CommonFileDialogFilter();
-			filter.DisplayName = fileType.Name;
-			filter.Extensions.Add(fileType.Extension);
-			filter.ShowExtensions = true;
-			return filter;
-		}*/
+			StringBuilder builder = new StringBuilder();
+			builder.Append(fileType.Name);
+			builder.Append("|");
+			builder.Append("*." + fileType.Extension);
+			return builder.ToString();
+		}
 	}
 }
