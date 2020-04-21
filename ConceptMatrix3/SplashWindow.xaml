@@ -30,9 +30,7 @@
 
 			<Label HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="Loading..." Foreground="Gray" HorizontalContentAlignment="Center"/>
 
-			<Button Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="6" 
-					Background="Transparent"
-						Style="{StaticResource MetroWindowButtonStyle}">
+			<Button Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="6" Background="Transparent">
 				<fa:IconBlock Icon="Times" Opacity="0.5"/>
 			</Button>
 		</Grid>

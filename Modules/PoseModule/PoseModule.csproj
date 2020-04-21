@@ -165,10 +165,6 @@
       <Project>{12021f91-2adb-4897-9671-356f7d7b77b6}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ThreeD\ThreeD.csproj">
-      <Project>{57b50980-3643-4d41-a8ac-045646da7310}</Project>
-      <Name>ThreeD</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\WPFStyles\WpfStyles.csproj">
       <Project>{f76c98a0-59bf-4bf8-ab41-0218859a89bd}</Project>
       <Name>WpfStyles</Name>

@@ -5,7 +5,7 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="pack://application:,,,/ConceptMatrix.WpfStyles;component/Main.xaml" />
+				<ResourceDictionary Source="pack://application:,,,/Styles;component/Main.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
