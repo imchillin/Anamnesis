@@ -39,7 +39,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Core\Core.csproj" />
-	  <ProjectReference Include="..\..\WPFStyles\WpfStyles.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
