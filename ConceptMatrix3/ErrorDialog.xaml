@@ -10,6 +10,7 @@
 		Width="650" 
 		WindowStartupLocation="CenterOwner"
 		WindowStyle="None"
+		Topmost="True"
 		ResizeMode="NoResize"
 		Background="Transparent"
 		AllowsTransparency="True"
