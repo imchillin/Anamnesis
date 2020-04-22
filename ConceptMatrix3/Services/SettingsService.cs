@@ -13,6 +13,8 @@ namespace ConceptMatrix.GUI.Services
 	{
 		public const string SettingsDirectory = "./Settings/";
 
+		public event SettingsEvent SettingsSaved;
+
 		public Task Initialize()
 		{
 			if (!Directory.Exists(SettingsDirectory))
@@ -49,6 +51,7 @@ namespace ConceptMatrix.GUI.Services
 			string path = SettingsDirectory + settings.GetType().Name + ".json";
 			string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
 			File.WriteAllText(path, json);
+			this.SettingsSaved?.Invoke(settings);
 		}
 
 		public Task Shutdown()
