@@ -1,4 +1,5 @@
 # CMTool 3
+![CM3](ConceptMatrix3/Assets/Concept%20Matrix.png "CM3")
 
 Concept Matrix is a standalone tool that is used to modify certain client side only values and allow them a greater degree of flexibility for making creative and interesting screenshots. In short, this tool allows its users to temporarily change their race, gender, looks, equipment, etc in game without actually making any changes visible to other players. It also allows to use all of the emotes in game, and you can even pose as monsters, other NPCs, etc. With the latest addition, Posing Matrix, you can even tweak existing emotes or create your own poses. As such this tool can be looked at as a valuable resource for both the beginner and advanced screenshot lovers.
 
