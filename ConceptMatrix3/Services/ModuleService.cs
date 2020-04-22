@@ -37,21 +37,20 @@ namespace ConceptMatrix.GUI.Services
 			if (!Directory.Exists(directory))
 				Directory.CreateDirectory(directory);
 
-			// Hack test
-			DirectoryInfo directoryInfo = new DirectoryInfo(directory + "/SaintCoinach/");
-			FileInfo[] assemblies = directoryInfo.GetFiles("*.dll", SearchOption.AllDirectories);
-			foreach (FileInfo assemblyInfo in assemblies)
+			DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+			FileInfo[] assemblyPaths = directoryInfo.GetFiles("*.dll", SearchOption.AllDirectories);
+			List<Assembly> assemblies = new List<Assembly>();
+
+			foreach (FileInfo assemblyInfo in assemblyPaths)
 			{
 				Log.Write("Load assembly: " + assemblyInfo.FullName);
 				Assembly assembly = Assembly.LoadFrom(assemblyInfo.FullName);
+				assemblies.Add(assembly);
 			}
 
-			directoryInfo = new DirectoryInfo(directory);
-			assemblies = directoryInfo.GetFiles("*.dll", SearchOption.AllDirectories);
-
-			foreach (FileInfo assemblyInfo in assemblies)
+			foreach (Assembly assembly in assemblies)
 			{
-				Assembly assembly = Assembly.LoadFrom(assemblyInfo.FullName);
+				Log.Write("Initialize assembly: " + assembly.FullName);
 				await this.InitializeModules(assembly);
 			}
 		}
