@@ -48,7 +48,7 @@ namespace ConceptMatrix.GUI
 
 			PaletteHelper ph = new PaletteHelper();
 
-			this.MainArea.Background = new SolidColorBrush(page.DrawBackground ? ph.GetTheme().CardBackground : Colors.Transparent);
+			this.MainAreaBackground.Visibility = page.DrawBackground ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		private async Task OnShowDrawer(string title, UserControl view, DrawerDirection direction)
