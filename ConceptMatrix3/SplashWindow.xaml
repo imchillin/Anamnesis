@@ -8,14 +8,14 @@
 		mc:Ignorable="d"
 		Height="200"
 		Width="200"
-		Icon="cmtool-icon.ico"
 		ResizeMode="NoResize"
 		WindowStyle="None"
 		Background="Transparent"
 		AllowsTransparency="True"
 		Title="Starting..."
 		WindowStartupLocation="CenterScreen"
-		MouseDown="OnMouseDown">
+		MouseDown="OnMouseDown"
+		Icon="/Assets/Concept Matrix.ico">
 
 	<Border Background="#262626" Margin="10" CornerRadius="2">
 		<Border.Effect>

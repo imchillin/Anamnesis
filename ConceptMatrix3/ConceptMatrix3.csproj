@@ -8,6 +8,7 @@
 		<AppendTargetFramework>False</AppendTargetFramework>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<RootNamespace>ConceptMatrix.GUI</RootNamespace>
+		<ApplicationIcon>Assets\Concept Matrix.ico</ApplicationIcon>
 </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -25,6 +26,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Assets\cmtool.png" />
+		<None Remove="Assets\Concept Matrix.ico" />
 		<None Remove="Assets\Loading.gif" />
 		<None Remove="cmtool-icon.ico" />
 		<None Remove="FodyWeavers.xml" />
@@ -55,8 +58,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Assets\cmtool.png" />
+		<Resource Include="Assets\Concept Matrix.ico" />
 		<Resource Include="Assets\Loading.gif" />
-		<Resource Include="cmtool-icon.ico" />
 		<Resource Include="FodyWeavers.xml" />
 	</ItemGroup>
 

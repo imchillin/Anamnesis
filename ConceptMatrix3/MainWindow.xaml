@@ -18,7 +18,8 @@
 		Background="Transparent"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"
-		TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
+		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
+		Icon="/Assets/Concept Matrix.ico">
 
 	<Grid Margin="10">
 		<Border Background="{DynamicResource MaterialDesignPaper}"
@@ -53,7 +54,7 @@
 			</Grid.RowDefinitions>
 
 			<Border Grid.Column="0" Grid.RowSpan="2" Height="150" VerticalAlignment="Top" HorizontalAlignment="Left">
-				<Image Source="cmtool-icon.ico" Grid.Row="0" VerticalAlignment="Top" Margin="0" Opacity="0.5"/>
+				<Image Source="/Assets/cmtool.png" Grid.Row="0" VerticalAlignment="Top" Margin="0" Opacity="0.5"/>
 			</Border>
 			
 			<!-- Main Area -->
