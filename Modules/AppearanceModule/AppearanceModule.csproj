@@ -9,13 +9,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>D:\Projects\CM3\Modules\AppearanceModule\AppearanceModule.xml</DocumentationFile>
+    <DocumentationFile>bin\AppearanceModule.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>D:\Projects\CM3\Modules\AppearanceModule\AppearanceModule.xml</DocumentationFile>
+    <DocumentationFile>bin\AppearanceModule.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

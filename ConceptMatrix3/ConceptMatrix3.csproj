@@ -10,15 +10,15 @@
 </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<OutputPath>D:\Projects\CM3\bin\</OutputPath>
-		<DocumentationFile>D:\Projects\CM3\ConceptMatrix3\ConceptMatrix3.xml</DocumentationFile>
+		<OutputPath>..\bin\</OutputPath>
+		<DocumentationFile>bin\ConceptMatrix3.xml</DocumentationFile>
 		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputPath>D:\Projects\CM3\bin\</OutputPath>
-		<DocumentationFile>D:\Projects\CM3\ConceptMatrix3\ConceptMatrix3.xml</DocumentationFile>
+		<OutputPath>..\bin\</OutputPath>
+		<DocumentationFile>bin\ConceptMatrix3.xml</DocumentationFile>
 		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
