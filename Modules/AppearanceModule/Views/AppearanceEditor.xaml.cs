@@ -76,7 +76,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 				if (value.Race == ConceptMatrix.Appearance.Races.Hrothgar)
 					this.Appearance.Gender = ConceptMatrix.Appearance.Genders.Masculine;
 
-				if (value.Race == ConceptMatrix.Appearance.Races.Vierra)
+				if (value.Race == ConceptMatrix.Appearance.Races.Viera)
 					this.Appearance.Gender = ConceptMatrix.Appearance.Genders.Feminine;
 
 				this.Appearance.Race = value.Race;
@@ -223,9 +223,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.HasFur = this.Appearance.Race == ConceptMatrix.Appearance.Races.Hrothgar;
 				this.HasTail = this.Appearance.Race == ConceptMatrix.Appearance.Races.Hrothgar || this.Appearance.Race == ConceptMatrix.Appearance.Races.Miqote || this.Appearance.Race == ConceptMatrix.Appearance.Races.AuRa;
 				this.HasLimbal = this.Appearance.Race == ConceptMatrix.Appearance.Races.AuRa;
-				this.HasEars = this.Appearance.Race == ConceptMatrix.Appearance.Races.Vierra;
+				this.HasEars = this.Appearance.Race == ConceptMatrix.Appearance.Races.Viera;
 				this.HasMuscles = !this.HasEars && !this.HasTail;
-				this.HasGender = this.Appearance.Race != ConceptMatrix.Appearance.Races.Hrothgar && this.Appearance.Race != ConceptMatrix.Appearance.Races.Vierra;
+				this.HasGender = this.Appearance.Race != ConceptMatrix.Appearance.Races.Hrothgar && this.Appearance.Race != ConceptMatrix.Appearance.Races.Viera;
 
 				bool canAge = this.Appearance.Tribe == ConceptMatrix.Appearance.Tribes.Midlander;
 				canAge |= this.Appearance.Race == ConceptMatrix.Appearance.Races.Miqote && this.Appearance.Gender == ConceptMatrix.Appearance.Genders.Feminine;

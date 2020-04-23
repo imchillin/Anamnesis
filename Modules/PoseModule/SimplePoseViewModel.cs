@@ -139,7 +139,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.Race == Appearance.Races.Vierra;
+				return this.Race == Appearance.Races.Viera;
 			}
 		}
 

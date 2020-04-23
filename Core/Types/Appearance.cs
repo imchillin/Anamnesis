@@ -49,7 +49,7 @@ namespace ConceptMatrix
 			Roegadyn = 5,
 			AuRa = 6,
 			Hrothgar = 7,
-			Vierra = 8,
+			Viera = 8,
 		}
 
 		public enum Tribes : byte
@@ -107,7 +107,7 @@ namespace ConceptMatrix
 				case Appearance.Races.Roegadyn: return new[] { Appearance.Tribes.SeaWolf, Appearance.Tribes.Hellsguard };
 				case Appearance.Races.AuRa: return new[] { Appearance.Tribes.Raen, Appearance.Tribes.Xaela };
 				case Appearance.Races.Hrothgar: return new[] { Appearance.Tribes.Helions, Appearance.Tribes.TheLost };
-				case Appearance.Races.Vierra: return new[] { Appearance.Tribes.Rava, Appearance.Tribes.Veena };
+				case Appearance.Races.Viera: return new[] { Appearance.Tribes.Rava, Appearance.Tribes.Veena };
 			}
 
 			throw new Exception("Unrecognized race: " + race);
