@@ -43,7 +43,7 @@ namespace ConceptMatrix.PoseModule
 
 			this.appearance = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
 
-			this.GenerateBones(selection);
+			Task.Run(async () => { await this.GenerateBones(selection); });
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -262,7 +262,7 @@ namespace ConceptMatrix.PoseModule
 		}
 
 		// gets all bones defined in BonesOffsets.
-		private void GenerateBones(Selection selection)
+		private async Task GenerateBones(Selection selection)
 		{
 			if (this.bones != null)
 			{
@@ -274,267 +274,42 @@ namespace ConceptMatrix.PoseModule
 
 			this.bones = new Dictionary<string, Bone>();
 
-			throw new NotImplementedException();
+			if (selection == null)
+				return;
 
-			/*FieldInfo[] members = typeof(Skeletons.SkeletonBase).GetFields(BindingFlags.Static | BindingFlags.Public);
+			if (this.Race == 0)
+				return;
 
-			if (members.Length <= 0)
-				throw new Exception("Failed to extract bone offsets");
+			SkeletonService skeletonService = Services.Get<SkeletonService>();
+			Dictionary<string, SkeletonService.Bone> boneDefs = await skeletonService.Load(this.Race);
 
-			foreach (FieldInfo bone in members)
+			// Once to load all bones
+			foreach ((string name, SkeletonService.Bone boneDef) in boneDefs)
 			{
-				string boneName = bone.Name;
+				if (this.bones.ContainsKey(name))
+					throw new Exception("Duplicate bone: \"" + name + "\"");
 
-				if (this.bones.ContainsKey(boneName))
-					throw new Exception("Duplicate bone: \"" + boneName + "\"");
-
-				// so much hack...
-				if (boneName.Contains(@"Hroth") && !this.IsHrothgar)
-					continue;
-
-				if (boneName.Contains(@"Viera") && !this.IsViera)
-					continue;
-
-				if (boneName.Contains(@"Tail") && !this.HasTail)
-					continue;
-
-				if (boneName.StartsWith("Ex"))
-					continue;
-
-				object offsetObj = bone.GetValue(null);
-				if (offsetObj is IMemoryOffset<Transform> transOffset)
+				try
 				{
-					try
-					{
-						IMemory<Transform> transMem = selection.BaseAddress.GetMemory(transOffset);
-						this.bones[boneName] = new Bone(boneName, transMem);
-					}
-					catch (Exception ex)
-					{
-						throw new Exception("Failed to create bone View Model for bone: " + boneName, ex);
-					}
+					IMemory<Transform> transMem = selection.BaseAddress.GetMemory(boneDef.Offsets);
+					this.bones[name] = new Bone(name, transMem);
+				}
+				catch (Exception ex)
+				{
+					throw new Exception("Failed to create bone View Model for bone: " + name, ex);
+				}
+			}
+
+			// Again to set parenting
+			foreach ((string name, SkeletonService.Bone boneDef) in boneDefs)
+			{
+				if (boneDef.Parent != null)
+				{
+					this.ParentBone(boneDef.Parent, name);
 				}
 			}
 
 			this.GetBone("Root").IsEnabled = false;
-
-			// special case for Viera lips
-			// disable lip bones if Viera, as they have their own set of lip bones...
-			this.GetBone("LipLowerA").IsEnabled = !this.IsViera;
-			this.GetBone("LipUpperB").IsEnabled = !this.IsViera;
-			this.GetBone("LipLowerB").IsEnabled = !this.IsViera;
-
-			// now that we have all the bones, we make a hierarchy
-			// torso tree
-			this.ParentBone("Root", "SpineA");
-			this.ParentBone("SpineA", "SpineB");
-			this.ParentBone("SpineB", "SpineC");
-			this.ParentBone("SpineC", "Neck");
-			this.ParentBone("Neck", "Head");
-			this.ParentBone("SpineB", "BreastLeft");
-			this.ParentBone("SpineB", "BreastRight");
-
-			// clothes tree
-			this.ParentBone("Waist", "ClothBackALeft");
-			this.ParentBone("ClothBackALeft", "ClothBackBLeft");
-			this.ParentBone("ClothBackBLeft", "ClothBackCLeft");
-			this.ParentBone("Waist", "ClothBackARight");
-			this.ParentBone("ClothBackARight", "ClothBackBRight");
-			this.ParentBone("ClothBackBRight", "ClothBackCRight");
-			this.ParentBone("Waist", "ClothSideALeft");
-			this.ParentBone("ClothSideALeft", "ClothSideBLeft");
-			this.ParentBone("ClothSideBLeft", "ClothSideCLeft");
-			this.ParentBone("Waist", "ClothSideARight");
-			this.ParentBone("ClothSideARight", "ClothSideBRight");
-			this.ParentBone("ClothSideBRight", "ClothSideCRight");
-			this.ParentBone("Waist", "ClothFrontALeft");
-			this.ParentBone("ClothFrontALeft", "ClothFrontBLeft");
-			this.ParentBone("ClothFrontBLeft", "ClothFrontCLeft");
-			this.ParentBone("Waist", "ClothFrontARight");
-			this.ParentBone("ClothFrontARight", "ClothFrontBRight");
-			this.ParentBone("ClothFrontBRight", "ClothFrontCRight");
-
-			// Facebone (middy) tree
-			this.ParentBone("Head", "Nose");
-			this.ParentBone("Head", "Jaw");
-			this.ParentBone("Head", "EyelidLowerLeft");
-			this.ParentBone("Head", "EyelidLowerRight");
-			this.ParentBone("Head", "EyeLeft");
-			this.ParentBone("Head", "EyeRight");
-			this.ParentBone("Head", "EarLeft");
-			this.ParentBone("EarLeft", "EarringALeft");
-			this.ParentBone("EarringALeft", "EarringBLeft");
-			this.ParentBone("Head", "EarRight");
-			this.ParentBone("EarRight", "EarringARight");
-			this.ParentBone("EarringARight", "EarringBRight");
-			this.ParentBone("Head", "HairFrontLeft");
-			this.ParentBone("Head", "HairFrontRight");
-			this.ParentBone("Head", "HairA");
-			this.ParentBone("HairA", "HairB");
-			this.ParentBone("Head", "CheekLeft");
-			this.ParentBone("Head", "CheekRight");
-			this.ParentBone("Head", "LipsLeft");
-			this.ParentBone("Head", "LipsRight");
-			this.ParentBone("Head", "EyebrowLeft");
-			this.ParentBone("Head", "EyebrowRight");
-			this.ParentBone("Head", "Bridge");
-			this.ParentBone("Head", "BrowLeft");
-			this.ParentBone("Head", "BrowRight");
-			this.ParentBone("Head", "LipUpperA");
-			this.ParentBone("Head", "EyelidUpperLeft");
-			this.ParentBone("Head", "EyelidUpperRight");
-			this.ParentBone("Jaw", "LipLowerA");
-			this.ParentBone("Head", "LipUpperB");
-			this.ParentBone("LipLowerA", "LipLowerB");
-
-			this.ParentBone("Head", "ExHairA");
-			this.ParentBone("Head", "ExHairB");
-			this.ParentBone("Head", "ExHairC");
-			this.ParentBone("Head", "ExHairD");
-			this.ParentBone("Head", "ExHairE");
-			this.ParentBone("Head", "ExHairF");
-			this.ParentBone("Head", "ExHairG");
-			this.ParentBone("Head", "ExHairH");
-			this.ParentBone("Head", "ExHairI");
-			this.ParentBone("Head", "ExHairJ");
-			this.ParentBone("Head", "ExHairK");
-			this.ParentBone("Head", "ExHairL");
-
-			// Facebone hroth tree
-			if (this.IsHrothgar)
-			{
-				this.ParentBone("Head", "HrothEyebrowLeft");
-				this.ParentBone("Head", "HrothEyebrowRight");
-				this.ParentBone("Head", "HrothBridge");
-				this.ParentBone("Head", "HrothBrowLeft");
-				this.ParentBone("Head", "HrothBrowRight");
-				this.ParentBone("Head", "HrothJawUpper");
-				this.ParentBone("Head", "HrothLipUpper");
-				this.ParentBone("Head", "HrothEyelidUpperLeft");
-				this.ParentBone("Head", "HrothEyelidUpperRight");
-				this.ParentBone("Head", "HrothLipsLeft");
-				this.ParentBone("Head", "HrothLipsRight");
-				this.ParentBone("Head", "HrothLipUpperLeft");
-				this.ParentBone("Head", "HrothLipUpperRight");
-				this.ParentBone("Head", "HrothLipLower");
-				this.ParentBone("Head", "HrothWhiskersLeft");
-				this.ParentBone("Head", "HrothWhiskersRight");
-			}
-
-			// Facebone Viera tree
-			if (this.IsViera)
-			{
-				this.ParentBone("Jaw", "VieraLipLowerA");
-				this.ParentBone("Jaw", "VieraLipLowerB");
-				this.ParentBone("Head", "VieraLipUpperB");
-
-				if (this.IsVieraEars01)
-				{
-					this.ParentBone("Head", "VieraEar01ALeft");
-					this.ParentBone("Head", "VieraEar01ARight");
-					this.ParentBone("VieraEar01ALeft", "VieraEar01BLeft");
-					this.ParentBone("VieraEar01ARight", "VieraEar01BRight");
-				}
-				else if (this.IsVieraEars02)
-				{
-					this.ParentBone("Head", "VieraEar02ALeft");
-					this.ParentBone("Head", "VieraEar02ARight");
-					this.ParentBone("VieraEar02ALeft", "VieraEar02BLeft");
-					this.ParentBone("VieraEar02ARight", "VieraEar02BRight");
-				}
-				else if (this.IsVieraEars03)
-				{
-					this.ParentBone("Head", "VieraEar03ALeft");
-					this.ParentBone("Head", "VieraEar03ARight");
-					this.ParentBone("VieraEar03ALeft", "VieraEar03BLeft");
-					this.ParentBone("VieraEar03ARight", "VieraEar03BRight");
-				}
-				else if (this.IsVieraEars04)
-				{
-					this.ParentBone("Head", "VieraEar04ALeft");
-					this.ParentBone("Head", "VieraEar04ARight");
-					this.ParentBone("VieraEar04ALeft", "VieraEar04BLeft");
-					this.ParentBone("VieraEar04ARight", "VieraEar04BRight");
-				}
-			}
-
-			// armbone tree
-			this.ParentBone("SpineC", "ClavicleLeft");
-			this.ParentBone("ClavicleLeft", "ArmLeft");
-			this.ParentBone("ArmLeft", "ShoulderLeft");
-			this.ParentBone("ArmLeft", "PauldronLeft");
-			this.ParentBone("ArmLeft", "ForearmLeft");
-			this.ParentBone("ForearmLeft", "ElbowLeft");
-			this.ParentBone("ForearmLeft", "WristLeft");
-			this.ParentBone("ForearmLeft", "ShieldLeft");
-			this.ParentBone("ForearmLeft", "CouterLeft");
-			this.ParentBone("ForearmLeft", "WristLeft");
-			this.ParentBone("HandLeft", "WeaponLeft");
-			this.ParentBone("HandLeft", "ThumbALeft");
-			this.ParentBone("ThumbALeft", "ThumbBLeft");
-			this.ParentBone("WristLeft", "HandLeft");
-			this.ParentBone("HandLeft", "IndexALeft");
-			this.ParentBone("IndexALeft", "IndexBLeft");
-			this.ParentBone("HandLeft", "MiddleALeft");
-			this.ParentBone("MiddleALeft", "MiddleBLeft");
-			this.ParentBone("HandLeft", "RingALeft");
-			this.ParentBone("RingALeft", "RingBLeft");
-			this.ParentBone("HandLeft", "PinkyALeft");
-			this.ParentBone("PinkyALeft", "PinkyBLeft");
-
-			this.ParentBone("SpineC", "ClavicleRight");
-			this.ParentBone("ClavicleRight", "ArmRight");
-			this.ParentBone("ArmRight", "ShoulderRight");
-			this.ParentBone("ArmRight", "PauldronRight");
-			this.ParentBone("ArmRight", "ForearmRight");
-			this.ParentBone("ForearmRight", "ElbowRight");
-			this.ParentBone("ForearmRight", "WristRight");
-			this.ParentBone("ForearmRight", "ShieldRight");
-			this.ParentBone("ForearmRight", "CouterRight");
-			this.ParentBone("ForearmRight", "WristRight");
-			this.ParentBone("WristRight", "HandRight");
-			this.ParentBone("HandRight", "WeaponRight");
-			this.ParentBone("HandRight", "ThumbARight");
-			this.ParentBone("ThumbARight", "ThumbBRight");
-			this.ParentBone("HandRight", "IndexARight");
-			this.ParentBone("IndexARight", "IndexBRight");
-			this.ParentBone("HandRight", "MiddleARight");
-			this.ParentBone("MiddleARight", "MiddleBRight");
-			this.ParentBone("HandRight", "RingARight");
-			this.ParentBone("RingARight", "RingBRight");
-			this.ParentBone("HandRight", "PinkyARight");
-			this.ParentBone("PinkyARight", "PinkyBRight");
-
-			// lower half bones tree
-			this.ParentBone("Root", "Waist");
-			this.ParentBone("Waist", "LegLeft");
-			this.ParentBone("CalfLeft", "KneeLeft");
-			this.ParentBone("KneeLeft", "PoleynLeft");
-			this.ParentBone("LegLeft", "CalfLeft");
-			this.ParentBone("CalfLeft", "FootLeft");
-			this.ParentBone("FootLeft", "ToesLeft");
-			this.ParentBone("Waist", "LegRight");
-			this.ParentBone("CalfRight", "KneeRight");
-			this.ParentBone("KneeRight", "PoleynRight");
-			this.ParentBone("LegRight", "CalfRight");
-			this.ParentBone("CalfRight", "FootRight");
-			this.ParentBone("FootRight", "ToesRight");
-
-			this.ParentBone("SpineB", "SheatheLeft");
-			this.ParentBone("SpineB", "SheatheRight");
-			this.ParentBone("SheatheLeft", "HolsterLeft");
-			this.ParentBone("SheatheRight", "HolsterRight");
-			this.ParentBone("SheatheLeft", "ScabbardLeft");
-			this.ParentBone("SheatheRight", "ScabbardRight");
-
-			// tail bones tree
-			if (this.HasTail)
-			{
-				this.ParentBone("Waist", "TailA");
-				this.ParentBone("TailA", "TailB");
-				this.ParentBone("TailB", "TailC");
-				this.ParentBone("TailC", "TailD");
-			}*/
 		}
 
 		private void ParentBone(string parentName, string childName)
