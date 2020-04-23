@@ -11,7 +11,7 @@ namespace ConceptMatrix
 	public interface ISettingsService : IService
 	{
 		Task<T> Load<T>()
-			where T : SettingsBase;
+			where T : SettingsBase, new();
 
 		Task Save(SettingsBase settings);
 		event SettingsEvent SettingsSaved;

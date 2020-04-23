@@ -7,7 +7,7 @@ namespace ConceptMatrix.GUI.Services
 	using System.IO;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
-	using Newtonsoft.Json;
+	using ConceptMatrix.GUI.Serialization;
 
 	public class SettingsService : ISettingsService
 	{
@@ -24,7 +24,7 @@ namespace ConceptMatrix.GUI.Services
 		}
 
 		public async Task<T> Load<T>()
-			where T : SettingsBase
+			where T : SettingsBase, new()
 		{
 			string path = SettingsDirectory + typeof(T).Name + ".json";
 
@@ -37,7 +37,7 @@ namespace ConceptMatrix.GUI.Services
 			else
 			{
 				string json = File.ReadAllText(path);
-				settings = JsonConvert.DeserializeObject<T>(json);
+				settings = Serializer.Deserialize<T>(json);
 			}
 
 			await settings.OnLoaded(this);
@@ -49,7 +49,7 @@ namespace ConceptMatrix.GUI.Services
 			await settings.OnSaving();
 
 			string path = SettingsDirectory + settings.GetType().Name + ".json";
-			string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
+			string json = Serializer.Serialize(settings);
 			File.WriteAllText(path, json);
 			this.SettingsSaved?.Invoke(settings);
 		}
