@@ -56,7 +56,7 @@ namespace ConceptMatrix.GUI.Services
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception("Failed to open file", ex));
+				Log.Write(new Exception("Failed to open file", ex), "Files", Log.Severity.Error);
 			}
 
 			return null;
@@ -88,7 +88,7 @@ namespace ConceptMatrix.GUI.Services
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception("Failed to open file", ex));
+				Log.Write(new Exception("Failed to open file", ex), "Files", Log.Severity.Error);
 			}
 
 			return null;
@@ -138,7 +138,7 @@ namespace ConceptMatrix.GUI.Services
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception("Failed to save file", ex));
+				Log.Write(new Exception("Failed to save file", ex), "Files", Log.Severity.Error);
 			}
 		}
 
