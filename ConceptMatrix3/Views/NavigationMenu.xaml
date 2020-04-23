@@ -21,10 +21,10 @@
 								<RowDefinition/>
 							</Grid.RowDefinitions>
 
-							<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" VerticalAlignment="Top" Margin="3, 0, 3, 0"/>
+							<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="Black" Opacity="0.3" VerticalAlignment="Top" Margin="3, 0, 3, 0"/>
 
 							<Border Grid.Row="0" Name="HeaderSite" Background="Transparent" Opacity="0.5">
-								<ToggleButton Name="ToggleSite" IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{DynamicResource MaterialDesignExpanderDownHeaderStyle}">
+								<ToggleButton Height="22" Name="ToggleSite" IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{DynamicResource MaterialDesignExpanderDownHeaderStyle}">
 									<Label Content="{TemplateBinding Header}" Height="28" Foreground="Black" FontWeight="Bold" Opacity="0.75" HorizontalAlignment="Center"/>
 								</ToggleButton>
 							</Border>
