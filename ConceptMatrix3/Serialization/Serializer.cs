@@ -16,6 +16,7 @@ namespace ConceptMatrix.GUI.Serialization
 		{
 			Options.WriteIndented = true;
 			Options.PropertyNameCaseInsensitive = false;
+			Options.IgnoreNullValues = true;
 
 			Options.Converters.Add(new Color4Converter());
 			Options.Converters.Add(new ColorConverter());

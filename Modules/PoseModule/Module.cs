@@ -11,8 +11,10 @@ namespace ConceptMatrix.PoseModule
 	{
 		public Task Initialize()
 		{
+			Services.Add<SkeletonService>();
+
 			IViewService viewService = Services.Get<IViewService>();
-			viewService.AddPage<SimplePosePage>("Character/Simple Pose", false);
+			////viewService.AddPage<SimplePosePage>("Character/Simple Pose", false);
 			viewService.AddPage<PositionPage>("Character/Positioning");
 
 			return Task.CompletedTask;

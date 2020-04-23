@@ -28,22 +28,29 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public async Task<T> Open<T>(FileType fileType)
+		public async Task<T> Open<T>(FileType fileType, string path = null)
 			where T : FileBase
 		{
 			try
 			{
-				string path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
+				if (string.IsNullOrEmpty(path))
 				{
-					OpenFileDialog dlg = new OpenFileDialog();
-					dlg.Filter = ToFilter(fileType);
-					bool? result = dlg.ShowDialog();
+					path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
+					{
+						OpenFileDialog dlg = new OpenFileDialog();
+						dlg.Filter = ToFilter(fileType);
+						bool? result = dlg.ShowDialog();
 
-					if (result != true)
-						return null;
+						if (result != true)
+							return null;
 
-					return dlg.FileName;
-				});
+						return dlg.FileName;
+					});
+				}
+				else if (!path.EndsWith(fileType.Extension))
+				{
+					path = path + "." + fileType.Extension;
+				}
 
 				if (path == null)
 					return null;
@@ -94,13 +101,14 @@ namespace ConceptMatrix.GUI.Services
 			return null;
 		}
 
-		public async Task Save(FileBase file)
+		public async Task Save(FileBase file, string path = null)
 		{
 			try
 			{
 				FileType type = file.GetFileType();
 
-				string path = file.Path;
+				if (path == null)
+					path = file.Path;
 
 				if (path == null)
 				{

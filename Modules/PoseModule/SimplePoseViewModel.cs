@@ -273,7 +273,10 @@ namespace ConceptMatrix.PoseModule
 			}
 
 			this.bones = new Dictionary<string, Bone>();
-			FieldInfo[] members = typeof(BoneOffsets).GetFields(BindingFlags.Static | BindingFlags.Public);
+
+			throw new NotImplementedException();
+
+			/*FieldInfo[] members = typeof(Skeletons.SkeletonBase).GetFields(BindingFlags.Static | BindingFlags.Public);
 
 			if (members.Length <= 0)
 				throw new Exception("Failed to extract bone offsets");
@@ -384,7 +387,7 @@ namespace ConceptMatrix.PoseModule
 			this.ParentBone("Head", "LipUpperB");
 			this.ParentBone("LipLowerA", "LipLowerB");
 
-			/*this.ParentBone("Head", "ExHairA");
+			this.ParentBone("Head", "ExHairA");
 			this.ParentBone("Head", "ExHairB");
 			this.ParentBone("Head", "ExHairC");
 			this.ParentBone("Head", "ExHairD");
@@ -395,7 +398,7 @@ namespace ConceptMatrix.PoseModule
 			this.ParentBone("Head", "ExHairI");
 			this.ParentBone("Head", "ExHairJ");
 			this.ParentBone("Head", "ExHairK");
-			this.ParentBone("Head", "ExHairL");*/
+			this.ParentBone("Head", "ExHairL");
 
 			// Facebone hroth tree
 			if (this.IsHrothgar)
@@ -531,7 +534,7 @@ namespace ConceptMatrix.PoseModule
 				this.ParentBone("TailA", "TailB");
 				this.ParentBone("TailB", "TailC");
 				this.ParentBone("TailC", "TailD");
-			}
+			}*/
 		}
 
 		private void ParentBone(string parentName, string childName)

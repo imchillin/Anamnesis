@@ -9,14 +9,14 @@ namespace ConceptMatrix
 
 	public interface IFileService : IService
 	{
-		Task<T> Open<T>(FileType fileType)
+		Task<T> Open<T>(FileType fileType, string path = null)
 			where T : FileBase;
 
 		Task<FileBase> OpenAny(params FileType[] fileTypes);
 
 		Task<string> OpenDirectory(string title, params string[] defaults);
 
-		Task Save(FileBase file);
+		Task Save(FileBase file, string path = null);
 		Task SaveAs(FileBase file);
 	}
 
