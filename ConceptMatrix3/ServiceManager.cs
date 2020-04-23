@@ -6,6 +6,7 @@ namespace ConceptMatrix.GUI
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
+	using ConceptMatrix.GUI.Pages;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.Injection;
 
@@ -79,6 +80,8 @@ namespace ConceptMatrix.GUI
 			await this.Add<FileService>();
 			await this.Add<ActorRefreshService>();
 			await this.Add<ModuleService>();
+
+			this.Get<IViewService>().AddPage<AdvancedActorPage>("Advanced/Actor");
 
 			this.IsInitialized = true;
 			Log.Write($"Services Initialized", "Services");
