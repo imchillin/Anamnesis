@@ -15,10 +15,12 @@ namespace ConceptMatrix.GUI
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
 	using MaterialDesignThemes.Wpf;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
 	public partial class MainWindow : Window
 	{
 		private UserControl currentView;
@@ -34,11 +36,29 @@ namespace ConceptMatrix.GUI
 			this.viewService.ShowingDrawer += this.OnShowDrawer;
 			this.viewService.ShowingPage += this.OnShowPage;
 
-			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
-			this.Opacity = App.Settings.Opacity;
-
 			this.currentView = new HomeView();
 			this.ViewArea.Content = this.currentView;
+			this.IconArea.DataContext = this;
+
+			ISettingsService settingsService = App.Services.Get<ISettingsService>();
+			this.Zodiark = App.Settings.ThemeDark;
+			this.Opacity = App.Settings.Opacity;
+			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
+			settingsService.SettingsSaved += this.SettingsService_SettingsSaved;
+		}
+
+		public bool Zodiark
+		{
+			get;
+			set;
+		}
+
+		private void SettingsService_SettingsSaved(SettingsBase settings)
+		{
+			if (settings is MainApplicationSettings mainSettings)
+			{
+				this.Zodiark = mainSettings.ThemeDark;
+			}
 		}
 
 		private void OnShowPage(ViewService.Page page)

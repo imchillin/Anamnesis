@@ -53,8 +53,11 @@
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 
-			<Border Grid.Column="0" Grid.RowSpan="2" Height="150" VerticalAlignment="Top" HorizontalAlignment="Left">
-				<Image Source="/Assets/cmtool.png" Grid.Row="0" VerticalAlignment="Top" Margin="0" Opacity="0.5"/>
+			<Border Grid.Column="0" Grid.RowSpan="2" Height="150" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0, 0, 0, 0" IsHitTestVisible="False">
+				<Grid x:Name="IconArea">
+					<Image Source="/Assets/Zodiark.png" Grid.Row="0" VerticalAlignment="Top" Visibility="{Binding Zodiark, Converter={StaticResource BoolToVisibilityConverter}}"/>
+					<Image Source="/Assets/Hydaelyn.png" Grid.Row="0" VerticalAlignment="Top" Visibility="{Binding Zodiark, Converter={StaticResource InverseBoolToVisConverter}}"/>
+				</Grid>
 			</Border>
 			
 			<!-- Main Area -->
@@ -75,7 +78,7 @@
 			<!-- Side Bar-->
 			<Grid Grid.Row="0" Grid.RowSpan="2">
 				<Grid.RowDefinitions>
-					<RowDefinition Height="100"/>
+					<RowDefinition Height="128"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>

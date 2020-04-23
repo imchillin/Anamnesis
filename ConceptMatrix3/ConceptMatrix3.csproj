@@ -28,7 +28,10 @@
 	<ItemGroup>
 		<None Remove="Assets\cmtool.png" />
 		<None Remove="Assets\Concept Matrix.ico" />
+		<None Remove="Assets\Concept Matrix.png" />
+		<None Remove="Assets\Hydaelyn.png" />
 		<None Remove="Assets\Loading.gif" />
+		<None Remove="Assets\Zodiark.png" />
 		<None Remove="cmtool-icon.ico" />
 		<None Remove="FodyWeavers.xml" />
 		<None Remove="stylecop.json" />
@@ -60,7 +63,10 @@
 	<ItemGroup>
 		<Resource Include="Assets\cmtool.png" />
 		<Resource Include="Assets\Concept Matrix.ico" />
+		<Resource Include="Assets\Concept Matrix.png" />
+		<Resource Include="Assets\Hydaelyn.png" />
 		<Resource Include="Assets\Loading.gif" />
+		<Resource Include="Assets\Zodiark.png" />
 		<Resource Include="FodyWeavers.xml" />
 	</ItemGroup>
 
