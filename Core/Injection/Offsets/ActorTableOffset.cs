@@ -12,6 +12,11 @@ namespace ConceptMatrix.Injection.Offsets
 		{
 		}
 
+		public ActorTableOffset(ulong[] offsets)
+			: base(offsets)
+		{
+		}
+
 		public static implicit operator ActorTableOffset(ulong offset)
 		{
 			return new ActorTableOffset(offset);

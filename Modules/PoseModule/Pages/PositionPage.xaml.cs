@@ -51,10 +51,10 @@ namespace ConceptMatrix.PoseModule.Pages
 			if (selection == null)
 				return;
 
-			this.posMem = selection.BaseAddress.GetMemory(Offsets.Position);
+			this.posMem = selection.BaseAddress.GetMemory(Offsets.Main.Position);
 			this.posMem.Bind(this, nameof(PositionPage.Position));
 
-			this.rotMem = selection.BaseAddress.GetMemory(Offsets.Rotation);
+			this.rotMem = selection.BaseAddress.GetMemory(Offsets.Main.Rotation);
 			this.rotMem.Bind(this, nameof(PositionPage.Rotation));
 		}
 	}

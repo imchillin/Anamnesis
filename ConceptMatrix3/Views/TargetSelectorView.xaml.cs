@@ -57,13 +57,13 @@ namespace ConceptMatrix.GUI.Views
 
 				if (mode == Selection.Modes.GPose)
 				{
-					actorTableOffset = Offsets.GposeActorTable;
-					targetOffset = Offsets.Gpose;
+					actorTableOffset = Offsets.Main.GposeActorTable;
+					targetOffset = Offsets.Main.Gpose;
 				}
 				else if (mode == Selection.Modes.Overworld)
 				{
-					actorTableOffset = Offsets.ActorTable;
-					targetOffset = Offsets.Target;
+					actorTableOffset = Offsets.Main.ActorTable;
+					targetOffset = Offsets.Main.Target;
 				}
 				else
 				{
@@ -75,8 +75,8 @@ namespace ConceptMatrix.GUI.Views
 
 				for (byte i = 0; i < count; i++)
 				{
-					ActorTypes type = actorTableOffset.GetActorValue(i, Offsets.ActorType);
-					string name = actorTableOffset.GetActorValue(i, Offsets.Name);
+					ActorTypes type = actorTableOffset.GetActorValue(i, Offsets.Main.ActorType);
+					string name = actorTableOffset.GetActorValue(i, Offsets.Main.Name);
 
 					string id = mode.ToString() + "_" + type + "_" + name;
 

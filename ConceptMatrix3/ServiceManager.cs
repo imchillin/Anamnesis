@@ -73,6 +73,7 @@ namespace ConceptMatrix.GUI
 			await this.Add<LogService>();
 			await this.Add<SettingsService>();
 			await this.Add<InjectionService>();
+			await this.Add<OffsetsService>();
 			await this.Add<ViewService>();
 			await this.Add<SelectionService>();
 			await this.Add<FileService>();

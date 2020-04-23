@@ -81,26 +81,22 @@ namespace ConceptMatrix.GUI.Services
 				this.IsRefreshing = true;
 				Log.Write("Refresh Begin", "Actor Refresh");
 
-				using (IMemory<ActorTypes> actorTypeMem = actorOffset.GetMemory(Offsets.ActorType))
+				using IMemory<ActorTypes> actorTypeMem = actorOffset.GetMemory(Offsets.Main.ActorType);
+				using IMemory<byte> actorRenderMem = actorOffset.GetMemory(Offsets.Main.ActorRender);
+				if (actorTypeMem.Value == ActorTypes.Player)
 				{
-					using (IMemory<byte> actorRenderMem = actorOffset.GetMemory(Offsets.ActorRender))
-					{
-						if (actorTypeMem.Value == ActorTypes.Player)
-						{
-							actorTypeMem.Value = ActorTypes.BattleNpc;
-							actorRenderMem.Value = 2;
-							await Task.Delay(50);
-							actorRenderMem.Value = 0;
-							await Task.Delay(50);
-							actorTypeMem.Value = ActorTypes.Player;
-						}
-						else
-						{
-							actorRenderMem.Value = 2;
-							await Task.Delay(50);
-							actorRenderMem.Value = 0;
-						}
-					}
+					actorTypeMem.Value = ActorTypes.BattleNpc;
+					actorRenderMem.Value = 2;
+					await Task.Delay(50);
+					actorRenderMem.Value = 0;
+					await Task.Delay(50);
+					actorTypeMem.Value = ActorTypes.Player;
+				}
+				else
+				{
+					actorRenderMem.Value = 2;
+					await Task.Delay(50);
+					actorRenderMem.Value = 0;
 				}
 
 				await Services.Get<ISelectionService>().ResetSelectionAsync();

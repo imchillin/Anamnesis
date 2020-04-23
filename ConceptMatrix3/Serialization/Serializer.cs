@@ -4,34 +4,40 @@
 namespace ConceptMatrix.GUI.Serialization
 {
 	using System;
-	using System.Collections.Generic;
+	using System.Text.Json;
 	using ConceptMatrix.GUI.Serialization.Converters;
-	using Newtonsoft.Json;
 
 	// Consider making this a service
 	public static class Serializer
 	{
-		public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings()
+		public static JsonSerializerOptions Options = new JsonSerializerOptions();
+
+		static Serializer()
 		{
-			Formatting = Formatting.Indented,
-			NullValueHandling = NullValueHandling.Ignore,
-			Converters = new List<JsonConverter>()
-			{
-				new ColorConverter(),
-				new VectorConverter(),
-				new QuaternionConverter(),
-				new Color4Converter(),
-			},
-		};
+			Options.WriteIndented = true;
+			Options.PropertyNameCaseInsensitive = false;
+
+			Options.Converters.Add(new Color4Converter());
+			Options.Converters.Add(new ColorConverter());
+			Options.Converters.Add(new OffsetConverter());
+			Options.Converters.Add(new QuaternionConverter());
+			Options.Converters.Add(new VectorConverter());
+		}
 
 		public static string Serialize(object obj)
 		{
-			return JsonConvert.SerializeObject(obj, Settings);
+			return JsonSerializer.Serialize(obj, Options);
+		}
+
+		public static T Deserialize<T>(string json)
+			where T : new()
+		{
+			return JsonSerializer.Deserialize<T>(json, Options);
 		}
 
 		public static object Deserialize(string json, Type type)
 		{
-			return JsonConvert.DeserializeObject(json, type, Settings);
+			return JsonSerializer.Deserialize(json, type, Options);
 		}
 	}
 }

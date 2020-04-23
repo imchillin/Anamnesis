@@ -13,6 +13,11 @@ namespace ConceptMatrix.Injection.Offsets
 		{
 		}
 
+		public BaseOffset(ulong[] offsets)
+			: base(offsets)
+		{
+		}
+
 		public static implicit operator BaseOffset(ulong offset)
 		{
 			return new BaseOffset(offset);

@@ -155,26 +155,26 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.EventNpc))
 				return;
 
-			this.skinColorMem = selection.BaseAddress.GetMemory(Offsets.SkinColor);
+			this.skinColorMem = selection.BaseAddress.GetMemory(Offsets.Main.SkinColor);
 			this.skinColorMem.Bind(this, nameof(AppearanceEditor.SkinTint));
-			this.skinGlowMem = selection.BaseAddress.GetMemory(Offsets.SkinGloss);
+			this.skinGlowMem = selection.BaseAddress.GetMemory(Offsets.Main.SkinGloss);
 			this.skinColorMem.Bind(this, nameof(AppearanceEditor.SkinGlow));
-			this.leftEyeColorMem = selection.BaseAddress.GetMemory(Offsets.LeftEyeColor);
+			this.leftEyeColorMem = selection.BaseAddress.GetMemory(Offsets.Main.LeftEyeColor);
 			this.leftEyeColorMem.Bind(this, nameof(AppearanceEditor.LeftEyeColor));
-			this.rightEyeColorMem = selection.BaseAddress.GetMemory(Offsets.RightEyeColor);
+			this.rightEyeColorMem = selection.BaseAddress.GetMemory(Offsets.Main.RightEyeColor);
 			this.rightEyeColorMem.Bind(this, nameof(AppearanceEditor.RightEyeColor));
-			this.limbalRingColorMem = selection.BaseAddress.GetMemory(Offsets.LimbalColor);
+			this.limbalRingColorMem = selection.BaseAddress.GetMemory(Offsets.Main.LimbalColor);
 			this.limbalRingColorMem.Bind(this, nameof(AppearanceEditor.LimbalRingColor));
-			this.hairTintColorMem = selection.BaseAddress.GetMemory(Offsets.HairColor);
+			this.hairTintColorMem = selection.BaseAddress.GetMemory(Offsets.Main.HairColor);
 			this.hairTintColorMem.Bind(this, nameof(AppearanceEditor.HairTint));
-			this.hairGlowColorMem = selection.BaseAddress.GetMemory(Offsets.HairGloss);
+			this.hairGlowColorMem = selection.BaseAddress.GetMemory(Offsets.Main.HairGloss);
 			this.hairGlowColorMem.Bind(this, nameof(AppearanceEditor.HairGlow));
-			this.highlightTintColorMem = selection.BaseAddress.GetMemory(Offsets.HairHiglight);
+			this.highlightTintColorMem = selection.BaseAddress.GetMemory(Offsets.Main.HairHiglight);
 			this.highlightTintColorMem.Bind(this, nameof(AppearanceEditor.HighlightTint));
 
-			this.lipTintMem = selection.BaseAddress.GetMemory(Offsets.MouthColor);
+			this.lipTintMem = selection.BaseAddress.GetMemory(Offsets.Main.MouthColor);
 			this.lipTintMem.ValueChanged += this.OnLipTintMemChanged;
-			this.lipGlossMem = selection.BaseAddress.GetMemory(Offsets.MouthGloss);
+			this.lipGlossMem = selection.BaseAddress.GetMemory(Offsets.Main.MouthGloss);
 			this.lipGlossMem.ValueChanged += this.OnLipTintMemChanged;
 			this.OnLipTintMemChanged(null, null);
 

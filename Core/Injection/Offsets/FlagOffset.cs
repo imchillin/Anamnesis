@@ -12,20 +12,27 @@ namespace ConceptMatrix.Injection.Offsets
 	/// </summary>
 	public class FlagOffset : BaseOffset
 	{
-		private byte[] on;
-		private byte[] off;
+		public readonly byte[] On;
+		public readonly byte[] Off;
 
 		public FlagOffset(ulong offset, byte[] on, byte[] off)
 			: base(offset)
 		{
-			this.on = on;
-			this.off = off;
+			this.On = on;
+			this.Off = off;
+		}
+
+		public FlagOffset(ulong[] offsets, byte[] on, byte[] off)
+		: base(offsets)
+		{
+			this.On = on;
+			this.Off = off;
 		}
 
 		public IMemory<Flag> GetMemory()
 		{
 			UIntPtr address = InjectionService.Instance.GetAddress(this);
-			return new FlagMemory(InjectionService.Instance.Process, address, this.on, this.off);
+			return new FlagMemory(InjectionService.Instance.Process, address, this.On, this.Off);
 		}
 	}
 }

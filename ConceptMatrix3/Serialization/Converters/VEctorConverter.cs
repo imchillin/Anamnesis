@@ -4,20 +4,20 @@
 namespace ConceptMatrix.GUI.Serialization.Converters
 {
 	using System;
+	using System.Text.Json;
+	using System.Text.Json.Serialization;
 	using ConceptMatrix;
-	using Newtonsoft.Json;
 
 	public class VectorConverter : JsonConverter<Vector>
 	{
-		public override Vector ReadJson(JsonReader reader, Type objectType, Vector existingValue, bool hasExistingValue, JsonSerializer serializer)
+		public override Vector Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			string s = (string)reader.Value;
-			return Vector.FromString(s);
+			return Vector.FromString(reader.GetString());
 		}
 
-		public override void WriteJson(JsonWriter writer, Vector value, JsonSerializer serializer)
+		public override void Write(Utf8JsonWriter writer, Vector value, JsonSerializerOptions options)
 		{
-			writer.WriteValue(value.ToString());
+			writer.WriteStringValue(value.ToString());
 		}
 	}
 }

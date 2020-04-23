@@ -17,7 +17,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		public EquipmentWeaponViewModel(ItemSlots slot, IBaseMemoryOffset baseOffset)
 			: base(slot, baseOffset)
 		{
-			this.memory = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHand : Offsets.OffHand);
+			this.memory = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.Main.MainHand : Offsets.Main.OffHand);
 			this.memory.Name = slot.ToString();
 			this.memory.ValueChanged += this.Memory_ValueChanged;
 
@@ -33,11 +33,11 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 			if (this.HasWeapon)
 			{
-				this.scaleMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandScale : Offsets.OffhandScale);
+				this.scaleMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.Main.MainHandScale : Offsets.Main.OffhandScale);
 				this.scaleMem.Name = slot.ToString() + "_Scale";
 				this.scaleMem.ValueChanged += this.ScaleMem_ValueChanged;
 
-				this.colorMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.MainHandColor : Offsets.OffhandColor);
+				this.colorMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.Main.MainHandColor : Offsets.Main.OffhandColor);
 				this.colorMem.Name = slot.ToString() + "_Color";
 				this.colorMem.ValueChanged += this.ColorMem_ValueChanged;
 

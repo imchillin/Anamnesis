@@ -76,8 +76,8 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Start()
 		{
-			this.gposeMem = Offsets.GposeCheck.GetMemory();
-			this.gposeMem2 = Offsets.GposeCheck2.GetMemory();
+			this.gposeMem = Offsets.Main.GposeCheck.GetMemory();
+			this.gposeMem2 = Offsets.Main.GposeCheck2.GetMemory();
 
 			Task.Run(this.Watch);
 
@@ -120,12 +120,12 @@ namespace ConceptMatrix.GUI.Services
 					await Task.Delay(250);
 
 				Selection.Modes mode = this.GetMode();
-				IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Gpose : Offsets.Target;
+				IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Main.Gpose : Offsets.Main.Target;
 
 				try
 				{
-					ActorTypes type = baseOffset.GetValue(Offsets.ActorType);
-					string name = baseOffset.GetValue(Offsets.Name);
+					ActorTypes type = baseOffset.GetValue(Offsets.Main.ActorType);
+					string name = baseOffset.GetValue(Offsets.Main.Name);
 
 					string actorId = mode.ToString() + "_" + name;
 

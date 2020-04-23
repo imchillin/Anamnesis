@@ -83,7 +83,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.OffHand = new EquipmentWeaponViewModel(ItemSlots.OffHand, this.BaseOffset);
 
 			// Equipment slots
-			this.eqMem = selection.BaseAddress.GetMemory(Offsets.ActorEquipment);
+			this.eqMem = selection.BaseAddress.GetMemory(Offsets.Main.ActorEquipment);
 			this.Head = new EquipmentItemViewModel(this.eqMem, ItemSlots.Head, this.BaseOffset);
 			this.Body = new EquipmentItemViewModel(this.eqMem, ItemSlots.Body, this.BaseOffset);
 			this.Hands = new EquipmentItemViewModel(this.eqMem, ItemSlots.Hands, this.BaseOffset);

@@ -4,20 +4,20 @@
 namespace ConceptMatrix.GUI.Serialization.Converters
 {
 	using System;
+	using System.Text.Json;
+	using System.Text.Json.Serialization;
 	using ConceptMatrix;
-	using Newtonsoft.Json;
 
 	public class QuaternionConverter : JsonConverter<Quaternion>
 	{
-		public override Quaternion ReadJson(JsonReader reader, Type objectType, Quaternion existingValue, bool hasExistingValue, JsonSerializer serializer)
+		public override Quaternion Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			string s = (string)reader.Value;
-			return Quaternion.FromString(s);
+			return Quaternion.FromString(reader.GetString());
 		}
 
-		public override void WriteJson(JsonWriter writer, Quaternion value, JsonSerializer serializer)
+		public override void Write(Utf8JsonWriter writer, Quaternion value, JsonSerializerOptions options)
 		{
-			writer.WriteValue(value.ToString());
+			writer.WriteStringValue(value.ToString());
 		}
 	}
 }

@@ -35,13 +35,13 @@ namespace ConceptMatrix.PoseModule
 		{
 			injection = Services.Get<IInjectionService>();
 
-			this.skel1Mem = Offsets.SkeletonOffset1.GetMemory();
-			this.skel2Mem = Offsets.SkeletonOffset2.GetMemory();
-			this.skel3Mem = Offsets.SkeletonOffset3.GetMemory();
-			this.phys1Mem = Offsets.PhysicsOffset1.GetMemory();
-			this.phys2Mem = Offsets.PhysicsOffset2.GetMemory();
+			this.skel1Mem = Offsets.Main.Skeleton1Flag.GetMemory();
+			this.skel2Mem = Offsets.Main.Skeleton2Flag.GetMemory();
+			this.skel3Mem = Offsets.Main.Skeleton3Flag.GetMemory();
+			this.phys1Mem = Offsets.Main.Physics1Flag.GetMemory();
+			this.phys2Mem = Offsets.Main.Physics2Flag.GetMemory();
 
-			this.appearance = selection.BaseAddress.GetMemory(Offsets.ActorAppearance);
+			this.appearance = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
 
 			this.GenerateBones(selection);
 		}
@@ -572,9 +572,9 @@ namespace ConceptMatrix.PoseModule
 
 		private void WatchCamera()
 		{
-			IMemory<float> camX = Offsets.CameraOffset.GetMemory(Offsets.CameraAngleX);
-			IMemory<float> camY = Offsets.CameraOffset.GetMemory(Offsets.CameraAngleY);
-			IMemory<float> camZ = Offsets.CameraOffset.GetMemory(Offsets.CameraRotation);
+			IMemory<float> camX = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraAngleX);
+			IMemory<float> camY = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraAngleY);
+			IMemory<float> camZ = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraRotation);
 
 			while (this.IsEnabled && Application.Current != null)
 			{

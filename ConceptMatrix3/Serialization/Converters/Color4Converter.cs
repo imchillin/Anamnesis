@@ -4,20 +4,20 @@
 namespace ConceptMatrix.GUI.Serialization.Converters
 {
 	using System;
+	using System.Text.Json;
+	using System.Text.Json.Serialization;
 	using ConceptMatrix;
-	using Newtonsoft.Json;
 
 	public class Color4Converter : JsonConverter<Color4>
 	{
-		public override Color4 ReadJson(JsonReader reader, Type objectType, Color4 existingValue, bool hasExistingValue, JsonSerializer serializer)
+		public override Color4 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			string s = (string)reader.Value;
-			return Color4.FromString(s);
+			return Color4.FromString(reader.GetString());
 		}
 
-		public override void WriteJson(JsonWriter writer, Color4 value, JsonSerializer serializer)
+		public override void Write(Utf8JsonWriter writer, Color4 value, JsonSerializerOptions options)
 		{
-			writer.WriteValue(value.ToString());
+			writer.WriteStringValue(value.ToString());
 		}
 	}
 }
