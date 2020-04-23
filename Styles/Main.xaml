@@ -46,6 +46,7 @@
 		<!-- Custom -->
 		<ResourceDictionary Source="Styles/GroupBoxStyles.xaml"/>
 		<ResourceDictionary Source="Styles/ButtonStyles.xaml"/>
+		<ResourceDictionary Source="Styles/TextBlockStyles.xaml"/>
 
 	</ResourceDictionary.MergedDictionaries>
 	

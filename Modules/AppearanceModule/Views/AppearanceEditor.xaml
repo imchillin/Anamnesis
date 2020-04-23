@@ -32,16 +32,6 @@
 				<TextBlock Text="{Binding DisplayName}"/>
 			</Grid>
 		</DataTemplate>
-
-		<Style TargetType="TextBlock" x:Key="Label">
-			<Setter Property="FontWeight" Value="Normal"/>
-			<Setter Property="FontSize" Value="12"/>
-			<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
-			<Setter Property="HorizontalAlignment" Value="Right"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Setter Property="Margin" Value="3,0,6,0"/>
-		</Style>
-
 	</UserControl.Resources>
 
 
