@@ -167,7 +167,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 			}
 		}
 
-		public void WritePreRefresh(AppearanceEditor ap, EquipmentEditor eq, SaveModes mode)
+		public void Write(AppearanceEditor ap, EquipmentEditor eq, SaveModes mode)
 		{
 			if (mode.HasFlag(SaveModes.EquipmentGear))
 			{
@@ -180,6 +180,11 @@ namespace ConceptMatrix.AppearanceModule.Files
 				this.Hands?.Write(eq.Hands);
 				this.Legs?.Write(eq.Legs);
 				this.Feet?.Write(eq.Feet);
+
+				Write(this.MainHandScale, (v) => eq.MainHand.Scale = v);
+				Write(this.MainHandColor, (v) => eq.MainHand.Color = v);
+				Write(this.OffHandScale, (v) => eq.OffHand.Scale = v);
+				Write(this.OffHandColor, (v) => eq.OffHand.Color = v);
 			}
 
 			if (mode.HasFlag(SaveModes.EquipmentAccessories))
@@ -197,6 +202,10 @@ namespace ConceptMatrix.AppearanceModule.Files
 				Write(this.EnableHighlights, (v) => ap.Appearance.EnableHighlights = v);
 				Write(this.HairTone, (v) => ap.Appearance.HairTone = v);
 				Write(this.Highlights, (v) => ap.Appearance.Highlights = v);
+
+				Write(this.HairTint, (v) => ap.HairTint = v);
+				Write(this.HairGlow, (v) => ap.HairGlow = v);
+				Write(this.HighlightTint, (v) => ap.HighlightTint = v);
 			}
 
 			if (mode.HasFlag(SaveModes.AppearanceFace) || mode.HasFlag(SaveModes.AppearanceBody))
@@ -222,6 +231,11 @@ namespace ConceptMatrix.AppearanceModule.Files
 				Write(this.LipsToneFurPattern, (v) => ap.Appearance.LipsToneFurPattern = v);
 				Write(this.FacePaint, (v) => ap.Appearance.FacePaint = v);
 				Write(this.FacePaintColor, (v) => ap.Appearance.FacePaintColor = v);
+
+				Write(this.LeftEyeColor, (v) => ap.LeftEyeColor = v);
+				Write(this.RightEyeColor, (v) => ap.RightEyeColor = v);
+				Write(this.LimbalRingColor, (v) => ap.LimbalRingColor = v);
+				Write(this.LipTint, (v) => ap.LipTint = v);
 			}
 
 			if (mode.HasFlag(SaveModes.AppearanceBody))
@@ -231,40 +245,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 				Write(this.EarMuscleTailSize, (v) => ap.Appearance.EarMuscleTailSize = v);
 				Write(this.TailEarsType, (v) => ap.Appearance.TailEarsType = v);
 				Write(this.Bust, (v) => ap.Appearance.Bust = v);
-			}
-		}
 
-		public void WritePostRefresh(AppearanceEditor ap, EquipmentEditor eq, SaveModes mode)
-		{
-			if (mode.HasFlag(SaveModes.EquipmentGear))
-			{
-				Write(this.MainHandScale, (v) => eq.MainHand.Scale = v);
-				Write(this.MainHandColor, (v) => eq.MainHand.Color = v);
-				Write(this.OffHandScale, (v) => eq.OffHand.Scale = v);
-				Write(this.OffHandColor, (v) => eq.OffHand.Color = v);
-			}
-
-			if (mode.HasFlag(SaveModes.EquipmentAccessories))
-			{
-			}
-
-			if (mode.HasFlag(SaveModes.AppearanceHair))
-			{
-				Write(this.HairTint, (v) => ap.HairTint = v);
-				Write(this.HairGlow, (v) => ap.HairGlow = v);
-				Write(this.HighlightTint, (v) => ap.HighlightTint = v);
-			}
-
-			if (mode.HasFlag(SaveModes.AppearanceFace))
-			{
-				Write(this.LeftEyeColor, (v) => ap.LeftEyeColor = v);
-				Write(this.RightEyeColor, (v) => ap.RightEyeColor = v);
-				Write(this.LimbalRingColor, (v) => ap.LimbalRingColor = v);
-				Write(this.LipTint, (v) => ap.LipTint = v);
-			}
-
-			if (mode.HasFlag(SaveModes.AppearanceBody))
-			{
 				Write(this.SkinTint, (v) => ap.SkinTint = v);
 				Write(this.SkinGlow, (v) => ap.SkinGlow = v);
 			}

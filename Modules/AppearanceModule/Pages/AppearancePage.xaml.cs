@@ -14,6 +14,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	public partial class AppearancePage : UserControl
 	{
 		private IBaseMemoryOffset baseOffset;
+		private AppearanceFile refreshCacheFile;
 
 		public AppearancePage()
 		{
@@ -21,6 +22,11 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 			ISelectionService selectionService = Services.Get<ISelectionService>();
 			selectionService.SelectionChanged += this.OnSelectionChanged;
+
+			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
+			refreshService.OnRefreshStarting += this.RefreshService_OnRefreshStarting;
+			refreshService.OnRefreshComplete += this.RefreshService_OnRefreshComplete;
+
 			this.OnSelectionChanged(selectionService.CurrentSelection);
 		}
 
@@ -32,7 +38,6 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
-			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
 			IFileService fileService = Services.Get<IFileService>();
 			IViewService viewService = Services.Get<IViewService>();
 
@@ -54,9 +59,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 				if (mode == AppearanceFile.SaveModes.None)
 					return;
 
-				apFile.WritePreRefresh(this.Appearance, this.Equipment, mode);
-				await refreshService.RefreshAsync(this.baseOffset);
-				apFile.WritePostRefresh(this.Appearance, this.Equipment, mode);
+				apFile.Write(this.Appearance, this.Equipment, mode);
 			}
 		}
 
@@ -85,6 +88,24 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			{
 				this.IsEnabled = hasValidSelection;
 			});
+		}
+
+		private void RefreshService_OnRefreshStarting(IBaseMemoryOffset baseOffset)
+		{
+			if (this.baseOffset != baseOffset)
+				return;
+
+			this.refreshCacheFile = new AppearanceFile();
+			this.refreshCacheFile.Read(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
+		}
+
+		private void RefreshService_OnRefreshComplete(IBaseMemoryOffset baseOffset)
+		{
+			if (this.refreshCacheFile != null)
+			{
+				this.refreshCacheFile.Write(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
+				this.refreshCacheFile = null;
+			}
 		}
 	}
 }

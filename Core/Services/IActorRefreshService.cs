@@ -5,8 +5,13 @@ namespace ConceptMatrix
 {
 	using System.Threading.Tasks;
 
+	public delegate void RefreshEvent(IBaseMemoryOffset baseOffset);
+
 	public interface IActorRefreshService : IService
 	{
+		event RefreshEvent OnRefreshStarting;
+		event RefreshEvent OnRefreshComplete;
+
 		bool IsRefreshing
 		{
 			get;
