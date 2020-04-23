@@ -15,11 +15,13 @@
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type Expander}">
 
-						<Grid>
+						<Grid Margin="0, 6, 0, 0">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto"/>
 								<RowDefinition/>
 							</Grid.RowDefinitions>
+
+							<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" VerticalAlignment="Top" Margin="3, 0, 3, 0"/>
 
 							<Border Grid.Row="0" Name="HeaderSite" Background="Transparent" Opacity="0.5">
 								<ToggleButton Name="ToggleSite" IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{DynamicResource MaterialDesignExpanderDownHeaderStyle}">

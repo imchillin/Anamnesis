@@ -4,6 +4,7 @@
 namespace ConceptMatrix.GUI.Views
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using System.Windows.Controls;
@@ -26,8 +27,10 @@ namespace ConceptMatrix.GUI.Views
 
 			ICollectionView view = CollectionViewSource.GetDefaultView(this.Items);
 			view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(NavigationItem.Category)));
+			view.SortDescriptions.Add(new SortDescription(nameof(NavigationItem.Sort), ListSortDirection.Ascending));
 			view.SortDescriptions.Add(new SortDescription(nameof(NavigationItem.Category), ListSortDirection.Ascending));
 			view.SortDescriptions.Add(new SortDescription(nameof(NavigationItem.Name), ListSortDirection.Ascending));
+
 			this.ViewList.ItemsSource = view;
 
 			this.viewService = App.Services.Get<ViewService>();
@@ -69,11 +72,18 @@ namespace ConceptMatrix.GUI.Views
 					this.Category = null;
 					this.Name = path;
 				}
+
+				// Bit of a hack. These should come in with the path
+				if (this.Category == "Advanced")
+				{
+					this.Sort = 99;
+				}
 			}
 
 			#pragma warning disable CS0067
 			public event PropertyChangedEventHandler PropertyChanged;
 
+			public int Sort { get; set; }
 			public string Name { get; set; }
 			public string Category { get; set; }
 			public string Path { get; set; }
