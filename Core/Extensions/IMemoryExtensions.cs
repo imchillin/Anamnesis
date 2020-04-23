@@ -16,11 +16,13 @@ namespace ConceptMatrix
 		/// <param name="owner">the object that owns the property.</param>
 		/// <param name="propertyName">the property to bind.</param>
 		public static void Bind<T>(this IMemory<T> self, object owner, string propertyName)
+			where T : struct
 		{
 			BindWrapper<T> bind = new BindWrapper<T>(self, owner, propertyName);
 		}
 
 		private class BindWrapper<T>
+			where T : struct
 		{
 			private IMemory<T> target;
 			private PropertyInfo property;
@@ -34,8 +36,16 @@ namespace ConceptMatrix
 				if (prop == null)
 					throw new Exception("Unable to locate property by name: " + propertyName + " on type: " + owner.GetType());
 
-				if (prop.PropertyType != typeof(T))
-					throw new Exception("Property: " + propertyName + " on type: " + owner.GetType() + " must match memory type: " + typeof(T) + " to be used as a memory binding.");
+				if (prop.PropertyType == typeof(T?))
+				{
+				}
+				else
+				{
+					if (prop.PropertyType != typeof(T))
+					{
+						throw new Exception("Property: " + propertyName + " on type: " + owner.GetType() + " must match memory type: " + typeof(T) + " to be used as a memory binding.");
+					}
+				}
 
 				this.ownerNotifier = owner as INotifyPropertyChanged;
 				if (this.ownerNotifier == null)
@@ -59,7 +69,12 @@ namespace ConceptMatrix
 
 				if (e.PropertyName == this.property.Name)
 				{
-					this.target.Value = (T)this.property.GetValue(this.owner);
+					object v = this.property.GetValue(this.owner);
+
+					if (v == null)
+						return;
+
+					this.target.Value = (T)v;
 				}
 			}
 

@@ -104,15 +104,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
-		public Color SkinTint { get; set; }
-		public Color SkinGlow { get; set; }
-		public Color LeftEyeColor { get; set; }
-		public Color RightEyeColor { get; set; }
-		public Color LimbalRingColor { get; set; }
-		public Color HairTint { get; set; }
-		public Color HairGlow { get; set; }
-		public Color HighlightTint { get; set; }
-		public Color4 LipTint { get; set; }
+		public Color? SkinTint { get; set; }
+		public Color? SkinGlow { get; set; }
+		public Color? LeftEyeColor { get; set; }
+		public Color? RightEyeColor { get; set; }
+		public Color? LimbalRingColor { get; set; }
+		public Color? HairTint { get; set; }
+		public Color? HairGlow { get; set; }
+		public Color? HighlightTint { get; set; }
+		public Color4? LipTint { get; set; }
 
 		public AppearanceViewModel Appearance
 		{
@@ -204,9 +204,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			if (e.PropertyName == nameof(AppearanceEditor.LipTint))
 			{
-				Color4 val = this.LipTint;
-				this.lipTintMem.Value = val.Color;
-				this.lipGlossMem.Value = val.A;
+				if (this.LipTint != null)
+				{
+					Color4 val = (Color4)this.LipTint;
+					this.lipTintMem.Value = val.Color;
+					this.lipGlossMem.Value = val.A;
+				}
 			}
 		}
 
@@ -238,6 +241,35 @@ namespace ConceptMatrix.AppearanceModule.Views
 			else if (e.PropertyName == nameof(AppearanceViewModel.Hair))
 			{
 				this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
+			}
+			else if (e.PropertyName == nameof(AppearanceViewModel.Skintone))
+			{
+				this.SkinTint = null;
+				this.SkinGlow = null;
+			}
+			else if (e.PropertyName == nameof(AppearanceViewModel.LimbalEyes))
+			{
+				this.LimbalRingColor = null;
+			}
+			else if (e.PropertyName == nameof(AppearanceViewModel.HairTone))
+			{
+				this.HairTint = null;
+			}
+			else if (e.PropertyName == nameof(AppearanceViewModel.Highlights))
+			{
+				this.HighlightTint = null;
+			}
+			else if (e.PropertyName == nameof(AppearanceViewModel.LipsToneFurPattern))
+			{
+				this.LipTint = null;
+			}
+			else if (e.PropertyName == nameof(AppearanceViewModel.LEyeColor))
+			{
+				this.LeftEyeColor = null;
+			}
+			else if (e.PropertyName == nameof(AppearanceViewModel.REyeColor))
+			{
+				this.RightEyeColor = null;
 			}
 		}
 
