@@ -203,9 +203,9 @@ namespace ConceptMatrix.AppearanceModule.Files
 				Write(this.HairTone, (v) => ap.Appearance.HairTone = v);
 				Write(this.Highlights, (v) => ap.Appearance.Highlights = v);
 
-				Write(this.HairTint, (v) => ap.HairTint = v);
-				Write(this.HairGlow, (v) => ap.HairGlow = v);
-				Write(this.HighlightTint, (v) => ap.HighlightTint = v);
+				ap.HairTint = this.HairTint;
+				ap.HairGlow = this.HairGlow;
+				ap.HighlightTint = this.HighlightTint;
 			}
 
 			if (mode.HasFlag(SaveModes.AppearanceFace) || mode.HasFlag(SaveModes.AppearanceBody))
@@ -232,10 +232,10 @@ namespace ConceptMatrix.AppearanceModule.Files
 				Write(this.FacePaint, (v) => ap.Appearance.FacePaint = v);
 				Write(this.FacePaintColor, (v) => ap.Appearance.FacePaintColor = v);
 
-				Write(this.LeftEyeColor, (v) => ap.LeftEyeColor = v);
-				Write(this.RightEyeColor, (v) => ap.RightEyeColor = v);
-				Write(this.LimbalRingColor, (v) => ap.LimbalRingColor = v);
-				Write(this.LipTint, (v) => ap.LipTint = v);
+				ap.LeftEyeColor = this.LeftEyeColor;
+				ap.RightEyeColor = this.RightEyeColor;
+				ap.LimbalRingColor = this.LimbalRingColor;
+				ap.LipTint = this.LipTint;
 			}
 
 			if (mode.HasFlag(SaveModes.AppearanceBody))
@@ -246,8 +246,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 				Write(this.TailEarsType, (v) => ap.Appearance.TailEarsType = v);
 				Write(this.Bust, (v) => ap.Appearance.Bust = v);
 
-				Write(this.SkinTint, (v) => ap.SkinTint = v);
-				Write(this.SkinGlow, (v) => ap.SkinGlow = v);
+				ap.SkinTint = this.SkinTint;
+				ap.SkinGlow = this.SkinGlow;
 			}
 		}
 
@@ -255,7 +255,10 @@ namespace ConceptMatrix.AppearanceModule.Files
 			where T : struct
 		{
 			if (val == null)
+			{
+				Log.Write(new Exception("Missing appearance value where one was required"), "Appearance File", Log.Severity.Warning);
 				return;
+			}
 
 			set.Invoke((T)val);
 		}

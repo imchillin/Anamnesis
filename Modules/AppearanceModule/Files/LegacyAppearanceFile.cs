@@ -27,7 +27,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 			allFile.Tribe = (Appearance.Tribes)data[4];
 			allFile.Head = data[5];
 			allFile.Hair = data[6];
-			allFile.Highlights = data[7];
+			allFile.EnableHighlights = data[7] != 0;
 			allFile.Skintone = data[8];
 			allFile.REyeColor = data[9];
 			allFile.HairTone = data[10];
@@ -40,13 +40,14 @@ namespace ConceptMatrix.AppearanceModule.Files
 			allFile.Nose = data[17];
 			allFile.Jaw = data[18];
 			allFile.Mouth = data[19];
-			allFile.Mouth = data[20];
+			allFile.LipsToneFurPattern = data[20];
 			allFile.EarMuscleTailSize = data[21];
 			allFile.TailEarsType = data[22];
 			allFile.Bust = data[23];
 			allFile.FacePaint = data[24];
 			allFile.FacePaintColor = data[25];
 
+			/*
 			allFile.SkinTint = new Color((float)this.characterDetails.SkinRedPigment.value, (float)this.characterDetails.SkinGreenPigment.value, (float)this.characterDetails.SkinBluePigment.value);
 			allFile.SkinGlow = new Color((float)this.characterDetails.SkinRedGloss.value, (float)this.characterDetails.SkinGreenGloss.value, (float)this.characterDetails.SkinBlueGloss.value);
 			allFile.LeftEyeColor = new Color((float)this.characterDetails.LeftEyeRed.value, (float)this.characterDetails.LeftEyeGreen.value, (float)this.characterDetails.LeftEyeBlue.value);
@@ -56,6 +57,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 			allFile.HairGlow = new Color((float)this.characterDetails.HairGlowRed.value, (float)this.characterDetails.HairGlowGreen.value, (float)this.characterDetails.HairGlowBlue.value);
 			allFile.HighlightTint = new Color((float)this.characterDetails.HighlightRedPigment.value, (float)this.characterDetails.HighlightGreenPigment.value, (float)this.characterDetails.HighlightBluePigment.value);
 			allFile.LipTint = new Color4((float)this.characterDetails.LipsR.value, (float)this.characterDetails.LipsG.value, (float)this.characterDetails.LipsB.value, (float)this.characterDetails.LipsBrightness.value);
+			*/
 
 			return allFile;
 		}
