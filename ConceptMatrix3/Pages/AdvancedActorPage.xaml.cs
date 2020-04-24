@@ -5,6 +5,7 @@ namespace ConceptMatrix.GUI.Pages
 {
 	using System;
 	using System.Windows.Controls;
+	using ConceptMatrix.MemoryBinds;
 	using PropertyChanged;
 
 	/// <summary>
@@ -29,6 +30,11 @@ namespace ConceptMatrix.GUI.Pages
 
 		private void OnSelectionChanged(Selection selection)
 		{
+			BindUtility.ClearAll(this);
+
+			if (selection == null)
+				return;
+
 			selection.BaseAddress.Bind(Offsets.Main.ActorType, this, nameof(this.ActorType));
 		}
 	}
