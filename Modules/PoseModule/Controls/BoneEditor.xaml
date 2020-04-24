@@ -10,16 +10,17 @@
 
 	<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 0, 3, 3" x:Name="ContentArea">
 		<StackPanel Margin="3">
-			<Label Content="Rotation"/>
-			<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
+			<GroupBox Header="Rotation">
+				<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
+			</GroupBox>
 
-			<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
-			<Label Content="Scale"/>
-			<cm3Controls:VectorEditor Value="{Binding Value.Scale, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+			<GroupBox Header="scale">
+				<cm3Controls:VectorEditor Value="{Binding Value.Scale, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+			</GroupBox>
 
-			<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
-			<Label Content="Position"/>
-			<cm3Controls:VectorEditor Value="{Binding Value.Position, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+			<GroupBox Header="Position">
+				<cm3Controls:VectorEditor Value="{Binding Value.Position, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+			</GroupBox>
 		</StackPanel>
 	</Border>
 </UserControl>

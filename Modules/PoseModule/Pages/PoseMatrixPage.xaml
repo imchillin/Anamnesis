@@ -627,36 +627,8 @@
 
 			</StackPanel>
 		</Border>
-		
-		<Grid Grid.Column="2">
-			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
 
-			<controls:BoneEditor Value="{Binding CurrentBone}"/>
+		<controls:PoseSidebar Grid.Column="2"/>
 
-			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3" >
-
-				<Grid Margin="6">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="Auto"/>
-					</Grid.ColumnDefinitions>
-
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition/>
-						<RowDefinition/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
-
-					<Label Grid.Row="0" Grid.Column="0" Content="Enable" VerticalContentAlignment="Center"/>
-					<ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsEnabled}"/>
-					
-				</Grid>
-			</Border>
-
-		</Grid>
 	</Grid>
 </UserControl>
