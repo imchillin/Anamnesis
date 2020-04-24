@@ -4,6 +4,7 @@
 namespace ConceptMatrix.PoseModule
 {
 	using System;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 
@@ -31,10 +32,15 @@ namespace ConceptMatrix.PoseModule
 			if (selection == null)
 				return;
 
-			Application.Current.Dispatcher.Invoke(() =>
+			Task.Run(async () =>
 			{
-				this.ViewModel = new SimplePoseViewModel(selection);
-				this.ContentArea.DataContext = this.ViewModel;
+				this.ViewModel = new SimplePoseViewModel();
+				await this.ViewModel.Initialize(selection);
+
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					this.ContentArea.DataContext = this.ViewModel;
+				});
 			});
 		}
 

@@ -12,11 +12,15 @@ namespace ConceptMatrix.PoseModule
 	public class SkeletonService : IService
 	{
 		public const string SkeletonsDirectory = "Modules/Skeletons/";
+		private Dictionary<Appearance.Races, Dictionary<string, Bone>> precachedBones;
 
 		public async Task Initialize()
 		{
-			Dictionary<string, Bone> testSkel = await this.Load(Appearance.Races.Hyur);
-			Log.Write("got " + testSkel.Count + " bones");
+			this.precachedBones = new Dictionary<Appearance.Races, Dictionary<string, Bone>>();
+			foreach (Appearance.Races race in Enum.GetValues(typeof(Appearance.Races)))
+			{
+				this.precachedBones[race] = await this.Load(race);
+			}
 		}
 
 		public Task Shutdown()
@@ -32,6 +36,11 @@ namespace ConceptMatrix.PoseModule
 		// Load the skeleton file and its BasedOn values
 		public async Task<Dictionary<string, Bone>> Load(Appearance.Races race)
 		{
+			if (this.precachedBones.ContainsKey(race))
+			{
+				return this.precachedBones[race];
+			}
+
 			IFileService fileService = Services.Get<IFileService>();
 			Dictionary<string, Bone> bones = new Dictionary<string, Bone>();
 

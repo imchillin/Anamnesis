@@ -31,21 +31,6 @@ namespace ConceptMatrix.PoseModule
 
 		private IMemory<Appearance> appearance;
 
-		public SimplePoseViewModel(Selection selection)
-		{
-			injection = Services.Get<IInjectionService>();
-
-			this.skel1Mem = Offsets.Main.Skeleton1Flag.GetMemory();
-			this.skel2Mem = Offsets.Main.Skeleton2Flag.GetMemory();
-			this.skel3Mem = Offsets.Main.Skeleton3Flag.GetMemory();
-			this.phys1Mem = Offsets.Main.Physics1Flag.GetMemory();
-			this.phys2Mem = Offsets.Main.Physics2Flag.GetMemory();
-
-			this.appearance = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
-
-			Task.Run(async () => { await this.GenerateBones(selection); });
-		}
-
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public bool IsEnabled
@@ -212,6 +197,21 @@ namespace ConceptMatrix.PoseModule
 			}
 
 			return name;
+		}
+
+		public async Task Initialize(Selection selection)
+		{
+			injection = Services.Get<IInjectionService>();
+
+			this.skel1Mem = Offsets.Main.Skeleton1Flag.GetMemory();
+			this.skel2Mem = Offsets.Main.Skeleton2Flag.GetMemory();
+			this.skel3Mem = Offsets.Main.Skeleton3Flag.GetMemory();
+			this.phys1Mem = Offsets.Main.Physics1Flag.GetMemory();
+			this.phys2Mem = Offsets.Main.Physics2Flag.GetMemory();
+
+			this.appearance = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
+
+			await this.GenerateBones(selection);
 		}
 
 		public bool GetIsBoneSelected(Bone bone)

@@ -226,12 +226,14 @@ namespace ConceptMatrix.PoseModule
 
 			if (!this.IsEnabled)
 			{
-				this.Visibility = Visibility.Hidden;
 				this.SetState(new SolidColorBrush(Colors.Transparent), 1);
+				this.BackgroundElipse.Opacity = 0.5;
+				this.BackgroundElipse.StrokeThickness = 0;
 				return;
 			}
 
-			this.Visibility = Visibility.Visible;
+			this.BackgroundElipse.Opacity = 1;
+			this.BackgroundElipse.StrokeThickness = 1;
 
 			bool hovered = this.viewModel.GetIsBoneHovered(this.bone);
 			bool selected = this.viewModel.GetIsBoneSelected(this.bone);
