@@ -8,9 +8,8 @@ namespace ConceptMatrix.GUI
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Controls.Primitives;
 	using System.Windows.Input;
-	using System.Windows.Media;
-	using System.Windows.Media.Animation;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
@@ -40,11 +39,12 @@ namespace ConceptMatrix.GUI
 			this.ViewArea.Content = this.currentView;
 			this.IconArea.DataContext = this;
 
-			ISettingsService settingsService = App.Services.Get<ISettingsService>();
 			this.Zodiark = App.Settings.ThemeDark;
 			this.Opacity = App.Settings.Opacity;
 			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
-			settingsService.SettingsSaved += this.SettingsService_SettingsSaved;
+			this.WindowScale.ScaleX = App.Settings.Scale;
+			this.WindowScale.ScaleY = App.Settings.Scale;
+			App.Settings.Changed += this.OnSettingsChanged;
 		}
 
 		public bool Zodiark
@@ -53,12 +53,11 @@ namespace ConceptMatrix.GUI
 			set;
 		}
 
-		private void SettingsService_SettingsSaved(SettingsBase settings)
+		private void OnSettingsChanged(SettingsBase settings)
 		{
-			if (settings is MainApplicationSettings mainSettings)
-			{
-				this.Zodiark = mainSettings.ThemeDark;
-			}
+			this.Zodiark = App.Settings.ThemeDark;
+			this.WindowScale.ScaleX = App.Settings.Scale;
+			this.WindowScale.ScaleY = App.Settings.Scale;
 		}
 
 		private void OnShowPage(ViewService.Page page)
@@ -131,7 +130,7 @@ namespace ConceptMatrix.GUI
 			}
 		}
 
-		private void OnTitleBarMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		private void OnTitleBarMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			if (e.ChangedButton == MouseButton.Left)
 			{
@@ -167,7 +166,7 @@ namespace ConceptMatrix.GUI
 			this.WindowState = WindowState.Minimized;
 		}
 
-		private void OnThemeClick(object sender, RoutedEventArgs e)
+		private void OnSettingsClick(object sender, RoutedEventArgs e)
 		{
 			if (this.DrawerHost.IsRightDrawerOpen)
 			{
@@ -175,21 +174,19 @@ namespace ConceptMatrix.GUI
 				return;
 			}
 
-			App.Services.Get<IViewService>().ShowDrawer<ThemeSettingsView>("Theme");
+			App.Services.Get<IViewService>().ShowDrawer<SettingsView>("Settings");
 		}
 
 		private void OnAlwaysOnTopChecked(object sender, RoutedEventArgs e)
 		{
 			this.Topmost = true;
 			App.Settings.AlwaysOnTop = true;
-			App.Settings.Save();
 		}
 
 		private void OnAlwaysOnTopUnchecked(object sender, RoutedEventArgs e)
 		{
 			this.Topmost = false;
 			App.Settings.AlwaysOnTop = false;
-			App.Settings.Save();
 		}
 
 		private void Window_MouseEnter(object sender, MouseEventArgs e)
@@ -209,6 +206,19 @@ namespace ConceptMatrix.GUI
 				return;
 
 			this.Animate(Window.OpacityProperty, App.Settings.Opacity, 250);
+		}
+
+		private void OnResizeDrag(object sender, DragDeltaEventArgs e)
+		{
+			double scale = this.WindowScale.ScaleX;
+
+			double delta = Math.Max(e.HorizontalChange / 1024, e.VerticalChange / 576);
+			scale += delta;
+
+			scale = Math.Clamp(scale, 0.5, 2.0);
+			this.WindowScale.ScaleX = scale;
+			this.WindowScale.ScaleY = scale;
+			App.Settings.Scale = scale;
 		}
 	}
 }

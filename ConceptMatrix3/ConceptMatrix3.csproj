@@ -103,8 +103,8 @@
 		<Compile Update="Views\TargetView.xaml.cs">
 			<DependentUpon>TargetView.xaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\ThemeSettingsView.xaml.cs">
-			<DependentUpon>ThemeSettingsView.xaml</DependentUpon>
+		<Compile Update="Views\SettingsView.xaml.cs">
+			<DependentUpon>SettingsView.xaml</DependentUpon>
 		</Compile>
 		<Compile Update="Windows\Dialog.xaml.cs">
 			<DependentUpon>Dialog.xaml</DependentUpon>
@@ -137,7 +137,7 @@
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
-		<Page Update="Views\ThemeSettingsView.xaml">
+		<Page Update="Views\SettingsView.xaml">
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</Page>

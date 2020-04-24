@@ -7,11 +7,9 @@
 		xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		mc:Ignorable="d"
-		Title="MainWindow"
-		Height="576"
-		Width="1024"
 		WindowStyle="None"
 		ResizeMode="NoResize"
+		SizeToContent="WidthAndHeight"
 		AllowsTransparency="True"
 		MouseEnter="Window_MouseEnter"
 		MouseLeave="Window_MouseLeave"
@@ -20,7 +18,7 @@
 		Deactivated="Window_Deactivated"
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 		Icon="/Assets/Concept Matrix.ico">
-
+	
 	<Grid Margin="10">
 		<Border Background="{DynamicResource MaterialDesignPaper}"
 			BorderBrush="{DynamicResource PrimaryHueMidBrush}"
@@ -42,7 +40,13 @@
 			</Border.Effect>
 		</Border>
 
-		<Grid Margin="1">
+
+		<Grid Margin="1" Width="1024" Height="576">
+
+			<Grid.LayoutTransform>
+				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5"/>
+			</Grid.LayoutTransform>
+			
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="128"/>
 				<ColumnDefinition/>
@@ -59,14 +63,14 @@
 					<Image Source="/Assets/Hydaelyn.png" Grid.Row="0" VerticalAlignment="Top" Visibility="{Binding Zodiark, Converter={StaticResource InverseBoolToVisConverter}}"/>
 				</Grid>
 			</Border>
-			
+
 			<!-- Main Area -->
 			<Border x:Name="MainAreaBackground" Grid.Row="1" Grid.Column="1" CornerRadius="3, 0, 0, 0" Background="{DynamicResource MaterialDesignCardBackground}">
 				<Border.Effect>
 					<DropShadowEffect ShadowDepth="0" BlurRadius="10" Direction="180" Opacity="0.25"/>
 				</Border.Effect>
 			</Border>
-			
+
 			<Border Grid.Row="1" Grid.Column="1" CornerRadius="3, 0, 0, 0" Background="Transparent">
 				<Border.Effect>
 					<DropShadowEffect ShadowDepth="0" BlurRadius="10" Direction="180" Opacity="0.25"/>
@@ -92,30 +96,30 @@
 			<TextBlock Grid.Column="1" Text="Concept Matrix 3.0" VerticalAlignment="Center" Margin="3, 0, 0, 0" Opacity="0.25" Foreground="{DynamicResource MaterialDesignBody}"/>
 
 			<Border Background="Transparent" 
-				CornerRadius="2, 2, 0, 0"
-				Grid.ColumnSpan="2"
-				VerticalAlignment="Top"
-				MouseDown="OnTitleBarMouseDown">
+					CornerRadius="2, 2, 0, 0"
+					Grid.ColumnSpan="2"
+					VerticalAlignment="Top"
+					MouseDown="OnTitleBarMouseDown">
 
 				<Grid>
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-						<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnThemeClick" BorderThickness="0">
-							<fa:IconBlock Icon="PaintBrush" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnSettingsClick" BorderThickness="0">
+							<fa:IconBlock Icon="Cog" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</Button>
 
 						<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" 
-									  x:Name="AlwaysOnTopToggle"
-									  Margin="3,0,0,0" 
-									  Width="28" 
-									  Height="28" 
-									  Padding="0" 
-									  Background="Transparent" 
-									  BorderThickness="0"
-									  Checked="OnAlwaysOnTopChecked"
-									  Unchecked="OnAlwaysOnTopUnchecked">
-						
+										  x:Name="AlwaysOnTopToggle"
+										  Margin="3,0,0,0" 
+										  Width="28" 
+										  Height="28" 
+										  Padding="0" 
+										  Background="Transparent" 
+										  BorderThickness="0"
+										  Checked="OnAlwaysOnTopChecked"
+										  Unchecked="OnAlwaysOnTopUnchecked">
+
 							<ToggleButton.Content>
 								<Grid Width="28" Height="28">
 									<fa:IconBlock Icon="ThumbTack" Opacity="0.5" Margin="6, 7, 6, 6" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
@@ -128,7 +132,7 @@
 								</Grid>
 							</materialdesign:ToggleButtonAssist.OnContent>
 
-					
+
 						</ToggleButton>
 
 						<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnMinimiseClick">
@@ -172,7 +176,10 @@
 					<ContentPresenter Height="128" x:Name="DrawerBottom" Margin="12"/>
 				</materialdesign:DrawerHost.BottomDrawerContent>
 			</materialdesign:DrawerHost>
-			
+
 		</Grid>
+
+		<Thumb Margin="0, 0, -4, -4" Width="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" DragDelta="OnResizeDrag"/>
+
 	</Grid>
 </Window>
