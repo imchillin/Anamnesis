@@ -317,7 +317,7 @@
 							<controls:BoneView BoneName="HandR" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="0" Text="Weapons" Style="{DynamicResource Label}"/>
+						<TextBlock Grid.Column="2" Grid.Row="0" Text="Weapon" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="WeaponL" Label="L"/>
 							<controls:BoneView BoneName="WeaponR" Label="R"/>
