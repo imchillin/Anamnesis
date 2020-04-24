@@ -4,6 +4,8 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System;
+	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.IO;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
@@ -12,6 +14,8 @@ namespace ConceptMatrix.GUI.Services
 	public class SettingsService : ISettingsService
 	{
 		public const string SettingsDirectory = "./Settings/";
+
+		private readonly Dictionary<SettingsBase, SaveJob> jobs = new Dictionary<SettingsBase, SaveJob>();
 
 		public event SettingsEvent SettingsSaved;
 
@@ -23,7 +27,7 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public async Task<T> Load<T>()
+		public Task<T> Load<T>()
 			where T : SettingsBase, new()
 		{
 			string path = SettingsDirectory + typeof(T).Name + ".json";
@@ -32,7 +36,7 @@ namespace ConceptMatrix.GUI.Services
 			if (!File.Exists(path))
 			{
 				settings = Activator.CreateInstance<T>();
-				await this.Save(settings);
+				this.SaveImmediate(settings);
 			}
 			else
 			{
@@ -40,14 +44,22 @@ namespace ConceptMatrix.GUI.Services
 				settings = Serializer.Deserialize<T>(json);
 			}
 
-			await settings.OnLoaded(this);
-			return settings;
+			if (!this.jobs.ContainsKey(settings))
+				this.jobs.Add(settings, new SaveJob(settings, this));
+
+			return Task.FromResult(settings);
 		}
 
-		public async Task Save(SettingsBase settings)
+		public void Save(SettingsBase settings)
 		{
-			await settings.OnSaving();
+			if (!this.jobs.ContainsKey(settings))
+				this.jobs.Add(settings, new SaveJob(settings, this));
 
+			this.jobs[settings].ResetTimer();
+		}
+
+		public void SaveImmediate(SettingsBase settings)
+		{
 			string path = SettingsDirectory + settings.GetType().Name + ".json";
 			string json = Serializer.Serialize(settings);
 			File.WriteAllText(path, json);
@@ -62,6 +74,66 @@ namespace ConceptMatrix.GUI.Services
 		public Task Start()
 		{
 			return Task.CompletedTask;
+		}
+
+		private class SaveJob
+		{
+			private const int SaveDelay = 500;
+			private int saveCountdown = 0;
+
+			private Task task;
+			private SettingsBase settings;
+			private SettingsService service;
+
+			public SaveJob(SettingsBase settings, SettingsService service)
+			{
+				this.settings = settings;
+				this.service = service;
+
+				INotifyPropertyChanged propChanged = settings as INotifyPropertyChanged;
+
+				if (propChanged == null)
+					throw new Exception("Settings: " + settings.GetType() + " must implement INotifyPropertyChanged");
+
+				propChanged.PropertyChanged += this.PropChanged_PropertyChanged;
+				settings.Changed += this.OnSettingsChanged;
+			}
+
+			public void ResetTimer()
+			{
+				this.saveCountdown = SaveDelay;
+
+				if (this.task == null || this.task.IsCompleted)
+				{
+					this.task = Task.Run(this.SaveAfterDelay);
+				}
+			}
+
+			private void PropChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
+			{
+				this.settings.NotifyChanged();
+			}
+
+			private void OnSettingsChanged(SettingsBase settings)
+			{
+				this.ResetTimer();
+			}
+
+			private async Task SaveAfterDelay()
+			{
+				ISelectionService selectionService = Services.Get<ISelectionService>();
+
+				while (this.saveCountdown > 0)
+				{
+					while (this.saveCountdown > 0)
+					{
+						this.saveCountdown -= 50;
+						await Task.Delay(50);
+					}
+
+					this.service.SaveImmediate(this.settings);
+				}
+			}
 		}
 	}
 }

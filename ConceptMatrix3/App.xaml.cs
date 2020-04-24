@@ -8,6 +8,7 @@ namespace ConceptMatrix
 	using System.Windows;
 	using System.Windows.Threading;
 	using ConceptMatrix.GUI;
+	using MaterialDesignThemes.Wpf;
 	using Application = System.Windows.Application;
 
 	/// <summary>
@@ -74,6 +75,8 @@ namespace ConceptMatrix
 				await Services.InitializeServices();
 
 				Settings = await App.Services.Get<ISettingsService>().Load<MainApplicationSettings>();
+				Settings.Changed += this.OnSettingsChanged;
+				this.OnSettingsChanged(Settings);
 
 				while (ErrorDialog.Count > 0)
 					await Task.Delay(500);
@@ -90,6 +93,12 @@ namespace ConceptMatrix
 			{
 				Log.Write(ex);
 			}
+		}
+
+		private void OnSettingsChanged(SettingsBase settings)
+		{
+			PaletteHelper ph = new PaletteHelper();
+			ph.Apply(App.Settings.ThemeSwatch, App.Settings.ThemeDark);
 		}
 
 		private void OnException(Exception ex, Log.Severity severity, string category)

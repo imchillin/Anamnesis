@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ConceptMatrix.GUI.Views.ThemeSettingsView"
+﻿<UserControl x:Class="ConceptMatrix.GUI.Views.SettingsView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,29 +6,33 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
 			 xmlns:materialDesignColors="clr-namespace:MaterialDesignColors;assembly=MaterialDesignColors"
 			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="232">
 
-	<Grid>
+	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
-			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Label Margin="10,0,0,0" Grid.Column="0" Grid.Row="0" Content="Window Opacity"/>
-		<Slider Margin="6, 6, 7, 6" x:Name="OpacitySlider" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsMoveToPointEnabled="False" VerticalAlignment="Center" PreviewMouseUp="Slider_MouseUp" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
-		
-		<Label Margin="10,0,0,0" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Content="Zodiark Theme"/>
-		<ToggleButton Margin="0, 0, 6, 10" Grid.Column="2" Grid.Row="1" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Stretch" IsChecked="{Binding Zodiark}"/>
+		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="0" Text="Window Opacity:" Style="{StaticResource Label}"/>
+		<cm3Controls:NumberBox Margin="6" Value="{Binding Settings.Opacity}" Slider="True" Grid.Column="1" Grid.Row="0" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
 
-		<ListBox Grid.ColumnSpan="3" Grid.Row="2" ItemsSource="{Binding Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
+		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="1" Text="Window Size:" Style="{StaticResource Label}"/>
+		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding Settings.Scale}" Grid.Column="1" Grid.Row="1" Margin="6"/>
+
+		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="2" Text="Zodiark Theme:" Style="{StaticResource Label}"/>
+		<ToggleButton Margin="6" Grid.Column="1" Grid.Row="2" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Left" IsChecked="{Binding Settings.ThemeDark}"/>
+
+		<ListBox Margin="0, 6, 0, 0" Grid.ColumnSpan="2" Grid.Row="3" ItemsSource="{Binding Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid Width="223">

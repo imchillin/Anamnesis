@@ -12,9 +12,6 @@ namespace ConceptMatrix
 	{
 		Task<T> Load<T>()
 			where T : SettingsBase, new();
-
-		Task Save(SettingsBase settings);
-		event SettingsEvent SettingsSaved;
 	}
 
 	public delegate void SettingsEvent(SettingsBase settings);
@@ -22,27 +19,11 @@ namespace ConceptMatrix
 	[Serializable]
 	public abstract class SettingsBase
 	{
-		private ISettingsService settingsService;
+		public event SettingsEvent Changed;
 
-		public virtual Task OnLoaded(ISettingsService settingsService)
+		public void NotifyChanged()
 		{
-			this.settingsService = settingsService;
-			return Task.CompletedTask;
-		}
-
-		public virtual Task OnSaving()
-		{
-			return Task.CompletedTask;
-		}
-
-		public void Save()
-		{
-			Task.Run(this.SaveAsync);
-		}
-
-		public Task SaveAsync()
-		{
-			return this.settingsService.Save(this);
+			this.Changed?.Invoke(this);
 		}
 	}
 }
