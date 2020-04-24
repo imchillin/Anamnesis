@@ -1,0 +1,646 @@
+﻿<UserControl x:Class="ConceptMatrix.PoseModule.Pages.PoseMatrixPage"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule.Pages"
+			 xmlns:controls="clr-namespace:ConceptMatrix.PoseModule.Controls"
+			 xmlns:cm3Controls="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="800">
+
+	<Grid>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="200"/>
+		</Grid.ColumnDefinitions>
+
+		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,0,3,3">
+			<StackPanel>
+
+				<GroupBox Header="Head" Margin="3, 0, 3, 7">
+					<Grid>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="Face" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="1" Grid.Row="0" BoneName="Face"/>
+
+						<TextBlock Grid.Column="2" Grid.Row="0" Text="Ears" Style="{DynamicResource Label}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="0">
+							<controls:BoneView BoneName="EarsL" Label="L"/>
+							<controls:BoneView BoneName="EarsR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="4" Text="Viera Ears" Style="{DynamicResource Label}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0">
+							<!-- TODO: switch which ear bones we display -->
+							<controls:BoneView BoneName="Ear01ALeft" Label="L1"/>
+							<controls:BoneView BoneName="Ear01ARight" Label="L2"/>
+							<controls:BoneView BoneName="Ear01ALeft" Label="R1"/>
+							<controls:BoneView BoneName="Ear01ARight" Label="R2"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="8" Grid.Row="0" Text="Nose" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="9" Grid.Row="0" BoneName="Nose"/>
+
+						<TextBlock Grid.Column="10" Grid.Row="0" Text="Bridge" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="11" Grid.Row="0" BoneName="Bridge"/>
+
+
+						<TextBlock Grid.Column="0" Grid.Row="1" Text="Eyes" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="EyesL" Label="L"/>
+							<controls:BoneView BoneName="EyesR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="1" Text="Eyebrows" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal">
+							<controls:BoneView BoneName="EyebrowL" Label="L"/>
+							<controls:BoneView BoneName="EyebrowR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="4" Grid.Row="1" Text="Brows" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal">
+							<controls:BoneView BoneName="BrowL" Label="L"/>
+							<controls:BoneView BoneName="BrowR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="6" Grid.Row="1" Text="Eyelids" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="7" Grid.Row="1" Orientation="Horizontal">
+							<controls:BoneView BoneName="EyelidUpperL" Label="L"/>
+							<controls:BoneView BoneName="EyelidUpperR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="8" Grid.Row="1" Text="Lower Lids" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="9" Grid.Row="1" Orientation="Horizontal">
+							<controls:BoneView BoneName="EyelidLowerL" Label="L"/>
+							<controls:BoneView BoneName="EyelidLowerR" Label="R"/>
+						</StackPanel>
+
+
+						<TextBlock Grid.Column="0" Grid.Row="2" Text="Cheeks" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+							<controls:BoneView BoneName="CheeksL" Label="L"/>
+							<controls:BoneView BoneName="CheeksR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="2" Text="Jaw" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="3" Grid.Row="2" BoneName="Jaw"/>
+
+						<TextBlock Grid.Column="4" Grid.Row="2" Text="Mouth" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="5" Grid.Row="2" Orientation="Horizontal">
+							<controls:BoneView BoneName="LipsL" Label="L"/>
+							<controls:BoneView BoneName="LipsR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="6" Grid.Row="2" Text="Upper Lip" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="7" Grid.Row="2" Orientation="Horizontal">
+							<controls:BoneView BoneName="UpperLipL" Label="L"/>
+							<controls:BoneView BoneName="UpperLipR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="8" Grid.Row="2" Text="Lower Lip" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="9" Grid.Row="2" Orientation="Horizontal">
+							<controls:BoneView BoneName="LowerLipL" Label="L"/>
+							<controls:BoneView BoneName="LowerLipR" Label="R"/>
+						</StackPanel>
+
+					</Grid>
+				</GroupBox>
+
+				<GroupBox Header="Hair and Accessories" Margin="3, 3, 3, 7">
+					<Grid>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="General" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="GeneralL" Label="L"/>
+							<controls:BoneView BoneName="GeneralR" Label="R"/>
+							<controls:BoneView BoneName="GeneralL" Label="1"/>
+							<controls:BoneView BoneName="GeneralR" Label="2"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="0" Text="Unique" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="GeneralL" Label="1"/>
+							<controls:BoneView BoneName="GeneralR" Label="2"/>
+							<controls:BoneView BoneName="GeneralL" Label="3"/>
+							<controls:BoneView BoneName="GeneralR" Label="4"/>
+							<controls:BoneView BoneName="GeneralL" Label="5"/>
+							<controls:BoneView BoneName="GeneralR" Label="6"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="4" Grid.Row="0" Text="Earrings" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="GeneralL" Label="L"/>
+							<controls:BoneView BoneName="GeneralR" Label="R"/>
+							<controls:BoneView BoneName="GeneralL" Label="1"/>
+							<controls:BoneView BoneName="GeneralR" Label="2"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="6" Grid.Row="0" Text="whiskers" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="7" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="GeneralL" Label="L"/>
+							<controls:BoneView BoneName="GeneralR" Label="R"/>
+						</StackPanel>
+
+					</Grid>
+				</GroupBox>
+
+				<GroupBox Header="Body" Margin="3, 3, 3, 7">
+					<Grid>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="Neck" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="1" Grid.Row="0" BoneName="Neck"/>
+
+						<TextBlock Grid.Column="2" Grid.Row="0" Text="Cervical" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="3" Grid.Row="0" BoneName="Cervical"/>
+
+						<TextBlock Grid.Column="4" Grid.Row="0" Text="Thoracic" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="5" Grid.Row="0" BoneName="Thoracic"/>
+
+						<TextBlock Grid.Column="6" Grid.Row="0" Text="Lumbar" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="7" Grid.Row="0" BoneName="Lumbar"/>
+
+						<TextBlock Grid.Column="0" Grid.Row="1" Text="Scabbards" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="ScabbardL" Label="L"/>
+							<controls:BoneView BoneName="ScabbardR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="1" Text="Clavicles" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="ClavicleL" Label="L"/>
+							<controls:BoneView BoneName="ClavicleR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="4" Grid.Row="1" Text="Breasts" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="BreastL" Label="L"/>
+							<controls:BoneView BoneName="BreastR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="6" Grid.Row="1" Text="Pauldrons" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="7" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="PauldronL" Label="L"/>
+							<controls:BoneView BoneName="PauldronR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="8" Grid.Row="1" Text="Shields" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="9" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="ShieldL" Label="L"/>
+							<controls:BoneView BoneName="ShieldR" Label="R"/>
+						</StackPanel>
+
+
+						<TextBlock Grid.Column="0" Grid.Row="2" Text="Shoulders" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" >
+							<controls:BoneView BoneName="ShoulderL" Label="L"/>
+							<controls:BoneView BoneName="ShoulderR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="2" Text="Arms" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="3" Grid.Row="2" Orientation="Horizontal" >
+							<controls:BoneView BoneName="ArmL" Label="L"/>
+							<controls:BoneView BoneName="ArmR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="4" Grid.Row="2" Text="Couters" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="5" Grid.Row="2" Orientation="Horizontal" >
+							<controls:BoneView BoneName="CouterL" Label="L"/>
+							<controls:BoneView BoneName="CouterR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="6" Grid.Row="2" Text="Elbows" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="7" Grid.Row="2" Orientation="Horizontal" >
+							<controls:BoneView BoneName="ElbowL" Label="L"/>
+							<controls:BoneView BoneName="ElbowR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="8" Grid.Row="2" Text="Forearms" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="9" Grid.Row="2" Orientation="Horizontal" >
+							<controls:BoneView BoneName="ForearmL" Label="L"/>
+							<controls:BoneView BoneName="ForearmR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="10" Grid.Row="2" Text="Wrists" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="11" Grid.Row="2" Orientation="Horizontal" >
+							<controls:BoneView BoneName="WristL" Label="L"/>
+							<controls:BoneView BoneName="WristR" Label="R"/>
+						</StackPanel>
+
+					</Grid>
+				</GroupBox>
+
+				<GroupBox Header="Hands" Margin="3, 3, 3, 7">
+					<Grid>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="Hands" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="HandL" Label="L"/>
+							<controls:BoneView BoneName="HandR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="0" Text="Weapons" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="WeaponL" Label="L"/>
+							<controls:BoneView BoneName="WeaponR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="0" Grid.Row="1" Text="Thumb" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="ThumbL1" Label="L1"/>
+							<controls:BoneView BoneName="ThumbL2" Label="L2"/>
+							<controls:BoneView BoneName="ThumbR1" Label="R1"/>
+							<controls:BoneView BoneName="ThumbR2" Label="R2"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="1" Text="Index" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="IndexL1" Label="L1"/>
+							<controls:BoneView BoneName="IndexL2" Label="L2"/>
+							<controls:BoneView BoneName="IndexR1" Label="R1"/>
+							<controls:BoneView BoneName="IndexR2" Label="R2"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="4" Grid.Row="1" Text="Middle" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="MiddleL1" Label="L1"/>
+							<controls:BoneView BoneName="MiddleL2" Label="L2"/>
+							<controls:BoneView BoneName="MiddleR1" Label="R1"/>
+							<controls:BoneView BoneName="MiddleR2" Label="R2"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="6" Grid.Row="1" Text="Ring" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="7" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="RingL1" Label="L1"/>
+							<controls:BoneView BoneName="RingL2" Label="L2"/>
+							<controls:BoneView BoneName="RingR1" Label="R1"/>
+							<controls:BoneView BoneName="RingR2" Label="R2"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="8" Grid.Row="1" Text="Pinky" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="9" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="PinkyL1" Label="L1"/>
+							<controls:BoneView BoneName="PinkyL2" Label="L2"/>
+							<controls:BoneView BoneName="PinkyR1" Label="R1"/>
+							<controls:BoneView BoneName="PinkyR2" Label="R2"/>
+						</StackPanel>
+
+					</Grid>
+				</GroupBox>
+
+				<GroupBox Header="Legs" Margin="3, 3, 3, 7">
+					<Grid>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="44"/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="Legs" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="HandL" Label="L"/>
+							<controls:BoneView BoneName="HandR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="0" Text="Poleyns" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="PoleynL" Label="L"/>
+							<controls:BoneView BoneName="PoleynR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="4" Grid.Row="0" Text="Knees" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="KneeL" Label="L"/>
+							<controls:BoneView BoneName="KneeR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="6" Grid.Row="0" Text="Calves" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="7" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="CalvesL" Label="L"/>
+							<controls:BoneView BoneName="CalvesR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="8" Grid.Row="0" Text="Feet" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="9" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="FeetL" Label="L"/>
+							<controls:BoneView BoneName="FeetR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="10" Grid.Row="0" Text="Toes" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="11" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="ToesL" Label="L"/>
+							<controls:BoneView BoneName="ToesR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="0" Grid.Row="1" Text="Tail" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" >
+							<controls:BoneView BoneName="FeetL" Label="1"/>
+							<controls:BoneView BoneName="FeetR" Label="2"/>
+							<controls:BoneView BoneName="FeetL" Label="3"/>
+							<controls:BoneView BoneName="FeetR" Label="4"/>
+							<controls:BoneView BoneName="FeetR" Label="5"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="4" Grid.Row="1" Text="Sheathes" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="SheatheL" Label="L"/>
+							<controls:BoneView BoneName="SheatheR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="6" Grid.Row="1" Text="Holsters" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="7" Grid.Row="1" Orientation="Horizontal" >
+							<controls:BoneView BoneName="HolsterL" Label="L"/>
+							<controls:BoneView BoneName="HolsterR" Label="R"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="8" Grid.Row="1" Text="Waist" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="9" Grid.Row="1" BoneName="Waist"/>
+
+					</Grid>
+				</GroupBox>
+
+				<GroupBox Header="Clothes" Margin="3, 3, 3, 6">
+					<Grid>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="Front" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="FrontL1" Label="L1"/>
+							<controls:BoneView BoneName="FrontL2" Label="L2"/>
+							<controls:BoneView BoneName="FrontL3" Label="L3"/>
+							<controls:BoneView BoneName="FrontR1" Label="R1"/>
+							<controls:BoneView BoneName="FrontR2" Label="R2"/>
+							<controls:BoneView BoneName="FrontR3" Label="R3"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="0" Text="Back" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="BackL1" Label="L1"/>
+							<controls:BoneView BoneName="BackL2" Label="L2"/>
+							<controls:BoneView BoneName="BackL3" Label="L3"/>
+							<controls:BoneView BoneName="BackR1" Label="R1"/>
+							<controls:BoneView BoneName="BackR2" Label="R2"/>
+							<controls:BoneView BoneName="BackR3" Label="R3"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="4" Grid.Row="0" Text="Sides" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="SideL1" Label="L1"/>
+							<controls:BoneView BoneName="SideL2" Label="L2"/>
+							<controls:BoneView BoneName="SideL3" Label="L3"/>
+							<controls:BoneView BoneName="SideR1" Label="R1"/>
+							<controls:BoneView BoneName="SideR2" Label="R2"/>
+							<controls:BoneView BoneName="SideR3" Label="R3"/>
+						</StackPanel>
+
+					</Grid>
+				</GroupBox>
+
+				<GroupBox Header="Equipment" Margin="3, 3, 3, 6">
+					<Grid>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="Helm" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="Helm1" Label="1"/>
+							<controls:BoneView BoneName="Helm2" Label="2"/>
+							<controls:BoneView BoneName="Helm3" Label="3"/>
+							<controls:BoneView BoneName="Helm4" Label="4"/>
+							<controls:BoneView BoneName="Helm5" Label="5"/>
+							<controls:BoneView BoneName="Helm6" Label="6"/>
+							<controls:BoneView BoneName="Helm7" Label="7"/>
+							<controls:BoneView BoneName="Helm8" Label="8"/>
+							<controls:BoneView BoneName="Helm9" Label="9"/>
+							<controls:BoneView BoneName="Helm10" Label="10"/>
+							<controls:BoneView BoneName="Helm11" Label="11"/>
+							<controls:BoneView BoneName="Helm12" Label="12"/>
+							<controls:BoneView BoneName="Helm13" Label="13"/>
+							<controls:BoneView BoneName="Helm14" Label="14"/>
+							<controls:BoneView BoneName="Helm15" Label="15"/>
+							<controls:BoneView BoneName="Helm16" Label="16"/>
+							<controls:BoneView BoneName="Helm17" Label="17"/>
+							<controls:BoneView BoneName="Helm18" Label="18"/>
+						</StackPanel>
+
+						<TextBlock Grid.Column="2" Grid.Row="0" Text="Top" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="Top1" Label="1"/>
+							<controls:BoneView BoneName="Top2" Label="2"/>
+							<controls:BoneView BoneName="Top3" Label="3"/>
+							<controls:BoneView BoneName="Top4" Label="4"/>
+							<controls:BoneView BoneName="Top5" Label="5"/>
+							<controls:BoneView BoneName="Top6" Label="6"/>
+							<controls:BoneView BoneName="Top7" Label="7"/>
+							<controls:BoneView BoneName="Top8" Label="8"/>
+							<controls:BoneView BoneName="Top9" Label="9"/>
+						</StackPanel>
+
+					</Grid>
+				</GroupBox>
+
+				<GroupBox Header="Other" Margin="3, 3, 3, 0">
+					<Grid>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="Root" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="1" Grid.Row="0" BoneName="Root"/>
+
+						<TextBlock Grid.Column="2" Grid.Row="0" Text="Head" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="3" Grid.Row="0" BoneName="Head"/>
+
+						<TextBlock Grid.Column="4" Grid.Row="0" Text="Abdomen" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="5" Grid.Row="0" BoneName="Abdomen"/>
+
+						<TextBlock Grid.Column="6" Grid.Row="0" Text="Throw" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="7" Grid.Row="0" BoneName="Throw"/>
+
+						<TextBlock Grid.Column="8" Grid.Row="0" Text="Unknown" Style="{DynamicResource Label}"/>
+						<controls:BoneView Grid.Column="9" Grid.Row="0" BoneName="Unknown"/>
+
+						<TextBlock Grid.Column="10" Grid.Row="0" Text="Weapon" Style="{DynamicResource Label}"/>
+						<StackPanel Grid.Column="11" Grid.Row="0" Orientation="Horizontal" >
+							<controls:BoneView BoneName="Weapon1" Label="1"/>
+							<controls:BoneView BoneName="Weapon2" Label="2"/>
+							<controls:BoneView BoneName="Weapon3" Label="3"/>
+							<controls:BoneView BoneName="Weapon4" Label="4"/>
+						</StackPanel>
+
+					</Grid>
+				</GroupBox>
+
+			</StackPanel>
+		</Border>
+		
+		<Grid Grid.Column="2">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<controls:BoneEditor Value="{Binding CurrentBone}"/>
+
+			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3" >
+
+				<Grid Margin="6">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<Label Grid.Row="0" Grid.Column="0" Content="Enable" VerticalContentAlignment="Center"/>
+					<ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsEnabled}"/>
+
+					<Label Grid.Row="1" Grid.Column="0" Content="Parenting" VerticalContentAlignment="Center"/>
+					<ToggleButton Grid.Row="1" Grid.Column="1" IsChecked="{Binding IsEnabled}"/>
+
+					<Label Grid.Row="2" Grid.Column="0" Content="Helm Parenting" VerticalContentAlignment="Center"/>
+					<ToggleButton Grid.Row="2" Grid.Column="1" IsChecked="{Binding IsEnabled}"/>
+
+					<Label Grid.Row="3" Grid.Column="0" Content="Physics" VerticalContentAlignment="Center"/>
+					<ToggleButton Grid.Row="3" Grid.Column="1" IsChecked="{Binding IsEnabled}"/>
+				</Grid>
+			</Border>
+
+		</Grid>
+	</Grid>
+</UserControl>

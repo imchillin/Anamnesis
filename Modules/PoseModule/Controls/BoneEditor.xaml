@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="ConceptMatrix.PoseModule.Controls.BoneEditor"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule.Controls"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="200">
+
+	<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 0, 3, 3" x:Name="ContentArea">
+		<StackPanel Margin="3">
+			<Label Content="Rotation"/>
+			<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
+
+			<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
+			<Label Content="Scale"/>
+			<cm3Controls:VectorEditor Value="{Binding Value.Scale, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+
+			<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource PrimaryHueMidBrush}" Margin="0, 12, 0, 3"/>
+			<Label Content="Position"/>
+			<cm3Controls:VectorEditor Value="{Binding Value.Position, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+		</StackPanel>
+	</Border>
+</UserControl>

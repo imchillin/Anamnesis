@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule
+namespace ConceptMatrix.PoseModule.Controls
 {
 	using System;
 	using System.Collections.Generic;
@@ -10,39 +10,38 @@ namespace ConceptMatrix.PoseModule
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Shapes;
+	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using MaterialDesignThemes.Wpf;
 
-	/// <summary>
-	/// Interaction logic for SimplePoseViewBone.xaml.
-	/// </summary>
-	public partial class SimplePoseBoneView : UserControl
+	public partial class BoneView : UserControl
 	{
-		public static readonly DependencyProperty BoneNameProperty = DependencyProperty.Register(nameof(BoneName), typeof(string), typeof(SimplePoseBoneView));
+		public static readonly IBind<string> LabelDp = Binder.Register<string, BoneView>(nameof(Label));
+		public static readonly IBind<string> NameDp = Binder.Register<string, BoneView>(nameof(BoneName));
 
-		private static Dictionary<Bone, List<SimplePoseBoneView>> boneViews = new Dictionary<Bone, List<SimplePoseBoneView>>();
+		private static Dictionary<Bone, List<BoneView>> boneViews = new Dictionary<Bone, List<BoneView>>();
 
 		private SimplePoseViewModel viewModel;
 		private Bone bone;
 
 		private List<Line> linesToChildren = new List<Line>();
 
-		public SimplePoseBoneView()
+		public BoneView()
 		{
 			this.InitializeComponent();
+			this.ContentArea.DataContext = this;
 			this.BindDataContext();
+		}
+
+		public string Label
+		{
+			get => LabelDp.Get(this);
+			set => LabelDp.Set(this, value);
 		}
 
 		public string BoneName
 		{
-			get
-			{
-				return (string)this.GetValue(BoneNameProperty);
-			}
-
-			set
-			{
-				this.SetValue(BoneNameProperty, value);
-			}
+			get => NameDp.Get(this);
+			set => NameDp.Set(this, value);
 		}
 
 		public new bool IsEnabled
@@ -114,7 +113,7 @@ namespace ConceptMatrix.PoseModule
 				if (!boneViews.ContainsKey(bone))
 					continue;
 
-				foreach (SimplePoseBoneView childView in boneViews[bone])
+				foreach (BoneView childView in boneViews[bone])
 				{
 					if (this.Parent is Canvas c1 && childView.Parent is Canvas c2 && c1 == c2)
 					{
@@ -167,7 +166,7 @@ namespace ConceptMatrix.PoseModule
 			this.ToolTip = this.bone.Tooltip;
 
 			if (!boneViews.ContainsKey(this.bone))
-				boneViews.Add(this.bone, new List<SimplePoseBoneView>());
+				boneViews.Add(this.bone, new List<BoneView>());
 
 			boneViews[this.bone].Add(this);
 

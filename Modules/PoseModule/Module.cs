@@ -14,7 +14,8 @@ namespace ConceptMatrix.PoseModule
 			Services.Add<SkeletonService>();
 
 			IViewService viewService = Services.Get<IViewService>();
-			viewService.AddPage<SimplePosePage>("Character/Simple Pose", false);
+			viewService.AddPage<PoseGuiPage>("Character/Pose Gui", false);
+			viewService.AddPage<PoseMatrixPage>("Character/Pose Matrix", false);
 			viewService.AddPage<PositionPage>("Character/Positioning");
 
 			return Task.CompletedTask;
