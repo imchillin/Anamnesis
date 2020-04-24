@@ -15,7 +15,7 @@ namespace ConceptMatrix.PoseModule
 
 	using Vector = ConceptMatrix.Vector;
 
-	public class SimplePoseViewModel : INotifyPropertyChanged
+	public class SkeletonViewModel : INotifyPropertyChanged
 	{
 		private static IInjectionService injection;
 
@@ -214,6 +214,19 @@ namespace ConceptMatrix.PoseModule
 			await this.GenerateBones(selection);
 		}
 
+		public void Clear()
+		{
+			this.skel1Mem?.Dispose();
+			this.skel2Mem?.Dispose();
+			this.skel3Mem?.Dispose();
+			this.phys1Mem?.Dispose();
+			this.phys2Mem?.Dispose();
+
+			this.appearance?.Dispose();
+
+			this.bones?.Clear();
+		}
+
 		public bool GetIsBoneSelected(Bone bone)
 		{
 			return this.CurrentBone == bone;
@@ -256,7 +269,7 @@ namespace ConceptMatrix.PoseModule
 				throw new Exception("Bones not generated");
 
 			if (!this.bones.ContainsKey(name))
-				throw new Exception("Unable to locate bone: \"" + name + "\"");
+				return null;
 
 			return this.bones[name];
 		}

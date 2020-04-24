@@ -432,8 +432,10 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 
+						<!--
 						<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
 						<cm3Controls:IconButton Grid.Column="1" Icon="Download" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
+						-->
 
 					</Grid>
 				</Grid>

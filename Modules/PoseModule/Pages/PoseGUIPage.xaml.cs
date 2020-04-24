@@ -17,42 +17,10 @@ namespace ConceptMatrix.PoseModule
 		{
 			this.InitializeComponent();
 
-			ISelectionService selectionService = Services.Get<ISelectionService>();
-			selectionService.SelectionChanged += this.OnSelectionChanged;
-
-			Application.Current.Exit += this.OnApplicationExiting;
-
-			this.OnSelectionChanged(selectionService.CurrentSelection);
+			this.ContentArea.DataContext = Module.SkeletonViewModel;
 		}
 
-		public SimplePoseViewModel ViewModel { get; set; }
-
-		private void OnSelectionChanged(Selection selection)
-		{
-			if (selection == null)
-				return;
-
-			Task.Run(async () =>
-			{
-				this.ViewModel = new SimplePoseViewModel();
-				await this.ViewModel.Initialize(selection);
-
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					this.ContentArea.DataContext = this.ViewModel;
-				});
-			});
-		}
-
-		private void OnApplicationExiting(object sender, ExitEventArgs e)
-		{
-			if (this.ViewModel == null)
-				return;
-
-			this.ViewModel.IsEnabled = false;
-		}
-
-		private async void OnOpenClicked(object sender, RoutedEventArgs e)
+		/*private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
 			try
 			{
@@ -83,6 +51,6 @@ namespace ConceptMatrix.PoseModule
 			file.Read(this.ViewModel.Bones);
 
 			await fileService.SaveAs(file);
-		}
+		}*/
 	}
 }

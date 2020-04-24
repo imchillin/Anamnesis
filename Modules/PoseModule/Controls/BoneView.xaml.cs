@@ -20,7 +20,7 @@ namespace ConceptMatrix.PoseModule.Controls
 
 		private static Dictionary<Bone, List<BoneView>> boneViews = new Dictionary<Bone, List<BoneView>>();
 
-		private SimplePoseViewModel viewModel;
+		private SkeletonViewModel viewModel;
 		private Bone bone;
 
 		private List<Line> linesToChildren = new List<Line>();
@@ -76,7 +76,7 @@ namespace ConceptMatrix.PoseModule.Controls
 
 			try
 			{
-				if (this.DataContext is SimplePoseViewModel viewModel)
+				if (this.DataContext is SkeletonViewModel viewModel)
 				{
 					this.viewModel = viewModel;
 					this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
@@ -144,7 +144,7 @@ namespace ConceptMatrix.PoseModule.Controls
 
 			if (e.PropertyName == nameof(this.viewModel.FlipSides))
 			{
-				this.SetBone(SimplePoseViewModel.GetBoneName(this.BoneName, this.viewModel.FlipSides));
+				this.SetBone(SkeletonViewModel.GetBoneName(this.BoneName, this.viewModel.FlipSides));
 			}
 			else if (e.PropertyName == nameof(this.viewModel.Bones))
 			{
@@ -163,23 +163,33 @@ namespace ConceptMatrix.PoseModule.Controls
 			}
 
 			this.bone = this.viewModel.GetBone(name);
-			this.ToolTip = this.bone.Tooltip;
 
-			if (!boneViews.ContainsKey(this.bone))
-				boneViews.Add(this.bone, new List<BoneView>());
-
-			boneViews[this.bone].Add(this);
-
-			this.ToolTip = this.bone.Tooltip;
-			this.IsEnabled = true;
-
-			// Wait for all bone views to load, then draw the skeleton
-			Application.Current.Dispatcher.InvokeAsync(async () =>
+			if (this.bone != null)
 			{
-				await Task.Delay(1);
-				this.DrawSkeleton();
+				this.ToolTip = this.bone.Tooltip;
+
+				if (!boneViews.ContainsKey(this.bone))
+					boneViews.Add(this.bone, new List<BoneView>());
+
+				boneViews[this.bone].Add(this);
+
+				this.ToolTip = this.bone.Tooltip;
+				this.IsEnabled = true;
+
+				// Wait for all bone views to load, then draw the skeleton
+				Application.Current.Dispatcher.InvokeAsync(async () =>
+				{
+					await Task.Delay(1);
+					this.DrawSkeleton();
+					this.UpdateState();
+				});
+			}
+			else
+			{
+				Log.Write("Bone not found: " + name, "Posing", Log.Severity.Warning);
+				this.IsEnabled = false;
 				this.UpdateState();
-			});
+			}
 		}
 
 		private void OnMouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -216,9 +226,13 @@ namespace ConceptMatrix.PoseModule.Controls
 		{
 			if (this.bone == null)
 			{
-				this.SetState(Brushes.Red, 1);
+				this.ErrorEllipse.Visibility = Visibility.Visible;
+				this.BackgroundElipse.Visibility = Visibility.Collapsed;
 				return;
 			}
+
+			this.ErrorEllipse.Visibility = Visibility.Collapsed;
+			this.BackgroundElipse.Visibility = Visibility.Visible;
 
 			PaletteHelper ph = new PaletteHelper();
 			ITheme theme = ph.GetTheme();
