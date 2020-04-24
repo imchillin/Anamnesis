@@ -10,9 +10,12 @@
 			 MouseLeave="OnMouseLeave"
 			 MouseUp="OnMouseUp"
 			 HorizontalAlignment="Left"
+			 Width="18"
+			 Height="18"
+			 Margin="2"
 			 IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}">
 
-	<Grid x:Name="ContentArea" Width="18" Height="18" Margin="2">
+	<Grid x:Name="ContentArea">
 		
 		<Ellipse Stroke="{DynamicResource PrimaryHueMidBrush}" StrokeThickness="1" Fill="{DynamicResource MaterialDesignPaper}" x:Name="BackgroundElipse"/>
 		<Ellipse Fill="{DynamicResource PrimaryHueMidBrush}" Margin="4" x:Name="ForegroundElipse" Visibility="Hidden"/>
