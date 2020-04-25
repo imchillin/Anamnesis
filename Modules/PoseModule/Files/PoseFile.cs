@@ -66,7 +66,14 @@ namespace ConceptMatrix.PoseModule
 
 				if (this.Bones.ContainsKey(bone.BoneName))
 				{
-					bone.Transform = this.Bones[bone.BoneName];
+					try
+					{
+						bone.Transform = this.Bones[bone.BoneName];
+					}
+					catch (Exception ex)
+					{
+						throw new Exception("Failed to apply pose transform to bone: " + bone.BoneName, ex);
+					}
 				}
 			}
 		}

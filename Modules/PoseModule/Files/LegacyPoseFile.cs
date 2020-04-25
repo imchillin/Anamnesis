@@ -14,9 +14,10 @@ namespace ConceptMatrix.PoseModule
 		/*public string Description { get; set; }
 		public string DateCreated { get; set; }
 		public string CMPVersion { get; set; }
-		public string Race { get; set; }
 		public string Clan { get; set; }
 		public string Body { get; set; }*/
+
+		public string Race { get; set; }
 
 		public string Root { get; set; }
 		public string Abdomen { get; set; }
@@ -433,22 +434,72 @@ namespace ConceptMatrix.PoseModule
 			return FileType;
 		}
 
-		public PoseFile Upgrade()
+		public PoseFile Upgrade(Appearance.Races race)
 		{
 			PoseFile file = new PoseFile();
-
-			// This whole function just does this:
-			// file.Root = StringToBone(this.Root, this.RootSize);
-			// but for every bone in the file.
 			Type legacyType = this.GetType();
-			Type newType = typeof(PoseFile);
 
-			PropertyInfo[] props = file.GetType().GetProperties();
+			Appearance.Races fileRace = (Appearance.Races)byte.Parse(this.Race);
+
+			PropertyInfo[] props = this.GetType().GetProperties();
 			foreach (PropertyInfo propertyInfo in props)
 			{
-				PropertyInfo rotProp = legacyType.GetProperty(propertyInfo.Name);
-				PropertyInfo scaleProp = legacyType.GetProperty(propertyInfo.Name + "Size");
-				PropertyInfo transProp = newType.GetProperty(propertyInfo.Name);
+				string boneName = propertyInfo.Name;
+
+				if (boneName == "Race")
+					continue;
+
+				if (boneName.EndsWith("Size"))
+					continue;
+
+				PropertyInfo rotProp = legacyType.GetProperty(boneName);
+				PropertyInfo scaleProp = legacyType.GetProperty(boneName + "Size");
+
+				if (boneName.StartsWith(@"Hroth"))
+				{
+					if (fileRace == Appearance.Races.Hrothgar)
+					{
+						boneName = boneName.Replace(@"Hroth", string.Empty);
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				if (boneName.StartsWith("Viera"))
+				{
+					if (fileRace == Appearance.Races.Viera)
+					{
+						if (!boneName.StartsWith("VieraEar"))
+						{
+							boneName = boneName.Replace("Viera", string.Empty);
+						}
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				if (boneName.StartsWith("ExHair"))
+				{
+					string letter = boneName.Replace("ExHair", string.Empty);
+					byte index = this.StringToByte(letter);
+					boneName = "ExHair" + index;
+				}
+				else if (boneName.StartsWith("ExMet"))
+				{
+					string letter = boneName.Replace("ExMet", string.Empty);
+					byte index = this.StringToByte(letter);
+					boneName = "ExMet" + index;
+				}
+				else if (boneName.StartsWith("ExTop"))
+				{
+					string letter = boneName.Replace("ExTop", string.Empty);
+					byte index = this.StringToByte(letter);
+					boneName = "ExTop" + index;
+				}
 
 				string rotString = null;
 				string scaleString = null;
@@ -459,8 +510,16 @@ namespace ConceptMatrix.PoseModule
 				if (scaleProp != null)
 					scaleString = (string)scaleProp.GetValue(this);
 
+				if (rotString == null && scaleString == null)
+					continue;
+
+				// Hroth and Viera bones should always be _after_ the base bones,
+				// And we only reach this point if we want them, so always prefer newer bones.
+				if (file.Bones.ContainsKey(boneName))
+					file.Bones.Remove(boneName);
+
 				Transform bone = StringToBone(rotString, scaleString);
-				transProp.SetValue(file, bone);
+				file.Bones.Add(boneName, bone);
 			}
 
 			return file;
@@ -518,6 +577,33 @@ namespace ConceptMatrix.PoseModule
 			{
 				throw new Exception($"Failed to parse string: {hex} to byte array", ex);
 			}
+		}
+
+		private byte StringToByte(string character)
+		{
+			switch (character)
+			{
+				case "A": return 1;
+				case "B": return 2;
+				case "C": return 3;
+				case "D": return 4;
+				case "E": return 5;
+				case "F": return 6;
+				case "G": return 7;
+				case "H": return 8;
+				case "I": return 9;
+				case "J": return 10;
+				case "K": return 11;
+				case "L": return 12;
+				case "M": return 13;
+				case "N": return 14;
+				case "O": return 15;
+				case "P": return 16;
+				case "Q": return 17;
+				case "R": return 18;
+			}
+
+			throw new Exception();
 		}
 	}
 }

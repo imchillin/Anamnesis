@@ -26,7 +26,7 @@ namespace ConceptMatrix.PoseModule.Controls
 				FileBase file = await fileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
 
 				if (file is LegacyPoseFile legacyFile)
-					file = legacyFile.Upgrade();
+					file = legacyFile.Upgrade(Module.SkeletonViewModel.Race);
 
 				IViewService viewService = Services.Get<IViewService>();
 				PoseFile.Groups groups = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Groups>("Load Pose...");
