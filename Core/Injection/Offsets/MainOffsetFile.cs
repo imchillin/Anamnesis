@@ -112,5 +112,9 @@ namespace ConceptMatrix.Injection.Offsets
 
 		public Offset GposeFilterEnable { get; set; }
 		public Offset GposeFilterTable { get; set; }
+
+		public Offset<byte> ExHairCount { get; set; }
+		public Offset<byte> ExMetCount { get; set; }
+		public Offset<byte> ExTopCount { get; set; }
 	}
 }

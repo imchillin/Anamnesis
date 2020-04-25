@@ -183,12 +183,12 @@
 
 						<TextBlock Grid.Column="2" Grid.Row="0" Text="Unique" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
-							<controls:BoneView BoneName="ExHairA" Label="1"/>
-							<controls:BoneView BoneName="ExHairB" Label="2"/>
-							<controls:BoneView BoneName="ExHairC" Label="3"/>
-							<controls:BoneView BoneName="ExHairD" Label="4"/>
-							<controls:BoneView BoneName="ExHairE" Label="5"/>
-							<controls:BoneView BoneName="ExHairF" Label="6"/>
+							<controls:BoneView BoneName="ExHair1" Label="1"/>
+							<controls:BoneView BoneName="ExHair2" Label="2"/>
+							<controls:BoneView BoneName="ExHair3" Label="3"/>
+							<controls:BoneView BoneName="ExHair4" Label="4"/>
+							<controls:BoneView BoneName="ExHair5" Label="5"/>
+							<controls:BoneView BoneName="ExHair6" Label="6"/>
 						</StackPanel>
 
 						<TextBlock Grid.Column="4" Grid.Row="0" Text="Earrings" Style="{DynamicResource Label}"/>
@@ -539,37 +539,37 @@
 
 						<TextBlock Grid.Column="0" Grid.Row="0" Text="Helm" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
-							<controls:BoneView BoneName="ExMetA" Label="1"/>
-							<controls:BoneView BoneName="ExMetB" Label="2"/>
-							<controls:BoneView BoneName="ExMetC" Label="3"/>
-							<controls:BoneView BoneName="ExMetD" Label="4"/>
-							<controls:BoneView BoneName="ExMetE" Label="5"/>
-							<controls:BoneView BoneName="ExMetF" Label="6"/>
-							<controls:BoneView BoneName="ExMetG" Label="7"/>
-							<controls:BoneView BoneName="ExMetH" Label="8"/>
-							<controls:BoneView BoneName="ExMetI" Label="9"/>
-							<controls:BoneView BoneName="ExMetJ" Label="10"/>
-							<controls:BoneView BoneName="ExMetK" Label="11"/>
-							<controls:BoneView BoneName="ExMetL" Label="12"/>
-							<controls:BoneView BoneName="ExMetM" Label="13"/>
-							<controls:BoneView BoneName="ExMetN" Label="14"/>
-							<controls:BoneView BoneName="ExMetO" Label="15"/>
-							<controls:BoneView BoneName="ExMetP" Label="16"/>
-							<controls:BoneView BoneName="ExMetQ" Label="17"/>
-							<controls:BoneView BoneName="ExMetR" Label="18"/>
+							<controls:BoneView BoneName="ExMet1" Label="1"/>
+							<controls:BoneView BoneName="ExMet2" Label="2"/>
+							<controls:BoneView BoneName="ExMet3" Label="3"/>
+							<controls:BoneView BoneName="ExMet4" Label="4"/>
+							<controls:BoneView BoneName="ExMet5" Label="5"/>
+							<controls:BoneView BoneName="ExMet6" Label="6"/>
+							<controls:BoneView BoneName="ExMet7" Label="7"/>
+							<controls:BoneView BoneName="ExMet8" Label="8"/>
+							<controls:BoneView BoneName="ExMet9" Label="9"/>
+							<controls:BoneView BoneName="ExMet10" Label="10"/>
+							<controls:BoneView BoneName="ExMet11" Label="11"/>
+							<controls:BoneView BoneName="ExMet12" Label="12"/>
+							<controls:BoneView BoneName="ExMet13" Label="13"/>
+							<controls:BoneView BoneName="ExMet14" Label="14"/>
+							<controls:BoneView BoneName="ExMet15" Label="15"/>
+							<controls:BoneView BoneName="ExMet16" Label="16"/>
+							<controls:BoneView BoneName="ExMet17" Label="17"/>
+							<controls:BoneView BoneName="ExMet18" Label="18"/>
 						</StackPanel>
 
 						<TextBlock Grid.Column="2" Grid.Row="0" Text="Top" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
-							<controls:BoneView BoneName="ExTopA" Label="1"/>
-							<controls:BoneView BoneName="ExTopB" Label="2"/>
-							<controls:BoneView BoneName="ExTopC" Label="3"/>
-							<controls:BoneView BoneName="ExTopD" Label="4"/>
-							<controls:BoneView BoneName="ExTopE" Label="5"/>
-							<controls:BoneView BoneName="ExTopF" Label="6"/>
-							<controls:BoneView BoneName="ExTopG" Label="7"/>
-							<controls:BoneView BoneName="ExTopH" Label="8"/>
-							<controls:BoneView BoneName="ExTopI" Label="9"/>
+							<controls:BoneView BoneName="ExTop1" Label="1"/>
+							<controls:BoneView BoneName="ExTop2" Label="2"/>
+							<controls:BoneView BoneName="ExTop3" Label="3"/>
+							<controls:BoneView BoneName="ExTop4" Label="4"/>
+							<controls:BoneView BoneName="ExTop5" Label="5"/>
+							<controls:BoneView BoneName="ExTop6" Label="6"/>
+							<controls:BoneView BoneName="ExTop7" Label="7"/>
+							<controls:BoneView BoneName="ExTop8" Label="8"/>
+							<controls:BoneView BoneName="ExTop9" Label="9"/>
 						</StackPanel>
 
 					</Grid>

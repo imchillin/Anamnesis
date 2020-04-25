@@ -16,54 +16,6 @@
 		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
 	</UserControl.Resources>
 
-	<!--
-	Missing Bones:
-		ShieldLeft
-		ShieldRight
-		ExtendedHair
-		ExtendedHairA
-		ExtendedHairB
-		ExtendedHairC
-		ExtendedHairD
-		ExtendedHairE
-		ExtendedHairF
-		ExtendedHairG
-		ExtendedHairH
-		ExtendedHairI
-		ExtendedHairJ
-		ExtendedHairK
-		ExtendedHairL
-		ExtendedMet
-		ExtendedMetA
-		ExtendedMetB
-		ExtendedMetC
-		ExtendedMetD
-		ExtendedMetE
-		ExtendedMetF
-		ExtendedMetG
-		ExtendedMetH
-		ExtendedMetI
-		ExtendedMetJ
-		ExtendedMetK
-		ExtendedMetL
-		ExtendedMetM
-		ExtendedMetN
-		ExtendedMetO
-		ExtendedMetP
-		ExtendedMetQ
-		ExtendedMetR
-		ExtendedTop
-		ExtendedTopA
-		ExtendedTopB
-		ExtendedTopC
-		ExtendedTopD
-		ExtendedTopE
-		ExtendedTopF
-		ExtendedTopG
-		ExtendedTopH
-		ExtendedTopI
-	-->
-
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>

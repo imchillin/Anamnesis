@@ -313,6 +313,41 @@ namespace ConceptMatrix.PoseModule
 				}
 			}
 
+			// Find all ExHair, ExMet, and ExTop bones, and disable any that are outside the bounds
+			// of the current characters actual skeleton.
+			// ex-  bones are numbered starting from 1 (there is no ExHair0!)
+			byte exHairCount = selection.BaseAddress.GetValue(Offsets.Main.ExHairCount);
+			byte exMetCount = selection.BaseAddress.GetValue(Offsets.Main.ExMetCount);
+			byte exTopCount = selection.BaseAddress.GetValue(Offsets.Main.ExTopCount);
+
+			foreach (string boneName in boneDefs.Keys)
+			{
+				if (boneName.StartsWith("ExHair"))
+				{
+					byte num = byte.Parse(boneName.Replace("ExHair", string.Empty));
+					if (num > exHairCount)
+					{
+						this.bones[boneName].IsEnabled = false;
+					}
+				}
+				else if (boneName.StartsWith("ExMet"))
+				{
+					byte num = byte.Parse(boneName.Replace("ExMet", string.Empty));
+					if (num > exMetCount)
+					{
+						this.bones[boneName].IsEnabled = false;
+					}
+				}
+				else if (boneName.StartsWith("ExTop"))
+				{
+					byte num = byte.Parse(boneName.Replace("ExTop", string.Empty));
+					if (num > exTopCount)
+					{
+						this.bones[boneName].IsEnabled = false;
+					}
+				}
+			}
+
 			// Again to set parenting
 			foreach ((string name, SkeletonService.Bone boneDef) in boneDefs)
 			{

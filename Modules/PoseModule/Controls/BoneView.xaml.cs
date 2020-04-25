@@ -51,6 +51,9 @@ namespace ConceptMatrix.PoseModule.Controls
 				if (this.viewModel != null && !this.viewModel.IsEnabled)
 					return false;
 
+				if (this.bone == null || !this.bone.IsEnabled)
+					return false;
+
 				return base.IsEnabled;
 			}
 			set
