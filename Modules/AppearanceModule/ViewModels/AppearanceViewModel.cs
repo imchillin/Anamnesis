@@ -183,7 +183,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		public void Dispose()
 		{
-			this.appearanceMem.Dispose();
+			this.appearanceMem?.Dispose();
 			this.appearanceMem = null;
 		}
 
