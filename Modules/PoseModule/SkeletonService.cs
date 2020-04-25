@@ -41,28 +41,39 @@ namespace ConceptMatrix.PoseModule
 				return this.precachedBones[race];
 			}
 
-			IFileService fileService = Services.Get<IFileService>();
-			Dictionary<string, Bone> bones = new Dictionary<string, Bone>();
-
-			string fileName = race.ToString();
-
-			while (!string.IsNullOrEmpty(fileName))
+			try
 			{
-				SkeletonFile file = await fileService.Open<SkeletonFile>(SkeletonFile.File, SkeletonsDirectory + fileName);
-				foreach ((string name, Bone bone) in file.Bones)
-				{
-					// If we already have this bone, then its being overwritten by a higher file.
-					if (bones.ContainsKey(name))
-						continue;
+				IFileService fileService = Services.Get<IFileService>();
+				Dictionary<string, Bone> bones = new Dictionary<string, Bone>();
 
-					bones[name] = bone;
+				string fileName = race.ToString();
+
+				while (!string.IsNullOrEmpty(fileName))
+				{
+					SkeletonFile file = await fileService.Open<SkeletonFile>(SkeletonFile.File, SkeletonsDirectory + fileName);
+
+					if (file == null)
+						throw new Exception("Failed to load skeleton file: " + fileName);
+
+					foreach ((string name, Bone bone) in file.Bones)
+					{
+						// If we already have this bone, then its being overwritten by a higher file.
+						if (bones.ContainsKey(name))
+							continue;
+
+						bones[name] = bone;
+					}
+
+					// Get the based on value to load bones from.
+					fileName = file.BasedOn;
 				}
 
-				// Get the based on value to load bones from.
-				fileName = file.BasedOn;
+				return bones;
 			}
-
-			return bones;
+			catch (Exception ex)
+			{
+				throw new Exception("Failed to load skeleton for race: " + race, ex);
+			}
 		}
 
 		[Serializable]
@@ -70,6 +81,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			public Offset<Transform> Offsets { get; set; }
 			public string Parent { get; set; }
+			public string Group { get; set; }
 		}
 
 		[Serializable]

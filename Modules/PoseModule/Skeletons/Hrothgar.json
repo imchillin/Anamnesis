@@ -2,82 +2,103 @@
   "BasedOn": "HumanoidBase",
   "Bones": {
     "WhiskersLeft": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x150"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x150",
+      "Group": "Face"
     },
     "WhiskersRight": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x180"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x180",
+      "Group": "Face"
     },
     "LipUpperLeft": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x3C0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x3C0",
+      "Group": "Face"
     },
     "LipUpperRight": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x3F0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x3F0",
+      "Group": "Face"
     },
     "JawUpper": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x2A0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x2A0",
+      "Group": "Face"
     },
     "EyebrowLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x1B0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyebrowRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x1E0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "Bridge": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x210",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "BrowLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x240",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "BrowRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x270",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "LipUpperA": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x2D0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyelidUpperLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x300",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyelidUpperRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x330",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "LipsLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x360",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "LipsRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x390",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "LipLowerA": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x420",
-      "Parent": "Jaw"
+      "Parent": "Jaw",
+      "Group": "Face"
     },
     "TailA": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x12C0",
-      "Parent": "Waist"
+      "Parent": "Waist",
+      "Group": "Tail"
     },
     "TailB": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x12F0",
-      "Parent": "TailA"
+      "Parent": "TailA",
+      "Group": "Tail"
     },
     "TailC": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1320",
-      "Parent": "TailB"
+      "Parent": "TailB",
+      "Group": "Tail"
     },
     "TailD": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1350",
-      "Parent": "TailC"
+      "Parent": "TailC",
+      "Group": "Tail"
     },
     "TailE": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1380"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1380",
+      "Group": "Tail"
     }
   }
 }

@@ -2,598 +2,755 @@
   "BasedOn": "Base",
   "Bones": {
     "Throw": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x60"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x60",
+      "Group": "None"
     },
     "Unknown00": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x990"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x990",
+      "Group": "None"
     },
     "Abdomen": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x30"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x30",
+      "Group": "Torso"
     },
     "Waist": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x90",
-      "Parent": "Root"
+      "Parent": "Root",
+      "Group": "Torso"
     },
     "SpineA": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xC0",
-      "Parent": "Root"
+      "Parent": "Root",
+      "Group": "Torso"
     },
     "SpineB": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x210",
-      "Parent": "SpineA"
+      "Parent": "SpineA",
+      "Group": "Torso"
     },
     "SpineC": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x420",
-      "Parent": "SpineB"
+      "Parent": "SpineB",
+      "Group": "Torso"
     },
     "LegLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xF0",
-      "Parent": "Waist"
+      "Parent": "Waist",
+      "Group": "LeftLeg"
     },
     "LegRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x120",
-      "Parent": "Waist"
+      "Parent": "Waist",
+      "Group": "RightLeg"
     },
     "KneeLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x360",
-      "Parent": "CalfLeft"
+      "Parent": "CalfLeft",
+      "Group": "LeftLeg"
     },
     "KneeRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x390",
-      "Parent": "CalfRight"
+      "Parent": "CalfRight",
+      "Group": "RightLeg"
     },
     "BreastLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x3C0",
-      "Parent": "SpineB"
+      "Parent": "SpineB",
+      "Group": "Torso"
     },
     "BreastRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x3F0",
-      "Parent": "SpineB"
+      "Parent": "SpineB",
+      "Group": "Torso"
     },
     "CalfLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x570",
-      "Parent": "LegLeft"
+      "Parent": "LegLeft",
+      "Group": "LeftLeg"
     },
     "CalfRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x5A0",
-      "Parent": "LegRight"
+      "Parent": "LegRight",
+      "Group": "RightLeg"
     },
     "Neck": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x630",
-      "Parent": "SpineC"
+      "Parent": "SpineC",
+      "Group": "Torso"
     },
     "ClavicleLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x660",
-      "Parent": "SpineC"
+      "Parent": "SpineC",
+      "Group": "LeftArm"
     },
     "ClavicleRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x690",
-      "Parent": "SpineC"
+      "Parent": "SpineC",
+      "Group": "RightArm"
     },
     "FootLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x840",
-      "Parent": "CalfLeft"
+      "Parent": "CalfLeft",
+      "Group": "LeftLeg"
     },
     "FootRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x870",
-      "Parent": "CalfRight"
+      "Parent": "CalfRight",
+      "Group": "RightLeg"
     },
     "ArmLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x8D0",
-      "Parent": "ClavicleLeft"
+      "Parent": "ClavicleLeft",
+      "Group": "LeftArm"
     },
     "ArmRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x900",
-      "Parent": "ClavicleRight"
+      "Parent": "ClavicleRight",
+      "Group": "RightArm"
     },
     "ToesLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x9C0",
-      "Parent": "FootLeft"
+      "Parent": "FootLeft",
+      "Group": "LeftLeg"
     },
     "ToesRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x9F0",
-      "Parent": "FootRight"
+      "Parent": "FootRight",
+      "Group": "RightLeg"
     },
     "ForearmLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xB10",
-      "Parent": "ArmLeft"
+      "Parent": "ArmLeft",
+      "Group": "LeftArm"
     },
     "ForearmRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xB40",
-      "Parent": "ArmRight"
+      "Parent": "ArmRight",
+      "Group": "RightArm"
     },
     "ShoulderLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xB70",
-      "Parent": "ArmLeft"
+      "Parent": "ArmLeft",
+      "Group": "LeftArm"
     },
     "ShoulderRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xBA0",
-      "Parent": "ArmRight"
+      "Parent": "ArmRight",
+      "Group": "RightArm"
     },
     "ElbowLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xD20",
-      "Parent": "ForearmLeft"
+      "Parent": "ForearmLeft",
+      "Group": "LeftArm"
     },
     "ElbowRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xD50",
-      "Parent": "ForearmRight"
+      "Parent": "ForearmRight",
+      "Group": "RightArm"
     },
     "HandLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xC00",
-      "Parent": "WristLeft"
+      "Parent": "WristLeft",
+      "Group": "LeftHand"
     },
     "HandRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xC30",
-      "Parent": "WristRight"
+      "Parent": "WristRight",
+      "Group": "RightHand"
     },
     "WristLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xDE0",
-      "Parent": "ForearmLeft"
+      "Parent": "ForearmLeft",
+      "Group": "LeftArm"
     },
     "WristRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xE10",
-      "Parent": "ForearmRight"
+      "Parent": "ForearmRight",
+      "Group": "RightArm"
     },
     "IndexALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xE40",
-      "Parent": "HandLeft"
+      "Parent": "HandLeft",
+      "Group": "LeftHand"
     },
     "IndexARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xE70",
-      "Parent": "HandRight"
+      "Parent": "HandRight",
+      "Group": "RightHand"
     },
     "PinkyALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xEA0",
-      "Parent": "HandLeft"
+      "Parent": "HandLeft",
+      "Group": "LeftHand"
     },
     "PinkyARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xED0",
-      "Parent": "HandRight"
+      "Parent": "HandRight",
+      "Group": "RightHand"
     },
     "RingALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xF00",
-      "Parent": "HandLeft"
+      "Parent": "HandLeft",
+      "Group": "LeftHand"
     },
     "RingARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xF30",
-      "Parent": "HandRight"
+      "Parent": "HandRight",
+      "Group": "RightHand"
     },
     "MiddleALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xF60",
-      "Parent": "HandLeft"
+      "Parent": "HandLeft",
+      "Group": "LeftHand"
     },
     "MiddleARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xF90",
-      "Parent": "HandRight"
+      "Parent": "HandRight",
+      "Group": "RightHand"
     },
     "ThumbALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xFC0",
-      "Parent": "HandLeft"
+      "Parent": "HandLeft",
+      "Group": "LeftHand"
     },
     "ThumbARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xFF0",
-      "Parent": "HandRight"
+      "Parent": "HandRight",
+      "Group": "RightHand"
     },
     "IndexBLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x10E0",
-      "Parent": "IndexALeft"
+      "Parent": "IndexALeft",
+      "Group": "LeftHand"
     },
     "IndexBRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1110",
-      "Parent": "IndexARight"
+      "Parent": "IndexARight",
+      "Group": "RightHand"
     },
     "PinkyBLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1140",
-      "Parent": "PinkyALeft"
+      "Parent": "PinkyALeft",
+      "Group": "LeftHand"
     },
     "PinkyBRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1170",
-      "Parent": "PinkyARight"
+      "Parent": "PinkyARight",
+      "Group": "RightHand"
     },
     "RingBLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x11A0",
-      "Parent": "RingALeft"
+      "Parent": "RingALeft",
+      "Group": "LeftHand"
     },
     "RingBRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x11D0",
-      "Parent": "RingARight"
+      "Parent": "RingARight",
+      "Group": "RightHand"
     },
     "MiddleBLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1200",
-      "Parent": "MiddleALeft"
+      "Parent": "MiddleALeft",
+      "Group": "LeftHand"
     },
     "MiddleBRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1230",
-      "Parent": "MiddleARight"
+      "Parent": "MiddleARight",
+      "Group": "RightHand"
     },
     "ThumbBLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1260",
-      "Parent": "ThumbALeft"
+      "Parent": "ThumbALeft",
+      "Group": "LeftHand"
     },
     "ThumbBRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1290",
-      "Parent": "ThumbARight"
+      "Parent": "ThumbARight",
+      "Group": "RightHand"
     },
     "HolsterLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x150",
-      "Parent": "SheatheLeft"
+      "Parent": "SheatheLeft",
+      "Group": "Equipment"
     },
     "HolsterRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x180",
-      "Parent": "SheatheRight"
+      "Parent": "SheatheRight",
+      "Group": "Equipment"
     },
     "SheatheLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1B0",
-      "Parent": "SpineB"
+      "Parent": "SpineB",
+      "Group": "Equipment"
     },
     "SheatheRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1E0",
-      "Parent": "SpineB"
+      "Parent": "SpineB",
+      "Group": "Equipment"
     },
     "ClothBackALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x240",
-      "Parent": "Waist"
+      "Parent": "Waist",
+      "Group": "Clothes"
     },
     "ClothBackARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x270",
-      "Parent": "Waist"
+      "Parent": "Waist",
+      "Group": "Clothes"
     },
     "ClothFrontALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x2A0",
-      "Parent": "Waist"
+      "Parent": "Waist",
+      "Group": "Clothes"
     },
     "ClothFrontARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x2D0",
-      "Parent": "Waist"
+      "Parent": "Waist",
+      "Group": "Clothes"
     },
     "ClothSideALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x300",
-      "Parent": "Waist"
+      "Parent": "Waist",
+      "Group": "Clothes"
     },
     "ClothSideARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x330",
-      "Parent": "Waist"
+      "Parent": "Waist",
+      "Group": "Clothes"
     },
     "ClothBackBLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x450",
-      "Parent": "ClothBackALeft"
+      "Parent": "ClothBackALeft",
+      "Group": "Clothes"
     },
     "ClothBackBRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x480",
-      "Parent": "ClothBackARight"
+      "Parent": "ClothBackARight",
+      "Group": "Clothes"
     },
     "ClothFrontBLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x4B0",
-      "Parent": "ClothFrontALeft"
+      "Parent": "ClothFrontALeft",
+      "Group": "Clothes"
     },
     "ClothFrontBRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x4E0",
-      "Parent": "ClothFrontARight"
+      "Parent": "ClothFrontARight",
+      "Group": "Clothes"
     },
     "ClothSideBLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x510",
-      "Parent": "ClothSideALeft"
+      "Parent": "ClothSideALeft",
+      "Group": "Clothes"
     },
     "ClothSideBRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x540",
-      "Parent": "ClothSideARight"
+      "Parent": "ClothSideARight",
+      "Group": "Clothes"
     },
     "ScabbardLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x5D0",
-      "Parent": "SheatheLeft"
+      "Parent": "SheatheLeft",
+      "Group": "Equipment"
     },
     "ScabbardRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x600",
-      "Parent": "SheatheRight"
+      "Parent": "SheatheRight",
+      "Group": "Equipment"
     },
     "ClothBackCLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x6C0",
-      "Parent": "ClothBackBLeft"
+      "Parent": "ClothBackBLeft",
+      "Group": "Clothes"
     },
     "ClothBackCRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x6F0",
-      "Parent": "ClothBackBRight"
+      "Parent": "ClothBackBRight",
+      "Group": "Clothes"
     },
     "ClothFrontCLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x720",
-      "Parent": "ClothFrontBLeft"
+      "Parent": "ClothFrontBLeft",
+      "Group": "Clothes"
     },
     "ClothFrontCRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x750",
-      "Parent": "ClothFrontBRight"
+      "Parent": "ClothFrontBRight",
+      "Group": "Clothes"
     },
     "ClothSideCLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x780",
-      "Parent": "ClothSideBLeft"
+      "Parent": "ClothSideBLeft",
+      "Group": "Clothes"
     },
     "ClothSideCRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x7B0",
-      "Parent": "ClothSideBRight"
+      "Parent": "ClothSideBRight",
+      "Group": "Clothes"
     },
     "PoleynLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x7E0",
-      "Parent": "KneeLeft"
+      "Parent": "KneeLeft",
+      "Group": "Clothes"
     },
     "PoleynRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x810",
-      "Parent": "KneeRight"
+      "Parent": "KneeRight",
+      "Group": "Clothes"
     },
     "PauldronLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x930",
-      "Parent": "ArmLeft"
+      "Parent": "ArmLeft",
+      "Group": "LeftArm"
     },
     "PauldronRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x960",
-      "Parent": "ArmRight"
+      "Parent": "ArmRight",
+      "Group": "RightArm"
     },
     "ShieldLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xC60",
-      "Parent": "ForearmLeft"
+      "Parent": "ForearmLeft",
+      "Group": "Equipment"
     },
     "ShieldRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xC90",
-      "Parent": "ForearmRight"
+      "Parent": "ForearmRight",
+      "Group": "Equipment"
     },
     "EarringALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xCC0",
-      "Parent": "EarLeft"
+      "Parent": "EarLeft",
+      "Group": "Equipment"
     },
     "EarringARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xCF0",
-      "Parent": "EarRight"
+      "Parent": "EarRight",
+      "Group": "Equipment"
     },
     "WeaponLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1020",
-      "Parent": "HandLeft"
+      "Parent": "HandLeft",
+      "Group": "Equipment"
     },
     "WeaponRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1050",
-      "Parent": "HandRight"
+      "Parent": "HandRight",
+      "Group": "Equipment"
     },
     "EarringBLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x1080",
-      "Parent": "EarringALeft"
+      "Parent": "EarringALeft",
+      "Group": "Equipment"
     },
     "EarringBRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x10B0",
-      "Parent": "EarringARight"
+      "Parent": "EarringARight",
+      "Group": "Equipment"
     },
     "CouterLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xD80",
-      "Parent": "ForearmLeft"
+      "Parent": "ForearmLeft",
+      "Group": "LeftArm"
     },
     "CouterRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xDB0",
-      "Parent": "ForearmRight"
+      "Parent": "ForearmRight",
+      "Group": "RightArm"
     },
     "Head": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0x8A0",
-      "Parent": "Neck"
+      "Parent": "Neck",
+      "Group": "Face"
     },
     "HairA": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xA20",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "HairFrontLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xA50",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "HairFrontRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xA80",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "HairB": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x140, 0x18, 0xBD0",
-      "Parent": "HairA"
+      "Parent": "HairA",
+      "Group": "Hair"
     },
     "RootHead": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x00"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x00",
+      "Group": "Face"
     },
     "Jaw": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x30",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyelidLowerLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x60",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyelidLowerRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x90",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyeLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0xC0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyeRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0xF0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "Nose": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x120",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "LipsLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x1B0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "LipsRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x1E0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyebrowLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x210",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyebrowRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x240",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "Bridge": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x270",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "BrowLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x2A0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "BrowRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x2D0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "LipUpperA": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x300",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyelidUpperLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x330",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "EyelidUpperRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x360",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Face"
     },
     "LipLowerA": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x390",
-      "Parent": "Jaw"
+      "Parent": "Jaw",
+      "Group": "Face"
     },
     "ExRootHair": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x00"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x00",
+      "Group": "Hair"
     },
     "ExHair1": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x30",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair2": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x60",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair3": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x90",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair4": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0xC0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair5": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0xF0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair6": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x120",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair7": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x150",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair8": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x180",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair9": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x1B0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair10": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x1E0",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair11": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x210",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExHair12": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x4C0, 0x18, 0x240",
-      "Parent": "Head"
+      "Parent": "Head",
+      "Group": "Hair"
     },
     "ExRootMet": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x00"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x00",
+      "Group": "Equipment"
     },
     "ExMet1": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x30"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x30",
+      "Group": "Equipment"
     },
     "ExMet2": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x60"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x60",
+      "Group": "Equipment"
     },
     "ExMet3": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x90"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x90",
+      "Group": "Equipment"
     },
     "ExMet4": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0xC0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0xC0",
+      "Group": "Equipment"
     },
     "ExMet5": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0xF0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0xF0",
+      "Group": "Equipment"
     },
     "ExMet6": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x120"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x120",
+      "Group": "Equipment"
     },
     "ExMet7": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x150"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x150",
+      "Group": "Equipment"
     },
     "ExMet8": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x180"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x180",
+      "Group": "Equipment"
     },
     "ExMet9": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x1B0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x1B0",
+      "Group": "Equipment"
     },
     "ExMet10": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x1E0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x1E0",
+      "Group": "Equipment"
     },
     "ExMet11": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x210"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x210",
+      "Group": "Equipment"
     },
     "ExMet12": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x240"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x240",
+      "Group": "Equipment"
     },
     "ExMet13": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x270"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x270",
+      "Group": "Equipment"
     },
     "ExMet14": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x2A0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x2A0",
+      "Group": "Equipment"
     },
     "ExMet15": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x2D0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x2D0",
+      "Group": "Equipment"
     },
     "ExMet16": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x300"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x300",
+      "Group": "Equipment"
     },
     "ExMet17": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x330"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x330",
+      "Group": "Equipment"
     },
     "ExMet18": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x360"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x680, 0x18, 0x360",
+      "Group": "Equipment"
     },
     "ExRootTop": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x00"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x00",
+      "Group": "Clothes"
     },
     "ExTop1": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x30"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x30",
+      "Group": "Clothes"
     },
     "ExTop2": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x60"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x60",
+      "Group": "Clothes"
     },
     "ExTop3": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x90"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x90",
+      "Group": "Clothes"
     },
     "ExTop4": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0xC0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0xC0",
+      "Group": "Clothes"
     },
     "ExTop5": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0xF0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0xF0",
+      "Group": "Clothes"
     },
     "ExTop6": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x120"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x120",
+      "Group": "Clothes"
     },
     "ExTop7": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x150"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x150",
+      "Group": "Clothes"
     },
     "ExTop8": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x180"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x180",
+      "Group": "Clothes"
     },
     "ExTop9": {
-      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x1B0"
+      "Offsets": "0xF0, 0xA0, 0x68, 0x840, 0x18, 0x1B0",
+      "Group": "Clothes"
     }
   }
 }

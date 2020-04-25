@@ -6,6 +6,7 @@ namespace ConceptMatrix.PoseModule.Controls
 	using System;
 	using System.Windows;
 	using System.Windows.Controls;
+	using ConceptMatrix.PoseModule.Dialogs;
 
 	/// <summary>
 	/// Interaction logic for PoseSidebar.xaml.
@@ -27,11 +28,17 @@ namespace ConceptMatrix.PoseModule.Controls
 				if (file is LegacyPoseFile legacyFile)
 					file = legacyFile.Upgrade();
 
+				IViewService viewService = Services.Get<IViewService>();
+				PoseFile.Groups groups = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Groups>("Load Pose...");
+
+				if (groups == PoseFile.Groups.None)
+					return;
+
 				Module.SkeletonViewModel.IsEnabled = true;
 
 				if (file is PoseFile poseFile)
 				{
-					poseFile.Write(Module.SkeletonViewModel.Bones);
+					poseFile.Write(Module.SkeletonViewModel.Bones, groups);
 				}
 			}
 			catch (Exception ex)
@@ -42,10 +49,15 @@ namespace ConceptMatrix.PoseModule.Controls
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			IFileService fileService = Services.Get<IFileService>();
+			IViewService viewService = Services.Get<IViewService>();
+			PoseFile.Groups groups = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Groups>("Save Pose...");
 
+			if (groups == PoseFile.Groups.None)
+				return;
+
+			IFileService fileService = Services.Get<IFileService>();
 			PoseFile file = new PoseFile();
-			file.Read(Module.SkeletonViewModel.Bones);
+			file.Read(Module.SkeletonViewModel.Bones, groups);
 
 			await fileService.SaveAs(file);
 		}

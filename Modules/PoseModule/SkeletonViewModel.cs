@@ -305,7 +305,7 @@ namespace ConceptMatrix.PoseModule
 				try
 				{
 					IMemory<Transform> transMem = selection.BaseAddress.GetMemory(boneDef.Offsets);
-					this.bones[name] = new Bone(name, transMem);
+					this.bones[name] = new Bone(name, transMem, boneDef);
 				}
 				catch (Exception ex)
 				{

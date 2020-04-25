@@ -9,13 +9,15 @@ namespace ConceptMatrix.PoseModule
 
 	public class Bone : INotifyPropertyChanged, IDisposable
 	{
+		public readonly SkeletonService.Bone Definition;
 		public List<Bone> Children = new List<Bone>();
 		public Bone Parent;
 
 		private IMemory<Transform> transformMem;
 
-		public Bone(string name, IMemory<Transform> transformMem)
+		public Bone(string name, IMemory<Transform> transformMem, SkeletonService.Bone definition)
 		{
+			this.Definition = definition;
 			this.BoneName = name;
 			this.transformMem = transformMem;
 

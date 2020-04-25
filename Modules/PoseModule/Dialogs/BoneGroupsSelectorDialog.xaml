@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="ConceptMatrix.PoseModule.Dialogs.BoneGroupsSelectorDialog"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 mc:Ignorable="d" 
+			 d:DesignHeight="200" d:DesignWidth="300">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="48"/>
+			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Text="Include these pose elements:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+		<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+			<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
+				<CheckBox Content="Torso" IsChecked="{Binding Torso}"/>
+				<CheckBox Content="Face" IsChecked="{Binding Face}"/>
+				<CheckBox Content="Hair" IsChecked="{Binding Hair}"/>
+				<CheckBox Content="Tail" IsChecked="{Binding Tail}"/>
+			</StackPanel>
+			<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
+				<CheckBox Content="Left Arm" IsChecked="{Binding LeftArm}"/>
+				<CheckBox Content="Left Hand" IsChecked="{Binding LeftHand}"/>
+				<CheckBox Content="Left Leg" IsChecked="{Binding LeftLeg}"/>
+				<CheckBox Content="Clothes" IsChecked="{Binding Clothes}"/>
+			</StackPanel>
+			<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
+				<CheckBox Content="Right Arm" IsChecked="{Binding RightArm}"/>
+				<CheckBox Content="Right Hand" IsChecked="{Binding RightHand}"/>
+				<CheckBox Content="Right Leg" IsChecked="{Binding RightLeg}"/>
+				<CheckBox Content="Equipment" IsChecked="{Binding Equipment}"/>
+			</StackPanel>
+		</StackPanel>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="LEft" >
+			<Button Grid.Column="1" Margin="3" Content="Cancel" MinWidth="75" Click="OnCancelClick"/>
+		</StackPanel>
+		
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" >
+			<Button Grid.Column="1" Margin="3" Content="OK" MinWidth="75" Click="OnOKClick"/>
+		</StackPanel>
+	</Grid>
+</UserControl>
