@@ -152,6 +152,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 			this.Appearance = null;
 
+			this.Hair = null;
+
 			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.EventNpc))
 				return;
 
