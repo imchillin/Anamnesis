@@ -142,13 +142,14 @@ namespace ConceptMatrix.GUI.Services
 						|| this.CurrentGameTarget.Mode != mode)
 					{
 						this.CurrentGameTarget = new Selection(type, baseOffset, actorId, name, mode);
-						this.isResetting = false;
 					}
 
 					if (this.UseGameTarget && this.CurrentSelection != this.CurrentGameTarget)
 					{
 						this.CurrentSelection = this.CurrentGameTarget;
 					}
+
+					this.isResetting = false;
 				}
 				catch (MemoryException)
 				{
