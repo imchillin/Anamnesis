@@ -22,6 +22,8 @@ namespace ConceptMatrix.PoseModule
 			this.transformMem = transformMem;
 
 			this.Rotation = this.LiveRotation;
+			this.Scale = this.LiveScale;
+			this.Position = this.LivePosition;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -118,19 +120,25 @@ namespace ConceptMatrix.PoseModule
 
 				foreach (Bone child in this.Children)
 				{
-					child.Rotate(oldRotationConjugate, newRotation);
+					child.ApplyRotation(oldRotationConjugate, newRotation);
 				}
 			}
 
-			/*if (this.LiveScale != this.Scale)
+			if (this.LiveScale != this.Scale)
 			{
+				Vector delta = this.Scale - this.LiveScale;
 				this.LiveScale = this.Scale;
+
+				foreach (Bone child in this.Children)
+				{
+					child.ApplyScale(delta);
+				}
 			}
 
 			if (this.LivePosition != this.Position)
 			{
 				this.LivePosition = this.Position;
-			}*/
+			}
 		}
 
 		public void Dispose()
@@ -138,7 +146,7 @@ namespace ConceptMatrix.PoseModule
 			this.transformMem.Dispose();
 		}
 
-		private void Rotate(Quaternion sourceOldCnj, Quaternion sourceNew)
+		private void ApplyRotation(Quaternion sourceOldCnj, Quaternion sourceNew)
 		{
 			if (!this.IsEnabled)
 				return;
@@ -154,7 +162,27 @@ namespace ConceptMatrix.PoseModule
 
 			foreach (Bone child in this.Children)
 			{
-				child.Rotate(sourceOldCnj, sourceNew);
+				child.ApplyRotation(sourceOldCnj, sourceNew);
+			}
+		}
+
+		private void ApplyScale(Vector delta)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			this.Scale = this.LiveScale;
+			Vector newScale = this.Scale + delta;
+
+			if (this.Scale == newScale)
+				return;
+
+			this.Scale = newScale;
+			this.LiveScale = this.Scale;
+
+			foreach (Bone child in this.Children)
+			{
+				child.ApplyScale(delta);
 			}
 		}
 	}

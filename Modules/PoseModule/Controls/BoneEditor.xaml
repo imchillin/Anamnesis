@@ -11,15 +11,15 @@
 	<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 0, 3, 3" x:Name="ContentArea">
 		<StackPanel Margin="3">
 			<GroupBox Header="Rotation">
-				<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation, Mode=TwoWay}" CameraRotation="{Binding CameraRotation}"/>
+				<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation}" CameraRotation="{Binding CameraRotation}"/>
 			</GroupBox>
 
 			<GroupBox Header="scale">
-				<cm3Controls:VectorEditor Value="{Binding Value.Scale, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+				<cm3Controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False"/>
 			</GroupBox>
 
 			<GroupBox Header="Position">
-				<cm3Controls:VectorEditor Value="{Binding Value.Position, Mode=TwoWay}" Expanded="False" IsEnabled="False"/>
+				<cm3Controls:VectorEditor Value="{Binding Value.Position}" Expanded="False" IsEnabled="False"/>
 			</GroupBox>
 		</StackPanel>
 	</Border>

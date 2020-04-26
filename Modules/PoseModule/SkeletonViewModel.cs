@@ -22,8 +22,12 @@ namespace ConceptMatrix.PoseModule
 		private IMemory<Flag> skel1Mem;
 		private IMemory<Flag> skel2Mem;
 		private IMemory<Flag> skel3Mem;
+		private IMemory<Flag> skel4Mem;
+		private IMemory<Flag> skel6Mem;
+
 		private IMemory<Flag> phys1Mem;
 		private IMemory<Flag> phys2Mem;
+		private IMemory<Flag> phys3Mem;
 
 		private Dictionary<string, Bone> bones;
 		private Bone currentBone;
@@ -47,11 +51,17 @@ namespace ConceptMatrix.PoseModule
 
 				if (this.enabled)
 				{
+					// rotations
 					this.skel1Mem.Value = Flag.Enabled;
 					this.skel2Mem.Value = Flag.Enabled;
 					this.skel3Mem.Value = Flag.Enabled;
 					this.phys1Mem.Value = Flag.Enabled;
 					this.phys2Mem.Value = Flag.Enabled;
+
+					// scale
+					this.skel4Mem.Value = Flag.Enabled;
+					this.skel6Mem.Value = Flag.Enabled;
+					this.phys3Mem.Value = Flag.Enabled;
 
 					// Poll changes thread
 					new Thread(new ThreadStart(this.PollChanges)).Start();
@@ -61,11 +71,17 @@ namespace ConceptMatrix.PoseModule
 				}
 				else
 				{
+					// rotations
 					this.skel1Mem.Value = Flag.Disabled;
 					this.skel2Mem.Value = Flag.Disabled;
 					this.skel3Mem.Value = Flag.Disabled;
 					this.phys1Mem.Value = Flag.Disabled;
 					this.phys2Mem.Value = Flag.Disabled;
+
+					// scale
+					this.skel4Mem.Value = Flag.Disabled;
+					this.skel6Mem.Value = Flag.Disabled;
+					this.phys3Mem.Value = Flag.Disabled;
 				}
 			}
 		}
@@ -206,8 +222,11 @@ namespace ConceptMatrix.PoseModule
 			this.skel1Mem = Offsets.Main.Skeleton1Flag.GetMemory();
 			this.skel2Mem = Offsets.Main.Skeleton2Flag.GetMemory();
 			this.skel3Mem = Offsets.Main.Skeleton3Flag.GetMemory();
+			this.skel4Mem = Offsets.Main.Skeleton4flag.GetMemory();
+			this.skel6Mem = Offsets.Main.Skeleton6Flag.GetMemory();
 			this.phys1Mem = Offsets.Main.Physics1Flag.GetMemory();
 			this.phys2Mem = Offsets.Main.Physics2Flag.GetMemory();
+			this.phys3Mem = Offsets.Main.Physics3Flag.GetMemory();
 
 			this.appearance = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
 
@@ -219,8 +238,11 @@ namespace ConceptMatrix.PoseModule
 			this.skel1Mem?.Dispose();
 			this.skel2Mem?.Dispose();
 			this.skel3Mem?.Dispose();
+			this.skel4Mem?.Dispose();
+			this.skel6Mem?.Dispose();
 			this.phys1Mem?.Dispose();
 			this.phys2Mem?.Dispose();
+			this.phys3Mem?.Dispose();
 
 			this.appearance?.Dispose();
 

@@ -31,6 +31,16 @@ namespace ConceptMatrix
 			return lhs.Equals(rhs);
 		}
 
+		public static Vector operator +(Vector left, Vector right)
+		{
+			return new Vector(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+		}
+
+		public static Vector operator -(Vector left, Vector right)
+		{
+			return new Vector(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+		}
+
 		public static Vector operator *(Vector left, Vector right)
 		{
 			return new Vector(left.X * right.X, left.Y * right.Y, left.Z * right.Z);
