@@ -231,6 +231,17 @@ namespace ConceptMatrix.PoseModule
 			this.appearance = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
 
 			await this.GenerateBones(selection);
+
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Bones)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.HasTail)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.HasTailOrEars)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsHrothgar)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsViera)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsVieraEars01)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsVieraEars02)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsVieraEars03)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsVieraEars04)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Race)));
 		}
 
 		public void Clear()
@@ -386,6 +397,14 @@ namespace ConceptMatrix.PoseModule
 		{
 			Bone parent = this.GetBone(parentName);
 			Bone child = this.GetBone(childName);
+
+			if (parent == null)
+				return;
+			////throw new Exception("Failed to find bone for parenting: " + parentName);
+
+			if (child == null)
+				return;
+			////throw new Exception("Failed to find bone for parenting: " + childName);
 
 			if (parent.Children.Contains(child) || child.Parent == parent)
 			{

@@ -471,10 +471,7 @@ namespace ConceptMatrix.PoseModule
 				{
 					if (fileRace == Appearance.Races.Viera)
 					{
-						if (!boneName.StartsWith("VieraEar"))
-						{
-							boneName = boneName.Replace("Viera", string.Empty);
-						}
+						boneName = boneName.Replace("Viera", string.Empty);
 					}
 					else
 					{

@@ -143,16 +143,19 @@ namespace ConceptMatrix.PoseModule.Controls
 			if (e.PropertyName == nameof(this.viewModel.CameraRotation))
 				return;
 
-			this.UpdateState();
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.UpdateState();
 
-			if (e.PropertyName == nameof(this.viewModel.FlipSides))
-			{
-				this.SetBone(SkeletonViewModel.GetBoneName(this.BoneName, this.viewModel.FlipSides));
-			}
-			else if (e.PropertyName == nameof(this.viewModel.Bones))
-			{
-				this.SetBone(this.BoneName);
-			}
+				if (e.PropertyName == nameof(this.viewModel.FlipSides))
+				{
+					this.SetBone(SkeletonViewModel.GetBoneName(this.BoneName, this.viewModel.FlipSides));
+				}
+				else if (e.PropertyName == nameof(this.viewModel.Bones))
+				{
+					this.SetBone(this.BoneName);
+				}
+			});
 		}
 
 		private void SetBone(string name)
