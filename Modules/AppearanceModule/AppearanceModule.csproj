@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <None Remove="Assets\colors.dat" />
-    <None Remove="Assets\FeatureSelectionborder.png" />
     <None Remove="Assets\IconBorder.png" />
     <None Remove="Assets\IconBorderSmall.png" />
     <None Remove="Assets\LegacyTattoo.png" />
@@ -53,7 +52,6 @@
 
   <ItemGroup>
     <Resource Include="Assets\colors.dat" />
-    <Resource Include="Assets\FeatureSelectionborder.png" />
     <Resource Include="Assets\IconBorder.png" />
     <Resource Include="Assets\IconBorderSmall.png" />
     <Resource Include="Assets\LegacyTattoo.png" />
