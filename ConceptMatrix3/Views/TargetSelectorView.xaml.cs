@@ -22,6 +22,7 @@ namespace ConceptMatrix.GUI.Views
 	{
 		private SelectionService selection;
 		private IInjectionService injection;
+		private bool lockSelection = false;
 
 		public TargetSelectorView()
 		{
@@ -48,6 +49,7 @@ namespace ConceptMatrix.GUI.Views
 		{
 			try
 			{
+				this.lockSelection = true;
 				Selection.Modes mode = this.selection.GetMode();
 				ActorTableOffset actorTableOffset;
 				BaseOffset targetOffset;
@@ -105,6 +107,8 @@ namespace ConceptMatrix.GUI.Views
 					this.InGameSelection = null;
 					this.InGameIcon = IconChar.None;
 				}
+
+				this.lockSelection = false;
 			}
 			catch (Exception ex)
 			{
@@ -114,12 +118,18 @@ namespace ConceptMatrix.GUI.Views
 
 		private void OnAutoSelected(object sender, RoutedEventArgs e)
 		{
+			if (this.lockSelection)
+				return;
+
 			this.selection.UseGameTarget = true;
 			this.selection.CurrentSelection = null;
 		}
 
 		private void OnSelected(object sender, RoutedEventArgs e)
 		{
+			if (this.lockSelection)
+				return;
+
 			if (sender is RadioButton btn)
 			{
 				PossibleSelection selection = btn.DataContext as PossibleSelection;
