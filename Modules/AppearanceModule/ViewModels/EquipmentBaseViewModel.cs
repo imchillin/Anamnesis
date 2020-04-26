@@ -98,12 +98,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			}
 		}
 
-		public bool CanDye
-		{
-			get;
-			set;
-		}
-
 		public byte DyeId
 		{
 			get
@@ -114,32 +108,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			{
 				this.dyeId = value;
 				this.Dye = this.GetDye();
-			}
-		}
-
-		public bool CanColor
-		{
-			get;
-			set;
-		}
-
-		public bool CanScale
-		{
-			get;
-			set;
-		}
-
-		public bool HasModelSet
-		{
-			get;
-			set;
-		}
-
-		public string SlotName
-		{
-			get
-			{
-				return this.Slot.ToDisplayName();
 			}
 		}
 
@@ -257,7 +225,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				if (this.Slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
 					continue;
 
-				if (this.HasModelSet && tItem.WeaponSet != this.ModelSet)
+				if ((this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand) &&  tItem.WeaponSet != this.ModelSet)
 					continue;
 
 				if (tItem.ModelBase == this.ModelBase && tItem.ModelVariant == this.ModelVariant)

@@ -9,14 +9,19 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.WpfStyles.DependencyProperties;
+	using PropertyChanged;
 
 	using Vector = ConceptMatrix.Vector;
 
 	/// <summary>
 	/// Interaction logic for ItemView.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
 	public partial class ItemView : UserControl
 	{
+		public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
+
 		private IGameDataService gameData;
 
 		public ItemView()
@@ -26,14 +31,47 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (DesignerProperties.GetIsInDesignMode(this))
 				return;
 
+			this.ContentArea.DataContext = this;
 			this.gameData = Services.Get<IGameDataService>();
+		}
+
+		public ItemSlots Slot
+		{
+			get => SlotDp.Get(this);
+			set => SlotDp.Set(this, value);
 		}
 
 		public EquipmentBaseViewModel ViewModel
 		{
+			get;
+			set;
+		}
+
+		public string SlotName
+		{
 			get
 			{
-				return this.DataContext as EquipmentBaseViewModel;
+				return this.Slot.ToDisplayName();
+			}
+		}
+
+		public bool IsWeapon
+		{
+			get
+			{
+				return this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
+			}
+		}
+
+		public bool CanDye
+		{
+			get
+			{
+				return this.Slot != ItemSlots.Ears
+					&& this.Slot != ItemSlots.Neck
+					&& this.Slot != ItemSlots.Wrists
+					&& this.Slot != ItemSlots.LeftRing
+					&& this.Slot != ItemSlots.RightRing;
 			}
 		}
 
@@ -43,7 +81,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			EquipmentSelector selector = new EquipmentSelector(this.ViewModel.Slot);
 			selector.Value = this.ViewModel.Item;
-			await viewService.ShowDrawer(selector, "Select " + this.ViewModel.SlotName);
+			await viewService.ShowDrawer(selector, "Select " + this.SlotName);
 
 			if (selector.Value == null)
 				return;
@@ -73,6 +111,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
+			this.ViewModel = this.DataContext as EquipmentBaseViewModel;
+
 			if (this.ViewModel == null)
 				return;
 

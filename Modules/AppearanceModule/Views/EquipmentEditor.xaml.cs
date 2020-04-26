@@ -73,6 +73,19 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.LeftRing?.Dispose();
 			this.RightRing?.Dispose();
 
+			this.MainHand = null;
+			this.OffHand = null;
+			this.Head = null;
+			this.Body = null;
+			this.Hands = null;
+			this.Legs = null;
+			this.Feet = null;
+			this.Ears = null;
+			this.Neck = null;
+			this.Wrists = null;
+			this.LeftRing = null;
+			this.RightRing = null;
+
 			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.BattleNpc && selection.Type != ActorTypes.EventNpc))
 				return;
 

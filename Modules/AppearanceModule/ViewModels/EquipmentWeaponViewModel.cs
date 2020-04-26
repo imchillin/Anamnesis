@@ -26,11 +26,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.modelVariant = this.memory.Value.Variant;
 			this.dyeId = this.memory.Value.Dye;
 
-			this.HasModelSet = true;
-			this.CanColor = true;
-			this.CanScale = true;
-			this.CanDye = true;
-
 			if (this.HasWeapon)
 			{
 				this.scaleMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.Main.MainHandScale : Offsets.Main.OffhandScale);

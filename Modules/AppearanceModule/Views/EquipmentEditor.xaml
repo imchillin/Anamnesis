@@ -24,20 +24,20 @@
 		</Grid.RowDefinitions>
 
 
-		<local:ItemView Grid.Row="0" Grid.Column="0" DataContext="{Binding MainHand}" Margin="0, 0, 3, 3"/>
-		<local:ItemView Grid.Row="0" Grid.Column="1" DataContext="{Binding OffHand}" Margin="3, 0, 0, 3"/>
+		<local:ItemView Grid.Row="0" Grid.Column="0" DataContext="{Binding MainHand}" Slot="MainHand" Margin="0, 0, 3, 3"/>
+		<local:ItemView Grid.Row="0" Grid.Column="1" DataContext="{Binding OffHand}" Slot="OffHand" Margin="3, 0, 0, 3"/>
 
-		<local:ItemView Grid.Row="1" Grid.Column="0" DataContext="{Binding Head}" Margin="0, 3, 3, 3"/>
-		<local:ItemView Grid.Row="2" Grid.Column="0" DataContext="{Binding Body}" Margin="0, 3, 3, 3"/>
-		<local:ItemView Grid.Row="3" Grid.Column="0" DataContext="{Binding Hands}" Margin="0, 3, 3, 3"/>
-		<local:ItemView Grid.Row="4" Grid.Column="0" DataContext="{Binding Legs}" Margin="0, 3, 3, 3"/>
-		<local:ItemView Grid.Row="5" Grid.Column="0" DataContext="{Binding Feet}" Margin="0, 3, 3, 0"/>
+		<local:ItemView Grid.Row="1" Grid.Column="0" DataContext="{Binding Head}" Slot="Head" Margin="0, 3, 3, 3"/>
+		<local:ItemView Grid.Row="2" Grid.Column="0" DataContext="{Binding Body}" Slot="Body" Margin="0, 3, 3, 3"/>
+		<local:ItemView Grid.Row="3" Grid.Column="0" DataContext="{Binding Hands}" Slot="Hands" Margin="0, 3, 3, 3"/>
+		<local:ItemView Grid.Row="4" Grid.Column="0" DataContext="{Binding Legs}" Slot="Legs" Margin="0, 3, 3, 3"/>
+		<local:ItemView Grid.Row="5" Grid.Column="0" DataContext="{Binding Feet}" Slot="Feet" Margin="0, 3, 3, 0"/>
 
-		<local:ItemView Grid.Row="1" Grid.Column="1" DataContext="{Binding Ears}" Margin="3, 3, 0, 3"/>
-		<local:ItemView Grid.Row="2" Grid.Column="1" DataContext="{Binding Neck}" Margin="3, 3, 0, 3"/>
-		<local:ItemView Grid.Row="3" Grid.Column="1" DataContext="{Binding Wrists}" Margin="3, 3, 0, 3"/>
-		<local:ItemView Grid.Row="4" Grid.Column="1" DataContext="{Binding RightRing}" Margin="3, 3, 0, 3"/>
-		<local:ItemView Grid.Row="5" Grid.Column="1" DataContext="{Binding LeftRing}" Margin="3, 3, 0, 0"/>
+		<local:ItemView Grid.Row="1" Grid.Column="1" DataContext="{Binding Ears}" Slot="Ears" Margin="3, 3, 0, 3"/>
+		<local:ItemView Grid.Row="2" Grid.Column="1" DataContext="{Binding Neck}" Slot="Neck" Margin="3, 3, 0, 3"/>
+		<local:ItemView Grid.Row="3" Grid.Column="1" DataContext="{Binding Wrists}" Slot="Wrists" Margin="3, 3, 0, 3"/>
+		<local:ItemView Grid.Row="4" Grid.Column="1" DataContext="{Binding RightRing}" Slot="RightRing" Margin="3, 3, 0, 3"/>
+		<local:ItemView Grid.Row="5" Grid.Column="1" DataContext="{Binding LeftRing}" Slot="LeftRing" Margin="3, 3, 0, 0"/>
 
 	</Grid>
 
