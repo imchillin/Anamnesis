@@ -11,7 +11,7 @@
 	<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 0, 3, 3" x:Name="ContentArea">
 		<StackPanel Margin="3">
 			<GroupBox Header="Rotation">
-				<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation}" CameraRotation="{Binding CameraRotation}"/>
+				<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation}"/>
 			</GroupBox>
 
 			<GroupBox Header="scale">

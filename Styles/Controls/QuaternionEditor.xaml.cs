@@ -3,7 +3,9 @@
 
 namespace ConceptMatrix.WpfStyles.Controls
 {
+	using System;
 	using System.ComponentModel;
+	using System.Threading;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
@@ -26,10 +28,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 	{
 		public static readonly IBind<CmQuaterion> ValueDp = Binder.Register<CmQuaterion, QuaternionEditor>(nameof(Value), OnValueChanged);
 		public static readonly IBind<double> TickDp = Binder.Register<double, QuaternionEditor>(nameof(TickFrequency));
-		public static readonly IBind<CmQuaterion> CameraRotationDp = Binder.Register<CmQuaterion, QuaternionEditor>(nameof(CameraRotation), OnCameraRotationChanged);
 
 		public static readonly IBind<Quaternion> ValueQuatDp = Binder.Register<Quaternion, QuaternionEditor>(nameof(ValueQuat), OnValueQuatChanged);
-		public static readonly IBind<Quaternion> CamQuatDp = Binder.Register<Quaternion, QuaternionEditor>(nameof(CamQuat), OnCamQuatChanged);
 
 		public static readonly IBind<double> EulerXDp = Binder.Register<double, QuaternionEditor>(nameof(EulerX), OnEulerChanged);
 		public static readonly IBind<double> EulerYDp = Binder.Register<double, QuaternionEditor>(nameof(EulerY), OnEulerChanged);
@@ -65,22 +65,10 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set => ValueDp.Set(this, value);
 		}
 
-		public CmQuaterion CameraRotation
-		{
-			get => CameraRotationDp.Get(this);
-			set => CameraRotationDp.Set(this, value);
-		}
-
 		public Quaternion ValueQuat
 		{
 			get => ValueQuatDp.Get(this);
 			set => ValueQuatDp.Set(this, value);
-		}
-
-		public Quaternion CamQuat
-		{
-			get => CamQuatDp.Get(this);
-			set => CamQuatDp.Set(this, value);
 		}
 
 		public double EulerX
@@ -135,29 +123,6 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.EulerY = euler.Y;
 			sender.EulerZ = euler.Z;
 
-			sender.lockdp = false;
-		}
-
-		private static void OnCameraRotationChanged(QuaternionEditor sender, CmQuaterion value)
-		{
-			if (sender.lockdp)
-				return;
-
-			sender.lockdp = true;
-
-			sender.CamQuat = new Quaternion(sender.CameraRotation.X, sender.CameraRotation.Y, sender.CameraRotation.Z, sender.CameraRotation.W);
-			sender.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(sender.CamQuat));
-
-			sender.lockdp = false;
-		}
-
-		private static void OnCamQuatChanged(QuaternionEditor sender, Quaternion value)
-		{
-			if (sender.lockdp)
-				return;
-
-			sender.lockdp = true;
-			sender.CameraRotation = new CmQuaterion((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
 			sender.lockdp = false;
 		}
 
@@ -219,6 +184,49 @@ namespace ConceptMatrix.WpfStyles.Controls
 				delta *= 10;
 
 			this.rotationGizmo.Scroll(delta);
+		}
+
+		private void WatchCamera()
+		{
+			IMemory<float> camX = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraAngleX);
+			IMemory<float> camY = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraAngleY);
+			IMemory<float> camZ = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraRotation);
+
+			Vector3D camEuler = default;
+
+			bool vis = true;
+			while (vis && Application.Current != null)
+			{
+				// It's weird that these would be in radians. maybe the memory is actually a quaternion?
+				// TODO: investigate.
+				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camX.Value);
+				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camY.Value);
+				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
+				Quaternion q = camEuler.ToQuaternion();
+
+				try
+				{
+					Application.Current.Dispatcher.Invoke(() =>
+					{
+						vis = this.IsVisible && this.IsEnabled;
+						this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(q));
+					});
+				}
+				catch (Exception)
+				{
+				}
+
+				Thread.Sleep(16);
+			}
+		}
+
+		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (this.IsVisible)
+			{
+				// Watch camera thread
+				new Thread(new ThreadStart(this.WatchCamera)).Start();
+			}
 		}
 
 		private class RotationGizmo : ModelVisual3D

@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls"
+			 IsVisibleChanged="OnIsVisibleChanged"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="250">
 	<Grid x:Name="ContentArea">

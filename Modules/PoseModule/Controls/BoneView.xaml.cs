@@ -140,9 +140,6 @@ namespace ConceptMatrix.PoseModule.Controls
 
 		private void OnViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(this.viewModel.CameraRotation))
-				return;
-
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.UpdateState();

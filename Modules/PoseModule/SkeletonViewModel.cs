@@ -65,9 +65,6 @@ namespace ConceptMatrix.PoseModule
 
 					// Poll changes thread
 					new Thread(new ThreadStart(this.PollChanges)).Start();
-
-					// Watch camera thread
-					new Thread(new ThreadStart(this.WatchCamera)).Start();
 				}
 				else
 				{
@@ -113,12 +110,6 @@ namespace ConceptMatrix.PoseModule
 		}
 
 		public Bone MouseOverBone { get; set; }
-
-		public Quaternion CameraRotation
-		{
-			get;
-			set;
-		}
 
 		public Appearance.Races Race
 		{
@@ -435,37 +426,6 @@ namespace ConceptMatrix.PoseModule
 			}
 
 			this.IsEnabled = false;
-		}
-
-		private void WatchCamera()
-		{
-			IMemory<float> camX = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraAngleX);
-			IMemory<float> camY = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraAngleY);
-			IMemory<float> camZ = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraRotation);
-
-			while (this.IsEnabled && Application.Current != null)
-			{
-				Vector camEuler = default;
-
-				// It's weird that these would be in radians. maybe the memory is actually a quaternion?
-				// TODO: investigate.
-				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camX.Value);
-				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camY.Value);
-				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
-
-				try
-				{
-					Application.Current.Dispatcher.Invoke(() =>
-					{
-						this.CameraRotation = Quaternion.FromEuler(camEuler);
-					});
-				}
-				catch (Exception)
-				{
-				}
-
-				Thread.Sleep(32);
-			}
 		}
 	}
 }
