@@ -197,9 +197,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			bool vis = true;
 			while (vis && Application.Current != null)
 			{
-				// It's weird that these would be in radians. maybe the memory is actually a quaternion?
-				// TODO: investigate.
-				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camX.Value);
+				camEuler.Y = 180 + (float)MathUtils.RadiansToDegrees((double)camX.Value);
 				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camY.Value);
 				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
 				Quaternion q = camEuler.ToQuaternion();
@@ -296,9 +294,6 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			private void ApplyDelta(Vector3D angleEuler)
 			{
-				// special case for LHS to RHS conversion, I think.
-				angleEuler.Z *= -1;
-
 				Quaternion angle = angleEuler.ToQuaternion();
 				this.target.ValueQuat *= angle;
 			}
