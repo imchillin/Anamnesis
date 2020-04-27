@@ -93,5 +93,6 @@
 	<converters:StringHasContentToVisibilityConverter x:Key="StringHasContentToVisibility" />
 	<converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
 	<converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
-	
+	<converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
+
 </ResourceDictionary>
