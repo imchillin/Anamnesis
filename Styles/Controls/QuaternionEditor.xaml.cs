@@ -55,7 +55,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			this.Viewport.Camera = new PerspectiveCamera(new Point3D(0, 0, -2.5), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
 
-			this.WorldSpace = true;
+			this.worldSpace = false;
 		}
 
 		public double TickFrequency
