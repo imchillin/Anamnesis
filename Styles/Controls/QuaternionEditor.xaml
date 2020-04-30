@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 IsVisibleChanged="OnIsVisibleChanged"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="250">
@@ -14,24 +15,38 @@
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="150"/>
 			<RowDefinition/>
 			<RowDefinition/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Grid Grid.Row="0" Grid.ColumnSpan="2" MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseLeave="OnViewportMouseLeave" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportMouseWheel">
+		<ToggleButton Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" 
+					  Style="{StaticResource MaterialDesignActionToggleButton}" IsChecked="{Binding WorldSpace}" Height="22" Width="22"
+					  ToolTip="World / Local space rotation">
+			
+			<ToggleButton.Content>
+				<TextBlock Text="L" Margin="-3, -3, -3, 0" FontSize="16" FontWeight="Bold"/>
+			</ToggleButton.Content>
+			<materialDesign:ToggleButtonAssist.OnContent>
+				<TextBlock Text="W" Margin="-3, -1, -3, 0" FontSize="14" FontWeight="Bold"/>
+			</materialDesign:ToggleButtonAssist.OnContent>
+		</ToggleButton>
+
+
+		<Grid Grid.Row="1" Grid.ColumnSpan="2" MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseLeave="OnViewportMouseLeave" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportMouseWheel">
 			<Rectangle Fill="Transparent"/>
 			<Viewport3D x:Name="Viewport"/>
 		</Grid>
 		
-		<Label Grid.Row="1" Grid.Column="0" Content="X" VerticalContentAlignment="Center"/>
-		<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding EulerX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True"/>
+		<Label Grid.Row="2" Grid.Column="0" Content="X" VerticalContentAlignment="Center"/>
+		<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding EulerX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True"/>
 
-		<Label Grid.Row="2" Grid.Column="0" Content="Y" VerticalContentAlignment="Center"/>
-		<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding EulerY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True"/>
+		<Label Grid.Row="3" Grid.Column="0" Content="Y" VerticalContentAlignment="Center"/>
+		<cm3:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding EulerY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True"/>
 
-		<Label Grid.Row="3" Grid.Column="0" Content="Z" VerticalContentAlignment="Center"/>
-		<cm3:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding EulerZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True"/>
+		<Label Grid.Row="4" Grid.Column="0" Content="Z" VerticalContentAlignment="Center"/>
+		<cm3:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding EulerZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True"/>
 	</Grid>
 </UserControl>

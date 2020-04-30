@@ -40,6 +40,9 @@ namespace ConceptMatrix.WpfStyles.Controls
 		private RotationGizmo rotationGizmo;
 		private bool mouseDown = false;
 
+		private Quaternion worldSpaceDelta;
+		private bool worldSpace;
+
 		public QuaternionEditor()
 		{
 			this.InitializeComponent();
@@ -51,6 +54,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.Viewport.Children.Add(this.rotationGizmo);
 
 			this.Viewport.Camera = new PerspectiveCamera(new Point3D(0, 0, -2.5), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
+
+			this.WorldSpace = true;
 		}
 
 		public double TickFrequency
@@ -89,9 +94,37 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set => EulerZDp.Set(this, value);
 		}
 
+		public bool WorldSpace
+		{
+			get
+			{
+				return this.worldSpace;
+			}
+			set
+			{
+				bool old = this.worldSpace;
+				this.worldSpace = value;
+
+				if (old && !value)
+				{
+					this.ValueQuat = new Quaternion(this.Value.X, this.Value.Y, this.Value.Z, this.Value.W);
+				}
+				else
+				{
+					this.ValueQuat = Quaternion.Identity;
+					this.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(Quaternion.Identity));
+				}
+			}
+		}
+
 		private static void OnValueChanged(QuaternionEditor sender, CmQuaterion value)
 		{
 			sender.ValueQuat = new Quaternion(sender.Value.X, sender.Value.Y, sender.Value.Z, sender.Value.W);
+			sender.worldSpaceDelta = sender.ValueQuat;
+
+			if (sender.WorldSpace)
+				sender.ValueQuat = Quaternion.Identity;
+
 			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(sender.ValueQuat));
 
 			if (sender.lockdp)
@@ -109,14 +142,19 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private static void OnValueQuatChanged(QuaternionEditor sender, Quaternion value)
 		{
-			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(sender.ValueQuat));
+			Quaternion newrot = value;
+
+			if (sender.WorldSpace)
+				newrot *= sender.worldSpaceDelta;
+
+			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(newrot));
 
 			if (sender.lockdp)
 				return;
 
 			sender.lockdp = true;
 
-			sender.Value = new CmQuaterion((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
+			sender.Value = new CmQuaterion((float)newrot.X, (float)newrot.Y, (float)newrot.Z, (float)newrot.W);
 
 			Vector euler = sender.Value.ToEuler();
 			sender.EulerX = euler.X;
