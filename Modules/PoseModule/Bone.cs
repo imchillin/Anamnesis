@@ -170,6 +170,7 @@ namespace ConceptMatrix.PoseModule
 
 			this.Rotation = this.LiveRotation;
 			Quaternion newRotation = sourceNew * (sourceOldCnj * this.Rotation);
+			newRotation.Normalize();
 
 			if (this.Rotation == newRotation)
 				return;
