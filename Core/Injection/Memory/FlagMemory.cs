@@ -10,7 +10,7 @@ namespace ConceptMatrix.Injection.Memory
 		private byte[] on;
 		private byte[] off;
 
-		public FlagMemory(ProcessInjection process, UIntPtr address, byte[] on, byte[] off)
+		public FlagMemory(IProcess process, UIntPtr address, byte[] on, byte[] off)
 			: base(process, address, (ulong)on.Length)
 		{
 			this.on = on;

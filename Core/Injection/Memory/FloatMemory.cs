@@ -7,7 +7,7 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class FloatMemory : MemoryBase<float>
 	{
-		public FloatMemory(ProcessInjection process, UIntPtr address)
+		public FloatMemory(IProcess process, UIntPtr address)
 			: base(process, address, 4)
 		{
 		}

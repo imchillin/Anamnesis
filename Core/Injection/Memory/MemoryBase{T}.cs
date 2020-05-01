@@ -23,7 +23,7 @@ namespace ConceptMatrix.Injection.Memory
 
 		private Exception lastException;
 
-		public MemoryBase(ProcessInjection process, UIntPtr address, ulong length)
+		public MemoryBase(IProcess process, UIntPtr address, ulong length)
 			: base(process, address)
 		{
 			this.length = length;
@@ -166,7 +166,8 @@ namespace ConceptMatrix.Injection.Memory
 				Array.Copy(this.newData, this.oldData, (int)this.length);
 
 				Log.Write("Write memory " + this.Name + " - " + this.Description, "Injection");
-				InjectionService.WriteProcessMemory(this.process.Handle, this.address, this.oldData, (UIntPtr)this.length, out IntPtr bytesRead);
+
+				this.process.Write(this.address, this.oldData, (UIntPtr)this.length, out IntPtr bytesRead);
 				return true;
 			}
 
@@ -179,7 +180,7 @@ namespace ConceptMatrix.Injection.Memory
 			if (!InjectionService.ProcessIsAlive)
 				throw new Exception("no FFXIV process");
 
-			if (!InjectionService.ReadProcessMemory(this.process.Handle, this.address, this.newData, (UIntPtr)this.length, IntPtr.Zero))
+			if (!this.process.Read(this.address, this.newData, (UIntPtr)this.length, IntPtr.Zero))
 			{
 				int code = Marshal.GetLastWin32Error();
 

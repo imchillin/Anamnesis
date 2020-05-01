@@ -7,7 +7,7 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class BoolMemory : MemoryBase<bool>
 	{
-		public BoolMemory(ProcessInjection process, UIntPtr address)
+		public BoolMemory(IProcess process, UIntPtr address)
 			: base(process, address, 1)
 		{
 		}

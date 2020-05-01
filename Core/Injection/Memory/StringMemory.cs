@@ -10,7 +10,7 @@ namespace ConceptMatrix.Injection.Memory
 	{
 		private bool zeroTerminated = true;
 
-		public StringMemory(ProcessInjection process, UIntPtr address)
+		public StringMemory(IProcess process, UIntPtr address)
 			: base(process, address, 32)
 		{
 		}

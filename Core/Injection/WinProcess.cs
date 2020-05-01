@@ -8,7 +8,7 @@ namespace ConceptMatrix.Injection
 	using System.Diagnostics;
 	using System.Runtime.InteropServices;
 
-	public class ProcessInjection
+	public class WinProcess : IProcess
 	{
 		private ProcessModule mainModule;
 		private Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
@@ -37,6 +37,14 @@ namespace ConceptMatrix.Injection
 					return false;
 
 				return true;
+			}
+		}
+
+		public string ExecutablePath
+		{
+			get
+			{
+				return this.Process.MainModule.FileName;
 			}
 		}
 
@@ -72,7 +80,7 @@ namespace ConceptMatrix.Injection
 				throw new Exception("Target process id not responding");
 
 			Process.EnterDebugMode();
-			var debugPrivilegeCheck = CheckSeDebugPrivilege(out var isDebugEnabled);
+			int debugPrivilegeCheck = CheckSeDebugPrivilege(out bool isDebugEnabled);
 			if (debugPrivilegeCheck != 0)
 			{
 				throw new Exception($"ERROR: CheckSeDebugPrivilege failed with error: {debugPrivilegeCheck}");
@@ -107,6 +115,12 @@ namespace ConceptMatrix.Injection
 			this.is64Bit = Environment.Is64BitOperatingSystem && (IsWow64Process(this.Handle, out bool retVal) && !retVal);
 
 			Debug.WriteLine($"Attached to process: {pid}");
+		}
+
+		public ulong GetBaseAddress()
+		{
+			////(ulong)process.MainModule.BaseAddress.ToInt64())
+			return (ulong)this.Process.MainModule.BaseAddress.ToInt64();
 		}
 
 		public UIntPtr GetAddress(params IMemoryOffset[] offsets)
@@ -145,18 +159,28 @@ namespace ConceptMatrix.Injection
 			}
 		}
 
+		public bool Read(UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead)
+		{
+			return ReadProcessMemory(this.Handle, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead);
+		}
+
+		public bool Write(UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten)
+		{
+			return WriteProcessMemory(this.Handle, lpBaseAddress, lpBuffer, nSize, out lpNumberOfBytesWritten);
+		}
+
 		private static int CheckSeDebugPrivilege(out bool isDebugEnabled)
 		{
 			isDebugEnabled = false;
 
-			if (!OpenProcessToken(GetCurrentProcess(), 0x8 /*TOKEN_QUERY*/, out var tokenHandle))
+			if (!OpenProcessToken(GetCurrentProcess(), 0x8 /*TOKEN_QUERY*/, out IntPtr tokenHandle))
 				return Marshal.GetLastWin32Error();
 
-			var luidDebugPrivilege = default(LUID);
+			LUID luidDebugPrivilege = default(LUID);
 			if (!LookupPrivilegeValue(null, "SeDebugPrivilege", ref luidDebugPrivilege))
 				return Marshal.GetLastWin32Error();
 
-			var requiredPrivileges = new PRIVILEGE_SET
+			PRIVILEGE_SET requiredPrivileges = new PRIVILEGE_SET
 			{
 				PrivilegeCount = 1,
 				Control = 1 /* PRIVILEGE_SET_ALL_NECESSARY */,
@@ -166,7 +190,7 @@ namespace ConceptMatrix.Injection
 			requiredPrivileges.Privilege[0].Luid = luidDebugPrivilege;
 			requiredPrivileges.Privilege[0].Attributes = 2 /* SE_PRIVILEGE_ENABLED */;
 
-			if (!PrivilegeCheck(tokenHandle, ref requiredPrivileges, out var bResult))
+			if (!PrivilegeCheck(tokenHandle, ref requiredPrivileges, out bool bResult))
 				return Marshal.GetLastWin32Error();
 
 			// bResult == true => SeDebugPrivilege is on; otherwise it's off
@@ -185,6 +209,9 @@ namespace ConceptMatrix.Injection
 
 		[DllImport("kernel32.dll")]
 		private static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead);
+
+		[DllImport("kernel32.dll")]
+		private static extern bool WriteProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern IntPtr GetCurrentProcess();

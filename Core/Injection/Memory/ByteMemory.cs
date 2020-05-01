@@ -7,7 +7,7 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class ByteMemory : MemoryBase<byte>
 	{
-		public ByteMemory(ProcessInjection process, UIntPtr address)
+		public ByteMemory(IProcess process, UIntPtr address)
 			: base(process, address, 1)
 		{
 		}

@@ -7,7 +7,7 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class EquipmentMemory : MemoryBase<Equipment>
 	{
-		public EquipmentMemory(ProcessInjection process, UIntPtr address)
+		public EquipmentMemory(IProcess process, UIntPtr address)
 			: base(process, address, 40)
 		{
 		}

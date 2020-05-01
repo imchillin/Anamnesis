@@ -7,7 +7,7 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class VectorMemory : MemoryBase<Vector>
 	{
-		public VectorMemory(ProcessInjection process, UIntPtr address)
+		public VectorMemory(IProcess process, UIntPtr address)
 			: base(process, address, 12)
 		{
 		}

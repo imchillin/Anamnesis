@@ -6,6 +6,7 @@ namespace ConceptMatrix.Injection
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
+	using System.IO;
 	using System.Reflection;
 	using System.Runtime.InteropServices;
 	using System.Threading;
@@ -31,10 +32,18 @@ namespace ConceptMatrix.Injection
 			private set;
 		}
 
-		public ProcessInjection Process
+		public IProcess Process
 		{
 			get;
 			private set;
+		}
+
+		public string GamePath
+		{
+			get
+			{
+				return Path.GetDirectoryName(this.Process.ExecutablePath) + "\\..\\";
+			}
 		}
 
 		public Task Initialize()
@@ -65,7 +74,11 @@ namespace ConceptMatrix.Injection
 				}
 			}
 
-			this.Process = new ProcessInjection();
+#if NO_GAME
+			this.Process = new DummyProcess();
+#else
+			this.Process = new WinProcess();
+#endif
 
 			// TODO: allow for process selection
 			try
@@ -94,15 +107,10 @@ namespace ConceptMatrix.Injection
 			return Task.CompletedTask;
 		}
 
-		public Process GetGameProcess()
-		{
-			return this.Process.Process;
-		}
-
 		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
 		{
 			List<IMemoryOffset> newOffsets = new List<IMemoryOffset>();
-			newOffsets.Add(new MappedBaseOffset(this.Process.Process, (BaseOffset)baseOffset));
+			newOffsets.Add(new MappedBaseOffset(this.Process, (BaseOffset)baseOffset));
 			newOffsets.AddRange(offsets);
 			return this.GetMemory<T>(newOffsets.ToArray());
 		}
@@ -134,7 +142,7 @@ namespace ConceptMatrix.Injection
 
 		public UIntPtr GetAddress(IBaseMemoryOffset offset)
 		{
-			IMemoryOffset newOffset = new MappedBaseOffset(this.Process.Process, (BaseOffset)offset);
+			IMemoryOffset newOffset = new MappedBaseOffset(this.Process, (BaseOffset)offset);
 			return this.Process.GetAddress(newOffset);
 		}
 
@@ -142,12 +150,6 @@ namespace ConceptMatrix.Injection
 		{
 			return this.Process.GetAddress(offsets);
 		}
-
-		[DllImport("kernel32.dll")]
-		internal static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead);
-
-		[DllImport("kernel32.dll")]
-		internal static extern bool WriteProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten);
 
 		private static string GetString(IMemoryOffset offset)
 		{
@@ -231,12 +233,12 @@ namespace ConceptMatrix.Injection
 
 		public class MappedBaseOffset : IBaseMemoryOffset
 		{
-			public MappedBaseOffset(Process process, BaseOffset offset)
+			public MappedBaseOffset(IProcess process, BaseOffset offset)
 			{
 				if (offset.Offsets == null || offset.Offsets.Length <= 0)
 					throw new Exception("Invalid base offset");
 
-				this.Offsets = new[] { ((ulong)process.MainModule.BaseAddress.ToInt64()) + offset.Offsets[0] };
+				this.Offsets = new[] { process.GetBaseAddress() + offset.Offsets[0] };
 			}
 
 			public ulong[] Offsets

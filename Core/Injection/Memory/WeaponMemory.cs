@@ -7,7 +7,7 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class WeaponMemory : MemoryBase<Weapon>
 	{
-		public WeaponMemory(ProcessInjection process, UIntPtr address)
+		public WeaponMemory(IProcess process, UIntPtr address)
 			: base(process, address, 7)
 		{
 		}

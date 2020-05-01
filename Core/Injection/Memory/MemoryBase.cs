@@ -8,12 +8,12 @@ namespace ConceptMatrix.Injection.Memory
 
 	public abstract class MemoryBase
 	{
-		protected ProcessInjection process;
+		protected IProcess process;
 		protected UIntPtr address;
 
 		private static List<MemoryBase> activeMemory = new List<MemoryBase>();
 
-		public MemoryBase(ProcessInjection process, UIntPtr address)
+		public MemoryBase(IProcess process, UIntPtr address)
 		{
 			this.process = process;
 			this.address = address;

@@ -104,8 +104,8 @@ namespace ConceptMatrix.SaintCoinachModule
 		public Task Start()
 		{
 			IInjectionService injection = Services.Get<IInjectionService>();
-			Process process = injection.GetGameProcess();
-			string directory = Path.GetDirectoryName(process.MainModule.FileName) + "\\..\\";
+
+			string directory = injection.GamePath;
 
 			Stopwatch sw = new Stopwatch();
 			sw.Start();

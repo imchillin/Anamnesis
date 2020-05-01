@@ -7,9 +7,8 @@ namespace ConceptMatrix
 
 	public interface IInjectionService : IService
 	{
+		string GamePath { get; }
 		IMemory<T> GetMemory<T>(IBaseMemoryOffset baseAddress, params IMemoryOffset[] offsets);
-
-		Process GetGameProcess();
 	}
 
 	public interface IMemoryOffset
