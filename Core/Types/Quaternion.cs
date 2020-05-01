@@ -122,6 +122,26 @@ namespace ConceptMatrix
 			return v;
 		}
 
+		public void Normalize()
+		{
+			float num = (this.X * this.X) + (this.Y * this.Y) + (this.Z * this.Z) + (this.W * this.W);
+			if (num > float.MaxValue)
+			{
+				float num2 = 1.0f / Max(Math.Abs(this.X), Math.Abs(this.Y), Math.Abs(this.Z), Math.Abs(this.W));
+				this.X *= num2;
+				this.Y *= num2;
+				this.Z *= num2;
+				this.W *= num2;
+				num = (this.X * this.X) + (this.Y * this.Y) + (this.Z * this.Z) + (this.W * this.W);
+			}
+
+			float num3 = 1.0f / (float)Math.Sqrt(num);
+			this.X *= num3;
+			this.Y *= num3;
+			this.Z *= num3;
+			this.W *= num3;
+		}
+
 		public override bool Equals(object obj)
 		{
 			return obj is Quaternion quaternion && this.Equals(quaternion);
@@ -165,6 +185,20 @@ namespace ConceptMatrix
 		public override string ToString()
 		{
 			return this.X + ", " + this.Y + ", " + this.Z + ", " + this.W;
+		}
+
+		private static float Max(float a, float b, float c, float d)
+		{
+			if (b > a)
+				a = b;
+
+			if (c > a)
+				a = c;
+
+			if (d > a)
+				a = d;
+
+			return a;
 		}
 	}
 }

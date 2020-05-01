@@ -68,6 +68,8 @@ namespace ConceptMatrix.PoseModule
 				{
 					try
 					{
+						this.Bones[bone.BoneName].Rotation.Normalize();
+
 						bone.Transform = this.Bones[bone.BoneName];
 					}
 					catch (Exception ex)
