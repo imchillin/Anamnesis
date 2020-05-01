@@ -28,8 +28,11 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Shutdown()
 		{
-			this.logWriter.Dispose();
-			this.logWriter = null;
+			lock (this.logWriter)
+			{
+				this.logWriter.Dispose();
+				this.logWriter = null;
+			}
 
 			return Task.CompletedTask;
 		}
@@ -44,22 +47,25 @@ namespace ConceptMatrix.GUI.Services
 			if (this.logWriter == null)
 				return;
 
-			this.logWriter.Write("[");
-			this.logWriter.Write(category);
-			this.logWriter.Write("][");
-			this.logWriter.Write(severity);
-			this.logWriter.Write("] ");
-
-			while (ex != null)
+			lock (this.logWriter)
 			{
-				this.logWriter.WriteLine(ex.GetType().Name);
-				this.logWriter.WriteLine(ex.Message);
-				this.logWriter.WriteLine(ex.StackTrace);
+				this.logWriter.Write("[");
+				this.logWriter.Write(category);
+				this.logWriter.Write("][");
+				this.logWriter.Write(severity);
+				this.logWriter.Write("] ");
 
-				ex = ex.InnerException;
+				while (ex != null)
+				{
+					this.logWriter.WriteLine(ex.GetType().Name);
+					this.logWriter.WriteLine(ex.Message);
+					this.logWriter.WriteLine(ex.StackTrace);
+
+					ex = ex.InnerException;
+				}
+
+				this.logWriter.Flush();
 			}
-
-			this.logWriter.Flush();
 		}
 
 		private void OnLog(string message, Log.Severity severity, string category)
@@ -67,14 +73,17 @@ namespace ConceptMatrix.GUI.Services
 			if (this.logWriter == null)
 				return;
 
-			this.logWriter.Write("[");
-			this.logWriter.Write(category);
-			this.logWriter.Write("][");
-			this.logWriter.Write(severity);
-			this.logWriter.Write("] ");
-			this.logWriter.WriteLine(message);
+			lock (this.logWriter)
+			{
+				this.logWriter.Write("[");
+				this.logWriter.Write(category);
+				this.logWriter.Write("][");
+				this.logWriter.Write(severity);
+				this.logWriter.Write("] ");
+				this.logWriter.WriteLine(message);
 
-			this.logWriter.Flush();
+				this.logWriter.Flush();
+			}
 		}
 	}
 }
