@@ -14,12 +14,14 @@ namespace ConceptMatrix.PoseModule
 		public Bone Parent;
 
 		private IMemory<Transform> transformMem;
+		private IMemory<Quaternion> rootRotationMem;
 
-		public Bone(string name, IMemory<Transform> transformMem, SkeletonService.Bone definition)
+		public Bone(string name, IMemory<Transform> transformMem, IMemory<Quaternion> root, SkeletonService.Bone definition)
 		{
 			this.Definition = definition;
 			this.BoneName = name;
 			this.transformMem = transformMem;
+			this.rootRotationMem = root;
 
 			this.Rotation = this.LiveRotation;
 			this.Scale = this.LiveScale;
@@ -34,6 +36,14 @@ namespace ConceptMatrix.PoseModule
 		public Quaternion Rotation { get; set; }
 		public Vector Scale { get; set; }
 		public Vector Position { get; set; }
+
+		public Quaternion RootRotation
+		{
+			get
+			{
+				return this.rootRotationMem.Value;
+			}
+		}
 
 		public string Tooltip
 		{
@@ -102,6 +112,13 @@ namespace ConceptMatrix.PoseModule
 				trans.Position = value;
 				this.Transform = trans;
 			}
+		}
+
+		public void Read()
+		{
+			this.Rotation = this.LiveRotation;
+			this.Scale = this.LiveScale;
+			this.Position = this.LivePosition;
 		}
 
 		public void ApplyTransform()

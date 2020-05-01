@@ -29,11 +29,13 @@ namespace ConceptMatrix.PoseModule
 		private IMemory<Flag> phys2Mem;
 		private IMemory<Flag> phys3Mem;
 
+		private IMemory<Quaternion> rootRotationMem;
+
 		private Dictionary<string, Bone> bones;
 		private Bone currentBone;
 		private bool enabled;
 
-		private IMemory<Appearance> appearance;
+		private IMemory<Appearance> appearanceMem;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -106,6 +108,7 @@ namespace ConceptMatrix.PoseModule
 					this.currentBone.ApplyTransform();
 
 				this.currentBone = value;
+				this.currentBone?.Read();
 			}
 		}
 
@@ -115,7 +118,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.appearance.Value.Race;
+				return this.appearanceMem.Value.Race;
 			}
 		}
 
@@ -139,7 +142,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.IsViera && this.appearance.Value.TailEarsType <= 1;
+				return this.IsViera && this.appearanceMem.Value.TailEarsType <= 1;
 			}
 		}
 
@@ -147,7 +150,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.IsViera && this.appearance.Value.TailEarsType == 2;
+				return this.IsViera && this.appearanceMem.Value.TailEarsType == 2;
 			}
 		}
 
@@ -155,7 +158,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.IsViera && this.appearance.Value.TailEarsType == 3;
+				return this.IsViera && this.appearanceMem.Value.TailEarsType == 3;
 			}
 		}
 
@@ -163,7 +166,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.IsViera && this.appearance.Value.TailEarsType == 4;
+				return this.IsViera && this.appearanceMem.Value.TailEarsType == 4;
 			}
 		}
 
@@ -219,7 +222,8 @@ namespace ConceptMatrix.PoseModule
 			this.phys2Mem = Offsets.Main.Physics2Flag.GetMemory();
 			this.phys3Mem = Offsets.Main.Physics3Flag.GetMemory();
 
-			this.appearance = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
+			this.appearanceMem = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
+			this.rootRotationMem = selection.BaseAddress.GetMemory(Offsets.Main.Rotation);
 
 			await this.GenerateBones(selection);
 
@@ -246,7 +250,8 @@ namespace ConceptMatrix.PoseModule
 			this.phys2Mem?.Dispose();
 			this.phys3Mem?.Dispose();
 
-			this.appearance?.Dispose();
+			this.appearanceMem?.Dispose();
+			this.rootRotationMem?.Dispose();
 
 			this.bones?.Clear();
 		}
@@ -329,7 +334,7 @@ namespace ConceptMatrix.PoseModule
 				try
 				{
 					IMemory<Transform> transMem = selection.BaseAddress.GetMemory(boneDef.Offsets);
-					this.bones[name] = new Bone(name, transMem, boneDef);
+					this.bones[name] = new Bone(name, transMem, this.rootRotationMem, boneDef);
 				}
 				catch (Exception ex)
 				{

@@ -17,7 +17,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
-	using CmQuaterion = ConceptMatrix.Quaternion;
+	using CmQuaternion = ConceptMatrix.Quaternion;
 	using Vector = ConceptMatrix.Vector;
 
 	/// <summary>
@@ -26,7 +26,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 	[AddINotifyPropertyChangedInterface]
 	public partial class QuaternionEditor : UserControl
 	{
-		public static readonly IBind<CmQuaterion> ValueDp = Binder.Register<CmQuaterion, QuaternionEditor>(nameof(Value), OnValueChanged);
+		public static readonly IBind<CmQuaternion> ValueDp = Binder.Register<CmQuaternion, QuaternionEditor>(nameof(Value), OnValueChanged);
+		public static readonly IBind<CmQuaternion?> RootRotationdp = Binder.Register<CmQuaternion?, QuaternionEditor>(nameof(RootRotation), OnRootRotationChanged);
 		public static readonly IBind<double> TickDp = Binder.Register<double, QuaternionEditor>(nameof(TickFrequency));
 
 		public static readonly IBind<Quaternion> ValueQuatDp = Binder.Register<Quaternion, QuaternionEditor>(nameof(ValueQuat), OnValueQuatChanged);
@@ -64,10 +65,16 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set => TickDp.Set(this, value);
 		}
 
-		public CmQuaterion Value
+		public CmQuaternion Value
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
+		}
+
+		public CmQuaternion? RootRotation
+		{
+			get => RootRotationdp.Get(this);
+			set => RootRotationdp.Set(this, value);
 		}
 
 		public Quaternion ValueQuat
@@ -94,6 +101,15 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set => EulerZDp.Set(this, value);
 		}
 
+		public Quaternion Root
+		{
+			get
+			{
+				CmQuaternion root = (CmQuaternion)this.RootRotation;
+				return new Quaternion(root.X, root.Y, root.Z, root.W);
+			}
+		}
+
 		public bool WorldSpace
 		{
 			get
@@ -107,7 +123,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 				if (old && !value)
 				{
-					this.ValueQuat = new Quaternion(this.Value.X, this.Value.Y, this.Value.Z, this.Value.W);
+					OnValueChanged(this, this.Value);
 				}
 				else
 				{
@@ -117,9 +133,17 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
-		private static void OnValueChanged(QuaternionEditor sender, CmQuaterion value)
+		private static void OnValueChanged(QuaternionEditor sender, CmQuaternion value)
 		{
-			sender.ValueQuat = new Quaternion(sender.Value.X, sender.Value.Y, sender.Value.Z, sender.Value.W);
+			sender.ValueQuat = new Quaternion(value.X, value.Y, value.Z, value.W);
+
+			if (sender.RootRotation != null)
+			{
+				Quaternion rootInv = sender.Root;
+				rootInv.Invert();
+				sender.ValueQuat *= rootInv;
+			}
+
 			sender.worldSpaceDelta = sender.ValueQuat;
 
 			if (sender.WorldSpace)
@@ -140,6 +164,11 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.lockdp = false;
 		}
 
+		private static void OnRootRotationChanged(QuaternionEditor sender, CmQuaternion? value)
+		{
+			OnValueChanged(sender, sender.Value);
+		}
+
 		private static void OnValueQuatChanged(QuaternionEditor sender, Quaternion value)
 		{
 			Quaternion newrot = value;
@@ -154,7 +183,12 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			sender.lockdp = true;
 
-			sender.Value = new CmQuaterion((float)newrot.X, (float)newrot.Y, (float)newrot.Z, (float)newrot.W);
+			if (sender.RootRotation != null)
+			{
+				newrot *= sender.Root;
+			}
+
+			sender.Value = new CmQuaternion((float)newrot.X, (float)newrot.Y, (float)newrot.Z, (float)newrot.W);
 
 			Vector euler = sender.Value.ToEuler();
 			sender.EulerX = euler.X;
@@ -171,7 +205,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			sender.lockdp = true;
 			Vector euler = new Vector((float)sender.EulerX, (float)sender.EulerY, (float)sender.EulerZ);
-			sender.Value = CmQuaterion.FromEuler(euler);
+			sender.Value = CmQuaternion.FromEuler(euler);
 			sender.lockdp = false;
 		}
 
@@ -235,7 +269,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			bool vis = true;
 			while (vis && Application.Current != null)
 			{
-				camEuler.Y = 180 + (float)MathUtils.RadiansToDegrees((double)camX.Value);
+				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camX.Value);
 				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camY.Value);
 				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
 				Quaternion q = camEuler.ToQuaternion();
@@ -244,7 +278,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 				{
 					Application.Current.Dispatcher.Invoke(() =>
 					{
-						vis = this.IsVisible && this.IsEnabled;
+						vis = this.IsVisible; ////&& this.IsEnabled;
 						this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(q));
 					});
 				}
@@ -427,6 +461,10 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 					Vector3D cross = Vector3D.CrossProduct(from, to);
 					if (Vector3D.DotProduct(axis, cross) < 0)
+						angle = -angle;
+
+					// X rotation gizmo is always backwards...
+					if (this.Axis.X >= 1)
 						angle = -angle;
 
 					return this.Axis * (angle * 2);
