@@ -139,9 +139,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			if (sender.RootRotation != null)
 			{
-				Quaternion rootInv = sender.Root;
-				rootInv.Invert();
-				sender.ValueQuat *= rootInv;
+				sender.ValueQuat = sender.Root * sender.ValueQuat;
 			}
 
 			sender.worldSpaceDelta = sender.ValueQuat;
@@ -185,7 +183,9 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			if (sender.RootRotation != null)
 			{
-				newrot *= sender.Root;
+				Quaternion rootInv = sender.Root;
+				rootInv.Invert();
+				newrot = rootInv * newrot;
 			}
 
 			sender.Value = new CmQuaternion((float)newrot.X, (float)newrot.Y, (float)newrot.Z, (float)newrot.W);
@@ -269,7 +269,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			bool vis = true;
 			while (vis && Application.Current != null)
 			{
-				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camX.Value);
+				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camX.Value) - 180;
 				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camY.Value);
 				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
 				Quaternion q = camEuler.ToQuaternion();
