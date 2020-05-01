@@ -28,7 +28,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Shutdown()
 		{
-			lock (this.logWriter)
+			lock (this)
 			{
 				this.logWriter.Dispose();
 				this.logWriter = null;
@@ -44,11 +44,11 @@ namespace ConceptMatrix.GUI.Services
 
 		private void OnException(Exception ex, Log.Severity severity, string category)
 		{
-			if (this.logWriter == null)
-				return;
-
-			lock (this.logWriter)
+			lock (this)
 			{
+				if (this.logWriter == null)
+					return;
+
 				this.logWriter.Write("[");
 				this.logWriter.Write(category);
 				this.logWriter.Write("][");
@@ -70,11 +70,11 @@ namespace ConceptMatrix.GUI.Services
 
 		private void OnLog(string message, Log.Severity severity, string category)
 		{
-			if (this.logWriter == null)
-				return;
-
-			lock (this.logWriter)
+			lock (this)
 			{
+				if (this.logWriter == null)
+					return;
+
 				this.logWriter.Write("[");
 				this.logWriter.Write(category);
 				this.logWriter.Write("][");
