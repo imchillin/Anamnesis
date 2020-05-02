@@ -16,7 +16,10 @@
 		Background="Transparent"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"
+		
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
+		TextBlock.FontSize="12"
+		
 		Icon="/Assets/Concept Matrix.ico">
 	
 	<Grid Margin="10">
