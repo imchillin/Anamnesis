@@ -103,12 +103,12 @@ namespace ConceptMatrix
 
 		private void OnException(Exception ex, Log.Severity severity, string category)
 		{
-			if (Application.Current == null)
-				return;
-
 			// Don't block the thread
 			Task.Run(() =>
 			{
+				if (Application.Current == null)
+					return;
+
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					ErrorDialog dlg = new ErrorDialog(ex, severity == Log.Severity.Critical);

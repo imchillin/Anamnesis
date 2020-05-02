@@ -13,6 +13,16 @@ namespace ConceptMatrix.GUI.Services
 
 	public class FileService : IFileService
 	{
+		public static string StoreDirectory
+		{
+			get
+			{
+				string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+				dir += "/Concept Matrix 3/";
+				return dir;
+			}
+		}
+
 		public Task Initialize()
 		{
 			return Task.CompletedTask;
