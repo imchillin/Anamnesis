@@ -415,8 +415,8 @@
 
 						<TextBlock Grid.Column="0" Grid.Row="0" Text="Legs" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
-							<controls:BoneView BoneName="HandLeft" Label="L"/>
-							<controls:BoneView BoneName="HandRight" Label="R"/>
+							<controls:BoneView BoneName="LegLeft" Label="L"/>
+							<controls:BoneView BoneName="LegRight" Label="R"/>
 						</StackPanel>
 
 						<TextBlock Grid.Column="2" Grid.Row="0" Text="Poleyns" Style="{DynamicResource Label}"/>
