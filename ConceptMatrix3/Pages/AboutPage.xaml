@@ -9,9 +9,38 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"
 			 d:DesignWidth="900">
-	
-	<Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="ContentArea">
-
-
-	</Grid>
+	<ScrollViewer>
+		<StackPanel Width="250" Margin="10">
+			<GroupBox Header="Version Info">
+				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15">Version info placeholder.</TextBlock>
+			</GroupBox>
+			<GroupBox Header="Proudly Open Source">
+				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15">This project is completely free and open source software. Please feel free to leave the team a Star on 
+				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/imchillin/CM3">GitHub</Hyperlink>.</TextBlock>
+			</GroupBox>
+			<GroupBox Header="Get in Touch">
+				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15">Want to follow development, ask a question, look for help, raise a bug, or just say hi? Visit us on
+				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://discord.gg/EenZwsN">Discord</Hyperlink>,
+				<fa:IconBlock Icon="Twitter"/> <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://twitter.com/ffxivcmtool">Twitter</Hyperlink>, and
+				<fa:IconBlock Icon="Trello"/> <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://trello.com/b/ay2Ckdzg/cm3">Trello</Hyperlink>.</TextBlock>
+			</GroupBox>
+			<GroupBox Header="Donate to the Devs!">
+				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15">This project is a labor of love. Please consider donating to the members of the dev team via Ko-fi to say thank you!<LineBreak />
+				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://ko-fi.com/leonblade">LeonBlade</Hyperlink><LineBreak />
+				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://ko-fi.com/enalagrange">Ena</Hyperlink><LineBreak />
+				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://ko-fi.com/missanithrope">Yuuki/MissAniThrope</Hyperlink></TextBlock>
+			</GroupBox>
+			<GroupBox Header="About the Project">
+				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15">Concept Matrix started as a trainer called SSTool created by LeonBlade and has evolved into a fully featured Windows app thanks to contributions over its lifetime by Johto, Lilly, Krisan Thyme, Goat and Seria Myouna.<LineBreak /><LineBreak />The current build, CM3, is a complete rewrite by Yuuki with additions by LeonBlade, Ena, and MissAniThrope.<LineBreak /><LineBreak />The Concept Matrix project is built in .net Core and WPF, and powered by 
+				<Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/ufx/SaintCoinach">Saint Coinach</Hyperlink>, 
+				<Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://materialdesigninxaml.net/">Material Design In XAML</Hyperlink>, 
+				<Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/Fody/Fody">Fody</Hyperlink>, 
+				<Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/Fody/PropertyChanged">Fody.PropertyChanged</Hyperlink>, 
+				<Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://fontawesome.com/">FontAwesome</Hyperlink>, 
+				<Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/awesome-inc/FontAwesome.Sharp">FontAwesome Sharp</Hyperlink>, 
+				<Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/XamlAnimatedGif/WpfAnimatedGif">WPF Animated Gif</Hyperlink>, and 
+				<Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/DotNetAnalyzers/StyleCopAnalyzers">StyleCop Analyzers</Hyperlink>.</TextBlock>
+			</GroupBox>
+		</StackPanel>
+	</ScrollViewer>
 </UserControl>

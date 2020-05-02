@@ -11,5 +11,9 @@ namespace ConceptMatrix.GUI.Pages
 		{
 			this.InitializeComponent();
 		}
+
+		private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+		{
+		}
 	}
 }
