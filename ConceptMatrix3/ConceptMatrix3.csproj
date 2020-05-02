@@ -88,6 +88,9 @@
 			<SubType>Code</SubType>
 			<DependentUpon>MainWindow.xaml</DependentUpon>
 		</Compile>
+		<Compile Update="Pages\AboutPage.xaml.cs">
+		  <SubType>Code</SubType>
+		</Compile>
 		<Compile Update="SplashWindow.xaml.cs">
 			<DependentUpon>SplashWindow.xaml</DependentUpon>
 		</Compile>
@@ -117,6 +120,9 @@
 		</Page>
 		<Page Update="MainWindow.xaml">
 			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Pages\AboutPage.xaml">
+		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="SplashWindow.xaml">
 			<SubType>Designer</SubType>

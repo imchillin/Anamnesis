@@ -82,6 +82,7 @@ namespace ConceptMatrix.GUI
 			await this.Add<ModuleService>();
 
 			this.Get<IViewService>().AddPage<AdvancedActorPage>("Advanced/Actor");
+			this.Get<IViewService>().AddPage<AboutPage>("Advanced/About");
 
 			this.IsInitialized = true;
 			Log.Write($"Services Initialized", "Services");
