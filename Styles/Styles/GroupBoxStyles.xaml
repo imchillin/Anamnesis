@@ -30,7 +30,7 @@
 						<ContentPresenter 
 							Grid.Row="0"
 							Grid.Column="0"
-							Margin="3, 0, 0, 0"
+							Margin="0"
 							ContentSource="Header" 
 							RecognizesAccessKey="True"
 							ContentStringFormat="{TemplateBinding HeaderStringFormat}"
@@ -41,7 +41,7 @@
 
 						<Border 
 							Grid.ColumnSpan="2"
-							Margin="3, 0, 3, 0"
+							Margin="0"
 							Grid.Row="1"
 							Background="{TemplateBinding Background}" 
 							BorderThickness="0"
