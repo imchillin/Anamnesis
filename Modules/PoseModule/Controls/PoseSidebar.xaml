@@ -29,6 +29,7 @@
 					<RowDefinition/>
 					<RowDefinition/>
 					<RowDefinition/>
+					<RowDefinition/>
 				</Grid.RowDefinitions>
 
 				<Label Grid.Row="0" Grid.Column="0" Content="Enable" VerticalContentAlignment="Center"/>
@@ -37,7 +38,10 @@
 				<Label Grid.Row="1" Grid.Column="0" Content="Flip Sides" VerticalContentAlignment="Center"/>
 				<ToggleButton Grid.Row="1" Grid.Column="1" IsChecked="{Binding FlipSides}"/>
 
-				<Grid Grid.Row="3" Grid.ColumnSpan="2"  Margin="0, 6, 0, 0">
+				<Label Grid.Row="3" Grid.Column="0" Content="Parenting" VerticalContentAlignment="Center"/>
+				<ToggleButton Grid.Row="3" Grid.Column="1" IsChecked="{Binding ParentingEnabled}"/>
+
+				<Grid Grid.Row="4" Grid.ColumnSpan="2"  Margin="0, 6, 0, 0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition/>

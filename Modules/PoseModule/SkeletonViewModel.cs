@@ -85,11 +85,8 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
-		public bool FlipSides
-		{
-			get;
-			set;
-		}
+		public bool FlipSides { get; set; } = false;
+		public bool ParentingEnabled { get; set; } = true;
 
 		public Bone CurrentBone
 		{

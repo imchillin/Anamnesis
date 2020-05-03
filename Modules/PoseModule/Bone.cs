@@ -135,9 +135,12 @@ namespace ConceptMatrix.PoseModule
 				Quaternion oldRotationConjugate = oldrotation;
 				oldRotationConjugate.Conjugate();
 
-				foreach (Bone child in this.Children)
+				if (Module.SkeletonViewModel.ParentingEnabled)
 				{
-					child.ApplyRotation(oldRotationConjugate, newRotation);
+					foreach (Bone child in this.Children)
+					{
+						child.ApplyRotation(oldRotationConjugate, newRotation);
+					}
 				}
 			}
 
@@ -146,9 +149,12 @@ namespace ConceptMatrix.PoseModule
 				Vector delta = this.Scale - this.LiveScale;
 				this.LiveScale = this.Scale;
 
-				foreach (Bone child in this.Children)
+				if (Module.SkeletonViewModel.ParentingEnabled)
 				{
-					child.ApplyScale(delta);
+					foreach (Bone child in this.Children)
+					{
+						child.ApplyScale(delta);
+					}
 				}
 			}
 
