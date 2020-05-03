@@ -141,7 +141,7 @@
 						<TextBlock Grid.Column="6" Grid.Row="2" Text="Upper Lip" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="2" Orientation="Horizontal">
 							<controls:BoneView BoneName="LipUpperA" Label="1"/>
-							<controls:BoneView BoneName="LipUpperB" Label="2" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
+							<controls:BoneView BoneName="LipUpperB" Label="2"/>
 						</StackPanel>
 
 						<TextBlock Grid.Column="8" Grid.Row="2" Text="Lower Lip" Style="{DynamicResource Label}"/>
