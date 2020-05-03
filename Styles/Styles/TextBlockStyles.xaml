@@ -1,5 +1,18 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<Style TargetType="TextBlock" x:Key="Body">
+		<Setter Property="FontWeight" Value="Normal"/>
+		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+
+		<Style.Resources>
+			<Style TargetType="Hyperlink">
+				<Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
+			</Style>
+		</Style.Resources>
+
+	</Style>
 	
 	<Style TargetType="TextBlock" x:Key="Label">
 		<Setter Property="FontWeight" Value="Normal"/>

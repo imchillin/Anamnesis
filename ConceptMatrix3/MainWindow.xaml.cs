@@ -177,6 +177,17 @@ namespace ConceptMatrix.GUI
 			App.Services.Get<IViewService>().ShowDrawer<SettingsView>("Settings");
 		}
 
+		private void OnAboutClick(object sender, RoutedEventArgs e)
+		{
+			if (this.DrawerHost.IsRightDrawerOpen)
+			{
+				this.DrawerHost.IsRightDrawerOpen = false;
+				return;
+			}
+
+			App.Services.Get<IViewService>().ShowDrawer<AboutView>("About");
+		}
+
 		private void OnAlwaysOnTopChecked(object sender, RoutedEventArgs e)
 		{
 			this.Topmost = true;
