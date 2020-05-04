@@ -122,15 +122,15 @@
 
 			<!-- Left -->
 			<controls:ColorControl Grid.Row="0" Grid.Column="1" ToolTip="Left Eye Color" Value="{Binding Appearance.LEyeColor}" Type="Eyes" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
-			<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="1" ToolTip="Left Eye Tint" Width="22"/>
+			<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="1" ToolTip="Left Eye Tint" Width="22" Value="{Binding LeftEyeColor}"/>
 
 			<!-- Right -->
 			<controls:ColorControl Grid.Row="0" Grid.Column="2" ToolTip="Right Eye Color" Value="{Binding Appearance.REyeColor}" Type="Eyes" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
-			<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="2" ToolTip="Right Eye Tint" Width="22"/>
+			<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="2" ToolTip="Right Eye Tint" Width="22" Value="{Binding RightEyeColor}"/>
 
 			<!-- Limbal Ring -->
 			<controls:ColorControl Grid.Row="0" Grid.Column="3" ToolTip="Limbal Ring Color" Value="{Binding Appearance.LimbalEyes}" Type="Eyes" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
-			<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="3" ToolTip="Limbal Ring Tint" Width="22" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+			<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="3" ToolTip="Limbal Ring Tint" Width="22" Value="{Binding LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
 		</Grid>
 
 		<!-- Face Type -->
