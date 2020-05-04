@@ -4,13 +4,15 @@
 namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.Windows.Controls;
+	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.WpfStyles.Drawers;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
 	/// </summary>
-	public partial class EquipmentSelector : UserControl, IDrawer
+	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
 		private ItemSlots slot;
 
@@ -32,6 +34,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		}
 
 		public event DrawerEvent Close;
+		public event DrawerEvent SelectionChanged;
 
 		public IItem Value
 		{
@@ -46,9 +49,22 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
+		SelectorDrawer SelectorDrawer.ISelectorView.Selector
+		{
+			get
+			{
+				return this.Selector;
+			}
+		}
+
 		private void OnClose()
 		{
 			this.Close?.Invoke();
+		}
+
+		private void OnSelectionChanged()
+		{
+			this.SelectionChanged?.Invoke();
 		}
 
 		private bool OnFilter(object obj, string[] search = null)

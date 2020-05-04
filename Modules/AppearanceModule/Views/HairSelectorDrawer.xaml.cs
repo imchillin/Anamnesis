@@ -11,6 +11,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 	/// </summary>
 	public partial class HairSelectorDrawer : UserControl, IDrawer
 	{
+		public delegate void SelectorEvent(byte value);
+
 		public HairSelectorDrawer(Appearance.Genders gender, Appearance.Tribes tribe, byte value)
 		{
 			this.InitializeComponent();
@@ -24,6 +26,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		}
 
 		public event DrawerEvent Close;
+		public event SelectorEvent SelectionChanged;
 
 		public ICharaMakeCustomize SelectedItem { get; set; }
 
@@ -46,7 +49,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (this.SelectedItem == null)
 				return;
 
-			this.Close?.Invoke();
+			this.SelectionChanged?.Invoke(this.Selected);
 		}
 	}
 }

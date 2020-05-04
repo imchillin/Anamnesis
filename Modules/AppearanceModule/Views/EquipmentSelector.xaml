@@ -10,7 +10,8 @@
 	<cm3Drawers:SelectorDrawer 
 		x:Name="Selector"
 		Close="OnClose" 
-		Filter="OnFilter">
+		Filter="OnFilter"
+		SelectionChanged="OnSelectionChanged">
 
 		<cm3Drawers:SelectorDrawer.ItemTemplate>
 			<DataTemplate>

@@ -5,11 +5,13 @@ namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.ComponentModel;
 	using System.Text.RegularExpressions;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
+	using ConceptMatrix.WpfStyles.Drawers;
 	using PropertyChanged;
 
 	using Vector = ConceptMatrix.Vector;
@@ -75,32 +77,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
-		private async void OnClick(object sender, RoutedEventArgs e)
+		private void OnClick(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Services.Get<IViewService>();
-
 			EquipmentSelector selector = new EquipmentSelector(this.ViewModel.Slot);
-			selector.Value = this.ViewModel.Item;
-			await viewService.ShowDrawer(selector, "Select " + this.SlotName);
-
-			if (selector.Value == null)
-				return;
-
-			this.ViewModel.Item = selector.Value;
+			SelectorDrawer.Show<IItem>("Select " + this.SlotName, selector, this.ViewModel.Item, (v) => { this.ViewModel.Item = v; });
 		}
 
-		private async void OnDyeClick(object sender, RoutedEventArgs e)
+		private void OnDyeClick(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Services.Get<IViewService>();
-
-			DyeSelector selector = new DyeSelector();
-			selector.Value = this.ViewModel.Dye;
-			await viewService.ShowDrawer(selector, "Select Dye");
-
-			if (selector.Value == null)
-				return;
-
-			this.ViewModel.Dye = selector.Value;
+			SelectorDrawer.Show<DyeSelector, IDye>("Select Dye", this.ViewModel.Dye, (v)=> { this.ViewModel.Dye = v; });
 		}
 
 		private void OnPreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)

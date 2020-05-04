@@ -98,12 +98,16 @@ namespace ConceptMatrix.AppearanceModule.Views
 			IViewService viewService = Services.Get<IViewService>();
 
 			FxivColorSelectorDrawer selector = new FxivColorSelectorDrawer(this.colors, this.Value);
+
+			selector.SelectionChanged += (v) =>
+			{
+				if (selector.Selected < 0 || selector.Selected >= this.colors.Length)
+					return;
+
+				this.Value = (byte)v;
+			};
+
 			await viewService.ShowDrawer(selector, "Color");
-
-			if (selector.Selected < 0 || selector.Selected >= this.colors.Length)
-				return;
-
-			this.Value = (byte)selector.Selected;
 		}
 
 		private ColorData.Entry[] GetColors()
