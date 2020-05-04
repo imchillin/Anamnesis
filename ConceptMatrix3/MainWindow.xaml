@@ -185,6 +185,14 @@
 				</materialdesign:DrawerHost.BottomDrawerContent>
 			</materialdesign:DrawerHost>
 
+			<Border Background="Transparent"
+					Grid.ColumnSpan="2"
+					VerticalAlignment="Top"
+					MouseDown="OnTitleBarMouseDown"
+					Height="26"
+					Margin="0, 0, 256, 0">
+			</Border>
+
 		</Grid>
 
 		<Thumb Margin="0, 0, -4, -4" Width="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" DragDelta="OnResizeDrag"/>
