@@ -23,7 +23,15 @@
 			<ColumnDefinition Width="200"/>
 		</Grid.ColumnDefinitions>
 
-		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,0,3,3">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<controls:PoseSidebar Grid.Column="2" Grid.Row="1"/>
+		<controls:PoseTopbar Grid.Row="0" Grid.ColumnSpan="2"/>
+
+		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,3,3,3">
 			<StackPanel>
 
 				<GroupBox Header="Head" Margin="3, 0, 3, 7">
@@ -627,8 +635,6 @@
 
 			</StackPanel>
 		</Border>
-
-		<controls:PoseSidebar Grid.Column="2"/>
 
 	</Grid>
 </UserControl>
