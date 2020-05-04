@@ -26,6 +26,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public static readonly IBind<byte> HeadDp = Binder.Register<byte, FacialFeaturesControl>(nameof(Head), OnHeadChanged);
 
 		private List<Option> features = new List<Option>();
+		private bool locked = false;
 
 		public FacialFeaturesControl()
 		{
@@ -85,6 +86,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void GetFeatures()
 		{
+			this.locked = true;
 			this.FeaturesList.ItemsSource = null;
 
 			if (this.Tribe == 0)
@@ -128,6 +130,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.features.Add(legacyTattoo);
 
 			this.FeaturesList.ItemsSource = this.features;
+			this.locked = false;
 		}
 
 		private Appearance.FacialFeature GetValue(int index)
@@ -148,6 +151,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			if (locked)
+				return;
+
 			Appearance.FacialFeature flags = Appearance.FacialFeature.None;
 			foreach (Option op in this.FeaturesList.SelectedItems)
 			{
