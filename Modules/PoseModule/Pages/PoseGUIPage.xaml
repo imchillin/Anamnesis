@@ -275,10 +275,10 @@
 						</Viewbox>
 					</Grid>
 
-					<Grid Grid.Row="2" Height="130" Visibility="{Binding HasTailOrEars, Converter={StaticResource B2V}, FallbackValue=Visible}">
+					<Grid Grid.Row="2" Height="100" Visibility="{Binding HasTailOrEars, Converter={StaticResource B2V}, FallbackValue=Visible}">
 
 						<!-- Tail -->
-						<Viewbox Visibility="{Binding HasTail, Converter={StaticResource B2V}, FallbackValue=Visible}">
+						<Viewbox Visibility="{Binding HasTail, Converter={StaticResource B2V}, FallbackValue=Visible}" Margin="0, -50, 0, 0">
 							<Canvas Height="200" Width="128">
 								<Canvas.Background>
 									<ImageBrush ImageSource="../Assets/PoseCharacterTailBackground.png" Opacity="0.15" Stretch="Uniform"/>
@@ -294,7 +294,7 @@
 
 
 						<!-- Viera Ears 01 -->
-						<Viewbox Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Margin="0, -40, 0, 0">
+						<Viewbox Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Margin="0, -60, 0, 0">
 							<Canvas Width="138" Height="196">
 								<Canvas.Background>
 									<ImageBrush ImageSource="../Assets/PoseCharacterVieraEars01Background.png" Opacity="0.15" Stretch="Uniform"/>
@@ -309,7 +309,7 @@
 
 						<!-- Viera Ears 02 -->
 						<Viewbox Visibility="{Binding IsVieraEars02, Converter={StaticResource B2V}, FallbackValue=Collapsed}">
-							<Canvas Width="163" Height="232" Margin="0, -60, 0, -10">
+							<Canvas Width="163" Height="232" Margin="0, -80, 0, -10">
 								<Canvas.Background>
 									<ImageBrush ImageSource="../Assets/PoseCharacterVieraEars02Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
@@ -337,7 +337,7 @@
 
 						<!-- Viera Ears 04 -->
 						<Viewbox Visibility="{Binding IsVieraEars04, Converter={StaticResource B2V}, FallbackValue=Collapsed}">
-							<Canvas Width="149" Height="232" Margin="0, -60, 0, 0">
+							<Canvas Width="149" Height="232" Margin="0, -100, 0, -10">
 								<Canvas.Background>
 									<ImageBrush ImageSource="../Assets/PoseCharacterVieraEars04Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
