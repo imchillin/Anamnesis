@@ -6,8 +6,10 @@ namespace ConceptMatrix.GUI.Views
 	using System;
 	using System.Diagnostics;
 	using System.Runtime.InteropServices;
+	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Navigation;
+	using ConceptMatrix.GUI.Services;
 
 	public partial class AboutView : UserControl
 	{
@@ -27,6 +29,16 @@ namespace ConceptMatrix.GUI.Views
 			{
 				Log.Write(ex, "About", Log.Severity.Error);
 			}
+		}
+
+		private void OnLogsClicked(object sender, RoutedEventArgs e)
+		{
+			LogService.ShowLogs();
+		}
+
+		private void OnSetingsClicked(object sender, RoutedEventArgs e)
+		{
+			SettingsService.ShowDirectory();
 		}
 	}
 }

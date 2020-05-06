@@ -51,6 +51,14 @@
 				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Concept Matrix started as a trainer called SSTool created by LeonBlade and has evolved into a fully featured Windows app thanks to contributions over its lifetime by Johto, Lilly, Krisan Thyme, Goat and Seria Myouna.<LineBreak /><LineBreak />The current build, CM3, is a complete rewrite by Yuuki with additions by LeonBlade, Ena, and MissAniThrope.
 				</TextBlock>
 			</GroupBox>
+
+			<GroupBox Header="Debugging">
+				<StackPanel>
+					<Button Content="Open Logs directory" Margin="3" Click="OnLogsClicked"/>
+					<Button Content="Open Settings directory" Margin="3" Click="OnSetingsClicked"/>
+				</StackPanel>
+			</GroupBox>
+			
 		</StackPanel>
 	</ScrollViewer>
 </UserControl>
