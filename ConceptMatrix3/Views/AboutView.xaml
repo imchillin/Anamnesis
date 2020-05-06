@@ -11,6 +11,13 @@
 			 d:DesignWidth="250">
 	<ScrollViewer>
 		<StackPanel>
+			<GroupBox Header="Version">
+				<StackPanel>
+					<TextBlock x:Name="VersionDisplay" FontSize="22" Text="XXXX-XX-XX"/>
+					<TextBlock x:Name="VersionDisplay2" FontSize="13" Text="XX:XX:XX.XX"/>
+					<TextBlock x:Name="BuildMachineDisplay" FontSize="13" Text="XXXXXXXXXXXX"/>
+				</StackPanel>
+			</GroupBox>
 			<GroupBox Header="Proudly Open Source">
 				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Concept matrix is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
 				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/CM3" FontSize="12">GitHub</Hyperlink>.
