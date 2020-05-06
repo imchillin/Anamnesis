@@ -8,7 +8,7 @@
 
 		<Style.Resources>
 			<Style TargetType="Hyperlink">
-				<Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
+				<Setter Property="Foreground" Value="#0dc5f8"/>
 			</Style>
 		</Style.Resources>
 
