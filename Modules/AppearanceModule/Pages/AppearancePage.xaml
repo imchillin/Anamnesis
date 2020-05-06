@@ -22,15 +22,16 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Padding="3" Margin="0, 0, 3, 0" Grid.Column="0" Grid.RowSpan="2">
+		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Padding="3" Margin="0, 0, 3, 0" Grid.Column="0" Grid.RowSpan="3">
 			<views:AppearanceEditor x:Name="Appearance" Grid.Column="0"/>
 		</Border>
 
 		<views:EquipmentEditor x:Name="Equipment" Grid.Column="1"/>
 
-		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Padding="3" Margin="3, 3, 0, 0" Grid.Column="1" Grid.Row="1">
+		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Padding="3" Margin="3, 20, 0, 0" Grid.Column="1" Grid.Row="2">
 			<Grid Margin="3, 0, 3, 0">
 				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
 					<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>

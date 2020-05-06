@@ -228,6 +228,8 @@ namespace ConceptMatrix.Injection
 				{
 					Log.Write(new Exception("FFXIV Process has terminated"), "Injection");
 				}
+
+				Thread.Sleep(100);
 			}
 		}
 

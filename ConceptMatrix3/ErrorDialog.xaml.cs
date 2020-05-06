@@ -5,6 +5,7 @@ namespace ConceptMatrix.GUI
 {
 	using System;
 	using System.Diagnostics;
+	using System.IO;
 	using System.Text;
 	using System.Windows;
 	using System.Windows.Documents;
@@ -88,7 +89,7 @@ namespace ConceptMatrix.GUI
 
 		private void OnLogClick(object sender, RoutedEventArgs e)
 		{
-			Process.Start(LogService.LogfilePath);
+			LogService.ShowLogs();
 		}
 
 		private void OnExpanded(object sender, RoutedEventArgs e)

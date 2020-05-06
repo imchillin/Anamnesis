@@ -20,6 +20,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly IBind<double> ValueDp = Binder.Register<double, NumberBox>(nameof(Value), OnValueChanged);
 		public static readonly IBind<double> TickDp = Binder.Register<double, NumberBox>(nameof(TickFrequency));
 		public static readonly IBind<bool> SliderDp = Binder.Register<bool, NumberBox>(nameof(Slider));
+		public static readonly IBind<bool> ButtonsDp = Binder.Register<bool, NumberBox>(nameof(Buttons));
 		public static readonly IBind<double> MinDp = Binder.Register<double, NumberBox>(nameof(Minimum));
 		public static readonly IBind<double> MaxDp = Binder.Register<double, NumberBox>(nameof(Maximum));
 		public static readonly IBind<bool> WrapDp = Binder.Register<bool, NumberBox>(nameof(Wrap));
@@ -51,6 +52,12 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			get => SliderDp.Get(this);
 			set => SliderDp.Set(this, value);
+		}
+
+		public bool Buttons
+		{
+			get => ButtonsDp.Get(this);
+			set => ButtonsDp.Set(this, value);
 		}
 
 		public double Minimum
@@ -250,6 +257,16 @@ namespace ConceptMatrix.WpfStyles.Controls
 				return;
 
 			this.Value = newValue;
+		}
+
+		private void OnDownClick(object sender, RoutedEventArgs e)
+		{
+			this.TickValue(false);
+		}
+
+		private void OnUpClick(object sender, RoutedEventArgs e)
+		{
+			this.TickValue(true);
 		}
 	}
 }

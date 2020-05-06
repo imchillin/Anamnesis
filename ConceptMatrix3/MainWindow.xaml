@@ -16,7 +16,10 @@
 		Background="Transparent"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"
+		
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
+		TextBlock.FontSize="12"
+		
 		Icon="/Assets/Concept Matrix.ico">
 	
 	<Grid Margin="10">
@@ -105,20 +108,25 @@
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-						<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnSettingsClick" BorderThickness="0">
+						<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnSettingsClick" BorderThickness="0" ToolTip="Settings">
 							<fa:IconBlock Icon="Cog" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</Button>
 
-						<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" 
-										  x:Name="AlwaysOnTopToggle"
-										  Margin="3,0,0,0" 
-										  Width="28" 
-										  Height="28" 
-										  Padding="0" 
-										  Background="Transparent" 
-										  BorderThickness="0"
-										  Checked="OnAlwaysOnTopChecked"
-										  Unchecked="OnAlwaysOnTopUnchecked">
+						<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnAboutClick" BorderThickness="0" ToolTip="About">
+							<fa:IconBlock Icon="Question" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
+						</Button>
+
+						<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}"
+									  ToolTip="Always on top"
+									  x:Name="AlwaysOnTopToggle"
+									  Margin="3,0,0,0" 
+									  Width="28" 
+									  Height="28" 
+									  Padding="0" 
+									  Background="Transparent" 
+									  BorderThickness="0"
+									  Checked="OnAlwaysOnTopChecked"
+									  Unchecked="OnAlwaysOnTopUnchecked">
 
 							<ToggleButton.Content>
 								<Grid Width="28" Height="28">
@@ -150,7 +158,7 @@
 			<!-- Drawer flyouts -->
 			<materialdesign:DrawerHost Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DrawerHost" Margin="1">
 				<materialdesign:DrawerHost.RightDrawerContent>
-					<Grid Width="256">
+					<Grid Width="256" Background="{DynamicResource MaterialDesignCardBackground}">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="1*" />
@@ -160,7 +168,7 @@
 					</Grid>
 				</materialdesign:DrawerHost.RightDrawerContent>
 				<materialdesign:DrawerHost.LeftDrawerContent>
-					<Grid Width="256">
+					<Grid Width="256" Background="{DynamicResource MaterialDesignCardBackground}">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="1*" />
@@ -176,6 +184,14 @@
 					<ContentPresenter Height="128" x:Name="DrawerBottom" Margin="12"/>
 				</materialdesign:DrawerHost.BottomDrawerContent>
 			</materialdesign:DrawerHost>
+
+			<Border Background="Transparent"
+					Grid.ColumnSpan="2"
+					VerticalAlignment="Top"
+					MouseDown="OnTitleBarMouseDown"
+					Height="26"
+					Margin="0, 0, 256, 0">
+			</Border>
 
 		</Grid>
 

@@ -13,6 +13,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 	{
 		private bool locked = false;
 
+		public delegate void SelectorEvent(int value);
+
 		public FxivColorSelectorDrawer(ColorData.Entry[] colors, int selectedIndex)
 		{
 			this.InitializeComponent();
@@ -24,6 +26,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		}
 
 		public event DrawerEvent Close;
+		public event SelectorEvent SelectionChanged;
 
 		public int Selected
 		{
@@ -38,7 +41,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (this.locked)
 				return;
 
-			this.Close?.Invoke();
+			this.SelectionChanged?.Invoke(this.Selected);
 		}
 	}
 }

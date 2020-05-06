@@ -4,24 +4,49 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System;
+	using System.Diagnostics;
 	using System.IO;
+	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
 
 	public class LogService : IService
 	{
-		public const string LogfilePath = "Log.txt";
+		private const string LogfilePath = "/Logs/";
 
 		private TextWriter logWriter;
+
+		public static void ShowLogs()
+		{
+			string dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath);
+			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);
+		}
 
 		public Task Initialize()
 		{
 			Log.OnLog += this.OnLog;
 			Log.OnException += this.OnException;
 
-			if (File.Exists(LogfilePath))
-				File.Delete(LogfilePath);
+			string dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath) + "\\";
 
-			this.logWriter = new StreamWriter(LogfilePath);
+			if (!Directory.Exists(dir))
+				Directory.CreateDirectory(dir);
+
+			string[] logs = Directory.GetFiles(dir);
+			for (int i = logs.Length - 1; i >= 0; i--)
+			{
+				if (i <= logs.Length - 5)
+				{
+					File.Delete(logs[i]);
+				}
+			}
+
+			string newLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
+			this.logWriter = new StreamWriter(newLogPath);
+
+			Log.Write("OS: " + RuntimeInformation.OSDescription, "Info");
+			Log.Write("Framework: " + RuntimeInformation.FrameworkDescription, "Info");
+			Log.Write("OS Architecture: " + RuntimeInformation.OSArchitecture.ToString(), "Info");
+			Log.Write("Process Architecture: " + RuntimeInformation.ProcessArchitecture.ToString(), "Info");
 
 			return Task.CompletedTask;
 		}

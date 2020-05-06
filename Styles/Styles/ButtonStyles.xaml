@@ -28,7 +28,61 @@
 							</Border.Effect>
 						</Border>
 
-						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" Margin="0"/>
+						<md:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
+									ContentStringFormat="{TemplateBinding ContentStringFormat}"
+									HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+									Padding="{TemplateBinding Padding}"
+									SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+							<!--<md:Ripple.Clip>
+								<MultiBinding Converter="{DynamicResource BorderClipConverter}">
+									<Binding ElementName="border" Path="ActualWidth" />
+									<Binding ElementName="border" Path="ActualHeight" />
+									<Binding ElementName="border" Path="CornerRadius" />
+									<Binding ElementName="border" Path="BorderThickness" />
+								</MultiBinding>
+							</md:Ripple.Clip>-->
+						</md:Ripple>
+
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="true">
+							<Setter TargetName="HoverBorder" Property="Opacity" Value="1"/>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="false">
+							<Setter TargetName="Border" Property="Opacity" Value="0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="RepeatButton" x:Key="TransparentRepeatButton">
+		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueMidBrush}"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+		<Setter Property="VerticalContentAlignment" Value="Stretch"/>
+		<Setter Property="md:RippleAssist.Feedback" Value="{DynamicResource MaterialDesignBody}" />
+		<Setter Property="Margin" Value="1" />
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="RepeatButton">
+
+					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand">
+						<Border Background="{TemplateBinding Background}" x:Name="Border" CornerRadius="3" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}"/>
+
+						<Border Background="{DynamicResource MaterialDesignCardBackground}" x:Name="HoverBorder" CornerRadius="3" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}" Opacity="0">
+							<Border.Effect>
+								<DropShadowEffect ShadowDepth="0" BlurRadius="5" Opacity="0.5"/>
+							</Border.Effect>
+						</Border>
 
 						<md:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
 									ContentStringFormat="{TemplateBinding ContentStringFormat}"
@@ -60,5 +114,5 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
-	
+
 </ResourceDictionary>

@@ -279,12 +279,13 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			IViewService viewService = Services.Get<IViewService>();
 			HairSelectorDrawer selector = new HairSelectorDrawer(this.Appearance.Gender, this.Appearance.Tribe, this.Appearance.Hair);
+
+			selector.SelectionChanged += (v) =>
+			{
+				this.Appearance.Hair = v;
+			};
+
 			await viewService.ShowDrawer(selector, "Hair");
-
-			if (selector.Selected <= 0)
-				return;
-
-			this.Appearance.Hair = (byte)selector.Selected;
 		}
 	}
 }

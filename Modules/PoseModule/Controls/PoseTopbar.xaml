@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="ConceptMatrix.PoseModule.Controls.PoseTopbar"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule.Controls"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="32" 
+			 d:DesignWidth="1024">
+	<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,0,3,3">
+		<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+			<Label Content="Enable" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
+			<ToggleButton IsChecked="{Binding IsEnabled}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>
+
+			<Label Content="Flip Sides" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
+			<ToggleButton IsChecked="{Binding FlipSides}" Margin="6, 8, 6, 6"/>
+
+			<Label Content="Parenting" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
+			<ToggleButton IsChecked="{Binding ParentingEnabled}" Margin="6, 8, 6, 6"/>
+
+		</StackPanel>
+	</Border>
+</UserControl>

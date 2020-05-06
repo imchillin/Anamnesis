@@ -61,6 +61,11 @@ namespace ConceptMatrix.GUI.Services
 			private set;
 		}
 
+		public static string GetActorId(Selection.Modes mode, ActorTypes type, string name)
+		{
+			return mode.ToString() + "_" + type + "_" + name;
+		}
+
 		public Task Initialize()
 		{
 			this.IsAlive = true;
@@ -127,7 +132,7 @@ namespace ConceptMatrix.GUI.Services
 					ActorTypes type = baseOffset.GetValue(Offsets.Main.ActorType);
 					string name = baseOffset.GetValue(Offsets.Main.Name);
 
-					string actorId = mode.ToString() + "_" + name;
+					string actorId = GetActorId(mode, type, name);
 
 					if (string.IsNullOrEmpty(actorId))
 					{
@@ -147,6 +152,20 @@ namespace ConceptMatrix.GUI.Services
 					if (this.UseGameTarget && this.CurrentSelection != this.CurrentGameTarget)
 					{
 						this.CurrentSelection = this.CurrentGameTarget;
+					}
+					else if (!this.UseGameTarget && this.CurrentSelection != null)
+					{
+						// Manually selected something
+						ActorTypes currentType = this.currentSelection.BaseAddress.GetValue(Offsets.Main.ActorType);
+						string currentName = this.currentSelection.BaseAddress.GetValue(Offsets.Main.Name);
+						string currentId = GetActorId(mode, currentType, currentName);
+
+						// If the id does not match, it means that actor has dissapeared, either changed zones, or entered/left gpose.
+						if (currentId != this.currentSelection.ActorId)
+						{
+							// TODO: search for this actor and select them again?
+							this.CurrentSelection = null;
+						}
 					}
 
 					this.isResetting = false;

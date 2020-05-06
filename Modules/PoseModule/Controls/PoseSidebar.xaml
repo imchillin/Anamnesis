@@ -14,40 +14,21 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<local:BoneEditor Value="{Binding CurrentBone}"/>
+		<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3"
+				IsEnabled="{Binding CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
+			<local:BoneEditor Value="{Binding CurrentBone}"/>
+		</Border>
 
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3" >
-
 			<Grid Margin="6">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
-					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 
-				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-
-				<Label Grid.Row="0" Grid.Column="0" Content="Enable" VerticalContentAlignment="Center"/>
-				<ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsEnabled}"/>
-
-				<Label Grid.Row="1" Grid.Column="0" Content="Flip Sides" VerticalContentAlignment="Center"/>
-				<ToggleButton Grid.Row="1" Grid.Column="1" IsChecked="{Binding FlipSides}"/>
-
-				<Grid Grid.Row="3" Grid.ColumnSpan="2"  Margin="0, 6, 0, 0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
-
-					<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
-					<cm3Controls:IconButton Grid.Column="1" Icon="Download" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
-				</Grid>
+				<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
+				<cm3Controls:IconButton Grid.Column="1" Icon="Download" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
 			</Grid>
 		</Border>
-
 	</Grid>
 </UserControl>

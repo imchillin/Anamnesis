@@ -10,6 +10,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
+	using ConceptMatrix;
 
 	/// <summary>
 	/// Interaction logic for SelectorDrawer.xaml.
@@ -38,6 +39,12 @@ namespace ConceptMatrix.WpfStyles.Drawers
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event DrawerEvent Close;
 		public event FilterEvent Filter;
+		public event DrawerEvent SelectionChanged;
+
+		public interface ISelectorView : IDrawer
+		{
+			SelectorDrawer Selector { get; }
+		}
 
 		public ObservableCollection<object> Items { get; set; } = new ObservableCollection<object>();
 		public ObservableCollection<object> FilteredItems { get; set; } = new ObservableCollection<object>();
@@ -67,6 +74,28 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			{
 				this.SetValue(ItemTemplateProperty, value);
 			}
+		}
+
+		public static void Show<TView, TValue>(string title, TValue current, Action<TValue> changed)
+			where TView : ISelectorView
+		{
+			ISelectorView view = Activator.CreateInstance<TView>();
+			Show(title, view, current, changed);
+		}
+
+		public static void Show<TValue>(string title, ISelectorView view, TValue current, Action<TValue> changed)
+		{
+			IViewService viewService = Services.Get<IViewService>();
+
+			view.Selector.SelectionChanged += () =>
+			{
+				changed?.Invoke((TValue)view.Selector.Value);
+			};
+
+			Task.Run(() =>
+			{
+				viewService.ShowDrawer(view, title);
+			});
 		}
 
 		public void FilterItems()
@@ -175,7 +204,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			if (this.searching)
 				return;
 
-			this.Close?.Invoke();
+			this.SelectionChanged?.Invoke();
 		}
 
 		private async void OnSearchBoxKeyDown(object sender, KeyEventArgs e)

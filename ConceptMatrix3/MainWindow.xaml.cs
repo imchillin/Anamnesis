@@ -72,62 +72,65 @@ namespace ConceptMatrix.GUI
 
 		private async Task OnShowDrawer(string title, UserControl view, DrawerDirection direction)
 		{
-			// Close all current drawers.
-			this.DrawerHost.IsLeftDrawerOpen = false;
-			this.DrawerHost.IsTopDrawerOpen = false;
-			this.DrawerHost.IsRightDrawerOpen = false;
-			this.DrawerHost.IsBottomDrawerOpen = false;
-
-			// If this is a drawer view, bind to its events.
-			if (view is IDrawer drawer)
+			await Application.Current.Dispatcher.InvokeAsync(async () =>
 			{
-				drawer.Close += () => this.DrawerHost.IsLeftDrawerOpen = false;
-				drawer.Close += () => this.DrawerHost.IsTopDrawerOpen = false;
-				drawer.Close += () => this.DrawerHost.IsRightDrawerOpen = false;
-				drawer.Close += () => this.DrawerHost.IsBottomDrawerOpen = false;
-			}
+				// Close all current drawers.
+				this.DrawerHost.IsLeftDrawerOpen = false;
+				this.DrawerHost.IsTopDrawerOpen = false;
+				this.DrawerHost.IsRightDrawerOpen = false;
+				this.DrawerHost.IsBottomDrawerOpen = false;
 
-			switch (direction)
-			{
-				case DrawerDirection.Left:
+				// If this is a drawer view, bind to its events.
+				if (view is IDrawer drawer)
 				{
-					this.DrawerLeft.Content = view;
-					this.DrawerHost.IsLeftDrawerOpen = true;
-					this.LeftTitle.Content = title;
-					break;
+					drawer.Close += () => this.DrawerHost.IsLeftDrawerOpen = false;
+					drawer.Close += () => this.DrawerHost.IsTopDrawerOpen = false;
+					drawer.Close += () => this.DrawerHost.IsRightDrawerOpen = false;
+					drawer.Close += () => this.DrawerHost.IsBottomDrawerOpen = false;
 				}
 
-				case DrawerDirection.Top:
+				switch (direction)
 				{
-					this.DrawerTop.Content = view;
-					this.DrawerHost.IsTopDrawerOpen = true;
-					break;
+					case DrawerDirection.Left:
+					{
+						this.DrawerLeft.Content = view;
+						this.DrawerHost.IsLeftDrawerOpen = true;
+						this.LeftTitle.Content = title;
+						break;
+					}
+
+					case DrawerDirection.Top:
+					{
+						this.DrawerTop.Content = view;
+						this.DrawerHost.IsTopDrawerOpen = true;
+						break;
+					}
+
+					case DrawerDirection.Right:
+					{
+						this.DrawerRight.Content = view;
+						this.DrawerHost.IsRightDrawerOpen = true;
+						this.RightTitle.Content = title;
+						break;
+					}
+
+					case DrawerDirection.Bottom:
+					{
+						this.DrawerBottom.Content = view;
+						this.DrawerHost.IsBottomDrawerOpen = true;
+						break;
+					}
 				}
 
-				case DrawerDirection.Right:
+				// Wait while any of the drawer areas remain open
+				while (this.DrawerHost.IsLeftDrawerOpen
+					|| this.DrawerHost.IsRightDrawerOpen
+					|| this.DrawerHost.IsBottomDrawerOpen
+					|| this.DrawerHost.IsTopDrawerOpen)
 				{
-					this.DrawerRight.Content = view;
-					this.DrawerHost.IsRightDrawerOpen = true;
-					this.RightTitle.Content = title;
-					break;
+					await Task.Delay(250);
 				}
-
-				case DrawerDirection.Bottom:
-				{
-					this.DrawerBottom.Content = view;
-					this.DrawerHost.IsBottomDrawerOpen = true;
-					break;
-				}
-			}
-
-			// Wait while any of the drawer areas remain open
-			while (this.DrawerHost.IsLeftDrawerOpen
-				|| this.DrawerHost.IsRightDrawerOpen
-				|| this.DrawerHost.IsBottomDrawerOpen
-				|| this.DrawerHost.IsTopDrawerOpen)
-			{
-				await Task.Delay(250);
-			}
+			});
 		}
 
 		private void OnTitleBarMouseDown(object sender, MouseButtonEventArgs e)
@@ -175,6 +178,17 @@ namespace ConceptMatrix.GUI
 			}
 
 			App.Services.Get<IViewService>().ShowDrawer<SettingsView>("Settings");
+		}
+
+		private void OnAboutClick(object sender, RoutedEventArgs e)
+		{
+			if (this.DrawerHost.IsRightDrawerOpen)
+			{
+				this.DrawerHost.IsRightDrawerOpen = false;
+				return;
+			}
+
+			App.Services.Get<IViewService>().ShowDrawer<AboutView>("About");
 		}
 
 		private void OnAlwaysOnTopChecked(object sender, RoutedEventArgs e)

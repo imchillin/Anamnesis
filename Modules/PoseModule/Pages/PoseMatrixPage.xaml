@@ -23,7 +23,15 @@
 			<ColumnDefinition Width="200"/>
 		</Grid.ColumnDefinitions>
 
-		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,0,3,3">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<controls:PoseSidebar Grid.Column="2" Grid.Row="1"/>
+		<controls:PoseTopbar Grid.Row="0" Grid.ColumnSpan="2"/>
+
+		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,3,3,3">
 			<StackPanel>
 
 				<GroupBox Header="Head" Margin="3, 0, 3, 7">
@@ -141,7 +149,7 @@
 						<TextBlock Grid.Column="6" Grid.Row="2" Text="Upper Lip" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="2" Orientation="Horizontal">
 							<controls:BoneView BoneName="LipUpperA" Label="1"/>
-							<controls:BoneView BoneName="LipUpperB" Label="2" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
+							<controls:BoneView BoneName="LipUpperB" Label="2"/>
 						</StackPanel>
 
 						<TextBlock Grid.Column="8" Grid.Row="2" Text="Lower Lip" Style="{DynamicResource Label}"/>
@@ -415,8 +423,8 @@
 
 						<TextBlock Grid.Column="0" Grid.Row="0" Text="Legs" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
-							<controls:BoneView BoneName="HandLeft" Label="L"/>
-							<controls:BoneView BoneName="HandRight" Label="R"/>
+							<controls:BoneView BoneName="LegLeft" Label="L"/>
+							<controls:BoneView BoneName="LegRight" Label="R"/>
 						</StackPanel>
 
 						<TextBlock Grid.Column="2" Grid.Row="0" Text="Poleyns" Style="{DynamicResource Label}"/>
@@ -627,8 +635,6 @@
 
 			</StackPanel>
 		</Border>
-
-		<controls:PoseSidebar Grid.Column="2"/>
 
 	</Grid>
 </UserControl>

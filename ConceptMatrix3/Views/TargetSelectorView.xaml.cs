@@ -80,7 +80,7 @@ namespace ConceptMatrix.GUI.Views
 					ActorTypes type = actorTableOffset.GetActorValue(i, Offsets.Main.ActorType);
 					string name = actorTableOffset.GetActorValue(i, Offsets.Main.Name);
 
-					string id = mode.ToString() + "_" + type + "_" + name;
+					string id = SelectionService.GetActorId(mode, type, name);
 
 					if (ids.Contains(id))
 						continue;

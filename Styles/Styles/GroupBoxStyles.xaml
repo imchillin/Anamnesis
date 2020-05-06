@@ -8,11 +8,11 @@
 	</ResourceDictionary.MergedDictionaries>
 
 	<Style TargetType="{x:Type GroupBox}">
-		<Setter Property="Foreground" Value="Black"/>
+		<Setter Property="Foreground" Value="#99000000"/>
 		<Setter Property="FontWeight" Value="DemiBold"/>
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="Margin" Value="3, 3, 3, 0"/>
-		<Setter Property="FontSize" Value="11"/>
+		<Setter Property="FontSize" Value="12"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type GroupBox}">
@@ -30,10 +30,9 @@
 						<ContentPresenter 
 							Grid.Row="0"
 							Grid.Column="0"
-							Margin="3, 0, 0, 0"
+							Margin="0"
 							ContentSource="Header" 
 							RecognizesAccessKey="True"
-							Opacity="0.5"
 							ContentStringFormat="{TemplateBinding HeaderStringFormat}"
 							ContentTemplate="{TemplateBinding HeaderTemplate}"
 							ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}" />
@@ -42,7 +41,7 @@
 
 						<Border 
 							Grid.ColumnSpan="2"
-							Margin="3, 0, 3, 0"
+							Margin="0"
 							Grid.Row="1"
 							Background="{TemplateBinding Background}" 
 							BorderThickness="0"

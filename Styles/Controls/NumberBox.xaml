@@ -34,6 +34,7 @@
 					</Style>
 				</ColumnDefinition.Style>
 			</ColumnDefinition>
+			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
 
 		<Slider
@@ -74,5 +75,17 @@
 			StrokeThickness="1"
 			Stroke="Red"
 			Margin="2,0,0,0"/>
+
+		<Grid Grid.Column="2" Visibility="{Binding Buttons, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<RepeatButton Grid.Column="0" Content="-" Style="{StaticResource TransparentRepeatButton}" Padding="3" Click="OnDownClick" Width="20" HorizontalContentAlignment="Center" Margin="4,1,1,1"/>
+			<RepeatButton Grid.Column="1" Content="+" Style="{StaticResource TransparentRepeatButton}" Padding="3" Click="OnUpClick" Width="20" HorizontalContentAlignment="Center" Margin="1,1,0,1"/>
+
+		</Grid>
+		
 	</Grid>
 </UserControl>
