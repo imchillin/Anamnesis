@@ -14,6 +14,7 @@ namespace ConceptMatrix.GUI.Windows
 	using System.Windows.Documents;
 	using System.Windows.Input;
 	using System.Windows.Media;
+	using System.Windows.Navigation;
 	using ConceptMatrix.GUI.Services;
 
 	/// <summary>
@@ -96,12 +97,60 @@ namespace ConceptMatrix.GUI.Windows
 			{
 				this.StackTraceBlock.Inlines.Add(new Run(parts[0]));
 				this.StackTraceBlock.Inlines.Add(new Run(" @ ") { Foreground = Brushes.LightGray });
-				this.StackTraceBlock.Inlines.Add(new Run(parts[1] + "\n") { Foreground = Brushes.Gray });
+
+				string path;
+				if (this.GetPath(parts[1], out path, out _) && File.Exists(path))
+				{
+					Hyperlink link = new Hyperlink(new Run(parts[1] + "\n"));
+					link.RequestNavigate += this.Link_RequestNavigate;
+					link.NavigateUri = new Uri(parts[1]);
+					this.StackTraceBlock.Inlines.Add(link);
+				}
+				else
+				{
+					this.StackTraceBlock.Inlines.Add(new Run(parts[1] + "\n") { Foreground = Brushes.Gray });
+				}
 			}
 			else
 			{
 				this.StackTraceBlock.Inlines.Add(parts[0]);
 			}
+		}
+
+		private void Link_RequestNavigate(object sender, RequestNavigateEventArgs e)
+		{
+			string path;
+			string line;
+
+			if (!this.GetPath(e.Uri.OriginalString, out path, out line))
+				return;
+
+			Process[] procs = Process.GetProcessesByName("devenv");
+			if (procs.Length == 0)
+			{
+				Process.Start(path);
+			}
+			else
+			{
+				string devEnvPath = procs[0].MainModule.FileName;
+				Process.Start(devEnvPath, $"-Edit \"{path}\" -Command \"Edit.Goto {line}\"");
+			}
+		}
+
+		private bool GetPath(string stackLine, out string path, out string line)
+		{
+			path = null;
+			line = null;
+
+			stackLine = stackLine.Trim();
+			string[] parts = stackLine.Split(' ');
+			if (parts.Length != 2)
+				return false;
+
+			path = parts[0];
+			line = parts[1];
+			path = path.Replace(":line", string.Empty);
+			return true;
 		}
 
 		private void OnQuitClick(object sender, RoutedEventArgs e)
