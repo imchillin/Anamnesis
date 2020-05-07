@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix
 {
+	using System.ComponentModel;
 	using System.Windows.Input;
 
 	/// <summary>
@@ -26,6 +27,12 @@ namespace ConceptMatrix
 		public static void ShowWindow()
 		{
 			instance?.Show();
+		}
+
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			base.OnClosing(e);
+			instance = null;
 		}
 
 		private void OnMouseDown(object sender, MouseButtonEventArgs e)
