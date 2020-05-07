@@ -13,9 +13,9 @@
 		<StackPanel>
 			<GroupBox Header="Version">
 				<StackPanel>
-					<TextBlock x:Name="VersionDisplay" FontSize="22" Text="XXXX-XX-XX"/>
-					<TextBlock x:Name="VersionDisplay2" FontSize="13" Text="XX:XX:XX.XX"/>
-					<TextBlock x:Name="BuildMachineDisplay" FontSize="13" Text="XXXXXXXXXXXX"/>
+					<TextBlock x:Name="VersionDisplay" FontSize="22" Text="XXXX-XX-XX" Style="{StaticResource Body}"/>
+					<TextBlock x:Name="VersionDisplay2" FontSize="13" Text="XX:XX:XX.XX" Style="{StaticResource Body}"/>
+					<TextBlock x:Name="BuildMachineDisplay" FontSize="13" Text="XXXXXXXXXXXX" Style="{StaticResource Body}"/>
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Header="Proudly Open Source">
