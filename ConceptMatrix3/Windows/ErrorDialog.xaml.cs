@@ -64,6 +64,7 @@ namespace ConceptMatrix.GUI.Windows
 				Dialog dlg = new Dialog();
 				ErrorDialog errorDialog = new ErrorDialog(ex, isCriticial);
 				errorDialog.window = dlg;
+				dlg.Topmost = App.Settings.AlwaysOnTop;
 				dlg.ContentArea.Content = errorDialog;
 				dlg.ShowDialog();
 
