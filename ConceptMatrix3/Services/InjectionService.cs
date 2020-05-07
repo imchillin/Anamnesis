@@ -18,7 +18,7 @@ namespace ConceptMatrix.Injection
 
 	public class InjectionService : IInjectionService
 	{
-		private Dictionary<Type, Type> memoryTypeLookup = new Dictionary<Type, Type>();
+		private readonly Dictionary<Type, Type> memoryTypeLookup = new Dictionary<Type, Type>();
 		private bool isActive;
 
 		public static InjectionService Instance

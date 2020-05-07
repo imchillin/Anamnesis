@@ -10,9 +10,7 @@ namespace ConceptMatrix.Injection
 
 	public class WinProcess : IProcess
 	{
-		private ProcessModule mainModule;
-		private Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
-		private bool is64Bit;
+		private readonly Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
 
 		public IntPtr Handle
 		{
@@ -75,9 +73,6 @@ namespace ConceptMatrix.Injection
 				int eCode = Marshal.GetLastWin32Error();
 			}
 
-			// Set main module
-			this.mainModule = this.Process.MainModule;
-
 			// Set all modules
 			this.modules.Clear();
 			foreach (ProcessModule module in this.Process.Modules)
@@ -91,9 +86,9 @@ namespace ConceptMatrix.Injection
 				this.modules.Add(module.ModuleName, module.BaseAddress);
 			}
 
-			this.is64Bit = Environment.Is64BitOperatingSystem && (IsWow64Process(this.Handle, out bool retVal) && !retVal);
+			////this.is64Bit = Environment.Is64BitOperatingSystem && (IsWow64Process(this.Handle, out bool retVal) && !retVal);
 
-			Debug.WriteLine($"Attached to process: {process.Id}");
+			Log.Write($"Attached to process: {process.Id}", "Injection");
 		}
 
 		public ulong GetBaseAddress()
@@ -155,7 +150,7 @@ namespace ConceptMatrix.Injection
 			if (!OpenProcessToken(GetCurrentProcess(), 0x8 /*TOKEN_QUERY*/, out IntPtr tokenHandle))
 				return Marshal.GetLastWin32Error();
 
-			LUID luidDebugPrivilege = default(LUID);
+			LUID luidDebugPrivilege = default;
 			if (!LookupPrivilegeValue(null, "SeDebugPrivilege", ref luidDebugPrivilege))
 				return Marshal.GetLastWin32Error();
 

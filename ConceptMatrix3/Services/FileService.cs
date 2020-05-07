@@ -168,7 +168,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task<string> OpenDirectory(string title, params string[] defaults)
 		{
-			string defaultDir = null;
+			string defaultDir;
 			foreach (string pDefaultDir in defaults)
 			{
 				if (Directory.Exists(pDefaultDir))

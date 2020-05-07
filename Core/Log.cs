@@ -4,11 +4,13 @@
 namespace ConceptMatrix
 {
 	using System;
+	using System.Diagnostics;
+	using System.Runtime.ExceptionServices;
 
 	public static class Log
 	{
 		public delegate void LogEvent(string message, Severity severity, string category);
-		public delegate void ExceptionEvent(Exception ex, Severity severity, string category);
+		public delegate void ExceptionEvent(ExceptionDispatchInfo ex, Severity severity, string category);
 
 		public static event LogEvent OnLog;
 		public static event ExceptionEvent OnException;
@@ -29,18 +31,20 @@ namespace ConceptMatrix
 
 		public static void Write(Exception ex, string category = null, Severity severity = Severity.Critical)
 		{
-			Console.WriteLine($"[{category}][{ex.GetType().Name}] ({severity}) {ex.Message}");
-			Console.WriteLine(ex.StackTrace);
+			ExceptionDispatchInfo exDispatch = ExceptionDispatchInfo.Capture(ex);
+
+			Debug.WriteLine($"[{category}][{ex.GetType().Name}] ({severity}) {ex.Message}");
+			Debug.WriteLine(ex.StackTrace);
 
 			Exception exception = ex.InnerException;
 			while (exception != null)
 			{
-				Console.WriteLine($"Inner: [{exception.GetType().Name}] {exception.Message}");
-				Console.WriteLine(exception.StackTrace);
+				Debug.WriteLine($"Inner: [{exception.GetType().Name}] {exception.Message}");
+				Debug.WriteLine(exception.StackTrace);
 				exception = exception.InnerException;
 			}
 
-			OnException?.Invoke(ex, severity, category);
+			OnException?.Invoke(exDispatch, severity, category);
 		}
 	}
 }

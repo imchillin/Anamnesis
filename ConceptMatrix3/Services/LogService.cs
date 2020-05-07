@@ -6,6 +6,7 @@ namespace ConceptMatrix.GUI.Services
 	using System;
 	using System.Diagnostics;
 	using System.IO;
+	using System.Runtime.ExceptionServices;
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
 
@@ -67,7 +68,7 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		private void OnException(Exception ex, Log.Severity severity, string category)
+		private void OnException(ExceptionDispatchInfo exDispatch, Log.Severity severity, string category)
 		{
 			lock (this)
 			{
@@ -79,6 +80,8 @@ namespace ConceptMatrix.GUI.Services
 				this.logWriter.Write("][");
 				this.logWriter.Write(severity);
 				this.logWriter.Write("] ");
+
+				Exception ex = exDispatch.SourceException;
 
 				while (ex != null)
 				{

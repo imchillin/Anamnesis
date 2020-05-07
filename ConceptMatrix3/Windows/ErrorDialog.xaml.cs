@@ -1,32 +1,39 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.GUI
+namespace ConceptMatrix.GUI.Windows
 {
 	using System;
 	using System.Diagnostics;
 	using System.IO;
+	using System.Runtime.CompilerServices;
+	using System.Runtime.ExceptionServices;
 	using System.Text;
 	using System.Windows;
+	using System.Windows.Controls;
 	using System.Windows.Documents;
 	using System.Windows.Input;
+	using System.Windows.Media;
 	using ConceptMatrix.GUI.Services;
 
 	/// <summary>
 	/// Interaction logic for ErrorDialog.xaml.
 	/// </summary>
-	public partial class ErrorDialog : Window
+	public partial class ErrorDialog : UserControl
 	{
-		public ErrorDialog(Exception ex, bool isCritical)
+		private Dialog window;
+
+		private ErrorDialog(ExceptionDispatchInfo exDispatch, bool isCritical)
 		{
 			this.InitializeComponent();
 
 			this.OkButton.Visibility = isCritical ? Visibility.Collapsed : Visibility.Visible;
-			this.DetailsExpander.Header = isCritical ? "A critical error has occurred. The application must quit" : ex.Message;
-
-			Count++;
+			this.Message.Text = isCritical ? "Critical Error" : "Error";
+			this.Subtitle.Visibility = isCritical ? Visibility.Visible : Visibility.Collapsed;
+			this.DetailsExpander.Header = exDispatch.SourceException.Message;
 
 			StringBuilder builder = new StringBuilder();
+			Exception ex = exDispatch.SourceException;
 			while (ex != null)
 			{
 				this.StackTraceBlock.Inlines.Add(new Run("[" + ex.GetType().Name + "] ") { FontWeight = FontWeights.Bold });
@@ -38,15 +45,35 @@ namespace ConceptMatrix.GUI
 				ex = ex.InnerException;
 			}
 
-#if DEBUG
-			this.DetailsExpander.IsExpanded = true;
-#endif
+			if (Debugger.IsAttached)
+			{
+				this.DetailsExpander.IsExpanded = true;
+			}
 		}
 
-		public static int Count
+		public static void ShowError(ExceptionDispatchInfo ex, bool isCriticial)
 		{
-			get;
-			private set;
+			if (Application.Current == null)
+				return;
+
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				SplashWindow.HideWindow();
+
+				Dialog dlg = new Dialog();
+				ErrorDialog errorDialog = new ErrorDialog(ex, isCriticial);
+				errorDialog.window = dlg;
+				dlg.ContentArea.Content = errorDialog;
+				dlg.ShowDialog();
+
+				if (Application.Current == null)
+					return;
+
+				if (isCriticial)
+					Application.Current.Shutdown(2);
+
+				SplashWindow.ShowWindow();
+			});
 		}
 
 		private void StackTraceFormatter(string stackTrace)
@@ -67,7 +94,9 @@ namespace ConceptMatrix.GUI
 
 			if (parts.Length == 2)
 			{
-				this.StackTraceBlock.Inlines.Add(new Run(parts[0] + "\n") { ToolTip = parts[1].Trim('\r', '\n') });
+				this.StackTraceBlock.Inlines.Add(new Run(parts[0]));
+				this.StackTraceBlock.Inlines.Add(new Run(" @ ") { Foreground = Brushes.LightGray });
+				this.StackTraceBlock.Inlines.Add(new Run(parts[1] + "\n") { Foreground = Brushes.Gray });
 			}
 			else
 			{
@@ -77,37 +106,17 @@ namespace ConceptMatrix.GUI
 
 		private void OnQuitClick(object sender, RoutedEventArgs e)
 		{
-			this.OnOkClick(sender, e);
-			Application.Current.Shutdown(2);
+			this.window.Close();
 		}
 
 		private void OnOkClick(object sender, RoutedEventArgs e)
 		{
-			Count--;
-			this.Close();
+			this.window.Close();
 		}
 
 		private void OnLogClick(object sender, RoutedEventArgs e)
 		{
 			LogService.ShowLogs();
-		}
-
-		private void OnExpanded(object sender, RoutedEventArgs e)
-		{
-			this.Height = 350;
-		}
-
-		private void OnCollapsed(object sender, RoutedEventArgs e)
-		{
-			this.Height = 130;
-		}
-
-		private void OnMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton == MouseButton.Left)
-			{
-				this.DragMove();
-			}
 		}
 	}
 }
