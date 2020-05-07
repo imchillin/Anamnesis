@@ -79,8 +79,7 @@ namespace ConceptMatrix.GUI.Windows
 			if (this.isAutomatic)
 				return;
 
-			Option op = this.ProcessGrid.SelectedValue as Option;
-			this.OkButton.IsEnabled = op != null && !op.Locked;
+			this.OkButton.IsEnabled = this.ProcessGrid.SelectedValue is Option op && !op.Locked;
 		}
 
 		private void OnOkClicked(object sender, RoutedEventArgs e)
@@ -105,10 +104,16 @@ namespace ConceptMatrix.GUI.Windows
 				if (!this.isAutomatic)
 					continue;
 
+				if (Application.Current == null)
+					return;
+
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					loaded = this.IsLoaded;
 				});
+
+				if (!loaded)
+					return;
 
 				Process[] processes = Process.GetProcesses();
 				foreach (Process process in processes)
