@@ -49,6 +49,12 @@ namespace ConceptMatrix.GUI.Services
 			Log.Write("OS Architecture: " + RuntimeInformation.OSArchitecture.ToString(), "Info");
 			Log.Write("Process Architecture: " + RuntimeInformation.ProcessArchitecture.ToString(), "Info");
 
+			string ver = "Unknown";
+			if (File.Exists("Version.txt"))
+				ver = File.ReadAllText("Version.txt");
+
+			Log.Write("CM Version: " + ver, "Info");
+
 			return Task.CompletedTask;
 		}
 
