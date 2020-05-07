@@ -48,33 +48,12 @@ namespace ConceptMatrix.Injection
 			}
 		}
 
-		public void OpenProcess(string contains)
-		{
-			Process[] processlist = System.Diagnostics.Process.GetProcesses();
-			foreach (Process process in processlist)
-			{
-				if (process.ProcessName.ToLower().Contains(contains))
-				{
-					this.OpenProcess(process.Id);
-					return;
-				}
-			}
-
-			throw new Exception($"Failed to find process containing: \"{contains}\"");
-		}
-
 		/// <summary>
 		/// Open the PC game process with all security and access rights.
 		/// </summary>
-		public void OpenProcess(int pid)
+		public void OpenProcess(Process process)
 		{
-			if (pid <= 0)
-				throw new Exception($"Invalid process id: {pid}");
-
-			this.Process = Process.GetProcessById(pid);
-
-			if (this.Process == null)
-				throw new Exception($"Failed to get process: {pid}");
+			this.Process = process;
 
 			if (!this.Process.Responding)
 				throw new Exception("Target process id not responding");
@@ -90,7 +69,7 @@ namespace ConceptMatrix.Injection
 				throw new Exception("ERROR: SeDebugPrivilege not enabled. Please report this!");
 			}
 
-			this.Handle = OpenProcess(0x001F0FFF, true, pid);
+			this.Handle = OpenProcess(0x001F0FFF, true, process.Id);
 			if (this.Handle == IntPtr.Zero)
 			{
 				int eCode = Marshal.GetLastWin32Error();
@@ -114,7 +93,7 @@ namespace ConceptMatrix.Injection
 
 			this.is64Bit = Environment.Is64BitOperatingSystem && (IsWow64Process(this.Handle, out bool retVal) && !retVal);
 
-			Debug.WriteLine($"Attached to process: {pid}");
+			Debug.WriteLine($"Attached to process: {process.Id}");
 		}
 
 		public ulong GetBaseAddress()

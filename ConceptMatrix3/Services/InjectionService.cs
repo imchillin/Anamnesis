@@ -12,6 +12,7 @@ namespace ConceptMatrix.Injection
 	using System.Threading;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
+	using ConceptMatrix.GUI.Windows;
 	using ConceptMatrix.Injection.Memory;
 	using ConceptMatrix.Injection.Offsets;
 
@@ -26,7 +27,7 @@ namespace ConceptMatrix.Injection
 			private set;
 		}
 
-		public static bool ProcessIsAlive
+		public bool ProcessIsAlive
 		{
 			get;
 			private set;
@@ -80,15 +81,52 @@ namespace ConceptMatrix.Injection
 			this.Process = new WinProcess();
 #endif
 
-			// TODO: allow for process selection
-			try
+			while (!this.ProcessIsAlive)
 			{
-				this.Process.OpenProcess("ffxiv_dx11");
-				ProcessIsAlive = true;
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("Failed to find FFXIV process", ex);
+				try
+				{
+					Process[] processes = System.Diagnostics.Process.GetProcesses();
+					Process proc = null;
+					foreach (Process process in processes)
+					{
+						if (process.ProcessName.ToLower().Contains("ffxiv_dx11"))
+						{
+							if (proc != null)
+								throw new Exception("Multiple processes found");
+
+							proc = process;
+						}
+					}
+
+					if (proc == null)
+						throw new Exception("No process found");
+
+					this.Process.OpenProcess(proc);
+					this.ProcessIsAlive = true;
+				}
+				catch (Exception)
+				{
+					App.Current.Dispatcher.Invoke(() =>
+					{
+						Process proc = ProcessSelector.FindProcess();
+
+						if (proc == null)
+						{
+							App.Current.Shutdown();
+							return;
+						}
+
+						try
+						{
+							this.Process.OpenProcess(proc);
+							this.ProcessIsAlive = true;
+						}
+						catch (Exception ex)
+						{
+							Log.Write(ex);
+						}
+					});
+				}
 			}
 
 			return Task.CompletedTask;
@@ -203,7 +241,7 @@ namespace ConceptMatrix.Injection
 				{
 					Thread.Sleep(16);
 
-					if (!ProcessIsAlive)
+					if (!this.ProcessIsAlive)
 						return;
 
 					while (refreshService.IsRefreshing)
@@ -222,9 +260,9 @@ namespace ConceptMatrix.Injection
 		{
 			while (this.isActive)
 			{
-				ProcessIsAlive = this.Process.IsAlive;
+				this.ProcessIsAlive = this.Process.IsAlive;
 
-				if (!ProcessIsAlive)
+				if (!this.ProcessIsAlive)
 				{
 					Log.Write(new Exception("FFXIV Process has terminated"), "Injection");
 				}

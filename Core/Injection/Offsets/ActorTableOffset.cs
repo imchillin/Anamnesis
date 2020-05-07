@@ -29,7 +29,7 @@ namespace ConceptMatrix.Injection.Offsets
 
 		public IMemory<byte> GetCountMemory()
 		{
-			return InjectionService.Instance.GetMemory<byte>(this);
+			return injection.GetMemory<byte>(this);
 		}
 
 		public byte GetCount()
@@ -42,7 +42,7 @@ namespace ConceptMatrix.Injection.Offsets
 
 		public IMemory<T> GetActorMemory<T>(byte i, params Offset[] offsets)
 		{
-			return InjectionService.Instance.GetMemory<T>(this.GetBaseOffset(i), offsets);
+			return injection.GetMemory<T>(this.GetBaseOffset(i), offsets);
 		}
 
 		public T GetActorValue<T>(byte i, Offset<T> offset)

@@ -10,9 +10,22 @@ namespace ConceptMatrix
 	/// </summary>
 	public partial class SplashWindow
 	{
+		private static SplashWindow instance;
+
 		public SplashWindow()
 		{
 			this.InitializeComponent();
+			instance = this;
+		}
+
+		public static void HideWindow()
+		{
+			instance?.Hide();
+		}
+
+		public static void ShowWindow()
+		{
+			instance?.Show();
 		}
 
 		private void OnMouseDown(object sender, MouseButtonEventArgs e)

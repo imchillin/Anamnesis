@@ -4,6 +4,7 @@
 namespace ConceptMatrix.Injection
 {
 	using System;
+	using System.Diagnostics;
 
 	public interface IProcess
 	{
@@ -11,7 +12,7 @@ namespace ConceptMatrix.Injection
 		bool IsAlive { get; }
 		IntPtr Handle { get; }
 
-		void OpenProcess(string name);
+		void OpenProcess(Process process);
 		ulong GetBaseAddress();
 		UIntPtr GetAddress(params IMemoryOffset[] offsets);
 
