@@ -12,7 +12,7 @@ namespace ConceptMatrix.GUI
 
 	public class ServiceManager : IServices
 	{
-		private List<IService> services = new List<IService>();
+		private readonly List<IService> services = new List<IService>();
 
 		public ServiceManager()
 		{

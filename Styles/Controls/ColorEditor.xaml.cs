@@ -92,6 +92,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			return v;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(ColorEditor sender, Color v)
 		{
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.R)));
@@ -101,6 +102,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.UpdatePreview();
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			this.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.Value)));
@@ -109,7 +111,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private void UpdatePreview()
 		{
-			WpfColor c = default(WpfColor);
+			WpfColor c = default;
 			c.R = (byte)(Clamp(this.Value.R) * 255);
 			c.G = (byte)(Clamp(this.Value.G) * 255);
 			c.B = (byte)(Clamp(this.Value.B) * 255);

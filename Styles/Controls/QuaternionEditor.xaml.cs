@@ -37,8 +37,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly IBind<double> EulerZDp = Binder.Register<double, QuaternionEditor>(nameof(EulerZ), OnEulerChanged);
 
 		////private Vector3D euler;
+		private readonly RotationGizmo rotationGizmo;
 		private bool lockdp = false;
-		private RotationGizmo rotationGizmo;
 		private bool mouseDown = false;
 
 		private Quaternion worldSpaceDelta;
@@ -133,6 +133,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(QuaternionEditor sender, CmQuaternion value)
 		{
 			sender.ValueQuat = new Quaternion(value.X, value.Y, value.Z, value.W);
@@ -162,11 +163,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.lockdp = false;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnRootRotationChanged(QuaternionEditor sender, CmQuaternion? value)
 		{
 			OnValueChanged(sender, sender.Value);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueQuatChanged(QuaternionEditor sender, Quaternion value)
 		{
 			Quaternion newrot = value;
@@ -198,6 +201,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.lockdp = false;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnEulerChanged(QuaternionEditor sender, double val)
 		{
 			if (sender.lockdp)
@@ -290,6 +294,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (this.IsVisible)
@@ -301,8 +306,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private class RotationGizmo : ModelVisual3D
 		{
+			private readonly QuaternionEditor target;
 			private AxisGizmo hoveredGizmo;
-			private QuaternionEditor target;
 
 			public RotationGizmo(QuaternionEditor target)
 			{
@@ -374,9 +379,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 		private class AxisGizmo : ModelVisual3D
 		{
 			public readonly Vector3D Axis;
-
-			private Circle circle;
-			private Cylinder cylinder;
+			private readonly Circle circle;
+			private readonly Cylinder cylinder;
 			private bool hovered;
 			private Color color;
 
@@ -429,7 +433,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 				}
 			}
 
-			public void StartDrag(Point3D mousePosition)
+			public void StartDrag()
 			{
 				this.lastPoint = null;
 			}
@@ -439,14 +443,14 @@ namespace ConceptMatrix.WpfStyles.Controls
 				Point3D? point = this.circle.NearestPoint2D(mousePosition);
 
 				if (point == null)
-					return default(Vector3D);
+					return default;
 
 				point = this.circle.TransformToAncestor(this).Transform((Point3D)point);
 
 				if (this.lastPoint == null)
 				{
 					this.lastPoint = point;
-					return default(Vector3D);
+					return default;
 				}
 				else
 				{

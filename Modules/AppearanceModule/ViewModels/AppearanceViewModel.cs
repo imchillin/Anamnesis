@@ -5,13 +5,14 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
 	using System.ComponentModel;
+	using PropertyChanged;
 
 	public class AppearanceViewModel : IDisposable, INotifyPropertyChanged
 	{
 		public Appearance Appearance;
 		private IMemory<Appearance> appearanceMem;
 
-		private Selection selection;
+		private readonly Selection selection;
 
 		public AppearanceViewModel(Selection selection)
 		{
@@ -187,6 +188,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.appearanceMem = null;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (this.appearanceMem == null || this.selection == null)

@@ -28,6 +28,7 @@ namespace ConceptMatrix.GUI.Pages
 
 		public ActorTypes ActorType { get; set; }
 
+		[SuppressPropertyChangedWarnings]
 		private void OnSelectionChanged(Selection selection)
 		{
 			BindUtility.ClearAll(this);

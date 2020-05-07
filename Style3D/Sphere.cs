@@ -13,7 +13,7 @@ namespace ConceptMatrix.ThreeD
 		private int slices = 32;
 		private int stacks = 16;
 		private double radius = 1;
-		private Point3D center = default(Point3D);
+		private Point3D center = default;
 
 		public Sphere()
 		{

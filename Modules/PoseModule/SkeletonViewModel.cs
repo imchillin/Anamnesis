@@ -17,8 +17,6 @@ namespace ConceptMatrix.PoseModule
 
 	public class SkeletonViewModel : INotifyPropertyChanged
 	{
-		private static IInjectionService injection;
-
 		private IMemory<Flag> skel1Mem;
 		private IMemory<Flag> skel2Mem;
 		private IMemory<Flag> skel3Mem;
@@ -208,8 +206,6 @@ namespace ConceptMatrix.PoseModule
 
 		public async Task Initialize(Selection selection)
 		{
-			injection = Services.Get<IInjectionService>();
-
 			this.skel1Mem = Offsets.Main.Skeleton1Flag.GetMemory();
 			this.skel2Mem = Offsets.Main.Skeleton2Flag.GetMemory();
 			this.skel3Mem = Offsets.Main.Skeleton3Flag.GetMemory();
