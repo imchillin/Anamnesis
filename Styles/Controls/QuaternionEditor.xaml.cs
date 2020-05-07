@@ -559,7 +559,15 @@ namespace ConceptMatrix.WpfStyles.Controls
 					if (this.Axis.X >= 1)
 						angle = -angle;
 
-					return this.Axis * (angle * 2);
+					float speed = 2;
+
+					if (Keyboard.IsKeyDown(Key.LeftShift))
+						speed = 4;
+
+					if (Keyboard.IsKeyDown(Key.LeftCtrl))
+						speed = 0.5f;
+
+					return this.Axis * (angle * speed);
 				}
 			}
 		}
