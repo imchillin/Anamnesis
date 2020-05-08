@@ -38,6 +38,7 @@ namespace ConceptMatrix.PoseModule.Pages
 			set;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnSelectionChanged(Selection selection)
 		{
 			if (this.posMem != null)

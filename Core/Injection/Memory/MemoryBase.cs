@@ -36,6 +36,8 @@ namespace ConceptMatrix.Injection.Memory
 
 		public static void TickAllActiveMemory()
 		{
+			IInjectionService injection = Services.Get<IInjectionService>();
+
 			List<MemoryBase> memories;
 			lock (activeMemory)
 			{
@@ -44,7 +46,7 @@ namespace ConceptMatrix.Injection.Memory
 
 			foreach (MemoryBase memory in memories)
 			{
-				if (!InjectionService.ProcessIsAlive)
+				if (!injection.ProcessIsAlive)
 					return;
 
 				memory.Tick();

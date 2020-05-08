@@ -95,6 +95,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(VectorEditor sender, Vector value)
 		{
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.X)));

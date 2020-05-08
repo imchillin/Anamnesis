@@ -47,5 +47,15 @@ namespace ConceptMatrix.GUI.Windows
 
 			this.Close();
 		}
+
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			SplashWindow.HideWindow();
+		}
+
+		private void Window_Unloaded(object sender, RoutedEventArgs e)
+		{
+			SplashWindow.ShowWindow();
+		}
 	}
 }

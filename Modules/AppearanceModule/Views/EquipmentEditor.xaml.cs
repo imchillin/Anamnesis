@@ -51,6 +51,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			private set;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnSelectionChanged(Selection selection)
 		{
 			Application.Current.Dispatcher.Invoke(() =>

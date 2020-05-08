@@ -6,6 +6,7 @@ namespace ConceptMatrix.GUI.Services
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
@@ -13,16 +14,24 @@ namespace ConceptMatrix.GUI.Services
 
 	public class SettingsService : ISettingsService
 	{
-		public const string SettingsDirectory = "./Settings/";
+		public const string SettingsDirectory = "Settings/";
 
 		private readonly Dictionary<SettingsBase, SaveJob> jobs = new Dictionary<SettingsBase, SaveJob>();
 
 		public event SettingsEvent SettingsSaved;
 
+		public static void ShowDirectory()
+		{
+			string dir = Path.GetDirectoryName(FileService.StoreDirectory + SettingsDirectory);
+			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);
+		}
+
 		public Task Initialize()
 		{
-			if (!Directory.Exists(SettingsDirectory))
-				Directory.CreateDirectory(SettingsDirectory);
+			string path = FileService.StoreDirectory + SettingsDirectory;
+
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
 
 			return Task.CompletedTask;
 		}
@@ -30,7 +39,7 @@ namespace ConceptMatrix.GUI.Services
 		public Task<T> Load<T>()
 			where T : SettingsBase, new()
 		{
-			string path = SettingsDirectory + typeof(T).Name + ".json";
+			string path = FileService.StoreDirectory + SettingsDirectory + typeof(T).Name + ".json";
 
 			T settings;
 			if (!File.Exists(path))
@@ -60,7 +69,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public void SaveImmediate(SettingsBase settings)
 		{
-			string path = SettingsDirectory + settings.GetType().Name + ".json";
+			string path = FileService.StoreDirectory + SettingsDirectory + settings.GetType().Name + ".json";
 			string json = Serializer.Serialize(settings);
 			File.WriteAllText(path, json);
 			this.SettingsSaved?.Invoke(settings);

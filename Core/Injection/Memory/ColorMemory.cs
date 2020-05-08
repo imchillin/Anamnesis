@@ -14,7 +14,7 @@ namespace ConceptMatrix.Injection.Memory
 
 		protected override Color Read(ref byte[] data)
 		{
-			Color value = default(Color);
+			Color value = default;
 			value.R = BitConverter.ToSingle(data, 0);
 			value.G = BitConverter.ToSingle(data, 4);
 			value.B = BitConverter.ToSingle(data, 8);

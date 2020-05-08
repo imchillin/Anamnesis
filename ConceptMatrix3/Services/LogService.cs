@@ -6,6 +6,7 @@ namespace ConceptMatrix.GUI.Services
 	using System;
 	using System.Diagnostics;
 	using System.IO;
+	using System.Runtime.ExceptionServices;
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
 
@@ -48,6 +49,12 @@ namespace ConceptMatrix.GUI.Services
 			Log.Write("OS Architecture: " + RuntimeInformation.OSArchitecture.ToString(), "Info");
 			Log.Write("Process Architecture: " + RuntimeInformation.ProcessArchitecture.ToString(), "Info");
 
+			string ver = "Unknown";
+			if (File.Exists("Version.txt"))
+				ver = File.ReadAllText("Version.txt");
+
+			Log.Write("CM Version: " + ver, "Info");
+
 			return Task.CompletedTask;
 		}
 
@@ -67,7 +74,7 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		private void OnException(Exception ex, Log.Severity severity, string category)
+		private void OnException(ExceptionDispatchInfo exDispatch, Log.Severity severity, string category)
 		{
 			lock (this)
 			{
@@ -79,6 +86,8 @@ namespace ConceptMatrix.GUI.Services
 				this.logWriter.Write("][");
 				this.logWriter.Write(severity);
 				this.logWriter.Write("] ");
+
+				Exception ex = exDispatch.SourceException;
 
 				while (ex != null)
 				{

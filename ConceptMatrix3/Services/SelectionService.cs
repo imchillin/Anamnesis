@@ -44,7 +44,7 @@ namespace ConceptMatrix.GUI.Services
 
 				try
 				{
-					Log.Write("Changing Selection: " + value?.ActorId + "(" + value?.BaseAddress + ")", "Selection");
+					Log.Write("Changing Selection: " + value?.Mode + " - " + value?.BaseAddress, "Selection");
 
 					this.SelectionChanged?.Invoke(this.currentSelection);
 				}

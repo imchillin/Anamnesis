@@ -3,11 +3,17 @@
 
 namespace ConceptMatrix
 {
-	using System.Diagnostics;
+	using System;
+	using ConceptMatrix.Injection;
 
 	public interface IInjectionService : IService
 	{
 		string GamePath { get; }
+		bool ProcessIsAlive { get; }
+		IProcess Process { get; }
+
+		UIntPtr GetAddress(IBaseMemoryOffset offset);
+		UIntPtr GetAddress(params IMemoryOffset[] offsets);
 		IMemory<T> GetMemory<T>(IBaseMemoryOffset baseAddress, params IMemoryOffset[] offsets);
 	}
 

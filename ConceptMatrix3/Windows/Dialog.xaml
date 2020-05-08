@@ -13,10 +13,13 @@
 		Title="Dialog"
 		Height="256"
 		Width="450"
+		SizeToContent="WidthAndHeight"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
-		WindowStartupLocation="CenterOwner">
+		WindowStartupLocation="CenterOwner"
+		Loaded="Window_Loaded"
+		Unloaded="Window_Unloaded">
 	
 	<Grid Margin="12">
 		<Border Background="{DynamicResource MaterialDesignPaper}"

@@ -10,13 +10,14 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
 	public partial class AppearanceEditor : UserControl, INotifyPropertyChanged
 	{
-		private IGameDataService gameDataService;
+		private readonly IGameDataService gameDataService;
 
 		private IMemory<Color> skinColorMem;
 		private IMemory<Color> skinGlowMem;
@@ -120,6 +121,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			private set;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnSelectionChanged(Selection selection)
 		{
 			if (this.Appearance != null)
@@ -197,6 +199,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			});
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnLipTintMemChanged(object sender, object value)
 		{
 			this.LipTint = new Color4(this.lipTintMem.Value, this.lipGlossMem.Value);
@@ -215,6 +218,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e == null || e.PropertyName == nameof(AppearanceViewModel.Race) || e.PropertyName == nameof(AppearanceViewModel.Tribe) || e.PropertyName == nameof(AppearanceViewModel.Gender))

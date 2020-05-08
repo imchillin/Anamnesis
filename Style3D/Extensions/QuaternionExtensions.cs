@@ -14,7 +14,7 @@ namespace System.Windows.Media.Media3D
 		/// <returns>Vector3D as euler angles.</returns>
 		public static Vector3D ToEulerAngles(this Quaternion q1)
 		{
-			Vector3D v = default(Vector3D);
+			Vector3D v = default;
 
 			double test = (q1.X * q1.Y) + (q1.Z * q1.W);
 

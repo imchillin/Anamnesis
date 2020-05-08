@@ -5,12 +5,14 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 IsVisibleChanged="OnIsVisibleChanged"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="250">
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="12"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
@@ -22,7 +24,30 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<ToggleButton Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" 
+		<StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Left" ToolTip="Right-Click an axis to lock rotation to it"
+					Orientation="Horizontal">
+			<ToggleButton  
+				IsEnabled="False"
+				Style="{StaticResource MaterialDesignActionToggleButton}"
+				Background="Transparent"
+				Height="22" Width="22"
+				x:Name="LockedIndicator"
+				Unchecked="LockedIndicator_Unchecked">
+				
+				<ToggleButton.Content>
+					<fa:IconImage Icon="LockOpen" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Margin="3"/>
+				</ToggleButton.Content>
+				
+				<materialDesign:ToggleButtonAssist.OnContent>
+					<fa:IconImage Icon="Lock" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Margin="3" Opacity="0.75"/>
+				</materialDesign:ToggleButtonAssist.OnContent>
+			</ToggleButton>
+
+			<TextBlock x:Name="LockedAxisDisplay" Text="" FontWeight="Bold" VerticalAlignment="Center" Margin="3" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Opacity="0.75"/>
+
+		</StackPanel>
+
+		<ToggleButton Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Right" 
 					  Style="{StaticResource MaterialDesignActionToggleButton}" IsChecked="{Binding WorldSpace}" Height="22" Width="22"
 					  ToolTip="World / Local space rotation">
 			
@@ -35,18 +60,21 @@
 		</ToggleButton>
 
 
-		<Grid Grid.Row="1" Grid.ColumnSpan="2" MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseLeave="OnViewportMouseLeave" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportMouseWheel">
+		<Grid Grid.Row="1" Grid.ColumnSpan="3" MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseLeave="OnViewportMouseLeave" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportMouseWheel">
 			<Rectangle Fill="Transparent"/>
 			<Viewport3D x:Name="Viewport"/>
 		</Grid>
 		
 		<Label Grid.Row="2" Grid.Column="0" Content="X" VerticalContentAlignment="Center"/>
-		<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding EulerX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True"/>
+		<Ellipse Grid.Row="2" Grid.Column="1" Width="10" Height="10" Fill="Blue" Opacity="0.5"/>
+		<cm3:NumberBox Grid.Row="2" Grid.Column="2" Value="{Binding EulerX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True"/>
 
 		<Label Grid.Row="3" Grid.Column="0" Content="Y" VerticalContentAlignment="Center"/>
-		<cm3:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding EulerY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True"/>
+		<Ellipse Grid.Row="3" Grid.Column="1" Width="10" Height="10" Fill="Green" Opacity="0.5"/>
+		<cm3:NumberBox Grid.Row="3" Grid.Column="2" Value="{Binding EulerY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True"/>
 
 		<Label Grid.Row="4" Grid.Column="0" Content="Z" VerticalContentAlignment="Center"/>
-		<cm3:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding EulerZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True"/>
+		<Ellipse Grid.Row="4" Grid.Column="1" Width="10" Height="10" Fill="Red" Opacity="0.5"/>
+		<cm3:NumberBox Grid.Row="4" Grid.Column="2" Value="{Binding EulerZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True"/>
 	</Grid>
 </UserControl>

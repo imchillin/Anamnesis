@@ -43,6 +43,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set => ValueDp.Set(this, value);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(RgbColorControl sender, CmColor value)
 		{
 			sender.UpdatePreview();
@@ -73,7 +74,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private void UpdatePreview()
 		{
-			WpfColor c = default(WpfColor);
+			WpfColor c = default;
 			c.R = (byte)(Clamp(this.Value.R) * 255);
 			c.G = (byte)(Clamp(this.Value.G) * 255);
 			c.B = (byte)(Clamp(this.Value.B) * 255);

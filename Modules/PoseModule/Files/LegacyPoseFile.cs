@@ -533,7 +533,7 @@ namespace ConceptMatrix.PoseModule
 			{
 				byte[] data = StringToByteArray(rot);
 
-				Quaternion value = default(Quaternion);
+				Quaternion value = default;
 				value.X = BitConverter.ToSingle(data, 0);
 				value.Y = BitConverter.ToSingle(data, 4);
 				value.Z = BitConverter.ToSingle(data, 8);
@@ -545,7 +545,7 @@ namespace ConceptMatrix.PoseModule
 			{
 				byte[] data = StringToByteArray(scale);
 
-				Vector value = default(Vector);
+				Vector value = default;
 				value.X = BitConverter.ToSingle(data, 0);
 				value.Y = BitConverter.ToSingle(data, 4);
 				value.Z = BitConverter.ToSingle(data, 8);
