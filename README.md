@@ -9,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need to have .NET framework installed on your computer, version 4.6.2 or higher. You can download it [here](https://dotnet.microsoft.com/download/dotnet-framework). You might also need to have „C++ Redistributable 2012-2019” installed to have Saintcoinach working properly, grab it from [here](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads).
+You need to have .NET framework installed on your computer, version 4.6.2 or higher. You can download it [here](https://dotnet.microsoft.com/download/dotnet-framework). You might also need to have `C++ Redistributable 2012-2019` installed to have Saintcoinach working properly, grab it from [here](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads).
 
 ### Installing
 
@@ -22,7 +22,6 @@ Make sure to check out the included [wiki](https://github.com/imchillin/CMTool/w
 ## Authors
 
 * **LeonBlade** - *Initial work* - [LeonBlade](https://github.com/LeonBlade)
-* **Johto** - *Further development* - [Khyrou](https://github.com/Khyrou)
 * **Yuuki** - *Further development* - [Yuuki](https://github.com/Yuuki-Walsh)
 
 ## License
@@ -31,6 +30,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
+* Special thanks to Johto for their contributions and help.
 * Special thanks to Goaat for their contributions and help.
 * Special thanks to Seria Myouna for their contributions and help.
 * Special thanks to KirsanThyme for their contributions on Posing Matrix and help.

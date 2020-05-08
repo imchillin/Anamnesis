@@ -22,10 +22,8 @@ namespace ConceptMatrix.GUI
 	[AddINotifyPropertyChangedInterface]
 	public partial class MainWindow : Window
 	{
+		private readonly ViewService viewService;
 		private UserControl currentView;
-		private ViewService viewService;
-
-		private Dictionary<Type, UserControl> pageCache = new Dictionary<Type, UserControl>();
 
 		public MainWindow()
 		{
@@ -53,6 +51,7 @@ namespace ConceptMatrix.GUI
 			set;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnSettingsChanged(SettingsBase settings)
 		{
 			this.Zodiark = App.Settings.ThemeDark;

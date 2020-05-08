@@ -11,6 +11,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using ConceptMatrix;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for SelectorDrawer.xaml.
@@ -86,7 +87,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 		public static void Show<TValue>(string title, ISelectorView view, TValue current, Action<TValue> changed)
 		{
 			IViewService viewService = Services.Get<IViewService>();
-
+			view.Selector.Value = current;
 			view.Selector.SelectionChanged += () =>
 			{
 				changed?.Invoke((TValue)view.Selector.Value);
@@ -103,6 +104,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			Task.Run(this.DoFilter);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueChangedStatic(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (sender is SelectorDrawer view)
@@ -116,12 +118,14 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			Keyboard.Focus(this.SearchBox);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnSearchChanged(object sender, TextChangedEventArgs e)
 		{
 			string str = this.SearchBox.Text;
 			Task.Run(async () => { await this.Search(str); });
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(this.Items))
@@ -196,6 +200,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			this.idle = true;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (e.AddedItems.Count <= 0 || e.AddedItems[0] == this.oldValue)

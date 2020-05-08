@@ -107,6 +107,9 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			string directory = injection.GamePath;
 
+			if (!IsValidInstallation(directory))
+				throw new Exception("Invalid FFXIV installation");
+
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
 

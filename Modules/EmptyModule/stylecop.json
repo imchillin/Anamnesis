@@ -1,0 +1,17 @@
+﻿{
+	"$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+	"settings": 
+	{
+		"documentationRules": {
+			"xmlHeader": false,
+			"documentInterfaces": false,
+			"documentExposedElements": false,
+			"documentInternalElements": false,
+			"copyrightText": "Concept Matrix 3.\nLicensed under the MIT license."
+		},
+		"indentation": 
+		{
+			"useTabs":  true
+		}
+	}
+}

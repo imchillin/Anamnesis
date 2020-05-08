@@ -11,6 +11,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for NumberBox.xaml.
@@ -89,7 +90,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			{
 				this.inputString = value;
 
-				double val = 0;
+				double val;
 				if (double.TryParse(value, out val))
 				{
 					this.Value = val;
@@ -154,6 +155,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.TickValue(e.Delta > 0);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(NumberBox sender, double v)
 		{
 			sender.Value = sender.Validate(v);

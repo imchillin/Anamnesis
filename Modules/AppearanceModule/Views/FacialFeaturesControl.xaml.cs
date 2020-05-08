@@ -25,7 +25,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, FacialFeaturesControl>(nameof(Tribe), OnTribeChanged);
 		public static readonly IBind<byte> HeadDp = Binder.Register<byte, FacialFeaturesControl>(nameof(Head), OnHeadChanged);
 
-		private List<Option> features = new List<Option>();
+		private readonly List<Option> features = new List<Option>();
 		private bool locked = false;
 
 		public FacialFeaturesControl()
@@ -58,24 +58,28 @@ namespace ConceptMatrix.AppearanceModule.Views
 			set => ValueDp.Set(this, value);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnGenderChanged(FacialFeaturesControl sender, Appearance.Genders value)
 		{
 			sender.GetFeatures();
 			OnValueChanged(sender, sender.Value);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnTribeChanged(FacialFeaturesControl sender, Appearance.Tribes value)
 		{
 			sender.GetFeatures();
 			OnValueChanged(sender, sender.Value);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnHeadChanged(FacialFeaturesControl sender, byte value)
 		{
 			sender.GetFeatures();
 			OnValueChanged(sender, sender.Value);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(FacialFeaturesControl sender, Appearance.FacialFeature value)
 		{
 			foreach (Option op in sender.features)
@@ -149,6 +153,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			throw new Exception("Invalid index value");
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (locked)

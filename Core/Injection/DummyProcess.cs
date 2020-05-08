@@ -4,6 +4,7 @@
 namespace ConceptMatrix.Injection
 {
 	using System;
+	using System.Diagnostics;
 
 	public class DummyProcess : IProcess
 	{
@@ -41,7 +42,7 @@ namespace ConceptMatrix.Injection
 			return 0;
 		}
 
-		public void OpenProcess(string name)
+		public void OpenProcess(Process proc)
 		{
 		}
 

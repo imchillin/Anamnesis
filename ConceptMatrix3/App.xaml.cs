@@ -4,10 +4,12 @@
 namespace ConceptMatrix
 {
 	using System;
+	using System.Runtime.ExceptionServices;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Threading;
 	using ConceptMatrix.GUI;
+	using ConceptMatrix.GUI.Windows;
 	using MaterialDesignThemes.Wpf;
 	using Application = System.Windows.Application;
 
@@ -78,9 +80,6 @@ namespace ConceptMatrix
 				Settings.Changed += this.OnSettingsChanged;
 				this.OnSettingsChanged(Settings);
 
-				while (ErrorDialog.Count > 0)
-					await Task.Delay(500);
-
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					Window oldwindow = this.MainWindow;
@@ -101,26 +100,9 @@ namespace ConceptMatrix
 			ph.Apply(App.Settings.ThemeSwatch, App.Settings.ThemeDark);
 		}
 
-		private void OnException(Exception ex, Log.Severity severity, string category)
+		private void OnException(ExceptionDispatchInfo ex, Log.Severity severity, string category)
 		{
-			// Don't block the thread
-			Task.Run(() =>
-			{
-				if (Application.Current == null)
-					return;
-
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					ErrorDialog dlg = new ErrorDialog(ex, severity == Log.Severity.Critical);
-
-					if (this.MainWindow is ConceptMatrix.GUI.MainWindow)
-					{
-						dlg.Owner = this.MainWindow;
-					}
-
-					dlg.ShowDialog();
-				});
-			});
+			 ErrorDialog.ShowError(ex, severity == Log.Severity.Critical);
 		}
 	}
 }

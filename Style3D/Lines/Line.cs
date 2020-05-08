@@ -4,6 +4,7 @@
 namespace ConceptMatrix.ThreeD
 {
 	using System;
+	using System.Diagnostics;
 	using System.Windows;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
@@ -80,6 +81,7 @@ namespace ConceptMatrix.ThreeD
 			foreach (Point3D point in this.Points)
 			{
 				Point3D cameraSpacePoint = transform.Transform(point);
+				cameraSpacePoint.Z = cameraSpacePoint.Z * 100;
 
 				Vector3D dir = cameraPoint - cameraSpacePoint;
 				if (dir.Length < closest)

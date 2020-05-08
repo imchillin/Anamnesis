@@ -31,8 +31,8 @@ namespace ConceptMatrix.Injection.Offsets
 
 		public IMemory<Flag> GetMemory()
 		{
-			UIntPtr address = InjectionService.Instance.GetAddress(this);
-			return new FlagMemory(InjectionService.Instance.Process, address, this.On, this.Off);
+			UIntPtr address = injection.GetAddress(this);
+			return new FlagMemory(injection.Process, address, this.On, this.Off);
 		}
 	}
 }

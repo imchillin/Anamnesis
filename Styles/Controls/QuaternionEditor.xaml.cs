@@ -37,9 +37,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly IBind<double> EulerZDp = Binder.Register<double, QuaternionEditor>(nameof(EulerZ), OnEulerChanged);
 
 		////private Vector3D euler;
+		private readonly RotationGizmo rotationGizmo;
 		private bool lockdp = false;
-		private RotationGizmo rotationGizmo;
-		private bool mouseDown = false;
 
 		private Quaternion worldSpaceDelta;
 		private bool worldSpace;
@@ -133,6 +132,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(QuaternionEditor sender, CmQuaternion value)
 		{
 			sender.ValueQuat = new Quaternion(value.X, value.Y, value.Z, value.W);
@@ -162,11 +162,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.lockdp = false;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnRootRotationChanged(QuaternionEditor sender, CmQuaternion? value)
 		{
 			OnValueChanged(sender, sender.Value);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnValueQuatChanged(QuaternionEditor sender, Quaternion value)
 		{
 			Quaternion newrot = value;
@@ -198,6 +200,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.lockdp = false;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private static void OnEulerChanged(QuaternionEditor sender, double val)
 		{
 			if (sender.lockdp)
@@ -209,16 +212,41 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.lockdp = false;
 		}
 
+		private static string GetAxisName(Vector3D? axis)
+		{
+			if (axis == null)
+				return null;
+
+			Vector3D v = (Vector3D)axis;
+
+			if (v.X > v.Y && v.X > v.Z)
+				return "X";
+
+			if (v.Y > v.X && v.Y > v.Z)
+				return "Y";
+
+			if (v.Z > v.X && v.Z > v.Y)
+				return "Z";
+
+			return null;
+		}
+
 		private void OnViewportMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			this.mouseDown = true;
 			Mouse.Capture(this.Viewport);
 		}
 
 		private void OnViewportMouseUp(object sender, MouseButtonEventArgs e)
 		{
-			this.mouseDown = false;
 			Mouse.Capture(null);
+
+			if (e.ChangedButton == MouseButton.Right)
+			{
+				this.LockedIndicator.IsChecked = this.rotationGizmo.LockHoveredGizmo();
+				this.LockedIndicator.IsEnabled = (bool)this.LockedIndicator.IsChecked;
+				this.LockedAxisDisplay.Text = GetAxisName(this.rotationGizmo.Locked?.Axis);
+			}
+
 			this.rotationGizmo.Hover(null);
 		}
 
@@ -226,7 +254,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			Point mousePosition = e.GetPosition(this.Viewport);
 
-			if (!this.mouseDown)
+			if (e.LeftButton != MouseButtonState.Pressed)
 			{
 				HitTestResult result = VisualTreeHelper.HitTest(this.Viewport, mousePosition);
 				this.rotationGizmo.Hover(result?.VisualHit);
@@ -234,18 +262,16 @@ namespace ConceptMatrix.WpfStyles.Controls
 			else
 			{
 				Point3D mousePos3D = new Point3D(mousePosition.X, mousePosition.Y, 0);
-
 				this.rotationGizmo.Drag(mousePos3D);
 			}
 		}
 
 		private void OnViewportMouseLeave(object sender, MouseEventArgs e)
 		{
-			if (this.mouseDown)
+			if (e.LeftButton == MouseButtonState.Pressed)
 				return;
 
 			this.rotationGizmo.Hover(null);
-			this.mouseDown = false;
 		}
 
 		private void OnViewportMouseWheel(object sender, MouseWheelEventArgs e)
@@ -256,6 +282,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 				delta *= 10;
 
 			this.rotationGizmo.Scroll(delta);
+		}
+
+		private void LockedIndicator_Unchecked(object sender, RoutedEventArgs e)
+		{
+			this.rotationGizmo.UnlockGizmo();
+			this.LockedIndicator.IsEnabled = false;
+			this.LockedAxisDisplay.Text = GetAxisName(this.rotationGizmo.Locked?.Axis);
 		}
 
 		private void WatchCamera()
@@ -290,6 +323,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (this.IsVisible)
@@ -301,8 +335,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private class RotationGizmo : ModelVisual3D
 		{
-			private AxisGizmo hoveredGizmo;
-			private QuaternionEditor target;
+			private readonly QuaternionEditor target;
 
 			public RotationGizmo(QuaternionEditor target)
 			{
@@ -320,8 +353,58 @@ namespace ConceptMatrix.WpfStyles.Controls
 				this.Children.Add(new AxisGizmo(Colors.Red, new Vector3D(0, 0, 1)));
 			}
 
+			public AxisGizmo Locked
+			{
+				get;
+				private set;
+			}
+
+			public AxisGizmo Hovered
+			{
+				get;
+				private set;
+			}
+
+			public AxisGizmo Active
+			{
+				get
+				{
+					if (this.Locked != null)
+						return this.Locked;
+
+					return this.Hovered;
+				}
+			}
+
+			public bool LockHoveredGizmo()
+			{
+				if (this.Locked != null)
+					this.Locked.Locked = false;
+
+				this.Locked = this.Hovered;
+
+				if (this.Locked != null)
+					this.Locked.Locked = true;
+
+				return this.Locked != null;
+			}
+
+			public void UnlockGizmo()
+			{
+				if (this.Locked != null)
+					this.Locked.Locked = false;
+
+				this.Locked = null;
+			}
+
 			public bool Hover(DependencyObject visual)
 			{
+				if (this.Locked != null)
+				{
+					this.Hovered = null;
+					return true;
+				}
+
 				AxisGizmo gizmo = null;
 				if (visual is Circle r)
 				{
@@ -332,14 +415,14 @@ namespace ConceptMatrix.WpfStyles.Controls
 					gizmo = (AxisGizmo)VisualTreeHelper.GetParent(c);
 				}
 
-				if (this.hoveredGizmo != null)
-					this.hoveredGizmo.Hovered = false;
+				if (this.Hovered != null)
+					this.Hovered.Hovered = false;
 
-				this.hoveredGizmo = gizmo;
+				this.Hovered = gizmo;
 
-				if (this.hoveredGizmo != null)
+				if (this.Hovered != null)
 				{
-					this.hoveredGizmo.Hovered = true;
+					this.Hovered.Hovered = true;
 					return true;
 				}
 
@@ -348,19 +431,19 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			public void Drag(Point3D mousePosition)
 			{
-				if (this.hoveredGizmo == null)
+				if (this.Active == null)
 					return;
 
-				Vector3D angleDelta = this.hoveredGizmo.Drag(mousePosition);
+				Vector3D angleDelta = this.Active.Drag(mousePosition);
 				this.ApplyDelta(angleDelta);
 			}
 
 			public void Scroll(double delta)
 			{
-				if (this.hoveredGizmo == null)
+				if (this.Active == null)
 					return;
 
-				Vector3D angleDelta = this.hoveredGizmo.Axis * delta;
+				Vector3D angleDelta = this.Active.Axis * delta;
 				this.ApplyDelta(angleDelta);
 			}
 
@@ -374,10 +457,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 		private class AxisGizmo : ModelVisual3D
 		{
 			public readonly Vector3D Axis;
-
-			private Circle circle;
-			private Cylinder cylinder;
-			private bool hovered;
+			private readonly Circle circle;
+			private readonly Cylinder cylinder;
 			private Color color;
 
 			private Point3D? lastPoint;
@@ -406,15 +487,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			public bool Hovered
 			{
-				get
-				{
-					return this.hovered;
-				}
-
 				set
 				{
-					this.hovered = value;
-
 					if (!value)
 					{
 						this.circle.Color = this.color;
@@ -429,7 +503,25 @@ namespace ConceptMatrix.WpfStyles.Controls
 				}
 			}
 
-			public void StartDrag(Point3D mousePosition)
+			public bool Locked
+			{
+				set
+				{
+					if (!value)
+					{
+						this.circle.Color = this.color;
+						this.circle.Thickness = 1;
+						this.lastPoint = null;
+					}
+					else
+					{
+						this.circle.Color = Colors.White;
+						this.circle.Thickness = 3;
+					}
+				}
+			}
+
+			public void StartDrag()
 			{
 				this.lastPoint = null;
 			}
@@ -439,14 +531,14 @@ namespace ConceptMatrix.WpfStyles.Controls
 				Point3D? point = this.circle.NearestPoint2D(mousePosition);
 
 				if (point == null)
-					return default(Vector3D);
+					return default;
 
 				point = this.circle.TransformToAncestor(this).Transform((Point3D)point);
 
 				if (this.lastPoint == null)
 				{
 					this.lastPoint = point;
-					return default(Vector3D);
+					return default;
 				}
 				else
 				{
@@ -467,7 +559,15 @@ namespace ConceptMatrix.WpfStyles.Controls
 					if (this.Axis.X >= 1)
 						angle = -angle;
 
-					return this.Axis * (angle * 2);
+					float speed = 2;
+
+					if (Keyboard.IsKeyDown(Key.LeftShift))
+						speed = 4;
+
+					if (Keyboard.IsKeyDown(Key.LeftCtrl))
+						speed = 0.5f;
+
+					return this.Axis * (angle * speed);
 				}
 			}
 		}

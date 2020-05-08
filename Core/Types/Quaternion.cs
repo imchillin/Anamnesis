@@ -89,7 +89,7 @@ namespace ConceptMatrix
 
 		public Vector ToEuler()
 		{
-			Vector v = default(Vector);
+			Vector v = default;
 
 			double test = (this.X * this.Y) + (this.Z * this.W);
 

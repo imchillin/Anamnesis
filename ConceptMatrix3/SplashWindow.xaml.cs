@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix
 {
+	using System.ComponentModel;
 	using System.Windows.Input;
 
 	/// <summary>
@@ -10,9 +11,28 @@ namespace ConceptMatrix
 	/// </summary>
 	public partial class SplashWindow
 	{
+		private static SplashWindow instance;
+
 		public SplashWindow()
 		{
 			this.InitializeComponent();
+			instance = this;
+		}
+
+		public static void HideWindow()
+		{
+			instance?.Hide();
+		}
+
+		public static void ShowWindow()
+		{
+			instance?.Show();
+		}
+
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			base.OnClosing(e);
+			instance = null;
 		}
 
 		private void OnMouseDown(object sender, MouseButtonEventArgs e)

@@ -35,7 +35,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			if (this.data.ContainsKey(key))
 				return this.data[key];
 
-			return default(T);
+			return default;
 		}
 
 		public T Get(byte key)

@@ -11,6 +11,8 @@ namespace ConceptMatrix.Injection.Offsets
 	[Serializable]
 	public class Offset : IMemoryOffset
 	{
+		protected static IInjectionService injection = Services.Get<IInjectionService>();
+
 		public Offset(params ulong[] offsets)
 		{
 			this.Offsets = offsets;

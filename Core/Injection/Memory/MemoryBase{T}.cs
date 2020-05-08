@@ -14,6 +14,8 @@ namespace ConceptMatrix.Injection.Memory
 	{
 		public string Description;
 
+		private static IInjectionService injection = Services.Get<IInjectionService>();
+
 		private T value;
 		private bool freeze;
 
@@ -156,7 +158,7 @@ namespace ConceptMatrix.Injection.Memory
 		// writes value to oldData and to memory
 		private bool DoWrite(T val, bool force = false)
 		{
-			if (!InjectionService.ProcessIsAlive)
+			if (!injection.ProcessIsAlive)
 				throw new Exception("no FFXIV process");
 
 			this.Write(val, ref this.newData);
@@ -177,7 +179,7 @@ namespace ConceptMatrix.Injection.Memory
 		// Reads memory into newData array
 		private void DoRead()
 		{
-			if (!InjectionService.ProcessIsAlive)
+			if (!injection.ProcessIsAlive)
 				throw new Exception("no FFXIV process");
 
 			if (!this.process.Read(this.address, this.newData, (UIntPtr)this.length, IntPtr.Zero))

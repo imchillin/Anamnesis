@@ -14,7 +14,7 @@ namespace ConceptMatrix.Injection.Memory
 
 		protected override Quaternion Read(ref byte[] data)
 		{
-			Quaternion value = default(Quaternion);
+			Quaternion value = default;
 			value.X = BitConverter.ToSingle(data, 0);
 			value.Y = BitConverter.ToSingle(data, 4);
 			value.Z = BitConverter.ToSingle(data, 8);

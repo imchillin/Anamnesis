@@ -81,7 +81,7 @@
 			<SubType>Code</SubType>
 			<DependentUpon>App.xaml</DependentUpon>
 		</Compile>
-		<Compile Update="ErrorDialog.xaml.cs">
+		<Compile Update="Windows\ErrorDialog.xaml.cs">
 			<DependentUpon>ErrorDialog.xaml</DependentUpon>
 		</Compile>
 		<Compile Update="MainWindow.xaml.cs">
@@ -115,7 +115,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Page Update="ErrorDialog.xaml">
+		<Page Update="Windows\ErrorDialog.xaml">
 			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="MainWindow.xaml">
@@ -152,5 +152,9 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="echo %25date%25 %25time%25 %25computername%25&gt; &quot;$(OutDir)\Version.txt&quot;" />
+	</Target>
 
 </Project>
