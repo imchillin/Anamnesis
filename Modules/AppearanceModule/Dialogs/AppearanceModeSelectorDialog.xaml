@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Dialogs"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="200" d:DesignWidth="300">
+			 d:DesignHeight="200" Width="300">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="48"/>
