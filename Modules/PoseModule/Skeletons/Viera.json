@@ -3,66 +3,82 @@
   "Bones": {
     "Ear01ALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x390",
+      "Parent": "Head",
       "Group": "Hair"
     },
     "Ear01ARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x3C0",
+      "Parent": "Head",
       "Group": "Hair"
     },
     "Ear01BLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x570",
+      "Parent": "Ear01ALeft",
       "Group": "Hair"
     },
     "Ear01BRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x5A0",
+      "Parent": "Ear01ARight",
       "Group": "Hair"
     },
     "Ear02ALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x3F0",
+      "Parent": "Head",
       "Group": "Hair"
     },
     "Ear02ARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x420",
+      "Parent": "Head",
       "Group": "Hair"
     },
     "Ear02BLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x5D0",
+      "Parent": "Ear02ALeft",
       "Group": "Hair"
     },
     "Ear02BRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x600",
+      "Parent": "Ear02ARight",
       "Group": "Hair"
     },
     "Ear03ALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x450",
+      "Parent": "Head",
       "Group": "Hair"
     },
     "Ear03ARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x480",
+      "Parent": "Head",
       "Group": "Hair"
     },
     "Ear03BLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x630",
+      "Parent": "Ear03ALeft",
       "Group": "Hair"
     },
     "Ear03BRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x660",
+      "Parent": "Ear03ARight",
       "Group": "Hair"
     },
     "Ear04ALeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x4B0",
+      "Parent": "Head",
       "Group": "Hair"
     },
     "Ear04ARight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x4E0",
+      "Parent": "Head",
       "Group": "Hair"
     },
     "Ear04BLeft": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x690",
+      "Parent": "Ear04ALeft",
       "Group": "Hair"
     },
     "Ear04BRight": {
       "Offsets": "0xF0, 0xA0, 0x68, 0x300, 0x18, 0x6C0",
+      "Parent": "Ear04ARight",
       "Group": "Hair"
     },
     "LipLowerA": {
