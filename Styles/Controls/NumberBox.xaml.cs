@@ -6,12 +6,17 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System;
 	using System.ComponentModel;
 	using System.Data;
+	using System.Drawing;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
+
+	using DrawPoint = System.Drawing.Point;
+	using WinCur = System.Windows.Forms.Cursor;
+	using WinPoint = System.Windows.Point;
 
 	/// <summary>
 	/// Interaction logic for NumberBox.xaml.
@@ -269,6 +274,25 @@ namespace ConceptMatrix.WpfStyles.Controls
 		private void OnUpClick(object sender, RoutedEventArgs e)
 		{
 			this.TickValue(true);
+		}
+
+		private void InputSlider_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (e.LeftButton == MouseButtonState.Pressed && this.Wrap)
+			{
+				WinPoint rightEdge = this.InputSlider.PointToScreen(new WinPoint(this.InputSlider.ActualWidth - 5, this.InputSlider.ActualHeight / 2));
+				WinPoint leftEdge = this.InputSlider.PointToScreen(new WinPoint(6, this.InputSlider.ActualHeight / 2));
+
+				if (WinCur.Position.X > rightEdge.X)
+				{
+					WinCur.Position = new DrawPoint((int)leftEdge.X, (int)leftEdge.Y);
+				}
+
+				if (WinCur.Position.X < leftEdge.X)
+				{
+					WinCur.Position = new DrawPoint((int)rightEdge.X, (int)rightEdge.Y);
+				}
+			}
 		}
 	}
 }

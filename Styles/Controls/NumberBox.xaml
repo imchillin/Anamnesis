@@ -48,6 +48,7 @@
 			Maximum="{Binding Maximum}"
 			TickFrequency="{Binding TickFrequency}"
 			Focusable="False"
+			PreviewMouseMove="InputSlider_MouseMove"
 			Visibility="{Binding Slider, Converter={StaticResource BoolToVisibilityConverter}}"
 			VerticalAlignment="Center"/>
 

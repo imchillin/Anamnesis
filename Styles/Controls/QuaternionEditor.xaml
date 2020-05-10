@@ -67,14 +67,14 @@
 		
 		<Label Grid.Row="2" Grid.Column="0" Content="X" VerticalContentAlignment="Center"/>
 		<Ellipse Grid.Row="2" Grid.Column="1" Width="10" Height="10" Fill="Blue" Opacity="0.5"/>
-		<cm3:NumberBox Grid.Row="2" Grid.Column="2" Value="{Binding EulerX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True"/>
+		<cm3:NumberBox Grid.Row="2" Grid.Column="2" Value="{Binding EulerX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True" Wrap="True"/>
 
 		<Label Grid.Row="3" Grid.Column="0" Content="Y" VerticalContentAlignment="Center"/>
 		<Ellipse Grid.Row="3" Grid.Column="1" Width="10" Height="10" Fill="Green" Opacity="0.5"/>
-		<cm3:NumberBox Grid.Row="3" Grid.Column="2" Value="{Binding EulerY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True"/>
+		<cm3:NumberBox Grid.Row="3" Grid.Column="2" Value="{Binding EulerY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True" Wrap="True"/>
 
 		<Label Grid.Row="4" Grid.Column="0" Content="Z" VerticalContentAlignment="Center"/>
 		<Ellipse Grid.Row="4" Grid.Column="1" Width="10" Height="10" Fill="Red" Opacity="0.5"/>
-		<cm3:NumberBox Grid.Row="4" Grid.Column="2" Value="{Binding EulerZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True"/>
+		<cm3:NumberBox Grid.Row="4" Grid.Column="2" Value="{Binding EulerZ, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TickFrequency="{Binding TickFrequency}" Minimum="0" Maximum="360" Slider="True" Buttons="True" Wrap="True"/>
 	</Grid>
 </UserControl>
