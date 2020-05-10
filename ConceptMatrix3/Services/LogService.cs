@@ -110,8 +110,17 @@ namespace ConceptMatrix.GUI.Services
 					return;
 
 				this.logWriter.Write("[");
-				this.logWriter.Write(category);
-				this.logWriter.Write("][");
+				this.logWriter.Write(DateTime.Now.ToString());
+				this.logWriter.Write("]");
+
+				if (!string.IsNullOrEmpty(category))
+				{
+					this.logWriter.Write("[");
+					this.logWriter.Write(category);
+					this.logWriter.Write("] ");
+				}
+
+				this.logWriter.Write("[");
 				this.logWriter.Write(severity);
 				this.logWriter.Write("] ");
 				this.logWriter.WriteLine(message);
