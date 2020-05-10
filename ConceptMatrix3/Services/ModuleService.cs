@@ -5,6 +5,7 @@ namespace ConceptMatrix.GUI.Services
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Reflection;
 	using System.Threading.Tasks;
@@ -43,20 +44,26 @@ namespace ConceptMatrix.GUI.Services
 
 			foreach (FileInfo assemblyInfo in assemblyPaths)
 			{
-				Log.Write("Load assembly: " + assemblyInfo.FullName);
 				Assembly assembly = Assembly.LoadFrom(assemblyInfo.FullName);
 				assemblies.Add(assembly);
+				Log.Write("Loaded assembly: " + assemblyInfo.FullName);
 			}
 
 			foreach (Assembly assembly in assemblies)
 			{
-				Log.Write("Initialize assembly: " + assembly.FullName);
 				await this.InitializeModules(assembly);
 			}
 		}
 
 		private async Task InitializeModules(Assembly targetAssembly)
 		{
+			string loc = targetAssembly.Location;
+			string dir = Path.GetDirectoryName(loc);
+
+			// Don't initialize assemblies in sub directories, just load them.
+			if (!dir.EndsWith("Modules"))
+				return;
+
 			try
 			{
 				foreach (Type type in targetAssembly.GetTypes())
@@ -66,6 +73,7 @@ namespace ConceptMatrix.GUI.Services
 
 					if (typeof(IModule).IsAssignableFrom(type))
 					{
+						Log.Write("Initialize Module: " + targetAssembly.GetName().Name);
 						IModule module = (IModule)Activator.CreateInstance(type);
 						await module.Initialize();
 					}

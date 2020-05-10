@@ -4,6 +4,7 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
 	using System.IO.Compression;
@@ -101,7 +102,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			return Task.CompletedTask;
 		}
 
-		public Task Start()
+		public async Task Start()
 		{
 			IInjectionService injection = Services.Get<IInjectionService>();
 
@@ -110,17 +111,23 @@ namespace ConceptMatrix.SaintCoinachModule
 			if (!IsValidInstallation(directory))
 				throw new Exception("Invalid FFXIV installation");
 
+			bool forceUpdate = false;
+
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
 
-			if (File.Exists("SaintCoinach.History.zip"))
-				File.Delete("SaintCoinach.History.zip");
+			if (forceUpdate)
+			{
+				if (File.Exists("SaintCoinach.History.zip"))
+					File.Delete("SaintCoinach.History.zip");
+
+				if (Directory.Exists("./Definitions/"))
+					Directory.Delete("./Definitions/", true);
+			}
 
 			// Unzip definitions
-			if (Directory.Exists("./Definitions/"))
-				Directory.Delete("./Definitions/", true);
-
-			ZipFile.ExtractToDirectory("./Modules/SaintCoinach/Definitions.zip", "./Definitions/");
+			if (!Directory.Exists("./Definitions/"))
+				ZipFile.ExtractToDirectory("./Modules/SaintCoinach/Definitions.zip", "./Definitions/");
 
 			// TODO get language from language service?
 			ARealmReversed realm = new ARealmReversed(directory, Language.English);
@@ -137,24 +144,24 @@ namespace ConceptMatrix.SaintCoinachModule
 				throw new Exception(@"Failed to update Saint Coinach", ex);
 			}
 
-			Log.Write("Reading data", @"Saint Coinach");
+			List<Task> tasks = new List<Task>();
+			tasks.Add(Task.Run(() => this.Items = this.Load<Table<IItem>, IItem, Item, ItemWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.Races = this.Load<Table<IRace>, IRace, Race, RaceWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.Tribes = this.Load<Table<ITribe>, ITribe, Tribe, TribeWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.Dyes = this.Load<Table<IDye>, IDye, Stain, DyeWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.BaseNPCs = this.Load<Table<INpcBase>, INpcBase, ENpcBase, NpcBaseWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.Territories = this.Load<Table<ITerritoryType>, ITerritoryType, TerritoryType, TerritoryTypeWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.Weathers = this.Load<Table<IWeather>, IWeather, Weather, WeatherWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.CharacterMakeCustomize = this.Load<CustomizeTable, ICharaMakeCustomize, CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.CharacterMakeTypes = this.Load<Table<ICharaMakeType>, ICharaMakeType, CharaMakeType, CharacterMakeTypeWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.ResidentNPCs = this.Load<Table<INpcResident>, INpcResident, ENpcResident, NpcResidentWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.Titles = this.Load<Table<ITitle>, ITitle, Title, TitleWrapper>(realm)));
+			tasks.Add(Task.Run(() => this.Statuses = this.Load<Table<IStatus>, IStatus, Status, StatusWrapper>(realm)));
 
-			this.Items = this.Load<Table<IItem>, IItem, Item, ItemWrapper>(realm);
-			this.Races = this.Load<Table<IRace>, IRace, Race, RaceWrapper>(realm);
-			this.Tribes = this.Load<Table<ITribe>, ITribe, Tribe, TribeWrapper>(realm);
-			this.Dyes = this.Load<Table<IDye>, IDye, Stain, DyeWrapper>(realm);
-			this.BaseNPCs = this.Load<Table<INpcBase>, INpcBase, ENpcBase, NpcBaseWrapper>(realm);
-			this.Territories = this.Load<Table<ITerritoryType>, ITerritoryType, TerritoryType, TerritoryTypeWrapper>(realm);
-			this.Weathers = this.Load<Table<IWeather>, IWeather, Weather, WeatherWrapper>(realm);
-			this.CharacterMakeCustomize = this.Load<CustomizeTable, ICharaMakeCustomize, CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm);
-			this.CharacterMakeTypes = this.Load<Table<ICharaMakeType>, ICharaMakeType, CharaMakeType, CharacterMakeTypeWrapper>(realm);
-			this.ResidentNPCs = this.Load<Table<INpcResident>, INpcResident, ENpcResident, NpcResidentWrapper>(realm);
-			this.Titles = this.Load<Table<ITitle>, ITitle, Title, TitleWrapper>(realm);
-			this.Statuses = this.Load<Table<IStatus>, IStatus, Status, StatusWrapper>(realm);
+			foreach (Task t in tasks)
+				await t;
 
-			Log.Write("Finished Reading data", @"Saint Coinach");
 			Log.Write("Initialization took " + sw.ElapsedMilliseconds + "ms", @"Saint Coinach");
-			return Task.CompletedTask;
 		}
 
 		public void Report(UpdateProgress value)

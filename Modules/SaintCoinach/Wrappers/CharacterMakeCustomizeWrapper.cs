@@ -12,11 +12,17 @@ namespace ConceptMatrix.SaintCoinachModule
 		public CharacterMakeCustomizeWrapper(CharaMakeCustomize value)
 			: base(value)
 		{
-			this.Icon = value.Icon.ToIImage();
 			this.FeatureId = (byte)value.FeatureID;
 		}
 
-		public IImage Icon { get; private set; }
+		public IImage Icon
+		{
+			get
+			{
+				return this.Value.Icon.ToIImage();
+			}
+		}
+
 		public byte FeatureId { get; private set; }
 	}
 }
