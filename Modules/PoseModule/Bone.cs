@@ -13,8 +13,8 @@ namespace ConceptMatrix.PoseModule
 		public List<Bone> Children = new List<Bone>();
 		public Bone Parent;
 
-		private IMemory<Transform> transformMem;
-		private IMemory<Quaternion> rootRotationMem;
+		private readonly IMemory<Transform> transformMem;
+		private readonly IMemory<Quaternion> rootRotationMem;
 
 		public Bone(string name, IMemory<Transform> transformMem, IMemory<Quaternion> root, SkeletonService.Bone definition)
 		{

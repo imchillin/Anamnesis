@@ -234,6 +234,8 @@ namespace ConceptMatrix.PoseModule
 
 		public void Clear()
 		{
+			this.IsEnabled = false;
+
 			this.skel1Mem?.Dispose();
 			this.skel2Mem?.Dispose();
 			this.skel3Mem?.Dispose();
