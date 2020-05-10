@@ -5,6 +5,7 @@ namespace ConceptMatrix.GUI
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using ConceptMatrix.GUI.Pages;
 	using ConceptMatrix.GUI.Services;
@@ -47,9 +48,11 @@ namespace ConceptMatrix.GUI
 		{
 			try
 			{
+				Stopwatch sw = new Stopwatch();
+				sw.Start();
+
 				string serviceName = GetServiceName<T>();
 
-				Log.Write($"Adding service: {serviceName}", "Services");
 				IService service = Activator.CreateInstance<T>();
 				this.services.Add(service);
 
@@ -62,6 +65,8 @@ namespace ConceptMatrix.GUI
 					OnServiceStarting?.Invoke(serviceName);
 					await service.Start();
 				}
+
+				Log.Write($"Added service: {serviceName} in {sw.ElapsedMilliseconds}ms", "Services");
 			}
 			catch (Exception ex)
 			{
