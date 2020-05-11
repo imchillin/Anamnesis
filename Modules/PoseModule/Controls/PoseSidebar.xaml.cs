@@ -25,6 +25,9 @@ namespace ConceptMatrix.PoseModule.Controls
 				IFileService fileService = Services.Get<IFileService>();
 				FileBase file = await fileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
 
+				if (file == null)
+					return;
+
 				if (file is LegacyPoseFile legacyFile)
 					file = legacyFile.Upgrade(Module.SkeletonViewModel.Race);
 
