@@ -57,7 +57,14 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.transformMem.Value;
+				try
+				{
+					return this.transformMem.Value;
+				}
+				catch (Exception ex)
+				{
+					throw new Exception("Unable to read bone transform: " + this.BoneName, ex);
+				}
 			}
 
 			set

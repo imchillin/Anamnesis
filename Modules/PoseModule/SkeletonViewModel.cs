@@ -32,6 +32,7 @@ namespace ConceptMatrix.PoseModule
 		private Dictionary<string, Bone> bones;
 		private Bone currentBone;
 		private bool enabled;
+		private bool freezePhysics;
 
 		private IMemory<Appearance> appearanceMem;
 
@@ -55,13 +56,10 @@ namespace ConceptMatrix.PoseModule
 					this.skel1Mem.Value = Flag.Enabled;
 					this.skel2Mem.Value = Flag.Enabled;
 					this.skel3Mem.Value = Flag.Enabled;
-					this.phys1Mem.Value = Flag.Enabled;
-					this.phys2Mem.Value = Flag.Enabled;
 
 					// scale
 					this.skel4Mem.Value = Flag.Enabled;
 					this.skel6Mem.Value = Flag.Enabled;
-					this.phys3Mem.Value = Flag.Enabled;
 
 					// Poll changes thread
 					new Thread(new ThreadStart(this.PollChanges)).Start();
@@ -72,12 +70,37 @@ namespace ConceptMatrix.PoseModule
 					this.skel1Mem.Value = Flag.Disabled;
 					this.skel2Mem.Value = Flag.Disabled;
 					this.skel3Mem.Value = Flag.Disabled;
-					this.phys1Mem.Value = Flag.Disabled;
-					this.phys2Mem.Value = Flag.Disabled;
 
 					// scale
 					this.skel4Mem.Value = Flag.Disabled;
 					this.skel6Mem.Value = Flag.Disabled;
+				}
+
+				this.FreezePhysics = value;
+			}
+		}
+
+		public bool FreezePhysics
+		{
+			get
+			{
+				return this.freezePhysics;
+			}
+
+			set
+			{
+				this.freezePhysics = value;
+
+				if (this.freezePhysics)
+				{
+					this.phys1Mem.Value = Flag.Enabled;
+					this.phys2Mem.Value = Flag.Enabled;
+					this.phys3Mem.Value = Flag.Enabled;
+				}
+				else
+				{
+					this.phys1Mem.Value = Flag.Disabled;
+					this.phys2Mem.Value = Flag.Disabled;
 					this.phys3Mem.Value = Flag.Disabled;
 				}
 			}
@@ -329,6 +352,7 @@ namespace ConceptMatrix.PoseModule
 				try
 				{
 					IMemory<Transform> transMem = selection.BaseAddress.GetMemory(boneDef.Offsets);
+					transMem.Name = "Bone_" + name;
 					this.bones[name] = new Bone(name, transMem, this.rootRotationMem, boneDef);
 				}
 				catch (Exception ex)
@@ -372,7 +396,11 @@ namespace ConceptMatrix.PoseModule
 				}
 				else if (boneName == "TailE")
 				{
-					this.GetBone("TailE").IsEnabled = false;
+					this.bones[boneName].IsEnabled = false;
+				}
+				else if (boneName == "ExRootMet")
+				{
+					this.bones[boneName].IsEnabled = false;
 				}
 			}
 
