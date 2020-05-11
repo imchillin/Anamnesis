@@ -19,13 +19,13 @@ namespace ConceptMatrix.PoseModule.Controls
 		public static readonly IBind<string> LabelDp = Binder.Register<string, BoneView>(nameof(Label));
 		public static readonly IBind<string> NameDp = Binder.Register<string, BoneView>(nameof(BoneName));
 
-		private static Dictionary<Bone, List<BoneView>> boneViews = new Dictionary<Bone, List<BoneView>>();
+		private static readonly Dictionary<Bone, List<BoneView>> BoneViews = new Dictionary<Bone, List<BoneView>>();
+
+		private readonly List<Line> linesToChildren = new List<Line>();
+		private readonly List<Line> mouseLinesToChildren = new List<Line>();
 
 		private SkeletonViewModel viewModel;
 		private Bone bone;
-
-		private List<Line> linesToChildren = new List<Line>();
-		private List<Line> mouseLinesToChildren = new List<Line>();
 
 		public BoneView()
 		{
@@ -66,7 +66,7 @@ namespace ConceptMatrix.PoseModule.Controls
 
 		public static bool HasView(Bone bone)
 		{
-			return boneViews.ContainsKey(bone);
+			return BoneViews.ContainsKey(bone);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -125,10 +125,10 @@ namespace ConceptMatrix.PoseModule.Controls
 
 			foreach (Bone bone in this.bone.Children)
 			{
-				if (!boneViews.ContainsKey(bone))
+				if (!BoneViews.ContainsKey(bone))
 					continue;
 
-				foreach (BoneView childView in boneViews[bone])
+				foreach (BoneView childView in BoneViews[bone])
 				{
 					if (this.Parent is Canvas c1 && childView.Parent is Canvas c2 && c1 == c2)
 					{
@@ -189,9 +189,9 @@ namespace ConceptMatrix.PoseModule.Controls
 		{
 			if (this.bone != null)
 			{
-				if (boneViews.ContainsKey(this.bone))
+				if (BoneViews.ContainsKey(this.bone))
 				{
-					boneViews[this.bone].Remove(this);
+					BoneViews[this.bone].Remove(this);
 				}
 			}
 
@@ -201,10 +201,10 @@ namespace ConceptMatrix.PoseModule.Controls
 			{
 				this.ToolTip = this.bone.Tooltip;
 
-				if (!boneViews.ContainsKey(this.bone))
-					boneViews.Add(this.bone, new List<BoneView>());
+				if (!BoneViews.ContainsKey(this.bone))
+					BoneViews.Add(this.bone, new List<BoneView>());
 
-				boneViews[this.bone].Add(this);
+				BoneViews[this.bone].Add(this);
 
 				this.ToolTip = this.bone.Tooltip;
 				this.IsEnabled = true;
