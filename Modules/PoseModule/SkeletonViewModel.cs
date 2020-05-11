@@ -370,6 +370,10 @@ namespace ConceptMatrix.PoseModule
 						this.bones[boneName].IsEnabled = false;
 					}
 				}
+				else if (boneName == "TailE")
+				{
+					this.GetBone("TailE").IsEnabled = false;
+				}
 			}
 
 			// Again to set parenting

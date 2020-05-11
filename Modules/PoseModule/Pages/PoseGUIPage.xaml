@@ -51,9 +51,8 @@
 						<controls:BoneView Canvas.Left="118" Canvas.Top="75" BoneName="Neck"/>
 						<controls:BoneView Canvas.Left="118" Canvas.Top="100" BoneName="SpineC"/>
 						<controls:BoneView Canvas.Left="118" Canvas.Top="145" BoneName="SpineB"/>
-						<controls:BoneView Canvas.Left="118" Canvas.Top="170" BoneName="SpineA"/>
-						<controls:BoneView Canvas.Left="118" Canvas.Top="195" BoneName="Root"/>
-						<controls:BoneView Canvas.Left="118" Canvas.Top="220" BoneName="Waist"/>
+						<controls:BoneView Canvas.Left="118" Canvas.Top="180" BoneName="SpineA"/>
+						<controls:BoneView Canvas.Left="118" Canvas.Top="210" BoneName="Waist"/>
 						<controls:BoneView Canvas.Left="98" Canvas.Top="93" BoneName="ClavicleLeft"/>
 						<controls:BoneView Canvas.Left="138" Canvas.Top="93" BoneName="ClavicleRight"/>
 						<controls:BoneView Canvas.Left="73" Canvas.Top="87" BoneName="ShoulderLeft"/>
@@ -288,7 +287,7 @@
 								<controls:BoneView Canvas.Left="73" Canvas.Top="28" BoneName="TailB"/>
 								<controls:BoneView Canvas.Left="65" Canvas.Top="80" BoneName="TailC"/>
 								<controls:BoneView Canvas.Left="55" Canvas.Top="128" BoneName="TailD"/>
-								<controls:BoneView Canvas.Left="65" Canvas.Top="168" BoneName="TailE"/>
+								<!--<controls:BoneView Canvas.Left="65" Canvas.Top="168" BoneName="TailE"/>-->
 							</Canvas>
 						</Viewbox>
 
