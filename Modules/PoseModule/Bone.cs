@@ -167,7 +167,16 @@ namespace ConceptMatrix.PoseModule
 
 			if (this.LivePosition != this.Position)
 			{
+				Vector delta = this.Position - this.LivePosition;
 				this.LivePosition = this.Position;
+
+				if (Module.SkeletonViewModel.ParentingEnabled)
+				{
+					foreach (Bone child in this.Children)
+					{
+						child.ApplyTranslate(delta);
+					}
+				}
 			}
 		}
 
@@ -214,6 +223,26 @@ namespace ConceptMatrix.PoseModule
 			foreach (Bone child in this.Children)
 			{
 				child.ApplyScale(delta);
+			}
+		}
+
+		private void ApplyTranslate(Vector delta)
+		{
+			if (!this.IsEnabled)
+				return;
+
+			this.Position = this.LivePosition;
+			Vector newPos = this.Position + delta;
+
+			if (this.Position == newPos)
+				return;
+
+			this.Position = newPos;
+			this.LivePosition = this.Position;
+
+			foreach (Bone child in this.Children)
+			{
+				child.ApplyTranslate(delta);
 			}
 		}
 	}

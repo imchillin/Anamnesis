@@ -21,6 +21,7 @@ namespace ConceptMatrix.PoseModule
 		private IMemory<Flag> skel2Mem;
 		private IMemory<Flag> skel3Mem;
 		private IMemory<Flag> skel4Mem;
+		private IMemory<Flag> skel5Mem;
 		private IMemory<Flag> skel6Mem;
 
 		private IMemory<Flag> phys1Mem;
@@ -61,6 +62,9 @@ namespace ConceptMatrix.PoseModule
 					this.skel4Mem.Value = Flag.Enabled;
 					this.skel6Mem.Value = Flag.Enabled;
 
+					// Positions
+					this.skel5Mem.Value = Flag.Enabled;
+
 					// Poll changes thread
 					new Thread(new ThreadStart(this.PollChanges)).Start();
 				}
@@ -74,6 +78,9 @@ namespace ConceptMatrix.PoseModule
 					// scale
 					this.skel4Mem.Value = Flag.Disabled;
 					this.skel6Mem.Value = Flag.Disabled;
+
+					// Positions
+					this.skel5Mem.Value = Flag.Disabled;
 				}
 
 				this.FreezePhysics = value;
@@ -233,6 +240,7 @@ namespace ConceptMatrix.PoseModule
 			this.skel2Mem = Offsets.Main.Skeleton2Flag.GetMemory();
 			this.skel3Mem = Offsets.Main.Skeleton3Flag.GetMemory();
 			this.skel4Mem = Offsets.Main.Skeleton4flag.GetMemory();
+			this.skel5Mem = Offsets.Main.Skeleton5Flag.GetMemory();
 			this.skel6Mem = Offsets.Main.Skeleton6Flag.GetMemory();
 			this.phys1Mem = Offsets.Main.Physics1Flag.GetMemory();
 			this.phys2Mem = Offsets.Main.Physics2Flag.GetMemory();
@@ -263,6 +271,7 @@ namespace ConceptMatrix.PoseModule
 			this.skel2Mem?.Dispose();
 			this.skel3Mem?.Dispose();
 			this.skel4Mem?.Dispose();
+			this.skel5Mem?.Dispose();
 			this.skel6Mem?.Dispose();
 			this.phys1Mem?.Dispose();
 			this.phys2Mem?.Dispose();
