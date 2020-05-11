@@ -8,6 +8,7 @@ namespace ConceptMatrix.PoseModule.Controls
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Shapes;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
@@ -24,6 +25,7 @@ namespace ConceptMatrix.PoseModule.Controls
 		private Bone bone;
 
 		private List<Line> linesToChildren = new List<Line>();
+		private List<Line> mouseLinesToChildren = new List<Line>();
 
 		public BoneView()
 		{
@@ -109,6 +111,16 @@ namespace ConceptMatrix.PoseModule.Controls
 				}
 			}
 
+			foreach (Line line in this.mouseLinesToChildren)
+			{
+				if (line.Parent is Panel parentPanel)
+					parentPanel.Children.Remove(line);
+
+				line.MouseEnter -= this.OnMouseEnter;
+				line.MouseLeave -= this.OnMouseLeave;
+				line.MouseUp -= this.OnMouseUp;
+			}
+
 			this.linesToChildren.Clear();
 
 			foreach (Bone bone in this.bone.Children)
@@ -133,6 +145,24 @@ namespace ConceptMatrix.PoseModule.Controls
 
 						c1.Children.Insert(0, line);
 						this.linesToChildren.Add(line);
+
+						// A transparent line to make mouse operations easier
+						Line line2 = new Line();
+						line2.StrokeThickness = 25;
+						line2.Stroke = Brushes.Transparent;
+						////line2.Opacity = 0.1f;
+
+						line2.MouseEnter += this.OnMouseEnter;
+						line2.MouseLeave += this.OnMouseLeave;
+						line2.MouseUp += this.OnMouseUp;
+
+						line2.X1 = line.X1;
+						line2.Y1 = line.Y1;
+						line2.X2 = line.X2;
+						line2.Y2 = line.Y2;
+
+						c1.Children.Insert(0, line2);
+						this.mouseLinesToChildren.Add(line2);
 					}
 				}
 			}
@@ -195,7 +225,7 @@ namespace ConceptMatrix.PoseModule.Controls
 			}
 		}
 
-		private void OnMouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+		private void OnMouseEnter(object sender, MouseEventArgs e)
 		{
 			if (!this.IsEnabled)
 				return;
@@ -203,7 +233,7 @@ namespace ConceptMatrix.PoseModule.Controls
 			this.viewModel.MouseOverBone = this.bone;
 		}
 
-		private void OnMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+		private void OnMouseLeave(object sender, MouseEventArgs e)
 		{
 			if (!this.IsEnabled)
 				return;
@@ -214,7 +244,7 @@ namespace ConceptMatrix.PoseModule.Controls
 			}
 		}
 
-		private void OnMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		private void OnMouseUp(object sender, MouseButtonEventArgs e)
 		{
 			if (!this.IsEnabled)
 				return;
