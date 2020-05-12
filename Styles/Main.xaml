@@ -94,5 +94,7 @@
 	<converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
 	<converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 	<converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
-
+	<converters:BoolToIntConverter x:Key="B2V"/>
+	<converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+	
 </ResourceDictionary>

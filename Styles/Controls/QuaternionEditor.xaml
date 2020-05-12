@@ -9,6 +9,7 @@
 			 IsVisibleChanged="OnIsVisibleChanged"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="250">
+
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
