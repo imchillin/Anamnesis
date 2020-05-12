@@ -192,6 +192,13 @@ namespace ConceptMatrix.ThreeD
 		public static Matrix3D TryTransformTo2DAncestor(DependencyObject visual, out Viewport3DVisual viewport, out bool success)
 		{
 			Matrix3D to2D = GetWorldTransformationMatrix(visual, out viewport);
+
+			if (viewport == null)
+			{
+				success = false;
+				return ZeroMatrix;
+			}
+
 			to2D.Append(MathUtils.TryWorldToViewportTransform(viewport, out success));
 
 			if (!success)
