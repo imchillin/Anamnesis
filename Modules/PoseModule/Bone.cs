@@ -10,17 +10,18 @@ namespace ConceptMatrix.PoseModule
 	public class Bone : INotifyPropertyChanged, IDisposable
 	{
 		public readonly SkeletonService.Bone Definition;
+		public readonly IMemory<Transform> TransformMem;
+
 		public List<Bone> Children = new List<Bone>();
 		public Bone Parent;
 
-		private readonly IMemory<Transform> transformMem;
 		private readonly IMemory<Quaternion> rootRotationMem;
 
 		public Bone(string name, IMemory<Transform> transformMem, IMemory<Quaternion> root, SkeletonService.Bone definition)
 		{
 			this.Definition = definition;
 			this.BoneName = name;
-			this.transformMem = transformMem;
+			this.TransformMem = transformMem;
 			this.rootRotationMem = root;
 
 			this.Rotation = this.LiveRotation;
@@ -59,7 +60,7 @@ namespace ConceptMatrix.PoseModule
 			{
 				try
 				{
-					return this.transformMem.Value;
+					return this.TransformMem.Value;
 				}
 				catch (Exception ex)
 				{
@@ -69,7 +70,7 @@ namespace ConceptMatrix.PoseModule
 
 			set
 			{
-				this.transformMem.Value = value;
+				this.TransformMem.Value = value;
 				this.Rotation = this.LiveRotation;
 				this.Scale = this.LiveScale;
 				this.Position = this.LivePosition;
@@ -182,7 +183,7 @@ namespace ConceptMatrix.PoseModule
 
 		public void Dispose()
 		{
-			this.transformMem.Dispose();
+			this.TransformMem.Dispose();
 		}
 
 		private void ApplyRotation(Quaternion sourceOldCnj, Quaternion sourceNew)
