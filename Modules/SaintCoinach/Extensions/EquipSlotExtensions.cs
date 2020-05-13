@@ -10,22 +10,24 @@ namespace SaintCoinach.Xiv
 	{
 		public static bool IsSlot(this EquipSlot self, ItemSlots slot)
 		{
+			string name = self.Name;
+
 			switch (slot)
 			{
 				// TODO: ensuire this works in every laguage!
-				case ItemSlots.MainHand: return self.Name == "Main Hand";
-				case ItemSlots.Head: return self.Name == "Head";
-				case ItemSlots.Body: return self.Name == "Body";
-				case ItemSlots.Hands: return self.Name == "Hands";
-				case ItemSlots.Waist: return self.Name == "Waist";
-				case ItemSlots.Legs: return self.Name == "Legs";
-				case ItemSlots.Feet: return self.Name == "Feet";
-				case ItemSlots.OffHand: return self.Name == "Off Hand";
-				case ItemSlots.Ears: return self.Name == "Ears";
-				case ItemSlots.Neck: return self.Name == "Neck";
-				case ItemSlots.Wrists: return self.Name == "Wrists";
-				case ItemSlots.RightRing: return self.Name == "Right Ring";
-				case ItemSlots.LeftRing: return self.Name == "Left Ring";
+				case ItemSlots.MainHand: return name == "Main Hand";
+				case ItemSlots.Head: return name == "Head";
+				case ItemSlots.Body: return name == "Body";
+				case ItemSlots.Hands: return name == "Hands";
+				case ItemSlots.Waist: return name == "Waist";
+				case ItemSlots.Legs: return name == "Legs";
+				case ItemSlots.Feet: return name == "Feet";
+				case ItemSlots.OffHand: return name == "Off Hand";
+				case ItemSlots.Ears: return name == "Ears";
+				case ItemSlots.Neck: return name == "Neck";
+				case ItemSlots.Wrists: return name == "Wrists";
+				case ItemSlots.RightRing: return name == "Right Ring";
+				case ItemSlots.LeftRing: return name == "Left Ring";
 			}
 
 			throw new Exception($"Unknown item slot: {slot}");

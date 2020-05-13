@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
+	using System;
 	using System.Collections.Generic;
 	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
@@ -77,13 +78,20 @@ namespace ConceptMatrix.SaintCoinachModule
 			if (this.fitsInSlotsCache.ContainsKey(slot))
 				return this.fitsInSlotsCache[slot];
 
-			foreach (EquipSlot equipSlot in this.Value.EquipSlotCategory.PossibleSlots)
+			try
 			{
-				if (equipSlot.IsSlot(slot))
+				foreach (EquipSlot equipSlot in this.Value.EquipSlotCategory.PossibleSlots)
 				{
-					this.fitsInSlotsCache.Add(slot, true);
-					return true;
+					if (equipSlot.IsSlot(slot))
+					{
+						this.fitsInSlotsCache.Add(slot, true);
+						return true;
+					}
 				}
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception("Failed to check item slot compatibility for item: " + this.Name, ex), @"Saint Coinach", Log.Severity.Error);
 			}
 
 			this.fitsInSlotsCache.Add(slot, false);
