@@ -373,7 +373,7 @@ namespace ConceptMatrix.PoseModule
 
 				try
 				{
-					IMemory<Transform> transMem = selection.BaseAddress.GetMemory(boneDef.Offsets);
+					IMemory<CmTransform> transMem = selection.BaseAddress.GetMemory(boneDef.Offsets);
 					transMem.Name = "Bone_" + name;
 					this.bones[name] = new Bone(name, transMem, boneDef);
 					this.Root.Children.Add(this.bones[name]);
@@ -488,7 +488,10 @@ namespace ConceptMatrix.PoseModule
 				if (this.CurrentBone == null)
 					continue;
 
-				this.CurrentBone.WriteTransform(this.Root);
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					this.CurrentBone.WriteTransform(this.Root);
+				});
 			}
 
 			this.IsEnabled = false;

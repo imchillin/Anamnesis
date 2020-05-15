@@ -123,7 +123,7 @@ namespace ConceptMatrix.PoseModule.Controls
 
 			this.linesToChildren.Clear();
 
-			foreach (Bone bone in this.bone.Children)
+			/*foreach (Bone bone in this.bone.Children)
 			{
 				if (!BoneViews.ContainsKey(bone))
 					continue;
@@ -165,7 +165,7 @@ namespace ConceptMatrix.PoseModule.Controls
 						this.mouseLinesToChildren.Add(line2);
 					}
 				}
-			}
+			}*/
 		}
 
 		private void OnViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

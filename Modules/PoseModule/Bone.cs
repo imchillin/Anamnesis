@@ -5,6 +5,7 @@ namespace ConceptMatrix.PoseModule
 {
 	using System;
 	using System.ComponentModel;
+	using System.Windows;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
 	using ConceptMatrix.ThreeD;
@@ -56,9 +57,9 @@ namespace ConceptMatrix.PoseModule
 		public string BoneName { get; private set; }
 		public bool IsEnabled { get; set; } = true;
 
-		public Quaternion Rotation { get; set; }
-		public Vector Scale { get; set; }
-		public Vector Position { get; set; }
+		public CmQuaternion Rotation { get; set; }
+		public CmVector Scale { get; set; }
+		public CmVector Position { get; set; }
 
 		public string Tooltip
 		{
@@ -100,28 +101,27 @@ namespace ConceptMatrix.PoseModule
 			if (!this.IsEnabled)
 				return;
 
-			CmVector relativePos = this.LiveTransform.Position;
-			CmQuaternion relativeRot = this.LiveTransform.Rotation;
-			CmVector relativeScale = this.LiveTransform.Scale;
+			this.Position = this.LiveTransform.Position;
+			this.Rotation = this.LiveTransform.Rotation;
+			this.Scale = this.LiveTransform.Scale;
 
 			if (this.Parent != null)
 			{
-				relativePos -= this.Parent.LiveTransform.Position;
+				this.Position -= this.Parent.LiveTransform.Position;
 				////relativeScale *= this.Parent.LiveTransform.Scale;
 
-				relativeRot.Invert();
-				relativeRot = this.Parent.LiveTransform.Rotation * relativeRot;
+				this.Rotation.Invert();
+				this.Rotation = this.Parent.LiveTransform.Rotation * this.Rotation;
 			}
 
 			////this.rotation.Rotation = new QuaternionRotation3D(new Quaternion(relativeRot.X, relativeRot.Y, relativeRot.Z, relativeRot.W));
-			this.position.OffsetX = relativePos.X;
-			this.position.OffsetY = relativePos.Y;
-			this.position.OffsetZ = relativePos.Z;
-			this.scale.ScaleX = relativeScale.X;
-			this.scale.ScaleY = relativeScale.Y;
-			this.scale.ScaleZ = relativeScale.Z;
+			this.position.OffsetX = this.Position.X;
+			this.position.OffsetY = this.Position.Y;
+			this.position.OffsetZ = this.Position.Z;
+			this.scale.ScaleX = this.Scale.X;
+			this.scale.ScaleY = this.Scale.Y;
+			this.scale.ScaleZ = this.Scale.Z;
 
-			// TODO: update this naturally
 			if (this.Parent != null)
 			{
 				CmVector parentPos = this.LiveTransform.Position - this.Parent.LiveTransform.Position;
@@ -139,6 +139,10 @@ namespace ConceptMatrix.PoseModule
 			if (!this.IsEnabled)
 				return;
 
+			this.scale.ScaleX = this.Scale.X;
+			this.scale.ScaleY = this.Scale.Y;
+			this.scale.ScaleZ = this.Scale.Z;
+
 			GeneralTransform3D transform = this.TransformToAncestor(root);
 
 			Point3D position = transform.Transform(new Point3D(0, 0, 0));
@@ -149,6 +153,14 @@ namespace ConceptMatrix.PoseModule
 			live.Scale = new CmVector((float)scale.X, (float)scale.Y, (float)scale.Z);
 
 			this.LiveTransform = live;
+
+			foreach (Visual3D child in this.Children)
+			{
+				if (child is Bone childBone)
+				{
+					childBone.WriteTransform(root);
+				}
+			}
 		}
 
 		public void Dispose()
