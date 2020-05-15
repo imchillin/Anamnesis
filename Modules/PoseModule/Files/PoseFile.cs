@@ -49,7 +49,7 @@ namespace ConceptMatrix.PoseModule
 				if (!groups.HasFlag(group))
 					continue;
 
-				this.Bones.Add(bone.BoneName, bone.Transform);
+				this.Bones.Add(bone.BoneName, bone.LiveTransform);
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace ConceptMatrix.PoseModule
 					{
 						this.Bones[bone.BoneName].Rotation.Normalize();
 
-						bone.Transform = this.Bones[bone.BoneName];
+						bone.LiveTransform = this.Bones[bone.BoneName];
 					}
 					catch (Exception ex)
 					{

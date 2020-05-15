@@ -4,29 +4,51 @@
 namespace ConceptMatrix.PoseModule
 {
 	using System;
-	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Windows.Media;
+	using System.Windows.Media.Media3D;
+	using ConceptMatrix.ThreeD;
 
-	public class Bone : INotifyPropertyChanged, IDisposable
+	using CmQuaternion = ConceptMatrix.Quaternion;
+	using CmTransform = ConceptMatrix.Transform;
+	using CmVector = ConceptMatrix.Vector;
+
+	public class Bone : ModelVisual3D, INotifyPropertyChanged, IDisposable
 	{
 		public readonly SkeletonService.Bone Definition;
-		public readonly IMemory<Transform> TransformMem;
+		private readonly IMemory<CmTransform> transformMem;
 
-		public List<Bone> Children = new List<Bone>();
-		public Bone Parent;
+		private readonly Sphere sphere;
+		private readonly RotateTransform3D rotation;
+		private readonly ScaleTransform3D scale;
+		private readonly TranslateTransform3D position;
+		private Bone parent;
+		private Line lineToParent;
 
-		private readonly IMemory<Quaternion> rootRotationMem;
-
-		public Bone(string name, IMemory<Transform> transformMem, IMemory<Quaternion> root, SkeletonService.Bone definition)
+		public Bone(string name, IMemory<CmTransform> transformMem, SkeletonService.Bone definition)
 		{
 			this.Definition = definition;
 			this.BoneName = name;
-			this.TransformMem = transformMem;
-			this.rootRotationMem = root;
+			this.transformMem = transformMem;
 
-			this.Rotation = this.LiveRotation;
-			this.Scale = this.LiveScale;
-			this.Position = this.LivePosition;
+			this.Definition = definition;
+			this.BoneName = name;
+			this.transformMem = transformMem;
+
+			this.rotation = new RotateTransform3D();
+			this.scale = new ScaleTransform3D();
+			this.position = new TranslateTransform3D();
+
+			Transform3DGroup transformGroup = new Transform3DGroup();
+			transformGroup.Children.Add(this.rotation);
+			transformGroup.Children.Add(this.scale);
+			transformGroup.Children.Add(this.position);
+			this.Transform = transformGroup;
+
+			this.sphere = new Sphere();
+			this.sphere.Radius = 0.01;
+			this.sphere.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Gray));
+			this.Children.Add(this.sphere);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -38,213 +60,100 @@ namespace ConceptMatrix.PoseModule
 		public Vector Scale { get; set; }
 		public Vector Position { get; set; }
 
-		public Quaternion RootRotation
-		{
-			get
-			{
-				return this.rootRotationMem.Value;
-			}
-		}
-
 		public string Tooltip
 		{
 			get
 			{
-				return this.BoneName; //// Strings.GetString<UISimplePoseStrings>(this.BoneName + "_Tooltip");
+				return this.BoneName;
 			}
 		}
 
-		public Transform Transform
+		public CmTransform LiveTransform
+		{
+			get => this.transformMem.Value;
+			set => this.transformMem.Value = value;
+		}
+
+		public Bone Parent
 		{
 			get
 			{
-				try
+				return this.parent;
+			}
+
+			set
+			{
+				this.parent = value;
+
+				if (this.parent != null)
 				{
-					return this.TransformMem.Value;
+					this.lineToParent = new Line();
+					this.lineToParent.Points.Add(new Point3D(0, 0, 0));
+					this.lineToParent.Points.Add(new Point3D(0, 0, 0));
+					this.parent.Children.Add(this.lineToParent);
 				}
-				catch (Exception ex)
-				{
-					throw new Exception("Unable to read bone transform: " + this.BoneName, ex);
-				}
-			}
-
-			set
-			{
-				this.TransformMem.Value = value;
-				this.Rotation = this.LiveRotation;
-				this.Scale = this.LiveScale;
-				this.Position = this.LivePosition;
 			}
 		}
 
-		public Quaternion LiveRotation
-		{
-			get
-			{
-				return this.Transform.Rotation;
-			}
-
-			set
-			{
-				Transform trans = this.Transform;
-				trans.Rotation = value;
-				this.Transform = trans;
-			}
-		}
-
-		public Vector LiveScale
-		{
-			get
-			{
-				return this.Transform.Scale;
-			}
-
-			set
-			{
-				Transform trans = this.Transform;
-				trans.Scale = value;
-				this.Transform = trans;
-			}
-		}
-
-		public Vector LivePosition
-		{
-			get
-			{
-				return this.Transform.Position;
-			}
-
-			set
-			{
-				Transform trans = this.Transform;
-				trans.Position = value;
-				this.Transform = trans;
-			}
-		}
-
-		public void Read()
-		{
-			this.Rotation = this.LiveRotation;
-			this.Scale = this.LiveScale;
-			this.Position = this.LivePosition;
-		}
-
-		public void ApplyTransform()
+		public void ReadTransform()
 		{
 			if (!this.IsEnabled)
 				return;
 
-			// TODO: Build a matrix4x4 and apply it to every bone
-			if (this.LiveRotation != this.Rotation)
-			{
-				Quaternion newRotation = this.Rotation;
-				Quaternion oldrotation = this.LiveRotation;
-				this.LiveRotation = newRotation;
-				Quaternion oldRotationConjugate = oldrotation;
-				oldRotationConjugate.Conjugate();
+			CmVector relativePos = this.LiveTransform.Position;
+			CmQuaternion relativeRot = this.LiveTransform.Rotation;
+			CmVector relativeScale = this.LiveTransform.Scale;
 
-				if (Module.SkeletonViewModel.ParentingEnabled)
-				{
-					foreach (Bone child in this.Children)
-					{
-						child.ApplyRotation(oldRotationConjugate, newRotation);
-					}
-				}
+			if (this.Parent != null)
+			{
+				relativePos -= this.Parent.LiveTransform.Position;
+				////relativeScale *= this.Parent.LiveTransform.Scale;
+
+				relativeRot.Invert();
+				relativeRot = this.Parent.LiveTransform.Rotation * relativeRot;
 			}
 
-			if (this.LiveScale != this.Scale)
+			////this.rotation.Rotation = new QuaternionRotation3D(new Quaternion(relativeRot.X, relativeRot.Y, relativeRot.Z, relativeRot.W));
+			this.position.OffsetX = relativePos.X;
+			this.position.OffsetY = relativePos.Y;
+			this.position.OffsetZ = relativePos.Z;
+			this.scale.ScaleX = relativeScale.X;
+			this.scale.ScaleY = relativeScale.Y;
+			this.scale.ScaleZ = relativeScale.Z;
+
+			// TODO: update this naturally
+			if (this.Parent != null)
 			{
-				Vector delta = this.Scale - this.LiveScale;
-				this.LiveScale = this.Scale;
+				CmVector parentPos = this.LiveTransform.Position - this.Parent.LiveTransform.Position;
 
-				if (Module.SkeletonViewModel.ParentingEnabled)
-				{
-					foreach (Bone child in this.Children)
-					{
-						child.ApplyScale(delta);
-					}
-				}
+				Point3D p = this.lineToParent.Points[1];
+				p.X = parentPos.X;
+				p.Y = parentPos.Y;
+				p.Z = parentPos.Z;
+				this.lineToParent.Points[1] = p;
 			}
+		}
 
-			if (this.LivePosition != this.Position)
-			{
-				Vector delta = this.Position - this.LivePosition;
-				this.LivePosition = this.Position;
+		public void WriteTransform(ModelVisual3D root)
+		{
+			if (!this.IsEnabled)
+				return;
 
-				if (Module.SkeletonViewModel.ParentingEnabled)
-				{
-					foreach (Bone child in this.Children)
-					{
-						child.ApplyTranslate(delta);
-					}
-				}
-			}
+			GeneralTransform3D transform = this.TransformToAncestor(root);
+
+			Point3D position = transform.Transform(new Point3D(0, 0, 0));
+			Vector3D scale = transform.Transform(new Point3D(1, 1, 1)) - position;
+
+			CmTransform live = this.LiveTransform;
+			live.Position = new CmVector((float)position.X, (float)position.Y, (float)position.Z);
+			live.Scale = new CmVector((float)scale.X, (float)scale.Y, (float)scale.Z);
+
+			this.LiveTransform = live;
 		}
 
 		public void Dispose()
 		{
-			this.TransformMem.Dispose();
-		}
-
-		private void ApplyRotation(Quaternion sourceOldCnj, Quaternion sourceNew)
-		{
-			if (!this.IsEnabled)
-				return;
-
-			this.Rotation = this.LiveRotation;
-			Quaternion newRotation = sourceNew * (sourceOldCnj * this.Rotation);
-			newRotation.Normalize();
-
-			if (this.Rotation == newRotation)
-				return;
-
-			this.Rotation = newRotation;
-			this.LiveRotation = this.Rotation;
-
-			foreach (Bone child in this.Children)
-			{
-				child.ApplyRotation(sourceOldCnj, sourceNew);
-			}
-		}
-
-		private void ApplyScale(Vector delta)
-		{
-			if (!this.IsEnabled)
-				return;
-
-			this.Scale = this.LiveScale;
-			Vector newScale = this.Scale + delta;
-
-			if (this.Scale == newScale)
-				return;
-
-			this.Scale = newScale;
-			this.LiveScale = this.Scale;
-
-			foreach (Bone child in this.Children)
-			{
-				child.ApplyScale(delta);
-			}
-		}
-
-		private void ApplyTranslate(Vector delta)
-		{
-			if (!this.IsEnabled)
-				return;
-
-			this.Position = this.LivePosition;
-			Vector newPos = this.Position + delta;
-
-			if (this.Position == newPos)
-				return;
-
-			this.Position = newPos;
-			this.LivePosition = this.Position;
-
-			foreach (Bone child in this.Children)
-			{
-				child.ApplyTranslate(delta);
-			}
+			this.transformMem.Dispose();
 		}
 	}
 }

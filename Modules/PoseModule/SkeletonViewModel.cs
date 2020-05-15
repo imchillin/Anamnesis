@@ -10,13 +10,18 @@ namespace ConceptMatrix.PoseModule
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Media.Media3D;
 	using ConceptMatrix;
 	using ConceptMatrix.ThreeD;
 
-	using Vector = ConceptMatrix.Vector;
+	using CmQuaternion = ConceptMatrix.Quaternion;
+	using CmTransform = ConceptMatrix.Transform;
+	using CmVector = ConceptMatrix.Vector;
 
 	public class SkeletonViewModel : INotifyPropertyChanged
 	{
+		public ModelVisual3D Root;
+
 		private IMemory<Flag> skel1Mem;
 		private IMemory<Flag> skel2Mem;
 		private IMemory<Flag> skel3Mem;
@@ -28,7 +33,7 @@ namespace ConceptMatrix.PoseModule
 		private IMemory<Flag> phys2Mem;
 		private IMemory<Flag> phys3Mem;
 
-		private IMemory<Quaternion> rootRotationMem;
+		private IMemory<CmQuaternion> rootRotationMem;
 
 		private Dictionary<string, Bone> bones;
 		private Bone currentBone;
@@ -36,6 +41,14 @@ namespace ConceptMatrix.PoseModule
 		private bool freezePhysics;
 
 		private IMemory<Appearance> appearanceMem;
+
+		public SkeletonViewModel()
+		{
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.Root = new ModelVisual3D();
+			});
+		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -130,10 +143,10 @@ namespace ConceptMatrix.PoseModule
 
 				// Ensure we have written any pending rotations before changing bone targets
 				if (this.currentBone != null)
-					this.currentBone.ApplyTransform();
+					this.currentBone.WriteTransform(this.Root);
 
 				this.currentBone = value;
-				this.currentBone?.Read();
+				this.currentBone?.ReadTransform();
 			}
 		}
 
@@ -362,7 +375,8 @@ namespace ConceptMatrix.PoseModule
 				{
 					IMemory<Transform> transMem = selection.BaseAddress.GetMemory(boneDef.Offsets);
 					transMem.Name = "Bone_" + name;
-					this.bones[name] = new Bone(name, transMem, this.rootRotationMem, boneDef);
+					this.bones[name] = new Bone(name, transMem, boneDef);
+					this.Root.Children.Add(this.bones[name]);
 				}
 				catch (Exception ex)
 				{
@@ -423,6 +437,16 @@ namespace ConceptMatrix.PoseModule
 			}
 
 			this.GetBone("Root").IsEnabled = false;
+
+			foreach (Bone gizmo in this.bones.Values)
+			{
+				gizmo.ReadTransform();
+			}
+
+			/*foreach (BoneGizmo gizmo in this.gizmoLookup.Values)
+			{
+				gizmo.WriteTransform(this.root);
+			}*/
 		}
 
 		private void ParentBone(string parentName, string childName)
@@ -432,11 +456,9 @@ namespace ConceptMatrix.PoseModule
 
 			if (parent == null)
 				return;
-			////throw new Exception("Failed to find bone for parenting: " + parentName);
 
 			if (child == null)
 				return;
-			////throw new Exception("Failed to find bone for parenting: " + childName);
 
 			if (parent.Children.Contains(child) || child.Parent == parent)
 			{
@@ -446,6 +468,9 @@ namespace ConceptMatrix.PoseModule
 
 			if (child.Parent != null)
 				throw new Exception("Attempt to parent bone: " + childName + " to multiple parents: " + parentName + " and " + this.bones[childName].Parent.BoneName);
+
+			if (this.Root.Children.Contains(child))
+				this.Root.Children.Remove(child);
 
 			parent.Children.Add(child);
 			child.Parent = parent;
@@ -463,7 +488,7 @@ namespace ConceptMatrix.PoseModule
 				if (this.CurrentBone == null)
 					continue;
 
-				this.CurrentBone.ApplyTransform();
+				this.CurrentBone.WriteTransform(this.Root);
 			}
 
 			this.IsEnabled = false;

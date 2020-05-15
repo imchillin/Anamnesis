@@ -51,7 +51,7 @@ namespace ConceptMatrix.PoseModule
 			if (selection == null)
 				return;
 
-			Task.Run(async () =>
+			Application.Current.Dispatcher.Invoke(async () =>
 			{
 				await SkeletonViewModel.Initialize(selection);
 			});
