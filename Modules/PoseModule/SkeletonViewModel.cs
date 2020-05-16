@@ -488,8 +488,14 @@ namespace ConceptMatrix.PoseModule
 				if (this.CurrentBone == null)
 					continue;
 
+				if (Application.Current == null)
+					return;
+
 				Application.Current.Dispatcher.Invoke(() =>
 				{
+					if (this.CurrentBone == null)
+						return;
+
 					this.CurrentBone.WriteTransform(this.Root);
 				});
 			}

@@ -25,6 +25,7 @@ namespace ConceptMatrix.PoseModule
 		private readonly TranslateTransform3D position;
 		private Bone parent;
 		private Line lineToParent;
+		private Quaternion initialRotation;
 
 		public Bone(string name, IMemory<CmTransform> transformMem, SkeletonService.Bone definition)
 		{
@@ -105,22 +106,37 @@ namespace ConceptMatrix.PoseModule
 			this.Rotation = this.LiveTransform.Rotation;
 			this.Scale = this.LiveTransform.Scale;
 
+			/*
+				Bones are retrieved from FFXIV with character-relative positions, scale, and roation.
+				Since we are creating a hierarchy, we need to convert the transforms to relative transforms.
+
+				once the relative rotation has been calculated, the positions need to be un-rotated.
+			*/
+
+			Point3D position = this.Position.ToMedia3DPoint();
+			Vector3D scale = this.Scale.ToMedia3DVector();
+			this.initialRotation = this.Rotation.ToMedia3DQuaternion();
+
 			if (this.Parent != null)
 			{
-				this.Position -= this.Parent.LiveTransform.Position;
+				CmTransform parentTransform = this.Parent.LiveTransform;
+				Point3D parentPosition = parentTransform.Position.ToMedia3DPoint();
+				Vector3D parentScale = parentTransform.Scale.ToMedia3DVector();
+
+				position = (Point3D)(position - parentPosition);
 				////relativeScale *= this.Parent.LiveTransform.Scale;
 
-				this.Rotation.Invert();
-				this.Rotation = this.Parent.LiveTransform.Rotation * this.Rotation;
+				////rotation.Invert();
+				////rotation = parentTransform.Rotation.ToMedia3DQuaternion() * rotation;
 			}
 
-			////this.rotation.Rotation = new QuaternionRotation3D(new Quaternion(relativeRot.X, relativeRot.Y, relativeRot.Z, relativeRot.W));
-			this.position.OffsetX = this.Position.X;
-			this.position.OffsetY = this.Position.Y;
-			this.position.OffsetZ = this.Position.Z;
-			this.scale.ScaleX = this.Scale.X;
-			this.scale.ScaleY = this.Scale.Y;
-			this.scale.ScaleZ = this.Scale.Z;
+			this.rotation.Rotation = new QuaternionRotation3D(Quaternion.Identity);
+			this.position.OffsetX = position.X;
+			this.position.OffsetY = position.Y;
+			this.position.OffsetZ = position.Z;
+			////this.scale.ScaleX = scale.X;
+			////this.scale.ScaleY = scale.Y;
+			////this.scale.ScaleZ = scale.Z;
 
 			if (this.Parent != null)
 			{
@@ -143,14 +159,22 @@ namespace ConceptMatrix.PoseModule
 			this.scale.ScaleY = this.Scale.Y;
 			this.scale.ScaleZ = this.Scale.Z;
 
-			GeneralTransform3D transform = this.TransformToAncestor(root);
+			// TODO: since we are caluclating rotation manually (not from the visual hierarchy)
+			// we must also calcualte all child rotations manually...
+			Quaternion newRotation = this.Rotation.ToMedia3DQuaternion();
+			Quaternion initialInv = this.initialRotation;
+			initialInv.Invert();
+			Quaternion delta = newRotation * initialInv;
+			this.rotation.Rotation = new QuaternionRotation3D(delta);
 
+			GeneralTransform3D transform = this.TransformToAncestor(root);
 			Point3D position = transform.Transform(new Point3D(0, 0, 0));
-			Vector3D scale = transform.Transform(new Point3D(1, 1, 1)) - position;
+			////Vector3D scale = transform.Transform(new Point3D(1, 1, 1)) - position;
 
 			CmTransform live = this.LiveTransform;
-			live.Position = new CmVector((float)position.X, (float)position.Y, (float)position.Z);
-			live.Scale = new CmVector((float)scale.X, (float)scale.Y, (float)scale.Z);
+			live.Position = position.ToCmVector();
+			////live.Scale = scale.ToCmVector();
+			live.Rotation = this.Rotation;
 
 			this.LiveTransform = live;
 
