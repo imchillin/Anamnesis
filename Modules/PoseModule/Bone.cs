@@ -25,7 +25,6 @@ namespace ConceptMatrix.PoseModule
 		private readonly TranslateTransform3D position;
 		private Bone parent;
 		private Line lineToParent;
-		private Quaternion initialRotation;
 
 		public Bone(string name, IMemory<CmTransform> transformMem, SkeletonService.Bone definition)
 		{
@@ -106,46 +105,54 @@ namespace ConceptMatrix.PoseModule
 			this.Rotation = this.LiveTransform.Rotation;
 			this.Scale = this.LiveTransform.Scale;
 
-			/*
-				Bones are retrieved from FFXIV with character-relative positions, scale, and roation.
-				Since we are creating a hierarchy, we need to convert the transforms to relative transforms.
-
-				once the relative rotation has been calculated, the positions need to be un-rotated.
-			*/
-
+			// Convert the character-relative transform into a parent-relative transform
 			Point3D position = this.Position.ToMedia3DPoint();
 			Vector3D scale = this.Scale.ToMedia3DVector();
-			this.initialRotation = this.Rotation.ToMedia3DQuaternion();
+			Quaternion rotation = this.Rotation.ToMedia3DQuaternion();
 
 			if (this.Parent != null)
 			{
 				CmTransform parentTransform = this.Parent.LiveTransform;
 				Point3D parentPosition = parentTransform.Position.ToMedia3DPoint();
 				Vector3D parentScale = parentTransform.Scale.ToMedia3DVector();
+				Quaternion parentRot = parentTransform.Rotation.ToMedia3DQuaternion();
+				parentRot.Invert();
 
+				// relative position
 				position = (Point3D)(position - parentPosition);
-				////relativeScale *= this.Parent.LiveTransform.Scale;
 
-				////rotation.Invert();
-				////rotation = parentTransform.Rotation.ToMedia3DQuaternion() * rotation;
+				// relative rotation
+				rotation = parentRot * rotation;
+
+				// relative scale
+				scale = (scale - parentScale) + new Vector3D(1, 1, 1);
+
+				// unrotate bones, since we will transform them ourselves.
+				RotateTransform3D rotTrans = new RotateTransform3D(new QuaternionRotation3D(parentRot));
+				position = rotTrans.Transform(position);
 			}
 
-			this.rotation.Rotation = new QuaternionRotation3D(Quaternion.Identity);
+			// Store the new parent-relative transform info
+			this.Position = position.ToCmVector();
+			this.Rotation = rotation.ToCmQuaternion();
+			this.Scale = scale.ToCmVector();
+
+			// Set the Media3D hierarchy transforms
+			this.rotation.Rotation = new QuaternionRotation3D(rotation);
 			this.position.OffsetX = position.X;
 			this.position.OffsetY = position.Y;
 			this.position.OffsetZ = position.Z;
-			////this.scale.ScaleX = scale.X;
-			////this.scale.ScaleY = scale.Y;
-			////this.scale.ScaleZ = scale.Z;
+			this.scale.ScaleX = scale.X;
+			this.scale.ScaleY = scale.Y;
+			this.scale.ScaleZ = scale.Z;
 
+			// Draw a line for visualization
 			if (this.Parent != null)
 			{
-				CmVector parentPos = this.LiveTransform.Position - this.Parent.LiveTransform.Position;
-
 				Point3D p = this.lineToParent.Points[1];
-				p.X = parentPos.X;
-				p.Y = parentPos.Y;
-				p.Z = parentPos.Z;
+				p.X = position.X;
+				p.Y = position.Y;
+				p.Z = position.Z;
 				this.lineToParent.Points[1] = p;
 			}
 		}
@@ -161,11 +168,11 @@ namespace ConceptMatrix.PoseModule
 
 			// TODO: since we are caluclating rotation manually (not from the visual hierarchy)
 			// we must also calcualte all child rotations manually...
-			Quaternion newRotation = this.Rotation.ToMedia3DQuaternion();
-			Quaternion initialInv = this.initialRotation;
-			initialInv.Invert();
-			Quaternion delta = newRotation * initialInv;
-			this.rotation.Rotation = new QuaternionRotation3D(delta);
+			////Quaternion newRotation = this.Rotation.ToMedia3DQuaternion();
+			////Quaternion initialInv = this.initialRotation;
+			////initialInv.Invert();
+			////Quaternion delta = newRotation * initialInv;
+			////this.rotation.Rotation = new QuaternionRotation3D(delta);
 
 			GeneralTransform3D transform = this.TransformToAncestor(root);
 			Point3D position = transform.Transform(new Point3D(0, 0, 0));
@@ -174,7 +181,7 @@ namespace ConceptMatrix.PoseModule
 			CmTransform live = this.LiveTransform;
 			live.Position = position.ToCmVector();
 			////live.Scale = scale.ToCmVector();
-			live.Rotation = this.Rotation;
+			////live.Rotation = this.Rotation;
 
 			this.LiveTransform = live;
 
