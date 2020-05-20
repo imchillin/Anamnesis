@@ -7,6 +7,7 @@ namespace ConceptMatrix.PoseModule
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Media;
+	using System.Windows.Media.Animation;
 	using System.Windows.Media.Media3D;
 	using ConceptMatrix.PoseModule.Extensions;
 	using ConceptMatrix.ThreeD;
@@ -94,6 +95,19 @@ namespace ConceptMatrix.PoseModule
 					this.lineToParent.Points.Add(new Point3D(0, 0, 0));
 					this.parent.Children.Add(this.lineToParent);
 				}
+			}
+		}
+
+		public CmQuaternion RootRotation
+		{
+			get
+			{
+				CmQuaternion rot = Module.SkeletonViewModel.RootRotation;
+
+				if (this.Parent == null)
+					return rot;
+
+				return rot * this.Parent.LiveTransform.Rotation;
 			}
 		}
 

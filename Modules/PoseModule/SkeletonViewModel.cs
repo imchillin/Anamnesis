@@ -232,6 +232,14 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
+		public CmQuaternion RootRotation
+		{
+			get
+			{
+				return this.rootRotationMem.Value;
+			}
+		}
+
 		public static string GetBoneName(string name, bool flip)
 		{
 			if (flip)
