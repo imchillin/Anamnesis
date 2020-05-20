@@ -8,6 +8,7 @@ namespace ConceptMatrix.PoseModule
 	using System.Windows;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
+	using ConceptMatrix.PoseModule.Extensions;
 	using ConceptMatrix.ThreeD;
 
 	using CmQuaternion = ConceptMatrix.Quaternion;
@@ -177,7 +178,8 @@ namespace ConceptMatrix.PoseModule
 
 			Vector3D scale = this.Scale.ToMedia3DVector(); // ??
 
-			Quaternion rotation = QuaternionFromMatrix(transform.Matrix);
+			Quaternion rotation = transform.Matrix.ToQuaternion();
+			rotation.Invert();
 
 			position.X = (float)transform.Matrix.OffsetX;
 			position.Y = (float)transform.Matrix.OffsetY;
@@ -186,7 +188,7 @@ namespace ConceptMatrix.PoseModule
 			// and push those values to the game memory
 			CmTransform live = this.LiveTransform;
 			live.Position = position;
-			live.Scale = scale.ToCmVector();
+			////live.Scale = scale.ToCmVector();
 			live.Rotation = rotation.ToCmQuaternion();
 			this.LiveTransform = live;
 
@@ -202,22 +204,6 @@ namespace ConceptMatrix.PoseModule
 		public void Dispose()
 		{
 			this.transformMem.Dispose();
-		}
-
-		private static Quaternion QuaternionFromMatrix(Matrix3D m)
-		{
-			// Adapted from: http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
-			Quaternion q = default;
-			q.W = Math.Sqrt(1.0 + m.M11 + m.M22 + m.M33) / 2.0;
-			double w4 = 4.0 * q.W;
-			q.X = (m.M32 - m.M23) / w4;
-			q.Y = (m.M13 - m.M31) / w4;
-			q.Z = (m.M21 - m.M12) / w4;
-
-			q.Normalize();
-			q.Invert();
-
-			return q;
 		}
 	}
 }
