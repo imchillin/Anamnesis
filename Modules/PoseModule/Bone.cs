@@ -162,27 +162,32 @@ namespace ConceptMatrix.PoseModule
 			if (!this.IsEnabled)
 				return;
 
+			// Apply the current values to the visual tree
+			this.rotation.Rotation = new QuaternionRotation3D(this.Rotation.ToMedia3DQuaternion());
+			this.position.OffsetX = this.Position.X;
+			this.position.OffsetY = this.Position.Y;
+			this.position.OffsetZ = this.Position.Z;
 			this.scale.ScaleX = this.Scale.X;
 			this.scale.ScaleY = this.Scale.Y;
 			this.scale.ScaleZ = this.Scale.Z;
 
-			// TODO: since we are caluclating rotation manually (not from the visual hierarchy)
-			// we must also calcualte all child rotations manually...
-			////Quaternion newRotation = this.Rotation.ToMedia3DQuaternion();
-			////Quaternion initialInv = this.initialRotation;
-			////initialInv.Invert();
-			////Quaternion delta = newRotation * initialInv;
-			////this.rotation.Rotation = new QuaternionRotation3D(delta);
+			// convert the values in the tree to character-relative space
+			MatrixTransform3D transform = (MatrixTransform3D)this.TransformToAncestor(root);
+			CmVector position = default;
 
-			GeneralTransform3D transform = this.TransformToAncestor(root);
-			Point3D position = transform.Transform(new Point3D(0, 0, 0));
-			////Vector3D scale = transform.Transform(new Point3D(1, 1, 1)) - position;
+			Vector3D scale = this.Scale.ToMedia3DVector(); // ??
 
+			Quaternion rotation = QuaternionFromMatrix(transform.Matrix);
+
+			position.X = (float)transform.Matrix.OffsetX;
+			position.Y = (float)transform.Matrix.OffsetY;
+			position.Z = (float)transform.Matrix.OffsetZ;
+
+			// and push those values to the game memory
 			CmTransform live = this.LiveTransform;
-			live.Position = position.ToCmVector();
-			////live.Scale = scale.ToCmVector();
-			////live.Rotation = this.Rotation;
-
+			live.Position = position;
+			live.Scale = scale.ToCmVector();
+			live.Rotation = rotation.ToCmQuaternion();
 			this.LiveTransform = live;
 
 			foreach (Visual3D child in this.Children)
@@ -197,6 +202,22 @@ namespace ConceptMatrix.PoseModule
 		public void Dispose()
 		{
 			this.transformMem.Dispose();
+		}
+
+		private static Quaternion QuaternionFromMatrix(Matrix3D m)
+		{
+			// Adapted from: http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
+			Quaternion q = default;
+			q.W = Math.Sqrt(1.0 + m.M11 + m.M22 + m.M33) / 2.0;
+			double w4 = 4.0 * q.W;
+			q.X = (m.M32 - m.M23) / w4;
+			q.Y = (m.M13 - m.M31) / w4;
+			q.Z = (m.M21 - m.M12) / w4;
+
+			q.Normalize();
+			q.Invert();
+
+			return q;
 		}
 	}
 }
