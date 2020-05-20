@@ -91,20 +91,22 @@ namespace ConceptMatrix.AppearanceModule.Utilities
 
 		private static int GetTribeSkinStartIndex(Appearance.Tribes tribe, Appearance.Genders gender)
 		{
+			bool isMasculine = gender == Appearance.Genders.Masculine;
+
 			switch (tribe)
 			{
-				case Appearance.Tribes.Midlander: return gender == Appearance.Genders.Feminine ? 4608 : 3328;
-				case Appearance.Tribes.Highlander: return gender == Appearance.Genders.Feminine ? 7168 : 5888;
-				case Appearance.Tribes.Wildwood: return gender == Appearance.Genders.Feminine ? 9728 : 8448;
-				case Appearance.Tribes.Duskwight: return gender == Appearance.Genders.Feminine ? 12288 : 11008;
-				case Appearance.Tribes.Plainsfolk: return gender == Appearance.Genders.Feminine ? 14848 : 13568;
-				case Appearance.Tribes.Dunesfolk: return gender == Appearance.Genders.Feminine ? 17408 : 16128;
-				case Appearance.Tribes.SeekerOfTheSun: return gender == Appearance.Genders.Feminine ? 19968 : 18688;
-				case Appearance.Tribes.KeeperOfTheMoon: return gender == Appearance.Genders.Feminine ? 22528 : 21248;
-				case Appearance.Tribes.SeaWolf: return gender == Appearance.Genders.Feminine ? 25088 : 23808;
-				case Appearance.Tribes.Hellsguard: return gender == Appearance.Genders.Feminine ? 27648 : 26368;
-				case Appearance.Tribes.Raen: return gender == Appearance.Genders.Feminine ? 28928 : 30208;
-				case Appearance.Tribes.Xaela: return gender == Appearance.Genders.Feminine ? 31488 : 32768;
+				case Appearance.Tribes.Midlander: return isMasculine ? 4608 : 3328;
+				case Appearance.Tribes.Highlander: return isMasculine ? 7168 : 5888;
+				case Appearance.Tribes.Wildwood: return isMasculine ? 9728 : 8448;
+				case Appearance.Tribes.Duskwight: return isMasculine ? 12288 : 11008;
+				case Appearance.Tribes.Plainsfolk: return isMasculine ? 14848 : 13568;
+				case Appearance.Tribes.Dunesfolk: return isMasculine ? 17408 : 16128;
+				case Appearance.Tribes.SeekerOfTheSun: return isMasculine ? 19968 : 18688;
+				case Appearance.Tribes.KeeperOfTheMoon: return isMasculine ? 22528 : 21248;
+				case Appearance.Tribes.SeaWolf: return isMasculine ? 25088 : 23808;
+				case Appearance.Tribes.Hellsguard: return isMasculine ? 27648 : 26368;
+				case Appearance.Tribes.Raen: return isMasculine ? 28928 : 30208;
+				case Appearance.Tribes.Xaela: return isMasculine ? 31488 : 32768;
 				case Appearance.Tribes.Helions: return 34048;
 				case Appearance.Tribes.TheLost: return 35840;
 				case Appearance.Tribes.Rava: return 40448;
@@ -116,20 +118,22 @@ namespace ConceptMatrix.AppearanceModule.Utilities
 
 		private static int GetTribeHairStartIndex(Appearance.Tribes tribe, Appearance.Genders gender)
 		{
+			bool isMasculine = gender == Appearance.Genders.Masculine;
+
 			switch (tribe)
 			{
-				case Appearance.Tribes.Midlander: return gender == Appearance.Genders.Feminine ? 4864 : 3584;
-				case Appearance.Tribes.Highlander: return gender == Appearance.Genders.Feminine ? 7424 : 6144;
-				case Appearance.Tribes.Wildwood: return gender == Appearance.Genders.Feminine ? 9984 : 8704;
-				case Appearance.Tribes.Duskwight: return gender == Appearance.Genders.Feminine ? 12544 : 11264;
-				case Appearance.Tribes.Plainsfolk: return gender == Appearance.Genders.Feminine ? 15104 : 13824;
-				case Appearance.Tribes.Dunesfolk: return gender == Appearance.Genders.Feminine ? 17664 : 16384;
-				case Appearance.Tribes.SeekerOfTheSun: return gender == Appearance.Genders.Feminine ? 20224 : 18944;
-				case Appearance.Tribes.KeeperOfTheMoon: return gender == Appearance.Genders.Feminine ? 22784 : 21504;
-				case Appearance.Tribes.SeaWolf: return gender == Appearance.Genders.Feminine ? 25344 : 24064;
-				case Appearance.Tribes.Hellsguard: return gender == Appearance.Genders.Feminine ? 27904 : 26624;
-				case Appearance.Tribes.Raen: return gender == Appearance.Genders.Feminine ? 30464 : 29184;
-				case Appearance.Tribes.Xaela: return gender == Appearance.Genders.Feminine ? 33024 : 31744;
+				case Appearance.Tribes.Midlander: return isMasculine ? 4864 : 3584;
+				case Appearance.Tribes.Highlander: return isMasculine ? 7424 : 6144;
+				case Appearance.Tribes.Wildwood: return isMasculine ? 9984 : 8704;
+				case Appearance.Tribes.Duskwight: return isMasculine ? 12544 : 11264;
+				case Appearance.Tribes.Plainsfolk: return isMasculine ? 15104 : 13824;
+				case Appearance.Tribes.Dunesfolk: return isMasculine ? 17664 : 16384;
+				case Appearance.Tribes.SeekerOfTheSun: return isMasculine ? 20224 : 18944;
+				case Appearance.Tribes.KeeperOfTheMoon: return isMasculine ? 22784 : 21504;
+				case Appearance.Tribes.SeaWolf: return isMasculine ? 25344 : 24064;
+				case Appearance.Tribes.Hellsguard: return isMasculine ? 27904 : 26624;
+				case Appearance.Tribes.Raen: return isMasculine ? 30464 : 29184;
+				case Appearance.Tribes.Xaela: return isMasculine ? 33024 : 31744;
 				case Appearance.Tribes.Helions: return 34304;
 				case Appearance.Tribes.TheLost: return 36608;
 				case Appearance.Tribes.Rava: return 40704;
