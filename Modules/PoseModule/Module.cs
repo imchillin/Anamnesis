@@ -18,8 +18,8 @@ namespace ConceptMatrix.PoseModule
 
 			IViewService viewService = Services.Get<IViewService>();
 			viewService.AddPage<Pose3DPage>("Character/Pose 3D", false);
-			viewService.AddPage<PoseGuiPage>("Character/Pose GUI", false);
-			viewService.AddPage<PoseMatrixPage>("Character/Pose Matrix", false);
+			viewService.AddPage<PoseGuiPage>("Character/Posing GUI", false);
+			viewService.AddPage<PoseMatrixPage>("Character/Posing Matrix", false);
 			viewService.AddPage<PositionPage>("Character/Positioning");
 
 			ISelectionService selectionService = Services.Get<ISelectionService>();
