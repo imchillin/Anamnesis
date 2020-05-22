@@ -5,13 +5,16 @@ namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Utilities;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for FxivColorSelectorDrawer.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
 	public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 	{
 		private bool locked = false;
+		private int selected;
 
 		public delegate void SelectorEvent(int value);
 
@@ -21,8 +24,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			this.locked = true;
 			this.List.ItemsSource = colors;
-			this.List.SelectedIndex = selectedIndex;
+			this.Selected = selectedIndex;
 			this.locked = false;
+
+			this.ContentArea.DataContext = this;
 		}
 
 		public event DrawerEvent Close;
@@ -32,16 +37,18 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			get
 			{
-				return this.List.SelectedIndex;
+				return selected;
 			}
-		}
 
-		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (this.locked)
-				return;
+			set
+			{
+				selected = value;
 
-			this.SelectionChanged?.Invoke(this.Selected);
+				if (this.locked)
+					return;
+
+				this.SelectionChanged?.Invoke(this.Selected);
+			}
 		}
 	}
 }

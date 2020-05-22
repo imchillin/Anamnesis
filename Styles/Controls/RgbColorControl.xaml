@@ -5,17 +5,15 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d"
-			 Margin="1, 0, 3, 0"
-			 MinWidth="22"
-			 HorizontalAlignment="Left">
+			 HorizontalAlignment="Left"
+			 SnapsToDevicePixels="True">
 	
-	<Grid x:Name="ContentArea" SnapsToDevicePixels="True">
-		<Button Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="2" VerticalAlignment="Center" Background="Transparent">
-			<Border Height="15" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1">
-				<Border.Background>
-					<SolidColorBrush x:Name="PreviewColor" Color="{Binding WpfColor, FallbackValue=White}"/>
-				</Border.Background>
-			</Border>
-		</Button>
-	</Grid>
+	<Button Height="20" Width="20" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="2" VerticalAlignment="Center" Background="Transparent">
+		<Border Height="18" Width="18" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1" x:Name="ContentArea">
+			<Border.Background>
+				<SolidColorBrush x:Name="PreviewColor" Color="{Binding WpfColor, FallbackValue=White}"/>
+			</Border.Background>
+		</Border>
+	</Button>
+
 </UserControl>

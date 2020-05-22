@@ -21,12 +21,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 	/// <summary>
 	/// Interaction logic for NumberBox.xaml.
 	/// </summary>
-	public partial class NumberBox : UserControl, INotifyPropertyChanged
+	[AddINotifyPropertyChangedInterface]
+	public partial class NumberBox : UserControl
 	{
 		public static readonly IBind<double> ValueDp = Binder.Register<double, NumberBox>(nameof(Value), OnValueChanged);
 		public static readonly IBind<double> TickDp = Binder.Register<double, NumberBox>(nameof(TickFrequency));
-		public static readonly IBind<bool> SliderDp = Binder.Register<bool, NumberBox>(nameof(Slider));
-		public static readonly IBind<bool> ButtonsDp = Binder.Register<bool, NumberBox>(nameof(Buttons));
+		public static readonly IBind<bool> SliderDp = Binder.Register<bool, NumberBox>(nameof(Slider), OnSliderChanged);
+		public static readonly IBind<bool> ButtonsDp = Binder.Register<bool, NumberBox>(nameof(Buttons), OnButtonsChanged);
 		public static readonly IBind<double> MinDp = Binder.Register<double, NumberBox>(nameof(Minimum));
 		public static readonly IBind<double> MaxDp = Binder.Register<double, NumberBox>(nameof(Maximum));
 		public static readonly IBind<bool> WrapDp = Binder.Register<bool, NumberBox>(nameof(Wrap));
@@ -38,15 +39,18 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			this.InitializeComponent();
 			this.TickFrequency = 1;
-			this.ContentArea.DataContext = this;
-
 			this.Minimum = double.MinValue;
 			this.Maximum = double.MaxValue;
 			this.Wrap = false;
 			this.Text = "0";
-		}
+			this.Slider = false;
+			this.Buttons = false;
 
-		public event PropertyChangedEventHandler PropertyChanged;
+			this.ContentArea.DataContext = this;
+
+			OnSliderChanged(this, this.Slider);
+			OnButtonsChanged(this, this.Buttons);
+		}
 
 		public double TickFrequency
 		{
@@ -165,6 +169,19 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			sender.Value = sender.Validate(v);
 			sender.Text = sender.Value.ToString("0.##");
+		}
+
+		[SuppressPropertyChangedWarnings]
+		private static void OnSliderChanged(NumberBox sender, bool v)
+		{
+			sender.SliderArea.Width = v ? new GridLength(1, GridUnitType.Star) : new GridLength(0);
+			sender.InputBoxArea.Width = v ? new GridLength(42) : new GridLength(1, GridUnitType.Star);
+		}
+
+		[SuppressPropertyChangedWarnings]
+		private static void OnButtonsChanged(NumberBox sender, bool v)
+		{
+			sender.ButtonsArea.Visibility = v ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		private double Validate(double v)

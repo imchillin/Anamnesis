@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
+			 xmlns:controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="256">
 
@@ -13,8 +14,16 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid Margin="6, 3, 0, 0">
-		<ListBox Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionChanged="OnSelectionChanged">
+	<Grid Margin="6, 3, 0, 0" x:Name="ContentArea">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Maximum="192" Margin="3,3,3,12" Buttons="True"/>
+
+		<ListBox Grid.Row="1" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedIndex="{Binding Selected}">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
 					<WrapPanel x:Name="wrapPanel"/>
@@ -22,7 +31,7 @@
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Rectangle Width="29" Height="19" Margin="0">
+					<Rectangle Width="29" Height="18" Margin="0">
 						<Rectangle.Fill>
 							<SolidColorBrush Color="{Binding WpfColor}"/>
 						</Rectangle.Fill>

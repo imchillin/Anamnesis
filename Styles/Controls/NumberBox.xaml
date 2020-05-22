@@ -6,35 +6,15 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.WpfStyles.Controls"
 			 xmlns:converters="clr-namespace:ConceptMatrix.WpfStyles.Converters"
 			 mc:Ignorable="d" 
-			 d:DesignWidth="128">
+			 d:DesignWidth="128"
+			 HorizontalAlignment="Stretch">
 
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition>
-				<ColumnDefinition.Style>
-					<Style TargetType="ColumnDefinition">
-						<Setter Property="Width" Value="*" />
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding Slider}" Value="False">
-								<Setter Property="Width" Value="0" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</ColumnDefinition.Style>
-			</ColumnDefinition>
-			<ColumnDefinition Width="47">
-				<ColumnDefinition.Style>
-					<Style TargetType="ColumnDefinition">
-						<Setter Property="Width" Value="*" />
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding Slider}" Value="False">
-								<Setter Property="Width" Value="1*" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</ColumnDefinition.Style>
-			</ColumnDefinition>
+			<ColumnDefinition x:Name="SliderArea" Width="Auto"/>
+			<ColumnDefinition x:Name="InputBoxArea" Width="42"/>
 			<ColumnDefinition Width="Auto"/>
+			
 		</Grid.ColumnDefinitions>
 
 		<Slider
@@ -59,7 +39,7 @@
 			Style="{DynamicResource MaterialDesignTextBox}"
 			Foreground="{DynamicResource MaterialDesignBody}"
 			Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=000.00}"
-			Margin="3, 0, 0, 0"
+			Margin="3, -2, 0, 1"
 			Height="22"
 			LostFocus="OnLostFocus"
 			LostKeyboardFocus="OnLostFocus"/>
@@ -77,14 +57,14 @@
 			Stroke="Red"
 			Margin="2,0,0,0"/>
 
-		<Grid Grid.Column="2" Visibility="{Binding Buttons, Converter={StaticResource B2V}}">
+		<Grid Grid.Column="2" x:Name="ButtonsArea">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
-			<RepeatButton Grid.Column="0" Content="-" Style="{StaticResource TransparentRepeatButton}" Padding="3" Click="OnDownClick" Width="20" HorizontalContentAlignment="Center" Margin="4,1,1,1"/>
-			<RepeatButton Grid.Column="1" Content="+" Style="{StaticResource TransparentRepeatButton}" Padding="3" Click="OnUpClick" Width="20" HorizontalContentAlignment="Center" Margin="1,1,0,1"/>
+			<RepeatButton Grid.Column="0" Content="-" Style="{StaticResource TransparentRepeatButton}" Padding="1" Click="OnDownClick" Width="20" HorizontalContentAlignment="Center" Margin="4,1,1,1"/>
+			<RepeatButton Grid.Column="1" Content="+" Style="{StaticResource TransparentRepeatButton}" Padding="1" Click="OnUpClick" Width="20" HorizontalContentAlignment="Center" Margin="1,1,0,1"/>
 
 		</Grid>
 		

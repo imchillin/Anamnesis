@@ -7,24 +7,17 @@
 			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles"
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d"
-			 Margin="1, 0, 3, 0"
-			 Width="53"
-			 HorizontalAlignment="Left">
-	<Grid x:Name="ContentArea" SnapsToDevicePixels="True">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="22"/>
-			<ColumnDefinition/>
-		</Grid.ColumnDefinitions>
-		
-		<Button Grid.Column="0" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="2" VerticalAlignment="Center" Background="Transparent">
-			<Border Height="15" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1">
-				<Border.Background>
-					<SolidColorBrush x:Name="PreviewColor" Color="{Binding WpfColor, FallbackValue=White}"/>
-				</Border.Background>
-			</Border>
-		</Button>
+			 HorizontalAlignment="Left"
+			 SnapsToDevicePixels="True">
+	
+	<Button Height="20" Width="20" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" VerticalAlignment="Center" Background="Transparent">
+		<Border Height="18" Width="18" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1" x:Name="ContentArea">
+			<Border.Background>
+				<SolidColorBrush x:Name="PreviewColor" Color="{Binding WpfColor, FallbackValue=White}"/>
+			</Border.Background>
 
-		<cm3Controls:NumberBox Grid.Column="1" MinWidth="20" Value="{Binding Value}" Margin="0, 0, 3, 3" Height="22"/>
+			<!--<TextBlock Text="{Binding Value}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="10"/>-->
+		</Border>
+	</Button>
 
-	</Grid>
 </UserControl>
