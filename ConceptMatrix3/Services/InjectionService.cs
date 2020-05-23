@@ -12,6 +12,7 @@ namespace ConceptMatrix.Injection
 	using System.Threading;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
+	using ConceptMatrix.Exceptions;
 	using ConceptMatrix.GUI.Windows;
 	using ConceptMatrix.Injection.Memory;
 	using ConceptMatrix.Injection.Offsets;
@@ -181,12 +182,22 @@ namespace ConceptMatrix.Injection
 		public UIntPtr GetAddress(IBaseMemoryOffset offset)
 		{
 			IMemoryOffset newOffset = new MappedBaseOffset(this.Process, (BaseOffset)offset);
-			return this.Process.GetAddress(newOffset);
+			UIntPtr ptr = this.Process.GetAddress(newOffset);
+
+			if (ptr == UIntPtr.Zero)
+				throw new InvalidAddressException();
+
+			return ptr;
 		}
 
 		public UIntPtr GetAddress(params IMemoryOffset[] offsets)
 		{
-			return this.Process.GetAddress(offsets);
+			UIntPtr ptr = this.Process.GetAddress(offsets);
+
+			if (ptr == UIntPtr.Zero)
+				throw new InvalidAddressException();
+
+			return ptr;
 		}
 
 		private static string GetString(IMemoryOffset offset)
