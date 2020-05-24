@@ -157,12 +157,7 @@ namespace ConceptMatrix
 
 		public override int GetHashCode()
 		{
-			int hashCode = 707706286;
-			hashCode = (hashCode * -1521134295) + this.X.GetHashCode();
-			hashCode = (hashCode * -1521134295) + this.Y.GetHashCode();
-			hashCode = (hashCode * -1521134295) + this.Z.GetHashCode();
-			hashCode = (hashCode * -1521134295) + this.W.GetHashCode();
-			return hashCode;
+			return HashCode.Combine(this.X, this.Y, this.Z, this.W);
 		}
 
 		public void Conjugate()
