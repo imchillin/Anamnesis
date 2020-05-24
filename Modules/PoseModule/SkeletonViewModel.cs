@@ -388,7 +388,8 @@ namespace ConceptMatrix.PoseModule
 				}
 				catch (Exception ex)
 				{
-					throw new Exception("Failed to create bone View Model for bone: " + name, ex);
+					Log.Write("Failed to create bone View Model for bone: " + name + " - " + ex.Message);
+					////throw new Exception("Failed to create bone View Model for bone: " + name, ex);
 				}
 			}
 
@@ -401,6 +402,9 @@ namespace ConceptMatrix.PoseModule
 
 			foreach (string boneName in boneDefs.Keys)
 			{
+				if (!this.bones.ContainsKey(boneName))
+					continue;
+
 				if (boneName.StartsWith("ExHair"))
 				{
 					byte num = byte.Parse(boneName.Replace("ExHair", string.Empty));
@@ -426,10 +430,6 @@ namespace ConceptMatrix.PoseModule
 					}
 				}
 				else if (boneName == "TailE")
-				{
-					this.bones[boneName].IsEnabled = false;
-				}
-				else if (boneName == "ExRootMet")
 				{
 					this.bones[boneName].IsEnabled = false;
 				}
