@@ -408,7 +408,7 @@ namespace ConceptMatrix.PoseModule
 				if (boneName.StartsWith("ExHair"))
 				{
 					byte num = byte.Parse(boneName.Replace("ExHair", string.Empty));
-					if (num > exHairCount)
+					if (num >= exHairCount)
 					{
 						this.bones[boneName].IsEnabled = false;
 					}
@@ -416,7 +416,7 @@ namespace ConceptMatrix.PoseModule
 				else if (boneName.StartsWith("ExMet"))
 				{
 					byte num = byte.Parse(boneName.Replace("ExMet", string.Empty));
-					if (num > exMetCount)
+					if (num >= exMetCount)
 					{
 						this.bones[boneName].IsEnabled = false;
 					}
@@ -424,7 +424,7 @@ namespace ConceptMatrix.PoseModule
 				else if (boneName.StartsWith("ExTop"))
 				{
 					byte num = byte.Parse(boneName.Replace("ExTop", string.Empty));
-					if (num > exTopCount)
+					if (num >= exTopCount)
 					{
 						this.bones[boneName].IsEnabled = false;
 					}
