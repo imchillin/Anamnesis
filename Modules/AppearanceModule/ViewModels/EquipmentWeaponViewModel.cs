@@ -10,9 +10,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	[AddINotifyPropertyChangedInterface]
 	public class EquipmentWeaponViewModel : EquipmentBaseViewModel
 	{
-		private IMemory<Weapon> memory;
-		private IMemory<Color> colorMem;
-		private IMemory<Vector> scaleMem;
+		private readonly IMemory<Weapon> memory;
+		private readonly IMemory<Color> colorMem;
+		private readonly IMemory<Vector> scaleMem;
 
 		public EquipmentWeaponViewModel(ItemSlots slot, IBaseMemoryOffset baseOffset)
 			: base(slot, baseOffset)
@@ -29,11 +29,11 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			if (this.HasWeapon)
 			{
 				this.scaleMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.Main.MainHandScale : Offsets.Main.OffhandScale);
-				this.scaleMem.Name = slot.ToString() + "_Scale";
+				this.scaleMem.Name = slot + "_Scale";
 				this.scaleMem.ValueChanged += this.ScaleMem_ValueChanged;
 
 				this.colorMem = baseOffset.GetMemory(slot == ItemSlots.MainHand ? Offsets.Main.MainHandColor : Offsets.Main.OffhandColor);
-				this.colorMem.Name = slot.ToString() + "_Color";
+				this.colorMem.Name = slot + "_Color";
 				this.colorMem.ValueChanged += this.ColorMem_ValueChanged;
 
 				this.scale = this.scaleMem.Value;

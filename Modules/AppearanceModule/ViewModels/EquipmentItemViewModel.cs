@@ -7,7 +7,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 	public class EquipmentItemViewModel : EquipmentBaseViewModel
 	{
-		private IMemory<Equipment> memory;
+		private readonly IMemory<Equipment> memory;
 
 		public EquipmentItemViewModel(IMemory<Equipment> equipmentMemory, ItemSlots slot, IBaseMemoryOffset baseOffset)
 			: base(slot, baseOffset)

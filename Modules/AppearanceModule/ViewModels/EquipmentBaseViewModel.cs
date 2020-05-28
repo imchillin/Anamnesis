@@ -23,10 +23,10 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		protected ushort modelVariant;
 		protected byte dyeId;
 
+		private readonly IBaseMemoryOffset baseOffset;
 		private IItem item;
 		private IDye dye;
-		private IBaseMemoryOffset baseOffset;
-
+		
 		public EquipmentBaseViewModel(ItemSlots slot, IBaseMemoryOffset baseOffset)
 		{
 			this.baseOffset = baseOffset;

@@ -14,7 +14,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	/// </summary>
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
-		private ItemSlots slot;
+		private readonly ItemSlots slot;
 
 		public EquipmentSelector(ItemSlots slot)
 		{

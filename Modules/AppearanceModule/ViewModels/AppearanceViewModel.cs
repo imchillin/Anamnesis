@@ -17,6 +17,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		public AppearanceViewModel(Selection selection)
 		{
 			this.appearanceMem = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
+			this.appearanceMem.Name = "Appearance";
 
 			this.Appearance = this.appearanceMem.Value;
 			this.selection = selection;
