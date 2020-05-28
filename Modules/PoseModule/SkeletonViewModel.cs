@@ -362,6 +362,8 @@ namespace ConceptMatrix.PoseModule
 				}
 			}
 
+			this.Root.Children.Clear();
+
 			this.bones = new Dictionary<string, Bone>();
 
 			if (selection == null)

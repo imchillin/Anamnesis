@@ -217,6 +217,9 @@ namespace ConceptMatrix.PoseModule
 
 		public void Dispose()
 		{
+			if (this.Parent != null)
+				this.Parent.Children.Remove(this);
+
 			this.transformMem.Dispose();
 		}
 	}
