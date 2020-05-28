@@ -5,15 +5,15 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
 			 xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 	<Grid>
 		<Image Source="/Assets/cmtool.png" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Opacity="0.65" Height="200"/>
 		<StackPanel Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" Width="550">
-			<TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="Welcome To ConceptMatrix 3"/>
+			<cm3:TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Key="HomeTitle" Text="Welcome To ConceptMatrix 3"/>
 			<Line X1="0" X2="1" Height="2" Stroke="{DynamicResource MaterialDesignDivider}" StrokeThickness="1" Stretch="Fill"/>
-			<TextBlock Style="{StaticResource MaterialDesignTextBlock}" TextWrapping="Wrap" 
-					   Text="At present, this application is in the development stages.&#xA;&#xA;[compatibility]&#xA;1. Non-64 bit computers may not work properly.&#xA;2. Supported game version is DirectX11.&#xA;&#xA;[INSTRUCTIONS]&#xA;1. The current Windows account needs to have Admin privileges to run this application. &#xD;&#xA;2. The game must be running.&#xA;&#xA;[File a bug]&#xA;1. Be mindful that we cannot act on a bug report unless we can replicate the issue. Create a detailed list of steps outlining how you found the bug.&#xA;2. Report the bug in our Discord server: https://discord.gg/hq3DnBa &#xA;3. Please allow us time to fully replicate the bug. We may need to contact you for additional information if your initial bug report failed to provide enough to start with."/>
+			<cm3:TextBlock Style="{StaticResource MaterialDesignTextBlock}" TextWrapping="Wrap" Key="HomeDescription"/>
 		</StackPanel>
 	</Grid>
 </UserControl>

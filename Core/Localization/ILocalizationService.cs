@@ -4,7 +4,6 @@
 namespace ConceptMatrix.Localization
 {
 	using System.Collections.Generic;
-	using System.Globalization;
 
 	public interface ILocalizationService : IService
 	{

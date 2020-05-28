@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.WpfStyles.Controls
 {
+	using System.ComponentModel;
 	using System.Windows;
 	using ConceptMatrix.Localization;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
@@ -38,6 +39,14 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			if (string.IsNullOrEmpty(this.Key))
 				return;
+
+			if (DesignerProperties.GetIsInDesignMode(this))
+			{
+				if (string.IsNullOrEmpty(this.Text))
+					this.Text = "[" + this.Key + "]";
+
+				return;
+			}
 
 			this.Text = Loc.GetString(this.Key);
 		}

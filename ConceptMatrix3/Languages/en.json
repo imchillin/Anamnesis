@@ -1,3 +1,6 @@
 {
-	"MainTitle": "Concept Matrix 3.0"
+	"MainTitle": "Concept Matrix 3.0",
+
+	"HomeTitle": "Welcome To ConceptMatrix 3",
+	"HomeDescription": "At present, this application is in the development stages.\n\n[compatibility]\n1. Non-64 bit computers may not work properly.\n2. Supported game version is DirectX11.\n\n[INSTRUCTIONS]\n1. The current Windows account needs to have Admin privileges to run this application. \n2. The game must be running.\n\n[File a bug]\n1. Be mindful that we cannot act on a bug report unless we can replicate the issue. Create a detailed list of steps outlining how you found the bug\n2. Report the bug in our Discord server: https://discord.gg/hq3DnBa \n3. Please allow us time to fully replicate the bug. We may need to contact you for additional information if your initial bug report failed to provide enough to start with."
 }
