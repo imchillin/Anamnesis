@@ -3,13 +3,12 @@
 
 namespace ConceptMatrix.GUI
 {
-	using System.Threading.Tasks;
-	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
 	public class MainApplicationSettings : SettingsBase
 	{
+		public string Language { get; set; } = "EN";
 		public bool AlwaysOnTop { get; set; } = true;
 		public bool ThemeDark { get; set; } = false;
 		public string ThemeSwatch { get; set; } = @"deeppurple";

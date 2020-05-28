@@ -6,7 +6,9 @@ namespace ConceptMatrix.GUI.Services
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+	using System.Linq;
 	using System.Threading.Tasks;
+	using System.Windows;
 	using ConceptMatrix.GUI.Serialization;
 	using ConceptMatrix.Localization;
 
@@ -14,7 +16,7 @@ namespace ConceptMatrix.GUI.Services
 	{
 		public const string FallbackCulture = "EN";
 
-		private Dictionary<string, Locale> locales = new Dictionary<string, Locale>();
+		private readonly Dictionary<string, Locale> locales = new Dictionary<string, Locale>();
 
 		private Locale fallbackLocale;
 		private Locale currentLocale;
@@ -68,6 +70,9 @@ namespace ConceptMatrix.GUI.Services
 
 			this.currentLocale = this.locales[FallbackCulture];
 			this.fallbackLocale = this.currentLocale;
+
+			this.locales.Add("GIB", new GiberishLocale(this.fallbackLocale));
+
 			return Task.CompletedTask;
 		}
 
@@ -76,9 +81,19 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public Task Start()
+		public async Task Start()
 		{
-			return Task.CompletedTask;
+			ISettingsService settingsService = ConceptMatrix.Services.Get<ISettingsService>();
+			MainApplicationSettings mainSettings = await settingsService.Load<MainApplicationSettings>();
+
+			if (this.locales.ContainsKey(mainSettings.Language))
+			{
+				this.currentLocale = this.locales[mainSettings.Language];
+			}
+			else
+			{
+				this.currentLocale = this.fallbackLocale;
+			}
 		}
 
 		private class Locale
@@ -92,7 +107,7 @@ namespace ConceptMatrix.GUI.Services
 				this.Culture = culture;
 			}
 
-			public void Add(string key, string value)
+			public virtual void Add(string key, string value)
 			{
 				if (!this.values.ContainsKey(key))
 					this.values.Add(key, value);
@@ -100,12 +115,66 @@ namespace ConceptMatrix.GUI.Services
 				this.values[key] = value;
 			}
 
-			public string Get(string key)
+			public virtual string Get(string key)
 			{
 				if (!this.values.ContainsKey(key))
 					return null;
 
 				return this.values[key];
+			}
+		}
+
+		/// <summary>
+		/// Converts any locale into gibberish English.
+		/// </summary>
+		private class GiberishLocale : Locale
+		{
+			private const string Characters = @"abcdefghijklmnopqrstuvwxyz";
+			private static Random random = new Random();
+
+			private Locale baseLocale;
+
+			public GiberishLocale(Locale baseLocale)
+				: base("Gib")
+			{
+				this.baseLocale = baseLocale;
+			}
+
+			public override string Get(string key)
+			{
+				string value = base.Get(key);
+
+				if (value == null)
+				{
+					string str = this.baseLocale.Get(key);
+					char[] newStr = new char[str.Length];
+
+					for (int i = 0; i < str.Length; i++)
+					{
+						if (char.IsDigit(str[i]))
+						{
+							newStr[i] = random.Next(0, 9).ToString()[0];
+						}
+						else if (char.IsLetter(str[i]))
+						{
+							newStr[i] = Characters[random.Next(0, Characters.Length)];
+
+							if (char.IsUpper(str[i]))
+							{
+								newStr[i] = char.ToUpper(newStr[i]);
+							}
+						}
+						else
+						{
+							newStr[i] = str[i];
+						}
+					}
+
+					value = new string(newStr);
+					this.Add(key, value);
+				}
+
+				return value;
 			}
 		}
 	}

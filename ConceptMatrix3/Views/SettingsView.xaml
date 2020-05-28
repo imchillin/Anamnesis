@@ -20,19 +20,29 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="0" Text="Window Opacity:" Style="{StaticResource Label}"/>
-		<cm3Controls:NumberBox Margin="6" Value="{Binding Settings.Opacity}" Slider="True" Grid.Column="1" Grid.Row="0" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
+		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="0" Text="Language:" Style="{StaticResource Label}"/>
+		<ComboBox Margin="6" Grid.Column="1" Grid.Row="0" SelectedValue="{Binding SelectedLanguage}" ItemsSource="{Binding Languages, Mode=OneTime}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Display}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
 
-		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="1" Text="Window Size:" Style="{StaticResource Label}"/>
-		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding Settings.Scale}" Grid.Column="1" Grid.Row="1" Margin="6"/>
+		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="1" Text="Window Opacity:" Style="{StaticResource Label}"/>
+		<cm3Controls:NumberBox Margin="6" Value="{Binding Settings.Opacity}" Slider="True" Grid.Column="1" Grid.Row="1" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
 
-		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="2" Text="Zodiark Theme:" Style="{StaticResource Label}"/>
-		<ToggleButton Margin="6" Grid.Column="1" Grid.Row="2" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Left" IsChecked="{Binding Settings.ThemeDark}"/>
+		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="2" Text="Window Size:" Style="{StaticResource Label}"/>
+		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding Settings.Scale}" Grid.Column="1" Grid.Row="2" Margin="6"/>
 
-		<ListBox Margin="0, 6, 0, 0" Grid.ColumnSpan="2" Grid.Row="3" ItemsSource="{Binding Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
+		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="3" Text="Zodiark Theme:" Style="{StaticResource Label}"/>
+		<ToggleButton Margin="6" Grid.Column="1" Grid.Row="3" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Left" IsChecked="{Binding Settings.ThemeDark}"/>
+
+		<ListBox Margin="0, 6, 0, 0" Grid.ColumnSpan="2" Grid.Row="4" ItemsSource="{Binding Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid Width="223">

@@ -40,9 +40,15 @@ namespace ConceptMatrix.GUI.Views
 			sizes.Add(1.75);
 			sizes.Add(2.0);
 			this.SizeSelector.ItemsSource = sizes;
+
+			List<LanguageOption> languages = new List<LanguageOption>();
+			languages.Add(new LanguageOption("EN", "English"));
+			languages.Add(new LanguageOption("GIB", "Gibberish"));
+			this.Languages = languages;
 		}
 
 		public IEnumerable<Swatch> Swatches { get; }
+		public IEnumerable<LanguageOption> Languages { get; }
 		public MainApplicationSettings Settings { get; set; }
 
 		public Swatch SelectedSwatch
@@ -64,6 +70,39 @@ namespace ConceptMatrix.GUI.Views
 			{
 				this.Settings.ThemeSwatch = value.Name;
 			}
+		}
+
+		public LanguageOption SelectedLanguage
+		{
+			get
+			{
+				foreach (LanguageOption language in this.Languages)
+				{
+					if (language.Key == this.Settings.Language)
+					{
+						return language;
+					}
+				}
+
+				return this.Languages.First();
+			}
+
+			set
+			{
+				this.Settings.Language = value.Key;
+			}
+		}
+
+		public class LanguageOption
+		{
+			public LanguageOption(string key, string display)
+			{
+				this.Key = key;
+				this.Display = display;
+			}
+
+			public string Key { get; }
+			public string Display { get; }
 		}
 	}
 }
