@@ -115,6 +115,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="Languages\en.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
 		<Page Update="Windows\ErrorDialog.xaml">
 			<SubType>Designer</SubType>
 		</Page>

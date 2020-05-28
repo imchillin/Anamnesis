@@ -5,6 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		xmlns:gif="http://wpfanimatedgif.codeplex.com"
+		xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 		mc:Ignorable="d"
 		Height="200"
 		Width="200"
@@ -25,9 +26,7 @@
 		<Grid>
 			<!--<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" Width="100" Height="100"/>-->
 			<Image gif:ImageBehavior.AnimatedSource="Assets/Loading.gif" Width="128" Height="133" Margin="50,0,0,0"/>
-
-			<Label HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="Loading..." Foreground="Gray" HorizontalContentAlignment="Center"/>
-
+			
 			<Button Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0">
 				<fa:IconBlock Icon="Times" Opacity="0.5"/>
 			</Button>
