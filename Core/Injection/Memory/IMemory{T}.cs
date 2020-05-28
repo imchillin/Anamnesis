@@ -25,6 +25,13 @@ namespace ConceptMatrix
 		/// Gets or sets a value indicating whether the value should be frozen in memory, preventing ffxiv from overwriting it.
 		/// </summary>
 		bool Freeze { get; set; }
+
+		/// <summary>
+		/// Sets the value in memory.
+		/// </summary>
+		/// <param name="value">the value to write.</param>
+		/// <param name="immediate">should this value be pushed into process memory immediately.</param>
+		void SetValue(T value, bool immediate = false);
 	}
 
 	#pragma warning disable SA1201

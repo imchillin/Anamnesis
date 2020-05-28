@@ -11,16 +11,16 @@ namespace ConceptMatrix.Injection.Memory
 		protected IProcess process;
 		protected UIntPtr address;
 
-		private static List<MemoryBase> activeMemory = new List<MemoryBase>();
+		private static readonly List<MemoryBase> ActiveMemory = new List<MemoryBase>();
 
 		public MemoryBase(IProcess process, UIntPtr address)
 		{
 			this.process = process;
 			this.address = address;
 
-			lock (activeMemory)
+			lock (ActiveMemory)
 			{
-				activeMemory.Add(this);
+				ActiveMemory.Add(this);
 			}
 
 			this.Active = true;
@@ -39,9 +39,9 @@ namespace ConceptMatrix.Injection.Memory
 			IInjectionService injection = Services.Get<IInjectionService>();
 
 			List<MemoryBase> memories;
-			lock (activeMemory)
+			lock (ActiveMemory)
 			{
-				memories = new List<MemoryBase>(activeMemory);
+				memories = new List<MemoryBase>(ActiveMemory);
 			}
 
 			foreach (MemoryBase memory in memories)
@@ -55,9 +55,9 @@ namespace ConceptMatrix.Injection.Memory
 
 		public virtual void Dispose()
 		{
-			lock (activeMemory)
+			lock (ActiveMemory)
 			{
-				activeMemory.Remove(this);
+				ActiveMemory.Remove(this);
 			}
 
 			this.Active = false;

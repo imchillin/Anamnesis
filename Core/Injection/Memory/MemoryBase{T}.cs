@@ -14,14 +14,15 @@ namespace ConceptMatrix.Injection.Memory
 	{
 		public string Description;
 
-		private static IInjectionService injection = Services.Get<IInjectionService>();
+		private static readonly IInjectionService Injection = Services.Get<IInjectionService>();
+
+		private readonly ulong length;
+		private byte[] oldData;
+		private byte[] newData;
 
 		private T value;
 		private bool freeze;
-
-		private ulong length;
-		private byte[] oldData;
-		private byte[] newData;
+		private bool dirty;
 
 		private Exception lastException;
 
@@ -61,18 +62,7 @@ namespace ConceptMatrix.Injection.Memory
 					throw new MemoryException("Cannot access disposed memory");
 
 				this.value = value;
-
-				bool changed = false;
-				lock (this)
-				{
-					changed = this.DoWrite(value);
-				}
-
-				if (changed)
-				{
-					this.ValueChanged?.Invoke(this, value);
-					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
-				}
+				this.dirty = true;
 			}
 		}
 
@@ -93,6 +83,16 @@ namespace ConceptMatrix.Injection.Memory
 
 				this.freeze = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+			}
+		}
+
+		public void SetValue(T value, bool immediate = false)
+		{
+			this.Value = value;
+
+			if (immediate)
+			{
+				this.Tick();
 			}
 		}
 
@@ -121,6 +121,12 @@ namespace ConceptMatrix.Injection.Memory
 				lock (this)
 				{
 					this.lastException = null;
+
+					if (this.dirty)
+					{
+						changed = this.DoWrite(this.value);
+						this.dirty = false;
+					}
 
 					if (this.Freeze)
 					{
@@ -158,7 +164,7 @@ namespace ConceptMatrix.Injection.Memory
 		// writes value to oldData and to memory
 		private bool DoWrite(T val, bool force = false)
 		{
-			if (!injection.ProcessIsAlive)
+			if (!Injection.ProcessIsAlive)
 				throw new Exception("no FFXIV process");
 
 			this.Write(val, ref this.newData);
@@ -179,7 +185,7 @@ namespace ConceptMatrix.Injection.Memory
 		// Reads memory into newData array
 		private void DoRead()
 		{
-			if (!injection.ProcessIsAlive)
+			if (!Injection.ProcessIsAlive)
 				throw new Exception("no FFXIV process");
 
 			if (!this.process.Read(this.address, this.newData, (UIntPtr)this.length, IntPtr.Zero))
