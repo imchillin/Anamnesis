@@ -37,11 +37,9 @@ namespace ConceptMatrix.PoseModule.Controls
 				if (groups == PoseFile.Groups.None)
 					return;
 
-				Module.SkeletonViewModel.IsEnabled = true;
-
 				if (file is PoseFile poseFile)
 				{
-					poseFile.Write(Module.SkeletonViewModel.Bones, groups);
+					await poseFile.Write(Module.SkeletonViewModel, groups);
 				}
 			}
 			catch (Exception ex)

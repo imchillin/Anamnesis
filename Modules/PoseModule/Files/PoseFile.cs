@@ -5,6 +5,7 @@ namespace ConceptMatrix.PoseModule
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Threading.Tasks;
 
 	public class PoseFile : FileBase
 	{
@@ -31,6 +32,8 @@ namespace ConceptMatrix.PoseModule
 			All = Hair | Face | Torso | LeftArm | RightArm | LeftHand | RightHand | LeftLeg | RightLeg | Clothes | Equipment | Tail,
 		}
 
+		public bool IncludePositions { get; set; } = true;
+		public bool IncludeScale { get; set; } = true;
 		public Dictionary<string, Transform> Bones { get; set; } = new Dictionary<string, Transform>();
 
 		public override FileType GetFileType()
@@ -53,9 +56,14 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
-		public void Write(IEnumerable<Bone> bones, Groups groups)
+		public async Task Write(SkeletonViewModel skeleton, Groups groups)
 		{
-			foreach (Bone bone in bones)
+			Module.SkeletonViewModel.IsEnabled = true;
+
+			// don't freeze positions if we aren't writing any
+			skeleton.FreezePositions = this.IncludePositions;
+
+			foreach (Bone bone in skeleton.Bones)
 			{
 				if (!bone.IsEnabled)
 					continue;
@@ -70,7 +78,20 @@ namespace ConceptMatrix.PoseModule
 					{
 						this.Bones[bone.BoneName].Rotation.Normalize();
 
-						bone.LiveTransform = this.Bones[bone.BoneName];
+						Transform trans = bone.LiveTransform;
+						Transform newTrans = this.Bones[bone.BoneName];
+
+						if (this.IncludeScale && newTrans.Scale != Vector.Zero)
+							trans.Scale = newTrans.Scale;
+
+						if (this.IncludePositions && newTrans.Position != Vector.Zero)
+							trans.Position = newTrans.Position;
+
+						////if (newTrans.Rotation != Quaternion.Identity)
+						trans.Rotation = newTrans.Rotation;
+
+						bone.LiveTransform = trans;
+						bone.ReadTransform();
 					}
 					catch (Exception ex)
 					{
@@ -78,6 +99,9 @@ namespace ConceptMatrix.PoseModule
 					}
 				}
 			}
+
+			await Task.Delay(100);
+			skeleton.FreezePositions = true;
 		}
 	}
 }

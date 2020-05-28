@@ -74,7 +74,7 @@ namespace ConceptMatrix.PoseModule
 		public CmTransform LiveTransform
 		{
 			get => this.transformMem.Value;
-			set => this.transformMem.Value = value;
+			set => this.transformMem.SetValue(value, true);
 		}
 
 		public Bone Parent

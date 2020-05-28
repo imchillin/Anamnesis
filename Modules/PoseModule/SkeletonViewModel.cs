@@ -75,9 +75,6 @@ namespace ConceptMatrix.PoseModule
 					this.skel4Mem.Value = Flag.Enabled;
 					this.skel6Mem.Value = Flag.Enabled;
 
-					// Positions
-					this.skel5Mem.Value = Flag.Enabled;
-
 					// Poll changes thread
 					new Thread(new ThreadStart(this.PollChanges)).Start();
 				}
@@ -91,11 +88,9 @@ namespace ConceptMatrix.PoseModule
 					// scale
 					this.skel4Mem.Value = Flag.Disabled;
 					this.skel6Mem.Value = Flag.Disabled;
-
-					// Positions
-					this.skel5Mem.Value = Flag.Disabled;
 				}
 
+				this.FreezePositions = value;
 				this.FreezePhysics = value;
 			}
 		}
@@ -123,6 +118,18 @@ namespace ConceptMatrix.PoseModule
 					this.phys2Mem.Value = Flag.Disabled;
 					this.phys3Mem.Value = Flag.Disabled;
 				}
+			}
+		}
+
+		public bool FreezePositions
+		{
+			get
+			{
+				return this.skel5Mem.Value.IsEnabled;
+			}
+			set
+			{
+				this.skel5Mem.Value = value ? Flag.Enabled : Flag.Disabled;
 			}
 		}
 
