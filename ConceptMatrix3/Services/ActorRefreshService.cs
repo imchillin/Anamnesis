@@ -94,15 +94,15 @@ namespace ConceptMatrix.GUI.Services
 				{
 					actorTypeMem.SetValue(ActorTypes.BattleNpc, true);
 					actorRenderMem.SetValue(2, true);
-					await Task.Delay(100);
+					await Task.Delay(150);
 					actorRenderMem.SetValue(0, true);
-					await Task.Delay(100);
+					await Task.Delay(150);
 					actorTypeMem.SetValue(ActorTypes.Player, true);
 				}
 				else
 				{
 					actorRenderMem.SetValue(2, true);
-					await Task.Delay(50);
+					await Task.Delay(150);
 					actorRenderMem.SetValue(0, true);
 				}
 
