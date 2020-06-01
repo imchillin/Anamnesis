@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix
 {
+	using System.Text.RegularExpressions;
+
 	public static class SearchUtility
 	{
 		public static bool Matches(string input, string[] querry)
@@ -11,10 +13,19 @@ namespace ConceptMatrix
 				return true;
 
 			input = input.ToLower();
+			input = Regex.Replace(input, @"[^\w\d\s]", string.Empty);
 
 			bool matchesSearch = true;
 			foreach (string str in querry)
-				matchesSearch &= input.Contains(str);
+			{
+				// ignore 'the'
+				if (str == "the")
+					continue;
+
+				// ignore all symbols
+				string strB = Regex.Replace(str, @"[^\w\d\s]", string.Empty);
+				matchesSearch &= input.Contains(strB);
+			}
 
 			if (!matchesSearch)
 			{
