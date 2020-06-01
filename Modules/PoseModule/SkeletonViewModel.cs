@@ -92,6 +92,16 @@ namespace ConceptMatrix.PoseModule
 
 				this.FreezePositions = value;
 				this.FreezePhysics = value;
+
+				foreach (Bone bone in this.bones.Values)
+				{
+					bone.ReadTransform();
+				}
+
+				foreach (Bone bone in this.bones.Values)
+				{
+					bone.WriteTransform(this.Root);
+				}
 			}
 		}
 
@@ -495,26 +505,32 @@ namespace ConceptMatrix.PoseModule
 
 		private void PollChanges()
 		{
-			while (this.IsEnabled && Application.Current != null)
+			try
 			{
-				Thread.Sleep(32);
-
-				if (!this.IsEnabled)
-					continue;
-
-				if (this.CurrentBone == null)
-					continue;
-
-				if (Application.Current == null)
-					return;
-
-				Application.Current.Dispatcher.Invoke(() =>
+				while (this.IsEnabled && Application.Current != null)
 				{
-					if (this.CurrentBone == null)
-						return;
+					Thread.Sleep(32);
 
-					this.CurrentBone.WriteTransform(this.Root);
-				});
+					if (!this.IsEnabled)
+						continue;
+
+					if (this.CurrentBone == null)
+						continue;
+
+					if (Application.Current == null)
+						continue;
+
+					Application.Current.Dispatcher.Invoke(() =>
+					{
+						if (this.CurrentBone == null)
+							return;
+
+						this.CurrentBone.WriteTransform(this.Root);
+					});
+				}
+			}
+			catch (TaskCanceledException)
+			{
 			}
 
 			this.IsEnabled = false;
