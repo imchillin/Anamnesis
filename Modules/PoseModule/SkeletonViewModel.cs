@@ -93,14 +93,17 @@ namespace ConceptMatrix.PoseModule
 				this.FreezePositions = value;
 				this.FreezePhysics = value;
 
-				foreach (Bone bone in this.bones.Values)
+				if (value)
 				{
-					bone.ReadTransform();
-				}
+					foreach (Bone bone in this.bones.Values)
+					{
+						bone.ReadTransform();
+					}
 
-				foreach (Bone bone in this.bones.Values)
-				{
-					bone.WriteTransform(this.Root);
+					foreach (Bone bone in this.bones.Values)
+					{
+						bone.WriteTransform(this.Root);
+					}
 				}
 			}
 		}
