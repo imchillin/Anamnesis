@@ -19,7 +19,7 @@
 			</GroupBox>
 
 			<GroupBox Header="Position">
-				<cm3Controls:VectorEditor Value="{Binding Value.Position}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1"/>
+				<cm3Controls:VectorEditor Value="{Binding Value.Position}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
 			</GroupBox>
 		</StackPanel>
 	</Grid>
