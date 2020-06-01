@@ -95,15 +95,18 @@ namespace ConceptMatrix.PoseModule
 
 				if (value)
 				{
-					foreach (Bone bone in this.bones.Values)
+					Application.Current.Dispatcher.Invoke(() =>
 					{
-						bone.ReadTransform();
-					}
+						foreach (Bone bone in this.bones.Values)
+						{
+							bone.ReadTransform();
+						}
 
-					foreach (Bone bone in this.bones.Values)
-					{
-						bone.WriteTransform(this.Root);
-					}
+						foreach (Bone bone in this.bones.Values)
+						{
+							bone.WriteTransform(this.Root);
+						}
+					});
 				}
 			}
 		}
@@ -163,7 +166,12 @@ namespace ConceptMatrix.PoseModule
 
 				// Ensure we have written any pending rotations before changing bone targets
 				if (this.currentBone != null)
-					this.currentBone.WriteTransform(this.Root);
+				{
+					Application.Current.Dispatcher.Invoke(() =>
+					{
+						this.currentBone.WriteTransform(this.Root);
+					});
+				}
 
 				this.currentBone = value;
 				this.currentBone?.ReadTransform();
@@ -290,7 +298,10 @@ namespace ConceptMatrix.PoseModule
 			this.appearanceMem = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
 			this.rootRotationMem = selection.BaseAddress.GetMemory(Offsets.Main.Rotation);
 
-			await this.GenerateBones(selection);
+			await Application.Current.Dispatcher.InvokeAsync(async () =>
+			{
+				await this.GenerateBones(selection);
+			});
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Bones)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.HasTail)));
