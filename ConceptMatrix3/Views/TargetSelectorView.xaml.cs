@@ -20,6 +20,8 @@ namespace ConceptMatrix.GUI.Views
 	/// </summary>
 	public partial class TargetSelectorView : UserControl, IDrawer
 	{
+		public Selection Actor;
+
 		private SelectionService selection;
 		private IInjectionService injection;
 		private bool lockSelection = false;
@@ -133,8 +135,7 @@ namespace ConceptMatrix.GUI.Views
 			if (sender is RadioButton btn)
 			{
 				PossibleSelection selection = btn.DataContext as PossibleSelection;
-				this.selection.UseGameTarget = false;
-				this.selection.CurrentSelection = selection;
+				this.Actor = selection;
 
 				this.Close?.Invoke();
 			}

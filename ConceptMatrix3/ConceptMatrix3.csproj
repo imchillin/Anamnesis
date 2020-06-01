@@ -42,6 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Dragablz.NetCore" Version="0.3.3" />
 		<PackageReference Include="Fody" Version="6.1.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -103,9 +104,6 @@
 		<Compile Update="Views\TargetSelectorView.xaml.cs">
 			<DependentUpon>TargetSelectorView.xaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\TargetView.xaml.cs">
-			<DependentUpon>TargetView.xaml</DependentUpon>
-		</Compile>
 		<Compile Update="Views\SettingsView.xaml.cs">
 			<DependentUpon>SettingsView.xaml</DependentUpon>
 		</Compile>
@@ -142,10 +140,6 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\TargetSelectorView.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\TargetView.xaml">
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</Page>

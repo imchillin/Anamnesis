@@ -5,6 +5,7 @@ namespace ConceptMatrix.GUI
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -23,7 +24,6 @@ namespace ConceptMatrix.GUI
 	public partial class MainWindow : Window
 	{
 		private readonly ViewService viewService;
-		private UserControl currentView;
 
 		public MainWindow()
 		{
@@ -31,11 +31,8 @@ namespace ConceptMatrix.GUI
 
 			this.viewService = App.Services.Get<ViewService>();
 			this.viewService.ShowingDrawer += this.OnShowDrawer;
-			this.viewService.ShowingPage += this.OnShowPage;
 
-			this.currentView = new HomeView();
-			this.ViewArea.Content = this.currentView;
-			this.IconArea.DataContext = this;
+			////this.IconArea.DataContext = this;
 
 			this.Zodiark = App.Settings.ThemeDark;
 			this.Opacity = App.Settings.Opacity;
@@ -43,7 +40,11 @@ namespace ConceptMatrix.GUI
 			this.WindowScale.ScaleX = App.Settings.Scale;
 			this.WindowScale.ScaleY = App.Settings.Scale;
 			App.Settings.Changed += this.OnSettingsChanged;
+
+			this.Tabs.DataContext = this;
 		}
+
+		public ObservableCollection<Selection> Actors { get; set; } = new ObservableCollection<Selection>();
 
 		public bool Zodiark
 		{
@@ -57,16 +58,6 @@ namespace ConceptMatrix.GUI
 			this.Zodiark = App.Settings.ThemeDark;
 			this.WindowScale.ScaleX = App.Settings.Scale;
 			this.WindowScale.ScaleY = App.Settings.Scale;
-		}
-
-		private void OnShowPage(ViewService.Page page)
-		{
-			this.currentView = page.Instance;
-			this.ViewArea.Content = this.currentView;
-
-			PaletteHelper ph = new PaletteHelper();
-
-			this.MainAreaBackground.Visibility = page.DrawBackground ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		private async Task OnShowDrawer(string title, UserControl view, DrawerDirection direction)
@@ -232,6 +223,20 @@ namespace ConceptMatrix.GUI
 			this.WindowScale.ScaleX = scale;
 			this.WindowScale.ScaleY = scale;
 			App.Settings.Scale = scale;
+		}
+
+		private async void OnAddClick(object sender, RoutedEventArgs e)
+		{
+			// TODO: replace this with a SelectorDrawer object instead
+			TargetSelectorView selector = new TargetSelectorView();
+			await this.viewService.ShowDrawer(selector, "Selection", DrawerDirection.Left);
+
+			while (selector.Actor == null)
+				await Task.Delay(100);
+
+			Selection selection = selector.Actor;
+
+			this.Actors.Add(selection);
 		}
 	}
 }
