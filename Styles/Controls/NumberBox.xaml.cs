@@ -168,7 +168,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		private static void OnValueChanged(NumberBox sender, double v)
 		{
 			sender.Value = sender.Validate(v);
-			sender.Text = sender.Value.ToString("0.##");
+			sender.Text = sender.Value.ToString("0.###");
 		}
 
 		[SuppressPropertyChangedWarnings]
@@ -227,7 +227,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 				this.ErrorDisplay.Visibility = Visibility.Visible;
 			}
 
-			this.Text = this.Value.ToString("0.##");
+			this.Text = this.Value.ToString("0.###");
 
 			if (refocus)
 			{

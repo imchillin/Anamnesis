@@ -38,7 +38,7 @@
 			Grid.Column="1"
 			Style="{DynamicResource MaterialDesignTextBox}"
 			Foreground="{DynamicResource MaterialDesignBody}"
-			Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=000.00}"
+			Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=000.000}"
 			Margin="3, -2, 0, 1"
 			Height="22"
 			LostFocus="OnLostFocus"
