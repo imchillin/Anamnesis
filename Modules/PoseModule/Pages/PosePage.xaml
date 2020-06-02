@@ -55,23 +55,15 @@
 		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3">
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
-				<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 6" SelectionChanged="OnViewChanged">
-					<ListBox.ToolTip>
-						<StackPanel>
-							<TextBlock Text="MaterialDesignToolToggleListBox" />
-							<TextBlock Text="Exclusive selection" />
-							<TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
-						</StackPanel>
-					</ListBox.ToolTip>
-				
-					<ListBoxItem ToolTip="GUI View">
-						<fa:IconImage Icon="Female" />
+				<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
+					<ListBoxItem ToolTip="GUI View" Margin="1, 0, 0, 1">
+						<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
 					</ListBoxItem>
-					<ListBoxItem ToolTip="3D View">
-						<fa:IconImage Icon="Cube" />
+					<ListBoxItem ToolTip="3D View" Margin="0, 0, 0, 1">
+						<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
 					</ListBoxItem>
-					<ListBoxItem ToolTip="Matrix View">
-						<fa:IconImage Icon="BorderAll" />
+					<ListBoxItem ToolTip="Matrix View" Margin="0, 0, 1, 1">
+						<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 					</ListBoxItem>
 				</ListBox>
 
