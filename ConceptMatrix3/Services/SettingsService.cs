@@ -130,8 +130,6 @@ namespace ConceptMatrix.GUI.Services
 
 			private async Task SaveAfterDelay()
 			{
-				ISelectionService selectionService = Services.Get<ISelectionService>();
-
 				while (this.saveCountdown > 0)
 				{
 					while (this.saveCountdown > 0)

@@ -20,7 +20,7 @@ namespace ConceptMatrix.GUI.Views
 	/// </summary>
 	public partial class TargetSelectorView : UserControl, IDrawer
 	{
-		public Selection Actor;
+		public Actor Actor;
 
 		private SelectionService selection;
 		private IInjectionService injection;
@@ -52,19 +52,19 @@ namespace ConceptMatrix.GUI.Views
 			try
 			{
 				this.lockSelection = true;
-				Selection.Modes mode = this.selection.GetMode();
+				Actor.Modes mode = this.selection.GetMode();
 				ActorTableOffset actorTableOffset;
 				BaseOffset targetOffset;
 
 				// clear the entity list
 				this.Entities.Clear();
 
-				if (mode == Selection.Modes.GPose)
+				if (mode == Actor.Modes.GPose)
 				{
 					actorTableOffset = Offsets.Main.GposeActorTable;
 					targetOffset = Offsets.Main.Gpose;
 				}
-				else if (mode == Selection.Modes.Overworld)
+				else if (mode == Actor.Modes.Overworld)
 				{
 					actorTableOffset = Offsets.Main.ActorTable;
 					targetOffset = Offsets.Main.Target;
@@ -93,11 +93,8 @@ namespace ConceptMatrix.GUI.Views
 						name = "Unknown";
 
 					PossibleSelection selection = new PossibleSelection(type, actorTableOffset.GetBaseOffset(i), id, name, mode);
-					selection.IsSelected = !this.selection.UseGameTarget && this.selection.CurrentSelection != null && this.selection.CurrentSelection.Name == name;
 					this.Entities.Add(selection);
 				}
-
-				this.AutoRadio.IsChecked = this.selection.UseGameTarget;
 
 				if (this.selection.CurrentGameTarget != null)
 				{
@@ -118,15 +115,6 @@ namespace ConceptMatrix.GUI.Views
 			}
 		}
 
-		private void OnAutoSelected(object sender, RoutedEventArgs e)
-		{
-			if (this.lockSelection)
-				return;
-
-			this.selection.UseGameTarget = true;
-			this.selection.CurrentSelection = null;
-		}
-
 		private void OnSelected(object sender, RoutedEventArgs e)
 		{
 			if (this.lockSelection)
@@ -141,7 +129,7 @@ namespace ConceptMatrix.GUI.Views
 			}
 		}
 
-		public class PossibleSelection : Selection
+		public class PossibleSelection : Actor
 		{
 			public PossibleSelection(ActorTypes type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
 				: base(type, address, actorId, name, mode)

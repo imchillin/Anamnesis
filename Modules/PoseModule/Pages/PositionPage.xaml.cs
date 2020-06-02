@@ -21,9 +21,7 @@ namespace ConceptMatrix.PoseModule.Pages
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			ISelectionService selectionService = Services.Get<ISelectionService>();
-			selectionService.SelectionChanged += this.OnSelectionChanged;
-			this.OnSelectionChanged(selectionService.CurrentSelection);
+			this.OnActorChanged(this.DataContext as Actor);
 		}
 
 		public Vector Position
@@ -39,7 +37,7 @@ namespace ConceptMatrix.PoseModule.Pages
 		}
 
 		[SuppressPropertyChangedWarnings]
-		private void OnSelectionChanged(Selection selection)
+		private void OnActorChanged(Actor selection)
 		{
 			if (this.posMem != null)
 				this.posMem.Dispose();

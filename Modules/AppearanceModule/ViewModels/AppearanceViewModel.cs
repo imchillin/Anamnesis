@@ -12,9 +12,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		public Appearance Appearance;
 		private IMemory<Appearance> appearanceMem;
 
-		private readonly Selection selection;
+		private readonly Actor selection;
 
-		public AppearanceViewModel(Selection selection)
+		public AppearanceViewModel(Actor selection)
 		{
 			this.appearanceMem = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
 			this.appearanceMem.Name = "Appearance";

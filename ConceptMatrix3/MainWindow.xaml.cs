@@ -44,7 +44,7 @@ namespace ConceptMatrix.GUI
 			this.Tabs.DataContext = this;
 		}
 
-		public ObservableCollection<Selection> Actors { get; set; } = new ObservableCollection<Selection>();
+		public ObservableCollection<Actor> Actors { get; set; } = new ObservableCollection<Actor>();
 
 		public bool Zodiark
 		{
@@ -234,7 +234,7 @@ namespace ConceptMatrix.GUI
 			while (selector.Actor == null)
 				await Task.Delay(100);
 
-			Selection selection = selector.Actor;
+			Actor selection = selector.Actor;
 
 			this.Actors.Add(selection);
 		}

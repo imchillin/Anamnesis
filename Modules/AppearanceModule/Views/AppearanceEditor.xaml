@@ -9,7 +9,8 @@
 			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles"
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d" 
-			 TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
+			 TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
+			 Loaded="OnLoaded">
 
 	<UserControl.Resources>
 

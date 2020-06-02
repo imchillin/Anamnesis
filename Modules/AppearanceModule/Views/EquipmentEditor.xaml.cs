@@ -23,13 +23,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public EquipmentEditor()
 		{
 			this.InitializeComponent();
-
-			if (DesignerProperties.GetIsInDesignMode(this))
-				return;
-
-			ISelectionService selection = Services.Get<ISelectionService>();
-			selection.SelectionChanged += this.OnSelectionChanged;
-			this.OnSelectionChanged(selection.CurrentSelection);
 		}
 
 		public EquipmentWeaponViewModel MainHand { get; set; }
@@ -51,8 +44,13 @@ namespace ConceptMatrix.AppearanceModule.Views
 			private set;
 		}
 
+		private void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			this.OnActorChanged(this.DataContext as Actor);
+		}
+
 		[SuppressPropertyChangedWarnings]
-		private void OnSelectionChanged(Selection selection)
+		private void OnActorChanged(Actor actor)
 		{
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -87,17 +85,17 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.LeftRing = null;
 			this.RightRing = null;
 
-			if (selection == null || (selection.Type != ActorTypes.Player && selection.Type != ActorTypes.BattleNpc && selection.Type != ActorTypes.EventNpc))
+			if (actor == null || (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.BattleNpc && actor.Type != ActorTypes.EventNpc))
 				return;
 
-			this.BaseOffset = selection.BaseAddress;
+			this.BaseOffset = actor.BaseAddress;
 
 			// Weapon slots
 			this.MainHand = new EquipmentWeaponViewModel(ItemSlots.MainHand, this.BaseOffset);
 			this.OffHand = new EquipmentWeaponViewModel(ItemSlots.OffHand, this.BaseOffset);
 
 			// Equipment slots
-			this.eqMem = selection.BaseAddress.GetMemory(Offsets.Main.ActorEquipment);
+			this.eqMem = actor.BaseAddress.GetMemory(Offsets.Main.ActorEquipment);
 			this.eqMem.Name = "Equipment";
 
 			this.Head = new EquipmentItemViewModel(this.eqMem, ItemSlots.Head, this.BaseOffset);

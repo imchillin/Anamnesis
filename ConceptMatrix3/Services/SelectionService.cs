@@ -9,15 +9,13 @@ namespace ConceptMatrix.GUI.Services
 	using ConceptMatrix;
 	using ConceptMatrix.Exceptions;
 
-	public class SelectionService : ISelectionService
+	public class SelectionService : IService
 	{
-		private Selection currentSelection;
+		////private Actor currentSelection;
 
 		private IMemory<bool> gposeMem;
 		private IMemory<ushort> gposeMem2;
-		private bool isResetting = false;
-
-		public event SelectionEvent SelectionChanged;
+		////private bool isResetting = false;
 
 		public bool IsAlive
 		{
@@ -25,43 +23,13 @@ namespace ConceptMatrix.GUI.Services
 			private set;
 		}
 
-		public bool UseGameTarget
-		{
-			get;
-			set;
-		}
-
-		public Selection CurrentSelection
-		{
-			get
-			{
-				return this.currentSelection;
-			}
-
-			set
-			{
-				this.currentSelection = value;
-
-				try
-				{
-					Log.Write("Changing Selection: " + value?.Mode + " - " + value?.BaseAddress, "Selection");
-
-					this.SelectionChanged?.Invoke(this.currentSelection);
-				}
-				catch (Exception ex)
-				{
-					Log.Write(new Exception("Failed to invoke selection changed event.", ex));
-				}
-			}
-		}
-
-		public Selection CurrentGameTarget
+		public Actor CurrentGameTarget
 		{
 			get;
 			private set;
 		}
 
-		public static string GetActorId(Selection.Modes mode, ActorTypes type, string name)
+		public static string GetActorId(Actor.Modes mode, ActorTypes type, string name)
 		{
 			return mode.ToString() + "_" + type + "_" + name;
 		}
@@ -69,7 +37,6 @@ namespace ConceptMatrix.GUI.Services
 		public Task Initialize()
 		{
 			this.IsAlive = true;
-			this.UseGameTarget = true;
 			return Task.CompletedTask;
 		}
 
@@ -84,17 +51,17 @@ namespace ConceptMatrix.GUI.Services
 			this.gposeMem = Offsets.Main.GposeCheck.GetMemory();
 			this.gposeMem2 = Offsets.Main.GposeCheck2.GetMemory();
 
-			Task.Run(this.Watch);
+			////Task.Run(this.Watch);
 
 			return Task.CompletedTask;
 		}
 
-		public Selection.Modes GetMode()
+		public Actor.Modes GetMode()
 		{
-			return this.gposeMem.Value && this.gposeMem2.Value == 4 ? Selection.Modes.GPose : Selection.Modes.Overworld;
+			return this.gposeMem.Value && this.gposeMem2.Value == 4 ? Actor.Modes.GPose : Actor.Modes.Overworld;
 		}
 
-		public void ResetSelection()
+		/*public void ResetSelection()
 		{
 			this.isResetting = true;
 			this.CurrentGameTarget = null;
@@ -124,8 +91,8 @@ namespace ConceptMatrix.GUI.Services
 				while (refreshService.IsRefreshing && !this.isResetting)
 					await Task.Delay(250);
 
-				Selection.Modes mode = this.GetMode();
-				IBaseMemoryOffset baseOffset = mode == Selection.Modes.GPose ? Offsets.Main.Gpose : Offsets.Main.Target;
+				Actor.Modes mode = this.GetMode();
+				IBaseMemoryOffset baseOffset = mode == Actor.Modes.GPose ? Offsets.Main.Gpose : Offsets.Main.Target;
 
 				try
 				{
@@ -146,7 +113,7 @@ namespace ConceptMatrix.GUI.Services
 						|| this.CurrentGameTarget.ActorId != actorId
 						|| this.CurrentGameTarget.Mode != mode)
 					{
-						this.CurrentGameTarget = new Selection(type, baseOffset, actorId, name, mode);
+						this.CurrentGameTarget = new Actor(type, baseOffset, actorId, name, mode);
 					}
 
 					if (this.UseGameTarget && this.CurrentSelection != this.CurrentGameTarget)
@@ -183,6 +150,6 @@ namespace ConceptMatrix.GUI.Services
 					Log.Write(ex);
 				}
 			}
-		}
+		}*/
 	}
 }

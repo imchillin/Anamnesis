@@ -71,8 +71,6 @@ namespace ConceptMatrix.GUI.Services
 
 		private async Task ApplyAfterDelay(IBaseMemoryOffset actorOffset)
 		{
-			ISelectionService selectionService = Services.Get<ISelectionService>();
-
 			while (this.applyCountdown > 0)
 			{
 				while (this.applyCountdown > 0)
@@ -105,8 +103,6 @@ namespace ConceptMatrix.GUI.Services
 					await Task.Delay(150);
 					actorRenderMem.SetValue(0, true);
 				}
-
-				await Services.Get<ISelectionService>().ResetSelectionAsync();
 
 				this.OnRefreshComplete?.Invoke(actorOffset);
 				Log.Write("Refresh Complete", "Actor Refresh");

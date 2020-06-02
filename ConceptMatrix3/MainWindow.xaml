@@ -73,7 +73,7 @@
 				<Setter Property="Background" Value="Transparent"/>
 			</Style>
 
-			<DataTemplate DataType="{x:Type cmc:Selection}">
+			<DataTemplate DataType="{x:Type cmc:Actor}">
 				<TextBlock Text="{Binding Name}"/>
 			</DataTemplate>
 

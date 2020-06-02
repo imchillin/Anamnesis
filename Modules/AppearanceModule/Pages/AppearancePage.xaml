@@ -9,9 +9,9 @@
 			 xmlns:cm3Drawers="clr-namespace:ConceptMatrix.WpfStyles.Drawers;assembly=Styles"
 			 xmlns:views="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 mc:Ignorable="d" 
-			 Unloaded="OnUnloaded"
 			 d:DesignHeight="600"
-			 d:DesignWidth="1024">
+			 d:DesignWidth="1024"
+			 Loaded="OnLoaded">
 	<Grid Margin="0, 0, 6, 6">
 
 		<Grid.ColumnDefinitions>

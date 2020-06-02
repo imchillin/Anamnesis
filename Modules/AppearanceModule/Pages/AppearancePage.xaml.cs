@@ -20,20 +20,14 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		{
 			this.InitializeComponent();
 
-			ISelectionService selectionService = Services.Get<ISelectionService>();
-			selectionService.SelectionChanged += this.OnSelectionChanged;
-
 			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
 			refreshService.OnRefreshStarting += this.RefreshService_OnRefreshStarting;
 			refreshService.OnRefreshComplete += this.RefreshService_OnRefreshComplete;
-
-			this.OnSelectionChanged(selectionService.CurrentSelection);
 		}
 
-		private void OnUnloaded(object sender, RoutedEventArgs e)
+		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			ISelectionService selectionService = Services.Get<ISelectionService>();
-			selectionService.SelectionChanged -= this.OnSelectionChanged;
+			this.OnActorChanged(this.DataContext as Actor);
 		}
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
@@ -77,12 +71,12 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			await fileService.Save(file);
 		}
 
-		private void OnSelectionChanged(Selection selection)
+		private void OnActorChanged(Actor actor)
 		{
-			bool hasValidSelection = selection != null && (selection.Type == ActorTypes.Player || selection.Type == ActorTypes.BattleNpc || selection.Type == ActorTypes.EventNpc);
+			bool hasValidSelection = actor != null && (actor.Type == ActorTypes.Player || actor.Type == ActorTypes.BattleNpc || actor.Type == ActorTypes.EventNpc);
 
 			if (hasValidSelection)
-				this.baseOffset = selection.BaseAddress;
+				this.baseOffset = actor.BaseAddress;
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{

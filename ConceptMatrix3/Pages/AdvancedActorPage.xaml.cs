@@ -21,15 +21,13 @@ namespace ConceptMatrix.GUI.Pages
 
 			this.ActorTypeComboBox.ItemsSource = Enum.GetValues(typeof(ActorTypes));
 
-			ISelectionService selectionService = ConceptMatrix.Services.Get<ISelectionService>();
-			selectionService.SelectionChanged += this.OnSelectionChanged;
-			this.OnSelectionChanged(selectionService.CurrentSelection);
+			this.OnSelectionChanged(this.DataContext as Actor);
 		}
 
 		public ActorTypes ActorType { get; set; }
 
 		[SuppressPropertyChangedWarnings]
-		private void OnSelectionChanged(Selection selection)
+		private void OnSelectionChanged(Actor selection)
 		{
 			BindUtility.ClearAll(this);
 

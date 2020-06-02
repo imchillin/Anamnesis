@@ -15,25 +15,6 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
-		
-
-		<RadioButton x:Name="AutoRadio" Grid.Column="0" Grid.Row="0" Margin="0, 12, 0, 10" GroupName="SelectionGroup" Checked="OnAutoSelected">
-			<Grid VerticalAlignment="Center" Margin="0, -10, 0, 0">
-				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-				
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="20"/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-
-				<Label Grid.ColumnSpan="2" Grid.Row="0" Content="In-game Selection (Auto)" VerticalAlignment="Center" Padding="0" Margin="5, 0, 0, 0"/>
-				<fa:IconBlock Grid.Row="1" Grid.Column="0" Icon="{Binding InGameIcon}"/>
-				<Label Grid.Column="1" Grid.Row="1" Content="{Binding InGameSelection}" VerticalAlignment="Center" Padding="0" FontWeight="DemiBold"/>
-			</Grid>
-		</RadioButton>
 
 		<ScrollViewer Grid.ColumnSpan="2" Grid.Row="1">
 			<ItemsControl ItemsSource="{Binding Entities, FallbackValue=123}" Margin="0" Padding="0">

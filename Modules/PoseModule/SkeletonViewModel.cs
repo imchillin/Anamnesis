@@ -184,6 +184,9 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
+				if (this.appearanceMem == null)
+					return Appearance.Races.Hyur;
+
 				return this.appearanceMem.Value.Race;
 			}
 		}
@@ -283,7 +286,7 @@ namespace ConceptMatrix.PoseModule
 			return name;
 		}
 
-		public async Task Initialize(Selection selection)
+		public async Task Initialize(Actor selection)
 		{
 			this.skel1Mem = Offsets.Main.Skeleton1Flag.GetMemory();
 			this.skel2Mem = Offsets.Main.Skeleton2Flag.GetMemory();
@@ -383,7 +386,7 @@ namespace ConceptMatrix.PoseModule
 		}
 
 		// gets all bones defined in BonesOffsets.
-		private async Task GenerateBones(Selection selection)
+		private async Task GenerateBones(Actor selection)
 		{
 			if (this.bones != null)
 			{

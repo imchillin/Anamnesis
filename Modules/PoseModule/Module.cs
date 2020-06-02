@@ -22,10 +22,6 @@ namespace ConceptMatrix.PoseModule
 			viewService.AddPage<PoseMatrixPage>("Character/Posing Matrix", false);
 			viewService.AddPage<PositionPage>("Character/Positioning");
 
-			ISelectionService selectionService = Services.Get<ISelectionService>();
-			selectionService.SelectionChanged += this.OnSelectionChanged;
-			this.OnSelectionChanged(selectionService.CurrentSelection);
-
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				Application.Current.Exit += this.OnApplicationExiting;
@@ -44,7 +40,7 @@ namespace ConceptMatrix.PoseModule
 			return Task.CompletedTask;
 		}
 
-		private void OnSelectionChanged(Selection selection)
+		/*private void OnSelectionChanged(Actor selection)
 		{
 			SkeletonViewModel.Clear();
 
@@ -55,7 +51,7 @@ namespace ConceptMatrix.PoseModule
 			{
 				await SkeletonViewModel.Initialize(selection);
 			});
-		}
+		}*/
 
 		private void OnApplicationExiting(object sender, ExitEventArgs e)
 		{

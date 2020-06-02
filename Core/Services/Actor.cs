@@ -3,29 +3,12 @@
 
 namespace ConceptMatrix
 {
-	using System.Threading.Tasks;
-
-	public delegate void SelectionEvent(Selection selection);
-
-	public interface ISelectionService : IService
-	{
-		event SelectionEvent SelectionChanged;
-
-		Selection CurrentSelection
-		{
-			get;
-		}
-
-		void ResetSelection();
-		Task ResetSelectionAsync();
-	}
-
-	public class Selection
+	public class Actor
 	{
 		public readonly IBaseMemoryOffset BaseAddress;
 		public readonly string ActorId;
 
-		public Selection(ActorTypes type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
+		public Actor(ActorTypes type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
 		{
 			this.Type = type;
 			this.BaseAddress = address;

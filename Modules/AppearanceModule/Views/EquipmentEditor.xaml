@@ -6,7 +6,8 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=ConceptMatrix.WpfStyles"
 			 mc:Ignorable="d"
-			 d:DesignHeight="600">
+			 d:DesignHeight="600"
+			 Loaded="OnLoaded">
 
 	<Grid x:Name="ContentArea" Margin="3, 0, 0, 3">
 		<Grid.ColumnDefinitions>
