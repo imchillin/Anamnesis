@@ -68,20 +68,24 @@
 		</Border>
 
 
-		<Grid Margin="1" Width="910" Height="552">
+		<Grid Margin="1" Width="910" Height="552" ClipToBounds="True">
 			<Grid.LayoutTransform>
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5"/>
 			</Grid.LayoutTransform>
 
 			<!-- TitleBar -->
-			<Border Margin="0, 0, 0, 0" 
-					Background="Transparent" 
+			<Border Margin="0" 
+					Background="{DynamicResource MaterialDesignPaper}" 
 					CornerRadius="2, 2, 0, 0"
 					Grid.ColumnSpan="2"
 					Height="40"
 					VerticalAlignment="Top"
 					MouseDown="OnTitleBarMouseDown">
 
+				<Border.Effect>
+					<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="1"/>
+				</Border.Effect>
+				
 				<Grid VerticalAlignment="Top">
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -134,7 +138,7 @@
 			</Border>
 
 			<!-- Tabs -->
-			<dragablz:TabablzControl x:Name="Tabs" ItemsSource="{Binding Actors}" Style="{StaticResource TabStyle}" BorderThickness="0" Margin="1">
+			<dragablz:TabablzControl x:Name="Tabs" ItemsSource="{Binding Actors}" Style="{StaticResource TabStyle}" BorderThickness="0" Margin="0">
 
 				<dragablz:TabablzControl.InterTabController>
 					<dragablz:InterTabController/>

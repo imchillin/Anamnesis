@@ -55,13 +55,12 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public void AddPage<T>(string name, string icon, bool drawBackground)
+		public void AddPage<T>(string name, string icon)
 		{
 			Page page = new Page();
 			page.Icon = icon;
 			page.Name = name;
 			page.Type = typeof(T);
-			page.DrawBackground = drawBackground;
 
 			if (this.pages.ContainsKey(name))
 				throw new Exception($"Page already registered with name: {name}");
@@ -161,7 +160,6 @@ namespace ConceptMatrix.GUI.Services
 
 			public string Name { get; set; }
 			public string Icon { get; set; }
-			public bool DrawBackground { get; set; }
 
 			public void Create()
 			{

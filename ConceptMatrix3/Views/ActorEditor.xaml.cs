@@ -41,10 +41,6 @@ namespace ConceptMatrix.GUI.Views
 		{
 			this.currentView = page.Instance;
 			this.ViewArea.Content = this.currentView;
-
-			PaletteHelper ph = new PaletteHelper();
-
-			this.MainAreaBackground.Visibility = page.DrawBackground ? Visibility.Visible : Visibility.Collapsed;
 		}
 	}
 }
