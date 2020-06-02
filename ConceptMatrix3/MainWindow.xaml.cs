@@ -235,8 +235,9 @@ namespace ConceptMatrix.GUI
 				await Task.Delay(100);
 
 			Actor selection = selector.Actor;
-
 			this.Actors.Add(selection);
+
+			this.Tabs.SelectedItem = selection;
 		}
 	}
 }
