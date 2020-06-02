@@ -20,21 +20,23 @@ namespace ConceptMatrix.GUI.Pages
 			this.ContentArea.DataContext = this;
 
 			this.ActorTypeComboBox.ItemsSource = Enum.GetValues(typeof(ActorTypes));
-
-			this.OnSelectionChanged(this.DataContext as Actor);
 		}
 
 		public ActorTypes ActorType { get; set; }
 
-		[SuppressPropertyChangedWarnings]
-		private void OnSelectionChanged(Actor selection)
+		private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			this.SetActor(this.DataContext as Actor);
+		}
+
+		private void SetActor(Actor actor)
 		{
 			BindUtility.ClearAll(this);
 
-			if (selection == null)
+			if (actor == null)
 				return;
 
-			selection.BaseAddress.Bind(Offsets.Main.ActorType, this, nameof(this.ActorType));
+			actor.BaseAddress.Bind(Offsets.Main.ActorType, this, nameof(this.ActorType));
 		}
 	}
 }

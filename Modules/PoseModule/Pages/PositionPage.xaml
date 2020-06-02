@@ -5,7 +5,8 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule.Pages"
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
-			 mc:Ignorable="d" >
+			 mc:Ignorable="d"
+			 Loaded="OnLoaded">
 	<Grid x:Name="ContentArea" VerticalAlignment="Center" HorizontalAlignment="Center">
 		<StackPanel>
 			<cm3Controls:QuaternionEditor Value="{Binding Rotation}"/>

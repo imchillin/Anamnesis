@@ -3,7 +3,6 @@
 
 namespace ConceptMatrix.PoseModule.Pages
 {
-	using System.ComponentModel;
 	using System.Windows.Controls;
 	using PropertyChanged;
 
@@ -20,8 +19,6 @@ namespace ConceptMatrix.PoseModule.Pages
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
-
-			this.OnActorChanged(this.DataContext as Actor);
 		}
 
 		public Vector Position
@@ -36,8 +33,12 @@ namespace ConceptMatrix.PoseModule.Pages
 			set;
 		}
 
-		[SuppressPropertyChangedWarnings]
-		private void OnActorChanged(Actor selection)
+		private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			this.SetActor(this.DataContext as Actor);
+		}
+
+		private void SetActor(Actor actor)
 		{
 			if (this.posMem != null)
 				this.posMem.Dispose();
@@ -45,15 +46,15 @@ namespace ConceptMatrix.PoseModule.Pages
 			if (this.rotMem != null)
 				this.rotMem.Dispose();
 
-			System.Windows.Application.Current.Dispatcher.Invoke(() => { this.IsEnabled = selection != null; });
+			System.Windows.Application.Current.Dispatcher.Invoke(() => { this.IsEnabled = actor != null; });
 
-			if (selection == null)
+			if (actor == null)
 				return;
 
-			this.posMem = selection.BaseAddress.GetMemory(Offsets.Main.Position);
+			this.posMem = actor.BaseAddress.GetMemory(Offsets.Main.Position);
 			this.posMem.Bind(this, nameof(PositionPage.Position));
 
-			this.rotMem = selection.BaseAddress.GetMemory(Offsets.Main.Rotation);
+			this.rotMem = actor.BaseAddress.GetMemory(Offsets.Main.Rotation);
 			this.rotMem.Bind(this, nameof(PositionPage.Rotation));
 		}
 	}

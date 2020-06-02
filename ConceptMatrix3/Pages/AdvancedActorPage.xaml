@@ -6,7 +6,8 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Pages"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"
-			 d:DesignWidth="900">
+			 d:DesignWidth="900"
+			 Loaded="OnLoaded">
 	
 	<Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
