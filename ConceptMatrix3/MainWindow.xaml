@@ -28,52 +28,19 @@
 	<Window.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<!-- primary color -->
-				<ResourceDictionary>
-					<!-- include your primary palette -->
-					<ResourceDictionary.MergedDictionaries>
-						<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Indigo.xaml" />
-					</ResourceDictionary.MergedDictionaries>
-					<!--
-							include three hues from the primary palette (and the associated forecolours).
-							Do not rename, keep in sequence; light to dark.
-						-->
-					<SolidColorBrush x:Key="PrimaryHueLightBrush" Color="{DynamicResource Primary100}"/>
-					<SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="{DynamicResource Primary100Foreground}"/>
-					<SolidColorBrush x:Key="PrimaryHueMidBrush" Color="{DynamicResource Primary500}"/>
-					<SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="{DynamicResource Primary500Foreground}"/>
-					<SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="{DynamicResource Primary700}"/>
-					<SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="{DynamicResource Primary700Foreground}"/>
-				</ResourceDictionary>
-
-				<!-- secondary colour -->
-				<ResourceDictionary>
-					<!-- include your secondary pallette -->
-					<ResourceDictionary.MergedDictionaries>
-						<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Yellow.xaml" />
-					</ResourceDictionary.MergedDictionaries>
-
-					<!-- include a single secondary accent color (and the associated forecolour) -->
-					<SolidColorBrush x:Key="SecondaryAccentBrush" Color="{DynamicResource Accent200}"/>
-					<SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{DynamicResource Accent200Foreground}"/>
-				</ResourceDictionary>
-
-				<!-- Include the Dragablz Material Design style -->
-				<ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/materialdesign.xaml"/>
-
+				<ResourceDictionary Source="pack://application:,,,/ConceptMatrix3;component/Styles/Tabablz.xaml"/>
 			</ResourceDictionary.MergedDictionaries>
 
-			<Style TargetType="{x:Type dragablz:TabablzControl}" x:Key="TabStyle" BasedOn="{StaticResource MaterialDesignTabablzControlStyle}">
+			<Style TargetType="{x:Type dragablz:TabablzControl}" x:Key="TabStyle" BasedOn="{StaticResource TabablzMaterialDesignCM3}">
 				<Setter Property="HeaderPrefixContent">
 					<Setter.Value>
 						<Rectangle Width="46"/>
 					</Setter.Value>
 				</Setter>
-				<Setter Property="Background" Value="Transparent"/>
 			</Style>
 
 			<DataTemplate DataType="{x:Type cmc:Actor}">
-				<TextBlock Text="{Binding Name}"/>
+				<TextBlock Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}"/>
 			</DataTemplate>
 
 		</ResourceDictionary>
@@ -106,39 +73,16 @@
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5"/>
 			</Grid.LayoutTransform>
 
-	
-
-			<dragablz:TabablzControl x:Name="Tabs" ItemsSource="{Binding Actors}" Style="{StaticResource TabStyle}">
-
-				<dragablz:TabablzControl.InterTabController>
-					<dragablz:InterTabController/>
-				</dragablz:TabablzControl.InterTabController>
-
-				<dragablz:TabablzControl.ContentTemplate>
-					<DataTemplate>
-						<views:ActorEditor/>
-					</DataTemplate>
-				</dragablz:TabablzControl.ContentTemplate>
-				
-			</dragablz:TabablzControl>
-
-			<Grid Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left">
-				<Button Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="32" Width="32" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OnAddClick">
-					<fa:IconImage Icon="Plus" Foreground="{StaticResource MaterialDesignBackground}" Width="12"/>
-				</Button>
-			</Grid>
-
 			<!-- TitleBar -->
-			<!--<cm3:TextBlock Key="MainTitle" Text="Concept Matrix 3.0" VerticalAlignment="Center" Margin="3, 0, 0, 0" Opacity="0.25" Foreground="{DynamicResource MaterialDesignBody}"/>-->
-
-			<Border Margin="512, 0, 0, 0"
-				Background="Transparent" 
+			<Border Margin="0, 0, 0, 0" 
+					Background="Transparent" 
 					CornerRadius="2, 2, 0, 0"
 					Grid.ColumnSpan="2"
+					Height="40"
 					VerticalAlignment="Top"
 					MouseDown="OnTitleBarMouseDown">
 
-				<Grid>
+				<Grid VerticalAlignment="Top">
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
@@ -188,6 +132,27 @@
 					</StackPanel>
 				</Grid>
 			</Border>
+
+			<!-- Tabs -->
+			<dragablz:TabablzControl x:Name="Tabs" ItemsSource="{Binding Actors}" Style="{StaticResource TabStyle}" BorderThickness="0" Margin="1">
+
+				<dragablz:TabablzControl.InterTabController>
+					<dragablz:InterTabController/>
+				</dragablz:TabablzControl.InterTabController>
+
+				<dragablz:TabablzControl.ContentTemplate>
+					<DataTemplate>
+						<views:ActorEditor/>
+					</DataTemplate>
+				</dragablz:TabablzControl.ContentTemplate>
+
+			</dragablz:TabablzControl>
+
+			<Grid Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left">
+				<Button Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="32" Width="32" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OnAddClick">
+					<fa:IconImage Icon="Plus" Foreground="{StaticResource MaterialDesignBackground}" Width="12"/>
+				</Button>
+			</Grid>
 
 			<!-- Drawer flyouts -->
 			<materialdesign:DrawerHost Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DrawerHost" Margin="1">
