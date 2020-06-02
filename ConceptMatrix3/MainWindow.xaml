@@ -68,7 +68,7 @@
 		</Border>
 
 
-		<Grid Margin="1" Width="1024" Height="576">
+		<Grid Margin="1" Width="910" Height="552">
 			<Grid.LayoutTransform>
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5"/>
 			</Grid.LayoutTransform>

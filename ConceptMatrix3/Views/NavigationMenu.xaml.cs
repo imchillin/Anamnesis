@@ -25,13 +25,7 @@ namespace ConceptMatrix.GUI.Views
 			if (DesignerProperties.GetIsInDesignMode(this))
 				return;
 
-			ICollectionView view = CollectionViewSource.GetDefaultView(this.Items);
-			view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(NavigationItem.Category)));
-			view.SortDescriptions.Add(new SortDescription(nameof(NavigationItem.Sort), ListSortDirection.Ascending));
-			view.SortDescriptions.Add(new SortDescription(nameof(NavigationItem.Category), ListSortDirection.Ascending));
-			view.SortDescriptions.Add(new SortDescription(nameof(NavigationItem.Name), ListSortDirection.Ascending));
-
-			this.ViewList.ItemsSource = view;
+			this.ViewList.DataContext = this;
 
 			this.viewService = App.Services.Get<ViewService>();
 			this.viewService.AddingPage += this.OnAddPage;
@@ -42,51 +36,17 @@ namespace ConceptMatrix.GUI.Views
 			}
 		}
 
-		public ObservableCollection<NavigationItem> Items { get; set; } = new ObservableCollection<NavigationItem>();
+		public ObservableCollection<ViewService.Page> Items { get; set; } = new ObservableCollection<ViewService.Page>();
 
 		private void OnAddPage(ViewService.Page page)
 		{
-			this.Items.Add(new NavigationItem(page.Path));
+			this.Items.Add(page);
 		}
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			NavigationItem item = (NavigationItem)this.ViewList.SelectedItem;
-			this.viewService.ShowPage(item.Path);
-		}
-
-		public class NavigationItem : INotifyPropertyChanged
-		{
-			public NavigationItem(string path)
-			{
-				this.Path = path;
-
-				string[] parts = path.Split('/', '\\');
-				if (parts.Length == 2)
-				{
-					this.Category = parts[0];
-					this.Name = parts[1];
-				}
-				else
-				{
-					this.Category = null;
-					this.Name = path;
-				}
-
-				// Bit of a hack. These should come in with the path
-				if (this.Category == "Advanced")
-				{
-					this.Sort = 99;
-				}
-			}
-
-			#pragma warning disable CS0067
-			public event PropertyChangedEventHandler PropertyChanged;
-
-			public int Sort { get; set; }
-			public string Name { get; set; }
-			public string Category { get; set; }
-			public string Path { get; set; }
+			ViewService.Page item = (ViewService.Page)this.ViewList.SelectedItem;
+			this.viewService.ShowPage(item.Name);
 		}
 	}
 }

@@ -55,15 +55,16 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public void AddPage<T>(string path, bool drawBackground)
+		public void AddPage<T>(string name, string icon, bool drawBackground)
 		{
 			Page page = new Page();
-			page.Path = path;
+			page.Icon = icon;
+			page.Name = name;
 			page.Type = typeof(T);
 			page.DrawBackground = drawBackground;
 
-			if (this.pages.ContainsKey(path))
-				throw new Exception($"Page already registered at path: {path}");
+			if (this.pages.ContainsKey(name))
+				throw new Exception($"Page already registered with name: {name}");
 
 			if (!typeof(UserControl).IsAssignableFrom(page.Type))
 				throw new Exception($"Page: {page.Type} does not extend from UserControl.");
@@ -77,7 +78,7 @@ namespace ConceptMatrix.GUI.Services
 				page.Create();
 			}
 
-			this.pages.Add(path, page);
+			this.pages.Add(name, page);
 			this.AddingPage?.Invoke(page);
 		}
 
@@ -155,10 +156,12 @@ namespace ConceptMatrix.GUI.Services
 
 		public class Page
 		{
-			public string Path;
-			public bool DrawBackground;
 			public Type Type;
 			public UserControl Instance;
+
+			public string Name { get; set; }
+			public string Icon { get; set; }
+			public bool DrawBackground { get; set; }
 
 			public void Create()
 			{

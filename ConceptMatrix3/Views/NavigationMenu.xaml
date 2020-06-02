@@ -4,71 +4,21 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="200">
 
 	<UserControl.Resources>
 
-		<Style x:Key="ExpanderStyle" TargetType="{x:Type Expander}">
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type Expander}">
-
-						<Grid Margin="0, 6, 0, 0">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition/>
-							</Grid.RowDefinitions>
-
-							<Line X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="Black" Opacity="0.3" VerticalAlignment="Top" Margin="3, 0, 3, 0"/>
-
-							<Border Grid.Row="0" Name="HeaderSite" Background="Transparent" Opacity="0.5">
-								<ToggleButton Height="22" Name="ToggleSite" IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{DynamicResource MaterialDesignExpanderDownHeaderStyle}">
-									<Label Content="{TemplateBinding Header}" Height="28" Foreground="Black" FontWeight="Bold" Opacity="0.75" HorizontalAlignment="Center"/>
-								</ToggleButton>
-							</Border>
-
-							<ContentPresenter Grid.Row="1" Name="ExpandSite" Visibility="Collapsed" Margin="0" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
-						</Grid>
-			
-
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsExpanded" Value="true">
-								<Setter TargetName="ExpandSite" Property="Visibility" Value="Visible" />
-							</Trigger>
-							<Trigger Property="IsExpanded" Value="false">
-								<Setter TargetName="ExpandSite" Property="Visibility" Value="Collapsed" />
-							</Trigger>
-							<Trigger Property="IsEnabled" Value="false">
-								<Setter Value="{DynamicResource {x:Static SystemColors.GrayTextBrush}}" Property="Foreground" />
-							</Trigger>
-						</ControlTemplate.Triggers>
-						
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<Style x:Key="ContainerStyle" TargetType="{x:Type GroupItem}">
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate>
-						<Expander Header="{Binding Name}" IsExpanded="True" Style="{StaticResource ExpanderStyle}" BorderThickness="0" Background="{DynamicResource PrimaryHueMidBrush}">
-							<ItemsPresenter />
-						</Expander>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
 		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="BorderThickness" Value="0"/>
 			<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
 			<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Padding" Value="0"/>
 			<Setter Property="SnapsToDevicePixels" Value="True"/>
+			<Setter Property="Height" Value="40"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -158,13 +108,12 @@
 	</UserControl.Resources>
 	
 	<Grid>
-		<ListBox Grid.Row="1" x:Name="ViewList" SelectionChanged="OnSelectionChanged" ItemContainerStyle="{StaticResource ListBoxItemStyle}">
-			<ListBox.GroupStyle>
-				<GroupStyle ContainerStyle="{StaticResource ContainerStyle}"/>
-			</ListBox.GroupStyle>
+		<ListBox x:Name="ViewList" SelectionChanged="OnSelectionChanged" ItemContainerStyle="{StaticResource ListBoxItemStyle}" ItemsSource="{Binding Items}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<TextBlock Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}"/>
+					<Border ToolTip="{Binding Name}" Background="Transparent" Width="48" Height="40" Margin="0">
+						<fa:IconImage Icon="{Binding Icon}" Foreground="{DynamicResource MaterialDesignBody}" Margin="6" HorizontalAlignment="Center"/>
+					</Border>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>

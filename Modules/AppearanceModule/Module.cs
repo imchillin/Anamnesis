@@ -12,7 +12,7 @@ namespace ConceptMatrix.AppearanceModule
 		public Task Initialize()
 		{
 			IViewService viewService = Services.Get<IViewService>();
-			viewService.AddPage<AppearancePage>("Character/Appearance", false);
+			viewService.AddPage<AppearancePage>("Appearance", "user", false);
 
 			return Task.CompletedTask;
 		}
