@@ -7,10 +7,12 @@
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d"
 			 Loaded="OnLoaded">
-	<Grid x:Name="ContentArea" VerticalAlignment="Center" HorizontalAlignment="Center">
-		<StackPanel>
-			<cm3Controls:QuaternionEditor Value="{Binding Rotation}"/>
-			<cm3Controls:VectorEditor Value="{Binding Position}" Minimum="-1000" Maximum="1000"/>
-		</StackPanel>
+	<Grid x:Name="ContentArea">
+		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}">
+			<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+				<cm3Controls:QuaternionEditor Value="{Binding Rotation}"/>
+				<cm3Controls:VectorEditor Value="{Binding Position}" Minimum="-1000" Maximum="1000"/>
+			</StackPanel>
+		</Border>
 	</Grid>
 </UserControl>

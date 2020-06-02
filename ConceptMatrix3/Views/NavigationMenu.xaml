@@ -108,7 +108,7 @@
 	</UserControl.Resources>
 	
 	<Grid>
-		<ListBox x:Name="ViewList" SelectionChanged="OnSelectionChanged" ItemContainerStyle="{StaticResource ListBoxItemStyle}" ItemsSource="{Binding Items}">
+		<ListBox x:Name="ViewList" SelectionChanged="OnSelectionChanged" ItemContainerStyle="{StaticResource ListBoxItemStyle}" ItemsSource="{Binding Items}" Margin="0, 12, 0, 0">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Border ToolTip="{Binding Name}" Background="Transparent" Width="48" Height="40" Margin="0">

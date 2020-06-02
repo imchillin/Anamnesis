@@ -34,7 +34,7 @@
 			<Style TargetType="{x:Type dragablz:TabablzControl}" x:Key="TabStyle" BasedOn="{StaticResource TabablzMaterialDesignCM3}">
 				<Setter Property="HeaderPrefixContent">
 					<Setter.Value>
-						<Rectangle Width="46"/>
+						<Rectangle Width="48"/>
 					</Setter.Value>
 				</Setter>
 			</Style>
@@ -68,7 +68,7 @@
 		</Border>
 
 
-		<Grid Margin="1" Width="910" Height="552" ClipToBounds="True">
+		<Grid Margin="1" Width="958" Height="552" ClipToBounds="True">
 			<Grid.LayoutTransform>
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5"/>
 			</Grid.LayoutTransform>
@@ -137,6 +137,8 @@
 				</Grid>
 			</Border>
 
+			<views:HomeView Margin="0, 40, 0, 0"/>
+
 			<!-- Tabs -->
 			<dragablz:TabablzControl x:Name="Tabs" ItemsSource="{Binding Actors}" Style="{StaticResource TabStyle}" BorderThickness="0" Margin="0">
 
@@ -146,14 +148,14 @@
 
 				<dragablz:TabablzControl.ContentTemplate>
 					<DataTemplate>
-						<views:ActorEditor/>
+						<views:ActorEditor Background="{DynamicResource MaterialDesignPaper}"/>
 					</DataTemplate>
 				</dragablz:TabablzControl.ContentTemplate>
 
 			</dragablz:TabablzControl>
 
-			<Grid Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left">
-				<Button Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="32" Width="32" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OnAddClick">
+			<Grid Width="48" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left">
+				<Button Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="28" Width="28" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OnAddClick">
 					<fa:IconImage Icon="Plus" Foreground="{StaticResource MaterialDesignBackground}" Width="12"/>
 				</Button>
 			</Grid>

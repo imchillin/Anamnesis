@@ -16,7 +16,7 @@
 				<ControlTemplate TargetType="{x:Type dragablz:TabablzControl}">
 					<Grid Name="templateRoot" ClipToBounds="true" SnapsToDevicePixels="true">
 						<Grid.RowDefinitions>
-							<RowDefinition Name="RowDefinition0" Height="Auto" />
+							<RowDefinition Name="RowDefinition0" Height="40" />
 							<RowDefinition Name="RowDefinition1" Height="*" />
 						</Grid.RowDefinitions>
 						<Border Name="contentPanel" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Column="0" Grid.Row="1" Margin="0 -1 0 0">

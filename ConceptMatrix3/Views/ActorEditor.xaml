@@ -23,7 +23,7 @@
 						</Border>-->
 
 			<!-- Main Area -->
-			<Border Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}">
+			<Border Grid.Column="1">
 				<Border.Effect>
 					<DropShadowEffect ShadowDepth="0" BlurRadius="10" Direction="180" Opacity="0.25"/>
 				</Border.Effect>

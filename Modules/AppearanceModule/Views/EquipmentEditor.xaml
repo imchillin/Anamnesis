@@ -24,20 +24,53 @@
 		</Grid.RowDefinitions>
 
 
-		<local:ItemView Grid.Row="0" Grid.Column="0" DataContext="{Binding MainHand}" Slot="MainHand" Margin="0, 0, 3, 3"/>
-		<local:ItemView Grid.Row="0" Grid.Column="1" DataContext="{Binding OffHand}" Slot="OffHand" Margin="3, 0, 0, 3"/>
+		<Border Grid.Row="0" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 3, 3" Margin="0, 0, 3, 3">
+			<local:ItemView DataContext="{Binding MainHand}" Slot="MainHand" />
+		</Border>
 
-		<local:ItemView Grid.Row="1" Grid.Column="0" DataContext="{Binding Head}" Slot="Head" Margin="0, 3, 3, 3"/>
-		<local:ItemView Grid.Row="2" Grid.Column="0" DataContext="{Binding Body}" Slot="Body" Margin="0, 3, 3, 3"/>
-		<local:ItemView Grid.Row="3" Grid.Column="0" DataContext="{Binding Hands}" Slot="Hands" Margin="0, 3, 3, 3"/>
-		<local:ItemView Grid.Row="4" Grid.Column="0" DataContext="{Binding Legs}" Slot="Legs" Margin="0, 3, 3, 3"/>
-		<local:ItemView Grid.Row="5" Grid.Column="0" DataContext="{Binding Feet}" Slot="Feet" Margin="0, 3, 3, 0"/>
+		<Border Grid.Row="0" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" Margin="3, 0, 0, 3">
+			<local:ItemView  DataContext="{Binding OffHand}" Slot="OffHand" />
+		</Border>
 
-		<local:ItemView Grid.Row="1" Grid.Column="1" DataContext="{Binding Ears}" Slot="Ears" Margin="3, 3, 0, 3"/>
-		<local:ItemView Grid.Row="2" Grid.Column="1" DataContext="{Binding Neck}" Slot="Neck" Margin="3, 3, 0, 3"/>
-		<local:ItemView Grid.Row="3" Grid.Column="1" DataContext="{Binding Wrists}" Slot="Wrists" Margin="3, 3, 0, 3"/>
-		<local:ItemView Grid.Row="4" Grid.Column="1" DataContext="{Binding RightRing}" Slot="RightRing" Margin="3, 3, 0, 3"/>
-		<local:ItemView Grid.Row="5" Grid.Column="1" DataContext="{Binding LeftRing}" Slot="LeftRing" Margin="3, 3, 0, 0"/>
+		<Border Grid.Row="1" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
+			<local:ItemView  DataContext="{Binding Head}" Slot="Head" />
+		</Border>
+
+		<Border Grid.Row="2" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
+			<local:ItemView  DataContext="{Binding Body}" Slot="Body" />
+		</Border>
+
+		<Border Grid.Row="3" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
+			<local:ItemView  DataContext="{Binding Hands}" Slot="Hands" />
+		</Border>
+
+		<Border Grid.Row="4" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
+			<local:ItemView  DataContext="{Binding Legs}" Slot="Legs"/>
+		</Border>
+
+		<Border Grid.Row="5" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 0">
+			<local:ItemView  DataContext="{Binding Feet}" Slot="Feet" />
+		</Border>
+
+		<Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3">
+			<local:ItemView  DataContext="{Binding Ears}" Slot="Ears" />
+		</Border>
+
+		<Border Grid.Row="2" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3">
+			<local:ItemView  DataContext="{Binding Neck}" Slot="Neck" />
+		</Border>
+
+		<Border Grid.Row="3" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3">
+			<local:ItemView  DataContext="{Binding Wrists}" Slot="Wrists" />
+		</Border>
+
+		<Border Grid.Row="4" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3">
+			<local:ItemView  DataContext="{Binding RightRing}" Slot="RightRing" />
+		</Border>
+
+		<Border Grid.Row="5" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 0">
+			<local:ItemView DataContext="{Binding LeftRing}" Slot="LeftRing" />
+		</Border>
 
 	</Grid>
 

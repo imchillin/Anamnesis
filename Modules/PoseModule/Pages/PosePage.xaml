@@ -33,12 +33,12 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3"
+			<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3"
 				IsEnabled="{Binding CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
 				<controls:BoneEditor Value="{Binding CurrentBone}"/>
 			</Border>
 
-			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3" >
+			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 3, 0, 0" >
 				<Grid Margin="6">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
@@ -52,7 +52,7 @@
 		</Grid>
 
 		<!-- top Bar -->
-		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,0,3,3">
+		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3">
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
 				<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 6" SelectionChanged="OnViewChanged">
@@ -91,7 +91,7 @@
 		</Border>
 
 		<!-- Content -->
-		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
+		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
 			<Grid>
 				<views:Pose3DView x:Name="ThreeDView" Visibility="Hidden"/>
 				<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>

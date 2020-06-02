@@ -8,20 +8,21 @@
 			 d:DesignHeight="600"
 			 d:DesignWidth="900"
 			 Loaded="OnLoaded">
-	
-	<Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="ContentArea">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition/>
-		</Grid.ColumnDefinitions>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition/>
-		</Grid.RowDefinitions>
+	<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}">
+		<Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="ContentArea">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
 
-		<TextBlock Grid.Column="0" Grid.Row="0" Text="Actor Type:" Style="{StaticResource Label}"/>
-		<ComboBox Grid.Column="1" Grid.Row="0" x:Name="ActorTypeComboBox" SelectedItem="{Binding ActorType}" Margin="3, -2, 3, 3" MinWidth="100"/>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
 
-	</Grid>
+			<TextBlock Grid.Column="0" Grid.Row="0" Text="Actor Type:" Style="{StaticResource Label}"/>
+			<ComboBox Grid.Column="1" Grid.Row="0" x:Name="ActorTypeComboBox" SelectedItem="{Binding ActorType}" Margin="3, -2, 3, 3" MinWidth="100"/>
+		</Grid>
+	</Border>
 </UserControl>
