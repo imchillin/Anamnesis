@@ -1,16 +1,16 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Controls
+namespace ConceptMatrix.PoseModule.Views
 {
 	using System.Windows.Controls;
 
 	/// <summary>
-	/// Interaction logic for PoseSidebar.xaml.
+	/// Interaction logic for CharacterPoseView.xaml.
 	/// </summary>
-	public partial class PoseTopbar : UserControl
+	public partial class PoseGuiView : UserControl
 	{
-		public PoseTopbar()
+		public PoseGuiView()
 		{
 			this.InitializeComponent();
 		}

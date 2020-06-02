@@ -386,7 +386,7 @@ namespace ConceptMatrix.PoseModule
 		}
 
 		// gets all bones defined in BonesOffsets.
-		private async Task GenerateBones(Actor selection)
+		private async Task GenerateBones(Actor actor)
 		{
 			if (this.bones != null)
 			{
@@ -400,7 +400,7 @@ namespace ConceptMatrix.PoseModule
 
 			this.bones = new Dictionary<string, Bone>();
 
-			if (selection == null)
+			if (actor == null)
 				return;
 
 			if (this.Race == 0)
@@ -417,9 +417,9 @@ namespace ConceptMatrix.PoseModule
 
 				try
 				{
-					IMemory<CmTransform> transMem = selection.BaseAddress.GetMemory(boneDef.Offsets);
+					IMemory<CmTransform> transMem = actor.BaseAddress.GetMemory(boneDef.Offsets);
 					transMem.Name = "Bone_" + name;
-					this.bones[name] = new Bone(name, transMem, boneDef);
+					this.bones[name] = new Bone(this, name, transMem, boneDef);
 					this.Root.Children.Add(this.bones[name]);
 				}
 				catch (Exception ex)
@@ -432,9 +432,9 @@ namespace ConceptMatrix.PoseModule
 			// Find all ExHair, ExMet, and ExTop bones, and disable any that are outside the bounds
 			// of the current characters actual skeleton.
 			// ex-  bones are numbered starting from 1 (there is no ExHair0!)
-			byte exHairCount = selection.BaseAddress.GetValue(Offsets.Main.ExHairCount);
-			byte exMetCount = selection.BaseAddress.GetValue(Offsets.Main.ExMetCount);
-			byte exTopCount = selection.BaseAddress.GetValue(Offsets.Main.ExTopCount);
+			byte exHairCount = actor.BaseAddress.GetValue(Offsets.Main.ExHairCount);
+			byte exMetCount = actor.BaseAddress.GetValue(Offsets.Main.ExMetCount);
+			byte exTopCount = actor.BaseAddress.GetValue(Offsets.Main.ExTopCount);
 
 			foreach (string boneName in boneDefs.Keys)
 			{

@@ -18,6 +18,7 @@ namespace ConceptMatrix.PoseModule
 
 	public class Bone : ModelVisual3D, INotifyPropertyChanged, IDisposable
 	{
+		public readonly SkeletonViewModel Skeleton;
 		public readonly SkeletonService.Bone Definition;
 		private readonly IMemory<CmTransform> transformMem;
 
@@ -28,8 +29,9 @@ namespace ConceptMatrix.PoseModule
 		private Bone parent;
 		private Line lineToParent;
 
-		public Bone(string name, IMemory<CmTransform> transformMem, SkeletonService.Bone definition)
+		public Bone(SkeletonViewModel skeleton, string name, IMemory<CmTransform> transformMem, SkeletonService.Bone definition)
 		{
+			this.Skeleton = skeleton;
 			this.Definition = definition;
 			this.BoneName = name;
 			this.transformMem = transformMem;
@@ -102,7 +104,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				CmQuaternion rot = Module.SkeletonViewModel.RootRotation;
+				CmQuaternion rot = this.Skeleton.RootRotation;
 
 				if (this.Parent == null)
 					return rot;

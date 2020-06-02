@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule
+namespace ConceptMatrix.PoseModule.Views
 {
 	using System;
 	using System.Collections.Generic;
@@ -17,19 +17,28 @@ namespace ConceptMatrix.PoseModule
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
 	/// </summary>
-	public partial class Pose3DPage : UserControl
+	public partial class Pose3DView : UserControl
 	{
-		public Pose3DPage()
+		public Pose3DView()
 		{
 			this.InitializeComponent();
 
-			this.ContentArea.DataContext = Module.SkeletonViewModel;
-
 			this.Viewport.Camera = new PerspectiveCamera(new Point3D(0, 0, -3), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
-			this.Viewport.Children.Add(Module.SkeletonViewModel.Root);
 
 			////ConceptMatrix.Quaternion rootrot = Module.SkeletonViewModel.GetBone("Root").RootRotation;
 			////this.root.Transform = new RotateTransform3D(new QuaternionRotation3D(new Quaternion(rootrot.X, rootrot.Y, rootrot.Z, rootrot.W)));
+		}
+
+		private void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
+			this.Viewport.Children.Add(vm.Root);
+		}
+
+		private void OnUnloaded(object sender, RoutedEventArgs e)
+		{
+			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
+			this.Viewport.Children.Remove(vm.Root);
 		}
 
 		[SuppressPropertyChangedWarnings]

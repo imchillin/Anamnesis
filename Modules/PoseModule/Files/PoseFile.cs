@@ -58,7 +58,7 @@ namespace ConceptMatrix.PoseModule
 
 		public async Task Write(SkeletonViewModel skeleton, Groups groups)
 		{
-			Module.SkeletonViewModel.IsEnabled = true;
+			skeleton.IsEnabled = true;
 
 			// don't freeze positions if we aren't writing any
 			skeleton.FreezePositions = this.IncludePositions;

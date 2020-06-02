@@ -38,12 +38,12 @@
 							include three hues from the primary palette (and the associated forecolours).
 							Do not rename, keep in sequence; light to dark.
 						-->
-					<SolidColorBrush x:Key="PrimaryHueLightBrush" Color="{StaticResource Primary100}"/>
-					<SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="{StaticResource Primary100Foreground}"/>
-					<SolidColorBrush x:Key="PrimaryHueMidBrush" Color="{StaticResource Primary500}"/>
-					<SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="{StaticResource Primary500Foreground}"/>
-					<SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="{StaticResource Primary700}"/>
-					<SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="{StaticResource Primary700Foreground}"/>
+					<SolidColorBrush x:Key="PrimaryHueLightBrush" Color="{DynamicResource Primary100}"/>
+					<SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="{DynamicResource Primary100Foreground}"/>
+					<SolidColorBrush x:Key="PrimaryHueMidBrush" Color="{DynamicResource Primary500}"/>
+					<SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="{DynamicResource Primary500Foreground}"/>
+					<SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="{DynamicResource Primary700}"/>
+					<SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="{DynamicResource Primary700Foreground}"/>
 				</ResourceDictionary>
 
 				<!-- secondary colour -->
@@ -54,8 +54,8 @@
 					</ResourceDictionary.MergedDictionaries>
 
 					<!-- include a single secondary accent color (and the associated forecolour) -->
-					<SolidColorBrush x:Key="SecondaryAccentBrush" Color="{StaticResource Accent200}"/>
-					<SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{StaticResource Accent200Foreground}"/>
+					<SolidColorBrush x:Key="SecondaryAccentBrush" Color="{DynamicResource Accent200}"/>
+					<SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{DynamicResource Accent200Foreground}"/>
 				</ResourceDictionary>
 
 				<!-- Include the Dragablz Material Design style -->
@@ -69,7 +69,6 @@
 						<Rectangle Width="46"/>
 					</Setter.Value>
 				</Setter>
-				<!--<Setter Property="HeaderSuffixContent" Value="☻" />-->
 				<Setter Property="Background" Value="Transparent"/>
 			</Style>
 

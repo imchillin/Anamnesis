@@ -1,19 +1,18 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Pages
+namespace ConceptMatrix.PoseModule.Views
 {
 	using System.Windows.Controls;
 
 	/// <summary>
 	/// Interaction logic for PoseMatrixPage.xaml.
 	/// </summary>
-	public partial class PoseMatrixPage : UserControl
+	public partial class PoseMatrixView : UserControl
 	{
-		public PoseMatrixPage()
+		public PoseMatrixView()
 		{
 			this.InitializeComponent();
-			this.ContentArea.DataContext = Module.SkeletonViewModel;
 		}
 	}
 }

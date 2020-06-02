@@ -72,12 +72,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Controls\PoseTopbar.xaml.cs">
-	    <SubType>Code</SubType>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Update="Skeletons\AuRa.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
@@ -117,7 +111,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Controls\PoseTopbar.xaml">
+	  <Page Update="Pages\PosePage.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>
 	</ItemGroup>

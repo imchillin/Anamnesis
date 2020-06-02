@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Controls
+namespace ConceptMatrix.PoseModule
 {
 	using System;
 	using System.Windows;
@@ -9,17 +9,34 @@ namespace ConceptMatrix.PoseModule.Controls
 	using ConceptMatrix.PoseModule.Dialogs;
 
 	/// <summary>
-	/// Interaction logic for PoseSidebar.xaml.
+	/// Interaction logic for CharacterPoseView.xaml.
 	/// </summary>
-	public partial class PoseSidebar : UserControl
+	public partial class PosePage : UserControl
 	{
-		public PoseSidebar()
+		public PosePage()
 		{
 			this.InitializeComponent();
+			this.SkeletonViewModel = new SkeletonViewModel();
+			this.ContentArea.DataContext = this.SkeletonViewModel;
+		}
+
+		public SkeletonViewModel SkeletonViewModel { get; set; }
+
+		private async void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			this.SkeletonViewModel.Clear();
+			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
+		}
+
+		private void OnUnloaded(object sender, RoutedEventArgs e)
+		{
+			this.SkeletonViewModel.IsEnabled = false;
 		}
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
+			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
+
 			try
 			{
 				IFileService fileService = Services.Get<IFileService>();
@@ -29,7 +46,7 @@ namespace ConceptMatrix.PoseModule.Controls
 					return;
 
 				if (file is LegacyPoseFile legacyFile)
-					file = legacyFile.Upgrade(Module.SkeletonViewModel.Race);
+					file = legacyFile.Upgrade(vm.Race);
 
 				IViewService viewService = Services.Get<IViewService>();
 				PoseFile.Groups groups = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Groups>("Load Pose...");
@@ -39,7 +56,7 @@ namespace ConceptMatrix.PoseModule.Controls
 
 				if (file is PoseFile poseFile)
 				{
-					await poseFile.Write(Module.SkeletonViewModel, groups);
+					await poseFile.Write(vm, groups);
 				}
 			}
 			catch (Exception ex)
@@ -50,6 +67,8 @@ namespace ConceptMatrix.PoseModule.Controls
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
+			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
+
 			IViewService viewService = Services.Get<IViewService>();
 			PoseFile.Groups groups = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Groups>("Save Pose...");
 
@@ -58,9 +77,21 @@ namespace ConceptMatrix.PoseModule.Controls
 
 			IFileService fileService = Services.Get<IFileService>();
 			PoseFile file = new PoseFile();
-			file.Read(Module.SkeletonViewModel.Bones, groups);
+			file.Read(vm.Bones, groups);
 
 			await fileService.SaveAs(file);
+		}
+
+		private void OnViewChanged(object sender, SelectionChangedEventArgs e)
+		{
+			int selected = this.ViewSelector.SelectedIndex;
+
+			if (this.GuiView == null)
+				return;
+
+			this.GuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Hidden;
+			this.ThreeDView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Hidden;
+			this.MatrixView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Hidden;
 		}
 	}
 }
