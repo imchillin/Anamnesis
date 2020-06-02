@@ -11,15 +11,11 @@ namespace ConceptMatrix.GUI.Views
 	/// </summary>
 	public partial class ActorEditor : UserControl
 	{
-		private readonly ViewService viewService;
 		private UserControl currentView;
 
 		public ActorEditor()
 		{
 			this.InitializeComponent();
-
-			this.viewService = App.Services.Get<ViewService>();
-			this.viewService.ShowingPage += this.OnShowPage;
 		}
 
 		private void OnShowPage(ViewService.Page page)

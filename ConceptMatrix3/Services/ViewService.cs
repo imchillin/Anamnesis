@@ -22,7 +22,6 @@ namespace ConceptMatrix.GUI.Services
 
 		public event PageEvent AddingPage;
 		public event DrawerEvent ShowingDrawer;
-		public event PageEvent ShowingPage;
 
 		public IEnumerable<Page> Pages
 		{
@@ -81,12 +80,6 @@ namespace ConceptMatrix.GUI.Services
 			this.AddingPage?.Invoke(page);
 		}
 
-		public void ShowPage(string path)
-		{
-			Page page = this.GetPage(path);
-			this.ShowingPage?.Invoke(page);
-		}
-
 		public Task ShowDrawer<T>(string title, DrawerDirection direction)
 		{
 			UserControl view = this.CreateView<T>();
@@ -101,6 +94,14 @@ namespace ConceptMatrix.GUI.Services
 				throw new Exception("Invalid view");
 
 			return this.ShowingDrawer?.Invoke(title, control, direction);
+		}
+
+		public Page GetPage(string path)
+		{
+			if (!this.pages.ContainsKey(path))
+				throw new Exception($"View not found for path: {path}");
+
+			return this.pages[path];
 		}
 
 		public Task<TResult> ShowDialog<TView, TResult>(string title)
@@ -143,14 +144,6 @@ namespace ConceptMatrix.GUI.Services
 			}
 
 			return view;
-		}
-
-		private Page GetPage(string path)
-		{
-			if (!this.pages.ContainsKey(path))
-				throw new Exception($"View not found for path: {path}");
-
-			return this.pages[path];
 		}
 
 		public class Page

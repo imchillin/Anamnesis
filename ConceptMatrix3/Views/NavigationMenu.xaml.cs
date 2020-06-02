@@ -10,6 +10,7 @@ namespace ConceptMatrix.GUI.Views
 	using System.Windows.Controls;
 	using System.Windows.Data;
 	using ConceptMatrix.GUI.Services;
+	using static ConceptMatrix.GUI.Services.ViewService;
 
 	/// <summary>
 	/// Interaction logic for NavigationMenu.xaml.
@@ -34,7 +35,11 @@ namespace ConceptMatrix.GUI.Views
 			{
 				this.OnAddPage(page);
 			}
+
+			this.ViewList.SelectedIndex = 0;
 		}
+
+		public event PageEvent SelectPage;
 
 		public ObservableCollection<ViewService.Page> Items { get; set; } = new ObservableCollection<ViewService.Page>();
 
@@ -46,7 +51,7 @@ namespace ConceptMatrix.GUI.Views
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			ViewService.Page item = (ViewService.Page)this.ViewList.SelectedItem;
-			this.viewService.ShowPage(item.Name);
+			this.SelectPage?.Invoke(item);
 		}
 	}
 }
