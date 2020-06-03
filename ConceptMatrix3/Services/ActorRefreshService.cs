@@ -13,9 +13,7 @@ namespace ConceptMatrix.GUI.Services
 
 		private int applyCountdown = 0;
 		private Task applyTask;
-
-		public event RefreshEvent OnRefreshStarting;
-		public event RefreshEvent OnRefreshComplete;
+		private SelectionService selectionService;
 
 		public bool IsRefreshing
 		{
@@ -30,6 +28,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Start()
 		{
+			this.selectionService = Services.Get<SelectionService>();
 			return Task.CompletedTask;
 		}
 
@@ -80,7 +79,6 @@ namespace ConceptMatrix.GUI.Services
 				}
 
 				this.IsRefreshing = true;
-				this.OnRefreshStarting?.Invoke(actor);
 				Log.Write("Refresh Begin", "Actor Refresh");
 
 				using IMemory<ActorTypes> actorTypeMem = actor.GetMemory(Offsets.Main.ActorType);
@@ -102,7 +100,8 @@ namespace ConceptMatrix.GUI.Services
 					actorRenderMem.SetValue(0, true);
 				}
 
-				this.OnRefreshComplete?.Invoke(actor);
+				this.selectionService.RetargetActors();
+
 				Log.Write("Refresh Complete", "Actor Refresh");
 				this.IsRefreshing = false;
 			}

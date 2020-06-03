@@ -59,6 +59,9 @@ namespace ConceptMatrix
 
 		public void Retarget(Actor actor)
 		{
+			if (this.baseOffset == actor.baseOffset)
+				return;
+
 			this.baseOffset = actor.baseOffset;
 			this.Name = actor.Name;
 			this.Type = actor.Type;
