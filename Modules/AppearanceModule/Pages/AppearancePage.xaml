@@ -11,7 +11,8 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
-			 Loaded="OnLoaded">
+			 Loaded="OnLoaded"
+			 Unloaded="OnUnloaded">
 	
 	<Grid Margin="0">
 

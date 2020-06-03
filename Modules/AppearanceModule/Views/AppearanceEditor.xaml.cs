@@ -6,6 +6,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.ViewModels;
@@ -18,6 +19,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	public partial class AppearanceEditor : UserControl, INotifyPropertyChanged
 	{
 		private readonly IGameDataService gameDataService;
+		private readonly ISelectionService selectionService;
 
 		private IMemory<Color> skinColorMem;
 		private IMemory<Color> skinGlowMem;
@@ -36,6 +38,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.ContentArea.DataContext = this;
 
 			this.gameDataService = Services.Get<IGameDataService>();
+			this.selectionService = Services.Get<ISelectionService>();
 
 			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Genders));
 			this.RaceComboBox.ItemsSource = this.gameDataService.Races.All;
@@ -119,7 +122,14 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
+			this.selectionService.ModeChanged += this.SelectionModeChanged;
 			this.OnActorChanged(this.DataContext as Actor);
+			this.SelectionModeChanged(this.selectionService.GetMode());
+		}
+
+		private void OnUnloaded(object sender, RoutedEventArgs e)
+		{
+			this.selectionService.ModeChanged -= this.SelectionModeChanged;
 		}
 
 		[SuppressPropertyChangedWarnings]
@@ -299,6 +309,16 @@ namespace ConceptMatrix.AppearanceModule.Views
 			};
 
 			await viewService.ShowDrawer(selector, "Hair");
+		}
+
+		private async void SelectionModeChanged(Modes mode)
+		{
+			await Task.Delay(1);
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				////this.ExtendedAppearanceArea.IsEnabled = mode == Modes.Overworld;
+				this.AppearanceArea.IsEnabled = mode == Modes.Overworld;
+			});
 		}
 	}
 }

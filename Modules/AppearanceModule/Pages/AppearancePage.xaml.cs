@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule.Pages
 {
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Dialogs;
@@ -13,14 +14,25 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	/// </summary>
 	public partial class AppearancePage : UserControl
 	{
+		private ISelectionService selectionService;
+
 		public AppearancePage()
 		{
+			this.selectionService = Services.Get<ISelectionService>();
+			
 			this.InitializeComponent();
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
+			this.selectionService.ModeChanged += this.SelectionModeChanged;
 			this.OnActorChanged(this.DataContext as Actor);
+			this.SelectionModeChanged(this.selectionService.GetMode());
+		}
+
+		private void OnUnloaded(object sender, RoutedEventArgs e)
+		{
+			this.selectionService.ModeChanged -= this.SelectionModeChanged;
 		}
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
@@ -71,6 +83,15 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.IsEnabled = hasValidSelection;
+			});
+		}
+
+		private async void SelectionModeChanged(Modes mode)
+		{
+			await Task.Delay(1);
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.Equipment.IsEnabled = mode == Modes.Overworld;
 			});
 		}
 	}

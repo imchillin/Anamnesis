@@ -10,18 +10,14 @@ namespace ConceptMatrix.GUI.Services
 	using ConceptMatrix;
 	using ConceptMatrix.Injection.Offsets;
 
-	public class SelectionService : IService
+	public class SelectionService : ISelectionService
 	{
 		private IMemory<bool> gposeMem;
 		private IMemory<ushort> gposeMem2;
 
 		private List<Actor> actors = new List<Actor>();
 
-		public enum Modes
-		{
-			Overworld,
-			GPose,
-		}
+		public event SelectionModeEvent ModeChanged;
 
 		public bool IsAlive
 		{
@@ -144,6 +140,15 @@ namespace ConceptMatrix.GUI.Services
 				{
 					currentMode = newMode;
 					this.RetargetActors();
+
+					try
+					{
+						this.ModeChanged?.Invoke(newMode);
+					}
+					catch (Exception ex)
+					{
+						Log.Write(ex, "Selection", Log.Severity.Error);
+					}
 				}
 			}
 		}

@@ -39,7 +39,7 @@
 	<Grid x:Name="ContentArea" Width="256">
 		<StackPanel>
 
-			<Grid Grid.Row="0">
+			<Grid Grid.Row="0" x:Name="AppearanceArea">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="64"/>
 					<ColumnDefinition/>
@@ -210,7 +210,7 @@
 
 			</Grid>
 
-			<GroupBox Header="Extended Appearance">
+			<GroupBox Header="Extended Appearance" x:Name="ExtendedAppearanceArea">
 				<Grid Grid.Row="0" Margin="0, 6, 0, 0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="64"/>
