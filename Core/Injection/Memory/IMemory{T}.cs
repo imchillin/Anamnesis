@@ -6,15 +6,15 @@ namespace ConceptMatrix
 	using System;
 	using System.ComponentModel;
 
-	public interface IMemory<T> : INotifyPropertyChanged, IDisposable
+	public interface IMemory<T> : IMemory
 	{
 		event ValueChangedEventHandler ValueChanged;
 		event DisposingEventHandler Disposing;
 
 		/// <summary>
-		/// Gets or sets a value used to identify this memory when logging. Does not need to be set.
+		/// Gets a value used to identify this memory when logging.
 		/// </summary>
-		string Name { get; set; }
+		string Name { get; }
 
 		/// <summary>
 		/// Gets or sets the value in memory.
@@ -32,6 +32,11 @@ namespace ConceptMatrix
 		/// <param name="value">the value to write.</param>
 		/// <param name="immediate">should this value be pushed into process memory immediately.</param>
 		void SetValue(T value, bool immediate = false);
+	}
+
+	public interface IMemory : INotifyPropertyChanged, IDisposable
+	{
+		void UpdateBaseOffset(IBaseMemoryOffset newBaseOffset);
 	}
 
 	#pragma warning disable SA1201

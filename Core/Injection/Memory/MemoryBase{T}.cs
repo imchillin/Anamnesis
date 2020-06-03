@@ -37,7 +37,6 @@ namespace ConceptMatrix.Injection.Memory
 			this.Tick();
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
 		public event ValueChangedEventHandler ValueChanged;
 		public event DisposingEventHandler Disposing;
 
@@ -80,7 +79,7 @@ namespace ConceptMatrix.Injection.Memory
 					throw new MemoryException("Cannot access disposed memory");
 
 				this.freeze = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+				this.RaiseChanged(nameof(this.Value));
 			}
 		}
 
@@ -147,7 +146,7 @@ namespace ConceptMatrix.Injection.Memory
 
 				if (changed)
 				{
-					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+					this.RaiseChanged(nameof(this.Value));
 					this.ValueChanged?.Invoke(this, this.value);
 				}
 			}
@@ -171,7 +170,7 @@ namespace ConceptMatrix.Injection.Memory
 			{
 				Array.Copy(this.newData, this.oldData, (int)this.length);
 
-				Log.Write("Write memory " + this.Name + " - " + this, "Injection");
+				Log.Write("Write memory " + this, "Injection");
 
 				this.process.Write(this.address, this.oldData, (UIntPtr)this.length, out IntPtr bytesRead);
 				return true;

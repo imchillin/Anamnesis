@@ -4,34 +4,29 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System;
-	using System.Diagnostics;
+	using System.Collections.Generic;
 	using System.Threading.Tasks;
+	using System.Windows.Documents;
 	using ConceptMatrix;
-	using ConceptMatrix.Exceptions;
+	using ConceptMatrix.Injection.Offsets;
 
 	public class SelectionService : IService
 	{
-		////private Actor currentSelection;
-
 		private IMemory<bool> gposeMem;
 		private IMemory<ushort> gposeMem2;
-		////private bool isResetting = false;
+
+		private List<Actor> actors = new List<Actor>();
+
+		public enum Modes
+		{
+			Overworld,
+			GPose,
+		}
 
 		public bool IsAlive
 		{
 			get;
 			private set;
-		}
-
-		public Actor CurrentGameTarget
-		{
-			get;
-			private set;
-		}
-
-		public static string GetActorId(Actor.Modes mode, ActorTypes type, string name)
-		{
-			return mode.ToString() + "_" + type + "_" + name;
 		}
 
 		public Task Initialize()
@@ -53,105 +48,104 @@ namespace ConceptMatrix.GUI.Services
 			this.gposeMem = injection.GetMemory(Offsets.Main.GposeCheck);
 			this.gposeMem2 = injection.GetMemory(Offsets.Main.GposeCheck2);
 
-			////Task.Run(this.Watch);
+			Task.Run(this.Watch);
 
 			return Task.CompletedTask;
 		}
 
-		public Actor.Modes GetMode()
+		public Modes GetMode()
 		{
-			return this.gposeMem.Value && this.gposeMem2.Value == 4 ? Actor.Modes.GPose : Actor.Modes.Overworld;
+			return this.gposeMem.Value && this.gposeMem2.Value == 4 ? Modes.GPose : Modes.Overworld;
 		}
 
-		/*public void ResetSelection()
+		public void RetargetActors()
 		{
-			this.isResetting = true;
-			this.CurrentGameTarget = null;
-		}
+			Dictionary<string, Actor> selectable = this.GetSelectableActors();
 
-		public async Task ResetSelectionAsync()
-		{
-			this.isResetting = true;
-			this.CurrentGameTarget = null;
-
-			while (this.isResetting)
+			foreach (Actor actor in this.actors)
 			{
-				await Task.Delay(100);
+				if (selectable.ContainsKey(actor.Id))
+				{
+					actor.Retarget(selectable[actor.Id]);
+				}
+				else
+				{
+					Log.Write("Actor: " + actor.Name + "\" lost.", "Selection", Log.Severity.Error);
+					actor.Retarget(null);
+				}
 			}
+		}
+
+		public Dictionary<string, Actor> GetSelectableActors()
+		{
+			Modes mode = this.GetMode();
+			ActorTableOffset actorTableOffset;
+			BaseOffset targetOffset;
+
+			if (mode == Modes.GPose)
+			{
+				actorTableOffset = Offsets.Main.GposeActorTable;
+				targetOffset = Offsets.Main.Gpose;
+			}
+			else if (mode == Modes.Overworld)
+			{
+				actorTableOffset = Offsets.Main.ActorTable;
+				targetOffset = Offsets.Main.Target;
+			}
+			else
+			{
+				throw new Exception("Unknown selection mode: " + mode);
+			}
+
+			byte count = actorTableOffset.GetCount();
+			HashSet<string> ids = new HashSet<string>();
+
+			Dictionary<string, Actor> actors = new Dictionary<string, Actor>();
+			for (byte i = 0; i < count; i++)
+			{
+				Actor actor = new Actor(actorTableOffset.GetBaseOffset(i));
+
+				if (actors.ContainsKey(actor.Id))
+				{
+					// don't log actor id as it can be used to identify a player.
+					Log.Write("Duplicate actor Id in selectable actors", "Selection", Log.Severity.Warning);
+					continue;
+				}
+
+				actors.Add(actor.Id, actor);
+			}
+
+			return actors;
+		}
+
+		public void SelectActor(Actor actor)
+		{
+			this.actors.Add(actor);
 		}
 
 		private async Task Watch()
 		{
 			await Task.Delay(500);
-			IInjectionService injection = App.Services.Get<IInjectionService>();
+
 			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
+
+			Modes currentMode = this.GetMode();
 
 			while (this.IsAlive)
 			{
 				await Task.Delay(250);
 
-				while (refreshService.IsRefreshing && !this.isResetting)
+				while (refreshService.IsRefreshing)
 					await Task.Delay(250);
 
-				Actor.Modes mode = this.GetMode();
-				IBaseMemoryOffset baseOffset = mode == Actor.Modes.GPose ? Offsets.Main.Gpose : Offsets.Main.Target;
+				Modes newMode = this.GetMode();
 
-				try
+				if (newMode != currentMode)
 				{
-					ActorTypes type = baseOffset.GetValue(Offsets.Main.ActorType);
-					string name = baseOffset.GetValue(Offsets.Main.Name);
-
-					string actorId = GetActorId(mode, type, name);
-
-					if (string.IsNullOrEmpty(actorId))
-					{
-						this.CurrentGameTarget = null;
-						this.isResetting = false;
-						continue;
-					}
-
-					if (this.CurrentGameTarget == null
-						|| this.CurrentGameTarget.Type != type
-						|| this.CurrentGameTarget.ActorId != actorId
-						|| this.CurrentGameTarget.Mode != mode)
-					{
-						this.CurrentGameTarget = new Actor(type, baseOffset, actorId, name, mode);
-					}
-
-					if (this.UseGameTarget && this.CurrentSelection != this.CurrentGameTarget)
-					{
-						this.CurrentSelection = this.CurrentGameTarget;
-					}
-					else if (!this.UseGameTarget && this.CurrentSelection != null)
-					{
-						// Manually selected something
-						ActorTypes currentType = this.currentSelection.BaseAddress.GetValue(Offsets.Main.ActorType);
-						string currentName = this.currentSelection.BaseAddress.GetValue(Offsets.Main.Name);
-						string currentId = GetActorId(mode, currentType, currentName);
-
-						// If the id does not match, it means that actor has dissapeared, either changed zones, or entered/left gpose.
-						if (currentId != this.currentSelection.ActorId)
-						{
-							// TODO: search for this actor and select them again?
-							this.CurrentSelection = null;
-						}
-					}
-
-					this.isResetting = false;
-				}
-				catch (MemoryException)
-				{
-					// If the user has _never_ selected anything in game, then the memory wont be read correctly.
-					// once the user has selected something, even if they then select nothing, the memory will work
-					// fine, leaving the old selected behind.
-					// so in this case, we just swallow the error, and let the thread loop.
-					await Task.Delay(750);
-				}
-				catch (Exception ex)
-				{
-					Log.Write(ex);
+					currentMode = newMode;
+					this.RetargetActors();
 				}
 			}
-		}*/
+		}
 	}
 }

@@ -4,6 +4,7 @@
 namespace ConceptMatrix
 {
 	using System;
+	using System.Reflection;
 	using ConceptMatrix.Injection.Offsets;
 
 	[Serializable]

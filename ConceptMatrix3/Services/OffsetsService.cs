@@ -6,6 +6,7 @@ namespace ConceptMatrix.GUI.Services
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+	using System.Reflection;
 	using System.Text;
 	using System.Threading.Tasks;
 	using ConceptMatrix.GUI.Serialization;
@@ -22,6 +23,15 @@ namespace ConceptMatrix.GUI.Services
 
 			json = File.ReadAllText("MainOffsets.json");
 			file = Serializer.Deserialize<MainOffsetFile>(json);
+
+			// Set the names of all the offsets for debugging.
+			PropertyInfo[] properties = file.GetType().GetProperties();
+			foreach (PropertyInfo property in properties)
+			{
+				Offset offset = (Offset)property.GetValue(file);
+				offset.Name = property.Name;
+				property.SetValue(file, offset);
+			}
 
 			Offsets.Main = file;
 

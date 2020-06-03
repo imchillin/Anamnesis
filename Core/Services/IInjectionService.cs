@@ -22,6 +22,11 @@ namespace ConceptMatrix
 		{
 			get;
 		}
+
+		string Name
+		{
+			get;
+		}
 	}
 
 	public interface IMemoryOffset<T> : IMemoryOffset

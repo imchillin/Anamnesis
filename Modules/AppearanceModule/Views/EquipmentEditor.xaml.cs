@@ -88,7 +88,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			// Equipment slots
 			this.eqMem = actor.GetMemory(Offsets.Main.ActorEquipment);
-			this.eqMem.Name = "Equipment";
 
 			this.Head = new EquipmentItemViewModel(this.eqMem, ItemSlots.Head, actor);
 			this.Body = new EquipmentItemViewModel(this.eqMem, ItemSlots.Body, actor);

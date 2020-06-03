@@ -84,9 +84,7 @@ namespace ConceptMatrix.GUI.Services
 				Log.Write("Refresh Begin", "Actor Refresh");
 
 				using IMemory<ActorTypes> actorTypeMem = actor.GetMemory(Offsets.Main.ActorType);
-				actorTypeMem.Name = "Actor Type";
 				using IMemory<byte> actorRenderMem = actor.GetMemory(Offsets.Main.ActorRender);
-				actorRenderMem.Name = "Actor Render";
 
 				if (actorTypeMem.Value == ActorTypes.Player)
 				{

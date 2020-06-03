@@ -14,6 +14,7 @@ namespace ConceptMatrix.GUI.Views
 	using ConceptMatrix.Injection.Offsets;
 	using ConceptMatrix.WpfStyles;
 	using FontAwesome.Sharp;
+	using Microsoft.VisualBasic;
 
 	/// <summary>
 	/// Interaction logic for TargetSelectorView.xaml.
@@ -43,70 +44,20 @@ namespace ConceptMatrix.GUI.Views
 
 		public event DrawerEvent Close;
 
-		public ObservableCollection<PossibleSelection> Entities { get; set; } = new ObservableCollection<PossibleSelection>();
-		public string InGameSelection { get; set; }
-		public IconChar InGameIcon { get; set; }
+		public ObservableCollection<ActorEx> Entities { get; set; } = new ObservableCollection<ActorEx>();
 
 		private void GetEntities()
 		{
 			try
 			{
 				this.lockSelection = true;
-				Actor.Modes mode = this.selection.GetMode();
-				ActorTableOffset actorTableOffset;
-				BaseOffset targetOffset;
 
-				// clear the entity list
 				this.Entities.Clear();
 
-				if (mode == Actor.Modes.GPose)
+				Dictionary<string, Actor> actors = this.selection.GetSelectableActors();
+				foreach (Actor actor in actors.Values)
 				{
-					actorTableOffset = Offsets.Main.GposeActorTable;
-					targetOffset = Offsets.Main.Gpose;
-				}
-				else if (mode == Actor.Modes.Overworld)
-				{
-					actorTableOffset = Offsets.Main.ActorTable;
-					targetOffset = Offsets.Main.Target;
-				}
-				else
-				{
-					throw new Exception("Unknown selection mode: " + mode);
-				}
-
-				byte count = actorTableOffset.GetCount();
-				HashSet<string> ids = new HashSet<string>();
-
-				for (byte i = 0; i < count; i++)
-				{
-					PossibleSelection actor = new PossibleSelection(actorTableOffset.GetBaseOffset(i));
-
-					/*ActorTypes type = actorTableOffset.GetActorValue(i, Offsets.Main.ActorType);
-					string name = actorTableOffset.GetActorValue(i, Offsets.Main.Name);
-
-					string id = SelectionService.GetActorId(mode, type, name);
-
-					if (ids.Contains(id))
-						continue;
-
-					ids.Add(id);
-
-					if (string.IsNullOrEmpty(name))
-						name = "Unknown";
-
-					PossibleSelection selection = new PossibleSelection(type, actorTableOffset.GetBaseOffset(i), id, name, mode);*/
-					this.Entities.Add(actor);
-				}
-
-				if (this.selection.CurrentGameTarget != null)
-				{
-					this.InGameSelection = this.selection.CurrentGameTarget.Name;
-					this.InGameIcon = this.selection.CurrentGameTarget.Type.GetIcon();
-				}
-				else
-				{
-					this.InGameSelection = null;
-					this.InGameIcon = IconChar.None;
+					this.Entities.Add(new ActorEx(actor));
 				}
 
 				this.lockSelection = false;
@@ -124,27 +75,36 @@ namespace ConceptMatrix.GUI.Views
 
 			if (sender is RadioButton btn)
 			{
-				PossibleSelection selection = btn.DataContext as PossibleSelection;
-				this.Actor = selection;
+				ActorEx selection = btn.DataContext as ActorEx;
+				this.Actor = selection.Actor;
+				this.selection.SelectActor(this.Actor);
 
 				this.Close?.Invoke();
 			}
 		}
 
-		public class PossibleSelection : Actor
+		public class ActorEx
 		{
-			public PossibleSelection(IBaseMemoryOffset baseOffset)
-				: base(baseOffset)
-			{
-			}
+			public readonly Actor Actor;
 
-			public bool IsSelected { get; set; }
+			public ActorEx(Actor actor)
+			{
+				this.Actor = actor;
+			}
 
 			public IconChar Icon
 			{
 				get
 				{
-					return this.Type.GetIcon();
+					return this.Actor.Type.GetIcon();
+				}
+			}
+
+			public string Name
+			{
+				get
+				{
+					return this.Actor.Name;
 				}
 			}
 		}

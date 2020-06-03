@@ -420,7 +420,6 @@ namespace ConceptMatrix.PoseModule
 				try
 				{
 					IMemory<CmTransform> transMem = actor.GetMemory(boneDef.Offsets);
-					transMem.Name = "Bone_" + name;
 					this.bones[name] = new Bone(this, name, transMem, boneDef);
 					this.Root.Children.Add(this.bones[name]);
 				}

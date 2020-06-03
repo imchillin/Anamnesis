@@ -5,9 +5,10 @@ namespace ConceptMatrix.Injection.Memory
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using ConceptMatrix.Exceptions;
 
-	public abstract class MemoryBase
+	public abstract class MemoryBase : IMemory
 	{
 		protected IProcess process;
 		protected UIntPtr address;
@@ -17,13 +18,15 @@ namespace ConceptMatrix.Injection.Memory
 
 		public MemoryBase(IProcess process, IMemoryOffset[] offsets)
 		{
+			foreach (IMemoryOffset offset in offsets)
+			{
+				this.Name += offset.Name + ", ";
+			}
+
 			this.process = process;
 			this.offsets = offsets;
 
-			this.address = process.GetAddress(this.offsets);
-
-			if (this.address == UIntPtr.Zero)
-				throw new InvalidAddressException();
+			this.UpdateAddress();
 
 			lock (ActiveMemory)
 			{
@@ -33,13 +36,19 @@ namespace ConceptMatrix.Injection.Memory
 			this.Active = true;
 		}
 
-		public bool Active
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		public string Name
 		{
 			get;
 			private set;
 		}
 
-		public string Name { get; set; }
+		public bool Active
+		{
+			get;
+			private set;
+		}
 
 		public static void TickAllActiveMemory()
 		{
@@ -58,6 +67,27 @@ namespace ConceptMatrix.Injection.Memory
 
 				memory.Tick();
 			}
+		}
+
+		public void UpdateBaseOffset(IBaseMemoryOffset newBaseOffset)
+		{
+			if (this.offsets[0] is IBaseMemoryOffset)
+			{
+				this.offsets[0] = newBaseOffset;
+				this.UpdateAddress();
+			}
+			else
+			{
+				throw new Exception("First offset in memory was not a base offset");
+			}
+		}
+
+		public void UpdateAddress()
+		{
+			this.address = this.process.GetAddress(this.offsets);
+
+			if (this.address == UIntPtr.Zero)
+				throw new InvalidAddressException();
 		}
 
 		public virtual void Dispose()
@@ -79,9 +109,14 @@ namespace ConceptMatrix.Injection.Memory
 			}
 
 			offsetString = offsetString.Trim(' ', ',');
-			return offsetString + " (" + this.address + ")";
+			return this.Name + ": " + offsetString + " (" + this.address + ")";
 		}
 
 		protected abstract void Tick();
+
+		protected void RaiseChanged(string name)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+		}
 	}
 }

@@ -20,6 +20,12 @@ namespace ConceptMatrix.Injection.Offsets
 			private set;
 		}
 
+		public string Name
+		{
+			get;
+			set;
+		}
+
 		public static implicit operator Offset(ulong offset)
 		{
 			return new Offset(offset);
