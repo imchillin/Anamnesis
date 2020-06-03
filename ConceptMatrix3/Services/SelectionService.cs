@@ -48,8 +48,10 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Start()
 		{
-			this.gposeMem = Offsets.Main.GposeCheck.GetMemory();
-			this.gposeMem2 = Offsets.Main.GposeCheck2.GetMemory();
+			IInjectionService injection = Services.Get<IInjectionService>();
+
+			this.gposeMem = injection.GetMemory(Offsets.Main.GposeCheck);
+			this.gposeMem2 = injection.GetMemory(Offsets.Main.GposeCheck2);
 
 			////Task.Run(this.Watch);
 

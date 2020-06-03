@@ -286,24 +286,26 @@ namespace ConceptMatrix.PoseModule
 			return name;
 		}
 
-		public async Task Initialize(Actor selection)
+		public async Task Initialize(Actor actor)
 		{
-			this.skel1Mem = Offsets.Main.Skeleton1Flag.GetMemory();
-			this.skel2Mem = Offsets.Main.Skeleton2Flag.GetMemory();
-			this.skel3Mem = Offsets.Main.Skeleton3Flag.GetMemory();
-			this.skel4Mem = Offsets.Main.Skeleton4flag.GetMemory();
-			this.skel5Mem = Offsets.Main.Skeleton5Flag.GetMemory();
-			this.skel6Mem = Offsets.Main.Skeleton6Flag.GetMemory();
-			this.phys1Mem = Offsets.Main.Physics1Flag.GetMemory();
-			this.phys2Mem = Offsets.Main.Physics2Flag.GetMemory();
-			this.phys3Mem = Offsets.Main.Physics3Flag.GetMemory();
+			IInjectionService injection = Services.Get<IInjectionService>();
 
-			this.appearanceMem = selection.BaseAddress.GetMemory(Offsets.Main.ActorAppearance);
-			this.rootRotationMem = selection.BaseAddress.GetMemory(Offsets.Main.Rotation);
+			this.skel1Mem = injection.GetMemory(Offsets.Main.Skeleton1Flag);
+			this.skel2Mem = injection.GetMemory(Offsets.Main.Skeleton2Flag);
+			this.skel3Mem = injection.GetMemory(Offsets.Main.Skeleton3Flag);
+			this.skel4Mem = injection.GetMemory(Offsets.Main.Skeleton4flag);
+			this.skel5Mem = injection.GetMemory(Offsets.Main.Skeleton5Flag);
+			this.skel6Mem = injection.GetMemory(Offsets.Main.Skeleton6Flag);
+			this.phys1Mem = injection.GetMemory(Offsets.Main.Physics1Flag);
+			this.phys2Mem = injection.GetMemory(Offsets.Main.Physics2Flag);
+			this.phys3Mem = injection.GetMemory(Offsets.Main.Physics3Flag);
+
+			this.appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
+			this.rootRotationMem = actor.GetMemory(Offsets.Main.Rotation);
 
 			await Application.Current.Dispatcher.InvokeAsync(async () =>
 			{
-				await this.GenerateBones(selection);
+				await this.GenerateBones(actor);
 			});
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Bones)));
@@ -417,7 +419,7 @@ namespace ConceptMatrix.PoseModule
 
 				try
 				{
-					IMemory<CmTransform> transMem = actor.BaseAddress.GetMemory(boneDef.Offsets);
+					IMemory<CmTransform> transMem = actor.GetMemory(boneDef.Offsets);
 					transMem.Name = "Bone_" + name;
 					this.bones[name] = new Bone(this, name, transMem, boneDef);
 					this.Root.Children.Add(this.bones[name]);
@@ -432,9 +434,9 @@ namespace ConceptMatrix.PoseModule
 			// Find all ExHair, ExMet, and ExTop bones, and disable any that are outside the bounds
 			// of the current characters actual skeleton.
 			// ex-  bones are numbered starting from 1 (there is no ExHair0!)
-			byte exHairCount = actor.BaseAddress.GetValue(Offsets.Main.ExHairCount);
-			byte exMetCount = actor.BaseAddress.GetValue(Offsets.Main.ExMetCount);
-			byte exTopCount = actor.BaseAddress.GetValue(Offsets.Main.ExTopCount);
+			byte exHairCount = actor.GetValue(Offsets.Main.ExHairCount);
+			byte exMetCount = actor.GetValue(Offsets.Main.ExMetCount);
+			byte exTopCount = actor.GetValue(Offsets.Main.ExTopCount);
 
 			foreach (string boneName in boneDefs.Keys)
 			{

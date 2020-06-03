@@ -7,8 +7,8 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class UShortMemory : MemoryBase<ushort>
 	{
-		public UShortMemory(IProcess process, UIntPtr address)
-			: base(process, address, 2)
+		public UShortMemory(IProcess process, IMemoryOffset[] offsets)
+			: base(process, offsets, 2)
 		{
 		}
 

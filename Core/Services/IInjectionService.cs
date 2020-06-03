@@ -3,7 +3,6 @@
 
 namespace ConceptMatrix
 {
-	using System;
 	using ConceptMatrix.Injection;
 
 	public interface IInjectionService : IService
@@ -12,9 +11,9 @@ namespace ConceptMatrix
 		bool ProcessIsAlive { get; }
 		IProcess Process { get; }
 
-		UIntPtr GetAddress(IBaseMemoryOffset offset);
-		UIntPtr GetAddress(params IMemoryOffset[] offsets);
-		IMemory<T> GetMemory<T>(IBaseMemoryOffset baseAddress, params IMemoryOffset[] offsets);
+		IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets);
+		IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset<T>[] offsets);
+		IMemory<T> GetMemory<T>(IBaseMemoryOffset<T> baseOffset, params IMemoryOffset<T>[] offsets);
 	}
 
 	public interface IMemoryOffset
@@ -27,13 +26,13 @@ namespace ConceptMatrix
 
 	public interface IMemoryOffset<T> : IMemoryOffset
 	{
-		IMemory<T> GetMemory(IBaseMemoryOffset baseOffset);
-		T GetValue(IBaseMemoryOffset offset);
 	}
 
 	public interface IBaseMemoryOffset : IMemoryOffset
 	{
-		IMemory<T> GetMemory<T>(IMemoryOffset<T> offset);
-		T GetValue<T>(IMemoryOffset<T> offset);
+	}
+
+	public interface IBaseMemoryOffset<T> : IBaseMemoryOffset
+	{
 	}
 }

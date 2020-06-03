@@ -7,8 +7,8 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class ByteMemory : MemoryBase<byte>
 	{
-		public ByteMemory(IProcess process, UIntPtr address)
-			: base(process, address, 1)
+		public ByteMemory(IProcess process, IMemoryOffset[] offsets)
+			: base(process, offsets, 1)
 		{
 		}
 

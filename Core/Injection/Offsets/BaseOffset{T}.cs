@@ -3,9 +3,7 @@
 
 namespace ConceptMatrix.Injection.Offsets
 {
-	using ConceptMatrix.Injection;
-
-	public class BaseOffset<T> : BaseOffset
+	public class BaseOffset<T> : BaseOffset, IBaseMemoryOffset<T>
 	{
 		public BaseOffset(ulong offset)
 			: base(offset)
@@ -20,11 +18,6 @@ namespace ConceptMatrix.Injection.Offsets
 		public static implicit operator BaseOffset<T>(ulong offset)
 		{
 			return new BaseOffset<T>(offset);
-		}
-
-		public IMemory<T> GetMemory()
-		{
-			return injection.GetMemory<T>(this);
 		}
 	}
 }

@@ -7,8 +7,8 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class AppearanceMemory : MemoryBase<Appearance>
 	{
-		public AppearanceMemory(IProcess process, UIntPtr address)
-			: base(process, address, 26)
+		public AppearanceMemory(IProcess process, IMemoryOffset[] offsets)
+			: base(process, offsets, 26)
 		{
 		}
 

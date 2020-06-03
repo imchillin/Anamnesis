@@ -5,18 +5,25 @@ namespace ConceptMatrix.Injection.Memory
 {
 	using System;
 	using System.Collections.Generic;
+	using ConceptMatrix.Exceptions;
 
 	public abstract class MemoryBase
 	{
 		protected IProcess process;
 		protected UIntPtr address;
+		protected IMemoryOffset[] offsets;
 
 		private static readonly List<MemoryBase> ActiveMemory = new List<MemoryBase>();
 
-		public MemoryBase(IProcess process, UIntPtr address)
+		public MemoryBase(IProcess process, IMemoryOffset[] offsets)
 		{
 			this.process = process;
-			this.address = address;
+			this.offsets = offsets;
+
+			this.address = process.GetAddress(this.offsets);
+
+			if (this.address == UIntPtr.Zero)
+				throw new InvalidAddressException();
 
 			lock (ActiveMemory)
 			{
@@ -61,6 +68,18 @@ namespace ConceptMatrix.Injection.Memory
 			}
 
 			this.Active = false;
+		}
+
+		public override string ToString()
+		{
+			string offsetString = string.Empty;
+			foreach (IMemoryOffset offset in this.offsets)
+			{
+				offsetString += " " + offset + ",";
+			}
+
+			offsetString = offsetString.Trim(' ', ',');
+			return offsetString + " (" + this.address + ")";
 		}
 
 		protected abstract void Tick();

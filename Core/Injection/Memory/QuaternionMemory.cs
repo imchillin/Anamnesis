@@ -7,8 +7,8 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class QuaternionMemory : MemoryBase<Quaternion>
 	{
-		public QuaternionMemory(IProcess process, UIntPtr address)
-			: base(process, address, 16)
+		public QuaternionMemory(IProcess process, IMemoryOffset[] offsets)
+			: base(process, offsets, 16)
 		{
 		}
 

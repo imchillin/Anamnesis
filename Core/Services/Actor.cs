@@ -5,16 +5,17 @@ namespace ConceptMatrix
 {
 	public class Actor
 	{
-		public readonly IBaseMemoryOffset BaseAddress;
-		public readonly string ActorId;
+		protected static IInjectionService injection = Services.Get<IInjectionService>();
 
-		public Actor(ActorTypes type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
+		private readonly IBaseMemoryOffset baseOffset;
+
+		public Actor(IBaseMemoryOffset baseOffset)
 		{
-			this.Type = type;
-			this.BaseAddress = address;
-			this.ActorId = actorId;
-			this.Name = name;
-			this.Mode = mode;
+			this.baseOffset = baseOffset;
+
+			this.Name = this.GetValue(Offsets.Main.Name);
+			this.Type = this.GetValue(Offsets.Main.ActorType);
+			this.Mode = Modes.Overworld;
 		}
 
 		public enum Modes
@@ -24,10 +25,19 @@ namespace ConceptMatrix
 		}
 
 		public ActorTypes Type { get; private set; }
-
 		public string Name { get; private set; }
-
 		public Modes Mode { get; private set; }
+
+		public IMemory<T> GetMemory<T>(IMemoryOffset<T> offset)
+		{
+			return injection.GetMemory<T>(this.baseOffset, offset);
+		}
+
+		public T GetValue<T>(IMemoryOffset<T> offset)
+		{
+			using IMemory<T> mem = this.GetMemory(offset);
+			return mem.Value;
+		}
 
 		/// <summary>
 		/// Marks the selected actor to be refreshed after a short delay.
@@ -36,7 +46,7 @@ namespace ConceptMatrix
 		public void ActorRefresh()
 		{
 			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
-			refreshService.Refresh(this.BaseAddress);
+			refreshService.Refresh(this);
 		}
 	}
 }

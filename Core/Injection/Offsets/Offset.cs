@@ -5,14 +5,10 @@ namespace ConceptMatrix.Injection.Offsets
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Globalization;
-	using System.Text;
 
 	[Serializable]
 	public class Offset : IMemoryOffset
 	{
-		protected static IInjectionService injection = Services.Get<IInjectionService>();
-
 		public Offset(params ulong[] offsets)
 		{
 			this.Offsets = offsets;
@@ -43,6 +39,40 @@ namespace ConceptMatrix.Injection.Offsets
 				longOffsets.Add(Convert.ToUInt64(offset));
 
 			return new Offset(longOffsets.ToArray());
+		}
+
+		public override string ToString()
+		{
+			Type type = this.GetType();
+			string typeName = type.Name;
+
+			if (type.IsGenericType)
+			{
+				typeName = typeName.Split('`')[0];
+				typeName += "<";
+
+				Type[] generics = type.GetGenericArguments();
+				for (int i = 0; i < generics.Length; i++)
+				{
+					if (i > 1)
+						typeName += ", ";
+
+					typeName += generics[i].Name;
+				}
+
+				typeName += ">";
+			}
+
+			string val = string.Empty;
+			for (int i = 0; i < this.Offsets.Length; i++)
+			{
+				if (i > 1)
+					val += ", ";
+
+				val += this.Offsets[i].ToString("X2");
+			}
+
+			return typeName + " [" + val + "]";
 		}
 	}
 }

@@ -23,13 +23,13 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		protected ushort modelVariant;
 		protected byte dyeId;
 
-		private readonly IBaseMemoryOffset baseOffset;
+		private readonly Actor actor;
 		private IItem item;
 		private IDye dye;
 		
-		public EquipmentBaseViewModel(ItemSlots slot, IBaseMemoryOffset baseOffset)
+		public EquipmentBaseViewModel(ItemSlots slot, Actor actor)
 		{
-			this.baseOffset = baseOffset;
+			this.actor = actor;
 			this.gameData = Services.Get<IGameDataService>();
 			this.Slot = slot;
 		}
@@ -72,7 +72,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				if (oldItem != null && oldItem != this.item)
 				{
 					this.Apply();
-					Services.Get<IActorRefreshService>().Refresh(this.baseOffset);
+					this.actor.ActorRefresh();
 				}
 			}
 		}
@@ -93,7 +93,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				if (oldDye != null && oldDye != this.dye)
 				{
 					this.Apply();
-					Services.Get<IActorRefreshService>().Refresh(this.baseOffset);
+					this.actor.ActorRefresh();
 				}
 			}
 		}

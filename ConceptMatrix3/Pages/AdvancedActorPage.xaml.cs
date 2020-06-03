@@ -36,7 +36,8 @@ namespace ConceptMatrix.GUI.Pages
 			if (actor == null)
 				return;
 
-			actor.BaseAddress.Bind(Offsets.Main.ActorType, this, nameof(this.ActorType));
+			IMemory<ActorTypes> memory = actor.GetMemory(Offsets.Main.ActorType);
+			memory.Bind(this, nameof(this.ActorType));
 		}
 	}
 }

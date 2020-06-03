@@ -7,8 +7,8 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class ActorTypesMemory : MemoryBase<ActorTypes>
 	{
-		public ActorTypesMemory(IProcess process, UIntPtr address)
-			: base(process, address, 1)
+		public ActorTypesMemory(IProcess process, IMemoryOffset[] offsets)
+			: base(process, offsets, 1)
 		{
 		}
 

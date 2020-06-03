@@ -53,9 +53,11 @@ namespace ConceptMatrix.PoseModule.Views
 
 		private void WatchCamera()
 		{
-			IMemory<float> camX = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraAngleX);
-			IMemory<float> camY = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraAngleY);
-			IMemory<float> camZ = Offsets.Main.CameraOffset.GetMemory(Offsets.Main.CameraRotation);
+			IInjectionService injection = Services.Get<IInjectionService>();
+
+			IMemory<float> camX = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraAngleX);
+			IMemory<float> camY = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraAngleY);
+			IMemory<float> camZ = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraRotation);
 
 			Vector3D camEuler = default;
 

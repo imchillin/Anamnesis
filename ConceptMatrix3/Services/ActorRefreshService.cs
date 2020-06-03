@@ -38,22 +38,22 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public void Refresh(IBaseMemoryOffset offset)
+		public void Refresh(Actor actor)
 		{
 			this.applyCountdown = ApplyDelay;
 
 			if (this.applyTask == null || this.applyTask.IsCompleted)
 			{
-				this.applyTask = this.ApplyAfterDelay(offset);
+				this.applyTask = this.ApplyAfterDelay(actor);
 			}
 		}
 
-		public async Task RefreshAsync(IBaseMemoryOffset offset)
+		public async Task RefreshAsync(Actor actor)
 		{
 			while (this.IsRefreshing)
 				await Task.Delay(100);
 
-			this.Refresh(offset);
+			this.Refresh(actor);
 			this.PendingRefreshImmediate();
 
 			await Task.Delay(50);
@@ -69,7 +69,7 @@ namespace ConceptMatrix.GUI.Services
 			this.applyCountdown = 0;
 		}
 
-		private async Task ApplyAfterDelay(IBaseMemoryOffset actorOffset)
+		private async Task ApplyAfterDelay(Actor actor)
 		{
 			while (this.applyCountdown > 0)
 			{
@@ -80,12 +80,12 @@ namespace ConceptMatrix.GUI.Services
 				}
 
 				this.IsRefreshing = true;
-				this.OnRefreshStarting?.Invoke(actorOffset);
+				this.OnRefreshStarting?.Invoke(actor);
 				Log.Write("Refresh Begin", "Actor Refresh");
 
-				using IMemory<ActorTypes> actorTypeMem = actorOffset.GetMemory(Offsets.Main.ActorType);
+				using IMemory<ActorTypes> actorTypeMem = actor.GetMemory(Offsets.Main.ActorType);
 				actorTypeMem.Name = "Actor Type";
-				using IMemory<byte> actorRenderMem = actorOffset.GetMemory(Offsets.Main.ActorRender);
+				using IMemory<byte> actorRenderMem = actor.GetMemory(Offsets.Main.ActorRender);
 				actorRenderMem.Name = "Actor Render";
 
 				if (actorTypeMem.Value == ActorTypes.Player)
@@ -104,7 +104,7 @@ namespace ConceptMatrix.GUI.Services
 					actorRenderMem.SetValue(0, true);
 				}
 
-				this.OnRefreshComplete?.Invoke(actorOffset);
+				this.OnRefreshComplete?.Invoke(actor);
 				Log.Write("Refresh Complete", "Actor Refresh");
 				this.IsRefreshing = false;
 			}

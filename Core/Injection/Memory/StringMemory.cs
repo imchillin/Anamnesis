@@ -10,8 +10,8 @@ namespace ConceptMatrix.Injection.Memory
 	{
 		private bool zeroTerminated = true;
 
-		public StringMemory(IProcess process, UIntPtr address)
-			: base(process, address, 32)
+		public StringMemory(IProcess process, IMemoryOffset[] offsets)
+			: base(process, offsets, 32)
 		{
 		}
 

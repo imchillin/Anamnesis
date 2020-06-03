@@ -12,8 +12,6 @@ namespace ConceptMatrix.Injection.Memory
 
 	public abstract class MemoryBase<T> : MemoryBase, IMemory<T>
 	{
-		public string Description;
-
 		private static readonly IInjectionService Injection = Services.Get<IInjectionService>();
 
 		private readonly ulong length;
@@ -26,8 +24,8 @@ namespace ConceptMatrix.Injection.Memory
 
 		private Exception lastException;
 
-		public MemoryBase(IProcess process, UIntPtr address, ulong length)
-			: base(process, address)
+		public MemoryBase(IProcess process, IMemoryOffset[] offsets, ulong length)
+			: base(process, offsets)
 		{
 			this.length = length;
 			this.oldData = new byte[this.length];
@@ -173,7 +171,7 @@ namespace ConceptMatrix.Injection.Memory
 			{
 				Array.Copy(this.newData, this.oldData, (int)this.length);
 
-				Log.Write("Write memory " + this.Name + " - " + this.Description, "Injection");
+				Log.Write("Write memory " + this.Name + " - " + this, "Injection");
 
 				this.process.Write(this.address, this.oldData, (UIntPtr)this.length, out IntPtr bytesRead);
 				return true;

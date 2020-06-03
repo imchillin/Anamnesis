@@ -7,8 +7,8 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class TransformMemory : MemoryBase<Transform>
 	{
-		public TransformMemory(IProcess process, UIntPtr address)
-			: base(process, address, 44)
+		public TransformMemory(IProcess process, IMemoryOffset[] offsets)
+			: base(process, offsets, 44)
 		{
 		}
 

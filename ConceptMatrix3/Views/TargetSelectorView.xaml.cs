@@ -79,7 +79,9 @@ namespace ConceptMatrix.GUI.Views
 
 				for (byte i = 0; i < count; i++)
 				{
-					ActorTypes type = actorTableOffset.GetActorValue(i, Offsets.Main.ActorType);
+					PossibleSelection actor = new PossibleSelection(actorTableOffset.GetBaseOffset(i));
+
+					/*ActorTypes type = actorTableOffset.GetActorValue(i, Offsets.Main.ActorType);
 					string name = actorTableOffset.GetActorValue(i, Offsets.Main.Name);
 
 					string id = SelectionService.GetActorId(mode, type, name);
@@ -92,8 +94,8 @@ namespace ConceptMatrix.GUI.Views
 					if (string.IsNullOrEmpty(name))
 						name = "Unknown";
 
-					PossibleSelection selection = new PossibleSelection(type, actorTableOffset.GetBaseOffset(i), id, name, mode);
-					this.Entities.Add(selection);
+					PossibleSelection selection = new PossibleSelection(type, actorTableOffset.GetBaseOffset(i), id, name, mode);*/
+					this.Entities.Add(actor);
 				}
 
 				if (this.selection.CurrentGameTarget != null)
@@ -131,8 +133,8 @@ namespace ConceptMatrix.GUI.Views
 
 		public class PossibleSelection : Actor
 		{
-			public PossibleSelection(ActorTypes type, IBaseMemoryOffset address, string actorId, string name, Modes mode)
-				: base(type, address, actorId, name, mode)
+			public PossibleSelection(IBaseMemoryOffset baseOffset)
+				: base(baseOffset)
 			{
 			}
 

@@ -5,7 +5,7 @@ namespace ConceptMatrix
 {
 	using System.Threading.Tasks;
 
-	public delegate void RefreshEvent(IBaseMemoryOffset baseOffset);
+	public delegate void RefreshEvent(Actor actor);
 
 	public interface IActorRefreshService : IService
 	{
@@ -17,8 +17,8 @@ namespace ConceptMatrix
 			get;
 		}
 
-		void Refresh(IBaseMemoryOffset offset);
-		Task RefreshAsync(IBaseMemoryOffset offset);
+		void Refresh(Actor offset);
+		Task RefreshAsync(Actor offset);
 		void PendingRefreshImmediate();
 	}
 }

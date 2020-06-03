@@ -102,9 +102,15 @@ namespace ConceptMatrix.Injection
 			int size = 16;
 
 			List<ulong> offsetsList = new List<ulong>();
-			foreach (IMemoryOffset offset in offsets)
+			for (int i = 0; i < offsets.Length; i++)
 			{
-				offsetsList.AddRange(offset.Offsets);
+				IMemoryOffset offset = offsets[i];
+				ulong[] offsetValues = offset.Offsets;
+
+				if (i == 0)
+					offsetValues = new[] { this.GetBaseAddress() + offsetValues[0] };
+
+				offsetsList.AddRange(offsetValues);
 			}
 
 			ulong[] longOffsets = offsetsList.ToArray();

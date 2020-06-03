@@ -149,29 +149,27 @@ namespace ConceptMatrix.Injection
 		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
 		{
 			List<IMemoryOffset> newOffsets = new List<IMemoryOffset>();
-			newOffsets.Add(new MappedBaseOffset(this.Process, (BaseOffset)baseOffset));
+			newOffsets.Add(baseOffset);
 			newOffsets.AddRange(offsets);
 			return this.GetMemory<T>(newOffsets.ToArray());
 		}
 
+		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset<T>[] offsets)
+		{
+			return this.GetMemory<T>(baseOffset, (IMemoryOffset[])offsets);
+		}
+
+		public IMemory<T> GetMemory<T>(IBaseMemoryOffset<T> baseOffset, params IMemoryOffset<T>[] offsets)
+		{
+			return this.GetMemory<T>((IBaseMemoryOffset)baseOffset, (IMemoryOffset[])offsets);
+		}
+
 		public IMemory<T> GetMemory<T>(params IMemoryOffset[] offsets)
 		{
-			UIntPtr address = this.GetAddress(offsets);
-
-			string offsetString = string.Empty;
-			foreach (IMemoryOffset offset in offsets)
-			{
-				offsetString += " " + GetString(offset) + ",";
-			}
-
-			offsetString = offsetString.Trim(' ', ',');
-
 			Type wrapperType = this.GetMemoryType(typeof(T));
 			try
 			{
-				MemoryBase<T> memory = (MemoryBase<T>)Activator.CreateInstance(wrapperType, this.Process, address);
-				memory.Description = offsetString + " (" + address + ")";
-				return memory;
+				return (MemoryBase<T>)Activator.CreateInstance(wrapperType, this.Process, offsets);
 			}
 			catch (TargetInvocationException ex)
 			{
@@ -179,7 +177,7 @@ namespace ConceptMatrix.Injection
 			}
 		}
 
-		public UIntPtr GetAddress(IBaseMemoryOffset offset)
+		/*public UIntPtr GetAddress(IBaseMemoryOffset offset)
 		{
 			IMemoryOffset newOffset = new MappedBaseOffset(this.Process, (BaseOffset)offset);
 			UIntPtr ptr = this.Process.GetAddress(newOffset);
@@ -188,51 +186,7 @@ namespace ConceptMatrix.Injection
 				throw new InvalidAddressException();
 
 			return ptr;
-		}
-
-		public UIntPtr GetAddress(params IMemoryOffset[] offsets)
-		{
-			UIntPtr ptr = this.Process.GetAddress(offsets);
-
-			if (ptr == UIntPtr.Zero)
-				throw new InvalidAddressException();
-
-			return ptr;
-		}
-
-		private static string GetString(IMemoryOffset offset)
-		{
-			Type type = offset.GetType();
-			string typeName = type.Name;
-
-			if (type.IsGenericType)
-			{
-				typeName = typeName.Split('`')[0];
-				typeName += "<";
-
-				Type[] generics = type.GetGenericArguments();
-				for (int i = 0; i < generics.Length; i++)
-				{
-					if (i > 1)
-						typeName += ", ";
-
-					typeName += generics[i].Name;
-				}
-
-				typeName += ">";
-			}
-
-			string val = string.Empty;
-			for (int i = 0; i < offset.Offsets.Length; i++)
-			{
-				if (i > 1)
-					val += ", ";
-
-				val += offset.Offsets[i].ToString("X2");
-			}
-
-			return typeName + " [" + val + "]";
-		}
+		}*/
 
 		private Type GetMemoryType(Type type)
 		{
@@ -279,33 +233,6 @@ namespace ConceptMatrix.Injection
 				}
 
 				Thread.Sleep(100);
-			}
-		}
-
-		public class MappedBaseOffset : IBaseMemoryOffset
-		{
-			public MappedBaseOffset(IProcess process, BaseOffset offset)
-			{
-				if (offset.Offsets == null || offset.Offsets.Length <= 0)
-					throw new Exception("Invalid base offset");
-
-				this.Offsets = new[] { process.GetBaseAddress() + offset.Offsets[0] };
-			}
-
-			public ulong[] Offsets
-			{
-				get;
-				private set;
-			}
-
-			public IMemory<T> GetMemory<T>(IMemoryOffset<T> offset)
-			{
-				throw new NotImplementedException();
-			}
-
-			public T GetValue<T>(IMemoryOffset<T> offset)
-			{
-				throw new NotImplementedException();
 			}
 		}
 	}

@@ -3,8 +3,6 @@
 
 namespace ConceptMatrix.Injection.Offsets
 {
-	using ConceptMatrix.Injection;
-
 	public class ActorTableOffset : BaseOffset<byte>
 	{
 		public ActorTableOffset(ulong offset)
@@ -29,28 +27,20 @@ namespace ConceptMatrix.Injection.Offsets
 
 		public IMemory<byte> GetCountMemory()
 		{
+			IInjectionService injection = Services.Get<IInjectionService>();
 			return injection.GetMemory<byte>(this);
 		}
 
 		public byte GetCount()
 		{
-			using (IMemory<byte> mem = this.GetCountMemory())
-			{
-				return mem.Value;
-			}
+			using IMemory<byte> mem = this.GetCountMemory();
+			return mem.Value;
 		}
 
 		public IMemory<T> GetActorMemory<T>(byte i, params Offset[] offsets)
 		{
+			IInjectionService injection = Services.Get<IInjectionService>();
 			return injection.GetMemory<T>(this.GetBaseOffset(i), offsets);
-		}
-
-		public T GetActorValue<T>(byte i, Offset<T> offset)
-		{
-			using (IMemory<T> mem = this.GetActorMemory<T>(i, offset))
-			{
-				return mem.Value;
-			}
 		}
 	}
 }

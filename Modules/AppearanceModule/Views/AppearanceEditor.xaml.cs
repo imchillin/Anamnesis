@@ -160,43 +160,43 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (actor == null || (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.EventNpc))
 				return;
 
-			this.skinColorMem = actor.BaseAddress.GetMemory(Offsets.Main.SkinColor);
+			this.skinColorMem = actor.GetMemory(Offsets.Main.SkinColor);
 			this.skinColorMem.Bind(this, nameof(AppearanceEditor.SkinTint));
 			this.skinColorMem.Name = "Skin Color";
 
-			this.skinGlowMem = actor.BaseAddress.GetMemory(Offsets.Main.SkinGloss);
+			this.skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
 			this.skinGlowMem.Bind(this, nameof(AppearanceEditor.SkinGlow));
 			this.skinGlowMem.Name = "Skin Glow";
 
-			this.leftEyeColorMem = actor.BaseAddress.GetMemory(Offsets.Main.LeftEyeColor);
+			this.leftEyeColorMem = actor.GetMemory(Offsets.Main.LeftEyeColor);
 			this.leftEyeColorMem.Bind(this, nameof(AppearanceEditor.LeftEyeColor));
 			this.leftEyeColorMem.Name = "Left Eye Color";
 
-			this.rightEyeColorMem = actor.BaseAddress.GetMemory(Offsets.Main.RightEyeColor);
+			this.rightEyeColorMem = actor.GetMemory(Offsets.Main.RightEyeColor);
 			this.rightEyeColorMem.Bind(this, nameof(AppearanceEditor.RightEyeColor));
 			this.rightEyeColorMem.Name = "Right Eye Color";
 
-			this.limbalRingColorMem = actor.BaseAddress.GetMemory(Offsets.Main.LimbalColor);
+			this.limbalRingColorMem = actor.GetMemory(Offsets.Main.LimbalColor);
 			this.limbalRingColorMem.Bind(this, nameof(AppearanceEditor.LimbalRingColor));
 			this.limbalRingColorMem.Name = "Limbal Ring Color";
 
-			this.hairTintColorMem = actor.BaseAddress.GetMemory(Offsets.Main.HairColor);
+			this.hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
 			this.hairTintColorMem.Bind(this, nameof(AppearanceEditor.HairTint));
 			this.hairTintColorMem.Name = "Hair Color";
 
-			this.hairGlowColorMem = actor.BaseAddress.GetMemory(Offsets.Main.HairGloss);
+			this.hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
 			this.hairGlowColorMem.Bind(this, nameof(AppearanceEditor.HairGlow));
 			this.hairGlowColorMem.Name = "Gair Glow";
 
-			this.highlightTintColorMem = actor.BaseAddress.GetMemory(Offsets.Main.HairHiglight);
+			this.highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
 			this.highlightTintColorMem.Bind(this, nameof(AppearanceEditor.HighlightTint));
 			this.highlightTintColorMem.Name = "Hair Highlight Color";
 				
-			this.lipTintMem = actor.BaseAddress.GetMemory(Offsets.Main.MouthColor);
+			this.lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
 			this.lipTintMem.ValueChanged += this.OnLipTintMemChanged;
 			this.lipTintMem.Name = "Lips Color";
 
-			this.lipGlossMem = actor.BaseAddress.GetMemory(Offsets.Main.MouthGloss);
+			this.lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
 			this.lipGlossMem.ValueChanged += this.OnLipTintMemChanged;
 			this.lipGlossMem.Name = "Lips Gloss";
 			this.OnLipTintMemChanged(null, null);

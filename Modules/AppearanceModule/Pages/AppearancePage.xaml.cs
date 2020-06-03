@@ -13,16 +13,9 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	/// </summary>
 	public partial class AppearancePage : UserControl
 	{
-		private IBaseMemoryOffset baseOffset;
-		private AppearanceFile refreshCacheFile;
-
 		public AppearancePage()
 		{
 			this.InitializeComponent();
-
-			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
-			refreshService.OnRefreshStarting += this.RefreshService_OnRefreshStarting;
-			refreshService.OnRefreshComplete += this.RefreshService_OnRefreshComplete;
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
@@ -75,31 +68,10 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		{
 			bool hasValidSelection = actor != null && (actor.Type == ActorTypes.Player || actor.Type == ActorTypes.BattleNpc || actor.Type == ActorTypes.EventNpc);
 
-			if (hasValidSelection)
-				this.baseOffset = actor.BaseAddress;
-
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.IsEnabled = hasValidSelection;
 			});
-		}
-
-		private void RefreshService_OnRefreshStarting(IBaseMemoryOffset baseOffset)
-		{
-			if (this.baseOffset != baseOffset)
-				return;
-
-			this.refreshCacheFile = new AppearanceFile();
-			this.refreshCacheFile.Read(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
-		}
-
-		private void RefreshService_OnRefreshComplete(IBaseMemoryOffset baseOffset)
-		{
-			if (this.refreshCacheFile != null)
-			{
-				this.refreshCacheFile.Write(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
-				this.refreshCacheFile = null;
-			}
 		}
 	}
 }

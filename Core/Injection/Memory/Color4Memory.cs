@@ -7,8 +7,8 @@ namespace ConceptMatrix.Injection.Memory
 
 	public class Color4Memory : MemoryBase<Color4>
 	{
-		public Color4Memory(IProcess process, UIntPtr address)
-			: base(process, address, 16)
+		public Color4Memory(IProcess process, IMemoryOffset[] offsets)
+			: base(process, offsets, 16)
 		{
 		}
 

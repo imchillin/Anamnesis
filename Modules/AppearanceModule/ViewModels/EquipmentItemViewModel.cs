@@ -9,8 +9,8 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	{
 		private readonly IMemory<Equipment> memory;
 
-		public EquipmentItemViewModel(IMemory<Equipment> equipmentMemory, ItemSlots slot, IBaseMemoryOffset baseOffset)
-			: base(slot, baseOffset)
+		public EquipmentItemViewModel(IMemory<Equipment> equipmentMemory, ItemSlots slot, Actor actor)
+			: base(slot, actor)
 		{
 			this.memory = equipmentMemory;
 			Equipment.Item item = equipmentMemory.Value.GetItem(slot);

@@ -10,7 +10,7 @@ namespace ConceptMatrix.Injection.Offsets
 	/// Flag offsets are special offsets that indicate a static chunk of memory to be written for either
 	/// On or Off states. Flag Offsets cannot be altered otherwise.
 	/// </summary>
-	public class FlagOffset : BaseOffset
+	public class FlagOffset : BaseOffset<Flag>
 	{
 		public readonly byte[] On;
 		public readonly byte[] Off;
@@ -29,10 +29,10 @@ namespace ConceptMatrix.Injection.Offsets
 			this.Off = off;
 		}
 
-		public IMemory<Flag> GetMemory()
+		/*public IMemory<Flag> GetMemory()
 		{
 			UIntPtr address = injection.GetAddress(this);
 			return new FlagMemory(injection.Process, address, this.On, this.Off);
-		}
+		}*/
 	}
 }
