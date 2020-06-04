@@ -13,9 +13,7 @@ namespace ConceptMatrix.GUI.Services
 
 	public class ViewService : IViewService
 	{
-		private List<Page> pendingPages = new List<Page>();
-		private Dictionary<string, Page> pages = new Dictionary<string, Page>();
-		private bool isStarted = false;
+		private readonly Dictionary<string, Page> pages = new Dictionary<string, Page>();
 
 		public delegate void PageEvent(Page page);
 		public delegate Task DrawerEvent(string title, UserControl drawer, DrawerDirection direction);
@@ -43,14 +41,6 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Start()
 		{
-			foreach (Page page in this.pendingPages)
-			{
-				page.Create();
-			}
-
-			this.pendingPages.Clear();
-
-			this.isStarted = true;
 			return Task.CompletedTask;
 		}
 
@@ -67,15 +57,6 @@ namespace ConceptMatrix.GUI.Services
 			if (!typeof(UserControl).IsAssignableFrom(page.Type))
 				throw new Exception($"Page: {page.Type} does not extend from UserControl.");
 
-			if (!this.isStarted)
-			{
-				this.pendingPages.Add(page);
-			}
-			else
-			{
-				page.Create();
-			}
-
 			this.pages.Add(name, page);
 			this.AddingPage?.Invoke(page);
 		}
@@ -88,9 +69,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task ShowDrawer(object view, string title, DrawerDirection direction)
 		{
-			UserControl control = view as UserControl;
-
-			if (control == null)
+			if (!(view is UserControl control))
 				throw new Exception("Invalid view");
 
 			return this.ShowingDrawer?.Invoke(title, control, direction);
@@ -149,29 +128,23 @@ namespace ConceptMatrix.GUI.Services
 		public class Page
 		{
 			public Type Type;
-			public UserControl Instance;
 
 			public string Name { get; set; }
 			public string Icon { get; set; }
 
-			public void Create()
+			public UserControl Create()
 			{
 				try
 				{
-					App.Current.Dispatcher.Invoke(() =>
-					{
-						this.Instance = Activator.CreateInstance(this.Type) as UserControl;
-					});
+					return Activator.CreateInstance(this.Type) as UserControl;
 				}
 				catch (TargetInvocationException ex)
 				{
-					Log.Write(new Exception($"Failed to create page: {this.Type}", ex.InnerException));
-					return;
+					throw new Exception($"Failed to create page: {this.Type}", ex.InnerException);
 				}
 				catch (Exception ex)
 				{
-					Log.Write(new Exception($"Failed to create page: {this.Type}", ex));
-					return;
+					throw new Exception($"Failed to create page: {this.Type}", ex);
 				}
 			}
 		}

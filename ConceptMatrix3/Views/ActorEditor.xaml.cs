@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix.GUI.Views
 {
+	using System.Collections.Generic;
+	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.GUI.Services;
 
@@ -12,6 +14,7 @@ namespace ConceptMatrix.GUI.Views
 	public partial class ActorEditor : UserControl
 	{
 		private UserControl currentView;
+		private Dictionary<ViewService.Page, UserControl> pages = new Dictionary<ViewService.Page, UserControl>();
 
 		public ActorEditor()
 		{
@@ -20,7 +23,15 @@ namespace ConceptMatrix.GUI.Views
 
 		private void OnShowPage(ViewService.Page page)
 		{
-			this.currentView = page.Instance;
+			if (!this.pages.ContainsKey(page))
+			{
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					this.pages.Add(page, page.Create());
+				});
+			}
+
+			this.currentView = this.pages[page];
 			this.ViewArea.Content = this.currentView;
 		}
 	}
