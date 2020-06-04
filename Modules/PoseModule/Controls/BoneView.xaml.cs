@@ -32,6 +32,8 @@ namespace ConceptMatrix.PoseModule.Controls
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 			this.BindDataContext();
+
+			this.IsEnabledChanged += this.OnIsEnabledChanged;
 		}
 
 		public string Label
@@ -46,21 +48,6 @@ namespace ConceptMatrix.PoseModule.Controls
 			set => NameDp.Set(this, value);
 		}
 
-		public new bool IsEnabled
-		{
-			get
-			{
-				if (this.bone == null || !this.bone.IsEnabled)
-					return false;
-
-				return base.IsEnabled;
-			}
-			set
-			{
-				base.IsEnabled = value;
-			}
-		}
-
 		public static bool HasView(Bone bone)
 		{
 			return BoneViews.ContainsKey(bone);
@@ -69,6 +56,11 @@ namespace ConceptMatrix.PoseModule.Controls
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			this.BindDataContext();
+		}
+
+		private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			this.UpdateState();
 		}
 
 		private void BindDataContext()
@@ -120,11 +112,9 @@ namespace ConceptMatrix.PoseModule.Controls
 
 			this.linesToChildren.Clear();
 
-			/*foreach (Bone bone in this.bone.Children)
+			Bone bone = this.bone.Parent;
+			if (bone != null && BoneViews.ContainsKey(bone))
 			{
-				if (!BoneViews.ContainsKey(bone))
-					continue;
-
 				foreach (BoneView childView in BoneViews[bone])
 				{
 					if (this.Parent is Canvas c1 && childView.Parent is Canvas c2 && c1 == c2)
@@ -149,9 +139,9 @@ namespace ConceptMatrix.PoseModule.Controls
 						line2.Stroke = Brushes.Transparent;
 						////line2.Opacity = 0.1f;
 
-						line2.MouseEnter += this.OnMouseEnter;
-						line2.MouseLeave += this.OnMouseLeave;
-						line2.MouseUp += this.OnMouseUp;
+						line2.MouseEnter += childView.OnMouseEnter;
+						line2.MouseLeave += childView.OnMouseLeave;
+						line2.MouseUp += childView.OnMouseUp;
 
 						line2.X1 = line.X1;
 						line2.Y1 = line.Y1;
@@ -162,7 +152,7 @@ namespace ConceptMatrix.PoseModule.Controls
 						this.mouseLinesToChildren.Add(line2);
 					}
 				}
-			}*/
+			}
 		}
 
 		private void OnViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

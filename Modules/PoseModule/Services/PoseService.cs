@@ -18,6 +18,12 @@ namespace ConceptMatrix.PoseModule
 		private IMemory<Flag> phys2Mem;
 		private IMemory<Flag> phys3Mem;
 
+		public delegate void PoseEvent(bool value);
+
+		public event PoseEvent OnEnabledChanged;
+		public event PoseEvent OnFreezePhysicsChanged;
+		public event PoseEvent OnFreezePositionsChanged;
+
 		public bool IsEnabled
 		{
 			get
@@ -27,6 +33,9 @@ namespace ConceptMatrix.PoseModule
 
 			set
 			{
+				if (this.IsEnabled == value)
+					return;
+
 				// rotations
 				this.skel1Mem.Value = Flag.Get(value);
 				this.skel2Mem.Value = Flag.Get(value);
@@ -38,6 +47,8 @@ namespace ConceptMatrix.PoseModule
 
 				this.FreezePositions = value;
 				this.FreezePhysics = value;
+
+				this.OnEnabledChanged?.Invoke(value);
 			}
 		}
 
@@ -53,6 +64,8 @@ namespace ConceptMatrix.PoseModule
 				this.phys1Mem.Value = Flag.Get(value);
 				this.phys2Mem.Value = Flag.Get(value);
 				this.phys3Mem.Value = Flag.Get(value);
+
+				this.OnFreezePhysicsChanged?.Invoke(value);
 			}
 		}
 
@@ -65,6 +78,8 @@ namespace ConceptMatrix.PoseModule
 			set
 			{
 				this.skel5Mem.Value = Flag.Get(value);
+
+				this.OnFreezePositionsChanged?.Invoke(value);
 			}
 		}
 

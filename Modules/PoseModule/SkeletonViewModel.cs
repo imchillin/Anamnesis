@@ -433,8 +433,6 @@ namespace ConceptMatrix.PoseModule
 			catch (TaskCanceledException)
 			{
 			}
-
-			this.CurrentBone = null;
 		}
 	}
 }

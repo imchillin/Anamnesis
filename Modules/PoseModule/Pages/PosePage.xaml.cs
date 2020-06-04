@@ -7,10 +7,12 @@ namespace ConceptMatrix.PoseModule
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix.PoseModule.Dialogs;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
 	public partial class PosePage : UserControl
 	{
 		private PoseService poseService;
@@ -18,6 +20,7 @@ namespace ConceptMatrix.PoseModule
 		public PosePage()
 		{
 			this.poseService = Services.Get<PoseService>();
+			this.poseService.OnEnabledChanged += this.PoseService_OnEnabledChanged;
 
 			this.InitializeComponent();
 
@@ -25,6 +28,8 @@ namespace ConceptMatrix.PoseModule
 			this.ContentArea.DataContext = this.SkeletonViewModel;
 
 			this.TopBarArea.DataContext = this;
+
+			this.PoseService_OnEnabledChanged(this.poseService.IsEnabled);
 		}
 
 		public SkeletonViewModel SkeletonViewModel { get; set; }
@@ -57,6 +62,14 @@ namespace ConceptMatrix.PoseModule
 		{
 			this.SkeletonViewModel.Clear();
 			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
+		}
+
+		private void PoseService_OnEnabledChanged(bool value)
+		{
+			if (this.SkeletonViewModel != null)
+				this.SkeletonViewModel.CurrentBone = null;
+
+			this.PoseContent.IsEnabled = value;
 		}
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)

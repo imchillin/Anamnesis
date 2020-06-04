@@ -82,7 +82,7 @@
 		</Border>
 
 		<!-- Content -->
-		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
+		<Border x:Name="PoseContent" Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
 			<Grid>
 				<views:Pose3DView x:Name="ThreeDView" Visibility="Hidden"/>
 				<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
