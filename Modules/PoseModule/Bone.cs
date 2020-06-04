@@ -204,7 +204,7 @@ namespace ConceptMatrix.PoseModule
 			// and push those values to the game memory
 			CmTransform live = this.LiveTransform;
 			live.Position = position;
-			////live.Scale = scale.ToCmVector();
+			live.Scale = scale.ToCmVector();
 			live.Rotation = rotation.ToCmQuaternion();
 			this.LiveTransform = live;
 
