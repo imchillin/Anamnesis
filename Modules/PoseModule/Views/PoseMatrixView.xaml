@@ -118,7 +118,7 @@
 
 
 						<TextBlock Grid.Column="0" Grid.Row="2" Text="Cheeks" Style="{DynamicResource Label}"/>
-						<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal"  Visibility="{Binding IsHroth, Converter={StaticResource !B2V}}">
+						<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal"  Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}">
 							<controls:BoneView BoneName="CheekLeft" Label="L"/>
 							<controls:BoneView BoneName="CheekRight" Label="R"/>
 						</StackPanel>
