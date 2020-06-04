@@ -22,23 +22,10 @@ namespace ConceptMatrix.PoseModule
 	{
 		public ModelVisual3D Root;
 
-		private IMemory<Flag> skel1Mem;
-		private IMemory<Flag> skel2Mem;
-		private IMemory<Flag> skel3Mem;
-		private IMemory<Flag> skel4Mem;
-		private IMemory<Flag> skel5Mem;
-		private IMemory<Flag> skel6Mem;
-
-		private IMemory<Flag> phys1Mem;
-		private IMemory<Flag> phys2Mem;
-		private IMemory<Flag> phys3Mem;
-
 		private IMemory<CmQuaternion> rootRotationMem;
 
 		private Dictionary<string, Bone> bones;
 		private Bone currentBone;
-		private bool enabled;
-		private bool freezePhysics;
 
 		private IMemory<Appearance> appearanceMem;
 
@@ -52,103 +39,6 @@ namespace ConceptMatrix.PoseModule
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public bool IsEnabled
-		{
-			get
-			{
-				return this.enabled;
-			}
-
-			set
-			{
-				this.CurrentBone = null;
-				this.enabled = value;
-
-				if (this.enabled)
-				{
-					// rotations
-					this.skel1Mem.Value = Flag.Enabled;
-					this.skel2Mem.Value = Flag.Enabled;
-					this.skel3Mem.Value = Flag.Enabled;
-
-					// scale
-					this.skel4Mem.Value = Flag.Enabled;
-					this.skel6Mem.Value = Flag.Enabled;
-
-					// Poll changes thread
-					new Thread(new ThreadStart(this.PollChanges)).Start();
-				}
-				else
-				{
-					// rotations
-					this.skel1Mem.Value = Flag.Disabled;
-					this.skel2Mem.Value = Flag.Disabled;
-					this.skel3Mem.Value = Flag.Disabled;
-
-					// scale
-					this.skel4Mem.Value = Flag.Disabled;
-					this.skel6Mem.Value = Flag.Disabled;
-				}
-
-				this.FreezePositions = value;
-				this.FreezePhysics = value;
-
-				if (value)
-				{
-					Application.Current.Dispatcher.Invoke(() =>
-					{
-						foreach (Bone bone in this.bones.Values)
-						{
-							bone.ReadTransform();
-						}
-
-						foreach (Bone bone in this.bones.Values)
-						{
-							bone.WriteTransform(this.Root);
-						}
-					});
-				}
-			}
-		}
-
-		public bool FreezePhysics
-		{
-			get
-			{
-				return this.freezePhysics;
-			}
-
-			set
-			{
-				this.freezePhysics = value;
-
-				if (this.freezePhysics)
-				{
-					this.phys1Mem.Value = Flag.Enabled;
-					this.phys2Mem.Value = Flag.Enabled;
-					this.phys3Mem.Value = Flag.Enabled;
-				}
-				else
-				{
-					this.phys1Mem.Value = Flag.Disabled;
-					this.phys2Mem.Value = Flag.Disabled;
-					this.phys3Mem.Value = Flag.Disabled;
-				}
-			}
-		}
-
-		public bool FreezePositions
-		{
-			get
-			{
-				return this.skel5Mem.Value.IsEnabled;
-			}
-			set
-			{
-				this.skel5Mem.Value = value ? Flag.Enabled : Flag.Disabled;
-			}
-		}
-
 		public bool FlipSides { get; set; } = false;
 		public bool ParentingEnabled { get; set; } = true;
 
@@ -161,7 +51,7 @@ namespace ConceptMatrix.PoseModule
 
 			set
 			{
-				if (!this.IsEnabled)
+				if (Application.Current == null)
 					return;
 
 				// Ensure we have written any pending rotations before changing bone targets
@@ -174,7 +64,12 @@ namespace ConceptMatrix.PoseModule
 				}
 
 				this.currentBone = value;
-				this.currentBone?.ReadTransform();
+
+				if (this.currentBone != null)
+				{
+					this.currentBone.ReadTransform();
+					new Thread(new ThreadStart(this.PollChanges)).Start();
+				}
 			}
 		}
 
@@ -288,18 +183,6 @@ namespace ConceptMatrix.PoseModule
 
 		public async Task Initialize(Actor actor)
 		{
-			IInjectionService injection = Services.Get<IInjectionService>();
-
-			this.skel1Mem = injection.GetMemory(Offsets.Main.Skeleton1Flag);
-			this.skel2Mem = injection.GetMemory(Offsets.Main.Skeleton2Flag);
-			this.skel3Mem = injection.GetMemory(Offsets.Main.Skeleton3Flag);
-			this.skel4Mem = injection.GetMemory(Offsets.Main.Skeleton4flag);
-			this.skel5Mem = injection.GetMemory(Offsets.Main.Skeleton5Flag);
-			this.skel6Mem = injection.GetMemory(Offsets.Main.Skeleton6Flag);
-			this.phys1Mem = injection.GetMemory(Offsets.Main.Physics1Flag);
-			this.phys2Mem = injection.GetMemory(Offsets.Main.Physics2Flag);
-			this.phys3Mem = injection.GetMemory(Offsets.Main.Physics3Flag);
-
 			this.appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
 			this.rootRotationMem = actor.GetMemory(Offsets.Main.Rotation);
 
@@ -318,22 +201,23 @@ namespace ConceptMatrix.PoseModule
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsVieraEars03)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsVieraEars04)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Race)));
+
+			await Application.Current.Dispatcher.InvokeAsync(() =>
+			{
+				foreach (Bone bone in this.bones.Values)
+				{
+					bone.ReadTransform();
+				}
+
+				foreach (Bone bone in this.bones.Values)
+				{
+					bone.WriteTransform(this.Root);
+				}
+			});
 		}
 
 		public void Clear()
 		{
-			this.IsEnabled = false;
-
-			this.skel1Mem?.Dispose();
-			this.skel2Mem?.Dispose();
-			this.skel3Mem?.Dispose();
-			this.skel4Mem?.Dispose();
-			this.skel5Mem?.Dispose();
-			this.skel6Mem?.Dispose();
-			this.phys1Mem?.Dispose();
-			this.phys2Mem?.Dispose();
-			this.phys3Mem?.Dispose();
-
 			this.appearanceMem?.Dispose();
 			this.rootRotationMem?.Dispose();
 
@@ -523,14 +407,13 @@ namespace ConceptMatrix.PoseModule
 
 		private void PollChanges()
 		{
+			Bone bone = this.CurrentBone;
+
 			try
 			{
-				while (this.IsEnabled && Application.Current != null)
+				while (bone == this.currentBone && Application.Current != null)
 				{
 					Thread.Sleep(32);
-
-					if (!this.IsEnabled)
-						continue;
 
 					if (this.CurrentBone == null)
 						continue;
@@ -551,7 +434,7 @@ namespace ConceptMatrix.PoseModule
 			{
 			}
 
-			this.IsEnabled = false;
+			this.CurrentBone = null;
 		}
 	}
 }

@@ -14,5 +14,10 @@ namespace ConceptMatrix
 		{
 			this.IsEnabled = enabled;
 		}
+
+		public static Flag Get(bool enabled)
+		{
+			return enabled ? Enabled : Disabled;
+		}
 	}
 }

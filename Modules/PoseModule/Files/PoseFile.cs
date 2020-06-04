@@ -58,10 +58,12 @@ namespace ConceptMatrix.PoseModule
 
 		public async Task Write(SkeletonViewModel skeleton, Groups groups)
 		{
-			skeleton.IsEnabled = true;
+			PoseService poseService = Services.Get<PoseService>();
+
+			poseService.IsEnabled = true;
 
 			// don't freeze positions if we aren't writing any
-			skeleton.FreezePositions = this.IncludePositions;
+			poseService.FreezePositions = this.IncludePositions;
 
 			foreach (Bone bone in skeleton.Bones)
 			{
@@ -101,7 +103,7 @@ namespace ConceptMatrix.PoseModule
 			}
 
 			await Task.Delay(100);
-			skeleton.FreezePositions = true;
+			poseService.FreezePositions = true;
 		}
 	}
 }

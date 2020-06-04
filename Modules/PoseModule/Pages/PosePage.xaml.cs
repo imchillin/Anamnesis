@@ -13,14 +13,45 @@ namespace ConceptMatrix.PoseModule
 	/// </summary>
 	public partial class PosePage : UserControl
 	{
+		private PoseService poseService;
+
 		public PosePage()
 		{
+			this.poseService = Services.Get<PoseService>();
+
 			this.InitializeComponent();
+
 			this.SkeletonViewModel = new SkeletonViewModel();
 			this.ContentArea.DataContext = this.SkeletonViewModel;
+
+			this.TopBarArea.DataContext = this;
 		}
 
 		public SkeletonViewModel SkeletonViewModel { get; set; }
+
+		public bool PosingEnabled
+		{
+			get => this.poseService.IsEnabled;
+			set => this.poseService.IsEnabled = value;
+		}
+
+		public bool FreezePhysics
+		{
+			get => this.poseService.FreezePhysics;
+			set => this.poseService.FreezePhysics = value;
+		}
+
+		public bool FlipSides
+		{
+			get => this.SkeletonViewModel.FlipSides;
+			set => this.SkeletonViewModel.FlipSides = value;
+		}
+
+		public bool ParentingEnabled
+		{
+			get => this.SkeletonViewModel.ParentingEnabled;
+			set => this.SkeletonViewModel.ParentingEnabled = value;
+		}
 
 		private async void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -28,15 +59,8 @@ namespace ConceptMatrix.PoseModule
 			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
 		}
 
-		private void OnUnloaded(object sender, RoutedEventArgs e)
-		{
-			this.SkeletonViewModel.IsEnabled = false;
-		}
-
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
-			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
-
 			try
 			{
 				IFileService fileService = Services.Get<IFileService>();
@@ -46,7 +70,7 @@ namespace ConceptMatrix.PoseModule
 					return;
 
 				if (file is LegacyPoseFile legacyFile)
-					file = legacyFile.Upgrade(vm.Race);
+					file = legacyFile.Upgrade(this.SkeletonViewModel.Race);
 
 				IViewService viewService = Services.Get<IViewService>();
 				PoseFile.Groups groups = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Groups>("Load Pose...");
@@ -56,7 +80,7 @@ namespace ConceptMatrix.PoseModule
 
 				if (file is PoseFile poseFile)
 				{
-					await poseFile.Write(vm, groups);
+					await poseFile.Write(this.SkeletonViewModel, groups);
 				}
 			}
 			catch (Exception ex)
@@ -67,8 +91,6 @@ namespace ConceptMatrix.PoseModule
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
-
 			IViewService viewService = Services.Get<IViewService>();
 			PoseFile.Groups groups = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Groups>("Save Pose...");
 
@@ -77,7 +99,7 @@ namespace ConceptMatrix.PoseModule
 
 			IFileService fileService = Services.Get<IFileService>();
 			PoseFile file = new PoseFile();
-			file.Read(vm.Bones, groups);
+			file.Read(this.SkeletonViewModel.Bones, groups);
 
 			await fileService.SaveAs(file);
 		}

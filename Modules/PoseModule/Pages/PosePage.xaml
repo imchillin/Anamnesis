@@ -11,7 +11,6 @@
 			 xmlns:views="clr-namespace:ConceptMatrix.PoseModule.Views"
 			 mc:Ignorable="d" 
 			 Loaded="OnLoaded"
-			 Unloaded="OnUnloaded"
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
 	<Grid x:Name="ContentArea">
@@ -52,7 +51,7 @@
 		</Grid>
 
 		<!-- top Bar -->
-		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3">
+		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3" x:Name="TopBarArea">
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
 				<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
@@ -68,7 +67,7 @@
 				</ListBox>
 
 				<Label Content="Enable" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
-				<ToggleButton IsChecked="{Binding IsEnabled}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>
+				<ToggleButton IsChecked="{Binding PosingEnabled}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>
 
 				<Label Content="Freeze Physics" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
 				<ToggleButton IsChecked="{Binding FreezePhysics}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>
