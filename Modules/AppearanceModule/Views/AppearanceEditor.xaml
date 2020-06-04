@@ -23,8 +23,7 @@
 
 		<DataTemplate x:Key="GenderedComboBoxItem">
 			<Grid>
-				<TextBlock Text="{Binding Feminine}" Visibility="{Binding DataContext.Appearance.Gender, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AppearancePage}}, Converter={StaticResource fGenderVis}}"/>
-				<TextBlock Text="{Binding Masculine}" Visibility="{Binding DataContext.Appearance.Gender, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AppearancePage}}, Converter={StaticResource mGenderVis}}"/>
+				<TextBlock Text="{Binding Feminine}"/>
 			</Grid>
 		</DataTemplate>
 
