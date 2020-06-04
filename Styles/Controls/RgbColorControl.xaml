@@ -11,7 +11,7 @@
 	<Button Height="20" Width="20" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="2" VerticalAlignment="Center" Background="Transparent">
 		<Border Height="18" Width="18" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1" x:Name="ContentArea">
 			<Border.Background>
-				<SolidColorBrush x:Name="PreviewColor" Color="{Binding WpfColor, FallbackValue=White}"/>
+				<SolidColorBrush x:Name="PreviewColor" Color="White"/>
 			</Border.Background>
 		</Border>
 	</Button>

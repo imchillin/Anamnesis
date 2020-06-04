@@ -21,7 +21,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	[AddINotifyPropertyChangedInterface]
 	public partial class RgbColorControl : UserControl
 	{
-		public static readonly IBind<CmColor> ValueDp = Binder.Register<CmColor, RgbColorControl>(nameof(Value), OnValueChanged);
+		public static readonly IBind<CmColor?> ValueDp = Binder.Register<CmColor?, RgbColorControl>(nameof(Value), OnValueChanged);
 		public static readonly IBind<string> NameDp = Binder.Register<string, RgbColorControl>(nameof(DisplayName));
 
 		public RgbColorControl()
@@ -37,14 +37,14 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set => NameDp.Set(this, value);
 		}
 
-		public CmColor Value
+		public CmColor? Value
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
 		}
 
 		[SuppressPropertyChangedWarnings]
-		private static void OnValueChanged(RgbColorControl sender, CmColor value)
+		private static void OnValueChanged(RgbColorControl sender, CmColor? value)
 		{
 			sender.UpdatePreview();
 		}
@@ -62,7 +62,11 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			ColorSelectorDrawer selector = new ColorSelectorDrawer();
 			selector.EnableAlpha = false;
-			selector.Value = new Color4(this.Value);
+
+			if (this.Value == null)
+				this.Value = new CmColor(1, 1, 1);
+
+			selector.Value = new Color4((CmColor)this.Value);
 
 			selector.ValueChanged += (v) =>
 			{
@@ -75,10 +79,19 @@ namespace ConceptMatrix.WpfStyles.Controls
 		private void UpdatePreview()
 		{
 			WpfColor c = default;
-			c.R = (byte)(Clamp(this.Value.R) * 255);
-			c.G = (byte)(Clamp(this.Value.G) * 255);
-			c.B = (byte)(Clamp(this.Value.B) * 255);
-			c.A = 255;
+
+			if (this.Value != null)
+			{
+				CmColor color = (CmColor)this.Value;
+				c.R = (byte)(Clamp(color.R) * 255);
+				c.G = (byte)(Clamp(color.G) * 255);
+				c.B = (byte)(Clamp(color.B) * 255);
+				c.A = 255;
+			}
+			else
+			{
+				c.A = 0;
+			}
 
 			this.PreviewColor.Color = c;
 		}
