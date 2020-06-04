@@ -3,11 +3,8 @@
 
 namespace ConceptMatrix.AppearanceModule.Views
 {
-	using System.ComponentModel;
-	using System.Diagnostics;
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
 	using PropertyChanged;
@@ -23,6 +20,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public EquipmentEditor()
 		{
 			this.InitializeComponent();
+
+			this.ContentArea.DataContext = this;
 		}
 
 		public EquipmentWeaponViewModel MainHand { get; set; }
@@ -40,47 +39,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.OnActorChanged(this.DataContext as Actor);
-		}
-
-		[SuppressPropertyChangedWarnings]
-		private void OnActorChanged(Actor actor)
-		{
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				this.IsEnabled = false;
-			});
-
-			this.eqMem?.Dispose();
-			this.MainHand?.Dispose();
-			this.OffHand?.Dispose();
-			this.eqMem?.Dispose();
-			this.Head?.Dispose();
-			this.Body?.Dispose();
-			this.Hands?.Dispose();
-			this.Legs?.Dispose();
-			this.Feet?.Dispose();
-			this.Ears?.Dispose();
-			this.Neck?.Dispose();
-			this.Wrists?.Dispose();
-			this.LeftRing?.Dispose();
-			this.RightRing?.Dispose();
-
-			this.MainHand = null;
-			this.OffHand = null;
-			this.Head = null;
-			this.Body = null;
-			this.Hands = null;
-			this.Legs = null;
-			this.Feet = null;
-			this.Ears = null;
-			this.Neck = null;
-			this.Wrists = null;
-			this.LeftRing = null;
-			this.RightRing = null;
-
-			if (actor == null || (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.BattleNpc && actor.Type != ActorTypes.EventNpc))
-				return;
+			Actor actor = this.DataContext as Actor;
 
 			// Weapon slots
 			this.MainHand = new EquipmentWeaponViewModel(ItemSlots.MainHand, actor);
@@ -99,13 +58,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.Wrists = new EquipmentItemViewModel(this.eqMem, ItemSlots.Wrists, actor);
 			this.LeftRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.LeftRing, actor);
 			this.RightRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.RightRing, actor);
-
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				////this.ContentArea.DataContext = null;
-				this.ContentArea.DataContext = this;
-				this.IsEnabled = true;
-			});
 		}
 	}
 }
