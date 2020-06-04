@@ -112,7 +112,7 @@
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Border ToolTip="{Binding Name}" Background="Transparent" Width="48" Height="40" Margin="0">
-						<fa:IconImage Icon="{Binding Icon}" Foreground="{DynamicResource MaterialDesignBody}" Margin="6" HorizontalAlignment="Center"/>
+						<fa:IconImage Icon="{Binding Icon}" Foreground="{DynamicResource MaterialDesignBody}" Margin="6" HorizontalAlignment="Center" Opacity="0.5"/>
 					</Border>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
