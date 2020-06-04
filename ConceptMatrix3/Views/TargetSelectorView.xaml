@@ -20,7 +20,7 @@
 			<ItemsControl ItemsSource="{Binding Entities, FallbackValue=123}" Margin="0" Padding="0">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<RadioButton Margin="0, 6, 0, 6"  IsChecked="{Binding IsSelected}" GroupName="SelectionGroup" Checked="OnSelected">
+						<RadioButton Margin="0, 6, 0, 6" GroupName="SelectionGroup" Checked="OnSelected">
 							<Grid VerticalAlignment="Center" Margin="0, -7, 0, 0">
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="20"/>
