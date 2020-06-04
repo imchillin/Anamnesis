@@ -75,7 +75,10 @@ namespace ConceptMatrix.PoseModule.Controls
 					this.viewModel = viewModel;
 					this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
 
-					this.SetBone(this.BoneName);
+					if (this.viewModel.Bones != null)
+					{
+						this.SetBone(this.BoneName);
+					}
 				}
 				else
 				{

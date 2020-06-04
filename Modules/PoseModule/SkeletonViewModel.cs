@@ -154,6 +154,9 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
+				if (this.bones == null)
+					return null;
+
 				return this.bones.Values;
 			}
 		}
