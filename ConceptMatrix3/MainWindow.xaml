@@ -7,6 +7,7 @@
 		xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
+		xmlns:cm3Core ="clr-namespace:ConceptMatrix;assembly=Core"
 		xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
 		xmlns:cmc="clr-namespace:ConceptMatrix;assembly=Core"
 		mc:Ignorable="d"
@@ -38,11 +39,6 @@
 					</Setter.Value>
 				</Setter>
 			</Style>
-
-			<DataTemplate DataType="{x:Type cmc:Actor}">
-				<TextBlock Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}"/>
-			</DataTemplate>
-
 		</ResourceDictionary>
 	</Window.Resources>
 
@@ -140,17 +136,16 @@
 			<views:HomeView Margin="0, 40, 0, 0"/>
 
 			<!-- Tabs -->
-			<dragablz:TabablzControl x:Name="Tabs" ItemsSource="{Binding Actors}" Style="{StaticResource TabStyle}" BorderThickness="0" Margin="0">
+			<dragablz:TabablzControl x:Name="Tabs" 
+									 ItemsSource="{Binding Actors}"
+									 Style="{StaticResource TabStyle}" 
+									 BorderThickness="0" 
+									 Margin="0" 
+									 ShowDefaultCloseButton="True">
 
 				<dragablz:TabablzControl.InterTabController>
-					<dragablz:InterTabController/>
+					<dragablz:InterTabController InterTabClient="{Binding TabClient}"/>
 				</dragablz:TabablzControl.InterTabController>
-
-				<dragablz:TabablzControl.ContentTemplate>
-					<DataTemplate>
-						<views:ActorEditor Background="{DynamicResource MaterialDesignPaper}"/>
-					</DataTemplate>
-				</dragablz:TabablzControl.ContentTemplate>
 
 			</dragablz:TabablzControl>
 
