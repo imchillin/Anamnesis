@@ -34,6 +34,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Shutdown()
 		{
+			this.IsRefreshing = false;
 			return Task.CompletedTask;
 		}
 
