@@ -245,7 +245,7 @@ namespace ConceptMatrix.GUI
 
 			TabItem tab = new TabItem();
 			tab.Content = new ActorEditor();
-			tab.Header = selector.Actor.Name;
+			tab.Header = new ActorHeaderView();
 			tab.DataContext = selector.Actor;
 			this.Tabs.Items.Add(tab);
 
