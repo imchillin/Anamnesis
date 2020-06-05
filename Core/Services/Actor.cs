@@ -84,12 +84,19 @@ namespace ConceptMatrix
 			this.Name = actor.Name;
 			this.Type = actor.Type;
 
-			foreach (WeakReference<IMemory> weakRef in this.memories)
+			try
 			{
-				if (weakRef.TryGetTarget(out mem))
+				foreach (WeakReference<IMemory> weakRef in this.memories)
 				{
-					mem.UpdateBaseOffset(this.baseOffset);
+					if (weakRef.TryGetTarget(out mem))
+					{
+						mem.UpdateBaseOffset(this.baseOffset);
+					}
 				}
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception("Failed to retarget actor", ex), "Selection", Log.Severity.Error);
 			}
 		}
 	}
