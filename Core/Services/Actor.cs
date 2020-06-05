@@ -59,24 +59,6 @@ namespace ConceptMatrix
 
 		public void Retarget(Actor actor)
 		{
-			IMemory mem;
-
-			if (actor == null)
-			{
-				this.Name = "Missing";
-				this.baseOffset = null;
-
-				foreach (WeakReference<IMemory> weakRef in this.memories)
-				{
-					if (weakRef.TryGetTarget(out mem))
-					{
-						mem.Dispose();
-					}
-				}
-
-				return;
-			}
-
 			if (this.baseOffset == actor.baseOffset)
 				return;
 
@@ -84,19 +66,13 @@ namespace ConceptMatrix
 			this.Name = actor.Name;
 			this.Type = actor.Type;
 
-			try
+			IMemory mem;
+			foreach (WeakReference<IMemory> weakRef in this.memories)
 			{
-				foreach (WeakReference<IMemory> weakRef in this.memories)
+				if (weakRef.TryGetTarget(out mem))
 				{
-					if (weakRef.TryGetTarget(out mem))
-					{
-						mem.UpdateBaseOffset(this.baseOffset);
-					}
+					mem.UpdateBaseOffset(this.baseOffset);
 				}
-			}
-			catch (Exception ex)
-			{
-				Log.Write(new Exception("Failed to retarget actor", ex), "Selection", Log.Severity.Error);
 			}
 		}
 	}
