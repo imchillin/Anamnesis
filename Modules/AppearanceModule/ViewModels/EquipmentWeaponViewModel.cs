@@ -67,8 +67,11 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			}
 		}
 
-		protected override void Apply()
+		public override void Apply()
 		{
+			if (this.DontApply)
+				return;
+
 			// Dont allow for setting none on the main hand
 			if (this.Slot == ItemSlots.MainHand && !this.HasWeapon)
 				return;

@@ -14,6 +14,8 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
 
+		public bool DontApply = false;
+
 		protected IGameDataService gameData;
 
 		protected Vector scale;
@@ -209,7 +211,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		public abstract void Dispose();
 
-		protected abstract void Apply();
+		public abstract void Apply();
 
 		protected IItem GetItem()
 		{
