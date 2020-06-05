@@ -29,7 +29,7 @@ namespace ConceptMatrix
 			get
 			{
 				// it would be nice if we had more info than this...
-				return this.Name + "_" + this.Type;
+				return this.Name;
 			}
 		}
 
@@ -59,6 +59,24 @@ namespace ConceptMatrix
 
 		public void Retarget(Actor actor)
 		{
+			IMemory mem;
+
+			if (actor == null)
+			{
+				this.Name = "Missing";
+				this.baseOffset = null;
+
+				foreach (WeakReference<IMemory> weakRef in this.memories)
+				{
+					if (weakRef.TryGetTarget(out mem))
+					{
+						mem.Dispose();
+					}
+				}
+
+				return;
+			}
+
 			if (this.baseOffset == actor.baseOffset)
 				return;
 
@@ -66,7 +84,6 @@ namespace ConceptMatrix
 			this.Name = actor.Name;
 			this.Type = actor.Type;
 
-			IMemory mem;
 			foreach (WeakReference<IMemory> weakRef in this.memories)
 			{
 				if (weakRef.TryGetTarget(out mem))
