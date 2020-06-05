@@ -22,6 +22,7 @@ namespace ConceptMatrix.PoseModule
 	{
 		public ModelVisual3D Root;
 
+		private Actor actor;
 		private IMemory<CmQuaternion> rootRotationMem;
 
 		private Dictionary<string, Bone> bones;
@@ -186,6 +187,13 @@ namespace ConceptMatrix.PoseModule
 
 		public async Task Initialize(Actor actor)
 		{
+			if (this.actor == actor)
+				return;
+
+			this.actor = actor;
+
+			this.Clear();
+
 			this.appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
 			this.rootRotationMem = actor.GetMemory(Offsets.Main.Rotation);
 

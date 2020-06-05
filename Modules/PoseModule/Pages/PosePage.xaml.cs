@@ -60,7 +60,6 @@ namespace ConceptMatrix.PoseModule
 
 		private async void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.SkeletonViewModel.Clear();
 			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
 		}
 
