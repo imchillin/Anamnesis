@@ -25,7 +25,7 @@ namespace ConceptMatrix
 
 		public static void Write(string message, string category = null, Severity severity = Severity.Log)
 		{
-			Console.WriteLine($"[{category}] ({severity}) {message}");
+			Debug.WriteLine($"[{category}] ({severity}) {message}");
 			OnLog?.Invoke(message, severity, category);
 		}
 
