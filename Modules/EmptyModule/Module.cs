@@ -13,7 +13,7 @@ namespace ConceptMatrix.BlankModule
 		public Task Initialize()
 		{
 			IViewService viewService = Services.Get<IViewService>();
-			viewService.AddPage<BlankPage>("Blank Module/Page");
+			viewService.AddPage<BlankPage>("Blank Page", "user");
 
 			return Task.CompletedTask;
 		}
