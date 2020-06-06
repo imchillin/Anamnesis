@@ -18,7 +18,10 @@ namespace ConceptMatrix.Injection
 
 		public string GamePath
 		{
-			get;
+			get
+			{
+				return this.service.GamePath;
+			}
 		}
 
 		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
