@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
+	using Anamnesis;
 	using ConceptMatrix.GameData;
 
 	public class EquipmentItemViewModel : EquipmentBaseViewModel

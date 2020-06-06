@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
+	using Anamnesis;
 	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
 

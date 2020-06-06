@@ -4,6 +4,7 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System.Collections.Generic;
+	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;

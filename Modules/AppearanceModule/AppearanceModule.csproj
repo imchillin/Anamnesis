@@ -51,6 +51,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Anamnesis">
+      <HintPath>..\..\Lib\Anamnesis.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\colors.dat" />
     <Resource Include="Assets\IconBorder.png" />
     <Resource Include="Assets\IconBorderSmall.png" />

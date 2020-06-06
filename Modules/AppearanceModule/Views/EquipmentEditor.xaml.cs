@@ -5,6 +5,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
 	using PropertyChanged;

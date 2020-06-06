@@ -6,6 +6,7 @@ namespace ConceptMatrix.GUI.Serialization.Converters
 	using System;
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
+	using Anamnesis;
 	using ConceptMatrix;
 
 	public class VectorConverter : JsonConverter<Vector>

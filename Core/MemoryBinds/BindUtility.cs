@@ -5,6 +5,7 @@ namespace ConceptMatrix.MemoryBinds
 {
 	using System.Collections.Generic;
 	using System.Runtime.CompilerServices;
+	using Anamnesis;
 
 	public static class BindUtility
 	{

@@ -9,9 +9,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
 	using PropertyChanged;
+
+	using AnAppearance = Anamnesis.Appearance;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
@@ -73,11 +76,11 @@ namespace ConceptMatrix.AppearanceModule.Views
 				if (value == null)
 					return;
 
-				if (value.Race == ConceptMatrix.Appearance.Races.Hrothgar)
-					this.Appearance.Gender = ConceptMatrix.Appearance.Genders.Masculine;
+				if (value.Race == AnAppearance.Races.Hrothgar)
+					this.Appearance.Gender = AnAppearance.Genders.Masculine;
 
-				if (value.Race == ConceptMatrix.Appearance.Races.Viera)
-					this.Appearance.Gender = ConceptMatrix.Appearance.Genders.Feminine;
+				if (value.Race == AnAppearance.Races.Viera)
+					this.Appearance.Gender = AnAppearance.Genders.Feminine;
 
 				this.Appearance.Race = value.Race;
 				this.TribeComboBox.ItemsSource = value.Tribes;
@@ -208,7 +211,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.IsEnabled = true;
 
 				if (this.Appearance.Race == 0)
-					this.Appearance.Race = ConceptMatrix.Appearance.Races.Hyur;
+					this.Appearance.Race = AnAppearance.Races.Hyur;
 
 				this.Race = this.gameDataService.Races.Get((byte)this.Appearance.Race);
 				this.TribeComboBox.ItemsSource = this.Race.Tribes;
@@ -245,17 +248,17 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(AppearanceEditor.Race)));
 				this.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(AppearanceEditor.Tribe)));
 
-				this.HasFur = this.Appearance.Race == ConceptMatrix.Appearance.Races.Hrothgar;
-				this.HasTail = this.Appearance.Race == ConceptMatrix.Appearance.Races.Hrothgar || this.Appearance.Race == ConceptMatrix.Appearance.Races.Miqote || this.Appearance.Race == ConceptMatrix.Appearance.Races.AuRa;
-				this.HasLimbal = this.Appearance.Race == ConceptMatrix.Appearance.Races.AuRa;
-				this.HasEars = this.Appearance.Race == ConceptMatrix.Appearance.Races.Viera;
+				this.HasFur = this.Appearance.Race == AnAppearance.Races.Hrothgar;
+				this.HasTail = this.Appearance.Race == AnAppearance.Races.Hrothgar || this.Appearance.Race == AnAppearance.Races.Miqote || this.Appearance.Race == AnAppearance.Races.AuRa;
+				this.HasLimbal = this.Appearance.Race == AnAppearance.Races.AuRa;
+				this.HasEars = this.Appearance.Race == AnAppearance.Races.Viera;
 				this.HasMuscles = !this.HasEars && !this.HasTail;
-				this.HasGender = this.Appearance.Race != ConceptMatrix.Appearance.Races.Hrothgar && this.Appearance.Race != ConceptMatrix.Appearance.Races.Viera;
+				this.HasGender = this.Appearance.Race != AnAppearance.Races.Hrothgar && this.Appearance.Race != AnAppearance.Races.Viera;
 
-				bool canAge = this.Appearance.Tribe == ConceptMatrix.Appearance.Tribes.Midlander;
-				canAge |= this.Appearance.Race == ConceptMatrix.Appearance.Races.Miqote && this.Appearance.Gender == ConceptMatrix.Appearance.Genders.Feminine;
-				canAge |= this.Appearance.Race == ConceptMatrix.Appearance.Races.Elezen;
-				canAge |= this.Appearance.Race == ConceptMatrix.Appearance.Races.AuRa && this.Appearance.Gender == ConceptMatrix.Appearance.Genders.Feminine;
+				bool canAge = this.Appearance.Tribe == AnAppearance.Tribes.Midlander;
+				canAge |= this.Appearance.Race == AnAppearance.Races.Miqote && this.Appearance.Gender == AnAppearance.Genders.Feminine;
+				canAge |= this.Appearance.Race == AnAppearance.Races.Elezen;
+				canAge |= this.Appearance.Race == AnAppearance.Races.AuRa && this.Appearance.Gender == AnAppearance.Genders.Feminine;
 				this.CanAge = canAge;
 
 				if (this.Appearance.Tribe > 0)

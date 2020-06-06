@@ -4,6 +4,7 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System.Threading.Tasks;
+	using Anamnesis;
 	using ConceptMatrix;
 
 	public class ActorRefreshService : IActorRefreshService

@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule.Files
 {
+	using Anamnesis;
 	using ConceptMatrix;
 
 	#pragma warning disable IDE1006, SA1300

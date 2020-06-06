@@ -4,6 +4,7 @@
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
+	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
 	using PropertyChanged;

@@ -9,7 +9,7 @@ namespace ConceptMatrix.GUI.Serialization.Converters
 	using System.Text;
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
-	using ConceptMatrix.Injection.Offsets;
+	using Anamnesis.Offsets;
 
 	public class OffsetConverter : JsonConverterFactory
 	{

@@ -4,6 +4,7 @@
 namespace ConceptMatrix.AppearanceModule.Files
 {
 	using System;
+	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.AppearanceModule.Views;

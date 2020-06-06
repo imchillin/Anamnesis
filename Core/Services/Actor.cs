@@ -5,6 +5,8 @@ namespace ConceptMatrix
 {
 	using System;
 	using System.Collections.Generic;
+	using Anamnesis;
+	using Anamnesis.Offsets;
 
 	public class Actor
 	{

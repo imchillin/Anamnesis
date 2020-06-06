@@ -9,12 +9,14 @@ namespace ConceptMatrix.PoseModule
 	using System.Windows.Media;
 	using System.Windows.Media.Animation;
 	using System.Windows.Media.Media3D;
+	using Anamnesis;
 	using ConceptMatrix.PoseModule.Extensions;
 	using ConceptMatrix.ThreeD;
 
-	using CmQuaternion = ConceptMatrix.Quaternion;
-	using CmTransform = ConceptMatrix.Transform;
-	using CmVector = ConceptMatrix.Vector;
+	using CmQuaternion = Anamnesis.Quaternion;
+	using CmTransform = Anamnesis.Transform;
+	using CmVector = Anamnesis.Vector;
+	using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
 	public class Bone : ModelVisual3D, INotifyPropertyChanged, IDisposable
 	{

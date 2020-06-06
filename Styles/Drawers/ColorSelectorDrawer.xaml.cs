@@ -9,6 +9,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using System.Windows.Media;
+	using Anamnesis;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 
 	using Binder = ConceptMatrix.WpfStyles.DependencyProperties.Binder;
@@ -43,7 +44,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			PropertyInfo[] properties = typeof(Colors).GetProperties(BindingFlags.Static | BindingFlags.Public);
 			foreach (PropertyInfo property in properties)
 			{
-				Color c = (Color)property.GetValue(null);
+				WpfColor c = (WpfColor)property.GetValue(null);
 				this.List.Items.Add(new ColorOption(c, property.Name));
 			}
 		}
@@ -186,13 +187,13 @@ namespace ConceptMatrix.WpfStyles.Drawers
 
 		private class ColorOption
 		{
-			public ColorOption(Color c, string name)
+			public ColorOption(WpfColor c, string name)
 			{
 				this.Name = name;
 				this.Color = c;
 			}
 
-			public Color Color { get; set; }
+			public WpfColor Color { get; set; }
 			public string Name { get; set; }
 
 			public Color4 AsColor()

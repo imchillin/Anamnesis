@@ -4,6 +4,7 @@
 namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.Windows.Controls;
+	using Anamnesis;
 	using ConceptMatrix.GameData;
 
 	/// <summary>

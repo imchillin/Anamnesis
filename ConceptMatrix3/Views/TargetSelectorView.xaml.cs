@@ -11,7 +11,6 @@ namespace ConceptMatrix.GUI.Views
 	using System.Windows.Controls;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
-	using ConceptMatrix.Injection.Offsets;
 	using ConceptMatrix.WpfStyles;
 	using FontAwesome.Sharp;
 	using Microsoft.VisualBasic;

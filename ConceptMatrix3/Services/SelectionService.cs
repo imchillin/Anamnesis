@@ -7,8 +7,9 @@ namespace ConceptMatrix.GUI.Services
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Windows.Documents;
+	using Anamnesis;
+	using Anamnesis.Offsets;
 	using ConceptMatrix;
-	using ConceptMatrix.Injection.Offsets;
 
 	public class SelectionService : ISelectionService
 	{

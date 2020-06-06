@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.WpfStyles
 {
+	using Anamnesis;
 	using FontAwesome.Sharp;
 
 	public static class ActorTypesExtensions

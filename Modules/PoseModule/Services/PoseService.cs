@@ -4,6 +4,7 @@
 namespace ConceptMatrix.PoseModule
 {
 	using System.Threading.Tasks;
+	using Anamnesis;
 
 	public class PoseService : IService
 	{
