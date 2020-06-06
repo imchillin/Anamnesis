@@ -67,6 +67,7 @@ namespace ConceptMatrix.GUI.Services
 		public Task Initialize()
 		{
 			this.Add("EN", "Languages/en.json");
+			this.Add("GR", "Languages/gr.json");
 
 			this.currentLocale = this.locales[FallbackCulture];
 			this.fallbackLocale = this.currentLocale;

@@ -44,6 +44,7 @@ namespace ConceptMatrix.GUI.Views
 			List<LanguageOption> languages = new List<LanguageOption>();
 			languages.Add(new LanguageOption("EN", "English"));
 			languages.Add(new LanguageOption("GIB", "Gibberish"));
+			languages.Add(new LanguageOption("GR", "Greek"));
 			this.Languages = languages;
 		}
 
