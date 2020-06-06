@@ -11,8 +11,10 @@ namespace ConceptMatrix.PoseModule.Views
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
+	using Anamnesis;
 	using ConceptMatrix.ThreeD;
 	using PropertyChanged;
+	using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.

@@ -9,6 +9,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
+	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
 	using ConceptMatrix.WpfStyles.DependencyProperties;

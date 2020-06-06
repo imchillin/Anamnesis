@@ -4,6 +4,7 @@
 namespace ConceptMatrix.AppearanceModule.Files
 {
 	using System;
+	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.AppearanceModule.Views;
@@ -171,8 +172,10 @@ namespace ConceptMatrix.AppearanceModule.Files
 		{
 			if (mode.HasFlag(SaveModes.EquipmentGear))
 			{
-				if (this.MainHand?.ModelSet != 0)
-					this.MainHand?.Write(eq.MainHand);
+				if (this.MainHand != null && this.MainHand.ModelSet != 0)
+				{
+					this.MainHand.Write(eq.MainHand);
+				}
 
 				this.OffHand?.Write(eq.OffHand);
 				this.HeadGear?.Write(eq.Head);
@@ -284,9 +287,11 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			public override void Write(EquipmentBaseViewModel to)
 			{
+				to.DontApply = true;
+
+				to.ModelSet = this.ModelSet;
 				to.Color = this.Color;
 				to.Scale = this.Scale;
-				to.ModelSet = this.ModelSet;
 
 				base.Write(to);
 			}
@@ -312,9 +317,14 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			public virtual void Write(EquipmentBaseViewModel to)
 			{
+				to.DontApply = true;
+
 				to.ModelBase = this.ModelBase;
 				to.ModelVariant = this.ModelVariant;
 				to.DyeId = this.DyeId;
+
+				to.DontApply = false;
+				to.Apply();
 			}
 		}
 	}

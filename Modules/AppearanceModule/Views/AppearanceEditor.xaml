@@ -69,15 +69,17 @@
 
 				<!-- Race / Tribe -->
 				<TextBlock Grid.Column="0" Grid.Row="0" Text="Tribe:" Style="{StaticResource Label}"/>
-				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0, -3, 0, 0">
+				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0, 3, 0, 0">
 					<ComboBox x:Name="RaceComboBox" SelectedItem="{Binding Race}" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="75" Margin="3, 0, 6, 3"/>
 					<ComboBox x:Name="TribeComboBox" SelectedItem="{Binding Tribe}" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="100"  Margin="3, 0, 3, 3"/>
 				</StackPanel>
 
-				<!-- Gender -->
-				<TextBlock Grid.Column="0" Grid.Row="1" Text="Gender:" Style="{StaticResource Label}" Visibility="{Binding HasGender, Converter={StaticResource B2V}}"/>
-				<ComboBox Grid.Column="1" Grid.Row="1" x:Name="GenderComboBox" SelectedItem="{Binding Appearance.Gender}" Margin="3, -2, 3, 3" Visibility="{Binding HasGender, Converter={StaticResource B2V}}"/>
-
+				<!-- Gender / Age-->
+				<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+					<ComboBox x:Name="GenderComboBox" SelectedItem="{Binding Appearance.Gender}" Width="75" Margin="3, 0, 6, 3" Visibility="{Binding HasGender, Converter={StaticResource B2V}}"/>
+					<ComboBox Grid.Row="12" Grid.Column="1" x:Name="AgeComboBox" SelectedItem="{Binding Appearance.Age}" Width="100" Visibility="{Binding CanAge, Converter={StaticResource B2V}}"  Margin="3, 0, 3, 3"/>
+				</StackPanel>
+				
 				<!-- Skintone -->
 				<TextBlock Grid.Column="0" Grid.Row="2" Text="Skin:" Style="{StaticResource Label}"/>
 				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding Appearance.Skintone}" Type="Skin" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
@@ -178,10 +180,6 @@
 
 				<TextBlock Grid.Column="0" Grid.Row="11" Text="Tail size:" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
 				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="True"/>
-
-				<!-- Age -->
-				<TextBlock Grid.Row="12" Grid.Column="0" Text="Age:" Style="{StaticResource Label}" Visibility="{Binding CanAge, Converter={StaticResource B2V}}"/>
-				<ComboBox Grid.Row="12" Grid.Column="1" x:Name="AgeComboBox" SelectedItem="{Binding Appearance.Age}" Visibility="{Binding CanAge, Converter={StaticResource B2V}}" Margin="0, 0, 0, 3"/>
 
 				<!-- Jaw Type -->
 				<TextBlock Grid.Row="13" Grid.Column="0" Text="Jaw:" Style="{StaticResource Label}"/>

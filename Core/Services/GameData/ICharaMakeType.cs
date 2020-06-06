@@ -4,6 +4,7 @@
 namespace ConceptMatrix.GameData
 {
 	using System.Collections.Generic;
+	using Anamnesis;
 
 	public interface ICharaMakeType : IDataObject
 	{

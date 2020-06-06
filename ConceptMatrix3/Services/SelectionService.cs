@@ -7,8 +7,9 @@ namespace ConceptMatrix.GUI.Services
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Windows.Documents;
+	using Anamnesis;
+	using Anamnesis.Offsets;
 	using ConceptMatrix;
-	using ConceptMatrix.Injection.Offsets;
 
 	public class SelectionService : ISelectionService
 	{
@@ -60,14 +61,16 @@ namespace ConceptMatrix.GUI.Services
 
 			foreach (Actor actor in this.actors)
 			{
-				if (selectable.ContainsKey(actor.Id))
+				try
 				{
+					if (!selectable.ContainsKey(actor.Id))
+						throw new Exception("Unable to locate actor by Id");
+
 					actor.Retarget(selectable[actor.Id]);
 				}
-				else
+				catch (Exception ex)
 				{
-					Log.Write("Actor: " + actor.Name + "\" lost.", "Selection", Log.Severity.Error);
-					actor.Retarget(null);
+					Log.Write(new Exception("Failed to retarget actor", ex), "Selection", Log.Severity.Error);
 				}
 			}
 		}
@@ -138,6 +141,8 @@ namespace ConceptMatrix.GUI.Services
 
 				if (newMode != currentMode)
 				{
+					await Task.Delay(1000);
+
 					currentMode = newMode;
 					this.RetargetActors();
 

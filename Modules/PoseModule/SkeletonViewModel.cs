@@ -11,17 +11,19 @@ namespace ConceptMatrix.PoseModule
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Media.Media3D;
+	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.ThreeD;
 
-	using CmQuaternion = ConceptMatrix.Quaternion;
-	using CmTransform = ConceptMatrix.Transform;
-	using CmVector = ConceptMatrix.Vector;
+	using CmQuaternion = Anamnesis.Quaternion;
+	using CmTransform = Anamnesis.Transform;
+	using CmVector = Anamnesis.Vector;
 
 	public class SkeletonViewModel : INotifyPropertyChanged
 	{
 		public ModelVisual3D Root;
 
+		private Actor actor;
 		private IMemory<CmQuaternion> rootRotationMem;
 
 		private Dictionary<string, Bone> bones;
@@ -186,6 +188,13 @@ namespace ConceptMatrix.PoseModule
 
 		public async Task Initialize(Actor actor)
 		{
+			if (this.actor == actor)
+				return;
+
+			this.actor = actor;
+
+			this.Clear();
+
 			this.appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
 			this.rootRotationMem = actor.GetMemory(Offsets.Main.Rotation);
 

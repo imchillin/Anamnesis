@@ -5,7 +5,9 @@ namespace ConceptMatrix.AppearanceModule.Utilities
 {
 	using System;
 	using System.Collections.Generic;
-	using cmColor = ConceptMatrix.Color;
+	using Anamnesis;
+
+	using cmColor = Anamnesis.Color;
 	using wpfColor = System.Windows.Media.Color;
 
 	public static class ColorData

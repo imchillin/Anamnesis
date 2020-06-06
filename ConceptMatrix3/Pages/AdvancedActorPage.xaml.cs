@@ -5,6 +5,7 @@ namespace ConceptMatrix.GUI.Pages
 {
 	using System;
 	using System.Windows.Controls;
+	using Anamnesis;
 	using ConceptMatrix.MemoryBinds;
 	using PropertyChanged;
 

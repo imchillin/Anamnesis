@@ -6,6 +6,7 @@ namespace ConceptMatrix.PoseModule
 	using System;
 	using System.Globalization;
 	using System.Reflection;
+	using Anamnesis;
 
 	public class LegacyPoseFile : FileBase
 	{

@@ -21,8 +21,9 @@ Make sure to check out the included [wiki](https://github.com/imchillin/CM3/wiki
 
 ## Authors
 
-* **LeonBlade** - *Initial work* - [LeonBlade](https://github.com/LeonBlade)
-* **Yuuki** - *Further development* - [Yuuki](https://github.com/Yuuki-Walsh)
+* **Yuuki** - *Main development* - [Yuuki](https://github.com/Yuuki-Walsh)
+* **MissAniThrope** - *Code contributions and Wiki curating* - [MissAniThrope](https://github.com/MissAniThrope)
+* **LeonBlade** - *Project oversight* - [LeonBlade](https://github.com/LeonBlade)
 
 ## License
 

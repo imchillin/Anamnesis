@@ -6,6 +6,7 @@ namespace ConceptMatrix.GUI.Serialization.Converters
 	using System;
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
+	using Anamnesis;
 	using ConceptMatrix;
 
 	public class Color4Converter : JsonConverter<Color4>

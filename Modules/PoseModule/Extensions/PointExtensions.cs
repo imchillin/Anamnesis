@@ -5,7 +5,7 @@ namespace ConceptMatrix.PoseModule
 {
 	using System.Windows.Media.Media3D;
 
-	using CmVector = ConceptMatrix.Vector;
+	using CmVector = Anamnesis.Vector;
 
 	public static class PointExtensions
 	{

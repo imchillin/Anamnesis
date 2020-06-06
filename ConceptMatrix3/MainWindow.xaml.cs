@@ -6,6 +6,7 @@ namespace ConceptMatrix.GUI
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
+	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -14,6 +15,8 @@ namespace ConceptMatrix.GUI
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
+	using Dragablz;
+	using FontAwesome.Sharp;
 	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
 
@@ -44,12 +47,18 @@ namespace ConceptMatrix.GUI
 			this.Tabs.DataContext = this;
 		}
 
-		public ObservableCollection<Actor> Actors { get; set; } = new ObservableCollection<Actor>();
-
 		public bool Zodiark
 		{
 			get;
 			set;
+		}
+
+		public InterTabClient TabClient
+		{
+			get
+			{
+				return new InterTabClient();
+			}
 		}
 
 		[SuppressPropertyChangedWarnings]
@@ -234,10 +243,30 @@ namespace ConceptMatrix.GUI
 			while (selector.Actor == null)
 				await Task.Delay(100);
 
-			Actor selection = selector.Actor;
-			this.Actors.Add(selection);
+			TabItem tab = new TabItem();
+			tab.Content = new ActorEditor();
+			tab.Header = new ActorHeaderView();
+			tab.DataContext = selector.Actor;
+			this.Tabs.Items.Add(tab);
 
-			this.Tabs.SelectedItem = selection;
+			this.Tabs.SelectedItem = tab;
+		}
+
+		public class InterTabClient : IInterTabClient
+		{
+			INewTabHost<Window> IInterTabClient.GetNewHost(IInterTabClient interTabClient, object partition, TabablzControl source)
+			{
+				SecondaryWindow view = new SecondaryWindow();
+				return new NewTabHost<SecondaryWindow>(view, view.Tabs);
+			}
+
+			public TabEmptiedResponse TabEmptiedHandler(TabablzControl tabControl, Window window)
+			{
+				if (window is MainWindow)
+					return TabEmptiedResponse.DoNothing;
+
+				return TabEmptiedResponse.CloseWindowOrLayoutBranch;
+			}
 		}
 	}
 }

@@ -33,6 +33,7 @@ namespace ConceptMatrix
 			Application.Current.DispatcherUnhandledException += this.CurrentOnDispatcherUnhandledException;
 			TaskScheduler.UnobservedTaskException += this.TaskSchedulerOnUnobservedTaskException;
 			Log.OnException += this.OnException;
+			Log.OnLog += this.OnLog;
 			this.Exit += this.OnExit;
 
 			base.OnStartup(e);
@@ -103,6 +104,15 @@ namespace ConceptMatrix
 		private void OnException(ExceptionDispatchInfo ex, Log.Severity severity, string category)
 		{
 			 ErrorDialog.ShowError(ex, severity == Log.Severity.Critical);
+		}
+
+		private void OnLog(string message, Log.Severity severity, string category)
+		{
+			if (severity >= Log.Severity.Error)
+			{
+				Exception ex = new Exception(message);
+				ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), severity == Log.Severity.Critical);
+			}
 		}
 	}
 }

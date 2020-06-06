@@ -4,6 +4,7 @@
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
+	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
 	using PropertyChanged;
@@ -13,6 +14,8 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	{
 		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
+
+		public bool DontApply = false;
 
 		protected IGameDataService gameData;
 
@@ -209,7 +212,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		public abstract void Dispose();
 
-		protected abstract void Apply();
+		public abstract void Apply();
 
 		protected IItem GetItem()
 		{

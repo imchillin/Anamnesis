@@ -7,6 +7,7 @@ namespace ConceptMatrix.AppearanceModule.Converters
 	using System.Globalization;
 	using System.Windows;
 	using System.Windows.Data;
+	using Anamnesis;
 
 	[ValueConversion(typeof(Appearance.Genders), typeof(Visibility))]
 	public class MasculineGenderToVisibilityConverter : IValueConverter

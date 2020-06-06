@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix.GameData
 {
+	using Anamnesis;
+
 	public interface ITribe : IDataObject
 	{
 		Appearance.Tribes Tribe { get; }

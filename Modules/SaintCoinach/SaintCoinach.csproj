@@ -42,6 +42,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Reference Include="Anamnesis">
+	    <HintPath>..\..\Lib\Anamnesis.dll</HintPath>
+	  </Reference>
 	  <Reference Include="SaintCoinachStandard">
 	    <HintPath>SaintCoinach\SaintCoinachStandard.dll</HintPath>
 	  </Reference>

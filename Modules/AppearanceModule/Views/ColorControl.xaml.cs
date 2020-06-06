@@ -6,6 +6,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System;
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis;
 	using ConceptMatrix.AppearanceModule.Utilities;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;

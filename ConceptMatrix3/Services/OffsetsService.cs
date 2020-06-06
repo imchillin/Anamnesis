@@ -9,8 +9,9 @@ namespace ConceptMatrix.GUI.Services
 	using System.Reflection;
 	using System.Text;
 	using System.Threading.Tasks;
+	using Anamnesis.Offsets;
 	using ConceptMatrix.GUI.Serialization;
-	using ConceptMatrix.Injection.Offsets;
+	using static ConceptMatrix.Offsets;
 
 	public class OffsetsService : IService
 	{

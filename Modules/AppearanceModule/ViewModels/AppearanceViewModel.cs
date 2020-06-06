@@ -5,6 +5,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
 	using System.ComponentModel;
+	using Anamnesis;
 	using PropertyChanged;
 
 	public class AppearanceViewModel : IDisposable, INotifyPropertyChanged

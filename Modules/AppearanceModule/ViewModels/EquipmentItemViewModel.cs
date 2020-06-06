@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
+	using Anamnesis;
 	using ConceptMatrix.GameData;
 
 	public class EquipmentItemViewModel : EquipmentBaseViewModel
@@ -31,8 +32,11 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.memory.Dispose();
 		}
 
-		protected override void Apply()
+		public override void Apply()
 		{
+			if (this.DontApply)
+				return;
+
 			Equipment eq = this.memory.Value;
 
 			Equipment.Item i = eq.GetItem(this.Slot);

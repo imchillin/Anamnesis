@@ -5,6 +5,8 @@ namespace ConceptMatrix
 {
 	using System;
 	using System.Collections.Generic;
+	using Anamnesis;
+	using Anamnesis.Offsets;
 
 	public class Actor
 	{
@@ -29,7 +31,7 @@ namespace ConceptMatrix
 			get
 			{
 				// it would be nice if we had more info than this...
-				return this.Name + "_" + this.Type;
+				return this.Name;
 			}
 		}
 

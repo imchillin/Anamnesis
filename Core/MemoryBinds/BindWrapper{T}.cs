@@ -5,6 +5,7 @@ namespace ConceptMatrix.MemoryBinds
 {
 	using System;
 	using System.ComponentModel;
+	using Anamnesis;
 
 	internal class BindWrapper<T> : BindWrapper
 		where T : struct

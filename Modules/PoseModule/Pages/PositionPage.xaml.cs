@@ -4,6 +4,7 @@
 namespace ConceptMatrix.PoseModule.Pages
 {
 	using System.Windows.Controls;
+	using Anamnesis;
 	using PropertyChanged;
 
 	/// <summary>
