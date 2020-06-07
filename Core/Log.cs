@@ -25,7 +25,7 @@ namespace ConceptMatrix
 
 		public static void Write(string message, string category = null, Severity severity = Severity.Log)
 		{
-			Debug.WriteLine($"[{category}] ({severity}) {message}");
+			Trace.WriteLine($"[{category}] ({severity}) {message}");
 			OnLog?.Invoke(message, severity, category);
 		}
 
@@ -33,14 +33,14 @@ namespace ConceptMatrix
 		{
 			ExceptionDispatchInfo exDispatch = ExceptionDispatchInfo.Capture(ex);
 
-			Debug.WriteLine($"[{category}][{ex.GetType().Name}] ({severity}) {ex.Message}");
-			Debug.WriteLine(ex.StackTrace);
+			Trace.WriteLine($"[{category}][{ex.GetType().Name}] ({severity}) {ex.Message}");
+			Trace.WriteLine(ex.StackTrace);
 
 			Exception exception = ex.InnerException;
 			while (exception != null)
 			{
-				Debug.WriteLine($"Inner: [{exception.GetType().Name}] {exception.Message}");
-				Debug.WriteLine(exception.StackTrace);
+				Trace.WriteLine($"Inner: [{exception.GetType().Name}] {exception.Message}");
+				Trace.WriteLine(exception.StackTrace);
 				exception = exception.InnerException;
 			}
 
