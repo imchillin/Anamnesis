@@ -214,18 +214,20 @@ namespace ConceptMatrix.PoseModule
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsVieraEars04)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Race)));
 
-			await Application.Current.Dispatcher.InvokeAsync(() =>
-			{
-				foreach (Bone bone in this.bones.Values)
-				{
-					bone.ReadTransform();
-				}
+			await Application.Current.Dispatcher.InvokeAsync(this.RefreshBones);
+		}
 
-				foreach (Bone bone in this.bones.Values)
-				{
-					bone.WriteTransform(this.Root);
-				}
-			});
+		public void RefreshBones()
+		{
+			foreach (Bone bone in this.bones.Values)
+			{
+				bone.ReadTransform();
+			}
+
+			foreach (Bone bone in this.bones.Values)
+			{
+				bone.WriteTransform(this.Root);
+			}
 		}
 
 		public void Clear()

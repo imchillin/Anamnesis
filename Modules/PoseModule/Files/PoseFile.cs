@@ -105,6 +105,8 @@ namespace ConceptMatrix.PoseModule
 
 			await Task.Delay(100);
 			poseService.FreezePositions = true;
+
+			skeleton.RefreshBones();
 		}
 	}
 }
