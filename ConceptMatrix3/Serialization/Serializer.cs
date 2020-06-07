@@ -5,7 +5,7 @@ namespace ConceptMatrix.GUI.Serialization
 {
 	using System;
 	using System.Text.Json;
-	using ConceptMatrix.GUI.Serialization.Converters;
+	using Anamnesis.Serialization.Converters;
 
 	// Consider making this a service
 	public static class Serializer
