@@ -127,7 +127,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.Appearance.Dispose();
 			}
 
-
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 			this.Appearance = null;
 
@@ -135,7 +134,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			if (actor == null || (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.EventNpc))
 				return;
-
 
 			this.Appearance = new AppearanceViewModel(actor);
 			this.Appearance.PropertyChanged += this.OnViewModelPropertyChanged;

@@ -44,7 +44,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		}
 
 		SelectorDrawer SelectorDrawer.ISelectorView.Selector
-		{ 
+		{
 			get
 			{
 				return this.Selector;

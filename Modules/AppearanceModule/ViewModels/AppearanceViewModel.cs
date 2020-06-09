@@ -11,9 +11,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	public class AppearanceViewModel : IDisposable, INotifyPropertyChanged
 	{
 		public Appearance Appearance;
-		private IMemory<Appearance> appearanceMem;
 
 		private readonly Actor selection;
+		private IMemory<Appearance> appearanceMem;
 
 		public AppearanceViewModel(Actor selection)
 		{

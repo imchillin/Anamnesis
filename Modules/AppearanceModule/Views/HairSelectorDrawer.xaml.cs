@@ -12,8 +12,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 	/// </summary>
 	public partial class HairSelectorDrawer : UserControl, IDrawer
 	{
-		public delegate void SelectorEvent(byte value);
-
 		public HairSelectorDrawer(Appearance.Genders gender, Appearance.Tribes tribe, byte value)
 		{
 			this.InitializeComponent();
@@ -25,6 +23,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.List.ItemsSource = gameData.CharacterMakeCustomize.GetHair(tribe, gender);
 			this.List.SelectedItem = gameData.CharacterMakeCustomize.GetHair(tribe, gender, value);
 		}
+
+		public delegate void SelectorEvent(byte value);
 
 		public event DrawerEvent Close;
 		public event SelectorEvent SelectionChanged;

@@ -20,7 +20,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		public AppearancePage()
 		{
 			this.selectionService = Services.Get<ISelectionService>();
-			
+
 			this.InitializeComponent();
 		}
 

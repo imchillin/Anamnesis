@@ -85,7 +85,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnDyeClick(object sender, RoutedEventArgs e)
 		{
-			SelectorDrawer.Show<DyeSelector, IDye>("Select Dye", this.ViewModel.Dye, (v)=> { this.ViewModel.Dye = v; });
+			SelectorDrawer.Show<DyeSelector, IDye>("Select Dye", this.ViewModel.Dye, (v) => { this.ViewModel.Dye = v; });
 		}
 
 		private void OnPreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)

@@ -157,7 +157,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		[SuppressPropertyChangedWarnings]
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (locked)
+			if (this.locked)
 				return;
 
 			Appearance.FacialFeature flags = Appearance.FacialFeature.None;

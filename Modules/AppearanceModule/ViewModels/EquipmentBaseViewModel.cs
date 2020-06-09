@@ -29,7 +29,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		private readonly Actor actor;
 		private IItem item;
 		private IDye dye;
-		
+
 		public EquipmentBaseViewModel(ItemSlots slot, Actor actor)
 		{
 			this.actor = actor;
@@ -228,7 +228,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				if (this.Slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
 					continue;
 
-				if ((this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand) &&  tItem.WeaponSet != this.ModelSet)
+				if ((this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand) && tItem.WeaponSet != this.ModelSet)
 					continue;
 
 				if (tItem.ModelBase == this.ModelBase && tItem.ModelVariant == this.ModelVariant)
