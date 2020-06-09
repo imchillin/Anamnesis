@@ -6,6 +6,7 @@ namespace ConceptMatrix.SaintCoinachModule
 	using System;
 	using System.Collections.Generic;
 	using ConceptMatrix.GameData;
+	using SaintCoinach.Text.Expressions;
 	using SaintCoinach.Xiv;
 
 	internal class ItemWrapper : ObjectWrapper<Item>, IItem

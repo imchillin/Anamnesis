@@ -75,8 +75,20 @@ namespace ConceptMatrix.AppearanceModule.Views
 				if (string.IsNullOrEmpty(item.Name))
 					return false;
 
-				if (!item.FitsInSlot(this.slot))
-					return false;
+				if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
+				{
+					if (!item.IsWeapon)
+					{
+						return false;
+					}
+				}
+				else
+				{
+					if (!item.FitsInSlot(this.slot))
+					{
+						return false;
+					}
+				}
 
 				if (!SearchUtility.Matches(item.Name, search))
 					return false;

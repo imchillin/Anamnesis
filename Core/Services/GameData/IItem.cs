@@ -13,6 +13,8 @@ namespace ConceptMatrix.GameData
 		ushort ModelVariant { get; }
 		ushort WeaponSet { get; }
 
+		bool IsWeapon { get; }
+
 		bool FitsInSlot(ItemSlots slot);
 	}
 }

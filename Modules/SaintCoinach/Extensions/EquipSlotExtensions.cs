@@ -14,7 +14,7 @@ namespace SaintCoinach.Xiv
 
 			switch (slot)
 			{
-				// TODO: ensuire this works in every laguage!
+				// TODO: ensure this works in every language!
 				case ItemSlots.MainHand: return name == "Main Hand";
 				case ItemSlots.Head: return name == "Head";
 				case ItemSlots.Body: return name == "Body";

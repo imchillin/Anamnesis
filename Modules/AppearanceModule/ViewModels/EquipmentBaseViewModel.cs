@@ -221,8 +221,16 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 			foreach (IItem tItem in this.gameData.Items.All)
 			{
-				if (!tItem.FitsInSlot(this.Slot))
-					continue;
+				if (this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand)
+				{
+					if (!tItem.IsWeapon)
+						continue;
+				}
+				else
+				{
+					if (!tItem.FitsInSlot(this.Slot))
+						continue;
+				}
 
 				// Big old hack, but we prefer the emperors bracelets to the promise bracelets (even though they are the same model)
 				if (this.Slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
@@ -312,6 +320,14 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				get
 				{
 					return 0;
+				}
+			}
+
+			public bool IsWeapon
+			{
+				get
+				{
+					return true;
 				}
 			}
 
@@ -407,6 +423,14 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				get
 				{
 					return 0;
+				}
+			}
+
+			public bool IsWeapon
+			{
+				get
+				{
+					return true;
 				}
 			}
 
