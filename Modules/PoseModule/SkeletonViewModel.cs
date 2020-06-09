@@ -197,6 +197,7 @@ namespace ConceptMatrix.PoseModule
 
 			this.appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
 			this.rootRotationMem = actor.GetMemory(Offsets.Main.Rotation);
+			this.rootRotationMem.ValueChanged += this.RootRotationMem_ValueChanged;
 
 			await Application.Current.Dispatcher.InvokeAsync(async () =>
 			{
@@ -447,6 +448,16 @@ namespace ConceptMatrix.PoseModule
 			catch (TaskCanceledException)
 			{
 			}
+		}
+
+		private void RootRotationMem_ValueChanged(object sender, object value)
+		{
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				System.Windows.Media.Media3D.Quaternion rot = this.RootRotation.ToMedia3DQuaternion();
+				RotateTransform3D trans = new RotateTransform3D(new QuaternionRotation3D(rot));
+				this.Root.Transform = trans;
+			});
 		}
 	}
 }
