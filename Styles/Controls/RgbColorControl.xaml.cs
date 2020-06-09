@@ -30,6 +30,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 			this.DisplayName = "Color";
+			this.UpdatePreview();
 		}
 
 		public string DisplayName

@@ -24,17 +24,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private readonly IGameDataService gameDataService;
 		private readonly ISelectionService selectionService;
 
-		private IMemory<Color> skinColorMem;
-		private IMemory<Color> skinGlowMem;
-		private IMemory<Color> leftEyeColorMem;
-		private IMemory<Color> rightEyeColorMem;
-		private IMemory<Color> limbalRingColorMem;
-		private IMemory<Color> hairTintColorMem;
-		private IMemory<Color> hairGlowColorMem;
-		private IMemory<Color> highlightTintColorMem;
-		private IMemory<Color> lipTintMem;
-		private IMemory<float> lipGlossMem;
-
 		public AppearanceEditor()
 		{
 			this.InitializeComponent();
@@ -46,8 +35,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Genders));
 			this.RaceComboBox.ItemsSource = this.gameDataService.Races.All;
 			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Ages));
-
-			this.PropertyChanged += this.AppearanceEditor_PropertyChanged;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -107,17 +94,13 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
-		public Color? SkinTint { get; set; }
-		public Color? SkinGlow { get; set; }
-		public Color? LeftEyeColor { get; set; }
-		public Color? RightEyeColor { get; set; }
-		public Color? LimbalRingColor { get; set; }
-		public Color? HairTint { get; set; }
-		public Color? HairGlow { get; set; }
-		public Color? HighlightTint { get; set; }
-		public Color4? LipTint { get; set; }
-
 		public AppearanceViewModel Appearance
+		{
+			get;
+			private set;
+		}
+
+		public ExtendedAppearanceViewModel ExAppearance
 		{
 			get;
 			private set;
@@ -144,26 +127,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.Appearance.Dispose();
 			}
 
-			this.skinColorMem?.Dispose();
-			this.skinGlowMem?.Dispose();
-			this.leftEyeColorMem?.Dispose();
-			this.rightEyeColorMem?.Dispose();
-			this.limbalRingColorMem?.Dispose();
-			this.hairTintColorMem?.Dispose();
-			this.hairGlowColorMem?.Dispose();
-			this.highlightTintColorMem?.Dispose();
-
-			if (this.lipTintMem != null)
-			{
-				this.lipTintMem?.Dispose();
-				this.lipTintMem.ValueChanged -= this.OnLipTintMemChanged;
-			}
-
-			if (this.lipGlossMem != null)
-			{
-				this.lipGlossMem?.Dispose();
-				this.lipGlossMem.ValueChanged -= this.OnLipTintMemChanged;
-			}
 
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 			this.Appearance = null;
@@ -173,39 +136,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (actor == null || (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.EventNpc))
 				return;
 
-			this.skinColorMem = actor.GetMemory(Offsets.Main.SkinColor);
-			this.skinColorMem.Bind(this, nameof(AppearanceEditor.SkinTint));
-
-			this.skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
-			this.skinGlowMem.Bind(this, nameof(AppearanceEditor.SkinGlow));
-
-			this.leftEyeColorMem = actor.GetMemory(Offsets.Main.LeftEyeColor);
-			this.leftEyeColorMem.Bind(this, nameof(AppearanceEditor.LeftEyeColor));
-
-			this.rightEyeColorMem = actor.GetMemory(Offsets.Main.RightEyeColor);
-			this.rightEyeColorMem.Bind(this, nameof(AppearanceEditor.RightEyeColor));
-
-			this.limbalRingColorMem = actor.GetMemory(Offsets.Main.LimbalColor);
-			this.limbalRingColorMem.Bind(this, nameof(AppearanceEditor.LimbalRingColor));
-
-			this.hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
-			this.hairTintColorMem.Bind(this, nameof(AppearanceEditor.HairTint));
-
-			this.hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
-			this.hairGlowColorMem.Bind(this, nameof(AppearanceEditor.HairGlow));
-
-			this.highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
-			this.highlightTintColorMem.Bind(this, nameof(AppearanceEditor.HighlightTint));
-				
-			this.lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
-			this.lipTintMem.ValueChanged += this.OnLipTintMemChanged;
-
-			this.lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
-			this.lipGlossMem.ValueChanged += this.OnLipTintMemChanged;
-			this.OnLipTintMemChanged(null, null);
 
 			this.Appearance = new AppearanceViewModel(actor);
 			this.Appearance.PropertyChanged += this.OnViewModelPropertyChanged;
+
+			this.ExAppearance = new ExtendedAppearanceViewModel(actor);
+
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.IsEnabled = true;
@@ -219,25 +155,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 				this.OnViewModelPropertyChanged(null, null);
 			});
-		}
-
-		[SuppressPropertyChangedWarnings]
-		private void OnLipTintMemChanged(object sender, object value)
-		{
-			this.LipTint = new Color4(this.lipTintMem.Value, this.lipGlossMem.Value);
-		}
-
-		private void AppearanceEditor_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(AppearanceEditor.LipTint))
-			{
-				if (this.LipTint != null)
-				{
-					Color4 val = (Color4)this.LipTint;
-					this.lipTintMem.Value = val.Color;
-					this.lipGlossMem.Value = val.A;
-				}
-			}
 		}
 
 		[SuppressPropertyChangedWarnings]
@@ -272,32 +189,32 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.Skintone))
 			{
-				this.SkinTint = null;
-				this.SkinGlow = null;
+				this.ExAppearance.SkinTint = null;
+				this.ExAppearance.SkinGlow = null;
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.LimbalEyes))
 			{
-				this.LimbalRingColor = null;
+				this.ExAppearance.LimbalRingColor = null;
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.HairTone))
 			{
-				this.HairTint = null;
+				this.ExAppearance.HairTint = null;
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.Highlights))
 			{
-				this.HighlightTint = null;
+				this.ExAppearance.HighlightTint = null;
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.LipsToneFurPattern))
 			{
-				this.LipTint = null;
+				this.ExAppearance.LipTint = null;
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.LEyeColor))
 			{
-				this.LeftEyeColor = null;
+				this.ExAppearance.LeftEyeColor = null;
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.REyeColor))
 			{
-				this.RightEyeColor = null;
+				this.ExAppearance.RightEyeColor = null;
 			}
 		}
 

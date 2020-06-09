@@ -122,9 +122,9 @@ namespace ConceptMatrix.AppearanceModule.Files
 				this.EnableHighlights = ed.Appearance.EnableHighlights;
 				this.HairTone = ed.Appearance.HairTone;
 				this.Highlights = ed.Appearance.Highlights;
-				this.HairTint = ed.HairTint;
-				this.HairGlow = ed.HairGlow;
-				this.HighlightTint = ed.HighlightTint;
+				this.HairTint = ed.ExAppearance.HairTint;
+				this.HairGlow = ed.ExAppearance.HairGlow;
+				this.HighlightTint = ed.ExAppearance.HighlightTint;
 			}
 
 			if (mode.HasFlag(SaveModes.AppearanceFace) || mode.HasFlag(SaveModes.AppearanceBody))
@@ -150,10 +150,10 @@ namespace ConceptMatrix.AppearanceModule.Files
 				this.LipsToneFurPattern = ed.Appearance.LipsToneFurPattern;
 				this.FacePaint = ed.Appearance.FacePaint;
 				this.FacePaintColor = ed.Appearance.FacePaintColor;
-				this.LeftEyeColor = ed.LeftEyeColor;
-				this.RightEyeColor = ed.RightEyeColor;
-				this.LimbalRingColor = ed.LimbalRingColor;
-				this.LipTint = ed.LipTint;
+				this.LeftEyeColor = ed.ExAppearance.LeftEyeColor;
+				this.RightEyeColor = ed.ExAppearance.RightEyeColor;
+				this.LimbalRingColor = ed.ExAppearance.LimbalRingColor;
+				this.LipTint = ed.ExAppearance.LipTint;
 			}
 
 			if (mode.HasFlag(SaveModes.AppearanceBody))
@@ -163,8 +163,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 				this.EarMuscleTailSize = ed.Appearance.EarMuscleTailSize;
 				this.TailEarsType = ed.Appearance.TailEarsType;
 				this.Bust = ed.Appearance.Bust;
-				this.SkinTint = ed.SkinTint;
-				this.SkinGlow = ed.SkinGlow;
+				this.SkinTint = ed.ExAppearance.SkinTint;
+				this.SkinGlow = ed.ExAppearance.SkinGlow;
 			}
 		}
 
@@ -206,9 +206,9 @@ namespace ConceptMatrix.AppearanceModule.Files
 				Write(this.HairTone, (v) => ap.Appearance.HairTone = v);
 				Write(this.Highlights, (v) => ap.Appearance.Highlights = v);
 
-				ap.HairTint = this.HairTint;
-				ap.HairGlow = this.HairGlow;
-				ap.HighlightTint = this.HighlightTint;
+				ap.ExAppearance.HairTint = this.HairTint;
+				ap.ExAppearance.HairGlow = this.HairGlow;
+				ap.ExAppearance.HighlightTint = this.HighlightTint;
 			}
 
 			if (mode.HasFlag(SaveModes.AppearanceFace) || mode.HasFlag(SaveModes.AppearanceBody))
@@ -235,10 +235,10 @@ namespace ConceptMatrix.AppearanceModule.Files
 				Write(this.FacePaint, (v) => ap.Appearance.FacePaint = v);
 				Write(this.FacePaintColor, (v) => ap.Appearance.FacePaintColor = v);
 
-				ap.LeftEyeColor = this.LeftEyeColor;
-				ap.RightEyeColor = this.RightEyeColor;
-				ap.LimbalRingColor = this.LimbalRingColor;
-				ap.LipTint = this.LipTint;
+				ap.ExAppearance.LeftEyeColor = this.LeftEyeColor;
+				ap.ExAppearance.RightEyeColor = this.RightEyeColor;
+				ap.ExAppearance.LimbalRingColor = this.LimbalRingColor;
+				ap.ExAppearance.LipTint = this.LipTint;
 			}
 
 			if (mode.HasFlag(SaveModes.AppearanceBody))
@@ -249,8 +249,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 				Write(this.TailEarsType, (v) => ap.Appearance.TailEarsType = v);
 				Write(this.Bust, (v) => ap.Appearance.Bust = v);
 
-				ap.SkinTint = this.SkinTint;
-				ap.SkinGlow = this.SkinGlow;
+				ap.ExAppearance.SkinTint = this.SkinTint;
+				ap.ExAppearance.SkinGlow = this.SkinGlow;
 			}
 		}
 

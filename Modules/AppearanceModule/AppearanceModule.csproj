@@ -36,6 +36,11 @@
     <None Remove="Assets\Slots\RightRing.png" />
     <None Remove="Assets\Slots\Waist.png" />
     <None Remove="Assets\Slots\Wrists.png" />
+    <None Remove="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
