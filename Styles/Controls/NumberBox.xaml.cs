@@ -168,6 +168,10 @@ namespace ConceptMatrix.WpfStyles.Controls
 		private static void OnValueChanged(NumberBox sender, double v)
 		{
 			sender.Value = sender.Validate(v);
+
+			if (sender.InputBox.IsFocused)
+				return;
+
 			sender.Text = sender.Value.ToString("0.###");
 		}
 
