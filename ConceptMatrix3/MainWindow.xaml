@@ -141,7 +141,8 @@
 									 Style="{StaticResource TabStyle}" 
 									 BorderThickness="0" 
 									 Margin="0" 
-									 ShowDefaultCloseButton="True">
+									 ShowDefaultCloseButton="True"
+									 ClosingItemCallback="OnTabClosing">
 
 				<dragablz:TabablzControl.InterTabController>
 					<dragablz:InterTabController InterTabClient="{Binding TabClient}"/>

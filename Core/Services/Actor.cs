@@ -5,10 +5,11 @@ namespace ConceptMatrix
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Threading.Tasks;
 	using Anamnesis;
 	using Anamnesis.Offsets;
 
-	public class Actor
+	public class Actor : IDisposable
 	{
 		protected static IInjectionService injection = Services.Get<IInjectionService>();
 
@@ -23,7 +24,7 @@ namespace ConceptMatrix
 			this.Type = this.GetValue(Offsets.Main.ActorType);
 		}
 
-		public ActorTypes Type { get; private set; }
+		public ActorTypes Type { get; set; }
 		public string Name { get; private set; }
 
 		public string Id
@@ -45,8 +46,13 @@ namespace ConceptMatrix
 		public T GetValue<T>(IMemoryOffset<T> offset)
 		{
 			using IMemory<T> mem = this.GetMemory(offset);
-			this.memories.Add(new WeakReference<IMemory>(mem));
 			return mem.Value;
+		}
+
+		public void SetValue<T>(IMemoryOffset<T> offset, T value)
+		{
+			using IMemory<T> mem = this.GetMemory(offset);
+			mem.Value = value;
 		}
 
 		/// <summary>
@@ -57,6 +63,12 @@ namespace ConceptMatrix
 		{
 			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
 			refreshService.Refresh(this);
+		}
+
+		public async Task ActorRefreshAsync()
+		{
+			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
+			await refreshService.RefreshAsync(this);
 		}
 
 		public void Retarget(Actor actor)
@@ -74,6 +86,18 @@ namespace ConceptMatrix
 				if (weakRef.TryGetTarget(out mem))
 				{
 					mem.UpdateBaseOffset(this.baseOffset);
+				}
+			}
+		}
+
+		public void Dispose()
+		{
+			IMemory mem;
+			foreach (WeakReference<IMemory> weakRef in this.memories)
+			{
+				if (weakRef.TryGetTarget(out mem))
+				{
+					mem.Dispose();
 				}
 			}
 		}

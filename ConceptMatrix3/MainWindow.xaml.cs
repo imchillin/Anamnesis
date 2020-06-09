@@ -243,6 +243,17 @@ namespace ConceptMatrix.GUI
 			while (selector.Actor == null)
 				await Task.Delay(100);
 
+			if (selector.Actor.Type == Anamnesis.ActorTypes.BattleNpc ||
+				selector.Actor.Type == Anamnesis.ActorTypes.EventNpc)
+			{
+				MessageBoxResult result = MessageBox.Show(this, $"The Actor: \"{selector.Actor.Name}\" is an NPC. Do you want to change them to a Player to enable selection in GPose?", "Actor Selection", MessageBoxButton.YesNo);
+				if (result == MessageBoxResult.Yes)
+				{
+					selector.Actor.SetValue(Offsets.Main.ActorType, Anamnesis.ActorTypes.Player);
+					selector.Actor.Type = Anamnesis.ActorTypes.Player;
+				}
+			}
+
 			TabItem tab = new TabItem();
 			tab.Content = new ActorEditor();
 			tab.Header = new ActorHeaderView();
@@ -250,6 +261,16 @@ namespace ConceptMatrix.GUI
 			this.Tabs.Items.Add(tab);
 
 			this.Tabs.SelectedItem = tab;
+		}
+
+		private void OnTabClosing(ItemActionCallbackArgs<TabablzControl> args)
+		{
+			DragablzItem item = args.DragablzItem;
+			if (item.Content is FrameworkElement v)
+			{
+				Actor actor = v.DataContext as Actor;
+				actor.Dispose();
+			}
 		}
 
 		public class InterTabClient : IInterTabClient
