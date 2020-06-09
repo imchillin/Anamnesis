@@ -30,6 +30,8 @@ namespace ConceptMatrix.PoseModule.Views
 			this.camera = new PerspectiveCamera(new Point3D(0, 0, -3), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
 			this.Viewport.Camera = this.camera;
 
+			this.Viewport.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
+
 			////ConceptMatrix.Quaternion rootrot = Module.SkeletonViewModel.GetBone("Root").RootRotation;
 			////this.root.Transform = new RotateTransform3D(new QuaternionRotation3D(new Quaternion(rootrot.X, rootrot.Y, rootrot.Z, rootrot.W)));
 		}

@@ -6,13 +6,14 @@ namespace ConceptMatrix.PoseModule
 	using System;
 	using System.ComponentModel;
 	using System.Windows;
+	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Media.Animation;
 	using System.Windows.Media.Media3D;
 	using Anamnesis;
 	using ConceptMatrix.PoseModule.Extensions;
 	using ConceptMatrix.ThreeD;
-
+	using MaterialDesignThemes.Wpf;
 	using CmQuaternion = Anamnesis.Quaternion;
 	using CmTransform = Anamnesis.Transform;
 	using CmVector = Anamnesis.Vector;
@@ -24,7 +25,6 @@ namespace ConceptMatrix.PoseModule
 		public readonly SkeletonService.Bone Definition;
 		private readonly IMemory<CmTransform> transformMem;
 
-		private readonly Sphere sphere;
 		private readonly RotateTransform3D rotation;
 		private readonly ScaleTransform3D scale;
 		private readonly TranslateTransform3D position;
@@ -52,10 +52,14 @@ namespace ConceptMatrix.PoseModule
 			transformGroup.Children.Add(this.position);
 			this.Transform = transformGroup;
 
-			this.sphere = new Sphere();
-			this.sphere.Radius = 0.01;
-			this.sphere.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Gray));
-			this.Children.Add(this.sphere);
+			PaletteHelper ph = new PaletteHelper();
+
+			Sphere sphere = new Sphere();
+			sphere.Radius = 0.015;
+			System.Windows.Media.Color c1 = ph.GetTheme().Paper;
+			c1.A = 255;
+			sphere.Material = new DiffuseMaterial(new SolidColorBrush(c1));
+			this.Children.Add(sphere);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -95,6 +99,13 @@ namespace ConceptMatrix.PoseModule
 				if (this.parent != null)
 				{
 					this.lineToParent = new Line();
+
+					System.Windows.Media.Color c = default;
+					c.R = 128;
+					c.G = 128;
+					c.B = 128;
+					c.A = 255;
+					this.lineToParent.Color = c;
 					this.lineToParent.Points.Add(new Point3D(0, 0, 0));
 					this.lineToParent.Points.Add(new Point3D(0, 0, 0));
 					this.parent.Children.Add(this.lineToParent);
