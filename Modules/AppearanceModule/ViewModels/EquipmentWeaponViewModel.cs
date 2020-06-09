@@ -75,7 +75,11 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 			// Dont allow for setting none on the main hand
 			if (this.Slot == ItemSlots.MainHand && !this.HasWeapon)
-				return;
+			{
+				this.ModelBase = 0;
+				this.ModelSet = 0;
+				this.ModelVariant = 0;
+			}
 
 			if (this.scaleMem != null)
 				this.scaleMem.Value = this.Scale;

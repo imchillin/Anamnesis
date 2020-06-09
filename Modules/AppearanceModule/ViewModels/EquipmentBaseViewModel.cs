@@ -47,6 +47,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			private set;
 		}
 
+		[AlsoNotifyFor(nameof(ModelSet), nameof(ModelBase), nameof(ModelVariant))]
 		public IItem Item
 		{
 			get
