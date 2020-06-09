@@ -213,9 +213,9 @@ namespace ConceptMatrix
 			public Offset<Color> LimbalColor { get; set; }
 
 			public Offset<Vector> CameraView { get; set; }
-			public Offset CameraCurrentZoom { get; set; }
-			public Offset CameraMinZoom { get; set; }
-			public Offset CameraMaxZoom { get; set; }
+			public Offset<float> CameraCurrentZoom { get; set; }
+			public Offset<float> CameraMinZoom { get; set; }
+			public Offset<float> CameraMaxZoom { get; set; }
 			public Offset FOVCurrent { get; set; }
 			public Offset FOVCurrent2 { get; set; }
 			public Offset FOV2 { get; set; }

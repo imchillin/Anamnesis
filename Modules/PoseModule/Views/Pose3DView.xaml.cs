@@ -21,11 +21,14 @@ namespace ConceptMatrix.PoseModule.Views
 	/// </summary>
 	public partial class Pose3DView : UserControl
 	{
+		private PerspectiveCamera camera;
+
 		public Pose3DView()
 		{
 			this.InitializeComponent();
 
-			this.Viewport.Camera = new PerspectiveCamera(new Point3D(0, 0, -3), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
+			this.camera = new PerspectiveCamera(new Point3D(0, 0, -3), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
+			this.Viewport.Camera = this.camera;
 
 			////ConceptMatrix.Quaternion rootrot = Module.SkeletonViewModel.GetBone("Root").RootRotation;
 			////this.root.Transform = new RotateTransform3D(new QuaternionRotation3D(new Quaternion(rootrot.X, rootrot.Y, rootrot.Z, rootrot.W)));
@@ -60,6 +63,7 @@ namespace ConceptMatrix.PoseModule.Views
 			IMemory<float> camX = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraAngleX);
 			IMemory<float> camY = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraAngleY);
 			IMemory<float> camZ = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraRotation);
+			IMemory<float> camDist = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraCurrentZoom);
 
 			Vector3D camEuler = default;
 
@@ -77,8 +81,8 @@ namespace ConceptMatrix.PoseModule.Views
 					{
 						vis = this.IsVisible; ////&& this.IsEnabled;
 						Transform3DGroup g = new Transform3DGroup();
+						g.Children.Add(new TranslateTransform3D(0, 0.75, -(camDist.Value - 1)));
 						g.Children.Add(new RotateTransform3D(new QuaternionRotation3D(q)));
-						g.Children.Add(new TranslateTransform3D(0, 0.75, 0));
 						this.Viewport.Camera.Transform = g;
 					});
 				}
