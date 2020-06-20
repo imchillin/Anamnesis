@@ -50,8 +50,8 @@
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>
 
-					<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
-					<cm3Controls:IconButton Grid.Column="1" Icon="Download" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
+					<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Key="Common_OpenFile" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
+					<cm3Controls:IconButton Grid.Column="1" Icon="Download" Key="Common_SaveFile" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
 				</Grid>
 			</Border>
 		</Grid>
@@ -62,7 +62,7 @@
 
 				<StackPanel Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal">
 					<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
-					<cm3Controls:TextBlock Text="Posing is only available while in Group Pose. Type /Gpose in chat." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
+					<cm3Controls:TextBlock Key="Pose_WarningNotGPose" Text="Posing is only available while in Group Pose. Type /Gpose in chat." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
 				</StackPanel>
 
 				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
@@ -100,7 +100,7 @@
 				<Grid DataContext="{Binding SkeletonViewModel}">
 					<StackPanel Height="35" Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 						<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
-						<cm3Controls:TextBlock Text="Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<cm3Controls:TextBlock Key="Pose_WarningNotFrozen" Text="Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
 					</StackPanel>
 
 					<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}">

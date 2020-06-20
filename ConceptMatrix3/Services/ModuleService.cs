@@ -61,7 +61,7 @@ namespace ConceptMatrix.GUI.Services
 			string dir = Path.GetDirectoryName(loc);
 
 			// Don't initialize assemblies in sub directories, just load them.
-			if (!dir.EndsWith("Modules"))
+			if (dir.EndsWith("bin"))
 				return;
 
 			try

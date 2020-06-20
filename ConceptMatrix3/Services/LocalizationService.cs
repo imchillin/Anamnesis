@@ -41,33 +41,41 @@ namespace ConceptMatrix.GUI.Services
 			}
 		}
 
-		public void Add(string culture, string path)
+		public void Add(string searchPath)
 		{
-			string json = File.ReadAllText(path);
-			Dictionary<string, string> values = Serializer.Deserialize<Dictionary<string, string>>(json);
-			this.Add(culture, values);
+			string[] paths = Directory.GetFiles(searchPath);
+
+			foreach (string path in paths)
+			{
+				string culture = Path.GetFileNameWithoutExtension(path);
+
+				string json = File.ReadAllText(path);
+				Dictionary<string, string> values = Serializer.Deserialize<Dictionary<string, string>>(json);
+				this.Add(culture, values);
+			}
 		}
 
 		public string GetString(string key)
 		{
-			string val = this.currentLocale.Get(key);
+			string val;
 
-			if (val == null)
-			{
-				Log.Write("Missing Localized string: \"" + key + "\" in locale: \"" + this.currentLocale.Culture + "\"");
-				val = this.fallbackLocale.Get(key);
-			}
+			if (this.currentLocale.Get(key, out val))
+				return val;
 
-			if (val == null)
-				throw new Exception("Missing Localized string: \"" + key + "\"");
+			Log.Write("Missing Localized string: \"" + key + "\" in locale: \"" + this.currentLocale.Culture + "\"", "Localization", Log.Severity.Warning);
 
-			return val;
+			if (this.fallbackLocale.Get(key, out val))
+				return val;
+
+			Log.Write("Missing Localized string: \"" + key + "\"", "Localization", Log.Severity.Error);
+			this.fallbackLocale.Add(key, null);
+
+			return null;
 		}
 
 		public Task Initialize()
 		{
-			this.Add("EN", "Languages/en.json");
-			this.Add("GR", "Languages/gr.json");
+			this.Add("Languages");
 
 			this.currentLocale = this.locales[FallbackCulture];
 			this.fallbackLocale = this.currentLocale;
@@ -116,12 +124,15 @@ namespace ConceptMatrix.GUI.Services
 				this.values[key] = value;
 			}
 
-			public virtual string Get(string key)
+			public virtual bool Get(string key, out string value)
 			{
-				if (!this.values.ContainsKey(key))
-					return null;
+				value = null;
 
-				return this.values[key];
+				if (!this.values.ContainsKey(key))
+					return false;
+
+				value = this.values[key];
+				return true;
 			}
 		}
 
@@ -141,13 +152,15 @@ namespace ConceptMatrix.GUI.Services
 				this.baseLocale = baseLocale;
 			}
 
-			public override string Get(string key)
+			public override bool Get(string key, out string value)
 			{
-				string value = base.Get(key);
-
-				if (value == null)
+				if (!base.Get(key, out value))
 				{
-					string str = this.baseLocale.Get(key);
+					string str = null;
+
+					if (!this.baseLocale.Get(key, out str))
+						return false;
+
 					char[] newStr = new char[str.Length];
 
 					for (int i = 0; i < str.Length; i++)
@@ -175,7 +188,7 @@ namespace ConceptMatrix.GUI.Services
 					this.Add(key, value);
 				}
 
-				return value;
+				return true;
 			}
 		}
 	}

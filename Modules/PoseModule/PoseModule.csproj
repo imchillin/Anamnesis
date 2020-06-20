@@ -78,6 +78,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="Languages\en.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Skeletons\AuRa.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
@@ -123,6 +126,6 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="md &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;xcopy /s /i /y &quot;$(TargetDir)Skeletons&quot; &quot;$(SolutionDir)bin\Modules\Skeletons&quot;" />
+	  <Exec Command="md &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)bin\Modules\Pose\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\Pose\&quot;&#xD;&#xA;xcopy /s /i /y &quot;$(TargetDir)Skeletons&quot; &quot;$(SolutionDir)bin\Modules\Pose\Skeletons&quot;&#xD;&#xA;xcopy /s /i /y &quot;$(TargetDir)Languages&quot; &quot;$(SolutionDir)bin\Modules\Pose\Languages&quot;" />
 	</Target>
 </Project>

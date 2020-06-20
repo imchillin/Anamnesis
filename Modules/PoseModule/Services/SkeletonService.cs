@@ -12,7 +12,7 @@ namespace ConceptMatrix.PoseModule
 
 	public class SkeletonService : IService
 	{
-		public const string SkeletonsDirectory = "Modules/Skeletons/";
+		public const string SkeletonsDirectory = "Modules/Pose/Skeletons/";
 		private Dictionary<Appearance.Races, Dictionary<string, Bone>> precachedBones;
 
 		public async Task Initialize()

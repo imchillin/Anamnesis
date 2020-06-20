@@ -4,21 +4,22 @@
 namespace ConceptMatrix.PoseModule
 {
 	using System.Threading.Tasks;
+	using ConceptMatrix.Localization;
 	using ConceptMatrix.Modules;
 	using ConceptMatrix.PoseModule.Pages;
 
 	public class Module : IModule
 	{
-		public Task Initialize()
+		public async Task Initialize()
 		{
-			Services.Add<SkeletonService>();
-			Services.Add<PoseService>();
+			Services.Get<ILocalizationService>().Add("Modules/Pose/Languages/");
+
+			await Services.Add<SkeletonService>();
+			await Services.Add<PoseService>();
 
 			IViewService viewService = Services.Get<IViewService>();
 			viewService.AddPage<PosePage>("Pose", "running");
 			viewService.AddPage<PositionPage>("Positioning", "globe");
-
-			return Task.CompletedTask;
 		}
 
 		public Task Start()

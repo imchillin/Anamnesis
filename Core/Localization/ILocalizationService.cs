@@ -11,6 +11,6 @@ namespace ConceptMatrix.Localization
 
 		void Add(string culture, string key, string value);
 		void Add(string culture, Dictionary<string, string> values);
-		void Add(string culture, string path);
+		void Add(string searchPath);
 	}
 }

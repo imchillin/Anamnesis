@@ -291,7 +291,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="md &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;xcopy /s /i /y &quot;$(TargetDir)SaintCoinach&quot; &quot;$(SolutionDir)bin\Modules\SaintCoinach&quot;" />
+	  <Exec Command="md &quot;$(SolutionDir)bin\Modules\SaintCoinach\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)bin\Modules\SaintCoinach&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\SaintCoinach&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\SaintCoinach&quot;&#xD;&#xA;xcopy /s /i /y &quot;$(TargetDir)SaintCoinach&quot; &quot;$(SolutionDir)bin\Modules\SaintCoinach\bin\&quot;" />
 	</Target>
 
 </Project>

@@ -6,6 +6,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
+	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using FontAwesome.Sharp;
 
 	/// <summary>
@@ -13,6 +14,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	/// </summary>
 	public partial class IconButton : UserControl, INotifyPropertyChanged
 	{
+		public static readonly IBind<string> KeyDp = Binder.Register<string, IconButton>(nameof(Key), OnKeyChanged);
 		public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(IconButton), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
 		public static readonly DependencyProperty IconProperty = DependencyProperty.Register(nameof(Icon), typeof(IconChar), typeof(IconButton), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnChanged)));
 		public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent(nameof(Click), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(IconButton));
@@ -39,6 +41,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
+		public string Key { get; set; }
+
 		public string Text
 		{
 			get
@@ -62,6 +66,11 @@ namespace ConceptMatrix.WpfStyles.Controls
 			{
 				this.SetValue(IconProperty, value);
 			}
+		}
+
+		public static void OnKeyChanged(IconButton sender, string val)
+		{
+			sender.Key = val;
 		}
 
 		private static void OnChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)

@@ -40,15 +40,20 @@ namespace ConceptMatrix.WpfStyles.Controls
 			if (string.IsNullOrEmpty(this.Key))
 				return;
 
-			if (DesignerProperties.GetIsInDesignMode(this))
-			{
-				if (string.IsNullOrEmpty(this.Text))
-					this.Text = "[" + this.Key + "]";
+			string val = null;
 
-				return;
+			if (!DesignerProperties.GetIsInDesignMode(this))
+				val = Loc.GetString(this.Key);
+
+			if (val == null)
+			{
+				if (!string.IsNullOrEmpty(this.Text))
+					return;
+
+				val = "[" + this.Key + "]";
 			}
 
-			this.Text = Loc.GetString(this.Key);
+			this.Text = val;
 		}
 	}
 }
