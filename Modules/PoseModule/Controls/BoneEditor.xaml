@@ -10,6 +10,9 @@
 
 	<Grid x:Name="ContentArea">
 		<StackPanel Margin="3" IsEnabled="{Binding Value, Converter={StaticResource NotNullToBoolConverter}}">
+
+			<TextBlock Text="{Binding Value.BoneName}" Foreground="Black" Opacity="0.5" Margin="3" FontWeight="Bold" HorizontalAlignment="Center"/>
+
 			<GroupBox Header="Rotation">
 				<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}"/>
 			</GroupBox>
