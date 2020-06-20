@@ -83,10 +83,13 @@ namespace ConceptMatrix.AppearanceModule.Views
 		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(FacialFeaturesControl sender, Appearance.FacialFeature value)
 		{
+			sender.locked = true;
 			foreach (Option op in sender.features)
 			{
 				op.Selected = sender.Value.HasFlag(op.Value);
 			}
+
+			sender.locked = false;
 		}
 
 		private void GetFeatures()
