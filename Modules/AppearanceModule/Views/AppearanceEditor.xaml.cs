@@ -166,7 +166,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.HasFur = this.Appearance.Race == AnAppearance.Races.Hrothgar;
 				this.HasTail = this.Appearance.Race == AnAppearance.Races.Hrothgar || this.Appearance.Race == AnAppearance.Races.Miqote || this.Appearance.Race == AnAppearance.Races.AuRa;
 				this.HasLimbal = this.Appearance.Race == AnAppearance.Races.AuRa;
-				this.HasEars = this.Appearance.Race == AnAppearance.Races.Viera;
+				this.HasEars = this.Appearance.Race == AnAppearance.Races.Viera || this.Appearance.Race == AnAppearance.Races.Lalafel || this.Appearance.Race == AnAppearance.Races.Elezen;
 				this.HasMuscles = !this.HasEars && !this.HasTail;
 				this.HasGender = this.Appearance.Race != AnAppearance.Races.Hrothgar && this.Appearance.Race != AnAppearance.Races.Viera;
 
