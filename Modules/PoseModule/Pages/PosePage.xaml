@@ -96,7 +96,7 @@
 
 		<!-- Content -->
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
-			<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
+			<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}" IsEnabled="{Binding PosingEnabled}">
 				<Grid DataContext="{Binding SkeletonViewModel}">
 					<StackPanel Height="35" Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 						<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
