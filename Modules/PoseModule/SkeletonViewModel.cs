@@ -25,6 +25,7 @@ namespace ConceptMatrix.PoseModule
 
 		private Actor actor;
 		private IMemory<CmQuaternion> rootRotationMem;
+		private IMemory<bool> animatingMem;
 
 		private Dictionary<string, Bone> bones;
 		private Bone currentBone;
@@ -43,6 +44,7 @@ namespace ConceptMatrix.PoseModule
 
 		public bool FlipSides { get; set; } = false;
 		public bool ParentingEnabled { get; set; } = true;
+		public bool CanPose { get; set; }
 
 		public Bone CurrentBone
 		{
@@ -198,9 +200,12 @@ namespace ConceptMatrix.PoseModule
 			this.appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
 			this.rootRotationMem = actor.GetMemory(Offsets.Main.Rotation);
 			this.rootRotationMem.ValueChanged += this.RootRotationMem_ValueChanged;
+			this.animatingMem = actor.GetMemory(Offsets.Main.Animating);
+			this.animatingMem.ValueChanged += this.OnAnimatingChanged;
 
 			await Application.Current.Dispatcher.InvokeAsync(async () =>
 			{
+				this.CanPose = !this.animatingMem.Value;
 				await this.GenerateBones(actor);
 			});
 
@@ -460,6 +465,11 @@ namespace ConceptMatrix.PoseModule
 				RotateTransform3D trans = new RotateTransform3D(new QuaternionRotation3D(rot));
 				this.Root.Transform = trans;
 			});
+		}
+
+		private void OnAnimatingChanged(object sender, object value)
+		{
+			this.CanPose = !this.animatingMem.Value;
 		}
 	}
 }

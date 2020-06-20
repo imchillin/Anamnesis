@@ -39,6 +39,10 @@ namespace ConceptMatrix.PoseModule.Views
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
+
+			if (vm == null)
+				return;
+
 			this.Viewport.Children.Add(vm.Root);
 		}
 

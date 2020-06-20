@@ -20,30 +20,26 @@ namespace ConceptMatrix.PoseModule
 		public PosePage()
 		{
 			this.poseService = Services.Get<PoseService>();
-			this.poseService.OnEnabledChanged += this.PoseService_OnEnabledChanged;
+			this.poseService.OnEnabledChanged += this.OnEnabledChanged;
+			this.poseService.OnAvailableChanged += this.OnAvailableChanged;
 
 			this.InitializeComponent();
 
 			this.SkeletonViewModel = new SkeletonViewModel();
-			this.ContentArea.DataContext = this.SkeletonViewModel;
+			this.ContentArea.DataContext = this;
 
-			this.TopBarArea.DataContext = this;
-
-			this.PoseService_OnEnabledChanged(this.poseService.IsEnabled);
+			this.OnEnabledChanged(this.poseService.IsEnabled);
+			this.OnAvailableChanged(this.poseService.IsAvailable);
 		}
 
 		public SkeletonViewModel SkeletonViewModel { get; set; }
+
+		public bool CanPose { get; set; }
 
 		public bool PosingEnabled
 		{
 			get => this.poseService.IsEnabled;
 			set => this.poseService.IsEnabled = value;
-		}
-
-		public bool FreezePhysics
-		{
-			get => this.poseService.FreezePhysics;
-			set => this.poseService.FreezePhysics = value;
 		}
 
 		public bool FlipSides
@@ -63,12 +59,17 @@ namespace ConceptMatrix.PoseModule
 			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
 		}
 
-		private void PoseService_OnEnabledChanged(bool value)
+		private void OnAvailableChanged(bool value)
+		{
+			this.CanPose = value;
+		}
+
+		private void OnEnabledChanged(bool value)
 		{
 			if (this.SkeletonViewModel != null)
+			{
 				this.SkeletonViewModel.CurrentBone = null;
-
-			this.PoseContent.IsEnabled = value;
+			}
 		}
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)

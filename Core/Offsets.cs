@@ -55,6 +55,7 @@ namespace ConceptMatrix
 			Main.ModelChara = 0x1888;
 			Main.ActorVoice = 0x18B8;
 			Main.StatusEffect = 0x1C1C;
+			Main.Animating = 0x784;
 
 			Main.Transparency = 0x1704;
 			Main.MainHand = 0x1450;
@@ -169,6 +170,7 @@ namespace ConceptMatrix
 			public Offset ModelChara { get; set; }
 			public Offset ActorVoice { get; set; }
 			public Offset StatusEffect { get; set; }
+			public Offset<bool> Animating { get; set; }
 
 			public Offset Transparency { get; set; }
 			public Offset<Weapon> MainHand { get; set; }

@@ -3,7 +3,9 @@
 
 namespace ConceptMatrix.PoseModule
 {
+	using System;
 	using System.Threading.Tasks;
+	using System.Windows;
 	using Anamnesis;
 
 	public class PoseService : IService
@@ -19,11 +21,22 @@ namespace ConceptMatrix.PoseModule
 		private IMemory<Flag> phys2Mem;
 		private IMemory<Flag> phys3Mem;
 
+		private ISelectionService selectionService;
+
 		public delegate void PoseEvent(bool value);
 
 		public event PoseEvent OnEnabledChanged;
 		public event PoseEvent OnFreezePhysicsChanged;
 		public event PoseEvent OnFreezePositionsChanged;
+		public event PoseEvent OnAvailableChanged;
+
+		public bool IsAvailable
+		{
+			get
+			{
+				return this.selectionService.GetMode() == Modes.GPose;
+			}
+		}
 
 		public bool IsEnabled
 		{
@@ -37,6 +50,10 @@ namespace ConceptMatrix.PoseModule
 				if (this.IsEnabled == value)
 					return;
 
+				// Don't try to enable posing unless we are in gpose
+				if (value && this.selectionService.GetMode() != Modes.GPose)
+					throw new Exception("Attempt to enable posing outside of gpose");
+
 				// rotations
 				this.skel1Mem.Value = Flag.Get(value);
 				this.skel2Mem.Value = Flag.Get(value);
@@ -47,29 +64,22 @@ namespace ConceptMatrix.PoseModule
 				this.skel6Mem.Value = Flag.Get(value);
 
 				this.FreezePositions = value;
-				this.FreezePhysics = value;
 
-				this.OnEnabledChanged?.Invoke(value);
-			}
-		}
-
-		public bool FreezePhysics
-		{
-			get
-			{
-				return this.phys1Mem.Value.IsEnabled;
-			}
-
-			set
-			{
+				// Physics
 				this.phys1Mem.Value = Flag.Get(value);
 				this.phys2Mem.Value = Flag.Get(value);
 				this.phys3Mem.Value = Flag.Get(value);
 
-				this.OnFreezePhysicsChanged?.Invoke(value);
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					this.OnEnabledChanged?.Invoke(value);
+				});
 			}
 		}
 
+		// We need to unfreeze positions to allow us to set bone rotations
+		// without calculating new positions. This is required for CM2 poses to load
+		// correctly, since they don't have positions.
 		public bool FreezePositions
 		{
 			get
@@ -98,6 +108,9 @@ namespace ConceptMatrix.PoseModule
 			this.phys2Mem = injection.GetMemory(Offsets.Main.Physics2Flag);
 			this.phys3Mem = injection.GetMemory(Offsets.Main.Physics3Flag);
 
+			this.selectionService = Services.Get<ISelectionService>();
+			this.selectionService.ModeChanged += this.Selection_ModeChanged;
+
 			return Task.CompletedTask;
 		}
 
@@ -121,6 +134,19 @@ namespace ConceptMatrix.PoseModule
 		public Task Start()
 		{
 			return Task.CompletedTask;
+		}
+
+		private void Selection_ModeChanged(Modes mode)
+		{
+			bool available = this.IsAvailable;
+
+			if (!available)
+				this.IsEnabled = false;
+
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.OnAvailableChanged?.Invoke(available);
+			});
 		}
 	}
 }

@@ -13,6 +13,11 @@
 			 Loaded="OnLoaded"
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="B2V"/>
+		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+	</UserControl.Resources>
+
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
@@ -26,19 +31,20 @@
 		</Grid.RowDefinitions>
 
 		<!-- Sidebar -->
-		<Grid Grid.Column="2" Grid.Row="1">
+		<Grid Grid.Column="2" Grid.Row="1" x:Name="Sidebar">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
 			<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3"
-				IsEnabled="{Binding CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
-				<controls:BoneEditor Value="{Binding CurrentBone}"/>
+				IsEnabled="{Binding SkeletonViewModel.CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
+				<controls:BoneEditor Value="{Binding SkeletonViewModel.CurrentBone}"/>
 			</Border>
 
-			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 3, 0, 0" >
-				<Grid Margin="6">
+			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 3, 0, 0" x:Name="LoadSaveArea" 
+					IsEnabled="{Binding CanPose}">
+				<Grid Margin="6" IsEnabled="{Binding SkeletonViewModel.CanPose}">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition/>
@@ -51,42 +57,58 @@
 		</Grid>
 
 		<!-- top Bar -->
-		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3" x:Name="TopBarArea">
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3" IsEnabled="{Binding CanPose}">
+			<Grid Height="35">
 
-				<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
-					<ListBoxItem ToolTip="GUI View" Margin="1, 0, 0, 1">
-						<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
-					</ListBoxItem>
-					<ListBoxItem ToolTip="3D View" Margin="0, 0, 0, 1">
-						<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
-					</ListBoxItem>
-					<ListBoxItem ToolTip="Matrix View" Margin="0, 0, 1, 1">
-						<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
-					</ListBoxItem>
-				</ListBox>
+				<StackPanel Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal">
+					<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
+					<cm3Controls:TextBlock Text="Posing is only available while in Group Pose. Type /Gpose in chat." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
+				</StackPanel>
 
-				<Label Content="Enable" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
-				<ToggleButton IsChecked="{Binding PosingEnabled}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>
+				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
+					<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
+						<ListBoxItem ToolTip="GUI View" Margin="1, 0, 0, 1">
+							<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
+						</ListBoxItem>
+						<ListBoxItem ToolTip="3D View" Margin="0, 0, 0, 1">
+							<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
+						</ListBoxItem>
+						<ListBoxItem ToolTip="Matrix View" Margin="0, 0, 1, 1">
+							<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
+						</ListBoxItem>
+					</ListBox>
 
-				<Label Content="Freeze Physics" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
-				<ToggleButton IsChecked="{Binding FreezePhysics}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>
+					<Label Content="Enable" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
+					<ToggleButton IsChecked="{Binding PosingEnabled}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>
 
-				<Label Content="Flip Sides" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
-				<ToggleButton IsChecked="{Binding FlipSides}" Margin="6, 8, 6, 6"/>
+					<!--<Label Content="Freeze Physics" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
+					<ToggleButton IsChecked="{Binding FreezePhysics}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>-->
 
-				<Label Content="Parenting" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
-				<ToggleButton IsChecked="{Binding ParentingEnabled}" Margin="6, 8, 6, 6"/>
+					<Label Content="Flip Sides" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
+					<ToggleButton IsChecked="{Binding FlipSides}" Margin="6, 8, 6, 6"/>
 
-			</StackPanel>
+					<Label Content="Parenting" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
+					<ToggleButton IsChecked="{Binding ParentingEnabled}" Margin="6, 8, 6, 6"/>
+
+				</StackPanel>
+			</Grid>
 		</Border>
 
 		<!-- Content -->
-		<Border x:Name="PoseContent" Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
-			<Grid>
-				<views:Pose3DView x:Name="ThreeDView" Visibility="Hidden"/>
-				<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
-				<views:PoseMatrixView x:Name="MatrixView" Visibility="Hidden"/>
+		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
+			<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
+				<Grid DataContext="{Binding SkeletonViewModel}">
+					<StackPanel Height="35" Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+						<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
+						<cm3Controls:TextBlock Text="Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
+					</StackPanel>
+
+					<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
+						<views:Pose3DView x:Name="ThreeDView" Visibility="Hidden"/>
+						<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
+						<views:PoseMatrixView x:Name="MatrixView" Visibility="Hidden"/>
+					</Grid>
+				</Grid>
 			</Grid>
 		</Border>
 	</Grid>
