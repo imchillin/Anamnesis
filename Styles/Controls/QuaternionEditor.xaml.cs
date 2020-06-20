@@ -484,7 +484,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 				this.cylinder = new Cylinder();
 				this.cylinder.Radius = 0.49;
-				this.cylinder.Length = 0.15;
+				this.cylinder.Length = 0.25;
 				this.cylinder.Transform = new RotateTransform3D(new AxisAngleRotation3D(axis, 90));
 				this.cylinder.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Transparent));
 				this.Children.Add(this.cylinder);
