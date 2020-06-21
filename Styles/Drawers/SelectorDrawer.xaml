@@ -42,7 +42,8 @@
 				 HorizontalContentAlignment="Stretch"
 				 Grid.Row="1"
 				 x:Name="ListBox"
-				 ItemTemplate="{Binding ItemTemplate}">
+				 ItemTemplate="{Binding ItemTemplate}"
+				 MouseDoubleClick="OnDoubleClick">
 		</ListBox>
 	</Grid>
 </UserControl>

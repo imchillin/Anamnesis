@@ -225,5 +225,10 @@ namespace ConceptMatrix.WpfStyles.Drawers
 
 			this.Value = this.FilteredItems[0];
 		}
+
+		private void OnDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			this.Close?.Invoke();
+		}
 	}
 }
