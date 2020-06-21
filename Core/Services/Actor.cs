@@ -26,6 +26,7 @@ namespace ConceptMatrix
 
 		public ActorTypes Type { get; set; }
 		public string Name { get; private set; }
+		public string Description { get; set; }
 
 		public string Id
 		{
@@ -76,8 +77,11 @@ namespace ConceptMatrix
 			if (this.baseOffset == actor.baseOffset)
 				return;
 
+			Log.Write("Retargeting actor from " + this.Description + "(" + this.baseOffset + " to " + actor.Description + "(" + actor.baseOffset + ")");
+
 			this.baseOffset = actor.baseOffset;
 			this.Name = actor.Name;
+			this.Description = actor.Description;
 			this.Type = actor.Type;
 
 			IMemory mem;
@@ -88,6 +92,8 @@ namespace ConceptMatrix
 					mem.UpdateBaseOffset(this.baseOffset);
 				}
 			}
+
+			Log.Write("Retargeting actor done");
 		}
 
 		public void Dispose()

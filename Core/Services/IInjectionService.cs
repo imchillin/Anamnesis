@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix
 {
+	using System.Threading.Tasks;
 	using Anamnesis;
 	using Anamnesis.Offsets;
 
@@ -13,5 +14,7 @@ namespace ConceptMatrix
 		IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets);
 		IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset<T>[] offsets);
 		IMemory<T> GetMemory<T>(IBaseMemoryOffset<T> baseOffset, params IMemoryOffset<T>[] offsets);
+
+		Task WaitForMemoryTick();
 	}
 }

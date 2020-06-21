@@ -15,6 +15,10 @@ namespace ConceptMatrix.GUI.Services
 		private int applyCountdown = 0;
 		private Task applyTask;
 		private SelectionService selectionService;
+		private IInjectionService injectionService;
+
+		public event RefreshEvent RefreshBegin;
+		public event RefreshEvent RefreshComplete;
 
 		public bool IsRefreshing
 		{
@@ -30,6 +34,7 @@ namespace ConceptMatrix.GUI.Services
 		public Task Start()
 		{
 			this.selectionService = Services.Get<SelectionService>();
+			this.injectionService = Services.Get<IInjectionService>();
 			return Task.CompletedTask;
 		}
 
@@ -82,6 +87,7 @@ namespace ConceptMatrix.GUI.Services
 
 				this.IsRefreshing = true;
 				Log.Write("Refresh Begin", "Actor Refresh");
+				this.RefreshBegin?.Invoke(actor);
 
 				using IMemory<ActorTypes> actorTypeMem = actor.GetMemory(Offsets.Main.ActorType);
 				using IMemory<byte> actorRenderMem = actor.GetMemory(Offsets.Main.ActorRender);
@@ -94,18 +100,27 @@ namespace ConceptMatrix.GUI.Services
 					actorRenderMem.SetValue(0, true);
 					await Task.Delay(150);
 					actorTypeMem.SetValue(ActorTypes.Player, true);
+					await Task.Delay(150);
 				}
 				else
 				{
 					actorRenderMem.SetValue(2, true);
 					await Task.Delay(150);
 					actorRenderMem.SetValue(0, true);
+					await Task.Delay(150);
 				}
 
 				this.selectionService.RetargetActors();
 
+				await Task.Delay(250);
+
+				await this.injectionService.WaitForMemoryTick();
+
+				await Task.Delay(250);
+
 				Log.Write("Refresh Complete", "Actor Refresh");
 				this.IsRefreshing = false;
+				this.RefreshComplete?.Invoke(actor);
 			}
 		}
 	}

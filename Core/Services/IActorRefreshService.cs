@@ -9,6 +9,9 @@ namespace ConceptMatrix
 
 	public interface IActorRefreshService : IService
 	{
+		event RefreshEvent RefreshBegin;
+		event RefreshEvent RefreshComplete;
+
 		bool IsRefreshing
 		{
 			get;

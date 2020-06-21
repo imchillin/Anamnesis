@@ -103,6 +103,7 @@ namespace ConceptMatrix.GUI.Services
 			for (byte i = 0; i < count; i++)
 			{
 				Actor actor = new Actor(actorTableOffset.GetBaseOffset(i));
+				actor.Description = mode + "_" + i;
 
 				if (actors.ContainsKey(actor.Id))
 				{

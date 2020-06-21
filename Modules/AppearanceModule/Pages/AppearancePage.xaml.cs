@@ -16,10 +16,18 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	public partial class AppearancePage : UserControl
 	{
 		private ISelectionService selectionService;
+		private IActorRefreshService refreshService;
+		private Actor actor;
+
+		private AppearanceFile refreshFile;
 
 		public AppearancePage()
 		{
 			this.selectionService = Services.Get<ISelectionService>();
+			this.refreshService = Services.Get<IActorRefreshService>();
+
+			this.refreshService.RefreshBegin += this.RefreshService_RefreshBegin;
+			this.refreshService.RefreshComplete += this.RefreshService_RefreshComplete;
 
 			this.InitializeComponent();
 		}
@@ -60,6 +68,9 @@ namespace ConceptMatrix.AppearanceModule.Pages
 					return;
 
 				apFile.Write(this.Appearance, this.Equipment, mode);
+				await this.refreshService.RefreshAsync(this.actor);
+
+				////apFile.Write(this.Appearance, this.Equipment, mode);
 			}
 		}
 
@@ -79,6 +90,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 		private void OnActorChanged(Actor actor)
 		{
+			this.actor = actor;
 			bool hasValidSelection = actor != null && (actor.Type == ActorTypes.Player || actor.Type == ActorTypes.BattleNpc || actor.Type == ActorTypes.EventNpc);
 
 			Application.Current.Dispatcher.Invoke(() =>
@@ -94,6 +106,21 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			{
 				this.Equipment.IsEnabled = mode == Modes.Overworld;
 			});
+		}
+
+		private void RefreshService_RefreshComplete(Actor actor)
+		{
+			if (this.refreshFile != null)
+			{
+				this.refreshFile.Write(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
+				this.refreshFile = null;
+			}
+		}
+
+		private void RefreshService_RefreshBegin(Actor actor)
+		{
+			this.refreshFile = new AppearanceFile();
+			this.refreshFile.Read(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
 		}
 	}
 }

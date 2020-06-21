@@ -34,15 +34,34 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		public ExtendedAppearanceViewModel(Actor actor)
 		{
 			this.skinColorMem = actor.GetMemory(Offsets.Main.SkinColor);
+			this.skinColorMem.ValueChanged += (_, v) => this.SkinTint = (Color?)v;
+
 			this.skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
+			this.skinGlowMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
 			this.leftEyeColorMem = actor.GetMemory(Offsets.Main.LeftEyeColor);
+			this.leftEyeColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
 			this.rightEyeColorMem = actor.GetMemory(Offsets.Main.RightEyeColor);
+			this.rightEyeColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
 			this.limbalRingColorMem = actor.GetMemory(Offsets.Main.LimbalColor);
+			this.limbalRingColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
 			this.hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
+			this.hairTintColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
 			this.hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
+			this.hairGlowColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
 			this.highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
+			this.highlightTintColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
 			this.lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
+			this.lipTintMem.ValueChanged += this.LipTintMem_ValueChanged;
+
 			this.lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
+			this.lipGlossMem.ValueChanged += this.LipGlossMem_ValueChanged;
 		}
 
 		public Color? SkinTint
@@ -54,7 +73,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set
 			{
 				this.skinTint = value;
-				this.skinColorMem.Freeze = value != null;
 
 				if (value != null)
 				{
@@ -72,7 +90,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set
 			{
 				this.skinGlow = value;
-				this.skinGlowMem.Freeze = value != null;
 
 				if (value != null)
 				{
@@ -90,7 +107,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set
 			{
 				this.leftEyeColor = value;
-				this.leftEyeColorMem.Freeze = value != null;
 
 				if (value != null)
 				{
@@ -108,7 +124,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set
 			{
 				this.rightEyeColor = value;
-				this.rightEyeColorMem.Freeze = value != null;
 
 				if (value != null)
 				{
@@ -126,7 +141,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set
 			{
 				this.limbalRingColor = value;
-				this.limbalRingColorMem.Freeze = value != null;
 
 				if (value != null)
 				{
@@ -144,7 +158,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set
 			{
 				this.hairTint = value;
-				this.hairTintColorMem.Freeze = value != null;
 
 				if (value != null)
 				{
@@ -162,7 +175,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set
 			{
 				this.hairGlow = value;
-				this.hairGlowColorMem.Freeze = value != null;
 
 				if (value != null)
 				{
@@ -180,7 +192,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set
 			{
 				this.highlightTint = value;
-				this.highlightTintColorMem.Freeze = value != null;
 
 				if (value != null)
 				{
@@ -199,9 +210,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			set
 			{
 				this.lipTint = value;
-
-				this.lipTintMem.Freeze = value != null;
-				this.lipGlossMem.Freeze = value != null;
 
 				if (value == null)
 					return;
@@ -225,6 +233,22 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.hairTintColorMem?.Dispose();
 			this.hairGlowColorMem?.Dispose();
 			this.highlightTintColorMem?.Dispose();
+		}
+
+		private void LipTintMem_ValueChanged(object sender, object value)
+		{
+			Color4 c = default;
+			c.Color = this.lipTintMem.Value;
+			c.A = this.lipGlossMem.Value;
+			this.LipTint = c;
+		}
+
+		private void LipGlossMem_ValueChanged(object sender, object value)
+		{
+			Color4 c = default;
+			c.Color = this.lipTintMem.Value;
+			c.A = this.lipGlossMem.Value;
+			this.LipTint = c;
 		}
 	}
 }

@@ -90,6 +90,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 		public void Read(AppearanceEditor ed, EquipmentEditor eq, SaveModes mode)
 		{
+			Log.Write("Reading appearance to file", "AppearanceFile");
+
 			if (mode.HasFlag(SaveModes.EquipmentGear))
 			{
 				this.MainHand = new Weapon(eq.MainHand);
@@ -170,6 +172,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 		public void Write(AppearanceEditor ap, EquipmentEditor eq, SaveModes mode)
 		{
+			Log.Write("Writing appearance from file", "AppearanceFile");
+
 			if (mode.HasFlag(SaveModes.EquipmentGear))
 			{
 				if (this.MainHand != null && this.MainHand.ModelSet != 0)

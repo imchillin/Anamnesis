@@ -10,6 +10,7 @@ namespace ConceptMatrix.Injection
 	using Anamnesis.Offsets;
 	using Anamnesis.Process;
 	using ConceptMatrix;
+	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Windows;
 
 	public class InjectionService : IInjectionService
@@ -57,6 +58,11 @@ namespace ConceptMatrix.Injection
 		public Task Start()
 		{
 			return Task.CompletedTask;
+		}
+
+		public Task WaitForMemoryTick()
+		{
+			return this.service.WaitForMemoryTick();
 		}
 
 		private void OnError(Exception ex)
