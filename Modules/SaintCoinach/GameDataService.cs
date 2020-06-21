@@ -127,7 +127,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			// Unzip definitions
 			if (!Directory.Exists("./Definitions/"))
-				ZipFile.ExtractToDirectory("./Modules/SaintCoinach/Definitions.zip", "./Definitions/");
+				ZipFile.ExtractToDirectory("./Modules/SaintCoinach/bin/Definitions.zip", "./Definitions/");
 
 			// TODO get language from language service?
 			ARealmReversed realm = new ARealmReversed(directory, Language.English);
