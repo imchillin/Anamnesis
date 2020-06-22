@@ -25,6 +25,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			IGameDataService gameData = Services.Get<IGameDataService>();
 			this.Selector.Items.Add(EquipmentBaseViewModel.NoneItem);
+			this.Selector.Items.Add(EquipmentBaseViewModel.NpcbodyItem);
 			foreach (IItem item in gameData.Items.All)
 			{
 				this.Selector.Items.Add(item);

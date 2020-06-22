@@ -6,6 +6,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	using System;
 	using Anamnesis;
 	using ConceptMatrix;
+	using ConceptMatrix.AppearanceModule.Items;
 	using ConceptMatrix.GameData;
 	using PropertyChanged;
 
@@ -14,6 +15,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	{
 		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
+		public static readonly NpcBodyItem NpcbodyItem = new NpcBodyItem();
 
 		public bool DontApply = false;
 
@@ -264,181 +266,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			}
 
 			return NoneDye;
-		}
-
-		public class DummyNoneItem : IItem
-		{
-			public string Name
-			{
-				get
-				{
-					return "None";
-				}
-			}
-
-			public string Description
-			{
-				get
-				{
-					return null;
-				}
-			}
-
-			public IImage Icon
-			{
-				get
-				{
-					return null;
-				}
-			}
-
-			public ushort ModelBase
-			{
-				get
-				{
-					return 0;
-				}
-			}
-
-			public ushort ModelVariant
-			{
-				get
-				{
-					return 0;
-				}
-			}
-
-			public ushort WeaponSet
-			{
-				get
-				{
-					return 0;
-				}
-			}
-
-			public int Key
-			{
-				get
-				{
-					return 0;
-				}
-			}
-
-			public bool IsWeapon
-			{
-				get
-				{
-					return true;
-				}
-			}
-
-			public bool FitsInSlot(ItemSlots slot)
-			{
-				return true;
-			}
-		}
-
-		public class DummyNoneDye : IDye
-		{
-			public byte Id
-			{
-				get
-				{
-					return 0;
-				}
-			}
-
-			public string Name
-			{
-				get
-				{
-					return "None";
-				}
-			}
-
-			public string Description { get; }
-			public IImage Icon { get; }
-
-			public int Key
-			{
-				get
-				{
-					return 0;
-				}
-			}
-		}
-
-		public class DummyItem : IItem
-		{
-			public DummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)
-			{
-				this.WeaponSet = modelSet;
-				this.ModelBase = modelBase;
-				this.ModelVariant = modelVariant;
-			}
-
-			public string Name
-			{
-				get
-				{
-					return "Unknown";
-				}
-			}
-
-			public string Description
-			{
-				get
-				{
-					return null;
-				}
-			}
-
-			public IImage Icon
-			{
-				get
-				{
-					return null;
-				}
-			}
-
-			public ushort ModelBase
-			{
-				get;
-				private set;
-			}
-
-			public ushort ModelVariant
-			{
-				get;
-				private set;
-			}
-
-			public ushort WeaponSet
-			{
-				get;
-				private set;
-			}
-
-			public int Key
-			{
-				get
-				{
-					return 0;
-				}
-			}
-
-			public bool IsWeapon
-			{
-				get
-				{
-					return true;
-				}
-			}
-
-			public bool FitsInSlot(ItemSlots slot)
-			{
-				return true;
-			}
 		}
 	}
 }
