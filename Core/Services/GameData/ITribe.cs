@@ -3,9 +3,10 @@
 
 namespace ConceptMatrix.GameData
 {
+	using System;
 	using Anamnesis;
 
-	public interface ITribe : IDataObject
+	public interface ITribe : IDataObject, IEquatable<ITribe>
 	{
 		Appearance.Tribes Tribe { get; }
 		string Feminine { get; }

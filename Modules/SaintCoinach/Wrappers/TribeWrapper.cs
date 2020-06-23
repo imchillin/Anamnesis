@@ -56,6 +56,11 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
+		public bool Equals(ITribe other)
+		{
+			return this.tribe == other.Tribe;
+		}
+
 		public override string ToString()
 		{
 			return this.DisplayName;

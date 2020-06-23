@@ -19,7 +19,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
-	public partial class AppearanceEditor : UserControl, INotifyPropertyChanged
+	[AddINotifyPropertyChangedInterface]
+	public partial class AppearanceEditor : UserControl
 	{
 		private readonly IGameDataService gameDataService;
 		private readonly ISelectionService selectionService;
@@ -37,8 +38,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Ages));
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
 		public bool HasGender { get; set; }
 		public bool HasFur { get; set; }
 		public bool HasLimbal { get; set; }
@@ -47,52 +46,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public bool HasMuscles { get; set; }
 		public bool CanAge { get; set; }
 		public ICharaMakeCustomize Hair { get; set; }
-
-		public IRace Race
-		{
-			get
-			{
-				if (this.Appearance == null)
-					return null;
-
-				return this.gameDataService.Races.Get((int)this.Appearance.Race);
-			}
-
-			set
-			{
-				if (value == null)
-					return;
-
-				if (value.Race == AnAppearance.Races.Hrothgar)
-					this.Appearance.Gender = AnAppearance.Genders.Masculine;
-
-				if (value.Race == AnAppearance.Races.Viera)
-					this.Appearance.Gender = AnAppearance.Genders.Feminine;
-
-				this.Appearance.Race = value.Race;
-				this.TribeComboBox.ItemsSource = value.Tribes;
-				this.Tribe = value.Tribes.First();
-			}
-		}
-
-		public ITribe Tribe
-		{
-			get
-			{
-				if (this.Appearance == null)
-					return null;
-
-				return this.gameDataService.Tribes.Get((int)this.Appearance.Tribe);
-			}
-
-			set
-			{
-				if (value == null)
-					return;
-
-				this.Appearance.Tribe = value.Tribe;
-			}
-		}
+		public IRace Race { get; set; }
+		public ITribe Tribe { get; set; }
 
 		public AppearanceViewModel Appearance
 		{
@@ -147,12 +102,20 @@ namespace ConceptMatrix.AppearanceModule.Views
 				if (this.Appearance.Race == 0)
 					this.Appearance.Race = AnAppearance.Races.Hyur;
 
-				this.Race = this.gameDataService.Races.Get((byte)this.Appearance.Race);
-				this.TribeComboBox.ItemsSource = this.Race.Tribes;
-				this.Tribe = this.gameDataService.Tribes.Get((byte)this.Appearance.Tribe);
+				this.UpdateRaceAndTribe();
 
 				this.OnViewModelPropertyChanged(null, null);
 			});
+		}
+
+		private void UpdateRaceAndTribe()
+		{
+			this.Race = this.gameDataService.Races.Get((int)this.Appearance.Race);
+			this.RaceComboBox.SelectedItem = this.Race;
+
+			this.TribeComboBox.ItemsSource = this.Race.Tribes;
+			this.Tribe = this.gameDataService.Tribes.Get((int)this.Appearance.Tribe);
+			this.TribeComboBox.SelectedItem = this.Tribe;
 		}
 
 		[SuppressPropertyChangedWarnings]
@@ -160,8 +123,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			if (e == null || e.PropertyName == nameof(AppearanceViewModel.Race) || e.PropertyName == nameof(AppearanceViewModel.Tribe) || e.PropertyName == nameof(AppearanceViewModel.Gender))
 			{
-				this.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(AppearanceEditor.Race)));
-				this.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(AppearanceEditor.Tribe)));
+				this.UpdateRaceAndTribe();
 
 				this.HasFur = this.Appearance.Race == AnAppearance.Races.Hrothgar;
 				this.HasTail = this.Appearance.Race == AnAppearance.Races.Hrothgar || this.Appearance.Race == AnAppearance.Races.Miqote || this.Appearance.Race == AnAppearance.Races.AuRa;
@@ -237,6 +199,34 @@ namespace ConceptMatrix.AppearanceModule.Views
 				////this.ExtendedAppearanceArea.IsEnabled = mode == Modes.Overworld;
 				this.AppearanceArea.IsEnabled = mode == Modes.Overworld;
 			});
+		}
+
+		private void OnRaceChanged(object sender, SelectionChangedEventArgs e)
+		{
+			IRace race = this.RaceComboBox.SelectedItem as IRace;
+			this.Race = race;
+
+			if (this.Race.Race == AnAppearance.Races.Hrothgar)
+				this.Appearance.Gender = AnAppearance.Genders.Masculine;
+
+			if (this.Race.Race == AnAppearance.Races.Viera)
+				this.Appearance.Gender = AnAppearance.Genders.Feminine;
+
+			this.Appearance.Race = this.Race.Race;
+			this.TribeComboBox.ItemsSource = this.Race.Tribes;
+			this.Tribe = this.Race.Tribes.First();
+			this.TribeComboBox.SelectedItem = this.Tribe;
+		}
+
+		private void OnTribeChanged(object sender, SelectionChangedEventArgs e)
+		{
+			ITribe tribe = this.TribeComboBox.SelectedItem as ITribe;
+
+			if (tribe == null)
+				return;
+
+			this.Tribe = tribe;
+			this.Appearance.Tribe = this.Tribe.Tribe;
 		}
 	}
 }
