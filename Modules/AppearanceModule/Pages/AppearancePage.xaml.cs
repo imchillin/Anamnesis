@@ -115,10 +115,13 @@ namespace ConceptMatrix.AppearanceModule.Pages
 				this.refreshFile.Write(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
 				this.refreshFile = null;
 			}
+
+			this.IsEnabled = true;
 		}
 
 		private void RefreshService_RefreshBegin(Actor actor)
 		{
+			this.IsEnabled = false;
 			this.refreshFile = new AppearanceFile();
 			this.refreshFile.Read(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
 		}
