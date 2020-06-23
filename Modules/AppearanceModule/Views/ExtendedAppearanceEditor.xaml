@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="ConceptMatrix.AppearanceModule.Views.ExtendedAppearanceEditor"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
+			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="800"
+			 DataContextChanged="OnDataContextChanged">
+
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="B2V"/>
+		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+	</UserControl.Resources>
+	
+	<Grid x:Name="ContentArea">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="64"/>
+			<ColumnDefinition/>
+
+			<ColumnDefinition Width="64"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Grid.Row="0" Grid.Column="0" Text="Skin:" Style="{StaticResource Label}"/>
+		<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Grid.ColumnSpan="3">
+			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.SkinTint, UpdateSourceTrigger=PropertyChanged}" DisplayName="Skin Color" ToolTip="Skin Color"/>
+			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.SkinGlow}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>
+		</StackPanel>
+
+		<TextBlock Grid.Row="0" Grid.Column="2" Text="Lips" Style="{StaticResource Label}"/>
+		<cm3Controls:RgbaColorControl Grid.Row="0" Grid.Column="3" Value="{Binding ExAppearance.LipTint}" ToolTip="Lips Color"/>
+
+		<TextBlock Grid.Row="1" Grid.Column="0" Text="Eyes:" Style="{StaticResource Label}"/>
+		<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+			<cm3Controls:RgbColorControl ToolTip="Left Eye Color" Value="{Binding ExAppearance.LeftEyeColor}"/>
+			<cm3Controls:RgbColorControl ToolTip="Right Eye Color" Value="{Binding ExAppearance.RightEyeColor}"/>
+			<cm3Controls:RgbColorControl ToolTip="Limbal Ring Color" Value="{Binding ExAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+		</StackPanel>
+
+		<TextBlock Grid.Row="1" Grid.Column="2" Text="Hair:" Style="{StaticResource Label}"/>
+		<StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal" Grid.ColumnSpan="3">
+			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.HairTint}" DisplayName="Hair Color" ToolTip="Hair Color" Margin="0"/>
+			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.HairGlow}" DisplayName="Hair Glow" ToolTip="Hair Glow" Margin="0"/>
+			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.HighlightTint}" DisplayName="Highlight Color" ToolTip="Highlight Color" Margin="0"/>
+		</StackPanel>
+
+
+
+	</Grid>
+</UserControl>

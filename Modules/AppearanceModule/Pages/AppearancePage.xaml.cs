@@ -19,8 +19,6 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		private IActorRefreshService refreshService;
 		private Actor actor;
 
-		private AppearanceFile refreshFile;
-
 		public AppearancePage()
 		{
 			this.selectionService = Services.Get<ISelectionService>();
@@ -67,7 +65,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 				if (mode == AppearanceFile.SaveModes.None)
 					return;
 
-				apFile.Write(this.Appearance, this.Equipment, mode);
+				apFile.Apply(this.actor, mode);
 				await this.refreshService.RefreshAsync(this.actor);
 
 				////apFile.Write(this.Appearance, this.Equipment, mode);
@@ -84,7 +82,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 			IFileService fileService = Services.Get<IFileService>();
 			AppearanceFile file = new AppearanceFile();
-			file.Read(this.Appearance, this.Equipment, mode);
+			file.Read(this.actor, mode);
 			await fileService.Save(file);
 		}
 
@@ -110,20 +108,18 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 		private void RefreshService_RefreshComplete(Actor actor)
 		{
-			if (this.refreshFile != null)
+			Application.Current.Dispatcher.Invoke(() =>
 			{
-				this.refreshFile.Write(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
-				this.refreshFile = null;
-			}
-
-			this.IsEnabled = true;
+				this.IsEnabled = true;
+			});
 		}
 
 		private void RefreshService_RefreshBegin(Actor actor)
 		{
-			this.IsEnabled = false;
-			this.refreshFile = new AppearanceFile();
-			this.refreshFile.Read(this.Appearance, this.Equipment, AppearanceFile.SaveModes.All);
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.IsEnabled = false;
+			});
 		}
 	}
 }

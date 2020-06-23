@@ -17,24 +17,22 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
 		public static readonly NpcBodyItem NpcbodyItem = new NpcBodyItem();
 
-		public bool DontApply = false;
+		public readonly Actor Actor;
 
 		protected IGameDataService gameData;
 
 		protected Vector scale;
-		protected Color color;
 		protected ushort modelBase;
 		protected ushort modelSet;
 		protected ushort modelVariant;
 		protected byte dyeId;
 
-		private readonly Actor actor;
 		private IItem item;
 		private IDye dye;
 
 		public EquipmentBaseViewModel(ItemSlots slot, Actor actor)
 		{
-			this.actor = actor;
+			this.Actor = actor;
 			this.gameData = Services.Get<IGameDataService>();
 			this.Slot = slot;
 		}
@@ -83,7 +81,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				if (oldItem != null && oldItem != this.item)
 				{
 					this.Apply();
-					this.actor.ActorRefresh();
 				}
 			}
 		}
@@ -104,7 +101,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				if (oldDye != null && oldDye != this.dye)
 				{
 					this.Apply();
-					this.actor.ActorRefresh();
 				}
 			}
 		}
@@ -134,22 +130,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 					return;
 
 				this.scale = value;
-				this.Apply();
-			}
-		}
-
-		public Color Color
-		{
-			get
-			{
-				return this.color;
-			}
-			set
-			{
-				if (this.color == value)
-					return;
-
-				this.color = value;
 				this.Apply();
 			}
 		}

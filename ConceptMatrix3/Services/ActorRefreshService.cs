@@ -111,12 +111,10 @@ namespace ConceptMatrix.GUI.Services
 				}
 
 				this.selectionService.RetargetActors();
-
-				await Task.Delay(250);
+				await Task.Delay(50);
 
 				await this.injectionService.WaitForMemoryTick();
-
-				await Task.Delay(250);
+				await Task.Delay(50);
 
 				Log.Write("Refresh Complete", "Actor Refresh");
 				this.IsRefreshing = false;

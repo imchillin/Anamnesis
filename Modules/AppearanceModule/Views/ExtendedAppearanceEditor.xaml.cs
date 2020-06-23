@@ -1,14 +1,28 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.ViewModels
+namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System;
+	using System.Collections.Generic;
+	using System.Text;
+	using System.Windows;
+	using System.Windows.Controls;
+	using System.Windows.Data;
+	using System.Windows.Documents;
+	using System.Windows.Input;
+	using System.Windows.Media;
+	using System.Windows.Media.Imaging;
+	using System.Windows.Navigation;
+	using System.Windows.Shapes;
 	using Anamnesis;
-	using PropertyChanged;
 
-	[AddINotifyPropertyChangedInterface]
-	public class ExtendedAppearanceViewModel : IDisposable
+	using Color = Anamnesis.Color;
+
+	/// <summary>
+	/// Interaction logic for ExtendedAppearanceEditor.xaml.
+	/// </summary>
+	public partial class ExtendedAppearanceEditor : UserControl
 	{
 		private IMemory<Color> skinColorMem;
 		private IMemory<Color> skinGlowMem;
@@ -31,37 +45,11 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		private Color? hairGlow;
 		private Color? highlightTint;
 
-		public ExtendedAppearanceViewModel(Actor actor)
+		public ExtendedAppearanceEditor()
 		{
-			this.skinColorMem = actor.GetMemory(Offsets.Main.SkinColor);
-			this.skinColorMem.ValueChanged += (_, v) => this.SkinTint = (Color?)v;
+			this.InitializeComponent();
 
-			this.skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
-			this.skinGlowMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
-
-			this.leftEyeColorMem = actor.GetMemory(Offsets.Main.LeftEyeColor);
-			this.leftEyeColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
-
-			this.rightEyeColorMem = actor.GetMemory(Offsets.Main.RightEyeColor);
-			this.rightEyeColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
-
-			this.limbalRingColorMem = actor.GetMemory(Offsets.Main.LimbalColor);
-			this.limbalRingColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
-
-			this.hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
-			this.hairTintColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
-
-			this.hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
-			this.hairGlowColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
-
-			this.highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
-			this.highlightTintColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
-
-			this.lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
-			this.lipTintMem.ValueChanged += this.LipTintMem_ValueChanged;
-
-			this.lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
-			this.lipGlossMem.ValueChanged += this.LipGlossMem_ValueChanged;
+			this.ContentArea.DataContext = this;
 		}
 
 		public Color? SkinTint
@@ -221,20 +209,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			}
 		}
 
-		public void Dispose()
-		{
-			this.lipTintMem?.Dispose();
-			this.lipGlossMem?.Dispose();
-			this.skinColorMem?.Dispose();
-			this.skinGlowMem?.Dispose();
-			this.leftEyeColorMem?.Dispose();
-			this.rightEyeColorMem?.Dispose();
-			this.limbalRingColorMem?.Dispose();
-			this.hairTintColorMem?.Dispose();
-			this.hairGlowColorMem?.Dispose();
-			this.highlightTintColorMem?.Dispose();
-		}
-
 		private void LipTintMem_ValueChanged(object sender, object value)
 		{
 			Color4 c = default;
@@ -249,6 +223,55 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			c.Color = this.lipTintMem.Value;
 			c.A = this.lipGlossMem.Value;
 			this.LipTint = c;
+		}
+
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			this.lipTintMem?.Dispose();
+			this.lipGlossMem?.Dispose();
+			this.skinColorMem?.Dispose();
+			this.skinGlowMem?.Dispose();
+			this.leftEyeColorMem?.Dispose();
+			this.rightEyeColorMem?.Dispose();
+			this.limbalRingColorMem?.Dispose();
+			this.hairTintColorMem?.Dispose();
+			this.hairGlowColorMem?.Dispose();
+			this.highlightTintColorMem?.Dispose();
+
+			Actor actor = this.DataContext as Actor;
+
+			if (actor == null)
+				return;
+
+			this.skinColorMem = actor.GetMemory(Offsets.Main.SkinColor);
+			this.skinColorMem.ValueChanged += (_, v) => this.SkinTint = (Color?)v;
+
+			this.skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
+			this.skinGlowMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
+			this.leftEyeColorMem = actor.GetMemory(Offsets.Main.LeftEyeColor);
+			this.leftEyeColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
+			this.rightEyeColorMem = actor.GetMemory(Offsets.Main.RightEyeColor);
+			this.rightEyeColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
+			this.limbalRingColorMem = actor.GetMemory(Offsets.Main.LimbalColor);
+			this.limbalRingColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
+			this.hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
+			this.hairTintColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
+			this.hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
+			this.hairGlowColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
+			this.highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
+			this.highlightTintColorMem.ValueChanged += (_, v) => this.skinGlow = (Color?)v;
+
+			this.lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
+			this.lipTintMem.ValueChanged += this.LipTintMem_ValueChanged;
+
+			this.lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
+			this.lipGlossMem.ValueChanged += this.LipGlossMem_ValueChanged;
 		}
 	}
 }

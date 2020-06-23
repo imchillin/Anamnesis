@@ -55,12 +55,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			private set;
 		}
 
-		public ExtendedAppearanceViewModel ExAppearance
-		{
-			get;
-			private set;
-		}
-
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			this.selectionService.ModeChanged += this.SelectionModeChanged;
@@ -93,8 +87,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.Appearance = new AppearanceViewModel(actor);
 			this.Appearance.PropertyChanged += this.OnViewModelPropertyChanged;
 
-			this.ExAppearance = new ExtendedAppearanceViewModel(actor);
-
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.IsEnabled = true;
@@ -103,19 +95,42 @@ namespace ConceptMatrix.AppearanceModule.Views
 					this.Appearance.Race = AnAppearance.Races.Hyur;
 
 				this.UpdateRaceAndTribe();
-
-				this.OnViewModelPropertyChanged(null, null);
 			});
 		}
 
 		private void UpdateRaceAndTribe()
 		{
+			if (this.Appearance.Race == 0)
+				this.Appearance.Race = AnAppearance.Races.Hyur;
+
 			this.Race = this.gameDataService.Races.Get((int)this.Appearance.Race);
 			this.RaceComboBox.SelectedItem = this.Race;
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
+
+			if (this.Appearance.Tribe == 0)
+				this.Appearance.Tribe = this.Race.Tribes.First().Tribe;
+
 			this.Tribe = this.gameDataService.Tribes.Get((int)this.Appearance.Tribe);
 			this.TribeComboBox.SelectedItem = this.Tribe;
+
+			this.HasFur = this.Appearance.Race == AnAppearance.Races.Hrothgar;
+			this.HasTail = this.Appearance.Race == AnAppearance.Races.Hrothgar || this.Appearance.Race == AnAppearance.Races.Miqote || this.Appearance.Race == AnAppearance.Races.AuRa;
+			this.HasLimbal = this.Appearance.Race == AnAppearance.Races.AuRa;
+			this.HasEars = this.Appearance.Race == AnAppearance.Races.Viera || this.Appearance.Race == AnAppearance.Races.Lalafel || this.Appearance.Race == AnAppearance.Races.Elezen;
+			this.HasMuscles = !this.HasEars && !this.HasTail;
+			this.HasGender = this.Appearance.Race != AnAppearance.Races.Hrothgar && this.Appearance.Race != AnAppearance.Races.Viera;
+
+			bool canAge = this.Appearance.Tribe == AnAppearance.Tribes.Midlander;
+			canAge |= this.Appearance.Race == AnAppearance.Races.Miqote && this.Appearance.Gender == AnAppearance.Genders.Feminine;
+			canAge |= this.Appearance.Race == AnAppearance.Races.Elezen;
+			canAge |= this.Appearance.Race == AnAppearance.Races.AuRa && this.Appearance.Gender == AnAppearance.Genders.Feminine;
+			this.CanAge = canAge;
+
+			if (this.Appearance.Tribe > 0)
+			{
+				this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
+			}
 		}
 
 		[SuppressPropertyChangedWarnings]
@@ -124,57 +139,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (e == null || e.PropertyName == nameof(AppearanceViewModel.Race) || e.PropertyName == nameof(AppearanceViewModel.Tribe) || e.PropertyName == nameof(AppearanceViewModel.Gender))
 			{
 				this.UpdateRaceAndTribe();
-
-				this.HasFur = this.Appearance.Race == AnAppearance.Races.Hrothgar;
-				this.HasTail = this.Appearance.Race == AnAppearance.Races.Hrothgar || this.Appearance.Race == AnAppearance.Races.Miqote || this.Appearance.Race == AnAppearance.Races.AuRa;
-				this.HasLimbal = this.Appearance.Race == AnAppearance.Races.AuRa;
-				this.HasEars = this.Appearance.Race == AnAppearance.Races.Viera || this.Appearance.Race == AnAppearance.Races.Lalafel || this.Appearance.Race == AnAppearance.Races.Elezen;
-				this.HasMuscles = !this.HasEars && !this.HasTail;
-				this.HasGender = this.Appearance.Race != AnAppearance.Races.Hrothgar && this.Appearance.Race != AnAppearance.Races.Viera;
-
-				bool canAge = this.Appearance.Tribe == AnAppearance.Tribes.Midlander;
-				canAge |= this.Appearance.Race == AnAppearance.Races.Miqote && this.Appearance.Gender == AnAppearance.Genders.Feminine;
-				canAge |= this.Appearance.Race == AnAppearance.Races.Elezen;
-				canAge |= this.Appearance.Race == AnAppearance.Races.AuRa && this.Appearance.Gender == AnAppearance.Genders.Feminine;
-				this.CanAge = canAge;
-
-				if (this.Appearance.Tribe > 0)
-				{
-					this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
-				}
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.Hair))
 			{
 				this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
-			}
-			else if (e.PropertyName == nameof(AppearanceViewModel.Skintone))
-			{
-				this.ExAppearance.SkinTint = null;
-				this.ExAppearance.SkinGlow = null;
-			}
-			else if (e.PropertyName == nameof(AppearanceViewModel.LimbalEyes))
-			{
-				this.ExAppearance.LimbalRingColor = null;
-			}
-			else if (e.PropertyName == nameof(AppearanceViewModel.HairTone))
-			{
-				this.ExAppearance.HairTint = null;
-			}
-			else if (e.PropertyName == nameof(AppearanceViewModel.Highlights))
-			{
-				this.ExAppearance.HighlightTint = null;
-			}
-			else if (e.PropertyName == nameof(AppearanceViewModel.LipsToneFurPattern))
-			{
-				this.ExAppearance.LipTint = null;
-			}
-			else if (e.PropertyName == nameof(AppearanceViewModel.LEyeColor))
-			{
-				this.ExAppearance.LeftEyeColor = null;
-			}
-			else if (e.PropertyName == nameof(AppearanceViewModel.REyeColor))
-			{
-				this.ExAppearance.RightEyeColor = null;
 			}
 		}
 
@@ -220,6 +188,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
 			this.Tribe = this.Race.Tribes.First();
 			this.TribeComboBox.SelectedItem = this.Tribe;
+
+			this.UpdateRaceAndTribe();
 		}
 
 		private void OnTribeChanged(object sender, SelectionChangedEventArgs e)
@@ -231,6 +201,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			this.Tribe = tribe;
 			this.Appearance.Tribe = this.Tribe.Tribe;
+
+			this.UpdateRaceAndTribe();
 		}
 	}
 }

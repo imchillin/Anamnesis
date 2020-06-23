@@ -79,7 +79,7 @@
 					<ComboBox x:Name="GenderComboBox" SelectedItem="{Binding Appearance.Gender}" Width="75" Margin="3, 0, 6, 3" Visibility="{Binding HasGender, Converter={StaticResource B2V}}"/>
 					<ComboBox Grid.Row="12" Grid.Column="1" x:Name="AgeComboBox" SelectedItem="{Binding Appearance.Age}" Width="100" Visibility="{Binding CanAge, Converter={StaticResource B2V}}"  Margin="3, 0, 3, 3"/>
 				</StackPanel>
-				
+
 				<!-- Skintone -->
 				<TextBlock Grid.Column="0" Grid.Row="2" Text="Skin:" Style="{StaticResource Label}"/>
 				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding Appearance.Skintone}" Type="Skin" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
@@ -206,57 +206,6 @@
 				<cm3Controls:NumberBox Grid.Row="18" Value="{Binding Appearance.LipsToneFurPattern}" Grid.Column="1" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
 
 			</Grid>
-
-			<GroupBox Header="Extended Appearance" x:Name="ExtendedAppearanceArea">
-				<Grid Grid.Row="0" Margin="0, 6, 0, 0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="64"/>
-						<ColumnDefinition/>
-
-						<ColumnDefinition Width="64"/>
-						<ColumnDefinition Width="Auto"/>
-					</Grid.ColumnDefinitions>
-
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
-
-					<TextBlock Grid.Row="0" Grid.Column="0" Text="Skin:" Style="{StaticResource Label}"/>
-					<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Grid.ColumnSpan="3">
-						<cm3Controls:RgbColorControl Value="{Binding ExAppearance.SkinTint, UpdateSourceTrigger=PropertyChanged}" DisplayName="Skin Color" ToolTip="Skin Color"/>
-						<cm3Controls:RgbColorControl Value="{Binding ExAppearance.SkinGlow}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>
-					</StackPanel>
-
-					<TextBlock Grid.Row="0" Grid.Column="2" Text="Lips" Style="{StaticResource Label}"/>
-					<cm3Controls:RgbaColorControl Grid.Row="0" Grid.Column="3" Value="{Binding ExAppearance.LipTint}" ToolTip="Lips Color"/>
-
-					<TextBlock Grid.Row="1" Grid.Column="0" Text="Eyes:" Style="{StaticResource Label}"/>
-					<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
-						<cm3Controls:RgbColorControl ToolTip="Left Eye Color" Value="{Binding ExAppearance.LeftEyeColor}"/>
-						<cm3Controls:RgbColorControl ToolTip="Right Eye Color" Value="{Binding ExAppearance.RightEyeColor}"/>
-						<cm3Controls:RgbColorControl ToolTip="Limbal Ring Color" Value="{Binding ExAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
-					</StackPanel>
-
-					<TextBlock Grid.Row="1" Grid.Column="2" Text="Hair:" Style="{StaticResource Label}"/>
-					<StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal" Grid.ColumnSpan="3">
-						<cm3Controls:RgbColorControl Value="{Binding ExAppearance.HairTint}" DisplayName="Hair Color" ToolTip="Hair Color" Margin="0"/>
-						<cm3Controls:RgbColorControl Value="{Binding ExAppearance.HairGlow}" DisplayName="Hair Glow" ToolTip="Hair Glow" Margin="0"/>
-						<cm3Controls:RgbColorControl Value="{Binding ExAppearance.HighlightTint}" DisplayName="Highlight Color" ToolTip="Highlight Color" Margin="0"/>
-					</StackPanel>
-					
-				
-
-				</Grid>
-			</GroupBox>
 		</StackPanel>
 	</Grid>
 </UserControl>

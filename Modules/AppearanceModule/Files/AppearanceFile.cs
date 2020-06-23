@@ -4,6 +4,7 @@
 namespace ConceptMatrix.AppearanceModule.Files
 {
 	using System;
+	using System.Runtime.CompilerServices;
 	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.ViewModels;
@@ -27,6 +28,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			All = EquipmentGear | EquipmentAccessories | AppearanceHair | AppearanceFace | AppearanceBody,
 		}
+
+		public SaveModes SaveMode { get; set; } = SaveModes.All;
 
 		public Appearance.Races? Race { get; set; }
 		public Appearance.Genders? Gender { get; set; }
@@ -65,266 +68,285 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public Color? HighlightTint { get; set; }
 		public Color4? LipTint { get; set; }
 
-		public Weapon MainHand { get; set; }
-		public Vector? MainHandScale { get; set; } = Vector.One;
-		public Color? MainHandColor { get; set; } = Color.White;
-		public Weapon OffHand { get; set; }
-		public Vector? OffHandScale { get; set; } = Vector.One;
-		public Color? OffHandColor { get; set; } = Color.White;
+		public WeaponSave MainHand { get; set; }
+		public WeaponSave OffHand { get; set; }
 
-		public Item HeadGear { get; set; }
-		public Item Body { get; set; }
-		public Item Hands { get; set; }
-		public Item Legs { get; set; }
-		public Item Feet { get; set; }
-		public Item Ears { get; set; }
-		public Item Neck { get; set; }
-		public Item Wrists { get; set; }
-		public Item LeftRing { get; set; }
-		public Item RightRing { get; set; }
+		public ItemSave HeadGear { get; set; }
+		public ItemSave Body { get; set; }
+		public ItemSave Hands { get; set; }
+		public ItemSave Legs { get; set; }
+		public ItemSave Feet { get; set; }
+		public ItemSave Ears { get; set; }
+		public ItemSave Neck { get; set; }
+		public ItemSave Wrists { get; set; }
+		public ItemSave LeftRing { get; set; }
+		public ItemSave RightRing { get; set; }
 
 		public override FileType GetFileType()
 		{
 			return FileType;
 		}
 
-		public void Read(AppearanceEditor ed, EquipmentEditor eq, SaveModes mode)
+		public void Read(Actor actor, SaveModes mode)
 		{
-			Log.Write("Reading appearance to file", "AppearanceFile");
+			Log.Write("Writing appearance to file", "AppearanceFile");
 
-			if (mode.HasFlag(SaveModes.EquipmentGear))
+			using IMemory<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
+			using IMemory<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
+			using IMemory<Weapon> mainHandMem = actor.GetMemory(Offsets.Main.MainHand);
+			using IMemory<Weapon> offHandMem = actor.GetMemory(Offsets.Main.OffHand);
+
+			Appearance appearance = appearanceMem.Value;
+			Equipment equipment = equipmentMem.Value;
+			Weapon mainHand = mainHandMem.Value;
+			Weapon offHand = offHandMem.Value;
+
+			this.SaveMode = mode;
+
+			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				this.MainHand = new Weapon(eq.MainHand);
-				this.MainHandScale = eq.MainHand.Scale;
-				this.MainHandColor = eq.MainHand.Color;
+				this.MainHand = new WeaponSave();
+				this.MainHand.DyeId = mainHand.Dye;
+				this.MainHand.ModelBase = mainHand.Base;
+				this.MainHand.ModelSet = mainHand.Set;
+				this.MainHand.ModelVariant = mainHand.Variant;
+				////this.MainHand.Color
+				////this.MainHand.Scale
 
-				this.OffHand = new Weapon(eq.OffHand);
-				this.OffHandScale = eq.OffHand.Scale;
-				this.OffHandColor = eq.OffHand.Color;
+				this.OffHand = new WeaponSave();
+				this.OffHand.DyeId = offHand.Dye;
+				this.OffHand.ModelBase = offHand.Base;
+				this.OffHand.ModelSet = offHand.Set;
+				this.OffHand.ModelVariant = offHand.Variant;
+				////this.OffHand.Color
+				////this.OffHand.Scale
 
-				this.HeadGear = new Item(eq.Head);
-				this.Body = new Item(eq.Body);
-				this.Hands = new Item(eq.Hands);
-				this.Legs = new Item(eq.Legs);
-				this.Feet = new Item(eq.Feet);
+				this.HeadGear = new ItemSave(equipment.Head);
+				this.Body = new ItemSave(equipment.Chest);
+				this.Hands = new ItemSave(equipment.Arms);
+				this.Legs = new ItemSave(equipment.Legs);
+				this.Feet = new ItemSave(equipment.Feet);
 			}
 
-			if (mode.HasFlag(SaveModes.EquipmentAccessories))
+			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 			{
-				this.Ears = new Item(eq.Ears);
-				this.Neck = new Item(eq.Neck);
-				this.Wrists = new Item(eq.Wrists);
-				this.LeftRing = new Item(eq.LeftRing);
-				this.RightRing = new Item(eq.RightRing);
+				this.Ears = new ItemSave(equipment.Ear);
+				this.Neck = new ItemSave(equipment.Neck);
+				this.Wrists = new ItemSave(equipment.Wrist);
+				this.LeftRing = new ItemSave(equipment.LFinger);
+				this.RightRing = new ItemSave(equipment.RFinger);
 			}
 
-			if (mode.HasFlag(SaveModes.AppearanceHair))
+			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
-				this.Hair = ed.Appearance.Hair;
-				this.EnableHighlights = ed.Appearance.EnableHighlights;
-				this.HairTone = ed.Appearance.HairTone;
-				this.Highlights = ed.Appearance.Highlights;
-				this.HairTint = ed.ExAppearance.HairTint;
+				this.Hair = appearance.Hair;
+				this.EnableHighlights = appearance.EnableHighlights;
+				this.HairTone = appearance.HairTone;
+				this.Highlights = appearance.Highlights;
+				/*this.HairTint = ed.ExAppearance.HairTint;
 				this.HairGlow = ed.ExAppearance.HairGlow;
-				this.HighlightTint = ed.ExAppearance.HighlightTint;
+				this.HighlightTint = ed.ExAppearance.HighlightTint;*/
 			}
 
-			if (mode.HasFlag(SaveModes.AppearanceFace) || mode.HasFlag(SaveModes.AppearanceBody))
+			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				this.Race = ed.Appearance.Race;
-				this.Gender = ed.Appearance.Gender;
-				this.Tribe = ed.Appearance.Tribe;
-				this.Age = ed.Appearance.Age;
+				this.Race = appearance.Race;
+				this.Gender = appearance.Gender;
+				this.Tribe = appearance.Tribe;
+				this.Age = appearance.Age;
 			}
 
-			if (mode.HasFlag(SaveModes.AppearanceFace))
+			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 			{
-				this.Head = ed.Appearance.Head;
-				this.REyeColor = ed.Appearance.REyeColor;
-				this.LimbalEyes = ed.Appearance.LimbalEyes;
-				this.FacialFeatures = ed.Appearance.FacialFeatures;
-				this.Eyebrows = ed.Appearance.Eyebrows;
-				this.LEyeColor = ed.Appearance.LEyeColor;
-				this.Eyes = ed.Appearance.Eyes;
-				this.Nose = ed.Appearance.Nose;
-				this.Jaw = ed.Appearance.Jaw;
-				this.Mouth = ed.Appearance.Mouth;
-				this.LipsToneFurPattern = ed.Appearance.LipsToneFurPattern;
-				this.FacePaint = ed.Appearance.FacePaint;
-				this.FacePaintColor = ed.Appearance.FacePaintColor;
-				this.LeftEyeColor = ed.ExAppearance.LeftEyeColor;
+				this.Head = appearance.Head;
+				this.REyeColor = appearance.REyeColor;
+				this.LimbalEyes = appearance.LimbalEyes;
+				this.FacialFeatures = appearance.FacialFeatures;
+				this.Eyebrows = appearance.Eyebrows;
+				this.LEyeColor = appearance.LEyeColor;
+				this.Eyes = appearance.Eyes;
+				this.Nose = appearance.Nose;
+				this.Jaw = appearance.Jaw;
+				this.Mouth = appearance.Mouth;
+				this.LipsToneFurPattern = appearance.LipsToneFurPattern;
+				this.FacePaint = appearance.FacePaint;
+				this.FacePaintColor = appearance.FacePaintColor;
+				/*this.LeftEyeColor = ed.ExAppearance.LeftEyeColor;
 				this.RightEyeColor = ed.ExAppearance.RightEyeColor;
 				this.LimbalRingColor = ed.ExAppearance.LimbalRingColor;
-				this.LipTint = ed.ExAppearance.LipTint;
+				this.LipTint = ed.ExAppearance.LipTint;*/
 			}
 
-			if (mode.HasFlag(SaveModes.AppearanceBody))
+			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				this.Height = ed.Appearance.Height;
-				this.Skintone = ed.Appearance.Skintone;
-				this.EarMuscleTailSize = ed.Appearance.EarMuscleTailSize;
-				this.TailEarsType = ed.Appearance.TailEarsType;
-				this.Bust = ed.Appearance.Bust;
-				this.SkinTint = ed.ExAppearance.SkinTint;
-				this.SkinGlow = ed.ExAppearance.SkinGlow;
+				this.Height = appearance.Height;
+				this.Skintone = appearance.Skintone;
+				this.EarMuscleTailSize = appearance.EarMuscleTailSize;
+				this.TailEarsType = appearance.TailEarsType;
+				this.Bust = appearance.Bust;
+				/*this.SkinTint = ed.ExAppearance.SkinTint;
+				this.SkinGlow = ed.ExAppearance.SkinGlow;*/
 			}
 		}
 
-		public void Write(AppearanceEditor ap, EquipmentEditor eq, SaveModes mode)
+		public void Apply(Actor actor, SaveModes mode)
 		{
-			Log.Write("Writing appearance from file", "AppearanceFile");
+			Log.Write("Reading appearance from file", "AppearanceFile");
 
-			if (mode.HasFlag(SaveModes.EquipmentGear))
+			using IMemory<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
+			using IMemory<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
+			using IMemory<Weapon> mainHandMem = actor.GetMemory(Offsets.Main.MainHand);
+			using IMemory<Weapon> offHandMem = actor.GetMemory(Offsets.Main.OffHand);
+
+			Appearance appearance = appearanceMem.Value;
+			Equipment equipment = equipmentMem.Value;
+			Weapon mainHand = mainHandMem.Value;
+			Weapon offHand = offHandMem.Value;
+
+			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				this.MainHand?.Write(eq.MainHand);
-				this.OffHand?.Write(eq.OffHand);
-				this.HeadGear?.Write(eq.Head);
-				this.Body?.Write(eq.Body);
-				this.Hands?.Write(eq.Hands);
-				this.Legs?.Write(eq.Legs);
-				this.Feet?.Write(eq.Feet);
+				mainHand.Base = this.MainHand.ModelBase;
+				mainHand.Dye = this.MainHand.DyeId;
+				mainHand.Set = this.MainHand.ModelSet;
+				mainHand.Variant = this.MainHand.ModelVariant;
+				//// Scale
+				//// Color
 
-				Write(this.MainHandScale, (v) => eq.MainHand.Scale = v);
-				Write(this.MainHandColor, (v) => eq.MainHand.Color = v);
-				Write(this.OffHandScale, (v) => eq.OffHand.Scale = v);
-				Write(this.OffHandColor, (v) => eq.OffHand.Color = v);
+				if (this.OffHand != null)
+				{
+					offHand.Base = this.OffHand.ModelBase;
+					offHand.Dye = this.OffHand.DyeId;
+					offHand.Set = this.OffHand.ModelSet;
+					offHand.Variant = this.OffHand.ModelVariant;
+					//// Scale
+					//// Color
+				}
+
+				equipment.Head = this.HeadGear;
+				equipment.Chest = this.Body;
+				equipment.Arms = this.Hands;
+				equipment.Legs = this.Legs;
+				equipment.Feet = this.Feet;
+
+				/*Write(this.MainHandScale, (v) => eq.MainHand.Scale = v);
+				Write(this.OffHandScale, (v) => eq.OffHand.Scale = v);*/
 			}
 
-			if (mode.HasFlag(SaveModes.EquipmentAccessories))
+			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 			{
-				this.Ears?.Write(eq.Ears);
-				this.Neck?.Write(eq.Neck);
-				this.Wrists?.Write(eq.Wrists);
-				this.LeftRing?.Write(eq.LeftRing);
-				this.RightRing?.Write(eq.RightRing);
+				equipment.Ear = this.Ears;
+				equipment.Neck = this.Neck;
+				equipment.Wrist = this.Wrists;
+				equipment.RFinger = this.RightRing;
+				equipment.LFinger = this.LeftRing;
 			}
 
-			if (mode.HasFlag(SaveModes.AppearanceHair))
+			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
-				Write(this.Hair, (v) => ap.Appearance.Hair = v);
-				Write(this.EnableHighlights, (v) => ap.Appearance.EnableHighlights = v);
-				Write(this.HairTone, (v) => ap.Appearance.HairTone = v);
-				Write(this.Highlights, (v) => ap.Appearance.Highlights = v);
+				appearance.Hair = (byte)this.Hair;
+				appearance.EnableHighlights = (bool)this.EnableHighlights;
+				appearance.HairTone = (byte)this.HairTone;
+				appearance.Highlights = (byte)this.Highlights;
 
-				ap.ExAppearance.HairTint = this.HairTint;
+				/*ap.ExAppearance.HairTint = this.HairTint;
 				ap.ExAppearance.HairGlow = this.HairGlow;
-				ap.ExAppearance.HighlightTint = this.HighlightTint;
+				ap.ExAppearance.HighlightTint = this.HighlightTint;*/
 			}
 
-			if (mode.HasFlag(SaveModes.AppearanceFace) || mode.HasFlag(SaveModes.AppearanceBody))
+			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				Write(this.Race, (v) => ap.Appearance.Race = v);
-				Write(this.Gender, (v) => ap.Appearance.Gender = v);
-				Write(this.Tribe, (v) => ap.Appearance.Tribe = v);
-				Write(this.Age, (v) => ap.Appearance.Age = v);
+				appearance.Race = (Appearance.Races)this.Race;
+				appearance.Gender = (Appearance.Genders)this.Gender;
+				appearance.Tribe = (Appearance.Tribes)this.Tribe;
+				appearance.Age = (Appearance.Ages)this.Age;
 			}
 
-			if (mode.HasFlag(SaveModes.AppearanceFace))
+			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 			{
-				Write(this.Head, (v) => ap.Appearance.Head = v);
-				Write(this.REyeColor, (v) => ap.Appearance.REyeColor = v);
-				Write(this.FacialFeatures, (v) => ap.Appearance.FacialFeatures = v);
-				Write(this.LimbalEyes, (v) => ap.Appearance.LimbalEyes = v);
-				Write(this.Eyebrows, (v) => ap.Appearance.Eyebrows = v);
-				Write(this.LEyeColor, (v) => ap.Appearance.LEyeColor = v);
-				Write(this.Eyes, (v) => ap.Appearance.Eyes = v);
-				Write(this.Nose, (v) => ap.Appearance.Nose = v);
-				Write(this.Jaw, (v) => ap.Appearance.Jaw = v);
-				Write(this.Mouth, (v) => ap.Appearance.Mouth = v);
-				Write(this.LipsToneFurPattern, (v) => ap.Appearance.LipsToneFurPattern = v);
-				Write(this.FacePaint, (v) => ap.Appearance.FacePaint = v);
-				Write(this.FacePaintColor, (v) => ap.Appearance.FacePaintColor = v);
+				appearance.Head = (byte)this.Head;
+				appearance.REyeColor = (byte)this.REyeColor;
+				appearance.FacialFeatures = (Appearance.FacialFeature)this.FacialFeatures;
+				appearance.LimbalEyes = (byte)this.LimbalEyes;
+				appearance.Eyebrows = (byte)this.Eyebrows;
+				appearance.LEyeColor = (byte)this.LEyeColor;
+				appearance.Eyes = (byte)this.Eyes;
+				appearance.Nose = (byte)this.Nose;
+				appearance.Jaw = (byte)this.Jaw;
+				appearance.Mouth = (byte)this.Mouth;
+				appearance.LipsToneFurPattern = (byte)this.LipsToneFurPattern;
+				appearance.FacePaint = (byte)this.FacePaint;
+				appearance.FacePaintColor = (byte)this.FacePaintColor;
 
-				ap.ExAppearance.LeftEyeColor = this.LeftEyeColor;
+				/*ap.ExAppearance.LeftEyeColor = this.LeftEyeColor;
 				ap.ExAppearance.RightEyeColor = this.RightEyeColor;
 				ap.ExAppearance.LimbalRingColor = this.LimbalRingColor;
-				ap.ExAppearance.LipTint = this.LipTint;
+				ap.ExAppearance.LipTint = this.LipTint;*/
 			}
 
-			if (mode.HasFlag(SaveModes.AppearanceBody))
+			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				Write(this.Height, (v) => ap.Appearance.Height = v);
-				Write(this.Skintone, (v) => ap.Appearance.Skintone = v);
-				Write(this.EarMuscleTailSize, (v) => ap.Appearance.EarMuscleTailSize = v);
-				Write(this.TailEarsType, (v) => ap.Appearance.TailEarsType = v);
-				Write(this.Bust, (v) => ap.Appearance.Bust = v);
+				appearance.Height = (byte)this.Height;
+				appearance.Skintone = (byte)this.Skintone;
+				appearance.EarMuscleTailSize = (byte)this.EarMuscleTailSize;
+				appearance.TailEarsType = (byte)this.TailEarsType;
+				appearance.Bust = (byte)this.Bust;
 
-				ap.ExAppearance.SkinTint = this.SkinTint;
-				ap.ExAppearance.SkinGlow = this.SkinGlow;
+				/*ap.ExAppearance.SkinTint = this.SkinTint;
+				ap.ExAppearance.SkinGlow = this.SkinGlow;*/
 			}
+
+			appearanceMem.Value = appearance;
+			equipmentMem.Value = equipment;
+			mainHandMem.Value = mainHand;
+			offHandMem.Value = offHand;
 		}
 
-		private static void Write<T>(T? val, Action<T> set)
-			where T : struct
+		private bool IncludeSection(SaveModes section, SaveModes mode)
 		{
-			if (val == null)
-			{
-				Log.Write(new Exception("Missing appearance value where one was required"), "Appearance File", Log.Severity.Warning);
-				return;
-			}
-
-			set.Invoke((T)val);
+			return this.SaveMode.HasFlag(mode) && mode.HasFlag(mode);
 		}
 
 		[Serializable]
-		public class Weapon : Item
+		public class WeaponSave
 		{
-			public Weapon()
-			{
-			}
-
-			public Weapon(EquipmentBaseViewModel from)
-				: base(from)
-			{
-				this.Color = from.Color;
-				this.Scale = from.Scale;
-				this.ModelSet = from.ModelSet;
-			}
-
 			public Color Color { get; set; }
 			public Vector Scale { get; set; }
 			public ushort ModelSet { get; set; }
-
-			public override void Write(EquipmentBaseViewModel to)
-			{
-				to.DontApply = true;
-
-				to.ModelSet = this.ModelSet;
-				to.Color = this.Color;
-				to.Scale = this.Scale;
-
-				base.Write(to);
-			}
-		}
-
-		[Serializable]
-		public class Item
-		{
-			public Item()
-			{
-			}
-
-			public Item(EquipmentBaseViewModel from)
-			{
-				this.ModelBase = from.ModelBase;
-				this.ModelVariant = from.ModelVariant;
-				this.DyeId = from.DyeId;
-			}
-
 			public ushort ModelBase { get; set; }
 			public ushort ModelVariant { get; set; }
 			public byte DyeId { get; set; }
+		}
 
-			public virtual void Write(EquipmentBaseViewModel to)
+		[Serializable]
+		public class ItemSave
+		{
+			public ItemSave()
 			{
-				to.DontApply = true;
+			}
 
-				to.ModelBase = this.ModelBase;
-				to.ModelVariant = this.ModelVariant;
-				to.DyeId = this.DyeId;
+			public ItemSave(Equipment.Item from)
+			{
+				this.ModelBase = from.Base;
+				this.ModelVariant = from.Variant;
+				this.DyeId = from.Dye;
+			}
 
-				to.DontApply = false;
-				to.Apply();
+			public ushort ModelBase { get; set; }
+			public byte ModelVariant { get; set; }
+			public byte DyeId { get; set; }
+
+			public static implicit operator Equipment.Item(ItemSave item)
+			{
+				Equipment.Item eqItem = new Equipment.Item();
+
+				if (item == null)
+					return eqItem;
+
+				eqItem.Base = item.ModelBase;
+				eqItem.Variant = item.ModelVariant;
+				eqItem.Dye = item.DyeId;
+
+				return eqItem;
 			}
 		}
 	}

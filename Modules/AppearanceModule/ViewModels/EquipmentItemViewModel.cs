@@ -14,7 +14,41 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			: base(slot, actor)
 		{
 			this.memory = equipmentMemory;
-			Equipment.Item item = equipmentMemory.Value.GetItem(slot);
+			this.memory.ValueChanged += this.OnMemoryValueChanged;
+
+			this.OnMemoryValueChanged(null, null);
+		}
+
+		public override void Dispose()
+		{
+			this.memory.Dispose();
+		}
+
+		public override void Apply()
+		{
+			Equipment eq = this.memory.Value;
+
+			Equipment.Item i = eq.GetItem(this.Slot);
+
+			if (i.Base == this.ModelBase &&
+				i.Dye == this.DyeId &&
+				i.Variant == this.ModelVariant)
+				return;
+
+			i.Base = this.ModelBase;
+			i.Dye = this.DyeId;
+			i.Variant = (byte)this.ModelVariant;
+
+			this.memory.Value = eq;
+
+			this.Actor.ActorRefresh();
+		}
+
+		private void OnMemoryValueChanged(object sender, object value)
+		{
+			Equipment eq = this.memory.Value;
+
+			Equipment.Item item = this.memory.Value.GetItem(this.Slot);
 
 			if (item == null)
 				return;
@@ -25,26 +59,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 			this.Item = this.GetItem();
 			this.Dye = this.GetDye();
-		}
-
-		public override void Dispose()
-		{
-			this.memory.Dispose();
-		}
-
-		public override void Apply()
-		{
-			if (this.DontApply)
-				return;
-
-			Equipment eq = this.memory.Value;
-
-			Equipment.Item i = eq.GetItem(this.Slot);
-			i.Base = this.ModelBase;
-			i.Dye = this.DyeId;
-			i.Variant = (byte)this.ModelVariant;
-
-			this.memory.Value = eq;
 		}
 	}
 }

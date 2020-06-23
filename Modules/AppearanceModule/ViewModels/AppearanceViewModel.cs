@@ -5,182 +5,56 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
 	using System.ComponentModel;
+	using System.Reflection;
+	using System.Windows;
 	using Anamnesis;
 	using PropertyChanged;
 
 	public class AppearanceViewModel : IDisposable, INotifyPropertyChanged
 	{
-		public Appearance Appearance;
-
 		private readonly Actor selection;
 		private IMemory<Appearance> appearanceMem;
+		private bool lockChangedEvent = false;
 
 		public AppearanceViewModel(Actor selection)
 		{
 			this.appearanceMem = selection.GetMemory(Offsets.Main.ActorAppearance);
-			this.Appearance = this.appearanceMem.Value;
+			this.appearanceMem.ValueChanged += this.OnMemValueChanged;
 			this.selection = selection;
 
-			this.PropertyChanged += this.OnSelfPropertyChanged;
+			this.PropertyChanged += this.OnPropertyChanged;
+
+			this.OnMemValueChanged(null, null);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public Appearance.Races Race
-		{
-			get => this.Appearance.Race;
-			set => this.Appearance.Race = value;
-		}
-
-		public byte FacePaintColor
-		{
-			get => this.Appearance.FacePaintColor;
-			set => this.Appearance.FacePaintColor = value;
-		}
-
-		public byte FacePaint
-		{
-			get => this.Appearance.FacePaint;
-			set => this.Appearance.FacePaint = value;
-		}
-
-		public byte Bust
-		{
-			get => this.Appearance.Bust;
-			set => this.Appearance.Bust = value;
-		}
-
-		public byte TailEarsType
-		{
-			get => this.Appearance.TailEarsType;
-			set => this.Appearance.TailEarsType = value;
-		}
-
-		public byte EarMuscleTailSize
-		{
-			get => this.Appearance.EarMuscleTailSize;
-			set => this.Appearance.EarMuscleTailSize = value;
-		}
-
-		public byte LipsToneFurPattern
-		{
-			get => this.Appearance.LipsToneFurPattern;
-			set => this.Appearance.LipsToneFurPattern = value;
-		}
-
-		public byte Mouth
-		{
-			get => this.Appearance.Mouth;
-			set => this.Appearance.Mouth = value;
-		}
-
-		public byte Jaw
-		{
-			get => this.Appearance.Jaw;
-			set => this.Appearance.Jaw = value;
-		}
-
-		public byte Nose
-		{
-			get => this.Appearance.Nose;
-			set => this.Appearance.Nose = value;
-		}
-
-		public byte Eyes
-		{
-			get => this.Appearance.Eyes;
-			set => this.Appearance.Eyes = value;
-		}
-
-		public byte LEyeColor
-		{
-			get => this.Appearance.LEyeColor;
-			set => this.Appearance.LEyeColor = value;
-		}
-
-		public byte LimbalEyes
-		{
-			get => this.Appearance.LimbalEyes;
-			set => this.Appearance.LimbalEyes = value;
-		}
-
-		public byte Eyebrows
-		{
-			get => this.Appearance.Eyebrows;
-			set => this.Appearance.Eyebrows = value;
-		}
-
-		public byte Highlights
-		{
-			get => this.Appearance.Highlights;
-			set => this.Appearance.Highlights = value;
-		}
-
-		public byte HairTone
-		{
-			get => this.Appearance.HairTone;
-			set => this.Appearance.HairTone = value;
-		}
-
-		public byte REyeColor
-		{
-			get => this.Appearance.REyeColor;
-			set => this.Appearance.REyeColor = value;
-		}
-
-		public byte Skintone
-		{
-			get => this.Appearance.Skintone;
-			set => this.Appearance.Skintone = value;
-		}
-
-		public bool EnableHighlights
-		{
-			get => this.Appearance.EnableHighlights;
-			set => this.Appearance.EnableHighlights = value;
-		}
-
-		public byte Hair
-		{
-			get => this.Appearance.Hair;
-			set => this.Appearance.Hair = value;
-		}
-
-		public byte Head
-		{
-			get => this.Appearance.Head;
-			set => this.Appearance.Head = value;
-		}
-
-		public Appearance.Tribes Tribe
-		{
-			get => this.Appearance.Tribe;
-			set => this.Appearance.Tribe = value;
-		}
-
-		public byte Height
-		{
-			get => this.Appearance.Height;
-			set => this.Appearance.Height = value;
-		}
-
-		public Appearance.Ages Age
-		{
-			get => this.Appearance.Age;
-			set => this.Appearance.Age = value;
-		}
-
-		public Appearance.Genders Gender
-		{
-			get => this.Appearance.Gender;
-			set => this.Appearance.Gender = value;
-		}
-
-		public Appearance.FacialFeature FacialFeatures
-		{
-			get => this.Appearance.FacialFeatures;
-			set => this.Appearance.FacialFeatures = value;
-		}
+		public Appearance.Races Race { get; set; }
+		public byte FacePaintColor { get; set; }
+		public byte FacePaint { get; set; }
+		public byte Bust { get; set; }
+		public byte TailEarsType { get; set; }
+		public byte EarMuscleTailSize { get; set; }
+		public byte LipsToneFurPattern { get; set; }
+		public byte Mouth { get; set; }
+		public byte Jaw { get; set; }
+		public byte Nose { get; set; }
+		public byte Eyes { get; set; }
+		public byte LEyeColor { get; set; }
+		public byte LimbalEyes { get; set; }
+		public byte Eyebrows { get; set; }
+		public byte Highlights { get; set; }
+		public byte HairTone { get; set; }
+		public byte REyeColor { get; set; }
+		public byte Skintone { get; set; }
+		public bool EnableHighlights { get; set; }
+		public byte Hair { get; set; }
+		public byte Head { get; set; }
+		public Appearance.Tribes Tribe { get; set; }
+		public byte Height { get; set; }
+		public Appearance.Ages Age { get; set; }
+		public Appearance.Genders Gender { get; set; }
+		public Appearance.FacialFeature FacialFeatures { get; set; }
 
 		public void Dispose()
 		{
@@ -188,13 +62,93 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.appearanceMem = null;
 		}
 
-		[SuppressPropertyChangedWarnings]
-		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnMemValueChanged(object sender, object value)
 		{
-			if (this.appearanceMem == null || this.selection == null)
+			this.lockChangedEvent = true;
+
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.RaiseIfChanged(nameof(this.Race));
+				this.RaiseIfChanged(nameof(this.Tribe));
+
+				this.RaiseIfChanged(nameof(this.Gender));
+				this.RaiseIfChanged(nameof(this.Age));
+				this.RaiseIfChanged(nameof(this.Height));
+				this.RaiseIfChanged(nameof(this.Head));
+				this.RaiseIfChanged(nameof(this.Hair));
+				this.RaiseIfChanged(nameof(this.EnableHighlights));
+				this.RaiseIfChanged(nameof(this.Skintone));
+				this.RaiseIfChanged(nameof(this.REyeColor));
+				this.RaiseIfChanged(nameof(this.HairTone));
+				this.RaiseIfChanged(nameof(this.Highlights));
+				this.RaiseIfChanged(nameof(this.FacialFeatures));
+				this.RaiseIfChanged(nameof(this.LimbalEyes));
+				this.RaiseIfChanged(nameof(this.Eyebrows));
+				this.RaiseIfChanged(nameof(this.LEyeColor));
+				this.RaiseIfChanged(nameof(this.Eyes));
+				this.RaiseIfChanged(nameof(this.Nose));
+				this.RaiseIfChanged(nameof(this.Jaw));
+				this.RaiseIfChanged(nameof(this.Mouth));
+				this.RaiseIfChanged(nameof(this.LipsToneFurPattern));
+				this.RaiseIfChanged(nameof(this.EarMuscleTailSize));
+				this.RaiseIfChanged(nameof(this.TailEarsType));
+				this.RaiseIfChanged(nameof(this.Bust));
+				this.RaiseIfChanged(nameof(this.FacePaint));
+				this.RaiseIfChanged(nameof(this.FacePaintColor));
+			});
+
+			this.lockChangedEvent = false;
+		}
+
+		private void RaiseIfChanged(string propertyName)
+		{
+			FieldInfo field = typeof(Appearance).GetField(propertyName);
+			PropertyInfo property = typeof(AppearanceViewModel).GetProperty(propertyName);
+
+			object oldValue = property.GetValue(this);
+			object newValue = field.GetValue(this.appearanceMem.Value);
+
+			if (oldValue.Equals(newValue))
 				return;
 
-			this.appearanceMem.Value = this.Appearance;
+			property.SetValue(this, newValue);
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (this.lockChangedEvent)
+				return;
+
+			Appearance appearance = this.appearanceMem.Value;
+			appearance.Race = this.Race;
+			appearance.Gender = this.Gender;
+			appearance.Age = this.Age;
+			appearance.Height = this.Height;
+			appearance.Tribe = this.Tribe;
+			appearance.Head = this.Head;
+			appearance.Hair = this.Hair;
+			appearance.EnableHighlights = this.EnableHighlights;
+			appearance.Skintone = this.Skintone;
+			appearance.REyeColor = this.REyeColor;
+			appearance.HairTone = this.HairTone;
+			appearance.Highlights = this.Highlights;
+			appearance.FacialFeatures = this.FacialFeatures;
+			appearance.LimbalEyes = this.LimbalEyes;
+			appearance.Eyebrows = this.Eyebrows;
+			appearance.LEyeColor = this.LEyeColor;
+			appearance.Eyes = this.Eyes;
+			appearance.Nose = this.Nose;
+			appearance.Jaw = this.Jaw;
+			appearance.Mouth = this.Mouth;
+			appearance.LipsToneFurPattern = this.LipsToneFurPattern;
+			appearance.EarMuscleTailSize = this.EarMuscleTailSize;
+			appearance.TailEarsType = this.TailEarsType;
+			appearance.Bust = this.Bust;
+			appearance.FacePaint = this.FacePaint;
+			appearance.FacePaintColor = this.FacePaintColor;
+			this.appearanceMem.Value = appearance;
+
 			this.selection.ActorRefresh();
 		}
 	}

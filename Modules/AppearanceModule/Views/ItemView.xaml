@@ -117,40 +117,5 @@
 
 			<!--<Label Grid.Column="2" Content="{Binding Dye.Name}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="12" FontWeight="Thin"/>-->
 		</Grid>
-
-		<!-- Scale -->
-		<Grid Height="24" Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" Margin="0, 4, 0, 2">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="58"/>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition/>
-			</Grid.ColumnDefinitions>
-
-			<Line X1="0" X2="1" Grid.ColumnSpan="4" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, -2, 3, 0"/>
-			<Label Grid.Column="0" Content="Scale:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 3, 3, 0" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-			<Button Grid.Column="1" Width="22" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" Click="OnZeroScaleClick" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0, 2, 0, 0"/>
-			<Button Grid.Column="2" Width="22" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" Click="OnOneScaleClick" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 2, 0, 0"/>
-
-			<cm3Controls:VectorEditor Value="{Binding ViewModel.Scale}" Minimum="-100" Maximum="100" TickFrequency="0.01" Grid.Column="3" FontSize="12" Margin="0, 0, 3, 0"/>
-		</Grid>
-
-		<!-- Color -->
-		<Grid 
-				Margin="0, 2"
-				Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
-				Height="24">
-
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="58"/>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition/>
-			</Grid.ColumnDefinitions>
-
-			<Label Grid.Column="0" Content="Color:" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Normal" FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-			<cm3Controls:ColorEditor Value="{Binding ViewModel.Color, Mode=TwoWay}" Grid.Column="1" FontSize="12" Margin="0, 0, 3, 0"/>
-			<Line Grid.ColumnSpan="4" X1="0" X2="1" VerticalAlignment="Top" StrokeThickness="1" Stretch="Fill" Stroke="#44000000" SnapsToDevicePixels="True" Margin="3, 0, 3, 0"/>
-		</Grid>
-
 	</StackPanel>
 </UserControl>
