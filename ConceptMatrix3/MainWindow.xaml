@@ -82,7 +82,7 @@
 						</Button>
 
 						<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnAboutClick" BorderThickness="0" ToolTip="About">
-							<fa:IconBlock Icon="Question" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
+							<fa:IconBlock Icon="Info" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</Button>
 
 						<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}"
