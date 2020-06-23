@@ -82,11 +82,11 @@
 
 				<!-- Skintone -->
 				<TextBlock Grid.Column="0" Grid.Row="2" Text="Skin:" Style="{StaticResource Label}"/>
-				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding Appearance.Skintone}" Type="Skin" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
+				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding Appearance.Skintone}" Type="Skin" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Margin="0, 2, 0, 2"/>
 
 				<!-- Eyes -->
 				<TextBlock Grid.Column="0" Grid.Row="3" Text="Eyes:" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="3">
+				<Grid Grid.Column="1" Grid.Row="3" Margin="0, 2, 0, 2">
 
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
@@ -105,7 +105,7 @@
 
 				<!-- Face Type -->
 				<TextBlock Grid.Column="0" Grid.Row="4" Text="Face:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.Head}" Grid.Column="1" Grid.Row="4" Minimum="1" Maximum="255" Margin="2" Buttons="True"/>
+				<cm3Controls:NumberBox Value="{Binding Appearance.Head}" Grid.Column="1" Grid.Row="4" Minimum="1" Maximum="255"  Margin="0, 2, 0, 2" Buttons="True"/>
 
 				<!-- Facial Features -->
 				<TextBlock Grid.Column="0" Grid.Row="5" Text="Features:" Style="{StaticResource Label}"/>
@@ -113,7 +113,7 @@
 
 				<!-- Face Paint  -->
 				<TextBlock Grid.Column="0" Grid.Row="6" Text="Face Paint:" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="6">
+				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 2, 0, 2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition Width="Auto"/>
@@ -125,7 +125,7 @@
 
 				<!-- Mouth / Lips  -->
 				<TextBlock Grid.Column="0" Grid.Row="7" Text="Lips:" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="7">
+				<Grid Grid.Column="1" Grid.Row="7" Margin="0, 2, 0, 2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition Width="Auto"/>
@@ -165,37 +165,37 @@
 
 				<!-- Height -->
 				<TextBlock Grid.Column="0" Grid.Row="9" Text="Height:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.Height}" Grid.Column="1" Grid.Row="9" Slider="True" Minimum="0" Maximum="100"/>
+				<cm3Controls:NumberBox Value="{Binding Appearance.Height}" Grid.Column="1" Grid.Row="9" Slider="True" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
 
 				<!-- Bust Size -->
 				<TextBlock Grid.Column="0" Grid.Row="10" Text="Bust Size:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.Bust}" Grid.Column="1" Grid.Row="10" Slider="True" Minimum="0" Maximum="100"/>
+				<cm3Controls:NumberBox Value="{Binding Appearance.Bust}" Grid.Column="1" Grid.Row="10" Slider="True" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
 
 				<!-- Muscle / Ears / Tail Size -->
 				<TextBlock Grid.Column="0" Grid.Row="11" Text="Muscle:" Style="{StaticResource Label}" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="True"/>
+				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="True" Margin="0, 2, 0, 2"/>
 
 				<TextBlock Grid.Column="0" Grid.Row="11" Text="Ears Size:" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="True"/>
+				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="True" Margin="0, 2, 0, 2"/>
 
 				<TextBlock Grid.Column="0" Grid.Row="11" Text="Tail size:" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="True"/>
+				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="True" Margin="0, 2, 0, 2"/>
 
 				<!-- Jaw Type -->
 				<TextBlock Grid.Row="13" Grid.Column="0" Text="Jaw:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Grid.Row="13" Value="{Binding Appearance.Jaw}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True"/>
+				<cm3Controls:NumberBox Grid.Row="13" Value="{Binding Appearance.Jaw}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
 
 				<!-- Eyebrows type -->
 				<TextBlock Grid.Row="14" Grid.Column="0" Text="Eyebrows:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Grid.Row="14" Value="{Binding Appearance.Eyebrows}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True"/>
+				<cm3Controls:NumberBox Grid.Row="14" Value="{Binding Appearance.Eyebrows}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
 
 				<!-- Nose Type -->
 				<TextBlock Grid.Row="15" Grid.Column="0" Text="Nose:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Grid.Row="15" Value="{Binding Appearance.Nose}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True"/>
+				<cm3Controls:NumberBox Grid.Row="15" Value="{Binding Appearance.Nose}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
 
 				<!-- Ear Type -->
 				<TextBlock Grid.Row="16" Grid.Column="0" Text="Ears:" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Grid.Row="16" Value="{Binding Appearance.TailEarsType}" Grid.Column="1" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
+				<cm3Controls:NumberBox Grid.Row="16" Value="{Binding Appearance.TailEarsType}" Grid.Column="1" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
 
 				<!-- Tail Type -->
 				<TextBlock Grid.Row="17" Grid.Column="0" Text="Tail:" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}"/>

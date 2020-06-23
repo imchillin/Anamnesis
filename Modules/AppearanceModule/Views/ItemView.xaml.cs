@@ -103,15 +103,5 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			this.SlotIcon.Source = this.ViewModel.Slot.GetIcon();
 		}
-
-		private void OnZeroScaleClick(object sender, RoutedEventArgs e)
-		{
-			this.ViewModel.Scale = Vector.Zero;
-		}
-
-		private void OnOneScaleClick(object sender, RoutedEventArgs e)
-		{
-			this.ViewModel.Scale = Vector.One;
-		}
 	}
 }

@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
-			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles"
+			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles" xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800"
 			 DataContextChanged="OnDataContextChanged">
@@ -17,50 +17,66 @@
 	
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="64"/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+
 			<ColumnDefinition/>
 
-			<ColumnDefinition Width="64"/>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<TextBlock Grid.Row="0" Grid.Column="0" Text="Skin:" Style="{StaticResource Label}"/>
-		<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Grid.ColumnSpan="3">
-			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.SkinTint, UpdateSourceTrigger=PropertyChanged}" DisplayName="Skin Color" ToolTip="Skin Color"/>
-			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.SkinGlow}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>
+		<TextBlock Foreground="#99000000" Text="Overrides" FontWeight="SemiBold" Grid.ColumnSpan="2" Margin="10, 2, 0, 0"/>
+
+		<TextBlock Grid.Row="0" Grid.Column="2" Text="Skin:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
+		<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="3" Value="{Binding SkinTint, UpdateSourceTrigger=PropertyChanged}" DisplayName="Skin Color" ToolTip="Skin Color"/>
+
+		<TextBlock Grid.Row="1" Grid.Column="2" Text="Skin Glow:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
+		<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="3" Value="{Binding SkinGlow}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>
+
+		<TextBlock Grid.Row="1" Grid.Column="0" Text="Lips:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
+		<cm3Controls:RgbaColorControl Grid.Row="1" Grid.Column="1" Value="{Binding LipTint}" ToolTip="Lips Color"/>
+
+		<TextBlock Grid.Row="1" Grid.Column="4" Text="Eyes:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
+		<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="5">
+			<cm3Controls:RgbColorControl ToolTip="Left Eye Color" Value="{Binding LeftEyeColor}"/>
+			<cm3Controls:RgbColorControl ToolTip="Right Eye Color" Value="{Binding RightEyeColor}"/>
+			<cm3Controls:RgbColorControl ToolTip="Limbal Ring Color" Value="{Binding LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
 		</StackPanel>
 
-		<TextBlock Grid.Row="0" Grid.Column="2" Text="Lips" Style="{StaticResource Label}"/>
-		<cm3Controls:RgbaColorControl Grid.Row="0" Grid.Column="3" Value="{Binding ExAppearance.LipTint}" ToolTip="Lips Color"/>
-
-		<TextBlock Grid.Row="1" Grid.Column="0" Text="Eyes:" Style="{StaticResource Label}"/>
-		<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
-			<cm3Controls:RgbColorControl ToolTip="Left Eye Color" Value="{Binding ExAppearance.LeftEyeColor}"/>
-			<cm3Controls:RgbColorControl ToolTip="Right Eye Color" Value="{Binding ExAppearance.RightEyeColor}"/>
-			<cm3Controls:RgbColorControl ToolTip="Limbal Ring Color" Value="{Binding ExAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+		<TextBlock Grid.Row="0" Grid.Column="4" Text="Hair:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
+		<StackPanel Grid.Row="0" Grid.Column="5" Orientation="Horizontal">
+			<cm3Controls:RgbColorControl Value="{Binding HairTint}" DisplayName="Hair Color" ToolTip="Hair Color" Margin="0"/>
+			<cm3Controls:RgbColorControl Value="{Binding HairGlow}" DisplayName="Hair Glow" ToolTip="Hair Glow" Margin="0"/>
+			<cm3Controls:RgbColorControl Value="{Binding HighlightTint}" DisplayName="Highlight Color" ToolTip="Highlight Color" Margin="0"/>
 		</StackPanel>
 
-		<TextBlock Grid.Row="1" Grid.Column="2" Text="Hair:" Style="{StaticResource Label}"/>
-		<StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal" Grid.ColumnSpan="3">
-			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.HairTint}" DisplayName="Hair Color" ToolTip="Hair Color" Margin="0"/>
-			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.HairGlow}" DisplayName="Hair Glow" ToolTip="Hair Glow" Margin="0"/>
-			<cm3Controls:RgbColorControl Value="{Binding ExAppearance.HighlightTint}" DisplayName="Highlight Color" ToolTip="Highlight Color" Margin="0"/>
+		<TextBlock Grid.Row="0" Grid.Column="6" Text="Main Hand:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
+		<StackPanel Grid.Row="0" Grid.Column="7" Orientation="Horizontal" Margin="0, 0, 3, 0">
+			<cm3Controls:RgbColorControl Value="{Binding MainHandTint}" DisplayName="Main Hand Tint" ToolTip="Tint" Margin="0"/>
+			<cm3Controls:VectorEditor Value="{Binding MainHandScale}" Width="150"/>
+			<Button Grid.Column="1" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="OnMainHandZeroScaleClick"/>
+			<Button Grid.Column="2" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="OnMainHandOneScaleClick"/>
 		</StackPanel>
 
-
-
+		<TextBlock Grid.Row="1" Grid.Column="6" Text="Off Hand:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
+		<StackPanel Grid.Row="1" Grid.Column="7" Orientation="Horizontal" Margin="0, 0, 3, 0">
+			<cm3Controls:RgbColorControl Value="{Binding OffHandTint}" DisplayName="Off Hand Tint" ToolTip="Tint" Margin="0"/>
+			<cm3Controls:VectorEditor Value="{Binding OffHandScale}" Width="150"/>
+			<Button Grid.Column="1" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="OnOffHandZeroScaleClick"/>
+			<Button Grid.Column="2" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="OnOffHandOneScaleClick"/>
+		</StackPanel>
 	</Grid>
 </UserControl>

@@ -28,14 +28,14 @@
 		</Grid.RowDefinitions>
 
 		<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 0, 3, 0" Grid.Column="0" Grid.RowSpan="3">
-			<StackPanel>
-				<views:AppearanceEditor x:Name="Appearance"/>
-
-				<!--<views:ExtendedAppearanceEditor x:Name="ExtendedAppearance"/>-->
-			</StackPanel>
+			<views:AppearanceEditor x:Name="Appearance"/>
 		</Border>
 
 		<views:EquipmentEditor x:Name="Equipment" Grid.Column="1"/>
+
+		<Border Grid.Column="1" Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="3, 3, 0, 3" CornerRadius="3, 0, 0, 3">
+			<views:ExtendedAppearanceEditor x:Name="ExtendedAppearance"/>
+		</Border>
 
 		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0" Grid.Column="1" Grid.Row="2">
 			<Grid Margin="3">
