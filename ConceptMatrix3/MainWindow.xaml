@@ -43,26 +43,17 @@
 	</Window.Resources>
 
 	<Grid Margin="10">
-		<Border Background="{DynamicResource MaterialDesignPaper}"
-			BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-			BorderThickness="1"
-			CornerRadius="3"
-			x:Name="ActiveBorder">
-			<Border.Effect>
-				<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.5"/>
-			</Border.Effect>
-		</Border>
 
-		<Border Background="{DynamicResource MaterialDesignPaper}"
+		<Border
+			Background="{DynamicResource MaterialDesignPaper}"
 			BorderBrush="#50000000"
 			BorderThickness="1"
 			CornerRadius="3"
 			x:Name="InActiveBorder">
 			<Border.Effect>
-				<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.1"/>
+				<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.75"/>
 			</Border.Effect>
 		</Border>
-
 
 		<Grid Margin="1" Width="958" Height="552" ClipToBounds="True">
 			<Grid.LayoutTransform>
@@ -195,6 +186,16 @@
 			</Border>-->
 
 		</Grid>
+
+		<Border
+			BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+			BorderThickness="1"
+			CornerRadius="3"
+			x:Name="ActiveBorder">
+			<Border.Effect>
+				<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.5"/>
+			</Border.Effect>
+		</Border>
 
 		<Thumb Margin="0, 0, -4, -4" Width="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" DragDelta="OnResizeDrag"/>
 
