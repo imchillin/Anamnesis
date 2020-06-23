@@ -176,11 +176,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			if (mode.HasFlag(SaveModes.EquipmentGear))
 			{
-				if (this.MainHand != null && this.MainHand.ModelSet != 0)
-				{
-					this.MainHand.Write(eq.MainHand);
-				}
-
+				this.MainHand?.Write(eq.MainHand);
 				this.OffHand?.Write(eq.OffHand);
 				this.HeadGear?.Write(eq.Head);
 				this.Body?.Write(eq.Body);
