@@ -222,7 +222,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		protected IItem GetItem()
 		{
-			if (this.ModelBase == 0 && this.modelVariant == 0 && this.modelSet == 0)
+			if (this.ModelBase == 0 && this.modelVariant == 0)
 				return NoneItem;
 
 			if (this.ModelBase == NpcbodyItem.ModelBase)
