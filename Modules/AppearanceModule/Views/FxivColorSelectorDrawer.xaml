@@ -14,14 +14,14 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid Margin="6, 3, 0, 0" x:Name="ContentArea">
+	<Grid Margin="6, 0, 0, 0" x:Name="ContentArea">
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Maximum="192" Margin="3,3,3,12" Buttons="True"/>
+		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Maximum="192" Margin="3,0,3,6" Buttons="True"/>
 
 		<ListBox Grid.Row="1" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedIndex="{Binding Selected}">
 			<ListBox.ItemsPanel>
