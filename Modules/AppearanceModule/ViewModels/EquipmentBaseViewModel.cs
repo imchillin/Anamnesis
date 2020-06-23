@@ -64,9 +64,11 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 				if (value != null)
 				{
-					this.modelSet = value.WeaponSet;
-					this.modelBase = value.ModelBase;
-					this.modelVariant = value.ModelVariant;
+					bool useSubModel = this.Slot == ItemSlots.OffHand && value.HasSubModel;
+
+					this.modelSet = useSubModel ? value.SubWeaponSet : value.WeaponSet;
+					this.modelBase = useSubModel ? value.SubModelBase : value.ModelBase;
+					this.modelVariant = useSubModel ? value.ModelVariant : value.ModelVariant;
 				}
 				else
 				{
@@ -245,10 +247,30 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				if (this.Slot == ItemSlots.Wrists && tItem.Name.StartsWith("Promise of"))
 					continue;
 
-				if ((this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand) && tItem.WeaponSet != this.ModelSet)
-					continue;
+				if (this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand)
+				{
+					if (tItem.HasSubModel)
+					{
+						if (tItem.SubWeaponSet != this.ModelSet && tItem.WeaponSet != this.ModelSet)
+						{
+							continue;
+						}
+					}
+					else
+					{
+						if (tItem.WeaponSet != this.ModelSet)
+						{
+							continue;
+						}
+					}
+				}
 
 				if (tItem.ModelBase == this.ModelBase && tItem.ModelVariant == this.ModelVariant)
+				{
+					return tItem;
+				}
+
+				if (tItem.HasSubModel && tItem.SubModelBase == this.modelBase && tItem.SubModelVariant == this.modelVariant)
 				{
 					return tItem;
 				}

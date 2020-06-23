@@ -74,6 +74,38 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
+		public bool HasSubModel
+		{
+			get
+			{
+				return this.Value.ModelSub != null && this.Value.ModelSub.Value1 != 0;
+			}
+		}
+
+		public ushort SubModelBase
+		{
+			get
+			{
+				return this.IsWeapon ? (ushort)this.Value.ModelSub.Value2 : (ushort)this.Value.ModelSub.Value1;
+			}
+		}
+
+		public ushort SubModelVariant
+		{
+			get
+			{
+				return this.IsWeapon ? (ushort)this.Value.ModelSub.Value3 : (ushort)this.Value.ModelSub.Value2;
+			}
+		}
+
+		public ushort SubWeaponSet
+		{
+			get
+			{
+				return (ushort)this.Value.ModelSub.Value1;
+			}
+		}
+
 		public bool FitsInSlot(ItemSlots slot)
 		{
 			if (this.fitsInSlotsCache.ContainsKey(slot))

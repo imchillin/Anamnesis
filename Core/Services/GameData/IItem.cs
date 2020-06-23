@@ -13,6 +13,11 @@ namespace ConceptMatrix.GameData
 		ushort ModelVariant { get; }
 		ushort WeaponSet { get; }
 
+		bool HasSubModel { get; }
+		ushort SubModelBase { get; }
+		ushort SubModelVariant { get; }
+		ushort SubWeaponSet { get; }
+
 		bool IsWeapon { get; }
 
 		bool FitsInSlot(ItemSlots slot);

@@ -76,6 +76,18 @@ namespace ConceptMatrix.AppearanceModule.Items
 			}
 		}
 
+		public bool HasSubModel
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		public ushort SubModelBase { get; }
+		public ushort SubModelVariant { get; }
+		public ushort SubWeaponSet { get; }
+
 		public bool FitsInSlot(ItemSlots slot)
 		{
 			return true;
