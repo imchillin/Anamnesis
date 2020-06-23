@@ -21,7 +21,7 @@
 				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Concept matrix is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
 				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/CM3" FontSize="12">GitHub</Hyperlink>.
 					<LineBreak /><LineBreak />
-					Concept matrix utilises the following open source projects:
+					Concept matrix is built with the following projects:
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/ufx/SaintCoinach" FontSize="12" >Saint Coinach</Hyperlink>
 					<LineBreak />
