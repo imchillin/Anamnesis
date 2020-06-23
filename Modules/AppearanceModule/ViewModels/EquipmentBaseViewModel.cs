@@ -222,6 +222,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			if (this.ModelBase == 0 && this.modelVariant == 0 && this.modelSet == 0)
 				return NoneItem;
 
+			if (this.ModelBase == NpcbodyItem.ModelBase)
+				return NpcbodyItem;
+
 			foreach (IItem tItem in this.gameData.Items.All)
 			{
 				if (this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand)
