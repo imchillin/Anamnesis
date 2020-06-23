@@ -204,13 +204,17 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private void OnRaceChanged(object sender, SelectionChangedEventArgs e)
 		{
 			IRace race = this.RaceComboBox.SelectedItem as IRace;
-			this.Race = race;
 
-			if (this.Race.Race == AnAppearance.Races.Hrothgar)
+			if (race.Race == AnAppearance.Races.Hrothgar)
 				this.Appearance.Gender = AnAppearance.Genders.Masculine;
 
-			if (this.Race.Race == AnAppearance.Races.Viera)
+			if (race.Race == AnAppearance.Races.Viera)
 				this.Appearance.Gender = AnAppearance.Genders.Feminine;
+
+			if (this.Race == race)
+				return;
+
+			this.Race = race;
 
 			this.Appearance.Race = this.Race.Race;
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
@@ -222,7 +226,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			ITribe tribe = this.TribeComboBox.SelectedItem as ITribe;
 
-			if (tribe == null)
+			if (tribe == null || this.Tribe == tribe)
 				return;
 
 			this.Tribe = tribe;
