@@ -148,12 +148,6 @@ namespace ConceptMatrix.GUI
 		private void Window_Deactivated(object sender, EventArgs e)
 		{
 			this.ActiveBorder.Visibility = Visibility.Collapsed;
-
-			// close any drawers that were left open
-			this.DrawerHost.IsLeftDrawerOpen = false;
-			this.DrawerHost.IsTopDrawerOpen = false;
-			this.DrawerHost.IsRightDrawerOpen = false;
-			this.DrawerHost.IsBottomDrawerOpen = false;
 		}
 
 		private void OnCloseClick(object sender, RoutedEventArgs e)
