@@ -75,6 +75,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 					this.modelVariant = 0;
 				}
 
+				if (this.modelBase == 0)
+					this.Dye = NoneDye;
+
 				if (oldItem != null && oldItem != this.item)
 				{
 					this.Apply();
