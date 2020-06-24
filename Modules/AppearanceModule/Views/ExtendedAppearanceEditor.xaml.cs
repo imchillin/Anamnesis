@@ -34,6 +34,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 	// or overwrite them.
 	public partial class ExtendedAppearanceEditor : UserControl, INotifyPropertyChanged
 	{
+		private Actor actor;
+
 		private IActorRefreshService refreshService;
 
 		private IMemory<Appearance> appearanceMem;
@@ -47,8 +49,11 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private IMemory<Color> highlightTintColorMem;
 		private IMemory<Color> lipTintMem;
 		private IMemory<float> lipGlossMem;
+
+		private IMemory<Weapon> mainHandMem;
 		private IMemory<Color> mainHandTintMem;
 		private IMemory<Vector> mainHandScaleMem;
+		private IMemory<Weapon> offHandMem;
 		private IMemory<Color> offHandTintMem;
 		private IMemory<Vector> offHandScaleMem;
 
@@ -85,6 +90,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public Vector OffHandScale { get; set; }
 		public Color4 LipTint { get; set; }
 
+		public bool HasMainHand { get; set; }
+		public bool HasOffHand { get; set; }
+
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			this.appearanceMem?.Dispose();
@@ -101,49 +109,37 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.hairGlowColorMem?.Dispose();
 			this.highlightTintColorMem?.Dispose();
 
-			this.mainHandTintMem?.Dispose();
-			this.mainHandScaleMem?.Dispose();
-			this.offHandTintMem?.Dispose();
-			this.offHandScaleMem?.Dispose();
+			this.actor = this.DataContext as Actor;
 
-			Actor actor = this.DataContext as Actor;
+			this.OnWeaponsChanged();
 
-			if (actor == null)
+			if (this.actor == null)
 				return;
 
-			this.appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
+			this.appearanceMem = this.actor.GetMemory(Offsets.Main.ActorAppearance);
 			this.appearanceMem.ValueChanged += this.AppearanceMem_ValueChanged;
 			this.lastAppearance = this.appearanceMem.Value;
 
-			this.skinColorMem = actor.GetMemory(Offsets.Main.SkinColor);
+			this.skinColorMem = this.actor.GetMemory(Offsets.Main.SkinColor);
 			this.skinColorMem.ValueChanged += this.SkinValueChanged;
-			this.skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
+			this.skinGlowMem = this.actor.GetMemory(Offsets.Main.SkinGloss);
 			this.skinGlowMem.ValueChanged += this.SkinValueChanged;
-			this.leftEyeColorMem = actor.GetMemory(Offsets.Main.LeftEyeColor);
+			this.leftEyeColorMem = this.actor.GetMemory(Offsets.Main.LeftEyeColor);
 			this.leftEyeColorMem.ValueChanged += this.LeftEyeColorValueChanged;
-			this.rightEyeColorMem = actor.GetMemory(Offsets.Main.RightEyeColor);
+			this.rightEyeColorMem = this.actor.GetMemory(Offsets.Main.RightEyeColor);
 			this.rightEyeColorMem.ValueChanged += this.RightEyeColorValueChanged;
-			this.limbalRingColorMem = actor.GetMemory(Offsets.Main.LimbalColor);
+			this.limbalRingColorMem = this.actor.GetMemory(Offsets.Main.LimbalColor);
 			this.limbalRingColorMem.ValueChanged += this.LimbalRingColorValueChanged;
-			this.hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
+			this.hairTintColorMem = this.actor.GetMemory(Offsets.Main.HairColor);
 			this.hairTintColorMem.ValueChanged += this.HairValueChanged;
-			this.hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
+			this.hairGlowColorMem = this.actor.GetMemory(Offsets.Main.HairGloss);
 			this.hairGlowColorMem.ValueChanged += this.HairValueChanged;
-			this.highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
+			this.highlightTintColorMem = this.actor.GetMemory(Offsets.Main.HairHiglight);
 			this.highlightTintColorMem.ValueChanged += this.HairValueChanged;
-			this.lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
-			this.lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
+			this.lipTintMem = this.actor.GetMemory(Offsets.Main.MouthColor);
+			this.lipGlossMem = this.actor.GetMemory(Offsets.Main.MouthGloss);
 			this.lipTintMem.ValueChanged += this.LipValueChanged;
 			this.lipGlossMem.ValueChanged += this.LipValueChanged;
-
-			this.mainHandTintMem = actor.GetMemory(Offsets.Main.MainHandColor);
-			this.mainHandTintMem.ValueChanged += this.MainHandTintMem_ValueChanged;
-			this.mainHandScaleMem = actor.GetMemory(Offsets.Main.MainHandScale);
-			this.mainHandScaleMem.ValueChanged += this.MainHandScaleMem_ValueChanged;
-			this.offHandTintMem = actor.GetMemory(Offsets.Main.OffhandColor);
-			this.offHandTintMem.ValueChanged += this.OffHandTintMem_ValueChanged;
-			this.offHandScaleMem = actor.GetMemory(Offsets.Main.OffhandScale);
-			this.offHandScaleMem.ValueChanged += this.OffHandScaleMem_ValueChanged;
 
 			this.HairTint = this.hairTintColorMem.Value;
 			this.HairGlow = this.hairGlowColorMem.Value;
@@ -159,10 +155,49 @@ namespace ConceptMatrix.AppearanceModule.Views
 			c.A = this.lipGlossMem.Value;
 			this.LipTint = c;
 
-			this.MainHandScale = this.mainHandScaleMem.Value;
-			this.MainHandTint = this.mainHandTintMem.Value;
-			this.OffHandScale = this.offHandScaleMem.Value;
-			this.OffHandTint = this.offHandTintMem.Value;
+			this.mainHandMem = this.actor.GetMemory(Offsets.Main.MainHand);
+			this.mainHandMem.ValueChanged += this.OnWeaponsChanged;
+			this.offHandMem = this.actor.GetMemory(Offsets.Main.OffHand);
+			this.offHandMem.ValueChanged += this.OnWeaponsChanged;
+
+			this.OnWeaponsChanged();
+		}
+
+		private void OnWeaponsChanged(object sender = null, object value = null)
+		{
+			this.mainHandTintMem?.Dispose();
+			this.mainHandScaleMem?.Dispose();
+			this.offHandTintMem?.Dispose();
+			this.offHandScaleMem?.Dispose();
+
+			if (this.actor == null)
+				return;
+
+			// do we have a main hand?
+			this.HasMainHand = this.mainHandMem != null && this.mainHandMem.Value.Base != 0;
+			if (this.HasMainHand)
+			{
+				this.mainHandTintMem = this.actor.GetMemory(Offsets.Main.MainHandColor);
+				this.mainHandTintMem.ValueChanged += this.MainHandTintMem_ValueChanged;
+				this.mainHandScaleMem = this.actor.GetMemory(Offsets.Main.MainHandScale);
+				this.mainHandScaleMem.ValueChanged += this.MainHandScaleMem_ValueChanged;
+
+				this.MainHandScale = this.mainHandScaleMem.Value;
+				this.MainHandTint = this.mainHandTintMem.Value;
+			}
+
+			// do we have an off hand?
+			this.HasOffHand = this.offHandMem != null && this.offHandMem.Value.Base != 0;
+			if (this.HasOffHand)
+			{
+				this.offHandTintMem = this.actor.GetMemory(Offsets.Main.OffhandColor);
+				this.offHandTintMem.ValueChanged += this.OffHandTintMem_ValueChanged;
+				this.offHandScaleMem = this.actor.GetMemory(Offsets.Main.OffhandScale);
+				this.offHandScaleMem.ValueChanged += this.OffHandScaleMem_ValueChanged;
+
+				this.OffHandScale = this.offHandScaleMem.Value;
+				this.OffHandTint = this.offHandTintMem.Value;
+			}
 		}
 
 		private void AppearanceMem_ValueChanged(object sender, object value)
@@ -385,22 +420,22 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnMainHandZeroScaleClick(object sender, RoutedEventArgs e)
 		{
-			this.mainHandScaleMem.Value = Vector.Zero;
+			this.MainHandScale = Vector.Zero;
 		}
 
 		private void OnMainHandOneScaleClick(object sender, RoutedEventArgs e)
 		{
-			this.mainHandScaleMem.Value = Vector.One;
+			this.MainHandScale = Vector.One;
 		}
 
 		private void OnOffHandZeroScaleClick(object sender, RoutedEventArgs e)
 		{
-			this.offHandScaleMem.Value = Vector.Zero;
+			this.OffHandScale = Vector.Zero;
 		}
 
 		private void OnOffHandOneScaleClick(object sender, RoutedEventArgs e)
 		{
-			this.offHandScaleMem.Value = Vector.One;
+			this.OffHandScale = Vector.One;
 		}
 
 		private async Task AwaitRefresh()

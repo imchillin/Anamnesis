@@ -64,7 +64,7 @@
 		</StackPanel>
 
 		<TextBlock Grid.Row="0" Grid.Column="6" Text="Main Hand:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
-		<StackPanel Grid.Row="0" Grid.Column="7" Orientation="Horizontal" Margin="0, 0, 3, 0">
+		<StackPanel Grid.Row="0" Grid.Column="7" Orientation="Horizontal" Margin="0, 0, 3, 0" IsEnabled="{Binding HasMainHand}">
 			<cm3Controls:RgbColorControl Value="{Binding MainHandTint}" DisplayName="Main Hand Tint" ToolTip="Tint" Margin="0"/>
 			<cm3Controls:VectorEditor Value="{Binding MainHandScale}" Width="150"/>
 			<Button Grid.Column="1" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="OnMainHandZeroScaleClick"/>
@@ -72,7 +72,7 @@
 		</StackPanel>
 
 		<TextBlock Grid.Row="1" Grid.Column="6" Text="Off Hand:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
-		<StackPanel Grid.Row="1" Grid.Column="7" Orientation="Horizontal" Margin="0, 0, 3, 0">
+		<StackPanel Grid.Row="1" Grid.Column="7" Orientation="Horizontal" Margin="0, 0, 3, 0" IsEnabled="{Binding HasOffHand}">
 			<cm3Controls:RgbColorControl Value="{Binding OffHandTint}" DisplayName="Off Hand Tint" ToolTip="Tint" Margin="0"/>
 			<cm3Controls:VectorEditor Value="{Binding OffHandScale}" Width="150"/>
 			<Button Grid.Column="1" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="OnOffHandZeroScaleClick"/>
