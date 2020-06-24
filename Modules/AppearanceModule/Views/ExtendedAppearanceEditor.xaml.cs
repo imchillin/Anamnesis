@@ -182,8 +182,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.mainHandScaleMem = this.actor.GetMemory(Offsets.Main.MainHandScale);
 				this.mainHandScaleMem.ValueChanged += this.MainHandScaleMem_ValueChanged;
 
-				this.MainHandScale = this.mainHandScaleMem.Value;
-				this.MainHandTint = this.mainHandTintMem.Value;
+				this.MainHandScale = Vector.One;
+				this.MainHandTint = Color.White;
 			}
 
 			// do we have an off hand?
@@ -195,8 +195,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.offHandScaleMem = this.actor.GetMemory(Offsets.Main.OffhandScale);
 				this.offHandScaleMem.ValueChanged += this.OffHandScaleMem_ValueChanged;
 
-				this.OffHandScale = this.offHandScaleMem.Value;
-				this.OffHandTint = this.offHandTintMem.Value;
+				this.OffHandScale = Vector.One;
+				this.OffHandTint = Color.White;
 			}
 		}
 
