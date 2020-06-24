@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule
+namespace ConceptMatrix.PoseModule.Pages
 {
 	using System;
 	using System.Windows;

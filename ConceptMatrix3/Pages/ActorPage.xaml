@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="ConceptMatrix.GUI.Pages.ActorPage"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Pages"
+			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="800"
+			 DataContextChanged="OnDataContextChanged">
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="200"/>
+		</Grid.ColumnDefinitions>
+
+		<Border Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 3, 0, 0" Margin="0, 0, 3, 0"/>
+
+		<Border Grid.Column="1" x:Name="ContentArea" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 0, 0, 0">
+			<StackPanel Margin="6">
+				<GroupBox Header="Rotation">
+					<cm3Controls:QuaternionEditor Value="{Binding Rotation}"/>
+				</GroupBox>
+
+				<GroupBox Header="Position">
+					<cm3Controls:VectorEditor Value="{Binding Position}" Minimum="-256" Maximum="256" Expanded="True"/>
+				</GroupBox>
+			</StackPanel>
+		</Border>
+	</Grid>
+</UserControl>

@@ -19,7 +19,6 @@ namespace ConceptMatrix.PoseModule
 
 			IViewService viewService = Services.Get<IViewService>();
 			viewService.AddActorPage<PosePage>("Pose", "running", this.IsActorPoseSupported);
-			viewService.AddActorPage<PositionPage>("Positioning", "globe");
 		}
 
 		public Task Start()
