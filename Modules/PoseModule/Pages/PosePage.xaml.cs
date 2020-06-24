@@ -59,11 +59,13 @@ namespace ConceptMatrix.PoseModule
 			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnAvailableChanged(bool value)
 		{
 			this.CanPose = value;
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnEnabledChanged(bool value)
 		{
 			if (this.SkeletonViewModel != null)
@@ -117,6 +119,7 @@ namespace ConceptMatrix.PoseModule
 			await fileService.SaveAs(file);
 		}
 
+		[SuppressPropertyChangedWarnings]
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)
 		{
 			int selected = this.ViewSelector.SelectedIndex;
