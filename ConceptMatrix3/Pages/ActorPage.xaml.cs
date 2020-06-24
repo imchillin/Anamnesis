@@ -15,6 +15,11 @@ namespace ConceptMatrix.GUI.Pages
 	{
 		private IMemory<Vector> posMem;
 		private IMemory<Quaternion> rotMem;
+		private IMemory<int> modelTypeMem;
+
+		private int modelType;
+
+		private Actor actor;
 
 		public ActorPage()
 		{
@@ -26,6 +31,19 @@ namespace ConceptMatrix.GUI.Pages
 		public Vector Position { get; set; }
 		public Quaternion Rotation { get; set; }
 
+		public int ModelType
+		{
+			get
+			{
+				return this.modelType;
+			}
+			set
+			{
+				this.modelType = value;
+				this.actor.ActorRefresh();
+			}
+		}
+
 		private void OnDataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
 		{
 			if (this.posMem != null)
@@ -34,18 +52,21 @@ namespace ConceptMatrix.GUI.Pages
 			if (this.rotMem != null)
 				this.rotMem.Dispose();
 
-			Actor actor = this.DataContext as Actor;
+			this.actor = this.DataContext as Actor;
 
-			System.Windows.Application.Current.Dispatcher.Invoke(() => { this.IsEnabled = actor != null; });
+			System.Windows.Application.Current.Dispatcher.Invoke(() => { this.IsEnabled = this.actor != null; });
 
-			if (actor == null)
+			if (this.actor == null)
 				return;
 
-			this.posMem = actor.GetMemory(Offsets.Main.Position);
+			this.posMem = this.actor.GetMemory(Offsets.Main.Position);
 			this.posMem.Bind(this, nameof(this.Position));
 
-			this.rotMem = actor.GetMemory(Offsets.Main.Rotation);
+			this.rotMem = this.actor.GetMemory(Offsets.Main.Rotation);
 			this.rotMem.Bind(this, nameof(this.Rotation));
+
+			this.modelTypeMem = this.actor.GetMemory(Offsets.Main.ModelType);
+			this.modelTypeMem.Bind(this, nameof(this.ModelType));
 		}
 	}
 }

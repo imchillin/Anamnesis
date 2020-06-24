@@ -33,9 +33,14 @@ namespace ConceptMatrix.PoseModule
 
 		private bool IsActorPoseSupported(Actor actor)
 		{
-			return actor.Type == Anamnesis.ActorTypes.Player ||
-				actor.Type == Anamnesis.ActorTypes.EventNpc ||
-				actor.Type == Anamnesis.ActorTypes.BattleNpc;
+			if (actor.Type != Anamnesis.ActorTypes.Player && actor.Type != Anamnesis.ActorTypes.EventNpc && actor.Type != Anamnesis.ActorTypes.BattleNpc)
+				return false;
+
+			int modelType = actor.GetValue(Offsets.Main.ModelType);
+			if (modelType != 0)
+				return false;
+
+			return true;
 		}
 	}
 }

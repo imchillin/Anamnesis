@@ -9,15 +9,32 @@
 			 d:DesignHeight="450" d:DesignWidth="800"
 			 DataContextChanged="OnDataContextChanged">
 
-	<Grid>
+	<Grid x:Name="ContentArea" >
 		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="200"/>
 			<ColumnDefinition/>
 			<ColumnDefinition Width="200"/>
 		</Grid.ColumnDefinitions>
 
-		<Border Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 3, 0, 0" Margin="0, 0, 3, 0"/>
+		<Border Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 3, 0, 0" Margin="0, 0, 3, 0">
+			<Grid Margin="6">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
 
-		<Border Grid.Column="1" x:Name="ContentArea" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 0, 0, 0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="Model:" Style="{StaticResource Label}"/>
+				<cm3Controls:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding ModelType}" Minimum="0" Maximum="10000" Buttons="True"/>
+
+			</Grid>
+		</Border>
+
+		<Border Grid.Column="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 0, 0, 0">
 			<StackPanel Margin="6">
 				<GroupBox Header="Rotation">
 					<cm3Controls:QuaternionEditor Value="{Binding Rotation}"/>
