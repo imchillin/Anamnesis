@@ -52,7 +52,7 @@
 				</TextBlock>
 			</GroupBox>
 			<GroupBox Header="About the Project">
-				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Concept Matrix started as a trainer called SSTool created by LeonBlade, and was merged with KrisanThyme and Seria Myouna's Posing Matrix to become Concept Matrix, with upkeep by Johto, Ena, and LeonBlade, asnd input from Noffletoff and Goaat.<LineBreak /><LineBreak />The current build, CM3, is a complete rewrite by Yuuki, with additions by MissAniThrope.
+				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Concept Matrix started as a trainer called SSTool created by LeonBlade, and was merged with KrisanThyme and Seria Myouna's Posing Matrix to become Concept Matrix, with upkeep by Johto, Ena, and LeonBlade, and input from Goaat.<LineBreak /><LineBreak />The current build, CM3, is a complete rewrite by Yuuki, with additions by MissAniThrope.
 				</TextBlock>
 			</GroupBox>
 
