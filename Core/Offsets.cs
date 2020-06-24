@@ -49,11 +49,9 @@ namespace ConceptMatrix
 
 			Main.Camera = 0xA0;
 
-			Main.ActorAppearance = 0x17B8; // Starting postion is Race Address Offset
-			Main.FCTag = 0x17D2;
+			Main.ActorAppearance = 0x17B8; // Starting position is Race Address Offset
 			Main.Title = 0x18B2;
-			Main.ModelChara = 0x1888;
-			Main.ActorVoice = 0x18B8;
+			Main.ModelType = 0x1888;
 			Main.StatusEffect = 0x1C1C;
 			Main.Animating = 0x784;
 
@@ -165,10 +163,8 @@ namespace ConceptMatrix
 			public Offset<Vector> Camera { get; set; }
 
 			public Offset<Appearance> ActorAppearance { get; set; }
-			public Offset FCTag { get; set; }
 			public Offset Title { get; set; }
-			public Offset ModelChara { get; set; }
-			public Offset ActorVoice { get; set; }
+			public Offset<int> ModelType { get; set; }
 			public Offset StatusEffect { get; set; }
 			public Offset<bool> Animating { get; set; }
 

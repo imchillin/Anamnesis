@@ -12,6 +12,7 @@ namespace ConceptMatrix.GUI
 	using System.Windows.Controls;
 	using System.Windows.Controls.Primitives;
 	using System.Windows.Input;
+	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
@@ -235,14 +236,29 @@ namespace ConceptMatrix.GUI
 			while (selector.Actor == null)
 				await Task.Delay(100);
 
-			if (selector.Actor.Type == Anamnesis.ActorTypes.BattleNpc ||
-				selector.Actor.Type == Anamnesis.ActorTypes.EventNpc)
+			if (selector.Actor.Type == ActorTypes.BattleNpc ||
+				selector.Actor.Type == ActorTypes.EventNpc)
 			{
 				MessageBoxResult result = MessageBox.Show(this, $"The Actor: \"{selector.Actor.Name}\" is an NPC. Do you want to change them to a Player to enable selection in GPose?", "Actor Selection", MessageBoxButton.YesNo);
 				if (result == MessageBoxResult.Yes)
 				{
-					selector.Actor.SetValue(Offsets.Main.ActorType, Anamnesis.ActorTypes.Player);
-					selector.Actor.Type = Anamnesis.ActorTypes.Player;
+					selector.Actor.SetValue(Offsets.Main.ActorType, ActorTypes.Player);
+					selector.Actor.Type = ActorTypes.Player;
+				}
+			}
+
+			using IMemory<int> modelMem = selector.Actor.GetMemory(Offsets.Main.ModelType);
+			if (modelMem.Value != 0)
+			{
+				MessageBoxResult result = MessageBox.Show(this, $"The Actor: \"{selector.Actor.Name}\" does not have a player body. Do you want to change their model to allow appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+				if (result == MessageBoxResult.Yes)
+				{
+					modelMem.Value = 0;
+
+					await selector.Actor.ActorRefreshAsync();
+
+					selector.Actor.SetValue(Offsets.Main.ActorAppearance, Appearance.Default());
+					await selector.Actor.ActorRefreshAsync();
 				}
 			}
 
