@@ -6,6 +6,7 @@ namespace ConceptMatrix.Injection
 	using System;
 	using System.Diagnostics;
 	using System.Threading.Tasks;
+	using System.Windows;
 	using Anamnesis;
 	using Anamnesis.Offsets;
 	using Anamnesis.Process;
@@ -79,7 +80,12 @@ namespace ConceptMatrix.Injection
 		{
 			return await App.Current.Dispatcher.InvokeAsync<Process>(() =>
 			{
-				return ProcessSelector.FindProcess();
+				Process proc = ProcessSelector.FindProcess();
+
+				if (proc == null)
+					Application.Current.Shutdown();
+
+				return proc;
 			});
 		}
 	}
