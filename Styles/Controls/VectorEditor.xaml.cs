@@ -19,6 +19,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly IBind<bool> ExpandedDp = Binder.Register<bool, VectorEditor>(nameof(Expanded));
 		public static readonly IBind<Vector> ValueDp = Binder.Register<Vector, VectorEditor>(nameof(Value), OnValueChanged);
 		public static readonly IBind<double> TickFrequencyDp = Binder.Register<double, VectorEditor>(nameof(TickFrequency));
+		public static readonly IBind<bool> WrapDp = Binder.Register<bool, VectorEditor>(nameof(Wrap));
 
 		public VectorEditor()
 		{
@@ -48,6 +49,12 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			get => TickFrequencyDp.Get(this);
 			set => TickFrequencyDp.Set(this, value);
+		}
+
+		public bool Wrap
+		{
+			get => WrapDp.Get(this);
+			set => WrapDp.Set(this, value);
 		}
 
 		[AlsoNotifyFor(nameof(VectorEditor.Value))]

@@ -34,10 +34,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly IBind<double> TickDp = Binder.Register<double, QuaternionEditor>(nameof(TickFrequency));
 
 		public static readonly IBind<Quaternion> ValueQuatDp = Binder.Register<Quaternion, QuaternionEditor>(nameof(ValueQuat), OnValueQuatChanged);
-
-		public static readonly IBind<double> EulerXDp = Binder.Register<double, QuaternionEditor>(nameof(EulerX), OnEulerChanged);
-		public static readonly IBind<double> EulerYDp = Binder.Register<double, QuaternionEditor>(nameof(EulerY), OnEulerChanged);
-		public static readonly IBind<double> EulerZDp = Binder.Register<double, QuaternionEditor>(nameof(EulerZ), OnEulerChanged);
+		public static readonly IBind<Vector> EulerDp = Binder.Register<Vector, QuaternionEditor>(nameof(Euler), OnEulerChanged);
 
 		////private Vector3D euler;
 		private readonly RotationGizmo rotationGizmo;
@@ -85,22 +82,10 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set => ValueQuatDp.Set(this, value);
 		}
 
-		public double EulerX
+		public Vector Euler
 		{
-			get => EulerXDp.Get(this);
-			set => EulerXDp.Set(this, value);
-		}
-
-		public double EulerY
-		{
-			get => EulerYDp.Get(this);
-			set => EulerYDp.Set(this, value);
-		}
-
-		public double EulerZ
-		{
-			get => EulerZDp.Get(this);
-			set => EulerZDp.Set(this, value);
+			get => EulerDp.Get(this);
+			set => EulerDp.Set(this, value);
 		}
 
 		public Quaternion Root
@@ -157,10 +142,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			sender.lockdp = true;
 
-			Vector euler = sender.Value.ToEuler();
-			sender.EulerX = euler.X;
-			sender.EulerY = euler.Y;
-			sender.EulerZ = euler.Z;
+			sender.Euler = sender.Value.ToEuler();
 
 			sender.lockdp = false;
 		}
@@ -195,23 +177,19 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			sender.Value = new CmQuaternion((float)newrot.X, (float)newrot.Y, (float)newrot.Z, (float)newrot.W);
 
-			Vector euler = sender.Value.ToEuler();
-			sender.EulerX = euler.X;
-			sender.EulerY = euler.Y;
-			sender.EulerZ = euler.Z;
+			sender.Euler = sender.Value.ToEuler();
 
 			sender.lockdp = false;
 		}
 
 		[SuppressPropertyChangedWarnings]
-		private static void OnEulerChanged(QuaternionEditor sender, double val)
+		private static void OnEulerChanged(QuaternionEditor sender, Vector val)
 		{
 			if (sender.lockdp)
 				return;
 
 			sender.lockdp = true;
-			Vector euler = new Vector((float)sender.EulerX, (float)sender.EulerY, (float)sender.EulerZ);
-			sender.Value = CmQuaternion.FromEuler(euler);
+			sender.Value = CmQuaternion.FromEuler(sender.Euler);
 			sender.lockdp = false;
 		}
 
