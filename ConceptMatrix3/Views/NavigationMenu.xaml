@@ -6,6 +6,7 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 DataContextChanged="OnDataContextChanged"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="200">
 

@@ -8,6 +8,7 @@ namespace ConceptMatrix.GUI.Services
 	using System.Reflection;
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
+	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Windows;
 
@@ -44,11 +45,12 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public void AddPage<T>(string name, string icon)
+		public void AddActorPage<T>(string name, string icon, Func<Actor, bool> isSupportedCallback = null)
 		{
 			Page page = new Page();
 			page.Icon = icon;
 			page.Name = name;
+			page.IsSupportedCallback = isSupportedCallback;
 			page.Type = typeof(T);
 
 			if (this.pages.ContainsKey(name))
@@ -132,6 +134,8 @@ namespace ConceptMatrix.GUI.Services
 			public string Name { get; set; }
 			public string Icon { get; set; }
 
+			public Func<Actor, bool> IsSupportedCallback { get; set; }
+
 			public UserControl Create()
 			{
 				try
@@ -146,6 +150,14 @@ namespace ConceptMatrix.GUI.Services
 				{
 					throw new Exception($"Failed to create page: {this.Type}", ex);
 				}
+			}
+
+			public bool Supports(Actor actor)
+			{
+				if (this.IsSupportedCallback == null)
+					return true;
+
+				return this.IsSupportedCallback.Invoke(actor);
 			}
 		}
 	}

@@ -10,6 +10,7 @@ namespace ConceptMatrix.GUI.Views
 	using System.Windows.Controls;
 	using System.Windows.Data;
 	using ConceptMatrix.GUI.Services;
+	using PropertyChanged;
 	using static ConceptMatrix.GUI.Services.ViewService;
 
 	/// <summary>
@@ -18,6 +19,7 @@ namespace ConceptMatrix.GUI.Views
 	public partial class NavigationMenu : UserControl
 	{
 		private ViewService viewService;
+		private Actor actor;
 
 		public NavigationMenu()
 		{
@@ -50,8 +52,34 @@ namespace ConceptMatrix.GUI.Views
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ViewService.Page item = (ViewService.Page)this.ViewList.SelectedItem;
-			this.SelectPage?.Invoke(item);
+			ViewService.Page page = (ViewService.Page)this.ViewList.SelectedItem;
+
+			if (!page.Supports(this.actor))
+				return;
+
+			this.SelectPage?.Invoke(page);
+		}
+
+		private void OnDataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+		{
+			this.actor = this.DataContext as Actor;
+
+			if (this.actor == null)
+			{
+				this.IsEnabled = false;
+				return;
+			}
+
+			this.Items.Clear();
+			foreach (ViewService.Page page in this.viewService.Pages)
+			{
+				if (!page.Supports(this.actor))
+					continue;
+
+				this.OnAddPage(page);
+			}
+
+			this.IsEnabled = true;
 		}
 	}
 }

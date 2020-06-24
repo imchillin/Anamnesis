@@ -9,7 +9,7 @@
 			 Loaded="OnLoaded">
 	<Grid x:Name="ContentArea">
 		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}">
-			<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+			<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="200">
 				<cm3Controls:QuaternionEditor Value="{Binding Rotation}"/>
 				<cm3Controls:VectorEditor Value="{Binding Position}" Minimum="-1000" Maximum="1000"/>
 			</StackPanel>
