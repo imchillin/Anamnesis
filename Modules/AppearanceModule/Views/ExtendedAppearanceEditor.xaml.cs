@@ -8,6 +8,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.ComponentModel;
 	using System.Reflection;
 	using System.Text;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Data;
@@ -33,6 +34,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 	// or overwrite them.
 	public partial class ExtendedAppearanceEditor : UserControl, INotifyPropertyChanged
 	{
+		private IActorRefreshService refreshService;
+
 		private IMemory<Appearance> appearanceMem;
 		private IMemory<Color> skinColorMem;
 		private IMemory<Color> skinGlowMem;
@@ -57,6 +60,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public ExtendedAppearanceEditor()
 		{
 			this.InitializeComponent();
+
+			this.refreshService = Services.Get<IActorRefreshService>();
 
 			this.ContentArea.DataContext = this;
 
@@ -180,7 +185,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.lastAppearance = newAppearance;
 		}
 
-		private void HairValueChanged(object sender, object value)
+		private async void HairValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -193,6 +198,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				this.hairTintColorMem.Value = this.HairTint;
 				this.hairGlowColorMem.Value = this.HairGlow;
 				this.highlightTintColorMem.Value = this.HighlightTint;
@@ -201,7 +208,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.lockChanged = false;
 		}
 
-		private void LimbalRingColorValueChanged(object sender, object value)
+		private async void LimbalRingColorValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -212,13 +219,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				this.limbalRingColorMem.Value = this.LimbalRingColor;
 			}
 
 			this.lockChanged = false;
 		}
 
-		private void RightEyeColorValueChanged(object sender, object value)
+		private async void RightEyeColorValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -229,13 +238,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				this.rightEyeColorMem.Value = this.RightEyeColor;
 			}
 
 			this.lockChanged = false;
 		}
 
-		private void LeftEyeColorValueChanged(object sender, object value)
+		private async void LeftEyeColorValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -246,13 +257,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				this.leftEyeColorMem.Value = this.LeftEyeColor;
 			}
 
 			this.lockChanged = false;
 		}
 
-		private void SkinValueChanged(object sender, object value)
+		private async void SkinValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -264,6 +277,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				this.skinColorMem.Value = this.SkinTint;
 				this.skinGlowMem.Value = this.SkinGlow;
 			}
@@ -271,7 +286,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.lockChanged = false;
 		}
 
-		private void LipValueChanged(object sender, object value)
+		private async void LipValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -286,6 +301,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				Color4 c = (Color4)this.LipTint;
 				this.lipTintMem.Value = c.Color;
 				this.lipGlossMem.Value = c.A;
@@ -294,7 +311,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.lockChanged = false;
 		}
 
-		private void OffHandScaleMem_ValueChanged(object sender, object value)
+		private async void OffHandScaleMem_ValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -304,13 +321,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				this.offHandScaleMem.Value = this.OffHandScale;
 			}
 
 			this.lockChanged = false;
 		}
 
-		private void OffHandTintMem_ValueChanged(object sender, object value)
+		private async void OffHandTintMem_ValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -320,13 +339,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				this.offHandTintMem.Value = this.OffHandTint;
 			}
 
 			this.lockChanged = false;
 		}
 
-		private void MainHandScaleMem_ValueChanged(object sender, object value)
+		private async void MainHandScaleMem_ValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -336,13 +357,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				this.mainHandScaleMem.Value = this.MainHandScale;
 			}
 
 			this.lockChanged = false;
 		}
 
-		private void MainHandTintMem_ValueChanged(object sender, object value)
+		private async void MainHandTintMem_ValueChanged(object sender, object value)
 		{
 			this.lockChanged = true;
 
@@ -352,6 +375,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 			else
 			{
+				await this.AwaitRefresh();
+
 				this.mainHandTintMem.Value = this.MainHandTint;
 			}
 
@@ -376,6 +401,14 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private void OnOffHandOneScaleClick(object sender, RoutedEventArgs e)
 		{
 			this.offHandScaleMem.Value = Vector.One;
+		}
+
+		private async Task AwaitRefresh()
+		{
+			while (this.refreshService.IsRefreshing)
+			{
+				await Task.Delay(10);
+			}
 		}
 
 		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
