@@ -18,8 +18,8 @@ namespace ConceptMatrix.PoseModule
 			await Services.Add<PoseService>();
 
 			IViewService viewService = Services.Get<IViewService>();
-			viewService.AddPage<PosePage>("Pose", "running");
-			viewService.AddPage<PositionPage>("Positioning", "globe");
+			viewService.AddActorPage<PosePage>("Pose", "running", this.IsActorPoseSupported);
+			viewService.AddActorPage<PositionPage>("Positioning", "globe");
 		}
 
 		public Task Start()
@@ -30,6 +30,13 @@ namespace ConceptMatrix.PoseModule
 		public Task Shutdown()
 		{
 			return Task.CompletedTask;
+		}
+
+		private bool IsActorPoseSupported(Actor actor)
+		{
+			return actor.Type == Anamnesis.ActorTypes.Player ||
+				actor.Type == Anamnesis.ActorTypes.EventNpc ||
+				actor.Type == Anamnesis.ActorTypes.BattleNpc;
 		}
 	}
 }

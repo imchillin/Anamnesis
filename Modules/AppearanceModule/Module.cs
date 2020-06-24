@@ -12,7 +12,7 @@ namespace ConceptMatrix.AppearanceModule
 		public Task Initialize()
 		{
 			IViewService viewService = Services.Get<IViewService>();
-			viewService.AddPage<AppearancePage>("Appearance", "user");
+			viewService.AddActorPage<AppearancePage>("Appearance", "user", this.IsActorSupported);
 
 			return Task.CompletedTask;
 		}
@@ -25,6 +25,13 @@ namespace ConceptMatrix.AppearanceModule
 		public Task Shutdown()
 		{
 			return Task.CompletedTask;
+		}
+
+		private bool IsActorSupported(Actor actor)
+		{
+			return actor.Type == Anamnesis.ActorTypes.Player ||
+				actor.Type == Anamnesis.ActorTypes.EventNpc ||
+				actor.Type == Anamnesis.ActorTypes.BattleNpc;
 		}
 	}
 }
