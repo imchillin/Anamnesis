@@ -7,6 +7,7 @@ namespace ConceptMatrix
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using Anamnesis;
+	using Anamnesis.Exceptions;
 	using Anamnesis.Offsets;
 
 	public class Actor : IDisposable
@@ -23,6 +24,10 @@ namespace ConceptMatrix
 			this.Name = this.GetValue(Offsets.Main.Name);
 			this.Type = this.GetValue(Offsets.Main.ActorType);
 		}
+
+		public delegate void ActorEvent(Actor actor);
+
+		public event ActorEvent ActorRetargeted;
 
 		public ActorTypes Type { get; set; }
 		public string Name { get; private set; }
@@ -89,9 +94,21 @@ namespace ConceptMatrix
 			{
 				if (weakRef.TryGetTarget(out mem))
 				{
-					mem.UpdateBaseOffset(this.baseOffset);
+					if (!mem.Active)
+						continue;
+
+					try
+					{
+						mem.UpdateBaseOffset(this.baseOffset);
+					}
+					catch (MemoryException)
+					{
+						mem.Dispose();
+					}
 				}
 			}
+
+			this.ActorRetargeted?.Invoke(this);
 
 			Log.Write("Retargeting actor done");
 		}

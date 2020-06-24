@@ -40,7 +40,8 @@ namespace ConceptMatrix.GUI.Pages
 			set
 			{
 				this.modelType = value;
-				this.actor.ActorRefresh();
+
+				this.actor?.ActorRefresh();
 			}
 		}
 

@@ -350,14 +350,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			this.lockChanged = true;
 
-			if (this.lockedFields.Contains("??"))
-			{
-				////this.lockedFields.Remove("??");
-			}
-			else
-			{
-				await this.AwaitRefresh();
+			await this.AwaitRefresh();
 
+			if (this.offHandScaleMem.Active)
+			{
 				this.offHandScaleMem.Value = this.OffHandScale;
 			}
 
@@ -368,14 +364,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			this.lockChanged = true;
 
-			if (this.lockedFields.Contains("??"))
-			{
-				////this.lockedFields.Remove("??");
-			}
-			else
-			{
-				await this.AwaitRefresh();
+			await this.AwaitRefresh();
 
+			if (this.offHandTintMem.Active)
+			{
 				this.offHandTintMem.Value = this.OffHandTint;
 			}
 
@@ -386,14 +378,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			this.lockChanged = true;
 
-			if (this.lockedFields.Contains("??"))
-			{
-				////this.lockedFields.Remove("??");
-			}
-			else
-			{
-				await this.AwaitRefresh();
+			await this.AwaitRefresh();
 
+			if (this.mainHandScaleMem.Active)
+			{
 				this.mainHandScaleMem.Value = this.MainHandScale;
 			}
 
@@ -404,14 +392,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			this.lockChanged = true;
 
-			if (this.lockedFields.Contains("??"))
-			{
-				////this.lockedFields.Remove("??");
-			}
-			else
-			{
-				await this.AwaitRefresh();
+			await this.AwaitRefresh();
 
+			if (this.mainHandTintMem.Active)
+			{
 				this.mainHandTintMem.Value = this.MainHandTint;
 			}
 

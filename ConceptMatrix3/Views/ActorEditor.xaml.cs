@@ -23,6 +23,13 @@ namespace ConceptMatrix.GUI.Views
 
 		private void OnShowPage(ViewService.Page page)
 		{
+			if (page == null)
+			{
+				this.currentView = null;
+				this.ViewArea.Content = null;
+				return;
+			}
+
 			if (!this.pages.ContainsKey(page))
 			{
 				Application.Current.Dispatcher.Invoke(() =>

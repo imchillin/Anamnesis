@@ -7,8 +7,10 @@ namespace ConceptMatrix.GUI.Views
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
+	using System.Linq;
 	using System.Windows.Controls;
 	using System.Windows.Data;
+	using Anamnesis;
 	using ConceptMatrix.GUI.Services;
 	using PropertyChanged;
 	using static ConceptMatrix.GUI.Services.ViewService;
@@ -20,6 +22,8 @@ namespace ConceptMatrix.GUI.Views
 	{
 		private ViewService viewService;
 		private Actor actor;
+		private ViewService.Page currentSelection;
+		private bool suppressSelectionEvent = false;
 
 		public NavigationMenu()
 		{
@@ -52,12 +56,15 @@ namespace ConceptMatrix.GUI.Views
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ViewService.Page page = (ViewService.Page)this.ViewList.SelectedItem;
-
-			if (!page.Supports(this.actor))
+			if (this.suppressSelectionEvent)
 				return;
 
-			this.SelectPage?.Invoke(page);
+			this.currentSelection = (ViewService.Page)this.ViewList.SelectedItem;
+
+			if (this.currentSelection != null && !this.currentSelection.Supports(this.actor))
+				return;
+
+			this.SelectPage?.Invoke(this.currentSelection);
 		}
 
 		private void OnDataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
@@ -70,16 +77,66 @@ namespace ConceptMatrix.GUI.Views
 				return;
 			}
 
-			this.Items.Clear();
+			this.actor.ActorRetargeted += this.OnActorRetargeted;
+
+			this.OnActorRetargeted(null);
+
+			this.IsEnabled = true;
+		}
+
+		private void OnActorRetargeted(Actor actor = null)
+		{
+			HashSet<ViewService.Page> oldPages = new HashSet<ViewService.Page>(this.Items);
+
+			List<ViewService.Page> newPages = new List<ViewService.Page>();
+
 			foreach (ViewService.Page page in this.viewService.Pages)
 			{
 				if (!page.Supports(this.actor))
 					continue;
 
-				this.OnAddPage(page);
+				newPages.Add(page);
 			}
 
-			this.IsEnabled = true;
+			bool changed = true;
+			if (oldPages.Count == newPages.Count)
+			{
+				changed = false;
+
+				foreach (ViewService.Page page in newPages)
+				{
+					if (oldPages.Contains(page))
+						continue;
+
+					changed = true;
+					break;
+				}
+			}
+
+			if (!changed)
+				return;
+
+			ViewService.Page oldSelection = this.currentSelection;
+			this.suppressSelectionEvent = true;
+
+			this.Items.Clear();
+			foreach (ViewService.Page page in newPages)
+			{
+				this.Items.Add(page);
+			}
+
+			if (newPages.Contains(oldSelection))
+			{
+				this.currentSelection = oldSelection;
+				this.ViewList.SelectedItem = this.currentSelection;
+				this.SelectPage?.Invoke(oldSelection);
+			}
+			else
+			{
+				this.SelectPage?.Invoke(this.Items.FirstOrDefault());
+			}
+
+			this.suppressSelectionEvent = false;
 		}
 	}
 }
