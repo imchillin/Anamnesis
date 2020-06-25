@@ -74,7 +74,7 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		private void OnException(ExceptionDispatchInfo exDispatch, Log.Severity severity, string category)
+		public void OnException(ExceptionDispatchInfo exDispatch, Log.Severity severity, string category)
 		{
 			lock (this)
 			{
@@ -102,7 +102,7 @@ namespace ConceptMatrix.GUI.Services
 			}
 		}
 
-		private void OnLog(string message, Log.Severity severity, string category)
+		public void OnLog(string message, Log.Severity severity, string category)
 		{
 			lock (this)
 			{

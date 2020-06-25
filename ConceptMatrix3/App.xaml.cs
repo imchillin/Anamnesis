@@ -10,6 +10,7 @@ namespace ConceptMatrix
 	using System.Windows.Threading;
 	using ConceptMatrix.GUI;
 	using ConceptMatrix.GUI.Pages;
+	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Windows;
 	using MaterialDesignThemes.Wpf;
 	using Application = System.Windows.Application;
@@ -106,13 +107,15 @@ namespace ConceptMatrix
 
 		private void OnException(ExceptionDispatchInfo ex, Log.Severity severity, string category)
 		{
-			 ErrorDialog.ShowError(ex, severity == Log.Severity.Critical);
+			Services.Get<LogService>().OnException(ex, severity, category);
+			ErrorDialog.ShowError(ex, severity == Log.Severity.Critical);
 		}
 
 		private void OnLog(string message, Log.Severity severity, string category)
 		{
 			if (severity >= Log.Severity.Error)
 			{
+				Services.Get<LogService>().OnLog(message, severity, category);
 				Exception ex = new Exception(message);
 				ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), severity == Log.Severity.Critical);
 			}
