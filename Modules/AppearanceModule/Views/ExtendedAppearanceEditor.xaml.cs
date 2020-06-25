@@ -95,6 +95,19 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
+			this.actor = this.DataContext as Actor;
+
+			this.ActorActorRetargeted(this.actor);
+
+			if (this.actor == null)
+				return;
+
+			this.actor.ActorRetargeted += this.ActorActorRetargeted;
+			this.ActorActorRetargeted(this.actor);
+		}
+
+		private void ActorActorRetargeted(Actor actor = null)
+		{
 			this.appearanceMem?.Dispose();
 
 			this.lipTintMem?.Dispose();
@@ -109,7 +122,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.hairGlowColorMem?.Dispose();
 			this.highlightTintColorMem?.Dispose();
 
-			this.actor = this.DataContext as Actor;
+			this.offHandMem?.Dispose();
+			this.mainHandMem?.Dispose();
 
 			this.OnWeaponsChanged();
 
@@ -174,7 +188,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 				return;
 
 			// do we have a main hand?
-			this.HasMainHand = this.mainHandMem != null && this.mainHandMem.Value.Base != 0;
+			this.HasMainHand = this.mainHandMem != null && this.mainHandMem.Active && this.mainHandMem.Value.Base != 0;
 			if (this.HasMainHand)
 			{
 				this.mainHandTintMem = this.actor.GetMemory(Offsets.Main.MainHandColor);
@@ -187,7 +201,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 
 			// do we have an off hand?
-			this.HasOffHand = this.offHandMem != null && this.offHandMem.Value.Base != 0;
+			this.HasOffHand = this.offHandMem != null && this.offHandMem.Active && this.offHandMem.Value.Base != 0;
 			if (this.HasOffHand)
 			{
 				this.offHandTintMem = this.actor.GetMemory(Offsets.Main.OffhandColor);
@@ -428,6 +442,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 			{
 				await Task.Delay(10);
 			}
+
+			// since sometimes the game take just a little while to get its memory sorted out.
+			await Task.Delay(1000);
 		}
 
 		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
