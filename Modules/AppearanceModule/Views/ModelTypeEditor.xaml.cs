@@ -26,6 +26,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.InitializeComponent();
 
 			this.ContentArea.DataContext = this;
+
+			ISelectionService selectionService = Services.Get<ISelectionService>();
+			selectionService.ModeChanged += this.SelectionService_ModeChanged;
 		}
 
 		public int ModelType
@@ -66,6 +69,14 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private void ModelTypeMem_ValueChanged(object sender = null, object value = null)
 		{
 			this.ModelType = this.modelTypeMem.Value;
+		}
+
+		private void SelectionService_ModeChanged(Modes mode)
+		{
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.IsEnabled = mode == Modes.Overworld;
+			});
 		}
 
 		private void OnBrowseClicked(object sender, RoutedEventArgs e)
