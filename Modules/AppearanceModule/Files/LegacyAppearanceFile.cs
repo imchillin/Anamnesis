@@ -48,17 +48,35 @@ namespace ConceptMatrix.AppearanceModule.Files
 			allFile.FacePaint = data[24];
 			allFile.FacePaintColor = data[25];
 
-			/*
-			allFile.SkinTint = new Color((float)this.characterDetails.SkinRedPigment.value, (float)this.characterDetails.SkinGreenPigment.value, (float)this.characterDetails.SkinBluePigment.value);
-			allFile.SkinGlow = new Color((float)this.characterDetails.SkinRedGloss.value, (float)this.characterDetails.SkinGreenGloss.value, (float)this.characterDetails.SkinBlueGloss.value);
-			allFile.LeftEyeColor = new Color((float)this.characterDetails.LeftEyeRed.value, (float)this.characterDetails.LeftEyeGreen.value, (float)this.characterDetails.LeftEyeBlue.value);
-			allFile.RightEyeColor = new Color((float)this.characterDetails.RightEyeRed.value, (float)this.characterDetails.RightEyeGreen.value, (float)this.characterDetails.RightEyeBlue.value);
-			allFile.LimbalRingColor = new Color((float)this.characterDetails.LimbalR.value, (float)this.characterDetails.LimbalG.value, (float)this.characterDetails.LimbalB.value);
-			allFile.HairTint = new Color((float)this.characterDetails.HairRedPigment.value, (float)this.characterDetails.HairGreenPigment.value, (float)this.characterDetails.HairBluePigment.value);
-			allFile.HairGlow = new Color((float)this.characterDetails.HairGlowRed.value, (float)this.characterDetails.HairGlowGreen.value, (float)this.characterDetails.HairGlowBlue.value);
-			allFile.HighlightTint = new Color((float)this.characterDetails.HighlightRedPigment.value, (float)this.characterDetails.HighlightGreenPigment.value, (float)this.characterDetails.HighlightBluePigment.value);
-			allFile.LipTint = new Color4((float)this.characterDetails.LipsR.value, (float)this.characterDetails.LipsG.value, (float)this.characterDetails.LipsB.value, (float)this.characterDetails.LipsBrightness.value);
-			*/
+			if (this.characterDetails.ModelType != null)
+				allFile.ModelType = (int)this.characterDetails.ModelType.value;
+
+			if (this.characterDetails.SkinBluePigment != null && this.characterDetails.SkinGreenPigment != null && this.characterDetails.SkinBluePigment != null)
+				allFile.SkinTint = new Color((float)this.characterDetails.SkinRedPigment.value, (float)this.characterDetails.SkinGreenPigment.value, (float)this.characterDetails.SkinBluePigment.value);
+
+			if (this.characterDetails.SkinRedGloss != null && this.characterDetails.SkinGreenGloss != null && this.characterDetails.SkinBlueGloss != null)
+				allFile.SkinGlow = new Color((float)this.characterDetails.SkinRedGloss.value, (float)this.characterDetails.SkinGreenGloss.value, (float)this.characterDetails.SkinBlueGloss.value);
+
+			if (this.characterDetails.LeftEyeRed != null && this.characterDetails.LeftEyeGreen != null && this.characterDetails.LeftEyeBlue != null)
+				allFile.LeftEyeColor = new Color((float)this.characterDetails.LeftEyeRed.value, (float)this.characterDetails.LeftEyeGreen.value, (float)this.characterDetails.LeftEyeBlue.value);
+
+			if (this.characterDetails.RightEyeRed != null && this.characterDetails.RightEyeBlue != null && this.characterDetails.RightEyeGreen != null)
+				allFile.RightEyeColor = new Color((float)this.characterDetails.RightEyeRed.value, (float)this.characterDetails.RightEyeGreen.value, (float)this.characterDetails.RightEyeBlue.value);
+
+			if (this.characterDetails.LimbalR != null && this.characterDetails.LimbalG != null && this.characterDetails.LimbalB != null)
+				allFile.LimbalRingColor = new Color((float)this.characterDetails.LimbalR.value, (float)this.characterDetails.LimbalG.value, (float)this.characterDetails.LimbalB.value);
+
+			if (this.characterDetails.HairRedPigment != null && this.characterDetails.HairGreenPigment != null && this.characterDetails.HairBluePigment != null)
+				allFile.HairTint = new Color((float)this.characterDetails.HairRedPigment.value, (float)this.characterDetails.HairGreenPigment.value, (float)this.characterDetails.HairBluePigment.value);
+
+			if (this.characterDetails.HairGlowRed != null && this.characterDetails.HairGlowGreen != null && this.characterDetails.HairGlowBlue != null)
+				allFile.HairGlow = new Color((float)this.characterDetails.HairGlowRed.value, (float)this.characterDetails.HairGlowGreen.value, (float)this.characterDetails.HairGlowBlue.value);
+
+			if (this.characterDetails.HighlightRedPigment != null && this.characterDetails.HighlightGreenPigment != null && this.characterDetails.HighlightBluePigment != null)
+				allFile.HighlightTint = new Color((float)this.characterDetails.HighlightRedPigment.value, (float)this.characterDetails.HighlightGreenPigment.value, (float)this.characterDetails.HighlightBluePigment.value);
+
+			if (this.characterDetails.LipsR != null && this.characterDetails.LipsG != null && this.characterDetails.LipsB != null)
+				allFile.LipTint = new Color4((float)this.characterDetails.LipsR.value, (float)this.characterDetails.LipsG.value, (float)this.characterDetails.LipsB.value, (float)this.characterDetails.LipsBrightness.value);
 
 			return allFile;
 		}
@@ -117,6 +135,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 			public Entry LimbalR { get; set; }
 			public Entry LimbalG { get; set; }
 			public Entry LimbalB { get; set; }
+			public Entry ModelType { get; set; }
 		}
 
 		public class Entry
