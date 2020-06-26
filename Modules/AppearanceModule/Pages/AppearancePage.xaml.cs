@@ -66,10 +66,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 				if (mode == AppearanceFile.SaveModes.None)
 					return;
 
-				apFile.Apply(this.actor, mode);
-				await this.refreshService.RefreshAsync(this.actor);
-
-				////apFile.Write(this.Appearance, this.Equipment, mode);
+				await apFile.Apply(this.actor, mode);
 			}
 		}
 

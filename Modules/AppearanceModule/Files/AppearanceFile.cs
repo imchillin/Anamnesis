@@ -5,6 +5,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 {
 	using System;
 	using System.Runtime.CompilerServices;
+	using System.Threading.Tasks;
 	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.ViewModels;
@@ -208,7 +209,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 			}
 		}
 
-		public void Apply(Actor actor, SaveModes mode)
+		public async Task Apply(Actor actor, SaveModes mode)
 		{
 			Log.Write("Reading appearance from file", "AppearanceFile");
 
@@ -224,27 +225,17 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				using IMemory<Color> mainHandTintMem = actor.GetMemory(Offsets.Main.MainHandColor);
-				using IMemory<Vector> mainHandScaleMem = actor.GetMemory(Offsets.Main.MainHandScale);
-
 				mainHand.Base = this.MainHand.ModelBase;
 				mainHand.Dye = this.MainHand.DyeId;
 				mainHand.Set = this.MainHand.ModelSet;
 				mainHand.Variant = this.MainHand.ModelVariant;
-				mainHandScaleMem.Value = this.MainHand.Scale;
-				mainHandTintMem.Value = this.MainHand.Color;
 
 				if (this.OffHand != null)
 				{
-					using IMemory<Color> offHandTintMem = actor.GetMemory(Offsets.Main.OffhandColor);
-					using IMemory<Vector> offHandScaleMem = actor.GetMemory(Offsets.Main.OffhandScale);
-
 					offHand.Base = this.OffHand.ModelBase;
 					offHand.Dye = this.OffHand.DyeId;
 					offHand.Set = this.OffHand.ModelSet;
 					offHand.Variant = this.OffHand.ModelVariant;
-					offHandScaleMem.Value = this.OffHand.Scale;
-					offHandTintMem.Value = this.OffHand.Color;
 				}
 
 				equipment.Head = this.HeadGear;
@@ -269,24 +260,6 @@ namespace ConceptMatrix.AppearanceModule.Files
 				appearance.EnableHighlights = (bool)this.EnableHighlights;
 				appearance.HairTone = (byte)this.HairTone;
 				appearance.Highlights = (byte)this.Highlights;
-
-				if (this.HairTint != null)
-				{
-					using IMemory<Color> hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
-					hairTintColorMem.Value = (Color)this.HairTint;
-				}
-
-				if (this.HairGlow != null)
-				{
-					using IMemory<Color> hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
-					hairGlowColorMem.Value = (Color)this.HairGlow;
-				}
-
-				if (this.HighlightTint != null)
-				{
-					using IMemory<Color> highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
-					highlightTintColorMem.Value = (Color)this.HighlightTint;
-				}
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
@@ -312,7 +285,67 @@ namespace ConceptMatrix.AppearanceModule.Files
 				appearance.LipsToneFurPattern = (byte)this.LipsToneFurPattern;
 				appearance.FacePaint = (byte)this.FacePaint;
 				appearance.FacePaintColor = (byte)this.FacePaintColor;
+			}
 
+			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
+			{
+				appearance.Height = (byte)this.Height;
+				appearance.Skintone = (byte)this.Skintone;
+				appearance.EarMuscleTailSize = (byte)this.EarMuscleTailSize;
+				appearance.TailEarsType = (byte)this.TailEarsType;
+				appearance.Bust = (byte)this.Bust;
+			}
+
+			appearanceMem.Value = appearance;
+			equipmentMem.Value = equipment;
+			mainHandMem.Value = mainHand;
+			offHandMem.Value = offHand;
+
+			await actor.ActorRefreshAsync();
+			await Task.Delay(1000);
+
+			// write everything that is reset by actor refreshes
+			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			{
+				using IMemory<Color> mainHandTintMem = actor.GetMemory(Offsets.Main.MainHandColor);
+				using IMemory<Vector> mainHandScaleMem = actor.GetMemory(Offsets.Main.MainHandScale);
+
+				mainHandScaleMem.Value = this.MainHand.Scale;
+				mainHandTintMem.Value = this.MainHand.Color;
+
+				if (this.OffHand != null)
+				{
+					using IMemory<Color> offHandTintMem = actor.GetMemory(Offsets.Main.OffhandColor);
+					using IMemory<Vector> offHandScaleMem = actor.GetMemory(Offsets.Main.OffhandScale);
+
+					offHandScaleMem.Value = this.OffHand.Scale;
+					offHandTintMem.Value = this.OffHand.Color;
+				}
+			}
+
+			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
+			{
+				if (this.HairTint != null)
+				{
+					using IMemory<Color> hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
+					hairTintColorMem.Value = (Color)this.HairTint;
+				}
+
+				if (this.HairGlow != null)
+				{
+					using IMemory<Color> hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
+					hairGlowColorMem.Value = (Color)this.HairGlow;
+				}
+
+				if (this.HighlightTint != null)
+				{
+					using IMemory<Color> highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
+					highlightTintColorMem.Value = (Color)this.HighlightTint;
+				}
+			}
+
+			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
+			{
 				if (this.LeftEyeColor != null)
 				{
 					using IMemory<Color> leftEyeColorMem = actor.GetMemory(Offsets.Main.LeftEyeColor);
@@ -344,29 +377,18 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				appearance.Height = (byte)this.Height;
-				appearance.Skintone = (byte)this.Skintone;
-				appearance.EarMuscleTailSize = (byte)this.EarMuscleTailSize;
-				appearance.TailEarsType = (byte)this.TailEarsType;
-				appearance.Bust = (byte)this.Bust;
-
 				if (this.SkinTint != null)
 				{
-					IMemory<Color> skinTintMem = actor.GetMemory(Offsets.Main.SkinColor);
+					using IMemory<Color> skinTintMem = actor.GetMemory(Offsets.Main.SkinColor);
 					skinTintMem.Value = (Color)this.SkinTint;
 				}
 
 				if (this.SkinGlow != null)
 				{
-					IMemory<Color> skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
+					using IMemory<Color> skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
 					skinGlowMem.Value = (Color)this.SkinGlow;
 				}
 			}
-
-			appearanceMem.Value = appearance;
-			equipmentMem.Value = equipment;
-			mainHandMem.Value = mainHand;
-			offHandMem.Value = offHand;
 		}
 
 		private bool IncludeSection(SaveModes section, SaveModes mode)

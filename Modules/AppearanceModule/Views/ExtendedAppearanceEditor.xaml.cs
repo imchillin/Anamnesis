@@ -188,7 +188,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.mainHandTintMem = this.actor.GetMemory(Offsets.Main.MainHandColor);
 				this.mainHandTintMem.Bind(this, nameof(this.MainHandTint));
 				this.mainHandScaleMem = this.actor.GetMemory(Offsets.Main.MainHandScale);
-				this.mainHandScaleMem.Bind(this, nameof(this.mainHandScaleMem));
+				this.mainHandScaleMem.Bind(this, nameof(this.MainHandScale));
 
 				this.MainHandScale = Vector.One;
 				this.MainHandTint = Color.White;
