@@ -102,6 +102,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 		private void RaiseIfChanged(string propertyName)
 		{
+			if (this.appearanceMem == null || !this.appearanceMem.Active)
+				return;
+
 			FieldInfo field = typeof(Appearance).GetField(propertyName);
 			PropertyInfo property = typeof(AppearanceViewModel).GetProperty(propertyName);
 

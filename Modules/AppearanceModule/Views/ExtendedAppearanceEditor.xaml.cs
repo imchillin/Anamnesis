@@ -38,7 +38,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private IActorRefreshService refreshService;
 
-		private IMemory<Appearance> appearanceMem;
 		private IMemory<Color> skinColorMem;
 		private IMemory<Color> skinGlowMem;
 		private IMemory<Color> leftEyeColorMem;
@@ -57,11 +56,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private IMemory<Color> offHandTintMem;
 		private IMemory<Vector> offHandScaleMem;
 
-		private HashSet<string> lockedFields = new HashSet<string>();
-		private bool lockChanged = false;
-
-		private Appearance lastAppearance;
-
 		public ExtendedAppearanceEditor()
 		{
 			this.InitializeComponent();
@@ -69,8 +63,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.refreshService = Services.Get<IActorRefreshService>();
 
 			this.ContentArea.DataContext = this;
-
-			this.PropertyChanged += this.OnSelfPropertyChanged;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -97,7 +89,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			this.actor = this.DataContext as Actor;
 
-			this.OnActorRetargetComplete(this.actor);
+			this.OnActorRetargetBegin(this.actor);
 
 			if (this.actor == null)
 				return;
@@ -109,9 +101,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnActorRetargetBegin(Actor actor)
 		{
-			this.IsEnabled = false;
-
-			this.appearanceMem?.Dispose();
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.IsEnabled = false;
+			});
 
 			this.lipTintMem?.Dispose();
 			this.lipGlossMem?.Dispose();
@@ -140,52 +133,30 @@ namespace ConceptMatrix.AppearanceModule.Views
 				return;
 
 			if (!actor.IsCustomizable())
-			{
-				this.IsEnabled = false;
 				return;
-			}
-
-			this.appearanceMem = this.actor.GetMemory(Offsets.Main.ActorAppearance);
-			this.appearanceMem.ValueChanged += this.AppearanceMem_ValueChanged;
-			this.lastAppearance = this.appearanceMem.Value;
 
 			this.skinColorMem = this.actor.GetMemory(Offsets.Main.SkinColor);
-			this.skinColorMem.ValueChanged += this.SkinValueChanged;
+			this.skinColorMem.Bind(this, nameof(this.SkinTint));
 			this.skinGlowMem = this.actor.GetMemory(Offsets.Main.SkinGloss);
-			this.skinGlowMem.ValueChanged += this.SkinValueChanged;
+			this.skinGlowMem.Bind(this, nameof(this.SkinGlow));
 
 			this.leftEyeColorMem = this.actor.GetMemory(Offsets.Main.LeftEyeColor);
+			this.leftEyeColorMem.Bind(this, nameof(this.LeftEyeColor));
 			this.rightEyeColorMem = this.actor.GetMemory(Offsets.Main.RightEyeColor);
+			this.rightEyeColorMem.Bind(this, nameof(this.RightEyeColor));
 			this.limbalRingColorMem = this.actor.GetMemory(Offsets.Main.LimbalColor);
-
-			this.leftEyeColorMem.ValueChanged += (s, v) => this.OnMemoryChanged(this.leftEyeColorMem, nameof(Appearance.LEyeColor), nameof(this.LeftEyeColor));
-			this.rightEyeColorMem.ValueChanged += (s, v) => this.OnMemoryChanged(this.rightEyeColorMem, nameof(Appearance.REyeColor), nameof(this.RightEyeColor));
-			this.limbalRingColorMem.ValueChanged += (s, v) => this.OnMemoryChanged(this.limbalRingColorMem, nameof(Appearance.LimbalEyes), nameof(this.LimbalRingColor));
+			this.limbalRingColorMem.Bind(this, nameof(this.LimbalRingColor));
 
 			this.hairTintColorMem = this.actor.GetMemory(Offsets.Main.HairColor);
-			this.hairTintColorMem.ValueChanged += this.HairValueChanged;
+			this.hairTintColorMem.Bind(this, nameof(this.HairTint));
 			this.hairGlowColorMem = this.actor.GetMemory(Offsets.Main.HairGloss);
-			this.hairGlowColorMem.ValueChanged += this.HairValueChanged;
+			this.hairGlowColorMem.Bind(this, nameof(this.HairGlow));
 			this.highlightTintColorMem = this.actor.GetMemory(Offsets.Main.HairHiglight);
-			this.highlightTintColorMem.ValueChanged += this.HairValueChanged;
+			this.highlightTintColorMem.Bind(this, nameof(this.HighlightTint));
 			this.lipTintMem = this.actor.GetMemory(Offsets.Main.MouthColor);
 			this.lipGlossMem = this.actor.GetMemory(Offsets.Main.MouthGloss);
 			this.lipTintMem.ValueChanged += this.LipValueChanged;
 			this.lipGlossMem.ValueChanged += this.LipValueChanged;
-
-			this.HairTint = this.hairTintColorMem.Value;
-			this.HairGlow = this.hairGlowColorMem.Value;
-			this.HighlightTint = this.highlightTintColorMem.Value;
-			this.LimbalRingColor = this.limbalRingColorMem.Value;
-			this.RightEyeColor = this.rightEyeColorMem.Value;
-			this.LeftEyeColor = this.leftEyeColorMem.Value;
-			this.SkinTint = this.skinColorMem.Value;
-			this.SkinGlow = this.skinGlowMem.Value;
-
-			Color4 c = default;
-			c.Color = this.lipTintMem.Value;
-			c.A = this.lipGlossMem.Value;
-			this.LipTint = c;
 
 			this.mainHandMem = this.actor.GetMemory(Offsets.Main.MainHand);
 			this.mainHandMem.ValueChanged += this.OnWeaponsChanged;
@@ -194,7 +165,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			this.OnWeaponsChanged();
 
-			this.IsEnabled = true;
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.IsEnabled = true;
+			});
 		}
 
 		private void OnWeaponsChanged(object sender = null, object value = null)
@@ -212,9 +186,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (this.HasMainHand)
 			{
 				this.mainHandTintMem = this.actor.GetMemory(Offsets.Main.MainHandColor);
-				this.mainHandTintMem.ValueChanged += this.MainHandTintMem_ValueChanged;
+				this.mainHandTintMem.Bind(this, nameof(this.MainHandTint));
 				this.mainHandScaleMem = this.actor.GetMemory(Offsets.Main.MainHandScale);
-				this.mainHandScaleMem.ValueChanged += this.MainHandScaleMem_ValueChanged;
+				this.mainHandScaleMem.Bind(this, nameof(this.mainHandScaleMem));
 
 				this.MainHandScale = Vector.One;
 				this.MainHandTint = Color.White;
@@ -225,194 +199,24 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (this.HasOffHand)
 			{
 				this.offHandTintMem = this.actor.GetMemory(Offsets.Main.OffhandColor);
-				this.offHandTintMem.ValueChanged += this.OffHandTintMem_ValueChanged;
+				this.offHandTintMem.Bind(this, nameof(this.OffHandTint));
 				this.offHandScaleMem = this.actor.GetMemory(Offsets.Main.OffhandScale);
-				this.offHandScaleMem.ValueChanged += this.OffHandScaleMem_ValueChanged;
+				this.offHandScaleMem.Bind(this, nameof(this.OffHandScale));
 
 				this.OffHandScale = Vector.One;
 				this.OffHandTint = Color.White;
 			}
 		}
 
-		private void AppearanceMem_ValueChanged(object sender, object value)
+		private void LipValueChanged(object sender, object value)
 		{
-			Appearance newAppearance = this.appearanceMem.Value;
+			if (!this.lipTintMem.Active || !this.lipGlossMem.Active)
+				return;
 
-			// Determine what values were changed
-			foreach (FieldInfo field in typeof(Appearance).GetFields())
-			{
-				object newValue = field.GetValue(newAppearance);
-				object oldValue = field.GetValue(this.lastAppearance);
-
-				if (!newValue.Equals(oldValue))
-				{
-					string fieldName = field.Name;
-					this.lockedFields.Add(fieldName);
-				}
-			}
-
-			this.lastAppearance = newAppearance;
-		}
-
-		private async void HairValueChanged(object sender, object value)
-		{
-			this.lockChanged = true;
-
-			if (this.lockedFields.Contains(nameof(Appearance.HairTone)))
-			{
-				this.HairTint = this.hairTintColorMem.Value;
-				this.HairGlow = this.hairGlowColorMem.Value;
-				this.HighlightTint = this.highlightTintColorMem.Value;
-				this.lockedFields.Remove(nameof(Appearance.HairTone));
-			}
-			else
-			{
-				await this.AwaitRefresh();
-
-				if (this.hairGlowColorMem.Active)
-					this.hairTintColorMem.Value = this.HairTint;
-
-				if (this.hairGlowColorMem.Active)
-					this.hairGlowColorMem.Value = this.HairGlow;
-
-				if (this.highlightTintColorMem.Active)
-					this.highlightTintColorMem.Value = this.HighlightTint;
-			}
-
-			this.lockChanged = false;
-		}
-
-		private async void OnMemoryChanged<T>(IMemory<T> memory, string fieldName, string selfFieldName)
-		{
-			this.lockChanged = true;
-
-			FieldInfo field = typeof(ExtendedAppearanceEditor).GetField(fieldName);
-
-			if (this.lockedFields.Contains(fieldName))
-			{
-				field.SetValue(this, memory.Value);
-				this.lockedFields.Remove(fieldName);
-			}
-			else
-			{
-				await this.AwaitRefresh();
-
-				if (memory.Active)
-				{
-					memory.Value = (T)field.GetValue(this);
-				}
-			}
-
-			this.lockChanged = false;
-		}
-
-		private async void SkinValueChanged(object sender, object value)
-		{
-			this.lockChanged = true;
-
-			if (this.lockedFields.Contains(nameof(Appearance.Skintone)))
-			{
-				this.SkinTint = this.skinColorMem.Value;
-				this.SkinGlow = this.skinGlowMem.Value;
-				this.lockedFields.Remove(nameof(Appearance.Skintone));
-			}
-			else
-			{
-				await this.AwaitRefresh();
-
-				if (this.skinColorMem.Active)
-					this.skinColorMem.Value = this.SkinTint;
-
-				if (this.skinColorMem.Active)
-					this.skinGlowMem.Value = this.SkinGlow;
-			}
-
-			this.lockChanged = false;
-		}
-
-		private async void LipValueChanged(object sender, object value)
-		{
-			this.lockChanged = true;
-
-			if (this.lockedFields.Contains(nameof(Appearance.LipsToneFurPattern)))
-			{
-				Color4 c = default;
-				c.Color = this.lipTintMem.Value;
-				c.A = this.lipGlossMem.Value;
-				this.LipTint = c;
-
-				this.lockedFields.Remove(nameof(Appearance.LipsToneFurPattern));
-			}
-			else
-			{
-				await this.AwaitRefresh();
-
-				Color4 c = (Color4)this.LipTint;
-
-				if (this.lipTintMem.Active)
-					this.lipTintMem.Value = c.Color;
-
-				if (this.lipGlossMem.Active)
-					this.lipGlossMem.Value = c.A;
-			}
-
-			this.lockChanged = false;
-		}
-
-		private async void OffHandScaleMem_ValueChanged(object sender, object value)
-		{
-			this.lockChanged = true;
-
-			await this.AwaitRefresh();
-
-			if (this.offHandScaleMem.Active)
-			{
-				this.offHandScaleMem.Value = this.OffHandScale;
-			}
-
-			this.lockChanged = false;
-		}
-
-		private async void OffHandTintMem_ValueChanged(object sender, object value)
-		{
-			this.lockChanged = true;
-
-			await this.AwaitRefresh();
-
-			if (this.offHandTintMem.Active)
-			{
-				this.offHandTintMem.Value = this.OffHandTint;
-			}
-
-			this.lockChanged = false;
-		}
-
-		private async void MainHandScaleMem_ValueChanged(object sender, object value)
-		{
-			this.lockChanged = true;
-
-			await this.AwaitRefresh();
-
-			if (this.mainHandScaleMem.Active)
-			{
-				this.mainHandScaleMem.Value = this.MainHandScale;
-			}
-
-			this.lockChanged = false;
-		}
-
-		private async void MainHandTintMem_ValueChanged(object sender, object value)
-		{
-			this.lockChanged = true;
-
-			await this.AwaitRefresh();
-
-			if (this.mainHandTintMem.Active)
-			{
-				this.mainHandTintMem.Value = this.MainHandTint;
-			}
-
-			this.lockChanged = false;
+			Color4 c = default;
+			c.Color = this.lipTintMem.Value;
+			c.A = this.lipGlossMem.Value;
+			this.LipTint = c;
 		}
 
 		private void OnMainHandZeroScaleClick(object sender, RoutedEventArgs e)
@@ -433,78 +237,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private void OnOffHandOneScaleClick(object sender, RoutedEventArgs e)
 		{
 			this.OffHandScale = Vector.One;
-		}
-
-		private async Task AwaitRefresh()
-		{
-			while (this.refreshService.IsRefreshing)
-			{
-				await Task.Delay(10);
-			}
-
-			// since sometimes the game take just a little while to get its memory sorted out.
-			await Task.Delay(1000);
-		}
-
-		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (this.lockChanged)
-				return;
-
-			if (e.PropertyName == nameof(this.LipTint))
-			{
-				Color4 c = (Color4)this.LipTint;
-				this.lipTintMem.Value = c.Color;
-				this.lipGlossMem.Value = c.A;
-			}
-			else if (e.PropertyName == nameof(this.SkinTint))
-			{
-				this.skinColorMem.Value = this.SkinTint;
-			}
-			else if (e.PropertyName == nameof(this.SkinGlow))
-			{
-				this.skinGlowMem.Value = this.SkinGlow;
-			}
-			else if (e.PropertyName == nameof(this.LeftEyeColor))
-			{
-				this.leftEyeColorMem.Value = this.LeftEyeColor;
-			}
-			else if (e.PropertyName == nameof(this.RightEyeColor))
-			{
-				this.rightEyeColorMem.Value = this.RightEyeColor;
-			}
-			else if (e.PropertyName == nameof(this.LimbalRingColor))
-			{
-				this.limbalRingColorMem.Value = this.LimbalRingColor;
-			}
-			else if (e.PropertyName == nameof(this.HairTint))
-			{
-				this.hairTintColorMem.Value = this.HairTint;
-			}
-			else if (e.PropertyName == nameof(this.HairGlow))
-			{
-				this.hairGlowColorMem.Value = this.HairGlow;
-			}
-			else if (e.PropertyName == nameof(this.HighlightTint))
-			{
-				this.highlightTintColorMem.Value = this.HighlightTint;
-			}
-			else if (e.PropertyName == nameof(this.MainHandScale))
-			{
-				this.mainHandScaleMem.Value = this.MainHandScale;
-			}
-			else if (e.PropertyName == nameof(this.MainHandTint))
-			{
-				this.mainHandTintMem.Value = this.MainHandTint;
-			}
-			else if (e.PropertyName == nameof(this.OffHandScale))
-			{
-				this.offHandScaleMem.Value = this.OffHandScale;
-			}
-			else if (e.PropertyName == nameof(this.OffHandTint))
-			{
-				this.offHandTintMem.Value = this.OffHandTint;
-			}
 		}
 	}
 }
