@@ -412,7 +412,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 		private bool IncludeSection(SaveModes section, SaveModes mode)
 		{
-			return this.SaveMode.HasFlag(mode) && mode.HasFlag(mode);
+			return this.SaveMode.HasFlag(section) && mode.HasFlag(section);
 		}
 
 		[Serializable]

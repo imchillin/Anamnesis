@@ -45,6 +45,16 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
+			await this.Load(false);
+		}
+
+		private async void OnAdvLoadClicked(object sender, RoutedEventArgs e)
+		{
+			await this.Load(true);
+		}
+
+		private async Task Load(bool advanced)
+		{
 			IFileService fileService = Services.Get<IFileService>();
 			IViewService viewService = Services.Get<IViewService>();
 
@@ -61,10 +71,17 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 			if (file is AppearanceFile apFile)
 			{
-				AppearanceFile.SaveModes mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Load Appearance...");
+				AppearanceFile.SaveModes mode = AppearanceFile.SaveModes.All;
 
-				if (mode == AppearanceFile.SaveModes.None)
-					return;
+				if (advanced)
+				{
+					mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Load Appearance...");
+
+					if (mode == AppearanceFile.SaveModes.None)
+					{
+						return;
+					}
+				}
 
 				await apFile.Apply(this.actor, mode);
 			}
