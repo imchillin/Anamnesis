@@ -129,15 +129,18 @@ namespace ConceptMatrix.GUI.Windows
 			if (!this.GetPath(e.Uri.OriginalString, out path, out line))
 				return;
 
-			Process[] procs = Process.GetProcessesByName("devenv");
-			if (procs.Length == 0)
+			try
 			{
-				Process.Start(path);
+				Process[] procs = Process.GetProcessesByName("devenv");
+				if (procs.Length != 0)
+				{
+					string devEnvPath = procs[0].MainModule.FileName;
+					Process.Start(devEnvPath, $"-Edit \"{path}\" -Command \"Edit.Goto {line}\"");
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				string devEnvPath = procs[0].MainModule.FileName;
-				Process.Start(devEnvPath, $"-Edit \"{path}\" -Command \"Edit.Goto {line}\"");
+				Log.Write(ex, "Error", Log.Severity.Warning);
 			}
 		}
 
