@@ -27,7 +27,8 @@ namespace ConceptMatrix
 
 		public delegate void ActorEvent(Actor actor);
 
-		public event ActorEvent ActorRetargeted;
+		public event ActorEvent ActorRetargetBegin;
+		public event ActorEvent ActorRetargetComplete;
 
 		public ActorTypes Type { get; set; }
 		public string Name { get; private set; }
@@ -84,6 +85,8 @@ namespace ConceptMatrix
 
 			Log.Write("Retargeting actor from " + this.Description + "(" + this.baseOffset + " to " + actor.Description + "(" + actor.baseOffset + ")");
 
+			this.ActorRetargetBegin?.Invoke(this);
+
 			this.baseOffset = actor.baseOffset;
 			this.Name = actor.Name;
 			this.Description = actor.Description;
@@ -108,7 +111,7 @@ namespace ConceptMatrix
 				}
 			}
 
-			this.ActorRetargeted?.Invoke(this);
+			this.ActorRetargetComplete?.Invoke(this);
 
 			Log.Write("Retargeting actor done");
 		}

@@ -100,8 +100,14 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ModelTypes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="md &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\&quot;" />
+    <Exec Command="md &quot;$(SolutionDir)bin\Modules\Appearance\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)bin\Modules\Appearance\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\Appearance\&quot;&#xD;&#xA;copy &quot;$(TargetDir)ModelTypes.json&quot; &quot;$(SolutionDir)bin\Modules\Appearance\&quot;" />
   </Target>
 
 </Project>

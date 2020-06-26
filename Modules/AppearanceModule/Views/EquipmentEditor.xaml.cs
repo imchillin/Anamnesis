@@ -42,6 +42,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			Actor actor = this.DataContext as Actor;
 
+			if (actor == null)
+				return;
+
 			// Weapon slots
 			this.MainHand = new EquipmentWeaponViewModel(ItemSlots.MainHand, actor);
 			this.OffHand = new EquipmentWeaponViewModel(ItemSlots.OffHand, actor);

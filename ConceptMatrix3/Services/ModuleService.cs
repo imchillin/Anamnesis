@@ -75,6 +75,7 @@ namespace ConceptMatrix.GUI.Services
 					{
 						Log.Write("Initialize Module: " + targetAssembly.GetName().Name);
 						IModule module = (IModule)Activator.CreateInstance(type);
+						this.modules.Add(module);
 						await module.Initialize();
 					}
 				}

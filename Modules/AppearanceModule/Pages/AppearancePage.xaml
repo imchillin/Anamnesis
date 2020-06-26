@@ -21,32 +21,48 @@
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
+		<Grid Grid.Column="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
 
-		<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 0, 3, 0" Grid.Column="0" Grid.RowSpan="3">
-			<views:AppearanceEditor x:Name="Appearance"/>
-		</Border>
+			<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 0, 3, 3" CornerRadius="0, 0, 3, 0" Grid.Row="0">
+				<views:ModelTypeEditor/>
+			</Border>
 
-		<views:EquipmentEditor x:Name="Equipment" Grid.Column="1"/>
+			<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 3, 3, 0" CornerRadius="0, 3, 0, 0" Grid.Row="1">
+				<views:AppearanceEditor x:Name="Appearance"/>
+			</Border>
 
-		<Border Grid.Column="1" Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="3, 3, 0, 3" CornerRadius="3, 0, 0, 3">
-			<views:ExtendedAppearanceEditor x:Name="ExtendedAppearance"/>
-		</Border>
+		</Grid>
 
-		<Border Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0" Grid.Column="1" Grid.Row="2">
-			<Grid Margin="3">
-				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
-					<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
-				</StackPanel>
 
-				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
-					<cm3Controls:IconButton Grid.Column="2" Icon="Save" Text="Save..." Margin="3" Click="OnSaveClicked"/>
-				</StackPanel>
-			</Grid>
-		</Border>
+		<Grid Grid.Column="1">
+
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<views:EquipmentEditor x:Name="Equipment" Grid.Row="0"/>
+
+			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="3, 3, 0, 3" CornerRadius="3, 0, 0, 3">
+				<views:ExtendedAppearanceEditor x:Name="ExtendedAppearance"/>
+			</Border>
+
+			<Border Grid.Row="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0">
+				<Grid Margin="3">
+					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+						<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
+					</StackPanel>
+
+					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
+						<cm3Controls:IconButton Grid.Column="2" Icon="Save" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+					</StackPanel>
+				</Grid>
+			</Border>
+		</Grid>
 	</Grid>
 </UserControl>

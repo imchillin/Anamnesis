@@ -77,7 +77,7 @@ namespace ConceptMatrix.GUI.Views
 				return;
 			}
 
-			this.actor.ActorRetargeted += this.OnActorRetargeted;
+			this.actor.ActorRetargetComplete += this.OnActorRetargeted;
 
 			this.OnActorRetargeted(null);
 
