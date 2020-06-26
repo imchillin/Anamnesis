@@ -32,6 +32,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 		public SaveModes SaveMode { get; set; } = SaveModes.All;
 
+		public int ModelType { get; set; } = 0;
+
 		public Appearance.Races? Race { get; set; }
 		public Appearance.Genders? Gender { get; set; }
 		public Appearance.Ages? Age { get; set; }
@@ -91,6 +93,12 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public void Read(Actor actor, SaveModes mode)
 		{
 			Log.Write("Writing appearance to file", "AppearanceFile");
+
+			using IMemory<int> modelTypeMem = actor.GetMemory(Offsets.Main.ModelType);
+			this.ModelType = modelTypeMem.Value;
+
+			if (!actor.IsCustomizable())
+				return;
 
 			using IMemory<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
 			using IMemory<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
@@ -212,6 +220,17 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public async Task Apply(Actor actor, SaveModes mode)
 		{
 			Log.Write("Reading appearance from file", "AppearanceFile");
+
+			using IMemory<int> modelTypeMem = actor.GetMemory(Offsets.Main.ModelType);
+
+			if (modelTypeMem.Value != this.ModelType)
+			{
+				modelTypeMem.Value = (int)this.ModelType;
+				await actor.ActorRefreshAsync();
+			}
+
+			if (!actor.IsCustomizable())
+				return;
 
 			using IMemory<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
 			using IMemory<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
