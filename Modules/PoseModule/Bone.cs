@@ -23,24 +23,25 @@ namespace ConceptMatrix.PoseModule
 	{
 		public readonly SkeletonViewModel Skeleton;
 		public readonly SkeletonService.Bone Definition;
-		private readonly IMemory<CmTransform> transformMem;
 
+		private readonly PoseService poseService;
+		private readonly IMemory<CmTransform> transformMem;
 		private readonly RotateTransform3D rotation;
 		private readonly ScaleTransform3D scale;
 		private readonly TranslateTransform3D position;
+
 		private Bone parent;
 		private Line lineToParent;
 
 		public Bone(SkeletonViewModel skeleton, string name, IMemory<CmTransform> transformMem, SkeletonService.Bone definition)
 		{
+			this.poseService = Services.Get<PoseService>();
+
 			this.Skeleton = skeleton;
 			this.Definition = definition;
 			this.BoneName = name;
 			this.transformMem = transformMem;
-
-			this.Definition = definition;
-			this.BoneName = name;
-			this.transformMem = transformMem;
+			this.transformMem.ValueChanged += this.OnTransformMemValueChanged;
 
 			this.rotation = new RotateTransform3D();
 			this.scale = new ScaleTransform3D();
@@ -236,6 +237,21 @@ namespace ConceptMatrix.PoseModule
 				this.Parent.Children.Remove(this);
 
 			this.transformMem.Dispose();
+		}
+
+		private void OnTransformMemValueChanged(object sender, object value)
+		{
+			if (Application.Current == null)
+				return;
+
+			// don't update our representation while we are actively posing, since we don't care what the game wants.
+			if (this.poseService.IsEnabled)
+				return;
+
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.ReadTransform();
+			});
 		}
 	}
 }

@@ -158,7 +158,7 @@
 
 
 					<!-- Head & Face -->
-					<Viewbox Grid.Row="0" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}, FallbackValue=Hidden}"  Height="250">
+					<Viewbox Grid.Row="0" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}, FallbackValue=Hidden}"  Height="220">
 						<Canvas Height="300" Width="300">
 							<Canvas.Background>
 								<ImageBrush ImageSource="../Assets/PoseCharacterFaceBackground.png" Opacity="0.15" Stretch="Uniform"/>
@@ -199,7 +199,7 @@
 					</Viewbox>
 
 
-					<Grid Grid.Row="1" Margin="0, -20, 0, 0" Height="180">
+					<Grid Grid.Row="1" Margin="0, -20, 0, 0" Height="160">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition/>
 							<ColumnDefinition/>
@@ -260,7 +260,7 @@
 						</Viewbox>
 					</Grid>
 
-					<Grid Grid.Row="2" Height="100" Visibility="{Binding HasTailOrEars, Converter={StaticResource B2V}, FallbackValue=Visible}">
+					<Grid Grid.Row="2" Height="90" Visibility="{Binding HasTailOrEars, Converter={StaticResource B2V}, FallbackValue=Visible}">
 
 						<!-- Tail -->
 						<Viewbox Visibility="{Binding HasTail, Converter={StaticResource B2V}, FallbackValue=Visible}" Margin="0, -50, 0, 0">

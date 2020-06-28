@@ -23,12 +23,14 @@ namespace ConceptMatrix.PoseModule
 
 		private ISelectionService selectionService;
 
+		private bool isEnabled;
+
 		public delegate void PoseEvent(bool value);
 
-		public event PoseEvent OnEnabledChanged;
-		public event PoseEvent OnFreezePhysicsChanged;
-		public event PoseEvent OnFreezePositionsChanged;
-		public event PoseEvent OnAvailableChanged;
+		public event PoseEvent EnabledChanged;
+		public event PoseEvent FreezePhysicsChanged;
+		public event PoseEvent FreezePositionsChanged;
+		public event PoseEvent AvailableChanged;
 
 		public bool IsAvailable
 		{
@@ -42,7 +44,7 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.skel1Mem.Value.IsEnabled;
+				return this.isEnabled;
 			}
 
 			set
@@ -50,30 +52,8 @@ namespace ConceptMatrix.PoseModule
 				if (this.IsEnabled == value)
 					return;
 
-				// Don't try to enable posing unless we are in gpose
-				if (value && this.selectionService.GetMode() != Modes.GPose)
-					throw new Exception("Attempt to enable posing outside of gpose");
-
-				// rotations
-				this.skel1Mem.Value = Flag.Get(value);
-				this.skel2Mem.Value = Flag.Get(value);
-				this.skel3Mem.Value = Flag.Get(value);
-
-				// scale
-				this.skel4Mem.Value = Flag.Get(value);
-				this.skel6Mem.Value = Flag.Get(value);
-
-				this.FreezePositions = value;
-
-				// Physics
-				this.phys1Mem.Value = Flag.Get(value);
-				this.phys2Mem.Value = Flag.Get(value);
-				this.phys3Mem.Value = Flag.Get(value);
-
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					this.OnEnabledChanged?.Invoke(value);
-				});
+				this.isEnabled = value;
+				this.SetEnabled(value);
 			}
 		}
 
@@ -90,7 +70,7 @@ namespace ConceptMatrix.PoseModule
 			{
 				this.skel5Mem.Value = Flag.Get(value);
 
-				this.OnFreezePositionsChanged?.Invoke(value);
+				this.FreezePositionsChanged?.Invoke(value);
 			}
 		}
 
@@ -136,6 +116,38 @@ namespace ConceptMatrix.PoseModule
 			return Task.CompletedTask;
 		}
 
+		private async void SetEnabled(bool enabled)
+		{
+			// Don't try to enable posing unless we are in gpose
+			if (enabled && this.selectionService.GetMode() != Modes.GPose)
+				throw new Exception("Attempt to enable posing outside of gpose");
+
+			// Physics
+			this.phys1Mem.Value = Flag.Get(enabled);
+			this.phys2Mem.Value = Flag.Get(enabled);
+			this.phys3Mem.Value = Flag.Get(enabled);
+
+			if (enabled)
+				await Task.Delay(100);
+
+			// rotations
+			this.skel1Mem.Value = Flag.Get(enabled);
+			this.skel2Mem.Value = Flag.Get(enabled);
+			this.skel3Mem.Value = Flag.Get(enabled);
+
+			// scale
+			this.skel4Mem.Value = Flag.Get(enabled);
+			this.skel6Mem.Value = Flag.Get(enabled);
+
+			// positions
+			this.FreezePositions = enabled;
+
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.EnabledChanged?.Invoke(enabled);
+			});
+		}
+
 		private void Selection_ModeChanged(Modes mode)
 		{
 			bool available = this.IsAvailable;
@@ -145,7 +157,7 @@ namespace ConceptMatrix.PoseModule
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				this.OnAvailableChanged?.Invoke(available);
+				this.AvailableChanged?.Invoke(available);
 			});
 		}
 	}

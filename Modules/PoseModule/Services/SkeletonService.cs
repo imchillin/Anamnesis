@@ -62,6 +62,8 @@ namespace ConceptMatrix.PoseModule
 						if (bones.ContainsKey(name))
 							continue;
 
+						bone.Offsets.Name = name;
+
 						bones[name] = bone;
 					}
 

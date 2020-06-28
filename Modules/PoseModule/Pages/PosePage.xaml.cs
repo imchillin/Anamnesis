@@ -20,8 +20,8 @@ namespace ConceptMatrix.PoseModule.Pages
 		public PosePage()
 		{
 			this.poseService = Services.Get<PoseService>();
-			this.poseService.OnEnabledChanged += this.OnEnabledChanged;
-			this.poseService.OnAvailableChanged += this.OnAvailableChanged;
+			this.poseService.EnabledChanged += this.OnEnabledChanged;
+			this.poseService.AvailableChanged += this.OnAvailableChanged;
 
 			this.InitializeComponent();
 

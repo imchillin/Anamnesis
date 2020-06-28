@@ -38,6 +38,9 @@ namespace ConceptMatrix.PoseModule
 			{
 				this.Root = new ModelVisual3D();
 			});
+
+			PoseService poseService = Services.Get<PoseService>();
+			poseService.EnabledChanged += this.OnPoseServiceEnabledChanged;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -71,7 +74,7 @@ namespace ConceptMatrix.PoseModule
 
 				if (this.currentBone != null)
 				{
-					this.currentBone.ReadTransform();
+					////this.currentBone.ReadTransform();
 					new Thread(new ThreadStart(this.PollChanges)).Start();
 				}
 			}
@@ -317,11 +320,47 @@ namespace ConceptMatrix.PoseModule
 			SkeletonService skeletonService = Services.Get<SkeletonService>();
 			Dictionary<string, SkeletonService.Bone> boneDefs = await skeletonService.Load(this.Race);
 
+			// Find all ExHair, ExMet, and ExTop bones, and disable any that are outside the bounds
+			// of the current characters actual skeleton.
+			// ex-  bones are numbered starting from 1 (there is no ExHair0!)
+			byte exHairCount = actor.GetValue(Offsets.Main.ExHairCount);
+			byte exMetCount = actor.GetValue(Offsets.Main.ExMetCount);
+			byte exTopCount = actor.GetValue(Offsets.Main.ExTopCount);
+
 			// Once to load all bones
 			foreach ((string name, SkeletonService.Bone boneDef) in boneDefs)
 			{
 				if (this.bones.ContainsKey(name))
 					throw new Exception("Duplicate bone: \"" + name + "\"");
+
+				if (name.StartsWith("ExHair"))
+				{
+					byte num = byte.Parse(name.Replace("ExHair", string.Empty));
+					if (num >= exHairCount)
+					{
+						continue;
+					}
+				}
+				else if (name.StartsWith("ExMet"))
+				{
+					byte num = byte.Parse(name.Replace("ExMet", string.Empty));
+					if (num >= exMetCount)
+					{
+						continue;
+					}
+				}
+				else if (name.StartsWith("ExTop"))
+				{
+					byte num = byte.Parse(name.Replace("ExTop", string.Empty));
+					if (num >= exTopCount)
+					{
+						continue;
+					}
+				}
+				else if (name == "TailE")
+				{
+					continue;
+				}
 
 				try
 				{
@@ -336,48 +375,6 @@ namespace ConceptMatrix.PoseModule
 				}
 			}
 
-			// Find all ExHair, ExMet, and ExTop bones, and disable any that are outside the bounds
-			// of the current characters actual skeleton.
-			// ex-  bones are numbered starting from 1 (there is no ExHair0!)
-			byte exHairCount = actor.GetValue(Offsets.Main.ExHairCount);
-			byte exMetCount = actor.GetValue(Offsets.Main.ExMetCount);
-			byte exTopCount = actor.GetValue(Offsets.Main.ExTopCount);
-
-			foreach (string boneName in boneDefs.Keys)
-			{
-				if (!this.bones.ContainsKey(boneName))
-					continue;
-
-				if (boneName.StartsWith("ExHair"))
-				{
-					byte num = byte.Parse(boneName.Replace("ExHair", string.Empty));
-					if (num >= exHairCount)
-					{
-						this.bones[boneName].IsEnabled = false;
-					}
-				}
-				else if (boneName.StartsWith("ExMet"))
-				{
-					byte num = byte.Parse(boneName.Replace("ExMet", string.Empty));
-					if (num >= exMetCount)
-					{
-						this.bones[boneName].IsEnabled = false;
-					}
-				}
-				else if (boneName.StartsWith("ExTop"))
-				{
-					byte num = byte.Parse(boneName.Replace("ExTop", string.Empty));
-					if (num >= exTopCount)
-					{
-						this.bones[boneName].IsEnabled = false;
-					}
-				}
-				else if (boneName == "TailE")
-				{
-					this.bones[boneName].IsEnabled = false;
-				}
-			}
-
 			// Again to set parenting
 			foreach ((string name, SkeletonService.Bone boneDef) in boneDefs)
 			{
@@ -389,15 +386,10 @@ namespace ConceptMatrix.PoseModule
 
 			this.GetBone("Root").IsEnabled = false;
 
-			foreach (Bone gizmo in this.bones.Values)
+			foreach (Bone bone in this.bones.Values)
 			{
-				gizmo.ReadTransform();
+				bone.ReadTransform();
 			}
-
-			/*foreach (BoneGizmo gizmo in this.gizmoLookup.Values)
-			{
-				gizmo.WriteTransform(this.root);
-			}*/
 		}
 
 		private void ParentBone(string parentName, string childName)
@@ -465,6 +457,14 @@ namespace ConceptMatrix.PoseModule
 				RotateTransform3D trans = new RotateTransform3D(new QuaternionRotation3D(rot));
 				this.Root.Transform = trans;
 			});
+		}
+
+		private void OnPoseServiceEnabledChanged(bool value)
+		{
+			if (value)
+			{
+				this.RefreshBones();
+			}
 		}
 
 		private void OnAnimatingChanged(object sender, object value)
