@@ -48,9 +48,10 @@ namespace ConceptMatrix.PoseModule
 			this.position = new TranslateTransform3D();
 
 			Transform3DGroup transformGroup = new Transform3DGroup();
-			transformGroup.Children.Add(this.rotation);
 			transformGroup.Children.Add(this.scale);
+			transformGroup.Children.Add(this.rotation);
 			transformGroup.Children.Add(this.position);
+
 			this.Transform = transformGroup;
 
 			PaletteHelper ph = new PaletteHelper();
@@ -166,7 +167,7 @@ namespace ConceptMatrix.PoseModule
 			// Store the new parent-relative transform info
 			this.Position = position.ToCmVector();
 			this.Rotation = rotation.ToCmQuaternion();
-			this.Scale = scale.ToCmVector();
+			////this.Scale = scale.ToCmVector();
 
 			// Set the Media3D hierarchy transforms
 			this.rotation.Rotation = new QuaternionRotation3D(rotation);
@@ -204,21 +205,27 @@ namespace ConceptMatrix.PoseModule
 
 			// convert the values in the tree to character-relative space
 			MatrixTransform3D transform = (MatrixTransform3D)this.TransformToAncestor(root);
-			CmVector position = default;
-
-			Vector3D scale = this.Scale.ToMedia3DVector(); // ??
 
 			Quaternion rotation = transform.Matrix.ToQuaternion();
 			rotation.Invert();
 
+			CmVector position = default;
 			position.X = (float)transform.Matrix.OffsetX;
 			position.Y = (float)transform.Matrix.OffsetY;
 			position.Z = (float)transform.Matrix.OffsetZ;
 
+			CmVector scale = this.Scale;
+
+			// uniform scaling only because i suck.
+			double scaleFac = Math.Sqrt((transform.Matrix.M11 * transform.Matrix.M11) + (transform.Matrix.M12 * transform.Matrix.M12) + (transform.Matrix.M13 * transform.Matrix.M13));
+			scale.X = (float)scaleFac;
+			scale.Y = (float)scaleFac;
+			scale.Z = (float)scaleFac;
+
 			// and push those values to the game memory
 			CmTransform live = this.LiveTransform;
 			live.Position = position;
-			live.Scale = scale.ToCmVector();
+			live.Scale = scale;
 			live.Rotation = rotation.ToCmQuaternion();
 			this.LiveTransform = live;
 
