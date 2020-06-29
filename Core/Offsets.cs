@@ -129,6 +129,8 @@ namespace ConceptMatrix
 
 		public class MainOffsetFile
 		{
+			#pragma warning disable CS8618
+
 			public ActorTableOffset ActorTable { get; set; }
 			public ActorTableOffset GposeActorTable { get; set; }
 			public BaseOffset Gpose { get; set; }

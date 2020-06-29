@@ -10,8 +10,8 @@ namespace ConceptMatrix.MemoryBinds
 	internal class BindWrapper<T> : BindWrapper
 		where T : struct
 	{
-		private IMemory<T> target;
-		private INotifyPropertyChanged ownerNotifier;
+		private IMemory<T>? target;
+		private INotifyPropertyChanged? ownerNotifier;
 		private bool bindLock = false;
 
 		public BindWrapper(IMemory<T> target, object owner, string propertyName)
@@ -66,6 +66,9 @@ namespace ConceptMatrix.MemoryBinds
 				return;
 
 			if (this.bindLock)
+				return;
+
+			if (this.target == null)
 				return;
 
 			if (e.PropertyName == this.property.Name)

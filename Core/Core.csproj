@@ -10,6 +10,7 @@
 		<WarningsAsErrors />
 		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;IDE0025;</NoWarn>
 		<Configurations>Debug;Release;Debug_NoGame</Configurations>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoGame|AnyCPU'">

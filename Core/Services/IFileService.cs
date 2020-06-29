@@ -9,14 +9,14 @@ namespace ConceptMatrix
 
 	public interface IFileService : IService
 	{
-		Task<T> Open<T>(FileType fileType, string path = null)
+		Task<T> Open<T>(FileType fileType, string? path = null)
 			where T : FileBase;
 
 		Task<FileBase> OpenAny(params FileType[] fileTypes);
 
 		Task<string> OpenDirectory(string title, params string[] defaults);
 
-		Task Save(FileBase file, string path = null);
+		Task Save(FileBase file, string? path = null);
 		Task SaveAs(FileBase file);
 	}
 
@@ -28,8 +28,8 @@ namespace ConceptMatrix
 		public readonly string Name;
 		public readonly Type Type;
 
-		public Func<Stream, FileBase> Deserialize;
-		public Action<Stream, FileBase> Serialize;
+		public Func<Stream, FileBase>? Deserialize;
+		public Action<Stream, FileBase>? Serialize;
 
 		public FileType(string extension, string name, Type type)
 		{
@@ -45,29 +45,7 @@ namespace ConceptMatrix
 	[Serializable]
 	public abstract class FileBase
 	{
-		public IFileService FileService;
-		public string Path;
-
+		public string? Path;
 		public abstract FileType GetFileType();
-
-		public void Save()
-		{
-			Task.Run(this.SaveAsync);
-		}
-
-		public void SaveAs()
-		{
-			Task.Run(this.SaveAsAsync);
-		}
-
-		public Task SaveAsync()
-		{
-			return this.FileService.Save(this);
-		}
-
-		public Task SaveAsAsync()
-		{
-			return this.FileService.SaveAs(this);
-		}
 	}
 }

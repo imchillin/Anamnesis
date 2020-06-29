@@ -25,7 +25,7 @@ namespace ConceptMatrix.MemoryBinds
 			this.IsAlive = true;
 		}
 
-		public object Owner
+		public object? Owner
 		{
 			get
 			{

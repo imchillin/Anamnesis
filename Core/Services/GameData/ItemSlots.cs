@@ -44,7 +44,7 @@ namespace ConceptMatrix.GameData
 				case ItemSlots.LeftRing: return self.LFinger;
 			}
 
-			return null;
+			throw new Exception("Invalid slot " + slot);
 		}
 	}
 }

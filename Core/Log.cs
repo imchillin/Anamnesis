@@ -9,11 +9,11 @@ namespace ConceptMatrix
 
 	public static class Log
 	{
-		public delegate void LogEvent(string message, Severity severity, string category);
-		public delegate void ExceptionEvent(ExceptionDispatchInfo ex, Severity severity, string category);
+		public delegate void LogEvent(string message, Severity severity, string? category);
+		public delegate void ExceptionEvent(ExceptionDispatchInfo ex, Severity severity, string? category);
 
-		public static event LogEvent OnLog;
-		public static event ExceptionEvent OnException;
+		public static event LogEvent? OnLog;
+		public static event ExceptionEvent? OnException;
 
 		public enum Severity
 		{
@@ -23,13 +23,13 @@ namespace ConceptMatrix
 			Critical,
 		}
 
-		public static void Write(string message, string category = null, Severity severity = Severity.Log)
+		public static void Write(string message, string? category = null, Severity severity = Severity.Log)
 		{
 			Trace.WriteLine($"[{category}] ({severity}) {message}");
 			OnLog?.Invoke(message, severity, category);
 		}
 
-		public static void Write(Exception ex, string category = null, Severity severity = Severity.Critical)
+		public static void Write(Exception ex, string? category = null, Severity severity = Severity.Critical)
 		{
 			ExceptionDispatchInfo exDispatch = ExceptionDispatchInfo.Capture(ex);
 

@@ -8,7 +8,7 @@ namespace ConceptMatrix
 
 	public static class Services
 	{
-		private static IServices services;
+		private static IServices? services;
 
 		public static T Get<T>()
 			where T : IService

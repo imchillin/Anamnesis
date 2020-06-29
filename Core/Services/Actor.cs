@@ -23,12 +23,13 @@ namespace ConceptMatrix
 
 			this.Name = this.GetValue(Offsets.Main.Name);
 			this.Type = this.GetValue(Offsets.Main.ActorType);
+			this.Description = string.Empty;
 		}
 
 		public delegate void ActorEvent(Actor actor);
 
-		public event ActorEvent ActorRetargetBegin;
-		public event ActorEvent ActorRetargetComplete;
+		public event ActorEvent? ActorRetargetBegin;
+		public event ActorEvent? ActorRetargetComplete;
 
 		public ActorTypes Type { get; set; }
 		public string Name { get; private set; }

@@ -19,7 +19,7 @@ namespace ConceptMatrix
 	[Serializable]
 	public abstract class SettingsBase
 	{
-		public event SettingsEvent Changed;
+		public event SettingsEvent? Changed;
 
 		public void NotifyChanged()
 		{

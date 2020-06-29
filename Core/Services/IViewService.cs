@@ -29,7 +29,7 @@ namespace ConceptMatrix
 		/// <param name="isSupportedCallback">a callback to determine if the given page will appear for a specific actor.</param>
 		// Although we could (where T : UserControl) to require correct types, doing so would
 		// require the core library to reference the WPF libs, and for simplicity, lets not.
-		void AddActorPage<T>(string name, string icon, Func<Actor, bool> isSupportedCallback = null);
+		void AddActorPage<T>(string name, string icon, Func<Actor, bool>? isSupportedCallback = null);
 
 		/// <summary>
 		/// Opens a drawer (flyout) menu on the main application window.
@@ -37,7 +37,7 @@ namespace ConceptMatrix
 		/// <typeparam name="T">type of view to place within the drawer.</typeparam>
 		/// <param name="title">the title to show at the top of the menu.</param>
 		/// <param name="direction">the edge of the window the drawer will appear from.</param>
-		Task ShowDrawer<T>(string title = null, DrawerDirection direction = DrawerDirection.Right);
+		Task ShowDrawer<T>(string? title = null, DrawerDirection direction = DrawerDirection.Right);
 
 		/// <summary>
 		/// Opens a drawer (flyout) menu on the main application window.
@@ -45,7 +45,7 @@ namespace ConceptMatrix
 		/// <param name="view"> the view to place in the drawer.</param>
 		/// <param name="title">the title to show at the top of the menu.</param>
 		/// <param name="direction">the edge of the window the drawer will appear from.</param>
-		Task ShowDrawer(object view, string title = null, DrawerDirection direction = DrawerDirection.Right);
+		Task ShowDrawer(object view, string? title = null, DrawerDirection direction = DrawerDirection.Right);
 
 		/// <summary>
 		/// Opens a blocking dialog with the given view.
