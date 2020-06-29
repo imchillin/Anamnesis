@@ -82,7 +82,7 @@ namespace ConceptMatrix.MemoryBinds
 			}
 		}
 
-		private void Target_ValueChanged(object sender, object value)
+		private void Target_ValueChanged(object sender, object? value)
 		{
 			if (!this.IsAlive)
 				return;
