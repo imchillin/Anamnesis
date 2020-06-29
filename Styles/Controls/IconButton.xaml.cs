@@ -68,6 +68,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		public static void OnKeyChanged(IconButton sender, string val)
 		{
 			sender.Key = val;

@@ -28,6 +28,7 @@ namespace ConceptMatrix.GUI.Pages
 		public Vector Position { get; set; }
 		public Quaternion Rotation { get; set; }
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnDataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
 		{
 			if (this.posMem != null)

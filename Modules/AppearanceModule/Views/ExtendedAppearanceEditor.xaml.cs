@@ -85,6 +85,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public bool HasMainHand { get; set; }
 		public bool HasOffHand { get; set; }
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			this.actor = this.DataContext as Actor;
@@ -171,6 +172,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			});
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnWeaponsChanged(object sender = null, object value = null)
 		{
 			this.mainHandTintMem?.Dispose();

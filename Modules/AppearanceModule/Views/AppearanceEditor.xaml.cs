@@ -169,6 +169,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			});
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnRaceChanged(object sender, SelectionChangedEventArgs e)
 		{
 			IRace race = this.RaceComboBox.SelectedItem as IRace;
@@ -192,6 +193,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.UpdateRaceAndTribe();
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnTribeChanged(object sender, SelectionChangedEventArgs e)
 		{
 			ITribe tribe = this.TribeComboBox.SelectedItem as ITribe;

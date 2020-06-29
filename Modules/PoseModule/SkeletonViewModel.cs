@@ -459,6 +459,7 @@ namespace ConceptMatrix.PoseModule
 			});
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnPoseServiceEnabledChanged(bool value)
 		{
 			if (value)
@@ -467,6 +468,7 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnAnimatingChanged(object sender, object value)
 		{
 			this.CanPose = !this.animatingMem.Value;

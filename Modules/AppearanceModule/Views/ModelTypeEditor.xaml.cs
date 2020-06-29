@@ -50,6 +50,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			this.modelTypeMem?.Dispose();

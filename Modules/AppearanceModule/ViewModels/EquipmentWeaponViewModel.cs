@@ -47,6 +47,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.Actor.ActorRefresh();
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnMemoryValueChanged(object sender, object value)
 		{
 			this.modelSet = this.memory.Value.Set;

@@ -62,6 +62,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.appearanceMem = null;
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnMemValueChanged(object sender, object value)
 		{
 			this.lockChangedEvent = true;

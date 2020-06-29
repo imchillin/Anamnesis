@@ -246,6 +246,7 @@ namespace ConceptMatrix.PoseModule
 			this.transformMem.Dispose();
 		}
 
+		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnTransformMemValueChanged(object sender, object value)
 		{
 			if (Application.Current == null)
