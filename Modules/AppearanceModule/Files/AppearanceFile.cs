@@ -315,6 +315,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 				appearance.Bust = (byte)this.Bust;
 			}
 
+			await Task.Delay(100);
+
 			appearanceMem.Value = appearance;
 			equipmentMem.Value = equipment;
 			mainHandMem.Value = mainHand;
