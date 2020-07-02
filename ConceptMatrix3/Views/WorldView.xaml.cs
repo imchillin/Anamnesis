@@ -6,7 +6,6 @@ namespace ConceptMatrix.GUI.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
-	using ConceptMatrix.MemoryBinds.Converters;
 	using PropertyChanged;
 
 	/// <summary>
