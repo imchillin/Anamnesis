@@ -20,12 +20,14 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly IBind<Vector> ValueDp = Binder.Register<Vector, VectorEditor>(nameof(Value), OnValueChanged);
 		public static readonly IBind<double> TickFrequencyDp = Binder.Register<double, VectorEditor>(nameof(TickFrequency));
 		public static readonly IBind<bool> WrapDp = Binder.Register<bool, VectorEditor>(nameof(Wrap));
+		public static readonly IBind<bool> SlidersDp = Binder.Register<bool, VectorEditor>(nameof(Sliders));
 
 		public VectorEditor()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 			this.TickFrequency = 0.1;
+			this.Sliders = true;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -37,6 +39,12 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			get => ExpandedDp.Get(this);
 			set => ExpandedDp.Set(this, value);
+		}
+
+		public bool Sliders
+		{
+			get => SlidersDp.Get(this);
+			set => SlidersDp.Set(this, value);
 		}
 
 		public Vector Value

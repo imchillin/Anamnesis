@@ -276,17 +276,16 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			IInjectionService injection = Services.Get<IInjectionService>();
 
-			IMemory<float> camX = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraAngleX);
-			IMemory<float> camY = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraAngleY);
-			IMemory<float> camZ = injection.GetMemory(Offsets.Main.CameraOffset, Offsets.Main.CameraRotation);
+			IMemory<Vector2D> camXY = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
+			IMemory<float> camZ = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
 
 			Vector3D camEuler = default;
 
 			bool vis = true;
 			while (vis && Application.Current != null)
 			{
-				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camX.Value) - 180;
-				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camY.Value);
+				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camXY.Value.X) - 180;
+				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camXY.Value.Y);
 				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
 				Quaternion q = camEuler.ToQuaternion();
 

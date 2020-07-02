@@ -148,8 +148,8 @@
 								<ColumnDefinition/>
 							</Grid.ColumnDefinitions>
 
-							<fa:IconBlock Grid.Column="0" Icon="Globe" Foreground="{DynamicResource MaterialDesignBody}"/>
-							<Label Grid.Column="1" Content="World" VerticalAlignment="Center"/>
+							<fa:IconBlock Grid.Column="0" Icon="Home" Foreground="{DynamicResource MaterialDesignBody}"/>
+							<Label Grid.Column="1" Content="Home" VerticalAlignment="Center"/>
 						</Grid>
 					</TabItem.Header>
 

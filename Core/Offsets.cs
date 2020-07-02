@@ -22,7 +22,7 @@ namespace ConceptMatrix
 			Main.GposeCheck = 0x1CB4C9A;
 			Main.GposeCheck2 = 0x1C67D50;
 			Main.Target = 0x1C641D0;
-			Main.CameraOffset = 0x1C63F80;
+			Main.CameraAddress = 0x1C63F80;
 			Main.Time = 0x1C44AF8;
 			Main.WeatherAddress = 0x1C1B858;
 			Main.TerritoryAddress = 0x1C42430;
@@ -100,17 +100,13 @@ namespace ConceptMatrix
 			Main.CameraCurrentZoom = 0x114;
 			Main.CameraMinZoom = 0x118;
 			Main.CameraMaxZoom = 0x11c;
-			Main.FOVCurrent = 0x120;
-			Main.FOVCurrent2 = 0x124;
-			Main.FOV2 = 0x12c;
-			Main.CameraAngleX = 0x130;
-			Main.CameraAngleY = 0x134;
+			Main.FOVCurrent = 0x12c; // 0x120 or 0x124 or 0x12c
+			Main.CameraAngle = 0x130;
+			Main.CameraPan = 0x150;
 			Main.CameraYMin = 0x14C;
 			Main.CameraYMax = 0x148;
-			Main.CameraRotation = 0x164;
+			Main.CameraRotation = 0x160;
 			Main.CameraUpDown = 0x218;
-			Main.CameraPanX = 0x150;
-			Main.CameraPanY = 0x154;
 
 			Main.TimeControl = new[] { 0x10, 0X08, 0x28, 0x80 };
 			Main.Territory = new[] { 0x00, 0X134C };
@@ -135,7 +131,7 @@ namespace ConceptMatrix
 			public BaseOffset<bool> GposeCheck { get; set; }
 			public BaseOffset<ushort> GposeCheck2 { get; set; }
 			public BaseOffset Target { get; set; }
-			public BaseOffset CameraOffset { get; set; }
+			public BaseOffset CameraAddress { get; set; }
 			public BaseOffset Time { get; set; }
 			public BaseOffset WeatherAddress { get; set; }
 			public BaseOffset TerritoryAddress { get; set; }
@@ -214,17 +210,13 @@ namespace ConceptMatrix
 			public Offset<float> CameraCurrentZoom { get; set; }
 			public Offset<float> CameraMinZoom { get; set; }
 			public Offset<float> CameraMaxZoom { get; set; }
-			public Offset FOVCurrent { get; set; }
-			public Offset FOVCurrent2 { get; set; }
-			public Offset FOV2 { get; set; }
-			public Offset<float> CameraAngleX { get; set; }
-			public Offset<float> CameraAngleY { get; set; }
-			public Offset CameraYMin { get; set; }
-			public Offset CameraYMax { get; set; }
+			public Offset<float> FOVCurrent { get; set; }
+			public Offset<Vector2D> CameraAngle { get; set; }
+			public Offset<Vector2D> CameraPan { get; set; }
+			public Offset<float> CameraYMin { get; set; }
+			public Offset<float> CameraYMax { get; set; }
 			public Offset<float> CameraRotation { get; set; }
 			public Offset CameraUpDown { get; set; }
-			public Offset CameraPanX { get; set; }
-			public Offset CameraPanY { get; set; }
 
 			public Offset<int> TimeControl { get; set; }
 			public Offset<int> Territory { get; set; }

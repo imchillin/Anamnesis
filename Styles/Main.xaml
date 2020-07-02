@@ -94,7 +94,9 @@
 	<converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
 	<converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 	<converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
-	<converters:BoolToIntConverter x:Key="B2V"/>
+	<BooleanToVisibilityConverter x:Key="B2V"/>
 	<converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
-	
+	<converters:RadiansToDegreesConverter x:Key="Rad2Deg"/>
+	<converters:Vector2DRadiansToDegreesConverter x:Key="Vec2DRad2Deg"/>
+
 </ResourceDictionary>
