@@ -242,7 +242,7 @@ namespace ConceptMatrix.PoseModule
 
 			if (this.bones.ContainsKey("BreastLeft") && this.bones.ContainsKey("BreastRight"))
 			{
-				float bustScale = ((appearance.Bust - 50) / 50) * 0.1f;
+				float bustScale = ((appearance.Bust - 50) / 50) * 0.15f;
 				this.bones["BreastLeft"].Scale += new CmVector(bustScale, bustScale, bustScale);
 				this.bones["BreastRight"].Scale += new CmVector(bustScale, bustScale, bustScale);
 			}
