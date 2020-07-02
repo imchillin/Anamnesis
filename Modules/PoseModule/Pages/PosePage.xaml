@@ -57,7 +57,7 @@
 		</Grid>
 
 		<!-- top Bar -->
-		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3" IsEnabled="{Binding CanPose}">
+		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3" IsEnabled="{Binding CanPose}">
 			<Grid Height="35">
 
 				<StackPanel Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal">
@@ -67,13 +67,13 @@
 
 				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
 					<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
-						<ListBoxItem ToolTip="GUI View" Margin="1, 0, 0, 1">
+						<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1">
 							<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
-						<ListBoxItem ToolTip="3D View" Margin="0, 0, 0, 1">
+						<ListBoxItem ToolTip="3D View" Margin="0, 1, 0, 1">
 							<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
-						<ListBoxItem ToolTip="Matrix View" Margin="0, 0, 1, 1">
+						<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 1, 1">
 							<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
 					</ListBox>

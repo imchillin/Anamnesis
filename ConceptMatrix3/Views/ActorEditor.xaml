@@ -21,16 +21,12 @@
 					<Image Source="/Assets/Hydaelyn.png" Grid.Row="0" VerticalAlignment="Top" Visibility="{Binding Zodiark, Converter={StaticResource InverseBoolToVisConverter}}"/>
 				</Grid>
 			</Border>-->
-
+			
 			<!-- Main Area -->
 			<Border Grid.Column="1">
-				<Border.Effect>
-					<DropShadowEffect ShadowDepth="0" BlurRadius="10" Direction="180" Opacity="0.25"/>
-				</Border.Effect>
-
-				<ContentPresenter Grid.Row="1" Grid.Column="1" x:Name="ViewArea" Height="512"/>
+				<ContentPresenter Margin="3, 3, 0, 0" x:Name="ViewArea" Height="512"/>
 			</Border>
-
+			
 			<!-- Side Bar-->
 			<views:NavigationMenu SelectPage="OnShowPage"/>
 		</Grid>

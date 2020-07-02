@@ -69,13 +69,17 @@
 							</VisualStateManager.VisualStateGroups>
 							<Grid>
 								<Border x:Name="MouseOverBorder"
-									Opacity="0"
-									Background="{TemplateBinding Foreground, Converter={StaticResource BrushRoundConverter}}"/>
+										CornerRadius="3, 0, 0, 3"
+										Margin="3, 0, 0, 0"
+										Opacity="0"
+										Background="{TemplateBinding Foreground, Converter={StaticResource BrushRoundConverter}}"/>
 
 								<Border x:Name="SelectedBorder"
-									Opacity="0"
-									Background="{DynamicResource MaterialDesignCardBackground}"
-									RenderTransformOrigin="0.5,0.5">
+										Opacity="0"
+										CornerRadius="3, 0, 0, 3"
+										Margin="3, 0, 0, 0"
+										Background="{DynamicResource MaterialDesignPaper}"
+										RenderTransformOrigin="0.5,0.5">
 
 									<Border.Effect>
 										<DropShadowEffect BlurRadius="10" Opacity="0.25"/>
@@ -94,7 +98,8 @@
 										HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
 										VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
 										Padding="{TemplateBinding Padding}"
-										RecognizesAccessKey="False"/>
+										RecognizesAccessKey="False"
+										Margin="3, 0, 0, 0"/>
 							</Grid>
 						</Border>
 						<ControlTemplate.Triggers>
@@ -107,9 +112,9 @@
 			</Setter>
 		</Style>
 	</UserControl.Resources>
-	
-	<Grid>
-		<ListBox x:Name="ViewList" SelectionChanged="OnSelectionChanged" ItemContainerStyle="{StaticResource ListBoxItemStyle}" ItemsSource="{Binding Items}" Margin="0, 12, 0, 0">
+
+	<Border Background="#60000000">
+		<ListBox x:Name="ViewList" SelectionChanged="OnSelectionChanged" ItemContainerStyle="{StaticResource ListBoxItemStyle}" ItemsSource="{Binding Items}" Margin="0, 3, 0, 0">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Border ToolTip="{Binding Name}" Background="Transparent" Width="48" Height="40" Margin="0">
@@ -118,5 +123,5 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-	</Grid>
+	</Border>
 </UserControl>
