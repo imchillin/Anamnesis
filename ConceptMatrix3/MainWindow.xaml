@@ -133,11 +133,28 @@
 									 BorderThickness="0" 
 									 Margin="0" 
 									 ShowDefaultCloseButton="True"
+									 FixedHeaderCount="1"
 									 ClosingItemCallback="OnTabClosing">
 
 				<dragablz:TabablzControl.InterTabController>
 					<dragablz:InterTabController InterTabClient="{Binding TabClient}"/>
 				</dragablz:TabablzControl.InterTabController>
+
+				<TabItem>
+					<TabItem.Header>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="20"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<fa:IconBlock Grid.Column="0" Icon="Globe" Foreground="{DynamicResource MaterialDesignBody}"/>
+							<Label Grid.Column="1" Content="World" VerticalAlignment="Center"/>
+						</Grid>
+					</TabItem.Header>
+
+					<views:WorldView/>
+				</TabItem>
 
 			</dragablz:TabablzControl>
 

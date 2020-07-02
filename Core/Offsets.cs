@@ -228,7 +228,7 @@ namespace ConceptMatrix
 			public Offset CameraPanX { get; set; }
 			public Offset CameraPanY { get; set; }
 
-			public Offset TimeControl { get; set; }
+			public Offset<int> TimeControl { get; set; }
 			public Offset Territory { get; set; }
 			public Offset Weather { get; set; }
 			public Offset ForceWeather { get; set; }
