@@ -101,9 +101,6 @@
 		<Compile Update="SplashWindow.xaml.cs">
 			<DependentUpon>SplashWindow.xaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\HomeView.xaml.cs">
-			<DependentUpon>HomeView.xaml</DependentUpon>
-		</Compile>
 		<Compile Update="Views\NavigationMenu.xaml.cs">
 			<DependentUpon>NavigationMenu.xaml</DependentUpon>
 		</Compile>
@@ -139,10 +136,6 @@
 		</Page>
 		<Page Update="SplashWindow.xaml">
 			<SubType>Designer</SubType>
-		</Page>
-		<Page Update="Views\HomeView.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\NavigationMenu.xaml">
 			<SubType>Designer</SubType>
