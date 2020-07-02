@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
+	using ConceptMatrix;
 	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
 
@@ -11,6 +12,30 @@ namespace ConceptMatrix.SaintCoinachModule
 		public WeatherWrapper(Weather row)
 			: base(row)
 		{
+		}
+
+		public string Name
+		{
+			get
+			{
+				return this.Value.Name;
+			}
+		}
+
+		public string Description
+		{
+			get
+			{
+				return this.Value.Description;
+			}
+		}
+
+		public IImage Icon
+		{
+			get
+			{
+				return this.Value.Icon.ToIImage();
+			}
 		}
 	}
 }

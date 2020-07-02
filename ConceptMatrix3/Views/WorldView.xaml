@@ -28,16 +28,36 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 
-				<!-- when time is not frozen -->
-				<TextBlock Grid.Row="0" Text="Time:" Style="{StaticResource Label}"/>
-				<cm3:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding Time}" Buttons="True" Slider="True" Minimum="0" Maximum="1440"/>
+				<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Territory}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 3, 3, 6"/>
 
-				<!-- when time is frozen -->
-				<TextBlock Grid.Row="1" Text="Moon Phase:" Style="{StaticResource Label}"/>
-				<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Moon}" Buttons="True" Slider="True" Minimum="0" Maximum="31"/>
+				<TextBlock Grid.Row="1" Text="Time:" Style="{StaticResource Label}"/>
+				<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Time}" Buttons="True" Slider="True" Minimum="0" Maximum="1440"/>
+
+				<TextBlock Grid.Row="2" Text="Moon Phase:" Style="{StaticResource Label}"/>
+				<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding Moon}" Buttons="True" Slider="True" Minimum="0" Maximum="31"/>
+
+				<TextBlock Grid.Row="3" Text="Weather:" Style="{StaticResource Label}"/>
+				<ComboBox Grid.Row="3" Grid.Column="1" x:Name="WeatherComboBox" SelectionChanged="OnWeatherSelectionChanged">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="32"/>
+									<ColumnDefinition/>
+								</Grid.ColumnDefinitions>
+
+								<Image Grid.Column="0" Source="{Binding Icon, Converter={StaticResource IImageConverter}}" Width="22" Height="22"/>
+								<TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}" VerticalAlignment="Center"/>
+
+							</Grid>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 
 			</Grid>
 		</Border>

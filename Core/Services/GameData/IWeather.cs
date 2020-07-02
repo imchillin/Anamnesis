@@ -5,5 +5,8 @@ namespace ConceptMatrix.GameData
 {
 	public interface IWeather : IDataObject
 	{
+		string Name { get; }
+		string Description { get; }
+		IImage Icon { get; }
 	}
 }

@@ -24,8 +24,8 @@ namespace ConceptMatrix
 			Main.Target = 0x1C641D0;
 			Main.CameraOffset = 0x1C63F80;
 			Main.Time = 0x1C44AF8;
-			Main.WeatherOffset = 0x1C1B858;
-			Main.TerritoryOFfset = 0x1C42430;
+			Main.WeatherAddress = 0x1C1B858;
+			Main.TerritoryAddress = 0x1C42430;
 			Main.GposeFilters = 0x1C42BB8;
 			Main.MusicOffset = 0x1C81CA8;
 
@@ -116,8 +116,6 @@ namespace ConceptMatrix
 			Main.Territory = new[] { 0x00, 0X134C };
 			Main.Weather = 0x20;
 			Main.ForceWeather = 0x26; // From GposeFilters
-			Main.Music = new[] { 0xC0, 0X114 };
-			Main.Music2 = new[] { 0xC0, 0X116 };
 
 			Main.GposeFilterEnable = 0x37B;
 			Main.GposeFilterTable = 0x318;
@@ -139,8 +137,8 @@ namespace ConceptMatrix
 			public BaseOffset Target { get; set; }
 			public BaseOffset CameraOffset { get; set; }
 			public BaseOffset Time { get; set; }
-			public BaseOffset WeatherOffset { get; set; }
-			public BaseOffset TerritoryOFfset { get; set; }
+			public BaseOffset WeatherAddress { get; set; }
+			public BaseOffset TerritoryAddress { get; set; }
 			public BaseOffset GposeFilters { get; set; }
 			public BaseOffset MusicOffset { get; set; }
 
@@ -229,11 +227,9 @@ namespace ConceptMatrix
 			public Offset CameraPanY { get; set; }
 
 			public Offset<int> TimeControl { get; set; }
-			public Offset Territory { get; set; }
-			public Offset Weather { get; set; }
-			public Offset ForceWeather { get; set; }
-			public Offset Music { get; set; }
-			public Offset Music2 { get; set; }
+			public Offset<int> Territory { get; set; }
+			public Offset<int> Weather { get; set; }
+			public Offset<ushort> ForceWeather { get; set; }
 
 			public Offset GposeFilterEnable { get; set; }
 			public Offset GposeFilterTable { get; set; }

@@ -3,9 +3,12 @@
 
 namespace ConceptMatrix.GUI.Views
 {
+	using System;
+	using System.Collections.ObjectModel;
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
+	using ConceptMatrix.GameData;
 	using PropertyChanged;
 
 	/// <summary>
@@ -14,7 +17,11 @@ namespace ConceptMatrix.GUI.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class WorldView : UserControl
 	{
+		private IGameDataService gameData;
+
 		private IMemory<int> timeMem;
+		private IMemory<int> territoryMem;
+		private IMemory<ushort> weatherMem;
 
 		private int time = 0;
 		private int moon = 0;
@@ -24,6 +31,8 @@ namespace ConceptMatrix.GUI.Views
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 		}
+
+		public string Territory { get; set; }
 
 		public int Time
 		{
@@ -55,13 +64,50 @@ namespace ConceptMatrix.GUI.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
+			this.gameData = ConceptMatrix.Services.Get<IGameDataService>();
 			IInjectionService injection = ConceptMatrix.Services.Get<IInjectionService>();
+
 			this.timeMem = injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
+
+			this.territoryMem = injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
+			this.territoryMem.ValueChanged += this.OnTerritoryMemValueChanged;
+
+			this.weatherMem = injection.GetMemory(Offsets.Main.GposeFilters, Offsets.Main.ForceWeather);
+
+			this.OnTerritoryMemValueChanged(null, null);
+		}
+
+		private void OnTerritoryMemValueChanged(object sender = null, object value = null)
+		{
+			int territoryId = this.territoryMem.Value;
+
+			foreach (ITerritoryType territory in this.gameData.Territories.All)
+			{
+				if (territory.Key == territoryId)
+				{
+					this.Territory = territory.Region + " - " + territory.Place;
+
+					this.WeatherComboBox.ItemsSource = territory.Weathers;
+				}
+			}
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
 			this.timeMem.Dispose();
+			this.territoryMem.Dispose();
+		}
+
+		private void OnWeatherSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			IWeather weather = this.WeatherComboBox.SelectedItem as IWeather;
+
+			if (weather == null)
+				return;
+
+			// This is super weird. I have no idea why we need to do this for weather...
+			byte[] bytes = { (byte)weather.Key, (byte)weather.Key };
+			this.weatherMem.Value = BitConverter.ToUInt16(bytes, 0);
 		}
 	}
 }
