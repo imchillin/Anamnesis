@@ -15,32 +15,25 @@ namespace ConceptMatrix.PoseModule.Pages
 	[AddINotifyPropertyChangedInterface]
 	public partial class PosePage : UserControl
 	{
-		private PoseService poseService;
-
 		public PosePage()
 		{
-			this.poseService = Services.Get<PoseService>();
-			this.poseService.EnabledChanged += this.OnEnabledChanged;
-			this.poseService.AvailableChanged += this.OnAvailableChanged;
+			this.PoseService = Services.Get<PoseService>();
+			this.PoseService.EnabledChanged += this.OnEnabledChanged;
+			this.PoseService.AvailableChanged += this.OnAvailableChanged;
 
 			this.InitializeComponent();
 
 			this.SkeletonViewModel = new SkeletonViewModel();
 			this.ContentArea.DataContext = this;
 
-			this.OnEnabledChanged(this.poseService.IsEnabled);
-			this.OnAvailableChanged(this.poseService.IsAvailable);
+			this.OnEnabledChanged(this.PoseService.IsEnabled);
+			this.OnAvailableChanged(this.PoseService.IsAvailable);
 		}
 
+		public PoseService PoseService { get; private set; }
 		public SkeletonViewModel SkeletonViewModel { get; set; }
 
 		public bool CanPose { get; set; }
-
-		public bool PosingEnabled
-		{
-			get => this.poseService.IsEnabled;
-			set => this.poseService.IsEnabled = value;
-		}
 
 		public bool FlipSides
 		{

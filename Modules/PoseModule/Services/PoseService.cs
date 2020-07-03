@@ -7,7 +7,9 @@ namespace ConceptMatrix.PoseModule
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Anamnesis;
+	using PropertyChanged;
 
+	[AddINotifyPropertyChangedInterface]
 	public class PoseService : IService
 	{
 		private IMemory<Flag> skel1Mem;
