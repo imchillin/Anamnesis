@@ -67,7 +67,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 					this.modelSet = useSubModel ? value.SubModelSet : value.ModelSet;
 					this.modelBase = useSubModel ? value.SubModelBase : value.ModelBase;
-					this.modelVariant = useSubModel ? value.ModelVariant : value.ModelVariant;
+					this.modelVariant = useSubModel ? value.SubModelVariant : value.ModelVariant;
 				}
 				else
 				{
@@ -234,30 +234,22 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 				if (this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand)
 				{
-					if (tItem.HasSubModel)
+					if (tItem.ModelSet == this.modelSet && tItem.ModelBase == this.ModelBase && tItem.ModelVariant == this.ModelVariant)
 					{
-						if (tItem.SubModelSet != this.ModelSet && tItem.ModelSet != this.ModelSet)
-						{
-							continue;
-						}
+						return tItem;
 					}
-					else
+
+					if (tItem.HasSubModel && tItem.SubModelSet == this.modelSet && tItem.SubModelBase == this.ModelBase && tItem.SubModelVariant == this.ModelVariant)
 					{
-						if (tItem.ModelSet != this.ModelSet)
-						{
-							continue;
-						}
+						return tItem;
 					}
 				}
-
-				if (tItem.ModelBase == this.ModelBase && tItem.ModelVariant == this.ModelVariant)
+				else
 				{
-					return tItem;
-				}
-
-				if (tItem.HasSubModel && tItem.SubModelBase == this.modelBase && tItem.SubModelVariant == this.ModelVariant)
-				{
-					return tItem;
+					if (tItem.ModelBase == this.ModelBase && tItem.ModelVariant == this.ModelVariant)
+					{
+						return tItem;
+					}
 				}
 			}
 
