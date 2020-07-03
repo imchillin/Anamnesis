@@ -18,6 +18,7 @@ namespace ConceptMatrix.GUI.Views
 	/// Interaction logic for WorldView.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class HomeView : UserControl
 	{
 		private IGameDataService gameData;

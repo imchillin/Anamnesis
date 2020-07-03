@@ -7,8 +7,8 @@
 		xmlns:gif="http://wpfanimatedgif.codeplex.com"
 		xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 		mc:Ignorable="d"
-		Height="200"
-		Width="200"
+		Height="100"
+		Width="100"
 		ResizeMode="NoResize"
 		WindowStyle="None"
 		Background="Transparent"
@@ -18,18 +18,16 @@
 		MouseDown="OnMouseDown"
 		Icon="/Assets/Concept Matrix.ico">
 
-	<Border Background="#262626" Margin="10" CornerRadius="2">
-		<Border.Effect>
-			<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.5"/>
-		</Border.Effect>
 
-		<Grid>
-			<!--<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" Width="100" Height="100"/>-->
-			<Image gif:ImageBehavior.AnimatedSource="Assets/Loading.gif" Width="128" Height="133" Margin="50,0,0,0"/>
-			
-			<Button Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0">
-				<fa:IconBlock Icon="Times" Opacity="0.5"/>
-			</Button>
-		</Grid>
-	</Border>
+	<Grid Width="100" Height="100">
+
+		<Ellipse Fill="#262626">
+			<Ellipse.Effect>
+				<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.75"/>
+			</Ellipse.Effect>
+		</Ellipse>
+
+		<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" Foreground="AliceBlue" IsIndeterminate="True" Width="100" Height="100"/>
+		<Image Grid.Row="0" Source="Assets/Concept Matrix.png" Width="100" Height="100" Margin="0,0,0,0"/>
+	</Grid>
 </Window>
