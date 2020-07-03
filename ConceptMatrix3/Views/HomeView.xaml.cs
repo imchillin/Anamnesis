@@ -207,18 +207,21 @@ namespace ConceptMatrix.GUI.Views
 				{
 					this.Territory = territory.Region + " - " + territory.Place;
 
-					this.WeatherComboBox.ItemsSource = territory.Weathers;
-
-					foreach (IWeather weather in territory.Weathers)
+					Application.Current.Dispatcher.Invoke(() =>
 					{
-						byte[] bytes = { (byte)weather.Key, (byte)weather.Key };
-						ushort weatherVal = BitConverter.ToUInt16(bytes, 0);
+						this.WeatherComboBox.ItemsSource = territory.Weathers;
 
-						if (weatherVal == currentWeather)
+						foreach (IWeather weather in territory.Weathers)
 						{
-							this.WeatherComboBox.SelectedItem = weather;
+							byte[] bytes = { (byte)weather.Key, (byte)weather.Key };
+							ushort weatherVal = BitConverter.ToUInt16(bytes, 0);
+
+							if (weatherVal == currentWeather)
+							{
+								this.WeatherComboBox.SelectedItem = weather;
+							}
 						}
-					}
+					});
 				}
 			}
 		}
