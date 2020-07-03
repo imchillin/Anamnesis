@@ -7,8 +7,8 @@
 		xmlns:gif="http://wpfanimatedgif.codeplex.com"
 		xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 		mc:Ignorable="d"
-		Height="100"
-		Width="100"
+		Height="120"
+		Width="120"
 		ResizeMode="NoResize"
 		WindowStyle="None"
 		Background="Transparent"
@@ -19,7 +19,7 @@
 		Icon="/Assets/Concept Matrix.ico">
 
 
-	<Grid Width="100" Height="100">
+	<Grid Width="100" Height="100" Margin="10">
 
 		<Ellipse Fill="#262626">
 			<Ellipse.Effect>
