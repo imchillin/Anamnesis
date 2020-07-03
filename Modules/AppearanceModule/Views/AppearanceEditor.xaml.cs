@@ -81,7 +81,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			this.Hair = null;
 
-			if (actor == null || (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.EventNpc))
+			if (actor == null || (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.BattleNpc))
 				return;
 
 			this.Appearance = new AppearanceViewModel(actor);
