@@ -10,12 +10,14 @@ namespace ConceptMatrix.AppearanceModule
 	using System.Text.Json;
 	using System.Threading.Tasks;
 	using System.Windows.Documents;
+	using Anamnesis.Serialization;
 	using ConceptMatrix.AppearanceModule.Pages;
 	using ConceptMatrix.Modules;
 
 	public class Module : IModule
 	{
 		public static ReadOnlyCollection<ModelTypes> ModelTypes { get; private set; }
+		public static ReadOnlyCollection<Prop> Props { get; private set; }
 
 		public Task Initialize()
 		{
@@ -36,6 +38,23 @@ namespace ConceptMatrix.AppearanceModule
 			catch (Exception ex)
 			{
 				Log.Write(new Exception("Failed to load model type list", ex), "Appearance", Log.Severity.Error);
+			}
+
+			try
+			{
+				string json = File.ReadAllText("Modules/Appearance/Props.json");
+				List<Prop> propList = JsonSerializer.Deserialize<List<Prop>>(json);
+
+				propList.Sort((a, b) =>
+				{
+					return a.Name.CompareTo(b.Name);
+				});
+
+				Props = propList.AsReadOnly();
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception("Failed to load props list", ex), "Appearance", Log.Severity.Error);
 			}
 
 			return Task.CompletedTask;

@@ -9,14 +9,14 @@ namespace ConceptMatrix.GameData
 		string Description { get; }
 		IImage Icon { get; }
 
+		ushort ModelSet { get; }
 		ushort ModelBase { get; }
 		ushort ModelVariant { get; }
-		ushort WeaponSet { get; }
 
 		bool HasSubModel { get; }
+		ushort SubModelSet { get; }
 		ushort SubModelBase { get; }
 		ushort SubModelVariant { get; }
-		ushort SubWeaponSet { get; }
 
 		bool IsWeapon { get; }
 

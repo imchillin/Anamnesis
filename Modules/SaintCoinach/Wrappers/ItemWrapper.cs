@@ -6,7 +6,6 @@ namespace ConceptMatrix.SaintCoinachModule
 	using System;
 	using System.Collections.Generic;
 	using ConceptMatrix.GameData;
-	using SaintCoinach.Text.Expressions;
 	using SaintCoinach.Xiv;
 
 	internal class ItemWrapper : ObjectWrapper<Item>, IItem
@@ -66,7 +65,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
-		public ushort WeaponSet
+		public ushort ModelSet
 		{
 			get
 			{
@@ -98,7 +97,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
-		public ushort SubWeaponSet
+		public ushort SubModelSet
 		{
 			get
 			{

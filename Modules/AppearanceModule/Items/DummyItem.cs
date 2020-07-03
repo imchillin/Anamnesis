@@ -13,7 +13,7 @@ namespace ConceptMatrix.AppearanceModule.Items
 	{
 		public DummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)
 		{
-			this.WeaponSet = modelSet;
+			this.ModelSet = modelSet;
 			this.ModelBase = modelBase;
 			this.ModelVariant = modelVariant;
 		}
@@ -54,7 +54,7 @@ namespace ConceptMatrix.AppearanceModule.Items
 			private set;
 		}
 
-		public ushort WeaponSet
+		public ushort ModelSet
 		{
 			get;
 			private set;
@@ -86,7 +86,7 @@ namespace ConceptMatrix.AppearanceModule.Items
 
 		public ushort SubModelBase { get; }
 		public ushort SubModelVariant { get; }
-		public ushort SubWeaponSet { get; }
+		public ushort SubModelSet { get; }
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

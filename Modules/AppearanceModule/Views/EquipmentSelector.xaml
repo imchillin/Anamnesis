@@ -6,46 +6,76 @@
 			 xmlns:cm3Drawers="clr-namespace:ConceptMatrix.WpfStyles.Drawers;assembly=Styles"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="232">
+	<Grid>
 
-	<cm3Drawers:SelectorDrawer 
-		x:Name="Selector"
-		Close="OnClose" 
-		Filter="OnFilter"
-		SelectionChanged="OnSelectionChanged">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
 
-		<cm3Drawers:SelectorDrawer.ItemTemplate>
-			<DataTemplate>
-				<Grid Height="32">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="32"/>
-						<ColumnDefinition Width="1*" />
-					</Grid.ColumnDefinitions>
+		<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="6, 0, 0, 0">
+			<RadioButton Margin="3" IsChecked="True" Checked="OnAllMode">
+				<TextBlock Text="All" Margin="0, -3, 6, 0"/>
+			</RadioButton>
 
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
+			<RadioButton Margin="3" Checked="OnPropsMode">
+				<TextBlock Text="Props" Margin="0, -3, 6, 0"/>
+			</RadioButton>
 
-					<Border Background="#444444" Grid.RowSpan="2" CornerRadius="3">
-						<Grid>
-							<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}" Margin="1"/>
-							<Image Source="/AppearanceModule;component/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
-						</Grid>
-					</Border>
+			<RadioButton Margin="3" Checked="OnItemsMode">
+				<TextBlock Text="Items" Margin="0, -3, 6, 0"/>
+			</RadioButton>
 
-					<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
+			<RadioButton Margin="3" Checked="OnSpecialMode">
+				<TextBlock Text="Special" Margin="0, -3, 6, 0"/>
+			</RadioButton>
+		</StackPanel>
 
-					<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Key}" Margin="6, 0, 0, 0" FontWeight="Light"  Foreground="{DynamicResource MaterialDesignBody}"/>
-					<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MainModelQuad}" Margin="46, 0, 0, 0" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBody}"/>
+		<cm3Drawers:SelectorDrawer
+			Grid.Row="1"
+			x:Name="Selector"
+			Close="OnClose" 
+			Filter="OnFilter"
+			SelectionChanged="OnSelectionChanged">
 
-					<Rectangle Grid.ColumnSpan="2" 
-								   Grid.RowSpan="2" 
-								   Fill="Transparent" 
-								   Visibility="{Binding Description, Converter={StaticResource StringHasContentToVisibility}}" 
-								   ToolTipService.ToolTip="{Binding Description}"/>
+			<cm3Drawers:SelectorDrawer.ItemTemplate>
+				<DataTemplate>
+					<Grid Height="32">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
 
-				</Grid>
-			</DataTemplate>
-		</cm3Drawers:SelectorDrawer.ItemTemplate>
-	</cm3Drawers:SelectorDrawer>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<Border Width="32" Background="#444444" Grid.RowSpan="2" CornerRadius="3" Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
+							<Grid>
+								<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}" Margin="1"/>
+								<Image Source="/AppearanceModule;component/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
+							</Grid>
+						</Border>
+
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
+
+						<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0">
+							<TextBlock Text="{Binding Key}" Style="{StaticResource Label}" Visibility="{Binding Key, Converter={StaticResource NotZeroToVisibility}}"/>
+							<TextBlock Text="{Binding ModelSet}" Style="{StaticResource Label}"/>
+							<TextBlock Text="{Binding ModelBase}" Style="{StaticResource Label}"/>
+							<TextBlock Text="{Binding ModelVariant}" Style="{StaticResource Label}"/>
+						</StackPanel>
+					
+						<Rectangle Grid.ColumnSpan="2" 
+									   Grid.RowSpan="2" 
+									   Fill="Transparent" 
+									   Visibility="{Binding Description, Converter={StaticResource StringHasContentToVisibility}}" 
+									   ToolTipService.ToolTip="{Binding Description}"/>
+
+					</Grid>
+				</DataTemplate>
+			</cm3Drawers:SelectorDrawer.ItemTemplate>
+		</cm3Drawers:SelectorDrawer>
+	</Grid>
 </UserControl>

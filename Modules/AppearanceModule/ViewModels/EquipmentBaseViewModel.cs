@@ -4,14 +4,14 @@
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
+	using System.ComponentModel;
 	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.Items;
 	using ConceptMatrix.GameData;
 	using PropertyChanged;
 
-	[AddINotifyPropertyChangedInterface]
-	public abstract class EquipmentBaseViewModel : IDisposable
+	public abstract class EquipmentBaseViewModel : IDisposable, INotifyPropertyChanged
 	{
 		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
@@ -40,6 +40,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		public delegate void ChangedHandler();
 
 		public event ChangedHandler Changed;
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		public ItemSlots Slot
 		{
@@ -64,7 +65,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				{
 					bool useSubModel = this.Slot == ItemSlots.OffHand && value.HasSubModel;
 
-					this.modelSet = useSubModel ? value.SubWeaponSet : value.WeaponSet;
+					this.modelSet = useSubModel ? value.SubModelSet : value.ModelSet;
 					this.modelBase = useSubModel ? value.SubModelBase : value.ModelBase;
 					this.modelVariant = useSubModel ? value.ModelVariant : value.ModelVariant;
 				}
@@ -77,6 +78,10 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 				if (this.modelBase == 0)
 					this.Dye = NoneDye;
+
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ModelSet)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ModelBase)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ModelVariant)));
 
 				if (oldItem != null && oldItem != this.item)
 				{
@@ -231,14 +236,14 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 				{
 					if (tItem.HasSubModel)
 					{
-						if (tItem.SubWeaponSet != this.ModelSet && tItem.WeaponSet != this.ModelSet)
+						if (tItem.SubModelSet != this.ModelSet && tItem.ModelSet != this.ModelSet)
 						{
 							continue;
 						}
 					}
 					else
 					{
-						if (tItem.WeaponSet != this.ModelSet)
+						if (tItem.ModelSet != this.ModelSet)
 						{
 							continue;
 						}
@@ -250,7 +255,15 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 					return tItem;
 				}
 
-				if (tItem.HasSubModel && tItem.SubModelBase == this.modelBase && tItem.SubModelVariant == this.modelVariant)
+				if (tItem.HasSubModel && tItem.SubModelBase == this.modelBase && tItem.SubModelVariant == this.ModelVariant)
+				{
+					return tItem;
+				}
+			}
+
+			foreach (IItem tItem in Module.Props)
+			{
+				if (tItem.ModelSet == this.ModelSet && tItem.ModelBase == this.ModelBase && tItem.ModelVariant == this.ModelVariant)
 				{
 					return tItem;
 				}

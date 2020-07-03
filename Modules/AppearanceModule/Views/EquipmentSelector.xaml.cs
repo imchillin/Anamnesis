@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix.AppearanceModule.Views
 {
+	using System.Text.RegularExpressions;
+	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.ViewModels;
@@ -15,6 +17,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
 		private readonly ItemSlots slot;
+		private Mode mode;
 
 		public EquipmentSelector(ItemSlots slot)
 		{
@@ -26,6 +29,16 @@ namespace ConceptMatrix.AppearanceModule.Views
 			IGameDataService gameData = Services.Get<IGameDataService>();
 			this.Selector.Items.Add(EquipmentBaseViewModel.NoneItem);
 			this.Selector.Items.Add(EquipmentBaseViewModel.NpcbodyItem);
+
+			// Special case for hands to also list props
+			if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
+			{
+				foreach (IItem prop in Module.Props)
+				{
+					this.Selector.Items.Add(prop);
+				}
+			}
+
 			foreach (IItem item in gameData.Items.All)
 			{
 				this.Selector.Items.Add(item);
@@ -36,6 +49,14 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		public event DrawerEvent Close;
 		public event DrawerEvent SelectionChanged;
+
+		private enum Mode
+		{
+			All,
+			Items,
+			Props,
+			Special,
+		}
 
 		public IItem Value
 		{
@@ -76,6 +97,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 				if (string.IsNullOrEmpty(item.Name))
 					return false;
 
+				if (this.mode == Mode.Items && (obj is Prop || item.Key == 0))
+					return false;
+
+				if (this.mode == Mode.Special && (obj is Prop || item.Key != 0))
+					return false;
+
+				if (this.mode == Mode.Props && !(obj is Prop))
+					return false;
+
 				if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
 				{
 					if (!item.IsWeapon)
@@ -91,13 +121,50 @@ namespace ConceptMatrix.AppearanceModule.Views
 					}
 				}
 
-				if (!SearchUtility.Matches(item.Name, search))
-					return false;
+				bool matches = false;
 
-				return true;
+				matches |= SearchUtility.Matches(item.Name, search);
+				matches |= SearchUtility.Matches(item.ModelSet.ToString(), search);
+				matches |= SearchUtility.Matches(item.ModelBase.ToString(), search);
+				matches |= SearchUtility.Matches(item.ModelVariant.ToString(), search);
+
+				if (item.HasSubModel)
+				{
+					matches |= SearchUtility.Matches(item.SubModelSet.ToString(), search);
+					matches |= SearchUtility.Matches(item.SubModelBase.ToString(), search);
+					matches |= SearchUtility.Matches(item.SubModelVariant.ToString(), search);
+				}
+
+				matches |= SearchUtility.Matches(item.Key.ToString(), search);
+
+				return matches;
 			}
 
 			return false;
+		}
+
+		private void OnAllMode(object sender, RoutedEventArgs e)
+		{
+			this.mode = Mode.All;
+			this.Selector?.FilterItems();
+		}
+
+		private void OnPropsMode(object sender, RoutedEventArgs e)
+		{
+			this.mode = Mode.Props;
+			this.Selector.FilterItems();
+		}
+
+		private void OnItemsMode(object sender, RoutedEventArgs e)
+		{
+			this.mode = Mode.Items;
+			this.Selector.FilterItems();
+		}
+
+		private void OnSpecialMode(object sender, RoutedEventArgs e)
+		{
+			this.mode = Mode.Special;
+			this.Selector.FilterItems();
 		}
 	}
 }
