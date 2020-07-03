@@ -93,6 +93,8 @@ namespace ConceptMatrix.PoseModule.Pages
 				if (groups == PoseFile.Groups.None)
 					return;
 
+				this.SkeletonViewModel.CurrentBone = null;
+
 				if (file is PoseFile poseFile)
 				{
 					await poseFile.Write(this.SkeletonViewModel, groups);
