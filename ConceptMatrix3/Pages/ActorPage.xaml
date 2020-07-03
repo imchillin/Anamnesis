@@ -25,7 +25,7 @@
 				</GroupBox>
 
 				<GroupBox Header="Position">
-					<cm3Controls:VectorEditor Value="{Binding Position}" Minimum="-256" Maximum="256" Expanded="True"/>
+					<cm3Controls:VectorEditor Value="{Binding Position}" Minimum="-512" Maximum="512" Expanded="True"/>
 				</GroupBox>
 			</StackPanel>
 		</Border>
