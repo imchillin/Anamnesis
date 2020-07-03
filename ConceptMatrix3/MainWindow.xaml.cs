@@ -251,9 +251,10 @@ namespace ConceptMatrix.GUI
 			// Carbuncles get model type set to player (but not actor type!)
 			if (selector.Actor.Type == ActorTypes.BattleNpc)
 			{
-				if (selector.Actor.GetValue(Offsets.Main.ModelType) == 409)
+				int modelType = selector.Actor.GetValue(Offsets.Main.ModelType);
+				if (modelType == 409 || modelType == 410 || modelType == 412)
 				{
-					MessageBoxResult result = MessageBox.Show(this, $"The Actor: \"{selector.Actor.Name}\" appears to be a carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+					MessageBoxResult result = MessageBox.Show(this, $"The Actor: \"{selector.Actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
 					if (result == MessageBoxResult.Yes)
 					{
 						selector.Actor.SetValue(Offsets.Main.ModelType, 0);
