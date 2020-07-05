@@ -88,8 +88,19 @@ namespace ConceptMatrix.GUI.Services
 		public Task<TResult> ShowDialog<TView, TResult>(string title)
 			where TView : IDialog<TResult>
 		{
+			UserControl userControl = this.CreateView<TView>();
+
+			if (userControl is TView view)
+				return this.ShowDialog<TView, TResult>(title, view);
+
+			throw new InvalidOperationException();
+		}
+
+		public Task<TResult> ShowDialog<TView, TResult>(string title, TView view)
+			where TView : IDialog<TResult>
+		{
 			Dialog dlg = new Dialog();
-			dlg.ContentArea.Content = this.CreateView<TView>();
+			dlg.ContentArea.Content = view;
 			dlg.TitleText.Text = title;
 			dlg.Owner = App.Current.MainWindow;
 

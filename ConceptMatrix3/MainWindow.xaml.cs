@@ -14,6 +14,7 @@ namespace ConceptMatrix.GUI
 	using System.Windows.Input;
 	using Anamnesis;
 	using ConceptMatrix;
+	using ConceptMatrix.GUI.Dialogs;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
 	using Dragablz;
@@ -239,8 +240,12 @@ namespace ConceptMatrix.GUI
 			// Mannequins get actor type set to player
 			if (selector.Actor.Type == ActorTypes.EventNpc)
 			{
-				MessageBoxResult result = MessageBox.Show(this, $"The Actor: \"{selector.Actor.Name}\" appears to be a mannequin. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
-				if (result == MessageBoxResult.Yes)
+				bool? result = await GenericDialog.Show($"The Actor: \"{selector.Actor.Name}\" appears to be a mannequin. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+
+				if (result == null)
+					return;
+
+				if (result == true)
 				{
 					selector.Actor.SetValue(Offsets.Main.ActorType, ActorTypes.Player);
 					selector.Actor.Type = ActorTypes.Player;
@@ -254,8 +259,12 @@ namespace ConceptMatrix.GUI
 				int modelType = selector.Actor.GetValue(Offsets.Main.ModelType);
 				if (modelType == 409 || modelType == 410 || modelType == 412)
 				{
-					MessageBoxResult result = MessageBox.Show(this, $"The Actor: \"{selector.Actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
-					if (result == MessageBoxResult.Yes)
+					bool? result = await GenericDialog.Show($"The Actor: \"{selector.Actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+
+					if (result == null)
+						return;
+
+					if (result == true)
 					{
 						selector.Actor.SetValue(Offsets.Main.ModelType, 0);
 						await selector.Actor.ActorRefreshAsync();

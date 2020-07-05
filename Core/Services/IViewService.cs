@@ -56,6 +56,17 @@ namespace ConceptMatrix
 		/// <returns>the result.</returns>
 		Task<TResult> ShowDialog<TView, TResult>(string title)
 			where TView : IDialog<TResult>;
+
+		/// <summary>
+		/// Opens a blocking dialog with the given view.
+		/// </summary>
+		/// <typeparam name="TView">the type of view to place within the dialog.</typeparam>
+		/// <typeparam name="TResult">the result the view returns when the dialog is closed.</typeparam>
+		/// <param name="title">the title of the dialog.</param>
+		/// <param name="view">the view to place within the dialog.</param>
+		/// <returns>the result.</returns>
+		Task<TResult> ShowDialog<TView, TResult>(string title, TView view)
+			where TView : IDialog<TResult>;
 	}
 
 	public interface IDrawer
@@ -73,6 +84,5 @@ namespace ConceptMatrix
 		event DialogEvent Close;
 
 		void Cancel();
-		void Confirm();
 	}
 }
