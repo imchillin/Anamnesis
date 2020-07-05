@@ -21,6 +21,8 @@ namespace ConceptMatrix.GUI.Services
 		private Locale fallbackLocale;
 		private Locale currentLocale;
 
+		public event LocalizationEvent LocaleChanged;
+
 		public void Add(string culture, string key, string value)
 		{
 			culture = culture.ToUpperInvariant();
@@ -95,25 +97,50 @@ namespace ConceptMatrix.GUI.Services
 			ISettingsService settingsService = ConceptMatrix.Services.Get<ISettingsService>();
 			MainApplicationSettings mainSettings = await settingsService.Load<MainApplicationSettings>();
 
-			if (this.locales.ContainsKey(mainSettings.Language))
+			this.SetLocale(mainSettings.Language);
+		}
+
+		public void SetLocale(string locale)
+		{
+			locale = locale.ToUpper();
+
+			if (this.locales.ContainsKey(locale))
 			{
-				this.currentLocale = this.locales[mainSettings.Language];
+				this.currentLocale = this.locales[locale];
 			}
 			else
 			{
 				this.currentLocale = this.fallbackLocale;
 			}
+
+			this.LocaleChanged?.Invoke();
+		}
+
+		public Dictionary<string, string> GetAvailableLocales()
+		{
+			Dictionary<string, string> results = new Dictionary<string, string>();
+			foreach (Locale locale in this.locales.Values)
+			{
+				if (results.ContainsKey(locale.Culture))
+					continue;
+
+				results.Add(locale.Culture, locale.Name);
+			}
+
+			return results;
 		}
 
 		private class Locale
 		{
 			public readonly string Culture;
+			public string Name;
 
 			private Dictionary<string, string> values = new Dictionary<string, string>();
 
 			public Locale(string culture)
 			{
 				this.Culture = culture;
+				this.Name = culture;
 			}
 
 			public virtual void Add(string key, string value)
@@ -150,6 +177,7 @@ namespace ConceptMatrix.GUI.Services
 				: base("Gib")
 			{
 				this.baseLocale = baseLocale;
+				this.Name = "Gibberish";
 			}
 
 			public override bool Get(string key, out string value)

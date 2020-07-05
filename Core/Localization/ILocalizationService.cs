@@ -5,8 +5,15 @@ namespace ConceptMatrix.Localization
 {
 	using System.Collections.Generic;
 
+	public delegate void LocalizationEvent();
+
 	public interface ILocalizationService : IService
 	{
+		event LocalizationEvent LocaleChanged;
+
+		void SetLocale(string culture);
+		Dictionary<string, string> GetAvailableLocales();
+
 		string GetString(string key);
 
 		void Add(string culture, string key, string value);

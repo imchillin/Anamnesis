@@ -7,6 +7,7 @@ namespace ConceptMatrix.GUI.Views
 	using System.ComponentModel;
 	using System.Linq;
 	using System.Windows.Controls;
+	using ConceptMatrix.Localization;
 	using MaterialDesignColors;
 	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
@@ -17,6 +18,8 @@ namespace ConceptMatrix.GUI.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class SettingsView : UserControl
 	{
+		private ILocalizationService localization;
+
 		public SettingsView()
 		{
 			this.InitializeComponent();
@@ -42,9 +45,13 @@ namespace ConceptMatrix.GUI.Views
 			this.SizeSelector.ItemsSource = sizes;
 
 			List<LanguageOption> languages = new List<LanguageOption>();
-			languages.Add(new LanguageOption("EN", "English"));
-			languages.Add(new LanguageOption("GIB", "Gibberish"));
-			languages.Add(new LanguageOption("GR", "Greek"));
+
+			this.localization = ConceptMatrix.Services.Get<ILocalizationService>();
+			foreach ((string key, string name) in this.localization.GetAvailableLocales())
+			{
+				languages.Add(new LanguageOption(key, name));
+			}
+
 			this.Languages = languages;
 		}
 
@@ -91,6 +98,7 @@ namespace ConceptMatrix.GUI.Views
 			set
 			{
 				this.Settings.Language = value.Key;
+				this.localization.SetLocale(value.Key);
 			}
 		}
 

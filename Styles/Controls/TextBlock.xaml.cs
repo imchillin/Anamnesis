@@ -20,6 +20,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public TextBlock()
 		{
 			this.Loaded += this.TextBlock_Loaded;
+			Loc.LocaleChanged += this.OnLocaleChanged;
 		}
 
 		public string Key { get; set; }
@@ -31,6 +32,11 @@ namespace ConceptMatrix.WpfStyles.Controls
 		}
 
 		private void TextBlock_Loaded(object sender, RoutedEventArgs e)
+		{
+			this.LoadString();
+		}
+
+		private void OnLocaleChanged()
 		{
 			this.LoadString();
 		}
