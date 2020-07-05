@@ -78,6 +78,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="Languages\gr.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Languages\en.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
