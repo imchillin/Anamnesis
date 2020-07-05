@@ -5,22 +5,22 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule.Pages"
 			 xmlns:controls="clr-namespace:ConceptMatrix.PoseModule.Controls"
-			 xmlns:cm3Controls="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles"
+			 xmlns:cm3="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 
 
 	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="B2V"/>
-		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+		<BooleanToVisibilityConverter x:Key="Pose_B2V"/>
+		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="Pose_!B2V"/>
 	</UserControl.Resources>
 
 	<Grid x:Name="ContentArea">
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,3,3,3">
 			<StackPanel>
 
-				<GroupBox Header="Head" Margin="3, 0, 3, 7">
+				<GroupBox Header="Head" Margin="3, 2, 3, 2">
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -44,16 +44,16 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<TextBlock Grid.Column="0" Grid.Row="0" Text="Head" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_Head" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="1" Grid.Row="0" BoneName="Head"/>
 
-						<TextBlock Grid.Column="2" Grid.Row="0" Text="Ears" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Ears" Style="{DynamicResource Label}"/>
 						<StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="0">
 							<controls:BoneView BoneName="EarLeft" Label="L"/>
 							<controls:BoneView BoneName="EarRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="4" Text="Viera Ears" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Key="Pose_VieraEars" Style="{DynamicResource Label}"/>
 						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}}">
 							<controls:BoneView BoneName="Ear01ALeft" Label="L1"/>
 							<controls:BoneView BoneName="Ear01ARight" Label="L2"/>
@@ -79,66 +79,66 @@
 							<controls:BoneView BoneName="Ear04ARight" Label="R2"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="8" Grid.Row="0" Text="Nose" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="8" Grid.Row="0" Key="Pose_Nose" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="9" Grid.Row="0" BoneName="Nose"/>
 
-						<TextBlock Grid.Column="10" Grid.Row="0" Text="Bridge" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="10" Grid.Row="0" Key="Pose_Bridge" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="11" Grid.Row="0" BoneName="Bridge"/>
 
 
-						<TextBlock Grid.Column="0" Grid.Row="1" Text="Eyes" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Eyes" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="EyeLeft" Label="L"/>
 							<controls:BoneView BoneName="EyeRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="1" Text="Eyebrows" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_Eyebrows" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal">
 							<controls:BoneView BoneName="EyebrowLeft" Label="L"/>
 							<controls:BoneView BoneName="EyebrowRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="4" Grid.Row="1" Text="Brows" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_Brows" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal">
 							<controls:BoneView BoneName="BrowLeft" Label="L"/>
 							<controls:BoneView BoneName="BrowRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="6" Grid.Row="1" Text="Eyelids" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="1" Key="Pose_Eyelids" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="1" Orientation="Horizontal">
 							<controls:BoneView BoneName="EyelidUpperLeft" Label="L"/>
 							<controls:BoneView BoneName="EyelidUpperRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="8" Grid.Row="1" Text="Lower Lids" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="8" Grid.Row="1" Key="Pose_LowerLids" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="9" Grid.Row="1" Orientation="Horizontal">
 							<controls:BoneView BoneName="EyelidLowerLeft" Label="L"/>
 							<controls:BoneView BoneName="EyelidLowerRight" Label="R"/>
 						</StackPanel>
 
 
-						<TextBlock Grid.Column="0" Grid.Row="2" Text="Cheeks" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="2" Key="Pose_Cheeks" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal"  Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}">
 							<controls:BoneView BoneName="CheekLeft" Label="L"/>
 							<controls:BoneView BoneName="CheekRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="2" Text="Jaw" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="2" Key="Pose_Jaw" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="3" Grid.Row="2" BoneName="Jaw"/>
 
-						<TextBlock Grid.Column="4" Grid.Row="2" Text="Mouth" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="2" Key="Pose_Mouth" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="5" Grid.Row="2" Orientation="Horizontal">
 							<controls:BoneView BoneName="LipsLeft" Label="L"/>
 							<controls:BoneView BoneName="LipsRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="6" Grid.Row="2" Text="Upper Lip" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="2" Key="Pose_UpperLip" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="2" Orientation="Horizontal">
 							<controls:BoneView BoneName="LipUpperA" Label="1"/>
 							<controls:BoneView BoneName="LipUpperB" Label="2"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="8" Grid.Row="2" Text="Lower Lip" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="8" Grid.Row="2" Key="Pose_LowerLip" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="9" Grid.Row="2" Orientation="Horizontal">
 							<controls:BoneView BoneName="LipLowerA" Label="1"/>
 							<controls:BoneView BoneName="LipLowerB" Label="2" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
@@ -147,7 +147,7 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Hair and Accessories" Margin="3, 3, 3, 7">
+				<GroupBox Header="Hair and Accessories" Margin="3, 2, 3, 2">
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -167,7 +167,7 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<TextBlock Grid.Column="0" Grid.Row="0" Text="General" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_General" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="HairFrontLeft" Label="L"/>
 							<controls:BoneView BoneName="HairFrontRight" Label="R"/>
@@ -175,7 +175,7 @@
 							<controls:BoneView BoneName="HairB" Label="2"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="0" Text="Unique" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Unique" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ExHair1" Label="1"/>
 							<controls:BoneView BoneName="ExHair2" Label="2"/>
@@ -185,7 +185,7 @@
 							<controls:BoneView BoneName="ExHair6" Label="6"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="4" Grid.Row="0" Text="Earrings" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_Earrings" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="EarringALeft" Label="L1"/>
 							<controls:BoneView BoneName="EarringARight" Label="L2"/>
@@ -193,7 +193,7 @@
 							<controls:BoneView BoneName="EarringBRight" Label="R2"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="6" Grid.Row="0" Text="whiskers" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_Whiskers" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="0" Orientation="Horizontal" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}">
 							<controls:BoneView BoneName="HrothWhiskersLeft" Label="L"/>
 							<controls:BoneView BoneName="HrothWhiskersRight" Label="R"/>
@@ -202,7 +202,7 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Body" Margin="3, 3, 3, 7">
+				<GroupBox Header="Body" Margin="3, 2, 3, 2">
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -226,80 +226,80 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<TextBlock Grid.Column="0" Grid.Row="0" Text="Neck" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_Neck" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="1" Grid.Row="0" BoneName="Neck"/>
 
-						<TextBlock Grid.Column="2" Grid.Row="0" Text="Cervical" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Cervical" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="3" Grid.Row="0" BoneName="SpineC"/>
 
-						<TextBlock Grid.Column="4" Grid.Row="0" Text="Thoracic" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_Thoracic" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="5" Grid.Row="0" BoneName="SpineB"/>
 
-						<TextBlock Grid.Column="6" Grid.Row="0" Text="Lumbar" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_Lumbar" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="7" Grid.Row="0" BoneName="SpineA"/>
 
-						<TextBlock Grid.Column="0" Grid.Row="1" Text="Scabbards" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Scabbards" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ScabbardLeft" Label="L"/>
 							<controls:BoneView BoneName="ScabbardRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="1" Text="Clavicles" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_Clavicles" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ClavicleLeft" Label="L"/>
 							<controls:BoneView BoneName="ClavicleRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="4" Grid.Row="1" Text="Breasts" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_Breasts" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="BreastLeft" Label="L"/>
 							<controls:BoneView BoneName="BreastRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="6" Grid.Row="1" Text="Pauldrons" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="1" Key="Pose_Pauldrons" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="PauldronLeft" Label="L"/>
 							<controls:BoneView BoneName="PauldronRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="8" Grid.Row="1" Text="Shields" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="8" Grid.Row="1" Key="Pose_Shields" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="9" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ShieldLeft" Label="L"/>
 							<controls:BoneView BoneName="ShieldRight" Label="R"/>
 						</StackPanel>
 
 
-						<TextBlock Grid.Column="0" Grid.Row="2" Text="Shoulders" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="2" Key="Pose_Shoulders" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ShoulderLeft" Label="L"/>
 							<controls:BoneView BoneName="ShoulderRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="2" Text="Arms" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="2" Key="Pose_Arms" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="2" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ArmLeft" Label="L"/>
 							<controls:BoneView BoneName="ArmRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="4" Grid.Row="2" Text="Couters" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="2" Key="Pose_Couters" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="5" Grid.Row="2" Orientation="Horizontal" >
 							<controls:BoneView BoneName="CouterLeft" Label="L"/>
 							<controls:BoneView BoneName="CouterRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="6" Grid.Row="2" Text="Elbows" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="2" Key="Pose_Elbows" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="2" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ElbowLeft" Label="L"/>
 							<controls:BoneView BoneName="ElbowRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="8" Grid.Row="2" Text="Forearms" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="8" Grid.Row="2" Key="Pose_Forearms" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="9" Grid.Row="2" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ForearmLeft" Label="L"/>
 							<controls:BoneView BoneName="ForearmRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="10" Grid.Row="2" Text="Wrists" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="10" Grid.Row="2" Key="Pose_Wrists" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="11" Grid.Row="2" Orientation="Horizontal" >
 							<controls:BoneView BoneName="WristLeft" Label="L"/>
 							<controls:BoneView BoneName="WristRight" Label="R"/>
@@ -308,7 +308,7 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Hands" Margin="3, 3, 3, 7">
+				<GroupBox Header="Hands" Margin="3, 2, 3, 2">
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -329,19 +329,19 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<TextBlock Grid.Column="0" Grid.Row="0" Text="Hands" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_Hands" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="HandLeft" Label="L"/>
 							<controls:BoneView BoneName="HandRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" Text="Weapons" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" Key="Pose_Weapons" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="WeaponLeft" Label="L"/>
 							<controls:BoneView BoneName="WeaponRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="0" Grid.Row="1" Text="Thumb" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Thumb" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ThumbALeft" Label="L1"/>
 							<controls:BoneView BoneName="ThumbBLeft" Label="L2"/>
@@ -349,7 +349,7 @@
 							<controls:BoneView BoneName="ThumbBRight" Label="R2"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="1" Text="Index" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_Index" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="IndexALeft" Label="L1"/>
 							<controls:BoneView BoneName="IndexBLeft" Label="L2"/>
@@ -357,7 +357,7 @@
 							<controls:BoneView BoneName="IndexBRight" Label="R2"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="4" Grid.Row="1" Text="Middle" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_Middle" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="MiddleALeft" Label="L1"/>
 							<controls:BoneView BoneName="MiddleBLeft" Label="L2"/>
@@ -365,7 +365,7 @@
 							<controls:BoneView BoneName="MiddleBRight" Label="R2"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="6" Grid.Row="1" Text="Ring" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="1" Key="Pose_Ring" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="RingALeft" Label="L1"/>
 							<controls:BoneView BoneName="RingBLeft" Label="L2"/>
@@ -373,7 +373,7 @@
 							<controls:BoneView BoneName="RingBRight" Label="R2"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="8" Grid.Row="1" Text="Pinky" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="8" Grid.Row="1" Key="Pose_Pinky" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="9" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="PinkyALeft" Label="L1"/>
 							<controls:BoneView BoneName="PinkyBLeft" Label="L2"/>
@@ -384,7 +384,7 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Legs" Margin="3, 3, 3, 7">
+				<GroupBox Header="Legs" Margin="3, 2, 3, 2">
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -407,43 +407,43 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<TextBlock Grid.Column="0" Grid.Row="0" Text="Legs" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_Legs" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="LegLeft" Label="L"/>
 							<controls:BoneView BoneName="LegRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="0" Text="Poleyns" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Poleyns" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="PoleynLeft" Label="L"/>
 							<controls:BoneView BoneName="PoleynRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="4" Grid.Row="0" Text="Knees" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_Knees" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="KneeLeft" Label="L"/>
 							<controls:BoneView BoneName="KneeRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="6" Grid.Row="0" Text="Calves" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_Calves" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="CalfLeft" Label="L"/>
 							<controls:BoneView BoneName="CalfRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="8" Grid.Row="0" Text="Feet" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="8" Grid.Row="0" Key="Pose_Feet" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="9" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="FootLeft" Label="L"/>
 							<controls:BoneView BoneName="FootRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="10" Grid.Row="0" Text="Toes" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="10" Grid.Row="0" Key="Pose_Toes" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="11" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ToesLeft" Label="L"/>
 							<controls:BoneView BoneName="ToesRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="0" Grid.Row="1" Text="Tail" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Tail" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Visibility="{Binding HasTail, Converter={StaticResource B2V}}">
 							<controls:BoneView BoneName="TailA" Label="1"/>
 							<controls:BoneView BoneName="TailB" Label="2"/>
@@ -452,25 +452,25 @@
 							<!--<controls:BoneView BoneName="TailE" Label="5"/>-->
 						</StackPanel>
 
-						<TextBlock Grid.Column="4" Grid.Row="1" Text="Sheathes" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_Sheathes" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="SheatheLeft" Label="L"/>
 							<controls:BoneView BoneName="SheatheRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="6" Grid.Row="1" Text="Holsters" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="1" Key="Pose_Holsters" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="7" Grid.Row="1" Orientation="Horizontal" >
 							<controls:BoneView BoneName="HolsterLeft" Label="L"/>
 							<controls:BoneView BoneName="HolsterRight" Label="R"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="8" Grid.Row="1" Text="Waist" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="8" Grid.Row="1" Key="Pose_Waist" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="9" Grid.Row="1" BoneName="Waist"/>
 
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Clothes" Margin="3, 3, 3, 6">
+				<GroupBox Header="Clothes" Margin="3, 2, 3, 2">
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -488,7 +488,7 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<TextBlock Grid.Column="0" Grid.Row="0" Text="Front" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_ClothesFront" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ClothFrontALeft" Label="L1"/>
 							<controls:BoneView BoneName="ClothFrontBLeft" Label="L2"/>
@@ -498,7 +498,7 @@
 							<controls:BoneView BoneName="ClothFrontCRight" Label="R3"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="0" Text="Back" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_ClothesBack" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ClothBackALeft" Label="L1"/>
 							<controls:BoneView BoneName="ClothBackBLeft" Label="L2"/>
@@ -508,7 +508,7 @@
 							<controls:BoneView BoneName="ClothBackCRight" Label="R3"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="4" Grid.Row="0" Text="Sides" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_ClothesSides" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ClothSideALeft" Label="L1"/>
 							<controls:BoneView BoneName="ClothSideBLeft" Label="L2"/>
@@ -521,7 +521,7 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Equipment" Margin="3, 3, 3, 6">
+				<GroupBox Header="Equipment" Margin="3, 2, 3, 2">
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -531,7 +531,7 @@
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
-						<TextBlock Grid.Column="0" Grid.Row="0" Text="Helm" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_EqHelm" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ExMet1" Label="1"/>
 							<controls:BoneView BoneName="ExMet2" Label="2"/>
@@ -553,7 +553,7 @@
 							<controls:BoneView BoneName="ExMet18" Label="18"/>
 						</StackPanel>
 
-						<TextBlock Grid.Column="2" Grid.Row="0" Text="Top" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_EqTop" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="ExTop1" Label="1"/>
 							<controls:BoneView BoneName="ExTop2" Label="2"/>
@@ -569,7 +569,7 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Other" Margin="3, 3, 3, 0">
+				<GroupBox Header="Other" Margin="3, 2, 3, 2">
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -593,19 +593,19 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<TextBlock Grid.Column="0" Grid.Row="0" Text="Head" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_OtherHead" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="1" Grid.Row="0" BoneName="Head"/>
 
-						<TextBlock Grid.Column="2" Grid.Row="0" Text="Abdomen" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_OtherAbdomen" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="3" Grid.Row="0" BoneName="Abdomen"/>
 
-						<TextBlock Grid.Column="4" Grid.Row="0" Text="Throw" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_OtherThrow" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="5" Grid.Row="0" BoneName="Throw"/>
 
-						<TextBlock Grid.Column="6" Grid.Row="0" Text="Unknown" Style="{DynamicResource Label}"/>
+						<cm3:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_OtherUnknown" Style="{DynamicResource Label}"/>
 						<controls:BoneView Grid.Column="7" Grid.Row="0" BoneName="Unknown00"/>
 
-						<!--<TextBlock Grid.Column="10" Grid.Row="0" Text="Weapon" Style="{DynamicResource Label}"/>
+						<!--<cm3:TextBlock Grid.Column="10" Grid.Row="0" Key="Pose_Weapon" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="11" Grid.Row="0" Orientation="Horizontal" >
 							<controls:BoneView BoneName="Weapon01" Label="1"/>
 							<controls:BoneView BoneName="Weapon02" Label="2"/>
