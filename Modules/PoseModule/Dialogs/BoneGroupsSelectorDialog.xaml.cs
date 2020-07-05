@@ -112,6 +112,16 @@ namespace ConceptMatrix.PoseModule.Dialogs
 			this.Close?.Invoke();
 		}
 
+		private void OnAllClick(object sender, RoutedEventArgs e)
+		{
+			this.Result = PoseFile.Groups.All;
+		}
+
+		private void OnNoneClick(object sender, RoutedEventArgs e)
+		{
+			this.Result = PoseFile.Groups.None;
+		}
+
 		private void OnOKClick(object sender, RoutedEventArgs e)
 		{
 			this.Confirm();

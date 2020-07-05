@@ -10,6 +10,7 @@
 			<RowDefinition Height="48"/>
 			<RowDefinition/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 		<TextBlock Text="Include these pose elements:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -35,11 +36,16 @@
 			</StackPanel>
 		</StackPanel>
 
-		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="LEft" >
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="6, 0, 6, 6">
+			<Button Grid.Column="1" Margin="3" Content="All" MinWidth="75" Click="OnAllClick" Style="{StaticResource TransparentButton}"/>
+			<Button Grid.Column="1" Margin="3" Content="None" MinWidth="75" Click="OnNoneClick" Style="{StaticResource TransparentButton}"/>
+		</StackPanel>
+
+		<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="LEft" >
 			<Button Grid.Column="1" Margin="3" Content="Cancel" MinWidth="75" Click="OnCancelClick"/>
 		</StackPanel>
 		
-		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" >
+		<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" >
 			<Button Grid.Column="1" Margin="3" Content="OK" MinWidth="75" Click="OnOKClick"/>
 		</StackPanel>
 	</Grid>

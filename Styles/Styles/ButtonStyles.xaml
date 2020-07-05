@@ -8,11 +8,13 @@
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueMidBrush}"/>
 		<Setter Property="BorderThickness" Value="0"/>
-		<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-		<Setter Property="VerticalContentAlignment" Value="Stretch"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
 		<Setter Property="md:RippleAssist.Feedback" Value="{DynamicResource MaterialDesignBody}" />
 		<Setter Property="Margin" Value="1" />
 		<Setter Property="Padding" Value="0"/>
+		<Setter Property="MinWidth" Value="20"/>
+		<Setter Property="MinHeight" Value="20"/>
 		<Setter Property="SnapsToDevicePixels" Value="True"/>
 
 		<Setter Property="Template">
