@@ -98,6 +98,17 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.actor.ActorRetargetBegin += this.OnActorRetargetBegin;
 			this.actor.ActorRetargetComplete += this.OnActorRetargetComplete;
 			this.OnActorRetargetComplete(this.actor);
+
+			this.PropertyChanged += this.OnPropertyChanged;
+		}
+
+		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(this.LipTint))
+			{
+				this.lipTintMem.Value = this.LipTint.Color;
+				this.lipGlossMem.Value = this.LipTint.A;
+			}
 		}
 
 		private void OnActorRetargetBegin(Actor actor)
