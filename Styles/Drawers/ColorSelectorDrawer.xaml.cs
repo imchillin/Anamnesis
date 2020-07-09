@@ -38,6 +38,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
+			this.List.Items.Add(new ColorOption(Colors.Transparent, "Transparent"));
 			this.List.Items.Add(new ColorOption(Colors.White, "White"));
 			this.List.Items.Add(new ColorOption(Colors.Black, "Black"));
 
@@ -198,7 +199,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 
 			public Color4 AsColor()
 			{
-				return new Color4(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f, this.Color.A);
+				return new Color4(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f, this.Color.A / 255.0f);
 			}
 		}
 	}
