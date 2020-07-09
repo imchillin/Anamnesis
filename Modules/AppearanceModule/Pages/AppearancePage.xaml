@@ -57,7 +57,7 @@
 					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
 						<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
 						<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Adv. Load..." Margin="3" Click="OnAdvLoadClicked"/>
-						<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Adv. Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
+						<cm3Controls:IconButton Grid.Column="1" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
 					</StackPanel>
 
 					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
