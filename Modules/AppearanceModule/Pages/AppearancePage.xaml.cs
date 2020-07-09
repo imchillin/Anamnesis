@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule.Pages
 {
+	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Windows;
@@ -10,6 +11,9 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	using Anamnesis;
 	using ConceptMatrix.AppearanceModule.Dialogs;
 	using ConceptMatrix.AppearanceModule.Files;
+	using ConceptMatrix.AppearanceModule.Views;
+	using ConceptMatrix.GameData;
+	using ConceptMatrix.WpfStyles.Drawers;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
@@ -51,6 +55,17 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		private async void OnAdvLoadClicked(object sender, RoutedEventArgs e)
 		{
 			await this.Load(true);
+		}
+
+		private void OnLoadNpcClicked(object sender, RoutedEventArgs e)
+		{
+			SelectorDrawer.Show<NpcSelector, INpcResident>("Select NPC", null, (v) => { this.ApplyNpc(v.Appearance); });
+		}
+
+		private async void ApplyNpc(INpcBase npc)
+		{
+			AppearanceFile apFile = npc.ToFile();
+			await apFile.Apply(this.actor, AppearanceFile.SaveModes.All);
 		}
 
 		private async Task Load(bool advanced)

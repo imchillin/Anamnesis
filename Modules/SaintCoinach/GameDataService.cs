@@ -20,6 +20,8 @@ namespace ConceptMatrix.SaintCoinachModule
 
 	public class GameDataService : IGameDataService, IProgress<UpdateProgress>
 	{
+		public static GameDataService Instance;
+
 		public IData<IRace> Races
 		{
 			get;
@@ -104,6 +106,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 		public async Task Start()
 		{
+			Instance = this;
 			IInjectionService injection = Services.Get<IInjectionService>();
 
 			string directory = injection.GamePath;

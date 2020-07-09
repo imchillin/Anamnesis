@@ -21,7 +21,7 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Maximum="192" Margin="3,0,3,6" Buttons="True"/>
+		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,0,3,6" Buttons="True"/>
 
 		<ListBox Grid.Row="1" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedIndex="{Binding Selected}">
 			<ListBox.ItemsPanel>

@@ -12,11 +12,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 	/// </summary>
 	public partial class HairSelectorDrawer : UserControl, IDrawer
 	{
+		private byte selected;
+
 		public HairSelectorDrawer(Appearance.Genders gender, Appearance.Tribes tribe, byte value)
 		{
 			this.InitializeComponent();
 
 			this.ContentArea.DataContext = this;
+
+			this.selected = value;
 
 			IGameDataService gameData = Services.Get<IGameDataService>();
 
@@ -29,16 +33,17 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public event DrawerEvent Close;
 		public event SelectorEvent SelectionChanged;
 
-		public ICharaMakeCustomize SelectedItem { get; set; }
-
 		public byte Selected
 		{
 			get
 			{
-				if (this.SelectedItem == null)
-					return 0;
+				return this.selected;
+			}
 
-				return this.SelectedItem.FeatureId;
+			set
+			{
+				this.selected = value;
+				this.SelectionChanged?.Invoke(this.selected);
 			}
 		}
 
@@ -47,10 +52,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (e.AddedItems.Count <= 0)
 				return;
 
-			if (this.SelectedItem == null)
-				return;
-
-			this.SelectionChanged?.Invoke(this.Selected);
+			ICharaMakeCustomize hair = this.List.SelectedItem as ICharaMakeCustomize;
+			this.Selected = hair.FeatureId;
 		}
 	}
 }

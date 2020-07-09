@@ -9,7 +9,7 @@
 		<OutputPath>bin\</OutputPath>
 		<DocumentationFile>bin\ConceptMatrix.SaintCoinach</DocumentationFile>
 		<WarningsAsErrors />
-		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;</NoWarn>
+		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;IDE0025;</NoWarn>
 		
 	</PropertyGroup>
 

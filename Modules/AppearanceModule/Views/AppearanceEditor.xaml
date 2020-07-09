@@ -148,7 +148,7 @@
 					</Grid.ColumnDefinitions>
 
 
-					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked" BorderBrush="Transparent">
+					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked">
 						<Border Width="32" Height="32">
 							<Image Source="{Binding Hair.Icon, Converter={StaticResource IImageConverter}}" Visibility="{Binding Hair, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 						</Border>
