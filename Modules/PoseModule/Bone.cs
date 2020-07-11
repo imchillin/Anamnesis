@@ -189,7 +189,7 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
-		public void WriteTransform(ModelVisual3D root)
+		public void WriteTransform(ModelVisual3D root, bool writeChildren = true)
 		{
 			if (!this.IsEnabled)
 				return;
@@ -229,11 +229,14 @@ namespace ConceptMatrix.PoseModule
 			live.Rotation = rotation.ToCmQuaternion();
 			this.LiveTransform = live;
 
-			foreach (Visual3D child in this.Children)
+			if (writeChildren)
 			{
-				if (child is Bone childBone)
+				foreach (Visual3D child in this.Children)
 				{
-					childBone.WriteTransform(root);
+					if (child is Bone childBone)
+					{
+						childBone.WriteTransform(root);
+					}
 				}
 			}
 		}

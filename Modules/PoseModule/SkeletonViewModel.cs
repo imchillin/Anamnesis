@@ -213,13 +213,7 @@ namespace ConceptMatrix.PoseModule
 			{
 				this.CanPose = !this.animatingMem.Value;
 
-				Stopwatch sw = new Stopwatch();
-				sw.Start();
-
 				await this.GenerateBones(actor);
-
-				sw.Stop();
-				Log.Write("took " + sw.ElapsedMilliseconds + "ms to generate bones");
 			});
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Bones)));
@@ -247,7 +241,7 @@ namespace ConceptMatrix.PoseModule
 
 			foreach (Bone bone in this.bones.Values)
 			{
-				bone.WriteTransform(this.Root);
+				bone.WriteTransform(this.Root, false);
 			}
 		}
 
