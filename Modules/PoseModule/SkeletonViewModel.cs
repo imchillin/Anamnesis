@@ -227,8 +227,6 @@ namespace ConceptMatrix.PoseModule
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsVieraEars04)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Race)));
 
-			await Application.Current.Dispatcher.InvokeAsync(this.RefreshBones);
-
 			this.RootRotationMem_ValueChanged(null, null);
 		}
 
