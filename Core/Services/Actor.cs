@@ -44,6 +44,19 @@ namespace ConceptMatrix
 			}
 		}
 
+		public static bool operator ==(Actor lhs, Actor rhs)
+		{
+			if (object.ReferenceEquals(lhs, null))
+				return object.ReferenceEquals(rhs, null);
+
+			return lhs.Equals(rhs);
+		}
+
+		public static bool operator !=(Actor lhs, Actor rhs)
+		{
+			return !(lhs == rhs);
+		}
+
 		public IMemory<T> GetMemory<T>(IMemoryOffset<T> offset)
 		{
 			IMemory<T> mem = injection.GetMemory<T>(this.baseOffset, offset);
@@ -127,6 +140,16 @@ namespace ConceptMatrix
 					mem.Dispose();
 				}
 			}
+		}
+
+		public override bool Equals(object? obj)
+		{
+			return obj is Actor actor && this.baseOffset.Equals(actor.baseOffset);
+		}
+
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(this.baseOffset);
 		}
 	}
 }
