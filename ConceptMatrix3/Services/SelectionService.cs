@@ -5,6 +5,7 @@ namespace ConceptMatrix.GUI.Services
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Documents;
@@ -51,6 +52,19 @@ namespace ConceptMatrix.GUI.Services
 			Task.Run(this.Watch);
 
 			return Task.CompletedTask;
+		}
+
+		public void SelectDefault()
+		{
+			Dictionary<string, Actor> selectable = this.GetSelectableActors();
+
+			if (selectable.Count > 0)
+			{
+				Actor actor = selectable.First().Value;
+
+				this.actors.Add(actor);
+				this.ActorSelected?.Invoke(actor, false);
+			}
 		}
 
 		public async Task SelectActor(Actor actor)

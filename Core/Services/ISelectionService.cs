@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix
 {
+	using System.Threading.Tasks;
+
 	public delegate void SelectionModeEvent(Modes mode);
 	public delegate void SelectionEvent(Actor actor, bool focus);
 
@@ -11,6 +13,8 @@ namespace ConceptMatrix
 		event SelectionModeEvent ModeChanged;
 		event SelectionEvent ActorSelected;
 		Modes GetMode();
+
+		void SelectDefault();
 	}
 
 	#pragma warning disable SA1201

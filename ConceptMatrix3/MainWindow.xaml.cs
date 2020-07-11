@@ -43,6 +43,8 @@ namespace ConceptMatrix.GUI
 			App.Settings.Changed += this.OnSettingsChanged;
 
 			this.Tabs.DataContext = this;
+
+			selection.SelectDefault();
 		}
 
 		public bool Zodiark
