@@ -5,14 +5,16 @@ namespace ConceptMatrix.GUI.Services
 {
 	using System;
 	using System.IO;
+	using System.Runtime.CompilerServices;
 	using System.Text;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
-	using ConceptMatrix.GUI.Serialization;
 	using Microsoft.Win32;
 
 	public class FileService : IFileService
 	{
+		private static ISerializerService serializer;
+
 		public static string StoreDirectory
 		{
 			get
@@ -25,6 +27,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Initialize()
 		{
+			serializer = Services.Get<ISerializerService>();
 			return Task.CompletedTask;
 		}
 
@@ -150,7 +153,7 @@ namespace ConceptMatrix.GUI.Services
 				else
 				{
 					using TextWriter writer = new StreamWriter(stream);
-					string json = Serializer.Serialize(file);
+					string json = serializer.Serialize(file);
 					writer.Write(json);
 				}
 			}
@@ -208,7 +211,7 @@ namespace ConceptMatrix.GUI.Services
 				{
 					using TextReader reader = new StreamReader(stream);
 					string json = reader.ReadToEnd();
-					file = (FileBase)Serializer.Deserialize(json, type.Type);
+					file = (FileBase)serializer.Deserialize(json, type.Type);
 				}
 			}
 

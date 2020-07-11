@@ -10,13 +10,13 @@ namespace ConceptMatrix.GUI.Services
 	using System.IO;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
-	using ConceptMatrix.GUI.Serialization;
 
 	public class SettingsService : ISettingsService
 	{
 		public const string SettingsDirectory = "Settings/";
 
 		private readonly Dictionary<SettingsBase, SaveJob> jobs = new Dictionary<SettingsBase, SaveJob>();
+		private ISerializerService serializer;
 
 		public event SettingsEvent SettingsSaved;
 
@@ -32,6 +32,8 @@ namespace ConceptMatrix.GUI.Services
 
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
+
+			this.serializer = Services.Get<ISerializerService>();
 
 			return Task.CompletedTask;
 		}
@@ -50,7 +52,7 @@ namespace ConceptMatrix.GUI.Services
 			else
 			{
 				string json = File.ReadAllText(path);
-				settings = Serializer.Deserialize<T>(json);
+				settings = this.serializer.Deserialize<T>(json);
 			}
 
 			if (!this.jobs.ContainsKey(settings))
@@ -70,7 +72,7 @@ namespace ConceptMatrix.GUI.Services
 		public void SaveImmediate(SettingsBase settings)
 		{
 			string path = FileService.StoreDirectory + SettingsDirectory + settings.GetType().Name + ".json";
-			string json = Serializer.Serialize(settings);
+			string json = this.serializer.Serialize(settings);
 			File.WriteAllText(path, json);
 			this.SettingsSaved?.Invoke(settings);
 		}

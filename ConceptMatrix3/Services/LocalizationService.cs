@@ -9,7 +9,6 @@ namespace ConceptMatrix.GUI.Services
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using ConceptMatrix.GUI.Serialization;
 	using ConceptMatrix.Localization;
 
 	public class LocalizationService : ILocalizationService
@@ -47,12 +46,14 @@ namespace ConceptMatrix.GUI.Services
 		{
 			string[] paths = Directory.GetFiles(searchPath);
 
+			ISerializerService serializer = ConceptMatrix.Services.Get<ISerializerService>();
+
 			foreach (string path in paths)
 			{
 				string culture = Path.GetFileNameWithoutExtension(path);
 
 				string json = File.ReadAllText(path);
-				Dictionary<string, string> values = Serializer.Deserialize<Dictionary<string, string>>(json);
+				Dictionary<string, string> values = serializer.Deserialize<Dictionary<string, string>>(json);
 				this.Add(culture, values);
 			}
 		}

@@ -29,10 +29,12 @@ namespace ConceptMatrix.AppearanceModule
 
 		public Task Start()
 		{
+			ISerializerService serializer = Services.Get<ISerializerService>();
+
 			try
 			{
 				string json = File.ReadAllText("Modules/Appearance/ModelTypes.json");
-				List<ModelTypes> modelTypes = JsonSerializer.Deserialize<List<ModelTypes>>(json);
+				List<ModelTypes> modelTypes = serializer.Deserialize<List<ModelTypes>>(json);
 				ModelTypes = modelTypes.AsReadOnly();
 			}
 			catch (Exception ex)
@@ -43,7 +45,7 @@ namespace ConceptMatrix.AppearanceModule
 			try
 			{
 				string json = File.ReadAllText("Modules/Appearance/Props.json");
-				List<Prop> propList = JsonSerializer.Deserialize<List<Prop>>(json);
+				List<Prop> propList = serializer.Deserialize<List<Prop>>(json);
 
 				propList.Sort((a, b) =>
 				{

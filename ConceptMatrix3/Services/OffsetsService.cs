@@ -10,20 +10,22 @@ namespace ConceptMatrix.GUI.Services
 	using System.Text;
 	using System.Threading.Tasks;
 	using Anamnesis.Offsets;
-	using ConceptMatrix.GUI.Serialization;
+
 	using static ConceptMatrix.Offsets;
 
 	public class OffsetsService : IService
 	{
 		public Task Initialize()
 		{
+			ISerializerService serializer = ConceptMatrix.Services.Get<ISerializerService>();
+
 			MainOffsetFile file = Offsets.Main;
-			string json = Serializer.Serialize(file);
+			string json = serializer.Serialize(file);
 
 			File.WriteAllText("MainOffsets.json", json);
 
 			json = File.ReadAllText("MainOffsets.json");
-			file = Serializer.Deserialize<MainOffsetFile>(json);
+			file = serializer.Deserialize<MainOffsetFile>(json);
 
 			// Set the names of all the offsets for debugging.
 			PropertyInfo[] properties = file.GetType().GetProperties();
