@@ -6,6 +6,7 @@ namespace ConceptMatrix.PoseModule
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Diagnostics;
 	using System.Reflection;
 	using System.Threading;
 	using System.Threading.Tasks;
@@ -42,6 +43,7 @@ namespace ConceptMatrix.PoseModule
 
 			PoseService poseService = Services.Get<PoseService>();
 			poseService.EnabledChanged += this.OnPoseServiceEnabledChanged;
+			poseService.FreezePhysicsChanged += this.OnPoseServiceFreezePhysicsChanged;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -210,7 +212,14 @@ namespace ConceptMatrix.PoseModule
 			await Application.Current.Dispatcher.InvokeAsync(async () =>
 			{
 				this.CanPose = !this.animatingMem.Value;
+
+				Stopwatch sw = new Stopwatch();
+				sw.Start();
+
 				await this.GenerateBones(actor);
+
+				sw.Stop();
+				Log.Write("took " + sw.ElapsedMilliseconds + "ms to generate bones");
 			});
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Bones)));
@@ -234,39 +243,6 @@ namespace ConceptMatrix.PoseModule
 			foreach (Bone bone in this.bones.Values)
 			{
 				bone.ReadTransform();
-			}
-
-			// Since we overwrite teh games skeleton view, we need to set the customization scaling.
-			// we should move this somewhere else if we add support for non player actors.
-			Appearance appearance = this.actor.GetValue(Offsets.Main.ActorAppearance);
-
-			if (this.bones.ContainsKey("BreastLeft") && this.bones.ContainsKey("BreastRight"))
-			{
-				float bustScale = ((appearance.Bust - 50) / 50) * 0.15f;
-				this.bones["BreastLeft"].Scale += new CmVector(bustScale, bustScale, bustScale);
-				this.bones["BreastRight"].Scale += new CmVector(bustScale, bustScale, bustScale);
-			}
-
-			if (appearance.Race == Appearance.Races.Viera)
-			{
-				float earScale = ((100 - appearance.EarMuscleTailSize) / 100.0f) * 0.2f;
-				CmVector earScaleV = new CmVector(earScale, earScale, earScale);
-				this.bones["Ear01ALeft"].Scale -= earScaleV;
-				this.bones["Ear01ARight"].Scale -= earScaleV;
-				this.bones["Ear02ALeft"].Scale -= earScaleV;
-				this.bones["Ear02ARight"].Scale -= earScaleV;
-				this.bones["Ear03ALeft"].Scale -= earScaleV;
-				this.bones["Ear03ARight"].Scale -= earScaleV;
-				this.bones["Ear04ALeft"].Scale -= earScaleV;
-				this.bones["Ear04ARight"].Scale -= earScaleV;
-			}
-
-			if (appearance.Race == Appearance.Races.Miqote)
-			{
-				float tailScale = ((100 - appearance.EarMuscleTailSize) / 100.0f) * 0.15f;
-				CmVector tailScaleV = new CmVector(tailScale, tailScale, tailScale);
-				this.bones["TailA"].Scale -= tailScaleV;
-				this.bones["TailB"].Scale -= tailScaleV;
 			}
 
 			foreach (Bone bone in this.bones.Values)
@@ -369,6 +345,9 @@ namespace ConceptMatrix.PoseModule
 
 				if (name.StartsWith("ExHair"))
 				{
+					if (exHairCount <= 0)
+						continue;
+
 					byte num = byte.Parse(name.Replace("ExHair", string.Empty));
 					if (num >= exHairCount)
 					{
@@ -377,6 +356,9 @@ namespace ConceptMatrix.PoseModule
 				}
 				else if (name.StartsWith("ExMet"))
 				{
+					if (exMetCount <= 0)
+						continue;
+
 					byte num = byte.Parse(name.Replace("ExMet", string.Empty));
 					if (num >= exMetCount)
 					{
@@ -385,8 +367,25 @@ namespace ConceptMatrix.PoseModule
 				}
 				else if (name.StartsWith("ExTop"))
 				{
+					if (exTopCount <= 0)
+						continue;
+
 					byte num = byte.Parse(name.Replace("ExTop", string.Empty));
 					if (num >= exTopCount)
+					{
+						continue;
+					}
+				}
+				else if (name == "ExRootMet")
+				{
+					if (exMetCount <= 0)
+					{
+						continue;
+					}
+				}
+				else if (name == "ExRootTop")
+				{
+					if (exTopCount <= 0)
 					{
 						continue;
 					}
@@ -495,6 +494,15 @@ namespace ConceptMatrix.PoseModule
 
 		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnPoseServiceEnabledChanged(bool value)
+		{
+			if (value)
+			{
+				this.RefreshBones();
+			}
+		}
+
+		[PropertyChanged.SuppressPropertyChangedWarnings]
+		private void OnPoseServiceFreezePhysicsChanged(bool value)
 		{
 			if (value)
 			{

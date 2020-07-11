@@ -34,7 +34,7 @@ namespace ConceptMatrix.PoseModule
 		}
 
 		public bool IncludePositions { get; set; } = true;
-		public bool IncludeScale { get; set; } = true;
+		public bool IncludeScale { get; set; } = false;
 		public Dictionary<string, Transform> Bones { get; set; } = new Dictionary<string, Transform>();
 
 		public override FileType GetFileType()

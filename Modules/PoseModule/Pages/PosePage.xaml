@@ -81,14 +81,17 @@
 					<Label Content="Enable" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
 					<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>
 
-					<!--<Label Content="Freeze Physics" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
-					<ToggleButton IsChecked="{Binding FreezePhysics}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>-->
+					<Label Content="Freeze Physics" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
+					<ToggleButton IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
+
+					<!--<Label Content="Freeze Scale" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
+					<ToggleButton IsChecked="{Binding PoseService.FreezeScale}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>-->
 
 					<Label Content="Flip Sides" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
-					<ToggleButton IsChecked="{Binding FlipSides}" Margin="6, 8, 6, 6"/>
+					<ToggleButton IsChecked="{Binding FlipSides}" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
 
 					<Label Content="Parenting" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
-					<ToggleButton IsChecked="{Binding ParentingEnabled}" Margin="6, 8, 6, 6"/>
+					<ToggleButton IsChecked="{Binding ParentingEnabled}" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
 
 				</StackPanel>
 			</Grid>
@@ -96,7 +99,15 @@
 
 		<!-- Content -->
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
-			<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}" IsEnabled="{Binding PoseService.IsEnabled}">
+			<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
+
+				<Grid.IsEnabled>
+					<MultiBinding Converter="{StaticResource MultiBoolAnd}">
+						<Binding Path="PoseService.IsEnabled" Mode="OneWay"/>
+						<Binding Path="PoseService.FreezePhysics" Mode="OneWay"/>
+					</MultiBinding>
+				</Grid.IsEnabled>
+				
 				<Grid DataContext="{Binding SkeletonViewModel}">
 					<StackPanel Height="35" Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 						<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>

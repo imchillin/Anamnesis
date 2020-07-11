@@ -20,6 +20,7 @@ namespace ConceptMatrix.PoseModule.Pages
 			this.PoseService = Services.Get<PoseService>();
 			this.PoseService.EnabledChanged += this.OnEnabledChanged;
 			this.PoseService.AvailableChanged += this.OnAvailableChanged;
+			this.PoseService.FreezePhysicsChanged += this.OnFreezePhysicsChanged;
 
 			this.InitializeComponent();
 
@@ -60,6 +61,15 @@ namespace ConceptMatrix.PoseModule.Pages
 
 		[SuppressPropertyChangedWarnings]
 		private void OnEnabledChanged(bool value)
+		{
+			if (this.SkeletonViewModel != null)
+			{
+				this.SkeletonViewModel.CurrentBone = null;
+			}
+		}
+
+		[SuppressPropertyChangedWarnings]
+		private void OnFreezePhysicsChanged(bool value)
 		{
 			if (this.SkeletonViewModel != null)
 			{

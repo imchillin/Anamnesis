@@ -17,6 +17,8 @@ namespace ConceptMatrix.PoseModule.Controls
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
+
+			this.PoseService = Services.Get<PoseService>();
 		}
 
 		public Bone Value
@@ -24,5 +26,7 @@ namespace ConceptMatrix.PoseModule.Controls
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
 		}
+
+		public PoseService PoseService { get; set; }
 	}
 }

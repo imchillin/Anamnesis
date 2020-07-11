@@ -32,6 +32,8 @@ namespace ConceptMatrix.PoseModule
 		public event PoseEvent EnabledChanged;
 		public event PoseEvent FreezePhysicsChanged;
 		public event PoseEvent FreezePositionsChanged;
+		public event PoseEvent FreezeScaleChanged;
+		public event PoseEvent FreezeRotationChanged;
 		public event PoseEvent AvailableChanged;
 
 		public bool IsAvailable
@@ -59,6 +61,25 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
+		public bool FreezePhysics
+		{
+			get
+			{
+				return this.phys1Mem.Value.IsEnabled;
+			}
+			set
+			{
+				if (!value)
+					this.FreezeScale = false;
+
+				this.phys1Mem.Value = Flag.Get(value);
+				this.phys2Mem.Value = Flag.Get(value);
+				this.phys3Mem.Value = Flag.Get(value);
+
+				this.FreezePhysicsChanged?.Invoke(value);
+			}
+		}
+
 		// We need to unfreeze positions to allow us to set bone rotations
 		// without calculating new positions. This is required for CM2 poses to load
 		// correctly, since they don't have positions.
@@ -73,6 +94,42 @@ namespace ConceptMatrix.PoseModule
 				this.skel5Mem.Value = Flag.Get(value);
 
 				this.FreezePositionsChanged?.Invoke(value);
+			}
+		}
+
+		public bool FreezeScale
+		{
+			get
+			{
+				return this.skel4Mem.Value.IsEnabled;
+			}
+			set
+			{
+				// Scale is not supported.
+				// Bone scale is used by character apeparance (breasts, ears, tail, muscle) and is not
+				// compatible with physics. We dont want to change any bone scales.
+				throw new NotImplementedException();
+
+				////this.skel4Mem.Value = Flag.Get(value);
+				////this.skel6Mem.Value = Flag.Get(value);
+
+				////this.FreezeScaleChanged?.Invoke(value);
+			}
+		}
+
+		public bool FreezeRotation
+		{
+			get
+			{
+				return this.skel1Mem.Value.IsEnabled;
+			}
+			set
+			{
+				this.skel1Mem.Value = Flag.Get(value);
+				this.skel2Mem.Value = Flag.Get(value);
+				this.skel3Mem.Value = Flag.Get(value);
+
+				this.FreezeRotationChanged?.Invoke(value);
 			}
 		}
 
@@ -124,27 +181,14 @@ namespace ConceptMatrix.PoseModule
 			if (enabled && this.selectionService.GetMode() != Modes.GPose)
 				throw new Exception("Attempt to enable posing outside of gpose");
 
-			// Physics
-			this.phys1Mem.Value = Flag.Get(enabled);
-			this.phys2Mem.Value = Flag.Get(enabled);
-			this.phys3Mem.Value = Flag.Get(enabled);
-
-			if (enabled)
-				await Task.Delay(100);
-
-			// rotations
-			this.skel1Mem.Value = Flag.Get(enabled);
-			this.skel2Mem.Value = Flag.Get(enabled);
-			this.skel3Mem.Value = Flag.Get(enabled);
-
-			// scale
-			this.skel4Mem.Value = Flag.Get(enabled);
-			this.skel6Mem.Value = Flag.Get(enabled);
-
-			// positions
 			this.FreezePositions = enabled;
+			this.FreezePhysics = enabled;
+			this.FreezeRotation = enabled;
 
-			Application.Current.Dispatcher.Invoke(() =>
+			if (!enabled)
+				this.FreezeScale = enabled;
+
+			await Application.Current.Dispatcher.InvokeAsync(() =>
 			{
 				this.EnabledChanged?.Invoke(enabled);
 			});

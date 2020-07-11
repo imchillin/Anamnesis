@@ -17,7 +17,7 @@
 				<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}"/>
 			</GroupBox>
 
-			<GroupBox Header="scale">
+			<GroupBox Header="scale" Visibility="{Binding PoseService.FreezeScale, Converter={StaticResource B2V}}">
 				<cm3Controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1"/>
 			</GroupBox>
 
