@@ -22,6 +22,7 @@
     <None Remove="Assets\colors.dat" />
     <None Remove="Assets\IconBorder.png" />
     <None Remove="Assets\IconBorderSmall.png" />
+    <None Remove="Assets\IconOverlay.png" />
     <None Remove="Assets\LegacyTattoo.png" />
     <None Remove="Assets\Slots\Body.png" />
     <None Remove="Assets\Slots\Ears.png" />
@@ -69,6 +70,7 @@
     <Resource Include="Assets\colors.dat" />
     <Resource Include="Assets\IconBorder.png" />
     <Resource Include="Assets\IconBorderSmall.png" />
+    <Resource Include="Assets\IconOverlay.png" />
     <Resource Include="Assets\LegacyTattoo.png" />
     <Resource Include="Assets\Slots\Body.png" />
     <Resource Include="Assets\Slots\Ears.png" />

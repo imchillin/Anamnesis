@@ -22,13 +22,13 @@
 				<ControlTemplate TargetType="Button">
 
 					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand">
-						<Border Background="{TemplateBinding Background}" x:Name="Border" CornerRadius="3" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}"/>
-
-						<Border Background="{DynamicResource MaterialDesignCardBackground}" x:Name="HoverBorder" CornerRadius="3" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}" Opacity="0">
+						<Border Background="{DynamicResource MaterialDesignCardBackground}" x:Name="HoverBorder" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource MaterialDesignCardBackground}" Opacity="0">
 							<Border.Effect>
 								<DropShadowEffect ShadowDepth="0" BlurRadius="5" Opacity="0.5"/>
 							</Border.Effect>
 						</Border>
+
+						<Border Background="{TemplateBinding Background}" x:Name="Border" CornerRadius="3" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}"/>
 
 						<md:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
 									ContentStringFormat="{TemplateBinding ContentStringFormat}"
