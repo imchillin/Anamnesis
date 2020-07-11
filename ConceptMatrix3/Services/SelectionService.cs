@@ -6,10 +6,12 @@ namespace ConceptMatrix.GUI.Services
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
+	using System.Windows;
 	using System.Windows.Documents;
 	using Anamnesis;
 	using Anamnesis.Offsets;
 	using ConceptMatrix;
+	using ConceptMatrix.GUI.Dialogs;
 
 	public class SelectionService : ISelectionService
 	{
@@ -19,6 +21,7 @@ namespace ConceptMatrix.GUI.Services
 		private List<Actor> actors = new List<Actor>();
 
 		public event SelectionModeEvent ModeChanged;
+		public event SelectionEvent ActorSelected;
 
 		public bool IsAlive
 		{
@@ -48,6 +51,47 @@ namespace ConceptMatrix.GUI.Services
 			Task.Run(this.Watch);
 
 			return Task.CompletedTask;
+		}
+
+		public async Task SelectActor(Actor actor)
+		{
+			// Mannequins get actor type set to player
+			if (actor.Type == ActorTypes.EventNpc)
+			{
+				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a mannequin. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+
+				if (result == null)
+					return;
+
+				if (result == true)
+				{
+					actor.SetValue(Offsets.Main.ActorType, ActorTypes.Player);
+					actor.Type = ActorTypes.Player;
+					await actor.ActorRefreshAsync();
+				}
+			}
+
+			// Carbuncles get model type set to player (but not actor type!)
+			if (actor.Type == ActorTypes.BattleNpc)
+			{
+				int modelType = actor.GetValue(Offsets.Main.ModelType);
+				if (modelType == 409 || modelType == 410 || modelType == 412)
+				{
+					bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+
+					if (result == null)
+						return;
+
+					if (result == true)
+					{
+						actor.SetValue(Offsets.Main.ModelType, 0);
+						await actor.ActorRefreshAsync();
+					}
+				}
+			}
+
+			this.actors.Add(actor);
+			this.ActorSelected?.Invoke(actor, true);
 		}
 
 		public Modes GetMode()
@@ -116,11 +160,6 @@ namespace ConceptMatrix.GUI.Services
 			}
 
 			return actors;
-		}
-
-		public void SelectActor(Actor actor)
-		{
-			this.actors.Add(actor);
 		}
 
 		private async Task Watch()

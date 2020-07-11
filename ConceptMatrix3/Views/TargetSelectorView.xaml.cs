@@ -67,7 +67,7 @@ namespace ConceptMatrix.GUI.Views
 			}
 		}
 
-		private void OnSelected(object sender, RoutedEventArgs e)
+		private async void OnSelected(object sender, RoutedEventArgs e)
 		{
 			if (this.lockSelection)
 				return;
@@ -76,9 +76,9 @@ namespace ConceptMatrix.GUI.Views
 			{
 				ActorEx selection = btn.DataContext as ActorEx;
 				this.Actor = selection.Actor;
-				this.selection.SelectActor(this.Actor);
-
 				this.Close?.Invoke();
+
+				await this.selection.SelectActor(this.Actor);
 			}
 		}
 

@@ -4,22 +4,15 @@
 namespace ConceptMatrix.GUI
 {
 	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Controls.Primitives;
 	using System.Windows.Input;
-	using Anamnesis;
 	using ConceptMatrix;
-	using ConceptMatrix.GUI.Dialogs;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
 	using Dragablz;
-	using FontAwesome.Sharp;
-	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
 
 	/// <summary>
@@ -36,6 +29,9 @@ namespace ConceptMatrix.GUI
 
 			this.viewService = App.Services.Get<ViewService>();
 			this.viewService.ShowingDrawer += this.OnShowDrawer;
+
+			ISelectionService selection = App.Services.Get<ISelectionService>();
+			selection.ActorSelected += this.OnActorSelected;
 
 			////this.IconArea.DataContext = this;
 
@@ -230,44 +226,23 @@ namespace ConceptMatrix.GUI
 
 		private async void OnAddClick(object sender, RoutedEventArgs e)
 		{
-			// TODO: replace this with a SelectorDrawer object instead
 			TargetSelectorView selector = new TargetSelectorView();
 			await this.viewService.ShowDrawer(selector, "Selection", DrawerDirection.Left);
+		}
 
-			while (selector.Actor == null)
-				await Task.Delay(100);
-
-			// Mannequins get actor type set to player
-			if (selector.Actor.Type == ActorTypes.EventNpc)
+		private void OnActorSelected(Actor actor, bool focus)
+		{
+			// Ensure we dont already have a tab for this actor.
+			foreach (TabItem item in this.Tabs.Items)
 			{
-				bool? result = await GenericDialog.Show($"The Actor: \"{selector.Actor.Name}\" appears to be a mannequin. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
-
-				if (result == null)
-					return;
-
-				if (result == true)
+				if (item.DataContext is Actor tActor)
 				{
-					selector.Actor.SetValue(Offsets.Main.ActorType, ActorTypes.Player);
-					selector.Actor.Type = ActorTypes.Player;
-					await selector.Actor.ActorRefreshAsync();
-				}
-			}
-
-			// Carbuncles get model type set to player (but not actor type!)
-			if (selector.Actor.Type == ActorTypes.BattleNpc)
-			{
-				int modelType = selector.Actor.GetValue(Offsets.Main.ModelType);
-				if (modelType == 409 || modelType == 410 || modelType == 412)
-				{
-					bool? result = await GenericDialog.Show($"The Actor: \"{selector.Actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
-
-					if (result == null)
-						return;
-
-					if (result == true)
+					if (tActor == actor)
 					{
-						selector.Actor.SetValue(Offsets.Main.ModelType, 0);
-						await selector.Actor.ActorRefreshAsync();
+						if (focus)
+							this.Tabs.SelectedItem = item;
+
+						return;
 					}
 				}
 			}
@@ -275,10 +250,13 @@ namespace ConceptMatrix.GUI
 			TabItem tab = new TabItem();
 			tab.Content = new ActorEditor();
 			tab.Header = new ActorHeaderView();
-			tab.DataContext = selector.Actor;
+			tab.DataContext = actor;
 			this.Tabs.Items.Add(tab);
 
-			this.Tabs.SelectedItem = tab;
+			if (focus)
+			{
+				this.Tabs.SelectedItem = tab;
+			}
 		}
 
 		private void OnTabClosing(ItemActionCallbackArgs<TabablzControl> args)
