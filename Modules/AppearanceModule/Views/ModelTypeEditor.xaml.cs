@@ -8,6 +8,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows.Controls;
 	using System.Windows.Media.Animation;
 	using Anamnesis;
+	using ConceptMatrix.WpfStyles.Drawers;
 	using PropertyChanged;
 	using Styles.Drawers;
 
@@ -85,20 +86,16 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (Module.ModelTypes == null)
 				return;
 
-			List<GenericSelector.Item> items = new List<GenericSelector.Item>();
-			GenericSelector.Item current = null;
-
-			foreach (ModelTypes model in Module.ModelTypes)
+			ModelTypes selected = null;
+			foreach (ModelTypes modelType in Module.ModelTypes)
 			{
-				GenericSelector.Item item = new GenericSelector.Item(model.Name, model.Id);
-
-				if (model.Id == this.ModelType)
-					current = item;
-
-				items.Add(item);
+				if (modelType.Id == this.ModelType)
+				{
+					selected = modelType;
+				}
 			}
 
-			GenericSelector.Show("Model Type", current, items, (i) => { this.ModelType = (int)i.Data; });
+			SelectorDrawer.Show<ModelTypeSelector, ModelTypes>("Model Type", selected, (v) => { this.ModelType = v.Id; });
 		}
 	}
 }

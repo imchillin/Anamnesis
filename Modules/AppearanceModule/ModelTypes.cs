@@ -8,8 +8,27 @@ namespace ConceptMatrix.AppearanceModule
 	[Serializable]
 	public class ModelTypes
 	{
+		public enum Types
+		{
+			Unknown,
+
+			Character,
+			Mount,
+			Minion,
+			Effect,
+			Monster,
+		}
+
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public bool CanCustomize { get; set; }
+		public Types Type { get; set; } = Types.Unknown;
+
+		public bool CanCustomize
+		{
+			get
+			{
+				return this.Type == Types.Character;
+			}
+		}
 	}
 }

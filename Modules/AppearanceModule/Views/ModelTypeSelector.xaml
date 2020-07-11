@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="ConceptMatrix.AppearanceModule.Views.ModelTypeSelector"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:cm3Drawers="clr-namespace:ConceptMatrix.WpfStyles.Drawers;assembly=Styles"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="232">
+	<Grid>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<ComboBox x:Name="ModeComboBox" Grid.Row="0" SelectionChanged="OnModeChanged" SelectedIndex="0" Margin="6, 0, 6, 0">
+			<ComboBoxItem Content="All"/>
+			<ComboBoxItem Content="Characters"/>
+			<ComboBoxItem Content="Mounts"/>
+			<ComboBoxItem Content="Minions"/>
+			<ComboBoxItem Content="Effects"/>
+			<ComboBoxItem Content="Monsters"/>
+		</ComboBox>
+
+		<cm3Drawers:SelectorDrawer
+			Grid.Row="1"
+			x:Name="Selector"
+			Close="OnClose" 
+			Filter="OnFilter"
+			SelectionChanged="OnSelectionChanged">
+
+			<cm3Drawers:SelectorDrawer.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<TextBlock Text="-" Style="{StaticResource Label}" Margin="6,0,3,0"/>
+						<TextBlock Text="{Binding Id}" Style="{StaticResource Label}"/>
+					</StackPanel>
+				</DataTemplate>
+			</cm3Drawers:SelectorDrawer.ItemTemplate>
+		</cm3Drawers:SelectorDrawer>
+	</Grid>
+</UserControl>
