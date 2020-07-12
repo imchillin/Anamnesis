@@ -33,6 +33,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	// going to look at the property changed and memory changed events to figure out if we want to accept the memory changes
 	// or overwrite them.
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class ExtendedAppearanceEditor : UserControl, INotifyPropertyChanged
 	{
 		private Actor actor;
@@ -86,7 +87,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public bool HasMainHand { get; set; }
 		public bool HasOffHand { get; set; }
 
-		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			this.actor = this.DataContext as Actor;
