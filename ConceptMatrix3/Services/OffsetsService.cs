@@ -19,13 +19,8 @@ namespace ConceptMatrix.GUI.Services
 		{
 			ISerializerService serializer = ConceptMatrix.Services.Get<ISerializerService>();
 
-			MainOffsetFile file = Offsets.Main;
-			string json = serializer.Serialize(file);
-
-			File.WriteAllText("MainOffsets.json", json);
-
-			json = File.ReadAllText("MainOffsets.json");
-			file = serializer.Deserialize<MainOffsetFile>(json);
+			string json = File.ReadAllText("MainOffsets.json");
+			MainOffsetFile file = serializer.Deserialize<MainOffsetFile>(json);
 
 			// Set the names of all the offsets for debugging.
 			PropertyInfo[] properties = file.GetType().GetProperties();
