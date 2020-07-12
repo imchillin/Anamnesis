@@ -99,6 +99,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private async void OnClick(object sender, RoutedEventArgs e)
 		{
+			if (this.colors == null)
+				return;
+
 			IViewService viewService = Services.Get<IViewService>();
 
 			FxivColorSelectorDrawer selector = new FxivColorSelectorDrawer(this.colors, this.Value);
