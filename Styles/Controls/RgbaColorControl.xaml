@@ -10,8 +10,8 @@
 			 HorizontalAlignment="Left">
 	
 	<Grid x:Name="ContentArea" SnapsToDevicePixels="True">
-		<Button Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="2" VerticalAlignment="Center" Background="Transparent">
-			<Border Height="15" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1">
+		<Button Width="20" Height="20" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" Margin="2" VerticalAlignment="Center" Background="Transparent">
+			<Border Height="18" Width="18" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1">
 				<Border.Background>
 					<SolidColorBrush x:Name="PreviewColor" Color="White"/>
 				</Border.Background>

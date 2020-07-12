@@ -41,7 +41,7 @@
 		<TextBlock Foreground="#99000000" Text="Overrides" FontWeight="SemiBold" Grid.ColumnSpan="2" Margin="10, 2, 0, 0"/>
 
 		<TextBlock Grid.Row="0" Grid.Column="2" Text="Skin:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
-		<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="3" Value="{Binding SkinTint, UpdateSourceTrigger=PropertyChanged}" DisplayName="Skin Color" ToolTip="Skin Color"/>
+		<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="3" Value="{Binding SkinTint}" DisplayName="Skin Color" ToolTip="Skin Color"/>
 
 		<TextBlock Grid.Row="1" Grid.Column="2" Text="Skin Glow:" Style="{StaticResource Label}" Margin="10, 0, 4, 0"/>
 		<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="3" Value="{Binding SkinGlow}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>

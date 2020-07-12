@@ -32,6 +32,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	// we don't have any implicit links between the two (e.g: Appearance.LipTone and LipTint + LipGloss) we're just
 	// going to look at the property changed and memory changed events to figure out if we want to accept the memory changes
 	// or overwrite them.
+	[AddINotifyPropertyChangedInterface]
 	public partial class ExtendedAppearanceEditor : UserControl, INotifyPropertyChanged
 	{
 		private Actor actor;
@@ -99,10 +100,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.actor.ActorRetargetComplete += this.OnActorRetargetComplete;
 			this.OnActorRetargetComplete(this.actor);
 
-			this.PropertyChanged += this.OnPropertyChanged;
+			this.PropertyChanged += this.OnThisPropertyChanged;
 		}
 
-		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnThisPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(this.LipTint))
 			{
@@ -149,6 +150,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			this.skinColorMem = this.actor.GetMemory(Offsets.Main.SkinColor);
 			this.skinColorMem.Bind(this, nameof(this.SkinTint));
+
 			this.skinGlowMem = this.actor.GetMemory(Offsets.Main.SkinGloss);
 			this.skinGlowMem.Bind(this, nameof(this.SkinGlow));
 
@@ -167,8 +169,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.highlightTintColorMem.Bind(this, nameof(this.HighlightTint));
 			this.lipTintMem = this.actor.GetMemory(Offsets.Main.MouthColor);
 			this.lipGlossMem = this.actor.GetMemory(Offsets.Main.MouthGloss);
-			this.lipTintMem.ValueChanged += this.LipValueChanged;
-			this.lipGlossMem.ValueChanged += this.LipValueChanged;
+			this.lipTintMem.ValueChanged += this.LipTintValueChanged;
+			this.lipGlossMem.ValueChanged += this.LipGlossValueChanged;
 
 			this.mainHandMem = this.actor.GetMemory(Offsets.Main.MainHand);
 			this.mainHandMem.ValueChanged += this.OnWeaponsChanged;
@@ -221,7 +223,18 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
-		private void LipValueChanged(object sender, object value)
+		private void LipGlossValueChanged(object sender, float value)
+		{
+			if (!this.lipTintMem.Active || !this.lipGlossMem.Active)
+				return;
+
+			Color4 c = default;
+			c.Color = this.lipTintMem.Value;
+			c.A = this.lipGlossMem.Value;
+			this.LipTint = c;
+		}
+
+		private void LipTintValueChanged(object sender, Color value)
 		{
 			if (!this.lipTintMem.Active || !this.lipGlossMem.Active)
 				return;
