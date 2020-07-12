@@ -202,28 +202,36 @@ namespace ConceptMatrix.GUI.Views
 			int territoryId = this.territoryMem.Value;
 			ushort currentWeather = this.weatherMem.Value;
 
-			foreach (ITerritoryType territory in this.gameData.Territories.All)
+			ITerritoryType territory = this.gameData.Territories.Get(territoryId);
+
+			if (territory == null)
 			{
-				if (territory.Key == territoryId)
+				this.Territory = "Unknwon";
+
+				Application.Current.Dispatcher.Invoke(() =>
 				{
-					this.Territory = territory.Region + " - " + territory.Place;
+					this.WeatherComboBox.ItemsSource = null;
+				});
+			}
+			else
+			{
+				this.Territory = territory.Region + " - " + territory.Place;
 
-					Application.Current.Dispatcher.Invoke(() =>
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					this.WeatherComboBox.ItemsSource = territory.Weathers;
+
+					foreach (IWeather weather in territory.Weathers)
 					{
-						this.WeatherComboBox.ItemsSource = territory.Weathers;
+						byte[] bytes = { (byte)weather.Key, (byte)weather.Key };
+						ushort weatherVal = BitConverter.ToUInt16(bytes, 0);
 
-						foreach (IWeather weather in territory.Weathers)
+						if (weatherVal == currentWeather)
 						{
-							byte[] bytes = { (byte)weather.Key, (byte)weather.Key };
-							ushort weatherVal = BitConverter.ToUInt16(bytes, 0);
-
-							if (weatherVal == currentWeather)
-							{
-								this.WeatherComboBox.SelectedItem = weather;
-							}
+							this.WeatherComboBox.SelectedItem = weather;
 						}
-					});
-				}
+					}
+				});
 			}
 		}
 
