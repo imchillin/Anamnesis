@@ -30,7 +30,7 @@ namespace ConceptMatrix.AppearanceModule.Utilities
 				Entry entry = default;
 				entry.CmColor = new cmColor(r / 255.0f, g / 255.0f, b / 255.0f);
 
-				wpfColor c2 = entry.WpfColor;
+				wpfColor c2 = (wpfColor)entry.WpfColor;
 				c2.R = buffer[at + 0];
 				c2.G = buffer[at + 1];
 				c2.B = buffer[at + 2];
@@ -81,7 +81,19 @@ namespace ConceptMatrix.AppearanceModule.Utilities
 
 		public static Entry[] GetLipColors()
 		{
-			return Span(512, 96);
+			List<Entry> entries = new List<Entry>();
+			entries.AddRange(Span(512, 96));
+
+			for (int i = 0; i < 32; i++)
+			{
+				Entry entry = default;
+				entry.Skip = true;
+				entries.Add(entry);
+			}
+
+			entries.AddRange(Span(1792, 96));
+
+			return entries.ToArray();
 		}
 
 		private static Entry[] Span(int from, int count)
@@ -149,6 +161,7 @@ namespace ConceptMatrix.AppearanceModule.Utilities
 		{
 			public cmColor CmColor { get; set; }
 			public wpfColor WpfColor { get; set; }
+			public bool Skip { get; set; }
 		}
 	}
 }

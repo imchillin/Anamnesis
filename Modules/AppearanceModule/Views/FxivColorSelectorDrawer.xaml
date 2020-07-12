@@ -23,7 +23,7 @@
 
 		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,0,3,6" Buttons="True"/>
 
-		<ListBox Grid.Row="1" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedIndex="{Binding Selected}">
+		<ListBox Grid.Row="1" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedItem}">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
 					<WrapPanel x:Name="wrapPanel"/>
@@ -33,7 +33,7 @@
 				<DataTemplate>
 					<Rectangle Width="29" Height="18" Margin="0">
 						<Rectangle.Fill>
-							<SolidColorBrush Color="{Binding WpfColor}"/>
+							<SolidColorBrush Color="{Binding Entry.WpfColor}"/>
 						</Rectangle.Fill>
 					</Rectangle>
 				</DataTemplate>

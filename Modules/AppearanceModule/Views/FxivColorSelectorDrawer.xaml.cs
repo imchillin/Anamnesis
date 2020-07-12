@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule.Views
 {
+	using System.Collections.Generic;
 	using System.Windows.Controls;
 	using ConceptMatrix.AppearanceModule.Utilities;
 	using PropertyChanged;
@@ -13,17 +14,31 @@ namespace ConceptMatrix.AppearanceModule.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 	{
-		private bool locked = false;
-		private int selected;
+		private Item selectedItem;
+		private List<Item> items = new List<Item>();
 
 		public FxivColorSelectorDrawer(ColorData.Entry[] colors, int selectedIndex)
 		{
 			this.InitializeComponent();
 
-			this.locked = true;
-			this.List.ItemsSource = colors;
 			this.Selected = selectedIndex;
-			this.locked = false;
+			for (int i = 0; i < colors.Length; i++)
+			{
+				if (colors[i].Skip)
+					continue;
+
+				Item item = new Item();
+				item.Entry = colors[i];
+				item.Index = i;
+				this.items.Add(item);
+
+				if (i == selectedIndex)
+				{
+					this.SelectedItem = item;
+				}
+			}
+
+			this.List.ItemsSource = this.items;
 
 			this.ContentArea.DataContext = this;
 		}
@@ -33,22 +48,51 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public event DrawerEvent Close;
 		public event SelectorEvent SelectionChanged;
 
-		public int Selected
+		public Item SelectedItem
 		{
 			get
 			{
-				return this.selected;
+				return this.selectedItem;
 			}
 
 			set
 			{
-				this.selected = value;
+				this.selectedItem = value;
 
-				if (this.locked)
+				if (value == null)
 					return;
 
-				this.SelectionChanged?.Invoke(this.Selected);
+				this.SelectionChanged?.Invoke(value.Index);
 			}
+		}
+
+		public int Selected
+		{
+			get
+			{
+				if (this.selectedItem == null)
+					return 0;
+
+				return this.selectedItem.Index;
+			}
+
+			set
+			{
+				foreach (Item item in this.items)
+				{
+					if (item.Index == value)
+					{
+						this.SelectedItem = item;
+						return;
+					}
+				}
+			}
+		}
+
+		public class Item
+		{
+			public ColorData.Entry Entry { get; set; }
+			public int Index { get; set; }
 		}
 	}
 }
