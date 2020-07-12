@@ -12,6 +12,7 @@ namespace ConceptMatrix.GUI.Services
 	using Anamnesis;
 	using Anamnesis.Offsets;
 	using ConceptMatrix;
+	using ConceptMatrix.GameData;
 	using ConceptMatrix.GUI.Dialogs;
 
 	public class SelectionService : ISelectionService
@@ -62,6 +63,9 @@ namespace ConceptMatrix.GUI.Services
 			{
 				Actor actor = selectable.First().Value;
 
+				if (actor == null || actor.Type != ActorTypes.Player)
+					return;
+
 				this.actors.Add(actor);
 				this.ActorSelected?.Invoke(actor, false);
 			}
@@ -69,8 +73,18 @@ namespace ConceptMatrix.GUI.Services
 
 		public async Task SelectActor(Actor actor)
 		{
-			// Mannequins get actor type set to player
-			if (actor.Type == ActorTypes.EventNpc)
+			IInjectionService injection = Services.Get<IInjectionService>();
+			using IMemory<int> territoryMem = injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
+
+			int territoryId = territoryMem.Value;
+
+			bool isBarracks = false;
+			isBarracks |= territoryId == 534; // Twin adder barracks
+			isBarracks |= territoryId == 535; // Immortal Flame barracks
+			isBarracks |= territoryId == 536; // Maelstrom barracks
+
+			// Mannequins and housing NPC's get actor type changed, but squadron members do not.
+			if (!isBarracks && actor.Type == ActorTypes.EventNpc)
 			{
 				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a humanoid NPC. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
 
@@ -82,6 +96,12 @@ namespace ConceptMatrix.GUI.Services
 					actor.SetValue(Offsets.Main.ActorType, ActorTypes.Player);
 					actor.Type = ActorTypes.Player;
 					await actor.ActorRefreshAsync();
+
+					if (actor.GetValue(Offsets.Main.ModelType) != 0)
+					{
+						actor.SetValue(Offsets.Main.ModelType, 0);
+						await actor.ActorRefreshAsync();
+					}
 				}
 			}
 
