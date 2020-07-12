@@ -5,6 +5,7 @@ namespace ConceptMatrix.MemoryBinds
 {
 	using System;
 	using System.ComponentModel;
+	using System.Reflection;
 	using Anamnesis;
 
 	internal class BindWrapper<T> : BindWrapper
@@ -82,7 +83,7 @@ namespace ConceptMatrix.MemoryBinds
 			}
 		}
 
-		private void Target_ValueChanged(object sender, object? value)
+		private void Target_ValueChanged(object sender, T value)
 		{
 			if (!this.IsAlive)
 				return;

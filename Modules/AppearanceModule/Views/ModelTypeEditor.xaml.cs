@@ -65,10 +65,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			this.modelTypeMem = this.actor.GetMemory(Offsets.Main.ModelType);
 			this.modelTypeMem.ValueChanged += this.ModelTypeMem_ValueChanged;
-			this.ModelTypeMem_ValueChanged(null, null);
+			this.ModelTypeMem_ValueChanged(null, 0);
 		}
 
-		private void ModelTypeMem_ValueChanged(object sender = null, object value = null)
+		private void ModelTypeMem_ValueChanged(object sender = null, int value = 0)
 		{
 			this.ModelType = this.modelTypeMem.Value;
 		}

@@ -227,7 +227,7 @@ namespace ConceptMatrix.PoseModule
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.IsVieraEars04)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonViewModel.Race)));
 
-			this.RootRotationMem_ValueChanged(null, null);
+			this.RootRotationMem_ValueChanged(null, default);
 		}
 
 		public void RefreshBones()
@@ -474,7 +474,7 @@ namespace ConceptMatrix.PoseModule
 			}
 		}
 
-		private void RootRotationMem_ValueChanged(object sender, object value)
+		private void RootRotationMem_ValueChanged(object sender, CmQuaternion value)
 		{
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -503,7 +503,7 @@ namespace ConceptMatrix.PoseModule
 		}
 
 		[PropertyChanged.SuppressPropertyChangedWarnings]
-		private void OnAnimatingChanged(object sender, object value)
+		private void OnAnimatingChanged(object sender, bool value)
 		{
 			this.CanPose = !this.animatingMem.Value;
 		}

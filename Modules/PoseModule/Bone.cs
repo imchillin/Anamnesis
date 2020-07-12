@@ -250,7 +250,7 @@ namespace ConceptMatrix.PoseModule
 		}
 
 		[PropertyChanged.SuppressPropertyChangedWarnings]
-		private void OnTransformMemValueChanged(object sender, object value)
+		private void OnTransformMemValueChanged(object sender, CmTransform value)
 		{
 			if (Application.Current == null)
 				return;

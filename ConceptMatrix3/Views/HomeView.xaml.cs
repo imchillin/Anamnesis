@@ -135,7 +135,7 @@ namespace ConceptMatrix.GUI.Views
 					this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
 					this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
 
-					this.OnTerritoryMemValueChanged(null, null);
+					this.OnTerritoryMemValueChanged(null, 0);
 				}
 				else
 				{
@@ -164,7 +164,7 @@ namespace ConceptMatrix.GUI.Views
 			this.territoryMem = this.injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 			this.territoryMem.ValueChanged += this.OnTerritoryMemValueChanged;
 
-			this.OnTerritoryMemValueChanged(null, null);
+			this.OnTerritoryMemValueChanged(null, 0);
 
 			this.IsGpose = selectionService.GetMode() == Modes.GPose;
 		}
@@ -185,7 +185,7 @@ namespace ConceptMatrix.GUI.Views
 			this.weatherMem.Dispose();
 		}
 
-		private void OnCameraAngleMemValueChanged(object sender, object value)
+		private void OnCameraAngleMemValueChanged(object sender, Vector2D value)
 		{
 			if (this.LockCameraAngle)
 			{
@@ -197,7 +197,7 @@ namespace ConceptMatrix.GUI.Views
 			}
 		}
 
-		private void OnTerritoryMemValueChanged(object sender = null, object value = null)
+		private void OnTerritoryMemValueChanged(object sender = null, int value = 0)
 		{
 			int territoryId = this.territoryMem.Value;
 			ushort currentWeather = this.weatherMem.Value;
