@@ -72,7 +72,7 @@ namespace ConceptMatrix.GUI.Services
 			// Mannequins get actor type set to player
 			if (actor.Type == ActorTypes.EventNpc)
 			{
-				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a mannequin. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a humanoid NPC. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
 
 				if (result == null)
 					return;
