@@ -13,6 +13,7 @@ namespace ConceptMatrix.GUI
 		public bool ThemeDark { get; set; } = false;
 		public string ThemeSwatch { get; set; } = @"deeppurple";
 		public double Opacity { get; set; } = 1.0;
+		public bool StayTransparent { get; set; } = false;
 		public double Scale { get; set; } = 1.0;
 	}
 }

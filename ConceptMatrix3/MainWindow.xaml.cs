@@ -202,6 +202,9 @@ namespace ConceptMatrix.GUI
 				return;
 			}
 
+			if (App.Settings.StayTransparent)
+				return;
+
 			this.Animate(Window.OpacityProperty, 1.0, 100);
 		}
 
