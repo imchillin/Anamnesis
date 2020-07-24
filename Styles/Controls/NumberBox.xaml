@@ -38,6 +38,7 @@
 			Grid.Column="1"
 			Style="{DynamicResource MaterialDesignTextBox}"
 			Foreground="{DynamicResource MaterialDesignBody}"
+			Padding="0"
 			Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=000.000}"
 			Margin="3, -2, 0, 1"
 			Height="22"
