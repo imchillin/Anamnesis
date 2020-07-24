@@ -24,14 +24,15 @@
 			Grid.Column="0"
 			Margin="3, 0, 3, 0"
 			HorizontalAlignment="Stretch"
-			Value="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-			Minimum="{Binding Minimum}"
-			Maximum="{Binding Maximum}"
+			Value="{Binding SliderValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			Minimum="{Binding SliderMinimum}"
+			Maximum="{Binding SliderMaximum}"
 			TickFrequency="{Binding TickFrequency}"
 			Focusable="False"
-			PreviewMouseMove="InputSlider_MouseMove"
-			Visibility="{Binding Slider, Converter={StaticResource B2V}}"
-			VerticalAlignment="Center"/>
+			VerticalAlignment="Center"
+			PreviewMouseMove="OnSliderMouseMove"
+			PreviewMouseDown="OnSliderPreviewMouseDown"
+			PreviewMouseUp="OnSliderPreviewMouseUp"/>
 
 		<TextBox
 			x:Name="InputBox"

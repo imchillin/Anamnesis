@@ -21,12 +21,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 	/// <summary>
 	/// Interaction logic for NumberBox.xaml.
 	/// </summary>
+	[SuppressPropertyChangedWarnings]
 	[AddINotifyPropertyChangedInterface]
-	public partial class NumberBox : UserControl
+	public partial class NumberBox : UserControl, INotifyPropertyChanged
 	{
 		public static readonly IBind<double> ValueDp = Binder.Register<double, NumberBox>(nameof(Value), OnValueChanged);
-		public static readonly IBind<double> TickDp = Binder.Register<double, NumberBox>(nameof(TickFrequency), BindMode.OneWay);
-		public static readonly IBind<bool> SliderDp = Binder.Register<bool, NumberBox>(nameof(Slider), OnSliderChanged, BindMode.OneWay);
+		public static readonly IBind<double> TickDp = Binder.Register<double, NumberBox>(nameof(TickFrequency), OnTickChanged, BindMode.OneWay);
+		public static readonly IBind<SliderModes> SliderDp = Binder.Register<SliderModes, NumberBox>(nameof(Slider), OnSliderChanged, BindMode.OneWay);
 		public static readonly IBind<bool> ButtonsDp = Binder.Register<bool, NumberBox>(nameof(Buttons), OnButtonsChanged, BindMode.OneWay);
 		public static readonly IBind<double> MinDp = Binder.Register<double, NumberBox>(nameof(Minimum), BindMode.OneWay);
 		public static readonly IBind<double> MaxDp = Binder.Register<double, NumberBox>(nameof(Maximum), BindMode.OneWay);
@@ -34,6 +35,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private string inputString;
 		private Key keyHeld = Key.None;
+		private double relativeSliderStart;
+		private double relativeSliderCurrent;
 
 		public NumberBox()
 		{
@@ -43,7 +46,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.Maximum = double.MaxValue;
 			this.Wrap = false;
 			this.Text = "0";
-			this.Slider = false;
+			this.Slider = SliderModes.None;
 			this.Buttons = false;
 
 			this.ContentArea.DataContext = this;
@@ -52,13 +55,22 @@ namespace ConceptMatrix.WpfStyles.Controls
 			OnButtonsChanged(this, this.Buttons);
 		}
 
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		public enum SliderModes
+		{
+			None,
+			Absolute,
+			Relative,
+		}
+
 		public double TickFrequency
 		{
 			get => TickDp.Get(this);
 			set => TickDp.Set(this, value);
 		}
 
-		public bool Slider
+		public SliderModes Slider
 		{
 			get => SliderDp.Get(this);
 			set => SliderDp.Set(this, value);
@@ -118,6 +130,63 @@ namespace ConceptMatrix.WpfStyles.Controls
 			set => ValueDp.Set(this, value);
 		}
 
+		public double SliderValue
+		{
+			get
+			{
+				if (this.Slider == SliderModes.Absolute)
+				{
+					return this.Value;
+				}
+				else
+				{
+					return this.relativeSliderCurrent;
+				}
+			}
+			set
+			{
+				if (this.Slider == SliderModes.Absolute)
+				{
+					this.Value = value;
+				}
+				else
+				{
+					this.relativeSliderCurrent = value;
+					this.Value = this.relativeSliderStart + value;
+				}
+			}
+		}
+
+		public double SliderMinimum
+		{
+			get
+			{
+				if (this.Slider == SliderModes.Absolute)
+				{
+					return this.Minimum;
+				}
+				else
+				{
+					return -(this.TickFrequency * 30);
+				}
+			}
+		}
+
+		public double SliderMaximum
+		{
+			get
+			{
+				if (this.Slider == SliderModes.Absolute)
+				{
+					return this.Maximum;
+				}
+				else
+				{
+					return this.TickFrequency * 30;
+				}
+			}
+		}
+
 		protected override void OnPreviewKeyDown(KeyEventArgs e)
 		{
 			bool focused = this.InputBox.IsKeyboardFocused || this.InputSlider.IsKeyboardFocused;
@@ -164,7 +233,6 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.TickValue(e.Delta > 0);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(NumberBox sender, double v)
 		{
 			sender.Value = sender.Validate(v);
@@ -175,17 +243,23 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.Text = sender.Value.ToString("0.###");
 		}
 
-		[SuppressPropertyChangedWarnings]
-		private static void OnSliderChanged(NumberBox sender, bool v)
+		private static void OnSliderChanged(NumberBox sender, SliderModes mode)
 		{
+			bool v = mode != SliderModes.None;
+
 			sender.SliderArea.Width = v ? new GridLength(1, GridUnitType.Star) : new GridLength(0);
 			sender.InputBoxArea.Width = v ? new GridLength(42) : new GridLength(1, GridUnitType.Star);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnButtonsChanged(NumberBox sender, bool v)
 		{
 			sender.ButtonsArea.Visibility = v ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		private static void OnTickChanged(NumberBox sender, double tick)
+		{
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderMaximum)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderMinimum)));
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -305,8 +379,11 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.TickValue(true);
 		}
 
-		private void InputSlider_MouseMove(object sender, MouseEventArgs e)
+		private void OnSliderMouseMove(object sender, MouseEventArgs e)
 		{
+			if (this.Slider != SliderModes.Absolute)
+				return;
+
 			if (e.LeftButton == MouseButtonState.Pressed && this.Wrap)
 			{
 				WinPoint rightEdge = this.InputSlider.PointToScreen(new WinPoint(this.InputSlider.ActualWidth - 5, this.InputSlider.ActualHeight / 2));
@@ -334,6 +411,17 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), null);
 			Keyboard.ClearFocus();
+		}
+
+		private void OnSliderPreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			this.relativeSliderStart = this.Value;
+		}
+
+		private void OnSliderPreviewMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			this.relativeSliderStart = this.Value;
+			this.SliderValue = 0;
 		}
 	}
 }

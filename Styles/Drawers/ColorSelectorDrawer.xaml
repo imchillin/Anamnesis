@@ -39,13 +39,13 @@
 			</Grid.RowDefinitions>
 
 			<Label Grid.Column="0" Grid.Row="0" Content="R:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-			<controls:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding R}" TickFrequency="0.1" Minimum="-3" Maximum="3" Slider="True" Wrap="False" Margin="0, 0, 0, 2"/>
+			<controls:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding R}" TickFrequency="0.1" Minimum="-3" Maximum="3" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2"/>
 			<Label Grid.Column="0" Grid.Row="1" Content="G:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-			<controls:NumberBox Grid.Column="1" Grid.Row="1"  Value="{Binding G}" TickFrequency="0.1" Minimum="-3" Maximum="3" Slider="True" Wrap="False" Margin="0, 0, 0, 2"/>
+			<controls:NumberBox Grid.Column="1" Grid.Row="1"  Value="{Binding G}" TickFrequency="0.1" Minimum="-3" Maximum="3" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2"/>
 			<Label Grid.Column="0" Grid.Row="2" Content="B:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-			<controls:NumberBox  Grid.Column="1" Grid.Row="2" Value="{Binding B}" TickFrequency="0.1" Minimum="-3" Maximum="3" Slider="True" Wrap="False" Margin="0, 0, 0, 2"/>
+			<controls:NumberBox  Grid.Column="1" Grid.Row="2" Value="{Binding B}" TickFrequency="0.1" Minimum="-3" Maximum="3" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2"/>
 			<Label Grid.Column="0" Grid.Row="3" Content="A:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Visibility="{Binding EnableAlpha, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-			<controls:NumberBox  Grid.Column="1" Grid.Row="3" Value="{Binding A}" TickFrequency="0.1" Minimum="-3" Maximum="3" Slider="True" Wrap="False" Margin="0, 0, 0, 2" Visibility="{Binding EnableAlpha, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+			<controls:NumberBox  Grid.Column="1" Grid.Row="3" Value="{Binding A}" TickFrequency="0.1" Minimum="-3" Maximum="3" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2" Visibility="{Binding EnableAlpha, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 		</Grid>
 
 		<ListBox Grid.Row="3" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionChanged="OnSelectionChanged" Margin="2, 0, 1, 0">

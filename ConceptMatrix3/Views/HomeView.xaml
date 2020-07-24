@@ -56,10 +56,10 @@
 					<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Territory}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 0, 3, 6"/>
 
 					<TextBlock Grid.Row="1" Text="Time:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Time}" Buttons="True" Slider="True" Minimum="0" Maximum="1440"/>
+					<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Time}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="1440"/>
 
 					<TextBlock Grid.Row="2" Text="Moon Phase:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding Moon}" Buttons="True" Slider="True" Minimum="0" Maximum="31"/>
+					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding Moon}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
 
 					<TextBlock Grid.Row="3" Text="Weather:" Style="{StaticResource Label}"/>
 					<ComboBox Grid.Row="3" Grid.Column="1" x:Name="WeatherComboBox" SelectionChanged="OnWeatherSelectionChanged">
@@ -133,25 +133,25 @@
 						</ToggleButton>
 
 						<Label Grid.Column="1" Grid.Row="0" Content="X:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="#99000000" Width="20"/>
-						<cm3:NumberBox Grid.Column="2" Grid.Row="0" Value="{Binding CameraAngleX, Converter={StaticResource Rad2Deg}}" IsEnabled="{Binding LockCameraAngle}" Minimum="-180" Maximum="180" Slider="True" Wrap="True" Buttons="True" Margin="0, 0, 0, 2"/>
+						<cm3:NumberBox Grid.Column="2" Grid.Row="0" Value="{Binding CameraAngleX, Converter={StaticResource Rad2Deg}}" IsEnabled="{Binding LockCameraAngle}" Minimum="-180" Maximum="180" Slider="Absolute" Wrap="True" Buttons="True" Margin="0, 0, 0, 2"/>
 						<Label Grid.Column="1" Grid.Row="1" Content="Y:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="#99000000" Width="20"/>
-						<cm3:NumberBox Grid.Column="2" Grid.Row="1" Value="{Binding CameraAngleY, Converter={StaticResource Rad2Deg}}" IsEnabled="{Binding LockCameraAngle}" Minimum="-90" Maximum="90" Slider="True" Buttons="True" Wrap="True" Margin="0, 0, 0, 2"/>
+						<cm3:NumberBox Grid.Column="2" Grid.Row="1" Value="{Binding CameraAngleY, Converter={StaticResource Rad2Deg}}" IsEnabled="{Binding LockCameraAngle}" Minimum="-90" Maximum="90" Slider="Absolute" Buttons="True" Wrap="True" Margin="0, 0, 0, 2"/>
 					</Grid>
 
 					<TextBlock Grid.Row="2" Grid.Column="0" Text="Rotation:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding CameraRotaton, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="True" Minimum="-180" Maximum="180" Wrap="True" TickFrequency="1"/>
+					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding CameraRotaton, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-180" Maximum="180" Wrap="True" TickFrequency="1"/>
 
 					<TextBlock Grid.Row="3" Grid.Column="0" Text="Pan:" Style="{StaticResource Label}"/>
 					<cm3:Vector2DEditor Grid.Row="3" Grid.Column="1" Value="{Binding CameraPan, Converter={StaticResource Vec2DRad2Deg}}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
 
 					<TextBlock Grid.Row="4" Grid.Column="0" Text="Zoom:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding CameraZoom}" Buttons="True" Slider="True" Minimum="{Binding CameraMinZoom}" Maximum="{Binding CameraMaxZoom}" TickFrequency="1"/>
+					<cm3:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding CameraZoom}" Buttons="True" Slider="Absolute" Minimum="{Binding CameraMinZoom}" Maximum="{Binding CameraMaxZoom}" TickFrequency="1"/>
 
 					<TextBlock Grid.Row="5" Grid.Column="0" Text="FoV:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding CameraFov, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="True" Minimum="-40" Maximum="100" TickFrequency="1"/>
+					<cm3:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding CameraFov, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-40" Maximum="100" TickFrequency="1"/>
 
 					<TextBlock Grid.Row="6" Grid.Column="0" Text="Position:" Style="{StaticResource Label}"/>
-					<cm3:VectorEditor Grid.Row="6" Grid.Column="1" Value="{Binding CameraPosition}" Expanded="True" Sliders="False" Minimum="-100" Maximum="100"/>
+					<cm3:VectorEditor Grid.Row="6" Grid.Column="1" Value="{Binding CameraPosition}" Expanded="True" Sliders="Relative" Minimum="-4096" Maximum="4096"/>
 				</Grid>
 			</GroupBox>
 		</StackPanel>
