@@ -438,8 +438,9 @@ namespace ConceptMatrix.PoseModule
 		public PoseFile Upgrade(Appearance.Races race)
 		{
 			PoseFile file = new PoseFile();
-			file.IncludePositions = false;
-			file.IncludeScale = false;
+			file.Config.IncludeRotation = true;
+			file.Config.IncludePosition = false;
+			file.Config.IncludeScale = true;
 			Type legacyType = this.GetType();
 
 			Appearance.Races fileRace = (Appearance.Races)byte.Parse(this.Race);

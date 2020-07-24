@@ -8,8 +8,8 @@
 	</ResourceDictionary.MergedDictionaries>
 
 	<Style x:Key="Cm3GroupBox" TargetType="{x:Type GroupBox}">
-		<Setter Property="Foreground" Value="#99000000"/>
-		<Setter Property="FontWeight" Value="DemiBold"/>
+		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
+		<Setter Property="FontWeight" Value="Normal"/>
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="Margin" Value="3, 3, 3, 0"/>
 		<Setter Property="FontSize" Value="12"/>
@@ -31,6 +31,8 @@
 							Grid.Row="0"
 							Grid.Column="0"
 							Margin="0"
+							TextBlock.Foreground="#99000000"
+							TextBlock.FontWeight="DemiBold"
 							ContentSource="Header" 
 							RecognizesAccessKey="True"
 							ContentStringFormat="{TemplateBinding HeaderStringFormat}"

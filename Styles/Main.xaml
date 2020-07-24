@@ -100,7 +100,7 @@
 	<converters:Vector2DRadiansToDegreesConverter x:Key="Vec2DRad2Deg"/>
 	<converters:NotZeroToVisibilityConverter x:Key="NotZeroToVisibility"/>
 
-    <!-- Multi converters -->
-    <converters:MultiBoolAndConverter x:Key="MultiBoolAnd"/>
+	<!-- Multi converters -->
+	<converters:MultiBoolAndConverter x:Key="MultiBoolAnd"/>
 
 </ResourceDictionary>

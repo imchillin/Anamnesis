@@ -91,16 +91,16 @@ namespace ConceptMatrix.PoseModule.Pages
 					file = legacyFile.Upgrade(this.SkeletonViewModel.Race);
 
 				IViewService viewService = Services.Get<IViewService>();
-				PoseFile.Groups groups = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Groups>("Load Pose...");
+				PoseFile.Configuration config = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Load Pose...");
 
-				if (groups == PoseFile.Groups.None)
+				if (config == null)
 					return;
 
 				this.SkeletonViewModel.CurrentBone = null;
 
 				if (file is PoseFile poseFile)
 				{
-					await poseFile.Write(this.SkeletonViewModel, groups);
+					await poseFile.Write(this.SkeletonViewModel, config);
 				}
 			}
 			catch (Exception ex)
@@ -112,14 +112,14 @@ namespace ConceptMatrix.PoseModule.Pages
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
 			IViewService viewService = Services.Get<IViewService>();
-			PoseFile.Groups groups = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Groups>("Save Pose...");
+			PoseFile.Configuration config = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Save Pose...");
 
-			if (groups == PoseFile.Groups.None)
+			if (config == null)
 				return;
 
 			IFileService fileService = Services.Get<IFileService>();
 			PoseFile file = new PoseFile();
-			file.Read(this.SkeletonViewModel.Bones, groups);
+			file.Read(this.SkeletonViewModel.Bones, config);
 
 			await fileService.SaveAs(file);
 		}

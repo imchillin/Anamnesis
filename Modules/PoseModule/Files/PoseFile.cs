@@ -33,8 +33,7 @@ namespace ConceptMatrix.PoseModule
 			All = Hair | Face | Torso | LeftArm | RightArm | LeftHand | RightHand | LeftLeg | RightLeg | Clothes | Equipment | Tail,
 		}
 
-		public bool IncludePositions { get; set; } = true;
-		public bool IncludeScale { get; set; } = false;
+		public Configuration Config { get; set; } = new Configuration();
 		public Dictionary<string, Transform> Bones { get; set; } = new Dictionary<string, Transform>();
 
 		public override FileType GetFileType()
@@ -42,29 +41,31 @@ namespace ConceptMatrix.PoseModule
 			return FileType;
 		}
 
-		public void Read(IEnumerable<Bone> bones, Groups groups)
+		public void Read(IEnumerable<Bone> bones, Configuration config)
 		{
+			this.Config = config;
+
 			foreach (Bone bone in bones)
 			{
 				if (!bone.IsEnabled)
 					continue;
 
 				Groups group = Enum.Parse<Groups>(bone.Definition.Group);
-				if (!groups.HasFlag(group))
+				if (!config.Groups.HasFlag(group))
 					continue;
 
 				this.Bones.Add(bone.BoneName, bone.LiveTransform);
 			}
 		}
 
-		public async Task Write(SkeletonViewModel skeleton, Groups groups)
+		public async Task Write(SkeletonViewModel skeleton, Configuration config)
 		{
 			PoseService poseService = Services.Get<PoseService>();
 
 			poseService.IsEnabled = true;
 
 			// don't freeze positions if we aren't writing any
-			poseService.FreezePositions = this.IncludePositions;
+			poseService.FreezePositions = this.Config.IncludePosition;
 
 			foreach (Bone bone in skeleton.Bones)
 			{
@@ -72,7 +73,7 @@ namespace ConceptMatrix.PoseModule
 					continue;
 
 				Groups group = Enum.Parse<Groups>(bone.Definition.Group);
-				if (!groups.HasFlag(group))
+				if (!config.Groups.HasFlag(group))
 					continue;
 
 				if (this.Bones.ContainsKey(bone.BoneName))
@@ -84,14 +85,14 @@ namespace ConceptMatrix.PoseModule
 						Transform trans = bone.LiveTransform;
 						Transform newTrans = this.Bones[bone.BoneName];
 
-						if (this.IncludeScale && newTrans.Scale != Vector.Zero)
+						if (config.IncludeScale && this.Config.IncludeScale && newTrans.Scale != Vector.Zero)
 							trans.Scale = newTrans.Scale;
 
-						if (this.IncludePositions && newTrans.Position != Vector.Zero)
+						if (config.IncludePosition && this.Config.IncludePosition && newTrans.Position != Vector.Zero)
 							trans.Position = newTrans.Position;
 
-						////if (newTrans.Rotation != Quaternion.Identity)
-						trans.Rotation = newTrans.Rotation;
+						if (config.IncludeRotation && this.Config.IncludeRotation)
+							trans.Rotation = newTrans.Rotation;
 
 						bone.LiveTransform = trans;
 						bone.ReadTransform();
@@ -107,6 +108,14 @@ namespace ConceptMatrix.PoseModule
 			poseService.FreezePositions = true;
 
 			skeleton.RefreshBones();
+		}
+
+		public class Configuration
+		{
+			public PoseFile.Groups Groups { get; set; } = Groups.All;
+			public bool IncludeRotation { get; set; } = true;
+			public bool IncludePosition { get; set; } = true;
+			public bool IncludeScale { get; set; } = true;
 		}
 	}
 }

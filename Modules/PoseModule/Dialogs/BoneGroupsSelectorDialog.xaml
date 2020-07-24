@@ -5,43 +5,58 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 mc:Ignorable="d" 
 			 d:DesignHeight="200" d:DesignWidth="300">
-	<Grid>
+	<Grid Width="300">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="48"/>
 			<RowDefinition/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<TextBlock Text="Include these pose elements:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<GroupBox Header="Bone Groups">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+			
+				<StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+					<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
+						<CheckBox Content="Torso" IsChecked="{Binding Torso}"/>
+						<CheckBox Content="Face" IsChecked="{Binding Face}"/>
+						<CheckBox Content="Hair" IsChecked="{Binding Hair}"/>
+						<CheckBox Content="Tail" IsChecked="{Binding Tail}"/>
+					</StackPanel>
+					<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
+						<CheckBox Content="Left Arm" IsChecked="{Binding LeftArm}"/>
+						<CheckBox Content="Left Hand" IsChecked="{Binding LeftHand}"/>
+						<CheckBox Content="Left Leg" IsChecked="{Binding LeftLeg}"/>
+						<CheckBox Content="Clothes" IsChecked="{Binding Clothes}"/>
+					</StackPanel>
+					<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
+						<CheckBox Content="Right Arm" IsChecked="{Binding RightArm}"/>
+						<CheckBox Content="Right Hand" IsChecked="{Binding RightHand}"/>
+						<CheckBox Content="Right Leg" IsChecked="{Binding RightLeg}"/>
+						<CheckBox Content="Equipment" IsChecked="{Binding Equipment}"/>
+					</StackPanel>
+				</StackPanel>
 
-		<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-			<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
-				<CheckBox Content="Torso" IsChecked="{Binding Torso}"/>
-				<CheckBox Content="Face" IsChecked="{Binding Face}"/>
-				<CheckBox Content="Hair" IsChecked="{Binding Hair}"/>
-				<CheckBox Content="Tail" IsChecked="{Binding Tail}"/>
-			</StackPanel>
-			<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
-				<CheckBox Content="Left Arm" IsChecked="{Binding LeftArm}"/>
-				<CheckBox Content="Left Hand" IsChecked="{Binding LeftHand}"/>
-				<CheckBox Content="Left Leg" IsChecked="{Binding LeftLeg}"/>
-				<CheckBox Content="Clothes" IsChecked="{Binding Clothes}"/>
-			</StackPanel>
-			<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
-				<CheckBox Content="Right Arm" IsChecked="{Binding RightArm}"/>
-				<CheckBox Content="Right Hand" IsChecked="{Binding RightHand}"/>
-				<CheckBox Content="Right Leg" IsChecked="{Binding RightLeg}"/>
-				<CheckBox Content="Equipment" IsChecked="{Binding Equipment}"/>
-			</StackPanel>
-		</StackPanel>
+				<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="6, 0, 6, 6">
+					<Button Grid.Column="1" Margin="3" Content="All" MinWidth="75" Click="OnAllClick" Style="{StaticResource TransparentButton}"/>
+					<Button Grid.Column="1" Margin="3" Content="None" MinWidth="75" Click="OnNoneClick" Style="{StaticResource TransparentButton}"/>
+				</StackPanel>
 
-		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="6, 0, 6, 6">
-			<Button Grid.Column="1" Margin="3" Content="All" MinWidth="75" Click="OnAllClick" Style="{StaticResource TransparentButton}"/>
-			<Button Grid.Column="1" Margin="3" Content="None" MinWidth="75" Click="OnNoneClick" Style="{StaticResource TransparentButton}"/>
-		</StackPanel>
+			</Grid>
+		</GroupBox>
 
-		<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="LEft" >
+		<GroupBox Header="Include" Grid.Row="1" Padding="6">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<CheckBox Content="Rotation" IsChecked="{Binding Result.IncludeRotation}" Margin="6"/>
+				<CheckBox Content="Scale" IsChecked="{Binding Result.IncludeScale}" Margin="6"/>
+				<CheckBox Content="Position" IsChecked="{Binding Result.IncludePosition}" Margin="6"/>
+			</StackPanel>
+		</GroupBox>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="LEft" >
 			<Button Grid.Column="1" Margin="3" Content="Cancel" MinWidth="75" Click="OnCancelClick"/>
 		</StackPanel>
 		
