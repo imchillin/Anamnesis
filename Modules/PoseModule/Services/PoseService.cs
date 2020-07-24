@@ -105,15 +105,10 @@ namespace ConceptMatrix.PoseModule
 			}
 			set
 			{
-				// Scale is not supported.
-				// Bone scale is used by character apeparance (breasts, ears, tail, muscle) and is not
-				// compatible with physics. We dont want to change any bone scales.
-				throw new NotImplementedException();
+				this.skel4Mem.Value = Flag.Get(value);
+				this.skel6Mem.Value = Flag.Get(value);
 
-				////this.skel4Mem.Value = Flag.Get(value);
-				////this.skel6Mem.Value = Flag.Get(value);
-
-				////this.FreezeScaleChanged?.Invoke(value);
+				this.FreezeScaleChanged?.Invoke(value);
 			}
 		}
 
@@ -184,9 +179,7 @@ namespace ConceptMatrix.PoseModule
 			this.FreezePositions = enabled;
 			this.FreezePhysics = enabled;
 			this.FreezeRotation = enabled;
-
-			if (!enabled)
-				this.FreezeScale = enabled;
+			this.FreezeScale = enabled;
 
 			await Application.Current.Dispatcher.InvokeAsync(() =>
 			{

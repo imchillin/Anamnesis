@@ -27,7 +27,6 @@ namespace ConceptMatrix.PoseModule
 		private readonly PoseService poseService;
 		private readonly IMemory<CmTransform> transformMem;
 		private readonly RotateTransform3D rotation;
-		private readonly ScaleTransform3D scale;
 		private readonly TranslateTransform3D position;
 
 		private Bone parent;
@@ -44,11 +43,9 @@ namespace ConceptMatrix.PoseModule
 			this.transformMem.ValueChanged += this.OnTransformMemValueChanged;
 
 			this.rotation = new RotateTransform3D();
-			this.scale = new ScaleTransform3D();
 			this.position = new TranslateTransform3D();
 
 			Transform3DGroup transformGroup = new Transform3DGroup();
-			transformGroup.Children.Add(this.scale);
 			transformGroup.Children.Add(this.rotation);
 			transformGroup.Children.Add(this.position);
 
@@ -139,14 +136,12 @@ namespace ConceptMatrix.PoseModule
 
 			// Convert the character-relative transform into a parent-relative transform
 			Point3D position = this.Position.ToMedia3DPoint();
-			Vector3D scale = this.Scale.ToMedia3DVector();
 			Quaternion rotation = this.Rotation.ToMedia3DQuaternion();
 
 			if (this.Parent != null)
 			{
 				CmTransform parentTransform = this.Parent.LiveTransform;
 				Point3D parentPosition = parentTransform.Position.ToMedia3DPoint();
-				Vector3D parentScale = parentTransform.Scale.ToMedia3DVector();
 				Quaternion parentRot = parentTransform.Rotation.ToMedia3DQuaternion();
 				parentRot.Invert();
 
@@ -156,9 +151,6 @@ namespace ConceptMatrix.PoseModule
 				// relative rotation
 				rotation = parentRot * rotation;
 
-				// relative scale
-				scale = (scale - parentScale) + new Vector3D(1, 1, 1);
-
 				// unrotate bones, since we will transform them ourselves.
 				RotateTransform3D rotTrans = new RotateTransform3D(new QuaternionRotation3D(parentRot));
 				position = rotTrans.Transform(position);
@@ -167,16 +159,12 @@ namespace ConceptMatrix.PoseModule
 			// Store the new parent-relative transform info
 			this.Position = position.ToCmVector();
 			this.Rotation = rotation.ToCmQuaternion();
-			////this.Scale = scale.ToCmVector();
 
 			// Set the Media3D hierarchy transforms
 			this.rotation.Rotation = new QuaternionRotation3D(rotation);
 			this.position.OffsetX = position.X;
 			this.position.OffsetY = position.Y;
 			this.position.OffsetZ = position.Z;
-			this.scale.ScaleX = scale.X;
-			this.scale.ScaleY = scale.Y;
-			this.scale.ScaleZ = scale.Z;
 
 			// Draw a line for visualization
 			if (this.Parent != null)
@@ -199,9 +187,6 @@ namespace ConceptMatrix.PoseModule
 			this.position.OffsetX = this.Position.X;
 			this.position.OffsetY = this.Position.Y;
 			this.position.OffsetZ = this.Position.Z;
-			this.scale.ScaleX = this.Scale.X;
-			this.scale.ScaleY = this.Scale.Y;
-			this.scale.ScaleZ = this.Scale.Z;
 
 			// convert the values in the tree to character-relative space
 			MatrixTransform3D transform = (MatrixTransform3D)this.TransformToAncestor(root);
@@ -214,18 +199,10 @@ namespace ConceptMatrix.PoseModule
 			position.Y = (float)transform.Matrix.OffsetY;
 			position.Z = (float)transform.Matrix.OffsetZ;
 
-			CmVector scale = this.Scale;
-
-			// uniform scaling only because i suck.
-			double scaleFac = Math.Sqrt((transform.Matrix.M11 * transform.Matrix.M11) + (transform.Matrix.M12 * transform.Matrix.M12) + (transform.Matrix.M13 * transform.Matrix.M13));
-			scale.X = (float)scaleFac;
-			scale.Y = (float)scaleFac;
-			scale.Z = (float)scaleFac;
-
 			// and push those values to the game memory
 			CmTransform live = this.LiveTransform;
 			live.Position = position;
-			live.Scale = scale;
+			live.Scale = this.Scale;
 			live.Rotation = rotation.ToCmQuaternion();
 			this.LiveTransform = live;
 
