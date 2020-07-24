@@ -25,12 +25,12 @@ namespace ConceptMatrix.WpfStyles.Controls
 	public partial class NumberBox : UserControl
 	{
 		public static readonly IBind<double> ValueDp = Binder.Register<double, NumberBox>(nameof(Value), OnValueChanged);
-		public static readonly IBind<double> TickDp = Binder.Register<double, NumberBox>(nameof(TickFrequency));
-		public static readonly IBind<bool> SliderDp = Binder.Register<bool, NumberBox>(nameof(Slider), OnSliderChanged);
-		public static readonly IBind<bool> ButtonsDp = Binder.Register<bool, NumberBox>(nameof(Buttons), OnButtonsChanged);
-		public static readonly IBind<double> MinDp = Binder.Register<double, NumberBox>(nameof(Minimum));
-		public static readonly IBind<double> MaxDp = Binder.Register<double, NumberBox>(nameof(Maximum));
-		public static readonly IBind<bool> WrapDp = Binder.Register<bool, NumberBox>(nameof(Wrap));
+		public static readonly IBind<double> TickDp = Binder.Register<double, NumberBox>(nameof(TickFrequency), BindMode.OneWay);
+		public static readonly IBind<bool> SliderDp = Binder.Register<bool, NumberBox>(nameof(Slider), OnSliderChanged, BindMode.OneWay);
+		public static readonly IBind<bool> ButtonsDp = Binder.Register<bool, NumberBox>(nameof(Buttons), OnButtonsChanged, BindMode.OneWay);
+		public static readonly IBind<double> MinDp = Binder.Register<double, NumberBox>(nameof(Minimum), BindMode.OneWay);
+		public static readonly IBind<double> MaxDp = Binder.Register<double, NumberBox>(nameof(Maximum), BindMode.OneWay);
+		public static readonly IBind<bool> WrapDp = Binder.Register<bool, NumberBox>(nameof(Wrap), BindMode.OneWay);
 
 		private string inputString;
 		private Key keyHeld = Key.None;
@@ -188,6 +188,13 @@ namespace ConceptMatrix.WpfStyles.Controls
 			sender.ButtonsArea.Visibility = v ? Visibility.Visible : Visibility.Collapsed;
 		}
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			Window window = Window.GetWindow(this);
+			window.MouseDown += this.OnWindowMouseDown;
+			window.Deactivated += this.OnWindowDeactivated;
+		}
+
 		private double Validate(double v)
 		{
 			if (this.Wrap)
@@ -216,7 +223,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private void OnLostFocus(object sender, RoutedEventArgs e)
 		{
-			this.Commit(false);
+			this.Text = this.Value.ToString("0.###");
+			////this.Commit(false);
 		}
 
 		private void Commit(bool refocus)
@@ -314,6 +322,18 @@ namespace ConceptMatrix.WpfStyles.Controls
 					WinCur.Position = new DrawPoint((int)rightEdge.X, (int)rightEdge.Y);
 				}
 			}
+		}
+
+		private void OnWindowMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), null);
+			Keyboard.ClearFocus();
+		}
+
+		private void OnWindowDeactivated(object sender, EventArgs e)
+		{
+			FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), null);
+			Keyboard.ClearFocus();
 		}
 	}
 }

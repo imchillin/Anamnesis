@@ -7,7 +7,8 @@
 			 xmlns:converters="clr-namespace:ConceptMatrix.WpfStyles.Converters"
 			 mc:Ignorable="d" 
 			 d:DesignWidth="128"
-			 HorizontalAlignment="Stretch">
+			 HorizontalAlignment="Stretch"
+			 Loaded="UserControl_Loaded">
 
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>

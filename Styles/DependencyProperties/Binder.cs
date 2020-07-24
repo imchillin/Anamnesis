@@ -10,7 +10,12 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 
 	public class Binder
 	{
-		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, Action<TOwner, TValue> changed = null)
+		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, BindMode mode)
+		{
+			return Register<TValue, TOwner>(propertyName, null, mode);
+		}
+
+		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, Action<TOwner, TValue> changed = null, BindMode mode = BindMode.TwoWay)
 		{
 			PropertyInfo property = typeof(TOwner).GetProperty(propertyName);
 			if (property == null)
@@ -25,12 +30,19 @@ namespace ConceptMatrix.WpfStyles.DependencyProperties
 			};
 
 			FrameworkPropertyMetadata meta = new FrameworkPropertyMetadata(new PropertyChangedCallback(changedb));
-			meta.BindsTwoWayByDefault = true;
+			meta.BindsTwoWayByDefault = mode == BindMode.TwoWay;
 			meta.DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 			meta.Inherits = true;
 			DependencyProperty dp = DependencyProperty.Register(propertyName, typeof(TValue), typeof(TOwner), meta);
 			DependencyProperty<TValue> dpv = new DependencyProperty<TValue>(dp);
 			return dpv;
 		}
+	}
+
+	#pragma warning disable SA1201
+	public enum BindMode
+	{
+		OneWay,
+		TwoWay,
 	}
 }
