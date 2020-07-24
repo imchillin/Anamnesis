@@ -145,7 +145,7 @@
 					<cm3:Vector2DEditor Grid.Row="3" Grid.Column="1" Value="{Binding CameraPan, Converter={StaticResource Vec2DRad2Deg}}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
 
 					<TextBlock Grid.Row="4" Grid.Column="0" Text="Zoom:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding CameraZoom}" Buttons="True" Slider="True" Minimum="0.1" Maximum="500" TickFrequency="1"/>
+					<cm3:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding CameraZoom}" Buttons="True" Slider="True" Minimum="{Binding CameraMinZoom}" Maximum="{Binding CameraMaxZoom}" TickFrequency="1"/>
 
 					<TextBlock Grid.Row="5" Grid.Column="0" Text="FoV:" Style="{StaticResource Label}"/>
 					<cm3:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding CameraFov, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="True" Minimum="-40" Maximum="100" TickFrequency="1"/>

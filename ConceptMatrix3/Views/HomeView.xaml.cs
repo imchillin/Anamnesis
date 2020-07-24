@@ -33,6 +33,8 @@ namespace ConceptMatrix.GUI.Views
 		private IMemory<float> cameraZoomMem;
 		private IMemory<float> cameraFovMem;
 		private IMemory<Vector> cameraPositionMem;
+		private IMemory<float> cameraMinZoomMem;
+		private IMemory<float> cameraMaxZoomMem;
 
 		private int time = 0;
 		private int moon = 0;
@@ -99,6 +101,8 @@ namespace ConceptMatrix.GUI.Views
 		public Vector2D CameraPan { get; set; }
 		public float CameraRotaton { get; set; }
 		public float CameraZoom { get; set; }
+		public float CameraMinZoom { get; private set; }
+		public float CameraMaxZoom { get; private set; }
 		public float CameraFov { get; set; }
 		public Vector CameraPosition { get; set; }
 
@@ -127,6 +131,12 @@ namespace ConceptMatrix.GUI.Views
 					this.cameraZoomMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraCurrentZoom);
 					this.cameraZoomMem.Bind(this, nameof(this.CameraZoom));
 
+					this.cameraMinZoomMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraMinZoom);
+					this.cameraMinZoomMem.Bind(this, nameof(this.CameraMinZoom));
+
+					this.cameraMaxZoomMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraMaxZoom);
+					this.cameraMaxZoomMem.Bind(this, nameof(this.CameraMaxZoom));
+
 					this.cameraFovMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.FOVCurrent);
 					this.cameraFovMem.Bind(this, nameof(this.CameraFov));
 
@@ -143,6 +153,8 @@ namespace ConceptMatrix.GUI.Views
 					this.cameraZoomMem.Dispose();
 					this.cameraFovMem.Dispose();
 					this.cameraPositionMem.Dispose();
+					this.cameraMinZoomMem.Dispose();
+					this.cameraMaxZoomMem.Dispose();
 				}
 			}
 		}
@@ -250,11 +262,8 @@ namespace ConceptMatrix.GUI.Views
 		{
 			bool unlock = (bool)this.UnlockCameraCheckbox.IsChecked;
 
-			using IMemory<float> maxZoomMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraMaxZoom);
-			maxZoomMem.Value = unlock ? 1000 : 20;
-
-			using IMemory<float> minZoomMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraMinZoom);
-			minZoomMem.Value = unlock ? 0 : 1.75f;
+			this.CameraMaxZoom = unlock ? 256 : 20;
+			this.CameraMinZoom = unlock ? 0 : 1.75f;
 
 			using IMemory<float> minYMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraYMin);
 			minYMem.Value = unlock ? 1.5f : 1.25f;
