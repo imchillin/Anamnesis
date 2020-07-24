@@ -14,25 +14,25 @@
 			 Loaded="OnLoaded"
 			 Unloaded="OnUnloaded">
 	
-	<Grid Margin="0">
+	<Grid Margin="0" x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
-		<Grid Grid.Column="0">
+		<Grid Grid.Column="0" IsEnabled="{Binding IsOverworld}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 
 			<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 0, 3, 3" CornerRadius="3" Grid.Row="0">
-				<views:ModelTypeEditor/>
+				<views:ModelTypeEditor DataContext="{Binding Actor}"/>
 			</Border>
 
 			<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 3, 3, 0" CornerRadius="3, 3, 0, 0" Grid.Row="1">
-				<views:AppearanceEditor x:Name="Appearance" Margin="0, -3, 0, 0"/>
+				<views:AppearanceEditor Margin="0, -3, 0, 0" DataContext="{Binding Actor}"/>
 			</Border>
 
 		</Grid>
@@ -46,15 +46,17 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-			<views:EquipmentEditor x:Name="Equipment" Grid.Row="0"/>
+			<Border IsEnabled="{Binding IsOverworld}" Grid.Row="0">
+				<views:EquipmentEditor DataContext="{Binding Actor}"/>
+			</Border>
 
 			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="3, 3, 0, 3" CornerRadius="3, 0, 0, 3">
-				<views:ExtendedAppearanceEditor x:Name="ExtendedAppearance"/>
+				<views:ExtendedAppearanceEditor DataContext="{Binding Actor}"/>
 			</Border>
 
 			<Border Grid.Row="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0">
 				<Grid Margin="3">
-					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal" IsEnabled="{Binding IsOverworld}">
 						<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
 						<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Adv. Load..." Margin="3" Click="OnAdvLoadClicked"/>
 						<cm3Controls:IconButton Grid.Column="1" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>

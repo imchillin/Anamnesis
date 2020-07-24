@@ -20,10 +20,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class AppearanceEditor : UserControl
 	{
 		private readonly IGameDataService gameDataService;
-		private readonly ISelectionService selectionService;
 
 		public AppearanceEditor()
 		{
@@ -31,7 +31,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.ContentArea.DataContext = this;
 
 			this.gameDataService = Services.Get<IGameDataService>();
-			this.selectionService = Services.Get<ISelectionService>();
 
 			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Genders));
 			this.RaceComboBox.ItemsSource = this.gameDataService.Races.All;
@@ -57,17 +56,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.selectionService.ModeChanged += this.SelectionModeChanged;
 			this.OnActorChanged(this.DataContext as Actor);
-			this.SelectionModeChanged(this.selectionService.GetMode());
 		}
 
-		private void OnUnloaded(object sender, RoutedEventArgs e)
-		{
-			this.selectionService.ModeChanged -= this.SelectionModeChanged;
-		}
-
-		[SuppressPropertyChangedWarnings]
 		private void OnActorChanged(Actor actor)
 		{
 			if (this.Appearance != null)
@@ -133,7 +124,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e == null || e.PropertyName == nameof(AppearanceViewModel.Race) || e.PropertyName == nameof(AppearanceViewModel.Tribe) || e.PropertyName == nameof(AppearanceViewModel.Gender))
@@ -159,17 +149,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			await viewService.ShowDrawer(selector, "Hair");
 		}
 
-		private async void SelectionModeChanged(Modes mode)
-		{
-			await Task.Delay(1);
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				////this.ExtendedAppearanceArea.IsEnabled = mode == Modes.Overworld;
-				this.AppearanceArea.IsEnabled = mode == Modes.Overworld;
-			});
-		}
-
-		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnRaceChanged(object sender, SelectionChangedEventArgs e)
 		{
 			IRace race = this.RaceComboBox.SelectedItem as IRace;
@@ -193,7 +172,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.UpdateRaceAndTribe();
 		}
 
-		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnTribeChanged(object sender, SelectionChangedEventArgs e)
 		{
 			ITribe tribe = this.TribeComboBox.SelectedItem as ITribe;

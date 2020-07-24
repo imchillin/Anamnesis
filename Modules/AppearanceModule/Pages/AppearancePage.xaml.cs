@@ -14,15 +14,17 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	using ConceptMatrix.AppearanceModule.Views;
 	using ConceptMatrix.GameData;
 	using ConceptMatrix.WpfStyles.Drawers;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class AppearancePage : UserControl
 	{
 		private ISelectionService selectionService;
 		private IActorRefreshService refreshService;
-		private Actor actor;
 
 		public AppearancePage()
 		{
@@ -33,7 +35,12 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			this.refreshService.RefreshComplete += this.RefreshService_RefreshComplete;
 
 			this.InitializeComponent();
+
+			this.ContentArea.DataContext = this;
 		}
+
+		public bool IsOverworld { get; private set; }
+		public Actor Actor { get; private set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -65,7 +72,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		private async void ApplyNpc(INpcBase npc)
 		{
 			AppearanceFile apFile = npc.ToFile();
-			await apFile.Apply(this.actor, AppearanceFile.SaveModes.All);
+			await apFile.Apply(this.Actor, AppearanceFile.SaveModes.All);
 		}
 
 		private async Task Load(bool advanced)
@@ -98,7 +105,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 					}
 				}
 
-				await apFile.Apply(this.actor, mode);
+				await apFile.Apply(this.Actor, mode);
 			}
 		}
 
@@ -112,13 +119,13 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 			IFileService fileService = Services.Get<IFileService>();
 			AppearanceFile file = new AppearanceFile();
-			file.Read(this.actor, mode);
+			file.Read(this.Actor, mode);
 			await fileService.Save(file);
 		}
 
 		private void OnActorChanged(Actor actor)
 		{
-			this.actor = actor;
+			this.Actor = actor;
 			bool hasValidSelection = actor != null && (actor.Type == ActorTypes.Player || actor.Type == ActorTypes.BattleNpc || actor.Type == ActorTypes.EventNpc);
 
 			Application.Current.Dispatcher.Invoke(() =>
@@ -127,13 +134,9 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			});
 		}
 
-		private async void SelectionModeChanged(Modes mode)
+		private void SelectionModeChanged(Modes mode)
 		{
-			await Task.Delay(1);
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				this.Equipment.IsEnabled = mode == Modes.Overworld;
-			});
+			this.IsOverworld = mode == Modes.Overworld;
 		}
 
 		private void RefreshService_RefreshComplete(Actor actor)
