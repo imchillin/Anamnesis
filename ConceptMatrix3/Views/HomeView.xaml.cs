@@ -115,8 +115,6 @@ namespace ConceptMatrix.GUI.Views
 
 				if (this.isGpose)
 				{
-					this.timeMem = this.injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
-
 					this.cameraAngleMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
 					this.cameraAngleMem.ValueChanged += this.OnCameraAngleMemValueChanged;
 
@@ -139,9 +137,6 @@ namespace ConceptMatrix.GUI.Views
 				}
 				else
 				{
-					this.timeMem.Value = 0;
-
-					this.timeMem.Dispose();
 					this.cameraAngleMem.Dispose();
 					this.cameraPanMem.Dispose();
 					this.cameraRotatonMem.Dispose();
@@ -160,6 +155,7 @@ namespace ConceptMatrix.GUI.Views
 			ISelectionService selectionService = ConceptMatrix.Services.Get<ISelectionService>();
 			selectionService.ModeChanged += this.OnSelectionServiceModeChanged;
 
+			this.timeMem = this.injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
 			this.weatherMem = this.injection.GetMemory(Offsets.Main.GposeFilters, Offsets.Main.ForceWeather);
 			this.territoryMem = this.injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 			this.territoryMem.ValueChanged += this.OnTerritoryMemValueChanged;
@@ -183,6 +179,9 @@ namespace ConceptMatrix.GUI.Views
 
 			this.territoryMem.Dispose();
 			this.weatherMem.Dispose();
+
+			this.timeMem.Value = 0;
+			this.timeMem.Dispose();
 		}
 
 		private void OnCameraAngleMemValueChanged(object sender, Vector2D value)

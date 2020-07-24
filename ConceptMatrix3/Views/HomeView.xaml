@@ -31,7 +31,7 @@
 		</Grid>
 
 		<StackPanel Grid.Column="1">
-			<GroupBox Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding IsGpose}">
+			<GroupBox Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
 						<fa:IconBlock Icon="Globe" Margin="0, 0, 3, 0"/>
