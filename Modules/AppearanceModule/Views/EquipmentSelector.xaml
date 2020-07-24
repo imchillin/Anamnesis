@@ -4,16 +4,25 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:cm3Drawers="clr-namespace:ConceptMatrix.WpfStyles.Drawers;assembly=Styles"
+			 xmlns:controls="clr-namespace:Styles.Controls;assembly=Styles"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="232">
+
 	<Grid>
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="6, 0, 0, 0">
+		<Expander x:Name="ClassExpander" Style="{StaticResource Cm3Expander}">
+			<Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="3" Padding="3, 3, 3, 6" Margin="3, 0, 3, 0">
+				<controls:ClassFilter HorizontalAlignment="Center" Value="{Binding ClassFilter}"/>
+			</Border>
+		</Expander>
+
+		<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6, 0, 0, 0">
 			<RadioButton Margin="3" IsChecked="True" Checked="OnAllMode">
 				<TextBlock Text="All" Margin="0, -3, 6, 0"/>
 			</RadioButton>
@@ -32,7 +41,7 @@
 		</StackPanel>
 
 		<cm3Drawers:SelectorDrawer
-			Grid.Row="1"
+			Grid.Row="2"
 			x:Name="Selector"
 			Close="OnClose" 
 			Filter="OnFilter"

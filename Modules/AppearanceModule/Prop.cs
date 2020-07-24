@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule
 {
+	using System.Collections.Generic;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
 
@@ -22,6 +23,14 @@ namespace ConceptMatrix.AppearanceModule
 		public ushort SubModelVariant { get => 0; }
 		public ushort SubModelSet { get => 0; }
 		public IImage Icon { get => null; }
+
+		public Classes EquipableClasses
+		{
+			get
+			{
+				return Classes.All;
+			}
+		}
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

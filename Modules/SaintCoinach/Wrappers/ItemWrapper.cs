@@ -7,10 +7,12 @@ namespace ConceptMatrix.SaintCoinachModule
 	using System.Collections.Generic;
 	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
+	using SaintCoinach.Xiv.Items;
 
 	internal class ItemWrapper : ObjectWrapper<Item>, IItem
 	{
 		private Dictionary<ItemSlots, bool> fitsInSlotsCache = new Dictionary<ItemSlots, bool>();
+		private Classes equipableClasses = Classes.None;
 
 		public ItemWrapper(Item value)
 			: base(value)
@@ -103,6 +105,51 @@ namespace ConceptMatrix.SaintCoinachModule
 			{
 				return (ushort)this.Value.ModelSub.Value1;
 			}
+		}
+
+		public Classes EquipableClasses
+		{
+			get
+			{
+				if (this.equipableClasses == Classes.None)
+				{
+					foreach (Classes job in Enum.GetValues(typeof(Classes)))
+					{
+						if (this.CanBeUsedByClass(job))
+						{
+							this.equipableClasses |= job;
+						}
+					}
+				}
+
+				return this.equipableClasses;
+			}
+		}
+
+		public bool CanBeUsedByClass(Classes job)
+		{
+			if (job == Classes.None)
+				return false;
+
+			if (job == Classes.All)
+				return false;
+
+			string abbreviation = job.GetAbbreviation();
+
+			if (this.Value is Equipment eq)
+			{
+				foreach (ClassJob classJob in eq.ClassJobCategory.ClassJobs)
+				{
+					if (classJob.Abbreviation == abbreviation)
+					{
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			return true;
 		}
 
 		public bool FitsInSlot(ItemSlots slot)

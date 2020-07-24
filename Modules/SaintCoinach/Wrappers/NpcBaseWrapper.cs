@@ -164,6 +164,14 @@ namespace ConceptMatrix.SaintCoinachModule
 			public ushort SubModelVariant { get; set; }
 			public bool IsWeapon { get; set; }
 
+			public Classes EquipableClasses
+			{
+				get
+				{
+					return Classes.All;
+				}
+			}
+
 			public static NpcItemwrapper FromWeapon(Quad weapon, bool isSub)
 			{
 				NpcItemwrapper item = new NpcItemwrapper();

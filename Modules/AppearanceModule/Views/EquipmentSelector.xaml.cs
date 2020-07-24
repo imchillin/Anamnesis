@@ -3,21 +3,25 @@
 
 namespace ConceptMatrix.AppearanceModule.Views
 {
-	using System.Text.RegularExpressions;
+	using System;
 	using System.Windows;
 	using System.Windows.Controls;
 	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
 	using ConceptMatrix.WpfStyles.Drawers;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
 		private readonly ItemSlots slot;
 		private Mode mode;
+		private Classes classFilter;
 
 		public EquipmentSelector(ItemSlots slot)
 		{
@@ -44,7 +48,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 				this.Selector.Items.Add(item);
 			}
 
-			this.Selector.FilterItems();
+			this.ClassFilter = Classes.All;
 		}
 
 		public event DrawerEvent Close;
@@ -76,6 +80,20 @@ namespace ConceptMatrix.AppearanceModule.Views
 			get
 			{
 				return this.Selector;
+			}
+		}
+
+		public Classes ClassFilter
+		{
+			get
+			{
+				return this.classFilter;
+			}
+			set
+			{
+				this.classFilter = value;
+				this.ClassExpander.Header = "Jobs: " + value.Describe(true);
+				this.Selector.FilterItems();
 			}
 		}
 
@@ -121,6 +139,9 @@ namespace ConceptMatrix.AppearanceModule.Views
 					}
 				}
 
+				if (!this.HasClass(this.ClassFilter, item.EquipableClasses))
+					return false;
+
 				bool matches = false;
 
 				matches |= SearchUtility.Matches(item.Name, search);
@@ -138,6 +159,22 @@ namespace ConceptMatrix.AppearanceModule.Views
 				matches |= SearchUtility.Matches(item.Key.ToString(), search);
 
 				return matches;
+			}
+
+			return false;
+		}
+
+		private bool HasClass(Classes a, Classes b)
+		{
+			foreach (Classes job in Enum.GetValues(typeof(Classes)))
+			{
+				if (job == Classes.None)
+					continue;
+
+				if (a.HasFlag(job) && b.HasFlag(job))
+				{
+					return true;
+				}
 			}
 
 			return false;

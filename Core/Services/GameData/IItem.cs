@@ -3,6 +3,8 @@
 
 namespace ConceptMatrix.GameData
 {
+	using System.Collections.Generic;
+
 	public interface IItem : IDataObject
 	{
 		string Name { get; }
@@ -17,6 +19,8 @@ namespace ConceptMatrix.GameData
 		ushort SubModelSet { get; }
 		ushort SubModelBase { get; }
 		ushort SubModelVariant { get; }
+
+		Classes EquipableClasses { get; }
 
 		bool IsWeapon { get; }
 

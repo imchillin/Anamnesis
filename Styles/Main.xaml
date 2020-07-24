@@ -47,7 +47,9 @@
 		<ResourceDictionary Source="Styles/GroupBoxStyles.xaml"/>
 		<ResourceDictionary Source="Styles/ButtonStyles.xaml"/>
 		<ResourceDictionary Source="Styles/TextBlockStyles.xaml"/>
-
+		<ResourceDictionary Source="Styles/ToggleButtonStyles.xaml"/>
+		<ResourceDictionary Source="Styles/ExpanderStyles.xaml"/>
+		
 	</ResourceDictionary.MergedDictionaries>
 	
 	<!-- Material Design:Styles-->
