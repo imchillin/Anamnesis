@@ -277,7 +277,7 @@ namespace ConceptMatrix.GUI.Views
 			}
 			else
 			{
-				this.FilePath = this.CurrentDir.Path + this.FileName;
+				this.FilePath = this.CurrentDir.Path + "/" + this.FileName;
 			}
 
 			this.CloseDrawer();
