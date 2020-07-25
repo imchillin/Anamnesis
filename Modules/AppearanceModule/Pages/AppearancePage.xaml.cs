@@ -109,15 +109,26 @@ namespace ConceptMatrix.AppearanceModule.Pages
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
 			IViewService viewService = Services.Get<IViewService>();
-			AppearanceFile.SaveModes mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Save Appearance...");
-
-			if (mode == AppearanceFile.SaveModes.None)
-				return;
-
 			IFileService fileService = Services.Get<IFileService>();
-			AppearanceFile file = new AppearanceFile();
-			file.Read(this.Actor, mode);
-			await fileService.Save(file);
+
+			await fileService.Save(
+				async (advancedMode) =>
+				{
+					AppearanceFile.SaveModes mode = AppearanceFile.SaveModes.All;
+
+					if (advancedMode)
+						mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Save Appearance...");
+
+					AppearanceFile file = new AppearanceFile();
+
+					if (mode == AppearanceFile.SaveModes.None)
+						return null;
+
+					file.Read(this.Actor, mode);
+
+					return file;
+				},
+				AppearanceFile.FileType);
 		}
 
 		private void OnActorChanged(Actor actor)

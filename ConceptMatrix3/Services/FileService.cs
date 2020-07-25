@@ -133,15 +133,10 @@ namespace ConceptMatrix.GUI.Services
 			return null;
 		}
 
-		public async Task Save(FileBase file, string path = null)
+		public async Task Save(Func<bool, Task<FileBase>> writeFile, FileType type, string path = null)
 		{
 			try
 			{
-				FileType type = file.GetFileType();
-
-				if (path == null)
-					path = file.Path;
-
 				bool advancedMode = false;
 
 				if (path == null)
@@ -151,7 +146,7 @@ namespace ConceptMatrix.GUI.Services
 					if (!useExplorerBrowser)
 					{
 						List<FileType> fileTypes = new List<FileType>();
-						fileTypes.Add(file.GetFileType());
+						fileTypes.Add(type);
 						FileBrowserView browser = new FileBrowserView(this.fileSources, fileTypes.ToArray(), FileBrowserView.Modes.Save);
 						await App.Services.Get<IViewService>().ShowDrawer(browser);
 
@@ -186,6 +181,8 @@ namespace ConceptMatrix.GUI.Services
 
 				path += "." + type.Extension;
 
+				FileBase file = await writeFile.Invoke(advancedMode);
+
 				using FileStream stream = new FileStream(path, FileMode.Create);
 				if (type.Serialize != null)
 				{
@@ -202,12 +199,6 @@ namespace ConceptMatrix.GUI.Services
 			{
 				Log.Write(new Exception("Failed to save file", ex), "Files", Log.Severity.Error);
 			}
-		}
-
-		public Task SaveAs(FileBase file)
-		{
-			file.Path = null;
-			return this.Save(file);
 		}
 
 		public Task<string> OpenDirectory(string title, params string[] defaults)

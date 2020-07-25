@@ -21,8 +21,13 @@ namespace ConceptMatrix
 
 		Task<string> OpenDirectory(string title, params string[] defaults);
 
-		Task Save(FileBase file, string? path = null);
-		Task SaveAs(FileBase file);
+		/// <summary>
+		/// Saves a file.
+		/// </summary>
+		/// <param name="writeFile">a callback executed once the location and advanced mode has been selected.</param>
+		/// <param name="type">the type of file to save.</param>
+		/// <param name="path">the default path to write to.</param>
+		Task Save(Func<bool, Task<FileBase>> writeFile, FileType type, string? path = null);
 	}
 
 	public interface IFileSource

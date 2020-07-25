@@ -112,16 +112,25 @@ namespace ConceptMatrix.PoseModule.Pages
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
 			IViewService viewService = Services.Get<IViewService>();
-			PoseFile.Configuration config = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Save Pose...");
-
-			if (config == null)
-				return;
-
 			IFileService fileService = Services.Get<IFileService>();
-			PoseFile file = new PoseFile();
-			file.Read(this.SkeletonViewModel.Bones, config);
 
-			await fileService.SaveAs(file);
+			await fileService.Save(
+				async (advancedMode) =>
+				{
+					PoseFile.Configuration config = null;
+
+					if (advancedMode)
+						config = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Save Pose...");
+
+					if (config == null)
+						return null;
+
+					PoseFile file = new PoseFile();
+					file.Read(this.SkeletonViewModel.Bones, config);
+
+					return file;
+				},
+				PoseFile.FileType);
 		}
 
 		[SuppressPropertyChangedWarnings]
