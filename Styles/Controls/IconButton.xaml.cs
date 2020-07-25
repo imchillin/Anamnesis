@@ -23,7 +23,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			this.InitializeComponent();
 
-			this.DataContext = this;
+			this.ContentArea.DataContext = this;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

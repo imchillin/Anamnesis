@@ -8,7 +8,7 @@
 			 mc:Ignorable="d" 
 			 d:DesignWidth="128">
 
-	<Button HorizontalContentAlignment="Stretch" Padding="0" Click="OnClick">
+	<Button x:Name="ContentArea" HorizontalContentAlignment="Stretch" Padding="0" Click="OnClick">
 		<Grid Margin="6, 0, 6, 0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
