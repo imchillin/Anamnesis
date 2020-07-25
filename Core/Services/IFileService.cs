@@ -29,12 +29,12 @@ namespace ConceptMatrix
 	{
 		public interface IEntry
 		{
+			public string Path { get; }
 			public string Name { get; }
 		}
 
 		public interface IFile : IEntry
 		{
-			public string Path { get; }
 			public FileType Type { get; }
 		}
 
@@ -54,7 +54,7 @@ namespace ConceptMatrix
 		public readonly string Extension;
 		public readonly string Name;
 		public readonly Type Type;
-		public readonly bool CanAdvancedLoad;
+		public readonly bool SupportsAdvancedMode;
 		public readonly string? DefaultDirectoryName;
 
 		public Func<Stream, FileBase>? Deserialize;
@@ -68,7 +68,7 @@ namespace ConceptMatrix
 			this.Extension = extension;
 			this.Name = name;
 			this.Type = type;
-			this.CanAdvancedLoad = canAdvancedLoad;
+			this.SupportsAdvancedMode = canAdvancedLoad;
 			this.DefaultDirectoryName = defaultdirectoryName;
 		}
 

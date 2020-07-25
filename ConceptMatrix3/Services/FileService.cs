@@ -81,20 +81,20 @@ namespace ConceptMatrix.GUI.Services
 			try
 			{
 				string path = null;
-				bool advancedLoad = false;
+				bool advancedMode = false;
 
 				bool useExplorerBrowser = App.Settings.UseWindowsExplorer;
 
 				if (!useExplorerBrowser)
 				{
-					FileBrowserView browser = new FileBrowserView(this.fileSources, fileTypes);
+					FileBrowserView browser = new FileBrowserView(this.fileSources, fileTypes, FileBrowserView.Modes.Load);
 					await App.Services.Get<IViewService>().ShowDrawer(browser);
 
 					while (browser.IsOpen)
 						await Task.Delay(10);
 
 					path = browser.FilePath;
-					advancedLoad = browser.AdvancedLoad;
+					advancedMode = browser.AdvancedMode;
 					useExplorerBrowser = browser.UseFileBrowser;
 				}
 
@@ -112,7 +112,7 @@ namespace ConceptMatrix.GUI.Services
 						return dlg.FileName;
 					});
 
-					advancedLoad = true;
+					advancedMode = true;
 				}
 
 				if (path == null)
@@ -122,7 +122,7 @@ namespace ConceptMatrix.GUI.Services
 				FileType type = GetFileType(fileTypes, extension);
 
 				FileBase file = await Open(path, type);
-				file.UseAdvancedLoad = advancedLoad;
+				file.UseAdvancedLoad = advancedMode;
 				return file;
 			}
 			catch (Exception ex)
@@ -142,19 +142,41 @@ namespace ConceptMatrix.GUI.Services
 				if (path == null)
 					path = file.Path;
 
+				bool advancedMode = false;
+
 				if (path == null)
 				{
-					path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
+					bool useExplorerBrowser = App.Settings.UseWindowsExplorer;
+
+					if (!useExplorerBrowser)
 					{
-						SaveFileDialog dlg = new SaveFileDialog();
-						dlg.Filter = ToFilter(type);
-						bool? result = dlg.ShowDialog();
+						List<FileType> fileTypes = new List<FileType>();
+						fileTypes.Add(file.GetFileType());
+						FileBrowserView browser = new FileBrowserView(this.fileSources, fileTypes.ToArray(), FileBrowserView.Modes.Save);
+						await App.Services.Get<IViewService>().ShowDrawer(browser);
 
-						if (result != true)
-							return null;
+						while (browser.IsOpen)
+							await Task.Delay(10);
 
-						return Path.Combine(Path.GetDirectoryName(dlg.FileName), Path.GetFileNameWithoutExtension(dlg.FileName));
-					});
+						path = browser.FilePath;
+						advancedMode = browser.AdvancedMode;
+						useExplorerBrowser = browser.UseFileBrowser;
+					}
+
+					if (useExplorerBrowser)
+					{
+						path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
+						{
+							SaveFileDialog dlg = new SaveFileDialog();
+							dlg.Filter = ToFilter(type);
+							bool? result = dlg.ShowDialog();
+
+							if (result != true)
+								return null;
+
+							return Path.Combine(Path.GetDirectoryName(dlg.FileName), Path.GetFileNameWithoutExtension(dlg.FileName));
+						});
+					}
 
 					if (path == null)
 					{

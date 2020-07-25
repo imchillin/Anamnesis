@@ -6,6 +6,7 @@ namespace ConceptMatrix.GUI.Views
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
+	using System.IO;
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
@@ -24,9 +25,12 @@ namespace ConceptMatrix.GUI.Views
 		private FileType[] fileTypes;
 		private IFileSource fileSource;
 		private Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
+		private Modes mode;
+		private string fileName;
 
-		public FileBrowserView(List<IFileSource> sources, FileType[] fileTypes)
+		public FileBrowserView(List<IFileSource> sources, FileType[] fileTypes, Modes mode)
 		{
+			this.mode = mode;
 			this.fileTypes = fileTypes;
 			this.InitializeComponent();
 
@@ -43,10 +47,34 @@ namespace ConceptMatrix.GUI.Views
 			this.IsOpen = true;
 
 			this.FileSource = this.FileSources.Count > 0 ? this.FileSources[0] : null;
+
+			if (this.mode == Modes.Save)
+			{
+				this.FileName = "New " + fileTypes[0].Name;
+
+				Task.Run(async () =>
+				{
+					await Task.Delay(100);
+					Application.Current.Dispatcher.Invoke(() =>
+					{
+						this.FileNameInputBox.Focus();
+						this.FileNameInputBox.SelectAll();
+
+						FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), this.FileNameInputBox);
+						Keyboard.Focus(this.FileNameInputBox);
+					});
+				});
+			}
 		}
 
 		public event DrawerEvent Close;
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		public enum Modes
+		{
+			Load,
+			Save,
+		}
 
 		public bool IsOpen
 		{
@@ -55,12 +83,34 @@ namespace ConceptMatrix.GUI.Views
 		}
 
 		public string FilePath { get; private set; }
-		public bool AdvancedLoad { get; private set; }
+		public bool AdvancedMode { get; private set; }
 		public bool UseFileBrowser { get; set; }
 
 		public ObservableCollection<IFileSource> FileSources { get; private set; } = new ObservableCollection<IFileSource>();
 		public ObservableCollection<EntryWrapper> Entries { get; private set; } = new ObservableCollection<EntryWrapper>();
 		public EntryWrapper Selected { get; set; }
+
+		public string FileName
+		{
+			get
+			{
+				return this.fileName;
+			}
+			set
+			{
+				this.fileName = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanSelect)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanSelectAdvanced)));
+			}
+		}
+
+		public string FileExtension
+		{
+			get
+			{
+				return "." + this.fileTypes[0].Extension;
+			}
+		}
 
 		public IFileSource FileSource
 		{
@@ -116,6 +166,47 @@ namespace ConceptMatrix.GUI.Views
 			}
 		}
 
+		public bool ShowFileName
+		{
+			get
+			{
+				return this.mode == Modes.Save;
+			}
+		}
+
+		public bool CanSelect
+		{
+			get
+			{
+				if (this.mode == Modes.Load)
+				{
+					return this.Selected?.CanSelect ?? false;
+				}
+				else
+				{
+					return this.CurrentDir != null && !string.IsNullOrWhiteSpace(this.FileName);
+				}
+			}
+		}
+
+		public bool CanSelectAdvanced
+		{
+			get
+			{
+				if (!this.CanSelect)
+					return false;
+
+				if (this.mode == Modes.Load)
+				{
+					return true;
+				}
+				else
+				{
+					return this.fileTypes[0].SupportsAdvancedMode;
+				}
+			}
+		}
+
 		private async Task UpdateEntries()
 		{
 			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.fileTypes);
@@ -126,7 +217,7 @@ namespace ConceptMatrix.GUI.Views
 
 				foreach (IFileSource.IEntry entry in entries)
 				{
-					this.Entries.Add(new EntryWrapper(entry));
+					this.Entries.Add(new EntryWrapper(entry, this));
 				}
 			});
 		}
@@ -170,22 +261,28 @@ namespace ConceptMatrix.GUI.Views
 
 		private void OnSelectClicked(object sender, RoutedEventArgs e)
 		{
-			if (this.Selected != null && this.Selected.Entry is IFileSource.IFile file)
+			if (!this.CanSelect)
+				return;
+
+			if (this.mode == Modes.Load)
 			{
-				this.FilePath = file.Path;
-				this.AdvancedLoad = false;
-				this.CloseDrawer();
+				if (this.Selected.Entry is IFileSource.IFile file)
+				{
+					this.FilePath = file.Path;
+				}
 			}
+			else
+			{
+				this.FilePath = this.CurrentDir.Path + this.FileName;
+			}
+
+			this.CloseDrawer();
 		}
 
 		private void OnAdvancedClicked(object sender, RoutedEventArgs e)
 		{
-			if (this.Selected != null && this.Selected.Entry is IFileSource.IFile file)
-			{
-				this.FilePath = file.Path;
-				this.AdvancedLoad = true;
-				this.CloseDrawer();
-			}
+			this.AdvancedMode = true;
+			this.OnSelectClicked(sender, e);
 		}
 
 		private void OnBrowseClicked(object sender, RoutedEventArgs e)
@@ -203,10 +300,12 @@ namespace ConceptMatrix.GUI.Views
 		public class EntryWrapper
 		{
 			public readonly IFileSource.IEntry Entry;
+			public readonly FileBrowserView View;
 
-			public EntryWrapper(IFileSource.IEntry entry)
+			public EntryWrapper(IFileSource.IEntry entry, FileBrowserView view)
 			{
 				this.Entry = entry;
+				this.View = view;
 			}
 
 			public string Name
@@ -227,7 +326,13 @@ namespace ConceptMatrix.GUI.Views
 
 			public bool CanSelect
 			{
-				get => this.Entry is IFileSource.IFile;
+				get
+				{
+					if (this.View.mode == Modes.Save)
+						return this.Entry is IFileSource.IDirectory;
+
+					return true;
+				}
 			}
 
 			public bool SupportsAdvanced
@@ -236,7 +341,7 @@ namespace ConceptMatrix.GUI.Views
 				{
 					if (this.Entry is IFileSource.IFile file && file.Type != null)
 					{
-						return file.Type.CanAdvancedLoad;
+						return file.Type.SupportsAdvancedMode;
 					}
 
 					return false;
