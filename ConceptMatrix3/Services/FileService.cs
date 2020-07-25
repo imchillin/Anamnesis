@@ -4,16 +4,18 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
-	using System.Runtime.CompilerServices;
 	using System.Text;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
+	using ConceptMatrix.GUI.Views;
 	using Microsoft.Win32;
 
 	public class FileService : IFileService
 	{
 		private static ISerializerService serializer;
+		private List<IFileSource> fileSources = new List<IFileSource>();
 
 		public static string StoreDirectory
 		{
@@ -33,6 +35,9 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Start()
 		{
+			this.AddFileSource(new NewFileSource());
+			this.AddFileSource(new LegacyFileSource());
+
 			return Task.CompletedTask;
 		}
 
@@ -41,29 +46,18 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public async Task<T> Open<T>(FileType fileType, string path = null)
+		public void AddFileSource(IFileSource source)
+		{
+			this.fileSources.Add(source);
+		}
+
+		public async Task<T> Open<T>(FileType fileType, string path)
 			where T : FileBase
 		{
 			try
 			{
-				if (string.IsNullOrEmpty(path))
-				{
-					path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
-					{
-						OpenFileDialog dlg = new OpenFileDialog();
-						dlg.Filter = ToFilter(fileType);
-						bool? result = dlg.ShowDialog();
-
-						if (result != true)
-							return null;
-
-						return dlg.FileName;
-					});
-				}
-				else if (!path.EndsWith(fileType.Extension))
-				{
+				if (!path.EndsWith(fileType.Extension))
 					path = path + "." + fileType.Extension;
-				}
 
 				if (path == null)
 					return null;
@@ -86,17 +80,40 @@ namespace ConceptMatrix.GUI.Services
 		{
 			try
 			{
-				string path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
+				string path = null;
+				bool advancedLoad = false;
+
+				bool useExplorerBrowser = App.Settings.UseWindowsExplorer;
+
+				if (!useExplorerBrowser)
 				{
-					OpenFileDialog dlg = new OpenFileDialog();
-					dlg.Filter = ToAnyFilter(fileTypes);
-					bool? result = dlg.ShowDialog();
+					FileBrowserView browser = new FileBrowserView(this.fileSources, fileTypes);
+					await App.Services.Get<IViewService>().ShowDrawer(browser);
 
-					if (result != true)
-						return null;
+					while (browser.IsOpen)
+						await Task.Delay(10);
 
-					return dlg.FileName;
-				});
+					path = browser.FilePath;
+					advancedLoad = browser.AdvancedLoad;
+					useExplorerBrowser = browser.UseFileBrowser;
+				}
+
+				if (useExplorerBrowser)
+				{
+					path = await App.Current.Dispatcher.InvokeAsync<string>(() =>
+					{
+						OpenFileDialog dlg = new OpenFileDialog();
+						dlg.Filter = ToAnyFilter(fileTypes);
+						bool? result = dlg.ShowDialog();
+
+						if (result != true)
+							return null;
+
+						return dlg.FileName;
+					});
+
+					advancedLoad = true;
+				}
 
 				if (path == null)
 					return null;
@@ -104,7 +121,9 @@ namespace ConceptMatrix.GUI.Services
 				string extension = Path.GetExtension(path);
 				FileType type = GetFileType(fileTypes, extension);
 
-				return await Open(path, type);
+				FileBase file = await Open(path, type);
+				file.UseAdvancedLoad = advancedLoad;
+				return file;
 			}
 			catch (Exception ex)
 			{

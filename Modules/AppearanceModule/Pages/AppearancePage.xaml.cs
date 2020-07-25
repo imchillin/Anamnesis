@@ -56,12 +56,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
-			await this.Load(false);
-		}
-
-		private async void OnAdvLoadClicked(object sender, RoutedEventArgs e)
-		{
-			await this.Load(true);
+			await this.Load();
 		}
 
 		private void OnLoadNpcClicked(object sender, RoutedEventArgs e)
@@ -75,7 +70,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			await apFile.Apply(this.Actor, AppearanceFile.SaveModes.All);
 		}
 
-		private async Task Load(bool advanced)
+		private async Task Load()
 		{
 			IFileService fileService = Services.Get<IFileService>();
 			IViewService viewService = Services.Get<IViewService>();
@@ -84,6 +79,8 @@ namespace ConceptMatrix.AppearanceModule.Pages
 				LegacyEquipmentSetFile.FileType,
 				LegacyAppearanceFile.AllFileType,
 				AppearanceFile.FileType);
+
+			bool advanced = file?.UseAdvancedLoad ?? false;
 
 			if (file is LegacyAppearanceFile legacyAllFile)
 				file = legacyAllFile.Upgrade();

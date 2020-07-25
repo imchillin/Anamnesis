@@ -4,11 +4,16 @@
 namespace ConceptMatrix
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
 
+	#pragma warning disable SA1402
+
 	public interface IFileService : IService
 	{
+		void AddFileSource(IFileSource source);
+
 		Task<T> Open<T>(FileType fileType, string? path = null)
 			where T : FileBase;
 
@@ -20,18 +25,42 @@ namespace ConceptMatrix
 		Task SaveAs(FileBase file);
 	}
 
-	#pragma warning disable SA1402
+	public interface IFileSource
+	{
+		public interface IEntry
+		{
+			public string Name { get; }
+		}
+
+		public interface IFile : IEntry
+		{
+			public string Path { get; }
+			public FileType Type { get; }
+		}
+
+		public interface IDirectory : IEntry
+		{
+		}
+
+		public string Name { get; }
+
+		public bool CanOpen(FileType type);
+		public IDirectory GetDefaultDirectory(FileType[] fileTypes);
+		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, FileType[] fileTypes);
+	}
 
 	public class FileType
 	{
 		public readonly string Extension;
 		public readonly string Name;
 		public readonly Type Type;
+		public readonly bool CanAdvancedLoad;
+		public readonly string? DefaultDirectoryName;
 
 		public Func<Stream, FileBase>? Deserialize;
 		public Action<Stream, FileBase>? Serialize;
 
-		public FileType(string extension, string name, Type type)
+		public FileType(string extension, string name, Type type, bool canAdvancedLoad = false, string? defaultdirectoryName = null)
 		{
 			if (extension.StartsWith("."))
 				extension = extension.Substring(1, extension.Length - 1);
@@ -39,6 +68,16 @@ namespace ConceptMatrix
 			this.Extension = extension;
 			this.Name = name;
 			this.Type = type;
+			this.CanAdvancedLoad = canAdvancedLoad;
+			this.DefaultDirectoryName = defaultdirectoryName;
+		}
+
+		public bool IsExtension(string extension)
+		{
+			if (extension.StartsWith("."))
+				extension = extension.Substring(1, extension.Length - 1);
+
+			return this.Extension == extension;
 		}
 	}
 
@@ -46,6 +85,7 @@ namespace ConceptMatrix
 	public abstract class FileBase
 	{
 		public string? Path;
+		public bool UseAdvancedLoad;
 		public abstract FileType GetFileType();
 	}
 }

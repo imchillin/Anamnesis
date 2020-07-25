@@ -14,7 +14,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 	[Serializable]
 	public class AppearanceFile : FileBase
 	{
-		public static readonly FileType FileType = new FileType("cm3a", "Appearance", typeof(AppearanceFile));
+		public static readonly FileType FileType = new FileType("cm3a", "Appearance", typeof(AppearanceFile), true, "Appearance");
 
 		[Flags]
 		public enum SaveModes

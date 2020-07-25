@@ -19,6 +19,7 @@ namespace ConceptMatrix.GUI
 	/// Interaction logic for MainWindow.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class MainWindow : Window
 	{
 		private readonly ViewService viewService;
@@ -61,7 +62,6 @@ namespace ConceptMatrix.GUI
 			}
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private void OnSettingsChanged(SettingsBase settings)
 		{
 			this.Zodiark = App.Settings.ThemeDark;

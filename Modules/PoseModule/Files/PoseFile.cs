@@ -10,7 +10,7 @@ namespace ConceptMatrix.PoseModule
 
 	public class PoseFile : FileBase
 	{
-		public static readonly FileType FileType = new FileType(@"cm3p", "CM3 Pose File", typeof(PoseFile));
+		public static readonly FileType FileType = new FileType(@"cm3p", "CM3 Pose File", typeof(PoseFile), true, "Poses");
 
 		[Flags]
 		public enum Groups

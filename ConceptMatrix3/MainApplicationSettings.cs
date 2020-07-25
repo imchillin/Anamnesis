@@ -15,5 +15,6 @@ namespace ConceptMatrix.GUI
 		public double Opacity { get; set; } = 1.0;
 		public bool StayTransparent { get; set; } = false;
 		public double Scale { get; set; } = 1.0;
+		public bool UseWindowsExplorer { get; set; } = false;
 	}
 }

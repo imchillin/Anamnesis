@@ -10,7 +10,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 	[Serializable]
 	public class LegacyEquipmentSetFile : FileBase
 	{
-		public static readonly FileType FileType = new FileType("json", "CM2 Equipment Set", typeof(LegacyEquipmentSetFile));
+		public static readonly FileType FileType = new FileType("json", "CM2 Equipment Set", typeof(LegacyEquipmentSetFile), false, "Gearsets");
 
 		public Item MainHand { get; set; }
 		public Item OffHand { get; set; }
