@@ -11,6 +11,7 @@ namespace ConceptMatrix.GUI.Services
 	using ConceptMatrix;
 
 	using Directories = System.IO.Directory;
+	using Files = System.IO.File;
 	using Paths = System.IO.Path;
 
 	#pragma warning disable SA1402
@@ -131,6 +132,12 @@ namespace ConceptMatrix.GUI.Services
 			public string Name { get; private set; }
 			public string Path { get; private set; }
 			public FileType Type { get; private set; }
+
+			public Task Delete()
+			{
+				Files.Delete(this.Path);
+				return Task.CompletedTask;
+			}
 		}
 
 		public class Directory : IFileSource.IDirectory
@@ -143,6 +150,12 @@ namespace ConceptMatrix.GUI.Services
 
 			public string Name { get; private set; }
 			public string Path { get; private set; }
+
+			public Task Delete()
+			{
+				Directories.Delete(this.Path, true);
+				return Task.CompletedTask;
+			}
 		}
 	}
 

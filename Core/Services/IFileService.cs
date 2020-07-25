@@ -31,6 +31,8 @@ namespace ConceptMatrix
 		{
 			public string Path { get; }
 			public string Name { get; }
+
+			public Task Delete();
 		}
 
 		public interface IFile : IEntry

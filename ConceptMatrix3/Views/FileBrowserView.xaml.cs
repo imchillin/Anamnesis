@@ -13,6 +13,7 @@ namespace ConceptMatrix.GUI.Views
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using ConceptMatrix;
+	using ConceptMatrix.GUI.Dialogs;
 	using PropertyChanged;
 
 	/// <summary>
@@ -237,6 +238,9 @@ namespace ConceptMatrix.GUI.Views
 
 		private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
+			if (e.ChangedButton != MouseButton.Left)
+				return;
+
 			if (this.Selected == null)
 				return;
 
@@ -289,6 +293,21 @@ namespace ConceptMatrix.GUI.Views
 		{
 			this.UseFileBrowser = true;
 			this.CloseDrawer();
+		}
+
+		private async void OnDeleteClick(object sender, RoutedEventArgs e)
+		{
+			if (this.Selected == null)
+				return;
+
+			bool? confirmed = await GenericDialog.Show("Are you sure you want to delete: \"" + this.Selected.Name + "\"", "Confirm", MessageBoxButton.OKCancel);
+
+			if (confirmed != true)
+				return;
+
+			await this.Selected.Entry.Delete();
+
+			_ = Task.Run(this.UpdateEntries);
 		}
 
 		private void CloseDrawer()

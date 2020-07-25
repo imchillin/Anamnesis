@@ -56,6 +56,12 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 
+						<Grid.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Delete" Click="OnDeleteClick"/>
+							</ContextMenu>
+						</Grid.ContextMenu>
+
 						<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}" Margin="3, 0, 3, 0" VerticalAlignment="Center"/>
 						<TextBlock Grid.Column="1" Text="{Binding Name}" Margin="3, 0, 3, 0"/>
 
