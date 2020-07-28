@@ -61,13 +61,19 @@ namespace ConceptMatrix.GUI.Services
 			return new Directory(defaultDir);
 		}
 
-		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, FileType[] fileTypes)
+		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, FileType[] fileTypes, bool recursive)
 		{
-			List<IFileSource.IEntry> results = new List<IFileSource.IEntry>();
-			results.AddRange(this.GetDirectories(current));
-			results.AddRange(this.GetFiles(current, fileTypes));
-
-			return Task.FromResult<IEnumerable<IFileSource.IEntry>>(results);
+			if (recursive)
+			{
+				return Task.FromResult<IEnumerable<IFileSource.IEntry>>(this.GetFiles(current, fileTypes, true));
+			}
+			else
+			{
+				List<IFileSource.IEntry> results = new List<IFileSource.IEntry>();
+				results.AddRange(this.GetDirectories(current));
+				results.AddRange(this.GetFiles(current, fileTypes, false));
+				return Task.FromResult<IEnumerable<IFileSource.IEntry>>(results);
+			}
 		}
 
 		public List<Directory> GetDirectories(IFileSource.IDirectory current)
@@ -88,7 +94,7 @@ namespace ConceptMatrix.GUI.Services
 			return results;
 		}
 
-		public List<File> GetFiles(IFileSource.IDirectory current, FileType[] fileTypes)
+		public List<File> GetFiles(IFileSource.IDirectory current, FileType[] fileTypes, bool recursive)
 		{
 			Directory currentDir = current as Directory;
 
@@ -96,7 +102,8 @@ namespace ConceptMatrix.GUI.Services
 
 			if (current != null)
 			{
-				string[] filePaths = Directories.GetFiles(currentDir.Path);
+				SearchOption op = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+				string[] filePaths = Directories.GetFiles(currentDir.Path, "*.*", op);
 
 				foreach (string filePath in filePaths)
 				{

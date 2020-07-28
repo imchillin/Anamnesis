@@ -53,7 +53,7 @@ namespace ConceptMatrix
 
 		public bool CanOpen(FileType type);
 		public IDirectory GetDefaultDirectory(FileType[] fileTypes);
-		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, FileType[] fileTypes);
+		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, FileType[] fileTypes, bool recursive);
 	}
 
 	public class FileType

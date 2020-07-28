@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:ConceptMatrix.GUI.Views"
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
-			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 	
@@ -30,13 +30,24 @@
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
-			<Button Style="{StaticResource TransparentButton}" Margin="3" Click="OnGoUpClicked" IsEnabled="{Binding CanGoUp}">
+			<ToggleButton Style="{StaticResource MaterialDesignActionToggleButton}" Grid.Column="0" Width="22" Height="22" 
+						  Margin="6, 0, 3, 0" ToolTip="Flatten Hierarchy" IsChecked="{Binding IsFlattened}">
+				<ToggleButton.Content>
+					<fa:IconBlock Icon="Folder" FontSize="12"/>
+				</ToggleButton.Content>
+				<materialDesign:ToggleButtonAssist.OnContent>
+					<fa:IconBlock Icon="Copy" FontSize="12"/>
+				</materialDesign:ToggleButtonAssist.OnContent>
+			</ToggleButton>
+
+			<Button Style="{StaticResource TransparentButton}" Margin="3" Click="OnGoUpClicked" IsEnabled="{Binding CanGoUp}" Grid.Column="1">
 				<fa:IconBlock Icon="LevelUpAlt" Opacity="0.5"/>
 			</Button>
-			<TextBlock Grid.Column="1" Text="{Binding CurrentPath}" VerticalAlignment="Center" Margin="3, 0, 3, 0"/>
+			<TextBlock Grid.Column="2" Text="{Binding CurrentPath}" VerticalAlignment="Center" Margin="3, 0, 3, 0"/>
 
 		</Grid>
 
@@ -56,14 +67,21 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+
 						<Grid.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="Delete" Click="OnDeleteClick"/>
 							</ContextMenu>
 						</Grid.ContextMenu>
 
-						<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}" Margin="3, 0, 3, 0" VerticalAlignment="Center"/>
-						<TextBlock Grid.Column="1" Text="{Binding Name}" Margin="3, 0, 3, 0"/>
+						<fa:IconBlock Grid.RowSpan="2" Grid.Column="0" Icon="{Binding Icon}" Margin="3, 0, 3, 0" VerticalAlignment="Center"/>
+						
+						<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="3, 0, 3, 0"/>
+						<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Directory}" Margin="3, 0, 3, 0" Visibility="{Binding Directory, Converter={StaticResource NotNullToVisibilityConverter}}" Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.5" FontSize="10"/>
 
 					</Grid>
 				</DataTemplate>

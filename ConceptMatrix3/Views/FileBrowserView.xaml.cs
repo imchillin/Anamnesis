@@ -28,6 +28,7 @@ namespace ConceptMatrix.GUI.Views
 		private Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
 		private Modes mode;
 		private string fileName;
+		private bool isFlattened;
 
 		public FileBrowserView(List<IFileSource> sources, FileType[] fileTypes, Modes mode)
 		{
@@ -90,6 +91,20 @@ namespace ConceptMatrix.GUI.Views
 		public ObservableCollection<IFileSource> FileSources { get; private set; } = new ObservableCollection<IFileSource>();
 		public ObservableCollection<EntryWrapper> Entries { get; private set; } = new ObservableCollection<EntryWrapper>();
 		public EntryWrapper Selected { get; set; }
+
+		public bool IsFlattened
+		{
+			get
+			{
+				return this.isFlattened;
+			}
+
+			set
+			{
+				this.isFlattened = value;
+				Task.Run(this.UpdateEntries);
+			}
+		}
 
 		public string FileName
 		{
@@ -210,7 +225,7 @@ namespace ConceptMatrix.GUI.Views
 
 		private async Task UpdateEntries()
 		{
-			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.fileTypes);
+			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.fileTypes, this.IsFlattened);
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -364,6 +379,20 @@ namespace ConceptMatrix.GUI.Views
 					}
 
 					return false;
+				}
+			}
+
+			public string Directory
+			{
+				get
+				{
+					string relativePath = this.Entry.Path.Replace(this.View.CurrentDir.Path, string.Empty);
+
+					if (relativePath.StartsWith('\\'))
+						relativePath = relativePath.Substring(2);
+
+					string dirName = Path.GetDirectoryName(relativePath);
+					return dirName;
 				}
 			}
 		}
