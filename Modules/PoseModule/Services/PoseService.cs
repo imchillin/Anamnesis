@@ -69,20 +69,16 @@ namespace ConceptMatrix.PoseModule
 			}
 			set
 			{
-				if (!value)
-					this.FreezeScale = false;
+				this.FreezePositions = value;
+				this.FreezeScale = value;
 
 				this.phys1Mem.Value = Flag.Get(value);
 				this.phys2Mem.Value = Flag.Get(value);
-				this.phys3Mem.Value = Flag.Get(value);
 
 				this.FreezePhysicsChanged?.Invoke(value);
 			}
 		}
 
-		// We need to unfreeze positions to allow us to set bone rotations
-		// without calculating new positions. This is required for CM2 poses to load
-		// correctly, since they don't have positions.
 		public bool FreezePositions
 		{
 			get
@@ -106,6 +102,7 @@ namespace ConceptMatrix.PoseModule
 			set
 			{
 				this.skel4Mem.Value = Flag.Get(value);
+				this.phys3Mem.Value = Flag.Get(value);
 				this.skel6Mem.Value = Flag.Get(value);
 
 				this.FreezeScaleChanged?.Invoke(value);

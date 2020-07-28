@@ -237,10 +237,10 @@ namespace ConceptMatrix.PoseModule
 				bone.ReadTransform();
 			}
 
-			foreach (Bone bone in this.bones.Values)
+			/*foreach (Bone bone in this.bones.Values)
 			{
 				bone.WriteTransform(this.Root, false);
-			}
+			}*/
 		}
 
 		public void Clear()

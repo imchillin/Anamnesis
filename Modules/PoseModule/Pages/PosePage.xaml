@@ -9,6 +9,7 @@
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 xmlns:controls="clr-namespace:ConceptMatrix.PoseModule.Controls"
 			 xmlns:views="clr-namespace:ConceptMatrix.PoseModule.Views"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d" 
 			 Loaded="OnLoaded"
 			 d:DesignHeight="512" d:DesignWidth="1024">
@@ -66,6 +67,17 @@
 				</StackPanel>
 
 				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
+
+
+					<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" Style="{StaticResource OutlineToggleButton}" Margin="3">
+						<Grid>
+							<TextBlock Text="Disable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}"/>
+							<TextBlock Text="Enable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}"/>
+						</Grid>
+					</ToggleButton>
+
+					<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
+
 					<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
 						<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1">
 							<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
@@ -78,17 +90,21 @@
 						</ListBoxItem>
 					</ListBox>
 
-					<Label Content="Enable" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
-					<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6"/>
+					<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
 
-					<Label Content="Freeze Physics" VerticalContentAlignment="Center" Margin="6,0,0,0"/>
-					<ToggleButton IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
+					<TextBlock Text="Physics" Margin="6,0,3,0"  Style="{StaticResource Label}"/>
+					<ToggleButton IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}"/>
+					<TextBlock Text="Scale &amp; Position" Margin="3,0,6,0"  Style="{StaticResource Label}"/>
 
-					<Label Content="Flip Sides" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
-					<ToggleButton IsChecked="{Binding FlipSides}" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
+					<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
 
-					<Label Content="Parenting" VerticalContentAlignment="Center" Margin="12,0,0,0"/>
-					<ToggleButton IsChecked="{Binding ParentingEnabled}" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
+					<TextBlock Text="Flip Sides" Margin="6,0,0,0"  Style="{StaticResource Label}"/>
+					<CheckBox IsChecked="{Binding FlipSides}" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
+
+					<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
+
+					<TextBlock Text="Parenting" Margin="6,0,0,0" Style="{StaticResource Label}"/>
+					<CheckBox IsChecked="{Binding ParentingEnabled}" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
 
 				</StackPanel>
 			</Grid>
@@ -96,15 +112,8 @@
 
 		<!-- Content -->
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
-			<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
+			<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}" IsEnabled="{Binding PoseService.IsEnabled}">
 
-				<Grid.IsEnabled>
-					<MultiBinding Converter="{StaticResource MultiBoolAnd}">
-						<Binding Path="PoseService.IsEnabled" Mode="OneWay"/>
-						<Binding Path="PoseService.FreezePhysics" Mode="OneWay"/>
-					</MultiBinding>
-				</Grid.IsEnabled>
-				
 				<Grid DataContext="{Binding SkeletonViewModel}">
 					<StackPanel Height="35" Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 						<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>

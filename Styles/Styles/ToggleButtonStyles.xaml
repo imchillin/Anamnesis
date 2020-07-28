@@ -59,4 +59,66 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+
+	<Style TargetType="{x:Type ToggleButton}" x:Key="OutlineToggleButton">
+		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueMidBrush}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="md:RippleAssist.Feedback" Value="{DynamicResource MaterialDesignBody}" />
+		<Setter Property="Margin" Value="1" />
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="MinWidth" Value="20"/>
+		<Setter Property="MinHeight" Value="20"/>
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ToggleButton}">
+
+					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand">
+						<Border Background="{DynamicResource MaterialDesignCardBackground}" x:Name="HoverBorder" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource MaterialDesignCardBackground}" Opacity="0">
+							<Border.Effect>
+								<DropShadowEffect ShadowDepth="0" BlurRadius="5" Opacity="0.5"/>
+							</Border.Effect>
+						</Border>
+
+						<Border Background="{TemplateBinding Background}" x:Name="Border" CornerRadius="3" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}"/>
+
+						<md:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
+									ContentStringFormat="{TemplateBinding ContentStringFormat}"
+									HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+									Padding="{TemplateBinding Padding}"
+									SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+							<!--<md:Ripple.Clip>
+								<MultiBinding Converter="{DynamicResource BorderClipConverter}">
+									<Binding ElementName="border" Path="ActualWidth" />
+									<Binding ElementName="border" Path="ActualHeight" />
+									<Binding ElementName="border" Path="CornerRadius" />
+									<Binding ElementName="border" Path="BorderThickness" />
+								</MultiBinding>
+							</md:Ripple.Clip>-->
+						</md:Ripple>
+
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="true">
+							<Setter TargetName="HoverBorder" Property="Opacity" Value="1"/>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="false">
+							<Setter TargetName="Border" Property="Opacity" Value="0"/>
+						</Trigger>
+						<Trigger Property="IsChecked" Value="True">
+							<Setter TargetName="Border" Property="Background" Value="{DynamicResource PrimaryHueMidBrush}"/>
+							<Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidForegroundBrush}"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 </ResourceDictionary>

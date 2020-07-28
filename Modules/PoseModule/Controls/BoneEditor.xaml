@@ -17,11 +17,11 @@
 				<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}"/>
 			</GroupBox>
 
-			<GroupBox Header="scale" Visibility="{Binding PoseService.FreezeScale, Converter={StaticResource B2V}}">
+			<GroupBox Header="scale" IsEnabled="{Binding PoseService.FreezeScale}">
 				<cm3Controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1"/>
 			</GroupBox>
 
-			<GroupBox Header="Position">
+			<GroupBox Header="Position" IsEnabled="{Binding PoseService.FreezePositions}">
 				<cm3Controls:VectorEditor Value="{Binding Value.Position}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
 			</GroupBox>
 		</StackPanel>
