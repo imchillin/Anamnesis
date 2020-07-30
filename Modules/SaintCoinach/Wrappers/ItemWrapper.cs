@@ -4,6 +4,7 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System;
+	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using ConceptMatrix.GameData;
 	using SaintCoinach.Xiv;
@@ -11,7 +12,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 	internal class ItemWrapper : ObjectWrapper<Item>, IItem
 	{
-		private Dictionary<ItemSlots, bool> fitsInSlotsCache = new Dictionary<ItemSlots, bool>();
+		private ConcurrentDictionary<ItemSlots, bool> fitsInSlotsCache = new ConcurrentDictionary<ItemSlots, bool>();
 		private Classes equipableClasses = Classes.None;
 
 		public ItemWrapper(Item value)
@@ -163,7 +164,7 @@ namespace ConceptMatrix.SaintCoinachModule
 				{
 					if (equipSlot.IsSlot(slot))
 					{
-						this.fitsInSlotsCache.Add(slot, true);
+						this.fitsInSlotsCache.TryAdd(slot, true);
 						return true;
 					}
 				}
@@ -173,7 +174,7 @@ namespace ConceptMatrix.SaintCoinachModule
 				Log.Write(new Exception("Failed to check item slot compatibility for item: " + this.Name, ex), @"Saint Coinach", Log.Severity.Error);
 			}
 
-			this.fitsInSlotsCache.Add(slot, false);
+			this.fitsInSlotsCache.TryAdd(slot, false);
 			return false;
 		}
 	}
