@@ -24,10 +24,8 @@ namespace ConceptMatrix
 			public BaseOffset Target { get; set; }
 			public BaseOffset CameraAddress { get; set; }
 			public BaseOffset Time { get; set; }
-			public BaseOffset WeatherAddress { get; set; }
 			public BaseOffset TerritoryAddress { get; set; }
 			public BaseOffset GposeFilters { get; set; }
-			public BaseOffset MusicOffset { get; set; }
 
 			public FlagOffset Skeleton1Flag { get; set; }
 			public FlagOffset Skeleton2Flag { get; set; }
@@ -43,16 +41,13 @@ namespace ConceptMatrix
 			public Offset RenderOffset2 { get; set; }
 
 			public Offset<string> Name { get; set; }
-			public Offset<string> ActorID { get; set; }
 			public Offset<ActorTypes> ActorType { get; set; }
 			public Offset<byte> ActorRender { get; set; }
 
 			public Offset<Vector> Camera { get; set; }
 
 			public Offset<Appearance> ActorAppearance { get; set; }
-			public Offset Title { get; set; }
 			public Offset<int> ModelType { get; set; }
-			public Offset StatusEffect { get; set; }
 			public Offset<bool> Animating { get; set; }
 
 			public Offset Transparency { get; set; }
