@@ -180,17 +180,24 @@ namespace ConceptMatrix.GUI.Services
 			Dictionary<string, Actor> actors = new Dictionary<string, Actor>();
 			for (byte i = 0; i < count; i++)
 			{
-				Actor actor = new Actor(actorTableOffset.GetBaseOffset(i));
-				actor.Description = mode + "_" + i;
-
-				if (actors.ContainsKey(actor.Id))
+				try
 				{
-					// don't log actor id as it can be used to identify a player.
-					Log.Write("Duplicate actor Id in selectable actors", "Selection", Log.Severity.Warning);
-					continue;
-				}
+					Actor actor = new Actor(actorTableOffset.GetBaseOffset(i));
+					actor.Description = mode + "_" + i;
 
-				actors.Add(actor.Id, actor);
+					if (actors.ContainsKey(actor.Id))
+					{
+						// don't log actor id as it can be used to identify a player.
+						Log.Write("Duplicate actor Id in selectable actors", "Selection", Log.Severity.Warning);
+						continue;
+					}
+
+					actors.Add(actor.Id, actor);
+				}
+				catch (Exception ex)
+				{
+					Log.Write(new Exception("Failed to create actor from actor table", ex), "Selection", Log.Severity.Warning);
+				}
 			}
 
 			return actors;
