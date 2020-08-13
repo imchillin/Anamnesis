@@ -15,13 +15,13 @@ namespace ConceptMatrix.PoseModule
 		private IMemory<Flag> skel1Mem;
 		private IMemory<Flag> skel2Mem;
 		private IMemory<Flag> skel3Mem;
-		private IMemory<Flag> skel4Mem;
-		private IMemory<Flag> skel5Mem;
-		private IMemory<Flag> skel6Mem;
+		////private IMemory<Flag> skel4Mem;
+		////private IMemory<Flag> skel5Mem;
+		////private IMemory<Flag> skel6Mem;
 
 		private IMemory<Flag> phys1Mem;
 		private IMemory<Flag> phys2Mem;
-		private IMemory<Flag> phys3Mem;
+		////private IMemory<Flag> phys3Mem;
 
 		private ISelectionService selectionService;
 
@@ -83,11 +83,12 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.skel5Mem.Value.IsEnabled;
+				return false;
+				////return this.skel5Mem.Value.IsEnabled;
 			}
 			set
 			{
-				this.skel5Mem.Value = Flag.Get(value);
+				////this.skel5Mem.Value = Flag.Get(value);
 
 				this.FreezePositionsChanged?.Invoke(value);
 			}
@@ -97,13 +98,14 @@ namespace ConceptMatrix.PoseModule
 		{
 			get
 			{
-				return this.skel4Mem.Value.IsEnabled;
+				return false;
+				////return this.skel4Mem.Value.IsEnabled;
 			}
 			set
 			{
-				this.skel4Mem.Value = Flag.Get(value);
-				this.phys3Mem.Value = Flag.Get(value);
-				this.skel6Mem.Value = Flag.Get(value);
+				////this.skel4Mem.Value = Flag.Get(value);
+				////this.phys3Mem.Value = Flag.Get(value);
+				////this.skel6Mem.Value = Flag.Get(value);
 
 				this.FreezeScaleChanged?.Invoke(value);
 			}
@@ -132,12 +134,12 @@ namespace ConceptMatrix.PoseModule
 			this.skel1Mem = injection.GetMemory(Offsets.Main.Skeleton1Flag);
 			this.skel2Mem = injection.GetMemory(Offsets.Main.Skeleton2Flag);
 			this.skel3Mem = injection.GetMemory(Offsets.Main.Skeleton3Flag);
-			this.skel4Mem = injection.GetMemory(Offsets.Main.Skeleton4flag);
-			this.skel5Mem = injection.GetMemory(Offsets.Main.Skeleton5Flag);
-			this.skel6Mem = injection.GetMemory(Offsets.Main.Skeleton6Flag);
+			////this.skel4Mem = injection.GetMemory(Offsets.Main.Skeleton4flag);
+			////this.skel5Mem = injection.GetMemory(Offsets.Main.Skeleton5Flag);
+			////this.skel6Mem = injection.GetMemory(Offsets.Main.Skeleton6Flag);
 			this.phys1Mem = injection.GetMemory(Offsets.Main.Physics1Flag);
 			this.phys2Mem = injection.GetMemory(Offsets.Main.Physics2Flag);
-			this.phys3Mem = injection.GetMemory(Offsets.Main.Physics3Flag);
+			////this.phys3Mem = injection.GetMemory(Offsets.Main.Physics3Flag);
 
 			this.selectionService = Services.Get<ISelectionService>();
 			this.selectionService.ModeChanged += this.Selection_ModeChanged;
@@ -152,12 +154,12 @@ namespace ConceptMatrix.PoseModule
 			this.skel1Mem?.Dispose();
 			this.skel2Mem?.Dispose();
 			this.skel3Mem?.Dispose();
-			this.skel4Mem?.Dispose();
-			this.skel5Mem?.Dispose();
-			this.skel6Mem?.Dispose();
+			////this.skel4Mem?.Dispose();
+			////this.skel5Mem?.Dispose();
+			////this.skel6Mem?.Dispose();
 			this.phys1Mem?.Dispose();
 			this.phys2Mem?.Dispose();
-			this.phys3Mem?.Dispose();
+			////this.phys3Mem?.Dispose();
 
 			return Task.CompletedTask;
 		}
