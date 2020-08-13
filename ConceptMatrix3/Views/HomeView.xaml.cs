@@ -32,12 +32,12 @@ namespace ConceptMatrix.GUI.Views
 		private IMemory<float> cameraRotatonMem;
 		private IMemory<float> cameraZoomMem;
 		private IMemory<float> cameraFovMem;
-		private IMemory<Vector> cameraPositionMem;
+		////private IMemory<Vector> cameraPositionMem;
 		private IMemory<float> cameraMinZoomMem;
 		private IMemory<float> cameraMaxZoomMem;
 
-		private int time = 0;
-		private int moon = 0;
+		////private int time = 0;
+		////private int moon = 0;
 		private bool isGpose;
 
 		public HomeView()
@@ -48,7 +48,7 @@ namespace ConceptMatrix.GUI.Views
 
 		public string Territory { get; set; }
 
-		public int Time
+		/*public int Time
 		{
 			get
 			{
@@ -58,7 +58,7 @@ namespace ConceptMatrix.GUI.Views
 			set
 			{
 				this.time = value;
-				////this.timeMem.Value = (this.moon * 86400) + (this.time * 60);
+				this.timeMem.Value = (this.moon * 86400) + (this.time * 60);
 			}
 		}
 
@@ -72,9 +72,9 @@ namespace ConceptMatrix.GUI.Views
 			set
 			{
 				this.moon = value;
-				////this.timeMem.Value = (this.moon * 86400) + (this.time * 60);
+				this.timeMem.Value = (this.moon * 86400) + (this.time * 60);
 			}
-		}
+		}*/
 
 		public float CameraAngleX
 		{
@@ -104,7 +104,6 @@ namespace ConceptMatrix.GUI.Views
 		public float CameraMinZoom { get; private set; }
 		public float CameraMaxZoom { get; private set; }
 		public float CameraFov { get; set; }
-		public Vector CameraPosition { get; set; }
 
 		public bool IsGpose
 		{
@@ -140,8 +139,8 @@ namespace ConceptMatrix.GUI.Views
 					this.cameraFovMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.FOVCurrent);
 					this.cameraFovMem.Bind(this, nameof(this.CameraFov));
 
-					this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
-					this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
+					////this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
+					////this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
 
 					this.OnTerritoryMemValueChanged(null, 0);
 				}
@@ -152,7 +151,7 @@ namespace ConceptMatrix.GUI.Views
 					this.cameraRotatonMem.Dispose();
 					this.cameraZoomMem.Dispose();
 					this.cameraFovMem.Dispose();
-					this.cameraPositionMem.Dispose();
+					////this.cameraPositionMem.Dispose();
 					this.cameraMinZoomMem.Dispose();
 					this.cameraMaxZoomMem.Dispose();
 				}
