@@ -41,8 +41,8 @@
 		<Grid Grid.Column="1">
 
 			<Grid.RowDefinitions>
-				<RowDefinition/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
@@ -51,7 +51,8 @@
 			</Border>
 
 			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="3, 3, 0, 3" CornerRadius="3, 0, 0, 3">
-				<views:ExtendedAppearanceEditor DataContext="{Binding Actor}"/>
+				<!--<views:ExtendedAppearanceEditor DataContext="{Binding Actor}"/>-->
+				<TextBlock Text="Extended Appearance comming soon" Style="{StaticResource Label}" HorizontalAlignment="Center"/>
 			</Border>
 
 			<Border Grid.Row="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0">
