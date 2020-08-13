@@ -53,15 +53,18 @@ namespace ConceptMatrix.SaintCoinachModule
 
 					try
 					{
-						// this is almost the exact code as "this.Value.FacialFeatureIcon" would execute, but renamed to "FacialFeatureOption"
-						// since "FacialFeatureIcon" throws an exception.
-						for (int i = 0; i < 56; i++)
+						// FacialFeatureOption[0][0] -> FacialFeatureOption[7][6]
+						for (int i = 0; i <= 7; i++)
 						{
-							SaintCoinach.Imaging.ImageFile imageFile = this.Value.AsImage("FacialFeatureOption", i);
+							for (int j = 0; j <= 6; j++)
+							{
+								SaintCoinach.Imaging.ImageFile imageFile = this.Value.AsImage("FacialFeatureOption", i, j);
 
-							if (imageFile is null)
-								continue;
-							this.facialFeatureList.Add(imageFile.ToIImage());
+								if (imageFile is null)
+									continue;
+
+								this.facialFeatureList.Add(imageFile.ToIImage());
+							}
 						}
 					}
 					catch (Exception ex)

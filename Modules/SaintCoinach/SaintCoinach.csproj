@@ -141,9 +141,6 @@
 	  <None Update="SaintCoinach\SaintCoinach.dll">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="SaintCoinach\SaintCoinachStandard.deps.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	  <None Update="SaintCoinach\SaintCoinachStandard.dll">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
