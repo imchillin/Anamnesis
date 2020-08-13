@@ -24,7 +24,7 @@ namespace ConceptMatrix.GUI.Views
 		private IGameDataService gameData;
 		private IInjectionService injection;
 
-		private IMemory<int> timeMem;
+		////private IMemory<int> timeMem;
 		private IMemory<int> territoryMem;
 		private IMemory<ushort> weatherMem;
 		private IMemory<Vector2D> cameraAngleMem;
@@ -58,7 +58,7 @@ namespace ConceptMatrix.GUI.Views
 			set
 			{
 				this.time = value;
-				this.timeMem.Value = (this.moon * 86400) + (this.time * 60);
+				////this.timeMem.Value = (this.moon * 86400) + (this.time * 60);
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace ConceptMatrix.GUI.Views
 			set
 			{
 				this.moon = value;
-				this.timeMem.Value = (this.moon * 86400) + (this.time * 60);
+				////this.timeMem.Value = (this.moon * 86400) + (this.time * 60);
 			}
 		}
 
@@ -167,7 +167,7 @@ namespace ConceptMatrix.GUI.Views
 			ISelectionService selectionService = ConceptMatrix.Services.Get<ISelectionService>();
 			selectionService.ModeChanged += this.OnSelectionServiceModeChanged;
 
-			this.timeMem = this.injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
+			////this.timeMem = this.injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
 			this.weatherMem = this.injection.GetMemory(Offsets.Main.GposeFilters, Offsets.Main.ForceWeather);
 			this.territoryMem = this.injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 			this.territoryMem.ValueChanged += this.OnTerritoryMemValueChanged;
@@ -192,8 +192,8 @@ namespace ConceptMatrix.GUI.Views
 			this.territoryMem.Dispose();
 			this.weatherMem.Dispose();
 
-			this.timeMem.Value = 0;
-			this.timeMem.Dispose();
+			////this.timeMem.Value = 0;
+			////this.timeMem.Dispose();
 		}
 
 		private void OnCameraAngleMemValueChanged(object sender, Vector2D value)

@@ -56,10 +56,10 @@
 					<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Territory}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 0, 3, 6"/>
 
 					<TextBlock Grid.Row="1" Text="Time:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Time}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="1440"/>
+					<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Time}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="1440" IsEnabled="False"/>
 
 					<TextBlock Grid.Row="2" Text="Moon Phase:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding Moon}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
+					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding Moon}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31" IsEnabled="False"/>
 
 					<TextBlock Grid.Row="3" Text="Weather:" Style="{StaticResource Label}"/>
 					<ComboBox Grid.Row="3" Grid.Column="1" x:Name="WeatherComboBox" SelectionChanged="OnWeatherSelectionChanged">
