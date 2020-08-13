@@ -117,10 +117,16 @@ namespace ConceptMatrix.PoseModule.Pages
 			await fileService.Save(
 				async (advancedMode) =>
 				{
-					PoseFile.Configuration config = null;
+					PoseFile.Configuration config;
 
 					if (advancedMode)
+					{
 						config = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Save Pose...");
+					}
+					else
+					{
+						config = new PoseFile.Configuration();
+					}
 
 					if (config == null)
 						return null;
