@@ -108,7 +108,11 @@ namespace ConceptMatrix
 		private void OnException(ExceptionDispatchInfo ex, Log.Severity severity, string category)
 		{
 			Services.Get<LogService>().OnException(ex, severity, category);
-			ErrorDialog.ShowError(ex, severity == Log.Severity.Critical);
+
+			if (severity >= Log.Severity.Error)
+			{
+				ErrorDialog.ShowError(ex, severity == Log.Severity.Critical);
+			}
 		}
 
 		private void OnLog(string message, Log.Severity severity, string category)
