@@ -6,7 +6,8 @@
 			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
 			 mc:Ignorable="d"
 			 d:DesignHeight="600"
-			 Loaded="OnLoaded">
+			 Loaded="OnLoaded"
+			 DataContextChanged="OnDataContextChanged">
 
 	<Grid x:Name="ContentArea" Margin="3, 0, 0, 3">
 		<Grid.ColumnDefinitions>

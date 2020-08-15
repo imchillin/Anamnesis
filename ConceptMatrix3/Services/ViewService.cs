@@ -10,6 +10,7 @@ namespace ConceptMatrix.GUI.Services
 	using System.Windows.Controls;
 	using Anamnesis;
 	using ConceptMatrix;
+	using ConceptMatrix.GUI.Views;
 	using ConceptMatrix.GUI.Windows;
 
 	public class ViewService : IViewService
@@ -32,6 +33,8 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Initialize()
 		{
+			this.AddPage<HomeView>("Home", "Home");
+
 			return Task.CompletedTask;
 		}
 
@@ -45,7 +48,7 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public void AddActorPage<T>(string name, string icon, Func<Actor, bool> isSupportedCallback = null)
+		public void AddPage<T>(string name, string icon, Func<Actor, bool> isSupportedCallback = null)
 		{
 			Page page = new Page();
 			page.Icon = icon;
@@ -167,6 +170,9 @@ namespace ConceptMatrix.GUI.Services
 			{
 				if (this.IsSupportedCallback == null)
 					return true;
+
+				if (actor is null)
+					return false;
 
 				return this.IsSupportedCallback.Invoke(actor);
 			}

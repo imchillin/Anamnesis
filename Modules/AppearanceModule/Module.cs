@@ -22,7 +22,7 @@ namespace ConceptMatrix.AppearanceModule
 		public Task Initialize()
 		{
 			IViewService viewService = Services.Get<IViewService>();
-			viewService.AddActorPage<AppearancePage>("Appearance", "user", this.IsActorSupported);
+			viewService.AddPage<AppearancePage>("Appearance", "user", this.IsActorSupported);
 
 			return Task.CompletedTask;
 		}

@@ -53,6 +53,11 @@ namespace ConceptMatrix.PoseModule.Pages
 			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
 		}
 
+		private async void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
+		}
+
 		[SuppressPropertyChangedWarnings]
 		private void OnAvailableChanged(bool value)
 		{

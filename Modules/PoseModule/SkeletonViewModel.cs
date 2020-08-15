@@ -199,9 +199,14 @@ namespace ConceptMatrix.PoseModule
 			if (this.actor == actor)
 				return;
 
+			this.CurrentBone = null;
+
 			this.actor = actor;
 
 			this.Clear();
+
+			if (this.actor == null)
+				return;
 
 			this.appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
 			this.rootRotationMem = actor.GetMemory(Offsets.Main.Rotation);

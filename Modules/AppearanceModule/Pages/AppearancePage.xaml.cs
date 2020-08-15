@@ -49,6 +49,11 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			this.SelectionModeChanged(this.selectionService.GetMode());
 		}
 
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			this.OnActorChanged(this.DataContext as Actor);
+		}
+
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
 			this.selectionService.ModeChanged -= this.SelectionModeChanged;

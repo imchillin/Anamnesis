@@ -98,9 +98,6 @@
 		<Compile Update="Views\NavigationMenu.xaml.cs">
 			<DependentUpon>NavigationMenu.xaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\TargetSelectorView.xaml.cs">
-			<DependentUpon>TargetSelectorView.xaml</DependentUpon>
-		</Compile>
 		<Compile Update="Views\SettingsView.xaml.cs">
 			<DependentUpon>SettingsView.xaml</DependentUpon>
 		</Compile>
@@ -138,10 +135,6 @@
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
-		<Page Update="Views\TargetSelectorView.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
 		<Page Update="Views\SettingsView.xaml">
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
@@ -150,6 +143,10 @@
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Pages\" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

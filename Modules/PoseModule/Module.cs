@@ -18,7 +18,7 @@ namespace ConceptMatrix.PoseModule
 			await Services.Add<PoseService>();
 
 			IViewService viewService = Services.Get<IViewService>();
-			viewService.AddActorPage<PosePage>("Pose", "running", this.IsActorPoseSupported);
+			viewService.AddPage<PosePage>("Pose", "running", this.IsActorPoseSupported);
 		}
 
 		public Task Start()

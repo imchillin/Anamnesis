@@ -11,30 +11,26 @@
 			 d:DesignHeight="450"
 			 d:DesignWidth="800"
 			 Loaded="OnLoaded"
-			 Unloaded="OnUnloaded">
+			 Unloaded="OnUnloaded"
+			 DataContextChanged="OnDataContextChanged">
 	
 	<Grid Background="{DynamicResource MaterialDesignPaper}" x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
 			<ColumnDefinition Width="256"/>
+			<ColumnDefinition Width="200"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid Grid.Column="0">
 			<Image Source="/Assets/cmtool.png" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Opacity="0.65" Height="200"/>
-			
-			<StackPanel Margin="10">
-				<cm3:TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Key="HomeTitle" Text="Welcome To ConceptMatrix 3" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-				<Line X1="0" X2="1" Height="2" Stroke="{DynamicResource MaterialDesignDivider}" StrokeThickness="1" Stretch="Fill"/>
-				<cm3:TextBlock Style="{StaticResource MaterialDesignTextBlock}" TextWrapping="Wrap" Key="HomeDescription" Foreground="{DynamicResource MaterialDesignBody}"/>
-			</StackPanel>
 		</Grid>
 
 		<StackPanel Grid.Column="1">
-			<GroupBox Style="{StaticResource PanelGroupBox}">
+			<GroupBox Style="{StaticResource PanelGroupBox}" Margin="0">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
-						<fa:IconBlock Icon="Globe" Margin="0, 0, 3, 0"/>
+						<fa:IconBlock Icon="Globe" Margin="2, 2, 6, 0"/>
 						<TextBlock Text="World"/>
 					</StackPanel>
 				</GroupBox.Header>
@@ -55,14 +51,12 @@
 
 					<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Territory}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 0, 3, 6"/>
 
-					<!--
 					<TextBlock Grid.Row="1" Text="Time:" Style="{StaticResource Label}"/>
 					<cm3:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Time}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="1440" IsEnabled="False"/>
 
 					<TextBlock Grid.Row="2" Text="Moon Phase:" Style="{StaticResource Label}"/>
 					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding Moon}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31" IsEnabled="False"/>
-					-->
-					
+
 					<TextBlock Grid.Row="3" Text="Weather:" Style="{StaticResource Label}"/>
 					<ComboBox Grid.Row="3" Grid.Column="1" x:Name="WeatherComboBox" SelectionChanged="OnWeatherSelectionChanged">
 						<ComboBox.ItemTemplate>
@@ -84,10 +78,10 @@
 				</Grid>
 			</GroupBox>
 
-			<GroupBox Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding IsGpose}">
+			<GroupBox Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding IsGpose}" Margin="0">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
-						<fa:IconBlock Icon="Camera" Margin="0, 0, 3, 0"/>
+						<fa:IconBlock Icon="Camera" Margin="2, 2, 6, 0"/>
 						<TextBlock Text="Camera"/>
 					</StackPanel>
 				</GroupBox.Header>
@@ -152,9 +146,50 @@
 					<TextBlock Grid.Row="5" Grid.Column="0" Text="FoV:" Style="{StaticResource Label}"/>
 					<cm3:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding CameraFov, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-40" Maximum="100" TickFrequency="1"/>
 
-					<!--<TextBlock Grid.Row="6" Grid.Column="0" Text="Position:" Style="{StaticResource Label}"/>
-					<cm3:VectorEditor Grid.Row="6" Grid.Column="1" Value="{Binding CameraPosition}" Expanded="True" Sliders="Relative" Minimum="-4096" Maximum="4096"/>-->
+					<TextBlock Grid.Row="6" Grid.Column="0" Text="Position:" Style="{StaticResource Label}"/>
+
+					<Grid Grid.Row="6" Grid.Column="1">
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<ToggleButton Grid.RowSpan="2" Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" Height="22" Width="22" Padding="0" Margin="0"
+									  IsChecked="{Binding LockCameraPosition}">
+							<ToggleButton.Content>
+								<fa:IconBlock Icon="LockOpen" FontSize="12"/>
+							</ToggleButton.Content>
+							<materialdesign:ToggleButtonAssist.OnContent>
+								<fa:IconBlock Icon="Lock" FontSize="12"/>
+							</materialdesign:ToggleButtonAssist.OnContent>
+						</ToggleButton>
+
+						<cm3:VectorEditor Grid.Column="1" Value="{Binding CameraPosition}" Expanded="True" Sliders="Relative" Minimum="-4096" Maximum="4096"/>
+					</Grid>
+				
 				</Grid>
+			</GroupBox>
+		</StackPanel>
+
+		<StackPanel Grid.Column="2">
+			<GroupBox  Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding IsGpose}" Margin="0">
+				<GroupBox.Header>
+					<StackPanel Orientation="Horizontal">
+						<fa:IconBlock Icon="Cube" Margin="2, 2, 6, 0"/>
+						<TextBlock Text="Transform"/>
+					</StackPanel>
+				</GroupBox.Header>
+
+				<StackPanel Margin="6">
+					<GroupBox Header="Rotation">
+						<cm3:QuaternionEditor Value="{Binding Rotation}"/>
+					</GroupBox>
+
+					<GroupBox Header="Position">
+						<cm3:VectorEditor Value="{Binding Position}" Minimum="-4096" Maximum="4096" Sliders="Relative" Expanded="True"/>
+					</GroupBox>
+				</StackPanel>
 			</GroupBox>
 		</StackPanel>
 	</Grid>

@@ -26,22 +26,6 @@
 		
 		Icon="/Assets/Concept Matrix.ico">
 
-	<Window.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="pack://application:,,,/ConceptMatrix3;component/Styles/Tabablz.xaml"/>
-			</ResourceDictionary.MergedDictionaries>
-
-			<Style TargetType="{x:Type dragablz:TabablzControl}" x:Key="TabStyle" BasedOn="{StaticResource TabablzMaterialDesignCM3}">
-				<Setter Property="HeaderPrefixContent">
-					<Setter.Value>
-						<Rectangle Width="48"/>
-					</Setter.Value>
-				</Setter>
-			</Style>
-		</ResourceDictionary>
-	</Window.Resources>
-
 	<Grid Margin="10">
 
 		<Border
@@ -65,7 +49,7 @@
 					Background="{DynamicResource MaterialDesignPaper}" 
 					CornerRadius="2, 2, 0, 0"
 					Grid.ColumnSpan="2"
-					Height="40"
+					Height="28"
 					VerticalAlignment="Top"
 					MouseDown="OnTitleBarMouseDown">
 
@@ -74,6 +58,12 @@
 				</Border.Effect>
 				
 				<Grid VerticalAlignment="Top">
+
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+						<TextBlock Text="Concept Matrix 3" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
+						<TextBlock Text=" - " VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>
+						<TextBlock x:Name="ActorName" VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>
+					</StackPanel>
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
@@ -124,44 +114,16 @@
 				</Grid>
 			</Border>
 
-			<views:HomeView Margin="0, 40, 0, 0"/>
+			<!--<views:HomeView Margin="0, 40, 0, 0"/>-->
 
-			<!-- Tabs -->
-			<dragablz:TabablzControl x:Name="Tabs" 
-									 ItemsSource="{Binding Actors}"
-									 Style="{StaticResource TabStyle}" 
-									 BorderThickness="0" 
-									 Margin="0" 
-									 ShowDefaultCloseButton="True"
-									 FixedHeaderCount="1"
-									 ClosingItemCallback="OnTabClosing">
+			<Grid Margin="0, 32, 0, 0" x:Name="ActorArea">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
 
-				<dragablz:TabablzControl.InterTabController>
-					<dragablz:InterTabController InterTabClient="{Binding TabClient}"/>
-				</dragablz:TabablzControl.InterTabController>
-
-				<TabItem>
-					<TabItem.Header>
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="20"/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
-
-							<fa:IconBlock Grid.Column="0" Icon="Home" Foreground="{DynamicResource MaterialDesignBody}"/>
-							<Label Grid.Column="1" Content="Home" VerticalAlignment="Center"/>
-						</Grid>
-					</TabItem.Header>
-
-					<views:HomeView/>
-				</TabItem>
-
-			</dragablz:TabablzControl>
-
-			<Grid Width="48" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left">
-				<Button Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="28" Width="28" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OnAddClick">
-					<fa:IconImage Icon="Plus" Foreground="{StaticResource MaterialDesignBackground}" Width="12"/>
-				</Button>
+				<views:NavigationMenu Grid.Column="0" SelectPage="OnSelectPage"/>
+				<ContentPresenter Grid.Column="1" x:Name="ViewArea"/>
 			</Grid>
 
 			<!-- Drawer flyouts -->

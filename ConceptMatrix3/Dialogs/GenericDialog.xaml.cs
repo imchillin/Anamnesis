@@ -30,38 +30,45 @@ namespace ConceptMatrix.GUI.Dialogs
 
 		public static async Task<bool?> Show(string message, string caption, MessageBoxButton buttons)
 		{
-			IViewService viewService = Services.Get<IViewService>();
-			GenericDialog dlg = new GenericDialog();
-			dlg.Message = message;
+			bool? result = null;
 
-			switch (buttons)
+			await Application.Current.Dispatcher.InvokeAsync(async () =>
 			{
-				case MessageBoxButton.OK:
+				IViewService viewService = Services.Get<IViewService>();
+				GenericDialog dlg = new GenericDialog();
+				dlg.Message = message;
+
+				switch (buttons)
 				{
-					dlg.Left = null;
-					dlg.Right = "OK";
-					break;
+					case MessageBoxButton.OK:
+					{
+						dlg.Left = null;
+						dlg.Right = "OK";
+						break;
+					}
+
+					case MessageBoxButton.OKCancel:
+					{
+						dlg.Left = "Cancel";
+						dlg.Right = "OK";
+						break;
+					}
+
+					case MessageBoxButton.YesNoCancel:
+						throw new NotImplementedException();
+
+					case MessageBoxButton.YesNo:
+					{
+						dlg.Left = "No";
+						dlg.Right = "Yes";
+						break;
+					}
 				}
 
-				case MessageBoxButton.OKCancel:
-				{
-					dlg.Left = "Cancel";
-					dlg.Right = "OK";
-					break;
-				}
+				result = await viewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
+			});
 
-				case MessageBoxButton.YesNoCancel:
-					throw new NotImplementedException();
-
-				case MessageBoxButton.YesNo:
-				{
-					dlg.Left = "No";
-					dlg.Right = "Yes";
-					break;
-				}
-			}
-
-			return await viewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
+			return result;
 		}
 
 		public void Cancel()

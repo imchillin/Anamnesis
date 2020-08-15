@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Style3D", "Style3D\Style3D.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppearanceModule", "Modules\AppearanceModule\AppearanceModule.csproj", "{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anamnesis", "..\Anamnesis\Anamnesis.csproj", "{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_NoGame|Any CPU = Debug_NoGame|Any CPU
@@ -149,6 +151,22 @@ Global
 		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
 		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
 		{141C3969-D9C4-4BBC-99B1-72466F4CDCBC}.Release-Unsigned|x64.Build.0 = Release|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Debug_NoGame|Any CPU.ActiveCfg = Debug|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Debug_NoGame|Any CPU.Build.0 = Debug|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Debug_NoGame|x64.ActiveCfg = Debug|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Debug_NoGame|x64.Build.0 = Debug|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Debug|x64.Build.0 = Debug|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Release|x64.ActiveCfg = Release|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Release|x64.Build.0 = Release|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Release-Unsigned|Any CPU.ActiveCfg = Release|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
+		{31D31FF9-DB4E-4F7C-B12F-C14392DD3054}.Release-Unsigned|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

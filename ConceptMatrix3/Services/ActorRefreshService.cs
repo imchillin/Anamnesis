@@ -110,7 +110,6 @@ namespace ConceptMatrix.GUI.Services
 					await Task.Delay(150);
 				}
 
-				this.selectionService.RetargetActors();
 				await Task.Delay(50);
 
 				await this.injectionService.WaitForMemoryTick();

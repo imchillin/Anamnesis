@@ -35,15 +35,6 @@ namespace ConceptMatrix
 		public string Name { get; private set; }
 		public string Description { get; set; }
 
-		public string Id
-		{
-			get
-			{
-				// it would be nice if we had more info than this...
-				return this.Name;
-			}
-		}
-
 		public static bool operator ==(Actor lhs, Actor rhs)
 		{
 			if (object.ReferenceEquals(lhs, null))
@@ -144,7 +135,7 @@ namespace ConceptMatrix
 
 		public override bool Equals(object? obj)
 		{
-			return obj is Actor actor && this.baseOffset.Equals(actor.baseOffset);
+			return obj is Actor actor && this.baseOffset.Equals(actor.baseOffset) && this.Name == actor.Name;
 		}
 
 		public override int GetHashCode()

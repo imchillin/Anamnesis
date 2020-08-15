@@ -40,8 +40,16 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			Actor actor = this.DataContext as Actor;
+			this.SetActor(this.DataContext as Actor);
+		}
 
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			this.SetActor(this.DataContext as Actor);
+		}
+
+		private void SetActor(Actor actor)
+		{
 			if (actor == null)
 				return;
 

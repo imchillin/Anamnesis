@@ -24,7 +24,7 @@ namespace ConceptMatrix.GUI.Views
 		private IGameDataService gameData;
 		private IInjectionService injection;
 
-		////private IMemory<int> timeMem;
+		private IMemory<int> timeMem;
 		private IMemory<int> territoryMem;
 		private IMemory<ushort> weatherMem;
 		private IMemory<Vector2D> cameraAngleMem;
@@ -32,12 +32,14 @@ namespace ConceptMatrix.GUI.Views
 		private IMemory<float> cameraRotatonMem;
 		private IMemory<float> cameraZoomMem;
 		private IMemory<float> cameraFovMem;
-		////private IMemory<Vector> cameraPositionMem;
+		private IMemory<Vector> cameraPositionMem;
 		private IMemory<float> cameraMinZoomMem;
 		private IMemory<float> cameraMaxZoomMem;
+		private IMemory<Vector> posMem;
+		private IMemory<Quaternion> rotMem;
 
-		////private int time = 0;
-		////private int moon = 0;
+		private int time = 0;
+		private int moon = 0;
 		private bool isGpose;
 
 		public HomeView()
@@ -48,7 +50,7 @@ namespace ConceptMatrix.GUI.Views
 
 		public string Territory { get; set; }
 
-		/*public int Time
+		public int Time
 		{
 			get
 			{
@@ -74,7 +76,7 @@ namespace ConceptMatrix.GUI.Views
 				this.moon = value;
 				this.timeMem.Value = (this.moon * 86400) + (this.time * 60);
 			}
-		}*/
+		}
 
 		public float CameraAngleX
 		{
@@ -99,11 +101,15 @@ namespace ConceptMatrix.GUI.Views
 		public bool LockCameraAngle { get; set; }
 		public Vector2D CameraAngle { get; set; }
 		public Vector2D CameraPan { get; set; }
+		public Vector CameraPosition { get; set; }
+		public bool LockCameraPosition { get; set; }
 		public float CameraRotaton { get; set; }
 		public float CameraZoom { get; set; }
 		public float CameraMinZoom { get; private set; }
 		public float CameraMaxZoom { get; private set; }
 		public float CameraFov { get; set; }
+		public Vector Position { get; set; }
+		public Quaternion Rotation { get; set; }
 
 		public bool IsGpose
 		{
@@ -139,8 +145,8 @@ namespace ConceptMatrix.GUI.Views
 					this.cameraFovMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.FOVCurrent);
 					this.cameraFovMem.Bind(this, nameof(this.CameraFov));
 
-					////this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
-					////this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
+					this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
+					this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
 
 					this.OnTerritoryMemValueChanged(null, 0);
 				}
@@ -151,7 +157,7 @@ namespace ConceptMatrix.GUI.Views
 					this.cameraRotatonMem.Dispose();
 					this.cameraZoomMem.Dispose();
 					this.cameraFovMem.Dispose();
-					////this.cameraPositionMem.Dispose();
+					this.cameraPositionMem.Dispose();
 					this.cameraMinZoomMem.Dispose();
 					this.cameraMaxZoomMem.Dispose();
 				}
@@ -166,7 +172,7 @@ namespace ConceptMatrix.GUI.Views
 			ISelectionService selectionService = ConceptMatrix.Services.Get<ISelectionService>();
 			selectionService.ModeChanged += this.OnSelectionServiceModeChanged;
 
-			////this.timeMem = this.injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
+			this.timeMem = this.injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
 			this.weatherMem = this.injection.GetMemory(Offsets.Main.GposeFilters, Offsets.Main.ForceWeather);
 			this.territoryMem = this.injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 			this.territoryMem.ValueChanged += this.OnTerritoryMemValueChanged;
@@ -174,6 +180,13 @@ namespace ConceptMatrix.GUI.Views
 			this.OnTerritoryMemValueChanged(null, 0);
 
 			this.IsGpose = selectionService.GetMode() == Modes.GPose;
+
+			this.SetActor(this.DataContext as Actor);
+		}
+
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			this.SetActor(this.DataContext as Actor);
 		}
 
 		private void OnSelectionServiceModeChanged(Modes mode)
@@ -191,8 +204,8 @@ namespace ConceptMatrix.GUI.Views
 			this.territoryMem.Dispose();
 			this.weatherMem.Dispose();
 
-			////this.timeMem.Value = 0;
-			////this.timeMem.Dispose();
+			this.timeMem.Value = 0;
+			this.timeMem.Dispose();
 		}
 
 		private void OnCameraAngleMemValueChanged(object sender, Vector2D value)
@@ -269,6 +282,38 @@ namespace ConceptMatrix.GUI.Views
 
 			using IMemory<float> maxYMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraYMax);
 			maxYMem.Value = unlock ? -1.5f : -1.4f;
+		}
+
+		private void SetActor(Actor actor)
+		{
+			this.cameraPositionMem?.Dispose();
+			this.posMem?.Dispose();
+			this.rotMem?.Dispose();
+
+			if (actor == null)
+				return;
+
+			this.posMem = actor.GetMemory(Offsets.Main.Position);
+			this.posMem.Bind(this, nameof(this.Position));
+
+			this.rotMem = actor.GetMemory(Offsets.Main.Rotation);
+			this.rotMem.Bind(this, nameof(this.Rotation));
+
+			if (this.isGpose)
+			{
+				this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
+
+				if (this.LockCameraPosition)
+				{
+					this.cameraPositionMem.Value = this.CameraPosition;
+				}
+				else if (actor != null)
+				{
+					this.cameraPositionMem.Value = actor.GetValue(Offsets.Main.Position);
+				}
+
+				this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
+			}
 		}
 	}
 }

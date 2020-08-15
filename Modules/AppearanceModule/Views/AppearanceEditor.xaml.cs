@@ -59,6 +59,11 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.OnActorChanged(this.DataContext as Actor);
 		}
 
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			this.OnActorChanged(this.DataContext as Actor);
+		}
+
 		private void OnActorChanged(Actor actor)
 		{
 			if (this.Appearance != null)

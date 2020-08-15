@@ -12,6 +12,7 @@
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d" 
 			 Loaded="OnLoaded"
+			 DataContextChanged="OnDataContextChanged"
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
 	<UserControl.Resources>

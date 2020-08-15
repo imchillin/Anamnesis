@@ -9,10 +9,10 @@ namespace ConceptMatrix
 	using System.Windows;
 	using System.Windows.Threading;
 	using ConceptMatrix.GUI;
-	using ConceptMatrix.GUI.Pages;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Windows;
 	using MaterialDesignThemes.Wpf;
+
 	using Application = System.Windows.Application;
 
 	/// <summary>
@@ -78,8 +78,6 @@ namespace ConceptMatrix
 			try
 			{
 				await Services.InitializeServices();
-
-				Services.Get<IViewService>().AddActorPage<ActorPage>("Actor", "wrench");
 
 				Settings = await App.Services.Get<ISettingsService>().Load<MainApplicationSettings>();
 				Settings.Changed += this.OnSettingsChanged;

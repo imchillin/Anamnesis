@@ -4,6 +4,7 @@
 namespace ConceptMatrix.GUI
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -24,6 +25,9 @@ namespace ConceptMatrix.GUI
 	{
 		private readonly ViewService viewService;
 
+		private UserControl currentView;
+		private Dictionary<ViewService.Page, UserControl> pages = new Dictionary<ViewService.Page, UserControl>();
+
 		public MainWindow()
 		{
 			this.InitializeComponent();
@@ -42,24 +46,12 @@ namespace ConceptMatrix.GUI
 			this.WindowScale.ScaleX = App.Settings.Scale;
 			this.WindowScale.ScaleY = App.Settings.Scale;
 			App.Settings.Changed += this.OnSettingsChanged;
-
-			this.Tabs.DataContext = this;
-
-			selection.SelectDefault();
 		}
 
 		public bool Zodiark
 		{
 			get;
 			set;
-		}
-
-		public InterTabClient TabClient
-		{
-			get
-			{
-				return new InterTabClient();
-			}
 		}
 
 		private void OnSettingsChanged(SettingsBase settings)
@@ -229,66 +221,34 @@ namespace ConceptMatrix.GUI
 			App.Settings.Scale = scale;
 		}
 
-		private async void OnAddClick(object sender, RoutedEventArgs e)
+		private void OnActorSelected(Actor actor)
 		{
-			TargetSelectorView selector = new TargetSelectorView();
-			await this.viewService.ShowDrawer(selector, "Selection", DrawerDirection.Left);
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.ActorArea.DataContext = actor;
+				this.ActorName.Text = actor.Name;
+			});
 		}
 
-		private void OnActorSelected(Actor actor, bool focus)
+		private void OnSelectPage(ViewService.Page page)
 		{
-			// Ensure we dont already have a tab for this actor.
-			foreach (TabItem item in this.Tabs.Items)
+			if (page == null)
 			{
-				if (item.DataContext is Actor tActor)
+				this.currentView = null;
+				this.ViewArea.Content = null;
+				return;
+			}
+
+			if (!this.pages.ContainsKey(page))
+			{
+				Application.Current.Dispatcher.Invoke(() =>
 				{
-					if (tActor == actor)
-					{
-						if (focus)
-							this.Tabs.SelectedItem = item;
-
-						return;
-					}
-				}
+					this.pages.Add(page, page.Create());
+				});
 			}
 
-			TabItem tab = new TabItem();
-			tab.Content = new ActorEditor();
-			tab.Header = new ActorHeaderView();
-			tab.DataContext = actor;
-			this.Tabs.Items.Add(tab);
-
-			if (focus)
-			{
-				this.Tabs.SelectedItem = tab;
-			}
-		}
-
-		private void OnTabClosing(ItemActionCallbackArgs<TabablzControl> args)
-		{
-			DragablzItem item = args.DragablzItem;
-			if (item.Content is FrameworkElement v)
-			{
-				Actor actor = v.DataContext as Actor;
-				actor.Dispose();
-			}
-		}
-
-		public class InterTabClient : IInterTabClient
-		{
-			INewTabHost<Window> IInterTabClient.GetNewHost(IInterTabClient interTabClient, object partition, TabablzControl source)
-			{
-				SecondaryWindow view = new SecondaryWindow();
-				return new NewTabHost<SecondaryWindow>(view, view.Tabs);
-			}
-
-			public TabEmptiedResponse TabEmptiedHandler(TabablzControl tabControl, Window window)
-			{
-				if (window is MainWindow)
-					return TabEmptiedResponse.DoNothing;
-
-				return TabEmptiedResponse.CloseWindowOrLayoutBranch;
-			}
+			this.currentView = this.pages[page];
+			this.ViewArea.Content = this.currentView;
 		}
 	}
 }
