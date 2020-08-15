@@ -42,12 +42,6 @@ namespace ConceptMatrix.PoseModule.Pages
 			set => this.SkeletonViewModel.FlipSides = value;
 		}
 
-		public bool ParentingEnabled
-		{
-			get => this.SkeletonViewModel.ParentingEnabled;
-			set => this.SkeletonViewModel.ParentingEnabled = value;
-		}
-
 		private async void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);

@@ -95,17 +95,11 @@
 
 					<TextBlock Text="Freeze Physics" Margin="6,0,3,0"  Style="{StaticResource Label}"/>
 					<CheckBox IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}"/>
-					<!--<TextBlock Text="Scale &amp; Position" Margin="3,0,6,0"  Style="{StaticResource Label}"/>-->
 
 					<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
 
 					<TextBlock Text="Flip Sides" Margin="6,0,0,0"  Style="{StaticResource Label}"/>
 					<CheckBox IsChecked="{Binding FlipSides}" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
-
-					<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
-
-					<TextBlock Text="Parenting" Margin="6,0,0,0" Style="{StaticResource Label}"/>
-					<CheckBox IsChecked="{Binding ParentingEnabled}" Margin="6, 8, 6, 6" IsEnabled="{Binding PoseService.IsEnabled}"/>
 
 				</StackPanel>
 			</Grid>

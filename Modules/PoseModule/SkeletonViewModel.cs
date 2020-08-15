@@ -49,7 +49,6 @@ namespace ConceptMatrix.PoseModule
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public bool FlipSides { get; set; } = false;
-		public bool ParentingEnabled { get; set; } = true;
 		public bool CanPose { get; set; }
 
 		public Bone CurrentBone
