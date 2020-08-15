@@ -13,7 +13,6 @@ namespace ConceptMatrix.GUI
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Views;
-	using Dragablz;
 	using PropertyChanged;
 
 	/// <summary>

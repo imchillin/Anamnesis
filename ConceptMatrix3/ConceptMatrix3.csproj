@@ -39,7 +39,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dragablz.NetCore" Version="0.3.3" />
 		<PackageReference Include="Fody" Version="6.1.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
