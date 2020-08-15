@@ -290,12 +290,7 @@ namespace ConceptMatrix.GUI.Views
 			this.cameraPositionMem?.Dispose();
 			this.posMem?.Dispose();
 			this.rotMem?.Dispose();
-
-			if (this.scaleMem != null)
-			{
-				this.scaleMem.Value = Vector.One;
-				this.scaleMem.Dispose();
-			}
+			this.scaleMem?.Dispose();
 
 			if (actor == null)
 				return;
