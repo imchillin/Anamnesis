@@ -181,13 +181,17 @@
 					</StackPanel>
 				</GroupBox.Header>
 
-				<StackPanel Margin="6">
+				<StackPanel>
 					<GroupBox Header="Rotation">
 						<cm3:QuaternionEditor Value="{Binding Rotation}"/>
 					</GroupBox>
 
 					<GroupBox Header="Position">
 						<cm3:VectorEditor Value="{Binding Position}" Minimum="-4096" Maximum="4096" Sliders="Relative" Expanded="True"/>
+					</GroupBox>
+
+					<GroupBox Header="Scale">
+						<cm3:VectorEditor Value="{Binding Scale}" Minimum="0.1" Maximum="50" Expanded="True" TickFrequency="0.1"/>
 					</GroupBox>
 				</StackPanel>
 			</GroupBox>

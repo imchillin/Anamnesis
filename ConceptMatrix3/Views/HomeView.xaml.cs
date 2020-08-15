@@ -37,6 +37,7 @@ namespace ConceptMatrix.GUI.Views
 		private IMemory<float> cameraMaxZoomMem;
 		private IMemory<Vector> posMem;
 		private IMemory<Quaternion> rotMem;
+		private IMemory<Vector> scaleMem;
 
 		private int time = 0;
 		private int moon = 0;
@@ -111,6 +112,7 @@ namespace ConceptMatrix.GUI.Views
 		public float CameraFov { get; set; }
 		public Vector Position { get; set; }
 		public Quaternion Rotation { get; set; }
+		public Vector Scale { get; set; }
 
 		public bool IsGpose
 		{
@@ -197,6 +199,8 @@ namespace ConceptMatrix.GUI.Views
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
 			this.IsGpose = false;
+
+			this.SetActor(null);
 
 			this.territoryMem.Dispose();
 			this.weatherMem.Dispose();
@@ -287,6 +291,12 @@ namespace ConceptMatrix.GUI.Views
 			this.posMem?.Dispose();
 			this.rotMem?.Dispose();
 
+			if (this.scaleMem != null)
+			{
+				this.scaleMem.Value = Vector.One;
+				this.scaleMem.Dispose();
+			}
+
 			if (actor == null)
 				return;
 
@@ -310,6 +320,9 @@ namespace ConceptMatrix.GUI.Views
 
 			this.rotMem = actor.GetMemory(Offsets.Main.Rotation);
 			this.rotMem.Bind(this, nameof(this.Rotation));
+
+			this.scaleMem = actor.GetMemory(Offsets.Main.Scale);
+			this.scaleMem.Bind(this, nameof(this.Scale));
 
 			if (this.isGpose)
 			{
