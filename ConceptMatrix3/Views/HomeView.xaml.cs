@@ -41,6 +41,7 @@ namespace ConceptMatrix.GUI.Views
 		private int time = 0;
 		private int moon = 0;
 		private bool isGpose;
+		private bool initialized = false;
 
 		public HomeView()
 		{
@@ -148,7 +149,7 @@ namespace ConceptMatrix.GUI.Views
 					this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
 					this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
 
-					if (this.territoryMem.Active)
+					if (this.territoryMem != null && this.territoryMem.Active)
 					{
 						this.OnTerritoryMemValueChanged(null, 0);
 					}
@@ -175,14 +176,7 @@ namespace ConceptMatrix.GUI.Views
 			ISelectionService selectionService = ConceptMatrix.Services.Get<ISelectionService>();
 			selectionService.ModeChanged += this.OnSelectionServiceModeChanged;
 
-			this.timeMem = this.injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
-			this.weatherMem = this.injection.GetMemory(Offsets.Main.GposeFilters, Offsets.Main.ForceWeather);
-			this.territoryMem = this.injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
-			this.territoryMem.ValueChanged += this.OnTerritoryMemValueChanged;
-
-			this.OnTerritoryMemValueChanged(null, 0);
-
-			this.IsGpose = selectionService.GetMode() == Modes.GPose;
+			this.initialized = false;
 
 			this.SetActor(this.DataContext as Actor);
 		}
@@ -295,6 +289,21 @@ namespace ConceptMatrix.GUI.Views
 
 			if (actor == null)
 				return;
+
+			if (!this.initialized)
+			{
+				this.initialized = true;
+
+				this.timeMem = this.injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
+				this.weatherMem = this.injection.GetMemory(Offsets.Main.GposeFilters, Offsets.Main.ForceWeather);
+				this.territoryMem = null;
+				this.territoryMem = this.injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
+				this.territoryMem.ValueChanged += this.OnTerritoryMemValueChanged;
+				this.OnTerritoryMemValueChanged(null, 0);
+
+				ISelectionService selection = App.Services.Get<ISelectionService>();
+				this.IsGpose = selection.GetMode() == Modes.GPose;
+			}
 
 			this.posMem = actor.GetMemory(Offsets.Main.Position);
 			this.posMem.Bind(this, nameof(this.Position));
