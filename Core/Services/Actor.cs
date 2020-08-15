@@ -28,9 +28,6 @@ namespace ConceptMatrix
 
 		public delegate void ActorEvent(Actor actor);
 
-		public event ActorEvent? ActorRetargetBegin;
-		public event ActorEvent? ActorRetargetComplete;
-
 		public ActorTypes Type { get; set; }
 		public string Name { get; private set; }
 		public string Description { get; set; }
@@ -81,44 +78,6 @@ namespace ConceptMatrix
 		{
 			IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
 			await refreshService.RefreshAsync(this);
-		}
-
-		public void Retarget(Actor actor)
-		{
-			if (this.baseOffset == actor.baseOffset)
-				return;
-
-			Log.Write("Retargeting actor from " + this.Description + "(" + this.baseOffset + " to " + actor.Description + "(" + actor.baseOffset + ")");
-
-			this.ActorRetargetBegin?.Invoke(this);
-
-			this.baseOffset = actor.baseOffset;
-			this.Name = actor.Name;
-			this.Description = actor.Description;
-			this.Type = actor.Type;
-
-			IMemory mem;
-			foreach (WeakReference<IMemory> weakRef in this.memories)
-			{
-				if (weakRef.TryGetTarget(out mem))
-				{
-					if (!mem.Active)
-						continue;
-
-					try
-					{
-						mem.UpdateBaseOffset(this.baseOffset);
-					}
-					catch (MemoryException)
-					{
-						mem.Dispose();
-					}
-				}
-			}
-
-			this.ActorRetargetComplete?.Invoke(this);
-
-			Log.Write("Retargeting actor done");
 		}
 
 		public void Dispose()

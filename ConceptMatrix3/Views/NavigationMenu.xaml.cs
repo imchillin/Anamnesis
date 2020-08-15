@@ -69,23 +69,14 @@ namespace ConceptMatrix.GUI.Views
 
 		private void OnDataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
 		{
-			this.actor = this.DataContext as Actor;
-
-			if (this.actor == null)
-			{
-				this.IsEnabled = false;
-				return;
-			}
-
-			this.actor.ActorRetargetComplete += this.OnActorRetargeted;
-
-			this.OnActorRetargeted(null);
-
-			this.IsEnabled = true;
+			this.SetActor(this.DataContext as Actor);
 		}
 
-		private void OnActorRetargeted(Actor actor = null)
+		private void SetActor(Actor actor = null)
 		{
+			this.actor = actor;
+			this.IsEnabled = this.actor != null;
+
 			HashSet<ViewService.Page> oldPages = new HashSet<ViewService.Page>(this.Items);
 
 			List<ViewService.Page> newPages = new List<ViewService.Page>();

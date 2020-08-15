@@ -89,16 +89,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			this.actor = this.DataContext as Actor;
-
-			this.OnActorRetargetBegin(this.actor);
+			this.SetActor(this.DataContext as Actor);
 
 			if (this.actor == null)
 				return;
-
-			this.actor.ActorRetargetBegin += this.OnActorRetargetBegin;
-			this.actor.ActorRetargetComplete += this.OnActorRetargetComplete;
-			this.OnActorRetargetComplete(this.actor);
 
 			this.PropertyChanged += this.OnThisPropertyChanged;
 		}
@@ -112,8 +106,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
-		private void OnActorRetargetBegin(Actor actor)
+		private void SetActor(Actor actor)
 		{
+			this.actor = actor;
+
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.IsEnabled = false;
@@ -138,10 +134,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.mainHandScaleMem?.Dispose();
 			this.offHandTintMem?.Dispose();
 			this.offHandScaleMem?.Dispose();
-		}
 
-		private void OnActorRetargetComplete(Actor actor = null)
-		{
 			if (this.actor == null)
 				return;
 
