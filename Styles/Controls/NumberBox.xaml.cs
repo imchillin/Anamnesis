@@ -50,9 +50,6 @@ namespace ConceptMatrix.WpfStyles.Controls
 			this.Buttons = false;
 
 			this.ContentArea.DataContext = this;
-
-			OnSliderChanged(this, this.Slider);
-			OnButtonsChanged(this, this.Buttons);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -260,6 +257,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderMaximum)));
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderMinimum)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderValue)));
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -267,6 +265,10 @@ namespace ConceptMatrix.WpfStyles.Controls
 			Window window = Window.GetWindow(this);
 			window.MouseDown += this.OnWindowMouseDown;
 			window.Deactivated += this.OnWindowDeactivated;
+
+			OnSliderChanged(this, this.Slider);
+			OnButtonsChanged(this, this.Buttons);
+			OnTickChanged(this, this.TickFrequency);
 		}
 
 		private double Validate(double v)
