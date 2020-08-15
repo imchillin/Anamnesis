@@ -148,7 +148,10 @@ namespace ConceptMatrix.GUI.Views
 					this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
 					this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
 
-					this.OnTerritoryMemValueChanged(null, 0);
+					if (this.territoryMem.Active)
+					{
+						this.OnTerritoryMemValueChanged(null, 0);
+					}
 				}
 				else
 				{
