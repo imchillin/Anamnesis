@@ -149,14 +149,26 @@ namespace ConceptMatrix.GUI.Services
 					}
 
 					Actor selected;
-					if (newMode == Modes.Overworld)
+
+					try
 					{
-						selected = new Actor(Offsets.Main.Target);
+						if (newMode == Modes.Overworld)
+						{
+							selected = new Actor(Offsets.Main.Target);
+						}
+						else
+						{
+							selected = new Actor(Offsets.Main.Gpose);
+						}
 					}
-					else
+					catch (Exception ex)
 					{
-						selected = new Actor(Offsets.Main.Gpose);
+						Log.Write(new Exception("Failed to select current target", ex), "Selection", Log.Severity.Warning);
+						selected = null;
 					}
+
+					if (selected == null || selected.Type == ActorTypes.None)
+						continue;
 
 					if (selected != this.selectedActor)
 					{
