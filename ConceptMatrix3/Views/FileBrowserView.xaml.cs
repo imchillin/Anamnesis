@@ -29,6 +29,7 @@ namespace ConceptMatrix.GUI.Views
 		private Modes mode;
 		private string fileName;
 		private bool isFlattened;
+		private EntryWrapper selected;
 
 		public FileBrowserView(List<IFileSource> sources, FileType[] fileTypes, Modes mode)
 		{
@@ -90,7 +91,24 @@ namespace ConceptMatrix.GUI.Views
 
 		public ObservableCollection<IFileSource> FileSources { get; private set; } = new ObservableCollection<IFileSource>();
 		public ObservableCollection<EntryWrapper> Entries { get; private set; } = new ObservableCollection<EntryWrapper>();
-		public EntryWrapper Selected { get; set; }
+
+		public EntryWrapper Selected
+		{
+			get
+			{
+				return this.selected;
+			}
+
+			set
+			{
+				this.selected = value;
+
+				if (this.mode == Modes.Save)
+				{
+					this.FileName = this.selected?.Name;
+				}
+			}
+		}
 
 		public bool IsFlattened
 		{
@@ -362,8 +380,8 @@ namespace ConceptMatrix.GUI.Views
 			{
 				get
 				{
-					if (this.View.mode == Modes.Save)
-						return this.Entry is IFileSource.IDirectory;
+					////if (this.View.mode == Modes.Save)
+					////	return this.Entry is IFileSource.IDirectory;
 
 					return true;
 				}
