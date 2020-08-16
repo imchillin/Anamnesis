@@ -32,7 +32,7 @@
 					Grid.RowSpan="2"
 					Style="{DynamicResource TransparentButton}">
 				<Grid>
-					<Image x:Name="SlotIcon" Source="/AppearanceModule;component/Assets/Slots/Body.png" Margin="6" Opacity="0.3"/>
+					<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="6" Opacity="0.3"/>
 
 					<Grid Visibility="{Binding ViewModel, Converter={StaticResource NotNullToVisibilityConverter}}">
 						<Image Source="{Binding ViewModel.Item.Icon, Converter={StaticResource IImageConverter}}" Margin="2"/>

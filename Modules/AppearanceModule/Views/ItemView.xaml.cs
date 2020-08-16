@@ -4,10 +4,12 @@
 namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.ComponentModel;
+	using System.Diagnostics;
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Media;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
@@ -65,6 +67,8 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 		}
 
+		public ImageSource IconSource { get; set; }
+
 		public bool CanDye
 		{
 			get
@@ -101,7 +105,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (this.ViewModel == null)
 				return;
 
-			this.SlotIcon.Source = this.ViewModel.Slot.GetIcon();
+			this.IconSource = this.ViewModel.Slot.GetIcon();
 		}
 	}
 }
