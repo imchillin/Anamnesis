@@ -14,10 +14,12 @@ namespace ConceptMatrix.SaintCoinachModule
 	{
 		private ConcurrentDictionary<ItemSlots, bool> fitsInSlotsCache = new ConcurrentDictionary<ItemSlots, bool>();
 		private Classes equipableClasses = Classes.None;
+		private EquipSlotCategory equipSlotCategory;
 
 		public ItemWrapper(Item value)
 			: base(value)
 		{
+			this.equipSlotCategory = this.Value.EquipSlotCategory;
 		}
 
 		public string Name
@@ -160,7 +162,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 			try
 			{
-				foreach (EquipSlot equipSlot in this.Value.EquipSlotCategory.PossibleSlots)
+				foreach (EquipSlot equipSlot in this.equipSlotCategory.PossibleSlots)
 				{
 					if (equipSlot.IsSlot(slot))
 					{
