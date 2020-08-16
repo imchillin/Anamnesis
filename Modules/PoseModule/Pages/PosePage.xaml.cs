@@ -146,9 +146,9 @@ namespace ConceptMatrix.PoseModule.Pages
 			if (this.GuiView == null)
 				return;
 
-			this.GuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Hidden;
-			this.ThreeDView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Hidden;
-			this.MatrixView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Hidden;
+			this.GuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Collapsed;
+			this.MatrixView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Collapsed;
+			////this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
 		}
 	}
 }

@@ -83,12 +83,12 @@
 						<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1">
 							<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
-						<ListBoxItem ToolTip="3D View" Margin="0, 1, 0, 1">
-							<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
-						</ListBoxItem>
 						<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 1, 1">
 							<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
+						<!--<ListBoxItem ToolTip="3D View" Margin="0, 1, 0, 1">
+							<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
+						</ListBoxItem>-->
 					</ListBox>
 
 					<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
@@ -116,9 +116,9 @@
 					</StackPanel>
 
 					<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
-						<views:Pose3DView x:Name="ThreeDView" Visibility="Hidden"/>
+						<!--<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>-->
 						<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
-						<views:PoseMatrixView x:Name="MatrixView" Visibility="Hidden"/>
+						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed"/>
 					</Grid>
 				</Grid>
 			</Grid>
