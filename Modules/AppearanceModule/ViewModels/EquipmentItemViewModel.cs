@@ -47,6 +47,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnMemoryValueChanged(object sender, object value)
 		{
+			if (!this.memory.Active)
+				return;
+
 			Equipment eq = this.memory.Value;
 
 			Equipment.Item item = this.memory.Value.GetItem(this.Slot);
