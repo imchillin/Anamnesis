@@ -249,6 +249,14 @@ namespace ConceptMatrix.PoseModule
 
 		public void Clear()
 		{
+			if (this.bones != null)
+			{
+				foreach ((string name, Bone bone) in this.bones)
+				{
+					bone.Dispose();
+				}
+			}
+
 			this.appearanceMem?.Dispose();
 			this.rootRotationMem?.Dispose();
 
