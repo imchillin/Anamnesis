@@ -57,7 +57,6 @@ namespace ConceptMatrix.MemoryBinds
 		public virtual void Dispose()
 		{
 			this.IsAlive = false;
-			Log.Write("disposing of memory bind");
 		}
 	}
 }

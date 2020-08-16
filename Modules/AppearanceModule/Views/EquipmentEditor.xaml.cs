@@ -50,6 +50,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void SetActor(Actor actor)
 		{
+			this.MainHand?.Dispose();
+			this.OffHand?.Dispose();
+			this.eqMem?.Dispose();
+
 			if (actor == null)
 				return;
 
