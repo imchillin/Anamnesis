@@ -130,6 +130,9 @@ namespace ConceptMatrix.PoseModule
 			if (!this.IsEnabled)
 				return;
 
+			if (!this.transformMem.Active)
+				return;
+
 			this.Position = this.LiveTransform.Position;
 			this.Rotation = this.LiveTransform.Rotation;
 			this.Scale = this.LiveTransform.Scale;
