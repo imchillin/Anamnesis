@@ -263,8 +263,11 @@ namespace ConceptMatrix.WpfStyles.Controls
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			Window window = Window.GetWindow(this);
-			window.MouseDown += this.OnWindowMouseDown;
-			window.Deactivated += this.OnWindowDeactivated;
+			if (window != null)
+			{
+				window.MouseDown += this.OnWindowMouseDown;
+				window.Deactivated += this.OnWindowDeactivated;
+			}
 
 			OnSliderChanged(this, this.Slider);
 			OnButtonsChanged(this, this.Buttons);
