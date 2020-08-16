@@ -3,6 +3,7 @@
 
 namespace ConceptMatrix.AppearanceModule.Views
 {
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
@@ -57,23 +58,26 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (actor == null)
 				return;
 
-			// Weapon slots
-			this.MainHand = new EquipmentWeaponViewModel(ItemSlots.MainHand, actor);
-			this.OffHand = new EquipmentWeaponViewModel(ItemSlots.OffHand, actor);
+			Task.Run(() =>
+			{
+				// Weapon slots
+				this.MainHand = new EquipmentWeaponViewModel(ItemSlots.MainHand, actor);
+				this.OffHand = new EquipmentWeaponViewModel(ItemSlots.OffHand, actor);
 
-			// Equipment slots
-			this.eqMem = actor.GetMemory(Offsets.Main.ActorEquipment);
+				// Equipment slots
+				this.eqMem = actor.GetMemory(Offsets.Main.ActorEquipment);
 
-			this.Head = new EquipmentItemViewModel(this.eqMem, ItemSlots.Head, actor);
-			this.Body = new EquipmentItemViewModel(this.eqMem, ItemSlots.Body, actor);
-			this.Hands = new EquipmentItemViewModel(this.eqMem, ItemSlots.Hands, actor);
-			this.Legs = new EquipmentItemViewModel(this.eqMem, ItemSlots.Legs, actor);
-			this.Feet = new EquipmentItemViewModel(this.eqMem, ItemSlots.Feet, actor);
-			this.Ears = new EquipmentItemViewModel(this.eqMem, ItemSlots.Ears, actor);
-			this.Neck = new EquipmentItemViewModel(this.eqMem, ItemSlots.Neck, actor);
-			this.Wrists = new EquipmentItemViewModel(this.eqMem, ItemSlots.Wrists, actor);
-			this.LeftRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.LeftRing, actor);
-			this.RightRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.RightRing, actor);
+				this.Head = new EquipmentItemViewModel(this.eqMem, ItemSlots.Head, actor);
+				this.Body = new EquipmentItemViewModel(this.eqMem, ItemSlots.Body, actor);
+				this.Hands = new EquipmentItemViewModel(this.eqMem, ItemSlots.Hands, actor);
+				this.Legs = new EquipmentItemViewModel(this.eqMem, ItemSlots.Legs, actor);
+				this.Feet = new EquipmentItemViewModel(this.eqMem, ItemSlots.Feet, actor);
+				this.Ears = new EquipmentItemViewModel(this.eqMem, ItemSlots.Ears, actor);
+				this.Neck = new EquipmentItemViewModel(this.eqMem, ItemSlots.Neck, actor);
+				this.Wrists = new EquipmentItemViewModel(this.eqMem, ItemSlots.Wrists, actor);
+				this.LeftRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.LeftRing, actor);
+				this.RightRing = new EquipmentItemViewModel(this.eqMem, ItemSlots.RightRing, actor);
+			});
 		}
 	}
 }
