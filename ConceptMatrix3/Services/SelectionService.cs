@@ -4,6 +4,7 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System;
+	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Anamnesis;
@@ -125,7 +126,7 @@ namespace ConceptMatrix.GUI.Services
 
 				while (this.IsAlive)
 				{
-					await Task.Delay(250);
+					await Task.Delay(50);
 
 					while (refreshService.IsRefreshing)
 						await Task.Delay(250);
