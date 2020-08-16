@@ -23,6 +23,8 @@ namespace ConceptMatrix.GameData
 		Wrists,
 		RightRing,
 		LeftRing,
+
+		SoulCrystal,
 	}
 
 	#pragma warning disable SA1649
