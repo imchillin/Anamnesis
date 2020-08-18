@@ -9,12 +9,14 @@ namespace ConceptMatrix.GUI.Services
 	using System.Runtime.ExceptionServices;
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
+	using ConceptMatrix.GUI.Windows;
+	using SimpleLog;
 
 	public class LogService : IService
 	{
 		private const string LogfilePath = "/Logs/";
 
-		private TextWriter logWriter;
+		private FileLogDestination file;
 
 		public static void ShowLogs()
 		{
@@ -24,9 +26,6 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Initialize()
 		{
-			Log.OnLog += this.OnLog;
-			Log.OnException += this.OnException;
-
 			string dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath) + "\\";
 
 			if (!Directory.Exists(dir))
@@ -42,7 +41,8 @@ namespace ConceptMatrix.GUI.Services
 			}
 
 			string newLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
-			this.logWriter = new StreamWriter(newLogPath);
+			this.file = new FileLogDestination(newLogPath);
+			Log.AddDestination(this.file);
 
 			Log.Write("OS: " + RuntimeInformation.OSDescription, "Info");
 			Log.Write("Framework: " + RuntimeInformation.FrameworkDescription, "Info");
@@ -62,8 +62,8 @@ namespace ConceptMatrix.GUI.Services
 		{
 			lock (this)
 			{
-				this.logWriter.Dispose();
-				this.logWriter = null;
+				this.file.Dispose();
+				this.file = null;
 			}
 
 			return Task.CompletedTask;
@@ -74,58 +74,23 @@ namespace ConceptMatrix.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public void OnException(ExceptionDispatchInfo exDispatch, Log.Severity severity, string category)
+		private class ErrorDialogLogDestination : ILogDestination
 		{
-			lock (this)
+			public void OnException(Severity severity, ExceptionDispatchInfo exception, string category = null)
 			{
-				if (this.logWriter == null)
-					return;
-
-				this.logWriter.Write("[");
-				this.logWriter.Write(category);
-				this.logWriter.Write("][");
-				this.logWriter.Write(severity);
-				this.logWriter.Write("] ");
-
-				Exception ex = exDispatch.SourceException;
-
-				while (ex != null)
+				if (severity >= Severity.Error)
 				{
-					this.logWriter.WriteLine(ex.GetType().Name);
-					this.logWriter.WriteLine(ex.Message);
-					this.logWriter.WriteLine(ex.StackTrace);
-
-					ex = ex.InnerException;
+					ErrorDialog.ShowError(exception, severity == Severity.UnhandledException);
 				}
-
-				this.logWriter.Flush();
 			}
-		}
 
-		public void OnLog(string message, Log.Severity severity, string category)
-		{
-			lock (this)
+			public void OnLog(Severity severity, string message, string category = null, string stack = null)
 			{
-				if (this.logWriter == null)
-					return;
-
-				this.logWriter.Write("[");
-				this.logWriter.Write(DateTime.Now.ToString());
-				this.logWriter.Write("]");
-
-				if (!string.IsNullOrEmpty(category))
+				if (severity >= Severity.Error)
 				{
-					this.logWriter.Write("[");
-					this.logWriter.Write(category);
-					this.logWriter.Write("] ");
+					Exception ex = new Exception(message);
+					ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), severity == Severity.UnhandledException);
 				}
-
-				this.logWriter.Write("[");
-				this.logWriter.Write(severity);
-				this.logWriter.Write("] ");
-				this.logWriter.WriteLine(message);
-
-				this.logWriter.Flush();
 			}
 		}
 	}

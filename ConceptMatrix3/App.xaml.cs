@@ -4,13 +4,10 @@
 namespace ConceptMatrix
 {
 	using System;
-	using System.Runtime.ExceptionServices;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Threading;
 	using ConceptMatrix.GUI;
-	using ConceptMatrix.GUI.Services;
-	using ConceptMatrix.GUI.Windows;
 	using MaterialDesignThemes.Wpf;
 
 	using Application = System.Windows.Application;
@@ -34,8 +31,6 @@ namespace ConceptMatrix
 			this.Dispatcher.UnhandledException += this.DispatcherOnUnhandledException;
 			Application.Current.DispatcherUnhandledException += this.CurrentOnDispatcherUnhandledException;
 			TaskScheduler.UnobservedTaskException += this.TaskSchedulerOnUnobservedTaskException;
-			Log.OnException += this.OnException;
-			Log.OnLog += this.OnLog;
 			this.Exit += this.OnExit;
 
 			base.OnStartup(e);
@@ -50,7 +45,6 @@ namespace ConceptMatrix
 		{
 			Task t = Services.ShutdownServices();
 			t.Wait();
-			Log.Write("Bye!");
 		}
 
 		private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
@@ -101,26 +95,6 @@ namespace ConceptMatrix
 		{
 			PaletteHelper ph = new PaletteHelper();
 			ph.Apply(App.Settings.ThemeSwatch, App.Settings.ThemeDark);
-		}
-
-		private void OnException(ExceptionDispatchInfo ex, Log.Severity severity, string category)
-		{
-			Services.Get<LogService>().OnException(ex, severity, category);
-
-			if (severity >= Log.Severity.Error)
-			{
-				ErrorDialog.ShowError(ex, severity == Log.Severity.Critical);
-			}
-		}
-
-		private void OnLog(string message, Log.Severity severity, string category)
-		{
-			if (severity >= Log.Severity.Error)
-			{
-				Services.Get<LogService>().OnLog(message, severity, category);
-				Exception ex = new Exception(message);
-				ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), severity == Log.Severity.Critical);
-			}
 		}
 	}
 }

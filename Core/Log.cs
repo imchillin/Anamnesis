@@ -4,47 +4,28 @@
 namespace ConceptMatrix
 {
 	using System;
-	using System.Diagnostics;
-	using System.Runtime.ExceptionServices;
 
+	/// <summary>
+	/// Basic log for when modules dont want to reference SimpleLog.
+	/// </summary>
 	public static class Log
 	{
-		public delegate void LogEvent(string message, Severity severity, string? category);
-		public delegate void ExceptionEvent(ExceptionDispatchInfo ex, Severity severity, string? category);
-
-		public static event LogEvent? OnLog;
-		public static event ExceptionEvent? OnException;
-
 		public enum Severity
 		{
-			Log,
-			Warning,
-			Error,
-			Critical,
+			Log = SimpleLog.Severity.Log,
+			Warning = SimpleLog.Severity.Warning,
+			Error = SimpleLog.Severity.Error,
+			Critical = SimpleLog.Severity.UnhandledException,
 		}
 
 		public static void Write(string message, string? category = null, Severity severity = Severity.Log)
 		{
-			Trace.WriteLine($"[{category}] ({severity}) {message}");
-			OnLog?.Invoke(message, severity, category);
+			SimpleLog.Log.Write((SimpleLog.Severity)severity, message);
 		}
 
 		public static void Write(Exception ex, string? category = null, Severity severity = Severity.Critical)
 		{
-			ExceptionDispatchInfo exDispatch = ExceptionDispatchInfo.Capture(ex);
-
-			Trace.WriteLine($"[{category}][{ex.GetType().Name}] ({severity}) {ex.Message}");
-			Trace.WriteLine(ex.StackTrace);
-
-			Exception exception = ex.InnerException;
-			while (exception != null)
-			{
-				Trace.WriteLine($"Inner: [{exception.GetType().Name}] {exception.Message}");
-				Trace.WriteLine(exception.StackTrace);
-				exception = exception.InnerException;
-			}
-
-			OnException?.Invoke(exDispatch, severity, category);
+			SimpleLog.Log.Write((SimpleLog.Severity)severity, ex);
 		}
 	}
 }

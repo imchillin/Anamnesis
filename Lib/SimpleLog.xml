@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SimpleLog</name>
+    </assembly>
+    <members>
+        <member name="T:SimpleLog.ConsoleLogDestination">
+            <summary>
+            A log destination that writes the log to the console.
+            </summary>
+        </member>
+        <member name="M:SimpleLog.ConsoleLogDestination.OnException(SimpleLog.Severity,System.Runtime.ExceptionServices.ExceptionDispatchInfo,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SimpleLog.ConsoleLogDestination.OnLog(SimpleLog.Severity,System.String,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:SimpleLog.FileLogDestination">
+            <summary>
+            Writes logs to a file.
+            </summary>
+        </member>
+        <member name="M:SimpleLog.FileLogDestination.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SimpleLog.FileLogDestination"/> class.
+            </summary>
+            <param name="path">the path of the text file to write logs to.</param>
+        </member>
+        <member name="M:SimpleLog.FileLogDestination.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:SimpleLog.FileLogDestination.OnException(SimpleLog.Severity,System.Runtime.ExceptionServices.ExceptionDispatchInfo,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SimpleLog.FileLogDestination.OnLog(SimpleLog.Severity,System.String,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:SimpleLog.ILogDestination">
+            <summary>
+            A log destiantion writes log events.
+            </summary>
+        </member>
+        <member name="M:SimpleLog.ILogDestination.OnException(SimpleLog.Severity,System.Runtime.ExceptionServices.ExceptionDispatchInfo,System.String)">
+            <summary>
+            Logs an exception.
+            </summary>
+            <param name="severity">exception severity.</param>
+            <param name="exception">the exception to log.</param>
+            <param name="category">the category of this log.</param>
+        </member>
+        <member name="M:SimpleLog.ILogDestination.OnLog(SimpleLog.Severity,System.String,System.String,System.String)">
+            <summary>
+            Logs a message.
+            </summary>
+            <param name="severity">message severity.</param>
+            <param name="message">the message to log.</param>
+            <param name="category">the catefory of this log.</param>
+            <param name="stack">a stack trace of this log.</param>
+        </member>
+        <member name="T:SimpleLog.Severity">
+            <summary>
+            Severity of logs.
+            </summary>
+        </member>
+        <member name="F:SimpleLog.Severity.Log">
+            <summary>
+            A general log.
+            </summary>
+        </member>
+        <member name="F:SimpleLog.Severity.Warning">
+            <summary>
+            A warning.
+            </summary>
+        </member>
+        <member name="F:SimpleLog.Severity.Error">
+            <summary>
+            An error.
+            </summary>
+        </member>
+        <member name="F:SimpleLog.Severity.Exception">
+            <summary>
+            An exception.
+            </summary>
+        </member>
+        <member name="F:SimpleLog.Severity.UnhandledException">
+            <summary>
+            An unhandled or fatal exception.
+            </summary>
+        </member>
+        <member name="T:SimpleLog.Log">
+            <summary>
+            Log system.
+            </summary>
+        </member>
+        <member name="M:SimpleLog.Log.GetLogger(System.String)">
+            <summary>
+            Gets a logger.
+            </summary>
+            <param name="category">The category to create a logger for.</param>
+            <returns>An instance of the logger class.</returns>
+        </member>
+        <member name="M:SimpleLog.Log.GetLogger``1">
+            <summary>
+            Gets a logger.
+            </summary>
+            <typeparam name="T">The category to create a logger for.</typeparam>
+            <returns>An instance of the logger class.</returns>
+        </member>
+        <member name="M:SimpleLog.Log.AddDestination``1">
+            <summary>
+            Adds a new log destination.
+            </summary>
+            <typeparam name="T">The type of destination to create.</typeparam>
+        </member>
+        <member name="M:SimpleLog.Log.AddDestination(SimpleLog.ILogDestination)">
+            <summary>
+            Adds a new log destination.
+            </summary>
+            <param name="destination">The destination to add.</param>
+        </member>
+        <member name="M:SimpleLog.Log.Write(System.Exception)">
+            <summary>
+            Writes a categoryless exception to the log.
+            </summary>
+            <param name="ex">The exception to write.</param>
+        </member>
+        <member name="M:SimpleLog.Log.Write(SimpleLog.Severity,System.Exception)">
+            <summary>
+            Writes a categoryless exception to the log.
+            </summary>
+            <param name="severity">The severity of the exception.</param>
+            <param name="ex">The exception to write.</param>
+        </member>
+        <member name="M:SimpleLog.Log.Write(System.String,System.String)">
+            <summary>
+            Writes a categoryless message to the log.
+            </summary>
+            <param name="message">The message to write.</param>
+            <param name="stack">A stack trace for this message.</param>
+        </member>
+        <member name="M:SimpleLog.Log.Write(SimpleLog.Severity,System.String,System.String)">
+            <summary>
+            Writes a categoryless message to the log.
+            </summary>
+            <param name="severity">The severity of the message.</param>
+            <param name="message">The message to log.</param>
+            <param name="stack">A stack trace for this message.</param>
+        </member>
+        <member name="T:SimpleLog.Logger">
+            <summary>
+            A Logger for a category.
+            </summary>
+        </member>
+        <member name="M:SimpleLog.Logger.Write(System.Exception)">
+            <summary>
+            Writes an exception to the log.
+            </summary>
+            <param name="ex">The exception to log.</param>
+        </member>
+        <member name="M:SimpleLog.Logger.Write(SimpleLog.Severity,System.Exception)">
+            <summary>
+            Writes an exception to the log.
+            </summary>
+            <param name="severity">The severity of the exception.</param>
+            <param name="ex">The exception to log.</param>
+        </member>
+        <member name="M:SimpleLog.Logger.Write(System.String,System.String)">
+            <summary>
+            Writes a message to the log.
+            </summary>
+            <param name="message">The message to log.</param>
+            <param name="stack">A stacktrace for the message.</param>
+        </member>
+        <member name="M:SimpleLog.Logger.Write(SimpleLog.Severity,System.String,System.String)">
+            <summary>
+            Writes a message to the log.
+            </summary>
+            <param name="severity">The severity of the message.</param>
+            <param name="message">The message to log.</param>
+            <param name="stack">A stacktrace for the message.</param>
+        </member>
+    </members>
+</doc>
