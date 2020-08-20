@@ -31,6 +31,8 @@ namespace ConceptMatrix.GUI
 		{
 			this.InitializeComponent();
 
+			this.DataContext = this;
+
 			this.viewService = App.Services.Get<ViewService>();
 			this.viewService.ShowingDrawer += this.OnShowDrawer;
 
@@ -39,6 +41,7 @@ namespace ConceptMatrix.GUI
 
 			////this.IconArea.DataContext = this;
 
+			this.HasSelection = false;
 			this.Zodiark = App.Settings.ThemeDark;
 			this.Opacity = App.Settings.Opacity;
 			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
@@ -47,11 +50,8 @@ namespace ConceptMatrix.GUI
 			App.Settings.Changed += this.OnSettingsChanged;
 		}
 
-		public bool Zodiark
-		{
-			get;
-			set;
-		}
+		public bool Zodiark { get; set; }
+		public bool HasSelection { get; set; }
 
 		private void OnSettingsChanged(SettingsBase settings)
 		{
@@ -225,7 +225,8 @@ namespace ConceptMatrix.GUI
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.ActorArea.DataContext = actor;
-				this.ActorName.Text = actor.Name;
+				this.ActorName.Text = actor?.Name;
+				this.HasSelection = actor != null;
 			});
 		}
 

@@ -56,7 +56,7 @@
 				<Border.Effect>
 					<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="1"/>
 				</Border.Effect>
-				
+
 				<Grid VerticalAlignment="Top">
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
@@ -114,16 +114,20 @@
 				</Grid>
 			</Border>
 
-			<!--<views:HomeView Margin="0, 40, 0, 0"/>-->
+			<Grid Margin="0, 32, 0, 0" Visibility="{Binding HasSelection, Converter={StaticResource B2V}}">
+				<Grid x:Name="ActorArea">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
 
-			<Grid Margin="0, 32, 0, 0" x:Name="ActorArea">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
+					<views:NavigationMenu Grid.Column="0" SelectPage="OnSelectPage"/>
+					<ContentPresenter Grid.Column="1" x:Name="ViewArea"/>
+				</Grid>
+			</Grid>
 
-				<views:NavigationMenu Grid.Column="0" SelectPage="OnSelectPage"/>
-				<ContentPresenter Grid.Column="1" x:Name="ViewArea"/>
+			<Grid Margin="0, 32, 0, 0" Visibility="{Binding HasSelection, Converter={StaticResource !B2V}}">
+				<TextBlock Text="To get started, select an actor in game." Style="{StaticResource Label}" HorizontalAlignment="Center"/>
 			</Grid>
 
 			<!-- Drawer flyouts -->
