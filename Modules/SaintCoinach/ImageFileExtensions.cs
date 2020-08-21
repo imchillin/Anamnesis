@@ -10,76 +10,72 @@ namespace ConceptMatrix.SaintCoinachModule
 
 	public static class ImageFileExtensions
 	{
-		public static unsafe IImage ToIImage(this ImageFile file)
+		public static IImageSource ToIImage(this ImageFile file)
 		{
 			if (file == null)
 				return null;
 
-			byte[] src = file.GetData();
-			SaintCoinach.Imaging.ImageFormat format = file.Format;
-			int width = file.Width;
-			int height = file.Height;
-			byte[] argb = ImageConverter.GetA8R8G8B8(src, format, width, height);
-
-			ImageWrapper wrapper = null;
-
-			try
-			{
-				fixed (byte* p = argb)
-				{
-					IntPtr ptr = (IntPtr)p;
-					Bitmap tempImage = new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, ptr);
-					wrapper = new ImageWrapper(tempImage);
-				}
-			}
-			catch (Exception)
-			{
-			}
-
-			return wrapper;
+			return new ImageSourceWrapper(file);
 		}
 
-		internal class ImageWrapper : IImage, IDisposable
+		internal class ImageSourceWrapper : IImageSource
 		{
-			private Bitmap bitmap;
-			private IntPtr ptr;
+			private ImageFile file;
 
-			public ImageWrapper(Bitmap bmp)
+			public ImageSourceWrapper(ImageFile file)
 			{
-				this.bitmap = bmp;
-				this.ptr = this.bitmap.GetHbitmap();
+				this.file = file;
+			}
+
+			public unsafe IImage GetImage()
+			{
+				byte[] src = this.file.GetData();
+				SaintCoinach.Imaging.ImageFormat format = this.file.Format;
+				int width = this.file.Width;
+				int height = this.file.Height;
+				byte[] argb = ImageConverter.GetA8R8G8B8(src, format, width, height);
+
+				Bitmap bmp = null;
+
+				try
+				{
+					fixed (byte* p = argb)
+					{
+						IntPtr ptr = (IntPtr)p;
+						bmp = new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, ptr);
+					}
+				}
+				catch (Exception)
+				{
+				}
+
+				if (bmp == null)
+					return null;
+
+				return new ImageWrapper(bmp);
+			}
+		}
+
+		internal class ImageWrapper : IImage
+		{
+			private Bitmap bmp;
+
+			internal ImageWrapper(Bitmap bmp)
+			{
+				this.bmp = bmp;
 			}
 
 			public IntPtr HBitmap
 			{
 				get
 				{
-					if (this.ptr == null)
-						throw new Exception("Cannot access a disposed object");
-
-					return this.ptr;
-				}
-			}
-
-			public int Width
-			{
-				get
-				{
-					return this.bitmap.Width;
-				}
-			}
-
-			public int Height
-			{
-				get
-				{
-					return this.bitmap.Height;
+					return this.bmp.GetHbitmap();
 				}
 			}
 
 			public void Dispose()
 			{
-				this.bitmap = null;
+				this.bmp.Dispose();
 			}
 		}
 	}

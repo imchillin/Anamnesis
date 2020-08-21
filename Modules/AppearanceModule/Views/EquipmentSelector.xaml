@@ -75,7 +75,7 @@
 							<TextBlock Text="{Binding ModelBase}" Style="{StaticResource Label}"/>
 							<TextBlock Text="{Binding ModelVariant}" Style="{StaticResource Label}"/>
 						</StackPanel>
-					
+
 						<Rectangle Grid.ColumnSpan="2" 
 									   Grid.RowSpan="2" 
 									   Fill="Transparent" 

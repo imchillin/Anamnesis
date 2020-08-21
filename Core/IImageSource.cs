@@ -5,10 +5,13 @@ namespace ConceptMatrix
 {
 	using System;
 
-	public interface IImage
+	public interface IImageSource
+	{
+		IImage GetImage();
+	}
+
+	public interface IImage : IDisposable
 	{
 		IntPtr HBitmap { get; }
-		int Width { get; }
-		int Height { get; }
 	}
 }

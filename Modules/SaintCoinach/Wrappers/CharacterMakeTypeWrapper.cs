@@ -12,7 +12,7 @@ namespace ConceptMatrix.SaintCoinachModule
 
 	internal class CharacterMakeTypeWrapper : ObjectWrapper<CharaMakeType>, ICharaMakeType
 	{
-		private List<IImage> facialFeatureList;
+		private List<IImageSource> facialFeatureList;
 
 		public CharacterMakeTypeWrapper(CharaMakeType row)
 			: base(row)
@@ -43,13 +43,13 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
-		public IEnumerable<IImage> FacialFeatures
+		public IEnumerable<IImageSource> FacialFeatures
 		{
 			get
 			{
 				if (this.facialFeatureList == null)
 				{
-					this.facialFeatureList = new List<IImage>();
+					this.facialFeatureList = new List<IImageSource>();
 
 					try
 					{

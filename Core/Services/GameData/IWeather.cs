@@ -7,6 +7,6 @@ namespace ConceptMatrix.GameData
 	{
 		string Name { get; }
 		string Description { get; }
-		IImage Icon { get; }
+		IImageSource Icon { get; }
 	}
 }

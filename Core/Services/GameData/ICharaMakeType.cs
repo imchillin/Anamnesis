@@ -11,6 +11,6 @@ namespace ConceptMatrix.GameData
 		Appearance.Genders Gender { get; }
 		Appearance.Races Race { get; }
 		Appearance.Tribes Tribe { get; }
-		IEnumerable<IImage> FacialFeatures { get; }
+		IEnumerable<IImageSource> FacialFeatures { get; }
 	}
 }

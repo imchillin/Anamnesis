@@ -153,7 +153,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			public int Key => 0;
 			public string Name => "Npc Item";
 			public string Description => null;
-			public IImage Icon => null;
+			public IImageSource Icon => null;
 
 			public ushort ModelSet { get; set; }
 			public ushort ModelBase { get; set; }

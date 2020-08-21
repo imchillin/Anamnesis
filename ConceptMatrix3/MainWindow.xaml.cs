@@ -120,6 +120,8 @@ namespace ConceptMatrix.GUI
 				{
 					await Task.Delay(250);
 				}
+
+				GC.Collect();
 			});
 		}
 

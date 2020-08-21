@@ -15,6 +15,7 @@ namespace ConceptMatrix.SaintCoinachModule
 		private ConcurrentDictionary<ItemSlots, bool> fitsInSlotsCache = new ConcurrentDictionary<ItemSlots, bool>();
 		private Classes equipableClasses = Classes.None;
 		private EquipSlotCategory equipSlotCategory;
+		private IImageSource icon;
 
 		public ItemWrapper(Item value)
 			: base(value)
@@ -38,11 +39,14 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
-		public IImage Icon
+		public IImageSource Icon
 		{
 			get
 			{
-				return this.Value.Icon.ToIImage();
+				if (this.icon == null)
+					this.icon = this.Value.Icon.ToIImage();
+
+				return this.icon;
 			}
 		}
 

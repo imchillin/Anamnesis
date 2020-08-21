@@ -35,7 +35,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			}
 		}
 
-		public IImage Icon
+		public IImageSource Icon
 		{
 			get
 			{

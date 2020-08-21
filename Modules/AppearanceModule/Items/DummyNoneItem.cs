@@ -28,7 +28,7 @@ namespace ConceptMatrix.AppearanceModule.Items
 			}
 		}
 
-		public IImage Icon
+		public IImageSource Icon
 		{
 			get
 			{

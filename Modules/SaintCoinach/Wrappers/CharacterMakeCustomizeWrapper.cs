@@ -15,7 +15,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			this.FeatureId = (byte)value.FeatureID;
 		}
 
-		public IImage Icon
+		public IImageSource Icon
 		{
 			get
 			{

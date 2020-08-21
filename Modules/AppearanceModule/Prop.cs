@@ -22,7 +22,7 @@ namespace ConceptMatrix.AppearanceModule
 		public ushort SubModelBase { get => 0; }
 		public ushort SubModelVariant { get => 0; }
 		public ushort SubModelSet { get => 0; }
-		public IImage Icon { get => null; }
+		public IImageSource Icon { get => null; }
 
 		public Classes EquipableClasses
 		{

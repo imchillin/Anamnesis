@@ -5,7 +5,7 @@ namespace ConceptMatrix.GameData
 {
 	public interface ICharaMakeCustomize : IDataObject
 	{
-		IImage Icon { get; }
+		IImageSource Icon { get; }
 		byte FeatureId { get; }
 	}
 }

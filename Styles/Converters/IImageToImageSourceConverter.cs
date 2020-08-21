@@ -9,18 +9,23 @@ namespace ConceptMatrix.WpfStyles.Converters
 	using System.Windows.Interop;
 	using System.Windows.Media.Imaging;
 
-	[ValueConversion(typeof(IImage), typeof(BitmapSource))]
+	[ValueConversion(typeof(IImageSource), typeof(BitmapSource))]
 	public class IImageToImageSourceConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			IImage img = value as IImage;
+			IImageSource imageSource = value as IImageSource;
 
-			if (img == null)
+			if (imageSource == null)
 				return null;
 
-			BitmapSource source = Imaging.CreateBitmapSourceFromHBitmap(img.HBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+			BitmapSource source;
+
+			using IImage image = imageSource.GetImage();
+
+			source = Imaging.CreateBitmapSourceFromHBitmap(image.HBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 			source.Freeze();
+
 			return source;
 		}
 

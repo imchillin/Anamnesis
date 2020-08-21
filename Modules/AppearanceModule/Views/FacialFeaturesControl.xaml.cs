@@ -102,7 +102,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			IGameDataService dataService = Services.Get<IGameDataService>();
 
-			IImage[] facialFeatures = null;
+			IImageSource[] facialFeatures = null;
 			foreach (ICharaMakeType set in dataService.CharacterMakeTypes.All)
 			{
 				if (set.Tribe != this.Tribe)
@@ -176,7 +176,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private class Option
 		{
 			public Appearance.FacialFeature Value { get; set; }
-			public IImage Icon { get; set; }
+			public IImageSource Icon { get; set; }
 			public bool Selected { get; set; }
 		}
 	}

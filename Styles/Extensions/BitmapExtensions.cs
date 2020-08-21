@@ -8,9 +8,9 @@ namespace System.Drawing
 
 	public static class BitmapExtensions
 	{
-		public static IImage ToIImage(this Bitmap self)
+		public static IImageSource ToIImage(this Bitmap self)
 		{
-			return new BitmapIImage(self);
+			return new BitmapIImageSource(self);
 		}
 	}
 }
