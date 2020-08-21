@@ -11,6 +11,7 @@ namespace ConceptMatrix.AppearanceModule
 	using System.Threading.Tasks;
 	using System.Windows.Documents;
 	using Anamnesis.Serialization;
+	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.AppearanceModule.Pages;
 	using ConceptMatrix.Modules;
 
@@ -21,6 +22,9 @@ namespace ConceptMatrix.AppearanceModule
 
 		public Task Initialize()
 		{
+			IFileService fileService = Services.Get<IFileService>();
+			fileService.AddFileSource(new DatAppearanceFileSource());
+
 			IViewService viewService = Services.Get<IViewService>();
 			viewService.AddPage<AppearancePage>("Appearance", "user", this.IsActorSupported);
 

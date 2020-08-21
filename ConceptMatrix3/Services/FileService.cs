@@ -9,6 +9,7 @@ namespace ConceptMatrix.GUI.Services
 	using System.Text;
 	using System.Threading.Tasks;
 	using ConceptMatrix;
+	using ConceptMatrix.Files;
 	using ConceptMatrix.GUI.Views;
 	using Microsoft.Win32;
 
@@ -29,15 +30,15 @@ namespace ConceptMatrix.GUI.Services
 
 		public Task Initialize()
 		{
+			this.AddFileSource(new LocalFileSource());
+			this.AddFileSource(new LegacyFileSource());
+
 			serializer = Services.Get<ISerializerService>();
 			return Task.CompletedTask;
 		}
 
 		public Task Start()
 		{
-			this.AddFileSource(new NewFileSource());
-			this.AddFileSource(new LegacyFileSource());
-
 			return Task.CompletedTask;
 		}
 

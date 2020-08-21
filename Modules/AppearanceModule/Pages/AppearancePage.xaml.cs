@@ -83,6 +83,7 @@ namespace ConceptMatrix.AppearanceModule.Pages
 			FileBase file = await fileService.OpenAny(
 				LegacyEquipmentSetFile.FileType,
 				LegacyAppearanceFile.AllFileType,
+				DatAppearanceFile.FileType,
 				AppearanceFile.FileType);
 
 			bool advanced = file?.UseAdvancedLoad ?? false;
@@ -92,6 +93,9 @@ namespace ConceptMatrix.AppearanceModule.Pages
 
 			if (file is LegacyEquipmentSetFile legacyEquipmentFile)
 				file = legacyEquipmentFile.Upgrade();
+
+			if (file is DatAppearanceFile datFile)
+				file = datFile.Upgrade();
 
 			if (file is AppearanceFile apFile)
 			{

@@ -92,13 +92,10 @@ namespace ConceptMatrix.PoseModule
 		{
 			public static readonly FileType File = new FileType(".json", "Skeleton file", typeof(SkeletonFile));
 
+			public override FileType Type => File;
+
 			public string BasedOn { get; set; }
 			public Dictionary<string, Bone> Bones { get; set; }
-
-			public override FileType GetFileType()
-			{
-				return File;
-			}
 		}
 	}
 }

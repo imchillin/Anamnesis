@@ -17,10 +17,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 		public string EquipmentBytes { get; set; }
 
-		public override FileType GetFileType()
-		{
-			return FileType;
-		}
+		public override FileType Type => FileType;
 
 		/// <summary>
 		/// Upgrades a CM2 equipment set to a CM3 equipment set file.

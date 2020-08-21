@@ -85,10 +85,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public ItemSave LeftRing { get; set; }
 		public ItemSave RightRing { get; set; }
 
-		public override FileType GetFileType()
-		{
-			return FileType;
-		}
+		public override FileType Type => FileType;
 
 		public void Read(Actor actor, SaveModes mode)
 		{
@@ -244,10 +241,13 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				mainHand.Base = this.MainHand.ModelBase;
-				mainHand.Dye = this.MainHand.DyeId;
-				mainHand.Set = this.MainHand.ModelSet;
-				mainHand.Variant = this.MainHand.ModelVariant;
+				if (this.MainHand != null)
+				{
+					mainHand.Base = this.MainHand.ModelBase;
+					mainHand.Dye = this.MainHand.DyeId;
+					mainHand.Set = this.MainHand.ModelSet;
+					mainHand.Variant = this.MainHand.ModelVariant;
+				}
 
 				if (this.OffHand != null)
 				{
@@ -257,20 +257,20 @@ namespace ConceptMatrix.AppearanceModule.Files
 					offHand.Variant = this.OffHand.ModelVariant;
 				}
 
-				equipment.Head = this.HeadGear;
-				equipment.Chest = this.Body;
-				equipment.Arms = this.Hands;
-				equipment.Legs = this.Legs;
-				equipment.Feet = this.Feet;
+				equipment.Head = this.HeadGear ?? equipment.Head;
+				equipment.Chest = this.Body ?? equipment.Chest;
+				equipment.Arms = this.Hands ?? equipment.Arms;
+				equipment.Legs = this.Legs ?? equipment.Legs;
+				equipment.Feet = this.Feet ?? equipment.Feet;
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 			{
-				equipment.Ear = this.Ears;
-				equipment.Neck = this.Neck;
-				equipment.Wrist = this.Wrists;
-				equipment.RFinger = this.RightRing;
-				equipment.LFinger = this.LeftRing;
+				equipment.Ear = this.Ears ?? equipment.Ear;
+				equipment.Neck = this.Neck ?? equipment.Neck;
+				equipment.Wrist = this.Wrists ?? equipment.Wrist;
+				equipment.RFinger = this.RightRing ?? equipment.RFinger;
+				equipment.LFinger = this.LeftRing ?? equipment.LFinger;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
@@ -328,11 +328,14 @@ namespace ConceptMatrix.AppearanceModule.Files
 			// write everything that is reset by actor refreshes
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				using IMemory<Color> mainHandTintMem = actor.GetMemory(Offsets.Main.MainHandColor);
-				using IMemory<Vector> mainHandScaleMem = actor.GetMemory(Offsets.Main.MainHandScale);
+				if (this.MainHand != null)
+				{
+					using IMemory<Color> mainHandTintMem = actor.GetMemory(Offsets.Main.MainHandColor);
+					using IMemory<Vector> mainHandScaleMem = actor.GetMemory(Offsets.Main.MainHandScale);
 
-				mainHandScaleMem.Value = this.MainHand.Scale;
-				mainHandTintMem.Value = this.MainHand.Color;
+					mainHandScaleMem.Value = this.MainHand.Scale;
+					mainHandTintMem.Value = this.MainHand.Color;
+				}
 
 				if (this.OffHand != null)
 				{

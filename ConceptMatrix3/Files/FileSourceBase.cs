@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.GUI.Services
+namespace ConceptMatrix.Files
 {
 	using System;
 	using System.Collections.Generic;
@@ -13,8 +13,6 @@ namespace ConceptMatrix.GUI.Services
 	using Directories = System.IO.Directory;
 	using Files = System.IO.File;
 	using Paths = System.IO.Path;
-
-	#pragma warning disable SA1402
 
 	public abstract class FileSourceBase : IFileSource
 	{
@@ -163,40 +161,6 @@ namespace ConceptMatrix.GUI.Services
 				Directories.Delete(this.Path, true);
 				return Task.CompletedTask;
 			}
-		}
-	}
-
-	public class LegacyFileSource : FileSourceBase
-	{
-		public LegacyFileSource()
-			: base("Local Files (CM2)")
-		{
-			this.startdir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/CmTool/";
-		}
-
-		public override bool CanOpen(FileType filetype)
-		{
-			if (filetype.Type.Name.StartsWith("Legacy"))
-				return true;
-
-			return false;
-		}
-	}
-
-	public class NewFileSource : FileSourceBase
-	{
-		public NewFileSource()
-			: base("Local Files")
-		{
-			this.startdir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/ConceptMatrix/";
-		}
-
-		public override bool CanOpen(FileType filetype)
-		{
-			if (filetype.Type.Name.StartsWith("Legacy"))
-				return false;
-
-			return true;
 		}
 	}
 }

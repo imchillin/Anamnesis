@@ -67,7 +67,7 @@ namespace ConceptMatrix
 		public Func<Stream, FileBase>? Deserialize;
 		public Action<Stream, FileBase>? Serialize;
 
-		public FileType(string extension, string name, Type type, bool canAdvancedLoad = false, string? defaultdirectoryName = null)
+		public FileType(string extension, string name, Type type, bool canAdvancedLoad = false, string? defaultdirectoryName = null, Func<Stream, FileBase>? deserialize = null, Action<Stream, FileBase>? serialize = null)
 		{
 			if (extension.StartsWith("."))
 				extension = extension.Substring(1, extension.Length - 1);
@@ -77,6 +77,8 @@ namespace ConceptMatrix
 			this.Type = type;
 			this.SupportsAdvancedMode = canAdvancedLoad;
 			this.DefaultDirectoryName = defaultdirectoryName;
+			this.Serialize = serialize;
+			this.Deserialize = deserialize;
 		}
 
 		public bool IsExtension(string extension)
@@ -91,8 +93,8 @@ namespace ConceptMatrix
 	[Serializable]
 	public abstract class FileBase
 	{
-		public string? Path;
-		public bool UseAdvancedLoad;
-		public abstract FileType GetFileType();
+		public string? Path { get; set; }
+		public bool UseAdvancedLoad { get; set; }
+		public abstract FileType Type { get; }
 	}
 }

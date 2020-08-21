@@ -33,13 +33,10 @@ namespace ConceptMatrix.PoseModule
 			All = Hair | Face | Torso | LeftArm | RightArm | LeftHand | RightHand | LeftLeg | RightLeg | Clothes | Equipment | Tail,
 		}
 
+		public override FileType Type => FileType;
+
 		public Configuration Config { get; set; } = new Configuration();
 		public Dictionary<string, Transform> Bones { get; set; } = new Dictionary<string, Transform>();
-
-		public override FileType GetFileType()
-		{
-			return FileType;
-		}
 
 		public void Read(IEnumerable<Bone> bones, Configuration config)
 		{

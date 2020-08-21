@@ -12,6 +12,8 @@ namespace ConceptMatrix.PoseModule
 	{
 		public static readonly FileType FileType = new FileType(@"cmp", "CM2 Pose File", typeof(LegacyPoseFile), true, "Matrix Saves");
 
+		public override FileType Type => FileType;
+
 		/*public string Description { get; set; }
 		public string DateCreated { get; set; }
 		public string CMPVersion { get; set; }
@@ -429,11 +431,6 @@ namespace ConceptMatrix.PoseModule
 		public string ExTopGSize { get; set; }
 		public string ExTopHSize { get; set; }
 		public string ExTopISize { get; set; }
-
-		public override FileType GetFileType()
-		{
-			return FileType;
-		}
 
 		public PoseFile Upgrade(Appearance.Races race)
 		{

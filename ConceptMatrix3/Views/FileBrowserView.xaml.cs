@@ -404,9 +404,9 @@ namespace ConceptMatrix.GUI.Views
 			{
 				get
 				{
-					string relativePath = this.Entry.Path.Replace(this.View.CurrentDir.Path, string.Empty);
+					string relativePath = this.Entry.Path?.Replace(this.View.CurrentDir.Path, string.Empty);
 
-					if (relativePath.StartsWith('\\'))
+					if (relativePath != null && relativePath.StartsWith('\\'))
 						relativePath = relativePath.Substring(2);
 
 					string dirName = Path.GetDirectoryName(relativePath);

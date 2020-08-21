@@ -11,6 +11,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 	{
 		public static readonly FileType AllFileType = new FileType("cma", "CM2 All Appearance File", typeof(LegacyAppearanceFile), true, "Saves");
 
+		public override FileType Type => AllFileType;
+
 		public string CharacterBytes { get; set; }
 		public Details characterDetails { get; set; }
 
@@ -79,11 +81,6 @@ namespace ConceptMatrix.AppearanceModule.Files
 				allFile.LipTint = new Color4((float)this.characterDetails.LipsR.value, (float)this.characterDetails.LipsG.value, (float)this.characterDetails.LipsB.value, (float)this.characterDetails.LipsBrightness.value);
 
 			return allFile;
-		}
-
-		public override FileType GetFileType()
-		{
-			return AllFileType;
 		}
 
 		public class Details

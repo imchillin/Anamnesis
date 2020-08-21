@@ -43,6 +43,7 @@ namespace ConceptMatrix.GUI.Services
 			string newLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
 			this.file = new FileLogDestination(newLogPath);
 			Log.AddDestination(this.file);
+			Log.AddDestination<ErrorDialogLogDestination>();
 
 			Log.Write("OS: " + RuntimeInformation.OSDescription, "Info");
 			Log.Write("Framework: " + RuntimeInformation.FrameworkDescription, "Info");
