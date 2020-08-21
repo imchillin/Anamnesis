@@ -62,7 +62,8 @@ namespace ConceptMatrix.PoseModule
 		{
 			PoseService poseService = Services.Get<PoseService>();
 
-			poseService.IsEnabled = true;
+			await poseService.SetEnabled(true);
+			await Task.Delay(100);
 
 			// don't freeze positions if we aren't writing any
 			poseService.FreezePositions = this.Config.IncludePosition;

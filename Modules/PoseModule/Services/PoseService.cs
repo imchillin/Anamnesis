@@ -4,13 +4,15 @@
 namespace ConceptMatrix.PoseModule
 {
 	using System;
+	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Anamnesis;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
-	public class PoseService : IService
+	[SuppressPropertyChangedWarnings]
+	public class PoseService : IService, INotifyPropertyChanged
 	{
 		private IMemory<Flag> skel1Mem;
 		private IMemory<Flag> skel2Mem;
@@ -35,6 +37,7 @@ namespace ConceptMatrix.PoseModule
 		public event PoseEvent FreezeScaleChanged;
 		public event PoseEvent FreezeRotationChanged;
 		public event PoseEvent AvailableChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		public bool IsAvailable
 		{
@@ -56,8 +59,7 @@ namespace ConceptMatrix.PoseModule
 				if (this.IsEnabled == value)
 					return;
 
-				this.isEnabled = value;
-				this.SetEnabled(value);
+				Task.Run(async () => { await this.SetEnabled(value); });
 			}
 		}
 
@@ -169,11 +171,13 @@ namespace ConceptMatrix.PoseModule
 			return Task.CompletedTask;
 		}
 
-		private async void SetEnabled(bool enabled)
+		public async Task SetEnabled(bool enabled)
 		{
 			// Don't try to enable posing unless we are in gpose
 			if (enabled && this.selectionService.GetMode() != Modes.GPose)
 				throw new Exception("Attempt to enable posing outside of gpose");
+
+			this.isEnabled = enabled;
 
 			this.FreezePositions = enabled;
 			this.FreezePhysics = enabled;
@@ -183,6 +187,7 @@ namespace ConceptMatrix.PoseModule
 			await Application.Current.Dispatcher.InvokeAsync(() =>
 			{
 				this.EnabledChanged?.Invoke(enabled);
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsEnabled)));
 			});
 		}
 
