@@ -90,7 +90,11 @@ namespace ConceptMatrix.PoseModule.Pages
 					file = legacyFile.Upgrade(this.SkeletonViewModel.Race);
 
 				IViewService viewService = Services.Get<IViewService>();
-				PoseFile.Configuration config = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Load Pose...");
+
+				PoseFile.Configuration config = new PoseFile.Configuration();
+
+				if (file.UseAdvancedLoad)
+					config = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Load Pose...");
 
 				if (config == null)
 					return;
