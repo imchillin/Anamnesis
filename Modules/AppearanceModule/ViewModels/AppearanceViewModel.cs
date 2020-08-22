@@ -6,10 +6,13 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	using System;
 	using System.ComponentModel;
 	using System.Reflection;
+	using System.Runtime.CompilerServices;
 	using System.Windows;
 	using Anamnesis;
 	using PropertyChanged;
 
+	[SuppressPropertyChangedWarnings]
+	[AddINotifyPropertyChangedInterface]
 	public class AppearanceViewModel : IDisposable, INotifyPropertyChanged
 	{
 		private readonly Actor selection;
@@ -22,7 +25,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.appearanceMem.ValueChanged += this.OnMemValueChanged;
 			this.selection = selection;
 
-			this.PropertyChanged += this.OnPropertyChanged;
+			this.PropertyChanged += this.OnSelfPropertyChanged;
 
 			this.OnMemValueChanged(null, default);
 		}
@@ -51,7 +54,13 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 		public byte Hair { get; set; }
 		public byte Head { get; set; }
 		public Appearance.Tribes Tribe { get; set; }
-		public byte Height { get; set; }
+
+		public byte Height
+		{
+			get;
+			set;
+		}
+
 		public Appearance.Ages Age { get; set; }
 		public Appearance.Genders Gender { get; set; }
 		public Appearance.FacialFeature FacialFeatures { get; set; }
@@ -62,7 +71,6 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.appearanceMem = null;
 		}
 
-		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnMemValueChanged(object sender, Appearance value)
 		{
 			this.lockChangedEvent = true;
@@ -119,7 +127,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (this.lockChangedEvent)
 				return;
