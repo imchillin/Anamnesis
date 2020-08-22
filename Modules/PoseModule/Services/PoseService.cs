@@ -149,9 +149,9 @@ namespace ConceptMatrix.PoseModule
 			return Task.CompletedTask;
 		}
 
-		public Task Shutdown()
+		public async Task Shutdown()
 		{
-			this.IsEnabled = false;
+			await this.SetEnabled(false);
 
 			this.skel1Mem?.Dispose();
 			this.skel2Mem?.Dispose();
@@ -162,8 +162,6 @@ namespace ConceptMatrix.PoseModule
 			this.phys1Mem?.Dispose();
 			this.phys2Mem?.Dispose();
 			////this.phys3Mem?.Dispose();
-
-			return Task.CompletedTask;
 		}
 
 		public Task Start()

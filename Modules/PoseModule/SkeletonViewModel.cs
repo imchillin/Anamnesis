@@ -510,7 +510,10 @@ namespace ConceptMatrix.PoseModule
 		{
 			if (value)
 			{
-				this.RefreshBones();
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					this.RefreshBones();
+				});
 			}
 		}
 

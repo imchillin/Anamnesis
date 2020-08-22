@@ -57,26 +57,26 @@
 						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}}">
 							<controls:BoneView BoneName="Ear01ALeft" Label="L1"/>
 							<controls:BoneView BoneName="Ear01ARight" Label="L2"/>
-							<controls:BoneView BoneName="Ear01ALeft" Label="R1"/>
-							<controls:BoneView BoneName="Ear01ARight" Label="R2"/>
+							<controls:BoneView BoneName="Ear01BLeft" Label="R1"/>
+							<controls:BoneView BoneName="Ear01BRight" Label="R2"/>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsVieraEars02, Converter={StaticResource B2V}}">
 							<controls:BoneView BoneName="Ear02ALeft" Label="L1"/>
 							<controls:BoneView BoneName="Ear02ARight" Label="L2"/>
-							<controls:BoneView BoneName="Ear02ALeft" Label="R1"/>
-							<controls:BoneView BoneName="Ear02ARight" Label="R2"/>
+							<controls:BoneView BoneName="Ear02BLeft" Label="R1"/>
+							<controls:BoneView BoneName="Ear02BRight" Label="R2"/>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsVieraEars03, Converter={StaticResource B2V}}">
 							<controls:BoneView BoneName="Ear03ALeft" Label="L1"/>
 							<controls:BoneView BoneName="Ear03ARight" Label="L2"/>
-							<controls:BoneView BoneName="Ear03ALeft" Label="R1"/>
-							<controls:BoneView BoneName="Ear03ARight" Label="R2"/>
+							<controls:BoneView BoneName="Ear03BLeft" Label="R1"/>
+							<controls:BoneView BoneName="Ear03BRight" Label="R2"/>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsVieraEars04, Converter={StaticResource B2V}}">
 							<controls:BoneView BoneName="Ear04ALeft" Label="L1"/>
 							<controls:BoneView BoneName="Ear04ARight" Label="L2"/>
-							<controls:BoneView BoneName="Ear04ALeft" Label="R1"/>
-							<controls:BoneView BoneName="Ear04ARight" Label="R2"/>
+							<controls:BoneView BoneName="Ear04BLeft" Label="R1"/>
+							<controls:BoneView BoneName="Ear04BRight" Label="R2"/>
 						</StackPanel>
 
 						<cm3:TextBlock Grid.Column="8" Grid.Row="0" Key="Pose_Nose" Style="{DynamicResource Label}"/>
