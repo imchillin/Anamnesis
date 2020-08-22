@@ -39,6 +39,7 @@ namespace ConceptMatrix.GUI.Views
 		private IMemory<Quaternion> rotMem;
 		private IMemory<Vector> scaleMem;
 		private IMemory<float> transparencyMem;
+		private IMemory<Vector> bustScaleMem;
 
 		private int time = 0;
 		private int moon = 0;
@@ -115,6 +116,7 @@ namespace ConceptMatrix.GUI.Views
 		public Quaternion Rotation { get; set; }
 		public Vector Scale { get; set; }
 		public float Transparency { get; set; }
+		public Vector BustScale { get; set; }
 
 		public bool IsGpose
 		{
@@ -324,6 +326,9 @@ namespace ConceptMatrix.GUI.Views
 
 			this.transparencyMem = actor.GetMemory(Offsets.Main.Transparency);
 			this.transparencyMem.Bind(this, nameof(this.Transparency));
+
+			this.bustScaleMem = actor.GetMemory(Offsets.Main.BustScale);
+			this.bustScaleMem.Bind(this, nameof(this.BustScale));
 
 			if (this.isGpose)
 			{

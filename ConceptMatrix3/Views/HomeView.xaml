@@ -196,6 +196,11 @@
 
 					<TextBlock Grid.Row="0" Grid.Column="0" Text="Transparency:" Style="{StaticResource Label}"/>
 					<cm3:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding Transparency}" Minimum="0" Maximum="1" Slider="Absolute"/>
+
+					<GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header="Bust Scale">
+						<cm3:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding BustScale}" Minimum="0" Maximum="10" Sliders="Absolute" Expanded="True"/>
+					</GroupBox>
+
 				</Grid>
 			</GroupBox>
 		</StackPanel>
