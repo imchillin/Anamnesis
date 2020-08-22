@@ -8,6 +8,7 @@
 			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
 			 xmlns:cm3Drawers="clr-namespace:ConceptMatrix.WpfStyles.Drawers;assembly=Styles"
 			 xmlns:views="clr-namespace:ConceptMatrix.AppearanceModule.Views"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
@@ -18,11 +19,17 @@
 	<Grid Margin="0" x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="256"/>
 			<ColumnDefinition/>
+			<ColumnDefinition Width="230"/>
 		</Grid.ColumnDefinitions>
 
-		<Grid Grid.Column="0" IsEnabled="{Binding IsOverworld}">
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding IsOverworld}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition/>
@@ -38,36 +45,33 @@
 
 		</Grid>
 
+		<Border Grid.Column="1" IsEnabled="{Binding IsOverworld}" Grid.Row="0">
+			<views:EquipmentEditor DataContext="{Binding Actor}"/>
+		</Border>
 
-		<Grid Grid.Column="1">
+		<GroupBox Grid.Column="2" Style="{StaticResource PanelGroupBox}" Margin="0, 0, -3, 0">
+			<GroupBox.Header>
+				<StackPanel Orientation="Horizontal">
+					<fa:IconBlock Icon="UserCog" Margin="2, 2, 6, 0"/>
+					<TextBlock Text="Extended Appearance"/>
+				</StackPanel>
+			</GroupBox.Header>
 
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition/>
-				<RowDefinition Height="Auto"/>
-			</Grid.RowDefinitions>
+			<views:ExtendedAppearanceEditor DataContext="{Binding Actor}" Margin="0, 6, 0, 0"/>
 
-			<Border IsEnabled="{Binding IsOverworld}" Grid.Row="0">
-				<views:EquipmentEditor DataContext="{Binding Actor}"/>
-			</Border>
+		</GroupBox>
 
-			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="3, 3, 0, 3" CornerRadius="3, 0, 0, 3">
-				<!--<views:ExtendedAppearanceEditor DataContext="{Binding Actor}"/>-->
-				<TextBlock Text="Extended Appearance comming soon" Style="{StaticResource Label}" HorizontalAlignment="Center"/>
-			</Border>
+		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0">
+			<Grid Margin="3">
+				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal" IsEnabled="{Binding IsOverworld}">
+					<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
+					<cm3Controls:IconButton Grid.Column="1" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
+				</StackPanel>
 
-			<Border Grid.Row="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0">
-				<Grid Margin="3">
-					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal" IsEnabled="{Binding IsOverworld}">
-						<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
-						<cm3Controls:IconButton Grid.Column="1" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
-					</StackPanel>
-
-					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
-						<cm3Controls:IconButton Grid.Column="2" Icon="Save" Text="Save..." Margin="3" Click="OnSaveClicked"/>
-					</StackPanel>
-				</Grid>
-			</Border>
-		</Grid>
+				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
+					<cm3Controls:IconButton Grid.Column="2" Icon="Save" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+				</StackPanel>
+			</Grid>
+		</Border>
 	</Grid>
 </UserControl>

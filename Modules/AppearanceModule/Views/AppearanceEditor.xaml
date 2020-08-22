@@ -36,7 +36,7 @@
 	</UserControl.Resources>
 
 
-	<Grid x:Name="ContentArea" Width="256">
+	<Grid x:Name="ContentArea">
 		<StackPanel>
 
 			<Grid Grid.Row="0" x:Name="AppearanceArea">

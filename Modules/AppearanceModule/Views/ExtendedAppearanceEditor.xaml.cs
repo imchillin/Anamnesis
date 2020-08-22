@@ -38,8 +38,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 	{
 		private Actor actor;
 
-		private IActorRefreshService refreshService;
-
 		private IMemory<Color> skinColorMem;
 		private IMemory<Color> skinGlowMem;
 		private IMemory<Color> leftEyeColorMem;
@@ -50,20 +48,19 @@ namespace ConceptMatrix.AppearanceModule.Views
 		private IMemory<Color> highlightTintColorMem;
 		private IMemory<Color> lipTintMem;
 		private IMemory<float> lipGlossMem;
-
 		private IMemory<Weapon> mainHandMem;
 		private IMemory<Color> mainHandTintMem;
 		private IMemory<Vector> mainHandScaleMem;
 		private IMemory<Weapon> offHandMem;
 		private IMemory<Color> offHandTintMem;
 		private IMemory<Vector> offHandScaleMem;
+		private IMemory<float> transparencyMem;
+		private IMemory<Vector> bustScaleMem;
+		private IMemory<float> featureScaleMem;
 
 		public ExtendedAppearanceEditor()
 		{
 			this.InitializeComponent();
-
-			this.refreshService = Services.Get<IActorRefreshService>();
-
 			this.ContentArea.DataContext = this;
 		}
 
@@ -77,12 +74,14 @@ namespace ConceptMatrix.AppearanceModule.Views
 		public Color HairTint { get; set; }
 		public Color HairGlow { get; set; }
 		public Color HighlightTint { get; set; }
-
 		public Color MainHandTint { get; set; }
 		public Vector MainHandScale { get; set; }
 		public Color OffHandTint { get; set; }
 		public Vector OffHandScale { get; set; }
 		public Color4 LipTint { get; set; }
+		public float Transparency { get; set; }
+		public Vector BustScale { get; set; }
+		public float FeatureScale { get; set; }
 
 		public bool HasMainHand { get; set; }
 		public bool HasOffHand { get; set; }
@@ -117,7 +116,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 			this.lipTintMem?.Dispose();
 			this.lipGlossMem?.Dispose();
-
 			this.skinColorMem?.Dispose();
 			this.skinGlowMem?.Dispose();
 			this.leftEyeColorMem?.Dispose();
@@ -126,14 +124,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.hairTintColorMem?.Dispose();
 			this.hairGlowColorMem?.Dispose();
 			this.highlightTintColorMem?.Dispose();
-
 			this.offHandMem?.Dispose();
 			this.mainHandMem?.Dispose();
-
 			this.mainHandTintMem?.Dispose();
 			this.mainHandScaleMem?.Dispose();
 			this.offHandTintMem?.Dispose();
 			this.offHandScaleMem?.Dispose();
+			this.transparencyMem?.Dispose();
+			this.bustScaleMem?.Dispose();
+			this.featureScaleMem?.Dispose();
 
 			if (this.actor == null)
 				return;
@@ -170,6 +169,15 @@ namespace ConceptMatrix.AppearanceModule.Views
 			this.offHandMem = this.actor.GetMemory(Offsets.Main.OffHand);
 			this.offHandMem.ValueChanged += this.OnWeaponsChanged;
 
+			this.transparencyMem = actor.GetMemory(Offsets.Main.Transparency);
+			this.transparencyMem.Bind(this, nameof(this.Transparency));
+
+			this.bustScaleMem = actor.GetMemory(Offsets.Main.BustScale);
+			this.bustScaleMem.Bind(this, nameof(this.BustScale));
+
+			this.featureScaleMem = actor.GetMemory(Offsets.Main.UniqueFeatureScale);
+			this.featureScaleMem.Bind(this, nameof(this.FeatureScale));
+
 			this.OnWeaponsChanged();
 
 			Application.Current.Dispatcher.Invoke(() =>
@@ -178,7 +186,6 @@ namespace ConceptMatrix.AppearanceModule.Views
 			});
 		}
 
-		[PropertyChanged.SuppressPropertyChangedWarnings]
 		private void OnWeaponsChanged(object sender = null, object value = null)
 		{
 			this.mainHandTintMem?.Dispose();

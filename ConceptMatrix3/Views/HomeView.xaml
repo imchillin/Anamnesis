@@ -19,7 +19,7 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
 			<ColumnDefinition Width="256"/>
-			<ColumnDefinition Width="200"/>
+			<ColumnDefinition Width="256"/>
 			<ColumnDefinition Width="200"/>
 		</Grid.ColumnDefinitions>
 
@@ -27,7 +27,7 @@
 			<Image Source="/Assets/cmtool.png" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Opacity="0.65" Height="200"/>
 		</Grid>
 
-		<StackPanel Grid.Column="1">
+		<StackPanel Grid.Column="2">
 			<GroupBox Style="{StaticResource PanelGroupBox}" Margin="0">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
@@ -155,7 +155,7 @@
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
-						
+
 						<ToggleButton Grid.RowSpan="2" Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" Height="22" Width="22" Padding="0" Margin="0"
 									  IsChecked="{Binding LockCameraPosition}">
 							<ToggleButton.Content>
@@ -168,38 +168,6 @@
 
 						<cm3:VectorEditor Grid.Column="1" Value="{Binding CameraPosition}" Expanded="True" Sliders="Relative" Minimum="-4096" Maximum="4096"/>
 					</Grid>
-				
-				</Grid>
-			</GroupBox>
-		</StackPanel>
-
-		<StackPanel Grid.Column="2">
-			<GroupBox  Style="{StaticResource PanelGroupBox}" Margin="0">
-				<GroupBox.Header>
-					<StackPanel Orientation="Horizontal">
-						<fa:IconBlock Icon="User" Margin="2, 2, 6, 0"/>
-						<TextBlock Text="Actor"/>
-					</StackPanel>
-				</GroupBox.Header>
-
-				<Grid>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
-
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
-				
-
-					<TextBlock Grid.Row="0" Grid.Column="0" Text="Transparency:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding Transparency}" Minimum="0" Maximum="1" Slider="Absolute"/>
-
-					<GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header="Bust Scale">
-						<cm3:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding BustScale}" Minimum="0" Maximum="10" Sliders="Absolute" Expanded="True"/>
-					</GroupBox>
 
 				</Grid>
 			</GroupBox>

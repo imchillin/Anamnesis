@@ -9,7 +9,7 @@
 			 Loaded="OnLoaded"
 			 DataContextChanged="OnDataContextChanged">
 
-	<Grid x:Name="ContentArea" Margin="3, 0, 0, 3">
+	<Grid x:Name="ContentArea" Margin="3, 2, 0, 3">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
 			<ColumnDefinition />
@@ -29,7 +29,7 @@
 			<local:ItemView DataContext="{Binding MainHand}" Slot="MainHand" />
 		</Border>
 
-		<Border Grid.Row="0" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 0, 0, 3">
+		<Border Grid.Row="0" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 0, 3, 3">
 			<local:ItemView  DataContext="{Binding OffHand}" Slot="OffHand" />
 		</Border>
 
@@ -53,23 +53,23 @@
 			<local:ItemView  DataContext="{Binding Feet}" Slot="Feet" />
 		</Border>
 
-		<Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3">
+		<Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3">
 			<local:ItemView  DataContext="{Binding Ears}" Slot="Ears" />
 		</Border>
 
-		<Border Grid.Row="2" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3">
+		<Border Grid.Row="2" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3">
 			<local:ItemView  DataContext="{Binding Neck}" Slot="Neck" />
 		</Border>
 
-		<Border Grid.Row="3" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3">
+		<Border Grid.Row="3" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3">
 			<local:ItemView  DataContext="{Binding Wrists}" Slot="Wrists" />
 		</Border>
 
-		<Border Grid.Row="4" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3">
+		<Border Grid.Row="4" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3">
 			<local:ItemView  DataContext="{Binding RightRing}" Slot="RightRing" />
 		</Border>
 
-		<Border Grid.Row="5" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 0">
+		<Border Grid.Row="5" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 0">
 			<local:ItemView DataContext="{Binding LeftRing}" Slot="LeftRing" />
 		</Border>
 

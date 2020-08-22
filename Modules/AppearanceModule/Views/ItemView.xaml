@@ -15,10 +15,10 @@
 
 	<StackPanel Margin="2, 3" x:Name="ContentArea">
 
-		<Grid Height="53">
+		<Grid Height="67">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
@@ -28,9 +28,10 @@
 			</Grid.RowDefinitions>
 
 			<Button 
-					Click="OnClick"
-					Grid.RowSpan="2"
-					Style="{DynamicResource TransparentButton}">
+				Click="OnClick"
+				Grid.Row="1"
+				Grid.RowSpan="2"
+				Style="{DynamicResource TransparentButton}">
 				<Grid>
 					<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="6" Opacity="0.3"/>
 
@@ -49,24 +50,31 @@
 				</Grid>
 			</Button>
 
-			<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-				<TextBlock Text="{Binding SlotName}" FontWeight="Light" Margin="3,2,0,0" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12"/>
-				<TextBlock Text=":" FontWeight="Light" Margin="0,2,3,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
-				<TextBlock Text="{Binding ViewModel.Item.Name}" MaxWidth="128" Margin="0, 2, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
-
-				<TextBlock Text="-" FontWeight="Light" Margin="3,2,3,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12" Visibility="{Binding ViewModel.Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
-				<TextBlock Text="{Binding ViewModel.Dye.Name}" Margin="0, 2, 0, 0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12" Visibility="{Binding ViewModel.Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+			<StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+				<TextBlock Text="{Binding SlotName}" FontWeight="Light" Margin="3,0,0,0" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12"/>
+				<TextBlock Text=":" FontWeight="Light" Margin="0,0,3,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
+				<TextBlock Text="{Binding ViewModel.Item.Name}" Margin="0, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
 			</StackPanel>
 
-			<StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0" Orientation="Horizontal">
+			<StackPanel Grid.Row="1" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal">
+				<cm3Controls:NumberBox Width="42" Value="{Binding ViewModel.Key}" PreviewTextInput="OnPreviewTextInput" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0"/>
+
+				<cm3Controls:NumberBox  Width="36" Value="{Binding ViewModel.ModelSet}" PreviewTextInput="OnPreviewTextInput" Margin="0" FontSize="12"  FontWeight="Light" Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
+				<TextBlock Text="-" Style="{StaticResource Label}" Margin="0"  Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
+				<cm3Controls:NumberBox Width="36" Value="{Binding ViewModel.ModelBase}" PreviewTextInput="OnPreviewTextInput" Margin="0" FontSize="12" FontWeight="Light"/>
+				<TextBlock Text="-" Style="{StaticResource Label}" Margin="0" />
+				<cm3Controls:NumberBox Width="22" Value="{Binding ViewModel.ModelVariant}" PreviewTextInput="OnPreviewTextInput" Margin="0" FontSize="12" FontWeight="Light"/>
+			</StackPanel>
+
+			<StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="2, 0, 0, 0" Orientation="Horizontal">
 				<!-- Dye -->
 				<Button 
 						Margin="2, 4, 0, 0"
 						Grid.Column="0"
 						Grid.RowSpan="2"
 						Click="OnDyeClick"
-						Height="28"
-						Width="28"
+						Height="22"
+						Width="22"
 						VerticalAlignment="Top"
 						Style="{DynamicResource TransparentButton}">
 
@@ -85,16 +93,8 @@
 					</Grid>
 				</Button>
 
-				<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="6, 0, 0, 0">
-					<cm3Controls:NumberBox Width="42" Value="{Binding ViewModel.Key}" PreviewTextInput="OnPreviewTextInput" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0"/>
+				<TextBlock Text="{Binding ViewModel.Dye.Name}" Margin="6, 2, 0, 0" Visibility="{Binding ViewModel.Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}" Style="{StaticResource Label}"/>
 
-					<cm3Controls:NumberBox  Width="36" Value="{Binding ViewModel.ModelSet}" PreviewTextInput="OnPreviewTextInput" Margin="0" FontSize="12"  FontWeight="Light" Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
-					<TextBlock Text="-" Style="{StaticResource Label}" Margin="0"  Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
-					<cm3Controls:NumberBox Width="36" Value="{Binding ViewModel.ModelBase}" PreviewTextInput="OnPreviewTextInput" Margin="0" FontSize="12" FontWeight="Light"/>
-					<TextBlock Text="-" Style="{StaticResource Label}" Margin="0" />
-					<cm3Controls:NumberBox Width="22" Value="{Binding ViewModel.ModelVariant}" PreviewTextInput="OnPreviewTextInput" Margin="0" FontSize="12" FontWeight="Light"/>
-
-				</StackPanel>
 			</StackPanel>
 		</Grid>
 	</StackPanel>

@@ -71,8 +71,8 @@ namespace ConceptMatrix
 			public Offset Drenched { get; set; }
 
 			public Offset<Vector> BustScale { get; set; }
-			public Offset UniqueFeatureScale { get; set; }
-			public Offset MuscleTone { get; set; }
+			public Offset<float> UniqueFeatureScale { get; set; }
+			public Offset<float> MuscleTone { get; set; }
 			public Offset<Vector> Scale { get; set; }
 
 			public Offset<Vector> MainHandScale { get; set; }
