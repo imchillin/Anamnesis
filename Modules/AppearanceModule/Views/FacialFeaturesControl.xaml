@@ -31,6 +31,7 @@
 						<Border Width="30" Height="29" Cursor="Hand">
 							<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}"/>
 						</Border>
+						<!--<TextBlock Text="{Binding Index}"/>-->
 						<Border Margin="-1" Visibility="{Binding Selected, Converter={StaticResource B2V}}" BorderThickness="2" CornerRadius="3" BorderBrush="{DynamicResource PrimaryHueMidBrush}"/>
 
 					</Grid>

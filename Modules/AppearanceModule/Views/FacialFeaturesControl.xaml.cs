@@ -19,6 +19,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	/// Interaction logic for FacialFeaturesControl.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class FacialFeaturesControl : UserControl
 	{
 		public static readonly IBind<Appearance.FacialFeature> ValueDp = Binder.Register<Appearance.FacialFeature, FacialFeaturesControl>(nameof(Value), OnValueChanged);
@@ -59,28 +60,24 @@ namespace ConceptMatrix.AppearanceModule.Views
 			set => ValueDp.Set(this, value);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnGenderChanged(FacialFeaturesControl sender, Appearance.Genders value)
 		{
 			sender.GetFeatures();
 			OnValueChanged(sender, sender.Value);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnTribeChanged(FacialFeaturesControl sender, Appearance.Tribes value)
 		{
 			sender.GetFeatures();
 			OnValueChanged(sender, sender.Value);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnHeadChanged(FacialFeaturesControl sender, byte value)
 		{
 			sender.GetFeatures();
 			OnValueChanged(sender, sender.Value);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(FacialFeaturesControl sender, Appearance.FacialFeature value)
 		{
 			sender.locked = true;
@@ -118,10 +115,11 @@ namespace ConceptMatrix.AppearanceModule.Views
 			if (facialFeatures == null)
 				return;
 
+			// 3 = 14, 15, 16, 17, 18, 19, 20
 			this.features.Clear();
 			for (byte i = 0; i < 7; i++)
 			{
-				int id = (this.Head - 1) + (i * 4);
+				int id = ((this.Head - 1) * 7) + i;
 
 				if (id < 0 || id >= facialFeatures.Length)
 					continue;
@@ -129,6 +127,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 				Option op = new Option();
 				op.Icon = facialFeatures[id];
 				op.Value = this.GetValue(i);
+				op.Index = id;
 				this.features.Add(op);
 			}
 
@@ -177,6 +176,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 		{
 			public Appearance.FacialFeature Value { get; set; }
 			public IImageSource Icon { get; set; }
+			public int Index { get; set; }
 			public bool Selected { get; set; }
 		}
 	}
