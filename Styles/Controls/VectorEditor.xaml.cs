@@ -14,6 +14,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 	/// <summary>
 	/// Interaction logic for Vector3DEditor.xaml.
 	/// </summary>
+	[SuppressPropertyChangedWarnings]
+	[AddINotifyPropertyChangedInterface]
 	public partial class VectorEditor : UserControl, INotifyPropertyChanged
 	{
 		public static readonly IBind<bool> ExpandedDp = Binder.Register<bool, VectorEditor>(nameof(Expanded));
@@ -21,6 +23,9 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly IBind<double> TickFrequencyDp = Binder.Register<double, VectorEditor>(nameof(TickFrequency));
 		public static readonly IBind<bool> WrapDp = Binder.Register<bool, VectorEditor>(nameof(Wrap));
 		public static readonly IBind<NumberBox.SliderModes> SlidersDp = Binder.Register<NumberBox.SliderModes, VectorEditor>(nameof(Sliders));
+
+		public static readonly IBind<double> MinDp = Binder.Register<double, VectorEditor>(nameof(Minimum));
+		public static readonly IBind<double> MaxDp = Binder.Register<double, VectorEditor>(nameof(Maximum), OnMaximumChanged);
 
 		public VectorEditor()
 		{
@@ -32,8 +37,17 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public double Minimum { get; set; } = 0;
-		public double Maximum { get; set; } = 100;
+		public double Minimum
+		{
+			get => MinDp.Get(this);
+			set => MinDp.Set(this, value);
+		}
+
+		public double Maximum
+		{
+			get => MaxDp.Get(this);
+			set => MaxDp.Set(this, value);
+		}
 
 		public bool Expanded
 		{
@@ -110,12 +124,16 @@ namespace ConceptMatrix.WpfStyles.Controls
 			}
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(VectorEditor sender, Vector value)
 		{
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.X)));
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.Y)));
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.Z)));
+		}
+
+		private static void OnMaximumChanged(VectorEditor sender, double value)
+		{
+			sender.ExpandedX.Maximum = value;
 		}
 	}
 }

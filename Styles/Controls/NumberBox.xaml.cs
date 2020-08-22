@@ -29,8 +29,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 		public static readonly IBind<double> TickDp = Binder.Register<double, NumberBox>(nameof(TickFrequency), OnTickChanged, BindMode.OneWay);
 		public static readonly IBind<SliderModes> SliderDp = Binder.Register<SliderModes, NumberBox>(nameof(Slider), OnSliderChanged, BindMode.OneWay);
 		public static readonly IBind<bool> ButtonsDp = Binder.Register<bool, NumberBox>(nameof(Buttons), OnButtonsChanged, BindMode.OneWay);
-		public static readonly IBind<double> MinDp = Binder.Register<double, NumberBox>(nameof(Minimum), BindMode.OneWay);
-		public static readonly IBind<double> MaxDp = Binder.Register<double, NumberBox>(nameof(Maximum), BindMode.OneWay);
+		public static readonly IBind<double> MinDp = Binder.Register<double, NumberBox>(nameof(Minimum), OnMinimumChanged, BindMode.OneWay);
+		public static readonly IBind<double> MaxDp = Binder.Register<double, NumberBox>(nameof(Maximum), OnMaximumChanged, BindMode.OneWay);
 		public static readonly IBind<bool> WrapDp = Binder.Register<bool, NumberBox>(nameof(Wrap), BindMode.OneWay);
 
 		private string inputString;
@@ -232,6 +232,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 		private static void OnValueChanged(NumberBox sender, double v)
 		{
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderValue)));
 			sender.Value = sender.Validate(v);
 
 			if (sender.InputBox.IsFocused)
@@ -246,11 +247,25 @@ namespace ConceptMatrix.WpfStyles.Controls
 
 			sender.SliderArea.Width = v ? new GridLength(1, GridUnitType.Star) : new GridLength(0);
 			sender.InputBoxArea.Width = v ? new GridLength(42) : new GridLength(1, GridUnitType.Star);
+
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderMaximum)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderMinimum)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderValue)));
 		}
 
 		private static void OnButtonsChanged(NumberBox sender, bool v)
 		{
 			sender.ButtonsArea.Visibility = v ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		private static void OnMinimumChanged(NumberBox sender, double value)
+		{
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderMinimum)));
+		}
+
+		private static void OnMaximumChanged(NumberBox sender, double value)
+		{
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderMaximum)));
 		}
 
 		private static void OnTickChanged(NumberBox sender, double tick)

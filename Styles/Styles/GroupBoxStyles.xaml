@@ -31,15 +31,15 @@
 							Grid.Row="0"
 							Grid.Column="0"
 							Margin="0"
-							TextBlock.Foreground="#99000000"
-							TextBlock.FontWeight="DemiBold"
+							TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}"
+							TextBlock.FontWeight="Normal"
 							ContentSource="Header" 
 							RecognizesAccessKey="True"
 							ContentStringFormat="{TemplateBinding HeaderStringFormat}"
 							ContentTemplate="{TemplateBinding HeaderTemplate}"
 							ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}" />
 
-						<Line Margin="6,0,0,0" Grid.Row="0" Grid.Column="1" X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="Black" VerticalAlignment="Center" Opacity="0.25"/>
+						<Line Margin="6,4,0,0" Grid.Row="0" Grid.Column="1" X1="0" X2="1" Stretch="Fill" StrokeThickness="1" Stroke="{DynamicResource MaterialDesignBodyLight}" VerticalAlignment="Center" Opacity="0.25"/>
 
 						<Border 
 							Grid.ColumnSpan="2"
@@ -62,7 +62,6 @@
 	</Style>
 
 	<Style TargetType="{x:Type GroupBox}" BasedOn="{StaticResource Cm3GroupBox}">
-
 	</Style>
 
 	<Style x:Key="PanelGroupBox" TargetType="{x:Type GroupBox}" BasedOn="{StaticResource Cm3GroupBox}">
