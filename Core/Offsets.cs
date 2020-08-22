@@ -50,7 +50,7 @@ namespace ConceptMatrix
 			public Offset<int> ModelType { get; set; }
 			public Offset<bool> Animating { get; set; }
 
-			public Offset Transparency { get; set; }
+			public Offset<float> Transparency { get; set; }
 			public Offset<Weapon> MainHand { get; set; }
 			public Offset<Weapon> OffHand { get; set; }
 			public Offset<Equipment> ActorEquipment { get; set; }

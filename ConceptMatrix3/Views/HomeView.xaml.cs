@@ -38,6 +38,7 @@ namespace ConceptMatrix.GUI.Views
 		private IMemory<Vector> posMem;
 		private IMemory<Quaternion> rotMem;
 		private IMemory<Vector> scaleMem;
+		private IMemory<float> transparencyMem;
 
 		private int time = 0;
 		private int moon = 0;
@@ -113,6 +114,7 @@ namespace ConceptMatrix.GUI.Views
 		public Vector Position { get; set; }
 		public Quaternion Rotation { get; set; }
 		public Vector Scale { get; set; }
+		public float Transparency { get; set; }
 
 		public bool IsGpose
 		{
@@ -291,6 +293,7 @@ namespace ConceptMatrix.GUI.Views
 			this.posMem?.Dispose();
 			this.rotMem?.Dispose();
 			this.scaleMem?.Dispose();
+			this.transparencyMem?.Dispose();
 
 			if (actor == null)
 				return;
@@ -318,6 +321,9 @@ namespace ConceptMatrix.GUI.Views
 
 			this.scaleMem = actor.GetMemory(Offsets.Main.Scale);
 			this.scaleMem.Bind(this, nameof(this.Scale));
+
+			this.transparencyMem = actor.GetMemory(Offsets.Main.Transparency);
+			this.transparencyMem.Bind(this, nameof(this.Transparency));
 
 			if (this.isGpose)
 			{

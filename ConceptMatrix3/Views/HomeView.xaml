@@ -20,6 +20,7 @@
 			<ColumnDefinition/>
 			<ColumnDefinition Width="256"/>
 			<ColumnDefinition Width="200"/>
+			<ColumnDefinition Width="200"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid Grid.Column="0">
@@ -173,7 +174,34 @@
 		</StackPanel>
 
 		<StackPanel Grid.Column="2">
-			<GroupBox  Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding IsGpose}" Margin="0">
+			<GroupBox  Style="{StaticResource PanelGroupBox}" Margin="0">
+				<GroupBox.Header>
+					<StackPanel Orientation="Horizontal">
+						<fa:IconBlock Icon="User" Margin="2, 2, 6, 0"/>
+						<TextBlock Text="Actor"/>
+					</StackPanel>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+				
+
+					<TextBlock Grid.Row="0" Grid.Column="0" Text="Transparency:" Style="{StaticResource Label}"/>
+					<cm3:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding Transparency}" Minimum="0" Maximum="1" Slider="Absolute"/>
+				</Grid>
+			</GroupBox>
+		</StackPanel>
+
+		<StackPanel Grid.Column="3">
+			<GroupBox Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding IsGpose}" Margin="0">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
 						<fa:IconBlock Icon="Cube" Margin="2, 2, 6, 0"/>
