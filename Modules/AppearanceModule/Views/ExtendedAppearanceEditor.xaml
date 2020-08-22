@@ -89,7 +89,7 @@
 				<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="1" Value="{Binding MainHandTint}" ToolTip="Tint" Margin="0"/>
 
 				<TextBlock Grid.Row="1" Grid.Column="0" Text="Scale:" Style="{StaticResource Label}"/>
-				<cm3Controls:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding MainHandScale}"/>
+				<cm3Controls:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding MainHandScale}" Minimum="0" Maximum="5"/>
 				<Button Grid.Row="1" Grid.Column="2" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="OnMainHandZeroScaleClick"/>
 				<Button Grid.Row="1" Grid.Column="3" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="OnMainHandOneScaleClick"/>
 
@@ -116,7 +116,7 @@
 				<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="1" Value="{Binding OffHandTint}" ToolTip="Tint" Margin="0"/>
 
 				<TextBlock Grid.Row="1" Grid.Column="0" Text="Scale:" Style="{StaticResource Label}"/>
-				<cm3Controls:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding OffHandScale}"/>
+				<cm3Controls:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding OffHandScale}" Minimum="0" Maximum="5"/>
 				<Button Grid.Row="1" Grid.Column="2" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="OnOffHandZeroScaleClick"/>
 				<Button Grid.Row="1" Grid.Column="3" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="OnOffHandOneScaleClick"/>
 
