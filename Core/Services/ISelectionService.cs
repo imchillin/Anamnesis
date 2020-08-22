@@ -12,6 +12,9 @@ namespace ConceptMatrix
 	{
 		event SelectionModeEvent ModeChanged;
 		event SelectionEvent ActorSelected;
+
+		Actor SelectedActor { get; }
+
 		Modes GetMode();
 	}
 

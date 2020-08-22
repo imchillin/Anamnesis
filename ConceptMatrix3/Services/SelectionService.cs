@@ -16,10 +16,10 @@ namespace ConceptMatrix.GUI.Services
 		private IMemory<bool> gposeMem;
 		private IMemory<ushort> gposeMem2;
 
-		private Actor selectedActor;
-
 		public event SelectionModeEvent ModeChanged;
 		public event SelectionEvent ActorSelected;
+
+		public Actor SelectedActor { get; private set; }
 
 		public bool IsAlive
 		{
@@ -53,7 +53,7 @@ namespace ConceptMatrix.GUI.Services
 
 		public async Task SelectActor(Actor actor)
 		{
-			this.selectedActor = actor;
+			this.SelectedActor = actor;
 
 			IInjectionService injection = Services.Get<IInjectionService>();
 			using IMemory<int> territoryMem = injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
@@ -171,7 +171,7 @@ namespace ConceptMatrix.GUI.Services
 					if (selected == null || selected.Type == ActorTypes.None)
 						continue;
 
-					if (selected != this.selectedActor)
+					if (selected != this.SelectedActor)
 					{
 						await this.SelectActor(selected);
 					}

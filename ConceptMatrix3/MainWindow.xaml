@@ -20,6 +20,7 @@
 		Background="Transparent"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"
+		Loaded="Window_Loaded"
 		
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 		TextBlock.FontSize="12"

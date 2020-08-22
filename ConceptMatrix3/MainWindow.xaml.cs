@@ -187,6 +187,13 @@ namespace ConceptMatrix.GUI
 			App.Settings.AlwaysOnTop = false;
 		}
 
+		private async void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			ISelectionService selection = App.Services.Get<ISelectionService>();
+			await Task.Delay(50);
+			this.OnActorSelected(selection.SelectedActor);
+		}
+
 		private void Window_MouseEnter(object sender, MouseEventArgs e)
 		{
 			if (App.Settings.Opacity == 1.0)
