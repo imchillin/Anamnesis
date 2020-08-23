@@ -64,6 +64,16 @@ namespace ConceptMatrix
 			mem.Value = value;
 		}
 
+		public void SetValue<T>(IMemoryOffset<T> offset, T? value)
+			where T : struct
+		{
+			if (value == null || !value.HasValue)
+				return;
+
+			using IMemory<T> mem = this.GetMemory(offset);
+			mem.Value = value.Value;
+		}
+
 		/// <summary>
 		/// Marks the selected actor to be refreshed after a short delay.
 		/// it is safe to call this repeatedly.

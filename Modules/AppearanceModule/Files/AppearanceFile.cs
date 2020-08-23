@@ -26,14 +26,16 @@ namespace ConceptMatrix.AppearanceModule.Files
 			AppearanceHair = 8,
 			AppearanceFace = 16,
 			AppearanceBody = 32,
+			AppearanceExtended = 64,
 
-			All = EquipmentGear | EquipmentAccessories | AppearanceHair | AppearanceFace | AppearanceBody,
+			All = EquipmentGear | EquipmentAccessories | AppearanceHair | AppearanceFace | AppearanceBody | AppearanceExtended,
 		}
 
 		public SaveModes SaveMode { get; set; } = SaveModes.All;
 
 		public int ModelType { get; set; } = 0;
 
+		// appearance
 		public Appearance.Races? Race { get; set; }
 		public Appearance.Genders? Gender { get; set; }
 		public Appearance.Ages? Age { get; set; }
@@ -61,19 +63,11 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public byte? FacePaint { get; set; }
 		public byte? FacePaintColor { get; set; }
 
-		public Color? SkinTint { get; set; }
-		public Color? SkinGlow { get; set; }
-		public Color? LeftEyeColor { get; set; }
-		public Color? RightEyeColor { get; set; }
-		public Color? LimbalRingColor { get; set; }
-		public Color? HairTint { get; set; }
-		public Color? HairGlow { get; set; }
-		public Color? HighlightTint { get; set; }
-		public Color4? LipTint { get; set; }
-
+		// weapons
 		public WeaponSave MainHand { get; set; }
 		public WeaponSave OffHand { get; set; }
 
+		// equipment
 		public ItemSave HeadGear { get; set; }
 		public ItemSave Body { get; set; }
 		public ItemSave Hands { get; set; }
@@ -84,6 +78,21 @@ namespace ConceptMatrix.AppearanceModule.Files
 		public ItemSave Wrists { get; set; }
 		public ItemSave LeftRing { get; set; }
 		public ItemSave RightRing { get; set; }
+
+		// extended appearance
+		// NOTE: extended weapon values are stored in the WeaponSave
+		public Color? SkinTint { get; set; }
+		public Color? SkinGlow { get; set; }
+		public Color? LeftEyeColor { get; set; }
+		public Color? RightEyeColor { get; set; }
+		public Color? LimbalRingColor { get; set; }
+		public Color? HairTint { get; set; }
+		public Color? HairGlow { get; set; }
+		public Color? HighlightTint { get; set; }
+		public Color4? LipTint { get; set; }
+		public Vector? BustScale { get; set; }
+		public float? Transparency { get; set; }
+		public float? FeatureScale { get; set; }
 
 		public override FileType Type => FileType;
 
@@ -111,26 +120,21 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				using IMemory<Color> mainHandTintMem = actor.GetMemory(Offsets.Main.MainHandColor);
-				using IMemory<Vector> mainHandScaleMem = actor.GetMemory(Offsets.Main.MainHandScale);
-				using IMemory<Color> offHandTintMem = actor.GetMemory(Offsets.Main.OffhandColor);
-				using IMemory<Vector> offHandScaleMem = actor.GetMemory(Offsets.Main.OffhandScale);
-
 				this.MainHand = new WeaponSave();
 				this.MainHand.DyeId = mainHand.Dye;
 				this.MainHand.ModelBase = mainHand.Base;
 				this.MainHand.ModelSet = mainHand.Set;
 				this.MainHand.ModelVariant = mainHand.Variant;
-				this.MainHand.Color = mainHandTintMem.Value;
-				this.MainHand.Scale = mainHandScaleMem.Value;
+				this.MainHand.Color = actor.GetValue(Offsets.Main.MainHandColor);
+				this.MainHand.Scale = actor.GetValue(Offsets.Main.MainHandScale);
 
 				this.OffHand = new WeaponSave();
 				this.OffHand.DyeId = offHand.Dye;
 				this.OffHand.ModelBase = offHand.Base;
 				this.OffHand.ModelSet = offHand.Set;
 				this.OffHand.ModelVariant = offHand.Variant;
-				this.OffHand.Color = offHandTintMem.Value;
-				this.OffHand.Scale = offHandScaleMem.Value;
+				this.OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
+				this.OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
 
 				this.HeadGear = new ItemSave(equipment.Head);
 				this.Body = new ItemSave(equipment.Chest);
@@ -150,17 +154,13 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
-				using IMemory<Color> hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
-				using IMemory<Color> hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
-				using IMemory<Color> highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
-
 				this.Hair = appearance.Hair;
 				this.EnableHighlights = appearance.EnableHighlights;
 				this.HairTone = appearance.HairTone;
 				this.Highlights = appearance.Highlights;
-				this.HairTint = hairTintColorMem.Value;
-				this.HairGlow = hairGlowColorMem.Value;
-				this.HighlightTint = highlightTintColorMem.Value;
+				this.HairTint = actor.GetValue(Offsets.Main.HairColor);
+				this.HairGlow = actor.GetValue(Offsets.Main.HairGloss);
+				this.HighlightTint = actor.GetValue(Offsets.Main.HairHiglight);
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
@@ -173,12 +173,6 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 			{
-				using IMemory<Color> leftEyeColorMem = actor.GetMemory(Offsets.Main.LeftEyeColor);
-				using IMemory<Color> rightEyeColorMem = actor.GetMemory(Offsets.Main.RightEyeColor);
-				using IMemory<Color> limbalRingColorMem = actor.GetMemory(Offsets.Main.LimbalColor);
-				using IMemory<Color> lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
-				using IMemory<float> lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
-
 				this.Head = appearance.Head;
 				this.REyeColor = appearance.REyeColor;
 				this.LimbalEyes = appearance.LimbalEyes;
@@ -192,25 +186,26 @@ namespace ConceptMatrix.AppearanceModule.Files
 				this.LipsToneFurPattern = appearance.LipsToneFurPattern;
 				this.FacePaint = appearance.FacePaint;
 				this.FacePaintColor = appearance.FacePaintColor;
-				this.LeftEyeColor = leftEyeColorMem.Value;
-				this.RightEyeColor = rightEyeColorMem.Value;
-				this.LimbalRingColor = limbalRingColorMem.Value;
+				this.LeftEyeColor = actor.GetValue(Offsets.Main.LeftEyeColor);
+				this.RightEyeColor = actor.GetValue(Offsets.Main.RightEyeColor);
+				this.LimbalRingColor = actor.GetValue(Offsets.Main.LimbalColor);
 
-				this.LipTint = new Color4(lipTintMem.Value, lipGlossMem.Value);
+				this.LipTint = new Color4(actor.GetValue(Offsets.Main.MouthColor), actor.GetValue(Offsets.Main.MouthGloss));
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				using IMemory<Color> skinColorMem = actor.GetMemory(Offsets.Main.SkinColor);
-				using IMemory<Color> skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
-
 				this.Height = appearance.Height;
 				this.Skintone = appearance.Skintone;
 				this.EarMuscleTailSize = appearance.EarMuscleTailSize;
 				this.TailEarsType = appearance.TailEarsType;
 				this.Bust = appearance.Bust;
-				this.SkinTint = skinColorMem.Value;
-				this.SkinGlow = skinGlowMem.Value;
+
+				this.SkinTint = actor.GetValue(Offsets.Main.SkinColor);
+				this.SkinGlow = actor.GetValue(Offsets.Main.SkinGloss);
+				this.BustScale = actor.GetValue(Offsets.Main.BustScale);
+				this.Transparency = actor.GetValue(Offsets.Main.Transparency);
+				this.FeatureScale = actor.GetValue(Offsets.Main.UniqueFeatureScale);
 			}
 		}
 
@@ -330,63 +325,29 @@ namespace ConceptMatrix.AppearanceModule.Files
 			{
 				if (this.MainHand != null)
 				{
-					using IMemory<Color> mainHandTintMem = actor.GetMemory(Offsets.Main.MainHandColor);
-					using IMemory<Vector> mainHandScaleMem = actor.GetMemory(Offsets.Main.MainHandScale);
-
-					mainHandScaleMem.Value = this.MainHand.Scale;
-					mainHandTintMem.Value = this.MainHand.Color;
+					actor.SetValue(Offsets.Main.MainHandColor, this.MainHand.Color);
+					actor.SetValue(Offsets.Main.MainHandScale, this.MainHand.Scale);
 				}
 
 				if (this.OffHand != null)
 				{
-					using IMemory<Color> offHandTintMem = actor.GetMemory(Offsets.Main.OffhandColor);
-					using IMemory<Vector> offHandScaleMem = actor.GetMemory(Offsets.Main.OffhandScale);
-
-					offHandScaleMem.Value = this.OffHand.Scale;
-					offHandTintMem.Value = this.OffHand.Color;
+					actor.SetValue(Offsets.Main.OffhandColor, this.OffHand.Color);
+					actor.SetValue(Offsets.Main.OffhandScale, this.OffHand.Scale);
 				}
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
-				if (this.HairTint != null)
-				{
-					using IMemory<Color> hairTintColorMem = actor.GetMemory(Offsets.Main.HairColor);
-					hairTintColorMem.Value = (Color)this.HairTint;
-				}
-
-				if (this.HairGlow != null)
-				{
-					using IMemory<Color> hairGlowColorMem = actor.GetMemory(Offsets.Main.HairGloss);
-					hairGlowColorMem.Value = (Color)this.HairGlow;
-				}
-
-				if (this.HighlightTint != null)
-				{
-					using IMemory<Color> highlightTintColorMem = actor.GetMemory(Offsets.Main.HairHiglight);
-					highlightTintColorMem.Value = (Color)this.HighlightTint;
-				}
+				actor.SetValue(Offsets.Main.HairColor, this.HairTint);
+				actor.SetValue(Offsets.Main.HairGloss, this.HairGlow);
+				actor.SetValue(Offsets.Main.HairHiglight, this.HighlightTint);
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 			{
-				if (this.LeftEyeColor != null)
-				{
-					using IMemory<Color> leftEyeColorMem = actor.GetMemory(Offsets.Main.LeftEyeColor);
-					leftEyeColorMem.Value = (Color)this.LeftEyeColor;
-				}
-
-				if (this.RightEyeColor != null)
-				{
-					using IMemory<Color> rightEyeColorMem = actor.GetMemory(Offsets.Main.RightEyeColor);
-					rightEyeColorMem.Value = (Color)this.RightEyeColor;
-				}
-
-				if (this.LimbalRingColor != null)
-				{
-					using IMemory<Color> limbalRingColorMem = actor.GetMemory(Offsets.Main.LimbalColor);
-					limbalRingColorMem.Value = (Color)this.LimbalRingColor;
-				}
+				actor.SetValue(Offsets.Main.LeftEyeColor, this.LeftEyeColor);
+				actor.SetValue(Offsets.Main.RightEyeColor, this.RightEyeColor);
+				actor.SetValue(Offsets.Main.LimbalColor, this.LimbalRingColor);
 
 				if (this.LipTint != null)
 				{
@@ -401,17 +362,11 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				if (this.SkinTint != null)
-				{
-					using IMemory<Color> skinTintMem = actor.GetMemory(Offsets.Main.SkinColor);
-					skinTintMem.Value = (Color)this.SkinTint;
-				}
-
-				if (this.SkinGlow != null)
-				{
-					using IMemory<Color> skinGlowMem = actor.GetMemory(Offsets.Main.SkinGloss);
-					skinGlowMem.Value = (Color)this.SkinGlow;
-				}
+				actor.SetValue(Offsets.Main.SkinColor, this.SkinTint);
+				actor.SetValue(Offsets.Main.SkinGloss, this.SkinGlow);
+				actor.SetValue(Offsets.Main.Transparency, this.Transparency);
+				actor.SetValue(Offsets.Main.BustScale, this.BustScale);
+				actor.SetValue(Offsets.Main.UniqueFeatureScale, this.FeatureScale);
 			}
 		}
 
