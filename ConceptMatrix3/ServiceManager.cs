@@ -110,6 +110,9 @@ namespace ConceptMatrix.GUI
 
 		public async Task ShutdownServices()
 		{
+			// shutdown services in reverse order
+			this.services.Reverse();
+
 			foreach (IService service in this.services)
 			{
 				await service.Shutdown();

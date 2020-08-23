@@ -43,8 +43,7 @@ namespace ConceptMatrix
 
 		private void OnExit(object sender, ExitEventArgs e)
 		{
-			Task t = Services.ShutdownServices();
-			t.Wait();
+			Task.Run(async () => { await Services.ShutdownServices(); });
 		}
 
 		private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
