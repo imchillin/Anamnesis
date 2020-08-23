@@ -59,7 +59,7 @@ namespace ConceptMatrix.PoseModule
 				if (this.IsEnabled == value)
 					return;
 
-				Task.Run(async () => { await this.SetEnabled(value); });
+				this.SetEnabled(value);
 			}
 		}
 
@@ -151,7 +151,8 @@ namespace ConceptMatrix.PoseModule
 
 		public async Task Shutdown()
 		{
-			await this.SetEnabled(false);
+			this.SetEnabled(false);
+			await Task.Delay(100);
 
 			this.skel1Mem?.Dispose();
 			this.skel2Mem?.Dispose();
@@ -169,7 +170,7 @@ namespace ConceptMatrix.PoseModule
 			return Task.CompletedTask;
 		}
 
-		public async Task SetEnabled(bool enabled)
+		public void SetEnabled(bool enabled)
 		{
 			// Don't try to enable posing unless we are in gpose
 			if (enabled && this.selectionService.GetMode() != Modes.GPose)
@@ -182,11 +183,8 @@ namespace ConceptMatrix.PoseModule
 			this.FreezeRotation = enabled;
 			this.FreezeScale = enabled;
 
-			await Application.Current.Dispatcher.InvokeAsync(() =>
-			{
-				this.EnabledChanged?.Invoke(enabled);
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsEnabled)));
-			});
+			this.EnabledChanged?.Invoke(enabled);
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsEnabled)));
 		}
 
 		private void Selection_ModeChanged(Modes mode)
