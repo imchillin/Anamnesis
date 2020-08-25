@@ -442,7 +442,7 @@ namespace ConceptMatrix.PoseModule
 
 			Appearance.Races fileRace = (Appearance.Races)byte.Parse(this.Race);
 
-			PropertyInfo[] props = this.GetType().GetProperties();
+			PropertyInfo[] props = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance);
 			foreach (PropertyInfo propertyInfo in props)
 			{
 				string boneName = propertyInfo.Name;
@@ -451,6 +451,9 @@ namespace ConceptMatrix.PoseModule
 					continue;
 
 				if (boneName.EndsWith("Size"))
+					continue;
+
+				if (boneName == "Type")
 					continue;
 
 				PropertyInfo rotProp = legacyType.GetProperty(boneName);
