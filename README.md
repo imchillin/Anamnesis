@@ -17,7 +17,7 @@ Make sure to check out the included [wiki](https://github.com/imchillin/CM3/wiki
 ## Authors
 
 * **[Yuuki](https://github.com/Yuuki-Walsh)** - *Main development*
-* **[MissAniThrope](https://github.com/MissAniThrope)** - *Project management, code contributions and wiki curating* 
+* **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
 
 ## License
 
