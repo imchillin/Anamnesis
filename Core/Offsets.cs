@@ -16,8 +16,6 @@ namespace ConceptMatrix
 
 		public class MainOffsetFile
 		{
-			public ActorTableOffset ActorTable { get; set; }
-			public ActorTableOffset GposeActorTable { get; set; }
 			public BaseOffset Gpose { get; set; }
 			public BaseOffset<bool> GposeCheck { get; set; }
 			public BaseOffset<ushort> GposeCheck2 { get; set; }
@@ -33,6 +31,7 @@ namespace ConceptMatrix
 			public FlagOffset Skeleton4flag { get; set; }
 			public FlagOffset Skeleton5Flag { get; set; }
 			public FlagOffset Skeleton6Flag { get; set; }
+			public FlagOffset Skeleton7Flag { get; set; }
 			public FlagOffset Physics1Flag { get; set; }
 			public FlagOffset Physics2Flag { get; set; }
 			public FlagOffset Physics3Flag { get; set; }

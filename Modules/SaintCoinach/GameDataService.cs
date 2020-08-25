@@ -114,7 +114,7 @@ namespace ConceptMatrix.SaintCoinachModule
 			if (!IsValidInstallation(directory))
 				throw new Exception("Invalid FFXIV installation");
 
-			bool forceUpdate = false;
+			bool forceUpdate = true;
 
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
