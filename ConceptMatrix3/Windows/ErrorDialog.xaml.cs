@@ -57,27 +57,37 @@ namespace ConceptMatrix.GUI.Windows
 			if (Application.Current == null)
 				return;
 
+			if (ex.SourceException is ErrorException)
+				return;
+
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				SplashWindow.HideWindow();
+				try
+				{
+					SplashWindow.HideWindow();
 
-				Dialog dlg = new Dialog();
-				ErrorDialog errorDialog = new ErrorDialog(ex, isCriticial);
-				errorDialog.window = dlg;
+					Dialog dlg = new Dialog();
+					ErrorDialog errorDialog = new ErrorDialog(ex, isCriticial);
+					errorDialog.window = dlg;
 
-				if (App.Settings != null)
-					dlg.Topmost = App.Settings.AlwaysOnTop;
+					if (App.Settings != null)
+						dlg.Topmost = App.Settings.AlwaysOnTop;
 
-				dlg.ContentArea.Content = errorDialog;
-				dlg.ShowDialog();
+					dlg.ContentArea.Content = errorDialog;
+					dlg.ShowDialog();
 
-				if (Application.Current == null)
-					return;
+					if (Application.Current == null)
+						return;
 
-				if (isCriticial)
-					Application.Current.Shutdown(2);
+					if (isCriticial)
+						Application.Current.Shutdown(2);
 
-				SplashWindow.ShowWindow();
+					SplashWindow.ShowWindow();
+				}
+				catch (Exception ex)
+				{
+					Log.Write(new ErrorException(ex));
+				}
 			});
 		}
 
@@ -173,6 +183,14 @@ namespace ConceptMatrix.GUI.Windows
 		private void OnLogClick(object sender, RoutedEventArgs e)
 		{
 			LogService.ShowLogs();
+		}
+
+		public class ErrorException : Exception
+		{
+			public ErrorException(Exception inner)
+				: base("An error was encountered when presenting the error dialog", inner)
+			{
+			}
 		}
 	}
 }

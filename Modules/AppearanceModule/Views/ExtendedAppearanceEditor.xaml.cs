@@ -88,7 +88,16 @@ namespace ConceptMatrix.AppearanceModule.Views
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			this.SetActor(this.DataContext as Actor);
+			try
+			{
+				this.SetActor(this.DataContext as Actor);
+				this.IsEnabled = true;
+			}
+			catch (Exception ex)
+			{
+				this.IsEnabled = false;
+				Log.Write(new Exception("Failed to set actor for extended appearance", ex));
+			}
 
 			if (this.actor == null)
 				return;
