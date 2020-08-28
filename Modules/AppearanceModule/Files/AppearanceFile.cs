@@ -312,10 +312,10 @@ namespace Anamnesis.AppearanceModule.Files
 
 			await Task.Delay(100);
 
-			appearanceMem.Value = appearance;
-			equipmentMem.Value = equipment;
-			mainHandMem.Value = mainHand;
-			offHandMem.Value = offHand;
+			appearanceMem.SetValue(appearance, true);
+			equipmentMem.SetValue(equipment, true);
+			mainHandMem.SetValue(mainHand, true);
+			offHandMem.SetValue(offHand, true);
 
 			await actor.ActorRefreshAsync();
 			await Task.Delay(1000);

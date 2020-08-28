@@ -3,6 +3,7 @@
 
 namespace Anamnesis.AppearanceModule.ViewModels
 {
+	using System;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 
@@ -39,7 +40,7 @@ namespace Anamnesis.AppearanceModule.ViewModels
 			i.Dye = this.DyeId;
 			i.Variant = (byte)this.ModelVariant;
 
-			this.memory.Value = eq;
+			this.memory.SetValue(eq, true);
 
 			this.Actor.ActorRefresh();
 		}

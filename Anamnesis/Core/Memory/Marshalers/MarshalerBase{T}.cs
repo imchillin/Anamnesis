@@ -66,6 +66,7 @@ namespace Anamnesis.Memory.Marshalers
 		public void SetValue(T value, bool immediate = false)
 		{
 			this.Value = value;
+			this.dirty = true;
 
 			if (immediate)
 			{
