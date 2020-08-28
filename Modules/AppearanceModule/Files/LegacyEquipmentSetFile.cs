@@ -1,11 +1,11 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Files
+namespace Anamnesis.AppearanceModule.Files
 {
 	using System;
 	using System.Globalization;
-	using ConceptMatrix.Memory;
+	using Anamnesis.Memory;
 
 	[Serializable]
 	public class LegacyEquipmentSetFile : FileBase

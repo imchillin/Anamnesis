@@ -1,10 +1,10 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.SaintCoinachModule
+namespace Anamnesis.SaintCoinachModule
 {
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.Memory;
+	using Anamnesis.GameData;
+	using Anamnesis.Memory;
 	using SaintCoinach.Xiv;
 
 	internal class TribeWrapper : ObjectWrapper<Tribe>, ITribe

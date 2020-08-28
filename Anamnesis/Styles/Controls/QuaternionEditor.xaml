@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="Anamnesis.WpfStyles.Controls.QuaternionEditor"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:cm3="clr-namespace:Anamnesis.WpfStyles.Controls"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 IsVisibleChanged="OnIsVisibleChanged"
+			 mc:Ignorable="d" 
+			 d:DesignWidth="250">
+
+	<Grid x:Name="ContentArea">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="150"/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" ToolTip="Right-Click an axis to lock rotation to it"
+					Orientation="Horizontal">
+			<ToggleButton  
+				IsEnabled="False"
+				Style="{StaticResource MaterialDesignActionToggleButton}"
+				Background="Transparent"
+				Height="22" Width="22"
+				x:Name="LockedIndicator"
+				Unchecked="LockedIndicator_Unchecked">
+				
+				<ToggleButton.Content>
+					<fa:IconImage Icon="LockOpen" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Margin="3"/>
+				</ToggleButton.Content>
+				
+				<materialDesign:ToggleButtonAssist.OnContent>
+					<fa:IconImage Icon="Lock" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Margin="3" Opacity="0.75"/>
+				</materialDesign:ToggleButtonAssist.OnContent>
+			</ToggleButton>
+
+			<TextBlock x:Name="LockedAxisDisplay" Text="" FontWeight="Bold" VerticalAlignment="Center" Margin="3" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Opacity="0.75"/>
+
+		</StackPanel>
+
+		<ToggleButton Grid.Row="0" HorizontalAlignment="Right" 
+					  Style="{StaticResource MaterialDesignActionToggleButton}" IsChecked="{Binding WorldSpace}" Height="22" Width="22"
+					  ToolTip="World / Local space rotation">
+			
+			<ToggleButton.Content>
+				<TextBlock Text="L" Margin="-3, -3, -3, 0" FontSize="16" FontWeight="Bold" IsHitTestVisible="False"/>
+			</ToggleButton.Content>
+			<materialDesign:ToggleButtonAssist.OnContent>
+				<TextBlock Text="W" Margin="-3, -1, -3, 0" FontSize="14" FontWeight="Bold" IsHitTestVisible="False"/>
+			</materialDesign:ToggleButtonAssist.OnContent>
+		</ToggleButton>
+
+
+		<Grid Grid.Row="1" MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseLeave="OnViewportMouseLeave" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportMouseWheel">
+			<Rectangle Fill="Transparent"/>
+			<Viewport3D x:Name="Viewport"/>
+		</Grid>
+
+		<cm3:VectorEditor Grid.Row="2" Value="{Binding Euler}" Expanded="True" Minimum="0" Maximum="360" TickFrequency="{Binding TickFrequency}" Wrap="True"/>
+	</Grid>
+</UserControl>

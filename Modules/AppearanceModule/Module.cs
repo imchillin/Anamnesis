@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule
+namespace Anamnesis.AppearanceModule
 {
 	using System;
 	using System.Collections.Generic;
@@ -10,11 +10,11 @@ namespace ConceptMatrix.AppearanceModule
 	using System.Text.Json;
 	using System.Threading.Tasks;
 	using System.Windows.Documents;
-	using ConceptMatrix.AppearanceModule.Files;
-	using ConceptMatrix.AppearanceModule.Pages;
-	using ConceptMatrix.Memory;
-	using ConceptMatrix.Memory.Serialization;
-	using ConceptMatrix.Modules;
+	using Anamnesis.AppearanceModule.Files;
+	using Anamnesis.AppearanceModule.Pages;
+	using Anamnesis.Memory;
+	using Anamnesis.Memory.Serialization;
+	using Anamnesis.Modules;
 
 	public class Module : IModule
 	{

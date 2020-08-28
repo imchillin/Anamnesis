@@ -1,12 +1,12 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Dialogs
+namespace Anamnesis.AppearanceModule.Dialogs
 {
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix;
-	using ConceptMatrix.AppearanceModule.Files;
+	using Anamnesis;
+	using Anamnesis.AppearanceModule.Files;
 	using PropertyChanged;
 
 	/// <summary>

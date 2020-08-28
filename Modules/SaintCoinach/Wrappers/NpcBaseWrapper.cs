@@ -1,10 +1,10 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.SaintCoinachModule
+namespace Anamnesis.SaintCoinachModule
 {
-	using ConceptMatrix;
-	using ConceptMatrix.GameData;
+	using Anamnesis;
+	using Anamnesis.GameData;
 	using SaintCoinach.Xiv;
 
 	internal class NpcBaseWrapper : ObjectWrapper<ENpcBase>, INpcBase

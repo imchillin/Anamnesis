@@ -1,19 +1,19 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Pages
+namespace Anamnesis.AppearanceModule.Pages
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix.AppearanceModule.Dialogs;
-	using ConceptMatrix.AppearanceModule.Files;
-	using ConceptMatrix.AppearanceModule.Views;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.Memory;
-	using ConceptMatrix.WpfStyles.Drawers;
+	using Anamnesis.AppearanceModule.Dialogs;
+	using Anamnesis.AppearanceModule.Files;
+	using Anamnesis.AppearanceModule.Views;
+	using Anamnesis.GameData;
+	using Anamnesis.Memory;
+	using Anamnesis.WpfStyles.Drawers;
 	using PropertyChanged;
 
 	/// <summary>

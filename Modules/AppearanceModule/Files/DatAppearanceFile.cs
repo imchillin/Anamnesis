@@ -1,14 +1,14 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Files
+namespace Anamnesis.AppearanceModule.Files
 {
 	using System;
 	using System.IO;
 	using System.Text;
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
-	using ConceptMatrix.Memory;
+	using Anamnesis.Memory;
 	using Paths = System.IO.Path;
 
 	public class DatAppearanceFile : FileBase, IFileSource.IFile

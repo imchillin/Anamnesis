@@ -1,11 +1,11 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.ViewModels
+namespace Anamnesis.AppearanceModule.ViewModels
 {
-	using ConceptMatrix;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.Memory;
+	using Anamnesis;
+	using Anamnesis.GameData;
+	using Anamnesis.Memory;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]

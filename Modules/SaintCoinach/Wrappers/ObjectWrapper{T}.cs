@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.SaintCoinachModule
+namespace Anamnesis.SaintCoinachModule
 {
 	using SaintCoinach.Xiv;
 

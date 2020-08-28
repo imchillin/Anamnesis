@@ -1,11 +1,11 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace Anamnesis.AppearanceModule.Views
 {
 	using System.Windows.Controls;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.Memory;
+	using Anamnesis.GameData;
+	using Anamnesis.Memory;
 
 	/// <summary>
 	/// Interaction logic for HairSelector.xaml.

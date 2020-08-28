@@ -1,13 +1,13 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace Anamnesis.AppearanceModule.Views
 {
 	using System.Collections.Generic;
 	using System.Windows.Controls;
-	using ConceptMatrix;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.WpfStyles.Drawers;
+	using Anamnesis;
+	using Anamnesis.GameData;
+	using Anamnesis.WpfStyles.Drawers;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.

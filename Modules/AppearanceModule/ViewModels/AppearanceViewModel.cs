@@ -1,14 +1,14 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.ViewModels
+namespace Anamnesis.AppearanceModule.ViewModels
 {
 	using System;
 	using System.ComponentModel;
 	using System.Reflection;
 	using System.Runtime.CompilerServices;
 	using System.Windows;
-	using ConceptMatrix.Memory;
+	using Anamnesis.Memory;
 	using PropertyChanged;
 
 	[SuppressPropertyChangedWarnings]

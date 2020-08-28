@@ -3,7 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <RootNamespace>ConceptMatrix.AppearanceModule</RootNamespace>
+    <RootNamespace>Anamnesis.AppearanceModule</RootNamespace>
+    <AssemblyName>Anamnesis.AppearanceModule</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -102,7 +103,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Styles\Styles.csproj" />
+    <ProjectReference Include="..\..\Anamnesis\Anamnesis.csproj" />
   </ItemGroup>
 
   <ItemGroup>

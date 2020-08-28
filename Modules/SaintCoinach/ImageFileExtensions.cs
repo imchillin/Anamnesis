@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.SaintCoinachModule
+namespace Anamnesis.SaintCoinachModule
 {
 	using System;
 	using System.Drawing;
@@ -33,7 +33,7 @@ namespace ConceptMatrix.SaintCoinachModule
 				SaintCoinach.Imaging.ImageFormat format = this.file.Format;
 				int width = this.file.Width;
 				int height = this.file.Height;
-				byte[] argb = ImageConverter.GetA8R8G8B8(src, format, width, height);
+				byte[] argb = SaintCoinach.Imaging.ImageConverter.GetA8R8G8B8(src, format, width, height);
 
 				Bitmap bmp = null;
 

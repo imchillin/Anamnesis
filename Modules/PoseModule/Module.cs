@@ -1,13 +1,13 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule
+namespace Anamnesis.PoseModule
 {
 	using System.Threading.Tasks;
-	using ConceptMatrix.Localization;
-	using ConceptMatrix.Memory;
-	using ConceptMatrix.Modules;
-	using ConceptMatrix.PoseModule.Pages;
+	using Anamnesis.Localization;
+	using Anamnesis.Memory;
+	using Anamnesis.Modules;
+	using Anamnesis.PoseModule.Pages;
 
 	public class Module : IModule
 	{

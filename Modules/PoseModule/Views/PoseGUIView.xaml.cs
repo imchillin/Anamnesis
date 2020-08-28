@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Views
+namespace Anamnesis.PoseModule.Views
 {
 	using System.Windows.Controls;
 

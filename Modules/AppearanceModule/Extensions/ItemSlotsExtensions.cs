@@ -1,11 +1,11 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule
+namespace Anamnesis.AppearanceModule
 {
 	using System;
 	using System.Windows.Media.Imaging;
-	using ConceptMatrix.GameData;
+	using Anamnesis.GameData;
 
 	public static class ItemSlotsExtensions
 	{
@@ -26,7 +26,7 @@ namespace ConceptMatrix.AppearanceModule
 		{
 			BitmapImage logo = new BitmapImage();
 			logo.BeginInit();
-			logo.UriSource = new Uri("pack://application:,,,/AppearanceModule;component/Assets/Slots/" + self.ToString() + ".png");
+			logo.UriSource = new Uri("pack://application:,,,/Anamnesis.AppearanceModule;component/Assets/Slots/" + self.ToString() + ".png");
 			logo.EndInit();
 
 			return logo;

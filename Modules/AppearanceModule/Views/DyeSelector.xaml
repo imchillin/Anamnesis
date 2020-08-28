@@ -1,13 +1,9 @@
-﻿<UserControl x:Class="ConceptMatrix.AppearanceModule.Views.DyeSelector"
+﻿<UserControl x:Class="Anamnesis.AppearanceModule.Views.DyeSelector"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:ConceptMatrix.AppearanceModule.Views"
-			 xmlns:fa="http://schemas.fontawesome.io/icons/"
-			 xmlns:cm3Converters="clr-namespace:ConceptMatrix.WpfStyles.Converters;assembly=Styles"
-			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
-			 xmlns:cm3Drawers="clr-namespace:ConceptMatrix.WpfStyles.Drawers;assembly=Styles"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:cm3Drawers="clr-namespace:Anamnesis.WpfStyles.Drawers;assembly=Anamnesis"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="232">
 

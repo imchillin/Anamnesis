@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace Anamnesis.AppearanceModule.Views
 {
 	using System;
 	using System.Collections.Generic;
@@ -18,10 +18,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows.Media.Imaging;
 	using System.Windows.Navigation;
 	using System.Windows.Shapes;
-	using ConceptMatrix.Memory;
+	using Anamnesis.Memory;
 	using PropertyChanged;
-	using Color = ConceptMatrix.Memory.Color;
-	using Vector = ConceptMatrix.Memory.Vector;
+	using Color = Anamnesis.Memory.Color;
+	using Vector = Anamnesis.Memory.Vector;
 
 	/// <summary>
 	/// Interaction logic for ExtendedAppearanceEditor.xaml.

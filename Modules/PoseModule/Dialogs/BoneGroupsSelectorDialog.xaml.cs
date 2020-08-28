@@ -1,11 +1,11 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Dialogs
+namespace Anamnesis.PoseModule.Dialogs
 {
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix;
+	using Anamnesis;
 	using PropertyChanged;
 
 	/// <summary>

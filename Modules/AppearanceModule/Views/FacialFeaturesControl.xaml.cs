@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace Anamnesis.AppearanceModule.Views
 {
 	using System;
 	using System.Collections.Generic;
@@ -9,10 +9,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
-	using ConceptMatrix;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.Memory;
-	using ConceptMatrix.WpfStyles.DependencyProperties;
+	using Anamnesis;
+	using Anamnesis.GameData;
+	using Anamnesis.Memory;
+	using Anamnesis.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
 	/// <summary>
@@ -132,7 +132,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 			}
 
 			Option legacyTattoo = new Option();
-			legacyTattoo.Icon = ConceptMatrix.AppearanceModule.Resources.LegacyTattoo.ToIImage();
+			legacyTattoo.Icon = Anamnesis.AppearanceModule.Resources.LegacyTattoo.ToIImage();
 			legacyTattoo.Value = Appearance.FacialFeature.LegacyTattoo;
 			this.features.Add(legacyTattoo);
 

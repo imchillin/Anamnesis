@@ -5,7 +5,7 @@ namespace SaintCoinach.Xiv
 {
 	using System;
 	using System.Collections.Generic;
-	using ConceptMatrix.GameData;
+	using Anamnesis.GameData;
 
 	public static class EquipSlotExtensions
 	{

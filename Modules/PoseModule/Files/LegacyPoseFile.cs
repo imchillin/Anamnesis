@@ -1,12 +1,12 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule
+namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.Globalization;
 	using System.Reflection;
-	using ConceptMatrix.Memory;
+	using Anamnesis.Memory;
 
 	public class LegacyPoseFile : FileBase
 	{

@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Views
+namespace Anamnesis.PoseModule.Views
 {
 	using System;
 	using System.Collections.Generic;
@@ -11,8 +11,8 @@ namespace ConceptMatrix.PoseModule.Views
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
-	using ConceptMatrix.Memory;
-	using ConceptMatrix.ThreeD;
+	using Anamnesis.Memory;
+	using Anamnesis.ThreeD;
 	using PropertyChanged;
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
@@ -32,7 +32,7 @@ namespace ConceptMatrix.PoseModule.Views
 
 			this.Viewport.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
 
-			////ConceptMatrix.Quaternion rootrot = Module.SkeletonViewModel.GetBone("Root").RootRotation;
+			////Anamnesis.Quaternion rootrot = Module.SkeletonViewModel.GetBone("Root").RootRotation;
 			////this.root.Transform = new RotateTransform3D(new QuaternionRotation3D(new Quaternion(rootrot.X, rootrot.Y, rootrot.Z, rootrot.W)));
 		}
 

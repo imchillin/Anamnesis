@@ -1,10 +1,10 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.SaintCoinachModule
+namespace Anamnesis.SaintCoinachModule
 {
 	using System.Threading.Tasks;
-	using ConceptMatrix.Modules;
+	using Anamnesis.Modules;
 
 	public class Module : IModule
 	{

@@ -1,14 +1,14 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule
+namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using ConceptMatrix;
-	using ConceptMatrix.Memory;
-	using ConceptMatrix.Memory.Offsets;
+	using Anamnesis;
+	using Anamnesis.Memory;
+	using Anamnesis.Memory.Offsets;
 
 	public class SkeletonService : IService
 	{

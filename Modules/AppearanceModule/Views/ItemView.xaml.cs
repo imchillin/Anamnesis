@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace Anamnesis.AppearanceModule.Views
 {
 	using System.ComponentModel;
 	using System.Diagnostics;
@@ -10,13 +10,13 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
-	using ConceptMatrix.AppearanceModule.ViewModels;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.WpfStyles.DependencyProperties;
-	using ConceptMatrix.WpfStyles.Drawers;
+	using Anamnesis.AppearanceModule.ViewModels;
+	using Anamnesis.GameData;
+	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.WpfStyles.Drawers;
 	using PropertyChanged;
 
-	using Vector = ConceptMatrix.Memory.Vector;
+	using Vector = Anamnesis.Memory.Vector;
 
 	/// <summary>
 	/// Interaction logic for ItemView.xaml.

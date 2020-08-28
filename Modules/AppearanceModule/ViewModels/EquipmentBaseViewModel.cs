@@ -1,14 +1,14 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.ViewModels
+namespace Anamnesis.AppearanceModule.ViewModels
 {
 	using System;
 	using System.ComponentModel;
-	using ConceptMatrix;
-	using ConceptMatrix.AppearanceModule.Items;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.Memory;
+	using Anamnesis;
+	using Anamnesis.AppearanceModule.Items;
+	using Anamnesis.GameData;
+	using Anamnesis.Memory;
 	using PropertyChanged;
 
 	public abstract class EquipmentBaseViewModel : IDisposable, INotifyPropertyChanged

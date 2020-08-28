@@ -1,10 +1,10 @@
-﻿<UserControl x:Class="ConceptMatrix.PoseModule.Controls.BoneEditor"
+﻿<UserControl x:Class="Anamnesis.PoseModule.Controls.BoneEditor"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:ConceptMatrix.PoseModule.Controls"
-			 xmlns:cm3Controls="clr-namespace:ConceptMatrix.WpfStyles.Controls;assembly=Styles"
+			 xmlns:local="clr-namespace:Anamnesis.PoseModule.Controls"
+			 xmlns:controls="clr-namespace:Anamnesis.WpfStyles.Controls;assembly=Anamnesis"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="200">
 
@@ -14,15 +14,15 @@
 			<TextBlock Text="{Binding Value.BoneName}" Foreground="Black" Opacity="0.5" Margin="3" FontWeight="Bold" HorizontalAlignment="Center"/>
 
 			<GroupBox Header="Rotation">
-				<cm3Controls:QuaternionEditor Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}"/>
+				<controls:QuaternionEditor Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}"/>
 			</GroupBox>
 
 			<GroupBox Header="scale" IsEnabled="{Binding PoseService.FreezeScale}">
-				<cm3Controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1"/>
+				<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1"/>
 			</GroupBox>
 
 			<GroupBox Header="Position" IsEnabled="{Binding PoseService.FreezePositions}">
-				<cm3Controls:VectorEditor Value="{Binding Value.Position}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
+				<controls:VectorEditor Value="{Binding Value.Position}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
 			</GroupBox>
 		</StackPanel>
 	</Grid>

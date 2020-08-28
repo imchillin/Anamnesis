@@ -1,12 +1,12 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.SaintCoinachModule
+namespace Anamnesis.SaintCoinachModule
 {
 	using System.Collections.Generic;
-	using ConceptMatrix;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.Memory;
+	using Anamnesis;
+	using Anamnesis.GameData;
+	using Anamnesis.Memory;
 	using SaintCoinach.Xiv;
 
 	internal class RaceWrapper : ObjectWrapper<Race>, IRace

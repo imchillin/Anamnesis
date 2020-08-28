@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.1</TargetFramework>
-		<RootNamespace>ConceptMatrix.SaintCoinachModule</RootNamespace>
-		<AssemblyName>ConceptMatrix.SaintCoinach</AssemblyName>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<RootNamespace>Anamnesis.SaintCoinachModule</RootNamespace>
+		<AssemblyName>Anamnesis.SaintCoinach</AssemblyName>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<OutputPath>bin\</OutputPath>
-		<DocumentationFile>bin\ConceptMatrix.SaintCoinach</DocumentationFile>
+		<DocumentationFile>bin\Anamnesis.SaintCoinach</DocumentationFile>
 		<WarningsAsErrors />
 		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;IDE0025;</NoWarn>
 		
@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Core\Core.csproj" />
+	  <ProjectReference Include="..\..\Anamnesis\Anamnesis.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

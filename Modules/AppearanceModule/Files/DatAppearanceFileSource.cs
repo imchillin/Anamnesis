@@ -1,13 +1,13 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Files
+namespace Anamnesis.AppearanceModule.Files
 {
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
-	using ConceptMatrix;
+	using Anamnesis;
 
 	using Directories = System.IO.Directory;
 	using Files = System.IO.File;

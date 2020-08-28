@@ -1,10 +1,10 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Controls
+namespace Anamnesis.PoseModule.Controls
 {
 	using System.Windows.Controls;
-	using ConceptMatrix.WpfStyles.DependencyProperties;
+	using Anamnesis.WpfStyles.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for BoneEditor.xaml.

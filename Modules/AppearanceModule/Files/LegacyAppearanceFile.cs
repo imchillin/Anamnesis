@@ -1,10 +1,10 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Files
+namespace Anamnesis.AppearanceModule.Files
 {
-	using ConceptMatrix;
-	using ConceptMatrix.Memory;
+	using Anamnesis;
+	using Anamnesis.Memory;
 
 	#pragma warning disable IDE1006, SA1300
 	public class LegacyAppearanceFile : LegacyEquipmentSetFile

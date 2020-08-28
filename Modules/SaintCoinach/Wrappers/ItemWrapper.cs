@@ -1,12 +1,12 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.SaintCoinachModule
+namespace Anamnesis.SaintCoinachModule
 {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
-	using ConceptMatrix.GameData;
+	using Anamnesis.GameData;
 	using SaintCoinach.Xiv;
 	using SaintCoinach.Xiv.Items;
 

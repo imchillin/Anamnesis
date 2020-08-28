@@ -1,14 +1,14 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace Anamnesis.AppearanceModule.Views
 {
 	using System;
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix.AppearanceModule.Utilities;
-	using ConceptMatrix.Memory;
-	using ConceptMatrix.WpfStyles.DependencyProperties;
+	using Anamnesis.AppearanceModule.Utilities;
+	using Anamnesis.Memory;
+	using Anamnesis.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 	using WpfColor = System.Windows.Media.Color;
 

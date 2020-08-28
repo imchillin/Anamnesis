@@ -1,13 +1,13 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Converters
+namespace Anamnesis.AppearanceModule.Converters
 {
 	using System;
 	using System.Globalization;
 	using System.Windows;
 	using System.Windows.Data;
-	using ConceptMatrix.Memory;
+	using Anamnesis.Memory;
 
 	[ValueConversion(typeof(Appearance.Genders), typeof(Visibility))]
 	public class FeminineGenderToVisibilityConverter : IValueConverter

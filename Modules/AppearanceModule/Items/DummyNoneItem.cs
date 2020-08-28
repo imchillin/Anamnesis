@@ -1,13 +1,13 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Items
+namespace Anamnesis.AppearanceModule.Items
 {
 	using System;
 	using System.Collections.Generic;
-	using ConceptMatrix;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.Memory;
+	using Anamnesis;
+	using Anamnesis.GameData;
+	using Anamnesis.Memory;
 	using PropertyChanged;
 
 	public class DummyNoneItem : IItem

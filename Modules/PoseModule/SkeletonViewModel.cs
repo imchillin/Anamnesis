@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule
+namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.Collections.Generic;
@@ -12,14 +12,14 @@ namespace ConceptMatrix.PoseModule
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Media.Media3D;
-	using ConceptMatrix;
-	using ConceptMatrix.Memory;
-	using ConceptMatrix.Memory.Offsets;
-	using ConceptMatrix.ThreeD;
+	using Anamnesis;
+	using Anamnesis.Memory;
+	using Anamnesis.Memory.Offsets;
+	using Anamnesis.ThreeD;
 
-	using CmQuaternion = ConceptMatrix.Memory.Quaternion;
-	using CmTransform = ConceptMatrix.Memory.Transform;
-	using CmVector = ConceptMatrix.Memory.Vector;
+	using CmQuaternion = Anamnesis.Memory.Quaternion;
+	using CmTransform = Anamnesis.Memory.Transform;
+	using CmVector = Anamnesis.Memory.Vector;
 
 	public class SkeletonViewModel : INotifyPropertyChanged
 	{

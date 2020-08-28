@@ -1,14 +1,14 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace Anamnesis.AppearanceModule.Views
 {
 	using System.Collections.Generic;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media.Animation;
-	using ConceptMatrix.Memory;
-	using ConceptMatrix.WpfStyles.Drawers;
+	using Anamnesis.Memory;
+	using Anamnesis.WpfStyles.Drawers;
 	using PropertyChanged;
 	using Styles.Drawers;
 

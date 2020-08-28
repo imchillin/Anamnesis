@@ -1,9 +1,9 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.SaintCoinachModule
+namespace Anamnesis.SaintCoinachModule
 {
-	using ConceptMatrix.GameData;
+	using Anamnesis.GameData;
 	using SaintCoinach.Xiv;
 
 	internal class StatusWrapper : ObjectWrapper<Status>, IStatus

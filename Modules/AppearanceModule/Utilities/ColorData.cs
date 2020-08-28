@@ -1,13 +1,13 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Utilities
+namespace Anamnesis.AppearanceModule.Utilities
 {
 	using System;
 	using System.Collections.Generic;
-	using ConceptMatrix.Memory;
+	using Anamnesis.Memory;
 
-	using cmColor = ConceptMatrix.Memory.Color;
+	using cmColor = Anamnesis.Memory.Color;
 	using wpfColor = System.Windows.Media.Color;
 
 	public static class ColorData

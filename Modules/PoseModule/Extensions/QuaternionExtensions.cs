@@ -1,12 +1,12 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule
+namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.Windows.Media.Media3D;
 
-	using CmQuaternion = ConceptMatrix.Memory.Quaternion;
+	using CmQuaternion = Anamnesis.Memory.Quaternion;
 
 	public static class QuaternionExtensions
 	{

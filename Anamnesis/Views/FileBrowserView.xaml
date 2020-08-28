@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="Anamnesis.GUI.Views.FileBrowserView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Anamnesis.GUI.Views"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="800">
+	
+	<Grid x:Name="ContentArea">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<!-- Source -->
+		<ComboBox SelectedIndex="0" Margin="6" ItemsSource="{Binding FileSources}" SelectedItem="{Binding FileSource}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<ToggleButton Style="{StaticResource MaterialDesignActionToggleButton}" Grid.Column="0" Width="22" Height="22" 
+						  Margin="6, 0, 3, 0" ToolTip="Flatten Hierarchy" IsChecked="{Binding IsFlattened}">
+				<ToggleButton.Content>
+					<fa:IconBlock Icon="Folder" FontSize="12"/>
+				</ToggleButton.Content>
+				<materialDesign:ToggleButtonAssist.OnContent>
+					<fa:IconBlock Icon="Copy" FontSize="12"/>
+				</materialDesign:ToggleButtonAssist.OnContent>
+			</ToggleButton>
+
+			<Button Style="{StaticResource TransparentButton}" Margin="3" Click="OnGoUpClicked" IsEnabled="{Binding CanGoUp}" Grid.Column="1">
+				<fa:IconBlock Icon="LevelUpAlt" Opacity="0.5"/>
+			</Button>
+			<TextBlock Grid.Column="2" Text="{Binding CurrentPath}" VerticalAlignment="Center" Margin="3, 0, 3, 0"/>
+
+		</Grid>
+
+		<ListBox Grid.Row="2" ItemsSource="{Binding Entries}" SelectedItem="{Binding Selected}" MouseDoubleClick="OnMouseDoubleClick">
+			<ListBox.ItemContainerStyle>
+				<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+					<Setter Property="Padding" Value="6"/>
+					<Setter Property="IsEnabled" Value="{Binding CanSelect}"/>
+				</Style>
+			</ListBox.ItemContainerStyle>
+			
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+
+						<Grid.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Delete" Click="OnDeleteClick"/>
+							</ContextMenu>
+						</Grid.ContextMenu>
+
+						<fa:IconBlock Grid.RowSpan="2" Grid.Column="0" Icon="{Binding Icon}" Margin="3, 0, 3, 0" VerticalAlignment="Center"/>
+						
+						<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="3, 0, 3, 0"/>
+						<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Directory}" Margin="3, 0, 3, 0" Visibility="{Binding Directory, Converter={StaticResource NotNullToVisibilityConverter}}" Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.5" FontSize="10"/>
+
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<Grid Grid.Row="3" Margin="6" Visibility="{Binding ShowFileName, Converter={StaticResource B2V}}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+
+			<TextBox Text="{Binding FileName}" Grid.Column="0" x:Name="FileNameInputBox"/>
+			<TextBlock Text="{Binding FileExtension}" Grid.Column="1" VerticalAlignment="Center" Margin="2, 0, 0, 0"/>
+		</Grid>
+
+		<!-- Options -->
+		<Grid Grid.Row="4" Margin="6">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+
+			<cm3Controls:IconButton Grid.Column="0" Icon="Check" Text="Select" Margin="3" IsEnabled="{Binding CanSelect, FallbackValue=false}" Click="OnSelectClicked"/>
+			<cm3Controls:IconButton Grid.Column="1" Icon="Wrench" Text="Advanced..." Margin="3" IsEnabled="{Binding CanSelectAdvanced, FallbackValue=false}" Click="OnAdvancedClicked"/>
+			<Button Grid.Column="2" Content="..." Margin="3" ToolTip="Browse for a file" Click="OnBrowseClicked"/>
+		</Grid>
+
+	</Grid>
+</UserControl>

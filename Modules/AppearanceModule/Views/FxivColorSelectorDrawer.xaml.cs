@@ -1,11 +1,11 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule.Views
+namespace Anamnesis.AppearanceModule.Views
 {
 	using System.Collections.Generic;
 	using System.Windows.Controls;
-	using ConceptMatrix.AppearanceModule.Utilities;
+	using Anamnesis.AppearanceModule.Utilities;
 	using PropertyChanged;
 
 	/// <summary>

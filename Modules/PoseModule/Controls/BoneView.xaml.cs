@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Controls
+namespace Anamnesis.PoseModule.Controls
 {
 	using System;
 	using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace ConceptMatrix.PoseModule.Controls
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Shapes;
-	using ConceptMatrix.WpfStyles.DependencyProperties;
+	using Anamnesis.WpfStyles.DependencyProperties;
 	using MaterialDesignThemes.Wpf;
 
 	public partial class BoneView : UserControl

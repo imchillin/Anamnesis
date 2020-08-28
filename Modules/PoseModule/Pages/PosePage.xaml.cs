@@ -1,12 +1,12 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.PoseModule.Pages
+namespace Anamnesis.PoseModule.Pages
 {
 	using System;
 	using System.Windows;
 	using System.Windows.Controls;
-	using ConceptMatrix.PoseModule.Dialogs;
+	using Anamnesis.PoseModule.Dialogs;
 	using PropertyChanged;
 
 	/// <summary>

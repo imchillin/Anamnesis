@@ -1,11 +1,11 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule
+namespace Anamnesis.AppearanceModule
 {
-	using ConceptMatrix.AppearanceModule.Files;
-	using ConceptMatrix.GameData;
-	using ConceptMatrix.Memory;
+	using Anamnesis.AppearanceModule.Files;
+	using Anamnesis.GameData;
+	using Anamnesis.Memory;
 
 	public static class INpcBaseExtensions
 	{

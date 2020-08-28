@@ -3,7 +3,8 @@
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<UseWPF>true</UseWPF>
-		<RootNamespace>ConceptMatrix.PoseModule</RootNamespace>
+		<RootNamespace>Anamnesis.PoseModule</RootNamespace>
+		<AssemblyName>Anamnesis.PoseModule</AssemblyName>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -49,12 +50,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Core\Core.csproj" />
-	  <ProjectReference Include="..\..\Style3D\Style3D.csproj" />
-	  <ProjectReference Include="..\..\Styles\Styles.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Resource Include="Assets\PoseCharacterBodyBackground.png" />
 	  <Resource Include="Assets\PoseCharacterClothesBackground.png" />
 	  <Resource Include="Assets\PoseCharacterFaceBackground.png" />
@@ -69,6 +64,10 @@
 
 	<ItemGroup>
 	  <Folder Include="Skeletons\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Anamnesis\Anamnesis.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

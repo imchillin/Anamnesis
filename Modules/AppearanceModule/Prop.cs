@@ -1,11 +1,11 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.AppearanceModule
+namespace Anamnesis.AppearanceModule
 {
 	using System.Collections.Generic;
-	using ConceptMatrix;
-	using ConceptMatrix.GameData;
+	using Anamnesis;
+	using Anamnesis.GameData;
 
 	public class Prop : IItem
 	{
