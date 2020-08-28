@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Memory.Memory
+namespace ConceptMatrix.Memory.Marshalers
 {
 	using System;
 	using System.Collections.Generic;
@@ -10,15 +10,15 @@ namespace ConceptMatrix.Memory.Memory
 	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.Memory.Process;
 
-	internal abstract class MemoryBase : IMemory
+	internal abstract class MarshalerBase : IMarshaler
 	{
 		protected IProcess process;
 		protected UIntPtr address;
 		protected IMemoryOffset[] offsets;
 
-		private static readonly List<MemoryBase> ActiveMemory = new List<MemoryBase>();
+		private static readonly List<MarshalerBase> ActiveMemoryInterfaces = new List<MarshalerBase>();
 
-		public MemoryBase(IProcess process, IMemoryOffset[] offsets)
+		public MarshalerBase(IProcess process, IMemoryOffset[] offsets)
 		{
 			this.Name = string.Empty;
 
@@ -39,9 +39,9 @@ namespace ConceptMatrix.Memory.Memory
 
 			this.UpdateAddress();
 
-			lock (ActiveMemory)
+			lock (ActiveMemoryInterfaces)
 			{
-				ActiveMemory.Add(this);
+				ActiveMemoryInterfaces.Add(this);
 			}
 
 			this.Active = true;
@@ -61,17 +61,17 @@ namespace ConceptMatrix.Memory.Memory
 			private set;
 		}
 
-		public static void TickAllActiveMemory()
+		public static void TickAllActive()
 		{
-			List<MemoryBase> memories;
-			lock (ActiveMemory)
+			List<MarshalerBase> memories;
+			lock (ActiveMemoryInterfaces)
 			{
-				memories = new List<MemoryBase>(ActiveMemory);
+				memories = new List<MarshalerBase>(ActiveMemoryInterfaces);
 			}
 
-			AnamnesisService service = AnamnesisService.Instance;
+			MarshalerService service = MarshalerService.Instance;
 
-			foreach (MemoryBase memory in memories)
+			foreach (MarshalerBase memory in memories)
 			{
 				if (!service.ProcessIsAlive)
 					return;
@@ -84,15 +84,15 @@ namespace ConceptMatrix.Memory.Memory
 			}
 		}
 
-		public static void DisposeAllMemory()
+		public static void DisposeAll()
 		{
-			List<MemoryBase> memories;
-			lock (ActiveMemory)
+			List<MarshalerBase> memories;
+			lock (ActiveMemoryInterfaces)
 			{
-				memories = new List<MemoryBase>(ActiveMemory);
+				memories = new List<MarshalerBase>(ActiveMemoryInterfaces);
 			}
 
-			foreach (MemoryBase memory in memories)
+			foreach (MarshalerBase memory in memories)
 			{
 				if (!memory.Active)
 					continue;
@@ -124,9 +124,9 @@ namespace ConceptMatrix.Memory.Memory
 
 		public virtual void Dispose()
 		{
-			lock (ActiveMemory)
+			lock (ActiveMemoryInterfaces)
 			{
-				ActiveMemory.Remove(this);
+				ActiveMemoryInterfaces.Remove(this);
 			}
 
 			this.Active = false;

@@ -1,15 +1,15 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Memory.Memory
+namespace ConceptMatrix.Memory.Marshalers
 {
 	using System;
 	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.Memory.Process;
 
-	internal class WeaponMemory : MemoryBase<Weapon>
+	internal class WeaponMarshaler : MarshalerBase<Weapon>
 	{
-		public WeaponMemory(IProcess process, IMemoryOffset[] offsets)
+		public WeaponMarshaler(IProcess process, IMemoryOffset[] offsets)
 			: base(process, offsets, 7)
 		{
 		}

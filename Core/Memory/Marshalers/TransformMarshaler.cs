@@ -1,15 +1,15 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Memory.Memory
+namespace ConceptMatrix.Memory.Marshalers
 {
 	using System;
 	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.Memory.Process;
 
-	internal class TransformMemory : MemoryBase<Transform>
+	internal class TransformMarshaler : MarshalerBase<Transform>
 	{
-		public TransformMemory(IProcess process, IMemoryOffset[] offsets)
+		public TransformMarshaler(IProcess process, IMemoryOffset[] offsets)
 			: base(process, offsets, 44)
 		{
 		}

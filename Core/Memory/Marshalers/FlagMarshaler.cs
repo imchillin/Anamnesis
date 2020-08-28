@@ -1,17 +1,17 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Memory.Memory
+namespace ConceptMatrix.Memory.Marshalers
 {
 	using System;
 	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.Memory.Process;
 
-	internal class FlagMemory : MemoryBase<Flag>
+	internal class FlagMarshaler : MarshalerBase<Flag>
 	{
 		private FlagOffset? flagOffset;
 
-		public FlagMemory(IProcess process, IMemoryOffset[] offsets)
+		public FlagMarshaler(IProcess process, IMemoryOffset[] offsets)
 			: base(process, offsets, GetMemoryLength(offsets))
 		{
 		}

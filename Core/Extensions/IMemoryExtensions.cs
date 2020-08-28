@@ -19,7 +19,7 @@ namespace ConceptMatrix
 		/// <param name="self">this.</param>
 		/// <param name="owner">the object that owns the property.</param>
 		/// <param name="propertyName">the property to bind.</param>
-		public static void Bind<T>(this IMemory<T> self, object owner, string propertyName)
+		public static void Bind<T>(this IMarshaler<T> self, object owner, string propertyName)
 			where T : struct
 		{
 			BindUtility.Bind<T>(self, owner, propertyName);
@@ -31,7 +31,7 @@ namespace ConceptMatrix
 		/// <param name="self">this.</param>
 		/// <param name="owner">the object that owns the property.</param>
 		/// <param name="propertyName">the property to bind.</param>
-		public static void UnBind<T>(this IMemory<T> self, object owner, string propertyName)
+		public static void UnBind<T>(this IMarshaler<T> self, object owner, string propertyName)
 			where T : struct
 		{
 			BindUtility.Clear(owner, propertyName);

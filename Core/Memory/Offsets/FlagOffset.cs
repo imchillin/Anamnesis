@@ -4,7 +4,7 @@
 namespace ConceptMatrix.Memory.Offsets
 {
 	using System;
-	using ConceptMatrix.Memory.Memory;
+	using ConceptMatrix.Memory.Marshalers;
 
 	/// <summary>
 	/// Flag offsets are special offsets that indicate a static chunk of memory to be written for either

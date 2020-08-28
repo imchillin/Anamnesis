@@ -1,15 +1,15 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Memory.Memory
+namespace ConceptMatrix.Memory.Marshalers
 {
 	using System;
 	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.Memory.Process;
 
-	internal class QuaternionMemory : MemoryBase<Quaternion>
+	internal class QuaternionMarshaler : MarshalerBase<Quaternion>
 	{
-		public QuaternionMemory(IProcess process, IMemoryOffset[] offsets)
+		public QuaternionMarshaler(IProcess process, IMemoryOffset[] offsets)
 			: base(process, offsets, 16)
 		{
 		}

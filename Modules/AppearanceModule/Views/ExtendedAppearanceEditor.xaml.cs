@@ -38,25 +38,25 @@ namespace ConceptMatrix.AppearanceModule.Views
 	{
 		private Actor actor;
 
-		private IMemory<Color> skinColorMem;
-		private IMemory<Color> skinGlowMem;
-		private IMemory<Color> leftEyeColorMem;
-		private IMemory<Color> rightEyeColorMem;
-		private IMemory<Color> limbalRingColorMem;
-		private IMemory<Color> hairTintColorMem;
-		private IMemory<Color> hairGlowColorMem;
-		private IMemory<Color> highlightTintColorMem;
-		private IMemory<Color> lipTintMem;
-		private IMemory<float> lipGlossMem;
-		private IMemory<Weapon> mainHandMem;
-		private IMemory<Color> mainHandTintMem;
-		private IMemory<Vector> mainHandScaleMem;
-		private IMemory<Weapon> offHandMem;
-		private IMemory<Color> offHandTintMem;
-		private IMemory<Vector> offHandScaleMem;
-		private IMemory<float> transparencyMem;
-		private IMemory<Vector> bustScaleMem;
-		private IMemory<float> featureScaleMem;
+		private IMarshaler<Color> skinColorMem;
+		private IMarshaler<Color> skinGlowMem;
+		private IMarshaler<Color> leftEyeColorMem;
+		private IMarshaler<Color> rightEyeColorMem;
+		private IMarshaler<Color> limbalRingColorMem;
+		private IMarshaler<Color> hairTintColorMem;
+		private IMarshaler<Color> hairGlowColorMem;
+		private IMarshaler<Color> highlightTintColorMem;
+		private IMarshaler<Color> lipTintMem;
+		private IMarshaler<float> lipGlossMem;
+		private IMarshaler<Weapon> mainHandMem;
+		private IMarshaler<Color> mainHandTintMem;
+		private IMarshaler<Vector> mainHandScaleMem;
+		private IMarshaler<Weapon> offHandMem;
+		private IMarshaler<Color> offHandTintMem;
+		private IMarshaler<Vector> offHandScaleMem;
+		private IMarshaler<float> transparencyMem;
+		private IMarshaler<Vector> bustScaleMem;
+		private IMarshaler<float> featureScaleMem;
 
 		public ExtendedAppearanceEditor()
 		{

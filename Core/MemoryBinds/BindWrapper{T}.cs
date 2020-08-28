@@ -11,11 +11,11 @@ namespace ConceptMatrix.MemoryBinds
 	internal class BindWrapper<T> : BindWrapper
 		where T : struct
 	{
-		private IMemory<T>? target;
+		private IMarshaler<T>? target;
 		private INotifyPropertyChanged? ownerNotifier;
 		private bool bindLock = false;
 
-		public BindWrapper(IMemory<T> target, object owner, string propertyName)
+		public BindWrapper(IMarshaler<T> target, object owner, string propertyName)
 			: base(owner, propertyName)
 		{
 			if (this.property.PropertyType == typeof(T?))

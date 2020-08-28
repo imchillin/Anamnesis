@@ -276,8 +276,8 @@ namespace ConceptMatrix.WpfStyles.Controls
 		{
 			IInjectionService injection = Services.Get<IInjectionService>();
 
-			IMemory<Vector2D> camXY = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
-			IMemory<float> camZ = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
+			IMarshaler<Vector2D> camXY = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
+			IMarshaler<float> camZ = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
 
 			Vector3D camEuler = default;
 

@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Memory.Memory
+namespace ConceptMatrix.Memory.Marshalers
 {
 	using System;
 	using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace ConceptMatrix.Memory.Memory
 	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.Memory.Process;
 
-	internal abstract class MemoryBase<T> : MemoryBase, IMemory<T>
+	internal abstract class MarshalerBase<T> : MarshalerBase, IMarshaler<T>
 	{
 		private readonly ulong length;
 		private byte[] oldData;
@@ -24,7 +24,7 @@ namespace ConceptMatrix.Memory.Memory
 
 		private Exception? lastException;
 
-		public MemoryBase(IProcess process, IMemoryOffset[] offsets, ulong length)
+		public MarshalerBase(IProcess process, IMemoryOffset[] offsets, ulong length)
 			: base(process, offsets)
 		{
 			this.length = length;
@@ -132,7 +132,7 @@ namespace ConceptMatrix.Memory.Memory
 					}
 					catch (Exception ex)
 					{
-						AnamnesisService.Instance.OnError(ex);
+						MarshalerService.Instance.OnError(ex);
 					}
 				}
 			}
@@ -149,7 +149,7 @@ namespace ConceptMatrix.Memory.Memory
 					this.dirty = false;
 					this.Dispose();
 
-					AnamnesisService.Instance.OnError(new Exception("Disposing of memory: " + this + " due to exception", ex));
+					MarshalerService.Instance.OnError(new Exception("Disposing of memory: " + this + " due to exception", ex));
 				}
 			}
 		}
@@ -168,7 +168,7 @@ namespace ConceptMatrix.Memory.Memory
 		// writes value to oldData and to memory
 		private bool DoWrite(T val, bool force = false)
 		{
-			if (!AnamnesisService.Instance.ProcessIsAlive)
+			if (!MarshalerService.Instance.ProcessIsAlive)
 				throw new Exception("no FFXIV process");
 
 			this.Write(val, ref this.newData);
@@ -177,7 +177,7 @@ namespace ConceptMatrix.Memory.Memory
 			{
 				Array.Copy(this.newData, this.oldData, (int)this.length);
 
-				AnamnesisService.Instance.OnLog("Write memory " + this);
+				MarshalerService.Instance.OnLog("Write memory " + this);
 
 				this.process.Write(this.address, this.oldData, (UIntPtr)this.length, out IntPtr bytesRead);
 				return true;
@@ -189,7 +189,7 @@ namespace ConceptMatrix.Memory.Memory
 		// Reads memory into newData array
 		private void DoRead()
 		{
-			if (!AnamnesisService.Instance.ProcessIsAlive)
+			if (!MarshalerService.Instance.ProcessIsAlive)
 				throw new Exception("no FFXIV process");
 
 			if (!this.process.Read(this.address, this.newData, (UIntPtr)this.length, IntPtr.Zero))

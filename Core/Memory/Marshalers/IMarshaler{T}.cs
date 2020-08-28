@@ -7,7 +7,7 @@ namespace ConceptMatrix.Memory
 	using System.ComponentModel;
 	using ConceptMatrix.Memory.Offsets;
 
-	public interface IMemory<T> : IMemory
+	public interface IMarshaler<T> : IMarshaler
 	{
 		event ValueChangedEventHandler<T> ValueChanged;
 		event DisposingEventHandler Disposing;
@@ -30,7 +30,7 @@ namespace ConceptMatrix.Memory
 		void SetValue(T value, bool immediate = false);
 	}
 
-	public interface IMemory : INotifyPropertyChanged, IDisposable
+	public interface IMarshaler : INotifyPropertyChanged, IDisposable
 	{
 		bool Active { get; }
 		void UpdateBaseOffset(IBaseMemoryOffset newBaseOffset);

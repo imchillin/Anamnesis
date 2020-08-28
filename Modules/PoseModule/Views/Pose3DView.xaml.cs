@@ -66,9 +66,9 @@ namespace ConceptMatrix.PoseModule.Views
 		{
 			IInjectionService injection = Services.Get<IInjectionService>();
 
-			IMemory<Vector2D> camXY = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
-			IMemory<float> camZ = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
-			IMemory<float> camDist = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraCurrentZoom);
+			IMarshaler<Vector2D> camXY = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
+			IMarshaler<float> camZ = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
+			IMarshaler<float> camDist = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraCurrentZoom);
 
 			Vector3D camEuler = default;
 

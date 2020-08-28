@@ -17,7 +17,7 @@ namespace ConceptMatrix.MemoryBinds
 		/// <param name="memory">the memory to bind.</param>
 		/// <param name="owner">the object that owns the property.</param>
 		/// <param name="propertyName">the property to bind.</param>
-		public static void Bind<T>(IMemory<T> memory, object owner, string propertyName)
+		public static void Bind<T>(IMarshaler<T> memory, object owner, string propertyName)
 			where T : struct
 		{
 			Binds binds = BindsLookup.GetOrCreateValue(owner);
@@ -49,7 +49,7 @@ namespace ConceptMatrix.MemoryBinds
 		{
 			private List<BindWrapper> bindings = new List<BindWrapper>();
 
-			public void Bind<T>(IMemory<T> memory, object owner, string propertyName)
+			public void Bind<T>(IMarshaler<T> memory, object owner, string propertyName)
 				where T : struct
 			{
 				for (int i = this.bindings.Count - 1; i >= 0; i--)

@@ -1,18 +1,18 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Memory.Memory
+namespace ConceptMatrix.Memory.Marshalers
 {
 	using System;
 	using System.Text;
 	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.Memory.Process;
 
-	internal class StringMemory : MemoryBase<string>
+	internal class StringMarshaler : MarshalerBase<string>
 	{
 		private bool zeroTerminated = true;
 
-		public StringMemory(IProcess process, IMemoryOffset[] offsets)
+		public StringMarshaler(IProcess process, IMemoryOffset[] offsets)
 			: base(process, offsets, 32)
 		{
 		}

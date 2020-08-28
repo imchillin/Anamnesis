@@ -100,16 +100,16 @@ namespace ConceptMatrix.AppearanceModule.Files
 		{
 			Log.Write("Writing appearance to file", "AppearanceFile");
 
-			using IMemory<int> modelTypeMem = actor.GetMemory(Offsets.Main.ModelType);
+			using IMarshaler<int> modelTypeMem = actor.GetMemory(Offsets.Main.ModelType);
 			this.ModelType = modelTypeMem.Value;
 
 			if (!actor.IsCustomizable())
 				return;
 
-			using IMemory<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
-			using IMemory<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
-			using IMemory<Weapon> mainHandMem = actor.GetMemory(Offsets.Main.MainHand);
-			using IMemory<Weapon> offHandMem = actor.GetMemory(Offsets.Main.OffHand);
+			using IMarshaler<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
+			using IMarshaler<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
+			using IMarshaler<Weapon> mainHandMem = actor.GetMemory(Offsets.Main.MainHand);
+			using IMarshaler<Weapon> offHandMem = actor.GetMemory(Offsets.Main.OffHand);
 
 			Appearance appearance = appearanceMem.Value;
 			Equipment equipment = equipmentMem.Value;
@@ -213,7 +213,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 		{
 			Log.Write("Reading appearance from file", "AppearanceFile");
 
-			using IMemory<int> modelTypeMem = actor.GetMemory(Offsets.Main.ModelType);
+			using IMarshaler<int> modelTypeMem = actor.GetMemory(Offsets.Main.ModelType);
 
 			if (modelTypeMem.Value != this.ModelType)
 			{
@@ -224,10 +224,10 @@ namespace ConceptMatrix.AppearanceModule.Files
 			if (!actor.IsCustomizable())
 				return;
 
-			using IMemory<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
-			using IMemory<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
-			using IMemory<Weapon> mainHandMem = actor.GetMemory(Offsets.Main.MainHand);
-			using IMemory<Weapon> offHandMem = actor.GetMemory(Offsets.Main.OffHand);
+			using IMarshaler<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
+			using IMarshaler<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
+			using IMarshaler<Weapon> mainHandMem = actor.GetMemory(Offsets.Main.MainHand);
+			using IMarshaler<Weapon> offHandMem = actor.GetMemory(Offsets.Main.OffHand);
 
 			Appearance appearance = appearanceMem.Value;
 			Equipment equipment = equipmentMem.Value;
@@ -351,8 +351,8 @@ namespace ConceptMatrix.AppearanceModule.Files
 
 				if (this.LipTint != null)
 				{
-					using IMemory<Color> lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
-					using IMemory<float> lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
+					using IMarshaler<Color> lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
+					using IMarshaler<float> lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
 
 					Color4 c = (Color4)this.LipTint;
 					lipTintMem.Value = c.Color;

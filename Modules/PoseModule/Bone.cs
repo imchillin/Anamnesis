@@ -26,14 +26,14 @@ namespace ConceptMatrix.PoseModule
 		public readonly SkeletonService.Bone Definition;
 
 		private readonly PoseService poseService;
-		private readonly IMemory<CmTransform> transformMem;
+		private readonly IMarshaler<CmTransform> transformMem;
 		private readonly RotateTransform3D rotation;
 		private readonly TranslateTransform3D position;
 
 		private Bone parent;
 		private Line lineToParent;
 
-		public Bone(SkeletonViewModel skeleton, string name, IMemory<CmTransform> transformMem, SkeletonService.Bone definition)
+		public Bone(SkeletonViewModel skeleton, string name, IMarshaler<CmTransform> transformMem, SkeletonService.Bone definition)
 		{
 			this.poseService = Services.Get<PoseService>();
 

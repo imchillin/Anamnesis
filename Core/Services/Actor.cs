@@ -15,7 +15,7 @@ namespace ConceptMatrix
 		protected static IInjectionService injection = Services.Get<IInjectionService>();
 
 		private IBaseMemoryOffset baseOffset;
-		private List<WeakReference<IMemory>> memories = new List<WeakReference<IMemory>>();
+		private List<WeakReference<IMarshaler>> memories = new List<WeakReference<IMarshaler>>();
 
 		public Actor(IBaseMemoryOffset baseOffset)
 		{
@@ -45,22 +45,22 @@ namespace ConceptMatrix
 			return !(lhs == rhs);
 		}
 
-		public IMemory<T> GetMemory<T>(IMemoryOffset<T> offset)
+		public IMarshaler<T> GetMemory<T>(IMemoryOffset<T> offset)
 		{
-			IMemory<T> mem = injection.GetMemory<T>(this.baseOffset, offset);
-			this.memories.Add(new WeakReference<IMemory>(mem));
+			IMarshaler<T> mem = injection.GetMemory<T>(this.baseOffset, offset);
+			this.memories.Add(new WeakReference<IMarshaler>(mem));
 			return mem;
 		}
 
 		public T GetValue<T>(IMemoryOffset<T> offset)
 		{
-			using IMemory<T> mem = this.GetMemory(offset);
+			using IMarshaler<T> mem = this.GetMemory(offset);
 			return mem.Value;
 		}
 
 		public void SetValue<T>(IMemoryOffset<T> offset, T value)
 		{
-			using IMemory<T> mem = this.GetMemory(offset);
+			using IMarshaler<T> mem = this.GetMemory(offset);
 			mem.Value = value;
 		}
 
@@ -70,7 +70,7 @@ namespace ConceptMatrix
 			if (value == null || !value.HasValue)
 				return;
 
-			using IMemory<T> mem = this.GetMemory(offset);
+			using IMarshaler<T> mem = this.GetMemory(offset);
 			mem.Value = value.Value;
 		}
 
@@ -92,8 +92,8 @@ namespace ConceptMatrix
 
 		public void Dispose()
 		{
-			IMemory mem;
-			foreach (WeakReference<IMemory> weakRef in this.memories)
+			IMarshaler mem;
+			foreach (WeakReference<IMarshaler> weakRef in this.memories)
 			{
 				if (weakRef.TryGetTarget(out mem))
 				{

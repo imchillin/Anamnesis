@@ -5,28 +5,25 @@ namespace ConceptMatrix.Memory
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Diagnostics;
 	using System.IO;
 	using System.Reflection;
-	using System.Runtime.InteropServices;
-	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using ConceptMatrix.Memory.Memory;
+	using ConceptMatrix.Memory.Marshalers;
 	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.Memory.Process;
 
 	using SysProcess = System.Diagnostics.Process;
 
-	public class AnamnesisService
+	public class MarshalerService
 	{
 		public Func<Task<SysProcess>>? SelectProcessCallback;
 		public Action<Exception>? ErrorCallback;
 		public Action<string>? LogCallback;
 
-		private static AnamnesisService? instance;
+		private static MarshalerService? instance;
+		private static Dictionary<Type, Type> marshalerLookup = new Dictionary<Type, Type>();
 
-		private readonly Dictionary<Type, Type> memoryTypeLookup = new Dictionary<Type, Type>();
 		private bool isActive;
 		private ulong tickCount = 0;
 
@@ -53,7 +50,7 @@ namespace ConceptMatrix.Memory
 			}
 		}
 
-		internal static AnamnesisService Instance
+		internal static MarshalerService Instance
 		{
 			get
 			{
@@ -64,34 +61,41 @@ namespace ConceptMatrix.Memory
 			}
 		}
 
+		public static void AddMarshaler<TType, TMarshaler>()
+			where TMarshaler : IMarshaler<TType>
+		{
+			Type memoryType = typeof(TType);
+
+			if (marshalerLookup.ContainsKey(memoryType))
+				throw new Exception("Marshaler already registered for type: " + memoryType);
+
+			marshalerLookup.Add(memoryType, typeof(TMarshaler));
+		}
+
 		public async Task Initialize<TProcess>()
 			where TProcess : IProcess
 		{
 			instance = this;
 			this.isActive = true;
-			this.memoryTypeLookup.Clear();
 
-			// Gets all Memory types (Like IntMemory, FloatMemory) and puts them in the lookup
-			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				foreach (Type type in asm.GetTypes())
-				{
-					if (type.IsAbstract || type.IsInterface)
-						continue;
-
-					if (typeof(MemoryBase).IsAssignableFrom(type))
-					{
-						if (type.BaseType.IsGenericType)
-						{
-							Type[] generics = type.BaseType.GetGenericArguments();
-							if (generics.Length == 1)
-							{
-								this.memoryTypeLookup.Add(generics[0], type);
-							}
-						}
-					}
-				}
-			}
+			AddMarshaler<ActorTypes, ActorTypesMarshaler>();
+			AddMarshaler<Appearance, AppearanceMarshaler>();
+			AddMarshaler<bool, BoolMarshaler>();
+			AddMarshaler<byte, ByteMarshaler>();
+			AddMarshaler<Color4, Color4Marshaler>();
+			AddMarshaler<Color, ColorMarshaler>();
+			AddMarshaler<Equipment, EquipmentMarshaler>();
+			AddMarshaler<Flag, FlagMarshaler>();
+			AddMarshaler<float, FloatMarshaler>();
+			AddMarshaler<int, IntMarshaler>();
+			AddMarshaler<Quaternion, QuaternionMarshaler>();
+			AddMarshaler<short, ShortMarshaler>();
+			AddMarshaler<string, StringMarshaler>();
+			AddMarshaler<Transform, TransformMarshaler>();
+			AddMarshaler<ushort, UShortMarshaler>();
+			AddMarshaler<Vector2D, Vector2DMarshaler>();
+			AddMarshaler<Vector, VectorMarshaler>();
+			AddMarshaler<Weapon, WeaponMarshaler>();
 
 			this.Process = Activator.CreateInstance<TProcess>();
 
@@ -133,7 +137,7 @@ namespace ConceptMatrix.Memory
 				}
 			}
 
-			new Thread(new ThreadStart(this.TickMemoryThread)).Start();
+			new Thread(new ThreadStart(this.TickMarshalersThread)).Start();
 			new Thread(new ThreadStart(this.ProcessWatcherThread)).Start();
 		}
 
@@ -143,30 +147,30 @@ namespace ConceptMatrix.Memory
 			return Task.CompletedTask;
 		}
 
-		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
+		public IMarshaler<T> GetMarshaler<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
 		{
 			List<IMemoryOffset> newOffsets = new List<IMemoryOffset>();
 			newOffsets.Add(baseOffset);
 			newOffsets.AddRange(offsets);
-			return this.GetMemory<T>(newOffsets.ToArray());
+			return this.GetMarshaler<T>(newOffsets.ToArray());
 		}
 
-		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset<T>[] offsets)
+		public IMarshaler<T> GetMarshaler<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset<T>[] offsets)
 		{
-			return this.GetMemory<T>(baseOffset, (IMemoryOffset[])offsets);
+			return this.GetMarshaler<T>(baseOffset, (IMemoryOffset[])offsets);
 		}
 
-		public IMemory<T> GetMemory<T>(IBaseMemoryOffset<T> baseOffset, params IMemoryOffset<T>[] offsets)
+		public IMarshaler<T> GetMarshaler<T>(IBaseMemoryOffset<T> baseOffset, params IMemoryOffset<T>[] offsets)
 		{
-			return this.GetMemory<T>((IBaseMemoryOffset)baseOffset, (IMemoryOffset[])offsets);
+			return this.GetMarshaler<T>((IBaseMemoryOffset)baseOffset, (IMemoryOffset[])offsets);
 		}
 
-		public IMemory<T> GetMemory<T>(params IMemoryOffset[] offsets)
+		public IMarshaler<T> GetMarshaler<T>(params IMemoryOffset[] offsets)
 		{
-			Type wrapperType = this.GetMemoryType(typeof(T));
+			Type marshalerType = this.GetMarshalerType(typeof(T));
 			try
 			{
-				return (MemoryBase<T>)Activator.CreateInstance(wrapperType, this.Process, offsets);
+				return (MarshalerBase<T>)Activator.CreateInstance(marshalerType, this.Process, offsets);
 			}
 			catch (TargetInvocationException ex)
 			{
@@ -174,7 +178,7 @@ namespace ConceptMatrix.Memory
 			}
 		}
 
-		public async Task WaitForMemoryTick()
+		public async Task WaitForMarshalerTick()
 		{
 			// we wait for two ticks since we might be towards the end of a tick,
 			// meaning the next tick (+1) will become active without ticking _all_ the memory.
@@ -198,15 +202,15 @@ namespace ConceptMatrix.Memory
 			this.LogCallback?.Invoke(message);
 		}
 
-		private Type GetMemoryType(Type type)
+		private Type GetMarshalerType(Type type)
 		{
-			if (!this.memoryTypeLookup.ContainsKey(type))
+			if (!marshalerLookup.ContainsKey(type))
 				throw new Exception($"No memory wrapper for type: {type}");
 
-			return this.memoryTypeLookup[type];
+			return marshalerLookup[type];
 		}
 
-		private void TickMemoryThread()
+		private void TickMarshalersThread()
 		{
 			try
 			{
@@ -218,14 +222,14 @@ namespace ConceptMatrix.Memory
 						return;
 
 					this.tickCount++;
-					MemoryBase.TickAllActiveMemory();
+					MarshalerBase.TickAllActive();
 				}
 
-				MemoryBase.DisposeAllMemory();
+				MarshalerBase.DisposeAll();
 			}
 			catch (Exception ex)
 			{
-				this.OnError(new Exception("Memory thread exception", ex));
+				this.OnError(new Exception("Marshaler thread exception", ex));
 			}
 		}
 

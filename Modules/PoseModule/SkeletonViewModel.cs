@@ -26,13 +26,13 @@ namespace ConceptMatrix.PoseModule
 		public ModelVisual3D Root;
 
 		private Actor actor;
-		private IMemory<CmQuaternion> rootRotationMem;
-		private IMemory<bool> animatingMem;
+		private IMarshaler<CmQuaternion> rootRotationMem;
+		private IMarshaler<bool> animatingMem;
 
 		private Dictionary<string, Bone> bones;
 		private Bone currentBone;
 
-		private IMemory<Appearance> appearanceMem;
+		private IMarshaler<Appearance> appearanceMem;
 
 		public SkeletonViewModel()
 		{
@@ -401,7 +401,7 @@ namespace ConceptMatrix.PoseModule
 
 				try
 				{
-					IMemory<CmTransform> transMem = actor.GetMemory(boneDef.Offsets);
+					IMarshaler<CmTransform> transMem = actor.GetMemory(boneDef.Offsets);
 					this.bones[name] = new Bone(this, name, transMem, boneDef);
 					this.Root.Children.Add(this.bones[name]);
 				}

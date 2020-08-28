@@ -20,7 +20,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	{
 		private Actor actor;
 
-		private IMemory<int> modelTypeMem;
+		private IMarshaler<int> modelTypeMem;
 
 		public ModelTypeEditor()
 		{

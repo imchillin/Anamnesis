@@ -16,7 +16,7 @@ namespace ConceptMatrix.Injection
 
 	public class InjectionService : IInjectionService
 	{
-		private AnamnesisService service;
+		private MarshalerService service;
 
 		public string GamePath
 		{
@@ -26,24 +26,24 @@ namespace ConceptMatrix.Injection
 			}
 		}
 
-		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
+		public IMarshaler<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
 		{
-			return this.service.GetMemory<T>(baseOffset, offsets);
+			return this.service.GetMarshaler<T>(baseOffset, offsets);
 		}
 
-		public IMemory<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset<T>[] offsets)
+		public IMarshaler<T> GetMemory<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset<T>[] offsets)
 		{
-			return this.service.GetMemory<T>(baseOffset, offsets);
+			return this.service.GetMarshaler<T>(baseOffset, offsets);
 		}
 
-		public IMemory<T> GetMemory<T>(IBaseMemoryOffset<T> baseOffset, params IMemoryOffset<T>[] offsets)
+		public IMarshaler<T> GetMemory<T>(IBaseMemoryOffset<T> baseOffset, params IMemoryOffset<T>[] offsets)
 		{
-			return this.service.GetMemory<T>(baseOffset, offsets);
+			return this.service.GetMarshaler<T>(baseOffset, offsets);
 		}
 
 		public async Task Initialize()
 		{
-			this.service = new AnamnesisService();
+			this.service = new MarshalerService();
 			this.service.ErrorCallback = this.OnError;
 			this.service.LogCallback = this.OnLog;
 			this.service.SelectProcessCallback = this.OnSelectProcess;
@@ -63,7 +63,7 @@ namespace ConceptMatrix.Injection
 
 		public Task WaitForMemoryTick()
 		{
-			return this.service.WaitForMemoryTick();
+			return this.service.WaitForMarshalerTick();
 		}
 
 		private void OnError(Exception ex)

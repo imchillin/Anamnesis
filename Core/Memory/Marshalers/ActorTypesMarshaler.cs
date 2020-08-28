@@ -1,15 +1,15 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace ConceptMatrix.Memory.Memory
+namespace ConceptMatrix.Memory.Marshalers
 {
 	using System;
 	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.Memory.Process;
 
-	internal class ActorTypesMemory : MemoryBase<ActorTypes>
+	internal class ActorTypesMarshaler : MarshalerBase<ActorTypes>
 	{
-		public ActorTypesMemory(IProcess process, IMemoryOffset[] offsets)
+		public ActorTypesMarshaler(IProcess process, IMemoryOffset[] offsets)
 			: base(process, offsets, 1)
 		{
 		}

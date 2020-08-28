@@ -24,20 +24,20 @@ namespace ConceptMatrix.GUI.Views
 		private IGameDataService gameData;
 		private IInjectionService injection;
 
-		private IMemory<int> timeMem;
-		private IMemory<int> territoryMem;
-		private IMemory<ushort> weatherMem;
-		private IMemory<Vector2D> cameraAngleMem;
-		private IMemory<Vector2D> cameraPanMem;
-		private IMemory<float> cameraRotatonMem;
-		private IMemory<float> cameraZoomMem;
-		private IMemory<float> cameraFovMem;
-		private IMemory<Vector> cameraPositionMem;
-		private IMemory<float> cameraMinZoomMem;
-		private IMemory<float> cameraMaxZoomMem;
-		private IMemory<Vector> posMem;
-		private IMemory<Quaternion> rotMem;
-		private IMemory<Vector> scaleMem;
+		private IMarshaler<int> timeMem;
+		private IMarshaler<int> territoryMem;
+		private IMarshaler<ushort> weatherMem;
+		private IMarshaler<Vector2D> cameraAngleMem;
+		private IMarshaler<Vector2D> cameraPanMem;
+		private IMarshaler<float> cameraRotatonMem;
+		private IMarshaler<float> cameraZoomMem;
+		private IMarshaler<float> cameraFovMem;
+		private IMarshaler<Vector> cameraPositionMem;
+		private IMarshaler<float> cameraMinZoomMem;
+		private IMarshaler<float> cameraMaxZoomMem;
+		private IMarshaler<Vector> posMem;
+		private IMarshaler<Quaternion> rotMem;
+		private IMarshaler<Vector> scaleMem;
 
 		private int time = 0;
 		private int moon = 0;
@@ -278,10 +278,10 @@ namespace ConceptMatrix.GUI.Views
 			this.CameraMaxZoom = unlock ? 256 : 20;
 			this.CameraMinZoom = unlock ? 0 : 1.75f;
 
-			using IMemory<float> minYMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraYMin);
+			using IMarshaler<float> minYMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraYMin);
 			minYMem.Value = unlock ? 1.5f : 1.25f;
 
-			using IMemory<float> maxYMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraYMax);
+			using IMarshaler<float> maxYMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraYMax);
 			maxYMem.Value = unlock ? -1.5f : -1.4f;
 		}
 

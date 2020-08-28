@@ -14,15 +14,15 @@ namespace ConceptMatrix.PoseModule
 	[SuppressPropertyChangedWarnings]
 	public class PoseService : IService, INotifyPropertyChanged
 	{
-		private IMemory<Flag> skel1Mem;
-		private IMemory<Flag> skel2Mem;
-		private IMemory<Flag> skel3Mem;
+		private IMarshaler<Flag> skel1Mem;
+		private IMarshaler<Flag> skel2Mem;
+		private IMarshaler<Flag> skel3Mem;
 		////private IMemory<Flag> skel4Mem;
 		////private IMemory<Flag> skel5Mem;
 		////private IMemory<Flag> skel6Mem;
 
-		private IMemory<Flag> phys1Mem;
-		private IMemory<Flag> phys2Mem;
+		private IMarshaler<Flag> phys1Mem;
+		private IMarshaler<Flag> phys2Mem;
 		////private IMemory<Flag> phys3Mem;
 
 		private ISelectionService selectionService;

@@ -13,8 +13,8 @@ namespace ConceptMatrix.GUI.Services
 
 	public class SelectionService : ISelectionService
 	{
-		private IMemory<bool> gposeMem;
-		private IMemory<ushort> gposeMem2;
+		private IMarshaler<bool> gposeMem;
+		private IMarshaler<ushort> gposeMem2;
 
 		public event SelectionModeEvent ModeChanged;
 		public event SelectionEvent ActorSelected;
@@ -56,7 +56,7 @@ namespace ConceptMatrix.GUI.Services
 			this.SelectedActor = actor;
 
 			IInjectionService injection = Services.Get<IInjectionService>();
-			using IMemory<int> territoryMem = injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
+			using IMarshaler<int> territoryMem = injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 
 			int territoryId = territoryMem.Value;
 

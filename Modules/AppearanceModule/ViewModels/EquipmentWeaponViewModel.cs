@@ -11,7 +11,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	[AddINotifyPropertyChangedInterface]
 	public class EquipmentWeaponViewModel : EquipmentBaseViewModel
 	{
-		private readonly IMemory<Weapon> memory;
+		private readonly IMarshaler<Weapon> memory;
 
 		public EquipmentWeaponViewModel(ItemSlots slot, Actor actor)
 			: base(slot, actor)

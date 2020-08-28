@@ -25,20 +25,20 @@ namespace ConceptMatrix.Memory.Offsets
 			return new BaseOffset(this.Offsets[0] + (ulong)((i + 1) * 8));
 		}
 
-		public IMemory<byte> GetCountMemory()
+		public IMarshaler<byte> GetCountMemory()
 		{
-			return AnamnesisService.Instance.GetMemory<byte>(this);
+			return MarshalerService.Instance.GetMarshaler<byte>(this);
 		}
 
 		public byte GetCount()
 		{
-			using IMemory<byte> mem = this.GetCountMemory();
+			using IMarshaler<byte> mem = this.GetCountMemory();
 			return mem.Value;
 		}
 
-		public IMemory<T> GetActorMemory<T>(byte i, params Offset[] offsets)
+		public IMarshaler<T> GetActorMemory<T>(byte i, params Offset[] offsets)
 		{
-			return AnamnesisService.Instance.GetMemory<T>(this.GetBaseOffset(i), offsets);
+			return MarshalerService.Instance.GetMarshaler<T>(this.GetBaseOffset(i), offsets);
 		}
 	}
 }

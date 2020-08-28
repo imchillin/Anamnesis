@@ -17,7 +17,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class EquipmentEditor : UserControl
 	{
-		private IMemory<Equipment> eqMem;
+		private IMarshaler<Equipment> eqMem;
 
 		public EquipmentEditor()
 		{

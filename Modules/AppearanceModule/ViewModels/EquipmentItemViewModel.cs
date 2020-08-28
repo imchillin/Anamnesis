@@ -8,9 +8,9 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 
 	public class EquipmentItemViewModel : EquipmentBaseViewModel
 	{
-		private readonly IMemory<Equipment> memory;
+		private readonly IMarshaler<Equipment> memory;
 
-		public EquipmentItemViewModel(IMemory<Equipment> equipmentMemory, ItemSlots slot, Actor actor)
+		public EquipmentItemViewModel(IMarshaler<Equipment> equipmentMemory, ItemSlots slot, Actor actor)
 			: base(slot, actor)
 		{
 			this.memory = equipmentMemory;
