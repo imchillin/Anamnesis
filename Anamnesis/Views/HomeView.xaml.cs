@@ -23,8 +23,6 @@ namespace Anamnesis.GUI.Views
 	{
 		private IGameDataService gameData;
 		private IInjectionService injection;
-
-		private IMarshaler<int>? timeMem;
 		private IMarshaler<int>? territoryMem;
 		private IMarshaler<ushort>? weatherMem;
 		private IMarshaler<Vector2D>? cameraAngleMem;
@@ -39,8 +37,6 @@ namespace Anamnesis.GUI.Views
 		private IMarshaler<Quaternion>? rotMem;
 		private IMarshaler<Vector>? scaleMem;
 
-		private int time = 0;
-		private int moon = 0;
 		private bool isGpose;
 		private bool initialized = false;
 
@@ -51,38 +47,13 @@ namespace Anamnesis.GUI.Views
 			this.gameData = Anamnesis.Services.Get<IGameDataService>();
 			this.injection = Anamnesis.Services.Get<IInjectionService>();
 
+			this.TimeService = Anamnesis.Services.Get<TimeService>();
+
 			this.ContentArea.DataContext = this;
 		}
 
+		public TimeService TimeService { get; private set; }
 		public string Territory { get; set; } = "Unknown";
-
-		public int Time
-		{
-			get
-			{
-				return this.time;
-			}
-
-			set
-			{
-				this.time = value;
-				this.timeMem?.SetValue((this.moon * 86400) + (this.time * 60));
-			}
-		}
-
-		public int Moon
-		{
-			get
-			{
-				return this.moon;
-			}
-
-			set
-			{
-				this.moon = value;
-				this.timeMem?.SetValue((this.moon * 86400) + (this.time * 60));
-			}
-		}
 
 		public float CameraAngleX
 		{
@@ -205,9 +176,6 @@ namespace Anamnesis.GUI.Views
 
 			this.territoryMem?.Dispose();
 			this.weatherMem?.Dispose();
-
-			this.timeMem?.SetValue(0);
-			this.timeMem?.Dispose();
 		}
 
 		private void OnCameraAngleMemValueChanged(object? sender, Vector2D value)
@@ -306,7 +274,6 @@ namespace Anamnesis.GUI.Views
 			{
 				this.initialized = true;
 
-				this.timeMem = this.injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
 				this.weatherMem = this.injection.GetMemory(Offsets.Main.GposeFilters, Offsets.Main.ForceWeather);
 				this.territoryMem = null;
 				this.territoryMem = this.injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
