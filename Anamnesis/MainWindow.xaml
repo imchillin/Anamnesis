@@ -57,7 +57,7 @@
 				<Grid VerticalAlignment="Top">
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-						<TextBlock Text="Concept Matrix 3" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
+						<TextBlock Text="Anamnesis" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
 						<TextBlock Text=" - " VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>
 						<TextBlock x:Name="ActorName" VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>
 					</StackPanel>
