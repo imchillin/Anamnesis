@@ -31,12 +31,10 @@
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 	  <PackageReference Include="System.Memory" Version="4.5.4" />
+	  <PackageReference Include="System.Text.Json" Version="4.7.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="Anamnesis">
-	    <HintPath>..\Lib\Anamnesis.dll</HintPath>
-	  </Reference>
 	  <Reference Include="SimpleLog">
 	    <HintPath>..\Lib\SimpleLog.dll</HintPath>
 	  </Reference>

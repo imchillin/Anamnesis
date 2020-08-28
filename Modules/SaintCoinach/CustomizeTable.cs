@@ -5,9 +5,9 @@ namespace ConceptMatrix.SaintCoinachModule
 {
 	using System;
 	using System.Collections.Generic;
-	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 
 	internal class CustomizeTable : Table<ICharaMakeCustomize>, ICharaMakeCustomizeData
 	{

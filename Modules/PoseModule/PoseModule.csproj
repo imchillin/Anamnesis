@@ -72,12 +72,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="Anamnesis">
-	    <HintPath>..\..\Lib\Anamnesis.dll</HintPath>
-	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Update="Languages\gr.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

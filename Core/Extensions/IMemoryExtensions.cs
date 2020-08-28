@@ -8,7 +8,7 @@ namespace ConceptMatrix
 	using System.ComponentModel;
 	using System.Reflection;
 	using System.Runtime.CompilerServices;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 	using ConceptMatrix.MemoryBinds;
 
 	public static class IMemoryExtensions

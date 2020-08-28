@@ -9,7 +9,7 @@ namespace ConceptMatrix.WpfStyles.Drawers
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using System.Windows.Media;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 
 	using Binder = ConceptMatrix.WpfStyles.DependencyProperties.Binder;

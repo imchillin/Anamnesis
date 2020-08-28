@@ -16,7 +16,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using ConceptMatrix.WpfStyles.Drawers;
 	using PropertyChanged;
 
-	using Vector = Anamnesis.Vector;
+	using Vector = ConceptMatrix.Memory.Vector;
 
 	/// <summary>
 	/// Interaction logic for ItemView.xaml.

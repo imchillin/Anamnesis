@@ -1,38 +1,38 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>Anamnesis</name>
+        <name>ConceptMatrix.Memory</name>
     </assembly>
     <members>
-        <member name="P:Anamnesis.IMemory`1.Name">
+        <member name="P:ConceptMatrix.Memory.IMemory`1.Name">
             <summary>
             Gets a value used to identify this memory when logging.
             </summary>
         </member>
-        <member name="P:Anamnesis.IMemory`1.Value">
+        <member name="P:ConceptMatrix.Memory.IMemory`1.Value">
             <summary>
             Gets or sets the value in memory.
             </summary>
         </member>
-        <member name="M:Anamnesis.IMemory`1.SetValue(`0,System.Boolean)">
+        <member name="M:ConceptMatrix.Memory.IMemory`1.SetValue(`0,System.Boolean)">
             <summary>
             Sets the value in memory.
             </summary>
             <param name="value">the value to write.</param>
             <param name="immediate">should this value be pushed into process memory immediately.</param>
         </member>
-        <member name="T:Anamnesis.Offsets.FlagOffset">
+        <member name="T:ConceptMatrix.Memory.Offsets.FlagOffset">
             <summary>
             Flag offsets are special offsets that indicate a static chunk of memory to be written for either
             On or Off states. Flag Offsets cannot be altered otherwise.
             </summary>
         </member>
-        <member name="M:Anamnesis.Process.WinProcess.OpenProcess(System.Diagnostics.Process)">
+        <member name="M:ConceptMatrix.Memory.Process.WinProcess.OpenProcess(System.Diagnostics.Process)">
             <summary>
             Open the PC game process with all security and access rights.
             </summary>
         </member>
-        <member name="M:Anamnesis.Quaternion.FromEuler(Anamnesis.Vector)">
+        <member name="M:ConceptMatrix.Memory.Quaternion.FromEuler(ConceptMatrix.Memory.Vector)">
             <summary>
             Convert into a Quaternion assuming the Vector represents euler angles.
             </summary>

@@ -4,9 +4,9 @@
 namespace ConceptMatrix.AppearanceModule.Items
 {
 	using System;
-	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
 
 	public class DummyNoneDye : IDye

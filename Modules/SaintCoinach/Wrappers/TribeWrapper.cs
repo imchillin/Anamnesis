@@ -3,8 +3,8 @@
 
 namespace ConceptMatrix.SaintCoinachModule
 {
-	using Anamnesis;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 	using SaintCoinach.Xiv;
 
 	internal class TribeWrapper : ObjectWrapper<Tribe>, ITribe

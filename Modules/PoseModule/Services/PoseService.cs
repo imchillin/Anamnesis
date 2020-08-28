@@ -7,7 +7,7 @@ namespace ConceptMatrix.PoseModule
 	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]

@@ -4,8 +4,8 @@
 namespace ConceptMatrix.AppearanceModule.Views
 {
 	using System.Windows.Controls;
-	using Anamnesis;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 
 	/// <summary>
 	/// Interaction logic for HairSelector.xaml.

@@ -6,9 +6,9 @@ namespace ConceptMatrix
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using Anamnesis;
-	using Anamnesis.Exceptions;
-	using Anamnesis.Offsets;
+	using ConceptMatrix.Memory;
+	using ConceptMatrix.Memory.Exceptions;
+	using ConceptMatrix.Memory.Offsets;
 
 	public class Actor : IDisposable
 	{

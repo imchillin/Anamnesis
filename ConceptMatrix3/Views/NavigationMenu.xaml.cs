@@ -10,9 +10,10 @@ namespace ConceptMatrix.GUI.Views
 	using System.Linq;
 	using System.Windows.Controls;
 	using System.Windows.Data;
-	using Anamnesis;
 	using ConceptMatrix.GUI.Services;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
+
 	using static ConceptMatrix.GUI.Services.ViewService;
 
 	/// <summary>

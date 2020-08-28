@@ -7,12 +7,12 @@ namespace ConceptMatrix.Injection
 	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using Anamnesis;
-	using Anamnesis.Offsets;
-	using Anamnesis.Process;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Services;
 	using ConceptMatrix.GUI.Windows;
+	using ConceptMatrix.Memory;
+	using ConceptMatrix.Memory.Offsets;
+	using ConceptMatrix.Memory.Process;
 
 	public class InjectionService : IInjectionService
 	{

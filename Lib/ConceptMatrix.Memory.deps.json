@@ -7,13 +7,13 @@
   "targets": {
     ".NETStandard,Version=v2.1": {},
     ".NETStandard,Version=v2.1/": {
-      "Anamnesis/1.0.0": {
+      "ConceptMatrix.Memory/1.0.0": {
         "dependencies": {
           "StyleCop.Analyzers": "1.1.118",
           "System.Text.Json": "4.7.0"
         },
         "runtime": {
-          "Anamnesis.dll": {}
+          "ConceptMatrix.Memory.dll": {}
         }
       },
       "Microsoft.Bcl.AsyncInterfaces/1.1.0": {
@@ -104,7 +104,7 @@
     }
   },
   "libraries": {
-    "Anamnesis/1.0.0": {
+    "ConceptMatrix.Memory/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

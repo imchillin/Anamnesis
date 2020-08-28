@@ -5,6 +5,7 @@ namespace ConceptMatrix.PoseModule
 {
 	using System.Threading.Tasks;
 	using ConceptMatrix.Localization;
+	using ConceptMatrix.Memory;
 	using ConceptMatrix.Modules;
 	using ConceptMatrix.PoseModule.Pages;
 
@@ -33,7 +34,7 @@ namespace ConceptMatrix.PoseModule
 
 		private bool IsActorPoseSupported(Actor actor)
 		{
-			if (actor.Type != Anamnesis.ActorTypes.Player && actor.Type != Anamnesis.ActorTypes.EventNpc && actor.Type != Anamnesis.ActorTypes.BattleNpc)
+			if (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.EventNpc && actor.Type != ActorTypes.BattleNpc)
 				return false;
 
 			int modelType = actor.GetValue(Offsets.Main.ModelType);

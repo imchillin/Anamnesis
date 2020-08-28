@@ -5,7 +5,7 @@ namespace ConceptMatrix
 {
 	using System;
 	using System.Threading.Tasks;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 
 	public delegate void DrawerEvent();
 	public delegate void DialogEvent();

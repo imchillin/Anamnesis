@@ -3,8 +3,8 @@
 
 namespace ConceptMatrix.AppearanceModule.Files
 {
-	using Anamnesis;
 	using ConceptMatrix;
+	using ConceptMatrix.Memory;
 
 	#pragma warning disable IDE1006, SA1300
 	public class LegacyAppearanceFile : LegacyEquipmentSetFile

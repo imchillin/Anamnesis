@@ -12,14 +12,14 @@ namespace ConceptMatrix.PoseModule
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Media.Media3D;
-	using Anamnesis;
-	using Anamnesis.Offsets;
 	using ConceptMatrix;
+	using ConceptMatrix.Memory;
+	using ConceptMatrix.Memory.Offsets;
 	using ConceptMatrix.ThreeD;
 
-	using CmQuaternion = Anamnesis.Quaternion;
-	using CmTransform = Anamnesis.Transform;
-	using CmVector = Anamnesis.Vector;
+	using CmQuaternion = ConceptMatrix.Memory.Quaternion;
+	using CmTransform = ConceptMatrix.Memory.Transform;
+	using CmVector = ConceptMatrix.Memory.Vector;
 
 	public class SkeletonViewModel : INotifyPropertyChanged
 	{

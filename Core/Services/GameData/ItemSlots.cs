@@ -4,7 +4,7 @@
 namespace ConceptMatrix.GameData
 {
 	using System;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 
 	public enum ItemSlots
 	{

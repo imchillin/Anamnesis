@@ -9,7 +9,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
-	using Vector = Anamnesis.Vector;
+	using Vector = ConceptMatrix.Memory.Vector;
 
 	/// <summary>
 	/// Interaction logic for Vector3DEditor.xaml.

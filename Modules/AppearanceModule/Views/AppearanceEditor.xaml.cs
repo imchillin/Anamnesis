@@ -10,12 +10,12 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
 
-	using AnAppearance = Anamnesis.Appearance;
+	using AnAppearance = ConceptMatrix.Memory.Appearance;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.

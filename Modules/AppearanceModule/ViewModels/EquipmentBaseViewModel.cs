@@ -5,10 +5,10 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 {
 	using System;
 	using System.ComponentModel;
-	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.Items;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
 
 	public abstract class EquipmentBaseViewModel : IDisposable, INotifyPropertyChanged

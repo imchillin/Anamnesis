@@ -6,9 +6,9 @@ namespace ConceptMatrix.PoseModule
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using Anamnesis;
-	using Anamnesis.Offsets;
 	using ConceptMatrix;
+	using ConceptMatrix.Memory;
+	using ConceptMatrix.Memory.Offsets;
 
 	public class SkeletonService : IService
 	{

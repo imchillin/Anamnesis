@@ -10,9 +10,10 @@ namespace ConceptMatrix.AppearanceModule
 	using System.Text.Json;
 	using System.Threading.Tasks;
 	using System.Windows.Documents;
-	using Anamnesis.Serialization;
 	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.AppearanceModule.Pages;
+	using ConceptMatrix.Memory;
+	using ConceptMatrix.Memory.Serialization;
 	using ConceptMatrix.Modules;
 
 	public class Module : IModule
@@ -73,7 +74,7 @@ namespace ConceptMatrix.AppearanceModule
 
 		private bool IsActorSupported(Actor actor)
 		{
-			if (actor.Type != Anamnesis.ActorTypes.Player && actor.Type != Anamnesis.ActorTypes.EventNpc && actor.Type != Anamnesis.ActorTypes.BattleNpc)
+			if (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.EventNpc && actor.Type != ActorTypes.BattleNpc)
 				return false;
 
 			return true;

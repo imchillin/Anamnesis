@@ -8,10 +8,10 @@ namespace ConceptMatrix.GUI.Services
 	using System.Reflection;
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
-	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Views;
 	using ConceptMatrix.GUI.Windows;
+	using ConceptMatrix.Memory;
 
 	public class ViewService : IViewService
 	{

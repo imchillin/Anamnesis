@@ -7,7 +7,7 @@ namespace ConceptMatrix.GUI.Services
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
-	using Anamnesis.Serialization.Converters;
+	using ConceptMatrix.Memory.Serialization.Converters;
 
 	public class SerializerService : ISerializerService
 	{

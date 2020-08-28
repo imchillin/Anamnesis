@@ -6,7 +6,7 @@ namespace ConceptMatrix.PoseModule
 	using System;
 	using System.Windows.Media.Media3D;
 
-	using CmVector = Anamnesis.Vector;
+	using CmVector = ConceptMatrix.Memory.Vector;
 
 	public static class VectorExtensions
 	{

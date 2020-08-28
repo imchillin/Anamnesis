@@ -7,9 +7,9 @@ namespace ConceptMatrix.GUI.Services
 	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GUI.Dialogs;
+	using ConceptMatrix.Memory;
 
 	public class SelectionService : ISelectionService
 	{

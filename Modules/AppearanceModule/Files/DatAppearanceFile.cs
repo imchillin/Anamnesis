@@ -8,7 +8,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 	using System.Text;
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 	using Paths = System.IO.Path;
 
 	public class DatAppearanceFile : FileBase, IFileSource.IFile

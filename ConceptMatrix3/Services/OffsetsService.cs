@@ -9,7 +9,7 @@ namespace ConceptMatrix.GUI.Services
 	using System.Reflection;
 	using System.Text;
 	using System.Threading.Tasks;
-	using Anamnesis.Offsets;
+	using ConceptMatrix.Memory.Offsets;
 
 	using static ConceptMatrix.Offsets;
 

@@ -4,8 +4,8 @@
 namespace ConceptMatrix
 {
 	using System.Threading.Tasks;
-	using Anamnesis;
-	using Anamnesis.Offsets;
+	using ConceptMatrix.Memory;
+	using ConceptMatrix.Memory.Offsets;
 
 	public interface IInjectionService : IService
 	{

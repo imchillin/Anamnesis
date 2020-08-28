@@ -8,11 +8,11 @@ namespace ConceptMatrix.AppearanceModule.Pages
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis;
 	using ConceptMatrix.AppearanceModule.Dialogs;
 	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.AppearanceModule.Views;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 	using ConceptMatrix.WpfStyles.Drawers;
 	using PropertyChanged;
 

@@ -8,7 +8,7 @@ namespace ConceptMatrix.AppearanceModule.ViewModels
 	using System.Reflection;
 	using System.Runtime.CompilerServices;
 	using System.Windows;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
 
 	[SuppressPropertyChangedWarnings]

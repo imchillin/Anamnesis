@@ -3,8 +3,8 @@
 
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
-	using Anamnesis;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 
 	public class EquipmentItemViewModel : EquipmentBaseViewModel
 	{

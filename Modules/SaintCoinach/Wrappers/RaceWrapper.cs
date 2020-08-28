@@ -4,9 +4,9 @@
 namespace ConceptMatrix.SaintCoinachModule
 {
 	using System.Collections.Generic;
-	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 	using SaintCoinach.Xiv;
 
 	internal class RaceWrapper : ObjectWrapper<Race>, IRace

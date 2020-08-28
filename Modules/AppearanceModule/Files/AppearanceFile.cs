@@ -6,10 +6,10 @@ namespace ConceptMatrix.AppearanceModule.Files
 	using System;
 	using System.Runtime.CompilerServices;
 	using System.Threading.Tasks;
-	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.AppearanceModule.ViewModels;
 	using ConceptMatrix.AppearanceModule.Views;
+	using ConceptMatrix.Memory;
 
 	[Serializable]
 	public class AppearanceFile : FileBase

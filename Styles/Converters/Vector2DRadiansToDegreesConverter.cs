@@ -6,7 +6,7 @@ namespace ConceptMatrix.WpfStyles.Converters
 	using System;
 	using System.Globalization;
 	using System.Windows.Data;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 
 	[ValueConversion(typeof(Vector2D), typeof(Vector2D))]
 	public class Vector2DRadiansToDegreesConverter : IValueConverter

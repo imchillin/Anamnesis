@@ -106,12 +106,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Anamnesis">
-      <HintPath>..\..\Lib\Anamnesis.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Assets\classBorder.png" />
     <Resource Include="Assets\Classes\alchemist.png" />
     <Resource Include="Assets\Classes\arcanist.png" />

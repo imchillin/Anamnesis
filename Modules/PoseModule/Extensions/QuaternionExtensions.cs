@@ -6,7 +6,7 @@ namespace ConceptMatrix.PoseModule
 	using System;
 	using System.Windows.Media.Media3D;
 
-	using CmQuaternion = Anamnesis.Quaternion;
+	using CmQuaternion = ConceptMatrix.Memory.Quaternion;
 
 	public static class QuaternionExtensions
 	{

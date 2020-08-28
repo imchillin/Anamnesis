@@ -4,7 +4,7 @@
 namespace ConceptMatrix.GameData
 {
 	using System.Collections.Generic;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 
 	public interface ICharaMakeCustomizeData : IData<ICharaMakeCustomize>
 	{

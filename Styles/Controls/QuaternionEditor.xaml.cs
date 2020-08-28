@@ -11,17 +11,17 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 	using ConceptMatrix.Three3D;
 	using ConceptMatrix.ThreeD;
 	using ConceptMatrix.ThreeD.Lines;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
-	using CmQuaternion = Anamnesis.Quaternion;
+	using CmQuaternion = ConceptMatrix.Memory.Quaternion;
 	using Color = System.Windows.Media.Color;
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;
-	using Vector = Anamnesis.Vector;
+	using Vector = ConceptMatrix.Memory.Vector;
 
 	/// <summary>
 	/// Interaction logic for QuaternionEditor.xaml.

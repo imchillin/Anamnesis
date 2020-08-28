@@ -6,7 +6,7 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 

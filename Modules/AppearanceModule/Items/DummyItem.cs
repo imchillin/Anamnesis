@@ -5,9 +5,9 @@ namespace ConceptMatrix.AppearanceModule.Items
 {
 	using System;
 	using System.Collections.Generic;
-	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
 
 	public class DummyItem : IItem

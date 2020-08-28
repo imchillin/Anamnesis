@@ -3,9 +3,9 @@
 
 namespace ConceptMatrix.AppearanceModule.ViewModels
 {
-	using Anamnesis;
 	using ConceptMatrix;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]

@@ -57,9 +57,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="Anamnesis">
-	    <HintPath>..\Lib\Anamnesis.dll</HintPath>
-	  </Reference>
 	  <Reference Include="SimpleLog">
 	    <HintPath>..\Lib\SimpleLog.dll</HintPath>
 	  </Reference>

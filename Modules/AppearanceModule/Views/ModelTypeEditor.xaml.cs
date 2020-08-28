@@ -7,7 +7,7 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media.Animation;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 	using ConceptMatrix.WpfStyles.Drawers;
 	using PropertyChanged;
 	using Styles.Drawers;

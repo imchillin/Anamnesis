@@ -8,11 +8,11 @@ namespace ConceptMatrix.GUI.Views
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
 
-	using Vector = Anamnesis.Vector;
+	using Vector = ConceptMatrix.Memory.Vector;
 
 	/// <summary>
 	/// Interaction logic for WorldView.xaml.

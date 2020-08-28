@@ -6,11 +6,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis;
 	using ConceptMatrix.AppearanceModule.Utilities;
+	using ConceptMatrix.Memory;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using PropertyChanged;
-
 	using WpfColor = System.Windows.Media.Color;
 
 	/// <summary>

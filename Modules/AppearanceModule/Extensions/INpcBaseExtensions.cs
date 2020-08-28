@@ -3,9 +3,9 @@
 
 namespace ConceptMatrix.AppearanceModule
 {
-	using Anamnesis;
 	using ConceptMatrix.AppearanceModule.Files;
 	using ConceptMatrix.GameData;
+	using ConceptMatrix.Memory;
 
 	public static class INpcBaseExtensions
 	{

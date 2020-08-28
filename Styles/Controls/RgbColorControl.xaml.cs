@@ -7,13 +7,12 @@ namespace ConceptMatrix.WpfStyles.Controls
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
-	using Anamnesis;
 	using ConceptMatrix;
+	using ConceptMatrix.Memory;
 	using ConceptMatrix.WpfStyles.DependencyProperties;
 	using ConceptMatrix.WpfStyles.Drawers;
 	using PropertyChanged;
-
-	using CmColor = Anamnesis.Color;
+	using CmColor = ConceptMatrix.Memory.Color;
 	using WpfColor = System.Windows.Media.Color;
 
 	/// <summary>

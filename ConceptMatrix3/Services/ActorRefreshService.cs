@@ -4,8 +4,8 @@
 namespace ConceptMatrix.GUI.Services
 {
 	using System.Threading.Tasks;
-	using Anamnesis;
 	using ConceptMatrix;
+	using ConceptMatrix.Memory;
 
 	public class ActorRefreshService : IActorRefreshService
 	{

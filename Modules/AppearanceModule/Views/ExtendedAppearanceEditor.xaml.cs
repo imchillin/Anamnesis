@@ -18,10 +18,10 @@ namespace ConceptMatrix.AppearanceModule.Views
 	using System.Windows.Media.Imaging;
 	using System.Windows.Navigation;
 	using System.Windows.Shapes;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 	using PropertyChanged;
-	using Color = Anamnesis.Color;
-	using Vector = Anamnesis.Vector;
+	using Color = ConceptMatrix.Memory.Color;
+	using Vector = ConceptMatrix.Memory.Vector;
 
 	/// <summary>
 	/// Interaction logic for ExtendedAppearanceEditor.xaml.

@@ -5,7 +5,7 @@ namespace ConceptMatrix.AppearanceModule.Files
 {
 	using System;
 	using System.Globalization;
-	using Anamnesis;
+	using ConceptMatrix.Memory;
 
 	[Serializable]
 	public class LegacyEquipmentSetFile : FileBase

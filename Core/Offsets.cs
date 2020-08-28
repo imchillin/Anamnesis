@@ -4,8 +4,8 @@
 namespace ConceptMatrix
 {
 	using System;
-	using Anamnesis;
-	using Anamnesis.Offsets;
+	using ConceptMatrix.Memory;
+	using ConceptMatrix.Memory.Offsets;
 
 	#pragma warning disable CS8618
 
