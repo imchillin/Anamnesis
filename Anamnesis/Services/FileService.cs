@@ -23,7 +23,7 @@ namespace Anamnesis.GUI.Services
 			get
 			{
 				string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-				dir += "/Concept Matrix 3/";
+				dir += "/Anamnesis/";
 				return dir;
 			}
 		}
