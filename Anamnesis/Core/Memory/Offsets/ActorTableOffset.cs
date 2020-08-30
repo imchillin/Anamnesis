@@ -27,7 +27,7 @@ namespace Anamnesis.Memory.Offsets
 
 		public IMarshaler<byte> GetCountMemory()
 		{
-			return MarshalerService.Instance.GetMarshaler<byte>(this);
+			return MemoryService.GetMarshaler<byte>(this);
 		}
 
 		public byte GetCount()
@@ -38,7 +38,7 @@ namespace Anamnesis.Memory.Offsets
 
 		public IMarshaler<T> GetActorMemory<T>(byte i, params Offset[] offsets)
 		{
-			return MarshalerService.Instance.GetMarshaler<T>(this.GetBaseOffset(i), offsets);
+			return MemoryService.GetMarshaler<T>(this.GetBaseOffset(i), offsets);
 		}
 	}
 }

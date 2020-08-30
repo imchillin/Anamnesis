@@ -5,12 +5,11 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class AppearanceMarshaler : MarshalerBase<Appearance>
 	{
-		public AppearanceMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 26)
+		public AppearanceMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 26)
 		{
 		}
 

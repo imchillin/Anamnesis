@@ -11,10 +11,12 @@ namespace Anamnesis.Memory.Marshalers
 	using Anamnesis.Memory;
 	using Anamnesis.Memory.Exceptions;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
+	using SimpleLog;
 
 	internal abstract class MarshalerBase<T> : MarshalerBase, IMarshaler<T>
 	{
+		protected static readonly Logger Log = SimpleLog.Log.GetLogger<MarshalerBase<T>>();
+
 		private readonly ulong length;
 		private byte[] oldData;
 		private byte[] newData;
@@ -24,8 +26,8 @@ namespace Anamnesis.Memory.Marshalers
 
 		private Exception? lastException;
 
-		public MarshalerBase(IProcess process, IMemoryOffset[] offsets, ulong length)
-			: base(process, offsets)
+		public MarshalerBase(IMemoryOffset[] offsets, ulong length)
+			: base(offsets)
 		{
 			this.length = length;
 			this.oldData = new byte[this.length];
@@ -35,6 +37,11 @@ namespace Anamnesis.Memory.Marshalers
 
 			// Tick once to ensure current value is valid
 			this.Tick();
+		}
+
+		public MarshalerBase(IMemoryOffset offset, ulong length)
+			: this(new[] { offset }, length)
+		{
 		}
 
 		public event ValueChangedEventHandler<T>? ValueChanged;
@@ -133,7 +140,7 @@ namespace Anamnesis.Memory.Marshalers
 					}
 					catch (Exception ex)
 					{
-						MarshalerService.Instance.OnError(ex);
+						Log.Write(ex);
 					}
 				}
 			}
@@ -150,7 +157,7 @@ namespace Anamnesis.Memory.Marshalers
 					this.dirty = false;
 					this.Dispose();
 
-					MarshalerService.Instance.OnError(new Exception("Disposing of memory: " + this + " due to exception", ex));
+					Log.Write(new Exception("Disposing of memory: " + this + " due to exception", ex));
 				}
 			}
 		}
@@ -169,7 +176,7 @@ namespace Anamnesis.Memory.Marshalers
 		// writes value to oldData and to memory
 		private bool DoWrite(T val, bool force = false)
 		{
-			if (!MarshalerService.Instance.ProcessIsAlive)
+			if (!MemoryService.ProcessIsAlive)
 				throw new Exception("no FFXIV process");
 
 			this.Write(val, ref this.newData);
@@ -178,9 +185,9 @@ namespace Anamnesis.Memory.Marshalers
 			{
 				Array.Copy(this.newData, this.oldData, (int)this.length);
 
-				MarshalerService.Instance.OnLog("Write memory " + this);
+				Log.Write("Write memory " + this);
 
-				this.process.Write(this.address, this.oldData, (UIntPtr)this.length, out IntPtr bytesRead);
+				MemoryService.Write(this.address, this.oldData, (UIntPtr)this.length, out IntPtr bytesRead);
 				return true;
 			}
 
@@ -190,10 +197,10 @@ namespace Anamnesis.Memory.Marshalers
 		// Reads memory into newData array
 		private void DoRead()
 		{
-			if (!MarshalerService.Instance.ProcessIsAlive)
+			if (!MemoryService.ProcessIsAlive)
 				throw new Exception("no FFXIV process");
 
-			if (!this.process.Read(this.address, this.newData, (UIntPtr)this.length, IntPtr.Zero))
+			if (!MemoryService.Read(this.address, this.newData, (UIntPtr)this.length, IntPtr.Zero))
 			{
 				int code = Marshal.GetLastWin32Error();
 

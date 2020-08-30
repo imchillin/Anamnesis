@@ -5,12 +5,11 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class FloatMarshaler : MarshalerBase<float>
 	{
-		public FloatMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 4)
+		public FloatMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 4)
 		{
 		}
 

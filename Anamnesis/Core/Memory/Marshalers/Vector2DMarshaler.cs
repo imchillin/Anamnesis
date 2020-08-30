@@ -5,12 +5,11 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class Vector2DMarshaler : MarshalerBase<Vector2D>
 	{
-		public Vector2DMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 8)
+		public Vector2DMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 8)
 		{
 		}
 

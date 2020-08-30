@@ -6,14 +6,13 @@ namespace Anamnesis.Memory.Marshalers
 	using System;
 	using System.Text;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class StringMarshaler : MarshalerBase<string>
 	{
 		private bool zeroTerminated = true;
 
-		public StringMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 32)
+		public StringMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 32)
 		{
 		}
 

@@ -66,8 +66,7 @@ namespace Anamnesis
 
 		public Task Initialize()
 		{
-			IInjectionService injection = Services.Get<IInjectionService>();
-			this.timeMem = injection.GetMemory(Offsets.Main.Time, Offsets.Main.TimeControl);
+			this.timeMem = MemoryService.GetMarshaler(Offsets.Main.Time, Offsets.Main.TimeControl);
 			return Task.CompletedTask;
 		}
 

@@ -8,17 +8,20 @@ namespace Anamnesis.Memory.Marshalers
 	using System.ComponentModel;
 	using Anamnesis.Memory.Exceptions;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal abstract class MarshalerBase : IMarshaler
 	{
-		protected IProcess process;
 		protected UIntPtr address;
 		protected IMemoryOffset[] offsets;
 
 		private static readonly List<MarshalerBase> ActiveMemoryInterfaces = new List<MarshalerBase>();
 
-		public MarshalerBase(IProcess process, IMemoryOffset[] offsets)
+		public MarshalerBase(IMemoryOffset offset)
+			: this(new[] { offset })
+		{
+		}
+
+		public MarshalerBase(IMemoryOffset[] offsets)
 		{
 			this.Name = string.Empty;
 
@@ -34,7 +37,6 @@ namespace Anamnesis.Memory.Marshalers
 				}
 			}
 
-			this.process = process;
 			this.offsets = offsets;
 
 			this.UpdateAddress();
@@ -69,11 +71,9 @@ namespace Anamnesis.Memory.Marshalers
 				memories = new List<MarshalerBase>(ActiveMemoryInterfaces);
 			}
 
-			MarshalerService service = MarshalerService.Instance;
-
 			foreach (MarshalerBase memory in memories)
 			{
-				if (!service.ProcessIsAlive)
+				if (!MemoryService.ProcessIsAlive)
 					return;
 
 				// Handle cases where memory was disposed while we were ticking.
@@ -116,7 +116,7 @@ namespace Anamnesis.Memory.Marshalers
 
 		public void UpdateAddress()
 		{
-			this.address = this.process.GetAddress(this.offsets);
+			this.address = MemoryService.GetAddress(this.offsets);
 
 			if (this.address == UIntPtr.Zero)
 				throw new InvalidAddressException(this.ToString());

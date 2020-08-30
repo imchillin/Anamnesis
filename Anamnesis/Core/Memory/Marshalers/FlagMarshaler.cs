@@ -5,14 +5,13 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class FlagMarshaler : MarshalerBase<Flag>
 	{
 		private FlagOffset? flagOffset;
 
-		public FlagMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, GetMemoryLength(offsets))
+		public FlagMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, GetMemoryLength(offsets))
 		{
 		}
 

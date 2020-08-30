@@ -12,8 +12,6 @@ namespace Anamnesis
 
 	public class Actor : IDisposable
 	{
-		protected static IInjectionService injection = Services.Get<IInjectionService>();
-
 		private IBaseMemoryOffset baseOffset;
 		private List<WeakReference<IMarshaler>> memories = new List<WeakReference<IMarshaler>>();
 
@@ -47,7 +45,7 @@ namespace Anamnesis
 
 		public IMarshaler<T> GetMemory<T>(IMemoryOffset<T> offset)
 		{
-			IMarshaler<T> mem = injection.GetMemory<T>(this.baseOffset, offset);
+			IMarshaler<T> mem = MemoryService.GetMarshaler<T>(this.baseOffset, offset);
 			this.memories.Add(new WeakReference<IMarshaler>(mem));
 			return mem;
 		}

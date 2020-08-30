@@ -5,12 +5,11 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class TransformMarshaler : MarshalerBase<Transform>
 	{
-		public TransformMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 44)
+		public TransformMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 44)
 		{
 		}
 

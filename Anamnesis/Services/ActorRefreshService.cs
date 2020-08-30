@@ -15,7 +15,6 @@ namespace Anamnesis.GUI.Services
 		private int applyCountdown = 0;
 		private Task? applyTask;
 		private SelectionService selectionService = Services.Get<SelectionService>();
-		private IInjectionService injectionService = Services.Get<IInjectionService>();
 
 		public event RefreshEvent? RefreshBegin;
 		public event RefreshEvent? RefreshComplete;
@@ -110,7 +109,7 @@ namespace Anamnesis.GUI.Services
 
 				await Task.Delay(50);
 
-				await this.injectionService.WaitForMemoryTick();
+				await MemoryService.WaitForMarshalerTick();
 				await Task.Delay(50);
 
 				Log.Write("Refresh Complete", "Actor Refresh");

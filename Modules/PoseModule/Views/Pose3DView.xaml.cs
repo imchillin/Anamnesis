@@ -64,11 +64,9 @@ namespace Anamnesis.PoseModule.Views
 
 		private void WatchCamera()
 		{
-			IInjectionService injection = Services.Get<IInjectionService>();
-
-			IMarshaler<Vector2D> camXY = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
-			IMarshaler<float> camZ = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
-			IMarshaler<float> camDist = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraCurrentZoom);
+			IMarshaler<Vector2D> camXY = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
+			IMarshaler<float> camZ = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
+			IMarshaler<float> camDist = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraCurrentZoom);
 
 			Vector3D camEuler = default;
 

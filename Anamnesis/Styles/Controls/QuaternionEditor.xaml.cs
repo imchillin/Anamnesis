@@ -277,10 +277,8 @@ namespace Anamnesis.WpfStyles.Controls
 
 		private void WatchCamera()
 		{
-			IInjectionService injection = Services.Get<IInjectionService>();
-
-			IMarshaler<Vector2D> camXY = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
-			IMarshaler<float> camZ = injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
+			IMarshaler<Vector2D> camXY = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
+			IMarshaler<float> camZ = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
 
 			Vector3D camEuler = default;
 

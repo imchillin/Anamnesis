@@ -131,17 +131,15 @@ namespace Anamnesis.PoseModule
 
 		public Task Initialize()
 		{
-			IInjectionService injection = Services.Get<IInjectionService>();
-
-			this.skel1Mem = injection.GetMemory(Offsets.Main.Skeleton1Flag);
-			this.skel2Mem = injection.GetMemory(Offsets.Main.Skeleton2Flag);
-			this.skel3Mem = injection.GetMemory(Offsets.Main.Skeleton3Flag);
-			////this.skel4Mem = injection.GetMemory(Offsets.Main.Skeleton4flag);
-			////this.skel5Mem = injection.GetMemory(Offsets.Main.Skeleton5Flag);
-			////this.skel6Mem = injection.GetMemory(Offsets.Main.Skeleton6Flag);
-			this.phys1Mem = injection.GetMemory(Offsets.Main.Physics1Flag);
-			this.phys2Mem = injection.GetMemory(Offsets.Main.Physics2Flag);
-			////this.phys3Mem = injection.GetMemory(Offsets.Main.Physics3Flag);
+			this.skel1Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton1Flag);
+			this.skel2Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton2Flag);
+			this.skel3Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton3Flag);
+			////this.skel4Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton4flag);
+			////this.skel5Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton5Flag);
+			////this.skel6Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton6Flag);
+			this.phys1Mem = MemoryService.GetMarshaler(Offsets.Main.Physics1Flag);
+			this.phys2Mem = MemoryService.GetMarshaler(Offsets.Main.Physics2Flag);
+			////this.phys3Mem = MemoryService.GetMarshaler(Offsets.Main.Physics3Flag);
 
 			this.selectionService = Services.Get<ISelectionService>();
 			this.selectionService.ModeChanged += this.Selection_ModeChanged;

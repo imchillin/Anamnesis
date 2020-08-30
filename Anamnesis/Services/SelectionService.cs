@@ -41,10 +41,8 @@ namespace Anamnesis.GUI.Services
 
 		public Task Start()
 		{
-			IInjectionService injection = Services.Get<IInjectionService>();
-
-			this.gposeMem = injection.GetMemory(Offsets.Main.GposeCheck);
-			this.gposeMem2 = injection.GetMemory(Offsets.Main.GposeCheck2);
+			this.gposeMem = MemoryService.GetMarshaler(Offsets.Main.GposeCheck);
+			this.gposeMem2 = MemoryService.GetMarshaler(Offsets.Main.GposeCheck2);
 
 			Task.Run(this.Watch);
 
@@ -55,8 +53,7 @@ namespace Anamnesis.GUI.Services
 		{
 			this.SelectedActor = actor;
 
-			IInjectionService injection = Services.Get<IInjectionService>();
-			using IMarshaler<int> territoryMem = injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
+			using IMarshaler<int> territoryMem = MemoryService.GetMarshaler(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 
 			int territoryId = territoryMem.Value;
 

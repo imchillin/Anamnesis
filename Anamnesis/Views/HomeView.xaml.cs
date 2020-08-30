@@ -22,7 +22,6 @@ namespace Anamnesis.GUI.Views
 	public partial class HomeView : UserControl
 	{
 		private IGameDataService gameData;
-		private IInjectionService injection;
 		private IMarshaler<int>? territoryMem;
 		private IMarshaler<ushort>? weatherMem;
 		private IMarshaler<Vector2D>? cameraAngleMem;
@@ -45,7 +44,6 @@ namespace Anamnesis.GUI.Views
 			this.InitializeComponent();
 
 			this.gameData = Anamnesis.Services.Get<IGameDataService>();
-			this.injection = Anamnesis.Services.Get<IInjectionService>();
 
 			this.TimeService = Anamnesis.Services.Get<TimeService>();
 
@@ -102,28 +100,28 @@ namespace Anamnesis.GUI.Views
 
 				if (this.isGpose)
 				{
-					this.cameraAngleMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
+					this.cameraAngleMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
 					this.cameraAngleMem.ValueChanged += this.OnCameraAngleMemValueChanged;
 
-					this.cameraPanMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraPan);
+					this.cameraPanMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraPan);
 					this.cameraPanMem.Bind(this, nameof(this.CameraPan));
 
-					this.cameraRotatonMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
+					this.cameraRotatonMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
 					this.cameraRotatonMem.Bind(this, nameof(this.CameraRotaton));
 
-					this.cameraZoomMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraCurrentZoom);
+					this.cameraZoomMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraCurrentZoom);
 					this.cameraZoomMem.Bind(this, nameof(this.CameraZoom));
 
-					this.cameraMinZoomMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraMinZoom);
+					this.cameraMinZoomMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraMinZoom);
 					this.cameraMinZoomMem.Bind(this, nameof(this.CameraMinZoom));
 
-					this.cameraMaxZoomMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraMaxZoom);
+					this.cameraMaxZoomMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraMaxZoom);
 					this.cameraMaxZoomMem.Bind(this, nameof(this.CameraMaxZoom));
 
-					this.cameraFovMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.FOVCurrent);
+					this.cameraFovMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.FOVCurrent);
 					this.cameraFovMem.Bind(this, nameof(this.CameraFov));
 
-					this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
+					this.cameraPositionMem = MemoryService.GetMarshaler(Offsets.Main.Gpose, Offsets.Main.Camera);
 					this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
 
 					if (this.territoryMem != null && this.territoryMem.Active)
@@ -253,10 +251,10 @@ namespace Anamnesis.GUI.Views
 			this.CameraMaxZoom = unlock ? 256 : 20;
 			this.CameraMinZoom = unlock ? 0 : 1.75f;
 
-			using IMarshaler<float> minYMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraYMin);
+			using IMarshaler<float> minYMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraYMin);
 			minYMem.Value = unlock ? 1.5f : 1.25f;
 
-			using IMarshaler<float> maxYMem = this.injection.GetMemory(Offsets.Main.CameraAddress, Offsets.Main.CameraYMax);
+			using IMarshaler<float> maxYMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraYMax);
 			maxYMem.Value = unlock ? -1.5f : -1.4f;
 		}
 
@@ -274,9 +272,9 @@ namespace Anamnesis.GUI.Views
 			{
 				this.initialized = true;
 
-				this.weatherMem = this.injection.GetMemory(Offsets.Main.GposeFilters, Offsets.Main.ForceWeather);
+				this.weatherMem = MemoryService.GetMarshaler(Offsets.Main.GposeFilters, Offsets.Main.ForceWeather);
 				this.territoryMem = null;
-				this.territoryMem = this.injection.GetMemory(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
+				this.territoryMem = MemoryService.GetMarshaler(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 				this.territoryMem.ValueChanged += this.OnTerritoryMemValueChanged;
 				this.OnTerritoryMemValueChanged(null, 0);
 
@@ -295,7 +293,7 @@ namespace Anamnesis.GUI.Views
 
 			if (this.isGpose)
 			{
-				this.cameraPositionMem = this.injection.GetMemory(Offsets.Main.Gpose, Offsets.Main.Camera);
+				this.cameraPositionMem = MemoryService.GetMarshaler(Offsets.Main.Gpose, Offsets.Main.Camera);
 
 				if (this.LockCameraPosition)
 				{

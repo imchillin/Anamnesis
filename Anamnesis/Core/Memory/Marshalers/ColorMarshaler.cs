@@ -5,12 +5,11 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class ColorMarshaler : MarshalerBase<Color>
 	{
-		public ColorMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 12)
+		public ColorMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 12)
 		{
 		}
 

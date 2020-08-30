@@ -5,12 +5,11 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class ShortMarshaler : MarshalerBase<short>
 	{
-		public ShortMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 2)
+		public ShortMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 2)
 		{
 		}
 

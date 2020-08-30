@@ -5,12 +5,11 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class QuaternionMarshaler : MarshalerBase<Quaternion>
 	{
-		public QuaternionMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 16)
+		public QuaternionMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 16)
 		{
 		}
 

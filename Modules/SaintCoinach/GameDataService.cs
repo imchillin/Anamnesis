@@ -10,6 +10,7 @@ namespace Anamnesis.SaintCoinachModule
 	using System.IO.Compression;
 	using System.Threading.Tasks;
 	using Anamnesis.GameData;
+	using Anamnesis.Memory;
 	using SaintCoinach;
 	using SaintCoinach.Ex;
 	using SaintCoinach.Ex.Relational.Update;
@@ -107,9 +108,8 @@ namespace Anamnesis.SaintCoinachModule
 		public async Task Start()
 		{
 			Instance = this;
-			IInjectionService injection = Services.Get<IInjectionService>();
 
-			string directory = injection.GamePath;
+			string directory = MemoryService.GamePath;
 
 			if (!IsValidInstallation(directory))
 				throw new Exception("Invalid FFXIV installation");

@@ -5,12 +5,11 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class BoolMarshaler : MarshalerBase<bool>
 	{
-		public BoolMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 1)
+		public BoolMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 1)
 		{
 		}
 

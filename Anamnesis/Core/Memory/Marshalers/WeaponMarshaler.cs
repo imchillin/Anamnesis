@@ -5,12 +5,11 @@ namespace Anamnesis.Memory.Marshalers
 {
 	using System;
 	using Anamnesis.Memory.Offsets;
-	using Anamnesis.Memory.Process;
 
 	internal class WeaponMarshaler : MarshalerBase<Weapon>
 	{
-		public WeaponMarshaler(IProcess process, IMemoryOffset[] offsets)
-			: base(process, offsets, 7)
+		public WeaponMarshaler(params IMemoryOffset[] offsets)
+			: base(offsets, 7)
 		{
 		}
 
