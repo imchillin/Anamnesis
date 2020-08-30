@@ -42,7 +42,7 @@ namespace Anamnesis.AppearanceModule.ViewModels
 			w.Dye = this.DyeId;
 			w.Set = this.ModelSet;
 			w.Variant = this.ModelVariant;
-			this.memory.Value = w;
+			this.memory.SetValue(w, true);
 
 			this.Actor.ActorRefresh();
 		}
