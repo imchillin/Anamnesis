@@ -43,6 +43,12 @@ namespace Anamnesis
 			return !(lhs == rhs);
 		}
 
+		public UIntPtr GetPointer()
+		{
+			using IMarshaler<string> mem = this.GetMemory(Offsets.Main.Name);
+			return mem.Address;
+		}
+
 		public IMarshaler<T> GetMemory<T>(IMemoryOffset<T> offset)
 		{
 			IMarshaler<T> mem = MemoryService.GetMarshaler<T>(this.baseOffset, offset);

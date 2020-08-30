@@ -28,8 +28,7 @@ namespace Anamnesis.AppearanceModule.Views
 
 			this.ContentArea.DataContext = this;
 
-			ISelectionService selectionService = Services.Get<ISelectionService>();
-			selectionService.ModeChanged += this.SelectionService_ModeChanged;
+			TargetService.ModeChanged += this.SelectionService_ModeChanged;
 		}
 
 		public int ModelType

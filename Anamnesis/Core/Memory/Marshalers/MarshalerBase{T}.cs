@@ -70,6 +70,14 @@ namespace Anamnesis.Memory.Marshalers
 			}
 		}
 
+		public UIntPtr Address
+		{
+			get
+			{
+				return this.address;
+			}
+		}
+
 		public void SetValue(T value, bool immediate = false)
 		{
 			this.Value = value;

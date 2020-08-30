@@ -12,6 +12,7 @@ namespace Anamnesis.GUI.Views
 	using Anamnesis.Memory;
 	using PropertyChanged;
 
+	using Actor = Anamnesis.Actor;
 	using Vector = Anamnesis.Memory.Vector;
 
 	/// <summary>
@@ -145,8 +146,7 @@ namespace Anamnesis.GUI.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			ISelectionService selectionService = Anamnesis.Services.Get<ISelectionService>();
-			selectionService.ModeChanged += this.OnSelectionServiceModeChanged;
+			TargetService.ModeChanged += this.OnSelectionServiceModeChanged;
 
 			this.initialized = false;
 
@@ -278,8 +278,7 @@ namespace Anamnesis.GUI.Views
 				this.territoryMem.ValueChanged += this.OnTerritoryMemValueChanged;
 				this.OnTerritoryMemValueChanged(null, 0);
 
-				ISelectionService selection = App.Services.Get<ISelectionService>();
-				this.IsGpose = selection.GetMode() == Modes.GPose;
+				this.IsGpose = TargetService.CurrentMode == Modes.GPose;
 			}
 
 			this.posMem = actor.GetMemory(Offsets.Main.Position);

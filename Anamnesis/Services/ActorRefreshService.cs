@@ -7,6 +7,8 @@ namespace Anamnesis.GUI.Services
 	using Anamnesis;
 	using Anamnesis.Memory;
 
+	using Actor = Anamnesis.Actor;
+
 	public class ActorRefreshService : IActorRefreshService
 	{
 		// how long to wait after a change before calling Apply()
@@ -14,7 +16,7 @@ namespace Anamnesis.GUI.Services
 
 		private int applyCountdown = 0;
 		private Task? applyTask;
-		private SelectionService selectionService = Services.Get<SelectionService>();
+		private TargetService selectionService = Services.Get<TargetService>();
 
 		public event RefreshEvent? RefreshBegin;
 		public event RefreshEvent? RefreshComplete;

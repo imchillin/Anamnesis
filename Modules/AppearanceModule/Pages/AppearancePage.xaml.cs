@@ -23,12 +23,10 @@ namespace Anamnesis.AppearanceModule.Pages
 	[SuppressPropertyChangedWarnings]
 	public partial class AppearancePage : UserControl
 	{
-		private ISelectionService selectionService;
 		private IActorRefreshService refreshService;
 
 		public AppearancePage()
 		{
-			this.selectionService = Services.Get<ISelectionService>();
 			this.refreshService = Services.Get<IActorRefreshService>();
 
 			this.refreshService.RefreshBegin += this.RefreshService_RefreshBegin;
@@ -44,9 +42,9 @@ namespace Anamnesis.AppearanceModule.Pages
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.selectionService.ModeChanged += this.SelectionModeChanged;
+			TargetService.ModeChanged += this.SelectionModeChanged;
 			this.OnActorChanged(this.DataContext as Actor);
-			this.SelectionModeChanged(this.selectionService.GetMode());
+			this.SelectionModeChanged(TargetService.CurrentMode);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -56,7 +54,7 @@ namespace Anamnesis.AppearanceModule.Pages
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
-			this.selectionService.ModeChanged -= this.SelectionModeChanged;
+			TargetService.ModeChanged -= this.SelectionModeChanged;
 		}
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)

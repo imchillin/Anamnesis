@@ -84,7 +84,7 @@ namespace Anamnesis.GUI
 			await this.Add<OffsetsService>();
 			await this.Add<AddressService>();
 			await this.Add<ViewService>();
-			await this.Add<SelectionService>();
+			await this.Add<TargetService>();
 			await this.Add<FileService>();
 			await this.Add<ActorRefreshService>();
 			await this.Add<ModuleService>();

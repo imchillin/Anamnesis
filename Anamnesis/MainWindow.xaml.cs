@@ -36,8 +36,7 @@ namespace Anamnesis.GUI
 			this.viewService = App.Services.Get<ViewService>();
 			this.viewService.ShowingDrawer += this.OnShowDrawer;
 
-			ISelectionService selection = App.Services.Get<ISelectionService>();
-			selection.ActorSelected += this.OnActorSelected;
+			TargetService.ActorSelected += this.OnActorSelected;
 
 			////this.IconArea.DataContext = this;
 
@@ -189,9 +188,8 @@ namespace Anamnesis.GUI
 
 		private async void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			ISelectionService selection = App.Services.Get<ISelectionService>();
 			await Task.Delay(50);
-			this.OnActorSelected(selection.SelectedActor);
+			this.OnActorSelected(TargetService.SelectedActor);
 		}
 
 		private void Window_MouseEnter(object sender, MouseEventArgs e)

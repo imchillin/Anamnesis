@@ -22,6 +22,8 @@ namespace Anamnesis.Memory
 		/// </summary>
 		T Value { get; set; }
 
+		UIntPtr Address { get; }
+
 		/// <summary>
 		/// Sets the value in memory.
 		/// </summary>

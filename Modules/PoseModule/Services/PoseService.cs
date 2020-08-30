@@ -25,8 +25,6 @@ namespace Anamnesis.PoseModule
 		private IMarshaler<Flag> phys2Mem;
 		////private IMemory<Flag> phys3Mem;
 
-		private ISelectionService selectionService;
-
 		private bool isEnabled;
 
 		public delegate void PoseEvent(bool value);
@@ -43,7 +41,7 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.selectionService.GetMode() == Modes.GPose;
+				return TargetService.CurrentMode == Modes.GPose;
 			}
 		}
 
@@ -141,8 +139,7 @@ namespace Anamnesis.PoseModule
 			this.phys2Mem = MemoryService.GetMarshaler(Offsets.Main.Physics2Flag);
 			////this.phys3Mem = MemoryService.GetMarshaler(Offsets.Main.Physics3Flag);
 
-			this.selectionService = Services.Get<ISelectionService>();
-			this.selectionService.ModeChanged += this.Selection_ModeChanged;
+			TargetService.ModeChanged += this.Selection_ModeChanged;
 
 			return Task.CompletedTask;
 		}
@@ -171,7 +168,7 @@ namespace Anamnesis.PoseModule
 		public void SetEnabled(bool enabled)
 		{
 			// Don't try to enable posing unless we are in gpose
-			if (enabled && this.selectionService.GetMode() != Modes.GPose)
+			if (enabled && TargetService.CurrentMode != Modes.GPose)
 				throw new Exception("Attempt to enable posing outside of gpose");
 
 			this.isEnabled = enabled;

@@ -13,6 +13,8 @@ namespace Anamnesis.GUI.Services
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Memory;
 
+	using Actor = Anamnesis.Actor;
+
 	public class ViewService : IViewService
 	{
 		private readonly Dictionary<string, Page> pages = new Dictionary<string, Page>();

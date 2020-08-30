@@ -4,7 +4,9 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Runtime.InteropServices;
 
+	[StructLayout(LayoutKind.Sequential)]
 	public struct Vector
 	{
 		public static readonly Vector Zero = new Vector(0, 0, 0);

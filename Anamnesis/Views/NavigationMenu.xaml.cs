@@ -14,7 +14,7 @@ namespace Anamnesis.GUI.Views
 	using Anamnesis.Memory;
 	using PropertyChanged;
 
-	using static Anamnesis.GUI.Services.ViewService;
+	using Actor = Anamnesis.Actor;
 
 	/// <summary>
 	/// Interaction logic for NavigationMenu.xaml.
@@ -43,7 +43,7 @@ namespace Anamnesis.GUI.Views
 			this.ViewList.SelectedIndex = 0;
 		}
 
-		public event PageEvent? SelectPage;
+		public event ViewService.PageEvent? SelectPage;
 
 		public ObservableCollection<ViewService.Page> Items { get; set; } = new ObservableCollection<ViewService.Page>();
 

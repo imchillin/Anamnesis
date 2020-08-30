@@ -122,6 +122,40 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		public static IntPtr ReadPtr(IntPtr address)
+		{
+			byte[] d = new byte[8];
+			ReadProcessMemory(Handle, address, d, 8, out _);
+			long i = BitConverter.ToInt64(d, 0);
+			IntPtr ptr = (IntPtr)i;
+			return ptr;
+		}
+
+		public static T? Read<T>(UIntPtr address)
+			where T : struct
+		{
+			unsafe
+			{
+				IntPtr ptr = (IntPtr)address.ToPointer();
+				return Read<T>(ptr);
+			}
+		}
+
+		public static T? Read<T>(IntPtr address)
+			where T : struct
+		{
+			if (address == IntPtr.Zero)
+				return null;
+
+			int size = Marshal.SizeOf(typeof(T));
+			IntPtr mem = Marshal.AllocHGlobal(size);
+			ReadProcessMemory(Handle, address, mem, size, out _);
+			T val = Marshal.PtrToStructure<T>(mem);
+			Marshal.FreeHGlobal(mem);
+
+			return val;
+		}
+
 		public async Task Initialize()
 		{
 			this.isActive = true;
@@ -320,6 +354,12 @@ namespace Anamnesis.Memory
 
 		[DllImport("kernel32.dll")]
 		private static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
 
 		[DllImport("kernel32.dll")]
 		private static extern bool WriteProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten);
