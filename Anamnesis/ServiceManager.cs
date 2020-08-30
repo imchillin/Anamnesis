@@ -7,8 +7,9 @@ namespace Anamnesis.GUI
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Threading.Tasks;
+	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Services;
-	using Anamnesis.Injection;
+	using Anamnesis.Memory;
 
 	public class ServiceManager : IServices
 	{
@@ -79,8 +80,9 @@ namespace Anamnesis.GUI
 			await this.Add<SerializerService>();
 			await this.Add<SettingsService>();
 			await this.Add<LocalizationService>();
-			await this.Add<InjectionService>();
+			await this.Add<MemoryService>();
 			await this.Add<OffsetsService>();
+			await this.Add<AddressService>();
 			await this.Add<ViewService>();
 			await this.Add<SelectionService>();
 			await this.Add<FileService>();
