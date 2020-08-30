@@ -13,8 +13,6 @@ namespace Anamnesis.PoseModule
 	{
 		public async Task Initialize()
 		{
-			Services.Get<ILocalizationService>().Add("Modules/Pose/Languages/");
-
 			await Services.Add<SkeletonService>();
 			await Services.Add<PoseService>();
 
