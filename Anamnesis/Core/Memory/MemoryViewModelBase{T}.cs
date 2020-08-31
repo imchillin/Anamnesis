@@ -15,13 +15,12 @@ namespace Anamnesis.Memory
 	public abstract class MemoryViewModelBase<T> : StructViewModelBase<T>, IMemoryViewModel
 		where T : struct
 	{
-		private IntPtr? pointer;
 		private IMemoryViewModel? parent;
 		private PropertyInfo? parentProperty;
 
 		public MemoryViewModelBase(IntPtr pointer)
 		{
-			this.pointer = pointer;
+			this.Pointer = pointer;
 
 			MemoryService.RegisterViewModel(this);
 
@@ -39,11 +38,17 @@ namespace Anamnesis.Memory
 			this.parentProperty = property;
 		}
 
+		public IntPtr? Pointer
+		{
+			get;
+			private set;
+		}
+
 		public void Tick()
 		{
-			if (this.pointer != null)
+			if (this.Pointer != null)
 			{
-				T? model = MemoryService.Read<T>((IntPtr)this.pointer);
+				T? model = MemoryService.Read<T>((IntPtr)this.Pointer);
 
 				if (model == null)
 					throw new Exception($"Failed to read memory: {typeof(T)}");
@@ -62,17 +67,21 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		protected override void OnModelUpdated(string fieldName, object? value)
+		protected override void OnViewToModel(string fieldName, object? value)
 		{
-			if (this.pointer != null)
+			if (this.Pointer != null)
 			{
-				MemoryService.Write((IntPtr)this.pointer, this.model);
+				MemoryService.Write((IntPtr)this.Pointer, this.model);
 			}
 			else if (this.parent != null && this.parentProperty != null)
 			{
 				// TODO: ensure propertychanged is raised
 				this.parentProperty.SetValue(this.parent, this.model);
 			}
+		}
+
+		protected override void OnModelToView(string fieldName, object? value)
+		{
 		}
 	}
 }

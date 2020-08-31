@@ -5,6 +5,7 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Runtime.InteropServices;
+	using PropertyChanged;
 
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Actor
@@ -54,14 +55,20 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x1868)]
 		public int NameId;
 
+		[FieldOffset(0x0F0)]
+		public IntPtr TransformPointer;
+
 		public static bool IsSame(Actor? lhs, Actor? rhs)
 		{
 			return lhs?.Name == rhs?.Name && lhs?.ActorId == rhs?.ActorId && lhs?.NameId == rhs?.NameId;
 		}
 	}
 
+	[AddINotifyPropertyChangedInterface]
 	public class ActorViewModel : MemoryViewModelBase<Actor>
 	{
+		private IntPtr transformPointer;
+
 		public ActorViewModel(IntPtr pointer)
 			: base(pointer)
 		{
@@ -81,5 +88,23 @@ namespace Anamnesis.Memory
 		public int PlayerCharacterTargetActorId { get; set; }
 		public int BattleNpcTargetActorId { get; set; }
 		public int NameId { get; set; }
+
+		public TransformViewModel? Transform { get; set; }
+
+		public IntPtr TransformPointer
+		{
+			get
+			{
+				return this.transformPointer;
+			}
+
+			set
+			{
+				this.transformPointer = value;
+
+				IntPtr transformPointer = value + 0x50;
+				this.Transform = new TransformViewModel(transformPointer);
+			}
+		}
 	}
 }

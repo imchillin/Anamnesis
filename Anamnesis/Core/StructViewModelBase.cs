@@ -46,7 +46,7 @@ namespace Anamnesis
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public void SetModel(T? model)
+		protected void SetModel(T? model)
 		{
 			if (model == null)
 				throw new Exception("Attempt to set null model to view model");
@@ -65,7 +65,7 @@ namespace Anamnesis
 				{
 					viewModelProperty.SetValue(this, rhs);
 					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(viewModelProperty.Name));
-					Log.Write("Property changed: " + viewModelProperty.Name);
+					this.OnModelToView(modelField.Name, rhs);
 				}
 			}
 		}
@@ -73,7 +73,12 @@ namespace Anamnesis
 		/// <summary>
 		/// Called when the view model has changed the backing modal.
 		/// </summary>
-		protected abstract void OnModelUpdated(string fieldName, object? value);
+		protected abstract void OnViewToModel(string fieldName, object? value);
+
+		/// <summary>
+		/// Called when the backing model has changed the view model.
+		/// </summary>
+		protected abstract void OnModelToView(string fieldName, object? value);
 
 		private void OnThisPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -93,7 +98,7 @@ namespace Anamnesis
 				object? value = viewModelProperty.GetValue(this);
 				modelField.SetValue(this.model, value);
 
-				this.OnModelUpdated(e.PropertyName, value);
+				this.OnViewToModel(e.PropertyName, value);
 			}
 		}
 	}
