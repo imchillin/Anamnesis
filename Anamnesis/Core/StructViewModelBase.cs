@@ -35,9 +35,6 @@ namespace Anamnesis
 					continue;
 				}
 
-				if (modelField.FieldType != property.PropertyType)
-					throw new Exception($"view model: {this.GetType()} property: {name} type: {property.PropertyType} does not match backing model field type: {modelField.FieldType}");
-
 				this.binds.Add(name, (property, modelField));
 			}
 
@@ -55,18 +52,43 @@ namespace Anamnesis
 
 			foreach ((PropertyInfo viewModelProperty, FieldInfo modelField) in this.binds.Values)
 			{
-				object? lhs = viewModelProperty.GetValue(this);
-				object? rhs = modelField.GetValue(this.model);
+				this.HandleModelToviewUpdate(viewModelProperty, modelField);
+			}
+		}
 
-				if (lhs == null && rhs == null)
-					continue;
+		protected virtual void HandleModelToviewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
+		{
+			if (modelField.FieldType != viewModelProperty.PropertyType)
+				throw new Exception($"view model: {this.GetType()} property: {modelField.Name} type: {viewModelProperty.PropertyType} does not match backing model field type: {modelField.FieldType}");
 
-				if (rhs == null || !rhs.Equals(lhs))
-				{
-					viewModelProperty.SetValue(this, rhs);
-					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(viewModelProperty.Name));
-					this.OnModelToView(modelField.Name, rhs);
-				}
+			object? lhs = viewModelProperty.GetValue(this);
+			object? rhs = modelField.GetValue(this.model);
+
+			if (lhs == null && rhs == null)
+				return;
+
+			if (rhs == null || !rhs.Equals(lhs))
+			{
+				viewModelProperty.SetValue(this, rhs);
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(viewModelProperty.Name));
+				this.OnModelToView(modelField.Name, rhs);
+			}
+		}
+
+		protected virtual void HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
+		{
+			object? lhs = viewModelProperty.GetValue(this);
+			object? rhs = modelField.GetValue(this.model);
+
+			if (lhs == null && rhs == null)
+				return;
+
+			if (rhs == null || !rhs.Equals(lhs))
+			{
+				object? value = viewModelProperty.GetValue(this);
+				modelField.SetValue(this.model, value);
+
+				this.OnViewToModel(viewModelProperty.Name, value);
 			}
 		}
 
@@ -86,20 +108,7 @@ namespace Anamnesis
 				return;
 
 			(PropertyInfo viewModelProperty, FieldInfo modelField) = this.binds[e.PropertyName];
-
-			object? lhs = viewModelProperty.GetValue(this);
-			object? rhs = modelField.GetValue(this.model);
-
-			if (lhs == null && rhs == null)
-				return;
-
-			if (rhs == null || !rhs.Equals(lhs))
-			{
-				object? value = viewModelProperty.GetValue(this);
-				modelField.SetValue(this.model, value);
-
-				this.OnViewToModel(e.PropertyName, value);
-			}
+			this.HandleViewToModelUpdate(viewModelProperty, modelField);
 		}
 	}
 }

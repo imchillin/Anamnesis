@@ -9,6 +9,7 @@ namespace Anamnesis.Memory
 	#pragma warning disable SA1649
 	public interface IMemoryViewModel
 	{
+		IntPtr? Pointer { get; }
 		void Tick();
 	}
 
@@ -82,6 +83,66 @@ namespace Anamnesis.Memory
 
 		protected override void OnModelToView(string fieldName, object? value)
 		{
+		}
+
+		protected override void HandleModelToviewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
+		{
+			// special case for the property being a viewModel and the field being a pointer to more memory
+			if (modelField.FieldType == typeof(IntPtr) && typeof(IMemoryViewModel).IsAssignableFrom(viewModelProperty.PropertyType))
+			{
+				ViewModelOffsetAttribute? offset = viewModelProperty.GetCustomAttribute<ViewModelOffsetAttribute>();
+
+				object? lhs = viewModelProperty.GetValue(this);
+				IntPtr? rhs = (IntPtr?)modelField.GetValue(this.model);
+
+				IntPtr desiredPointer = IntPtr.Zero;
+
+				if (rhs != null)
+				{
+					desiredPointer = (IntPtr)rhs;
+
+					if (offset != null)
+					{
+						desiredPointer += offset.Offset;
+					}
+				}
+
+				IMemoryViewModel vm;
+				if (lhs != null)
+				{
+					vm = (IMemoryViewModel)lhs;
+
+					if (vm.Pointer == desiredPointer)
+					{
+						return;
+					}
+				}
+
+				lhs = Activator.CreateInstance(viewModelProperty.PropertyType, desiredPointer) as IMemoryViewModel;
+
+				if (lhs == null)
+					throw new Exception($"Failed to create instance of view model: {viewModelProperty.PropertyType}");
+
+				viewModelProperty.SetValue(this, lhs);
+				this.OnModelToView(modelField.Name, rhs);
+			}
+			else
+			{
+				base.HandleModelToviewUpdate(viewModelProperty, modelField);
+			}
+		}
+
+		protected override void HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
+		{
+			// special case for the property being a viewModel and the field being a pointer to more memory
+			if (modelField.FieldType == typeof(IntPtr) && typeof(IMemoryViewModel).IsAssignableFrom(viewModelProperty.PropertyType))
+			{
+				// We do not support setting a pointer from a viewmodel. read only!
+			}
+			else
+			{
+				base.HandleViewToModelUpdate(viewModelProperty, modelField);
+			}
 		}
 	}
 }

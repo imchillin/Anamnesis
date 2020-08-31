@@ -56,7 +56,7 @@ namespace Anamnesis.Memory
 		public int NameId;
 
 		[FieldOffset(0x0F0)]
-		public IntPtr TransformPointer;
+		public IntPtr Transform;
 
 		public static bool IsSame(Actor? lhs, Actor? rhs)
 		{
@@ -67,8 +67,6 @@ namespace Anamnesis.Memory
 	[AddINotifyPropertyChangedInterface]
 	public class ActorViewModel : MemoryViewModelBase<Actor>
 	{
-		private IntPtr transformPointer;
-
 		public ActorViewModel(IntPtr pointer)
 			: base(pointer)
 		{
@@ -89,22 +87,7 @@ namespace Anamnesis.Memory
 		public int BattleNpcTargetActorId { get; set; }
 		public int NameId { get; set; }
 
+		[ViewModelOffset(0x50)]
 		public TransformViewModel? Transform { get; set; }
-
-		public IntPtr TransformPointer
-		{
-			get
-			{
-				return this.transformPointer;
-			}
-
-			set
-			{
-				this.transformPointer = value;
-
-				IntPtr transformPointer = value + 0x50;
-				this.Transform = new TransformViewModel(transformPointer);
-			}
-		}
 	}
 }
