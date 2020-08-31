@@ -12,6 +12,7 @@ namespace Anamnesis.GUI.Views
 	using System.Windows.Data;
 	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	/// <summary>
@@ -19,7 +20,6 @@ namespace Anamnesis.GUI.Views
 	/// </summary>
 	public partial class NavigationMenu : UserControl
 	{
-		private ViewService viewService;
 		private ActorViewModel? actor;
 		private ViewService.Page? currentSelection;
 		private bool suppressSelectionEvent = false;
@@ -30,10 +30,9 @@ namespace Anamnesis.GUI.Views
 
 			this.ViewList.DataContext = this;
 
-			this.viewService = App.Services.Get<ViewService>();
-			this.viewService.AddingPage += this.OnAddPage;
+			ViewService.AddingPage += this.OnAddPage;
 
-			foreach (ViewService.Page page in this.viewService.Pages)
+			foreach (ViewService.Page page in ViewService.Pages)
 			{
 				this.OnAddPage(page);
 			}
@@ -80,7 +79,7 @@ namespace Anamnesis.GUI.Views
 
 			List<ViewService.Page> newPages = new List<ViewService.Page>();
 
-			foreach (ViewService.Page page in this.viewService.Pages)
+			foreach (ViewService.Page page in ViewService.Pages)
 			{
 				if (!page.Supports(this.actor))
 					continue;

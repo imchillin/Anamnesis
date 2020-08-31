@@ -4,12 +4,13 @@
 namespace Anamnesis.AppearanceModule
 {
 	using System.Collections.Generic;
+	using Anamnesis.Memory;
 
 	public static class ActorExtensions
 	{
 		private static Dictionary<int, bool> isCustomizableLookup;
 
-		public static bool IsCustomizable(this Actor self)
+		public static bool IsCustomizable(this ActorViewModel self)
 		{
 			if (isCustomizableLookup == null)
 			{
@@ -24,11 +25,10 @@ namespace Anamnesis.AppearanceModule
 				}
 			}
 
-			int modelTypeId = self.GetValue(Offsets.Main.ModelType);
-			if (!isCustomizableLookup.ContainsKey(modelTypeId))
+			if (!isCustomizableLookup.ContainsKey(self.ModelType))
 				return false;
 
-			return isCustomizableLookup[modelTypeId];
+			return isCustomizableLookup[self.ModelType];
 		}
 	}
 }

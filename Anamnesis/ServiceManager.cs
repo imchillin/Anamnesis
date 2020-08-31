@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI
+namespace Anamnesis.Services
 {
 	using System;
 	using System.Collections.Generic;
@@ -11,39 +11,19 @@ namespace Anamnesis.GUI
 	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
 
-	public class ServiceManager : IServices
+	public class ServiceManager
 	{
-		private readonly List<IService> services = new List<IService>();
-
-		public ServiceManager()
-		{
-			Anamnesis.Services.RegisterServicesProvider(this);
-		}
+		private static readonly List<IService> Services = new List<IService>();
 
 		public delegate void ServiceEvent(string serviceName);
 
 		public static event ServiceEvent? OnServiceInitializing;
 		public static event ServiceEvent? OnServiceStarting;
 
-		public bool IsInitialized { get; private set; } = false;
-		public bool IsStarted { get; private set; } = false;
+		public static bool IsInitialized { get; private set; } = false;
+		public static bool IsStarted { get; private set; } = false;
 
-		public T Get<T>()
-			where T : IService
-		{
-			// TODO: cache these for faster lookups
-			foreach (IService service in this.services)
-			{
-				if (typeof(T).IsAssignableFrom(service.GetType()))
-				{
-					return (T)service;
-				}
-			}
-
-			throw new Exception($"Failed to find service: {typeof(T)}");
-		}
-
-		public async Task Add<T>()
+		public static async Task Add<T>()
 			where T : IService, new()
 		{
 			try
@@ -54,13 +34,13 @@ namespace Anamnesis.GUI
 				string serviceName = GetServiceName<T>();
 
 				IService service = Activator.CreateInstance<T>();
-				this.services.Add(service);
+				Services.Add(service);
 
 				OnServiceInitializing?.Invoke(serviceName);
 				await service.Initialize();
 
 				// If we've already started, and this service is being added late (possibly by a module from its start method) start the service immediately.
-				if (this.IsStarted)
+				if (IsStarted)
 				{
 					OnServiceStarting?.Invoke(serviceName);
 					await service.Start();
@@ -76,21 +56,21 @@ namespace Anamnesis.GUI
 
 		public async Task InitializeServices()
 		{
-			await this.Add<LogService>();
-			await this.Add<SerializerService>();
-			await this.Add<SettingsService>();
-			await this.Add<LocalizationService>();
-			await this.Add<MemoryService>();
-			await this.Add<AddressService>();
-			await this.Add<ViewService>();
-			await this.Add<TargetService>();
-			await this.Add<FileService>();
-			await this.Add<ActorRefreshService>();
-			await this.Add<TerritoryService>();
-			await this.Add<TimeService>();
-			await this.Add<ModuleService>();
+			await Add<LogService>();
+			await Add<SerializerService>();
+			await Add<SettingsService>();
+			await Add<LocalizationService>();
+			await Add<MemoryService>();
+			await Add<AddressService>();
+			await Add<ViewService>();
+			await Add<TargetService>();
+			await Add<FileService>();
+			await Add<ActorRefreshService>();
+			await Add<TerritoryService>();
+			await Add<TimeService>();
+			await Add<ModuleService>();
 
-			this.IsInitialized = true;
+			IsInitialized = true;
 			Log.Write($"Services Initialized", "Services");
 
 			await this.StartServices();
@@ -99,7 +79,7 @@ namespace Anamnesis.GUI
 		public async Task StartServices()
 		{
 			// Since starting a service _can_ add new services, copy the list first.
-			List<IService> services = new List<IService>(this.services);
+			List<IService> services = new List<IService>(Services);
 			services.Reverse();
 			foreach (IService service in services)
 			{
@@ -107,16 +87,16 @@ namespace Anamnesis.GUI
 				await service.Start();
 			}
 
-			this.IsStarted = true;
+			IsStarted = true;
 			Log.Write($"Services Started", "Services");
 		}
 
 		public async Task ShutdownServices()
 		{
 			// shutdown services in reverse order
-			this.services.Reverse();
+			Services.Reverse();
 
-			foreach (IService service in this.services)
+			foreach (IService service in Services)
 			{
 				await service.Shutdown();
 			}

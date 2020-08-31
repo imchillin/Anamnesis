@@ -1,15 +1,14 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Services
+namespace Anamnesis.Services
 {
 	using System;
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
-	using System.Threading.Tasks;
 	using Anamnesis.Memory.Serialization.Converters;
 
-	public class SerializerService : ISerializerService
+	public class SerializerService : ServiceBase<SerializerService>
 	{
 		public static JsonSerializerOptions Options = new JsonSerializerOptions();
 
@@ -26,35 +25,20 @@ namespace Anamnesis.GUI.Services
 			Options.Converters.Add(new VectorConverter());
 		}
 
-		public string Serialize(object obj)
+		public static string Serialize(object obj)
 		{
 			return JsonSerializer.Serialize(obj, Options);
 		}
 
-		public T Deserialize<T>(string json)
+		public static T Deserialize<T>(string json)
 			where T : new()
 		{
 			return JsonSerializer.Deserialize<T>(json, Options);
 		}
 
-		public object Deserialize(string json, Type type)
+		public static object Deserialize(string json, Type type)
 		{
 			return JsonSerializer.Deserialize(json, type, Options);
-		}
-
-		public Task Initialize()
-		{
-			return Task.CompletedTask;
-		}
-
-		public Task Start()
-		{
-			return Task.CompletedTask;
-		}
-
-		public Task Shutdown()
-		{
-			return Task.CompletedTask;
 		}
 	}
 }

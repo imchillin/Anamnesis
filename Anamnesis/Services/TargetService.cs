@@ -14,6 +14,7 @@ namespace Anamnesis
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 
 	public delegate void SelectionModeEvent(Modes mode);
 	public delegate void SelectionEvent(ActorViewModel actor);

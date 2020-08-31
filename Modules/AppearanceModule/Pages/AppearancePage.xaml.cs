@@ -12,6 +12,7 @@ namespace Anamnesis.AppearanceModule.Pages
 	using Anamnesis.AppearanceModule.Files;
 	using Anamnesis.AppearanceModule.Views;
 	using Anamnesis.GameData;
+	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
 	using Anamnesis.WpfStyles.Drawers;
 	using PropertyChanged;
@@ -23,14 +24,10 @@ namespace Anamnesis.AppearanceModule.Pages
 	[SuppressPropertyChangedWarnings]
 	public partial class AppearancePage : UserControl
 	{
-		private IActorRefreshService refreshService;
-
 		public AppearancePage()
 		{
-			this.refreshService = Services.Get<IActorRefreshService>();
-
-			this.refreshService.RefreshBegin += this.RefreshService_RefreshBegin;
-			this.refreshService.RefreshComplete += this.RefreshService_RefreshComplete;
+			ActorRefreshService.RefreshBegin += this.RefreshService_RefreshBegin;
+			ActorRefreshService.RefreshComplete += this.RefreshService_RefreshComplete;
 
 			this.InitializeComponent();
 

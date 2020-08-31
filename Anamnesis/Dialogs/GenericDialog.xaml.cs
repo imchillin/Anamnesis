@@ -8,6 +8,7 @@ namespace Anamnesis.GUI.Dialogs
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
+	using Anamnesis.Services;
 
 	/// <summary>
 	/// Interaction logic for GenericDialog.xaml.
@@ -34,7 +35,6 @@ namespace Anamnesis.GUI.Dialogs
 
 			await Application.Current.Dispatcher.InvokeAsync(async () =>
 			{
-				IViewService viewService = Services.Get<IViewService>();
 				GenericDialog dlg = new GenericDialog();
 				dlg.Message = message;
 
@@ -65,7 +65,7 @@ namespace Anamnesis.GUI.Dialogs
 					}
 				}
 
-				result = await viewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
+				result = await ViewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
 			});
 
 			return result;

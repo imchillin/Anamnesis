@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Services
+namespace Anamnesis.Services
 {
 	using System;
 	using System.Collections.Generic;
@@ -11,12 +11,13 @@ namespace Anamnesis.GUI.Services
 	using Anamnesis;
 	using Anamnesis.Files;
 	using Anamnesis.GUI.Views;
+	using Anamnesis.Services;
 	using Microsoft.Win32;
+	using SimpleLog;
 
-	public class FileService : IFileService
+	public class FileService : ServiceBase<FileService>
 	{
-		private static ISerializerService serializer = Services.Get<ISerializerService>();
-		private List<IFileSource> fileSources = new List<IFileSource>();
+		private static readonly List<IFileSource> FileSources = new List<IFileSource>();
 
 		public static string StoreDirectory
 		{
@@ -28,27 +29,17 @@ namespace Anamnesis.GUI.Services
 			}
 		}
 
-		public Task Initialize()
+		public static void AddFileSource(IFileSource source)
 		{
-			this.AddFileSource(new LocalFileSource());
-			this.AddFileSource(new LegacyFileSource());
-
-			return Task.CompletedTask;
+			FileSources.Add(source);
 		}
 
-		public Task Start()
+		public override async Task Initialize()
 		{
-			return Task.CompletedTask;
-		}
+			await base.Initialize();
 
-		public Task Shutdown()
-		{
-			return Task.CompletedTask;
-		}
-
-		public void AddFileSource(IFileSource source)
-		{
-			this.fileSources.Add(source);
+			AddFileSource(new LocalFileSource());
+			AddFileSource(new LegacyFileSource());
 		}
 
 		public async Task<T?> Open<T>(FileType fileType, string? path)
@@ -73,7 +64,7 @@ namespace Anamnesis.GUI.Services
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception("Failed to open file", ex), "Files", Log.Severity.Error);
+				Log.Write(Severity.Error, new Exception("Failed to open file", ex));
 			}
 
 			return null;
@@ -90,8 +81,8 @@ namespace Anamnesis.GUI.Services
 
 				if (!useExplorerBrowser)
 				{
-					FileBrowserView browser = new FileBrowserView(this.fileSources, fileTypes, FileBrowserView.Modes.Load);
-					await App.Services.Get<IViewService>().ShowDrawer(browser);
+					FileBrowserView browser = new FileBrowserView(FileSources, fileTypes, FileBrowserView.Modes.Load);
+					await ViewService.ShowDrawer(browser);
 
 					while (browser.IsOpen)
 						await Task.Delay(10);
@@ -130,7 +121,7 @@ namespace Anamnesis.GUI.Services
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception("Failed to open file", ex), "Files", Log.Severity.Error);
+				Log.Write(Severity.Error, new Exception("Failed to open file", ex));
 			}
 
 			return null;
@@ -150,8 +141,8 @@ namespace Anamnesis.GUI.Services
 					{
 						List<FileType> fileTypes = new List<FileType>();
 						fileTypes.Add(type);
-						FileBrowserView browser = new FileBrowserView(this.fileSources, fileTypes.ToArray(), FileBrowserView.Modes.Save);
-						await App.Services.Get<IViewService>().ShowDrawer(browser);
+						FileBrowserView browser = new FileBrowserView(FileSources, fileTypes.ToArray(), FileBrowserView.Modes.Save);
+						await ViewService.ShowDrawer(browser);
 
 						while (browser.IsOpen)
 							await Task.Delay(10);
@@ -199,13 +190,13 @@ namespace Anamnesis.GUI.Services
 				else
 				{
 					using TextWriter writer = new StreamWriter(stream);
-					string json = serializer.Serialize(file);
+					string json = SerializerService.Serialize(file);
 					writer.Write(json);
 				}
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception("Failed to save file", ex), "Files", Log.Severity.Error);
+				Log.Write(Severity.Error, new Exception("Failed to save file", ex));
 			}
 		}
 
@@ -251,7 +242,7 @@ namespace Anamnesis.GUI.Services
 				{
 					using TextReader reader = new StreamReader(stream);
 					string json = reader.ReadToEnd();
-					file = (FileBase)serializer.Deserialize(json, type.Type);
+					file = (FileBase)SerializerService.Deserialize(json, type.Type);
 				}
 			}
 
@@ -306,5 +297,74 @@ namespace Anamnesis.GUI.Services
 			builder.Append("*." + fileType.Extension);
 			return builder.ToString();
 		}
+	}
+
+	#pragma warning disable SA1201, SA1402
+	public interface IFileSource
+	{
+		public interface IEntry
+		{
+			public string Path { get; }
+			public string Name { get; }
+
+			public Task Delete();
+		}
+
+		public interface IFile : IEntry
+		{
+			public FileType? Type { get; }
+		}
+
+		public interface IDirectory : IEntry
+		{
+		}
+
+		public string Name { get; }
+
+		public bool CanOpen(FileType type);
+		public IDirectory GetDefaultDirectory(FileType[] fileTypes);
+		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, FileType[] fileTypes, bool recursive);
+	}
+
+	public class FileType
+	{
+		public readonly string Extension;
+		public readonly string Name;
+		public readonly Type Type;
+		public readonly bool SupportsAdvancedMode;
+		public readonly string? DefaultDirectoryName;
+
+		public Func<Stream, FileBase>? Deserialize;
+		public Action<Stream, FileBase>? Serialize;
+
+		public FileType(string extension, string name, Type type, bool canAdvancedLoad = false, string? defaultdirectoryName = null, Func<Stream, FileBase>? deserialize = null, Action<Stream, FileBase>? serialize = null)
+		{
+			if (extension.StartsWith("."))
+				extension = extension.Substring(1, extension.Length - 1);
+
+			this.Extension = extension;
+			this.Name = name;
+			this.Type = type;
+			this.SupportsAdvancedMode = canAdvancedLoad;
+			this.DefaultDirectoryName = defaultdirectoryName;
+			this.Serialize = serialize;
+			this.Deserialize = deserialize;
+		}
+
+		public bool IsExtension(string extension)
+		{
+			if (extension.StartsWith("."))
+				extension = extension.Substring(1, extension.Length - 1);
+
+			return this.Extension == extension;
+		}
+	}
+
+	[Serializable]
+	public abstract class FileBase
+	{
+		public string? Path { get; set; }
+		public bool UseAdvancedLoad { get; set; }
+		public abstract FileType Type { get; }
 	}
 }

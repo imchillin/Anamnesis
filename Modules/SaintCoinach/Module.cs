@@ -5,12 +5,13 @@ namespace Anamnesis.SaintCoinachModule
 {
 	using System.Threading.Tasks;
 	using Anamnesis.Modules;
+	using Anamnesis.Services;
 
 	public class Module : IModule
 	{
 		public async Task Initialize()
 		{
-			await Services.Add<GameDataService>();
+			await ServiceManager.Add<GameDataService>();
 		}
 
 		public Task Start()

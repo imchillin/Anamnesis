@@ -16,6 +16,7 @@ namespace Anamnesis.GUI.Windows
 	using System.Windows.Media;
 	using System.Windows.Navigation;
 	using Anamnesis.GUI.Services;
+	using Anamnesis.Services;
 
 	/// <summary>
 	/// Interaction logic for ErrorDialog.xaml.

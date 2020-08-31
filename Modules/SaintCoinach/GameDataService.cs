@@ -19,10 +19,8 @@ namespace Anamnesis.SaintCoinachModule
 	using Directory = System.IO.Directory;
 	using File = System.IO.File;
 
-	public class GameDataService : IGameDataService, IProgress<UpdateProgress>
+	public class GameDataService : ServiceBase<GameDataService>, IGameDataService, IProgress<UpdateProgress>
 	{
-		public static GameDataService Instance;
-
 		public IData<IRace> Races
 		{
 			get;
@@ -95,19 +93,9 @@ namespace Anamnesis.SaintCoinachModule
 			private set;
 		}
 
-		public Task Initialize()
+		public override async Task Start()
 		{
-			return Task.CompletedTask;
-		}
-
-		public Task Shutdown()
-		{
-			return Task.CompletedTask;
-		}
-
-		public async Task Start()
-		{
-			Instance = this;
+			await base.Start();
 
 			string directory = MemoryService.GamePath;
 

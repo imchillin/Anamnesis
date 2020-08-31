@@ -62,12 +62,10 @@ namespace Anamnesis.SaintCoinachModule
 		{
 			get
 			{
-				GameDataService service = Services.Get<GameDataService>();
-
 				List<ITribe> tribes = new List<ITribe>();
 				foreach (Appearance.Tribes tribe in this.Race.GetTribes())
 				{
-					tribes.Add(service.Tribes.Get((byte)tribe));
+					tribes.Add(GameDataService.Instance.Tribes.Get((byte)tribe));
 				}
 
 				return tribes;

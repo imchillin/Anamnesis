@@ -4,12 +4,10 @@
 namespace Anamnesis.GUI.Views
 {
 	using System.Collections.Generic;
-	using System.ComponentModel;
 	using System.Linq;
 	using System.Windows.Controls;
-	using Anamnesis.Localization;
+	using Anamnesis.Services;
 	using MaterialDesignColors;
-	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
 
 	/// <summary>
@@ -18,8 +16,6 @@ namespace Anamnesis.GUI.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class SettingsView : UserControl
 	{
-		private ILocalizationService localization;
-
 		public SettingsView()
 		{
 			this.InitializeComponent();
@@ -43,8 +39,7 @@ namespace Anamnesis.GUI.Views
 
 			List<LanguageOption> languages = new List<LanguageOption>();
 
-			this.localization = Anamnesis.Services.Get<ILocalizationService>();
-			foreach ((string key, string name) in this.localization.GetAvailableLocales())
+			foreach ((string key, string name) in LocalizationService.GetAvailableLocales())
 			{
 				languages.Add(new LanguageOption(key, name));
 			}
@@ -95,7 +90,7 @@ namespace Anamnesis.GUI.Views
 			set
 			{
 				this.Settings.Language = value.Key;
-				this.localization.SetLocale(value.Key);
+				LocalizationService.SetLocale(value.Key);
 			}
 		}
 

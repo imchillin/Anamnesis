@@ -45,6 +45,9 @@
 	  <Reference Include="SaintCoinachStandard">
 	    <HintPath>SaintCoinach\SaintCoinachStandard.dll</HintPath>
 	  </Reference>
+	  <Reference Include="SimpleLog">
+	    <HintPath>..\..\Lib\SimpleLog.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>

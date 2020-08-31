@@ -12,6 +12,7 @@ namespace Anamnesis.GUI.Views
 	using System.Windows.Controls;
 	using System.Windows.Navigation;
 	using Anamnesis.GUI.Services;
+	using Anamnesis.Services;
 
 	public partial class AboutView : UserControl
 	{

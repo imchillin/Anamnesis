@@ -11,6 +11,7 @@ namespace Anamnesis.WpfStyles.Drawers
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using Anamnesis;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	#pragma warning disable SA1011
@@ -88,7 +89,6 @@ namespace Anamnesis.WpfStyles.Drawers
 
 		public static void Show<TValue>(string title, ISelectorView view, TValue current, Action<TValue> changed)
 		{
-			IViewService viewService = Services.Get<IViewService>();
 			view.Selector.Value = current;
 			view.Selector.SelectionChanged += () =>
 			{
@@ -102,7 +102,7 @@ namespace Anamnesis.WpfStyles.Drawers
 
 			Task.Run(() =>
 			{
-				viewService.ShowDrawer(view, title);
+				ViewService.ShowDrawer(view, title);
 			});
 		}
 

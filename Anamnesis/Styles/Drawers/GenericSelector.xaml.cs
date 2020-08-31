@@ -7,6 +7,7 @@ namespace Styles.Drawers
 	using System.Collections.Generic;
 	using System.Windows.Controls;
 	using Anamnesis;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.Drawers;
 
 	/// <summary>

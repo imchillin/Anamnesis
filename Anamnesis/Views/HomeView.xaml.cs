@@ -21,19 +21,13 @@ namespace Anamnesis.GUI.Views
 	[SuppressPropertyChangedWarnings]
 	public partial class HomeView : UserControl
 	{
-		private IGameDataService gameData;
-
 		public HomeView()
 		{
 			this.InitializeComponent();
 
-			this.gameData = Anamnesis.Services.Get<IGameDataService>();
-			this.TimeService = Anamnesis.Services.Get<TimeService>();
-
 			this.ContentArea.DataContext = this;
 		}
 
-		public TimeService TimeService { get; private set; }
 		public string Territory { get; set; } = "Unknown";
 
 		public float CameraAngleX

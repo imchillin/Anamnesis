@@ -11,9 +11,9 @@ namespace Anamnesis.GUI
 	using System.Windows.Controls.Primitives;
 	using System.Windows.Input;
 	using Anamnesis;
-	using Anamnesis.GUI.Services;
 	using Anamnesis.GUI.Views;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	/// <summary>
@@ -23,8 +23,6 @@ namespace Anamnesis.GUI
 	[SuppressPropertyChangedWarnings]
 	public partial class MainWindow : Window
 	{
-		private readonly ViewService viewService;
-
 		private UserControl? currentView;
 		private Dictionary<ViewService.Page, UserControl> pages = new Dictionary<ViewService.Page, UserControl>();
 
@@ -34,8 +32,7 @@ namespace Anamnesis.GUI
 
 			this.DataContext = this;
 
-			this.viewService = App.Services.Get<ViewService>();
-			this.viewService.ShowingDrawer += this.OnShowDrawer;
+			ViewService.ShowingDrawer += this.OnShowDrawer;
 
 			TargetService.ActorSelected += this.OnActorSelected;
 
@@ -161,7 +158,7 @@ namespace Anamnesis.GUI
 				return;
 			}
 
-			App.Services.Get<IViewService>().ShowDrawer<SettingsView>("Settings");
+			ViewService.ShowDrawer<SettingsView>("Settings");
 		}
 
 		private void OnAboutClick(object sender, RoutedEventArgs e)
@@ -172,7 +169,7 @@ namespace Anamnesis.GUI
 				return;
 			}
 
-			App.Services.Get<IViewService>().ShowDrawer<AboutView>("About");
+			ViewService.ShowDrawer<AboutView>("About");
 		}
 
 		private void OnAlwaysOnTopChecked(object sender, RoutedEventArgs e)

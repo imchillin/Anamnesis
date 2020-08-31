@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Services
+namespace Anamnesis.Services
 {
 	using System;
 	using System.Collections.Generic;
@@ -9,118 +9,93 @@ namespace Anamnesis.GUI.Services
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using Anamnesis.Localization;
+	using SimpleLog;
 
-	public class LocalizationService : ILocalizationService
+	public delegate void LocalizationEvent();
+
+	public class LocalizationService : ServiceBase<LocalizationService>
 	{
 		public const string FallbackCulture = "EN";
 
-		private readonly Dictionary<string, Locale> locales = new Dictionary<string, Locale>();
+		private static readonly Dictionary<string, Locale> Locales = new Dictionary<string, Locale>();
 
-		private Locale? fallbackLocale;
-		private Locale? currentLocale;
+		private static Locale? fallbackLocale;
+		private static Locale? currentLocale;
 
-		public event LocalizationEvent? LocaleChanged;
+		public static event LocalizationEvent? LocaleChanged;
 
-		public void Add(string culture, string key, string? value)
+		public static void Add(string culture, string key, string? value)
 		{
 			culture = culture.ToUpperInvariant();
 
-			if (!this.locales.ContainsKey(culture))
-				this.locales.Add(culture, new Locale(culture));
+			if (!Locales.ContainsKey(culture))
+				Locales.Add(culture, new Locale(culture));
 
-			Locale locale = this.locales[culture];
+			Locale locale = Locales[culture];
 
-			this.locales[culture].Add(key, value);
+			Locales[culture].Add(key, value);
 		}
 
-		public void Add(string culture, Dictionary<string, string?> values)
+		public static void Add(string culture, Dictionary<string, string?> values)
 		{
 			foreach ((string key, string? value) in values)
 			{
-				this.Add(culture, key, value);
+				Add(culture, key, value);
 			}
 		}
 
-		public void Add(string searchPath)
+		public static void Add(string searchPath)
 		{
 			string[] paths = Directory.GetFiles(searchPath);
-
-			ISerializerService serializer = Anamnesis.Services.Get<ISerializerService>();
 
 			foreach (string path in paths)
 			{
 				string culture = Path.GetFileNameWithoutExtension(path);
 
 				string json = File.ReadAllText(path);
-				Dictionary<string, string?> values = serializer.Deserialize<Dictionary<string, string?>>(json);
-				this.Add(culture, values);
+				Dictionary<string, string?> values = SerializerService.Deserialize<Dictionary<string, string?>>(json);
+				Add(culture, values);
 			}
 		}
 
-		public string? GetString(string key)
+		public static string? GetString(string key)
 		{
 			string? val = null;
 
-			if (this.currentLocale?.Get(key, out val) ?? false)
+			if (currentLocale?.Get(key, out val) ?? false)
 				return val;
 
-			Log.Write("Missing Localized string: \"" + key + "\" in locale: \"" + this.currentLocale?.Culture + "\"", "Localization", Log.Severity.Warning);
+			Log.Write(Severity.Warning, "Missing Localized string: \"" + key + "\" in locale: \"" + currentLocale?.Culture + "\"");
 
-			if (this.fallbackLocale?.Get(key, out val) ?? false)
+			if (fallbackLocale?.Get(key, out val) ?? false)
 				return val;
 
-			Log.Write("Missing Localized string: \"" + key + "\"", "Localization", Log.Severity.Error);
-			this.fallbackLocale?.Add(key, null);
+			Log.Write(Severity.Error, "Missing Localized string: \"" + key + "\"");
+			fallbackLocale?.Add(key, null);
 
 			return null;
 		}
 
-		public Task Initialize()
-		{
-			this.Add("Languages");
-
-			this.currentLocale = this.locales[FallbackCulture];
-			this.fallbackLocale = this.currentLocale;
-
-			this.locales.Add("GIB", new GiberishLocale(this.fallbackLocale));
-
-			return Task.CompletedTask;
-		}
-
-		public Task Shutdown()
-		{
-			return Task.CompletedTask;
-		}
-
-		public async Task Start()
-		{
-			ISettingsService settingsService = Anamnesis.Services.Get<ISettingsService>();
-			MainApplicationSettings mainSettings = await settingsService.Load<MainApplicationSettings>();
-
-			this.SetLocale(mainSettings.Language);
-		}
-
-		public void SetLocale(string locale)
+		public static void SetLocale(string locale)
 		{
 			locale = locale.ToUpper();
 
-			if (this.locales.ContainsKey(locale))
+			if (Locales.ContainsKey(locale))
 			{
-				this.currentLocale = this.locales[locale];
+				currentLocale = Locales[locale];
 			}
 			else
 			{
-				this.currentLocale = this.fallbackLocale;
+				currentLocale = fallbackLocale;
 			}
 
-			this.LocaleChanged?.Invoke();
+			LocaleChanged?.Invoke();
 		}
 
-		public Dictionary<string, string> GetAvailableLocales()
+		public static Dictionary<string, string> GetAvailableLocales()
 		{
 			Dictionary<string, string> results = new Dictionary<string, string>();
-			foreach (Locale locale in this.locales.Values)
+			foreach (Locale locale in Locales.Values)
 			{
 				if (results.ContainsKey(locale.Culture))
 					continue;
@@ -129,6 +104,26 @@ namespace Anamnesis.GUI.Services
 			}
 
 			return results;
+		}
+
+		public override async Task Initialize()
+		{
+			await base.Initialize();
+
+			Add("Languages");
+
+			currentLocale = Locales[FallbackCulture];
+			fallbackLocale = currentLocale;
+
+			Locales.Add("GIB", new GiberishLocale(fallbackLocale));
+		}
+
+		public override async Task Start()
+		{
+			await base.Start();
+			MainApplicationSettings mainSettings = await SettingsService.Load<MainApplicationSettings>();
+
+			SetLocale(mainSettings.Language);
 		}
 
 		private class Locale

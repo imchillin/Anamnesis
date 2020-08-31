@@ -5,7 +5,7 @@ namespace Anamnesis.WpfStyles.Controls
 {
 	using System.ComponentModel;
 	using System.Windows;
-	using Anamnesis.Localization;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.DependencyProperties;
 
 	/// <summary>
@@ -15,12 +15,10 @@ namespace Anamnesis.WpfStyles.Controls
 	{
 		public static readonly IBind<string> KeyDp = Binder.Register<string, TextBlock>(nameof(Key), OnKeyChanged);
 
-		private static readonly ILocalizationService Loc = Services.Get<ILocalizationService>();
-
 		public TextBlock()
 		{
 			this.Loaded += this.TextBlock_Loaded;
-			Loc.LocaleChanged += this.OnLocaleChanged;
+			LocalizationService.LocaleChanged += this.OnLocaleChanged;
 		}
 
 		public string? Key { get; set; }
@@ -49,7 +47,7 @@ namespace Anamnesis.WpfStyles.Controls
 			string? val = null;
 
 			if (!DesignerProperties.GetIsInDesignMode(this))
-				val = Loc.GetString(this.Key);
+				val = LocalizationService.GetString(this.Key);
 
 			if (val == null)
 			{

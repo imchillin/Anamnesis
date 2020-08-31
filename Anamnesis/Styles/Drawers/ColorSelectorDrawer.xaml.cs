@@ -10,6 +10,7 @@ namespace Anamnesis.WpfStyles.Drawers
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.DependencyProperties;
 
 	using Binder = Anamnesis.WpfStyles.DependencyProperties.Binder;

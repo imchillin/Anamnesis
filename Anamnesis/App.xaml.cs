@@ -8,6 +8,7 @@ namespace Anamnesis
 	using System.Windows;
 	using System.Windows.Threading;
 	using Anamnesis.GUI;
+	using Anamnesis.Services;
 	using MaterialDesignThemes.Wpf;
 
 	using Application = System.Windows.Application;
@@ -17,7 +18,7 @@ namespace Anamnesis
 	/// </summary>
 	public partial class App : Application
 	{
-		public static readonly ServiceManager Services = new ServiceManager();
+		private static readonly ServiceManager Services = new ServiceManager();
 
 		public static MainApplicationSettings Settings { get; private set; } = new MainApplicationSettings();
 
@@ -76,7 +77,7 @@ namespace Anamnesis
 			{
 				await Services.InitializeServices();
 
-				Settings = await App.Services.Get<ISettingsService>().Load<MainApplicationSettings>();
+				Settings = await SettingsService.Load<MainApplicationSettings>();
 				Settings.Changed += this.OnSettingsChanged;
 				this.OnSettingsChanged(Settings);
 

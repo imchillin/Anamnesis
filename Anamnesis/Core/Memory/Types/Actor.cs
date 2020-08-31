@@ -55,6 +55,9 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x1868)]
 		public int NameId;
 
+		[FieldOffset(0x1888)]
+		public int ModelType;
+
 		[FieldOffset(0x0F0)]
 		public IntPtr Transform;
 
@@ -86,6 +89,7 @@ namespace Anamnesis.Memory
 		public int PlayerCharacterTargetActorId { get; set; }
 		public int BattleNpcTargetActorId { get; set; }
 		public int NameId { get; set; }
+		public int ModelType { get; set; }
 
 		[ViewModelOffset(0x50)]
 		public TransformViewModel? Transform { get; set; }

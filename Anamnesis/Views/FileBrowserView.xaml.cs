@@ -14,6 +14,7 @@ namespace Anamnesis.GUI.Views
 	using System.Windows.Input;
 	using Anamnesis;
 	using Anamnesis.GUI.Dialogs;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	/// <summary>

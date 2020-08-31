@@ -6,6 +6,7 @@ namespace Anamnesis.GUI.Windows
 	using System;
 	using System.Windows;
 	using System.Windows.Input;
+	using Anamnesis.Services;
 
 	/// <summary>
 	/// Interaction logic for Dialog.xaml.

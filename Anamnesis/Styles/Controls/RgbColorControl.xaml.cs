@@ -9,6 +9,7 @@ namespace Anamnesis.WpfStyles.Controls
 	using System.Windows.Media;
 	using Anamnesis;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.DependencyProperties;
 	using Anamnesis.WpfStyles.Drawers;
 	using PropertyChanged;
@@ -59,8 +60,6 @@ namespace Anamnesis.WpfStyles.Controls
 
 		private async void OnClick(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Services.Get<IViewService>();
-
 			ColorSelectorDrawer selector = new ColorSelectorDrawer();
 			selector.EnableAlpha = false;
 
@@ -74,7 +73,7 @@ namespace Anamnesis.WpfStyles.Controls
 				this.Value = v.Color;
 			};
 
-			await viewService.ShowDrawer(selector, this.DisplayName);
+			await ViewService.ShowDrawer(selector, this.DisplayName);
 		}
 
 		private void UpdatePreview()

@@ -70,8 +70,7 @@ namespace Anamnesis.SaintCoinachModule
 				// use the item id lookup
 				if (this.item == null)
 				{
-					IGameDataService gd = Services.Get<IGameDataService>();
-					this.item = gd.Items.Get(DyeToItemKey(this.Key));
+					this.item = GameDataService.Instance.Items.Get(DyeToItemKey(this.Key));
 				}
 			}
 

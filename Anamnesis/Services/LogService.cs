@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Services
+namespace Anamnesis.Services
 {
 	using System;
 	using System.Diagnostics;

@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Services
+namespace Anamnesis.Services
 {
 	using System;
 	using System.Collections.Generic;
@@ -11,14 +11,15 @@ namespace Anamnesis.GUI.Services
 	using System.Threading.Tasks;
 	using Anamnesis;
 
-	public class SettingsService : ISettingsService
+	public delegate void SettingsEvent(SettingsBase settings);
+
+	public class SettingsService : ServiceBase<SettingsService>
 	{
 		public const string SettingsDirectory = "Settings/";
 
-		private readonly Dictionary<SettingsBase, SaveJob> jobs = new Dictionary<SettingsBase, SaveJob>();
-		private ISerializerService serializer = Services.Get<ISerializerService>();
+		private static readonly Dictionary<SettingsBase, SaveJob> Jobs = new Dictionary<SettingsBase, SaveJob>();
 
-		public event SettingsEvent? SettingsSaved;
+		public static event SettingsEvent? SettingsSaved;
 
 		public static void ShowDirectory()
 		{
@@ -26,17 +27,7 @@ namespace Anamnesis.GUI.Services
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);
 		}
 
-		public Task Initialize()
-		{
-			string path = FileService.StoreDirectory + SettingsDirectory;
-
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-
-			return Task.CompletedTask;
-		}
-
-		public Task<T> Load<T>()
+		public static Task<T> Load<T>()
 			where T : SettingsBase, new()
 		{
 			string path = FileService.StoreDirectory + SettingsDirectory + typeof(T).Name + ".json";
@@ -45,44 +36,46 @@ namespace Anamnesis.GUI.Services
 			if (!File.Exists(path))
 			{
 				settings = Activator.CreateInstance<T>();
-				this.SaveImmediate(settings);
+				SaveImmediate(settings);
 			}
 			else
 			{
 				string json = File.ReadAllText(path);
-				settings = this.serializer.Deserialize<T>(json);
+				settings = SerializerService.Deserialize<T>(json);
 			}
 
-			if (!this.jobs.ContainsKey(settings))
-				this.jobs.Add(settings, new SaveJob(settings, this));
+			if (!Jobs.ContainsKey(settings))
+				Jobs.Add(settings, new SaveJob(settings));
 
 			return Task.FromResult(settings);
 		}
 
-		public void Save(SettingsBase settings)
+		public static void Save(SettingsBase settings)
 		{
-			if (!this.jobs.ContainsKey(settings))
-				this.jobs.Add(settings, new SaveJob(settings, this));
+			if (!Jobs.ContainsKey(settings))
+				Jobs.Add(settings, new SaveJob(settings));
 
-			this.jobs[settings].ResetTimer();
+			Jobs[settings].ResetTimer();
 		}
 
-		public void SaveImmediate(SettingsBase settings)
+		public static void SaveImmediate(SettingsBase settings)
 		{
 			string path = FileService.StoreDirectory + SettingsDirectory + settings.GetType().Name + ".json";
-			string json = this.serializer.Serialize(settings);
+			string json = SerializerService.Serialize(settings);
 			File.WriteAllText(path, json);
-			this.SettingsSaved?.Invoke(settings);
+			SettingsSaved?.Invoke(settings);
 		}
 
-		public Task Shutdown()
+		public override async Task Initialize()
 		{
-			return Task.CompletedTask;
-		}
+			await base.Initialize();
 
-		public Task Start()
-		{
-			return Task.CompletedTask;
+			string path = FileService.StoreDirectory + SettingsDirectory;
+
+			if (!Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
+			}
 		}
 
 		private class SaveJob
@@ -92,12 +85,10 @@ namespace Anamnesis.GUI.Services
 
 			private Task? task;
 			private SettingsBase settings;
-			private SettingsService service;
 
-			public SaveJob(SettingsBase settings, SettingsService service)
+			public SaveJob(SettingsBase settings)
 			{
 				this.settings = settings;
-				this.service = service;
 
 				INotifyPropertyChanged? propChanged = settings as INotifyPropertyChanged;
 
@@ -138,9 +129,22 @@ namespace Anamnesis.GUI.Services
 						await Task.Delay(50);
 					}
 
-					this.service.SaveImmediate(this.settings);
+					SettingsService.SaveImmediate(this.settings);
 				}
 			}
+		}
+	}
+
+	#pragma warning disable SA1402
+
+	[Serializable]
+	public abstract class SettingsBase
+	{
+		public event SettingsEvent? Changed;
+
+		public void NotifyChanged()
+		{
+			this.Changed?.Invoke(this);
 		}
 	}
 }

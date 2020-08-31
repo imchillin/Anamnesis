@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Services
+namespace Anamnesis.Services
 {
 	using System;
 	using System.Collections.Generic;
@@ -13,42 +13,55 @@ namespace Anamnesis.GUI.Services
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Memory;
 
-	public class ViewService : IViewService
+	#pragma warning disable SA1649
+
+	public delegate void DrawerEvent();
+	public delegate void DialogEvent();
+
+	public enum DrawerDirection
 	{
-		private readonly Dictionary<string, Page> pages = new Dictionary<string, Page>();
+		Left,
+		Top,
+		Right,
+		Bottom,
+	}
+
+	public interface IDrawer
+	{
+		event DrawerEvent Close;
+	}
+
+	public interface IDialog<TResult> : IDialog
+	{
+		TResult Result { get; }
+	}
+
+	public interface IDialog
+	{
+		event DialogEvent Close;
+
+		void Cancel();
+	}
+
+	public class ViewService : ServiceBase<ViewService>
+	{
+		private static readonly Dictionary<string, Page> PageLookup = new Dictionary<string, Page>();
 
 		public delegate void PageEvent(Page page);
 		public delegate Task DrawerEvent(string? title, UserControl drawer, DrawerDirection direction);
 
-		public event PageEvent? AddingPage;
-		public event DrawerEvent? ShowingDrawer;
+		public static event PageEvent? AddingPage;
+		public static event DrawerEvent? ShowingDrawer;
 
-		public IEnumerable<Page> Pages
+		public static IEnumerable<Page> Pages
 		{
 			get
 			{
-				return this.pages.Values;
+				return PageLookup.Values;
 			}
 		}
 
-		public Task Initialize()
-		{
-			this.AddPage<HomeView>("Home", "Home");
-
-			return Task.CompletedTask;
-		}
-
-		public Task Shutdown()
-		{
-			return Task.CompletedTask;
-		}
-
-		public Task Start()
-		{
-			return Task.CompletedTask;
-		}
-
-		public void AddPage<T>(string name, string icon, Func<ActorViewModel, bool>? isSupportedCallback = null)
+		public static void AddPage<T>(string name, string icon, Func<ActorViewModel, bool>? isSupportedCallback = null)
 		{
 			Page page = new Page();
 			page.Icon = icon;
@@ -56,57 +69,57 @@ namespace Anamnesis.GUI.Services
 			page.IsSupportedCallback = isSupportedCallback;
 			page.Type = typeof(T);
 
-			if (this.pages.ContainsKey(name))
+			if (PageLookup.ContainsKey(name))
 				throw new Exception($"Page already registered with name: {name}");
 
 			if (!typeof(UserControl).IsAssignableFrom(page.Type))
 				throw new Exception($"Page: {page.Type} does not extend from UserControl.");
 
-			this.pages.Add(name, page);
-			this.AddingPage?.Invoke(page);
+			PageLookup.Add(name, page);
+			AddingPage?.Invoke(page);
 		}
 
-		public Task ShowDrawer<T>(string? title, DrawerDirection direction)
+		public static Task ShowDrawer<T>(string? title = null, DrawerDirection direction = DrawerDirection.Right)
 		{
-			UserControl? view = this.CreateView<T>();
+			UserControl? view = CreateView<T>();
 
-			if (view == null || this.ShowingDrawer == null)
+			if (view == null || ShowingDrawer == null)
 				return Task.CompletedTask;
 
-			return this.ShowingDrawer.Invoke(title, view, direction);
+			return ShowingDrawer.Invoke(title, view, direction);
 		}
 
-		public Task ShowDrawer(object view, string? title, DrawerDirection direction)
+		public static Task ShowDrawer(object view, string? title = null, DrawerDirection direction = DrawerDirection.Right)
 		{
 			if (!(view is UserControl control))
 				throw new Exception("Invalid view");
 
-			if (this.ShowingDrawer == null)
+			if (ShowingDrawer == null)
 				return Task.CompletedTask;
 
-			return this.ShowingDrawer.Invoke(title, control, direction);
+			return ShowingDrawer.Invoke(title, control, direction);
 		}
 
-		public Page GetPage(string path)
+		public static Page GetPage(string path)
 		{
-			if (!this.pages.ContainsKey(path))
+			if (!PageLookup.ContainsKey(path))
 				throw new Exception($"View not found for path: {path}");
 
-			return this.pages[path];
+			return PageLookup[path];
 		}
 
-		public Task<TResult> ShowDialog<TView, TResult>(string title)
+		public static Task<TResult> ShowDialog<TView, TResult>(string title)
 			where TView : IDialog<TResult>
 		{
-			UserControl? userControl = this.CreateView<TView>();
+			UserControl? userControl = CreateView<TView>();
 
 			if (userControl is TView view)
-				return this.ShowDialog<TView, TResult>(title, view);
+				return ShowDialog<TView, TResult>(title, view);
 
 			throw new InvalidOperationException();
 		}
 
-		public Task<TResult> ShowDialog<TView, TResult>(string title, TView view)
+		public static Task<TResult> ShowDialog<TView, TResult>(string title, TView view)
 			where TView : IDialog<TResult>
 		{
 			Dialog dlg = new Dialog();
@@ -126,7 +139,14 @@ namespace Anamnesis.GUI.Services
 			return Task.FromResult(dialogInterface.Result);
 		}
 
-		private UserControl? CreateView<T>()
+		public override async Task Initialize()
+		{
+			await base.Initialize();
+
+			AddPage<HomeView>("Home", "Home");
+		}
+
+		private static UserControl? CreateView<T>()
 		{
 			Type viewType = typeof(T);
 
