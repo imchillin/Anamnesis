@@ -86,8 +86,9 @@ namespace Anamnesis.GUI
 			await this.Add<TargetService>();
 			await this.Add<FileService>();
 			await this.Add<ActorRefreshService>();
-			await this.Add<ModuleService>();
+			await this.Add<TerritoryService>();
 			await this.Add<TimeService>();
+			await this.Add<ModuleService>();
 
 			this.IsInitialized = true;
 			Log.Write($"Services Initialized", "Services");
