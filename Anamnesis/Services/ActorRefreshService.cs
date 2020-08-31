@@ -8,13 +8,13 @@ namespace Anamnesis.Services
 	using Anamnesis;
 	using Anamnesis.Memory;
 
-	public class ActorRefreshService : IService
+	public class ActorRefreshService : ServiceBase<ActorRefreshService>
 	{
 		// how long to wait after a change before calling Apply()
 		private const int ApplyDelay = 500;
 
-		private int applyCountdown = 0;
-		private Task? applyTask;
+		private static int applyCountdown = 0;
+		private static Task? applyTask;
 
 		public static bool IsRefreshing
 		{
@@ -22,39 +22,23 @@ namespace Anamnesis.Services
 			private set;
 		}
 
-		public Task Initialize()
+		public static void Refresh(ActorViewModel actor)
 		{
-			return Task.CompletedTask;
-		}
+			applyCountdown = ApplyDelay;
 
-		public Task Start()
-		{
-			return Task.CompletedTask;
-		}
-
-		public Task Shutdown()
-		{
-			IsRefreshing = false;
-			return Task.CompletedTask;
-		}
-
-		public void Refresh(Actor actor)
-		{
-			this.applyCountdown = ApplyDelay;
-
-			if (this.applyTask == null || this.applyTask.IsCompleted)
+			if (applyTask == null || applyTask.IsCompleted)
 			{
-				this.applyTask = this.ApplyAfterDelay(actor);
+				applyTask = ApplyAfterDelay(actor);
 			}
 		}
 
-		public async Task RefreshAsync(Actor actor)
+		public static async Task RefreshAsync(ActorViewModel actor)
 		{
 			while (IsRefreshing)
 				await Task.Delay(100);
 
-			this.Refresh(actor);
-			this.PendingRefreshImmediate();
+			Refresh(actor);
+			PendingRefreshImmediate();
 
 			await Task.Delay(50);
 
@@ -64,18 +48,24 @@ namespace Anamnesis.Services
 			await Task.Delay(50);
 		}
 
-		public void PendingRefreshImmediate()
+		public static void PendingRefreshImmediate()
 		{
-			this.applyCountdown = 0;
+			applyCountdown = 0;
 		}
 
-		private async Task ApplyAfterDelay(Actor actor)
+		public override async Task Shutdown()
 		{
-			while (this.applyCountdown > 0)
+			await base.Shutdown();
+			IsRefreshing = false;
+		}
+
+		private static async Task ApplyAfterDelay(ActorViewModel actor)
+		{
+			while (applyCountdown > 0)
 			{
-				while (this.applyCountdown > 0)
+				while (applyCountdown > 0)
 				{
-					this.applyCountdown -= 50;
+					applyCountdown -= 50;
 					await Task.Delay(50);
 				}
 

@@ -12,8 +12,8 @@ namespace Anamnesis.AppearanceModule.Pages
 	using Anamnesis.AppearanceModule.Files;
 	using Anamnesis.AppearanceModule.Views;
 	using Anamnesis.GameData;
-	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.Drawers;
 	using PropertyChanged;
 
@@ -26,27 +26,24 @@ namespace Anamnesis.AppearanceModule.Pages
 	{
 		public AppearancePage()
 		{
-			ActorRefreshService.RefreshBegin += this.RefreshService_RefreshBegin;
-			ActorRefreshService.RefreshComplete += this.RefreshService_RefreshComplete;
-
 			this.InitializeComponent();
 
 			this.ContentArea.DataContext = this;
 		}
 
 		public bool IsOverworld { get; private set; }
-		public Actor Actor { get; private set; }
+		public ActorViewModel Actor { get; private set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			TargetService.ModeChanged += this.SelectionModeChanged;
-			this.OnActorChanged(this.DataContext as Actor);
+			this.OnActorChanged(this.DataContext as ActorViewModel);
 			this.SelectionModeChanged(TargetService.CurrentMode);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			this.OnActorChanged(this.DataContext as Actor);
+			this.OnActorChanged(this.DataContext as ActorViewModel);
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -72,10 +69,7 @@ namespace Anamnesis.AppearanceModule.Pages
 
 		private async Task Load()
 		{
-			IFileService fileService = Services.Get<IFileService>();
-			IViewService viewService = Services.Get<IViewService>();
-
-			FileBase file = await fileService.OpenAny(
+			FileBase file = await FileService.OpenAny(
 				LegacyEquipmentSetFile.FileType,
 				LegacyAppearanceFile.AllFileType,
 				DatAppearanceFile.FileType,
@@ -98,7 +92,7 @@ namespace Anamnesis.AppearanceModule.Pages
 
 				if (advanced)
 				{
-					mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Load Appearance...");
+					mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Load Appearance...");
 
 					if (mode == AppearanceFile.SaveModes.None)
 					{
@@ -112,16 +106,13 @@ namespace Anamnesis.AppearanceModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Services.Get<IViewService>();
-			IFileService fileService = Services.Get<IFileService>();
-
-			await fileService.Save(
+			await FileService.Save(
 				async (advancedMode) =>
 				{
 					AppearanceFile.SaveModes mode = AppearanceFile.SaveModes.All;
 
 					if (advancedMode)
-						mode = await viewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Save Appearance...");
+						mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Save Appearance...");
 
 					AppearanceFile file = new AppearanceFile();
 
@@ -135,10 +126,10 @@ namespace Anamnesis.AppearanceModule.Pages
 				AppearanceFile.FileType);
 		}
 
-		private void OnActorChanged(Actor actor)
+		private void OnActorChanged(ActorViewModel actor)
 		{
 			this.Actor = actor;
-			bool hasValidSelection = actor != null && (actor.Type == ActorTypes.Player || actor.Type == ActorTypes.BattleNpc || actor.Type == ActorTypes.EventNpc);
+			bool hasValidSelection = actor != null && (actor.ObjectKind == ActorTypes.Player || actor.ObjectKind == ActorTypes.BattleNpc || actor.ObjectKind == ActorTypes.EventNpc);
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -149,22 +140,6 @@ namespace Anamnesis.AppearanceModule.Pages
 		private void SelectionModeChanged(Modes mode)
 		{
 			this.IsOverworld = mode == Modes.Overworld;
-		}
-
-		private void RefreshService_RefreshComplete(Actor actor)
-		{
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				this.IsEnabled = true;
-			});
-		}
-
-		private void RefreshService_RefreshBegin(Actor actor)
-		{
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				this.IsEnabled = false;
-			});
 		}
 	}
 }

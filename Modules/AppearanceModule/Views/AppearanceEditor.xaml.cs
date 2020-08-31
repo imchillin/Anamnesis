@@ -13,6 +13,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using Anamnesis.AppearanceModule.ViewModels;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	using AnAppearance = Anamnesis.Memory.Appearance;
@@ -24,17 +25,13 @@ namespace Anamnesis.AppearanceModule.Views
 	[SuppressPropertyChangedWarnings]
 	public partial class AppearanceEditor : UserControl
 	{
-		private readonly IGameDataService gameDataService;
-
 		public AppearanceEditor()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			this.gameDataService = Services.Get<IGameDataService>();
-
 			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Genders));
-			this.RaceComboBox.ItemsSource = this.gameDataService.Races.All;
+			this.RaceComboBox.ItemsSource = GameDataService.Races.All;
 			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Ages));
 		}
 
@@ -60,20 +57,19 @@ namespace Anamnesis.AppearanceModule.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.OnActorChanged(this.DataContext as Actor);
+			this.OnActorChanged(this.DataContext as ActorViewModel);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			this.OnActorChanged(this.DataContext as Actor);
+			this.OnActorChanged(this.DataContext as ActorViewModel);
 		}
 
-		private void OnActorChanged(Actor actor)
+		private void OnActorChanged(ActorViewModel actor)
 		{
 			if (this.Appearance != null)
 			{
 				this.Appearance.PropertyChanged -= this.OnViewModelPropertyChanged;
-				this.Appearance.Dispose();
 			}
 
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
@@ -103,7 +99,7 @@ namespace Anamnesis.AppearanceModule.Views
 			if (this.Appearance.Race == 0)
 				this.Appearance.Race = AnAppearance.Races.Hyur;
 
-			this.Race = this.gameDataService.Races.Get((int)this.Appearance.Race);
+			this.Race = GameDataService.Races.Get((int)this.Appearance.Race);
 			this.RaceComboBox.SelectedItem = this.Race;
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
@@ -111,7 +107,7 @@ namespace Anamnesis.AppearanceModule.Views
 			if (this.Appearance.Tribe == 0)
 				this.Appearance.Tribe = this.Race.Tribes.First().Tribe;
 
-			this.Tribe = this.gameDataService.Tribes.Get((int)this.Appearance.Tribe);
+			this.Tribe = GameDataService.Tribes.Get((int)this.Appearance.Tribe);
 			this.TribeComboBox.SelectedItem = this.Tribe;
 
 			this.HasFur = this.Appearance.Race == AnAppearance.Races.Hrothgar;
@@ -129,7 +125,7 @@ namespace Anamnesis.AppearanceModule.Views
 
 			if (this.Appearance.Tribe > 0)
 			{
-				this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
+				this.Hair = GameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
 			}
 
 			this.CalculateHeight();
@@ -142,7 +138,7 @@ namespace Anamnesis.AppearanceModule.Views
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.Hair))
 			{
-				this.Hair = this.gameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
+				this.Hair = GameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
 			}
 			else if (e.PropertyName == nameof(AppearanceViewModel.Height))
 			{
@@ -152,7 +148,6 @@ namespace Anamnesis.AppearanceModule.Views
 
 		private async void OnHairClicked(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Services.Get<IViewService>();
 			HairSelectorDrawer selector = new HairSelectorDrawer(this.Appearance.Gender, this.Appearance.Tribe, this.Appearance.Hair);
 
 			selector.SelectionChanged += (v) =>
@@ -160,7 +155,7 @@ namespace Anamnesis.AppearanceModule.Views
 				this.Appearance.Hair = v;
 			};
 
-			await viewService.ShowDrawer(selector, "Hair");
+			await ViewService.ShowDrawer(selector, "Hair");
 		}
 
 		private void OnRaceChanged(object sender, SelectionChangedEventArgs e)

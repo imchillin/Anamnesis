@@ -9,6 +9,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using Anamnesis;
 	using Anamnesis.AppearanceModule.ViewModels;
 	using Anamnesis.GameData;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.Drawers;
 	using PropertyChanged;
 
@@ -30,7 +31,6 @@ namespace Anamnesis.AppearanceModule.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			IGameDataService gameData = Services.Get<IGameDataService>();
 			this.Selector.Items.Add(EquipmentBaseViewModel.NoneItem);
 			this.Selector.Items.Add(EquipmentBaseViewModel.NpcbodyItem);
 
@@ -43,7 +43,7 @@ namespace Anamnesis.AppearanceModule.Views
 				}
 			}
 
-			foreach (IItem item in gameData.Items.All)
+			foreach (IItem item in GameDataService.Items.All)
 			{
 				this.Selector.Items.Add(item);
 			}

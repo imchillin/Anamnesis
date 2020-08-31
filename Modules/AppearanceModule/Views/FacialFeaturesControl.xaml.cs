@@ -12,6 +12,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using Anamnesis;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
@@ -97,10 +98,8 @@ namespace Anamnesis.AppearanceModule.Views
 			if (this.Tribe == 0)
 				return;
 
-			IGameDataService dataService = Services.Get<IGameDataService>();
-
 			IImageSource[] facialFeatures = null;
-			foreach (ICharaMakeType set in dataService.CharacterMakeTypes.All)
+			foreach (ICharaMakeType set in GameDataService.CharacterMakeTypes.All)
 			{
 				if (set.Tribe != this.Tribe)
 					continue;

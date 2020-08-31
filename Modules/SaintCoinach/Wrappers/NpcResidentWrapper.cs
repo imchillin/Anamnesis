@@ -24,7 +24,7 @@ namespace Anamnesis.SaintCoinachModule
 			get
 			{
 				if (this.appearance == null)
-					this.appearance = GameDataService.Instance.BaseNPCs.Get(this.Key);
+					this.appearance = SaintCoinachService.BaseNPCs.Get(this.Key);
 
 				return this.appearance;
 			}

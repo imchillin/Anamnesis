@@ -6,6 +6,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using System.Collections.Generic;
 	using System.Windows.Controls;
 	using Anamnesis.AppearanceModule.Utilities;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	/// <summary>

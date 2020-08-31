@@ -7,6 +7,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.GameData;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.Drawers;
 
 	/// <summary>
@@ -19,9 +20,7 @@ namespace Anamnesis.AppearanceModule.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			IGameDataService gameData = Services.Get<IGameDataService>();
-
-			foreach (INpcResident npc in gameData.ResidentNPCs.All)
+			foreach (INpcResident npc in GameDataService.ResidentNPCs.All)
 			{
 				this.Selector.Items.Add(npc);
 			}

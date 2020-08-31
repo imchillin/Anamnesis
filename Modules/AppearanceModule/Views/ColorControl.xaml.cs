@@ -8,6 +8,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using System.Windows.Controls;
 	using Anamnesis.AppearanceModule.Utilities;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 	using WpfColor = System.Windows.Media.Color;
@@ -101,8 +102,6 @@ namespace Anamnesis.AppearanceModule.Views
 			if (this.colors == null)
 				return;
 
-			IViewService viewService = Services.Get<IViewService>();
-
 			FxivColorSelectorDrawer selector = new FxivColorSelectorDrawer(this.colors, this.Value);
 
 			selector.SelectionChanged += (v) =>
@@ -113,7 +112,7 @@ namespace Anamnesis.AppearanceModule.Views
 				this.Value = (byte)v;
 			};
 
-			await viewService.ShowDrawer(selector, "Color");
+			await ViewService.ShowDrawer(selector, "Color");
 		}
 
 		private ColorData.Entry[] GetColors()

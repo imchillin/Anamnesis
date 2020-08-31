@@ -6,6 +6,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using System.Windows.Controls;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 
 	/// <summary>
 	/// Interaction logic for HairSelector.xaml.
@@ -22,10 +23,8 @@ namespace Anamnesis.AppearanceModule.Views
 
 			this.selected = value;
 
-			IGameDataService gameData = Services.Get<IGameDataService>();
-
-			this.List.ItemsSource = gameData.CharacterMakeCustomize.GetHair(tribe, gender);
-			this.List.SelectedItem = gameData.CharacterMakeCustomize.GetHair(tribe, gender, value);
+			this.List.ItemsSource = GameDataService.CharacterMakeCustomize.GetHair(tribe, gender);
+			this.List.SelectedItem = GameDataService.CharacterMakeCustomize.GetHair(tribe, gender, value);
 		}
 
 		public delegate void SelectorEvent(byte value);

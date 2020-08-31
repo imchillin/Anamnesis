@@ -8,7 +8,7 @@ namespace Anamnesis.AppearanceModule.Files
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis;
-
+	using Anamnesis.Services;
 	using Directories = System.IO.Directory;
 	using Files = System.IO.File;
 	using Paths = System.IO.Path;

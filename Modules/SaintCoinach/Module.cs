@@ -11,7 +11,7 @@ namespace Anamnesis.SaintCoinachModule
 	{
 		public async Task Initialize()
 		{
-			await ServiceManager.Add<GameDataService>();
+			await ServiceManager.Add<SaintCoinachService>();
 		}
 
 		public Task Start()

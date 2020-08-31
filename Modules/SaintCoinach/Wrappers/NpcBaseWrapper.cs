@@ -16,8 +16,8 @@ namespace Anamnesis.SaintCoinachModule
 		{
 		}
 
-		public IRace Race => GameDataService.Instance.Races.Get(this.Value.Race.Key);
-		public ITribe Tribe => GameDataService.Instance.Tribes.Get(this.Value.Tribe.Key);
+		public IRace Race => SaintCoinachService.Races.Get(this.Value.Race.Key);
+		public ITribe Tribe => SaintCoinachService.Tribes.Get(this.Value.Tribe.Key);
 
 		public int FacePaintColor => this.Value.FacePaintColor;
 		public int FacePaint => this.Value.FacePaint;
@@ -75,18 +75,18 @@ namespace Anamnesis.SaintCoinachModule
 				equip.RightRing = NpcItemwrapper.FromGear(this.Value.NpcEquip.ModelRightRing);
 				equip.LeftRing = NpcItemwrapper.FromGear(this.Value.NpcEquip.ModelLeftRing);
 
-				equip.DyeMainHand = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeMain.Key);
-				equip.DyeOffHand = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeOff.Key);
-				equip.DyeHead = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeHead.Key);
-				equip.DyeBody = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeBody.Key);
-				equip.DyeHands = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeHands.Key);
-				equip.DyeLegs = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeLegs.Key);
-				equip.DyeFeet = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeFeet.Key);
-				equip.DyeEars = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeEars.Key);
-				equip.DyeNeck = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeNeck.Key);
-				equip.DyeWrists = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeWrists.Key);
-				equip.DyeRightRing = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeRightRing.Key);
-				equip.DyeLeftRing = GameDataService.Instance.Dyes.Get(this.Value.NpcEquip.DyeLeftRing.Key);
+				equip.DyeMainHand = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeMain.Key);
+				equip.DyeOffHand = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeOff.Key);
+				equip.DyeHead = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeHead.Key);
+				equip.DyeBody = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeBody.Key);
+				equip.DyeHands = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeHands.Key);
+				equip.DyeLegs = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeLegs.Key);
+				equip.DyeFeet = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeFeet.Key);
+				equip.DyeEars = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeEars.Key);
+				equip.DyeNeck = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeNeck.Key);
+				equip.DyeWrists = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeWrists.Key);
+				equip.DyeRightRing = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeRightRing.Key);
+				equip.DyeLeftRing = SaintCoinachService.Dyes.Get(this.Value.NpcEquip.DyeLeftRing.Key);
 			}
 			else
 			{
@@ -103,18 +103,18 @@ namespace Anamnesis.SaintCoinachModule
 				equip.RightRing = NpcItemwrapper.FromGear(this.Value.ModelRightRing);
 				equip.LeftRing = NpcItemwrapper.FromGear(this.Value.ModelLeftRing);
 
-				equip.DyeMainHand = GameDataService.Instance.Dyes.Get(this.Value.DyeMain.Key);
-				equip.DyeOffHand = GameDataService.Instance.Dyes.Get(this.Value.DyeOff.Key);
-				equip.DyeHead = GameDataService.Instance.Dyes.Get(this.Value.DyeHead.Key);
-				equip.DyeBody = GameDataService.Instance.Dyes.Get(this.Value.DyeBody.Key);
-				equip.DyeHands = GameDataService.Instance.Dyes.Get(this.Value.DyeHands.Key);
-				equip.DyeLegs = GameDataService.Instance.Dyes.Get(this.Value.DyeLegs.Key);
-				equip.DyeFeet = GameDataService.Instance.Dyes.Get(this.Value.DyeFeet.Key);
-				equip.DyeEars = GameDataService.Instance.Dyes.Get(this.Value.DyeEars.Key);
-				equip.DyeNeck = GameDataService.Instance.Dyes.Get(this.Value.DyeNeck.Key);
-				equip.DyeWrists = GameDataService.Instance.Dyes.Get(this.Value.DyeWrists.Key);
-				equip.DyeRightRing = GameDataService.Instance.Dyes.Get(this.Value.DyeRightRing.Key);
-				equip.DyeLeftRing = GameDataService.Instance.Dyes.Get(this.Value.DyeLeftRing.Key);
+				equip.DyeMainHand = SaintCoinachService.Dyes.Get(this.Value.DyeMain.Key);
+				equip.DyeOffHand = SaintCoinachService.Dyes.Get(this.Value.DyeOff.Key);
+				equip.DyeHead = SaintCoinachService.Dyes.Get(this.Value.DyeHead.Key);
+				equip.DyeBody = SaintCoinachService.Dyes.Get(this.Value.DyeBody.Key);
+				equip.DyeHands = SaintCoinachService.Dyes.Get(this.Value.DyeHands.Key);
+				equip.DyeLegs = SaintCoinachService.Dyes.Get(this.Value.DyeLegs.Key);
+				equip.DyeFeet = SaintCoinachService.Dyes.Get(this.Value.DyeFeet.Key);
+				equip.DyeEars = SaintCoinachService.Dyes.Get(this.Value.DyeEars.Key);
+				equip.DyeNeck = SaintCoinachService.Dyes.Get(this.Value.DyeNeck.Key);
+				equip.DyeWrists = SaintCoinachService.Dyes.Get(this.Value.DyeWrists.Key);
+				equip.DyeRightRing = SaintCoinachService.Dyes.Get(this.Value.DyeRightRing.Key);
+				equip.DyeLeftRing = SaintCoinachService.Dyes.Get(this.Value.DyeLeftRing.Key);
 			}
 
 			return equip;

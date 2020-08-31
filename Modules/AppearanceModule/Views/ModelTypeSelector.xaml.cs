@@ -9,6 +9,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using Anamnesis;
 	using Anamnesis.AppearanceModule.ViewModels;
 	using Anamnesis.GameData;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.Drawers;
 
 	/// <summary>
@@ -22,8 +23,6 @@ namespace Anamnesis.AppearanceModule.Views
 		{
 			this.InitializeComponent();
 			this.DataContext = this;
-
-			IGameDataService gameData = Services.Get<IGameDataService>();
 
 			foreach (ModelTypes item in Module.ModelTypes)
 			{

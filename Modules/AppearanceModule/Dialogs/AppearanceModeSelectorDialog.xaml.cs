@@ -7,6 +7,7 @@ namespace Anamnesis.AppearanceModule.Dialogs
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.AppearanceModule.Files;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	/// <summary>

@@ -11,6 +11,7 @@ namespace Anamnesis.SaintCoinachModule
 	using System.Threading.Tasks;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using SaintCoinach;
 	using SaintCoinach.Ex;
 	using SaintCoinach.Ex.Relational.Update;
@@ -19,80 +20,8 @@ namespace Anamnesis.SaintCoinachModule
 	using Directory = System.IO.Directory;
 	using File = System.IO.File;
 
-	public class GameDataService : ServiceBase<GameDataService>, IGameDataService, IProgress<UpdateProgress>
+	public class SaintCoinachService : GameDataService, IProgress<UpdateProgress>
 	{
-		public IData<IRace> Races
-		{
-			get;
-			private set;
-		}
-
-		public IData<ITribe> Tribes
-		{
-			get;
-			private set;
-		}
-
-		public IData<IItem> Items
-		{
-			get;
-			private set;
-		}
-
-		public IData<IDye> Dyes
-		{
-			get;
-			private set;
-		}
-
-		public IData<INpcBase> BaseNPCs
-		{
-			get;
-			private set;
-		}
-
-		public IData<ITerritoryType> Territories
-		{
-			get;
-			private set;
-		}
-
-		public IData<IWeather> Weathers
-		{
-			get;
-			private set;
-		}
-
-		public ICharaMakeCustomizeData CharacterMakeCustomize
-		{
-			get;
-			private set;
-		}
-
-		public IData<ICharaMakeType> CharacterMakeTypes
-		{
-			get;
-			private set;
-		}
-
-		public IData<INpcResident> ResidentNPCs
-		{
-			get;
-			private set;
-		}
-
-		public IData<ITitle> Titles
-		{
-			get;
-			private set;
-		}
-
-		public IData<IStatus> Statuses
-		{
-			get;
-			private set;
-		}
-
 		public override async Task Start()
 		{
 			await base.Start();
@@ -136,18 +65,18 @@ namespace Anamnesis.SaintCoinachModule
 			}
 
 			List<Task> tasks = new List<Task>();
-			tasks.Add(Task.Run(() => this.Items = this.Load<Table<IItem>, IItem, Item, ItemWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.Races = this.Load<Table<IRace>, IRace, Race, RaceWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.Tribes = this.Load<Table<ITribe>, ITribe, Tribe, TribeWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.Dyes = this.Load<Table<IDye>, IDye, Stain, DyeWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.BaseNPCs = this.Load<Table<INpcBase>, INpcBase, ENpcBase, NpcBaseWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.Territories = this.Load<Table<ITerritoryType>, ITerritoryType, TerritoryType, TerritoryTypeWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.Weathers = this.Load<Table<IWeather>, IWeather, Weather, WeatherWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.CharacterMakeCustomize = this.Load<CustomizeTable, ICharaMakeCustomize, CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.CharacterMakeTypes = this.Load<Table<ICharaMakeType>, ICharaMakeType, CharaMakeType, CharacterMakeTypeWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.ResidentNPCs = this.Load<Table<INpcResident>, INpcResident, ENpcResident, NpcResidentWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.Titles = this.Load<Table<ITitle>, ITitle, Title, TitleWrapper>(realm)));
-			tasks.Add(Task.Run(() => this.Statuses = this.Load<Table<IStatus>, IStatus, Status, StatusWrapper>(realm)));
+			tasks.Add(Task.Run(() => Items = this.Load<Table<IItem>, IItem, Item, ItemWrapper>(realm)));
+			tasks.Add(Task.Run(() => Races = this.Load<Table<IRace>, IRace, Race, RaceWrapper>(realm)));
+			tasks.Add(Task.Run(() => Tribes = this.Load<Table<ITribe>, ITribe, Tribe, TribeWrapper>(realm)));
+			tasks.Add(Task.Run(() => Dyes = this.Load<Table<IDye>, IDye, Stain, DyeWrapper>(realm)));
+			tasks.Add(Task.Run(() => BaseNPCs = this.Load<Table<INpcBase>, INpcBase, ENpcBase, NpcBaseWrapper>(realm)));
+			tasks.Add(Task.Run(() => Territories = this.Load<Table<ITerritoryType>, ITerritoryType, TerritoryType, TerritoryTypeWrapper>(realm)));
+			tasks.Add(Task.Run(() => Weathers = this.Load<Table<IWeather>, IWeather, Weather, WeatherWrapper>(realm)));
+			tasks.Add(Task.Run(() => CharacterMakeCustomize = this.Load<CustomizeTable, ICharaMakeCustomize, CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm)));
+			tasks.Add(Task.Run(() => CharacterMakeTypes = this.Load<Table<ICharaMakeType>, ICharaMakeType, CharaMakeType, CharacterMakeTypeWrapper>(realm)));
+			tasks.Add(Task.Run(() => ResidentNPCs = this.Load<Table<INpcResident>, INpcResident, ENpcResident, NpcResidentWrapper>(realm)));
+			tasks.Add(Task.Run(() => Titles = this.Load<Table<ITitle>, ITitle, Title, TitleWrapper>(realm)));
+			tasks.Add(Task.Run(() => Statuses = this.Load<Table<IStatus>, IStatus, Status, StatusWrapper>(realm)));
 
 			foreach (Task t in tasks)
 				await t;

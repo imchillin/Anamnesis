@@ -5,6 +5,8 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Runtime.InteropServices;
+	using System.Threading.Tasks;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	[StructLayout(LayoutKind.Explicit)]
@@ -93,5 +95,10 @@ namespace Anamnesis.Memory
 
 		[ViewModelOffset(0x50)]
 		public TransformViewModel? Transform { get; set; }
+
+		public Task ActorRefreshAsync()
+		{
+			return ActorRefreshService.RefreshAsync(this);
+		}
 	}
 }

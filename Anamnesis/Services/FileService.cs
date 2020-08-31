@@ -34,15 +34,7 @@ namespace Anamnesis.Services
 			FileSources.Add(source);
 		}
 
-		public override async Task Initialize()
-		{
-			await base.Initialize();
-
-			AddFileSource(new LocalFileSource());
-			AddFileSource(new LegacyFileSource());
-		}
-
-		public async Task<T?> Open<T>(FileType fileType, string? path)
+		public static async Task<T?> Open<T>(FileType fileType, string? path)
 			where T : FileBase
 		{
 			try
@@ -70,7 +62,7 @@ namespace Anamnesis.Services
 			return null;
 		}
 
-		public async Task<FileBase?> OpenAny(params FileType[] fileTypes)
+		public static async Task<FileBase?> OpenAny(params FileType[] fileTypes)
 		{
 			try
 			{
@@ -127,7 +119,7 @@ namespace Anamnesis.Services
 			return null;
 		}
 
-		public async Task Save(Func<bool, Task<FileBase>> writeFile, FileType type, string? path = null)
+		public static async Task Save(Func<bool, Task<FileBase>> writeFile, FileType type, string? path = null)
 		{
 			try
 			{
@@ -200,7 +192,7 @@ namespace Anamnesis.Services
 			}
 		}
 
-		public Task<string> OpenDirectory(string title, params string[] defaults)
+		public static Task<string> OpenDirectory(string title, params string[] defaults)
 		{
 			string defaultDir;
 			foreach (string pDefaultDir in defaults)
@@ -227,6 +219,14 @@ namespace Anamnesis.Services
 
 				return dlg.FileName;
 			});*/
+		}
+
+		public override async Task Initialize()
+		{
+			await base.Initialize();
+
+			AddFileSource(new LocalFileSource());
+			AddFileSource(new LegacyFileSource());
 		}
 
 		private static Task<FileBase> Open(string path, FileType type)

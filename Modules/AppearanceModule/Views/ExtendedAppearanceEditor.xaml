@@ -6,8 +6,7 @@
 			 xmlns:cm3Converters="clr-namespace:Anamnesis.WpfStyles.Converters;assembly=Anamnesis"
 			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls;assembly=Anamnesis"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800"
-			 DataContextChanged="OnDataContextChanged">
+			 d:DesignHeight="450" d:DesignWidth="800">
 
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="B2V"/>
@@ -89,8 +88,8 @@
 
 				<TextBlock Grid.Row="1" Grid.Column="0" Text="Scale:" Style="{StaticResource Label}"/>
 				<cm3Controls:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding MainHandScale}" Minimum="0" Maximum="5"/>
-				<Button Grid.Row="1" Grid.Column="2" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="OnMainHandZeroScaleClick"/>
-				<Button Grid.Row="1" Grid.Column="3" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="OnMainHandOneScaleClick"/>
+				<Button Grid.Row="1" Grid.Column="2" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="Button_Click"/>
+				<Button Grid.Row="1" Grid.Column="3" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="Button_Click"/>
 
 			</Grid>
 		</GroupBox>
@@ -116,8 +115,8 @@
 
 				<TextBlock Grid.Row="1" Grid.Column="0" Text="Scale:" Style="{StaticResource Label}"/>
 				<cm3Controls:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding OffHandScale}" Minimum="0" Maximum="5"/>
-				<Button Grid.Row="1" Grid.Column="2" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="OnOffHandZeroScaleClick"/>
-				<Button Grid.Row="1" Grid.Column="3" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="OnOffHandOneScaleClick"/>
+				<Button Grid.Row="1" Grid.Column="2" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="Button_Click"/>
+				<Button Grid.Row="1" Grid.Column="3" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="Button_Click"/>
 
 			</Grid>
 		</GroupBox>

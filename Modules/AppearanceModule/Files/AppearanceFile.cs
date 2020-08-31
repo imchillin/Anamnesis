@@ -10,6 +10,7 @@ namespace Anamnesis.AppearanceModule.Files
 	using Anamnesis.AppearanceModule.ViewModels;
 	using Anamnesis.AppearanceModule.Views;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 
 	[Serializable]
 	public class AppearanceFile : FileBase
@@ -96,29 +97,23 @@ namespace Anamnesis.AppearanceModule.Files
 
 		public override FileType Type => FileType;
 
-		public void Read(Actor actor, SaveModes mode)
+		public void Read(ActorViewModel actor, SaveModes mode)
 		{
 			Log.Write("Writing appearance to file", "AppearanceFile");
 
-			using IMarshaler<int> modelTypeMem = actor.GetMemory(Offsets.Main.ModelType);
-			this.ModelType = modelTypeMem.Value;
+			this.ModelType = actor.ModelType;
 
 			if (!actor.IsCustomizable())
 				return;
 
-			using IMarshaler<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
-			using IMarshaler<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
-			using IMarshaler<Weapon> mainHandMem = actor.GetMemory(Offsets.Main.MainHand);
-			using IMarshaler<Weapon> offHandMem = actor.GetMemory(Offsets.Main.OffHand);
-
-			Appearance appearance = appearanceMem.Value;
-			Equipment equipment = equipmentMem.Value;
+			Appearance appearance = actor.Customize;
+			/*Equipment equipment = equipmentMem.Value;
 			Weapon mainHand = mainHandMem.Value;
-			Weapon offHand = offHandMem.Value;
+			Weapon offHand = offHandMem.Value;*/
 
 			this.SaveMode = mode;
 
-			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
 				this.MainHand = new WeaponSave();
 				this.MainHand.DyeId = mainHand.Dye;
@@ -150,7 +145,7 @@ namespace Anamnesis.AppearanceModule.Files
 				this.Wrists = new ItemSave(equipment.Wrist);
 				this.LeftRing = new ItemSave(equipment.LFinger);
 				this.RightRing = new ItemSave(equipment.RFinger);
-			}
+			}*/
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
@@ -158,9 +153,9 @@ namespace Anamnesis.AppearanceModule.Files
 				this.EnableHighlights = appearance.EnableHighlights;
 				this.HairTone = appearance.HairTone;
 				this.Highlights = appearance.Highlights;
-				this.HairTint = actor.GetValue(Offsets.Main.HairColor);
-				this.HairGlow = actor.GetValue(Offsets.Main.HairGloss);
-				this.HighlightTint = actor.GetValue(Offsets.Main.HairHiglight);
+				////this.HairTint = actor.GetValue(Offsets.Main.HairColor);
+				////this.HairGlow = actor.GetValue(Offsets.Main.HairGloss);
+				////this.HighlightTint = actor.GetValue(Offsets.Main.HairHiglight);
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
@@ -186,11 +181,11 @@ namespace Anamnesis.AppearanceModule.Files
 				this.LipsToneFurPattern = appearance.LipsToneFurPattern;
 				this.FacePaint = appearance.FacePaint;
 				this.FacePaintColor = appearance.FacePaintColor;
-				this.LeftEyeColor = actor.GetValue(Offsets.Main.LeftEyeColor);
-				this.RightEyeColor = actor.GetValue(Offsets.Main.RightEyeColor);
-				this.LimbalRingColor = actor.GetValue(Offsets.Main.LimbalColor);
+				////this.LeftEyeColor = actor.GetValue(Offsets.Main.LeftEyeColor);
+				////this.RightEyeColor = actor.GetValue(Offsets.Main.RightEyeColor);
+				////this.LimbalRingColor = actor.GetValue(Offsets.Main.LimbalColor);
 
-				this.LipTint = new Color4(actor.GetValue(Offsets.Main.MouthColor), actor.GetValue(Offsets.Main.MouthGloss));
+				////this.LipTint = new Color4(actor.GetValue(Offsets.Main.MouthColor), actor.GetValue(Offsets.Main.MouthGloss));
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
@@ -201,40 +196,33 @@ namespace Anamnesis.AppearanceModule.Files
 				this.TailEarsType = appearance.TailEarsType;
 				this.Bust = appearance.Bust;
 
-				this.SkinTint = actor.GetValue(Offsets.Main.SkinColor);
-				this.SkinGlow = actor.GetValue(Offsets.Main.SkinGloss);
-				this.BustScale = actor.GetValue(Offsets.Main.BustScale);
-				this.Transparency = actor.GetValue(Offsets.Main.Transparency);
-				this.FeatureScale = actor.GetValue(Offsets.Main.UniqueFeatureScale);
+				////this.SkinTint = actor.GetValue(Offsets.Main.SkinColor);
+				////this.SkinGlow = actor.GetValue(Offsets.Main.SkinGloss);
+				////this.BustScale = actor.GetValue(Offsets.Main.BustScale);
+				////this.Transparency = actor.GetValue(Offsets.Main.Transparency);
+				////this.FeatureScale = actor.GetValue(Offsets.Main.UniqueFeatureScale);
 			}
 		}
 
-		public async Task Apply(Actor actor, SaveModes mode)
+		public async Task Apply(ActorViewModel actor, SaveModes mode)
 		{
 			Log.Write("Reading appearance from file", "AppearanceFile");
 
-			using IMarshaler<int> modelTypeMem = actor.GetMemory(Offsets.Main.ModelType);
-
-			if (modelTypeMem.Value != this.ModelType)
+			if (actor.ModelType != this.ModelType)
 			{
-				modelTypeMem.Value = (int)this.ModelType;
+				actor.ModelType = (int)this.ModelType;
 				await actor.ActorRefreshAsync();
 			}
 
 			if (!actor.IsCustomizable())
 				return;
 
-			using IMarshaler<Appearance> appearanceMem = actor.GetMemory(Offsets.Main.ActorAppearance);
-			using IMarshaler<Equipment> equipmentMem = actor.GetMemory(Offsets.Main.ActorEquipment);
-			using IMarshaler<Weapon> mainHandMem = actor.GetMemory(Offsets.Main.MainHand);
-			using IMarshaler<Weapon> offHandMem = actor.GetMemory(Offsets.Main.OffHand);
+			Appearance appearance = actor.Customize;
+			////Equipment equipment = equipmentMem.Value;
+			////Weapon mainHand = mainHandMem.Value;
+			////Weapon offHand = offHandMem.Value;
 
-			Appearance appearance = appearanceMem.Value;
-			Equipment equipment = equipmentMem.Value;
-			Weapon mainHand = mainHandMem.Value;
-			Weapon offHand = offHandMem.Value;
-
-			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
 				if (this.MainHand != null)
 				{
@@ -266,7 +254,7 @@ namespace Anamnesis.AppearanceModule.Files
 				equipment.Wrist = this.Wrists ?? equipment.Wrist;
 				equipment.RFinger = this.RightRing ?? equipment.RFinger;
 				equipment.LFinger = this.LeftRing ?? equipment.LFinger;
-			}
+			}*/
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
@@ -312,16 +300,16 @@ namespace Anamnesis.AppearanceModule.Files
 
 			await Task.Delay(100);
 
-			appearanceMem.SetValue(appearance, true);
-			equipmentMem.SetValue(equipment, true);
-			mainHandMem.SetValue(mainHand, true);
-			offHandMem.SetValue(offHand, true);
+			actor.Customize = appearance;
+			////equipmentMem.SetValue(equipment, true);
+			////mainHandMem.SetValue(mainHand, true);
+			////offHandMem.SetValue(offHand, true);
 
 			await actor.ActorRefreshAsync();
 			await Task.Delay(1000);
 
 			// write everything that is reset by actor refreshes
-			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
 				if (this.MainHand != null)
 				{
@@ -367,7 +355,7 @@ namespace Anamnesis.AppearanceModule.Files
 				actor.SetValue(Offsets.Main.Transparency, this.Transparency);
 				actor.SetValue(Offsets.Main.BustScale, this.BustScale);
 				actor.SetValue(Offsets.Main.UniqueFeatureScale, this.FeatureScale);
-			}
+			}*/
 		}
 
 		private bool IncludeSection(SaveModes section, SaveModes mode)

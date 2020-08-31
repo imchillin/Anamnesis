@@ -6,6 +6,7 @@ namespace Anamnesis.AppearanceModule.Files
 	using System;
 	using System.Globalization;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 
 	[Serializable]
 	public class LegacyEquipmentSetFile : FileBase

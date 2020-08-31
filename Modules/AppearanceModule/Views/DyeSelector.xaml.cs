@@ -6,6 +6,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using System.Windows.Controls;
 	using Anamnesis.AppearanceModule.ViewModels;
 	using Anamnesis.GameData;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.Drawers;
 
 	/// <summary>
@@ -18,9 +19,8 @@ namespace Anamnesis.AppearanceModule.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			IGameDataService gameData = Services.Get<IGameDataService>();
 			this.Selector.Items.Add(EquipmentBaseViewModel.NoneDye);
-			foreach (IDye item in gameData.Dyes.All)
+			foreach (IDye item in GameDataService.Dyes.All)
 			{
 				this.Selector.Items.Add(item);
 			}

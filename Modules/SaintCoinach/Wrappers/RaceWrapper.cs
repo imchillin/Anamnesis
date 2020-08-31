@@ -65,7 +65,7 @@ namespace Anamnesis.SaintCoinachModule
 				List<ITribe> tribes = new List<ITribe>();
 				foreach (Appearance.Tribes tribe in this.Race.GetTribes())
 				{
-					tribes.Add(GameDataService.Instance.Tribes.Get((byte)tribe));
+					tribes.Add(SaintCoinachService.Tribes.Get((byte)tribe));
 				}
 
 				return tribes;

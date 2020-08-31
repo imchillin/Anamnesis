@@ -9,6 +9,7 @@ namespace Anamnesis.AppearanceModule.Files
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using Paths = System.IO.Path;
 
 	public class DatAppearanceFile : FileBase, IFileSource.IFile

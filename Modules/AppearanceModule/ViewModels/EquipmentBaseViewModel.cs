@@ -9,6 +9,7 @@ namespace Anamnesis.AppearanceModule.ViewModels
 	using Anamnesis.AppearanceModule.Items;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	public abstract class EquipmentBaseViewModel : IDisposable, INotifyPropertyChanged
@@ -17,9 +18,7 @@ namespace Anamnesis.AppearanceModule.ViewModels
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
 		public static readonly NpcBodyItem NpcbodyItem = new NpcBodyItem();
 
-		public readonly Actor Actor;
-
-		protected IGameDataService gameData;
+		public readonly ActorViewModel Actor;
 
 		protected Vector scale;
 		protected ushort modelBase;
@@ -30,10 +29,9 @@ namespace Anamnesis.AppearanceModule.ViewModels
 		private IItem item;
 		private IDye dye;
 
-		public EquipmentBaseViewModel(ItemSlots slot, Actor actor)
+		public EquipmentBaseViewModel(ItemSlots slot, ActorViewModel actor)
 		{
 			this.Actor = actor;
-			this.gameData = Services.Get<IGameDataService>();
 			this.Slot = slot;
 		}
 
@@ -151,7 +149,7 @@ namespace Anamnesis.AppearanceModule.ViewModels
 			}
 			set
 			{
-				IItem item = this.gameData.Items.Get(value);
+				IItem item = GameDataService.Items.Get(value);
 
 				if (item != null && item.FitsInSlot(this.Slot))
 				{
@@ -215,7 +213,7 @@ namespace Anamnesis.AppearanceModule.ViewModels
 			if (this.ModelBase == NpcbodyItem.ModelBase)
 				return NpcbodyItem;
 
-			foreach (IItem tItem in this.gameData.Items.All)
+			foreach (IItem tItem in GameDataService.Items.All)
 			{
 				if (this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand)
 				{
@@ -270,7 +268,7 @@ namespace Anamnesis.AppearanceModule.ViewModels
 			if (this.DyeId == 0)
 				return NoneDye;
 
-			foreach (IDye dye in this.gameData.Dyes.All)
+			foreach (IDye dye in GameDataService.Dyes.All)
 			{
 				if (dye.Id == this.DyeId)
 				{

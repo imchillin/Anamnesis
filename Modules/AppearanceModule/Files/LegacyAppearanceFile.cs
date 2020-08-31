@@ -5,8 +5,9 @@ namespace Anamnesis.AppearanceModule.Files
 {
 	using Anamnesis;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 
-	#pragma warning disable IDE1006, SA1300
+#pragma warning disable IDE1006, SA1300
 	public class LegacyAppearanceFile : LegacyEquipmentSetFile
 	{
 		public static readonly FileType AllFileType = new FileType("cma", "CM2 All Appearance File", typeof(LegacyAppearanceFile), true, "Saves");

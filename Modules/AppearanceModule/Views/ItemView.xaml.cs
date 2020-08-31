@@ -26,8 +26,6 @@ namespace Anamnesis.AppearanceModule.Views
 	{
 		public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
 
-		private IGameDataService gameData;
-
 		public ItemView()
 		{
 			this.InitializeComponent();
@@ -36,7 +34,6 @@ namespace Anamnesis.AppearanceModule.Views
 				return;
 
 			this.ContentArea.DataContext = this;
-			this.gameData = Services.Get<IGameDataService>();
 		}
 
 		public ItemSlots Slot

@@ -5,9 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.AppearanceModule.Views"
 			 mc:Ignorable="d"
-			 d:DesignHeight="600"
-			 Loaded="OnLoaded"
-			 DataContextChanged="OnDataContextChanged">
+			 d:DesignHeight="600">
 
 	<Grid x:Name="ContentArea" Margin="3, 2, 0, 3">
 		<Grid.ColumnDefinitions>
