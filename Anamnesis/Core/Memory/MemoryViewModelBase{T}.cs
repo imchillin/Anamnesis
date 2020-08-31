@@ -47,24 +47,27 @@ namespace Anamnesis.Memory
 
 		public void Tick()
 		{
-			if (this.Pointer != null)
+			lock (this)
 			{
-				T? model = MemoryService.Read<T>((IntPtr)this.Pointer);
+				if (this.Pointer != null)
+				{
+					T? model = MemoryService.Read<T>((IntPtr)this.Pointer);
 
-				if (model == null)
-					throw new Exception($"Failed to read memory: {typeof(T)}");
+					if (model == null)
+						throw new Exception($"Failed to read memory: {typeof(T)}");
 
-				this.SetModel(model);
-			}
-			else if (this.parent != null && this.parentProperty != null)
-			{
-				object? obj = this.parentProperty.GetValue(this.parent);
-				T? val = (T?)obj;
-				this.SetModel(val);
-			}
-			else
-			{
-				throw new Exception("Memory view model is not correctly initialized");
+					this.SetModel(model);
+				}
+				else if (this.parent != null && this.parentProperty != null)
+				{
+					object? obj = this.parentProperty.GetValue(this.parent);
+					T? val = (T?)obj;
+					this.SetModel(val);
+				}
+				else
+				{
+					throw new Exception("Memory view model is not correctly initialized");
+				}
 			}
 		}
 

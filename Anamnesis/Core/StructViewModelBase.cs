@@ -58,37 +58,46 @@ namespace Anamnesis
 
 		protected virtual void HandleModelToviewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
-			if (modelField.FieldType != viewModelProperty.PropertyType)
-				throw new Exception($"view model: {this.GetType()} property: {modelField.Name} type: {viewModelProperty.PropertyType} does not match backing model field type: {modelField.FieldType}");
-
-			object? lhs = viewModelProperty.GetValue(this);
-			object? rhs = modelField.GetValue(this.model);
-
-			if (lhs == null && rhs == null)
-				return;
-
-			if (rhs == null || !rhs.Equals(lhs))
+			lock (this)
 			{
-				viewModelProperty.SetValue(this, rhs);
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(viewModelProperty.Name));
-				this.OnModelToView(modelField.Name, rhs);
+				if (modelField.FieldType != viewModelProperty.PropertyType)
+					throw new Exception($"view model: {this.GetType()} property: {modelField.Name} type: {viewModelProperty.PropertyType} does not match backing model field type: {modelField.FieldType}");
+
+				object? lhs = viewModelProperty.GetValue(this);
+				object? rhs = modelField.GetValue(this.model);
+
+				if (lhs == null && rhs == null)
+					return;
+
+				if (rhs == null || !rhs.Equals(lhs))
+				{
+					viewModelProperty.SetValue(this, rhs);
+					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(viewModelProperty.Name));
+					this.OnModelToView(modelField.Name, rhs);
+				}
 			}
 		}
 
 		protected virtual void HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
-			object? lhs = viewModelProperty.GetValue(this);
-			object? rhs = modelField.GetValue(this.model);
-
-			if (lhs == null && rhs == null)
-				return;
-
-			if (rhs == null || !rhs.Equals(lhs))
+			lock (this)
 			{
-				object? value = viewModelProperty.GetValue(this);
-				modelField.SetValue(this.model, value);
+				object? lhs = viewModelProperty.GetValue(this);
+				object? rhs = modelField.GetValue(this.model);
 
-				this.OnViewToModel(viewModelProperty.Name, value);
+				if (lhs == null && rhs == null)
+					return;
+
+				if (lhs == null)
+					return;
+
+				if (rhs == null || !rhs.Equals(lhs))
+				{
+					TypedReference typedReference = __makeref(this.model);
+					modelField.SetValueDirect(typedReference, lhs);
+
+					this.OnViewToModel(viewModelProperty.Name, lhs);
+				}
 			}
 		}
 
