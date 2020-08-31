@@ -8,14 +8,15 @@ namespace Anamnesis
 	using System.Runtime.CompilerServices;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Forms.VisualStyles;
 	using Anamnesis;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Dialogs;
+	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
-	using Anamnesis.Memory.Marshalers;
 
 	public delegate void SelectionModeEvent(Modes mode);
-	public delegate void SelectionEvent(Actor actor);
+	public delegate void SelectionEvent(ActorViewModel actor);
 
 	public enum Modes
 	{
@@ -25,28 +26,19 @@ namespace Anamnesis
 
 	public class TargetService : IService
 	{
-		private static IMarshaler<bool>? gposeMem;
-		private static IMarshaler<ushort>? gposeMem2;
+		private static int targetOffset = 0x80;
 
 		public static event SelectionModeEvent? ModeChanged;
 		public static event SelectionEvent? ActorSelected;
 
-		public static Actor? SelectedActor { get; private set; }
-
-		public static Anamnesis.Memory.Actor? CurrentTarget
-		{
-			get => GetActorByOffset(0x80);
-			set => SetActorByOffset(0x80, value);
-		}
+		public static ActorViewModel? SelectedActor { get; private set; }
 
 		public static Modes CurrentMode
 		{
 			get
 			{
-				if (gposeMem == null || gposeMem2 == null)
-					throw new Exception("Unable to get selection mode");
-
-				return gposeMem.Value && gposeMem2.Value == 4 ? Modes.GPose : Modes.Overworld;
+				////return gposeMem.Value && gposeMem2.Value == 4 ? Modes.GPose : Modes.Overworld;
+				return Modes.Overworld;
 			}
 		}
 
@@ -70,19 +62,19 @@ namespace Anamnesis
 
 		public Task Start()
 		{
-			gposeMem = MemoryService.GetMarshaler(Offsets.Main.GposeCheck);
-			gposeMem2 = MemoryService.GetMarshaler(Offsets.Main.GposeCheck2);
+			////gposeMem = MemoryService.GetMarshaler(Offsets.Main.GposeCheck);
+			////gposeMem2 = MemoryService.GetMarshaler(Offsets.Main.GposeCheck2);
 
 			Task.Run(this.Watch);
 
 			return Task.CompletedTask;
 		}
 
-		public async Task SelectActor(Actor actor)
+		public void SelectActor(ActorViewModel actor)
 		{
 			SelectedActor = actor;
 
-			using IMarshaler<int> territoryMem = MemoryService.GetMarshaler(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
+			/*using IMarshaler<int> territoryMem = MemoryService.GetMarshaler(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 
 			int territoryId = territoryMem.Value;
 
@@ -130,22 +122,9 @@ namespace Anamnesis
 						await actor.ActorRefreshAsync();
 					}
 				}
-			}
+			}*/
 
 			ActorSelected?.Invoke(actor);
-		}
-
-		private static Anamnesis.Memory.Actor? GetActorByOffset(int offset)
-		{
-			IntPtr address = AddressService.TargetManager + offset;
-			IntPtr ptr = MemoryService.ReadPtr(address);
-
-			return MemoryService.Read<Anamnesis.Memory.Actor>(ptr);
-		}
-
-		private static void SetActorByOffset(int offset, Anamnesis.Memory.Actor? actor)
-		{
-			throw new NotImplementedException();
 		}
 
 		private async Task Watch()
@@ -154,16 +133,16 @@ namespace Anamnesis
 			{
 				await Task.Delay(500);
 
-				IActorRefreshService refreshService = Services.Get<IActorRefreshService>();
+				IntPtr targetPointerAddress = AddressService.TargetManager + targetOffset;
 
 				Modes currentMode = CurrentMode;
-				Anamnesis.Memory.Actor? lastTarget = CurrentTarget;
+				IntPtr lastTargetAddress = IntPtr.Zero;
 
 				while (this.IsAlive)
 				{
 					await Task.Delay(50);
 
-					while (refreshService.IsRefreshing)
+					while (ActorRefreshService.IsRefreshing)
 						await Task.Delay(250);
 
 					Modes newMode = CurrentMode;
@@ -184,15 +163,15 @@ namespace Anamnesis
 						}
 					}
 
-					Anamnesis.Memory.Actor? newTarget = CurrentTarget;
-					if (!Anamnesis.Memory.Actor.IsSame(newTarget, lastTarget))
+					IntPtr newTargetAddress = MemoryService.ReadPtr(targetPointerAddress);
+					if (newTargetAddress != lastTargetAddress)
 					{
-						lastTarget = newTarget;
+						lastTargetAddress = newTargetAddress;
 
 						try
 						{
-							Actor ac = new Actor(Offsets.Main.Target);
-							await this.SelectActor(ac);
+							ActorViewModel vm = new ActorViewModel(newTargetAddress);
+							this.SelectActor(vm);
 						}
 						catch (Exception ex)
 						{

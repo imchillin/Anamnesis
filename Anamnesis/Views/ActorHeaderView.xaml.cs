@@ -5,6 +5,7 @@ namespace Anamnesis.GUI.Views
 {
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.Memory;
 	using Anamnesis.WpfStyles;
 
 	/// <summary>
@@ -19,12 +20,12 @@ namespace Anamnesis.GUI.Views
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			Actor? actor = this.DataContext as Actor;
+			ActorViewModel? actor = this.DataContext as ActorViewModel;
 
 			if (actor == null)
 				return;
 
-			this.Icon.Icon = actor.Type.GetIcon();
+			this.Icon.Icon = actor.ObjectKind.GetIcon();
 		}
 	}
 }

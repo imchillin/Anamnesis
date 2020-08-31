@@ -44,6 +44,7 @@ namespace Anamnesis.GUI.Services
 			this.file = new FileLogDestination(newLogPath);
 			Log.AddDestination(this.file);
 			Log.AddDestination<ErrorDialogLogDestination>();
+			Log.AddDestination<TraceLogDestination>();
 
 			Log.Write("OS: " + RuntimeInformation.OSDescription, "Info");
 			Log.Write("Framework: " + RuntimeInformation.FrameworkDescription, "Info");

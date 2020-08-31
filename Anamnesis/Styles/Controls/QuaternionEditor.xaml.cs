@@ -4,14 +4,12 @@
 namespace Anamnesis.WpfStyles.Controls
 {
 	using System;
-	using System.ComponentModel;
 	using System.Threading;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
-	using Anamnesis.Memory;
 	using Anamnesis.Three3D;
 	using Anamnesis.ThreeD;
 	using Anamnesis.ThreeD.Lines;
@@ -277,25 +275,15 @@ namespace Anamnesis.WpfStyles.Controls
 
 		private void WatchCamera()
 		{
-			IMarshaler<Vector2D> camXY = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
-			IMarshaler<float> camZ = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
-
-			Vector3D camEuler = default;
-
 			bool vis = true;
 			while (vis && Application.Current != null)
 			{
-				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camXY.Value.X) - 180;
-				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camXY.Value.Y);
-				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
-				Quaternion q = camEuler.ToQuaternion();
-
 				try
 				{
 					Application.Current.Dispatcher.Invoke(() =>
 					{
 						vis = this.IsVisible; ////&& this.IsEnabled;
-						this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(q));
+						this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(CameraService.Rotation));
 					});
 				}
 				catch (Exception)

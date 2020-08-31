@@ -14,15 +14,13 @@ namespace Anamnesis.GUI.Views
 	using Anamnesis.Memory;
 	using PropertyChanged;
 
-	using Actor = Anamnesis.Actor;
-
 	/// <summary>
 	/// Interaction logic for NavigationMenu.xaml.
 	/// </summary>
 	public partial class NavigationMenu : UserControl
 	{
 		private ViewService viewService;
-		private Actor? actor;
+		private ActorViewModel? actor;
 		private ViewService.Page? currentSelection;
 		private bool suppressSelectionEvent = false;
 
@@ -70,10 +68,10 @@ namespace Anamnesis.GUI.Views
 
 		private void OnDataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
 		{
-			this.SetActor(this.DataContext as Actor);
+			this.SetActor(this.DataContext as ActorViewModel);
 		}
 
-		private void SetActor(Actor? actor = null)
+		private void SetActor(ActorViewModel? actor = null)
 		{
 			this.actor = actor;
 			this.IsEnabled = this.actor != null;

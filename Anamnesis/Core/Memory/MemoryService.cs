@@ -7,14 +7,12 @@ namespace Anamnesis.Memory
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
-	using System.Reflection;
+	using System.Runtime.CompilerServices;
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Windows;
-	using Anamnesis.Memory.Marshalers;
-	using Anamnesis.Memory.Offsets;
 	using SimpleLog;
 
 	using SysProcess = System.Diagnostics.Process;
@@ -23,8 +21,8 @@ namespace Anamnesis.Memory
 	{
 		private static readonly Logger Log = SimpleLog.Log.GetLogger<MemoryService>();
 
-		private static Dictionary<Type, Type> marshalerLookup = new Dictionary<Type, Type>();
-		private static ulong tickCount = 0;
+		private static List<WeakReference<IMemoryViewModel>> viewModels = new List<WeakReference<IMemoryViewModel>>();
+		private static ulong memoryTickCount = 0;
 		private readonly Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
 		private bool isActive;
 
@@ -58,67 +56,13 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		public static void AddMarshaler<TType, TMarshaler>()
-			where TMarshaler : IMarshaler<TType>
+		public static async Task WaitForMemoryTick()
 		{
-			Type memoryType = typeof(TType);
+			ulong waitTillTick = memoryTickCount += 2;
 
-			if (marshalerLookup.ContainsKey(memoryType))
-				throw new Exception("Marshaler already registered for type: " + memoryType);
-
-			marshalerLookup.Add(memoryType, typeof(TMarshaler));
-		}
-
-		public static IMarshaler<T> GetMarshaler<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset[] offsets)
-		{
-			List<IMemoryOffset> newOffsets = new List<IMemoryOffset>();
-			newOffsets.Add(baseOffset);
-			newOffsets.AddRange(offsets);
-			return GetMarshaler<T>(newOffsets.ToArray());
-		}
-
-		public static IMarshaler<T> GetMarshaler<T>(IBaseMemoryOffset baseOffset, params IMemoryOffset<T>[] offsets)
-		{
-			return GetMarshaler<T>(baseOffset, (IMemoryOffset[])offsets);
-		}
-
-		public static IMarshaler<T> GetMarshaler<T>(IBaseMemoryOffset<T> baseOffset, params IMemoryOffset<T>[] offsets)
-		{
-			return GetMarshaler<T>((IBaseMemoryOffset)baseOffset, (IMemoryOffset[])offsets);
-		}
-
-		public static IMarshaler<T> GetMarshaler<T>(params IMemoryOffset[] offsets)
-		{
-			Type marshalerType = GetMarshalerType(typeof(T));
-			try
+			while (memoryTickCount <= waitTillTick)
 			{
-				object? obj = Activator.CreateInstance(marshalerType, offsets);
-
-				if (obj == null)
-					throw new Exception("Failed to create marshaler instance");
-
-				return (MarshalerBase<T>)obj;
-			}
-			catch (TargetInvocationException ex)
-			{
-				if (ex.InnerException == null)
-					throw ex;
-
-				throw ex.InnerException;
-			}
-		}
-
-		public static async Task WaitForMarshalerTick()
-		{
-			// we wait for two ticks since we might be towards the end of a tick,
-			// meaning the next tick (+1) will become active without ticking _all_ the memory.
-			// wait for +2 guarantees that all currently tracked memory will get a chance to tick
-			// before we return.
-			ulong targetTick = tickCount + 2;
-
-			while (tickCount < targetTick)
-			{
-				await Task.Delay(100);
+				await Task.Delay(16);
 			}
 		}
 
@@ -156,28 +100,22 @@ namespace Anamnesis.Memory
 			return val;
 		}
 
+		public static void Write<T>(IntPtr address, T value)
+			where T : struct
+		{
+			if (address == IntPtr.Zero)
+				return;
+
+			int size = Marshal.SizeOf(typeof(T));
+			IntPtr mem = Marshal.AllocHGlobal(size);
+			Marshal.StructureToPtr<T>(value, mem, false);
+			WriteProcessMemory(Handle, address, mem, size, out _);
+			Marshal.FreeHGlobal(mem);
+		}
+
 		public async Task Initialize()
 		{
 			this.isActive = true;
-
-			AddMarshaler<ActorTypes, ActorTypesMarshaler>();
-			AddMarshaler<Appearance, AppearanceMarshaler>();
-			AddMarshaler<bool, BoolMarshaler>();
-			AddMarshaler<byte, ByteMarshaler>();
-			AddMarshaler<Color4, Color4Marshaler>();
-			AddMarshaler<Color, ColorMarshaler>();
-			AddMarshaler<Equipment, EquipmentMarshaler>();
-			AddMarshaler<Flag, FlagMarshaler>();
-			AddMarshaler<float, FloatMarshaler>();
-			AddMarshaler<int, IntMarshaler>();
-			AddMarshaler<Quaternion, QuaternionMarshaler>();
-			AddMarshaler<short, ShortMarshaler>();
-			AddMarshaler<string, StringMarshaler>();
-			AddMarshaler<Transform, TransformMarshaler>();
-			AddMarshaler<ushort, UShortMarshaler>();
-			AddMarshaler<Vector2D, Vector2DMarshaler>();
-			AddMarshaler<Vector, VectorMarshaler>();
-			AddMarshaler<Weapon, WeaponMarshaler>();
 
 			while (!ProcessIsAlive)
 			{
@@ -224,7 +162,7 @@ namespace Anamnesis.Memory
 				}
 			}
 
-			new Thread(new ThreadStart(this.TickMarshalersThread)).Start();
+			new Thread(new ThreadStart(this.TickMemoryViewModelThread)).Start();
 			new Thread(new ThreadStart(this.ProcessWatcherThread)).Start();
 		}
 
@@ -285,55 +223,9 @@ namespace Anamnesis.Memory
 			Scanner = new SignatureScanner(process.MainModule);
 		}
 
-		internal static ulong GetBaseAddress()
+		internal static void RegisterViewModel(IMemoryViewModel vm)
 		{
-			if (Process == null)
-				throw new Exception("No game process");
-
-			////(ulong)process.MainModule.BaseAddress.ToInt64())
-			return (ulong)Process.MainModule.BaseAddress.ToInt64();
-		}
-
-		internal static UIntPtr GetAddress(params IMemoryOffset[] offsets)
-		{
-			int size = 16;
-
-			List<ulong> offsetsList = new List<ulong>();
-			for (int i = 0; i < offsets.Length; i++)
-			{
-				IMemoryOffset offset = offsets[i];
-				ulong[] offsetValues = offset.Offsets;
-
-				if (i == 0)
-					offsetValues = new[] { GetBaseAddress() + offsetValues[0] };
-
-				offsetsList.AddRange(offsetValues);
-			}
-
-			ulong[] longOffsets = offsetsList.ToArray();
-
-			if (longOffsets.Length > 1)
-			{
-				byte[] memoryAddress = new byte[size];
-				ReadProcessMemory(Handle, (UIntPtr)longOffsets[0], memoryAddress, (UIntPtr)size, IntPtr.Zero);
-
-				long num1 = BitConverter.ToInt64(memoryAddress, 0);
-
-				UIntPtr base1 = (UIntPtr)0;
-
-				for (int i = 1; i < longOffsets.Length; i++)
-				{
-					base1 = new UIntPtr(Convert.ToUInt64(num1 + (long)longOffsets[i]));
-					ReadProcessMemory(Handle, base1, memoryAddress, (UIntPtr)size, IntPtr.Zero);
-					num1 = BitConverter.ToInt64(memoryAddress, 0);
-				}
-
-				return base1;
-			}
-			else
-			{
-				return (UIntPtr)longOffsets[0];
-			}
+			viewModels.Add(new WeakReference<IMemoryViewModel>(vm));
 		}
 
 		internal static bool Read(UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead)
@@ -355,14 +247,17 @@ namespace Anamnesis.Memory
 		[DllImport("kernel32.dll")]
 		private static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead);
 
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32.dll")]
 		private static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
 
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32.dll")]
 		private static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
 
 		[DllImport("kernel32.dll")]
 		private static extern bool WriteProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten);
+
+		[DllImport("kernel32.dll")]
+		private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int dwSize, out IntPtr lpNumberOfBytesWritten);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern IntPtr GetCurrentProcess();
@@ -411,15 +306,7 @@ namespace Anamnesis.Memory
 			return 0;
 		}
 
-		private static Type GetMarshalerType(Type type)
-		{
-			if (!marshalerLookup.ContainsKey(type))
-				throw new Exception($"No memory wrapper for type: {type}");
-
-			return marshalerLookup[type];
-		}
-
-		private void TickMarshalersThread()
+		private void TickMemoryViewModelThread()
 		{
 			try
 			{
@@ -430,15 +317,33 @@ namespace Anamnesis.Memory
 					if (!ProcessIsAlive)
 						return;
 
-					tickCount++;
-					MarshalerBase.TickAllActive();
-				}
+					memoryTickCount++;
 
-				MarshalerBase.DisposeAll();
+					List<WeakReference<IMemoryViewModel>> weakRefs;
+					IMemoryViewModel? viewModel;
+					lock (viewModels)
+					{
+						weakRefs = new List<WeakReference<IMemoryViewModel>>(viewModels);
+
+						foreach (WeakReference<IMemoryViewModel>? weakRef in weakRefs)
+						{
+							if (!weakRef.TryGetTarget(out viewModel) || viewModel == null)
+							{
+								viewModels.Remove(weakRef);
+								continue;
+							}
+
+							viewModel.Tick();
+						}
+					}
+
+					// 60 ticks per second
+					Thread.Sleep(16);
+				}
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception("Marshaler thread exception", ex));
+				Log.Write(new Exception("Memory thread exception", ex));
 			}
 		}
 

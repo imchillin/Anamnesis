@@ -29,7 +29,7 @@ namespace Anamnesis
 		/// <param name="isSupportedCallback">a callback to determine if the given page will appear for a specific actor.</param>
 		// Although we could (where T : UserControl) to require correct types, doing so would
 		// require the core library to reference the WPF libs, and for simplicity, lets not.
-		void AddPage<T>(string name, string icon, Func<Actor, bool>? isSupportedCallback = null);
+		void AddPage<T>(string name, string icon, Func<ActorViewModel, bool>? isSupportedCallback = null);
 
 		/// <summary>
 		/// Opens a drawer (flyout) menu on the main application window.

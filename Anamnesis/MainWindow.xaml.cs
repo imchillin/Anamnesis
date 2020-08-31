@@ -13,6 +13,7 @@ namespace Anamnesis.GUI
 	using Anamnesis;
 	using Anamnesis.GUI.Services;
 	using Anamnesis.GUI.Views;
+	using Anamnesis.Memory;
 	using PropertyChanged;
 
 	/// <summary>
@@ -227,7 +228,7 @@ namespace Anamnesis.GUI
 			App.Settings.Scale = scale;
 		}
 
-		private void OnActorSelected(Actor? actor)
+		private void OnActorSelected(ActorViewModel? actor)
 		{
 			Application.Current.Dispatcher.Invoke(() =>
 			{

@@ -42,8 +42,8 @@ namespace Anamnesis.Memory
 		public float Rotation;
 
 		[FieldOffset(0x17B8)]
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
-		public byte[] Customize;
+		////[MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
+		public Appearance Customize;
 
 		[FieldOffset(0x1F0)]
 		public int PlayerCharacterTargetActorId;
@@ -58,5 +58,28 @@ namespace Anamnesis.Memory
 		{
 			return lhs?.Name == rhs?.Name && lhs?.ActorId == rhs?.ActorId && lhs?.NameId == rhs?.NameId;
 		}
+	}
+
+	public class ActorViewModel : MemoryViewModelBase<Actor>
+	{
+		public ActorViewModel(IntPtr pointer)
+			: base(pointer)
+		{
+		}
+
+		public string Name { get; set; } = string.Empty;
+		public int ActorId { get; set; }
+		public int DataId { get; set; }
+		public int OwnerId { get; set; }
+		public ActorTypes ObjectKind { get; set; }
+		public byte SubKind { get; set; }
+		public bool IsFriendly { get; set; }
+		public byte PlayerTargetStatus { get; set; }
+		public Vector Position { get; set; }
+		public float Rotation { get; set; }
+		public Appearance Customize { get; set; }
+		public int PlayerCharacterTargetActorId { get; set; }
+		public int BattleNpcTargetActorId { get; set; }
+		public int NameId { get; set; }
 	}
 }

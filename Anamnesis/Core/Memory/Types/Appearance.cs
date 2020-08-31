@@ -4,7 +4,9 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Runtime.InteropServices;
 
+	[StructLayout(LayoutKind.Sequential)]
 	public struct Appearance
 	{
 		public Races Race;
@@ -106,6 +108,7 @@ namespace Anamnesis.Memory
 		}
 	}
 
+	#pragma warning disable SA1402
 	public static class RacesExtensions
 	{
 		public static Appearance.Tribes[] GetTribes(this Appearance.Races race)
@@ -124,5 +127,45 @@ namespace Anamnesis.Memory
 
 			throw new Exception("Unrecognized race: " + race);
 		}
+	}
+
+	public class AppearanceViewModel : MemoryViewModelBase<Appearance>
+	{
+		public AppearanceViewModel(IntPtr pointer)
+			: base(pointer)
+		{
+		}
+
+		public AppearanceViewModel(ActorViewModel parent)
+			: base(parent, nameof(ActorViewModel.Customize))
+		{
+		}
+
+		public Appearance.Races Race { get; set; }
+		public Appearance.Genders Gender { get; set; }
+		public Appearance.Ages Age { get; set; }
+		public byte Height { get; set; }
+		public Appearance.Tribes Tribe { get; set; }
+		public byte Head { get; set; }
+		public byte Hair { get; set; }
+		public bool EnableHighlights { get; set; }
+		public byte Skintone { get; set; }
+		public byte REyeColor { get; set; }
+		public byte HairTone { get; set; }
+		public byte Highlights { get; set; }
+		public Appearance.FacialFeature FacialFeatures { get; set; }
+		public byte LimbalEyes { get; set; }
+		public byte Eyebrows { get; set; }
+		public byte LEyeColor { get; set; }
+		public byte Eyes { get; set; }
+		public byte Nose { get; set; }
+		public byte Jaw { get; set; }
+		public byte Mouth { get; set; }
+		public byte LipsToneFurPattern { get; set; }
+		public byte EarMuscleTailSize { get; set; }
+		public byte TailEarsType { get; set; }
+		public byte Bust { get; set; }
+		public byte FacePaint { get; set; }
+		public byte FacePaintColor { get; set; }
 	}
 }

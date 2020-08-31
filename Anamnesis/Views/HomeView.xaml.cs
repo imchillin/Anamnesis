@@ -12,7 +12,6 @@ namespace Anamnesis.GUI.Views
 	using Anamnesis.Memory;
 	using PropertyChanged;
 
-	using Actor = Anamnesis.Actor;
 	using Vector = Anamnesis.Memory.Vector;
 
 	/// <summary>
@@ -23,29 +22,12 @@ namespace Anamnesis.GUI.Views
 	public partial class HomeView : UserControl
 	{
 		private IGameDataService gameData;
-		private IMarshaler<int>? territoryMem;
-		private IMarshaler<ushort>? weatherMem;
-		private IMarshaler<Vector2D>? cameraAngleMem;
-		private IMarshaler<Vector2D>? cameraPanMem;
-		private IMarshaler<float>? cameraRotatonMem;
-		private IMarshaler<float>? cameraZoomMem;
-		private IMarshaler<float>? cameraFovMem;
-		private IMarshaler<Vector>? cameraPositionMem;
-		private IMarshaler<float>? cameraMinZoomMem;
-		private IMarshaler<float>? cameraMaxZoomMem;
-		private IMarshaler<Vector>? posMem;
-		private IMarshaler<Quaternion>? rotMem;
-		private IMarshaler<Vector>? scaleMem;
-
-		private bool isGpose;
-		private bool initialized = false;
 
 		public HomeView()
 		{
 			this.InitializeComponent();
 
 			this.gameData = Anamnesis.Services.Get<IGameDataService>();
-
 			this.TimeService = Anamnesis.Services.Get<TimeService>();
 
 			this.ContentArea.DataContext = this;
@@ -60,7 +42,7 @@ namespace Anamnesis.GUI.Views
 			set
 			{
 				this.CameraAngle = new Vector2D(value, this.CameraAngleY);
-				this.cameraAngleMem?.SetValue(this.CameraAngle);
+				////this.cameraAngleMem?.SetValue(this.CameraAngle);
 			}
 		}
 
@@ -70,7 +52,7 @@ namespace Anamnesis.GUI.Views
 			set
 			{
 				this.CameraAngle = new Vector2D(this.CameraAngleX, value);
-				this.cameraAngleMem?.SetValue(this.CameraAngle);
+				////this.cameraAngleMem?.SetValue(this.CameraAngle);
 			}
 		}
 
@@ -88,77 +70,24 @@ namespace Anamnesis.GUI.Views
 		public Quaternion Rotation { get; set; }
 		public Vector Scale { get; set; }
 
-		public bool IsGpose
-		{
-			get
-			{
-				return this.isGpose;
-			}
+		public bool IsGpose { get; set; }
 
-			set
-			{
-				this.isGpose = value;
-
-				if (this.isGpose)
-				{
-					this.cameraAngleMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
-					this.cameraAngleMem.ValueChanged += this.OnCameraAngleMemValueChanged;
-
-					this.cameraPanMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraPan);
-					this.cameraPanMem.Bind(this, nameof(this.CameraPan));
-
-					this.cameraRotatonMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
-					this.cameraRotatonMem.Bind(this, nameof(this.CameraRotaton));
-
-					this.cameraZoomMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraCurrentZoom);
-					this.cameraZoomMem.Bind(this, nameof(this.CameraZoom));
-
-					this.cameraMinZoomMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraMinZoom);
-					this.cameraMinZoomMem.Bind(this, nameof(this.CameraMinZoom));
-
-					this.cameraMaxZoomMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraMaxZoom);
-					this.cameraMaxZoomMem.Bind(this, nameof(this.CameraMaxZoom));
-
-					this.cameraFovMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.FOVCurrent);
-					this.cameraFovMem.Bind(this, nameof(this.CameraFov));
-
-					this.cameraPositionMem = MemoryService.GetMarshaler(Offsets.Main.Gpose, Offsets.Main.Camera);
-					this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
-
-					if (this.territoryMem != null && this.territoryMem.Active)
-					{
-						this.OnTerritoryMemValueChanged(null, 0);
-					}
-				}
-				else
-				{
-					this.cameraAngleMem?.Dispose();
-					this.cameraPanMem?.Dispose();
-					this.cameraRotatonMem?.Dispose();
-					this.cameraZoomMem?.Dispose();
-					this.cameraFovMem?.Dispose();
-					this.cameraPositionMem?.Dispose();
-					this.cameraMinZoomMem?.Dispose();
-					this.cameraMaxZoomMem?.Dispose();
-				}
-			}
-		}
+		public ActorViewModel? Target { get; set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			TargetService.ModeChanged += this.OnSelectionServiceModeChanged;
+			TargetService.ModeChanged += this.OnTargetModeChanged;
+			this.IsGpose = true;
 
-			this.initialized = false;
-
-			this.SetActor(this.DataContext as Actor);
+			this.SetActor(this.DataContext as ActorViewModel);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			this.SetActor(this.DataContext as Actor);
+			this.SetActor(this.DataContext as ActorViewModel);
 		}
 
-		private void OnSelectionServiceModeChanged(Modes mode)
+		private void OnTargetModeChanged(Modes mode)
 		{
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -172,11 +101,11 @@ namespace Anamnesis.GUI.Views
 
 			this.SetActor(null);
 
-			this.territoryMem?.Dispose();
-			this.weatherMem?.Dispose();
+			////this.territoryMem?.Dispose();
+			////this.weatherMem?.Dispose();
 		}
 
-		private void OnCameraAngleMemValueChanged(object? sender, Vector2D value)
+		/*private void OnCameraAngleMemValueChanged(object? sender, Vector2D value)
 		{
 			if (this.LockCameraAngle)
 			{
@@ -227,7 +156,7 @@ namespace Anamnesis.GUI.Views
 					}
 				});
 			}
-		}
+		}*/
 
 		private void OnWeatherSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -237,8 +166,8 @@ namespace Anamnesis.GUI.Views
 				return;
 
 			// This is super weird. I have no idea why we need to do this for weather...
-			byte[] bytes = { (byte)weather.Key, (byte)weather.Key };
-			this.weatherMem?.SetValue(BitConverter.ToUInt16(bytes, 0));
+			////byte[] bytes = { (byte)weather.Key, (byte)weather.Key };
+			////this.weatherMem?.SetValue(BitConverter.ToUInt16(bytes, 0));
 		}
 
 		private void OnUnlockCameraChanged(object sender, RoutedEventArgs e)
@@ -251,16 +180,18 @@ namespace Anamnesis.GUI.Views
 			this.CameraMaxZoom = unlock ? 256 : 20;
 			this.CameraMinZoom = unlock ? 0 : 1.75f;
 
-			using IMarshaler<float> minYMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraYMin);
-			minYMem.Value = unlock ? 1.5f : 1.25f;
+			////using IMarshaler<float> minYMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraYMin);
+			////minYMem.Value = unlock ? 1.5f : 1.25f;
 
-			using IMarshaler<float> maxYMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraYMax);
-			maxYMem.Value = unlock ? -1.5f : -1.4f;
+			////using IMarshaler<float> maxYMem = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraYMax);
+			////maxYMem.Value = unlock ? -1.5f : -1.4f;
 		}
 
-		private void SetActor(Actor? actor)
+		private void SetActor(ActorViewModel? actor)
 		{
-			this.cameraPositionMem?.Dispose();
+			this.Target = actor;
+
+			/*this.cameraPositionMem?.Dispose();
 			this.posMem?.Dispose();
 			this.rotMem?.Dispose();
 			this.scaleMem?.Dispose();
@@ -304,7 +235,7 @@ namespace Anamnesis.GUI.Views
 				}
 
 				this.cameraPositionMem.Bind(this, nameof(this.CameraPosition));
-			}
+			}*/
 		}
 	}
 }

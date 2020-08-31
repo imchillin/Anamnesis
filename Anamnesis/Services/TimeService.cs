@@ -11,7 +11,6 @@ namespace Anamnesis
 	[AddINotifyPropertyChangedInterface]
 	public class TimeService : IService
 	{
-		private IMarshaler<int>? timeMem;
 		private int time = 0;
 		private int moon = 0;
 		private bool freeze;
@@ -26,7 +25,7 @@ namespace Anamnesis
 			set
 			{
 				this.time = value;
-				this.timeMem?.SetValue((this.moon * 86400) + (this.time * 60));
+				////this.timeMem?.SetValue((this.moon * 86400) + (this.time * 60));
 			}
 		}
 
@@ -40,7 +39,7 @@ namespace Anamnesis
 			set
 			{
 				this.moon = value;
-				this.timeMem?.SetValue((this.moon * 86400) + (this.time * 60));
+				////this.timeMem?.SetValue((this.moon * 86400) + (this.time * 60));
 			}
 		}
 
@@ -66,14 +65,14 @@ namespace Anamnesis
 
 		public Task Initialize()
 		{
-			this.timeMem = MemoryService.GetMarshaler(Offsets.Main.Time, Offsets.Main.TimeControl);
+			////this.timeMem = MemoryService.GetMarshaler(Offsets.Main.Time, Offsets.Main.TimeControl);
 			return Task.CompletedTask;
 		}
 
 		public Task Shutdown()
 		{
-			this.timeMem?.SetValue(0);
-			this.timeMem?.Dispose();
+			////this.timeMem?.SetValue(0);
+			////this.timeMem?.Dispose();
 
 			return Task.CompletedTask;
 		}

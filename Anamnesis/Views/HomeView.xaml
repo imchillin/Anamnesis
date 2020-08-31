@@ -207,7 +207,7 @@
 					</GroupBox>
 
 					<GroupBox Header="Position">
-						<cm3:VectorEditor Value="{Binding Position}" Minimum="-4096" Maximum="4096" Sliders="Relative" Expanded="True"/>
+						<cm3:VectorEditor Value="{Binding Target.Position}" Minimum="-4096" Maximum="4096" Sliders="Relative" Expanded="True"/>
 					</GroupBox>
 
 					<GroupBox Header="Scale">

@@ -19,7 +19,6 @@ namespace Anamnesis.Memory.Serialization
 
 			Options.Converters.Add(new Color4Converter());
 			Options.Converters.Add(new ColorConverter());
-			Options.Converters.Add(new OffsetConverter());
 			Options.Converters.Add(new QuaternionConverter());
 			Options.Converters.Add(new VectorConverter());
 		}

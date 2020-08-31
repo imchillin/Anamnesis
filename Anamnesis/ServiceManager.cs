@@ -81,7 +81,6 @@ namespace Anamnesis.GUI
 			await this.Add<SettingsService>();
 			await this.Add<LocalizationService>();
 			await this.Add<MemoryService>();
-			await this.Add<OffsetsService>();
 			await this.Add<AddressService>();
 			await this.Add<ViewService>();
 			await this.Add<TargetService>();

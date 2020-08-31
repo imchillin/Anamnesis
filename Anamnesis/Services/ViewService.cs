@@ -13,8 +13,6 @@ namespace Anamnesis.GUI.Services
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Memory;
 
-	using Actor = Anamnesis.Actor;
-
 	public class ViewService : IViewService
 	{
 		private readonly Dictionary<string, Page> pages = new Dictionary<string, Page>();
@@ -50,7 +48,7 @@ namespace Anamnesis.GUI.Services
 			return Task.CompletedTask;
 		}
 
-		public void AddPage<T>(string name, string icon, Func<Actor, bool>? isSupportedCallback = null)
+		public void AddPage<T>(string name, string icon, Func<ActorViewModel, bool>? isSupportedCallback = null)
 		{
 			Page page = new Page();
 			page.Icon = icon;
@@ -161,7 +159,7 @@ namespace Anamnesis.GUI.Services
 			public string Name { get; set; } = string.Empty;
 			public string Icon { get; set; } = string.Empty;
 
-			public Func<Actor, bool>? IsSupportedCallback { get; set; }
+			public Func<ActorViewModel, bool>? IsSupportedCallback { get; set; }
 
 			public UserControl Create()
 			{
@@ -187,7 +185,7 @@ namespace Anamnesis.GUI.Services
 				}
 			}
 
-			public bool Supports(Actor? actor)
+			public bool Supports(ActorViewModel? actor)
 			{
 				if (this.IsSupportedCallback == null)
 					return true;
@@ -195,7 +193,7 @@ namespace Anamnesis.GUI.Services
 				if (actor is null)
 					return false;
 
-				return this.IsSupportedCallback.Invoke(actor);
+				return this.IsSupportedCallback.Invoke((ActorViewModel)actor);
 			}
 		}
 	}
