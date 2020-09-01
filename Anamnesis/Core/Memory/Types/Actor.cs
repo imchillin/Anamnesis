@@ -45,7 +45,6 @@ namespace Anamnesis.Memory
 		public float Rotation;
 
 		[FieldOffset(0x17B8)]
-		////[MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
 		public Appearance Customize;
 
 		[FieldOffset(0x1F0)]
