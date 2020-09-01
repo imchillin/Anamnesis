@@ -11,6 +11,8 @@ namespace Anamnesis
 	using SimpleLog;
 
 	#pragma warning disable SA1649
+	public delegate void ViewModelEvent(object sender);
+
 	public interface IStructViewModel : INotifyPropertyChanged
 	{
 		Type GetModelType();
@@ -44,7 +46,7 @@ namespace Anamnesis
 				FieldInfo? modelField = modelType.GetField(property.Name, BindingFlags.Public | BindingFlags.Instance);
 				if (modelField == null)
 				{
-					Log.Write(Severity.Warning, $"No field for property: {name} in view model: {this.GetType()}");
+					Log.Write(Severity.Error, $"No field for property: {name} in view model: {this.GetType()}");
 					continue;
 				}
 
@@ -66,6 +68,19 @@ namespace Anamnesis
 			this.parentProperty = property;
 		}
 
+		/// <summary>
+		/// Called when the view is updated from the backing model. (FFXIV -> Anamnesis)
+		/// </summary>
+		public event ViewModelEvent? ModelChanged;
+
+		/// <summary>
+		/// Called when the model is updated from the view model. (Anamnesis -> FFXIV)
+		/// </summary>
+		public event ViewModelEvent? ViewModelChanged;
+
+		/// <summary>
+		/// Called when a property within the view model is changed. (from FFXIV or Anamnesis)
+		/// </summary>
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public Type GetModelType()
@@ -92,9 +107,15 @@ namespace Anamnesis
 
 			this.model = (T)model;
 
+			bool changed = false;
 			foreach ((PropertyInfo viewModelProperty, FieldInfo modelField) in this.binds.Values)
 			{
-				this.HandleModelToviewUpdate(viewModelProperty, modelField);
+				changed |= this.HandleModelToViewUpdate(viewModelProperty, modelField);
+			}
+
+			if (changed)
+			{
+				this.ModelChanged?.Invoke(this);
 			}
 		}
 
@@ -121,7 +142,7 @@ namespace Anamnesis
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		protected virtual void HandleModelToviewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
+		protected virtual bool HandleModelToViewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
 			lock (this)
 			{
@@ -151,7 +172,7 @@ namespace Anamnesis
 
 					if (lhs == null && rhs == null)
 					{
-						return;
+						return false;
 					}
 				}
 
@@ -160,34 +181,37 @@ namespace Anamnesis
 					viewModelProperty.SetValue(this, rhs);
 					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(viewModelProperty.Name));
 					this.OnModelToView(modelField.Name, rhs);
+					return true;
 				}
 			}
+
+			return false;
 		}
 
-		protected virtual void HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
+		protected virtual bool HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
-			lock (this)
+			object? lhs = viewModelProperty.GetValue(this);
+			object? rhs = modelField.GetValue(this.model);
+
+			if (lhs is IStructViewModel vm)
+				lhs = vm.GetModel();
+
+			if (lhs == null && rhs == null)
+				return false;
+
+			if (lhs == null)
+				return false;
+
+			if (rhs == null || !rhs.Equals(lhs))
 			{
-				object? lhs = viewModelProperty.GetValue(this);
-				object? rhs = modelField.GetValue(this.model);
+				TypedReference typedReference = __makeref(this.model);
+				modelField.SetValueDirect(typedReference, lhs);
 
-				if (lhs is IStructViewModel vm)
-					lhs = vm.GetModel();
-
-				if (lhs == null && rhs == null)
-					return;
-
-				if (lhs == null)
-					return;
-
-				if (rhs == null || !rhs.Equals(lhs))
-				{
-					TypedReference typedReference = __makeref(this.model);
-					modelField.SetValueDirect(typedReference, lhs);
-
-					this.OnViewToModel(viewModelProperty.Name, lhs);
-				}
+				this.OnViewToModel(viewModelProperty.Name, lhs);
+				return true;
 			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -219,7 +243,12 @@ namespace Anamnesis
 				return;
 
 			(PropertyInfo viewModelProperty, FieldInfo modelField) = this.binds[e.PropertyName];
-			this.HandleViewToModelUpdate(viewModelProperty, modelField);
+			bool changed = this.HandleViewToModelUpdate(viewModelProperty, modelField);
+
+			if (changed)
+			{
+				this.ViewModelChanged?.Invoke(this);
+			}
 		}
 	}
 }

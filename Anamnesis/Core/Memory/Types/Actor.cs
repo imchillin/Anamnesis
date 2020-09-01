@@ -5,50 +5,60 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Runtime.InteropServices;
-	using System.Threading.Tasks;
-	using Anamnesis.Services;
 	using PropertyChanged;
+
+	public enum RenderModes : int
+	{
+		Draw = 0,
+		Unload = 2,
+	}
 
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Actor
 	{
-		[FieldOffset(0x30)]
+		[FieldOffset(0x0030)]
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 30)]
 		public string Name;
 
-		[FieldOffset(116)]
+		[FieldOffset(0x0074)]
 		public int ActorId;
 
-		[FieldOffset(128)]
+		[FieldOffset(0x0080)]
 		public int DataId;
 
-		[FieldOffset(132)]
+		[FieldOffset(0x0084)]
 		public int OwnerId;
 
-		[FieldOffset(140)]
+		[FieldOffset(0x008c)]
 		public ActorTypes ObjectKind;
 
-		[FieldOffset(141)]
+		[FieldOffset(0x008D)]
 		public byte SubKind;
 
-		[FieldOffset(142)]
+		[FieldOffset(0x008E)]
 		public bool IsFriendly;
 
 		// This is some kind of enum
-		[FieldOffset(145)]
+		[FieldOffset(0x0091)]
 		public byte PlayerTargetStatus;
 
-		[FieldOffset(160)]
+		[FieldOffset(0x00A0)]
 		public Vector Position;
 
-		[FieldOffset(176)]
+		[FieldOffset(0x00B0)]
 		public float Rotation;
+
+		[FieldOffset(0x00F0)]
+		public IntPtr Transform;
+
+		[FieldOffset(0x0104)]
+		public RenderModes RenderMode;
+
+		[FieldOffset(0x01F0)]
+		public int PlayerCharacterTargetActorId;
 
 		[FieldOffset(0x17B8)]
 		public Appearance Customize;
-
-		[FieldOffset(0x1F0)]
-		public int PlayerCharacterTargetActorId;
 
 		[FieldOffset(0x17F8)]
 		public int BattleNpcTargetActorId;
@@ -58,9 +68,6 @@ namespace Anamnesis.Memory
 
 		[FieldOffset(0x1888)]
 		public int ModelType;
-
-		[FieldOffset(0x0F0)]
-		public IntPtr Transform;
 
 		public static bool IsSame(Actor? lhs, Actor? rhs)
 		{
@@ -91,13 +98,9 @@ namespace Anamnesis.Memory
 		public int BattleNpcTargetActorId { get; set; }
 		public int NameId { get; set; }
 		public int ModelType { get; set; }
+		public RenderModes RenderMode { get; set; }
 
 		[ViewModelOffset(0x50)]
 		public TransformViewModel? Transform { get; set; }
-
-		public Task ActorRefreshAsync()
-		{
-			return ActorRefreshService.RefreshAsync(this);
-		}
 	}
 }

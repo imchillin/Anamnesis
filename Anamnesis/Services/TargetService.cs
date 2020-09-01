@@ -4,6 +4,7 @@
 namespace Anamnesis
 {
 	using System;
+	using System.ComponentModel;
 	using System.Diagnostics;
 	using System.Runtime.CompilerServices;
 	using System.Threading.Tasks;
@@ -15,9 +16,10 @@ namespace Anamnesis
 	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using SimpleLog;
 
 	public delegate void SelectionModeEvent(Modes mode);
-	public delegate void SelectionEvent(ActorViewModel actor);
+	public delegate void SelectionEvent(ActorViewModel? actor);
 
 	public enum Modes
 	{
@@ -25,7 +27,7 @@ namespace Anamnesis
 		GPose,
 	}
 
-	public class TargetService : IService
+	public class TargetService : ServiceBase<TargetService>
 	{
 		private static int targetOffset = 0x80;
 
@@ -49,29 +51,29 @@ namespace Anamnesis
 			private set;
 		}
 
-		public Task Initialize()
+		public override Task Initialize()
 		{
 			this.IsAlive = true;
-			return Task.CompletedTask;
+			return base.Initialize();
 		}
 
-		public Task Shutdown()
+		public override Task Shutdown()
 		{
 			this.IsAlive = false;
-			return Task.CompletedTask;
+			return base.Shutdown();
 		}
 
-		public Task Start()
+		public override Task Start()
 		{
 			////gposeMem = MemoryService.GetMarshaler(Offsets.Main.GposeCheck);
 			////gposeMem2 = MemoryService.GetMarshaler(Offsets.Main.GposeCheck2);
 
 			Task.Run(this.Watch);
 
-			return Task.CompletedTask;
+			return base.Start();
 		}
 
-		public void SelectActor(ActorViewModel actor)
+		public void SelectActor(ActorViewModel? actor)
 		{
 			SelectedActor = actor;
 
@@ -160,7 +162,7 @@ namespace Anamnesis
 						}
 						catch (Exception ex)
 						{
-							Log.Write(ex, "Selection", Log.Severity.Error);
+							Log.Write(Severity.Error, ex);
 						}
 					}
 
@@ -171,12 +173,19 @@ namespace Anamnesis
 
 						try
 						{
-							ActorViewModel vm = new ActorViewModel(newTargetAddress);
-							this.SelectActor(vm);
+							if (newTargetAddress == IntPtr.Zero)
+							{
+								////this.SelectActor(null);
+							}
+							else
+							{
+								ActorViewModel vm = new ActorViewModel(newTargetAddress);
+								this.SelectActor(vm);
+							}
 						}
 						catch (Exception ex)
 						{
-							Log.Write(new Exception("Failed to select current target", ex), "Selection", Log.Severity.Warning);
+							Log.Write(Severity.Warning, new Exception("Failed to select current target", ex));
 						}
 					}
 				}

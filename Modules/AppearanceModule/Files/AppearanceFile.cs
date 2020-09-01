@@ -207,11 +207,7 @@ namespace Anamnesis.AppearanceModule.Files
 		{
 			Log.Write("Reading appearance from file", "AppearanceFile");
 
-			if (actor.ModelType != this.ModelType)
-			{
-				actor.ModelType = (int)this.ModelType;
-				await actor.ActorRefreshAsync();
-			}
+			actor.ModelType = this.ModelType;
 
 			if (!actor.IsCustomizable())
 				return;
@@ -303,7 +299,6 @@ namespace Anamnesis.AppearanceModule.Files
 			////mainHandMem.SetValue(mainHand, true);
 			////offHandMem.SetValue(offHand, true);
 
-			await actor.ActorRefreshAsync();
 			await Task.Delay(1000);
 
 			// write everything that is reset by actor refreshes

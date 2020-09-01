@@ -70,10 +70,11 @@ namespace Anamnesis.AppearanceModule.Views
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 
 			this.Hair = null;
-			this.Appearance = actor.Customize;
 
 			if (actor == null || !actor.IsCustomizable())
 				return;
+
+			this.Appearance = actor.Customize;
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
