@@ -106,7 +106,6 @@ namespace Anamnesis.AppearanceModule.Files
 			if (!actor.IsCustomizable())
 				return;
 
-			Appearance appearance = actor.Customize;
 			/*Equipment equipment = equipmentMem.Value;
 			Weapon mainHand = mainHandMem.Value;
 			Weapon offHand = offHandMem.Value;*/
@@ -149,10 +148,10 @@ namespace Anamnesis.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
-				this.Hair = appearance.Hair;
-				this.EnableHighlights = appearance.EnableHighlights;
-				this.HairTone = appearance.HairTone;
-				this.Highlights = appearance.Highlights;
+				this.Hair = actor.Customize.Hair;
+				this.EnableHighlights = actor.Customize.EnableHighlights;
+				this.HairTone = actor.Customize.HairTone;
+				this.Highlights = actor.Customize.Highlights;
 				////this.HairTint = actor.GetValue(Offsets.Main.HairColor);
 				////this.HairGlow = actor.GetValue(Offsets.Main.HairGloss);
 				////this.HighlightTint = actor.GetValue(Offsets.Main.HairHiglight);
@@ -160,27 +159,27 @@ namespace Anamnesis.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				this.Race = appearance.Race;
-				this.Gender = appearance.Gender;
-				this.Tribe = appearance.Tribe;
-				this.Age = appearance.Age;
+				this.Race = actor.Customize.Race;
+				this.Gender = actor.Customize.Gender;
+				this.Tribe = actor.Customize.Tribe;
+				this.Age = actor.Customize.Age;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 			{
-				this.Head = appearance.Head;
-				this.REyeColor = appearance.REyeColor;
-				this.LimbalEyes = appearance.LimbalEyes;
-				this.FacialFeatures = appearance.FacialFeatures;
-				this.Eyebrows = appearance.Eyebrows;
-				this.LEyeColor = appearance.LEyeColor;
-				this.Eyes = appearance.Eyes;
-				this.Nose = appearance.Nose;
-				this.Jaw = appearance.Jaw;
-				this.Mouth = appearance.Mouth;
-				this.LipsToneFurPattern = appearance.LipsToneFurPattern;
-				this.FacePaint = appearance.FacePaint;
-				this.FacePaintColor = appearance.FacePaintColor;
+				this.Head = actor.Customize.Head;
+				this.REyeColor = actor.Customize.REyeColor;
+				this.LimbalEyes = actor.Customize.LimbalEyes;
+				this.FacialFeatures = actor.Customize.FacialFeatures;
+				this.Eyebrows = actor.Customize.Eyebrows;
+				this.LEyeColor = actor.Customize.LEyeColor;
+				this.Eyes = actor.Customize.Eyes;
+				this.Nose = actor.Customize.Nose;
+				this.Jaw = actor.Customize.Jaw;
+				this.Mouth = actor.Customize.Mouth;
+				this.LipsToneFurPattern = actor.Customize.LipsToneFurPattern;
+				this.FacePaint = actor.Customize.FacePaint;
+				this.FacePaintColor = actor.Customize.FacePaintColor;
 				////this.LeftEyeColor = actor.GetValue(Offsets.Main.LeftEyeColor);
 				////this.RightEyeColor = actor.GetValue(Offsets.Main.RightEyeColor);
 				////this.LimbalRingColor = actor.GetValue(Offsets.Main.LimbalColor);
@@ -190,11 +189,11 @@ namespace Anamnesis.AppearanceModule.Files
 
 			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				this.Height = appearance.Height;
-				this.Skintone = appearance.Skintone;
-				this.EarMuscleTailSize = appearance.EarMuscleTailSize;
-				this.TailEarsType = appearance.TailEarsType;
-				this.Bust = appearance.Bust;
+				this.Height = actor.Customize.Height;
+				this.Skintone = actor.Customize.Skintone;
+				this.EarMuscleTailSize = actor.Customize.EarMuscleTailSize;
+				this.TailEarsType = actor.Customize.TailEarsType;
+				this.Bust = actor.Customize.Bust;
 
 				////this.SkinTint = actor.GetValue(Offsets.Main.SkinColor);
 				////this.SkinGlow = actor.GetValue(Offsets.Main.SkinGloss);
@@ -217,7 +216,7 @@ namespace Anamnesis.AppearanceModule.Files
 			if (!actor.IsCustomizable())
 				return;
 
-			Appearance appearance = actor.Customize;
+			AppearanceViewModel appearance = actor.Customize;
 			////Equipment equipment = equipmentMem.Value;
 			////Weapon mainHand = mainHandMem.Value;
 			////Weapon offHand = offHandMem.Value;
@@ -300,7 +299,6 @@ namespace Anamnesis.AppearanceModule.Files
 
 			await Task.Delay(100);
 
-			actor.Customize = appearance;
 			////equipmentMem.SetValue(equipment, true);
 			////mainHandMem.SetValue(mainHand, true);
 			////offHandMem.SetValue(offHand, true);

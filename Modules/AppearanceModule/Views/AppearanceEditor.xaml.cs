@@ -67,21 +67,13 @@ namespace Anamnesis.AppearanceModule.Views
 
 		private void OnActorChanged(ActorViewModel actor)
 		{
-			if (this.Appearance != null)
-			{
-				this.Appearance.PropertyChanged -= this.OnViewModelPropertyChanged;
-			}
-
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
-			this.Appearance = null;
 
 			this.Hair = null;
+			this.Appearance = actor.Customize;
 
 			if (actor == null || !actor.IsCustomizable())
 				return;
-
-			this.Appearance = new AppearanceViewModel(actor);
-			this.Appearance.PropertyChanged += this.OnViewModelPropertyChanged;
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -126,23 +118,6 @@ namespace Anamnesis.AppearanceModule.Views
 			if (this.Appearance.Tribe > 0)
 			{
 				this.Hair = GameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
-			}
-
-			this.CalculateHeight();
-		}
-
-		private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e == null)
-			{
-			}
-			else if (e.PropertyName == nameof(AppearanceViewModel.Hair))
-			{
-				this.Hair = GameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
-			}
-			else if (e.PropertyName == nameof(AppearanceViewModel.Height))
-			{
-				this.CalculateHeight();
 			}
 		}
 
@@ -196,7 +171,7 @@ namespace Anamnesis.AppearanceModule.Views
 			this.UpdateRaceAndTribe();
 		}
 
-		private void CalculateHeight()
+		/*private void CalculateHeight()
 		{
 			bool isFeminine = this.Appearance.Gender == AnAppearance.Genders.Feminine;
 			double min;
@@ -255,6 +230,6 @@ namespace Anamnesis.AppearanceModule.Views
 			int iFeet = (int)feet;
 			int inches = (int)((feet - (double)iFeet) * 12.0);
 			this.HeightFeet = iFeet + "' " + inches + "''";
-		}
+		}*/
 	}
 }
