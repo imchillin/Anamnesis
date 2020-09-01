@@ -106,11 +106,31 @@ namespace Anamnesis.Memory
 			if (address == IntPtr.Zero)
 				return;
 
+			// Read the existing memory to oldBuffer
 			int size = Marshal.SizeOf(typeof(T));
+			byte[] oldBuffer = new byte[size];
+			ReadProcessMemory(Handle, address, oldBuffer, size, out _);
+
+			// Marshal the struct to newBuffer
+			byte[] newbuffer = new byte[size];
 			IntPtr mem = Marshal.AllocHGlobal(size);
 			Marshal.StructureToPtr<T>(value, mem, false);
-			WriteProcessMemory(Handle, address, mem, size, out _);
+			Marshal.Copy(mem, newbuffer, 0, size);
 			Marshal.FreeHGlobal(mem);
+
+			// Move any non-0 bytes from newBuffer to oldBuffer
+			// This is critical, as our structs do not contain _all_ the information the game needs
+			// so we only want to update values we actually know
+			for (int i = 0; i < size; i++)
+			{
+				if (newbuffer[i] != 0)
+				{
+					oldBuffer[i] = newbuffer[i];
+				}
+			}
+
+			// Write the oldBuffer (which has now had newBuffer merged over it) to the process
+			WriteProcessMemory(Handle, address, oldBuffer, size, out _);
 		}
 
 		public async Task Initialize()
@@ -260,6 +280,9 @@ namespace Anamnesis.Memory
 
 		[DllImport("kernel32.dll")]
 		private static extern bool WriteProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten);
+
+		[DllImport("kernel32.dll")]
+		private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int nSize, out IntPtr lpNumberOfBytesWritten);
 
 		[DllImport("kernel32.dll")]
 		private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int dwSize, out IntPtr lpNumberOfBytesWritten);
