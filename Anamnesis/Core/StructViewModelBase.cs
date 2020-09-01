@@ -11,11 +11,13 @@ namespace Anamnesis
 	using SimpleLog;
 
 	#pragma warning disable SA1649
-	public interface IStructViewModel
+	public interface IStructViewModel : INotifyPropertyChanged
 	{
 		Type GetModelType();
 		void SetModel(object? model);
 		object? GetModel();
+
+		void RaisePropertyChanged(string propertyName);
 	}
 
 	[AddINotifyPropertyChangedInterface]
@@ -26,6 +28,9 @@ namespace Anamnesis
 
 		protected T model;
 		private Dictionary<string, (PropertyInfo, FieldInfo)> binds = new Dictionary<string, (PropertyInfo, FieldInfo)>();
+
+		private IStructViewModel? parent;
+		private PropertyInfo? parentProperty;
 
 		public StructViewModelBase()
 		{
@@ -52,8 +57,13 @@ namespace Anamnesis
 		public StructViewModelBase(IStructViewModel parent, string propertyName)
 			: this()
 		{
-			// nothing to do here, since we really only use memoryviewmodel and that handles
-			// setting the values for us.
+			this.parent = parent;
+			PropertyInfo? property = this.parent.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+
+			if (property == null)
+				throw new Exception($"Unable to find property: {propertyName} on object: {this.parent}");
+
+			this.parentProperty = property;
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
@@ -91,6 +101,24 @@ namespace Anamnesis
 		public object? GetModel()
 		{
 			return this.model;
+		}
+
+		public virtual void Tick()
+		{
+			if (this.parent != null && this.parentProperty != null)
+			{
+				object? obj = this.parentProperty.GetValue(this.parent);
+				T? val = (T?)obj;
+				this.SetModel(val);
+				return;
+			}
+
+			throw new Exception("View model is not correctly initialized");
+		}
+
+		void IStructViewModel.RaisePropertyChanged(string propertyName)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		protected virtual void HandleModelToviewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
@@ -165,7 +193,20 @@ namespace Anamnesis
 		/// <summary>
 		/// Called when the view model has changed the backing modal.
 		/// </summary>
-		protected abstract void OnViewToModel(string fieldName, object? value);
+		protected virtual void OnViewToModel(string fieldName, object? value)
+		{
+			if (this.parent != null && this.parentProperty != null)
+			{
+				if (typeof(IStructViewModel).IsAssignableFrom(this.parentProperty.PropertyType))
+				{
+					this.parent.RaisePropertyChanged(this.parentProperty.Name);
+				}
+				else
+				{
+					this.parentProperty.SetValue(this.parent, this.model);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Called when the backing model has changed the view model.

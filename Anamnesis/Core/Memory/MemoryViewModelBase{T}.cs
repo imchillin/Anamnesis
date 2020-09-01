@@ -16,9 +16,6 @@ namespace Anamnesis.Memory
 	public abstract class MemoryViewModelBase<T> : StructViewModelBase<T>, IMemoryViewModel
 		where T : struct
 	{
-		private IMemoryViewModel? parent;
-		private PropertyInfo? parentProperty;
-
 		public MemoryViewModelBase(IntPtr pointer)
 			: base()
 		{
@@ -32,13 +29,6 @@ namespace Anamnesis.Memory
 		public MemoryViewModelBase(IMemoryViewModel parent, string propertyName)
 			: base(parent, propertyName)
 		{
-			this.parent = parent;
-			PropertyInfo? property = this.parent.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
-
-			if (property == null)
-				throw new Exception($"Unable to find property: {propertyName} on object: {this.parent}");
-
-			this.parentProperty = property;
 		}
 
 		public IntPtr? Pointer
@@ -47,7 +37,7 @@ namespace Anamnesis.Memory
 			private set;
 		}
 
-		public void Tick()
+		public override void Tick()
 		{
 			lock (this)
 			{
@@ -60,15 +50,9 @@ namespace Anamnesis.Memory
 
 					this.SetModel(model);
 				}
-				else if (this.parent != null && this.parentProperty != null)
-				{
-					object? obj = this.parentProperty.GetValue(this.parent);
-					T? val = (T?)obj;
-					this.SetModel(val);
-				}
 				else
 				{
-					throw new Exception("Memory view model is not correctly initialized");
+					base.Tick();
 				}
 			}
 		}
@@ -79,10 +63,9 @@ namespace Anamnesis.Memory
 			{
 				MemoryService.Write((IntPtr)this.Pointer, this.model);
 			}
-			else if (this.parent != null && this.parentProperty != null)
+			else
 			{
-				// TODO: ensure propertychanged is raised
-				this.parentProperty.SetValue(this.parent, this.model);
+				base.OnViewToModel(fieldName, value);
 			}
 		}
 
