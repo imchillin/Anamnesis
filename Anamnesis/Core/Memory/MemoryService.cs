@@ -7,7 +7,6 @@ namespace Anamnesis.Memory
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
-	using System.Runtime.CompilerServices;
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
@@ -22,6 +21,7 @@ namespace Anamnesis.Memory
 		private static readonly Logger Log = SimpleLog.Log.GetLogger<MemoryService>();
 
 		private static List<WeakReference<IMemoryViewModel>> viewModels = new List<WeakReference<IMemoryViewModel>>();
+		private static Dictionary<Type, bool[]> structMasks = new Dictionary<Type, bool[]>();
 		private static ulong memoryTickCount = 0;
 		private readonly Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
 		private bool isActive;
@@ -85,19 +85,29 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		public static T? Read<T>(IntPtr address)
+		public static T Read<T>(IntPtr address)
 			where T : struct
 		{
 			if (address == IntPtr.Zero)
-				return null;
+				throw new Exception("Invalid address");
 
-			int size = Marshal.SizeOf(typeof(T));
-			IntPtr mem = Marshal.AllocHGlobal(size);
-			ReadProcessMemory(Handle, address, mem, size, out _);
-			T val = Marshal.PtrToStructure<T>(mem);
-			Marshal.FreeHGlobal(mem);
+			int attempt = 0;
+			while (attempt < 10)
+			{
+				int size = Marshal.SizeOf(typeof(T));
+				IntPtr mem = Marshal.AllocHGlobal(size);
+				ReadProcessMemory(Handle, address, mem, size, out _);
+				T? val = Marshal.PtrToStructure<T>(mem);
+				Marshal.FreeHGlobal(mem);
+				attempt++;
 
-			return val;
+				if (val != null)
+					return (T)val;
+
+				Thread.Sleep(100);
+			}
+
+			throw new Exception($"Failed to read memory {typeof(T)} from address {address}");
 		}
 
 		public static void Write<T>(IntPtr address, T value)
@@ -114,16 +124,17 @@ namespace Anamnesis.Memory
 			// Marshal the struct to newBuffer
 			byte[] newbuffer = new byte[size];
 			IntPtr mem = Marshal.AllocHGlobal(size);
+
 			Marshal.StructureToPtr<T>(value, mem, false);
 			Marshal.Copy(mem, newbuffer, 0, size);
 			Marshal.FreeHGlobal(mem);
 
-			// Move any non-0 bytes from newBuffer to oldBuffer
-			// This is critical, as our structs do not contain _all_ the information the game needs
-			// so we only want to update values we actually know
+			// Apply only memory that is allowed by the mask.
+			// this prevents writing memory for values that we dont have in our structs.
+			bool[] mask = GetMask<T>();
 			for (int i = 0; i < size; i++)
 			{
-				if (newbuffer[i] != 0)
+				if (mask[i])
 				{
 					oldBuffer[i] = newbuffer[i];
 				}
@@ -301,6 +312,52 @@ namespace Anamnesis.Memory
 
 		[DllImport("kernel32.dll")]
 		private static extern int CloseHandle(IntPtr hObject);
+
+		/// <summary>
+		/// Gets or generates a new mask for the given struct.
+		/// The mask indicates which bytes of memory the struct uses, and which bytes should not be
+		/// changed in memory.
+		/// </summary>
+		private static bool[] GetMask<T>()
+			where T : struct
+		{
+			Type type = typeof(T);
+
+			if (structMasks.ContainsKey(type))
+				return structMasks[type];
+
+			int size = Marshal.SizeOf(type);
+			byte[] buffer = new byte[size];
+			byte[] buffer2 = new byte[size];
+
+			// Write 255 to all bytes in the buffer
+			for (int i = 0; i < size; i++)
+				buffer[i] = 255;
+
+			// read buffer2 to a struct
+			IntPtr mem = Marshal.AllocHGlobal(size);
+			Marshal.Copy(buffer, 0, mem, size);
+			T val = Marshal.PtrToStructure<T>(mem);
+			Marshal.FreeHGlobal(mem);
+
+			// write the struct to buffer2
+			mem = Marshal.AllocHGlobal(size);
+			Marshal.StructureToPtr(val, mem, false);
+			Marshal.Copy(mem, buffer2, 0, size);
+			Marshal.FreeHGlobal(mem);
+
+			// generate a mask fore ach bit
+			bool[] mask = new bool[size];
+			for (int i = 0; i < size; i++)
+			{
+				// if the buffer bit (255) has not been changed to the default bit (0) then
+				// the bit was written to by the marshaling.
+				mask[i] = buffer[i] == buffer2[i];
+			}
+
+			structMasks.Add(type, mask);
+			return mask;
+		}
 
 		private static int CheckSeDebugPrivilege(out bool isDebugEnabled)
 		{

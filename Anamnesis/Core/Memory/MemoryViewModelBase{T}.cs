@@ -9,17 +9,22 @@ namespace Anamnesis.Memory
 	#pragma warning disable SA1649
 	public interface IMemoryViewModel : IStructViewModel
 	{
-		IntPtr? Pointer { get; }
+		IntPtr? GetPointer();
 		void Tick();
 	}
 
 	public abstract class MemoryViewModelBase<T> : StructViewModelBase<T>, IMemoryViewModel
 		where T : struct
 	{
+		private IntPtr? pointer;
+
 		public MemoryViewModelBase(IntPtr pointer)
 			: base()
 		{
-			this.Pointer = pointer;
+			if (pointer == IntPtr.Zero)
+				throw new Exception("Attempt to create memory view model with invalid address");
+
+			this.pointer = pointer;
 
 			MemoryService.RegisterViewModel(this);
 
@@ -31,19 +36,18 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public IntPtr? Pointer
+		IntPtr? IMemoryViewModel.GetPointer()
 		{
-			get;
-			private set;
+			return this.pointer;
 		}
 
 		public override void Tick()
 		{
 			lock (this)
 			{
-				if (this.Pointer != null)
+				if (this.pointer != null)
 				{
-					T? model = MemoryService.Read<T>((IntPtr)this.Pointer);
+					T? model = MemoryService.Read<T>((IntPtr)this.pointer);
 
 					if (model == null)
 						throw new Exception($"Failed to read memory: {typeof(T)}");
@@ -59,9 +63,9 @@ namespace Anamnesis.Memory
 
 		protected override void OnViewToModel(string fieldName, object? value)
 		{
-			if (this.Pointer != null)
+			if (this.pointer != null)
 			{
-				MemoryService.Write((IntPtr)this.Pointer, this.model);
+				MemoryService.Write((IntPtr)this.pointer, this.model);
 			}
 			else
 			{
@@ -73,7 +77,7 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		protected override void HandleModelToviewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
+		protected override bool HandleModelToViewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
 			// special case for the property being a viewModel and the field being a pointer to more memory
 			if (modelField.FieldType == typeof(IntPtr) && typeof(IMemoryViewModel).IsAssignableFrom(viewModelProperty.PropertyType))
@@ -100,9 +104,9 @@ namespace Anamnesis.Memory
 				{
 					vm = (IMemoryViewModel)lhs;
 
-					if (vm.Pointer == desiredPointer)
+					if (vm.GetPointer() == desiredPointer)
 					{
-						return;
+						return false;
 					}
 				}
 
@@ -113,23 +117,25 @@ namespace Anamnesis.Memory
 
 				viewModelProperty.SetValue(this, lhs);
 				this.OnModelToView(modelField.Name, rhs);
+				return true;
 			}
 			else
 			{
-				base.HandleModelToviewUpdate(viewModelProperty, modelField);
+				return base.HandleModelToViewUpdate(viewModelProperty, modelField);
 			}
 		}
 
-		protected override void HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
+		protected override bool HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
 			// special case for the property being a viewModel and the field being a pointer to more memory
 			if (modelField.FieldType == typeof(IntPtr) && typeof(IMemoryViewModel).IsAssignableFrom(viewModelProperty.PropertyType))
 			{
 				// We do not support setting a pointer from a viewmodel. read only!
+				return false;
 			}
 			else
 			{
-				base.HandleViewToModelUpdate(viewModelProperty, modelField);
+				return base.HandleViewToModelUpdate(viewModelProperty, modelField);
 			}
 		}
 	}
