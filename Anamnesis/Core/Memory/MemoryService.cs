@@ -233,6 +233,11 @@ namespace Anamnesis.Memory
 			return ReadProcessMemory(Handle, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead);
 		}
 
+		internal static bool Read(IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize)
+		{
+			return ReadProcessMemory(Handle, lpBaseAddress, lpBuffer, dwSize, out _);
+		}
+
 		internal static bool Write(UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten)
 		{
 			return WriteProcessMemory(Handle, lpBaseAddress, lpBuffer, nSize, out lpNumberOfBytesWritten);

@@ -110,34 +110,21 @@ namespace Anamnesis.Core.Memory
 		{
 			byte?[]? needle = this.SigToNeedle(signature);
 
+			// Fast
+			byte[] bigBuffer = new byte[size];
+			MemoryService.Read(baseAddress, bigBuffer, size);
+
 			unsafe
 			{
-				long offset = 0;
-				while (offset < size - needle.Length)
+				for (long offset = 0; offset < size - needle.Length; offset++)
 				{
-					UIntPtr addr = new UIntPtr(Convert.ToUInt64(baseAddress.ToInt64() + offset));
-
-					if (this.IsMatch(addr, needle))
-						return (IntPtr)addr.ToPointer();
-
-					// Advance an offset
-					offset += 1;
+					if (this.IsMatch(needle, bigBuffer, offset))
+					{
+						UIntPtr ptr = new UIntPtr(Convert.ToUInt64(baseAddress.ToInt64() + offset));
+						return (IntPtr)ptr.ToPointer();
+					}
 				}
 			}
-
-			/*unsafe
-			{
-				byte* pCursor = (byte*)baseAddress.ToPointer();
-				byte* pTop = (byte*)(baseAddress + size - needle.Length);
-				while (pCursor < pTop)
-				{
-					if (this.IsMatch(pCursor, needle))
-						return (IntPtr)pCursor;
-
-					// Advance an offset
-					pCursor += 1;
-				}
-			}*/
 
 			throw new KeyNotFoundException($"Can't find a signature of {signature}");
 		}
@@ -239,18 +226,15 @@ namespace Anamnesis.Core.Memory
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe bool IsMatch(UIntPtr pCursor, byte?[] needle)
+		private unsafe bool IsMatch(byte?[] needle, byte[] buffer, long offset)
 		{
-			byte[] buffer = new byte[needle.Length];
-			MemoryService.Read(pCursor, buffer, (UIntPtr)needle.Length, IntPtr.Zero);
-
 			for (int i = 0; i < needle.Length; i++)
 			{
 				byte? expected = needle[i];
 				if (expected == null)
 					continue;
 
-				byte actual = buffer[i];
+				byte actual = buffer[offset + i];
 				if (expected != actual)
 					return false;
 			}
