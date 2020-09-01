@@ -10,8 +10,16 @@ namespace Anamnesis
 	using PropertyChanged;
 	using SimpleLog;
 
+	#pragma warning disable SA1649
+	public interface IStructViewModel
+	{
+		Type GetModelType();
+		void SetModel(object? model);
+		object? GetModel();
+	}
+
 	[AddINotifyPropertyChangedInterface]
-	public abstract class StructViewModelBase<T> : INotifyPropertyChanged
+	public abstract class StructViewModelBase<T> : IStructViewModel, INotifyPropertyChanged
 		where T : struct
 	{
 		protected static readonly Logger Log = SimpleLog.Log.GetLogger("StructViewModels");
@@ -41,9 +49,33 @@ namespace Anamnesis
 			this.PropertyChanged += this.OnThisPropertyChanged;
 		}
 
+		public StructViewModelBase(IStructViewModel parent, string propertyName)
+			: this()
+		{
+			// nothing to do here, since we really only use memoryviewmodel and that handles
+			// setting the values for us.
+		}
+
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		protected void SetModel(T? model)
+		public Type GetModelType()
+		{
+			return typeof(T);
+		}
+
+		public void SetModel(object? model)
+		{
+			if (model is T tModel)
+			{
+				this.SetModel(tModel);
+			}
+			else
+			{
+				throw new Exception($"Invalid model type. Expected: {typeof(T)}, got: {model?.GetType()}");
+			}
+		}
+
+		public void SetModel(T? model)
 		{
 			if (model == null)
 				throw new Exception("Attempt to set null model to view model");
@@ -56,18 +88,44 @@ namespace Anamnesis
 			}
 		}
 
+		public object? GetModel()
+		{
+			return this.model;
+		}
+
 		protected virtual void HandleModelToviewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
 			lock (this)
 			{
-				if (modelField.FieldType != viewModelProperty.PropertyType)
-					throw new Exception($"view model: {this.GetType()} property: {modelField.Name} type: {viewModelProperty.PropertyType} does not match backing model field type: {modelField.FieldType}");
-
 				object? lhs = viewModelProperty.GetValue(this);
 				object? rhs = modelField.GetValue(this.model);
 
-				if (lhs == null && rhs == null)
-					return;
+				if (typeof(IStructViewModel).IsAssignableFrom(viewModelProperty.PropertyType))
+				{
+					IStructViewModel? vm = null;
+
+					if (lhs != null)
+						vm = (IStructViewModel)lhs;
+
+					if (vm == null)
+						vm = Activator.CreateInstance(viewModelProperty.PropertyType, this, viewModelProperty.Name) as IStructViewModel;
+
+					if (vm == null)
+						throw new Exception($"Failed to create instance of view model: {viewModelProperty.PropertyType}");
+
+					vm.SetModel(rhs);
+					rhs = vm;
+				}
+				else
+				{
+					if (modelField.FieldType != viewModelProperty.PropertyType)
+						throw new Exception($"view model: {this.GetType()} property: {modelField.Name} type: {viewModelProperty.PropertyType} does not match backing model field type: {modelField.FieldType}");
+
+					if (lhs == null && rhs == null)
+					{
+						return;
+					}
+				}
 
 				if (rhs == null || !rhs.Equals(lhs))
 				{
@@ -84,6 +142,9 @@ namespace Anamnesis
 			{
 				object? lhs = viewModelProperty.GetValue(this);
 				object? rhs = modelField.GetValue(this.model);
+
+				if (lhs is IStructViewModel vm)
+					lhs = vm.GetModel();
 
 				if (lhs == null && rhs == null)
 					return;

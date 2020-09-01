@@ -87,7 +87,7 @@ namespace Anamnesis.Memory
 		public byte PlayerTargetStatus { get; set; }
 		public Vector Position { get; set; }
 		public float Rotation { get; set; }
-		public Appearance Customize { get; set; }
+		public AppearanceViewModel? Customize { get; set; }
 		public int PlayerCharacterTargetActorId { get; set; }
 		public int BattleNpcTargetActorId { get; set; }
 		public int NameId { get; set; }

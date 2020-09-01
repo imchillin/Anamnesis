@@ -7,7 +7,7 @@ namespace Anamnesis.Memory
 	using System.Reflection;
 
 	#pragma warning disable SA1649
-	public interface IMemoryViewModel
+	public interface IMemoryViewModel : IStructViewModel
 	{
 		IntPtr? Pointer { get; }
 		void Tick();
@@ -20,6 +20,7 @@ namespace Anamnesis.Memory
 		private PropertyInfo? parentProperty;
 
 		public MemoryViewModelBase(IntPtr pointer)
+			: base()
 		{
 			this.Pointer = pointer;
 
@@ -29,6 +30,7 @@ namespace Anamnesis.Memory
 		}
 
 		public MemoryViewModelBase(IMemoryViewModel parent, string propertyName)
+			: base(parent, propertyName)
 		{
 			this.parent = parent;
 			PropertyInfo? property = this.parent.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);

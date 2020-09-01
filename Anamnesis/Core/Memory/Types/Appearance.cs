@@ -141,6 +141,11 @@ namespace Anamnesis.Memory
 		{
 		}
 
+		public AppearanceViewModel(ActorViewModel parent, string propertyName)
+			: base(parent, propertyName)
+		{
+		}
+
 		public Appearance.Races Race { get; set; }
 		public Appearance.Genders Gender { get; set; }
 		public Appearance.Ages Age { get; set; }
