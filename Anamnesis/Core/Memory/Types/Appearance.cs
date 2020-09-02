@@ -16,7 +16,10 @@ namespace Anamnesis.Memory
 		public Tribes Tribe;
 		public byte Head;
 		public byte Hair;
+
+		[MarshalAs(UnmanagedType.I1)]
 		public bool EnableHighlights;
+
 		public byte Skintone;
 		public byte REyeColor;
 		public byte HairTone;

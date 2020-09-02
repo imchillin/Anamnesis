@@ -36,6 +36,7 @@ namespace Anamnesis.Memory
 		public byte SubKind;
 
 		[FieldOffset(0x008E)]
+		[MarshalAs(UnmanagedType.U1)]
 		public bool IsFriendly;
 
 		// This is some kind of enum
@@ -68,11 +69,6 @@ namespace Anamnesis.Memory
 
 		[FieldOffset(0x1888)]
 		public int ModelType;
-
-		public static bool IsSame(Actor? lhs, Actor? rhs)
-		{
-			return lhs?.Name == rhs?.Name && lhs?.ActorId == rhs?.ActorId && lhs?.NameId == rhs?.NameId;
-		}
 	}
 
 	[AddINotifyPropertyChangedInterface]
