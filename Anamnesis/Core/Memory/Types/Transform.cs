@@ -31,8 +31,8 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public Vector Position { get; set; }
-		public Quaternion Rotation { get; set; }
-		public Vector Scale { get; set; }
+		[ModelField] public Vector Position { get; set; }
+		[ModelField] public Quaternion Rotation { get; set; }
+		[ModelField] public Vector Scale { get; set; }
 	}
 }

@@ -82,7 +82,7 @@ namespace Anamnesis.Memory
 			// special case for the property being a viewModel and the field being a pointer to more memory
 			if (modelField.FieldType == typeof(IntPtr) && typeof(IMemoryViewModel).IsAssignableFrom(viewModelProperty.PropertyType))
 			{
-				ViewModelOffsetAttribute? offset = viewModelProperty.GetCustomAttribute<ViewModelOffsetAttribute>();
+				ModelFieldAttribute? offset = viewModelProperty.GetCustomAttribute<ModelFieldAttribute>();
 
 				object? lhs = viewModelProperty.GetValue(this);
 				IntPtr? rhs = (IntPtr?)modelField.GetValue(this.model);

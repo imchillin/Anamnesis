@@ -7,6 +7,7 @@ namespace Anamnesis
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Reflection;
+	using Anamnesis.Memory;
 	using PropertyChanged;
 	using SimpleLog;
 
@@ -43,7 +44,13 @@ namespace Anamnesis
 			{
 				string name = property.Name;
 
-				FieldInfo? modelField = modelType.GetField(property.Name, BindingFlags.Public | BindingFlags.Instance);
+				ModelFieldAttribute? attribute = property.GetCustomAttribute<ModelFieldAttribute>();
+				if (attribute == null)
+					continue;
+
+				string fieldName = attribute.FieldName ?? property.Name;
+
+				FieldInfo? modelField = modelType.GetField(fieldName, BindingFlags.Public | BindingFlags.Instance);
 				if (modelField == null)
 				{
 					Log.Write(Severity.Error, $"No field for property: {name} in view model: {this.GetType()}");
@@ -82,6 +89,15 @@ namespace Anamnesis
 		/// Called when a property within the view model is changed. (from FFXIV or Anamnesis)
 		/// </summary>
 		public event PropertyChangedEventHandler? PropertyChanged;
+
+		/// <summary>
+		/// Gets or sets a value indicating whether writing this view model's properties to memory is allowed.
+		/// </summary>
+		public bool Locked
+		{
+			get;
+			set;
+		}
 
 		public Type GetModelType()
 		{
@@ -126,6 +142,9 @@ namespace Anamnesis
 
 		public virtual void Tick()
 		{
+			if (this.Locked)
+				return;
+
 			if (this.parent != null && this.parentProperty != null)
 			{
 				object? obj = this.parentProperty.GetValue(this.parent);
@@ -239,6 +258,9 @@ namespace Anamnesis
 
 		private void OnThisPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			if (this.Locked)
+				return;
+
 			if (!this.binds.ContainsKey(e.PropertyName))
 				return;
 

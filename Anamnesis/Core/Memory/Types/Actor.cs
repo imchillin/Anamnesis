@@ -79,24 +79,23 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public string Name { get; set; } = string.Empty;
-		public int ActorId { get; set; }
-		public int DataId { get; set; }
-		public int OwnerId { get; set; }
-		public ActorTypes ObjectKind { get; set; }
-		public byte SubKind { get; set; }
-		public bool IsFriendly { get; set; }
-		public byte PlayerTargetStatus { get; set; }
-		public Vector Position { get; set; }
-		public float Rotation { get; set; }
-		public AppearanceViewModel? Customize { get; set; }
-		public int PlayerCharacterTargetActorId { get; set; }
-		public int BattleNpcTargetActorId { get; set; }
-		public int NameId { get; set; }
-		public int ModelType { get; set; }
-		public RenderModes RenderMode { get; set; }
+		[ModelField] public string Name { get; set; } = string.Empty;
+		[ModelField] public int ActorId { get; set; }
+		[ModelField] public int DataId { get; set; }
+		[ModelField] public int OwnerId { get; set; }
+		[ModelField] public ActorTypes ObjectKind { get; set; }
+		[ModelField] public byte SubKind { get; set; }
+		[ModelField] public bool IsFriendly { get; set; }
+		[ModelField] public byte PlayerTargetStatus { get; set; }
+		[ModelField] public Vector Position { get; set; }
+		[ModelField] public float Rotation { get; set; }
+		[ModelField] public AppearanceViewModel? Customize { get; set; }
+		[ModelField] public int PlayerCharacterTargetActorId { get; set; }
+		[ModelField] public int BattleNpcTargetActorId { get; set; }
+		[ModelField] public int NameId { get; set; }
+		[ModelField] public int ModelType { get; set; }
+		[ModelField] public RenderModes RenderMode { get; set; }
 
-		[ViewModelOffset(0x50)]
-		public TransformViewModel? Transform { get; set; }
+		[ModelField(0x50)] public TransformViewModel? Transform { get; set; }
 	}
 }
