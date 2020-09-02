@@ -57,29 +57,34 @@ namespace Anamnesis.Services
 
 		private async Task Refresh()
 		{
-			if (this.actor == null)
+			if (this.actor == null || this.actor.Pointer == null)
 				return;
 
 			IsRefreshing = true;
+			this.actor.Locked = true;
+
+			// we create a new actor view model here so that we can write the values we need to update
+			// for the refresh without the actual actorview model being able to write its own values.
+			// if the other view model attempts to write a value during a refresh, the game will crash.
+			ActorViewModel newVm = new ActorViewModel((IntPtr)this.actor.Pointer);
+
 			Log.Write("Refresh Begin", "Actor Refresh");
 
-			this.actor.ObjectKind = ActorTypes.Player;
-
-			if (this.actor.ObjectKind == ActorTypes.Player)
+			if (newVm.ObjectKind == ActorTypes.Player)
 			{
-				this.actor.ObjectKind = ActorTypes.BattleNpc;
-				this.actor.RenderMode = RenderModes.Unload;
+				newVm.ObjectKind = ActorTypes.BattleNpc;
+				newVm.RenderMode = RenderModes.Unload;
 				await Task.Delay(150);
-				this.actor.RenderMode = RenderModes.Draw;
+				newVm.RenderMode = RenderModes.Draw;
 				await Task.Delay(150);
-				this.actor.ObjectKind = ActorTypes.Player;
+				newVm.ObjectKind = ActorTypes.Player;
 				await Task.Delay(150);
 			}
 			else
 			{
-				this.actor.RenderMode = RenderModes.Unload;
+				newVm.RenderMode = RenderModes.Unload;
 				await Task.Delay(150);
-				this.actor.RenderMode = RenderModes.Draw;
+				newVm.RenderMode = RenderModes.Draw;
 				await Task.Delay(150);
 			}
 
@@ -90,6 +95,7 @@ namespace Anamnesis.Services
 
 			Log.Write("Refresh Complete", "Actor Refresh");
 			IsRefreshing = false;
+			this.actor.Locked = false;
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace Anamnesis.Memory
 	#pragma warning disable SA1649
 	public interface IMemoryViewModel : IStructViewModel
 	{
-		IntPtr? GetPointer();
+		IntPtr? Pointer { get; }
 		void Tick();
 	}
 
@@ -36,15 +36,21 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		IntPtr? IMemoryViewModel.GetPointer()
+		public IntPtr? Pointer
 		{
-			return this.pointer;
+			get
+			{
+				return this.pointer;
+			}
 		}
 
 		public override void Tick()
 		{
 			lock (this)
 			{
+				if (this.Locked)
+					return;
+
 				if (this.pointer != null)
 				{
 					T? model = MemoryService.Read<T>((IntPtr)this.pointer);
@@ -104,7 +110,7 @@ namespace Anamnesis.Memory
 				{
 					vm = (IMemoryViewModel)lhs;
 
-					if (vm.GetPointer() == desiredPointer)
+					if (vm.Pointer == desiredPointer)
 					{
 						return false;
 					}
