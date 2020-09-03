@@ -387,7 +387,7 @@ namespace Anamnesis.AppearanceModule.Files
 
 			public static implicit operator Equipment.Item(ItemSave item)
 			{
-				Equipment.Item eqItem = new Equipment.Item();
+				Equipment.Item eqItem = default;
 
 				if (item == null)
 					return eqItem;

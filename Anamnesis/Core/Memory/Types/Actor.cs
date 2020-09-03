@@ -58,6 +58,9 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x01F0)]
 		public int PlayerCharacterTargetActorId;
 
+		[FieldOffset(0x1708)]
+		public Equipment Equipment;
+
 		[FieldOffset(0x17B8)]
 		public Appearance Customize;
 
@@ -95,6 +98,7 @@ namespace Anamnesis.Memory
 		[ModelField] public int NameId { get; set; }
 		[ModelField] public int ModelType { get; set; }
 		[ModelField] public RenderModes RenderMode { get; set; }
+		[ModelField] public EquipmentViewModel? Equipment { get; set; }
 
 		[ModelField(0x50)] public TransformViewModel? Transform { get; set; }
 	}

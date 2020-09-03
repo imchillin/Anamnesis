@@ -24,51 +24,51 @@
 
 
 		<Border Grid.Row="0" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 0, 3, 3">
-			<local:ItemView DataContext="{Binding MainHand}" Slot="MainHand" />
+			<local:ItemView DataContext="{Binding Equipment.MainHand}" Slot="MainHand" />
 		</Border>
 
 		<Border Grid.Row="0" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 0, 3, 3">
-			<local:ItemView  DataContext="{Binding OffHand}" Slot="OffHand" />
+			<local:ItemView  DataContext="{Binding Equipment.OffHand}" Slot="OffHand" />
 		</Border>
 
 		<Border Grid.Row="1" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
-			<local:ItemView  DataContext="{Binding Head}" Slot="Head" />
+			<local:ItemView  DataContext="{Binding Equipment.Head}" Slot="Head" />
 		</Border>
 
 		<Border Grid.Row="2" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
-			<local:ItemView  DataContext="{Binding Body}" Slot="Body" />
+			<local:ItemView  DataContext="{Binding Equipment.Chest}" Slot="Body" />
 		</Border>
 
 		<Border Grid.Row="3" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
-			<local:ItemView  DataContext="{Binding Hands}" Slot="Hands" />
+			<local:ItemView  DataContext="{Binding Equipment.Arms}" Slot="Hands" />
 		</Border>
 
 		<Border Grid.Row="4" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
-			<local:ItemView  DataContext="{Binding Legs}" Slot="Legs"/>
+			<local:ItemView  DataContext="{Binding Equipment.Legs}" Slot="Legs"/>
 		</Border>
 
 		<Border Grid.Row="5" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 0">
-			<local:ItemView  DataContext="{Binding Feet}" Slot="Feet" />
+			<local:ItemView  DataContext="{Binding Equipment.Feet}" Slot="Feet" />
 		</Border>
 
 		<Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3">
-			<local:ItemView  DataContext="{Binding Ears}" Slot="Ears" />
+			<local:ItemView  DataContext="{Binding Equipment.Ear}" Slot="Ears" />
 		</Border>
 
 		<Border Grid.Row="2" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3">
-			<local:ItemView  DataContext="{Binding Neck}" Slot="Neck" />
+			<local:ItemView  DataContext="{Binding Equipment.Neck}" Slot="Neck" />
 		</Border>
 
 		<Border Grid.Row="3" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3">
-			<local:ItemView  DataContext="{Binding Wrists}" Slot="Wrists" />
+			<local:ItemView  DataContext="{Binding Equipment.Wrist}" Slot="Wrists" />
 		</Border>
 
 		<Border Grid.Row="4" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 3">
-			<local:ItemView  DataContext="{Binding RightRing}" Slot="RightRing" />
+			<local:ItemView  DataContext="{Binding Equipment.RFinger}" Slot="RightRing" />
 		</Border>
 
 		<Border Grid.Row="5" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 3, 3, 0">
-			<local:ItemView DataContext="{Binding LeftRing}" Slot="LeftRing" />
+			<local:ItemView DataContext="{Binding Equipment.LFinger}" Slot="LeftRing" />
 		</Border>
 
 	</Grid>
