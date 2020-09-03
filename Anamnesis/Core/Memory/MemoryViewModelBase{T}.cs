@@ -48,7 +48,7 @@ namespace Anamnesis.Memory
 		{
 			lock (this)
 			{
-				if (this.Locked)
+				if (!this.Enabled)
 					return;
 
 				if (this.pointer != null)

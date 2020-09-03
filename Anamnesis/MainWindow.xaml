@@ -119,7 +119,7 @@
 					</Grid.ColumnDefinitions>
 
 					<views:NavigationMenu Grid.Column="0" SelectPage="OnSelectPage"/>
-					<ContentPresenter Grid.Column="1" x:Name="ViewArea"/>
+					<ContentPresenter Grid.Column="1" x:Name="ViewArea" IsEnabled="{Binding Enabled}"/>
 				</Grid>
 			</Grid>
 

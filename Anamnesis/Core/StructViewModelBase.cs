@@ -34,7 +34,6 @@ namespace Anamnesis
 
 		private IStructViewModel? parent;
 		private PropertyInfo? parentProperty;
-		private bool locked;
 
 		public StructViewModelBase()
 		{
@@ -62,6 +61,7 @@ namespace Anamnesis
 			}
 
 			this.PropertyChanged += this.OnThisPropertyChanged;
+			this.Enabled = true;
 		}
 
 		public StructViewModelBase(IStructViewModel parent, string propertyName)
@@ -92,24 +92,9 @@ namespace Anamnesis
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		/// <summary>
-		/// Gets or sets a value indicating whether writing this view model's properties to memory is allowed.
+		/// Gets or sets a value indicating whether updating the view model is allowed.
 		/// </summary>
-		public bool Locked
-		{
-			get
-			{
-				return this.locked;
-			}
-			set
-			{
-				this.locked = value;
-
-				if (!this.locked)
-				{
-					this.OnUnlock();
-				}
-			}
-		}
+		public bool Enabled { get; set; }
 
 		public Type GetModelType()
 		{
@@ -154,7 +139,7 @@ namespace Anamnesis
 
 		public virtual void Tick()
 		{
-			if (this.Locked)
+			if (!this.Enabled)
 				return;
 
 			if (this.parent != null && this.parentProperty != null)
@@ -270,7 +255,7 @@ namespace Anamnesis
 
 		private void OnThisPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (this.Locked)
+			if (!this.Enabled)
 				return;
 
 			if (!this.binds.ContainsKey(e.PropertyName))
@@ -278,21 +263,6 @@ namespace Anamnesis
 
 			(PropertyInfo viewModelProperty, FieldInfo modelField) = this.binds[e.PropertyName];
 			bool changed = this.HandleViewToModelUpdate(viewModelProperty, modelField);
-
-			if (changed)
-			{
-				this.ViewModelChanged?.Invoke(this);
-			}
-		}
-
-		// When unlocking a view model, we need to check all the properties and push any changes to the model.
-		private void OnUnlock()
-		{
-			bool changed = false;
-			foreach ((PropertyInfo property, FieldInfo field) in this.binds.Values)
-			{
-				changed |= this.HandleViewToModelUpdate(property, field);
-			}
 
 			if (changed)
 			{

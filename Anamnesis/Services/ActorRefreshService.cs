@@ -11,7 +11,10 @@ namespace Anamnesis.Services
 
 	public class ActorRefreshService : ServiceBase<ActorRefreshService>
 	{
+		private const int RefreshDelay = 250;
+
 		private ActorViewModel? actor;
+		private int refreshCountdown;
 
 		public static bool IsRefreshing
 		{
@@ -52,7 +55,13 @@ namespace Anamnesis.Services
 			if (IsRefreshing)
 				return;
 
-			Task.Run(this.Refresh);
+			bool startTask = this.refreshCountdown <= 0;
+			this.refreshCountdown = RefreshDelay;
+
+			if (startTask)
+			{
+				Task.Run(this.Refresh);
+			}
 		}
 
 		private async Task Refresh()
@@ -60,42 +69,53 @@ namespace Anamnesis.Services
 			if (this.actor == null || this.actor.Pointer == null)
 				return;
 
+			IntPtr actorPointer = (IntPtr)this.actor.Pointer;
+
+			while (this.refreshCountdown > 0)
+			{
+				await Task.Delay(10);
+				this.refreshCountdown -= 10;
+			}
+
+			this.refreshCountdown = 0;
+
+			// if the target actor changed while this refresh was pending, abort.
+			if (actorPointer != (IntPtr)this.actor.Pointer)
+				return;
+
 			IsRefreshing = true;
-			this.actor.Locked = true;
+			this.actor.Enabled = false;
 
 			// we create a new actor view model here so that we can write the values we need to update
 			// for the refresh without the actual actorview model being able to write its own values.
 			// if the other view model attempts to write a value during a refresh, the game will crash.
-			ActorViewModel newVm = new ActorViewModel((IntPtr)this.actor.Pointer);
-
-			Log.Write("Refresh Begin", "Actor Refresh");
+			ActorViewModel newVm = new ActorViewModel(actorPointer);
 
 			if (newVm.ObjectKind == ActorTypes.Player)
 			{
 				newVm.ObjectKind = ActorTypes.BattleNpc;
 				newVm.RenderMode = RenderModes.Unload;
-				await Task.Delay(150);
+				await MemoryService.WaitForMemoryTick();
+				await Task.Delay(50);
 				newVm.RenderMode = RenderModes.Draw;
-				await Task.Delay(150);
+				await MemoryService.WaitForMemoryTick();
+				await Task.Delay(50);
 				newVm.ObjectKind = ActorTypes.Player;
-				await Task.Delay(150);
 			}
 			else
 			{
 				newVm.RenderMode = RenderModes.Unload;
-				await Task.Delay(150);
+				await MemoryService.WaitForMemoryTick();
+				await Task.Delay(50);
 				newVm.RenderMode = RenderModes.Draw;
-				await Task.Delay(150);
 			}
-
-			await Task.Delay(50);
 
 			await MemoryService.WaitForMemoryTick();
 			await Task.Delay(50);
 
 			Log.Write("Refresh Complete", "Actor Refresh");
 			IsRefreshing = false;
-			this.actor.Locked = false;
+			this.actor.Enabled = true;
 		}
 	}
 }
