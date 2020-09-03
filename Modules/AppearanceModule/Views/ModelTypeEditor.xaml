@@ -22,10 +22,8 @@
 
 		<TextBlock Grid.Row="0" Grid.Column="0" Text="Model:" Style="{StaticResource Label}"/>
 		
-		<cm3Controls:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding DataContext.ModelType}" Minimum="0" Maximum="10000" Buttons="True"/>
+		<cm3Controls:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding ModelType}" Minimum="0" Maximum="10000" Buttons="True"/>
 		<Button Click="OnBrowseClicked" Style="{StaticResource TransparentButton}" Content="..." Grid.Column="2" Width="22" HorizontalContentAlignment="Center" Margin="8, 1, 0, 1"/>
-
-		
 
 	</Grid>
 </UserControl>
