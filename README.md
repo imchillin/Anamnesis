@@ -5,7 +5,7 @@ Anamnesis is a standalone tool that is used to modify certain clientside-only va
 
 Anamnesis is the successor to [Concept Matrix (CMTool)](https://github.com/imchillin/CMTool).
 
-This project is a work in progress and is not currently in a state to replace CMTool. 
+This project is a work in progress and is not currently in a state to replace CMTool. Please do not download the code expecting it to work like CMTool. Check the [Releases](https://github.com/imchillin/Anamnesis/releases) page for official releases. 
 
 ## Getting Started
 
