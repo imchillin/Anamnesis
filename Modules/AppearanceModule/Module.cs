@@ -25,7 +25,7 @@ namespace Anamnesis.AppearanceModule
 		public Task Initialize()
 		{
 			FileService.AddFileSource(new DatAppearanceFileSource());
-			ViewService.AddPage<AppearancePage>("Appearance", "user", this.IsActorSupported);
+			ViewService.AddPage<AppearancePage>("Appearance", "useralt", this.IsActorSupported);
 
 			return Task.CompletedTask;
 		}
