@@ -8,10 +8,24 @@ namespace Anamnesis
 	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows.Media.Media3D;
+	using Anamnesis.Memory;
+
+	using MediaQuaternion = System.Windows.Media.Media3D.Quaternion;
 
 	public class CameraService : IService
 	{
-		public static Quaternion Rotation;
+		public static MediaQuaternion Rotation;
+
+		public bool LockCameraAngle { get; set; }
+		public Vector2D CameraAngle { get; set; }
+		public Vector2D CameraPan { get; set; }
+		public Vector CameraPosition { get; set; }
+		public bool LockCameraPosition { get; set; }
+		public float CameraRotaton { get; set; }
+		public float CameraZoom { get; set; }
+		public float CameraMinZoom { get; private set; }
+		public float CameraMaxZoom { get; private set; }
+		public float CameraFov { get; set; }
 
 		public Task Initialize()
 		{
