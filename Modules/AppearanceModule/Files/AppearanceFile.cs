@@ -210,13 +210,13 @@ namespace Anamnesis.AppearanceModule.Files
 				return;
 
 			AppearanceViewModel appearance = actor.Customize;
-			////Equipment equipment = equipmentMem.Value;
+			EquipmentViewModel equipment = actor.Equipment;
 			////Weapon mainHand = mainHandMem.Value;
 			////Weapon offHand = offHandMem.Value;
 
-			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				if (this.MainHand != null)
+				/*if (this.MainHand != null)
 				{
 					mainHand.Base = this.MainHand.ModelBase;
 					mainHand.Dye = this.MainHand.DyeId;
@@ -230,23 +230,23 @@ namespace Anamnesis.AppearanceModule.Files
 					offHand.Dye = this.OffHand.DyeId;
 					offHand.Set = this.OffHand.ModelSet;
 					offHand.Variant = this.OffHand.ModelVariant;
-				}
+				}*/
 
-				equipment.Head = this.HeadGear ?? equipment.Head;
-				equipment.Chest = this.Body ?? equipment.Chest;
-				equipment.Arms = this.Hands ?? equipment.Arms;
-				equipment.Legs = this.Legs ?? equipment.Legs;
-				equipment.Feet = this.Feet ?? equipment.Feet;
+				this.HeadGear?.Write(equipment.Head);
+				this.Body?.Write(equipment.Chest);
+				this.Hands?.Write(equipment.Arms);
+				this.Legs?.Write(equipment.Legs);
+				this.Feet?.Write(equipment.Feet);
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 			{
-				equipment.Ear = this.Ears ?? equipment.Ear;
-				equipment.Neck = this.Neck ?? equipment.Neck;
-				equipment.Wrist = this.Wrists ?? equipment.Wrist;
-				equipment.RFinger = this.RightRing ?? equipment.RFinger;
-				equipment.LFinger = this.LeftRing ?? equipment.LFinger;
-			}*/
+				this.Ears?.Write(equipment.Ear);
+				this.Neck?.Write(equipment.Neck);
+				this.Wrists?.Write(equipment.Wrist);
+				this.RightRing?.Write(equipment.RFinger);
+				this.LeftRing?.Write(equipment.LFinger);
+			}
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
@@ -292,11 +292,8 @@ namespace Anamnesis.AppearanceModule.Files
 
 			await Task.Delay(100);
 
-			////equipmentMem.SetValue(equipment, true);
-			////mainHandMem.SetValue(mainHand, true);
-			////offHandMem.SetValue(offHand, true);
-
-			await Task.Delay(1000);
+			while (ActorRefreshService.IsRefreshing)
+				await Task.Delay(100);
 
 			// write everything that is reset by actor refreshes
 			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))
@@ -382,18 +379,11 @@ namespace Anamnesis.AppearanceModule.Files
 			public byte ModelVariant { get; set; }
 			public byte DyeId { get; set; }
 
-			public static implicit operator Equipment.Item(ItemSave item)
+			public void Write(ItemViewModel vm)
 			{
-				Equipment.Item eqItem = default;
-
-				if (item == null)
-					return eqItem;
-
-				eqItem.Base = item.ModelBase;
-				eqItem.Variant = item.ModelVariant;
-				eqItem.Dye = item.DyeId;
-
-				return eqItem;
+				vm.Base = this.ModelBase;
+				vm.Variant = this.ModelVariant;
+				vm.Dye = this.DyeId;
 			}
 		}
 	}
