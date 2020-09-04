@@ -69,7 +69,7 @@ namespace Styles.Controls
 		{
 			get
 			{
-				return "/AppearanceModule;component/Assets/Roles/" + this.Role.ToString() + ".png";
+				return "/Anamnesis;component/Assets/Roles/" + this.Role.ToString() + ".png";
 			}
 		}
 

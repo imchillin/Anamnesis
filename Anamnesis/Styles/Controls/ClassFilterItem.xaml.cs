@@ -64,7 +64,7 @@ namespace Styles.Controls
 		{
 			get
 			{
-				return "/AppearanceModule;component/Assets/Classes/" + this.Class.ToString() + ".png";
+				return "/Anamnesis;component/Assets/Classes/" + this.Class.ToString() + ".png";
 			}
 		}
 
