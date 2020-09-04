@@ -5,12 +5,8 @@ namespace Anamnesis.AppearanceModule.Views
 {
 	using System;
 	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Runtime.CompilerServices;
-	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis.AppearanceModule.ViewModels;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;

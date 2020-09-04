@@ -78,20 +78,20 @@
 
 					<Grid>
 						<Grid Visibility="{Binding ViewModel, Converter={StaticResource NotNullToVisibilityConverter}}">
-							<Image Source="{Binding ViewModel.Dye.Icon, Converter={StaticResource IImageConverter}}" Margin="2"/>
-							<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding ViewModel.Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+							<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}" Margin="2"/>
+							<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
 							<Grid.ToolTip>
 								<StackPanel>
-									<TextBlock Text="{Binding ViewModel.Dye.Name}" FontWeight="DemiBold"/>
-									<TextBlock Text="{Binding ViewModel.Dye.Description}" Visibility="{Binding ViewModel.Dye.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+									<TextBlock Text="{Binding Dye.Name}" FontWeight="DemiBold"/>
+									<TextBlock Text="{Binding Dye.Description}" Visibility="{Binding Dye.Description, Converter={StaticResource StringHasContentToVisibility}}" />
 								</StackPanel>
 							</Grid.ToolTip>
 						</Grid>
 					</Grid>
 				</Button>
 
-				<TextBlock Text="{Binding ViewModel.Dye.Name}" Margin="6, 2, 0, 0" Visibility="{Binding ViewModel.Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}" Style="{StaticResource Label}"/>
+				<TextBlock Text="{Binding Dye.Name}" Margin="6, 2, 0, 0" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}" Style="{StaticResource Label}"/>
 
 			</StackPanel>
 		</Grid>

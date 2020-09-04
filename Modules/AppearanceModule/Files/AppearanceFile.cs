@@ -4,11 +4,8 @@
 namespace Anamnesis.AppearanceModule.Files
 {
 	using System;
-	using System.Runtime.CompilerServices;
 	using System.Threading.Tasks;
 	using Anamnesis;
-	using Anamnesis.AppearanceModule.ViewModels;
-	using Anamnesis.AppearanceModule.Views;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 

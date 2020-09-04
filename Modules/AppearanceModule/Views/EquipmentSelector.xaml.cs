@@ -7,7 +7,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
-	using Anamnesis.AppearanceModule.ViewModels;
+	using Anamnesis.AppearanceModule.Utilities;
 	using Anamnesis.GameData;
 	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.Drawers;
@@ -31,8 +31,8 @@ namespace Anamnesis.AppearanceModule.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			this.Selector.Items.Add(EquipmentBaseViewModel.NoneItem);
-			this.Selector.Items.Add(EquipmentBaseViewModel.NpcbodyItem);
+			this.Selector.Items.Add(ItemUtility.NoneItem);
+			this.Selector.Items.Add(ItemUtility.NpcbodyItem);
 
 			// Special case for hands to also list props
 			if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)

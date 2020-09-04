@@ -4,14 +4,10 @@
 namespace Anamnesis.AppearanceModule.Views
 {
 	using System.ComponentModel;
-	using System.Diagnostics;
-	using System.Text.RegularExpressions;
-	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using Anamnesis.AppearanceModule.Utilities;
-	using Anamnesis.AppearanceModule.ViewModels;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
@@ -47,6 +43,7 @@ namespace Anamnesis.AppearanceModule.Views
 
 		public ItemViewModel ViewModel { get; set; }
 		public IItem Item { get; set; }
+		public IDye Dye { get; set; }
 		public ImageSource IconSource { get; set; }
 
 		public int? ItemKey
@@ -101,7 +98,7 @@ namespace Anamnesis.AppearanceModule.Views
 
 		private void OnDyeClick(object sender, RoutedEventArgs e)
 		{
-			////SelectorDrawer.Show<DyeSelector, IDye>("Select Dye", this.ViewModel.Dye, (v) => { this.ViewModel.Dye = v; });
+			SelectorDrawer.Show<DyeSelector, IDye>("Select Dye", this.Dye, (v) => { this.ViewModel.Dye = (byte)v.Key; });
 		}
 
 		private void OnThisDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -124,6 +121,7 @@ namespace Anamnesis.AppearanceModule.Views
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.Item = ItemUtility.GetItem(this.Slot, 0, this.ViewModel.Base, this.ViewModel.Variant);
+				this.Dye = GameDataService.Dyes.Get(this.ViewModel.Dye);
 			});
 		}
 	}

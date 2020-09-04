@@ -3,12 +3,8 @@
 
 namespace Anamnesis.AppearanceModule.Views
 {
-	using System.Text.RegularExpressions;
-	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
-	using Anamnesis.AppearanceModule.ViewModels;
-	using Anamnesis.GameData;
 	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.Drawers;
 
