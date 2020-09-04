@@ -72,13 +72,13 @@
 				<TextBlock Grid.Column="0" Grid.Row="0" Text="Tribe:" Style="{StaticResource Label}"/>
 				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0, 3, 0, 0">
 					<ComboBox x:Name="RaceComboBox" SelectionChanged="OnRaceChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="75" Margin="3, 0, 6, 3"/>
-					<ComboBox x:Name="TribeComboBox" SelectionChanged="OnTribeChanged"  ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="100"  Margin="3, 0, 3, 3"/>
+					<ComboBox x:Name="TribeComboBox" SelectionChanged="OnTribeChanged"  ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="93"  Margin="3, 0, 3, 3"/>
 				</StackPanel>
 
 				<!-- Gender / Age-->
 				<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
 					<ComboBox x:Name="GenderComboBox" SelectedItem="{Binding Appearance.Gender}" Width="75" Margin="3, 0, 6, 3" Visibility="{Binding HasGender, Converter={StaticResource B2V}}"/>
-					<ComboBox Grid.Row="12" Grid.Column="1" x:Name="AgeComboBox" SelectedItem="{Binding Appearance.Age}" Width="100" Visibility="{Binding CanAge, Converter={StaticResource B2V}}"  Margin="3, 0, 3, 3"/>
+					<ComboBox Grid.Row="12" Grid.Column="1" x:Name="AgeComboBox" SelectedItem="{Binding Appearance.Age}" Width="93" Visibility="{Binding CanAge, Converter={StaticResource B2V}}"  Margin="3, 0, 3, 3"/>
 				</StackPanel>
 
 				<!-- Skintone -->
