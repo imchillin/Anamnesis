@@ -19,6 +19,7 @@ namespace Anamnesis.SaintCoinachModule
 
 	using Directory = System.IO.Directory;
 	using File = System.IO.File;
+	using Item = SaintCoinach.Xiv.Item;
 
 	public class SaintCoinachService : GameDataService, IProgress<UpdateProgress>
 	{

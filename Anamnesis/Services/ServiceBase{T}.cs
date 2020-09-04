@@ -4,15 +4,20 @@
 namespace Anamnesis
 {
 	using System;
+	using System.ComponentModel;
 	using System.Threading.Tasks;
+	using PropertyChanged;
 	using SimpleLog;
 
-	public abstract class ServiceBase<T> : IService
+	[AddINotifyPropertyChangedInterface]
+	public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 		where T : ServiceBase<T>
 	{
 		protected static readonly Logger Log = SimpleLog.Log.GetLogger<T>();
 
 		private static T? instance;
+
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public static T Instance
 		{

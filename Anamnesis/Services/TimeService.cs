@@ -5,41 +5,44 @@ namespace Anamnesis
 {
 	using System;
 	using System.Threading.Tasks;
+	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
-	public class TimeService : IService
+	public class TimeService : ServiceBase<TimeService>
 	{
-		private int time = 0;
-		private int moon = 0;
 		private bool freeze;
+		private int dayOfMonth = 0;
+		private int timeOfDay = 0;
 
-		public int Time
+		public int Time { get; set; } = 0;
+
+		public int TimeOfDay
 		{
 			get
 			{
-				return this.time;
+				return this.timeOfDay;
 			}
 
 			set
 			{
-				this.time = value;
-				////this.timeMem?.SetValue((this.moon * 86400) + (this.time * 60));
+				this.timeOfDay = value;
+				this.Time = (this.dayOfMonth * 86400) + (this.timeOfDay * 60);
 			}
 		}
 
-		public int Moon
+		public int DayOfMonth
 		{
 			get
 			{
-				return this.moon;
+				return this.dayOfMonth;
 			}
 
 			set
 			{
-				this.moon = value;
-				////this.timeMem?.SetValue((this.moon * 86400) + (this.time * 60));
+				this.dayOfMonth = value;
+				this.Time = (this.dayOfMonth * 86400) + (this.TimeOfDay * 60);
 			}
 		}
 
@@ -58,31 +61,38 @@ namespace Anamnesis
 
 				if (this.freeze)
 				{
-					Task.Run(this.CheckTime);
+					Task.Run(this.FreezeTime);
 				}
 			}
 		}
 
-		public Task Initialize()
+		public override async Task Initialize()
 		{
-			////this.timeMem = MemoryService.GetMarshaler(Offsets.Main.Time, Offsets.Main.TimeControl);
-			return Task.CompletedTask;
-		}
+			await base.Initialize();
 
-		public Task Shutdown()
-		{
-			////this.timeMem?.SetValue(0);
-			////this.timeMem?.Dispose();
-
-			return Task.CompletedTask;
-		}
-
-		public Task Start()
-		{
-			return Task.CompletedTask;
+			_ = Task.Run(this.CheckTime);
 		}
 
 		private async Task CheckTime()
+		{
+			while (this.IsAlive)
+			{
+				await Task.Delay(10);
+
+				IntPtr timeAddress = MemoryService.ReadPtr(AddressService.Time);
+				timeAddress = MemoryService.ReadPtr(timeAddress + 0x10);
+				timeAddress = MemoryService.ReadPtr(timeAddress + 0x8);
+				timeAddress = MemoryService.ReadPtr(timeAddress + 0x28);
+				timeAddress += 0x80;
+
+				if (timeAddress == IntPtr.Zero)
+					continue;
+
+				MemoryService.Write(timeAddress, this.Time);
+			}
+		}
+
+		private async Task FreezeTime()
 		{
 			// eorzean day is 70 minutes real-time
 			double eorzeaDayInMs = 70 * 60 * 1000;
@@ -90,7 +100,7 @@ namespace Anamnesis
 			// there may be a tiny drift because of rounding errors
 			int eorzeaMinuteInMs = (int)Math.Round(eorzeaDayInMs / 24 / 60);
 
-			while (this.Freeze)
+			while (this.Freeze && this.IsAlive)
 			{
 				await Task.Delay(eorzeaMinuteInMs);
 

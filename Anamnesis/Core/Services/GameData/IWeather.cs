@@ -8,5 +8,6 @@ namespace Anamnesis.GameData
 		string Name { get; }
 		string Description { get; }
 		IImageSource Icon { get; }
+		ushort WeatherId { get; }
 	}
 }

@@ -70,15 +70,15 @@
 							</materialdesign:ToggleButtonAssist.OnContent>
 						</ToggleButton>
 
-						<cm3:NumberBox Grid.Column="1" Value="{Binding TimeService.Time}" Buttons="False" Slider="Absolute" Minimum="0" Maximum="1440"/>
+						<cm3:NumberBox Grid.Column="1" Value="{Binding TimeService.TimeOfDay}" Buttons="False" Slider="Absolute" Minimum="0" Maximum="1440"/>
 					</Grid>
 					
 
 					<TextBlock Grid.Row="2" Text="Moon Phase:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding TimeService.Moon}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
+					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding TimeService.DayOfMonth}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
 
 					<TextBlock Grid.Row="3" Text="Weather:" Style="{StaticResource Label}"/>
-					<ComboBox Grid.Row="3" Grid.Column="1" x:Name="WeatherComboBox" SelectionChanged="OnWeatherSelectionChanged">
+					<ComboBox Grid.Row="3" Grid.Column="1" SelectedItem="{Binding TerritoryService.CurrentWeather}" ItemsSource="{Binding TerritoryService.CurrentTerritory.Weathers}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<Grid>

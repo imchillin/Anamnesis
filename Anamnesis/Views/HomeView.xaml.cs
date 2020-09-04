@@ -3,12 +3,8 @@
 
 namespace Anamnesis.GUI.Views
 {
-	using System;
-	using System.Collections.ObjectModel;
-	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using PropertyChanged;
 
@@ -29,6 +25,7 @@ namespace Anamnesis.GUI.Views
 		}
 
 		public TerritoryService TerritoryService { get => TerritoryService.Instance; }
+		public TimeService TimeService { get => TimeService.Instance; }
 
 		public float CameraAngleX
 		{
@@ -109,58 +106,7 @@ namespace Anamnesis.GUI.Views
 			{
 				this.CameraAngle = this.cameraAngleMem.Value;
 			}
-		}
-
-		private void OnTerritoryMemValueChanged(object? sender = null, int value = 0)
-		{
-			if (this.territoryMem == null || this.weatherMem == null)
-				return;
-
-			int territoryId = this.territoryMem.Value;
-			ushort currentWeather = this.weatherMem.Value;
-
-			if (territory == null)
-			{
-				this.Territory = "Unknwon";
-
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					this.WeatherComboBox.ItemsSource = null;
-				});
-			}
-			else
-			{
-				this.Territory = territory.Region + " - " + territory.Place;
-
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					this.WeatherComboBox.ItemsSource = territory.Weathers;
-
-					foreach (IWeather weather in territory.Weathers)
-					{
-						byte[] bytes = { (byte)weather.Key, (byte)weather.Key };
-						ushort weatherVal = BitConverter.ToUInt16(bytes, 0);
-
-						if (weatherVal == currentWeather)
-						{
-							this.WeatherComboBox.SelectedItem = weather;
-						}
-					}
-				});
-			}
 		}*/
-
-		private void OnWeatherSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			IWeather? weather = this.WeatherComboBox.SelectedItem as IWeather;
-
-			if (weather == null)
-				return;
-
-			// This is super weird. I have no idea why we need to do this for weather...
-			////byte[] bytes = { (byte)weather.Key, (byte)weather.Key };
-			////this.weatherMem?.SetValue(BitConverter.ToUInt16(bytes, 0));
-		}
 
 		private void OnUnlockCameraChanged(object sender, RoutedEventArgs e)
 		{

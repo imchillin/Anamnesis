@@ -3,6 +3,7 @@
 
 namespace Anamnesis.SaintCoinachModule
 {
+	using System;
 	using Anamnesis;
 	using Anamnesis.GameData;
 	using SaintCoinach.Xiv;
@@ -12,6 +13,16 @@ namespace Anamnesis.SaintCoinachModule
 		public WeatherWrapper(Weather row)
 			: base(row)
 		{
+		}
+
+		public ushort WeatherId
+		{
+			get
+			{
+				// this is super weird.
+				byte[] bytes = { (byte)this.Key, (byte)this.Key };
+				return BitConverter.ToUInt16(bytes, 0);
+			}
 		}
 
 		public string Name
