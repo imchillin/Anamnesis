@@ -18,29 +18,32 @@ namespace Anamnesis.Core.Memory
 
 		// Static offsets
 		public static IntPtr ActorTable { get; private set; }
-		////public IntPtr ViewportActorTable { get; private set; }
-		public static IntPtr LocalContentId { get; private set; }
 		public static IntPtr TargetManager { get; private set; }
-
-		// Functions
-		public static IntPtr SetupTerritoryType { get; private set; }
-		////public IntPtr SomeActorTableAccess { get; private set; }
-		////public static IntPtr PartyListUpdate { get; private set; }
-		////public IntPtr ConditionFlags { get; private set; }
+		public static IntPtr Territory { get; private set; }
+		public static IntPtr Weather { get; private set; }
+		public static IntPtr Time { get; private set; }
+		public static IntPtr Camera { get; private set; }
 
 		public async Task Initialize()
 		{
+			if (MemoryService.Process == null)
+				return;
+
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
 
 			List<Task> tasks = new List<Task>();
 
 			// Scan for all static addresses
-			// Signatures taken from Dalamud: https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Game/ClientState/ClientStateAddressResolver.cs
+			// Some signatures taken from Dalamud: https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Game/ClientState/ClientStateAddressResolver.cs
 			tasks.Add(GetAddressFromSignature("88 91 ?? ?? ?? ?? 48 8D 3D ?? ?? ?? ??", 0, (p) => { ActorTable = p; }));
-			tasks.Add(GetAddressFromSignature("48 0F 44 05 ?? ?? ?? ?? 48 39 07", 0, (p) => { LocalContentId = p; }));
 			tasks.Add(GetAddressFromSignature("48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 3, (p) => { TargetManager = p; }));
-			tasks.Add(GetAddressFromSignature("48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 48 8B F9 66 89 91 ?? ?? ?? ??", 0, (p) => { SetupTerritoryType = p; }));
+
+			// TODO: replace these manual offsets with signautres
+			Weather = MemoryService.Process.MainModule.BaseAddress + 0x1CBFB08;
+			Territory = MemoryService.Process.MainModule.BaseAddress + 0x1D07760;
+			Time = MemoryService.Process.MainModule.BaseAddress + 0x1CE96E8;
+			Camera = MemoryService.Process.MainModule.BaseAddress + 0x1D08BA0;
 
 			await Task.WhenAll(tasks.ToArray());
 

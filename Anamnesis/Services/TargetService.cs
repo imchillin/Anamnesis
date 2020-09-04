@@ -45,24 +45,6 @@ namespace Anamnesis
 			}
 		}
 
-		public bool IsAlive
-		{
-			get;
-			private set;
-		}
-
-		public override Task Initialize()
-		{
-			this.IsAlive = true;
-			return base.Initialize();
-		}
-
-		public override Task Shutdown()
-		{
-			this.IsAlive = false;
-			return base.Shutdown();
-		}
-
 		public override Task Start()
 		{
 			////gposeMem = MemoryService.GetMarshaler(Offsets.Main.GposeCheck);

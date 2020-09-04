@@ -25,14 +25,22 @@ namespace Anamnesis
 			}
 		}
 
+		public bool IsAlive
+		{
+			get;
+			private set;
+		}
+
 		public virtual Task Initialize()
 		{
 			instance = (T)this;
+			this.IsAlive = true;
 			return Task.CompletedTask;
 		}
 
 		public virtual Task Shutdown()
 		{
+			this.IsAlive = false;
 			return Task.CompletedTask;
 		}
 

@@ -28,7 +28,7 @@ namespace Anamnesis.GUI.Views
 			this.ContentArea.DataContext = this;
 		}
 
-		public string Territory { get; set; } = "Unknown";
+		public TerritoryService TerritoryService { get => TerritoryService.Instance; }
 
 		public float CameraAngleX
 		{
