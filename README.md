@@ -5,9 +5,12 @@ Anamnesis is a standalone tool that is used to modify certain clientside-only va
 
 Anamnesis is the successor to [Concept Matrix (CMTool)](https://github.com/imchillin/CMTool).
 
+This project is a work in progress and is not currently in a state to replace CMTool. Please do not download the code expecting it to work like CMTool. Check the [Releases](https://github.com/imchillin/Anamnesis/releases) page for official releases. 
+
 ## Getting Started
 
 These instructions will get a copy of the project up and running on your local machine.
+[Instructions coming soon]
 
 ### Prerequisites
 - .NET Core 3.1 installed on your computer.
