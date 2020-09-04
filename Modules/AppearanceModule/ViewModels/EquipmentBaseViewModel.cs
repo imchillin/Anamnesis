@@ -12,7 +12,7 @@ namespace Anamnesis.AppearanceModule.ViewModels
 	using Anamnesis.Services;
 	using PropertyChanged;
 
-	public abstract class EquipmentBaseViewModel : IDisposable, INotifyPropertyChanged
+	public abstract class EquipmentBaseViewModel : INotifyPropertyChanged
 	{
 		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();

@@ -9,7 +9,7 @@
 			 mc:Ignorable="d"
 			 Margin="0"
 			 d:DesignWidth="300"
-			 DataContextChanged="UserControl_DataContextChanged">
+			 DataContextChanged="OnThisDataContextChanged">
 
 	<StackPanel Margin="2, 3" x:Name="ContentArea">
 
@@ -34,14 +34,14 @@
 					<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="6" Opacity="0.3"/>
 
 					<Grid Visibility="{Binding ViewModel, Converter={StaticResource NotNullToVisibilityConverter}}">
-						<Image Source="{Binding ViewModel.Item.Icon, Converter={StaticResource IImageConverter}}" Margin="2"/>
-						<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding ViewModel.Item.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+						<Image Source="{Binding Item.Icon, Converter={StaticResource IImageConverter}}" Margin="2"/>
+						<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 					</Grid>
 
 					<Grid.ToolTip>
 						<StackPanel>
-							<TextBlock Text="{Binding ViewModel.Item.Name}" FontWeight="DemiBold"/>
-							<TextBlock Text="{Binding ViewModel.Item.Description}" Visibility="{Binding ViewModel.Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+							<TextBlock Text="{Binding Item.Name}" FontWeight="DemiBold"/>
+							<TextBlock Text="{Binding Item.Description}" Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
 						</StackPanel>
 					</Grid.ToolTip>
 
@@ -51,11 +51,11 @@
 			<StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
 				<TextBlock Text="{Binding SlotName}" FontWeight="Light" Margin="3,0,0,0" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12"/>
 				<TextBlock Text=":" FontWeight="Light" Margin="0,0,3,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
-				<TextBlock Text="{Binding ViewModel.Item.Name}" Margin="0, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
+				<TextBlock Text="{Binding Item.Name}" Margin="0, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
 			</StackPanel>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal">
-				<cm3Controls:NumberBox Width="42" Value="{Binding ViewModel.Key}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0"/>
+				<cm3Controls:NumberBox Width="42" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0"/>
 
 				<cm3Controls:NumberBox  Width="36" Value="{Binding ViewModel.ModelSet}" Margin="0" FontSize="12"  FontWeight="Light" Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
 				<TextBlock Text="-" Style="{StaticResource Label}" Margin="0"  Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>

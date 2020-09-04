@@ -5,6 +5,7 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Runtime.InteropServices;
+	using Anamnesis.GameData;
 	using PropertyChanged;
 
 	[StructLayout(LayoutKind.Sequential)]

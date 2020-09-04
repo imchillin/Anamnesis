@@ -10,9 +10,11 @@ namespace Anamnesis.AppearanceModule.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
+	using Anamnesis.AppearanceModule.Utilities;
 	using Anamnesis.AppearanceModule.ViewModels;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.DependencyProperties;
 	using Anamnesis.WpfStyles.Drawers;
 	using PropertyChanged;
@@ -43,18 +45,44 @@ namespace Anamnesis.AppearanceModule.Views
 			set => SlotDp.Set(this, value);
 		}
 
-		public ItemViewModel ViewModel
+		public ItemViewModel ViewModel { get; set; }
+		public IItem Item { get; set; }
+		public ImageSource IconSource { get; set; }
+
+		public int? ItemKey
 		{
-			get;
-			set;
+			get
+			{
+				return this.Item?.Key;
+			}
+			set
+			{
+				IItem item = null;
+
+				if (value != null)
+					item = GameDataService.Items.Get((int)value);
+
+				this.Item = item;
+
+				if (value == null || item == null)
+				{
+					this.ViewModel.Base = 0;
+					this.ViewModel.Variant = 0;
+				}
+				else
+				{
+					bool useSubModel = this.Slot == ItemSlots.OffHand && this.Item.HasSubModel;
+
+					////this.ViewModel.Set = useSubModel ? this.Item.SubModelSet : this.Item.ModelSet;
+					this.ViewModel.Base = useSubModel ? this.Item.SubModelBase : this.Item.ModelBase;
+					this.ViewModel.Variant = useSubModel ? (byte)this.Item.SubModelVariant : (byte)this.Item.ModelVariant;
+				}
+			}
 		}
 
 		public string SlotName
 		{
-			get
-			{
-				return this.Slot.ToDisplayName();
-			}
+			get => this.Slot.ToDisplayName();
 		}
 
 		public bool IsWeapon
@@ -65,12 +93,10 @@ namespace Anamnesis.AppearanceModule.Views
 			}
 		}
 
-		public ImageSource IconSource { get; set; }
-
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
 			EquipmentSelector selector = new EquipmentSelector(this.Slot);
-			////SelectorDrawer.Show<IItem>("Select " + this.SlotName, selector, this.ViewModel.Item, (v) => { this.ViewModel.Item = v; });
+			SelectorDrawer.Show<IItem>("Select " + this.SlotName, selector, this.Item, (v) => { this.ItemKey = v.Key; });
 		}
 
 		private void OnDyeClick(object sender, RoutedEventArgs e)
@@ -78,7 +104,7 @@ namespace Anamnesis.AppearanceModule.Views
 			////SelectorDrawer.Show<DyeSelector, IDye>("Select Dye", this.ViewModel.Dye, (v) => { this.ViewModel.Dye = v; });
 		}
 
-		private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void OnThisDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			this.ViewModel = this.DataContext as ItemViewModel;
 
@@ -86,6 +112,19 @@ namespace Anamnesis.AppearanceModule.Views
 				return;
 
 			this.IconSource = this.Slot.GetIcon();
+			this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+			this.OnViewModelPropertyChanged(null, null);
+		}
+
+		private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (!this.ViewModel.Enabled)
+				return;
+
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.Item = ItemUtility.GetItem(this.Slot, 0, this.ViewModel.Base, this.ViewModel.Variant);
+			});
 		}
 	}
 }
