@@ -41,7 +41,7 @@ namespace Anamnesis.AppearanceModule.Views
 			set => SlotDp.Set(this, value);
 		}
 
-		public ItemViewModel ViewModel { get; set; }
+		public IStructViewModel ViewModel { get; set; }
 		public IItem Item { get; set; }
 		public IDye Dye { get; set; }
 		public ImageSource IconSource { get; set; }
@@ -61,18 +61,29 @@ namespace Anamnesis.AppearanceModule.Views
 
 				this.Item = item;
 
-				if (value == null || item == null)
-				{
-					this.ViewModel.Base = 0;
-					this.ViewModel.Variant = 0;
-				}
-				else
+				ushort modelSet = 0;
+				ushort modelBase = 0;
+				ushort modelVariant = 0;
+
+				if (value != null && item != null)
 				{
 					bool useSubModel = this.Slot == ItemSlots.OffHand && this.Item.HasSubModel;
 
-					////this.ViewModel.Set = useSubModel ? this.Item.SubModelSet : this.Item.ModelSet;
-					this.ViewModel.Base = useSubModel ? this.Item.SubModelBase : this.Item.ModelBase;
-					this.ViewModel.Variant = useSubModel ? (byte)this.Item.SubModelVariant : (byte)this.Item.ModelVariant;
+					modelSet = useSubModel ? this.Item.SubModelSet : this.Item.ModelSet;
+					modelBase = useSubModel ? this.Item.SubModelBase : this.Item.ModelBase;
+					modelVariant = useSubModel ? (byte)this.Item.SubModelVariant : (byte)this.Item.ModelVariant;
+				}
+
+				if (this.ViewModel is ItemViewModel itemView)
+				{
+					itemView.Base = modelBase;
+					itemView.Variant = (byte)modelVariant;
+				}
+				else if (this.ViewModel is WeaponViewModel weaponView)
+				{
+					weaponView.Set = modelSet;
+					weaponView.Base = modelBase;
+					weaponView.Variant = modelVariant;
 				}
 			}
 		}
@@ -98,12 +109,22 @@ namespace Anamnesis.AppearanceModule.Views
 
 		private void OnDyeClick(object sender, RoutedEventArgs e)
 		{
-			SelectorDrawer.Show<DyeSelector, IDye>("Select Dye", this.Dye, (v) => { this.ViewModel.Dye = (byte)v.Key; });
+			SelectorDrawer.Show<DyeSelector, IDye>("Select Dye", this.Dye, (v) =>
+			{
+				if (this.ViewModel is ItemViewModel item)
+				{
+					item.Dye = (byte)v.Key;
+				}
+				else if (this.ViewModel is WeaponViewModel weapon)
+				{
+					weapon.Dye = (byte)v.Key;
+				}
+			});
 		}
 
 		private void OnThisDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			this.ViewModel = this.DataContext as ItemViewModel;
+			this.ViewModel = this.DataContext as IStructViewModel;
 
 			if (this.ViewModel == null)
 				return;
@@ -120,8 +141,16 @@ namespace Anamnesis.AppearanceModule.Views
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				this.Item = ItemUtility.GetItem(this.Slot, 0, this.ViewModel.Base, this.ViewModel.Variant);
-				this.Dye = GameDataService.Dyes.Get(this.ViewModel.Dye);
+				if (this.ViewModel is ItemViewModel item)
+				{
+					this.Item = ItemUtility.GetItem(this.Slot, 0, item.Base, item.Variant);
+					this.Dye = GameDataService.Dyes.Get(item.Dye);
+				}
+				else if (this.ViewModel is WeaponViewModel weapon)
+				{
+					this.Item = ItemUtility.GetItem(this.Slot, weapon.Set, weapon.Base, weapon.Variant);
+					this.Dye = GameDataService.Dyes.Get(weapon.Dye);
+				}
 			});
 		}
 	}

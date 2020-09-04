@@ -368,7 +368,7 @@ namespace Anamnesis.AppearanceModule.Files
 			{
 			}
 
-			public ItemSave(Equipment.Item from)
+			public ItemSave(Item from)
 			{
 				this.ModelBase = from.Base;
 				this.ModelVariant = from.Variant;

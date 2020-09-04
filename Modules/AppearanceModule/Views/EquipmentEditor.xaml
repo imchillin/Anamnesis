@@ -24,11 +24,11 @@
 
 
 		<Border Grid.Row="0" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 0, 3, 3">
-			<local:ItemView DataContext="{Binding Equipment.MainHand}" Slot="MainHand" />
+			<local:ItemView DataContext="{Binding MainHand}" Slot="MainHand" />
 		</Border>
 
 		<Border Grid.Row="0" Grid.Column="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3, 0, 3, 3">
-			<local:ItemView  DataContext="{Binding Equipment.OffHand}" Slot="OffHand" />
+			<local:ItemView  DataContext="{Binding OffHand}" Slot="OffHand" />
 		</Border>
 
 		<Border Grid.Row="1" Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">

@@ -16,6 +16,7 @@ namespace Anamnesis
 
 	public interface IStructViewModel : INotifyPropertyChanged
 	{
+		bool Enabled { get; set; }
 		Type GetModelType();
 		void SetModel(object? model);
 		object? GetModel();

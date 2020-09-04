@@ -19,7 +19,7 @@ namespace Anamnesis.AppearanceModule.Utilities
 		/// <summary>
 		/// Searches the gamedata service item list for an item with the given model attributes.
 		/// </summary>
-		public static IItem GetItem(ItemSlots slot, ushort modelSet, ushort modelBase, byte modelVariant)
+		public static IItem GetItem(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
 		{
 			if (modelBase == 0 && modelVariant == 0)
 				return NoneItem;

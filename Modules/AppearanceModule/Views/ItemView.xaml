@@ -57,7 +57,7 @@
 			<StackPanel Grid.Row="1" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal">
 				<cm3Controls:NumberBox Width="42" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0"/>
 
-				<cm3Controls:NumberBox  Width="36" Value="{Binding ViewModel.ModelSet}" Margin="0" FontSize="12"  FontWeight="Light" Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
+				<cm3Controls:NumberBox  Width="36" Value="{Binding ViewModel.Set}" Margin="0" FontSize="12"  FontWeight="Light" Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
 				<TextBlock Text="-" Style="{StaticResource Label}" Margin="0"  Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
 				<cm3Controls:NumberBox Width="36" Value="{Binding ViewModel.Base}" Margin="0" FontSize="12" FontWeight="Light"/>
 				<TextBlock Text="-" Style="{StaticResource Label}" Margin="0" />

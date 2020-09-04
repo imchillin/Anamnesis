@@ -21,14 +21,14 @@ namespace Anamnesis.Memory
 		public Item Wrist;
 		public Item RFinger;
 		public Item LFinger;
+	}
 
-		[StructLayout(LayoutKind.Sequential)]
-		public struct Item
-		{
-			public ushort Base;
-			public byte Variant;
-			public byte Dye;
-		}
+	[StructLayout(LayoutKind.Sequential)]
+	public struct Item
+	{
+		public ushort Base;
+		public byte Variant;
+		public byte Dye;
 	}
 
 	[AddINotifyPropertyChangedInterface]
@@ -54,7 +54,7 @@ namespace Anamnesis.Memory
 	#pragma warning disable SA1402
 
 	[AddINotifyPropertyChangedInterface]
-	public class ItemViewModel : MemoryViewModelBase<Equipment.Item>
+	public class ItemViewModel : MemoryViewModelBase<Item>
 	{
 		public ItemViewModel(IMemoryViewModel parent, string propertyName)
 			: base(parent, propertyName)
