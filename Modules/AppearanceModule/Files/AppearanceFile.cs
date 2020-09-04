@@ -103,45 +103,33 @@ namespace Anamnesis.AppearanceModule.Files
 			if (!actor.IsCustomizable())
 				return;
 
-			/*Equipment equipment = equipmentMem.Value;
-			Weapon mainHand = mainHandMem.Value;
-			Weapon offHand = offHandMem.Value;*/
-
 			this.SaveMode = mode;
 
-			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				this.MainHand = new WeaponSave();
-				this.MainHand.DyeId = mainHand.Dye;
-				this.MainHand.ModelBase = mainHand.Base;
-				this.MainHand.ModelSet = mainHand.Set;
-				this.MainHand.ModelVariant = mainHand.Variant;
-				this.MainHand.Color = actor.GetValue(Offsets.Main.MainHandColor);
-				this.MainHand.Scale = actor.GetValue(Offsets.Main.MainHandScale);
+				this.MainHand = new WeaponSave(actor.MainHand);
+				////this.MainHand.Color = actor.GetValue(Offsets.Main.MainHandColor);
+				////this.MainHand.Scale = actor.GetValue(Offsets.Main.MainHandScale);
 
-				this.OffHand = new WeaponSave();
-				this.OffHand.DyeId = offHand.Dye;
-				this.OffHand.ModelBase = offHand.Base;
-				this.OffHand.ModelSet = offHand.Set;
-				this.OffHand.ModelVariant = offHand.Variant;
-				this.OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
-				this.OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
+				this.OffHand = new WeaponSave(actor.OffHand);
+				////this.OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
+				////this.OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
 
-				this.HeadGear = new ItemSave(equipment.Head);
-				this.Body = new ItemSave(equipment.Chest);
-				this.Hands = new ItemSave(equipment.Arms);
-				this.Legs = new ItemSave(equipment.Legs);
-				this.Feet = new ItemSave(equipment.Feet);
+				this.HeadGear = new ItemSave(actor.Equipment.Head);
+				this.Body = new ItemSave(actor.Equipment.Chest);
+				this.Hands = new ItemSave(actor.Equipment.Arms);
+				this.Legs = new ItemSave(actor.Equipment.Legs);
+				this.Feet = new ItemSave(actor.Equipment.Feet);
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 			{
-				this.Ears = new ItemSave(equipment.Ear);
-				this.Neck = new ItemSave(equipment.Neck);
-				this.Wrists = new ItemSave(equipment.Wrist);
-				this.LeftRing = new ItemSave(equipment.LFinger);
-				this.RightRing = new ItemSave(equipment.RFinger);
-			}*/
+				this.Ears = new ItemSave(actor.Equipment.Ear);
+				this.Neck = new ItemSave(actor.Equipment.Neck);
+				this.Wrists = new ItemSave(actor.Equipment.Wrist);
+				this.LeftRing = new ItemSave(actor.Equipment.LFinger);
+				this.RightRing = new ItemSave(actor.Equipment.RFinger);
+			}
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
@@ -209,85 +197,66 @@ namespace Anamnesis.AppearanceModule.Files
 			if (!actor.IsCustomizable())
 				return;
 
-			AppearanceViewModel appearance = actor.Customize;
-			EquipmentViewModel equipment = actor.Equipment;
-			////Weapon mainHand = mainHandMem.Value;
-			////Weapon offHand = offHandMem.Value;
-
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
-				/*if (this.MainHand != null)
-				{
-					mainHand.Base = this.MainHand.ModelBase;
-					mainHand.Dye = this.MainHand.DyeId;
-					mainHand.Set = this.MainHand.ModelSet;
-					mainHand.Variant = this.MainHand.ModelVariant;
-				}
-
-				if (this.OffHand != null)
-				{
-					offHand.Base = this.OffHand.ModelBase;
-					offHand.Dye = this.OffHand.DyeId;
-					offHand.Set = this.OffHand.ModelSet;
-					offHand.Variant = this.OffHand.ModelVariant;
-				}*/
-
-				this.HeadGear?.Write(equipment.Head);
-				this.Body?.Write(equipment.Chest);
-				this.Hands?.Write(equipment.Arms);
-				this.Legs?.Write(equipment.Legs);
-				this.Feet?.Write(equipment.Feet);
+				this.MainHand?.Write(actor.MainHand);
+				this.OffHand?.Write(actor.OffHand);
+				this.HeadGear?.Write(actor.Equipment.Head);
+				this.Body?.Write(actor.Equipment.Chest);
+				this.Hands?.Write(actor.Equipment.Arms);
+				this.Legs?.Write(actor.Equipment.Legs);
+				this.Feet?.Write(actor.Equipment.Feet);
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
 			{
-				this.Ears?.Write(equipment.Ear);
-				this.Neck?.Write(equipment.Neck);
-				this.Wrists?.Write(equipment.Wrist);
-				this.RightRing?.Write(equipment.RFinger);
-				this.LeftRing?.Write(equipment.LFinger);
+				this.Ears?.Write(actor.Equipment.Ear);
+				this.Neck?.Write(actor.Equipment.Neck);
+				this.Wrists?.Write(actor.Equipment.Wrist);
+				this.RightRing?.Write(actor.Equipment.RFinger);
+				this.LeftRing?.Write(actor.Equipment.LFinger);
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 			{
-				appearance.Hair = (byte)this.Hair;
-				appearance.EnableHighlights = (bool)this.EnableHighlights;
-				appearance.HairTone = (byte)this.HairTone;
-				appearance.Highlights = (byte)this.Highlights;
+				actor.Customize.Hair = (byte)this.Hair;
+				actor.Customize.EnableHighlights = (bool)this.EnableHighlights;
+				actor.Customize.HairTone = (byte)this.HairTone;
+				actor.Customize.Highlights = (byte)this.Highlights;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				appearance.Race = (Appearance.Races)this.Race;
-				appearance.Gender = (Appearance.Genders)this.Gender;
-				appearance.Tribe = (Appearance.Tribes)this.Tribe;
-				appearance.Age = (Appearance.Ages)this.Age;
+				actor.Customize.Race = (Appearance.Races)this.Race;
+				actor.Customize.Gender = (Appearance.Genders)this.Gender;
+				actor.Customize.Tribe = (Appearance.Tribes)this.Tribe;
+				actor.Customize.Age = (Appearance.Ages)this.Age;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 			{
-				appearance.Head = (byte)this.Head;
-				appearance.REyeColor = (byte)this.REyeColor;
-				appearance.FacialFeatures = (Appearance.FacialFeature)this.FacialFeatures;
-				appearance.LimbalEyes = (byte)this.LimbalEyes;
-				appearance.Eyebrows = (byte)this.Eyebrows;
-				appearance.LEyeColor = (byte)this.LEyeColor;
-				appearance.Eyes = (byte)this.Eyes;
-				appearance.Nose = (byte)this.Nose;
-				appearance.Jaw = (byte)this.Jaw;
-				appearance.Mouth = (byte)this.Mouth;
-				appearance.LipsToneFurPattern = (byte)this.LipsToneFurPattern;
-				appearance.FacePaint = (byte)this.FacePaint;
-				appearance.FacePaintColor = (byte)this.FacePaintColor;
+				actor.Customize.Head = (byte)this.Head;
+				actor.Customize.REyeColor = (byte)this.REyeColor;
+				actor.Customize.FacialFeatures = (Appearance.FacialFeature)this.FacialFeatures;
+				actor.Customize.LimbalEyes = (byte)this.LimbalEyes;
+				actor.Customize.Eyebrows = (byte)this.Eyebrows;
+				actor.Customize.LEyeColor = (byte)this.LEyeColor;
+				actor.Customize.Eyes = (byte)this.Eyes;
+				actor.Customize.Nose = (byte)this.Nose;
+				actor.Customize.Jaw = (byte)this.Jaw;
+				actor.Customize.Mouth = (byte)this.Mouth;
+				actor.Customize.LipsToneFurPattern = (byte)this.LipsToneFurPattern;
+				actor.Customize.FacePaint = (byte)this.FacePaint;
+				actor.Customize.FacePaintColor = (byte)this.FacePaintColor;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
-				appearance.Height = (byte)this.Height;
-				appearance.Skintone = (byte)this.Skintone;
-				appearance.EarMuscleTailSize = (byte)this.EarMuscleTailSize;
-				appearance.TailEarsType = (byte)this.TailEarsType;
-				appearance.Bust = (byte)this.Bust;
+				actor.Customize.Height = (byte)this.Height;
+				actor.Customize.Skintone = (byte)this.Skintone;
+				actor.Customize.EarMuscleTailSize = (byte)this.EarMuscleTailSize;
+				actor.Customize.TailEarsType = (byte)this.TailEarsType;
+				actor.Customize.Bust = (byte)this.Bust;
 			}
 
 			await Task.Delay(100);
@@ -353,12 +322,32 @@ namespace Anamnesis.AppearanceModule.Files
 		[Serializable]
 		public class WeaponSave
 		{
+			public WeaponSave()
+			{
+			}
+
+			public WeaponSave(WeaponViewModel from)
+			{
+				this.ModelSet = from.Set;
+				this.ModelBase = from.Base;
+				this.ModelVariant = from.Variant;
+				this.DyeId = from.Dye;
+			}
+
 			public Color Color { get; set; }
 			public Vector Scale { get; set; }
 			public ushort ModelSet { get; set; }
 			public ushort ModelBase { get; set; }
 			public ushort ModelVariant { get; set; }
 			public byte DyeId { get; set; }
+
+			public void Write(WeaponViewModel vm)
+			{
+				vm.Set = this.ModelSet;
+				vm.Base = this.ModelBase;
+				vm.Variant = this.ModelVariant;
+				vm.Dye = this.DyeId;
+			}
 		}
 
 		[Serializable]
@@ -368,7 +357,7 @@ namespace Anamnesis.AppearanceModule.Files
 			{
 			}
 
-			public ItemSave(Item from)
+			public ItemSave(ItemViewModel from)
 			{
 				this.ModelBase = from.Base;
 				this.ModelVariant = from.Variant;
