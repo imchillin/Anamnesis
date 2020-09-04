@@ -98,7 +98,8 @@
 				</Grid>
 			</GroupBox>
 
-			<GroupBox Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding IsGpose}" Margin="0">
+			<!--
+			<GroupBox Style="{StaticResource PanelGroupBox}" Margin="0">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
 						<fa:IconBlock Icon="Camera" Margin="2, 2, 6, 0"/>
@@ -190,10 +191,12 @@
 
 				</Grid>
 			</GroupBox>
+			-->
+			
 		</StackPanel>
 
 		<StackPanel Grid.Column="3">
-			<GroupBox Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding IsGpose}" Margin="0">
+			<GroupBox Style="{StaticResource PanelGroupBox}" Margin="0">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
 						<fa:IconBlock Icon="Cube" Margin="2, 2, 6, 0"/>
