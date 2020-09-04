@@ -6,7 +6,9 @@ namespace Anamnesis
 	using System;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
+	using Anamnesis.GameData;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
@@ -14,8 +16,9 @@ namespace Anamnesis
 	{
 		private const int Offset = 0x13D8;
 
-		public int TerritoryId { get; set; }
-		public string Territory { get; set; } = "Unknown";
+		public int CurrentTerritoryId { get; set; }
+		public string CurrentTerritoryName { get; set; } = "Unknown";
+		public ITerritoryType? CurrentTerritory { get; set; }
 
 		public override async Task Start()
 		{
@@ -33,9 +36,22 @@ namespace Anamnesis
 				IntPtr territoryAddress = MemoryService.ReadPtr(AddressService.Territory);
 				territoryAddress = MemoryService.ReadPtr(territoryAddress);
 				territoryAddress += Offset;
-				this.TerritoryId = MemoryService.Read<int>(territoryAddress);
 
-				this.Territory = $"Unkown ({this.TerritoryId})";
+				int newTerritoryId = MemoryService.Read<int>(territoryAddress);
+
+				if (newTerritoryId == this.CurrentTerritoryId)
+					continue;
+
+				this.CurrentTerritoryId = newTerritoryId;
+
+				if (GameDataService.Territories == null)
+				{
+					this.CurrentTerritoryName = $"Unkown ({this.CurrentTerritoryId})";
+					continue;
+				}
+
+				this.CurrentTerritory = GameDataService.Territories.Get(this.CurrentTerritoryId);
+				this.CurrentTerritoryName = this.CurrentTerritory.Region + " - " + this.CurrentTerritory.Place;
 			}
 		}
 	}

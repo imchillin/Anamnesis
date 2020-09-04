@@ -119,8 +119,6 @@ namespace Anamnesis.GUI.Views
 			int territoryId = this.territoryMem.Value;
 			ushort currentWeather = this.weatherMem.Value;
 
-			ITerritoryType territory = this.gameData.Territories.Get(territoryId);
-
 			if (territory == null)
 			{
 				this.Territory = "Unknwon";

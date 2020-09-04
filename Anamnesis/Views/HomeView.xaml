@@ -50,7 +50,7 @@
 						<RowDefinition/>
 					</Grid.RowDefinitions>
 
-					<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding TerritoryService.Territory}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 0, 3, 6"/>
+					<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding TerritoryService.CurrentTerritoryName}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 0, 3, 6"/>
 
 					<TextBlock Grid.Row="1" Text="Time:" Style="{StaticResource Label}"/>
 					<Grid Grid.Row="1" Grid.Column="1">
