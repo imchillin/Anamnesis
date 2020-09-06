@@ -14,32 +14,25 @@ namespace Anamnesis.PoseModule
 	using Anamnesis.PoseModule.Extensions;
 	using Anamnesis.ThreeD;
 	using MaterialDesignThemes.Wpf;
+	using PropertyChanged;
 
 	using CmQuaternion = Anamnesis.Memory.Quaternion;
 	using CmTransform = Anamnesis.Memory.Transform;
 	using CmVector = Anamnesis.Memory.Vector;
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
-	public class Bone : ModelVisual3D, INotifyPropertyChanged, IDisposable
+	[AddINotifyPropertyChangedInterface]
+	public class Bone : ModelVisual3D
 	{
-		public readonly SkeletonViewModel Skeleton;
-		public readonly SkeletonService.Bone Definition;
-
-		private readonly PoseService poseService;
-		private readonly IMarshaler<CmTransform> transformMem;
 		private readonly RotateTransform3D rotation;
 		private readonly TranslateTransform3D position;
 
 		private Bone parent;
 		private Line lineToParent;
 
-		public Bone(SkeletonViewModel skeleton, string name, IMarshaler<CmTransform> transformMem, SkeletonService.Bone definition)
+		public Bone(string name)
 		{
-			this.Skeleton = skeleton;
-			this.Definition = definition;
 			this.BoneName = name;
-			this.transformMem = transformMem;
-			this.transformMem.ValueChanged += this.OnTransformMemValueChanged;
 
 			this.rotation = new RotateTransform3D();
 			this.position = new TranslateTransform3D();
@@ -60,8 +53,6 @@ namespace Anamnesis.PoseModule
 			this.Children.Add(sphere);
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
 		public string BoneName { get; private set; }
 		public bool IsEnabled { get; set; } = true;
 
@@ -79,8 +70,8 @@ namespace Anamnesis.PoseModule
 
 		public CmTransform LiveTransform
 		{
-			get => this.transformMem.Value;
-			set => this.transformMem.SetValue(value, true);
+			get => throw new NotImplementedException();
+			set => throw new NotImplementedException();
 		}
 
 		public Bone Parent
@@ -115,21 +106,21 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				CmQuaternion rot = this.Skeleton.RootRotation;
+				// TODO: use actor model rotation?
+				return CmQuaternion.Identity;
+
+				/*CmQuaternion rot = this.Skeleton.RootRotation;
 
 				if (this.Parent == null)
 					return rot;
 
-				return rot * this.Parent.LiveTransform.Rotation;
+				return rot * this.Parent.LiveTransform.Rotation;*/
 			}
 		}
 
 		public void ReadTransform()
 		{
 			if (!this.IsEnabled)
-				return;
-
-			if (!this.transformMem.Active)
 				return;
 
 			this.Position = this.LiveTransform.Position;
@@ -218,30 +209,6 @@ namespace Anamnesis.PoseModule
 					}
 				}
 			}
-		}
-
-		public void Dispose()
-		{
-			if (this.Parent != null)
-				this.Parent.Children.Remove(this);
-
-			this.transformMem.Dispose();
-		}
-
-		[PropertyChanged.SuppressPropertyChangedWarnings]
-		private void OnTransformMemValueChanged(object sender, CmTransform value)
-		{
-			if (Application.Current == null)
-				return;
-
-			// don't update our representation while we are actively posing, since we don't care what the game wants.
-			if (this.poseService.IsEnabled)
-				return;
-
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				this.ReadTransform();
-			});
 		}
 	}
 }

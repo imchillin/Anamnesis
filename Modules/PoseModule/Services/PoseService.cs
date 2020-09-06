@@ -7,35 +7,34 @@ namespace Anamnesis.PoseModule
 	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
 	[SuppressPropertyChangedWarnings]
-	public class PoseService : IService, INotifyPropertyChanged
+	public class PoseService : ServiceBase<PoseService>
 	{
-		private IMarshaler<Flag> skel1Mem;
-		private IMarshaler<Flag> skel2Mem;
-		private IMarshaler<Flag> skel3Mem;
-		////private IMemory<Flag> skel4Mem;
-		////private IMemory<Flag> skel5Mem;
-		////private IMemory<Flag> skel6Mem;
-
-		private IMarshaler<Flag> phys1Mem;
-		private IMarshaler<Flag> phys2Mem;
-		////private IMemory<Flag> phys3Mem;
+		private NopHookViewModel skel1Mem;
+		private NopHookViewModel skel2Mem;
+		private NopHookViewModel skel3Mem;
+		private NopHookViewModel skel4Mem;
+		private NopHookViewModel skel5Mem;
+		private NopHookViewModel skel6Mem;
+		private NopHookViewModel phys1Mem;
+		private NopHookViewModel phys2Mem;
+		private NopHookViewModel phys3Mem;
 
 		private bool isEnabled;
 
 		public delegate void PoseEvent(bool value);
 
-		public event PoseEvent EnabledChanged;
-		public event PoseEvent FreezePhysicsChanged;
-		public event PoseEvent FreezePositionsChanged;
-		public event PoseEvent FreezeScaleChanged;
-		public event PoseEvent FreezeRotationChanged;
-		public event PoseEvent AvailableChanged;
-		public event PropertyChangedEventHandler PropertyChanged;
+		public static event PoseEvent EnabledChanged;
+		public static event PoseEvent FreezePhysicsChanged;
+		public static event PoseEvent FreezePositionsChanged;
+		public static event PoseEvent FreezeScaleChanged;
+		public static event PoseEvent FreezeRotationChanged;
+		public static event PoseEvent AvailableChanged;
 
 		public bool IsAvailable
 		{
@@ -65,17 +64,17 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.phys1Mem.Value.IsEnabled;
+				return this.phys1Mem.Enabled;
 			}
 			set
 			{
 				this.FreezePositions = value;
 				this.FreezeScale = value;
 
-				this.phys1Mem.Value = Flag.Get(value);
-				this.phys2Mem.Value = Flag.Get(value);
+				this.phys1Mem.Enabled = value;
+				this.phys2Mem.Enabled = value;
 
-				this.FreezePhysicsChanged?.Invoke(value);
+				FreezePhysicsChanged?.Invoke(value);
 			}
 		}
 
@@ -83,14 +82,13 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return false;
-				////return this.skel5Mem.Value.IsEnabled;
+				return this.skel5Mem.Enabled;
 			}
 			set
 			{
-				////this.skel5Mem.Value = Flag.Get(value);
+				this.skel5Mem.Enabled = value;
 
-				this.FreezePositionsChanged?.Invoke(value);
+				FreezePositionsChanged?.Invoke(value);
 			}
 		}
 
@@ -98,16 +96,15 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return false;
-				////return this.skel4Mem.Value.IsEnabled;
+				return this.skel4Mem.Enabled;
 			}
 			set
 			{
-				////this.skel4Mem.Value = Flag.Get(value);
-				////this.phys3Mem.Value = Flag.Get(value);
-				////this.skel6Mem.Value = Flag.Get(value);
+				this.skel4Mem.Enabled = value;
+				this.phys3Mem.Enabled = value;
+				this.skel6Mem.Enabled = value;
 
-				this.FreezeScaleChanged?.Invoke(value);
+				FreezeScaleChanged?.Invoke(value);
 			}
 		}
 
@@ -115,71 +112,59 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.skel1Mem.Value.IsEnabled;
+				return this.skel1Mem.Enabled;
 			}
 			set
 			{
-				this.skel1Mem.Value = Flag.Get(value);
-				this.skel2Mem.Value = Flag.Get(value);
-				this.skel3Mem.Value = Flag.Get(value);
+				this.skel1Mem.Enabled = value;
+				this.skel2Mem.Enabled = value;
+				this.skel3Mem.Enabled = value;
 
-				this.FreezeRotationChanged?.Invoke(value);
+				FreezeRotationChanged?.Invoke(value);
 			}
 		}
 
-		public Task Initialize()
+		public override async Task Initialize()
 		{
-			this.skel1Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton1Flag);
-			this.skel2Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton2Flag);
-			this.skel3Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton3Flag);
-			////this.skel4Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton4flag);
-			////this.skel5Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton5Flag);
-			////this.skel6Mem = MemoryService.GetMarshaler(Offsets.Main.Skeleton6Flag);
-			this.phys1Mem = MemoryService.GetMarshaler(Offsets.Main.Physics1Flag);
-			this.phys2Mem = MemoryService.GetMarshaler(Offsets.Main.Physics2Flag);
-			////this.phys3Mem = MemoryService.GetMarshaler(Offsets.Main.Physics3Flag);
+			await base.Initialize();
+
+			this.skel1Mem = new NopHookViewModel(AddressService.SkeletonFreezeRotation, 6);
+			this.skel2Mem = new NopHookViewModel(AddressService.SkeletonFreezeRotation2, 6);
+			this.skel3Mem = new NopHookViewModel(AddressService.SkeletonFreezeRotation3, 4);
+			this.skel4Mem = new NopHookViewModel(AddressService.SkeletonFreezeScale, 6);
+			this.skel5Mem = new NopHookViewModel(AddressService.SkeletonFreezePosition, 5);
+			this.skel6Mem = new NopHookViewModel(AddressService.SkeletonFreezeScale2, 6);
+			////this.skel7Mem = new NopHookViewModel(AddressService.SkeletonFreezePosition2, 5);
+
+			this.phys1Mem = new NopHookViewModel(AddressService.SkeletonFreezePhysics, 4);
+			this.phys2Mem = new NopHookViewModel(AddressService.SkeletonFreezePhysics2, 3);
+			this.phys3Mem = new NopHookViewModel(AddressService.SkeletonFreezePhysics3, 4);
 
 			TargetService.ModeChanged += this.Selection_ModeChanged;
-
-			return Task.CompletedTask;
 		}
 
-		public async Task Shutdown()
+		public override async Task Shutdown()
 		{
+			await base.Shutdown();
 			this.SetEnabled(false);
-			await Task.Delay(100);
-
-			this.skel1Mem?.Dispose();
-			this.skel2Mem?.Dispose();
-			this.skel3Mem?.Dispose();
-			////this.skel4Mem?.Dispose();
-			////this.skel5Mem?.Dispose();
-			////this.skel6Mem?.Dispose();
-			this.phys1Mem?.Dispose();
-			this.phys2Mem?.Dispose();
-			////this.phys3Mem?.Dispose();
-		}
-
-		public Task Start()
-		{
-			return Task.CompletedTask;
 		}
 
 		public void SetEnabled(bool enabled)
 		{
 			// Don't try to enable posing unless we are in gpose
-			if (enabled && TargetService.CurrentMode != Modes.GPose)
-				throw new Exception("Attempt to enable posing outside of gpose");
+			////if (enabled && TargetService.CurrentMode != Modes.GPose)
+			////	throw new Exception("Attempt to enable posing outside of gpose");
 
 			this.isEnabled = enabled;
 
-			this.FreezePositions = enabled;
-			this.FreezePhysics = enabled;
+			////this.FreezePositions = enabled;
+			////this.FreezePhysics = enabled;
 			this.FreezeRotation = enabled;
-			this.FreezeScale = enabled;
+			////this.FreezeScale = enabled;
 
-			this.EnabledChanged?.Invoke(enabled);
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsEnabled)));
+			EnabledChanged?.Invoke(enabled);
+
+			this.RaisePropertyChanged(nameof(this.IsEnabled));
 		}
 
 		private void Selection_ModeChanged(Modes mode)
@@ -191,7 +176,7 @@ namespace Anamnesis.PoseModule
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				this.AvailableChanged?.Invoke(available);
+				AvailableChanged?.Invoke(available);
 			});
 		}
 	}

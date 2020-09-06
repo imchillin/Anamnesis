@@ -43,58 +43,13 @@ namespace Anamnesis.PoseModule.Views
 			if (vm == null)
 				return;
 
-			this.Viewport.Children.Add(vm.Root);
+			////this.Viewport.Children.Add(vm.Root);
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
 			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
-			this.Viewport.Children.Remove(vm.Root);
-		}
-
-		[SuppressPropertyChangedWarnings]
-		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (this.IsVisible)
-			{
-				// Watch camera thread
-				new Thread(new ThreadStart(this.WatchCamera)).Start();
-			}
-		}
-
-		private void WatchCamera()
-		{
-			IMarshaler<Vector2D> camXY = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
-			IMarshaler<float> camZ = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
-			IMarshaler<float> camDist = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraCurrentZoom);
-
-			Vector3D camEuler = default;
-
-			bool vis = true;
-			while (vis && Application.Current != null)
-			{
-				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camXY.Value.X) - 180;
-				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camXY.Value.Y);
-				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
-				Quaternion q = camEuler.ToQuaternion();
-
-				try
-				{
-					Application.Current.Dispatcher.Invoke(() =>
-					{
-						vis = this.IsVisible; ////&& this.IsEnabled;
-						Transform3DGroup g = new Transform3DGroup();
-						g.Children.Add(new TranslateTransform3D(0, 0.75, -(camDist.Value - 1)));
-						g.Children.Add(new RotateTransform3D(new QuaternionRotation3D(q)));
-						this.Viewport.Camera.Transform = g;
-					});
-				}
-				catch (Exception)
-				{
-				}
-
-				Thread.Sleep(16);
-			}
+			////this.Viewport.Children.Remove(vm.Root);
 		}
 	}
 }

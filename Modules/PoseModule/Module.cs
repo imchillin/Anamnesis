@@ -4,20 +4,18 @@
 namespace Anamnesis.PoseModule
 {
 	using System.Threading.Tasks;
-	using Anamnesis.Localization;
 	using Anamnesis.Memory;
 	using Anamnesis.Modules;
 	using Anamnesis.PoseModule.Pages;
+	using Anamnesis.Services;
 
 	public class Module : IModule
 	{
 		public async Task Initialize()
 		{
-			await Services.Add<SkeletonService>();
-			await Services.Add<PoseService>();
+			await ServiceManager.Add<PoseService>();
 
-			IViewService viewService = Services.Get<IViewService>();
-			viewService.AddPage<PosePage>("Pose", "running", this.IsActorPoseSupported);
+			ViewService.AddPage<PosePage>("Pose", "running", this.IsActorPoseSupported);
 		}
 
 		public Task Start()
@@ -30,13 +28,12 @@ namespace Anamnesis.PoseModule
 			return Task.CompletedTask;
 		}
 
-		private bool IsActorPoseSupported(Actor actor)
+		private bool IsActorPoseSupported(ActorViewModel actor)
 		{
-			if (actor.Type != ActorTypes.Player && actor.Type != ActorTypes.EventNpc && actor.Type != ActorTypes.BattleNpc)
+			if (actor.ObjectKind != ActorTypes.Player && actor.ObjectKind != ActorTypes.EventNpc && actor.ObjectKind != ActorTypes.BattleNpc)
 				return false;
 
-			int modelType = actor.GetValue(Offsets.Main.ModelType);
-			if (modelType != 0)
+			if (actor.ModelType != 0)
 				return false;
 
 			return true;

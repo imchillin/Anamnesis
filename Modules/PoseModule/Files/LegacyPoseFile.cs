@@ -7,6 +7,7 @@ namespace Anamnesis.PoseModule
 	using System.Globalization;
 	using System.Reflection;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 
 	public class LegacyPoseFile : FileBase
 	{

@@ -24,7 +24,6 @@ namespace Anamnesis.PoseModule.Controls
 		private readonly List<Line> linesToChildren = new List<Line>();
 		private readonly List<Line> mouseLinesToChildren = new List<Line>();
 
-		private SkeletonViewModel viewModel;
 		private Bone bone;
 
 		public BoneView()
@@ -70,7 +69,7 @@ namespace Anamnesis.PoseModule.Controls
 
 			try
 			{
-				if (this.DataContext is SkeletonViewModel viewModel)
+				/*if (this.DataContext is SkeletonViewModel viewModel)
 				{
 					this.viewModel = viewModel;
 					this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
@@ -80,7 +79,7 @@ namespace Anamnesis.PoseModule.Controls
 						this.SetBone(this.BoneName);
 					}
 				}
-				else
+				else*/
 				{
 					this.IsEnabled = false;
 				}
@@ -158,23 +157,6 @@ namespace Anamnesis.PoseModule.Controls
 			}
 		}
 
-		private void OnViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				this.UpdateState();
-
-				if (e.PropertyName == nameof(this.viewModel.FlipSides))
-				{
-					this.SetBone(SkeletonViewModel.GetBoneName(this.BoneName, this.viewModel.FlipSides));
-				}
-				else if (e.PropertyName == nameof(this.viewModel.Bones))
-				{
-					this.SetBone(this.BoneName);
-				}
-			});
-		}
-
 		private void SetBone(string name)
 		{
 			if (this.bone != null)
@@ -185,7 +167,7 @@ namespace Anamnesis.PoseModule.Controls
 				}
 			}
 
-			this.bone = this.viewModel.GetBone(name);
+			this.bone = null; //// this.viewModel.GetBone(name);
 
 			if (this.bone != null)
 			{
@@ -220,7 +202,7 @@ namespace Anamnesis.PoseModule.Controls
 			if (!this.IsEnabled)
 				return;
 
-			this.viewModel.MouseOverBone = this.bone;
+			////this.viewModel.MouseOverBone = this.bone;
 		}
 
 		private void OnMouseLeave(object sender, MouseEventArgs e)
@@ -228,10 +210,10 @@ namespace Anamnesis.PoseModule.Controls
 			if (!this.IsEnabled)
 				return;
 
-			if (this.viewModel.MouseOverBone == this.bone)
+			/*if (this.viewModel.MouseOverBone == this.bone)
 			{
 				this.viewModel.MouseOverBone = null;
-			}
+			}*/
 		}
 
 		private void OnMouseUp(object sender, MouseButtonEventArgs e)
@@ -239,10 +221,10 @@ namespace Anamnesis.PoseModule.Controls
 			if (!this.IsEnabled)
 				return;
 
-			if (this.viewModel == null || this.bone == null)
+			/*if (this.viewModel == null || this.bone == null)
 				return;
 
-			this.viewModel.CurrentBone = this.bone;
+			this.viewModel.CurrentBone = this.bone;*/
 		}
 
 		private void UpdateState()
@@ -271,7 +253,7 @@ namespace Anamnesis.PoseModule.Controls
 			this.BackgroundElipse.Opacity = 1;
 			this.BackgroundElipse.StrokeThickness = 1;
 
-			bool hovered = this.viewModel.GetIsBoneHovered(this.bone);
+			/*bool hovered = this.viewModel.GetIsBoneHovered(this.bone);
 			bool selected = this.viewModel.GetIsBoneSelected(this.bone);
 			bool parentSelected = this.viewModel.GetIsBoneParentsSelected(this.bone);
 			bool parentHovered = this.viewModel.GetIsBoneParentsHovered(this.bone);
@@ -281,7 +263,7 @@ namespace Anamnesis.PoseModule.Controls
 
 			this.ForegroundElipse.Visibility = (selected || hovered) ? Visibility.Visible : Visibility.Hidden;
 			this.BackgroundElipse.Stroke = new SolidColorBrush(theme.PrimaryMid.Color);
-			this.SetState(new SolidColorBrush(color), thickenss);
+			this.SetState(new SolidColorBrush(color), thickenss);*/
 		}
 
 		private void SetState(Brush stroke, int thickness)

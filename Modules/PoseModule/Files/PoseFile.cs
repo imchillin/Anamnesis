@@ -7,6 +7,7 @@ namespace Anamnesis.PoseModule
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 
 	public class PoseFile : FileBase
 	{
@@ -42,7 +43,7 @@ namespace Anamnesis.PoseModule
 		{
 			this.Config = config;
 
-			foreach (Bone bone in bones)
+			/*foreach (Bone bone in bones)
 			{
 				if (!bone.IsEnabled)
 					continue;
@@ -52,14 +53,14 @@ namespace Anamnesis.PoseModule
 					continue;
 
 				this.Bones.Add(bone.BoneName, bone.LiveTransform);
-			}
+			}*/
+
+			throw new NotImplementedException();
 		}
 
-		public async Task Write(SkeletonViewModel skeleton, Configuration config)
+		public Task Write(SkeletonViewModel skeleton, Configuration config)
 		{
-			PoseService poseService = Services.Get<PoseService>();
-
-			poseService.SetEnabled(true);
+			/*PoseService.SetEnabled(true);
 			await Task.Delay(100);
 
 			// don't freeze positions if we aren't writing any
@@ -105,7 +106,8 @@ namespace Anamnesis.PoseModule
 			await Task.Delay(100);
 			poseService.FreezePositions = true;
 
-			skeleton.RefreshBones();
+			skeleton.RefreshBones();*/
+			throw new NotImplementedException();
 		}
 
 		public class Configuration

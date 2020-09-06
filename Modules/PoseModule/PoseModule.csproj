@@ -63,50 +63,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Skeletons\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\..\Anamnesis\Anamnesis.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Skeletons\AuRa.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\Base.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\Elezen.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\ExpressiveBase.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\Hrothgar.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\HumanoidBase.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\Hyur.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\Lalafel.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\Miqote.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\Roegadyn.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\TailBase.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Skeletons\Viera.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -116,6 +73,6 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="md &quot;$(SolutionDir)bin\Modules\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)bin\Modules\Pose\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\Pose\&quot;&#xD;&#xA;xcopy /s /i /y &quot;$(TargetDir)Skeletons&quot; &quot;$(SolutionDir)bin\Modules\Pose\Skeletons&quot;" />
+	  <Exec Command="md &quot;$(SolutionDir)bin\Modules\Pose\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)bin\Modules\Pose\&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)bin\Modules\Pose\&quot;" />
 	</Target>
 </Project>

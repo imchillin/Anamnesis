@@ -6,6 +6,7 @@ namespace Anamnesis.PoseModule.Dialogs
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	/// <summary>

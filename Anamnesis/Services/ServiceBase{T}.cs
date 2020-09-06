@@ -53,5 +53,10 @@ namespace Anamnesis
 		{
 			return Task.CompletedTask;
 		}
+
+		protected void RaisePropertyChanged(string property)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+		}
 	}
 }

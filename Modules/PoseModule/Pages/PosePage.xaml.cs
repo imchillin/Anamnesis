@@ -7,6 +7,7 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.PoseModule.Dialogs;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	/// <summary>
@@ -17,71 +18,30 @@ namespace Anamnesis.PoseModule.Pages
 	{
 		public PosePage()
 		{
-			this.PoseService = Services.Get<PoseService>();
-			this.PoseService.EnabledChanged += this.OnEnabledChanged;
-			this.PoseService.AvailableChanged += this.OnAvailableChanged;
-			this.PoseService.FreezePhysicsChanged += this.OnFreezePhysicsChanged;
-
 			this.InitializeComponent();
 
-			this.SkeletonViewModel = new SkeletonViewModel();
 			this.ContentArea.DataContext = this;
-
-			this.OnEnabledChanged(this.PoseService.IsEnabled);
-			this.OnAvailableChanged(this.PoseService.IsAvailable);
 		}
 
-		public PoseService PoseService { get; private set; }
-		public SkeletonViewModel SkeletonViewModel { get; set; }
+		public PoseService PoseService { get => PoseModule.PoseService.Instance; }
 
 		public bool CanPose { get; set; }
 
-		public bool FlipSides
+		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			get => this.SkeletonViewModel.FlipSides;
-			set => this.SkeletonViewModel.FlipSides = value;
+			this.CanPose = true;
 		}
 
-		private async void OnLoaded(object sender, RoutedEventArgs e)
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
 		}
 
-		private async void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
-			await this.SkeletonViewModel.Initialize(this.DataContext as Actor);
-		}
-
-		[SuppressPropertyChangedWarnings]
-		private void OnAvailableChanged(bool value)
-		{
-			this.CanPose = value;
-		}
-
-		[SuppressPropertyChangedWarnings]
-		private void OnEnabledChanged(bool value)
-		{
-			if (this.SkeletonViewModel != null)
+			throw new NotImplementedException();
+			/*try
 			{
-				this.SkeletonViewModel.CurrentBone = null;
-			}
-		}
-
-		[SuppressPropertyChangedWarnings]
-		private void OnFreezePhysicsChanged(bool value)
-		{
-			if (this.SkeletonViewModel != null)
-			{
-				this.SkeletonViewModel.CurrentBone = null;
-			}
-		}
-
-		private async void OnOpenClicked(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				IFileService fileService = Services.Get<IFileService>();
-				FileBase file = await fileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
+				FileBase file = await FileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
 
 				if (file == null)
 					return;
@@ -89,17 +49,13 @@ namespace Anamnesis.PoseModule.Pages
 				if (file is LegacyPoseFile legacyFile)
 					file = legacyFile.Upgrade(this.SkeletonViewModel.Race);
 
-				IViewService viewService = Services.Get<IViewService>();
-
 				PoseFile.Configuration config = new PoseFile.Configuration();
 
 				if (file.UseAdvancedLoad)
-					config = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Load Pose...");
+					config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Load Pose...");
 
 				if (config == null)
 					return;
-
-				this.SkeletonViewModel.CurrentBone = null;
 
 				if (file is PoseFile poseFile)
 				{
@@ -109,12 +65,12 @@ namespace Anamnesis.PoseModule.Pages
 			catch (Exception ex)
 			{
 				Log.Write(ex, "Pose", Log.Severity.Error);
-			}
+			}*/
 		}
 
-		private async void OnSaveClicked(object sender, RoutedEventArgs e)
+		private void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			IViewService viewService = Services.Get<IViewService>();
+			/*IViewService viewService = Services.Get<IViewService>();
 			IFileService fileService = Services.Get<IFileService>();
 
 			await fileService.Save(
@@ -139,7 +95,9 @@ namespace Anamnesis.PoseModule.Pages
 
 					return file;
 				},
-				PoseFile.FileType);
+				PoseFile.FileType);*/
+
+			throw new NotImplementedException();
 		}
 
 		[SuppressPropertyChangedWarnings]
@@ -152,7 +110,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			this.GuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Collapsed;
 			this.MatrixView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Collapsed;
-			////this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
+			this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
 		}
 	}
 }

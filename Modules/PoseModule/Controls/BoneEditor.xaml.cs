@@ -17,8 +17,6 @@ namespace Anamnesis.PoseModule.Controls
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
-
-			this.PoseService = Services.Get<PoseService>();
 		}
 
 		public Bone Value
@@ -27,6 +25,6 @@ namespace Anamnesis.PoseModule.Controls
 			set => ValueDp.Set(this, value);
 		}
 
-		public PoseService PoseService { get; set; }
+		public PoseService PoseService { get => PoseModule.PoseService.Instance; }
 	}
 }

@@ -139,33 +139,29 @@ namespace Anamnesis.Core.Memory
 
 		private static byte ReadByte(IntPtr baseAddress, int offset = 0)
 		{
-			UIntPtr addr = new UIntPtr(Convert.ToUInt64(baseAddress.ToInt64() + (long)offset));
 			byte[] buffer = new byte[1];
-			MemoryService.Read(addr, buffer, (UIntPtr)1, IntPtr.Zero);
+			MemoryService.Read(baseAddress + offset, buffer, 1);
 			return buffer[0];
 		}
 
 		private static int ReadInt32(IntPtr baseAddress, int offset = 0)
 		{
-			UIntPtr addr = new UIntPtr(Convert.ToUInt64(baseAddress.ToInt64() + (long)offset));
 			byte[] buffer = new byte[4];
-			MemoryService.Read(addr, buffer, (UIntPtr)4, IntPtr.Zero);
+			MemoryService.Read(baseAddress + offset, buffer, 4);
 			return BitConverter.ToInt32(buffer);
 		}
 
 		private static short ReadInt16(IntPtr baseAddress, int offset = 0)
 		{
-			UIntPtr addr = new UIntPtr(Convert.ToUInt64(baseAddress.ToInt64() + (long)offset));
 			byte[] buffer = new byte[2];
-			MemoryService.Read(addr, buffer, (UIntPtr)2, IntPtr.Zero);
+			MemoryService.Read(baseAddress + offset, buffer, 2);
 			return BitConverter.ToInt16(buffer);
 		}
 
 		private static long ReadInt64(IntPtr baseAddress, int offset = 0)
 		{
-			UIntPtr addr = new UIntPtr(Convert.ToUInt64(baseAddress.ToInt64() + (long)offset));
 			byte[] buffer = new byte[8];
-			MemoryService.Read(addr, buffer, (UIntPtr)8, IntPtr.Zero);
+			MemoryService.Read(baseAddress + offset, buffer, 8);
 			return BitConverter.ToInt64(buffer);
 		}
 

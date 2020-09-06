@@ -144,6 +144,21 @@ namespace Anamnesis.Memory
 			WriteProcessMemory(Handle, address, oldBuffer, size, out _);
 		}
 
+		public static bool Read(UIntPtr address, byte[] buffer, UIntPtr size)
+		{
+			return ReadProcessMemory(Handle, address, buffer, size, IntPtr.Zero);
+		}
+
+		public static bool Read(IntPtr address, byte[] buffer, int size)
+		{
+			return ReadProcessMemory(Handle, address, buffer, size, out _);
+		}
+
+		public static bool Write(IntPtr address, byte[] buffer)
+		{
+			return WriteProcessMemory(Handle, address, buffer, buffer.Length, out _);
+		}
+
 		public async Task Initialize()
 		{
 			this.isActive = true;
@@ -257,21 +272,6 @@ namespace Anamnesis.Memory
 		internal static void RegisterViewModel(IMemoryViewModel vm)
 		{
 			viewModels.Add(new WeakReference<IMemoryViewModel>(vm));
-		}
-
-		internal static bool Read(UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, IntPtr lpNumberOfBytesRead)
-		{
-			return ReadProcessMemory(Handle, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead);
-		}
-
-		internal static bool Read(IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize)
-		{
-			return ReadProcessMemory(Handle, lpBaseAddress, lpBuffer, dwSize, out _);
-		}
-
-		internal static bool Write(UIntPtr lpBaseAddress, byte[] lpBuffer, UIntPtr nSize, out IntPtr lpNumberOfBytesWritten)
-		{
-			return WriteProcessMemory(Handle, lpBaseAddress, lpBuffer, nSize, out lpNumberOfBytesWritten);
 		}
 
 		[DllImport("kernel32.dll", SetLastError = true)]
