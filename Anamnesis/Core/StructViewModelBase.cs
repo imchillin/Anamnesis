@@ -7,6 +7,7 @@ namespace Anamnesis
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Reflection;
+	using System.Text;
 	using Anamnesis.Memory;
 	using PropertyChanged;
 	using SimpleLog;
@@ -16,6 +17,7 @@ namespace Anamnesis
 
 	public interface IStructViewModel : INotifyPropertyChanged
 	{
+		IStructViewModel? Parent { get; }
 		bool Enabled { get; set; }
 		Type GetModelType();
 		void SetModel(object? model);
@@ -32,9 +34,6 @@ namespace Anamnesis
 
 		protected T model;
 		private Dictionary<string, (PropertyInfo, FieldInfo)> binds = new Dictionary<string, (PropertyInfo, FieldInfo)>();
-
-		private IStructViewModel? parent;
-		private PropertyInfo? parentProperty;
 
 		public StructViewModelBase()
 		{
@@ -65,16 +64,21 @@ namespace Anamnesis
 			this.Enabled = true;
 		}
 
-		public StructViewModelBase(IStructViewModel parent, string propertyName)
+		public StructViewModelBase(IStructViewModel parent)
 			: this()
 		{
-			this.parent = parent;
-			PropertyInfo? property = this.parent.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+			this.Parent = parent;
+		}
+
+		public StructViewModelBase(IStructViewModel parent, string propertyName)
+			: this(parent)
+		{
+			PropertyInfo? property = parent.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
 
 			if (property == null)
-				throw new Exception($"Unable to find property: {propertyName} on object: {this.parent}");
+				throw new Exception($"Unable to find property: {propertyName} on object: {this.Parent}");
 
-			this.parentProperty = property;
+			this.ParentProperty = property;
 		}
 
 		/// <summary>
@@ -96,6 +100,28 @@ namespace Anamnesis
 		/// Gets or sets a value indicating whether updating the view model is allowed.
 		/// </summary>
 		public bool Enabled { get; set; }
+
+		public IStructViewModel? Parent { get; protected set; }
+		public PropertyInfo? ParentProperty { get; }
+
+		public virtual string Path
+		{
+			get
+			{
+				StringBuilder builder = new StringBuilder();
+				builder.Append(this.GetType().Name);
+				IStructViewModel? vm = this.Parent;
+				while (vm != null)
+				{
+					builder.Append("<--");
+					builder.Append(vm.GetType().Name);
+
+					vm = vm.Parent;
+				}
+
+				return builder.ToString();
+			}
+		}
 
 		public Type GetModelType()
 		{
@@ -143,9 +169,9 @@ namespace Anamnesis
 			if (!this.Enabled)
 				return;
 
-			if (this.parent != null && this.parentProperty != null)
+			if (this.Parent != null && this.ParentProperty != null)
 			{
-				object? obj = this.parentProperty.GetValue(this.parent);
+				object? obj = this.ParentProperty.GetValue(this.Parent);
 				T? val = (T?)obj;
 				this.SetModel(val);
 				return;
@@ -236,15 +262,15 @@ namespace Anamnesis
 		/// </summary>
 		protected virtual void OnViewToModel(string fieldName, object? value)
 		{
-			if (this.parent != null && this.parentProperty != null)
+			if (this.Parent != null && this.ParentProperty != null)
 			{
-				if (typeof(IStructViewModel).IsAssignableFrom(this.parentProperty.PropertyType))
+				if (typeof(IStructViewModel).IsAssignableFrom(this.ParentProperty.PropertyType))
 				{
-					this.parent.RaisePropertyChanged(this.parentProperty.Name);
+					this.Parent.RaisePropertyChanged(this.ParentProperty.Name);
 				}
 				else
 				{
-					this.parentProperty.SetValue(this.parent, this.model);
+					this.ParentProperty.SetValue(this.Parent, this.model);
 				}
 			}
 		}

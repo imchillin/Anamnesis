@@ -134,8 +134,8 @@ namespace Anamnesis.Memory
 
 	public class AppearanceViewModel : MemoryViewModelBase<Appearance>
 	{
-		public AppearanceViewModel(IntPtr pointer)
-			: base(pointer)
+		public AppearanceViewModel(IntPtr pointer, IStructViewModel? parent = null)
+			: base(pointer, parent)
 		{
 		}
 

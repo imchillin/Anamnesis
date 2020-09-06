@@ -4,9 +4,11 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Printing;
 	using System.Reflection;
+	using System.Text;
 
-	#pragma warning disable SA1649
+#pragma warning disable SA1649
 	public interface IMemoryViewModel : IStructViewModel
 	{
 		IntPtr? Pointer { get; }
@@ -16,15 +18,14 @@ namespace Anamnesis.Memory
 	public abstract class MemoryViewModelBase<T> : StructViewModelBase<T>, IMemoryViewModel
 		where T : struct
 	{
-		private IntPtr? pointer;
-
-		public MemoryViewModelBase(IntPtr pointer)
+		public MemoryViewModelBase(IntPtr pointer, IStructViewModel? parent = null)
 			: base()
 		{
+			this.Parent = parent;
 			if (pointer == IntPtr.Zero)
 				throw new Exception("Attempt to create memory view model with invalid address");
 
-			this.pointer = pointer;
+			this.Pointer = pointer;
 
 			MemoryService.RegisterViewModel(this);
 
@@ -36,11 +37,34 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public IntPtr? Pointer
+		public IntPtr? Pointer { get; }
+
+		public override string Path
 		{
 			get
 			{
-				return this.pointer;
+				StringBuilder builder = new StringBuilder();
+				builder.Append(this.GetType().Name);
+				builder.Append("(0x");
+				builder.Append(this.Pointer?.ToString("x"));
+				builder.Append(")");
+
+				IStructViewModel? vm = this.Parent;
+				while (vm != null)
+				{
+					if (vm is IMemoryViewModel memVm)
+					{
+						builder.Append("<--");
+						builder.Append(vm.GetType().Name);
+						builder.Append("(0x");
+						builder.Append(memVm.Pointer?.ToString("x"));
+						builder.Append(")");
+					}
+
+					vm = vm.Parent;
+				}
+
+				return builder.ToString();
 			}
 		}
 
@@ -51,9 +75,9 @@ namespace Anamnesis.Memory
 				if (!this.Enabled)
 					return;
 
-				if (this.pointer != null)
+				if (this.Pointer != null)
 				{
-					T? model = MemoryService.Read<T>((IntPtr)this.pointer);
+					T? model = MemoryService.Read<T>((IntPtr)this.Pointer);
 
 					if (model == null)
 						throw new Exception($"Failed to read memory: {typeof(T)}");
@@ -69,9 +93,9 @@ namespace Anamnesis.Memory
 
 		protected override void OnViewToModel(string fieldName, object? value)
 		{
-			if (this.pointer != null)
+			if (this.Pointer != null)
 			{
-				MemoryService.Write((IntPtr)this.pointer, this.model);
+				MemoryService.Write((IntPtr)this.Pointer, this.model);
 			}
 			else
 			{
@@ -116,7 +140,11 @@ namespace Anamnesis.Memory
 					}
 				}
 
-				lhs = Activator.CreateInstance(viewModelProperty.PropertyType, desiredPointer) as IMemoryViewModel;
+				// not a valid pointer
+				if (desiredPointer == IntPtr.Zero)
+					return false;
+
+				lhs = Activator.CreateInstance(viewModelProperty.PropertyType, desiredPointer, this) as IMemoryViewModel;
 
 				if (lhs == null)
 					throw new Exception($"Failed to create instance of view model: {viewModelProperty.PropertyType}");

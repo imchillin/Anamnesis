@@ -21,8 +21,8 @@ namespace Anamnesis.Memory
 
 	public class TransformViewModel : MemoryViewModelBase<Transform>
 	{
-		public TransformViewModel(IntPtr pointer)
-			: base(pointer)
+		public TransformViewModel(IntPtr pointer, IStructViewModel? parent = null)
+			: base(pointer, parent)
 		{
 		}
 

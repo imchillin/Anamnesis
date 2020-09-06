@@ -35,8 +35,6 @@ namespace Anamnesis.PoseModule
 
 		public Bone(SkeletonViewModel skeleton, string name, IMarshaler<CmTransform> transformMem, SkeletonService.Bone definition)
 		{
-			this.poseService = Services.Get<PoseService>();
-
 			this.Skeleton = skeleton;
 			this.Definition = definition;
 			this.BoneName = name;
