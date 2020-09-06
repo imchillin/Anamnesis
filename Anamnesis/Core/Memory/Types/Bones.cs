@@ -42,16 +42,16 @@ namespace Anamnesis.Memory
 		{
 			bool changed = base.HandleModelToViewUpdate(viewModelProperty, modelField);
 
-			if (this.TransformArray == IntPtr.Zero)
-				throw new Exception("No transform array pointer");
-
 			this.Transforms.Clear();
 
-			IntPtr ptr = this.TransformArray + 0x10;
-			for (int i = 0; i < this.Count; i++)
+			if (viewModelProperty.Name == nameof(BonesViewModel.TransformArray) && this.TransformArray != IntPtr.Zero)
 			{
-				this.Transforms.Add(new TransformViewModel(ptr));
-				ptr += 0x30;
+				IntPtr ptr = this.TransformArray + 0x10;
+				for (int i = 0; i < this.Count; i++)
+				{
+					this.Transforms.Add(new TransformViewModel(ptr));
+					ptr += 0x30;
+				}
 			}
 
 			return changed;

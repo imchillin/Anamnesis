@@ -12,10 +12,10 @@ namespace Anamnesis.Memory
 	public struct Skeleton
 	{
 		[FieldOffset(0x140)] public IntPtr Body;
-		////[FieldOffset(0x300)] public IntPtr Head;
-		////[FieldOffset(0x4C0)] public IntPtr Hair;
-		////[FieldOffset(0x680)] public IntPtr Met;
-		////[FieldOffset(0x840)] public IntPtr Top;
+		[FieldOffset(0x300)] public IntPtr Head;
+		[FieldOffset(0x4C0)] public IntPtr Hair;
+		[FieldOffset(0x680)] public IntPtr Met;
+		[FieldOffset(0x840)] public IntPtr Top;
 	}
 
 	public class SkeletonViewModel : MemoryViewModelBase<Skeleton>
@@ -31,9 +31,9 @@ namespace Anamnesis.Memory
 		}
 
 		[ModelField] public BonesViewModel? Body { get; set; }
-		////[ModelField] public BonesViewModel? Head { get; set; }
-		////[ModelField] public BonesViewModel? Hair { get; set; }
-		////[ModelField] public BonesViewModel? Met { get; set; }
-		////[ModelField] public BonesViewModel? Top { get; set; }
+		[ModelField] public BonesViewModel? Head { get; set; }
+		[ModelField] public BonesViewModel? Hair { get; set; }
+		[ModelField] public BonesViewModel? Met { get; set; }
+		[ModelField] public BonesViewModel? Top { get; set; }
 	}
 }
