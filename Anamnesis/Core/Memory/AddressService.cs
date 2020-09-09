@@ -54,18 +54,18 @@ namespace Anamnesis.Core.Memory
 			IntPtr baseAddress = MemoryService.Process.MainModule.BaseAddress;
 
 			// TODO: replace these manual offsets with signautres
-			Weather = baseAddress + 0x1CBFB08;
-			Territory = baseAddress + 0x1D07760;
-			Time = baseAddress + 0x1CE96E8;
-			Camera = baseAddress + 0x1D08BA0;
+			Weather = baseAddress + 0x1CC0B08;
+			Territory = baseAddress + 0x1D08760;
+			Time = baseAddress + 0x1CEA6E8;
+			Camera = baseAddress + 0x1D09BA0;
 
-			SkeletonFreezePosition = baseAddress + 0x140814B;
-			SkeletonFreezeRotation = baseAddress + 0x14081C0;
-			SkeletonFreezeScale = baseAddress + 0x14081D0;
-			SkeletonFreezeRotation2 = baseAddress + 0x14092ED;
-			SkeletonFreezeScale2 = baseAddress + 0x14092FD;
-			SkeletonFreezePosition2 = baseAddress + 0x1409278;
-			SkeletonFreezeRotation3 = baseAddress + 0x1416F54;
+			SkeletonFreezePosition = baseAddress + 0x140821B;
+			SkeletonFreezeRotation = baseAddress + 0x1408290;
+			SkeletonFreezeScale = baseAddress + 0x14082A0;
+			SkeletonFreezeRotation2 = baseAddress + 0x14093BD;
+			SkeletonFreezeScale2 = baseAddress + 0x14093CD;
+			SkeletonFreezePosition2 = baseAddress + 0x1409348;
+			SkeletonFreezeRotation3 = baseAddress + 0x1417024;
 			SkeletonFreezePhysics2 = baseAddress + 0x38332F;
 			SkeletonFreezePhysics = baseAddress + 0x383338;
 			SkeletonFreezePhysics3 = baseAddress + 0x383342;

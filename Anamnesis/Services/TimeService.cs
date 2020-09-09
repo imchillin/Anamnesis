@@ -81,7 +81,7 @@ namespace Anamnesis
 
 				IntPtr timeAddress = MemoryService.ReadPtr(AddressService.Time);
 				timeAddress = MemoryService.ReadPtr(timeAddress + 0x10);
-				timeAddress = MemoryService.ReadPtr(timeAddress + 0x8);
+				timeAddress = MemoryService.ReadPtr(timeAddress + 0x10);
 				timeAddress = MemoryService.ReadPtr(timeAddress + 0x28);
 				timeAddress += 0x80;
 
