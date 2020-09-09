@@ -11,7 +11,7 @@ namespace Anamnesis.Memory
 #pragma warning disable SA1649
 	public interface IMemoryViewModel : IStructViewModel
 	{
-		IntPtr? Pointer { get; }
+		IntPtr? Pointer { get; set; }
 		void Tick();
 	}
 
@@ -37,7 +37,7 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public IntPtr? Pointer { get; }
+		public IntPtr? Pointer { get; set; }
 
 		public override string Path
 		{
@@ -129,6 +129,10 @@ namespace Anamnesis.Memory
 					}
 				}
 
+				// not a valid pointer
+				if (desiredPointer == IntPtr.Zero)
+					return false;
+
 				IMemoryViewModel vm;
 				if (lhs != null)
 				{
@@ -138,13 +142,13 @@ namespace Anamnesis.Memory
 					{
 						return false;
 					}
+
+					vm.Pointer = desiredPointer;
 				}
-
-				// not a valid pointer
-				if (desiredPointer == IntPtr.Zero)
-					return false;
-
-				lhs = Activator.CreateInstance(viewModelProperty.PropertyType, desiredPointer, this) as IMemoryViewModel;
+				else
+				{
+					lhs = Activator.CreateInstance(viewModelProperty.PropertyType, desiredPointer, this) as IMemoryViewModel;
+				}
 
 				if (lhs == null)
 					throw new Exception($"Failed to create instance of view model: {viewModelProperty.PropertyType}");

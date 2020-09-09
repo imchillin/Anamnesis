@@ -42,15 +42,21 @@ namespace Anamnesis.Memory
 		{
 			bool changed = base.HandleModelToViewUpdate(viewModelProperty, modelField);
 
-			this.Transforms.Clear();
-
 			if (viewModelProperty.Name == nameof(BonesViewModel.TransformArray) && this.TransformArray != IntPtr.Zero)
 			{
-				IntPtr ptr = this.TransformArray + 0x10;
-				for (int i = 0; i < this.Count; i++)
+				// safety cap at 512 bones
+				int count = Math.Min(this.Count, 512);
+
+				if (this.Transforms.Count != count)
 				{
-					this.Transforms.Add(new TransformViewModel(ptr));
-					ptr += 0x30;
+					this.Transforms.Clear();
+
+					IntPtr ptr = this.TransformArray + 0x10;
+					for (int i = 0; i < count; i++)
+					{
+						this.Transforms.Add(new TransformViewModel(ptr));
+						ptr += 0x30;
+					}
 				}
 			}
 

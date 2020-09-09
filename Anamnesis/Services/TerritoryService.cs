@@ -89,7 +89,13 @@ namespace Anamnesis
 			{
 				IntPtr weatherAddress = MemoryService.ReadPtr(AddressService.Weather);
 				weatherAddress += 0x20;
-				MemoryService.Write<ushort>(weatherAddress, this.CurrentWeatherId);
+
+				ushort current = MemoryService.Read<ushort>(weatherAddress);
+
+				if (current != this.CurrentWeatherId)
+				{
+					MemoryService.Write<ushort>(weatherAddress, this.CurrentWeatherId);
+				}
 			}
 			else if (e.PropertyName == nameof(TerritoryService.CurrentWeather))
 			{

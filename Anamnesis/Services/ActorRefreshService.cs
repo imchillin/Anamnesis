@@ -11,12 +11,16 @@ namespace Anamnesis.Services
 
 	public class ActorRefreshService : ServiceBase<ActorRefreshService>
 	{
-		private const int RefreshDelay = 250;
-
 		private ActorViewModel? actor;
 		private int refreshCountdown;
 
 		public static bool IsRefreshing
+		{
+			get;
+			private set;
+		}
+
+		public static bool AwaitingRefresh
 		{
 			get;
 			private set;
@@ -28,6 +32,8 @@ namespace Anamnesis.Services
 
 			TargetService.ActorSelected += this.OnActorSelected;
 			this.OnActorSelected(TargetService.SelectedActor);
+
+			_ = Task.Run(this.RefreshTask);
 		}
 
 		public override async Task Shutdown()
@@ -52,15 +58,20 @@ namespace Anamnesis.Services
 
 		private void OnSelectedActorChanged(object sender)
 		{
-			if (IsRefreshing)
-				return;
+			AwaitingRefresh = true;
+		}
 
-			bool startTask = this.refreshCountdown <= 0;
-			this.refreshCountdown = RefreshDelay;
-
-			if (startTask)
+		private async Task RefreshTask()
+		{
+			while (this.IsAlive)
 			{
-				Task.Run(this.Refresh);
+				await Task.Delay(10);
+
+				if (AwaitingRefresh)
+				{
+					AwaitingRefresh = false;
+					await this.Refresh();
+				}
 			}
 		}
 
@@ -84,38 +95,42 @@ namespace Anamnesis.Services
 				return;
 
 			IsRefreshing = true;
-			this.actor.Enabled = false;
+			////this.actor.Enabled = false;
 
-			// we create a new actor view model here so that we can write the values we need to update
+			MemoryService.EnableMemoryViewModelTick = false;
+
+			// we use direct pointers here so that we can write the values we need to update
 			// for the refresh without the actual actorview model being able to write its own values.
-			// if the other view model attempts to write a value during a refresh, the game will crash.
-			ActorViewModel newVm = new ActorViewModel(actorPointer);
+			// if the actor view model attempts to write a value during a refresh, the game will crash.
+			IntPtr objectKindPointer = actorPointer + 0x008c;
+			IntPtr renderModePointer = actorPointer + 0x0104;
 
-			if (newVm.ObjectKind == ActorTypes.Player)
+			if (this.actor.ObjectKind == ActorTypes.Player)
 			{
-				newVm.ObjectKind = ActorTypes.BattleNpc;
-				newVm.RenderMode = RenderModes.Unload;
-				await MemoryService.WaitForMemoryTick();
+				MemoryService.Write(objectKindPointer, (byte)ActorTypes.BattleNpc);
+
+				MemoryService.Write(renderModePointer, (int)RenderModes.Unload);
 				await Task.Delay(50);
-				newVm.RenderMode = RenderModes.Draw;
-				await MemoryService.WaitForMemoryTick();
+				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
 				await Task.Delay(50);
-				newVm.ObjectKind = ActorTypes.Player;
+				MemoryService.Write(objectKindPointer, (byte)ActorTypes.Player);
+				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
 			}
 			else
 			{
-				newVm.RenderMode = RenderModes.Unload;
-				await MemoryService.WaitForMemoryTick();
+				MemoryService.Write(renderModePointer, (int)RenderModes.Unload);
 				await Task.Delay(50);
-				newVm.RenderMode = RenderModes.Draw;
+				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
 			}
 
+			MemoryService.EnableMemoryViewModelTick = true;
 			await MemoryService.WaitForMemoryTick();
+
 			await Task.Delay(50);
 
 			Log.Write("Refresh Complete", "Actor Refresh");
 			IsRefreshing = false;
-			this.actor.Enabled = true;
+			////this.actor.Enabled = true;
 		}
 	}
 }

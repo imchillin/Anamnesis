@@ -88,6 +88,11 @@ namespace Anamnesis
 				if (timeAddress == IntPtr.Zero)
 					continue;
 
+				int currentTime = MemoryService.Read<int>(timeAddress);
+
+				if (currentTime == this.Time)
+					continue;
+
 				MemoryService.Write(timeAddress, this.Time);
 			}
 		}

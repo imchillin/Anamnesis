@@ -34,6 +34,7 @@ namespace Anamnesis
 
 		protected T model;
 		private Dictionary<string, (PropertyInfo, FieldInfo)> binds = new Dictionary<string, (PropertyInfo, FieldInfo)>();
+		private bool suppressViewToModelEvents = false;
 
 		public StructViewModelBase()
 		{
@@ -142,16 +143,22 @@ namespace Anamnesis
 
 		public void SetModel(T? model)
 		{
+			if (!MemoryService.IsProcessAlive)
+				return;
+
 			if (model == null)
 				throw new Exception("Attempt to set null model to view model");
 
 			this.model = (T)model;
 
 			bool changed = false;
+			this.suppressViewToModelEvents = true;
 			foreach ((PropertyInfo viewModelProperty, FieldInfo modelField) in this.binds.Values)
 			{
 				changed |= this.HandleModelToViewUpdate(viewModelProperty, modelField);
 			}
+
+			this.suppressViewToModelEvents = false;
 
 			if (changed)
 			{
@@ -282,7 +289,7 @@ namespace Anamnesis
 
 		private void OnThisPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (!this.Enabled)
+			if (!this.Enabled || this.suppressViewToModelEvents)
 				return;
 
 			if (!this.binds.ContainsKey(e.PropertyName))

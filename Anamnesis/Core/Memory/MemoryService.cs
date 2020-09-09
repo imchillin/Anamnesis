@@ -16,25 +16,26 @@ namespace Anamnesis.Memory
 
 	using SysProcess = System.Diagnostics.Process;
 
-	public class MemoryService : IService
+	public class MemoryService : ServiceBase<MemoryService>
 	{
-		private static readonly Logger Log = SimpleLog.Log.GetLogger<MemoryService>();
-
 		private static List<WeakReference<IMemoryViewModel>> viewModels = new List<WeakReference<IMemoryViewModel>>();
 		private static Dictionary<Type, bool[]> structMasks = new Dictionary<Type, bool[]>();
 		private static ulong memoryTickCount = 0;
 		private readonly Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
-		private bool isActive;
 
 		public static IntPtr Handle { get; private set; }
 		public static SignatureScanner? Scanner { get; private set; }
 		public static SysProcess? Process { get; private set; }
 		public static bool ProcessIsAlive { get; private set; }
+		public static bool EnableMemoryViewModelTick { get; set; }
 
-		public static bool IsAlive
+		public static bool IsProcessAlive
 		{
 			get
 			{
+				if (!Instance.IsAlive)
+					return false;
+
 				if (Process == null || Process.HasExited)
 					return false;
 
@@ -159,9 +160,9 @@ namespace Anamnesis.Memory
 			return WriteProcessMemory(Handle, address, buffer, buffer.Length, out _);
 		}
 
-		public async Task Initialize()
+		public override async Task Initialize()
 		{
-			this.isActive = true;
+			await base.Initialize();
 
 			while (!ProcessIsAlive)
 			{
@@ -212,15 +213,10 @@ namespace Anamnesis.Memory
 			new Thread(new ThreadStart(this.ProcessWatcherThread)).Start();
 		}
 
-		public Task Start()
+		public override Task Start()
 		{
-			return Task.CompletedTask;
-		}
-
-		public Task Shutdown()
-		{
-			this.isActive = false;
-			return Task.CompletedTask;
+			EnableMemoryViewModelTick = true;
+			return base.Start();
 		}
 
 		/// <summary>
@@ -395,12 +391,15 @@ namespace Anamnesis.Memory
 		{
 			try
 			{
-				while (this.isActive)
+				while (this.IsAlive)
 				{
 					Thread.Sleep(16);
 
 					if (!ProcessIsAlive)
 						return;
+
+					if (!EnableMemoryViewModelTick)
+						continue;
 
 					memoryTickCount++;
 
@@ -412,6 +411,9 @@ namespace Anamnesis.Memory
 
 						foreach (WeakReference<IMemoryViewModel>? weakRef in weakRefs)
 						{
+							if (!this.IsAlive)
+								return;
+
 							if (!weakRef.TryGetTarget(out viewModel) || viewModel == null)
 							{
 								viewModels.Remove(weakRef);
@@ -434,9 +436,9 @@ namespace Anamnesis.Memory
 
 		private void ProcessWatcherThread()
 		{
-			while (this.isActive && Process != null)
+			while (this.IsAlive && Process != null)
 			{
-				ProcessIsAlive = IsAlive;
+				ProcessIsAlive = IsProcessAlive;
 
 				if (!ProcessIsAlive)
 				{

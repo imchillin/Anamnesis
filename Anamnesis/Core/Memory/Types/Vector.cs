@@ -7,7 +7,7 @@ namespace Anamnesis.Memory
 	using System.Runtime.InteropServices;
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct Vector
+	public struct Vector : IEquatable<object>
 	{
 		public static readonly Vector Zero = new Vector(0, 0, 0);
 		public static readonly Vector One = new Vector(1, 1, 1);
