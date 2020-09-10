@@ -80,10 +80,7 @@ namespace Anamnesis
 				await Task.Delay(10);
 
 				IntPtr timeAddress = MemoryService.ReadPtr(AddressService.Time);
-				timeAddress = MemoryService.ReadPtr(timeAddress + 0x10);
-				timeAddress = MemoryService.ReadPtr(timeAddress + 0x10);
-				timeAddress = MemoryService.ReadPtr(timeAddress + 0x28);
-				timeAddress += 0x80;
+				timeAddress += 0x88;
 
 				if (timeAddress == IntPtr.Zero)
 					continue;
