@@ -7,6 +7,7 @@ namespace Anamnesis.PoseModule.Views
 	using System.Collections.Generic;
 	using System.Runtime.CompilerServices;
 	using System.Threading;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
@@ -14,6 +15,7 @@ namespace Anamnesis.PoseModule.Views
 	using Anamnesis.Memory;
 	using Anamnesis.ThreeD;
 	using PropertyChanged;
+
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
 	/// <summary>
@@ -67,6 +69,20 @@ namespace Anamnesis.PoseModule.Views
 					return;
 
 				this.Viewport.Children.Add(visual);
+			}
+
+			// position camera at average center position of skeleton
+			if (vm.Bones.Count > 0)
+			{
+				Vector3D pos = vm.Bones[0].LiveTransform.Position.ToMedia3DVector();
+				foreach (BoneVisual3d visual in vm.Bones)
+				{
+					pos += visual.LiveTransform.Position.ToMedia3DVector();
+				}
+
+				pos /= vm.Bones.Count;
+				Point3D center = new Point3D(pos.X, pos.Y, pos.Z - 4);
+				this.camera.Position = center;
 			}
 		}
 	}

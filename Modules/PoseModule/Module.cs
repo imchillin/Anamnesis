@@ -30,11 +30,11 @@ namespace Anamnesis.PoseModule
 
 		private bool IsActorPoseSupported(ActorViewModel actor)
 		{
-			if (actor.ObjectKind != ActorTypes.Player && actor.ObjectKind != ActorTypes.EventNpc && actor.ObjectKind != ActorTypes.BattleNpc)
-				return false;
+			////if (actor.ObjectKind != ActorTypes.Player && actor.ObjectKind != ActorTypes.EventNpc && actor.ObjectKind != ActorTypes.BattleNpc)
+			////	return false;
 
-			if (actor.ModelType != 0)
-				return false;
+			////if (actor.ModelType != 0)
+			////	return false;
 
 			return true;
 		}

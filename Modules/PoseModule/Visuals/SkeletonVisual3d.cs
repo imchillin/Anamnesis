@@ -13,8 +13,6 @@ namespace Anamnesis.PoseModule
 	[AddINotifyPropertyChangedInterface]
 	public class SkeletonVisual3d : INotifyPropertyChanged
 	{
-		private List<BoneVisual3d> bones;
-
 		public SkeletonVisual3d(ActorViewModel actor)
 		{
 			this.Actor = actor;
@@ -29,6 +27,7 @@ namespace Anamnesis.PoseModule
 		public BoneVisual3d CurrentBone { get; set; }
 
 		public List<BoneVisual3d> RootBones { get; } = new List<BoneVisual3d>();
+		public List<BoneVisual3d> Bones { get; private set; }
 
 		public bool HasTail => this.Actor?.Customize?.Race == Appearance.Races.Miqote
 			|| this.Actor?.Customize?.Race == Appearance.Races.AuRa
@@ -77,9 +76,10 @@ namespace Anamnesis.PoseModule
 
 		private void GenerateBones()
 		{
-			this.bones = new List<BoneVisual3d>();
+			this.Bones = new List<BoneVisual3d>();
 
-			if (this.Actor?.Customize?.Race == null || this.Actor.Customize.Race == 0)
+			// only show actors that have a body
+			if (this.Actor?.Model?.Skeleton?.Skeleton?.Body == null)
 				return;
 
 			SkeletonViewModel skeletonVm = this.Actor.Model.Skeleton.Skeleton;
@@ -87,7 +87,7 @@ namespace Anamnesis.PoseModule
 			foreach (TransformViewModel boneTrans in skeletonVm.Body.Transforms)
 			{
 				BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-				this.bones.Add(bone);
+				this.Bones.Add(bone);
 
 				this.RootBones.Add(bone);
 			}
