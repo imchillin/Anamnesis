@@ -4,9 +4,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
-	using System.Reflection;
 	using System.Runtime.InteropServices;
-	using PropertyChanged;
 
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Skeleton

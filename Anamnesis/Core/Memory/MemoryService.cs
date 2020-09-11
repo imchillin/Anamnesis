@@ -150,8 +150,11 @@ namespace Anamnesis.Memory
 			return ReadProcessMemory(Handle, address, buffer, size, IntPtr.Zero);
 		}
 
-		public static bool Read(IntPtr address, byte[] buffer, int size)
+		public static bool Read(IntPtr address, byte[] buffer, int size = -1)
 		{
+			if (size <= 0)
+				size = buffer.Length;
+
 			return ReadProcessMemory(Handle, address, buffer, size, out _);
 		}
 

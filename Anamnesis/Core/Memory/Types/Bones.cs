@@ -14,6 +14,9 @@ namespace Anamnesis.Memory
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Bones
 	{
+		////[FieldOffset(0x00)]
+		////public IntPtr HkAnimationFile;
+
 		[FieldOffset(0x10)]
 		public int Count;
 
