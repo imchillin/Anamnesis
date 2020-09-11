@@ -27,7 +27,7 @@ namespace Anamnesis.PoseModule.Views
 		{
 			this.InitializeComponent();
 
-			this.camera = new PerspectiveCamera(new Point3D(0, 0, -3), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
+			this.camera = new PerspectiveCamera(new Point3D(0, 0.75, -4), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
 			this.Viewport.Camera = this.camera;
 
 			this.Viewport.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
@@ -48,7 +48,10 @@ namespace Anamnesis.PoseModule.Views
 			if (vm == null)
 				return;
 
-			this.Viewport.Children.Remove(vm.RootBone);
+			foreach (BoneVisual3d visual in vm.RootBones)
+			{
+				this.Viewport.Children.Remove(visual);
+			}
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -58,10 +61,13 @@ namespace Anamnesis.PoseModule.Views
 			if (vm == null)
 				return;
 
-			if (this.Viewport.Children.Contains(vm.RootBone))
-				return;
+			foreach (BoneVisual3d visual in vm.RootBones)
+			{
+				if (this.Viewport.Children.Contains(visual))
+					return;
 
-			this.Viewport.Children.Add(vm.RootBone);
+				this.Viewport.Children.Add(visual);
+			}
 		}
 	}
 }

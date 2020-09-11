@@ -51,7 +51,7 @@ namespace Anamnesis.Memory
 				{
 					this.Transforms.Clear();
 
-					IntPtr ptr = this.TransformArray + 0x10;
+					IntPtr ptr = this.TransformArray;
 					for (int i = 0; i < count; i++)
 					{
 						this.Transforms.Add(new TransformViewModel(ptr));

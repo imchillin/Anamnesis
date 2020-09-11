@@ -5,6 +5,7 @@ namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.ComponentModel;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
@@ -47,11 +48,14 @@ namespace Anamnesis.PoseModule
 			PaletteHelper ph = new PaletteHelper();
 
 			Sphere sphere = new Sphere();
-			sphere.Radius = 0.015;
-			System.Windows.Media.Color c1 = ph.GetTheme().Paper;
-			c1.A = 255;
+			sphere.Radius = 0.005;
+			System.Windows.Media.Color c1 = ph.GetTheme().BodyLight;
+			c1.A = 200;
 			sphere.Material = new DiffuseMaterial(new SolidColorBrush(c1));
 			this.Children.Add(sphere);
+
+			transform.PropertyChanged += this.OnTransformPropertyChanged;
+			this.ReadTransform();
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }
@@ -200,6 +204,23 @@ namespace Anamnesis.PoseModule
 						childBone.WriteTransform(root);
 					}
 				}
+			}
+		}
+
+		private void OnTransformPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			try
+			{
+				if (Application.Current == null)
+					return;
+
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					this.ReadTransform();
+				});
+			}
+			catch (TaskCanceledException)
+			{
 			}
 		}
 	}

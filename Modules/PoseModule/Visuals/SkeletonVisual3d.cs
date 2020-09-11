@@ -27,7 +27,8 @@ namespace Anamnesis.PoseModule
 		public ActorViewModel Actor { get; private set; }
 		public BoneVisual3d MouseOverBone { get; set; }
 		public BoneVisual3d CurrentBone { get; set; }
-		public BoneVisual3d RootBone { get; private set; }
+
+		public List<BoneVisual3d> RootBones { get; } = new List<BoneVisual3d>();
 
 		public bool HasTail => this.Actor?.Customize?.Race == Appearance.Races.Miqote
 			|| this.Actor?.Customize?.Race == Appearance.Races.AuRa
@@ -78,8 +79,6 @@ namespace Anamnesis.PoseModule
 		{
 			this.bones = new List<BoneVisual3d>();
 
-			this.RootBone = new BoneVisual3d(null, this);
-
 			if (this.Actor?.Customize?.Race == null || this.Actor.Customize.Race == 0)
 				return;
 
@@ -88,8 +87,9 @@ namespace Anamnesis.PoseModule
 			foreach (TransformViewModel boneTrans in skeletonVm.Body.Transforms)
 			{
 				BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-				bone.Parent = this.RootBone;
 				this.bones.Add(bone);
+
+				this.RootBones.Add(bone);
 			}
 		}
 	}
