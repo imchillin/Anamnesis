@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.PoseModule.Controls
+namespace Anamnesis.PoseModule.Views
 {
 	using System;
 	using System.Collections.Generic;
@@ -19,12 +19,13 @@ namespace Anamnesis.PoseModule.Controls
 		public static readonly IBind<string> LabelDp = Binder.Register<string, BoneView>(nameof(Label));
 		public static readonly IBind<string> NameDp = Binder.Register<string, BoneView>(nameof(BoneName));
 
-		private static readonly Dictionary<Bone, List<BoneView>> BoneViews = new Dictionary<Bone, List<BoneView>>();
+		private static readonly Dictionary<BoneVisual3d, List<BoneView>> BoneViews = new Dictionary<BoneVisual3d, List<BoneView>>();
 
 		private readonly List<Line> linesToChildren = new List<Line>();
 		private readonly List<Line> mouseLinesToChildren = new List<Line>();
 
-		private Bone bone;
+		private BoneVisual3d bone;
+		private SkeletonVisual3d skeleton;
 
 		public BoneView()
 		{
@@ -47,7 +48,7 @@ namespace Anamnesis.PoseModule.Controls
 			set => NameDp.Set(this, value);
 		}
 
-		public static bool HasView(Bone bone)
+		public static bool HasView(BoneVisual3d bone)
 		{
 			return BoneViews.ContainsKey(bone);
 		}
@@ -69,17 +70,12 @@ namespace Anamnesis.PoseModule.Controls
 
 			try
 			{
-				/*if (this.DataContext is SkeletonViewModel viewModel)
+				if (this.DataContext is SkeletonVisual3d viewModel)
 				{
-					this.viewModel = viewModel;
-					this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
-
-					if (this.viewModel.Bones != null)
-					{
-						this.SetBone(this.BoneName);
-					}
+					this.skeleton = viewModel;
+					this.SetBone(this.BoneName);
 				}
-				else*/
+				else
 				{
 					this.IsEnabled = false;
 				}
@@ -114,7 +110,7 @@ namespace Anamnesis.PoseModule.Controls
 
 			this.linesToChildren.Clear();
 
-			Bone bone = this.bone.Parent;
+			BoneVisual3d bone = this.bone.Parent;
 			if (bone != null && BoneViews.ContainsKey(bone))
 			{
 				foreach (BoneView childView in BoneViews[bone])
@@ -167,18 +163,14 @@ namespace Anamnesis.PoseModule.Controls
 				}
 			}
 
-			this.bone = null; //// this.viewModel.GetBone(name);
+			this.bone = this.skeleton.GetBone(name);
 
 			if (this.bone != null)
 			{
-				this.ToolTip = this.bone.Tooltip;
-
 				if (!BoneViews.ContainsKey(this.bone))
 					BoneViews.Add(this.bone, new List<BoneView>());
 
 				BoneViews[this.bone].Add(this);
-
-				this.ToolTip = this.bone.Tooltip;
 				this.IsEnabled = true;
 
 				// Wait for all bone views to load, then draw the skeleton
@@ -202,7 +194,7 @@ namespace Anamnesis.PoseModule.Controls
 			if (!this.IsEnabled)
 				return;
 
-			////this.viewModel.MouseOverBone = this.bone;
+			this.skeleton.MouseOverBone = this.bone;
 		}
 
 		private void OnMouseLeave(object sender, MouseEventArgs e)
@@ -210,10 +202,10 @@ namespace Anamnesis.PoseModule.Controls
 			if (!this.IsEnabled)
 				return;
 
-			/*if (this.viewModel.MouseOverBone == this.bone)
+			if (this.skeleton.MouseOverBone == this.bone)
 			{
-				this.viewModel.MouseOverBone = null;
-			}*/
+				this.skeleton.MouseOverBone = null;
+			}
 		}
 
 		private void OnMouseUp(object sender, MouseButtonEventArgs e)
@@ -221,10 +213,10 @@ namespace Anamnesis.PoseModule.Controls
 			if (!this.IsEnabled)
 				return;
 
-			/*if (this.viewModel == null || this.bone == null)
+			if (this.skeleton == null || this.bone == null)
 				return;
 
-			this.viewModel.CurrentBone = this.bone;*/
+			this.skeleton.CurrentBone = this.bone;
 		}
 
 		private void UpdateState()
@@ -253,17 +245,17 @@ namespace Anamnesis.PoseModule.Controls
 			this.BackgroundElipse.Opacity = 1;
 			this.BackgroundElipse.StrokeThickness = 1;
 
-			/*bool hovered = this.viewModel.GetIsBoneHovered(this.bone);
-			bool selected = this.viewModel.GetIsBoneSelected(this.bone);
-			bool parentSelected = this.viewModel.GetIsBoneParentsSelected(this.bone);
-			bool parentHovered = this.viewModel.GetIsBoneParentsHovered(this.bone);
+			bool hovered = this.skeleton.GetIsBoneHovered(this.bone);
+			bool selected = this.skeleton.GetIsBoneSelected(this.bone);
+			bool parentSelected = this.skeleton.GetIsBoneParentsSelected(this.bone);
+			bool parentHovered = this.skeleton.GetIsBoneParentsHovered(this.bone);
 
 			Color color = parentHovered ? theme.PrimaryMid.Color : theme.BodyLight;
 			int thickenss = parentSelected || selected || parentHovered ? 2 : 1;
 
 			this.ForegroundElipse.Visibility = (selected || hovered) ? Visibility.Visible : Visibility.Hidden;
 			this.BackgroundElipse.Stroke = new SolidColorBrush(theme.PrimaryMid.Color);
-			this.SetState(new SolidColorBrush(color), thickenss);*/
+			this.SetState(new SolidColorBrush(color), thickenss);
 		}
 
 		private void SetState(Brush stroke, int thickness)

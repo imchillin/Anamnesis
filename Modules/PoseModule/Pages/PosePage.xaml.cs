@@ -6,6 +6,7 @@ namespace Anamnesis.PoseModule.Pages
 	using System;
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -25,15 +26,30 @@ namespace Anamnesis.PoseModule.Pages
 
 		public PoseService PoseService { get => PoseModule.PoseService.Instance; }
 
+		public SkeletonVisual3d Skeleton { get; private set; }
 		public bool CanPose { get; set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			this.CanPose = true;
+			this.OnDataContextChanged(null, default);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
+			ActorViewModel actor = this.DataContext as ActorViewModel;
+
+			if (actor == null)
+			{
+				this.Skeleton = null;
+				return;
+			}
+
+			this.Skeleton = new SkeletonVisual3d(actor);
+
+			this.ThreeDView.DataContext = this.Skeleton;
+			this.GuiView.DataContext = this.Skeleton;
+			this.MatrixView.DataContext = this.Skeleton;
 		}
 
 		private void OnOpenClicked(object sender, RoutedEventArgs e)

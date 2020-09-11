@@ -11,7 +11,7 @@ namespace Anamnesis.PoseModule.Controls
 	/// </summary>
 	public partial class BoneEditor : UserControl
 	{
-		public static readonly IBind<Bone> ValueDp = Binder.Register<Bone, BoneEditor>(nameof(Value));
+		public static readonly IBind<BoneVisual3d> ValueDp = Binder.Register<BoneVisual3d, BoneEditor>(nameof(Value));
 
 		public BoneEditor()
 		{
@@ -19,7 +19,7 @@ namespace Anamnesis.PoseModule.Controls
 			this.ContentArea.DataContext = this;
 		}
 
-		public Bone Value
+		public BoneVisual3d Value
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);

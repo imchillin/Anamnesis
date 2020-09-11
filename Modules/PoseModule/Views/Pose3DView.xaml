@@ -6,6 +6,7 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="512" d:DesignWidth="1024"
 			 Loaded="OnLoaded"
+			 DataContextChanged="OnDataContextChanged"
 			 Unloaded="OnUnloaded">
 
 	<Grid x:Name="ContentArea">

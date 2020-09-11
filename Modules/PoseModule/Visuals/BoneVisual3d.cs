@@ -22,17 +22,18 @@ namespace Anamnesis.PoseModule
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
 	[AddINotifyPropertyChangedInterface]
-	public class Bone : ModelVisual3D
+	public class BoneVisual3d : ModelVisual3D
 	{
 		private readonly RotateTransform3D rotation;
 		private readonly TranslateTransform3D position;
 
-		private Bone parent;
+		private BoneVisual3d parent;
 		private Line lineToParent;
 
-		public Bone(string name)
+		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton)
 		{
-			this.BoneName = name;
+			this.ViewModel = transform;
+			this.Skeleton = skeleton;
 
 			this.rotation = new RotateTransform3D();
 			this.position = new TranslateTransform3D();
@@ -53,28 +54,22 @@ namespace Anamnesis.PoseModule
 			this.Children.Add(sphere);
 		}
 
-		public string BoneName { get; private set; }
+		public SkeletonVisual3d Skeleton { get; private set; }
+		public TransformViewModel ViewModel { get; private set; }
+
 		public bool IsEnabled { get; set; } = true;
 
 		public CmQuaternion Rotation { get; set; }
 		public CmVector Scale { get; set; }
 		public CmVector Position { get; set; }
 
-		public string Tooltip
-		{
-			get
-			{
-				return this.BoneName;
-			}
-		}
-
 		public CmTransform LiveTransform
 		{
-			get => throw new NotImplementedException();
-			set => throw new NotImplementedException();
+			get => (CmTransform)this.ViewModel.GetModel();
+			set => this.ViewModel.SetModel(value);
 		}
 
-		public Bone Parent
+		public BoneVisual3d Parent
 		{
 			get
 			{
@@ -106,15 +101,12 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				// TODO: use actor model rotation?
-				return CmQuaternion.Identity;
-
-				/*CmQuaternion rot = this.Skeleton.RootRotation;
+				CmQuaternion rot = this.Skeleton.RootRotation;
 
 				if (this.Parent == null)
 					return rot;
 
-				return rot * this.Parent.LiveTransform.Rotation;*/
+				return rot * this.Parent.LiveTransform.Rotation;
 			}
 		}
 
@@ -203,7 +195,7 @@ namespace Anamnesis.PoseModule
 			{
 				foreach (Visual3D child in this.Children)
 				{
-					if (child is Bone childBone)
+					if (child is BoneVisual3d childBone)
 					{
 						childBone.WriteTransform(root);
 					}

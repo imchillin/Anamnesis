@@ -38,18 +38,30 @@ namespace Anamnesis.PoseModule.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
-
-			if (vm == null)
-				return;
-
-			////this.Viewport.Children.Add(vm.Root);
+			this.OnDataContextChanged(null, default);
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
-			SkeletonViewModel vm = this.DataContext as SkeletonViewModel;
-			////this.Viewport.Children.Remove(vm.Root);
+			SkeletonVisual3d vm = this.DataContext as SkeletonVisual3d;
+
+			if (vm == null)
+				return;
+
+			this.Viewport.Children.Remove(vm.RootBone);
+		}
+
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			SkeletonVisual3d vm = this.DataContext as SkeletonVisual3d;
+
+			if (vm == null)
+				return;
+
+			if (this.Viewport.Children.Contains(vm.RootBone))
+				return;
+
+			this.Viewport.Children.Add(vm.RootBone);
 		}
 	}
 }

@@ -39,7 +39,7 @@ namespace Anamnesis.PoseModule
 		public Configuration Config { get; set; } = new Configuration();
 		public Dictionary<string, Transform> Bones { get; set; } = new Dictionary<string, Transform>();
 
-		public void Read(IEnumerable<Bone> bones, Configuration config)
+		public void Read(IEnumerable<BoneVisual3d> bones, Configuration config)
 		{
 			this.Config = config;
 
