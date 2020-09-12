@@ -459,8 +459,8 @@
 
 						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_Legs" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="LegLeft" Label="L"/>
-							<local:BoneView BoneName="LegRight" Label="R"/>
+							<local:BoneView BoneName="LegsLeft" Label="L"/>
+							<local:BoneView BoneName="LegsRight" Label="R"/>
 						</StackPanel>
 
 						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Poleyns" Style="{DynamicResource Label}"/>
@@ -583,37 +583,39 @@
 
 						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_EqHelm" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="ExMet1" Label="1"/>
-							<local:BoneView BoneName="ExMet2" Label="2"/>
-							<local:BoneView BoneName="ExMet3" Label="3"/>
-							<local:BoneView BoneName="ExMet4" Label="4"/>
-							<local:BoneView BoneName="ExMet5" Label="5"/>
-							<local:BoneView BoneName="ExMet6" Label="6"/>
-							<local:BoneView BoneName="ExMet7" Label="7"/>
-							<local:BoneView BoneName="ExMet8" Label="8"/>
-							<local:BoneView BoneName="ExMet9" Label="9"/>
-							<local:BoneView BoneName="ExMet10" Label="10"/>
-							<local:BoneView BoneName="ExMet11" Label="11"/>
-							<local:BoneView BoneName="ExMet12" Label="12"/>
-							<local:BoneView BoneName="ExMet13" Label="13"/>
-							<local:BoneView BoneName="ExMet14" Label="14"/>
-							<local:BoneView BoneName="ExMet15" Label="15"/>
-							<local:BoneView BoneName="ExMet16" Label="16"/>
-							<local:BoneView BoneName="ExMet17" Label="17"/>
-							<local:BoneView BoneName="ExMet18" Label="18"/>
+							<local:BoneView BoneName="ExRootMet"/>
+							<local:BoneView BoneName="ExMetA" Label="A"/>
+							<local:BoneView BoneName="ExMetB" Label="B"/>
+							<local:BoneView BoneName="ExMetC" Label="C"/>
+							<local:BoneView BoneName="ExMetD" Label="D"/>
+							<local:BoneView BoneName="ExMetE" Label="E"/>
+							<local:BoneView BoneName="ExMetF" Label="F"/>
+							<local:BoneView BoneName="ExMetG" Label="G"/>
+							<local:BoneView BoneName="ExMetH" Label="H"/>
+							<local:BoneView BoneName="ExMetI" Label="I"/>
+							<local:BoneView BoneName="ExMetJ" Label="J"/>
+							<local:BoneView BoneName="ExMetK" Label="K"/>
+							<local:BoneView BoneName="ExMetL" Label="L"/>
+							<local:BoneView BoneName="ExMetM" Label="M"/>
+							<local:BoneView BoneName="ExMetN" Label="N"/>
+							<local:BoneView BoneName="ExMetO" Label="O"/>
+							<local:BoneView BoneName="ExMetP" Label="P"/>
+							<local:BoneView BoneName="ExMetQ" Label="Q"/>
+							<local:BoneView BoneName="ExMetR" Label="R"/>
 						</StackPanel>
 
 						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_EqTop" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="ExTop1" Label="1"/>
-							<local:BoneView BoneName="ExTop2" Label="2"/>
-							<local:BoneView BoneName="ExTop3" Label="3"/>
-							<local:BoneView BoneName="ExTop4" Label="4"/>
-							<local:BoneView BoneName="ExTop5" Label="5"/>
-							<local:BoneView BoneName="ExTop6" Label="6"/>
-							<local:BoneView BoneName="ExTop7" Label="7"/>
-							<local:BoneView BoneName="ExTop8" Label="8"/>
-							<local:BoneView BoneName="ExTop9" Label="9"/>
+							<local:BoneView BoneName="ExRootTop"/>
+							<local:BoneView BoneName="ExTopA" Label="A"/>
+							<local:BoneView BoneName="ExTopB" Label="B"/>
+							<local:BoneView BoneName="ExTopC" Label="C"/>
+							<local:BoneView BoneName="ExTopD" Label="D"/>
+							<local:BoneView BoneName="ExTopE" Label="E"/>
+							<local:BoneView BoneName="ExTopF" Label="F"/>
+							<local:BoneView BoneName="ExTopG" Label="G"/>
+							<local:BoneView BoneName="ExTopH" Label="H"/>
+							<local:BoneView BoneName="ExTopI" Label="I"/>
 						</StackPanel>
 
 					</Grid>

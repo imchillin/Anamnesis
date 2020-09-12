@@ -51,8 +51,8 @@
 						<local:BoneView Canvas.Left="182" Canvas.Top="160" BoneName="ForearmRight"/>
 						<local:BoneView Canvas.Left="48" Canvas.Top="230" BoneName="WristLeft"/>
 						<local:BoneView Canvas.Left="188" Canvas.Top="230" BoneName="WristRight"/>
-						<local:BoneView Canvas.Left="94" Canvas.Top="255" BoneName="LegLeft"/>
-						<local:BoneView Canvas.Left="143" Canvas.Top="255" BoneName="LegRight"/>
+						<local:BoneView Canvas.Left="94" Canvas.Top="255" BoneName="LegsLeft"/>
+						<local:BoneView Canvas.Left="143" Canvas.Top="255" BoneName="LegsRight"/>
 						<local:BoneView Canvas.Left="103" Canvas.Top="333" BoneName="KneeLeft"/>
 						<local:BoneView Canvas.Left="132" Canvas.Top="333" BoneName="KneeRight"/>
 						<local:BoneView Canvas.Left="83" Canvas.Top="333" BoneName="CalfLeft"/>

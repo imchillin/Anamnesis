@@ -484,25 +484,6 @@ namespace Anamnesis.PoseModule
 					}
 				}
 
-				if (boneName.StartsWith("ExHair"))
-				{
-					string letter = boneName.Replace("ExHair", string.Empty);
-					byte index = this.StringToByte(letter);
-					boneName = "ExHair" + index;
-				}
-				else if (boneName.StartsWith("ExMet"))
-				{
-					string letter = boneName.Replace("ExMet", string.Empty);
-					byte index = this.StringToByte(letter);
-					boneName = "ExMet" + index;
-				}
-				else if (boneName.StartsWith("ExTop"))
-				{
-					string letter = boneName.Replace("ExTop", string.Empty);
-					byte index = this.StringToByte(letter);
-					boneName = "ExTop" + index;
-				}
-
 				string rotString = null;
 				string scaleString = null;
 
@@ -579,33 +560,6 @@ namespace Anamnesis.PoseModule
 			{
 				throw new Exception($"Failed to parse string: {hex} to byte array", ex);
 			}
-		}
-
-		private byte StringToByte(string character)
-		{
-			switch (character)
-			{
-				case "A": return 1;
-				case "B": return 2;
-				case "C": return 3;
-				case "D": return 4;
-				case "E": return 5;
-				case "F": return 6;
-				case "G": return 7;
-				case "H": return 8;
-				case "I": return 9;
-				case "J": return 10;
-				case "K": return 11;
-				case "L": return 12;
-				case "M": return 13;
-				case "N": return 14;
-				case "O": return 15;
-				case "P": return 16;
-				case "Q": return 17;
-				case "R": return 18;
-			}
-
-			throw new Exception();
 		}
 	}
 }

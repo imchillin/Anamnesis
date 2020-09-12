@@ -71,6 +71,23 @@ namespace Anamnesis.PoseModule
 
 		public BoneVisual3d GetBone(string name)
 		{
+			// only show actors that have a body
+			if (this.Actor?.Model?.Skeleton?.Skeleton?.Body == null)
+				return null;
+
+			TransformViewModel transform = this.Actor.Model.Skeleton.Skeleton.GetBone(name);
+
+			if (transform == null)
+				return null;
+
+			foreach (BoneVisual3d bone in this.Bones)
+			{
+				if (bone.ViewModel == transform)
+				{
+					return bone;
+				}
+			}
+
 			return null;
 		}
 
@@ -86,9 +103,44 @@ namespace Anamnesis.PoseModule
 
 			foreach (TransformViewModel boneTrans in skeletonVm.Body.Transforms)
 			{
-				BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-				this.Bones.Add(bone);
+				this.Bones.Add(new BoneVisual3d(boneTrans, this));
+			}
 
+			if (skeletonVm.Head != null)
+			{
+				foreach (TransformViewModel boneTrans in skeletonVm.Head.Transforms)
+				{
+					this.Bones.Add(new BoneVisual3d(boneTrans, this));
+				}
+			}
+
+			if (skeletonVm.Hair != null)
+			{
+				foreach (TransformViewModel boneTrans in skeletonVm.Hair.Transforms)
+				{
+					this.Bones.Add(new BoneVisual3d(boneTrans, this));
+				}
+			}
+
+			if (skeletonVm.Met != null)
+			{
+				foreach (TransformViewModel boneTrans in skeletonVm.Met.Transforms)
+				{
+					this.Bones.Add(new BoneVisual3d(boneTrans, this));
+				}
+			}
+
+			if (skeletonVm.Top != null)
+			{
+				foreach (TransformViewModel boneTrans in skeletonVm.Top.Transforms)
+				{
+					this.Bones.Add(new BoneVisual3d(boneTrans, this));
+				}
+			}
+
+			// parenting
+			foreach (BoneVisual3d bone in this.Bones)
+			{
 				this.RootBones.Add(bone);
 			}
 		}

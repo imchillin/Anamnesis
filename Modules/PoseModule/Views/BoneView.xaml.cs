@@ -84,7 +84,7 @@ namespace Anamnesis.PoseModule.Views
 			{
 				this.IsEnabled = false;
 				this.ToolTip = ex.Message;
-				Console.WriteLine(ex.Message);
+				Log.Write(ex, "BoneView");
 			}
 		}
 
