@@ -63,6 +63,8 @@ namespace Anamnesis.PoseModule.Views
 			if (vm == null)
 				return;
 
+			this.Viewport.Children.Clear();
+
 			foreach (BoneVisual3d visual in vm.RootBones)
 			{
 				if (this.Viewport.Children.Contains(visual))

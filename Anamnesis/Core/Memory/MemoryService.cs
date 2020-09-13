@@ -394,8 +394,12 @@ namespace Anamnesis.Memory
 		{
 			try
 			{
+				Stopwatch sw = new Stopwatch();
 				while (this.IsAlive)
 				{
+					sw.Restart();
+
+					// 60 ticks per second
 					Thread.Sleep(16);
 
 					if (!ProcessIsAlive)
@@ -427,8 +431,10 @@ namespace Anamnesis.Memory
 						}
 					}
 
-					// 60 ticks per second
-					Thread.Sleep(16);
+					if (sw.ElapsedMilliseconds > 100)
+					{
+						Log.Write(Severity.Warning, "Took " + sw.ElapsedMilliseconds + "ms to tick memory");
+					}
 				}
 			}
 			catch (Exception ex)

@@ -91,6 +91,14 @@ namespace Anamnesis.PoseModule
 			return null;
 		}
 
+		public void ReadTranforms()
+		{
+			foreach (BoneVisual3d bone in this.Bones)
+			{
+				bone.ReadTransform();
+			}
+		}
+
 		private void GenerateBones()
 		{
 			this.Bones = new List<BoneVisual3d>();
@@ -101,16 +109,38 @@ namespace Anamnesis.PoseModule
 
 			SkeletonViewModel skeletonVm = this.Actor.Model.Skeleton.Skeleton;
 
-			foreach (TransformViewModel boneTrans in skeletonVm.Body.Transforms)
+			// Body bones
 			{
-				this.Bones.Add(new BoneVisual3d(boneTrans, this));
+				List<BoneVisual3d> bodyBones = new List<BoneVisual3d>();
+				for (int i = 0; i < skeletonVm.Body.Count; i++)
+				{
+					BoneVisual3d bone = new BoneVisual3d(skeletonVm.Body.Transforms[i], this);
+					bodyBones.Add(bone);
+					this.Bones.Add(bone);
+					////this.RootBones.Add(bone);
+				}
+
+				for (int i = 0; i < skeletonVm.Body.Count; i++)
+				{
+					int parent = SkeletonUtility.PlayerBodyParents[i];
+					if (parent == -1)
+					{
+						this.RootBones.Add(bodyBones[i]);
+					}
+					else
+					{
+						bodyBones[i].Parent = bodyBones[parent];
+					}
+				}
 			}
 
 			if (skeletonVm.Head != null)
 			{
 				foreach (TransformViewModel boneTrans in skeletonVm.Head.Transforms)
 				{
-					this.Bones.Add(new BoneVisual3d(boneTrans, this));
+					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
+					this.Bones.Add(bone);
+					this.RootBones.Add(bone);
 				}
 			}
 
@@ -118,7 +148,9 @@ namespace Anamnesis.PoseModule
 			{
 				foreach (TransformViewModel boneTrans in skeletonVm.Hair.Transforms)
 				{
-					this.Bones.Add(new BoneVisual3d(boneTrans, this));
+					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
+					this.Bones.Add(bone);
+					this.RootBones.Add(bone);
 				}
 			}
 
@@ -126,7 +158,9 @@ namespace Anamnesis.PoseModule
 			{
 				foreach (TransformViewModel boneTrans in skeletonVm.Met.Transforms)
 				{
-					this.Bones.Add(new BoneVisual3d(boneTrans, this));
+					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
+					this.Bones.Add(bone);
+					this.RootBones.Add(bone);
 				}
 			}
 
@@ -134,14 +168,10 @@ namespace Anamnesis.PoseModule
 			{
 				foreach (TransformViewModel boneTrans in skeletonVm.Top.Transforms)
 				{
-					this.Bones.Add(new BoneVisual3d(boneTrans, this));
+					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
+					this.Bones.Add(bone);
+					this.RootBones.Add(bone);
 				}
-			}
-
-			// parenting
-			foreach (BoneVisual3d bone in this.Bones)
-			{
-				this.RootBones.Add(bone);
 			}
 		}
 	}

@@ -12,6 +12,7 @@
 			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls;assembly=Anamnesis"
 			 mc:Ignorable="d" 
 			 Loaded="OnLoaded"
+			 Unloaded="OnUnloaded"
 			 DataContextChanged="OnDataContextChanged"
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
@@ -86,7 +87,7 @@
 						<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 1, 1">
 							<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
-						<ListBoxItem ToolTip="3D View" Margin="0, 1, 0, 1">
+						<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 0, 1">
 							<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
 					</ListBox>

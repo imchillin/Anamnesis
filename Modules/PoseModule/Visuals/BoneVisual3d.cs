@@ -49,12 +49,10 @@ namespace Anamnesis.PoseModule
 
 			Sphere sphere = new Sphere();
 			sphere.Radius = 0.005;
-			System.Windows.Media.Color c1 = ph.GetTheme().BodyLight;
-			c1.A = 200;
-			sphere.Material = new DiffuseMaterial(new SolidColorBrush(c1));
+			System.Windows.Media.Color c1 = System.Windows.Media.Color.FromArgb(200, 255, 255, 255);
+			sphere.Material = new EmissiveMaterial(new SolidColorBrush(c1));
 			this.Children.Add(sphere);
 
-			transform.PropertyChanged += this.OnTransformPropertyChanged;
 			this.ReadTransform();
 		}
 
@@ -86,6 +84,8 @@ namespace Anamnesis.PoseModule
 
 				if (this.parent != null)
 				{
+					this.parent.Children.Add(this);
+
 					this.lineToParent = new Line();
 
 					System.Windows.Media.Color c = default;
@@ -204,23 +204,6 @@ namespace Anamnesis.PoseModule
 						childBone.WriteTransform(root);
 					}
 				}
-			}
-		}
-
-		private void OnTransformPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			try
-			{
-				if (Application.Current == null)
-					return;
-
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					this.ReadTransform();
-				});
-			}
-			catch (TaskCanceledException)
-			{
 			}
 		}
 	}
