@@ -41,6 +41,8 @@ namespace Anamnesis.Services
 		{
 			await base.Initialize();
 
+			AutomaticRefreshEnabled = true;
+
 			TargetService.ActorSelected += this.OnActorSelected;
 			this.OnActorSelected(TargetService.SelectedActor);
 
