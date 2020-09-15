@@ -174,6 +174,9 @@ namespace Anamnesis.GUI.Windows
 		private void OnQuitClick(object sender, RoutedEventArgs e)
 		{
 			this.window?.Close();
+
+			Process p = Process.GetCurrentProcess();
+			p.Kill(true);
 		}
 
 		private void OnOkClick(object sender, RoutedEventArgs e)
