@@ -63,8 +63,8 @@ namespace Anamnesis.AppearanceModule.Pages
 
 		private async void ApplyNpc(INpcBase npc)
 		{
-			AppearanceFile apFile = npc.ToFile();
-			await apFile.Apply(this.Actor, AppearanceFile.SaveModes.All);
+			CharacterFile apFile = npc.ToFile();
+			await apFile.Apply(this.Actor, CharacterFile.SaveModes.All);
 		}
 
 		private async Task Load()
@@ -73,7 +73,7 @@ namespace Anamnesis.AppearanceModule.Pages
 				LegacyEquipmentSetFile.FileType,
 				LegacyAppearanceFile.AllFileType,
 				DatAppearanceFile.FileType,
-				AppearanceFile.FileType);
+				CharacterFile.FileType);
 
 			bool advanced = file?.UseAdvancedLoad ?? false;
 
@@ -86,15 +86,15 @@ namespace Anamnesis.AppearanceModule.Pages
 			if (file is DatAppearanceFile datFile)
 				file = datFile.Upgrade();
 
-			if (file is AppearanceFile apFile)
+			if (file is CharacterFile apFile)
 			{
-				AppearanceFile.SaveModes mode = AppearanceFile.SaveModes.All;
+				CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
 
 				if (advanced)
 				{
-					mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Load Appearance...");
+					mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Load Appearance...");
 
-					if (mode == AppearanceFile.SaveModes.None)
+					if (mode == CharacterFile.SaveModes.None)
 					{
 						return;
 					}
@@ -109,21 +109,21 @@ namespace Anamnesis.AppearanceModule.Pages
 			await FileService.Save(
 				async (advancedMode) =>
 				{
-					AppearanceFile.SaveModes mode = AppearanceFile.SaveModes.All;
+					CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
 
 					if (advancedMode)
-						mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, AppearanceFile.SaveModes>("Save Appearance...");
+						mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Appearance...");
 
-					AppearanceFile file = new AppearanceFile();
+					CharacterFile file = new CharacterFile();
 
-					if (mode == AppearanceFile.SaveModes.None)
+					if (mode == CharacterFile.SaveModes.None)
 						return null;
 
 					file.Read(this.Actor, mode);
 
 					return file;
 				},
-				AppearanceFile.FileType);
+				CharacterFile.FileType);
 		}
 
 		private void OnActorChanged(ActorViewModel actor)

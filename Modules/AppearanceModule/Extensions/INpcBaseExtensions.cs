@@ -9,10 +9,10 @@ namespace Anamnesis.AppearanceModule
 
 	public static class INpcBaseExtensions
 	{
-		public static AppearanceFile ToFile(this INpcBase npc)
+		public static CharacterFile ToFile(this INpcBase npc)
 		{
-			AppearanceFile file = new AppearanceFile();
-			file.SaveMode = AppearanceFile.SaveModes.All;
+			CharacterFile file = new CharacterFile();
+			file.SaveMode = CharacterFile.SaveModes.All;
 			file.ModelType = npc.ModelType;
 			file.Race = npc.Race.Race;
 			file.Tribe = npc.Tribe.Tribe;
@@ -58,9 +58,9 @@ namespace Anamnesis.AppearanceModule
 			return file;
 		}
 
-		private static AppearanceFile.WeaponSave WeaponFromItem(IItem item, IDye dye)
+		private static CharacterFile.WeaponSave WeaponFromItem(IItem item, IDye dye)
 		{
-			AppearanceFile.WeaponSave save = new AppearanceFile.WeaponSave();
+			CharacterFile.WeaponSave save = new CharacterFile.WeaponSave();
 
 			save.Color = Color.White;
 			save.Scale = Vector.One;
@@ -74,9 +74,9 @@ namespace Anamnesis.AppearanceModule
 			return save;
 		}
 
-		private static AppearanceFile.ItemSave GearFromItem(IItem item, IDye dye)
+		private static CharacterFile.ItemSave GearFromItem(IItem item, IDye dye)
 		{
-			AppearanceFile.ItemSave save = new AppearanceFile.ItemSave();
+			CharacterFile.ItemSave save = new CharacterFile.ItemSave();
 
 			save.ModelBase = item.ModelBase;
 			save.ModelVariant = (byte)item.ModelVariant;

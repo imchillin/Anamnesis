@@ -46,9 +46,9 @@ namespace Anamnesis.AppearanceModule.Files
 			throw new NotSupportedException();
 		}
 
-		public AppearanceFile Upgrade()
+		public CharacterFile Upgrade()
 		{
-			AppearanceFile file = new AppearanceFile();
+			CharacterFile file = new CharacterFile();
 			file.Race = (Appearance.Races)this.data[0];
 			file.Gender = (Appearance.Genders)this.data[1];
 			file.Age = (Appearance.Ages)this.data[2];

@@ -19,7 +19,7 @@ namespace Anamnesis.AppearanceModule.Files
 
 		public new FileBase Upgrade()
 		{
-			AppearanceFile allFile = base.Upgrade();
+			CharacterFile allFile = base.Upgrade();
 
 			byte[] data = this.StringtoBytes(this.CharacterBytes);
 

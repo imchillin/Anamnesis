@@ -10,9 +10,9 @@ namespace Anamnesis.AppearanceModule.Files
 	using Anamnesis.Services;
 
 	[Serializable]
-	public class AppearanceFile : FileBase
+	public class CharacterFile : FileBase
 	{
-		public static readonly FileType FileType = new FileType("cm3a", "Appearance", typeof(AppearanceFile), true, "Appearance");
+		public static readonly FileType FileType = new FileType("char", "Anamnesis Character File", typeof(CharacterFile), true, "Characters");
 
 		[Flags]
 		public enum SaveModes
