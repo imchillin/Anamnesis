@@ -68,6 +68,7 @@ namespace Anamnesis.Services
 			await Add<ActorRefreshService>();
 			await Add<TerritoryService>();
 			await Add<TimeService>();
+			await Add<CameraService>();
 			await Add<ModuleService>();
 
 			IsInitialized = true;

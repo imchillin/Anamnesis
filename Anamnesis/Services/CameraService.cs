@@ -8,11 +8,12 @@ namespace Anamnesis
 	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows.Media.Media3D;
+	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
 
 	using MediaQuaternion = System.Windows.Media.Media3D.Quaternion;
 
-	public class CameraService : IService
+	public class CameraService : ServiceBase<CameraService>
 	{
 		public static MediaQuaternion Rotation;
 
@@ -27,29 +28,36 @@ namespace Anamnesis
 		public float CameraMaxZoom { get; private set; }
 		public float CameraFov { get; set; }
 
-		public Task Initialize()
+		public override async Task Start()
 		{
-			////IMarshaler<Vector2D> camXY = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraAngle);
-			////IMarshaler<float> camZ = MemoryService.GetMarshaler(Offsets.Main.CameraAddress, Offsets.Main.CameraRotation);
-			return Task.CompletedTask;
+			await base.Start();
+			_ = Task.Run(this.WatchCameraThread);
 		}
 
-		public Task Shutdown()
+		private async Task WatchCameraThread()
 		{
-			return Task.CompletedTask;
-		}
+			while (this.IsAlive)
+			{
+				IntPtr ptr = MemoryService.ReadPtr(AddressService.Camera);
+				this.CameraAngle = MemoryService.Read<Vector2D>(ptr + 0x130);
+				this.CameraPan = MemoryService.Read<Vector2D>(ptr + 0x150);
+				this.CameraRotaton = MemoryService.Read<float>(ptr + 0x160);
+				this.CameraZoom = MemoryService.Read<float>(ptr + 0x114);
+				this.CameraMinZoom = MemoryService.Read<float>(ptr + 0x118);
+				this.CameraMaxZoom = MemoryService.Read<float>(ptr + 0x11C);
+				this.CameraFov = MemoryService.Read<float>(ptr + 0x12C);
 
-		public Task Start()
-		{
-			return Task.CompletedTask;
-		}
+				IntPtr gposePtr = MemoryService.ReadPtr(AddressService.GPose);
+				this.CameraPosition = MemoryService.Read<Vector>(gposePtr + 0xA0);
 
-		/*private void Update()
-		{
-			camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camXY.Value.X) - 180;
-			camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camXY.Value.Y);
-			camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
-			Quaternion q = camEuler.ToQuaternion();
-		}*/
+				/*camEuler.Y = (float)MathUtils.RadiansToDegrees((double)camXY.Value.X) - 180;
+				camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)camXY.Value.Y);
+				camEuler.X = (float)MathUtils.RadiansToDegrees((double)camZ.Value);
+				Rotation = camEuler.ToQuaternion();*/
+
+				// maximum 60 times a second
+				await Task.Delay(16);
+			}
+		}
 	}
 }
