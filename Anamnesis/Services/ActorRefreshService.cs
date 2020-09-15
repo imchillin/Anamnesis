@@ -5,6 +5,7 @@ namespace Anamnesis.Services
 {
 	using System;
 	using System.ComponentModel;
+	using System.Runtime.CompilerServices;
 	using System.Threading.Tasks;
 	using Anamnesis;
 	using Anamnesis.Memory;
@@ -12,7 +13,6 @@ namespace Anamnesis.Services
 	public class ActorRefreshService : ServiceBase<ActorRefreshService>
 	{
 		private ActorViewModel? actor;
-		private int refreshCountdown;
 
 		public static bool IsRefreshing
 		{
@@ -24,6 +24,17 @@ namespace Anamnesis.Services
 		{
 			get;
 			private set;
+		}
+
+		public static bool AutomaticRefreshEnabled
+		{
+			get;
+			set;
+		}
+
+		public static void Refresh()
+		{
+			AwaitingRefresh = true;
 		}
 
 		public override async Task Initialize()
@@ -58,6 +69,9 @@ namespace Anamnesis.Services
 
 		private void OnSelectedActorChanged(object sender)
 		{
+			if (!AutomaticRefreshEnabled)
+				return;
+
 			AwaitingRefresh = true;
 		}
 
@@ -70,25 +84,17 @@ namespace Anamnesis.Services
 				if (AwaitingRefresh)
 				{
 					AwaitingRefresh = false;
-					await this.Refresh();
+					await this.DoRefresh();
 				}
 			}
 		}
 
-		private async Task Refresh()
+		private async Task DoRefresh()
 		{
 			if (this.actor == null || this.actor.Pointer == null)
 				return;
 
 			IntPtr actorPointer = (IntPtr)this.actor.Pointer;
-
-			while (this.refreshCountdown > 0)
-			{
-				await Task.Delay(10);
-				this.refreshCountdown -= 10;
-			}
-
-			this.refreshCountdown = 0;
 
 			// if the target actor changed while this refresh was pending, abort.
 			if (actorPointer != (IntPtr)this.actor.Pointer)
