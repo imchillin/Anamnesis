@@ -40,14 +40,16 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
+			
+
 			<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3"
-				IsEnabled="{Binding SkeletonViewModel.CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
-				<controls:BoneEditor Value="{Binding SkeletonViewModel.CurrentBone}"/>
+				IsEnabled="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
+				<controls:BoneEditor Value="{Binding Skeleton.CurrentBone}"/>
 			</Border>
 
 			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 3, 0, 0" x:Name="LoadSaveArea" 
 					IsEnabled="{Binding CanPose}">
-				<Grid Margin="6" IsEnabled="{Binding SkeletonViewModel.CanPose}">
+				<Grid Margin="6" IsEnabled="{Binding Skeleton.CanPose}">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition/>
@@ -84,10 +86,10 @@
 						<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1">
 							<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
-						<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 1, 1">
+						<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 0, 1">
 							<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
-						<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 0, 1">
+						<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1">
 							<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</ListBoxItem>
 					</ListBox>
@@ -110,7 +112,7 @@
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
 			<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}" IsEnabled="{Binding PoseService.IsEnabled}">
 
-				<Grid DataContext="{Binding SkeletonViewModel}">
+				<Grid DataContext="{Binding Skeleton}">
 					<StackPanel Height="35" Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 						<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
 						<cm3Controls:TextBlock Key="Pose_WarningNotFrozen" Text="Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>

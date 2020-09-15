@@ -50,10 +50,7 @@ namespace Anamnesis.PoseModule.Views
 			if (vm == null)
 				return;
 
-			foreach (BoneVisual3d visual in vm.RootBones)
-			{
-				this.Viewport.Children.Remove(visual);
-			}
+			this.Viewport.Children.Remove(vm);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -65,21 +62,16 @@ namespace Anamnesis.PoseModule.Views
 
 			this.Viewport.Children.Clear();
 
-			foreach (BoneVisual3d visual in vm.RootBones)
-			{
-				if (this.Viewport.Children.Contains(visual))
-					return;
-
-				this.Viewport.Children.Add(visual);
-			}
+			if (!this.Viewport.Children.Contains(vm))
+				this.Viewport.Children.Add(vm);
 
 			// position camera at average center position of skeleton
 			if (vm.Bones.Count > 0)
 			{
-				Vector3D pos = vm.Bones[0].LiveTransform.Position.ToMedia3DVector();
+				Vector3D pos = vm.Bones[0].ViewModel.Position.ToMedia3DVector();
 				foreach (BoneVisual3d visual in vm.Bones)
 				{
-					pos += visual.LiveTransform.Position.ToMedia3DVector();
+					pos += visual.ViewModel.Position.ToMedia3DVector();
 				}
 
 				pos /= vm.Bones.Count;

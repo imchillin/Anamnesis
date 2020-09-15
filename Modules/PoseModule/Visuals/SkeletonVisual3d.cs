@@ -7,12 +7,19 @@ namespace Anamnesis.PoseModule
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Text;
+	using System.Threading.Tasks;
+	using System.Windows;
+	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
 	using PropertyChanged;
 
+	using AnQuaternion = Anamnesis.Memory.Quaternion;
+
 	[AddINotifyPropertyChangedInterface]
-	public class SkeletonVisual3d : INotifyPropertyChanged
+	public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	{
+		private BoneVisual3d currentBone;
+
 		public SkeletonVisual3d(ActorViewModel actor)
 		{
 			this.Actor = actor;
@@ -24,9 +31,20 @@ namespace Anamnesis.PoseModule
 
 		public ActorViewModel Actor { get; private set; }
 		public BoneVisual3d MouseOverBone { get; set; }
-		public BoneVisual3d CurrentBone { get; set; }
 
-		public List<BoneVisual3d> RootBones { get; } = new List<BoneVisual3d>();
+		public BoneVisual3d CurrentBone
+		{
+			get
+			{
+				return this.currentBone;
+			}
+			set
+			{
+				this.currentBone = value;
+				Task.Run(this.WriteSkeletonThread);
+			}
+		}
+
 		public List<BoneVisual3d> Bones { get; private set; }
 
 		public bool HasTail => this.Actor?.Customize?.Race == Appearance.Races.Miqote
@@ -41,11 +59,11 @@ namespace Anamnesis.PoseModule
 		public bool IsHrothgar => this.Actor?.Customize?.Race == Appearance.Races.Hrothgar;
 		public bool HasTailOrEars => this.IsViera || this.HasTail;
 
-		public Quaternion RootRotation
+		public AnQuaternion RootRotation
 		{
 			get
 			{
-				return this.Actor?.Model?.Transform?.Rotation ?? Quaternion.Identity;
+				return this.Actor?.Model?.Transform?.Rotation ?? AnQuaternion.Identity;
 			}
 		}
 
@@ -141,7 +159,7 @@ namespace Anamnesis.PoseModule
 					int parent = SkeletonUtility.PlayerBodyParents[i];
 					if (parent == -1)
 					{
-						this.RootBones.Add(bodyBones[i]);
+						this.Children.Add(bodyBones[i]);
 					}
 					else
 					{
@@ -156,7 +174,7 @@ namespace Anamnesis.PoseModule
 				{
 					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
 					this.Bones.Add(bone);
-					this.RootBones.Add(bone);
+					this.Children.Add(bone);
 				}
 			}
 
@@ -166,7 +184,7 @@ namespace Anamnesis.PoseModule
 				{
 					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
 					this.Bones.Add(bone);
-					this.RootBones.Add(bone);
+					this.Children.Add(bone);
 				}
 			}
 
@@ -176,7 +194,7 @@ namespace Anamnesis.PoseModule
 				{
 					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
 					this.Bones.Add(bone);
-					this.RootBones.Add(bone);
+					this.Children.Add(bone);
 				}
 			}
 
@@ -186,8 +204,22 @@ namespace Anamnesis.PoseModule
 				{
 					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
 					this.Bones.Add(bone);
-					this.RootBones.Add(bone);
+					this.Children.Add(bone);
 				}
+			}
+		}
+
+		private async Task WriteSkeletonThread()
+		{
+			while (Application.Current != null && this.CurrentBone != null)
+			{
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					this.CurrentBone.WriteTransform(this);
+				});
+
+				// up to 60 times a second
+				await Task.Delay(16);
 			}
 		}
 	}

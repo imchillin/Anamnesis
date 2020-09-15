@@ -3,13 +3,7 @@
 
 namespace Anamnesis.PoseModule
 {
-	using System;
-	using System.ComponentModel;
-	using System.Threading.Tasks;
-	using System.Windows;
-	using System.Windows.Controls;
 	using System.Windows.Media;
-	using System.Windows.Media.Animation;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Extensions;
@@ -65,12 +59,6 @@ namespace Anamnesis.PoseModule
 		public CmVector Scale { get; set; }
 		public CmVector Position { get; set; }
 
-		public CmTransform LiveTransform
-		{
-			get => (CmTransform)this.ViewModel.GetModel();
-			set => this.ViewModel.SetModel(value);
-		}
-
 		public BoneVisual3d Parent
 		{
 			get
@@ -110,7 +98,7 @@ namespace Anamnesis.PoseModule
 				if (this.Parent == null)
 					return rot;
 
-				return rot * this.Parent.LiveTransform.Rotation;
+				return rot * this.Parent.ViewModel.Rotation;
 			}
 		}
 
@@ -119,9 +107,9 @@ namespace Anamnesis.PoseModule
 			if (!this.IsEnabled)
 				return;
 
-			this.Position = this.LiveTransform.Position;
-			this.Rotation = this.LiveTransform.Rotation;
-			this.Scale = this.LiveTransform.Scale;
+			this.Position = this.ViewModel.Position;
+			this.Rotation = this.ViewModel.Rotation;
+			this.Scale = this.ViewModel.Scale;
 
 			// Convert the character-relative transform into a parent-relative transform
 			Point3D position = this.Position.ToMedia3DPoint();
@@ -129,7 +117,7 @@ namespace Anamnesis.PoseModule
 
 			if (this.Parent != null)
 			{
-				CmTransform parentTransform = this.Parent.LiveTransform;
+				TransformViewModel parentTransform = this.Parent.ViewModel;
 				Point3D parentPosition = parentTransform.Position.ToMedia3DPoint();
 				Quaternion parentRot = parentTransform.Rotation.ToMedia3DQuaternion();
 				parentRot.Invert();
@@ -189,11 +177,9 @@ namespace Anamnesis.PoseModule
 			position.Z = (float)transform.Matrix.OffsetZ;
 
 			// and push those values to the game memory
-			CmTransform live = this.LiveTransform;
-			live.Position = position;
-			live.Scale = this.Scale;
-			live.Rotation = rotation.ToCmQuaternion();
-			this.LiveTransform = live;
+			this.ViewModel.Position = position;
+			this.ViewModel.Scale = this.Scale;
+			this.ViewModel.Rotation = rotation.ToCmQuaternion();
 
 			if (writeChildren)
 			{

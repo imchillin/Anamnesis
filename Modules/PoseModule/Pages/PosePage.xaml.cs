@@ -40,6 +40,16 @@ namespace Anamnesis.PoseModule.Pages
 			{
 				this.View3dButton.ToolTip = "Spoopy Skeletons";
 			}
+
+			PoseService.EnabledChanged += this.OnPoseServiceEnabledChanged;
+		}
+
+		private void OnPoseServiceEnabledChanged(bool value)
+		{
+			Application.Current?.Dispatcher.Invoke(() =>
+			{
+				this.Skeleton?.ReadTranforms();
+			});
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -57,8 +67,6 @@ namespace Anamnesis.PoseModule.Pages
 			this.ThreeDView.DataContext = this.Skeleton;
 			this.GuiView.DataContext = this.Skeleton;
 			this.MatrixView.DataContext = this.Skeleton;
-
-			Task.Run(this.ReadTransformsThread);
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -141,19 +149,6 @@ namespace Anamnesis.PoseModule.Pages
 			this.GuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Collapsed;
 			this.MatrixView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Collapsed;
 			this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
-		}
-
-		private async Task ReadTransformsThread()
-		{
-			while (Application.Current != null && this.Skeleton != null)
-			{
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					this.Skeleton.ReadTranforms();
-				});
-
-				await Task.Delay(32);
-			}
 		}
 	}
 }
