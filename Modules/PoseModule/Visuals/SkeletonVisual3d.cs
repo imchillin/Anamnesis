@@ -51,21 +51,37 @@ namespace Anamnesis.PoseModule
 
 		public bool GetIsBoneHovered(BoneVisual3d bone)
 		{
-			return false;
+			return bone == this.MouseOverBone;
 		}
 
 		public bool GetIsBoneSelected(BoneVisual3d bone)
 		{
-			return false;
+			return bone == this.CurrentBone;
 		}
 
 		public bool GetIsBoneParentsSelected(BoneVisual3d bone)
 		{
+			while (bone != null)
+			{
+				if (bone == this.CurrentBone)
+					return true;
+
+				bone = bone.Parent;
+			}
+
 			return false;
 		}
 
 		public bool GetIsBoneParentsHovered(BoneVisual3d bone)
 		{
+			while (bone != null)
+			{
+				if (bone == this.MouseOverBone)
+					return true;
+
+				bone = bone.Parent;
+			}
+
 			return false;
 		}
 

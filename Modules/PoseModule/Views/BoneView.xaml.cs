@@ -70,10 +70,15 @@ namespace Anamnesis.PoseModule.Views
 
 			try
 			{
+				if (this.skeleton != null)
+					this.skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+
 				if (this.DataContext is SkeletonVisual3d viewModel)
 				{
 					this.skeleton = viewModel;
 					this.SetBone(this.BoneName);
+
+					this.skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 				}
 				else
 				{
@@ -86,6 +91,11 @@ namespace Anamnesis.PoseModule.Views
 				this.ToolTip = ex.Message;
 				Log.Write(ex, "BoneView");
 			}
+		}
+
+		private void OnSkeletonPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			this.UpdateState();
 		}
 
 		private void DrawSkeleton()
