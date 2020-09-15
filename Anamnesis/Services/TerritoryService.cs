@@ -38,11 +38,7 @@ namespace Anamnesis
 				await Task.Delay(10);
 
 				// Update territory
-				IntPtr territoryAddress = MemoryService.ReadPtr(AddressService.Territory);
-				territoryAddress = MemoryService.ReadPtr(territoryAddress);
-				territoryAddress += 0x13D8;
-
-				int newTerritoryId = MemoryService.Read<int>(territoryAddress);
+				int newTerritoryId = MemoryService.Read<int>(AddressService.Territory);
 
 				if (newTerritoryId != this.CurrentTerritoryId)
 				{
@@ -60,9 +56,7 @@ namespace Anamnesis
 				}
 
 				// Update weather
-				IntPtr weatherAddress = MemoryService.ReadPtr(AddressService.Weather);
-				weatherAddress += 0x20;
-				ushort weatherId = MemoryService.Read<ushort>(weatherAddress);
+				ushort weatherId = MemoryService.Read<ushort>(AddressService.Weather);
 
 				if (weatherId != this.CurrentWeatherId)
 				{
@@ -87,14 +81,11 @@ namespace Anamnesis
 		{
 			if (e.PropertyName == nameof(TerritoryService.CurrentWeatherId))
 			{
-				IntPtr weatherAddress = MemoryService.ReadPtr(AddressService.Weather);
-				weatherAddress += 0x20;
-
-				ushort current = MemoryService.Read<ushort>(weatherAddress);
+				ushort current = MemoryService.Read<ushort>(AddressService.Weather);
 
 				if (current != this.CurrentWeatherId)
 				{
-					MemoryService.Write<ushort>(weatherAddress, this.CurrentWeatherId);
+					MemoryService.Write<ushort>(AddressService.Weather, this.CurrentWeatherId);
 				}
 			}
 			else if (e.PropertyName == nameof(TerritoryService.CurrentWeather))

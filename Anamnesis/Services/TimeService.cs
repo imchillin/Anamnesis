@@ -79,18 +79,15 @@ namespace Anamnesis
 			{
 				await Task.Delay(10);
 
-				IntPtr timeAddress = MemoryService.ReadPtr(AddressService.Time);
-				timeAddress += 0x88;
-
-				if (timeAddress == IntPtr.Zero)
+				if (AddressService.Time == IntPtr.Zero)
 					continue;
 
-				int currentTime = MemoryService.Read<int>(timeAddress);
+				int currentTime = MemoryService.Read<int>(AddressService.Time);
 
 				if (currentTime == this.Time)
 					continue;
 
-				MemoryService.Write(timeAddress, this.Time);
+				MemoryService.Write(AddressService.Time, this.Time);
 			}
 		}
 

@@ -12,19 +12,18 @@ namespace Anamnesis.Core.Memory
 	using Anamnesis.Memory;
 	using SimpleLog;
 
+#pragma warning disable SA1027, SA1025
 	public class AddressService : IService
 	{
 		protected static readonly Logger Log = SimpleLog.Log.GetLogger<AddressService>();
+		private static IntPtr weather;
+		private static IntPtr territory;
+		private static IntPtr time;
 
 		// Static offsets
 		public static IntPtr ActorTable { get; private set; }
 		public static IntPtr TargetManager { get; private set; }
-		public static IntPtr Territory { get; private set; }
-		public static IntPtr Weather { get; private set; }
-		public static IntPtr Time { get; private set; }
 		public static IntPtr Camera { get; private set; }
-
-		#pragma warning disable SA1027, SA1025
 		public static IntPtr SkeletonFreezeRotation { get; private set; }   // SkeletonOffset
 		public static IntPtr SkeletonFreezeRotation2 { get; private set; }  // SkeletonOffset2
 		public static IntPtr SkeletonFreezeRotation3 { get; private set; }  // SkeletonOffset3
@@ -32,9 +31,52 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr SkeletonFreezePosition { get; private set; }   // SkeletonOffset5
 		public static IntPtr SkeletonFreezeScale2 { get; private set; }     // SkeletonOffset6
 		public static IntPtr SkeletonFreezePosition2 { get; private set; }  // SkeletonOffset7
-		public static IntPtr SkeletonFreezePhysics { get; private set; }	// PhysicsOffset
-		public static IntPtr SkeletonFreezePhysics2 { get; private set; }	// PhysicsOffset2
-		public static IntPtr SkeletonFreezePhysics3 { get; private set; }	// PhysicsOffset3
+		public static IntPtr SkeletonFreezePhysics { get; private set; }    // PhysicsOffset
+		public static IntPtr SkeletonFreezePhysics2 { get; private set; }   // PhysicsOffset2
+		public static IntPtr SkeletonFreezePhysics3 { get; private set; }   // PhysicsOffset3
+
+		public static IntPtr Time
+		{
+			get
+			{
+				IntPtr address = MemoryService.ReadPtr(time);
+				address += 0x88;
+				return address;
+			}
+			set
+			{
+				time = value;
+			}
+		}
+
+		public static IntPtr Territory
+		{
+			get
+			{
+				IntPtr address = MemoryService.ReadPtr(territory);
+				address = MemoryService.ReadPtr(address);
+				address += 0x13D8;
+				return address;
+			}
+			private set
+			{
+				territory = value;
+			}
+		}
+
+		public static IntPtr Weather
+		{
+			get
+			{
+				IntPtr address = MemoryService.ReadPtr(weather);
+				address += 0x20;
+				return address;
+			}
+			private set
+			{
+				weather = value;
+			}
+		}
 
 		public async Task Initialize()
 		{
