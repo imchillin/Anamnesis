@@ -176,7 +176,7 @@ namespace Anamnesis.GUI.Windows
 			this.window?.Close();
 
 			Process p = Process.GetCurrentProcess();
-			p.Kill(true);
+			p.Kill();
 		}
 
 		private void OnOkClick(object sender, RoutedEventArgs e)
