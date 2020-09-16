@@ -26,6 +26,7 @@ namespace Anamnesis.GUI.Views
 
 		public TerritoryService TerritoryService { get => TerritoryService.Instance; }
 		public TimeService TimeService { get => TimeService.Instance; }
+		public CameraService CameraService { get => CameraService.Instance; }
 
 		public ActorViewModel? Target { get; set; }
 

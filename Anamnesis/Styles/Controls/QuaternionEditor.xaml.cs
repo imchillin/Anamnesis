@@ -283,7 +283,11 @@ namespace Anamnesis.WpfStyles.Controls
 					Application.Current.Dispatcher.Invoke(() =>
 					{
 						vis = this.IsVisible; ////&& this.IsEnabled;
-						this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(CameraService.Rotation));
+
+						if (CameraService.Instance.Camera != null)
+						{
+							this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(CameraService.Instance.Camera.Rotation3d));
+						}
 					});
 				}
 				catch (Exception)
