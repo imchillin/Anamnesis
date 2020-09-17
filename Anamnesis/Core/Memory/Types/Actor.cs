@@ -6,6 +6,8 @@ namespace Anamnesis.Memory
 	using System;
 	using System.Reflection;
 	using System.Runtime.InteropServices;
+	using System.Threading.Tasks;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	public enum RenderModes : int
@@ -63,5 +65,14 @@ namespace Anamnesis.Memory
 		[ModelField] public WeaponViewModel? OffHand { get; set; }
 
 		[ModelField] public ModelViewModel? Model { get; set; }
+
+		protected override void OnViewToModel(string fieldName, object? value)
+		{
+			// Do not allow actor view model changes to push into memory while we are refreshing.
+			if (ActorRefreshService.Instance.IsRefreshing)
+				return;
+
+			base.OnViewToModel(fieldName, value);
+		}
 	}
 }
