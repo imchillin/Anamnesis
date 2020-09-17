@@ -47,18 +47,27 @@ namespace Anamnesis.Memory
 
 			if (viewModelProperty.Name == nameof(BonesViewModel.TransformArray) && this.TransformArray != IntPtr.Zero)
 			{
-				// safety cap at 512 bones
-				int count = Math.Min(this.Count, 512);
+				// If we think there are more than 512 bones its likely that
+				// this is actually an invalid pointer that we got from memory.
+				if (this.Count > 512)
+					return changed;
 
-				if (this.Transforms.Count != count)
+				if (this.Count <= 0)
 				{
 					this.Transforms.Clear();
-
-					IntPtr ptr = this.TransformArray;
-					for (int i = 0; i < count; i++)
+				}
+				else
+				{
+					if (this.Transforms.Count != this.Count)
 					{
-						this.Transforms.Add(new TransformViewModel(ptr));
-						ptr += 0x30;
+						this.Transforms.Clear();
+
+						IntPtr ptr = this.TransformArray;
+						for (int i = 0; i < this.Count; i++)
+						{
+							this.Transforms.Add(new TransformViewModel(ptr));
+							ptr += 0x30;
+						}
 					}
 				}
 			}
