@@ -109,6 +109,9 @@ namespace Anamnesis.PoseModule
 			if (this.Actor?.Model?.Skeleton?.Skeleton?.Body == null)
 				return null;
 
+			if (this.Actor.ModelType != 0)
+				return null;
+
 			TransformViewModel transform = this.Actor.Model.Skeleton.Skeleton.GetBone(name);
 
 			if (transform == null)
