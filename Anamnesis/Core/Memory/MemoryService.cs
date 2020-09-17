@@ -12,6 +12,7 @@ namespace Anamnesis.Memory
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Windows;
+	using Anamnesis.Services;
 	using SimpleLog;
 
 	using SysProcess = System.Diagnostics.Process;
@@ -133,13 +134,21 @@ namespace Anamnesis.Memory
 			// Apply only memory that is allowed by the mask.
 			// this prevents writing memory for values that we dont have in our structs.
 			bool[] mask = GetMask<T>();
+			int diff = 0;
 			for (int i = 0; i < size; i++)
 			{
-				if (mask[i])
+				if (mask[i] && oldBuffer[i] != newbuffer[i])
 				{
 					oldBuffer[i] = newbuffer[i];
+					diff++;
 				}
 			}
+
+			// Last chance safety on the most likely cause of game crashes.
+			if (ActorRefreshService.Instance.IsRefreshing && value is Actor)
+				throw new Exception("Attempt to write actor memory while actor is refreshing");
+
+			Log.Write("Writing: " + diff + " bytes, " + value.GetType().Name + " to " + address);
 
 			// Write the oldBuffer (which has now had newBuffer merged over it) to the process
 			WriteProcessMemory(Handle, address, oldBuffer, size, out _);
@@ -428,6 +437,11 @@ namespace Anamnesis.Memory
 							}
 
 							viewModel.Tick();
+						}
+
+						if (weakRefs.Count > 10000)
+						{
+							Log.Write(Severity.Warning, weakRefs.Count + " memory view models registered");
 						}
 					}
 
