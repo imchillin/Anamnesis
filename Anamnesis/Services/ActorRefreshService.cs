@@ -9,24 +9,29 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis;
 	using Anamnesis.Memory;
+	using PropertyChanged;
 
+	[AddINotifyPropertyChangedInterface]
 	public class ActorRefreshService : ServiceBase<ActorRefreshService>
 	{
+		private const int AutomaticRefreshDelay = 50;
+
 		private ActorViewModel? actor;
+		private int currentRefreshDelay = 0;
 
-		public static bool IsRefreshing
+		public bool IsRefreshing
 		{
 			get;
 			private set;
 		}
 
-		public static bool AwaitingRefresh
+		public bool AutomaticRefreshEnabled
 		{
 			get;
-			private set;
+			set;
 		}
 
-		public static bool AutomaticRefreshEnabled
+		public bool PendingRefresh
 		{
 			get;
 			set;
@@ -34,14 +39,15 @@ namespace Anamnesis.Services
 
 		public static void Refresh()
 		{
-			AwaitingRefresh = true;
+			Instance.currentRefreshDelay = 1;
+			Instance.PendingRefresh = true;
 		}
 
 		public override async Task Initialize()
 		{
 			await base.Initialize();
 
-			AutomaticRefreshEnabled = true;
+			this.AutomaticRefreshEnabled = true;
 
 			TargetService.ActorSelected += this.OnActorSelected;
 			this.OnActorSelected(TargetService.SelectedActor);
@@ -53,7 +59,7 @@ namespace Anamnesis.Services
 		{
 			await base.Shutdown();
 			this.OnActorSelected(null);
-			IsRefreshing = false;
+			this.IsRefreshing = false;
 		}
 
 		private void OnActorSelected(ActorViewModel? actor)
@@ -71,22 +77,27 @@ namespace Anamnesis.Services
 
 		private void OnSelectedActorChanged(object sender)
 		{
-			if (!AutomaticRefreshEnabled)
+			if (!this.AutomaticRefreshEnabled)
 				return;
 
-			AwaitingRefresh = true;
+			this.currentRefreshDelay = 250;
+			Instance.PendingRefresh = true;
 		}
 
 		private async Task RefreshTask()
 		{
 			while (this.IsAlive)
 			{
-				await Task.Delay(10);
-
-				if (AwaitingRefresh)
+				if (this.currentRefreshDelay > 0)
 				{
-					AwaitingRefresh = false;
-					await this.DoRefresh();
+					await Task.Delay(10);
+					this.currentRefreshDelay -= 10;
+
+					if (this.currentRefreshDelay <= 0)
+					{
+						Instance.PendingRefresh = false;
+						await this.DoRefresh();
+					}
 				}
 			}
 		}
@@ -102,7 +113,7 @@ namespace Anamnesis.Services
 			if (actorPointer != (IntPtr)this.actor.Pointer)
 				return;
 
-			IsRefreshing = true;
+			this.IsRefreshing = true;
 			////this.actor.Enabled = false;
 
 			MemoryService.EnableMemoryViewModelTick = false;
@@ -137,7 +148,7 @@ namespace Anamnesis.Services
 			await Task.Delay(50);
 
 			Log.Write("Refresh Complete", "Actor Refresh");
-			IsRefreshing = false;
+			this.IsRefreshing = false;
 			////this.actor.Enabled = true;
 		}
 	}

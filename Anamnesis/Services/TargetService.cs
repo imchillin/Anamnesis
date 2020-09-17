@@ -129,7 +129,7 @@ namespace Anamnesis
 				{
 					await Task.Delay(50);
 
-					while (ActorRefreshService.IsRefreshing)
+					while (ActorRefreshService.Instance.IsRefreshing)
 						await Task.Delay(250);
 
 					Modes newMode = CurrentMode;
