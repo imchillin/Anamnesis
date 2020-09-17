@@ -60,6 +60,9 @@
 						<TextBlock Text="Anamnesis" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
 						<TextBlock Text=" - " VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>
 						<TextBlock x:Name="ActorName" VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>
+						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Sync" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding ActorRefreshService.IsRefreshing, Converter={StaticResource B2V}}"/>
+						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Hourglass" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding ActorRefreshService.PendingRefresh, Converter={StaticResource B2V}}"/>
+
 					</StackPanel>
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

@@ -47,6 +47,7 @@ namespace Anamnesis.GUI
 			App.Settings.Changed += this.OnSettingsChanged;
 		}
 
+		public ActorRefreshService ActorRefreshService { get => ActorRefreshService.Instance; }
 		public bool Zodiark { get; set; }
 		public bool HasSelection { get; set; }
 
