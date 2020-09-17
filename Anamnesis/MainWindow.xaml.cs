@@ -5,6 +5,8 @@ namespace Anamnesis.GUI
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -233,6 +235,12 @@ namespace Anamnesis.GUI
 				this.ActorArea.DataContext = actor;
 				this.ActorName.Text = actor?.Name;
 				this.HasSelection = actor != null;
+
+				if (actor != null && Debugger.IsAttached)
+				{
+					Regex initialsReg = new Regex(@"(\b[a-zA-Z])[a-zA-Z]* ?");
+					this.ActorName.Text = initialsReg.Replace(actor.Name, "$1.") + " (debug)";
+				}
 			});
 		}
 
