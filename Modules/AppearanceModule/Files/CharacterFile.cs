@@ -192,7 +192,7 @@ namespace Anamnesis.AppearanceModule.Files
 		{
 			Log.Write("Reading appearance from file", "AppearanceFile");
 
-			ActorRefreshService.AutomaticRefreshEnabled = false;
+			ActorRefreshService.Instance.AutomaticRefreshEnabled = false;
 
 			actor.ModelType = this.ModelType;
 
@@ -265,7 +265,7 @@ namespace Anamnesis.AppearanceModule.Files
 
 			ActorRefreshService.Refresh();
 
-			while (ActorRefreshService.AwaitingRefresh || ActorRefreshService.IsRefreshing)
+			while (ActorRefreshService.Instance.PendingRefresh || ActorRefreshService.Instance.IsRefreshing)
 				await Task.Delay(100);
 
 			// write everything that is reset by actor refreshes
@@ -317,7 +317,7 @@ namespace Anamnesis.AppearanceModule.Files
 				actor.SetValue(Offsets.Main.UniqueFeatureScale, this.FeatureScale);
 			}*/
 
-			ActorRefreshService.AutomaticRefreshEnabled = true;
+			ActorRefreshService.Instance.AutomaticRefreshEnabled = true;
 		}
 
 		private bool IncludeSection(SaveModes section, SaveModes mode)
