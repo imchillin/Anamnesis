@@ -28,7 +28,7 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x0084)] public int OwnerId;
 		[FieldOffset(0x008c)] public ActorTypes ObjectKind;
 		[FieldOffset(0x008D)] public byte SubKind;
-		[FieldOffset(0x00F0)] public IntPtr Model;
+		[FieldOffset(0x00F0)] public IntPtr ModelObject;
 		[FieldOffset(0x0104)] public RenderModes RenderMode;
 		[FieldOffset(0x01F0)] public int PlayerCharacterTargetActorId;
 		[FieldOffset(0x1450)] public Weapon MainHand;
@@ -64,7 +64,7 @@ namespace Anamnesis.Memory
 		[ModelField] public WeaponViewModel? MainHand { get; set; }
 		[ModelField] public WeaponViewModel? OffHand { get; set; }
 
-		[ModelField] public ModelViewModel? Model { get; set; }
+		[ModelField] public ModelViewModel? ModelObject { get; set; }
 
 		protected override void OnViewToModel(string fieldName, object? value)
 		{

@@ -18,7 +18,7 @@ namespace Anamnesis.PoseModule
 	[AddINotifyPropertyChangedInterface]
 	public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	{
-		private BoneVisual3d currentBone;
+		private BoneVisual3d? currentBone;
 
 		public SkeletonVisual3d(ActorViewModel actor)
 		{
@@ -27,12 +27,12 @@ namespace Anamnesis.PoseModule
 			this.GenerateBones();
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public ActorViewModel Actor { get; private set; }
-		public BoneVisual3d MouseOverBone { get; set; }
+		public BoneVisual3d? MouseOverBone { get; set; }
 
-		public BoneVisual3d CurrentBone
+		public BoneVisual3d? CurrentBone
 		{
 			get
 			{
@@ -45,7 +45,7 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		public List<BoneVisual3d> Bones { get; private set; }
+		public List<BoneVisual3d>? Bones { get; private set; }
 
 		public bool HasTail => this.Actor?.Customize?.Race == Appearance.Races.Miqote
 			|| this.Actor?.Customize?.Race == Appearance.Races.AuRa
@@ -63,7 +63,7 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.Actor?.Model?.Transform?.Rotation ?? AnQuaternion.Identity;
+				return this.Actor?.ModelObject?.Transform?.Rotation ?? AnQuaternion.Identity;
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace Anamnesis.PoseModule
 			return bone == this.CurrentBone;
 		}
 
-		public bool GetIsBoneParentsSelected(BoneVisual3d bone)
+		public bool GetIsBoneParentsSelected(BoneVisual3d? bone)
 		{
 			while (bone != null)
 			{
@@ -90,7 +90,7 @@ namespace Anamnesis.PoseModule
 			return false;
 		}
 
-		public bool GetIsBoneParentsHovered(BoneVisual3d bone)
+		public bool GetIsBoneParentsHovered(BoneVisual3d? bone)
 		{
 			while (bone != null)
 			{
@@ -103,18 +103,18 @@ namespace Anamnesis.PoseModule
 			return false;
 		}
 
-		public BoneVisual3d GetBone(string name)
+		public BoneVisual3d? GetBone(string name)
 		{
 			// only show actors that have a body
-			if (this.Actor?.Model?.Skeleton?.Skeleton?.Body == null)
+			if (this.Actor?.ModelObject?.Skeleton?.Skeleton?.Body == null)
 				return null;
 
 			if (this.Actor.ModelType != 0)
 				return null;
 
-			TransformViewModel transform = this.Actor.Model.Skeleton.Skeleton.GetBone(name);
+			TransformViewModel? transform = this.Actor.ModelObject.Skeleton.Skeleton.GetBone(name);
 
-			if (transform == null)
+			if (transform == null || this.Bones == null)
 				return null;
 
 			foreach (BoneVisual3d bone in this.Bones)
@@ -130,6 +130,9 @@ namespace Anamnesis.PoseModule
 
 		public void ReadTranforms()
 		{
+			if (this.Bones == null)
+				return;
+
 			foreach (BoneVisual3d bone in this.Bones)
 			{
 				bone.ReadTransform();
@@ -141,10 +144,13 @@ namespace Anamnesis.PoseModule
 			this.Bones = new List<BoneVisual3d>();
 
 			// only show actors that have a body
-			if (this.Actor?.Model?.Skeleton?.Skeleton?.Body == null)
+			if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
 				return;
 
-			SkeletonViewModel skeletonVm = this.Actor.Model.Skeleton.Skeleton;
+			SkeletonViewModel skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
+
+			if (skeletonVm.Body == null)
+				return;
 
 			// Body bones
 			List<BoneVisual3d> bodyBones = new List<BoneVisual3d>();
@@ -171,7 +177,7 @@ namespace Anamnesis.PoseModule
 
 			int headBoneIndex = SkeletonUtility.BodyBoneIndexLookup["Head"];
 
-			BoneVisual3d headRoot = null;
+			BoneVisual3d? headRoot = null;
 			if (headBoneIndex < bodyBones.Count)
 				headRoot = bodyBones[headBoneIndex];
 

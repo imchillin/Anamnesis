@@ -10,6 +10,7 @@ namespace Anamnesis.Services
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule;
 	using Anamnesis.Serialization;
 
 	public class ServiceManager
@@ -71,6 +72,7 @@ namespace Anamnesis.Services
 			await Add<TimeService>();
 			await Add<CameraService>();
 			await Add<GposeService>();
+			await Add<PoseService>();
 			await Add<ModuleService>();
 
 			IsInitialized = true;

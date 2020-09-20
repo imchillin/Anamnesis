@@ -14,21 +14,21 @@ namespace Anamnesis.PoseModule
 	[SuppressPropertyChangedWarnings]
 	public class PoseService : ServiceBase<PoseService>
 	{
-		private NopHookViewModel skel1Mem;
-		private NopHookViewModel skel2Mem;
-		private NopHookViewModel skel3Mem;
-		private NopHookViewModel skel4Mem;
-		private NopHookViewModel skel5Mem;
-		private NopHookViewModel skel6Mem;
-		private NopHookViewModel phys1Mem;
-		private NopHookViewModel phys2Mem;
-		private NopHookViewModel phys3Mem;
+		private NopHookViewModel? skel1Mem;
+		private NopHookViewModel? skel2Mem;
+		private NopHookViewModel? skel3Mem;
+		private NopHookViewModel? skel4Mem;
+		private NopHookViewModel? skel5Mem;
+		private NopHookViewModel? skel6Mem;
+		private NopHookViewModel? phys1Mem;
+		private NopHookViewModel? phys2Mem;
+		private NopHookViewModel? phys3Mem;
 
 		private bool isEnabled;
 
 		public delegate void PoseEvent(bool value);
 
-		public static event PoseEvent EnabledChanged;
+		public static event PoseEvent? EnabledChanged;
 
 		public bool IsEnabled
 		{
@@ -50,15 +50,15 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.phys1Mem.Enabled;
+				return this.phys1Mem?.Enabled ?? false;
 			}
 			set
 			{
 				this.FreezePositions = value;
 				this.FreezeScale = value;
 
-				this.phys1Mem.Enabled = value;
-				this.phys2Mem.Enabled = value;
+				this.phys1Mem?.SetEnabled(value);
+				this.phys2Mem?.SetEnabled(value);
 			}
 		}
 
@@ -66,11 +66,11 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.skel5Mem.Enabled;
+				return this.skel5Mem?.Enabled ?? false;
 			}
 			set
 			{
-				this.skel5Mem.Enabled = value;
+				this.skel5Mem?.SetEnabled(value);
 			}
 		}
 
@@ -78,13 +78,13 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.skel4Mem.Enabled;
+				return this.skel4Mem?.Enabled ?? false;
 			}
 			set
 			{
-				this.skel4Mem.Enabled = value;
-				this.phys3Mem.Enabled = value;
-				this.skel6Mem.Enabled = value;
+				this.skel4Mem?.SetEnabled(value);
+				this.phys3Mem?.SetEnabled(value);
+				this.skel6Mem?.SetEnabled(value);
 			}
 		}
 
@@ -92,13 +92,13 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.skel1Mem.Enabled;
+				return this.skel1Mem?.Enabled ?? false;
 			}
 			set
 			{
-				this.skel1Mem.Enabled = value;
-				this.skel2Mem.Enabled = value;
-				this.skel3Mem.Enabled = value;
+				this.skel1Mem?.SetEnabled(value);
+				this.skel2Mem?.SetEnabled(value);
+				this.skel3Mem?.SetEnabled(value);
 			}
 		}
 

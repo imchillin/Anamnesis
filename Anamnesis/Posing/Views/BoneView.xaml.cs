@@ -24,8 +24,8 @@ namespace Anamnesis.PoseModule.Views
 		private readonly List<Line> linesToChildren = new List<Line>();
 		private readonly List<Line> mouseLinesToChildren = new List<Line>();
 
-		private BoneVisual3d bone;
-		private SkeletonVisual3d skeleton;
+		private BoneVisual3d? bone;
+		private SkeletonVisual3d? skeleton;
 
 		public BoneView()
 		{
@@ -120,7 +120,7 @@ namespace Anamnesis.PoseModule.Views
 
 			this.linesToChildren.Clear();
 
-			BoneVisual3d bone = this.bone.Parent;
+			BoneVisual3d? bone = this.bone?.Parent;
 			if (bone != null && BoneViews.ContainsKey(bone))
 			{
 				foreach (BoneView childView in BoneViews[bone])
@@ -173,7 +173,7 @@ namespace Anamnesis.PoseModule.Views
 				}
 			}
 
-			this.bone = this.skeleton.GetBone(name);
+			this.bone = this.skeleton?.GetBone(name);
 
 			if (this.bone != null)
 			{
@@ -204,12 +204,18 @@ namespace Anamnesis.PoseModule.Views
 			if (!this.IsEnabled)
 				return;
 
+			if (this.skeleton == null)
+				return;
+
 			this.skeleton.MouseOverBone = this.bone;
 		}
 
 		private void OnMouseLeave(object sender, MouseEventArgs e)
 		{
 			if (!this.IsEnabled)
+				return;
+
+			if (this.skeleton == null)
 				return;
 
 			if (this.skeleton.MouseOverBone == this.bone)
@@ -244,7 +250,7 @@ namespace Anamnesis.PoseModule.Views
 			PaletteHelper ph = new PaletteHelper();
 			ITheme theme = ph.GetTheme();
 
-			if (!this.IsEnabled)
+			if (!this.IsEnabled || this.skeleton == null)
 			{
 				this.SetState(new SolidColorBrush(Colors.Transparent), 1);
 				this.BackgroundElipse.Opacity = 0.5;

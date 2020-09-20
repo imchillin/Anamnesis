@@ -12,8 +12,9 @@ namespace Anamnesis.Services
 	using Anamnesis.GUI.Views;
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule.Pages;
 
-	#pragma warning disable SA1649
+#pragma warning disable SA1649
 
 	public delegate void DrawerEvent();
 	public delegate void DialogEvent();
@@ -144,6 +145,7 @@ namespace Anamnesis.Services
 			await base.Initialize();
 
 			AddPage<HomeView>("Home", "Home");
+			AddPage<PosePage>("Pose", "running");
 		}
 
 		private static UserControl? CreateView<T>()

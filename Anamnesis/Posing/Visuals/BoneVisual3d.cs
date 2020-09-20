@@ -22,8 +22,8 @@ namespace Anamnesis.PoseModule
 		private readonly RotateTransform3D rotation;
 		private readonly TranslateTransform3D position;
 
-		private BoneVisual3d parent;
-		private Line lineToParent;
+		private BoneVisual3d? parent;
+		private Line? lineToParent;
 
 		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton)
 		{
@@ -57,7 +57,7 @@ namespace Anamnesis.PoseModule
 		public CmVector Scale { get; set; }
 		public CmVector Position { get; set; }
 
-		public BoneVisual3d Parent
+		public BoneVisual3d? Parent
 		{
 			get
 			{
@@ -142,7 +142,7 @@ namespace Anamnesis.PoseModule
 			this.position.OffsetZ = position.Z;
 
 			// Draw a line for visualization
-			if (this.Parent != null)
+			if (this.Parent != null && this.lineToParent != null)
 			{
 				Point3D p = this.lineToParent.Points[1];
 				p.X = position.X;

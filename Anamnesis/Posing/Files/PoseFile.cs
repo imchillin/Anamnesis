@@ -31,34 +31,34 @@ namespace Anamnesis.PoseModule
 
 		public Configuration Config { get; set; } = new Configuration();
 
-		public List<Bone> Body { get; set; }
-		public List<Bone> Head { get; set; }
-		public List<Bone> Hair { get; set; }
-		public List<Bone> Met { get; set; }
-		public List<Bone> Top { get; set; }
+		public List<Bone?>? Body { get; set; }
+		public List<Bone?>? Head { get; set; }
+		public List<Bone?>? Hair { get; set; }
+		public List<Bone?>? Met { get; set; }
+		public List<Bone?>? Top { get; set; }
 
 		public void WriteToFile(ActorViewModel actor, Configuration config)
 		{
 			this.Config = config;
 
-			SkeletonViewModel skeleton = actor?.Model?.Skeleton?.Skeleton;
+			SkeletonViewModel? skeleton = actor?.ModelObject?.Skeleton?.Skeleton;
 
 			if (skeleton == null)
 				throw new Exception("No skeleton in actor");
 
-			if (config.Groups.HasFlag(Groups.Body))
+			if (config.Groups.HasFlag(Groups.Body) && skeleton.Body != null)
 				this.Body = this.WriteToFile(skeleton.Body);
 
-			if (config.Groups.HasFlag(Groups.Head))
+			if (config.Groups.HasFlag(Groups.Head) && skeleton.Head != null)
 				this.Head = this.WriteToFile(skeleton.Head);
 
-			if (config.Groups.HasFlag(Groups.Hair))
+			if (config.Groups.HasFlag(Groups.Hair) && skeleton.Hair != null)
 				this.Hair = this.WriteToFile(skeleton.Hair);
 
-			if (config.Groups.HasFlag(Groups.Met))
+			if (config.Groups.HasFlag(Groups.Met) && skeleton.Met != null)
 				this.Met = this.WriteToFile(skeleton.Met);
 
-			if (config.Groups.HasFlag(Groups.Top))
+			if (config.Groups.HasFlag(Groups.Top) && skeleton.Top != null)
 				this.Top = this.WriteToFile(skeleton.Top);
 
 			Log.Write("Saved skeleton to file");
@@ -66,7 +66,7 @@ namespace Anamnesis.PoseModule
 
 		public async Task ReadFromFile(ActorViewModel actor, Configuration config)
 		{
-			SkeletonViewModel skeleton = actor?.Model?.Skeleton?.Skeleton;
+			SkeletonViewModel? skeleton = actor?.ModelObject?.Skeleton?.Skeleton;
 
 			if (skeleton == null)
 				throw new Exception("No skeleton in actor");
@@ -77,19 +77,19 @@ namespace Anamnesis.PoseModule
 			// don't freeze positions if we aren't writing any
 			PoseService.Instance.FreezePositions = this.Config.IncludePosition;
 
-			if (config.Groups.HasFlag(Groups.Body))
+			if (config.Groups.HasFlag(Groups.Body) && skeleton.Body != null)
 				this.ReadFromFile(this.Body, skeleton.Body, config);
 
-			if (config.Groups.HasFlag(Groups.Head))
+			if (config.Groups.HasFlag(Groups.Head) && skeleton.Head != null)
 				this.ReadFromFile(this.Head, skeleton.Head, config);
 
-			if (config.Groups.HasFlag(Groups.Hair))
+			if (config.Groups.HasFlag(Groups.Hair) && skeleton.Hair != null)
 				this.ReadFromFile(this.Hair, skeleton.Hair, config);
 
-			if (config.Groups.HasFlag(Groups.Met))
+			if (config.Groups.HasFlag(Groups.Met) && skeleton.Met != null)
 				this.ReadFromFile(this.Met, skeleton.Met, config);
 
-			if (config.Groups.HasFlag(Groups.Top))
+			if (config.Groups.HasFlag(Groups.Top) && skeleton.Top != null)
 				this.ReadFromFile(this.Top, skeleton.Top, config);
 
 			await Task.Delay(100);
@@ -98,7 +98,7 @@ namespace Anamnesis.PoseModule
 			////skeleton.RefreshBones();
 		}
 
-		private List<Bone> WriteToFile(BonesViewModel bones)
+		private List<Bone?>? WriteToFile(BonesViewModel bones)
 		{
 			if (bones == null)
 				return null;
@@ -109,22 +109,26 @@ namespace Anamnesis.PoseModule
 			if (bones.Transforms == null || bones.Transforms.Count != bones.Count)
 				throw new Exception("Bone transform array does not match expected size");
 
-			List<Bone> transforms = new List<Bone>();
+			List<Bone?> transforms = new List<Bone?>();
 			foreach (TransformViewModel bone in bones.Transforms)
 			{
-				Transform trans = (Transform)bone.GetModel();
-				transforms.Add(new Bone(trans));
+				Transform? trans = bone.Model;
+
+				if (trans == null)
+					continue;
+
+				transforms.Add(new Bone(trans.Value));
 			}
 
 			return transforms;
 		}
 
-		private void ReadFromFile(List<Bone> transforms, BonesViewModel bones, Configuration config)
+		private void ReadFromFile(List<Bone?>? transforms, BonesViewModel bones, Configuration config)
 		{
 			if (bones == null)
 				return;
 
-			if (transforms.Count <= 0)
+			if (transforms == null || transforms.Count <= 0)
 				return;
 
 			////if (transforms.Count != bones.Count)
@@ -134,14 +138,19 @@ namespace Anamnesis.PoseModule
 
 			for (int i = 0; i < count; i++)
 			{
-				if (config.IncludePosition && this.Config.IncludePosition && transforms[i].Position != Vector.Zero)
-					bones.Transforms[i].Position = transforms[i].Position;
+				Bone? bone = transforms[i];
+
+				if (bone == null)
+					continue;
+
+				if (config.IncludePosition && this.Config.IncludePosition && bone.Position != Vector.Zero)
+					bones.Transforms[i].Position = bone.Position;
 
 				if (config.IncludeRotation && this.Config.IncludeRotation)
-					bones.Transforms[i].Rotation = transforms[i].Rotation;
+					bones.Transforms[i].Rotation = bone.Rotation;
 
-				if (config.IncludeScale && this.Config.IncludeScale && transforms[i].Scale != Vector.Zero)
-					bones.Transforms[i].Scale = transforms[i].Scale;
+				if (config.IncludeScale && this.Config.IncludeScale && bone.Scale != Vector.Zero)
+					bones.Transforms[i].Scale = bone.Scale;
 			}
 		}
 

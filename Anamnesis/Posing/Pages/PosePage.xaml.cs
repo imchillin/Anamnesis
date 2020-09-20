@@ -29,7 +29,7 @@ namespace Anamnesis.PoseModule.Pages
 		public GposeService GposeService => GposeService.Instance;
 		public PoseService PoseService { get => PoseModule.PoseService.Instance; }
 
-		public SkeletonVisual3d Skeleton { get; private set; }
+		public SkeletonVisual3d? Skeleton { get; private set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -52,9 +52,9 @@ namespace Anamnesis.PoseModule.Pages
 			});
 		}
 
-		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
-			ActorViewModel actor = this.DataContext as ActorViewModel;
+			ActorViewModel? actor = this.DataContext as ActorViewModel;
 
 			if (actor == null)
 			{
@@ -78,9 +78,12 @@ namespace Anamnesis.PoseModule.Pages
 		{
 			try
 			{
-				ActorViewModel actor = this.DataContext as ActorViewModel;
+				ActorViewModel? actor = this.DataContext as ActorViewModel;
 
-				FileBase file = await FileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
+				if (actor == null)
+					return;
+
+				FileBase? file = await FileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
 
 				if (file == null)
 					return;
@@ -112,7 +115,10 @@ namespace Anamnesis.PoseModule.Pages
 			await FileService.Save(
 				async (advancedMode) =>
 				{
-					ActorViewModel actor = this.DataContext as ActorViewModel;
+					ActorViewModel? actor = this.DataContext as ActorViewModel;
+
+					if (actor == null)
+						return null;
 
 					PoseFile.Configuration config;
 

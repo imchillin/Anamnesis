@@ -4,7 +4,6 @@
 namespace Anamnesis.Memory
 {
 	using System;
-	using Anamnesis.Memory;
 
 	public class NopHookViewModel
 	{
@@ -38,17 +37,23 @@ namespace Anamnesis.Memory
 			set
 			{
 				this.value = value;
+				this.SetEnabled(value);
+			}
+		}
 
-				if (this.value)
-				{
-					// Write Nop
-					MemoryService.Write(this.address, this.nopValue);
-				}
-				else
-				{
-					// Write the original value
-					MemoryService.Write(this.address, this.originalValue);
-				}
+		public void SetEnabled(bool enabled)
+		{
+			this.value = enabled;
+
+			if (enabled)
+			{
+				// Write Nop
+				MemoryService.Write(this.address, this.nopValue);
+			}
+			else
+			{
+				// Write the original value
+				MemoryService.Write(this.address, this.originalValue);
 			}
 		}
 	}

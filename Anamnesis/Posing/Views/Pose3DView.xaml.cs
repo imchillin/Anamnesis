@@ -35,7 +35,7 @@ namespace Anamnesis.PoseModule.Views
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
-			SkeletonVisual3d vm = this.DataContext as SkeletonVisual3d;
+			SkeletonVisual3d? vm = this.DataContext as SkeletonVisual3d;
 
 			if (vm == null)
 				return;
@@ -43,9 +43,9 @@ namespace Anamnesis.PoseModule.Views
 			this.Viewport.Children.Remove(vm);
 		}
 
-		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
-			SkeletonVisual3d vm = this.DataContext as SkeletonVisual3d;
+			SkeletonVisual3d? vm = this.DataContext as SkeletonVisual3d;
 
 			if (vm == null)
 				return;
@@ -56,7 +56,7 @@ namespace Anamnesis.PoseModule.Views
 				this.Viewport.Children.Add(vm);
 
 			// position camera at average center position of skeleton
-			if (vm.Bones.Count > 0)
+			if (vm.Bones != null && vm.Bones.Count > 0)
 			{
 				Vector3D pos = vm.Bones[0].ViewModel.Position.ToMedia3DVector();
 				foreach (BoneVisual3d visual in vm.Bones)

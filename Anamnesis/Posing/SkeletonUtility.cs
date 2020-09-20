@@ -260,7 +260,7 @@ namespace Anamnesis.PoseModule
 			-1, -1, -1, 0, 0, 3, 3, 9, 10, 11, 11, 4, 3, 3, 3, 3, 3, 3, 29, 30, 11, 11, 11, 12, 13, 14, 15, 16, 17, 5, 6, 9, 10, 22, 22, 22, 23, 24, 25, 26, 27, 28, 18, 19, 29, 30, 33, 34, 35, 47, 48, -1, 44, 45, 46, 46, 46, 46, 46, 47, 48, 47, 48, 54, 74, 75, 59, 60, 57, 58, 59, 60, 59, 60, 59, 60, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 64, 65, 68, 69, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 3, 100, 101, 102, 103,
 		};
 
-		public static TransformViewModel GetBone(this SkeletonViewModel skeleton, string name)
+		public static TransformViewModel? GetBone(this SkeletonViewModel skeleton, string name)
 		{
 			int index;
 			if (BodyBoneIndexLookup.TryGetValue(name, out index) && skeleton.Body != null && index < skeleton.Body.Count)

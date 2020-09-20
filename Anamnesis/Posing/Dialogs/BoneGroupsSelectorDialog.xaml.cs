@@ -22,7 +22,7 @@ namespace Anamnesis.PoseModule.Dialogs
 			this.Result = new PoseFile.Configuration();
 		}
 
-		public event DialogEvent Close;
+		public event DialogEvent? Close;
 
 		public PoseFile.Configuration Result
 		{
@@ -62,7 +62,6 @@ namespace Anamnesis.PoseModule.Dialogs
 
 		public void Cancel()
 		{
-			this.Result = null;
 			this.Close?.Invoke();
 		}
 

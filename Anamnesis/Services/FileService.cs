@@ -120,7 +120,7 @@ namespace Anamnesis.Services
 			return null;
 		}
 
-		public static async Task Save(Func<bool, Task<FileBase>> writeFile, FileType type, string? path = null)
+		public static async Task Save(Func<bool, Task<FileBase?>> writeFile, FileType type, string? path = null)
 		{
 			try
 			{
@@ -173,7 +173,10 @@ namespace Anamnesis.Services
 
 				path += "." + type.Extension;
 
-				FileBase file = await writeFile.Invoke(advancedMode);
+				FileBase? file = await writeFile.Invoke(advancedMode);
+
+				if (file == null)
+					return;
 
 				using FileStream stream = new FileStream(path, FileMode.Create);
 				if (type.Serialize != null)

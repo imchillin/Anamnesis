@@ -105,6 +105,14 @@ namespace Anamnesis
 		public IStructViewModel? Parent { get; protected set; }
 		public PropertyInfo? ParentProperty { get; }
 
+		public T? Model
+		{
+			get
+			{
+				return this.model;
+			}
+		}
+
 		public virtual string Path
 		{
 			get

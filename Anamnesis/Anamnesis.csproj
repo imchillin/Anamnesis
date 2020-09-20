@@ -67,6 +67,16 @@
 		<None Remove="Assets\cmtool.png" />
 		<None Remove="Assets\Concept Matrix.ico" />
 		<None Remove="Assets\Concept Matrix.png" />
+		<None Remove="Assets\PoseCharacterBodyBackground.png" />
+		<None Remove="Assets\PoseCharacterClothesBackground.png" />
+		<None Remove="Assets\PoseCharacterFaceBackground.png" />
+		<None Remove="Assets\PoseCharacterHandBackground.png" />
+		<None Remove="Assets\PoseCharacterHrothFaceBackground.png" />
+		<None Remove="Assets\PoseCharacterTailBackground.png" />
+		<None Remove="Assets\PoseCharacterVieraEars01Background.png" />
+		<None Remove="Assets\PoseCharacterVieraEars02Background.png" />
+		<None Remove="Assets\PoseCharacterVieraEars03Background.png" />
+		<None Remove="Assets\PoseCharacterVieraEars04Background.png" />
 		<None Remove="Assets\Roles\crafters.png" />
 		<None Remove="Assets\Roles\damage.png" />
 		<None Remove="Assets\Roles\gatherers.png" />
@@ -146,6 +156,16 @@
 		<Resource Include="Assets\cmtool.png" />
 		<Resource Include="Assets\Concept Matrix.ico" />
 		<Resource Include="Assets\Concept Matrix.png" />
+		<Resource Include="Assets\PoseCharacterBodyBackground.png" />
+		<Resource Include="Assets\PoseCharacterClothesBackground.png" />
+		<Resource Include="Assets\PoseCharacterFaceBackground.png" />
+		<Resource Include="Assets\PoseCharacterHandBackground.png" />
+		<Resource Include="Assets\PoseCharacterHrothFaceBackground.png" />
+		<Resource Include="Assets\PoseCharacterTailBackground.png" />
+		<Resource Include="Assets\PoseCharacterVieraEars01Background.png" />
+		<Resource Include="Assets\PoseCharacterVieraEars02Background.png" />
+		<Resource Include="Assets\PoseCharacterVieraEars03Background.png" />
+		<Resource Include="Assets\PoseCharacterVieraEars04Background.png" />
 		<Resource Include="Assets\Roles\crafters.png" />
 		<Resource Include="Assets\Roles\damage.png" />
 		<Resource Include="Assets\Roles\gatherers.png" />
@@ -165,6 +185,12 @@
 		<Compile Update="App.xaml.cs">
 			<SubType>Code</SubType>
 			<DependentUpon>App.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Posing\Controls\BoneEditor.xaml.cs">
+		  <SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Posing\Views\PoseMatrixView.xaml.cs">
+		  <SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Windows\ErrorDialog.xaml.cs">
 			<DependentUpon>ErrorDialog.xaml</DependentUpon>
@@ -200,6 +226,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Page Update="Posing\Controls\BoneEditor.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Posing\Dialogs\BoneGroupsSelectorDialog.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Posing\Pages\PosePage.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Posing\Views\Pose3DView.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Posing\Views\PoseMatrixView.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
 		<Page Update="Windows\ErrorDialog.xaml">
 			<SubType>Designer</SubType>
 		</Page>
