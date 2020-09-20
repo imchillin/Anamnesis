@@ -16,6 +16,7 @@ namespace Anamnesis.PoseModule.Pages
 	/// Interaction logic for CharacterPoseView.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class PosePage : UserControl
 	{
 		public PosePage()
@@ -74,18 +75,19 @@ namespace Anamnesis.PoseModule.Pages
 			this.Skeleton = null;
 		}
 
-		private void OnOpenClicked(object sender, RoutedEventArgs e)
+		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
-			/*try
+			try
 			{
+				ActorViewModel actor = this.DataContext as ActorViewModel;
+
 				FileBase file = await FileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
 
 				if (file == null)
 					return;
 
 				if (file is LegacyPoseFile legacyFile)
-					file = legacyFile.Upgrade(this.SkeletonViewModel.Race);
+					file = legacyFile.Upgrade(actor.Customize?.Race ?? Appearance.Races.Hyur);
 
 				PoseFile.Configuration config = new PoseFile.Configuration();
 
@@ -97,28 +99,27 @@ namespace Anamnesis.PoseModule.Pages
 
 				if (file is PoseFile poseFile)
 				{
-					await poseFile.Write(this.SkeletonViewModel, config);
+					await poseFile.ReadFromFile(actor, config);
 				}
 			}
 			catch (Exception ex)
 			{
 				Log.Write(ex, "Pose", Log.Severity.Error);
-			}*/
+			}
 		}
 
-		private void OnSaveClicked(object sender, RoutedEventArgs e)
+		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			/*IViewService viewService = Services.Get<IViewService>();
-			IFileService fileService = Services.Get<IFileService>();
-
-			await fileService.Save(
+			await FileService.Save(
 				async (advancedMode) =>
 				{
+					ActorViewModel actor = this.DataContext as ActorViewModel;
+
 					PoseFile.Configuration config;
 
 					if (advancedMode)
 					{
-						config = await viewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Save Pose...");
+						config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Save Pose...");
 					}
 					else
 					{
@@ -129,13 +130,11 @@ namespace Anamnesis.PoseModule.Pages
 						return null;
 
 					PoseFile file = new PoseFile();
-					file.Read(this.SkeletonViewModel.Bones, config);
+					file.WriteToFile(actor, config);
 
 					return file;
 				},
-				PoseFile.FileType);*/
-
-			throw new NotImplementedException();
+				PoseFile.FileType);
 		}
 
 		[SuppressPropertyChangedWarnings]

@@ -46,8 +46,6 @@ namespace Anamnesis.PoseModule
 			System.Windows.Media.Color c1 = System.Windows.Media.Color.FromArgb(200, 255, 255, 255);
 			sphere.Material = new EmissiveMaterial(new SolidColorBrush(c1));
 			this.Children.Add(sphere);
-
-			this.ReadTransform();
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }

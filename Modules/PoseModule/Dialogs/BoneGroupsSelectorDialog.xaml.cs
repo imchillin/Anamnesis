@@ -30,76 +30,34 @@ namespace Anamnesis.PoseModule.Dialogs
 			private set;
 		}
 
+		public bool Body
+		{
+			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Body) ?? false;
+			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Body, value);
+		}
+
+		public bool Head
+		{
+			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Head) ?? false;
+			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Head, value);
+		}
+
 		public bool Hair
 		{
 			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Hair) ?? false;
 			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Hair, value);
 		}
 
-		public bool Face
+		public bool Met
 		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Face) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Face, value);
+			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Met) ?? false;
+			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Met, value);
 		}
 
-		public bool Torso
+		public bool Top
 		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Torso) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Torso, value);
-		}
-
-		public bool LeftArm
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.LeftArm) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.LeftArm, value);
-		}
-
-		public bool RightArm
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.RightArm) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.RightArm, value);
-		}
-
-		public bool LeftHand
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.LeftHand) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.LeftHand, value);
-		}
-
-		public bool RightHand
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.RightHand) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.RightHand, value);
-		}
-
-		public bool LeftLeg
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.LeftLeg) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.LeftLeg, value);
-		}
-
-		public bool RightLeg
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.RightLeg) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.RightLeg, value);
-		}
-
-		public bool Clothes
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Clothes) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Clothes, value);
-		}
-
-		public bool Equipment
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Equipment) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Equipment, value);
-		}
-
-		public bool Tail
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Tail) ?? false;
-			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Tail, value);
+			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Top) ?? false;
+			set => this.Result.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Top, value);
 		}
 
 		public void Cancel()

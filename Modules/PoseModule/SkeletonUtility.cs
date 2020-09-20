@@ -21,6 +21,8 @@ namespace Anamnesis.PoseModule
 			{ "SpineA", 4 },
 			{ "LegsLeft", 5 },
 			{ "LegsRight", 6 },
+			{ "LegLeft", 5 },
+			{ "LegRight", 6 },
 			{ "HolsterLeft", 7 },
 			{ "HolsterRight", 8 },
 			{ "SheatheLeft", 9 },

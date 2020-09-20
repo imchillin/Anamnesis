@@ -18,96 +18,131 @@ namespace Anamnesis.PoseModule
 		{
 			None = 0,
 
-			Hair = 1,
-			Face = 2,
-			Torso = 4,
-			LeftArm = 8,
-			RightArm = 16,
-			LeftHand = 32,
-			RightHand = 64,
-			LeftLeg = 128,
-			RightLeg = 256,
-			Clothes = 512,
-			Equipment = 1024,
-			Tail = 2048,
+			Body = 1,
+			Head = 2,
+			Hair = 4,
+			Met = 8,
+			Top = 16,
 
-			All = Hair | Face | Torso | LeftArm | RightArm | LeftHand | RightHand | LeftLeg | RightLeg | Clothes | Equipment | Tail,
+			All = Body | Head | Hair | Met | Top,
 		}
 
 		public override FileType Type => FileType;
 
 		public Configuration Config { get; set; } = new Configuration();
-		public Dictionary<string, Transform> Bones { get; set; } = new Dictionary<string, Transform>();
 
-		public void Read(IEnumerable<BoneVisual3d> bones, Configuration config)
+		public List<Bone> Body { get; set; }
+		public List<Bone> Head { get; set; }
+		public List<Bone> Hair { get; set; }
+		public List<Bone> Met { get; set; }
+		public List<Bone> Top { get; set; }
+
+		public void WriteToFile(ActorViewModel actor, Configuration config)
 		{
 			this.Config = config;
 
-			/*foreach (Bone bone in bones)
-			{
-				if (!bone.IsEnabled)
-					continue;
+			SkeletonViewModel skeleton = actor?.Model?.Skeleton?.Skeleton;
 
-				Groups group = Enum.Parse<Groups>(bone.Definition.Group);
-				if (!config.Groups.HasFlag(group))
-					continue;
+			if (skeleton == null)
+				throw new Exception("No skeleton in actor");
 
-				this.Bones.Add(bone.BoneName, bone.LiveTransform);
-			}*/
+			if (config.Groups.HasFlag(Groups.Body))
+				this.Body = this.WriteToFile(skeleton.Body);
 
-			throw new NotImplementedException();
+			if (config.Groups.HasFlag(Groups.Head))
+				this.Head = this.WriteToFile(skeleton.Head);
+
+			if (config.Groups.HasFlag(Groups.Hair))
+				this.Hair = this.WriteToFile(skeleton.Hair);
+
+			if (config.Groups.HasFlag(Groups.Met))
+				this.Met = this.WriteToFile(skeleton.Met);
+
+			if (config.Groups.HasFlag(Groups.Top))
+				this.Top = this.WriteToFile(skeleton.Top);
+
+			Log.Write("Saved skeleton to file");
 		}
 
-		public Task Write(SkeletonViewModel skeleton, Configuration config)
+		public async Task ReadFromFile(ActorViewModel actor, Configuration config)
 		{
-			/*PoseService.SetEnabled(true);
+			SkeletonViewModel skeleton = actor?.Model?.Skeleton?.Skeleton;
+
+			if (skeleton == null)
+				throw new Exception("No skeleton in actor");
+
+			PoseService.Instance.SetEnabled(true);
 			await Task.Delay(100);
 
 			// don't freeze positions if we aren't writing any
-			poseService.FreezePositions = this.Config.IncludePosition;
+			PoseService.Instance.FreezePositions = this.Config.IncludePosition;
 
-			foreach (Bone bone in skeleton.Bones)
-			{
-				if (!bone.IsEnabled)
-					continue;
+			if (config.Groups.HasFlag(Groups.Body))
+				this.ReadFromFile(this.Body, skeleton.Body, config);
 
-				Groups group = Enum.Parse<Groups>(bone.Definition.Group);
-				if (!config.Groups.HasFlag(group))
-					continue;
+			if (config.Groups.HasFlag(Groups.Head))
+				this.ReadFromFile(this.Head, skeleton.Head, config);
 
-				if (this.Bones.ContainsKey(bone.BoneName))
-				{
-					try
-					{
-						this.Bones[bone.BoneName].Rotation.Normalize();
+			if (config.Groups.HasFlag(Groups.Hair))
+				this.ReadFromFile(this.Hair, skeleton.Hair, config);
 
-						Transform trans = bone.LiveTransform;
-						Transform newTrans = this.Bones[bone.BoneName];
+			if (config.Groups.HasFlag(Groups.Met))
+				this.ReadFromFile(this.Met, skeleton.Met, config);
 
-						if (config.IncludeScale && this.Config.IncludeScale && newTrans.Scale != Vector.Zero)
-							trans.Scale = newTrans.Scale;
-
-						if (config.IncludePosition && this.Config.IncludePosition && newTrans.Position != Vector.Zero)
-							trans.Position = newTrans.Position;
-
-						if (config.IncludeRotation && this.Config.IncludeRotation)
-							trans.Rotation = newTrans.Rotation;
-
-						bone.LiveTransform = trans;
-						bone.ReadTransform();
-					}
-					catch (Exception ex)
-					{
-						throw new Exception("Failed to apply pose transform to bone: " + bone.BoneName, ex);
-					}
-				}
-			}
+			if (config.Groups.HasFlag(Groups.Top))
+				this.ReadFromFile(this.Top, skeleton.Top, config);
 
 			await Task.Delay(100);
-			poseService.FreezePositions = true;
+			PoseService.Instance.FreezePositions = true;
 
-			skeleton.RefreshBones();*/
-			throw new NotImplementedException();
+			////skeleton.RefreshBones();
+		}
+
+		private List<Bone> WriteToFile(BonesViewModel bones)
+		{
+			if (bones == null)
+				return null;
+
+			if (bones.Count <= 0 || bones.Count > 512)
+				return null;
+
+			if (bones.Transforms == null || bones.Transforms.Count != bones.Count)
+				throw new Exception("Bone transform array does not match expected size");
+
+			List<Bone> transforms = new List<Bone>();
+			foreach (TransformViewModel bone in bones.Transforms)
+			{
+				Transform trans = (Transform)bone.GetModel();
+				transforms.Add(new Bone(trans));
+			}
+
+			return transforms;
+		}
+
+		private void ReadFromFile(List<Bone> transforms, BonesViewModel bones, Configuration config)
+		{
+			if (bones == null)
+				return;
+
+			if (transforms.Count <= 0)
+				return;
+
+			////if (transforms.Count != bones.Count)
+			////	throw new Exception("Saved pose bone count does not match target skeleton bone count");
+
+			int count = Math.Min(transforms.Count, bones.Count);
+
+			for (int i = 0; i < count; i++)
+			{
+				if (config.IncludePosition && this.Config.IncludePosition && transforms[i].Position != Vector.Zero)
+					bones.Transforms[i].Position = transforms[i].Position;
+
+				if (config.IncludeRotation && this.Config.IncludeRotation)
+					bones.Transforms[i].Rotation = transforms[i].Rotation;
+
+				if (config.IncludeScale && this.Config.IncludeScale && transforms[i].Scale != Vector.Zero)
+					bones.Transforms[i].Scale = transforms[i].Scale;
+			}
 		}
 
 		public class Configuration
@@ -116,6 +151,25 @@ namespace Anamnesis.PoseModule
 			public bool IncludeRotation { get; set; } = true;
 			public bool IncludePosition { get; set; } = true;
 			public bool IncludeScale { get; set; } = true;
+		}
+
+		[Serializable]
+		public class Bone
+		{
+			public Bone()
+			{
+			}
+
+			public Bone(Transform trans)
+			{
+				this.Position = trans.Position;
+				this.Rotation = trans.Rotation;
+				this.Scale = trans.Scale;
+			}
+
+			public Vector Position { get; set; }
+			public Quaternion Rotation { get; set; }
+			public Vector Scale { get; set; }
 		}
 	}
 }

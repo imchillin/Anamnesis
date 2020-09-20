@@ -21,22 +21,11 @@
 			
 				<StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
 					<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
-						<CheckBox Content="Torso" IsChecked="{Binding Torso}"/>
-						<CheckBox Content="Face" IsChecked="{Binding Face}"/>
+						<CheckBox Content="Body" IsChecked="{Binding Body}"/>
+						<CheckBox Content="Head" IsChecked="{Binding Head}"/>
 						<CheckBox Content="Hair" IsChecked="{Binding Hair}"/>
-						<CheckBox Content="Tail" IsChecked="{Binding Tail}"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
-						<CheckBox Content="Left Arm" IsChecked="{Binding LeftArm}"/>
-						<CheckBox Content="Left Hand" IsChecked="{Binding LeftHand}"/>
-						<CheckBox Content="Left Leg" IsChecked="{Binding LeftLeg}"/>
-						<CheckBox Content="Clothes" IsChecked="{Binding Clothes}"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
-						<CheckBox Content="Right Arm" IsChecked="{Binding RightArm}"/>
-						<CheckBox Content="Right Hand" IsChecked="{Binding RightHand}"/>
-						<CheckBox Content="Right Leg" IsChecked="{Binding RightLeg}"/>
-						<CheckBox Content="Equipment" IsChecked="{Binding Equipment}"/>
+						<CheckBox Content="Met" IsChecked="{Binding Met}"/>
+						<CheckBox Content="Top" IsChecked="{Binding Top}"/>
 					</StackPanel>
 				</StackPanel>
 

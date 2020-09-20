@@ -147,29 +147,33 @@ namespace Anamnesis.PoseModule
 			SkeletonViewModel skeletonVm = this.Actor.Model.Skeleton.Skeleton;
 
 			// Body bones
+			List<BoneVisual3d> bodyBones = new List<BoneVisual3d>();
+			for (int i = 0; i < skeletonVm.Body.Count; i++)
 			{
-				List<BoneVisual3d> bodyBones = new List<BoneVisual3d>();
-				for (int i = 0; i < skeletonVm.Body.Count; i++)
-				{
-					BoneVisual3d bone = new BoneVisual3d(skeletonVm.Body.Transforms[i], this);
-					bodyBones.Add(bone);
-					this.Bones.Add(bone);
-					////this.RootBones.Add(bone);
-				}
+				BoneVisual3d bone = new BoneVisual3d(skeletonVm.Body.Transforms[i], this);
+				bodyBones.Add(bone);
+				this.Bones.Add(bone);
+				////this.RootBones.Add(bone);
+			}
 
-				for (int i = 0; i < skeletonVm.Body.Count; i++)
+			for (int i = 0; i < skeletonVm.Body.Count; i++)
+			{
+				int parent = SkeletonUtility.PlayerBodyParents[i];
+				if (parent == -1)
 				{
-					int parent = SkeletonUtility.PlayerBodyParents[i];
-					if (parent == -1)
-					{
-						this.Children.Add(bodyBones[i]);
-					}
-					else
-					{
-						bodyBones[i].Parent = bodyBones[parent];
-					}
+					this.Children.Add(bodyBones[i]);
+				}
+				else
+				{
+					bodyBones[i].Parent = bodyBones[parent];
 				}
 			}
+
+			int headBoneIndex = SkeletonUtility.BodyBoneIndexLookup["Head"];
+
+			BoneVisual3d headRoot = null;
+			if (headBoneIndex < bodyBones.Count)
+				headRoot = bodyBones[headBoneIndex];
 
 			if (skeletonVm.Head != null)
 			{
@@ -177,7 +181,12 @@ namespace Anamnesis.PoseModule
 				{
 					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
 					this.Bones.Add(bone);
-					this.Children.Add(bone);
+					bone.Parent = headRoot;
+
+					if (headRoot == null)
+					{
+						this.Children.Add(bone);
+					}
 				}
 			}
 
@@ -187,7 +196,12 @@ namespace Anamnesis.PoseModule
 				{
 					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
 					this.Bones.Add(bone);
-					this.Children.Add(bone);
+					bone.Parent = headRoot;
+
+					if (headRoot == null)
+					{
+						this.Children.Add(bone);
+					}
 				}
 			}
 
@@ -209,6 +223,16 @@ namespace Anamnesis.PoseModule
 					this.Bones.Add(bone);
 					this.Children.Add(bone);
 				}
+			}
+
+			foreach (BoneVisual3d bone in this.Bones)
+			{
+				bone.ReadTransform();
+			}
+
+			foreach (BoneVisual3d bone in this.Bones)
+			{
+				bone.ReadTransform();
 			}
 		}
 

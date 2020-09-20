@@ -4,8 +4,10 @@
 namespace Anamnesis.PoseModule
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Globalization;
 	using System.Reflection;
+	using System.Windows.Documents;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 
@@ -460,29 +462,11 @@ namespace Anamnesis.PoseModule
 				PropertyInfo rotProp = legacyType.GetProperty(boneName);
 				PropertyInfo scaleProp = legacyType.GetProperty(boneName + "Size");
 
-				if (boneName.StartsWith(@"Hroth"))
-				{
-					if (fileRace == Appearance.Races.Hrothgar)
-					{
-						boneName = boneName.Replace(@"Hroth", string.Empty);
-					}
-					else
-					{
-						continue;
-					}
-				}
+				if (boneName.StartsWith(@"Hroth") && fileRace != Appearance.Races.Hrothgar)
+					continue;
 
-				if (boneName.StartsWith("Viera"))
-				{
-					if (fileRace == Appearance.Races.Viera)
-					{
-						boneName = boneName.Replace("Viera", string.Empty);
-					}
-					else
-					{
-						continue;
-					}
-				}
+				if (boneName.StartsWith("Viera") && fileRace != Appearance.Races.Viera)
+					continue;
 
 				string rotString = null;
 				string scaleString = null;
@@ -496,13 +480,63 @@ namespace Anamnesis.PoseModule
 				if (rotString == null && scaleString == null)
 					continue;
 
-				// Hroth and Viera bones should always be _after_ the base bones,
-				// And we only reach this point if we want them, so always prefer newer bones.
-				if (file.Bones.ContainsKey(boneName))
-					file.Bones.Remove(boneName);
+				Transform transform = StringToBone(rotString, scaleString);
 
-				Transform bone = StringToBone(rotString, scaleString);
-				file.Bones.Add(boneName, bone);
+				int index;
+				if (SkeletonUtility.BodyBoneIndexLookup.TryGetValue(boneName, out index))
+				{
+					if (file.Body == null)
+						file.Body = new List<PoseFile.Bone>();
+
+					while (file.Body.Count <= index)
+						file.Body.Add(default);
+
+					file.Body[index] = new PoseFile.Bone(transform);
+				}
+				else if (SkeletonUtility.HeadBoneIndexLookup.TryGetValue(boneName, out index))
+				{
+					if (file.Head == null)
+						file.Head = new List<PoseFile.Bone>();
+
+					while (file.Head.Count <= index)
+						file.Head.Add(default);
+
+					file.Head[index] = new PoseFile.Bone(transform);
+				}
+				else if (SkeletonUtility.HairBoneIndexLookup.TryGetValue(boneName, out index))
+				{
+					if (file.Hair == null)
+						file.Hair = new List<PoseFile.Bone>();
+
+					while (file.Hair.Count <= index)
+						file.Hair.Add(default);
+
+					file.Hair[index] = new PoseFile.Bone(transform);
+				}
+				else if (SkeletonUtility.MetBoneIndexLookup.TryGetValue(boneName, out index))
+				{
+					if (file.Met == null)
+						file.Met = new List<PoseFile.Bone>();
+
+					while (file.Met.Count <= index)
+						file.Met.Add(default);
+
+					file.Met[index] = new PoseFile.Bone(transform);
+				}
+				else if (SkeletonUtility.TopBoneIndexLookup.TryGetValue(boneName, out index))
+				{
+					if (file.Top == null)
+						file.Top = new List<PoseFile.Bone>();
+
+					while (file.Top.Count <= index)
+						file.Top.Add(default);
+
+					file.Top[index] = new PoseFile.Bone(transform);
+				}
+				else
+				{
+					throw new Exception("Failed to find index for bone: " + boneName);
+				}
 			}
 
 			return file;
