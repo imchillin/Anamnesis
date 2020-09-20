@@ -17,13 +17,7 @@ namespace Anamnesis.AppearanceModule.Views
 	{
 		public ModelTypeEditor()
 		{
-			GposeService.Instance.PropertyChanged += this.GPoseServicePropertyChanged;
 			this.InitializeComponent();
-		}
-
-		private void GPoseServicePropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			this.IsEnabled = GposeService.Instance.IsOverworld;
 		}
 
 		private void OnBrowseClicked(object sender, RoutedEventArgs e)

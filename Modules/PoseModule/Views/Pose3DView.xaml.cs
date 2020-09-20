@@ -3,20 +3,10 @@
 
 namespace Anamnesis.PoseModule.Views
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Runtime.CompilerServices;
-	using System.Threading;
-	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
-	using Anamnesis.Memory;
-	using Anamnesis.ThreeD;
-	using PropertyChanged;
-
-	using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
