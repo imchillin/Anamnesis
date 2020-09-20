@@ -1,13 +1,14 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Files
+namespace Anamnesis.Files
 {
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis;
+	using Anamnesis.Files.Types;
 	using Anamnesis.Services;
 	using Directories = System.IO.Directory;
 	using Files = System.IO.File;

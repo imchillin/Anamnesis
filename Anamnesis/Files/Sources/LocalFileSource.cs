@@ -5,6 +5,7 @@ namespace Anamnesis.Files
 {
 	using System;
 	using Anamnesis;
+	using Anamnesis.Files.Types;
 	using Anamnesis.Services;
 
 	public class LocalFileSource : FileSourceBase

@@ -1,14 +1,16 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.PoseModule
+namespace Anamnesis.Files
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.Reflection;
 	using System.Windows.Documents;
+	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 
 	public class LegacyPoseFile : FileBase

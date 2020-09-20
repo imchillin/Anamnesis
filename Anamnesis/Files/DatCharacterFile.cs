@@ -1,18 +1,19 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Files
+namespace Anamnesis.Files
 {
 	using System;
 	using System.IO;
 	using System.Text;
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
+	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Paths = System.IO.Path;
 
-	public class DatCharacterFile : FileBase, IFileSource.IFile
+	public class DatCharacterFile : FileBase
 	{
 		public static readonly FileType FileType = new FileType("dat", "Characters", typeof(DatCharacterFile), false, null, Deserialize, Serialize);
 

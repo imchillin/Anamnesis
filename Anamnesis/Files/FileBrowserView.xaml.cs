@@ -13,6 +13,8 @@ namespace Anamnesis.GUI.Views
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using Anamnesis;
+	using Anamnesis.Files;
+	using Anamnesis.Files.Types;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;

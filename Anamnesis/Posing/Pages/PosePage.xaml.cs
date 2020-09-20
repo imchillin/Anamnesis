@@ -7,6 +7,7 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.Files;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Dialogs;
 	using Anamnesis.Services;

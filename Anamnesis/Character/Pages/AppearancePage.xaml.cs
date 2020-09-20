@@ -3,14 +3,12 @@
 
 namespace Anamnesis.Character.Pages
 {
-	using System;
-	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Character.Dialogs;
-	using Anamnesis.Character.Files;
 	using Anamnesis.Character.Views;
+	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;

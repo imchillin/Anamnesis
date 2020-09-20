@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Character
 {
-	using Anamnesis.Character.Files;
+	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 

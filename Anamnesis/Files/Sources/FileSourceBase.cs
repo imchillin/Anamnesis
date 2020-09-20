@@ -9,6 +9,7 @@ namespace Anamnesis.Files
 	using System.Text;
 	using System.Threading.Tasks;
 	using Anamnesis;
+	using Anamnesis.Files.Types;
 	using Anamnesis.Services;
 
 	using Directories = System.IO.Directory;

@@ -5,8 +5,7 @@ namespace Anamnesis.Character.Dialogs
 {
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis;
-	using Anamnesis.Character.Files;
+	using Anamnesis.Files;
 	using Anamnesis.Services;
 	using PropertyChanged;
 

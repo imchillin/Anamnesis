@@ -8,6 +8,7 @@ namespace Anamnesis.Services
 	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
+	using Anamnesis.Files;
 	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;

@@ -4,16 +4,7 @@
 namespace Anamnesis.Files
 {
 	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Text;
-	using System.Threading.Tasks;
-	using Anamnesis;
-	using Anamnesis.Services;
-
-	using Directories = System.IO.Directory;
-	using Files = System.IO.File;
-	using Paths = System.IO.Path;
+	using Anamnesis.Files.Types;
 
 	public class LegacyFileSource : FileSourceBase
 	{

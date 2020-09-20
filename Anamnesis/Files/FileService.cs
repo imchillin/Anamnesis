@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Services
+namespace Anamnesis.Files
 {
 	using System;
 	using System.Collections.Generic;
@@ -10,6 +10,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis;
 	using Anamnesis.Files;
+	using Anamnesis.Files.Types;
 	using Anamnesis.GUI.Views;
 	using Anamnesis.Serialization;
 	using Anamnesis.Services;
@@ -328,54 +329,5 @@ namespace Anamnesis.Services
 		public bool CanOpen(FileType type);
 		public IDirectory GetDefaultDirectory(FileType[] fileTypes);
 		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, FileType[] fileTypes, bool recursive);
-	}
-
-	public class FileType
-	{
-		public readonly string Extension;
-		public readonly string Name;
-		public readonly Type Type;
-		public readonly bool SupportsAdvancedMode;
-		public readonly string? DefaultDirectoryName;
-
-		public Func<Stream, FileBase>? Deserialize;
-		public Action<Stream, FileBase>? Serialize;
-
-		public FileType(string extension, string name, Type type, bool canAdvancedLoad = false, string? defaultdirectoryName = null, Func<Stream, FileBase>? deserialize = null, Action<Stream, FileBase>? serialize = null)
-		{
-			if (extension.StartsWith("."))
-				extension = extension.Substring(1, extension.Length - 1);
-
-			this.Extension = extension;
-			this.Name = name;
-			this.Type = type;
-			this.SupportsAdvancedMode = canAdvancedLoad;
-			this.DefaultDirectoryName = defaultdirectoryName;
-			this.Serialize = serialize;
-			this.Deserialize = deserialize;
-		}
-
-		public bool IsExtension(string extension)
-		{
-			if (extension.StartsWith("."))
-				extension = extension.Substring(1, extension.Length - 1);
-
-			return this.Extension == extension;
-		}
-	}
-
-	[Serializable]
-	public abstract class FileBase : IFileSource.IFile
-	{
-		public string? Path { get; set; }
-		public bool UseAdvancedLoad { get; set; }
-		public abstract FileType? Type { get; }
-
-		public string? Name { get; protected set; }
-
-		public virtual Task Delete()
-		{
-			return Task.CompletedTask;
-		}
 	}
 }

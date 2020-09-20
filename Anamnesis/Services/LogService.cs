@@ -9,6 +9,7 @@ namespace Anamnesis.Services
 	using System.Runtime.ExceptionServices;
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
+	using Anamnesis.Files;
 	using Anamnesis.GUI.Windows;
 	using SimpleLog;
 
