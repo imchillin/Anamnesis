@@ -36,6 +36,7 @@ namespace Anamnesis.Serialization
 			where T : new()
 		{
 			string json = File.ReadAllText(path);
+			json = json.Replace("\r", Environment.NewLine);
 			return JsonSerializer.Deserialize<T>(json, Options);
 		}
 
