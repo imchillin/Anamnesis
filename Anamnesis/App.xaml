@@ -52,6 +52,7 @@
 					<ResourceDictionary Source="Styles/TextBlockStyles.xaml"/>
 					<ResourceDictionary Source="Styles/ToggleButtonStyles.xaml"/>
 					<ResourceDictionary Source="Styles/ExpanderStyles.xaml"/>
+					<ResourceDictionary Source="Styles/TabControlStyles.xaml"/>
 
 				</ResourceDictionary.MergedDictionaries>
 
