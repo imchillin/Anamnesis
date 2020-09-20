@@ -4,18 +4,13 @@
 namespace Anamnesis.Services
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Reflection;
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using Anamnesis;
-	using Anamnesis.Character.Pages;
-	using Anamnesis.GUI.Views;
 	using Anamnesis.GUI.Windows;
-	using Anamnesis.Memory;
-	using Anamnesis.PoseModule.Pages;
 
-#pragma warning disable SA1649
+	#pragma warning disable SA1649
 
 	public delegate void DrawerEvent();
 	public delegate void DialogEvent();
@@ -47,39 +42,9 @@ namespace Anamnesis.Services
 
 	public class ViewService : ServiceBase<ViewService>
 	{
-		private static readonly Dictionary<string, Page> PageLookup = new Dictionary<string, Page>();
-
-		public delegate void PageEvent(Page page);
 		public delegate Task DrawerEvent(string? title, UserControl drawer, DrawerDirection direction);
 
-		public static event PageEvent? AddingPage;
 		public static event DrawerEvent? ShowingDrawer;
-
-		public static IEnumerable<Page> Pages
-		{
-			get
-			{
-				return PageLookup.Values;
-			}
-		}
-
-		public static void AddPage<T>(string name, string icon, Func<ActorViewModel, bool>? isSupportedCallback = null)
-		{
-			Page page = new Page();
-			page.Icon = icon;
-			page.Name = name;
-			page.IsSupportedCallback = isSupportedCallback;
-			page.Type = typeof(T);
-
-			if (PageLookup.ContainsKey(name))
-				throw new Exception($"Page already registered with name: {name}");
-
-			if (!typeof(UserControl).IsAssignableFrom(page.Type))
-				throw new Exception($"Page: {page.Type} does not extend from UserControl.");
-
-			PageLookup.Add(name, page);
-			AddingPage?.Invoke(page);
-		}
 
 		public static Task ShowDrawer<T>(string? title = null, DrawerDirection direction = DrawerDirection.Right)
 		{
@@ -100,14 +65,6 @@ namespace Anamnesis.Services
 				return Task.CompletedTask;
 
 			return ShowingDrawer.Invoke(title, control, direction);
-		}
-
-		public static Page GetPage(string path)
-		{
-			if (!PageLookup.ContainsKey(path))
-				throw new Exception($"View not found for path: {path}");
-
-			return PageLookup[path];
 		}
 
 		public static Task<TResult> ShowDialog<TView, TResult>(string title)
@@ -141,15 +98,6 @@ namespace Anamnesis.Services
 			return Task.FromResult(dialogInterface.Result);
 		}
 
-		public override async Task Initialize()
-		{
-			await base.Initialize();
-
-			AddPage<HomeView>("Home", "Home");
-			AddPage<AppearancePage>("Character", "useralt");
-			AddPage<PosePage>("Pose", "running");
-		}
-
 		private static UserControl? CreateView<T>()
 		{
 			Type viewType = typeof(T);
@@ -174,51 +122,6 @@ namespace Anamnesis.Services
 			}
 
 			return view;
-		}
-
-		public class Page
-		{
-			public Type? Type;
-
-			public string Name { get; set; } = string.Empty;
-			public string Icon { get; set; } = string.Empty;
-
-			public Func<ActorViewModel, bool>? IsSupportedCallback { get; set; }
-
-			public UserControl Create()
-			{
-				try
-				{
-					if (this.Type == null)
-						throw new Exception();
-
-					UserControl? control = Activator.CreateInstance(this.Type) as UserControl;
-
-					if (control == null)
-						throw new Exception("Unknown failure");
-
-					return control;
-				}
-				catch (TargetInvocationException ex)
-				{
-					throw new Exception($"Failed to create page: {this.Type}", ex.InnerException);
-				}
-				catch (Exception ex)
-				{
-					throw new Exception($"Failed to create page: {this.Type}", ex);
-				}
-			}
-
-			public bool Supports(ActorViewModel? actor)
-			{
-				if (this.IsSupportedCallback == null)
-					return true;
-
-				if (actor is null)
-					return false;
-
-				return this.IsSupportedCallback.Invoke((ActorViewModel)actor);
-			}
 		}
 	}
 }

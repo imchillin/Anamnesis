@@ -25,9 +25,6 @@ namespace Anamnesis.GUI
 	[SuppressPropertyChangedWarnings]
 	public partial class MainWindow : Window
 	{
-		private UserControl? currentView;
-		private Dictionary<ViewService.Page, UserControl> pages = new Dictionary<ViewService.Page, UserControl>();
-
 		public MainWindow()
 		{
 			this.InitializeComponent();
@@ -245,27 +242,6 @@ namespace Anamnesis.GUI
 					this.ActorName.Text = initialsReg.Replace(actor.Name, "$1.") + " (debug)";
 				}
 			});
-		}
-
-		private void OnSelectPage(ViewService.Page page)
-		{
-			if (page == null)
-			{
-				this.currentView = null;
-				this.ViewArea.Content = null;
-				return;
-			}
-
-			if (!this.pages.ContainsKey(page))
-			{
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					this.pages.Add(page, page.Create());
-				});
-			}
-
-			this.currentView = this.pages[page];
-			this.ViewArea.Content = this.currentView;
 		}
 	}
 }

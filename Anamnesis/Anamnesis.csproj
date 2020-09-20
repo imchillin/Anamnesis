@@ -254,9 +254,6 @@
 		<Compile Update="SplashWindow.xaml.cs">
 			<DependentUpon>SplashWindow.xaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\NavigationMenu.xaml.cs">
-			<DependentUpon>NavigationMenu.xaml</DependentUpon>
-		</Compile>
 		<Compile Update="Views\SettingsView.xaml.cs">
 			<DependentUpon>SettingsView.xaml</DependentUpon>
 		</Compile>
@@ -320,10 +317,6 @@
 		<Page Update="SplashWindow.xaml">
 			<SubType>Designer</SubType>
 		</Page>
-		<Page Update="Views\NavigationMenu.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
 		<Page Update="Views\SettingsView.xaml">
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
@@ -336,7 +329,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Core\Localization\" />
-	  <Folder Include="Pages\" />
 	</ItemGroup>
 
 	<ItemGroup>
