@@ -263,19 +263,19 @@ namespace Anamnesis.PoseModule
 		public static TransformViewModel GetBone(this SkeletonViewModel skeleton, string name)
 		{
 			int index;
-			if (skeleton.Body != null && BodyBoneIndexLookup.TryGetValue(name, out index))
+			if (BodyBoneIndexLookup.TryGetValue(name, out index) && skeleton.Body != null && index < skeleton.Body.Count)
 				return skeleton.Body.Transforms[index];
 
-			if (skeleton.Head != null && HeadBoneIndexLookup.TryGetValue(name, out index))
+			if (HeadBoneIndexLookup.TryGetValue(name, out index) && skeleton.Head != null && index < skeleton.Head.Count)
 				return skeleton.Head.Transforms[index];
 
-			if (skeleton.Hair != null && HairBoneIndexLookup.TryGetValue(name, out index))
+			if (HairBoneIndexLookup.TryGetValue(name, out index) && skeleton.Hair != null && index < skeleton.Hair.Count)
 				return skeleton.Hair.Transforms[index];
 
-			if (skeleton.Met != null && MetBoneIndexLookup.TryGetValue(name, out index))
+			if (MetBoneIndexLookup.TryGetValue(name, out index) && skeleton.Met != null && index < skeleton.Met.Count)
 				return skeleton.Met.Transforms[index];
 
-			if (skeleton.Top != null && TopBoneIndexLookup.TryGetValue(name, out index))
+			if (TopBoneIndexLookup.TryGetValue(name, out index) && skeleton.Top != null && index < skeleton.Top.Count)
 				return skeleton.Top.Transforms[index];
 
 			return null;

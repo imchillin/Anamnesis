@@ -23,103 +23,94 @@
 
 	<Grid x:Name="ContentArea">
 
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-			<ColumnDefinition Width="200"/>
-		</Grid.ColumnDefinitions>
+		<StackPanel Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
+			<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
+			<cm3Controls:TextBlock Key="Pose_WarningNotGPose" Text="Posing is only available while in Group Pose. Type /Gpose in chat." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
+		</StackPanel>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition />
-		</Grid.RowDefinitions>
+		<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition Width="200"/>
+			</Grid.ColumnDefinitions>
 
-		<!-- Sidebar -->
-		<Grid Grid.Column="2" Grid.Row="1" x:Name="Sidebar">
 			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto"/>
+				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			
+			<!-- Sidebar -->
+			<Grid Grid.Column="2" Grid.Row="1" x:Name="Sidebar" Visibility="{Binding GPoseService.IsGPose, Converter={StaticResource B2V}}">
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
 
-			<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3"
-				IsEnabled="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
-				<controls:BoneEditor Value="{Binding Skeleton.CurrentBone}"/>
-			</Border>
+				<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3"
+					IsEnabled="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
+					<controls:BoneEditor Value="{Binding Skeleton.CurrentBone}"/>
+				</Border>
 
-			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 3, 0, 0" x:Name="LoadSaveArea" 
-					IsEnabled="{Binding CanPose}">
-				<Grid Margin="6" IsEnabled="{Binding Skeleton.CanPose}">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
+				<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 3, 0, 0" x:Name="LoadSaveArea" 
+						IsEnabled="{Binding GposeService.IsGPose}">
+					<Grid Margin="6" IsEnabled="{Binding Skeleton.CanPose}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
 
-					<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Key="Common_OpenFile" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
-					<cm3Controls:IconButton Grid.Column="1" Icon="Download" Key="Common_SaveFile" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
+						<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Key="Common_OpenFile" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
+						<cm3Controls:IconButton Grid.Column="1" Icon="Download" Key="Common_SaveFile" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
+					</Grid>
+				</Border>
+			</Grid>
+
+			<!-- top Bar -->
+			<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3" IsEnabled="{Binding CanPose}">
+				<Grid Height="35">
+					<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding GposeService.IsGPose, Converter={StaticResource B2V}}">
+
+
+						<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" Style="{StaticResource OutlineToggleButton}" Margin="3">
+							<Grid>
+								<TextBlock Text="Disable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}"/>
+								<TextBlock Text="Enable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}"/>
+							</Grid>
+						</ToggleButton>
+
+						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
+
+						<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
+							<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1">
+								<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
+							</ListBoxItem>
+							<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 0, 1">
+								<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
+							</ListBoxItem>
+							<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1">
+								<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
+							</ListBoxItem>
+						</ListBox>
+
+						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
+
+						<TextBlock Text="Freeze Physics" Margin="6,0,3,0"  Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}"/>
+
+					</StackPanel>
 				</Grid>
 			</Border>
-		</Grid>
 
-		<!-- top Bar -->
-		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3" IsEnabled="{Binding CanPose}">
-			<Grid Height="35">
-
-				<StackPanel Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal">
-					<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
-					<cm3Controls:TextBlock Key="Pose_WarningNotGPose" Text="Posing is only available while in Group Pose. Type /Gpose in chat." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
-				</StackPanel>
-
-				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
-
-
-					<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" Style="{StaticResource OutlineToggleButton}" Margin="3">
-						<Grid>
-							<TextBlock Text="Disable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}"/>
-							<TextBlock Text="Enable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}"/>
-						</Grid>
-					</ToggleButton>
-
-					<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
-
-					<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
-						<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1">
-							<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
-						</ListBoxItem>
-						<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 0, 1">
-							<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
-						</ListBoxItem>
-						<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1">
-							<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
-						</ListBoxItem>
-					</ListBox>
-
-					<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
-
-					<TextBlock Text="Freeze Physics" Margin="6,0,3,0"  Style="{StaticResource Label}"/>
-					<CheckBox IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}"/>
-
-				</StackPanel>
-			</Grid>
-		</Border>
-
-		<!-- Content -->
-		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
-			<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}" IsEnabled="{Binding PoseService.IsEnabled}">
-
-				<Grid DataContext="{Binding Skeleton}">
-					<StackPanel Height="35" Visibility="{Binding CanPose, Converter={StaticResource !B2V}}" Margin="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-						<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
-						<cm3Controls:TextBlock Key="Pose_WarningNotFrozen" Text="Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
-					</StackPanel>
-
-					<Grid Visibility="{Binding CanPose, Converter={StaticResource B2V}}">
+			<!-- Content -->
+			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
+				<Grid Visibility="{Binding GposeService.IsGPose, Converter={StaticResource B2V}}" IsEnabled="{Binding PoseService.IsEnabled}">
+					<Grid DataContext="{Binding Skeleton}">
 						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>
 						<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
 						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed"/>
 					</Grid>
 				</Grid>
-			</Grid>
-		</Border>
+			</Border>
+		</Grid>
 	</Grid>
 </UserControl>

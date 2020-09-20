@@ -26,14 +26,13 @@ namespace Anamnesis.PoseModule.Pages
 			this.ContentArea.DataContext = this;
 		}
 
+		public GposeService GposeService => GposeService.Instance;
 		public PoseService PoseService { get => PoseModule.PoseService.Instance; }
 
 		public SkeletonVisual3d Skeleton { get; private set; }
-		public bool CanPose { get; set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.CanPose = true;
 			this.OnDataContextChanged(null, default);
 
 			DateTime dt = DateTime.Now;
