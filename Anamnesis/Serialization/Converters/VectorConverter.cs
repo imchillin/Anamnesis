@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory.Serialization.Converters
+namespace Anamnesis.Serialization.Converters
 {
 	using System;
 	using System.Text.Json;

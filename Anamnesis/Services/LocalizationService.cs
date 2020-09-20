@@ -9,6 +9,7 @@ namespace Anamnesis.Services
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using Anamnesis.Serialization;
 	using SimpleLog;
 
 	public delegate void LocalizationEvent();

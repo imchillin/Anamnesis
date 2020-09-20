@@ -11,6 +11,7 @@ namespace Anamnesis.Services
 	using Anamnesis;
 	using Anamnesis.Files;
 	using Anamnesis.GUI.Views;
+	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 	using Microsoft.Win32;
 	using SimpleLog;

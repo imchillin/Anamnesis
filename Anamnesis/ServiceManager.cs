@@ -10,6 +10,7 @@ namespace Anamnesis.Services
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
+	using Anamnesis.Serialization;
 
 	public class ServiceManager
 	{

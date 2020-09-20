@@ -7,14 +7,12 @@ namespace Anamnesis.AppearanceModule
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.IO;
-	using System.Text.Json;
 	using System.Threading.Tasks;
-	using System.Windows.Documents;
 	using Anamnesis.AppearanceModule.Files;
 	using Anamnesis.AppearanceModule.Pages;
 	using Anamnesis.Memory;
-	using Anamnesis.Memory.Serialization;
 	using Anamnesis.Modules;
+	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 
 	public class Module : IModule
@@ -34,8 +32,7 @@ namespace Anamnesis.AppearanceModule
 		{
 			try
 			{
-				string json = File.ReadAllText("Modules/Appearance/ModelTypes.json");
-				List<ModelTypes> modelTypes = SerializerService.Deserialize<List<ModelTypes>>(json);
+				List<ModelTypes> modelTypes = SerializerService.DeserializeFile<List<ModelTypes>>("Modules/Appearance/ModelTypes.json");
 				ModelTypes = modelTypes.AsReadOnly();
 			}
 			catch (Exception ex)
@@ -45,8 +42,7 @@ namespace Anamnesis.AppearanceModule
 
 			try
 			{
-				string json = File.ReadAllText("Modules/Appearance/Props.json");
-				List<Prop> propList = SerializerService.Deserialize<List<Prop>>(json);
+				List<Prop> propList = SerializerService.DeserializeFile<List<Prop>>("Modules/Appearance/Props.json");
 
 				propList.Sort((a, b) =>
 				{

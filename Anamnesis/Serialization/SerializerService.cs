@@ -1,22 +1,26 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory.Serialization
+namespace Anamnesis.Serialization
 {
 	using System;
+	using System.IO;
 	using System.Text.Json;
-	using Anamnesis.Memory.Serialization.Converters;
+	using System.Text.Json.Serialization;
+	using Anamnesis.Serialization.Converters;
 
-	public static class Serializer
+	public class SerializerService : ServiceBase<SerializerService>
 	{
 		public static JsonSerializerOptions Options = new JsonSerializerOptions();
 
-		static Serializer()
+		static SerializerService()
 		{
 			Options.WriteIndented = true;
 			Options.PropertyNameCaseInsensitive = false;
 			Options.IgnoreNullValues = true;
+			Options.AllowTrailingCommas = true;
 
+			Options.Converters.Add(new JsonStringEnumConverter());
 			Options.Converters.Add(new Color4Converter());
 			Options.Converters.Add(new ColorConverter());
 			Options.Converters.Add(new QuaternionConverter());
@@ -26,6 +30,13 @@ namespace Anamnesis.Memory.Serialization
 		public static string Serialize(object obj)
 		{
 			return JsonSerializer.Serialize(obj, Options);
+		}
+
+		public static T DeserializeFile<T>(string path)
+			where T : new()
+		{
+			string json = File.ReadAllText(path);
+			return JsonSerializer.Deserialize<T>(json, Options);
 		}
 
 		public static T Deserialize<T>(string json)

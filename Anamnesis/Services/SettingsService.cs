@@ -10,6 +10,7 @@ namespace Anamnesis.Services
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis;
+	using Anamnesis.Serialization;
 
 	public delegate void SettingsEvent(SettingsBase settings);
 
