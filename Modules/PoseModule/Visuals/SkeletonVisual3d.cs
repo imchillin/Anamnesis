@@ -214,7 +214,7 @@ namespace Anamnesis.PoseModule
 
 		private async Task WriteSkeletonThread()
 		{
-			while (Application.Current != null && this.CurrentBone != null)
+			while (Application.Current != null && this.CurrentBone != null && PoseService.Instance.IsEnabled)
 			{
 				Application.Current.Dispatcher.Invoke(() =>
 				{

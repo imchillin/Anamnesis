@@ -10,7 +10,7 @@
 			 DataContextChanged="OnDataContextChanged"
 			 d:DesignHeight="450" d:DesignWidth="800">
 	
-	<Grid x:Name="ContentArea">
+	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>

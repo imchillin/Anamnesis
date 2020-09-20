@@ -31,24 +31,17 @@ namespace Anamnesis.AppearanceModule.Pages
 			this.ContentArea.DataContext = this;
 		}
 
-		public bool IsOverworld { get; private set; }
+		public GposeService GPoseService => GposeService.Instance;
 		public ActorViewModel Actor { get; private set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			TargetService.ModeChanged += this.SelectionModeChanged;
 			this.OnActorChanged(this.DataContext as ActorViewModel);
-			this.SelectionModeChanged(TargetService.CurrentMode);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			this.OnActorChanged(this.DataContext as ActorViewModel);
-		}
-
-		private void OnUnloaded(object sender, RoutedEventArgs e)
-		{
-			TargetService.ModeChanged -= this.SelectionModeChanged;
 		}
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
@@ -135,11 +128,6 @@ namespace Anamnesis.AppearanceModule.Pages
 			{
 				this.IsEnabled = hasValidSelection;
 			});
-		}
-
-		private void SelectionModeChanged(Modes mode)
-		{
-			this.IsOverworld = mode == Modes.Overworld;
 		}
 	}
 }

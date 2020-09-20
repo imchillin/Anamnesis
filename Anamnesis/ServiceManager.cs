@@ -69,6 +69,7 @@ namespace Anamnesis.Services
 			await Add<TerritoryService>();
 			await Add<TimeService>();
 			await Add<CameraService>();
+			await Add<GposeService>();
 			await Add<ModuleService>();
 
 			IsInitialized = true;

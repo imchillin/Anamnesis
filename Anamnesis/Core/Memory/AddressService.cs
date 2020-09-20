@@ -24,7 +24,7 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr ActorTable { get; private set; }
 		public static IntPtr TargetManager { get; private set; }
 		public static IntPtr Camera { get; private set; }
-		public static IntPtr GPose { get; private set; }
+		public static IntPtr GPoseTargetManager { get; private set; }
 		public static IntPtr SkeletonFreezeRotation { get; private set; }   // SkeletonOffset
 		public static IntPtr SkeletonFreezeRotation2 { get; private set; }  // SkeletonOffset2
 		public static IntPtr SkeletonFreezeRotation3 { get; private set; }  // SkeletonOffset3
@@ -35,6 +35,8 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr SkeletonFreezePhysics { get; private set; }    // PhysicsOffset
 		public static IntPtr SkeletonFreezePhysics2 { get; private set; }   // PhysicsOffset2
 		public static IntPtr SkeletonFreezePhysics3 { get; private set; }   // PhysicsOffset3
+		public static IntPtr GposeCheck { get; private set; }   // GPoseCheckOffset
+		public static IntPtr GposeCheck2 { get; private set; }   // GPoseCheck2Offset
 
 		public static IntPtr Time
 		{
@@ -92,7 +94,7 @@ namespace Anamnesis.Core.Memory
 			// Scan for all static addresses
 			// Some signatures taken from Dalamud: https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Game/ClientState/ClientStateAddressResolver.cs
 			tasks.Add(GetAddressFromSignature("88 91 ?? ?? ?? ?? 48 8D 3D ?? ?? ?? ??", 0, (p) => { ActorTable = p; }));
-			tasks.Add(GetAddressFromSignature("48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 3, (p) => { TargetManager = p; }));
+			tasks.Add(GetAddressFromSignature("48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 3, (p) => { TargetManager = p + 0x80; }));
 
 			IntPtr baseAddress = MemoryService.Process.MainModule.BaseAddress;
 
@@ -101,7 +103,9 @@ namespace Anamnesis.Core.Memory
 			Territory = baseAddress + 0x1D08760;
 			Time = baseAddress + 0x1CEA6E8;
 			Camera = baseAddress + 0x1D09BA0;
-			GPose = baseAddress + 0x1D08D88;
+			GPoseTargetManager = baseAddress + 0x1D09DB0;
+			GposeCheck = baseAddress + 0x1D0D990;
+			GposeCheck2 = baseAddress + 0x1D0D970;
 
 			SkeletonFreezePosition = baseAddress + 0x140821B;
 			SkeletonFreezeRotation = baseAddress + 0x1408290;

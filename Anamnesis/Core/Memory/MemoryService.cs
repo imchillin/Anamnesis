@@ -148,7 +148,7 @@ namespace Anamnesis.Memory
 			if (ActorRefreshService.Instance.IsRefreshing && value is Actor)
 				throw new Exception("Attempt to write actor memory while actor is refreshing");
 
-			Log.Write("Writing: " + diff + " bytes, " + value.GetType().Name + " to " + address);
+			////Log.Write("Writing: " + diff + " bytes, " + value.GetType().Name + " to " + address);
 
 			// Write the oldBuffer (which has now had newBuffer merged over it) to the process
 			WriteProcessMemory(Handle, address, oldBuffer, size, out _);

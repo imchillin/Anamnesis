@@ -11,7 +11,6 @@
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
 			 Loaded="OnLoaded"
-			 Unloaded="OnUnloaded"
 			 DataContextChanged="OnDataContextChanged">
 	
 	<Grid Margin="3, 0, 0, 0" x:Name="ContentArea">
@@ -27,7 +26,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Grid Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding IsOverworld}">
+		<Grid Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding GPoseService.IsOverworld}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition/>
@@ -43,7 +42,7 @@
 
 		</Grid>
 
-		<Border Grid.Column="1" IsEnabled="{Binding IsOverworld}" Grid.Row="0">
+		<Border Grid.Column="1" IsEnabled="{Binding GPoseService.IsOverworld}" Grid.Row="0">
 			<views:EquipmentEditor DataContext="{Binding Actor}"/>
 		</Border>
 
@@ -61,7 +60,7 @@
 
 		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0">
 			<Grid Margin="3">
-				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal" IsEnabled="{Binding IsOverworld}">
+				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal" IsEnabled="{Binding GPoseService.IsOverworld}">
 					<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
 					<cm3Controls:IconButton Grid.Column="1" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
 				</StackPanel>

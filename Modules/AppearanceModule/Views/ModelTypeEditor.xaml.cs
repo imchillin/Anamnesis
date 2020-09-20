@@ -7,6 +7,7 @@ namespace Anamnesis.AppearanceModule.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using Anamnesis.WpfStyles.Drawers;
 
 	/// <summary>
@@ -16,17 +17,13 @@ namespace Anamnesis.AppearanceModule.Views
 	{
 		public ModelTypeEditor()
 		{
+			GposeService.Instance.PropertyChanged += this.GPoseServicePropertyChanged;
 			this.InitializeComponent();
-
-			TargetService.ModeChanged += this.SelectionService_ModeChanged;
 		}
 
-		private void SelectionService_ModeChanged(Modes mode)
+		private void GPoseServicePropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				this.IsEnabled = mode == Modes.Overworld;
-			});
+			this.IsEnabled = GposeService.Instance.IsOverworld;
 		}
 
 		private void OnBrowseClicked(object sender, RoutedEventArgs e)

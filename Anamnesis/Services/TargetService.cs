@@ -20,32 +20,13 @@ namespace Anamnesis
 	using Anamnesis.Services;
 	using SimpleLog;
 
-	public delegate void SelectionModeEvent(Modes mode);
 	public delegate void SelectionEvent(ActorViewModel? actor);
-
-	public enum Modes
-	{
-		Overworld,
-		GPose,
-	}
 
 	public class TargetService : ServiceBase<TargetService>
 	{
-		private static int targetOffset = 0x80;
-
-		public static event SelectionModeEvent? ModeChanged;
 		public static event SelectionEvent? ActorSelected;
 
 		public static ActorViewModel? SelectedActor { get; private set; }
-
-		public static Modes CurrentMode
-		{
-			get
-			{
-				////return gposeMem.Value && gposeMem2.Value == 4 ? Modes.GPose : Modes.Overworld;
-				return Modes.Overworld;
-			}
-		}
 
 		public override Task Start()
 		{
@@ -120,9 +101,6 @@ namespace Anamnesis
 			{
 				await Task.Delay(500);
 
-				IntPtr targetPointerAddress = AddressService.TargetManager + targetOffset;
-
-				Modes currentMode = CurrentMode;
 				IntPtr lastTargetAddress = IntPtr.Zero;
 
 				while (this.IsAlive)
@@ -132,25 +110,16 @@ namespace Anamnesis
 					while (ActorRefreshService.Instance.IsRefreshing)
 						await Task.Delay(250);
 
-					Modes newMode = CurrentMode;
-
-					if (newMode != currentMode)
+					IntPtr newTargetAddress;
+					if (GposeService.Instance.IsGpose)
 					{
-						await Task.Delay(1000);
-
-						currentMode = newMode;
-
-						try
-						{
-							ModeChanged?.Invoke(newMode);
-						}
-						catch (Exception ex)
-						{
-							Log.Write(Severity.Error, ex);
-						}
+						newTargetAddress = MemoryService.ReadPtr(AddressService.GPoseTargetManager);
+					}
+					else
+					{
+						newTargetAddress = MemoryService.ReadPtr(AddressService.TargetManager);
 					}
 
-					IntPtr newTargetAddress = MemoryService.ReadPtr(targetPointerAddress);
 					if (newTargetAddress != lastTargetAddress)
 					{
 						lastTargetAddress = newTargetAddress;

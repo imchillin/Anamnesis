@@ -4,11 +4,10 @@
 namespace Anamnesis.PoseModule
 {
 	using System;
-	using System.ComponentModel;
 	using System.Threading.Tasks;
-	using System.Windows;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
@@ -30,19 +29,6 @@ namespace Anamnesis.PoseModule
 		public delegate void PoseEvent(bool value);
 
 		public static event PoseEvent EnabledChanged;
-		public static event PoseEvent FreezePhysicsChanged;
-		public static event PoseEvent FreezePositionsChanged;
-		public static event PoseEvent FreezeScaleChanged;
-		public static event PoseEvent FreezeRotationChanged;
-		public static event PoseEvent AvailableChanged;
-
-		public bool IsAvailable
-		{
-			get
-			{
-				return TargetService.CurrentMode == Modes.GPose;
-			}
-		}
 
 		public bool IsEnabled
 		{
@@ -73,8 +59,6 @@ namespace Anamnesis.PoseModule
 
 				this.phys1Mem.Enabled = value;
 				this.phys2Mem.Enabled = value;
-
-				FreezePhysicsChanged?.Invoke(value);
 			}
 		}
 
@@ -87,8 +71,6 @@ namespace Anamnesis.PoseModule
 			set
 			{
 				this.skel5Mem.Enabled = value;
-
-				FreezePositionsChanged?.Invoke(value);
 			}
 		}
 
@@ -103,8 +85,6 @@ namespace Anamnesis.PoseModule
 				this.skel4Mem.Enabled = value;
 				this.phys3Mem.Enabled = value;
 				this.skel6Mem.Enabled = value;
-
-				FreezeScaleChanged?.Invoke(value);
 			}
 		}
 
@@ -119,8 +99,6 @@ namespace Anamnesis.PoseModule
 				this.skel1Mem.Enabled = value;
 				this.skel2Mem.Enabled = value;
 				this.skel3Mem.Enabled = value;
-
-				FreezeRotationChanged?.Invoke(value);
 			}
 		}
 
@@ -139,8 +117,6 @@ namespace Anamnesis.PoseModule
 			this.phys1Mem = new NopHookViewModel(AddressService.SkeletonFreezePhysics, 4);
 			this.phys2Mem = new NopHookViewModel(AddressService.SkeletonFreezePhysics2, 3);
 			this.phys3Mem = new NopHookViewModel(AddressService.SkeletonFreezePhysics3, 4);
-
-			TargetService.ModeChanged += this.Selection_ModeChanged;
 		}
 
 		public override async Task Shutdown()
@@ -152,32 +128,19 @@ namespace Anamnesis.PoseModule
 		public void SetEnabled(bool enabled)
 		{
 			// Don't try to enable posing unless we are in gpose
-			////if (enabled && TargetService.CurrentMode != Modes.GPose)
-			////	throw new Exception("Attempt to enable posing outside of gpose");
+			if (enabled && !GposeService.Instance.IsGpose)
+				throw new Exception("Attempt to enable posing outside of gpose");
 
 			this.isEnabled = enabled;
 
 			////this.FreezePositions = enabled;
-			////this.FreezePhysics = enabled;
+			this.FreezePhysics = enabled;
 			this.FreezeRotation = enabled;
 			////this.FreezeScale = enabled;
 
 			EnabledChanged?.Invoke(enabled);
 
 			this.RaisePropertyChanged(nameof(this.IsEnabled));
-		}
-
-		private void Selection_ModeChanged(Modes mode)
-		{
-			bool available = this.IsAvailable;
-
-			if (!available)
-				this.IsEnabled = false;
-
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				AvailableChanged?.Invoke(available);
-			});
 		}
 	}
 }
