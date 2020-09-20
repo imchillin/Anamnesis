@@ -73,6 +73,7 @@ namespace Anamnesis.Services
 			await Add<CameraService>();
 			await Add<GposeService>();
 			await Add<PoseService>();
+			await Add<ModelTypeService>();
 			await Add<ModuleService>();
 
 			IsInitialized = true;

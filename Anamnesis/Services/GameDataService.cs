@@ -3,7 +3,13 @@
 
 namespace Anamnesis.Services
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using System.Threading.Tasks;
+	using Anamnesis.Character;
 	using Anamnesis.GameData;
+	using Anamnesis.Serialization;
 
 	public abstract class GameDataService : ServiceBase<GameDataService>
 	{
@@ -19,5 +25,28 @@ namespace Anamnesis.Services
 		public static IData<INpcResident>? ResidentNPCs { get; protected set; }
 		public static IData<ITitle>? Titles { get; protected set; }
 		public static IData<IStatus>? Statuses { get; protected set; }
+
+		public static ReadOnlyCollection<Prop>? Props { get; private set; }
+
+		public override Task Initialize()
+		{
+			try
+			{
+				List<Prop> propList = SerializerService.DeserializeFile<List<Prop>>("Props.json");
+
+				propList.Sort((a, b) =>
+				{
+					return a.Name.CompareTo(b.Name);
+				});
+
+				Props = propList.AsReadOnly();
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception("Failed to load props list", ex));
+			}
+
+			return base.Initialize();
+		}
 	}
 }

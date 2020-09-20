@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="Anamnesis.Character.Views.EquipmentSelector"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:controls="clr-namespace:Styles.Controls"
+			 xmlns:cm3Drawers="clr-namespace:Anamnesis.WpfStyles.Drawers"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="232">
+
+	<Grid>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Expander x:Name="ClassExpander" Style="{StaticResource Cm3Expander}">
+			<Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="3" Padding="3, 3, 3, 6" Margin="3, 0, 3, 0">
+				<controls:ClassFilter HorizontalAlignment="Center" Value="{Binding ClassFilter}"/>
+			</Border>
+		</Expander>
+
+		<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6, 0, 0, 0">
+			<RadioButton Margin="3" IsChecked="True" Checked="OnAllMode">
+				<TextBlock Text="All" Margin="0, -3, 6, 0"/>
+			</RadioButton>
+
+			<RadioButton Margin="3" Checked="OnPropsMode">
+				<TextBlock Text="Props" Margin="0, -3, 6, 0"/>
+			</RadioButton>
+
+			<RadioButton Margin="3" Checked="OnItemsMode">
+				<TextBlock Text="Items" Margin="0, -3, 6, 0"/>
+			</RadioButton>
+
+			<RadioButton Margin="3" Checked="OnSpecialMode">
+				<TextBlock Text="Special" Margin="0, -3, 6, 0"/>
+			</RadioButton>
+		</StackPanel>
+
+		<cm3Drawers:SelectorDrawer
+			Grid.Row="2"
+			x:Name="Selector"
+			Close="OnClose" 
+			Filter="OnFilter"
+			SelectionChanged="OnSelectionChanged">
+
+			<cm3Drawers:SelectorDrawer.ItemTemplate>
+				<DataTemplate>
+					<Grid Height="32">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<Border Width="32" Background="#444444" Grid.RowSpan="2" CornerRadius="3" Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
+							<Grid>
+								<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}" Margin="1"/>
+								<Image Source="/AppearanceModule;component/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
+							</Grid>
+						</Border>
+
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
+
+						<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0">
+							<TextBlock Text="{Binding Key}" Style="{StaticResource Label}" Visibility="{Binding Key, Converter={StaticResource NotZeroToVisibility}}"/>
+							<TextBlock Text="{Binding ModelSet}" Style="{StaticResource Label}"/>
+							<TextBlock Text="{Binding ModelBase}" Style="{StaticResource Label}"/>
+							<TextBlock Text="{Binding ModelVariant}" Style="{StaticResource Label}"/>
+						</StackPanel>
+
+						<Rectangle Grid.ColumnSpan="2" 
+									   Grid.RowSpan="2" 
+									   Fill="Transparent" 
+									   Visibility="{Binding Description, Converter={StaticResource StringHasContentToVisibility}}" 
+									   ToolTipService.ToolTip="{Binding Description}"/>
+
+					</Grid>
+				</DataTemplate>
+			</cm3Drawers:SelectorDrawer.ItemTemplate>
+		</cm3Drawers:SelectorDrawer>
+	</Grid>
+</UserControl>

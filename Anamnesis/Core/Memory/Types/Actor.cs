@@ -66,6 +66,11 @@ namespace Anamnesis.Memory
 
 		[ModelField] public ModelViewModel? ModelObject { get; set; }
 
+		public bool IsCustomizable()
+		{
+			return ModelTypeService.IsCustomizable(this.ModelType) && this.Customize != null;
+		}
+
 		protected override void OnViewToModel(string fieldName, object? value)
 		{
 			// Do not allow actor view model changes to push into memory while we are refreshing.

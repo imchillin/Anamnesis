@@ -370,10 +370,7 @@ namespace Anamnesis.GUI.Views
 				this.View = view;
 			}
 
-			public string Name
-			{
-				get => this.Entry.Name;
-			}
+			public string? Name => this.Entry.Name;
 
 			public string Icon
 			{
@@ -414,7 +411,7 @@ namespace Anamnesis.GUI.Views
 			{
 				get
 				{
-					if (this.View.CurrentDir == null)
+					if (this.View.CurrentDir == null || this.View.CurrentDir.Path == null)
 						return string.Empty;
 
 					string relativePath = this.Entry.Path?.Replace(this.View.CurrentDir.Path, string.Empty) ?? string.Empty;

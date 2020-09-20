@@ -27,6 +27,7 @@ namespace Anamnesis
 	}
 
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public abstract class StructViewModelBase<T> : IStructViewModel, INotifyPropertyChanged
 		where T : struct
 	{

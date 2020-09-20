@@ -80,14 +80,16 @@ namespace Anamnesis.WpfStyles.Drawers
 			}
 		}
 
-		public static void Show<TView, TValue>(string title, TValue current, Action<TValue> changed)
+		public static void Show<TView, TValue>(string title, TValue? current, Action<TValue> changed)
 			where TView : ISelectorView
+			where TValue : class
 		{
 			ISelectorView view = Activator.CreateInstance<TView>();
 			Show(title, view, current, changed);
 		}
 
-		public static void Show<TValue>(string title, ISelectorView view, TValue current, Action<TValue> changed)
+		public static void Show<TValue>(string title, ISelectorView view, TValue? current, Action<TValue> changed)
+			where TValue : class
 		{
 			view.Selector.Value = current;
 			view.Selector.SelectionChanged += () =>

@@ -1,0 +1,30 @@
+﻿// Concept Matrix 3.
+// Licensed under the MIT license.
+
+namespace Anamnesis.Character.Items
+{
+	using Anamnesis;
+	using Anamnesis.GameData;
+
+	public class DummyNoneItem : IItem
+	{
+		public string Name => "None";
+		public string? Description => null;
+		public IImageSource? Icon => null;
+		public ushort ModelBase => 0;
+		public ushort ModelVariant => 0;
+		public ushort ModelSet => 0;
+		public int Key => 0;
+		public bool IsWeapon => true;
+		public bool HasSubModel => false;
+		public ushort SubModelBase => 0;
+		public ushort SubModelVariant => 0;
+		public ushort SubModelSet => 0;
+		public Classes EquipableClasses => Classes.All;
+
+		public bool FitsInSlot(ItemSlots slot)
+		{
+			return true;
+		}
+	}
+}

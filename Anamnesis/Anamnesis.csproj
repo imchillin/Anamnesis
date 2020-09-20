@@ -25,6 +25,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Assets\classBorder.png" />
 		<None Remove="Assets\Classes\alchemist.png" />
 		<None Remove="Assets\Classes\arcanist.png" />
 		<None Remove="Assets\Classes\archer.png" />
@@ -65,8 +66,13 @@
 		<None Remove="Assets\Classes\weaver.png" />
 		<None Remove="Assets\Classes\whitemage.png" />
 		<None Remove="Assets\cmtool.png" />
+		<None Remove="Assets\colors.dat" />
 		<None Remove="Assets\Concept Matrix.ico" />
 		<None Remove="Assets\Concept Matrix.png" />
+		<None Remove="Assets\IconBorder.png" />
+		<None Remove="Assets\IconBorderSmall.png" />
+		<None Remove="Assets\IconOverlay.png" />
+		<None Remove="Assets\LegacyTattoo.png" />
 		<None Remove="Assets\PoseCharacterBodyBackground.png" />
 		<None Remove="Assets\PoseCharacterClothesBackground.png" />
 		<None Remove="Assets\PoseCharacterFaceBackground.png" />
@@ -82,6 +88,19 @@
 		<None Remove="Assets\Roles\gatherers.png" />
 		<None Remove="Assets\Roles\healers.png" />
 		<None Remove="Assets\Roles\tanks.png" />
+		<None Remove="Assets\Slots\Body.png" />
+		<None Remove="Assets\Slots\Ears.png" />
+		<None Remove="Assets\Slots\Feet.png" />
+		<None Remove="Assets\Slots\Hands.png" />
+		<None Remove="Assets\Slots\Head.png" />
+		<None Remove="Assets\Slots\LeftRing.png" />
+		<None Remove="Assets\Slots\Legs.png" />
+		<None Remove="Assets\Slots\MainHand.png" />
+		<None Remove="Assets\Slots\Neck.png" />
+		<None Remove="Assets\Slots\OffHand.png" />
+		<None Remove="Assets\Slots\RightRing.png" />
+		<None Remove="Assets\Slots\Waist.png" />
+		<None Remove="Assets\Slots\Wrists.png" />
 		<None Remove="cmtool-icon.ico" />
 		<None Remove="FodyWeavers.xml" />
 		<None Remove="stylecop.json" />
@@ -114,6 +133,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Assets\classBorder.png" />
 		<Resource Include="Assets\Classes\alchemist.png" />
 		<Resource Include="Assets\Classes\arcanist.png" />
 		<Resource Include="Assets\Classes\archer.png" />
@@ -154,8 +174,13 @@
 		<Resource Include="Assets\Classes\weaver.png" />
 		<Resource Include="Assets\Classes\whitemage.png" />
 		<Resource Include="Assets\cmtool.png" />
+		<Resource Include="Assets\colors.dat" />
 		<Resource Include="Assets\Concept Matrix.ico" />
 		<Resource Include="Assets\Concept Matrix.png" />
+		<Resource Include="Assets\IconBorder.png" />
+		<Resource Include="Assets\IconBorderSmall.png" />
+		<Resource Include="Assets\IconOverlay.png" />
+		<Resource Include="Assets\LegacyTattoo.png" />
 		<Resource Include="Assets\PoseCharacterBodyBackground.png" />
 		<Resource Include="Assets\PoseCharacterClothesBackground.png" />
 		<Resource Include="Assets\PoseCharacterFaceBackground.png" />
@@ -171,6 +196,19 @@
 		<Resource Include="Assets\Roles\gatherers.png" />
 		<Resource Include="Assets\Roles\healers.png" />
 		<Resource Include="Assets\Roles\tanks.png" />
+		<Resource Include="Assets\Slots\Body.png" />
+		<Resource Include="Assets\Slots\Ears.png" />
+		<Resource Include="Assets\Slots\Feet.png" />
+		<Resource Include="Assets\Slots\Hands.png" />
+		<Resource Include="Assets\Slots\Head.png" />
+		<Resource Include="Assets\Slots\LeftRing.png" />
+		<Resource Include="Assets\Slots\Legs.png" />
+		<Resource Include="Assets\Slots\MainHand.png" />
+		<Resource Include="Assets\Slots\Neck.png" />
+		<Resource Include="Assets\Slots\OffHand.png" />
+		<Resource Include="Assets\Slots\RightRing.png" />
+		<Resource Include="Assets\Slots\Waist.png" />
+		<Resource Include="Assets\Slots\Wrists.png" />
 		<Resource Include="FodyWeavers.xml" />
 	</ItemGroup>
 
@@ -186,11 +224,22 @@
 			<SubType>Code</SubType>
 			<DependentUpon>App.xaml</DependentUpon>
 		</Compile>
+		<Compile Update="Character\Views\ExtendedAppearanceEditor.xaml.cs">
+		  <SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Character\Views\ModelTypeEditor.xaml.cs">
+		  <SubType>Code</SubType>
+		</Compile>
 		<Compile Update="Posing\Controls\BoneEditor.xaml.cs">
 		  <SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Posing\Views\PoseMatrixView.xaml.cs">
 		  <SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Resources.Designer.cs">
+		  <DependentUpon>Resources.resx</DependentUpon>
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
 		</Compile>
 		<Compile Update="Windows\ErrorDialog.xaml.cs">
 			<DependentUpon>ErrorDialog.xaml</DependentUpon>
@@ -217,6 +266,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="ModelTypes.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Props.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Languages\en.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
@@ -226,6 +281,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Page Update="Character\Views\ExtendedAppearanceEditor.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Character\Views\ModelTypeEditor.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Character\Views\ModelTypeSelector.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Character\Views\NpcSelector.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
 		<Page Update="Posing\Controls\BoneEditor.xaml">
 		  <SubType>Designer</SubType>
 		</Page>
@@ -270,6 +337,13 @@
 	<ItemGroup>
 	  <Folder Include="Core\Localization\" />
 	  <Folder Include="Pages\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources.resx">
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	    <Generator>ResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

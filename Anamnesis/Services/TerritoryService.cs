@@ -13,6 +13,7 @@ namespace Anamnesis
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public class TerritoryService : ServiceBase<TerritoryService>
 	{
 		public int CurrentTerritoryId { get; set; }

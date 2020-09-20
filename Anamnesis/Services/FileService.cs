@@ -308,8 +308,8 @@ namespace Anamnesis.Services
 	{
 		public interface IEntry
 		{
-			public string Path { get; }
-			public string Name { get; }
+			public string? Path { get; }
+			public string? Name { get; }
 
 			public Task Delete();
 		}
@@ -365,10 +365,17 @@ namespace Anamnesis.Services
 	}
 
 	[Serializable]
-	public abstract class FileBase
+	public abstract class FileBase : IFileSource.IFile
 	{
 		public string? Path { get; set; }
 		public bool UseAdvancedLoad { get; set; }
-		public abstract FileType Type { get; }
+		public abstract FileType? Type { get; }
+
+		public string? Name { get; protected set; }
+
+		public virtual Task Delete()
+		{
+			return Task.CompletedTask;
+		}
 	}
 }

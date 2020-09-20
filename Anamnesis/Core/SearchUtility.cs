@@ -8,8 +8,11 @@ namespace Anamnesis
 	public static class SearchUtility
 	{
 		#pragma warning disable SA1011
-		public static bool Matches(string input, string[]? querry)
+		public static bool Matches(string? input, string[]? querry)
 		{
+			if (input == null)
+				return false;
+
 			if (querry == null)
 				return true;
 

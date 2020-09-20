@@ -12,6 +12,7 @@ namespace Anamnesis.Services
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public class ActorRefreshService : ServiceBase<ActorRefreshService>
 	{
 		private const int AutomaticRefreshDelay = 50;

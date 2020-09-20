@@ -9,6 +9,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using Anamnesis;
+	using Anamnesis.Character.Pages;
 	using Anamnesis.GUI.Views;
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Memory;
@@ -145,6 +146,7 @@ namespace Anamnesis.Services
 			await base.Initialize();
 
 			AddPage<HomeView>("Home", "Home");
+			AddPage<AppearancePage>("Character", "useralt");
 			AddPage<PosePage>("Pose", "running");
 		}
 

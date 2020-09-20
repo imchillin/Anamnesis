@@ -7,7 +7,7 @@ namespace Anamnesis.GameData
 	{
 		byte Id { get; }
 		string Name { get; }
-		string Description { get; }
-		IImageSource Icon { get; }
+		string? Description { get; }
+		IImageSource? Icon { get; }
 	}
 }

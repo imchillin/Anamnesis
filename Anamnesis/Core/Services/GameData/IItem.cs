@@ -8,8 +8,8 @@ namespace Anamnesis.GameData
 	public interface IItem : IDataObject
 	{
 		string Name { get; }
-		string Description { get; }
-		IImageSource Icon { get; }
+		string? Description { get; }
+		IImageSource? Icon { get; }
 
 		ushort ModelSet { get; }
 		ushort ModelBase { get; }
