@@ -230,6 +230,9 @@ namespace Anamnesis.GUI
 
 		private void OnActorSelected(ActorViewModel? actor)
 		{
+			if (Application.Current == null)
+				return;
+
 			Application.Current.Dispatcher.Invoke(() =>
 			{
 				this.ActorArea.DataContext = actor;
