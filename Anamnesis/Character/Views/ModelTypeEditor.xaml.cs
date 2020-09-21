@@ -83,6 +83,7 @@ namespace Anamnesis.Character.Views
 					if (modelType.Id == modelTypeId)
 					{
 						this.ModelName.Text = modelType.Name;
+						return;
 					}
 				}
 			});
