@@ -85,12 +85,16 @@ namespace Anamnesis.Files
 
 				foreach (string filePath in filePaths)
 				{
-					File file = new File(filePath);
+					try
+					{
+						string extension = Paths.GetExtension(filePath);
+						FileInfoBase info = FileService.GetFileInfo(extension);
 
-					if (file.Type == null)
-						continue;
-
-					results.Add(file);
+						results.Add(new File(filePath, info));
+					}
+					catch (Exception)
+					{
+					}
 				}
 			}
 
@@ -99,13 +103,11 @@ namespace Anamnesis.Files
 
 		public class File : IFileSource.IFile
 		{
-			public File(string path)
+			public File(string path, FileInfoBase info)
 			{
 				this.Path = path;
 				this.Name = Paths.GetFileNameWithoutExtension(path);
-
-				string extension = Paths.GetExtension(path);
-				this.Type = FileService.GetFileInfo(extension);
+				this.Type = info;
 			}
 
 			public string Name { get; private set; }
