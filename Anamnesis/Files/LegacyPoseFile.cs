@@ -17,7 +17,7 @@ namespace Anamnesis.Files
 	#pragma warning disable SA1402, SA1649
 	public class LegacyPoseFileInfo : JsonFileInfoBase<LegacyPoseFile>
 	{
-		public override string Extension => "json";
+		public override string Extension => "cmp";
 		public override string Name => "CMTool Equipment Set";
 		public override IFileSource FileSource => new LocalFileSource("Local Files (CMTool)", "CMTool", "Matrix Saves");
 	}
