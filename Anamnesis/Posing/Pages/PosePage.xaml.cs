@@ -84,23 +84,23 @@ namespace Anamnesis.PoseModule.Pages
 				if (actor == null)
 					return;
 
-				FileBase? file = await FileService.Open<PoseFile, LegacyPoseFile>();
+				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>();
 
-				if (file == null)
+				if (result.File == null)
 					return;
 
-				if (file is LegacyPoseFile legacyFile)
-					file = legacyFile.Upgrade(actor.Customize?.Race ?? Appearance.Races.Hyur);
+				if (result.File is LegacyPoseFile legacyFile)
+					result.File = legacyFile.Upgrade(actor.Customize?.Race ?? Appearance.Races.Hyur);
 
 				PoseFile.Configuration config = new PoseFile.Configuration();
 
-				if (true)
+				if (result.UseAdvancedLoad)
 					config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Load Pose...");
 
 				if (config == null)
 					return;
 
-				if (file is PoseFile poseFile)
+				if (result.File is PoseFile poseFile)
 				{
 					await poseFile.ReadFromFile(actor, config);
 				}
@@ -113,33 +113,34 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			await FileService.Save(
-				async (advancedMode) =>
-				{
-					ActorViewModel? actor = this.DataContext as ActorViewModel;
+			await FileService.Save(this.Save);
+		}
 
-					if (actor == null)
-						return null;
+		private async Task<PoseFile?> Save(bool useAdvancedSave)
+		{
+			ActorViewModel? actor = this.DataContext as ActorViewModel;
 
-					PoseFile.Configuration config;
+			if (actor == null)
+				return null;
 
-					if (advancedMode)
-					{
-						config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Save Pose...");
-					}
-					else
-					{
-						config = new PoseFile.Configuration();
-					}
+			PoseFile.Configuration config;
 
-					if (config == null)
-						return null;
+			if (useAdvancedSave)
+			{
+				config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Save Pose...");
+			}
+			else
+			{
+				config = new PoseFile.Configuration();
+			}
 
-					PoseFile file = new PoseFile();
-					file.WriteToFile(actor, config);
+			if (config == null)
+				return null;
 
-					return file;
-				});
+			PoseFile file = new PoseFile();
+			file.WriteToFile(actor, config);
+
+			return file;
 		}
 
 		[SuppressPropertyChangedWarnings]

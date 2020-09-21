@@ -38,24 +38,20 @@ namespace Anamnesis.Files
 			}
 		}
 
-		public static async Task<T?> Open<T>()
+		public static async Task<OpenResult> Open<T>()
 			where T : FileBase
 		{
-			FileBase? file = await Open(typeof(T));
-			if (file is T tFile)
-				return tFile;
-
-			throw new Exception("Faield to open file as expected type");
+			return await Open(typeof(T));
 		}
 
-		public static async Task<FileBase?> Open<T1, T2>()
+		public static async Task<OpenResult> Open<T1, T2>()
 			where T1 : FileBase
 			where T2 : FileBase
 		{
 			return await Open(typeof(T1), typeof(T2));
 		}
 
-		public static async Task<FileBase?> Open<T1, T2, T3>()
+		public static async Task<OpenResult> Open<T1, T2, T3>()
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
@@ -63,7 +59,7 @@ namespace Anamnesis.Files
 			return await Open(typeof(T1), typeof(T2), typeof(T3));
 		}
 
-		public static async Task<FileBase?> Open<T1, T2, T3, T4>()
+		public static async Task<OpenResult> Open<T1, T2, T3, T4>()
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
@@ -72,7 +68,7 @@ namespace Anamnesis.Files
 			return await Open(typeof(T1), typeof(T2), typeof(T3), typeof(T4));
 		}
 
-		public static Task<FileBase?> Open(params Type[] fileTypes)
+		public static Task<OpenResult> Open(params Type[] fileTypes)
 		{
 			List<FileInfoBase>? fileInfos = new List<FileInfoBase>();
 			foreach (Type fileType in fileTypes)
@@ -83,13 +79,12 @@ namespace Anamnesis.Files
 			return Open(fileInfos.ToArray());
 		}
 
-		public static async Task<FileBase?> Open(params FileInfoBase[] fileInfos)
+		public static async Task<OpenResult> Open(params FileInfoBase[] fileInfos)
 		{
+			OpenResult result = default;
+
 			try
 			{
-				string? path = null;
-				bool advancedMode = false;
-
 				bool useExplorerBrowser = App.Settings.UseWindowsExplorer;
 
 				if (!useExplorerBrowser)
@@ -100,14 +95,14 @@ namespace Anamnesis.Files
 					while (browser.IsOpen)
 						await Task.Delay(10);
 
-					path = browser.FilePath;
-					advancedMode = browser.AdvancedMode;
+					result.Path = browser.FilePath;
+					result.UseAdvancedLoad = browser.AdvancedMode;
 					useExplorerBrowser = browser.UseFileBrowser;
 				}
 
 				if (useExplorerBrowser)
 				{
-					path = await App.Current.Dispatcher.InvokeAsync<string?>(() =>
+					result.Path = await App.Current.Dispatcher.InvokeAsync<string?>(() =>
 					{
 						OpenFileDialog dlg = new OpenFileDialog();
 						dlg.Filter = ToAnyFilter(fileInfos);
@@ -119,31 +114,29 @@ namespace Anamnesis.Files
 						return dlg.FileName;
 					});
 
-					advancedMode = true;
+					result.UseAdvancedLoad = true;
 				}
 
-				if (path == null)
-					return null;
+				if (result.Path == null)
+					return result;
 
-				string extension = Path.GetExtension(path);
-				FileInfoBase info = GetFileInfo(extension);
+				string extension = Path.GetExtension(result.Path);
+				result.Info = GetFileInfo(extension);
 
-				using FileStream stream = new FileStream(path, FileMode.Open);
-				FileBase file = info.DeserializeFile(stream);
+				using FileStream stream = new FileStream(result.Path, FileMode.Open);
+				result.File = result.Info.DeserializeFile(stream);
 
-				if (file == null)
+				if (result.File == null)
 					throw new Exception("File failed to deserialize");
 
-				file.Path = path;
-
-				return file;
+				return result;
 			}
 			catch (Exception ex)
 			{
 				Log.Write(Severity.Error, new Exception("Failed to open file", ex));
 			}
 
-			return null;
+			return result;
 		}
 
 		public static async Task Save<T>(Func<bool, Task<T?>> writeFile, string? path = null)
@@ -284,6 +277,14 @@ namespace Anamnesis.Files
 	}
 
 	#pragma warning disable SA1201, SA1402
+	public struct OpenResult
+	{
+		public FileBase? File;
+		public FileInfoBase? Info;
+		public string? Path;
+		public bool UseAdvancedLoad;
+	}
+
 	public interface IFileSource
 	{
 		public interface IEntry

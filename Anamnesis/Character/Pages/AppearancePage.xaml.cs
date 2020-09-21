@@ -74,27 +74,25 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			FileBase? file = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>();
+			OpenResult result = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>();
 
-			if (file == null)
+			if (result.File == null)
 				return;
 
-			bool advanced = true;
+			if (result.File is LegacyCharacterFile legacyAllFile)
+				result.File = legacyAllFile.Upgrade();
 
-			if (file is LegacyCharacterFile legacyAllFile)
-				file = legacyAllFile.Upgrade();
+			if (result.File is LegacyEquipmentSetFile legacyEquipmentFile)
+				result.File = legacyEquipmentFile.Upgrade();
 
-			if (file is LegacyEquipmentSetFile legacyEquipmentFile)
-				file = legacyEquipmentFile.Upgrade();
+			if (result.File is DatCharacterFile datFile)
+				result.File = datFile.Upgrade();
 
-			if (file is DatCharacterFile datFile)
-				file = datFile.Upgrade();
-
-			if (file is CharacterFile apFile)
+			if (result.File is CharacterFile apFile)
 			{
 				CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
 
-				if (advanced)
+				if (result.UseAdvancedLoad)
 				{
 					mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Load Appearance...");
 
@@ -113,23 +111,27 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			await FileService.Save(
-				async (advancedMode) =>
-				{
-					CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
+			await FileService.Save(this.Save);
+		}
 
-					if (advancedMode)
-						mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Appearance...");
+		private async Task<CharacterFile?> Save(bool useAdvancedSave)
+		{
+			if (this.Actor == null)
+				return null;
 
-					CharacterFile file = new CharacterFile();
+			CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
 
-					if (mode == CharacterFile.SaveModes.None)
-						return null;
+			if (useAdvancedSave)
+				mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Appearance...");
 
-					file.Read(this.Actor, mode);
+			CharacterFile file = new CharacterFile();
 
-					return file;
-				});
+			if (mode == CharacterFile.SaveModes.None)
+				return null;
+
+			file.Read(this.Actor, mode);
+
+			return file;
 		}
 
 		private void OnActorChanged(ActorViewModel? actor)
