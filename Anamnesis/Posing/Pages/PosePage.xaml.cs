@@ -84,7 +84,7 @@ namespace Anamnesis.PoseModule.Pages
 				if (actor == null)
 					return;
 
-				FileBase? file = await FileService.OpenAny(PoseFile.FileType, LegacyPoseFile.FileType);
+				FileBase? file = await FileService.Open<PoseFile, LegacyPoseFile>();
 
 				if (file == null)
 					return;
@@ -94,7 +94,7 @@ namespace Anamnesis.PoseModule.Pages
 
 				PoseFile.Configuration config = new PoseFile.Configuration();
 
-				if (file.UseAdvancedLoad)
+				if (true)
 					config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Load Pose...");
 
 				if (config == null)
@@ -139,8 +139,7 @@ namespace Anamnesis.PoseModule.Pages
 					file.WriteToFile(actor, config);
 
 					return file;
-				},
-				PoseFile.FileType);
+				});
 		}
 
 		[SuppressPropertyChangedWarnings]

@@ -8,17 +8,22 @@ namespace Anamnesis.Files
 	using System.Globalization;
 	using System.Reflection;
 	using System.Windows.Documents;
+	using Anamnesis.Files.Infos;
 	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 
+	#pragma warning disable SA1402, SA1649
+	public class LegacyPoseFileInfo : JsonFileInfoBase<LegacyPoseFile>
+	{
+		public override string Extension => "json";
+		public override string Name => "CMTool Equipment Set";
+		public override IFileSource FileSource => new LocalFileSource("Local Files (CMTool)", "CMTool", "Matrix Saves");
+	}
+
 	public class LegacyPoseFile : FileBase
 	{
-		public static readonly FileType FileType = new FileType(@"cmp", "CM2 Pose File", typeof(LegacyPoseFile), true, "Matrix Saves");
-
-		public override FileType Type => FileType;
-
 		/*public string Description { get; set; }
 		public string DateCreated { get; set; }
 		public string CMPVersion { get; set; }

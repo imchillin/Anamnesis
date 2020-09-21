@@ -5,21 +5,26 @@ namespace Anamnesis.Files
 {
 	using System;
 	using System.Globalization;
+	using Anamnesis.Files.Infos;
 	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 
+	#pragma warning disable SA1402, SA1649
+	public class LegacyEquipmentSetFileInfo : JsonFileInfoBase<LegacyEquipmentSetFile>
+	{
+		public override string Extension => "json";
+		public override string Name => "CMTool Equipment Set";
+		public override IFileSource FileSource => new LocalFileSource("Local Files (CMTool Gearsets)", "CMTool", "Gearsets");
+	}
+
 	[Serializable]
 	public class LegacyEquipmentSetFile : FileBase
 	{
-		public static readonly FileType FileType = new FileType("json", "CMTool Equipment Set", typeof(LegacyEquipmentSetFile), false, "Gearsets");
-
 		public Item? MainHand { get; set; }
 		public Item? OffHand { get; set; }
 
 		public string? EquipmentBytes { get; set; }
-
-		public override FileType Type => FileType;
 
 		/// <summary>
 		/// Upgrades a CM2 equipment set to a CM3 equipment set file.

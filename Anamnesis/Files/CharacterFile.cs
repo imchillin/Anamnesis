@@ -6,15 +6,22 @@ namespace Anamnesis.Files
 	using System;
 	using System.Threading.Tasks;
 	using Anamnesis;
+	using Anamnesis.Files.Infos;
 	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 
+	#pragma warning disable SA1402, SA1649
+	public class CharacterFileInfo : JsonFileInfoBase<CharacterFile>
+	{
+		public override string Extension => "char";
+		public override string Name => "Anamnesis Character File";
+		public override IFileSource FileSource => new LocalFileSource("Local Files", "Anamnesis", "Characters");
+	}
+
 	[Serializable]
 	public class CharacterFile : FileBase
 	{
-		public static readonly FileType FileType = new FileType("char", "Anamnesis Character File", typeof(CharacterFile), true, "Characters");
-
 		[Flags]
 		public enum SaveModes
 		{
@@ -92,8 +99,6 @@ namespace Anamnesis.Files
 		public Vector? BustScale { get; set; }
 		public float? Transparency { get; set; }
 		public float? FeatureScale { get; set; }
-
-		public override FileType Type => FileType;
 
 		public void Read(ActorViewModel actor, SaveModes mode)
 		{

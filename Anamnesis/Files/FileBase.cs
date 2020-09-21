@@ -8,13 +8,10 @@ namespace Anamnesis.Files
 	using Anamnesis.Files.Types;
 
 	[Serializable]
-	public abstract class FileBase : IFileSource.IFile
+	public abstract class FileBase
 	{
 		public string? Path { get; set; }
-		public bool UseAdvancedLoad { get; set; }
-		public abstract FileType? Type { get; }
-
-		public string? Name { get; protected set; }
+		public string? Name { get; set; }
 
 		public virtual Task Delete()
 		{

@@ -5,17 +5,21 @@ namespace Anamnesis.Files
 {
 	using System;
 	using Anamnesis;
+	using Anamnesis.Files.Infos;
 	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 
-	#pragma warning disable IDE1006, SA1300
+	#pragma warning disable SA1402, SA1649, IDE1006, SA1300
+	public class LegacyCharacterFileInfo : JsonFileInfoBase<LegacyCharacterFile>
+	{
+		public override string Extension => "cma";
+		public override string Name => "CMTool Appearance File";
+		public override IFileSource FileSource => new LocalFileSource("Local Files (CMTool Saves)", "CMTool", "Saves");
+	}
+
 	public class LegacyCharacterFile : LegacyEquipmentSetFile
 	{
-		public static readonly FileType AllFileType = new FileType("cma", "CMTool Appearance File", typeof(LegacyCharacterFile), true, "Saves");
-
-		public override FileType Type => AllFileType;
-
 		public string? CharacterBytes { get; set; }
 		public Details? characterDetails { get; set; }
 

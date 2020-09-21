@@ -9,17 +9,24 @@ namespace Anamnesis.Files
 	using System.Text;
 	using System.Threading.Tasks;
 	using Anamnesis;
-	using Anamnesis.Files;
-	using Anamnesis.Files.Types;
+	using Anamnesis.Files.Infos;
 	using Anamnesis.GUI.Views;
-	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 	using Microsoft.Win32;
 	using SimpleLog;
 
 	public class FileService : ServiceBase<FileService>
 	{
-		private static readonly List<IFileSource> FileSources = new List<IFileSource>();
+		public static readonly List<FileInfoBase> FileInfos = new List<FileInfoBase>()
+		{
+			new CharacterFileInfo(),
+			new PoseFileInfo(),
+			new DatCharacterFileInfo(),
+
+			new LegacyCharacterFileInfo(),
+			new LegacyEquipmentSetFileInfo(),
+			new LegacyPoseFileInfo(),
+		};
 
 		public static string StoreDirectory
 		{
@@ -31,40 +38,52 @@ namespace Anamnesis.Files
 			}
 		}
 
-		public static void AddFileSource(IFileSource source)
-		{
-			FileSources.Add(source);
-		}
-
-		public static async Task<T?> Open<T>(FileType fileType, string? path)
+		public static async Task<T?> Open<T>()
 			where T : FileBase
 		{
-			try
-			{
-				if (path == null)
-					return null;
+			FileBase? file = await Open(typeof(T));
+			if (file is T tFile)
+				return tFile;
 
-				if (!path.EndsWith(fileType.Extension))
-					path = path + "." + fileType.Extension;
-
-				if (path == null)
-					return null;
-
-				FileBase file = await Open(path, fileType);
-				if (file is T tFile)
-					return tFile;
-
-				throw new Exception("file loaded was incorrect type");
-			}
-			catch (Exception ex)
-			{
-				Log.Write(Severity.Error, new Exception("Failed to open file", ex));
-			}
-
-			return null;
+			throw new Exception("Faield to open file as expected type");
 		}
 
-		public static async Task<FileBase?> OpenAny(params FileType[] fileTypes)
+		public static async Task<FileBase?> Open<T1, T2>()
+			where T1 : FileBase
+			where T2 : FileBase
+		{
+			return await Open(typeof(T1), typeof(T2));
+		}
+
+		public static async Task<FileBase?> Open<T1, T2, T3>()
+			where T1 : FileBase
+			where T2 : FileBase
+			where T3 : FileBase
+		{
+			return await Open(typeof(T1), typeof(T2), typeof(T3));
+		}
+
+		public static async Task<FileBase?> Open<T1, T2, T3, T4>()
+			where T1 : FileBase
+			where T2 : FileBase
+			where T3 : FileBase
+			where T4 : FileBase
+		{
+			return await Open(typeof(T1), typeof(T2), typeof(T3), typeof(T4));
+		}
+
+		public static Task<FileBase?> Open(params Type[] fileTypes)
+		{
+			List<FileInfoBase>? fileInfos = new List<FileInfoBase>();
+			foreach (Type fileType in fileTypes)
+			{
+				fileInfos.Add(GetFileInfo(fileType));
+			}
+
+			return Open(fileInfos.ToArray());
+		}
+
+		public static async Task<FileBase?> Open(params FileInfoBase[] fileInfos)
 		{
 			try
 			{
@@ -75,7 +94,7 @@ namespace Anamnesis.Files
 
 				if (!useExplorerBrowser)
 				{
-					FileBrowserView browser = new FileBrowserView(FileSources, fileTypes, FileBrowserView.Modes.Load);
+					FileBrowserView browser = new FileBrowserView(fileInfos, FileBrowserView.Modes.Load);
 					await ViewService.ShowDrawer(browser);
 
 					while (browser.IsOpen)
@@ -91,7 +110,7 @@ namespace Anamnesis.Files
 					path = await App.Current.Dispatcher.InvokeAsync<string?>(() =>
 					{
 						OpenFileDialog dlg = new OpenFileDialog();
-						dlg.Filter = ToAnyFilter(fileTypes);
+						dlg.Filter = ToAnyFilter(fileInfos);
 						bool? result = dlg.ShowDialog();
 
 						if (result != true)
@@ -107,10 +126,16 @@ namespace Anamnesis.Files
 					return null;
 
 				string extension = Path.GetExtension(path);
-				FileType type = GetFileType(fileTypes, extension);
+				FileInfoBase info = GetFileInfo(extension);
 
-				FileBase file = await Open(path, type);
-				file.UseAdvancedLoad = advancedMode;
+				using FileStream stream = new FileStream(path, FileMode.Open);
+				FileBase file = info.DeserializeFile(stream);
+
+				if (file == null)
+					throw new Exception("File failed to deserialize");
+
+				file.Path = path;
+
 				return file;
 			}
 			catch (Exception ex)
@@ -121,11 +146,14 @@ namespace Anamnesis.Files
 			return null;
 		}
 
-		public static async Task Save(Func<bool, Task<FileBase?>> writeFile, FileType type, string? path = null)
+		public static async Task Save<T>(Func<bool, Task<T?>> writeFile, string? path = null)
+			where T : FileBase, new()
 		{
 			try
 			{
 				bool advancedMode = false;
+
+				FileInfoBase info = GetFileInfo<T>();
 
 				if (path == null)
 				{
@@ -133,9 +161,7 @@ namespace Anamnesis.Files
 
 					if (!useExplorerBrowser)
 					{
-						List<FileType> fileTypes = new List<FileType>();
-						fileTypes.Add(type);
-						FileBrowserView browser = new FileBrowserView(FileSources, fileTypes.ToArray(), FileBrowserView.Modes.Save);
+						FileBrowserView browser = new FileBrowserView(info, FileBrowserView.Modes.Save);
 						await ViewService.ShowDrawer(browser);
 
 						while (browser.IsOpen)
@@ -151,7 +177,7 @@ namespace Anamnesis.Files
 						path = await App.Current.Dispatcher.InvokeAsync<string?>(() =>
 						{
 							SaveFileDialog dlg = new SaveFileDialog();
-							dlg.Filter = ToFilter(type);
+							dlg.Filter = ToFilter(info);
 							bool? result = dlg.ShowDialog();
 
 							if (result != true)
@@ -172,7 +198,7 @@ namespace Anamnesis.Files
 					}
 				}
 
-				path += "." + type.Extension;
+				path += "." + info.Extension;
 
 				FileBase? file = await writeFile.Invoke(advancedMode);
 
@@ -180,16 +206,7 @@ namespace Anamnesis.Files
 					return;
 
 				using FileStream stream = new FileStream(path, FileMode.Create);
-				if (type.Serialize != null)
-				{
-					type.Serialize.Invoke(stream, file);
-				}
-				else
-				{
-					using TextWriter writer = new StreamWriter(stream);
-					string json = SerializerService.Serialize(file);
-					writer.Write(json);
-				}
+				info.SerializeFile(file, stream);
 			}
 			catch (Exception ex)
 			{
@@ -197,93 +214,55 @@ namespace Anamnesis.Files
 			}
 		}
 
-		public static Task<string> OpenDirectory(string title, params string[] defaults)
+		public static FileInfoBase GetFileInfo<T>()
+			where T : FileBase
 		{
-			string defaultDir;
-			foreach (string pDefaultDir in defaults)
+			return GetFileInfo(typeof(T));
+		}
+
+		public static FileInfoBase GetFileInfo(FileBase file)
+		{
+			return GetFileInfo(file.GetType());
+		}
+
+		public static FileInfoBase GetFileInfo(Type type)
+		{
+			foreach (FileInfoBase fileInfo in FileInfos)
 			{
-				if (Directory.Exists(pDefaultDir))
+				if (fileInfo.IsFile(type))
 				{
-					defaultDir = pDefaultDir;
-					break;
+					return fileInfo;
 				}
 			}
 
-			throw new NotImplementedException();
-
-			/*return await App.Current.Dispatcher.InvokeAsync<string>(() =>
-			{
-				OpenFileDialog dlg = new OpenFileDialog();
-				dlg.IsFolderPicker = true;
-				dlg.Title = title;
-				dlg.DefaultDirectory = defaultDir;
-				bool? result = dlg.ShowDialog();
-
-				if (result != true)
-					return null;
-
-				return dlg.FileName;
-			});*/
+			throw new Exception($"No file Info for file type: {type}");
 		}
 
-		public override async Task Initialize()
-		{
-			await base.Initialize();
-
-			AddFileSource(new LocalFileSource());
-			AddFileSource(new LegacyFileSource());
-		}
-
-		private static Task<FileBase> Open(string path, FileType type)
-		{
-			FileBase file;
-			using (FileStream stream = new FileStream(path, FileMode.Open))
-			{
-				if (type.Deserialize != null)
-				{
-					file = type.Deserialize.Invoke(stream);
-				}
-				else
-				{
-					using TextReader reader = new StreamReader(stream);
-					string json = reader.ReadToEnd();
-					file = (FileBase)SerializerService.Deserialize(json, type.Type);
-				}
-			}
-
-			if (file == null)
-				throw new Exception("File failed to deserialize");
-
-			file.Path = path;
-
-			return Task.FromResult<FileBase>(file);
-		}
-
-		private static FileType GetFileType(FileType[] fileTypes, string extension)
+		public static FileInfoBase GetFileInfo(string extension)
 		{
 			if (extension.StartsWith("."))
 				extension = extension.Substring(1, extension.Length - 1);
 
-			foreach (FileType fileType in fileTypes)
+			foreach (FileInfoBase fileInfo in FileInfos)
 			{
-				if (fileType.Extension == extension)
+				if (fileInfo.Extension == extension)
 				{
-					return fileType;
+					return fileInfo;
 				}
 			}
 
-			throw new Exception($"Unable to determine file type from extension: \"{extension}\"");
+			throw new Exception($"Unable to determine file info from extension: \"{extension}\"");
 		}
 
-		private static string ToAnyFilter(params FileType[] types)
+		private static string ToAnyFilter(params FileInfoBase[] infos)
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append("Any|");
 
-			foreach (FileType type in types)
+			foreach (FileInfoBase type in infos)
 				builder.Append("*." + type.Extension + ";");
 
-			foreach (FileType type in types)
+			foreach (FileInfoBase type in infos)
 			{
 				builder.Append("|");
 				builder.Append(type.Name);
@@ -294,12 +273,12 @@ namespace Anamnesis.Files
 			return builder.ToString();
 		}
 
-		private static string ToFilter(FileType fileType)
+		private static string ToFilter(FileInfoBase info)
 		{
 			StringBuilder builder = new StringBuilder();
-			builder.Append(fileType.Name);
+			builder.Append(info.Name);
 			builder.Append("|");
-			builder.Append("*." + fileType.Extension);
+			builder.Append("*." + info.Extension);
 			return builder.ToString();
 		}
 	}
@@ -317,7 +296,7 @@ namespace Anamnesis.Files
 
 		public interface IFile : IEntry
 		{
-			public FileType? Type { get; }
+			public FileInfoBase? Type { get; }
 		}
 
 		public interface IDirectory : IEntry
@@ -326,8 +305,7 @@ namespace Anamnesis.Files
 
 		public string Name { get; }
 
-		public bool CanOpen(FileType type);
-		public IDirectory GetDefaultDirectory(FileType[] fileTypes);
-		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, FileType[] fileTypes, bool recursive);
+		public IDirectory GetDefaultDirectory();
+		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, bool recursive);
 	}
 }

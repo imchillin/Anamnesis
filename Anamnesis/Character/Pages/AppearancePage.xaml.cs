@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Character.Pages
 {
+	using System;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -44,7 +45,14 @@ namespace Anamnesis.Character.Pages
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
-			await this.Load();
+			try
+			{
+				await this.Load();
+			}
+			catch (Exception ex)
+			{
+				Log.Write(ex, "Appearance", Log.Severity.Error);
+			}
 		}
 
 		private void OnLoadNpcClicked(object sender, RoutedEventArgs e)
@@ -66,16 +74,12 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			FileBase? file = await FileService.OpenAny(
-				LegacyEquipmentSetFile.FileType,
-				LegacyCharacterFile.AllFileType,
-				DatCharacterFile.FileType,
-				CharacterFile.FileType);
+			FileBase? file = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>();
 
 			if (file == null)
 				return;
 
-			bool advanced = file.UseAdvancedLoad;
+			bool advanced = true;
 
 			if (file is LegacyCharacterFile legacyAllFile)
 				file = legacyAllFile.Upgrade();
@@ -125,8 +129,7 @@ namespace Anamnesis.Character.Pages
 					file.Read(this.Actor, mode);
 
 					return file;
-				},
-				CharacterFile.FileType);
+				});
 		}
 
 		private void OnActorChanged(ActorViewModel? actor)

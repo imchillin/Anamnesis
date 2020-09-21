@@ -14,6 +14,7 @@ namespace Anamnesis.GUI.Views
 	using System.Windows.Input;
 	using Anamnesis;
 	using Anamnesis.Files;
+	using Anamnesis.Files.Infos;
 	using Anamnesis.Files.Types;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
@@ -26,7 +27,7 @@ namespace Anamnesis.GUI.Views
 	[SuppressPropertyChangedWarnings]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
-		private FileType[] fileTypes;
+		private FileInfoBase[] fileInfos;
 		private IFileSource? fileSource;
 		private Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
 		private Modes mode;
@@ -34,29 +35,37 @@ namespace Anamnesis.GUI.Views
 		private bool isFlattened;
 		private EntryWrapper? selected;
 
-		public FileBrowserView(List<IFileSource> sources, FileType[] fileTypes, Modes mode)
+		public FileBrowserView(FileInfoBase fileInfo, Modes mode)
+			: this(new[] { fileInfo }, mode)
+		{
+		}
+
+		public FileBrowserView(FileInfoBase[] fileInfos, Modes mode)
 		{
 			this.mode = mode;
-			this.fileTypes = fileTypes;
+			this.fileInfos = fileInfos;
 			this.InitializeComponent();
 
 			this.ContentArea.DataContext = this;
 
-			foreach (IFileSource source in sources)
+			foreach (FileInfoBase info in fileInfos)
 			{
-				if (!this.CanOpenAny(source, fileTypes))
-					continue;
-
+				IFileSource? source = info.FileSource;
 				this.FileSources.Add(source);
+
+				// TODO: remember the last used file source
+				// Bit of a hack, but always prefer the anamnesis file source if its available
+				if (this.FileSource == null || source.Name == "Local Files")
+				{
+					this.FileSource = source;
+				}
 			}
 
 			this.IsOpen = true;
 
-			this.FileSource = this.FileSources.Count > 0 ? this.FileSources[0] : null;
-
 			if (this.mode == Modes.Save)
 			{
-				this.FileName = "New " + fileTypes[0].Name;
+				this.FileName = "New " + fileInfos[0].Name;
 
 				Task.Run(async () =>
 				{
@@ -145,7 +154,7 @@ namespace Anamnesis.GUI.Views
 		{
 			get
 			{
-				return "." + this.fileTypes[0].Extension;
+				return "." + this.fileInfos[0].Extension;
 			}
 		}
 
@@ -159,7 +168,7 @@ namespace Anamnesis.GUI.Views
 			{
 				this.fileSource = value;
 				this.currentPath.Clear();
-				this.CurrentDir = this.FileSource?.GetDefaultDirectory(this.fileTypes);
+				this.CurrentDir = this.FileSource?.GetDefaultDirectory();
 			}
 		}
 
@@ -242,7 +251,7 @@ namespace Anamnesis.GUI.Views
 				}
 				else
 				{
-					return this.fileTypes[0].SupportsAdvancedMode;
+					return true; //// this.fileInfos[0].SupportsAdvancedMode;
 				}
 			}
 		}
@@ -252,7 +261,7 @@ namespace Anamnesis.GUI.Views
 			if (this.FileSource == null || this.CurrentDir == null)
 				return;
 
-			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.fileTypes, this.IsFlattened);
+			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.IsFlattened);
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -263,19 +272,6 @@ namespace Anamnesis.GUI.Views
 					this.Entries.Add(new EntryWrapper(entry, this));
 				}
 			});
-		}
-
-		private bool CanOpenAny(IFileSource source, FileType[] fileTypes)
-		{
-			foreach (FileType type in fileTypes)
-			{
-				if (source.CanOpen(type))
-				{
-					return true;
-				}
-			}
-
-			return false;
 		}
 
 		private void OnMouseDoubleClick(object? sender, MouseButtonEventArgs e)
@@ -400,12 +396,7 @@ namespace Anamnesis.GUI.Views
 			{
 				get
 				{
-					if (this.Entry is IFileSource.IFile file && file.Type != null)
-					{
-						return file.Type.SupportsAdvancedMode;
-					}
-
-					return false;
+					return true;
 				}
 			}
 

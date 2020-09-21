@@ -6,15 +6,22 @@ namespace Anamnesis.Files
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
+	using Anamnesis.Files.Infos;
 	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 
+	#pragma warning disable SA1402, SA1649
+	public class PoseFileInfo : JsonFileInfoBase<PoseFile>
+	{
+		public override string Extension => "pose";
+		public override string Name => "Anamnesis Pose File";
+		public override IFileSource FileSource => new LocalFileSource("Local Files", "Anamnesis", "Poses");
+	}
+
 	public class PoseFile : FileBase
 	{
-		public static readonly FileType FileType = new FileType(@"pose", "Anamnesis Pose File", typeof(PoseFile), true, "Poses");
-
 		[Flags]
 		public enum Groups
 		{
@@ -28,8 +35,6 @@ namespace Anamnesis.Files
 
 			All = Body | Head | Hair | Met | Top,
 		}
-
-		public override FileType Type => FileType;
 
 		public Configuration Config { get; set; } = new Configuration();
 

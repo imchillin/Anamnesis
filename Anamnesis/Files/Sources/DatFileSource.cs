@@ -7,34 +7,27 @@ namespace Anamnesis.Files
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
-	using Anamnesis;
-	using Anamnesis.Files.Types;
-	using Anamnesis.Services;
+	using Anamnesis.Files.Infos;
+
 	using Directories = System.IO.Directory;
-	using Files = System.IO.File;
 	using Paths = System.IO.Path;
 
-	public class DatAppearanceFileSource : IFileSource
+	public class DatFileSource : IFileSource
 	{
 		public string Name => "FFXIV Saved Appearance Data";
 
-		public bool CanOpen(FileType type)
-		{
-			return type == DatCharacterFile.FileType;
-		}
-
-		public IFileSource.IDirectory GetDefaultDirectory(FileType[] fileTypes)
+		public IFileSource.IDirectory GetDefaultDirectory()
 		{
 			string startdir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/My Games/FINAL FANTASY XIV - A Realm Reborn/";
 			return new Directory(startdir);
 		}
 
-		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, FileType[] fileTypes, bool recursive)
+		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, bool recursive)
 		{
-			return Task.FromResult<IEnumerable<IFileSource.IEntry>>(this.GetFiles(current, fileTypes, recursive));
+			return Task.FromResult<IEnumerable<IFileSource.IEntry>>(this.GetFiles(current, recursive));
 		}
 
-		public List<IFileSource.IEntry> GetFiles(IFileSource.IDirectory current, FileType[] fileTypes, bool recursive)
+		public List<IFileSource.IEntry> GetFiles(IFileSource.IDirectory current, bool recursive)
 		{
 			Directory? currentDir = current as Directory;
 
@@ -47,16 +40,30 @@ namespace Anamnesis.Files
 
 				foreach (string filePath in filePaths)
 				{
-					DatCharacterFile file = DatCharacterFile.FromDat(filePath);
+					File file = new File();
+					file.Path = filePath;
+					file.Type = FileService.GetFileInfo<DatCharacterFile>();
 
-					if (file.Type == null)
-						continue;
+					string name = Paths.GetFileNameWithoutExtension(filePath);
+					file.Name = name.Substring(12);
 
 					results.Add(file);
 				}
 			}
 
 			return results;
+		}
+
+		public class File : IFileSource.IFile
+		{
+			public FileInfoBase? Type { get; set; }
+			public string? Path { get; set; }
+			public string? Name { get; set; }
+
+			public Task Delete()
+			{
+				return Task.CompletedTask;
+			}
 		}
 
 		public class Directory : IFileSource.IDirectory
