@@ -40,7 +40,7 @@
 			</Grid.RowDefinitions>
 
 			<!-- Sidebar -->
-			<Grid Grid.Column="2" Grid.Row="1" x:Name="Sidebar" Visibility="{Binding GPoseService.IsGPose, Converter={StaticResource B2V}}">
+			<Grid Grid.Column="2" Grid.Row="1" x:Name="Sidebar">
 				<Grid.RowDefinitions>
 					<RowDefinition/>
 					<RowDefinition Height="Auto" />
@@ -51,9 +51,8 @@
 					<controls:BoneEditor Value="{Binding Skeleton.CurrentBone}"/>
 				</Border>
 
-				<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 3, 0, 0" x:Name="LoadSaveArea" 
-						IsEnabled="{Binding GposeService.IsGPose}">
-					<Grid Margin="6" IsEnabled="{Binding Skeleton.CanPose}">
+				<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 3, 0, 0" x:Name="LoadSaveArea">
+					<Grid Margin="6">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition/>
 							<ColumnDefinition/>
@@ -66,11 +65,9 @@
 			</Grid>
 
 			<!-- top Bar -->
-			<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3" IsEnabled="{Binding CanPose}">
+			<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3">
 				<Grid Height="35">
-					<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding GposeService.IsGPose, Converter={StaticResource B2V}}">
-
-
+					<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 						<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" Style="{StaticResource OutlineToggleButton}" Margin="3">
 							<Grid>
 								<TextBlock Text="Disable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}"/>
@@ -103,7 +100,7 @@
 
 			<!-- Content -->
 			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
-				<Grid Visibility="{Binding GposeService.IsGPose, Converter={StaticResource B2V}}" IsEnabled="{Binding PoseService.IsEnabled}">
+				<Grid IsEnabled="{Binding PoseService.IsEnabled}">
 					<Grid DataContext="{Binding Skeleton}">
 						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>
 						<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>

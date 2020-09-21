@@ -47,26 +47,22 @@ namespace Anamnesis.Character.Views
 		public IDye? Dye { get; set; }
 		public ImageSource? IconSource { get; set; }
 
-		public int? ItemKey
+		public int ItemKey
 		{
 			get
 			{
-				return this.Item?.Key;
+				return this.Item?.Key ?? 0;
 			}
 			set
 			{
-				IItem? item = null;
-
-				if (value != null)
-					item = GameDataService.Items?.Get((int)value);
-
+				IItem? item = GameDataService.Items?.Get((int)value);
 				this.Item = item;
 
 				ushort modelSet = 0;
 				ushort modelBase = 0;
 				ushort modelVariant = 0;
 
-				if (value != null && item != null)
+				if (item != null)
 				{
 					bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
 

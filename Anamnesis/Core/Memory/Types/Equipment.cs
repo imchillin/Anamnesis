@@ -64,5 +64,7 @@ namespace Anamnesis.Memory
 		[ModelField] public ushort Base { get; set; }
 		[ModelField] public byte Variant { get; set; }
 		[ModelField] public byte Dye { get; set; }
+
+		public byte Set => 0;
 	}
 }
