@@ -11,10 +11,10 @@
 	<ScrollViewer>
 		<StackPanel>
 			<GroupBox Header="Proudly Open Source">
-				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Concept matrix is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
-				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/CM3" FontSize="12">GitHub</Hyperlink>.
+				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Anamnesis is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
+				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/Anamnesis" FontSize="12">GitHub</Hyperlink>.
 					<LineBreak /><LineBreak />
-					Concept matrix is built with the following projects:
+					Anamnesis is built with the following projects:
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/ufx/SaintCoinach" FontSize="12" >Saint Coinach</Hyperlink>
 					<LineBreak />
@@ -28,24 +28,18 @@
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/awesome-inc/FontAwesome.Sharp" FontSize="12">FontAwesome Sharp</Hyperlink>
 					<LineBreak />
-					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/XamlAnimatedGif/WpfAnimatedGif" FontSize="12">WPF Animated Gif</Hyperlink>
-					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/DotNetAnalyzers/StyleCopAnalyzers" FontSize="12">StyleCop Analyzers</Hyperlink>
 				</TextBlock>
 
 			</GroupBox>
 			<GroupBox Header="Get in Touch">
 				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Want to follow development, ask a question, look for help, raise a bug, or just say hi? Visit us on
-				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discord.gg/EenZwsN" FontSize="12">Discord</Hyperlink>, or follow MissAniThrope's 
-				<fa:IconBlock Icon="Twitter"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://twitter.com/missanithrope" FontSize="12">Twitter</Hyperlink>!</TextBlock>
+				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discord.gg/EenZwsN" FontSize="12">Discord</Hyperlink>, or follow Ani-Ki's 
+				<fa:IconBlock Icon="Twitter"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://twitter.com/Ani_ki__" FontSize="12">Twitter</Hyperlink>!</TextBlock>
 			</GroupBox>
 			<GroupBox Header="Donate to the Devs!">
 				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">This project is a labor of love. Please consider donating to the members of the dev team via Ko-fi to say thank you!<LineBreak />
-				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/missanithrope" FontSize="12">Yuuki &amp; MissAniThrope's shared Ko-fi</Hyperlink>
-				</TextBlock>
-			</GroupBox>
-			<GroupBox Header="About the Project">
-				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Concept Matrix started as a trainer called SSTool created by LeonBlade, and was merged with KrisanThyme and Seria Myouna's Posing Matrix to become Concept Matrix, with upkeep by Johto, Ena, and LeonBlade, and input from Goaat.<LineBreak /><LineBreak />The current build, CM3, is a complete rewrite by Yuuki, with additions by MissAniThrope.
+				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/aniki" FontSize="12">Yuuki &amp; Ani-Ki's shared Ko-fi</Hyperlink>
 				</TextBlock>
 			</GroupBox>
 
