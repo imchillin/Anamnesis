@@ -36,7 +36,7 @@ namespace Anamnesis.Files
 			if (!Directories.Exists(defaultDir))
 				Directories.CreateDirectory(defaultDir);
 
-			return new Directory(defaultDir);
+			return new Directory(defaultDir, this);
 		}
 
 		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, bool recursive)
@@ -65,7 +65,7 @@ namespace Anamnesis.Files
 				string[] dirPaths = Directories.GetDirectories(currentDir.Path);
 				foreach (string dirPath in dirPaths)
 				{
-					results.Add(new Directory(dirPath));
+					results.Add(new Directory(dirPath, this));
 				}
 			}
 
@@ -90,7 +90,7 @@ namespace Anamnesis.Files
 						string extension = Paths.GetExtension(filePath);
 						FileInfoBase info = FileService.GetFileInfo(extension);
 
-						results.Add(new File(filePath, info));
+						results.Add(new File(filePath, info, this));
 					}
 					catch (Exception)
 					{
@@ -103,16 +103,18 @@ namespace Anamnesis.Files
 
 		public class File : IFileSource.IFile
 		{
-			public File(string path, FileInfoBase info)
+			public File(string path, FileInfoBase info, LocalFileSource source)
 			{
 				this.Path = path;
 				this.Name = Paths.GetFileNameWithoutExtension(path);
 				this.Type = info;
+				this.Source = source;
 			}
 
 			public string Name { get; private set; }
 			public string Path { get; private set; }
 			public FileInfoBase? Type { get; private set; }
+			public IFileSource Source { get; private set; }
 
 			public Task Delete()
 			{
@@ -123,14 +125,16 @@ namespace Anamnesis.Files
 
 		public class Directory : IFileSource.IDirectory
 		{
-			public Directory(string path)
+			public Directory(string path, LocalFileSource source)
 			{
 				this.Path = path;
 				this.Name = Paths.GetFileName(path);
+				this.Source = source;
 			}
 
 			public string Name { get; private set; }
 			public string Path { get; private set; }
+			public IFileSource Source { get; private set; }
 
 			public Task Delete()
 			{

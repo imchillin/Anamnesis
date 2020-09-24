@@ -291,6 +291,7 @@ namespace Anamnesis.Files
 		{
 			public string? Path { get; }
 			public string? Name { get; }
+			public IFileSource Source { get; }
 
 			public Task Delete();
 		}

@@ -29,12 +29,10 @@ namespace Anamnesis.GUI.Views
 	[SuppressPropertyChangedWarnings]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
-		private static IFileSource? lastFileSource;
-		////private static IDirectory? lastDirectory;
+		private static IFileSource? currentFileSource;
+		private static Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
 
 		private FileInfoBase[] fileInfos;
-		private IFileSource? fileSource;
-		private Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
 		private Modes mode;
 		private string? fileName;
 		private bool isFlattened;
@@ -80,6 +78,8 @@ namespace Anamnesis.GUI.Views
 					});
 				});
 			}
+
+			Task.Run(this.UpdateEntries);
 		}
 
 		public event DrawerEvent? Close;
@@ -162,14 +162,16 @@ namespace Anamnesis.GUI.Views
 		{
 			get
 			{
-				return this.fileSource;
+				return currentFileSource;
 			}
 			set
 			{
-				lastFileSource = value;
-				this.fileSource = value;
-				this.currentPath.Clear();
-				this.CurrentDir = this.FileSource?.GetDefaultDirectory();
+				if (value == null)
+					return;
+
+				currentFileSource = value;
+				currentPath.Clear();
+				this.CurrentDir = value?.GetDefaultDirectory();
 			}
 		}
 
@@ -177,7 +179,7 @@ namespace Anamnesis.GUI.Views
 		{
 			get
 			{
-				return this.currentPath.Count > 1;
+				return currentPath.Count > 1;
 			}
 		}
 
@@ -186,7 +188,7 @@ namespace Anamnesis.GUI.Views
 			get
 			{
 				string str = string.Empty;
-				foreach (IFileSource.IDirectory dir in this.currentPath.Reverse())
+				foreach (IFileSource.IDirectory dir in currentPath.Reverse())
 				{
 					str += dir.Name + "/";
 				}
@@ -199,17 +201,18 @@ namespace Anamnesis.GUI.Views
 		{
 			get
 			{
-				if (this.currentPath.Count <= 0)
+				if (currentPath.Count <= 0)
 					return null;
 
-				return this.currentPath.Peek();
+				return currentPath.Peek();
 			}
 			private set
 			{
 				if (value == null)
 					return;
 
-				this.currentPath.Push(value);
+				currentPath.Push(value);
+
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanGoUp)));
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentPath)));
 				Task.Run(this.UpdateEntries);
@@ -262,11 +265,11 @@ namespace Anamnesis.GUI.Views
 		/// </summary>
 		private IFileSource GetDefaultFileSource()
 		{
-			if (lastFileSource != null)
+			if (currentFileSource != null)
 			{
 				foreach (IFileSource source in this.FileSources)
 				{
-					if (source == lastFileSource)
+					if (source == currentFileSource)
 					{
 						return source;
 					}
@@ -327,7 +330,8 @@ namespace Anamnesis.GUI.Views
 
 		private void OnGoUpClicked(object? sender, RoutedEventArgs e)
 		{
-			this.currentPath.Pop();
+			currentPath.Pop();
+
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanGoUp)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentPath)));
 			Task.Run(this.UpdateEntries);

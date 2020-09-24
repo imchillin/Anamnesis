@@ -19,7 +19,7 @@ namespace Anamnesis.Files
 		public IFileSource.IDirectory GetDefaultDirectory()
 		{
 			string startdir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/My Games/FINAL FANTASY XIV - A Realm Reborn/";
-			return new Directory(startdir);
+			return new Directory(startdir, this);
 		}
 
 		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, bool recursive)
@@ -40,7 +40,7 @@ namespace Anamnesis.Files
 
 				foreach (string filePath in filePaths)
 				{
-					File file = new File();
+					File file = new File(this);
 					file.Path = filePath;
 					file.Type = FileService.GetFileInfo<DatCharacterFile>();
 
@@ -56,9 +56,15 @@ namespace Anamnesis.Files
 
 		public class File : IFileSource.IFile
 		{
+			public File(DatFileSource source)
+			{
+				this.Source = source;
+			}
+
 			public FileInfoBase? Type { get; set; }
 			public string? Path { get; set; }
 			public string? Name { get; set; }
+			public IFileSource Source { get; private set; }
 
 			public Task Delete()
 			{
@@ -68,14 +74,16 @@ namespace Anamnesis.Files
 
 		public class Directory : IFileSource.IDirectory
 		{
-			public Directory(string path)
+			public Directory(string path, DatFileSource source)
 			{
 				this.Path = path;
 				this.Name = Paths.GetFileName(path);
+				this.Source = source;
 			}
 
 			public string Name { get; private set; }
 			public string Path { get; private set; }
+			public IFileSource Source { get; private set; }
 
 			public Task Delete()
 			{
