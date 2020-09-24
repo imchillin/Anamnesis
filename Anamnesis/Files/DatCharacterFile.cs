@@ -32,9 +32,6 @@ namespace Anamnesis.Files
 
 			stream.Seek(0x30, SeekOrigin.Begin);
 
-			////file.Description = Regex.Replace(Encoding.ASCII.GetString(reader.ReadBytes(164)), @"(?![ -~]|\r|\n).", string.Empty);
-			////file.Name = file.SaveSlot + ". " + file.Description.Substring(0, Math.Min(file.Description.Length, 50));
-
 			return file;
 		}
 

@@ -6,6 +6,8 @@ namespace Anamnesis.Files
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+	using System.Text;
+	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
 	using Anamnesis.Files.Infos;
 
@@ -44,8 +46,14 @@ namespace Anamnesis.Files
 					file.Path = filePath;
 					file.Type = FileService.GetFileInfo<DatCharacterFile>();
 
-					string name = Paths.GetFileNameWithoutExtension(filePath);
-					file.Name = name.Substring(12);
+					string fileName = Paths.GetFileNameWithoutExtension(filePath);
+					string slotNumber = fileName.Substring(12);
+
+					FileStream stream = new FileStream(filePath, FileMode.Open);
+					stream.Seek(0x30, SeekOrigin.Begin);
+					using BinaryReader reader = new BinaryReader(stream);
+					string desc = Regex.Replace(Encoding.ASCII.GetString(reader.ReadBytes(164)), @"(?![ -~]|\r|\n).", string.Empty);
+					file.Name = slotNumber + ". " + desc.Substring(0, Math.Min(desc.Length, 50));
 
 					results.Add(file);
 				}
