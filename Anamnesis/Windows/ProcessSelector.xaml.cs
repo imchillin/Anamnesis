@@ -64,14 +64,18 @@ namespace Anamnesis.GUI.Windows
 		{
 			this.isAutomatic = false;
 			this.OkButton.Visibility = Visibility.Visible;
-			this.Expander.Header = "Manual";
+			this.AutoLabel.Visibility = Visibility.Collapsed;
+			this.ManualLabel.Visibility = Visibility.Visible;
+			this.ScanProgress.Visibility = Visibility.Collapsed;
 		}
 
 		private void OnManualCollapsed(object sender, RoutedEventArgs e)
 		{
 			this.isAutomatic = true;
 			this.OkButton.Visibility = Visibility.Collapsed;
-			this.Expander.Header = "Scanning...";
+			this.AutoLabel.Visibility = Visibility.Visible;
+			this.ManualLabel.Visibility = Visibility.Collapsed;
+			this.ScanProgress.Visibility = Visibility.Visible;
 		}
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)

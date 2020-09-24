@@ -6,16 +6,12 @@ namespace Anamnesis.Core.Memory
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
-	using System.Text;
 	using System.Threading.Tasks;
-	using System.Windows.Documents.Serialization;
 	using Anamnesis.Memory;
-	using SimpleLog;
 
-#pragma warning disable SA1027, SA1025
-	public class AddressService : IService
+	#pragma warning disable SA1027, SA1025
+	public class AddressService : ServiceBase<AddressService>
 	{
-		protected static readonly Logger Log = SimpleLog.Log.GetLogger<AddressService>();
 		private static IntPtr weather;
 		private static IntPtr territory;
 		private static IntPtr time;
@@ -81,7 +77,7 @@ namespace Anamnesis.Core.Memory
 			}
 		}
 
-		public async Task Initialize()
+		public static async Task Scan()
 		{
 			if (MemoryService.Process == null)
 				return;
@@ -123,14 +119,10 @@ namespace Anamnesis.Core.Memory
 			Log.Write($"Took {sw.ElapsedMilliseconds}ms to scan for {tasks.Count} addresses");
 		}
 
-		public Task Shutdown()
+		public override async Task Initialize()
 		{
-			return Task.CompletedTask;
-		}
-
-		public Task Start()
-		{
-			return Task.CompletedTask;
+			await base.Initialize();
+			await Scan();
 		}
 
 		private static Task GetAddressFromSignature(string signature, int offset, Action<IntPtr> callback)

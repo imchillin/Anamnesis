@@ -27,24 +27,7 @@ namespace Anamnesis.Memory
 		public static IntPtr Handle { get; private set; }
 		public static SignatureScanner? Scanner { get; private set; }
 		public static SysProcess? Process { get; private set; }
-		public static bool ProcessIsAlive { get; private set; }
-
-		public static bool IsProcessAlive
-		{
-			get
-			{
-				if (!Instance.IsAlive)
-					return false;
-
-				if (Process == null || Process.HasExited)
-					return false;
-
-				if (!Process.Responding)
-					return false;
-
-				return true;
-			}
-		}
+		public static bool IsProcessAlive { get; private set; }
 
 		public static string GamePath
 		{
@@ -55,6 +38,20 @@ namespace Anamnesis.Memory
 
 				return Path.GetDirectoryName(Process.MainModule.FileName) + "\\..\\";
 			}
+		}
+
+		public static bool GetIsProcessAlive()
+		{
+			if (!Instance.IsAlive)
+				return false;
+
+			if (Process == null || Process.HasExited)
+				return false;
+
+			if (!Process.Responding)
+				return false;
+
+			return true;
 		}
 
 		public static async Task WaitForMemoryTick()
@@ -174,51 +171,7 @@ namespace Anamnesis.Memory
 		public override async Task Initialize()
 		{
 			await base.Initialize();
-
-			while (!ProcessIsAlive)
-			{
-				try
-				{
-					SysProcess[] processes = System.Diagnostics.Process.GetProcesses();
-					SysProcess? proc = null;
-					foreach (SysProcess process in processes)
-					{
-						if (process.ProcessName.ToLower().Contains("ffxiv_dx11"))
-						{
-							if (proc != null)
-								throw new Exception("Multiple processes found");
-
-							proc = process;
-						}
-					}
-
-					if (proc == null)
-						throw new Exception("No process found");
-
-					this.OpenProcess(proc);
-					ProcessIsAlive = true;
-				}
-				catch (Exception ex)
-				{
-					SysProcess? proc = null;
-
-					proc = await App.Current.Dispatcher.InvokeAsync<Process?>(() =>
-					{
-						Process? proc = ProcessSelector.FindProcess();
-
-						if (proc == null)
-							App.Current.Shutdown();
-
-						return proc;
-					});
-
-					if (proc == null)
-						throw new Exception("Unable to locate FFXIV process", ex);
-
-					this.OpenProcess(proc);
-					ProcessIsAlive = true;
-				}
-			}
+			await this.GetProcess();
 
 			new Thread(new ThreadStart(this.ProcessWatcherThread)).Start();
 		}
@@ -397,6 +350,30 @@ namespace Anamnesis.Memory
 			return 0;
 		}
 
+		private async Task GetProcess()
+		{
+			SysProcess? proc = await App.Current.Dispatcher.InvokeAsync<Process?>(() =>
+			{
+				App.Current.MainWindow.Topmost = false;
+
+				Process? proc = ProcessSelector.FindProcess();
+
+				if (proc == null)
+					App.Current.Shutdown();
+
+				App.Current.MainWindow.Topmost = App.Settings.AlwaysOnTop;
+
+				return proc;
+			});
+
+			if (proc == null)
+				throw new Exception("Unable to locate FFXIV process");
+
+			this.OpenProcess(proc);
+			await AddressService.Scan();
+			IsProcessAlive = true;
+		}
+
 		private void TickMemoryViewModelThread()
 		{
 			try
@@ -409,7 +386,7 @@ namespace Anamnesis.Memory
 					// 60 ticks per second
 					Thread.Sleep(16);
 
-					if (!ProcessIsAlive)
+					if (!IsProcessAlive)
 						return;
 
 					if (GposeService.Instance.IsChangingState || ActorRefreshService.Instance.IsRefreshing)
@@ -459,12 +436,16 @@ namespace Anamnesis.Memory
 		{
 			while (this.IsAlive && Process != null)
 			{
-				ProcessIsAlive = IsProcessAlive;
+				bool newAlive = GetIsProcessAlive();
 
-				if (!ProcessIsAlive)
+				if (newAlive != IsProcessAlive && !newAlive)
 				{
-					Log.Write(new Exception("FFXIV Process has terminated"));
+					Log.Write("FFXIV Process has terminated");
+					TargetService.Instance.SelectActor(null);
+					Task.Run(this.GetProcess);
 				}
+
+				IsProcessAlive = newAlive;
 
 				Thread.Sleep(100);
 			}

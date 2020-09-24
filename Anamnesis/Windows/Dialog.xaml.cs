@@ -16,6 +16,8 @@ namespace Anamnesis.GUI.Windows
 		public Dialog()
 		{
 			this.InitializeComponent();
+
+			this.Owner = App.Current.MainWindow;
 		}
 
 		private void OnTitleBarMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
