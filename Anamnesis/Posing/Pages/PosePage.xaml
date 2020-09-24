@@ -63,7 +63,7 @@
 			<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3">
 				<Grid Height="35">
 					<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-						<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" Style="{StaticResource OutlineToggleButton}" Margin="3">
+						<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" Style="{StaticResource OutlineToggleButton}" Margin="3" Width="75">
 							<Grid>
 								<TextBlock Text="Disable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}"/>
 								<TextBlock Text="Enable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}"/>
@@ -105,10 +105,9 @@
 			</Border>
 		</Grid>
 
-		<Grid>
+		<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
 			<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.75"/>
-			
-			<StackPanel Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
+			<StackPanel Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
 				<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
 				<cm3Controls:TextBlock Key="Pose_WarningNotGPose" Text="Posing is only available while in Group Pose. Type /Gpose in chat." FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
 			</StackPanel>
