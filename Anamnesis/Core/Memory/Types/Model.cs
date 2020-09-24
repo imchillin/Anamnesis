@@ -4,15 +4,20 @@
 namespace Anamnesis.Memory
 {
 	using System;
-	using System.Reflection;
 	using System.Runtime.InteropServices;
-	using PropertyChanged;
 
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Model
 	{
-		[FieldOffset(0x50)] public Transform Transform;
-		[FieldOffset(0xA0)] public IntPtr Skeleton;
+		[FieldOffset(0x050)] public Transform Transform;
+		[FieldOffset(0x0A0)] public IntPtr Skeleton;
+		[FieldOffset(0x148)] public IntPtr Bust;
+		[FieldOffset(0x240)] public IntPtr ExtendedAppearance;
+		[FieldOffset(0x26C)] public float Height;
+		[FieldOffset(0x2B0)] public float Wetness;
+		[FieldOffset(0x2BC)] public bool Drenched;
+		[FieldOffset(0x938)] public short DataPath;
+		[FieldOffset(0x93C)] public byte DataHead;
 	}
 
 	public class ModelViewModel : MemoryViewModelBase<Model>
@@ -29,5 +34,6 @@ namespace Anamnesis.Memory
 
 		[ModelField] public TransformViewModel? Transform { get; set; }
 		[ModelField] public SkeletonWrapperViewModel? Skeleton { get; set; }
+		[ModelField(0x28, 0x20)] public ExtendedAppearanceViewModel? ExtendedAppearance { get; set; }
 	}
 }
