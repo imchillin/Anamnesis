@@ -2,7 +2,9 @@
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-	<Style TargetType="{x:Type Expander}" x:Key="Cm3Expander">
+	<Style TargetType="{x:Type Expander}" x:Key="Cm3Expander" BasedOn="{StaticResource MaterialDesignExpander}">
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="Margin" Value="0"/>
 	</Style>
 	
 </ResourceDictionary>
