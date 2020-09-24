@@ -59,6 +59,24 @@
 				<Grid VerticalAlignment="Top">
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+
+						<ComboBox Margin="2" Height="22" Width="75" ItemsSource="{Binding TargetService.Actors}" SelectedValue="{Binding TargetService.SelectedActor, Mode=OneWay}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<Grid>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="22"/>
+											<ColumnDefinition/>
+										</Grid.ColumnDefinitions>
+
+										<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}"/>
+										<TextBlock Grid.Column="1" Text="{Binding Name}"/>
+									</Grid>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+
+
 						<TextBlock Text="Anamnesis" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
 						<TextBlock Text=" - " VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>
 						<TextBlock x:Name="ActorName" VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>

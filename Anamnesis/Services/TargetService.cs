@@ -5,19 +5,16 @@ namespace Anamnesis
 {
 	using System;
 	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Diagnostics;
-	using System.Runtime.CompilerServices;
-	using System.Text;
+	using System.Collections.ObjectModel;
+	using System.Linq;
+	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
-	using System.Windows;
-	using System.Windows.Forms.VisualStyles;
-	using Anamnesis;
+	using System.Windows.Documents;
 	using Anamnesis.Core.Memory;
-	using Anamnesis.GUI.Dialogs;
-	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using Anamnesis.WpfStyles;
+	using FontAwesome.Sharp;
 	using SimpleLog;
 
 	public delegate void SelectionEvent(ActorViewModel? actor);
@@ -26,13 +23,11 @@ namespace Anamnesis
 	{
 		public static event SelectionEvent? ActorSelected;
 
-		public static ActorViewModel? SelectedActor { get; private set; }
+		public ActorViewModel? SelectedActor { get; private set; }
+		public ObservableCollection<ActorTableActor> Actors { get; set; } = new ObservableCollection<ActorTableActor>();
 
 		public override Task Start()
 		{
-			////gposeMem = MemoryService.GetMarshaler(Offsets.Main.GposeCheck);
-			////gposeMem2 = MemoryService.GetMarshaler(Offsets.Main.GposeCheck2);
-
 			Task.Run(this.Watch);
 
 			return base.Start();
@@ -40,7 +35,7 @@ namespace Anamnesis
 
 		public void SelectActor(ActorViewModel? actor)
 		{
-			SelectedActor = actor;
+			this.SelectedActor = actor;
 
 			/*using IMarshaler<int> territoryMem = MemoryService.GetMarshaler(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 
@@ -118,6 +113,19 @@ namespace Anamnesis
 					else
 					{
 						newTargetAddress = MemoryService.ReadPtr(AddressService.TargetManager);
+
+						List<IntPtr> actorPointers = new List<IntPtr>();
+						for (int i = 0; i < 424; i++)
+						{
+							IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
+
+							if (ptr == IntPtr.Zero)
+								continue;
+
+							actorPointers.Add(ptr);
+						}
+
+						this.UpdateActorList(actorPointers);
 					}
 
 					if (newTargetAddress != lastTargetAddress)
@@ -126,11 +134,7 @@ namespace Anamnesis
 
 						try
 						{
-							if (newTargetAddress == IntPtr.Zero)
-							{
-								////this.SelectActor(null);
-							}
-							else
+							if (newTargetAddress != IntPtr.Zero)
 							{
 								ActorViewModel vm = new ActorViewModel(newTargetAddress);
 								this.SelectActor(vm);
@@ -147,6 +151,63 @@ namespace Anamnesis
 			{
 				Log.Write(ex);
 			}
+		}
+
+		private void UpdateActorList(List<IntPtr> pointers)
+		{
+			if (App.Current == null)
+				return;
+
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				// Remove missing actors, and remove existing pointers
+				for (int i = this.Actors.Count - 1; i >= 0; i--)
+				{
+					if (pointers.Contains(this.Actors[i].Pointer))
+					{
+						pointers.Remove(this.Actors[i].Pointer);
+					}
+					else
+					{
+						this.Actors.RemoveAt(i);
+					}
+				}
+
+				// now add new actors
+				foreach (IntPtr pointer in pointers)
+				{
+					Actor actor = MemoryService.Read<Actor>(pointer);
+
+					if (actor.ObjectKind != ActorTypes.Player
+					 && actor.ObjectKind != ActorTypes.BattleNpc
+					 && actor.ObjectKind != ActorTypes.EventNpc
+					 && actor.ObjectKind != ActorTypes.Companion
+					 && actor.ObjectKind != ActorTypes.Retainer)
+						continue;
+
+					if (string.IsNullOrEmpty(actor.Name))
+						continue;
+
+					this.Actors.Add(new ActorTableActor(actor, pointer));
+				}
+			});
+		}
+
+		public class ActorTableActor
+		{
+			public readonly IntPtr Pointer;
+
+			private Actor actor;
+
+			public ActorTableActor(Actor actor, IntPtr pointer)
+			{
+				this.actor = actor;
+				this.Pointer = pointer;
+			}
+
+			public string Name => this.actor.Name;
+			public ActorTypes Kind => this.actor.ObjectKind;
+			public IconChar Icon => this.actor.ObjectKind.GetIcon();
 		}
 	}
 }

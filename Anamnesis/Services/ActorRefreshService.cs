@@ -51,7 +51,7 @@ namespace Anamnesis.Services
 			this.AutomaticRefreshEnabled = true;
 
 			TargetService.ActorSelected += this.OnActorSelected;
-			this.OnActorSelected(TargetService.SelectedActor);
+			this.OnActorSelected(TargetService.Instance.SelectedActor);
 
 			_ = Task.Run(this.RefreshTask);
 		}

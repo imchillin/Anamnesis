@@ -46,7 +46,9 @@ namespace Anamnesis.GUI
 			App.Settings.Changed += this.OnSettingsChanged;
 		}
 
-		public ActorRefreshService ActorRefreshService { get => ActorRefreshService.Instance; }
+		public TargetService TargetService => TargetService.Instance;
+		public ActorRefreshService ActorRefreshService => ActorRefreshService.Instance;
+
 		public bool Zodiark { get; set; }
 		public bool HasSelection { get; set; }
 
@@ -187,7 +189,7 @@ namespace Anamnesis.GUI
 		private async void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			await Task.Delay(50);
-			this.OnActorSelected(TargetService.SelectedActor);
+			this.OnActorSelected(TargetService.Instance.SelectedActor);
 		}
 
 		private void Window_MouseEnter(object sender, MouseEventArgs e)
