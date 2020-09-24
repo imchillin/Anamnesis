@@ -4,6 +4,7 @@
 namespace Anamnesis.Character.Views
 {
 	using System;
+	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
 	using PropertyChanged;
@@ -23,26 +24,32 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 		}
 
-		public Color SkinTint { get; set; }
-		public Color SkinGlow { get; set; }
-		public Color LeftEyeColor { get; set; }
-		public Color RightEyeColor { get; set; }
-		public Color LimbalRingColor { get; set; }
-		public Color HairTint { get; set; }
-		public Color HairGlow { get; set; }
-		public Color HighlightTint { get; set; }
+		public ExtendedAppearanceViewModel? ExtendedAppearance { get; set; }
+
 		public Color MainHandTint { get; set; }
 		public Vector MainHandScale { get; set; }
 		public Color OffHandTint { get; set; }
 		public Vector OffHandScale { get; set; }
-		public Color4 LipTint { get; set; }
 		public float Transparency { get; set; }
 		public Vector BustScale { get; set; }
 		public float FeatureScale { get; set; }
 
-		private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
+		}
+
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			ActorViewModel? vm = this.DataContext as ActorViewModel;
+			if (vm == null)
+				return;
+
+			this.ExtendedAppearance = vm.ModelObject?.ExtendedAppearance;
+		}
+
+		private void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			this.OnDataContextChanged(sender, default);
 		}
 	}
 }

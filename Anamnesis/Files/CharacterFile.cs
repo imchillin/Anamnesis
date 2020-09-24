@@ -4,6 +4,7 @@
 namespace Anamnesis.Files
 {
 	using System;
+	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
 	using Anamnesis;
 	using Anamnesis.Files.Infos;
@@ -87,15 +88,15 @@ namespace Anamnesis.Files
 
 		// extended appearance
 		// NOTE: extended weapon values are stored in the WeaponSave
-		public Color? SkinTint { get; set; }
-		public Color? SkinGlow { get; set; }
+		public Color? SkinColor { get; set; }
+		public Color? SkinGloss { get; set; }
 		public Color? LeftEyeColor { get; set; }
 		public Color? RightEyeColor { get; set; }
 		public Color? LimbalRingColor { get; set; }
-		public Color? HairTint { get; set; }
-		public Color? HairGlow { get; set; }
-		public Color? HighlightTint { get; set; }
-		public Color4? LipTint { get; set; }
+		public Color? HairColor { get; set; }
+		public Color? HairGloss { get; set; }
+		public Color? HairHighlight { get; set; }
+		public Color4? MouthColor { get; set; }
 		public Vector? BustScale { get; set; }
 		public float? Transparency { get; set; }
 		public float? FeatureScale { get; set; }
@@ -163,9 +164,9 @@ namespace Anamnesis.Files
 				this.EnableHighlights = actor.Customize?.EnableHighlights;
 				this.HairTone = actor.Customize?.HairTone;
 				this.Highlights = actor.Customize?.Highlights;
-				////this.HairTint = actor.GetValue(Offsets.Main.HairColor);
-				////this.HairGlow = actor.GetValue(Offsets.Main.HairGloss);
-				////this.HighlightTint = actor.GetValue(Offsets.Main.HairHiglight);
+				this.HairColor = actor.ModelObject?.ExtendedAppearance?.HairColor;
+				this.HairGloss = actor.ModelObject?.ExtendedAppearance?.HairGloss;
+				this.HairHighlight = actor.ModelObject?.ExtendedAppearance?.HairHighlight;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
@@ -191,11 +192,10 @@ namespace Anamnesis.Files
 				this.LipsToneFurPattern = actor.Customize?.LipsToneFurPattern;
 				this.FacePaint = actor.Customize?.FacePaint;
 				this.FacePaintColor = actor.Customize?.FacePaintColor;
-				////this.LeftEyeColor = actor.GetValue(Offsets.Main.LeftEyeColor);
-				////this.RightEyeColor = actor.GetValue(Offsets.Main.RightEyeColor);
-				////this.LimbalRingColor = actor.GetValue(Offsets.Main.LimbalColor);
-
-				////this.LipTint = new Color4(actor.GetValue(Offsets.Main.MouthColor), actor.GetValue(Offsets.Main.MouthGloss));
+				this.LeftEyeColor = actor.ModelObject?.ExtendedAppearance?.LeftEyeColor;
+				this.RightEyeColor = actor.ModelObject?.ExtendedAppearance?.RightEyeColor;
+				this.LimbalRingColor = actor.ModelObject?.ExtendedAppearance?.LimbalRingColor;
+				this.MouthColor = actor.ModelObject?.ExtendedAppearance?.MouthColor;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
@@ -206,8 +206,8 @@ namespace Anamnesis.Files
 				this.TailEarsType = actor.Customize?.TailEarsType;
 				this.Bust = actor.Customize?.Bust;
 
-				////this.SkinTint = actor.GetValue(Offsets.Main.SkinColor);
-				////this.SkinGlow = actor.GetValue(Offsets.Main.SkinGloss);
+				this.SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
+				this.SkinGloss = actor.ModelObject?.ExtendedAppearance?.SkinGloss;
 				////this.BustScale = actor.GetValue(Offsets.Main.BustScale);
 				////this.Transparency = actor.GetValue(Offsets.Main.Transparency);
 				////this.FeatureScale = actor.GetValue(Offsets.Main.UniqueFeatureScale);
@@ -308,40 +308,34 @@ namespace Anamnesis.Files
 					actor.SetValue(Offsets.Main.OffhandColor, this.OffHand.Color);
 					actor.SetValue(Offsets.Main.OffhandScale, this.OffHand.Scale);
 				}
-			}
+			}*/
 
-			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
+			if (actor.ModelObject?.ExtendedAppearance != null)
 			{
-				actor.SetValue(Offsets.Main.HairColor, this.HairTint);
-				actor.SetValue(Offsets.Main.HairGloss, this.HairGlow);
-				actor.SetValue(Offsets.Main.HairHiglight, this.HighlightTint);
-			}
-
-			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
-			{
-				actor.SetValue(Offsets.Main.LeftEyeColor, this.LeftEyeColor);
-				actor.SetValue(Offsets.Main.RightEyeColor, this.RightEyeColor);
-				actor.SetValue(Offsets.Main.LimbalColor, this.LimbalRingColor);
-
-				if (this.LipTint != null)
+				if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 				{
-					using IMarshaler<Color> lipTintMem = actor.GetMemory(Offsets.Main.MouthColor);
-					using IMarshaler<float> lipGlossMem = actor.GetMemory(Offsets.Main.MouthGloss);
+					actor.ModelObject.ExtendedAppearance.HairColor = (Color)this.HairColor!;
+					actor.ModelObject.ExtendedAppearance.HairGloss = (Color)this.HairGloss!;
+					actor.ModelObject.ExtendedAppearance.HairHighlight = (Color)this.HairHighlight!;
+				}
 
-					Color4 c = (Color4)this.LipTint;
-					lipTintMem.Value = c.Color;
-					lipGlossMem.Value = c.A;
+				if (this.IncludeSection(SaveModes.AppearanceFace, mode))
+				{
+					actor.ModelObject.ExtendedAppearance.LeftEyeColor = (Color)this.LeftEyeColor!;
+					actor.ModelObject.ExtendedAppearance.RightEyeColor = (Color)this.RightEyeColor!;
+					actor.ModelObject.ExtendedAppearance.LimbalRingColor = (Color)this.LimbalRingColor!;
+					actor.ModelObject.ExtendedAppearance.MouthColor = (Color4)this.MouthColor!;
+				}
+
+				if (this.IncludeSection(SaveModes.AppearanceBody, mode))
+				{
+					actor.ModelObject.ExtendedAppearance.SkinColor = (Color)this.SkinColor!;
+					actor.ModelObject.ExtendedAppearance.SkinGloss = (Color)this.SkinGloss!;
+					////actor.SetValue(Offsets.Main.Transparency, this.Transparency);
+					////actor.SetValue(Offsets.Main.BustScale, this.BustScale);
+					////actor.SetValue(Offsets.Main.UniqueFeatureScale, this.FeatureScale);
 				}
 			}
-
-			if (this.IncludeSection(SaveModes.AppearanceBody, mode))
-			{
-				actor.SetValue(Offsets.Main.SkinColor, this.SkinTint);
-				actor.SetValue(Offsets.Main.SkinGloss, this.SkinGlow);
-				actor.SetValue(Offsets.Main.Transparency, this.Transparency);
-				actor.SetValue(Offsets.Main.BustScale, this.BustScale);
-				actor.SetValue(Offsets.Main.UniqueFeatureScale, this.FeatureScale);
-			}*/
 
 			ActorRefreshService.Instance.AutomaticRefreshEnabled = true;
 		}

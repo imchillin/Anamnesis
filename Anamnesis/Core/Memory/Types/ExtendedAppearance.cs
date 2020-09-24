@@ -12,8 +12,7 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x00)] public Color SkinColor;
 		[FieldOffset(0x0C)] public float MuscleTone;
 		[FieldOffset(0x10)] public Color SkinGloss;
-		[FieldOffset(0x20)] public Color MouthColor;
-		[FieldOffset(0x2C)] public float MouthGloss;
+		[FieldOffset(0x20)] public Color4 MouthColor;
 		[FieldOffset(0x30)] public Color HairColor;
 		[FieldOffset(0x40)] public Color HairGloss;
 		[FieldOffset(0x50)] public Color HairHighlight;
@@ -37,8 +36,7 @@ namespace Anamnesis.Memory
 		[ModelField] public Color SkinColor { get; set; }
 		[ModelField] public float MuscleTone { get; set; }
 		[ModelField] public Color SkinGloss { get; set; }
-		[ModelField] public Color MouthColor { get; set; }
-		[ModelField] public float MouthGloss { get; set; }
+		[ModelField] public Color4 MouthColor { get; set; }
 		[ModelField] public Color HairColor { get; set; }
 		[ModelField] public Color HairGloss { get; set; }
 		[ModelField] public Color HairHighlight { get; set; }

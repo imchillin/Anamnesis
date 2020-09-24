@@ -54,7 +54,7 @@
 				</StackPanel>
 			</GroupBox.Header>
 
-			<!--<views:ExtendedAppearanceEditor DataContext="{Binding Actor}" Margin="0, 6, 0, 0"/>-->
+			<views:ExtendedAppearanceEditor DataContext="{Binding Actor}" Margin="0, 6, 0, 0"/>
 
 		</GroupBox>
 
