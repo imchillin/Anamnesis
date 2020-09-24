@@ -12,7 +12,7 @@ namespace Anamnesis.Memory
 	[AttributeUsage(AttributeTargets.Property)]
 	public class ModelFieldAttribute : Attribute
 	{
-		public readonly int Offset;
+		public readonly int[]? Offsets;
 		public readonly string? FieldName;
 
 		public ModelFieldAttribute()
@@ -28,12 +28,11 @@ namespace Anamnesis.Memory
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ModelFieldAttribute"/> class that binds to an <see cref="IntPtr"/> address with a custom offset.
+		/// Initializes a new instance of the <see cref="ModelFieldAttribute"/> class that binds to an <see cref="IntPtr"/> address with a custom offset pointer path.
 		/// </summary>
-		/// <param name="offset">A byte offset from the address of the backing field.</param>
-		public ModelFieldAttribute(int offset)
+		public ModelFieldAttribute(params int[] offsets)
 		{
-			this.Offset = offset;
+			this.Offsets = offsets;
 			this.FieldName = null;
 		}
 	}
