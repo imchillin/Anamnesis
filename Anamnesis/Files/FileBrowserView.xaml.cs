@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GUI.Views
 {
+	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
@@ -19,6 +20,7 @@ namespace Anamnesis.GUI.Views
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
+	using static Anamnesis.Files.IFileSource;
 
 	/// <summary>
 	/// Interaction logic for FileBrowserView.xaml.
@@ -27,6 +29,9 @@ namespace Anamnesis.GUI.Views
 	[SuppressPropertyChangedWarnings]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
+		private static IFileSource? lastFileSource;
+		////private static IDirectory? lastDirectory;
+
 		private FileInfoBase[] fileInfos;
 		private IFileSource? fileSource;
 		private Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
@@ -50,16 +55,11 @@ namespace Anamnesis.GUI.Views
 
 			foreach (FileInfoBase info in fileInfos)
 			{
-				IFileSource? source = info.FileSource;
+				IFileSource? source = info.GetFileSource();
 				this.FileSources.Add(source);
-
-				// TODO: remember the last used file source
-				// Bit of a hack, but always prefer the anamnesis file source if its available
-				if (this.FileSource == null || source.Name == "Local Files")
-				{
-					this.FileSource = source;
-				}
 			}
+
+			this.FileSource = this.GetDefaultFileSource();
 
 			this.IsOpen = true;
 
@@ -166,6 +166,7 @@ namespace Anamnesis.GUI.Views
 			}
 			set
 			{
+				lastFileSource = value;
 				this.fileSource = value;
 				this.currentPath.Clear();
 				this.CurrentDir = this.FileSource?.GetDefaultDirectory();
@@ -254,6 +255,37 @@ namespace Anamnesis.GUI.Views
 					return true; //// this.fileInfos[0].SupportsAdvancedMode;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets the last used file source if it is available, else returns "Local Files" or first source.
+		/// </summary>
+		private IFileSource GetDefaultFileSource()
+		{
+			if (lastFileSource != null)
+			{
+				foreach (IFileSource source in this.FileSources)
+				{
+					if (source == lastFileSource)
+					{
+						return source;
+					}
+				}
+			}
+
+			if (this.FileSources == null || this.FileSources.Count <= 0)
+				throw new Exception("No file sources");
+
+			foreach (IFileSource source in this.FileSources)
+			{
+				// Bit of a hack, but always prefer the anamnesis file source if its available
+				if (source.Name == "Local Files")
+				{
+					return source;
+				}
+			}
+
+			return this.FileSources[0];
 		}
 
 		private async Task UpdateEntries()

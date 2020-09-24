@@ -8,6 +8,8 @@ namespace Anamnesis.Files.Infos
 
 	public abstract class FileInfoBase
 	{
+		private IFileSource? fileSource;
+
 		public abstract string Extension { get; }
 		public abstract string Name { get; }
 
@@ -17,5 +19,13 @@ namespace Anamnesis.Files.Infos
 		public abstract void SerializeFile(FileBase file, Stream stream);
 
 		public abstract bool IsFile(Type type);
+
+		public IFileSource GetFileSource()
+		{
+			if (this.fileSource == null)
+				this.fileSource = this.FileSource;
+
+			return this.fileSource;
+		}
 	}
 }
