@@ -165,7 +165,7 @@ namespace Anamnesis.PoseModule
 			for (int i = 0; i < skeletonVm.Body.Count; i++)
 			{
 				int parent = SkeletonUtility.PlayerBodyParents[i];
-				if (parent == -1)
+				if (parent == -1 || parent > bodyBones.Count)
 				{
 					this.Children.Add(bodyBones[i]);
 				}
