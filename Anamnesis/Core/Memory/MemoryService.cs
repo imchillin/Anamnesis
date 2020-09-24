@@ -28,7 +28,6 @@ namespace Anamnesis.Memory
 		public static SignatureScanner? Scanner { get; private set; }
 		public static SysProcess? Process { get; private set; }
 		public static bool ProcessIsAlive { get; private set; }
-		public static bool EnableMemoryViewModelTick { get; set; }
 
 		public static bool IsProcessAlive
 		{
@@ -221,14 +220,13 @@ namespace Anamnesis.Memory
 				}
 			}
 
-			new Thread(new ThreadStart(this.TickMemoryViewModelThread)).Start();
 			new Thread(new ThreadStart(this.ProcessWatcherThread)).Start();
 		}
 
-		public override Task Start()
+		public override async Task Start()
 		{
-			EnableMemoryViewModelTick = true;
-			return base.Start();
+			await base.Start();
+			new Thread(new ThreadStart(this.TickMemoryViewModelThread)).Start();
 		}
 
 		/// <summary>
@@ -414,7 +412,7 @@ namespace Anamnesis.Memory
 					if (!ProcessIsAlive)
 						return;
 
-					if (!EnableMemoryViewModelTick)
+					if (GposeService.Instance.IsChangingState || ActorRefreshService.Instance.IsRefreshing)
 						continue;
 
 					memoryTickCount++;
