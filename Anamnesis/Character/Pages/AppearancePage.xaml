@@ -58,6 +58,20 @@
 
 		</GroupBox>
 
+		<Grid Grid.Column="0" 
+			  Grid.ColumnSpan="2" 
+			  Grid.Row="0"
+			  Grid.RowSpan="2"
+			  Visibility="{Binding GPoseService.IsOverworld, Converter={StaticResource !B2V}}" >
+
+			<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.9"/>
+
+			<StackPanel Grid.RowSpan="2" Grid.ColumnSpan="2" Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
+				<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
+				<cm3Controls:TextBlock Text="Character appearance can not be changed while in GPose." FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
+			</StackPanel>
+		</Grid>
+
 		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0">
 			<Grid Margin="3">
 				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal" IsEnabled="{Binding GPoseService.IsOverworld}">

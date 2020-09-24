@@ -23,12 +23,7 @@
 
 	<Grid x:Name="ContentArea">
 
-		<StackPanel Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
-			<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
-			<cm3Controls:TextBlock Key="Pose_WarningNotGPose" Text="Posing is only available while in Group Pose. Type /Gpose in chat." VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
-		</StackPanel>
-
-		<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}">
+		<Grid IsEnabled="{Binding GposeService.IsGpose}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
 				<ColumnDefinition Width="200"/>
@@ -109,5 +104,15 @@
 				</Grid>
 			</Border>
 		</Grid>
+
+		<Grid>
+			<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.75"/>
+			
+			<StackPanel Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
+				<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
+				<cm3Controls:TextBlock Key="Pose_WarningNotGPose" Text="Posing is only available while in Group Pose. Type /Gpose in chat." FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
+			</StackPanel>
+		</Grid>
+
 	</Grid>
 </UserControl>
