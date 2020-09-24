@@ -107,7 +107,7 @@ namespace Anamnesis
 				{
 					await Task.Delay(50);
 
-					while (ActorRefreshService.Instance.IsRefreshing)
+					while (ActorRefreshService.Instance.IsRefreshing || GposeService.Instance.IsChangingState)
 						await Task.Delay(250);
 
 					IntPtr newTargetAddress;

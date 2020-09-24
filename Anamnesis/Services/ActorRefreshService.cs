@@ -117,8 +117,6 @@ namespace Anamnesis.Services
 			this.IsRefreshing = true;
 			////this.actor.Enabled = false;
 
-			MemoryService.EnableMemoryViewModelTick = false;
-
 			// we use direct pointers here so that we can write the values we need to update
 			// for the refresh without the actual actorview model being able to write its own values.
 			// if the actor view model attempts to write a value during a refresh, the game will crash.
@@ -142,9 +140,6 @@ namespace Anamnesis.Services
 				await Task.Delay(50);
 				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
 			}
-
-			MemoryService.EnableMemoryViewModelTick = true;
-			await MemoryService.WaitForMemoryTick();
 
 			await Task.Delay(50);
 
