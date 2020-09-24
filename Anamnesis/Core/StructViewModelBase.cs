@@ -138,6 +138,14 @@ namespace Anamnesis
 			return typeof(T);
 		}
 
+		public void Import(T model)
+		{
+			foreach ((PropertyInfo viewModelProperty, FieldInfo modelField) in this.binds.Values)
+			{
+				viewModelProperty.SetValue(this, modelField.GetValue(model));
+			}
+		}
+
 		public void SetModel(object? model)
 		{
 			if (model is T tModel)
