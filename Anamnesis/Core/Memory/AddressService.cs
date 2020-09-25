@@ -19,8 +19,9 @@ namespace Anamnesis.Core.Memory
 		// Static offsets
 		public static IntPtr ActorTable { get; private set; }
 		public static IntPtr TargetManager { get; private set; }
-		public static IntPtr Camera { get; private set; }
+		public static IntPtr GPoseActorTable { get; private set; }
 		public static IntPtr GPoseTargetManager { get; private set; }
+		public static IntPtr Camera { get; private set; }
 		public static IntPtr SkeletonFreezeRotation { get; private set; }   // SkeletonOffset
 		public static IntPtr SkeletonFreezeRotation2 { get; private set; }  // SkeletonOffset2
 		public static IntPtr SkeletonFreezeRotation3 { get; private set; }  // SkeletonOffset3
@@ -99,6 +100,7 @@ namespace Anamnesis.Core.Memory
 			Territory = baseAddress + 0x1D08760;
 			Time = baseAddress + 0x1CEA6E8;
 			Camera = baseAddress + 0x1D09BA0;
+			GPoseActorTable = baseAddress + 0x1D0B190;
 			GPoseTargetManager = baseAddress + 0x1D09DB0;
 			GposeCheck = baseAddress + 0x1D0D990;
 			GposeCheck2 = baseAddress + 0x1D0D970;

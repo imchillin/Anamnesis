@@ -14,7 +14,7 @@
 			 Unloaded="OnUnloaded"
 			 DataContextChanged="OnDataContextChanged">
 	
-	<Grid Background="{DynamicResource MaterialDesignPaper}" x:Name="ContentArea">
+	<Grid x:Name="ContentArea" Visibility="{Binding DataContext, Converter={StaticResource NotNullToVisibilityConverter}}">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>

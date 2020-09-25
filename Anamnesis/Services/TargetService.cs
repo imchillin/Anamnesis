@@ -6,31 +6,72 @@ namespace Anamnesis
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
-	using System.Linq;
-	using System.Runtime.InteropServices;
+	using System.ComponentModel;
+	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
-	using System.Windows.Documents;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.WpfStyles;
 	using FontAwesome.Sharp;
+	using PropertyChanged;
 	using SimpleLog;
 
 	public delegate void SelectionEvent(ActorViewModel? actor);
 
+	[AddINotifyPropertyChangedInterface]
 	public class TargetService : ServiceBase<TargetService>
 	{
 		public static event SelectionEvent? ActorSelected;
 
 		public ActorViewModel? SelectedActor { get; private set; }
 		public ObservableCollection<ActorTableActor> Actors { get; set; } = new ObservableCollection<ActorTableActor>();
+		public ObservableCollection<ActorTableActor> AllActors { get; set; } = new ObservableCollection<ActorTableActor>();
+
+		public static void AddActor(ActorTableActor actor)
+		{
+			foreach (ActorTableActor otherActor in Instance.Actors)
+			{
+				if (actor.Pointer == otherActor.Pointer)
+				{
+					return;
+				}
+			}
+
+			Instance.Actors.Add(actor);
+		}
+
+		public static void RemoveActor(ActorTableActor actor)
+		{
+			Instance.Actors.Remove(actor);
+		}
 
 		public override Task Start()
 		{
 			Task.Run(this.Watch);
 
 			return base.Start();
+		}
+
+		public void ClearSelection()
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				this.SelectedActor = null;
+				this.AllActors.Clear();
+				this.Actors.Clear();
+			});
+		}
+
+		public void SelectActor(ActorTableActor actor)
+		{
+			ActorViewModel vm = new ActorViewModel(actor.Pointer);
+			this.SelectActor(vm);
+
+			foreach (ActorTableActor ac in this.Actors)
+			{
+				ac.SelectionChanged();
+			}
 		}
 
 		public void SelectActor(ActorViewModel? actor)
@@ -105,45 +146,44 @@ namespace Anamnesis
 					while (ActorRefreshService.Instance.IsRefreshing || GposeService.Instance.IsChangingState)
 						await Task.Delay(250);
 
-					IntPtr newTargetAddress;
+					List<IntPtr> actorPointers = new List<IntPtr>();
+
+					int count = 0;
+					IntPtr startAddress;
+
 					if (GposeService.Instance.IsGpose)
 					{
-						newTargetAddress = MemoryService.ReadPtr(AddressService.GPoseTargetManager);
+						count = MemoryService.Read<int>(AddressService.GPoseActorTable);
+						startAddress = AddressService.GPoseActorTable + 8;
+						////ingameTargetAddress = MemoryService.ReadPtr(AddressService.GPoseTargetManager);
 					}
 					else
 					{
-						newTargetAddress = MemoryService.ReadPtr(AddressService.TargetManager);
-
-						List<IntPtr> actorPointers = new List<IntPtr>();
-						for (int i = 0; i < 424; i++)
-						{
-							IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
-
-							if (ptr == IntPtr.Zero)
-								continue;
-
-							actorPointers.Add(ptr);
-						}
-
-						this.UpdateActorList(actorPointers);
+						// why 424?
+						count = 424;
+						startAddress = AddressService.ActorTable;
+						////ingameTargetAddress = MemoryService.ReadPtr(AddressService.TargetManager);
 					}
 
-					if (newTargetAddress != lastTargetAddress)
+					for (int i = 0; i < count; i++)
 					{
-						lastTargetAddress = newTargetAddress;
+						IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
 
-						try
+						if (ptr == IntPtr.Zero)
+							continue;
+
+						actorPointers.Add(ptr);
+					}
+
+					this.UpdateActorList(actorPointers);
+
+					if (this.SelectedActor == null && this.AllActors.Count > 0)
+					{
+						App.Current.Dispatcher.Invoke(() =>
 						{
-							if (newTargetAddress != IntPtr.Zero)
-							{
-								ActorViewModel vm = new ActorViewModel(newTargetAddress);
-								this.SelectActor(vm);
-							}
-						}
-						catch (Exception ex)
-						{
-							Log.Write(Severity.Warning, new Exception("Failed to select current target", ex));
-						}
+							AddActor(this.AllActors[0]);
+							this.SelectActor(this.Actors[0]);
+						});
 					}
 				}
 			}
@@ -161,15 +201,15 @@ namespace Anamnesis
 			App.Current.Dispatcher.Invoke(() =>
 			{
 				// Remove missing actors, and remove existing pointers
-				for (int i = this.Actors.Count - 1; i >= 0; i--)
+				for (int i = this.AllActors.Count - 1; i >= 0; i--)
 				{
-					if (pointers.Contains(this.Actors[i].Pointer))
+					if (pointers.Contains(this.AllActors[i].Pointer))
 					{
-						pointers.Remove(this.Actors[i].Pointer);
+						pointers.Remove(this.AllActors[i].Pointer);
 					}
 					else
 					{
-						this.Actors.RemoveAt(i);
+						this.AllActors.RemoveAt(i);
 					}
 				}
 
@@ -188,12 +228,13 @@ namespace Anamnesis
 					if (string.IsNullOrEmpty(actor.Name))
 						continue;
 
-					this.Actors.Add(new ActorTableActor(actor, pointer));
+					this.AllActors.Add(new ActorTableActor(actor, pointer));
 				}
 			});
 		}
 
-		public class ActorTableActor
+		[AddINotifyPropertyChangedInterface]
+		public class ActorTableActor : INotifyPropertyChanged
 		{
 			public readonly IntPtr Pointer;
 
@@ -203,11 +244,49 @@ namespace Anamnesis
 			{
 				this.actor = actor;
 				this.Pointer = pointer;
+
+				Regex initialsReg = new Regex(@"(\b[a-zA-Z])[a-zA-Z]* ?");
+				this.Initials = initialsReg.Replace(actor.Name, "$1.").Trim('.');
+			}
+
+			public event PropertyChangedEventHandler? PropertyChanged;
+
+			public bool IsSelected
+			{
+				get
+				{
+					return TargetService.Instance.SelectedActor?.Pointer == this.Pointer;
+				}
+
+				set
+				{
+					if (value)
+					{
+						TargetService.Instance.SelectActor(this);
+					}
+				}
 			}
 
 			public string Name => this.actor.Name;
 			public ActorTypes Kind => this.actor.ObjectKind;
 			public IconChar Icon => this.actor.ObjectKind.GetIcon();
+			public string Initials { get; private set; }
+
+			public void SelectionChanged()
+			{
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsSelected)));
+			}
+
+			public override bool Equals(object? obj)
+			{
+				return obj is ActorTableActor actor &&
+					   this.Pointer.Equals(actor.Pointer);
+			}
+
+			public override int GetHashCode()
+			{
+				return HashCode.Combine(this.Pointer);
+			}
 		}
 	}
 }

@@ -33,7 +33,7 @@ namespace Anamnesis.Services
 				if (newGpose != this.IsGpose)
 				{
 					this.IsChangingState = true;
-					TargetService.Instance.SelectActor(null);
+					TargetService.Instance.ClearSelection();
 					await Task.Delay(500);
 				}
 

@@ -31,6 +31,10 @@
 							<Setter TargetName="Panel" Property="Opacity" Value="1.0" />
 							<Setter TargetName="ContentSite" Property="Opacity" Value="1.0" />
 						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter TargetName="Panel" Property="Opacity" Value="0" />
+							<Setter TargetName="ContentSite" Property="Opacity" Value="0.25" />
+						</Trigger>
 					</ControlTemplate.Triggers>
 					
 				</ControlTemplate>

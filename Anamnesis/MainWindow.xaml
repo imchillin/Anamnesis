@@ -8,6 +8,7 @@
 		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		xmlns:characterPages="clr-namespace:Anamnesis.Character.Pages"
 		xmlns:posePages="clr-namespace:Anamnesis.PoseModule.Pages"
+		xmlns:services="clr-namespace:Anamnesis"
 		mc:Ignorable="d"
 		WindowStyle="None"
 		ResizeMode="NoResize"
@@ -18,7 +19,6 @@
 		Background="Transparent"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"
-		Loaded="Window_Loaded"
 		
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 		TextBlock.FontSize="12"
@@ -43,43 +43,110 @@
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5"/>
 			</Grid.LayoutTransform>
 
+			<Grid Background="{DynamicResource MaterialDesignShadowBrush}">
+				<TabControl TabStripPlacement="Left">
+
+					<TabControl.Template>
+						<ControlTemplate TargetType="TabControl">
+
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition/>
+								</Grid.ColumnDefinitions>
+
+								<Grid Grid.Column="0" Margin="0">
+
+									<StackPanel Orientation="Vertical" Width="48">
+										<Button Click="OnAddActorClicked" Height="22" Margin="2, 2, 2, 12" Style="{DynamicResource MaterialDesignOutlinedButton}">
+											<fa:IconBlock Icon="Plus" FontSize="12"/>
+										</Button>
+
+										<ItemsControl ItemsSource="{Binding TargetService.Actors}">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate>
+													<Grid Margin="0, 3">
+														<ToggleButton IsChecked="{Binding IsSelected}" Height="32" Width="32" Style="{DynamicResource RoundToggleButton}">
+															<Grid Height="32" Width="32">
+																<Grid.Clip>
+																	<EllipseGeometry RadiusX="16" RadiusY="16" Center="16, 16"/>
+																</Grid.Clip>
+
+																<fa:IconImage Icon="{Binding Icon}" Foreground="{StaticResource MaterialDesignShadowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+																<TextBlock Text="{Binding Initials}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+															</Grid>
+
+															<ToggleButton.ToolTip>
+																<TextBlock>
+																	<TextBlock.Text>
+																		<MultiBinding StringFormat="{}{0} ({1})">
+																			<Binding Path="Name" />
+																			<Binding Path="Kind" />
+																		</MultiBinding>
+																	</TextBlock.Text>
+																</TextBlock>
+															</ToggleButton.ToolTip>
+															
+														</ToggleButton>
+													</Grid>
+
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+										</ItemsControl>
+
+										<StackPanel Orientation="Vertical" HorizontalAlignment="Left" IsItemsHost="true" Margin="3, 12, 0, 0"/>
+									</StackPanel>
+								</Grid>
+
+								<Border Grid.Column="1" Background="{DynamicResource MaterialDesignPaper}" CornerRadius="3" Margin="0">
+									<ContentPresenter ContentSource="SelectedContent" Margin="0, 28, 0, 0" />
+								</Border>
+							</Grid>
+						</ControlTemplate>
+					</TabControl.Template>
+
+					<TabItem IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+						<TabItem.Header>
+							<fa:IconImage Icon="Home" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Home"/>
+						</TabItem.Header>
+
+						<views:HomeView DataContext="{Binding TargetService.SelectedActor}"/>
+					</TabItem>
+					<TabItem IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+						<TabItem.Header>
+							<fa:IconImage Icon="UserAlt" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Character"/>
+						</TabItem.Header>
+
+						<characterPages:AppearancePage DataContext="{Binding TargetService.SelectedActor}"/>
+					</TabItem>
+					<TabItem IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+						<TabItem.Header>
+							<fa:IconImage Icon="Running" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Pose"/>
+						</TabItem.Header>
+
+						<posePages:PosePage DataContext="{Binding TargetService.SelectedActor}"/>
+					</TabItem>
+				</TabControl>
+			</Grid>
+
+			<Grid Margin="0, 32, 0, 0" Visibility="{Binding TargetService.SelectedActor, Converter={StaticResource NullToVisibilityConverter}}">
+				<TextBlock Text="To get started, add an actor." Style="{StaticResource Label}" HorizontalAlignment="Center"/>
+			</Grid>
+
 			<!-- TitleBar -->
-			<Border Margin="0" 
-					Background="{DynamicResource MaterialDesignPaper}" 
+			<Border Background="Transparent" 
 					CornerRadius="2, 2, 0, 0"
 					Grid.ColumnSpan="2"
 					Height="28"
 					VerticalAlignment="Top"
-					MouseDown="OnTitleBarMouseDown">
-
-				<Border.Effect>
-					<DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="1"/>
-				</Border.Effect>
+					MouseDown="OnTitleBarMouseDown"
+					Margin="44, 0, 0, 0">
 
 				<Grid VerticalAlignment="Top">
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 
-						<ComboBox Margin="2" Height="22" Width="75" ItemsSource="{Binding TargetService.Actors}" SelectedValue="{Binding TargetService.SelectedActor, Mode=OneWay}">
-							<ComboBox.ItemTemplate>
-								<DataTemplate>
-									<Grid>
-										<Grid.ColumnDefinitions>
-											<ColumnDefinition Width="22"/>
-											<ColumnDefinition/>
-										</Grid.ColumnDefinitions>
-
-										<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}"/>
-										<TextBlock Grid.Column="1" Text="{Binding Name}"/>
-									</Grid>
-								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>
-
-
 						<TextBlock Text="Anamnesis" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
-						<TextBlock Text=" - " VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>
-						<TextBlock x:Name="ActorName" VerticalAlignment="Center" Margin="3, 0, 3, 0" Opacity="0.5"/>
 						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Sync" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding ActorRefreshService.IsRefreshing, Converter={StaticResource B2V}}"/>
 						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Hourglass" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding ActorRefreshService.PendingRefresh, Converter={StaticResource B2V}}"/>
 
@@ -133,39 +200,6 @@
 					</StackPanel>
 				</Grid>
 			</Border>
-
-			<Grid Margin="0, 32, 0, 0" Visibility="{Binding HasSelection, Converter={StaticResource B2V}}">
-				<Grid x:Name="ActorArea" Background="{DynamicResource MaterialDesignShadowBrush}">
-
-					<TabControl TabStripPlacement="Left">
-						<TabItem>
-							<TabItem.Header>
-								<fa:IconImage Icon="Home" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Home"/>
-							</TabItem.Header>
-
-							<views:HomeView/>
-						</TabItem>
-						<TabItem>
-							<TabItem.Header>
-								<fa:IconImage Icon="UserAlt" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Character"/>
-							</TabItem.Header>
-
-							<characterPages:AppearancePage/>
-						</TabItem>
-						<TabItem>
-							<TabItem.Header>
-								<fa:IconImage Icon="Running" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Pose"/>
-							</TabItem.Header>
-
-							<posePages:PosePage/>
-						</TabItem>
-					</TabControl>
-				</Grid>
-			</Grid>
-
-			<Grid Margin="0, 32, 0, 0" Visibility="{Binding HasSelection, Converter={StaticResource !B2V}}">
-				<TextBlock Text="To get started, select an actor in game." Style="{StaticResource Label}" HorizontalAlignment="Center"/>
-			</Grid>
 
 			<!-- Drawer flyouts -->
 			<materialdesign:DrawerHost Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DrawerHost" Margin="1">

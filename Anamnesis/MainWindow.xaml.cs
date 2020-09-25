@@ -16,6 +16,7 @@ namespace Anamnesis.GUI
 	using Anamnesis.GUI.Views;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using Anamnesis.Views;
 	using PropertyChanged;
 
 	/// <summary>
@@ -33,11 +34,6 @@ namespace Anamnesis.GUI
 
 			ViewService.ShowingDrawer += this.OnShowDrawer;
 
-			TargetService.ActorSelected += this.OnActorSelected;
-
-			////this.IconArea.DataContext = this;
-
-			this.HasSelection = false;
 			this.Zodiark = App.Settings.ThemeDark;
 			this.Opacity = App.Settings.Opacity;
 			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
@@ -50,7 +46,6 @@ namespace Anamnesis.GUI
 		public ActorRefreshService ActorRefreshService => ActorRefreshService.Instance;
 
 		public bool Zodiark { get; set; }
-		public bool HasSelection { get; set; }
 
 		private void OnSettingsChanged(SettingsBase settings)
 		{
@@ -186,12 +181,6 @@ namespace Anamnesis.GUI
 			App.Settings.AlwaysOnTop = false;
 		}
 
-		private async void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			await Task.Delay(50);
-			this.OnActorSelected(TargetService.Instance.SelectedActor);
-		}
-
 		private void Window_MouseEnter(object sender, MouseEventArgs e)
 		{
 			if (App.Settings.Opacity == 1.0)
@@ -227,23 +216,9 @@ namespace Anamnesis.GUI
 			App.Settings.Scale = scale;
 		}
 
-		private void OnActorSelected(ActorViewModel? actor)
+		private void OnAddActorClicked(object sender, RoutedEventArgs e)
 		{
-			if (Application.Current == null)
-				return;
-
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				this.ActorArea.DataContext = actor;
-				this.ActorName.Text = actor?.Name;
-				this.HasSelection = actor != null;
-
-				if (actor != null && Debugger.IsAttached)
-				{
-					Regex initialsReg = new Regex(@"(\b[a-zA-Z])[a-zA-Z]* ?");
-					this.ActorName.Text = initialsReg.Replace(actor.Name, "$1.") + " (debug)";
-				}
-			});
+			ViewService.ShowDrawer<TargetSelectorView>(null, DrawerDirection.Left);
 		}
 	}
 }

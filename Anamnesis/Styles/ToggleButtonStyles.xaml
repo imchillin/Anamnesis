@@ -121,4 +121,16 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+
+	<Style TargetType="ToggleButton" x:Key="RoundToggleButton" BasedOn="{StaticResource MaterialDesignFlatPrimaryToggleButton}">
+
+		<Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
+
+		<Style.Triggers>
+			<Trigger Property="IsChecked" Value="True">
+				<Setter Property="Foreground" Value="Black"/>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+	
 </ResourceDictionary>

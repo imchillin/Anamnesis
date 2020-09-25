@@ -394,11 +394,10 @@ namespace Anamnesis.Memory
 
 					memoryTickCount++;
 
-					List<WeakReference<IMemoryViewModel>> weakRefs;
 					IMemoryViewModel? viewModel;
 					lock (viewModels)
 					{
-						weakRefs = new List<WeakReference<IMemoryViewModel>>(viewModels);
+						List<WeakReference<IMemoryViewModel>> weakRefs = new List<WeakReference<IMemoryViewModel>>(viewModels);
 
 						foreach (WeakReference<IMemoryViewModel>? weakRef in weakRefs)
 						{
@@ -441,7 +440,7 @@ namespace Anamnesis.Memory
 				if (newAlive != IsProcessAlive && !newAlive)
 				{
 					Log.Write("FFXIV Process has terminated");
-					TargetService.Instance.SelectActor(null);
+					TargetService.Instance.ClearSelection();
 					Task.Run(this.GetProcess);
 				}
 
