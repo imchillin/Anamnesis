@@ -55,6 +55,9 @@ namespace Anamnesis.PoseModule.Pages
 
 		private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
+			if (!this.IsVisible)
+				return;
+
 			ActorViewModel? actor = this.DataContext as ActorViewModel;
 
 			if (actor == null)
@@ -64,7 +67,6 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			this.Skeleton = new SkeletonVisual3d(actor);
-
 			this.ThreeDView.DataContext = this.Skeleton;
 			this.GuiView.DataContext = this.Skeleton;
 			this.MatrixView.DataContext = this.Skeleton;

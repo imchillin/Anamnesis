@@ -7,8 +7,10 @@ namespace Anamnesis
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
+	using System.Diagnostics;
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
+	using System.Windows.Media.Animation;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
@@ -76,7 +78,13 @@ namespace Anamnesis
 
 		public void SelectActor(ActorViewModel? actor)
 		{
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+
 			this.SelectedActor = actor;
+
+			sw.Stop();
+			Log.Write("took " + sw.ElapsedMilliseconds + " ms to change selected actor");
 
 			/*using IMarshaler<int> territoryMem = MemoryService.GetMarshaler(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 

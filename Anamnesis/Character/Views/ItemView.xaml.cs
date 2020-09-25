@@ -3,7 +3,9 @@
 
 namespace Anamnesis.Character.Views
 {
+	using System;
 	using System.ComponentModel;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
@@ -124,6 +126,9 @@ namespace Anamnesis.Character.Views
 
 		private void OnThisDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
+			if (this.ViewModel != null)
+				this.ViewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
+
 			this.ViewModel = this.DataContext as IStructViewModel;
 
 			if (this.ViewModel == null)
@@ -131,6 +136,7 @@ namespace Anamnesis.Character.Views
 
 			this.IconSource = this.Slot.GetIcon();
 			this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+
 			this.OnViewModelPropertyChanged(null, null);
 		}
 
@@ -139,16 +145,16 @@ namespace Anamnesis.Character.Views
 			if (this.ViewModel == null || !this.ViewModel.Enabled || GameDataService.Dyes == null)
 				return;
 
-			Application.Current.Dispatcher.Invoke(() =>
+			Application.Current.Dispatcher.Invoke(async () =>
 			{
 				if (this.ViewModel is ItemViewModel item)
 				{
-					this.Item = ItemUtility.GetItem(this.Slot, 0, item.Base, item.Variant);
+					this.Item = await ItemUtility.GetItemAsync(this.Slot, 0, item.Base, item.Variant);
 					this.Dye = GameDataService.Dyes.Get(item.Dye);
 				}
 				else if (this.ViewModel is WeaponViewModel weapon)
 				{
-					this.Item = ItemUtility.GetItem(this.Slot, weapon.Set, weapon.Base, weapon.Variant);
+					this.Item = await ItemUtility.GetItemAsync(this.Slot, weapon.Set, weapon.Base, weapon.Variant);
 					this.Dye = GameDataService.Dyes.Get(weapon.Dye);
 				}
 			});

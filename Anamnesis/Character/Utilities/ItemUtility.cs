@@ -3,9 +3,7 @@
 
 namespace Anamnesis.Character.Utilities
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Text;
+	using System.Threading.Tasks;
 	using Anamnesis.Character.Items;
 	using Anamnesis.GameData;
 	using Anamnesis.Services;
@@ -15,6 +13,14 @@ namespace Anamnesis.Character.Utilities
 		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
 		public static readonly NpcBodyItem NpcbodyItem = new NpcBodyItem();
+
+		public static async Task<IItem> GetItemAsync(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
+		{
+			return await Task.Run<IItem>(() =>
+			{
+				return GetItem(slot, modelSet, modelBase, modelVariant);
+			});
+		}
 
 		/// <summary>
 		/// Searches the gamedata service item list for an item with the given model attributes.

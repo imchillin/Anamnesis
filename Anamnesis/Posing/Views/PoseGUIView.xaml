@@ -16,7 +16,8 @@
 
 	<Grid x:Name="ContentArea">
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
-			<Grid>
+			<Grid ClipToBounds="True">
+				
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>

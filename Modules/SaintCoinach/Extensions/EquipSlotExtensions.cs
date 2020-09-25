@@ -19,32 +19,35 @@ namespace SaintCoinach.Xiv
 		public static ItemSlots ToSlot(this EquipSlot self)
 		{
 			ItemSlots slot;
-			if (!slotLookup.TryGetValue(self, out slot))
+			lock (slotLookup)
 			{
-				string name = self.Name;
-
-				slot = name switch
+				if (!slotLookup.TryGetValue(self, out slot))
 				{
-					"Main Hand" => ItemSlots.MainHand,
-					"Head" => ItemSlots.Head,
-					"Body" => ItemSlots.Body,
-					"Hands" => ItemSlots.Hands,
-					"Waist" => ItemSlots.Waist,
-					"Legs" => ItemSlots.Legs,
-					"Feet" => ItemSlots.Feet,
-					"Off Hand" => ItemSlots.OffHand,
-					"Ears" => ItemSlots.Ears,
-					"Neck" => ItemSlots.Neck,
-					"Wrists" => ItemSlots.Wrists,
-					"Right Ring" => ItemSlots.RightRing,
-					"Left Ring" => ItemSlots.LeftRing,
+					string name = self.Name;
 
-					"Soul Crystal" => ItemSlots.SoulCrystal,
+					slot = name switch
+					{
+						"Main Hand" => ItemSlots.MainHand,
+						"Head" => ItemSlots.Head,
+						"Body" => ItemSlots.Body,
+						"Hands" => ItemSlots.Hands,
+						"Waist" => ItemSlots.Waist,
+						"Legs" => ItemSlots.Legs,
+						"Feet" => ItemSlots.Feet,
+						"Off Hand" => ItemSlots.OffHand,
+						"Ears" => ItemSlots.Ears,
+						"Neck" => ItemSlots.Neck,
+						"Wrists" => ItemSlots.Wrists,
+						"Right Ring" => ItemSlots.RightRing,
+						"Left Ring" => ItemSlots.LeftRing,
 
-					_ => throw new Exception("Unknown slot name: " + name),
-				};
+						"Soul Crystal" => ItemSlots.SoulCrystal,
 
-				slotLookup.Add(self, slot);
+						_ => throw new Exception("Unknown slot name: " + name),
+					};
+
+					slotLookup.Add(self, slot);
+				}
 			}
 
 			return slot;
