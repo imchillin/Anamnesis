@@ -314,23 +314,23 @@ namespace Anamnesis.Files
 			{
 				if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 				{
-					actor.ModelObject.ExtendedAppearance.HairColor = (Color)this.HairColor!;
-					actor.ModelObject.ExtendedAppearance.HairGloss = (Color)this.HairGloss!;
-					actor.ModelObject.ExtendedAppearance.HairHighlight = (Color)this.HairHighlight!;
+					actor.ModelObject.ExtendedAppearance.HairColor = this.HairColor ?? actor.ModelObject.ExtendedAppearance.HairColor;
+					actor.ModelObject.ExtendedAppearance.HairGloss = this.HairGloss ?? actor.ModelObject.ExtendedAppearance.HairGloss;
+					actor.ModelObject.ExtendedAppearance.HairHighlight = this.HairHighlight ?? actor.ModelObject.ExtendedAppearance.HairHighlight;
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceFace, mode))
 				{
-					actor.ModelObject.ExtendedAppearance.LeftEyeColor = (Color)this.LeftEyeColor!;
-					actor.ModelObject.ExtendedAppearance.RightEyeColor = (Color)this.RightEyeColor!;
-					actor.ModelObject.ExtendedAppearance.LimbalRingColor = (Color)this.LimbalRingColor!;
-					actor.ModelObject.ExtendedAppearance.MouthColor = (Color4)this.MouthColor!;
+					actor.ModelObject.ExtendedAppearance.LeftEyeColor = this.LeftEyeColor ?? actor.ModelObject.ExtendedAppearance.LeftEyeColor;
+					actor.ModelObject.ExtendedAppearance.RightEyeColor = this.RightEyeColor ?? actor.ModelObject.ExtendedAppearance.RightEyeColor;
+					actor.ModelObject.ExtendedAppearance.LimbalRingColor = this.LimbalRingColor ?? actor.ModelObject.ExtendedAppearance.LimbalRingColor;
+					actor.ModelObject.ExtendedAppearance.MouthColor = this.MouthColor ?? actor.ModelObject.ExtendedAppearance.MouthColor;
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceBody, mode))
 				{
-					actor.ModelObject.ExtendedAppearance.SkinColor = (Color)this.SkinColor!;
-					actor.ModelObject.ExtendedAppearance.SkinGloss = (Color)this.SkinGloss!;
+					actor.ModelObject.ExtendedAppearance.SkinColor = this.SkinColor ?? actor.ModelObject.ExtendedAppearance.SkinColor;
+					actor.ModelObject.ExtendedAppearance.SkinGloss = this.SkinGloss ?? actor.ModelObject.ExtendedAppearance.SkinGloss;
 					////actor.SetValue(Offsets.Main.Transparency, this.Transparency);
 					////actor.SetValue(Offsets.Main.BustScale, this.BustScale);
 					////actor.SetValue(Offsets.Main.UniqueFeatureScale, this.FeatureScale);
