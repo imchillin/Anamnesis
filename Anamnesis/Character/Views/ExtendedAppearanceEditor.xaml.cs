@@ -16,6 +16,7 @@ namespace Anamnesis.Character.Views
 	/// Interaction logic for ExtendedAppearanceEditor.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class ExtendedAppearanceEditor : UserControl
 	{
 		public ExtendedAppearanceEditor()
