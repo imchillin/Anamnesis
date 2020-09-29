@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Views
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -68,10 +69,14 @@ namespace Anamnesis.Character.Views
 
 			this.Hair = null;
 
+			if (this.Appearance != null)
+				this.Appearance.PropertyChanged -= this.OnAppearancePropertyChanged;
+
 			if (actor == null || !actor.IsCustomizable() || actor.Customize == null)
 				return;
 
 			this.Appearance = actor.Customize;
+			this.Appearance.PropertyChanged += this.OnAppearancePropertyChanged;
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -82,6 +87,14 @@ namespace Anamnesis.Character.Views
 
 				this.UpdateRaceAndTribe();
 			});
+		}
+
+		private void OnAppearancePropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AppearanceViewModel.Race) || e.PropertyName == nameof(AppearanceViewModel.Tribe))
+			{
+				Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
+			}
 		}
 
 		private void UpdateRaceAndTribe()
