@@ -216,14 +216,15 @@ namespace Anamnesis.Files
 
 		public async Task Apply(ActorViewModel actor, SaveModes mode)
 		{
+			if (!actor.IsCustomizable() || actor.Customize == null)
+				return;
+
 			Log.Write("Reading appearance from file", "AppearanceFile");
 
 			ActorRefreshService.Instance.AutomaticRefreshEnabled = false;
+			actor.MemoryMode = MemoryModes.None;
 
 			actor.ModelType = this.ModelType;
-
-			if (!actor.IsCustomizable() || actor.Customize == null)
-				return;
 
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
 			{
@@ -287,12 +288,9 @@ namespace Anamnesis.Files
 				actor.Customize.Bust = (byte)this.Bust!;
 			}
 
-			await Task.Delay(100);
+			actor.WriteToMemory(true);
 
-			ActorRefreshService.Refresh();
-
-			while (ActorRefreshService.Instance.PendingRefresh || ActorRefreshService.Instance.IsRefreshing)
-				await Task.Delay(100);
+			await ActorRefreshService.RefreshAsync();
 
 			// write everything that is reset by actor refreshes
 			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))
@@ -337,6 +335,8 @@ namespace Anamnesis.Files
 				}
 			}
 
+			actor.MemoryMode = MemoryModes.ReadWrite;
+			actor.WriteToMemory(true);
 			ActorRefreshService.Instance.AutomaticRefreshEnabled = true;
 		}
 
