@@ -121,7 +121,7 @@
 					</Grid.ColumnDefinitions>
 
 					<cm3Controls:NumberBox Grid.Column="0" Value="{Binding Appearance.FacePaint}" Minimum="0" Maximum="255" Buttons="True" Margin="0, 0, 12, 0"/>
-					<controls:ColorControl Grid.Column="1" Value="{Binding Appearance.FacePaintColor}" Type="Hair" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
+					<controls:ColorControl Grid.Column="1" Value="{Binding Appearance.FacePaintColor}" Type="FacePaint" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
 				</Grid>
 
 				<!-- Mouth / Lips  -->
