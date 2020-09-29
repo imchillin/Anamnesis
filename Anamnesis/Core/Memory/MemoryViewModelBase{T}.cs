@@ -8,7 +8,18 @@ namespace Anamnesis.Memory
 	using System.Reflection;
 	using System.Text;
 
-#pragma warning disable SA1649
+	#pragma warning disable SA1649
+	[Flags]
+	public enum MemoryModes
+	{
+		None = 0,
+
+		Read = 1,
+		Write = 2,
+
+		ReadWrite = Read | Write,
+	}
+
 	public interface IMemoryViewModel : IStructViewModel
 	{
 		IntPtr? Pointer { get; set; }
@@ -38,6 +49,7 @@ namespace Anamnesis.Memory
 		}
 
 		public IntPtr? Pointer { get; set; }
+		public MemoryModes MemoryMode { get; set; } = MemoryModes.ReadWrite;
 
 		public override string Path
 		{
@@ -75,6 +87,9 @@ namespace Anamnesis.Memory
 				if (!this.Enabled)
 					return;
 
+				if (!this.MemoryMode.HasFlag(MemoryModes.Read))
+					return;
+
 				if (this.Pointer != null)
 				{
 					T? model = MemoryService.Read<T>((IntPtr)this.Pointer);
@@ -91,11 +106,23 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		public bool WriteToMemory(bool force = false)
+		{
+			if (this.Pointer == null)
+				return false;
+
+			if (!force && !this.MemoryMode.HasFlag(MemoryModes.Write))
+				return false;
+
+			MemoryService.Write((IntPtr)this.Pointer, this.model);
+			return true;
+		}
+
 		protected override void OnViewToModel(string fieldName, object? value)
 		{
 			if (this.Pointer != null)
 			{
-				MemoryService.Write((IntPtr)this.Pointer, this.model);
+				this.WriteToMemory();
 			}
 			else
 			{
