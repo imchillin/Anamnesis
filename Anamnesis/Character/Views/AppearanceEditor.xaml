@@ -70,7 +70,7 @@
 
 				<!-- Race / Tribe -->
 				<TextBlock Grid.Column="0" Grid.Row="0" Text="Tribe:" Style="{StaticResource Label}"/>
-				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0, 3, 0, 0">
+				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0">
 					<ComboBox x:Name="RaceComboBox" SelectionChanged="OnRaceChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="75" Margin="3, 0, 6, 3"/>
 					<ComboBox x:Name="TribeComboBox" SelectionChanged="OnTribeChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="93"  Margin="3, 0, 3, 3"/>
 				</StackPanel>
@@ -166,23 +166,7 @@
 
 				<!-- Height -->
 				<TextBlock Grid.Column="0" Grid.Row="9" Text="Height:" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="9">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="48"/>
-					</Grid.ColumnDefinitions>
-
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
-					
-					<cm3Controls:NumberBox Grid.RowSpan="2" Value="{Binding Appearance.Height}" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
-
-					<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding HeightCm, StringFormat={}{0}cm}" Style="{StaticResource Label}" FontSize="12"/>
-					<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding HeightFeet}" Style="{StaticResource Label}" FontSize="12"/>
-				</Grid>
-				
+				<cm3Controls:NumberBox Grid.Column="1" Grid.Row="9" Value="{Binding Appearance.Height}" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
 
 				<!-- Bust Size -->
 				<TextBlock Grid.Column="0" Grid.Row="10" Text="Bust Size:" Style="{StaticResource Label}"/>
