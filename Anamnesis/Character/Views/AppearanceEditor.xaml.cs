@@ -91,7 +91,9 @@ namespace Anamnesis.Character.Views
 
 		private void OnAppearancePropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(AppearanceViewModel.Race) || e.PropertyName == nameof(AppearanceViewModel.Tribe))
+			if (e.PropertyName == nameof(AppearanceViewModel.Race) ||
+				e.PropertyName == nameof(AppearanceViewModel.Tribe) ||
+				e.PropertyName == nameof(AppearanceViewModel.Hair))
 			{
 				Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
 			}

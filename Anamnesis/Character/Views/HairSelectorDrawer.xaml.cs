@@ -7,24 +7,32 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for HairSelector.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public partial class HairSelectorDrawer : UserControl, IDrawer
 	{
+		private readonly Appearance.Genders gender;
+		private readonly Appearance.Tribes tribe;
+
 		private byte selected;
+		private ICharaMakeCustomize? selectedItem;
 
 		public HairSelectorDrawer(Appearance.Genders gender, Appearance.Tribes tribe, byte value)
 		{
 			this.InitializeComponent();
 
+			this.gender = gender;
+			this.tribe = tribe;
+
 			this.ContentArea.DataContext = this;
-
-			this.selected = value;
-
 			this.List.ItemsSource = GameDataService.CharacterMakeCustomize?.GetHair(tribe, gender);
-			this.List.SelectedItem = GameDataService.CharacterMakeCustomize?.GetHair(tribe, gender, value);
+
+			this.Selected = value;
 		}
 
 		public delegate void SelectorEvent(byte value);
@@ -42,21 +50,34 @@ namespace Anamnesis.Character.Views
 			set
 			{
 				this.selected = value;
+
+				if (!this.IsLoaded)
+					return;
+
+				this.SelectedItem = GameDataService.CharacterMakeCustomize?.GetHair(this.tribe, this.gender, value);
 				this.SelectionChanged?.Invoke(this.selected);
 			}
 		}
 
-		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		public ICharaMakeCustomize? SelectedItem
 		{
-			if (e.AddedItems.Count <= 0)
-				return;
+			get
+			{
+				return this.selectedItem;
+			}
 
-			ICharaMakeCustomize? hair = this.List.SelectedItem as ICharaMakeCustomize;
+			set
+			{
+				if (this.selectedItem == value)
+					return;
 
-			if (hair == null)
-				return;
+				this.selectedItem = value;
 
-			this.Selected = hair.FeatureId;
+				if (value == null)
+					return;
+
+				this.Selected = value.FeatureId;
+			}
 		}
 	}
 }

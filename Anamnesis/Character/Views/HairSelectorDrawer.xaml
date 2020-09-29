@@ -22,17 +22,33 @@
 
 		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,0,3,6" Buttons="True"/>
 
-		<ListBox Grid.Row="1" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionChanged="OnSelectionChanged" SelectedItem="{Binding SelectedItem}">
+		<ListBox Grid.Row="1" Name="List" SelectedItem="{Binding SelectedItem}">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
 					<WrapPanel x:Name="wrapPanel"/>
 				</ItemsPanelTemplate>
 			</ListBox.ItemsPanel>
+
+			<ListBox.ItemContainerStyle>
+				<Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemStyle}">
+					<Setter Property="BorderThickness" Value="0"/>
+					<Setter Property="Margin" Value="1"/>
+				</Style>
+			</ListBox.ItemContainerStyle>
+
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Border Width="54" Height="54">
+					<Grid Width="54" Height="54">
 						<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}"/>
-					</Border>
+						<Border x:Name="SelectedBorder" BorderThickness="3" BorderBrush="{DynamicResource PrimaryHueMidBrush}" Margin="0" CornerRadius="3"/>
+					</Grid>
+					
+					<DataTemplate.Triggers>
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="False">
+							<Setter TargetName="SelectedBorder" Property="Visibility" Value="Collapsed"/>
+						</DataTrigger>
+					</DataTemplate.Triggers>
+					
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
