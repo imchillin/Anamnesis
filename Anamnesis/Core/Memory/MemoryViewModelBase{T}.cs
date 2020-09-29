@@ -4,11 +4,14 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Printing;
 	using System.Reflection;
 	using System.Text;
+	using System.Windows.Documents;
+	using Anamnesis.Memory.Types;
 
-	#pragma warning disable SA1649
+#pragma warning disable SA1649
 	[Flags]
 	public enum MemoryModes
 	{
@@ -24,13 +27,15 @@ namespace Anamnesis.Memory
 	{
 		IntPtr? Pointer { get; set; }
 		void Tick();
+		bool WriteToMemory(bool force = false);
+		bool ReadFromMemory(bool force = false);
 	}
 
 	public abstract class MemoryViewModelBase<T> : StructViewModelBase<T>, IMemoryViewModel
 		where T : struct
 	{
 		public MemoryViewModelBase(IntPtr pointer, IStructViewModel? parent = null)
-			: base()
+			: base(parent)
 		{
 			this.Parent = parent;
 			if (pointer == IntPtr.Zero)
@@ -87,17 +92,9 @@ namespace Anamnesis.Memory
 				if (!this.Enabled)
 					return;
 
-				if (!this.MemoryMode.HasFlag(MemoryModes.Read))
-					return;
-
 				if (this.Pointer != null)
 				{
-					T? model = MemoryService.Read<T>((IntPtr)this.Pointer);
-
-					if (model == null)
-						throw new Exception($"Failed to read memory: {typeof(T)}");
-
-					this.SetModel(model);
+					this.ReadFromMemory();
 				}
 				else
 				{
@@ -115,6 +112,24 @@ namespace Anamnesis.Memory
 				return false;
 
 			MemoryService.Write((IntPtr)this.Pointer, this.model);
+			return true;
+		}
+
+		public bool ReadFromMemory(bool force = false)
+		{
+			if (this.Pointer == null)
+				return false;
+
+			if (!force && !this.MemoryMode.HasFlag(MemoryModes.Read))
+				return false;
+
+			T? model = MemoryService.Read<T>((IntPtr)this.Pointer);
+
+			if (model == null)
+				throw new Exception($"Failed to read memory: {typeof(T)}");
+
+			this.SetModel(model);
+
 			return true;
 		}
 

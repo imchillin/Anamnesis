@@ -224,6 +224,9 @@ namespace Anamnesis.Files
 			ActorRefreshService.Instance.AutomaticRefreshEnabled = false;
 			actor.MemoryMode = MemoryModes.None;
 
+			if (actor.ModelObject?.ExtendedAppearance != null)
+				actor.ModelObject.ExtendedAppearance.MemoryMode = MemoryModes.None;
+
 			actor.ModelType = this.ModelType;
 
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
@@ -289,8 +292,13 @@ namespace Anamnesis.Files
 			}
 
 			actor.WriteToMemory(true);
-
 			await ActorRefreshService.RefreshAsync();
+
+			// Setting customize values will reset the extended appearance, whish me must read.
+			actor.ReadFromMemory(true);
+
+			if (actor.ModelObject?.ExtendedAppearance != null)
+				actor.ModelObject.ExtendedAppearance.ReadFromMemory(true);
 
 			// write everything that is reset by actor refreshes
 			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))
@@ -333,6 +341,9 @@ namespace Anamnesis.Files
 					////actor.SetValue(Offsets.Main.BustScale, this.BustScale);
 					////actor.SetValue(Offsets.Main.UniqueFeatureScale, this.FeatureScale);
 				}
+
+				actor.ModelObject.ExtendedAppearance.MemoryMode = MemoryModes.ReadWrite;
+				actor.ModelObject.ExtendedAppearance.WriteToMemory(true);
 			}
 
 			actor.MemoryMode = MemoryModes.ReadWrite;

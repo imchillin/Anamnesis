@@ -66,7 +66,7 @@ namespace Anamnesis
 			this.Enabled = true;
 		}
 
-		public StructViewModelBase(IStructViewModel parent)
+		public StructViewModelBase(IStructViewModel? parent)
 			: this()
 		{
 			this.Parent = parent;

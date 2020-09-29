@@ -140,6 +140,10 @@ namespace Anamnesis.Memory
 				}
 			}
 
+			// No change, nothing to write.
+			if (diff <= 0)
+				return;
+
 			// Last chance safety on the most likely cause of game crashes.
 			if (ActorRefreshService.Instance.IsRefreshing && value is Actor)
 				throw new Exception("Attempt to write actor memory while actor is refreshing");
