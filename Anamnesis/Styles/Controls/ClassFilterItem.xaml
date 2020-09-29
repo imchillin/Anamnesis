@@ -7,11 +7,12 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 	<Grid x:Name="ContentArea">
-		<ToggleButton Height="25" Width="25" ToolTip="{Binding ClassName}" Style="{StaticResource TransparentToggleButton}" IsChecked="{Binding IsSelected}" BorderThickness="0" Margin="0">
+		<ToggleButton Height="23" Width="23" ToolTip="{Binding ClassName}" Style="{StaticResource TransparentToggleButton}" 
+					  IsChecked="{Binding IsSelected}" BorderThickness="0" Margin="0">
 
 			<Grid>
 				<Image Source="{Binding ImageSource}"/>
-				<Image Source="/AppearanceModule;component/Assets/classBorder.png" Visibility="{Binding IsSelected, Converter={StaticResource B2V}}"/>
+				<Image Source="/Assets/classBorder.png" Visibility="{Binding IsSelected, Converter={StaticResource B2V}}"/>
 			</Grid>
 		</ToggleButton>
 	</Grid>

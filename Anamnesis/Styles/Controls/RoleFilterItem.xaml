@@ -11,7 +11,7 @@
 		<Button Height="25" Width="25" ToolTip="{Binding RoleName}" Style="{StaticResource TransparentButton}" BorderThickness="0" Padding="0" Click="OnClick">
 			<Grid>
 				<Image Source="{Binding ImageSource}"/>
-				<Image Source="/AppearanceModule;component/Assets/classBorder.png" Visibility="{Binding IsSelected, Converter={StaticResource B2V}}"/>
+				<Image Source="/Assets/classBorder.png" Visibility="{Binding IsSelected, Converter={StaticResource B2V}}"/>
 			</Grid>
 		</Button>
 	</Grid>

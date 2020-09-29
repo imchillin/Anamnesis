@@ -5,6 +5,15 @@
 	<Style TargetType="{x:Type Expander}" x:Key="Cm3Expander" BasedOn="{StaticResource MaterialDesignExpander}">
 		<Setter Property="Padding" Value="0"/>
 		<Setter Property="Margin" Value="0"/>
+
+		<Setter Property="HeaderTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<ContentPresenter Content="{Binding}" Margin="-6"/>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+		
 	</Style>
 	
 </ResourceDictionary>

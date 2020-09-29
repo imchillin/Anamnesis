@@ -16,8 +16,14 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Expander x:Name="ClassExpander" Style="{StaticResource Cm3Expander}">
-			<Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="3" Padding="3, 3, 3, 6" Margin="3, 0, 3, 0">
+		<Expander Style="{StaticResource Cm3Expander}">
+			<Expander.Header>
+				<StackPanel>
+					<TextBlock Text="Classes / Jobs" Foreground="{DynamicResource MaterialDesignBody}"/>
+					<TextBlock x:Name="JobFilterText" Text="All" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="10"/>
+				</StackPanel>
+			</Expander.Header>
+			<Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="3">
 				<controls:ClassFilter HorizontalAlignment="Center" Value="{Binding ClassFilter}"/>
 			</Border>
 		</Expander>
@@ -63,7 +69,7 @@
 						<Border Width="32" Background="#444444" Grid.RowSpan="2" CornerRadius="3" Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
 							<Grid>
 								<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}" Margin="1"/>
-								<Image Source="/AppearanceModule;component/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
+								<Image Source="/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
 							</Grid>
 						</Border>
 

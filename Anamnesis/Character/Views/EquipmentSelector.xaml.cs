@@ -98,7 +98,7 @@ namespace Anamnesis.Character.Views
 			set
 			{
 				this.classFilter = value;
-				this.ClassExpander.Header = "Jobs: " + value.Describe(true);
+				this.JobFilterText.Text = value.Describe();
 				this.Selector.FilterItems();
 			}
 		}
