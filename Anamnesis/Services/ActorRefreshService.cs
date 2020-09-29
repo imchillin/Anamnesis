@@ -44,6 +44,11 @@ namespace Anamnesis.Services
 			Instance.PendingRefresh = true;
 		}
 
+		public static async Task RefreshAsync()
+		{
+			await Instance.DoRefresh();
+		}
+
 		public override async Task Initialize()
 		{
 			await base.Initialize();
