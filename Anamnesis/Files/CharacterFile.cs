@@ -15,7 +15,7 @@ namespace Anamnesis.Files
 	#pragma warning disable SA1402, SA1649
 	public class CharacterFileInfo : JsonFileInfoBase<CharacterFile>
 	{
-		public override string Extension => "char";
+		public override string Extension => "chara";
 		public override string Name => "Anamnesis Character File";
 		public override IFileSource FileSource => new LocalFileSource("Local Files", "Anamnesis", "Characters");
 	}
