@@ -66,8 +66,6 @@ namespace Anamnesis.Memory
 
 		[ModelField] public ModelViewModel? ModelObject { get; set; }
 
-		public string NickName { get; set; } = string.Empty;
-
 		public bool IsCustomizable()
 		{
 			return ModelTypeService.IsCustomizable(this.ModelType) && this.Customize != null;

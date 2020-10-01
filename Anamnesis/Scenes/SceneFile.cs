@@ -16,6 +16,7 @@ namespace Anamnesis.Scenes
 	using Anamnesis.Memory;
 	using Anamnesis.Memory.Types;
 	using Anamnesis.Services;
+	using SimpleLog;
 	using Vector = Anamnesis.Memory.Vector;
 
 	#pragma warning disable SA1402, SA1649
@@ -28,6 +29,8 @@ namespace Anamnesis.Scenes
 
 	public class SceneFile : FileBase
 	{
+		private static readonly Logger Log = SimpleLog.Log.GetLogger<SceneFile>();
+
 		public int TerritoryId { get; set; }
 		public string? TerritoryName { get; set; }
 
@@ -67,11 +70,18 @@ namespace Anamnesis.Scenes
 
 			if (config.IncludeActors)
 			{
+				Log.Write(Severity.Error, "Writing actor name to scene file! Do not distrubite scene files.");
+
 				this.Actors = new List<SceneActor>();
 				foreach (TargetService.ActorTableActor actorTableActor in TargetService.Instance.Actors)
 				{
 					ActorViewModel actor = new ActorViewModel(actorTableActor.Pointer);
-					this.Actors.Add(SceneActor.FromActor(actor, config));
+
+					// TODO: ask the user to set nicknames for each actor, and store them in a service so they
+					// can be cached between saves
+					string name = actor.Name;
+
+					this.Actors.Add(SceneActor.FromActor(actor, name, config));
 				}
 			}
 		}
@@ -162,10 +172,10 @@ namespace Anamnesis.Scenes
 			public PoseFile? Pose { get; set; }
 			public CharacterFile? Character { get; set; }
 
-			public static SceneActor FromActor(ActorViewModel actor, Configuration config)
+			public static SceneActor FromActor(ActorViewModel actor, string identifier, Configuration config)
 			{
 				SceneActor scene = new SceneActor();
-				scene.Identifier = actor.NickName;
+				scene.Identifier = identifier;
 
 				if (config.IncludeActorPosition)
 					scene.Position = actor.ModelObject?.Transform?.Position;
