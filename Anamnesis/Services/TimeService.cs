@@ -52,12 +52,16 @@ namespace Anamnesis
 			_ = Task.Run(this.CheckTime);
 		}
 
-		public override Task Shutdown()
+		public override async Task Shutdown()
 		{
-			if (AddressService.Time != IntPtr.Zero)
-				MemoryService.Write(AddressService.Time, 0);
+			this.Freeze = false;
 
-			return base.Shutdown();
+			await base.Shutdown();
+
+			if (AddressService.Time != IntPtr.Zero)
+			{
+				MemoryService.Write(AddressService.Time, 0);
+			}
 		}
 
 		private async Task CheckTime()
