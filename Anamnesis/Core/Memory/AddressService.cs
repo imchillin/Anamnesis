@@ -21,6 +21,7 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr TargetManager { get; private set; }
 		public static IntPtr GPoseActorTable { get; private set; }
 		public static IntPtr GPoseTargetManager { get; private set; }
+		public static IntPtr GPoseFilters { get; private set; }
 		public static IntPtr Camera { get; private set; }
 		public static IntPtr SkeletonFreezeRotation { get; private set; }   // SkeletonOffset
 		public static IntPtr SkeletonFreezeRotation2 { get; private set; }  // SkeletonOffset2
@@ -78,6 +79,20 @@ namespace Anamnesis.Core.Memory
 			}
 		}
 
+		public static IntPtr GPoseWeather
+		{
+			get
+			{
+				IntPtr address = MemoryService.ReadPtr(GPoseFilters);
+				address += 0x27;
+				return address;
+			}
+			private set
+			{
+				weather = value;
+			}
+		}
+
 		public static async Task Scan()
 		{
 			if (MemoryService.Process == null)
@@ -102,6 +117,7 @@ namespace Anamnesis.Core.Memory
 			Camera = baseAddress + 0x1D09BA0;
 			GPoseActorTable = baseAddress + 0x1D0B190;
 			GPoseTargetManager = baseAddress + 0x1D09DB0;
+			GPoseFilters = baseAddress + 0x1CE8138;
 			GposeCheck = baseAddress + 0x1D0D990;
 			GposeCheck2 = baseAddress + 0x1D0D970;
 

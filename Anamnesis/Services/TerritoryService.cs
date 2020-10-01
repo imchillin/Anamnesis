@@ -50,6 +50,8 @@ namespace Anamnesis
 
 		public IWeather? CurrentWeather { get; set; }
 
+		private static IntPtr WeatherAddress => GposeService.Instance.IsGpose ? AddressService.GPoseWeather : AddressService.Weather;
+
 		public override async Task Start()
 		{
 			await base.Start();
@@ -84,7 +86,7 @@ namespace Anamnesis
 				}
 
 				// Update weather
-				ushort weatherId = MemoryService.Read<ushort>(AddressService.Weather);
+				ushort weatherId = MemoryService.Read<ushort>(WeatherAddress);
 
 				if (weatherId != this.CurrentWeatherId)
 				{
@@ -97,11 +99,11 @@ namespace Anamnesis
 		{
 			if (e.PropertyName == nameof(TerritoryService.CurrentWeatherId))
 			{
-				ushort current = MemoryService.Read<ushort>(AddressService.Weather);
+				ushort current = MemoryService.Read<ushort>(WeatherAddress);
 
 				if (current != this.CurrentWeatherId)
 				{
-					MemoryService.Write<ushort>(AddressService.Weather, this.CurrentWeatherId);
+					MemoryService.Write<ushort>(WeatherAddress, this.CurrentWeatherId);
 				}
 			}
 			else if (e.PropertyName == nameof(TerritoryService.CurrentWeather))
