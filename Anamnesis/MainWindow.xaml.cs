@@ -42,6 +42,7 @@ namespace Anamnesis.GUI
 			App.Settings.Changed += this.OnSettingsChanged;
 		}
 
+		public GposeService GposeService => GposeService.Instance;
 		public TargetService TargetService => TargetService.Instance;
 		public ActorRefreshService ActorRefreshService => ActorRefreshService.Instance;
 

@@ -43,7 +43,7 @@
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5"/>
 			</Grid.LayoutTransform>
 
-			<Grid Background="{DynamicResource MaterialDesignShadowBrush}">
+			<Grid Background="{DynamicResource MaterialDesignShadowBrush}" IsEnabled="{Binding GposeService.IsNotChangingState}">
 				<TabControl TabStripPlacement="Left">
 
 					<TabControl.Template>
