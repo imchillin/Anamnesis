@@ -17,11 +17,11 @@ namespace Anamnesis
 
 		private bool freeze;
 
-		public DateTime RealTime { get; set; }
-		public int RealTimeOfDay { get; set; }
-		public int RealDayOfMonth { get; set; }
+		public DateTime RealTime { get; private set; }
+		public int RealTimeOfDay { get; private set; }
+		public int RealDayOfMonth { get; private set; }
 
-		public DateTime Time { get; set; }
+		public DateTime Time { get; private set; }
 		public int TimeOfDay { get; set; }
 		public int DayOfMonth { get; set; }
 
@@ -50,6 +50,14 @@ namespace Anamnesis
 			await base.Initialize();
 
 			_ = Task.Run(this.CheckTime);
+		}
+
+		public override Task Shutdown()
+		{
+			if (AddressService.Time != IntPtr.Zero)
+				MemoryService.Write(AddressService.Time, 0);
+
+			return base.Shutdown();
 		}
 
 		private async Task CheckTime()

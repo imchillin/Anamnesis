@@ -34,6 +34,10 @@ namespace Anamnesis.Scenes
 		public int TerritoryId { get; set; }
 		public string? TerritoryName { get; set; }
 
+		public int? TimeOfDay { get; set; }
+		public int? DayOfMonth { get; set; }
+		public ushort? Weather { get; set; }
+
 		public bool? UnlimitCamera { get; set; }
 		public Vector2D? CameraAngle { get; set; }
 		public float? CameraYMin { get; set; }
@@ -52,6 +56,17 @@ namespace Anamnesis.Scenes
 		{
 			this.TerritoryId = TerritoryService.Instance.CurrentTerritoryId;
 			this.TerritoryName = TerritoryService.Instance.CurrentTerritoryName;
+
+			if (config.IncludeTime)
+			{
+				this.TimeOfDay = TimeService.Instance.TimeOfDay;
+				this.DayOfMonth = TimeService.Instance.DayOfMonth;
+			}
+
+			if (config.IncludeWeather)
+			{
+				this.Weather = TerritoryService.Instance.CurrentWeatherId;
+			}
 
 			if (config.IncludeCamera && CameraService.Instance.Camera != null)
 			{
@@ -90,9 +105,24 @@ namespace Anamnesis.Scenes
 		{
 			if (TerritoryService.Instance.CurrentTerritoryId != this.TerritoryId)
 			{
-				await GenericDialog.Show("This scene was created in a different map. Actor and camera positions will not be loaded", "Warning", MessageBoxButton.OK);
+				await GenericDialog.Show("This scene was created in a different map. Actor Positions, Camera Position, and Weather will not be loaded", "Warning", MessageBoxButton.OK);
 				config.IncludeActorPosition = false;
 				config.IncludeCamera = false;
+
+				// TODO: Check to see if the desired weather is available for this map
+				config.IncludeWeather = false;
+			}
+
+			if (config.IncludeTime && this.TimeOfDay != null && this.DayOfMonth != null)
+			{
+				TimeService.Instance.Freeze = true;
+				TimeService.Instance.TimeOfDay = (int)this.TimeOfDay;
+				TimeService.Instance.DayOfMonth = (int)this.DayOfMonth;
+			}
+
+			if (config.IncludeWeather && this.Weather != null)
+			{
+				TerritoryService.Instance.CurrentWeatherId = (ushort)this.Weather;
 			}
 
 			if (config.IncludeActors && this.Actors != null)
@@ -228,6 +258,8 @@ namespace Anamnesis.Scenes
 
 		public class Configuration
 		{
+			public bool IncludeTime { get; set; } = true;
+			public bool IncludeWeather { get; set; } = true;
 			public bool IncludeCamera { get; set; } = true;
 			public bool IncludePose { get; set; } = true;
 			public PoseFile.Configuration Pose { get; set; } = new PoseFile.Configuration();

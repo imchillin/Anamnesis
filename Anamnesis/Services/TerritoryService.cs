@@ -16,11 +16,38 @@ namespace Anamnesis
 	[SuppressPropertyChangedWarnings]
 	public class TerritoryService : ServiceBase<TerritoryService>
 	{
-		public int CurrentTerritoryId { get; set; }
-		public string CurrentTerritoryName { get; set; } = "Unknown";
-		public ITerritoryType? CurrentTerritory { get; set; }
+		private ushort currentWeatherId;
 
-		public ushort CurrentWeatherId { get; set; }
+		public int CurrentTerritoryId { get; private set; }
+		public string CurrentTerritoryName { get; private set; } = "Unknown";
+		public ITerritoryType? CurrentTerritory { get; private set; }
+
+		public ushort CurrentWeatherId
+		{
+			get
+			{
+				return this.currentWeatherId;
+			}
+			set
+			{
+				if (this.currentWeatherId == value)
+					return;
+
+				this.currentWeatherId = value;
+				this.CurrentWeather = null;
+				if (this.CurrentTerritory != null)
+				{
+					foreach (IWeather weather in this.CurrentTerritory.Weathers)
+					{
+						if (weather.WeatherId == value)
+						{
+							this.CurrentWeather = weather;
+						}
+					}
+				}
+			}
+		}
+
 		public IWeather? CurrentWeather { get; set; }
 
 		public override async Task Start()
@@ -62,18 +89,6 @@ namespace Anamnesis
 				if (weatherId != this.CurrentWeatherId)
 				{
 					this.CurrentWeatherId = weatherId;
-					this.CurrentWeather = null;
-
-					if (this.CurrentTerritory != null)
-					{
-						foreach (IWeather weather in this.CurrentTerritory.Weathers)
-						{
-							if (weather.WeatherId == weatherId)
-							{
-								this.CurrentWeather = weather;
-							}
-						}
-					}
 				}
 			}
 		}
@@ -92,6 +107,9 @@ namespace Anamnesis
 			else if (e.PropertyName == nameof(TerritoryService.CurrentWeather))
 			{
 				if (this.CurrentWeather == null)
+					return;
+
+				if (this.CurrentWeatherId == this.CurrentWeather.WeatherId)
 					return;
 
 				this.CurrentWeatherId = this.CurrentWeather.WeatherId;
