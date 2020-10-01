@@ -12,7 +12,6 @@ namespace Anamnesis.WpfStyles
 		{
 			switch (type)
 			{
-				case ActorTypes.None: return IconChar.None;
 				case ActorTypes.Player: return IconChar.UserAlt;
 				case ActorTypes.BattleNpc: return IconChar.UserShield;
 				case ActorTypes.EventNpc: return IconChar.UserNinja;

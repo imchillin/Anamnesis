@@ -15,13 +15,19 @@ namespace Anamnesis.Views
 		public GposePrompt(bool destination, string message)
 		{
 			this.InitializeComponent();
+			this.ContentArea.DataContext = this;
+
 			this.Result = false;
 			this.Destination = destination;
 			this.Message = message;
+			this.Waiting = true;
+
+			Task.Run(this.Wait);
 		}
 
 		public event DialogEvent? Close;
 
+		public bool Waiting { get; set; }
 		public bool Result { get; set; }
 		public bool Destination { get; set; }
 		public string Message { get; set; }
@@ -38,18 +44,33 @@ namespace Anamnesis.Views
 		public void Cancel()
 		{
 			this.Result = false;
+			this.Waiting = false;
 			this.Close?.Invoke();
 		}
 
-		public async Task Wait()
+		private void OnSkipClicked(object sender, System.Windows.RoutedEventArgs e)
 		{
-			while (GposeService.Instance.IsGpose != this.Destination)
+			this.Cancel();
+		}
+
+		private async Task Wait()
+		{
+			while (this.Waiting && GposeService.Instance.IsGpose != this.Destination)
 			{
 				await Task.Delay(500);
 			}
 
+			this.Waiting = false;
+
+			while (GposeService.Instance.IsChangingState)
+				await Task.Delay(250);
+
 			this.Result = true;
-			this.Close?.Invoke();
+
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				this.Close?.Invoke();
+			});
 		}
 	}
 }

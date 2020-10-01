@@ -33,7 +33,7 @@
 											<ColumnDefinition/>
 										</Grid.ColumnDefinitions>
 
-										<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}"/>
+										<!--<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}"/>-->
 										<TextBlock Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0"/>
 
 									</Grid>
