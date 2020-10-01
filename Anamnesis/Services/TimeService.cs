@@ -12,39 +12,18 @@ namespace Anamnesis
 	[AddINotifyPropertyChangedInterface]
 	public class TimeService : ServiceBase<TimeService>
 	{
+		private const double EorzeaTimeConstant = 20.571428571428573;
+		private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0);
+
 		private bool freeze;
-		private int dayOfMonth = 0;
-		private int timeOfDay = 0;
 
-		public int Time { get; set; } = 0;
+		public DateTime RealTime { get; set; }
+		public int RealTimeOfDay { get; set; }
+		public int RealDayOfMonth { get; set; }
 
-		public int TimeOfDay
-		{
-			get
-			{
-				return this.timeOfDay;
-			}
-
-			set
-			{
-				this.timeOfDay = value;
-				this.Time = (this.dayOfMonth * 86400) + (this.timeOfDay * 60);
-			}
-		}
-
-		public int DayOfMonth
-		{
-			get
-			{
-				return this.dayOfMonth;
-			}
-
-			set
-			{
-				this.dayOfMonth = value;
-				this.Time = (this.dayOfMonth * 86400) + (this.TimeOfDay * 60);
-			}
-		}
+		public DateTime Time { get; set; }
+		public int TimeOfDay { get; set; }
+		public int DayOfMonth { get; set; }
 
 		public bool Freeze
 		{
@@ -59,10 +38,10 @@ namespace Anamnesis
 
 				this.freeze = value;
 
-				if (this.freeze)
+				/*if (this.freeze)
 				{
 					Task.Run(this.FreezeTime);
-				}
+				}*/
 			}
 		}
 
@@ -82,12 +61,40 @@ namespace Anamnesis
 				if (AddressService.Time == IntPtr.Zero)
 					continue;
 
-				int currentTime = MemoryService.Read<int>(AddressService.Time);
+				// time is off by 19 minutes on windows
+				double offset = 19 * 60;
 
-				if (currentTime == this.Time)
-					continue;
+				double timeSeconds = (DateTime.Now.ToUniversalTime() - Epoch).TotalSeconds;
+				double eorzeaSeconds = (timeSeconds * EorzeaTimeConstant) + offset;
+				this.RealTime = Epoch + TimeSpan.FromSeconds(eorzeaSeconds);
 
-				MemoryService.Write(AddressService.Time, this.Time);
+				this.RealTimeOfDay = (this.RealTime.Hour * 60) + this.RealTime.Minute;
+				this.RealDayOfMonth = this.RealTime.Day;
+
+				////int currentTimeOffset = MemoryService.Read<int>(AddressService.Time);
+
+				if (this.Freeze)
+				{
+					int minuteOffset = this.TimeOfDay - this.RealTimeOfDay;
+
+					int dayOffset = this.DayOfMonth - this.RealDayOfMonth;
+					minuteOffset += dayOffset * 24 * 60;
+
+					if (minuteOffset <= 0)
+						minuteOffset += 30 * 24 * 60;
+
+					MemoryService.Write(AddressService.Time, minuteOffset * 60);
+
+					this.Time = this.RealTime.AddMinutes(minuteOffset);
+				}
+				else
+				{
+					this.TimeOfDay = this.RealTimeOfDay;
+					this.DayOfMonth = this.RealDayOfMonth;
+					this.Time = this.RealTime;
+
+					MemoryService.Write(AddressService.Time, 0);
+				}
 			}
 		}
 
@@ -103,14 +110,14 @@ namespace Anamnesis
 			{
 				await Task.Delay(eorzeaMinuteInMs);
 
-				int time = this.Time;
+				int time = this.TimeOfDay;
 
-				time -= 1;
+				time -= 60;
 
 				if (time <= 0)
 					time = 24 * 60;
 
-				this.Time = time;
+				this.TimeOfDay = time;
 			}
 		}
 	}

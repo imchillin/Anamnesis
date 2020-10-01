@@ -53,10 +53,11 @@
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
-						<ToggleButton Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" Height="22" Width="22" Padding="0" Margin="0"
-									  IsChecked="{Binding TimeService.Freeze}">
+						<ToggleButton Grid.Column="0" Grid.RowSpan="2" Style="{DynamicResource MaterialDesignActionToggleButton}" Height="22" Width="22" Padding="0" Margin="0, 0, 3, 0"
+									  VerticalAlignment="Center" IsChecked="{Binding TimeService.Freeze}">
 							<ToggleButton.Content>
 								<fa:IconBlock Icon="LockOpen" FontSize="12"/>
 							</ToggleButton.Content>
@@ -65,7 +66,9 @@
 							</materialdesign:ToggleButtonAssist.OnContent>
 						</ToggleButton>
 
-						<cm3:NumberBox Grid.Column="1" Value="{Binding TimeService.TimeOfDay}" Buttons="False" Slider="Absolute" Minimum="0" Maximum="1440"/>
+						<Slider Minimum="0" Maximum="1440" Grid.Column="1" Value="{Binding TimeService.TimeOfDay}" Margin="3" IsEnabled="{Binding TimeService.Freeze}" TickFrequency="30" IsSnapToTickEnabled="True"/>
+
+						<TextBlock Grid.Column="2" Text="{Binding TimeService.Time, StringFormat=t}" Margin="3, 3, 0, 3" Width="50" HorizontalAlignment="Right"/>
 					</Grid>
 
 
