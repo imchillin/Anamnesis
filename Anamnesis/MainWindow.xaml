@@ -3,7 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:views="clr-namespace:Anamnesis.GUI.Views"
+		xmlns:views="clr-namespace:Anamnesis.Views"
 		xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		xmlns:characterPages="clr-namespace:Anamnesis.Character.Pages"
@@ -105,16 +105,24 @@
 						</ControlTemplate>
 					</TabControl.Template>
 
+					<TabItem>
+						<TabItem.Header>
+							<fa:IconImage Icon="HouseUser" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Scene"/>
+						</TabItem.Header>
+
+						<views:SceneView/>
+					</TabItem>
+
 					<TabItem IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 						<TabItem.Header>
-							<fa:IconImage Icon="Home" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Home"/>
+							<fa:IconImage Icon="UserEdit" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Actor"/>
 						</TabItem.Header>
 
 						<views:HomeView DataContext="{Binding TargetService.SelectedActor}"/>
 					</TabItem>
 					<TabItem IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 						<TabItem.Header>
-							<fa:IconImage Icon="UserAlt" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Character"/>
+							<fa:IconImage Icon="ConciergeBell" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Appearance"/>
 						</TabItem.Header>
 
 						<characterPages:AppearancePage DataContext="{Binding TargetService.SelectedActor}"/>

@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Views
+namespace Anamnesis.Views
 {
 	using System.Windows;
 	using System.Windows.Controls;
