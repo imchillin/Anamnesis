@@ -53,7 +53,7 @@ namespace Anamnesis.Scenes
 
 		public List<SceneActor>? Actors { get; set; }
 
-		public void WriteToFile(Configuration config)
+		public async Task WriteToFile(Configuration config)
 		{
 			this.TerritoryId = TerritoryService.Instance.CurrentTerritoryId;
 			this.TerritoryName = TerritoryService.Instance.CurrentTerritoryName;
@@ -69,18 +69,23 @@ namespace Anamnesis.Scenes
 				this.Weather = TerritoryService.Instance.CurrentWeatherId;
 			}
 
-			List<ActorViewModel> actors = new List<ActorViewModel>();
-			foreach (TargetService.ActorTableActor actorTableActor in TargetService.Instance.Actors)
+			Dictionary<TargetService.ActorTableActor, SceneActor>? actors = null;
+			if (config.IncludeActors)
 			{
-				ActorViewModel? actor = actorTableActor.GetViewModel();
+				actors = await ActorNamer.GetActors(TargetService.Instance.Actors);
 
-				if (actor == null)
-					continue;
+				foreach ((TargetService.ActorTableActor tableActor, SceneActor sceneActor) in actors)
+				{
+					ActorViewModel? actor = tableActor.GetViewModel();
 
-				if (this.RootPosition == Vector.Zero && actor.ModelObject?.Transform != null)
-					this.RootPosition = actor.ModelObject.Transform.Position;
+					if (actor == null)
+						continue;
 
-				actors.Add(actor);
+					if (this.RootPosition == Vector.Zero && actor.ModelObject?.Transform != null)
+					{
+						this.RootPosition = actor.ModelObject.Transform.Position;
+					}
+				}
 			}
 
 			if (config.IncludeCamera && CameraService.Instance.Camera != null)
@@ -98,18 +103,19 @@ namespace Anamnesis.Scenes
 				this.CameraPosition = CameraService.Instance.CameraPosition;
 			}
 
-			if (config.IncludeActors)
+			if (config.IncludeActors && actors != null)
 			{
-				Log.Write(Severity.Error, "Writing actor name to scene file! Do not distrubite scene files.");
-
 				this.Actors = new List<SceneActor>();
-				foreach (ActorViewModel actor in actors)
-				{
-					// TODO: ask the user to set nicknames for each actor, and store them in a service so they
-					// can be cached between saves
-					string name = actor.Name;
 
-					this.Actors.Add(SceneActor.FromActor(actor, name, this.RootPosition, config));
+				foreach ((TargetService.ActorTableActor tableActor, SceneActor sceneActor) in actors)
+				{
+					ActorViewModel? vm = tableActor.GetViewModel();
+
+					if (vm == null)
+						continue;
+
+					sceneActor.FromActor(vm, this.RootPosition, config);
+					this.Actors.Add(sceneActor);
 				}
 			}
 		}
@@ -246,30 +252,25 @@ namespace Anamnesis.Scenes
 			public PoseFile? Pose { get; set; }
 			public CharacterFile? Character { get; set; }
 
-			public static SceneActor FromActor(ActorViewModel actor, string identifier, Vector rootPos, Configuration config)
+			public void FromActor(ActorViewModel actor, Vector rootPos, Configuration config)
 			{
-				SceneActor scene = new SceneActor();
-				scene.Identifier = identifier;
-
 				if (actor.ModelObject?.Transform != null)
 				{
 					if (config.IncludeActorPosition)
-						scene.Position = rootPos - actor.ModelObject.Transform.Position;
+						this.Position = rootPos - actor.ModelObject.Transform.Position;
 
 					if (config.IncludeActorRotation)
-						scene.Rotation = actor.ModelObject.Transform.Rotation;
+						this.Rotation = actor.ModelObject.Transform.Rotation;
 
 					if (config.IncludeActorScale)
-						scene.Scale = actor.ModelObject.Transform.Scale;
+						this.Scale = actor.ModelObject.Transform.Scale;
 				}
 
-				scene.Pose = new PoseFile();
-				scene.Pose.WriteToFile(actor, config.Pose);
+				this.Pose = new PoseFile();
+				this.Pose.WriteToFile(actor, config.Pose);
 
-				scene.Character = new CharacterFile();
-				scene.Character.WriteToFile(actor, config.Character);
-
-				return scene;
+				this.Character = new CharacterFile();
+				this.Character.WriteToFile(actor, config.Character);
 			}
 
 			public async Task ApplyOverworld(ActorViewModel actor, Configuration config)

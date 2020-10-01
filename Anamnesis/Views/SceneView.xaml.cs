@@ -67,15 +67,15 @@ namespace Anamnesis.Views
 			await FileService.Save(this.Save);
 		}
 
-		private Task<SceneFile?> Save(bool useAdvancedSave)
+		private async Task<SceneFile?> Save(bool useAdvancedSave)
 		{
 			SceneFile file = new SceneFile();
 
 			// TODO: config editor
 			SceneFile.Configuration config = new SceneFile.Configuration();
 
-			file.WriteToFile(config);
-			return Task.FromResult((SceneFile?)file);
+			await file.WriteToFile(config);
+			return file;
 		}
 	}
 }
