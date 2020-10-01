@@ -96,7 +96,7 @@
 				</Grid>
 			</GroupBox>
 
-			<GroupBox Style="{StaticResource PanelGroupBox}" Margin="0">
+			<GroupBox Style="{StaticResource PanelGroupBox}" Margin="0" IsEnabled="{Binding GposeService.IsGpose}">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
 						<fa:IconBlock Icon="Camera" Margin="2, 2, 6, 0"/>

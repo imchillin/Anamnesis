@@ -9,6 +9,7 @@ namespace Anamnesis.Views
 	using System.Windows.Controls;
 	using Anamnesis.Files;
 	using Anamnesis.Scenes;
+	using Anamnesis.Services;
 	using PropertyChanged;
 	using SimpleLog;
 
@@ -28,9 +29,10 @@ namespace Anamnesis.Views
 			this.ContentArea.DataContext = this;
 		}
 
-		public TerritoryService TerritoryService { get => TerritoryService.Instance; }
-		public TimeService TimeService { get => TimeService.Instance; }
-		public CameraService CameraService { get => CameraService.Instance; }
+		public GposeService GposeService => GposeService.Instance;
+		public TerritoryService TerritoryService => TerritoryService.Instance;
+		public TimeService TimeService => TimeService.Instance;
+		public CameraService CameraService => CameraService.Instance;
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{

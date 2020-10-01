@@ -6,6 +6,7 @@ namespace Anamnesis.Memory.Types
 	using System;
 	using System.Runtime.InteropServices;
 	using System.Windows.Media.Media3D;
+	using Anamnesis.Services;
 	using Anamnesis.ThreeD;
 	using PropertyChanged;
 
@@ -52,6 +53,14 @@ namespace Anamnesis.Memory.Types
 				camEuler.X = (float)MathUtils.RadiansToDegrees((double)this.Rotation);
 				return camEuler.ToQuaternion();
 			}
+		}
+
+		protected override void OnViewToModel(string fieldName, object? value)
+		{
+			if (!GposeService.Instance.IsGpose)
+				return;
+
+			base.OnViewToModel(fieldName, value);
 		}
 	}
 }
