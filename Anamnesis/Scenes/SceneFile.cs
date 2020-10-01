@@ -197,6 +197,14 @@ namespace Anamnesis.Scenes
 
 			public async Task ApplyOverworld(ActorViewModel actor, Configuration config)
 			{
+				if (this.Character != null)
+				{
+					await this.Character.Apply(actor, config.Character);
+				}
+			}
+
+			public async Task ApplyGpose(ActorViewModel actor, Configuration config)
+			{
 				if (actor.ModelObject?.Transform != null)
 				{
 					if (this.Position != null)
@@ -211,14 +219,6 @@ namespace Anamnesis.Scenes
 					}
 				}
 
-				if (this.Character != null)
-				{
-					await this.Character.Apply(actor, config.Character);
-				}
-			}
-
-			public async Task ApplyGpose(ActorViewModel actor, Configuration config)
-			{
 				if (this.Pose != null)
 				{
 					await this.Pose.Apply(actor, config.Pose);
