@@ -104,7 +104,7 @@ namespace Anamnesis.PoseModule.Pages
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.ReadFromFile(actor, config);
+					await poseFile.Apply(actor, config);
 				}
 			}
 			catch (Exception ex)

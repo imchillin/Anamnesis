@@ -71,7 +71,7 @@ namespace Anamnesis.Files
 			Log.Write("Saved skeleton to file");
 		}
 
-		public async Task ReadFromFile(ActorViewModel actor, Configuration config)
+		public async Task Apply(ActorViewModel actor, Configuration config)
 		{
 			SkeletonViewModel? skeleton = actor?.ModelObject?.Skeleton?.Skeleton;
 

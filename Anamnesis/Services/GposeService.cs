@@ -6,6 +6,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
+	using Anamnesis.Views;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
@@ -20,6 +21,16 @@ namespace Anamnesis.Services
 
 		[AlsoNotifyFor(nameof(GposeService.IsChangingState))]
 		public bool IsNotChangingState { get => !this.IsChangingState; }
+
+		public static Task<bool> LeaveGpose(string message)
+		{
+			return GposePrompt.WaitForChange(false, message);
+		}
+
+		public static Task<bool> EnterGpose(string message)
+		{
+			return GposePrompt.WaitForChange(true, message);
+		}
 
 		public override Task Start()
 		{

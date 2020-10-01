@@ -4,8 +4,11 @@
 namespace Anamnesis.Views
 {
 	using System;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.Files;
+	using Anamnesis.Scenes;
 	using PropertyChanged;
 	using SimpleLog;
 
@@ -29,14 +32,48 @@ namespace Anamnesis.Views
 		public TimeService TimeService { get => TimeService.Instance; }
 		public CameraService CameraService { get => CameraService.Instance; }
 
-		private void OnLoadClicked(object sender, RoutedEventArgs e)
+		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
-			Log.Write(Severity.Error, new NotImplementedException());
+			try
+			{
+				OpenResult result = await FileService.Open<SceneFile>();
+
+				if (result.File == null)
+					return;
+
+				SceneFile.Configuration config = new SceneFile.Configuration();
+
+				////if (result.UseAdvancedLoad)
+				////	config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Load Scene...");
+
+				if (config == null)
+					return;
+
+				if (result.File is SceneFile sceneFile)
+				{
+					await sceneFile.Apply(config);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Write(Severity.Error, ex);
+			}
 		}
 
-		private void OnSaveClicked(object sender, RoutedEventArgs e)
+		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			Log.Write(Severity.Error, new NotImplementedException());
+			await FileService.Save(this.Save);
+		}
+
+		private Task<SceneFile?> Save(bool useAdvancedSave)
+		{
+			SceneFile file = new SceneFile();
+
+			// TODO: config editor
+			SceneFile.Configuration config = new SceneFile.Configuration();
+
+			file.WriteToFile(config);
+			return Task.FromResult((SceneFile?)file);
 		}
 	}
 }

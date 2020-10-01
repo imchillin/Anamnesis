@@ -11,6 +11,7 @@ namespace Anamnesis.Files
 	using Anamnesis;
 	using Anamnesis.Files.Infos;
 	using Anamnesis.GUI.Views;
+	using Anamnesis.Scenes;
 	using Anamnesis.Services;
 	using Microsoft.Win32;
 	using SimpleLog;
@@ -22,6 +23,7 @@ namespace Anamnesis.Files
 			new CharacterFileInfo(),
 			new PoseFileInfo(),
 			new DatCharacterFileInfo(),
+			new SceneFileInfo(),
 
 			new LegacyCharacterFileInfo(),
 			new LegacyEquipmentSetFileInfo(),

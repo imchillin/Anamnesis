@@ -49,6 +49,8 @@ namespace Anamnesis
 			}
 		}
 
+		public Vector CameraPosition { get; set; }
+
 		public override async Task Start()
 		{
 			await base.Start();

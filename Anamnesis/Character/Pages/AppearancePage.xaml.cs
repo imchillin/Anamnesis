@@ -132,7 +132,7 @@ namespace Anamnesis.Character.Pages
 			if (mode == CharacterFile.SaveModes.None)
 				return null;
 
-			file.Read(this.Actor, mode);
+			file.WriteToFile(this.Actor, mode);
 
 			return file;
 		}

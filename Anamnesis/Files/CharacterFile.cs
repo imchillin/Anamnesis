@@ -101,10 +101,8 @@ namespace Anamnesis.Files
 		public float? Transparency { get; set; }
 		public float? FeatureScale { get; set; }
 
-		public void Read(ActorViewModel actor, SaveModes mode)
+		public void WriteToFile(ActorViewModel actor, SaveModes mode)
 		{
-			Log.Write("Writing appearance to file", "AppearanceFile");
-
 			this.ModelType = actor.ModelType;
 
 			if (!actor.IsCustomizable())
