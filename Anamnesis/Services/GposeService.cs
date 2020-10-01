@@ -11,10 +11,15 @@ namespace Anamnesis.Services
 	[AddINotifyPropertyChangedInterface]
 	public class GposeService : ServiceBase<GposeService>
 	{
+		private bool initialized = false;
+
 		public bool IsGpose { get; private set; }
 		public bool IsOverworld { get; private set; }
 
 		public bool IsChangingState { get; private set; }
+
+		[AlsoNotifyFor(nameof(GposeService.IsChangingState))]
+		public bool IsNotChangingState { get => !this.IsChangingState; }
 
 		public override Task Start()
 		{
@@ -30,15 +35,21 @@ namespace Anamnesis.Services
 				byte check2 = MemoryService.Read<byte>(AddressService.GposeCheck2);
 				bool newGpose = check1 == 1 && check2 == 4;
 
-				if (newGpose != this.IsGpose)
+				if (newGpose != this.IsGpose || !this.initialized)
 				{
+					this.initialized = true;
+					this.IsGpose = newGpose;
+					this.IsOverworld = !this.IsGpose;
+
 					this.IsChangingState = true;
-					TargetService.Instance.ClearSelection();
-					await Task.Delay(500);
+
+					// GPose takes a while before actors become availalbe. I dont know why, or how to detect it
+					// so we just wait a magic duration.
+					await Task.Delay(1000);
+
+					TargetService.Instance.Retarget();
 				}
 
-				this.IsGpose = newGpose;
-				this.IsOverworld = !this.IsGpose;
 				this.IsChangingState = false;
 
 				await Task.Delay(100);

@@ -65,6 +65,49 @@ namespace Anamnesis
 			});
 		}
 
+		public void Retarget()
+		{
+			try
+			{
+				App.Current.Dispatcher.Invoke(() =>
+				{
+					List<ActorTableActor> oldActors = new List<ActorTableActor>(this.Actors);
+
+					this.ClearSelection();
+					this.ReadActorLists();
+
+					// Find new actors that match the old ones
+					foreach (ActorTableActor oldActor in oldActors)
+					{
+						bool found = false;
+						foreach (ActorTableActor newActor in this.AllActors)
+						{
+							if (newActor.Is(oldActor))
+							{
+								this.Actors.Add(newActor);
+								found = true;
+								break;
+							}
+						}
+
+						if (!found)
+						{
+							Log.Write(Severity.Warning, "Actor not found during retarget: " + oldActor.Initials);
+						}
+					}
+
+					if (this.Actors.Count > 0)
+					{
+						this.SelectActor(this.Actors[0]);
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception("Failed to retarget actor", ex));
+			}
+		}
+
 		public void SelectActor(ActorTableActor actor)
 		{
 			ActorViewModel vm = new ActorViewModel(actor.Pointer);
@@ -154,36 +197,7 @@ namespace Anamnesis
 					while (ActorRefreshService.Instance.IsRefreshing || GposeService.Instance.IsChangingState)
 						await Task.Delay(250);
 
-					List<IntPtr> actorPointers = new List<IntPtr>();
-
-					int count = 0;
-					IntPtr startAddress;
-
-					if (GposeService.Instance.IsGpose)
-					{
-						count = MemoryService.Read<int>(AddressService.GPoseActorTable);
-						startAddress = AddressService.GPoseActorTable + 8;
-						////ingameTargetAddress = MemoryService.ReadPtr(AddressService.GPoseTargetManager);
-					}
-					else
-					{
-						// why 424?
-						count = 424;
-						startAddress = AddressService.ActorTable;
-						////ingameTargetAddress = MemoryService.ReadPtr(AddressService.TargetManager);
-					}
-
-					for (int i = 0; i < count; i++)
-					{
-						IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
-
-						if (ptr == IntPtr.Zero)
-							continue;
-
-						actorPointers.Add(ptr);
-					}
-
-					this.UpdateActorList(actorPointers);
+					this.ReadActorLists();
 
 					if (this.SelectedActor == null && this.AllActors.Count > 0)
 					{
@@ -199,6 +213,40 @@ namespace Anamnesis
 			{
 				Log.Write(ex);
 			}
+		}
+
+		private void ReadActorLists()
+		{
+			List<IntPtr> actorPointers = new List<IntPtr>();
+
+			int count = 0;
+			IntPtr startAddress;
+
+			if (GposeService.Instance.IsGpose)
+			{
+				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
+				startAddress = AddressService.GPoseActorTable + 8;
+				////ingameTargetAddress = MemoryService.ReadPtr(AddressService.GPoseTargetManager);
+			}
+			else
+			{
+				// why 424?
+				count = 424;
+				startAddress = AddressService.ActorTable;
+				////ingameTargetAddress = MemoryService.ReadPtr(AddressService.TargetManager);
+			}
+
+			for (int i = 0; i < count; i++)
+			{
+				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
+
+				if (ptr == IntPtr.Zero)
+					continue;
+
+				actorPointers.Add(ptr);
+			}
+
+			this.UpdateActorList(actorPointers);
 		}
 
 		private void UpdateActorList(List<IntPtr> pointers)
@@ -289,6 +337,16 @@ namespace Anamnesis
 			{
 				return obj is ActorTableActor actor &&
 					   this.Pointer.Equals(actor.Pointer);
+			}
+
+			/// <summary>
+			/// Compares actor identity, does not compare pointers.
+			/// </summary>
+			public bool Is(ActorTableActor other)
+			{
+				// TODO: Handle cases where multiple actors share a name, but are different actors
+				// perhaps compare modelType and customize values?
+				return this.Name == other.Name;
 			}
 
 			public override int GetHashCode()
