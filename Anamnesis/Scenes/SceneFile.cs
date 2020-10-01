@@ -5,18 +5,17 @@ namespace Anamnesis.Scenes
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Runtime.CompilerServices;
-	using System.Text;
+	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using System.Xml;
 	using Anamnesis.Files;
 	using Anamnesis.Files.Infos;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Memory;
-	using Anamnesis.Memory.Types;
 	using Anamnesis.Services;
 	using SimpleLog;
+
+	using Quaternion = Anamnesis.Memory.Quaternion;
 	using Vector = Anamnesis.Memory.Vector;
 
 	#pragma warning disable SA1402, SA1649
@@ -33,6 +32,8 @@ namespace Anamnesis.Scenes
 
 		public int TerritoryId { get; set; }
 		public string? TerritoryName { get; set; }
+
+		public Vector RootPosition { get; set; }
 
 		public int? TimeOfDay { get; set; }
 		public int? DayOfMonth { get; set; }
@@ -68,6 +69,20 @@ namespace Anamnesis.Scenes
 				this.Weather = TerritoryService.Instance.CurrentWeatherId;
 			}
 
+			List<ActorViewModel> actors = new List<ActorViewModel>();
+			foreach (TargetService.ActorTableActor actorTableActor in TargetService.Instance.Actors)
+			{
+				ActorViewModel? actor = actorTableActor.GetViewModel();
+
+				if (actor == null)
+					continue;
+
+				if (this.RootPosition == Vector.Zero && actor.ModelObject?.Transform != null)
+					this.RootPosition = actor.ModelObject.Transform.Position;
+
+				actors.Add(actor);
+			}
+
 			if (config.IncludeCamera && CameraService.Instance.Camera != null)
 			{
 				this.UnlimitCamera = CameraService.Instance.UnlimitCamera;
@@ -88,26 +103,50 @@ namespace Anamnesis.Scenes
 				Log.Write(Severity.Error, "Writing actor name to scene file! Do not distrubite scene files.");
 
 				this.Actors = new List<SceneActor>();
-				foreach (TargetService.ActorTableActor actorTableActor in TargetService.Instance.Actors)
+				foreach (ActorViewModel actor in actors)
 				{
-					ActorViewModel actor = new ActorViewModel(actorTableActor.Pointer);
-
 					// TODO: ask the user to set nicknames for each actor, and store them in a service so they
 					// can be cached between saves
 					string name = actor.Name;
 
-					this.Actors.Add(SceneActor.FromActor(actor, name, config));
+					this.Actors.Add(SceneActor.FromActor(actor, name, this.RootPosition, config));
 				}
 			}
 		}
 
 		public async Task Apply(Configuration config)
 		{
+			Dictionary<SceneActor, TargetService.ActorTableActor>? lookup = null;
+
+			if (config.IncludeActors && this.Actors != null)
+				lookup = await ActorSelector.GetActors(this.Actors);
+
 			if (TerritoryService.Instance.CurrentTerritoryId != this.TerritoryId)
 			{
-				await GenericDialog.Show("This scene was created in a different map. Actor Positions, Camera Position, and Weather will not be loaded", "Warning", MessageBoxButton.OK);
-				config.IncludeActorPosition = false;
-				config.IncludeCamera = false;
+				this.RootPosition = Vector.Zero;
+
+				if (lookup != null && lookup.Count > 0)
+				{
+					// Use the position of the first valid actor as the root position
+					foreach ((SceneActor scene, TargetService.ActorTableActor actor) in lookup)
+					{
+						ActorViewModel? actorVm = actor.GetViewModel();
+
+						if (actorVm == null)
+							continue;
+
+						if (this.RootPosition == Vector.Zero && actorVm.ModelObject?.Transform != null)
+						{
+							this.RootPosition = actorVm.ModelObject.Transform.Position;
+						}
+					}
+				}
+				else
+				{
+					// No actors to fall back on means no positions
+					config.IncludeActorPosition = false;
+					config.IncludeCamera = false;
+				}
 
 				// TODO: Check to see if the desired weather is available for this map
 				config.IncludeWeather = false;
@@ -125,26 +164,31 @@ namespace Anamnesis.Scenes
 				TerritoryService.Instance.CurrentWeatherId = (ushort)this.Weather;
 			}
 
-			if (config.IncludeActors && this.Actors != null)
+			if (lookup != null && lookup.Count != 0)
 			{
-				Dictionary<SceneActor, ActorViewModel> lookup = await ActorSelector.GetActors(this.Actors);
-
-				if (lookup.Count != 0)
+				if (await GposeService.LeaveGpose("You must not be in Gpose to apply actor appearances"))
 				{
-					if (await GposeService.LeaveGpose("You must not be in Gpose to apply actor appearances"))
+					foreach ((SceneActor scene, TargetService.ActorTableActor actor) in lookup)
 					{
-						foreach ((SceneActor scene, ActorViewModel actor) in lookup)
-						{
-							await scene.ApplyOverworld(actor, config);
-						}
-					}
+						ActorViewModel? actorVm = actor.GetViewModel();
 
-					if (await GposeService.EnterGpose("You must be in Gpose to apply actor poses"))
+						if (actorVm == null)
+							continue;
+
+						await scene.ApplyOverworld(actorVm, config);
+					}
+				}
+
+				if (await GposeService.EnterGpose("You must be in Gpose to apply actor poses"))
+				{
+					foreach ((SceneActor scene, TargetService.ActorTableActor actor) in lookup)
 					{
-						foreach ((SceneActor scene, ActorViewModel actor) in lookup)
-						{
-							await scene.ApplyGpose(actor, config);
-						}
+						ActorViewModel? actorVm = actor.GetViewModel();
+
+						if (actorVm == null)
+							continue;
+
+						await scene.ApplyGpose(actorVm, this.RootPosition, config);
 					}
 				}
 			}
@@ -202,19 +246,22 @@ namespace Anamnesis.Scenes
 			public PoseFile? Pose { get; set; }
 			public CharacterFile? Character { get; set; }
 
-			public static SceneActor FromActor(ActorViewModel actor, string identifier, Configuration config)
+			public static SceneActor FromActor(ActorViewModel actor, string identifier, Vector rootPos, Configuration config)
 			{
 				SceneActor scene = new SceneActor();
 				scene.Identifier = identifier;
 
-				if (config.IncludeActorPosition)
-					scene.Position = actor.ModelObject?.Transform?.Position;
+				if (actor.ModelObject?.Transform != null)
+				{
+					if (config.IncludeActorPosition)
+						scene.Position = rootPos - actor.ModelObject.Transform.Position;
 
-				if (config.IncludeActorRotation)
-					scene.Rotation = actor.ModelObject?.Transform?.Rotation;
+					if (config.IncludeActorRotation)
+						scene.Rotation = actor.ModelObject.Transform.Rotation;
 
-				if (config.IncludeActorScale)
-					scene.Scale = actor.ModelObject?.Transform?.Scale;
+					if (config.IncludeActorScale)
+						scene.Scale = actor.ModelObject.Transform.Scale;
+				}
 
 				scene.Pose = new PoseFile();
 				scene.Pose.WriteToFile(actor, config.Pose);
@@ -233,12 +280,12 @@ namespace Anamnesis.Scenes
 				}
 			}
 
-			public async Task ApplyGpose(ActorViewModel actor, Configuration config)
+			public async Task ApplyGpose(ActorViewModel actor, Vector rootPos, Configuration config)
 			{
 				if (actor.ModelObject?.Transform != null)
 				{
 					if (this.Position != null)
-						actor.ModelObject.Transform.Position = (Vector)this.Position;
+						actor.ModelObject.Transform.Position = rootPos + (Vector)this.Position;
 
 					if (this.Rotation != null)
 						actor.ModelObject.Transform.Rotation = (Quaternion)this.Rotation;

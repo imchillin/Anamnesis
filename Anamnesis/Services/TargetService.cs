@@ -67,51 +67,28 @@ namespace Anamnesis
 
 		public void Retarget()
 		{
-			try
+			App.Current.Dispatcher.Invoke(() =>
 			{
-				App.Current.Dispatcher.Invoke(() =>
+				this.SelectedActor = null;
+				this.AllActors.Clear();
+			});
+
+			this.ReadActorLists();
+
+			if (this.Actors.Count > 0)
+			{
+				foreach (ActorTableActor actor in this.Actors)
 				{
-					List<ActorTableActor> oldActors = new List<ActorTableActor>(this.Actors);
+					actor.Clear();
+				}
 
-					this.ClearSelection();
-					this.ReadActorLists();
-
-					// Find new actors that match the old ones
-					foreach (ActorTableActor oldActor in oldActors)
-					{
-						bool found = false;
-						foreach (ActorTableActor newActor in this.AllActors)
-						{
-							if (newActor.Is(oldActor))
-							{
-								this.Actors.Add(newActor);
-								found = true;
-								break;
-							}
-						}
-
-						if (!found)
-						{
-							Log.Write(Severity.Warning, "Actor not found during retarget: " + oldActor.Initials);
-						}
-					}
-
-					if (this.Actors.Count > 0)
-					{
-						this.SelectActor(this.Actors[0]);
-					}
-				});
-			}
-			catch (Exception ex)
-			{
-				Log.Write(new Exception("Failed to retarget actor", ex));
+				this.SelectActor(this.Actors[0]);
 			}
 		}
 
 		public void SelectActor(ActorTableActor actor)
 		{
-			ActorViewModel vm = new ActorViewModel(actor.Pointer);
-			this.SelectActor(vm);
+			this.SelectActor(actor.GetViewModel());
 
 			foreach (ActorTableActor ac in this.Actors)
 			{
@@ -259,13 +236,20 @@ namespace Anamnesis
 				// Remove missing actors, and remove existing pointers
 				for (int i = this.AllActors.Count - 1; i >= 0; i--)
 				{
-					if (pointers.Contains(this.AllActors[i].Pointer))
+					if (this.AllActors[i].Pointer == null)
 					{
-						pointers.Remove(this.AllActors[i].Pointer);
+						this.AllActors.RemoveAt(i);
 					}
 					else
 					{
-						this.AllActors.RemoveAt(i);
+						if (pointers.Contains((IntPtr)this.AllActors[i].Pointer!))
+						{
+							pointers.Remove((IntPtr)this.AllActors[i].Pointer!);
+						}
+						else
+						{
+							this.AllActors.RemoveAt(i);
+						}
 					}
 				}
 
@@ -292,9 +276,8 @@ namespace Anamnesis
 		[AddINotifyPropertyChangedInterface]
 		public class ActorTableActor : INotifyPropertyChanged
 		{
-			public readonly IntPtr Pointer;
-
 			private Actor actor;
+			private ActorViewModel? viewModel;
 
 			public ActorTableActor(Actor actor, IntPtr pointer)
 			{
@@ -323,6 +306,7 @@ namespace Anamnesis
 				}
 			}
 
+			public IntPtr? Pointer { get; private set; }
 			public string Name => this.actor.Name;
 			public ActorTypes Kind => this.actor.ObjectKind;
 			public IconChar Icon => this.actor.ObjectKind.GetIcon();
@@ -352,6 +336,39 @@ namespace Anamnesis
 			public override int GetHashCode()
 			{
 				return HashCode.Combine(this.Pointer);
+			}
+
+			public void Clear()
+			{
+				this.viewModel = null;
+				this.Pointer = null;
+			}
+
+			public ActorViewModel? GetViewModel()
+			{
+				if (this.Pointer == null)
+					this.Retarget();
+
+				if (this.viewModel == null || this.Pointer != this.viewModel.Pointer)
+					this.Retarget();
+
+				return this.viewModel;
+			}
+
+			private void Retarget()
+			{
+				this.viewModel = null;
+
+				foreach (ActorTableActor actor in TargetService.Instance.AllActors)
+				{
+					if (actor.Name == this.Name && actor.Pointer != null)
+					{
+						this.Pointer = actor.Pointer;
+						this.actor = actor.actor;
+
+						this.viewModel = new ActorViewModel((IntPtr)this.Pointer);
+					}
+				}
 			}
 		}
 	}

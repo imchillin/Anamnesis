@@ -15,7 +15,7 @@ namespace Anamnesis.Scenes
 	/// Interaction logic for ActorSelector.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	public partial class ActorSelector : UserControl, IDialog<Dictionary<SceneFile.SceneActor, ActorViewModel>>
+	public partial class ActorSelector : UserControl, IDialog<Dictionary<SceneFile.SceneActor, TargetService.ActorTableActor>>
 	{
 		public ActorSelector(List<SceneFile.SceneActor> actors)
 		{
@@ -31,12 +31,12 @@ namespace Anamnesis.Scenes
 		public event DialogEvent? Close;
 
 		public ObservableCollection<Entry> Entries { get; set; } = new ObservableCollection<Entry>();
-		public Dictionary<SceneFile.SceneActor, ActorViewModel> Result { get; set; } = new Dictionary<SceneFile.SceneActor, ActorViewModel>();
+		public Dictionary<SceneFile.SceneActor, TargetService.ActorTableActor> Result { get; set; } = new Dictionary<SceneFile.SceneActor, TargetService.ActorTableActor>();
 
-		public static async Task<Dictionary<SceneFile.SceneActor, ActorViewModel>> GetActors(List<SceneFile.SceneActor> actors)
+		public static async Task<Dictionary<SceneFile.SceneActor, TargetService.ActorTableActor>> GetActors(List<SceneFile.SceneActor> actors)
 		{
 			ActorSelector selector = new ActorSelector(actors);
-			return await ViewService.ShowDialog<ActorSelector, Dictionary<SceneFile.SceneActor, ActorViewModel>>("Select Actors", selector);
+			return await ViewService.ShowDialog<ActorSelector, Dictionary<SceneFile.SceneActor, TargetService.ActorTableActor>>("Select Actors", selector);
 		}
 
 		public void Cancel()
@@ -52,7 +52,7 @@ namespace Anamnesis.Scenes
 				if (entry.Actor == null)
 					continue;
 
-				this.Result.Add(entry.SceneActor, new ActorViewModel(entry.Actor.Pointer));
+				this.Result.Add(entry.SceneActor, entry.Actor);
 			}
 
 			this.Close?.Invoke();
