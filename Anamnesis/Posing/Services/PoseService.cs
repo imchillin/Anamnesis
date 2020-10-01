@@ -14,15 +14,16 @@ namespace Anamnesis.PoseModule
 	[SuppressPropertyChangedWarnings]
 	public class PoseService : ServiceBase<PoseService>
 	{
-		private NopHookViewModel? skel1Mem;
-		private NopHookViewModel? skel2Mem;
-		private NopHookViewModel? skel3Mem;
-		private NopHookViewModel? skel4Mem;
-		private NopHookViewModel? skel5Mem;
-		private NopHookViewModel? skel6Mem;
-		private NopHookViewModel? phys1Mem;
-		private NopHookViewModel? phys2Mem;
-		private NopHookViewModel? phys3Mem;
+		private NopHookViewModel? freezeRot1;
+		private NopHookViewModel? freezeRot2;
+		private NopHookViewModel? freezeRot3;
+		private NopHookViewModel? freezeScale1;
+		private NopHookViewModel? freezePosition;
+		private NopHookViewModel? freezePosition2;
+		private NopHookViewModel? freeseScale2;
+		private NopHookViewModel? freezePhysics1;
+		private NopHookViewModel? freezePhysics2;
+		private NopHookViewModel? freezePhysics3;
 
 		private bool isEnabled;
 
@@ -50,15 +51,15 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.phys1Mem?.Enabled ?? false;
+				return this.freezePhysics1?.Enabled ?? false;
 			}
 			set
 			{
 				this.FreezePositions = value;
 				this.FreezeScale = value;
 
-				this.phys1Mem?.SetEnabled(value);
-				this.phys2Mem?.SetEnabled(value);
+				this.freezePhysics1?.SetEnabled(value);
+				this.freezePhysics2?.SetEnabled(value);
 			}
 		}
 
@@ -66,11 +67,12 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.skel5Mem?.Enabled ?? false;
+				return this.freezePosition?.Enabled ?? false;
 			}
 			set
 			{
-				this.skel5Mem?.SetEnabled(value);
+				this.freezePosition?.SetEnabled(value);
+				this.freezePosition2?.SetEnabled(value);
 			}
 		}
 
@@ -78,13 +80,13 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.skel4Mem?.Enabled ?? false;
+				return this.freezeScale1?.Enabled ?? false;
 			}
 			set
 			{
-				this.skel4Mem?.SetEnabled(value);
-				this.phys3Mem?.SetEnabled(value);
-				this.skel6Mem?.SetEnabled(value);
+				this.freezeScale1?.SetEnabled(value);
+				this.freezePhysics3?.SetEnabled(value);
+				this.freeseScale2?.SetEnabled(value);
 			}
 		}
 
@@ -92,13 +94,13 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.skel1Mem?.Enabled ?? false;
+				return this.freezeRot1?.Enabled ?? false;
 			}
 			set
 			{
-				this.skel1Mem?.SetEnabled(value);
-				this.skel2Mem?.SetEnabled(value);
-				this.skel3Mem?.SetEnabled(value);
+				this.freezeRot1?.SetEnabled(value);
+				this.freezeRot2?.SetEnabled(value);
+				this.freezeRot3?.SetEnabled(value);
 			}
 		}
 
@@ -106,17 +108,16 @@ namespace Anamnesis.PoseModule
 		{
 			await base.Initialize();
 
-			this.skel1Mem = new NopHookViewModel(AddressService.SkeletonFreezeRotation, 6);
-			this.skel2Mem = new NopHookViewModel(AddressService.SkeletonFreezeRotation2, 6);
-			this.skel3Mem = new NopHookViewModel(AddressService.SkeletonFreezeRotation3, 4);
-			this.skel4Mem = new NopHookViewModel(AddressService.SkeletonFreezeScale, 6);
-			this.skel5Mem = new NopHookViewModel(AddressService.SkeletonFreezePosition, 5);
-			this.skel6Mem = new NopHookViewModel(AddressService.SkeletonFreezeScale2, 6);
-			////this.skel7Mem = new NopHookViewModel(AddressService.SkeletonFreezePosition2, 5);
-
-			this.phys1Mem = new NopHookViewModel(AddressService.SkeletonFreezePhysics, 4);
-			this.phys2Mem = new NopHookViewModel(AddressService.SkeletonFreezePhysics2, 3);
-			this.phys3Mem = new NopHookViewModel(AddressService.SkeletonFreezePhysics3, 4);
+			this.freezePosition = new NopHookViewModel(AddressService.SkeletonFreezePosition, 5);
+			this.freezePosition2 = new NopHookViewModel(AddressService.SkeletonFreezePosition2, 5);
+			this.freezeRot1 = new NopHookViewModel(AddressService.SkeletonFreezeRotation, 6);
+			this.freezeRot2 = new NopHookViewModel(AddressService.SkeletonFreezeRotation2, 6);
+			this.freezeRot3 = new NopHookViewModel(AddressService.SkeletonFreezeRotation3, 4);
+			this.freezeScale1 = new NopHookViewModel(AddressService.SkeletonFreezeScale, 6);
+			this.freeseScale2 = new NopHookViewModel(AddressService.SkeletonFreezeScale2, 6);
+			this.freezePhysics1 = new NopHookViewModel(AddressService.SkeletonFreezePhysics, 4);
+			this.freezePhysics2 = new NopHookViewModel(AddressService.SkeletonFreezePhysics2, 3);
+			this.freezePhysics3 = new NopHookViewModel(AddressService.SkeletonFreezePhysics3, 4);
 		}
 
 		public override async Task Shutdown()

@@ -82,7 +82,7 @@ namespace Anamnesis.Files
 			await Task.Delay(100);
 
 			// don't freeze positions if we aren't writing any
-			PoseService.Instance.FreezePositions = this.Config.IncludePosition;
+			PoseService.Instance.FreezePositions = this.Config.IncludePosition && config.IncludePosition;
 
 			if (config.Groups.HasFlag(Groups.Body) && skeleton.Body != null)
 				this.ReadFromFile(this.Body, skeleton.Body, config);
