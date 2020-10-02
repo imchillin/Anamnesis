@@ -62,7 +62,7 @@
 											<fa:IconBlock Icon="Plus" FontSize="12"/>
 										</Button>
 
-										<ItemsControl ItemsSource="{Binding TargetService.Actors}">
+										<ItemsControl ItemsSource="{Binding TargetService.PinnedActors}">
 											<ItemsControl.ItemTemplate>
 												<DataTemplate>
 													<Grid Margin="0, 3">
@@ -71,19 +71,26 @@
 															<TextBlock Text="{Binding Initials}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Margin="0, 0, 0, 2"/>
 
 															<ToggleButton.ToolTip>
-																<TextBlock>
-																	<TextBlock.Text>
-																		<MultiBinding StringFormat="{}{0} ({1})">
-																			<Binding Path="Name" />
-																			<Binding Path="Kind" />
-																		</MultiBinding>
-																	</TextBlock.Text>
-																</TextBlock>
+																<StackPanel>
+																	<TextBlock>
+																		<TextBlock.Text>
+																			<MultiBinding StringFormat="{}{0} ({1})">
+																				<Binding Path="Name" />
+																				<Binding Path="Kind" />
+																			</MultiBinding>
+																		</TextBlock.Text>
+																	</TextBlock>
+
+																	<TextBlock Text="This actor could not be found" Visibility="{Binding IsValid, Converter={StaticResource !B2V}}"/>
+
+																</StackPanel>
 															</ToggleButton.ToolTip>
 
 														</ToggleButton>
 
-														<Grid Width="15" Height="15" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, -4, 4, 0">
+														<Ellipse Stroke="Red" StrokeThickness="1" Width="32" Height="32" Visibility="{Binding IsValid, Converter={StaticResource !B2V}}"/>
+
+														<Grid Width="15" Height="15" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, -4, 4, 0" Visibility="{Binding IsValid, Converter={StaticResource B2V}}">
 															<Ellipse Fill="{DynamicResource PrimaryHueMidBrush}"/>
 															<fa:IconImage Icon="{Binding Icon}" Foreground="Black" Margin="2, 1, 1, 2"/>
 														</Grid>

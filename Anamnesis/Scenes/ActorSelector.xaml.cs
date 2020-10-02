@@ -69,7 +69,7 @@ namespace Anamnesis.Scenes
 			}
 
 			public string? Identifier => this.SceneActor.Identifier;
-			public ObservableCollection<TargetService.ActorTableActor> AllActors => TargetService.Instance.AllActors;
+			public List<TargetService.ActorTableActor> AllActors => TargetService.GetActors();
 
 			public TargetService.ActorTableActor? Actor { get; set; }
 		}

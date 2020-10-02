@@ -21,7 +21,7 @@ namespace Anamnesis.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			foreach (TargetService.ActorTableActor? actor in TargetService.Instance.AllActors)
+			foreach (TargetService.ActorTableActor? actor in TargetService.GetActors())
 			{
 				this.Selector.Items.Add(actor);
 			}
@@ -53,7 +53,7 @@ namespace Anamnesis.Views
 				if (!SearchUtility.Matches(item.Name, search))
 					return false;
 
-				if (TargetService.Instance.Actors.Contains(item))
+				if (TargetService.Instance.PinnedActors.Contains(item))
 					return false;
 
 				return true;

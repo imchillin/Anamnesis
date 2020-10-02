@@ -27,12 +27,11 @@ namespace Anamnesis
 		public static event SelectionEvent? ActorSelected;
 
 		public ActorViewModel? SelectedActor { get; private set; }
-		public ObservableCollection<ActorTableActor> Actors { get; set; } = new ObservableCollection<ActorTableActor>();
-		public ObservableCollection<ActorTableActor> AllActors { get; set; } = new ObservableCollection<ActorTableActor>();
+		public ObservableCollection<ActorTableActor> PinnedActors { get; set; } = new ObservableCollection<ActorTableActor>();
 
 		public static void AddActor(ActorTableActor actor)
 		{
-			foreach (ActorTableActor otherActor in Instance.Actors)
+			foreach (ActorTableActor otherActor in Instance.PinnedActors)
 			{
 				if (actor.Pointer == otherActor.Pointer)
 				{
@@ -40,19 +39,72 @@ namespace Anamnesis
 				}
 			}
 
-			Instance.Actors.Add(actor);
+			Instance.PinnedActors.Add(actor);
 		}
 
 		public static void RemoveActor(ActorTableActor actor)
 		{
-			Instance.Actors.Remove(actor);
+			Instance.PinnedActors.Remove(actor);
 		}
 
-		public override Task Start()
+		public static List<ActorTableActor> GetActors()
 		{
-			Task.Run(this.Watch);
+			List<ActorTableActor> actorPointers = new List<ActorTableActor>();
 
-			return base.Start();
+			int count = 0;
+			IntPtr startAddress;
+
+			if (GposeService.Instance.IsGpose)
+			{
+				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
+				startAddress = AddressService.GPoseActorTable + 8;
+				////ingameTargetAddress = MemoryService.ReadPtr(AddressService.GPoseTargetManager);
+			}
+			else
+			{
+				// why 424?
+				count = 424;
+				startAddress = AddressService.ActorTable;
+				////ingameTargetAddress = MemoryService.ReadPtr(AddressService.TargetManager);
+			}
+
+			List<ActorTableActor> results = new List<ActorTableActor>();
+			for (int i = 0; i < count; i++)
+			{
+				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
+
+				if (ptr == IntPtr.Zero)
+					continue;
+
+				Actor actor = MemoryService.Read<Actor>(ptr);
+
+				if (actor.ObjectKind != ActorTypes.Player
+						&& actor.ObjectKind != ActorTypes.BattleNpc
+						&& actor.ObjectKind != ActorTypes.EventNpc
+						&& actor.ObjectKind != ActorTypes.Companion
+						&& actor.ObjectKind != ActorTypes.Retainer)
+					continue;
+
+				if (string.IsNullOrEmpty(actor.Name))
+					continue;
+
+				results.Add(new ActorTableActor(actor, ptr));
+			}
+
+			return results;
+		}
+
+		public override async Task Start()
+		{
+			await base.Start();
+
+			List<ActorTableActor> actors = TargetService.GetActors();
+
+			if (actors.Count <= 0)
+				return;
+
+			this.PinnedActors.Add(actors[0]);
+			this.SelectActor(actors[0]);
 		}
 
 		public void ClearSelection()
@@ -60,8 +112,7 @@ namespace Anamnesis
 			App.Current.Dispatcher.Invoke(() =>
 			{
 				this.SelectedActor = null;
-				this.AllActors.Clear();
-				this.Actors.Clear();
+				this.PinnedActors.Clear();
 			});
 		}
 
@@ -70,19 +121,16 @@ namespace Anamnesis
 			App.Current.Dispatcher.Invoke(() =>
 			{
 				this.SelectedActor = null;
-				this.AllActors.Clear();
 			});
 
-			this.ReadActorLists();
-
-			if (this.Actors.Count > 0)
+			if (this.PinnedActors.Count > 0)
 			{
-				foreach (ActorTableActor actor in this.Actors)
+				foreach (ActorTableActor actor in this.PinnedActors)
 				{
 					actor.Clear();
 				}
 
-				this.SelectActor(this.Actors[0]);
+				this.SelectActor(this.PinnedActors[0]);
 			}
 		}
 
@@ -90,7 +138,7 @@ namespace Anamnesis
 		{
 			this.SelectActor(actor.GetViewModel());
 
-			foreach (ActorTableActor ac in this.Actors)
+			foreach (ActorTableActor ac in this.PinnedActors)
 			{
 				ac.SelectionChanged();
 			}
@@ -98,13 +146,7 @@ namespace Anamnesis
 
 		public void SelectActor(ActorViewModel? actor)
 		{
-			Stopwatch sw = new Stopwatch();
-			sw.Start();
-
 			this.SelectedActor = actor;
-
-			sw.Stop();
-			Log.Write("took " + sw.ElapsedMilliseconds + " ms to change selected actor");
 
 			/*using IMarshaler<int> territoryMem = MemoryService.GetMarshaler(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
 
@@ -159,7 +201,7 @@ namespace Anamnesis
 			ActorSelected?.Invoke(actor);
 		}
 
-		private async Task Watch()
+		/*private async Task Watch()
 		{
 			try
 			{
@@ -174,10 +216,10 @@ namespace Anamnesis
 					while (ActorRefreshService.Instance.IsRefreshing || GposeService.Instance.IsChangingState)
 						await Task.Delay(250);
 
-					this.ReadActorLists();
-
 					if (this.SelectedActor == null && this.AllActors.Count > 0)
 					{
+						this.ReadActorLists();
+
 						App.Current.Dispatcher.Invoke(() =>
 						{
 							AddActor(this.AllActors[0]);
@@ -190,88 +232,7 @@ namespace Anamnesis
 			{
 				Log.Write(ex);
 			}
-		}
-
-		private void ReadActorLists()
-		{
-			List<IntPtr> actorPointers = new List<IntPtr>();
-
-			int count = 0;
-			IntPtr startAddress;
-
-			if (GposeService.Instance.IsGpose)
-			{
-				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
-				startAddress = AddressService.GPoseActorTable + 8;
-				////ingameTargetAddress = MemoryService.ReadPtr(AddressService.GPoseTargetManager);
-			}
-			else
-			{
-				// why 424?
-				count = 424;
-				startAddress = AddressService.ActorTable;
-				////ingameTargetAddress = MemoryService.ReadPtr(AddressService.TargetManager);
-			}
-
-			for (int i = 0; i < count; i++)
-			{
-				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
-
-				if (ptr == IntPtr.Zero)
-					continue;
-
-				actorPointers.Add(ptr);
-			}
-
-			this.UpdateActorList(actorPointers);
-		}
-
-		private void UpdateActorList(List<IntPtr> pointers)
-		{
-			if (App.Current == null)
-				return;
-
-			App.Current.Dispatcher.Invoke(() =>
-			{
-				// Remove missing actors, and remove existing pointers
-				for (int i = this.AllActors.Count - 1; i >= 0; i--)
-				{
-					if (this.AllActors[i].Pointer == null)
-					{
-						this.AllActors.RemoveAt(i);
-					}
-					else
-					{
-						if (pointers.Contains((IntPtr)this.AllActors[i].Pointer!))
-						{
-							pointers.Remove((IntPtr)this.AllActors[i].Pointer!);
-						}
-						else
-						{
-							this.AllActors.RemoveAt(i);
-						}
-					}
-				}
-
-				// now add new actors
-				foreach (IntPtr pointer in pointers)
-				{
-					Actor actor = MemoryService.Read<Actor>(pointer);
-
-					if (actor.ObjectKind != ActorTypes.Player
-					 && actor.ObjectKind != ActorTypes.BattleNpc
-					 && actor.ObjectKind != ActorTypes.EventNpc
-					 && actor.ObjectKind != ActorTypes.Companion
-					 && actor.ObjectKind != ActorTypes.Retainer)
-						continue;
-
-					if (string.IsNullOrEmpty(actor.Name))
-						continue;
-
-					this.AllActors.Add(new ActorTableActor(actor, pointer));
-				}
-			});
-		}
+		}*/
 
 		[AddINotifyPropertyChangedInterface]
 		public class ActorTableActor : INotifyPropertyChanged
@@ -283,6 +244,7 @@ namespace Anamnesis
 			{
 				this.actor = actor;
 				this.Pointer = pointer;
+				this.IsValid = true;
 
 				this.Initials = string.Empty;
 				string[] names = actor.Name.Split(' ');
@@ -317,16 +279,11 @@ namespace Anamnesis
 			public ActorTypes Kind => this.actor.ObjectKind;
 			public IconChar Icon => this.actor.ObjectKind.GetIcon();
 			public string Initials { get; private set; }
+			public bool IsValid { get; private set; }
 
 			public void SelectionChanged()
 			{
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsSelected)));
-			}
-
-			public override bool Equals(object? obj)
-			{
-				return obj is ActorTableActor actor &&
-					   this.Pointer.Equals(actor.Pointer);
 			}
 
 			/// <summary>
@@ -337,11 +294,6 @@ namespace Anamnesis
 				// TODO: Handle cases where multiple actors share a name, but are different actors
 				// perhaps compare modelType and customize values?
 				return this.Name == other.Name;
-			}
-
-			public override int GetHashCode()
-			{
-				return HashCode.Combine(this.Pointer);
 			}
 
 			public void Clear()
@@ -355,26 +307,48 @@ namespace Anamnesis
 				if (this.Pointer == null)
 					this.Retarget();
 
-				if (this.viewModel == null || this.Pointer != this.viewModel.Pointer)
+				if (this.viewModel == null || this.Pointer != this.viewModel.Pointer || this.Name != this.viewModel.Name)
 					this.Retarget();
 
 				return this.viewModel;
+			}
+
+			public override bool Equals(object? obj)
+			{
+				return obj is ActorTableActor actor &&
+					   EqualityComparer<IntPtr?>.Default.Equals(this.Pointer, actor.Pointer) &&
+					   this.Name == actor.Name;
+			}
+
+			public override int GetHashCode()
+			{
+				return HashCode.Combine(this.Pointer, this.Name);
 			}
 
 			private void Retarget()
 			{
 				this.viewModel = null;
 
-				foreach (ActorTableActor actor in TargetService.Instance.AllActors)
+				List<ActorTableActor> actors = TargetService.GetActors();
+
+				foreach (ActorTableActor actor in actors)
 				{
 					if (actor.Name == this.Name && actor.Pointer != null)
 					{
+						ActorViewModel vm = new ActorViewModel((IntPtr)actor.Pointer);
+
+						// Handle case where multiple actor table entries point ot the same actor, but
+						// its not the actor we actually want.
+						if (vm.Name != this.Name)
+							continue;
+
 						this.Pointer = actor.Pointer;
 						this.actor = actor.actor;
-
-						this.viewModel = new ActorViewModel((IntPtr)this.Pointer);
+						this.viewModel = vm;
 					}
 				}
+
+				this.IsValid = this.viewModel != null;
 			}
 		}
 	}

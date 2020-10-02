@@ -72,7 +72,7 @@ namespace Anamnesis.Scenes
 			Dictionary<TargetService.ActorTableActor, SceneActor>? actors = null;
 			if (config.IncludeActors)
 			{
-				actors = await ActorNamer.GetActors(TargetService.Instance.Actors);
+				actors = await ActorNamer.GetActors(TargetService.Instance.PinnedActors);
 
 				foreach ((TargetService.ActorTableActor tableActor, SceneActor sceneActor) in actors)
 				{
