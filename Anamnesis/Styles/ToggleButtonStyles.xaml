@@ -122,15 +122,66 @@
 		</Setter>
 	</Style>
 
-	<Style TargetType="ToggleButton" x:Key="RoundToggleButton" BasedOn="{StaticResource MaterialDesignFlatPrimaryToggleButton}">
+	<Style TargetType="ToggleButton" x:Key="RoundToggleButton">
 
 		<Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
+		<Setter Property="Background" Value="{DynamicResource PrimaryHueMidBrush}"/>
 
-		<Style.Triggers>
-			<Trigger Property="IsChecked" Value="True">
-				<Setter Property="Foreground" Value="Black"/>
-			</Trigger>
-		</Style.Triggers>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ToggleButton}">
+
+					<Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Cursor="Hand">
+
+						<Ellipse Name="HoverEllipse" Fill="Transparent" Stroke="{TemplateBinding Background}" StrokeThickness="1" />
+						<Ellipse Name="CheckedEllipse" Fill="{TemplateBinding Background}" RenderTransformOrigin="0.5, 0.5">
+							<Ellipse.RenderTransform>
+								<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="0" ScaleY="0" x:Name="CheckedEllipseScale" />
+							</Ellipse.RenderTransform>
+						</Ellipse>
+
+						<ContentPresenter Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsChecked" Value="True">
+
+							<Trigger.EnterActions>
+								<BeginStoryboard>
+									<Storyboard>
+										<DoubleAnimationUsingKeyFrames Duration="0:0:0.2" Storyboard.TargetProperty="ScaleX" Storyboard.TargetName="CheckedEllipseScale">
+											<LinearDoubleKeyFrame Value="0" KeyTime="0:0:0.0" />
+											<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.1" />
+										</DoubleAnimationUsingKeyFrames>
+										<DoubleAnimationUsingKeyFrames Duration="0:0:0.2" Storyboard.TargetProperty="ScaleY" Storyboard.TargetName="CheckedEllipseScale">
+											<LinearDoubleKeyFrame Value="0" KeyTime="0:0:0.0" />
+											<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.1" />
+										</DoubleAnimationUsingKeyFrames>
+									</Storyboard>
+								</BeginStoryboard>
+							</Trigger.EnterActions>
+
+							<Trigger.ExitActions>
+								<BeginStoryboard>
+									<Storyboard>
+										<DoubleAnimationUsingKeyFrames Duration="0:0:0.2" Storyboard.TargetProperty="ScaleX" Storyboard.TargetName="CheckedEllipseScale">
+											<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.0" />
+											<LinearDoubleKeyFrame Value="0" KeyTime="0:0:0.1" />
+										</DoubleAnimationUsingKeyFrames>
+										<DoubleAnimationUsingKeyFrames Duration="0:0:0.2" Storyboard.TargetProperty="ScaleY" Storyboard.TargetName="CheckedEllipseScale">
+											<LinearDoubleKeyFrame Value="1.0" KeyTime="0:0:0.0" />
+											<LinearDoubleKeyFrame Value="0" KeyTime="0:0:0.1" />
+										</DoubleAnimationUsingKeyFrames>
+									</Storyboard>
+								</BeginStoryboard>
+							</Trigger.ExitActions>
+
+							<Setter Property="Foreground" Value="Black"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
 	</Style>
 	
 </ResourceDictionary>

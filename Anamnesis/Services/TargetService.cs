@@ -284,8 +284,14 @@ namespace Anamnesis
 				this.actor = actor;
 				this.Pointer = pointer;
 
-				Regex initialsReg = new Regex(@"(\b[a-zA-Z])[a-zA-Z]* ?");
-				this.Initials = initialsReg.Replace(actor.Name, "$1.").Trim('.');
+				this.Initials = string.Empty;
+				string[] names = actor.Name.Split(' ');
+				foreach (string name in names)
+				{
+					this.Initials += name[0] + ".";
+				}
+
+				this.Initials = this.Initials.Trim('.');
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;

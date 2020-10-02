@@ -67,14 +67,8 @@
 												<DataTemplate>
 													<Grid Margin="0, 3">
 														<ToggleButton IsChecked="{Binding IsSelected}" Height="32" Width="32" Style="{DynamicResource RoundToggleButton}">
-															<Grid Height="32" Width="32">
-																<Grid.Clip>
-																	<EllipseGeometry RadiusX="16" RadiusY="16" Center="16, 16"/>
-																</Grid.Clip>
 
-																<fa:IconImage Icon="{Binding Icon}" Foreground="{StaticResource MaterialDesignShadowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-																<TextBlock Text="{Binding Initials}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
-															</Grid>
+															<TextBlock Text="{Binding Initials}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Margin="0, 0, 0, 2"/>
 
 															<ToggleButton.ToolTip>
 																<TextBlock>
@@ -86,8 +80,13 @@
 																	</TextBlock.Text>
 																</TextBlock>
 															</ToggleButton.ToolTip>
-															
+
 														</ToggleButton>
+
+														<Grid Width="15" Height="15" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, -4, 4, 0">
+															<Ellipse Fill="{DynamicResource PrimaryHueMidBrush}"/>
+															<fa:IconImage Icon="{Binding Icon}" Foreground="Black" Margin="2, 1, 1, 2"/>
+														</Grid>
 													</Grid>
 
 												</DataTemplate>
