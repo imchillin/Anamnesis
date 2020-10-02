@@ -29,7 +29,7 @@ namespace Anamnesis
 		public ActorViewModel? SelectedActor { get; private set; }
 		public ObservableCollection<ActorTableActor> PinnedActors { get; set; } = new ObservableCollection<ActorTableActor>();
 
-		public static void AddActor(ActorTableActor actor)
+		public static void PinActor(ActorTableActor actor)
 		{
 			foreach (ActorTableActor otherActor in Instance.PinnedActors)
 			{
@@ -42,7 +42,7 @@ namespace Anamnesis
 			Instance.PinnedActors.Add(actor);
 		}
 
-		public static void RemoveActor(ActorTableActor actor)
+		public static void InpinActor(ActorTableActor actor)
 		{
 			Instance.PinnedActors.Remove(actor);
 		}
@@ -103,7 +103,7 @@ namespace Anamnesis
 			if (actors.Count <= 0)
 				return;
 
-			this.PinnedActors.Add(actors[0]);
+			PinActor(actors[0]);
 			this.SelectActor(actors[0]);
 		}
 
@@ -271,6 +271,14 @@ namespace Anamnesis
 					{
 						TargetService.Instance.SelectActor(this);
 					}
+				}
+			}
+
+			public bool IsPinned
+			{
+				get
+				{
+					return TargetService.Instance.PinnedActors.Contains(this);
 				}
 			}
 

@@ -10,26 +10,28 @@
 			 d:DesignHeight="450" d:DesignWidth="800"
 			 Loaded="OnLoaded">
 	
-	<Grid Margin="0, -12, 0, 0">
+	<Grid Margin="0, -12, 0, 0" x:Name="ContentArea">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Button Grid.Row="0" Style="{StaticResource TransparentButton}" BorderThickness="0" HorizontalAlignment="Left" Width="48" Click="OnCloseClicked">
-			<fa:IconBlock Icon="ArrowLeft"/>
-		</Button>
+		<StackPanel Orientation="Horizontal" Grid.Row="0" Margin="4, 6, 4, 0">
+			<CheckBox Content="Players" Margin="6, 0" IsChecked="{Binding IncludePlayers}"/>
+			<CheckBox Content="Companions" Margin="6, 0" IsChecked="{Binding IncludeCompanions}"/>
+			<CheckBox Content="NPCs" Margin="6, 0" IsChecked="{Binding IncludeNPCs}"/>
+		</StackPanel>
 
 		<cm3Drawers:SelectorDrawer 
 			x:Name="Selector"
 			Grid.Row="1"
 			Close="OnClose" 
-			Filter="OnFilter">
+			Filter="OnFilter"
+			SelectionChanged="OnSelectionChanged">
 
 			<cm3Drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
 					<Grid>
-
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="32"/>
 							<ColumnDefinition/>
@@ -37,6 +39,17 @@
 
 						<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}"/>
 						<TextBlock Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
+
+						<Grid.ToolTip>
+							<TextBlock>
+								<TextBlock.Text>
+									<MultiBinding StringFormat="{}{0} ({1})">
+										<Binding Path="Name" />
+										<Binding Path="Kind" />
+									</MultiBinding>
+								</TextBlock.Text>
+							</TextBlock>
+						</Grid.ToolTip>
 
 					</Grid>
 				</DataTemplate>

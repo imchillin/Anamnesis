@@ -3,21 +3,51 @@
 
 namespace Anamnesis.Views
 {
+	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Services;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for TargetSelectorView.xaml.
 	/// </summary>
-	public partial class TargetSelectorView : UserControl, IDrawer
+	[AddINotifyPropertyChangedInterface]
+	public partial class TargetSelectorView : UserControl, IDrawer, INotifyPropertyChanged
 	{
+		private static bool includePlayers = true;
+		private static bool includeCompanions = true;
+		private static bool includeNPCs = true;
+
 		public TargetSelectorView()
 		{
 			this.InitializeComponent();
+
+			this.ContentArea.DataContext = this;
+
+			this.PropertyChanged += this.OnSelfPropertyChanged;
 		}
 
 		public event DrawerEvent? Close;
+		public event PropertyChangedEventHandler? PropertyChanged;
+
+		public bool IncludePlayers
+		{
+			get => includePlayers;
+			set => includePlayers = value;
+		}
+
+		public bool IncludeCompanions
+		{
+			get => includeCompanions;
+			set => includeCompanions = value;
+		}
+
+		public bool IncludeNPCs
+		{
+			get => includeNPCs;
+			set => includeNPCs = value;
+		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -29,11 +59,6 @@ namespace Anamnesis.Views
 			this.Selector.FilterItems();
 		}
 
-		private void OnCloseClicked(object sender, RoutedEventArgs e)
-		{
-			this.Close?.Invoke();
-		}
-
 		private void OnClose()
 		{
 			this.Close?.Invoke();
@@ -43,7 +68,7 @@ namespace Anamnesis.Views
 			if (actor == null)
 				return;
 
-			TargetService.AddActor(actor);
+			TargetService.PinActor(actor);
 		}
 
 		private bool OnFilter(object obj, string[]? search = null)
@@ -53,13 +78,32 @@ namespace Anamnesis.Views
 				if (!SearchUtility.Matches(item.Name, search))
 					return false;
 
-				if (TargetService.Instance.PinnedActors.Contains(item))
+				if (item.IsPinned)
+					return false;
+
+				if (!includePlayers && item.Kind == Memory.ActorTypes.Player)
+					return false;
+
+				if (!includeCompanions && item.Kind == Memory.ActorTypes.Companion)
+					return false;
+
+				if (!includeNPCs && (item.Kind == Memory.ActorTypes.BattleNpc || item.Kind == Memory.ActorTypes.EventNpc))
 					return false;
 
 				return true;
 			}
 
 			return false;
+		}
+
+		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			this.Selector.FilterItems();
+		}
+
+		private void OnSelectionChanged()
+		{
+			this.OnClose();
 		}
 	}
 }
