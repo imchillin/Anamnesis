@@ -7,17 +7,15 @@ namespace Anamnesis
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
-	using System.Diagnostics;
-	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
-	using System.Windows.Media.Animation;
+	using System.Windows;
 	using Anamnesis.Core.Memory;
+	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.WpfStyles;
 	using FontAwesome.Sharp;
 	using PropertyChanged;
-	using SimpleLog;
 
 	public delegate void SelectionEvent(ActorViewModel? actor);
 
@@ -29,7 +27,7 @@ namespace Anamnesis
 		public ActorViewModel? SelectedActor { get; private set; }
 		public ObservableCollection<ActorTableActor> PinnedActors { get; set; } = new ObservableCollection<ActorTableActor>();
 
-		public static void PinActor(ActorTableActor actor)
+		public static async Task PinActor(ActorTableActor actor)
 		{
 			foreach (ActorTableActor otherActor in Instance.PinnedActors)
 			{
@@ -39,7 +37,50 @@ namespace Anamnesis
 				}
 			}
 
-			Instance.PinnedActors.Add(actor);
+			// Mannequins and housing NPC's get actor type changed, but squadron members do not.
+			if (!TerritoryService.GetIsBarracks() && actor.Kind == ActorTypes.EventNpc)
+			{
+				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a humanoid NPC. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+				if (result == true)
+				{
+					ActorViewModel? vm = actor.GetViewModel();
+					if (vm == null)
+						return;
+
+					vm.ObjectKind = ActorTypes.Player;
+					await vm.RefreshAsync();
+
+					if (vm.ModelType != 0)
+					{
+						vm.ModelType = 0;
+						await vm.RefreshAsync();
+					}
+
+					actor.Model = (Actor)vm.Model!;
+				}
+			}
+
+			// Carbuncles get model type set to player (but not actor type!)
+			if (actor.Kind == ActorTypes.BattleNpc)
+			{
+				if (actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412)
+				{
+					bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+					if (result == true)
+					{
+						ActorViewModel? vm = actor.GetViewModel();
+						if (vm == null)
+							return;
+
+						vm.ModelType = 0;
+						await vm.RefreshAsync();
+
+						actor.Model = (Actor)vm.Model!;
+					}
+				}
+			}
+
+			App.Current.Dispatcher.Invoke(() => Instance.PinnedActors.Add(actor));
 		}
 
 		public static void InpinActor(ActorTableActor actor)
@@ -103,7 +144,7 @@ namespace Anamnesis
 			if (actors.Count <= 0)
 				return;
 
-			PinActor(actors[0]);
+			await PinActor(actors[0]);
 			this.SelectActor(actors[0]);
 		}
 
@@ -116,7 +157,7 @@ namespace Anamnesis
 			});
 		}
 
-		public void Retarget()
+		public Task Retarget()
 		{
 			App.Current.Dispatcher.Invoke(() =>
 			{
@@ -132,6 +173,8 @@ namespace Anamnesis
 
 				this.SelectActor(this.PinnedActors[0]);
 			}
+
+			return Task.CompletedTask;
 		}
 
 		public void SelectActor(ActorTableActor actor)
@@ -147,102 +190,17 @@ namespace Anamnesis
 		public void SelectActor(ActorViewModel? actor)
 		{
 			this.SelectedActor = actor;
-
-			/*using IMarshaler<int> territoryMem = MemoryService.GetMarshaler(Offsets.Main.TerritoryAddress, Offsets.Main.Territory);
-
-			int territoryId = territoryMem.Value;
-
-			bool isBarracks = false;
-			isBarracks |= territoryId == 534; // Twin adder barracks
-			isBarracks |= territoryId == 535; // Immortal Flame barracks
-			isBarracks |= territoryId == 536; // Maelstrom barracks
-
-			// Mannequins and housing NPC's get actor type changed, but squadron members do not.
-			if (!isBarracks && actor.Type == ActorTypes.EventNpc)
-			{
-				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a humanoid NPC. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
-
-				if (result == null)
-					return;
-
-				if (result == true)
-				{
-					actor.SetValue(Offsets.Main.ActorType, ActorTypes.Player);
-					actor.Type = ActorTypes.Player;
-					await actor.ActorRefreshAsync();
-
-					if (actor.GetValue(Offsets.Main.ModelType) != 0)
-					{
-						actor.SetValue(Offsets.Main.ModelType, 0);
-						await actor.ActorRefreshAsync();
-					}
-				}
-			}
-
-			// Carbuncles get model type set to player (but not actor type!)
-			if (actor.Type == ActorTypes.BattleNpc)
-			{
-				int modelType = actor.GetValue(Offsets.Main.ModelType);
-				if (modelType == 409 || modelType == 410 || modelType == 412)
-				{
-					bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
-
-					if (result == null)
-						return;
-
-					if (result == true)
-					{
-						actor.SetValue(Offsets.Main.ModelType, 0);
-						await actor.ActorRefreshAsync();
-					}
-				}
-			}*/
-
 			ActorSelected?.Invoke(actor);
 		}
-
-		/*private async Task Watch()
-		{
-			try
-			{
-				await Task.Delay(500);
-
-				IntPtr lastTargetAddress = IntPtr.Zero;
-
-				while (this.IsAlive)
-				{
-					await Task.Delay(50);
-
-					while (ActorRefreshService.Instance.IsRefreshing || GposeService.Instance.IsChangingState)
-						await Task.Delay(250);
-
-					if (this.SelectedActor == null && this.AllActors.Count > 0)
-					{
-						this.ReadActorLists();
-
-						App.Current.Dispatcher.Invoke(() =>
-						{
-							AddActor(this.AllActors[0]);
-							this.SelectActor(this.Actors[0]);
-						});
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Write(ex);
-			}
-		}*/
 
 		[AddINotifyPropertyChangedInterface]
 		public class ActorTableActor : INotifyPropertyChanged
 		{
-			private Actor actor;
 			private ActorViewModel? viewModel;
 
 			public ActorTableActor(Actor actor, IntPtr pointer)
 			{
-				this.actor = actor;
+				this.Model = actor;
 				this.Pointer = pointer;
 				this.IsValid = true;
 
@@ -257,6 +215,17 @@ namespace Anamnesis
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;
+
+			public Actor Model { get; set; }
+
+			public IntPtr? Pointer { get; private set; }
+			public string Name => this.Model.Name;
+			public ActorTypes Kind => this.Model.ObjectKind;
+			public IconChar Icon => this.Model.ObjectKind.GetIcon();
+			public int ModelType => this.Model.ModelType;
+			public string Initials { get; private set; }
+			public bool IsValid { get; private set; }
+			public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
 
 			public bool IsSelected
 			{
@@ -273,21 +242,6 @@ namespace Anamnesis
 					}
 				}
 			}
-
-			public bool IsPinned
-			{
-				get
-				{
-					return TargetService.Instance.PinnedActors.Contains(this);
-				}
-			}
-
-			public IntPtr? Pointer { get; private set; }
-			public string Name => this.actor.Name;
-			public ActorTypes Kind => this.actor.ObjectKind;
-			public IconChar Icon => this.actor.ObjectKind.GetIcon();
-			public string Initials { get; private set; }
-			public bool IsValid { get; private set; }
 
 			public void SelectionChanged()
 			{
@@ -351,7 +305,7 @@ namespace Anamnesis
 							continue;
 
 						this.Pointer = actor.Pointer;
-						this.actor = actor.actor;
+						this.Model = actor.Model;
 						this.viewModel = vm;
 					}
 				}

@@ -52,6 +52,17 @@ namespace Anamnesis
 
 		private static IntPtr WeatherAddress => GposeService.Instance.IsGpose ? AddressService.GPoseWeather : AddressService.Weather;
 
+		public static bool GetIsBarracks()
+		{
+			// Twin adder barracks = 534
+			// Immortal Flame barracks = 535
+			// Maelstrom barracks = 536
+			if (Instance.CurrentTerritoryId >= 534 && Instance.CurrentTerritoryId <= 536)
+				return true;
+
+			return false;
+		}
+
 		public override async Task Start()
 		{
 			await base.Start();

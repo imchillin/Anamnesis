@@ -4,6 +4,7 @@
 namespace Anamnesis.Views
 {
 	using System.ComponentModel;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Services;
@@ -68,7 +69,7 @@ namespace Anamnesis.Views
 			if (actor == null)
 				return;
 
-			TargetService.PinActor(actor);
+			Task.Run(() => TargetService.PinActor(actor));
 		}
 
 		private bool OnFilter(object obj, string[]? search = null)
