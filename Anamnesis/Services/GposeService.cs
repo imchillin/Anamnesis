@@ -58,7 +58,7 @@ namespace Anamnesis.Services
 					// so we just wait a magic duration.
 					await Task.Delay(1000);
 
-					TargetService.Instance.Retarget();
+					await TargetService.Instance.Retarget();
 				}
 
 				this.IsChangingState = false;

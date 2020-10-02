@@ -219,7 +219,7 @@ namespace Anamnesis.Files
 
 			Log.Write("Reading appearance from file", "AppearanceFile");
 
-			ActorRefreshService.Instance.AutomaticRefreshEnabled = false;
+			actor.AutomaticRefreshEnabled = false;
 			actor.MemoryMode = MemoryModes.None;
 
 			if (actor.ModelObject?.ExtendedAppearance != null)
@@ -290,7 +290,7 @@ namespace Anamnesis.Files
 			}
 
 			actor.WriteToMemory(true);
-			await ActorRefreshService.RefreshAsync();
+			await actor.RefreshAsync();
 
 			// Setting customize values will reset the extended appearance, whish me must read.
 			actor.ReadFromMemory(true);
@@ -346,7 +346,7 @@ namespace Anamnesis.Files
 
 			actor.MemoryMode = MemoryModes.ReadWrite;
 			actor.WriteToMemory(true);
-			ActorRefreshService.Instance.AutomaticRefreshEnabled = true;
+			actor.AutomaticRefreshEnabled = true;
 		}
 
 		private bool IncludeSection(SaveModes section, SaveModes mode)

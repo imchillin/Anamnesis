@@ -144,10 +144,6 @@ namespace Anamnesis.Memory
 			if (diff <= 0)
 				return;
 
-			// Last chance safety on the most likely cause of game crashes.
-			if (ActorRefreshService.Instance.IsRefreshing && value is Actor)
-				throw new Exception("Attempt to write actor memory while actor is refreshing");
-
 			////Log.Write("Writing: " + diff + " bytes, " + value.GetType().Name + " to " + address);
 
 			// Write the oldBuffer (which has now had newBuffer merged over it) to the process
@@ -393,7 +389,7 @@ namespace Anamnesis.Memory
 					if (!IsProcessAlive)
 						return;
 
-					if (GposeService.Instance.IsChangingState || ActorRefreshService.Instance.IsRefreshing)
+					if (GposeService.Instance.IsChangingState)
 						continue;
 
 					memoryTickCount++;

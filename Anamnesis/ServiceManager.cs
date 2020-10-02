@@ -68,7 +68,6 @@ namespace Anamnesis.Services
 			await Add<ViewService>();
 			await Add<TargetService>();
 			await Add<FileService>();
-			await Add<ActorRefreshService>();
 			await Add<TerritoryService>();
 			await Add<TimeService>();
 			await Add<CameraService>();

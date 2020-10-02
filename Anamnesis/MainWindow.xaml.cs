@@ -44,7 +44,6 @@ namespace Anamnesis.GUI
 
 		public GposeService GposeService => GposeService.Instance;
 		public TargetService TargetService => TargetService.Instance;
-		public ActorRefreshService ActorRefreshService => ActorRefreshService.Instance;
 
 		public bool Zodiark { get; set; }
 

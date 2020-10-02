@@ -43,6 +43,11 @@ namespace Anamnesis.Memory
 	[AddINotifyPropertyChangedInterface]
 	public class ActorViewModel : MemoryViewModelBase<Actor>
 	{
+		private const short RefreshDelay = 250;
+
+		private short refreshDelay;
+		private Task? refreshTask;
+
 		public ActorViewModel(IntPtr pointer)
 			: base(pointer)
 		{
@@ -66,18 +71,105 @@ namespace Anamnesis.Memory
 
 		[ModelField] public ModelViewModel? ModelObject { get; set; }
 
+		public bool AutomaticRefreshEnabled { get; set; } = true;
+		public bool IsRefreshing { get; set; } = false;
+		public bool PendingRefresh { get; set; } = false;
+
 		public bool IsCustomizable()
 		{
 			return ModelTypeService.IsCustomizable(this.ModelType) && this.Customize != null;
 		}
 
+		/// <summary>
+		/// Refresh the actor to force the game to load any changed values for appearance.
+		/// </summary>
+		public void Refresh()
+		{
+			this.refreshDelay = RefreshDelay;
+
+			if (this.refreshTask == null || this.refreshTask.IsCompleted)
+			{
+				this.refreshTask = Task.Run(this.RefreshTask);
+			}
+		}
+
+		/// <summary>
+		/// Refresh the actor to force the game to load any changed values for appearance.
+		/// </summary>
+		public async Task RefreshAsync()
+		{
+			if (this.Pointer == null)
+				return;
+
+			this.IsRefreshing = true;
+			MemoryModes oldMode = this.MemoryMode;
+			this.MemoryMode = MemoryModes.Read;
+
+			// Use direct pointers here so that we can write the values we need to update
+			// for the refresh without the rest of the model's values, as writing most of the other
+			// values will crash the game.
+			IntPtr actorPointer = (IntPtr)this.Pointer;
+			IntPtr objectKindPointer = actorPointer + 0x008c;
+			IntPtr renderModePointer = actorPointer + 0x0104;
+
+			if (this.ObjectKind == ActorTypes.Player)
+			{
+				MemoryService.Write(objectKindPointer, (byte)ActorTypes.BattleNpc);
+
+				MemoryService.Write(renderModePointer, (int)RenderModes.Unload);
+				await Task.Delay(50);
+				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
+				await Task.Delay(50);
+				MemoryService.Write(objectKindPointer, (byte)ActorTypes.Player);
+				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
+			}
+			else
+			{
+				MemoryService.Write(renderModePointer, (int)RenderModes.Unload);
+				await Task.Delay(50);
+				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
+			}
+
+			await Task.Delay(50);
+
+			this.IsRefreshing = false;
+			this.MemoryMode = oldMode;
+		}
+
 		protected override void OnViewToModel(string fieldName, object? value)
 		{
 			// Do not allow actor view model changes to push into memory while we are refreshing.
-			if (ActorRefreshService.Instance.IsRefreshing)
+			if (this.IsRefreshing)
 				return;
 
 			base.OnViewToModel(fieldName, value);
+		}
+
+		protected override bool HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
+		{
+			if (this.AutomaticRefreshEnabled)
+				this.Refresh();
+
+			return base.HandleViewToModelUpdate(viewModelProperty, modelField);
+		}
+
+		private async Task RefreshTask()
+		{
+			// Double loops to handle case where a refresh delay was added
+			// while the refresh was running
+			while (this.refreshDelay > 0)
+			{
+				this.PendingRefresh = true;
+
+				while (this.refreshDelay > 0)
+				{
+					await Task.Delay(10);
+					this.refreshDelay -= 10;
+				}
+
+				this.PendingRefresh = false;
+				await this.RefreshAsync();
+			}
 		}
 	}
 }
