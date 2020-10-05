@@ -9,11 +9,9 @@ namespace Anamnesis
 	using Anamnesis.Memory;
 	using Anamnesis.Memory.Types;
 
-	using MediaQuaternion = System.Windows.Media.Media3D.Quaternion;
-
 	public class CameraService : ServiceBase<CameraService>
 	{
-		private bool unlimitCamera;
+		private bool delimitCamera;
 
 		public CameraViewModel? Camera { get; set; }
 
@@ -29,15 +27,15 @@ namespace Anamnesis
 			set;
 		}
 
-		public bool UnlimitCamera
+		public bool DelimitCamera
 		{
 			get
 			{
-				return this.unlimitCamera;
+				return this.delimitCamera;
 			}
 			set
 			{
-				this.unlimitCamera = value;
+				this.delimitCamera = value;
 
 				if (this.Camera == null)
 					return;

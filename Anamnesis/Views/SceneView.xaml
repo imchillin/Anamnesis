@@ -120,8 +120,8 @@
 						<RowDefinition/>
 					</Grid.RowDefinitions>
 
-					<TextBlock Grid.Row="0" Text="Unlimit:" Style="{StaticResource Label}"/>
-					<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding CameraService.UnlimitCamera}"/>
+					<TextBlock Grid.Row="0" Text="Delimit:" Style="{StaticResource Label}"/>
+					<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding CameraService.DelimitCamera}"/>
 
 					<TextBlock Grid.Row="1" Grid.Column="0" Text="Angle:" Style="{StaticResource Label}"/>
 					<Grid Grid.Row="1" Grid.Column="1">

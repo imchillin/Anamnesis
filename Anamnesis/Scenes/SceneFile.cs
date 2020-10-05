@@ -90,7 +90,7 @@ namespace Anamnesis.Scenes
 
 			if (config.IncludeCamera && CameraService.Instance.Camera != null)
 			{
-				this.UnlimitCamera = CameraService.Instance.UnlimitCamera;
+				this.UnlimitCamera = CameraService.Instance.DelimitCamera;
 				this.CameraAngle = CameraService.Instance.Camera.Angle;
 				this.CameraYMin = CameraService.Instance.Camera.YMin;
 				this.CameraYMax = CameraService.Instance.Camera.YMax;
@@ -204,7 +204,7 @@ namespace Anamnesis.Scenes
 				if (config.IncludeCamera && CameraService.Instance.Camera != null)
 				{
 					if (this.UnlimitCamera != null)
-						CameraService.Instance.UnlimitCamera = (bool)this.UnlimitCamera;
+						CameraService.Instance.DelimitCamera = (bool)this.UnlimitCamera;
 
 					if (this.CameraAngle != null)
 						CameraService.Instance.Camera.Angle = (Vector2D)this.CameraAngle;
