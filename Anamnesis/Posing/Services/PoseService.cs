@@ -118,6 +118,8 @@ namespace Anamnesis.PoseModule
 			this.freezePhysics1 = new NopHookViewModel(AddressService.SkeletonFreezePhysics, 4);
 			this.freezePhysics2 = new NopHookViewModel(AddressService.SkeletonFreezePhysics2, 3);
 			this.freezePhysics3 = new NopHookViewModel(AddressService.SkeletonFreezePhysics3, 4);
+
+			GposeService.GposeStateChanging += this.OnGposeStateChanging;
 		}
 
 		public override async Task Shutdown()
@@ -142,6 +144,11 @@ namespace Anamnesis.PoseModule
 			EnabledChanged?.Invoke(enabled);
 
 			this.RaisePropertyChanged(nameof(this.IsEnabled));
+		}
+
+		private void OnGposeStateChanging()
+		{
+			this.SetEnabled(false);
 		}
 	}
 }

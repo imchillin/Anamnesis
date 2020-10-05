@@ -9,10 +9,15 @@ namespace Anamnesis.Services
 	using Anamnesis.Views;
 	using PropertyChanged;
 
+	public delegate void GposeEvent();
+
 	[AddINotifyPropertyChangedInterface]
 	public class GposeService : ServiceBase<GposeService>
 	{
 		private bool initialized = false;
+
+		public static event GposeEvent? GposeStateChanging;
+		public static event GposeEvent? GposeStateChanged;
 
 		public bool IsGpose { get; private set; }
 		public bool IsOverworld { get; private set; }
@@ -52,6 +57,7 @@ namespace Anamnesis.Services
 					this.IsGpose = newGpose;
 					this.IsOverworld = !this.IsGpose;
 
+					GposeStateChanging?.Invoke();
 					this.IsChangingState = true;
 
 					// GPose takes a while before actors become availalbe. I dont know why, or how to detect it
@@ -59,6 +65,8 @@ namespace Anamnesis.Services
 					await Task.Delay(1000);
 
 					await TargetService.Instance.Retarget();
+
+					GposeStateChanged?.Invoke();
 				}
 
 				this.IsChangingState = false;
