@@ -81,11 +81,28 @@ namespace Anamnesis
 			}
 
 			App.Current.Dispatcher.Invoke(() => Instance.PinnedActors.Add(actor));
+
+			if (Instance.SelectedActor == null)
+			{
+				Instance.SelectActor(actor);
+			}
 		}
 
-		public static void InpinActor(ActorTableActor actor)
+		public static void UnpinActor(ActorTableActor actor)
 		{
 			Instance.PinnedActors.Remove(actor);
+
+			if (actor.GetViewModel() == Instance.SelectedActor)
+			{
+				if (Instance.PinnedActors.Count > 0)
+				{
+					Instance.SelectActor(Instance.PinnedActors[0]);
+				}
+				else
+				{
+					Instance.SelectActorViewModel(null);
+				}
+			}
 		}
 
 		public static List<ActorTableActor> GetActors()
@@ -179,7 +196,7 @@ namespace Anamnesis
 
 		public void SelectActor(ActorTableActor actor)
 		{
-			this.SelectActor(actor.GetViewModel());
+			this.SelectActorViewModel(actor.GetViewModel());
 
 			foreach (ActorTableActor ac in this.PinnedActors)
 			{
@@ -187,7 +204,7 @@ namespace Anamnesis
 			}
 		}
 
-		public void SelectActor(ActorViewModel? actor)
+		public void SelectActorViewModel(ActorViewModel? actor)
 		{
 			this.SelectedActor = actor;
 			ActorSelected?.Invoke(actor);

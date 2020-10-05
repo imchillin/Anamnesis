@@ -66,7 +66,13 @@
 											<ItemsControl.ItemTemplate>
 												<DataTemplate>
 													<Grid Margin="0, 3">
-														<ToggleButton IsChecked="{Binding IsSelected}" Height="32" Width="32" Style="{DynamicResource RoundToggleButton}">
+														<ToggleButton IsChecked="{Binding IsSelected}" Height="32" Width="32" Style="{DynamicResource RoundToggleButton}" PreviewMouseUp="OnActorPinPreviewMouseUp">
+													
+															<ToggleButton.ContextMenu>
+																<ContextMenu>
+																	<MenuItem Header="Unpin" Click="OnUnpinActorClicked"/>
+																</ContextMenu>
+															</ToggleButton.ContextMenu>
 
 															<TextBlock Text="{Binding Initials}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Margin="0, 0, 0, 2"/>
 
@@ -161,8 +167,8 @@
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 
 						<TextBlock Text="Anamnesis" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
-						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Sync" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}}"/>
-						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Hourglass" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}}"/>
+						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Sync" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
+						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Hourglass" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 
 					</StackPanel>
 

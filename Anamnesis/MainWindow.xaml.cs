@@ -220,5 +220,21 @@ namespace Anamnesis.GUI
 		{
 			ViewService.ShowDrawer<TargetSelectorView>(null, DrawerDirection.Left);
 		}
+
+		private void OnUnpinActorClicked(object sender, RoutedEventArgs e)
+		{
+			if (sender is FrameworkElement el && el.DataContext is TargetService.ActorTableActor actor)
+			{
+				TargetService.UnpinActor(actor);
+			}
+		}
+
+		private void OnActorPinPreviewMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			if (e.ChangedButton == MouseButton.Middle)
+			{
+				this.OnUnpinActorClicked(sender, new RoutedEventArgs());
+			}
+		}
 	}
 }
