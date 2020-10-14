@@ -47,16 +47,23 @@
 
 					<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding TerritoryService.CurrentTerritoryName}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 0, 3, 6"/>
 
-					<TextBlock Grid.Row="1" Text="Time:" Style="{StaticResource Label}"/>
-					<Grid Grid.Row="1" Grid.Column="1">
+					
+					<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
 
 						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
-						<ToggleButton Grid.Column="0" Grid.RowSpan="2" Style="{DynamicResource MaterialDesignActionToggleButton}" Height="22" Width="22" Padding="0" Margin="0, 0, 3, 0"
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<ToggleButton Grid.Column="0" Grid.RowSpan="2" Style="{DynamicResource MaterialDesignActionToggleButton}" 
+									  Height="22" Width="22" Padding="0" Margin="0, 3, 6, 0"
 									  VerticalAlignment="Center" IsChecked="{Binding TimeService.Freeze}">
 							<ToggleButton.Content>
 								<fa:IconBlock Icon="LockOpen" FontSize="12"/>
@@ -66,14 +73,16 @@
 							</materialdesign:ToggleButtonAssist.OnContent>
 						</ToggleButton>
 
-						<Slider Minimum="0" Maximum="1440" Grid.Column="1" Value="{Binding TimeService.TimeOfDay}" Margin="3" IsEnabled="{Binding TimeService.Freeze}" TickFrequency="30" IsSnapToTickEnabled="True"/>
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="Time:" Style="{StaticResource Label}"/>
+						<Slider Minimum="0" Maximum="1440" Grid.Column="2" Value="{Binding TimeService.TimeOfDay}" Margin="3" IsEnabled="{Binding TimeService.Freeze}" TickFrequency="30" IsSnapToTickEnabled="True"/>
+						<TextBlock Grid.Column="3" Text="{Binding TimeService.Time, StringFormat=t}" Margin="3, 3, 0, 3" Width="50" HorizontalAlignment="Right"/>
 
-						<TextBlock Grid.Column="2" Text="{Binding TimeService.Time, StringFormat=t}" Margin="3, 3, 0, 3" Width="50" HorizontalAlignment="Right"/>
+						<TextBlock Grid.Row="1" Grid.Column="1" Text="Day:" Style="{StaticResource Label}"/>
+						<cm3:NumberBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
 					</Grid>
 
 
-					<TextBlock Grid.Row="2" Text="Moon Phase:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding TimeService.DayOfMonth}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
+				
 
 					<TextBlock Grid.Row="3" Text="Weather:" Style="{StaticResource Label}"/>
 					<ComboBox Grid.Row="3" Grid.Column="1" SelectedItem="{Binding TerritoryService.CurrentWeather}" ItemsSource="{Binding TerritoryService.CurrentTerritory.Weathers}">
