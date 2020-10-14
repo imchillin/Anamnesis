@@ -284,10 +284,10 @@
 									<ImageBrush ImageSource="../../Assets/PoseCharacterVieraEars01Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
 
-								<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="Ear01ALeft"/>
-								<local:BoneView Canvas.Left="22" Canvas.Top="98" BoneName="Ear01BLeft"/>
-								<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="Ear01ARight"/>
-								<local:BoneView Canvas.Left="96" Canvas.Top="98" BoneName="Ear01BRight"/>
+								<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar01ALeft"/>
+								<local:BoneView Canvas.Left="22" Canvas.Top="98" BoneName="VieraEar01BLeft"/>
+								<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar01ARight"/>
+								<local:BoneView Canvas.Left="96" Canvas.Top="98" BoneName="VieraEar01BRight"/>
 							</Canvas>
 						</Viewbox>
 
@@ -298,10 +298,10 @@
 									<ImageBrush ImageSource="../../Assets/PoseCharacterVieraEars02Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
 
-								<local:BoneView Canvas.Left="47" Canvas.Top="169" BoneName="Ear02ALeft"/>
-								<local:BoneView Canvas.Left="31" Canvas.Top="106" BoneName="Ear02BLeft"/>
-								<local:BoneView Canvas.Left="89" Canvas.Top="169" BoneName="Ear02ARight"/>
-								<local:BoneView Canvas.Left="105" Canvas.Top="106" BoneName="Ear02BRight"/>
+								<local:BoneView Canvas.Left="47" Canvas.Top="169" BoneName="VieraEar02ALeft"/>
+								<local:BoneView Canvas.Left="31" Canvas.Top="106" BoneName="VieraEar02BLeft"/>
+								<local:BoneView Canvas.Left="89" Canvas.Top="169" BoneName="VieraEar02ARight"/>
+								<local:BoneView Canvas.Left="105" Canvas.Top="106" BoneName="VieraEar02BRight"/>
 							</Canvas>
 						</Viewbox>
 
@@ -312,10 +312,10 @@
 									<ImageBrush ImageSource="../../Assets/PoseCharacterVieraEars03Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
 
-								<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="Ear03ALeft"/>
-								<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="Ear03BLeft"/>
-								<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="Ear03ARight"/>
-								<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="Ear03BRight"/>
+								<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="VieraEar03ALeft"/>
+								<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="VieraEar03BLeft"/>
+								<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="VieraEar03ARight"/>
+								<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="VieraEar03BRight"/>
 							</Canvas>
 						</Viewbox>
 
@@ -326,10 +326,10 @@
 									<ImageBrush ImageSource="../../Assets/PoseCharacterVieraEars04Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
 
-								<local:BoneView Canvas.Left="44" Canvas.Top="170" BoneName="Ear04ALeft"/>
-								<local:BoneView Canvas.Left="26" Canvas.Top="104" BoneName="Ear04BLeft"/>
-								<local:BoneView Canvas.Left="85" Canvas.Top="170" BoneName="Ear04ARight"/>
-								<local:BoneView Canvas.Left="102" Canvas.Top="104" BoneName="Ear04BRight"/>
+								<local:BoneView Canvas.Left="44" Canvas.Top="170" BoneName="VieraEar04ALeft"/>
+								<local:BoneView Canvas.Left="26" Canvas.Top="104" BoneName="VieraEar04BLeft"/>
+								<local:BoneView Canvas.Left="85" Canvas.Top="170" BoneName="VieraEar04ARight"/>
+								<local:BoneView Canvas.Left="102" Canvas.Top="104" BoneName="VieraEar04BRight"/>
 							</Canvas>
 						</Viewbox>
 					</Grid>
