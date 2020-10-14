@@ -13,7 +13,6 @@ namespace Anamnesis.Core.Memory
 	public class AddressService : ServiceBase<AddressService>
 	{
 		private static IntPtr weather;
-		private static IntPtr territory;
 		private static IntPtr time;
 
 		// Static offsets
@@ -35,6 +34,7 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr SkeletonFreezePhysics3 { get; private set; }   // PhysicsOffset3
 		public static IntPtr GposeCheck { get; private set; }   // GPoseCheckOffset
 		public static IntPtr GposeCheck2 { get; private set; }   // GPoseCheck2Offset
+		public static IntPtr Territory { get; private set; }
 
 		public static IntPtr Time
 		{
@@ -47,21 +47,6 @@ namespace Anamnesis.Core.Memory
 			set
 			{
 				time = value;
-			}
-		}
-
-		public static IntPtr Territory
-		{
-			get
-			{
-				IntPtr address = MemoryService.ReadPtr(territory);
-				address = MemoryService.ReadPtr(address);
-				address += 0x13D8;
-				return address;
-			}
-			private set
-			{
-				territory = value;
 			}
 		}
 
@@ -111,26 +96,26 @@ namespace Anamnesis.Core.Memory
 			IntPtr baseAddress = MemoryService.Process.MainModule.BaseAddress;
 
 			// TODO: replace these manual offsets with signautres
-			Weather = baseAddress + 0x1CC0B08;
-			Territory = baseAddress + 0x1D08760;
-			Time = baseAddress + 0x1CEA6E8;
-			Camera = baseAddress + 0x1D09BA0;
-			GPoseActorTable = baseAddress + 0x1D0B190;
-			GPoseTargetManager = baseAddress + 0x1D09DB0;
-			GPoseFilters = baseAddress + 0x1CE8138;
-			GposeCheck = baseAddress + 0x1D0D990;
-			GposeCheck2 = baseAddress + 0x1D0D970;
+			Weather = baseAddress + 0x1CC1B88;
+			Territory = baseAddress + 0x1D0ABB8;
+			Time = baseAddress + 0x1CEB768;
+			Camera = baseAddress + 0x1D0AC20;
+			GPoseActorTable = baseAddress + 0x1D0C210;
+			GPoseTargetManager = baseAddress + 0x1D0AE30;
+			GPoseFilters = baseAddress + 0x1CE91B8;
+			GposeCheck = baseAddress + 0x1D0EA10;
+			GposeCheck2 = baseAddress + 0x1D0E9F0;
 
-			SkeletonFreezePosition = baseAddress + 0x140821B;
-			SkeletonFreezeRotation = baseAddress + 0x1408290;
-			SkeletonFreezeScale = baseAddress + 0x14082A0;
-			SkeletonFreezeRotation2 = baseAddress + 0x14093BD;
-			SkeletonFreezeScale2 = baseAddress + 0x14093CD;
-			SkeletonFreezePosition2 = baseAddress + 0x1409348;
-			SkeletonFreezeRotation3 = baseAddress + 0x1417024;
-			SkeletonFreezePhysics2 = baseAddress + 0x38332F;
-			SkeletonFreezePhysics = baseAddress + 0x383338;
-			SkeletonFreezePhysics3 = baseAddress + 0x383342;
+			SkeletonFreezePosition = baseAddress + 0x140978B;
+			SkeletonFreezeRotation = baseAddress + 0x1409800;
+			SkeletonFreezeScale = baseAddress + 0x1409810;
+			SkeletonFreezeRotation2 = baseAddress + 0x140A92D;
+			SkeletonFreezeScale2 = baseAddress + 0x140A93D;
+			SkeletonFreezePosition2 = baseAddress + 0x140A8B8;
+			SkeletonFreezeRotation3 = baseAddress + 0x1418594;
+			SkeletonFreezePhysics2 = baseAddress + 0x38372F;
+			SkeletonFreezePhysics = baseAddress + 0x383738;
+			SkeletonFreezePhysics3 = baseAddress + 0x383742;
 
 			await Task.WhenAll(tasks.ToArray());
 
