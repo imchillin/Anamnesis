@@ -310,6 +310,6 @@ namespace Anamnesis.Files
 		public string Name { get; }
 
 		public IDirectory GetDefaultDirectory();
-		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, bool recursive);
+		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, bool recursive, FileInfoBase[] fileTypes);
 	}
 }

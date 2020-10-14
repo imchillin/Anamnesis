@@ -24,12 +24,12 @@ namespace Anamnesis.Files
 			return new Directory(startdir, this);
 		}
 
-		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, bool recursive)
+		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, bool recursive, FileInfoBase[] fileTypes)
 		{
-			return Task.FromResult<IEnumerable<IFileSource.IEntry>>(this.GetFiles(current, recursive));
+			return Task.FromResult<IEnumerable<IFileSource.IEntry>>(this.GetFiles(current, recursive, fileTypes));
 		}
 
-		public List<IFileSource.IEntry> GetFiles(IFileSource.IDirectory current, bool recursive)
+		public List<IFileSource.IEntry> GetFiles(IFileSource.IDirectory current, bool recursive, FileInfoBase[] fileTypes)
 		{
 			Directory? currentDir = current as Directory;
 

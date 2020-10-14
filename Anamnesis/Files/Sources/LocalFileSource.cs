@@ -5,6 +5,7 @@ namespace Anamnesis.Files
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel.Design;
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Files.Infos;
@@ -39,17 +40,17 @@ namespace Anamnesis.Files
 			return new Directory(defaultDir, this);
 		}
 
-		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, bool recursive)
+		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, bool recursive, FileInfoBase[] fileTypes)
 		{
 			if (recursive)
 			{
-				return Task.FromResult<IEnumerable<IFileSource.IEntry>>(this.GetFiles(current, true));
+				return Task.FromResult<IEnumerable<IFileSource.IEntry>>(this.GetFiles(current, true, fileTypes));
 			}
 			else
 			{
 				List<IFileSource.IEntry> results = new List<IFileSource.IEntry>();
 				results.AddRange(this.GetDirectories(current));
-				results.AddRange(this.GetFiles(current, false));
+				results.AddRange(this.GetFiles(current, false, fileTypes));
 				return Task.FromResult<IEnumerable<IFileSource.IEntry>>(results);
 			}
 		}
@@ -72,11 +73,14 @@ namespace Anamnesis.Files
 			return results;
 		}
 
-		public List<File> GetFiles(IFileSource.IDirectory current, bool recursive)
+		public List<File> GetFiles(IFileSource.IDirectory current, bool recursive, FileInfoBase[] fileTypes)
 		{
 			Directory? currentDir = current as Directory;
-
 			List<File> results = new List<File>();
+
+			HashSet<string> validExtensions = new HashSet<string>();
+			foreach (FileInfoBase info in fileTypes)
+				validExtensions.Add("." + info.Extension);
 
 			if (currentDir != null)
 			{
@@ -88,6 +92,10 @@ namespace Anamnesis.Files
 					try
 					{
 						string extension = Paths.GetExtension(filePath);
+
+						if (!validExtensions.Contains(extension))
+							continue;
+
 						FileInfoBase info = FileService.GetFileInfo(extension);
 
 						results.Add(new File(filePath, info, this));

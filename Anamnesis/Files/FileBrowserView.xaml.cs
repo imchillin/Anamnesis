@@ -296,7 +296,7 @@ namespace Anamnesis.GUI.Views
 			if (this.FileSource == null || this.CurrentDir == null)
 				return;
 
-			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.IsFlattened);
+			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.IsFlattened, this.fileInfos);
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
