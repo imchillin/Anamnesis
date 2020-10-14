@@ -74,13 +74,10 @@
 
 		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0">
 			<Grid Margin="3">
-				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal" IsEnabled="{Binding GPoseService.IsOverworld}">
-					<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
-					<cm3Controls:IconButton Grid.Column="1" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
-				</StackPanel>
-
 				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
-					<cm3Controls:IconButton Grid.Column="2" Icon="Save" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+					<cm3Controls:IconButton Grid.Column="1" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
+					<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
+					<cm3Controls:IconButton Grid.Column="2" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
 				</StackPanel>
 			</Grid>
 		</Border>
