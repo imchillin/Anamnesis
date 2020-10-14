@@ -45,6 +45,8 @@ namespace Anamnesis.GUI.Views
 			}
 
 			this.Languages = languages;
+
+			this.TransparancySlider.Value = this.Settings.Opacity;
 		}
 
 		public IEnumerable<Swatch> Swatches { get; }
@@ -92,6 +94,11 @@ namespace Anamnesis.GUI.Views
 				this.Settings.Language = value.Key;
 				LocalizationService.SetLocale(value.Key);
 			}
+		}
+
+		private void TransparancyPreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			this.Settings.Opacity = this.TransparancySlider.Value;
 		}
 
 		public class LanguageOption

@@ -35,7 +35,7 @@
 		</ComboBox>
 
 		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="1" Text="Window Opacity:" Style="{StaticResource Label}"/>
-		<cm3Controls:NumberBox Margin="6" Value="{Binding Settings.Opacity}" Slider="Absolute" Grid.Column="1" Grid.Row="1" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
+		<cm3Controls:NumberBox Margin="6" x:Name="TransparancySlider" PreviewMouseUp="TransparancyPreviewMouseUp" Slider="Absolute" Grid.Column="1" Grid.Row="1" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
 
 		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="2" Text="Stay Transparent:" Style="{StaticResource Label}"/>
 		<CheckBox Margin="6" IsChecked="{Binding Settings.StayTransparent}" Grid.Column="1" Grid.Row="2"/>
