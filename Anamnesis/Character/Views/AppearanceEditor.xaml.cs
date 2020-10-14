@@ -41,6 +41,7 @@ namespace Anamnesis.Character.Views
 		public bool HasMuscles { get; set; }
 		public bool CanAge { get; set; }
 		public ICharaMakeCustomize? Hair { get; set; }
+		public ICharaMakeCustomize? FacePaint { get; set; }
 		public IRace? Race { get; set; }
 		public ITribe? Tribe { get; set; }
 
@@ -68,6 +69,7 @@ namespace Anamnesis.Character.Views
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 
 			this.Hair = null;
+			this.FacePaint = null;
 
 			if (this.Appearance != null)
 				this.Appearance.PropertyChanged -= this.OnAppearancePropertyChanged;
@@ -93,7 +95,8 @@ namespace Anamnesis.Character.Views
 		{
 			if (e.PropertyName == nameof(AppearanceViewModel.Race) ||
 				e.PropertyName == nameof(AppearanceViewModel.Tribe) ||
-				e.PropertyName == nameof(AppearanceViewModel.Hair))
+				e.PropertyName == nameof(AppearanceViewModel.Hair) ||
+				e.PropertyName == nameof(AppearanceViewModel.FacePaint))
 			{
 				Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
 			}
@@ -142,7 +145,8 @@ namespace Anamnesis.Character.Views
 
 			if (this.Appearance.Tribe > 0)
 			{
-				this.Hair = GameDataService.CharacterMakeCustomize.GetHair(this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
+				this.Hair = GameDataService.CharacterMakeCustomize.GetFeature(Features.Hair, this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
+				this.FacePaint = GameDataService.CharacterMakeCustomize.GetFeature(Features.FacePaint, this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.FacePaint);
 			}
 		}
 
@@ -151,14 +155,27 @@ namespace Anamnesis.Character.Views
 			if (this.Appearance == null)
 				return;
 
-			HairSelectorDrawer selector = new HairSelectorDrawer(this.Appearance.Gender, this.Appearance.Tribe, this.Appearance.Hair);
-
+			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(Features.Hair, this.Appearance.Gender, this.Appearance.Tribe, this.Appearance.Hair);
 			selector.SelectionChanged += (v) =>
 			{
 				this.Appearance.Hair = v;
 			};
 
 			await ViewService.ShowDrawer(selector, "Hair");
+		}
+
+		private async void OnFacePaintClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Appearance == null)
+				return;
+
+			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(Features.FacePaint, this.Appearance.Gender, this.Appearance.Tribe, this.Appearance.FacePaint);
+			selector.SelectionChanged += (v) =>
+			{
+				this.Appearance.FacePaint = v;
+			};
+
+			await ViewService.ShowDrawer(selector, "Face Paint");
 		}
 
 		private void OnRaceChanged(object sender, SelectionChangedEventArgs e)

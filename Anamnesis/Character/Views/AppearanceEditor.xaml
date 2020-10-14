@@ -114,13 +114,22 @@
 
 				<!-- Face Paint  -->
 				<TextBlock Grid.Column="0" Grid.Row="6" Text="Face Paint:" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 2, 0, 2">
+
+				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 2, 2, 2">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<cm3Controls:NumberBox Grid.Column="0" Value="{Binding Appearance.FacePaint}" Minimum="0" Maximum="255" Buttons="True" Margin="0, 0, 12, 0"/>
+
+					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnFacePaintClicked">
+						<Border Width="30" Height="30" Margin="2">
+							<Image Source="{Binding FacePaint.Icon, Converter={StaticResource IImageConverter}}" Visibility="{Binding FacePaint, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+						</Border>
+					</Button>
+
+					<!--<cm3Controls:NumberBox Grid.Column="1" Value="{Binding Appearance.FacePaint}" Minimum="0" Maximum="255" Buttons="True" Margin="0, 0, 12, 0" HorizontalAlignment="Center"/>-->
+
 					<controls:ColorControl Grid.Column="1" Value="{Binding Appearance.FacePaintColor}" Type="FacePaint" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
 				</Grid>
 

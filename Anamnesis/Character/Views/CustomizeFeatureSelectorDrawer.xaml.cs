@@ -14,23 +14,25 @@ namespace Anamnesis.Character.Views
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
 	[SuppressPropertyChangedWarnings]
-	public partial class HairSelectorDrawer : UserControl, IDrawer
+	public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 	{
 		private readonly Appearance.Genders gender;
 		private readonly Appearance.Tribes tribe;
+		private readonly Features feature;
 
 		private byte selected;
 		private ICharaMakeCustomize? selectedItem;
 
-		public HairSelectorDrawer(Appearance.Genders gender, Appearance.Tribes tribe, byte value)
+		public CustomizeFeatureSelectorDrawer(Features feature, Appearance.Genders gender, Appearance.Tribes tribe, byte value)
 		{
 			this.InitializeComponent();
 
+			this.feature = feature;
 			this.gender = gender;
 			this.tribe = tribe;
 
 			this.ContentArea.DataContext = this;
-			this.List.ItemsSource = GameDataService.CharacterMakeCustomize?.GetHair(tribe, gender);
+			this.List.ItemsSource = GameDataService.CharacterMakeCustomize?.GetFeatureOptions(feature, tribe, gender);
 
 			this.Selected = value;
 		}
@@ -54,7 +56,7 @@ namespace Anamnesis.Character.Views
 				if (!this.IsLoaded)
 					return;
 
-				this.SelectedItem = GameDataService.CharacterMakeCustomize?.GetHair(this.tribe, this.gender, value);
+				this.SelectedItem = GameDataService.CharacterMakeCustomize?.GetFeature(this.feature, this.tribe, this.gender, value);
 				this.SelectionChanged?.Invoke(this.selected);
 			}
 		}
