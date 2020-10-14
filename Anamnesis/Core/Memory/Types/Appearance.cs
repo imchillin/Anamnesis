@@ -16,10 +16,7 @@ namespace Anamnesis.Memory
 		public Tribes Tribe;
 		public byte Head;
 		public byte Hair;
-
-		[MarshalAs(UnmanagedType.I1)]
-		public bool EnableHighlights;
-
+		public byte HighlightType;
 		public byte Skintone;
 		public byte REyeColor;
 		public byte HairTone;
@@ -156,7 +153,7 @@ namespace Anamnesis.Memory
 		[ModelField] public Appearance.Tribes Tribe { get; set; }
 		[ModelField] public byte Head { get; set; }
 		[ModelField] public byte Hair { get; set; }
-		[ModelField] public bool EnableHighlights { get; set; }
+		[ModelField] public byte HighlightType { get; set; }
 		[ModelField] public byte Skintone { get; set; }
 		[ModelField] public byte REyeColor { get; set; }
 		[ModelField] public byte HairTone { get; set; }
@@ -175,5 +172,11 @@ namespace Anamnesis.Memory
 		[ModelField] public byte Bust { get; set; }
 		[ModelField] public byte FacePaint { get; set; }
 		[ModelField] public byte FacePaintColor { get; set; }
+
+		public bool EnableHighlights
+		{
+			get => this.HighlightType != 0;
+			set => this.HighlightType = value ? (byte)128 : (byte)0;
+		}
 	}
 }
