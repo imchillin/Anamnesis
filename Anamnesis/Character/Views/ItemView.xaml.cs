@@ -162,12 +162,12 @@ namespace Anamnesis.Character.Views
 			{
 				if (this.ViewModel is ItemViewModel item)
 				{
-					this.Item = await ItemUtility.GetItemAsync(this.Slot, 0, item.Base, item.Variant);
+					this.SetItem(await ItemUtility.GetItemAsync(this.Slot, 0, item.Base, item.Variant));
 					this.Dye = GameDataService.Dyes.Get(item.Dye);
 				}
 				else if (this.ViewModel is WeaponViewModel weapon)
 				{
-					this.Item = await ItemUtility.GetItemAsync(this.Slot, weapon.Set, weapon.Base, weapon.Variant);
+					this.SetItem(await ItemUtility.GetItemAsync(this.Slot, weapon.Set, weapon.Base, weapon.Variant));
 					this.Dye = GameDataService.Dyes.Get(weapon.Dye);
 				}
 			});

@@ -6,6 +6,7 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:cm3="clr-namespace:Anamnesis.WpfStyles.Controls"
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:views="clr-namespace:Anamnesis.Character.Views"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450"
 			 d:DesignWidth="800"
@@ -22,6 +23,11 @@
 		</Grid.ColumnDefinitions>
 
 		<StackPanel Grid.Column="1">
+			
+			<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 0, 3, 3" CornerRadius="3">
+				<views:ModelTypeEditor DataContext="{Binding Target}"/>
+			</Border>
+			
 			<GroupBox Grid.Column="2" Style="{StaticResource PanelGroupBox}" Margin="0">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">

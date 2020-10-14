@@ -15,6 +15,26 @@
 			<Setter Property="IsSelected" Value="{Binding Selected}"/>
 			<Setter Property="BorderThickness" Value="0"/>
 			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ListBoxItem">
+						<Border
+							BorderThickness="{TemplateBinding Border.BorderThickness}"
+							Padding="{TemplateBinding Control.Padding}"
+							BorderBrush="{TemplateBinding Border.BorderBrush}"
+							Background="{TemplateBinding Panel.Background}"
+							SnapsToDevicePixels="True">
+							<ContentPresenter
+								Content="{TemplateBinding ContentControl.Content}"
+								ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
+								HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+								VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
+								SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+
 		</Style>
 	</UserControl.Resources>
 
@@ -27,12 +47,12 @@
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Grid Margin="1">
-						<Border Width="30" Height="29" Cursor="Hand">
-							<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}"/>
+					<Grid Margin="1" Cursor="Hand">
+						<Border>
+							<Image Width="32" Height="32" Source="{Binding Icon, Converter={StaticResource IImageConverter}}" Margin="2"/>
 						</Border>
 						<!--<TextBlock Text="{Binding Index}"/>-->
-						<Border Margin="-1" Visibility="{Binding Selected, Converter={StaticResource B2V}}" BorderThickness="2" CornerRadius="3" BorderBrush="{DynamicResource PrimaryHueMidBrush}"/>
+						<Border SnapsToDevicePixels="True" Visibility="{Binding Selected, Converter={StaticResource B2V}}" BorderThickness="1" CornerRadius="3" BorderBrush="{DynamicResource PrimaryHueMidBrush}"/>
 
 					</Grid>
 				</DataTemplate>

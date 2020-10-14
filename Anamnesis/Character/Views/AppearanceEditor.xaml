@@ -123,7 +123,7 @@
 
 
 					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnFacePaintClicked">
-						<Border Width="30" Height="30" Margin="2">
+						<Border Width="32" Height="32" Margin="2">
 							<Image Source="{Binding FacePaint.Icon, Converter={StaticResource IImageConverter}}" Visibility="{Binding FacePaint, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 						</Border>
 					</Button>
@@ -139,10 +139,14 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<cm3Controls:NumberBox Grid.Column="0" Value="{Binding Appearance.Mouth}" Minimum="0" Maximum="255" Buttons="True" Margin="0, 0, 12, 0"/>
-					<controls:ColorControl Grid.Column="1" Value="{Binding Appearance.LipsToneFurPattern}" Type="Lips" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
+					<cm3Controls:NumberBox Grid.Column="0" Value="{Binding Appearance.Lips}" Minimum="0" Maximum="4" Buttons="True" Margin="0, 0, 12, 0"/>
+					<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}"/>
+					<CheckBox Grid.Column="2" IsChecked="{Binding Appearance.EnableLipColor}"/>
+					<controls:ColorControl Grid.Column="3" Value="{Binding Appearance.LipsToneFurPattern}" Type="Lips" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
 				</Grid>
 
 				<!-- Hair -->
@@ -159,7 +163,7 @@
 
 
 					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked">
-						<Border Width="30" Height="30" Margin="2">
+						<Border Width="32" Height="32" Margin="2">
 							<Image Source="{Binding Hair.Icon, Converter={StaticResource IImageConverter}}" Visibility="{Binding Hair, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 						</Border>
 					</Button>

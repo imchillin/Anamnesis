@@ -7,6 +7,8 @@ namespace Anamnesis.Memory
 
 	public enum DataPaths : short
 	{
+		None = 0,
+
 		MidlanderMasculine = 101,
 		MidlanderChild = 104,
 		MidlanderFeminine = 201,
@@ -37,6 +39,8 @@ namespace Anamnesis.Memory
 		{
 			switch (self)
 			{
+				case DataPaths.None: return "Unknown";
+
 				case DataPaths.MidlanderMasculine: return "Hyur Midlander Masculine";
 				case DataPaths.MidlanderChild: return "Hyur Midlander Child";
 				case DataPaths.MidlanderFeminine: return "Hyur Midlander Feminine";
@@ -66,6 +70,9 @@ namespace Anamnesis.Memory
 
 		public static byte GetHead(this DataPaths self, Appearance.Tribes tribe)
 		{
+			if (self == DataPaths.None)
+				return 0;
+
 			if ((int)tribe % 2 != 0)
 			{
 				if (self == DataPaths.HighlanderMasculine || self == DataPaths.HighlanderFeminine)

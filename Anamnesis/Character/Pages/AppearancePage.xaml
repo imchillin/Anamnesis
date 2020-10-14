@@ -27,14 +27,6 @@
 		</Grid.RowDefinitions>
 
 		<Grid Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding GPoseService.IsOverworld}">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition/>
-			</Grid.RowDefinitions>
-
-			<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 0, 3, 3" CornerRadius="3" Grid.Row="0">
-				<views:ModelTypeEditor DataContext="{Binding Actor}"/>
-			</Border>
 
 			<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 3, 3, 0" CornerRadius="3, 3, 0, 0" Grid.Row="1">
 				<views:AppearanceEditor Margin="0, -3, 0, 0" DataContext="{Binding Actor}"/>

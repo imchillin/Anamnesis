@@ -178,5 +178,17 @@ namespace Anamnesis.Memory
 			get => this.HighlightType != 0;
 			set => this.HighlightType = value ? (byte)128 : (byte)0;
 		}
+
+		public byte Lips
+		{
+			get => (byte)(this.EnableLipColor ? this.Mouth - 128 : this.Mouth);
+			set => this.Mouth = (byte)(this.EnableLipColor ? value - 128 : value);
+		}
+
+		public bool EnableLipColor
+		{
+			get => this.Mouth >= 128;
+			set => this.Mouth = (byte)(this.Lips + (value ? 128 : 0));
+		}
 	}
 }
