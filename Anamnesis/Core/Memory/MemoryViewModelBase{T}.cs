@@ -34,6 +34,8 @@ namespace Anamnesis.Memory
 	public abstract class MemoryViewModelBase<T> : StructViewModelBase<T>, IMemoryViewModel
 		where T : struct
 	{
+		private Dictionary<string, (PropertyInfo, object?)> freezeValues = new Dictionary<string, (PropertyInfo, object?)>();
+
 		public MemoryViewModelBase(IntPtr pointer, IStructViewModel? parent = null)
 			: base(parent)
 		{
@@ -133,6 +135,30 @@ namespace Anamnesis.Memory
 			return true;
 		}
 
+		public void FreezeValue(string name, bool freeze)
+		{
+			if (freeze)
+			{
+				Type type = this.GetType();
+				PropertyInfo? field = type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+
+				if (field == null)
+					throw new Exception($"Unable to locate field to freeze with name: {name}");
+
+				object? val = field.GetValue(this);
+				this.freezeValues.Add(name, (field, val));
+			}
+			else
+			{
+				this.freezeValues.Remove(name);
+			}
+		}
+
+		public bool IsValueFrozen(string name)
+		{
+			return this.freezeValues.ContainsKey(name);
+		}
+
 		protected override void OnViewToModel(string fieldName, object? value)
 		{
 			if (this.Pointer != null)
@@ -143,10 +169,22 @@ namespace Anamnesis.Memory
 			{
 				base.OnViewToModel(fieldName, value);
 			}
+
+			if (this.freezeValues.ContainsKey(fieldName))
+			{
+				(PropertyInfo property, object? val) = this.freezeValues[fieldName];
+				val = value;
+				this.freezeValues[fieldName] = (property, val);
+			}
 		}
 
 		protected override void OnModelToView(string fieldName, object? value)
 		{
+			if (this.freezeValues.ContainsKey(fieldName))
+			{
+				(PropertyInfo property, object? val) = this.freezeValues[fieldName];
+				property.SetValue(this, val);
+			}
 		}
 
 		protected override bool HandleModelToViewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
