@@ -15,7 +15,7 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x240)] public IntPtr ExtendedAppearance;
 		[FieldOffset(0x26C)] public float Height;
 		[FieldOffset(0x2B0)] public float Wetness;
-		[FieldOffset(0x2BC)] public bool Drenched;
+		[FieldOffset(0x2BC)] public float Drenched;
 		[FieldOffset(0x938)] public short DataPath;
 		[FieldOffset(0x93C)] public byte DataHead;
 	}
@@ -34,6 +34,23 @@ namespace Anamnesis.Memory
 
 		[ModelField] public TransformViewModel? Transform { get; set; }
 		[ModelField] public SkeletonWrapperViewModel? Skeleton { get; set; }
+		[ModelField] public float Height { get; set; }
+		[ModelField] public float Wetness { get; set; }
+		[ModelField] public float Drenched { get; set; }
+		[ModelField] public short DataPath { get; set; }
+		[ModelField] public byte DataHead { get; set; }
 		[ModelField(0x28, 0x20)] public ExtendedAppearanceViewModel? ExtendedAppearance { get; set; }
+
+		public bool LockWetness
+		{
+			get => this.IsValueFrozen(nameof(ModelViewModel.Wetness));
+			set => this.FreezeValue(nameof(ModelViewModel.Wetness), value);
+		}
+
+		public bool ForceDrenched
+		{
+			get => this.IsValueFrozen(nameof(ModelViewModel.Drenched));
+			set => this.FreezeValue(nameof(ModelViewModel.Drenched), value, value ? 5 : 0);
+		}
 	}
 }

@@ -135,7 +135,7 @@ namespace Anamnesis.Memory
 			return true;
 		}
 
-		public void FreezeValue(string name, bool freeze)
+		public void FreezeValue(string name, bool freeze, object? value = null)
 		{
 			if (freeze)
 			{
@@ -145,8 +145,16 @@ namespace Anamnesis.Memory
 				if (field == null)
 					throw new Exception($"Unable to locate field to freeze with name: {name}");
 
-				object? val = field.GetValue(this);
-				this.freezeValues.Add(name, (field, val));
+				if (value == null)
+				{
+					value = field.GetValue(this);
+				}
+				else
+				{
+					field.SetValue(this, value);
+				}
+
+				this.freezeValues.Add(name, (field, value));
 			}
 			else
 			{
