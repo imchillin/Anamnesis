@@ -17,7 +17,7 @@
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
-			<ColumnDefinition Width="200"/>
+			<ColumnDefinition Width="230"/>
 			<ColumnDefinition Width="200"/>
 		</Grid.ColumnDefinitions>
 
@@ -37,6 +37,7 @@
 					</Grid.ColumnDefinitions>
 
 					<Grid.RowDefinitions>
+						<RowDefinition/>
 						<RowDefinition/>
 						<RowDefinition/>
 						<RowDefinition/>
@@ -71,6 +72,34 @@
 					<!-- Drenched -->
 					<TextBlock Grid.Row="2" Text="Drenched:" Style="{StaticResource Label}"/>
 					<ToggleButton Grid.Row="2" Grid.Column="1" IsChecked="{Binding Target.ModelObject.ForceDrenched}"/>
+					
+					<!-- Data Path -->
+					<TextBlock Grid.Row="3" Text="Data Path:" Style="{StaticResource Label}"/>
+					<ComboBox Grid.Row="3" Grid.Column="1" SelectedValuePath="Tag" SelectedValue="{Binding Target.ModelObject.DataPathAndHead}">
+						<ComboBoxItem Visibility="Collapsed" Content="None" Tag="0"/>
+						<ComboBoxItem Tag="101" Content="Hyur Midlander Masculine"/>
+						<ComboBoxItem Tag="104" Content="Hyur Midlander Child"/>
+						<ComboBoxItem Tag="201" Content="Hyur Midlander Feminine"/>
+						<ComboBoxItem Tag="301" Content="Hyur Highlander Masculine"/>
+						<ComboBoxItem Tag="401" Content="Hyur Highlander Feminine"/>
+						<ComboBoxItem Tag="501" Content="Elezen Masculine"/>
+						<ComboBoxItem Tag="504" Content="Elezen Masculine Child"/>
+						<ComboBoxItem Tag="601" Content="Elezen Feminine"/>
+						<ComboBoxItem Tag="604" Content="Elezen Feminine Child"/>
+						<ComboBoxItem Tag="701" Content="Miqo'te Masculine"/>
+						<ComboBoxItem Tag="801" Content="Miqo'te Feminine"/>
+						<ComboBoxItem Tag="804" Content="Miqo'te Feminine Child"/>
+						<ComboBoxItem Tag="901" Content="Roegadyn Masculine"/>
+						<ComboBoxItem Tag="1001" Content="Roegadyn Feminine"/>
+						<ComboBoxItem Tag="1101" Content="Lalafell Masculine"/>
+						<ComboBoxItem Tag="1201" Content="Lalafell Feminine"/>
+						<ComboBoxItem Tag="1301" Content="Au Ra Masculine"/>
+						<ComboBoxItem Tag="1401" Content="Au Ra Feminine"/>
+						<ComboBoxItem Tag="1501" Content="Hrothgar"/>
+						<ComboBoxItem Tag="1801" Content="Viera"/>
+						<ComboBoxItem Tag="9104" Content="Padjal Masculine"/>
+						<ComboBoxItem Tag="9204" Content="Padjal Feminine"/>
+					</ComboBox>
 
 				</Grid>
 			</GroupBox>
