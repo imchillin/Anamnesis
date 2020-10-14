@@ -28,6 +28,8 @@ namespace Anamnesis.Character.Views
 	{
 		public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
 
+		private bool lockViewModel = false;
+
 		public ItemView()
 		{
 			this.InitializeComponent();
@@ -58,32 +60,7 @@ namespace Anamnesis.Character.Views
 			set
 			{
 				IItem? item = GameDataService.Items?.Get((int)value);
-				this.Item = item;
-
-				ushort modelSet = 0;
-				ushort modelBase = 0;
-				ushort modelVariant = 0;
-
-				if (item != null)
-				{
-					bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
-
-					modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
-					modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
-					modelVariant = useSubModel ? (byte)item.SubModelVariant : (byte)item.ModelVariant;
-				}
-
-				if (this.ViewModel is ItemViewModel itemView)
-				{
-					itemView.Base = modelBase;
-					itemView.Variant = (byte)modelVariant;
-				}
-				else if (this.ViewModel is WeaponViewModel weaponView)
-				{
-					weaponView.Set = modelSet;
-					weaponView.Base = modelBase;
-					weaponView.Variant = modelVariant;
-				}
+				this.SetItem(item);
 			}
 		}
 
@@ -103,7 +80,40 @@ namespace Anamnesis.Character.Views
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
 			EquipmentSelector selector = new EquipmentSelector(this.Slot);
-			SelectorDrawer.Show<IItem>("Select " + this.SlotName, selector, this.Item, (v) => { this.ItemKey = v.Key; });
+			SelectorDrawer.Show("Select " + this.SlotName, selector, this.Item, this.SetItem);
+		}
+
+		private void SetItem(IItem? item)
+		{
+			this.lockViewModel = true;
+
+			ushort modelSet = 0;
+			ushort modelBase = 0;
+			ushort modelVariant = 0;
+
+			if (item != null)
+			{
+				bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
+
+				modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
+				modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
+				modelVariant = useSubModel ? (byte)item.SubModelVariant : (byte)item.ModelVariant;
+			}
+
+			if (this.ViewModel is ItemViewModel itemView)
+			{
+				itemView.Base = modelBase;
+				itemView.Variant = (byte)modelVariant;
+			}
+			else if (this.ViewModel is WeaponViewModel weaponView)
+			{
+				weaponView.Set = modelSet;
+				weaponView.Base = modelBase;
+				weaponView.Variant = modelVariant;
+			}
+
+			this.Item = item;
+			this.lockViewModel = false;
 		}
 
 		private void OnDyeClick(object sender, RoutedEventArgs e)
@@ -142,6 +152,9 @@ namespace Anamnesis.Character.Views
 
 		private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs? e)
 		{
+			if (this.lockViewModel)
+				return;
+
 			if (this.ViewModel == null || !this.ViewModel.Enabled || GameDataService.Dyes == null)
 				return;
 
