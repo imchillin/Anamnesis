@@ -28,6 +28,7 @@
 			Minimum="{Binding SliderMinimum}"
 			Maximum="{Binding SliderMaximum}"
 			TickFrequency="{Binding TickFrequency}"
+			IsSnapToTickEnabled="True"
 			Focusable="False"
 			VerticalAlignment="Center"
 			PreviewMouseMove="OnSliderMouseMove"
