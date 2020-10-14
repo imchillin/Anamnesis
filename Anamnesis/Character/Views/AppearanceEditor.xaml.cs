@@ -23,6 +23,8 @@ namespace Anamnesis.Character.Views
 	[SuppressPropertyChangedWarnings]
 	public partial class AppearanceEditor : UserControl
 	{
+		private bool appearanceLocked = false;
+
 		public AppearanceEditor()
 		{
 			this.InitializeComponent();
@@ -93,6 +95,9 @@ namespace Anamnesis.Character.Views
 
 		private void OnAppearancePropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			if (this.appearanceLocked)
+				return;
+
 			if (e.PropertyName == nameof(AppearanceViewModel.Race) ||
 				e.PropertyName == nameof(AppearanceViewModel.Tribe) ||
 				e.PropertyName == nameof(AppearanceViewModel.Hair) ||
@@ -194,6 +199,8 @@ namespace Anamnesis.Character.Views
 			if (this.Race == race)
 				return;
 
+			this.appearanceLocked = true;
+
 			this.Race = race;
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
@@ -204,6 +211,8 @@ namespace Anamnesis.Character.Views
 			this.Appearance.Tribe = this.Tribe.Tribe;
 
 			this.UpdateRaceAndTribe();
+
+			this.appearanceLocked = false;
 		}
 
 		private void OnTribeChanged(object sender, SelectionChangedEventArgs e)
