@@ -7,6 +7,7 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:cm3="clr-namespace:Anamnesis.WpfStyles.Controls"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 
@@ -15,6 +16,7 @@
 			<ColumnDefinition/>
 			<ColumnDefinition Width="256"/>
 			<ColumnDefinition Width="256"/>
+			<ColumnDefinition Width="200"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
@@ -23,12 +25,9 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Grid.Column="2">
-			<GroupBox Style="{StaticResource PanelGroupBox}" Margin="0">
+			<GroupBox Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
-					<StackPanel Orientation="Horizontal">
-						<fa:IconBlock Icon="Globe" Margin="2, 2, 6, 0"/>
-						<TextBlock Text="World"/>
-					</StackPanel>
+					<ana:Header Icon="Globe" Text="World"/>
 				</GroupBox.Header>
 
 				<Grid Margin="6">
@@ -47,7 +46,7 @@
 
 					<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding TerritoryService.CurrentTerritoryName}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 0, 3, 6"/>
 
-					
+
 					<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
 
 						<Grid.ColumnDefinitions>
@@ -81,9 +80,6 @@
 						<cm3:NumberBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
 					</Grid>
 
-
-				
-
 					<TextBlock Grid.Row="3" Text="Weather:" Style="{StaticResource Label}"/>
 					<ComboBox Grid.Row="3" Grid.Column="1" SelectedItem="{Binding TerritoryService.CurrentWeather}" ItemsSource="{Binding TerritoryService.CurrentTerritory.Weathers}">
 						<ComboBox.ItemTemplate>
@@ -105,12 +101,9 @@
 				</Grid>
 			</GroupBox>
 
-			<GroupBox Style="{StaticResource PanelGroupBox}" Margin="0" IsEnabled="{Binding GposeService.IsGpose}">
+			<GroupBox Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding GposeService.IsGpose}">
 				<GroupBox.Header>
-					<StackPanel Orientation="Horizontal">
-						<fa:IconBlock Icon="Camera" Margin="2, 2, 6, 0"/>
-						<TextBlock Text="Camera"/>
-					</StackPanel>
+					<ana:Header Icon="Camera" Text="Camera"/>
 				</GroupBox.Header>
 
 				<Grid Margin="6">
@@ -200,7 +193,27 @@
 
 		</StackPanel>
 
-		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" Margin="0, 2, 0, 0">
+		<GroupBox Grid.Column="3" Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+			<GroupBox.Header>
+				<ana:Header Icon="Cube" Text="Transform"/>
+			</GroupBox.Header>
+
+			<StackPanel>
+				<GroupBox Header="Rotation">
+					<cm3:QuaternionEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Rotation}"/>
+				</GroupBox>
+
+				<GroupBox Header="Position">
+					<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Position}" Minimum="-4096" Maximum="4096" Sliders="Relative" Expanded="True"/>
+				</GroupBox>
+
+				<GroupBox Header="Scale">
+					<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Scale}" Minimum="0.1" Maximum="50" Expanded="True" TickFrequency="0.1"/>
+				</GroupBox>
+			</StackPanel>
+		</GroupBox>
+
+		<Border Grid.Row="1" Grid.ColumnSpan="4" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="0, 0, 0, 3" Margin="0, 2, 0, 0">
 			<Grid Margin="3">
 				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal" IsEnabled="{Binding GPoseService.IsOverworld}">
 					<cm3:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
@@ -209,7 +222,7 @@
 			</Grid>
 		</Border>
 
-		<Grid Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="128">
+		<Grid Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="128">
 			<Image Source="/Assets/cmtool.png" Opacity="0.65" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="Helpful Ascian friend"/>
 
 			<Grid Height="32" VerticalAlignment="Bottom" Margin="128, 5, 5, 5">

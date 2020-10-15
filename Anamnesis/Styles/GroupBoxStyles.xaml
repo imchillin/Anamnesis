@@ -65,6 +65,10 @@
 	</Style>
 
 	<Style x:Key="PanelGroupBox" TargetType="{x:Type GroupBox}" BasedOn="{StaticResource Cm3GroupBox}">
+
+		<Setter Property="Padding" Value="3"/>
+		<Setter Property="Margin" Value="0"/>
+
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type GroupBox}">

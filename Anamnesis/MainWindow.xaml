@@ -55,14 +55,22 @@
 									<ColumnDefinition/>
 								</Grid.ColumnDefinitions>
 
-								<Grid Grid.Column="0" Margin="0">
+								<Grid Grid.Column="0">
 
-									<StackPanel Orientation="Vertical" Width="48">
-										<Button Click="OnAddActorClicked" Height="22" Margin="2, 2, 2, 12" Style="{DynamicResource MaterialDesignOutlinedButton}">
+									<Grid Width="47">
+
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto"/>
+											<RowDefinition Height="Auto"/>
+											<RowDefinition/>
+											<RowDefinition Height="Auto"/>
+										</Grid.RowDefinitions>
+										
+										<Button Grid.Row="0" Click="OnAddActorClicked" Height="22" Margin="2, 2, 2, 12" Style="{DynamicResource MaterialDesignOutlinedButton}">
 											<fa:IconBlock Icon="Plus" FontSize="12"/>
 										</Button>
 
-										<ItemsControl ItemsSource="{Binding TargetService.PinnedActors}">
+										<ItemsControl Grid.Row="1" ItemsSource="{Binding TargetService.PinnedActors}">
 											<ItemsControl.ItemTemplate>
 												<DataTemplate>
 													<Grid Margin="0, 3">
@@ -106,12 +114,22 @@
 											</ItemsControl.ItemTemplate>
 										</ItemsControl>
 
-										<StackPanel Orientation="Vertical" HorizontalAlignment="Left" IsItemsHost="true" Margin="3, 12, 0, 0"/>
-									</StackPanel>
+										<StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Left" IsItemsHost="true" Margin="3, 12, 0, 0"/>
+
+										<StackPanel Grid.Row="3">
+											<Button Height="32" Click="OnAboutClick" BorderThickness="0" ToolTip="About" Margin="2" Style="{StaticResource TransparentButton}">
+												<fa:IconBlock Icon="Info" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
+											</Button>
+
+											<Button Height="32" Click="OnSettingsClick" BorderThickness="0" ToolTip="Settings" Margin="2" Style="{StaticResource TransparentButton}">
+												<fa:IconBlock Icon="Cog" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
+											</Button>
+										</StackPanel>
+									</Grid>
 								</Grid>
 
-								<Border Grid.Column="1" Background="{DynamicResource MaterialDesignPaper}" CornerRadius="3" Margin="0">
-									<ContentPresenter ContentSource="SelectedContent" Margin="0, 28, 0, 0" />
+								<Border Grid.Column="1" Background="{DynamicResource MaterialDesignPaper}" CornerRadius="3" Margin="-1, 0, 0, 0">
+									<ContentPresenter ContentSource="SelectedContent" Margin="0, 22, 0, 0" />
 								</Border>
 							</Grid>
 						</ControlTemplate>
@@ -127,14 +145,7 @@
 
 					<TabItem IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 						<TabItem.Header>
-							<fa:IconImage Icon="UserEdit" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Actor"/>
-						</TabItem.Header>
-
-						<views:HomeView DataContext="{Binding TargetService.SelectedActor}"/>
-					</TabItem>
-					<TabItem IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
-						<TabItem.Header>
-							<fa:IconImage Icon="ConciergeBell" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Appearance"/>
+							<fa:IconImage Icon="UserEdit" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Character"/>
 						</TabItem.Header>
 
 						<characterPages:AppearancePage DataContext="{Binding TargetService.SelectedActor}"/>
@@ -149,15 +160,16 @@
 				</TabControl>
 			</Grid>
 
-			<Grid Margin="0, 32, 0, 0" Visibility="{Binding TargetService.SelectedActor, Converter={StaticResource NullToVisibilityConverter}}">
+			<!--<Grid Margin="48, 22, 1, 1" Visibility="{Binding TargetService.SelectedActor, Converter={StaticResource NullToVisibilityConverter}}">
+				<Rectangle Fill="{DynamicResource MaterialDesignPaper}" Opacity="0.9"/>
 				<TextBlock Text="To get started, add an actor." Style="{StaticResource Label}" HorizontalAlignment="Center"/>
-			</Grid>
+			</Grid>-->
 
 			<!-- TitleBar -->
 			<Border Background="Transparent" 
 					CornerRadius="2, 2, 0, 0"
 					Grid.ColumnSpan="2"
-					Height="28"
+					Height="26"
 					VerticalAlignment="Top"
 					MouseDown="OnTitleBarMouseDown"
 					Margin="44, 0, 0, 0">
@@ -173,15 +185,6 @@
 					</StackPanel>
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-
-						<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnSettingsClick" BorderThickness="0" ToolTip="Settings">
-							<fa:IconBlock Icon="Cog" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
-						</Button>
-
-						<Button Margin="3,0,30,0" Width="28" Height="28" Padding="8" Background="Transparent" Click="OnAboutClick" BorderThickness="0" ToolTip="About">
-							<fa:IconBlock Icon="Info" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
-						</Button>
-
 						<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}"
 									  ToolTip="Always on top"
 									  x:Name="AlwaysOnTopToggle"
@@ -209,11 +212,11 @@
 
 						</ToggleButton>
 
-						<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnMinimiseClick">
+						<Button Margin="3, 3, 1, 3" Width="28" BorderThickness="0" Click="OnMinimiseClick" Style="{StaticResource TransparentButton}">
 							<fa:IconBlock Icon="WindowMinimize" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</Button>
 
-						<Button Margin="3,0,3,0" Width="28" Height="28" Padding="8" Background="Transparent" BorderThickness="0" Click="OnCloseClick">
+						<Button Margin="1, 3, 4, 3" Width="28" BorderThickness="0" Click="OnCloseClick" Style="{StaticResource TransparentButton}">
 							<fa:IconBlock Icon="Times" Opacity="0.5" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
 						</Button>
 

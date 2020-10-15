@@ -11,7 +11,6 @@
 	
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
@@ -21,12 +20,10 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<TextBlock Grid.Row="0" Grid.Column="0" Text="Model:" Style="{StaticResource Label}"/>
-		
-		<cm3Controls:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding ModelType}" Minimum="0" Maximum="10000" Buttons="True"/>
-		<Button Click="OnBrowseClicked" Style="{StaticResource TransparentButton}" Content="..." Grid.Column="2" Width="22" HorizontalContentAlignment="Center" Margin="8, 1, 0, 1"/>
+		<cm3Controls:NumberBox Grid.Column="0" Value="{Binding ModelType}" Minimum="0" Maximum="10000" Buttons="True"/>
+		<Button Click="OnBrowseClicked" Style="{StaticResource TransparentButton}" Content="..." Grid.Column="1" Width="22" HorizontalContentAlignment="Center" Margin="8, 1, 0, 1"/>
 
-		<TextBlock Margin="3, 0, 0, 0" x:Name="ModelName" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" FontSize="10"/>
+		<TextBlock Margin="3, 0, 0, 0" x:Name="ModelName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" FontSize="10"/>
 
 	</Grid>
 </UserControl>

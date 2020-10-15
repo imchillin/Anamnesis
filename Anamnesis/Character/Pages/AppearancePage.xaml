@@ -6,14 +6,15 @@
 			 xmlns:local="clr-namespace:Anamnesis.Character.Pages"
 			 xmlns:views="clr-namespace:Anamnesis.Character.Views"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls"
+			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls" xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
 			 Loaded="OnLoaded"
 			 DataContextChanged="OnDataContextChanged">
 	
-	<Grid Margin="3, 0, 0, 0" x:Name="ContentArea">
+	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="256"/>
@@ -28,27 +29,149 @@
 
 		<Grid Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding GPoseService.IsOverworld}">
 
-			<Border Background="{DynamicResource MaterialDesignCardBackground}" Padding="3" Margin="0, 3, 3, 0" CornerRadius="3, 3, 0, 0" Grid.Row="1">
-				<views:AppearanceEditor Margin="0, -3, 0, 0" DataContext="{Binding Actor}"/>
-			</Border>
+			<GroupBox Style="{StaticResource PanelGroupBox}">
+				<GroupBox.Header>
+					<ana:Header Icon="ConciergeBell" Text="Appearance"/>
+				</GroupBox.Header>
+				
+				<views:AppearanceEditor DataContext="{Binding Actor}"/>
+			</GroupBox>
 
 		</Grid>
 
-		<Border Grid.Column="1" IsEnabled="{Binding GPoseService.IsOverworld}" Grid.Row="0">
-			<views:EquipmentEditor DataContext="{Binding Actor}"/>
-		</Border>
-
-		<GroupBox Grid.Column="2" Style="{StaticResource PanelGroupBox}" Margin="0, 0, -3, 0">
+		<GroupBox Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding GPoseService.IsOverworld}" Grid.Column="1" Grid.Row="0">
 			<GroupBox.Header>
-				<StackPanel Orientation="Horizontal">
-					<fa:IconBlock Icon="UserCog" Margin="2, 2, 6, 0"/>
-					<TextBlock Text="Extended Appearance"/>
-				</StackPanel>
+				<ana:Header Icon="ChessQueen" Text="Equipment"/>
 			</GroupBox.Header>
 
-			<views:ExtendedAppearanceEditor DataContext="{Binding Actor}" Margin="0, 6, 0, 0"/>
-
+			<views:EquipmentEditor DataContext="{Binding Actor}"/>
 		</GroupBox>
+
+		<Grid Grid.Column="2">
+
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+		
+			<StackPanel>
+
+				<GroupBox Style="{StaticResource PanelGroupBox}">
+					<GroupBox.Header>
+						<ana:Header Icon="Horse" Text="Model Type"/>
+					</GroupBox.Header>
+
+					<views:ModelTypeEditor DataContext="{Binding Actor}"/>
+	
+				</GroupBox>
+
+				<GroupBox Style="{StaticResource PanelGroupBox}">
+					<GroupBox.Header>
+						<ana:Header Icon="GraduationCap" Text="Parameters"/>
+					</GroupBox.Header>
+
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<!-- Height -->
+						<TextBlock Text="Height:" Style="{StaticResource Label}"/>
+						<cm3Controls:NumberBox Grid.Column="1" Slider="Absolute" Minimum="0.1" Maximum="2" Value="{Binding Actor.ModelObject.Height}" TickFrequency="0.01"/>
+
+						<!-- Wetness -->
+						<TextBlock Grid.Row="1" Grid.Column="0" Text="Wetness:" Style="{StaticResource Label}"/>
+						<Grid Grid.Row="1" Grid.Column="1">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<ToggleButton Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" 
+										Height="22" Width="22" Padding="0" Margin="0, 3, 6, 0"
+										VerticalAlignment="Center" IsChecked="{Binding Actor.ModelObject.LockWetness}">
+								<ToggleButton.Content>
+									<fa:IconBlock Icon="LockOpen" FontSize="12"/>
+								</ToggleButton.Content>
+								<materialdesign:ToggleButtonAssist.OnContent>
+									<fa:IconBlock Icon="Lock" FontSize="12"/>
+								</materialdesign:ToggleButtonAssist.OnContent>
+							</ToggleButton>
+
+							<cm3Controls:NumberBox Grid.Column="1" Slider="Absolute" Minimum="0" Maximum="1" Value="{Binding Actor.ModelObject.Wetness}" TickFrequency="0.01"/>
+						</Grid>
+
+						<!-- Drenched -->
+						<TextBlock Grid.Row="2" Text="Drenched:" Style="{StaticResource Label}"/>
+						<ToggleButton Grid.Row="2" Grid.Column="1" IsChecked="{Binding Actor.ModelObject.ForceDrenched}" HorizontalAlignment="Left" Margin="3"/>
+
+						<!-- Data Path -->
+						<TextBlock Grid.Row="3" Text="Data Path:" Style="{StaticResource Label}"/>
+						<ComboBox Grid.Row="3" Grid.Column="1" SelectedValuePath="Tag" SelectedValue="{Binding Actor.ModelObject.DataPathAndHead}">
+							<ComboBoxItem Visibility="Collapsed" Content="None" Tag="0"/>
+							<ComboBoxItem Tag="101" Content="Hyur Midlander Masculine"/>
+							<ComboBoxItem Tag="104" Content="Hyur Midlander Child"/>
+							<ComboBoxItem Tag="201" Content="Hyur Midlander Feminine"/>
+							<ComboBoxItem Tag="301" Content="Hyur Highlander Masculine"/>
+							<ComboBoxItem Tag="401" Content="Hyur Highlander Feminine"/>
+							<ComboBoxItem Tag="501" Content="Elezen Masculine"/>
+							<ComboBoxItem Tag="504" Content="Elezen Masculine Child"/>
+							<ComboBoxItem Tag="601" Content="Elezen Feminine"/>
+							<ComboBoxItem Tag="604" Content="Elezen Feminine Child"/>
+							<ComboBoxItem Tag="701" Content="Miqo'te Masculine"/>
+							<ComboBoxItem Tag="801" Content="Miqo'te Feminine"/>
+							<ComboBoxItem Tag="804" Content="Miqo'te Feminine Child"/>
+							<ComboBoxItem Tag="901" Content="Roegadyn Masculine"/>
+							<ComboBoxItem Tag="1001" Content="Roegadyn Feminine"/>
+							<ComboBoxItem Tag="1101" Content="Lalafell Masculine"/>
+							<ComboBoxItem Tag="1201" Content="Lalafell Feminine"/>
+							<ComboBoxItem Tag="1301" Content="Au Ra Masculine"/>
+							<ComboBoxItem Tag="1401" Content="Au Ra Feminine"/>
+							<ComboBoxItem Tag="1501" Content="Hrothgar"/>
+							<ComboBoxItem Tag="1801" Content="Viera"/>
+							<ComboBoxItem Tag="9104" Content="Padjal Masculine"/>
+							<ComboBoxItem Tag="9204" Content="Padjal Feminine"/>
+						</ComboBox>
+
+					</Grid>
+				</GroupBox>
+
+				<GroupBox Style="{StaticResource PanelGroupBox}">
+					<GroupBox.Header>
+						<ana:Header Icon="UserCog" Text="Extended Appearance"/>
+					</GroupBox.Header>
+
+					<views:ExtendedAppearanceEditor DataContext="{Binding Actor}"/>
+
+				</GroupBox>
+			</StackPanel>
+
+			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="4">
+				<Grid Margin="3">
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+
+					<cm3Controls:IconButton Grid.Row="0" Grid.ColumnSpan="2" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
+					<cm3Controls:IconButton Grid.Row="1" Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
+					<cm3Controls:IconButton Grid.Row="1" Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+				</Grid>
+			</Border>
+		</Grid>
 
 		<Grid Grid.Column="0" 
 			  Grid.ColumnSpan="2" 
@@ -64,14 +187,5 @@
 			</StackPanel>
 		</Grid>
 
-		<Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 2, 0, 0">
-			<Grid Margin="3">
-				<StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
-					<cm3Controls:IconButton Grid.Column="1" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
-					<cm3Controls:IconButton Grid.Column="1" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
-					<cm3Controls:IconButton Grid.Column="2" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
-				</StackPanel>
-			</Grid>
-		</Border>
 	</Grid>
 </UserControl>

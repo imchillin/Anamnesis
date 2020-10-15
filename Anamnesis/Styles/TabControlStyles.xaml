@@ -17,7 +17,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="TabItem">
-					<Grid Margin="1, 1, 0, 3">
+					<Grid Margin="1, 1, 0, 3" Cursor="Hand">
 						<Border x:Name="Panel" Background="{DynamicResource MaterialDesignPaper}" CornerRadius="3,0,0,3"/>
 						<ContentPresenter x:Name="ContentSite" VerticalAlignment="Center" HorizontalAlignment="Center" ContentSource="Header" Margin="6"/>
 					</Grid>

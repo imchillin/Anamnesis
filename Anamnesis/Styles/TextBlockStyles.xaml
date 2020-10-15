@@ -22,5 +22,14 @@
 		<Setter Property="VerticalAlignment" Value="Center"/>
 		<Setter Property="Margin" Value="3,0,6,0"/>
 	</Style>
-	
+
+	<Style TargetType="TextBlock" x:Key="Header">
+		<Setter Property="FontWeight" Value="Normal"/>
+		<Setter Property="FontSize" Value="11"/>
+		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignShadowBrush}"/>
+		<Setter Property="HorizontalAlignment" Value="Left"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="0"/>
+	</Style>
+
 </ResourceDictionary>

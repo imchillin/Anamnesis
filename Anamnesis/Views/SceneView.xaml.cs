@@ -8,6 +8,7 @@ namespace Anamnesis.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Files;
+	using Anamnesis.Memory;
 	using Anamnesis.Scenes;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -29,6 +30,7 @@ namespace Anamnesis.Views
 			this.ContentArea.DataContext = this;
 		}
 
+		public TargetService TargetService => TargetService.Instance;
 		public GposeService GposeService => GposeService.Instance;
 		public TerritoryService TerritoryService => TerritoryService.Instance;
 		public TimeService TimeService => TimeService.Instance;

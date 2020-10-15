@@ -5,6 +5,7 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Runtime.InteropServices;
+	using PropertyChanged;
 
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Model
@@ -53,6 +54,7 @@ namespace Anamnesis.Memory
 			set => this.FreezeValue(nameof(ModelViewModel.Drenched), value, value ? 5 : 0);
 		}
 
+		[AlsoNotifyFor(nameof(ModelViewModel.DataPath))]
 		public DataPaths DataPathAndHead
 		{
 			get
