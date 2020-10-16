@@ -16,7 +16,7 @@
 			<ColumnDefinition/>
 			<ColumnDefinition Width="256"/>
 			<ColumnDefinition Width="256"/>
-			<ColumnDefinition Width="200"/>
+			<ColumnDefinition Width="256"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
@@ -208,7 +208,7 @@
 				</GroupBox>
 
 				<GroupBox Header="Scale">
-					<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Scale}" Minimum="0.1" Maximum="50" Expanded="True" TickFrequency="0.1"/>
+					<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Scale}" Minimum="0.1" Maximum="50" Expanded="True" TickFrequency="0.1" CanLink="True"/>
 				</GroupBox>
 			</StackPanel>
 		</GroupBox>
