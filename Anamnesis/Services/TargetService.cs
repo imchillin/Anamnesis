@@ -220,15 +220,9 @@ namespace Anamnesis
 				this.Model = actor;
 				this.Pointer = pointer;
 				this.IsValid = true;
-
 				this.Initials = string.Empty;
-				string[] names = actor.Name.Split(' ');
-				foreach (string name in names)
-				{
-					this.Initials += name[0] + ".";
-				}
 
-				this.Initials = this.Initials.Trim('.');
+				this.UpdateInitials(actor.Name);
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;
@@ -306,6 +300,9 @@ namespace Anamnesis
 
 			private void Retarget()
 			{
+				if (this.viewModel != null)
+					this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+
 				this.viewModel = null;
 
 				List<ActorTableActor> actors = TargetService.GetActors();
@@ -324,10 +321,39 @@ namespace Anamnesis
 						this.Pointer = actor.Pointer;
 						this.Model = actor.Model;
 						this.viewModel = vm;
+						this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
 					}
 				}
 
 				this.IsValid = this.viewModel != null;
+			}
+
+			private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+			{
+				if (this.viewModel != null && e.PropertyName == nameof(ActorViewModel.DisplayName))
+				{
+					this.UpdateInitials(this.viewModel.DisplayName);
+				}
+			}
+
+			private void UpdateInitials(string name)
+			{
+				if (name.Length <= 4)
+				{
+					this.Initials = name;
+				}
+				else
+				{
+					this.Initials = string.Empty;
+
+					string[] parts = name.Split(' ');
+					foreach (string part in parts)
+					{
+						this.Initials += part[0] + ".";
+					}
+
+					this.Initials = this.Initials.Trim('.');
+				}
 			}
 		}
 	}

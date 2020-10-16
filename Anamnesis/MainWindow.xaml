@@ -180,6 +180,9 @@
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 
 						<TextBlock Text="Anamnesis" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
+
+						<TextBlock Text="{Binding TargetService.SelectedActor.DisplayName}" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
+
 						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Sync" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Hourglass" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 

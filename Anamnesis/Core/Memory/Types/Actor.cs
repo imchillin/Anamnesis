@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Reflection;
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
@@ -45,6 +46,8 @@ namespace Anamnesis.Memory
 	{
 		private const short RefreshDelay = 250;
 
+		private static Dictionary<string, string> nicknameLookup = new Dictionary<string, string>();
+
 		private short refreshDelay;
 		private Task? refreshTask;
 
@@ -74,6 +77,50 @@ namespace Anamnesis.Memory
 		public bool AutomaticRefreshEnabled { get; set; } = true;
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
+
+		[AlsoNotifyFor(nameof(ActorViewModel.DisplayName))]
+		public string? Nickname
+		{
+			get
+			{
+				if (nicknameLookup.ContainsKey(this.Name))
+					return nicknameLookup[this.Name];
+
+				return null;
+			}
+
+			set
+			{
+				if (value == null)
+				{
+					if (nicknameLookup.ContainsKey(this.Name))
+					{
+						nicknameLookup.Remove(this.Name);
+					}
+				}
+				else
+				{
+					if (!nicknameLookup.ContainsKey(this.Name))
+						nicknameLookup.Add(this.Name, string.Empty);
+
+					nicknameLookup[this.Name] = value;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the Nickname or if not set, the Name.
+		/// </summary>
+		public string DisplayName
+		{
+			get
+			{
+				if (this.Nickname == null)
+					return this.Name;
+
+				return this.Nickname;
+			}
+		}
 
 		public bool IsCustomizable()
 		{

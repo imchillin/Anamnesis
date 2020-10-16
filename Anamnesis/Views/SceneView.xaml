@@ -24,7 +24,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Column="2">
+		<StackPanel Grid.Column="1">
 			<GroupBox Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
 					<ana:Header Icon="Globe" Text="World"/>
@@ -191,6 +191,30 @@
 				</Grid>
 			</GroupBox>
 
+		</StackPanel>
+
+		<StackPanel Grid.Column="2">
+			<GroupBox Style="{StaticResource PanelGroupBox}">
+				<GroupBox.Header>
+					<ana:Header Icon="UserAlt" Text="Actor Info"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<TextBlock Text="Nickname:" Style="{StaticResource Label}"/>
+					<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TargetService.SelectedActor.Nickname}"/>
+
+				</Grid>
+
+			</GroupBox>
 		</StackPanel>
 
 		<GroupBox Grid.Column="3" Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
