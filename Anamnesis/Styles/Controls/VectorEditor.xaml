@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.WpfStyles.Controls"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d"
 			 d:DesignWidth="256">
 	<Grid x:Name="ContentArea">
@@ -31,6 +32,7 @@
 		<Grid Visibility="{Binding Expanded, Converter={StaticResource B2V}}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
@@ -40,12 +42,35 @@
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 
+			<Grid Grid.Column="1" Grid.RowSpan="3" Visibility="{Binding CanLink, Converter={StaticResource B2V}}">
+
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				
+				<Line Grid.Row="0" Y1="0" Y2="1" Stretch="Fill" Stroke="{DynamicResource MaterialDesignBodyLight}" StrokeThickness="1" SnapsToDevicePixels="True" Margin="0, 11, 0, 0"/>
+				<Line Grid.Row="2" Y1="0" Y2="1" Stretch="Fill" Stroke="{DynamicResource MaterialDesignBodyLight}" StrokeThickness="1" SnapsToDevicePixels="True" Margin="0, 0, 0, 11"/>
+				
+				<Line Grid.Row="0" X1="0" X2="1" Stretch="Fill" Stroke="{DynamicResource MaterialDesignBodyLight}" StrokeThickness="1" SnapsToDevicePixels="True" Margin="0, 11, 0, 0" VerticalAlignment="Top"/>
+				<!--<Line X1="0" X2="1" Stretch="Fill" Stroke="{DynamicResource MaterialDesignBodyLight}" StrokeThickness="1" SnapsToDevicePixels="True" Margin="0, 0, 0, 0"/>-->
+				<Line Grid.Row="2" X1="0" X2="1" Stretch="Fill" Stroke="{DynamicResource MaterialDesignBodyLight}" StrokeThickness="1" SnapsToDevicePixels="True" Margin="0, 6, 0, 11" VerticalAlignment="Bottom"/>
+
+				
+				<fa:IconBlock Grid.Row="1" Icon="Link" FontSize="10" Margin="0, 3, 0, 3" Foreground="{DynamicResource PrimaryHueMidBrush}" Visibility="{Binding Linked, Converter={StaticResource B2V}}"/>
+				<fa:IconBlock Grid.Row="1" Icon="Link" FontSize="10" Margin="0, 3, 0, 3" Visibility="{Binding Linked, Converter={StaticResource !B2V}}"/>
+
+				<Button Grid.RowSpan="3" Style="{StaticResource TransparentButton}" Opacity="0.01" Margin="-2, 0, -2, 0" Click="LinkClicked"/>
+
+			</Grid>
+
 			<Label Grid.Column="0" Grid.Row="0" Content="X:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20"/>
-			<local:NumberBox x:Name="ExpandedX" Grid.Column="1" Grid.Row="0" Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="{Binding Sliders}" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
+			<local:NumberBox x:Name="ExpandedX" Grid.Column="2" Grid.Row="0" Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="{Binding Sliders}" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
 			<Label Grid.Column="0" Grid.Row="1" Content="Y:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20"/>
-			<local:NumberBox Grid.Column="1" Grid.Row="1"  Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="{Binding Sliders}" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
+			<local:NumberBox Grid.Column="2" Grid.Row="1"  Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="{Binding Sliders}" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
 			<Label Grid.Column="0" Grid.Row="2" Content="Z:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20"/>
-			<local:NumberBox  Grid.Column="1" Grid.Row="2" Value="{Binding Z, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="{Binding Sliders}" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
+			<local:NumberBox  Grid.Column="2" Grid.Row="2" Value="{Binding Z, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="{Binding Sliders}" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
 		</Grid>
 	</Grid>
 </UserControl>

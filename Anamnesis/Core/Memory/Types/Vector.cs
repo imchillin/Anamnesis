@@ -38,9 +38,19 @@ namespace Anamnesis.Memory
 			return new Vector(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 		}
 
+		public static Vector operator +(Vector left, float right)
+		{
+			return new Vector(left.X + right, left.Y + right, left.Z + right);
+		}
+
 		public static Vector operator -(Vector left, Vector right)
 		{
 			return new Vector(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+		}
+
+		public static Vector operator -(Vector left, float right)
+		{
+			return new Vector(left.X - right, left.Y - right, left.Z - right);
 		}
 
 		public static Vector operator *(Vector left, Vector right)

@@ -12,16 +12,13 @@ namespace Anamnesis.WpfStyles.DependencyProperties
 	{
 		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, BindMode mode)
 		{
-			return Register<TValue, TOwner>(propertyName, null, mode);
+			Action<DependencyObject, DependencyPropertyChangedEventArgs> callback = (d, e) => { };
+			return Register<TValue, TOwner>(propertyName, new PropertyChangedCallback(callback), mode);
 		}
 
 		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, Action<TOwner, TValue>? changed = null, BindMode mode = BindMode.TwoWay)
 		{
-			PropertyInfo? property = typeof(TOwner).GetProperty(propertyName);
-			if (property == null)
-				throw new Exception("Failed to locate property: \"" + propertyName + "\" on type: \"" + typeof(TOwner) + "\" for binding.");
-
-			Action<DependencyObject, DependencyPropertyChangedEventArgs> changedb = (d, e) =>
+			Action<DependencyObject, DependencyPropertyChangedEventArgs> callback = (d, e) =>
 			{
 				if (d is TOwner owner && e.NewValue is TValue value)
 				{
@@ -29,7 +26,29 @@ namespace Anamnesis.WpfStyles.DependencyProperties
 				}
 			};
 
-			FrameworkPropertyMetadata meta = new FrameworkPropertyMetadata(new PropertyChangedCallback(changedb));
+			return Register<TValue, TOwner>(propertyName, new PropertyChangedCallback(callback), mode);
+		}
+
+		public static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, Action<TOwner, TValue, TValue> changed, BindMode mode = BindMode.TwoWay)
+		{
+			Action<DependencyObject, DependencyPropertyChangedEventArgs> callback = (d, e) =>
+			{
+				if (d is TOwner owner && e.OldValue is TValue oldValue && e.NewValue is TValue newValue)
+				{
+					changed?.Invoke(owner, oldValue, newValue);
+				}
+			};
+
+			return Register<TValue, TOwner>(propertyName, new PropertyChangedCallback(callback), mode);
+		}
+
+		private static DependencyProperty<TValue> Register<TValue, TOwner>(string propertyName, PropertyChangedCallback callback, BindMode mode)
+		{
+			PropertyInfo? property = typeof(TOwner).GetProperty(propertyName);
+			if (property == null)
+				throw new Exception("Failed to locate property: \"" + propertyName + "\" on type: \"" + typeof(TOwner) + "\" for binding.");
+
+			FrameworkPropertyMetadata meta = new FrameworkPropertyMetadata(new PropertyChangedCallback(callback));
 			meta.BindsTwoWayByDefault = mode == BindMode.TwoWay;
 			meta.DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 			meta.Inherits = true;

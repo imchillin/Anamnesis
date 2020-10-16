@@ -23,9 +23,12 @@ namespace Anamnesis.WpfStyles.Controls
 		public static readonly IBind<double> TickFrequencyDp = Binder.Register<double, VectorEditor>(nameof(TickFrequency));
 		public static readonly IBind<bool> WrapDp = Binder.Register<bool, VectorEditor>(nameof(Wrap));
 		public static readonly IBind<NumberBox.SliderModes> SlidersDp = Binder.Register<NumberBox.SliderModes, VectorEditor>(nameof(Sliders));
-
 		public static readonly IBind<double> MinDp = Binder.Register<double, VectorEditor>(nameof(Minimum));
 		public static readonly IBind<double> MaxDp = Binder.Register<double, VectorEditor>(nameof(Maximum), OnMaximumChanged);
+		public static readonly IBind<bool> CanLinkDp = Binder.Register<bool, VectorEditor>(nameof(CanLink));
+		public static readonly IBind<bool> LinkedDp = Binder.Register<bool, VectorEditor>(nameof(Linked));
+
+		private bool lockChangedEvent = false;
 
 		public VectorEditor()
 		{
@@ -79,6 +82,18 @@ namespace Anamnesis.WpfStyles.Controls
 			set => WrapDp.Set(this, value);
 		}
 
+		public bool CanLink
+		{
+			get => CanLinkDp.Get(this);
+			set => CanLinkDp.Set(this, value);
+		}
+
+		public bool Linked
+		{
+			get => LinkedDp.Get(this);
+			set => LinkedDp.Set(this, value);
+		}
+
 		[AlsoNotifyFor(nameof(VectorEditor.Value))]
 		[DependsOn(nameof(VectorEditor.Value))]
 		public float X
@@ -124,8 +139,17 @@ namespace Anamnesis.WpfStyles.Controls
 			}
 		}
 
-		private static void OnValueChanged(VectorEditor sender, Vector value)
+		private static void OnValueChanged(VectorEditor sender, Vector oldValue, Vector newValue)
 		{
+			if (sender.Linked && !sender.lockChangedEvent)
+			{
+				sender.lockChangedEvent = true;
+				Vector deltaV = newValue - oldValue;
+				float delta = deltaV.X + deltaV.Y + deltaV.Z;
+				sender.Value = oldValue + delta;
+				sender.lockChangedEvent = false;
+			}
+
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.X)));
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.Y)));
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(VectorEditor.Z)));
@@ -134,6 +158,17 @@ namespace Anamnesis.WpfStyles.Controls
 		private static void OnMaximumChanged(VectorEditor sender, double value)
 		{
 			sender.ExpandedX.Maximum = value;
+		}
+
+		private void LinkClicked(object sender, RoutedEventArgs e)
+		{
+			if (!this.CanLink)
+			{
+				this.Linked = false;
+				return;
+			}
+
+			this.Linked = !this.Linked;
 		}
 	}
 }
