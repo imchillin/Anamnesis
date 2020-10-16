@@ -81,6 +81,7 @@
 							<RowDefinition/>
 							<RowDefinition/>
 							<RowDefinition/>
+							<RowDefinition/>
 						</Grid.RowDefinitions>
 
 						<!-- Height -->
@@ -140,6 +141,11 @@
 							<ComboBoxItem Tag="9104" Content="Padjal Masculine"/>
 							<ComboBoxItem Tag="9204" Content="Padjal Feminine"/>
 						</ComboBox>
+						
+						<!-- Bust Scale -->
+						<GroupBox Style="{StaticResource Cm3GroupBox}" Header="Bust Scale" Grid.Row="4" Grid.ColumnSpan="2">
+							<cm3Controls:VectorEditor Value="{Binding Actor.ModelObject.Bust.Scale}" Expanded="True" CanLink="True" Minimum="0" Maximum="10"/>
+						</GroupBox>
 
 					</Grid>
 				</GroupBox>
@@ -154,23 +160,21 @@
 				</GroupBox>
 			</StackPanel>
 
-			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="4">
-				<Grid Margin="3">
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
+			<Grid Grid.Row="1" Margin="3">
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
 
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
 
-					<cm3Controls:IconButton Grid.Row="0" Grid.ColumnSpan="2" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
-					<cm3Controls:IconButton Grid.Row="1" Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
-					<cm3Controls:IconButton Grid.Row="1" Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
-				</Grid>
-			</Border>
+				<cm3Controls:IconButton Grid.Row="0" Grid.ColumnSpan="2" Icon="UserShield" Text="Load NPC" Margin="3" Click="OnLoadNpcClicked"/>
+				<cm3Controls:IconButton Grid.Row="1" Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
+				<cm3Controls:IconButton Grid.Row="1" Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+			</Grid>
 		</Grid>
 
 		<Grid Grid.Column="0" 

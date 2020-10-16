@@ -35,6 +35,7 @@ namespace Anamnesis.Memory
 
 		[ModelField] public TransformViewModel? Transform { get; set; }
 		[ModelField] public SkeletonWrapperViewModel? Skeleton { get; set; }
+		[ModelField] public BustViewModel? Bust { get; set; }
 		[ModelField] public float Height { get; set; }
 		[ModelField] public float Wetness { get; set; }
 		[ModelField] public float Drenched { get; set; }
