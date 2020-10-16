@@ -39,6 +39,13 @@ namespace Anamnesis.GUI
 			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
 			this.WindowScale.ScaleX = App.Settings.Scale;
 			this.WindowScale.ScaleY = App.Settings.Scale;
+
+			if (App.Settings.WindowPosition.X != 0)
+			{
+				this.Left = App.Settings.WindowPosition.X;
+				this.Top = App.Settings.WindowPosition.Y;
+			}
+
 			App.Settings.Changed += this.OnSettingsChanged;
 		}
 
@@ -235,6 +242,12 @@ namespace Anamnesis.GUI
 			{
 				this.OnUnpinActorClicked(sender, new RoutedEventArgs());
 			}
+		}
+
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			App.Settings.WindowPosition = new Point(this.Left, this.Top);
+			App.Settings.Save();
 		}
 	}
 }

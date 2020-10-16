@@ -3,6 +3,7 @@
 
 namespace Anamnesis
 {
+	using System.Windows;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -17,5 +18,6 @@ namespace Anamnesis
 		public bool StayTransparent { get; set; } = false;
 		public double Scale { get; set; } = 1.0;
 		public bool UseWindowsExplorer { get; set; } = false;
+		public Point WindowPosition { get; set; }
 	}
 }

@@ -19,6 +19,7 @@
 		Background="Transparent"
 		Activated="Window_Activated"
 		Deactivated="Window_Deactivated"
+		Closing="Window_Closing"
 		
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 		TextBlock.FontSize="12"
