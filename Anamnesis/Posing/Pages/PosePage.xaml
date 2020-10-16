@@ -26,7 +26,7 @@
 		<Grid IsEnabled="{Binding GposeService.IsGpose}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
-				<ColumnDefinition Width="200"/>
+				<ColumnDefinition Width="220"/>
 			</Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
@@ -41,26 +41,24 @@
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 
-				<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" Margin="3, 3, 0, 3"
+				<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3"
 					IsEnabled="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
 					<controls:BoneEditor Value="{Binding Skeleton.CurrentBone}"/>
 				</Border>
 
-				<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 0" Margin="3, 3, 0, 0" x:Name="LoadSaveArea">
-					<Grid Margin="6">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition/>
-							<ColumnDefinition/>
-						</Grid.ColumnDefinitions>
+				<Grid Grid.Row="1" Margin="3" IsEnabled="{Binding GPoseService.IsOverworld}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
 
-						<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Key="Common_OpenFile" Text="Open" Margin="0, 0, 3, 0" Click="OnOpenClicked"/>
-						<cm3Controls:IconButton Grid.Column="1" Icon="Download" Key="Common_SaveFile" Text="Save" Margin="3, 0, 0, 0" Click="OnSaveClicked"/>
-					</Grid>
-				</Border>
+					<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnOpenClicked"/>
+					<cm3Controls:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+				</Grid>
 			</Grid>
 
 			<!-- top Bar -->
-			<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 0, 0, 3" VerticalAlignment="Stretch" Margin="0,0,0,3">
+			<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="3">
 				<Grid Height="35">
 					<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 						<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" Style="{StaticResource OutlineToggleButton}" Margin="3" Width="75">
@@ -73,13 +71,13 @@
 						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
 
 						<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
-							<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1">
-								<fa:IconImage Icon="Female" Foreground="{DynamicResource MaterialDesignBody}"/>
+							<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1" Padding="12, 4, 12, 4" Cursor="Hand">
+								<fa:IconImage Icon="ProjectDiagram" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
-							<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 0, 1">
+							<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 0, 1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
-							<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1">
+							<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
 						</ListBox>
@@ -94,7 +92,7 @@
 			</Border>
 
 			<!-- Content -->
-			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3, 3, 0, 0" Margin="0, 3, 3, 0">
+			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
 				<Grid IsEnabled="{Binding PoseService.IsEnabled}">
 					<Grid DataContext="{Binding Skeleton}">
 						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>
