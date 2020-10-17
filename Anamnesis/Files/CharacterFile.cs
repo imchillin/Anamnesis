@@ -292,7 +292,7 @@ namespace Anamnesis.Files
 			actor.WriteToMemory(true);
 			await actor.RefreshAsync();
 
-			// Setting customize values will reset the extended appearance, whish me must read.
+			// Setting customize values will reset the extended appearance, which me must read.
 			await actor.ReadFromMemoryAsync(true);
 
 			if (actor.ModelObject?.ExtendedAppearance != null)

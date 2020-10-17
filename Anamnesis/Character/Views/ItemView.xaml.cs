@@ -158,16 +158,16 @@ namespace Anamnesis.Character.Views
 			if (this.ViewModel == null || !this.ViewModel.Enabled || GameDataService.Dyes == null)
 				return;
 
-			Application.Current.Dispatcher.Invoke(async () =>
+			Application.Current.Dispatcher.Invoke(() =>
 			{
 				if (this.ViewModel is ItemViewModel item)
 				{
-					this.SetItem(await ItemUtility.GetItemAsync(this.Slot, 0, item.Base, item.Variant));
+					this.Item = ItemUtility.GetItem(this.Slot, 0, item.Base, item.Variant);
 					this.Dye = GameDataService.Dyes.Get(item.Dye);
 				}
 				else if (this.ViewModel is WeaponViewModel weapon)
 				{
-					this.SetItem(await ItemUtility.GetItemAsync(this.Slot, weapon.Set, weapon.Base, weapon.Variant));
+					this.Item = ItemUtility.GetItem(this.Slot, weapon.Set, weapon.Base, weapon.Variant);
 					this.Dye = GameDataService.Dyes.Get(weapon.Dye);
 				}
 			});

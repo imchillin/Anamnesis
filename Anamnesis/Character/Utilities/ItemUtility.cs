@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Character.Utilities
 {
-	using System.Threading.Tasks;
+	using System.Collections.Generic;
 	using Anamnesis.Character.Items;
 	using Anamnesis.GameData;
 	using Anamnesis.Services;
@@ -14,13 +14,7 @@ namespace Anamnesis.Character.Utilities
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
 		public static readonly NpcBodyItem NpcbodyItem = new NpcBodyItem();
 
-		public static async Task<IItem> GetItemAsync(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
-		{
-			return await Task.Run<IItem>(() =>
-			{
-				return GetItem(slot, modelSet, modelBase, modelVariant);
-			});
-		}
+		private static Dictionary<string, IItem> itemLookup = new Dictionary<string, IItem>();
 
 		/// <summary>
 		/// Searches the gamedata service item list for an item with the given model attributes.
@@ -33,6 +27,18 @@ namespace Anamnesis.Character.Utilities
 			if (modelBase == NpcbodyItem.ModelBase)
 				return NpcbodyItem;
 
+			string lookupKey = slot + "_" + modelSet + "_" + modelBase + "_" + modelVariant;
+			if (!itemLookup.ContainsKey(lookupKey))
+			{
+				IItem item = ItemSearch(slot, modelSet, modelBase, modelVariant);
+				itemLookup.Add(lookupKey, item);
+			}
+
+			return itemLookup[lookupKey];
+		}
+
+		private static IItem ItemSearch(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
+		{
 			if (GameDataService.Items == null)
 				return NoneItem;
 
