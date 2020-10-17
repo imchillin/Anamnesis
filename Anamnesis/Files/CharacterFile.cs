@@ -293,10 +293,10 @@ namespace Anamnesis.Files
 			await actor.RefreshAsync();
 
 			// Setting customize values will reset the extended appearance, whish me must read.
-			actor.ReadFromMemory(true);
+			await actor.ReadFromMemoryAsync(true);
 
 			if (actor.ModelObject?.ExtendedAppearance != null)
-				actor.ModelObject.ExtendedAppearance.ReadFromMemory(true);
+				await actor.ModelObject.ExtendedAppearance.ReadFromMemoryAsync(true);
 
 			// write everything that is reset by actor refreshes
 			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))

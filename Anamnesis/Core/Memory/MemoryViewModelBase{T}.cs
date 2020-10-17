@@ -8,6 +8,8 @@ namespace Anamnesis.Memory
 	using System.Printing;
 	using System.Reflection;
 	using System.Text;
+	using System.Threading;
+	using System.Threading.Tasks;
 	using System.Windows.Documents;
 	using Anamnesis.Memory.Types;
 
@@ -115,6 +117,14 @@ namespace Anamnesis.Memory
 
 			MemoryService.Write((IntPtr)this.Pointer, this.model);
 			return true;
+		}
+
+		public async Task<bool> ReadFromMemoryAsync(bool force = false)
+		{
+			return await Task<bool>.Run(() =>
+			{
+				return this.ReadFromMemory(force);
+			});
 		}
 
 		public bool ReadFromMemory(bool force = false)
