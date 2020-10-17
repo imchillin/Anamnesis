@@ -206,6 +206,9 @@ namespace Anamnesis.Character.Views
 			if (race.Race == AnAppearance.Races.Viera)
 				this.Appearance.Gender = AnAppearance.Genders.Feminine;
 
+			// reset age when chaing race
+			this.Appearance.Age = AnAppearance.Ages.Normal;
+
 			if (this.Race == race)
 				return;
 
@@ -231,6 +234,9 @@ namespace Anamnesis.Character.Views
 				return;
 
 			ITribe? tribe = this.TribeComboBox.SelectedItem as ITribe;
+
+			// reset age when chaing tribe
+			this.Appearance.Age = AnAppearance.Ages.Normal;
 
 			if (tribe == null || this.Tribe == tribe)
 				return;
