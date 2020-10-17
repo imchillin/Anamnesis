@@ -125,6 +125,16 @@ namespace Anamnesis.Character.Views
 				this.Appearance.Race = AnAppearance.Races.Hyur;
 
 			this.Race = GameDataService.Races.Get((int)this.Appearance.Race);
+
+			// Something has gone terribly wrong.
+			if (this.Race == null)
+			{
+				this.IsEnabled = false;
+				return;
+			}
+
+			this.IsEnabled = true;
+
 			this.RaceComboBox.SelectedItem = this.Race;
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
