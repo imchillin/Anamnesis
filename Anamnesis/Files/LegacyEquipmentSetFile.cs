@@ -35,6 +35,7 @@ namespace Anamnesis.Files
 				throw new Exception("CMTool equipment set file missing data");
 
 			CharacterFile file = new CharacterFile();
+			file.SaveMode = CharacterFile.SaveModes.EquipmentGear | CharacterFile.SaveModes.EquipmentAccessories;
 			file.MainHand = this.MainHand?.Upgrade();
 			file.OffHand = this.OffHand?.Upgrade();
 
