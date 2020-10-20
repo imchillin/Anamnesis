@@ -84,13 +84,19 @@ namespace Anamnesis.Services
 
 		public async Task StartServices()
 		{
+			Stopwatch sw = new Stopwatch();
+
 			// Since starting a service _can_ add new services, copy the list first.
 			List<IService> services = new List<IService>(Services);
 			services.Reverse();
 			foreach (IService service in services)
 			{
-				OnServiceStarting?.Invoke(GetServiceName(service.GetType()));
+				string name = GetServiceName(service.GetType());
+				sw.Restart();
+				OnServiceStarting?.Invoke(name);
 				await service.Start();
+
+				Log.Write($"Started Service: {name} in {sw.ElapsedMilliseconds}ms", "Services");
 			}
 
 			IsStarted = true;

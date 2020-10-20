@@ -34,9 +34,6 @@ namespace Anamnesis.SaintCoinachModule
 
 			bool forceUpdate = true;
 
-			Stopwatch sw = new Stopwatch();
-			sw.Start();
-
 			if (forceUpdate)
 			{
 				if (File.Exists("SaintCoinach.History.zip"))
@@ -79,10 +76,7 @@ namespace Anamnesis.SaintCoinachModule
 			tasks.Add(Task.Run(() => Titles = this.Load<Table<ITitle>, ITitle, Title, TitleWrapper>(realm)));
 			tasks.Add(Task.Run(() => Statuses = this.Load<Table<IStatus>, IStatus, Status, StatusWrapper>(realm)));
 
-			foreach (Task t in tasks)
-				await t;
-
-			Log.Write("Initialization took " + sw.ElapsedMilliseconds + "ms", @"Saint Coinach");
+			await Task.WhenAll(tasks);
 		}
 
 		public void Report(UpdateProgress value)
