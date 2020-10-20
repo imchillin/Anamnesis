@@ -64,7 +64,7 @@ namespace Anamnesis.SaintCoinachModule
 
 			List<Task> tasks = new List<Task>();
 			tasks.Add(Task.Run(() => Items = this.Load<Table<IItem>, IItem, Item, ItemWrapper>(realm)));
-			tasks.Add(Task.Run(() => Races = this.Load<Table<IRace>, IRace, Race, RaceWrapper>(realm)));
+
 			tasks.Add(Task.Run(() => Tribes = this.Load<Table<ITribe>, ITribe, Tribe, TribeWrapper>(realm)));
 			tasks.Add(Task.Run(() => Dyes = this.Load<Table<IDye>, IDye, Stain, DyeWrapper>(realm)));
 			tasks.Add(Task.Run(() => BaseNPCs = this.Load<Table<INpcBase>, INpcBase, ENpcBase, NpcBaseWrapper>(realm)));

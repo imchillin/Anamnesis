@@ -109,26 +109,6 @@ namespace Anamnesis.Memory
 	}
 
 	#pragma warning disable SA1402
-	public static class RacesExtensions
-	{
-		public static Appearance.Tribes[] GetTribes(this Appearance.Races race)
-		{
-			switch (race)
-			{
-				case Appearance.Races.Hyur: return new[] { Appearance.Tribes.Midlander, Appearance.Tribes.Highlander };
-				case Appearance.Races.Elezen: return new[] { Appearance.Tribes.Wildwood, Appearance.Tribes.Duskwight };
-				case Appearance.Races.Lalafel: return new[] { Appearance.Tribes.Plainsfolk, Appearance.Tribes.Dunesfolk };
-				case Appearance.Races.Miqote: return new[] { Appearance.Tribes.SeekerOfTheSun, Appearance.Tribes.KeeperOfTheMoon };
-				case Appearance.Races.Roegadyn: return new[] { Appearance.Tribes.SeaWolf, Appearance.Tribes.Hellsguard };
-				case Appearance.Races.AuRa: return new[] { Appearance.Tribes.Raen, Appearance.Tribes.Xaela };
-				case Appearance.Races.Hrothgar: return new[] { Appearance.Tribes.Helions, Appearance.Tribes.TheLost };
-				case Appearance.Races.Viera: return new[] { Appearance.Tribes.Rava, Appearance.Tribes.Veena };
-			}
-
-			throw new Exception("Unrecognized race: " + race);
-		}
-	}
-
 	public class AppearanceViewModel : MemoryViewModelBase<Appearance>
 	{
 		public AppearanceViewModel(IntPtr pointer, IStructViewModel? parent = null)
