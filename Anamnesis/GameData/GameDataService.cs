@@ -9,10 +9,15 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
 	using Anamnesis.GameData;
+	using Anamnesis.Memory;
 	using Anamnesis.Serialization;
+
+	using LuminaData = Lumina.Lumina;
 
 	public abstract class GameDataService : ServiceBase<GameDataService>
 	{
+		private LuminaData? lumina;
+
 		public static IData<IRace>? Races { get; protected set; }
 		public static IData<ITribe>? Tribes { get; protected set; }
 		public static IData<IItem>? Items { get; protected set; }
@@ -30,6 +35,8 @@ namespace Anamnesis.Services
 
 		public override Task Initialize()
 		{
+			this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
+
 			try
 			{
 				List<Prop> propList = SerializerService.DeserializeFile<List<Prop>>("Props.json");
