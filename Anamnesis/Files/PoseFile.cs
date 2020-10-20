@@ -79,6 +79,7 @@ namespace Anamnesis.Files
 				throw new Exception("No skeleton in actor");
 
 			PoseService.Instance.SetEnabled(true);
+			PoseService.Instance.CanEdit = false;
 			await Task.Delay(100);
 
 			// don't freeze positions if we aren't writing any
@@ -102,7 +103,8 @@ namespace Anamnesis.Files
 			await Task.Delay(100);
 			PoseService.Instance.FreezePositions = true;
 
-			////skeleton.RefreshBones();
+			await skeleton.ReadFromMemoryAsync();
+			PoseService.Instance.CanEdit = true;
 		}
 
 		private List<Bone?>? WriteToFile(BonesViewModel bones)

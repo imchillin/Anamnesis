@@ -104,6 +104,8 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
+		public bool CanEdit { get; set; }
+
 		public override async Task Initialize()
 		{
 			await base.Initialize();

@@ -67,6 +67,17 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
+		public void Clear()
+		{
+			this.CurrentBone = null;
+			this.MouseOverBone = null;
+
+			if (this.Bones != null)
+			{
+				this.Bones.Clear();
+			}
+		}
+
 		public bool GetIsBoneHovered(BoneVisual3d bone)
 		{
 			return bone == this.MouseOverBone;
@@ -248,7 +259,7 @@ namespace Anamnesis.PoseModule
 			{
 				Application.Current.Dispatcher.Invoke(() =>
 				{
-					this.CurrentBone.WriteTransform(this);
+					this.CurrentBone?.WriteTransform(this);
 				});
 
 				// up to 60 times a second

@@ -43,6 +43,18 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			PoseService.EnabledChanged += this.OnPoseServiceEnabledChanged;
+			this.PoseService.PropertyChanged += this.PoseService_PropertyChanged;
+		}
+
+		private void PoseService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			Application.Current?.Dispatcher.Invoke(() =>
+			{
+				if (this.Skeleton != null && !this.PoseService.CanEdit)
+					this.Skeleton.CurrentBone = null;
+
+				this.Skeleton?.ReadTranforms();
+			});
 		}
 
 		private void OnPoseServiceEnabledChanged(bool value)
@@ -66,15 +78,13 @@ namespace Anamnesis.PoseModule.Pages
 				return;
 			}
 
+			this.Skeleton?.Clear();
+
 			this.Skeleton = new SkeletonVisual3d(actor);
+
 			this.ThreeDView.DataContext = this.Skeleton;
 			this.GuiView.DataContext = this.Skeleton;
 			this.MatrixView.DataContext = this.Skeleton;
-		}
-
-		private void OnUnloaded(object sender, RoutedEventArgs e)
-		{
-			this.Skeleton = null;
 		}
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)

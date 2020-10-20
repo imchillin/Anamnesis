@@ -12,7 +12,6 @@
 			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls"
 			 mc:Ignorable="d" 
 			 Loaded="OnLoaded"
-			 Unloaded="OnUnloaded"
 			 DataContextChanged="OnDataContextChanged"
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
