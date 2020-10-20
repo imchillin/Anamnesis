@@ -329,7 +329,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Core\Localization\" />
-	  <Folder Include="GameData\Wrappers\" />
 	</ItemGroup>
 
 	<ItemGroup>
