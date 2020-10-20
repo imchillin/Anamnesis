@@ -20,6 +20,7 @@ namespace Anamnesis
 	public delegate void SelectionEvent(ActorViewModel? actor);
 
 	[AddINotifyPropertyChangedInterface]
+	[SuppressPropertyChangedWarnings]
 	public class TargetService : ServiceBase<TargetService>
 	{
 		public static event SelectionEvent? ActorSelected;
