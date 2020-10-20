@@ -43,6 +43,7 @@ namespace Anamnesis.Services
 			Races = new Database<IRace, Race, RaceWrapper>(this.lumina);
 			Tribes = new Database<ITribe, Tribe, TribeWrapper>(this.lumina);
 			Dyes = new Database<IDye, Stain, DyeWrapper>(this.lumina);
+			BaseNPCs = new Database<INpcBase, ENpcBase, NpcBaseWrapper>(this.lumina);
 
 			try
 			{
