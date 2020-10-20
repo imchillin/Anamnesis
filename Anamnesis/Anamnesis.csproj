@@ -116,6 +116,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="FontAwesome.Sharp" Version="5.14.1" />
+		<PackageReference Include="Lumina" Version="2.4.0" />
+		<PackageReference Include="Lumina.Excel" Version="5.35.0" />
 		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />
 		<PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
 		<PackageReference Include="PropertyChanged.Fody" Version="3.2.9">
@@ -327,6 +329,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Core\Localization\" />
+	  <Folder Include="GameData\Wrappers\" />
 	</ItemGroup>
 
 	<ItemGroup>
