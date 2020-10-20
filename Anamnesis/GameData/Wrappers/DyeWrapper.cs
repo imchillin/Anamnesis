@@ -17,8 +17,8 @@ namespace Anamnesis.GameData.Wrappers
 		{
 		}
 
-		public byte Id => (byte)this.Value.Color;
-		public string Name => this.Value.Name;
+		public byte Id => (byte)(this.Value?.Color ?? 0);
+		public string Name => this.Value?.Name ?? "Unkown";
 		public string? Description => this.GetDyeItem()?.Description;
 		public IImageSource? Icon => this.GetDyeItem()?.Icon;
 
@@ -160,6 +160,8 @@ namespace Anamnesis.GameData.Wrappers
 				case 118: return 8749;
 				case 119: return 8750;
 				case 120: return 8751;
+
+				case 244: return 0;
 			}
 
 			throw new Exception("Failed to find item key for dye key: " + dyeKey);
