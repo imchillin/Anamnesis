@@ -6,7 +6,6 @@ namespace Anamnesis.Services
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
-	using System.Security.Policy;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
 	using Anamnesis.GameData;
@@ -42,6 +41,7 @@ namespace Anamnesis.Services
 			this.lumina.GetExcelSheet<Race>();
 
 			Races = new Database<IRace, Race, RaceWrapper>(this.lumina);
+			Tribes = new Database<ITribe, Tribe, TribeWrapper>(this.lumina);
 
 			try
 			{
