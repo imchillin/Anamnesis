@@ -75,6 +75,9 @@ namespace Anamnesis.Character.Views
 				if (npc.Appearance.Race == null)
 					return false;
 
+				if (npc.Appearance.ModelType == -1)
+					return false;
+
 				bool matches = false;
 
 				matches |= SearchUtility.Matches(npc.Singular, search);
