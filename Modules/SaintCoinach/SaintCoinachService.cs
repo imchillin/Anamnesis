@@ -64,7 +64,6 @@ namespace Anamnesis.SaintCoinachModule
 
 			List<Task> tasks = new List<Task>();
 			tasks.Add(Task.Run(() => Items = this.Load<Table<IItem>, IItem, Item, ItemWrapper>(realm)));
-			tasks.Add(Task.Run(() => CharacterMakeCustomize = this.Load<CustomizeTable, ICharaMakeCustomize, CharaMakeCustomize, CharacterMakeCustomizeWrapper>(realm)));
 			tasks.Add(Task.Run(() => CharacterMakeTypes = this.Load<Table<ICharaMakeType>, ICharaMakeType, CharaMakeType, CharacterMakeTypeWrapper>(realm)));
 			tasks.Add(Task.Run(() => ResidentNPCs = this.Load<Table<INpcResident>, INpcResident, ENpcResident, NpcResidentWrapper>(realm)));
 			tasks.Add(Task.Run(() => Titles = this.Load<Table<ITitle>, ITitle, Title, TitleWrapper>(realm)));

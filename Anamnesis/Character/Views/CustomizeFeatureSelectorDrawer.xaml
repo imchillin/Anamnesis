@@ -39,7 +39,7 @@
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid Width="54" Height="54">
-						<Image Source="{Binding Icon, Converter={StaticResource IImageConverter}}"/>
+						<Image Source="{Binding Icon}"/>
 						<Border x:Name="SelectedBorder" BorderThickness="3" BorderBrush="{DynamicResource PrimaryHueMidBrush}" Margin="0" CornerRadius="3"/>
 					</Grid>
 					

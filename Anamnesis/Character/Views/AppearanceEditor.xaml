@@ -124,7 +124,7 @@
 
 					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnFacePaintClicked">
 						<Border Width="32" Height="32" Margin="2">
-							<Image Source="{Binding FacePaint.Icon, Converter={StaticResource IImageConverter}}" Visibility="{Binding FacePaint, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+							<Image Source="{Binding FacePaint.Icon}" Visibility="{Binding FacePaint, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 						</Border>
 					</Button>
 
@@ -164,7 +164,7 @@
 
 					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked">
 						<Border Width="32" Height="32" Margin="2">
-							<Image Source="{Binding Hair.Icon, Converter={StaticResource IImageConverter}}" Visibility="{Binding Hair, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+							<Image Source="{Binding Hair.Icon}" Visibility="{Binding Hair, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 						</Border>
 					</Button>
 

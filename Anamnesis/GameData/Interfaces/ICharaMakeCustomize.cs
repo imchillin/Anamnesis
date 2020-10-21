@@ -3,9 +3,11 @@
 
 namespace Anamnesis.GameData
 {
+	using System.Windows.Media;
+
 	public interface ICharaMakeCustomize : IDataObject
 	{
-		IImageSource Icon { get; }
+		ImageSource? Icon { get; }
 		byte FeatureId { get; }
 	}
 }

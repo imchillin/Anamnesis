@@ -21,6 +21,6 @@ namespace Anamnesis.GameData.ViewModels
 		public string Description => this.Value.Description;
 		public ushort WeatherId => (ushort)this.Value.RowId;
 
-		public ImageSource? Icon => this.lumina.GetIcon(this.Value.Icon).GetImage();
+		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);
 	}
 }

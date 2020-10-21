@@ -9,6 +9,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
 	using Anamnesis.Serialization;
@@ -42,12 +43,13 @@ namespace Anamnesis.Services
 			this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
 			this.lumina.GetExcelSheet<Race>();
 
-			Races = new Database<IRace, Race, RaceViewModel>(this.lumina);
-			Tribes = new Database<ITribe, Tribe, TribeViewModel>(this.lumina);
-			Dyes = new Database<IDye, Stain, DyeViewModel>(this.lumina);
-			BaseNPCs = new Database<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
-			Territories = new Database<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
-			Weathers = new Database<IWeather, Weather, WeatherViewModel>(this.lumina);
+			Races = new Sheet<IRace, Race, RaceViewModel>(this.lumina);
+			Tribes = new Sheet<ITribe, Tribe, TribeViewModel>(this.lumina);
+			Dyes = new Sheet<IDye, Stain, DyeViewModel>(this.lumina);
+			BaseNPCs = new Sheet<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
+			Territories = new Sheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
+			Weathers = new Sheet<IWeather, Weather, WeatherViewModel>(this.lumina);
+			CharacterMakeCustomize = new CustomizeSheet(this.lumina);
 
 			// no view models for these
 			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();
@@ -69,61 +71,6 @@ namespace Anamnesis.Services
 			}
 
 			return base.Initialize();
-		}
-
-		private class Database<TInterfaceType, TConcreteType, TWrapperType> : IData<TInterfaceType>
-			where TInterfaceType : IDataObject
-			where TConcreteType : class, IExcelRow
-			where TWrapperType : ExcelRowViewModel<TConcreteType>, TInterfaceType
-		{
-			private ExcelSheet<TConcreteType> excel;
-			private Dictionary<int, TWrapperType> wrapperCache = new Dictionary<int, TWrapperType>();
-			private List<TInterfaceType>? all;
-
-			private LuminaData lumina;
-
-			public Database(LuminaData lumina)
-			{
-				this.lumina = lumina;
-				this.excel = lumina.GetExcelSheet<TConcreteType>();
-			}
-
-			public IEnumerable<TInterfaceType> All
-			{
-				get
-				{
-					if (this.all == null)
-					{
-						this.all = new List<TInterfaceType>();
-						for (int i = 1; i < this.excel.RowCount; i++)
-						{
-							this.all.Add(this.Get(i));
-						}
-					}
-
-					return this.all;
-				}
-			}
-
-			public TInterfaceType Get(int key)
-			{
-				if (!this.wrapperCache.ContainsKey(key))
-				{
-					TWrapperType? wrapper = Activator.CreateInstance(typeof(TWrapperType), key, this.excel, this.lumina) as TWrapperType;
-
-					if (wrapper == null)
-						throw new Exception($"Failed to create instance of Lumina data wrapper: {typeof(TWrapperType)}");
-
-					this.wrapperCache.Add(key, wrapper);
-				}
-
-				return this.wrapperCache[key];
-			}
-
-			public TInterfaceType Get(byte key)
-			{
-				return this.Get((int)key);
-			}
 		}
 	}
 }

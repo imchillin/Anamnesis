@@ -10,6 +10,8 @@ namespace Lumina
 	using Anamnesis.GameData;
 
 	using global::Lumina.Data.Files;
+	using global::Lumina.Extensions;
+	using LuminaData = global::Lumina.Lumina;
 
 	public static class LuminaExtensions
 	{
@@ -36,6 +38,17 @@ namespace Lumina
 			}
 
 			return ItemUtility.GetItem(slot, (ushort)modelSet, (ushort)modelBase, (ushort)modelVariant);
+		}
+
+		public static ImageSource? GetImage(this LuminaData self, uint imageId)
+		{
+			return self.GetImage((int)imageId);
+		}
+
+		public static ImageSource? GetImage(this LuminaData self, int imageId)
+		{
+			TexFile tex = self.GetIcon(imageId);
+			return tex.GetImage();
 		}
 
 		public static ImageSource? GetImage(this TexFile self)
