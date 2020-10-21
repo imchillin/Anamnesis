@@ -15,8 +15,6 @@ namespace Anamnesis.Memory
 	using Anamnesis.Services;
 	using SimpleLog;
 
-	using SysProcess = System.Diagnostics.Process;
-
 	public class MemoryService : ServiceBase<MemoryService>
 	{
 		private static List<WeakReference<IMemoryViewModel>> viewModels = new List<WeakReference<IMemoryViewModel>>();
@@ -26,7 +24,7 @@ namespace Anamnesis.Memory
 
 		public static IntPtr Handle { get; private set; }
 		public static SignatureScanner? Scanner { get; private set; }
-		public static SysProcess? Process { get; private set; }
+		public static Process? Process { get; private set; }
 		public static bool IsProcessAlive { get; private set; }
 
 		public static string GamePath
@@ -185,14 +183,14 @@ namespace Anamnesis.Memory
 		/// <summary>
 		/// Open the PC game process with all security and access rights.
 		/// </summary>
-		public void OpenProcess(SysProcess process)
+		public void OpenProcess(Process process)
 		{
 			Process = process;
 
 			if (!Process.Responding)
 				throw new Exception("Target process id not responding");
 
-			SysProcess.EnterDebugMode();
+			Process.EnterDebugMode();
 			int debugPrivilegeCheck = CheckSeDebugPrivilege(out bool isDebugEnabled);
 			if (debugPrivilegeCheck != 0)
 			{
@@ -352,20 +350,37 @@ namespace Anamnesis.Memory
 
 		private async Task GetProcess()
 		{
-			SysProcess? proc = await App.Current.Dispatcher.InvokeAsync<Process?>(() =>
+			Process[] processes = Process.GetProcesses();
+			Process? proc = null;
+
+			// Search for ffxiv process
+			foreach (Process process in processes)
 			{
-				App.Current.MainWindow.Topmost = false;
+				if (process.ProcessName.ToLower().Contains("ffxiv_dx11"))
+				{
+					proc = process;
+				}
+			}
 
-				Process? proc = ProcessSelector.FindProcess();
+			// if no process, open the process selector GUI
+			if (proc == null)
+			{
+				proc = await App.Current.Dispatcher.InvokeAsync<Process?>(() =>
+				{
+					App.Current.MainWindow.Topmost = false;
 
-				if (proc == null)
-					App.Current.Shutdown();
+					Process? proc = ProcessSelector.FindProcess();
 
-				App.Current.MainWindow.Topmost = App.Settings.AlwaysOnTop;
+					if (proc == null)
+						App.Current.Shutdown();
 
-				return proc;
-			});
+					App.Current.MainWindow.Topmost = App.Settings.AlwaysOnTop;
 
+					return proc;
+				});
+			}
+
+			// if still no process, shutdown.
 			if (proc == null)
 				throw new Exception("Unable to locate FFXIV process");
 
