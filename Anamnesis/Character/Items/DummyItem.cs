@@ -3,12 +3,8 @@
 
 namespace Anamnesis.Character.Items
 {
-	using System;
-	using System.Collections.Generic;
-	using Anamnesis;
+	using System.Windows.Media;
 	using Anamnesis.GameData;
-	using Anamnesis.Memory;
-	using PropertyChanged;
 
 	public class DummyItem : IItem
 	{
@@ -19,29 +15,13 @@ namespace Anamnesis.Character.Items
 			this.ModelVariant = modelVariant;
 		}
 
-		public string Name
-		{
-			get
-			{
-				return "Unknown";
-			}
-		}
-
-		public string? Description
-		{
-			get
-			{
-				return null;
-			}
-		}
-
-		public IImageSource? Icon
-		{
-			get
-			{
-				return null;
-			}
-		}
+		public int Key => 0;
+		public bool IsWeapon => true;
+		public bool HasSubModel => false;
+		public string Name => "Unknown";
+		public string? Description => null;
+		public ImageSource? Icon => null;
+		public Classes EquipableClasses => Classes.All;
 
 		public ushort ModelBase
 		{
@@ -61,41 +41,9 @@ namespace Anamnesis.Character.Items
 			private set;
 		}
 
-		public int Key
-		{
-			get
-			{
-				return 0;
-			}
-		}
-
-		public bool IsWeapon
-		{
-			get
-			{
-				return true;
-			}
-		}
-
-		public bool HasSubModel
-		{
-			get
-			{
-				return false;
-			}
-		}
-
 		public ushort SubModelBase { get; }
 		public ushort SubModelVariant { get; }
 		public ushort SubModelSet { get; }
-
-		public Classes EquipableClasses
-		{
-			get
-			{
-				return Classes.All;
-			}
-		}
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

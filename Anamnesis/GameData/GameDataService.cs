@@ -15,9 +15,10 @@ namespace Anamnesis.Services
 	using Anamnesis.Serialization;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
+
 	using LuminaData = Lumina.Lumina;
 
-	public abstract class GameDataService : ServiceBase<GameDataService>
+	public class GameDataService : ServiceBase<GameDataService>
 	{
 		private LuminaData? lumina;
 
@@ -31,8 +32,6 @@ namespace Anamnesis.Services
 		public static ICharaMakeCustomizeData? CharacterMakeCustomize { get; protected set; }
 		public static IData<ICharaMakeType>? CharacterMakeTypes { get; protected set; }
 		public static IData<INpcResident>? ResidentNPCs { get; protected set; }
-		public static IData<ITitle>? Titles { get; protected set; }
-		public static IData<IStatus>? Statuses { get; protected set; }
 
 		public static ExcelSheet<WeatherRate>? WeatherRates { get; protected set; }
 
@@ -45,12 +44,14 @@ namespace Anamnesis.Services
 
 			Races = new Sheet<IRace, Race, RaceViewModel>(this.lumina);
 			Tribes = new Sheet<ITribe, Tribe, TribeViewModel>(this.lumina);
+			Items = new Sheet<IItem, Lumina.Excel.GeneratedSheets.Item, GameData.ViewModels.ItemViewModel>(this.lumina);
 			Dyes = new Sheet<IDye, Stain, DyeViewModel>(this.lumina);
 			BaseNPCs = new Sheet<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
 			Territories = new Sheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
 			Weathers = new Sheet<IWeather, Weather, WeatherViewModel>(this.lumina);
 			CharacterMakeCustomize = new CustomizeSheet(this.lumina);
 			CharacterMakeTypes = new Sheet<ICharaMakeType, CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
+			ResidentNPCs = new Sheet<INpcResident, ENpcResident, NpcResidentViewModel>(this.lumina);
 
 			// no view models for these
 			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();

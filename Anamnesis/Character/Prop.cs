@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Character
 {
-	using Anamnesis;
+	using System.Windows.Media;
 	using Anamnesis.GameData;
 
 	public class Prop : IItem
@@ -21,7 +21,7 @@ namespace Anamnesis.Character
 		public ushort SubModelBase => 0;
 		public ushort SubModelVariant => 0;
 		public ushort SubModelSet => 0;
-		public IImageSource? Icon => null;
+		public ImageSource? Icon => null;
 		public Classes EquipableClasses => Classes.All;
 
 		public bool FitsInSlot(ItemSlots slot)

@@ -3,14 +3,14 @@
 
 namespace Anamnesis.Character.Items
 {
-	using Anamnesis;
+	using System.Windows.Media;
 	using Anamnesis.GameData;
 
 	public class NpcBodyItem : IItem
 	{
 		public string Name => "NPC Body";
 		public string? Description => null;
-		public IImageSource? Icon => null;
+		public ImageSource? Icon => null;
 		public ushort ModelBase => 9903;
 		public ushort ModelVariant => 1;
 		public ushort ModelSet => 0;

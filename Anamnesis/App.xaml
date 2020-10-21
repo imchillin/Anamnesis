@@ -96,7 +96,6 @@
 				<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
 				<!-- Custom converters -->
-				<converters:IImageToImageSourceConverter x:Key="IImageConverter" />
 				<converters:StringHasContentToVisibilityConverter x:Key="StringHasContentToVisibility" />
 				<converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
 				<converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>

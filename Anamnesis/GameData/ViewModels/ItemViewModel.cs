@@ -1,0 +1,48 @@
+﻿// Concept Matrix 3.
+// Licensed under the MIT license.
+
+namespace Anamnesis.GameData.ViewModels
+{
+	using System;
+	using System.Windows.Media;
+	using Lumina;
+	using Lumina.Excel;
+	using Lumina.Excel.GeneratedSheets;
+
+	public class ItemViewModel : ExcelRowViewModel<Item>, IItem
+	{
+		private ushort modelSet;
+		private ushort modelBase;
+		private ushort modelVariant;
+
+		private ushort subModelSet;
+		private ushort subModelBase;
+		private ushort subModelVariant;
+
+		public ItemViewModel(int key, ExcelSheet<Item> sheet, Lumina lumina)
+			: base(key, sheet, lumina)
+		{
+			LuminaExtensions.GetModel(this.Value.ModelMain, this.IsWeapon, out this.modelSet, out this.modelBase, out this.modelVariant);
+			LuminaExtensions.GetModel(this.Value.ModelSub, this.IsWeapon, out this.subModelSet, out this.subModelBase, out this.subModelVariant);
+		}
+
+		public string Name => this.Value.Name;
+		public string? Description => this.Value.Description;
+		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);
+		public ushort ModelSet => this.modelSet;
+		public ushort ModelBase => this.modelBase;
+		public ushort ModelVariant => this.modelVariant;
+		public bool HasSubModel => this.Value.ModelSub != 0;
+		public ushort SubModelSet => this.subModelSet;
+		public ushort SubModelBase => this.subModelBase;
+		public ushort SubModelVariant => this.subModelVariant;
+		public Classes EquipableClasses => this.Value.ClassJobCategory.Value.ToFlags();
+
+		public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
+
+		public bool FitsInSlot(ItemSlots slot)
+		{
+			return this.Value.EquipSlotCategory.Value.Contains(slot);
+		}
+	}
+}

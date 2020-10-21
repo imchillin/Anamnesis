@@ -4,12 +4,13 @@
 namespace Anamnesis.GameData
 {
 	using System.Collections.Generic;
+	using System.Windows.Media;
 
 	public interface IItem : IDataObject
 	{
 		string Name { get; }
 		string? Description { get; }
-		IImageSource? Icon { get; }
+		ImageSource? Icon { get; }
 
 		ushort ModelSet { get; }
 		ushort ModelBase { get; }

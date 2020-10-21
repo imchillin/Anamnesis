@@ -3,11 +3,13 @@
 
 namespace Anamnesis.GameData
 {
+	using System.Windows.Media;
+
 	public interface IDye : IDataObject
 	{
 		byte Id { get; }
 		string Name { get; }
 		string? Description { get; }
-		IImageSource? Icon { get; }
+		ImageSource? Icon { get; }
 	}
 }

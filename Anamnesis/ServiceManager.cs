@@ -9,7 +9,6 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Files;
-	using Anamnesis.GUI.Services;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Serialization;
@@ -74,7 +73,7 @@ namespace Anamnesis.Services
 			await Add<GposeService>();
 			await Add<PoseService>();
 			await Add<ModelTypeService>();
-			await Add<ModuleService>();
+			await Add<GameDataService>();
 
 			IsInitialized = true;
 			Log.Write($"Services Initialized", "Services");

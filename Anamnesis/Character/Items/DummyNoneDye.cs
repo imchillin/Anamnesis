@@ -3,36 +3,15 @@
 
 namespace Anamnesis.Character.Items
 {
-	using Anamnesis;
+	using System.Windows.Media;
 	using Anamnesis.GameData;
 
 	public class DummyNoneDye : IDye
 	{
-		public byte Id
-		{
-			get
-			{
-				return 0;
-			}
-		}
-
-		public string Name
-		{
-			get
-			{
-				return "None";
-			}
-		}
-
-		public string? Description { get => null; }
-		public IImageSource? Icon { get => null; }
-
-		public int Key
-		{
-			get
-			{
-				return 0;
-			}
-		}
+		public int Key => 0;
+		public byte Id => 0;
+		public string Name => "None";
+		public string? Description => null;
+		public ImageSource? Icon => null;
 	}
 }

@@ -34,7 +34,7 @@
 					<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="6" Opacity="0.3"/>
 
 					<Grid Visibility="{Binding ViewModel, Converter={StaticResource NotNullToVisibilityConverter}}">
-						<Image Source="{Binding Item.Icon, Converter={StaticResource IImageConverter}}" Margin="2"/>
+						<Image Source="{Binding Item.Icon}" Margin="2"/>
 						<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 					</Grid>
 
@@ -78,7 +78,7 @@
 
 					<Grid>
 						<Grid Visibility="{Binding ViewModel, Converter={StaticResource NotNullToVisibilityConverter}}">
-							<Image Source="{Binding Dye.Icon, Converter={StaticResource IImageConverter}}" Margin="2"/>
+							<Image Source="{Binding Dye.Icon}" Margin="2"/>
 							<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
 							<Grid.ToolTip>

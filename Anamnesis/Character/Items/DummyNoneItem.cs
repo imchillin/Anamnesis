@@ -3,14 +3,14 @@
 
 namespace Anamnesis.Character.Items
 {
-	using Anamnesis;
+	using System.Windows.Media;
 	using Anamnesis.GameData;
 
 	public class DummyNoneItem : IItem
 	{
 		public string Name => "None";
 		public string? Description => null;
-		public IImageSource? Icon => null;
+		public ImageSource? Icon => null;
 		public ushort ModelBase => 0;
 		public ushort ModelVariant => 0;
 		public ushort ModelSet => 0;

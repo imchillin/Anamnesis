@@ -4,6 +4,7 @@
 namespace Anamnesis.GameData.ViewModels
 {
 	using System;
+	using System.Windows.Media;
 	using Anamnesis.Services;
 	using Lumina;
 	using Lumina.Excel;
@@ -21,7 +22,7 @@ namespace Anamnesis.GameData.ViewModels
 		public byte Id => (byte)(this.Value?.Color ?? 0);
 		public string Name => this.Value?.Name ?? "Unkown";
 		public string? Description => this.GetDyeItem()?.Description;
-		public IImageSource? Icon => this.GetDyeItem()?.Icon;
+		public ImageSource? Icon => this.GetDyeItem()?.Icon;
 
 		public IItem? GetDyeItem()
 		{

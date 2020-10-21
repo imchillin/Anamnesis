@@ -5,13 +5,9 @@ namespace Anamnesis.GUI.Views
 {
 	using System;
 	using System.Diagnostics;
-	using System.IO;
-	using System.Reflection;
-	using System.Runtime.InteropServices;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Navigation;
-	using Anamnesis.GUI.Services;
 	using Anamnesis.Services;
 
 	public partial class AboutView : UserControl

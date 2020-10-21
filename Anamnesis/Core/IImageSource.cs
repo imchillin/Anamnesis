@@ -5,11 +5,13 @@ namespace Anamnesis
 {
 	using System;
 
+	[Obsolete]
 	public interface IImageSource
 	{
 		IImage GetImage();
 	}
 
+	[Obsolete]
 	public interface IImage : IDisposable
 	{
 		IntPtr HBitmap { get; }
