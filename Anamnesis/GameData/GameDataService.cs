@@ -49,7 +49,7 @@ namespace Anamnesis.Services
 			Territories = new Sheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
 			Weathers = new Sheet<IWeather, Weather, WeatherViewModel>(this.lumina);
 			CharacterMakeCustomize = new CustomizeSheet(this.lumina);
-			CharacterMakeTypes = new Sheet<ICharaMakeType, CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
+			CharacterMakeTypes = new Sheet<ICharaMakeType, GameData.Sheets.CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
 			ResidentNPCs = new Sheet<INpcResident, ENpcResident, NpcResidentViewModel>(this.lumina);
 
 			// no view models for these

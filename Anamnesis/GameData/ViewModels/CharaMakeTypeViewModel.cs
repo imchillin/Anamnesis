@@ -5,10 +5,10 @@ namespace Anamnesis.GameData.ViewModels
 {
 	using System.Collections.Generic;
 	using System.Windows.Media;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Lumina;
 	using Lumina.Excel;
-	using Lumina.Excel.GeneratedSheets;
 
 	public class CharaMakeTypeViewModel : ExcelRowViewModel<CharaMakeType>, ICharaMakeType
 	{
@@ -20,8 +20,8 @@ namespace Anamnesis.GameData.ViewModels
 		}
 
 		public Appearance.Genders Gender => (Appearance.Genders)this.Value.Gender;
-		public Appearance.Races Race => (Appearance.Races)this.Value.Race.Row;
-		public Appearance.Tribes Tribe => (Appearance.Tribes)this.Value.Tribe.Row;
+		public Appearance.Races Race => (Appearance.Races)this.Value.Race!.Row;
+		public Appearance.Tribes Tribe => (Appearance.Tribes)this.Value.Tribe!.Row;
 
 		public IEnumerable<ImageSource> FacialFeatures
 		{
@@ -31,7 +31,7 @@ namespace Anamnesis.GameData.ViewModels
 				{
 					this.facialFeatureList = new List<ImageSource>();
 
-					foreach (uint iconId in this.Value.Customize)
+					foreach (uint iconId in this.Value.FacialFeatureOptions!)
 					{
 						ImageSource? img = this.lumina.GetImage(iconId);
 
