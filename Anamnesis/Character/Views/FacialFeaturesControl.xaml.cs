@@ -9,6 +9,8 @@ namespace Anamnesis.Character.Views
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
+	using System.Windows.Media;
+	using System.Windows.Media.Imaging;
 	using Anamnesis;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
@@ -98,7 +100,7 @@ namespace Anamnesis.Character.Views
 			if (this.Tribe == 0)
 				return;
 
-			IImageSource[]? facialFeatures = null;
+			ImageSource[]? facialFeatures = null;
 			if (GameDataService.CharacterMakeTypes != null)
 			{
 				foreach (ICharaMakeType set in GameDataService.CharacterMakeTypes.All)
@@ -134,7 +136,6 @@ namespace Anamnesis.Character.Views
 			}
 
 			Option legacyTattoo = new Option();
-			legacyTattoo.Icon = Anamnesis.Resources.LegacyTattoo.ToIImage();
 			legacyTattoo.Value = Appearance.FacialFeature.LegacyTattoo;
 			this.features.Add(legacyTattoo);
 
@@ -180,7 +181,7 @@ namespace Anamnesis.Character.Views
 		private class Option
 		{
 			public Appearance.FacialFeature Value { get; set; }
-			public IImageSource? Icon { get; set; }
+			public ImageSource? Icon { get; set; }
 			public int Index { get; set; }
 			public bool Selected { get; set; }
 		}

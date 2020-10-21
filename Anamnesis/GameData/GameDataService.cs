@@ -50,10 +50,12 @@ namespace Anamnesis.Services
 			Territories = new Sheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
 			Weathers = new Sheet<IWeather, Weather, WeatherViewModel>(this.lumina);
 			CharacterMakeCustomize = new CustomizeSheet(this.lumina);
+			CharacterMakeTypes = new Sheet<ICharaMakeType, CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
 
 			// no view models for these
 			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();
 
+			// props from the props.json file
 			try
 			{
 				List<Prop> propList = SerializerService.DeserializeFile<List<Prop>>("Props.json");

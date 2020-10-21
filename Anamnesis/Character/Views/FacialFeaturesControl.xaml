@@ -49,7 +49,10 @@
 				<DataTemplate>
 					<Grid Margin="1" Cursor="Hand">
 						<Border>
-							<Image Width="32" Height="32" Source="{Binding Icon, Converter={StaticResource IImageConverter}}" Margin="2"/>
+							<Grid Width="32" Height="32" Margin="2">
+								<Image Source="/Assets/LegacyTattoo.png"/>
+								<Image Source="{Binding Icon}" />
+							</Grid>
 						</Border>
 						<!--<TextBlock Text="{Binding Index}"/>-->
 						<Border SnapsToDevicePixels="True" Visibility="{Binding Selected, Converter={StaticResource B2V}}" BorderThickness="1" CornerRadius="3" BorderBrush="{DynamicResource PrimaryHueMidBrush}"/>
