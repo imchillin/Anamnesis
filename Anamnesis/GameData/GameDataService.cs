@@ -9,7 +9,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
 	using Anamnesis.GameData;
-	using Anamnesis.GameData.Wrappers;
+	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
 	using Anamnesis.Serialization;
 	using Lumina.Excel;
@@ -40,10 +40,10 @@ namespace Anamnesis.Services
 			this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
 			this.lumina.GetExcelSheet<Race>();
 
-			Races = new Database<IRace, Race, RaceWrapper>(this.lumina);
-			Tribes = new Database<ITribe, Tribe, TribeWrapper>(this.lumina);
-			Dyes = new Database<IDye, Stain, DyeWrapper>(this.lumina);
-			BaseNPCs = new Database<INpcBase, ENpcBase, NpcBaseWrapper>(this.lumina);
+			Races = new Database<IRace, Race, RaceViewModel>(this.lumina);
+			Tribes = new Database<ITribe, Tribe, TribeViewModel>(this.lumina);
+			Dyes = new Database<IDye, Stain, DyeViewModel>(this.lumina);
+			BaseNPCs = new Database<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
 
 			try
 			{
@@ -67,7 +67,7 @@ namespace Anamnesis.Services
 		private class Database<TInterfaceType, TConcreteType, TWrapperType> : IData<TInterfaceType>
 			where TInterfaceType : IDataObject
 			where TConcreteType : class, IExcelRow
-			where TWrapperType : ExcelRowWrapper<TConcreteType>, TInterfaceType
+			where TWrapperType : ExcelRowViewModel<TConcreteType>, TInterfaceType
 		{
 			private ExcelSheet<TConcreteType> excel;
 			private Dictionary<int, TWrapperType> wrapperCache = new Dictionary<int, TWrapperType>();

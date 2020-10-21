@@ -1,18 +1,18 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Wrappers
+namespace Anamnesis.GameData.ViewModels
 {
 	using System;
 	using Anamnesis.Services;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
-	public class DyeWrapper : ExcelRowWrapper<Stain>, IDye
+	public class DyeViewModel : ExcelRowViewModel<Stain>, IDye
 	{
 		private IItem? item;
 
-		public DyeWrapper(int key, ExcelSheet<Stain> sheet)
+		public DyeViewModel(int key, ExcelSheet<Stain> sheet)
 			: base(key, sheet)
 		{
 		}

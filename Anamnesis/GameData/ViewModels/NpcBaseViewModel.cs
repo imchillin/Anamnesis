@@ -1,15 +1,15 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Wrappers
+namespace Anamnesis.GameData.ViewModels
 {
 	using Anamnesis.Services;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
-	public class NpcBaseWrapper : ExcelRowWrapper<ENpcBase>, INpcBase
+	public class NpcBaseViewModel : ExcelRowViewModel<ENpcBase>, INpcBase
 	{
-		public NpcBaseWrapper(int key, ExcelSheet<ENpcBase> sheet)
+		public NpcBaseViewModel(int key, ExcelSheet<ENpcBase> sheet)
 			: base(key, sheet)
 		{
 		}
@@ -41,6 +41,6 @@ namespace Anamnesis.GameData.Wrappers
 		public int LipColor => this.Value.LipColor;
 		public int BustOrTone1 => this.Value.BustOrTone1;
 		public int HairColor => this.Value.HairColor;
-		public INpcEquip NpcEquip => new NpcEquipWrapper(this.Value);
+		public INpcEquip NpcEquip => new NpcEquipViewModel(this.Value);
 	}
 }

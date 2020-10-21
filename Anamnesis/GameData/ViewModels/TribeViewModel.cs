@@ -1,15 +1,15 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Wrappers
+namespace Anamnesis.GameData.ViewModels
 {
 	using Anamnesis.Memory;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
-	public class TribeWrapper : ExcelRowWrapper<Tribe>, ITribe
+	public class TribeViewModel : ExcelRowViewModel<Tribe>, ITribe
 	{
-		public TribeWrapper(int key, ExcelSheet<Tribe> sheet)
+		public TribeViewModel(int key, ExcelSheet<Tribe> sheet)
 			: base(key, sheet)
 		{
 		}

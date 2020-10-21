@@ -1,17 +1,17 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Wrappers
+namespace Anamnesis.GameData.ViewModels
 {
 	using Lumina.Excel;
 
-	public abstract class ExcelRowWrapper<T> : IDataObject
+	public abstract class ExcelRowViewModel<T> : IDataObject
 		where T : class, IExcelRow
 	{
 		private ExcelSheet<T> sheet;
 		private T? value;
 
-		public ExcelRowWrapper(int key, ExcelSheet<T> sheet)
+		public ExcelRowViewModel(int key, ExcelSheet<T> sheet)
 		{
 			this.sheet = sheet;
 			this.Key = key;

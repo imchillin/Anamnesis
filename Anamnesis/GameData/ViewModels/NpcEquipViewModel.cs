@@ -1,17 +1,17 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Wrappers
+namespace Anamnesis.GameData.ViewModels
 {
 	using Anamnesis.Extensions;
 	using Anamnesis.Services;
 	using Lumina.Excel.GeneratedSheets;
 
-	public class NpcEquipWrapper : INpcEquip
+	public class NpcEquipViewModel : INpcEquip
 	{
 		public readonly ENpcBase Value;
 
-		public NpcEquipWrapper(ENpcBase value)
+		public NpcEquipViewModel(ENpcBase value)
 		{
 			this.Value = value;
 		}

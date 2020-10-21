@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Wrappers
+namespace Anamnesis.GameData.ViewModels
 {
 	using System;
 	using System.Collections.Generic;
@@ -10,9 +10,9 @@ namespace Anamnesis.GameData.Wrappers
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
-	public class RaceWrapper : ExcelRowWrapper<Race>, IRace
+	public class RaceViewModel : ExcelRowViewModel<Race>, IRace
 	{
-		public RaceWrapper(int key, ExcelSheet<Race> sheet)
+		public RaceViewModel(int key, ExcelSheet<Race> sheet)
 			: base(key, sheet)
 		{
 		}
