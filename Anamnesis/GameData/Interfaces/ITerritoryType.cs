@@ -11,7 +11,7 @@ namespace Anamnesis.GameData
 		string Place { get; }
 		string Region { get; }
 		string Zone { get; }
-		string Background { get; }
+
 		List<IWeather> Weathers { get; }
 	}
 }

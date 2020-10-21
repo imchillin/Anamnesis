@@ -33,6 +33,8 @@ namespace Anamnesis.Services
 		public static IData<ITitle>? Titles { get; protected set; }
 		public static IData<IStatus>? Statuses { get; protected set; }
 
+		public static ExcelSheet<WeatherRate>? WeatherRates { get; protected set; }
+
 		public static ReadOnlyCollection<Prop>? Props { get; private set; }
 
 		public override Task Initialize()
@@ -44,6 +46,10 @@ namespace Anamnesis.Services
 			Tribes = new Database<ITribe, Tribe, TribeViewModel>(this.lumina);
 			Dyes = new Database<IDye, Stain, DyeViewModel>(this.lumina);
 			BaseNPCs = new Database<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
+			Territories = new Database<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
+
+			// no view models for these
+			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();
 
 			try
 			{
