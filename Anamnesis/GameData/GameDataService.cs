@@ -40,7 +40,6 @@ namespace Anamnesis.Services
 		public override Task Initialize()
 		{
 			this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
-			this.lumina.GetExcelSheet<Race>();
 
 			Races = new Sheet<IRace, Race, RaceViewModel>(this.lumina);
 			Tribes = new Sheet<ITribe, Tribe, TribeViewModel>(this.lumina);
