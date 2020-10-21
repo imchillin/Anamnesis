@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.ViewModels
 {
 	using System;
 	using Anamnesis.Services;
+	using Lumina;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
@@ -12,8 +13,8 @@ namespace Anamnesis.GameData.ViewModels
 	{
 		private IItem? item;
 
-		public DyeViewModel(int key, ExcelSheet<Stain> sheet)
-			: base(key, sheet)
+		public DyeViewModel(int key, ExcelSheet<Stain> sheet, Lumina lumina)
+			: base(key, sheet, lumina)
 		{
 		}
 

@@ -7,13 +7,14 @@ namespace Anamnesis.GameData.ViewModels
 	using System.Collections.Generic;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using Lumina;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
 	public class RaceViewModel : ExcelRowViewModel<Race>, IRace
 	{
-		public RaceViewModel(int key, ExcelSheet<Race> sheet)
-			: base(key, sheet)
+		public RaceViewModel(int key, ExcelSheet<Race> sheet, Lumina lumina)
+			: base(key, sheet, lumina)
 		{
 		}
 

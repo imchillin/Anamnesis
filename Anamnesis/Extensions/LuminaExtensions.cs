@@ -1,13 +1,15 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Extensions
+namespace Lumina
 {
 	using System;
-	using System.Collections.Generic;
-	using System.Text;
+	using System.Windows.Media;
+	using System.Windows.Media.Imaging;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
+
+	using global::Lumina.Data.Files;
 
 	public static class LuminaExtensions
 	{
@@ -34,6 +36,17 @@ namespace Anamnesis.Extensions
 			}
 
 			return ItemUtility.GetItem(slot, (ushort)modelSet, (ushort)modelBase, (ushort)modelVariant);
+		}
+
+		public static ImageSource? GetImage(this TexFile self)
+		{
+			if (self == null)
+				return null;
+
+			BitmapSource bmp = BitmapSource.Create(self.Header.Width, self.Header.Height, 96, 96, PixelFormats.Bgra32, null, self.ImageData, self.Header.Width * 4);
+			bmp.Freeze();
+
+			return bmp;
 		}
 	}
 }

@@ -3,11 +3,13 @@
 
 namespace Anamnesis.GameData
 {
+	using System.Windows.Media;
+
 	public interface IWeather : IDataObject
 	{
 		string Name { get; }
 		string Description { get; }
-		IImageSource Icon { get; }
+		ImageSource? Icon { get; }
 		ushort WeatherId { get; }
 	}
 }

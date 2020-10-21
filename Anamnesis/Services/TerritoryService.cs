@@ -50,8 +50,6 @@ namespace Anamnesis
 
 		public IWeather? CurrentWeather { get; set; }
 
-		private static IntPtr WeatherAddress => GposeService.Instance.IsGpose ? AddressService.GPoseWeather : AddressService.Weather;
-
 		public static bool GetIsBarracks()
 		{
 			// Twin adder barracks = 534
@@ -97,7 +95,15 @@ namespace Anamnesis
 				}
 
 				// Update weather
-				ushort weatherId = MemoryService.Read<ushort>(WeatherAddress);
+				ushort weatherId;
+				if (GposeService.Instance.IsGpose)
+				{
+					weatherId = MemoryService.Read<ushort>(AddressService.GPoseWeather);
+				}
+				else
+				{
+					weatherId = MemoryService.Read<byte>(AddressService.Weather);
+				}
 
 				if (weatherId != this.CurrentWeatherId)
 				{
@@ -110,11 +116,24 @@ namespace Anamnesis
 		{
 			if (e.PropertyName == nameof(TerritoryService.CurrentWeatherId))
 			{
-				ushort current = MemoryService.Read<ushort>(WeatherAddress);
-
-				if (current != this.CurrentWeatherId)
+				ushort current;
+				if (GposeService.Instance.IsGpose)
 				{
-					MemoryService.Write<ushort>(WeatherAddress, this.CurrentWeatherId);
+					current = MemoryService.Read<ushort>(AddressService.GPoseWeather);
+
+					if (current != this.CurrentWeatherId)
+					{
+						MemoryService.Write<ushort>(AddressService.GPoseWeather, this.CurrentWeatherId);
+					}
+				}
+				else
+				{
+					current = MemoryService.Read<byte>(AddressService.Weather);
+
+					if (current != this.CurrentWeatherId)
+					{
+						MemoryService.Write<byte>(AddressService.Weather, (byte)this.CurrentWeatherId);
+					}
 				}
 			}
 			else if (e.PropertyName == nameof(TerritoryService.CurrentWeather))

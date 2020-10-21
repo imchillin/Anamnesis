@@ -4,13 +4,14 @@
 namespace Anamnesis.GameData.ViewModels
 {
 	using Anamnesis.Memory;
+	using Lumina;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
 	public class TribeViewModel : ExcelRowViewModel<Tribe>, ITribe
 	{
-		public TribeViewModel(int key, ExcelSheet<Tribe> sheet)
-			: base(key, sheet)
+		public TribeViewModel(int key, ExcelSheet<Tribe> sheet, Lumina lumina)
+			: base(key, sheet, lumina)
 		{
 		}
 

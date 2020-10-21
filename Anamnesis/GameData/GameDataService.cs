@@ -47,6 +47,7 @@ namespace Anamnesis.Services
 			Dyes = new Database<IDye, Stain, DyeViewModel>(this.lumina);
 			BaseNPCs = new Database<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
 			Territories = new Database<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
+			Weathers = new Database<IWeather, Weather, WeatherViewModel>(this.lumina);
 
 			// no view models for these
 			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();
@@ -79,8 +80,11 @@ namespace Anamnesis.Services
 			private Dictionary<int, TWrapperType> wrapperCache = new Dictionary<int, TWrapperType>();
 			private List<TInterfaceType>? all;
 
+			private LuminaData lumina;
+
 			public Database(LuminaData lumina)
 			{
+				this.lumina = lumina;
 				this.excel = lumina.GetExcelSheet<TConcreteType>();
 			}
 
@@ -105,7 +109,7 @@ namespace Anamnesis.Services
 			{
 				if (!this.wrapperCache.ContainsKey(key))
 				{
-					TWrapperType? wrapper = Activator.CreateInstance(typeof(TWrapperType), key, this.excel) as TWrapperType;
+					TWrapperType? wrapper = Activator.CreateInstance(typeof(TWrapperType), key, this.excel, this.lumina) as TWrapperType;
 
 					if (wrapper == null)
 						throw new Exception($"Failed to create instance of Lumina data wrapper: {typeof(TWrapperType)}");

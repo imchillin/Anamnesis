@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.ViewModels
 {
 	using System.Collections.Generic;
 	using Anamnesis.Services;
+	using Lumina;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
@@ -12,8 +13,8 @@ namespace Anamnesis.GameData.ViewModels
 	{
 		private List<IWeather>? weathers;
 
-		public TerritoryTypeViewModel(int key, ExcelSheet<TerritoryType> sheet)
-			: base(key, sheet)
+		public TerritoryTypeViewModel(int key, ExcelSheet<TerritoryType> sheet, Lumina lumina)
+			: base(key, sheet, lumina)
 		{
 		}
 

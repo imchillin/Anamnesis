@@ -3,18 +3,22 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
+	using Lumina;
 	using Lumina.Excel;
 
 	public abstract class ExcelRowViewModel<T> : IDataObject
 		where T : class, IExcelRow
 	{
+		protected readonly Lumina lumina;
+
 		private ExcelSheet<T> sheet;
 		private T? value;
 
-		public ExcelRowViewModel(int key, ExcelSheet<T> sheet)
+		public ExcelRowViewModel(int key, ExcelSheet<T> sheet, Lumina lumina)
 		{
 			this.sheet = sheet;
 			this.Key = key;
+			this.lumina = lumina;
 		}
 
 		public int Key

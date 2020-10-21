@@ -90,7 +90,7 @@
 										<ColumnDefinition/>
 									</Grid.ColumnDefinitions>
 
-									<Image Grid.Column="0" Source="{Binding Icon, Converter={StaticResource IImageConverter}}" Width="22" Height="22"/>
+									<Image Grid.Column="0" Source="{Binding Icon}" Width="22" Height="22"/>
 									<TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}" VerticalAlignment="Center"/>
 
 								</Grid>

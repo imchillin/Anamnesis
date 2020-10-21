@@ -4,13 +4,14 @@
 namespace Anamnesis.GameData.ViewModels
 {
 	using Anamnesis.Services;
+	using Lumina;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
 	public class NpcBaseViewModel : ExcelRowViewModel<ENpcBase>, INpcBase
 	{
-		public NpcBaseViewModel(int key, ExcelSheet<ENpcBase> sheet)
-			: base(key, sheet)
+		public NpcBaseViewModel(int key, ExcelSheet<ENpcBase> sheet, Lumina lumina)
+			: base(key, sheet, lumina)
 		{
 		}
 

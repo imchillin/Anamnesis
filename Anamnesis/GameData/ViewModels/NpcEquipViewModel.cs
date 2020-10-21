@@ -3,8 +3,8 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
-	using Anamnesis.Extensions;
 	using Anamnesis.Services;
+	using Lumina;
 	using Lumina.Excel.GeneratedSheets;
 
 	public class NpcEquipViewModel : INpcEquip
