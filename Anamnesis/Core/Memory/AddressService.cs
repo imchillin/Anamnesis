@@ -122,12 +122,6 @@ namespace Anamnesis.Core.Memory
 			Log.Write($"Took {sw.ElapsedMilliseconds}ms to scan for {tasks.Count} addresses");
 		}
 
-		public override async Task Initialize()
-		{
-			await base.Initialize();
-			await Scan();
-		}
-
 		private static Task GetAddressFromSignature(string signature, int offset, Action<IntPtr> callback)
 		{
 			if (MemoryService.Scanner == null)
