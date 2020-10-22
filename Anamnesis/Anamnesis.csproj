@@ -25,6 +25,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Assets\Amaurotine.png" />
 		<None Remove="Assets\classBorder.png" />
 		<None Remove="Assets\Classes\alchemist.png" />
 		<None Remove="Assets\Classes\arcanist.png" />
@@ -65,10 +66,10 @@
 		<None Remove="Assets\Classes\warrior.png" />
 		<None Remove="Assets\Classes\weaver.png" />
 		<None Remove="Assets\Classes\whitemage.png" />
-		<None Remove="Assets\cmtool.png" />
 		<None Remove="Assets\colors.dat" />
 		<None Remove="Assets\Concept Matrix.ico" />
 		<None Remove="Assets\Concept Matrix.png" />
+		<None Remove="Assets\Hydaelyn.png" />
 		<None Remove="Assets\IconBorder.png" />
 		<None Remove="Assets\IconBorderSmall.png" />
 		<None Remove="Assets\IconOverlay.png" />
@@ -101,6 +102,7 @@
 		<None Remove="Assets\Slots\RightRing.png" />
 		<None Remove="Assets\Slots\Waist.png" />
 		<None Remove="Assets\Slots\Wrists.png" />
+		<None Remove="Assets\Zodiark.png" />
 		<None Remove="cmtool-icon.ico" />
 		<None Remove="FodyWeavers.xml" />
 		<None Remove="stylecop.json" />
@@ -173,10 +175,11 @@
 		<Resource Include="Assets\Classes\warrior.png" />
 		<Resource Include="Assets\Classes\weaver.png" />
 		<Resource Include="Assets\Classes\whitemage.png" />
-		<Resource Include="Assets\cmtool.png" />
+		<Resource Include="Assets\Amaurotine.png" />
 		<Resource Include="Assets\colors.dat" />
 		<Resource Include="Assets\Concept Matrix.ico" />
 		<Resource Include="Assets\Concept Matrix.png" />
+		<Resource Include="Assets\Hydaelyn.png" />
 		<Resource Include="Assets\IconBorder.png" />
 		<Resource Include="Assets\IconBorderSmall.png" />
 		<Resource Include="Assets\IconOverlay.png" />
@@ -209,6 +212,7 @@
 		<Resource Include="Assets\Slots\RightRing.png" />
 		<Resource Include="Assets\Slots\Waist.png" />
 		<Resource Include="Assets\Slots\Wrists.png" />
+		<Resource Include="Assets\Zodiark.png" />
 		<Resource Include="FodyWeavers.xml" />
 	</ItemGroup>
 
@@ -273,6 +277,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Languages\gr.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Tips.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

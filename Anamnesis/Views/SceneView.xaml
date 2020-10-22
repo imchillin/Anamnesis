@@ -15,17 +15,18 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
 			<ColumnDefinition Width="300"/>
-			<ColumnDefinition Width="256"/>
 			<ColumnDefinition Width="220"/>
 		</Grid.ColumnDefinitions>
 
-		<Grid.RowDefinitions>
-			<RowDefinition/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
+		<Grid Grid.Column="1">
 
-		<StackPanel Grid.Column="1">
-			<GroupBox Style="{StaticResource PanelGroupBox}">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			
+			<GroupBox Grid.Row="0" Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
 					<ana:Header Icon="Globe" Text="World"/>
 				</GroupBox.Header>
@@ -46,9 +47,7 @@
 
 					<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding TerritoryService.CurrentTerritoryName}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 0, 3, 6"/>
 
-
 					<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
@@ -101,18 +100,41 @@
 				</Grid>
 			</GroupBox>
 
-			<GroupBox Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding GposeService.IsGpose}">
+			<GroupBox Grid.Row="1" Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
-					<ana:Header Icon="Camera" Text="Camera"/>
+					<ana:Header Icon="UserAlt" Text="Actor Info"/>
 				</GroupBox.Header>
 
-				<Grid Margin="6">
+				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>
 
 					<Grid.RowDefinitions>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<TextBlock Text="Nickname:" Style="{StaticResource Label}"/>
+					<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TargetService.SelectedActor.Nickname}"/>
+
+				</Grid>
+
+			</GroupBox>
+
+			<GroupBox Grid.Row="2" Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding GposeService.IsGpose}">
+				<GroupBox.Header>
+					<ana:Header Icon="Camera" Text="Camera"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
@@ -165,7 +187,7 @@
 
 						<cm3:Vector2DEditor Grid.Column="1" Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
 					</Grid>
-						
+
 
 					<TextBlock Grid.Row="3" Grid.Column="0" Text="Rotation:" Style="{StaticResource Label}"/>
 					<cm3:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-180" Maximum="180" Wrap="True" TickFrequency="1"/>
@@ -182,71 +204,73 @@
 				</Grid>
 			</GroupBox>
 
-		</StackPanel>
+		</Grid>
 
-		<StackPanel Grid.Column="2">
-			<GroupBox Style="{StaticResource PanelGroupBox}">
+		<Grid Grid.Column="2">
+
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="auto"/>
+			</Grid.RowDefinitions>
+		
+			<GroupBox Grid.Row="0" Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 				<GroupBox.Header>
-					<ana:Header Icon="UserAlt" Text="Actor Info"/>
+					<ana:Header Icon="Cube" Text="Transform"/>
 				</GroupBox.Header>
 
-				<Grid>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
+				<StackPanel>
+					<GroupBox Header="Rotation">
+						<cm3:QuaternionEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Rotation}"/>
+					</GroupBox>
 
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
+					<GroupBox Header="Position">
+						<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Position}" Minimum="-4096" Maximum="4096" Sliders="Relative" Expanded="True"/>
+					</GroupBox>
 
-					<TextBlock Text="Nickname:" Style="{StaticResource Label}"/>
-					<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TargetService.SelectedActor.Nickname}"/>
-
-				</Grid>
-
+					<GroupBox Header="Scale">
+						<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Scale}" Minimum="0.1" Maximum="50" Expanded="True" TickFrequency="0.1" CanLink="True"/>
+					</GroupBox>
+				</StackPanel>
 			</GroupBox>
-		</StackPanel>
-
-		<GroupBox Grid.Column="3" Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
-			<GroupBox.Header>
-				<ana:Header Icon="Cube" Text="Transform"/>
-			</GroupBox.Header>
-
-			<StackPanel>
-				<GroupBox Header="Rotation">
-					<cm3:QuaternionEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Rotation}"/>
-				</GroupBox>
-
-				<GroupBox Header="Position">
-					<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Position}" Minimum="-4096" Maximum="4096" Sliders="Relative" Expanded="True"/>
-				</GroupBox>
-
-				<GroupBox Header="Scale">
-					<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Scale}" Minimum="0.1" Maximum="50" Expanded="True" TickFrequency="0.1" CanLink="True"/>
-				</GroupBox>
-			</StackPanel>
-		</GroupBox>
 
 
-		<Grid Grid.Column="3" Grid.Row="2" Margin="3" IsEnabled="{Binding GPoseService.IsOverworld}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition/>
-				<ColumnDefinition/>
-			</Grid.ColumnDefinitions>
-			
-			<cm3:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
-			<cm3:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+			<Grid Grid.Row="1" IsEnabled="{Binding GPoseService.IsOverworld}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+
+				<cm3:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
+				<cm3:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+			</Grid>
 		</Grid>
 
 
-		<Grid Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="128">
-			<Image Source="/Assets/cmtool.png" Opacity="0.65" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="Helpful Ascian friend"/>
+		<Grid Grid.Column="0" VerticalAlignment="Bottom">
+			<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12, 0, 0, 32" Height="128">
+				<Image Source="/Assets/Amaurotine.png" ToolTip="Helpful Ascian friend" Visibility="{Binding TipService.IsAmaurotine, Converter={StaticResource B2V}}"/>
+				<Image Source="/Assets/Hydaelyn.png" ToolTip="Crystal Mom" Visibility="{Binding TipService.IsHydaelyn, Converter={StaticResource B2V}}"/>
+				<Image Source="/Assets/Zodiark.png" ToolTip="Crystal Mo, but angry." Visibility="{Binding TipService.IsZodiark, Converter={StaticResource B2V}}"/>
+				<Image Source="/Assets/AnamTan.png" ToolTip="Crystal Mo, but angry." Visibility="{Binding TipService.IsAnamTan, Converter={StaticResource B2V}}"/>
+			</Grid>
+			
+			<Grid VerticalAlignment="Bottom" Margin="5, 100, 5, 5">
+				<Rectangle Fill="{DynamicResource MaterialDesignCardBackground}" Stroke="{DynamicResource MaterialDesignPaper}" RadiusX="4" RadiusY="4" Margin="0, 13, 0, 0"/>
+			
+				<Button Click="OnTipClicked" Margin="0, 13, 0, 0" Style="{StaticResource TransparentButton}" Padding="0" HorizontalContentAlignment="Stretch" IsEnabled="{Binding TipService.Tip.CanClick}">
+					<Grid Margin="6">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
 
-			<Grid Height="32" VerticalAlignment="Bottom" Margin="128, 5, 5, 5">
-				<Rectangle Fill="{DynamicResource MaterialDesignCardBackground}" Stroke="{DynamicResource MaterialDesignPaper}" RadiusX="4" RadiusY="4" Margin="13, 0, 0, 0"/>
-				<Path Fill="{DynamicResource MaterialDesignCardBackground}" Stroke="{DynamicResource MaterialDesignPaper}" Stretch="Fill" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 6, 0, 0" Width="15" Height="15" Grid.Row="1" Data="M 1,0, 0,1, 1,2"/>
-				<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" Text="Did you know? Only you can see me~" Margin="25, 0, 10, 2" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+						<ana:Header Icon="Question" Text="Did you know"/>
+						<TextBlock Margin="3, 0, 3, 0" Grid.Row="1" TextWrapping="Wrap" FontSize="14" Text="{Binding TipService.Tip.Text}" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+					</Grid>
+				</Button>
+
+				<Path Fill="{DynamicResource MaterialDesignCardBackground}" Stroke="{DynamicResource PrimaryHueMidBrush}" Stretch="Fill" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16, 0, 0, 0" Width="15" Height="15" Grid.Row="1" Data="M 0,1, 1,0, 2,1" Visibility="{Binding TipService.Tip.CanClick, Converter={StaticResource B2V}}"/>
+				<Path Fill="{DynamicResource MaterialDesignCardBackground}" Stroke="{DynamicResource MaterialDesignCardBackground}" Stretch="Fill" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16, 0, 0, 0" Width="15" Height="15" Grid.Row="1" Data="M 0,1, 1,0, 2,1" Visibility="{Binding TipService.Tip.CanClick, Converter={StaticResource !B2V}}"/>
 
 				<Grid.Effect>
 					<DropShadowEffect ShadowDepth="3" Opacity="0.25"/>

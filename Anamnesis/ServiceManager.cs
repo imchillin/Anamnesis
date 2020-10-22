@@ -74,6 +74,7 @@ namespace Anamnesis.Services
 			await Add<PoseService>();
 			await Add<ModelTypeService>();
 			await Add<GameDataService>();
+			await Add<TipService>();
 
 			IsInitialized = true;
 			Log.Write($"Services Initialized", "Services");

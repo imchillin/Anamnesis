@@ -35,6 +35,7 @@ namespace Anamnesis.Views
 		public TerritoryService TerritoryService => TerritoryService.Instance;
 		public TimeService TimeService => TimeService.Instance;
 		public CameraService CameraService => CameraService.Instance;
+		public TipService TipService => TipService.Instance;
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
@@ -78,6 +79,11 @@ namespace Anamnesis.Views
 
 			await file.WriteToFile(config);
 			return file;
+		}
+
+		private void OnTipClicked(object sender, RoutedEventArgs e)
+		{
+			TipService.Instance.KnowMore();
 		}
 	}
 }
