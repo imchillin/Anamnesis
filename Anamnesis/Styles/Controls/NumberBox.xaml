@@ -13,7 +13,7 @@
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition x:Name="SliderArea" Width="Auto"/>
-			<ColumnDefinition x:Name="InputBoxArea" Width="42"/>
+			<ColumnDefinition x:Name="InputBoxArea" Width="45"/>
 			<ColumnDefinition Width="Auto"/>
 			
 		</Grid.ColumnDefinitions>
