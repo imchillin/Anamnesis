@@ -12,6 +12,7 @@ namespace Anamnesis.Services
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Serialization;
+	using Anamnesis.XMA;
 
 	public class ServiceManager
 	{
@@ -75,6 +76,7 @@ namespace Anamnesis.Services
 			await Add<ModelTypeService>();
 			await Add<GameDataService>();
 			await Add<TipService>();
+			await Add<XmaService>();
 
 			IsInitialized = true;
 			Log.Write($"Services Initialized", "Services");
