@@ -55,6 +55,12 @@ namespace Anamnesis.Memory.Types
 			}
 		}
 
+		public bool FreezeAngle
+		{
+			get => this.IsValueFrozen(nameof(CameraViewModel.Angle));
+			set => this.FreezeValue(nameof(CameraViewModel.Angle), value);
+		}
+
 		protected override void OnViewToModel(string fieldName, object? value)
 		{
 			if (!GposeService.Instance.IsGpose)

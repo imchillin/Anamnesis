@@ -14,7 +14,7 @@
 	<Grid x:Name="ContentArea" Visibility="{Binding DataContext, Converter={StaticResource NotNullToVisibilityConverter}}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
-			<ColumnDefinition Width="256"/>
+			<ColumnDefinition Width="300"/>
 			<ColumnDefinition Width="256"/>
 			<ColumnDefinition Width="220"/>
 		</Grid.ColumnDefinitions>
@@ -125,50 +125,8 @@
 					<TextBlock Grid.Row="0" Text="Delimit:" Style="{StaticResource Label}"/>
 					<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding CameraService.DelimitCamera}"/>
 
-					<TextBlock Grid.Row="1" Grid.Column="0" Text="Angle:" Style="{StaticResource Label}"/>
+					<TextBlock Grid.Row="1" Grid.Column="0" Text="Position:" Style="{StaticResource Label}"/>
 					<Grid Grid.Row="1" Grid.Column="1">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
-						</Grid.ColumnDefinitions>
-
-						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition/>
-						</Grid.RowDefinitions>
-
-						<ToggleButton Grid.RowSpan="2" Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" Height="22" Width="22" Padding="0" Margin="0"
-									  IsChecked="{Binding CameraService.LockCameraAngle}">
-							<ToggleButton.Content>
-								<fa:IconBlock Icon="LockOpen" FontSize="12"/>
-							</ToggleButton.Content>
-							<materialdesign:ToggleButtonAssist.OnContent>
-								<fa:IconBlock Icon="Lock" FontSize="12"/>
-							</materialdesign:ToggleButtonAssist.OnContent>
-						</ToggleButton>
-
-						<Label Grid.Column="1" Grid.Row="0" Content="X:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="#99000000" Width="20"/>
-						<cm3:NumberBox Grid.Column="2" Grid.Row="0" Value="{Binding CameraService.Camera.Angle.X, Converter={StaticResource Rad2Deg}}" IsEnabled="{Binding LockCameraAngle}" Minimum="-180" Maximum="180" Slider="Absolute" Wrap="True" Buttons="True" Margin="0, 0, 0, 2"/>
-						<Label Grid.Column="1" Grid.Row="1" Content="Y:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="#99000000" Width="20"/>
-						<cm3:NumberBox Grid.Column="2" Grid.Row="1" Value="{Binding CameraService.Camera.Angle.Y, Converter={StaticResource Rad2Deg}}" IsEnabled="{Binding LockCameraAngle}" Minimum="-90" Maximum="90" Slider="Absolute" Buttons="True" Wrap="True" Margin="0, 0, 0, 2"/>
-					</Grid>
-
-					<TextBlock Grid.Row="2" Grid.Column="0" Text="Rotation:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-180" Maximum="180" Wrap="True" TickFrequency="1"/>
-
-					<TextBlock Grid.Row="3" Grid.Column="0" Text="Pan:" Style="{StaticResource Label}"/>
-					<cm3:Vector2DEditor Grid.Row="3" Grid.Column="1" Value="{Binding CameraService.Camera.Pan, Converter={StaticResource Vec2DRad2Deg}}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
-
-					<TextBlock Grid.Row="4" Grid.Column="0" Text="Zoom:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding CameraService.Camera.Zoom}" Buttons="True" Slider="Absolute" Minimum="{Binding CameraService.Camera.MinZoom}" Maximum="{Binding CameraService.Camera.MaxZoom}" TickFrequency="1"/>
-
-					<TextBlock Grid.Row="5" Grid.Column="0" Text="FoV:" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding CameraService.Camera.FieldOfView, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-40" Maximum="100" TickFrequency="1"/>
-
-					<TextBlock Grid.Row="6" Grid.Column="0" Text="Position:" Style="{StaticResource Label}"/>
-
-					<!--<Grid Grid.Row="6" Grid.Column="1">
 
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -185,8 +143,41 @@
 							</materialdesign:ToggleButtonAssist.OnContent>
 						</ToggleButton>
 
-						<cm3:VectorEditor Grid.Column="1" Value="{Binding CameraService.CameraPosition}" Expanded="True" Sliders="Relative" Minimum="-4096" Maximum="4096"/>
-					</Grid>-->
+						<cm3:VectorEditor IsEnabled="{Binding CameraService.LockCameraPosition}" Grid.Column="1" TickFrequency="0.05" Value="{Binding CameraService.CameraPosition}" Expanded="True" Sliders="Relative" Minimum="-4096" Maximum="4096"/>
+					</Grid>
+
+					<TextBlock Grid.Row="2" Grid.Column="0" Text="Angle:" Style="{StaticResource Label}"/>
+					<Grid Grid.Row="2" Grid.Column="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<ToggleButton Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" Height="22" Width="22" Padding="0" Margin="0"
+									  IsChecked="{Binding CameraService.Camera.FreezeAngle}">
+							<ToggleButton.Content>
+								<fa:IconBlock Icon="LockOpen" FontSize="12"/>
+							</ToggleButton.Content>
+							<materialdesign:ToggleButtonAssist.OnContent>
+								<fa:IconBlock Icon="Lock" FontSize="12"/>
+							</materialdesign:ToggleButtonAssist.OnContent>
+						</ToggleButton>
+
+						<cm3:Vector2DEditor Grid.Column="1" Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
+					</Grid>
+						
+
+					<TextBlock Grid.Row="3" Grid.Column="0" Text="Rotation:" Style="{StaticResource Label}"/>
+					<cm3:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-180" Maximum="180" Wrap="True" TickFrequency="1"/>
+
+					<TextBlock Grid.Row="4" Grid.Column="0" Text="Pan:" Style="{StaticResource Label}"/>
+					<cm3:Vector2DEditor Grid.Row="4" Grid.Column="1" Value="{Binding CameraService.Camera.Pan, Converter={StaticResource Vec2DRad2Deg}}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
+
+					<TextBlock Grid.Row="5" Grid.Column="0" Text="Zoom:" Style="{StaticResource Label}"/>
+					<cm3:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding CameraService.Camera.Zoom}" Buttons="True" Slider="Absolute" Minimum="{Binding CameraService.Camera.MinZoom}" Maximum="{Binding CameraService.Camera.MaxZoom}" TickFrequency="1"/>
+
+					<TextBlock Grid.Row="6" Grid.Column="0" Text="FoV:" Style="{StaticResource Label}"/>
+					<cm3:NumberBox Grid.Row="6" Grid.Column="1" Value="{Binding CameraService.Camera.FieldOfView, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-40" Maximum="100" TickFrequency="1"/>
 
 				</Grid>
 			</GroupBox>

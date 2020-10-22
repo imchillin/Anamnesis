@@ -35,6 +35,7 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr GposeCheck { get; private set; }   // GPoseCheckOffset
 		public static IntPtr GposeCheck2 { get; private set; }   // GPoseCheck2Offset
 		public static IntPtr Territory { get; private set; }
+		public static IntPtr GPose { get; private set; }
 
 		public static IntPtr Time
 		{
@@ -78,6 +79,16 @@ namespace Anamnesis.Core.Memory
 			}
 		}
 
+		public static IntPtr GPoseCamera
+		{
+			get
+			{
+				IntPtr address = MemoryService.ReadPtr(GPose);
+				address += 0xA0;
+				return address;
+			}
+		}
+
 		public static async Task Scan()
 		{
 			if (MemoryService.Process == null)
@@ -105,6 +116,7 @@ namespace Anamnesis.Core.Memory
 			GPoseFilters = baseAddress + 0x1CE91B8;
 			GposeCheck = baseAddress + 0x1D0EA10;
 			GposeCheck2 = baseAddress + 0x1D0E9F0;
+			GPose = baseAddress + 0x1D0AE30;
 
 			SkeletonFreezePosition = baseAddress + 0x140978B;
 			SkeletonFreezeRotation = baseAddress + 0x1409800;

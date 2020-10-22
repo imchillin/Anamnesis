@@ -36,7 +36,7 @@ namespace Anamnesis.Memory
 	public abstract class MemoryViewModelBase<T> : StructViewModelBase<T>, IMemoryViewModel
 		where T : struct
 	{
-		private Dictionary<string, (PropertyInfo, object?)> freezeValues = new Dictionary<string, (PropertyInfo, object?)>();
+		private Dictionary<string, (PropertyInfo, FieldInfo, object?)> freezeValues = new Dictionary<string, (PropertyInfo, FieldInfo, object?)>();
 
 		public MemoryViewModelBase(IntPtr pointer, IStructViewModel? parent = null)
 			: base(parent)
@@ -149,22 +149,25 @@ namespace Anamnesis.Memory
 		{
 			if (freeze)
 			{
-				Type type = this.GetType();
-				PropertyInfo? field = type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+				PropertyInfo? property = this.GetType().GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+				FieldInfo? field = typeof(T).GetField(name, BindingFlags.Public | BindingFlags.Instance);
+
+				if (property == null)
+					throw new Exception($"Unable to locate property to freeze with name: {name}");
 
 				if (field == null)
 					throw new Exception($"Unable to locate field to freeze with name: {name}");
 
 				if (value == null)
 				{
-					value = field.GetValue(this);
+					value = property.GetValue(this);
 				}
 				else
 				{
-					field.SetValue(this, value);
+					property.SetValue(this, value);
 				}
 
-				this.freezeValues.Add(name, (field, value));
+				this.freezeValues.Add(name, (property, field, value));
 			}
 			else
 			{
@@ -190,9 +193,9 @@ namespace Anamnesis.Memory
 
 			if (this.freezeValues.ContainsKey(fieldName))
 			{
-				(PropertyInfo property, object? val) = this.freezeValues[fieldName];
+				(PropertyInfo property, FieldInfo field, object? val) = this.freezeValues[fieldName];
 				val = value;
-				this.freezeValues[fieldName] = (property, val);
+				this.freezeValues[fieldName] = (property, field, val);
 			}
 		}
 
@@ -200,8 +203,13 @@ namespace Anamnesis.Memory
 		{
 			if (this.freezeValues.ContainsKey(fieldName))
 			{
-				(PropertyInfo property, object? val) = this.freezeValues[fieldName];
+				(PropertyInfo property, FieldInfo field, object? val) = this.freezeValues[fieldName];
 				property.SetValue(this, val);
+
+				if (this.HandleViewToModelUpdate(property, field))
+				{
+					this.OnViewToModel(fieldName, val);
+				}
 			}
 		}
 
