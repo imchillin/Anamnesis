@@ -29,6 +29,7 @@ namespace Anamnesis.Files
 				throw new Exception("CMTool Apearance file has no data");
 
 			CharacterFile allFile = base.Upgrade();
+			allFile.SaveMode = CharacterFile.SaveModes.All;
 
 			byte[] data = this.StringtoBytes(this.CharacterBytes);
 
