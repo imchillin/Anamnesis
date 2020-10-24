@@ -277,7 +277,7 @@
 			</GroupBox>
 
 
-			<Grid Grid.Row="1" IsEnabled="{Binding GPoseService.IsOverworld}">
+			<!--<Grid Grid.Row="1" IsEnabled="{Binding GPoseService.IsOverworld}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
 					<ColumnDefinition/>
@@ -285,7 +285,7 @@
 
 				<cm3:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
 				<cm3:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
-			</Grid>
+			</Grid>-->
 		</Grid>
 	</Grid>
 </UserControl>
