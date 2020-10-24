@@ -4,18 +4,58 @@
 		"Url": "https://www.xivmodarchive.com"
 	},
 	{
-		"Text": "I will give you many tips."
+		"Text": "Tips on the main tab will give you tips."
 	},
 	{
-		"Text": "To restore your default appearance, move to a differnet area through a loading screen."
+		"Text": "To restore your default appearance, close Anamnesis, then go to another area."
 	},
 	{
-		"Text": "Use [Shift] and [Ctrl] to speed up or slow down number changes."
+		"Text": "Use [Shift] and [Ctrl] to speed up or slow down the intervals of your rotation/position."
 	},
 	{
 		"Text": "You can change the values of sliders, input boxes, and gizmos with the scroll wheel."
 	},
 	{
-		"Text": "Need more actors but have no friends? Use housing npcs!"
+		"Text": "The Anamnesis window can be made transparent in the Settings Panel."
+	},
+	{	
+		"Text": "You can change the current theme in the Settings Panel."
+	},
+	{
+		"Text": "Need more actors but have no friends? Use housing NPCs!"
+	},
+	{	
+		"Text": "The Crystalline Means Discord has many useful guides to help you with using Anamnesis.",
+		"Url": "https://discord.com/invite/crystallinemeans" 
+	},
+	{	
+		"Text": "Game updates will likely break the tool. Please be patient when this happens, and we will have a fix out ASAP."
+	},
+	{
+		"Text": "You can use housing NPCs or Carbuncles as actors."
+	},
+	{
+		"Text": "You can use poses made for other races, but they may require adjustment."
+	},
+	{
+		"Text": "If hair or ears go funny when loading a pose, turn Physics on, then off again."
+	},
+	{
+		"Text": "Make sure you're running Anamnesis as an Administrator"
+	},
+	{
+		"Text": "You can only pose actors while in GPose"
+	},
+	{
+		"Text": "Anamnesis cannot be used for gameplay advantages. If you find an exploit using Anamnesis, please report it to the developers.",
+		"Url": "https://discord.com/invite/crystallinemeans"
+	},
+	{
+		"Text": "You can set skin, skin glow, lip, eye, and hair colour by RGB using the Extended Appearance function."
+	},
+	{
+		"Text": "You can change the time of day and the weather in the 'World' section."
+	},
+	{	"Text": "You can change the window size in the Settings Panel."
 	}
 ]
