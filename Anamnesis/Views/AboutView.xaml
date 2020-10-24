@@ -9,14 +9,14 @@
 			 d:DesignHeight="600"
 			 d:DesignWidth="250">
 	<ScrollViewer>
-		<StackPanel>
+		<StackPanel Margin="6, 0, 0, 0">
 			<GroupBox Header="Proudly Open Source">
 				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Anamnesis is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
 				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/Anamnesis" FontSize="12">GitHub</Hyperlink>.
 					<LineBreak /><LineBreak />
 					Anamnesis is built with the following projects:
 					<LineBreak />
-					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/ufx/SaintCoinach" FontSize="12" >Saint Coinach</Hyperlink>
+					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/NotAdam/Lumina" FontSize="12" >Lumina</Hyperlink>
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="http://materialdesigninxaml.net/" FontSize="12">Material Design In XAML</Hyperlink>
 					<LineBreak />
