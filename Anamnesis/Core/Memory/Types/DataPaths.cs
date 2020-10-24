@@ -8,6 +8,7 @@ namespace Anamnesis.Memory
 	public enum DataPaths : short
 	{
 		None = 0,
+		Unknown = 1,
 
 		MidlanderMasculine = 101,
 		MidlanderMasculineChild = 104,
