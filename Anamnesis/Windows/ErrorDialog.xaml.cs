@@ -27,7 +27,7 @@ namespace Anamnesis.GUI.Windows
 			this.InitializeComponent();
 
 			this.OkButton.Visibility = isCritical ? Visibility.Collapsed : Visibility.Visible;
-			this.QuitButton.Visibility = isCritical ? Visibility.Collapsed : Visibility.Visible;
+			this.QuitButton.Visibility = !isCritical ? Visibility.Collapsed : Visibility.Visible;
 
 			this.Message.Text = isCritical ? "Critical Error" : "Error";
 			this.Subtitle.Visibility = isCritical ? Visibility.Visible : Visibility.Collapsed;
