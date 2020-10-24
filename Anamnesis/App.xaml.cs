@@ -4,6 +4,7 @@
 namespace Anamnesis
 {
 	using System;
+	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Threading;
@@ -19,8 +20,6 @@ namespace Anamnesis
 	public partial class App : Application
 	{
 		private static readonly ServiceManager Services = new ServiceManager();
-
-		public static MainApplicationSettings Settings { get; private set; } = new MainApplicationSettings();
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -77,10 +76,6 @@ namespace Anamnesis
 			{
 				await Services.InitializeServices();
 
-				Settings = await SettingsService.Load<MainApplicationSettings>();
-				Settings.Changed += this.OnSettingsChanged;
-				this.OnSettingsChanged(Settings);
-
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					Window oldwindow = this.MainWindow;
@@ -93,12 +88,6 @@ namespace Anamnesis
 			{
 				Log.Write(ex);
 			}
-		}
-
-		private void OnSettingsChanged(SettingsBase settings)
-		{
-			PaletteHelper ph = new PaletteHelper();
-			ph.Apply(App.Settings.ThemeSwatch, App.Settings.ThemeDark);
 		}
 	}
 }

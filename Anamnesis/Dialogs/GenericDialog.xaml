@@ -16,11 +16,11 @@
 		<TextBlock Text="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="450" TextWrapping="Wrap" Margin="12"/>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" >
-			<Button Grid.Column="1" Margin="3" Content="{Binding Left}" MinWidth="75" Click="OnLeftClick"/>
+			<Button Grid.Column="1" Margin="3" Content="{Binding Left}" Visibility="{Binding Left, Converter={StaticResource NotNullToVisibilityConverter}}" MinWidth="75" Click="OnLeftClick"/>
 		</StackPanel>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" >
-			<Button Grid.Column="1" Margin="3" Content="{Binding Right}" MinWidth="75" Click="OnRightClick"/>
+			<Button Grid.Column="1" Margin="3" Content="{Binding Right}" Visibility="{Binding Right, Converter={StaticResource NotNullToVisibilityConverter}}" MinWidth="75" Click="OnRightClick"/>
 		</StackPanel>
 	</Grid>
 </UserControl>

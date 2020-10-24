@@ -122,9 +122,8 @@ namespace Anamnesis.Services
 		public override async Task Start()
 		{
 			await base.Start();
-			MainApplicationSettings mainSettings = await SettingsService.Load<MainApplicationSettings>();
 
-			SetLocale(mainSettings.Language);
+			SetLocale(SettingsService.Current.Language);
 		}
 
 		private class Locale

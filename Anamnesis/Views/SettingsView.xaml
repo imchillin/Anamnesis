@@ -35,13 +35,13 @@
 		</ComboBox>
 
 		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="1" Text="Window Opacity:" Style="{StaticResource Label}"/>
-		<cm3Controls:NumberBox Margin="6" x:Name="TransparancySlider" PreviewMouseUp="TransparancyPreviewMouseUp" Slider="Absolute" Grid.Column="1" Grid.Row="1" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
+		<cm3Controls:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="1" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
 
 		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="2" Text="Stay Transparent:" Style="{StaticResource Label}"/>
-		<CheckBox Margin="6" IsChecked="{Binding Settings.StayTransparent}" Grid.Column="1" Grid.Row="2"/>
+		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="2"/>
 
 		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="3" Text="Window Size:" Style="{StaticResource Label}"/>
-		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding Settings.Scale}" Grid.Column="1" Grid.Row="3" Margin="6"/>
+		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="3" Margin="6"/>
 
 		<GroupBox Header="Theme" Grid.Row="4" Grid.ColumnSpan="2">
 			<Grid>
@@ -53,11 +53,11 @@
 
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 					<TextBlock Text="Hydaelyn"  VerticalAlignment="Center"/>
-					<ToggleButton Margin="6" Grid.Row="0" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Left" IsChecked="{Binding Settings.ThemeDark}"/>
+					<ToggleButton Margin="6" Grid.Row="0" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Left" IsChecked="{Binding SettingsService.Settings.ThemeDark}"/>
 					<TextBlock Text="Zodiark"  VerticalAlignment="Center"/>
 				</StackPanel>
 				
-				<ListBox Grid.Row="1" ItemsSource="{Binding Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
+				<ListBox Grid.Row="1" ItemsSource="{Binding Swatches.Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
 					<ListBox.ItemsPanel>
 						<ItemsPanelTemplate>
 							<WrapPanel x:Name="wrapPanel"/>

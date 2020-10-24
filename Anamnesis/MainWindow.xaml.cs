@@ -5,6 +5,7 @@ namespace Anamnesis.GUI
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Diagnostics;
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
@@ -34,31 +35,32 @@ namespace Anamnesis.GUI
 
 			ViewService.ShowingDrawer += this.OnShowDrawer;
 
-			this.Zodiark = App.Settings.ThemeDark;
-			this.Opacity = App.Settings.Opacity;
-			this.AlwaysOnTopToggle.IsChecked = App.Settings.AlwaysOnTop;
-			this.WindowScale.ScaleX = App.Settings.Scale;
-			this.WindowScale.ScaleY = App.Settings.Scale;
+			this.Zodiark = SettingsService.Current.ThemeDark;
+			this.Opacity = SettingsService.Current.Opacity;
+			this.AlwaysOnTopToggle.IsChecked = SettingsService.Current.AlwaysOnTop;
+			this.WindowScale.ScaleX = SettingsService.Current.Scale;
+			this.WindowScale.ScaleY = SettingsService.Current.Scale;
 
-			if (App.Settings.WindowPosition.X != 0)
+			if (SettingsService.Current.WindowPosition.X != 0)
 			{
-				this.Left = App.Settings.WindowPosition.X;
-				this.Top = App.Settings.WindowPosition.Y;
+				this.Left = SettingsService.Current.WindowPosition.X;
+				this.Top = SettingsService.Current.WindowPosition.Y;
 			}
 
-			App.Settings.Changed += this.OnSettingsChanged;
+			SettingsService.Current.PropertyChanged += this.OnSettingsChanged;
 		}
 
+		public SettingsService SettingsService => SettingsService.Instance;
 		public GposeService GposeService => GposeService.Instance;
 		public TargetService TargetService => TargetService.Instance;
 
 		public bool Zodiark { get; set; }
 
-		private void OnSettingsChanged(SettingsBase settings)
+		private void OnSettingsChanged(object sender, PropertyChangedEventArgs args)
 		{
-			this.Zodiark = App.Settings.ThemeDark;
-			this.WindowScale.ScaleX = App.Settings.Scale;
-			this.WindowScale.ScaleY = App.Settings.Scale;
+			this.Zodiark = SettingsService.Current.ThemeDark;
+			this.WindowScale.ScaleX = SettingsService.Current.Scale;
+			this.WindowScale.ScaleY = SettingsService.Current.Scale;
 		}
 
 		private async Task OnShowDrawer(string? title, UserControl view, DrawerDirection direction)
@@ -176,27 +178,15 @@ namespace Anamnesis.GUI
 			ViewService.ShowDrawer<AboutView>("About");
 		}
 
-		private void OnAlwaysOnTopChecked(object sender, RoutedEventArgs e)
-		{
-			this.Topmost = true;
-			App.Settings.AlwaysOnTop = true;
-		}
-
-		private void OnAlwaysOnTopUnchecked(object sender, RoutedEventArgs e)
-		{
-			this.Topmost = false;
-			App.Settings.AlwaysOnTop = false;
-		}
-
 		private void Window_MouseEnter(object sender, MouseEventArgs e)
 		{
-			if (App.Settings.Opacity == 1.0)
+			if (SettingsService.Current.Opacity == 1.0)
 			{
 				this.Opacity = 1.0;
 				return;
 			}
 
-			if (App.Settings.StayTransparent)
+			if (SettingsService.Current.StayTransparent)
 				return;
 
 			this.Animate(Window.OpacityProperty, 1.0, 100);
@@ -204,10 +194,10 @@ namespace Anamnesis.GUI
 
 		private void Window_MouseLeave(object sender, MouseEventArgs e)
 		{
-			if (App.Settings.Opacity == 1.0)
+			if (SettingsService.Current.Opacity == 1.0)
 				return;
 
-			this.Animate(Window.OpacityProperty, App.Settings.Opacity, 250);
+			this.Animate(Window.OpacityProperty, SettingsService.Current.Opacity, 250);
 		}
 
 		private void OnResizeDrag(object sender, DragDeltaEventArgs e)
@@ -220,7 +210,7 @@ namespace Anamnesis.GUI
 			scale = Math.Clamp(scale, 0.5, 2.0);
 			this.WindowScale.ScaleX = scale;
 			this.WindowScale.ScaleY = scale;
-			App.Settings.Scale = scale;
+			SettingsService.Current.Scale = scale;
 		}
 
 		private void OnAddActorClicked(object sender, RoutedEventArgs e)
@@ -246,8 +236,8 @@ namespace Anamnesis.GUI
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			App.Settings.WindowPosition = new Point(this.Left, this.Top);
-			App.Settings.Save();
+			SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
+			SettingsService.Save();
 		}
 	}
 }

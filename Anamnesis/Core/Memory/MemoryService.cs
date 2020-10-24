@@ -374,7 +374,7 @@ namespace Anamnesis.Memory
 					if (proc == null)
 						App.Current.Shutdown();
 
-					App.Current.MainWindow.Topmost = App.Settings.AlwaysOnTop;
+					App.Current.MainWindow.Topmost = SettingsService.Current.AlwaysOnTop;
 
 					return proc;
 				});

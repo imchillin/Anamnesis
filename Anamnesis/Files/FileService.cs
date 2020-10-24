@@ -87,7 +87,7 @@ namespace Anamnesis.Files
 
 			try
 			{
-				bool useExplorerBrowser = App.Settings.UseWindowsExplorer;
+				bool useExplorerBrowser = SettingsService.Current.UseWindowsExplorer;
 
 				if (!useExplorerBrowser)
 				{
@@ -156,7 +156,7 @@ namespace Anamnesis.Files
 
 				if (path == null)
 				{
-					bool useExplorerBrowser = App.Settings.UseWindowsExplorer;
+					bool useExplorerBrowser = SettingsService.Current.UseWindowsExplorer;
 
 					if (!useExplorerBrowser)
 					{

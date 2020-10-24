@@ -4,76 +4,91 @@
 namespace Anamnesis.Services
 {
 	using System;
+	using System.ComponentModel;
 	using System.Diagnostics;
 	using System.IO;
 	using System.Threading.Tasks;
+	using System.Windows;
 	using Anamnesis;
 	using Anamnesis.Files;
+	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Serialization;
-
-	public delegate void SettingsEvent(SettingsBase settings);
+	using MaterialDesignThemes.Wpf;
 
 	public class SettingsService : ServiceBase<SettingsService>
 	{
-		public const string SettingsDirectory = "Settings/";
+		private static string settingsPath = FileService.StoreDirectory + "/Settings.json";
+
+		private string currentThemeSwatch = string.Empty;
+		private bool? currentThemeDark = null;
+
+		public static Settings Current => Instance.Settings!;
+
+		public Settings? Settings { get; private set; }
 
 		public static void ShowDirectory()
 		{
-			string? dir = Path.GetDirectoryName(FileService.StoreDirectory + SettingsDirectory);
+			string? dir = Path.GetDirectoryName(FileService.StoreDirectory);
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);
 		}
 
-		public static Task<T> Load<T>()
-			where T : SettingsBase, new()
+		public static void Save()
 		{
-			string path = FileService.StoreDirectory + SettingsDirectory + typeof(T).Name + ".json";
-
-			T settings;
-			if (!File.Exists(path))
-			{
-				settings = Activator.CreateInstance<T>();
-				settings.Save();
-			}
-			else
-			{
-				string json = File.ReadAllText(path);
-				settings = SerializerService.Deserialize<T>(json);
-			}
-
-			return Task.FromResult(settings);
+			string json = SerializerService.Serialize(Instance.Settings!);
+			File.WriteAllText(settingsPath, json);
 		}
 
 		public override async Task Initialize()
 		{
 			await base.Initialize();
 
-			string path = FileService.StoreDirectory + SettingsDirectory;
+			string path = FileService.StoreDirectory;
 
 			if (!Directory.Exists(path))
-			{
 				Directory.CreateDirectory(path);
+
+			path = FileService.StoreDirectory + "/Settings.json";
+
+			if (!File.Exists(path))
+			{
+				this.Settings = new Settings();
+				Save();
 			}
+			else
+			{
+				try
+				{
+					string json = File.ReadAllText(path);
+					this.Settings = SerializerService.Deserialize<Settings>(json);
+				}
+				catch (Exception)
+				{
+					await GenericDialog.Show("Failed to load Settings. Your settings have been reset.", "Error", MessageBoxButton.OK);
+					this.Settings = new Settings();
+					Save();
+				}
+			}
+
+			this.Settings.PropertyChanged += this.SettingsChanged;
+			this.SettingsChanged(null, null);
 		}
-	}
 
-	#pragma warning disable SA1402
-
-	[Serializable]
-	public abstract class SettingsBase
-	{
-		public event SettingsEvent? Changed;
-
-		public void NotifyChanged()
+		private void SettingsChanged(object? sender, PropertyChangedEventArgs? e)
 		{
-			this.Changed?.Invoke(this);
-			this.Save();
-		}
+			if (this.Settings == null)
+				return;
 
-		public void Save()
-		{
-			string path = FileService.StoreDirectory + SettingsService.SettingsDirectory + this.GetType().Name + ".json";
-			string json = SerializerService.Serialize(this);
-			File.WriteAllText(path, json);
+			if (this.currentThemeSwatch != this.Settings.ThemeSwatch || this.currentThemeDark != this.Settings.ThemeDark)
+			{
+				this.currentThemeSwatch = this.Settings.ThemeSwatch;
+				this.currentThemeDark = this.Settings.ThemeDark;
+				new PaletteHelper().Apply(this.Settings.ThemeSwatch, this.Settings.ThemeDark);
+			}
+
+			if (sender is Settings settings)
+			{
+				Save();
+			}
 		}
 	}
 }

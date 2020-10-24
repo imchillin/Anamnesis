@@ -22,9 +22,6 @@ namespace Anamnesis.GUI.Views
 
 			this.ContentArea.DataContext = this;
 
-			this.Settings = App.Settings;
-			this.Swatches = new SwatchesProvider().Swatches;
-
 			List<double> sizes = new List<double>();
 			sizes.Add(0.5);
 			sizes.Add(0.6);
@@ -45,32 +42,31 @@ namespace Anamnesis.GUI.Views
 			}
 
 			this.Languages = languages;
-
-			this.TransparancySlider.Value = this.Settings.Opacity;
 		}
 
-		public IEnumerable<Swatch> Swatches { get; }
+		public SwatchesProvider Swatches => new SwatchesProvider();
+		public SettingsService SettingsService => SettingsService.Instance;
+
 		public IEnumerable<LanguageOption> Languages { get; }
-		public MainApplicationSettings Settings { get; set; }
 
 		public Swatch SelectedSwatch
 		{
 			get
 			{
-				foreach (Swatch sw in this.Swatches)
+				foreach (Swatch sw in this.Swatches.Swatches)
 				{
-					if (sw.Name == this.Settings.ThemeSwatch)
+					if (sw.Name == SettingsService.Current.ThemeSwatch)
 					{
 						return sw;
 					}
 				}
 
-				return this.Swatches.First();
+				return this.Swatches.Swatches.First();
 			}
 
 			set
 			{
-				this.Settings.ThemeSwatch = value.Name;
+				SettingsService.Current.ThemeSwatch = value.Name;
 			}
 		}
 
@@ -80,7 +76,7 @@ namespace Anamnesis.GUI.Views
 			{
 				foreach (LanguageOption language in this.Languages)
 				{
-					if (language.Key == this.Settings.Language)
+					if (language.Key == SettingsService.Current.Language)
 					{
 						return language;
 					}
@@ -91,14 +87,9 @@ namespace Anamnesis.GUI.Views
 
 			set
 			{
-				this.Settings.Language = value.Key;
+				SettingsService.Current.Language = value.Key;
 				LocalizationService.SetLocale(value.Key);
 			}
-		}
-
-		private void TransparancyPreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-			this.Settings.Opacity = this.TransparancySlider.Value;
 		}
 
 		public class LanguageOption

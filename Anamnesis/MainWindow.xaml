@@ -189,17 +189,10 @@
 					</StackPanel>
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-						<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}"
-									  ToolTip="Always on top"
-									  x:Name="AlwaysOnTopToggle"
-									  Margin="3,0,0,0" 
-									  Width="28" 
-									  Height="28" 
-									  Padding="0" 
-									  Background="Transparent" 
-									  BorderThickness="0"
-									  Checked="OnAlwaysOnTopChecked"
-									  Unchecked="OnAlwaysOnTopUnchecked">
+						<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" ToolTip="Always on top" x:Name="AlwaysOnTopToggle"
+									  Margin="3,0,0,0" Width="28" Height="28" 
+									  Padding="0" Background="Transparent" BorderThickness="0"
+									  IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}">
 
 							<ToggleButton.Content>
 								<Grid Width="28" Height="28">

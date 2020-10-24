@@ -70,8 +70,8 @@ namespace Anamnesis.GUI.Windows
 					ErrorDialog errorDialog = new ErrorDialog(ex, isCriticial);
 					errorDialog.window = dlg;
 
-					if (App.Settings != null)
-						dlg.Topmost = App.Settings.AlwaysOnTop;
+					if (SettingsService.Instance.Settings != null)
+						dlg.Topmost = SettingsService.Current.AlwaysOnTop;
 
 					dlg.ContentArea.Content = errorDialog;
 					dlg.ShowDialog();
