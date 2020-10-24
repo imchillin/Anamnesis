@@ -13,5 +13,6 @@ namespace Anamnesis.Character.Items
 		public string Name => "None";
 		public string? Description => null;
 		public ImageSource? Icon => null;
+		public Brush? Color => null;
 	}
 }

@@ -10,6 +10,8 @@ namespace Anamnesis.GameData.ViewModels
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
+	using MediaColor = System.Windows.Media.Color;
+
 	public class DyeViewModel : ExcelRowViewModel<Stain>, IDye
 	{
 		private IItem? item;
@@ -23,6 +25,19 @@ namespace Anamnesis.GameData.ViewModels
 		public string Name => this.Value?.Name ?? "Unkown";
 		public string? Description => this.GetDyeItem()?.Description;
 		public ImageSource? Icon => this.GetDyeItem()?.Icon;
+
+		public Brush? Color
+		{
+			get
+			{
+				byte[]? colorBytes = BitConverter.GetBytes(this.Value.Color);
+
+				if (colorBytes == null)
+					return null;
+
+				return new SolidColorBrush(MediaColor.FromRgb(colorBytes[2], colorBytes[1], colorBytes[0]));
+			}
+		}
 
 		public IItem? GetDyeItem()
 		{

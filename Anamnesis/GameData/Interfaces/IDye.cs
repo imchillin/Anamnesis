@@ -11,5 +11,6 @@ namespace Anamnesis.GameData
 		string Name { get; }
 		string? Description { get; }
 		ImageSource? Icon { get; }
+		Brush? Color { get; }
 	}
 }

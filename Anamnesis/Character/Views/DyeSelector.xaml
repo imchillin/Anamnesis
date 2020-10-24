@@ -28,7 +28,7 @@
 					<Border Background="#444444" Grid.RowSpan="2" CornerRadius="3">
 						<Grid>
 							<Image Source="{Binding Icon}" Margin="1"/>
-							<Image Source="/AppearanceModule;component/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
+							<Image Source="/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
 						</Grid>
 					</Border>
 
@@ -41,6 +41,10 @@
 								   Fill="Transparent" 
 								   Visibility="{Binding Description, Converter={StaticResource StringHasContentToVisibility}}" 
 								   ToolTipService.ToolTip="{Binding Description}"/>
+
+					<Ellipse Grid.Row="1" Width="12" Height="12" StrokeThickness="1" 
+							 Fill="{Binding Color}" Visibility="{Binding Color, Converter={StaticResource NotNullToVisibilityConverter}}"
+							 Stroke="Black" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0, 0, -2, -2"/>
 
 				</Grid>
 			</DataTemplate>
