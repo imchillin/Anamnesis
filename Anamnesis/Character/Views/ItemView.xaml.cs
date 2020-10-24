@@ -125,11 +125,11 @@ namespace Anamnesis.Character.Views
 
 				if (this.ViewModel is ItemViewModel item)
 				{
-					item.Dye = (byte)v.Key;
+					item.Dye = v.Id;
 				}
 				else if (this.ViewModel is WeaponViewModel weapon)
 				{
-					weapon.Dye = (byte)v.Key;
+					weapon.Dye = v.Id;
 				}
 			});
 		}

@@ -9,7 +9,7 @@ namespace Anamnesis.GameData
 		public string Plural { get; }
 		public string Title { get; }
 
-		public INpcBase Appearance { get; }
+		public INpcBase? Appearance { get; }
 
 		public string Name { get; }
 	}

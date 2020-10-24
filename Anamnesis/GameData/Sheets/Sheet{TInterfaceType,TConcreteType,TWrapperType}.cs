@@ -35,10 +35,22 @@ namespace Anamnesis.GameData.Sheets
 				if (this.all == null)
 				{
 					this.all = new List<TInterfaceType>();
-					for (int i = 1; i < this.excel.RowCount; i++)
+
+					foreach (TConcreteType? entry in this.excel)
 					{
-						this.all.Add(this.Get(i));
+						TInterfaceType viewModel = this.Get((int)entry.RowId);
+						this.all.Add(viewModel);
 					}
+
+					/*for (int i = 1; i < this.excel.RowCount; i++)
+					{
+						TInterfaceType entry = this.Get(i);
+
+						if (!entry.IsValid)
+							continue;
+
+						this.all.Add(entry);
+					}*/
 				}
 
 				return this.all;

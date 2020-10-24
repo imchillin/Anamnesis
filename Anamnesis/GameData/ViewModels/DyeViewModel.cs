@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.ViewModels
 {
 	using System;
 	using System.Windows.Media;
+	using Anamnesis.Character.Items;
 	using Anamnesis.Services;
 	using Lumina;
 	using Lumina.Excel;
@@ -21,7 +22,7 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
-		public byte Id => (byte)(this.Value?.Color ?? 0);
+		public byte Id => (byte)this.Key;
 		public string Name => this.Value?.Name ?? "Unkown";
 		public string? Description => this.GetDyeItem()?.Description;
 		public ImageSource? Icon => this.GetDyeItem()?.Icon;
@@ -48,7 +49,18 @@ namespace Anamnesis.GameData.ViewModels
 				return null;
 
 			if (this.item == null)
-				this.item = GameDataService.Items.Get(DyeToItemKey(this.Key));
+			{
+				int itemKey = DyeToItemKey(this.Key);
+
+				if (itemKey != 0)
+				{
+					this.item = GameDataService.Items.Get(itemKey);
+				}
+				else
+				{
+					this.item = null;
+				}
+			}
 
 			return this.item;
 		}
@@ -151,12 +163,6 @@ namespace Anamnesis.GameData.ViewModels
 				case 92: return 30122;
 				case 93: return 30123;
 				case 94: return 30124;
-				case 95: return 0;
-				case 96: return 0;
-				case 97: return 0;
-				case 98: return 0;
-				case 99: return 0;
-				case 100: return 0;
 				case 101: return 8732;
 				case 102: return 8733;
 				case 103: return 8734;
@@ -178,7 +184,7 @@ namespace Anamnesis.GameData.ViewModels
 				case 119: return 8750;
 				case 120: return 8751;
 
-				case 244: return 0;
+				default: return 0;
 			}
 
 			throw new Exception("Failed to find item key for dye key: " + dyeKey);
