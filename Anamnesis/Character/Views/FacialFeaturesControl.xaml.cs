@@ -119,11 +119,10 @@ namespace Anamnesis.Character.Views
 			if (facialFeatures == null)
 				return;
 
-			// 3 = 14, 15, 16, 17, 18, 19, 20
 			this.features.Clear();
 			for (byte i = 0; i < 7; i++)
 			{
-				int id = ((this.Head - 1) * 7) + i;
+				int id = (this.Head - 1) + (8 * i);
 
 				if (id < 0 || id >= facialFeatures.Length)
 					continue;
