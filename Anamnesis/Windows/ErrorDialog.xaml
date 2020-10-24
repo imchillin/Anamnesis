@@ -3,8 +3,8 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:local="clr-namespace:Anamnesis.GUI"
-		mc:Ignorable="d" 
+		xmlns:local="clr-namespace:Anamnesis.GUI" xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 mc:Ignorable="d" 
 		Width="650">
 
 	<Grid Margin="3" x:Name="ContentArea">
@@ -43,14 +43,25 @@
 			</ScrollViewer>
 		</Expander>
 
-		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="LEft" Margin="0, 7, 0, 0">
-			<Button Content="Show Log" Click="OnLogClick" Margin="3"/>
-		</StackPanel>
+		<Grid Grid.Row="2" Margin="0, 3, 0, 0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
 
-		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 7, 0, 0">
-			<Button x:Name="QuitButton" Content="Quit" Width="75" Click="OnQuitClick" Background="#DD2020" BorderBrush="#CC1010" Margin="3"/>
-			<Button x:Name="OkButton" Content="OK" Width="75" Click="OnOkClick" Margin="3"/>
-		</StackPanel>
+			<TextBlock Grid.Column="0" Margin="6, 3, 3, 0" Style="{StaticResource Body}" TextWrapping="Wrap">
+				To help us fix this problem, please upload your 
+				<Hyperlink RequestNavigate="OnLogNavigate" NavigateUri="/">log file</Hyperlink>
+				to
+				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discordapp.com/channels/701987194910277642/722967293071589466/">Discord</Hyperlink>
+				or a new issue on 
+				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/Anamnesis/issues/new">GitHub</Hyperlink>.
+				<LineBreak/>
+				Log files contain debugging information and are completely anonymous and safe to share.
+			</TextBlock>
 
+			<Button Grid.Column="1" x:Name="QuitButton" Content="Quit" Width="75" Click="OnQuitClick" Background="#DD2020" BorderBrush="#CC1010" Margin="3"/>
+			<Button Grid.Column="1" x:Name="OkButton" Content="OK" Width="75" Click="OnOkClick" Margin="3"/>
+		</Grid>
 	</Grid>
 </UserControl>

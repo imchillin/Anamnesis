@@ -9,6 +9,7 @@ namespace Anamnesis.GUI.Views
 	using System.Windows.Controls;
 	using System.Windows.Navigation;
 	using Anamnesis.Services;
+	using SimpleLog;
 
 	public partial class AboutView : UserControl
 	{
@@ -19,15 +20,7 @@ namespace Anamnesis.GUI.Views
 
 		private void OnNavigate(object sender, RequestNavigateEventArgs e)
 		{
-			try
-			{
-				string url = e.Uri.AbsoluteUri;
-				Process.Start(new ProcessStartInfo(@"cmd", $"/c start {url}") { CreateNoWindow = true });
-			}
-			catch (Exception ex)
-			{
-				Log.Write(ex, "About", Log.Severity.Error);
-			}
+			UrlUtility.Open(e.Uri.AbsoluteUri);
 		}
 
 		private void OnLogsClicked(object sender, RoutedEventArgs e)
@@ -38,6 +31,11 @@ namespace Anamnesis.GUI.Views
 		private void OnSetingsClicked(object sender, RoutedEventArgs e)
 		{
 			SettingsService.ShowDirectory();
+		}
+
+		private void OnErrorClicked(object sender, RoutedEventArgs e)
+		{
+			throw new Exception("You clicked the forbidden button!");
 		}
 	}
 }

@@ -17,12 +17,19 @@ namespace Anamnesis.Services
 	{
 		private const string LogfilePath = "/Logs/";
 
+		private static string? currentLogPath;
+
 		private FileLogDestination? file;
 
 		public static void ShowLogs()
 		{
 			string? dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath);
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);
+		}
+
+		public static void ShowCurrentLog()
+		{
+			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"/select, \"{currentLogPath}\"");
 		}
 
 		public Task Initialize()
@@ -41,8 +48,8 @@ namespace Anamnesis.Services
 				}
 			}
 
-			string newLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
-			this.file = new FileLogDestination(newLogPath);
+			currentLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
+			this.file = new FileLogDestination(currentLogPath);
 			Log.AddDestination(this.file);
 			Log.AddDestination<ErrorDialogLogDestination>();
 			Log.AddDestination<TraceLogDestination>();

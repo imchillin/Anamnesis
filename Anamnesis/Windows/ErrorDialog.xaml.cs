@@ -27,6 +27,8 @@ namespace Anamnesis.GUI.Windows
 			this.InitializeComponent();
 
 			this.OkButton.Visibility = isCritical ? Visibility.Collapsed : Visibility.Visible;
+			this.QuitButton.Visibility = isCritical ? Visibility.Collapsed : Visibility.Visible;
+
 			this.Message.Text = isCritical ? "Critical Error" : "Error";
 			this.Subtitle.Visibility = isCritical ? Visibility.Visible : Visibility.Collapsed;
 			this.DetailsExpander.Header = exDispatch.SourceException.Message;
@@ -181,9 +183,19 @@ namespace Anamnesis.GUI.Windows
 			this.window?.Close();
 		}
 
+		private void OnLogNavigate(object sender, RequestNavigateEventArgs e)
+		{
+			LogService.ShowCurrentLog();
+		}
+
 		private void OnLogClick(object sender, RoutedEventArgs e)
 		{
-			LogService.ShowLogs();
+			LogService.ShowCurrentLog();
+		}
+
+		private void OnNavigate(object sender, RequestNavigateEventArgs e)
+		{
+			UrlUtility.Open(e.Uri.AbsoluteUri);
 		}
 
 		public class ErrorException : Exception

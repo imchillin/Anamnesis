@@ -47,6 +47,7 @@
 				<StackPanel>
 					<Button Content="Open Logs directory" Margin="3" Click="OnLogsClicked"/>
 					<Button Content="Open Settings directory" Margin="3" Click="OnSetingsClicked"/>
+					<Button Content="Throw an error" Margin="3" Click="OnErrorClicked"/>
 				</StackPanel>
 			</GroupBox>
 			

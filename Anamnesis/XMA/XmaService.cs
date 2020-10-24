@@ -54,18 +54,12 @@ namespace Anamnesis.XMA
 
 		public void OpenSearch()
 		{
-			ProcessStartInfo psi = new ProcessStartInfo();
-			psi.FileName = SearchUrl;
-			psi.UseShellExecute = true;
-			Process.Start(psi);
+			UrlUtility.Open(SearchUrl);
 		}
 
 		public void Open(SearchResult result)
 		{
-			ProcessStartInfo psi = new ProcessStartInfo();
-			psi.FileName = "https://www.xivmodarchive.com/modid/" + result.Id;
-			psi.UseShellExecute = true;
-			Process.Start(psi);
+			UrlUtility.Open("https://www.xivmodarchive.com/modid/" + result.Id);
 		}
 
 		[Serializable]
