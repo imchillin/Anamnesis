@@ -16,7 +16,7 @@
 
 		<StackPanel Margin="8">
 			<TextBlock x:Name="Message" TextWrapping="Wrap" Text="Critical Error" FontSize="18"/>
-			<TextBlock x:Name="Subtitle" TextWrapping="Wrap" Text="Concept matrix was unable to recover from this error, and must close." FontSize="14"/>
+			<TextBlock x:Name="Subtitle" TextWrapping="Wrap" Text="Anamnesis was unable to recover from this error, and must close." FontSize="14"/>
 		</StackPanel>
 
 		<Expander x:Name="DetailsExpander" 
