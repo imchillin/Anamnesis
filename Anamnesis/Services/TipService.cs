@@ -31,7 +31,7 @@ namespace Anamnesis.Services
 				Log.Write(SimpleLog.Severity.Warning, new Exception("Failed to load tips.", ex));
 			}
 
-			this.NextTip();
+			Task.Run(this.TipCycle);
 
 			return base.Start();
 		}
@@ -69,6 +69,17 @@ namespace Anamnesis.Services
 			psi.UseShellExecute = true;
 
 			Process.Start(psi);
+		}
+
+		private async Task TipCycle()
+		{
+			this.NextTip();
+
+			while (this.IsAlive)
+			{
+				await Task.Delay(30000);
+				this.NextTip();
+			}
 		}
 
 		[Serializable]

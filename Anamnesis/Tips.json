@@ -2,5 +2,20 @@
 	{
 		"Text": "You can download many poses from the XIV Mod Archive.",
 		"Url": "https://www.xivmodarchive.com"
+	},
+	{
+		"Text": "I will give you many tips."
+	},
+	{
+		"Text": "To restore your default appearance, move to a differnet area through a loading screen."
+	},
+	{
+		"Text": "Use [Shift] and [Ctrl] to speed up or slow down number changes."
+	},
+	{
+		"Text": "You can change the values of sliders, input boxes, and gizmos with the scroll wheel."
+	},
+	{
+		"Text": "Need more actors but have no friends? Use housing npcs!"
 	}
 ]
