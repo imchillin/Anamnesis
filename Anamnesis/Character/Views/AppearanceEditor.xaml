@@ -41,7 +41,7 @@
 
 			<Grid Grid.Row="0" x:Name="AppearanceArea">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="64"/>
+					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 
@@ -68,18 +68,26 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 
-				<!-- Race / Tribe -->
+				<!-- Race / Tribe / Gender / Age -->
 				<TextBlock Grid.Column="0" Grid.Row="0" Text="Tribe:" Style="{StaticResource Label}"/>
-				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0">
-					<ComboBox x:Name="RaceComboBox" SelectionChanged="OnRaceChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="75" Margin="3, 0, 6, 3"/>
-					<ComboBox x:Name="TribeComboBox" SelectionChanged="OnTribeChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Width="93"  Margin="3, 0, 3, 3"/>
-				</StackPanel>
+				<Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
 
-				<!-- Gender / Age-->
-				<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
-					<ComboBox x:Name="GenderComboBox" SelectedItem="{Binding Appearance.Gender}" Width="75" Margin="3, 0, 6, 3" Visibility="{Binding HasGender, Converter={StaticResource B2V}}"/>
-					<ComboBox Grid.Row="12" Grid.Column="1" x:Name="AgeComboBox" SelectedItem="{Binding Appearance.Age}" Width="93" Visibility="{Binding CanAge, Converter={StaticResource B2V}}"  Margin="3, 0, 3, 3"/>
-				</StackPanel>
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<ComboBox x:Name="RaceComboBox" Grid.Column="0" Grid.Row="0" SelectionChanged="OnRaceChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Margin="0, 0, 3, 0"/>
+					<ComboBox x:Name="TribeComboBox" Grid.Column="1" Grid.Row="0" SelectionChanged="OnTribeChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Margin="3, 0, 0, 0"/>
+
+					<ComboBox x:Name="GenderComboBox" Grid.Column="0" Grid.Row="1" SelectedItem="{Binding Appearance.Gender}" Visibility="{Binding HasGender, Converter={StaticResource B2V}}" Margin="0, 0, 3, 0"/>
+					<ComboBox x:Name="AgeComboBox" Grid.Column="1" Grid.Row="1" SelectedItem="{Binding Appearance.Age}" Visibility="{Binding CanAge, Converter={StaticResource B2V}}" Margin="3, 0, 0, 0"/>
+
+				</Grid>
 
 				<!-- Skintone -->
 				<TextBlock Grid.Column="0" Grid.Row="2" Text="Skin:" Style="{StaticResource Label}"/>
@@ -216,7 +224,7 @@
 				<cm3Controls:NumberBox Grid.Row="17" Value="{Binding Appearance.TailEarsType}" Grid.Column="1" Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="255" Buttons="True"/>
 
 				<!-- Fur pattern -->
-				<TextBlock Grid.Row="18" Grid.Column="0" Text="Fur Pattern:" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
+				<TextBlock Grid.Row="18" Grid.Column="0" Text="Fur:" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
 				<cm3Controls:NumberBox Grid.Row="18" Value="{Binding Appearance.LipsToneFurPattern}" Grid.Column="1" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
 
 			</Grid>

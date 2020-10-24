@@ -29,7 +29,7 @@
 
 		<Grid Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding GPoseService.IsOverworld}">
 
-			<GroupBox Style="{StaticResource PanelGroupBox}">
+			<GroupBox Style="{StaticResource PanelGroupBox}" Padding="3, 1, 3, 3">
 				<GroupBox.Header>
 					<ana:Header Icon="ConciergeBell" Text="Appearance"/>
 				</GroupBox.Header>
