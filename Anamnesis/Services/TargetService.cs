@@ -48,6 +48,8 @@ namespace Anamnesis
 					if (vm == null)
 						return;
 
+					vm.Nickname = vm.Name + " (" + vm.ObjectKind + ")";
+
 					vm.ObjectKind = ActorTypes.Player;
 					await vm.RefreshAsync();
 
@@ -229,7 +231,7 @@ namespace Anamnesis
 			public event PropertyChangedEventHandler? PropertyChanged;
 
 			public Actor Model { get; set; }
-
+			public string Id => this.Model.Id;
 			public IntPtr? Pointer { get; private set; }
 			public string Name => this.Model.Name;
 			public ActorTypes Kind => this.Model.ObjectKind;
@@ -267,7 +269,7 @@ namespace Anamnesis
 			{
 				// TODO: Handle cases where multiple actors share a name, but are different actors
 				// perhaps compare modelType and customize values?
-				return this.Name == other.Name;
+				return this.Id == other.Id;
 			}
 
 			public void Clear()
@@ -316,7 +318,7 @@ namespace Anamnesis
 
 						// Handle case where multiple actor table entries point ot the same actor, but
 						// its not the actor we actually want.
-						if (vm.Name != this.Name)
+						if (vm.Id != this.Id)
 							continue;
 
 						this.Pointer = actor.Pointer;

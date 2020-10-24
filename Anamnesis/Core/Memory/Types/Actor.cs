@@ -39,6 +39,8 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x17F8)] public int BattleNpcTargetActorId;
 		[FieldOffset(0x1868)] public int NameId;
 		[FieldOffset(0x1888)] public int ModelType;
+
+		public string Id => this.Name + this.NameId;
 	}
 
 	[AddINotifyPropertyChangedInterface]
@@ -57,7 +59,6 @@ namespace Anamnesis.Memory
 		}
 
 		[ModelField] public string Name { get; set; } = string.Empty;
-		[ModelField] public int ActorId { get; set; }
 		[ModelField] public int DataId { get; set; }
 		[ModelField] public int OwnerId { get; set; }
 		[ModelField] public ActorTypes ObjectKind { get; set; }
@@ -78,13 +79,15 @@ namespace Anamnesis.Memory
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
 
+		public string Id => this.model.Id;
+
 		[AlsoNotifyFor(nameof(ActorViewModel.DisplayName))]
 		public string? Nickname
 		{
 			get
 			{
-				if (nicknameLookup.ContainsKey(this.Name))
-					return nicknameLookup[this.Name];
+				if (nicknameLookup.ContainsKey(this.Id))
+					return nicknameLookup[this.Id];
 
 				return null;
 			}
@@ -93,17 +96,17 @@ namespace Anamnesis.Memory
 			{
 				if (value == null)
 				{
-					if (nicknameLookup.ContainsKey(this.Name))
+					if (nicknameLookup.ContainsKey(this.Id))
 					{
-						nicknameLookup.Remove(this.Name);
+						nicknameLookup.Remove(this.Id);
 					}
 				}
 				else
 				{
-					if (!nicknameLookup.ContainsKey(this.Name))
-						nicknameLookup.Add(this.Name, string.Empty);
+					if (!nicknameLookup.ContainsKey(this.Id))
+						nicknameLookup.Add(this.Id, string.Empty);
 
-					nicknameLookup[this.Name] = value;
+					nicknameLookup[this.Id] = value;
 				}
 			}
 		}
