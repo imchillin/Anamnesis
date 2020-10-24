@@ -40,37 +40,37 @@ namespace Anamnesis.Files
 			}
 		}
 
-		public static async Task<OpenResult> Open<T>()
+		public static async Task<OpenResult> Open<T>(string title)
 			where T : FileBase
 		{
-			return await Open(typeof(T));
+			return await Open(title, typeof(T));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2>()
+		public static async Task<OpenResult> Open<T1, T2>(string title)
 			where T1 : FileBase
 			where T2 : FileBase
 		{
-			return await Open(typeof(T1), typeof(T2));
+			return await Open(title, typeof(T1), typeof(T2));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3>()
+		public static async Task<OpenResult> Open<T1, T2, T3>(string title)
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 		{
-			return await Open(typeof(T1), typeof(T2), typeof(T3));
+			return await Open(title, typeof(T1), typeof(T2), typeof(T3));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3, T4>()
+		public static async Task<OpenResult> Open<T1, T2, T3, T4>(string title)
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 			where T4 : FileBase
 		{
-			return await Open(typeof(T1), typeof(T2), typeof(T3), typeof(T4));
+			return await Open(title, typeof(T1), typeof(T2), typeof(T3), typeof(T4));
 		}
 
-		public static Task<OpenResult> Open(params Type[] fileTypes)
+		public static Task<OpenResult> Open(string title, params Type[] fileTypes)
 		{
 			List<FileInfoBase>? fileInfos = new List<FileInfoBase>();
 			foreach (Type fileType in fileTypes)
@@ -78,10 +78,10 @@ namespace Anamnesis.Files
 				fileInfos.Add(GetFileInfo(fileType));
 			}
 
-			return Open(fileInfos.ToArray());
+			return Open(title, fileInfos.ToArray());
 		}
 
-		public static async Task<OpenResult> Open(params FileInfoBase[] fileInfos)
+		public static async Task<OpenResult> Open(string title, params FileInfoBase[] fileInfos)
 		{
 			OpenResult result = default;
 
@@ -92,7 +92,11 @@ namespace Anamnesis.Files
 				if (!useExplorerBrowser)
 				{
 					FileBrowserView browser = new FileBrowserView(fileInfos, FileBrowserView.Modes.Load);
-					await ViewService.ShowDrawer(browser);
+
+					if (title != null)
+						title = "Load " + title;
+
+					await ViewService.ShowDrawer(browser, title);
 
 					while (browser.IsOpen)
 						await Task.Delay(10);
@@ -141,7 +145,7 @@ namespace Anamnesis.Files
 			return result;
 		}
 
-		public static async Task Save<T>(Func<bool, Task<T?>> writeFile, string? path = null)
+		public static async Task Save<T>(Func<bool, Task<T?>> writeFile, string title, string? path = null)
 			where T : FileBase, new()
 		{
 			try
@@ -157,7 +161,11 @@ namespace Anamnesis.Files
 					if (!useExplorerBrowser)
 					{
 						FileBrowserView browser = new FileBrowserView(info, FileBrowserView.Modes.Save);
-						await ViewService.ShowDrawer(browser);
+
+						if (title != null)
+							title = "Save " + title;
+
+						await ViewService.ShowDrawer(browser, title);
 
 						while (browser.IsOpen)
 							await Task.Delay(10);

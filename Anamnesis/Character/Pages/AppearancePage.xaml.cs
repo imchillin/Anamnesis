@@ -77,7 +77,7 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			OpenResult result = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>();
+			OpenResult result = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>("Character");
 
 			if (result.File == null)
 				return;
@@ -97,7 +97,7 @@ namespace Anamnesis.Character.Pages
 
 				if (result.UseAdvancedLoad)
 				{
-					mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Load Appearance...");
+					mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Load Character...");
 
 					if (mode == CharacterFile.SaveModes.None)
 					{
@@ -114,7 +114,7 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			await FileService.Save(this.Save);
+			await FileService.Save(this.Save, "Character");
 		}
 
 		private async Task<CharacterFile?> Save(bool useAdvancedSave)
@@ -125,7 +125,7 @@ namespace Anamnesis.Character.Pages
 			CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
 
 			if (useAdvancedSave)
-				mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Appearance...");
+				mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Character...");
 
 			CharacterFile file = new CharacterFile();
 

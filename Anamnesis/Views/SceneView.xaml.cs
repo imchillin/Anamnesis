@@ -41,7 +41,7 @@ namespace Anamnesis.Views
 		{
 			try
 			{
-				OpenResult result = await FileService.Open<SceneFile>();
+				OpenResult result = await FileService.Open<SceneFile>("Scene");
 
 				if (result.File == null)
 					return;
@@ -67,7 +67,7 @@ namespace Anamnesis.Views
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			await FileService.Save(this.Save);
+			await FileService.Save(this.Save, "Scene");
 		}
 
 		private async Task<SceneFile?> Save(bool useAdvancedSave)

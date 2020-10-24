@@ -96,7 +96,7 @@ namespace Anamnesis.PoseModule.Pages
 				if (actor == null)
 					return;
 
-				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>();
+				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>("Pose");
 
 				if (result.File == null)
 					return;
@@ -125,7 +125,7 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			await FileService.Save(this.Save);
+			await FileService.Save(this.Save, "Pose");
 		}
 
 		private async Task<PoseFile?> Save(bool useAdvancedSave)
