@@ -31,8 +31,18 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 
 			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Genders));
-			this.RaceComboBox.ItemsSource = GameDataService.Races?.All;
 			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Ages));
+
+			List<IRace> races = new List<IRace>();
+			foreach (IRace race in GameDataService.Races!.All)
+			{
+				if (race.Key == 0)
+					continue;
+
+				races.Add(race);
+			}
+
+			this.RaceComboBox.ItemsSource = races;
 		}
 
 		public bool HasGender { get; set; }
