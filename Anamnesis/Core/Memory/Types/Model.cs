@@ -54,31 +54,5 @@ namespace Anamnesis.Memory
 			get => this.IsValueFrozen(nameof(ModelViewModel.Drenched));
 			set => this.FreezeValue(nameof(ModelViewModel.Drenched), value, value ? 5 : 0);
 		}
-
-		[AlsoNotifyFor(nameof(ModelViewModel.DataPath))]
-		public DataPaths DataPathAndHead
-		{
-			get
-			{
-				try
-				{
-					return (DataPaths)this.DataPath;
-				}
-				catch (Exception)
-				{
-					return DataPaths.Unknown;
-				}
-			}
-
-			set
-			{
-				this.DataPath = (short)value;
-
-				if (this.Parent is ActorViewModel vm && vm.Customize != null)
-				{
-					this.DataHead = value.GetHead(vm.Customize.Tribe);
-				}
-			}
-		}
 	}
 }
