@@ -21,6 +21,8 @@
 		Deactivated="Window_Deactivated"
 		Closing="Window_Closing"
 		
+		Topmost="{Binding SettingsService.Settings.AlwaysOnTop}"
+		
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 		TextBlock.FontSize="12"
 		
