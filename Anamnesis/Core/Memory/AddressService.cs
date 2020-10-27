@@ -118,16 +118,16 @@ namespace Anamnesis.Core.Memory
 			GposeCheck2 = baseAddress + 0x1D0E9F0;
 			GPose = baseAddress + 0x1D0AE30;
 
-			SkeletonFreezePosition = baseAddress + 0x140978B;
-			SkeletonFreezeRotation = baseAddress + 0x1409800;
-			SkeletonFreezeScale = baseAddress + 0x1409810;
-			SkeletonFreezeRotation2 = baseAddress + 0x140A92D;
-			SkeletonFreezeScale2 = baseAddress + 0x140A93D;
-			SkeletonFreezePosition2 = baseAddress + 0x140A8B8;
-			SkeletonFreezeRotation3 = baseAddress + 0x1418594;
-			SkeletonFreezePhysics2 = baseAddress + 0x38372F;
-			SkeletonFreezePhysics = baseAddress + 0x383738;
-			SkeletonFreezePhysics3 = baseAddress + 0x383742;
+			SkeletonFreezeRotation = baseAddress + 0x1409920; // SkeletonOffset
+			SkeletonFreezeRotation2 = baseAddress + 0x140AA4D; // SkeletonOffset2
+			SkeletonFreezeRotation3 = baseAddress + 0x14186B4; // SkeletonOffset3
+			SkeletonFreezeScale = baseAddress + 0x1409930; // SkeletonOffset4
+			SkeletonFreezePosition = baseAddress + 0x14098AB;  // SkeletonOffset5
+			SkeletonFreezeScale2 = baseAddress + 0x140AA5D; // SkeletonOffset6
+			SkeletonFreezePosition2 = baseAddress + 0x140A9D8; // SkeletonOffset7
+			SkeletonFreezePhysics = baseAddress + 0x3836A8; // PhysicsOffset
+			SkeletonFreezePhysics2 = baseAddress + 0x38369F; // PhysicsOffset2
+			SkeletonFreezePhysics3 = baseAddress + 0x3836B2; // PhysicsOffset3
 
 			await Task.WhenAll(tasks.ToArray());
 
