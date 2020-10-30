@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.ViewModels
 {
 	using System;
 	using System.Windows.Media;
+	using Anamnesis.TexTools;
 	using Lumina;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
@@ -39,6 +40,8 @@ namespace Anamnesis.GameData.ViewModels
 		public Classes EquipableClasses => this.Value.ClassJobCategory.Value.ToFlags();
 
 		public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
+
+		public Mod? Mod => TexToolsService.GetMod(this);
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

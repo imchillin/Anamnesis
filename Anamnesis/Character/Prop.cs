@@ -6,6 +6,7 @@ namespace Anamnesis.Character
 	using System.Windows.Media;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
+	using Anamnesis.TexTools;
 
 	public class Prop : IJsonRow, IItem
 	{
@@ -24,6 +25,7 @@ namespace Anamnesis.Character
 		public ushort SubModelSet => 0;
 		public ImageSource? Icon => null;
 		public Classes EquipableClasses => Classes.All;
+		public Mod? Mod => null;
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

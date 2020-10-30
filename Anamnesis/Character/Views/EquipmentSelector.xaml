@@ -6,7 +6,7 @@
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="232">
+			 d:DesignHeight="450" Width="256">
 
 	<Grid>
 
@@ -55,7 +55,7 @@
 
 			<cm3Drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
-					<Grid Height="32">
+					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>
@@ -64,9 +64,10 @@
 						<Grid.RowDefinitions>
 							<RowDefinition/>
 							<RowDefinition/>
+							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
-						<Border Width="32" Background="#444444" Grid.RowSpan="2" CornerRadius="3" Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
+						<Border Width="32" Height="32" Background="#444444" Grid.RowSpan="3" CornerRadius="3" Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
 							<Grid>
 								<Image Source="{Binding Icon}" Margin="1"/>
 								<Image Source="/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
@@ -82,6 +83,16 @@
 							<TextBlock Text="{Binding ModelVariant}" Style="{StaticResource Label}"/>
 						</StackPanel>
 
+						<Grid Grid.Column="1" Grid.Row="2" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="3, 0, 0, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Grid.Column="0" Text="Moded:" Style="{StaticResource Label}" HorizontalAlignment="Left" />
+							<TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name}" Style="{StaticResource Label}" HorizontalAlignment="Left" />
+						</Grid>
+						
 						<Rectangle Grid.ColumnSpan="2" 
 									   Grid.RowSpan="2" 
 									   Fill="Transparent" 

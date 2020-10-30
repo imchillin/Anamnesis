@@ -164,6 +164,11 @@ namespace Anamnesis.Character.Views
 
 				matches |= SearchUtility.Matches(item.Key.ToString(), search);
 
+				if (item.Mod != null && item.Mod.ModPack != null)
+				{
+					matches |= SearchUtility.Matches(item.Mod.ModPack.Name, search);
+				}
+
 				return matches;
 			}
 

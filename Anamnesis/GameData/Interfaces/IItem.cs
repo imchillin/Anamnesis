@@ -5,6 +5,7 @@ namespace Anamnesis.GameData
 {
 	using System.Collections.Generic;
 	using System.Windows.Media;
+	using Anamnesis.TexTools;
 
 	public interface IItem : IRow
 	{
@@ -22,6 +23,8 @@ namespace Anamnesis.GameData
 		Classes EquipableClasses { get; }
 
 		bool IsWeapon { get; }
+
+		Mod? Mod { get; }
 
 		bool FitsInSlot(ItemSlots slot);
 	}

@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Items
 {
 	using System.Windows.Media;
 	using Anamnesis.GameData;
+	using Anamnesis.TexTools;
 
 	public class DummyItem : IItem
 	{
@@ -22,6 +23,7 @@ namespace Anamnesis.Character.Items
 		public string? Description => null;
 		public ImageSource? Icon => null;
 		public Classes EquipableClasses => Classes.All;
+		public Mod? Mod => null;
 
 		public ushort ModelBase
 		{
