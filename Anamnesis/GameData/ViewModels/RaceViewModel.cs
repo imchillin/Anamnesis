@@ -18,6 +18,7 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
+		public override string Name => this.Race.ToString();
 		public Appearance.Races Race => (Appearance.Races)this.Key;
 		public string Feminine => this.Value.Feminine;
 		public string Masculine => this.Value.Masculine;

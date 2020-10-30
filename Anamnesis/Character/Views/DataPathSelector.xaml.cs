@@ -7,7 +7,7 @@ namespace Anamnesis.Character.Views
 	using System.Collections.ObjectModel;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
 
 	/// <summary>

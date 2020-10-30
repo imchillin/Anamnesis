@@ -6,7 +6,7 @@ namespace Anamnesis.GUI.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
-	using Anamnesis.WpfStyles;
+	using Anamnesis.Styles;
 
 	/// <summary>
 	/// Interaction logic for ActorHeaderView.xaml.

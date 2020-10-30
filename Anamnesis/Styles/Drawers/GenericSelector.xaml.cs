@@ -1,25 +1,24 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Styles.Drawers
+namespace Anamnesis.Styles.Drawers
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.Drawers;
 
 	/// <summary>
 	/// Interaction logic for GenericSelector.xaml.
 	/// </summary>
 	public partial class GenericSelector : UserControl, SelectorDrawer.ISelectorView
 	{
-		public GenericSelector(List<Item> options)
+		public GenericSelector(IEnumerable<ISelectable> options)
 		{
 			this.InitializeComponent();
 
-			foreach (Item item in options)
+			foreach (ISelectable item in options)
 			{
 				this.Selector.Items.Add(item);
 			}
@@ -30,13 +29,13 @@ namespace Styles.Drawers
 		public event DrawerEvent? Close;
 		public event DrawerEvent? SelectionChanged;
 
-		public Item? Value
+		public ISelectable? Value
 		{
 			get
 			{
 				object? val = this.Selector.Value;
 
-				if (val is Item itemVal)
+				if (val is ISelectable itemVal)
 					return itemVal;
 
 				return null;
@@ -56,10 +55,11 @@ namespace Styles.Drawers
 			}
 		}
 
-		public static void Show(string title, Item current, List<Item> options, Action<Item> changed)
+		public static void Show<T>(string title, T? current, IEnumerable<T> options, Action<T> changed)
+			where T : class, ISelectable
 		{
 			GenericSelector selector = new GenericSelector(options);
-			SelectorDrawer.Show<Item>(title, selector, current, changed);
+			SelectorDrawer.Show<ISelectable>(title, selector, current, (v) => changed.Invoke((T)v));
 		}
 
 		private void OnClose()
@@ -75,8 +75,11 @@ namespace Styles.Drawers
 		#pragma warning disable SA1011
 		private bool OnFilter(object obj, string[]? search = null)
 		{
-			if (obj is Item item)
+			if (obj is ISelectable item)
 			{
+				if (string.IsNullOrEmpty(item.Name))
+					return false;
+
 				if (!SearchUtility.Matches(item.Name, search))
 					return false;
 
@@ -85,24 +88,12 @@ namespace Styles.Drawers
 
 			return false;
 		}
+	}
 
-		public class Item
-		{
-			public Item()
-			{
-				this.Name = string.Empty;
-			}
-
-			public Item(string name, object? data = null, string? descroption = null)
-			{
-				this.Name = name;
-				this.Description = descroption;
-				this.Data = data;
-			}
-
-			public string Name { get; set; }
-			public string? Description { get; set; }
-			public object? Data { get; set; }
-		}
+	#pragma warning disable SA1201
+	public interface ISelectable
+	{
+		string Name { get; }
+		string? Description { get; }
 	}
 }

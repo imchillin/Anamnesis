@@ -13,7 +13,7 @@ namespace Anamnesis.Character.Pages
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.Drawers;
+	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 
 	/// <summary>

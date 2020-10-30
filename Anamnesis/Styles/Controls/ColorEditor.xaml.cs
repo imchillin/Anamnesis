@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles.Controls
+namespace Anamnesis.Styles.Controls
 {
 	using System;
 	using System.ComponentModel;
@@ -10,8 +10,8 @@ namespace Anamnesis.WpfStyles.Controls
 	using System.Windows.Media;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.DependencyProperties;
-	using Anamnesis.WpfStyles.Drawers;
+	using Anamnesis.Styles.DependencyProperties;
+	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 
 	using Color = Anamnesis.Memory.Color;

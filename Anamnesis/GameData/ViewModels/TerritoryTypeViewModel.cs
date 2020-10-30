@@ -18,7 +18,7 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
-		public string Name => this.Value.Name;
+		public override string Name => this.Value.Name;
 		public string Place => this.Value.PlaceName.Value.Name;
 		public string Region => this.Value.PlaceNameRegion.Value.Name;
 		public string Zone => this.Value.PlaceNameZone.Value.Name;

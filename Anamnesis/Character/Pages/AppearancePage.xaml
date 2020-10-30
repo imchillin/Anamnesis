@@ -6,7 +6,7 @@
 			 xmlns:local="clr-namespace:Anamnesis.Character.Pages"
 			 xmlns:views="clr-namespace:Anamnesis.Character.Views"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls" xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls" xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"

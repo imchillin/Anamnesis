@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles.Converters
+namespace Anamnesis.Styles.Converters
 {
 	using System;
 	using System.Windows.Data;

@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles.Controls
+namespace Anamnesis.Styles.Controls
 {
 	using System;
 	using System.ComponentModel;
@@ -11,7 +11,7 @@ namespace Anamnesis.WpfStyles.Controls
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
 
 	using DrawPoint = System.Drawing.Point;

@@ -3,7 +3,9 @@
 
 namespace Anamnesis.GameData
 {
-	public interface IRow
+	using global::Anamnesis.Styles.Drawers;
+
+	public interface IRow : ISelectable
 	{
 		int Key { get; }
 	}

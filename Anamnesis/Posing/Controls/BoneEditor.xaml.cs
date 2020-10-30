@@ -4,7 +4,7 @@
 namespace Anamnesis.PoseModule.Controls
 {
 	using System.Windows.Controls;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for BoneEditor.xaml.

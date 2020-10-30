@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:fa="http://schemas.fontawesome.io/icons/"
-			 xmlns:cm3Converters="clr-namespace:Anamnesis.WpfStyles.Converters"
+			 xmlns:cm3Converters="clr-namespace:Anamnesis.Styles.Converters"
 			 xmlns:local="clr-namespace:Anamnesis.PoseModule.Views"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="512" d:DesignWidth="1024">

@@ -8,6 +8,8 @@ namespace Anamnesis.Character
 	public class Animation : IJsonRow
 	{
 		public int Key { get; set; }
-		public string? Name { get; set; }
+		public string Name { get; set; } = string.Empty;
+
+		public string? Description => null;
 	}
 }

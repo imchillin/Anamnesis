@@ -1,12 +1,12 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles.Controls
+namespace Anamnesis.Styles.Controls
 {
 	using System.ComponentModel;
 	using System.Windows;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for Label.xaml.

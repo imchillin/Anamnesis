@@ -8,7 +8,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.Drawers;
+	using global::Anamnesis.Styles.Drawers;
 
 	/// <summary>
 	/// Interaction logic for ModelTypeEditor.xaml.
@@ -35,7 +35,7 @@ namespace Anamnesis.Character.Views
 			if (GameDataService.ModelTypes.Contains(vm.ModelType))
 				selected = GameDataService.ModelTypes.Get(vm.ModelType);
 
-			SelectorDrawer.Show<ModelTypeSelector, ModelType>("Model Type", selected, (v) => { vm.ModelType = v.Key; });
+			GenericSelector.Show<ModelType>("Select Model", selected, GameDataService.ModelTypes, (v) => { vm.ModelType = v.Key; });
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)

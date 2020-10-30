@@ -17,8 +17,8 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
-		public string Name => this.Value.Name;
-		public string Description => this.Value.Description;
+		public override string Name => this.Value.Name;
+		public override string Description => this.Value.Description;
 		public ushort WeatherId => (ushort)this.Value.RowId;
 
 		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);

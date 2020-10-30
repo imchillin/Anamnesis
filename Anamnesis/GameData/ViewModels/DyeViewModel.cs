@@ -23,8 +23,8 @@ namespace Anamnesis.GameData.ViewModels
 		}
 
 		public byte Id => (byte)this.Key;
-		public string Name => this.Value?.Name ?? "Unkown";
-		public string? Description => this.GetDyeItem()?.Description;
+		public override string Name => this.Value?.Name ?? "Unkown";
+		public override string? Description => this.GetDyeItem()?.Description;
 		public ImageSource? Icon => this.GetDyeItem()?.Icon;
 
 		public Brush? Color

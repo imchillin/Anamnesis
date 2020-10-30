@@ -7,7 +7,6 @@ namespace Anamnesis.GameData
 
 	public interface ITerritoryType : IRow
 	{
-		string Name { get; }
 		string Place { get; }
 		string Region { get; }
 		string Zone { get; }

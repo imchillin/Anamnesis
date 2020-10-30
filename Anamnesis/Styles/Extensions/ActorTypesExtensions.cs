@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles
+namespace Anamnesis.Styles
 {
 	using Anamnesis.Memory;
 	using FontAwesome.Sharp;

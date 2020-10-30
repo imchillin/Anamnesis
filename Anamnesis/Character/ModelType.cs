@@ -21,15 +21,10 @@ namespace Anamnesis.Character
 		}
 
 		public int Key { get; set; }
-		public string? Name { get; set; }
+		public string Name { get; set; } = string.Empty;
 		public Types Type { get; set; } = Types.Unknown;
 
-		public bool CanCustomize
-		{
-			get
-			{
-				return this.Type == Types.Character;
-			}
-		}
+		public bool CanCustomize => this.Type == Types.Character;
+		public string? Description => null;
 	}
 }

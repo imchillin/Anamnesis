@@ -294,9 +294,6 @@
 		<Page Update="Character\Views\ModelTypeEditor.xaml">
 		  <SubType>Designer</SubType>
 		</Page>
-		<Page Update="Character\Views\ModelTypeSelector.xaml">
-		  <SubType>Designer</SubType>
-		</Page>
 		<Page Update="Character\Views\NpcSelector.xaml">
 		  <SubType>Designer</SubType>
 		</Page>

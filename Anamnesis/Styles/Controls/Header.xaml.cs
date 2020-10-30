@@ -4,7 +4,7 @@
 namespace Anamnesis.Styles.Controls
 {
 	using System.Windows.Controls;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
 	using FontAwesome.Sharp;
 
 	/// <summary>

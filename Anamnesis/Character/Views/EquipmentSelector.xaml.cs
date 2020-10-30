@@ -10,7 +10,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.Drawers;
+	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 
 	/// <summary>

@@ -9,7 +9,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
 	using WpfColor = System.Windows.Media.Color;
 

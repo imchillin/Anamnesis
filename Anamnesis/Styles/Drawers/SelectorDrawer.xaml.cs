@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles.Drawers
+namespace Anamnesis.Styles.Drawers
 {
 	using System;
 	using System.Collections.ObjectModel;

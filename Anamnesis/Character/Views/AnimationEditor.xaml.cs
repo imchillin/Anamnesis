@@ -5,9 +5,9 @@ namespace Anamnesis.Character.Views
 {
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
+	using global::Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 
 	/// <summary>
@@ -37,6 +37,18 @@ namespace Anamnesis.Character.Views
 
 		private void OnSelectAnimation(object sender, RoutedEventArgs e)
 		{
+			Animation? current = null;
+
+			if (GameDataService.Animations.Contains(this.AnimationId))
+				current = GameDataService.Animations.Get(this.AnimationId);
+
+			GenericSelector.Show("Select Animation", current, GameDataService.Animations, (v) =>
+			{
+				if (v == null)
+					return;
+
+				this.AnimationId = v.Key;
+			});
 		}
 
 		private void GetName()

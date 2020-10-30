@@ -7,8 +7,6 @@ namespace Anamnesis.GameData
 
 	public interface IWeather : IRow
 	{
-		string Name { get; }
-		string Description { get; }
 		ImageSource? Icon { get; }
 		ushort WeatherId { get; }
 	}

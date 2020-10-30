@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles.Controls
+namespace Anamnesis.Styles.Controls
 {
 	using System;
 	using System.Threading;
@@ -10,10 +10,10 @@ namespace Anamnesis.WpfStyles.Controls
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
+	using Anamnesis.Styles.DependencyProperties;
 	using Anamnesis.Three3D;
 	using Anamnesis.ThreeD;
 	using Anamnesis.ThreeD.Lines;
-	using Anamnesis.WpfStyles.DependencyProperties;
 	using PropertyChanged;
 
 	using CmQuaternion = Anamnesis.Memory.Quaternion;

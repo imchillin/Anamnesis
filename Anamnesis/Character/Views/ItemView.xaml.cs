@@ -13,8 +13,8 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.DependencyProperties;
-	using Anamnesis.WpfStyles.Drawers;
+	using Anamnesis.Styles.DependencyProperties;
+	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 
 	using Vector = Anamnesis.Memory.Vector;

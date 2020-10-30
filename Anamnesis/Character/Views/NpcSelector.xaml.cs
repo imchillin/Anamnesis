@@ -8,7 +8,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis;
 	using Anamnesis.GameData;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.Drawers;
+	using Anamnesis.Styles.Drawers;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.

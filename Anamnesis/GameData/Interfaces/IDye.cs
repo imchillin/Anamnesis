@@ -8,8 +8,6 @@ namespace Anamnesis.GameData
 	public interface IDye : IRow
 	{
 		byte Id { get; }
-		string Name { get; }
-		string? Description { get; }
 		ImageSource? Icon { get; }
 		Brush? Color { get; }
 	}

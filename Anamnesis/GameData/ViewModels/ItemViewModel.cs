@@ -26,8 +26,8 @@ namespace Anamnesis.GameData.ViewModels
 			LuminaExtensions.GetModel(this.Value.ModelSub, this.IsWeapon, out this.subModelSet, out this.subModelBase, out this.subModelVariant);
 		}
 
-		public string Name => this.Value.Name;
-		public string? Description => this.Value.Description;
+		public override string Name => this.Value.Name;
+		public override string? Description => this.Value.Description;
 		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);
 		public ushort ModelSet => this.modelSet;
 		public ushort ModelBase => this.modelBase;

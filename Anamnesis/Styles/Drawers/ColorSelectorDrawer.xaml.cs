@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles.Drawers
+namespace Anamnesis.Styles.Drawers
 {
 	using System;
 	using System.Reflection;
@@ -11,9 +11,9 @@ namespace Anamnesis.WpfStyles.Drawers
 	using System.Windows.Media;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
 
-	using Binder = Anamnesis.WpfStyles.DependencyProperties.Binder;
+	using Binder = Anamnesis.Styles.DependencyProperties.Binder;
 	using WpfColor = System.Windows.Media.Color;
 
 	/// <summary>

@@ -15,6 +15,7 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
+		public override string Name => "Unknown";
 		public int FacePaintColor => this.Value.FacePaintColor;
 		public int FacePaint => this.Value.FacePaint;
 		public int ExtraFeature2OrBust => this.Value.ExtraFeature2OrBust;

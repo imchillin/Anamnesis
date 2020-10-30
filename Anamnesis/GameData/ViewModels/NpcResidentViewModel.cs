@@ -16,7 +16,7 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
-		public string Name => string.IsNullOrEmpty(this.Singular) ? this.Key.ToString() : this.Singular;
+		public override string Name => string.IsNullOrEmpty(this.Singular) ? this.Key.ToString() : this.Singular;
 		public string Singular => this.Value.Singular;
 		public string Plural => this.Value.Plural;
 		public string Title => this.Value.Title;

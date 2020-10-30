@@ -4,8 +4,8 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.Character.Views"
-			 xmlns:cm3Converters="clr-namespace:Anamnesis.WpfStyles.Converters;assembly=Styles"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls;assembly=Styles"
+			 xmlns:cm3Converters="clr-namespace:Anamnesis.Styles.Converters;assembly=Styles"
+			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls;assembly=Styles"
 			 mc:Ignorable="d"
 			 HorizontalAlignment="Left"
 			 SnapsToDevicePixels="True">

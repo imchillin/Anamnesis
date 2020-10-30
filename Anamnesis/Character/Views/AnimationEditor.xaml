@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.Character.Views"
-			 xmlns:cm3="clr-namespace:Anamnesis.WpfStyles.Controls"
+			 xmlns:cm3="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">

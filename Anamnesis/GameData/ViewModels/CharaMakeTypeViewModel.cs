@@ -19,6 +19,7 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
+		public override string Name => this.Key.ToString();
 		public Appearance.Genders Gender => (Appearance.Genders)this.Value.Gender;
 		public Appearance.Races Race => (Appearance.Races)this.Value.Race!.Row;
 		public Appearance.Tribes Tribe => (Appearance.Tribes)this.Value.Tribe!.Row;

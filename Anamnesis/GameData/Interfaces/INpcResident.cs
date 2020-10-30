@@ -10,7 +10,5 @@ namespace Anamnesis.GameData
 		public string Title { get; }
 
 		public INpcBase? Appearance { get; }
-
-		public string Name { get; }
 	}
 }

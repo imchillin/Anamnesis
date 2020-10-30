@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		xmlns:gif="http://wpfanimatedgif.codeplex.com"
-		xmlns:cm3="clr-namespace:Anamnesis.WpfStyles.Controls;assembly=Styles"
+		xmlns:cm3="clr-namespace:Anamnesis.Styles.Controls;assembly=Styles"
 		mc:Ignorable="d"
 		Height="120"
 		Width="120"

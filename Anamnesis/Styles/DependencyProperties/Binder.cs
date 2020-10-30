@@ -1,7 +1,7 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles.DependencyProperties
+namespace Anamnesis.Styles.DependencyProperties
 {
 	using System;
 	using System.Reflection;

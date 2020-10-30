@@ -1,13 +1,13 @@
 ﻿// Concept Matrix 3.
 // Licensed under the MIT license.
 
-namespace Anamnesis.WpfStyles.Controls
+namespace Anamnesis.Styles.Controls
 {
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
 
 	/// <summary>

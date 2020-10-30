@@ -13,7 +13,7 @@ namespace Anamnesis
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.WpfStyles;
+	using Anamnesis.Styles;
 	using FontAwesome.Sharp;
 	using PropertyChanged;
 

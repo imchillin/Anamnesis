@@ -37,5 +37,15 @@ namespace Anamnesis.GameData.ViewModels
 				return this.value;
 			}
 		}
+
+		public abstract string Name
+		{
+			get;
+		}
+
+		public virtual string? Description
+		{
+			get => null;
+		}
 	}
 }

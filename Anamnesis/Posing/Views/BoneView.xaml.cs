@@ -11,7 +11,7 @@ namespace Anamnesis.PoseModule.Views
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Shapes;
-	using Anamnesis.WpfStyles.DependencyProperties;
+	using Anamnesis.Styles.DependencyProperties;
 	using MaterialDesignThemes.Wpf;
 
 	public partial class BoneView : UserControl
