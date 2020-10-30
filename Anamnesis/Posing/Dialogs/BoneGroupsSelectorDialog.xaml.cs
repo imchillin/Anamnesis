@@ -73,11 +73,23 @@ namespace Anamnesis.PoseModule.Dialogs
 
 		private void OnAllClick(object sender, RoutedEventArgs e)
 		{
+			this.Body = true;
+			this.Head = true;
+			this.Hair = true;
+			this.Met = true;
+			this.Top = true;
+
 			this.Result.Groups = PoseFile.Groups.All;
 		}
 
 		private void OnNoneClick(object sender, RoutedEventArgs e)
 		{
+			this.Body = false;
+			this.Head = false;
+			this.Hair = false;
+			this.Met = false;
+			this.Top = false;
+
 			this.Result.Groups = PoseFile.Groups.None;
 		}
 
