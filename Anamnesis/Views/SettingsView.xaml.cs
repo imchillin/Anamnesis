@@ -5,16 +5,20 @@ namespace Anamnesis.GUI.Views
 {
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Forms;
+	using Anamnesis.Files;
 	using Anamnesis.Services;
 	using MaterialDesignColors;
+	using Microsoft.Win32;
 	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for ThemeSettingsView.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	public partial class SettingsView : UserControl
+	public partial class SettingsView : System.Windows.Controls.UserControl
 	{
 		public SettingsView()
 		{
@@ -90,6 +94,42 @@ namespace Anamnesis.GUI.Views
 				SettingsService.Current.Language = value.Key;
 				LocalizationService.SetLocale(value.Key);
 			}
+		}
+
+		private void OnBrowseCharacter(object sender, RoutedEventArgs e)
+		{
+			FolderBrowserDialog dlg = new FolderBrowserDialog();
+			dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.DefaultCharacterDirectory);
+			DialogResult result = dlg.ShowDialog();
+
+			if (result != DialogResult.OK)
+				return;
+
+			SettingsService.Current.DefaultCharacterDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
+		}
+
+		private void OnBrowsePose(object sender, RoutedEventArgs e)
+		{
+			FolderBrowserDialog dlg = new FolderBrowserDialog();
+			dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.DefaultPoseDirectory);
+			DialogResult result = dlg.ShowDialog();
+
+			if (result != DialogResult.OK)
+				return;
+
+			SettingsService.Current.DefaultPoseDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
+		}
+
+		private void OnBrowseScene(object sender, RoutedEventArgs e)
+		{
+			FolderBrowserDialog dlg = new FolderBrowserDialog();
+			dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.DefaultSceneDirectory);
+			DialogResult result = dlg.ShowDialog();
+
+			if (result != DialogResult.OK)
+				return;
+
+			SettingsService.Current.DefaultSceneDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
 		}
 
 		public class LanguageOption

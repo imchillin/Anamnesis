@@ -23,5 +23,9 @@ namespace Anamnesis.Services
 		public double Scale { get; set; } = 1.0;
 		public bool UseWindowsExplorer { get; set; } = false;
 		public Point WindowPosition { get; set; }
+
+		public string DefaultPoseDirectory { get; set; } = "%MyDocuments%/Anamnesis/Poses/";
+		public string DefaultCharacterDirectory { get; set; } = "%MyDocuments%/Anamnesis/Characters/";
+		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
 	}
 }

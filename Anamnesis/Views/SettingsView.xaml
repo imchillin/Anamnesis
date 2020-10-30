@@ -8,15 +8,19 @@
 			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls"
 			 mc:Ignorable="d" 
+			 Width="350"
 			 d:DesignHeight="450" d:DesignWidth="232">
 
-	<Grid x:Name="ContentArea">
+	<Grid x:Name="ContentArea" Margin="3, 0, 0, 0">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
@@ -34,16 +38,47 @@
 			</ComboBox.ItemTemplate>
 		</ComboBox>
 
-		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="1" Text="Window Opacity:" Style="{StaticResource Label}"/>
+		<TextBlock Grid.Column="0" Grid.Row="1" Text="Window Opacity:" Style="{StaticResource Label}"/>
 		<cm3Controls:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="1" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
 
-		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="2" Text="Stay Transparent:" Style="{StaticResource Label}"/>
+		<TextBlock Grid.Column="0" Grid.Row="2" Text="Stay Transparent:" Style="{StaticResource Label}"/>
 		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="2"/>
 
-		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="3" Text="Window Size:" Style="{StaticResource Label}"/>
+		<TextBlock Grid.Column="0" Grid.Row="3" Text="Window Size:" Style="{StaticResource Label}"/>
 		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="3" Margin="6"/>
 
-		<GroupBox Header="Theme" Grid.Row="4" Grid.ColumnSpan="2">
+
+		<GroupBox Header="Directories" Grid.Row="4" Grid.ColumnSpan="2">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="Characters:" Style="{StaticResource Label}"/>
+				<TextBox Grid.Row="0" Grid.Column="1" Margin="3, 0, 0, 0" Text="{Binding SettingsService.Settings.DefaultCharacterDirectory}" IsEnabled="False"/>
+				<Button Grid.Row="0" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseCharacter"/>
+
+				<TextBlock Grid.Row="1" Grid.Column="0" Text="Poses:" Style="{StaticResource Label}"/>
+				<TextBox Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0" Text="{Binding SettingsService.Settings.DefaultPoseDirectory}" IsEnabled="False"/>
+				<Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowsePose"/>
+
+				<TextBlock Grid.Row="2" Grid.Column="0" Text="Scenes:" Style="{StaticResource Label}"/>
+				<TextBox Grid.Row="2" Grid.Column="1" Margin="3, 0, 0, 0" Text="{Binding SettingsService.Settings.DefaultSceneDirectory}" IsEnabled="False"/>
+				<Button Grid.Row="2" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseScene"/>
+				
+			</Grid>
+		</GroupBox>
+		
+
+		<GroupBox Header="Theme" Grid.Row="7" Grid.ColumnSpan="2">
 			<Grid>
 
 				<Grid.RowDefinitions>
@@ -66,7 +101,7 @@
 
 					<ListBox.ItemTemplate>
 						<DataTemplate>
-							<Grid Width="45">
+							<Grid Width="40">
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition/>
 									<ColumnDefinition/>
