@@ -89,7 +89,7 @@
 								<ColumnDefinition/>
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="0" Text="Moded:" Style="{StaticResource Label}" HorizontalAlignment="Left" />
+							<TextBlock Grid.Column="0" Text="Modded:" Style="{StaticResource Label}" HorizontalAlignment="Left" />
 							<TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name}" Style="{StaticResource Label}" HorizontalAlignment="Left" />
 						</Grid>
 						
