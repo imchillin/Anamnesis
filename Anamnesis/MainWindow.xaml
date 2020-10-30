@@ -226,7 +226,7 @@
 			<!-- Drawer flyouts -->
 			<materialdesign:DrawerHost Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DrawerHost" Margin="1">
 				<materialdesign:DrawerHost.RightDrawerContent>
-					<Grid Width="256" Background="{DynamicResource MaterialDesignCardBackground}">
+					<Grid MinWidth="256" Background="{DynamicResource MaterialDesignCardBackground}">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="1*" />
@@ -236,7 +236,7 @@
 					</Grid>
 				</materialdesign:DrawerHost.RightDrawerContent>
 				<materialdesign:DrawerHost.LeftDrawerContent>
-					<Grid Width="256" Background="{DynamicResource MaterialDesignCardBackground}">
+					<Grid MinWidth="256" Background="{DynamicResource MaterialDesignCardBackground}">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="1*" />
@@ -246,10 +246,10 @@
 					</Grid>
 				</materialdesign:DrawerHost.LeftDrawerContent>
 				<materialdesign:DrawerHost.TopDrawerContent>
-					<ContentPresenter Height="128" x:Name="DrawerTop" Margin="12"/>
+					<ContentPresenter MinHeight="128" x:Name="DrawerTop" Margin="12"/>
 				</materialdesign:DrawerHost.TopDrawerContent>
 				<materialdesign:DrawerHost.BottomDrawerContent>
-					<ContentPresenter Height="128" x:Name="DrawerBottom" Margin="12"/>
+					<ContentPresenter MinHeight="128" x:Name="DrawerBottom" Margin="12"/>
 				</materialdesign:DrawerHost.BottomDrawerContent>
 			</materialdesign:DrawerHost>
 

@@ -7,7 +7,7 @@
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"
-			 d:DesignWidth="250">
+			 Width="300">
 	<ScrollViewer>
 		<StackPanel Margin="6, 0, 0, 0">
 			<GroupBox Header="Proudly Open Source">

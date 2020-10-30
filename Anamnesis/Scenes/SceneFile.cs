@@ -23,7 +23,7 @@ namespace Anamnesis.Scenes
 	{
 		public override string Extension => "scene";
 		public override string Name => "Anamnesis Scene File";
-		public override IFileSource FileSource => new LocalFileSource("Local Files", "Anamnesis", "Scenes");
+		public override IFileSource FileSource => new LocalFileSource("Local Files", SettingsService.Current.DefaultSceneDirectory);
 	}
 
 	public class SceneFile : FileBase

@@ -5,6 +5,7 @@ namespace Anamnesis.Files
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Text;
 	using System.Threading.Tasks;
@@ -30,14 +31,56 @@ namespace Anamnesis.Files
 			new LegacyPoseFileInfo(),
 		};
 
-		public static string StoreDirectory
+		public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
+
+		/// <summary>
+		/// Replaces special folders (%ApplicationData%) with the actual path.
+		/// </summary>
+		public static string ParseToFilePath(string path)
 		{
-			get
+			foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues(typeof(Environment.SpecialFolder)))
 			{
-				string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-				dir += "/Anamnesis/";
-				return dir;
+				if (specialFolder == null)
+					continue;
+
+				path = path.Replace($"%{specialFolder}%", Environment.GetFolderPath((Environment.SpecialFolder)specialFolder));
 			}
+
+			// Special case for "AppData" instead of "ApplicationData"
+			path = path.Replace($"%AppData%", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+			path = path.Replace('/', '\\');
+			return path;
+		}
+
+		/// <summary>
+		/// Replaces special fodler paths with special fodler notation (%appdata%).
+		/// </summary>
+		public static string ParseFromFilePath(string path)
+		{
+			// Special case for "AppData" instead of "ApplicationData"
+			path = path.Replace(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $"%AppData%");
+
+			foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues(typeof(Environment.SpecialFolder)))
+			{
+				if (specialFolder == null)
+					continue;
+
+				string specialPath = Environment.GetFolderPath((Environment.SpecialFolder)specialFolder);
+
+				if (string.IsNullOrEmpty(specialPath))
+					continue;
+
+				path = path.Replace(specialPath, $"%{specialFolder}%");
+			}
+
+			path = path.Replace('\\', '/');
+			return path;
+		}
+
+		public static void OpenDirectory(string path)
+		{
+			string dir = FileService.ParseToFilePath(path);
+			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"\"{dir}\"");
 		}
 
 		public static async Task<OpenResult> Open<T>(string title)

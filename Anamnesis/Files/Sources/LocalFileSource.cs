@@ -16,23 +16,22 @@ namespace Anamnesis.Files
 
 	public class LocalFileSource : IFileSource
 	{
-		public LocalFileSource(string name, string baseDir, string defaultDir)
+		public LocalFileSource(string name, string baseDir)
 		{
 			this.Name = name;
-			this.BaseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + baseDir;
-			this.DefaultDirectoryName = defaultDir;
+
+			this.BaseDirectory = FileService.ParseToFilePath(baseDir);
 		}
 
 		public string Name { get; private set; }
 		public string BaseDirectory { get; private set; }
-		public string DefaultDirectoryName { get; private set; }
 
 		/// <summary>
 		/// If all filetypes have the same default directory name, return that subdirectory, otherwise returns the raw starting directory.
 		/// </summary>
 		public IFileSource.IDirectory GetDefaultDirectory()
 		{
-			string defaultDir = this.BaseDirectory + "/" + this.DefaultDirectoryName + "/";
+			string defaultDir = this.BaseDirectory;
 
 			if (!Directories.Exists(defaultDir))
 				Directories.CreateDirectory(defaultDir);

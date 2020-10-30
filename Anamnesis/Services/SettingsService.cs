@@ -17,7 +17,7 @@ namespace Anamnesis.Services
 
 	public class SettingsService : ServiceBase<SettingsService>
 	{
-		private static string settingsPath = FileService.StoreDirectory + "/Settings.json";
+		private static string settingsPath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Settings.json");
 
 		private string currentThemeSwatch = string.Empty;
 		private bool? currentThemeDark = null;
@@ -28,8 +28,7 @@ namespace Anamnesis.Services
 
 		public static void ShowDirectory()
 		{
-			string? dir = Path.GetDirectoryName(FileService.StoreDirectory);
-			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);
+			FileService.OpenDirectory(FileService.StoreDirectory);
 		}
 
 		public static void Save()
@@ -42,14 +41,7 @@ namespace Anamnesis.Services
 		{
 			await base.Initialize();
 
-			string path = FileService.StoreDirectory;
-
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-
-			path = FileService.StoreDirectory + "/Settings.json";
-
-			if (!File.Exists(path))
+			if (!File.Exists(settingsPath))
 			{
 				this.Settings = new Settings();
 				Save();
@@ -58,7 +50,7 @@ namespace Anamnesis.Services
 			{
 				try
 				{
-					string json = File.ReadAllText(path);
+					string json = File.ReadAllText(settingsPath);
 					this.Settings = SerializerService.Deserialize<Settings>(json);
 				}
 				catch (Exception)

@@ -24,6 +24,11 @@ namespace Anamnesis.Services
 		public static void ShowLogs()
 		{
 			string? dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath);
+
+			if (dir == null)
+				throw new Exception("Failed to get directory name for path");
+
+			dir = FileService.ParseToFilePath(dir);
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", dir);
 		}
 
@@ -35,6 +40,7 @@ namespace Anamnesis.Services
 		public Task Initialize()
 		{
 			string dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath) + "\\";
+			dir = FileService.ParseToFilePath(dir);
 
 			if (!Directory.Exists(dir))
 				Directory.CreateDirectory(dir);

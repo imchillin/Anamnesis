@@ -17,7 +17,7 @@ namespace Anamnesis.Files
 	{
 		public override string Extension => "pose";
 		public override string Name => "Anamnesis Pose File";
-		public override IFileSource FileSource => new LocalFileSource("Local Files", "Anamnesis", "Poses");
+		public override IFileSource FileSource => new LocalFileSource("Local Files", SettingsService.Current.DefaultPoseDirectory);
 	}
 
 	public class PoseFile : FileBase
