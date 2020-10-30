@@ -73,7 +73,6 @@ namespace Anamnesis.Services
 			await Add<CameraService>();
 			await Add<GposeService>();
 			await Add<PoseService>();
-			await Add<ModelTypeService>();
 			await Add<GameDataService>();
 			await Add<TipService>();
 			await Add<XmaService>();

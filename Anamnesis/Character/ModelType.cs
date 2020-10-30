@@ -4,9 +4,10 @@
 namespace Anamnesis.Character
 {
 	using System;
+	using Anamnesis.GameData.Sheets;
 
 	[Serializable]
-	public class ModelTypes
+	public class ModelType : IJsonRow
 	{
 		public enum Types
 		{
@@ -19,7 +20,7 @@ namespace Anamnesis.Character
 			Monster,
 		}
 
-		public int Id { get; set; }
+		public int Key { get; set; }
 		public string? Name { get; set; }
 		public Types Type { get; set; } = Types.Unknown;
 

@@ -6,7 +6,7 @@ namespace Anamnesis.GameData.ViewModels
 	using Lumina;
 	using Lumina.Excel;
 
-	public abstract class ExcelRowViewModel<T> : IDataObject
+	public abstract class ExcelRowViewModel<T> : IRow
 		where T : class, IExcelRow
 	{
 		protected readonly Lumina lumina;

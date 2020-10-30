@@ -23,7 +23,7 @@ namespace Anamnesis.Character.Views
 
 			if (GameDataService.Dyes != null)
 			{
-				foreach (IDye item in GameDataService.Dyes.All)
+				foreach (IDye item in GameDataService.Dyes)
 				{
 					this.Selector.Items.Add(item);
 				}

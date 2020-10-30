@@ -4,6 +4,7 @@
 namespace Anamnesis.GameData.Sheets
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.ViewModels;
@@ -11,8 +12,8 @@ namespace Anamnesis.GameData.Sheets
 
 	using LuminaData = Lumina.Lumina;
 
-	public class Sheet<TInterfaceType, TConcreteType, TWrapperType> : IData<TInterfaceType>
-		where TInterfaceType : IDataObject
+	public class LuminaSheet<TInterfaceType, TConcreteType, TWrapperType> : ISheet<TInterfaceType>
+		where TInterfaceType : IRow
 		where TConcreteType : class, IExcelRow
 		where TWrapperType : ExcelRowViewModel<TConcreteType>, TInterfaceType
 	{
@@ -22,13 +23,13 @@ namespace Anamnesis.GameData.Sheets
 
 		private LuminaData lumina;
 
-		public Sheet(LuminaData lumina)
+		public LuminaSheet(LuminaData lumina)
 		{
 			this.lumina = lumina;
 			this.excel = lumina.GetExcelSheet<TConcreteType>();
 		}
 
-		public IEnumerable<TInterfaceType> All
+		private IEnumerable<TInterfaceType> All
 		{
 			get
 			{
@@ -57,6 +58,12 @@ namespace Anamnesis.GameData.Sheets
 			}
 		}
 
+		public bool Contains(int key)
+		{
+			TConcreteType? row = this.excel.GetRow((uint)key);
+			return row != null;
+		}
+
 		public TInterfaceType Get(int key)
 		{
 			if (!this.wrapperCache.ContainsKey(key))
@@ -75,6 +82,16 @@ namespace Anamnesis.GameData.Sheets
 		public TInterfaceType Get(byte key)
 		{
 			return this.Get((int)key);
+		}
+
+		public IEnumerator<TInterfaceType> GetEnumerator()
+		{
+			return this.All.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.All.GetEnumerator();
 		}
 	}
 }

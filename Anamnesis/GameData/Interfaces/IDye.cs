@@ -5,7 +5,7 @@ namespace Anamnesis.GameData
 {
 	using System.Windows.Media;
 
-	public interface IDye : IDataObject
+	public interface IDye : IRow
 	{
 		byte Id { get; }
 		string Name { get; }

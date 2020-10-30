@@ -3,7 +3,7 @@
 
 namespace Anamnesis.GameData
 {
-	public interface INpcBase : IDataObject
+	public interface INpcBase : IRow
 	{
 		int FacePaintColor { get; }
 		int FacePaint { get; }

@@ -3,7 +3,7 @@
 
 namespace Anamnesis.GameData
 {
-	public interface INpcResident : IDataObject
+	public interface INpcResident : IRow
 	{
 		public string Singular { get; }
 		public string Plural { get; }

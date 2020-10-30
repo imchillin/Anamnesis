@@ -39,10 +39,7 @@ namespace Anamnesis.Character.Utilities
 
 		private static IItem ItemSearch(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
 		{
-			if (GameDataService.Items == null)
-				return NoneItem;
-
-			foreach (IItem tItem in GameDataService.Items.All)
+			foreach (IItem tItem in GameDataService.Items)
 			{
 				if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
 				{

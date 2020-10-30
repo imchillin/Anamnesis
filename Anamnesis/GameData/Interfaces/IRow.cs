@@ -3,7 +3,7 @@
 
 namespace Anamnesis.GameData
 {
-	public interface IDataObject
+	public interface IRow
 	{
 		int Key { get; }
 	}

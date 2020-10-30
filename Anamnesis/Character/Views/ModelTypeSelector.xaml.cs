@@ -20,7 +20,7 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			foreach (ModelTypes item in ModelTypeService.ModelTypes)
+			foreach (ModelType item in GameDataService.ModelTypes)
 			{
 				this.Selector.Items.Add(item);
 			}
@@ -62,7 +62,7 @@ namespace Anamnesis.Character.Views
 
 		private bool OnFilter(object obj, string[]? search = null)
 		{
-			if (obj is ModelTypes item)
+			if (obj is ModelType item)
 			{
 				if (this.mode != Mode.All)
 				{
@@ -74,7 +74,7 @@ namespace Anamnesis.Character.Views
 
 				bool matches = false;
 				matches |= SearchUtility.Matches(item.Name, search);
-				matches |= SearchUtility.Matches(item.Id.ToString(), search);
+				matches |= SearchUtility.Matches(item.Key.ToString(), search);
 				return matches;
 			}
 

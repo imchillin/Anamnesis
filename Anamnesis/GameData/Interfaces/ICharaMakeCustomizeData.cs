@@ -12,7 +12,7 @@ namespace Anamnesis.GameData
 		FacePaint,
 	}
 
-	public interface ICharaMakeCustomizeData : IData<ICharaMakeCustomize>
+	public interface ICharaMakeCustomizeData : ISheet<ICharaMakeCustomize>
 	{
 		List<ICharaMakeCustomize> GetFeatureOptions(Features feature, Appearance.Tribes tribe, Appearance.Genders gender);
 		ICharaMakeCustomize? GetFeature(Features feature, Appearance.Tribes tribe, Appearance.Genders gender, byte featureId);

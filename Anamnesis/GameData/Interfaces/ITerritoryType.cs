@@ -5,7 +5,7 @@ namespace Anamnesis.GameData
 {
 	using System.Collections.Generic;
 
-	public interface ITerritoryType : IDataObject
+	public interface ITerritoryType : IRow
 	{
 		string Name { get; }
 		string Place { get; }

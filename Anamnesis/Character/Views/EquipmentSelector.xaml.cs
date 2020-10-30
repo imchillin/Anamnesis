@@ -48,7 +48,7 @@ namespace Anamnesis.Character.Views
 
 			if (GameDataService.Items != null)
 			{
-				foreach (IItem item in GameDataService.Items.All)
+				foreach (IItem item in GameDataService.Items)
 				{
 					this.Selector.Items.Add(item);
 				}

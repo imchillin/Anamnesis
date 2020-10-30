@@ -20,12 +20,9 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			if (GameDataService.ResidentNPCs != null)
+			foreach (INpcResident npc in GameDataService.ResidentNPCs)
 			{
-				foreach (INpcResident npc in GameDataService.ResidentNPCs.All)
-				{
-					this.Selector.Items.Add(npc);
-				}
+				this.Selector.Items.Add(npc);
 			}
 
 			this.Selector.FilterItems();

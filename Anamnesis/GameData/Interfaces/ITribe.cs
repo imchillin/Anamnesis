@@ -6,7 +6,7 @@ namespace Anamnesis.GameData
 	using System;
 	using Anamnesis.Memory;
 
-	public interface ITribe : IDataObject, IEquatable<ITribe>
+	public interface ITribe : IRow, IEquatable<ITribe>
 	{
 		Appearance.Tribes Tribe { get; }
 		string Feminine { get; }

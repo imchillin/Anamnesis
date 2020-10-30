@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.WpfStyles.Drawers"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="232">
+			 d:DesignHeight="450" Width="256">
 	<Grid>
 
 		<Grid.RowDefinitions>
@@ -32,9 +32,9 @@
 			<cm3Drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding Key}" Style="{StaticResource Label}"/>
 						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
-						<TextBlock Text="-" Style="{StaticResource Label}" Margin="6,0,3,0"/>
-						<TextBlock Text="{Binding Id}" Style="{StaticResource Label}"/>
+
 					</StackPanel>
 				</DataTemplate>
 			</cm3Drawers:SelectorDrawer.ItemTemplate>

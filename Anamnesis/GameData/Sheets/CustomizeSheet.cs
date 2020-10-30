@@ -10,7 +10,7 @@ namespace Anamnesis.GameData.Sheets
 	using Lumina;
 	using Lumina.Excel.GeneratedSheets;
 
-	public class CustomizeSheet : Sheet<ICharaMakeCustomize, CharaMakeCustomize, CharaMakeCustomizeViewModel>, ICharaMakeCustomizeData
+	public class CustomizeSheet : LuminaSheet<ICharaMakeCustomize, CharaMakeCustomize, CharaMakeCustomizeViewModel>, ICharaMakeCustomizeData
 	{
 		public CustomizeSheet(Lumina lumina)
 			: base(lumina)

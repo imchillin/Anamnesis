@@ -8,6 +8,7 @@ namespace Anamnesis.Memory
 	using System.Reflection;
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
+	using Anamnesis.Character;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -38,6 +39,7 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x1708)] public Equipment Equipment;
 		[FieldOffset(0x17B8)] public Appearance Customize;
 		[FieldOffset(0x17F8)] public int BattleNpcTargetActorId;
+		[FieldOffset(0x18BE)] public int AnimationId;
 		[FieldOffset(0x1868)] public int NameId;
 		[FieldOffset(0x1888)] public int ModelType;
 
@@ -62,18 +64,19 @@ namespace Anamnesis.Memory
 		[ModelField] public string Name { get; set; } = string.Empty;
 		[ModelField] public int DataId { get; set; }
 		[ModelField] public int OwnerId { get; set; }
-		[ModelField] public ActorTypes ObjectKind { get; set; }
+		[ModelField][Refresh] public ActorTypes ObjectKind { get; set; }
 		[ModelField] public byte SubKind { get; set; }
-		[ModelField] public AppearanceViewModel? Customize { get; set; }
+		[ModelField][Refresh] public AppearanceViewModel? Customize { get; set; }
 		[ModelField] public int PlayerCharacterTargetActorId { get; set; }
 		[ModelField] public int BattleNpcTargetActorId { get; set; }
+		[ModelField] public int AnimationId { get; set; }
 		[ModelField] public int NameId { get; set; }
-		[ModelField] public int ModelType { get; set; }
-		[ModelField] public RenderModes RenderMode { get; set; }
+		[ModelField][Refresh] public int ModelType { get; set; }
+		[ModelField][Refresh] public RenderModes RenderMode { get; set; }
 		[ModelField] public float Transparency { get; set; }
-		[ModelField] public EquipmentViewModel? Equipment { get; set; }
-		[ModelField] public WeaponViewModel? MainHand { get; set; }
-		[ModelField] public WeaponViewModel? OffHand { get; set; }
+		[ModelField][Refresh] public EquipmentViewModel? Equipment { get; set; }
+		[ModelField][Refresh] public WeaponViewModel? MainHand { get; set; }
+		[ModelField][Refresh] public WeaponViewModel? OffHand { get; set; }
 
 		[ModelField] public ModelViewModel? ModelObject { get; set; }
 
@@ -129,7 +132,17 @@ namespace Anamnesis.Memory
 
 		public bool IsCustomizable()
 		{
-			return ModelTypeService.IsCustomizable(this.ModelType) && this.Customize != null;
+			if (this.Customize == null)
+				return false;
+
+			if (this.ModelType == 0)
+				return true;
+
+			if (!GameDataService.ModelTypes!.Contains(this.ModelType))
+				return false;
+
+			ModelType modelType = GameDataService.ModelTypes!.Get(this.ModelType);
+			return modelType.CanCustomize;
 		}
 
 		/// <summary>
@@ -199,20 +212,12 @@ namespace Anamnesis.Memory
 
 		protected override bool HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
-			if (this.AutomaticRefreshEnabled && ShouldRefreshForProperty(viewModelProperty))
+			if (this.AutomaticRefreshEnabled && RefreshAttribute.IsSet(viewModelProperty))
 			{
 				this.Refresh();
 			}
 
 			return base.HandleViewToModelUpdate(viewModelProperty, modelField);
-		}
-
-		private static bool ShouldRefreshForProperty(PropertyInfo property)
-		{
-			if (property.Name == nameof(ActorViewModel.Transparency))
-				return false;
-
-			return true;
 		}
 
 		private async Task RefreshTask()
@@ -231,6 +236,14 @@ namespace Anamnesis.Memory
 
 				this.PendingRefresh = false;
 				await this.RefreshAsync();
+			}
+		}
+
+		private class RefreshAttribute : Attribute
+		{
+			public static bool IsSet(PropertyInfo property)
+			{
+				return property.GetCustomAttribute<RefreshAttribute>() != null;
 			}
 		}
 	}

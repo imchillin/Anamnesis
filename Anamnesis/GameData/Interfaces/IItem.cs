@@ -6,7 +6,7 @@ namespace Anamnesis.GameData
 	using System.Collections.Generic;
 	using System.Windows.Media;
 
-	public interface IItem : IDataObject
+	public interface IItem : IRow
 	{
 		string Name { get; }
 		string? Description { get; }

@@ -267,6 +267,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="Animations.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="ModelTypes.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

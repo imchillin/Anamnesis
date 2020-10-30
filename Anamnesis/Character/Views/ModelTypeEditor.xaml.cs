@@ -22,7 +22,7 @@ namespace Anamnesis.Character.Views
 
 		private void OnBrowseClicked(object sender, RoutedEventArgs e)
 		{
-			if (ModelTypeService.ModelTypes == null)
+			if (GameDataService.ModelTypes == null)
 				return;
 
 			ActorViewModel? vm = this.DataContext as ActorViewModel;
@@ -30,16 +30,12 @@ namespace Anamnesis.Character.Views
 			if (vm == null)
 				return;
 
-			ModelTypes? selected = null;
-			foreach (ModelTypes modelType in ModelTypeService.ModelTypes)
-			{
-				if (modelType.Id == vm.ModelType)
-				{
-					selected = modelType;
-				}
-			}
+			ModelType? selected = null;
 
-			SelectorDrawer.Show<ModelTypeSelector, ModelTypes>("Model Type", selected, (v) => { vm.ModelType = v.Id; });
+			if (GameDataService.ModelTypes.Contains(vm.ModelType))
+				selected = GameDataService.ModelTypes.Get(vm.ModelType);
+
+			SelectorDrawer.Show<ModelTypeSelector, ModelType>("Model Type", selected, (v) => { vm.ModelType = v.Key; });
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
@@ -78,13 +74,10 @@ namespace Anamnesis.Character.Views
 
 				this.ModelName.Text = null;
 
-				foreach (ModelTypes modelType in ModelTypeService.ModelTypes)
+				if (GameDataService.ModelTypes!.Contains(actorVm.ModelType))
 				{
-					if (modelType.Id == modelTypeId)
-					{
-						this.ModelName.Text = modelType.Name;
-						return;
-					}
+					ModelType entry = GameDataService.ModelTypes.Get(actorVm.ModelType);
+					this.ModelName.Text = entry.Name;
 				}
 			});
 		}

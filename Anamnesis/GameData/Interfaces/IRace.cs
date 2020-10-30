@@ -6,7 +6,7 @@ namespace Anamnesis.GameData
 	using System.Collections.Generic;
 	using Anamnesis.Memory;
 
-	public interface IRace : IDataObject
+	public interface IRace : IRow
 	{
 		Appearance.Races Race { get; }
 		string Feminine { get; }

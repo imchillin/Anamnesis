@@ -7,7 +7,7 @@ namespace Anamnesis.GameData
 	using System.Windows.Media;
 	using Anamnesis.Memory;
 
-	public interface ICharaMakeType : IDataObject
+	public interface ICharaMakeType : IRow
 	{
 		Appearance.Genders Gender { get; }
 		Appearance.Races Race { get; }

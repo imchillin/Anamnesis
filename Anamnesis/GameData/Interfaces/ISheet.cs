@@ -5,10 +5,10 @@ namespace Anamnesis.GameData
 {
 	using System.Collections.Generic;
 
-	public interface IData<T>
-		where T : IDataObject
+	public interface ISheet<T> : IEnumerable<T>
+		where T : IRow
 	{
-		IEnumerable<T> All { get; }
+		bool Contains(int key);
 
 		T Get(int key);
 		T Get(byte key);

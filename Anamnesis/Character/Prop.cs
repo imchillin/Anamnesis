@@ -5,8 +5,9 @@ namespace Anamnesis.Character
 {
 	using System.Windows.Media;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 
-	public class Prop : IItem
+	public class Prop : IJsonRow, IItem
 	{
 		public int Key { get; set; }
 

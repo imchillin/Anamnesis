@@ -5,7 +5,7 @@ namespace Anamnesis.GameData
 {
 	using System.Windows.Media;
 
-	public interface ICharaMakeCustomize : IDataObject
+	public interface ICharaMakeCustomize : IRow
 	{
 		ImageSource? Icon { get; }
 		byte FeatureId { get; }

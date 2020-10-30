@@ -5,7 +5,7 @@ namespace Anamnesis.GameData
 {
 	using System.Windows.Media;
 
-	public interface IWeather : IDataObject
+	public interface IWeather : IRow
 	{
 		string Name { get; }
 		string Description { get; }

@@ -34,7 +34,7 @@ namespace Anamnesis.Character.Views
 			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Ages));
 
 			List<IRace> races = new List<IRace>();
-			foreach (IRace race in GameDataService.Races!.All)
+			foreach (IRace race in GameDataService.Races)
 			{
 				if (race.Key == 0)
 					continue;

@@ -103,7 +103,7 @@ namespace Anamnesis.Character.Views
 			ImageSource[]? facialFeatures = null;
 			if (GameDataService.CharacterMakeTypes != null)
 			{
-				foreach (ICharaMakeType set in GameDataService.CharacterMakeTypes.All)
+				foreach (ICharaMakeType set in GameDataService.CharacterMakeTypes)
 				{
 					if (set.Tribe != this.Tribe)
 						continue;
