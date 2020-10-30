@@ -124,19 +124,18 @@ namespace Anamnesis.WpfStyles.Controls
 		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(QuaternionEditor sender, CmQuaternion value)
 		{
-			sender.ValueQuat = new Quaternion(value.X, value.Y, value.Z, value.W);
+			Quaternion valueQuat = new Quaternion(value.X, value.Y, value.Z, value.W);
 
 			if (sender.RootRotation != null)
-			{
-				sender.ValueQuat = sender.Root * sender.ValueQuat;
-			}
+				valueQuat = sender.Root * valueQuat;
 
-			sender.worldSpaceDelta = sender.ValueQuat;
+			sender.worldSpaceDelta = valueQuat;
 
 			if (sender.WorldSpace)
-				sender.ValueQuat = Quaternion.Identity;
+				valueQuat = Quaternion.Identity;
 
-			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(sender.ValueQuat));
+			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(valueQuat));
+			sender.ValueQuat = valueQuat;
 
 			if (sender.lockdp)
 				return;
@@ -158,11 +157,13 @@ namespace Anamnesis.WpfStyles.Controls
 		private static void OnValueQuatChanged(QuaternionEditor sender, Quaternion value)
 		{
 			Quaternion newrot = value;
+			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(newrot));
 
 			if (sender.WorldSpace)
+			{
 				newrot *= sender.worldSpaceDelta;
-
-			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(newrot));
+				sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(Quaternion.Identity));
+			}
 
 			if (sender.lockdp)
 				return;
