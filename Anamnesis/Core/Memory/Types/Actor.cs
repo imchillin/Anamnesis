@@ -169,20 +169,20 @@ namespace Anamnesis.Memory
 				MemoryService.Write(objectKindPointer, (byte)ActorTypes.BattleNpc);
 
 				MemoryService.Write(renderModePointer, (int)RenderModes.Unload);
-				await Task.Delay(50);
+				await Task.Delay(75);
 				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
-				await Task.Delay(50);
+				await Task.Delay(75);
 				MemoryService.Write(objectKindPointer, (byte)ActorTypes.Player);
 				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
 			}
 			else
 			{
 				MemoryService.Write(renderModePointer, (int)RenderModes.Unload);
-				await Task.Delay(50);
+				await Task.Delay(75);
 				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
 			}
 
-			await Task.Delay(50);
+			await Task.Delay(75);
 
 			this.IsRefreshing = false;
 			this.MemoryMode = oldMode;
