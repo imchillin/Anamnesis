@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="Anamnesis.Character.Views.AnimationEditor"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Anamnesis.Character.Views"
+			 xmlns:cm3="clr-namespace:Anamnesis.WpfStyles.Controls"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" d:DesignWidth="800">
+	
+	<Grid x:Name="ContentArea">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<cm3:NumberBox Grid.Row="0" Grid.Column="0" Value="{Binding AnimationId}" Minimum="0" Maximum="8800" Buttons="True"/>
+
+		<Button Grid.Row="0" Grid.Column="1" Style="{StaticResource TransparentButton}" Click="OnSelectAnimation" Content="..."/>
+
+		<TextBlock Margin="3, 0, 0, 0" x:Name="AnimationName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" FontSize="10"/>
+
+	</Grid>
+</UserControl>
