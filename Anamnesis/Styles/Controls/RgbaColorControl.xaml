@@ -5,7 +5,6 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:cm3Controls="clr-namespace:Anamnesis.WpfStyles.Controls;assembly=Anamnesis.WpfStyles"
 			 mc:Ignorable="d"
-			 Margin="1, 0, 3, 0"
 			 MinWidth="22"
 			 HorizontalAlignment="Left">
 	

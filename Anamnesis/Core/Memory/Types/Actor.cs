@@ -34,6 +34,7 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x01F0)] public int PlayerCharacterTargetActorId;
 		[FieldOffset(0x1450)] public Weapon MainHand;
 		[FieldOffset(0x14B8)] public Weapon OffHand;
+		[FieldOffset(0x1704)] public float Transparency;
 		[FieldOffset(0x1708)] public Equipment Equipment;
 		[FieldOffset(0x17B8)] public Appearance Customize;
 		[FieldOffset(0x17F8)] public int BattleNpcTargetActorId;
@@ -69,6 +70,7 @@ namespace Anamnesis.Memory
 		[ModelField] public int NameId { get; set; }
 		[ModelField] public int ModelType { get; set; }
 		[ModelField] public RenderModes RenderMode { get; set; }
+		[ModelField] public float Transparency { get; set; }
 		[ModelField] public EquipmentViewModel? Equipment { get; set; }
 		[ModelField] public WeaponViewModel? MainHand { get; set; }
 		[ModelField] public WeaponViewModel? OffHand { get; set; }
@@ -197,10 +199,20 @@ namespace Anamnesis.Memory
 
 		protected override bool HandleViewToModelUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
-			if (this.AutomaticRefreshEnabled)
+			if (this.AutomaticRefreshEnabled && ShouldRefreshForProperty(viewModelProperty))
+			{
 				this.Refresh();
+			}
 
 			return base.HandleViewToModelUpdate(viewModelProperty, modelField);
+		}
+
+		private static bool ShouldRefreshForProperty(PropertyInfo property)
+		{
+			if (property.Name == nameof(ActorViewModel.Transparency))
+				return false;
+
+			return true;
 		}
 
 		private async Task RefreshTask()

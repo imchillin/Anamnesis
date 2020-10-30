@@ -18,6 +18,9 @@
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
@@ -39,26 +42,22 @@
 
 		<TextBlock Grid.Row="0" Grid.Column="0" Text="Skin:" Style="{StaticResource Label}"/>
 		<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="1" Value="{Binding ExtendedAppearance.SkinColor}" DisplayName="Skin Color" ToolTip="Skin Color"/>
+		<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ExtendedAppearance.SkinGloss}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>
 
-		<TextBlock Grid.Row="1" Grid.Column="0" Text="Skin Glow:" Style="{StaticResource Label}"/>
-		<cm3Controls:RgbColorControl Grid.Row="1" Grid.Column="1" Value="{Binding ExtendedAppearance.SkinGloss}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>
+		<TextBlock Grid.Row="1" Grid.Column="0" Text="Lips:" Style="{StaticResource Label}"/>
+		<cm3Controls:RgbaColorControl Grid.Row="1" Grid.Column="1" Value="{Binding ExtendedAppearance.MouthColor}" ToolTip="Lips Color"/>
 
-		<TextBlock Grid.Row="2" Grid.Column="0" Text="Lips:" Style="{StaticResource Label}"/>
-		<cm3Controls:RgbaColorControl Grid.Row="2" Grid.Column="1" Value="{Binding ExtendedAppearance.MouthColor}" ToolTip="Lips Color"/>
+		<TextBlock Grid.Row="2" Grid.Column="0" Text="Eyes:" Style="{StaticResource Label}"/>
+		<cm3Controls:RgbColorControl Grid.Row="2" Grid.Column="1" ToolTip="Left Eye Color" Value="{Binding ExtendedAppearance.LeftEyeColor}"/>
+		<cm3Controls:RgbColorControl Grid.Row="2" Grid.Column="2" ToolTip="Right Eye Color" Value="{Binding ExtendedAppearance.RightEyeColor}"/>
+		<cm3Controls:RgbColorControl Grid.Row="2" Grid.Column="3" ToolTip="Limbal Ring Color" Value="{Binding ExtendedAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
 
-		<TextBlock Grid.Row="3" Grid.Column="0" Text="Eyes:" Style="{StaticResource Label}"/>
-		<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
-			<cm3Controls:RgbColorControl ToolTip="Left Eye Color" Value="{Binding ExtendedAppearance.LeftEyeColor}"/>
-			<cm3Controls:RgbColorControl ToolTip="Right Eye Color" Value="{Binding ExtendedAppearance.RightEyeColor}"/>
-			<cm3Controls:RgbColorControl ToolTip="Limbal Ring Color" Value="{Binding ExtendedAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
-		</StackPanel>
 
-		<TextBlock Grid.Row="4" Grid.Column="0" Text="Hair:" Style="{StaticResource Label}"/>
-		<StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
-			<cm3Controls:RgbColorControl Value="{Binding ExtendedAppearance.HairColor}" DisplayName="Hair Color" ToolTip="Hair Color" Margin="0"/>
-			<cm3Controls:RgbColorControl Value="{Binding ExtendedAppearance.HairGloss}" DisplayName="Hair Glow" ToolTip="Hair Glow" Margin="0"/>
-			<cm3Controls:RgbColorControl Value="{Binding ExtendedAppearance.HairHighlight}" DisplayName="Highlight Color" ToolTip="Highlight Color" Margin="0"/>
-		</StackPanel>
+		<TextBlock Grid.Row="3" Grid.Column="0" Text="Hair:" Style="{StaticResource Label}"/>
+		<cm3Controls:RgbColorControl Grid.Row="3" Grid.Column="1" Value="{Binding ExtendedAppearance.HairColor}" DisplayName="Hair Color" ToolTip="Hair Color"/>
+		<cm3Controls:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding ExtendedAppearance.HairGloss}" DisplayName="Hair Glow" ToolTip="Hair Glow"/>
+		<cm3Controls:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding ExtendedAppearance.HairHighlight}" DisplayName="Highlight Color" ToolTip="Highlight Color"/>
+
 
 		<!--
 		<TextBlock Grid.Row="5" Grid.Column="0" Text="Transparency:" Style="{StaticResource Label}"/>

@@ -58,16 +58,32 @@
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
-						<ana:Header Icon="Horse" Text="Model Type"/>
+						<ana:Header Icon="Horse" Text="Actor"/>
 					</GroupBox.Header>
 
-					<views:ModelTypeEditor DataContext="{Binding Actor}"/>
-	
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<TextBlock Grid.Row="0" Grid.Column="0" Text="Model:" Style="{StaticResource Label}"/>
+						<views:ModelTypeEditor Grid.Row="0" Grid.Column="1" DataContext="{Binding Actor}"/>
+
+						<TextBlock Grid.Row="1" Grid.Column="0" Text="Alpha:" Style="{StaticResource Label}"/>
+						<cm3Controls:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Actor.Transparency}" Minimum="0.01" Maximum="1" TickFrequency="0.1" Slider="Absolute"/>
+					</Grid>
+					
 				</GroupBox>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
-						<ana:Header Icon="GraduationCap" Text="Parameters"/>
+						<ana:Header Icon="GraduationCap" Text="Model"/>
 					</GroupBox.Header>
 
 					<Grid>
