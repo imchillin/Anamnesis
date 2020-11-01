@@ -18,10 +18,10 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
-		public override string Name => this.Value.Name;
-		public string Place => this.Value.PlaceName.Value.Name;
-		public string Region => this.Value.PlaceNameRegion.Value.Name;
-		public string Zone => this.Value.PlaceNameZone.Value.Name;
+		public override string Name => this.Value?.Name ?? "Unknown";
+		public string Place => this.Value?.PlaceName?.Value?.Name ?? "Unknown";
+		public string Region => this.Value?.PlaceNameRegion?.Value?.Name ?? "Unknown";
+		public string Zone => this.Value?.PlaceNameZone?.Value?.Name ?? "Unknown";
 
 		public List<IWeather> Weathers
 		{
@@ -33,12 +33,15 @@ namespace Anamnesis.GameData.ViewModels
 
 					WeatherRate weatherRate = GameDataService.WeatherRates!.GetRow((uint)this.Value.WeatherRate);
 
-					foreach (WeatherRate.UnkStruct0Struct wr in weatherRate.UnkStruct0)
+					if (weatherRate != null && weatherRate.UnkStruct0 != null)
 					{
-						if (wr.Weather == 0)
-							continue;
+						foreach (WeatherRate.UnkStruct0Struct wr in weatherRate.UnkStruct0)
+						{
+							if (wr.Weather == 0)
+								continue;
 
-						this.weathers.Add(GameDataService.Weathers!.Get(wr.Weather));
+							this.weathers.Add(GameDataService.Weathers!.Get(wr.Weather));
+						}
 					}
 				}
 
