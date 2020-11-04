@@ -32,6 +32,7 @@ namespace Anamnesis.Styles.Controls
 		public static readonly IBind<double> MinDp = Binder.Register<double, NumberBox>(nameof(Minimum), OnMinimumChanged, BindMode.OneWay);
 		public static readonly IBind<double> MaxDp = Binder.Register<double, NumberBox>(nameof(Maximum), OnMaximumChanged, BindMode.OneWay);
 		public static readonly IBind<bool> WrapDp = Binder.Register<bool, NumberBox>(nameof(Wrap), BindMode.OneWay);
+		public static readonly IBind<double> OffsetDp = Binder.Register<double, NumberBox>(nameof(ValueOffset), BindMode.OneWay);
 
 		private string? inputString;
 		private Key keyHeld = Key.None;
@@ -97,6 +98,31 @@ namespace Anamnesis.Styles.Controls
 			set => WrapDp.Set(this, value);
 		}
 
+		public double ValueOffset
+		{
+			get => OffsetDp.Get(this);
+			set => OffsetDp.Set(this, value);
+		}
+
+		public double Value
+		{
+			get => ValueDp.Get(this);
+			set => ValueDp.Set(this, value);
+		}
+
+		public double DisplayValue
+		{
+			get
+			{
+				return this.Value + this.ValueOffset;
+			}
+
+			set
+			{
+				this.Value = value - this.ValueOffset;
+			}
+		}
+
 		public string? Text
 		{
 			get
@@ -111,7 +137,7 @@ namespace Anamnesis.Styles.Controls
 				double val;
 				if (double.TryParse(value, out val))
 				{
-					this.Value = val;
+					this.DisplayValue = val;
 					this.ErrorDisplay.Visibility = Visibility.Collapsed;
 				}
 				else
@@ -121,19 +147,13 @@ namespace Anamnesis.Styles.Controls
 			}
 		}
 
-		public double Value
-		{
-			get => ValueDp.Get(this);
-			set => ValueDp.Set(this, value);
-		}
-
 		public double SliderValue
 		{
 			get
 			{
 				if (this.Slider == SliderModes.Absolute)
 				{
-					return this.Value;
+					return this.DisplayValue;
 				}
 				else
 				{
@@ -144,12 +164,12 @@ namespace Anamnesis.Styles.Controls
 			{
 				if (this.Slider == SliderModes.Absolute)
 				{
-					this.Value = value;
+					this.DisplayValue = value;
 				}
 				else
 				{
 					this.relativeSliderCurrent = value;
-					this.Value = this.relativeSliderStart + value;
+					this.DisplayValue = this.relativeSliderStart + value;
 				}
 			}
 		}
@@ -233,12 +253,12 @@ namespace Anamnesis.Styles.Controls
 		private static void OnValueChanged(NumberBox sender, double v)
 		{
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(NumberBox.SliderValue)));
-			sender.Value = sender.Validate(v);
+			////sender.DisplayValue = sender.Validate(v) + sender.ValueOffset;
 
 			if (sender.InputBox.IsFocused)
 				return;
 
-			sender.Text = sender.Value.ToString("0.###");
+			sender.Text = sender.DisplayValue.ToString("0.###");
 		}
 
 		private static void OnSliderChanged(NumberBox sender, SliderModes mode)
@@ -317,7 +337,7 @@ namespace Anamnesis.Styles.Controls
 
 		private void OnLostFocus(object sender, RoutedEventArgs e)
 		{
-			this.Text = this.Value.ToString("0.###");
+			this.Text = this.DisplayValue.ToString("0.###");
 			////this.Commit(false);
 		}
 
@@ -325,7 +345,7 @@ namespace Anamnesis.Styles.Controls
 		{
 			try
 			{
-				this.Value = Convert.ToDouble(new DataTable().Compute(this.inputString, null));
+				this.DisplayValue = Convert.ToDouble(new DataTable().Compute(this.inputString, null));
 				this.ErrorDisplay.Visibility = Visibility.Collapsed;
 			}
 			catch (Exception)
@@ -333,7 +353,7 @@ namespace Anamnesis.Styles.Controls
 				this.ErrorDisplay.Visibility = Visibility.Visible;
 			}
 
-			this.Text = this.Value.ToString("0.###");
+			this.Text = this.DisplayValue.ToString("0.###");
 
 			if (refocus)
 			{
@@ -379,14 +399,14 @@ namespace Anamnesis.Styles.Controls
 			if (Keyboard.IsKeyDown(Key.LeftCtrl))
 				delta /= 10;
 
-			double value = this.Value;
+			double value = this.DisplayValue;
 			double newValue = value + delta;
 			newValue = this.Validate(newValue);
 
 			if (newValue == value)
 				return;
 
-			this.Value = newValue;
+			this.DisplayValue = newValue;
 		}
 
 		private void OnDownClick(object sender, RoutedEventArgs e)
@@ -435,12 +455,12 @@ namespace Anamnesis.Styles.Controls
 
 		private void OnSliderPreviewMouseDown(object? sender, MouseButtonEventArgs e)
 		{
-			this.relativeSliderStart = this.Value;
+			this.relativeSliderStart = this.DisplayValue;
 		}
 
 		private void OnSliderPreviewMouseUp(object? sender, MouseButtonEventArgs e)
 		{
-			this.relativeSliderStart = this.Value;
+			this.relativeSliderStart = this.DisplayValue;
 			this.SliderValue = 0;
 		}
 	}
