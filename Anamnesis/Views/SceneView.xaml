@@ -25,7 +25,7 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-			<views:XmaView Grid.Row="0"/>
+			<views:XmaView Grid.Row="0" Visibility="{Binding SettingsService.Settings.HideXmaPoses, Converter={StaticResource !B2V}, FallbackValue=Collapsed}"/>
 
 			<Grid Grid.Row="1" Margin="0, -100, 0, 0">
 				<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12, 0, 0, 32" Height="128" IsHitTestVisible="False">

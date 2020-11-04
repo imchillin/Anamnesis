@@ -5,7 +5,8 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.XMA.Views"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800">
+			 d:DesignHeight="450" d:DesignWidth="800"
+			 IsVisibleChanged="OnIsVisibleChanged">
 
 	<Grid x:Name="ContentArea">
 
@@ -18,7 +19,13 @@
 			<TextBlock Text="Popular poses Today on XIV Mod Archive" Margin="3"/>
 		</Button>
 
-		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
+		<Grid Grid.Row="1" Visibility="{Binding XmaService.IsLoading, Converter={StaticResource B2V}}">
+			<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" 
+				Width="100" Height="100"
+				HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		</Grid>
+
+		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" Visibility="{Binding XmaService.IsLoading, Converter={StaticResource !B2V}}">
 			<ItemsControl Grid.Row="1" ItemsSource="{Binding XmaService.PopularToday}" HorizontalAlignment="Center" Margin="0, 0, 0, 100">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>

@@ -36,6 +36,7 @@ namespace Anamnesis.Views
 		public TimeService TimeService => TimeService.Instance;
 		public CameraService CameraService => CameraService.Instance;
 		public TipService TipService => TipService.Instance;
+		public SettingsService SettingsService => SettingsService.Instance;
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{

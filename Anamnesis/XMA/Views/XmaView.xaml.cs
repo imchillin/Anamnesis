@@ -31,5 +31,13 @@ namespace Anamnesis.XMA.Views
 				this.XmaService.Open(sr);
 			}
 		}
+
+		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (this.IsVisible && this.XmaService.PopularToday.Count <= 0)
+			{
+				this.XmaService.UpdatePopular();
+			}
+		}
 	}
 }

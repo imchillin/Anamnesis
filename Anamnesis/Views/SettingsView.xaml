@@ -26,6 +26,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
@@ -47,8 +48,10 @@
 		<TextBlock Grid.Column="0" Grid.Row="3" Text="Window Size:" Style="{StaticResource Label}"/>
 		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="3" Margin="6"/>
 
+		<TextBlock Grid.Column="0" Grid.Row="4" Text="Hide XMA Popular:" Style="{StaticResource Label}"/>
+		<CheckBox Grid.Column="1" Grid.Row="4" Margin="6" IsChecked="{Binding SettingsService.Settings.HideXmaPoses}" />
 
-		<GroupBox Header="Directories" Grid.Row="4" Grid.ColumnSpan="2">
+		<GroupBox Header="Directories" Grid.Row="6" Grid.ColumnSpan="2">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
