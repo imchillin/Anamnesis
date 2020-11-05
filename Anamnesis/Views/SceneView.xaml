@@ -68,13 +68,17 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
-			
+
 			<GroupBox Grid.Row="0" Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
-					<ana:Header Icon="Globe" Text="World"/>
+					<StackPanel Orientation="Horizontal">
+						<ana:Header Icon="Globe" Text="World"/>
+						<TextBlock Text=" - " Style="{StaticResource Header}" Margin="3, 0, 0, 0"/>
+						<TextBlock Text="{Binding TerritoryService.CurrentTerritoryName}" Style="{StaticResource Header}" Margin="3, 0, 0, 0"/>
+					</StackPanel>
 				</GroupBox.Header>
 
-				<Grid Margin="6">
+				<Grid Margin="6, 0, 6, 6">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition/>
@@ -83,14 +87,10 @@
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition/>
 					</Grid.RowDefinitions>
 
-					<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding TerritoryService.CurrentTerritoryName}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="3, 0, 3, 6"/>
-
-					<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+			
+					<Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
@@ -122,8 +122,8 @@
 						<cm3:NumberBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
 					</Grid>
 
-					<TextBlock Grid.Row="3" Text="Weather:" Style="{StaticResource Label}"/>
-					<ComboBox Grid.Row="3" Grid.Column="1" SelectedItem="{Binding TerritoryService.CurrentWeather}" ItemsSource="{Binding TerritoryService.CurrentTerritory.Weathers}">
+					<TextBlock Grid.Row="1" Text="Weather:" Style="{StaticResource Label}"/>
+					<ComboBox Grid.Row="1" Grid.Column="1" SelectedItem="{Binding TerritoryService.CurrentWeather}" ItemsSource="{Binding TerritoryService.CurrentTerritory.Weathers}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<Grid>
@@ -158,13 +158,17 @@
 					<Grid.RowDefinitions>
 						<RowDefinition/>
 						<RowDefinition/>
+						<RowDefinition/>
 					</Grid.RowDefinitions>
 
 					<TextBlock Text="Nickname:" Style="{StaticResource Label}"/>
 					<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TargetService.SelectedActor.Nickname}" Grid.ColumnSpan="2"/>
-					
+
 					<TextBlock Grid.Row="1" Text="Animation:" Style="{StaticResource Label}"/>
-					<charViews:AnimationEditor AnimationId="{Binding TargetService.SelectedActor.AnimationId}" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding GposeService.IsGpose}"/>
+					<charViews:AnimationEditor AnimationId="{Binding TargetService.SelectedActor.AnimationId}" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding GposeService.IsGpose}" Margin="-3, 3, 0, 0"/>
+
+					<TextBlock Grid.Row="2" Text="Data Path:" Style="{StaticResource Label}"/>
+					<charViews:DataPathSelector Grid.Row="3" Grid.Column="1" DataPath="{Binding TargetService.SelectedActor.ModelObject.DataPath}" DataHead="{Binding TargetService.SelectedActor.ModelObject.DataHead}" Tribe="{Binding TargetService.SelectedActor.Customize.Tribe}"/>
 
 				</Grid>
 

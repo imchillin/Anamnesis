@@ -130,11 +130,6 @@
 						<TextBlock Grid.Row="2" Text="Drenched:" Style="{StaticResource Label}"/>
 						<ToggleButton Grid.Row="2" Grid.Column="1" IsChecked="{Binding Actor.ModelObject.ForceDrenched}" HorizontalAlignment="Left" Margin="3"/>
 
-						<!-- Data Path -->
-						<TextBlock Grid.Row="3" Text="Data Path:" Style="{StaticResource Label}"/>
-						<views:DataPathSelector Grid.Row="3" Grid.Column="1" DataPath="{Binding Actor.ModelObject.DataPath}" DataHead="{Binding Actor.ModelObject.DataHead}" Tribe="{Binding Actor.Customize.Tribe}"/>
-
-
 						<!-- Bust Scale -->
 						<GroupBox Style="{StaticResource Cm3GroupBox}" Header="Bust Scale" Grid.Row="4" Grid.ColumnSpan="2">
 							<cm3Controls:VectorEditor Value="{Binding Actor.ModelObject.Bust.Scale}" Expanded="True" CanLink="True" Minimum="0" Maximum="10"/>

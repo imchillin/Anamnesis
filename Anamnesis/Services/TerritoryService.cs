@@ -90,7 +90,7 @@ namespace Anamnesis
 					else
 					{
 						this.CurrentTerritory = GameDataService.Territories.Get(this.CurrentTerritoryId);
-						this.CurrentTerritoryName = this.CurrentTerritory?.Region + " - " + this.CurrentTerritory?.Place;
+						this.CurrentTerritoryName = this.CurrentTerritory?.Place + " (" + this.CurrentTerritory?.Region + ")";
 					}
 				}
 
