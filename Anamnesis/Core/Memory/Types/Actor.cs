@@ -201,6 +201,30 @@ namespace Anamnesis.Memory
 			this.MemoryMode = oldMode;
 		}
 
+		public async Task ConvertToPlayer()
+		{
+			this.Nickname = this.Name + " (" + this.ObjectKind + ")";
+
+			if (this.ObjectKind == ActorTypes.EventNpc)
+			{
+				this.ObjectKind = ActorTypes.Player;
+				await this.RefreshAsync();
+
+				if (this.ModelType != 0)
+				{
+					this.ModelType = 0;
+					await this.RefreshAsync();
+				}
+			}
+
+			// Carbuncles get model type set to player (but not actor type!)
+			if (this.ObjectKind == ActorTypes.BattleNpc && (this.ModelType == 409 || this.ModelType == 410 || this.ModelType == 412))
+			{
+				this.ModelType = 0;
+				await this.RefreshAsync();
+			}
+		}
+
 		protected override void OnViewToModel(string fieldName, object? value)
 		{
 			// Do not allow actor view model changes to push into memory while we are refreshing.

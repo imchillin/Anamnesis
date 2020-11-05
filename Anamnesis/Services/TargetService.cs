@@ -39,47 +39,32 @@ namespace Anamnesis
 			}
 
 			// Mannequins and housing NPC's get actor type changed, but squadron members do not.
-			if (!TerritoryService.GetIsBarracks() && actor.Kind == ActorTypes.EventNpc)
+			if (actor.Kind == ActorTypes.EventNpc)
 			{
-				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a humanoid NPC. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a humanoid NPC. Do you want to change them to a player? This is required for some housing vendors, but not all.", "Actor Selection", MessageBoxButton.YesNo);
 				if (result == true)
 				{
 					ActorViewModel? vm = actor.GetViewModel();
 					if (vm == null)
 						return;
 
-					vm.Nickname = vm.Name + " (" + vm.ObjectKind + ")";
-
-					vm.ObjectKind = ActorTypes.Player;
-					await vm.RefreshAsync();
-
-					if (vm.ModelType != 0)
-					{
-						vm.ModelType = 0;
-						await vm.RefreshAsync();
-					}
-
+					await vm.ConvertToPlayer();
 					actor.Model = (Actor)vm.Model!;
 				}
 			}
 
 			// Carbuncles get model type set to player (but not actor type!)
-			if (actor.Kind == ActorTypes.BattleNpc)
+			if (actor.Kind == ActorTypes.BattleNpc && (actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412))
 			{
-				if (actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412)
+				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+				if (result == true)
 				{
-					bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
-					if (result == true)
-					{
-						ActorViewModel? vm = actor.GetViewModel();
-						if (vm == null)
-							return;
+					ActorViewModel? vm = actor.GetViewModel();
+					if (vm == null)
+						return;
 
-						vm.ModelType = 0;
-						await vm.RefreshAsync();
-
-						actor.Model = (Actor)vm.Model!;
-					}
+					await vm.ConvertToPlayer();
+					actor.Model = (Actor)vm.Model!;
 				}
 			}
 

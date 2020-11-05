@@ -234,6 +234,19 @@ namespace Anamnesis.GUI
 			}
 		}
 
+		private void OnConvertActorClicked(object sender, RoutedEventArgs e)
+		{
+			if (sender is FrameworkElement el && el.DataContext is TargetService.ActorTableActor actor)
+			{
+				ActorViewModel? vm = actor.GetViewModel();
+
+				if (vm == null)
+					return;
+
+				Task.Run(vm.ConvertToPlayer);
+			}
+		}
+
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
