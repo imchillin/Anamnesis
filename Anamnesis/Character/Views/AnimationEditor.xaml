@@ -22,7 +22,7 @@
 
 		<cm3:NumberBox Grid.Row="0" Grid.Column="0" Value="{Binding AnimationId}" Minimum="0" Maximum="8800" Buttons="True"/>
 
-		<Button Grid.Row="0" Grid.Column="1" Style="{StaticResource TransparentButton}" Click="OnSelectAnimation" Content="..."/>
+		<Button Grid.Row="0" Grid.Column="1" Width="32" Style="{StaticResource TransparentButton}" Click="OnSelectAnimation" Content="..."/>
 
 		<TextBlock Margin="3, 0, 0, 0" x:Name="AnimationName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" FontSize="10"/>
 
