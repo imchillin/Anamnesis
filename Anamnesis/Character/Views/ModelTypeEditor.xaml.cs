@@ -20,24 +20,6 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 		}
 
-		private void OnBrowseClicked(object sender, RoutedEventArgs e)
-		{
-			if (GameDataService.ModelTypes == null)
-				return;
-
-			ActorViewModel? vm = this.DataContext as ActorViewModel;
-
-			if (vm == null)
-				return;
-
-			ModelType? selected = null;
-
-			if (GameDataService.ModelTypes.Contains(vm.ModelType))
-				selected = GameDataService.ModelTypes.Get(vm.ModelType);
-
-			GenericSelector.Show<ModelType>("Select Model", selected, GameDataService.ModelTypes, (v) => { vm.ModelType = v.Key; });
-		}
-
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			this.GetModelName();
@@ -74,9 +56,9 @@ namespace Anamnesis.Character.Views
 
 				this.ModelName.Text = null;
 
-				if (GameDataService.ModelTypes!.Contains(actorVm.ModelType))
+				if (GameDataService.Monsters!.Contains(actorVm.ModelType))
 				{
-					ModelType entry = GameDataService.ModelTypes.Get(actorVm.ModelType);
+					Monster entry = GameDataService.Monsters.Get(actorVm.ModelType);
 					this.ModelName.Text = entry.Name;
 				}
 			});

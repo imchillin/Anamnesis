@@ -270,7 +270,7 @@
 	  <None Update="Animations.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="ModelTypes.json">
+	  <None Update="Monsters.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Props.json">

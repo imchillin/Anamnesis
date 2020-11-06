@@ -30,7 +30,7 @@ namespace Anamnesis.Services
 		public static ISheet<ICharaMakeType> CharacterMakeTypes { get; protected set; }
 		public static ISheet<INpcResident> ResidentNPCs { get; protected set; }
 		public static ExcelSheet<WeatherRate> WeatherRates { get; protected set; }
-		public static ISheet<ModelType> ModelTypes { get; private set; }
+		public static ISheet<Monster> Monsters { get; private set; }
 		public static ISheet<Prop> Props { get; private set; }
 		public static ISheet<Animation> Animations { get; private set; }
 		#pragma warning restore CS8618
@@ -54,9 +54,9 @@ namespace Anamnesis.Services
 			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();
 
 			// these are json files that we write by hand
-			ModelTypes = new JsonSheet<ModelType>("ModelTypes.json");
-			Props = new JsonSheet<Prop>("Props.json");
-			Animations = new JsonSheet<Animation>("Animations.json");
+			Monsters = new JsonListSheet<Monster>("Monsters.json");
+			Props = new JsonDictionarySheet<Prop>("Props.json");
+			Animations = new JsonDictionarySheet<Animation>("Animations.json");
 
 			return base.Initialize();
 		}

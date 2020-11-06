@@ -5,10 +5,31 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="232">
+			 d:DesignHeight="450" Width="256">
 	<Grid>
 
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<CheckBox Grid.Row="0" Grid.Column="0" Content="NPCs" Margin="6,0" IsChecked="{Binding IncludeNpc}"/>
+		<CheckBox Grid.Row="0" Grid.Column="1" Content="Character" Margin="6,0" IsChecked="{Binding IncludeCharacter}"/>
+		<CheckBox Grid.Row="0" Grid.Column="2" Content="Mount" Margin="6,0" IsChecked="{Binding IncludeMount}"/>
+		<CheckBox Grid.Row="1" Grid.Column="0" Content="Minion" Margin="6,0" IsChecked="{Binding IncludeMinion}"/>
+		<CheckBox Grid.Row="1" Grid.Column="1" Content="Effect" Margin="6,0" IsChecked="{Binding IncludeEffect}"/>
+		<CheckBox Grid.Row="1" Grid.Column="2" Content="Monster" Margin="6,0" IsChecked="{Binding IncludeMonster}"/>
+
 		<cm3Drawers:SelectorDrawer
+			Grid.Row="2"
+			Grid.ColumnSpan="3"
 			x:Name="Selector"
 			Close="OnClose" 
 			Filter="OnFilter"

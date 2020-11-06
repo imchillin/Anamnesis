@@ -60,15 +60,18 @@ namespace Anamnesis.Character.Pages
 
 		private void OnLoadNpcClicked(object sender, RoutedEventArgs e)
 		{
-			SelectorDrawer.Show<NpcSelector, INpcResident>("Select NPC", null, (v) => { this.ApplyNpc(v?.Appearance); });
+			SelectorDrawer.Show<NpcSelector, INpcResident>("Select NPC", null, (v) => { this.ApplyNpc(v); });
 		}
 
-		private async void ApplyNpc(INpcBase? npc)
+		private async void ApplyNpc(INpcResident? npc)
 		{
 			if (this.Actor == null || npc == null)
 				return;
 
-			CharacterFile apFile = npc.ToFile();
+			if (npc.Appearance == null)
+				return;
+
+			CharacterFile apFile = npc.Appearance.ToFile();
 			await apFile.Apply(this.Actor, CharacterFile.SaveModes.All);
 		}
 

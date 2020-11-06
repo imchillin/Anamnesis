@@ -8,12 +8,12 @@ namespace Anamnesis.GameData.Sheets
 	using System.Collections.Generic;
 	using Anamnesis.Serialization;
 
-	public class JsonSheet<T> : ISheet<T>
+	public class JsonDictionarySheet<T> : ISheet<T>
 		where T : IJsonRow
 	{
 		private Dictionary<int, T> rows;
 
-		public JsonSheet(string fileName)
+		public JsonDictionarySheet(string fileName)
 		{
 			try
 			{

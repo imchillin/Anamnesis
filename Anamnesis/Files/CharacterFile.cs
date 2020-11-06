@@ -105,7 +105,7 @@ namespace Anamnesis.Files
 		{
 			this.ModelType = actor.ModelType;
 
-			if (!actor.IsCustomizable())
+			if (actor.Customize == null)
 				return;
 
 			this.SaveMode = mode;
@@ -214,7 +214,7 @@ namespace Anamnesis.Files
 
 		public async Task Apply(ActorViewModel actor, SaveModes mode)
 		{
-			if (!actor.IsCustomizable() || actor.Customize == null)
+			if (actor.Customize == null)
 				return;
 
 			Log.Write("Reading appearance from file", "AppearanceFile");

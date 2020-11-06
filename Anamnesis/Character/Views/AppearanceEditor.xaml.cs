@@ -86,7 +86,7 @@ namespace Anamnesis.Character.Views
 			if (this.Appearance != null)
 				this.Appearance.PropertyChanged -= this.OnAppearancePropertyChanged;
 
-			if (actor == null || !actor.IsCustomizable() || actor.Customize == null)
+			if (actor == null || actor.Customize == null)
 				return;
 
 			this.Appearance = actor.Customize;

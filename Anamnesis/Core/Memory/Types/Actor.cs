@@ -130,21 +130,6 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		public bool IsCustomizable()
-		{
-			if (this.Customize == null)
-				return false;
-
-			if (this.ModelType == 0)
-				return true;
-
-			if (!GameDataService.ModelTypes!.Contains(this.ModelType))
-				return false;
-
-			ModelType modelType = GameDataService.ModelTypes!.Get(this.ModelType);
-			return modelType.CanCustomize;
-		}
-
 		/// <summary>
 		/// Refresh the actor to force the game to load any changed values for appearance.
 		/// </summary>
