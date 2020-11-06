@@ -60,7 +60,7 @@ namespace Anamnesis.Character.Pages
 
 		private void OnLoadNpcClicked(object sender, RoutedEventArgs e)
 		{
-			SelectorDrawer.Show<NpcSelector, INpcResident>("Select NPC", null, (v) => { this.ApplyNpc(v); });
+			SelectorDrawer.Show<NpcSelector, INpcResident>("Select Appearance", null, (v) => { this.ApplyNpc(v); });
 		}
 
 		private async void ApplyNpc(INpcResident? npc)
