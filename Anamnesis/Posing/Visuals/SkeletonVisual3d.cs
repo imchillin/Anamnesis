@@ -177,7 +177,7 @@ namespace Anamnesis.PoseModule
 			{
 				int parent = -1;
 
-				if (skeletonVm.Body.Count == SkeletonUtility.PlayerBodyParents.Count)
+				if (skeletonVm.Body.Count == 100 || skeletonVm.Body.Count == 105)
 					parent = SkeletonUtility.PlayerBodyParents[i];
 
 				if (parent == -1 || parent > bodyBones.Count)
