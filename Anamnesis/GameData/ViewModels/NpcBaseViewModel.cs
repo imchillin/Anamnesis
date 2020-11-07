@@ -18,9 +18,12 @@ namespace Anamnesis.GameData.ViewModels
 		public override string Name => "Unknown";
 		public int FacePaintColor => this.Value.FacePaintColor;
 		public int FacePaint => this.Value.FacePaint;
-		public int ExtraFeature2OrBust => this.Value.ExtraFeature2OrBust;
-		public int ExtraFeature1 => this.Value.ExtraFeature1;
-		public int ModelType => this.Value.BodyType - 1;
+
+		// Lumina has these values backwards, so flip them here.
+		public int ExtraFeature2OrBust => this.Value.ExtraFeature1;
+		public int ExtraFeature1 => this.Value.ExtraFeature2OrBust;
+
+		public int ModelType => 0;
 		public IRace Race => GameDataService.Races!.Get((int)this.Value.Race.Value.RowId);
 		public int Gender => this.Value.Gender;
 		public int BodyType => this.Value.BodyType;
