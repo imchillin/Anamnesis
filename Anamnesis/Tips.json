@@ -22,7 +22,7 @@
 		"Text": "You can change the current theme in the Settings Panel."
 	},
 	{
-		"Text": "Need more actors but have no friends? Use housing NPCs!"
+		"Text": "Need more actors but have no friends? Use ARR housing NPCs!"
 	},
 	{	
 		"Text": "The Crystalline Means Discord has many useful guides to help you with using Anamnesis.",
@@ -32,7 +32,7 @@
 		"Text": "Game updates will likely break the tool. Please be patient when this happens, and we will have a fix out ASAP."
 	},
 	{
-		"Text": "You can use housing NPCs or Carbuncles as actors."
+		"Text": "You can use ARR housing NPCs or Carbuncles as actors."
 	},
 	{
 		"Text": "You can use poses made for other races, but they may require adjustment."
@@ -56,6 +56,18 @@
 	{
 		"Text": "You can change the time of day and the weather in the 'World' section."
 	},
-	{	"Text": "You can change the window size in the Settings Panel."
+	{	
+		"Text": "You can change the window size in the Settings Panel."
+	},
+	{	
+		"Text": "When it comes to PCs, only Friends or Party Members can be manipulated."
+	},
+	{	
+		"Text": "If you ever come across a bug that can be reproduced, please file the issue in our GitHub, or use the reporting channels in our Discord with proper formatting. Please provide us steps on how to reproduce the bug.",
+		"Url": "https://github.com/imchillin/Anamnesis/issues"
+	},
+	{
+		"Text": "Going in first-person mode allows you to capture perfect shots where normally the camera would block due to collision!"
 	}
+	
 ]
