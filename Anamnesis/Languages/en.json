@@ -1,6 +1,8 @@
 {
 	"Common_OpenFile": "Open",
 	"Common_SaveFile": "Save",
+	"Common_Enable": "Enable",
+	"Common_Disable": "Disable",
 
 	"XMA_PopularToday": "Popular poses Today on XIV Mod Archive",
 
@@ -81,6 +83,23 @@
 
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /Gpose in chat.",
 	"Pose_WarningNotFrozen": "Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window.",
+
+	"Pose_FreezePhysics": "Freeze Physics",
+	"Pose_LinkEyes": "Link Eyes",
+	"Pose_Rotation": "Rotation",
+	"Pose_Scale": "Scale",
+	"Pose_Position": "Position",
+
+	"Pose_Matrix_HeadCategory": "Head",
+	"Pose_Matrix_HairAndAccessoriesCategory": "Hair and Accessories",
+	"Pose_Matrix_BodyCategory": "Body",
+	"Pose_Matrix_LeftHandCategory": "Left Hand",
+	"Pose_Matrix_RightHandCategory": "Right Hand",
+	"Pose_Matrix_LegsCategory": "Legs",
+	"Pose_Matrix_ClothesCategory": "Clothes",
+	"Pose_Matrix_EquipmentCategory": "Equipment",
+	"Pose_Matrix_OtherCategory": "Other",
+
 	"Pose_Head": "Head",
 	"Pose_Ears": "Ears",
 	"Pose_VieraEars": "Viera Ears",

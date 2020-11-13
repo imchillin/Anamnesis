@@ -8,8 +8,8 @@
 			 xmlns:controls="clr-namespace:Anamnesis.PoseModule.Controls"
 			 xmlns:views="clr-namespace:Anamnesis.PoseModule.Views"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-			 xmlns:cm3Converters="clr-namespace:Anamnesis.Styles.Converters"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:anaConverters="clr-namespace:Anamnesis.Styles.Converters"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 Loaded="OnLoaded"
 			 DataContextChanged="OnDataContextChanged"
@@ -17,7 +17,7 @@
 
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="B2V"/>
-		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+		<anaConverters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
 	</UserControl.Resources>
 
 	<Grid x:Name="ContentArea">
@@ -51,8 +51,8 @@
 						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>
 
-					<cm3Controls:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnOpenClicked"/>
-					<cm3Controls:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+					<ana:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnOpenClicked"/>
+					<ana:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
 				</Grid>
 			</Grid>
 
@@ -62,8 +62,8 @@
 					<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 						<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" Style="{StaticResource OutlineToggleButton}" Margin="3" Width="75">
 							<Grid>
-								<TextBlock Text="Disable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}"/>
-								<TextBlock Text="Enable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}"/>
+								<ana:TextBlock Key="Common_Disable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}"/>
+								<ana:TextBlock Key="Common_Enable" Margin="12,0,12,0" Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}"/>
 							</Grid>
 						</ToggleButton>
 
@@ -73,7 +73,7 @@
 							<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="ProjectDiagram" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
-							<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 0, 1" Padding="12, 4, 12, 4" Cursor="Hand">
+							<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
 							<!--<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
@@ -83,10 +83,13 @@
 
 						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
 
-						<CheckBox Content="Freeze Physics" IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}"/>
+						<CheckBox IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
+							<ana:TextBlock Key="Pose_FreezePhysics"/>
+						</CheckBox>
 
-						<CheckBox Content="Link Eyes" IsChecked="{Binding Skeleton.LinkEyes}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}"/>
-
+						<CheckBox IsChecked="{Binding Skeleton.LinkEyes}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
+							<ana:TextBlock Key="Pose_LinkEyes"/>
+						</CheckBox>
 
 					</StackPanel>
 				</Grid>
@@ -108,7 +111,7 @@
 			<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.75"/>
 			<StackPanel Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
 				<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
-				<cm3Controls:TextBlock Key="Pose_WarningNotGPose" Text="Posing is only available while in Group Pose. Type /Gpose in chat." FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
+				<ana:TextBlock Key="Pose_WarningNotGPose" Text="Posing is only available while in Group Pose. Type /Gpose in chat." FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
 			</StackPanel>
 		</Grid>
 

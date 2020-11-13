@@ -10,17 +10,26 @@
 	<Grid x:Name="ContentArea">
 		<StackPanel Margin="3" IsEnabled="{Binding Value, Converter={StaticResource NotNullToBoolConverter}}">
 
-			<TextBlock Text="{Binding Value.BoneName}" Foreground="Black" Opacity="0.5" Margin="3" FontWeight="Bold" HorizontalAlignment="Center"/>
+			<controls:TextBlock Text="{Binding Value.BoneName}" Foreground="Black" Opacity="0.5" Margin="3" FontWeight="Bold" HorizontalAlignment="Center"/>
 
-			<GroupBox Header="Rotation">
+			<GroupBox>
+				<GroupBox.Header>
+					<controls:TextBlock Key="Pose_Rotation"/>
+				</GroupBox.Header>
 				<controls:QuaternionEditor Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}"/>
 			</GroupBox>
 
-			<GroupBox Header="scale" IsEnabled="{Binding PoseService.FreezeScale}">
+			<GroupBox IsEnabled="{Binding PoseService.FreezeScale}">
+				<GroupBox.Header>
+					<controls:TextBlock Key="Pose_Scale"/>
+				</GroupBox.Header>
 				<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1"/>
 			</GroupBox>
 
-			<GroupBox Header="Position" IsEnabled="{Binding PoseService.FreezePositions}">
+			<GroupBox IsEnabled="{Binding PoseService.FreezePositions}">
+				<GroupBox.Header>
+					<controls:TextBlock Key="Pose_Position"/>
+				</GroupBox.Header>
 				<controls:VectorEditor Value="{Binding Value.Position}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
 			</GroupBox>
 		</StackPanel>

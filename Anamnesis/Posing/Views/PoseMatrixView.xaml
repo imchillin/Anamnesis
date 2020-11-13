@@ -19,7 +19,10 @@
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,3,3,3">
 			<StackPanel>
 
-				<GroupBox Header="Head" Margin="3, -2, 3, 0">
+				<GroupBox Margin="3, -2, 3, 0">
+					<GroupBox.Header>
+						<cm3:TextBlock Key="Pose_Matrix_HeadCategory"/>
+					</GroupBox.Header>
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -146,7 +149,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Hair and Accessories" Margin="3, 2, 3, 0">
+				<GroupBox Margin="3, 2, 3, 0">
+					<GroupBox.Header>
+						<cm3:TextBlock Key="Pose_Matrix_HairAndAccessoriesCategory"/>
+					</GroupBox.Header>
+					
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -202,7 +209,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Body" Margin="3, 2, 3, 0">
+				<GroupBox Margin="3, 2, 3, 0">
+					<GroupBox.Header>
+						<cm3:TextBlock Key="Pose_Matrix_BodyCategory"/>
+					</GroupBox.Header>
+					
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -308,9 +319,12 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Left Hand" Margin="3, 2, 3, 0">
-					<Grid>
+				<GroupBox Margin="3, 2, 3, 0">
+					<GroupBox.Header>
+						<cm3:TextBlock Key="Pose_Matrix_LeftHandCategory"/>
+					</GroupBox.Header>
 
+					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="72"/>
 							<ColumnDefinition Width="Auto"/>
@@ -371,9 +385,12 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Right Hand" Margin="3, 2, 3, 0">
-					<Grid>
+				<GroupBox Margin="3, 2, 3, 0">
+					<GroupBox.Header>
+						<cm3:TextBlock Key="Pose_Matrix_RightHandCategory"/>
+					</GroupBox.Header>
 
+					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="72"/>
 							<ColumnDefinition Width="Auto"/>
@@ -435,7 +452,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Legs" Margin="3, 2, 3, 0">
+				<GroupBox Margin="3, 2, 3, 0">
+					<GroupBox.Header>
+						<cm3:TextBlock Key="Pose_Matrix_LegsCategory"/>
+					</GroupBox.Header>
+					
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -521,7 +542,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Clothes" Margin="3, 2, 3, 0">
+				<GroupBox Margin="3, 2, 3, 0">
+					<GroupBox.Header>
+						<cm3:TextBlock Key="Pose_Matrix_ClothesCategory"/>
+					</GroupBox.Header>
+					
 					<Grid>
 
 						<Grid.ColumnDefinitions>
@@ -573,7 +598,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Equipment" Margin="3, 2, 3, 0">
+				<GroupBox Margin="3, 2, 3, 0">
+					<GroupBox.Header>
+						<cm3:TextBlock Key="Pose_Matrix_EquipmentCategory"/>
+					</GroupBox.Header>
+					
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="72"/>
@@ -624,7 +653,10 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Header="Other" Margin="3, 2, 3, 0">
+				<GroupBox Margin="3, 2, 3, 0">
+					<GroupBox.Header>
+						<cm3:TextBlock Key="Pose_Matrix_OtherCategory"/>
+					</GroupBox.Header>
 					<Grid>
 
 						<Grid.ColumnDefinitions>
