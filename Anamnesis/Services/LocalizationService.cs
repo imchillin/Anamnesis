@@ -25,7 +25,7 @@ namespace Anamnesis.Services
 
 		public static event LocalizationEvent? LocaleChanged;
 
-		public static void Add(string culture, string key, string? value)
+		public static void Add(string culture, string key, string value)
 		{
 			culture = culture.ToUpperInvariant();
 
@@ -37,9 +37,9 @@ namespace Anamnesis.Services
 			Locales[culture].Add(key, value);
 		}
 
-		public static void Add(string culture, Dictionary<string, string?> values)
+		public static void Add(string culture, Dictionary<string, string> values)
 		{
-			foreach ((string key, string? value) in values)
+			foreach ((string key, string value) in values)
 			{
 				Add(culture, key, value);
 			}
@@ -54,14 +54,14 @@ namespace Anamnesis.Services
 				string culture = Path.GetFileNameWithoutExtension(path);
 
 				string json = File.ReadAllText(path);
-				Dictionary<string, string?> values = SerializerService.Deserialize<Dictionary<string, string?>>(json);
+				Dictionary<string, string> values = SerializerService.Deserialize<Dictionary<string, string>>(json);
 				Add(culture, values);
 			}
 		}
 
-		public static string? GetString(string key)
+		public static string GetString(string key)
 		{
-			string? val = null;
+			string val = string.Empty;
 
 			if (currentLocale?.Get(key, out val) ?? false)
 				return val;
@@ -132,7 +132,7 @@ namespace Anamnesis.Services
 			public readonly string Culture;
 			public string Name;
 
-			private Dictionary<string, string?> values = new Dictionary<string, string?>();
+			private Dictionary<string, string> values = new Dictionary<string, string>();
 
 			public Locale(string culture)
 			{
@@ -140,7 +140,7 @@ namespace Anamnesis.Services
 				this.Name = culture;
 			}
 
-			public virtual void Add(string key, string? value)
+			public virtual void Add(string key, string value)
 			{
 				if (!this.values.ContainsKey(key))
 					this.values.Add(key, value);
@@ -148,9 +148,9 @@ namespace Anamnesis.Services
 				this.values[key] = value;
 			}
 
-			public virtual bool Get(string key, out string? value)
+			public virtual bool Get(string key, out string value)
 			{
-				value = null;
+				value = string.Empty;
 
 				if (!this.values.ContainsKey(key))
 					return false;
@@ -177,7 +177,7 @@ namespace Anamnesis.Services
 				this.Name = "Gibberish";
 			}
 
-			public override bool Get(string key, out string? value)
+			public override bool Get(string key, out string value)
 			{
 				if (!base.Get(key, out value))
 				{

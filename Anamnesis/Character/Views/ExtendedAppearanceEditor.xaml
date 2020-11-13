@@ -1,10 +1,10 @@
 ﻿<UserControl x:Class="Anamnesis.Character.Views.ExtendedAppearanceEditor"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:cm3Converters="clr-namespace:Anamnesis.Styles.Converters"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:anaConverters="clr-namespace:Anamnesis.Styles.Converters"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800"
 			 DataContextChanged="OnDataContextChanged"
@@ -12,7 +12,7 @@
 
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="B2V"/>
-		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+		<anaConverters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
 	</UserControl.Resources>
 	
 	<Grid x:Name="ContentArea">
@@ -40,23 +40,23 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<TextBlock Grid.Row="0" Grid.Column="0" Text="Skin:" Style="{StaticResource Label}"/>
-		<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="1" Value="{Binding ExtendedAppearance.SkinColor}" DisplayName="Skin Color" ToolTip="Skin Color"/>
-		<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ExtendedAppearance.SkinGloss}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>
+		<ana:TextBlock Grid.Row="0" Grid.Column="0" Key="Character_ExAppearance_Skin" Style="{StaticResource Label}"/>
+		<ana:RgbColorControl Grid.Row="0" Grid.Column="1" Value="{Binding ExtendedAppearance.SkinColor}" DisplayName="Skin Color" ToolTip="Skin Color"/>
+		<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ExtendedAppearance.SkinGloss}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>
 
-		<TextBlock Grid.Row="1" Grid.Column="0" Text="Lips:" Style="{StaticResource Label}"/>
-		<cm3Controls:RgbaColorControl Grid.Row="1" Grid.Column="1" Value="{Binding ExtendedAppearance.MouthColor}" ToolTip="Lips Color"/>
+		<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Character_ExAppearance_Lips" Style="{StaticResource Label}"/>
+		<ana:RgbaColorControl Grid.Row="1" Grid.Column="1" Value="{Binding ExtendedAppearance.MouthColor}" ToolTip="Lips Color"/>
 
-		<TextBlock Grid.Row="2" Grid.Column="0" Text="Eyes:" Style="{StaticResource Label}"/>
-		<cm3Controls:RgbColorControl Grid.Row="2" Grid.Column="1" ToolTip="Left Eye Color" Value="{Binding ExtendedAppearance.LeftEyeColor}"/>
-		<cm3Controls:RgbColorControl Grid.Row="2" Grid.Column="2" ToolTip="Right Eye Color" Value="{Binding ExtendedAppearance.RightEyeColor}"/>
-		<cm3Controls:RgbColorControl Grid.Row="2" Grid.Column="3" ToolTip="Limbal Ring Color" Value="{Binding ExtendedAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+		<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_ExAppearance_Eyes" Style="{StaticResource Label}"/>
+		<ana:RgbColorControl Grid.Row="2" Grid.Column="1" ToolTip="Left Eye Color" Value="{Binding ExtendedAppearance.LeftEyeColor}"/>
+		<ana:RgbColorControl Grid.Row="2" Grid.Column="2" ToolTip="Right Eye Color" Value="{Binding ExtendedAppearance.RightEyeColor}"/>
+		<ana:RgbColorControl Grid.Row="2" Grid.Column="3" ToolTip="Limbal Ring Color" Value="{Binding ExtendedAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
 
 
-		<TextBlock Grid.Row="3" Grid.Column="0" Text="Hair:" Style="{StaticResource Label}"/>
-		<cm3Controls:RgbColorControl Grid.Row="3" Grid.Column="1" Value="{Binding ExtendedAppearance.HairColor}" DisplayName="Hair Color" ToolTip="Hair Color"/>
-		<cm3Controls:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding ExtendedAppearance.HairGloss}" DisplayName="Hair Glow" ToolTip="Hair Glow"/>
-		<cm3Controls:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding ExtendedAppearance.HairHighlight}" DisplayName="Highlight Color" ToolTip="Highlight Color"/>
+		<ana:TextBlock Grid.Row="3" Grid.Column="0" Key="Character_ExAppearance_Hair" Style="{StaticResource Label}"/>
+		<ana:RgbColorControl Grid.Row="3" Grid.Column="1" Value="{Binding ExtendedAppearance.HairColor}" DisplayName="Hair Color" ToolTip="Hair Color"/>
+		<ana:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding ExtendedAppearance.HairGloss}" DisplayName="Hair Glow" ToolTip="Hair Glow"/>
+		<ana:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding ExtendedAppearance.HairHighlight}" DisplayName="Highlight Color" ToolTip="Highlight Color"/>
 
 
 		<!--

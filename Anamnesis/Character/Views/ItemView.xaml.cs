@@ -66,7 +66,7 @@ namespace Anamnesis.Character.Views
 
 		public string SlotName
 		{
-			get => this.Slot.ToDisplayName();
+			get => LocalizationService.GetString("Character_Equipment_" + this.Slot);
 		}
 
 		public bool IsWeapon

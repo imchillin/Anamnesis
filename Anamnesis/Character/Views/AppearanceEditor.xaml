@@ -6,8 +6,8 @@
 			 xmlns:local="clr-namespace:Anamnesis.Character.Pages"
 			 xmlns:converters="clr-namespace:Anamnesis.Character.Converters"
 			 xmlns:controls="clr-namespace:Anamnesis.Character.Views"
-			 xmlns:cm3Converters="clr-namespace:Anamnesis.Styles.Converters"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:anaConverters="clr-namespace:Anamnesis.Styles.Converters"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 			 Loaded="OnLoaded"
@@ -19,7 +19,7 @@
 		<converters:MasculineGenderToVisibilityConverter x:Key="fGenderVis"/>
 
 		<BooleanToVisibilityConverter x:Key="B2V"/>
-		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+		<anaConverters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
 
 
 		<DataTemplate x:Key="GenderedComboBoxItem">
@@ -69,7 +69,7 @@
 				</Grid.RowDefinitions>
 
 				<!-- Race / Tribe / Gender / Age -->
-				<TextBlock Grid.Column="0" Grid.Row="0" Text="Tribe:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="0" Key="Character_Appearance_Race" Style="{StaticResource Label}" Margin="0, 6, 6, 0"/>
 				<Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
@@ -90,11 +90,11 @@
 				</Grid>
 
 				<!-- Skintone -->
-				<TextBlock Grid.Column="0" Grid.Row="2" Text="Skin:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="2" Key="Character_Appearance_Skin" Style="{StaticResource Label}"/>
 				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding Appearance.Skintone}" Type="Skin" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Margin="0, 2, 0, 2"/>
 
 				<!-- Eyes -->
-				<TextBlock Grid.Column="0" Grid.Row="3" Text="Eyes:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="3" Key="Character_Appearance_Eyes" Style="{StaticResource Label}"/>
 				<Grid Grid.Column="1" Grid.Row="3" Margin="0, 2, 0, 2">
 
 					<Grid.ColumnDefinitions>
@@ -104,7 +104,7 @@
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<cm3Controls:NumberBox Grid.Column="0" Value="{Binding Appearance.Eyes}" Minimum="0" Maximum="255" Buttons="True" Margin="2, 2, 12, 2"/>
+					<ana:NumberBox Grid.Column="0" Value="{Binding Appearance.Eyes}" Minimum="0" Maximum="255" Buttons="True" Margin="2, 2, 12, 2"/>
 
 					<controls:ColorControl Grid.Column="1" ToolTip="Left Eye Color" Value="{Binding Appearance.LEyeColor}" Type="Eyes" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Margin="0"/>
 					<controls:ColorControl Grid.Column="2" ToolTip="Right Eye Color" Value="{Binding Appearance.REyeColor}" Type="Eyes" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Margin="0"/>
@@ -113,15 +113,15 @@
 				</Grid>
 
 				<!-- Face Type -->
-				<TextBlock Grid.Column="0" Grid.Row="4" Text="Face:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.Head}" Grid.Column="1" Grid.Row="4" Minimum="1" Maximum="255"  Margin="0, 2, 0, 2" Buttons="True"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="4" Key="Character_Appearance_Face" Style="{StaticResource Label}"/>
+				<ana:NumberBox Value="{Binding Appearance.Head}" Grid.Column="1" Grid.Row="4" Minimum="1" Maximum="255"  Margin="0, 2, 0, 2" Buttons="True"/>
 
 				<!-- Facial Features -->
-				<TextBlock Grid.Column="0" Grid.Row="5" Text="Features:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="5" Key="Character_Appearance_Features" Style="{StaticResource Label}"/>
 				<controls:FacialFeaturesControl Value="{Binding Appearance.FacialFeatures}" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Head="{Binding Appearance.Head}" Grid.Column="1" Grid.Row="5"  Margin="0, 3, 3, 3"/>
 
 				<!-- Face Paint  -->
-				<TextBlock Grid.Column="0" Grid.Row="6" Text="Face Paint:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="6" Key="Character_Appearance_FacePaint" Style="{StaticResource Label}"/>
 
 				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 2, 2, 2">
 					<Grid.ColumnDefinitions>
@@ -142,7 +142,7 @@
 				</Grid>
 
 				<!-- Mouth / Lips  -->
-				<TextBlock Grid.Column="0" Grid.Row="7" Text="Lips:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="7" Key="Character_Appearance_Lips" Style="{StaticResource Label}"/>
 				<Grid Grid.Column="1" Grid.Row="7" Margin="0, 2, 0, 2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
@@ -151,14 +151,14 @@
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<cm3Controls:NumberBox Grid.Column="0" Value="{Binding Appearance.Lips}" Minimum="0" Maximum="4" Buttons="True" Margin="0, 0, 12, 0"/>
+					<ana:NumberBox Grid.Column="0" Value="{Binding Appearance.Lips}" Minimum="0" Maximum="4" Buttons="True" Margin="0, 0, 12, 0"/>
 					<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}"/>
 					<CheckBox Grid.Column="2" IsChecked="{Binding Appearance.EnableLipColor}"/>
 					<controls:ColorControl Grid.Column="3" Value="{Binding Appearance.LipsToneFurPattern}" Type="Lips" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
 				</Grid>
 
 				<!-- Hair -->
-				<TextBlock Grid.Column="0" Grid.Row="8" Text="Hair:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="8" Key="Character_Appearance_Hair" Style="{StaticResource Label}"/>
 
 				<Grid Grid.Column="1" Grid.Row="8" Margin="0, 2, 2, 2">
 					<Grid.ColumnDefinitions>
@@ -186,46 +186,46 @@
 				</Grid>
 
 				<!-- Height -->
-				<TextBlock Grid.Column="0" Grid.Row="9" Text="Height:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Grid.Column="1" Grid.Row="9" Value="{Binding Appearance.Height}" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="9" Key="Character_Appearance_Height" Style="{StaticResource Label}"/>
+				<ana:NumberBox Grid.Column="1" Grid.Row="9" Value="{Binding Appearance.Height}" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
 
 				<!-- Bust Size -->
-				<TextBlock Grid.Column="0" Grid.Row="10" Text="Bust Size:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.Bust}" Grid.Column="1" Grid.Row="10" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="10" Key="Character_Appearance_BustSize" Style="{StaticResource Label}"/>
+				<ana:NumberBox Value="{Binding Appearance.Bust}" Grid.Column="1" Grid.Row="10" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
 
 				<!-- Muscle / Ears / Tail Size -->
-				<TextBlock Grid.Column="0" Grid.Row="11" Text="Muscle:" Style="{StaticResource Label}" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 2, 0, 2"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_Muscle" Style="{StaticResource Label}" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
+				<ana:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 2, 0, 2"/>
 
-				<TextBlock Grid.Column="0" Grid.Row="11" Text="Ears Size:" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 2, 0, 2"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_EarsSize" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
+				<ana:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 2, 0, 2"/>
 
-				<TextBlock Grid.Column="0" Grid.Row="11" Text="Tail size:" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 2, 0, 2"/>
+				<ana:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_TailSize" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
+				<ana:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 2, 0, 2"/>
 
 				<!-- Jaw Type -->
-				<TextBlock Grid.Row="13" Grid.Column="0" Text="Jaw:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Grid.Row="13" Value="{Binding Appearance.Jaw}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
+				<ana:TextBlock Grid.Row="13" Grid.Column="0" Key="Character_Appearance_Jaw" Style="{StaticResource Label}"/>
+				<ana:NumberBox Grid.Row="13" Value="{Binding Appearance.Jaw}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
 
 				<!-- Eyebrows type -->
-				<TextBlock Grid.Row="14" Grid.Column="0" Text="Eyebrows:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Grid.Row="14" Value="{Binding Appearance.Eyebrows}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
+				<ana:TextBlock Grid.Row="14" Grid.Column="0" Key="Character_Appearance_Eyebrows" Style="{StaticResource Label}"/>
+				<ana:NumberBox Grid.Row="14" Value="{Binding Appearance.Eyebrows}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
 
 				<!-- Nose Type -->
-				<TextBlock Grid.Row="15" Grid.Column="0" Text="Nose:" Style="{StaticResource Label}"/>
-				<cm3Controls:NumberBox Grid.Row="15" Value="{Binding Appearance.Nose}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
+				<ana:TextBlock Grid.Row="15" Grid.Column="0" Key="Character_Appearance_Nose" Style="{StaticResource Label}"/>
+				<ana:NumberBox Grid.Row="15" Value="{Binding Appearance.Nose}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
 
 				<!-- Ear Type -->
-				<TextBlock Grid.Row="16" Grid.Column="0" Text="Ears:" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Grid.Row="16" Value="{Binding Appearance.TailEarsType}" Grid.Column="1" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
+				<ana:TextBlock Grid.Row="16" Grid.Column="0" Key="Character_Appearance_Ears" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
+				<ana:NumberBox Grid.Row="16" Value="{Binding Appearance.TailEarsType}" Grid.Column="1" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
 
 				<!-- Tail Type -->
-				<TextBlock Grid.Row="17" Grid.Column="0" Text="Tail:" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}"/>
-				<cm3Controls:NumberBox Grid.Row="17" Value="{Binding Appearance.TailEarsType}" Grid.Column="1" Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="255" Buttons="True"/>
+				<ana:TextBlock Grid.Row="17" Grid.Column="0" Key="Character_Appearance_Tail" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}"/>
+				<ana:NumberBox Grid.Row="17" Value="{Binding Appearance.TailEarsType}" Grid.Column="1" Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="255" Buttons="True"/>
 
 				<!-- Fur pattern -->
-				<TextBlock Grid.Row="18" Grid.Column="0" Text="Fur:" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
-				<cm3Controls:NumberBox Grid.Row="18" Value="{Binding Appearance.LipsToneFurPattern}" Grid.Column="1" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
+				<ana:TextBlock Grid.Row="18" Grid.Column="0" Key="Character_Appearance_Fur" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
+				<ana:NumberBox Grid.Row="18" Value="{Binding Appearance.LipsToneFurPattern}" Grid.Column="1" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
 
 			</Grid>
 		</StackPanel>

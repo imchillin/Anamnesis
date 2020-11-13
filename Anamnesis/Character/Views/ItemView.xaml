@@ -50,8 +50,7 @@
 
 			<StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
 				<TextBlock Text="{Binding SlotName}" FontWeight="Light" Margin="3,0,0,0" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12"/>
-				<TextBlock Text=":" FontWeight="Light" Margin="0,0,3,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
-				<TextBlock Text="{Binding Item.Name}" Margin="0, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
+				<TextBlock Text="{Binding Item.Name}" Margin="4, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
 			</StackPanel>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal">
