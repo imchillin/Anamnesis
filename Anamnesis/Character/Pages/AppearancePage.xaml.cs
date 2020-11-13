@@ -23,6 +23,9 @@ namespace Anamnesis.Character.Pages
 	[SuppressPropertyChangedWarnings]
 	public partial class AppearancePage : UserControl
 	{
+		private static CharacterFile.SaveModes lastSaveMode = CharacterFile.SaveModes.All;
+		private static CharacterFile.SaveModes lastLoadMode = CharacterFile.SaveModes.All;
+
 		public AppearancePage()
 		{
 			this.InitializeComponent();
@@ -100,12 +103,13 @@ namespace Anamnesis.Character.Pages
 
 				if (result.UseAdvancedLoad)
 				{
-					mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Load Character...");
+					CharacterFile.SaveModes newmode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Load Character...", lastLoadMode);
 
-					if (mode == CharacterFile.SaveModes.None)
-					{
+					if (newmode == CharacterFile.SaveModes.None)
 						return;
-					}
+
+					lastLoadMode = newmode;
+					mode = lastLoadMode;
 				}
 
 				await apFile.Apply(this.Actor, mode);
@@ -128,13 +132,16 @@ namespace Anamnesis.Character.Pages
 			CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
 
 			if (useAdvancedSave)
-				mode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Character...");
+			{
+				CharacterFile.SaveModes newMode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Character...", lastSaveMode);
+
+				if (newMode == CharacterFile.SaveModes.None)
+					return null;
+
+				mode = newMode;
+			}
 
 			CharacterFile file = new CharacterFile();
-
-			if (mode == CharacterFile.SaveModes.None)
-				return null;
-
 			file.WriteToFile(this.Actor, mode);
 
 			return file;

@@ -27,7 +27,7 @@ namespace Anamnesis.Character.Dialogs
 		public CharacterFile.SaveModes Result
 		{
 			get;
-			private set;
+			set;
 		}
 
 		public bool EquipmentGear

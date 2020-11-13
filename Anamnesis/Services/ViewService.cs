@@ -30,7 +30,7 @@ namespace Anamnesis.Services
 
 	public interface IDialog<TResult> : IDialog
 	{
-		TResult Result { get; }
+		TResult Result { get; set; }
 	}
 
 	public interface IDialog
@@ -74,6 +74,20 @@ namespace Anamnesis.Services
 
 			if (userControl is TView view)
 				return ShowDialog<TView, TResult>(title, view);
+
+			throw new InvalidOperationException();
+		}
+
+		public static Task<TResult> ShowDialog<TView, TResult>(string title, TResult result)
+			where TView : IDialog<TResult>
+		{
+			UserControl? userControl = CreateView<TView>();
+
+			if (userControl is TView view)
+			{
+				view.Result = result;
+				return ShowDialog<TView, TResult>(title, view);
+			}
 
 			throw new InvalidOperationException();
 		}

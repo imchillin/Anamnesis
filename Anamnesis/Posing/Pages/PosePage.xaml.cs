@@ -20,6 +20,9 @@ namespace Anamnesis.PoseModule.Pages
 	[SuppressPropertyChangedWarnings]
 	public partial class PosePage : UserControl
 	{
+		private static PoseFile.Configuration? lastAdvancedLoadConfig;
+		private static PoseFile.Configuration? lastAdvancedSaveConfig;
+
 		public PosePage()
 		{
 			this.InitializeComponent();
@@ -104,13 +107,17 @@ namespace Anamnesis.PoseModule.Pages
 				if (result.File is LegacyPoseFile legacyFile)
 					result.File = legacyFile.Upgrade(actor.Customize?.Race ?? Appearance.Races.Hyur);
 
-				PoseFile.Configuration config = new PoseFile.Configuration();
+				PoseFile.Configuration? config = new PoseFile.Configuration();
 
 				if (result.UseAdvancedLoad)
-					config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Load Pose...");
+				{
+					config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration?>("Load Pose...", lastAdvancedLoadConfig);
 
-				if (config == null)
-					return;
+					if (config == null)
+						return;
+
+					lastAdvancedLoadConfig = config;
+				}
 
 				if (result.File is PoseFile poseFile)
 				{
@@ -135,19 +142,17 @@ namespace Anamnesis.PoseModule.Pages
 			if (actor == null)
 				return null;
 
-			PoseFile.Configuration config;
+			PoseFile.Configuration? config = new PoseFile.Configuration();
 
 			if (useAdvancedSave)
 			{
-				config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration>("Save Pose...");
-			}
-			else
-			{
-				config = new PoseFile.Configuration();
-			}
+				config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration?>("Save Pose...", lastAdvancedSaveConfig);
 
-			if (config == null)
-				return null;
+				if (config == null)
+					return null;
+
+				lastAdvancedSaveConfig = config;
+			}
 
 			PoseFile file = new PoseFile();
 			file.WriteToFile(actor, config);

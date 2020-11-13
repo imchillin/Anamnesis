@@ -23,7 +23,7 @@ namespace Anamnesis.GUI.Dialogs
 
 		public event DialogEvent? Close;
 
-		public bool? Result { get; private set; }
+		public bool? Result { get; set; }
 		public string Message { get; set; } = string.Empty;
 
 		public string? Left { get; set; }

@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
+	using System;
 	using Lumina;
 	using Lumina.Excel;
 
@@ -31,10 +32,18 @@ namespace Anamnesis.GameData.ViewModels
 		{
 			get
 			{
-				if (this.value == null)
-					this.value = this.sheet.GetRow((uint)this.Key);
+				try
+				{
+					if (this.value == null)
+						this.value = this.sheet.GetRow((uint)this.Key);
 
-				return this.value;
+					return this.value;
+				}
+				catch (Exception ex)
+				{
+					Log.Write(ex);
+					throw ex;
+				}
 			}
 		}
 
