@@ -454,6 +454,7 @@ namespace Anamnesis.Files
 				throw new Exception("Legacy pose file has no race specified");
 
 			Appearance.Races fileRace = (Appearance.Races)byte.Parse(this.Race);
+			file.Race = fileRace;
 
 			PropertyInfo[] props = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance);
 			foreach (PropertyInfo propertyInfo in props)
@@ -506,12 +507,9 @@ namespace Anamnesis.Files
 				else if (SkeletonUtility.HeadBoneIndexLookup.TryGetValue(boneName, out index))
 				{
 					if (file.Head == null)
-						file.Head = new List<PoseFile.Bone?>();
+						file.Head = new Dictionary<string, PoseFile.Bone?>();
 
-					while (file.Head.Count <= index)
-						file.Head.Add(null);
-
-					file.Head[index] = new PoseFile.Bone(transform);
+					file.Head.Add(boneName, new PoseFile.Bone(transform));
 				}
 				else if (SkeletonUtility.HairBoneIndexLookup.TryGetValue(boneName, out index))
 				{

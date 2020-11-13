@@ -36,17 +36,21 @@ namespace Anamnesis.Files
 			All = Body | Head | Hair | Met | Top,
 		}
 
+		public Appearance.Races? Race { get; set; }
 		public Configuration Config { get; set; } = new Configuration();
 
 		public List<Bone?>? Body { get; set; }
-		public List<Bone?>? Head { get; set; }
 		public List<Bone?>? Hair { get; set; }
 		public List<Bone?>? Met { get; set; }
 		public List<Bone?>? Top { get; set; }
 
+		// Head bones are saved by name since they are used in different order for multiple races.
+		public Dictionary<string, Bone?>? Head { get; set; }
+
 		public void WriteToFile(ActorViewModel actor, Configuration config)
 		{
 			this.Config = config;
+			this.Race = actor?.Customize?.Race;
 
 			SkeletonViewModel? skeleton = actor?.ModelObject?.Skeleton?.Skeleton;
 
@@ -57,7 +61,7 @@ namespace Anamnesis.Files
 				this.Body = this.WriteToFile(skeleton.Body);
 
 			if (config.Groups.HasFlag(Groups.Head) && skeleton.Head != null)
-				this.Head = this.WriteToFile(skeleton.Head);
+				this.Head = this.WriteHeadBonesToFile(actor, skeleton.Head);
 
 			if (config.Groups.HasFlag(Groups.Hair) && skeleton.Hair != null)
 				this.Hair = this.WriteToFile(skeleton.Hair);
@@ -89,7 +93,7 @@ namespace Anamnesis.Files
 				this.ReadFromFile(this.Body, skeleton.Body, config);
 
 			if (config.Groups.HasFlag(Groups.Head) && skeleton.Head != null)
-				this.ReadFromFile(this.Head, skeleton.Head, config);
+				this.ReadHeadFromFile(actor, config);
 
 			if (config.Groups.HasFlag(Groups.Hair) && skeleton.Hair != null)
 				this.ReadFromFile(this.Hair, skeleton.Hair, config);
@@ -118,15 +122,44 @@ namespace Anamnesis.Files
 			if (bones.Transforms == null || bones.Transforms.Count != bones.Count)
 				throw new Exception("Bone transform array does not match expected size");
 
-			List<Bone?> transforms = new List<Bone?>();
-			foreach (TransformViewModel bone in bones.Transforms)
+			List<Bone?> transforms = new List<Bone?>(bones.Transforms.Count);
+			for (int i = 0; i < bones.Transforms.Count; i++)
 			{
-				Transform? trans = bone.Model;
+				Transform? trans = bones.Transforms[i].Model;
+
+				if (trans == null)
+					throw new Exception("Bone is missing transform");
+
+				transforms.Add(new Bone(trans.Value));
+			}
+
+			return transforms;
+		}
+
+		private Dictionary<string, Bone?>? WriteHeadBonesToFile(ActorViewModel? actor, BonesViewModel bones)
+		{
+			if (bones == null)
+				return null;
+
+			if (bones.Count <= 0 || bones.Count > 512)
+				return null;
+
+			if (bones.Transforms == null || bones.Transforms.Count != bones.Count)
+				throw new Exception("Bone transform array does not match expected size");
+
+			if (actor?.Customize?.Race == null)
+				throw new Exception("Only customizable actors can save head bone values");
+
+			Dictionary<string, Bone?> transforms = new Dictionary<string, Bone?>(bones.Transforms.Count);
+			for (int i = 0; i < bones.Transforms.Count; i++)
+			{
+				Transform? trans = bones.Transforms[i].Model;
 
 				if (trans == null)
 					continue;
 
-				transforms.Add(new Bone(trans.Value));
+				string name = SkeletonUtility.GetHeadBoneName(i, actor.Customize.Race);
+				transforms.Add(name, new Bone(trans.Value));
 			}
 
 			return transforms;
@@ -160,6 +193,38 @@ namespace Anamnesis.Files
 
 				if (config.IncludeScale && this.Config.IncludeScale && bone.Scale != Vector.Zero)
 					bones.Transforms[i].Scale = bone.Scale;
+			}
+		}
+
+		private void ReadHeadFromFile(ActorViewModel? actor, Configuration config)
+		{
+			BonesViewModel? bones = actor?.ModelObject?.Skeleton?.Skeleton?.Head;
+
+			if (bones == null)
+				return;
+
+			if (this.Head == null || this.Head.Count <= 0)
+				return;
+
+			if (actor?.Customize == null || this.Race == null)
+				return;
+
+			foreach ((string name, Bone? value) in this.Head)
+			{
+				string newName = SkeletonUtility.GetBoneName(name, (Appearance.Races)this.Race, actor.Customize.Race);
+				TransformViewModel? tvm = bones.GetHeadBone(newName);
+
+				if (tvm == null || value == null)
+					continue;
+
+				if (config.IncludePosition && this.Config.IncludePosition && value.Position != Vector.Zero)
+					tvm.Position = value.Position;
+
+				if (config.IncludeRotation && this.Config.IncludeRotation)
+					tvm.Rotation = value.Rotation;
+
+				if (config.IncludeScale && this.Config.IncludeScale && value.Scale != Vector.Zero)
+					tvm.Scale = value.Scale;
 			}
 		}
 

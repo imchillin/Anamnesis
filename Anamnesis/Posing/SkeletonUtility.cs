@@ -188,6 +188,32 @@ namespace Anamnesis.PoseModule
 		};
 
 		/// <summary>
+		/// Provides a mapping of compatible head bones that can be used to convet poses from one race to another.
+		/// </summary>
+		public static readonly Dictionary<string, string> HrothHeadBoneNameMap = new Dictionary<string, string>()
+		{
+			{ "HrothBridge", "Bridge" },
+			{ "HrothBrowLeft", "BrowLeft" },
+			{ "HrothBrowRight", "BrowRight" },
+			{ "HrothLipUpper", "LipUpperA" },
+			{ "HrothEyelidUpperLeft", "EyelidUpperLeft" },
+			{ "HrothEyelidUpperRight", "EyelidUpperRight" },
+			{ "HrothLipsLeft", "LipsLeft" },
+			{ "HrothLipsRight", "LipsRight" },
+			{ "HrothLipLower", "LipLowerA" },
+		};
+
+		/// <summary>
+		/// Provides a mapping of compatible head bones that can be used to convet poses from one race to another.
+		/// </summary>
+		public static readonly Dictionary<string, string> VieraHeadBoneNameMap = new Dictionary<string, string>()
+		{
+			{ "VieraLipLowerA", "LipLowerA" },
+			{ "VieraLipUpperB", "LipUpperB" },
+			{ "VieraLipLowerB", "LipLowerB" },
+		};
+
+		/// <summary>
 		/// Maps the CMTool bone names to their index within the Skeleton Hair Bones transform array.
 		/// </summary>
 		public static readonly Dictionary<string, int> HairBoneIndexLookup = new Dictionary<string, int>()
@@ -279,6 +305,106 @@ namespace Anamnesis.PoseModule
 				return skeleton.Top.Transforms[index];
 
 			return null;
+		}
+
+		public static TransformViewModel? GetHeadBone(this BonesViewModel bones, string name)
+		{
+			int index;
+
+			if (HeadBoneIndexLookup.TryGetValue(name, out index) && index > 0 && index < bones.Transforms.Count)
+				return bones.Transforms[index];
+
+			return null;
+		}
+
+		/// <summary>
+		/// Remaps bone names from original: "LipLowerB" to special: "VieraLipLowerB" or from special to orignal.
+		/// </summary>
+		public static string GetBoneName(string name, Appearance.Races originalRace, Appearance.Races newRace)
+		{
+			if (originalRace == newRace)
+				return name;
+
+			// loading special to default:
+			if (originalRace == Appearance.Races.Hrothgar)
+			{
+				if (HrothHeadBoneNameMap.ContainsKey(name))
+				{
+					return HrothHeadBoneNameMap[name];
+				}
+			}
+			else if (originalRace == Appearance.Races.Viera)
+			{
+				if (VieraHeadBoneNameMap.ContainsKey(name))
+				{
+					return VieraHeadBoneNameMap[name];
+				}
+			}
+
+			// loading default to special:
+			if (newRace == Appearance.Races.Hrothgar)
+			{
+				foreach ((string specialName, string defaultName) in HrothHeadBoneNameMap)
+				{
+					if (defaultName == name)
+					{
+						return specialName;
+					}
+				}
+			}
+			else if (newRace == Appearance.Races.Viera)
+			{
+				foreach ((string specialName, string defaultName) in VieraHeadBoneNameMap)
+				{
+					if (defaultName == name)
+					{
+						return specialName;
+					}
+				}
+			}
+
+			return name;
+		}
+
+		public static string GetHeadBoneName(int boneIndex, Appearance.Races race)
+		{
+			// Check special bones
+			foreach ((string name, int index) in HeadBoneIndexLookup)
+			{
+				if (index != boneIndex)
+					continue;
+
+				if (race == Appearance.Races.Viera && !name.StartsWith("Viera"))
+					continue;
+
+				if (race != Appearance.Races.Viera && name.StartsWith("Viera"))
+					continue;
+
+				if (race == Appearance.Races.Hrothgar && !name.StartsWith("Hroth"))
+					continue;
+
+				if (race != Appearance.Races.Hrothgar && name.StartsWith("Hroth"))
+					continue;
+
+				return name;
+			}
+
+			// check normal bones
+			foreach ((string name, int index) in HeadBoneIndexLookup)
+			{
+				if (index != boneIndex)
+					continue;
+
+				if (name.StartsWith("Viera"))
+					continue;
+
+				if (name.StartsWith("Hroth"))
+					continue;
+
+				return name;
+			}
+
+			throw new Exception($"No bone name found for bone index: {boneIndex} and race: {race}");
 		}
 	}
 }
