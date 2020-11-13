@@ -42,6 +42,12 @@ namespace Anamnesis.Character.Dialogs
 			set => this.Result = this.Result.SetFlag(CharacterFile.SaveModes.EquipmentAccessories, value);
 		}
 
+		public bool EquipmentWeapons
+		{
+			get => this.Result.HasFlag(CharacterFile.SaveModes.EquipmentWeapons);
+			set => this.Result = this.Result.SetFlag(CharacterFile.SaveModes.EquipmentWeapons, value);
+		}
+
 		public bool AppearanceHair
 		{
 			get => this.Result.HasFlag(CharacterFile.SaveModes.AppearanceHair);

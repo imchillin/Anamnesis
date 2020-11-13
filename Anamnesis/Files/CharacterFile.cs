@@ -30,12 +30,13 @@ namespace Anamnesis.Files
 
 			EquipmentGear = 1,
 			EquipmentAccessories = 2,
+			EquipmentWeapons = 4,
 			AppearanceHair = 8,
 			AppearanceFace = 16,
 			AppearanceBody = 32,
 			AppearanceExtended = 64,
 
-			All = EquipmentGear | EquipmentAccessories | AppearanceHair | AppearanceFace | AppearanceBody | AppearanceExtended,
+			All = EquipmentGear | EquipmentAccessories | EquipmentWeapons | AppearanceHair | AppearanceFace | AppearanceBody | AppearanceExtended,
 		}
 
 		public SaveModes SaveMode { get; set; } = SaveModes.All;
@@ -110,7 +111,7 @@ namespace Anamnesis.Files
 
 			this.SaveMode = mode;
 
-			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 			{
 				if (actor.MainHand != null)
 					this.MainHand = new WeaponSave(actor.MainHand);
@@ -121,7 +122,10 @@ namespace Anamnesis.Files
 					this.OffHand = new WeaponSave(actor.OffHand);
 				////this.OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
 				////this.OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
+			}
 
+			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			{
 				if (actor.Equipment?.Head != null)
 					this.HeadGear = new ItemSave(actor.Equipment.Head);
 
@@ -227,10 +231,14 @@ namespace Anamnesis.Files
 
 			actor.ModelType = this.ModelType;
 
-			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 			{
 				this.MainHand?.Write(actor.MainHand);
 				this.OffHand?.Write(actor.OffHand);
+			}
+
+			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
+			{
 				this.HeadGear?.Write(actor.Equipment?.Head);
 				this.Body?.Write(actor.Equipment?.Chest);
 				this.Hands?.Write(actor.Equipment?.Arms);
