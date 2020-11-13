@@ -19,7 +19,7 @@
 		<Expander Style="{StaticResource Cm3Expander}">
 			<Expander.Header>
 				<StackPanel>
-					<TextBlock Text="Classes / Jobs" Foreground="{DynamicResource MaterialDesignBody}"/>
+					<controls:TextBlock Key="EquipmentSelector_Classes" Foreground="{DynamicResource MaterialDesignBody}"/>
 					<TextBlock x:Name="JobFilterText" Text="All" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="10"/>
 				</StackPanel>
 			</Expander.Header>
@@ -30,19 +30,19 @@
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6, 0, 0, 0">
 			<RadioButton Margin="3" IsChecked="True" Checked="OnAllMode">
-				<TextBlock Text="All" Margin="0, -3, 6, 0"/>
+				<controls:TextBlock Key="EquipmentSelector_All" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 
 			<RadioButton Margin="3" Checked="OnPropsMode">
-				<TextBlock Text="Props" Margin="0, -3, 6, 0"/>
+				<controls:TextBlock Key="EquipmentSelector_Props" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 
 			<RadioButton Margin="3" Checked="OnItemsMode">
-				<TextBlock Text="Items" Margin="0, -3, 6, 0"/>
+				<controls:TextBlock Key="EquipmentSelector_Items" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 
 			<RadioButton Margin="3" Checked="OnSpecialMode">
-				<TextBlock Text="Special" Margin="0, -3, 6, 0"/>
+				<controls:TextBlock Key="EquipmentSelector_Special" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 		</StackPanel>
 

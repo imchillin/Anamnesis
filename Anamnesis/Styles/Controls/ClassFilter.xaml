@@ -93,8 +93,12 @@
 		</WrapPanel>
 
 		<StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Center" Grid.ColumnSpan="3" Margin="3, 3, 3, 6">
-			<Button Content="None" Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnNoneClicked"/>
-			<Button Content="All" Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnAllClicked"/>
+			<Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnNoneClicked">
+				<local:TextBlock Key="Common_None"/>
+			</Button>
+			<Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnAllClicked">
+				<local:TextBlock Key="Common_All"/>
+			</Button>
 		</StackPanel>
 
 	</Grid>

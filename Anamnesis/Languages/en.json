@@ -3,10 +3,18 @@
 	"Common_SaveFile": "Save",
 	"Common_Enable": "Enable",
 	"Common_Disable": "Disable",
+	"Common_None": "None",
+	"Common_All": "All",
 
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",
 	"Target_Npc": "NPCs",
+
+	"EquipmentSelector_Classes": "Classes / Jobs",
+	"EquipmentSelector_All": "All",
+	"EquipmentSelector_Props": "Props",
+	"EquipmentSelector_Items": "Items",
+	"EquipmentSelector_Special": "Special",
 
 	"XMA_PopularToday": "Popular poses Today on XIV Mod Archive",
 
