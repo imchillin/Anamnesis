@@ -1,11 +1,32 @@
 {
-	"MainTitle": "Concept Matrix 3.0",
-
-	"HomeTitle": "Welcome To Anamnesis 3",
-	"HomeDescription": "To get started, Add an Actor with the (+) button above.",
-
 	"Common_OpenFile": "Open",
 	"Common_SaveFile": "Save",
+
+	"XMA_PopularToday": "Popular poses Today on XIV Mod Archive",
+
+	"Scene_World_Header": "World",
+	"Scene_World_Time": "Time:",
+	"Scene_World_Day": "Day:",
+	"Scene_World_Weather": "Weather:",
+
+	"Scene_ActorInfo_Header": "Actor Info",
+	"Scene_ActorInfo_Nickname": "Nickname:",
+	"Scene_ActorInfo_Animation": "Animation:",
+	"Scene_ActorInfo_DataPath": "Data Path:",
+
+	"Scene_Camera_Header": "Camera",
+	"Scene_Camera_Delimit": "Delimit:",
+	"Scene_Camera_Position": "Position:",
+	"Scene_Camera_Angle": "Angle:",
+	"Scene_Camera_Rotation": "Rotation:",
+	"Scene_Camera_Pan": "Pan:",
+	"Scene_Camera_Zoom": "Zoom:",
+	"Scene_Camera_FoV": "FoV:",
+
+	"Scene_Transform_Header": "Transform",
+	"Scene_Transform_Rotation": "Rotation:",
+	"Scene_Transform_Position": "Position:",
+	"Scene_Transform_Scale": "Scale:",
 
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /Gpose in chat.",
 	"Pose_WarningNotFrozen": "Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window.",

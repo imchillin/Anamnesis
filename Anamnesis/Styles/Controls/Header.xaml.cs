@@ -14,6 +14,7 @@ namespace Anamnesis.Styles.Controls
 	{
 		public static readonly IBind<IconChar> IconDp = Binder.Register<IconChar, Header>(nameof(Icon));
 		public static readonly IBind<string> TextDp = Binder.Register<string, Header>(nameof(Text));
+		public static readonly IBind<string> KeyDp = Binder.Register<string, Header>(nameof(Key));
 
 		public Header()
 		{
@@ -31,6 +32,12 @@ namespace Anamnesis.Styles.Controls
 		{
 			get => TextDp.Get(this);
 			set => TextDp.Set(this, value);
+		}
+
+		public string Key
+		{
+			get => KeyDp.Get(this);
+			set => KeyDp.Set(this, value);
 		}
 	}
 }

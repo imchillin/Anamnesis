@@ -4,11 +4,12 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 
 	<StackPanel Orientation="Horizontal" x:Name="ContentArea">
 		<fa:IconBlock Icon="{Binding Icon}" Margin="2, 2, 6, 0" Style="{StaticResource Header}"/>
-		<TextBlock Text="{Binding Text}" Style="{StaticResource Header}"/>
+		<ana:TextBlock Text="{Binding Text}" Key="{Binding Key}" Style="{StaticResource Header}"/>
 	</StackPanel>
 </UserControl>

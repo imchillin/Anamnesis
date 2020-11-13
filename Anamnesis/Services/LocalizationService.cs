@@ -72,9 +72,10 @@ namespace Anamnesis.Services
 				return val;
 
 			Log.Write(Severity.Error, "Missing Localized string: \"" + key + "\"");
-			fallbackLocale?.Add(key, null);
 
-			return null;
+			string erorString = "{" + key + "}";
+			fallbackLocale?.Add(key, erorString);
+			return erorString;
 		}
 
 		public static void SetLocale(string locale)

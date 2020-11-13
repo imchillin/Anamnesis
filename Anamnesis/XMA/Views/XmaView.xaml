@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.XMA.Views"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800"
 			 IsVisibleChanged="OnIsVisibleChanged">
@@ -16,7 +17,7 @@
 		</Grid.RowDefinitions>
 
 		<Button Grid.Row="0" Margin="6" Style="{StaticResource TransparentButton}" BorderThickness="0" Click="OnHeaderClicked">
-			<TextBlock Text="Popular poses Today on XIV Mod Archive" Margin="3"/>
+			<ana:TextBlock Key="XMA_PopularToday" Margin="3"/>
 		</Button>
 
 		<Grid Grid.Row="1" Visibility="{Binding XmaService.IsLoading, Converter={StaticResource B2V}}">
