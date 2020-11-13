@@ -29,6 +29,7 @@ namespace Anamnesis.PoseModule
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
+		public bool LinkEyes { get; set; }
 		public ActorViewModel Actor { get; private set; }
 		public BoneVisual3d? MouseOverBone { get; set; }
 
@@ -198,16 +199,33 @@ namespace Anamnesis.PoseModule
 
 			if (skeletonVm.Head != null)
 			{
-				foreach (TransformViewModel boneTrans in skeletonVm.Head.Transforms)
+				BoneVisual3d? leftEye = null;
+				BoneVisual3d? rightEye = null;
+
+				for (int i = 0; i < skeletonVm.Head.Transforms.Count; i++)
+				////foreach (TransformViewModel boneTrans in skeletonVm.Head.Transforms)
 				{
+					TransformViewModel boneTrans = skeletonVm.Head.Transforms[i];
 					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
 					this.Bones.Add(bone);
 					bone.Parent = headRoot;
+
+					if (i == SkeletonUtility.HeadBoneIndexLookup["EyeLeft"])
+						leftEye = bone;
+
+					if (i == SkeletonUtility.HeadBoneIndexLookup["EyeRight"])
+						rightEye = bone;
 
 					if (headRoot == null)
 					{
 						this.Children.Add(bone);
 					}
+				}
+
+				if (leftEye != null && rightEye != null)
+				{
+					leftEye.LinkedEye = rightEye;
+					rightEye.LinkedEye = leftEye;
 				}
 			}
 

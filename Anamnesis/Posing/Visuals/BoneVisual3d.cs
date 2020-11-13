@@ -57,6 +57,8 @@ namespace Anamnesis.PoseModule
 		public CmVector Scale { get; set; }
 		public CmVector Position { get; set; }
 
+		public BoneVisual3d? LinkedEye { get; set; }
+
 		public BoneVisual3d? Parent
 		{
 			get
@@ -178,6 +180,12 @@ namespace Anamnesis.PoseModule
 			this.ViewModel.Position = position;
 			this.ViewModel.Scale = this.Scale;
 			this.ViewModel.Rotation = rotation.ToCmQuaternion();
+
+			if (this.LinkedEye != null && this.Skeleton.LinkEyes)
+			{
+				this.LinkedEye.ViewModel.Rotation = this.ViewModel.Rotation;
+				this.LinkedEye.Rotation = this.Rotation;
+			}
 
 			if (writeChildren)
 			{

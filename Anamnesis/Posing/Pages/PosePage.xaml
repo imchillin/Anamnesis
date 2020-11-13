@@ -83,8 +83,10 @@
 
 						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
 
-						<TextBlock Text="Freeze Physics" Margin="6,0,3,0"  Style="{StaticResource Label}"/>
-						<CheckBox IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}"/>
+						<CheckBox Content="Freeze Physics" IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}"/>
+
+						<CheckBox Content="Link Eyes" IsChecked="{Binding Skeleton.LinkEyes}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}"/>
+
 
 					</StackPanel>
 				</Grid>
