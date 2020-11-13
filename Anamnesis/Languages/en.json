@@ -4,6 +4,10 @@
 	"Common_Enable": "Enable",
 	"Common_Disable": "Disable",
 
+	"Target_Players": "Players",
+	"Target_Companions": "Companions",
+	"Target_Npc": "NPCs",
+
 	"XMA_PopularToday": "Popular poses Today on XIV Mod Archive",
 
 	"Scene_World_Header": "World",

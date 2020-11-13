@@ -6,6 +6,7 @@
 			 xmlns:local="clr-namespace:Anamnesis.Views"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800"
 			 Loaded="OnLoaded">
@@ -17,9 +18,15 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Orientation="Horizontal" Grid.Row="0" Margin="4, 6, 4, 0">
-			<CheckBox Content="Players" Margin="6, 0" IsChecked="{Binding IncludePlayers}"/>
-			<CheckBox Content="Companions" Margin="6, 0" IsChecked="{Binding IncludeCompanions}"/>
-			<CheckBox Content="NPCs" Margin="6, 0" IsChecked="{Binding IncludeNPCs}"/>
+			<CheckBox Margin="6, 0" IsChecked="{Binding IncludePlayers}">
+				<ana:TextBlock Key="Target_Players"/>
+			</CheckBox>
+			<CheckBox Margin="6, 0" IsChecked="{Binding IncludeCompanions}">
+				<ana:TextBlock Key="Target_Companions"/>
+			</CheckBox>
+			<CheckBox Margin="6, 0" IsChecked="{Binding IncludeNPCs}">
+				<ana:TextBlock Key="Target_Npc"/>
+			</CheckBox>
 		</StackPanel>
 
 		<cm3Drawers:SelectorDrawer 
