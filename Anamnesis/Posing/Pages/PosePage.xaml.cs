@@ -39,12 +39,6 @@ namespace Anamnesis.PoseModule.Pages
 		{
 			this.OnDataContextChanged(null, default);
 
-			DateTime dt = DateTime.Now;
-			if (dt.Month == 10 && dt.Day == 31)
-			{
-				this.View3dButton.ToolTip = "Spoopy Skeletons";
-			}
-
 			PoseService.EnabledChanged += this.OnPoseServiceEnabledChanged;
 			this.PoseService.PropertyChanged += this.PoseService_PropertyChanged;
 		}
@@ -85,7 +79,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			this.Skeleton = new SkeletonVisual3d(actor);
 
-			this.ThreeDView.DataContext = this.Skeleton;
+			////this.ThreeDView.DataContext = this.Skeleton;
 			this.GuiView.DataContext = this.Skeleton;
 			this.MatrixView.DataContext = this.Skeleton;
 		}
@@ -170,7 +164,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			this.GuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Collapsed;
 			this.MatrixView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Collapsed;
-			this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
+			////this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
 		}
 	}
 }

@@ -76,9 +76,9 @@
 							<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 0, 1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
-							<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
+							<!--<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
-							</ListBoxItem>
+							</ListBoxItem>-->
 						</ListBox>
 
 						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
@@ -94,7 +94,7 @@
 			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
 				<Grid IsEnabled="{Binding PoseService.IsEnabled}">
 					<Grid DataContext="{Binding Skeleton}">
-						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>
+						<!--<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>-->
 						<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
 						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed"/>
 					</Grid>
