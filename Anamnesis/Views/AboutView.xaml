@@ -5,12 +5,18 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"
 			 Width="300">
+	
 	<ScrollViewer>
 		<StackPanel Margin="6, 0, 0, 0">
-			<GroupBox Header="Proudly Open Source">
+			<GroupBox>
+				<GroupBox.Header>
+					<ana:TextBlock Key="About_OpenSource_Header"/>
+				</GroupBox.Header>
+				
 				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Anamnesis is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
 				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/Anamnesis" FontSize="12">GitHub</Hyperlink>.
 					<LineBreak /><LineBreak />
@@ -32,22 +38,42 @@
 				</TextBlock>
 
 			</GroupBox>
-			<GroupBox Header="Get in Touch">
+			<GroupBox>
+				<GroupBox.Header>
+					<ana:TextBlock Key="About_Contact_Header"/>
+				</GroupBox.Header>
+				
 				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">Want to follow development, ask a question, look for help, raise a bug, or just say hi? Visit us on
 				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discord.gg/EenZwsN" FontSize="12">Discord</Hyperlink>, or follow Ani-Ki's 
 				<fa:IconBlock Icon="Twitter"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://twitter.com/Ani_ki__" FontSize="12">Twitter</Hyperlink>!</TextBlock>
 			</GroupBox>
-			<GroupBox Header="Donate to the Devs!">
+			<GroupBox>
+				<GroupBox.Header>
+					<ana:TextBlock Key="About_Donate_Header"/>
+				</GroupBox.Header>
+				
 				<TextBlock TextWrapping="Wrap" Margin="0,0,0,15" Style="{StaticResource Body}">This project is a labor of love. Please consider donating to the members of the dev team via Ko-fi to say thank you!<LineBreak />
 				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/aniki" FontSize="12">Yuuki &amp; Ani-Ki's shared Ko-fi</Hyperlink>
 				</TextBlock>
 			</GroupBox>
 
-			<GroupBox Header="Debugging">
+			<GroupBox>
+				<GroupBox.Header>
+					<ana:TextBlock Key="About_Debug_Header"/>
+				</GroupBox.Header>
+				
 				<StackPanel>
-					<Button Content="Open Logs directory" Margin="3" Click="OnLogsClicked"/>
-					<Button Content="Open Settings directory" Margin="3" Click="OnSetingsClicked"/>
-					<Button Content="Throw an error" Margin="3" Click="OnErrorClicked"/>
+					<Button Margin="3" Click="OnLogsClicked">
+						<ana:TextBlock Key="About_Debug_OpenLogs"/>
+					</Button>
+					
+					<Button Margin="3" Click="OnSetingsClicked">
+						<ana:TextBlock Key="About_Debug_OpenSettings"/>
+					</Button>
+					
+					<Button Margin="3" Click="OnErrorClicked">
+						<ana:TextBlock Key="About_Debug_Throw"/>
+					</Button>
 				</StackPanel>
 			</GroupBox>
 			

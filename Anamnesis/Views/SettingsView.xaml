@@ -6,7 +6,7 @@
 			 xmlns:local="clr-namespace:Anamnesis.GUI.Views"
 			 xmlns:materialDesignColors="clr-namespace:MaterialDesignColors;assembly=MaterialDesignColors"
 			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 Width="350"
 			 d:DesignHeight="450" d:DesignWidth="232">
@@ -30,7 +30,7 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="0" Text="Language:" Style="{StaticResource Label}"/>
+		<ana:TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="0" Key="Settings_Language" Style="{StaticResource Label}"/>
 		<ComboBox Margin="6" Grid.Column="1" Grid.Row="0" SelectedValue="{Binding SelectedLanguage}" ItemsSource="{Binding Languages, Mode=OneTime}">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
@@ -39,19 +39,23 @@
 			</ComboBox.ItemTemplate>
 		</ComboBox>
 
-		<TextBlock Grid.Column="0" Grid.Row="1" Text="Window Opacity:" Style="{StaticResource Label}"/>
-		<cm3Controls:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="1" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
+		<ana:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
+		<ana:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="1" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
 
-		<TextBlock Grid.Column="0" Grid.Row="2" Text="Stay Transparent:" Style="{StaticResource Label}"/>
+		<ana:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_StayTransparent" Style="{StaticResource Label}"/>
 		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="2"/>
 
-		<TextBlock Grid.Column="0" Grid.Row="3" Text="Window Size:" Style="{StaticResource Label}"/>
+		<ana:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
 		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="3" Margin="6"/>
 
-		<TextBlock Grid.Column="0" Grid.Row="4" Text="Hide XMA Popular:" Style="{StaticResource Label}"/>
+		<ana:TextBlock Grid.Column="0" Grid.Row="4" Key="Settings_HideXMA" Style="{StaticResource Label}"/>
 		<CheckBox Grid.Column="1" Grid.Row="4" Margin="6" IsChecked="{Binding SettingsService.Settings.HideXmaPoses}" />
 
-		<GroupBox Header="Directories" Grid.Row="6" Grid.ColumnSpan="2">
+		<GroupBox Grid.Row="6" Grid.ColumnSpan="2">
+			<GroupBox.Header>
+				<ana:TextBlock Key="Settings_Directories"/>
+			</GroupBox.Header>
+			
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
@@ -65,15 +69,15 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 
-				<TextBlock Grid.Row="0" Grid.Column="0" Text="Characters:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Row="0" Grid.Column="0" Key="Settings_Dir_Characters" Style="{StaticResource Label}"/>
 				<TextBox Grid.Row="0" Grid.Column="1" Margin="3, 0, 0, 0" Text="{Binding SettingsService.Settings.DefaultCharacterDirectory}" IsEnabled="False"/>
 				<Button Grid.Row="0" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseCharacter"/>
 
-				<TextBlock Grid.Row="1" Grid.Column="0" Text="Poses:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Settings_Dir_Poses" Style="{StaticResource Label}"/>
 				<TextBox Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0" Text="{Binding SettingsService.Settings.DefaultPoseDirectory}" IsEnabled="False"/>
 				<Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowsePose"/>
 
-				<TextBlock Grid.Row="2" Grid.Column="0" Text="Scenes:" Style="{StaticResource Label}"/>
+				<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Settings_Dir_Scenes" Style="{StaticResource Label}"/>
 				<TextBox Grid.Row="2" Grid.Column="1" Margin="3, 0, 0, 0" Text="{Binding SettingsService.Settings.DefaultSceneDirectory}" IsEnabled="False"/>
 				<Button Grid.Row="2" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseScene"/>
 				
@@ -81,7 +85,11 @@
 		</GroupBox>
 		
 
-		<GroupBox Header="Theme" Grid.Row="7" Grid.ColumnSpan="2">
+		<GroupBox Grid.Row="7" Grid.ColumnSpan="2">
+			<GroupBox.Header>
+				<ana:TextBlock Key="Settings_Theme"/>
+			</GroupBox.Header>
+			
 			<Grid>
 
 				<Grid.RowDefinitions>
@@ -90,9 +98,9 @@
 				</Grid.RowDefinitions>
 
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-					<TextBlock Text="Hydaelyn"  VerticalAlignment="Center"/>
+					<ana:TextBlock Key="Settings_Theme_Hydaelyn" VerticalAlignment="Center"/>
 					<ToggleButton Margin="6" Grid.Row="0" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Left" IsChecked="{Binding SettingsService.Settings.ThemeDark}"/>
-					<TextBlock Text="Zodiark"  VerticalAlignment="Center"/>
+					<ana:TextBlock Key="Settings_Theme_Zodiark" VerticalAlignment="Center"/>
 				</StackPanel>
 				
 				<ListBox Grid.Row="1" ItemsSource="{Binding Swatches.Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
@@ -132,8 +140,6 @@
 				</ListBox>
 			</Grid>
 		</GroupBox>
-		
-	
 		
 	</Grid>
 

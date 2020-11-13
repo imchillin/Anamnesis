@@ -159,5 +159,31 @@
 	"Pose_OtherHead": "Head",
 	"Pose_OtherAbdomen": "Abdomen",
 	"Pose_OtherThrow": "Throw",
-	"Pose_OtherUnknown": "Unknown"
+	"Pose_OtherUnknown": "Unknown",
+
+	"Settings_Header": "Settings",
+	"Settings_Language": "Language:",
+	"Settings_WindowOpacity": "Window Opacity:",
+	"Settings_StayTransparent": "Stay Transparent:",
+	"Settings_WindowSize": "Window Size:",
+	"Settings_HideXMA": "Hide XMA Popular",
+	"Settings_Directories": "Directories",
+	"Settings_Dir_Characters": "Characters:",
+	"Settings_Dir_Poses": "Poses:",
+	"Settings_Dir_Scenes": "Scenes:",
+	"Settings_Theme": "Theme:",
+	"Settings_Theme_Hydaelyn": "Hydaelyn",
+	"Settings_Theme_Zodiark": "Zodiark",
+
+	"About_Header": "About",
+	"About_OpenSource_Header": "Proudly Open Source",
+	"About_Contact_Header": "Get in Touch",
+	"About_Donate_Header": "Donate to the Devs!",
+	"About_Debug_Header": "Debugging",
+
+	"About_Debug_OpenLogs": "Open Logs directory",
+	"About_Debug_OpenSettings": "Open Settings directory",
+	"About_Debug_Throw": "Throw an error",
+
+	"fake": "fake"
 }

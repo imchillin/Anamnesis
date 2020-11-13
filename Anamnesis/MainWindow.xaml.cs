@@ -164,7 +164,7 @@ namespace Anamnesis.GUI
 				return;
 			}
 
-			ViewService.ShowDrawer<SettingsView>("Settings");
+			ViewService.ShowDrawer<SettingsView>(LocalizationService.GetString("Settings_Header"));
 		}
 
 		private void OnAboutClick(object sender, RoutedEventArgs e)
@@ -175,7 +175,7 @@ namespace Anamnesis.GUI
 				return;
 			}
 
-			ViewService.ShowDrawer<AboutView>("About");
+			ViewService.ShowDrawer<AboutView>(LocalizationService.GetString("About_Header"));
 		}
 
 		private void Window_MouseEnter(object sender, MouseEventArgs e)
