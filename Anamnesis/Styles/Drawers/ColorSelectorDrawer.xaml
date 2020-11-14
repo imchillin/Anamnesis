@@ -8,7 +8,7 @@
 			 xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450"
-			 d:DesignWidth="232">
+			 Width="280">
 
 	<UserControl.Resources>
 		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">

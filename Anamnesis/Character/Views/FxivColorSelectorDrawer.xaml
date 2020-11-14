@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="256">
+			 d:DesignHeight="450" Width="256">
 
 	<UserControl.Resources>
 		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
