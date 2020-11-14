@@ -175,10 +175,12 @@
 
 	"Settings_Header": "Settings",
 	"Settings_Language": "Language:",
-	"Settings_WindowOpacity": "Window Opacity:",
-	"Settings_StayTransparent": "Stay Transparent:",
-	"Settings_WindowSize": "Window Size:",
-	"Settings_HideXMA": "Hide XMA Popular",
+	"Settings_AlwaysOnTop": "Always on top",
+	"Settings_UseCustomBorder": "Custom window border",
+	"Settings_WindowOpacity": "Window opacity:",
+	"Settings_StayTransparent": "Stay transparent:",
+	"Settings_WindowSize": "Window size:",
+	"Settings_HideXMA": "Hide XMA popular",
 	"Settings_Directories": "Directories",
 	"Settings_Dir_Characters": "Characters:",
 	"Settings_Dir_Poses": "Poses:",
@@ -195,7 +197,5 @@
 
 	"About_Debug_OpenLogs": "Open Logs directory",
 	"About_Debug_OpenSettings": "Open Settings directory",
-	"About_Debug_Throw": "Throw an error",
-
-	"fake": "fake"
+	"About_Debug_Throw": "Throw an error"
 }

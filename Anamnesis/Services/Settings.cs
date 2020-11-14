@@ -27,5 +27,6 @@ namespace Anamnesis.Services
 		public string DefaultCharacterDirectory { get; set; } = "%MyDocuments%/Anamnesis/Characters/";
 		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
 		public bool HideXmaPoses { get; set; } = false;
+		public bool UseCustomBorder { get; set; } = true;
 	}
 }

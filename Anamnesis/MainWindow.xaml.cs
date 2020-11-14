@@ -27,6 +27,8 @@ namespace Anamnesis.GUI
 	[SuppressPropertyChangedWarnings]
 	public partial class MainWindow : Window
 	{
+		private bool hasSetPosition = false;
+
 		public MainWindow()
 		{
 			this.InitializeComponent();
@@ -35,32 +37,50 @@ namespace Anamnesis.GUI
 
 			ViewService.ShowingDrawer += this.OnShowDrawer;
 
-			this.Zodiark = SettingsService.Current.ThemeDark;
-			this.Opacity = SettingsService.Current.Opacity;
-			this.AlwaysOnTopToggle.IsChecked = SettingsService.Current.AlwaysOnTop;
-			this.WindowScale.ScaleX = SettingsService.Current.Scale;
-			this.WindowScale.ScaleY = SettingsService.Current.Scale;
-
-			if (SettingsService.Current.WindowPosition.X != 0)
-			{
-				this.Left = SettingsService.Current.WindowPosition.X;
-				this.Top = SettingsService.Current.WindowPosition.Y;
-			}
-
 			SettingsService.Current.PropertyChanged += this.OnSettingsChanged;
+			this.OnSettingsChanged();
 		}
 
 		public SettingsService SettingsService => SettingsService.Instance;
 		public GposeService GposeService => GposeService.Instance;
 		public TargetService TargetService => TargetService.Instance;
 
-		public bool Zodiark { get; set; }
-
-		private void OnSettingsChanged(object sender, PropertyChangedEventArgs args)
+		private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
 		{
-			this.Zodiark = SettingsService.Current.ThemeDark;
+			this.Opacity = SettingsService.Current.Opacity;
 			this.WindowScale.ScaleX = SettingsService.Current.Scale;
 			this.WindowScale.ScaleY = SettingsService.Current.Scale;
+
+			if (SettingsService.Current.UseCustomBorder != this.AllowsTransparency)
+			{
+				if (this.IsLoaded)
+				{
+					App.Current.MainWindow = new MainWindow();
+					this.Close();
+					App.Current.MainWindow.Show();
+					return;
+				}
+
+				if (SettingsService.Current.UseCustomBorder)
+				{
+					this.WindowStyle = WindowStyle.None;
+					this.AllowsTransparency = true;
+				}
+				else
+				{
+					this.AllowsTransparency = false;
+					this.WindowStyle = WindowStyle.ThreeDBorderWindow;
+				}
+			}
+
+			this.ContentArea.Margin = new Thickness(SettingsService.Current.UseCustomBorder ? 10 : 0);
+
+			if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
+			{
+				this.hasSetPosition = true;
+				this.Left = SettingsService.Current.WindowPosition.X;
+				this.Top = SettingsService.Current.WindowPosition.Y;
+			}
 		}
 
 		private async Task OnShowDrawer(string? title, UserControl view, DrawerDirection direction)
@@ -138,6 +158,12 @@ namespace Anamnesis.GUI
 
 		private void Window_Activated(object sender, EventArgs e)
 		{
+			if (!SettingsService.Current.UseCustomBorder)
+			{
+				this.ActiveBorder.Visibility = Visibility.Collapsed;
+				return;
+			}
+
 			this.ActiveBorder.Visibility = Visibility.Visible;
 		}
 
@@ -249,6 +275,9 @@ namespace Anamnesis.GUI
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			SettingsService.Current.PropertyChanged -= this.OnSettingsChanged;
+			ViewService.ShowingDrawer -= this.OnShowDrawer;
+
 			SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
 			SettingsService.Save();
 		}

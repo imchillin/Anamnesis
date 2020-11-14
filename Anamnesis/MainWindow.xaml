@@ -11,7 +11,7 @@
 		xmlns:services="clr-namespace:Anamnesis"
 		mc:Ignorable="d"
 		WindowStyle="None"
-		ResizeMode="NoResize"
+		ResizeMode="CanMinimize"
 		SizeToContent="WidthAndHeight"
 		AllowsTransparency="True"
 		MouseEnter="Window_MouseEnter"
@@ -28,7 +28,13 @@
 		
 		Icon="/Assets/Concept Matrix.ico">
 
-	<Grid Margin="10">
+	<Window.Title>
+		<MultiBinding StringFormat="{}Anamnesis - {0}">
+			<Binding Path="TargetService.SelectedActor.DisplayName" />
+		</MultiBinding>
+	</Window.Title>
+
+	<Grid Margin="10" x:Name="ContentArea">
 
 		<Border
 			Background="{DynamicResource MaterialDesignPaper}"
@@ -42,6 +48,7 @@
 		</Border>
 
 		<Grid Margin="1" Width="958" Height="552" ClipToBounds="True">
+
 			<Grid.LayoutTransform>
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5"/>
 			</Grid.LayoutTransform>
@@ -58,7 +65,7 @@
 									<ColumnDefinition/>
 								</Grid.ColumnDefinitions>
 
-								<Grid Grid.Column="0">
+								<Grid Grid.Column="0" Grid.RowSpan="2">
 
 									<Grid Width="47">
 
@@ -133,7 +140,17 @@
 								</Grid>
 
 								<Border Grid.Column="1" Background="{DynamicResource MaterialDesignPaper}" CornerRadius="3" Margin="-1, 0, 0, 0">
-									<ContentPresenter ContentSource="SelectedContent" Margin="0, 22, 0, 0" />
+
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto"/>
+											<RowDefinition/>
+										</Grid.RowDefinitions>
+
+										<Rectangle Grid.Row="0" Height="24" Fill="Transparent" Visibility="{Binding SettingsService.Current.UseCustomBorder, Converter={StaticResource B2V}}"/>
+
+										<ContentPresenter Grid.Row="1" ContentSource="SelectedContent" Margin="0, 0, 0, 0" />
+									</Grid>
 								</Border>
 							</Grid>
 						</ControlTemplate>
@@ -176,6 +193,7 @@
 					Height="26"
 					VerticalAlignment="Top"
 					MouseDown="OnTitleBarMouseDown"
+					Visibility="{Binding SettingsService.Current.UseCustomBorder, Converter={StaticResource B2V}}"
 					Margin="44, 0, 0, 0">
 
 				<Grid VerticalAlignment="Top">

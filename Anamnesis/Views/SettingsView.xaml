@@ -27,6 +27,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
@@ -39,19 +40,25 @@
 			</ComboBox.ItemTemplate>
 		</ComboBox>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
-		<ana:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="1" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
+		<ana:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_AlwaysOnTop" Style="{StaticResource Label}"/>
+		<CheckBox Grid.Column="1" Grid.Row="1" IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}" Margin="6"/>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_StayTransparent" Style="{StaticResource Label}"/>
-		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="2"/>
+		<ana:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_UseCustomBorder" Style="{StaticResource Label}"/>
+		<CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding SettingsService.Settings.UseCustomBorder}" Margin="6"/>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
-		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="3" Margin="6"/>
+		<ana:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
+		<ana:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="3" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="4" Key="Settings_HideXMA" Style="{StaticResource Label}"/>
-		<CheckBox Grid.Column="1" Grid.Row="4" Margin="6" IsChecked="{Binding SettingsService.Settings.HideXmaPoses}" />
+		<ana:TextBlock Grid.Column="0" Grid.Row="4" Key="Settings_StayTransparent" Style="{StaticResource Label}"/>
+		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="4"/>
 
-		<GroupBox Grid.Row="6" Grid.ColumnSpan="2">
+		<ana:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
+		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="5" Margin="6"/>
+
+		<ana:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_HideXMA" Style="{StaticResource Label}"/>
+		<CheckBox Grid.Column="1" Grid.Row="6" Margin="6" IsChecked="{Binding SettingsService.Settings.HideXmaPoses}" />
+
+		<GroupBox Grid.Row="7" Grid.ColumnSpan="2">
 			<GroupBox.Header>
 				<ana:TextBlock Key="Settings_Directories"/>
 			</GroupBox.Header>
@@ -85,7 +92,7 @@
 		</GroupBox>
 		
 
-		<GroupBox Grid.Row="7" Grid.ColumnSpan="2">
+		<GroupBox Grid.Row="8" Grid.ColumnSpan="2">
 			<GroupBox.Header>
 				<ana:TextBlock Key="Settings_Theme"/>
 			</GroupBox.Header>
