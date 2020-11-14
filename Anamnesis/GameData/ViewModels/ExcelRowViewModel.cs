@@ -35,7 +35,16 @@ namespace Anamnesis.GameData.ViewModels
 				try
 				{
 					if (this.value == null)
-						this.value = this.sheet.GetRow((uint)this.Key);
+					{
+						try
+						{
+							this.value = this.sheet.GetRow((uint)this.Key);
+						}
+						catch (Exception ex)
+						{
+							throw new Exception($"Failed to read Lumina row: {this.Key} for type: {typeof(T).Name}", ex);
+						}
+					}
 
 					return this.value;
 				}
