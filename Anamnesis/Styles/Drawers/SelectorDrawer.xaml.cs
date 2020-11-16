@@ -24,7 +24,9 @@ namespace Anamnesis.Styles.Drawers
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty ItemTemplateProperty = DependencyProperty.Register(nameof(ItemTemplate), typeof(DataTemplate), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 
-		private string[]? searchQuerry;
+		private static string[]? searchQuerry;
+		private static string? lastSearchInput;
+
 		private bool searching = false;
 		private bool idle = true;
 		private object? oldValue;
@@ -124,14 +126,16 @@ namespace Anamnesis.Styles.Drawers
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
+			this.SearchBox.Text = lastSearchInput;
 			Keyboard.Focus(this.SearchBox);
+			this.SearchBox.CaretIndex = int.MaxValue;
 		}
 
 		[SuppressPropertyChangedWarnings]
 		private void OnSearchChanged(object sender, TextChangedEventArgs e)
 		{
-			string str = this.SearchBox.Text;
-			Task.Run(async () => { await this.Search(str); });
+			lastSearchInput = this.SearchBox.Text;
+			Task.Run(async () => { await this.Search(lastSearchInput); });
 		}
 
 		[SuppressPropertyChangedWarnings]
@@ -168,12 +172,12 @@ namespace Anamnesis.Styles.Drawers
 
 				if (string.IsNullOrEmpty(str))
 				{
-					this.searchQuerry = null;
+					searchQuerry = null;
 				}
 				else
 				{
 					str = str.ToLower();
-					this.searchQuerry = str.Split(' ');
+					searchQuerry = str.Split(' ');
 				}
 
 				await Task.Run(this.DoFilter);
@@ -194,7 +198,7 @@ namespace Anamnesis.Styles.Drawers
 
 			foreach (object item in this.Items)
 			{
-				if (this.Filter != null && !this.Filter.Invoke(item, this.searchQuerry))
+				if (this.Filter != null && !this.Filter.Invoke(item, searchQuerry))
 					continue;
 
 				filteredItems.Add(item);
