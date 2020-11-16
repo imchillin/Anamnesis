@@ -91,6 +91,13 @@
 							<ana:TextBlock Key="Pose_LinkEyes"/>
 						</CheckBox>
 
+						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
+
+						<StackPanel Orientation="Horizontal" IsEnabled="{Binding PoseService.IsEnabled}" Margin="3,0,0,0">
+							<views:BoneView Width="16" Height="16" BoneName="CharacterRoot" DataContext="{Binding Skeleton}"/>
+							<ana:TextBlock Text="Character" VerticalAlignment="Center" Margin="3" FontWeight="Light"/>
+						</StackPanel>
+
 					</StackPanel>
 				</Grid>
 			</Border>

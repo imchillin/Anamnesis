@@ -48,14 +48,7 @@ namespace Anamnesis.PoseModule.Views
 			set => NameDp.Set(this, value);
 		}
 
-		public string TooltipKey
-		{
-			get
-			{
-				string name = this.BoneName;
-				return "Pose_" + name;
-			}
-		}
+		public string TooltipKey => "Pose_" + this.BoneName;
 
 		public static bool HasView(BoneVisual3d bone)
 		{

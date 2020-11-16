@@ -112,6 +112,7 @@
 	"Pose_Matrix_EquipmentCategory": "Equipment",
 	"Pose_Matrix_OtherCategory": "Other",
 
+	"Pose_CharacterRoot": "Character",
 	"Pose_Head": "Head",
 	"Pose_Ears": "Ears",
 	"Pose_VieraEars": "Viera Ears",

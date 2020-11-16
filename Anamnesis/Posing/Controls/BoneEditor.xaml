@@ -10,7 +10,7 @@
 	<Grid x:Name="ContentArea">
 		<StackPanel Margin="3" IsEnabled="{Binding Value, Converter={StaticResource NotNullToBoolConverter}}">
 
-			<controls:TextBlock Text="{Binding Value.BoneName}" Foreground="Black" Opacity="0.5" Margin="3" FontWeight="Bold" HorizontalAlignment="Center"/>
+			<controls:TextBlock Key="{Binding Value.TooltipKey}" HorizontalAlignment="Center"/>
 
 			<GroupBox>
 				<GroupBox.Header>
@@ -30,7 +30,7 @@
 				<GroupBox.Header>
 					<controls:TextBlock Key="Pose_Position"/>
 				</GroupBox.Header>
-				<controls:VectorEditor Value="{Binding Value.Position}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.01"/>
+				<controls:VectorEditor Value="{Binding Value.Position}" Expanded="True" Minimum="-4096" Maximum="4096" Sliders="Relative" TickFrequency="0.01"/>
 			</GroupBox>
 		</StackPanel>
 	</Grid>

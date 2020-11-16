@@ -16,7 +16,7 @@
 	</UserControl.Resources>
 
 	<Grid x:Name="ContentArea">
-		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,3,3,3">
+		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,1,3,3">
 			<StackPanel>
 
 				<GroupBox Margin="3, -2, 3, 0">
