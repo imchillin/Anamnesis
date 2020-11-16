@@ -65,6 +65,9 @@ namespace Anamnesis
 			{
 				await Task.Delay(10);
 
+				if (!MemoryService.IsProcessAlive)
+					continue;
+
 				// Update territory
 				int newTerritoryId = MemoryService.Read<int>(AddressService.Territory);
 

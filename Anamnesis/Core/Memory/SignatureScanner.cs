@@ -108,6 +108,9 @@ namespace Anamnesis.Core.Memory
 
 		public IntPtr Scan(IntPtr baseAddress, int size, string signature)
 		{
+			if (!MemoryService.GetIsProcessAlive())
+				return IntPtr.Zero;
+
 			byte?[]? needle = this.SigToNeedle(signature);
 
 			// Fast
