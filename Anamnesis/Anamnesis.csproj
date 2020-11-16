@@ -234,7 +234,7 @@
 		<Compile Update="Character\Views\ModelTypeEditor.xaml.cs">
 		  <SubType>Code</SubType>
 		</Compile>
-		<Compile Update="Posing\Controls\BoneEditor.xaml.cs">
+		<Compile Update="Views\TransformEditor.xaml.cs">
 		  <SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Posing\Views\PoseMatrixView.xaml.cs">
@@ -297,7 +297,7 @@
 		<Page Update="Character\Views\NpcSelector.xaml">
 		  <SubType>Designer</SubType>
 		</Page>
-		<Page Update="Posing\Controls\BoneEditor.xaml">
+		<Page Update="Views\TransformEditor.xaml">
 		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="Posing\Dialogs\BoneGroupsSelectorDialog.xaml">

@@ -31,7 +31,8 @@ namespace Anamnesis.PoseModule.Pages
 		}
 
 		public GposeService GposeService => GposeService.Instance;
-		public PoseService PoseService { get => PoseModule.PoseService.Instance; }
+		public PoseService PoseService { get => PoseService.Instance; }
+		public TargetService TargetService { get => TargetService.Instance; }
 
 		public SkeletonVisual3d? Skeleton { get; private set; }
 
@@ -165,6 +166,14 @@ namespace Anamnesis.PoseModule.Pages
 			this.GuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Collapsed;
 			this.MatrixView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Collapsed;
 			////this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		private void OnEditCharacterChecked(object sender, RoutedEventArgs e)
+		{
+			if (this.Skeleton != null)
+			{
+				this.Skeleton.CurrentBone = null;
+			}
 		}
 	}
 }

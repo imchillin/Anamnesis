@@ -11,7 +11,6 @@ namespace Anamnesis.PoseModule
 	using System.Windows;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
-	using Anamnesis.Posing.Visuals;
 	using PropertyChanged;
 
 	using AnQuaternion = Anamnesis.Memory.Quaternion;
@@ -124,10 +123,6 @@ namespace Anamnesis.PoseModule
 
 			if (this.Actor.ModelType != 0)
 				return null;
-
-			// Spcial bones
-			if (name == "CharacterRoot")
-				return new RootBoneVisual3d(this.Actor, this);
 
 			TransformViewModel? transform = this.Actor.ModelObject.Skeleton.Skeleton.GetBone(name);
 

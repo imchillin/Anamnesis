@@ -16,7 +16,6 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
 			<ColumnDefinition Width="300"/>
-			<ColumnDefinition Width="220"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid Grid.Column="0">
@@ -265,37 +264,7 @@
 				<RowDefinition Height="auto"/>
 			</Grid.RowDefinitions>
 
-			<GroupBox Grid.Row="0" Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
-				<GroupBox.Header>
-					<ana:Header Icon="Cube" Key="Scene_Transform_Header"/>
-				</GroupBox.Header>
-
-				<StackPanel>
-					<GroupBox>
-						<GroupBox.Header>
-							<ana:TextBlock Key="Scene_Transform_Rotation"/>
-						</GroupBox.Header>
-						
-						<cm3:QuaternionEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Rotation}"/>
-					</GroupBox>
-
-					<GroupBox>
-						<GroupBox.Header>
-							<ana:TextBlock Key="Scene_Transform_Position"/>
-						</GroupBox.Header>
-						
-						<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Position}" Minimum="-4096" Maximum="4096" Sliders="Relative" Expanded="True"/>
-					</GroupBox>
-
-					<GroupBox>
-						<GroupBox.Header>
-							<ana:TextBlock Key="Scene_Transform_Scale"/>
-						</GroupBox.Header>
-						
-						<cm3:VectorEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform.Scale}" Minimum="0.1" Maximum="50" Expanded="True" TickFrequency="0.1" CanLink="True"/>
-					</GroupBox>
-				</StackPanel>
-			</GroupBox>
+			
 
 
 			<!--<Grid Grid.Row="1" IsEnabled="{Binding GPoseService.IsOverworld}">

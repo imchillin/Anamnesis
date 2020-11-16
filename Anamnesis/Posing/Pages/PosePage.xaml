@@ -40,9 +40,16 @@
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 
-				<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3"
-					IsEnabled="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToBoolConverter}}">
-					<controls:BoneEditor Value="{Binding Skeleton.CurrentBone}"/>
+				<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
+
+					<Grid>
+						<controls:TransformEditor Value="{Binding Skeleton.CurrentBone}" Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+
+						<Grid Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}">
+							<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}"/>
+						</Grid>
+					</Grid>
+
 				</Border>
 
 				<Grid Grid.Row="1" Margin="3" IsEnabled="{Binding GPoseService.IsOverworld}">
@@ -93,8 +100,8 @@
 
 						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
 
-						<StackPanel Orientation="Horizontal" IsEnabled="{Binding PoseService.IsEnabled}" Margin="3,0,0,0">
-							<views:BoneView Width="16" Height="16" BoneName="CharacterRoot" DataContext="{Binding Skeleton}"/>
+						<StackPanel Orientation="Horizontal" Margin="3,0,0,0">
+							<RadioButton IsChecked="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToBoolConverter}, Mode=OneWay}" Checked="OnEditCharacterChecked"/>
 							<ana:TextBlock Text="Character" VerticalAlignment="Center" Margin="3" FontWeight="Light"/>
 						</StackPanel>
 
