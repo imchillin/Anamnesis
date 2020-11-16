@@ -42,13 +42,18 @@
 
 				<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
 
-					<Grid>
-						<controls:TransformEditor Value="{Binding Skeleton.CurrentBone}" Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+					<StackPanel Orientation="Vertical">
 
-						<Grid Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}">
-							<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}"/>
+						<ana:TextBlock Key="{Binding Skeleton.CurrentBone.TooltipKey, FallbackValue=Pose_CharacterRoot}" HorizontalAlignment="Center" Margin="3"/>
+
+						<Grid>
+							<controls:TransformEditor Value="{Binding Skeleton.CurrentBone}" Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+
+							<Grid Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}">
+								<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}"/>
+							</Grid>
 						</Grid>
-					</Grid>
+					</StackPanel>
 
 				</Border>
 
