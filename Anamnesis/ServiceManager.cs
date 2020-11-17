@@ -76,7 +76,6 @@ namespace Anamnesis.Services
 			await Add<PoseService>();
 			await Add<GameDataService>();
 			await Add<TipService>();
-			await Add<XmaService>();
 			await Add<TexToolsService>();
 
 			IsInitialized = true;

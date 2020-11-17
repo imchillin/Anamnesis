@@ -5,9 +5,9 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.XMA.Views"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800"
-			 IsVisibleChanged="OnIsVisibleChanged">
+			 d:DesignHeight="450" d:DesignWidth="800">
 
 	<Grid x:Name="ContentArea">
 
@@ -16,18 +16,14 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Button Grid.Row="0" Margin="6" Style="{StaticResource TransparentButton}" BorderThickness="0" Click="OnHeaderClicked">
-			<ana:TextBlock Key="XMA_PopularToday" Margin="3"/>
-		</Button>
-
-		<Grid Grid.Row="1" Visibility="{Binding XmaService.IsLoading, Converter={StaticResource B2V}}">
+		<Grid Grid.Row="1" Visibility="{Binding IsLoading, Converter={StaticResource B2V}}">
 			<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" 
 				Width="100" Height="100"
 				HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		</Grid>
 
-		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" Visibility="{Binding XmaService.IsLoading, Converter={StaticResource !B2V}}">
-			<ItemsControl Grid.Row="1" ItemsSource="{Binding XmaService.PopularToday}" HorizontalAlignment="Center" Margin="0, 0, 0, 100">
+		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" Visibility="{Binding IsLoading, Converter={StaticResource !B2V}}">
+			<ItemsControl Grid.Row="1" ItemsSource="{Binding Items}" HorizontalAlignment="Center" Margin="0, 0, 0, 100">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<WrapPanel />
@@ -36,7 +32,7 @@
 
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<Button Width="190" Height="143" Margin="2" Style="{StaticResource TransparentButton}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Click="OnEntryClicked">
+						<Button Width="196" Height="143" Margin="2" Style="{StaticResource TransparentButton}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Click="OnEntryClicked">
 							<Grid>
 								<Grid.RowDefinitions>
 									<RowDefinition Height="Auto"/>

@@ -16,7 +16,10 @@
 	"EquipmentSelector_Items": "Items",
 	"EquipmentSelector_Modded": "Modded",
 
-	"XMA_PopularToday": "Popular poses Today on XIV Mod Archive",
+	"Home_XmaTopToday": "XMA Top Today",
+	"Home_XmaLatest": "XMA Latest",
+	"Home_Wiki": "Wiki",
+	"Home_None": "None",
 
 	"Scene_World_Header": "World",
 	"Scene_World_Time": "Time:",

@@ -21,6 +21,11 @@ namespace Anamnesis.XMA
 		[JsonPropertyName("author")]
 		public AuthorInfo? Author { get; set; }
 
+		public void Open()
+		{
+			UrlUtility.Open("https://www.xivmodarchive.com/modid/" + this.Id);
+		}
+
 		public class AuthorInfo
 		{
 			[JsonPropertyName("xma_id")]
