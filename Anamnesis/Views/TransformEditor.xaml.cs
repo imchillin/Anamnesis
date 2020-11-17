@@ -3,6 +3,7 @@
 
 namespace Anamnesis.PoseModule.Controls
 {
+	using System;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
 	using Anamnesis.Styles.DependencyProperties;
@@ -12,7 +13,7 @@ namespace Anamnesis.PoseModule.Controls
 	/// </summary>
 	public partial class TransformEditor : UserControl
 	{
-		public static readonly IBind<object> ValueDp = Binder.Register<object, TransformEditor>(nameof(Value));
+		public static readonly IBind<ITransform> ValueDp = Binder.Register<ITransform, TransformEditor>(nameof(Value));
 
 		public TransformEditor()
 		{
@@ -20,7 +21,7 @@ namespace Anamnesis.PoseModule.Controls
 			this.ContentArea.DataContext = this;
 		}
 
-		public object Value
+		public ITransform Value
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);

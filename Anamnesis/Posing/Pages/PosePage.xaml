@@ -22,7 +22,7 @@
 
 	<Grid x:Name="ContentArea">
 
-		<Grid IsEnabled="{Binding GposeService.IsGpose}">
+		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
 				<ColumnDefinition Width="220"/>
@@ -34,7 +34,7 @@
 			</Grid.RowDefinitions>
 
 			<!-- Sidebar -->
-			<Grid Grid.Column="2" Grid.Row="1" x:Name="Sidebar">
+			<Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
 				<Grid.RowDefinitions>
 					<RowDefinition/>
 					<RowDefinition Height="Auto" />
@@ -57,7 +57,7 @@
 
 				</Border>
 
-				<Grid Grid.Row="1" Margin="3" IsEnabled="{Binding GPoseService.IsOverworld}">
+				<Grid Grid.Row="1" Margin="3" IsEnabled="{Binding GposeService.IsGpose}">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition/>
@@ -69,7 +69,7 @@
 			</Grid>
 
 			<!-- top Bar -->
-			<Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="3">
+			<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="3" IsEnabled="{Binding GposeService.IsGpose}">
 				<Grid Height="35">
 					<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 						<ToggleButton IsChecked="{Binding PoseService.IsEnabled}" Style="{StaticResource OutlineToggleButton}" Margin="3" Width="75">
@@ -124,15 +124,17 @@
 					</Grid>
 				</Grid>
 			</Border>
+
+			<Grid Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
+				<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.75"/>
+				<StackPanel Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
+					<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
+					<ana:TextBlock Key="Pose_WarningNotGPose" FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
+				</StackPanel>
+			</Grid>
 		</Grid>
 
-		<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
-			<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.75"/>
-			<StackPanel Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
-				<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
-				<ana:TextBlock Key="Pose_WarningNotGPose" Text="Posing is only available while in Group Pose. Type /Gpose in chat." FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
-			</StackPanel>
-		</Grid>
+		
 
 	</Grid>
 </UserControl>

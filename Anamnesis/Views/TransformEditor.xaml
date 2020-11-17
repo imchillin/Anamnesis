@@ -10,21 +10,21 @@
 	<Grid x:Name="ContentArea">
 		<StackPanel Margin="3" IsEnabled="{Binding Value, Converter={StaticResource NotNullToBoolConverter}}">
 
-			<GroupBox>
+			<GroupBox  IsEnabled="{Binding Value.CanRotate}">
 				<GroupBox.Header>
 					<controls:TextBlock Key="Pose_Rotation"/>
 				</GroupBox.Header>
 				<controls:QuaternionEditor Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}"/>
 			</GroupBox>
 
-			<GroupBox IsEnabled="{Binding PoseService.FreezeScale}">
+			<GroupBox IsEnabled="{Binding Value.CanScale}">
 				<GroupBox.Header>
 					<controls:TextBlock Key="Pose_Scale"/>
 				</GroupBox.Header>
-				<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1"/>
+				<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="True" Minimum="-10" Maximum="10" TickFrequency="0.1" CanLink="True"/>
 			</GroupBox>
 
-			<GroupBox IsEnabled="{Binding PoseService.FreezePositions}">
+			<GroupBox IsEnabled="{Binding Value.CanTranslate}">
 				<GroupBox.Header>
 					<controls:TextBlock Key="Pose_Position"/>
 				</GroupBox.Header>

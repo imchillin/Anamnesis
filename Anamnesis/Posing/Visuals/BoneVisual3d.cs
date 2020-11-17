@@ -17,7 +17,7 @@ namespace Anamnesis.PoseModule
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
 	[AddINotifyPropertyChangedInterface]
-	public class BoneVisual3d : ModelVisual3D
+	public class BoneVisual3d : ModelVisual3D, ITransform
 	{
 		private readonly RotateTransform3D rotation;
 		private readonly TranslateTransform3D position;
@@ -54,8 +54,11 @@ namespace Anamnesis.PoseModule
 		public bool IsEnabled { get; set; } = true;
 		public string? BoneName { get; set; }
 
+		public bool CanRotate => PoseService.Instance.FreezeRotation;
 		public CmQuaternion Rotation { get; set; }
+		public bool CanScale => PoseService.Instance.FreezeScale;
 		public CmVector Scale { get; set; }
+		public bool CanTranslate => PoseService.Instance.FreezePositions;
 		public CmVector Position { get; set; }
 
 		public BoneVisual3d? LinkedEye { get; set; }
