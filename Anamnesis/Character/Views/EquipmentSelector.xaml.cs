@@ -65,7 +65,7 @@ namespace Anamnesis.Character.Views
 			All,
 			Items,
 			Props,
-			Special,
+			Modded,
 		}
 
 		public IItem? Value
@@ -124,10 +124,10 @@ namespace Anamnesis.Character.Views
 				if (this.mode == Mode.Items && (obj is Prop || item.Key == 0))
 					return false;
 
-				if (this.mode == Mode.Special && (obj is Prop || item.Key != 0))
+				if (this.mode == Mode.Props && !(obj is Prop))
 					return false;
 
-				if (this.mode == Mode.Props && !(obj is Prop))
+				if (this.mode == Mode.Modded && item.Mod == null)
 					return false;
 
 				if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
@@ -209,9 +209,9 @@ namespace Anamnesis.Character.Views
 			this.Selector.FilterItems();
 		}
 
-		private void OnSpecialMode(object sender, RoutedEventArgs e)
+		private void OnModdedMode(object sender, RoutedEventArgs e)
 		{
-			this.mode = Mode.Special;
+			this.mode = Mode.Modded;
 			this.Selector.FilterItems();
 		}
 	}

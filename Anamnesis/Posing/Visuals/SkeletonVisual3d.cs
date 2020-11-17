@@ -133,6 +133,7 @@ namespace Anamnesis.PoseModule
 			{
 				if (bone.ViewModel == transform)
 				{
+					bone.BoneName = name;
 					return bone;
 				}
 			}

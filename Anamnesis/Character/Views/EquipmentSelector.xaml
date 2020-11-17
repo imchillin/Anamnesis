@@ -5,6 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" Width="256">
 
@@ -41,8 +42,8 @@
 				<controls:TextBlock Key="EquipmentSelector_Items" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 
-			<RadioButton Margin="3" Checked="OnSpecialMode">
-				<controls:TextBlock Key="EquipmentSelector_Special" Margin="0, -3, 6, 0"/>
+			<RadioButton Margin="3" Checked="OnModdedMode">
+				<controls:TextBlock Key="EquipmentSelector_Modded" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 		</StackPanel>
 
@@ -81,23 +82,30 @@
 							<TextBlock Text="{Binding ModelSet}" Style="{StaticResource Label}"/>
 							<TextBlock Text="{Binding ModelBase}" Style="{StaticResource Label}"/>
 							<TextBlock Text="{Binding ModelVariant}" Style="{StaticResource Label}"/>
+
+							<fa:IconBlock Icon="pen" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+
 						</StackPanel>
 
-						<Grid Grid.Column="1" Grid.Row="2" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="3, 0, 0, 0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
-
-							<TextBlock Grid.Column="0" Text="Modded:" Style="{StaticResource Label}" HorizontalAlignment="Left" />
-							<TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name}" Style="{StaticResource Label}" HorizontalAlignment="Left" />
-						</Grid>
-						
 						<Rectangle Grid.ColumnSpan="2" 
 									   Grid.RowSpan="2" 
-									   Fill="Transparent" 
-									   Visibility="{Binding Description, Converter={StaticResource StringHasContentToVisibility}}" 
-									   ToolTipService.ToolTip="{Binding Description}"/>
+									   Fill="Transparent" >
+							<ToolTipService.ToolTip>
+								<StackPanel Orientation="Vertical">
+									<TextBlock Text="{Binding Description}" Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+
+									<Grid Grid.Column="1" Grid.Row="2" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="3, 0, 0, 0">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="Auto"/>
+											<ColumnDefinition/>
+										</Grid.ColumnDefinitions>
+
+										<TextBlock Grid.Column="0" Text="Modded: " HorizontalAlignment="Left" />
+										<TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name}" HorizontalAlignment="Left" />
+									</Grid>
+								</StackPanel>
+							</ToolTipService.ToolTip>
+						</Rectangle>
 
 					</Grid>
 				</DataTemplate>

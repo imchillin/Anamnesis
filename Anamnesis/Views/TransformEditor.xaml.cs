@@ -3,28 +3,28 @@
 
 namespace Anamnesis.PoseModule.Controls
 {
+	using System;
 	using System.Windows.Controls;
+	using Anamnesis.Memory;
 	using Anamnesis.Styles.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for BoneEditor.xaml.
 	/// </summary>
-	public partial class BoneEditor : UserControl
+	public partial class TransformEditor : UserControl
 	{
-		public static readonly IBind<BoneVisual3d> ValueDp = Binder.Register<BoneVisual3d, BoneEditor>(nameof(Value));
+		public static readonly IBind<ITransform> ValueDp = Binder.Register<ITransform, TransformEditor>(nameof(Value));
 
-		public BoneEditor()
+		public TransformEditor()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 		}
 
-		public BoneVisual3d Value
+		public ITransform Value
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
 		}
-
-		public PoseService PoseService { get => PoseModule.PoseService.Instance; }
 	}
 }

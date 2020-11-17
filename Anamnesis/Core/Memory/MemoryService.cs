@@ -5,6 +5,7 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Diagnostics;
 	using System.IO;
 	using System.Runtime.InteropServices;
@@ -382,7 +383,15 @@ namespace Anamnesis.Memory
 
 			// if still no process, shutdown.
 			if (proc == null)
-				throw new Exception("Unable to locate FFXIV process");
+			{
+				App.Current.Dispatcher.Invoke(() =>
+				{
+					App.Current.MainWindow.Close();
+					App.Current.Shutdown();
+				});
+
+				return;
+			}
 
 			this.OpenProcess(proc);
 			await AddressService.Scan();
@@ -450,18 +459,31 @@ namespace Anamnesis.Memory
 		{
 			while (this.IsAlive && Process != null)
 			{
-				bool newAlive = GetIsProcessAlive();
-
-				if (newAlive != IsProcessAlive && !newAlive)
-				{
-					Log.Write("FFXIV Process has terminated");
-					TargetService.Instance.ClearSelection();
-					Task.Run(this.GetProcess);
-				}
-
-				IsProcessAlive = newAlive;
-
 				Thread.Sleep(100);
+
+				IsProcessAlive = GetIsProcessAlive();
+
+				if (!IsProcessAlive)
+				{
+					try
+					{
+						Log.Write("FFXIV Process has terminated");
+						TargetService.Instance.ClearSelection();
+						Task.Run(this.GetProcess).Wait();
+					}
+					catch (AggregateException ex)
+					{
+						// Ignore "Only part of a readmemory operation completed errors, caused by reading memory while the game is shutting down.
+						if (ex.InnerException is Win32Exception)
+							continue;
+
+						Log.Write(new Exception("Unable to get ffxiv process", ex));
+					}
+					catch (Exception ex)
+					{
+						Log.Write(new Exception("Unable to get ffxiv process", ex));
+					}
+				}
 			}
 		}
 

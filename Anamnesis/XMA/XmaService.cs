@@ -47,27 +47,35 @@ namespace Anamnesis.XMA
 
 			Application.Current.Dispatcher.Invoke(() => this.IsLoading = true);
 
-			WebRequest req = WebRequest.Create(SearchUrl + "&json=true");
-			WebResponse response = await req.GetResponseAsync();
-			using StreamReader reader = new StreamReader(response.GetResponseStream());
-			string json = reader.ReadToEnd();
-			SearchResultWrapper result = SerializerService.Deserialize<SearchResultWrapper>(json);
-
-			Application.Current.Dispatcher.Invoke(() =>
+			try
 			{
-				this.PopularToday.Clear();
+				WebRequest req = WebRequest.Create(SearchUrl + "&json=true");
+				WebResponse response = await req.GetResponseAsync();
+				using StreamReader reader = new StreamReader(response.GetResponseStream());
+				string json = reader.ReadToEnd();
+				SearchResultWrapper result = SerializerService.Deserialize<SearchResultWrapper>(json);
 
-				if (result.Success && result.SearchResults != null)
+				Application.Current.Dispatcher.Invoke(() =>
 				{
-					for (int i = 0; i < Math.Min(8, result.SearchResults.Count); i++)
-					{
-						SearchResult searchResult = result.SearchResults[i];
-						this.PopularToday.Add(searchResult);
-					}
-				}
+					this.PopularToday.Clear();
 
+					if (result.Success && result.SearchResults != null)
+					{
+						for (int i = 0; i < Math.Min(8, result.SearchResults.Count); i++)
+						{
+							SearchResult searchResult = result.SearchResults[i];
+							this.PopularToday.Add(searchResult);
+						}
+					}
+
+					this.IsLoading = false;
+				});
+			}
+			catch (Exception ex)
+			{
 				this.IsLoading = false;
-			});
+				Log.Write(SimpleLog.Severity.Warning, ex);
+			}
 		}
 
 		public void OpenSearch()

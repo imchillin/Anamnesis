@@ -100,6 +100,7 @@
 				<converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
 				<converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 				<converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
+				<converters:NullToBoolConverter x:Key="NullToBoolConverter"/>
 				<BooleanToVisibilityConverter x:Key="B2V"/>
 				<converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
 				<converters:RadiansToDegreesConverter x:Key="Rad2Deg"/>

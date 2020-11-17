@@ -13,7 +13,7 @@ namespace Anamnesis.Styles.Controls
 	/// </summary>
 	public partial class TextBlock : System.Windows.Controls.TextBlock
 	{
-		public static readonly IBind<string> KeyDp = Binder.Register<string, TextBlock>(nameof(Key), OnKeyChanged);
+		public static readonly IBind<string> KeyDp = Binder.Register<string, TextBlock>(nameof(Key), OnKeyChanged, BindMode.OneWay);
 
 		public TextBlock()
 		{

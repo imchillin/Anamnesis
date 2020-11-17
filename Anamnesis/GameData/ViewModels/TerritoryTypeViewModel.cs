@@ -31,16 +31,19 @@ namespace Anamnesis.GameData.ViewModels
 				{
 					this.weathers = new List<IWeather>();
 
-					WeatherRate weatherRate = GameDataService.WeatherRates!.GetRow((uint)this.Value.WeatherRate);
-
-					if (weatherRate != null && weatherRate.UnkStruct0 != null)
+					if (this.Value != null)
 					{
-						foreach (WeatherRate.UnkStruct0Struct wr in weatherRate.UnkStruct0)
-						{
-							if (wr.Weather == 0)
-								continue;
+						WeatherRate weatherRate = GameDataService.WeatherRates!.GetRow((uint)this.Value.WeatherRate);
 
-							this.weathers.Add(GameDataService.Weathers!.Get(wr.Weather));
+						if (weatherRate != null && weatherRate.UnkStruct0 != null)
+						{
+							foreach (WeatherRate.UnkStruct0Struct wr in weatherRate.UnkStruct0)
+							{
+								if (wr.Weather == 0)
+									continue;
+
+								this.weathers.Add(GameDataService.Weathers!.Get(wr.Weather));
+							}
 						}
 					}
 				}

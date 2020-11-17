@@ -19,7 +19,7 @@ namespace Anamnesis.Memory
 		public Vector Scale;
 	}
 
-	public class TransformViewModel : MemoryViewModelBase<Transform>
+	public class TransformViewModel : MemoryViewModelBase<Transform>, ITransform
 	{
 		public TransformViewModel(IntPtr pointer, IStructViewModel? parent = null)
 			: base(pointer, parent)
@@ -31,8 +31,13 @@ namespace Anamnesis.Memory
 		{
 		}
 
+		public bool CanTranslate => true;
 		[ModelField] public Vector Position { get; set; }
+
+		public bool CanRotate => true;
 		[ModelField] public Quaternion Rotation { get; set; }
+
+		public bool CanScale => true;
 		[ModelField] public Vector Scale { get; set; }
 	}
 }
