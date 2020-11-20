@@ -9,7 +9,7 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" Width="256">
 
-	<Grid>
+	<Grid x:Name="ContentArea">
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -30,19 +30,19 @@
 		</Expander>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6, 0, 0, 0">
-			<RadioButton Margin="3" IsChecked="True" Checked="OnAllMode">
+			<RadioButton Margin="3" IsChecked="{Binding AllMode}">
 				<controls:TextBlock Key="EquipmentSelector_All" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 
-			<RadioButton Margin="3" Checked="OnPropsMode">
+			<RadioButton Margin="3" IsChecked="{Binding PropsMode}">
 				<controls:TextBlock Key="EquipmentSelector_Props" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 
-			<RadioButton Margin="3" Checked="OnItemsMode">
+			<RadioButton Margin="3"  IsChecked="{Binding ItemsMode}">
 				<controls:TextBlock Key="EquipmentSelector_Items" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 
-			<RadioButton Margin="3" Checked="OnModdedMode">
+			<RadioButton Margin="3"  IsChecked="{Binding ModdedMode}">
 				<controls:TextBlock Key="EquipmentSelector_Modded" Margin="0, -3, 6, 0"/>
 			</RadioButton>
 		</StackPanel>

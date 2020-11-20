@@ -19,16 +19,17 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
+		private static Mode mode = Mode.All;
+		private static Classes classFilter = Classes.All;
+
 		private readonly ItemSlots slot;
-		private Mode mode;
-		private Classes classFilter;
 
 		public EquipmentSelector(ItemSlots slot)
 		{
 			this.slot = slot;
 
 			this.InitializeComponent();
-			this.DataContext = this;
+			this.ContentArea.DataContext = this;
 
 			this.Selector.Items.Add(ItemUtility.NoneItem);
 			this.Selector.Items.Add(ItemUtility.NpcbodyItem);
@@ -53,7 +54,8 @@ namespace Anamnesis.Character.Views
 				}
 			}
 
-			this.ClassFilter = Classes.All;
+			this.JobFilterText.Text = classFilter.Describe();
+			this.Selector.FilterItems();
 		}
 
 		public event DrawerEvent? Close;
@@ -80,6 +82,58 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
+		public bool AllMode
+		{
+			get => mode == Mode.All;
+			set
+			{
+				if (value)
+				{
+					mode = Mode.All;
+					this.Selector.FilterItems();
+				}
+			}
+		}
+
+		public bool PropsMode
+		{
+			get => mode == Mode.Props;
+			set
+			{
+				if (value)
+				{
+					mode = Mode.Props;
+					this.Selector.FilterItems();
+				}
+			}
+		}
+
+		public bool ItemsMode
+		{
+			get => mode == Mode.Items;
+			set
+			{
+				if (value)
+				{
+					mode = Mode.Items;
+					this.Selector.FilterItems();
+				}
+			}
+		}
+
+		public bool ModdedMode
+		{
+			get => mode == Mode.Modded;
+			set
+			{
+				if (value)
+				{
+					mode = Mode.Modded;
+					this.Selector.FilterItems();
+				}
+			}
+		}
+
 		SelectorDrawer SelectorDrawer.ISelectorView.Selector
 		{
 			get
@@ -92,11 +146,11 @@ namespace Anamnesis.Character.Views
 		{
 			get
 			{
-				return this.classFilter;
+				return classFilter;
 			}
 			set
 			{
-				this.classFilter = value;
+				classFilter = value;
 				this.JobFilterText.Text = value.Describe();
 				this.Selector.FilterItems();
 			}
@@ -120,13 +174,13 @@ namespace Anamnesis.Character.Views
 				if (string.IsNullOrEmpty(item.Name))
 					return false;
 
-				if (this.mode == Mode.Items && (obj is Prop || item.Key == 0))
+				if (mode == Mode.Items && (obj is Prop || item.Key == 0))
 					return false;
 
-				if (this.mode == Mode.Props && !(obj is Prop))
+				if (mode == Mode.Props && !(obj is Prop))
 					return false;
 
-				if (this.mode == Mode.Modded && item.Mod == null)
+				if (mode == Mode.Modded && item.Mod == null)
 					return false;
 
 				if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
@@ -188,30 +242,6 @@ namespace Anamnesis.Character.Views
 			}
 
 			return false;
-		}
-
-		private void OnAllMode(object sender, RoutedEventArgs e)
-		{
-			this.mode = Mode.All;
-			this.Selector?.FilterItems();
-		}
-
-		private void OnPropsMode(object sender, RoutedEventArgs e)
-		{
-			this.mode = Mode.Props;
-			this.Selector.FilterItems();
-		}
-
-		private void OnItemsMode(object sender, RoutedEventArgs e)
-		{
-			this.mode = Mode.Items;
-			this.Selector.FilterItems();
-		}
-
-		private void OnModdedMode(object sender, RoutedEventArgs e)
-		{
-			this.mode = Mode.Modded;
-			this.Selector.FilterItems();
 		}
 	}
 }
