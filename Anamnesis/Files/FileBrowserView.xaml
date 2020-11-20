@@ -6,7 +6,7 @@
 			 xmlns:local="clr-namespace:Anamnesis.GUI.Views"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 	
@@ -32,27 +32,44 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
 			<ToggleButton Style="{StaticResource MaterialDesignActionToggleButton}" Grid.Column="0" Width="22" Height="22" 
-						  Margin="6, 0, 3, 0" ToolTip="Flatten Hierarchy" IsChecked="{Binding IsFlattened}">
+						  Margin="6, 0, 3, 0"  IsChecked="{Binding IsFlattened}">
+				<ToggleButton.ToolTip>
+					<ana:TextBlock Key="FileBrowser_Flatten"/>
+				</ToggleButton.ToolTip>
 				<ToggleButton.Content>
-					<fa:IconBlock Icon="Folder" FontSize="12"/>
+					<fa:IconBlock Icon="folder" FontSize="12"/>
 				</ToggleButton.Content>
 				<materialDesign:ToggleButtonAssist.OnContent>
 					<fa:IconBlock Icon="Copy" FontSize="12"/>
 				</materialDesign:ToggleButtonAssist.OnContent>
 			</ToggleButton>
 
-			<Button Style="{StaticResource TransparentButton}" Margin="3" Click="OnGoUpClicked" IsEnabled="{Binding CanGoUp}" Grid.Column="1">
+			<Button Style="{StaticResource TransparentButton}" Margin="3" Grid.Column="1" Click="OnCreateFolderClicked">
+				<Button.ToolTip>
+					<ana:TextBlock Key="FileBrowser_CreateFolder"/>
+				</Button.ToolTip>
+				
+				<fa:IconBlock Icon="FolderPlus"/>
+			</Button>
+
+			<Button Style="{StaticResource TransparentButton}" Margin="3" Click="OnGoUpClicked" IsEnabled="{Binding CanGoUp}" Grid.Column="2">
+				<Button.ToolTip>
+					<ana:TextBlock Key="FileBrowser_GoUp"/>
+				</Button.ToolTip>
+				
 				<fa:IconBlock Icon="LevelUpAlt" Opacity="0.5"/>
 			</Button>
-			<TextBlock Grid.Column="2" Text="{Binding CurrentPath}" VerticalAlignment="Center" Margin="3, 0, 3, 0"/>
+			
+			<TextBlock Grid.Column="3" Text="{Binding CurrentPath}" VerticalAlignment="Center" Margin="3, 0, 3, 0"/>
 
 		</Grid>
 
-		<ListBox Grid.Row="2" ItemsSource="{Binding Entries}" SelectedItem="{Binding Selected}" MouseDoubleClick="OnMouseDoubleClick">
+		<ListBox Grid.Row="2" ItemsSource="{Binding Entries}" SelectedItem="{Binding Selected}" MouseDoubleClick="OnMouseDoubleClick" HorizontalContentAlignment="Stretch">
 			<ListBox.ItemContainerStyle>
 				<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
 					<Setter Property="Padding" Value="6"/>
@@ -76,12 +93,15 @@
 						<Grid.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="Delete" Click="OnDeleteClick"/>
+								<MenuItem Header="Rename" Click="OnRenameClick"/>
 							</ContextMenu>
 						</Grid.ContextMenu>
 
 						<fa:IconBlock Grid.RowSpan="2" Grid.Column="0" Icon="{Binding Icon}" Margin="3, 0, 3, 0" VerticalAlignment="Center"/>
-						
-						<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="3, 0, 3, 0"/>
+
+						<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="3, 0, 3, 0"  Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}"/>
+						<TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Rename}" Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}" LostFocus="OnRenameComplete"/>
+
 						<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Directory}" Margin="3, 0, 3, 0" Visibility="{Binding Directory, Converter={StaticResource NotNullToVisibilityConverter}}" Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.5" FontSize="10"/>
 
 					</Grid>
@@ -107,8 +127,8 @@
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 
-			<cm3Controls:IconButton Grid.Column="0" Icon="Check" Text="Select" Margin="3" IsEnabled="{Binding CanSelect, FallbackValue=false}" Click="OnSelectClicked"/>
-			<cm3Controls:IconButton Grid.Column="1" Icon="Wrench" Text="Advanced..." Margin="3" IsEnabled="{Binding CanSelectAdvanced, FallbackValue=false}" Click="OnAdvancedClicked"/>
+			<ana:IconButton Grid.Column="0" Icon="Check" Text="Select" Margin="3" IsEnabled="{Binding CanSelect, FallbackValue=false}" Click="OnSelectClicked"/>
+			<ana:IconButton Grid.Column="1" Icon="Wrench" Text="Advanced..." Margin="3" IsEnabled="{Binding CanSelectAdvanced, FallbackValue=false}" Click="OnAdvancedClicked"/>
 			<Button Grid.Column="2" Content="..." Margin="3" ToolTip="Browse for a file" Click="OnBrowseClicked"/>
 		</Grid>
 

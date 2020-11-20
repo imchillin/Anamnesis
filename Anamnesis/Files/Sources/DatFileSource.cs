@@ -78,6 +78,11 @@ namespace Anamnesis.Files
 			{
 				return Task.CompletedTask;
 			}
+
+			public Task Rename(string newName)
+			{
+				throw new NotSupportedException();
+			}
 		}
 
 		public class Directory : IFileSource.IDirectory
@@ -92,6 +97,16 @@ namespace Anamnesis.Files
 			public string Name { get; private set; }
 			public string Path { get; private set; }
 			public IFileSource Source { get; private set; }
+
+			public IFileSource.IDirectory CreateSubDirectory()
+			{
+				throw new NotSupportedException();
+			}
+
+			public Task Rename(string newName)
+			{
+				throw new NotSupportedException();
+			}
 
 			public Task Delete()
 			{

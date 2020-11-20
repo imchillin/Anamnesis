@@ -347,6 +347,7 @@ namespace Anamnesis.Files
 			public IFileSource Source { get; }
 
 			public Task Delete();
+			public Task Rename(string newName);
 		}
 
 		public interface IFile : IEntry
@@ -356,6 +357,7 @@ namespace Anamnesis.Files
 
 		public interface IDirectory : IEntry
 		{
+			public IDirectory CreateSubDirectory();
 		}
 
 		public string Name { get; }

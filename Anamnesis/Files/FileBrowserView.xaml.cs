@@ -332,6 +332,22 @@ namespace Anamnesis.GUI.Views
 			Task.Run(this.UpdateEntries);
 		}
 
+		private async void OnCreateFolderClicked(object? sender, RoutedEventArgs e)
+		{
+			if (this.CurrentDir == null)
+				return;
+
+			IDirectory newDir = this.CurrentDir.CreateSubDirectory();
+			await this.UpdateEntries();
+			this.Select(newDir);
+
+			if (this.Selected == null)
+				return;
+
+			this.Selected.Rename = this.Selected.Name;
+			this.Selected.IsRenaming = true;
+		}
+
 		private void OnSelectClicked(object? sender, RoutedEventArgs? e)
 		{
 			if (!this.CanSelect)
@@ -382,12 +398,47 @@ namespace Anamnesis.GUI.Views
 			_ = Task.Run(this.UpdateEntries);
 		}
 
+		private void OnRenameClick(object sender, RoutedEventArgs e)
+		{
+			if (this.Selected == null)
+				return;
+
+			this.Selected.Rename = this.Selected.Name;
+			this.Selected.IsRenaming = true;
+		}
+
+		private async void OnRenameComplete(object sender, RoutedEventArgs e)
+		{
+			if (this.Selected == null)
+				return;
+
+			this.Selected.IsRenaming = false;
+
+			if (this.Selected.Rename == null || this.Selected.Rename == this.Selected.Name)
+				return;
+
+			await this.Selected.Entry.Rename(this.Selected.Rename);
+			_ = Task.Run(this.UpdateEntries);
+		}
+
 		private void CloseDrawer()
 		{
 			this.IsOpen = false;
 			this.Close?.Invoke();
 		}
 
+		private void Select(IEntry entry)
+		{
+			foreach (EntryWrapper? wrapper in this.Entries)
+			{
+				if (wrapper.Entry.Path == entry.Path)
+				{
+					this.selected = wrapper;
+				}
+			}
+		}
+
+		[AddINotifyPropertyChangedInterface]
 		public class EntryWrapper
 		{
 			public readonly IFileSource.IEntry Entry;
@@ -430,6 +481,9 @@ namespace Anamnesis.GUI.Views
 					return true;
 				}
 			}
+
+			public bool IsRenaming { get; set; }
+			public string? Rename { get; set; }
 
 			public string Directory
 			{

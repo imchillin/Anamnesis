@@ -6,6 +6,11 @@
 	"Common_None": "None",
 	"Common_All": "All",
 
+	"FileBrowser_GoUp": "Go Up",
+	"FileBrowser_Flatten": "Flatten Hierarchy",
+	"FileBrowser_CreateFolder": "Create Folder",
+	"FileBrowser_Advanced": "Advanced",
+
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",
 	"Target_Npc": "NPCs",

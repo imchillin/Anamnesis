@@ -9,10 +9,11 @@ namespace Anamnesis.Files
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Files.Infos;
-
+	using Microsoft.VisualBasic.FileIO;
 	using Directories = System.IO.Directory;
 	using Files = System.IO.File;
 	using Paths = System.IO.Path;
+	using SearchOption = System.IO.SearchOption;
 
 	public class LocalFileSource : IFileSource
 	{
@@ -125,7 +126,16 @@ namespace Anamnesis.Files
 
 			public Task Delete()
 			{
-				Files.Delete(this.Path);
+				FileSystem.DeleteFile(this.Path, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+				////Files.Delete(this.Path);
+				return Task.CompletedTask;
+			}
+
+			public Task Rename(string newName)
+			{
+				string newPath = Paths.GetDirectoryName(this.Path) + "\\" + newName + "." + Paths.GetExtension(this.Path);
+				Files.Move(this.Path, newPath);
+				this.Path = newPath;
 				return Task.CompletedTask;
 			}
 		}
@@ -143,9 +153,25 @@ namespace Anamnesis.Files
 			public string Path { get; private set; }
 			public IFileSource Source { get; private set; }
 
+			public IFileSource.IDirectory CreateSubDirectory()
+			{
+				string newPath = this.Path + "New Directory";
+				Directories.CreateDirectory(newPath);
+				return new Directory(newPath, (LocalFileSource)this.Source);
+			}
+
 			public Task Delete()
 			{
-				Directories.Delete(this.Path, true);
+				FileSystem.DeleteDirectory(this.Path, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+				////Directories.Delete(this.Path, true);
+				return Task.CompletedTask;
+			}
+
+			public Task Rename(string newName)
+			{
+				string newPath = Paths.GetDirectoryName(this.Path) + "\\" + newName;
+				Directories.Move(this.Path, newPath);
+				this.Path = newPath;
 				return Task.CompletedTask;
 			}
 		}
