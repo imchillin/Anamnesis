@@ -67,10 +67,8 @@ namespace Anamnesis.Views
 
 			this.Result = true;
 
-			App.Current.Dispatcher.Invoke(() =>
-			{
-				this.Close?.Invoke();
-			});
+			await Dispatch.MainThread();
+			this.Close?.Invoke();
 		}
 	}
 }

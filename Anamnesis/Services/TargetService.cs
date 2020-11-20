@@ -68,7 +68,8 @@ namespace Anamnesis
 				}
 			}
 
-			App.Current.Dispatcher.Invoke(() => Instance.PinnedActors.Add(actor));
+			await Dispatch.MainThread();
+			Instance.PinnedActors.Add(actor);
 
 			if (Instance.SelectedActor == null)
 			{
@@ -162,12 +163,10 @@ namespace Anamnesis
 			});
 		}
 
-		public Task Retarget()
+		public async Task Retarget()
 		{
-			App.Current.Dispatcher.Invoke(() =>
-			{
-				this.SelectedActor = null;
-			});
+			await Dispatch.MainThread();
+			this.SelectedActor = null;
 
 			if (this.PinnedActors.Count > 0)
 			{
@@ -178,8 +177,6 @@ namespace Anamnesis
 
 				this.SelectActor(this.PinnedActors[0]);
 			}
-
-			return Task.CompletedTask;
 		}
 
 		public void SelectActor(ActorTableActor actor)

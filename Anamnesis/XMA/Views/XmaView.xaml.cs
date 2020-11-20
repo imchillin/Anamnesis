@@ -66,7 +66,7 @@ namespace Anamnesis.XMA.Views
 
 		private async Task Refresh()
 		{
-			await Dispatch.UiThread();
+			await Dispatch.MainThread();
 
 			if (this.Type != Settings.HomeWidgetType.XmaLatest && this.Type != Settings.HomeWidgetType.XmaTop)
 				return;
@@ -85,7 +85,7 @@ namespace Anamnesis.XMA.Views
 
 				if (result.Success && result.SearchResults != null)
 				{
-					await Dispatch.UiThread();
+					await Dispatch.MainThread();
 					this.Items.Clear();
 					foreach (SearchResult? entry in result.SearchResults)
 					{

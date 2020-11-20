@@ -76,13 +76,12 @@ namespace Anamnesis
 			{
 				await Services.InitializeServices();
 
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					Window oldwindow = this.MainWindow;
-					this.MainWindow = new Anamnesis.GUI.MainWindow();
-					this.MainWindow.Show();
-					oldwindow.Close();
-				});
+				await Dispatch.MainThread();
+
+				Window oldwindow = this.MainWindow;
+				this.MainWindow = new Anamnesis.GUI.MainWindow();
+				this.MainWindow.Show();
+				oldwindow.Close();
 			}
 			catch (Exception ex)
 			{

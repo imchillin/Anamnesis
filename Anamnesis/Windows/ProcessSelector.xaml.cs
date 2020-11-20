@@ -111,10 +111,8 @@ namespace Anamnesis.GUI.Windows
 				if (Application.Current == null)
 					return;
 
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					loaded = this.IsLoaded;
-				});
+				await Dispatch.MainThread();
+				loaded = this.IsLoaded;
 
 				if (!loaded)
 					return;
@@ -124,11 +122,9 @@ namespace Anamnesis.GUI.Windows
 				{
 					if (process.ProcessName.ToLower().Contains("ffxiv_dx11"))
 					{
-						Application.Current.Dispatcher.Invoke(() =>
-						{
-							this.Selected = process;
-							this.window?.Close();
-						});
+						await Dispatch.MainThread();
+						this.Selected = process;
+						this.window?.Close();
 
 						return;
 					}

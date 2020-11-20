@@ -203,23 +203,26 @@ namespace Anamnesis.PoseModule
 				BoneVisual3d? leftEye = null;
 				BoneVisual3d? rightEye = null;
 
-				for (int i = 0; i < skeletonVm.Head.Transforms.Count; i++)
-				////foreach (TransformViewModel boneTrans in skeletonVm.Head.Transforms)
+				lock (skeletonVm.Head.Transforms)
 				{
-					TransformViewModel boneTrans = skeletonVm.Head.Transforms[i];
-					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-					this.Bones.Add(bone);
-					bone.Parent = headRoot;
-
-					if (i == SkeletonUtility.HeadBoneIndexLookup["EyeLeft"])
-						leftEye = bone;
-
-					if (i == SkeletonUtility.HeadBoneIndexLookup["EyeRight"])
-						rightEye = bone;
-
-					if (headRoot == null)
+					for (int i = 0; i < skeletonVm.Head.Transforms.Count; i++)
+					////foreach (TransformViewModel boneTrans in skeletonVm.Head.Transforms)
 					{
-						this.Children.Add(bone);
+						TransformViewModel boneTrans = skeletonVm.Head.Transforms[i];
+						BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
+						this.Bones.Add(bone);
+						bone.Parent = headRoot;
+
+						if (i == SkeletonUtility.HeadBoneIndexLookup["EyeLeft"])
+							leftEye = bone;
+
+						if (i == SkeletonUtility.HeadBoneIndexLookup["EyeRight"])
+							rightEye = bone;
+
+						if (headRoot == null)
+						{
+							this.Children.Add(bone);
+						}
 					}
 				}
 
@@ -232,36 +235,45 @@ namespace Anamnesis.PoseModule
 
 			if (skeletonVm.Hair != null)
 			{
-				foreach (TransformViewModel boneTrans in skeletonVm.Hair.Transforms)
+				lock (skeletonVm.Hair.Transforms)
 				{
-					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-					this.Bones.Add(bone);
-					bone.Parent = headRoot;
-
-					if (headRoot == null)
+					foreach (TransformViewModel boneTrans in skeletonVm.Hair.Transforms)
 					{
-						this.Children.Add(bone);
+						BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
+						this.Bones.Add(bone);
+						bone.Parent = headRoot;
+
+						if (headRoot == null)
+						{
+							this.Children.Add(bone);
+						}
 					}
 				}
 			}
 
 			if (skeletonVm.Met != null)
 			{
-				foreach (TransformViewModel boneTrans in skeletonVm.Met.Transforms)
+				lock (skeletonVm.Met.Transforms)
 				{
-					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-					this.Bones.Add(bone);
-					this.Children.Add(bone);
+					foreach (TransformViewModel boneTrans in skeletonVm.Met.Transforms)
+					{
+						BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
+						this.Bones.Add(bone);
+						this.Children.Add(bone);
+					}
 				}
 			}
 
 			if (skeletonVm.Top != null)
 			{
-				foreach (TransformViewModel boneTrans in skeletonVm.Top.Transforms)
+				lock (skeletonVm.Top.Transforms)
 				{
-					BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-					this.Bones.Add(bone);
-					this.Children.Add(bone);
+					foreach (TransformViewModel boneTrans in skeletonVm.Top.Transforms)
+					{
+						BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
+						this.Bones.Add(bone);
+						this.Children.Add(bone);
+					}
 				}
 			}
 
@@ -280,10 +292,8 @@ namespace Anamnesis.PoseModule
 		{
 			while (Application.Current != null && this.CurrentBone != null && PoseService.Instance.IsEnabled)
 			{
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					this.CurrentBone?.WriteTransform(this);
-				});
+				await Dispatch.MainThread();
+				this.CurrentBone?.WriteTransform(this);
 
 				// up to 60 times a second
 				await Task.Delay(16);

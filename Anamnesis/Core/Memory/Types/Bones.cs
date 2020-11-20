@@ -52,21 +52,24 @@ namespace Anamnesis.Memory
 				if (this.Count > 512)
 					return changed;
 
-				if (this.Count <= 0)
+				lock (this.Transforms)
 				{
-					this.Transforms.Clear();
-				}
-				else
-				{
-					if (this.Transforms.Count != this.Count)
+					if (this.Count <= 0)
 					{
 						this.Transforms.Clear();
-
-						IntPtr ptr = this.TransformArray;
-						for (int i = 0; i < this.Count; i++)
+					}
+					else
+					{
+						if (this.Transforms.Count != this.Count)
 						{
-							this.Transforms.Add(new TransformViewModel(ptr));
-							ptr += 0x30;
+							this.Transforms.Clear();
+
+							IntPtr ptr = this.TransformArray;
+							for (int i = 0; i < this.Count; i++)
+							{
+								this.Transforms.Add(new TransformViewModel(ptr));
+								ptr += 0x30;
+							}
 						}
 					}
 				}

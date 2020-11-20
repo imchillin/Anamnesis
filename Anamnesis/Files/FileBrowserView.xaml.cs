@@ -68,14 +68,12 @@ namespace Anamnesis.GUI.Views
 				Task.Run(async () =>
 				{
 					await Task.Delay(100);
-					Application.Current.Dispatcher.Invoke(() =>
-					{
-						this.FileNameInputBox.Focus();
-						this.FileNameInputBox.SelectAll();
+					await Dispatch.MainThread();
+					this.FileNameInputBox.Focus();
+					this.FileNameInputBox.SelectAll();
 
-						FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), this.FileNameInputBox);
-						Keyboard.Focus(this.FileNameInputBox);
-					});
+					FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), this.FileNameInputBox);
+					Keyboard.Focus(this.FileNameInputBox);
 				});
 			}
 
@@ -298,15 +296,13 @@ namespace Anamnesis.GUI.Views
 
 			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.IsFlattened, this.fileInfos);
 
-			Application.Current.Dispatcher.Invoke(() =>
-			{
-				this.Entries.Clear();
+			await Dispatch.MainThread();
+			this.Entries.Clear();
 
-				foreach (IFileSource.IEntry entry in entries)
-				{
-					this.Entries.Add(new EntryWrapper(entry, this));
-				}
-			});
+			foreach (IFileSource.IEntry entry in entries)
+			{
+				this.Entries.Add(new EntryWrapper(entry, this));
+			}
 		}
 
 		private void OnMouseDoubleClick(object? sender, MouseButtonEventArgs e)

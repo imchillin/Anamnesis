@@ -390,11 +390,9 @@ namespace Anamnesis.Memory
 			// if still no process, shutdown.
 			if (proc == null)
 			{
-				App.Current.Dispatcher.Invoke(() =>
-				{
-					App.Current.MainWindow.Close();
-					App.Current.Shutdown();
-				});
+				await Dispatch.MainThread();
+				App.Current.MainWindow.Close();
+				App.Current.Shutdown();
 
 				return;
 			}

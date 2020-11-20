@@ -10,7 +10,7 @@ namespace Anamnesis
 
 	public static class Dispatch
 	{
-		public static SwitchToUiAwaitable UiThread()
+		public static SwitchToUiAwaitable MainThread()
 		{
 			return default(SwitchToUiAwaitable);
 		}
