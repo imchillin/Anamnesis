@@ -407,20 +407,6 @@ namespace Anamnesis.GUI.Views
 			this.Selected.IsRenaming = true;
 		}
 
-		private async void OnRenameComplete(object sender, RoutedEventArgs e)
-		{
-			if (this.Selected == null)
-				return;
-
-			this.Selected.IsRenaming = false;
-
-			if (this.Selected.Rename == null || this.Selected.Rename == this.Selected.Name)
-				return;
-
-			await this.Selected.Entry.Rename(this.Selected.Rename);
-			_ = Task.Run(this.UpdateEntries);
-		}
-
 		private void CloseDrawer()
 		{
 			this.IsOpen = false;
@@ -483,7 +469,32 @@ namespace Anamnesis.GUI.Views
 			}
 
 			public bool IsRenaming { get; set; }
-			public string? Rename { get; set; }
+
+			public string? Rename
+			{
+				get => this.Name;
+				set
+				{
+					this.IsRenaming = false;
+
+					if (value == null || value == this.Name)
+						return;
+
+					foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+					{
+						if (value.Contains(c))
+						{
+							return;
+						}
+					}
+
+					Task.Run(async () =>
+					{
+						await this.Entry.Rename(value);
+						await this.View.UpdateEntries();
+					});
+				}
+			}
 
 			public string Directory
 			{

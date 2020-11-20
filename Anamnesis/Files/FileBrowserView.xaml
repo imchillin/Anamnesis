@@ -100,7 +100,7 @@
 						<fa:IconBlock Grid.RowSpan="2" Grid.Column="0" Icon="{Binding Icon}" Margin="3, 0, 3, 0" VerticalAlignment="Center"/>
 
 						<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="3, 0, 3, 0"  Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}"/>
-						<TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Rename}" Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}" LostFocus="OnRenameComplete"/>
+						<ana:RenameTextBox Grid.Column="1" Grid.Row="0" Text="{Binding Rename}" Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}"/>
 
 						<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Directory}" Margin="3, 0, 3, 0" Visibility="{Binding Directory, Converter={StaticResource NotNullToVisibilityConverter}}" Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.5" FontSize="10"/>
 
