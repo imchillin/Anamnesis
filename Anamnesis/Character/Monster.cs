@@ -41,7 +41,7 @@ namespace Anamnesis.Character
 		public string? Description => null;
 		public string Singular => this.Name;
 		public string Plural => this.Name;
-		public string Title => this.Type.ToString();
+		public string Title => this.ModelType.ToString();
 
 		public class MonsterAppearance : INpcBase, INpcEquip
 		{

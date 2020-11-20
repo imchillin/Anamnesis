@@ -37,7 +37,7 @@
 
 			<cm3Drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
-					<Grid Height="32">
+					<Grid>
 
 						<Grid.RowDefinitions>
 							<RowDefinition/>
@@ -48,7 +48,6 @@
 
 						<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0">
 							<TextBlock Text="{Binding Title}" Style="{StaticResource Label}" Visibility="{Binding Title, Converter={StaticResource NotNullToVisibilityConverter}}"/>
-							<TextBlock Text="{Binding Key}" Style="{StaticResource Label}"/>
 						</StackPanel>
 
 						<!--<Rectangle Grid.ColumnSpan="2" 
