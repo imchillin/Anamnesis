@@ -22,7 +22,6 @@ namespace Anamnesis.Character.Views
 	/// Interaction logic for FacialFeaturesControl.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class FacialFeaturesControl : UserControl
 	{
 		public static readonly IBind<Appearance.FacialFeature> ValueDp = Binder.Register<Appearance.FacialFeature, FacialFeaturesControl>(nameof(Value), OnValueChanged);
@@ -158,7 +157,6 @@ namespace Anamnesis.Character.Views
 			throw new Exception("Invalid index value");
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (this.locked)

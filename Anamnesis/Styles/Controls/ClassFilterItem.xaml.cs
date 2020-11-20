@@ -13,7 +13,6 @@ namespace Anamnesis.Styles.Controls
 	/// Interaction logic for ClassFilterItem.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class ClassFilterItem : UserControl, INotifyPropertyChanged
 	{
 		public static DependencyProperty<Classes> ValueDp = Binder.Register<Classes, ClassFilterItem>(nameof(ClassFilterItem.Value), OnValueChanged);

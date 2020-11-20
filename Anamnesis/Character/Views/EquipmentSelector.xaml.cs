@@ -17,7 +17,6 @@ namespace Anamnesis.Character.Views
 	/// Interaction logic for EquipmentSelector.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
 		private readonly ItemSlots slot;

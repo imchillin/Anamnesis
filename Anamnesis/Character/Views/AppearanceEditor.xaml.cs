@@ -20,7 +20,6 @@ namespace Anamnesis.Character.Views
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class AppearanceEditor : UserControl
 	{
 		private bool appearanceLocked = false;

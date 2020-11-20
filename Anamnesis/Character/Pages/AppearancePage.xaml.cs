@@ -20,7 +20,6 @@ namespace Anamnesis.Character.Pages
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class AppearancePage : UserControl
 	{
 		private static CharacterFile.SaveModes lastSaveMode = CharacterFile.SaveModes.All;

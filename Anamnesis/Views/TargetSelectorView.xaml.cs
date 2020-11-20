@@ -14,7 +14,6 @@ namespace Anamnesis.Views
 	/// Interaction logic for TargetSelectorView.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class TargetSelectorView : UserControl, IDrawer, INotifyPropertyChanged
 	{
 		private static bool includePlayers = true;

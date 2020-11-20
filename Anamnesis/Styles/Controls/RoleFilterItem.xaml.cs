@@ -14,7 +14,6 @@ namespace Anamnesis.Styles.Controls
 	/// Interaction logic for JobFilterItem.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class RoleFilterItem : UserControl, INotifyPropertyChanged
 	{
 		public static DependencyProperty<Classes> ValueDp = Binder.Register<Classes, RoleFilterItem>(nameof(RoleFilterItem.Value), OnValueChanged);

@@ -13,7 +13,6 @@ namespace Anamnesis
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public class TerritoryService : ServiceBase<TerritoryService>
 	{
 		private ushort currentWeatherId;

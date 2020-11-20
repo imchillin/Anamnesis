@@ -121,7 +121,6 @@ namespace Anamnesis.Styles.Controls
 			}
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(QuaternionEditor sender, CmQuaternion value)
 		{
 			Quaternion valueQuat = new Quaternion(value.X, value.Y, value.Z, value.W);
@@ -147,13 +146,11 @@ namespace Anamnesis.Styles.Controls
 			sender.lockdp = false;
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnRootRotationChanged(QuaternionEditor sender, CmQuaternion? value)
 		{
 			OnValueChanged(sender, sender.Value);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueQuatChanged(QuaternionEditor sender, Quaternion value)
 		{
 			Quaternion newrot = value;
@@ -184,7 +181,6 @@ namespace Anamnesis.Styles.Controls
 			sender.lockdp = false;
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnEulerChanged(QuaternionEditor sender, Vector val)
 		{
 			if (sender.lockdp)
@@ -299,7 +295,6 @@ namespace Anamnesis.Styles.Controls
 			}
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (this.IsVisible)

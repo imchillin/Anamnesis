@@ -24,7 +24,6 @@ namespace Anamnesis.GUI
 	/// Interaction logic for MainWindow.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class MainWindow : Window
 	{
 		private bool hasSetPosition = false;

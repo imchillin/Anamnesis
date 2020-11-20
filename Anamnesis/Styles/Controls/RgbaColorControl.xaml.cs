@@ -43,7 +43,6 @@ namespace Anamnesis.Styles.Controls
 			set => ValueDp.Set(this, value);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(RgbaColorControl sender, Color4 value)
 		{
 			sender.UpdatePreview();

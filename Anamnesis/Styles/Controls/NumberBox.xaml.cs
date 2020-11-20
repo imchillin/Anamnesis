@@ -21,7 +21,6 @@ namespace Anamnesis.Styles.Controls
 	/// <summary>
 	/// Interaction logic for NumberBox.xaml.
 	/// </summary>
-	[SuppressPropertyChangedWarnings]
 	[AddINotifyPropertyChangedInterface]
 	public partial class NumberBox : UserControl, INotifyPropertyChanged
 	{

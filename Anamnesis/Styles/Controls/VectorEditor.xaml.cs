@@ -14,7 +14,6 @@ namespace Anamnesis.Styles.Controls
 	/// <summary>
 	/// Interaction logic for Vector3DEditor.xaml.
 	/// </summary>
-	[SuppressPropertyChangedWarnings]
 	[AddINotifyPropertyChangedInterface]
 	public partial class VectorEditor : UserControl, INotifyPropertyChanged
 	{

@@ -23,7 +23,6 @@ namespace Anamnesis.Character.Views
 	/// Interaction logic for ItemView.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class ItemView : UserControl
 	{
 		public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");

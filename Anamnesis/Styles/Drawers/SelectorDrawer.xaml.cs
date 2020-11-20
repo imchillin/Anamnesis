@@ -115,7 +115,6 @@ namespace Anamnesis.Styles.Drawers
 			Task.Run(this.DoFilter);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueChangedStatic(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (sender is SelectorDrawer view)
@@ -131,14 +130,12 @@ namespace Anamnesis.Styles.Drawers
 			this.SearchBox.CaretIndex = int.MaxValue;
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private void OnSearchChanged(object sender, TextChangedEventArgs e)
 		{
 			lastSearchInput = this.SearchBox.Text;
 			Task.Run(async () => { await this.Search(lastSearchInput); });
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(this.Items))
@@ -213,7 +210,6 @@ namespace Anamnesis.Styles.Drawers
 			this.idle = true;
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (e.AddedItems.Count <= 0 || e.AddedItems[0] == this.oldValue)

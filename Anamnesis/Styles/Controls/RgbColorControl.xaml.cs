@@ -45,7 +45,6 @@ namespace Anamnesis.Styles.Controls
 			set => ValueDp.Set(this, value);
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(RgbColorControl sender, CmColor? value)
 		{
 			sender.UpdatePreview();

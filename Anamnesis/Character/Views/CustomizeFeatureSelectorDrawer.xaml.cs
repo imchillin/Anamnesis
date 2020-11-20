@@ -13,7 +13,6 @@ namespace Anamnesis.Character.Views
 	/// Interaction logic for HairSelector.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 	{
 		private readonly Appearance.Genders gender;

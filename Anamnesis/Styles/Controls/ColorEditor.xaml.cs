@@ -94,7 +94,6 @@ namespace Anamnesis.Styles.Controls
 			return v;
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(ColorEditor sender, Color v)
 		{
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.R)));
@@ -104,7 +103,6 @@ namespace Anamnesis.Styles.Controls
 			sender.UpdatePreview();
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			this.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ColorEditor.Value)));

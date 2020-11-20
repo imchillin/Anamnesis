@@ -68,7 +68,6 @@ namespace Anamnesis.Styles.Controls
 			}
 		}
 
-		[PropertyChanged.SuppressPropertyChangedWarnings]
 		public static void OnKeyChanged(IconButton sender, string val)
 		{
 			sender.Key = val;

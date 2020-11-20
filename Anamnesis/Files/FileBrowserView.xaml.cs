@@ -26,7 +26,6 @@ namespace Anamnesis.GUI.Views
 	/// Interaction logic for FileBrowserView.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
 		private static IFileSource? currentFileSource;

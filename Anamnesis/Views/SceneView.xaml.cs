@@ -18,7 +18,6 @@ namespace Anamnesis.Views
 	/// Interaction logic for SceneView.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class SceneView : UserControl
 	{
 		private static readonly Logger Log = SimpleLog.Log.GetLogger<SceneView>();

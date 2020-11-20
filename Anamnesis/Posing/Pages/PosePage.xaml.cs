@@ -17,7 +17,6 @@ namespace Anamnesis.PoseModule.Pages
 	/// Interaction logic for CharacterPoseView.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public partial class PosePage : UserControl
 	{
 		private static PoseFile.Configuration? lastAdvancedLoadConfig;
@@ -155,7 +154,6 @@ namespace Anamnesis.PoseModule.Pages
 			return file;
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)
 		{
 			int selected = this.ViewSelector.SelectedIndex;

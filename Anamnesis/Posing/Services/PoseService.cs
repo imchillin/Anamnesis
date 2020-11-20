@@ -11,7 +11,6 @@ namespace Anamnesis.PoseModule
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
-	[SuppressPropertyChangedWarnings]
 	public class PoseService : ServiceBase<PoseService>
 	{
 		private NopHookViewModel? freezeRot1;

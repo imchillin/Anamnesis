@@ -86,7 +86,6 @@ namespace Anamnesis.Styles.Controls
 			}
 		}
 
-		[SuppressPropertyChangedWarnings]
 		private static void OnValueChanged(Vector2DEditor sender, Vector2D value)
 		{
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditor.X)));
