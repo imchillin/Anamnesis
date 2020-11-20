@@ -35,6 +35,9 @@ namespace Anamnesis.Memory
 				if (Process == null)
 					throw new Exception("No game process");
 
+				if (Process.MainModule == null)
+					throw new Exception("Process has no main module");
+
 				return Path.GetDirectoryName(Process.MainModule.FileName) + "\\..\\";
 			}
 		}
@@ -190,6 +193,9 @@ namespace Anamnesis.Memory
 
 			if (!Process.Responding)
 				throw new Exception("Target process id not responding");
+
+			if (process.MainModule == null)
+				throw new Exception("Process has no main module");
 
 			Process.EnterDebugMode();
 			int debugPrivilegeCheck = CheckSeDebugPrivilege(out bool isDebugEnabled);

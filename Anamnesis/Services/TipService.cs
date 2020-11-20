@@ -61,7 +61,7 @@ namespace Anamnesis.Services
 
 		public void KnowMore()
 		{
-			if (this.Tip == null)
+			if (this.Tip == null || this.Tip.Url == null)
 				return;
 
 			ProcessStartInfo psi = new ProcessStartInfo();

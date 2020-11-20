@@ -103,7 +103,7 @@ namespace Anamnesis.Character.Views
 			});
 		}
 
-		private void OnAppearancePropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnAppearancePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (this.appearanceLocked)
 				return;

@@ -144,7 +144,11 @@ namespace Anamnesis.GUI.Windows
 				Process[] procs = Process.GetProcessesByName("devenv");
 				if (procs.Length != 0)
 				{
-					string devEnvPath = procs[0].MainModule.FileName;
+					string? devEnvPath = procs[0].MainModule?.FileName;
+
+					if (devEnvPath == null)
+						return;
+
 					Process.Start(devEnvPath, $"-Edit \"{path}\" -Command \"Edit.Goto {line}\"");
 				}
 			}

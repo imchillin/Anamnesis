@@ -5,11 +5,17 @@ namespace Anamnesis
 {
 	using System;
 	using System.Runtime.CompilerServices;
+	using System.Threading.Tasks;
 	using System.Windows;
 
 	public static class Dispatch
 	{
 		public static SwitchToUiAwaitable UiThread()
+		{
+			return default(SwitchToUiAwaitable);
+		}
+
+		public static SwitchToUiAwaitable NonUiThread()
 		{
 			return default(SwitchToUiAwaitable);
 		}
@@ -30,6 +36,25 @@ namespace Anamnesis
 			public void OnCompleted(Action continuation)
 			{
 				Application.Current.Dispatcher.BeginInvoke(continuation);
+			}
+		}
+
+		public struct SwitchFromUiAwaitable : INotifyCompletion
+		{
+			public bool IsCompleted => !Application.Current.Dispatcher.CheckAccess();
+
+			public SwitchFromUiAwaitable GetAwaiter()
+			{
+				return this;
+			}
+
+			public void GetResult()
+			{
+			}
+
+			public void OnCompleted(Action continuation)
+			{
+				Task.Run(continuation);
 			}
 		}
 	}

@@ -40,7 +40,7 @@ namespace Anamnesis.Character.Views
 
 		public event DrawerEvent? Close;
 		public event DrawerEvent? SelectionChanged;
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public bool IncludeNpc { get; set; } = true;
 		public bool IncludeCharacter { get; set; } = true;
@@ -119,7 +119,7 @@ namespace Anamnesis.Character.Views
 			return false;
 		}
 
-		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			this.Selector.FilterItems();
 		}

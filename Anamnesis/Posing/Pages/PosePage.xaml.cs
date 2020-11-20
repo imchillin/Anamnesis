@@ -44,7 +44,7 @@ namespace Anamnesis.PoseModule.Pages
 			this.PoseService.PropertyChanged += this.PoseService_PropertyChanged;
 		}
 
-		private void PoseService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void PoseService_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			Application.Current?.Dispatcher.Invoke(() =>
 			{

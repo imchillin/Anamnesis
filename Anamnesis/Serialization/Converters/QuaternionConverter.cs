@@ -12,7 +12,12 @@ namespace Anamnesis.Serialization.Converters
 	{
 		public override Quaternion Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			return Quaternion.FromString(reader.GetString());
+			string? str = reader.GetString();
+
+			if (str == null)
+				throw new Exception("Cannot convert null to Quaternion");
+
+			return Quaternion.FromString(str);
 		}
 
 		public override void Write(Utf8JsonWriter writer, Quaternion value, JsonSerializerOptions options)

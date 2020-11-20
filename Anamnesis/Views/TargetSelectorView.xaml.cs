@@ -98,7 +98,7 @@ namespace Anamnesis.Views
 			return false;
 		}
 
-		private void OnSelfPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			this.Selector.FilterItems();
 		}

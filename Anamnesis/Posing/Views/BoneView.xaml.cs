@@ -95,7 +95,7 @@ namespace Anamnesis.PoseModule.Views
 			}
 		}
 
-		private void OnSkeletonPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			this.UpdateState();
 		}

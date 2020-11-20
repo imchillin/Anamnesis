@@ -35,7 +35,7 @@ namespace Anamnesis.Character.Views
 			actorVm.PropertyChanged += this.OnActorVmPropertyChanged;
 		}
 
-		private void OnActorVmPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnActorVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(ActorViewModel.ModelType))
 			{

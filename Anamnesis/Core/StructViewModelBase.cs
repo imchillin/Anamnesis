@@ -304,9 +304,12 @@ namespace Anamnesis
 		/// </summary>
 		protected abstract void OnModelToView(string fieldName, object? value);
 
-		private void OnThisPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnThisPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (!this.Enabled || this.suppressViewToModelEvents)
+				return;
+
+			if (e.PropertyName == null)
 				return;
 
 			if (!this.binds.ContainsKey(e.PropertyName))

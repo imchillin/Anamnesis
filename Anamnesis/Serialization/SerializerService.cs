@@ -37,18 +37,33 @@ namespace Anamnesis.Serialization
 		{
 			string json = File.ReadAllText(path);
 			json = json.Replace("\r", Environment.NewLine);
-			return JsonSerializer.Deserialize<T>(json, Options);
+			T? result = JsonSerializer.Deserialize<T>(json, Options);
+
+			if (result == null)
+				throw new Exception("Failed to deserialize object");
+
+			return result;
 		}
 
 		public static T Deserialize<T>(string json)
 			where T : new()
 		{
-			return JsonSerializer.Deserialize<T>(json, Options);
+			T? result = JsonSerializer.Deserialize<T>(json, Options);
+
+			if (result == null)
+				throw new Exception("Failed to deserialize object");
+
+			return result;
 		}
 
 		public static object Deserialize(string json, Type type)
 		{
-			return JsonSerializer.Deserialize(json, type, Options);
+			object? result = JsonSerializer.Deserialize(json, type, Options);
+
+			if (result == null)
+				throw new Exception("Failed to deserialize object");
+
+			return result;
 		}
 	}
 }

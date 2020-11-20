@@ -316,7 +316,7 @@ namespace Anamnesis
 				this.IsValid = this.viewModel != null;
 			}
 
-			private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+			private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
 			{
 				if (this.viewModel != null && e.PropertyName == nameof(ActorViewModel.DisplayName))
 				{

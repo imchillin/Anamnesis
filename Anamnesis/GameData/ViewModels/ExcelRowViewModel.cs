@@ -51,7 +51,7 @@ namespace Anamnesis.GameData.ViewModels
 				catch (Exception ex)
 				{
 					Log.Write(ex);
-					throw ex;
+					throw;
 				}
 			}
 		}

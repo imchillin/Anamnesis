@@ -94,6 +94,9 @@ namespace Anamnesis.Core.Memory
 			if (MemoryService.Process == null)
 				return;
 
+			if (MemoryService.Process.MainModule == null)
+				throw new Exception("Process has no main module");
+
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
 

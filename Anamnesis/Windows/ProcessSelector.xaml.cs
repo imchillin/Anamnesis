@@ -149,8 +149,17 @@ namespace Anamnesis.GUI.Windows
 				try
 				{
 					this.StartTime = process.StartTime;
-					this.AppIcon = IconToImageSource(System.Drawing.Icon.ExtractAssociatedIcon(process.MainModule.FileName));
-					this.Path = process.MainModule.FileName;
+
+					if (process.MainModule?.FileName != null)
+					{
+						Icon? icon = Icon.ExtractAssociatedIcon(process.MainModule.FileName);
+						if (icon != null)
+						{
+							this.AppIcon = IconToImageSource(icon);
+						}
+					}
+
+					this.Path = process.MainModule?.FileName ?? process.Id.ToString();
 				}
 				catch (Exception)
 				{

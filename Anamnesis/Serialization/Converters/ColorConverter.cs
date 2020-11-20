@@ -12,7 +12,12 @@ namespace Anamnesis.Serialization.Converters
 	{
 		public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			return Color.FromString(reader.GetString());
+			string? str = reader.GetString();
+
+			if (str == null)
+				throw new Exception("Cannot convert null to Color");
+
+			return Color.FromString(str);
 		}
 
 		public override void Write(Utf8JsonWriter writer, Color value, JsonSerializerOptions options)

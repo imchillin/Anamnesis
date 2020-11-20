@@ -12,7 +12,12 @@ namespace Anamnesis.Serialization.Converters
 	{
 		public override Vector Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			return Vector.FromString(reader.GetString());
+			string? str = reader.GetString();
+
+			if (str == null)
+				throw new Exception("Cannot convert null to Vector");
+
+			return Vector.FromString(str);
 		}
 
 		public override void Write(Utf8JsonWriter writer, Vector value, JsonSerializerOptions options)

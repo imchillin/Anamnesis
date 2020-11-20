@@ -104,7 +104,7 @@ namespace Anamnesis
 			}
 		}
 
-		private void OnThisPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnThisPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(TerritoryService.CurrentWeatherId))
 			{
