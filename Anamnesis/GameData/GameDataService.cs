@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Services
 {
+	using System;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
 	using Anamnesis.GameData;
@@ -37,7 +38,14 @@ namespace Anamnesis.Services
 
 		public override Task Initialize()
 		{
-			this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
+			try
+			{
+				this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Failed to initialize Lumina (Are your game files up to date?)", ex);
+			}
 
 			Races = new LuminaSheet<IRace, Race, RaceViewModel>(this.lumina);
 			Tribes = new LuminaSheet<ITribe, Tribe, TribeViewModel>(this.lumina);
