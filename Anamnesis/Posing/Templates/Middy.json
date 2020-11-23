@@ -1,0 +1,637 @@
+{
+	"ModelType": 0,
+	"Body": {
+		"Root": {
+			"Index": 0
+		},
+		"Abdomen": {
+			"Index": 1
+		},
+		"Throw": {
+			"Index": 2
+		},
+		"Waist": {
+			"Index": 3,
+			"Parent": "Root"
+		},
+		"SpineA": {
+			"Index": 4,
+			"Parent": "Root"
+		},
+		"LegsLeft": {
+			"Index": 5,
+			"Parent": "Waist"
+		},
+		"LegsRight": {
+			"Index": 6,
+			"Parent": "Waist"
+		},
+		"HolsterLeft": {
+			"Index": 7
+		},
+		"HolsterRight": {
+			"Index": 8
+		},
+		"SheatheLeft": {
+			"Index": 9,
+			"Parent": "SpineB"
+		},
+		"SheatheRight": {
+			"Index": 10,
+			"Parent": "SpineB"
+		},
+		"SpineB": {
+			"Index": 11,
+			"Parent": "SpineA"
+		},
+		"ClothBackALeft": {
+			"Index": 12,
+			"Parent": "Waist"
+		},
+		"ClothBackARight": {
+			"Index": 13,
+			"Parent": "Waist"
+		},
+		"ClothFrontALeft": {
+			"Index": 14,
+			"Parent": "Waist"
+		},
+		"ClothFrontARight": {
+			"Index": 15,
+			"Parent": "Waist"
+		},
+		"ClothSideALeft": {
+			"Index": 16,
+			"Parent": "Waist"
+		},
+		"ClothSideARight": {
+			"Index": 17,
+			"Parent": "Waist"
+		},
+		"KneeLeft": {
+			"Index": 18,
+			"Parent": "CalfLeft"
+		},
+		"KneeRight": {
+			"Index": 19,
+			"Parent": "CalfRight"
+		},
+		"BreastLeft": {
+			"Index": 20,
+			"Parent": "SpineC"
+		},
+		"BreastRight": {
+			"Index": 21,
+			"Parent": "SpineC"
+		},
+		"SpineC": {
+			"Index": 22,
+			"Parent": "SpineB"
+		},
+		"ClothBackBLeft": {
+			"Index": 23,
+			"Parent": "ClothBackALeft"
+		},
+		"ClothBackBRight": {
+			"Index": 24,
+			"Parent": "ClothBackARight"
+		},
+		"ClothFrontBLeft": {
+			"Index": 25,
+			"Parent": "ClothFrontALeft"
+		},
+		"ClothFrontBRight": {
+			"Index": 26,
+			"Parent": "ClothFrontARight"
+		},
+		"ClothSideBLeft": {
+			"Index": 27,
+			"Parent": "ClothSideALeft"
+		},
+		"ClothSideBRight": {
+			"Index": 28,
+			"Parent": "ClothSideARight"
+		},
+		"CalfLeft": {
+			"Index": 29,
+			"Parent": "LegsLeft"
+		},
+		"CalfRight": {
+			"Index": 30,
+			"Parent": "LegsRight"
+		},
+		"ScabbardLeft": {
+			"Index": 31
+		},
+		"ScabbardRight": {
+			"Index": 32
+		},
+		"Neck": {
+			"Index": 33,
+			"Parent": "SpineC"
+		},
+		"ClavicleLeft": {
+			"Index": 34,
+			"Parent": "SpineC"
+		},
+		"ClavicleRight": {
+			"Index": 35,
+			"Parent": "SpineC"
+		},
+		"ClothBackCLeft": {
+			"Index": 36,
+			"Parent": "ClothBackBLeft"
+		},
+		"ClothBackCRight": {
+			"Index": 37,
+			"Parent": "ClothBackBRight"
+		},
+		"ClothFrontCLeft": {
+			"Index": 38,
+			"Parent": "ClothFrontBLeft"
+		},
+		"ClothFrontCRight": {
+			"Index": 39,
+			"Parent": "ClothFrontBRight"
+		},
+		"ClothSideCLeft": {
+			"Index": 40,
+			"Parent": "ClothSideBLeft"
+		},
+		"ClothSideCRight": {
+			"Index": 41,
+			"Parent": "ClothSideBRight"
+		},
+		"PoleynLeft": {
+			"Index": 42
+		},
+		"PoleynRight": {
+			"Index": 43
+		},
+		"FootLeft": {
+			"Index": 44,
+			"Parent": "CalfLeft"
+		},
+		"FootRight": {
+			"Index": 45,
+			"Parent": "CalfRight"
+		},
+		"Head": {
+			"Index": 46,
+			"Parent": "Neck"
+		},
+		"ArmLeft": {
+			"Index": 47,
+			"Parent": "ClavicleLeft"
+		},
+		"ArmRight": {
+			"Index": 48,
+			"Parent": "ClavicleRight"
+		},
+		"PauldronLeft": {
+			"Index": 49
+		},
+		"PauldronRight": {
+			"Index": 50
+		},
+		"Unknown00": {
+			"Index": 51
+		},
+		"ToesLeft": {
+			"Index": 52,
+			"Parent": "FootLeft"
+		},
+		"ToesRight": {
+			"Index": 53,
+			"Parent": "FootRight"
+		},
+		"HairA": {
+			"Index": 54,
+			"Parent": "Head"
+		},
+		"HairFrontLeft": {
+			"Index": 55,
+			"Parent": "Head"
+		},
+		"HairFrontRight": {
+			"Index": 56,
+			"Parent": "Head"
+		},
+		"EarLeft": {
+			"Index": 57,
+			"Parent": "Head"
+		},
+		"EarRight": {
+			"Index": 58,
+			"Parent": "Head"
+		},
+		"ForearmLeft": {
+			"Index": 59,
+			"Parent": "ArmLeft"
+		},
+		"ForearmRight": {
+			"Index": 60,
+			"Parent": "ArmRight"
+		},
+		"ShoulderLeft": {
+			"Index": 61,
+			"Parent": "ArmLeft"
+		},
+		"ShoulderRight": {
+			"Index": 62,
+			"Parent": "ArmRight"
+		},
+		"HairB": {
+			"Index": 63,
+			"Parent": "HairA"
+		},
+		"HandLeft": {
+			"Index": 64,
+			"Parent": "WristLeft"
+		},
+		"HandRight": {
+			"Index": 65,
+			"Parent": "WristRight"
+		},
+		"ShieldLeft": {
+			"Index": 66
+		},
+		"ShieldRight": {
+			"Index": 67
+		},
+		"EarringALeft": {
+			"Index": 68,
+			"Parent": "EarLeft"
+		},
+		"EarringARight": {
+			"Index": 69,
+			"Parent": "EarRight"
+		},
+		"ElbowLeft": {
+			"Index": 70,
+			"Parent": "ForearmLeft"
+		},
+		"ElbowRight": {
+			"Index": 71,
+			"Parent": "ForearmRight"
+		},
+		"CouterLeft": {
+			"Index": 72,
+			"Parent": "ElbowLeft"
+		},
+		"CouterRight": {
+			"Index": 73,
+			"Parent": "ElbowRight"
+		},
+		"WristLeft": {
+			"Index": 74,
+			"Parent": "ForearmLeft"
+		},
+		"WristRight": {
+			"Index": 75,
+			"Parent": "ForearmRight"
+		},
+		"IndexALeft": {
+			"Index": 76,
+			"Parent": "HandLeft"
+		},
+		"IndexARight": {
+			"Index": 77,
+			"Parent": "HandRight"
+		},
+		"PinkyALeft": {
+			"Index": 78,
+			"Parent": "HandLeft"
+		},
+		"PinkyARight": {
+			"Index": 79,
+			"Parent": "HandRight"
+		},
+		"RingALeft": {
+			"Index": 80,
+			"Parent": "HandLeft"
+		},
+		"RingARight": {
+			"Index": 81,
+			"Parent": "HandRight"
+		},
+		"MiddleALeft": {
+			"Index": 82,
+			"Parent": "HandLeft"
+		},
+		"MiddleARight": {
+			"Index": 83,
+			"Parent": "HandRight"
+		},
+		"ThumbALeft": {
+			"Index": 84,
+			"Parent": "HandLeft"
+		},
+		"ThumbARight": {
+			"Index": 85,
+			"Parent": "HandRight"
+		},
+		"WeaponLeft": {
+			"Index": 86,
+			"Parent": "HandLeft"
+		},
+		"WeaponRight": {
+			"Index": 87,
+			"Parent": "HandRight"
+		},
+		"EarringBLeft": {
+			"Index": 88,
+			"Parent": "EarringALeft"
+		},
+		"EarringBRight": {
+			"Parent": "EarringARight",
+			"Index": 89
+		},
+		"IndexBLeft": {
+			"Index": 90,
+			"Parent": "IndexALeft"
+		},
+		"IndexBRight": {
+			"Index": 91,
+			"Parent": "IndexARight"
+		},
+		"PinkyBLeft": {
+			"Index": 92,
+			"Parent": "PinkyALeft"
+		},
+		"PinkyBRight": {
+			"Index": 93,
+			"Parent": "PinkyARight"
+		},
+		"RingBLeft": {
+			"Index": 94,
+			"Parent": "RingALeft"
+		},
+		"RingBRight": {
+			"Index": 95,
+			"Parent": "RingARight"
+		},
+		"MiddleBLeft": {
+			"Index": 96,
+			"Parent": "MiddleALeft"
+		},
+		"MiddleBRight": {
+			"Index": 97,
+			"Parent": "MiddleARight"
+		},
+		"ThumbBLeft": {
+			"Index": 98,
+			"Parent": "ThumbALeft"
+		},
+		"ThumbBRight": {
+			"Index": 99,
+			"Parent": "ThumbARight"
+		},
+		"TailA": {
+			"Index": 100,
+			"Parent": "Waist"
+		},
+		"TailB": {
+			"Index": 101,
+			"Parent": "TailA"
+		},
+		"TailC": {
+			"Index": 102,
+			"Parent": "TailB"
+		},
+		"TailD": {
+			"Index": 103,
+			"Parent": "TailC"
+		},
+		"TailE": {
+			"Index": 104
+		}
+	},
+	"HeadRoot": "Head",
+	"Head": {
+		"RootHead": {
+			"Index": 0
+		},
+		"Jaw": {
+			"Index": 1
+		},
+		"EyelidLowerLeft": {
+			"Index": 2
+		},
+		"EyelidLowerRight": {
+			"Index": 3
+		},
+		"EyeLeft": {
+			"Index": 4
+		},
+		"EyeRight": {
+			"Index": 5
+		},
+		"Nose": {
+			"Index": 6
+		},
+		"CheekLeft": {
+			"Index": 7
+		},
+		"CheekRight": {
+			"Index": 8
+		},
+		"LipsLeft": {
+			"Index": 9
+		},
+		"LipsRight": {
+			"Index": 10
+		},
+		"EyebrowLeft": {
+			"Index": 11
+		},
+		"EyebrowRight": {
+			"Index": 12
+		},
+		"Bridge": {
+			"Index": 13
+		},
+		"BrowLeft": {
+			"Index": 14,
+		},
+		"BrowRight": {
+			"Index": 15,
+		},
+		"LipUpperA": {
+			"Index": 16,
+		},
+		"EyelidUpperLeft": {
+			"Index": 17,
+		},
+		"EyelidUpperRight": {
+			"Index": 18,
+		},
+		"LipLowerA": {
+			"Index": 19,
+		},
+		"LipUpperB": {
+			"Index": 20
+		},
+		"LipLowerB": {
+			"Index": 21
+		},
+	},
+	"HairRoot": "Head",
+	"Hair": {
+		"ExRootHair": {
+			"Index": 0
+		},
+		"ExHairA": {
+			"Index": 1
+		},
+		"ExHairB": {
+			"Index": 2
+		},
+		"ExHairC": {
+			"Index": 3,
+			"Parent": "ExRootHair"
+		},
+		"ExHairD": {
+			"Index": 4,
+			"Parent": "ExRootHair"
+		},
+		"ExHairE": {
+			"Index": 5,
+			"Parent": "ExHairC"
+		},
+		"ExHairF": {
+			"Index": 6,
+			"Parent": "ExHairC"
+		},
+		"ExHairG": {
+			"Index": 7
+		},
+		"ExHairH": {
+			"Index": 8
+		},
+		"ExHairI": {
+			"Index": 9,
+			"Parent": "ExHairK"
+		},
+		"ExHairJ": {
+			"Index": 10,
+			"Parent": "ExHairK"
+		},
+		"ExHairK": {
+			"Index": 11,
+			"Parent": "ExHairD"
+		},
+		"ExHairL": {
+			"Index": 12,
+			"Parent": "ExHairC"
+		}
+	},
+	"Met": {
+		"ExRootMet": {
+			"Index": 0
+		},
+		"ExMetA": {
+			"Index": 1
+		},
+		"ExMetB": {
+			"Index": 2
+		},
+		"ExMetC": {
+			"Index": 3,
+			"Parent": "ExRootMet"
+		},
+		"ExMetD": {
+			"Index": 4,
+			"Parent": "ExRootMet"
+		},
+		"ExMetE": {
+			"Index": 5,
+			"Parent": "ExMetC"
+		},
+		"ExMetF": {
+			"Index": 6,
+			"Parent": "ExMetC"
+		},
+		"ExMetG": {
+			"Index": 7
+		},
+		"ExMetH": {
+			"Index": 8
+		},
+		"ExMetI": {
+			"Index": 9,
+			"Parent": "ExMetK"
+		},
+		"ExMetJ": {
+			"Index": 10,
+			"Parent": "ExMetK"
+		},
+		"ExMetK": {
+			"Index": 11,
+			"Parent": "ExMetD"
+		},
+		"ExMetL": {
+			"Index": 12,
+			"Parent": "ExMetC"
+		},
+		"ExMetM": {
+			"Index": 13,
+			"Parent": "ExMetC"
+		},
+		"ExMetN": {
+			"Index": 14,
+			"Parent": "ExMetC"
+		},
+		"ExMetO": {
+			"Index": 15,
+			"Parent": "ExMetC"
+		},
+		"ExMetP": {
+			"Index": 16,
+			"Parent": "ExMetC"
+		},
+		"ExMetQ": {
+			"Index": 17,
+			"Parent": "ExMetC"
+		},
+		"ExMetR": {
+			"Index": 18
+		}
+	},
+	"Top": {
+		"ExRootTop": {
+			"Index": 0
+		},
+		"ExTopA": {
+			"Index": 1
+		},
+		"ExTopB": {
+			"Index": 2
+		},
+		"ExTopC": {
+			"Index": 3,
+			"Parent": "ExRootTop"
+		},
+		"ExTopD": {
+			"Index": 4,
+			"Parent": "ExRootTop"
+		},
+		"ExTopE": {
+			"Index": 5,
+			"Parent": "ExTopC"
+		},
+		"ExTopF": {
+			"Index": 6,
+			"Parent": "ExTopC"
+		},
+		"ExTopG": {
+			"Index": 7
+		},
+		"ExTopH": {
+			"Index": 8
+		},
+		"ExTopI": {
+			"Index": 9
+		}
+	}
+}

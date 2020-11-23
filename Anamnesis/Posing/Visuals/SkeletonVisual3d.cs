@@ -9,8 +9,11 @@ namespace Anamnesis.PoseModule
 	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Input;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
+	using Anamnesis.Posing.Extensions;
+	using Anamnesis.Posing.Templates;
 	using PropertyChanged;
 
 	using AnQuaternion = Anamnesis.Memory.Quaternion;
@@ -18,18 +21,18 @@ namespace Anamnesis.PoseModule
 	[AddINotifyPropertyChangedInterface]
 	public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	{
-		private BoneVisual3d? currentBone;
+		public List<BoneVisual3d> SelectedBones = new List<BoneVisual3d>();
 
 		public SkeletonVisual3d(ActorViewModel actor)
 		{
 			this.Actor = actor;
-
 			this.GenerateBones();
+			Task.Run(this.WriteSkeletonThread);
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public bool LinkEyes { get; set; }
+		public bool LinkEyes { get; set; } = true;
 		public ActorViewModel Actor { get; private set; }
 		public BoneVisual3d? MouseOverBone { get; set; }
 
@@ -37,14 +40,26 @@ namespace Anamnesis.PoseModule
 		{
 			get
 			{
-				return this.currentBone;
+				if (this.SelectedBones.Count <= 0)
+					return null;
+
+				return this.SelectedBones[this.SelectedBones.Count - 1];
 			}
 			set
 			{
-				this.currentBone = value;
-				Task.Run(this.WriteSkeletonThread);
+				if (!Keyboard.IsKeyDown(Key.LeftCtrl))
+					this.SelectedBones.Clear();
+
+				if (value != null)
+				{
+					this.Select(value);
+				}
+
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
 			}
 		}
+
+		public bool HasSelection => this.SelectedBones.Count > 0;
 
 		public List<BoneVisual3d>? Bones { get; private set; }
 
@@ -72,11 +87,57 @@ namespace Anamnesis.PoseModule
 		{
 			this.CurrentBone = null;
 			this.MouseOverBone = null;
+			this.SelectedBones.Clear();
 
 			if (this.Bones != null)
 			{
 				this.Bones.Clear();
 			}
+		}
+
+		public void Select(BoneVisual3d bone, bool add = false)
+		{
+			if (Keyboard.IsKeyDown(Key.LeftCtrl))
+				add = true;
+
+			if (!add)
+				this.SelectedBones.Clear();
+
+			if (add && this.SelectedBones.Contains(bone))
+			{
+				this.SelectedBones.Remove(bone);
+			}
+			else
+			{
+				this.SelectedBones.Add(bone);
+			}
+
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
+		}
+
+		public void Select(List<BoneVisual3d> bones, bool add = false)
+		{
+			if (Keyboard.IsKeyDown(Key.LeftCtrl))
+				add = true;
+
+			if (!add)
+				this.SelectedBones.Clear();
+
+			foreach (BoneVisual3d bone in bones)
+			{
+				if (add && this.SelectedBones.Contains(bone))
+				{
+					this.SelectedBones.Remove(bone);
+				}
+				else
+				{
+					this.SelectedBones.Add(bone);
+				}
+			}
+
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
 		}
 
 		public bool GetIsBoneHovered(BoneVisual3d bone)
@@ -86,14 +147,14 @@ namespace Anamnesis.PoseModule
 
 		public bool GetIsBoneSelected(BoneVisual3d bone)
 		{
-			return bone == this.CurrentBone;
+			return this.SelectedBones.Contains(bone);
 		}
 
 		public bool GetIsBoneParentsSelected(BoneVisual3d? bone)
 		{
 			while (bone != null)
 			{
-				if (bone == this.CurrentBone)
+				if (this.GetIsBoneSelected(bone))
 					return true;
 
 				bone = bone.Parent;
@@ -106,7 +167,7 @@ namespace Anamnesis.PoseModule
 		{
 			while (bone != null)
 			{
-				if (bone == this.MouseOverBone)
+				if (this.GetIsBoneHovered(bone))
 					return true;
 
 				bone = bone.Parent;
@@ -124,17 +185,14 @@ namespace Anamnesis.PoseModule
 			if (this.Actor.ModelType != 0)
 				return null;
 
-			TransformViewModel? transform = this.Actor.ModelObject.Skeleton.Skeleton.GetBone(name);
-
-			if (transform == null || this.Bones == null)
-				return null;
-
-			foreach (BoneVisual3d bone in this.Bones)
+			if (this.Bones != null)
 			{
-				if (bone.ViewModel == transform)
+				foreach (BoneVisual3d? bone in this.Bones)
 				{
-					bone.BoneName = name;
-					return bone;
+					if (bone.BoneName == name)
+					{
+						return bone;
+					}
 				}
 			}
 
@@ -156,126 +214,13 @@ namespace Anamnesis.PoseModule
 		{
 			this.Bones = new List<BoneVisual3d>();
 
-			// only show actors that have a body
 			if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
 				return;
 
 			SkeletonViewModel skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
 
-			if (skeletonVm.Body == null)
-				return;
-
-			// Body bones
-			List<BoneVisual3d> bodyBones = new List<BoneVisual3d>();
-			for (int i = 0; i < skeletonVm.Body.Count; i++)
-			{
-				BoneVisual3d bone = new BoneVisual3d(skeletonVm.Body.Transforms[i], this);
-				bodyBones.Add(bone);
-				this.Bones.Add(bone);
-				////this.RootBones.Add(bone);
-			}
-
-			for (int i = 0; i < skeletonVm.Body.Count; i++)
-			{
-				int parent = -1;
-
-				if (skeletonVm.Body.Count == 100 || skeletonVm.Body.Count == 105)
-					parent = SkeletonUtility.PlayerBodyParents[i];
-
-				if (parent == -1 || parent > bodyBones.Count)
-				{
-					this.Children.Add(bodyBones[i]);
-				}
-				else
-				{
-					bodyBones[i].Parent = bodyBones[parent];
-				}
-			}
-
-			int headBoneIndex = SkeletonUtility.BodyBoneIndexLookup["Head"];
-
-			BoneVisual3d? headRoot = null;
-			if (headBoneIndex < bodyBones.Count)
-				headRoot = bodyBones[headBoneIndex];
-
-			if (skeletonVm.Head != null)
-			{
-				BoneVisual3d? leftEye = null;
-				BoneVisual3d? rightEye = null;
-
-				lock (skeletonVm.Head.Transforms)
-				{
-					for (int i = 0; i < skeletonVm.Head.Transforms.Count; i++)
-					////foreach (TransformViewModel boneTrans in skeletonVm.Head.Transforms)
-					{
-						TransformViewModel boneTrans = skeletonVm.Head.Transforms[i];
-						BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-						this.Bones.Add(bone);
-						bone.Parent = headRoot;
-
-						if (i == SkeletonUtility.HeadBoneIndexLookup["EyeLeft"])
-							leftEye = bone;
-
-						if (i == SkeletonUtility.HeadBoneIndexLookup["EyeRight"])
-							rightEye = bone;
-
-						if (headRoot == null)
-						{
-							this.Children.Add(bone);
-						}
-					}
-				}
-
-				if (leftEye != null && rightEye != null)
-				{
-					leftEye.LinkedEye = rightEye;
-					rightEye.LinkedEye = leftEye;
-				}
-			}
-
-			if (skeletonVm.Hair != null)
-			{
-				lock (skeletonVm.Hair.Transforms)
-				{
-					foreach (TransformViewModel boneTrans in skeletonVm.Hair.Transforms)
-					{
-						BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-						this.Bones.Add(bone);
-						bone.Parent = headRoot;
-
-						if (headRoot == null)
-						{
-							this.Children.Add(bone);
-						}
-					}
-				}
-			}
-
-			if (skeletonVm.Met != null)
-			{
-				lock (skeletonVm.Met.Transforms)
-				{
-					foreach (TransformViewModel boneTrans in skeletonVm.Met.Transforms)
-					{
-						BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-						this.Bones.Add(bone);
-						this.Children.Add(bone);
-					}
-				}
-			}
-
-			if (skeletonVm.Top != null)
-			{
-				lock (skeletonVm.Top.Transforms)
-				{
-					foreach (TransformViewModel boneTrans in skeletonVm.Top.Transforms)
-					{
-						BoneVisual3d bone = new BoneVisual3d(boneTrans, this);
-						this.Bones.Add(bone);
-						this.Children.Add(bone);
-					}
-				}
-			}
+			TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
+			this.Generate(template, skeletonVm);
 
 			foreach (BoneVisual3d bone in this.Bones)
 			{
@@ -288,12 +233,96 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
+		private ModelVisual3D GetVisual(string? name)
+		{
+			if (name == null)
+				return this;
+
+			if (this.Bones != null)
+			{
+				foreach (BoneVisual3d bone in this.Bones)
+				{
+					if (bone.BoneName == name)
+					{
+						return bone;
+					}
+				}
+			}
+
+			return this;
+		}
+
+		private void Generate(TemplateSkeleton template, SkeletonViewModel memory)
+		{
+			this.Generate(template.Body, memory.Body, "Body", this);
+			this.Generate(template.Head, memory.Head, "Head", this.GetVisual(template.HeadRoot));
+			this.Generate(template.Hair, memory.Hair, "Hair", this.GetVisual(template.HairRoot));
+			this.Generate(template.Met, memory.Met, "Met", this.GetVisual(template.MetRoot));
+			this.Generate(template.Top, memory.Top, "Top", this.GetVisual(template.TopRoot));
+		}
+
+		private void Generate(Dictionary<string, TemplateBone>? template, BonesViewModel? memory, string fallbackName, ModelVisual3D root)
+		{
+			if (this.Bones == null)
+				this.Bones = new List<BoneVisual3d>();
+
+			if (template == null)
+				template = new Dictionary<string, TemplateBone>();
+
+			Dictionary<int, string> nameLookup = new Dictionary<int, string>();
+			foreach ((string name, TemplateBone templateBone) in template)
+			{
+				nameLookup.Add(templateBone.Index, name);
+			}
+
+			if (memory != null)
+			{
+				Dictionary<string, BoneVisual3d> newBones = new Dictionary<string, BoneVisual3d>();
+
+				for (int i = 0; i < memory.Transforms.Count; i++)
+				{
+					TransformViewModel? transform = memory.Transforms[i];
+					string name = fallbackName + "_" + i;
+
+					if (nameLookup.ContainsKey(i))
+						name = nameLookup[i];
+
+					BoneVisual3d bone = new BoneVisual3d(transform, this, name);
+					newBones.Add(name, bone);
+					this.Bones.Add(bone);
+				}
+
+				foreach (BoneVisual3d bone in newBones.Values)
+				{
+					string? parentBoneName = null;
+
+					if (template.ContainsKey(bone.BoneName))
+						parentBoneName = template[bone.BoneName].Parent;
+
+					if (parentBoneName != null)
+					{
+						bone.Parent = newBones[parentBoneName];
+					}
+					else if (root is BoneVisual3d rootBone)
+					{
+						bone.Parent = rootBone;
+					}
+					else
+					{
+						root.Children.Add(bone);
+					}
+				}
+			}
+		}
+
 		private async Task WriteSkeletonThread()
 		{
-			while (Application.Current != null && this.CurrentBone != null && PoseService.Instance.IsEnabled)
+			while (Application.Current != null)
 			{
 				await Dispatch.MainThread();
-				this.CurrentBone?.WriteTransform(this);
+
+				if (this.CurrentBone != null && PoseService.Instance.IsEnabled)
+					this.CurrentBone?.WriteTransform(this);
 
 				// up to 60 times a second
 				await Task.Delay(16);

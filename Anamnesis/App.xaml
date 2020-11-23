@@ -106,8 +106,9 @@
 				<converters:RadiansToDegreesConverter x:Key="Rad2Deg"/>
 				<converters:Vector2DRadiansToDegreesConverter x:Key="Vec2DRad2Deg"/>
 				<converters:NotZeroToVisibilityConverter x:Key="NotZeroToVisibility"/>
+				<converters:BoolInversionConverter x:Key="!B"/>
 
-				<!-- Multi converters -->
+			<!-- Multi converters -->
 			<converters:MultiBoolAndConverter x:Key="MultiBoolAnd"/>
 		</ResourceDictionary>
 	</Application.Resources>

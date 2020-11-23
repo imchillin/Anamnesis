@@ -138,14 +138,14 @@
 							<local:BoneView Canvas.Left="109" Canvas.Top="77" BoneName="BrowLeft"/>
 							<local:BoneView Canvas.Left="170" Canvas.Top="77" BoneName="BrowRight"/>
 							<local:BoneView Canvas.Left="140" Canvas.Top="129" BoneName="JawUpper"/>
-							<local:BoneView Canvas.Left="140" Canvas.Top="190" BoneName="LipUpperA"/>
+							<local:BoneView Canvas.Left="140" Canvas.Top="190" BoneName="LipUpper"/>
 							<local:BoneView Canvas.Left="77" Canvas.Top="60" BoneName="EyelidUpperLeft"/>
 							<local:BoneView Canvas.Left="202" Canvas.Top="60" BoneName="EyelidUpperRight"/>
 							<local:BoneView Canvas.Left="63" Canvas.Top="211" BoneName="LipsLeft"/>
 							<local:BoneView Canvas.Left="215" Canvas.Top="211" BoneName="LipsRight"/>
 							<local:BoneView Canvas.Left="90" Canvas.Top="198" BoneName="LipUpperLeft"/>
 							<local:BoneView Canvas.Left="192" Canvas.Top="198" BoneName="LipUpperRight"/>
-							<local:BoneView Canvas.Left="140" Canvas.Top="222" BoneName="LipLowerA"/>
+							<local:BoneView Canvas.Left="140" Canvas.Top="222" BoneName="LipLower"/>
 							<local:BoneView Canvas.Left="140" Canvas.Top="152" BoneName="Nose"/>
 							<local:BoneView Canvas.Left="140" Canvas.Top="255" BoneName="Jaw"/>
 							<local:BoneView Canvas.Left="209" Canvas.Top="78" BoneName="EyeRight"/>
@@ -167,9 +167,9 @@
 							<local:BoneView Canvas.Left="141" Canvas.Top="135" BoneName="Nose"/>
 							<local:BoneView Canvas.Left="141" Canvas.Top="100" BoneName="Bridge"/>
 
-							<local:BoneView Canvas.Left="141" Canvas.Top="248" BoneName="VieraLipLowerB" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="141" Canvas.Top="225" BoneName="VieraLipLowerA" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="141" Canvas.Top="175" BoneName="VieraLipUpperB" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
+							<local:BoneView Canvas.Left="141" Canvas.Top="248" BoneName="LipLowerB" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
+							<local:BoneView Canvas.Left="141" Canvas.Top="225" BoneName="LipLowerA" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
+							<local:BoneView Canvas.Left="141" Canvas.Top="175" BoneName="LipUpperB" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
 							
 							<local:BoneView Canvas.Left="141" Canvas.Top="248" BoneName="LipLowerB" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
 							<local:BoneView Canvas.Left="141" Canvas.Top="225" BoneName="LipLowerA" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
@@ -288,10 +288,10 @@
 									<ImageBrush ImageSource="../../Assets/PoseCharacterVieraEars01Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
 
-								<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar01ALeft"/>
-								<local:BoneView Canvas.Left="22" Canvas.Top="98" BoneName="VieraEar01BLeft"/>
-								<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar01ARight"/>
-								<local:BoneView Canvas.Left="96" Canvas.Top="98" BoneName="VieraEar01BRight"/>
+								<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="Ear01ALeft"/>
+								<local:BoneView Canvas.Left="22" Canvas.Top="98" BoneName="Ear01BLeft"/>
+								<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="Ear01ARight"/>
+								<local:BoneView Canvas.Left="96" Canvas.Top="98" BoneName="Ear01BRight"/>
 							</Canvas>
 						</Viewbox>
 
@@ -302,10 +302,10 @@
 									<ImageBrush ImageSource="../../Assets/PoseCharacterVieraEars02Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
 
-								<local:BoneView Canvas.Left="47" Canvas.Top="169" BoneName="VieraEar02ALeft"/>
-								<local:BoneView Canvas.Left="31" Canvas.Top="106" BoneName="VieraEar02BLeft"/>
-								<local:BoneView Canvas.Left="89" Canvas.Top="169" BoneName="VieraEar02ARight"/>
-								<local:BoneView Canvas.Left="105" Canvas.Top="106" BoneName="VieraEar02BRight"/>
+								<local:BoneView Canvas.Left="47" Canvas.Top="169" BoneName="Ear02ALeft"/>
+								<local:BoneView Canvas.Left="31" Canvas.Top="106" BoneName="Ear02BLeft"/>
+								<local:BoneView Canvas.Left="89" Canvas.Top="169" BoneName="Ear02ARight"/>
+								<local:BoneView Canvas.Left="105" Canvas.Top="106" BoneName="Ear02BRight"/>
 							</Canvas>
 						</Viewbox>
 
@@ -316,10 +316,10 @@
 									<ImageBrush ImageSource="../../Assets/PoseCharacterVieraEars03Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
 
-								<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="VieraEar03ALeft"/>
-								<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="VieraEar03BLeft"/>
-								<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="VieraEar03ARight"/>
-								<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="VieraEar03BRight"/>
+								<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="Ear03ALeft"/>
+								<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="Ear03BLeft"/>
+								<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="Ear03ARight"/>
+								<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="Ear03BRight"/>
 							</Canvas>
 						</Viewbox>
 
@@ -330,10 +330,10 @@
 									<ImageBrush ImageSource="../../Assets/PoseCharacterVieraEars04Background.png" Opacity="0.15" Stretch="Uniform"/>
 								</Canvas.Background>
 
-								<local:BoneView Canvas.Left="44" Canvas.Top="170" BoneName="VieraEar04ALeft"/>
-								<local:BoneView Canvas.Left="26" Canvas.Top="104" BoneName="VieraEar04BLeft"/>
-								<local:BoneView Canvas.Left="85" Canvas.Top="170" BoneName="VieraEar04ARight"/>
-								<local:BoneView Canvas.Left="102" Canvas.Top="104" BoneName="VieraEar04BRight"/>
+								<local:BoneView Canvas.Left="44" Canvas.Top="170" BoneName="Ear04ALeft"/>
+								<local:BoneView Canvas.Left="26" Canvas.Top="104" BoneName="Ear04BLeft"/>
+								<local:BoneView Canvas.Left="85" Canvas.Top="170" BoneName="Ear04ARight"/>
+								<local:BoneView Canvas.Left="102" Canvas.Top="104" BoneName="Ear04BRight"/>
 							</Canvas>
 						</Viewbox>
 					</Grid>

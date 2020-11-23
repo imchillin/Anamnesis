@@ -17,9 +17,9 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type GroupBox}">
-					<Grid>
+					<Grid SnapsToDevicePixels="True">
 						<Grid.RowDefinitions>
-							<RowDefinition Height="15"/>
+							<RowDefinition Height="Auto"/>
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 

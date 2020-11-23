@@ -30,36 +30,6 @@ namespace Anamnesis.PoseModule.Dialogs
 			set;
 		}
 
-		public bool Body
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Body) ?? false;
-			set => this.Result!.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Body, value);
-		}
-
-		public bool Head
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Head) ?? false;
-			set => this.Result!.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Head, value);
-		}
-
-		public bool Hair
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Hair) ?? false;
-			set => this.Result!.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Hair, value);
-		}
-
-		public bool Met
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Met) ?? false;
-			set => this.Result!.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Met, value);
-		}
-
-		public bool Top
-		{
-			get => this.Result?.Groups.HasFlag(PoseFile.Groups.Top) ?? false;
-			set => this.Result!.Groups = this.Result.Groups.SetFlag(PoseFile.Groups.Top, value);
-		}
-
 		public void Cancel()
 		{
 			this.Result = null;
@@ -81,24 +51,10 @@ namespace Anamnesis.PoseModule.Dialogs
 
 		private void OnAllClick(object sender, RoutedEventArgs e)
 		{
-			this.Body = true;
-			this.Head = true;
-			this.Hair = true;
-			this.Met = true;
-			this.Top = true;
-
-			this.Result!.Groups = PoseFile.Groups.All;
 		}
 
 		private void OnNoneClick(object sender, RoutedEventArgs e)
 		{
-			this.Body = false;
-			this.Head = false;
-			this.Hair = false;
-			this.Met = false;
-			this.Top = false;
-
-			this.Result!.Groups = PoseFile.Groups.None;
 		}
 
 		private void OnOKClick(object sender, RoutedEventArgs e)
@@ -109,22 +65,6 @@ namespace Anamnesis.PoseModule.Dialogs
 		private void OnCancelClick(object sender, RoutedEventArgs e)
 		{
 			this.Cancel();
-		}
-	}
-
-#pragma warning disable SA1204, SA1402
-	public static class GroupsExtensions
-	{
-		public static PoseFile.Groups SetFlag(this PoseFile.Groups a, PoseFile.Groups b, bool enabled)
-		{
-			if (enabled)
-			{
-				return a | b;
-			}
-			else
-			{
-				return a & ~b;
-			}
 		}
 	}
 }

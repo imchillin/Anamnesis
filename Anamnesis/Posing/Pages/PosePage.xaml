@@ -15,11 +15,6 @@
 			 DataContextChanged="OnDataContextChanged"
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
-	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="B2V"/>
-		<anaConverters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
-	</UserControl.Resources>
-
 	<Grid x:Name="ContentArea">
 
 		<Grid>
@@ -103,13 +98,16 @@
 							<ana:TextBlock Key="Pose_LinkEyes"/>
 						</CheckBox>
 
-						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
+					</StackPanel>
 
-						<StackPanel Orientation="Horizontal" Margin="3,0,0,0">
-							<RadioButton IsChecked="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToBoolConverter}, Mode=OneWay}" Checked="OnEditCharacterChecked"/>
-							<ana:TextBlock Text="Character" VerticalAlignment="Center" Margin="3" FontWeight="Light"/>
-						</StackPanel>
-
+					<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+						<Button Style="{StaticResource TransparentButton}" Margin="6" IsEnabled="{Binding Skeleton.HasSelection}" Click="OnClearClicked">
+							<ana:TextBlock Text="Clear Selection" Margin="6, 0, 6, 0"/>
+						</Button>
+						
+						<Button Style="{StaticResource TransparentButton}" Margin="6" IsEnabled="{Binding Skeleton.HasSelection}" Click="OnSelectChildrenClicked">
+							<ana:TextBlock Text="Select Children" Margin="6, 0, 6, 0"/>
+						</Button>
 					</StackPanel>
 				</Grid>
 			</Border>

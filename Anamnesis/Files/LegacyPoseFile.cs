@@ -493,11 +493,11 @@ namespace Anamnesis.Files
 
 				Transform transform = StringToBone(rotString, scaleString);
 
-				int index;
+				/*int index;
 				if (SkeletonUtility.BodyBoneIndexLookup.TryGetValue(boneName, out index))
 				{
 					if (file.Body == null)
-						file.Body = new List<PoseFile.Bone?>();
+						file.Body = new Dictionary<string, PoseFile.Bone?>();
 
 					while (file.Body.Count <= index)
 						file.Body.Add(null);
@@ -544,7 +544,7 @@ namespace Anamnesis.Files
 				else
 				{
 					throw new Exception("Failed to find index for bone: " + boneName);
-				}
+				}*/
 			}
 
 			return file;

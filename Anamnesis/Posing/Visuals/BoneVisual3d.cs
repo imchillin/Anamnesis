@@ -3,6 +3,7 @@
 
 namespace Anamnesis.PoseModule
 {
+	using System.Collections.Generic;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
@@ -25,7 +26,7 @@ namespace Anamnesis.PoseModule
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
 
-		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton)
+		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton, string name)
 		{
 			this.ViewModel = transform;
 			this.Skeleton = skeleton;
@@ -46,13 +47,15 @@ namespace Anamnesis.PoseModule
 			System.Windows.Media.Color c1 = System.Windows.Media.Color.FromArgb(200, 255, 255, 255);
 			sphere.Material = new EmissiveMaterial(new SolidColorBrush(c1));
 			this.Children.Add(sphere);
+
+			this.BoneName = name;
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }
 		public TransformViewModel ViewModel { get; private set; }
 
 		public bool IsEnabled { get; set; } = true;
-		public string? BoneName { get; set; }
+		public string BoneName { get; set; }
 
 		public bool CanRotate => PoseService.Instance.FreezeRotation;
 		public CmQuaternion Rotation { get; set; }
@@ -63,7 +66,7 @@ namespace Anamnesis.PoseModule
 
 		public BoneVisual3d? LinkedEye { get; set; }
 
-		public virtual string? TooltipKey => this.BoneName == null ? null : "Pose_" + this.BoneName;
+		public virtual string TooltipKey => "Pose_" + this.BoneName;
 
 		public BoneVisual3d? Parent
 		{
@@ -201,6 +204,18 @@ namespace Anamnesis.PoseModule
 					{
 						childBone.WriteTransform(root);
 					}
+				}
+			}
+		}
+
+		public void GetChildren(ref List<BoneVisual3d> bones)
+		{
+			foreach (Visual3D? child in this.Children)
+			{
+				if (child is BoneVisual3d childBoneVisual)
+				{
+					bones.Add(childBoneVisual);
+					childBoneVisual.GetChildren(ref bones);
 				}
 			}
 		}

@@ -4,9 +4,11 @@
 namespace Anamnesis.PoseModule.Pages
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Media.Media3D;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Dialogs;
@@ -166,12 +168,26 @@ namespace Anamnesis.PoseModule.Pages
 			////this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
 		}
 
-		private void OnEditCharacterChecked(object sender, RoutedEventArgs e)
+		private void OnClearClicked(object sender, RoutedEventArgs e)
 		{
 			if (this.Skeleton != null)
 			{
 				this.Skeleton.CurrentBone = null;
 			}
+		}
+
+		private void OnSelectChildrenClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Skeleton == null)
+				return;
+
+			List<BoneVisual3d> bones = new List<BoneVisual3d>();
+			foreach (BoneVisual3d bone in this.Skeleton.SelectedBones)
+			{
+				bone.GetChildren(ref bones);
+			}
+
+			this.Skeleton.Select(bones);
 		}
 	}
 }

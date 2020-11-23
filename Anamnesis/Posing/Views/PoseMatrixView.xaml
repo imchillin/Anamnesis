@@ -19,9 +19,11 @@
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" VerticalAlignment="Stretch" Margin="0,1,3,3">
 			<StackPanel>
 
-				<GroupBox Margin="3, -2, 3, 0">
+				<GroupBox>
 					<GroupBox.Header>
-						<cm3:TextBlock Key="Pose_Matrix_HeadCategory"/>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<cm3:TextBlock Key="Pose_Matrix_HeadCategory"/>
+						</Button>
 					</GroupBox.Header>
 					<Grid>
 
@@ -149,9 +151,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Margin="3, 2, 3, 0">
+				<GroupBox>
 					<GroupBox.Header>
-						<cm3:TextBlock Key="Pose_Matrix_HairAndAccessoriesCategory"/>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<cm3:TextBlock Key="Pose_Matrix_HairAndAccessoriesCategory"/>
+						</Button>
 					</GroupBox.Header>
 					
 					<Grid>
@@ -209,9 +213,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Margin="3, 2, 3, 0">
+				<GroupBox>
 					<GroupBox.Header>
-						<cm3:TextBlock Key="Pose_Matrix_BodyCategory"/>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<cm3:TextBlock Key="Pose_Matrix_BodyCategory"/>
+						</Button>
 					</GroupBox.Header>
 					
 					<Grid>
@@ -248,6 +254,9 @@
 
 						<cm3:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_Lumbar" Style="{DynamicResource Label}"/>
 						<local:BoneView Grid.Column="7" Grid.Row="0" BoneName="SpineA"/>
+
+						<!--<cm3:TextBlock Grid.Column="8" Grid.Row="0" Key="Pose_OtherAbdomen" Style="{DynamicResource Label}"/>
+						<local:BoneView Grid.Column="9" Grid.Row="0" BoneName="Abdomen"/>-->
 
 						<cm3:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Scabbards" Style="{DynamicResource Label}"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
@@ -319,9 +328,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Margin="3, 2, 3, 0">
+				<GroupBox>
 					<GroupBox.Header>
-						<cm3:TextBlock Key="Pose_Matrix_LeftHandCategory"/>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<cm3:TextBlock Key="Pose_Matrix_LeftHandCategory"/>
+						</Button>
 					</GroupBox.Header>
 
 					<Grid>
@@ -385,9 +396,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Margin="3, 2, 3, 0">
+				<GroupBox>
 					<GroupBox.Header>
-						<cm3:TextBlock Key="Pose_Matrix_RightHandCategory"/>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<cm3:TextBlock Key="Pose_Matrix_RightHandCategory"/>
+						</Button>
 					</GroupBox.Header>
 
 					<Grid>
@@ -452,9 +465,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Margin="3, 2, 3, 0">
+				<GroupBox>
 					<GroupBox.Header>
-						<cm3:TextBlock Key="Pose_Matrix_LegsCategory"/>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<cm3:TextBlock Key="Pose_Matrix_LegsCategory"/>
+						</Button>
 					</GroupBox.Header>
 					
 					<Grid>
@@ -542,9 +557,11 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Margin="3, 2, 3, 0">
+				<GroupBox>
 					<GroupBox.Header>
-						<cm3:TextBlock Key="Pose_Matrix_ClothesCategory"/>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<cm3:TextBlock Key="Pose_Matrix_ClothesCategory"/>
+						</Button>
 					</GroupBox.Header>
 					
 					<Grid>
@@ -598,11 +615,13 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox Margin="3, 2, 3, 0">
+				<GroupBox>
 					<GroupBox.Header>
-						<cm3:TextBlock Key="Pose_Matrix_EquipmentCategory"/>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<cm3:TextBlock Key="Pose_Matrix_EquipmentCategory"/>
+						</Button>
 					</GroupBox.Header>
-					
+
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="72"/>
@@ -650,57 +669,6 @@
 							<local:BoneView BoneName="ExTopH" Label="H"/>
 							<local:BoneView BoneName="ExTopI" Label="I"/>
 						</StackPanel>
-					</Grid>
-				</GroupBox>
-
-				<GroupBox Margin="3, 2, 3, 0">
-					<GroupBox.Header>
-						<cm3:TextBlock Key="Pose_Matrix_OtherCategory"/>
-					</GroupBox.Header>
-					<Grid>
-
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="72"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
-						</Grid.ColumnDefinitions>
-
-						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition/>
-							<RowDefinition/>
-						</Grid.RowDefinitions>
-
-						<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_OtherHead" Style="{DynamicResource Label}"/>
-						<local:BoneView Grid.Column="1" Grid.Row="0" BoneName="Head"/>
-
-						<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_OtherAbdomen" Style="{DynamicResource Label}"/>
-						<local:BoneView Grid.Column="3" Grid.Row="0" BoneName="Abdomen"/>
-
-						<cm3:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_OtherThrow" Style="{DynamicResource Label}"/>
-						<local:BoneView Grid.Column="5" Grid.Row="0" BoneName="Throw"/>
-
-						<cm3:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_OtherUnknown" Style="{DynamicResource Label}"/>
-						<local:BoneView Grid.Column="7" Grid.Row="0" BoneName="Unknown00"/>
-
-						<!--<cm3:TextBlock Grid.Column="10" Grid.Row="0" Key="Pose_Weapon" Style="{DynamicResource Label}"/>
-						<StackPanel Grid.Column="11" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="Weapon01" Label="1"/>
-							<local:BoneView BoneName="Weapon02" Label="2"/>
-							<local:BoneView BoneName="Weapon03" Label="3"/>
-							<local:BoneView BoneName="Weapon04" Label="4"/>
-						</StackPanel>-->
-
 					</Grid>
 				</GroupBox>
 

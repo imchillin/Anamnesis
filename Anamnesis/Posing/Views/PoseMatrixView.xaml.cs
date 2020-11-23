@@ -3,7 +3,10 @@
 
 namespace Anamnesis.PoseModule.Views
 {
+	using System.Collections.Generic;
+	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Input;
 
 	/// <summary>
 	/// Interaction logic for PoseMatrixPage.xaml.
@@ -13,6 +16,30 @@ namespace Anamnesis.PoseModule.Views
 		public PoseMatrixView()
 		{
 			this.InitializeComponent();
+		}
+
+		private void OnGroupClicked(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (sender is DependencyObject ob)
+			{
+				GroupBox? groupBox = ob.FindParent<GroupBox>();
+				if (groupBox == null)
+					return;
+
+				SkeletonVisual3d skeleton = (SkeletonVisual3d)this.DataContext;
+
+				if (!Keyboard.IsKeyDown(Key.LeftCtrl))
+					skeleton.SelectedBones.Clear();
+
+				List<BoneView> bones = groupBox.FindChildren<BoneView>();
+				foreach (BoneView bone in bones)
+				{
+					if (bone.Bone == null)
+						continue;
+
+					skeleton.Select(bone.Bone, true);
+				}
+			}
 		}
 	}
 }

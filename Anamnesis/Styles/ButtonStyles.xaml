@@ -61,6 +61,46 @@
 		</Setter>
 	</Style>
 
+	<Style TargetType="Button" x:Key="LinkButton">
+		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueMidBrush}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="HorizontalContentAlignment" Value="Left"/>
+		<Setter Property="md:RippleAssist.Feedback" Value="{DynamicResource MaterialDesignBody}" />
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+
+					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand">
+
+						
+
+						<md:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
+									ContentStringFormat="{TemplateBinding ContentStringFormat}"
+									HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+									Padding="{TemplateBinding Padding}"
+									SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+						</md:Ripple>
+
+						<Line x:Name="Line" Margin="0, -1, 0, 1" X1="0" X2="10" Stretch="Fill" HorizontalAlignment="Stretch" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1" VerticalAlignment="Bottom"/>
+
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsEnabled" Value="false">
+							<Setter TargetName="Line" Property="Opacity" Value="0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<Style TargetType="RepeatButton" x:Key="TransparentRepeatButton">
 		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
 		<Setter Property="Background" Value="Transparent"/>

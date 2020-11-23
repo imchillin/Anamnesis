@@ -1,0 +1,121 @@
+{
+	"ModelType": 0,
+	"Race": "Viera",
+	"BasedOn": "Middy.json",
+	"Head": {
+		"RootHead": {
+			"Index": 0
+		},
+		"Jaw": {
+			"Index": 1
+		},
+		"EyelidLowerLeft": {
+			"Index": 2
+		},
+		"EyelidLowerRight": {
+			"Index": 3
+		},
+		"EyeLeft": {
+			"Index": 4
+		},
+		"EyeRight": {
+			"Index": 5
+		},
+		"Nose": {
+			"Index": 6
+		},
+		"CheekLeft": {
+			"Index": 7
+		},
+		"CheekRight": {
+			"Index": 8
+		},
+		"LipsLeft": {
+			"Index": 9
+		},
+		"LipsRight": {
+			"Index": 10
+		},
+		"EyebrowLeft": {
+			"Index": 11
+		},
+		"EyebrowRight": {
+			"Index": 12
+		},
+		"Bridge": {
+			"Index": 13
+		},
+		"BrowLeft": {
+			"Index": 14
+		},
+		"BrowRight": {
+			"Index": 15
+		},
+		"LipUpperA": {
+			"Index": 16
+		},
+		"EyelidUpperLeft": {
+			"Index": 17
+		},
+		"EyelidUpperRight": {
+			"Index": 18
+		},
+		"Ear01ALeft": {
+			"Index": 19
+		},
+		"Ear01ARight": {
+			"Index": 20
+		},
+		"Ear02ALeft": {
+			"Index": 21
+		},
+		"Ear02ARight": {
+			"Index": 22
+		},
+		"Ear03ALeft": {
+			"Index": 23
+		},
+		"Ear03ARight": {
+			"Index": 24
+		},
+		"Ear04ALeft": {
+			"Index": 25
+		},
+		"Ear04ARight": {
+			"Index": 26
+		},
+		"LipLowerA": {
+			"Index": 27
+		},
+		"LipUpperB": {
+			"Index": 28
+		},
+		"Ear01BLeft": {
+			"Index": 29
+		},
+		"Ear01BRight": {
+			"Index": 30
+		},
+		"Ear02BLeft": {
+			"Index": 31
+		},
+		"Ear02BRight": {
+			"Index": 32
+		},
+		"Ear03BLeft": {
+			"Index": 33
+		},
+		"Ear03BRight": {
+			"Index": 34
+		},
+		"Ear04BLeft": {
+			"Index": 35
+		},
+		"Ear04BRight": {
+			"Index": 36
+		},
+		"LipLowerB": {
+			"Index": 37
+		}
+	}
+}

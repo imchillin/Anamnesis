@@ -4,15 +4,21 @@
 namespace Anamnesis.PoseModule
 {
 	using System;
+	using System.Collections.Generic;
+	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
+	using Anamnesis.Posing.Templates;
+	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
 	public class PoseService : ServiceBase<PoseService>
 	{
+		public static List<TemplateSkeleton> Templates = new List<TemplateSkeleton>();
+
 		private NopHookViewModel? freezeRot1;
 		private NopHookViewModel? freezeRot2;
 		private NopHookViewModel? freezeRot3;
@@ -121,6 +127,13 @@ namespace Anamnesis.PoseModule
 			this.freezePhysics3 = new NopHookViewModel(AddressService.SkeletonFreezePhysics3, 4);
 
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
+
+			string[] templates = Directory.GetFiles("Posing/Templates/",  "*.json");
+			foreach (string templatePath in templates)
+			{
+				TemplateSkeleton template = SerializerService.DeserializeFile<TemplateSkeleton>(templatePath);
+				this.Load(template);
+			}
 		}
 
 		public override async Task Shutdown()
@@ -150,6 +163,18 @@ namespace Anamnesis.PoseModule
 		private void OnGposeStateChanging()
 		{
 			this.SetEnabled(false);
+		}
+
+		private void Load(TemplateSkeleton template)
+		{
+			Templates.Add(template);
+
+			if (template.BasedOn != null)
+			{
+				TemplateSkeleton baseTemplate = SerializerService.DeserializeFile<TemplateSkeleton>("Posing/Templates/" + template.BasedOn);
+				this.Load(baseTemplate);
+				template.CopyBaseValues(baseTemplate);
+			}
 		}
 	}
 }

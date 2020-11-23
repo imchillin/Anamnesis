@@ -275,6 +275,15 @@
 	  <None Update="Monsters.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="Posing\Templates\Viera.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Posing\Templates\Hrothgar.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Posing\Templates\Middy.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Props.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
