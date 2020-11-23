@@ -37,7 +37,7 @@ namespace Anamnesis.PoseModule.Views
 					if (bone.Bone == null)
 						continue;
 
-					skeleton.Select(bone.Bone, true);
+					skeleton.Select(bone.Bone, SkeletonVisual3d.SelectMode.Add);
 				}
 			}
 		}

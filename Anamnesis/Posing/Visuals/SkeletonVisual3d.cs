@@ -32,6 +32,13 @@ namespace Anamnesis.PoseModule
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
+		public enum SelectMode
+		{
+			Override,
+			Add,
+			Toggle,
+		}
+
 		public bool LinkEyes { get; set; } = true;
 		public ActorViewModel Actor { get; private set; }
 		public BoneVisual3d? MouseOverBone { get; set; }
@@ -51,9 +58,7 @@ namespace Anamnesis.PoseModule
 					this.SelectedBones.Clear();
 
 				if (value != null)
-				{
-					this.Select(value);
-				}
+					this.Select(value, SelectMode.Add);
 
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
 			}
@@ -90,22 +95,22 @@ namespace Anamnesis.PoseModule
 			this.SelectedBones.Clear();
 
 			if (this.Bones != null)
-			{
 				this.Bones.Clear();
-			}
+
+			this.Bones = null;
 		}
 
-		public void Select(BoneVisual3d bone, bool add = false)
+		public void Select(BoneVisual3d bone, SelectMode mode)
 		{
-			if (Keyboard.IsKeyDown(Key.LeftCtrl))
-				add = true;
-
-			if (!add)
+			if (mode == SelectMode.Override)
 				this.SelectedBones.Clear();
 
-			if (add && this.SelectedBones.Contains(bone))
+			if (this.SelectedBones.Contains(bone))
 			{
-				this.SelectedBones.Remove(bone);
+				if (mode == SelectMode.Toggle)
+				{
+					this.SelectedBones.Remove(bone);
+				}
 			}
 			else
 			{
@@ -116,19 +121,19 @@ namespace Anamnesis.PoseModule
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
 		}
 
-		public void Select(List<BoneVisual3d> bones, bool add = false)
+		public void Select(List<BoneVisual3d> bones, SelectMode mode)
 		{
-			if (Keyboard.IsKeyDown(Key.LeftCtrl))
-				add = true;
-
-			if (!add)
+			if (mode == SelectMode.Override)
 				this.SelectedBones.Clear();
 
 			foreach (BoneVisual3d bone in bones)
 			{
-				if (add && this.SelectedBones.Contains(bone))
+				if (this.SelectedBones.Contains(bone))
 				{
-					this.SelectedBones.Remove(bone);
+					if (mode == SelectMode.Toggle)
+					{
+						this.SelectedBones.Remove(bone);
+					}
 				}
 				else
 				{
@@ -300,7 +305,7 @@ namespace Anamnesis.PoseModule
 
 		private async Task WriteSkeletonThread()
 		{
-			while (Application.Current != null)
+			while (Application.Current != null && this.Bones != null)
 			{
 				await Dispatch.MainThread();
 

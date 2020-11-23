@@ -39,6 +39,9 @@ namespace Anamnesis.Files
 
 			foreach ((string name, BoneVisual3d bone) in skeleton.Bones)
 			{
+				if (config.UseSelection && !skeleton.GetIsBoneSelected(bone))
+					continue;
+
 				Transform? trans = bone.ViewModel.Model;
 
 				if (trans == null)
@@ -76,6 +79,10 @@ namespace Anamnesis.Files
 					}
 
 					BoneVisual3d? bone = skeleton.Bones[name];
+
+					if (config.UseSelection && !skeleton.GetIsBoneSelected(bone))
+						continue;
+
 					TransformViewModel vm = bone.ViewModel;
 
 					if (config.IncludePosition && this.Config.IncludePosition && bone.Position != Vector.Zero)
@@ -92,6 +99,9 @@ namespace Anamnesis.Files
 					{
 						vm.Scale = savedBone.Scale;
 					}
+
+					bone.ReadTransform();
+					bone.WriteTransform(skeleton, false);
 				}
 			}
 
@@ -104,10 +114,10 @@ namespace Anamnesis.Files
 
 		public class Configuration
 		{
-			public List<BoneVisual3d>? Bones;
 			public bool IncludeRotation { get; set; } = true;
 			public bool IncludePosition { get; set; } = true;
 			public bool IncludeScale { get; set; } = true;
+			public bool UseSelection { get; set; } = false;
 		}
 
 		[Serializable]

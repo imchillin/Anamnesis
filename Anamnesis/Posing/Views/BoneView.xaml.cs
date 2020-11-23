@@ -235,7 +235,12 @@ namespace Anamnesis.PoseModule.Views
 			if (this.skeleton == null || this.Bone == null)
 				return;
 
-			this.skeleton.Select(this.Bone);
+			SkeletonVisual3d.SelectMode mode = SkeletonVisual3d.SelectMode.Override;
+
+			if (Keyboard.IsKeyDown(Key.LeftCtrl))
+				mode = SkeletonVisual3d.SelectMode.Toggle;
+
+			this.skeleton.Select(this.Bone, mode);
 		}
 
 		private void UpdateState()

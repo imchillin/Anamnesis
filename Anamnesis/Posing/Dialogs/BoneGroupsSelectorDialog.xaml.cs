@@ -24,6 +24,8 @@ namespace Anamnesis.PoseModule.Dialogs
 
 		public event DialogEvent? Close;
 
+		public bool UseSelection { get; set; }
+
 		public PoseFile.Configuration? Result
 		{
 			get;
@@ -44,21 +46,14 @@ namespace Anamnesis.PoseModule.Dialogs
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			if (this.Result == null)
-			{
 				this.Result = new PoseFile.Configuration();
-			}
-		}
 
-		private void OnAllClick(object sender, RoutedEventArgs e)
-		{
-		}
-
-		private void OnNoneClick(object sender, RoutedEventArgs e)
-		{
+			this.UseSelection = this.Result.UseSelection;
 		}
 
 		private void OnOKClick(object sender, RoutedEventArgs e)
 		{
+			this.Result!.UseSelection = this.UseSelection;
 			this.Confirm();
 		}
 

@@ -13,30 +13,16 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<GroupBox Header="Bone Groups">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
-			
-				<StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-					<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
-						<CheckBox Content="Body" IsChecked="{Binding Body}"/>
-						<CheckBox Content="Head" IsChecked="{Binding Head}"/>
-						<CheckBox Content="Hair" IsChecked="{Binding Hair}"/>
-						<CheckBox Content="Met" IsChecked="{Binding Met}"/>
-						<CheckBox Content="Top" IsChecked="{Binding Top}"/>
-					</StackPanel>
-				</StackPanel>
+		<Grid Grid.Row="0">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
 
-				<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="6, 0, 6, 6">
-					<Button Grid.Column="1" Margin="3" Content="All" MinWidth="75" Click="OnAllClick" Style="{StaticResource TransparentButton}"/>
-					<Button Grid.Column="1" Margin="3" Content="None" MinWidth="75" Click="OnNoneClick" Style="{StaticResource TransparentButton}"/>
-				</StackPanel>
-
-			</Grid>
-		</GroupBox>
+			<StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12">
+				<CheckBox Content="Include Selected Bones Only" IsChecked="{Binding UseSelection}"/>
+			</StackPanel>
+		</Grid>
 
 		<GroupBox Header="Include" Grid.Row="1" Padding="6">
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

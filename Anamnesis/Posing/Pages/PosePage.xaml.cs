@@ -49,8 +49,8 @@ namespace Anamnesis.PoseModule.Pages
 		{
 			Application.Current?.Dispatcher.Invoke(() =>
 			{
-				if (this.Skeleton != null && !this.PoseService.CanEdit)
-					this.Skeleton.CurrentBone = null;
+				////if (this.Skeleton != null && !this.PoseService.CanEdit)
+				////	this.Skeleton.CurrentBone = null;
 
 				this.Skeleton?.ReadTranforms();
 			});
@@ -187,7 +187,7 @@ namespace Anamnesis.PoseModule.Pages
 				bone.GetChildren(ref bones);
 			}
 
-			this.Skeleton.Select(bones);
+			this.Skeleton.Select(bones, SkeletonVisual3d.SelectMode.Add);
 		}
 	}
 }
