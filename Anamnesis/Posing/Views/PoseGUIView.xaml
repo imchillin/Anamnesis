@@ -52,8 +52,8 @@
 						<local:BoneView Canvas.Left="182" Canvas.Top="160" BoneName="ForearmRight"/>
 						<local:BoneView Canvas.Left="48" Canvas.Top="230" BoneName="WristLeft"/>
 						<local:BoneView Canvas.Left="188" Canvas.Top="230" BoneName="WristRight"/>
-						<local:BoneView Canvas.Left="94" Canvas.Top="255" BoneName="LegsLeft"/>
-						<local:BoneView Canvas.Left="143" Canvas.Top="255" BoneName="LegsRight"/>
+						<local:BoneView Canvas.Left="94" Canvas.Top="255" BoneName="LegLeft"/>
+						<local:BoneView Canvas.Left="143" Canvas.Top="255" BoneName="LegRight"/>
 						<local:BoneView Canvas.Left="103" Canvas.Top="333" BoneName="KneeLeft"/>
 						<local:BoneView Canvas.Left="132" Canvas.Top="333" BoneName="KneeRight"/>
 						<local:BoneView Canvas.Left="83" Canvas.Top="333" BoneName="CalfLeft"/>
@@ -138,14 +138,14 @@
 							<local:BoneView Canvas.Left="109" Canvas.Top="77" BoneName="BrowLeft"/>
 							<local:BoneView Canvas.Left="170" Canvas.Top="77" BoneName="BrowRight"/>
 							<local:BoneView Canvas.Left="140" Canvas.Top="129" BoneName="JawUpper"/>
-							<local:BoneView Canvas.Left="140" Canvas.Top="190" BoneName="LipUpper"/>
+							<local:BoneView Canvas.Left="140" Canvas.Top="190" BoneName="LipUpperA"/>
 							<local:BoneView Canvas.Left="77" Canvas.Top="60" BoneName="EyelidUpperLeft"/>
 							<local:BoneView Canvas.Left="202" Canvas.Top="60" BoneName="EyelidUpperRight"/>
 							<local:BoneView Canvas.Left="63" Canvas.Top="211" BoneName="LipsLeft"/>
 							<local:BoneView Canvas.Left="215" Canvas.Top="211" BoneName="LipsRight"/>
 							<local:BoneView Canvas.Left="90" Canvas.Top="198" BoneName="LipUpperLeft"/>
 							<local:BoneView Canvas.Left="192" Canvas.Top="198" BoneName="LipUpperRight"/>
-							<local:BoneView Canvas.Left="140" Canvas.Top="222" BoneName="LipLower"/>
+							<local:BoneView Canvas.Left="140" Canvas.Top="222" BoneName="LipLowerA"/>
 							<local:BoneView Canvas.Left="140" Canvas.Top="152" BoneName="Nose"/>
 							<local:BoneView Canvas.Left="140" Canvas.Top="255" BoneName="Jaw"/>
 							<local:BoneView Canvas.Left="209" Canvas.Top="78" BoneName="EyeRight"/>

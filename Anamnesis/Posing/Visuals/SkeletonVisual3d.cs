@@ -61,7 +61,7 @@ namespace Anamnesis.PoseModule
 
 		public bool HasSelection => this.SelectedBones.Count > 0;
 
-		public List<BoneVisual3d>? Bones { get; private set; }
+		public Dictionary<string, BoneVisual3d>? Bones { get; private set; }
 
 		public bool HasTail => this.Actor?.Customize?.Race == Appearance.Races.Miqote
 			|| this.Actor?.Customize?.Race == Appearance.Races.AuRa
@@ -185,16 +185,8 @@ namespace Anamnesis.PoseModule
 			if (this.Actor.ModelType != 0)
 				return null;
 
-			if (this.Bones != null)
-			{
-				foreach (BoneVisual3d? bone in this.Bones)
-				{
-					if (bone.BoneName == name)
-					{
-						return bone;
-					}
-				}
-			}
+			if (this.Bones != null && this.Bones.ContainsKey(name))
+				return this.Bones[name];
 
 			return null;
 		}
@@ -204,7 +196,7 @@ namespace Anamnesis.PoseModule
 			if (this.Bones == null)
 				return;
 
-			foreach (BoneVisual3d bone in this.Bones)
+			foreach (BoneVisual3d bone in this.Bones.Values)
 			{
 				bone.ReadTransform();
 			}
@@ -212,7 +204,7 @@ namespace Anamnesis.PoseModule
 
 		private void GenerateBones()
 		{
-			this.Bones = new List<BoneVisual3d>();
+			this.Bones = new Dictionary<string, BoneVisual3d>();
 
 			if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
 				return;
@@ -222,12 +214,12 @@ namespace Anamnesis.PoseModule
 			TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
 			this.Generate(template, skeletonVm);
 
-			foreach (BoneVisual3d bone in this.Bones)
+			foreach (BoneVisual3d bone in this.Bones.Values)
 			{
 				bone.ReadTransform();
 			}
 
-			foreach (BoneVisual3d bone in this.Bones)
+			foreach (BoneVisual3d bone in this.Bones.Values)
 			{
 				bone.ReadTransform();
 			}
@@ -238,16 +230,8 @@ namespace Anamnesis.PoseModule
 			if (name == null)
 				return this;
 
-			if (this.Bones != null)
-			{
-				foreach (BoneVisual3d bone in this.Bones)
-				{
-					if (bone.BoneName == name)
-					{
-						return bone;
-					}
-				}
-			}
+			if (this.Bones != null && this.Bones.ContainsKey(name))
+				return this.Bones[name];
 
 			return this;
 		}
@@ -264,7 +248,7 @@ namespace Anamnesis.PoseModule
 		private void Generate(Dictionary<string, TemplateBone>? template, BonesViewModel? memory, string fallbackName, ModelVisual3D root)
 		{
 			if (this.Bones == null)
-				this.Bones = new List<BoneVisual3d>();
+				this.Bones = new Dictionary<string, BoneVisual3d>();
 
 			if (template == null)
 				template = new Dictionary<string, TemplateBone>();
@@ -278,7 +262,6 @@ namespace Anamnesis.PoseModule
 			if (memory != null)
 			{
 				Dictionary<string, BoneVisual3d> newBones = new Dictionary<string, BoneVisual3d>();
-
 				for (int i = 0; i < memory.Transforms.Count; i++)
 				{
 					TransformViewModel? transform = memory.Transforms[i];
@@ -289,7 +272,7 @@ namespace Anamnesis.PoseModule
 
 					BoneVisual3d bone = new BoneVisual3d(transform, this, name);
 					newBones.Add(name, bone);
-					this.Bones.Add(bone);
+					this.Bones.Add(name, bone);
 				}
 
 				foreach (BoneVisual3d bone in newBones.Values)

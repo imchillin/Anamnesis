@@ -18,11 +18,11 @@
 			"Index": 4,
 			"Parent": "Root"
 		},
-		"LegsLeft": {
+		"LegLeft": {
 			"Index": 5,
 			"Parent": "Waist"
 		},
-		"LegsRight": {
+		"LegRight": {
 			"Index": 6,
 			"Parent": "Waist"
 		},
@@ -114,11 +114,11 @@
 		},
 		"CalfLeft": {
 			"Index": 29,
-			"Parent": "LegsLeft"
+			"Parent": "LegLeft"
 		},
 		"CalfRight": {
 			"Index": 30,
-			"Parent": "LegsRight"
+			"Parent": "LegRight"
 		},
 		"ScabbardLeft": {
 			"Index": 31

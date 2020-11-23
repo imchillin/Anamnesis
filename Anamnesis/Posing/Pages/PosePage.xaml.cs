@@ -92,7 +92,7 @@ namespace Anamnesis.PoseModule.Pages
 			{
 				ActorViewModel? actor = this.DataContext as ActorViewModel;
 
-				if (actor == null)
+				if (actor == null || this.Skeleton == null)
 					return;
 
 				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>("Pose");
@@ -117,7 +117,7 @@ namespace Anamnesis.PoseModule.Pages
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(actor, config);
+					await poseFile.Apply(actor, this.Skeleton, config);
 				}
 			}
 			catch (Exception ex)
@@ -135,7 +135,7 @@ namespace Anamnesis.PoseModule.Pages
 		{
 			ActorViewModel? actor = this.DataContext as ActorViewModel;
 
-			if (actor == null)
+			if (actor == null || this.Skeleton == null)
 				return null;
 
 			PoseFile.Configuration? config = new PoseFile.Configuration();
@@ -151,7 +151,7 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			PoseFile file = new PoseFile();
-			file.WriteToFile(actor, config);
+			file.WriteToFile(actor, this.Skeleton, config);
 
 			return file;
 		}

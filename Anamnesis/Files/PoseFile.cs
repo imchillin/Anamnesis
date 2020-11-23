@@ -22,48 +22,37 @@ namespace Anamnesis.Files
 
 	public class PoseFile : FileBase
 	{
-		public Appearance.Races? Race { get; set; }
 		public Configuration Config { get; set; } = new Configuration();
 
-		public Dictionary<string, Bone?>? Body { get; set; }
-		public Dictionary<string, Bone?>? Hair { get; set; }
-		public Dictionary<string, Bone?>? Met { get; set; }
-		public Dictionary<string, Bone?>? Top { get; set; }
-		public Dictionary<string, Bone?>? Head { get; set; }
+		public Dictionary<string, Bone?>? Bones { get; set; }
 
-		public void WriteToFile(ActorViewModel actor, Configuration config)
+		public void WriteToFile(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config)
 		{
 			this.Config = config;
-			this.Race = actor?.Customize?.Race;
 
-			SkeletonViewModel? skeleton = actor?.ModelObject?.Skeleton?.Skeleton;
+			////SkeletonViewModel? skeletonMem = actor?.ModelObject?.Skeleton?.Skeleton;
 
-			/*if (skeleton == null)
+			if (skeleton == null || skeleton.Bones == null)
 				throw new Exception("No skeleton in actor");
 
-			if (skeleton.Body != null)
-				this.Body = this.WriteToFile(skeleton.Body);
+			this.Bones = new Dictionary<string, Bone?>();
 
-			if (skeleton.Head != null)
-				this.Head = this.WriteToFile(skeleton.Head);
+			foreach ((string name, BoneVisual3d bone) in skeleton.Bones)
+			{
+				Transform? trans = bone.ViewModel.Model;
 
-			if (skeleton.Hair != null)
-				this.Hair = this.WriteToFile(skeleton.Hair);
+				if (trans == null)
+					throw new Exception("Bone is missing transform");
 
-			if (skeleton.Met != null)
-				this.Met = this.WriteToFile(skeleton.Met);
-
-			if (skeleton.Top != null)
-				this.Top = this.WriteToFile(skeleton.Top);*/
-
-			Log.Write("Saved skeleton to file");
+				this.Bones.Add(name, new Bone(trans.Value));
+			}
 		}
 
-		public async Task Apply(ActorViewModel actor, Configuration config)
+		public async Task Apply(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config)
 		{
-			SkeletonViewModel? skeleton = actor?.ModelObject?.Skeleton?.Skeleton;
+			SkeletonViewModel? skeletonMem = actor?.ModelObject?.Skeleton?.Skeleton;
 
-			if (skeleton == null)
+			if (skeletonMem == null || skeleton.Bones == null)
 				throw new Exception("No skeleton in actor");
 
 			PoseService.Instance.SetEnabled(true);
@@ -73,83 +62,45 @@ namespace Anamnesis.Files
 			// don't freeze positions if we aren't writing any
 			PoseService.Instance.FreezePositions = this.Config.IncludePosition && config.IncludePosition;
 
-			/*if (skeleton.Body != null)
-				this.ReadFromFile(this.Body, skeleton.Body, config);
+			if (this.Bones != null)
+			{
+				foreach ((string name, Bone? savedBone) in this.Bones)
+				{
+					if (savedBone == null)
+						continue;
 
-			if (skeleton.Head != null)
-				this.ReadHeadFromFile(actor, config);
+					if (!skeleton.Bones.ContainsKey(name))
+					{
+						Log.Write($"Bone: \"{name}\" not found", "Pose", Log.Severity.Warning);
+						continue;
+					}
 
-			if (skeleton.Hair != null)
-				this.ReadFromFile(this.Hair, skeleton.Hair, config);
+					BoneVisual3d? bone = skeleton.Bones[name];
+					TransformViewModel vm = bone.ViewModel;
 
-			if (skeleton.Met != null)
-				this.ReadFromFile(this.Met, skeleton.Met, config);
+					if (config.IncludePosition && this.Config.IncludePosition && bone.Position != Vector.Zero)
+					{
+						vm.Position = savedBone.Position;
+					}
 
-			if (skeleton.Top != null)
-				this.ReadFromFile(this.Top, skeleton.Top, config);*/
+					if (config.IncludeRotation && this.Config.IncludeRotation)
+					{
+						vm.Rotation = savedBone.Rotation;
+					}
+
+					if (config.IncludeScale && this.Config.IncludeScale && bone.Scale != Vector.Zero)
+					{
+						vm.Scale = savedBone.Scale;
+					}
+				}
+			}
 
 			await Task.Delay(100);
 			PoseService.Instance.FreezePositions = true;
 
-			await skeleton.ReadFromMemoryAsync();
+			await skeletonMem.ReadFromMemoryAsync();
 			PoseService.Instance.CanEdit = true;
 		}
-
-		/*private Dictionary<string, Bone?>? WriteToFile(BonesViewModel bones)
-		{
-			if (bones == null)
-				return null;
-
-			if (bones.Count <= 0 || bones.Count > 512)
-				return null;
-
-			if (bones.Transforms == null || bones.Transforms.Count != bones.Count)
-				throw new Exception("Bone transform array does not match expected size");
-
-			Dictionary<string, Bone?>? transforms = new Dictionary<string, Bone?>?(bones.Transforms.Count);
-			for (int i = 0; i < bones.Transforms.Count; i++)
-			{
-				Transform? trans = bones.Transforms[i].Model;
-
-				if (trans == null)
-					throw new Exception("Bone is missing transform");
-
-				transforms.Add(new Bone(trans.Value));
-			}
-
-			return transforms;
-		}
-
-		private void ReadFromFile(List<Bone?>? transforms, BonesViewModel bones, Configuration config)
-		{
-			if (bones == null)
-				return;
-
-			if (transforms == null || transforms.Count <= 0)
-				return;
-
-			////if (transforms.Count != bones.Count)
-			////throw new Exception("Saved pose bone count does not match target skeleton bone count");
-
-			int count = Math.Min(transforms.Count, bones.Count);
-
-			for (int i = 0; i < count; i++)
-			{
-				Bone? bone = transforms[i];
-
-				if (bone == null)
-					continue;
-
-				if (config.IncludePosition && this.Config.IncludePosition && bone.Position != Vector.Zero)
-					bones.Transforms[i].Position = bone.Position;
-
-				if (config.IncludeRotation && this.Config.IncludeRotation)
-					bones.Transforms[i].Rotation = bone.Rotation;
-
-				if (config.IncludeScale && this.Config.IncludeScale && bone.Scale != Vector.Zero)
-					bones.Transforms[i].Scale = bone.Scale;
-			}
-		}*/
 
 		public class Configuration
 		{

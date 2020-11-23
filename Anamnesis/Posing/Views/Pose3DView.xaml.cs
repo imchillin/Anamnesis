@@ -3,6 +3,7 @@
 
 namespace Anamnesis.PoseModule.Views
 {
+	using System.Linq;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
@@ -58,8 +59,8 @@ namespace Anamnesis.PoseModule.Views
 			// position camera at average center position of skeleton
 			if (vm.Bones != null && vm.Bones.Count > 0)
 			{
-				Vector3D pos = vm.Bones[0].ViewModel.Position.ToMedia3DVector();
-				foreach (BoneVisual3d visual in vm.Bones)
+				Vector3D pos = vm.Bones.First().Value.ViewModel.Position.ToMedia3DVector();
+				foreach (BoneVisual3d visual in vm.Bones.Values)
 				{
 					pos += visual.ViewModel.Position.ToMedia3DVector();
 				}

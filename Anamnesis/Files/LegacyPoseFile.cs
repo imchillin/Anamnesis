@@ -145,39 +145,39 @@ namespace Anamnesis.Files
 		public string? EyeRight { get; set; }
 		public string? Nose { get; set; }
 		public string? CheekLeft { get; set; }
-		public string? HrothWhiskersLeft { get; set; }
 		public string? CheekRight { get; set; }
-		public string? HrothWhiskersRight { get; set; }
 		public string? LipsLeft { get; set; }
-		public string? HrothEyebrowLeft { get; set; }
 		public string? LipsRight { get; set; }
-		public string? HrothEyebrowRight { get; set; }
 		public string? EyebrowLeft { get; set; }
-		public string? HrothBridge { get; set; }
 		public string? EyebrowRight { get; set; }
-		public string? HrothBrowLeft { get; set; }
 		public string? Bridge { get; set; }
-		public string? HrothBrowRight { get; set; }
 		public string? BrowLeft { get; set; }
-		public string? HrothJawUpper { get; set; }
 		public string? BrowRight { get; set; }
-		public string? HrothLipUpper { get; set; }
 		public string? LipUpperA { get; set; }
-		public string? HrothEyelidUpperLeft { get; set; }
 		public string? EyelidUpperLeft { get; set; }
-		public string? HrothEyelidUpperRight { get; set; }
 		public string? EyelidUpperRight { get; set; }
-		public string? HrothLipsLeft { get; set; }
 		public string? LipLowerA { get; set; }
-		public string? HrothLipsRight { get; set; }
-		public string? VieraEar01ALeft { get; set; }
 		public string? LipUpperB { get; set; }
-		public string? HrothLipUpperLeft { get; set; }
-		public string? VieraEar01ARight { get; set; }
 		public string? LipLowerB { get; set; }
+		public string? HrothWhiskersLeft { get; set; }
+		public string? HrothWhiskersRight { get; set; }
+		public string? HrothEyebrowLeft { get; set; }
+		public string? HrothEyebrowRight { get; set; }
+		public string? HrothBridge { get; set; }
+		public string? HrothBrowLeft { get; set; }
+		public string? HrothBrowRight { get; set; }
+		public string? HrothJawUpper { get; set; }
+		public string? HrothLipUpper { get; set; }
+		public string? HrothEyelidUpperLeft { get; set; }
+		public string? HrothEyelidUpperRight { get; set; }
+		public string? HrothLipsLeft { get; set; }
+		public string? HrothLipsRight { get; set; }
+		public string? HrothLipUpperLeft { get; set; }
 		public string? HrothLipUpperRight { get; set; }
-		public string? VieraEar02ALeft { get; set; }
 		public string? HrothLipLower { get; set; }
+		public string? VieraEar01ALeft { get; set; }
+		public string? VieraEar01ARight { get; set; }
+		public string? VieraEar02ALeft { get; set; }
 		public string? VieraEar02ARight { get; set; }
 		public string? VieraEar03ALeft { get; set; }
 		public string? VieraEar03ARight { get; set; }
@@ -350,39 +350,39 @@ namespace Anamnesis.Files
 		public string? EyeRightSize { get; set; }
 		public string? NoseSize { get; set; }
 		public string? CheekLeftSize { get; set; }
-		public string? HrothWhiskersLeftSize { get; set; }
 		public string? CheekRightSize { get; set; }
-		public string? HrothWhiskersRightSize { get; set; }
 		public string? LipsLeftSize { get; set; }
-		public string? HrothEyebrowLeftSize { get; set; }
 		public string? LipsRightSize { get; set; }
-		public string? HrothEyebrowRightSize { get; set; }
 		public string? EyebrowLeftSize { get; set; }
-		public string? HrothBridgeSize { get; set; }
 		public string? EyebrowRightSize { get; set; }
-		public string? HrothBrowLeftSize { get; set; }
 		public string? BridgeSize { get; set; }
-		public string? HrothBrowRightSize { get; set; }
 		public string? BrowLeftSize { get; set; }
-		public string? HrothJawUpperSize { get; set; }
 		public string? BrowRightSize { get; set; }
-		public string? HrothLipUpperSize { get; set; }
 		public string? LipUpperASize { get; set; }
-		public string? HrothEyelidUpperLeftSize { get; set; }
 		public string? EyelidUpperLeftSize { get; set; }
-		public string? HrothEyelidUpperRightSize { get; set; }
 		public string? EyelidUpperRightSize { get; set; }
-		public string? HrothLipsLeftSize { get; set; }
 		public string? LipLowerASize { get; set; }
-		public string? HrothLipsRightSize { get; set; }
-		public string? VieraEar01ALeftSize { get; set; }
 		public string? LipUpperBSize { get; set; }
-		public string? HrothLipUpperLeftSize { get; set; }
-		public string? VieraEar01ARightSize { get; set; }
 		public string? LipLowerBSize { get; set; }
+		public string? HrothWhiskersLeftSize { get; set; }
+		public string? HrothWhiskersRightSize { get; set; }
+		public string? HrothEyebrowLeftSize { get; set; }
+		public string? HrothEyebrowRightSize { get; set; }
+		public string? HrothBridgeSize { get; set; }
+		public string? HrothBrowLeftSize { get; set; }
+		public string? HrothBrowRightSize { get; set; }
+		public string? HrothJawUpperSize { get; set; }
+		public string? HrothLipUpperSize { get; set; }
+		public string? HrothEyelidUpperLeftSize { get; set; }
+		public string? HrothEyelidUpperRightSize { get; set; }
+		public string? HrothLipsLeftSize { get; set; }
+		public string? HrothLipsRightSize { get; set; }
+		public string? HrothLipUpperLeftSize { get; set; }
 		public string? HrothLipUpperRightSize { get; set; }
-		public string? VieraEar02ALeftSize { get; set; }
 		public string? HrothLipLowerSize { get; set; }
+		public string? VieraEar01ALeftSize { get; set; }
+		public string? VieraEar01ARightSize { get; set; }
+		public string? VieraEar02ALeftSize { get; set; }
 		public string? VieraEar02ARightSize { get; set; }
 		public string? VieraEar03ALeftSize { get; set; }
 		public string? VieraEar03ARightSize { get; set; }
@@ -454,7 +454,7 @@ namespace Anamnesis.Files
 				throw new Exception("Legacy pose file has no race specified");
 
 			Appearance.Races fileRace = (Appearance.Races)byte.Parse(this.Race);
-			file.Race = fileRace;
+			file.Bones = new Dictionary<string, PoseFile.Bone?>();
 
 			PropertyInfo[] props = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance);
 			foreach (PropertyInfo propertyInfo in props)
@@ -479,6 +479,9 @@ namespace Anamnesis.Files
 				if (boneName.StartsWith("Viera") && fileRace != Appearance.Races.Viera)
 					continue;
 
+				boneName = boneName.Replace(@"Hroth", string.Empty);
+				boneName = boneName.Replace(@"Viera", string.Empty);
+
 				string? rotString = null;
 				string? scaleString = null;
 
@@ -493,58 +496,7 @@ namespace Anamnesis.Files
 
 				Transform transform = StringToBone(rotString, scaleString);
 
-				/*int index;
-				if (SkeletonUtility.BodyBoneIndexLookup.TryGetValue(boneName, out index))
-				{
-					if (file.Body == null)
-						file.Body = new Dictionary<string, PoseFile.Bone?>();
-
-					while (file.Body.Count <= index)
-						file.Body.Add(null);
-
-					file.Body[index] = new PoseFile.Bone(transform);
-				}
-				else if (SkeletonUtility.HeadBoneIndexLookup.TryGetValue(boneName, out index))
-				{
-					if (file.Head == null)
-						file.Head = new Dictionary<string, PoseFile.Bone?>();
-
-					file.Head.Add(boneName, new PoseFile.Bone(transform));
-				}
-				else if (SkeletonUtility.HairBoneIndexLookup.TryGetValue(boneName, out index))
-				{
-					if (file.Hair == null)
-						file.Hair = new List<PoseFile.Bone?>();
-
-					while (file.Hair.Count <= index)
-						file.Hair.Add(null);
-
-					file.Hair[index] = new PoseFile.Bone(transform);
-				}
-				else if (SkeletonUtility.MetBoneIndexLookup.TryGetValue(boneName, out index))
-				{
-					if (file.Met == null)
-						file.Met = new List<PoseFile.Bone?>();
-
-					while (file.Met.Count <= index)
-						file.Met.Add(null);
-
-					file.Met[index] = new PoseFile.Bone(transform);
-				}
-				else if (SkeletonUtility.TopBoneIndexLookup.TryGetValue(boneName, out index))
-				{
-					if (file.Top == null)
-						file.Top = new List<PoseFile.Bone?>();
-
-					while (file.Top.Count <= index)
-						file.Top.Add(null);
-
-					file.Top[index] = new PoseFile.Bone(transform);
-				}
-				else
-				{
-					throw new Exception("Failed to find index for bone: " + boneName);
-				}*/
+				file.Bones.Add(boneName, new PoseFile.Bone(transform));
 			}
 
 			return file;

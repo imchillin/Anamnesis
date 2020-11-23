@@ -48,7 +48,7 @@
 		"JawUpper": {
 			"Index": 14
 		},
-		"LipUpper": {
+		"LipUpperA": {
 			"Index": 15
 		},
 		"EyelidUpperLeft": {
@@ -69,7 +69,7 @@
 		"LipUpperRight": {
 			"Index": 21
 		},
-		"LipLower": {
+		"LipLowerA": {
 			"Index": 22
 		}
 	}

@@ -12,6 +12,7 @@ namespace Anamnesis.Scenes
 	using Anamnesis.Files.Infos;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 	using SimpleLog;
 
@@ -114,8 +115,12 @@ namespace Anamnesis.Scenes
 					if (vm == null)
 						continue;
 
+					throw new NotImplementedException();
+
+					/*SkeletonVisual3d skeleton;
+
 					sceneActor.FromActor(vm, this.RootPosition, config);
-					this.Actors.Add(sceneActor);
+					this.Actors.Add(sceneActor);*/
 				}
 			}
 		}
@@ -252,7 +257,7 @@ namespace Anamnesis.Scenes
 			public PoseFile? Pose { get; set; }
 			public CharacterFile? Character { get; set; }
 
-			public void FromActor(ActorViewModel actor, Vector rootPos, Configuration config)
+			public void FromActor(ActorViewModel actor, SkeletonVisual3d skeleton, Vector rootPos, Configuration config)
 			{
 				if (actor.ModelObject?.Transform != null)
 				{
@@ -267,7 +272,7 @@ namespace Anamnesis.Scenes
 				}
 
 				this.Pose = new PoseFile();
-				this.Pose.WriteToFile(actor, config.Pose);
+				this.Pose.WriteToFile(actor, skeleton, config.Pose);
 
 				this.Character = new CharacterFile();
 				this.Character.WriteToFile(actor, config.Character);
@@ -281,7 +286,7 @@ namespace Anamnesis.Scenes
 				}
 			}
 
-			public async Task ApplyGpose(ActorViewModel actor, Vector rootPos, Configuration config)
+			public Task ApplyGpose(ActorViewModel actor, Vector rootPos, Configuration config)
 			{
 				if (actor.ModelObject?.Transform != null)
 				{
@@ -299,8 +304,11 @@ namespace Anamnesis.Scenes
 
 				if (this.Pose != null)
 				{
-					await this.Pose.Apply(actor, config.Pose);
+					throw new NotImplementedException();
+					////await this.Pose.Apply(actor, config.Pose);
 				}
+
+				return Task.CompletedTask;
 			}
 		}
 
