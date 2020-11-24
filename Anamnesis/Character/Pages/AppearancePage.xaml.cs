@@ -52,7 +52,7 @@ namespace Anamnesis.Character.Pages
 		{
 			try
 			{
-				await this.Load();
+				await this.Load(true);
 			}
 			catch (Exception ex)
 			{
@@ -77,7 +77,7 @@ namespace Anamnesis.Character.Pages
 			await apFile.Apply(this.Actor, CharacterFile.SaveModes.All);
 		}
 
-		private async Task Load()
+		private async Task Load(bool advanced)
 		{
 			if (this.Actor == null)
 				return;
@@ -100,7 +100,7 @@ namespace Anamnesis.Character.Pages
 			{
 				CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
 
-				if (result.UseAdvancedLoad)
+				if (advanced)
 				{
 					CharacterFile.SaveModes newmode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Load Character...", lastLoadMode);
 
@@ -115,12 +115,13 @@ namespace Anamnesis.Character.Pages
 			}
 		}
 
-		private async void OnSaveClicked(object sender, RoutedEventArgs e)
+		private void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
 			if (this.Actor == null)
 				return;
 
-			await FileService.Save(this.Save, "Character");
+			////await FileService.Save(this.Save, "Character");
+			throw new NotImplementedException();
 		}
 
 		private async Task<CharacterFile?> Save(bool useAdvancedSave)

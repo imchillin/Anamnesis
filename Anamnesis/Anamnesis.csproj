@@ -311,9 +311,6 @@
 		<Page Update="Views\TransformEditor.xaml">
 		  <SubType>Designer</SubType>
 		</Page>
-		<Page Update="Posing\Dialogs\BoneGroupsSelectorDialog.xaml">
-		  <SubType>Designer</SubType>
-		</Page>
 		<Page Update="Posing\Pages\PosePage.xaml">
 		  <SubType>Designer</SubType>
 		</Page>
@@ -347,6 +344,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Core\Localization\" />
+	  <Folder Include="Posing\Dialogs\" />
 	</ItemGroup>
 
 	<ItemGroup>

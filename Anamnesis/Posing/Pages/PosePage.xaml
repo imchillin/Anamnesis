@@ -52,15 +52,40 @@
 
 				</Border>
 
-				<Grid Grid.Row="1" Margin="3" IsEnabled="{Binding GposeService.IsGpose}">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
+				<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource MaterialDesignCardBackground}" CornerRadius="3" IsEnabled="{Binding GposeService.IsGpose}" Margin="3">
+					<Grid Margin="3">
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
 
-					<ana:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnOpenClicked"/>
-					<ana:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
-				</Grid>
+						<CheckBox Content="Include Selected Bones Only" Grid.ColumnSpan="3" Margin="3" IsChecked="{Binding FileConfiguration.UseSelection}"/>
+
+						<Grid Grid.Row="1" Margin="3">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<CheckBox Grid.Column="0" Content="Rotation" IsChecked="{Binding FileConfiguration.IncludeRotation}"/>
+							<CheckBox Grid.Column="1" Content="Position" IsChecked="{Binding FileConfiguration.IncludePosition}"/>
+							<CheckBox Grid.Column="2" Content="Scale" IsChecked="{Binding FileConfiguration.IncludeScale}"/>
+						</Grid>
+
+						<Grid Grid.Row="2" Margin="0, 3, 0, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<ana:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnOpenClicked"/>
+							<ana:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+						</Grid>
+
+					</Grid>
+				</Border>
 			</Grid>
 
 			<!-- top Bar -->

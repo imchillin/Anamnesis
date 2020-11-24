@@ -122,14 +122,12 @@
 		<!-- Options -->
 		<Grid Grid.Row="4" Margin="6">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 
 			<ana:IconButton Grid.Column="0" Icon="Check" Text="Select" Margin="3" IsEnabled="{Binding CanSelect, FallbackValue=false}" Click="OnSelectClicked"/>
-			<ana:IconButton Grid.Column="1" Icon="Wrench" Text="Advanced..." Margin="3" IsEnabled="{Binding CanSelectAdvanced, FallbackValue=false}" Click="OnAdvancedClicked"/>
-			<Button Grid.Column="2" Content="..." Margin="3" ToolTip="Browse for a file" Click="OnBrowseClicked"/>
+			<Button Grid.Column="1" Content="..." Margin="3" ToolTip="Browse for a file" Click="OnBrowseClicked"/>
 		</Grid>
 
 	</Grid>

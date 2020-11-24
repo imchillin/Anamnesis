@@ -8,10 +8,8 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using System.Windows.Media.Media3D;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
-	using Anamnesis.PoseModule.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -21,8 +19,7 @@ namespace Anamnesis.PoseModule.Pages
 	[AddINotifyPropertyChangedInterface]
 	public partial class PosePage : UserControl
 	{
-		private static PoseFile.Configuration? lastAdvancedLoadConfig;
-		private static PoseFile.Configuration? lastAdvancedSaveConfig;
+		private static PoseFile.Configuration fileConfig = new PoseFile.Configuration();
 
 		public PosePage()
 		{
@@ -36,6 +33,8 @@ namespace Anamnesis.PoseModule.Pages
 		public TargetService TargetService { get => TargetService.Instance; }
 
 		public SkeletonVisual3d? Skeleton { get; private set; }
+
+		public PoseFile.Configuration FileConfiguration => fileConfig;
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -58,10 +57,17 @@ namespace Anamnesis.PoseModule.Pages
 
 		private void OnPoseServiceEnabledChanged(bool value)
 		{
-			Application.Current?.Dispatcher.Invoke(() =>
+			if (!value)
 			{
-				this.Skeleton?.ReadTranforms();
-			});
+				this.OnClearClicked(null, null);
+			}
+			else
+			{
+				Application.Current?.Dispatcher.Invoke(() =>
+				{
+					this.Skeleton?.ReadTranforms();
+				});
+			}
 		}
 
 		private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
@@ -103,21 +109,9 @@ namespace Anamnesis.PoseModule.Pages
 				if (result.File is LegacyPoseFile legacyFile)
 					result.File = legacyFile.Upgrade(actor.Customize?.Race ?? Appearance.Races.Hyur);
 
-				PoseFile.Configuration? config = new PoseFile.Configuration();
-
-				if (result.UseAdvancedLoad)
-				{
-					config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration?>("Load Pose...", lastAdvancedLoadConfig);
-
-					if (config == null)
-						return;
-
-					lastAdvancedLoadConfig = config;
-				}
-
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(actor, this.Skeleton, config);
+					await poseFile.Apply(actor, this.Skeleton, fileConfig);
 				}
 			}
 			catch (Exception ex)
@@ -128,32 +122,15 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			await FileService.Save(this.Save, "Pose");
-		}
-
-		private async Task<PoseFile?> Save(bool useAdvancedSave)
-		{
 			ActorViewModel? actor = this.DataContext as ActorViewModel;
 
 			if (actor == null || this.Skeleton == null)
-				return null;
-
-			PoseFile.Configuration? config = new PoseFile.Configuration();
-
-			if (useAdvancedSave)
-			{
-				config = await ViewService.ShowDialog<BoneGroupsSelectorDialog, PoseFile.Configuration?>("Save Pose...", lastAdvancedSaveConfig);
-
-				if (config == null)
-					return null;
-
-				lastAdvancedSaveConfig = config;
-			}
+				return;
 
 			PoseFile file = new PoseFile();
-			file.WriteToFile(actor, this.Skeleton, config);
+			file.WriteToFile(actor, this.Skeleton, fileConfig);
 
-			return file;
+			await FileService.Save(file, "Pose");
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)
@@ -168,7 +145,7 @@ namespace Anamnesis.PoseModule.Pages
 			////this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
 		}
 
-		private void OnClearClicked(object sender, RoutedEventArgs e)
+		private void OnClearClicked(object? sender, RoutedEventArgs? e)
 		{
 			if (this.Skeleton != null)
 			{

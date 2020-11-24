@@ -145,7 +145,6 @@ namespace Anamnesis.Files
 						await Task.Delay(10);
 
 					result.Path = browser.FilePath;
-					result.UseAdvancedLoad = browser.AdvancedMode;
 					useExplorerBrowser = browser.UseFileBrowser;
 				}
 
@@ -162,8 +161,6 @@ namespace Anamnesis.Files
 
 						return dlg.FileName;
 					});
-
-					result.UseAdvancedLoad = true;
 				}
 
 				if (result.Path == null)
@@ -188,13 +185,11 @@ namespace Anamnesis.Files
 			return result;
 		}
 
-		public static async Task Save<T>(Func<bool, Task<T?>> writeFile, string title, string? path = null)
+		public static async Task Save<T>(T file, string title, string? path = null)
 			where T : FileBase, new()
 		{
 			try
 			{
-				bool advancedMode = false;
-
 				FileInfoBase info = GetFileInfo<T>();
 
 				if (path == null)
@@ -214,7 +209,6 @@ namespace Anamnesis.Files
 							await Task.Delay(10);
 
 						path = browser.FilePath;
-						advancedMode = browser.AdvancedMode;
 						useExplorerBrowser = browser.UseFileBrowser;
 					}
 
@@ -245,11 +239,6 @@ namespace Anamnesis.Files
 				}
 
 				path += "." + info.Extension;
-
-				FileBase? file = await writeFile.Invoke(advancedMode);
-
-				if (file == null)
-					return;
 
 				using FileStream stream = new FileStream(path, FileMode.Create);
 				info.SerializeFile(file, stream);
@@ -335,7 +324,6 @@ namespace Anamnesis.Files
 		public FileBase? File;
 		public FileInfoBase? Info;
 		public string? Path;
-		public bool UseAdvancedLoad;
 	}
 
 	public interface IFileSource

@@ -11,7 +11,7 @@ namespace Anamnesis.Posing.Extensions
 	{
 		public static TemplateSkeleton GetTemplate(this SkeletonViewModel self, ActorViewModel actor)
 		{
-			int maxDepth = 0;
+			int maxDepth = int.MinValue;
 			TemplateSkeleton? maxSkel = null;
 
 			foreach (TemplateSkeleton template in PoseService.Templates)

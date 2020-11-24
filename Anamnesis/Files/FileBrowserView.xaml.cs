@@ -95,7 +95,6 @@ namespace Anamnesis.GUI.Views
 		}
 
 		public string? FilePath { get; private set; }
-		public bool AdvancedMode { get; private set; }
 		public bool UseFileBrowser { get; set; }
 
 		public ObservableCollection<IFileSource> FileSources { get; private set; } = new ObservableCollection<IFileSource>();
@@ -369,12 +368,6 @@ namespace Anamnesis.GUI.Views
 			}
 
 			this.CloseDrawer();
-		}
-
-		private void OnAdvancedClicked(object sender, RoutedEventArgs e)
-		{
-			this.AdvancedMode = true;
-			this.OnSelectClicked(sender, e);
 		}
 
 		private void OnBrowseClicked(object sender, RoutedEventArgs e)
