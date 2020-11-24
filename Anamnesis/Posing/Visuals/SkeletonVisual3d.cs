@@ -219,6 +219,15 @@ namespace Anamnesis.PoseModule
 			TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
 			this.Generate(template, skeletonVm);
 
+			// Map eyes together if they exist
+			BoneVisual3d? lEye = this.GetBone("EyeLeft");
+			BoneVisual3d? rEye = this.GetBone("EyeRight");
+			if (lEye != null && rEye != null)
+			{
+				lEye.LinkedEye = rEye;
+				rEye.LinkedEye = lEye;
+			}
+
 			foreach (BoneVisual3d bone in this.Bones.Values)
 			{
 				bone.ReadTransform();
