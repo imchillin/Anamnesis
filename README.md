@@ -13,7 +13,7 @@ These instructions will get a copy of the project up and running on your local m
 [Instructions coming soon]
 
 ### Prerequisites
-- .NET Core 3.1 installed on your computer.
+- [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) installed on your computer.
 
 ### Usage
 
