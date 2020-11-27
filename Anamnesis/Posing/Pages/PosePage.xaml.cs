@@ -8,6 +8,7 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Input;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
@@ -19,7 +20,13 @@ namespace Anamnesis.PoseModule.Pages
 	[AddINotifyPropertyChangedInterface]
 	public partial class PosePage : UserControl
 	{
+		public const double DragThreshold = 20;
+
 		private static PoseFile.Configuration fileConfig = new PoseFile.Configuration();
+
+		private bool isLeftMouseButtonDownOnWindow;
+		private bool isDragging;
+		private Point origMouseDownPoint;
 
 		public PosePage()
 		{
@@ -164,6 +171,69 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			this.Skeleton.Select(bones, SkeletonVisual3d.SelectMode.Add);
+		}
+
+		private void Canvas_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			if (e.ChangedButton == MouseButton.Left)
+			{
+				this.isLeftMouseButtonDownOnWindow = true;
+				this.origMouseDownPoint = e.GetPosition(this.SelectionCanvas);
+
+				this.MouseCanvas.CaptureMouse();
+
+				e.Handled = true;
+			}
+		}
+
+		private void Canvas_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+		{
+			Point curMouseDownPoint = e.GetPosition(this.SelectionCanvas);
+
+			if (this.isDragging)
+			{
+				e.Handled = true;
+
+				this.DragSelectionBorder.Visibility = Visibility.Visible;
+
+				double minx = Math.Min(curMouseDownPoint.X, this.origMouseDownPoint.X);
+				double miny = Math.Min(curMouseDownPoint.Y, this.origMouseDownPoint.Y);
+				double maxx = Math.Max(curMouseDownPoint.X, this.origMouseDownPoint.X);
+				double maxy = Math.Max(curMouseDownPoint.Y, this.origMouseDownPoint.Y);
+
+				minx = Math.Max(minx, 0);
+				miny = Math.Max(miny, 0);
+				maxx = Math.Min(maxx, this.SelectionCanvas.ActualWidth);
+				maxy = Math.Min(maxy, this.SelectionCanvas.ActualHeight);
+
+				Canvas.SetLeft(this.DragSelectionBorder, minx);
+				Canvas.SetTop(this.DragSelectionBorder, miny);
+				this.DragSelectionBorder.Width = maxx - minx;
+				this.DragSelectionBorder.Height = maxy - miny;
+			}
+			else if (this.isLeftMouseButtonDownOnWindow)
+			{
+				System.Windows.Vector dragDelta = curMouseDownPoint - this.origMouseDownPoint;
+				double dragDistance = Math.Abs(dragDelta.Length);
+				if (dragDistance > DragThreshold)
+				{
+					this.isDragging = true;
+					e.Handled = true;
+				}
+			}
+		}
+
+		private void Canvas_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			this.isLeftMouseButtonDownOnWindow = false;
+			if (this.isDragging)
+			{
+				this.isDragging = false;
+				this.DragSelectionBorder.Visibility = Visibility.Collapsed;
+				e.Handled = true;
+			}
+
+			this.MouseCanvas.ReleaseMouseCapture();
 		}
 	}
 }

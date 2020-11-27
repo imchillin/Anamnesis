@@ -137,14 +137,30 @@
 				</Grid>
 			</Border>
 
+			
+
 			<!-- Content -->
 			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
 				<Grid IsEnabled="{Binding PoseService.IsEnabled}">
+
+					<Canvas Grid.Row="1" x:Name="MouseCanvas" MouseDown="Canvas_PreviewMouseDown" MouseMove="Canvas_PreviewMouseMove" MouseUp="Canvas_PreviewMouseUp" Background="Transparent"/>
+
 					<Grid DataContext="{Binding Skeleton}">
 						<!--<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>-->
 						<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
 						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed"/>
 					</Grid>
+
+					<Canvas Grid.Row="1" x:Name="SelectionCanvas" IsHitTestVisible="False">
+						<Border 
+							x:Name="DragSelectionBorder"
+							BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+							BorderThickness="1"
+							CornerRadius="3">
+							<Border Background="{DynamicResource MaterialDesignBackground}" Opacity="0.1"/>
+						</Border>
+					</Canvas>
+
 				</Grid>
 			</Border>
 
