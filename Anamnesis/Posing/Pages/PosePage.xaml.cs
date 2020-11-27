@@ -171,7 +171,7 @@ namespace Anamnesis.PoseModule.Pages
 			this.Skeleton.Select(bones, SkeletonVisual3d.SelectMode.Add);
 		}
 
-		private void Canvas_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		private void OnCanvasMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			if (e.ChangedButton == MouseButton.Left)
 			{
@@ -180,7 +180,7 @@ namespace Anamnesis.PoseModule.Pages
 			}
 		}
 
-		private void Canvas_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+		private void OnCanvasMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
 		{
 			if (this.Skeleton == null)
 				return;
@@ -237,7 +237,7 @@ namespace Anamnesis.PoseModule.Pages
 			}
 		}
 
-		private void Canvas_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		private void OnCanvasMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			this.isLeftMouseButtonDownOnWindow = false;
 			if (this.isDragging)
@@ -275,6 +275,13 @@ namespace Anamnesis.PoseModule.Pages
 
 				this.DragSelectionBorder.Visibility = Visibility.Collapsed;
 				e.Handled = true;
+			}
+			else
+			{
+				if (this.Skeleton != null && !this.Skeleton.HasHover)
+				{
+					this.Skeleton?.ClearSelection();
+				}
 			}
 
 			this.MouseCanvas.ReleaseMouseCapture();
