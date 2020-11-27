@@ -156,16 +156,32 @@
 				<Grid.RowDefinitions>
 					<RowDefinition/>
 					<RowDefinition/>
+					<RowDefinition/>
 				</Grid.RowDefinitions>
 
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
-					<ColumnDefinition/>
+					<ColumnDefinition Width="48"/>
 				</Grid.ColumnDefinitions>
 
 				<cm3Controls:IconButton Grid.Row="0" Grid.ColumnSpan="2" Icon="ChessQueen" Text="Load Other" Margin="3" Click="OnLoadNpcClicked"/>
-				<cm3Controls:IconButton Grid.Row="1" Grid.Column="0" Icon="Upload" Text="Load File" Margin="3" Click="OnLoadClicked"/>
-				<cm3Controls:IconButton Grid.Row="1" Grid.Column="1" Icon="Download" Text="Save File" Margin="3" Click="OnSaveClicked"/>
+
+				<Button Grid.Row="1" Grid.Column="0" Margin="3, 3, 0, 3" Style="{StaticResource ButtonLeft}" Click="OnLoadClicked">
+					<cm3Controls:TextBlock Text="Load"/>
+				</Button>
+				<Button Grid.Row="1" Grid.Column="1" Margin="0, 3, 3, 3" Style="{StaticResource ButtonRight}" Click="OnAdvLoadClicked">
+					<fa:IconBlock Icon="Wrench"/>
+				</Button>
+				<Line Y1="0" Y2="1" Grid.Row="1" Grid.Column="1" StrokeThickness="1" Stroke="{DynamicResource MaterialDesignCardBackground}" Stretch="Fill" HorizontalAlignment="Left" Margin="0, 6"/>
+
+				<Button Grid.Row="2" Grid.Column="0" Margin="3, 3, 0, 3" Style="{StaticResource ButtonLeft}" Click="OnSaveClicked">
+					<cm3Controls:TextBlock Text="Save"/>
+				</Button>
+				<Button Grid.Row="2" Grid.Column="1" Margin="0, 3, 3, 3" Style="{StaticResource ButtonRight}" Click="OnAdvSaveClicked">
+					<fa:IconBlock Icon="Wrench"/>
+				</Button>
+				<Line Y1="0" Y2="1" Grid.Row="2" Grid.Column="1" StrokeThickness="1" Stroke="{DynamicResource MaterialDesignCardBackground}" Stretch="Fill" HorizontalAlignment="Left" Margin="0, 6"/>
+
 			</Grid>
 		</Grid>
 

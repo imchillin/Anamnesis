@@ -61,6 +61,87 @@
 		</Setter>
 	</Style>
 
+	<Style TargetType="Button" x:Key="ButtonRight" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+		<Setter Property="FontWeight" Value="Light"/>
+		<Setter Property="HorizontalContentAlignment" Value="Left"/>
+
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+
+					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand" ClipToBounds="True" Margin="0, -6, -6, -6">
+						<Border Background="{DynamicResource MaterialDesignCardBackground}" Margin="0, 6, 6, 6" x:Name="HoverBorder" CornerRadius="0, 3, 3, 0" BorderThickness="1" BorderBrush="{DynamicResource MaterialDesignCardBackground}" Opacity="0">
+							<Border.Effect>
+								<DropShadowEffect ShadowDepth="0" BlurRadius="5" Opacity="0.5"/>
+							</Border.Effect>
+						</Border>
+
+						<Border Background="{TemplateBinding Background}" x:Name="Border" Margin="0, 6, 6, 6" CornerRadius="0, 3, 3, 0" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}"/>
+
+						<md:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
+								   Margin="0, 6, 6, 6" 
+									ContentStringFormat="{TemplateBinding ContentStringFormat}"
+									HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+									Padding="{TemplateBinding Padding}"
+									SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+						</md:Ripple>
+
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="true">
+							<Setter TargetName="HoverBorder" Property="Opacity" Value="1"/>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="false">
+							<Setter TargetName="Border" Property="Opacity" Value="0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="Button" x:Key="ButtonLeft" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+		<Setter Property="FontWeight" Value="Light"/>
+		<Setter Property="HorizontalContentAlignment" Value="Left"/>
+		
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+
+					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand">
+						<Border Background="{DynamicResource MaterialDesignCardBackground}" x:Name="HoverBorder" CornerRadius="3, 0, 0, 3" BorderThickness="1" BorderBrush="{DynamicResource MaterialDesignCardBackground}" Opacity="0">
+							<Border.Effect>
+								<DropShadowEffect ShadowDepth="0" BlurRadius="5" Opacity="0.5"/>
+							</Border.Effect>
+						</Border>
+
+						<Border Background="{TemplateBinding Background}" x:Name="Border" CornerRadius="3, 0, 0, 3" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}"/>
+
+						<md:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
+									ContentStringFormat="{TemplateBinding ContentStringFormat}"
+									HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+									Padding="{TemplateBinding Padding}"
+									SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+						</md:Ripple>
+
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="true">
+							<Setter TargetName="HoverBorder" Property="Opacity" Value="1"/>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="false">
+							<Setter TargetName="Border" Property="Opacity" Value="0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<Style TargetType="Button" x:Key="LinkButton">
 		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
 		<Setter Property="Background" Value="Transparent"/>

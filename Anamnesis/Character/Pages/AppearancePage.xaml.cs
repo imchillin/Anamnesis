@@ -52,6 +52,18 @@ namespace Anamnesis.Character.Pages
 		{
 			try
 			{
+				await this.Load(false);
+			}
+			catch (Exception ex)
+			{
+				Log.Write(ex, "Appearance", Log.Severity.Error);
+			}
+		}
+
+		private async void OnAdvLoadClicked(object sender, RoutedEventArgs e)
+		{
+			try
+			{
 				await this.Load(true);
 			}
 			catch (Exception ex)
@@ -115,28 +127,43 @@ namespace Anamnesis.Character.Pages
 			}
 		}
 
-		private void OnSaveClicked(object sender, RoutedEventArgs e)
+		private async void OnSaveClicked(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				await this.Save(false);
+			}
+			catch (Exception ex)
+			{
+				Log.Write(ex, "Appearance", Log.Severity.Error);
+			}
+		}
+
+		private async void OnAdvSaveClicked(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				await this.Save(true);
+			}
+			catch (Exception ex)
+			{
+				Log.Write(ex, "Appearance", Log.Severity.Error);
+			}
+		}
+
+		private async Task Save(bool advanced)
 		{
 			if (this.Actor == null)
 				return;
 
-			////await FileService.Save(this.Save, "Character");
-			throw new NotImplementedException();
-		}
-
-		private async Task<CharacterFile?> Save(bool useAdvancedSave)
-		{
-			if (this.Actor == null)
-				return null;
-
 			CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
 
-			if (useAdvancedSave)
+			if (advanced)
 			{
 				CharacterFile.SaveModes newMode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Character...", lastSaveMode);
 
 				if (newMode == CharacterFile.SaveModes.None)
-					return null;
+					return;
 
 				mode = newMode;
 			}
@@ -144,7 +171,7 @@ namespace Anamnesis.Character.Pages
 			CharacterFile file = new CharacterFile();
 			file.WriteToFile(this.Actor, mode);
 
-			return file;
+			await FileService.Save(file);
 		}
 
 		private void OnActorChanged(ActorViewModel? actor)

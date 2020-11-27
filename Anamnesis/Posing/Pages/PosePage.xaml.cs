@@ -129,8 +129,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			PoseFile file = new PoseFile();
 			file.WriteToFile(actor, this.Skeleton, fileConfig);
-
-			await FileService.Save(file, "Pose");
+			await FileService.Save(file);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)

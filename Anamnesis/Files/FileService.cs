@@ -185,7 +185,7 @@ namespace Anamnesis.Files
 			return result;
 		}
 
-		public static async Task Save<T>(T file, string title, string? path = null)
+		public static async Task Save<T>(T file, string? path = null)
 			where T : FileBase, new()
 		{
 			try
@@ -199,11 +199,7 @@ namespace Anamnesis.Files
 					if (!useExplorerBrowser)
 					{
 						FileBrowserView browser = new FileBrowserView(info, FileBrowserView.Modes.Save);
-
-						if (title != null)
-							title = "Save " + title;
-
-						await ViewService.ShowDrawer(browser, title);
+						await ViewService.ShowDrawer(browser, null);
 
 						while (browser.IsOpen)
 							await Task.Delay(10);
