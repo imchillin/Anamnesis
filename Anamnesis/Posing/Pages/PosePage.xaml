@@ -143,12 +143,12 @@
 			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
 				<Grid IsEnabled="{Binding PoseService.IsEnabled}">
 
-					<Canvas Grid.Row="1" x:Name="MouseCanvas" MouseDown="Canvas_PreviewMouseDown" MouseMove="Canvas_PreviewMouseMove" MouseUp="Canvas_PreviewMouseUp" Background="Transparent"/>
-
-					<Grid DataContext="{Binding Skeleton}">
-						<!--<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>-->
-						<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
-						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed"/>
+					<Grid Grid.Row="1" x:Name="MouseCanvas" MouseDown="Canvas_PreviewMouseDown" MouseMove="Canvas_PreviewMouseMove" MouseUp="Canvas_PreviewMouseUp" Background="Transparent">
+						<Grid DataContext="{Binding Skeleton}">
+							<!--<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>-->
+							<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
+							<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed"/>
+						</Grid>
 					</Grid>
 
 					<Canvas Grid.Row="1" x:Name="SelectionCanvas" IsHitTestVisible="False">

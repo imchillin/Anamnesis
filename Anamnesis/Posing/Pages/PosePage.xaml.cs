@@ -11,6 +11,7 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Windows.Input;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -153,10 +154,7 @@ namespace Anamnesis.PoseModule.Pages
 
 		private void OnClearClicked(object? sender, RoutedEventArgs? e)
 		{
-			if (this.Skeleton != null)
-			{
-				this.Skeleton.CurrentBone = null;
-			}
+			this.Skeleton?.ClearSelection();
 		}
 
 		private void OnSelectChildrenClicked(object sender, RoutedEventArgs e)
@@ -179,15 +177,14 @@ namespace Anamnesis.PoseModule.Pages
 			{
 				this.isLeftMouseButtonDownOnWindow = true;
 				this.origMouseDownPoint = e.GetPosition(this.SelectionCanvas);
-
-				this.MouseCanvas.CaptureMouse();
-
-				e.Handled = true;
 			}
 		}
 
 		private void Canvas_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
 		{
+			if (this.Skeleton == null)
+				return;
+
 			Point curMouseDownPoint = e.GetPosition(this.SelectionCanvas);
 
 			if (this.isDragging)
@@ -210,6 +207,22 @@ namespace Anamnesis.PoseModule.Pages
 				Canvas.SetTop(this.DragSelectionBorder, miny);
 				this.DragSelectionBorder.Width = maxx - minx;
 				this.DragSelectionBorder.Height = maxy - miny;
+
+				foreach (BoneView bone in BoneView.All)
+				{
+					if (bone.Bone == null)
+						continue;
+
+					Point relativePoint = bone.TransformToAncestor(this.MouseCanvas).Transform(new Point(0, 0));
+					if (relativePoint.X > minx && relativePoint.X < maxx && relativePoint.Y > miny && relativePoint.Y < maxy)
+					{
+						this.Skeleton.Hover(bone.Bone, true);
+					}
+					else
+					{
+						this.Skeleton.Hover(bone.Bone, false);
+					}
+				}
 			}
 			else if (this.isLeftMouseButtonDownOnWindow)
 			{
@@ -218,6 +231,7 @@ namespace Anamnesis.PoseModule.Pages
 				if (dragDistance > DragThreshold)
 				{
 					this.isDragging = true;
+					this.MouseCanvas.CaptureMouse();
 					e.Handled = true;
 				}
 			}
@@ -229,6 +243,36 @@ namespace Anamnesis.PoseModule.Pages
 			if (this.isDragging)
 			{
 				this.isDragging = false;
+
+				if (this.Skeleton != null)
+				{
+					double minx = Canvas.GetLeft(this.DragSelectionBorder);
+					double miny = Canvas.GetTop(this.DragSelectionBorder);
+					double maxx = minx + this.DragSelectionBorder.Width;
+					double maxy = miny + this.DragSelectionBorder.Height;
+
+					List<BoneView> toSelect = new List<BoneView>();
+
+					foreach (BoneView bone in BoneView.All)
+					{
+						if (bone.Bone == null)
+							continue;
+
+						if (!bone.IsVisible)
+							continue;
+
+						this.Skeleton.Hover(bone.Bone, false);
+
+						Point relativePoint = bone.TransformToAncestor(this.MouseCanvas).Transform(new Point(0, 0));
+						if (relativePoint.X > minx && relativePoint.X < maxx && relativePoint.Y > miny && relativePoint.Y < maxy)
+						{
+							toSelect.Add(bone);
+						}
+					}
+
+					this.Skeleton.Select(toSelect);
+				}
+
 				this.DragSelectionBorder.Visibility = Visibility.Collapsed;
 				e.Handled = true;
 			}

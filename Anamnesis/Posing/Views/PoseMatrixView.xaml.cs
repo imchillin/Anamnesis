@@ -32,13 +32,7 @@ namespace Anamnesis.PoseModule.Views
 					skeleton.SelectedBones.Clear();
 
 				List<BoneView> bones = groupBox.FindChildren<BoneView>();
-				foreach (BoneView bone in bones)
-				{
-					if (bone.Bone == null)
-						continue;
-
-					skeleton.Select(bone.Bone, SkeletonVisual3d.SelectMode.Add);
-				}
+				skeleton.Select(bones);
 			}
 		}
 	}

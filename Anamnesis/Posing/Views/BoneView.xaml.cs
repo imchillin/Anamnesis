@@ -14,12 +14,13 @@ namespace Anamnesis.PoseModule.Views
 	using Anamnesis.Styles.DependencyProperties;
 	using MaterialDesignThemes.Wpf;
 
-	public partial class BoneView : UserControl
+	public partial class BoneView : UserControl, IBone
 	{
 		public static readonly IBind<string> LabelDp = Binder.Register<string, BoneView>(nameof(Label));
 		public static readonly IBind<string> NameDp = Binder.Register<string, BoneView>(nameof(BoneName));
 
 		private static readonly Dictionary<BoneVisual3d, List<BoneView>> BoneViews = new Dictionary<BoneVisual3d, List<BoneView>>();
+		private static readonly List<BoneView> AllViews = new List<BoneView>();
 
 		private readonly List<Line> linesToChildren = new List<Line>();
 		private readonly List<Line> mouseLinesToChildren = new List<Line>();
@@ -34,6 +35,8 @@ namespace Anamnesis.PoseModule.Views
 
 			this.IsEnabledChanged += this.OnIsEnabledChanged;
 		}
+
+		public static IEnumerable<BoneView> All => AllViews;
 
 		public BoneVisual3d? Bone { get; private set; }
 
@@ -50,6 +53,8 @@ namespace Anamnesis.PoseModule.Views
 		}
 
 		public string TooltipKey => "Pose_" + this.BoneName;
+
+		public BoneVisual3d? Visual => this.Bone;
 
 		public static bool HasView(BoneVisual3d bone)
 		{
@@ -168,6 +173,9 @@ namespace Anamnesis.PoseModule.Views
 
 		private void SetBone(string name)
 		{
+			if (!AllViews.Contains(this))
+				AllViews.Add(this);
+
 			if (this.Bone != null)
 			{
 				if (BoneViews.ContainsKey(this.Bone))
@@ -204,27 +212,18 @@ namespace Anamnesis.PoseModule.Views
 
 		private void OnMouseEnter(object sender, MouseEventArgs e)
 		{
-			if (!this.IsEnabled)
+			if (!this.IsEnabled || this.skeleton == null || this.Bone == null)
 				return;
 
-			if (this.skeleton == null)
-				return;
-
-			this.skeleton.MouseOverBone = this.Bone;
+			this.skeleton.Hover(this.Bone, true);
 		}
 
 		private void OnMouseLeave(object sender, MouseEventArgs e)
 		{
-			if (!this.IsEnabled)
+			if (!this.IsEnabled || this.skeleton == null || this.Bone == null)
 				return;
 
-			if (this.skeleton == null)
-				return;
-
-			if (this.skeleton.MouseOverBone == this.Bone)
-			{
-				this.skeleton.MouseOverBone = null;
-			}
+			this.skeleton.Hover(this.Bone, false);
 		}
 
 		private void OnMouseUp(object sender, MouseButtonEventArgs e)
@@ -235,12 +234,7 @@ namespace Anamnesis.PoseModule.Views
 			if (this.skeleton == null || this.Bone == null)
 				return;
 
-			SkeletonVisual3d.SelectMode mode = SkeletonVisual3d.SelectMode.Override;
-
-			if (Keyboard.IsKeyDown(Key.LeftCtrl))
-				mode = SkeletonVisual3d.SelectMode.Toggle;
-
-			this.skeleton.Select(this.Bone, mode);
+			this.skeleton.Select(this);
 		}
 
 		private void UpdateState()

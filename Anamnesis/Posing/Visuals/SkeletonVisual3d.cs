@@ -12,6 +12,7 @@ namespace Anamnesis.PoseModule
 	using System.Windows.Input;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Posing.Extensions;
 	using Anamnesis.Posing.Templates;
 	using PropertyChanged;
@@ -22,6 +23,7 @@ namespace Anamnesis.PoseModule
 	public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	{
 		public List<BoneVisual3d> SelectedBones = new List<BoneVisual3d>();
+		public HashSet<BoneVisual3d> HoverBones = new HashSet<BoneVisual3d>();
 
 		public SkeletonVisual3d(ActorViewModel actor)
 		{
@@ -41,7 +43,6 @@ namespace Anamnesis.PoseModule
 
 		public bool LinkEyes { get; set; } = true;
 		public ActorViewModel Actor { get; private set; }
-		public BoneVisual3d? MouseOverBone { get; set; }
 
 		public BoneVisual3d? CurrentBone
 		{
@@ -52,8 +53,16 @@ namespace Anamnesis.PoseModule
 
 				return this.SelectedBones[this.SelectedBones.Count - 1];
 			}
+
 			set
 			{
+				throw new NotSupportedException();
+			}
+
+			/*set
+			{
+				this.HoverBones.Clear();
+
 				if (!Keyboard.IsKeyDown(Key.LeftCtrl))
 					this.SelectedBones.Clear();
 
@@ -61,10 +70,11 @@ namespace Anamnesis.PoseModule
 					this.Select(value, SelectMode.Add);
 
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
-			}
+			}*/
 		}
 
 		public bool HasSelection => this.SelectedBones.Count > 0;
+		public bool HasHover => this.HoverBones.Count > 0;
 
 		public Dictionary<string, BoneVisual3d>? Bones { get; private set; }
 
@@ -90,9 +100,8 @@ namespace Anamnesis.PoseModule
 
 		public void Clear()
 		{
-			this.CurrentBone = null;
-			this.MouseOverBone = null;
-			this.SelectedBones.Clear();
+			this.ClearSelection();
+			this.HoverBones.Clear();
 
 			if (this.Bones != null)
 				this.Bones.Clear();
@@ -100,25 +109,103 @@ namespace Anamnesis.PoseModule
 			this.Bones = null;
 		}
 
-		public void Select(BoneVisual3d bone, SelectMode mode)
+		public void Select(IBone bone)
 		{
+			if (bone.Visual == null)
+				return;
+
+			SkeletonVisual3d.SelectMode mode = SkeletonVisual3d.SelectMode.Override;
+
+			if (Keyboard.IsKeyDown(Key.LeftCtrl))
+				mode = SkeletonVisual3d.SelectMode.Toggle;
+
+			if (Keyboard.IsKeyDown(Key.LeftShift))
+				mode = SkeletonVisual3d.SelectMode.Add;
+
 			if (mode == SelectMode.Override)
 				this.SelectedBones.Clear();
 
-			if (this.SelectedBones.Contains(bone))
+			if (this.SelectedBones.Contains(bone.Visual))
 			{
 				if (mode == SelectMode.Toggle)
 				{
-					this.SelectedBones.Remove(bone);
+					this.SelectedBones.Remove(bone.Visual);
 				}
 			}
 			else
 			{
-				this.SelectedBones.Add(bone);
+				this.SelectedBones.Add(bone.Visual);
 			}
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
+		}
+
+		public void Select(IEnumerable<IBone> bones)
+		{
+			SkeletonVisual3d.SelectMode mode = SkeletonVisual3d.SelectMode.Override;
+
+			if (Keyboard.IsKeyDown(Key.LeftCtrl))
+				mode = SkeletonVisual3d.SelectMode.Toggle;
+
+			if (Keyboard.IsKeyDown(Key.LeftShift))
+				mode = SkeletonVisual3d.SelectMode.Add;
+
+			if (mode == SelectMode.Override)
+			{
+				this.SelectedBones.Clear();
+				mode = SelectMode.Add;
+			}
+
+			foreach (IBone bone in bones)
+			{
+				if (bone.Visual == null)
+					continue;
+
+				if (this.SelectedBones.Contains(bone.Visual))
+				{
+					if (mode == SelectMode.Toggle)
+					{
+						this.SelectedBones.Remove(bone.Visual);
+					}
+				}
+				else
+				{
+					this.SelectedBones.Add(bone.Visual);
+				}
+			}
+
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
+		}
+
+		public void ClearSelection()
+		{
+			this.SelectedBones.Clear();
+
+			Application.Current?.Dispatcher.Invoke(() =>
+			{
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
+			});
+		}
+
+		public void Hover(BoneVisual3d bone, bool hover)
+		{
+			if (this.HoverBones.Contains(bone) && !hover)
+			{
+				this.HoverBones.Remove(bone);
+			}
+			else if (!this.HoverBones.Contains(bone) && hover)
+			{
+				this.HoverBones.Add(bone);
+			}
+			else
+			{
+				return;
+			}
+
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasHover)));
 		}
 
 		public void Select(List<BoneVisual3d> bones, SelectMode mode)
@@ -147,7 +234,7 @@ namespace Anamnesis.PoseModule
 
 		public bool GetIsBoneHovered(BoneVisual3d bone)
 		{
-			return bone == this.MouseOverBone;
+			return this.HoverBones.Contains(bone);
 		}
 
 		public bool GetIsBoneSelected(BoneVisual3d bone)
@@ -325,5 +412,11 @@ namespace Anamnesis.PoseModule
 				await Task.Delay(16);
 			}
 		}
+	}
+
+	#pragma warning disable SA1201
+	public interface IBone
+	{
+		BoneVisual3d? Visual { get; }
 	}
 }
