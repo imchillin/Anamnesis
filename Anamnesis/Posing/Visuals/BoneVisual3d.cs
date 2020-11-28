@@ -113,7 +113,7 @@ namespace Anamnesis.PoseModule
 
 		public BoneVisual3d? Visual => this;
 
-		public virtual void ReadTransform()
+		public virtual void ReadTransform(bool readChildren = false)
 		{
 			if (!this.IsEnabled)
 				return;
@@ -163,6 +163,17 @@ namespace Anamnesis.PoseModule
 				p.Z = position.Z;
 				this.lineToParent.Points[1] = p;
 			}
+
+			if (readChildren)
+			{
+				foreach (Visual3D child in this.Children)
+				{
+					if (child is BoneVisual3d childBone)
+					{
+						childBone.ReadTransform(true);
+					}
+				}
+			}
 		}
 
 		public virtual void WriteTransform(ModelVisual3D root, bool writeChildren = true)
@@ -204,7 +215,14 @@ namespace Anamnesis.PoseModule
 				{
 					if (child is BoneVisual3d childBone)
 					{
-						childBone.WriteTransform(root);
+						if (PoseService.Instance.EnableParenting)
+						{
+							childBone.WriteTransform(root);
+						}
+						else
+						{
+							childBone.ReadTransform(true);
+						}
 					}
 				}
 			}

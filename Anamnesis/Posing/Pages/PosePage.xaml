@@ -123,6 +123,10 @@
 							<ana:TextBlock Key="Pose_LinkEyes"/>
 						</CheckBox>
 
+						<CheckBox IsChecked="{Binding PoseService.LockChildRotation}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
+							<ana:TextBlock Text="Lock Child Rot"/>
+						</CheckBox>
+
 					</StackPanel>
 
 					<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">

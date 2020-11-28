@@ -31,6 +31,7 @@ namespace Anamnesis.PoseModule
 		private NopHookViewModel? freezePhysics3;
 
 		private bool isEnabled;
+		private bool lockChildRotation;
 
 		public delegate void PoseEvent(bool value);
 
@@ -109,6 +110,22 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
+		public bool EnableParenting { get; set; } = true;
+
+		public bool LockChildRotation
+		{
+			get
+			{
+				return this.lockChildRotation;
+			}
+			set
+			{
+				this.lockChildRotation = value;
+				this.EnableParenting = !value;
+				this.FreezePositions = !value;
+			}
+		}
+
 		public bool CanEdit { get; set; }
 
 		public override async Task Initialize()
@@ -128,7 +145,7 @@ namespace Anamnesis.PoseModule
 
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
 
-			string[] templates = Directory.GetFiles("Posing/Templates/",  "*.json");
+			string[] templates = Directory.GetFiles("Posing/Templates/", "*.json");
 			foreach (string templatePath in templates)
 			{
 				TemplateSkeleton template = SerializerService.DeserializeFile<TemplateSkeleton>(templatePath);
