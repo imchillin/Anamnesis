@@ -496,6 +496,9 @@ namespace Anamnesis.Files
 
 				Transform transform = StringToBone(rotString, scaleString);
 
+				if (file.Bones.ContainsKey(boneName))
+					file.Bones.Remove(boneName);
+
 				file.Bones.Add(boneName, new PoseFile.Bone(transform));
 			}
 
