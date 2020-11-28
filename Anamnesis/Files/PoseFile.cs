@@ -58,6 +58,8 @@ namespace Anamnesis.Files
 			if (skeletonMem == null || skeleton.Bones == null)
 				throw new Exception("No skeleton in actor");
 
+			skeletonMem.MemoryMode = MemoryModes.None;
+
 			PoseService.Instance.SetEnabled(true);
 			PoseService.Instance.CanEdit = false;
 			await Task.Delay(100);
@@ -67,46 +69,51 @@ namespace Anamnesis.Files
 
 			if (this.Bones != null)
 			{
-				foreach ((string name, Bone? savedBone) in this.Bones)
+				// Apply all transforms twice to ensure parent-inherited values are caluclated correctly.
+				for (int i = 0; i < 2; i++)
 				{
-					if (savedBone == null)
-						continue;
-
-					if (!skeleton.Bones.ContainsKey(name))
+					foreach ((string name, Bone? savedBone) in this.Bones)
 					{
-						Log.Write($"Bone: \"{name}\" not found", "Pose", Log.Severity.Warning);
-						continue;
+						if (savedBone == null)
+							continue;
+
+						if (!skeleton.Bones.ContainsKey(name))
+						{
+							Log.Write($"Bone: \"{name}\" not found", "Pose", Log.Severity.Warning);
+							continue;
+						}
+
+						BoneVisual3d? bone = skeleton.Bones[name];
+
+						if (config.UseSelection && !skeleton.GetIsBoneSelected(bone))
+							continue;
+
+						TransformViewModel vm = bone.ViewModel;
+
+						if (config.IncludePosition && this.Config.IncludePosition && bone.Position != Vector.Zero)
+						{
+							vm.Position = savedBone.Position;
+						}
+
+						if (config.IncludeRotation && this.Config.IncludeRotation)
+						{
+							vm.Rotation = savedBone.Rotation;
+						}
+
+						if (config.IncludeScale && this.Config.IncludeScale && bone.Scale != Vector.Zero)
+						{
+							vm.Scale = savedBone.Scale;
+						}
+
+						bone.ReadTransform();
+						bone.WriteTransform(skeleton, false);
 					}
-
-					BoneVisual3d? bone = skeleton.Bones[name];
-
-					if (config.UseSelection && !skeleton.GetIsBoneSelected(bone))
-						continue;
-
-					TransformViewModel vm = bone.ViewModel;
-
-					if (config.IncludePosition && this.Config.IncludePosition && bone.Position != Vector.Zero)
-					{
-						vm.Position = savedBone.Position;
-					}
-
-					if (config.IncludeRotation && this.Config.IncludeRotation)
-					{
-						vm.Rotation = savedBone.Rotation;
-					}
-
-					if (config.IncludeScale && this.Config.IncludeScale && bone.Scale != Vector.Zero)
-					{
-						vm.Scale = savedBone.Scale;
-					}
-
-					bone.ReadTransform();
-					bone.WriteTransform(skeleton, false);
 				}
 			}
 
 			await Task.Delay(100);
 			PoseService.Instance.FreezePositions = true;
+			skeletonMem.MemoryMode = MemoryModes.ReadWrite;
 
 			await skeletonMem.ReadFromMemoryAsync();
 			PoseService.Instance.CanEdit = true;
