@@ -105,6 +105,7 @@
 	"Pose_WarningNotFrozen": "Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window.",
 
 	"Pose_FreezePhysics": "Freeze Physics",
+	"Pose_LockChildrenRot": "Lock Child Rot",
 	"Pose_LinkEyes": "Link Eyes",
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Scale",

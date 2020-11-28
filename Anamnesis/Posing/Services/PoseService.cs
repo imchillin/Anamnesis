@@ -61,7 +61,15 @@ namespace Anamnesis.PoseModule
 			}
 			set
 			{
-				this.FreezePositions = value;
+				if (this.lockChildRotation)
+				{
+					this.FreezePositions = false;
+				}
+				else
+				{
+					this.FreezePositions = value;
+				}
+
 				this.FreezeScale = value;
 
 				this.freezePhysics1?.SetEnabled(value);
@@ -168,6 +176,7 @@ namespace Anamnesis.PoseModule
 			this.isEnabled = enabled;
 
 			////this.FreezePositions = enabled;
+			this.lockChildRotation = false;
 			this.FreezePhysics = enabled;
 			this.FreezeRotation = enabled;
 			////this.FreezeScale = enabled;

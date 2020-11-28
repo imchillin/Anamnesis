@@ -118,13 +118,13 @@
 						<CheckBox IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
 							<ana:TextBlock Key="Pose_FreezePhysics"/>
 						</CheckBox>
+						
+						<CheckBox IsChecked="{Binding PoseService.LockChildRotation}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
+							<ana:TextBlock Key="Pose_LockChildrenRot"/>
+						</CheckBox>
 
 						<CheckBox IsChecked="{Binding Skeleton.LinkEyes}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
 							<ana:TextBlock Key="Pose_LinkEyes"/>
-						</CheckBox>
-
-						<CheckBox IsChecked="{Binding PoseService.LockChildRotation}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
-							<ana:TextBlock Text="Lock Child Rot"/>
 						</CheckBox>
 
 					</StackPanel>
@@ -168,6 +168,13 @@
 
 				</Grid>
 			</Border>
+
+			<!-- Status -->
+			<StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Margin="3, 0, 6, 3" Opacity="0.25">
+				<TextBlock Text="P" Visibility="{Binding PoseService.FreezePositions, Converter={StaticResource B2V}}" Margin="3"/>
+				<TextBlock Text="R" Visibility="{Binding PoseService.FreezeRotation, Converter={StaticResource B2V}}" Margin="3"/>
+				<TextBlock Text="S" Visibility="{Binding PoseService.FreezeScale, Converter={StaticResource B2V}}" Margin="3"/>
+			</StackPanel>
 
 			<Grid Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
 				<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.75"/>
