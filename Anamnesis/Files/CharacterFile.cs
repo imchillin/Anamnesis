@@ -231,6 +231,8 @@ namespace Anamnesis.Files
 
 			actor.ModelType = this.ModelType;
 
+			bool changedRace = actor.Customize.Race != this.Race;
+
 			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 			{
 				this.MainHand?.Write(actor.MainHand);
@@ -299,6 +301,12 @@ namespace Anamnesis.Files
 
 			actor.WriteToMemory(true);
 			await actor.RefreshAsync();
+
+			// If we have changed race, we do a second actor refresh to avoid cases where
+			// FFXIV has not loaded the correct skin texture for the new race in time for
+			// the charater to render, causing the new model to show with the old skin.
+			if (changedRace)
+				await actor.RefreshAsync();
 
 			// Setting customize values will reset the extended appearance, which me must read.
 			await actor.ReadFromMemoryAsync(true);
