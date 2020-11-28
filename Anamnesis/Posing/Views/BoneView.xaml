@@ -17,7 +17,9 @@
 
 	<Grid x:Name="ContentArea" Cursor="Hand">
 		<Grid.ToolTip>
-			<ana:TextBlock Key="{Binding Value.TooltipKey}"/>
+			<StackPanel>
+				<ana:TextBlock Key="{Binding Bone.TooltipKey}"/>
+			</StackPanel>
 		</Grid.ToolTip>
 
 		<Ellipse Stroke="{DynamicResource PrimaryHueMidBrush}" StrokeThickness="1" Fill="{DynamicResource MaterialDesignPaper}" x:Name="BackgroundElipse"/>
