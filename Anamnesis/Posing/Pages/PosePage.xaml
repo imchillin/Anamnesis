@@ -154,6 +154,7 @@
 					<Canvas Grid.Row="1" x:Name="SelectionCanvas" IsHitTestVisible="False">
 						<Border 
 							x:Name="DragSelectionBorder"
+							Visibility="Collapsed"
 							BorderBrush="{DynamicResource PrimaryHueMidBrush}"
 							BorderThickness="1"
 							CornerRadius="3">
