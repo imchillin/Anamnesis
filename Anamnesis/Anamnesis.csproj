@@ -180,7 +180,6 @@
 		<Resource Include="Assets\colors.dat" />
 		<Resource Include="Assets\Concept Matrix.ico" />
 		<Resource Include="Assets\Concept Matrix.png" />
-		<Resource Include="Assets\G2P.png" />
 		<Resource Include="Assets\Hydaelyn.png" />
 		<Resource Include="Assets\IconBorder.png" />
 		<Resource Include="Assets\IconBorderSmall.png" />
@@ -270,6 +269,9 @@
 
 	<ItemGroup>
 	  <None Update="Animations.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Images.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Monsters.json">

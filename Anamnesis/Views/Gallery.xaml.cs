@@ -1,0 +1,118 @@
+﻿// Concept Matrix 3.
+// Licensed under the MIT license.
+
+namespace Anamnesis.Views
+{
+	using System;
+	using System.Collections.Generic;
+	using System.Threading.Tasks;
+	using System.Windows;
+	using System.Windows.Controls;
+	using System.Windows.Media;
+	using System.Windows.Media.Animation;
+	using Anamnesis.Serialization;
+	using PropertyChanged;
+
+	/// <summary>
+	/// Interaction logic for Gallery.xaml.
+	/// </summary>
+	[AddINotifyPropertyChangedInterface]
+	public partial class Gallery : UserControl
+	{
+		private bool isImage1 = true;
+
+		public Gallery()
+		{
+			this.InitializeComponent();
+			this.ContentArea.DataContext = this;
+		}
+
+		public string? Image1Path { get; set; } = null;
+		public string Image1Author { get; set; } = string.Empty;
+		public string? Image2Path { get; set; } = null;
+		public string Image2Author { get; set; } = string.Empty;
+
+		private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (this.IsVisible)
+			{
+				Task.Run(this.Run);
+			}
+		}
+
+		private async Task Run()
+		{
+			Random rnd = new Random();
+
+			while (this.IsVisible)
+			{
+				List<Entry> entries = SerializerService.DeserializeFile<List<Entry>>("Images.json");
+
+				while (this.IsVisible && entries.Count > 0)
+				{
+					int index = rnd.Next(entries.Count);
+					await this.Show(entries[index], rnd);
+					entries.RemoveAt(index);
+					await Task.Delay(5000);
+				}
+			}
+		}
+
+		private async Task Show(Entry entry, Random rnd)
+		{
+			if (entry.Url == null || entry.Author == null)
+				return;
+
+			await Dispatch.MainThread();
+
+			UIElement oldHost = this.isImage1 ? this.Image1Host : this.Image2Host;
+
+			this.isImage1 = !this.isImage1;
+			UIElement host;
+			Image image;
+			RotateTransform rotate;
+
+			if (this.isImage1)
+			{
+				this.Image1Path = entry.Url;
+				this.Image1Author = entry.Author;
+				image = this.Image1;
+				host = this.Image1Host;
+				rotate = this.Image1Rotate;
+			}
+			else
+			{
+				this.Image2Path = entry.Url;
+				this.Image2Author = entry.Author;
+				image = this.Image2;
+				host = this.Image2Host;
+				rotate = this.Image2Rotate;
+			}
+
+			rotate.Angle = -5 + (rnd.NextDouble() * 10.0);
+
+			while (image.Source != null && !image.Source.CanFreeze)
+				await Task.Delay(100);
+
+			await Dispatch.MainThread();
+
+			host.Opacity = 0.0;
+
+			Storyboard? sb = this.Resources[this.isImage1 ? "StoryboardImage1" : "StoryboardImage2"] as Storyboard;
+
+			if (sb == null)
+				throw new System.Exception("Missing gallery storyboard");
+
+			sb.Begin();
+			await Task.Delay(2000);
+
+			oldHost.Opacity = 0.0;
+		}
+
+		public class Entry
+		{
+			public string? Url { get; set; }
+			public string? Author { get; set; }
+		}
+	}
+}

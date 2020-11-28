@@ -37,7 +37,7 @@
 		<views:XmaView x:Name="xmaView" Grid.Row="1" Grid.ColumnSpan="3" Type="{Binding SettingsService.Settings.HomeWidget}" Visibility="{Binding ShowXMA, Converter={StaticResource B2V}}"/>
 
 		<Grid Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding ShowArt, Converter={StaticResource B2V}}" >
-			<Image Source="../../Assets/G2P.png" Margin="6, 15, -32, -20" IsHitTestVisible="False"/>
+			<local:Gallery/>
 		</Grid>
 
 	</Grid>

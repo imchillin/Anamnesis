@@ -48,6 +48,7 @@ namespace Anamnesis.Views
 			{
 				Settings.HomeWidgetType.XmaTop => XmaView.PopularTodaySearchUrl,
 				Settings.HomeWidgetType.XmaLatest => XmaView.RecentSearchUrl,
+				Settings.HomeWidgetType.Art => "https://discord.com/channels/701987194910277642/782161117463969793/782165438666637343",
 				_ => null,
 			};
 
