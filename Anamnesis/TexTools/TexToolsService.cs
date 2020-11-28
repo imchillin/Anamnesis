@@ -6,6 +6,7 @@ namespace Anamnesis.TexTools
 	using System;
 	using System.IO;
 	using System.Threading.Tasks;
+	using Anamnesis.Character;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Serialization;
@@ -15,6 +16,11 @@ namespace Anamnesis.TexTools
 		private static ModList? modList;
 
 		public static Mod? GetMod(IItem item)
+		{
+			return GetMod(item.Name);
+		}
+
+		public static Mod? GetMod(Monster item)
 		{
 			return GetMod(item.Name);
 		}

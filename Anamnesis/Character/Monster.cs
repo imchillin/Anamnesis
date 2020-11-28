@@ -9,6 +9,7 @@ namespace Anamnesis.Character
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
+	using Anamnesis.TexTools;
 
 	[Serializable]
 	public class Monster : INpcResident, IJsonRow
@@ -41,7 +42,9 @@ namespace Anamnesis.Character
 		public string? Description => null;
 		public string Singular => this.Name;
 		public string Plural => this.Name;
-		public string Title => this.ModelType.ToString();
+		public string Title => this.Type + " - " + this.ModelType.ToString();
+
+		public Mod? Mod => TexToolsService.GetMod(this);
 
 		public class MonsterAppearance : INpcBase, INpcEquip
 		{

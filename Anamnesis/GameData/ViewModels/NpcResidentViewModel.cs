@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.ViewModels
 {
 	using System;
 	using Anamnesis.Services;
+	using Anamnesis.TexTools;
 	using Lumina;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
@@ -21,5 +22,6 @@ namespace Anamnesis.GameData.ViewModels
 		public string Plural => this.Value.Plural;
 		public string Title => this.Value.Title;
 		public INpcBase? Appearance => GameDataService.BaseNPCs!.Get((int)this.Value.RowId);
+		public Mod? Mod => null;
 	}
 }

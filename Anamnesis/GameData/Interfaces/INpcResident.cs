@@ -3,6 +3,8 @@
 
 namespace Anamnesis.GameData
 {
+	using Anamnesis.TexTools;
+
 	public interface INpcResident : IRow
 	{
 		public string Singular { get; }
@@ -10,5 +12,7 @@ namespace Anamnesis.GameData
 		public string Title { get; }
 
 		public INpcBase? Appearance { get; }
+
+		Mod? Mod { get; }
 	}
 }

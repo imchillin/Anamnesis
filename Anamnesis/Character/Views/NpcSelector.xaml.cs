@@ -48,6 +48,9 @@ namespace Anamnesis.Character.Views
 		public bool IncludeMinion { get; set; } = true;
 		public bool IncludeEffect { get; set; } = true;
 		public bool IncludeMonster { get; set; } = true;
+		public bool IncludeUnknown { get; set; } = true;
+
+		public bool? IncludeModded { get; set; } = null;
 
 		public INpcResident? Value
 		{
@@ -106,13 +109,28 @@ namespace Anamnesis.Character.Views
 
 					if (!this.IncludeMount && mon.Type == Monster.Types.Mount)
 						return false;
+
+					if (!this.IncludeUnknown && mon.Type == Monster.Types.Unknown)
+						return false;
 				}
+
+				if (this.IncludeModded == true && npc.Mod == null)
+					return false;
+
+				if (this.IncludeModded == false && npc.Mod != null)
+					return false;
 
 				bool matches = false;
 				matches |= SearchUtility.Matches(npc.Singular, search);
 				matches |= SearchUtility.Matches(npc.Plural, search);
 				matches |= SearchUtility.Matches(npc.Title, search);
 				matches |= SearchUtility.Matches(npc.Key.ToString(), search);
+
+				if (npc.Mod != null && npc.Mod.ModPack != null)
+				{
+					matches |= SearchUtility.Matches(npc.Mod.ModPack.Name, search);
+				}
+
 				return matches;
 			}
 
