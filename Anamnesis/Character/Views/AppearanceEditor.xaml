@@ -95,7 +95,7 @@
 
 				<!-- Eyes -->
 				<ana:TextBlock Grid.Column="0" Grid.Row="3" Key="Character_Appearance_Eyes" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="3" Margin="0, 2, 0, 2">
+				<Grid Grid.Column="1" Grid.Row="3" Margin="0, 2, -1, 2">
 
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
@@ -160,7 +160,7 @@
 				<!-- Hair -->
 				<ana:TextBlock Grid.Column="0" Grid.Row="8" Key="Character_Appearance_Hair" Style="{StaticResource Label}"/>
 
-				<Grid Grid.Column="1" Grid.Row="8" Margin="0, 2, 2, 2">
+				<Grid Grid.Column="1" Grid.Row="8" Margin="0, 2, 0, 2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
