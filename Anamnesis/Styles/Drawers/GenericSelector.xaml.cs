@@ -55,11 +55,11 @@ namespace Anamnesis.Styles.Drawers
 			}
 		}
 
-		public static void Show<T>(string title, T? current, IEnumerable<T> options, Action<T> changed)
+		public static void Show<T>(T? current, IEnumerable<T> options, Action<T> changed)
 			where T : class, ISelectable
 		{
 			GenericSelector selector = new GenericSelector(options);
-			SelectorDrawer.Show<ISelectable>(title, selector, current, (v) => changed.Invoke((T)v));
+			SelectorDrawer.Show<ISelectable>(selector, current, (v) => changed.Invoke((T)v));
 		}
 
 		private void OnClose()

@@ -23,20 +23,12 @@ namespace Anamnesis.Styles.Controls
 	public partial class RgbColorControl : UserControl
 	{
 		public static readonly IBind<CmColor?> ValueDp = Binder.Register<CmColor?, RgbColorControl>(nameof(Value), OnValueChanged);
-		public static readonly IBind<string> NameDp = Binder.Register<string, RgbColorControl>(nameof(DisplayName));
 
 		public RgbColorControl()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
-			this.DisplayName = "Color";
 			this.UpdatePreview();
-		}
-
-		public string DisplayName
-		{
-			get => NameDp.Get(this);
-			set => NameDp.Set(this, value);
 		}
 
 		public CmColor? Value
@@ -72,7 +64,7 @@ namespace Anamnesis.Styles.Controls
 				this.Value = v.Color;
 			};
 
-			await ViewService.ShowDrawer(selector, this.DisplayName);
+			await ViewService.ShowDrawer(selector);
 		}
 
 		private void UpdatePreview()

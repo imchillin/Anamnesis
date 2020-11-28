@@ -82,15 +82,15 @@ namespace Anamnesis.Styles.Drawers
 			}
 		}
 
-		public static void Show<TView, TValue>(string title, TValue? current, Action<TValue> changed)
+		public static void Show<TView, TValue>(TValue? current, Action<TValue> changed)
 			where TView : ISelectorView
 			where TValue : class
 		{
 			ISelectorView view = Activator.CreateInstance<TView>();
-			Show(title, view, current, changed);
+			Show(view, current, changed);
 		}
 
-		public static void Show<TValue>(string title, ISelectorView view, TValue? current, Action<TValue> changed)
+		public static void Show<TValue>(ISelectorView view, TValue? current, Action<TValue> changed)
 			where TValue : class
 		{
 			view.Selector.Value = current;
@@ -106,7 +106,7 @@ namespace Anamnesis.Styles.Drawers
 
 			Task.Run(() =>
 			{
-				ViewService.ShowDrawer(view, title);
+				ViewService.ShowDrawer(view);
 			});
 		}
 

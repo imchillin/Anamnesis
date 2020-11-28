@@ -42,21 +42,21 @@ namespace Anamnesis.Services
 
 	public class ViewService : ServiceBase<ViewService>
 	{
-		public delegate Task DrawerEvent(string? title, UserControl drawer, DrawerDirection direction);
+		public delegate Task DrawerEvent(UserControl drawer, DrawerDirection direction);
 
 		public static event DrawerEvent? ShowingDrawer;
 
-		public static Task ShowDrawer<T>(string? title = null, DrawerDirection direction = DrawerDirection.Right)
+		public static Task ShowDrawer<T>(DrawerDirection direction = DrawerDirection.Right)
 		{
 			UserControl? view = CreateView<T>();
 
 			if (view == null || ShowingDrawer == null)
 				return Task.CompletedTask;
 
-			return ShowingDrawer.Invoke(title, view, direction);
+			return ShowingDrawer.Invoke(view, direction);
 		}
 
-		public static Task ShowDrawer(object view, string? title = null, DrawerDirection direction = DrawerDirection.Right)
+		public static Task ShowDrawer(object view, DrawerDirection direction = DrawerDirection.Right)
 		{
 			if (!(view is UserControl control))
 				throw new Exception("Invalid view");
@@ -64,7 +64,7 @@ namespace Anamnesis.Services
 			if (ShowingDrawer == null)
 				return Task.CompletedTask;
 
-			return ShowingDrawer.Invoke(title, control, direction);
+			return ShowingDrawer.Invoke(control, direction);
 		}
 
 		public static Task<TResult> ShowDialog<TView, TResult>(string title)

@@ -79,7 +79,7 @@ namespace Anamnesis.Character.Views
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
 			EquipmentSelector selector = new EquipmentSelector(this.Slot);
-			SelectorDrawer.Show("Select " + this.SlotName, selector, this.Item, this.SetItem);
+			SelectorDrawer.Show(selector, this.Item, this.SetItem);
 		}
 
 		private void SetItem(IItem? item)
@@ -117,7 +117,7 @@ namespace Anamnesis.Character.Views
 
 		private void OnDyeClick(object sender, RoutedEventArgs e)
 		{
-			SelectorDrawer.Show<DyeSelector, IDye>("Select Dye", this.Dye, (v) =>
+			SelectorDrawer.Show<DyeSelector, IDye>(this.Dye, (v) =>
 			{
 				if (v == null)
 					return;

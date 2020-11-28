@@ -83,37 +83,37 @@ namespace Anamnesis.Files
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"\"{dir}\"");
 		}
 
-		public static async Task<OpenResult> Open<T>(string title)
+		public static async Task<OpenResult> Open<T>()
 			where T : FileBase
 		{
-			return await Open(title, typeof(T));
+			return await Open(typeof(T));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2>(string title)
+		public static async Task<OpenResult> Open<T1, T2>()
 			where T1 : FileBase
 			where T2 : FileBase
 		{
-			return await Open(title, typeof(T1), typeof(T2));
+			return await Open(typeof(T1), typeof(T2));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3>(string title)
+		public static async Task<OpenResult> Open<T1, T2, T3>()
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 		{
-			return await Open(title, typeof(T1), typeof(T2), typeof(T3));
+			return await Open(typeof(T1), typeof(T2), typeof(T3));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3, T4>(string title)
+		public static async Task<OpenResult> Open<T1, T2, T3, T4>()
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 			where T4 : FileBase
 		{
-			return await Open(title, typeof(T1), typeof(T2), typeof(T3), typeof(T4));
+			return await Open(typeof(T1), typeof(T2), typeof(T3), typeof(T4));
 		}
 
-		public static Task<OpenResult> Open(string title, params Type[] fileTypes)
+		public static Task<OpenResult> Open(params Type[] fileTypes)
 		{
 			List<FileInfoBase>? fileInfos = new List<FileInfoBase>();
 			foreach (Type fileType in fileTypes)
@@ -121,10 +121,10 @@ namespace Anamnesis.Files
 				fileInfos.Add(GetFileInfo(fileType));
 			}
 
-			return Open(title, fileInfos.ToArray());
+			return Open(fileInfos.ToArray());
 		}
 
-		public static async Task<OpenResult> Open(string title, params FileInfoBase[] fileInfos)
+		public static async Task<OpenResult> Open(params FileInfoBase[] fileInfos)
 		{
 			OpenResult result = default;
 
@@ -135,11 +135,7 @@ namespace Anamnesis.Files
 				if (!useExplorerBrowser)
 				{
 					FileBrowserView browser = new FileBrowserView(fileInfos, FileBrowserView.Modes.Load);
-
-					if (title != null)
-						title = "Load " + title;
-
-					await ViewService.ShowDrawer(browser, title);
+					await ViewService.ShowDrawer(browser);
 
 					while (browser.IsOpen)
 						await Task.Delay(10);
@@ -199,7 +195,7 @@ namespace Anamnesis.Files
 					if (!useExplorerBrowser)
 					{
 						FileBrowserView browser = new FileBrowserView(info, FileBrowserView.Modes.Save);
-						await ViewService.ShowDrawer(browser, null);
+						await ViewService.ShowDrawer(browser);
 
 						while (browser.IsOpen)
 							await Task.Delay(10);

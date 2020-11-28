@@ -124,7 +124,7 @@ namespace Anamnesis.Styles.Controls
 		{
 			ColorSelectorDrawer selector = new ColorSelectorDrawer();
 			selector.Value = new Color4(this.Value);
-			await ViewService.ShowDrawer(selector, "Color");
+			await ViewService.ShowDrawer(selector);
 			this.Value = selector.Value.Color;
 		}
 	}

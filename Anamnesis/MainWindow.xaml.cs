@@ -82,7 +82,7 @@ namespace Anamnesis.GUI
 			}
 		}
 
-		private async Task OnShowDrawer(string? title, UserControl view, DrawerDirection direction)
+		private async Task OnShowDrawer(UserControl view, DrawerDirection direction)
 		{
 			await Application.Current.Dispatcher.InvokeAsync(async () =>
 			{
@@ -107,7 +107,6 @@ namespace Anamnesis.GUI
 					{
 						this.DrawerLeft.Content = view;
 						this.DrawerHost.IsLeftDrawerOpen = true;
-						this.LeftTitle.Content = title;
 						break;
 					}
 
@@ -122,7 +121,6 @@ namespace Anamnesis.GUI
 					{
 						this.DrawerRight.Content = view;
 						this.DrawerHost.IsRightDrawerOpen = true;
-						this.RightTitle.Content = title;
 						break;
 					}
 
@@ -189,7 +187,7 @@ namespace Anamnesis.GUI
 				return;
 			}
 
-			ViewService.ShowDrawer<SettingsView>(LocalizationService.GetString("Settings_Header"));
+			ViewService.ShowDrawer<SettingsView>();
 		}
 
 		private void OnAboutClick(object sender, RoutedEventArgs e)
@@ -200,7 +198,7 @@ namespace Anamnesis.GUI
 				return;
 			}
 
-			ViewService.ShowDrawer<AboutView>(LocalizationService.GetString("About_Header"));
+			ViewService.ShowDrawer<AboutView>();
 		}
 
 		private void Window_MouseEnter(object sender, MouseEventArgs e)
@@ -240,7 +238,7 @@ namespace Anamnesis.GUI
 
 		private void OnAddActorClicked(object sender, RoutedEventArgs e)
 		{
-			ViewService.ShowDrawer<TargetSelectorView>(null, DrawerDirection.Left);
+			ViewService.ShowDrawer<TargetSelectorView>(DrawerDirection.Left);
 		}
 
 		private void OnUnpinActorClicked(object sender, RoutedEventArgs e)

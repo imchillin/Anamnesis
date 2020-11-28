@@ -185,7 +185,7 @@ namespace Anamnesis.Character.Views
 				this.Appearance.Hair = v;
 			};
 
-			await ViewService.ShowDrawer(selector, "Hair");
+			await ViewService.ShowDrawer(selector);
 		}
 
 		private async void OnFacePaintClicked(object sender, RoutedEventArgs e)
@@ -199,7 +199,7 @@ namespace Anamnesis.Character.Views
 				this.Appearance.FacePaint = v;
 			};
 
-			await ViewService.ShowDrawer(selector, "Face Paint");
+			await ViewService.ShowDrawer(selector);
 		}
 
 		private void OnRaceChanged(object sender, SelectionChangedEventArgs e)

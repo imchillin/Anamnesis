@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" Width="256">
+			 d:DesignHeight="450" Width="174">
 
 	<UserControl.Resources>
 		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
@@ -13,16 +13,17 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid Margin="6, 0, 0, 0" x:Name="ContentArea">
+	<Grid Margin="0, 0, 0, 0" x:Name="ContentArea">
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,0,3,6" Buttons="True"/>
+		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,6,3,6" Buttons="True"/>
 
-		<ListBox Grid.Row="1" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedItem}">
+		<ListBox Grid.Row="2" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedItem}" Margin="3">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
 					<WrapPanel x:Name="wrapPanel"/>
@@ -30,7 +31,7 @@
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Rectangle Width="29" Height="18" Margin="0">
+					<Rectangle Width="19" Height="19" Margin="0">
 						<Rectangle.Fill>
 							<SolidColorBrush Color="{Binding Entry.WpfColor}"/>
 						</Rectangle.Fill>

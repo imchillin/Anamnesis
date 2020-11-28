@@ -42,7 +42,7 @@ namespace Anamnesis.Character.Views
 			if (GameDataService.Animations.Contains(this.AnimationId))
 				current = GameDataService.Animations.Get(this.AnimationId);
 
-			GenericSelector.Show("Select Animation", current, GameDataService.Animations, (v) =>
+			GenericSelector.Show(current, GameDataService.Animations, (v) =>
 			{
 				if (v == null)
 					return;

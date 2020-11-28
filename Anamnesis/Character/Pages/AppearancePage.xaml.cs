@@ -74,7 +74,7 @@ namespace Anamnesis.Character.Pages
 
 		private void OnLoadNpcClicked(object sender, RoutedEventArgs e)
 		{
-			SelectorDrawer.Show<NpcSelector, INpcResident>("Select Appearance", null, (v) => { this.ApplyNpc(v); });
+			SelectorDrawer.Show<NpcSelector, INpcResident>(null, (v) => { this.ApplyNpc(v); });
 		}
 
 		private async void ApplyNpc(INpcResident? npc)
@@ -94,7 +94,7 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			OpenResult result = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>("Character");
+			OpenResult result = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>();
 
 			if (result.File == null)
 				return;

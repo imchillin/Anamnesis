@@ -109,7 +109,7 @@ namespace Anamnesis.PoseModule.Pages
 				if (actor == null || this.Skeleton == null)
 					return;
 
-				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>("Pose");
+				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>();
 
 				if (result.File == null)
 					return;

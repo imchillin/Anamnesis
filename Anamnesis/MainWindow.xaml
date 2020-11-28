@@ -245,23 +245,13 @@
 			<!-- Drawer flyouts -->
 			<materialdesign:DrawerHost Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DrawerHost" Margin="1">
 				<materialdesign:DrawerHost.RightDrawerContent>
-					<Grid MinWidth="256" Background="{DynamicResource MaterialDesignCardBackground}">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="1*" />
-						</Grid.RowDefinitions>
-						<Label Grid.Row="0" x:Name="RightTitle" Content="Hello World" FontSize="20" FontWeight="DemiBold" Margin="6, 6, 6, 0"/>
-						<ContentPresenter Grid.Row="1" x:Name="DrawerRight"/>
+					<Grid MinWidth="64" Background="{DynamicResource MaterialDesignCardBackground}">
+						<ContentPresenter x:Name="DrawerRight"/>
 					</Grid>
 				</materialdesign:DrawerHost.RightDrawerContent>
 				<materialdesign:DrawerHost.LeftDrawerContent>
-					<Grid MinWidth="256" Background="{DynamicResource MaterialDesignCardBackground}">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="1*" />
-						</Grid.RowDefinitions>
-						<Label Grid.Row="0" x:Name="LeftTitle" Content="Hello World" FontSize="20" FontWeight="DemiBold" Margin="6, 6, 6, 0"/>
-						<ContentPresenter Grid.Row="1" x:Name="DrawerLeft"/>
+					<Grid MinWidth="64" Background="{DynamicResource MaterialDesignCardBackground}">
+						<ContentPresenter x:Name="DrawerLeft"/>
 					</Grid>
 				</materialdesign:DrawerHost.LeftDrawerContent>
 				<materialdesign:DrawerHost.TopDrawerContent>

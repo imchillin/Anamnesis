@@ -41,8 +41,8 @@
 		</Grid.RowDefinitions>
 
 		<ana:TextBlock Grid.Row="0" Grid.Column="0" Key="Character_ExAppearance_Skin" Style="{StaticResource Label}"/>
-		<ana:RgbColorControl Grid.Row="0" Grid.Column="1" Value="{Binding ExtendedAppearance.SkinColor}" DisplayName="Skin Color" ToolTip="Skin Color"/>
-		<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ExtendedAppearance.SkinGloss}" DisplayName="Skin Glow Color" ToolTip="Skin Glow Color"/>
+		<ana:RgbColorControl Grid.Row="0" Grid.Column="1" Value="{Binding ExtendedAppearance.SkinColor}" ToolTip="Skin Color"/>
+		<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ExtendedAppearance.SkinGloss}" ToolTip="Skin Glow Color"/>
 
 		<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Character_ExAppearance_Lips" Style="{StaticResource Label}"/>
 		<ana:RgbaColorControl Grid.Row="1" Grid.Column="1" Value="{Binding ExtendedAppearance.MouthColor}" ToolTip="Lips Color"/>
@@ -54,9 +54,9 @@
 
 
 		<ana:TextBlock Grid.Row="3" Grid.Column="0" Key="Character_ExAppearance_Hair" Style="{StaticResource Label}"/>
-		<ana:RgbColorControl Grid.Row="3" Grid.Column="1" Value="{Binding ExtendedAppearance.HairColor}" DisplayName="Hair Color" ToolTip="Hair Color"/>
-		<ana:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding ExtendedAppearance.HairGloss}" DisplayName="Hair Glow" ToolTip="Hair Glow"/>
-		<ana:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding ExtendedAppearance.HairHighlight}" DisplayName="Highlight Color" ToolTip="Highlight Color"/>
+		<ana:RgbColorControl Grid.Row="3" Grid.Column="1" Value="{Binding ExtendedAppearance.HairColor}" ToolTip="Hair Color"/>
+		<ana:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding ExtendedAppearance.HairGloss}" ToolTip="Hair Glow"/>
+		<ana:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding ExtendedAppearance.HairHighlight}" ToolTip="Highlight Color"/>
 
 
 		<!--

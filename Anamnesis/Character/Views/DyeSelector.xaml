@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="232">
+			 d:DesignHeight="450" Width="200">
 
 	<cm3Drawers:SelectorDrawer 
 		x:Name="Selector"

@@ -22,19 +22,11 @@ namespace Anamnesis.Styles.Controls
 	public partial class RgbaColorControl : UserControl
 	{
 		public static readonly IBind<Color4> ValueDp = Binder.Register<Color4, RgbaColorControl>(nameof(Value), OnValueChanged);
-		public static readonly IBind<string> NameDp = Binder.Register<string, RgbaColorControl>(nameof(DisplayName));
 
 		public RgbaColorControl()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
-			this.DisplayName = "Color";
-		}
-
-		public string DisplayName
-		{
-			get => NameDp.Get(this);
-			set => NameDp.Set(this, value);
 		}
 
 		public Color4 Value
@@ -66,7 +58,7 @@ namespace Anamnesis.Styles.Controls
 				this.Value = v;
 			};
 
-			await ViewService.ShowDrawer(selector, this.DisplayName);
+			await ViewService.ShowDrawer(selector);
 		}
 
 		private void UpdatePreview()

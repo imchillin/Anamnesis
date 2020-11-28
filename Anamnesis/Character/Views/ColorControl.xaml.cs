@@ -109,7 +109,7 @@ namespace Anamnesis.Character.Views
 				this.Value = (byte)v;
 			};
 
-			await ViewService.ShowDrawer(selector, "Color");
+			await ViewService.ShowDrawer(selector);
 		}
 
 		private ColorData.Entry[]? GetColors()
