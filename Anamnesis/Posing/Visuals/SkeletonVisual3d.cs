@@ -135,6 +135,11 @@ namespace Anamnesis.PoseModule
 			else
 			{
 				this.SelectedBones.Add(bone.Visual);
+
+				if (bone.Visual.Template?.RequiresPositions == true)
+				{
+					PoseService.Instance.LockChildRotation = true;
+				}
 			}
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
@@ -172,6 +177,11 @@ namespace Anamnesis.PoseModule
 				else
 				{
 					this.SelectedBones.Add(bone.Visual);
+
+					if (bone.Visual.Template?.RequiresPositions == true)
+					{
+						PoseService.Instance.LockChildRotation = true;
+					}
 				}
 			}
 
@@ -371,7 +381,12 @@ namespace Anamnesis.PoseModule
 					if (nameLookup.ContainsKey(i))
 						name = nameLookup[i];
 
-					BoneVisual3d bone = new BoneVisual3d(transform, this, name);
+					TemplateBone? boneTemplate = null;
+
+					if (template.ContainsKey(name))
+						boneTemplate = template[name];
+
+					BoneVisual3d bone = new BoneVisual3d(transform, this, name, boneTemplate);
 					newBones.Add(name, bone);
 					this.Bones.Add(name, bone);
 				}

@@ -19,6 +19,7 @@
 		<Grid.ToolTip>
 			<StackPanel>
 				<ana:TextBlock Key="{Binding Bone.TooltipKey}"/>
+				<ana:TextBlock Text="Requires child rotation lock" Visibility="{Binding Bone.Template.RequiresPositions, Converter={StaticResource B2V}}"/>
 			</StackPanel>
 		</Grid.ToolTip>
 

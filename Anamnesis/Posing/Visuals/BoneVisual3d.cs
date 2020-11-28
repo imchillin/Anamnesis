@@ -8,6 +8,7 @@ namespace Anamnesis.PoseModule
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Extensions;
+	using Anamnesis.Posing.Templates;
 	using Anamnesis.ThreeD;
 	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
@@ -26,7 +27,7 @@ namespace Anamnesis.PoseModule
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
 
-		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton, string name)
+		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton, string name, TemplateBone? template)
 		{
 			this.ViewModel = transform;
 			this.Skeleton = skeleton;
@@ -49,6 +50,7 @@ namespace Anamnesis.PoseModule
 			this.Children.Add(sphere);
 
 			this.BoneName = name;
+			this.Template = template;
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }
@@ -56,6 +58,7 @@ namespace Anamnesis.PoseModule
 
 		public bool IsEnabled { get; set; } = true;
 		public string BoneName { get; set; }
+		public TemplateBone? Template { get; private set; }
 
 		public bool CanRotate => PoseService.Instance.FreezeRotation;
 		public CmQuaternion Rotation { get; set; }

@@ -452,22 +452,24 @@
 			"Index": 13
 		},
 		"BrowLeft": {
-			"Index": 14,
+			"Index": 14
 		},
 		"BrowRight": {
-			"Index": 15,
+			"Index": 15
 		},
 		"LipUpperA": {
 			"Index": 16,
+			"RequiresPositions": true
 		},
 		"EyelidUpperLeft": {
-			"Index": 17,
+			"Index": 17
 		},
 		"EyelidUpperRight": {
-			"Index": 18,
+			"Index": 18
 		},
 		"LipLowerA": {
 			"Index": 19,
+			"RequiresPositions": true
 		},
 		"LipUpperB": {
 			"Index": 20
