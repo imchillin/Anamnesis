@@ -4,6 +4,7 @@
 namespace Anamnesis.Styles.Drawers
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using System.Threading.Tasks;
@@ -193,7 +194,8 @@ namespace Anamnesis.Styles.Drawers
 			this.idle = false;
 			ObservableCollection<object> filteredItems = new ObservableCollection<object>();
 
-			foreach (object item in this.Items)
+			List<object> items = new List<object>(this.Items);
+			foreach (object item in items)
 			{
 				if (this.Filter != null && !this.Filter.Invoke(item, searchQuerry))
 					continue;
