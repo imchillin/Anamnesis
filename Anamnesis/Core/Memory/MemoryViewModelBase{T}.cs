@@ -145,6 +145,18 @@ namespace Anamnesis.Memory
 			return true;
 		}
 
+		public void FreezeAll(bool freeze)
+		{
+			PropertyInfo[] properties = this.GetType().GetProperties();
+			foreach (PropertyInfo property in properties)
+			{
+				if (property.GetCustomAttribute<ModelFieldAttribute>() == null)
+					continue;
+
+				this.FreezeValue(property.Name, freeze);
+			}
+		}
+
 		public void FreezeValue(string name, bool freeze, object? value = null)
 		{
 			if (freeze)

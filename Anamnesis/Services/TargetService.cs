@@ -155,6 +155,9 @@ namespace Anamnesis
 
 		public void ClearSelection()
 		{
+			if (App.Current == null)
+				return;
+
 			App.Current.Dispatcher.Invoke(() =>
 			{
 				this.SelectedActor = null;
