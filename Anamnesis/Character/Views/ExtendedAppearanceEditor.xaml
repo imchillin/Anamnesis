@@ -20,28 +20,8 @@
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
-
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
 
 		<ToggleButton Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" 
 					  Height="22" Width="22" Padding="0" Margin="0, 3, 6, 0"
@@ -54,26 +34,45 @@
 			</materialdesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<ana:TextBlock Grid.Row="0" Grid.Column="1" Key="Character_ExAppearance_Skin" Style="{StaticResource Label}"/>
-		<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ExtendedAppearance.SkinColor}" ToolTip="Skin Color"/>
-		<ana:RgbColorControl Grid.Row="0" Grid.Column="3" Value="{Binding ExtendedAppearance.SkinGloss}" ToolTip="Skin Glow Color"/>
+		<Grid Grid.Column="1" IsEnabled="{Binding ExtendedAppearance.Freeze}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
 
-		<ana:TextBlock Grid.Row="1" Grid.Column="1" Key="Character_ExAppearance_Lips" Style="{StaticResource Label}"/>
-		<ana:RgbaColorControl Grid.Row="1" Grid.Column="2" Value="{Binding ExtendedAppearance.MouthColor}" ToolTip="Lips Color"/>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
 
-		<ana:TextBlock Grid.Row="2" Grid.Column="1" Key="Character_ExAppearance_Eyes" Style="{StaticResource Label}"/>
-		<ana:RgbColorControl Grid.Row="2" Grid.Column="2" ToolTip="Left Eye Color" Value="{Binding ExtendedAppearance.LeftEyeColor}"/>
-		<ana:RgbColorControl Grid.Row="2" Grid.Column="3" ToolTip="Right Eye Color" Value="{Binding ExtendedAppearance.RightEyeColor}"/>
-		<ana:RgbColorControl Grid.Row="2" Grid.Column="4" ToolTip="Limbal Ring Color" Value="{Binding ExtendedAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+			
+
+			<ana:TextBlock Grid.Row="0" Grid.Column="1" Key="Character_ExAppearance_Skin" Style="{StaticResource Label}"/>
+			<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ExtendedAppearance.SkinColor}" ToolTip="Skin Color"/>
+			<ana:RgbColorControl Grid.Row="0" Grid.Column="3" Value="{Binding ExtendedAppearance.SkinGloss}" ToolTip="Skin Glow Color"/>
+
+			<ana:TextBlock Grid.Row="1" Grid.Column="1" Key="Character_ExAppearance_Lips" Style="{StaticResource Label}"/>
+			<ana:RgbaColorControl Grid.Row="1" Grid.Column="2" Value="{Binding ExtendedAppearance.MouthColor}" ToolTip="Lips Color"/>
+
+			<ana:TextBlock Grid.Row="2" Grid.Column="1" Key="Character_ExAppearance_Eyes" Style="{StaticResource Label}"/>
+			<ana:RgbColorControl Grid.Row="2" Grid.Column="2" ToolTip="Left Eye Color" Value="{Binding ExtendedAppearance.LeftEyeColor}"/>
+			<ana:RgbColorControl Grid.Row="2" Grid.Column="3" ToolTip="Right Eye Color" Value="{Binding ExtendedAppearance.RightEyeColor}"/>
+			<ana:RgbColorControl Grid.Row="2" Grid.Column="4" ToolTip="Limbal Ring Color" Value="{Binding ExtendedAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
 
 
-		<ana:TextBlock Grid.Row="3" Grid.Column="1" Key="Character_ExAppearance_Hair" Style="{StaticResource Label}"/>
-		<ana:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding ExtendedAppearance.HairColor}" ToolTip="Hair Color"/>
-		<ana:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding ExtendedAppearance.HairGloss}" ToolTip="Hair Glow"/>
-		<ana:RgbColorControl Grid.Row="3" Grid.Column="4" Value="{Binding ExtendedAppearance.HairHighlight}" ToolTip="Highlight Color"/>
+			<ana:TextBlock Grid.Row="3" Grid.Column="1" Key="Character_ExAppearance_Hair" Style="{StaticResource Label}"/>
+			<ana:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding ExtendedAppearance.HairColor}" ToolTip="Hair Color"/>
+			<ana:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding ExtendedAppearance.HairGloss}" ToolTip="Hair Glow"/>
+			<ana:RgbColorControl Grid.Row="3" Grid.Column="4" Value="{Binding ExtendedAppearance.HairHighlight}" ToolTip="Highlight Color"/>
 
 
-		<!--
+			<!--
 		<TextBlock Grid.Row="5" Grid.Column="0" Text="Transparency:" Style="{StaticResource Label}"/>
 		<cm3Controls:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding Transparency}" Minimum="0" Maximum="1" Slider="Absolute"/>
 
@@ -137,5 +136,6 @@
 			</Grid>
 		</GroupBox>
 		-->
+		</Grid>
 	</Grid>
 </UserControl>

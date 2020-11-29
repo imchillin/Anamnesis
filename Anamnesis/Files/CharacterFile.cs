@@ -332,11 +332,17 @@ namespace Anamnesis.Files
 
 			if (actor.ModelObject?.ExtendedAppearance != null)
 			{
+				bool usedExAppearance = false;
+
 				if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 				{
 					actor.ModelObject.ExtendedAppearance.HairColor = this.HairColor ?? actor.ModelObject.ExtendedAppearance.HairColor;
 					actor.ModelObject.ExtendedAppearance.HairGloss = this.HairGloss ?? actor.ModelObject.ExtendedAppearance.HairGloss;
 					actor.ModelObject.ExtendedAppearance.HairHighlight = this.HairHighlight ?? actor.ModelObject.ExtendedAppearance.HairHighlight;
+
+					usedExAppearance |= this.HairColor != null;
+					usedExAppearance |= this.HairGloss != null;
+					usedExAppearance |= this.HairHighlight != null;
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceFace, mode))
@@ -345,6 +351,11 @@ namespace Anamnesis.Files
 					actor.ModelObject.ExtendedAppearance.RightEyeColor = this.RightEyeColor ?? actor.ModelObject.ExtendedAppearance.RightEyeColor;
 					actor.ModelObject.ExtendedAppearance.LimbalRingColor = this.LimbalRingColor ?? actor.ModelObject.ExtendedAppearance.LimbalRingColor;
 					actor.ModelObject.ExtendedAppearance.MouthColor = this.MouthColor ?? actor.ModelObject.ExtendedAppearance.MouthColor;
+
+					usedExAppearance |= this.LeftEyeColor != null;
+					usedExAppearance |= this.RightEyeColor != null;
+					usedExAppearance |= this.LimbalRingColor != null;
+					usedExAppearance |= this.MouthColor != null;
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceBody, mode))
@@ -354,8 +365,12 @@ namespace Anamnesis.Files
 					////actor.SetValue(Offsets.Main.Transparency, this.Transparency);
 					////actor.SetValue(Offsets.Main.BustScale, this.BustScale);
 					////actor.SetValue(Offsets.Main.UniqueFeatureScale, this.FeatureScale);
+
+					usedExAppearance |= this.SkinColor != null;
+					usedExAppearance |= this.SkinGloss != null;
 				}
 
+				actor.ModelObject.ExtendedAppearance.Freeze = usedExAppearance;
 				actor.ModelObject.ExtendedAppearance.MemoryMode = MemoryModes.ReadWrite;
 				actor.ModelObject.ExtendedAppearance.WriteToMemory(true);
 			}
