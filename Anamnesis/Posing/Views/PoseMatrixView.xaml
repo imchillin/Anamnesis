@@ -186,12 +186,12 @@
 
 					<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Unique" Style="{DynamicResource Label}"/>
 					<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
-						<local:BoneView BoneName="ExHair1" Label="1"/>
-						<local:BoneView BoneName="ExHair2" Label="2"/>
-						<local:BoneView BoneName="ExHair3" Label="3"/>
-						<local:BoneView BoneName="ExHair4" Label="4"/>
-						<local:BoneView BoneName="ExHair5" Label="5"/>
-						<local:BoneView BoneName="ExHair6" Label="6"/>
+						<local:BoneView BoneName="ExHairA" Label="1"/>
+						<local:BoneView BoneName="ExHairB" Label="2"/>
+						<local:BoneView BoneName="ExHairC" Label="3"/>
+						<local:BoneView BoneName="ExHairD" Label="4"/>
+						<local:BoneView BoneName="ExHairE" Label="5"/>
+						<local:BoneView BoneName="ExHairF" Label="6"/>
 					</StackPanel>
 
 					<cm3:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_Earrings" Style="{DynamicResource Label}"/>
