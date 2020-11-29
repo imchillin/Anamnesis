@@ -62,12 +62,23 @@ namespace Anamnesis.Memory
 					{
 						if (this.Transforms.Count != this.Count)
 						{
+							// new transforms
 							this.Transforms.Clear();
 
 							IntPtr ptr = this.TransformArray;
 							for (int i = 0; i < this.Count; i++)
 							{
 								this.Transforms.Add(new TransformViewModel(ptr));
+								ptr += 0x30;
+							}
+						}
+						else
+						{
+							// Update pointers
+							IntPtr ptr = this.TransformArray;
+							for (int i = 0; i < this.Transforms.Count; i++)
+							{
+								this.Transforms[i].Pointer = ptr;
 								ptr += 0x30;
 							}
 						}
