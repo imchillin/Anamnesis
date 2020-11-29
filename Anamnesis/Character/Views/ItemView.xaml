@@ -11,7 +11,7 @@
 			 d:DesignWidth="300"
 			 DataContextChanged="OnThisDataContextChanged">
 
-	<StackPanel Margin="0, 0, 3, 18" x:Name="ContentArea">
+	<StackPanel Margin="0, 0, 3, 7" x:Name="ContentArea">
 
 		<Grid Height="67">
 			<Grid.ColumnDefinitions>

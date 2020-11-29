@@ -101,6 +101,8 @@
 	"Character_ExAppearance_Eyes": "Eyes:",
 	"Character_ExAppearance_Hair": "Hair:",
 
+	"Character_ExWeapons_Header": "Extended Weapons",
+
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /Gpose in chat.",
 	"Pose_WarningNotFrozen": "Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window.",
 

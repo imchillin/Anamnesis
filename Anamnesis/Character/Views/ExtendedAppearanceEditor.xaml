@@ -8,16 +8,9 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800"
-			 DataContextChanged="OnDataContextChanged"
-			 Loaded="OnLoaded">
+			 d:DesignHeight="450" d:DesignWidth="800">
 
-	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="B2V"/>
-		<anaConverters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
-	</UserControl.Resources>
-	
-	<Grid x:Name="ContentArea">
+	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
@@ -25,7 +18,7 @@
 
 		<ToggleButton Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" 
 					  Height="22" Width="22" Padding="0" Margin="0, 3, 6, 0"
-					  VerticalAlignment="Center" IsChecked="{Binding ExtendedAppearance.Freeze}">
+					  VerticalAlignment="Center" IsChecked="{Binding Freeze}">
 			<ToggleButton.Content>
 				<fa:IconBlock Icon="LockOpen" FontSize="12"/>
 			</ToggleButton.Content>
@@ -34,8 +27,9 @@
 			</materialdesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<Grid Grid.Column="1" IsEnabled="{Binding ExtendedAppearance.Freeze}">
+		<Grid Grid.Column="1" IsEnabled="{Binding Freeze}">
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="Auto"/>
@@ -51,91 +45,23 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-			
-
 			<ana:TextBlock Grid.Row="0" Grid.Column="1" Key="Character_ExAppearance_Skin" Style="{StaticResource Label}"/>
-			<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ExtendedAppearance.SkinColor}" ToolTip="Skin Color"/>
-			<ana:RgbColorControl Grid.Row="0" Grid.Column="3" Value="{Binding ExtendedAppearance.SkinGloss}" ToolTip="Skin Glow Color"/>
+			<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding SkinColor}" ToolTip="Skin Color"/>
+			<ana:RgbColorControl Grid.Row="0" Grid.Column="3" Value="{Binding SkinGloss}" ToolTip="Skin Glow Color"/>
 
 			<ana:TextBlock Grid.Row="1" Grid.Column="1" Key="Character_ExAppearance_Lips" Style="{StaticResource Label}"/>
-			<ana:RgbaColorControl Grid.Row="1" Grid.Column="2" Value="{Binding ExtendedAppearance.MouthColor}" ToolTip="Lips Color"/>
+			<ana:RgbaColorControl Grid.Row="1" Grid.Column="2" Value="{Binding MouthColor}" ToolTip="Lips Color"/>
 
 			<ana:TextBlock Grid.Row="2" Grid.Column="1" Key="Character_ExAppearance_Eyes" Style="{StaticResource Label}"/>
-			<ana:RgbColorControl Grid.Row="2" Grid.Column="2" ToolTip="Left Eye Color" Value="{Binding ExtendedAppearance.LeftEyeColor}"/>
-			<ana:RgbColorControl Grid.Row="2" Grid.Column="3" ToolTip="Right Eye Color" Value="{Binding ExtendedAppearance.RightEyeColor}"/>
-			<ana:RgbColorControl Grid.Row="2" Grid.Column="4" ToolTip="Limbal Ring Color" Value="{Binding ExtendedAppearance.LimbalRingColor}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}"/>
+			<ana:RgbColorControl Grid.Row="2" Grid.Column="2" ToolTip="Left Eye Color" Value="{Binding LeftEyeColor}"/>
+			<ana:RgbColorControl Grid.Row="2" Grid.Column="3" ToolTip="Right Eye Color" Value="{Binding RightEyeColor}"/>
+			<ana:RgbColorControl Grid.Row="2" Grid.Column="4" ToolTip="Limbal Ring Color" Value="{Binding LimbalRingColor}"/>
 
 
 			<ana:TextBlock Grid.Row="3" Grid.Column="1" Key="Character_ExAppearance_Hair" Style="{StaticResource Label}"/>
-			<ana:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding ExtendedAppearance.HairColor}" ToolTip="Hair Color"/>
-			<ana:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding ExtendedAppearance.HairGloss}" ToolTip="Hair Glow"/>
-			<ana:RgbColorControl Grid.Row="3" Grid.Column="4" Value="{Binding ExtendedAppearance.HairHighlight}" ToolTip="Highlight Color"/>
-
-
-			<!--
-		<TextBlock Grid.Row="5" Grid.Column="0" Text="Transparency:" Style="{StaticResource Label}"/>
-		<cm3Controls:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding Transparency}" Minimum="0" Maximum="1" Slider="Absolute"/>
-
-		<TextBlock Grid.Row="6" Grid.Column="0" Text="Feature Scale:" Style="{StaticResource Label}"/>
-		<cm3Controls:NumberBox Grid.Row="6" Grid.Column="1" Value="{Binding FeatureScale}" Minimum="0" Maximum="10" Slider="Absolute"/>
-
-		<GroupBox Grid.Row="7" Grid.ColumnSpan="2" Header="Bust Scale">
-			<cm3Controls:VectorEditor Value="{Binding BustScale}" Minimum="0" Maximum="10" Sliders="Absolute" Expanded="True"/>
-		</GroupBox>
-
-		<GroupBox Header="Main Hand" Grid.Row="8" Grid.ColumnSpan="2" IsEnabled="{Binding HasMainHand}" Margin="0, 6, 0, 0">
-			<Grid Margin="3">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-
-				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-
-				<TextBlock Grid.Row="0" Grid.Column="0" Text="Tint:" Style="{StaticResource Label}"/>
-				<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="1" Value="{Binding MainHandTint}" ToolTip="Tint" Margin="0"/>
-
-				<TextBlock Grid.Row="1" Grid.Column="0" Text="Scale:" Style="{StaticResource Label}"/>
-				<cm3Controls:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding MainHandScale}" Minimum="0" Maximum="5"/>
-				<Button Grid.Row="1" Grid.Column="2" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="Button_Click"/>
-				<Button Grid.Row="1" Grid.Column="3" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="Button_Click"/>
-
-			</Grid>
-		</GroupBox>
-
-
-		<GroupBox Header="Off Hand" Grid.Row="9" Grid.ColumnSpan="2" IsEnabled="{Binding HasOffHand}" Margin="0, 6, 0, 0">
-			<Grid Margin="3">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-
-				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-
-				<TextBlock Grid.Row="0" Grid.Column="0" Text="Tint:" Style="{StaticResource Label}"/>
-				<cm3Controls:RgbColorControl Grid.Row="0" Grid.Column="1" Value="{Binding OffHandTint}" ToolTip="Tint" Margin="0"/>
-
-				<TextBlock Grid.Row="1" Grid.Column="0" Text="Scale:" Style="{StaticResource Label}"/>
-				<cm3Controls:VectorEditor Grid.Row="1" Grid.Column="1" Value="{Binding OffHandScale}" Minimum="0" Maximum="5"/>
-				<Button Grid.Row="1" Grid.Column="2" Width="20" Content="0" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6, 1, 0, 2" Click="Button_Click"/>
-				<Button Grid.Row="1" Grid.Column="3" Width="20" Content="1" Style="{DynamicResource TransparentButton}" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="2, 1, 0, 2" Click="Button_Click"/>
-
-			</Grid>
-		</GroupBox>
-		-->
+			<ana:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding HairColor}" ToolTip="Hair Color"/>
+			<ana:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding HairGloss}" ToolTip="Hair Glow"/>
+			<ana:RgbColorControl Grid.Row="3" Grid.Column="4" Value="{Binding HairHighlight}" ToolTip="Highlight Color"/>
 		</Grid>
 	</Grid>
 </UserControl>

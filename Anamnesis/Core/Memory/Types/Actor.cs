@@ -77,7 +77,6 @@ namespace Anamnesis.Memory
 		[ModelField][Refresh] public EquipmentViewModel? Equipment { get; set; }
 		[ModelField][Refresh] public WeaponViewModel? MainHand { get; set; }
 		[ModelField][Refresh] public WeaponViewModel? OffHand { get; set; }
-
 		[ModelField] public ModelViewModel? ModelObject { get; set; }
 
 		public bool AutomaticRefreshEnabled { get; set; } = true;

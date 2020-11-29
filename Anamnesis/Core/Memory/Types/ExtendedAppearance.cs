@@ -23,8 +23,6 @@ namespace Anamnesis.Memory
 
 	public class ExtendedAppearanceViewModel : MemoryViewModelBase<ExtendedAppearance>
 	{
-		private bool isFrozen = false;
-
 		public ExtendedAppearanceViewModel(IntPtr pointer, IStructViewModel? parent = null)
 			: base(pointer, parent)
 		{
@@ -45,15 +43,5 @@ namespace Anamnesis.Memory
 		[ModelField] public Color LeftEyeColor { get; set; }
 		[ModelField] public Color RightEyeColor { get; set; }
 		[ModelField] public Color LimbalRingColor { get; set; }
-
-		public bool Freeze
-		{
-			get => this.isFrozen;
-			set
-			{
-				this.isFrozen = value;
-				this.FreezeAll(value);
-			}
-		}
 	}
 }

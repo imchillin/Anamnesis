@@ -37,6 +37,7 @@ namespace Anamnesis.Memory
 		where T : struct
 	{
 		private Dictionary<string, (PropertyInfo, FieldInfo, object?)> freezeValues = new Dictionary<string, (PropertyInfo, FieldInfo, object?)>();
+		private bool isAllFrozen = false;
 
 		public MemoryViewModelBase(IntPtr pointer, IStructViewModel? parent = null)
 			: base(parent)
@@ -59,6 +60,16 @@ namespace Anamnesis.Memory
 
 		public IntPtr? Pointer { get; set; }
 		public MemoryModes MemoryMode { get; set; } = MemoryModes.ReadWrite;
+
+		public bool Freeze
+		{
+			get => this.isAllFrozen;
+			set
+			{
+				this.isAllFrozen = value;
+				this.FreezeAll(value);
+			}
+		}
 
 		public override string Path
 		{

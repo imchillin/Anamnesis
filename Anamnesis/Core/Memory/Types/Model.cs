@@ -5,11 +5,11 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Runtime.InteropServices;
-	using PropertyChanged;
 
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Model
 	{
+		[FieldOffset(0x030)] public IntPtr Weapons;
 		[FieldOffset(0x050)] public Transform Transform;
 		[FieldOffset(0x0A0)] public IntPtr Skeleton;
 		[FieldOffset(0x148)] public IntPtr Bust;
@@ -33,6 +33,7 @@ namespace Anamnesis.Memory
 		{
 		}
 
+		[ModelField] public WeaponExtendedViewModel? Weapons { get; set; }
 		[ModelField] public TransformViewModel? Transform { get; set; }
 		[ModelField] public SkeletonWrapperViewModel? Skeleton { get; set; }
 		[ModelField] public BustViewModel? Bust { get; set; }
