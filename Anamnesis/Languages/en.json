@@ -401,7 +401,6 @@
 	"About_Donate_Header": "Donate to the Devs!",
 	"About_Debug_Header": "Debugging",
 
-	"About_Debug_OpenLogs": "Open Logs directory",
-	"About_Debug_OpenSettings": "Open Settings directory",
-	"About_Debug_Throw": "Throw an error"
+	"About_Debug_OpenLogs": "Logs",
+	"About_Debug_OpenSettings": "Settings",
 }

@@ -3,13 +3,10 @@
 
 namespace Anamnesis.GUI.Views
 {
-	using System;
-	using System.Diagnostics;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Navigation;
 	using Anamnesis.Services;
-	using SimpleLog;
 
 	public partial class AboutView : UserControl
 	{
@@ -31,11 +28,6 @@ namespace Anamnesis.GUI.Views
 		private void OnSetingsClicked(object sender, RoutedEventArgs e)
 		{
 			SettingsService.ShowDirectory();
-		}
-
-		private void OnErrorClicked(object sender, RoutedEventArgs e)
-		{
-			throw new Exception("You clicked the forbidden button!");
 		}
 	}
 }
