@@ -23,6 +23,9 @@ namespace Anamnesis.GameData.ViewModels
 		public ItemViewModel(int key, ExcelSheet<Item> sheet, Lumina lumina)
 			: base(key, sheet, lumina)
 		{
+			if (this.Value == null)
+				return;
+
 			LuminaExtensions.GetModel(this.Value.ModelMain, this.IsWeapon, out this.modelSet, out this.modelBase, out this.modelVariant);
 			LuminaExtensions.GetModel(this.Value.ModelSub, this.IsWeapon, out this.subModelSet, out this.subModelBase, out this.subModelVariant);
 		}

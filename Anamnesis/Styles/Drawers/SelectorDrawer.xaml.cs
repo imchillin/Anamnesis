@@ -25,12 +25,13 @@ namespace Anamnesis.Styles.Drawers
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty ItemTemplateProperty = DependencyProperty.Register(nameof(ItemTemplate), typeof(DataTemplate), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 
-		private static string[]? searchQuerry;
-		private static string? lastSearchInput;
+		private static Dictionary<Type, string?> searchInputs = new Dictionary<Type, string?>();
 
+		private Type? objectType;
 		private bool searching = false;
 		private bool idle = true;
 		private object? oldValue;
+		private string[]? searchQuerry;
 
 		public SelectorDrawer()
 		{
@@ -94,6 +95,7 @@ namespace Anamnesis.Styles.Drawers
 		public static void Show<TValue>(ISelectorView view, TValue? current, Action<TValue> changed)
 			where TValue : class
 		{
+			view.Selector.objectType = typeof(TValue);
 			view.Selector.Value = current;
 			view.Selector.SelectionChanged += () =>
 			{
@@ -126,15 +128,24 @@ namespace Anamnesis.Styles.Drawers
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.SearchBox.Text = lastSearchInput;
+			if (this.objectType != null && searchInputs.ContainsKey(this.objectType))
+				this.SearchBox.Text = searchInputs[this.objectType];
+
 			Keyboard.Focus(this.SearchBox);
 			this.SearchBox.CaretIndex = int.MaxValue;
 		}
 
 		private void OnSearchChanged(object sender, TextChangedEventArgs e)
 		{
-			lastSearchInput = this.SearchBox.Text;
-			Task.Run(async () => { await this.Search(lastSearchInput); });
+			if (this.objectType == null)
+				return;
+
+			if (!searchInputs.ContainsKey(this.objectType))
+				searchInputs.Add(this.objectType, null);
+
+			string str = this.SearchBox.Text;
+			searchInputs[this.objectType] = str;
+			Task.Run(async () => { await this.Search(str); });
 		}
 
 		private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -170,12 +181,12 @@ namespace Anamnesis.Styles.Drawers
 
 				if (string.IsNullOrEmpty(str))
 				{
-					searchQuerry = null;
+					this.searchQuerry = null;
 				}
 				else
 				{
 					str = str.ToLower();
-					searchQuerry = str.Split(' ');
+					this.searchQuerry = str.Split(' ');
 				}
 
 				await Task.Run(this.DoFilter);
@@ -197,7 +208,7 @@ namespace Anamnesis.Styles.Drawers
 			List<object> items = new List<object>(this.Items);
 			foreach (object item in items)
 			{
-				if (this.Filter != null && !this.Filter.Invoke(item, searchQuerry))
+				if (this.Filter != null && !this.Filter.Invoke(item, this.searchQuerry))
 					continue;
 
 				filteredItems.Add(item);
