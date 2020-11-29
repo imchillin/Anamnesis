@@ -202,9 +202,14 @@ namespace Anamnesis.PoseModule
 			position.Z = (float)transform.Matrix.OffsetZ;
 
 			// and push those values to the game memory
-			this.ViewModel.Position = position;
-			this.ViewModel.Scale = this.Scale;
-			this.ViewModel.Rotation = rotation.ToCmQuaternion();
+			if (PoseService.Instance.FreezePositions)
+				this.ViewModel.Position = position;
+
+			if (PoseService.Instance.FreezeScale)
+				this.ViewModel.Scale = this.Scale;
+
+			if (PoseService.Instance.FreezeRotation)
+				this.ViewModel.Rotation = rotation.ToCmQuaternion();
 
 			if (this.LinkedEye != null && this.Skeleton.LinkEyes)
 			{
