@@ -20,6 +20,7 @@ namespace Anamnesis.Views
 	public partial class Gallery : UserControl
 	{
 		private bool isImage1 = true;
+		private bool isRunning = false;
 
 		public Gallery()
 		{
@@ -42,6 +43,10 @@ namespace Anamnesis.Views
 
 		private async Task Run()
 		{
+			if (this.isRunning)
+				return;
+
+			this.isRunning = true;
 			Random rnd = new Random();
 
 			while (this.IsVisible)
@@ -56,6 +61,8 @@ namespace Anamnesis.Views
 					await Task.Delay(5000);
 				}
 			}
+
+			this.isRunning = false;
 		}
 
 		private async Task Show(Entry entry, Random rnd)
