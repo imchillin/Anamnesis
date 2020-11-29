@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Character.Views
 {
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -15,6 +16,8 @@ namespace Anamnesis.Character.Views
 	/// </summary>
 	public partial class ModelTypeEditor : UserControl
 	{
+		private static Dictionary<int, string>? modelTypeNameLookup;
+
 		public ModelTypeEditor()
 		{
 			this.InitializeComponent();
@@ -22,6 +25,25 @@ namespace Anamnesis.Character.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
+			if (modelTypeNameLookup == null)
+			{
+				modelTypeNameLookup = new Dictionary<int, string>();
+
+				foreach (Monster monster in GameDataService.Monsters)
+				{
+					if (modelTypeNameLookup.ContainsKey(monster.ModelType))
+					{
+						string str = modelTypeNameLookup[monster.ModelType];
+						str += " / " + monster.Name;
+						modelTypeNameLookup[monster.ModelType] = str;
+					}
+					else
+					{
+						modelTypeNameLookup.Add(monster.ModelType, monster.Name);
+					}
+				}
+			}
+
 			this.GetModelName();
 		}
 
@@ -56,10 +78,9 @@ namespace Anamnesis.Character.Views
 
 				this.ModelName.Text = null;
 
-				if (GameDataService.Monsters!.Contains(actorVm.ModelType))
+				if (modelTypeNameLookup != null && modelTypeNameLookup.ContainsKey(actorVm.ModelType))
 				{
-					Monster entry = GameDataService.Monsters.Get(actorVm.ModelType);
-					this.ModelName.Text = entry.Name;
+					this.ModelName.Text = modelTypeNameLookup[actorVm.ModelType];
 				}
 			});
 		}
