@@ -69,8 +69,9 @@ namespace Anamnesis.Files
 
 			if (this.Bones != null)
 			{
-				// Apply all transforms twice to ensure parent-inherited values are caluclated correctly.
-				for (int i = 0; i < 2; i++)
+				// Apply all transforms a few times to ensure parent-inherited values are caluclated correctly, and to ensure
+				// we dont end up with some values read during a ffxiv frame update.
+				for (int i = 0; i < 3; i++)
 				{
 					foreach ((string name, Bone? savedBone) in this.Bones)
 					{
@@ -108,6 +109,8 @@ namespace Anamnesis.Files
 						bone.ReadTransform();
 						bone.WriteTransform(skeleton, false);
 					}
+
+					await Task.Delay(1);
 				}
 			}
 
