@@ -258,7 +258,6 @@ namespace Anamnesis
 
 			public void Clear()
 			{
-				this.viewModel = null;
 				this.Pointer = null;
 			}
 
@@ -290,7 +289,7 @@ namespace Anamnesis
 				if (this.viewModel != null)
 					this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
 
-				this.viewModel = null;
+				////this.viewModel = null;
 
 				List<ActorTableActor> actors = TargetService.GetActors();
 
@@ -298,16 +297,22 @@ namespace Anamnesis
 				{
 					if (actor.Name == this.Name && actor.Pointer != null)
 					{
-						ActorViewModel vm = new ActorViewModel((IntPtr)actor.Pointer);
-
 						// Handle case where multiple actor table entries point ot the same actor, but
 						// its not the actor we actually want.
-						if (vm.Id != this.Id)
+						if (actor.Id != this.Id)
 							continue;
+
+						if (this.viewModel != null)
+						{
+							this.viewModel.Pointer = actor.Pointer;
+						}
+						else
+						{
+							this.viewModel = new ActorViewModel((IntPtr)actor.Pointer);
+						}
 
 						this.Pointer = actor.Pointer;
 						this.Model = actor.Model;
-						this.viewModel = vm;
 						this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
 					}
 				}
