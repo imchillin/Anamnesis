@@ -5,10 +5,13 @@ namespace Anamnesis
 {
 	using System;
 	using System.ComponentModel;
+	using System.Diagnostics;
+	using System.Runtime.ExceptionServices;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Threading;
 	using Anamnesis.GUI;
+	using Anamnesis.GUI.Windows;
 	using Anamnesis.Services;
 	using MaterialDesignThemes.Wpf;
 
@@ -74,6 +77,7 @@ namespace Anamnesis
 		{
 			try
 			{
+				this.CheckForProcesses();
 				await Services.InitializeServices();
 
 				await Dispatch.MainThread();
@@ -86,6 +90,21 @@ namespace Anamnesis
 			catch (Exception ex)
 			{
 				Log.Write(ex);
+				ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), true);
+			}
+		}
+
+		private void CheckForProcesses()
+		{
+			string name = Process.GetCurrentProcess().ProcessName;
+			Process[] processes = Process.GetProcessesByName(name);
+
+			if (processes.Length < 1)
+				throw new Exception($"Unable to locate {name} process.");
+
+			if (processes.Length > 1)
+			{
+				throw new Exception($"Multiple {name} processes found. Please close all other instances.");
 			}
 		}
 	}

@@ -30,6 +30,8 @@ namespace Anamnesis
 			}
 		}
 
+		public static bool Exists => instance != null;
+
 		public bool IsAlive
 		{
 			get;
