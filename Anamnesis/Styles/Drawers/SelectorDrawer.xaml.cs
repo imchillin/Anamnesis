@@ -36,6 +36,7 @@ namespace Anamnesis.Styles.Drawers
 		private bool idle = true;
 		private string[]? searchQuerry;
 		private bool loading = false;
+		private bool abortSearch = false;
 
 		public SelectorDrawer()
 		{
@@ -172,6 +173,7 @@ namespace Anamnesis.Styles.Drawers
 		private async Task Search(string str)
 		{
 			this.idle = false;
+			this.abortSearch = true;
 
 			if (!this.loading)
 				await Task.Delay(50);
@@ -204,6 +206,7 @@ namespace Anamnesis.Styles.Drawers
 					this.searchQuerry = str.Split(' ');
 				}
 
+				this.abortSearch = false;
 				await Task.Run(this.DoFilter);
 				this.searching = false;
 			}
@@ -250,6 +253,11 @@ namespace Anamnesis.Styles.Drawers
 						}
 
 						filteredEntries.Add(entry);
+
+						if (this.abortSearch)
+						{
+							entries.Clear();
+						}
 					}
 				});
 
