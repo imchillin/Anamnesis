@@ -15,11 +15,21 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		
+
 		<GroupBox Grid.Row="0">
+			<GroupBox.Header>
+				<ana:TextBlock Key="About_Version_Header"/>
+			</GroupBox.Header>
+
+			<TextBlock x:Name="VersionLabel" FontSize="22" Margin="6,0,0,0"/>
+
+		</GroupBox>
+		
+		<GroupBox Grid.Row="1">
 			<GroupBox.Header>
 				<ana:TextBlock Key="About_OpenSource_Header"/>
 			</GroupBox.Header>
@@ -42,11 +52,13 @@
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/awesome-inc/FontAwesome.Sharp" FontSize="12">FontAwesome Sharp</Hyperlink>
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/DotNetAnalyzers/StyleCopAnalyzers" FontSize="12">StyleCop Analyzers</Hyperlink>
+					<LineBreak />
+					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/Kryptos-FR/markdig.wpf" FontSize="12">Markdig.WPF</Hyperlink>
 			</TextBlock>
 
 			
 		</GroupBox>
-		<GroupBox Grid.Row="1">
+		<GroupBox Grid.Row="2">
 			<GroupBox.Header>
 				<ana:TextBlock Key="About_Contact_Header"/>
 			</GroupBox.Header>
@@ -56,7 +68,7 @@
 				<fa:IconBlock Icon="Twitter"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://twitter.com/Ani_ki__" FontSize="12">Twitter</Hyperlink>!</TextBlock>
 		</GroupBox>
 		
-		<GroupBox Grid.Row="2">
+		<GroupBox Grid.Row="3">
 			<GroupBox.Header>
 				<ana:TextBlock Key="About_Donate_Header"/>
 			</GroupBox.Header>
@@ -66,7 +78,7 @@
 			</TextBlock>
 		</GroupBox>
 
-		<GroupBox Grid.Row="3">
+		<GroupBox Grid.Row="4">
 			<GroupBox.Header>
 				<ana:TextBlock Key="About_Debug_Header"/>
 			</GroupBox.Header>
@@ -82,12 +94,12 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 
-				<Button Margin="3" Click="OnLogsClicked" Grid.Column="0" Grid.Row="0">
-					<ana:TextBlock Key="About_Debug_OpenLogs"/>
+				<Button Margin="3" Click="OnLogsClicked" Grid.Column="0" Grid.Row="0" Style="{StaticResource TransparentButton}">
+					<ana:TextBlock Key="About_Debug_OpenLogs" Margin="3"/>
 				</Button>
 
-				<Button Margin="3" Click="OnSetingsClicked" Grid.Column="1" Grid.Row="0">
-					<ana:TextBlock Key="About_Debug_OpenSettings"/>
+				<Button Margin="3" Click="OnSetingsClicked" Grid.Column="1" Grid.Row="0" Style="{StaticResource TransparentButton}">
+					<ana:TextBlock Key="About_Debug_OpenSettings" Margin="3"/>
 				</Button>
 			</Grid>
 		</GroupBox>

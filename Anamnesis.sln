@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29230.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anamnesis", "Anamnesis\Anamnesis.csproj", "{04C21AF7-BD19-4180-A5E0-291E187C0936}"
+	ProjectSection(ProjectDependencies) = postProject
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2} = {99AADD3B-8499-4DA8-AE3C-8E81569640E2}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateExtractor", "UpdateExtractor\UpdateExtractor.csproj", "{99AADD3B-8499-4DA8-AE3C-8E81569640E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +38,22 @@ Global
 		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
 		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
 		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release-Unsigned|x64.Build.0 = Release|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug_NoGame|Any CPU.ActiveCfg = Debug|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug_NoGame|Any CPU.Build.0 = Debug|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug_NoGame|x64.ActiveCfg = Debug|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug_NoGame|x64.Build.0 = Debug|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug|x64.Build.0 = Debug|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release|x64.ActiveCfg = Release|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release|x64.Build.0 = Release|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release-Unsigned|Any CPU.ActiveCfg = Release|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
+		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release-Unsigned|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

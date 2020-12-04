@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+	<OutputType>Exe</OutputType>
+	<TargetFramework>net5.0</TargetFramework>
+	<AppendTargetFramework>False</AppendTargetFramework>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <DocumentationFile>..\bin\OutputExtractor.xml</DocumentationFile>
+	  <OutputPath>..\bin\</OutputPath>
+	  <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;IDE0025;SA1011;SA1134;</NoWarn>
+	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	  <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="stylecop.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

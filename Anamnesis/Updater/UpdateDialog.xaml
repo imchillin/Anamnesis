@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="Anamnesis.Updater.UpdateDialog"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Anamnesis.Updater"
+			 mc:Ignorable="d" 
+			 Loaded="OnLoaded"
+			 Height="300" Width="600">
+	<Grid x:Name="ContentArea">
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<FlowDocumentScrollViewer x:Name="Viewer"/>
+
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding IsUpdating, Converter={StaticResource !B2V}}">
+			<Button Content="Skip" Width="100" Height="32" Margin="3" Click="OnSkipClicked"/>
+			<Button Content="Update" Width="100" Height="32" Margin="3" Click="OnUpdateClicked"/>
+		</StackPanel>
+
+		<Grid Visibility="{Binding IsUpdating, Converter={StaticResource B2V}}" Grid.Row="1">
+			<ProgressBar Value="{Binding Progress}" Minimum="0" Maximum="1" Margin="6"/>
+		</Grid>
+		
+	</Grid>
+</UserControl>

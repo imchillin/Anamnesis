@@ -64,9 +64,10 @@ namespace Anamnesis.Services
 			await Add<SerializerService>();
 			await Add<SettingsService>();
 			await Add<LocalizationService>();
+			await Add<ViewService>();
+			await Add<Updater.UpdateService>();
 			await Add<MemoryService>();
 			await Add<AddressService>();
-			await Add<ViewService>();
 			await Add<TargetService>();
 			await Add<FileService>();
 			await Add<TerritoryService>();

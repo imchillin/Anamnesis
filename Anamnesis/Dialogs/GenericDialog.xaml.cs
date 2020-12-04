@@ -31,44 +31,39 @@ namespace Anamnesis.GUI.Dialogs
 
 		public static async Task<bool?> Show(string message, string caption, MessageBoxButton buttons)
 		{
-			bool? result = null;
+			await Dispatch.MainThread();
 
-			await Application.Current.Dispatcher.InvokeAsync(async () =>
+			GenericDialog dlg = new GenericDialog();
+			dlg.Message = message;
+
+			switch (buttons)
 			{
-				GenericDialog dlg = new GenericDialog();
-				dlg.Message = message;
-
-				switch (buttons)
+				case MessageBoxButton.OK:
 				{
-					case MessageBoxButton.OK:
-					{
-						dlg.Left = null;
-						dlg.Right = "OK";
-						break;
-					}
-
-					case MessageBoxButton.OKCancel:
-					{
-						dlg.Left = "Cancel";
-						dlg.Right = "OK";
-						break;
-					}
-
-					case MessageBoxButton.YesNoCancel:
-						throw new NotImplementedException();
-
-					case MessageBoxButton.YesNo:
-					{
-						dlg.Left = "No";
-						dlg.Right = "Yes";
-						break;
-					}
+					dlg.Left = null;
+					dlg.Right = "OK";
+					break;
 				}
 
-				result = await ViewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
-			});
+				case MessageBoxButton.OKCancel:
+				{
+					dlg.Left = "Cancel";
+					dlg.Right = "OK";
+					break;
+				}
 
-			return result;
+				case MessageBoxButton.YesNoCancel:
+					throw new NotImplementedException();
+
+				case MessageBoxButton.YesNo:
+				{
+					dlg.Left = "No";
+					dlg.Right = "Yes";
+					break;
+				}
+			}
+
+			return await ViewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
 		}
 
 		public void Cancel()

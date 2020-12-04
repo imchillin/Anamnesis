@@ -7,12 +7,15 @@ namespace Anamnesis.GUI.Views
 	using System.Windows.Controls;
 	using System.Windows.Navigation;
 	using Anamnesis.Services;
+	using Anamnesis.Updater;
 
 	public partial class AboutView : UserControl
 	{
 		public AboutView()
 		{
 			this.InitializeComponent();
+
+			this.VersionLabel.Text = UpdateService.Version.ToString("yyyy-MM-dd HH:mm");
 		}
 
 		private void OnNavigate(object sender, RequestNavigateEventArgs e)
