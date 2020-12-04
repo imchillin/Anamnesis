@@ -38,7 +38,7 @@ namespace UpdateExtractor
 
 				string? destDir = Path.GetDirectoryName(targetPath);
 				string? currentExePath = Assembly.GetExecutingAssembly().Location;
-				string? sourceDir = Path.GetDirectoryName(currentExePath);
+				string? sourceDir = Path.GetDirectoryName(currentExePath) + "/../";
 
 				if (string.IsNullOrEmpty(currentExePath))
 					throw new Exception("Unable to determine current process path");

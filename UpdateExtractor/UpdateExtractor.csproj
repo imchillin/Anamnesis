@@ -4,22 +4,26 @@
 	<TargetFramework>net5.0</TargetFramework>
 	<AppendTargetFramework>False</AppendTargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <DocumentationFile>..\bin\OutputExtractor.xml</DocumentationFile>
-	  <OutputPath>..\bin\</OutputPath>
-	  <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;IDE0025;SA1011;SA1134;</NoWarn>
-	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	  <Nullable>enable</Nullable>
+	<DocumentationFile>..\obj\UpdateExtractor.xml</DocumentationFile>
+	<OutputPath>..\bin\Updater\</OutputPath>
+	<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;IDE0025;SA1011;SA1134;</NoWarn>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<Nullable>enable</Nullable>
+	<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="stylecop.json" />
+	<None Remove="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
+	<AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+	<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
   </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="del $(TargetDir)$(TargetName).xml&#xD;&#xA;del $(TargetDir)$(TargetName).deps.json&#xD;&#xA;del $(TargetDir)$(TargetName).runtimeconfig.dev.json" />
+  </Target>
 </Project>

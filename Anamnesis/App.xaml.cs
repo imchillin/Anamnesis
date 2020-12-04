@@ -6,7 +6,10 @@ namespace Anamnesis
 	using System;
 	using System.ComponentModel;
 	using System.Diagnostics;
+	using System.IO;
+	using System.Reflection;
 	using System.Runtime.ExceptionServices;
+	using System.Runtime.Loader;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Threading;
@@ -23,6 +26,11 @@ namespace Anamnesis
 	public partial class App : Application
 	{
 		private static readonly ServiceManager Services = new ServiceManager();
+
+		public App()
+		{
+			AssemblyLoadContext.Default.Resolving += this.ResolveAssembly;
+		}
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -106,6 +114,18 @@ namespace Anamnesis
 			{
 				throw new Exception($"Multiple {name} processes found. Please close all other instances.");
 			}
+		}
+
+		private Assembly? ResolveAssembly(AssemblyLoadContext context, AssemblyName name)
+		{
+			if (name.Name == null)
+				return null;
+
+			string path = AppContext.BaseDirectory + "/bin/" + name.Name + ".dll";
+			if (File.Exists(path))
+				return context.LoadFromAssemblyPath(path);
+
+			return null;
 		}
 	}
 }

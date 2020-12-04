@@ -62,9 +62,9 @@ namespace Anamnesis.Services
 			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();
 
 			// these are json files that we write by hand
-			Monsters = new JsonListSheet<Monster>("Monsters.json");
-			Props = new JsonDictionarySheet<Prop>("Props.json");
-			Animations = new JsonDictionarySheet<Animation>("Animations.json");
+			Monsters = new JsonListSheet<Monster>("Data/Monsters.json");
+			Props = new JsonDictionarySheet<Prop>("Data/Props.json");
+			Animations = new JsonDictionarySheet<Animation>("Data/Animations.json");
 
 			return base.Initialize();
 		}

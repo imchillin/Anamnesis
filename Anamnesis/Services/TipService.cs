@@ -24,7 +24,7 @@ namespace Anamnesis.Services
 		{
 			try
 			{
-				this.tips = SerializerService.DeserializeFile<List<TipEntry>>("Tips.json");
+				this.tips = SerializerService.DeserializeFile<List<TipEntry>>("Data/Tips.json");
 			}
 			catch (Exception ex)
 			{

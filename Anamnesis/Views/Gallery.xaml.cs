@@ -51,7 +51,7 @@ namespace Anamnesis.Views
 
 			while (this.IsVisible)
 			{
-				List<Entry> entries = SerializerService.DeserializeFile<List<Entry>>("Images.json");
+				List<Entry> entries = SerializerService.DeserializeFile<List<Entry>>("Data/Images.json");
 
 				while (this.IsVisible && entries.Count > 0)
 				{

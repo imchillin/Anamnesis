@@ -86,7 +86,7 @@ namespace Anamnesis.Updater
 		{
 			try
 			{
-				string? currentExePath = Assembly.GetExecutingAssembly().Location;
+				string? currentExePath = Environment.GetCommandLineArgs()[0];
 
 				if (string.IsNullOrEmpty(currentExePath))
 					throw new Exception("Unable to determine current assembly path");
@@ -167,7 +167,7 @@ namespace Anamnesis.Updater
 
 				// Start the update extractor
 				string procName = Process.GetCurrentProcess().ProcessName;
-				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/UpdateExtractor.exe", currentExePath + " " + procName);
+				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", currentExePath + " " + procName);
 				Process.Start(start);
 
 				// Shutdown anamnesis

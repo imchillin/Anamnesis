@@ -153,7 +153,7 @@ namespace Anamnesis.PoseModule
 
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
 
-			string[] templates = Directory.GetFiles("Posing/Templates/", "*.json");
+			string[] templates = Directory.GetFiles("Data/SkeletonTemplates/", "*.json");
 			foreach (string templatePath in templates)
 			{
 				TemplateSkeleton template = SerializerService.DeserializeFile<TemplateSkeleton>(templatePath);
@@ -197,7 +197,7 @@ namespace Anamnesis.PoseModule
 
 			if (template.BasedOn != null)
 			{
-				TemplateSkeleton baseTemplate = SerializerService.DeserializeFile<TemplateSkeleton>("Posing/Templates/" + template.BasedOn);
+				TemplateSkeleton baseTemplate = SerializerService.DeserializeFile<TemplateSkeleton>("Data/SkeletonTemplates/" + template.BasedOn);
 				this.Load(baseTemplate);
 				template.CopyBaseValues(baseTemplate);
 			}
