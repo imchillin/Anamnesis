@@ -66,17 +66,20 @@ namespace Anamnesis.GameData.Sheets
 
 		public TInterfaceType Get(int key)
 		{
-			if (!this.wrapperCache.ContainsKey(key))
+			lock (this.wrapperCache)
 			{
-				TWrapperType? wrapper = Activator.CreateInstance(typeof(TWrapperType), key, this.excel, this.lumina) as TWrapperType;
+				if (!this.wrapperCache.ContainsKey(key))
+				{
+					TWrapperType? wrapper = Activator.CreateInstance(typeof(TWrapperType), key, this.excel, this.lumina) as TWrapperType;
 
-				if (wrapper == null)
-					throw new Exception($"Failed to create instance of Lumina data wrapper: {typeof(TWrapperType)}");
+					if (wrapper == null)
+						throw new Exception($"Failed to create instance of Lumina data wrapper: {typeof(TWrapperType)}");
 
-				this.wrapperCache.Add(key, wrapper);
+					this.wrapperCache.Add(key, wrapper);
+				}
+
+				return this.wrapperCache[key];
 			}
-
-			return this.wrapperCache[key];
 		}
 
 		public TInterfaceType Get(byte key)

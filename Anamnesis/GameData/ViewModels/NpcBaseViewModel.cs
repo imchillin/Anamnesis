@@ -13,7 +13,12 @@ namespace Anamnesis.GameData.ViewModels
 		public NpcBaseViewModel(int key, ExcelSheet<ENpcBase> sheet, Lumina lumina)
 			: base(key, sheet, lumina)
 		{
+			this.Race = GameDataService.Races!.Get((int)this.Value.Race.Value.RowId);
+			this.Tribe = GameDataService.Tribes!.Get((int)this.Value.Tribe.Value.RowId);
 		}
+
+		public IRace Race { get; private set; }
+		public ITribe Tribe { get; private set; }
 
 		public override string Name => "Unknown";
 		public int FacePaintColor => this.Value.FacePaintColor;
@@ -24,11 +29,9 @@ namespace Anamnesis.GameData.ViewModels
 		public int ExtraFeature1 => this.Value.ExtraFeature2OrBust;
 
 		public int ModelType => 0;
-		public IRace Race => GameDataService.Races!.Get((int)this.Value.Race.Value.RowId);
 		public int Gender => this.Value.Gender;
 		public int BodyType => this.Value.BodyType;
 		public int Height => this.Value.Height;
-		public ITribe Tribe => GameDataService.Tribes!.Get((int)this.Value.Tribe.Value.RowId);
 		public int Face => this.Value.Face;
 		public int HairStyle => this.Value.HairStyle;
 		public int HairHighlight => this.Value.HairHighlight;
