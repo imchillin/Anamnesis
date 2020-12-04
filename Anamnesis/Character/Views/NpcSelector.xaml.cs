@@ -18,6 +18,15 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class NpcSelector : UserControl, SelectorDrawer.ISelectorView, INotifyPropertyChanged
 	{
+		private static bool includeNpc = true;
+		private static bool includeCharacter = true;
+		private static bool includeMount = true;
+		private static bool includeMinion = true;
+		private static bool includeEffect = true;
+		private static bool includeMonster = true;
+		private static bool includeUnknown = true;
+		private static bool? includeModded = null;
+
 		public NpcSelector()
 		{
 			this.InitializeComponent();
@@ -35,15 +44,14 @@ namespace Anamnesis.Character.Views
 		public event DrawerEvent? SelectionChanged;
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public bool IncludeNpc { get; set; } = true;
-		public bool IncludeCharacter { get; set; } = true;
-		public bool IncludeMount { get; set; } = true;
-		public bool IncludeMinion { get; set; } = true;
-		public bool IncludeEffect { get; set; } = true;
-		public bool IncludeMonster { get; set; } = true;
-		public bool IncludeUnknown { get; set; } = true;
-
-		public bool? IncludeModded { get; set; } = null;
+		public bool IncludeNpc { get => includeNpc; set => includeNpc = value; }
+		public bool IncludeCharacter { get => includeCharacter; set => includeCharacter = value; }
+		public bool IncludeMount { get => includeMount; set => includeMount = value; }
+		public bool IncludeMinion { get => includeMinion; set => includeMinion = value; }
+		public bool IncludeEffect { get => includeEffect; set => includeEffect = value; }
+		public bool IncludeMonster { get => includeMonster; set => includeMonster = value; }
+		public bool IncludeUnknown { get => includeUnknown; set => includeUnknown = value; }
+		public bool? IncludeModded { get => includeModded; set => includeModded = value; }
 
 		public INpcResident? Value
 		{
