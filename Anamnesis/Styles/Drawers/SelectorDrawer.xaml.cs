@@ -34,7 +34,6 @@ namespace Anamnesis.Styles.Drawers
 		private Type? objectType;
 		private bool searching = false;
 		private bool idle = true;
-		private object? oldValue;
 		private string[]? searchQuerry;
 		private bool loading = false;
 
@@ -63,29 +62,14 @@ namespace Anamnesis.Styles.Drawers
 
 		public object? Value
 		{
-			get
-			{
-				return this.GetValue(ValueProperty);
-			}
-
-			set
-			{
-				this.SetValue(ValueProperty, value);
-				this.oldValue = value;
-			}
+			get => this.GetValue(ValueProperty);
+			set => this.SetValue(ValueProperty, value);
 		}
 
 		public DataTemplate ItemTemplate
 		{
-			get
-			{
-				return (DataTemplate)this.GetValue(ItemTemplateProperty);
-			}
-
-			set
-			{
-				this.SetValue(ItemTemplateProperty, value);
-			}
+			get => (DataTemplate)this.GetValue(ItemTemplateProperty);
+			set => this.SetValue(ItemTemplateProperty, value);
 		}
 
 		public static void Show<TView, TValue>(TValue? current, Action<TValue> changed)
@@ -104,7 +88,6 @@ namespace Anamnesis.Styles.Drawers
 			view.Selector.SelectionChanged += () =>
 			{
 				object? v = view.Selector.Value;
-
 				if (v is TValue tval)
 				{
 					changed?.Invoke(tval);
@@ -294,7 +277,7 @@ namespace Anamnesis.Styles.Drawers
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (e.AddedItems.Count <= 0 || e.AddedItems[0] == this.oldValue)
+			if (e.AddedItems.Count <= 0)
 				return;
 
 			if (this.searching)
