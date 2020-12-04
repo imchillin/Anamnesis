@@ -31,27 +31,21 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			this.Selector.Items.Add(ItemUtility.NoneItem);
-			this.Selector.Items.Add(ItemUtility.NpcbodyItem);
+			this.Selector.AddItem(ItemUtility.NoneItem);
+			this.Selector.AddItem(ItemUtility.NpcbodyItem);
 
 			// Special case for hands to also list props
 			if (GameDataService.Props != null)
 			{
 				if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
 				{
-					foreach (IItem prop in GameDataService.Props)
-					{
-						this.Selector.Items.Add(prop);
-					}
+					this.Selector.AddItems(GameDataService.Props);
 				}
 			}
 
 			if (GameDataService.Items != null)
 			{
-				foreach (IItem item in GameDataService.Items)
-				{
-					this.Selector.Items.Add(item);
-				}
+				this.Selector.AddItems(GameDataService.Items);
 			}
 
 			this.JobFilterText.Text = classFilter.Describe();

@@ -20,11 +20,12 @@ namespace Anamnesis.GameData.ViewModels
 		private ushort subModelBase;
 		private ushort subModelVariant;
 
+		private ClassJobCategory classJob;
+
 		public ItemViewModel(int key, ExcelSheet<Item> sheet, Lumina lumina)
 			: base(key, sheet, lumina)
 		{
-			if (this.Value == null)
-				return;
+			this.classJob = this.Value.ClassJobCategory.Value;
 
 			LuminaExtensions.GetModel(this.Value.ModelMain, this.IsWeapon, out this.modelSet, out this.modelBase, out this.modelVariant);
 			LuminaExtensions.GetModel(this.Value.ModelSub, this.IsWeapon, out this.subModelSet, out this.subModelBase, out this.subModelVariant);
@@ -40,7 +41,7 @@ namespace Anamnesis.GameData.ViewModels
 		public ushort SubModelSet => this.subModelSet;
 		public ushort SubModelBase => this.subModelBase;
 		public ushort SubModelVariant => this.subModelVariant;
-		public Classes EquipableClasses => this.Value.ClassJobCategory.Value.ToFlags();
+		public Classes EquipableClasses => this.classJob.ToFlags();
 
 		public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
 

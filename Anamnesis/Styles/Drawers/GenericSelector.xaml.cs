@@ -18,11 +18,7 @@ namespace Anamnesis.Styles.Drawers
 		{
 			this.InitializeComponent();
 
-			foreach (ISelectable item in options)
-			{
-				this.Selector.Items.Add(item);
-			}
-
+			this.Selector.AddItems(options);
 			this.Selector.FilterItems();
 		}
 

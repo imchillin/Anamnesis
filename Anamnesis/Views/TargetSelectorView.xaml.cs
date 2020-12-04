@@ -52,11 +52,7 @@ namespace Anamnesis.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			foreach (TargetService.ActorTableActor? actor in TargetService.GetActors())
-			{
-				this.Selector.Items.Add(actor);
-			}
-
+			this.Selector.AddItems(TargetService.GetActors());
 			this.Selector.FilterItems();
 		}
 

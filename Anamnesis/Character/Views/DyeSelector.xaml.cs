@@ -19,14 +19,11 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			this.Selector.Items.Add(DyeUtility.NoneDye);
+			this.Selector.AddItem(DyeUtility.NoneDye);
 
 			if (GameDataService.Dyes != null)
 			{
-				foreach (IDye item in GameDataService.Dyes)
-				{
-					this.Selector.Items.Add(item);
-				}
+				this.Selector.AddItems(GameDataService.Dyes);
 			}
 
 			this.Selector.FilterItems();

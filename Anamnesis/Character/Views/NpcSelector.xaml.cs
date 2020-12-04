@@ -23,15 +23,8 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			foreach (INpcResident npc in GameDataService.ResidentNPCs)
-			{
-				this.Selector.Items.Add(npc);
-			}
-
-			foreach (INpcResident monster in GameDataService.Monsters)
-			{
-				this.Selector.Items.Add(monster);
-			}
+			this.Selector.AddItems(GameDataService.ResidentNPCs);
+			this.Selector.AddItems(GameDataService.Monsters);
 
 			this.Selector.FilterItems();
 

@@ -4,9 +4,11 @@
 namespace Anamnesis.Styles.Drawers
 {
 	using System;
+	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
+	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -14,8 +16,7 @@ namespace Anamnesis.Styles.Drawers
 	using Anamnesis;
 	using Anamnesis.Services;
 	using PropertyChanged;
-
-	#pragma warning disable SA1011
+	using SimpleLog;
 
 	/// <summary>
 	/// Interaction logic for SelectorDrawer.xaml.
@@ -25,21 +26,25 @@ namespace Anamnesis.Styles.Drawers
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty ItemTemplateProperty = DependencyProperty.Register(nameof(ItemTemplate), typeof(DataTemplate), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 
+		private static readonly SimpleLog.Logger Log = SimpleLog.Log.GetLogger<SelectorDrawer>();
+
 		private static Dictionary<Type, string?> searchInputs = new Dictionary<Type, string?>();
+		private List<ItemEntry> entries = new List<ItemEntry>();
 
 		private Type? objectType;
 		private bool searching = false;
 		private bool idle = true;
 		private object? oldValue;
 		private string[]? searchQuerry;
+		private bool loading = false;
 
 		public SelectorDrawer()
 		{
 			this.InitializeComponent();
+			this.loading = true;
 			this.DataContext = this;
 
 			this.PropertyChanged += this.OnPropertyChanged;
-			this.FilterItems();
 		}
 
 		public delegate bool FilterEvent(object item, string[]? search);
@@ -54,7 +59,6 @@ namespace Anamnesis.Styles.Drawers
 			SelectorDrawer Selector { get; }
 		}
 
-		public ObservableCollection<object> Items { get; set; } = new ObservableCollection<object>();
 		public ObservableCollection<object> FilteredItems { get; set; } = new ObservableCollection<object>();
 
 		public object? Value
@@ -113,6 +117,31 @@ namespace Anamnesis.Styles.Drawers
 			});
 		}
 
+		public void AddItem(object item)
+		{
+			lock (this.entries)
+			{
+				ItemEntry entry = default;
+				entry.Item = item;
+				entry.OriginalIndex = this.entries.Count;
+				this.entries.Add(entry);
+			}
+		}
+
+		public void AddItems(IEnumerable<object> items)
+		{
+			lock (this.entries)
+			{
+				foreach (object item in items)
+				{
+					ItemEntry entry = default;
+					entry.Item = item;
+					entry.OriginalIndex = this.entries.Count;
+					this.entries.Add(entry);
+				}
+			}
+		}
+
 		public void FilterItems()
 		{
 			Task.Run(this.DoFilter);
@@ -133,6 +162,7 @@ namespace Anamnesis.Styles.Drawers
 
 			Keyboard.Focus(this.SearchBox);
 			this.SearchBox.CaretIndex = int.MaxValue;
+			this.loading = false;
 		}
 
 		private void OnSearchChanged(object sender, TextChangedEventArgs e)
@@ -150,7 +180,7 @@ namespace Anamnesis.Styles.Drawers
 
 		private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(this.Items))
+			if (e.PropertyName == nameof(this.entries))
 			{
 				Task.Run(this.DoFilter);
 			}
@@ -159,7 +189,9 @@ namespace Anamnesis.Styles.Drawers
 		private async Task Search(string str)
 		{
 			this.idle = false;
-			await Task.Delay(250);
+
+			if (!this.loading)
+				await Task.Delay(50);
 
 			try
 			{
@@ -200,23 +232,60 @@ namespace Anamnesis.Styles.Drawers
 			this.idle = true;
 		}
 
-		private void DoFilter()
+		private async Task DoFilter()
 		{
 			this.idle = false;
-			ObservableCollection<object> filteredItems = new ObservableCollection<object>();
 
-			List<object> items = new List<object>(this.Items);
-			foreach (object item in items)
+			ConcurrentQueue<ItemEntry> entries;
+			lock (this.entries)
 			{
-				if (this.Filter != null && !this.Filter.Invoke(item, this.searchQuerry))
-					continue;
-
-				filteredItems.Add(item);
+				entries = new ConcurrentQueue<ItemEntry>(this.entries);
 			}
 
-			Application.Current.Dispatcher.InvokeAsync(() =>
+			ConcurrentBag<ItemEntry> filteredEntries = new ConcurrentBag<ItemEntry>();
+
+			int threads = 4;
+			List<Task> tasks = new List<Task>();
+			for (int i = 0; i < threads; i++)
 			{
-				this.FilteredItems = filteredItems;
+				Task t = Task.Run(() =>
+				{
+					while (!entries.IsEmpty)
+					{
+						ItemEntry entry;
+						if (!entries.TryDequeue(out entry))
+							continue;
+
+						try
+						{
+							if (this.Filter != null && !this.Filter.Invoke(entry.Item, this.searchQuerry))
+								continue;
+						}
+						catch (Exception ex)
+						{
+							Log.Write(Severity.Error, new Exception($"Failed to filter selector item: {entry.Item}", ex));
+						}
+
+						filteredEntries.Add(entry);
+					}
+				});
+
+				tasks.Add(t);
+			}
+
+			await Task.WhenAll(tasks.ToArray());
+
+			IOrderedEnumerable<ItemEntry>? sortedFilteredEntries = filteredEntries.OrderBy(cc => cc.OriginalIndex);
+
+			await Application.Current.Dispatcher.InvokeAsync(() =>
+			{
+				this.FilteredItems.Clear();
+
+				foreach (ItemEntry obj in sortedFilteredEntries)
+				{
+					this.FilteredItems.Add(obj.Item);
+				}
+
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.FilteredItems)));
 			});
 
@@ -251,6 +320,12 @@ namespace Anamnesis.Styles.Drawers
 		private void OnDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			this.Close?.Invoke();
+		}
+
+		private struct ItemEntry
+		{
+			public object Item;
+			public int OriginalIndex;
 		}
 	}
 }
