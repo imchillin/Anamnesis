@@ -85,7 +85,8 @@
 			"Index": 26
 		},
 		"LipLowerA": {
-			"Index": 27
+			"Index": 27,
+			"RequiresPositions": true
 		},
 		"LipUpperB": {
 			"Index": 28
