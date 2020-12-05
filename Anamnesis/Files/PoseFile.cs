@@ -125,8 +125,8 @@ namespace Anamnesis.Files
 		public class Configuration
 		{
 			public bool IncludeRotation { get; set; } = true;
-			public bool IncludePosition { get; set; } = true;
-			public bool IncludeScale { get; set; } = true;
+			public bool IncludePosition { get; set; } = false;
+			public bool IncludeScale { get; set; } = false;
 			public bool UseSelection { get; set; } = false;
 		}
 
