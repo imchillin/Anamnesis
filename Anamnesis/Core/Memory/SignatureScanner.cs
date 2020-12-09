@@ -79,6 +79,11 @@ namespace Anamnesis.Core.Memory
 			{
 				instrAddr = IntPtr.Add(instrAddr, 1);
 				num = ReadInt32(instrAddr) + (long)instrAddr + 4 - bAddr;
+
+				if (!MemoryService.IsProcessAlive)
+				{
+					throw new Exception("FFXIV process has exited");
+				}
 			}
 			while (!(num >= this.DataSectionOffset && num <= this.DataSectionOffset + this.DataSectionSize));
 			return IntPtr.Add(instrAddr, ReadInt32(instrAddr) + 4);
