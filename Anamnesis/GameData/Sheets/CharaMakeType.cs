@@ -9,7 +9,7 @@ namespace Anamnesis.GameData.Sheets
 
 	using LuminaData = Lumina.Lumina;
 
-	[Sheet("CharaMakeType", columnHash: 0x5a353b46)]
+	[Sheet("CharaMakeType", columnHash: 0x80d7db6d)]
 	public class CharaMakeType : IExcelRow
 	{
 		public LazyRow<Race>? Race;
