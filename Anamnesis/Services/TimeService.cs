@@ -38,10 +38,10 @@ namespace Anamnesis
 
 				this.freeze = value;
 
-				/*if (this.freeze)
+				if (!this.freeze)
 				{
-					Task.Run(this.FreezeTime);
-				}*/
+					MemoryService.Write(AddressService.Time, 0);
+				}
 			}
 		}
 
@@ -104,8 +104,6 @@ namespace Anamnesis
 					this.TimeOfDay = this.RealTimeOfDay;
 					this.DayOfMonth = this.RealDayOfMonth;
 					this.Time = this.RealTime;
-
-					MemoryService.Write(AddressService.Time, 0);
 				}
 			}
 		}
