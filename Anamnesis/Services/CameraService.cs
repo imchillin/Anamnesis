@@ -48,8 +48,7 @@ namespace Anamnesis
 		{
 			await base.Start();
 
-			IntPtr ptr = MemoryService.ReadPtr(AddressService.Camera);
-			this.Camera = new CameraViewModel(ptr);
+			this.Camera = new CameraViewModel(AddressService.Camera);
 
 			_ = Task.Run(this.Tick);
 		}
