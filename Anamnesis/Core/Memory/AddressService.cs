@@ -14,6 +14,7 @@ namespace Anamnesis.Core.Memory
 	{
 		private static IntPtr weather;
 		private static IntPtr time;
+		private static IntPtr camera;
 
 		// Static offsets
 		public static IntPtr ActorTable { get; private set; }
@@ -21,7 +22,6 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr GPoseActorTable { get; private set; }
 		public static IntPtr GPoseTargetManager { get; private set; }
 		public static IntPtr GPoseFilters { get; private set; }
-		public static IntPtr Camera { get; private set; }
 		public static IntPtr SkeletonFreezeRotation { get; private set; }   // SkeletonOffset
 		public static IntPtr SkeletonFreezeRotation2 { get; private set; }  // SkeletonOffset2
 		public static IntPtr SkeletonFreezeRotation3 { get; private set; }  // SkeletonOffset3
@@ -36,6 +36,18 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr GposeCheck2 { get; private set; }   // GPoseCheck2Offset
 		public static IntPtr Territory { get; private set; }
 		public static IntPtr GPose { get; private set; }
+
+		public static IntPtr Camera
+		{
+			get
+			{
+				return MemoryService.ReadPtr(camera);
+			}
+			set
+			{
+				camera = value;
+			}
+		}
 
 		public static IntPtr Time
 		{
