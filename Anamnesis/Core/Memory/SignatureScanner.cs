@@ -75,17 +75,14 @@ namespace Anamnesis.Core.Memory
 			instrAddr = IntPtr.Add(instrAddr, offset);
 			long bAddr = (long)this.Module.BaseAddress;
 			long num;
+			int steps = 1000;
 			do
 			{
 				instrAddr = IntPtr.Add(instrAddr, 1);
 				num = ReadInt32(instrAddr) + (long)instrAddr + 4 - bAddr;
-
-				if (!MemoryService.IsProcessAlive)
-				{
-					throw new Exception("FFXIV process has exited");
-				}
+				steps--;
 			}
-			while (!(num >= this.DataSectionOffset && num <= this.DataSectionOffset + this.DataSectionSize));
+			while (steps > 0 && !(num >= this.DataSectionOffset && num <= this.DataSectionOffset + this.DataSectionSize));
 			return IntPtr.Add(instrAddr, ReadInt32(instrAddr) + 4);
 		}
 
