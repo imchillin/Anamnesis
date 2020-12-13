@@ -134,7 +134,8 @@ namespace Anamnesis.Files
 
 			public Task Rename(string newName)
 			{
-				string newPath = Paths.GetDirectoryName(this.Path) + "\\" + newName + "." + Paths.GetExtension(this.Path);
+				newName = newName.Trim('.');
+				string newPath = Paths.GetDirectoryName(this.Path) + "\\" + newName + Paths.GetExtension(this.Path);
 				Files.Move(this.Path, newPath);
 				this.Path = newPath;
 				return Task.CompletedTask;
@@ -156,7 +157,7 @@ namespace Anamnesis.Files
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{
-				string newPath = this.Path + "New Directory";
+				string newPath = this.Path + "/" + "New Directory";
 				Directories.CreateDirectory(newPath);
 				return new Directory(newPath, (LocalFileSource)this.Source);
 			}
