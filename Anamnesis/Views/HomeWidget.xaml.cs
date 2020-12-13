@@ -1,4 +1,5 @@
-﻿// Concept Matrix 3.
+﻿// © Anamnesis.
+// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Views
