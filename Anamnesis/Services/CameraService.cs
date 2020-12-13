@@ -65,13 +65,20 @@ namespace Anamnesis
 					continue;
 				}
 
-				if (this.LockCameraPosition)
+				try
 				{
-					MemoryService.Write(AddressService.GPoseCamera, this.CameraPosition);
+					if (this.LockCameraPosition)
+					{
+						MemoryService.Write(AddressService.GPoseCamera, this.CameraPosition);
+					}
+					else
+					{
+						this.CameraPosition = MemoryService.Read<Vector>(AddressService.GPoseCamera);
+					}
 				}
-				else
+				catch (Exception ex)
 				{
-					this.CameraPosition = MemoryService.Read<Vector>(AddressService.GPoseCamera);
+					Log.Write(SimpleLog.Severity.Warning, ex);
 				}
 			}
 		}

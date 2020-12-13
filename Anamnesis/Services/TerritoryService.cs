@@ -60,46 +60,53 @@ namespace Anamnesis
 
 		private async Task Update()
 		{
-			while (this.IsAlive)
+			try
 			{
-				await Task.Delay(10);
-
-				if (!MemoryService.IsProcessAlive)
-					continue;
-
-				// Update territory
-				int newTerritoryId = MemoryService.Read<int>(AddressService.Territory);
-
-				if (newTerritoryId != this.CurrentTerritoryId)
+				while (this.IsAlive)
 				{
-					this.CurrentTerritoryId = newTerritoryId;
+					await Task.Delay(10);
 
-					if (GameDataService.Territories == null)
+					if (!MemoryService.IsProcessAlive)
+						continue;
+
+					// Update territory
+					int newTerritoryId = MemoryService.Read<int>(AddressService.Territory);
+
+					if (newTerritoryId != this.CurrentTerritoryId)
 					{
-						this.CurrentTerritoryName = $"Unkown ({this.CurrentTerritoryId})";
+						this.CurrentTerritoryId = newTerritoryId;
+
+						if (GameDataService.Territories == null)
+						{
+							this.CurrentTerritoryName = $"Unkown ({this.CurrentTerritoryId})";
+						}
+						else
+						{
+							this.CurrentTerritory = GameDataService.Territories.Get(this.CurrentTerritoryId);
+							this.CurrentTerritoryName = this.CurrentTerritory?.Place + " (" + this.CurrentTerritory?.Region + ")";
+						}
+					}
+
+					// Update weather
+					ushort weatherId;
+					if (GposeService.Instance.IsGpose)
+					{
+						weatherId = MemoryService.Read<ushort>(AddressService.GPoseWeather);
 					}
 					else
 					{
-						this.CurrentTerritory = GameDataService.Territories.Get(this.CurrentTerritoryId);
-						this.CurrentTerritoryName = this.CurrentTerritory?.Place + " (" + this.CurrentTerritory?.Region + ")";
+						weatherId = MemoryService.Read<byte>(AddressService.Weather);
+					}
+
+					if (weatherId != this.CurrentWeatherId)
+					{
+						this.CurrentWeatherId = weatherId;
 					}
 				}
-
-				// Update weather
-				ushort weatherId;
-				if (GposeService.Instance.IsGpose)
-				{
-					weatherId = MemoryService.Read<ushort>(AddressService.GPoseWeather);
-				}
-				else
-				{
-					weatherId = MemoryService.Read<byte>(AddressService.Weather);
-				}
-
-				if (weatherId != this.CurrentWeatherId)
-				{
-					this.CurrentWeatherId = weatherId;
-				}
+			}
+			catch (Exception ex)
+			{
+				Log.Write(new Exception("Failed to update territory", ex));
 			}
 		}
 

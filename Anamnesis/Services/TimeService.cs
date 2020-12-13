@@ -57,11 +57,6 @@ namespace Anamnesis
 			this.Freeze = false;
 
 			await base.Shutdown();
-
-			if (AddressService.Time != IntPtr.Zero)
-			{
-				MemoryService.Write(AddressService.Time, 0);
-			}
 		}
 
 		private async Task CheckTime()
