@@ -67,6 +67,7 @@ namespace Anamnesis.Services
 			await Add<ViewService>();
 			await Add<Updater.UpdateService>();
 			await Add<MemoryService>();
+			await Add<VersionService>();
 			await Add<AddressService>();
 			await Add<TargetService>();
 			await Add<FileService>();

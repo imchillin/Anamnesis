@@ -59,6 +59,12 @@ namespace Anamnesis.Services
 			}
 		}
 
+		public static string GetString(string key, params string[] param)
+		{
+			string str = GetString(key);
+			return string.Format(str, param);
+		}
+
 		public static string GetString(string key)
 		{
 			string val = string.Empty;
