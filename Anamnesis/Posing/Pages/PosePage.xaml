@@ -52,7 +52,7 @@
 
 				</Border>
 
-				<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource MaterialDesignCardBackground}" CornerRadius="3" IsEnabled="{Binding GposeService.IsGpose}" Margin="3">
+				<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
 					<Grid Margin="3">
 						<Grid.RowDefinitions>
 							<RowDefinition/>
@@ -80,7 +80,7 @@
 								<ColumnDefinition/>
 							</Grid.ColumnDefinitions>
 
-							<ana:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnOpenClicked"/>
+							<ana:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnOpenClicked" IsEnabled="{Binding GposeService.IsGpose}"/>
 							<ana:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
 						</Grid>
 
