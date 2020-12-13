@@ -6,7 +6,7 @@
 	"Common_None": "None",
 	"Common_All": "All",
 
-	"Error_WrongVersion": "Unsupported game version: {0}.\nUsing Anamnesis with unsupported game versions can cause game and app crashes.",
+	"Error_WrongVersion": "Unsupported game version: {0}. Has a patch come out recently?\nUsing Anamnesis with unsupported game versions can cause game/app crashes.\nWe will have an update out as soon as we can, thank you for your patience!",
 
 	"FileBrowser_GoUp": "Go Up",
 	"FileBrowser_Flatten": "Flatten Hierarchy",
