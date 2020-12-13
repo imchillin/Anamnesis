@@ -134,8 +134,8 @@ namespace Anamnesis.Core.Memory
 
 			IntPtr baseAddress = MemoryService.Process.MainModule.BaseAddress;
 
-			// TODO: replace these manual offsets with signautres
-			Weather = baseAddress + 0x1D40FD8;
+			// TODO: replace these manual offsets with signatures
+			Weather = baseAddress + 0x1D3FCC8;
 			Territory = baseAddress + 0x1D8A008;
 			Time = baseAddress + 0x1D6A800;
 			Camera = baseAddress + 0x1D8A070;
