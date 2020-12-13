@@ -53,8 +53,15 @@ namespace Anamnesis.GUI.Views
 
 			foreach (FileInfoBase info in fileInfos)
 			{
-				IFileSource? source = info.GetFileSource();
-				this.FileSources.Add(source);
+				IFileSource[]? sources = info.GetFileSources();
+
+				if (sources == null)
+					continue;
+
+				foreach (IFileSource source in sources)
+				{
+					this.FileSources.Add(source);
+				}
 			}
 
 			this.FileSource = this.GetDefaultFileSource();
@@ -234,6 +241,9 @@ namespace Anamnesis.GUI.Views
 				}
 				else
 				{
+					if (this.FileSource?.CanWrite != true)
+						return false;
+
 					return this.CurrentDir != null && !string.IsNullOrWhiteSpace(this.FileName);
 				}
 			}
@@ -430,6 +440,7 @@ namespace Anamnesis.GUI.Views
 				this.View = view;
 			}
 
+			public bool? CanWrite => this.View.FileSource?.CanWrite;
 			public string? Name => this.Entry.Name;
 
 			public string Icon

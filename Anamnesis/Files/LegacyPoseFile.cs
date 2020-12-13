@@ -20,7 +20,7 @@ namespace Anamnesis.Files
 	{
 		public override string Extension => "cmp";
 		public override string Name => "CMTool Equipment Set";
-		public override IFileSource FileSource => new LocalFileSource("Local Files (CMTool)", "%MyDocuments%/CMTool/Matrix Saves/");
+		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files (CMTool)", "%MyDocuments%/CMTool/Matrix Saves/") };
 	}
 
 	public class LegacyPoseFile : FileBase

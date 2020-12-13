@@ -326,6 +326,7 @@ namespace Anamnesis.Files
 			public string? Path { get; }
 			public string? Name { get; }
 			public IFileSource Source { get; }
+			public bool Exists { get; }
 
 			public Task Delete();
 			public Task Rename(string newName);
@@ -341,6 +342,8 @@ namespace Anamnesis.Files
 			public IDirectory CreateSubDirectory();
 		}
 
+		public bool CanRead { get; }
+		public bool CanWrite { get; }
 		public string Name { get; }
 
 		public IDirectory GetDefaultDirectory();

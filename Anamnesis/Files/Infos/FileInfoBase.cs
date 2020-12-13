@@ -9,22 +9,22 @@ namespace Anamnesis.Files.Infos
 
 	public abstract class FileInfoBase
 	{
-		private IFileSource? fileSource;
+		private IFileSource[]? fileSource;
 
 		public abstract string Extension { get; }
 		public abstract string Name { get; }
 
-		public abstract IFileSource FileSource { get; }
+		public abstract IFileSource[] FileSources { get; }
 
 		public abstract FileBase DeserializeFile(Stream stream);
 		public abstract void SerializeFile(FileBase file, Stream stream);
 
 		public abstract bool IsFile(Type type);
 
-		public IFileSource GetFileSource()
+		public IFileSource[] GetFileSources()
 		{
 			if (this.fileSource == null)
-				this.fileSource = this.FileSource;
+				this.fileSource = this.FileSources;
 
 			return this.fileSource;
 		}

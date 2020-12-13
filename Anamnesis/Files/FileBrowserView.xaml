@@ -49,7 +49,7 @@
 				</materialDesign:ToggleButtonAssist.OnContent>
 			</ToggleButton>
 
-			<Button Style="{StaticResource TransparentButton}" Margin="3" Grid.Column="1" Click="OnCreateFolderClicked">
+			<Button Style="{StaticResource TransparentButton}" Margin="3" Grid.Column="1" Click="OnCreateFolderClicked" IsEnabled="{Binding FileSource.CanWrite}">
 				<Button.ToolTip>
 					<ana:TextBlock Key="FileBrowser_CreateFolder"/>
 				</Button.ToolTip>
@@ -91,7 +91,7 @@
 						</Grid.RowDefinitions>
 
 						<Grid.ContextMenu>
-							<ContextMenu>
+							<ContextMenu IsEnabled="{Binding CanWrite}">
 								<MenuItem Header="Delete" Click="OnDeleteClick"/>
 								<MenuItem Header="Rename" Click="OnRenameClick"/>
 							</ContextMenu>

@@ -18,11 +18,11 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -233,21 +233,21 @@
 			<DependentUpon>App.xaml</DependentUpon>
 		</Compile>
 		<Compile Update="Character\Views\ExtendedAppearanceEditor.xaml.cs">
-		  <SubType>Code</SubType>
+			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Character\Views\ModelTypeEditor.xaml.cs">
-		  <SubType>Code</SubType>
+			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Views\TransformEditor.xaml.cs">
-		  <SubType>Code</SubType>
+			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Posing\Views\PoseMatrixView.xaml.cs">
-		  <SubType>Code</SubType>
+			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Resources.Designer.cs">
-		  <DependentUpon>Resources.resx</DependentUpon>
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
 		</Compile>
 		<Compile Update="Windows\ErrorDialog.xaml.cs">
 			<DependentUpon>ErrorDialog.xaml</DependentUpon>
@@ -257,7 +257,7 @@
 			<DependentUpon>MainWindow.xaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\AboutView.xaml.cs">
-		  <SubType>Code</SubType>
+			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="SplashWindow.xaml.cs">
 			<DependentUpon>SplashWindow.xaml</DependentUpon>
@@ -271,62 +271,38 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Data\Animations.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Data\Images.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Data\Monsters.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Data\SkeletonTemplates\Viera.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Data\SkeletonTemplates\Hrothgar.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Data\SkeletonTemplates\Middy.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Data\Props.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Languages\en.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Languages\gr.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Data\Tips.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Version.txt">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="Data\**\*.*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Languages\*.*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Version.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
 		<Page Update="Character\Views\ExtendedAppearanceEditor.xaml">
-		  <SubType>Designer</SubType>
+			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Character\Views\ModelTypeEditor.xaml">
-		  <SubType>Designer</SubType>
+			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Character\Views\NpcSelector.xaml">
-		  <SubType>Designer</SubType>
+			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Views\TransformEditor.xaml">
-		  <SubType>Designer</SubType>
+			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Posing\Pages\PosePage.xaml">
-		  <SubType>Designer</SubType>
+			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Posing\Views\Pose3DView.xaml">
-		  <SubType>Designer</SubType>
+			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Posing\Views\PoseMatrixView.xaml">
-		  <SubType>Designer</SubType>
+			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Windows\ErrorDialog.xaml">
 			<SubType>Designer</SubType>
@@ -335,7 +311,7 @@
 			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Views\AboutView.xaml">
-		  <SubType>Designer</SubType>
+			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="SplashWindow.xaml">
 			<SubType>Designer</SubType>
@@ -351,19 +327,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Core\Localization\" />
-	  <Folder Include="Posing\Dialogs\" />
+		<Folder Include="Core\Localization\" />
+		<Folder Include="Posing\Dialogs\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Resources.resx">
-	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	    <Generator>ResXFileCodeGenerator</Generator>
-	  </EmbeddedResource>
+		<EmbeddedResource Update="Resources.resx">
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<Generator>ResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="copy &quot;..\Lib\PropertyChanged.dll&quot; &quot;$(TargetDir)PropertyChanged.dll&quot;&#xD;&#xA;&#xD;&#xA;del $(TargetDir)$(TargetName).xml&#xD;&#xA;del $(TargetDir)$(TargetName).deps.json&#xD;&#xA;del $(TargetDir)$(TargetName).runtimeconfig.dev.json&#xD;&#xA;&#xD;&#xA;md $(TargetDir)bin&#xD;&#xA;move /Y &quot;$(TargetDir)FontAwesome.Sharp.dll&quot; &quot;$(TargetDir)bin\FontAwesome.Sharp.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.dll&quot; &quot;$(TargetDir)bin\Lumina.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.Excel.dll&quot; &quot;$(TargetDir)bin\Lumina.Excel.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Signed.dll&quot; &quot;$(TargetDir)bin\Markdig.Signed.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Wpf.dll&quot; &quot;$(TargetDir)bin\Markdig.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignColors.dll&quot; &quot;$(TargetDir)bin\MaterialDesignColors.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignThemes.Wpf.dll&quot; &quot;$(TargetDir)bin\MaterialDesignThemes.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)PropertyChanged.dll&quot; &quot;$(TargetDir)bin\PropertyChanged.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)SimpleLog.dll&quot; &quot;$(TargetDir)bin\SimpleLog.dll&quot;" />
+		<Exec Command="copy &quot;..\Lib\PropertyChanged.dll&quot; &quot;$(TargetDir)PropertyChanged.dll&quot;&#xD;&#xA;&#xD;&#xA;del $(TargetDir)$(TargetName).xml&#xD;&#xA;del $(TargetDir)$(TargetName).deps.json&#xD;&#xA;del $(TargetDir)$(TargetName).runtimeconfig.dev.json&#xD;&#xA;&#xD;&#xA;md $(TargetDir)bin&#xD;&#xA;move /Y &quot;$(TargetDir)FontAwesome.Sharp.dll&quot; &quot;$(TargetDir)bin\FontAwesome.Sharp.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.dll&quot; &quot;$(TargetDir)bin\Lumina.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.Excel.dll&quot; &quot;$(TargetDir)bin\Lumina.Excel.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Signed.dll&quot; &quot;$(TargetDir)bin\Markdig.Signed.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Wpf.dll&quot; &quot;$(TargetDir)bin\Markdig.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignColors.dll&quot; &quot;$(TargetDir)bin\MaterialDesignColors.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignThemes.Wpf.dll&quot; &quot;$(TargetDir)bin\MaterialDesignThemes.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)PropertyChanged.dll&quot; &quot;$(TargetDir)bin\PropertyChanged.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)SimpleLog.dll&quot; &quot;$(TargetDir)bin\SimpleLog.dll&quot;" />
 	</Target>
 
 </Project>

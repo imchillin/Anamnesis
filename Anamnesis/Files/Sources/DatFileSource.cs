@@ -18,6 +18,8 @@ namespace Anamnesis.Files
 	public class DatFileSource : IFileSource
 	{
 		public string Name => "FFXIV Saved Appearance Data";
+		public bool CanRead => true;
+		public bool CanWrite => false;
 
 		public IFileSource.IDirectory GetDefaultDirectory()
 		{
@@ -74,6 +76,7 @@ namespace Anamnesis.Files
 			public string? Path { get; set; }
 			public string? Name { get; set; }
 			public IFileSource Source { get; private set; }
+			public bool Exists => System.IO.File.Exists(this.Path);
 
 			public Task Delete()
 			{
@@ -98,6 +101,7 @@ namespace Anamnesis.Files
 			public string Name { get; private set; }
 			public string Path { get; private set; }
 			public IFileSource Source { get; private set; }
+			public bool Exists => true;
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{

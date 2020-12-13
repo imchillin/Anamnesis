@@ -16,7 +16,7 @@ namespace Anamnesis.Files
 	{
 		public override string Extension => "cma";
 		public override string Name => "CMTool Appearance File";
-		public override IFileSource FileSource => new LocalFileSource("Local Files (CMTool Saves)", "%MyDocuments%/CMTool/Saves/");
+		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files (CMTool Saves)", "%MyDocuments%/CMTool/Saves/") };
 	}
 
 	public class LegacyCharacterFile : LegacyEquipmentSetFile

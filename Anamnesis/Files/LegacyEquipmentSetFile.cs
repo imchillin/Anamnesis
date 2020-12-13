@@ -16,7 +16,7 @@ namespace Anamnesis.Files
 	{
 		public override string Extension => "json";
 		public override string Name => "CMTool Equipment Set";
-		public override IFileSource FileSource => new LocalFileSource("Local Files (CMTool Gearsets)", "%MyDocuments%/CMTool/Gearsets/");
+		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files (CMTool Gearsets)", "%MyDocuments%/CMTool/Gearsets/") };
 	}
 
 	[Serializable]

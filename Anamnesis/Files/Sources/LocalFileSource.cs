@@ -6,11 +6,10 @@ namespace Anamnesis.Files
 {
 	using System;
 	using System.Collections.Generic;
-	using System.ComponentModel.Design;
-	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Files.Infos;
 	using Microsoft.VisualBasic.FileIO;
+
 	using Directories = System.IO.Directory;
 	using Files = System.IO.File;
 	using Paths = System.IO.Path;
@@ -25,6 +24,8 @@ namespace Anamnesis.Files
 			this.BaseDirectory = FileService.ParseToFilePath(baseDir);
 		}
 
+		public bool CanRead => true;
+		public virtual bool CanWrite => true;
 		public string Name { get; private set; }
 		public string BaseDirectory { get; private set; }
 
@@ -43,6 +44,10 @@ namespace Anamnesis.Files
 
 		public Task<IEnumerable<IFileSource.IEntry>> GetEntries(IFileSource.IDirectory current, bool recursive, FileInfoBase[] fileTypes)
 		{
+			Directory? currentDir = current as Directory;
+			if (currentDir == null || !currentDir.Exists)
+				throw new Exception("Current directory does not exist");
+
 			if (recursive)
 			{
 				return Task.FromResult<IEnumerable<IFileSource.IEntry>>(this.GetFiles(current, true, fileTypes));
@@ -124,6 +129,7 @@ namespace Anamnesis.Files
 			public string Path { get; private set; }
 			public FileInfoBase? Type { get; private set; }
 			public IFileSource Source { get; private set; }
+			public bool Exists => Files.Exists(this.Path);
 
 			public Task Delete()
 			{
@@ -154,6 +160,7 @@ namespace Anamnesis.Files
 			public string Name { get; private set; }
 			public string Path { get; private set; }
 			public IFileSource Source { get; private set; }
+			public bool Exists => Directories.Exists(this.Path);
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{

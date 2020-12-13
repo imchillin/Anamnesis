@@ -20,7 +20,7 @@ namespace Anamnesis.Files
 	{
 		public override string Extension => "dat";
 		public override string Name => "Ffxiv Character appearance save";
-		public override IFileSource FileSource => new DatFileSource();
+		public override IFileSource[] FileSources => new[] { new DatFileSource() };
 
 		protected override DatCharacterFile Deserialize(Stream stream)
 		{

@@ -18,7 +18,7 @@ namespace Anamnesis.Files
 	{
 		public override string Extension => "chara";
 		public override string Name => "Anamnesis Character File";
-		public override IFileSource FileSource => new LocalFileSource("Local Files", SettingsService.Current.DefaultCharacterDirectory);
+		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files", SettingsService.Current.DefaultCharacterDirectory) };
 	}
 
 	[Serializable]
