@@ -391,5 +391,14 @@
 	"About_Debug_Header": "Debugging",
 
 	"About_Debug_OpenLogs": "Logs",
-	"About_Debug_OpenSettings": "Settings"
+	"About_Debug_OpenSettings": "Settings",
+
+	"Item_Unknown": "Unknown",
+	"Item_None": "None",
+	"Item_NpcBody": "Smallclothes Body (NPC)",
+	"Item_NpcBodyDesc": "The Smallclothes body used by NPC's",
+	"Item_InvisibleBody": "Invisible",
+	"Item_InvisibleBodyDesc": "Turns you invisible (Except for your head)",
+	"Item_InvisibleHead": "Invisible",
+	"Item_InvisibleHeadDesc": "Turns your head invisible"
 }

@@ -6,11 +6,12 @@ namespace Anamnesis.Character.Items
 {
 	using System.Windows.Media;
 	using Anamnesis.GameData;
+	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 
 	public class DummyNoneItem : IItem
 	{
-		public string Name => "None";
+		public string Name => LocalizationService.GetString("Item_None");
 		public string? Description => null;
 		public ImageSource? Icon => null;
 		public ushort ModelBase => 0;

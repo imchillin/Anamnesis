@@ -13,7 +13,9 @@ namespace Anamnesis.Character.Utilities
 	{
 		public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
-		public static readonly NpcBodyItem NpcbodyItem = new NpcBodyItem();
+		public static readonly NpcBodyItem NpcBodyItem = new NpcBodyItem();
+		public static readonly InvisibleBodyItem InvisibileBodyItem = new InvisibleBodyItem();
+		public static readonly InvisibleHeadItem InvisibileHeadItem = new InvisibleHeadItem();
 
 		private static Dictionary<string, IItem> itemLookup = new Dictionary<string, IItem>();
 
@@ -25,8 +27,8 @@ namespace Anamnesis.Character.Utilities
 			if (modelBase == 0 && modelVariant == 0)
 				return NoneItem;
 
-			if (modelBase == NpcbodyItem.ModelBase)
-				return NpcbodyItem;
+			if (modelBase == NpcBodyItem.ModelBase)
+				return NpcBodyItem;
 
 			string lookupKey = slot + "_" + modelSet + "_" + modelBase + "_" + modelVariant;
 			if (!itemLookup.ContainsKey(lookupKey))

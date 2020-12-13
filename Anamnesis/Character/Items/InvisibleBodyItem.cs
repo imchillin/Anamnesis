@@ -9,26 +9,26 @@ namespace Anamnesis.Character.Items
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 
-	public class NpcBodyItem : IItem
+	public class InvisibleBodyItem : IItem
 	{
-		public string Name => LocalizationService.GetString("Item_NpcBody");
-		public string? Description => LocalizationService.GetString("Item_NpcBodyDesc");
+		public string Name => LocalizationService.GetString("Item_InvisibleBody");
+		public string? Description => LocalizationService.GetString("Item_InvisibleBodyDesc");
 		public ImageSource? Icon => null;
-		public ushort ModelBase => 9903;
-		public ushort ModelVariant => 1;
 		public ushort ModelSet => 0;
-		public int Key => 0;
-		public bool IsWeapon => false;
+		public ushort ModelBase => 6103;
+		public ushort ModelVariant => 254;
 		public bool HasSubModel => false;
+		public ushort SubModelSet => 0;
 		public ushort SubModelBase => 0;
 		public ushort SubModelVariant => 0;
-		public ushort SubModelSet => 0;
 		public Classes EquipableClasses => Classes.All;
-		public Mod? Mod => TexToolsService.GetMod(this.Name);
+		public bool IsWeapon => false;
+		public Mod? Mod => null;
+		public int Key => 0;
 
 		public bool FitsInSlot(ItemSlots slot)
 		{
-			return slot == ItemSlots.Body || slot == ItemSlots.Feet || slot == ItemSlots.Hands || slot == ItemSlots.Legs;
+			return slot == ItemSlots.Body;
 		}
 	}
 }

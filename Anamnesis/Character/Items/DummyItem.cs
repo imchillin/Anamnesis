@@ -6,6 +6,7 @@ namespace Anamnesis.Character.Items
 {
 	using System.Windows.Media;
 	using Anamnesis.GameData;
+	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 
 	public class DummyItem : IItem
@@ -20,7 +21,7 @@ namespace Anamnesis.Character.Items
 		public int Key => 0;
 		public bool IsWeapon => true;
 		public bool HasSubModel => false;
-		public string Name => "Unknown";
+		public string Name => LocalizationService.GetString("Item_Unknown");
 		public string? Description => null;
 		public ImageSource? Icon => null;
 		public Classes EquipableClasses => Classes.All;
@@ -48,7 +49,7 @@ namespace Anamnesis.Character.Items
 		public ushort SubModelVariant { get; }
 		public ushort SubModelSet { get; }
 
-		public bool FitsInSlot(ItemSlots slot)
+		public virtual bool FitsInSlot(ItemSlots slot)
 		{
 			return true;
 		}

@@ -33,7 +33,9 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 
 			this.Selector.AddItem(ItemUtility.NoneItem);
-			this.Selector.AddItem(ItemUtility.NpcbodyItem);
+			this.Selector.AddItem(ItemUtility.NpcBodyItem);
+			this.Selector.AddItem(ItemUtility.InvisibileBodyItem);
+			this.Selector.AddItem(ItemUtility.InvisibileHeadItem);
 
 			// Special case for hands to also list props
 			if (GameDataService.Props != null)
