@@ -156,7 +156,7 @@ namespace Anamnesis.Files
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{
-				string newPath = this.Path + "New Directory";
+				string newPath = this.Path + "/" + "New Directory";
 				Directories.CreateDirectory(newPath);
 				return new Directory(newPath, (LocalFileSource)this.Source);
 			}
