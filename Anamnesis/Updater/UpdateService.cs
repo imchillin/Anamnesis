@@ -41,6 +41,8 @@ namespace Anamnesis.Updater
 			}
 
 			versionStr = File.ReadAllText(VersionFile);
+
+			versionStr = versionStr.Trim();
 			Version = DateTimeOffset.Parse(versionStr);
 
 			if (Directory.Exists(UpdateTempDir))
