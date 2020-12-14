@@ -66,6 +66,9 @@ namespace Anamnesis
 			{
 				await Task.Delay(10);
 
+				if (!MemoryService.IsProcessAlive)
+					continue;
+
 				if (AddressService.Time == IntPtr.Zero)
 					continue;
 
