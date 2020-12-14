@@ -176,7 +176,7 @@ namespace Anamnesis.Memory
 			await base.Initialize();
 			await this.GetProcess();
 
-			new Thread(new ThreadStart(this.ProcessWatcherThread)).Start();
+			_ = Task.Run(this.ProcessWatcherTask);
 		}
 
 		public override async Task Start()
@@ -373,19 +373,13 @@ namespace Anamnesis.Memory
 			// if no process, open the process selector GUI
 			if (proc == null)
 			{
-				proc = await App.Current.Dispatcher.InvokeAsync<Process?>(() =>
-				{
-					App.Current.MainWindow.Topmost = false;
+				await Dispatch.MainThread();
+				App.Current.MainWindow.Topmost = false;
 
-					Process? proc = ProcessSelector.FindProcess();
+				proc = ProcessSelector.FindProcess();
+				App.Current.MainWindow.Topmost = SettingsService.Current.AlwaysOnTop;
 
-					if (proc == null)
-						App.Current.Shutdown();
-
-					App.Current.MainWindow.Topmost = SettingsService.Current.AlwaysOnTop;
-
-					return proc;
-				});
+				await Dispatch.NonUiThread();
 			}
 
 			// if still no process, shutdown.
@@ -460,11 +454,11 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		private void ProcessWatcherThread()
+		private async Task ProcessWatcherTask()
 		{
 			while (this.IsAlive && Process != null)
 			{
-				Thread.Sleep(100);
+				await Task.Delay(100);
 
 				IsProcessAlive = GetIsProcessAlive();
 
@@ -474,7 +468,11 @@ namespace Anamnesis.Memory
 					{
 						Log.Write("FFXIV Process has terminated");
 						TargetService.Instance.ClearSelection();
-						Task.Run(this.GetProcess).Wait();
+						await this.GetProcess();
+					}
+					catch (Win32Exception)
+					{
+						// Ignore "Only part of a readmemory operation completed errors, caused by reading memory while the game is shutting down.
 					}
 					catch (AggregateException ex)
 					{
