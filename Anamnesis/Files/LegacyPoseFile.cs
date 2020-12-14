@@ -446,9 +446,6 @@ namespace Anamnesis.Files
 		public PoseFile Upgrade(Appearance.Races race)
 		{
 			PoseFile file = new PoseFile();
-			file.Config.IncludeRotation = true;
-			file.Config.IncludePosition = false;
-			file.Config.IncludeScale = true;
 			Type legacyType = this.GetType();
 
 			if (this.Race == null)
@@ -495,23 +492,20 @@ namespace Anamnesis.Files
 				if (rotString == null && scaleString == null)
 					continue;
 
-				Transform transform = StringToBone(rotString, scaleString);
+				PoseFile.Bone bone = StringToBone(rotString, scaleString);
 
 				if (file.Bones.ContainsKey(boneName))
 					file.Bones.Remove(boneName);
 
-				file.Bones.Add(boneName, new PoseFile.Bone(transform));
+				file.Bones.Add(boneName, bone);
 			}
 
 			return file;
 		}
 
-		private static Transform StringToBone(string? rot = null, string? scale = null, string? position = null)
+		private static PoseFile.Bone StringToBone(string? rot = null, string? scale = null, string? position = null)
 		{
-			Transform trans = default;
-			trans.Scale = Vector.One;
-			trans.Position = Vector.Zero;
-			trans.Rotation = Quaternion.Identity;
+			PoseFile.Bone bone = new PoseFile.Bone();
 
 			if (!string.IsNullOrEmpty(rot) && rot != "null")
 			{
@@ -522,7 +516,7 @@ namespace Anamnesis.Files
 				value.Y = BitConverter.ToSingle(data, 4);
 				value.Z = BitConverter.ToSingle(data, 8);
 				value.W = BitConverter.ToSingle(data, 12);
-				trans.Rotation = value;
+				bone.Rotation = value;
 			}
 
 			if (!string.IsNullOrEmpty(scale) && scale != "null")
@@ -533,10 +527,10 @@ namespace Anamnesis.Files
 				value.X = BitConverter.ToSingle(data, 0);
 				value.Y = BitConverter.ToSingle(data, 4);
 				value.Z = BitConverter.ToSingle(data, 8);
-				trans.Scale = value;
+				bone.Scale = value;
 			}
 
-			return trans;
+			return bone;
 		}
 
 		private static byte[] StringToByteArray(string hex)

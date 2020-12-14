@@ -69,9 +69,6 @@ namespace Anamnesis.Files
 			PoseService.Instance.CanEdit = false;
 			await Task.Delay(100);
 
-			// don't freeze positions if we aren't writing any
-			PoseService.Instance.FreezePositions = this.Config.IncludePosition && config.IncludePosition;
-
 			if (this.Bones != null)
 			{
 				// Apply all transforms a few times to ensure parent-inherited values are caluclated correctly, and to ensure
@@ -96,19 +93,19 @@ namespace Anamnesis.Files
 
 						TransformViewModel vm = bone.ViewModel;
 
-						if (config.IncludePosition && this.Config.IncludePosition && bone.Position != Vector.Zero)
+						if (PoseService.Instance.FreezePositions && savedBone.Position != null)
 						{
-							vm.Position = savedBone.Position;
+							vm.Position = (Vector)savedBone.Position;
 						}
 
-						if (config.IncludeRotation && this.Config.IncludeRotation)
+						if (PoseService.Instance.FreezeRotation && savedBone.Rotation != null)
 						{
-							vm.Rotation = savedBone.Rotation;
+							vm.Rotation = (Quaternion)savedBone.Rotation;
 						}
 
-						if (config.IncludeScale && this.Config.IncludeScale && bone.Scale != Vector.Zero)
+						if (PoseService.Instance.FreezeScale && savedBone.Scale != null)
 						{
-							vm.Scale = savedBone.Scale;
+							vm.Scale = (Vector)savedBone.Scale;
 						}
 
 						bone.ReadTransform();
@@ -120,7 +117,6 @@ namespace Anamnesis.Files
 			}
 
 			await Task.Delay(100);
-			PoseService.Instance.FreezePositions = true;
 			skeletonMem.MemoryMode = MemoryModes.ReadWrite;
 
 			await skeletonMem.ReadFromMemoryAsync();
@@ -129,9 +125,6 @@ namespace Anamnesis.Files
 
 		public class Configuration
 		{
-			public bool IncludeRotation { get; set; } = true;
-			public bool IncludePosition { get; set; } = false;
-			public bool IncludeScale { get; set; } = false;
 			public bool UseSelection { get; set; } = false;
 		}
 
@@ -149,9 +142,9 @@ namespace Anamnesis.Files
 				this.Scale = trans.Scale;
 			}
 
-			public Vector Position { get; set; }
-			public Quaternion Rotation { get; set; }
-			public Vector Scale { get; set; }
+			public Vector? Position { get; set; }
+			public Quaternion? Rotation { get; set; }
+			public Vector? Scale { get; set; }
 		}
 	}
 }

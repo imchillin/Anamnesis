@@ -12,6 +12,7 @@
 		<Grid Visibility="{Binding Expanded, Converter={StaticResource !B2V}}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
@@ -19,14 +20,18 @@
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
-			<Label Grid.Column="0" Content="X:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20"/>
-			<local:NumberBox Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="1" Margin="-3, 0, 0, 2"/>
+			<fa:IconBlock Grid.Column="0" Icon="Link" FontSize="10" Margin="0, 3, 0, 3" Foreground="{DynamicResource PrimaryHueMidBrush}" Visibility="{Binding Linked, Converter={StaticResource B2V}}"/>
+			<fa:IconBlock Grid.Column="0" Icon="Link" FontSize="10" Margin="0, 3, 0, 3" Visibility="{Binding Linked, Converter={StaticResource !B2V}}"/>
+			<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Opacity="0.01" Margin="2, 0, -2, 0" Click="LinkClicked"/>
 
-			<Label Grid.Column="2" Content="Y:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20"/>
-			<local:NumberBox Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="3" Margin="-3, 0, 0, 2"/>
+			<Label Grid.Column="1" Content="X:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20"/>
+			<local:NumberBox Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="2" Margin="-3, 0, 0, 2"/>
 
-			<Label Grid.Column="4" Content="Z:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20"/>
-			<local:NumberBox Value="{Binding Z, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="5" Margin="-3, 0, 0, 2"/>
+			<Label Grid.Column="3" Content="Y:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20"/>
+			<local:NumberBox Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="4" Margin="-3, 0, 0, 2"/>
+
+			<Label Grid.Column="5" Content="Z:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Foreground="{StaticResource MaterialDesignBodyLight}" Width="20"/>
+			<local:NumberBox Value="{Binding Z, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="6" Margin="-3, 0, 0, 2"/>
 		</Grid>
 
 		<Grid Visibility="{Binding Expanded, Converter={StaticResource B2V}}">

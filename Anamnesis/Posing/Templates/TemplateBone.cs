@@ -8,6 +8,5 @@ namespace Anamnesis.Posing.Templates
 	{
 		public int Index { get; set; }
 		public string? Parent { get; set; }
-		public bool? RequiresPositions { get; set; }
 	}
 }

@@ -108,12 +108,24 @@
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /Gpose in chat.",
 	"Pose_WarningNotFrozen": "Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window.",
 
+	"Pose_Save": "Save",
+	"Pose_SaveBones": "Save {0} Bones",
+	"Pose_Load": "Load",
+	"Pose_LoadBones": "Load {0} Bones",
+
 	"Pose_FreezePhysics": "Freeze Physics",
-	"Pose_LockChildrenRot": "Lock Child Rot",
+	"Pose_Parenting": "Parenting",
 	"Pose_LinkEyes": "Link Eyes",
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Scale",
 	"Pose_Position": "Position",
+
+	"Pose_EnableRotation": "R",
+	"Pose_EnableRotationTooltip": "Enable editing rotation",
+	"Pose_EnableScale": "S",
+	"Pose_EnableScaleTooltip": "Enable editing scale",
+	"Pose_EnablePosition": "P",
+	"Pose_EnablePositionTooltip": "Enable editing positions",
 
 	"Pose_Matrix_HeadCategory": "Head",
 	"Pose_Matrix_HairAndAccessoriesCategory": "Hair and Accessories",

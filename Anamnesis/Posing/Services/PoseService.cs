@@ -32,7 +32,6 @@ namespace Anamnesis.PoseModule
 		private NopHookViewModel? freezePhysics3;
 
 		private bool isEnabled;
-		private bool lockChildRotation;
 
 		public delegate void PoseEvent(bool value);
 
@@ -62,17 +61,6 @@ namespace Anamnesis.PoseModule
 			}
 			set
 			{
-				if (this.lockChildRotation)
-				{
-					this.FreezePositions = false;
-				}
-				else
-				{
-					this.FreezePositions = value;
-				}
-
-				this.FreezeScale = value;
-
 				this.freezePhysics1?.SetEnabled(value);
 				this.freezePhysics2?.SetEnabled(value);
 			}
@@ -121,20 +109,6 @@ namespace Anamnesis.PoseModule
 
 		public bool EnableParenting { get; set; } = true;
 
-		public bool LockChildRotation
-		{
-			get
-			{
-				return this.lockChildRotation;
-			}
-			set
-			{
-				this.lockChildRotation = value;
-				this.EnableParenting = !value;
-				this.FreezePositions = !value;
-			}
-		}
-
 		public bool CanEdit { get; set; }
 
 		public override async Task Initialize()
@@ -176,11 +150,11 @@ namespace Anamnesis.PoseModule
 
 			this.isEnabled = enabled;
 
-			////this.FreezePositions = enabled;
-			this.lockChildRotation = false;
+			this.FreezePositions = false;
+			this.FreezeScale = false;
+			this.EnableParenting = true;
 			this.FreezePhysics = enabled;
 			this.FreezeRotation = enabled;
-			////this.FreezeScale = enabled;
 
 			EnabledChanged?.Invoke(enabled);
 

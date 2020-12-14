@@ -44,6 +44,7 @@ namespace Anamnesis.PoseModule
 
 		public bool LinkEyes { get; set; } = true;
 		public ActorViewModel Actor { get; private set; }
+		public int SelectedCount => this.SelectedBones.Count;
 
 		public BoneVisual3d? CurrentBone
 		{
@@ -136,15 +137,11 @@ namespace Anamnesis.PoseModule
 			else
 			{
 				this.SelectedBones.Add(bone.Visual);
-
-				if (bone.Visual.Template?.RequiresPositions == true)
-				{
-					PoseService.Instance.LockChildRotation = true;
-				}
 			}
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
 		}
 
 		public void Select(IEnumerable<IBone> bones)
@@ -178,16 +175,12 @@ namespace Anamnesis.PoseModule
 				else
 				{
 					this.SelectedBones.Add(bone.Visual);
-
-					if (bone.Visual.Template?.RequiresPositions == true)
-					{
-						PoseService.Instance.LockChildRotation = true;
-					}
 				}
 			}
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
 		}
 
 		public void ClearSelection()
@@ -198,6 +191,7 @@ namespace Anamnesis.PoseModule
 			{
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
 			});
 		}
 
@@ -241,6 +235,7 @@ namespace Anamnesis.PoseModule
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
 		}
 
 		public bool GetIsBoneHovered(BoneVisual3d bone)

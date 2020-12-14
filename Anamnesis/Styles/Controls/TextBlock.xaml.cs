@@ -15,6 +15,7 @@ namespace Anamnesis.Styles.Controls
 	public partial class TextBlock : System.Windows.Controls.TextBlock
 	{
 		public static readonly IBind<string> KeyDp = Binder.Register<string, TextBlock>(nameof(Key), OnKeyChanged, BindMode.OneWay);
+		public static readonly IBind<string?> ValueDp = Binder.Register<string?, TextBlock>(nameof(Value), OnValueChanged, BindMode.OneWay);
 
 		public TextBlock()
 		{
@@ -24,9 +25,20 @@ namespace Anamnesis.Styles.Controls
 
 		public string? Key { get; set; }
 
+		public string? Value
+		{
+			get => ValueDp.Get(this);
+			set => ValueDp.Set(this, value);
+		}
+
 		public static void OnKeyChanged(TextBlock sender, string val)
 		{
 			sender.Key = val;
+			sender.LoadString();
+		}
+
+		public static void OnValueChanged(TextBlock sender, string? val)
+		{
 			sender.LoadString();
 		}
 
@@ -48,7 +60,16 @@ namespace Anamnesis.Styles.Controls
 			string? val = null;
 
 			if (!DesignerProperties.GetIsInDesignMode(this))
-				val = LocalizationService.GetString(this.Key);
+			{
+				if (this.Value == null)
+				{
+					val = LocalizationService.GetString(this.Key);
+				}
+				else
+				{
+					val = LocalizationService.GetString(this.Key, this.Value);
+				}
+			}
 
 			if (val == null)
 			{

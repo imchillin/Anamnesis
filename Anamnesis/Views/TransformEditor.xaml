@@ -16,19 +16,19 @@
 				</GroupBox.Header>
 				<controls:QuaternionEditor Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}"/>
 			</GroupBox>
-
-			<GroupBox IsEnabled="{Binding Value.CanScale}">
-				<GroupBox.Header>
-					<controls:TextBlock Key="Pose_Scale"/>
-				</GroupBox.Header>
-				<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="True" Minimum="-10" Maximum="10" TickFrequency="0.1" CanLink="True"/>
-			</GroupBox>
-
+			
 			<GroupBox IsEnabled="{Binding Value.CanTranslate}">
 				<GroupBox.Header>
 					<controls:TextBlock Key="Pose_Position"/>
 				</GroupBox.Header>
 				<controls:VectorEditor Value="{Binding Value.Position}" Expanded="True" Minimum="-4096" Maximum="4096" Sliders="Relative" TickFrequency="0.01"/>
+			</GroupBox>
+
+			<GroupBox IsEnabled="{Binding Value.CanScale}">
+				<GroupBox.Header>
+					<controls:TextBlock Key="Pose_Scale"/>
+				</GroupBox.Header>
+				<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1" CanLink="True"/>
 			</GroupBox>
 		</StackPanel>
 	</Grid>

@@ -105,7 +105,7 @@
 	<Style TargetType="Button" x:Key="ButtonLeft" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
 		<Setter Property="FontWeight" Value="Light"/>
 		<Setter Property="HorizontalContentAlignment" Value="Left"/>
-		
+
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="Button">

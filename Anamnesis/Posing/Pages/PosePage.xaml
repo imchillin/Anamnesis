@@ -32,60 +32,64 @@
 			<Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
 				<Grid.RowDefinitions>
 					<RowDefinition/>
-					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
 				<Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.5*"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
 
-					<StackPanel Orientation="Vertical">
-
-						<ana:TextBlock Key="{Binding Skeleton.CurrentBone.TooltipKey, FallbackValue=Pose_CharacterRoot}" HorizontalAlignment="Center" Margin="3"/>
-
-						<Grid>
-							<controls:TransformEditor Value="{Binding Skeleton.CurrentBone}" Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"/>
-
-							<Grid Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}">
-								<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}"/>
-							</Grid>
-						</Grid>
-					</StackPanel>
-
-				</Border>
-
-				<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
-					<Grid Margin="3">
 						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<CheckBox Content="Include Selected Bones Only" Grid.ColumnSpan="3" Margin="3" IsChecked="{Binding FileConfiguration.UseSelection}"/>
+						<ana:TextBlock Grid.Row="0" Grid.ColumnSpan="2" Key="{Binding Skeleton.CurrentBone.TooltipKey, FallbackValue=Pose_CharacterRoot}" HorizontalAlignment="Center" Margin="6" FontSize="14"/>
 
-						<Grid Grid.Row="1" Margin="3">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition/>
-								<ColumnDefinition/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
+						<Button Grid.Row="1" Grid.Column="0" Style="{StaticResource TransparentButton}" Margin="6, 2, 2, 2" Padding="6, 4" Click="OnClearClicked" IsEnabled="{Binding Skeleton.HasSelection}">
+							<ana:TextBlock Text="Clear"/>
+						</Button>
 
-							<CheckBox Grid.Column="0" Content="Rotation" IsChecked="{Binding FileConfiguration.IncludeRotation}"/>
-							<CheckBox Grid.Column="1" Content="Position" IsChecked="{Binding FileConfiguration.IncludePosition}"/>
-							<CheckBox Grid.Column="2" Content="Scale" IsChecked="{Binding FileConfiguration.IncludeScale}"/>
-						</Grid>
+						<Button Grid.Row="1" Grid.Column="1" Style="{StaticResource TransparentButton}" Margin="2, 2, 6, 2" Padding="6, 4" Click="OnSelectChildrenClicked" IsEnabled="{Binding Skeleton.HasSelection}">
+							<ana:TextBlock Text="Select Children"/>
+						</Button>
 
-						<Grid Grid.Row="2" Margin="0, 3, 0, 0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
+						<controls:TransformEditor Grid.Row="2" Grid.ColumnSpan="2" Value="{Binding Skeleton.CurrentBone}" Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
-							<ana:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnOpenClicked" IsEnabled="{Binding GposeService.IsGpose}"/>
-							<ana:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
+						<Grid Grid.Row="2" Grid.ColumnSpan="2" Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}">
+							<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}"/>
 						</Grid>
 
 					</Grid>
 				</Border>
+
+				<!--<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">-->
+				<Grid Grid.Row="1" Margin="2">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<CheckBox Content="Include Selected Bones Only" Margin="3" IsChecked="{Binding FileConfiguration.UseSelection}"/>
+
+					<Button Grid.Row="1" Margin="2" Click="OnOpenClicked" IsEnabled="{Binding GposeService.IsGpose}" HorizontalContentAlignment="Left">
+						<Grid>
+							<ana:TextBlock Key="Pose_LoadBones" Value="{Binding Skeleton.SelectedCount}" FontWeight="Light" Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource B2V}}"/>
+							<ana:TextBlock Key="Pose_Load" FontWeight="Light" Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource !B2V}}"/>
+						</Grid>
+					</Button>
+					<Button Grid.Row="2" Margin="2" Click="OnSaveClicked" HorizontalContentAlignment="Left">
+						<Grid>
+							<ana:TextBlock Key="Pose_SaveBones" Value="{Binding Skeleton.SelectedCount}" FontWeight="Light" Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource B2V}}"/>
+							<ana:TextBlock Key="Pose_Save" FontWeight="Light" Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource !B2V}}"/>
+						</Grid>
+					</Button>
+				</Grid>
 			</Grid>
 
 			<!-- top Bar -->
@@ -118,9 +122,9 @@
 						<CheckBox IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
 							<ana:TextBlock Key="Pose_FreezePhysics"/>
 						</CheckBox>
-						
-						<CheckBox IsChecked="{Binding PoseService.LockChildRotation}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
-							<ana:TextBlock Key="Pose_LockChildrenRot"/>
+
+						<CheckBox IsChecked="{Binding PoseService.EnableParenting}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
+							<ana:TextBlock Key="Pose_Parenting"/>
 						</CheckBox>
 
 						<CheckBox IsChecked="{Binding Skeleton.LinkEyes}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
@@ -129,19 +133,37 @@
 
 					</StackPanel>
 
-					<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-						<Button Style="{StaticResource TransparentButton}" Margin="6" IsEnabled="{Binding Skeleton.HasSelection}" Click="OnClearClicked">
-							<ana:TextBlock Text="Clear Selection" Margin="6, 0, 6, 0"/>
-						</Button>
-						
-						<Button Style="{StaticResource TransparentButton}" Margin="6" IsEnabled="{Binding Skeleton.HasSelection}" Click="OnSelectChildrenClicked">
-							<ana:TextBlock Text="Select Children" Margin="6, 0, 6, 0"/>
-						</Button>
-					</StackPanel>
+					<Border Background="{DynamicResource MaterialDesignPaper}" Margin="3" CornerRadius="3" Padding="3" HorizontalAlignment="Right">
+						<StackPanel Orientation="Horizontal">
+							<CheckBox IsChecked="{Binding PoseService.FreezeRotation}" VerticalContentAlignment="Center" Margin="3" IsEnabled="{Binding PoseService.IsEnabled}">
+								<ana:TextBlock Key="Pose_EnableRotation" Margin="0, -2, 0, 2"/>
+
+								<CheckBox.ToolTip>
+									<ana:TextBlock Key="Pose_EnableRotationTooltip" />
+								</CheckBox.ToolTip>
+							</CheckBox>
+
+							<CheckBox IsChecked="{Binding PoseService.FreezePositions}" VerticalContentAlignment="Center" Margin="3" IsEnabled="{Binding PoseService.IsEnabled}">
+								<ana:TextBlock Key="Pose_EnablePosition"  Margin="0, -2, 0, 2"/>
+
+								<CheckBox.ToolTip>
+									<ana:TextBlock Key="Pose_EnablePositionTooltip" />
+								</CheckBox.ToolTip>
+							</CheckBox>
+
+							<CheckBox IsChecked="{Binding PoseService.FreezeScale}" VerticalContentAlignment="Center" Margin="3" IsEnabled="{Binding PoseService.IsEnabled}">
+								<ana:TextBlock Key="Pose_EnableScale"  Margin="0, -2, 0, 2"/>
+
+								<CheckBox.ToolTip>
+									<ana:TextBlock Key="Pose_EnableScaleTooltip" />
+								</CheckBox.ToolTip>
+							</CheckBox>
+						</StackPanel>
+					</Border>
+
 				</Grid>
 			</Border>
 
-			
 
 			<!-- Content -->
 			<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">
@@ -168,13 +190,6 @@
 
 				</Grid>
 			</Border>
-
-			<!-- Status -->
-			<StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Margin="3, 0, 6, 3" Opacity="0.25">
-				<TextBlock Text="P" Visibility="{Binding PoseService.FreezePositions, Converter={StaticResource B2V}}" Margin="3"/>
-				<TextBlock Text="R" Visibility="{Binding PoseService.FreezeRotation, Converter={StaticResource B2V}}" Margin="3"/>
-				<TextBlock Text="S" Visibility="{Binding PoseService.FreezeScale, Converter={StaticResource B2V}}" Margin="3"/>
-			</StackPanel>
 
 			<Grid Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
 				<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.75"/>
