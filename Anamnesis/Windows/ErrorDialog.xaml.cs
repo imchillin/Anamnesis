@@ -34,6 +34,9 @@ namespace Anamnesis.GUI.Windows
 			this.Subtitle.Visibility = isCritical ? Visibility.Visible : Visibility.Collapsed;
 			this.DetailsExpander.Header = exDispatch.SourceException.Message;
 
+			if (exDispatch.SourceException is AggregateException aggEx && aggEx.InnerException != null)
+				this.DetailsExpander.Header = aggEx.InnerException.Message;
+
 			StringBuilder builder = new StringBuilder();
 			Exception? ex = exDispatch.SourceException;
 			while (ex != null)
