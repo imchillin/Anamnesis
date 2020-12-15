@@ -407,6 +407,7 @@
 
 	"Item_Unknown": "Unknown",
 	"Item_None": "None",
+	"Item_NoneDesc": "Nothing",
 	"Item_NpcBody": "Smallclothes Body (NPC)",
 	"Item_NpcBodyDesc": "The Smallclothes body used by NPC's",
 	"Item_InvisibleBody": "Invisible",

@@ -12,7 +12,7 @@ namespace Anamnesis.Character.Items
 	public class DummyNoneItem : IItem
 	{
 		public string Name => LocalizationService.GetString("Item_None");
-		public string? Description => null;
+		public string? Description => LocalizationService.GetString("Item_NoneDesc");
 		public ImageSource? Icon => null;
 		public ushort ModelBase => 0;
 		public ushort ModelVariant => 0;
