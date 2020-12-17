@@ -114,7 +114,7 @@
 						</ToggleButton>
 
 						<ana:TextBlock Grid.Row="0" Grid.Column="1" Key="Scene_World_Time" Style="{StaticResource Label}"/>
-						<Slider Minimum="0" Maximum="1440" Grid.Column="2" Value="{Binding TimeService.TimeOfDay}" Margin="3" IsEnabled="{Binding TimeService.Freeze}" TickFrequency="30" IsSnapToTickEnabled="True"/>
+						<ana:NumberBox Minimum="0" Maximum="1440" Grid.Column="2" Value="{Binding TimeService.TimeOfDay}" Margin="3" Slider="Absolute" IsEnabled="{Binding TimeService.Freeze}" TickFrequency="30"/>
 						<TextBlock Grid.Column="3" Text="{Binding TimeService.Time, StringFormat=t}" Margin="3, 3, 0, 3" Width="50" HorizontalAlignment="Right"/>
 
 						<ana:TextBlock Grid.Row="1" Grid.Column="1" Key="Scene_World_Day" Style="{StaticResource Label}"/>
