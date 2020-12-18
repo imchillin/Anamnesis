@@ -4,6 +4,7 @@
 
 namespace Anamnesis.PoseModule.Views
 {
+	using System.Collections.ObjectModel;
 	using System.Linq;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -26,9 +27,13 @@ namespace Anamnesis.PoseModule.Views
 
 			this.Viewport.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
 
+			this.ContentArea.DataContext = this;
+
 			////Anamnesis.Quaternion rootrot = Module.SkeletonViewModel.GetBone("Root").RootRotation;
 			////this.root.Transform = new RotateTransform3D(new QuaternionRotation3D(new Quaternion(rootrot.X, rootrot.Y, rootrot.Z, rootrot.W)));
 		}
+
+		public ObservableCollection<BoneVisual3d> Bones { get; set; } = new ObservableCollection<BoneVisual3d>();
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -49,6 +54,8 @@ namespace Anamnesis.PoseModule.Views
 		{
 			SkeletonVisual3d? vm = this.DataContext as SkeletonVisual3d;
 
+			this.Bones.Clear();
+
 			if (vm == null)
 				return;
 
@@ -63,6 +70,7 @@ namespace Anamnesis.PoseModule.Views
 				Vector3D pos = vm.Bones.First().Value.ViewModel.Position.ToMedia3DVector();
 				foreach (BoneVisual3d visual in vm.Bones.Values)
 				{
+					this.Bones.Add(visual);
 					pos += visual.ViewModel.Position.ToMedia3DVector();
 				}
 
@@ -70,6 +78,25 @@ namespace Anamnesis.PoseModule.Views
 				Point3D center = new Point3D(pos.X, pos.Y, pos.Z - 4);
 				this.camera.Position = center;
 			}
+		}
+
+		private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			SkeletonVisual3d? vm = this.DataContext as SkeletonVisual3d;
+
+			if (vm == null)
+				return;
+
+			if (e.AddedItems == null || e.AddedItems.Count <= 0)
+				return;
+
+			BoneVisual3d? selected = e.AddedItems[0] as BoneVisual3d;
+
+			if (selected == null)
+				return;
+
+			vm.Hover(selected, true);
+			vm.Select(selected);
 		}
 	}
 }

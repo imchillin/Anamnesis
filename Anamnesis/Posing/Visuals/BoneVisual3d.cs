@@ -5,11 +5,13 @@
 namespace Anamnesis.PoseModule
 {
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Extensions;
 	using Anamnesis.Posing.Templates;
+	using Anamnesis.Services;
 	using Anamnesis.ThreeD;
 	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
@@ -27,6 +29,7 @@ namespace Anamnesis.PoseModule
 
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
+		private Sphere sphere;
 
 		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton, string name, TemplateBone? template)
 		{
@@ -44,14 +47,16 @@ namespace Anamnesis.PoseModule
 
 			PaletteHelper ph = new PaletteHelper();
 
-			Sphere sphere = new Sphere();
-			sphere.Radius = 0.005;
 			System.Windows.Media.Color c1 = System.Windows.Media.Color.FromArgb(200, 255, 255, 255);
-			sphere.Material = new EmissiveMaterial(new SolidColorBrush(c1));
-			this.Children.Add(sphere);
+			this.sphere = new Sphere();
+			this.sphere.Radius = 0.02;
+			this.sphere.Material = new EmissiveMaterial(new SolidColorBrush(c1));
+			this.Children.Add(this.sphere);
 
 			this.BoneName = name;
 			this.Template = template;
+
+			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }
@@ -71,6 +76,19 @@ namespace Anamnesis.PoseModule
 		public BoneVisual3d? LinkedEye { get; set; }
 
 		public virtual string TooltipKey => "Pose_" + this.BoneName;
+
+		public string Tooltip
+		{
+			get
+			{
+				string str = LocalizationService.GetString(this.TooltipKey, true);
+
+				if (string.IsNullOrEmpty(str))
+					return this.BoneName;
+
+				return str;
+			}
+		}
 
 		public BoneVisual3d? Parent
 		{
@@ -246,6 +264,14 @@ namespace Anamnesis.PoseModule
 					bones.Add(childBoneVisual);
 					childBoneVisual.GetChildren(ref bones);
 				}
+			}
+		}
+
+		private void OnSkeletonPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(SkeletonVisual3d.CurrentBone))
+			{
+				this.sphere.Radius = this.Skeleton.GetIsBoneSelected(this) ? 0.03 : 0.02;
 			}
 		}
 	}

@@ -67,11 +67,11 @@ namespace Anamnesis.Styles.Controls
 				}
 				else
 				{
-					val = LocalizationService.GetString(this.Key, this.Value);
+					val = LocalizationService.GetStringFormatted(this.Key, this.Value);
 				}
 			}
 
-			if (val == null)
+			if (string.IsNullOrEmpty(val))
 			{
 				if (!string.IsNullOrEmpty(this.Text))
 					return;

@@ -2,7 +2,9 @@
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:views="clr-namespace:Anamnesis.PoseModule.Views"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="512" d:DesignWidth="1024"
 			 Loaded="OnLoaded"
@@ -11,7 +13,24 @@
 
 	<Grid x:Name="ContentArea">
 		<Border Grid.Row="1" Background="{DynamicResource MaterialDesignCardBackground}" CornerRadius="3" Margin="0, 3, 3, 3">
-			<Viewport3D x:Name="Viewport"/>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition Width="150"/>
+				</Grid.ColumnDefinitions>
+
+				<Viewport3D x:Name="Viewport" Grid.Column="0"/>
+				
+				<ListBox ItemsSource="{Binding Bones}" Grid.Column="1" SelectionChanged="ListBox_SelectionChanged">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<ana:TextBlock Grid.Column="1" Text="{Binding Tooltip}" Margin="3, 0, 0, 0" VerticalAlignment="Center"/>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				
+			</Grid>
+		
 		</Border>
 	</Grid>
 </UserControl>

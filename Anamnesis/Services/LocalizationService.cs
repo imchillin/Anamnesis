@@ -60,29 +60,48 @@ namespace Anamnesis.Services
 			}
 		}
 
-		public static string GetString(string key, params string[] param)
+		public static bool HasString(string key)
+		{
+			string val;
+			if (currentLocale?.Get(key, out val) != true)
+				return false;
+
+			return true;
+		}
+
+		public static string GetStringFormatted(string key, params string[] param)
 		{
 			string str = GetString(key);
 			return string.Format(str, param);
 		}
 
-		public static string GetString(string key)
+		public static string GetString(string key, bool silent = false)
 		{
 			string val = string.Empty;
 
 			if (currentLocale?.Get(key, out val) ?? false)
 				return val;
 
-			Log.Write(Severity.Warning, "Missing Localized string: \"" + key + "\" in locale: \"" + currentLocale?.Culture + "\"");
+			if (!silent)
+				Log.Write(Severity.Warning, "Missing Localized string: \"" + key + "\" in locale: \"" + currentLocale?.Culture + "\"");
 
 			if (fallbackLocale?.Get(key, out val) ?? false)
 				return val;
 
-			Log.Write(Severity.Error, "Missing Localized string: \"" + key + "\"");
+			if (!silent)
+				Log.Write(Severity.Error, "Missing Localized string: \"" + key + "\"");
 
-			string erorString = "{" + key + "}";
-			fallbackLocale?.Add(key, erorString);
-			return erorString;
+			if (!silent)
+			{
+				string erorString = "{" + key + "}";
+				fallbackLocale?.Add(key, erorString);
+				return erorString;
+			}
+			else
+			{
+				fallbackLocale?.Add(key, string.Empty);
+				return string.Empty;
+			}
 		}
 
 		public static void SetLocale(string locale)

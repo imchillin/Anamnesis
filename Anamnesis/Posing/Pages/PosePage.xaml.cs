@@ -96,7 +96,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			this.Skeleton = new SkeletonVisual3d(actor);
 
-			////this.ThreeDView.DataContext = this.Skeleton;
+			this.ThreeDView.DataContext = this.Skeleton;
 			this.GuiView.DataContext = this.Skeleton;
 			this.MatrixView.DataContext = this.Skeleton;
 		}
@@ -150,7 +150,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			this.GuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Collapsed;
 			this.MatrixView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Collapsed;
-			////this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
+			this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		private void OnClearClicked(object? sender, RoutedEventArgs? e)

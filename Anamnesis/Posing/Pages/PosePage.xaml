@@ -48,7 +48,7 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<ana:TextBlock Grid.Row="0" Grid.ColumnSpan="2" Key="{Binding Skeleton.CurrentBone.TooltipKey, FallbackValue=Pose_CharacterRoot}" HorizontalAlignment="Center" Margin="6" FontSize="14"/>
+						<ana:TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Skeleton.CurrentBone.Tooltip}" HorizontalAlignment="Center" Margin="6" FontSize="14"/>
 
 						<Button Grid.Row="1" Grid.Column="0" Style="{StaticResource TransparentButton}" Margin="6, 2, 2, 2" Padding="6, 4" Click="OnClearClicked" IsEnabled="{Binding Skeleton.HasSelection}">
 							<ana:TextBlock Text="Clear"/>
@@ -112,9 +112,9 @@
 							<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
-							<!--<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
+							<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
-							</ListBoxItem>-->
+							</ListBoxItem>
 						</ListBox>
 
 						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
@@ -171,7 +171,7 @@
 
 					<Grid Grid.Row="1" x:Name="MouseCanvas" MouseDown="OnCanvasMouseDown" MouseMove="OnCanvasMouseMove" MouseUp="OnCanvasMouseUp" Background="Transparent">
 						<Grid DataContext="{Binding Skeleton}">
-							<!--<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>-->
+							<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed"/>
 							<views:PoseGuiView x:Name="GuiView" Visibility="Visible"/>
 							<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed"/>
 						</Grid>
