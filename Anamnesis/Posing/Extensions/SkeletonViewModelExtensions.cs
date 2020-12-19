@@ -11,12 +11,12 @@ namespace Anamnesis.Posing.Extensions
 
 	public static class SkeletonViewModelExtensions
 	{
-		public static Dictionary<string, string>? GetBoneNames(this SkeletonViewModel self, ActorViewModel actor)
+		public static SkeletonFile? GetSkeletonFile(this SkeletonViewModel self, ActorViewModel actor)
 		{
 			int maxDepth = int.MinValue;
-			BoneNamesFile? maxSkel = null;
+			SkeletonFile? maxSkel = null;
 
-			foreach (BoneNamesFile template in PoseService.BoneNameFiles)
+			foreach (SkeletonFile template in PoseService.BoneNameFiles)
 			{
 				if (template.IsValid(self, actor))
 				{
@@ -29,7 +29,7 @@ namespace Anamnesis.Posing.Extensions
 			}
 
 			if (maxSkel != null)
-				return maxSkel.BoneNames;
+				return maxSkel;
 
 			return null;
 		}

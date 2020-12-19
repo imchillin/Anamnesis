@@ -33,6 +33,12 @@ namespace Anamnesis.Serialization
 			return JsonSerializer.Serialize(obj, Options);
 		}
 
+		public static void SerializeFile(string path, object obj)
+		{
+			string json = Serialize(obj);
+			File.WriteAllText(path, json);
+		}
+
 		public static T DeserializeFile<T>(string path)
 			where T : new()
 		{

@@ -7,7 +7,7 @@ namespace Anamnesis.Posing.Templates
 	using System.Collections.Generic;
 	using Anamnesis.Memory;
 
-	public class BoneNamesFile
+	public class SkeletonFile
 	{
 		public int Depth = 0;
 
@@ -16,6 +16,7 @@ namespace Anamnesis.Posing.Templates
 		public string? BasedOn { get; set; }
 
 		public Dictionary<string, string>? BoneNames { get; set; }
+		public Dictionary<string, string>? Parenting { get; set; }
 
 		public bool IsValid(SkeletonViewModel self, ActorViewModel actor)
 		{
@@ -31,7 +32,7 @@ namespace Anamnesis.Posing.Templates
 			return true;
 		}
 
-		public void CopyBaseValues(BoneNamesFile from)
+		public void CopyBaseValues(SkeletonFile from)
 		{
 			this.Depth = from.Depth + 1;
 
@@ -47,6 +48,11 @@ namespace Anamnesis.Posing.Templates
 					continue;
 
 				this.BoneNames.Add(key, name);
+			}
+
+			if (this.Parenting == null)
+			{
+				this.Parenting = from.Parenting;
 			}
 		}
 	}
