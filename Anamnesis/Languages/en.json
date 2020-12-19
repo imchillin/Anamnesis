@@ -108,7 +108,7 @@
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /Gpose in chat.",
 	"Pose_WarningNotFrozen": "Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window.",
 	"Pose_GenerateSkeletonTitle": "Skeleton not found",
-	"Pose_GenerateSkeleton": "No skeleton was found for selected actor, Generate one now?\nWithout a skeleton, parenting will not work correctly.",
+	"Pose_GenerateSkeleton": "No skeleton was found for the actor {0}, Generate one now?\nWithout a skeleton, parenting will not work correctly.",
 
 	"Pose_Save": "Save",
 	"Pose_SaveBones": "Save {0} Bones",

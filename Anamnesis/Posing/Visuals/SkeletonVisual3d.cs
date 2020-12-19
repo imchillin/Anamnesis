@@ -363,7 +363,8 @@ namespace Anamnesis.PoseModule
 
 			if ((skeletonFile == null || skeletonFile.Parenting == null) && GposeService.Instance.IsGpose)
 			{
-				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_GenerateSkeleton"), LocalizationService.GetString("Pose_GenerateSkeletonTitle"), MessageBoxButton.YesNo);
+				string message = LocalizationService.GetStringFormatted("Pose_GenerateSkeleton", this.Actor.DisplayName);
+				bool? result = await GenericDialog.Show(message, LocalizationService.GetString("Pose_GenerateSkeletonTitle"), MessageBoxButton.YesNo);
 				autoSkeleton = result == true;
 			}
 
