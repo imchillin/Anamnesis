@@ -42,7 +42,7 @@ namespace Anamnesis.Files
 
 			this.Bones = new Dictionary<string, Bone?>();
 
-			foreach ((string name, BoneVisual3d bone) in skeleton.Bones)
+			foreach (BoneVisual3d bone in skeleton.Bones)
 			{
 				if (config.UseSelection && !skeleton.GetIsBoneSelected(bone))
 					continue;
@@ -52,7 +52,7 @@ namespace Anamnesis.Files
 				if (trans == null)
 					throw new Exception("Bone is missing transform");
 
-				this.Bones.Add(name, new Bone(trans.Value));
+				this.Bones.Add(bone.BoneName, new Bone(trans.Value));
 			}
 		}
 
@@ -80,13 +80,13 @@ namespace Anamnesis.Files
 						if (savedBone == null)
 							continue;
 
-						if (!skeleton.Bones.ContainsKey(name))
+						BoneVisual3d? bone = skeleton.GetBone(name);
+
+						if (bone == null)
 						{
 							Log.Write($"Bone: \"{name}\" not found", "Pose", Log.Severity.Warning);
 							continue;
 						}
-
-						BoneVisual3d? bone = skeleton.Bones[name];
 
 						if (config.UseSelection && !skeleton.GetIsBoneSelected(bone))
 							continue;

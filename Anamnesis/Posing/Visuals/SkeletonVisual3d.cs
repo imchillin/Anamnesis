@@ -6,6 +6,7 @@ namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using System.Text;
 	using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace Anamnesis.PoseModule
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Views;
+	using Anamnesis.Posing;
 	using Anamnesis.Posing.Extensions;
 	using Anamnesis.Posing.Templates;
 	using PropertyChanged;
@@ -29,7 +31,7 @@ namespace Anamnesis.PoseModule
 		public SkeletonVisual3d(ActorViewModel actor)
 		{
 			this.Actor = actor;
-			this.GenerateBones();
+			Task.Run(this.GenerateBones);
 			Task.Run(this.WriteSkeletonThread);
 		}
 
@@ -78,7 +80,7 @@ namespace Anamnesis.PoseModule
 		public bool HasSelection => this.SelectedBones.Count > 0;
 		public bool HasHover => this.HoverBones.Count > 0;
 
-		public Dictionary<string, BoneVisual3d>? Bones { get; private set; }
+		public ObservableCollection<BoneVisual3d> Bones { get; private set; } = new ObservableCollection<BoneVisual3d>();
 
 		public bool HasTail => this.Actor?.Customize?.Race == Appearance.Races.Miqote
 			|| this.Actor?.Customize?.Race == Appearance.Races.AuRa
@@ -104,11 +106,7 @@ namespace Anamnesis.PoseModule
 		{
 			this.ClearSelection();
 			this.HoverBones.Clear();
-
-			if (this.Bones != null)
-				this.Bones.Clear();
-
-			this.Bones = null;
+			this.Bones.Clear();
 		}
 
 		public void Select(IBone bone)
@@ -283,8 +281,13 @@ namespace Anamnesis.PoseModule
 			if (this.Actor.ModelType != 0)
 				return null;
 
-			if (this.Bones != null && this.Bones.ContainsKey(name))
-				return this.Bones[name];
+			foreach (BoneVisual3d bone in this.Bones)
+			{
+				if (bone.BoneName == name)
+				{
+					return bone;
+				}
+			}
 
 			return null;
 		}
@@ -294,23 +297,25 @@ namespace Anamnesis.PoseModule
 			if (this.Bones == null)
 				return;
 
-			foreach (BoneVisual3d bone in this.Bones.Values)
+			foreach (BoneVisual3d bone in this.Bones)
 			{
 				bone.ReadTransform();
 			}
 		}
 
-		private void GenerateBones()
+		private async Task GenerateBones()
 		{
-			this.Bones = new Dictionary<string, BoneVisual3d>();
+			await Dispatch.MainThread();
+
+			this.Bones.Clear();
 
 			if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
 				return;
 
 			SkeletonViewModel skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
 
-			TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
-			this.Generate(template, skeletonVm);
+			////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
+			await this.Generate(skeletonVm);
 
 			// Map eyes together if they exist
 			BoneVisual3d? lEye = this.GetBone("EyeLeft");
@@ -321,12 +326,12 @@ namespace Anamnesis.PoseModule
 				rEye.LinkedEye = lEye;
 			}
 
-			foreach (BoneVisual3d bone in this.Bones.Values)
+			foreach (BoneVisual3d bone in this.Bones)
 			{
 				bone.ReadTransform();
 			}
 
-			foreach (BoneVisual3d bone in this.Bones.Values)
+			foreach (BoneVisual3d bone in this.Bones)
 			{
 				bone.ReadTransform();
 			}
@@ -337,76 +342,41 @@ namespace Anamnesis.PoseModule
 			if (name == null)
 				return this;
 
-			if (this.Bones != null && this.Bones.ContainsKey(name))
-				return this.Bones[name];
+			foreach (BoneVisual3d bone in this.Bones)
+			{
+				if (bone.BoneName == name)
+				{
+					return bone;
+				}
+			}
 
 			return this;
 		}
 
-		private void Generate(TemplateSkeleton template, SkeletonViewModel memory)
+		private async Task Generate(SkeletonViewModel memory)
 		{
-			this.Generate(template.Body, memory.Body, "Body", this);
-			this.Generate(template.Head, memory.Head, "Head", this.GetVisual(template.HeadRoot));
-			this.Generate(template.Hair, memory.Hair, "Hair", this.GetVisual(template.HairRoot));
-			this.Generate(template.Met, memory.Met, "Met", this.GetVisual(template.MetRoot));
-			this.Generate(template.Top, memory.Top, "Top", this.GetVisual(template.TopRoot));
+			// Get all bones
+			this.Bones.Clear();
+			this.GetBones(memory.Body, "Body");
+			this.GetBones(memory.Head, "Head");
+			this.GetBones(memory.Hair, "Hair");
+			this.GetBones(memory.Met, "Met");
+			this.GetBones(memory.Top, "Top");
+
+			await ParentingUtility.ParentBones(this, this.Bones);
 		}
 
-		private void Generate(Dictionary<string, TemplateBone>? template, BonesViewModel? memory, string fallbackName, ModelVisual3D root)
+		private void GetBones(BonesViewModel? vm, string name)
 		{
-			if (this.Bones == null)
-				this.Bones = new Dictionary<string, BoneVisual3d>();
+			if (vm == null)
+				return;
 
-			if (template == null)
-				template = new Dictionary<string, TemplateBone>();
-
-			Dictionary<int, string> nameLookup = new Dictionary<int, string>();
-			foreach ((string name, TemplateBone templateBone) in template)
+			for (int i = 0; i < vm.Transforms.Count; i++)
 			{
-				nameLookup.Add(templateBone.Index, name);
-			}
-
-			if (memory != null)
-			{
-				Dictionary<string, BoneVisual3d> newBones = new Dictionary<string, BoneVisual3d>();
-				for (int i = 0; i < memory.Transforms.Count; i++)
-				{
-					TransformViewModel? transform = memory.Transforms[i];
-					string name = fallbackName + "_" + i;
-
-					if (nameLookup.ContainsKey(i))
-						name = nameLookup[i];
-
-					TemplateBone? boneTemplate = null;
-
-					if (template.ContainsKey(name))
-						boneTemplate = template[name];
-
-					BoneVisual3d bone = new BoneVisual3d(transform, this, name, boneTemplate);
-					newBones.Add(name, bone);
-					this.Bones.Add(name, bone);
-				}
-
-				foreach (BoneVisual3d bone in newBones.Values)
-				{
-					string? parentBoneName = null;
-
-					if (template.ContainsKey(bone.BoneName))
-						parentBoneName = template[bone.BoneName].Parent;
-
-					if (parentBoneName != null)
-					{
-						bone.Parent = newBones[parentBoneName];
-					}
-					else if (root is BoneVisual3d rootBone)
-					{
-						bone.Parent = rootBone;
-					}
-					else
-					{
-						root.Children.Add(bone);
-					}
-				}
+				TransformViewModel? transform = vm.Transforms[i];
+				string boneName = name + "_" + i;
+				BoneVisual3d bone = new BoneVisual3d(transform, this, boneName);
+				this.Bones.Add(bone);
 			}
 		}
 

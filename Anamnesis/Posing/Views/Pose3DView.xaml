@@ -21,7 +21,7 @@
 
 				<Viewport3D x:Name="Viewport" Grid.Column="0"/>
 				
-				<ListBox ItemsSource="{Binding Bones}" Grid.Column="1" SelectionChanged="ListBox_SelectionChanged">
+				<ListBox ItemsSource="{Binding Skeleton.Bones}" Grid.Column="1" SelectionChanged="ListBox_SelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<ana:TextBlock Grid.Column="1" Text="{Binding Tooltip}" Margin="3, 0, 0, 0" VerticalAlignment="Center"/>

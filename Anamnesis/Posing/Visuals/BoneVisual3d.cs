@@ -31,7 +31,7 @@ namespace Anamnesis.PoseModule
 		private Line? lineToParent;
 		private Sphere sphere;
 
-		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton, string name, TemplateBone? template)
+		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton, string name)
 		{
 			this.ViewModel = transform;
 			this.Skeleton = skeleton;
@@ -54,7 +54,6 @@ namespace Anamnesis.PoseModule
 			this.Children.Add(this.sphere);
 
 			this.BoneName = name;
-			this.Template = template;
 
 			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 		}
@@ -64,7 +63,6 @@ namespace Anamnesis.PoseModule
 
 		public bool IsEnabled { get; set; } = true;
 		public string BoneName { get; set; }
-		public TemplateBone? Template { get; private set; }
 
 		public bool CanRotate => PoseService.Instance.FreezeRotation;
 		public CmQuaternion Rotation { get; set; }
@@ -99,22 +97,33 @@ namespace Anamnesis.PoseModule
 
 			set
 			{
+				if (this.parent != null)
+				{
+					this.parent.Children.Remove(this);
+					this.parent.Children.Remove(this.lineToParent);
+				}
+
+				if (this.Skeleton.Children.Contains(this))
+					this.Skeleton.Children.Remove(this);
+
 				this.parent = value;
 
 				if (this.parent != null)
 				{
+					if (this.lineToParent == null)
+					{
+						this.lineToParent = new Line();
+						System.Windows.Media.Color c = default;
+						c.R = 128;
+						c.G = 128;
+						c.B = 128;
+						c.A = 255;
+						this.lineToParent.Color = c;
+						this.lineToParent.Points.Add(new Point3D(0, 0, 0));
+						this.lineToParent.Points.Add(new Point3D(0, 0, 0));
+					}
+
 					this.parent.Children.Add(this);
-
-					this.lineToParent = new Line();
-
-					System.Windows.Media.Color c = default;
-					c.R = 128;
-					c.G = 128;
-					c.B = 128;
-					c.A = 255;
-					this.lineToParent.Color = c;
-					this.lineToParent.Points.Add(new Point3D(0, 0, 0));
-					this.lineToParent.Points.Add(new Point3D(0, 0, 0));
 					this.parent.Children.Add(this.lineToParent);
 				}
 			}
@@ -265,6 +274,11 @@ namespace Anamnesis.PoseModule
 					childBoneVisual.GetChildren(ref bones);
 				}
 			}
+		}
+
+		public override string ToString()
+		{
+			return base.ToString() + "(" + this.BoneName + ")";
 		}
 
 		private void OnSkeletonPropertyChanged(object? sender, PropertyChangedEventArgs e)

@@ -10,10 +10,12 @@ namespace Anamnesis.PoseModule.Views
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
 	public partial class Pose3DView : UserControl
 	{
 		private PerspectiveCamera camera;
@@ -33,7 +35,7 @@ namespace Anamnesis.PoseModule.Views
 			////this.root.Transform = new RotateTransform3D(new QuaternionRotation3D(new Quaternion(rootrot.X, rootrot.Y, rootrot.Z, rootrot.W)));
 		}
 
-		public ObservableCollection<BoneVisual3d> Bones { get; set; } = new ObservableCollection<BoneVisual3d>();
+		public SkeletonVisual3d? Skeleton { get; set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -52,29 +54,26 @@ namespace Anamnesis.PoseModule.Views
 
 		private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
-			SkeletonVisual3d? vm = this.DataContext as SkeletonVisual3d;
+			this.Skeleton = this.DataContext as SkeletonVisual3d;
 
-			this.Bones.Clear();
-
-			if (vm == null)
+			if (this.Skeleton == null)
 				return;
 
 			this.Viewport.Children.Clear();
 
-			if (!this.Viewport.Children.Contains(vm))
-				this.Viewport.Children.Add(vm);
+			if (!this.Viewport.Children.Contains(this.Skeleton))
+				this.Viewport.Children.Add(this.Skeleton);
 
 			// position camera at average center position of skeleton
-			if (vm.Bones != null && vm.Bones.Count > 0)
+			if (this.Skeleton.Bones != null && this.Skeleton.Bones.Count > 0)
 			{
-				Vector3D pos = vm.Bones.First().Value.ViewModel.Position.ToMedia3DVector();
-				foreach (BoneVisual3d visual in vm.Bones.Values)
+				Vector3D pos = this.Skeleton.Bones.First().ViewModel.Position.ToMedia3DVector();
+				foreach (BoneVisual3d visual in this.Skeleton.Bones)
 				{
-					this.Bones.Add(visual);
 					pos += visual.ViewModel.Position.ToMedia3DVector();
 				}
 
-				pos /= vm.Bones.Count;
+				pos /= this.Skeleton.Bones.Count;
 				Point3D center = new Point3D(pos.X, pos.Y, pos.Z - 4);
 				this.camera.Position = center;
 			}

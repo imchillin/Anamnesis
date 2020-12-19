@@ -21,6 +21,14 @@ namespace Anamnesis.Memory
 			this.W = w;
 		}
 
+		public Quaternion(Quaternion other)
+		{
+			this.X = other.X;
+			this.Y = other.Y;
+			this.Z = other.Z;
+			this.W = other.W;
+		}
+
 		public float X { get; set; }
 		public float Y { get; set; }
 		public float Z { get; set; }
