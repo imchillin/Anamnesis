@@ -4,18 +4,19 @@
 
 namespace Anamnesis.Posing.Extensions
 {
+	using System.Collections.Generic;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Posing.Templates;
 
 	public static class SkeletonViewModelExtensions
 	{
-		public static TemplateSkeleton GetTemplate(this SkeletonViewModel self, ActorViewModel actor)
+		public static Dictionary<string, string>? GetBoneNames(this SkeletonViewModel self, ActorViewModel actor)
 		{
 			int maxDepth = int.MinValue;
-			TemplateSkeleton? maxSkel = null;
+			BoneNamesFile? maxSkel = null;
 
-			foreach (TemplateSkeleton template in PoseService.Templates)
+			foreach (BoneNamesFile template in PoseService.BoneNameFiles)
 			{
 				if (template.IsValid(self, actor))
 				{
@@ -28,10 +29,9 @@ namespace Anamnesis.Posing.Extensions
 			}
 
 			if (maxSkel != null)
-				return maxSkel;
+				return maxSkel.BoneNames;
 
-			// No template...
-			return new TemplateSkeleton();
+			return null;
 		}
 	}
 }

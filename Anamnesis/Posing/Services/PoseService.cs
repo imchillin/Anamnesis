@@ -18,7 +18,7 @@ namespace Anamnesis.PoseModule
 	[AddINotifyPropertyChangedInterface]
 	public class PoseService : ServiceBase<PoseService>
 	{
-		public static List<TemplateSkeleton> Templates = new List<TemplateSkeleton>();
+		public static List<BoneNamesFile> BoneNameFiles = new List<BoneNamesFile>();
 
 		private NopHookViewModel? freezeRot1;
 		private NopHookViewModel? freezeRot2;
@@ -128,10 +128,10 @@ namespace Anamnesis.PoseModule
 
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
 
-			string[] templates = Directory.GetFiles("Data/SkeletonTemplates/", "*.json");
+			string[] templates = Directory.GetFiles("Data/BoneNames/", "*.json");
 			foreach (string templatePath in templates)
 			{
-				TemplateSkeleton template = SerializerService.DeserializeFile<TemplateSkeleton>(templatePath);
+				BoneNamesFile template = SerializerService.DeserializeFile<BoneNamesFile>(templatePath);
 				this.Load(template);
 			}
 		}
@@ -166,13 +166,13 @@ namespace Anamnesis.PoseModule
 			this.SetEnabled(false);
 		}
 
-		private void Load(TemplateSkeleton template)
+		private void Load(BoneNamesFile template)
 		{
-			Templates.Add(template);
+			BoneNameFiles.Add(template);
 
 			if (template.BasedOn != null)
 			{
-				TemplateSkeleton baseTemplate = SerializerService.DeserializeFile<TemplateSkeleton>("Data/SkeletonTemplates/" + template.BasedOn);
+				BoneNamesFile baseTemplate = SerializerService.DeserializeFile<BoneNamesFile>("Data/BoneNames/" + template.BasedOn);
 				this.Load(baseTemplate);
 				template.CopyBaseValues(baseTemplate);
 			}

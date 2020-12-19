@@ -363,6 +363,19 @@ namespace Anamnesis.PoseModule
 			this.GetBones(memory.Met, "Met");
 			this.GetBones(memory.Top, "Top");
 
+			Dictionary<string, string>? boneNames = memory.GetBoneNames(this.Actor);
+			if (boneNames != null)
+			{
+				foreach (BoneVisual3d bone in this.Bones)
+				{
+					string? newName;
+					if (boneNames.TryGetValue(bone.BoneName, out newName))
+					{
+						bone.BoneName = newName;
+					}
+				}
+			}
+
 			await ParentingUtility.ParentBones(this, this.Bones);
 		}
 
