@@ -4,6 +4,7 @@
 
 namespace Anamnesis.PoseModule.Views
 {
+	using System;
 	using System.Collections.ObjectModel;
 	using System.Linq;
 	using System.Windows;
@@ -67,14 +68,20 @@ namespace Anamnesis.PoseModule.Views
 			// position camera at average center position of skeleton
 			if (this.Skeleton.Bones != null && this.Skeleton.Bones.Count > 0)
 			{
+				Rect3D bounds = default;
+
 				Vector3D pos = this.Skeleton.Bones.First().ViewModel.Position.ToMedia3DVector();
 				foreach (BoneVisual3d visual in this.Skeleton.Bones)
 				{
 					pos += visual.ViewModel.Position.ToMedia3DVector();
+
+					Point3D point = visual.ViewModel.Position.ToMedia3DPoint();
+					bounds.Union(point);
 				}
 
 				pos /= this.Skeleton.Bones.Count;
-				Point3D center = new Point3D(pos.X, pos.Y, pos.Z - 4);
+				double d = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
+				Point3D center = new Point3D(pos.X, pos.Y, pos.Z - (d + 3));
 				this.camera.Position = center;
 			}
 		}
