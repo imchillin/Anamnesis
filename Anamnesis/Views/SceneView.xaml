@@ -163,9 +163,6 @@
 					<ana:TextBlock Key="Scene_ActorInfo_Nickname" Style="{StaticResource Label}"/>
 					<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TargetService.SelectedActor.Nickname}" Grid.ColumnSpan="2"/>
 
-					<ana:TextBlock Grid.Row="1" Key="Scene_ActorInfo_Animation" Style="{StaticResource Label}"/>
-					<charViews:AnimationEditor AnimationId="{Binding TargetService.SelectedActor.AnimationId}" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding GposeService.IsGpose}" Margin="-3, 3, 0, 0"/>
-
 					<ana:TextBlock Grid.Row="2" Key="Scene_ActorInfo_DataPath" Style="{StaticResource Label}"/>
 					<charViews:DataPathSelector Grid.Row="3" Grid.Column="1" DataPath="{Binding TargetService.SelectedActor.ModelObject.DataPath}" DataHead="{Binding TargetService.SelectedActor.ModelObject.DataHead}" Tribe="{Binding TargetService.SelectedActor.Customize.Tribe}"/>
 

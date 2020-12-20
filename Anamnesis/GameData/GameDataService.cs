@@ -34,7 +34,6 @@ namespace Anamnesis.Services
 		public static ExcelSheet<WeatherRate> WeatherRates { get; protected set; }
 		public static ISheet<Monster> Monsters { get; private set; }
 		public static ISheet<Prop> Props { get; private set; }
-		public static ISheet<Animation> Animations { get; private set; }
 		#pragma warning restore CS8618
 
 		public override Task Initialize()
@@ -65,7 +64,6 @@ namespace Anamnesis.Services
 			// these are json files that we write by hand
 			Monsters = new JsonListSheet<Monster>("Data/Monsters.json");
 			Props = new JsonDictionarySheet<Prop>("Data/Props.json");
-			Animations = new JsonDictionarySheet<Animation>("Data/Animations.json");
 
 			return base.Initialize();
 		}

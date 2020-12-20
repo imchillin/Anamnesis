@@ -36,7 +36,6 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x1808)] public float Transparency;
 		[FieldOffset(0x1040)] public Equipment Equipment;
 		[FieldOffset(0x1878)] public Appearance Customize;
-		[FieldOffset(0x18BE)] public int AnimationId;
 		[FieldOffset(0x1B4)] public int ModelType;
 
 		public string Id => this.Name + this.DataId;
@@ -62,7 +61,6 @@ namespace Anamnesis.Memory
 		[ModelField][Refresh] public ActorTypes ObjectKind { get; set; }
 		[ModelField] public byte SubKind { get; set; }
 		[ModelField][Refresh] public AppearanceViewModel? Customize { get; set; }
-		[ModelField] public int AnimationId { get; set; }
 		[ModelField][Refresh] public int ModelType { get; set; }
 		[ModelField][Refresh] public RenderModes RenderMode { get; set; }
 		[ModelField] public float Transparency { get; set; }

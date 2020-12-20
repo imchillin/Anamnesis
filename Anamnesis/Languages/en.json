@@ -39,7 +39,6 @@
 
 	"Scene_ActorInfo_Header": "Actor Info",
 	"Scene_ActorInfo_Nickname": "Nickname:",
-	"Scene_ActorInfo_Animation": "Animation:",
 	"Scene_ActorInfo_DataPath": "Data Path:",
 
 	"Scene_Camera_Header": "Camera",
