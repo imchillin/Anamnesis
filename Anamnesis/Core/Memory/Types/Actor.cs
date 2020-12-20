@@ -181,7 +181,7 @@ namespace Anamnesis.Memory
 		{
 			this.Nickname = this.Name + " (" + this.ObjectKind + ")";
 
-			if (this.ObjectKind != ActorTypes.Player)
+			if (this.ObjectKind == ActorTypes.EventNpc)
 			{
 				this.ObjectKind = ActorTypes.Player;
 				await this.RefreshAsync();
