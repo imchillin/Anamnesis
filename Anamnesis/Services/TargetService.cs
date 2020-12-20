@@ -56,7 +56,7 @@ namespace Anamnesis
 			// Carbuncles get model type set to player (but not actor type!)
 			if (actor.Kind == ActorTypes.BattleNpc && (actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412))
 			{
-				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a Carbuncle. Do you want to change them to a player to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a Carbuncle. Do you want to change them to an editable actor to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
 				if (result == true)
 				{
 					ActorViewModel? vm = actor.GetViewModel();
