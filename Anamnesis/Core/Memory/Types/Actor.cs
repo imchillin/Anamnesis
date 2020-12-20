@@ -189,7 +189,6 @@ namespace Anamnesis.Memory
 				if (this.ModelType != 0)
 				{
 					this.ModelType = 0;
-					await this.RefreshAsync();
 				}
 			}
 
@@ -197,8 +196,9 @@ namespace Anamnesis.Memory
 			if (this.ObjectKind == ActorTypes.BattleNpc && (this.ModelType == 409 || this.ModelType == 410 || this.ModelType == 412))
 			{
 				this.ModelType = 0;
-				await this.RefreshAsync();
 			}
+
+			await DefaultCharacterFile.Default.Apply(this, Files.CharacterFile.SaveModes.All);
 		}
 
 		protected override void OnViewToModel(string fieldName, object? value)
