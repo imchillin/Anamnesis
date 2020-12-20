@@ -41,7 +41,7 @@ namespace Anamnesis
 			// Mannequins and housing NPC's get actor type changed, but squadron members do not.
 			if (actor.Kind == ActorTypes.EventNpc)
 			{
-				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a humanoid NPC. Do you want to change them to a player? This is required for some housing vendors, but not all.", "Actor Selection", MessageBoxButton.YesNo);
+				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertHousingNpcToPlayerMessage", actor.Name), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
 				if (result == true)
 				{
 					ActorViewModel? vm = actor.GetViewModel();
@@ -56,7 +56,7 @@ namespace Anamnesis
 			// Carbuncles get model type set to player (but not actor type!)
 			if (actor.Kind == ActorTypes.BattleNpc && (actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412))
 			{
-				bool? result = await GenericDialog.Show($"The Actor: \"{actor.Name}\" appears to be a Carbuncle. Do you want to change them to an editable actor to allow for posing and appearance changes?", "Actor Selection", MessageBoxButton.YesNo);
+				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertCarbuncleToPlayerMessage", actor.Name), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
 				if (result == true)
 				{
 					ActorViewModel? vm = actor.GetViewModel();
