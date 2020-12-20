@@ -47,6 +47,7 @@ namespace Anamnesis.PoseModule
 		}
 
 		public bool LinkEyes { get; set; } = true;
+		public bool FlipSides { get; set; } = false;
 		public ActorViewModel Actor { get; private set; }
 		public int SelectedCount => this.SelectedBones.Count;
 
@@ -282,6 +283,13 @@ namespace Anamnesis.PoseModule
 
 			if (this.Actor.ModelType != 0)
 				return null;
+
+			if (this.FlipSides)
+			{
+				name = name.Replace("Left", "Temp");
+				name = name.Replace("Right", "Left");
+				name = name.Replace("Temp", "Right");
+			}
 
 			foreach (BoneVisual3d bone in this.Bones)
 			{

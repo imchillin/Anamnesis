@@ -103,8 +103,6 @@
 							</Grid>
 						</ToggleButton>
 
-						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
-
 						<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
 							<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="ProjectDiagram" Foreground="{DynamicResource MaterialDesignBody}"/>
@@ -117,8 +115,6 @@
 							</ListBoxItem>
 						</ListBox>
 
-						<Line Y1="0" Y2="1" Stretch="Fill" Stroke="{StaticResource MaterialDesignPaper}" StrokeThickness="1" Margin="3"/>
-
 						<CheckBox IsChecked="{Binding PoseService.FreezePhysics}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
 							<ana:TextBlock Key="Pose_FreezePhysics"/>
 						</CheckBox>
@@ -129,6 +125,10 @@
 
 						<CheckBox IsChecked="{Binding Skeleton.LinkEyes}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
 							<ana:TextBlock Key="Pose_LinkEyes"/>
+						</CheckBox>
+
+						<CheckBox IsChecked="{Binding Skeleton.FlipSides}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
+							<ana:TextBlock Text="Flip Sides"/>
 						</CheckBox>
 
 					</StackPanel>
