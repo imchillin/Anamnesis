@@ -132,11 +132,34 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("88 91 ?? ?? ?? ?? 48 8D 3D ?? ?? ?? ??", 0, (p) => { ActorTable = p; }));
 			tasks.Add(GetAddressFromSignature("48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 3, (p) => { TargetManager = p + 0x80; }));
 
-			IntPtr baseAddress = MemoryService.Process.MainModule.BaseAddress;
+			tasks.Add(GetAddressFromTextSignature("41 0F 29 5C 12 10", (p) => { SkeletonFreezeRotation = p; }));	// SkeletonAddress
+			tasks.Add(GetAddressFromTextSignature("43 0F 29 5C 18 10", (p) => { SkeletonFreezeRotation2 = p; }));   // SkeletonAddress2
+			tasks.Add(GetAddressFromTextSignature("0F 29 5E 10 49 8B 73 28", (p) => { SkeletonFreezeRotation3 = p; })); // SkeletonAddress3
+			tasks.Add(GetAddressFromTextSignature("41 0F 29 44 12 20", (p) => { SkeletonFreezeScale = p; }));   // SkeletonAddress4
+			tasks.Add(GetAddressFromTextSignature("41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
+			tasks.Add(GetAddressFromTextSignature("43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
+			tasks.Add(GetAddressFromTextSignature("43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
+
+			tasks.Add(GetAddressFromTextSignature("0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
+			{
+				SkeletonFreezePhysics = p;  // PhysicsAddress
+				SkeletonFreezePhysics2 = p - 0x9;   // SkeletonAddress2
+				SkeletonFreezePhysics3 = p + 0xA;   // SkeletonAddress3
+			}));
+
+			tasks.Add(GetAddressFromSignature("8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
+
+			/*
+			// CMTool signatures that dont fit in our signature scanner yet
+			MemoryManager.Instance.CameraAddress = GSAFS("4F 8B B4 C6 ?? ?? ?? ??", 4, 0, true);
+			MemoryManager.Instance.TerritoryAddress = GSAFS("8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2);
+			MemoryManager.Instance.TimeAddress = GSAFS("48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3);
+			*/
 
 			// TODO: replace these manual offsets with signatures
+			IntPtr baseAddress = MemoryService.Process.MainModule.BaseAddress;
+
 			Weather = baseAddress + 0x1D3FCC8;
-			Territory = baseAddress + 0x1D8A008;
 			Time = baseAddress + 0x1D6A800;
 			Camera = baseAddress + 0x1D8A070;
 			GPoseActorTable = baseAddress + 0x1D8B660;
@@ -145,17 +168,6 @@ namespace Anamnesis.Core.Memory
 			GposeCheck = baseAddress + 0x1D8DE60;
 			GposeCheck2 = baseAddress + 0x1D8DE40;
 			GPose = baseAddress + 0x1D8A280;
-
-			SkeletonFreezeRotation = baseAddress + 0x1463BE0; // SkeletonOffset
-			SkeletonFreezeRotation2 = baseAddress + 0x1464D0D; // SkeletonOffset2
-			SkeletonFreezeRotation3 = baseAddress + 0x1472974; // SkeletonOffset3
-			SkeletonFreezeScale = baseAddress + 0x1463BF0; // SkeletonOffset4
-			SkeletonFreezePosition = baseAddress + 0x1463B6B;  // SkeletonOffset5
-			SkeletonFreezeScale2 = baseAddress + 0x1464D1D; // SkeletonOffset6
-			SkeletonFreezePosition2 = baseAddress + 0x1464C98; // SkeletonOffset7
-			SkeletonFreezePhysics = baseAddress + 0x38A768; // PhysicsOffset
-			SkeletonFreezePhysics2 = baseAddress + 0x38A75F; // PhysicsOffset2
-			SkeletonFreezePhysics3 = baseAddress + 0x38A772; // PhysicsOffset3
 
 			await Task.WhenAll(tasks.ToArray());
 
@@ -170,6 +182,18 @@ namespace Anamnesis.Core.Memory
 			return Task.Run(() =>
 			{
 				IntPtr ptr = MemoryService.Scanner.GetStaticAddressFromSig(signature, offset);
+				callback.Invoke(ptr);
+			});
+		}
+
+		private static Task GetAddressFromTextSignature(string signature, Action<IntPtr> callback)
+		{
+			if (MemoryService.Scanner == null)
+				throw new Exception("No memory scanner");
+
+			return Task.Run(() =>
+			{
+				IntPtr ptr = MemoryService.Scanner.ScanText(signature);
 				callback.Invoke(ptr);
 			});
 		}
