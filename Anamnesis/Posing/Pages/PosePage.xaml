@@ -17,7 +17,7 @@
 
 	<Grid x:Name="ContentArea">
 
-		<Grid>
+		<Grid Visibility="{Binding Skeleton.Generating, Converter={StaticResource !B2V}}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
 				<ColumnDefinition Width="220"/>

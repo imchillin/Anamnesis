@@ -46,6 +46,7 @@ namespace Anamnesis.PoseModule
 			Toggle,
 		}
 
+		public bool Generating { get; set; } = false;
 		public bool LinkEyes { get; set; } = true;
 		public bool FlipSides { get; set; } = false;
 		public ActorViewModel Actor { get; private set; }
@@ -315,6 +316,8 @@ namespace Anamnesis.PoseModule
 
 		private async Task GenerateBones()
 		{
+			this.Generating = true;
+
 			await Dispatch.MainThread();
 
 			this.Bones.Clear();
@@ -345,6 +348,8 @@ namespace Anamnesis.PoseModule
 			{
 				bone.ReadTransform();
 			}
+
+			this.Generating = false;
 		}
 
 		private ModelVisual3D GetVisual(string? name)
