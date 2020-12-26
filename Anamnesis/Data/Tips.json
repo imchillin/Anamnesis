@@ -68,6 +68,27 @@
 	},
 	{
 		"Text": "Going in first-person mode allows you to capture perfect shots where normally the camera would block due to collision!"
+	},
+	{
+		"Text": "You need to set the time of day before entering GPose"
+	},
+	{
+		"Text": "When using the Pose tab, if you don't have a bone selected you can use the Transform Function to change your actor's scale and position."
+	},
+	{	
+		"Text": "Remember to unfreeze time in the gpose menu before trying to change it via Anamnesis."
+	},
+	{
+		"Text": "Don't be afraid to use real life model references to make your pose look more organic and natural."
+	},
+	{
+		"Text": "You can use Advanced Load to load hands and facial expression from other poses you've made to save time."
+	},
+	{
+		"Text": "If you feel that a pose you made looks off, try replicating it yourself, in real life. You'll realise quite quickly how something should or should not bend if you try it yourself."
+	}
+	
+	
 	}
 	
 ]
