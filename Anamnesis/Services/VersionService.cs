@@ -7,17 +7,19 @@ namespace Anamnesis.Services
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Memory;
+	using Anamnesis.Updater;
 
 	public class VersionService : ServiceBase<VersionService>
 	{
-		private const string SupportedVersion = "2020.12.02.0000.0000";
-
 		public override Task Initialize()
 		{
+			string versionStr = File.ReadAllText(UpdateService.VersionFile);
+			versionStr = versionStr.Split('\r')[1].Trim();
+
 			string file = MemoryService.GamePath + "game/ffxivgame.ver";
 			string gameVer = File.ReadAllText(file);
 
-			if (gameVer != SupportedVersion)
+			if (gameVer != versionStr)
 			{
 				Log.Write(SimpleLog.Severity.Error, LocalizationService.GetStringFormatted("Error_WrongVersion", gameVer));
 			}

@@ -20,10 +20,11 @@ namespace Anamnesis.Updater
 
 	public class UpdateService : ServiceBase<UpdateService>
 	{
+		public const string VersionFile = "Version.txt";
+
 		public static DateTimeOffset Version = DateTimeOffset.Now;
 
 		private const string Repository = "imchillin/Anamnesis";
-		private const string VersionFile = "Version.txt";
 
 		private HttpClient httpClient = new HttpClient();
 		private Release? currentRelease;
@@ -36,12 +37,10 @@ namespace Anamnesis.Updater
 
 			string versionStr;
 			if (!File.Exists(VersionFile))
-			{
-				versionStr = DateTimeOffset.UtcNow.ToString("s");
-				File.WriteAllText(VersionFile, versionStr);
-			}
+				throw new Exception("No version file found");
 
 			versionStr = File.ReadAllText(VersionFile);
+			versionStr = versionStr.Split('\r')[0].Trim();
 
 			versionStr = versionStr.Trim();
 			Version = DateTimeOffset.Parse(versionStr);
