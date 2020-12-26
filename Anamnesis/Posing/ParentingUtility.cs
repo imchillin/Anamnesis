@@ -4,6 +4,7 @@
 
 namespace Anamnesis.Posing
 {
+	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using Anamnesis.Memory;
@@ -16,18 +17,27 @@ namespace Anamnesis.Posing
 			PoseService.Instance.IsEnabled = true;
 			PoseService.Instance.EnableParenting = false;
 
-			foreach (BoneVisual3d bone in bones)
+			try
 			{
-				root.Children.Add(bone);
-				bone.ReadTransform();
-			}
+				foreach (BoneVisual3d bone in bones)
+				{
+					root.Children.Add(bone);
+					bone.ReadTransform();
+				}
 
-			foreach (BoneVisual3d bone in bones)
+				foreach (BoneVisual3d bone in bones)
+				{
+					await ParentBone(root, bones, bone);
+				}
+			}
+			catch (Exception)
 			{
-				await ParentBone(root, bones, bone);
+				throw;
 			}
-
-			PoseService.Instance.IsEnabled = false;
+			finally
+			{
+				PoseService.Instance.IsEnabled = false;
+			}
 		}
 
 		private static bool IsChildOf(BoneVisual3d childBone, BoneVisual3d parentBone)
@@ -77,10 +87,7 @@ namespace Anamnesis.Posing
 						continue;
 
 					if (IsChildOf(bone, otherBone))
-					{
-						Log.Write("Bone that is parent of test bone was marked as moved! This should never happen.", "Posing", Log.Severity.Error);
-						return;
-					}
+						throw new Exception("Bone that is parent of test bone was moved.");
 
 					otherBone.Parent = bone;
 				}

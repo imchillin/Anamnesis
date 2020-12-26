@@ -282,9 +282,6 @@ namespace Anamnesis.PoseModule
 			if (this.Actor?.ModelObject?.Skeleton?.Skeleton?.Body == null)
 				return null;
 
-			if (this.Actor.ModelType != 0)
-				return null;
-
 			if (this.FlipSides)
 			{
 				name = name.Replace("Left", "Temp");
@@ -403,8 +400,16 @@ namespace Anamnesis.PoseModule
 
 			if (autoSkeleton)
 			{
-				// gnerate parenting
-				await ParentingUtility.ParentBones(this, this.Bones);
+				try
+				{
+					// gnerate parenting
+					await ParentingUtility.ParentBones(this, this.Bones);
+				}
+				catch (Exception ex)
+				{
+					Log.Write(new Exception("Failed to generate skeleton file.", ex), "Posing", Log.Severity.Error);
+					return;
+				}
 
 				if (skeletonFile == null)
 				{
