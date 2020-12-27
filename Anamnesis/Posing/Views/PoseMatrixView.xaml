@@ -156,54 +156,50 @@
 					</Button>
 				</GroupBox.Header>
 
-				<Grid>
+				<Grid Margin="0, 2, 0, 0">
 
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="72"/>
 						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
+						<ColumnDefinition Width="72"/>
 						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
+						<ColumnDefinition Width="72"/>
 						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
+						
+						<ColumnDefinition Width="72"/>
 						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
 					</Grid.ColumnDefinitions>
 
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
 
-					<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_General" Style="{DynamicResource Label}"/>
-					<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
+					<cm3:TextBlock Grid.Column="0" Key="Pose_General" Style="{DynamicResource Label}"/>
+					<StackPanel Grid.Column="1" Orientation="Horizontal" >
 						<local:BoneView BoneName="HairFrontLeft" Label="L"/>
 						<local:BoneView BoneName="HairFrontRight" Label="R"/>
 						<local:BoneView BoneName="HairA" Label="1"/>
 						<local:BoneView BoneName="HairB" Label="2"/>
 					</StackPanel>
 
-					<cm3:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Unique" Style="{DynamicResource Label}"/>
-					<StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" >
-						<local:BoneView BoneName="ExHairA" Label="1"/>
-						<local:BoneView BoneName="ExHairB" Label="2"/>
-						<local:BoneView BoneName="ExHairC" Label="3"/>
-						<local:BoneView BoneName="ExHairD" Label="4"/>
-						<local:BoneView BoneName="ExHairE" Label="5"/>
-						<local:BoneView BoneName="ExHairF" Label="6"/>
+					<cm3:TextBlock Grid.Column="2" Key="Pose_Unique" Style="{DynamicResource Label}"/>
+					<StackPanel Grid.Column="3" Orientation="Horizontal" >
+						<local:BoneView BoneName="Hair_0" Label="0"/>
+						<local:BoneView BoneName="Hair_1" Label="1"/>
+						<local:BoneView BoneName="Hair_2" Label="2"/>
+						<local:BoneView BoneName="Hair_3" Label="3"/>
+						<local:BoneView BoneName="Hair_4" Label="4"/>
+						<local:BoneView BoneName="Hair_5" Label="5"/>
+						<local:BoneView BoneName="Hair_6" Label="6"/>
 					</StackPanel>
 
-					<cm3:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_Earrings" Style="{DynamicResource Label}"/>
-					<StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" >
+					<cm3:TextBlock Grid.Column="4" Key="Pose_Earrings" Style="{DynamicResource Label}"/>
+					<StackPanel Grid.Column="5" Orientation="Horizontal" >
 						<local:BoneView BoneName="EarringALeft" Label="L1"/>
 						<local:BoneView BoneName="EarringARight" Label="L2"/>
 						<local:BoneView BoneName="EarringBLeft" Label="R1"/>
 						<local:BoneView BoneName="EarringBRight" Label="R2"/>
 					</StackPanel>
 
-					<cm3:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_Whiskers" Style="{DynamicResource Label}" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
-					<StackPanel Grid.Column="7" Grid.Row="0" Orientation="Horizontal" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}">
+					<cm3:TextBlock Grid.Column="6" Key="Pose_Whiskers" Style="{DynamicResource Label}" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
+					<StackPanel Grid.Column="7" Orientation="Horizontal" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}">
 						<local:BoneView BoneName="HrothWhiskersLeft" Label="L"/>
 						<local:BoneView BoneName="HrothWhiskersRight" Label="R"/>
 					</StackPanel>
@@ -633,39 +629,38 @@
 
 					<cm3:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_EqHelm" Style="{DynamicResource Label}"/>
 					<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
-						<local:BoneView BoneName="ExRootMet"/>
-						<local:BoneView BoneName="ExMetA" Label="A"/>
-						<local:BoneView BoneName="ExMetB" Label="B"/>
-						<local:BoneView BoneName="ExMetC" Label="C"/>
-						<local:BoneView BoneName="ExMetD" Label="D"/>
-						<local:BoneView BoneName="ExMetE" Label="E"/>
-						<local:BoneView BoneName="ExMetF" Label="F"/>
-						<local:BoneView BoneName="ExMetG" Label="G"/>
-						<local:BoneView BoneName="ExMetH" Label="H"/>
-						<local:BoneView BoneName="ExMetI" Label="I"/>
-						<local:BoneView BoneName="ExMetJ" Label="J"/>
-						<local:BoneView BoneName="ExMetK" Label="K"/>
-						<local:BoneView BoneName="ExMetL" Label="L"/>
-						<local:BoneView BoneName="ExMetM" Label="M"/>
-						<local:BoneView BoneName="ExMetN" Label="N"/>
-						<local:BoneView BoneName="ExMetO" Label="O"/>
-						<local:BoneView BoneName="ExMetP" Label="P"/>
-						<local:BoneView BoneName="ExMetQ" Label="Q"/>
-						<local:BoneView BoneName="ExMetR" Label="R"/>
+						<local:BoneView BoneName="Met_0" Label="0"/>
+						<local:BoneView BoneName="Met_1" Label="1"/>
+						<local:BoneView BoneName="Met_2" Label="2"/>
+						<local:BoneView BoneName="Met_3" Label="3"/>
+						<local:BoneView BoneName="Met_4" Label="4"/>
+						<local:BoneView BoneName="Met_5" Label="5"/>
+						<local:BoneView BoneName="Met_6" Label="6"/>
+						<local:BoneView BoneName="Met_7" Label="7"/>
+						<local:BoneView BoneName="Met_8" Label="8"/>
+						<local:BoneView BoneName="Met_9" Label="9"/>
+						<local:BoneView BoneName="Met_10" Label="10"/>
+						<local:BoneView BoneName="Met_11" Label="11"/>
+						<local:BoneView BoneName="Met_12" Label="12"/>
+						<local:BoneView BoneName="Met_13" Label="13"/>
+						<local:BoneView BoneName="Met_14" Label="14"/>
+						<local:BoneView BoneName="Met_15" Label="15"/>
+						<local:BoneView BoneName="Met_16" Label="16"/>
+						<local:BoneView BoneName="Met_17" Label="17"/>
 					</StackPanel>
 
 					<cm3:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_EqTop" Style="{DynamicResource Label}"/>
 					<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
-						<local:BoneView BoneName="ExRootTop"/>
-						<local:BoneView BoneName="ExTopA" Label="A"/>
-						<local:BoneView BoneName="ExTopB" Label="B"/>
-						<local:BoneView BoneName="ExTopC" Label="C"/>
-						<local:BoneView BoneName="ExTopD" Label="D"/>
-						<local:BoneView BoneName="ExTopE" Label="E"/>
-						<local:BoneView BoneName="ExTopF" Label="F"/>
-						<local:BoneView BoneName="ExTopG" Label="G"/>
-						<local:BoneView BoneName="ExTopH" Label="H"/>
-						<local:BoneView BoneName="ExTopI" Label="I"/>
+						<local:BoneView BoneName="Top_0" Label="0"/>
+						<local:BoneView BoneName="Top_1" Label="1"/>
+						<local:BoneView BoneName="Top_2" Label="2"/>
+						<local:BoneView BoneName="Top_3" Label="3"/>
+						<local:BoneView BoneName="Top_4" Label="4"/>
+						<local:BoneView BoneName="Top_5" Label="5"/>
+						<local:BoneView BoneName="Top_6" Label="6"/>
+						<local:BoneView BoneName="Top_7" Label="7"/>
+						<local:BoneView BoneName="Top_8" Label="8"/>
+						<local:BoneView BoneName="Top_9" Label="9"/>
 					</StackPanel>
 				</Grid>
 			</GroupBox>
