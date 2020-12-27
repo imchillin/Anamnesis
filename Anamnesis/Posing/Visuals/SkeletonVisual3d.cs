@@ -32,11 +32,19 @@ namespace Anamnesis.PoseModule
 
 		private static readonly Logger Log = SimpleLog.Log.GetLogger("Skeleton");
 
+		private readonly QuaternionRotation3D rootRotation;
+
 		public SkeletonVisual3d(ActorViewModel actor)
 		{
 			this.Actor = actor;
 			Task.Run(this.GenerateBones);
 			Task.Run(this.WriteSkeletonThread);
+
+			if (actor.ModelObject?.Transform != null)
+				actor.ModelObject.Transform.PropertyChanged += this.OnTransformPropertyChanged;
+
+			this.rootRotation = new QuaternionRotation3D();
+			this.Transform = new RotateTransform3D(this.rootRotation);
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
@@ -500,6 +508,11 @@ namespace Anamnesis.PoseModule
 				// up to 60 times a second
 				await Task.Delay(16);
 			}
+		}
+
+		private void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			this.rootRotation.Quaternion = this.RootRotation.ToMedia3DQuaternion();
 		}
 	}
 
