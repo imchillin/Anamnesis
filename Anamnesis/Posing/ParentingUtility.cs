@@ -87,7 +87,11 @@ namespace Anamnesis.Posing
 						continue;
 
 					if (IsChildOf(bone, otherBone))
-						throw new Exception("Bone that is parent of test bone was moved.");
+					{
+						Log.Write("Bone that is parent of test bone was moved.", "Skeleton Generator", Log.Severity.Warning);
+						continue;
+						////throw new Exception("Bone that is parent of test bone was moved.");
+					}
 
 					otherBone.Parent = bone;
 				}
