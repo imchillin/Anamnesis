@@ -4,6 +4,7 @@
 
 namespace Anamnesis.Views
 {
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using System.Windows;
@@ -53,7 +54,9 @@ namespace Anamnesis.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.Selector.AddItems(TargetService.GetActors());
+			List<TargetService.ActorTableActor> actors = TargetService.GetActors();
+			actors.Sort((a, b) => a.DistanceFromPlayer.CompareTo(b.DistanceFromPlayer));
+			this.Selector.AddItems(actors);
 			this.Selector.FilterItems();
 		}
 

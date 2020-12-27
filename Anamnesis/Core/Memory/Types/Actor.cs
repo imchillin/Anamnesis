@@ -29,14 +29,16 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x0080)] public int DataId;
 		[FieldOffset(0x008c)] public ActorTypes ObjectKind;
 		[FieldOffset(0x008D)] public byte SubKind;
+		[FieldOffset(0x0090)] public byte DistanceFromPlayerX;
+		[FieldOffset(0x0092)] public byte DistanceFromPlayerY;
 		[FieldOffset(0x00F0)] public IntPtr ModelObject;
 		[FieldOffset(0x0104)] public RenderModes RenderMode;
-		[FieldOffset(0xF08)] public Weapon MainHand;
-		[FieldOffset(0xF70)] public Weapon OffHand;
-		[FieldOffset(0x1808)] public float Transparency;
+		[FieldOffset(0x01B4)] public int ModelType;
+		[FieldOffset(0x0F08)] public Weapon MainHand;
+		[FieldOffset(0x0F70)] public Weapon OffHand;
 		[FieldOffset(0x1040)] public Equipment Equipment;
+		[FieldOffset(0x1808)] public float Transparency;
 		[FieldOffset(0x1878)] public Appearance Customize;
-		[FieldOffset(0x1B4)] public int ModelType;
 
 		public string Id => this.Name + this.DataId;
 	}

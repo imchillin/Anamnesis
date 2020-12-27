@@ -42,11 +42,12 @@
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="32"/>
 							<ColumnDefinition/>
+							<ColumnDefinition Width="48"/>
 						</Grid.ColumnDefinitions>
 
 						<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}"/>
 						<TextBlock Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
-
+						<TextBlock Grid.Column="2" Text="{Binding DistanceFromPlayer, StringFormat={}{0:#0} ym}" Margin="6, 0, 0, 0" FontWeight="Light" HorizontalAlignment="Right" Foreground="{DynamicResource MaterialDesignBody}"/>
 						<Grid.ToolTip>
 							<TextBlock>
 								<TextBlock.Text>

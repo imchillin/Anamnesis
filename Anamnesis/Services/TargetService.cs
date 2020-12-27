@@ -226,6 +226,14 @@ namespace Anamnesis
 			public bool IsValid { get; private set; }
 			public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
 
+			public float DistanceFromPlayer
+			{
+				get
+				{
+					return new System.Numerics.Vector2(this.Model.DistanceFromPlayerX, this.Model.DistanceFromPlayerY).Length();
+				}
+			}
+
 			public bool IsSelected
 			{
 				get
