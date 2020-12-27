@@ -226,7 +226,7 @@
 		"MiddleBLeft": "MiddleALeft",
 		"MiddleBRight": "MiddleARight",
 		"ThumbBLeft": "ThumbALeft",
-		"ThumbBRight": "WeaponLeft",
+		"ThumbBRight": "ThumbARight",
 		"RootHead": "Head",
 		"Jaw": "RootHead",
 		"EyelidLowerLeft": "RootHead",
