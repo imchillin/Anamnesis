@@ -4,6 +4,7 @@
 
 namespace Anamnesis.PoseModule
 {
+	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Windows.Media;
@@ -219,7 +220,16 @@ namespace Anamnesis.PoseModule
 			this.position.OffsetZ = this.Position.Z;
 
 			// convert the values in the tree to character-relative space
-			MatrixTransform3D transform = (MatrixTransform3D)this.TransformToAncestor(root);
+			MatrixTransform3D transform;
+
+			try
+			{
+				transform = (MatrixTransform3D)this.TransformToAncestor(root);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to transform bone: {this.BoneName} to root", ex);
+			}
 
 			Quaternion rotation = transform.Matrix.ToQuaternion();
 			rotation.Invert();

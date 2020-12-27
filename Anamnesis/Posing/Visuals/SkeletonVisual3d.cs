@@ -21,7 +21,7 @@ namespace Anamnesis.PoseModule
 	using Anamnesis.Posing.Templates;
 	using Anamnesis.Services;
 	using PropertyChanged;
-
+	using SimpleLog;
 	using AnQuaternion = Anamnesis.Memory.Quaternion;
 
 	[AddINotifyPropertyChangedInterface]
@@ -29,6 +29,8 @@ namespace Anamnesis.PoseModule
 	{
 		public List<BoneVisual3d> SelectedBones = new List<BoneVisual3d>();
 		public HashSet<BoneVisual3d> HoverBones = new HashSet<BoneVisual3d>();
+
+		private static readonly Logger Log = SimpleLog.Log.GetLogger("Skeleton");
 
 		public SkeletonVisual3d(ActorViewModel actor)
 		{
@@ -407,7 +409,7 @@ namespace Anamnesis.PoseModule
 				}
 				catch (Exception ex)
 				{
-					Log.Write(new Exception("Failed to generate skeleton file.", ex), "Posing", Log.Severity.Error);
+					Log.Write(Severity.Error, new Exception("Failed to generate skeleton file.", ex));
 					return;
 				}
 
@@ -438,6 +440,11 @@ namespace Anamnesis.PoseModule
 					if (skeletonFile.Parenting.TryGetValue(bone.BoneName, out parentBoneName))
 					{
 						bone.Parent = this.GetBone(parentBoneName);
+
+						if (bone.Parent == null)
+						{
+							throw new Exception($"Failed to find target parent bone: {parentBoneName}");
+						}
 					}
 					else
 					{
@@ -478,7 +485,17 @@ namespace Anamnesis.PoseModule
 				await Dispatch.MainThread();
 
 				if (this.CurrentBone != null && PoseService.Instance.IsEnabled)
-					this.CurrentBone?.WriteTransform(this);
+				{
+					try
+					{
+						this.CurrentBone.WriteTransform(this);
+					}
+					catch (Exception ex)
+					{
+						Log.Write(Severity.Error, new Exception($"Failed to write bone transform: {this.CurrentBone.BoneName}", ex));
+						this.ClearSelection();
+					}
+				}
 
 				// up to 60 times a second
 				await Task.Delay(16);
