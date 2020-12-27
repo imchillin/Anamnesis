@@ -14,6 +14,7 @@ namespace Anamnesis.GUI.Windows
 	using System.Windows.Documents;
 	using System.Windows.Media;
 	using System.Windows.Navigation;
+	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 
 	/// <summary>
@@ -181,6 +182,8 @@ namespace Anamnesis.GUI.Windows
 		private void OnQuitClick(object sender, RoutedEventArgs e)
 		{
 			this.window?.Close();
+
+			PoseService.Instance.SetEnabled(false);
 
 			Process p = Process.GetCurrentProcess();
 			p.Kill();
