@@ -86,7 +86,12 @@ namespace Anamnesis.PoseModule.Views
 				{
 					this.skeleton = viewModel;
 					this.SetBone(this.BoneName);
-
+					this.skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
+				}
+				else if (this.DataContext is BoneVisual3d bone)
+				{
+					this.skeleton = bone.Skeleton;
+					this.SetBone(bone);
 					this.skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 				}
 				else
@@ -174,6 +179,16 @@ namespace Anamnesis.PoseModule.Views
 
 		private void SetBone(string name)
 		{
+			this.SetBone(this.skeleton?.GetBone(name));
+
+			if (this.Bone == null)
+			{
+				Log.Write("Bone not found: " + name, "Posing", Log.Severity.Warning);
+			}
+		}
+
+		private void SetBone(BoneVisual3d? bone)
+		{
 			if (!AllViews.Contains(this))
 				AllViews.Add(this);
 
@@ -185,7 +200,7 @@ namespace Anamnesis.PoseModule.Views
 				}
 			}
 
-			this.Bone = this.skeleton?.GetBone(name);
+			this.Bone = bone;
 
 			if (this.Bone != null)
 			{
@@ -205,7 +220,6 @@ namespace Anamnesis.PoseModule.Views
 			}
 			else
 			{
-				Log.Write("Bone not found: " + name, "Posing", Log.Severity.Warning);
 				this.IsEnabled = false;
 				this.UpdateState();
 			}

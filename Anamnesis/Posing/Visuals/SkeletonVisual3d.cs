@@ -45,6 +45,7 @@ namespace Anamnesis.PoseModule
 
 			this.rootRotation = new QuaternionRotation3D();
 			this.Transform = new RotateTransform3D(this.rootRotation);
+			this.OnTransformPropertyChanged(null, null);
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
@@ -510,7 +511,7 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		private void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		private void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs? e)
 		{
 			this.rootRotation.Quaternion = this.RootRotation.ToMedia3DQuaternion();
 		}

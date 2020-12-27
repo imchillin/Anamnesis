@@ -16,7 +16,7 @@
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
-					<ColumnDefinition Width="150"/>
+					<ColumnDefinition Width="128"/>
 				</Grid.ColumnDefinitions>
 
 				<Grid Grid.Column="0">
@@ -24,24 +24,46 @@
 						<RowDefinition/>
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
-					
-					<Viewport3D x:Name="Viewport" Grid.Row="0"/>
+
+					<Viewport3D x:Name="Viewport" Grid.Row="0">
+						<ModelVisual3D>
+							<ModelVisual3D.Content>
+								<Model3DGroup>
+									<AmbientLight Color="White"/>
+								</Model3DGroup>
+							</ModelVisual3D.Content>
+						</ModelVisual3D>
+
+						<ModelVisual3D x:Name="SkeletonRoot"/>
+
+					</Viewport3D>
 
 					<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="3, 0, 0, 0">
 						<Button Style="{StaticResource TransparentButton}" Content="Reset" Click="OnFrameClicked" Padding="6, 0"/>
 					</StackPanel>
 					
 				</Grid>
-				
-				
-				<ListBox ItemsSource="{Binding Skeleton.Bones}" Grid.Column="1" SelectionChanged="ListBox_SelectionChanged">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<ana:TextBlock Grid.Column="1" Text="{Binding Tooltip}" Margin="3, 0, 0, 0" VerticalAlignment="Center"/>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-				
+
+
+				<ScrollViewer HorizontalScrollBarVisibility="Disabled" Grid.Column="1">
+					<ItemsControl ItemsSource="{Binding Skeleton.Bones}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="32"/>
+										<ColumnDefinition/>
+									</Grid.ColumnDefinitions>
+
+									<views:BoneView Grid.Column="0"/>
+
+									<ana:TextBlock Grid.Column="1" Text="{Binding Tooltip}" VerticalAlignment="Center" FontWeight="Light" FontSize="11"/>
+								</Grid>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
+
 			</Grid>
 		
 		</Border>

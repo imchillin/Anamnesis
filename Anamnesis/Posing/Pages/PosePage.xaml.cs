@@ -214,6 +214,9 @@ namespace Anamnesis.PoseModule.Pages
 					if (bone.Bone == null)
 						continue;
 
+					if (!bone.IsDescendantOf(this.MouseCanvas))
+						continue;
+
 					Point relativePoint = bone.TransformToAncestor(this.MouseCanvas).Transform(new Point(0, 0));
 					if (relativePoint.X > minx && relativePoint.X < maxx && relativePoint.Y > miny && relativePoint.Y < maxy)
 					{

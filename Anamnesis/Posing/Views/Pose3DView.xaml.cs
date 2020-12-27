@@ -6,6 +6,7 @@ namespace Anamnesis.PoseModule.Views
 {
 	using System;
 	using System.Collections.ObjectModel;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -31,14 +32,16 @@ namespace Anamnesis.PoseModule.Views
 			this.Viewport.Camera = this.camera;
 
 			this.cameraRotaion = new RotateTransform3D();
-			this.cameraRotaion.Rotation = new QuaternionRotation3D();
+			QuaternionRotation3D camRot = new QuaternionRotation3D();
+			camRot.Quaternion = CameraService.Instance.Camera?.Rotation3d ?? Quaternion.Identity;
+			this.cameraRotaion.Rotation = camRot;
 			this.cameraPosition = new TranslateTransform3D();
 			Transform3DGroup transformGroup = new Transform3DGroup();
 			transformGroup.Children.Add(this.cameraRotaion);
 			transformGroup.Children.Add(this.cameraPosition);
 			this.camera.Transform = transformGroup;
 
-			this.Viewport.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
+			this.SkeletonRoot.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
 
 			this.ContentArea.DataContext = this;
 
@@ -62,7 +65,7 @@ namespace Anamnesis.PoseModule.Views
 			if (vm == null)
 				return;
 
-			this.Viewport.Children.Remove(vm);
+			this.SkeletonRoot.Children.Remove(vm);
 		}
 
 		private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
@@ -73,10 +76,10 @@ namespace Anamnesis.PoseModule.Views
 				return;
 
 			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
-			this.Viewport.Children.Clear();
+			this.SkeletonRoot.Children.Clear();
 
-			if (!this.Viewport.Children.Contains(this.Skeleton))
-				this.Viewport.Children.Add(this.Skeleton);
+			if (!this.SkeletonRoot.Children.Contains(this.Skeleton))
+				this.SkeletonRoot.Children.Add(this.Skeleton);
 
 			this.FrameSkeleton();
 		}
@@ -108,7 +111,7 @@ namespace Anamnesis.PoseModule.Views
 			vm.Select(selected);
 		}
 
-		private async void OnCameraChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private async void OnCameraChanged(object? sender, PropertyChangedEventArgs? e)
 		{
 			if (CameraService.Instance == null || CameraService.Instance.Camera == null)
 				return;
@@ -124,6 +127,7 @@ namespace Anamnesis.PoseModule.Views
 		private void OnFrameClicked(object sender, RoutedEventArgs e)
 		{
 			this.FrameSkeleton();
+			this.OnCameraChanged(sender, null);
 		}
 
 		private void FrameSkeleton()
@@ -144,9 +148,15 @@ namespace Anamnesis.PoseModule.Views
 			}
 
 			pos /= this.Skeleton.Bones.Count;
+
 			double d = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
 			Point3D center = new Point3D(pos.X, pos.Y, pos.Z - (d + 3));
 			this.camera.Position = center;
+
+			foreach (BoneVisual3d visual in this.Skeleton.Bones)
+			{
+				visual.SphereRadius = d / 128;
+			}
 		}
 	}
 }

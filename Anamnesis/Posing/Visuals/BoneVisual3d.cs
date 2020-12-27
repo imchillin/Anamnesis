@@ -21,6 +21,7 @@ namespace Anamnesis.PoseModule
 	using CmTransform = Anamnesis.Memory.Transform;
 	using CmVector = Anamnesis.Memory.Vector;
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;
+	using WinColor = System.Windows.Media.Color;
 
 	[AddINotifyPropertyChangedInterface]
 	public class BoneVisual3d : ModelVisual3D, ITransform, IBone
@@ -31,6 +32,10 @@ namespace Anamnesis.PoseModule
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
 		private Sphere sphere;
+
+		private Material defaultMaterial;
+		private EmissiveMaterial hoverMaterial;
+		private EmissiveMaterial selectedMaterial;
 
 		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton, string name)
 		{
@@ -47,11 +52,16 @@ namespace Anamnesis.PoseModule
 			this.Transform = transformGroup;
 
 			PaletteHelper ph = new PaletteHelper();
+			ITheme t = ph.GetTheme();
+
+			this.defaultMaterial = new DiffuseMaterial(new SolidColorBrush(WinColor.FromArgb(64, 0, 0, 0)));
+			this.hoverMaterial = new EmissiveMaterial(new SolidColorBrush(t.PrimaryDark.Color));
+			this.selectedMaterial = new EmissiveMaterial(new SolidColorBrush(t.PrimaryMid.Color));
 
 			System.Windows.Media.Color c1 = System.Windows.Media.Color.FromArgb(200, 255, 255, 255);
 			this.sphere = new Sphere();
 			this.sphere.Radius = 0.02;
-			this.sphere.Material = new EmissiveMaterial(new SolidColorBrush(c1));
+			this.sphere.Material = this.defaultMaterial;
 			this.Children.Add(this.sphere);
 
 			this.BoneName = name;
@@ -61,6 +71,12 @@ namespace Anamnesis.PoseModule
 
 		public SkeletonVisual3d Skeleton { get; private set; }
 		public TransformViewModel ViewModel { get; private set; }
+
+		public double SphereRadius
+		{
+			get => this.sphere.Radius;
+			set => this.sphere.Radius = value;
+		}
 
 		public bool IsEnabled { get; set; } = true;
 		public string BoneName { get; set; }
@@ -293,9 +309,19 @@ namespace Anamnesis.PoseModule
 
 		private void OnSkeletonPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(SkeletonVisual3d.CurrentBone))
+			if (e.PropertyName == nameof(SkeletonVisual3d.CurrentBone) || e.PropertyName == nameof(SkeletonVisual3d.HasHover))
 			{
-				this.sphere.Radius = this.Skeleton.GetIsBoneSelected(this) ? 0.03 : 0.02;
+				this.sphere.Material = this.defaultMaterial;
+
+				if (this.Skeleton.GetIsBoneHovered(this))
+				{
+					this.sphere.Material = this.hoverMaterial;
+				}
+
+				if (this.Skeleton.GetIsBoneSelected(this))
+				{
+					this.sphere.Material = this.selectedMaterial;
+				}
 			}
 		}
 	}
