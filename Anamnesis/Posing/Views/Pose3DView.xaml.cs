@@ -19,7 +19,9 @@ namespace Anamnesis.PoseModule.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class Pose3DView : UserControl
 	{
-		private PerspectiveCamera camera;
+		private readonly PerspectiveCamera camera;
+		private readonly RotateTransform3D cameraRotaion;
+		private readonly TranslateTransform3D cameraPosition;
 
 		public Pose3DView()
 		{
@@ -28,12 +30,22 @@ namespace Anamnesis.PoseModule.Views
 			this.camera = new PerspectiveCamera(new Point3D(0, 0.75, -4), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
 			this.Viewport.Camera = this.camera;
 
+			this.cameraRotaion = new RotateTransform3D();
+			this.cameraRotaion.Rotation = new QuaternionRotation3D();
+			this.cameraPosition = new TranslateTransform3D();
+			Transform3DGroup transformGroup = new Transform3DGroup();
+			transformGroup.Children.Add(this.cameraRotaion);
+			transformGroup.Children.Add(this.cameraPosition);
+			this.camera.Transform = transformGroup;
+
 			this.Viewport.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
 
 			this.ContentArea.DataContext = this;
 
-			////Anamnesis.Quaternion rootrot = Module.SkeletonViewModel.GetBone("Root").RootRotation;
-			////this.root.Transform = new RotateTransform3D(new QuaternionRotation3D(new Quaternion(rootrot.X, rootrot.Y, rootrot.Z, rootrot.W)));
+			if (CameraService.Instance.Camera != null)
+			{
+				CameraService.Instance.Camera.PropertyChanged += this.OnCameraChanged;
+			}
 		}
 
 		public SkeletonVisual3d? Skeleton { get; set; }
@@ -60,29 +72,20 @@ namespace Anamnesis.PoseModule.Views
 			if (this.Skeleton == null)
 				return;
 
+			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 			this.Viewport.Children.Clear();
 
 			if (!this.Viewport.Children.Contains(this.Skeleton))
 				this.Viewport.Children.Add(this.Skeleton);
 
-			// position camera at average center position of skeleton
-			if (this.Skeleton.Bones != null && this.Skeleton.Bones.Count > 0)
+			this.FrameSkeleton();
+		}
+
+		private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(SkeletonVisual3d.Generating))
 			{
-				Rect3D bounds = default;
-
-				Vector3D pos = this.Skeleton.Bones.First().ViewModel.Position.ToMedia3DVector();
-				foreach (BoneVisual3d visual in this.Skeleton.Bones)
-				{
-					pos += visual.ViewModel.Position.ToMedia3DVector();
-
-					Point3D point = visual.ViewModel.Position.ToMedia3DPoint();
-					bounds.Union(point);
-				}
-
-				pos /= this.Skeleton.Bones.Count;
-				double d = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
-				Point3D center = new Point3D(pos.X, pos.Y, pos.Z - (d + 3));
-				this.camera.Position = center;
+				this.FrameSkeleton();
 			}
 		}
 
@@ -103,6 +106,47 @@ namespace Anamnesis.PoseModule.Views
 
 			vm.Hover(selected, true);
 			vm.Select(selected);
+		}
+
+		private async void OnCameraChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (CameraService.Instance == null || CameraService.Instance.Camera == null)
+				return;
+
+			await Dispatch.MainThread();
+
+			////this.camera.Position = CameraService.Instance.CameraPosition.ToMedia3DPoint();
+			QuaternionRotation3D rot = (QuaternionRotation3D)this.cameraRotaion.Rotation;
+			rot.Quaternion = CameraService.Instance.Camera.Rotation3d;
+			this.cameraRotaion.Rotation = rot;
+		}
+
+		private void OnFrameClicked(object sender, RoutedEventArgs e)
+		{
+			this.FrameSkeleton();
+		}
+
+		private void FrameSkeleton()
+		{
+			// position camera at average center position of skeleton
+			if (this.Skeleton == null || this.Skeleton.Bones == null || this.Skeleton.Bones.Count <= 0)
+				return;
+
+			Rect3D bounds = default;
+
+			Vector3D pos = this.Skeleton.Bones.First().ViewModel.Position.ToMedia3DVector();
+			foreach (BoneVisual3d visual in this.Skeleton.Bones)
+			{
+				pos += visual.ViewModel.Position.ToMedia3DVector();
+
+				Point3D point = visual.ViewModel.Position.ToMedia3DPoint();
+				bounds.Union(point);
+			}
+
+			pos /= this.Skeleton.Bones.Count;
+			double d = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
+			Point3D center = new Point3D(pos.X, pos.Y, pos.Z - (d + 3));
+			this.camera.Position = center;
 		}
 	}
 }

@@ -19,7 +19,20 @@
 					<ColumnDefinition Width="150"/>
 				</Grid.ColumnDefinitions>
 
-				<Viewport3D x:Name="Viewport" Grid.Column="0"/>
+				<Grid Grid.Column="0">
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+					
+					<Viewport3D x:Name="Viewport" Grid.Row="0"/>
+
+					<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="3, 0, 0, 0">
+						<Button Style="{StaticResource TransparentButton}" Content="Reset" Click="OnFrameClicked" Padding="6, 0"/>
+					</StackPanel>
+					
+				</Grid>
+				
 				
 				<ListBox ItemsSource="{Binding Skeleton.Bones}" Grid.Column="1" SelectionChanged="ListBox_SelectionChanged">
 					<ListBox.ItemTemplate>
