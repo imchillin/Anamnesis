@@ -511,8 +511,9 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		private void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs? e)
+		private async void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs? e)
 		{
+			await Dispatch.MainThread();
 			this.rootRotation.Quaternion = this.RootRotation.ToMedia3DQuaternion();
 		}
 	}
