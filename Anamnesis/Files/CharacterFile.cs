@@ -371,7 +371,7 @@ namespace Anamnesis.Files
 					usedExAppearance |= this.SkinGloss != null;
 				}
 
-				actor.ModelObject.ExtendedAppearance.Freeze = usedExAppearance;
+				////actor.ModelObject.ExtendedAppearance.Freeze = usedExAppearance;
 				actor.ModelObject.ExtendedAppearance.MemoryMode = MemoryModes.ReadWrite;
 				actor.ModelObject.ExtendedAppearance.WriteToMemory(true);
 			}
