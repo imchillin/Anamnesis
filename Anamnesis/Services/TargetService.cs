@@ -70,11 +70,7 @@ namespace Anamnesis
 
 			await Dispatch.MainThread();
 			Instance.PinnedActors.Add(actor);
-
-			if (Instance.SelectedActor == null)
-			{
-				Instance.SelectActor(actor);
-			}
+			Instance.SelectActor(actor);
 		}
 
 		public static void UnpinActor(ActorTableActor actor)
@@ -151,7 +147,6 @@ namespace Anamnesis
 				return;
 
 			await PinActor(actors[0]);
-			this.SelectActor(actors[0]);
 		}
 
 		public void ClearSelection()
