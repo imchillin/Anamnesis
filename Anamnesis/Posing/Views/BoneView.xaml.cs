@@ -109,6 +109,9 @@ namespace Anamnesis.PoseModule.Views
 
 		private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
+			if (this.Bone == null && this.DataContext is SkeletonVisual3d)
+				this.SetBone(this.BoneName);
+
 			this.UpdateState();
 		}
 
