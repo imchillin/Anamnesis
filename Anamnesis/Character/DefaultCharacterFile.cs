@@ -43,18 +43,18 @@ namespace Anamnesis.Character
 			{
 				Color = Color.Black,
 				Scale = Vector.One,
-				ModelSet = 0,
-				ModelBase = 0,
-				ModelVariant = 0,
+				ModelSet = 301,
+				ModelBase = 31,
+				ModelVariant = 1,
 				DyeId = 0,
 			},
 			OffHand = new CharacterFile.WeaponSave()
 			{
 				Color = Color.Black,
 				Scale = Vector.One,
-				ModelSet = 0,
-				ModelBase = 0,
-				ModelVariant = 0,
+				ModelSet = 301,
+				ModelBase = 31,
+				ModelVariant = 1,
 				DyeId = 0,
 			},
 			HeadGear = new CharacterFile.ItemSave()
