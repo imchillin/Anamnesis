@@ -8,6 +8,7 @@ namespace Anamnesis
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
@@ -67,6 +68,9 @@ namespace Anamnesis
 				await Task.Delay(10);
 
 				if (!MemoryService.IsProcessAlive)
+					continue;
+
+				if (!GameService.Instance.IsSignedIn)
 					continue;
 
 				if (AddressService.Time == IntPtr.Zero)

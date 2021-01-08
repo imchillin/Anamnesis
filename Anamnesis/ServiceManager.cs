@@ -73,6 +73,7 @@ namespace Anamnesis.Services
 			await Add<TargetService>();
 			await Add<FileService>();
 			await Add<TerritoryService>();
+			await Add<GameService>();
 			await Add<TimeService>();
 			await Add<CameraService>();
 			await Add<GposeService>();

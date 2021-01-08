@@ -23,7 +23,16 @@ namespace Anamnesis
 
 		public struct SwitchToUiAwaitable : INotifyCompletion
 		{
-			public bool IsCompleted => Application.Current.Dispatcher.CheckAccess();
+			public bool IsCompleted
+			{
+				get
+				{
+					if (Application.Current == null)
+						return true;
+
+					return Application.Current.Dispatcher.CheckAccess();
+				}
+			}
 
 			public SwitchToUiAwaitable GetAwaiter()
 			{

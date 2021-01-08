@@ -374,6 +374,10 @@ namespace Anamnesis.Memory
 			if (proc == null)
 			{
 				await Dispatch.MainThread();
+
+				if (App.Current == null)
+					return;
+
 				App.Current.MainWindow.Topmost = false;
 
 				proc = ProcessSelector.FindProcess();
@@ -412,6 +416,9 @@ namespace Anamnesis.Memory
 					if (!IsProcessAlive)
 						return;
 
+					if (App.Current == null)
+						return;
+
 					if (GposeService.Instance.IsChangingState)
 						continue;
 
@@ -432,6 +439,9 @@ namespace Anamnesis.Memory
 								viewModels.Remove(weakRef);
 								continue;
 							}
+
+							if (!GameService.Instance.IsSignedIn)
+								continue;
 
 							viewModel.Tick();
 						}
@@ -467,7 +477,7 @@ namespace Anamnesis.Memory
 					try
 					{
 						Log.Write("FFXIV Process has terminated");
-						TargetService.Instance.ClearSelection();
+						TargetService.Instance.ClearPins();
 						await this.GetProcess();
 					}
 					catch (Win32Exception)

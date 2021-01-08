@@ -151,6 +151,28 @@ namespace Anamnesis
 
 		public void ClearSelection()
 		{
+			if (this.SelectedActor == null)
+				return;
+
+			if (App.Current == null)
+				return;
+
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				this.SelectedActor = null;
+
+				foreach (ActorTableActor actor in this.PinnedActors)
+				{
+					actor.SelectionChanged();
+				}
+			});
+		}
+
+		public void ClearPins()
+		{
+			if (this.SelectedActor == null)
+				return;
+
 			if (App.Current == null)
 				return;
 
@@ -233,11 +255,17 @@ namespace Anamnesis
 			{
 				get
 				{
+					if (this.Pointer == null)
+						return false;
+
 					return TargetService.Instance.SelectedActor?.Pointer == this.Pointer;
 				}
 
 				set
 				{
+					if (!GameService.Instance.IsSignedIn)
+						return;
+
 					if (value)
 					{
 						TargetService.Instance.SelectActor(this);

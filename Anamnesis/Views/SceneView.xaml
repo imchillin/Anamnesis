@@ -60,7 +60,7 @@
 			</Grid>
 		</Grid>
 
-		<Grid Grid.Column="1">
+		<Grid Grid.Column="1" IsEnabled="{Binding GameService.IsSignedIn}">
 
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>

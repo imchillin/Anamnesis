@@ -25,6 +25,7 @@ namespace Anamnesis.Views
 			this.ContentArea.DataContext = this;
 		}
 
+		public GameService GameService => GameService.Instance;
 		public TargetService TargetService => TargetService.Instance;
 		public GposeService GposeService => GposeService.Instance;
 		public TerritoryService TerritoryService => TerritoryService.Instance;

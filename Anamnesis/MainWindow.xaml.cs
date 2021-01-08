@@ -39,8 +39,11 @@ namespace Anamnesis.GUI
 
 			SettingsService.Current.PropertyChanged += this.OnSettingsChanged;
 			this.OnSettingsChanged();
+
+			GameService.Instance.PropertyChanged += this.OnGameServicePropertyChanged;
 		}
 
+		public GameService GameService => GameService.Instance;
 		public SettingsService SettingsService => SettingsService.Instance;
 		public GposeService GposeService => GposeService.Instance;
 		public TargetService TargetService => TargetService.Instance;
@@ -268,6 +271,14 @@ namespace Anamnesis.GUI
 					return;
 
 				Task.Run(vm.ConvertToPlayer);
+			}
+		}
+
+		private void OnGameServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (!GameService.Instance.IsSignedIn)
+			{
+				this.Dispatcher.Invoke(() => this.Tabs.SelectedIndex = 0);
 			}
 		}
 

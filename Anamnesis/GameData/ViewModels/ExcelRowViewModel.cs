@@ -14,13 +14,21 @@ namespace Anamnesis.GameData.ViewModels
 		protected readonly Lumina lumina;
 
 		private ExcelSheet<T> sheet;
-		private T? value;
 
 		public ExcelRowViewModel(int key, ExcelSheet<T> sheet, Lumina lumina)
 		{
 			this.sheet = sheet;
 			this.Key = key;
 			this.lumina = lumina;
+
+			try
+			{
+				this.Value = this.sheet.GetRow((uint)this.Key);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to read Lumina row: {this.Key} for type: {typeof(T).Name}", ex);
+			}
 		}
 
 		public int Key
@@ -29,33 +37,7 @@ namespace Anamnesis.GameData.ViewModels
 			private set;
 		}
 
-		public T Value
-		{
-			get
-			{
-				try
-				{
-					if (this.value == null)
-					{
-						try
-						{
-							this.value = this.sheet.GetRow((uint)this.Key);
-						}
-						catch (Exception ex)
-						{
-							throw new Exception($"Failed to read Lumina row: {this.Key} for type: {typeof(T).Name}", ex);
-						}
-					}
-
-					return this.value;
-				}
-				catch (Exception ex)
-				{
-					Log.Write(ex);
-					throw;
-				}
-			}
-		}
+		public T Value { get; private set; }
 
 		public abstract string Name
 		{

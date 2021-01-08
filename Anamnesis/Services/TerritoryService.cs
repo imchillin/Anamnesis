@@ -73,41 +73,55 @@ namespace Anamnesis
 					// Update territory
 					int newTerritoryId = MemoryService.Read<int>(AddressService.Territory);
 
-					if (newTerritoryId != this.CurrentTerritoryId)
+					if (newTerritoryId == -1)
 					{
-						this.CurrentTerritoryId = newTerritoryId;
-
-						if (GameDataService.Territories == null)
-						{
-							this.CurrentTerritoryName = $"Unkown ({this.CurrentTerritoryId})";
-						}
-						else
-						{
-							this.CurrentTerritory = GameDataService.Territories.Get(this.CurrentTerritoryId);
-							this.CurrentTerritoryName = this.CurrentTerritory?.Place + " (" + this.CurrentTerritory?.Region + ")";
-						}
-					}
-
-					// Update weather
-					ushort weatherId;
-					if (GposeService.Instance.IsGpose)
-					{
-						weatherId = MemoryService.Read<ushort>(AddressService.GPoseWeather);
+						this.currentWeatherId = 0;
+						this.CurrentTerritoryId = 0;
+						this.CurrentTerritory = null;
+						this.CurrentTerritoryName = "Menu";
 					}
 					else
 					{
-						weatherId = MemoryService.Read<byte>(AddressService.Weather);
-					}
+						if (newTerritoryId != this.CurrentTerritoryId)
+						{
+							this.CurrentTerritoryId = newTerritoryId;
 
-					if (weatherId != this.CurrentWeatherId)
-					{
-						this.CurrentWeatherId = weatherId;
+							if (GameDataService.Territories == null)
+							{
+								this.CurrentTerritoryName = $"Unkown ({this.CurrentTerritoryId})";
+							}
+							else
+							{
+								this.CurrentTerritory = GameDataService.Territories.Get(this.CurrentTerritoryId);
+								this.CurrentTerritoryName = this.CurrentTerritory?.Place + " (" + this.CurrentTerritory?.Region + ")";
+							}
+						}
+
+						// Update weather
+						ushort weatherId;
+						if (GposeService.Instance.IsGpose)
+						{
+							weatherId = MemoryService.Read<ushort>(AddressService.GPoseWeather);
+						}
+						else
+						{
+							weatherId = MemoryService.Read<byte>(AddressService.Weather);
+						}
+
+						if (weatherId != this.CurrentWeatherId)
+						{
+							this.CurrentWeatherId = weatherId;
+						}
 					}
 				}
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				Log.Write(new Exception("Failed to update territory", ex));
+				Log.Write("Failed to update territory");
+				this.currentWeatherId = 0;
+				this.CurrentTerritoryId = 0;
+				this.CurrentTerritory = null;
+				this.CurrentTerritoryName = "Unknown";
 			}
 		}
 

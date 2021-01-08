@@ -8,7 +8,7 @@
 		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		xmlns:characterPages="clr-namespace:Anamnesis.Character.Pages"
 		xmlns:posePages="clr-namespace:Anamnesis.PoseModule.Pages"
-		xmlns:services="clr-namespace:Anamnesis"
+		xmlns:services="clr-namespace:Anamnesis" xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 		mc:Ignorable="d"
 		WindowStyle="None"
 		ResizeMode="CanMinimize"
@@ -54,7 +54,7 @@
 			</Grid.LayoutTransform>
 
 			<Grid Background="{DynamicResource MaterialDesignShadowBrush}" IsEnabled="{Binding GposeService.IsNotChangingState}">
-				<TabControl TabStripPlacement="Left">
+				<TabControl TabStripPlacement="Left" x:Name="Tabs">
 
 					<TabControl.Template>
 						<ControlTemplate TargetType="TabControl">
@@ -166,7 +166,7 @@
 
 					<TabItem IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 						<TabItem.Header>
-							<fa:IconImage Icon="UserEdit" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Character"/>
+							<fa:IconImage Icon="UserEdit" Foreground="{DynamicResource MaterialDesignBodyLight}" ToolTip="Character" IsEnabled="{Binding GameService.IsSignedIn}"/>
 						</TabItem.Header>
 
 						<characterPages:AppearancePage DataContext="{Binding TargetService.SelectedActor}"/>
@@ -203,6 +203,8 @@
 						<TextBlock Text="Anamnesis" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
 
 						<TextBlock Text="{Binding TargetService.SelectedActor.DisplayName}" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5"/>
+
+						<ana:TextBlock Key="Error_NotInGame" VerticalAlignment="Center" Margin="12, 0, 3, 0" Opacity="0.5" Visibility="{Binding GameService.IsSignedIn, Converter={StaticResource !B2V}}"/>
 
 						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Sync" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Hourglass" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
