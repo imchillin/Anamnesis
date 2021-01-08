@@ -92,6 +92,9 @@ namespace Anamnesis.Files
 			if (this.characterDetails?.LipsR != null && this.characterDetails?.LipsG != null && this.characterDetails?.LipsB != null && this.characterDetails?.LipsBrightness != null)
 				allFile.MouthColor = new Color4((float)this.characterDetails.LipsR.value, (float)this.characterDetails.LipsG.value, (float)this.characterDetails.LipsB.value, (float)this.characterDetails.LipsBrightness.value);
 
+			if (this.characterDetails?.Height != null)
+				allFile.HeightMultiplier = (float)this.characterDetails.Height.value;
+
 			return allFile;
 		}
 

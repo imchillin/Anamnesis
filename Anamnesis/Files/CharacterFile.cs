@@ -102,6 +102,7 @@ namespace Anamnesis.Files
 		public Vector? BustScale { get; set; }
 		public float? Transparency { get; set; }
 		public float? FeatureScale { get; set; }
+		public float? HeightMultiplier { get; set; }
 
 		public void WriteToFile(ActorViewModel actor, SaveModes mode)
 		{
@@ -209,11 +210,11 @@ namespace Anamnesis.Files
 				this.TailEarsType = actor.Customize?.TailEarsType;
 				this.Bust = actor.Customize?.Bust;
 
+				this.HeightMultiplier = actor.ModelObject?.Height;
 				this.SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
 				this.SkinGloss = actor.ModelObject?.ExtendedAppearance?.SkinGloss;
-				////this.BustScale = actor.GetValue(Offsets.Main.BustScale);
-				////this.Transparency = actor.GetValue(Offsets.Main.Transparency);
-				////this.FeatureScale = actor.GetValue(Offsets.Main.UniqueFeatureScale);
+				this.BustScale = actor.ModelObject?.Bust?.Scale;
+				this.Transparency = actor.Transparency;
 			}
 		}
 
@@ -363,9 +364,10 @@ namespace Anamnesis.Files
 				{
 					actor.ModelObject.ExtendedAppearance.SkinColor = this.SkinColor ?? actor.ModelObject.ExtendedAppearance.SkinColor;
 					actor.ModelObject.ExtendedAppearance.SkinGloss = this.SkinGloss ?? actor.ModelObject.ExtendedAppearance.SkinGloss;
-					////actor.SetValue(Offsets.Main.Transparency, this.Transparency);
-					////actor.SetValue(Offsets.Main.BustScale, this.BustScale);
-					////actor.SetValue(Offsets.Main.UniqueFeatureScale, this.FeatureScale);
+					actor.Transparency = this.Transparency ?? actor.Transparency;
+
+					if (actor.ModelObject.Bust?.Scale != null)
+						actor.ModelObject.Bust.Scale = this.BustScale ?? actor.ModelObject.Bust.Scale;
 
 					usedExAppearance |= this.SkinColor != null;
 					usedExAppearance |= this.SkinGloss != null;
