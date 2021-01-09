@@ -94,11 +94,6 @@ namespace Anamnesis.Character.Views
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				this.IsEnabled = true;
-
-				if (this.Appearance.Race == 0)
-					this.Appearance.Race = AnAppearance.Races.Hyur;
-
 				this.UpdateRaceAndTribe();
 			});
 		}
@@ -129,10 +124,16 @@ namespace Anamnesis.Character.Views
 				throw new Exception("CharacterMakeCustomize not loaded");
 
 			if (this.Appearance == null)
+			{
+				this.IsEnabled = false;
 				return;
+			}
 
 			if (this.Appearance.Race == 0)
-				this.Appearance.Race = AnAppearance.Races.Hyur;
+			{
+				this.IsEnabled = false;
+				return;
+			}
 
 			this.Race = GameDataService.Races.Get((int)this.Appearance.Race);
 
@@ -173,6 +174,8 @@ namespace Anamnesis.Character.Views
 				this.Hair = GameDataService.CharacterMakeCustomize.GetFeature(Features.Hair, this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
 				this.FacePaint = GameDataService.CharacterMakeCustomize.GetFeature(Features.FacePaint, this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.FacePaint);
 			}
+
+			this.IsEnabled = true;
 		}
 
 		private async void OnHairClicked(object sender, RoutedEventArgs e)
