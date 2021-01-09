@@ -29,7 +29,7 @@
 			</materialdesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<Grid Grid.Column="1" IsEnabled="{Binding Freeze}" Margin="0, 0, 3, 0">
+		<Grid Grid.Column="1" Margin="0, 0, 3, 0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>

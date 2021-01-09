@@ -27,7 +27,7 @@
 			</materialdesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<Grid Grid.Column="1" IsEnabled="{Binding Freeze}">
+		<Grid Grid.Column="1">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="Auto"/>
