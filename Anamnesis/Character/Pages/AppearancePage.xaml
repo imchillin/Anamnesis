@@ -57,7 +57,7 @@
 
 			</GroupBox>
 		</Grid>
-		
+
 
 		<Grid Grid.Column="2">
 
@@ -65,7 +65,7 @@
 				<RowDefinition/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
-		
+
 			<StackPanel>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">
@@ -85,12 +85,14 @@
 						</Grid.RowDefinitions>
 
 						<ana:TextBlock Grid.Row="0" Grid.Column="0" Key="Character_Actor_Model" Style="{StaticResource Label}"/>
-						<views:ModelTypeEditor Grid.Row="0" Grid.Column="1" DataContext="{Binding Actor}"/>
+						<Grid Grid.Row="0" Grid.Column="1" IsEnabled="{Binding GPoseService.IsOverworld}">
+							<views:ModelTypeEditor  DataContext="{Binding Actor}"/>
+						</Grid>
 
 						<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Character_Actor_Alpha" Style="{StaticResource Label}"/>
 						<cm3Controls:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Actor.Transparency}" Minimum="0.01" Maximum="1" TickFrequency="0.1" Slider="Absolute"/>
 					</Grid>
-					
+
 				</GroupBox>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">
@@ -147,7 +149,7 @@
 							<GroupBox.Header>
 								<ana:TextBlock Key="Character_Model_BustScale"/>
 							</GroupBox.Header>
-							
+
 							<cm3Controls:VectorEditor Value="{Binding Actor.ModelObject.Bust.Scale}" Expanded="True" CanLink="True" Minimum="0" Maximum="10"/>
 						</GroupBox>
 
@@ -196,19 +198,5 @@
 
 			</Grid>
 		</Grid>
-
-		<Grid Grid.Column="0" 
-			  Grid.ColumnSpan="2" 
-			  Grid.RowSpan="2"
-			  Visibility="{Binding GPoseService.IsOverworld, Converter={StaticResource !B2V}}" >
-
-			<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.9"/>
-
-			<StackPanel Grid.RowSpan="2" Grid.ColumnSpan="2" Height="32" HorizontalAlignment="Center" Orientation="Horizontal">
-				<fa:IconImage Icon="ExclamationTriangle" Foreground="{DynamicResource MaterialDesignBody}" Margin="6, 3, 10, 3"/>
-				<cm3Controls:TextBlock Text="Character appearance can not be changed while in GPose." FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}"/>
-			</StackPanel>
-		</Grid>
-
 	</Grid>
 </UserControl>
