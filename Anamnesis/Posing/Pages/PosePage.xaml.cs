@@ -15,6 +15,7 @@ namespace Anamnesis.PoseModule.Pages
 	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Services;
 	using PropertyChanged;
+	using Serilog;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
@@ -125,7 +126,7 @@ namespace Anamnesis.PoseModule.Pages
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex, "Pose", Log.Severity.Error);
+				Log.Error(ex, "Failed to load pose file");
 			}
 		}
 

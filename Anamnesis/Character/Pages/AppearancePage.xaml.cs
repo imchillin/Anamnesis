@@ -16,6 +16,7 @@ namespace Anamnesis.Character.Pages
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
+	using Serilog;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
@@ -57,7 +58,7 @@ namespace Anamnesis.Character.Pages
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex, "Appearance", Log.Severity.Error);
+				Log.Error(ex, "Failed to load appearance");
 			}
 		}
 
@@ -69,7 +70,7 @@ namespace Anamnesis.Character.Pages
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex, "Appearance", Log.Severity.Error);
+				Log.Error(ex, "Failed to load appearance");
 			}
 		}
 
@@ -136,7 +137,7 @@ namespace Anamnesis.Character.Pages
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex, "Appearance", Log.Severity.Error);
+				Log.Error(ex, "Failed to save appearance");
 			}
 		}
 
@@ -148,7 +149,7 @@ namespace Anamnesis.Character.Pages
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex, "Appearance", Log.Severity.Error);
+				Log.Error(ex, "Failed to save appearance");
 			}
 		}
 

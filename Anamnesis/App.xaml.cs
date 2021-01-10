@@ -18,7 +18,7 @@ namespace Anamnesis
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Services;
 	using MaterialDesignThemes.Wpf;
-
+	using Serilog;
 	using Application = System.Windows.Application;
 
 	/// <summary>
@@ -59,17 +59,17 @@ namespace Anamnesis
 			if (e.Exception == null)
 				return;
 
-			Log.Write(e.Exception, @"Unhandled Task", Log.Severity.Critical);
+			Log.Fatal(e.Exception, e.Exception.Message);
 		}
 
 		private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
-			Log.Write(e.Exception, @"Unhandled Current Dispatcher", Log.Severity.Critical);
+			Log.Fatal(e.Exception, e.Exception.Message);
 		}
 
 		private void DispatcherOnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
-			Log.Write(e.Exception, @"Unhandled Dispatcher", Log.Severity.Critical);
+			Log.Fatal(e.Exception, e.Exception.Message);
 		}
 
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -79,7 +79,7 @@ namespace Anamnesis
 			if (ex == null)
 				return;
 
-			Log.Write(ex, @"Unhandled", Log.Severity.Critical);
+			Log.Fatal(ex, ex.Message);
 		}
 
 		private async Task Start()
@@ -98,7 +98,7 @@ namespace Anamnesis
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex);
+				Log.Error(ex, "Failed to start application");
 				ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), true);
 			}
 		}

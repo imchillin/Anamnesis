@@ -16,7 +16,7 @@ namespace Anamnesis.Files
 	using Anamnesis.Scenes;
 	using Anamnesis.Services;
 	using Microsoft.Win32;
-	using SimpleLog;
+	using Serilog;
 
 	public class FileService : ServiceBase<FileService>
 	{
@@ -176,7 +176,7 @@ namespace Anamnesis.Files
 			}
 			catch (Exception ex)
 			{
-				Log.Write(Severity.Error, new Exception("Failed to open file", ex));
+				Log.Error(ex, "Failed to open file");
 			}
 
 			return result;
@@ -238,7 +238,7 @@ namespace Anamnesis.Files
 			}
 			catch (Exception ex)
 			{
-				Log.Write(Severity.Error, new Exception("Failed to save file", ex));
+				Log.Error(ex, "Failed to save file");
 			}
 		}
 

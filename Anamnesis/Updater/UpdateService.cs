@@ -16,7 +16,7 @@ namespace Anamnesis.Updater
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
 	using Anamnesis.Services;
-	using SimpleLog;
+	using Serilog;
 
 	public class UpdateService : ServiceBase<UpdateService>
 	{
@@ -79,7 +79,7 @@ namespace Anamnesis.Updater
 			}
 			catch (Exception ex)
 			{
-				Log.Write(Severity.Error, new Exception("Unable to complete update check", ex));
+				Log.Error(ex, "Failed to complete update check");
 				throw;
 			}
 		}
@@ -178,7 +178,7 @@ namespace Anamnesis.Updater
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex);
+				Log.Error(ex, "Failed to perform update");
 			}
 		}
 

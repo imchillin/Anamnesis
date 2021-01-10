@@ -12,15 +12,15 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis.Files;
 	using Anamnesis.GUI.Windows;
-	using SimpleLog;
+	using Serilog;
+	using Serilog.Core;
+	using Serilog.Events;
 
 	public class LogService : IService
 	{
 		private const string LogfilePath = "/Logs/";
 
 		private static string? currentLogPath;
-
-		private FileLogDestination? file;
 
 		public static void ShowLogs()
 		{
@@ -56,33 +56,33 @@ namespace Anamnesis.Services
 			}
 
 			currentLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
-			this.file = new FileLogDestination(currentLogPath);
-			Log.AddDestination(this.file);
-			Log.AddDestination<ErrorDialogLogDestination>();
-			Log.AddDestination<TraceLogDestination>();
 
-			Log.Write("OS: " + RuntimeInformation.OSDescription, "Info");
-			Log.Write("Framework: " + RuntimeInformation.FrameworkDescription, "Info");
-			Log.Write("OS Architecture: " + RuntimeInformation.OSArchitecture.ToString(), "Info");
-			Log.Write("Process Architecture: " + RuntimeInformation.ProcessArchitecture.ToString(), "Info");
+			LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch();
+			levelSwitch.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
+
+			LoggerConfiguration config = new LoggerConfiguration();
+			config.MinimumLevel.ControlledBy(levelSwitch);
+			config.WriteTo.File(currentLogPath);
+			config.WriteTo.Sink<ErrorDialogLogDestination>();
+
+			Serilog.Log.Logger = config.CreateLogger();
+
+			Log.Information("OS: " + RuntimeInformation.OSDescription, "Info");
+			Log.Information("Framework: " + RuntimeInformation.FrameworkDescription, "Info");
+			Log.Information("OS Architecture: " + RuntimeInformation.OSArchitecture.ToString(), "Info");
+			Log.Information("Process Architecture: " + RuntimeInformation.ProcessArchitecture.ToString(), "Info");
 
 			string ver = "Unknown";
 			if (File.Exists("Version.txt"))
 				ver = File.ReadAllText("Version.txt");
 
-			Log.Write("CM Version: " + ver, "Info");
+			Log.Information("Anamnesis Version: " + ver, "Info");
 
 			return Task.CompletedTask;
 		}
 
 		public Task Shutdown()
 		{
-			lock (this)
-			{
-				this.file?.Dispose();
-				this.file = null;
-			}
-
 			return Task.CompletedTask;
 		}
 
@@ -91,22 +91,13 @@ namespace Anamnesis.Services
 			return Task.CompletedTask;
 		}
 
-		private class ErrorDialogLogDestination : ILogDestination
+		private class ErrorDialogLogDestination : ILogEventSink
 		{
-			public void OnException(Severity severity, ExceptionDispatchInfo exception, string? category = null)
+			public void Emit(LogEvent logEvent)
 			{
-				if (severity >= Severity.Error)
+				if (logEvent.Level >= LogEventLevel.Error)
 				{
-					ErrorDialog.ShowError(exception, severity == Severity.UnhandledException);
-				}
-			}
-
-			public void OnLog(Severity severity, string message, string? category = null, string? stack = null)
-			{
-				if (severity >= Severity.Error)
-				{
-					Exception ex = new Exception(message);
-					ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), severity == Severity.UnhandledException);
+					ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(new Exception(logEvent.MessageTemplate.Text, logEvent.Exception)), logEvent.Level == LogEventLevel.Fatal);
 				}
 			}
 		}

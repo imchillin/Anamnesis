@@ -15,6 +15,7 @@ namespace Anamnesis.Services
 	using Anamnesis.Serialization;
 	using Anamnesis.TexTools;
 	using Anamnesis.XMA;
+	using Serilog;
 
 	public class ServiceManager
 	{
@@ -51,11 +52,11 @@ namespace Anamnesis.Services
 					await service.Start();
 				}
 
-				Log.Write($"Added service: {serviceName} in {sw.ElapsedMilliseconds}ms", "Services");
+				Log.Information($"Added service: {serviceName} in {sw.ElapsedMilliseconds}ms");
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception($"Failed to initialize service: {typeof(T).Name}", ex));
+				Log.Error(ex, $"Failed to initialize service: {typeof(T).Name}");
 			}
 		}
 
@@ -83,7 +84,7 @@ namespace Anamnesis.Services
 			await Add<TexToolsService>();
 
 			IsInitialized = true;
-			Log.Write($"Services Initialized", "Services");
+			Log.Information($"Services Initialized");
 
 			await this.StartServices();
 		}
@@ -102,11 +103,11 @@ namespace Anamnesis.Services
 				OnServiceStarting?.Invoke(name);
 				await service.Start();
 
-				Log.Write($"Started Service: {name} in {sw.ElapsedMilliseconds}ms", "Services");
+				Log.Information($"Started Service: {name} in {sw.ElapsedMilliseconds}ms");
 			}
 
 			IsStarted = true;
-			Log.Write($"Services Started", "Services");
+			Log.Information($"Services Started");
 		}
 
 		public async Task ShutdownServices()

@@ -29,7 +29,7 @@ namespace Anamnesis.Services
 			}
 			catch (Exception ex)
 			{
-				Log.Write(SimpleLog.Severity.Warning, new Exception("Failed to load tips.", ex));
+				Log.Warning(ex, "Failed to load tips.");
 			}
 
 			Task.Run(this.TipCycle);

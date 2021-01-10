@@ -12,8 +12,9 @@ namespace Anamnesis.Files
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
+	using Serilog;
 
-	#pragma warning disable SA1402, SA1649
+#pragma warning disable SA1402, SA1649
 	public class PoseFileInfo : JsonFileInfoBase<PoseFile>
 	{
 		public override string Extension => "pose";
@@ -84,7 +85,7 @@ namespace Anamnesis.Files
 
 						if (bone == null)
 						{
-							Log.Write($"Bone: \"{name}\" not found", "Pose", Log.Severity.Warning);
+							Log.Warning($"Bone: \"{name}\" not found");
 							continue;
 						}
 

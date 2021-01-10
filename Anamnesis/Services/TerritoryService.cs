@@ -117,7 +117,7 @@ namespace Anamnesis
 			}
 			catch (Exception)
 			{
-				Log.Write("Failed to update territory");
+				Log.Information("Failed to update territory");
 				this.currentWeatherId = 0;
 				this.CurrentTerritoryId = 0;
 				this.CurrentTerritory = null;

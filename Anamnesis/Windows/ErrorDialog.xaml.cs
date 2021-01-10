@@ -16,6 +16,7 @@ namespace Anamnesis.GUI.Windows
 	using System.Windows.Navigation;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
+	using Serilog;
 
 	/// <summary>
 	/// Interaction logic for ErrorDialog.xaml.
@@ -91,7 +92,7 @@ namespace Anamnesis.GUI.Windows
 				}
 				catch (Exception ex)
 				{
-					Log.Write(new ErrorException(ex));
+					Log.Error(new ErrorException(ex), "Failed to display error dialog");
 				}
 			});
 		}
@@ -159,7 +160,7 @@ namespace Anamnesis.GUI.Windows
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex, "Error", Log.Severity.Warning);
+				Log.Warning(ex, "Failed to navigate to source file");
 			}
 		}
 
