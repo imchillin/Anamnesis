@@ -15,7 +15,7 @@ namespace Anamnesis.Scenes
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
-	using SimpleLog;
+	using Serilog;
 
 	using Quaternion = Anamnesis.Memory.Quaternion;
 	using Vector = Anamnesis.Memory.Vector;
@@ -30,8 +30,6 @@ namespace Anamnesis.Scenes
 
 	public class SceneFile : FileBase
 	{
-		private static readonly Logger Log = SimpleLog.Log.GetLogger<SceneFile>();
-
 		public int TerritoryId { get; set; }
 		public string? TerritoryName { get; set; }
 
@@ -54,6 +52,8 @@ namespace Anamnesis.Scenes
 		public Vector? CameraPosition { get; set; }
 
 		public List<SceneActor>? Actors { get; set; }
+
+		private static ILogger Log => Serilog.Log.ForContext<SceneFile>();
 
 		public async Task WriteToFile(Configuration config)
 		{

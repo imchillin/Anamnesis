@@ -79,7 +79,7 @@ namespace Anamnesis
 				}
 				catch (Exception ex)
 				{
-					Log.Write(SimpleLog.Severity.Warning, ex);
+					Log.Warning(ex, "Failed to update camera");
 				}
 			}
 		}

@@ -12,8 +12,9 @@ namespace Anamnesis.Files
 	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using Serilog;
 
-	#pragma warning disable SA1402, SA1649
+#pragma warning disable SA1402, SA1649
 	public class CharacterFileInfo : JsonFileInfoBase<CharacterFile>
 	{
 		public override string Extension => "chara";
@@ -223,7 +224,7 @@ namespace Anamnesis.Files
 			if (actor.Customize == null)
 				return;
 
-			Log.Write("Reading appearance from file", "AppearanceFile");
+			Log.Information("Reading appearance from file");
 
 			actor.AutomaticRefreshEnabled = false;
 			actor.MemoryMode = MemoryModes.None;

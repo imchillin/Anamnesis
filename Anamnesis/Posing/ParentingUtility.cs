@@ -9,6 +9,7 @@ namespace Anamnesis.Posing
 	using System.Threading.Tasks;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
+	using Serilog;
 
 	public static class ParentingUtility
 	{
@@ -88,7 +89,7 @@ namespace Anamnesis.Posing
 
 					if (IsChildOf(bone, otherBone))
 					{
-						Log.Write("Bone that is parent of test bone was moved.", "Skeleton Generator", Log.Severity.Warning);
+						Log.Warning("Bone that is parent of test bone was moved.");
 						continue;
 						////throw new Exception("Bone that is parent of test bone was moved.");
 					}

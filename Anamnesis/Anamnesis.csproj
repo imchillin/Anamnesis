@@ -130,12 +130,13 @@
 			<IncludeAssets></IncludeAssets>
 			<ExcludeAssets></ExcludeAssets>
 		</PackageReference>
+		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
-		<PackageReference Include="Yuuki.Walsh.SimpleLog" Version="1.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -339,7 +340,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="copy &quot;..\Lib\PropertyChanged.dll&quot; &quot;$(TargetDir)PropertyChanged.dll&quot;&#xD;&#xA;&#xD;&#xA;del $(TargetDir)$(TargetName).xml&#xD;&#xA;del $(TargetDir)$(TargetName).deps.json&#xD;&#xA;del $(TargetDir)$(TargetName).runtimeconfig.dev.json&#xD;&#xA;&#xD;&#xA;md $(TargetDir)bin&#xD;&#xA;move /Y &quot;$(TargetDir)FontAwesome.Sharp.dll&quot; &quot;$(TargetDir)bin\FontAwesome.Sharp.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.dll&quot; &quot;$(TargetDir)bin\Lumina.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.Excel.dll&quot; &quot;$(TargetDir)bin\Lumina.Excel.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Signed.dll&quot; &quot;$(TargetDir)bin\Markdig.Signed.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Wpf.dll&quot; &quot;$(TargetDir)bin\Markdig.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignColors.dll&quot; &quot;$(TargetDir)bin\MaterialDesignColors.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignThemes.Wpf.dll&quot; &quot;$(TargetDir)bin\MaterialDesignThemes.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)PropertyChanged.dll&quot; &quot;$(TargetDir)bin\PropertyChanged.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)SimpleLog.dll&quot; &quot;$(TargetDir)bin\SimpleLog.dll&quot;" />
+		<Exec Command="copy &quot;..\Lib\PropertyChanged.dll&quot; &quot;$(TargetDir)PropertyChanged.dll&quot;&#xD;&#xA;&#xD;&#xA;del $(TargetDir)$(TargetName).xml&#xD;&#xA;del $(TargetDir)$(TargetName).deps.json&#xD;&#xA;del $(TargetDir)$(TargetName).runtimeconfig.dev.json&#xD;&#xA;&#xD;&#xA;md $(TargetDir)bin&#xD;&#xA;move /Y &quot;$(TargetDir)FontAwesome.Sharp.dll&quot; &quot;$(TargetDir)bin\FontAwesome.Sharp.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.dll&quot; &quot;$(TargetDir)bin\Lumina.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.Excel.dll&quot; &quot;$(TargetDir)bin\Lumina.Excel.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Signed.dll&quot; &quot;$(TargetDir)bin\Markdig.Signed.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Wpf.dll&quot; &quot;$(TargetDir)bin\Markdig.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignColors.dll&quot; &quot;$(TargetDir)bin\MaterialDesignColors.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignThemes.Wpf.dll&quot; &quot;$(TargetDir)bin\MaterialDesignThemes.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)PropertyChanged.dll&quot; &quot;$(TargetDir)bin\PropertyChanged.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Serilog.dll&quot; &quot;$(TargetDir)bin\Serilog.dll&quot;" />
 	</Target>
 
 </Project>

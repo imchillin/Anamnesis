@@ -8,14 +8,12 @@ namespace Anamnesis
 	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using PropertyChanged;
-	using SimpleLog;
+	using Serilog;
 
 	[AddINotifyPropertyChangedInterface]
 	public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 		where T : ServiceBase<T>
 	{
-		protected static readonly Logger Log = SimpleLog.Log.GetLogger<T>();
-
 		private static T? instance;
 
 		public event PropertyChangedEventHandler? PropertyChanged;
@@ -38,6 +36,8 @@ namespace Anamnesis
 			get;
 			private set;
 		}
+
+		protected static ILogger Log => Serilog.Log.ForContext<T>();
 
 		public virtual Task Initialize()
 		{

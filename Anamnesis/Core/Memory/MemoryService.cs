@@ -15,7 +15,7 @@ namespace Anamnesis.Memory
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Services;
-	using SimpleLog;
+	using Serilog;
 
 	public class MemoryService : ServiceBase<MemoryService>
 	{
@@ -448,19 +448,19 @@ namespace Anamnesis.Memory
 
 						if (weakRefs.Count > 10000)
 						{
-							Log.Write(Severity.Warning, weakRefs.Count + " memory view models registered");
+							Log.Warning(weakRefs.Count + " memory view models registered");
 						}
 					}
 
 					if (sw.ElapsedMilliseconds > 100)
 					{
-						Log.Write(Severity.Warning, "Took " + sw.ElapsedMilliseconds + "ms to tick memory");
+						Log.Warning("Took " + sw.ElapsedMilliseconds + "ms to tick memory");
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception("Memory thread exception", ex));
+				Log.Error(ex, "Memory thread exception");
 			}
 		}
 
@@ -476,7 +476,7 @@ namespace Anamnesis.Memory
 				{
 					try
 					{
-						Log.Write("FFXIV Process has terminated");
+						Log.Information("FFXIV Process has terminated");
 						TargetService.Instance.ClearPins();
 						await this.GetProcess();
 					}
@@ -490,11 +490,11 @@ namespace Anamnesis.Memory
 						if (ex.InnerException is Win32Exception)
 							continue;
 
-						Log.Write(new Exception("Unable to get ffxiv process", ex));
+						Log.Error(ex, "Unable to get ffxiv process");
 					}
 					catch (Exception ex)
 					{
-						Log.Write(new Exception("Unable to get ffxiv process", ex));
+						Log.Error(ex, "Unable to get ffxiv process");
 					}
 				}
 			}

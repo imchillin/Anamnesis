@@ -21,7 +21,7 @@ namespace Anamnesis.PoseModule
 	using Anamnesis.Posing.Templates;
 	using Anamnesis.Services;
 	using PropertyChanged;
-	using SimpleLog;
+	using Serilog;
 	using AnQuaternion = Anamnesis.Memory.Quaternion;
 
 	[AddINotifyPropertyChangedInterface]
@@ -29,8 +29,6 @@ namespace Anamnesis.PoseModule
 	{
 		public List<BoneVisual3d> SelectedBones = new List<BoneVisual3d>();
 		public HashSet<BoneVisual3d> HoverBones = new HashSet<BoneVisual3d>();
-
-		private static readonly Logger Log = SimpleLog.Log.GetLogger("Skeleton");
 
 		private readonly QuaternionRotation3D rootRotation;
 
@@ -116,6 +114,8 @@ namespace Anamnesis.PoseModule
 				return this.Actor?.ModelObject?.Transform?.Rotation ?? AnQuaternion.Identity;
 			}
 		}
+
+		private static ILogger Log => Serilog.Log.ForContext<SkeletonVisual3d>();
 
 		public void Clear()
 		{
@@ -418,7 +418,7 @@ namespace Anamnesis.PoseModule
 				}
 				catch (Exception ex)
 				{
-					Log.Write(Severity.Error, new Exception("Failed to generate skeleton file.", ex));
+					Log.Error(ex, "Failed to generate skeleton file.");
 					return;
 				}
 
@@ -501,7 +501,7 @@ namespace Anamnesis.PoseModule
 					}
 					catch (Exception ex)
 					{
-						Log.Write(Severity.Error, new Exception($"Failed to write bone transform: {this.CurrentBone.BoneName}", ex));
+						Log.Error(ex, $"Failed to write bone transform: {this.CurrentBone.BoneName}");
 						this.ClearSelection();
 					}
 				}

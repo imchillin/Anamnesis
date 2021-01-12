@@ -12,6 +12,7 @@ namespace Anamnesis.Core.Memory
 	using System.Runtime.InteropServices;
 	using System.Text;
 	using Anamnesis.Memory;
+	using Serilog;
 
 #pragma warning disable SA1011
 
@@ -29,8 +30,8 @@ namespace Anamnesis.Core.Memory
 			// Limit the search space to .text section.
 			this.SetupSearchSpace(module);
 
-			Log.Write($"Module base: {this.TextSectionBase}");
-			Log.Write($"Module size: {this.TextSectionSize}");
+			Log.Information($"Module base: {this.TextSectionBase}");
+			Log.Information($"Module size: {this.TextSectionSize}");
 		}
 
 		public bool IsCopy { get; private set; }

@@ -21,7 +21,7 @@ namespace Anamnesis.Services
 
 			if (gameVer != versionStr)
 			{
-				Log.Write(SimpleLog.Severity.Error, LocalizationService.GetStringFormatted("Error_WrongVersion", gameVer));
+				Log.Error(LocalizationService.GetStringFormatted("Error_WrongVersion", gameVer));
 			}
 
 			return base.Initialize();

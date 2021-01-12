@@ -8,7 +8,7 @@ namespace Anamnesis.Views
 	using System.Windows.Controls;
 	using Anamnesis.Services;
 	using PropertyChanged;
-	using SimpleLog;
+	using Serilog;
 
 	/// <summary>
 	/// Interaction logic for SceneView.xaml.
@@ -16,8 +16,6 @@ namespace Anamnesis.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class SceneView : UserControl
 	{
-		private static readonly Logger Log = SimpleLog.Log.GetLogger<SceneView>();
-
 		public SceneView()
 		{
 			this.InitializeComponent();
@@ -33,6 +31,8 @@ namespace Anamnesis.Views
 		public CameraService CameraService => CameraService.Instance;
 		public TipService TipService => TipService.Instance;
 		public SettingsService SettingsService => SettingsService.Instance;
+
+		private static ILogger Log => Serilog.Log.ForContext<SceneView>();
 
 		private void OnTipClicked(object sender, RoutedEventArgs e)
 		{

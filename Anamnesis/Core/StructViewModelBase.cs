@@ -11,7 +11,7 @@ namespace Anamnesis
 	using System.Text;
 	using Anamnesis.Memory;
 	using PropertyChanged;
-	using SimpleLog;
+	using Serilog;
 
 	#pragma warning disable SA1649
 	public delegate void ViewModelEvent(object sender);
@@ -31,8 +31,6 @@ namespace Anamnesis
 	public abstract class StructViewModelBase<T> : IStructViewModel, INotifyPropertyChanged
 		where T : struct
 	{
-		protected static readonly Logger Log = SimpleLog.Log.GetLogger("StructViewModels");
-
 		protected T model;
 		private Dictionary<string, (PropertyInfo, FieldInfo)> binds = new Dictionary<string, (PropertyInfo, FieldInfo)>();
 		private bool suppressViewToModelEvents = false;
@@ -55,7 +53,7 @@ namespace Anamnesis
 				FieldInfo? modelField = modelType.GetField(fieldName, BindingFlags.Public | BindingFlags.Instance);
 				if (modelField == null)
 				{
-					Log.Write(Severity.Error, $"No field for property: {name} in view model: {this.GetType()}");
+					Log.Error($"No field for property: {name} in view model: {this.GetType()}");
 					continue;
 				}
 
@@ -132,6 +130,8 @@ namespace Anamnesis
 				return builder.ToString();
 			}
 		}
+
+		protected static ILogger Log => Serilog.Log.ForContext<StructViewModelBase<T>>();
 
 		public Type GetModelType()
 		{

@@ -171,7 +171,7 @@ namespace Anamnesis.Core.Memory
 
 			await Task.WhenAll(tasks.ToArray());
 
-			Log.Write($"Took {sw.ElapsedMilliseconds}ms to scan for {tasks.Count} addresses");
+			Log.Information($"Took {sw.ElapsedMilliseconds}ms to scan for {tasks.Count} addresses");
 		}
 
 		private static Task GetAddressFromSignature(string signature, int offset, Action<IntPtr> callback)

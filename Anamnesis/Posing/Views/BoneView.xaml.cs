@@ -14,6 +14,7 @@ namespace Anamnesis.PoseModule.Views
 	using System.Windows.Shapes;
 	using Anamnesis.Styles.DependencyProperties;
 	using MaterialDesignThemes.Wpf;
+	using Serilog;
 
 	public partial class BoneView : UserControl, IBone
 	{
@@ -103,7 +104,7 @@ namespace Anamnesis.PoseModule.Views
 			{
 				this.IsEnabled = false;
 				this.ToolTip = ex.Message;
-				Log.Write(ex, "BoneView");
+				Log.Error(ex, "Failed to bind bone view");
 			}
 		}
 
@@ -186,7 +187,7 @@ namespace Anamnesis.PoseModule.Views
 
 			if (this.Bone == null)
 			{
-				Log.Write("Bone not found: " + name, "Posing", Log.Severity.Warning);
+				Log.Warning("Bone not found: " + name);
 			}
 		}
 

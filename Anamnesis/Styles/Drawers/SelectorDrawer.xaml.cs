@@ -17,7 +17,7 @@ namespace Anamnesis.Styles.Drawers
 	using Anamnesis;
 	using Anamnesis.Services;
 	using PropertyChanged;
-	using SimpleLog;
+	using Serilog;
 
 	/// <summary>
 	/// Interaction logic for SelectorDrawer.xaml.
@@ -26,8 +26,6 @@ namespace Anamnesis.Styles.Drawers
 	{
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty ItemTemplateProperty = DependencyProperty.Register(nameof(ItemTemplate), typeof(DataTemplate), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
-
-		private static readonly SimpleLog.Logger Log = SimpleLog.Log.GetLogger<SelectorDrawer>();
 
 		private static Dictionary<Type, string?> searchInputs = new Dictionary<Type, string?>();
 		private List<ItemEntry> entries = new List<ItemEntry>();
@@ -73,6 +71,8 @@ namespace Anamnesis.Styles.Drawers
 			get => (DataTemplate)this.GetValue(ItemTemplateProperty);
 			set => this.SetValue(ItemTemplateProperty, value);
 		}
+
+		private static ILogger Log => Serilog.Log.ForContext<SelectorDrawer>();
 
 		public static void Show<TView, TValue>(TValue? current, Action<TValue> changed)
 			where TView : ISelectorView
@@ -213,7 +213,7 @@ namespace Anamnesis.Styles.Drawers
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex);
+				Log.Error(ex, "Failed to perform search");
 			}
 
 			this.idle = true;
@@ -250,7 +250,7 @@ namespace Anamnesis.Styles.Drawers
 						}
 						catch (Exception ex)
 						{
-							Log.Write(Severity.Error, new Exception($"Failed to filter selector item: {entry.Item}", ex));
+							Log.Error(ex, $"Failed to filter selector item: {entry.Item}");
 						}
 
 						filteredEntries.Add(entry);

@@ -17,7 +17,7 @@ namespace Anamnesis.XMA.Views
 	using Anamnesis.Services;
 	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
-	using SimpleLog;
+	using Serilog;
 
 	/// <summary>
 	/// Interaction logic for XmaView.xaml.
@@ -32,8 +32,6 @@ namespace Anamnesis.XMA.Views
 		public const string RecentSearchUrl = "https://www.xivmodarchive.com/search?sortby=time_posted&sortorder=desc&nsfw=false&types=11";
 
 		public static readonly IBind<Settings.HomeWidgetType> TypeDp = Binder.Register<Settings.HomeWidgetType, XmaView>(nameof(Type), OnTypeChanged);
-
-		private static readonly Logger Log = SimpleLog.Log.GetLogger<XmaView>();
 
 		public XmaView()
 		{
@@ -51,6 +49,8 @@ namespace Anamnesis.XMA.Views
 			get => TypeDp.Get(this);
 			set => TypeDp.Set(this, value);
 		}
+
+		private static ILogger Log => Serilog.Log.ForContext<XmaView>();
 
 		private static void OnTypeChanged(XmaView sender, Settings.HomeWidgetType newType)
 		{
@@ -99,7 +99,7 @@ namespace Anamnesis.XMA.Views
 			catch (Exception ex)
 			{
 				this.IsLoading = false;
-				Log.Write(Severity.Warning, ex);
+				Log.Warning(ex, "Failed to refresh XMA");
 			}
 		}
 

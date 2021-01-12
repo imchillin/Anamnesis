@@ -6,6 +6,7 @@ namespace Anamnesis
 {
 	using System;
 	using System.Diagnostics;
+	using Serilog;
 
 	public static class UrlUtility
 	{
@@ -17,7 +18,7 @@ namespace Anamnesis
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex, "URL", Log.Severity.Error);
+				Log.Error(ex, "Failed to navigate to url");
 			}
 		}
 	}

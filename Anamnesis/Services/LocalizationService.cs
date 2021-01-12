@@ -11,7 +11,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Anamnesis.Serialization;
-	using SimpleLog;
+	using Serilog;
 
 	public delegate void LocalizationEvent();
 
@@ -83,13 +83,13 @@ namespace Anamnesis.Services
 				return val;
 
 			if (!silent)
-				Log.Write(Severity.Warning, "Missing Localized string: \"" + key + "\" in locale: \"" + currentLocale?.Culture + "\"");
+				Log.Warning("Missing Localized string: \"" + key + "\" in locale: \"" + currentLocale?.Culture + "\"");
 
 			if (fallbackLocale?.Get(key, out val) ?? false)
 				return val;
 
 			if (!silent)
-				Log.Write(Severity.Error, "Missing Localized string: \"" + key + "\"");
+				Log.Error("Missing Localized string: \"" + key + "\"");
 
 			if (!silent)
 			{

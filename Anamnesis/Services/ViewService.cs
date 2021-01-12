@@ -127,12 +127,12 @@ namespace Anamnesis.Services
 			}
 			catch (TargetInvocationException ex)
 			{
-				Log.Write(new Exception($"Failed to create view: {viewType}", ex.InnerException));
+				Log.Error(ex.InnerException, $"Failed to create view: {viewType}");
 				return null;
 			}
 			catch (Exception ex)
 			{
-				Log.Write(new Exception($"Failed to create view: {viewType}", ex));
+				Log.Error(ex, $"Failed to create view: {viewType}");
 				return null;
 			}
 

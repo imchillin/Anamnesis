@@ -59,7 +59,7 @@ namespace Anamnesis.TexTools
 			}
 			catch (Exception ex)
 			{
-				Log.Write(ex);
+				Log.Error(ex, "Failed to read modlist");
 			}
 		}
 	}
