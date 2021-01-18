@@ -75,9 +75,6 @@ namespace Anamnesis.PoseModule.Views
 
 		private void BindDataContext()
 		{
-			if (!this.IsVisible)
-				return;
-
 			try
 			{
 				if (this.skeleton != null)
@@ -110,7 +107,9 @@ namespace Anamnesis.PoseModule.Views
 
 		private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (this.Bone == null && this.DataContext is SkeletonVisual3d)
+			bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonVisual3d.FlipSides);
+
+			if (refreshBone && this.DataContext is SkeletonVisual3d)
 				this.SetBone(this.BoneName);
 
 			this.UpdateState();
@@ -184,11 +183,6 @@ namespace Anamnesis.PoseModule.Views
 		private void SetBone(string name)
 		{
 			this.SetBone(this.skeleton?.GetBone(name));
-
-			if (this.Bone == null)
-			{
-				Log.Warning("Bone not found: " + name);
-			}
 		}
 
 		private void SetBone(BoneVisual3d? bone)
@@ -304,11 +298,6 @@ namespace Anamnesis.PoseModule.Views
 				line.Stroke = stroke;
 				line.StrokeThickness = thickness;
 			}
-		}
-
-		private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			this.BindDataContext();
 		}
 	}
 }

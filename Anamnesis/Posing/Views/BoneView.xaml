@@ -5,7 +5,6 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 DataContextChanged="OnDataContextChanged"
-			 IsVisibleChanged="OnVisibleChanged"
 			 mc:Ignorable="d" 
 			 MouseEnter="OnMouseEnter"
 			 MouseLeave="OnMouseLeave"
