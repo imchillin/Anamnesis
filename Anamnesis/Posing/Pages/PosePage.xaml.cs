@@ -93,9 +93,18 @@ namespace Anamnesis.PoseModule.Pages
 				return;
 			}
 
-			this.Skeleton?.Clear();
-
-			this.Skeleton = new SkeletonVisual3d(actor);
+			if (this.Skeleton != null)
+			{
+				if (this.Skeleton.Actor != actor)
+				{
+					this.Skeleton.Clear();
+					this.Skeleton = new SkeletonVisual3d(actor);
+				}
+			}
+			else
+			{
+				this.Skeleton = new SkeletonVisual3d(actor);
+			}
 
 			this.ThreeDView.DataContext = this.Skeleton;
 			this.GuiView.DataContext = this.Skeleton;
