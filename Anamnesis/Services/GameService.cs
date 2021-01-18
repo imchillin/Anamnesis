@@ -58,7 +58,13 @@ namespace Anamnesis.Services
 				this.IsSignedIn = GetIsSignedIn();
 
 				if (!this.IsSignedIn)
+				{
 					TargetService.Instance.ClearSelection();
+				}
+				else
+				{
+					TargetService.Instance.EnsureSelection();
+				}
 
 				await Task.Delay(16);
 			}

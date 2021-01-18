@@ -170,6 +170,20 @@ namespace Anamnesis
 			});
 		}
 
+		public void EnsureSelection()
+		{
+			if (App.Current == null)
+				return;
+
+			if (this.SelectedActor != null)
+				return;
+
+			if (this.PinnedActors == null || this.PinnedActors.Count <= 0)
+				return;
+
+			this.SelectActor(this.PinnedActors[0]);
+		}
+
 		public void ClearPins()
 		{
 			if (this.SelectedActor == null)
