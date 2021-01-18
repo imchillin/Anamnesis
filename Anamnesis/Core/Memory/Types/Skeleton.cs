@@ -20,7 +20,7 @@ namespace Anamnesis.Memory
 
 	public class SkeletonViewModel : MemoryViewModelBase<Skeleton>
 	{
-		public SkeletonViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public SkeletonViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}

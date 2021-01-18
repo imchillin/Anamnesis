@@ -514,6 +514,10 @@ namespace Anamnesis.PoseModule
 		private async void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs? e)
 		{
 			await Dispatch.MainThread();
+
+			if (Application.Current == null)
+				return;
+
 			this.rootRotation.Quaternion = this.RootRotation.ToMedia3DQuaternion();
 		}
 	}

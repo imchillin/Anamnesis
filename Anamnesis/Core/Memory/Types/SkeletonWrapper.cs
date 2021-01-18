@@ -18,7 +18,7 @@ namespace Anamnesis.Memory
 
 	public class SkeletonWrapperViewModel : MemoryViewModelBase<SkeletonWrapper>
 	{
-		public SkeletonWrapperViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public SkeletonWrapperViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}

@@ -15,7 +15,7 @@ namespace Anamnesis.Memory
 
 	public class BustViewModel : MemoryViewModelBase<Bust>
 	{
-		public BustViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public BustViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}

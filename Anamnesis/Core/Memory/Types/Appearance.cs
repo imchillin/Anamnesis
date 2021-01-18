@@ -112,7 +112,7 @@ namespace Anamnesis.Memory
 	#pragma warning disable SA1402
 	public class AppearanceViewModel : MemoryViewModelBase<Appearance>
 	{
-		public AppearanceViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public AppearanceViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}

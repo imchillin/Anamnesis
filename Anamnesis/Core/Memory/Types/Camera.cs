@@ -28,7 +28,7 @@ namespace Anamnesis.Memory.Types
 	[AddINotifyPropertyChangedInterface]
 	public class CameraViewModel : MemoryViewModelBase<Camera>
 	{
-		public CameraViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public CameraViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}

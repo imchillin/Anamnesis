@@ -24,7 +24,7 @@ namespace Anamnesis.Memory
 
 	public class ExtendedAppearanceViewModel : MemoryViewModelBase<ExtendedAppearance>
 	{
-		public ExtendedAppearanceViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public ExtendedAppearanceViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}

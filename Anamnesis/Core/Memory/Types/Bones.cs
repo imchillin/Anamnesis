@@ -27,7 +27,7 @@ namespace Anamnesis.Memory
 
 	public class BonesViewModel : MemoryViewModelBase<Bones>
 	{
-		public BonesViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public BonesViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}
@@ -57,19 +57,19 @@ namespace Anamnesis.Memory
 				{
 					if (this.Count <= 0)
 					{
-						this.Transforms.Clear();
+						this.ClearTransforms();
 					}
 					else
 					{
 						if (this.Transforms.Count != this.Count)
 						{
 							// new transforms
-							this.Transforms.Clear();
+							this.ClearTransforms();
 
 							IntPtr ptr = this.TransformArray;
 							for (int i = 0; i < this.Count; i++)
 							{
-								this.Transforms.Add(new TransformViewModel(ptr));
+								this.Transforms.Add(new TransformViewModel(ptr, this));
 								ptr += 0x30;
 							}
 						}
@@ -88,6 +88,16 @@ namespace Anamnesis.Memory
 			}
 
 			return changed;
+		}
+
+		private void ClearTransforms()
+		{
+			foreach (TransformViewModel transform in this.Transforms)
+			{
+				transform.Dispose();
+			}
+
+			this.Transforms.Clear();
 		}
 	}
 }

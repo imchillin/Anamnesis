@@ -53,8 +53,10 @@ namespace Anamnesis.Memory
 		private short refreshDelay;
 		private Task? refreshTask;
 
+		private byte[] data = new byte[1024 * 1024 * 10];
+
 		public ActorViewModel(IntPtr pointer)
-			: base(pointer)
+			: base(pointer, null)
 		{
 		}
 

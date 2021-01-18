@@ -26,12 +26,15 @@ namespace Anamnesis.Memory
 		ReadWrite = Read | Write,
 	}
 
-	public interface IMemoryViewModel : IStructViewModel
+	public interface IMemoryViewModel : IStructViewModel, IDisposable
 	{
 		IntPtr? Pointer { get; set; }
-		void Tick();
+		int Tick();
 		bool WriteToMemory(bool force = false);
 		bool ReadFromMemory(bool force = false);
+
+		void AddChild(IMemoryViewModel child);
+		void RemoveChild(IMemoryViewModel child);
 	}
 
 	public abstract class MemoryViewModelBase<T> : StructViewModelBase<T>, IMemoryViewModel
@@ -39,8 +42,9 @@ namespace Anamnesis.Memory
 	{
 		private Dictionary<string, (PropertyInfo, FieldInfo, object?)> freezeValues = new Dictionary<string, (PropertyInfo, FieldInfo, object?)>();
 		private bool isAllFrozen = false;
+		private List<IMemoryViewModel> children = new List<IMemoryViewModel>();
 
-		public MemoryViewModelBase(IntPtr pointer, IStructViewModel? parent = null)
+		public MemoryViewModelBase(IntPtr pointer, IMemoryViewModel? parent)
 			: base(parent)
 		{
 			this.Parent = parent;
@@ -49,7 +53,14 @@ namespace Anamnesis.Memory
 
 			this.Pointer = pointer;
 
-			MemoryService.RegisterViewModel(this);
+			if (parent == null)
+			{
+				MemoryService.RegisterViewModel(this);
+			}
+			else
+			{
+				parent.AddChild(this);
+			}
 
 			this.Tick();
 		}
@@ -61,6 +72,12 @@ namespace Anamnesis.Memory
 
 		public IntPtr? Pointer { get; set; }
 		public MemoryModes MemoryMode { get; set; } = MemoryModes.ReadWrite;
+
+		public new IMemoryViewModel? Parent
+		{
+			get => (IMemoryViewModel?)base.Parent;
+			set => base.Parent = value;
+		}
 
 		public bool Freeze
 		{
@@ -101,12 +118,44 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		public override void Tick()
+		public void Dispose()
 		{
+			for (int i = this.children.Count - 1; i >= 0; i--)
+			{
+				this.children[i].Dispose();
+			}
+
+			if (this.children.Count > 0)
+				Log.Warning("not all memory view model children were removed during disposal");
+
+			if (this.Parent == null)
+			{
+				MemoryService.ClearViewModel(this);
+			}
+			else
+			{
+				this.Parent.RemoveChild(this);
+			}
+		}
+
+		public void AddChild(IMemoryViewModel child)
+		{
+			this.children.Add(child);
+		}
+
+		public void RemoveChild(IMemoryViewModel child)
+		{
+			this.children.Remove(child);
+		}
+
+		public override int Tick()
+		{
+			int count = 0;
+
 			lock (this)
 			{
 				if (!this.Enabled)
-					return;
+					return count;
 
 				if (this.Pointer != null)
 				{
@@ -114,9 +163,17 @@ namespace Anamnesis.Memory
 				}
 				else
 				{
-					base.Tick();
+					return base.Tick();
+				}
+
+				foreach (IMemoryViewModel child in this.children)
+				{
+					count++;
+					count += child.Tick();
 				}
 			}
+
+			return count;
 		}
 
 		public bool WriteToMemory(bool force = false)

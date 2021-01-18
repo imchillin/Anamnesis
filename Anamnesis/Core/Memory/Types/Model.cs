@@ -24,7 +24,7 @@ namespace Anamnesis.Memory
 
 	public class ModelViewModel : MemoryViewModelBase<Model>
 	{
-		public ModelViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public ModelViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}

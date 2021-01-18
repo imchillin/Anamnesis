@@ -88,6 +88,8 @@ namespace Anamnesis
 					Instance.SelectActorViewModel(null);
 				}
 			}
+
+			actor.Clear();
 		}
 
 		public static List<ActorTableActor> GetActors()
@@ -291,6 +293,11 @@ namespace Anamnesis
 			public void Clear()
 			{
 				this.Pointer = null;
+
+				if (this.viewModel != null)
+					this.viewModel.Dispose();
+
+				this.viewModel = null;
 			}
 
 			public ActorViewModel? GetViewModel()

@@ -208,7 +208,6 @@
 
 						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Sync" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 						<fa:IconBlock Margin="6, 0, 0, 0" Icon="Hourglass" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}" Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
-
 					</StackPanel>
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

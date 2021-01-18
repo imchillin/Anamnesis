@@ -10,16 +10,19 @@ namespace Anamnesis.Memory
 	using System.Diagnostics;
 	using System.IO;
 	using System.Runtime.InteropServices;
+	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Services;
+	using PropertyChanged;
 	using Serilog;
 
+	[AddINotifyPropertyChangedInterface]
 	public class MemoryService : ServiceBase<MemoryService>
 	{
-		private static List<WeakReference<IMemoryViewModel>> viewModels = new List<WeakReference<IMemoryViewModel>>();
+		private static List<IMemoryViewModel> rootViewModels = new List<IMemoryViewModel>();
 		private static Dictionary<Type, bool[]> structMasks = new Dictionary<Type, bool[]>();
 		private static ulong memoryTickCount = 0;
 		private readonly Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
@@ -236,7 +239,12 @@ namespace Anamnesis.Memory
 
 		internal static void RegisterViewModel(IMemoryViewModel vm)
 		{
-			viewModels.Add(new WeakReference<IMemoryViewModel>(vm));
+			rootViewModels.Add(vm);
+		}
+
+		internal static void ClearViewModel(IMemoryViewModel vm)
+		{
+			rootViewModels.Remove(vm);
 		}
 
 		[DllImport("kernel32.dll", SetLastError = true)]
@@ -422,33 +430,40 @@ namespace Anamnesis.Memory
 					if (GposeService.Instance.IsChangingState)
 						continue;
 
+					int tickCount = 0;
 					memoryTickCount++;
 
-					IMemoryViewModel? viewModel;
-					lock (viewModels)
+					lock (rootViewModels)
 					{
-						List<WeakReference<IMemoryViewModel>> weakRefs = new List<WeakReference<IMemoryViewModel>>(viewModels);
+						Dictionary<Type, int> count = new Dictionary<Type, int>();
 
-						foreach (WeakReference<IMemoryViewModel>? weakRef in weakRefs)
+						foreach (IMemoryViewModel viewModel in rootViewModels)
 						{
 							if (!this.IsAlive)
 								return;
 
-							if (!weakRef.TryGetTarget(out viewModel) || viewModel == null)
-							{
-								viewModels.Remove(weakRef);
-								continue;
-							}
-
 							if (!GameService.Instance.IsSignedIn)
 								continue;
 
-							viewModel.Tick();
+							tickCount++;
+							tickCount += viewModel.Tick();
 						}
 
-						if (weakRefs.Count > 10000)
+						if (tickCount > 1000)
 						{
-							Log.Warning(weakRefs.Count + " memory view models registered");
+							StringBuilder b = new StringBuilder();
+							b.Append("Too many view model ticks:  ");
+							b.Append(tickCount);
+							b.AppendLine(" (are we leaking memory?)");
+
+							b.AppendLine("Root view models:");
+							foreach (IMemoryViewModel vm in rootViewModels)
+							{
+								b.Append("    ");
+								b.AppendLine(vm.ToString());
+							}
+
+							Log.Warning(b.ToString());
 						}
 					}
 

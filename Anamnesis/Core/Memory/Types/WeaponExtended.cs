@@ -17,7 +17,7 @@ namespace Anamnesis.Memory
 
 	public class WeaponExtendedViewModel : WeaponSubExtendedViewModel
 	{
-		public WeaponExtendedViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public WeaponExtendedViewModel(IntPtr pointer, IMemoryViewModel? parent = null)
 			: base(pointer, parent)
 		{
 		}
@@ -33,7 +33,7 @@ namespace Anamnesis.Memory
 	#pragma warning disable SA1402
 	public class WeaponSubExtendedViewModel : MemoryViewModelBase<WeaponExtended>
 	{
-		public WeaponSubExtendedViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public WeaponSubExtendedViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}

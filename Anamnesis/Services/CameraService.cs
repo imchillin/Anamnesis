@@ -49,7 +49,7 @@ namespace Anamnesis
 		{
 			await base.Start();
 
-			this.Camera = new CameraViewModel(AddressService.Camera);
+			this.Camera = new CameraViewModel(AddressService.Camera, null);
 
 			_ = Task.Run(this.Tick);
 		}

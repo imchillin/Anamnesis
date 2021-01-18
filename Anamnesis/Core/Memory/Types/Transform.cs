@@ -22,7 +22,7 @@ namespace Anamnesis.Memory
 
 	public class TransformViewModel : MemoryViewModelBase<Transform>, ITransform
 	{
-		public TransformViewModel(IntPtr pointer, IStructViewModel? parent = null)
+		public TransformViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
 		{
 		}
