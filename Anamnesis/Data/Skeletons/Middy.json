@@ -261,6 +261,11 @@
 		"Hair_9": "RootHead",
 		"Hair_10": "RootHead",
 		"Hair_11": "RootHead",
-		"Hair_12": "RootHead"
+		"Hair_12": "RootHead",
+
+		"TailA": "Waist",
+		"TailB": "TailA",
+		"TailC": "TailB",
+		"TailD":  "TailC"
 	}
 }
