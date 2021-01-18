@@ -433,38 +433,39 @@ namespace Anamnesis.Memory
 					int tickCount = 0;
 					memoryTickCount++;
 
+					List<IMemoryViewModel> viewModels;
 					lock (rootViewModels)
 					{
-						Dictionary<Type, int> count = new Dictionary<Type, int>();
+						viewModels = new List<IMemoryViewModel>(rootViewModels);
+					}
 
-						foreach (IMemoryViewModel viewModel in rootViewModels)
+					foreach (IMemoryViewModel viewModel in viewModels)
+					{
+						if (!this.IsAlive)
+							return;
+
+						if (!GameService.Instance.IsSignedIn)
+							continue;
+
+						tickCount++;
+						tickCount += viewModel.Tick();
+					}
+
+					if (tickCount > 1000)
+					{
+						StringBuilder b = new StringBuilder();
+						b.Append("Too many view model ticks:  ");
+						b.Append(tickCount);
+						b.AppendLine(" (are we leaking memory?)");
+
+						b.AppendLine("Root view models:");
+						foreach (IMemoryViewModel vm in viewModels)
 						{
-							if (!this.IsAlive)
-								return;
-
-							if (!GameService.Instance.IsSignedIn)
-								continue;
-
-							tickCount++;
-							tickCount += viewModel.Tick();
+							b.Append("    ");
+							b.AppendLine(vm.ToString());
 						}
 
-						if (tickCount > 1000)
-						{
-							StringBuilder b = new StringBuilder();
-							b.Append("Too many view model ticks:  ");
-							b.Append(tickCount);
-							b.AppendLine(" (are we leaking memory?)");
-
-							b.AppendLine("Root view models:");
-							foreach (IMemoryViewModel vm in rootViewModels)
-							{
-								b.Append("    ");
-								b.AppendLine(vm.ToString());
-							}
-
-							Log.Warning(b.ToString());
-						}
+						Log.Warning(b.ToString());
 					}
 
 					if (sw.ElapsedMilliseconds > 100)
