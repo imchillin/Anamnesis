@@ -127,7 +127,7 @@
 							<ana:TextBlock Key="Pose_LinkEyes"/>
 						</CheckBox>
 
-						<CheckBox IsChecked="{Binding Skeleton.FlipSides}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
+						<CheckBox x:Name="FlipSidesOption" IsChecked="{Binding Skeleton.FlipSides}" VerticalContentAlignment="Center" Margin="3, 0, 3, 0" IsEnabled="{Binding PoseService.IsEnabled}">
 							<ana:TextBlock Text="Flip Sides"/>
 						</CheckBox>
 

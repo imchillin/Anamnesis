@@ -293,13 +293,6 @@ namespace Anamnesis.PoseModule
 			if (this.Actor?.ModelObject?.Skeleton?.Skeleton?.Body == null)
 				return null;
 
-			if (this.FlipSides)
-			{
-				name = name.Replace("Left", "Temp");
-				name = name.Replace("Right", "Left");
-				name = name.Replace("Temp", "Right");
-			}
-
 			foreach (BoneVisual3d bone in this.Bones)
 			{
 				if (bone.BoneName == name)

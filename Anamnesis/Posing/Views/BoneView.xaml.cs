@@ -20,6 +20,7 @@ namespace Anamnesis.PoseModule.Views
 	{
 		public static readonly IBind<string> LabelDp = Binder.Register<string, BoneView>(nameof(Label));
 		public static readonly IBind<string> NameDp = Binder.Register<string, BoneView>(nameof(BoneName));
+		public static readonly IBind<string> FlippedNameDp = Binder.Register<string, BoneView>(nameof(FlippedBoneName));
 
 		private static readonly Dictionary<BoneVisual3d, List<BoneView>> BoneViews = new Dictionary<BoneVisual3d, List<BoneView>>();
 		private static readonly List<BoneView> AllViews = new List<BoneView>();
@@ -54,9 +55,27 @@ namespace Anamnesis.PoseModule.Views
 			set => NameDp.Set(this, value);
 		}
 
-		public string TooltipKey => "Pose_" + this.BoneName;
+		public string FlippedBoneName
+		{
+			get => FlippedNameDp.Get(this);
+			set => FlippedNameDp.Set(this, value);
+		}
 
 		public BoneVisual3d? Visual => this.Bone;
+
+		public string CurrentBoneName
+		{
+			get
+			{
+				if (this.skeleton == null)
+					return this.BoneName;
+
+				if (string.IsNullOrEmpty(this.FlippedBoneName) || !this.skeleton.FlipSides)
+					return this.BoneName;
+
+				return this.FlippedBoneName;
+			}
+		}
 
 		public static bool HasView(BoneVisual3d bone)
 		{
@@ -83,7 +102,7 @@ namespace Anamnesis.PoseModule.Views
 				if (this.DataContext is SkeletonVisual3d viewModel)
 				{
 					this.skeleton = viewModel;
-					this.SetBone(this.BoneName);
+					this.SetBone(this.CurrentBoneName);
 					this.skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 				}
 				else if (this.DataContext is BoneVisual3d bone)
@@ -110,7 +129,7 @@ namespace Anamnesis.PoseModule.Views
 			bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonVisual3d.FlipSides);
 
 			if (refreshBone && this.DataContext is SkeletonVisual3d)
-				this.SetBone(this.BoneName);
+				this.SetBone(this.CurrentBoneName);
 
 			this.UpdateState();
 		}
