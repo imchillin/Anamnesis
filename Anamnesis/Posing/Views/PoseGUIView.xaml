@@ -158,14 +158,10 @@
 						<local:BoneView Canvas.Left="141" Canvas.Top="135" BoneName="Nose"/>
 						<local:BoneView Canvas.Left="141" Canvas.Top="100" BoneName="Bridge"/>
 
-						<local:BoneView Canvas.Left="141" Canvas.Top="248" BoneName="LipLowerB" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="225" BoneName="LipLowerA" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="175" BoneName="LipUpperB" Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
-
-						<local:BoneView Canvas.Left="141" Canvas.Top="248" BoneName="LipLowerB" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="225" BoneName="LipLowerA" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="186" BoneName="LipUpperA" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="163" BoneName="LipUpperB" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
+						<local:BoneView Canvas.Left="141" Canvas.Top="248" BoneName="LipLowerB"/>
+						<local:BoneView Canvas.Left="141" Canvas.Top="225" BoneName="LipLowerA"/>
+						<local:BoneView Canvas.Left="141" Canvas.Top="186" BoneName="LipUpperA"/>
+						<local:BoneView Canvas.Left="141" Canvas.Top="163" BoneName="LipUpperB"/>
 
 						<local:BoneView Canvas.Left="103" Canvas.Top="33" BoneName="BrowLeft" FlippedBoneName="BrowRight"/>
 						<local:BoneView Canvas.Left="74" Canvas.Top="77" BoneName="EyeLeft" FlippedBoneName="EyeRight"/>
