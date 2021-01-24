@@ -238,7 +238,7 @@
 							<local:BoneView Canvas.Left="51" Canvas.Top="77" BoneName="MiddleARight" FlippedBoneName="MiddleALeft"/>
 							<local:BoneView Canvas.Left="53" Canvas.Top="40" BoneName="MiddleBRight" FlippedBoneName="MiddleBLeft"/>
 							<local:BoneView Canvas.Left="33" Canvas.Top="79" BoneName="RingARight" FlippedBoneName="RingALeft"/>
-							<local:BoneView Canvas.Left="33" Canvas.Top="47" BoneName="RingBRight" FlippedBoneName="RingBRLeft"/>
+							<local:BoneView Canvas.Left="33" Canvas.Top="47" BoneName="RingBRight" FlippedBoneName="RingBLeft"/>
 							<local:BoneView Canvas.Left="16" Canvas.Top="84" BoneName="PinkyARight" FlippedBoneName="PinkyALeft"/>
 							<local:BoneView Canvas.Left="13" Canvas.Top="55" BoneName="PinkyBRight" FlippedBoneName="PinkyBLeft"/>
 							<local:BoneView Canvas.Left="48" Canvas.Top="115" BoneName="WeaponRight" FlippedBoneName="WeaponLeft"/>
