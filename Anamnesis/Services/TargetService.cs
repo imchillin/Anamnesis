@@ -383,21 +383,31 @@ namespace Anamnesis
 
 			private void UpdateInitials(string name)
 			{
-				if (name.Length <= 4)
-				{
-					this.Initials = name;
-				}
-				else
-				{
-					this.Initials = string.Empty;
+				if (string.IsNullOrWhiteSpace(name))
+					return;
 
-					string[] parts = name.Split(' ');
-					foreach (string part in parts)
+				try
+				{
+					if (name.Length <= 4)
 					{
-						this.Initials += part[0] + ".";
+						this.Initials = name;
 					}
+					else
+					{
+						this.Initials = string.Empty;
 
-					this.Initials = this.Initials.Trim('.');
+						string[] parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+						foreach (string part in parts)
+						{
+							this.Initials += part[0] + ".";
+						}
+
+						this.Initials = this.Initials.Trim('.');
+					}
+				}
+				catch (Exception)
+				{
+					this.Initials = name[0] + "?";
 				}
 			}
 		}
