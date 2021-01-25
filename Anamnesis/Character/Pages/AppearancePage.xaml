@@ -100,60 +100,7 @@
 						<ana:Header Icon="GraduationCap" Key="Character_Model_Header"/>
 					</GroupBox.Header>
 
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
-						</Grid.ColumnDefinitions>
-
-						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition/>
-							<RowDefinition/>
-							<RowDefinition/>
-							<RowDefinition/>
-						</Grid.RowDefinitions>
-
-						<!-- Height -->
-						<ana:TextBlock Key="Character_Model_Height" Style="{StaticResource Label}"/>
-						<cm3Controls:NumberBox Grid.Column="1" Slider="Absolute" Minimum="0.1" Maximum="2" Value="{Binding Actor.ModelObject.Height}" TickFrequency="0.01"/>
-
-						<!-- Wetness -->
-						<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Character_Model_Wetness" Style="{StaticResource Label}"/>
-						<Grid Grid.Row="1" Grid.Column="1">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
-
-							<ToggleButton Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" 
-										Height="22" Width="22" Padding="0" Margin="0, 3, 6, 0"
-										VerticalAlignment="Center" IsChecked="{Binding Actor.ModelObject.LockWetness}">
-								<ToggleButton.Content>
-									<fa:IconBlock Icon="LockOpen" FontSize="12"/>
-								</ToggleButton.Content>
-								<materialdesign:ToggleButtonAssist.OnContent>
-									<fa:IconBlock Icon="Lock" FontSize="12"/>
-								</materialdesign:ToggleButtonAssist.OnContent>
-							</ToggleButton>
-
-							<cm3Controls:NumberBox Grid.Column="1" Slider="Absolute" Minimum="0" Maximum="1" Value="{Binding Actor.ModelObject.Wetness}" TickFrequency="0.01"/>
-						</Grid>
-
-						<!-- Drenched -->
-						<ana:TextBlock Grid.Row="2" Key="Character_Model_Drenched" Style="{StaticResource Label}"/>
-						<ToggleButton Grid.Row="2" Grid.Column="1" IsChecked="{Binding Actor.ModelObject.ForceDrenched}" HorizontalAlignment="Left" Margin="3"/>
-
-						<!-- Bust Scale -->
-						<GroupBox Style="{StaticResource Cm3GroupBox}" Grid.Row="4" Grid.ColumnSpan="2">
-							<GroupBox.Header>
-								<ana:TextBlock Key="Character_Model_BustScale"/>
-							</GroupBox.Header>
-
-							<cm3Controls:VectorEditor Value="{Binding Actor.ModelObject.Bust.Scale}" Expanded="True" CanLink="True" Minimum="0" Maximum="10"/>
-						</GroupBox>
-
-					</Grid>
+					<views:CharacterModelEditor DataContext="{Binding Actor.ModelObject}"/>
 				</GroupBox>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">

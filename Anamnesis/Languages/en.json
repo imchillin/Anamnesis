@@ -98,7 +98,9 @@
 	"Character_Model_Header": "Model",
 	"Character_Model_Height": "Height:",
 	"Character_Model_Wetness": "Wetness:",
-	"Character_Model_Drenched": "Drenched:",
+	"Character_Model_WetNone": "Dry",
+	"Character_Model_WetWet": "Wet",
+	"Character_Model_WetDrenched": "Drenched",
 	"Character_Model_BustScale": "Bust scale:",
 
 	"Character_ExAppearance_Header": "Extended Appearance",
