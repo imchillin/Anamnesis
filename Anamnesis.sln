@@ -8,24 +8,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anamnesis", "Anamnesis\Anam
 		{99AADD3B-8499-4DA8-AE3C-8E81569640E2} = {99AADD3B-8499-4DA8-AE3C-8E81569640E2}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateExtractor", "UpdateExtractor\UpdateExtractor.csproj", "{99AADD3B-8499-4DA8-AE3C-8E81569640E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UpdateExtractor", "UpdateExtractor\UpdateExtractor.csproj", "{99AADD3B-8499-4DA8-AE3C-8E81569640E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug_NoGame|Any CPU = Debug_NoGame|Any CPU
-		Debug_NoGame|x64 = Debug_NoGame|x64
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
-		Release-Unsigned|Any CPU = Release-Unsigned|Any CPU
-		Release-Unsigned|x64 = Release-Unsigned|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Debug_NoGame|Any CPU.ActiveCfg = Debug|Any CPU
-		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Debug_NoGame|Any CPU.Build.0 = Debug|Any CPU
-		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Debug_NoGame|x64.ActiveCfg = Debug|Any CPU
-		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Debug_NoGame|x64.Build.0 = Debug|Any CPU
 		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -34,14 +26,6 @@ Global
 		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release|x64.ActiveCfg = Release|Any CPU
 		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release|x64.Build.0 = Release|Any CPU
-		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release-Unsigned|Any CPU.ActiveCfg = Release|Any CPU
-		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
-		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
-		{04C21AF7-BD19-4180-A5E0-291E187C0936}.Release-Unsigned|x64.Build.0 = Release|Any CPU
-		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug_NoGame|Any CPU.ActiveCfg = Debug|Any CPU
-		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug_NoGame|Any CPU.Build.0 = Debug|Any CPU
-		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug_NoGame|x64.ActiveCfg = Debug|Any CPU
-		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug_NoGame|x64.Build.0 = Debug|Any CPU
 		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -50,10 +34,6 @@ Global
 		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release|x64.ActiveCfg = Release|Any CPU
 		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release|x64.Build.0 = Release|Any CPU
-		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release-Unsigned|Any CPU.ActiveCfg = Release|Any CPU
-		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release-Unsigned|Any CPU.Build.0 = Release|Any CPU
-		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release-Unsigned|x64.ActiveCfg = Release|Any CPU
-		{99AADD3B-8499-4DA8-AE3C-8E81569640E2}.Release-Unsigned|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
