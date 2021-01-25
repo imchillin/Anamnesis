@@ -21,7 +21,7 @@
 	
 	<Grid x:Name="ContentArea" Margin="0, 20, 0, 0" IsHitTestVisible="False">
 
-		<Border BorderBrush="White" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image1Host" Opacity="0"  Visibility="{Binding Image1Path, Converter={StaticResource NotNullToVisibilityConverter}}">
+		<Border BorderBrush="White" MinHeight="256" MinWidth="256" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image1Host" Opacity="0"  Visibility="{Binding Image1Path, Converter={StaticResource NotNullToVisibilityConverter}}">
 			<Border.Effect>
 				<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="1"/>
 			</Border.Effect>
@@ -31,8 +31,10 @@
 			</Border.RenderTransform>
 
 			<Grid>
+				<Rectangle Fill="White" Margin="-3"/>
+				<TextBlock Text="Oops! No Image!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0, 0, 0, 20"/>
 				<Image Source="{Binding Image1Path}" x:Name="Image1" Margin="0, 0, 0, 20"/>
-				<TextBlock Text="{Binding Image1Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2"/>
+				<TextBlock Text="{Binding Image1Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2, 4, 2, 0"/>
 			</Grid>
 		</Border>
 
@@ -46,8 +48,10 @@
 			</Border.RenderTransform>
 
 			<Grid>
+				<Rectangle Fill="White" Margin="-3"/>
+				<TextBlock Text="Oops! No Image!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0, 0, 0, 20"/>
 				<Image Source="{Binding Image2Path}" x:Name="Image2" Margin="0, 0, 0, 20"/>
-				<TextBlock Text="{Binding Image2Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2"/>
+				<TextBlock Text="{Binding Image2Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2, 4, 2, 0"/>
 			</Grid>
 		</Border>
 	</Grid>

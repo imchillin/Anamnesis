@@ -35,7 +35,7 @@ namespace Anamnesis.Services
 		public string DefaultPoseDirectory { get; set; } = "%MyDocuments%/Anamnesis/Poses/";
 		public string DefaultCharacterDirectory { get; set; } = "%MyDocuments%/Anamnesis/Characters/";
 		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
-		public HomeWidgetType HomeWidget { get; set; } = HomeWidgetType.XmaLatest;
+		public HomeWidgetType HomeWidget { get; set; } = HomeWidgetType.Art;
 		public bool UseCustomBorder { get; set; } = true;
 	}
 }
