@@ -8,9 +8,10 @@
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800">
-	
-	<Grid>
+			 Height="26"
+			 d:DesignWidth="800">
+
+	<Grid Visibility="{Binding MainHand.Set, Converter={StaticResource NotZeroToVisibilityConverter}}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="32"/>
 			<ColumnDefinition/>
@@ -41,13 +42,13 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-			<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding Tint}" Margin="6, 0, 0, 0"/>
-			<ana:VectorEditor Grid.Row="0" Grid.Column="1" Value="{Binding Scale}" Minimum="0" Maximum="10" TickFrequency="0.1"/>
+			<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ModelObject.Weapons.Tint}" Margin="6, 0, 0, 0"/>
+			<ana:VectorEditor Grid.Row="0" Grid.Column="1" Value="{Binding ModelObject.Weapons.Scale}" Minimum="0" Maximum="10" TickFrequency="0.1"/>
 		</Grid>
 
 		<Line Y1="0" Y2="1" StrokeThickness="1" HorizontalAlignment="Left" Grid.Column="2" Stroke="{DynamicResource MaterialDesignPaper}" Stretch="Fill"/>
 
-		<Grid Grid.Column="2" IsEnabled="{Binding Freeze}" Margin="0, 0, 3, 0">
+		<Grid Grid.Column="2" Margin="0, 0, 3, 0" Visibility="{Binding OffHand.Set, Converter={StaticResource NotZeroToVisibilityConverter}}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>
@@ -59,8 +60,8 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-			<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding SubModel.Tint}" Margin="6, 0, 0, 0"/>
-			<ana:VectorEditor Grid.Row="0" Grid.Column="1" Value="{Binding SubModel.Scale}" Minimum="0" Maximum="10" TickFrequency="0.1"/>
+			<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding ModelObject.Weapons.SubModel.Tint}" Margin="6, 0, 0, 0"/>
+			<ana:VectorEditor Grid.Row="0" Grid.Column="1" Value="{Binding ModelObject.Weapons.SubModel.Scale}" Minimum="0" Maximum="10" TickFrequency="0.1"/>
 		</Grid>
 	</Grid>
 </UserControl>

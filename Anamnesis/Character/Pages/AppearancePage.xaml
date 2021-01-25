@@ -53,7 +53,7 @@
 					<ana:Header Icon="PenAlt" Key="Character_ExWeapons_Header"/>
 				</GroupBox.Header>
 
-				<views:ExtendedWeaponsEditor DataContext="{Binding Actor.ModelObject.Weapons}"/>
+				<views:ExtendedWeaponsEditor DataContext="{Binding Actor}"/>
 
 			</GroupBox>
 		</Grid>
