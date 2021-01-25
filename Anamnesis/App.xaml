@@ -55,7 +55,9 @@
 					<ResourceDictionary Source="Styles/TabControlStyles.xaml"/>
 					<ResourceDictionary Source="Styles/TextBoxStyles.xaml"/>
 
-				</ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Styles/MarkdownStyles.xaml"/>
+
+			</ResourceDictionary.MergedDictionaries>
 
 				<!-- Material Design:Styles-->
 				<Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedButton}" />

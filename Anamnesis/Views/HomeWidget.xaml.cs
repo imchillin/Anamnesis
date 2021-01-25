@@ -29,6 +29,7 @@ namespace Anamnesis.Views
 
 		public bool ShowXMA { get; private set; }
 		public bool ShowArt { get; private set; }
+		public bool ShowWiki { get; private set; }
 
 		public int Mode
 		{
@@ -41,6 +42,7 @@ namespace Anamnesis.Views
 			this.Mode = (int)SettingsService.Current.HomeWidget;
 			this.ShowXMA = SettingsService.Current.HomeWidget == Settings.HomeWidgetType.XmaTop || SettingsService.Current.HomeWidget == Settings.HomeWidgetType.XmaLatest;
 			this.ShowArt = SettingsService.Current.HomeWidget == Settings.HomeWidgetType.Art;
+			this.ShowWiki = SettingsService.Current.HomeWidget == Settings.HomeWidgetType.Wiki;
 		}
 
 		private void OnOpenUrlClicked(object sender, System.Windows.RoutedEventArgs e)
@@ -50,6 +52,7 @@ namespace Anamnesis.Views
 				Settings.HomeWidgetType.XmaTop => XmaView.PopularTodaySearchUrl,
 				Settings.HomeWidgetType.XmaLatest => XmaView.RecentSearchUrl,
 				Settings.HomeWidgetType.Art => "https://discord.com/channels/701987194910277642/782161117463969793/782165438666637343",
+				Settings.HomeWidgetType.Wiki => "https://github.com/imchillin/Anamnesis/wiki",
 				_ => null,
 			};
 

@@ -27,6 +27,7 @@
 			<ComboBoxItem><ana:TextBlock Key="Home_XmaTopToday"/></ComboBoxItem>
 			<ComboBoxItem><ana:TextBlock Key="Home_XmaLatest"/></ComboBoxItem>
 			<ComboBoxItem><ana:TextBlock Key="Home_Art"/></ComboBoxItem>
+			<ComboBoxItem><ana:TextBlock Key="Home_Wiki"/></ComboBoxItem>
 			<ComboBoxItem><ana:TextBlock Key="Home_None"/></ComboBoxItem>
 		</ComboBox>
 
@@ -39,6 +40,8 @@
 		<Grid Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding ShowArt, Converter={StaticResource B2V}}" >
 			<local:Gallery/>
 		</Grid>
+
+		<local:Wiki Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="{Binding ShowWiki, Converter={StaticResource B2V}}"/>
 
 	</Grid>
 </UserControl>

@@ -8,7 +8,9 @@
 		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 		xmlns:characterPages="clr-namespace:Anamnesis.Character.Pages"
 		xmlns:posePages="clr-namespace:Anamnesis.PoseModule.Pages"
-		xmlns:services="clr-namespace:Anamnesis" xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+		xmlns:services="clr-namespace:Anamnesis"
+		xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+		xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
 		mc:Ignorable="d"
 		WindowStyle="None"
 		ResizeMode="CanMinimize"
@@ -27,6 +29,10 @@
 		TextBlock.FontSize="12"
 		
 		Icon="/Assets/Concept Matrix.ico">
+
+	<FrameworkElement.CommandBindings>
+		<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
+	</FrameworkElement.CommandBindings>
 
 	<Window.Title>
 		<MultiBinding StringFormat="{}Anamnesis - {0}">

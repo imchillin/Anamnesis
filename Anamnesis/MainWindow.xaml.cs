@@ -290,5 +290,18 @@ namespace Anamnesis.GUI
 			SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
 			SettingsService.Save();
 		}
+
+		private void OpenHyperlink(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (e.Parameter == null)
+				return;
+
+			string? url = e.Parameter.ToString();
+
+			if (url == null)
+				return;
+
+			UrlUtility.Open(url);
+		}
 	}
 }

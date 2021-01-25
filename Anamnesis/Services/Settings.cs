@@ -20,6 +20,7 @@ namespace Anamnesis.Services
 			XmaTop,
 			XmaLatest,
 			Art,
+			Wiki,
 			None,
 		}
 
