@@ -129,7 +129,7 @@ namespace Anamnesis.Character.Views
 				return;
 			}
 
-			if (this.Appearance.Race == 0)
+			if (this.Appearance.Race == 0 || this.Appearance.Race > AnAppearance.Races.Viera)
 			{
 				this.IsEnabled = false;
 				return;

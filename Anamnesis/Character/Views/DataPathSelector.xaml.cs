@@ -22,6 +22,7 @@ namespace Anamnesis.Character.Views
 		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, DataPathSelector>(nameof(Tribe), OnTribeChanged);
 
 		private DataPathOption? selectedPath;
+		private bool supressEvents = false;
 
 		public DataPathSelector()
 		{
@@ -85,13 +86,9 @@ namespace Anamnesis.Character.Views
 			}
 			set
 			{
+				this.supressEvents = true;
 				this.selectedPath = value;
-
-				if (value != null && value.PathValue != 0)
-				{
-					this.DataPath = value.PathValue;
-					this.DataHead = value.GetHead(this.Tribe);
-				}
+				this.supressEvents = false;
 			}
 		}
 
@@ -123,6 +120,18 @@ namespace Anamnesis.Character.Views
 			return null;
 		}
 
+		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (this.supressEvents)
+				return;
+
+			if (this.selectedPath == null)
+				return;
+
+			this.DataPath = this.selectedPath.PathValue;
+			this.DataHead = this.selectedPath.GetHead(this.Tribe);
+		}
+
 		public class DataPathOption
 		{
 			public DataPathOption(string name, short path)
@@ -136,6 +145,7 @@ namespace Anamnesis.Character.Views
 
 			public byte GetHead(Appearance.Tribes tribe)
 			{
+				// 1, 3, 5, 7, 9, 11, 13, 15
 				if ((int)tribe % 2 != 0)
 				{
 					// If highlander
@@ -144,6 +154,8 @@ namespace Anamnesis.Character.Views
 
 					return 0x01;
 				}
+
+				// 2, 4, 6, 8, 10
 				else if ((int)tribe <= 10)
 				{
 					// If midlander
@@ -152,6 +164,8 @@ namespace Anamnesis.Character.Views
 
 					return 0x65;
 				}
+
+				// 12, 14, 16
 				else
 				{
 					// If highlander
