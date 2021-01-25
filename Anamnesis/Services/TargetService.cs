@@ -206,11 +206,6 @@ namespace Anamnesis
 
 			if (this.PinnedActors.Count > 0)
 			{
-				foreach (ActorTableActor actor in this.PinnedActors)
-				{
-					actor.Clear();
-				}
-
 				this.SelectActor(this.PinnedActors[0]);
 			}
 		}
@@ -316,12 +311,7 @@ namespace Anamnesis
 
 			public ActorViewModel? GetViewModel()
 			{
-				if (this.Pointer == null)
-					this.Retarget();
-
-				if (this.viewModel == null || this.Pointer != this.viewModel.Pointer || this.Name != this.viewModel.Name)
-					this.Retarget();
-
+				this.Retarget();
 				return this.viewModel;
 			}
 
@@ -339,38 +329,47 @@ namespace Anamnesis
 
 			private void Retarget()
 			{
-				if (this.viewModel != null)
-					this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
-
-				////this.viewModel = null;
-
-				List<ActorTableActor> actors = TargetService.GetActors();
-
-				foreach (ActorTableActor actor in actors)
+				lock (this)
 				{
-					if (actor.Name == this.Name && actor.Pointer != null)
-					{
-						// Handle case where multiple actor table entries point ot the same actor, but
-						// its not the actor we actually want.
-						if (actor.Id != this.Id)
-							continue;
-
-						if (this.viewModel != null)
-						{
-							this.viewModel.Pointer = actor.Pointer;
-						}
-						else
-						{
-							this.viewModel = new ActorViewModel((IntPtr)actor.Pointer);
-						}
-
-						this.Pointer = actor.Pointer;
-						this.Model = actor.Model;
+					if (this.viewModel != null)
 						this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
-					}
-				}
 
-				this.IsValid = this.viewModel != null;
+					List<ActorTableActor> actors = TargetService.GetActors();
+					bool found = false;
+					foreach (ActorTableActor actor in actors)
+					{
+						if (actor.Name == this.Name && actor.Pointer != null)
+						{
+							// Handle case where multiple actor table entries point ot the same actor, but
+							// its not the actor we actually want.
+							if (actor.Id != this.Id)
+								continue;
+
+							if (this.viewModel != null)
+							{
+								this.viewModel.Pointer = actor.Pointer;
+							}
+							else
+							{
+								this.viewModel = new ActorViewModel((IntPtr)actor.Pointer);
+							}
+
+							this.Pointer = actor.Pointer;
+							this.Model = actor.Model;
+							this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+							found = true;
+							break;
+						}
+					}
+
+					if (!found)
+					{
+						this.viewModel?.Dispose();
+						this.viewModel = null;
+					}
+
+					this.IsValid = found;
+				}
 			}
 
 			private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

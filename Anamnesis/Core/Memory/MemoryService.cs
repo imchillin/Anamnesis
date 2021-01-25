@@ -422,7 +422,7 @@ namespace Anamnesis.Memory
 					Thread.Sleep(16);
 
 					if (!IsProcessAlive)
-						return;
+						continue;
 
 					if (App.Current == null)
 						return;

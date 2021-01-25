@@ -61,9 +61,9 @@ namespace Anamnesis
 
 		private async Task Update()
 		{
-			try
+			while (this.IsAlive)
 			{
-				while (this.IsAlive)
+				try
 				{
 					await Task.Delay(10);
 
@@ -114,14 +114,14 @@ namespace Anamnesis
 						}
 					}
 				}
-			}
-			catch (Exception)
-			{
-				Log.Information("Failed to update territory");
-				this.currentWeatherId = 0;
-				this.CurrentTerritoryId = 0;
-				this.CurrentTerritory = null;
-				this.CurrentTerritoryName = "Unknown";
+				catch (Exception)
+				{
+					Log.Information("Failed to update territory");
+					this.currentWeatherId = 0;
+					this.CurrentTerritoryId = 0;
+					this.CurrentTerritory = null;
+					this.CurrentTerritoryName = "Unknown";
+				}
 			}
 		}
 

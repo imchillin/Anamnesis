@@ -60,6 +60,11 @@ namespace Anamnesis
 			{
 				await Task.Delay(50);
 
+				if (this.Camera == null)
+					continue;
+
+				this.Camera.Pointer = AddressService.Camera;
+
 				if (!GposeService.Instance.IsGpose || GposeService.Instance.IsChangingState)
 				{
 					this.LockCameraPosition = false;
