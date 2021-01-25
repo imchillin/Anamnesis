@@ -27,6 +27,8 @@ namespace Anamnesis.Character.Views
 	public partial class ItemView : UserControl
 	{
 		public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
+		public static readonly IBind<IStructViewModel?> ItemModelDp = Binder.Register<IStructViewModel?, ItemView>(nameof(ItemModel), OnItemModelChanged, BindMode.TwoWay);
+		public static readonly IBind<WeaponSubExtendedViewModel?> WeaponExModelDp = Binder.Register<WeaponSubExtendedViewModel?, ItemView>(nameof(ExtendedViewModel));
 
 		private bool lockViewModel = false;
 
@@ -40,16 +42,29 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 		}
 
+		public GposeService GPoseService => GposeService.Instance;
+
 		public ItemSlots Slot
 		{
 			get => SlotDp.Get(this);
 			set => SlotDp.Set(this, value);
 		}
 
-		public IStructViewModel? ViewModel { get; set; }
 		public IItem? Item { get; set; }
 		public IDye? Dye { get; set; }
 		public ImageSource? IconSource { get; set; }
+
+		public IStructViewModel? ItemModel
+		{
+			get => ItemModelDp.Get(this);
+			set => ItemModelDp.Set(this, value);
+		}
+
+		public WeaponSubExtendedViewModel? ExtendedViewModel
+		{
+			get => WeaponExModelDp.Get(this);
+			set => WeaponExModelDp.Set(this, value);
+		}
 
 		public int ItemKey
 		{
@@ -77,6 +92,20 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
+		private static void OnItemModelChanged(ItemView sender, IStructViewModel? value)
+		{
+			if (sender.ItemModel != null)
+				sender.ItemModel.PropertyChanged -= sender.OnViewModelPropertyChanged;
+
+			if (sender.ItemModel == null)
+				return;
+
+			sender.IconSource = sender.Slot.GetIcon();
+			sender.ItemModel.PropertyChanged += sender.OnViewModelPropertyChanged;
+
+			sender.OnViewModelPropertyChanged(null, null);
+		}
+
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
 			EquipmentSelector selector = new EquipmentSelector(this.Slot);
@@ -100,12 +129,12 @@ namespace Anamnesis.Character.Views
 				modelVariant = useSubModel ? (byte)item.SubModelVariant : (byte)item.ModelVariant;
 			}
 
-			if (this.ViewModel is ItemViewModel itemView)
+			if (this.ItemModel is ItemViewModel itemView)
 			{
 				itemView.Base = modelBase;
 				itemView.Variant = (byte)modelVariant;
 			}
-			else if (this.ViewModel is WeaponViewModel weaponView)
+			else if (this.ItemModel is WeaponViewModel weaponView)
 			{
 				weaponView.Set = modelSet;
 				weaponView.Base = modelBase;
@@ -123,31 +152,15 @@ namespace Anamnesis.Character.Views
 				if (v == null)
 					return;
 
-				if (this.ViewModel is ItemViewModel item)
+				if (this.ItemModel is ItemViewModel item)
 				{
 					item.Dye = v.Id;
 				}
-				else if (this.ViewModel is WeaponViewModel weapon)
+				else if (this.ItemModel is WeaponViewModel weapon)
 				{
 					weapon.Dye = v.Id;
 				}
 			});
-		}
-
-		private void OnThisDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (this.ViewModel != null)
-				this.ViewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
-
-			this.ViewModel = this.DataContext as IStructViewModel;
-
-			if (this.ViewModel == null)
-				return;
-
-			this.IconSource = this.Slot.GetIcon();
-			this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
-
-			this.OnViewModelPropertyChanged(null, null);
 		}
 
 		private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs? e)
@@ -155,22 +168,22 @@ namespace Anamnesis.Character.Views
 			if (this.lockViewModel)
 				return;
 
-			if (this.ViewModel == null || !this.ViewModel.Enabled || GameDataService.Dyes == null)
-				return;
-
-			Application.Current.Dispatcher.Invoke(() =>
+			Application.Current.Dispatcher.Invoke((Action)(() =>
 			{
-				if (this.ViewModel is ItemViewModel item)
+				if (this.ItemModel == null || !this.ItemModel.Enabled || GameDataService.Dyes == null)
+					return;
+
+				if (this.ItemModel is ItemViewModel item)
 				{
 					this.Item = ItemUtility.GetItem(this.Slot, 0, item.Base, item.Variant);
 					this.Dye = GameDataService.Dyes.Get(item.Dye);
 				}
-				else if (this.ViewModel is WeaponViewModel weapon)
+				else if (this.ItemModel is WeaponViewModel weapon)
 				{
 					this.Item = ItemUtility.GetItem(this.Slot, weapon.Set, weapon.Base, weapon.Variant);
 					this.Dye = GameDataService.Dyes.Get(weapon.Dye);
 				}
-			});
+			}));
 		}
 	}
 }

@@ -45,5 +45,17 @@ namespace Anamnesis.Memory
 
 		[ModelField] public Vector Scale { get; set; }
 		[ModelField] public Color Tint { get; set; }
+
+		public bool IsHidden
+		{
+			get
+			{
+				return this.Scale == Vector.Zero;
+			}
+			set
+			{
+				this.Scale = value ? Vector.Zero : Vector.One;
+			}
+		}
 	}
 }

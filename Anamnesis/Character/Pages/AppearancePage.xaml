@@ -34,30 +34,13 @@
 
 		</Grid>
 
-		<Grid Grid.Column="1">
-			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition Height="Auto"/>
-			</Grid.RowDefinitions>
-			
-			<GroupBox Style="{StaticResource PanelGroupBox}" Grid.Row="0" IsEnabled="{Binding GPoseService.IsOverworld}" >
-				<GroupBox.Header>
-					<ana:Header Icon="ChessQueen" Key="Character_Equipment_Header"/>
-				</GroupBox.Header>
+		<GroupBox Grid.Column="1" Style="{StaticResource PanelGroupBox}" Grid.Row="0">
+			<GroupBox.Header>
+				<ana:Header Icon="ChessQueen" Key="Character_Equipment_Header"/>
+			</GroupBox.Header>
 
-				<views:EquipmentEditor DataContext="{Binding Actor}"/>
-			</GroupBox>
-			
-			<GroupBox Style="{StaticResource PanelGroupBox}" Grid.Row="1">
-				<GroupBox.Header>
-					<ana:Header Icon="PenAlt" Key="Character_ExWeapons_Header"/>
-				</GroupBox.Header>
-
-				<views:ExtendedWeaponsEditor DataContext="{Binding Actor}"/>
-
-			</GroupBox>
-		</Grid>
-
+			<views:EquipmentEditor DataContext="{Binding Actor}"/>
+		</GroupBox>
 
 		<Grid Grid.Column="2">
 
