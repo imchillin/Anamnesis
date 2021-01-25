@@ -43,6 +43,7 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
 			<ana:TextBlock Grid.Row="0" Grid.Column="1" Key="Character_ExAppearance_Skin" Style="{StaticResource Label}"/>
@@ -57,11 +58,14 @@
 			<ana:RgbColorControl Grid.Row="2" Grid.Column="3" ToolTip="Right Eye Color" Value="{Binding RightEyeColor}"/>
 			<ana:RgbColorControl Grid.Row="2" Grid.Column="4" ToolTip="Limbal Ring Color" Value="{Binding LimbalRingColor}"/>
 
-
 			<ana:TextBlock Grid.Row="3" Grid.Column="1" Key="Character_ExAppearance_Hair" Style="{StaticResource Label}"/>
 			<ana:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding HairColor}" ToolTip="Hair Color"/>
 			<ana:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding HairGloss}" ToolTip="Hair Glow"/>
 			<ana:RgbColorControl Grid.Row="3" Grid.Column="4" Value="{Binding HairHighlight}" ToolTip="Highlight Color"/>
+
+			<ana:TextBlock Grid.Row="4" Grid.Column="1" Key="Character_ExAppearance_Muscle" Style="{StaticResource Label}"/>
+			<ana:NumberBox Grid.Row="4" Value="{Binding MuscleTone}" Grid.Column="2" Grid.ColumnSpan="5" Slider="Absolute" Minimum="0" Maximum="5" TickFrequency="0.1"/>
+
 		</Grid>
 	</Grid>
 </UserControl>

@@ -102,7 +102,7 @@ namespace Anamnesis.Files
 		public Color4? MouthColor { get; set; }
 		public Vector? BustScale { get; set; }
 		public float? Transparency { get; set; }
-		public float? FeatureScale { get; set; }
+		public float? MuscleTone { get; set; }
 		public float? HeightMultiplier { get; set; }
 
 		public void WriteToFile(ActorViewModel actor, SaveModes mode)
@@ -214,6 +214,7 @@ namespace Anamnesis.Files
 				this.HeightMultiplier = actor.ModelObject?.Height;
 				this.SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
 				this.SkinGloss = actor.ModelObject?.ExtendedAppearance?.SkinGloss;
+				this.MuscleTone = actor.ModelObject?.ExtendedAppearance?.MuscleTone;
 				this.BustScale = actor.ModelObject?.Bust?.Scale;
 				this.Transparency = actor.Transparency;
 			}
@@ -357,6 +358,7 @@ namespace Anamnesis.Files
 				{
 					actor.ModelObject.ExtendedAppearance.SkinColor = this.SkinColor ?? actor.ModelObject.ExtendedAppearance.SkinColor;
 					actor.ModelObject.ExtendedAppearance.SkinGloss = this.SkinGloss ?? actor.ModelObject.ExtendedAppearance.SkinGloss;
+					actor.ModelObject.ExtendedAppearance.MuscleTone = this.MuscleTone ?? actor.ModelObject.ExtendedAppearance.MuscleTone;
 					actor.Transparency = this.Transparency ?? actor.Transparency;
 
 					if (actor.ModelObject.Bust?.Scale != null)
@@ -364,6 +366,7 @@ namespace Anamnesis.Files
 
 					usedExAppearance |= this.SkinColor != null;
 					usedExAppearance |= this.SkinGloss != null;
+					usedExAppearance |= this.MuscleTone != null;
 				}
 
 				////actor.ModelObject.ExtendedAppearance.Freeze = usedExAppearance;
