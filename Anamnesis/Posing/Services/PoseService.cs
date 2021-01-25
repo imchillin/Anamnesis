@@ -159,6 +159,9 @@ namespace Anamnesis.PoseModule
 			if (enabled && !GposeService.Instance.IsGpose)
 				throw new Exception("Attempt to enable posing outside of gpose");
 
+			if (this.isEnabled == enabled)
+				return;
+
 			this.isEnabled = enabled;
 
 			this.FreezePositions = false;
