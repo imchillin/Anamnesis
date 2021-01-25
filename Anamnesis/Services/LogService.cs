@@ -49,7 +49,7 @@ namespace Anamnesis.Services
 			string[] logs = Directory.GetFiles(dir);
 			for (int i = logs.Length - 1; i >= 0; i--)
 			{
-				if (i <= logs.Length - 5)
+				if (i <= logs.Length - 15)
 				{
 					File.Delete(logs[i]);
 				}
