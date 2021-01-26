@@ -4,6 +4,7 @@
 
 namespace Anamnesis.Styles.Controls
 {
+	using System;
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -145,7 +146,11 @@ namespace Anamnesis.Styles.Controls
 			{
 				sender.lockChangedEvent = true;
 				Vector deltaV = newValue - oldValue;
-				float delta = deltaV.X + deltaV.Y + deltaV.Z;
+				float delta = Math.Max(deltaV.X, Math.Max(deltaV.Y, deltaV.Z));
+
+				if (delta == 0)
+					delta = Math.Min(deltaV.X, Math.Min(deltaV.Y, deltaV.Z));
+
 				sender.Value = oldValue + delta;
 				sender.lockChangedEvent = false;
 			}
