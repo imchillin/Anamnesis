@@ -238,4 +238,54 @@
 		</Setter>
 	</Style>
 
+	<Style TargetType="Button" x:Key="TransparentIconButton">
+		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueMidBrush}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="md:RippleAssist.Feedback" Value="{DynamicResource MaterialDesignBody}" />
+		<Setter Property="Margin" Value="1" />
+		<Setter Property="Padding" Value="6, 0, 6, 0"/>
+		<Setter Property="MinWidth" Value="18"/>
+		<Setter Property="MinHeight" Value="18"/>
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+
+					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand">
+						<Border Background="{DynamicResource MaterialDesignCardBackground}" x:Name="HoverBorder" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource MaterialDesignCardBackground}" Opacity="0">
+							<Border.Effect>
+								<DropShadowEffect ShadowDepth="0" BlurRadius="5" Opacity="0.5"/>
+							</Border.Effect>
+						</Border>
+
+						<Line X1="0" X2="1" Stretch="Fill" x:Name="Border" StrokeThickness="{TemplateBinding BorderThickness}" Stroke="{TemplateBinding BorderBrush}" VerticalAlignment="Bottom" Margin="3, 0, 3, 0"/>
+
+						<md:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
+									ContentStringFormat="{TemplateBinding ContentStringFormat}"
+									HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+									Padding="{TemplateBinding Padding}"
+									SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+						</md:Ripple>
+
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="true">
+							<Setter TargetName="HoverBorder" Property="Opacity" Value="1"/>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="false">
+							<Setter TargetName="Border" Property="Opacity" Value="0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 </ResourceDictionary>

@@ -9,6 +9,7 @@ namespace Anamnesis.Character.Pages
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Character.Dialogs;
+	using Anamnesis.Character.Utilities;
 	using Anamnesis.Character.Views;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
@@ -48,6 +49,38 @@ namespace Anamnesis.Character.Pages
 				return;
 
 			this.OnActorChanged(this.DataContext as ActorViewModel);
+		}
+
+		private void OnClearClicked(object sender, RoutedEventArgs e)
+		{
+			this.Actor?.Equipment?.Arms?.Clear();
+			this.Actor?.Equipment?.Chest?.Clear();
+			this.Actor?.Equipment?.Ear?.Clear();
+			this.Actor?.Equipment?.Feet?.Clear();
+			this.Actor?.Equipment?.Head?.Clear();
+			this.Actor?.Equipment?.Legs?.Clear();
+			this.Actor?.Equipment?.LFinger?.Clear();
+			this.Actor?.Equipment?.Neck?.Clear();
+			this.Actor?.Equipment?.RFinger?.Clear();
+			this.Actor?.Equipment?.Wrist?.Clear();
+
+			this.Actor?.ModelObject?.Weapons?.Hide();
+			this.Actor?.ModelObject?.Weapons?.SubModel?.Hide();
+		}
+
+		private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
+		{
+			this.Actor?.Equipment?.Ear?.Clear();
+			this.Actor?.Equipment?.Head?.Clear();
+			this.Actor?.Equipment?.LFinger?.Clear();
+			this.Actor?.Equipment?.Neck?.Clear();
+			this.Actor?.Equipment?.RFinger?.Clear();
+			this.Actor?.Equipment?.Wrist?.Clear();
+
+			this.Actor?.Equipment?.Arms?.Equip(ItemUtility.NpcBodyItem);
+			this.Actor?.Equipment?.Chest?.Equip(ItemUtility.NpcBodyItem);
+			this.Actor?.Equipment?.Legs?.Equip(ItemUtility.NpcBodyItem);
+			this.Actor?.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
 		}
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)

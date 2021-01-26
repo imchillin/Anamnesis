@@ -39,7 +39,33 @@
 				<ana:Header Icon="ChessQueen" Key="Character_Equipment_Header"/>
 			</GroupBox.Header>
 
-			<views:EquipmentEditor DataContext="{Binding Actor}"/>
+			<Grid>
+
+				<StackPanel Margin="0, -18, -4, 0" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Orientation="Horizontal">
+
+					<Button Style="{StaticResource TransparentIconButton}"
+						Click="OnNpcSmallclothesClicked">
+
+						<Button.ToolTip>
+							<ana:TextBlock Key="Character_Equipment_NpcSmallclothes"/>
+						</Button.ToolTip>
+
+						<fa:IconBlock Icon="UserShield" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+					</Button>
+
+					<Button Style="{StaticResource TransparentIconButton}"
+						Click="OnClearClicked">
+
+						<Button.ToolTip>
+							<ana:TextBlock Key="Character_Equipment_Clear"/>
+						</Button.ToolTip>
+
+						<fa:IconBlock Icon="Eraser" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+					</Button>
+				</StackPanel>
+				
+				<views:EquipmentEditor DataContext="{Binding Actor}"/>
+			</Grid>
 		</GroupBox>
 
 		<Grid Grid.Column="2">

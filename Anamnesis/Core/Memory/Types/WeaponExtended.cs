@@ -57,5 +57,10 @@ namespace Anamnesis.Memory
 				this.Scale = value ? Vector.Zero : Vector.One;
 			}
 		}
+
+		public void Hide()
+		{
+			this.IsHidden = true;
+		}
 	}
 }

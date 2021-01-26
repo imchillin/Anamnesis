@@ -6,6 +6,8 @@
 	"Common_None": "None",
 	"Common_All": "All",
 
+	"Common_LinkVector": "Link X, Y, and Z, axis together",
+
 	"Error_NotInGame": "Not Signed In",
 	"Error_WrongVersion": "Unsupported game version: {0}. Has a patch come out recently?\nUsing Anamnesis with unsupported game versions can cause game/app crashes.\nWe will have an update out as soon as we can. Thank you for your patience!",
 
@@ -79,6 +81,8 @@
 	"Character_Appearance_Fur": "Fur:",
 
 	"Character_Equipment_Header": "Equipment",
+	"Character_Equipment_Clear": "Remove all Equipment",
+	"Character_Equipment_NpcSmallclothes": "Equip NPC smallclothes",
 	"Character_Equipment_MainHand": "Main Hand:",
 	"Character_Equipment_OffHand": "Off Hand:",
 	"Character_Equipment_Head": "Head:",
