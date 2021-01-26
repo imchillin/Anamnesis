@@ -17,9 +17,9 @@
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="256"/>
+			<ColumnDefinition Width="240"/>
 			<ColumnDefinition/>
-			<ColumnDefinition Width="220"/>
+			<ColumnDefinition Width="240"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding GPoseService.IsOverworld}">
@@ -82,7 +82,7 @@
 						<ana:Header Icon="Horse" Key="Character_Actor_Header"/>
 					</GroupBox.Header>
 
-					<Grid>
+					<Grid Margin="0, -6, 0, 0">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>
@@ -91,15 +91,47 @@
 						<Grid.RowDefinitions>
 							<RowDefinition/>
 							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<ana:TextBlock Grid.Row="0" Grid.Column="0" Key="Character_Actor_Model" Style="{StaticResource Label}"/>
-						<Grid Grid.Row="0" Grid.Column="1" IsEnabled="{Binding GPoseService.IsOverworld}">
-							<views:ModelTypeEditor  DataContext="{Binding Actor}"/>
+						<ana:TextBlock Grid.Row="0" Grid.Column="0" Key="Character_Actor_Nickname" Style="{StaticResource Label}"/>
+						<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Actor.Nickname}" Grid.ColumnSpan="2"/>
+
+						<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Character_Actor_DataPath" Style="{StaticResource Label}"/>
+						<views:DataPathSelector Height="26" Grid.Row="1" Grid.Column="1" DataPath="{Binding Actor.ModelObject.DataPath}" DataHead="{Binding Actor.ModelObject.DataHead}" Tribe="{Binding Actor.Customize.Tribe}"/>
+
+						<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_Actor_EntityType" Style="{StaticResource Label}"/>
+						<Grid Grid.Row="2" Grid.Column="1" IsEnabled="{Binding GPoseService.IsOverworld}" Margin="0, 2, 0, 0">
+							<ComboBox Height="26" SelectedIndex="{Binding Actor.ObjectKindInt}">
+								<ComboBoxItem>None</ComboBoxItem>
+								<ComboBoxItem>Player</ComboBoxItem>
+								<ComboBoxItem>Battle NPC</ComboBoxItem>
+								<ComboBoxItem>Event NPC</ComboBoxItem>
+								<ComboBoxItem>Treasure</ComboBoxItem>
+								<ComboBoxItem>Aetheryte</ComboBoxItem>
+								<ComboBoxItem>Gathering Point</ComboBoxItem>
+								<ComboBoxItem>Event Object</ComboBoxItem>
+								<ComboBoxItem>Mount</ComboBoxItem>
+								<ComboBoxItem>Companion</ComboBoxItem>
+								<ComboBoxItem>Retainer</ComboBoxItem>
+								<ComboBoxItem>Area</ComboBoxItem>
+								<ComboBoxItem>Housing</ComboBoxItem>
+								<ComboBoxItem>Cutscene</ComboBoxItem>
+								<ComboBoxItem>card Stand</ComboBoxItem>
+							</ComboBox>
+						</Grid>
+						
+						<ana:TextBlock Grid.Row="3" Grid.Column="0" Key="Character_Actor_Model" Style="{StaticResource Label}"/>
+						<Grid Grid.Row="3" Grid.Column="1" IsEnabled="{Binding GPoseService.IsOverworld}" Margin="0, 2, 0, 0">
+							<views:ModelTypeEditor DataContext="{Binding Actor}"/>
 						</Grid>
 
-						<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Character_Actor_Alpha" Style="{StaticResource Label}"/>
-						<cm3Controls:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Actor.Transparency}" Minimum="0.01" Maximum="1" TickFrequency="0.1" Slider="Absolute"/>
+						<ana:TextBlock Grid.Row="4" Grid.Column="0" Key="Character_Actor_Alpha" Style="{StaticResource Label}"/>
+						<cm3Controls:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding Actor.Transparency}" Minimum="0.01" Maximum="1" TickFrequency="0.1" Slider="Absolute"/>
+
+						
 					</Grid>
 
 				</GroupBox>

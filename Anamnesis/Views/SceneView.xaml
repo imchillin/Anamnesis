@@ -142,34 +142,6 @@
 				</Grid>
 			</GroupBox>
 
-			<GroupBox Grid.Row="1" Style="{StaticResource PanelGroupBox}">
-				<GroupBox.Header>
-					<ana:Header Icon="UserAlt" Key="Scene_ActorInfo_Header"/>
-				</GroupBox.Header>
-
-				<Grid>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="Auto"/>
-					</Grid.ColumnDefinitions>
-
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
-
-					<ana:TextBlock Key="Scene_ActorInfo_Nickname" Style="{StaticResource Label}"/>
-					<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TargetService.SelectedActor.Nickname}" Grid.ColumnSpan="2"/>
-
-					<ana:TextBlock Grid.Row="2" Key="Scene_ActorInfo_DataPath" Style="{StaticResource Label}"/>
-					<charViews:DataPathSelector Grid.Row="3" Grid.Column="1" DataPath="{Binding TargetService.SelectedActor.ModelObject.DataPath}" DataHead="{Binding TargetService.SelectedActor.ModelObject.DataHead}" Tribe="{Binding TargetService.SelectedActor.Customize.Tribe}"/>
-
-				</Grid>
-
-			</GroupBox>
-
 			<GroupBox Grid.Row="2" Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding GposeService.IsGpose}">
 				<GroupBox.Header>
 					<ana:Header Icon="Camera" Key="Scene_Camera_Header"/>

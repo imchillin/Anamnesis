@@ -41,10 +41,6 @@
 	"Scene_World_Day": "Day:",
 	"Scene_World_Weather": "Weather:",
 
-	"Scene_ActorInfo_Header": "Actor Info",
-	"Scene_ActorInfo_Nickname": "Nickname:",
-	"Scene_ActorInfo_DataPath": "Data Path:",
-
 	"Scene_Camera_Header": "Camera",
 	"Scene_Camera_Delimit": "Delimit:",
 	"Scene_Camera_Position": "Position:",
@@ -99,14 +95,17 @@
 	"Character_Actor_Header": "Actor",
 	"Character_Actor_Model": "Model:",
 	"Character_Actor_Alpha": "Alpha:",
+	"Character_Actor_EntityType": "Type:",
+	"Character_Actor_Nickname": "Nickname:",
+	"Character_Actor_DataPath": "Data Path:",
 
 	"Character_Model_Header": "Model",
 	"Character_Model_Height": "Height:",
-	"Character_Model_Wetness": "Wetness:",
+	"Character_Model_Wetness": "Wet:",
 	"Character_Model_WetNone": "Dry",
 	"Character_Model_WetWet": "Wet",
 	"Character_Model_WetDrenched": "Drenched",
-	"Character_Model_BustScale": "Bust scale:",
+	"Character_Model_BustScale": "Bust:",
 
 	"Character_ExAppearance_Header": "Extended Appearance",
 	"Character_ExAppearance_Skin": "Skin:",

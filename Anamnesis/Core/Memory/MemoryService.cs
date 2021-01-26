@@ -421,11 +421,11 @@ namespace Anamnesis.Memory
 					// 60 ticks per second
 					Thread.Sleep(16);
 
-					if (!IsProcessAlive)
-						continue;
-
 					if (App.Current == null)
 						return;
+
+					if (!IsProcessAlive)
+						continue;
 
 					if (GposeService.Instance.IsChangingState)
 						continue;

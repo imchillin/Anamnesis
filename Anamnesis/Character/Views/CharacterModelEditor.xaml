@@ -58,13 +58,8 @@
 		</Grid>
 
 		<!-- Bust Scale -->
-		<GroupBox Style="{StaticResource Cm3GroupBox}" Grid.Row="4" Grid.ColumnSpan="2">
-			<GroupBox.Header>
-				<ana:TextBlock Key="Character_Model_BustScale"/>
-			</GroupBox.Header>
-
-			<ana:VectorEditor Value="{Binding Bust.Scale}" Expanded="True" CanLink="True" Minimum="0" Maximum="10"/>
-		</GroupBox>
+		<ana:TextBlock Grid.Row="4" Grid.Column="0" Key="Character_Model_BustScale" Style="{StaticResource Label}"/>
+		<ana:VectorEditor Grid.Row="4" Grid.Column="1" Value="{Binding Bust.Scale}" Expanded="False" CanLink="True" Minimum="0" Maximum="10"/>
 
 	</Grid>
 </UserControl>

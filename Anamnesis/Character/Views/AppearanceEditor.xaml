@@ -179,7 +179,7 @@
 
 					<controls:ColorControl Grid.Column="1" Value="{Binding Appearance.HairTone}" Type="Hair" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" ToolTip="Hair Color"/>
 
-					<TextBlock Grid.Column="2" Text="Highlights:" Margin="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Label}"/>
+					<TextBlock Grid.Column="2" Text="Highlight:" Margin="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Label}"/>
 					<CheckBox Grid.Column="3" IsChecked="{Binding Appearance.EnableHighlights}" ToolTip="Enable Highlights" HorizontalAlignment="Center"/>
 					<controls:ColorControl Grid.Column="4" Value="{Binding Appearance.Highlights}" Type="HairHighlights" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" IsEnabled="{Binding Appearance.EnableHighlights}" ToolTip="Highlight Color"/>
 
