@@ -21,6 +21,7 @@ namespace Anamnesis.GUI.Views
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
+	using Serilog;
 	using static Anamnesis.Files.IFileSource;
 
 	/// <summary>
@@ -31,12 +32,13 @@ namespace Anamnesis.GUI.Views
 	{
 		private static IFileSource? currentFileSource;
 		private static Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
+		private static bool isFlattened;
 
 		private FileInfoBase[] fileInfos;
 		private Modes mode;
 		private string? fileName;
-		private bool isFlattened;
 		private EntryWrapper? selected;
+		private bool updatingEntries = false;
 
 		public FileBrowserView(FileInfoBase fileInfo, Modes mode)
 			: this(new[] { fileInfo }, mode)
@@ -106,7 +108,6 @@ namespace Anamnesis.GUI.Views
 		public bool UseFileBrowser { get; set; }
 
 		public ObservableCollection<IFileSource> FileSources { get; private set; } = new ObservableCollection<IFileSource>();
-		public ObservableCollection<EntryWrapper> Entries { get; private set; } = new ObservableCollection<EntryWrapper>();
 
 		public EntryWrapper? Selected
 		{
@@ -130,12 +131,12 @@ namespace Anamnesis.GUI.Views
 		{
 			get
 			{
-				return this.isFlattened;
+				return isFlattened;
 			}
 
 			set
 			{
-				this.isFlattened = value;
+				isFlattened = value;
 				Task.Run(this.UpdateEntries);
 			}
 		}
@@ -303,22 +304,24 @@ namespace Anamnesis.GUI.Views
 			if (this.FileSource == null || this.CurrentDir == null)
 				return;
 
-			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.IsFlattened, this.fileInfos);
+			while (this.updatingEntries)
+				await Task.Delay(10);
 
-			await Dispatch.MainThread();
-			this.Entries.Clear();
+			this.updatingEntries = true;
+			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.IsFlattened, this.fileInfos);
+			this.Selector.ClearItems();
 
 			foreach (IFileSource.IEntry entry in entries)
 			{
-				this.Entries.Add(new EntryWrapper(entry, this));
+				this.Selector.AddItem(new EntryWrapper(entry, this));
 			}
+
+			this.Selector.FilterItems();
+			this.updatingEntries = false;
 		}
 
-		private void OnMouseDoubleClick(object? sender, MouseButtonEventArgs e)
+		private void OnClose()
 		{
-			if (e.ChangedButton != MouseButton.Left)
-				return;
-
 			if (this.Selected == null)
 				return;
 
@@ -331,6 +334,28 @@ namespace Anamnesis.GUI.Views
 			{
 				this.OnSelectClicked(null, null);
 			}
+
+			////this.Close?.Invoke();
+		}
+
+		private void OnSelectionChanged()
+		{
+			this.Selected = this.Selector.Value as EntryWrapper;
+		}
+
+		private bool OnFilter(object obj, string[]? search = null)
+		{
+			if (obj is EntryWrapper item)
+			{
+				bool matches = false;
+
+				matches |= SearchUtility.Matches(item.Name, search);
+				matches |= SearchUtility.Matches(item.Directory, search);
+
+				return matches;
+			}
+
+			return false;
 		}
 
 		private void OnGoUpClicked(object? sender, RoutedEventArgs e)
@@ -419,8 +444,11 @@ namespace Anamnesis.GUI.Views
 
 		private void Select(IEntry entry)
 		{
-			foreach (EntryWrapper? wrapper in this.Entries)
+			foreach (EntryWrapper? wrapper in this.Selector.Entries)
 			{
+				if (wrapper == null)
+					continue;
+
 				if (wrapper.Entry.Path == entry.Path)
 				{
 					this.selected = wrapper;

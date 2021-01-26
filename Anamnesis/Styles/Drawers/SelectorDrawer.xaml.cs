@@ -60,6 +60,18 @@ namespace Anamnesis.Styles.Drawers
 
 		public ObservableCollection<object> FilteredItems { get; set; } = new ObservableCollection<object>();
 
+		public IEnumerable<object> Entries
+		{
+			get
+			{
+				List<object> values = new List<object>();
+				foreach (ItemEntry entry in this.entries)
+					values.Add(entry.Item);
+
+				return values;
+			}
+		}
+
 		public object? Value
 		{
 			get => this.GetValue(ValueProperty);
@@ -102,6 +114,14 @@ namespace Anamnesis.Styles.Drawers
 			});
 		}
 
+		public void ClearItems()
+		{
+			lock (this.entries)
+			{
+				this.entries.Clear();
+			}
+		}
+
 		public void AddItem(object item)
 		{
 			lock (this.entries)
@@ -110,6 +130,11 @@ namespace Anamnesis.Styles.Drawers
 				entry.Item = item;
 				entry.OriginalIndex = this.entries.Count;
 				this.entries.Add(entry);
+
+				if (this.objectType == null)
+				{
+					this.objectType = item.GetType();
+				}
 			}
 		}
 
@@ -123,6 +148,11 @@ namespace Anamnesis.Styles.Drawers
 					entry.Item = item;
 					entry.OriginalIndex = this.entries.Count;
 					this.entries.Add(entry);
+
+					if (this.objectType == null)
+					{
+						this.objectType = item.GetType();
+					}
 				}
 			}
 		}

@@ -7,6 +7,7 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" Width="256">
 	
@@ -53,7 +54,7 @@
 				<Button.ToolTip>
 					<ana:TextBlock Key="FileBrowser_CreateFolder"/>
 				</Button.ToolTip>
-				
+
 				<fa:IconBlock Icon="FolderPlus"/>
 			</Button>
 
@@ -61,23 +62,19 @@
 				<Button.ToolTip>
 					<ana:TextBlock Key="FileBrowser_GoUp"/>
 				</Button.ToolTip>
-				
+
 				<fa:IconBlock Icon="LevelUpAlt" Opacity="0.5"/>
 			</Button>
-			
+
 			<TextBlock Grid.Column="3" Text="{Binding CurrentPath}" VerticalAlignment="Center" Margin="3, 0, 3, 0"/>
 
 		</Grid>
 
-		<ListBox Grid.Row="2" ItemsSource="{Binding Entries}" SelectedItem="{Binding Selected}" MouseDoubleClick="OnMouseDoubleClick" HorizontalContentAlignment="Stretch">
-			<ListBox.ItemContainerStyle>
-				<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
-					<Setter Property="Padding" Value="6"/>
-					<Setter Property="IsEnabled" Value="{Binding CanSelect}"/>
-				</Style>
-			</ListBox.ItemContainerStyle>
-			
-			<ListBox.ItemTemplate>
+		<drawers:SelectorDrawer Grid.Row="2" x:Name="Selector"
+								Close="OnClose" 
+								Filter="OnFilter"
+								SelectionChanged="OnSelectionChanged">
+			<drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
 					<Grid>
 						<Grid.ColumnDefinitions>
@@ -106,8 +103,17 @@
 
 					</Grid>
 				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+			</drawers:SelectorDrawer.ItemTemplate>
+		</drawers:SelectorDrawer>
+
+		<!--<ListBox Grid.Row="2" ItemsSource="{Binding Entries}" SelectedItem="{Binding Selected}" MouseDoubleClick="OnMouseDoubleClick" HorizontalContentAlignment="Stretch">
+			<ListBox.ItemContainerStyle>
+				<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+					<Setter Property="Padding" Value="6"/>
+					<Setter Property="IsEnabled" Value="{Binding CanSelect}"/>
+				</Style>
+			</ListBox.ItemContainerStyle>
+		</ListBox>-->
 
 		<Grid Grid.Row="3" Margin="6" Visibility="{Binding ShowFileName, Converter={StaticResource B2V}}">
 			<Grid.ColumnDefinitions>
