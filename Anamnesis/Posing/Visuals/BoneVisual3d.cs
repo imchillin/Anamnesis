@@ -64,6 +64,7 @@ namespace Anamnesis.PoseModule
 			this.sphere.Material = this.defaultMaterial;
 			this.Children.Add(this.sphere);
 
+			this.OriginalBoneName = name;
 			this.BoneName = name;
 
 			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
@@ -79,6 +80,7 @@ namespace Anamnesis.PoseModule
 		}
 
 		public bool IsEnabled { get; set; } = true;
+		public string OriginalBoneName { get; set; }
 		public string BoneName { get; set; }
 
 		public bool CanRotate => PoseService.Instance.FreezeRotation;

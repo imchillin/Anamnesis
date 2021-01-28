@@ -1,6 +1,8 @@
 {
-	"ModelType": 0,
+	"ModelTypes": [ 0 ],
 	"Age": "Normal",
+	"AllowPoseGui": true,
+	"AllowPoseMatrix": true,
 	"BoneNames": {
 		"Body_0": "Root",
 		"Body_1": "Abdomen",
@@ -267,6 +269,6 @@
 		"TailA": "Waist",
 		"TailB": "TailA",
 		"TailC": "TailB",
-		"TailD":  "TailC"
+		"TailD": "TailC"
 	}
 }

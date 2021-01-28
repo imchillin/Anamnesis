@@ -41,8 +41,6 @@ namespace Anamnesis.PoseModule.Views
 			transformGroup.Children.Add(this.cameraPosition);
 			this.camera.Transform = transformGroup;
 
-			this.SkeletonRoot.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
-
 			this.ContentArea.DataContext = this;
 
 			if (CameraService.Instance.Camera != null)
@@ -60,12 +58,7 @@ namespace Anamnesis.PoseModule.Views
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
-			SkeletonVisual3d? vm = this.DataContext as SkeletonVisual3d;
-
-			if (vm == null)
-				return;
-
-			this.SkeletonRoot.Children.Remove(vm);
+			this.SkeletonRoot.Children.Clear();
 		}
 
 		private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
@@ -80,6 +73,8 @@ namespace Anamnesis.PoseModule.Views
 
 			if (!this.SkeletonRoot.Children.Contains(this.Skeleton))
 				this.SkeletonRoot.Children.Add(this.Skeleton);
+
+			this.SkeletonRoot.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
 
 			this.FrameSkeleton();
 		}

@@ -80,7 +80,7 @@ namespace Anamnesis.PoseModule.Pages
 			}
 		}
 
-		private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
+		private async void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (!this.IsVisible)
 				return;
@@ -109,6 +109,21 @@ namespace Anamnesis.PoseModule.Pages
 			this.ThreeDView.DataContext = this.Skeleton;
 			this.GuiView.DataContext = this.Skeleton;
 			this.MatrixView.DataContext = this.Skeleton;
+
+			await this.Skeleton.GenerateBones();
+
+			if (this.Skeleton.File != null)
+			{
+				if (!this.Skeleton.File.AllowPoseGui)
+				{
+					this.ViewSelector.SelectedIndex = 1;
+				}
+
+				if (!this.Skeleton.File.AllowPoseMatrix)
+				{
+					this.ViewSelector.SelectedIndex = 2;
+				}
+			}
 		}
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)

@@ -104,13 +104,13 @@
 						</ToggleButton>
 
 						<ListBox Style="{StaticResource MaterialDesignToolToggleListBox}" x:Name="ViewSelector" SelectedIndex="0" Margin="6, 6, 6, 4" SelectionChanged="OnViewChanged">
-							<ListBoxItem ToolTip="GUI View" Margin="1, 1, 0, 1" Padding="12, 4, 12, 4" Cursor="Hand">
+							<ListBoxItem ToolTip="GUI View" Margin="1" Padding="12, 4, 12, 4" Cursor="Hand" Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
 								<fa:IconImage Icon="ProjectDiagram" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
-							<ListBoxItem ToolTip="Matrix View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
+							<ListBoxItem ToolTip="Matrix View" Margin="1" Padding="12, 4, 12, 4" Cursor="Hand"  Visibility="{Binding Skeleton.File.AllowPoseMatrix, Converter={StaticResource B2V}}">
 								<fa:IconImage Icon="BorderAll" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
-							<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="0, 1, 1, 1" Padding="12, 4, 12, 4" Cursor="Hand">
+							<ListBoxItem x:Name="View3dButton" ToolTip="3D View" Margin="1" Padding="12, 4, 12, 4" Cursor="Hand">
 								<fa:IconImage Icon="Cube" Foreground="{DynamicResource MaterialDesignBody}"/>
 							</ListBoxItem>
 						</ListBox>

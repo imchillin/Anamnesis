@@ -1,5 +1,4 @@
 {
-	"ModelType": 0,
 	"Race": "Viera",
 	"BasedOn": "Middy.json",
 	"BoneNames": {

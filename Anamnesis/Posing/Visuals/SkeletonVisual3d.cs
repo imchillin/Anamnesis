@@ -35,7 +35,7 @@ namespace Anamnesis.PoseModule
 		public SkeletonVisual3d(ActorViewModel actor)
 		{
 			this.Actor = actor;
-			Task.Run(this.GenerateBones);
+			////Task.Run(this.GenerateBones);
 			Task.Run(this.WriteSkeletonThread);
 
 			if (actor.ModelObject?.Transform != null)
@@ -59,6 +59,7 @@ namespace Anamnesis.PoseModule
 		public bool LinkEyes { get; set; } = true;
 		public bool FlipSides { get; set; } = false;
 		public ActorViewModel Actor { get; private set; }
+		public SkeletonFile? File { get; private set; }
 		public int SelectedCount => this.SelectedBones.Count;
 
 		public BoneVisual3d? CurrentBone
@@ -122,6 +123,7 @@ namespace Anamnesis.PoseModule
 			this.ClearSelection();
 			this.HoverBones.Clear();
 			this.Bones.Clear();
+			this.Children.Clear();
 		}
 
 		public void Select(IBone bone)
@@ -299,6 +301,11 @@ namespace Anamnesis.PoseModule
 				{
 					return bone;
 				}
+
+				if (bone.OriginalBoneName == name)
+				{
+					return bone;
+				}
 			}
 
 			return null;
@@ -315,13 +322,20 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		private async Task GenerateBones()
+		public async Task GenerateBones()
 		{
 			this.Generating = true;
 
 			await Dispatch.MainThread();
 
+			if (!GposeService.Instance.IsGpose)
+			{
+				this.Generating = false;
+				return;
+			}
+
 			this.Bones.Clear();
+			this.Children.Clear();
 
 			if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
 				return;
@@ -330,6 +344,12 @@ namespace Anamnesis.PoseModule
 
 			////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
 			await this.Generate(skeletonVm);
+
+			if (!GposeService.Instance.IsGpose)
+			{
+				this.Generating = false;
+				return;
+			}
 
 			// Map eyes together if they exist
 			BoneVisual3d? lEye = this.GetBone("EyeLeft");
@@ -371,11 +391,11 @@ namespace Anamnesis.PoseModule
 
 		private async Task Generate(SkeletonViewModel memory)
 		{
-			SkeletonFile? skeletonFile = memory.GetSkeletonFile(this.Actor);
+			this.File = memory.GetSkeletonFile(this.Actor);
 
 			bool autoSkeleton = false;
 
-			if ((skeletonFile == null || skeletonFile.Parenting == null) && GposeService.Instance.IsGpose)
+			if ((this.File == null || this.File.Parenting == null) && GposeService.Instance.IsGpose)
 			{
 				string message = LocalizationService.GetStringFormatted("Pose_GenerateSkeleton", this.Actor.DisplayName);
 				bool? result = await GenericDialog.Show(message, LocalizationService.GetString("Pose_GenerateSkeletonTitle"), MessageBoxButton.YesNo);
@@ -390,12 +410,12 @@ namespace Anamnesis.PoseModule
 			this.GetBones(memory.Met, "Met");
 			this.GetBones(memory.Top, "Top");
 
-			if (skeletonFile != null && skeletonFile.BoneNames != null)
+			if (this.File != null && this.File.BoneNames != null)
 			{
 				foreach (BoneVisual3d bone in this.Bones)
 				{
 					string? newName;
-					if (skeletonFile.BoneNames.TryGetValue(bone.BoneName, out newName))
+					if (this.File.BoneNames.TryGetValue(bone.BoneName, out newName))
 					{
 						bone.BoneName = newName;
 					}
@@ -415,31 +435,31 @@ namespace Anamnesis.PoseModule
 					return;
 				}
 
-				if (skeletonFile == null)
+				if (this.File == null)
 				{
-					skeletonFile = new SkeletonFile();
-					skeletonFile.ModelType = this.Actor.ModelType;
-					skeletonFile.Race = this.Actor.Customize?.Race;
+					this.File = new SkeletonFile();
+					this.File.ModelTypes.Add(this.Actor.ModelType);
+					this.File.Race = this.Actor.Customize?.Race;
 				}
 
-				skeletonFile.Parenting = new Dictionary<string, string>();
+				this.File.Parenting = new Dictionary<string, string>();
 				foreach (BoneVisual3d bone in this.Bones)
 				{
 					if (bone.Parent == null)
 						continue;
 
-					skeletonFile.Parenting.Add(bone.BoneName, bone.Parent.BoneName);
+					this.File.Parenting.Add(bone.BoneName, bone.Parent.BoneName);
 				}
 
-				PoseService.SaveTemplate(skeletonFile);
+				PoseService.SaveTemplate(this.File);
 			}
-			else if (skeletonFile != null && skeletonFile.Parenting != null)
+			else if (this.File != null && this.File.Parenting != null)
 			{
 				// parenting from file
 				foreach (BoneVisual3d bone in this.Bones)
 				{
 					string? parentBoneName;
-					if (skeletonFile.Parenting.TryGetValue(bone.BoneName, out parentBoneName))
+					if (this.File.Parenting.TryGetValue(bone.BoneName, out parentBoneName) || this.File.Parenting.TryGetValue(bone.OriginalBoneName, out parentBoneName))
 					{
 						bone.Parent = this.GetBone(parentBoneName);
 
