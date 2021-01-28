@@ -367,6 +367,10 @@ namespace Anamnesis
 						this.viewModel?.Dispose();
 						this.viewModel = null;
 					}
+					else if (this.viewModel != null)
+					{
+						this.viewModel.OnRetargeted();
+					}
 
 					this.IsValid = found;
 				}

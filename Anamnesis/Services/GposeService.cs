@@ -61,10 +61,6 @@ namespace Anamnesis.Services
 					GposeStateChanging?.Invoke();
 					this.IsChangingState = true;
 
-					// GPose takes a while before actors become availalbe. I dont know why, or how to detect it
-					// so we just wait a magic duration.
-					await Task.Delay(1000);
-
 					await TargetService.Instance.Retarget();
 
 					GposeStateChanged?.Invoke();

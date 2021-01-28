@@ -129,6 +129,29 @@ namespace Anamnesis.Memory
 			set => this.ObjectKind = (ActorTypes)value;
 		}
 
+		public void OnRetargeted()
+		{
+			if (this.Customize == null)
+				return;
+
+			// If we are being retargeted it means we have jsut entered gpose
+			if (this.ObjectKind == ActorTypes.Player)
+			{
+				// Using player parts means no need to refresh these
+				if (this.Customize.Age == Appearance.Ages.Normal && this.Customize.Head < 4)
+					return;
+
+				// set the actor to NPC so that npc body and head parts are available to load
+				// otherwise gpose forces us to use player parts.
+				Task.Run(async () =>
+				{
+					this.ObjectKind = ActorTypes.BattleNpc;
+					await Task.Delay(1500);
+					this.ObjectKind = ActorTypes.Player;
+				});
+			}
+		}
+
 		/// <summary>
 		/// Refresh the actor to force the game to load any changed values for appearance.
 		/// </summary>
