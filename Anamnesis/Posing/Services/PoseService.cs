@@ -116,7 +116,10 @@ namespace Anamnesis.PoseModule
 			string name = "Generated_" + skeleton.ModelType;
 
 			if (skeleton.Race != null)
-				name += skeleton.Race;
+				name += "_" + skeleton.Race;
+
+			if (skeleton.Age != null)
+				name += "_" + skeleton.Age;
 
 			SerializerService.SerializeFile("Data/Skeletons/" + name + ".json", skeleton);
 			BoneNameFiles.Add(skeleton);

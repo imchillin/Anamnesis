@@ -1,5 +1,6 @@
 {
 	"ModelType": 0,
+	"Age": "Normal",
 	"BoneNames": {
 		"Body_0": "Root",
 		"Body_1": "Abdomen",

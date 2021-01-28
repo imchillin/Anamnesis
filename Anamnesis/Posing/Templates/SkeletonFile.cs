@@ -13,6 +13,7 @@ namespace Anamnesis.Posing.Templates
 
 		public int ModelType { get; set; } = 0;
 		public Appearance.Races? Race { get; set; }
+		public Appearance.Ages? Age { get; set; }
 		public string? BasedOn { get; set; }
 
 		public Dictionary<string, string>? BoneNames { get; set; }
@@ -26,7 +27,17 @@ namespace Anamnesis.Posing.Templates
 			if (this.Race != null)
 			{
 				if (actor.Customize?.Race != this.Race)
+				{
 					return false;
+				}
+			}
+
+			if (this.Age != null)
+			{
+				if (actor.Customize?.Age != this.Age)
+				{
+					return false;
+				}
 			}
 
 			return true;
@@ -35,6 +46,9 @@ namespace Anamnesis.Posing.Templates
 		public void CopyBaseValues(SkeletonFile from)
 		{
 			this.Depth = from.Depth + 1;
+
+			if (this.Age == null)
+				this.Age = from.Age;
 
 			if (from.BoneNames == null)
 				return;
