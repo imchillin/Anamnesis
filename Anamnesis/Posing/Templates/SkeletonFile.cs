@@ -14,6 +14,8 @@ namespace Anamnesis.Posing.Templates
 		public int ModelType { get; set; } = 0;
 		public Appearance.Races? Race { get; set; }
 		public Appearance.Ages? Age { get; set; }
+		public bool AllowPoseGui { get; set; } = false;
+		public bool AllowPoseMatrix { get; set; } = false;
 		public string? BasedOn { get; set; }
 
 		public Dictionary<string, string>? BoneNames { get; set; }

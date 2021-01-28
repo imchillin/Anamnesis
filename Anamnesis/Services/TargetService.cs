@@ -246,7 +246,7 @@ namespace Anamnesis
 			public Actor Model { get; set; }
 			public string Id => this.Model.Id;
 			public IntPtr? Pointer { get; private set; }
-			public string Name => this.Model.Name;
+			public string Name => this.viewModel == null ? this.Model.Name : this.viewModel.DisplayName;
 			public ActorTypes Kind => this.Model.ObjectKind;
 			public IconChar Icon => this.Model.ObjectKind.GetIcon();
 			public int ModelType => this.Model.ModelType;
