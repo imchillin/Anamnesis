@@ -39,7 +39,7 @@
 					</Viewport3D>
 
 					<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="3, 0, 0, 0">
-						<Button Style="{StaticResource TransparentButton}" Content="Reset" Click="OnFrameClicked" Padding="6, 0"/>
+						<Button Style="{StaticResource TransparentButton}" Content="Reset Camera" Click="OnFrameClicked" Padding="6, 0"/>
 					</StackPanel>
 					
 				</Grid>
