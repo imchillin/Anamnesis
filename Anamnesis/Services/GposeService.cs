@@ -61,6 +61,12 @@ namespace Anamnesis.Services
 					GposeStateChanging?.Invoke();
 					this.IsChangingState = true;
 
+					// retarget as we enter to allow modification of the actor before it loads
+					await TargetService.Instance.Retarget();
+
+					await Task.Delay(1000);
+
+					// retarget again as we have now loaded
 					await TargetService.Instance.Retarget();
 
 					GposeStateChanged?.Invoke();
