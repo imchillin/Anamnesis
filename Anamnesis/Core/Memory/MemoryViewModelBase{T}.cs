@@ -320,9 +320,28 @@ namespace Anamnesis.Memory
 					}
 				}
 
+				// bad pointers
+				bool isValidPointer = true;
+				long v = desiredPointer.ToInt64();
+				if (v < 0x0000000200000000)
+					isValidPointer = false;
+
 				// not a valid pointer
 				if (desiredPointer == IntPtr.Zero)
-					return false;
+					isValidPointer = false;
+
+				if (!isValidPointer)
+				{
+					bool wasNull = lhs == null;
+
+					if (!wasNull && lhs is IMemoryViewModel lhsVm)
+					{
+						lhsVm.Dispose();
+					}
+
+					viewModelProperty.SetValue(this, null);
+					return wasNull;
+				}
 
 				IMemoryViewModel vm;
 				if (lhs != null)

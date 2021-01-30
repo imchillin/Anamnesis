@@ -144,7 +144,7 @@
 					<views:CharacterModelEditor DataContext="{Binding Actor.ModelObject}"/>
 				</GroupBox>
 
-				<GroupBox Style="{StaticResource PanelGroupBox}">
+				<GroupBox Style="{StaticResource PanelGroupBox}" Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
 					<GroupBox.Header>
 						<ana:Header Icon="UserCog" Key="Character_ExAppearance_Header"/>
 					</GroupBox.Header>
