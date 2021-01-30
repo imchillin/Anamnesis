@@ -92,6 +92,23 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
+		public bool IsValidWeapon
+		{
+			get
+			{
+				if (!this.IsWeapon)
+					return false;
+
+				if (this.Item == null)
+					return true;
+
+				if (this.Item.ModelSet == 0 && this.Item.SubModelSet == 0)
+					return false;
+
+				return true;
+			}
+		}
+
 		private static void OnItemModelChanged(ItemView sender, IStructViewModel? value)
 		{
 			if (sender.ItemModel != null)

@@ -5,7 +5,7 @@
 	"Common_Disable": "Disable",
 	"Common_None": "None",
 	"Common_All": "All",
-
+	"Common_Scale": "Scale",
 	"Common_LinkVector": "Link X, Y, and Z, axis together",
 
 	"Error_NotInGame": "Not Signed In",
@@ -97,6 +97,14 @@
 	"Character_Equipment_Wrists": "Wrists:",
 	"Character_Equipment_RightRing": "Right Ring:",
 	"Character_Equipment_LeftRing": "Left Ring:",
+
+	"Character_Equipment_Tint": "Tint Color",
+	"Character_Equipment_Dye": "Dye",
+	"Character_Equipment_Hide": "Hide the weapon (by setting its scale to 0)",
+	"Character_Equipment_ItemId": "Item Id",
+	"Character_Equipment_ItemSet": "Set",
+	"Character_Equipment_ItemBase": "Base",
+	"Character_Equipment_ItemVariant": "Variant",
 
 	"Character_Actor_Header": "Actor",
 	"Character_Actor_Model": "Model:",
