@@ -135,11 +135,13 @@ namespace Anamnesis.Memory
 				return;
 
 			// If we are being retargeted it means we have jsut entered gpose
-			if (this.ObjectKind == ActorTypes.Player)
+			if (this.ObjectKind == ActorTypes.Player && GposeService.Instance.IsGpose && GposeService.Instance.IsChangingState)
 			{
 				// Using player parts means no need to refresh these
-				if (this.Customize.Age == Appearance.Ages.Normal && this.Customize.Head < 4)
+				if (this.Customize.Age == Appearance.Ages.Normal && this.Customize.Head <= 4)
 					return;
+
+				Log.Information("Forcing Object Kind to NPC for GPose");
 
 				// set the actor to NPC so that npc body and head parts are available to load
 				// otherwise gpose forces us to use player parts.
