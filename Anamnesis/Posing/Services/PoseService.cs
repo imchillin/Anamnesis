@@ -113,7 +113,15 @@ namespace Anamnesis.PoseModule
 
 		public static void SaveTemplate(SkeletonFile skeleton)
 		{
-			string name = "Generated_" + skeleton.ModelTypes;
+			string name = "Generated_";
+
+			for (int i = 0; i < skeleton.ModelTypes.Count; i++)
+			{
+				if (i > 0)
+					name += "_";
+
+				name += skeleton.ModelTypes[i];
+			}
 
 			if (skeleton.Race != null)
 				name += "_" + skeleton.Race;
