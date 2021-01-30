@@ -46,8 +46,13 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		public bool EnableProcess { get; set; } = true;
+
 		public static bool GetIsProcessAlive()
 		{
+			if (!Instance.EnableProcess)
+				return false;
+
 			if (!Instance.IsAlive)
 				return false;
 
@@ -370,11 +375,14 @@ namespace Anamnesis.Memory
 			Process? proc = null;
 
 			// Search for ffxiv process
-			foreach (Process process in processes)
+			if (this.EnableProcess)
 			{
-				if (process.ProcessName.ToLower().Contains("ffxiv_dx11"))
+				foreach (Process process in processes)
 				{
-					proc = process;
+					if (process.ProcessName.ToLower().Contains("ffxiv_dx11"))
+					{
+						proc = process;
+					}
 				}
 			}
 

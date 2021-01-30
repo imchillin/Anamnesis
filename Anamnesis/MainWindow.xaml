@@ -219,24 +219,19 @@
 					</StackPanel>
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-						<ToggleButton Style="{DynamicResource MaterialDesignActionToggleButton}" ToolTip="Always on top" x:Name="AlwaysOnTopToggle"
-									  Margin="3,0,0,0" Width="28" Height="28" 
-									  Padding="0" Background="Transparent" BorderThickness="0"
-									  IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}">
+						<ToggleButton Style="{DynamicResource TransparentIconToggleButton}" Margin="3,0,0,0" Width="28" BorderThickness="0" 
+									  IsChecked="{Binding MemoryService.EnableProcess}" ToolTip="Enable process"
+									  Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
+							<fa:IconBlock Icon="Microchip" FontSize="12"/>
+						</ToggleButton>
+						
+						<ToggleButton Style="{DynamicResource TransparentIconToggleButton}" Margin="3,0,0,0" Width="28" BorderThickness="0" IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}">
 
-							<ToggleButton.Content>
-								<Grid Width="28" Height="28">
-									<fa:IconBlock Icon="ThumbTack" Opacity="0.5" Margin="6, 7, 6, 6" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}"/>
-								</Grid>
-							</ToggleButton.Content>
-							<materialdesign:ToggleButtonAssist.OnContent>
-								<Grid Width="28" Height="28">
-									<Ellipse Stroke="Black" Fill="Black" StrokeThickness="1" Margin="4" Opacity="0.35"/>
-									<fa:IconBlock Foreground="{DynamicResource SecondaryAccentBrush}" Icon="ThumbTack" Margin="6, 7, 6, 6" FontSize="12"/>
-								</Grid>
-							</materialdesign:ToggleButtonAssist.OnContent>
-
-
+							<ToggleButton.ToolTip>
+								<ana:TextBlock Key="Settings_AlwaysOnTop"/>
+							</ToggleButton.ToolTip>
+							
+							<fa:IconBlock Icon="ThumbTack" FontSize="12"/>
 						</ToggleButton>
 
 						<Button Margin="3, 3, 1, 3" Width="28" BorderThickness="0" Click="OnMinimiseClick" Style="{StaticResource TransparentButton}">

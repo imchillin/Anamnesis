@@ -47,6 +47,13 @@ namespace Anamnesis.GUI
 		public SettingsService SettingsService => SettingsService.Instance;
 		public GposeService GposeService => GposeService.Instance;
 		public TargetService TargetService => TargetService.Instance;
+		public MemoryService MemoryService => MemoryService.Instance;
+
+#if DEBUG
+		public bool IsDebug => true;
+#else
+		public bool IsDebug => false;
+#endif
 
 		private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
 		{

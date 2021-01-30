@@ -15,6 +15,7 @@ namespace Anamnesis.GUI.Windows
 	using System.Windows.Interop;
 	using System.Windows.Media;
 	using System.Windows.Media.Imaging;
+	using Anamnesis.Memory;
 
 	/// <summary>
 	/// Interaction logic for ProcessSelector.xaml.
@@ -90,6 +91,7 @@ namespace Anamnesis.GUI.Windows
 		private void OnOkClicked(object sender, RoutedEventArgs e)
 		{
 			this.Selected = (this.ProcessGrid.SelectedValue as Option)?.Process;
+			MemoryService.Instance.EnableProcess = true;
 			this.window?.Close();
 		}
 
@@ -107,6 +109,9 @@ namespace Anamnesis.GUI.Windows
 				await Task.Delay(1000);
 
 				if (!this.isAutomatic)
+					continue;
+
+				if (!MemoryService.Instance.EnableProcess)
 					continue;
 
 				if (Application.Current == null)
