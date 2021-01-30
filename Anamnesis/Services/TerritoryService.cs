@@ -35,15 +35,10 @@ namespace Anamnesis
 
 				this.currentWeatherId = value;
 				this.CurrentWeather = null;
-				if (this.CurrentTerritory != null)
+
+				if (GameDataService.Weathers.Contains(value))
 				{
-					foreach (IWeather weather in this.CurrentTerritory.Weathers)
-					{
-						if (weather.WeatherId == value)
-						{
-							this.CurrentWeather = weather;
-						}
-					}
+					this.CurrentWeather = GameDataService.Weathers.Get(value);
 				}
 			}
 		}

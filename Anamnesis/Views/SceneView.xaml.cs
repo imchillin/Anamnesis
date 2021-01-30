@@ -7,6 +7,7 @@ namespace Anamnesis.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Services;
+	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 	using Serilog;
 
@@ -37,6 +38,15 @@ namespace Anamnesis.Views
 		private void OnTipClicked(object sender, RoutedEventArgs e)
 		{
 			TipService.Instance.KnowMore();
+		}
+
+		private void OnWeatherClicked(object sender, RoutedEventArgs e)
+		{
+			WeatherSelector selector = new WeatherSelector();
+			SelectorDrawer.Show(selector, this.TerritoryService.CurrentWeather, (w) =>
+			{
+				this.TerritoryService.CurrentWeather = w;
+			});
 		}
 	}
 }
