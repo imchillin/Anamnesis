@@ -164,16 +164,5 @@ namespace Anamnesis.Styles.Controls
 		{
 			sender.ExpandedX.Maximum = value;
 		}
-
-		private void LinkClicked(object sender, RoutedEventArgs e)
-		{
-			if (!this.CanLink)
-			{
-				this.Linked = false;
-				return;
-			}
-
-			this.Linked = !this.Linked;
-		}
 	}
 }

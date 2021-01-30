@@ -105,11 +105,8 @@
 			</StackPanel>
 
 			<Grid Grid.Row="2" Grid.Column="0" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}">
-				<ToggleButton Style="{StaticResource TransparentToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1" Visibility="{Binding ItemModel.Set, Converter={StaticResource NotZeroToVisibilityConverter}}">
-					<Grid>
-						<fa:IconBlock Icon="EyeSlash" FontSize="12" Visibility="{Binding ExtendedViewModel.IsHidden, Converter={StaticResource !B2V}}"/>
-						<fa:IconBlock Icon="Eye" FontSize="12" Visibility="{Binding ExtendedViewModel.IsHidden, Converter={StaticResource B2V}}"/>
-					</Grid>
+				<ToggleButton Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1" Visibility="{Binding ItemModel.Set, Converter={StaticResource NotZeroToVisibilityConverter}}">
+					<fa:IconBlock Icon="EyeSlash" FontSize="12"/>
 				</ToggleButton>
 			</Grid>
 
