@@ -115,12 +115,15 @@ namespace Anamnesis.PoseModule
 		{
 			string name = "Generated_";
 
-			for (int i = 0; i < skeleton.ModelTypes.Count; i++)
+			if (skeleton.ModelTypes != null)
 			{
-				if (i > 0)
-					name += "_";
+				for (int i = 0; i < skeleton.ModelTypes.Count; i++)
+				{
+					if (i > 0)
+						name += "_";
 
-				name += skeleton.ModelTypes[i];
+					name += skeleton.ModelTypes[i];
+				}
 			}
 
 			if (skeleton.Race != null)

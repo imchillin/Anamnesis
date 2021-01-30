@@ -11,7 +11,7 @@ namespace Anamnesis.Posing.Templates
 	{
 		public int Depth = 0;
 
-		public List<int> ModelTypes { get; set; } = new List<int>();
+		public List<int>? ModelTypes { get; set; }
 		public Appearance.Races? Race { get; set; }
 		public Appearance.Ages? Age { get; set; }
 		public bool AllowPoseGui { get; set; } = false;
@@ -23,8 +23,13 @@ namespace Anamnesis.Posing.Templates
 
 		public bool IsValid(SkeletonViewModel self, ActorViewModel actor)
 		{
-			if (!this.ModelTypes.Contains(actor.ModelType))
-				return false;
+			if (this.ModelTypes != null)
+			{
+				if (!this.ModelTypes.Contains(actor.ModelType))
+				{
+					return false;
+				}
+			}
 
 			if (this.Race != null)
 			{
@@ -54,6 +59,9 @@ namespace Anamnesis.Posing.Templates
 
 			if (from.BoneNames == null)
 				return;
+
+			if (this.ModelTypes == null)
+				this.ModelTypes = from.ModelTypes;
 
 			if (this.BoneNames == null)
 				this.BoneNames = new Dictionary<string, string>();

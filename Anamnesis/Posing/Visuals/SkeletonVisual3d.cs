@@ -308,6 +308,8 @@ namespace Anamnesis.PoseModule
 				}
 			}
 
+			////Log.Information($"Optional bone not found: {name}");
+
 			return null;
 		}
 
@@ -438,6 +440,7 @@ namespace Anamnesis.PoseModule
 				if (this.File == null)
 				{
 					this.File = new SkeletonFile();
+					this.File.ModelTypes = new List<int>();
 					this.File.ModelTypes.Add(this.Actor.ModelType);
 					this.File.Race = this.Actor.Customize?.Race;
 				}

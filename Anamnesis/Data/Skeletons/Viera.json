@@ -1,6 +1,8 @@
 {
 	"Race": "Viera",
 	"BasedOn": "Middy.json",
+	"AllowPoseGui": true,
+	"AllowPoseMatrix": true,
 	"BoneNames": {
 		"Head_0": "RootHead",
 		"Head_1": "Jaw",
