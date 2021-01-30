@@ -58,7 +58,7 @@ namespace Anamnesis.Services
 			currentLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
 
 			LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch();
-			levelSwitch.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
+			levelSwitch.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
 			LoggerConfiguration config = new LoggerConfiguration();
 			config.MinimumLevel.ControlledBy(levelSwitch);

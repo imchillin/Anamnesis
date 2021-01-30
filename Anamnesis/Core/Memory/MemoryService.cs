@@ -155,7 +155,7 @@ namespace Anamnesis.Memory
 			if (diff <= 0)
 				return;
 
-			Log.Information($"Writing: {diff} bytes to {address} for model type {value.GetType().Name} for reason: {purpose}");
+			Log.Verbose($"Writing: {diff} bytes to {address} for model type {value.GetType().Name} for reason: {purpose}");
 
 			// Write the oldBuffer (which has now had newBuffer merged over it) to the process
 			WriteProcessMemory(Handle, address, oldBuffer, size, out _);
