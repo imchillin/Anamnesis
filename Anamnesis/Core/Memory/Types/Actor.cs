@@ -186,20 +186,20 @@ namespace Anamnesis.Memory
 
 			if (this.ObjectKind == ActorTypes.Player)
 			{
-				MemoryService.Write(objectKindPointer, (byte)ActorTypes.BattleNpc);
+				MemoryService.Write(objectKindPointer, (byte)ActorTypes.BattleNpc, "Actor Refresh (1 / 5)");
 
-				MemoryService.Write(renderModePointer, (int)RenderModes.Unload);
+				MemoryService.Write(renderModePointer, (int)RenderModes.Unload, "Actor Refresh (2 / 5)");
 				await Task.Delay(75);
-				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
+				MemoryService.Write(renderModePointer, (int)RenderModes.Draw, "Actor Refresh (3 / 5)");
 				await Task.Delay(75);
-				MemoryService.Write(objectKindPointer, (byte)ActorTypes.Player);
-				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
+				MemoryService.Write(objectKindPointer, (byte)ActorTypes.Player, "Actor Refresh (4 / 5)");
+				MemoryService.Write(renderModePointer, (int)RenderModes.Draw, "Actor Refresh (5 / 5)");
 			}
 			else
 			{
-				MemoryService.Write(renderModePointer, (int)RenderModes.Unload);
+				MemoryService.Write(renderModePointer, (int)RenderModes.Unload, "Actor Refresh (1 / 2)");
 				await Task.Delay(75);
-				MemoryService.Write(renderModePointer, (int)RenderModes.Draw);
+				MemoryService.Write(renderModePointer, (int)RenderModes.Draw, "Actor Refresh (2 / 2)");
 			}
 
 			await Task.Delay(75);

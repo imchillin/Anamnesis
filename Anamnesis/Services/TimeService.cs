@@ -42,7 +42,7 @@ namespace Anamnesis
 
 				if (!this.freeze)
 				{
-					MemoryService.Write(AddressService.Time, 0);
+					MemoryService.Write(AddressService.Time, 0, "Time unfrozen");
 				}
 			}
 		}
@@ -98,7 +98,7 @@ namespace Anamnesis
 					if (minuteOffset <= 0)
 						minuteOffset += 30 * 24 * 60;
 
-					MemoryService.Write(AddressService.Time, minuteOffset * 60);
+					MemoryService.Write(AddressService.Time, minuteOffset * 60, "Time frozen");
 
 					this.Time = this.RealTime.AddMinutes(minuteOffset);
 				}

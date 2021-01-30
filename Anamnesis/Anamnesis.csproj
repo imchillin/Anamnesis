@@ -131,6 +131,7 @@
 			<ExcludeAssets></ExcludeAssets>
 		</PackageReference>
 		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
 			<PrivateAssets>all</PrivateAssets>

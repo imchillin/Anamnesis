@@ -131,7 +131,7 @@ namespace Anamnesis
 
 					if (current != this.CurrentWeatherId)
 					{
-						MemoryService.Write<ushort>(AddressService.GPoseWeather, this.CurrentWeatherId);
+						MemoryService.Write<ushort>(AddressService.GPoseWeather, this.CurrentWeatherId, "Gpose weather Changed");
 					}
 				}
 				else
@@ -140,7 +140,7 @@ namespace Anamnesis
 
 					if (current != this.CurrentWeatherId)
 					{
-						MemoryService.Write<byte>(AddressService.Weather, (byte)this.CurrentWeatherId);
+						MemoryService.Write<byte>(AddressService.Weather, (byte)this.CurrentWeatherId, "Overworld weather Changed");
 					}
 				}
 			}

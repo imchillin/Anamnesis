@@ -64,6 +64,7 @@ namespace Anamnesis.Services
 			config.MinimumLevel.ControlledBy(levelSwitch);
 			config.WriteTo.File(currentLogPath);
 			config.WriteTo.Sink<ErrorDialogLogDestination>();
+			config.WriteTo.Debug();
 
 			Serilog.Log.Logger = config.CreateLogger();
 

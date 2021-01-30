@@ -76,7 +76,7 @@ namespace Anamnesis
 				{
 					if (this.LockCameraPosition)
 					{
-						MemoryService.Write(AddressService.GPoseCamera, this.CameraPosition);
+						MemoryService.Write(AddressService.GPoseCamera, this.CameraPosition, "Camera Locked");
 					}
 					else
 					{

@@ -119,7 +119,7 @@ namespace Anamnesis.Memory
 			throw new Exception($"Failed to read memory {typeof(T)} from address {address}");
 		}
 
-		public static void Write<T>(IntPtr address, T value)
+		public static void Write<T>(IntPtr address, T value, string purpose)
 			where T : struct
 		{
 			if (address == IntPtr.Zero)
@@ -155,7 +155,7 @@ namespace Anamnesis.Memory
 			if (diff <= 0)
 				return;
 
-			////Log.Write("Writing: " + diff + " bytes, " + value.GetType().Name + " to " + address);
+			Log.Information($"Writing: {diff} bytes to {address} for model type {value.GetType().Name} for reason: {purpose}");
 
 			// Write the oldBuffer (which has now had newBuffer merged over it) to the process
 			WriteProcessMemory(Handle, address, oldBuffer, size, out _);

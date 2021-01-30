@@ -184,7 +184,7 @@ namespace Anamnesis.Memory
 			if (!force && !this.MemoryMode.HasFlag(MemoryModes.Write))
 				return false;
 
-			MemoryService.Write((IntPtr)this.Pointer, this.model);
+			MemoryService.Write((IntPtr)this.Pointer, this.model, "Model Updated");
 			return true;
 		}
 
