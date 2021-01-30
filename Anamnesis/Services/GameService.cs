@@ -20,6 +20,9 @@ namespace Anamnesis.Services
 
 		public static bool GetIsSignedIn()
 		{
+			if (!MemoryService.Instance.EnableProcess)
+				return false;
+
 			if (TerritoryService.Instance.CurrentTerritory == null)
 				return false;
 
@@ -63,6 +66,7 @@ namespace Anamnesis.Services
 				}
 				else
 				{
+					await Task.Delay(1000);
 					TargetService.Instance.EnsureSelection();
 				}
 

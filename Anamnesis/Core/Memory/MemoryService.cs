@@ -501,7 +501,7 @@ namespace Anamnesis.Memory
 					try
 					{
 						Log.Information("FFXIV Process has terminated");
-						TargetService.Instance.ClearPins();
+						TargetService.Instance.ClearSelection();
 						await this.GetProcess();
 					}
 					catch (Win32Exception)
