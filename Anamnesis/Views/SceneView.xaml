@@ -227,7 +227,7 @@
 							</materialdesign:ToggleButtonAssist.OnContent>
 						</ToggleButton>
 
-						<cm3:Vector2DEditor Grid.Column="1" Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
+						<cm3:Vector2DEditor Grid.Column="1" Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}" IsEnabled="{Binding CameraService.Camera.FreezeAngle}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
 					</Grid>
 
 

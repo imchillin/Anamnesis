@@ -67,6 +67,7 @@ namespace Anamnesis
 
 				if (!GposeService.Instance.IsGpose || GposeService.Instance.IsChangingState)
 				{
+					this.DelimitCamera = false;
 					this.LockCameraPosition = false;
 					continue;
 				}
