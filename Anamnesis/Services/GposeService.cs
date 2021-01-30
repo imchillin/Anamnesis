@@ -65,6 +65,7 @@ namespace Anamnesis.Services
 					await TargetService.Instance.Retarget();
 
 					await Task.Delay(1000);
+					this.IsChangingState = false;
 
 					// retarget again as we have now loaded
 					await TargetService.Instance.Retarget();

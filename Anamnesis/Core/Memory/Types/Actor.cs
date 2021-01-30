@@ -22,17 +22,20 @@ namespace Anamnesis.Memory
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Actor
 	{
+		public const int ObjectKindOffset = 0x008c;
+		public const int RenderModeOffset = 0x0104;
+
 		[FieldOffset(0x0030)]
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 30)]
 		public string Name;
 
 		[FieldOffset(0x0080)] public int DataId;
-		[FieldOffset(0x008c)] public ActorTypes ObjectKind;
+		[FieldOffset(ObjectKindOffset)] public ActorTypes ObjectKind;
 		[FieldOffset(0x008D)] public byte SubKind;
 		[FieldOffset(0x0090)] public byte DistanceFromPlayerX;
 		[FieldOffset(0x0092)] public byte DistanceFromPlayerY;
 		[FieldOffset(0x00F0)] public IntPtr ModelObject;
-		[FieldOffset(0x0104)] public RenderModes RenderMode;
+		[FieldOffset(RenderModeOffset)] public RenderModes RenderMode;
 		[FieldOffset(0x01B4)] public int ModelType;
 		[FieldOffset(0x0F08)] public Weapon MainHand;
 		[FieldOffset(0x0F70)] public Weapon OffHand;
@@ -52,8 +55,7 @@ namespace Anamnesis.Memory
 
 		private short refreshDelay;
 		private Task? refreshTask;
-
-		private byte[] data = new byte[1024 * 1024 * 10];
+		private bool wasPlayerForGPose;
 
 		public ActorViewModel(IntPtr pointer)
 			: base(pointer, null)
@@ -134,23 +136,33 @@ namespace Anamnesis.Memory
 			if (this.Customize == null)
 				return;
 
-			// If we are being retargeted it means we have jsut entered gpose
-			if (this.ObjectKind == ActorTypes.Player && GposeService.Instance.IsGpose && GposeService.Instance.IsChangingState)
+			GposeService gpose = GposeService.Instance;
+
+			if (gpose.IsGpose && gpose.IsChangingState)
 			{
-				// Using player parts means no need to refresh these
-				if (this.Customize.Age == Appearance.Ages.Normal && this.Customize.Head <= 4)
-					return;
-
-				Log.Information("Forcing Object Kind to NPC for GPose");
-
-				// set the actor to NPC so that npc body and head parts are available to load
-				// otherwise gpose forces us to use player parts.
-				Task.Run(async () =>
+				// Entering gpose
+				if (this.ObjectKind == ActorTypes.Player)
 				{
-					this.ObjectKind = ActorTypes.BattleNpc;
-					await Task.Delay(1500);
-					this.ObjectKind = ActorTypes.Player;
-				});
+					this.wasPlayerForGPose = true;
+					this.SetObjectKindDirect(ActorTypes.BattleNpc);
+				}
+			}
+			else if (gpose.IsGpose && !gpose.IsChangingState)
+			{
+				// Entered gpose
+				if (this.wasPlayerForGPose)
+				{
+					this.SetObjectKindDirect(ActorTypes.Player);
+				}
+			}
+			else if (!gpose.IsGpose && !gpose.IsChangingState)
+			{
+				// left gpose
+				if (this.wasPlayerForGPose)
+				{
+					this.SetObjectKindDirect(ActorTypes.Player);
+					this.wasPlayerForGPose = false;
+				}
 			}
 		}
 
@@ -165,6 +177,16 @@ namespace Anamnesis.Memory
 			{
 				this.refreshTask = Task.Run(this.RefreshTask);
 			}
+		}
+
+		public void SetObjectKindDirect(ActorTypes type)
+		{
+			if (this.Pointer == null)
+				return;
+
+			IntPtr actorPointer = (IntPtr)this.Pointer;
+			IntPtr objectKindPointer = actorPointer + Actor.ObjectKindOffset;
+			MemoryService.Write(objectKindPointer, (byte)type, "Set ObjectKind Direct");
 		}
 
 		/// <summary>
@@ -183,8 +205,8 @@ namespace Anamnesis.Memory
 			// for the refresh without the rest of the model's values, as writing most of the other
 			// values will crash the game.
 			IntPtr actorPointer = (IntPtr)this.Pointer;
-			IntPtr objectKindPointer = actorPointer + 0x008c;
-			IntPtr renderModePointer = actorPointer + 0x0104;
+			IntPtr objectKindPointer = actorPointer + Actor.ObjectKindOffset;
+			IntPtr renderModePointer = actorPointer + Actor.RenderModeOffset;
 
 			if (this.ObjectKind == ActorTypes.Player)
 			{
