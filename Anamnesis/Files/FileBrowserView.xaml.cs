@@ -538,8 +538,13 @@ namespace Anamnesis.GUI.Views
 
 					string relativePath = this.Entry.Path?.Replace(this.View.CurrentDir.Path, string.Empty) ?? string.Empty;
 
-					if (relativePath != null && relativePath.StartsWith('\\'))
-						relativePath = relativePath.Substring(2);
+					if (relativePath != null)
+					{
+						while (relativePath.StartsWith("\\") && relativePath.Length > 0)
+						{
+							relativePath = relativePath.Substring(1);
+						}
+					}
 
 					string? dirName = Path.GetDirectoryName(relativePath);
 
