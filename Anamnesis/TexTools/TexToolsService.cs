@@ -36,7 +36,13 @@ namespace Anamnesis.TexTools
 				if (!mod.Enabled)
 					continue;
 
-				if (mod.Name == itemName)
+				string name = mod.Name;
+
+				// TexTools adds left and right to the names of rings
+				name = name.Replace(" - Right", string.Empty);
+				name = name.Replace(" - Left", string.Empty);
+
+				if (name == itemName)
 				{
 					return mod;
 				}
