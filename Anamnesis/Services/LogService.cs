@@ -20,7 +20,33 @@ namespace Anamnesis.Services
 	{
 		private const string LogfilePath = "/Logs/";
 
+		private static LogService? instance;
 		private static string? currentLogPath;
+		private static LoggingLevelSwitch logLevel = new LoggingLevelSwitch()
+		{
+#if DEBUG
+			MinimumLevel = LogEventLevel.Verbose,
+#else
+			MinimumLevel = LogEventLevel.Debug,
+#endif
+		};
+
+		public static LogService Instance
+		{
+			get
+			{
+				if (instance == null)
+					throw new Exception("No logging service found");
+
+				return instance;
+			}
+		}
+
+		public bool VerboseLogging
+		{
+			get => logLevel.MinimumLevel == LogEventLevel.Verbose;
+			set => logLevel.MinimumLevel = LogEventLevel.Verbose;
+		}
 
 		public static void ShowLogs()
 		{
@@ -40,6 +66,8 @@ namespace Anamnesis.Services
 
 		public Task Initialize()
 		{
+			instance = this;
+
 			string dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath) + "\\";
 			dir = FileService.ParseToFilePath(dir);
 
@@ -57,11 +85,8 @@ namespace Anamnesis.Services
 
 			currentLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
 
-			LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch();
-			levelSwitch.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
 			LoggerConfiguration config = new LoggerConfiguration();
-			config.MinimumLevel.ControlledBy(levelSwitch);
+			config.MinimumLevel.ControlledBy(logLevel);
 			config.WriteTo.File(currentLogPath);
 			config.WriteTo.Sink<ErrorDialogLogDestination>();
 			config.WriteTo.Debug();

@@ -219,12 +219,21 @@
 					</StackPanel>
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-						<ToggleButton Style="{DynamicResource TransparentIconToggleButton}" Margin="3,0,0,0" Width="28" BorderThickness="0" 
-									  IsChecked="{Binding MemoryService.EnableProcess}" ToolTip="Enable process"
-									  Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
-							<fa:IconBlock Icon="Microchip" FontSize="12"/>
-						</ToggleButton>
-						
+
+						<!-- Debugging toggles -->
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
+
+							<ToggleButton Style="{DynamicResource TransparentIconToggleButton}" Margin="3,0,0,0" Width="28" BorderThickness="0" 
+									  IsChecked="{Binding LogService.VerboseLogging}" ToolTip="Enable verbose logging">
+								<fa:IconBlock Icon="FileAlt" FontSize="12"/>
+							</ToggleButton>
+							
+							<ToggleButton Style="{DynamicResource TransparentIconToggleButton}" Margin="3,0,0,0" Width="28" BorderThickness="0" 
+									  IsChecked="{Binding MemoryService.EnableProcess}" ToolTip="Enable process">
+								<fa:IconBlock Icon="Microchip" FontSize="12"/>
+							</ToggleButton>
+						</StackPanel>
+
 						<ToggleButton Style="{DynamicResource TransparentIconToggleButton}" Margin="3,0,0,0" Width="28" BorderThickness="0" IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}">
 
 							<ToggleButton.ToolTip>
