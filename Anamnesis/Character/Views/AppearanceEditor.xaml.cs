@@ -213,6 +213,10 @@ namespace Anamnesis.Character.Views
 			if (race == null || this.Appearance == null)
 				return;
 
+			// did we change?
+			if (race == this.Race)
+				return;
+
 			if (race.Race == AnAppearance.Races.Hrothgar)
 				this.Appearance.Gender = AnAppearance.Genders.Masculine;
 
@@ -248,11 +252,11 @@ namespace Anamnesis.Character.Views
 
 			ITribe? tribe = this.TribeComboBox.SelectedItem as ITribe;
 
-			// reset age when chaing tribe
-			this.Appearance.Age = AnAppearance.Ages.Normal;
-
 			if (tribe == null || this.Tribe == tribe)
 				return;
+
+			// reset age when chaing tribe
+			this.Appearance.Age = AnAppearance.Ages.Normal;
 
 			this.Tribe = tribe;
 			this.Appearance.Tribe = this.Tribe.Tribe;
