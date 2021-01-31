@@ -25,6 +25,9 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 * **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
 * **[damphands](https://github.com/damphands)** - *Wiki and tip curating* 
 
+## Translations
+* **[Maxunit](https://github.com/Maxunit)** - *German* 
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
