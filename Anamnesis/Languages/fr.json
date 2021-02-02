@@ -11,10 +11,10 @@
 	"Error_NotInGame": "Non connecté en jeu",
 	"Error_WrongVersion": "Version du jeu non supporté: {0}. Une mise à jour est-elle sortie récemment?\nUtiliser Anamnesis avec une version du jeu non supportée peux causer des crashs de l'app/du jeu.\nUne mise à jour sortira dès que possible. Merci de votre patience!",
 
-	"FileBrowser_GoUp": "Go Up",
+	"FileBrowser_GoUp": "Remonter",
 	"FileBrowser_Flatten": "Flatten Hierarchy",
-	"FileBrowser_CreateFolder": "Create Folder",
-	"FileBrowser_Advanced": "Advanced",
+	"FileBrowser_CreateFolder": "Créer un dossier",
+	"FileBrowser_Advanced": "Avancé",
 
 	"Target_Players": "Joueur",
 	"Target_Companions": "Companions",
@@ -135,10 +135,10 @@
 	"Pose_GenerateSkeletonTitle": "Skeleton not found",
 	"Pose_GenerateSkeleton": "No skeleton was found for the actor {0}- generate one now?\nWithout a skeleton, parenting will not work correctly.",
 
-	"Pose_Save": "Save",
-	"Pose_SaveBones": "Save {0} Bones",
-	"Pose_Load": "Load",
-	"Pose_LoadBones": "Load {0} Bones",
+	"Pose_Save": "Sauvegarder",
+	"Pose_SaveBones": "Sauver l'os {0}",
+	"Pose_Load": "Charger",
+	"Pose_LoadBones": "Charger l'os {0}",
 
 	"Pose_FreezePhysics": "Freeze Physics",
 	"Pose_Parenting": "Parenting",
