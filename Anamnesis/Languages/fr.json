@@ -61,12 +61,12 @@
 	"Weather_Selector_Unnatural_Tooltip": "Affiche seulement les effets météo indisponibles normalement dans la zone",
 	"Weather_Selector_All_Tooltip": "Tout",
 
-	"Character_Appearance_Header": "Appearance",
+	"Character_Appearance_Header": "Apparence",
 	"Character_Appearance_Race": "Race:",
 	"Character_Appearance_Skin": "Peau:",
 	"Character_Appearance_Eyes": "Yeux:",
 	"Character_Appearance_Face": "Visage:",
-	"Character_Appearance_Features": "Signes Distinctifs:",
+	"Character_Appearance_Features": "Marques:",
 	"Character_Appearance_FacePaint": "Maquillage:",
 	"Character_Appearance_Lips": "Lèvres:",
 	"Character_Appearance_Hair": "Cheveux:",
@@ -79,7 +79,7 @@
 	"Character_Appearance_Eyebrows": "Sourcils:",
 	"Character_Appearance_Nose": "Nez:",
 	"Character_Appearance_Ears": "Oreilles:",
-	"Character_Appearance_Tail": "Forme de la Queue:",
+	"Character_Appearance_Tail": "Forme Queue:",
 	"Character_Appearance_Fur": "Fourrure:",
 
 	"Character_Equipment_Header": "Equipment",
