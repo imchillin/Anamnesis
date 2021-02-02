@@ -194,6 +194,9 @@ namespace Anamnesis.Memory
 		/// </summary>
 		public async Task RefreshAsync()
 		{
+			if (this.IsRefreshing)
+				return;
+
 			if (this.Pointer == null)
 				return;
 
@@ -269,6 +272,7 @@ namespace Anamnesis.Memory
 		{
 			if (this.AutomaticRefreshEnabled && RefreshAttribute.IsSet(viewModelProperty))
 			{
+				Log.Debug($"Triggering actor refresh due to changed property: {viewModelProperty.Name}");
 				this.Refresh();
 			}
 

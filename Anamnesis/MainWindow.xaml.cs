@@ -48,6 +48,7 @@ namespace Anamnesis.GUI
 		public GposeService GposeService => GposeService.Instance;
 		public TargetService TargetService => TargetService.Instance;
 		public MemoryService MemoryService => MemoryService.Instance;
+		public LogService LogService => LogService.Instance;
 
 #if DEBUG
 		public bool IsDebug => true;
