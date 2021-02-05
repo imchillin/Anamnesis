@@ -55,7 +55,7 @@ namespace Anamnesis.Memory
 
 		private short refreshDelay;
 		private Task? refreshTask;
-		private bool wasPlayerForGPose;
+		private IntPtr? wasPlayerBeforeGPose;
 
 		public ActorViewModel(IntPtr pointer)
 			: base(pointer, null)
@@ -143,31 +143,17 @@ namespace Anamnesis.Memory
 				// Entering gpose
 				if (this.ObjectKind == ActorTypes.Player)
 				{
-					this.wasPlayerForGPose = true;
-					this.SetObjectKindDirect(ActorTypes.BattleNpc);
+					this.wasPlayerBeforeGPose = this.Pointer;
+					this.SetObjectKindDirect(ActorTypes.BattleNpc, this.Pointer);
 				}
 			}
 			else if (gpose.IsGpose && !gpose.IsChangingState)
 			{
 				// Entered gpose
-				if (this.wasPlayerForGPose)
+				if (this.wasPlayerBeforeGPose != null)
 				{
-					this.SetObjectKindDirect(ActorTypes.Player);
-				}
-			}
-			else if (!gpose.IsGpose && gpose.IsChangingState)
-			{
-				// left gpose
-				if (this.wasPlayerForGPose)
-				{
-					this.SetObjectKindDirect(ActorTypes.Player);
-
-					// sanity check that we are absolutelly a player
-					Task.Run(async () =>
-					{
-						await Task.Delay(1000);
-						this.SetObjectKindDirect(ActorTypes.Player);
-					});
+					this.SetObjectKindDirect(ActorTypes.Player, this.wasPlayerBeforeGPose);
+					this.SetObjectKindDirect(ActorTypes.Player, this.Pointer);
 				}
 			}
 		}
@@ -185,13 +171,12 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		public void SetObjectKindDirect(ActorTypes type)
+		public void SetObjectKindDirect(ActorTypes type, IntPtr? actorPointer)
 		{
-			if (this.Pointer == null)
+			if (actorPointer == null)
 				return;
 
-			IntPtr actorPointer = (IntPtr)this.Pointer;
-			IntPtr objectKindPointer = actorPointer + Actor.ObjectKindOffset;
+			IntPtr objectKindPointer = ((IntPtr)actorPointer) + Actor.ObjectKindOffset;
 			MemoryService.Write(objectKindPointer, (byte)type, "Set ObjectKind Direct");
 		}
 
