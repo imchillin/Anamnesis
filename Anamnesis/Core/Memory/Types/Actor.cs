@@ -155,13 +155,19 @@ namespace Anamnesis.Memory
 					this.SetObjectKindDirect(ActorTypes.Player);
 				}
 			}
-			else if (!gpose.IsGpose && !gpose.IsChangingState)
+			else if (!gpose.IsGpose && gpose.IsChangingState)
 			{
 				// left gpose
 				if (this.wasPlayerForGPose)
 				{
 					this.SetObjectKindDirect(ActorTypes.Player);
-					this.wasPlayerForGPose = false;
+
+					// sanity check that we are absolutelly a player
+					Task.Run(async () =>
+					{
+						await Task.Delay(1000);
+						this.SetObjectKindDirect(ActorTypes.Player);
+					});
 				}
 			}
 		}
