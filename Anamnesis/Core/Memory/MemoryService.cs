@@ -47,6 +47,7 @@ namespace Anamnesis.Memory
 		}
 
 		public bool EnableProcess { get; set; } = true;
+		public int LastTickCount { get; set; }
 
 		public static bool GetIsProcessAlive()
 		{
@@ -458,6 +459,8 @@ namespace Anamnesis.Memory
 						tickCount++;
 						tickCount += viewModel.Tick();
 					}
+
+					this.LastTickCount = tickCount;
 
 					if (tickCount > 1000)
 					{

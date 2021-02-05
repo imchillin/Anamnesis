@@ -223,6 +223,9 @@
 						<!-- Debugging toggles -->
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
 
+							<TextBlock Text="{Binding MemoryService.LastTickCount}" ToolTip="Memory models ticked" VerticalAlignment="Center" Opacity="0.5">
+							</TextBlock>
+
 							<ToggleButton Style="{DynamicResource TransparentIconToggleButton}" Margin="3,0,0,0" Width="28" BorderThickness="0" 
 									  IsChecked="{Binding LogService.VerboseLogging}" ToolTip="Enable verbose logging">
 								<fa:IconBlock Icon="FileAlt" FontSize="12"/>
