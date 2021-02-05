@@ -45,7 +45,7 @@ namespace Anamnesis.Services
 		public bool VerboseLogging
 		{
 			get => logLevel.MinimumLevel == LogEventLevel.Verbose;
-			set => logLevel.MinimumLevel = LogEventLevel.Verbose;
+			set => logLevel.MinimumLevel = value ? LogEventLevel.Verbose : LogEventLevel.Debug;
 		}
 
 		public static void ShowLogs()
