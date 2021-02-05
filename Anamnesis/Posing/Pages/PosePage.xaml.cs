@@ -99,18 +99,18 @@ namespace Anamnesis.PoseModule.Pages
 				{
 					this.Skeleton.Clear();
 					this.Skeleton = new SkeletonVisual3d(actor);
+					await this.Skeleton.GenerateBones();
 				}
 			}
 			else
 			{
 				this.Skeleton = new SkeletonVisual3d(actor);
+				await this.Skeleton.GenerateBones();
 			}
 
 			this.ThreeDView.DataContext = this.Skeleton;
 			this.GuiView.DataContext = this.Skeleton;
 			this.MatrixView.DataContext = this.Skeleton;
-
-			await this.Skeleton.GenerateBones();
 
 			if (this.Skeleton.File != null)
 			{
