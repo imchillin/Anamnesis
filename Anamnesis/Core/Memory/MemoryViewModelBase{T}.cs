@@ -140,12 +140,18 @@ namespace Anamnesis.Memory
 
 		public void AddChild(IMemoryViewModel child)
 		{
-			this.children.Add(child);
+			lock (this)
+			{
+				this.children.Add(child);
+			}
 		}
 
 		public void RemoveChild(IMemoryViewModel child)
 		{
-			this.children.Remove(child);
+			lock (this)
+			{
+				this.children.Remove(child);
+			}
 		}
 
 		public override int Tick()
