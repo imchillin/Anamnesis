@@ -45,7 +45,6 @@ namespace Anamnesis.Files
 
 		public string? Nickname { get; set; } = null;
 		public int ModelType { get; set; } = 0;
-		public ActorTypes? ActorType { get; set; } = null;
 
 		// appearance
 		public Appearance.Races? Race { get; set; }
@@ -111,7 +110,6 @@ namespace Anamnesis.Files
 		{
 			this.Nickname = actor.Nickname;
 			this.ModelType = actor.ModelType;
-			this.ActorType = actor.ObjectKind;
 
 			if (actor.Customize == null)
 				return;
@@ -239,9 +237,6 @@ namespace Anamnesis.Files
 
 			actor.Nickname = this.Nickname;
 			actor.ModelType = this.ModelType;
-
-			if (this.ActorType != null && this.ActorType != ActorTypes.None)
-				actor.ObjectKind = (ActorTypes)this.ActorType;
 
 			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 			{
