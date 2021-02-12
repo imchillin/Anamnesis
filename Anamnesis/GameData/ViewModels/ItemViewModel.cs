@@ -30,6 +30,8 @@ namespace Anamnesis.GameData.ViewModels
 
 			LuminaExtensions.GetModel(this.Value.ModelMain, this.IsWeapon, out this.modelSet, out this.modelBase, out this.modelVariant);
 			LuminaExtensions.GetModel(this.Value.ModelSub, this.IsWeapon, out this.subModelSet, out this.subModelBase, out this.subModelVariant);
+
+			this.Mod = TexToolsService.GetMod(this);
 		}
 
 		public override string Name => this.Value.Name;
@@ -46,7 +48,7 @@ namespace Anamnesis.GameData.ViewModels
 
 		public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
 
-		public Mod? Mod => TexToolsService.GetMod(this);
+		public Mod? Mod { get; private set; }
 
 		public bool FitsInSlot(ItemSlots slot)
 		{
