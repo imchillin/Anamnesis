@@ -82,9 +82,6 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
-			if (!this.IsVisible)
-				return;
-
 			ActorViewModel? actor = this.DataContext as ActorViewModel;
 
 			if (actor == null)
@@ -92,6 +89,9 @@ namespace Anamnesis.PoseModule.Pages
 				this.Skeleton = null;
 				return;
 			}
+
+			if (!this.IsVisible)
+				return;
 
 			if (this.Skeleton != null)
 			{
