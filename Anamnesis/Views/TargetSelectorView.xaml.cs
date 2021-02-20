@@ -21,6 +21,7 @@ namespace Anamnesis.Views
 		private static bool includePlayers = true;
 		private static bool includeCompanions = true;
 		private static bool includeNPCs = true;
+		private static bool includeOther = false;
 
 		public TargetSelectorView()
 		{
@@ -50,6 +51,12 @@ namespace Anamnesis.Views
 		{
 			get => includeNPCs;
 			set => includeNPCs = value;
+		}
+
+		public bool IncludeOther
+		{
+			get => includeOther;
+			set => includeOther = value;
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
@@ -90,6 +97,15 @@ namespace Anamnesis.Views
 
 				if (!includeNPCs && (item.Kind == Memory.ActorTypes.BattleNpc || item.Kind == Memory.ActorTypes.EventNpc))
 					return false;
+
+				if (!includeOther
+					&& item.Kind != Memory.ActorTypes.Player
+					&& item.Kind != Memory.ActorTypes.Companion
+					&& item.Kind != Memory.ActorTypes.BattleNpc
+					&& item.Kind != Memory.ActorTypes.EventNpc)
+				{
+					return false;
+				}
 
 				return true;
 			}

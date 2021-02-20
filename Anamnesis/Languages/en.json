@@ -19,6 +19,7 @@
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",
 	"Target_Npc": "NPCs",
+	"Target_Other": "Others",
 
 	"Target_ConvertToPlayerTitle": "Actor Selection",
 	"Target_ConvertHousingNpcToPlayerMessage": "The Actor: \"{0}\" appears to be a humanoid NPC. Do you want to change them to a player? This is required for some housing vendors, but not all.",

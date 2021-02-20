@@ -123,13 +123,6 @@ namespace Anamnesis
 
 				Actor actor = MemoryService.Read<Actor>(ptr);
 
-				if (actor.ObjectKind != ActorTypes.Player
-						&& actor.ObjectKind != ActorTypes.BattleNpc
-						&& actor.ObjectKind != ActorTypes.EventNpc
-						&& actor.ObjectKind != ActorTypes.Companion
-						&& actor.ObjectKind != ActorTypes.Retainer)
-					continue;
-
 				if (string.IsNullOrEmpty(actor.Name))
 					continue;
 
