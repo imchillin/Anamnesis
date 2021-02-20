@@ -6,6 +6,7 @@ namespace Anamnesis.PoseModule.Pages
 {
 	using System;
 	using System.Collections.Generic;
+	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -25,7 +26,7 @@ namespace Anamnesis.PoseModule.Pages
 	{
 		public const double DragThreshold = 20;
 
-		private static PoseFile.Configuration fileConfig = new PoseFile.Configuration();
+		public static PoseFile.Configuration FileConfig = new PoseFile.Configuration();
 
 		private bool isLeftMouseButtonDownOnWindow;
 		private bool isDragging;
@@ -43,8 +44,7 @@ namespace Anamnesis.PoseModule.Pages
 		public TargetService TargetService { get => TargetService.Instance; }
 
 		public SkeletonVisual3d? Skeleton { get; private set; }
-
-		public PoseFile.Configuration FileConfiguration => fileConfig;
+		public PoseFile.Configuration FileConfiguration => FileConfig;
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -145,7 +145,7 @@ namespace Anamnesis.PoseModule.Pages
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(actor, this.Skeleton, fileConfig);
+					await poseFile.Apply(actor, this.Skeleton, FileConfig);
 				}
 			}
 			catch (Exception ex)
@@ -161,9 +161,16 @@ namespace Anamnesis.PoseModule.Pages
 			if (actor == null || this.Skeleton == null)
 				return;
 
+			SaveResult result = await FileService.Save<PoseFile>();
+
+			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
+				return;
+
 			PoseFile file = new PoseFile();
-			file.WriteToFile(actor, this.Skeleton, fileConfig);
-			await FileService.Save(file);
+			file.WriteToFile(actor, this.Skeleton, FileConfig);
+
+			using FileStream stream = new FileStream(result.Path, FileMode.Create);
+			result.Info.SerializeFile(file, stream);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)

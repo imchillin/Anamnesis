@@ -16,6 +16,9 @@ namespace Anamnesis.Files.Infos
 
 		public abstract IFileSource[] FileSources { get; }
 
+		public virtual Type? LoadOptionsViewType => null;
+		public virtual Type? SaveOptionsViewType => null;
+
 		public abstract FileBase DeserializeFile(Stream stream);
 		public abstract void SerializeFile(FileBase file, Stream stream);
 

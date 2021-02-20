@@ -5,10 +5,10 @@
 namespace Anamnesis.Character.Pages
 {
 	using System;
+	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis.Character.Dialogs;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Character.Views;
 	using Anamnesis.Files;
@@ -87,19 +87,7 @@ namespace Anamnesis.Character.Pages
 		{
 			try
 			{
-				await this.Load(false);
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to load appearance");
-			}
-		}
-
-		private async void OnAdvLoadClicked(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				await this.Load(true);
+				await this.Load();
 			}
 			catch (Exception ex)
 			{
@@ -124,15 +112,18 @@ namespace Anamnesis.Character.Pages
 			await apFile.Apply(this.Actor, CharacterFile.SaveModes.All);
 		}
 
-		private async Task Load(bool advanced)
+		private async Task Load()
 		{
 			if (this.Actor == null)
 				return;
 
+			CharacterFileOptions.Result = lastLoadMode;
 			OpenResult result = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>();
 
 			if (result.File == null)
 				return;
+
+			lastLoadMode = CharacterFileOptions.Result;
 
 			if (result.File is LegacyCharacterFile legacyAllFile)
 				result.File = legacyAllFile.Upgrade();
@@ -145,20 +136,7 @@ namespace Anamnesis.Character.Pages
 
 			if (result.File is CharacterFile apFile)
 			{
-				CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
-
-				if (advanced)
-				{
-					CharacterFile.SaveModes newmode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Load Character...", lastLoadMode);
-
-					if (newmode == CharacterFile.SaveModes.None)
-						return;
-
-					lastLoadMode = newmode;
-					mode = lastLoadMode;
-				}
-
-				await apFile.Apply(this.Actor, mode);
+				await apFile.Apply(this.Actor, lastLoadMode);
 			}
 		}
 
@@ -166,7 +144,7 @@ namespace Anamnesis.Character.Pages
 		{
 			try
 			{
-				await this.Save(false);
+				await this.Save();
 			}
 			catch (Exception ex)
 			{
@@ -174,39 +152,23 @@ namespace Anamnesis.Character.Pages
 			}
 		}
 
-		private async void OnAdvSaveClicked(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				await this.Save(true);
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to save appearance");
-			}
-		}
-
-		private async Task Save(bool advanced)
+		private async Task Save()
 		{
 			if (this.Actor == null)
 				return;
 
-			CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
+			CharacterFileOptions.Result = lastSaveMode;
+			SaveResult result = await FileService.Save<CharacterFile>();
+			lastSaveMode = CharacterFileOptions.Result;
 
-			if (advanced)
-			{
-				CharacterFile.SaveModes newMode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Character...", lastSaveMode);
-
-				if (newMode == CharacterFile.SaveModes.None)
-					return;
-
-				mode = newMode;
-			}
+			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
+				return;
 
 			CharacterFile file = new CharacterFile();
-			file.WriteToFile(this.Actor, mode);
+			file.WriteToFile(this.Actor, lastSaveMode);
 
-			await FileService.Save(file);
+			using FileStream stream = new FileStream(result.Path, FileMode.Create);
+			result.Info.SerializeFile(file, stream);
 		}
 
 		private void OnActorChanged(ActorViewModel? actor)

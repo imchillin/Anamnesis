@@ -330,7 +330,6 @@
 
 	<ItemGroup>
 		<Folder Include="Core\Localization\" />
-		<Folder Include="Posing\Dialogs\" />
 	</ItemGroup>
 
 	<ItemGroup>

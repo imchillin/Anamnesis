@@ -30,6 +30,7 @@ namespace Anamnesis.GUI.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
+		private static bool showOptions;
 		private static IFileSource? currentFileSource;
 		private static Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
 		private static bool isFlattened;
@@ -43,6 +44,11 @@ namespace Anamnesis.GUI.Views
 		public FileBrowserView(FileInfoBase fileInfo, Modes mode)
 			: this(new[] { fileInfo }, mode)
 		{
+			Type? optionsType = mode == Modes.Load ? fileInfo.LoadOptionsViewType : fileInfo.SaveOptionsViewType;
+			if (optionsType != null)
+			{
+				this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsType);
+			}
 		}
 
 		public FileBrowserView(FileInfoBase[] fileInfos, Modes mode)
@@ -104,8 +110,15 @@ namespace Anamnesis.GUI.Views
 			private set;
 		}
 
+		public bool ShowOptions
+		{
+			get => showOptions;
+			set => showOptions = value;
+		}
+
 		public string? FilePath { get; private set; }
 		public bool UseFileBrowser { get; set; }
+		public UserControl? OptionsControl { get; set; }
 
 		public ObservableCollection<IFileSource> FileSources { get; private set; } = new ObservableCollection<IFileSource>();
 
@@ -123,6 +136,31 @@ namespace Anamnesis.GUI.Views
 				if (this.mode == Modes.Save)
 				{
 					this.FileName = this.selected?.Name ?? string.Empty;
+				}
+
+				// show the options panel for the selected file type
+				if (this.selected != null && this.selected.Entry is IFile file)
+				{
+					FileInfoBase? fileType = file.Type;
+					Type? optionsViewType = this.mode == Modes.Load ? fileType?.LoadOptionsViewType : fileType?.SaveOptionsViewType;
+
+					if (this.OptionsControl == null && optionsViewType == null)
+						return;
+
+					if (this.OptionsControl?.GetType() == optionsViewType)
+						return;
+
+					if (optionsViewType == null)
+					{
+						this.OptionsControl = null;
+						return;
+					}
+
+					this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsViewType);
+				}
+				else
+				{
+					this.OptionsControl = null;
 				}
 			}
 		}
@@ -489,14 +527,6 @@ namespace Anamnesis.GUI.Views
 					////if (this.View.mode == Modes.Save)
 					////	return this.Entry is IFileSource.IDirectory;
 
-					return true;
-				}
-			}
-
-			public bool SupportsAdvanced
-			{
-				get
-				{
 					return true;
 				}
 			}

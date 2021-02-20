@@ -11,7 +11,9 @@ namespace Anamnesis.Files
 	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
+	using Anamnesis.Posing.Views;
 	using Anamnesis.Services;
+	using PropertyChanged;
 	using Serilog;
 
 #pragma warning disable SA1402, SA1649
@@ -19,6 +21,8 @@ namespace Anamnesis.Files
 	{
 		public override string Extension => "pose";
 		public override string Name => "Anamnesis Pose File";
+		public override Type? LoadOptionsViewType => typeof(LoadOptions);
+
 		public override IFileSource[] FileSources => new[]
 		{
 			new LocalFileSource("Local Files", SettingsService.Current.DefaultPoseDirectory),
@@ -94,17 +98,17 @@ namespace Anamnesis.Files
 
 						TransformViewModel vm = bone.ViewModel;
 
-						if (PoseService.Instance.FreezePositions && savedBone.Position != null)
+						if (PoseService.Instance.FreezePositions && savedBone.Position != null && config.LoadPositions)
 						{
 							vm.Position = (Vector)savedBone.Position;
 						}
 
-						if (PoseService.Instance.FreezeRotation && savedBone.Rotation != null)
+						if (PoseService.Instance.FreezeRotation && savedBone.Rotation != null && config.LoadRotations)
 						{
 							vm.Rotation = (Quaternion)savedBone.Rotation;
 						}
 
-						if (PoseService.Instance.FreezeScale && savedBone.Scale != null)
+						if (PoseService.Instance.FreezeScale && savedBone.Scale != null && config.LoadScales)
 						{
 							vm.Scale = (Vector)savedBone.Scale;
 						}
@@ -124,9 +128,14 @@ namespace Anamnesis.Files
 			PoseService.Instance.CanEdit = true;
 		}
 
+		[AddINotifyPropertyChangedInterface]
 		public class Configuration
 		{
 			public bool UseSelection { get; set; } = false;
+
+			public bool LoadPositions { get; set; } = true;
+			public bool LoadRotations { get; set; } = true;
+			public bool LoadScales { get; set; } = true;
 		}
 
 		[Serializable]

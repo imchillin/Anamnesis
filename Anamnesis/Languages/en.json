@@ -147,6 +147,9 @@
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Scale",
 	"Pose_Position": "Position",
+	"Pose_LoadRotation": "Load Bone Rotations",
+	"Pose_LoadScale": "Load Bone Scales",
+	"Pose_LoadPosition": "Load Bone Positions",
 
 	"Pose_EnableRotation": "R",
 	"Pose_EnableRotationTooltip": "Enable editing rotation",

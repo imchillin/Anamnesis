@@ -6,6 +6,7 @@ namespace Anamnesis.Files
 {
 	using System;
 	using System.Globalization;
+	using Anamnesis.Character.Views;
 	using Anamnesis.Files.Infos;
 	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
@@ -16,6 +17,8 @@ namespace Anamnesis.Files
 	{
 		public override string Extension => "json";
 		public override string Name => "CMTool Equipment Set";
+		public override Type? LoadOptionsViewType => typeof(CharacterFileOptions);
+		public override Type? SaveOptionsViewType => typeof(CharacterFileOptions);
 		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files (CMTool Gearsets)", "%MyDocuments%/CMTool/Gearsets/") };
 	}
 
