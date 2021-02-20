@@ -325,7 +325,7 @@ namespace Anamnesis
 				lock (this)
 				{
 					if (this.viewModel != null)
-						this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+						this.viewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
 
 					List<ActorTableActor> actors = TargetService.GetActors();
 					bool found = false;
@@ -365,6 +365,7 @@ namespace Anamnesis
 						this.viewModel.OnRetargeted();
 					}
 
+					Log.Information($"Retargeting actor: {this.Initials}. Success: {found}. Checked {actors.Count} actors.");
 					this.IsValid = found;
 				}
 			}
