@@ -5,9 +5,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
-	using System.Reflection;
 	using System.Runtime.InteropServices;
-	using PropertyChanged;
 
 	// We dont know what this structure is
 	[StructLayout(LayoutKind.Explicit)]
@@ -20,11 +18,6 @@ namespace Anamnesis.Memory
 	{
 		public SkeletonWrapperViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
-		{
-		}
-
-		public SkeletonWrapperViewModel(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
 		{
 		}
 

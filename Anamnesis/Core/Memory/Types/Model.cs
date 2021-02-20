@@ -61,11 +61,6 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public ModelViewModel(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
-		{
-		}
-
 		[ModelField] public WeaponExtendedViewModel? Weapons { get; set; }
 		[ModelField] public TransformViewModel? Transform { get; set; }
 		[ModelField] public SkeletonWrapperViewModel? Skeleton { get; set; }

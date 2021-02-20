@@ -496,7 +496,7 @@ namespace Anamnesis.PoseModule
 
 			for (int i = 0; i < vm.Transforms.Count; i++)
 			{
-				TransformViewModel? transform = vm.Transforms[i];
+				TransformPtrViewModel? transform = vm.Transforms[i];
 				string boneName = name + "_" + i;
 				BoneVisual3d bone = new BoneVisual3d(transform, this, boneName);
 				this.Bones.Add(bone);

@@ -53,6 +53,7 @@ namespace Anamnesis.Character.Pages
 
 		private void OnClearClicked(object sender, RoutedEventArgs e)
 		{
+			this.Actor?.SetMemoryMode(MemoryModes.Write);
 			this.Actor?.Equipment?.Arms?.Clear();
 			this.Actor?.Equipment?.Chest?.Clear();
 			this.Actor?.Equipment?.Ear?.Clear();
@@ -66,21 +67,23 @@ namespace Anamnesis.Character.Pages
 
 			this.Actor?.ModelObject?.Weapons?.Hide();
 			this.Actor?.ModelObject?.Weapons?.SubModel?.Hide();
+			this.Actor?.SetMemoryMode(MemoryModes.ReadWrite);
 		}
 
 		private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
 		{
+			this.Actor?.SetMemoryMode(MemoryModes.Write);
 			this.Actor?.Equipment?.Ear?.Clear();
 			this.Actor?.Equipment?.Head?.Clear();
 			this.Actor?.Equipment?.LFinger?.Clear();
 			this.Actor?.Equipment?.Neck?.Clear();
 			this.Actor?.Equipment?.RFinger?.Clear();
 			this.Actor?.Equipment?.Wrist?.Clear();
-
 			this.Actor?.Equipment?.Arms?.Equip(ItemUtility.NpcBodyItem);
 			this.Actor?.Equipment?.Chest?.Equip(ItemUtility.NpcBodyItem);
 			this.Actor?.Equipment?.Legs?.Equip(ItemUtility.NpcBodyItem);
 			this.Actor?.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
+			this.Actor?.SetMemoryMode(MemoryModes.ReadWrite);
 		}
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)

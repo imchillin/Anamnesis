@@ -33,6 +33,8 @@ namespace Anamnesis.Memory
 		bool WriteToMemory(bool force = false);
 		bool ReadFromMemory(bool force = false);
 
+		void SetMemoryMode(MemoryModes mode);
+
 		void AddChild(IMemoryViewModel child);
 		void RemoveChild(IMemoryViewModel child);
 	}
@@ -63,11 +65,6 @@ namespace Anamnesis.Memory
 			}
 
 			this.Tick();
-		}
-
-		public MemoryViewModelBase(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
-		{
 		}
 
 		public IntPtr? Pointer { get; set; }
@@ -116,6 +113,11 @@ namespace Anamnesis.Memory
 
 				return builder.ToString();
 			}
+		}
+
+		public void SetMemoryMode(MemoryModes mode)
+		{
+			this.MemoryMode = mode;
 		}
 
 		public void Dispose()

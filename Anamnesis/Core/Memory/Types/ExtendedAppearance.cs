@@ -29,11 +29,6 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public ExtendedAppearanceViewModel(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
-		{
-		}
-
 		[ModelField] public Color SkinColor { get; set; }
 		[ModelField] public float MuscleTone { get; set; }
 		[ModelField] public Color SkinGloss { get; set; }

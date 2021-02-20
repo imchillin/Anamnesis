@@ -133,6 +133,9 @@ namespace Anamnesis.Character.Views
 		{
 			this.lockViewModel = true;
 
+			IMemoryViewModel? memory = this.ItemModel?.GetParent<IMemoryViewModel>();
+			memory?.SetMemoryMode(MemoryModes.Write);
+
 			ushort modelSet = 0;
 			ushort modelBase = 0;
 			ushort modelVariant = 0;
@@ -159,6 +162,7 @@ namespace Anamnesis.Character.Views
 			}
 
 			this.Item = item;
+			memory?.SetMemoryMode(MemoryModes.ReadWrite);
 			this.lockViewModel = false;
 		}
 

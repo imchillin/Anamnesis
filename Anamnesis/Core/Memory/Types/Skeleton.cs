@@ -25,11 +25,6 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public SkeletonViewModel(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
-		{
-		}
-
 		[ModelField] public BonesViewModel? Body { get; set; }
 		[ModelField] public BonesViewModel? Head { get; set; }
 		[ModelField] public BonesViewModel? Hair { get; set; }

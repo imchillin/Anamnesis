@@ -33,7 +33,7 @@ namespace Anamnesis.Memory
 	}
 
 	[AddINotifyPropertyChangedInterface]
-	public class EquipmentViewModel : MemoryViewModelBase<Equipment>
+	public class EquipmentViewModel : StructViewModelBase<Equipment>
 	{
 		public EquipmentViewModel(IMemoryViewModel parent, string propertyName)
 			: base(parent, propertyName)
@@ -55,9 +55,9 @@ namespace Anamnesis.Memory
 	#pragma warning disable SA1402
 
 	[AddINotifyPropertyChangedInterface]
-	public class ItemViewModel : MemoryViewModelBase<Item>
+	public class ItemViewModel : StructViewModelBase<Item>
 	{
-		public ItemViewModel(IMemoryViewModel parent, string propertyName)
+		public ItemViewModel(EquipmentViewModel parent, string propertyName)
 			: base(parent, propertyName)
 		{
 		}

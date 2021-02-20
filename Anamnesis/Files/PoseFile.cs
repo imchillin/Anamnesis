@@ -96,7 +96,7 @@ namespace Anamnesis.Files
 						if (config.UseSelection && !skeleton.GetIsBoneSelected(bone))
 							continue;
 
-						TransformViewModel vm = bone.ViewModel;
+						TransformPtrViewModel vm = bone.ViewModel;
 
 						if (PoseService.Instance.FreezePositions && savedBone.Position != null && config.LoadPositions)
 						{
