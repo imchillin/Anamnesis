@@ -328,51 +328,60 @@ namespace Anamnesis.PoseModule
 		{
 			this.Generating = true;
 
-			await Dispatch.MainThread();
+			try
+			{
+				await Dispatch.MainThread();
 
-			if (!GposeService.Instance.IsGpose)
+				if (!GposeService.Instance.IsGpose)
+				{
+					this.Generating = false;
+					return;
+				}
+
+				this.Bones.Clear();
+				this.Children.Clear();
+
+				if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
+					return;
+
+				SkeletonViewModel skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
+
+				////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
+				await this.Generate(skeletonVm);
+
+				if (!GposeService.Instance.IsGpose)
+				{
+					this.Generating = false;
+					return;
+				}
+
+				// Map eyes together if they exist
+				BoneVisual3d? lEye = this.GetBone("EyeLeft");
+				BoneVisual3d? rEye = this.GetBone("EyeRight");
+				if (lEye != null && rEye != null)
+				{
+					lEye.LinkedEye = rEye;
+					rEye.LinkedEye = lEye;
+				}
+
+				foreach (BoneVisual3d bone in this.Bones)
+				{
+					bone.ReadTransform();
+				}
+
+				foreach (BoneVisual3d bone in this.Bones)
+				{
+					bone.ReadTransform();
+				}
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+			finally
 			{
 				this.Generating = false;
-				return;
 			}
-
-			this.Bones.Clear();
-			this.Children.Clear();
-
-			if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
-				return;
-
-			SkeletonViewModel skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
-
-			////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
-			await this.Generate(skeletonVm);
-
-			if (!GposeService.Instance.IsGpose)
-			{
-				this.Generating = false;
-				return;
-			}
-
-			// Map eyes together if they exist
-			BoneVisual3d? lEye = this.GetBone("EyeLeft");
-			BoneVisual3d? rEye = this.GetBone("EyeRight");
-			if (lEye != null && rEye != null)
-			{
-				lEye.LinkedEye = rEye;
-				rEye.LinkedEye = lEye;
-			}
-
-			foreach (BoneVisual3d bone in this.Bones)
-			{
-				bone.ReadTransform();
-			}
-
-			foreach (BoneVisual3d bone in this.Bones)
-			{
-				bone.ReadTransform();
-			}
-
-			this.Generating = false;
 		}
 
 		private ModelVisual3D GetVisual(string? name)

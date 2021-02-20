@@ -135,6 +135,8 @@
 	"Pose_WarningNotFrozen": "Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window.",
 	"Pose_GenerateSkeletonTitle": "Skeleton not found",
 	"Pose_GenerateSkeleton": "No skeleton was found for the actor {0}- generate one now?\nWithout a skeleton, parenting will not work correctly.",
+	"Pose_Generating": "Generating Skeleton. Please Wait.",
+	"Pose_NoSkeleton": "No Skeleton is bound to this view.",
 
 	"Pose_Save": "Save",
 	"Pose_SaveBones": "Save {0} Bones",

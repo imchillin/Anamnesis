@@ -93,36 +93,43 @@ namespace Anamnesis.PoseModule.Pages
 			if (!this.IsVisible)
 				return;
 
-			if (this.Skeleton != null)
+			try
 			{
-				if (this.Skeleton.Actor != actor)
+				if (this.Skeleton != null)
 				{
-					this.Skeleton.Clear();
+					if (this.Skeleton.Actor != actor)
+					{
+						this.Skeleton.Clear();
+						this.Skeleton = new SkeletonVisual3d(actor);
+						await this.Skeleton.GenerateBones();
+					}
+				}
+				else
+				{
 					this.Skeleton = new SkeletonVisual3d(actor);
 					await this.Skeleton.GenerateBones();
 				}
-			}
-			else
-			{
-				this.Skeleton = new SkeletonVisual3d(actor);
-				await this.Skeleton.GenerateBones();
-			}
 
-			this.ThreeDView.DataContext = this.Skeleton;
-			this.GuiView.DataContext = this.Skeleton;
-			this.MatrixView.DataContext = this.Skeleton;
+				this.ThreeDView.DataContext = this.Skeleton;
+				this.GuiView.DataContext = this.Skeleton;
+				this.MatrixView.DataContext = this.Skeleton;
 
-			if (this.Skeleton.File != null)
-			{
-				if (!this.Skeleton.File.AllowPoseGui)
+				if (this.Skeleton.File != null)
 				{
-					this.ViewSelector.SelectedIndex = 1;
-				}
+					if (!this.Skeleton.File.AllowPoseGui)
+					{
+						this.ViewSelector.SelectedIndex = 1;
+					}
 
-				if (!this.Skeleton.File.AllowPoseMatrix)
-				{
-					this.ViewSelector.SelectedIndex = 2;
+					if (!this.Skeleton.File.AllowPoseMatrix)
+					{
+						this.ViewSelector.SelectedIndex = 2;
+					}
 				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to bind skeleton to view");
 			}
 		}
 
