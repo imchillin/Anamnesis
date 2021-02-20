@@ -38,5 +38,7 @@ namespace Anamnesis.Services
 		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
 		public HomeWidgetType HomeWidget { get; set; } = HomeWidgetType.Art;
 		public bool UseCustomBorder { get; set; } = true;
+
+		public DateTimeOffset LastUpdateCheck { get; set; } = DateTimeOffset.MinValue;
 	}
 }

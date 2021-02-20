@@ -35,6 +35,14 @@ namespace Anamnesis.Updater
 		{
 			await base.Initialize();
 
+			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
+			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
+			if (elapsed.TotalHours < 24)
+			{
+				Log.Information("Last update check was less than 24 hours ago. Skipping.");
+				return;
+			}
+
 			string versionStr;
 			if (!File.Exists(VersionFile))
 				throw new Exception("No version file found");
@@ -68,12 +76,19 @@ namespace Anamnesis.Updater
 					dlg.Changes = this.currentRelease.Changes;
 					await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
 				}
+
+				SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
+				SettingsService.Save();
 			}
 			catch (HttpRequestException ex)
 			{
 				// 404 errors just mean there are no latest releases.
 				if (ex.StatusCode == HttpStatusCode.NotFound)
+				{
+					SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
+					SettingsService.Save();
 					return;
+				}
 
 				throw;
 			}
