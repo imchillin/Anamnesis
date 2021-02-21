@@ -33,7 +33,7 @@ namespace Anamnesis.Styles.Drawers
 		private Type? objectType;
 		private bool searching = false;
 		private bool idle = true;
-		private string[]? searchQuerry;
+		private string[]? searchQuery;
 		private bool loading = false;
 		private bool abortSearch = false;
 
@@ -229,12 +229,12 @@ namespace Anamnesis.Styles.Drawers
 
 				if (string.IsNullOrEmpty(str))
 				{
-					this.searchQuerry = null;
+					this.searchQuery = null;
 				}
 				else
 				{
 					str = str.ToLower();
-					this.searchQuerry = str.Split(' ');
+					this.searchQuery = str.Split(' ');
 				}
 
 				this.abortSearch = false;
@@ -275,7 +275,7 @@ namespace Anamnesis.Styles.Drawers
 
 						try
 						{
-							if (this.Filter != null && !this.Filter.Invoke(entry.Item, this.searchQuerry))
+							if (this.Filter != null && !this.Filter.Invoke(entry.Item, this.searchQuery))
 								continue;
 						}
 						catch (Exception ex)
