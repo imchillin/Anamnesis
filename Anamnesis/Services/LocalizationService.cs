@@ -55,8 +55,16 @@ namespace Anamnesis.Services
 				string culture = Path.GetFileNameWithoutExtension(path);
 
 				string json = File.ReadAllText(path);
-				Dictionary<string, string> values = SerializerService.Deserialize<Dictionary<string, string>>(json);
-				Add(culture, values);
+
+				try
+				{
+					Dictionary<string, string> values = SerializerService.Deserialize<Dictionary<string, string>>(json);
+					Add(culture, values);
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, $"Failed to load language: {path}");
+				}
 			}
 		}
 
