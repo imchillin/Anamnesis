@@ -8,6 +8,7 @@ namespace Anamnesis.Services
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Anamnesis.Serialization;
@@ -81,6 +82,26 @@ namespace Anamnesis.Services
 		{
 			string str = GetString(key);
 			return string.Format(str, param);
+		}
+
+		public static string GetStringAllLanguages(string key)
+		{
+			StringBuilder builder = new StringBuilder();
+
+			foreach ((string code, Locale locale) in Locales)
+			{
+				if (locale is GiberishLocale)
+					continue;
+
+				string val;
+				if (locale.Get(key, out val))
+				{
+					builder.AppendLine(val);
+					builder.AppendLine();
+				}
+			}
+
+			return builder.ToString().TrimEnd();
 		}
 
 		public static string GetString(string key, bool silent = false)

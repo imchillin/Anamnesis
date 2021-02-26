@@ -16,6 +16,7 @@ namespace Anamnesis.Styles.Controls
 	{
 		public static readonly IBind<string> KeyDp = Binder.Register<string, TextBlock>(nameof(Key), OnKeyChanged, BindMode.OneWay);
 		public static readonly IBind<string?> ValueDp = Binder.Register<string?, TextBlock>(nameof(Value), OnValueChanged, BindMode.OneWay);
+		public static readonly IBind<bool> AllLanguagesDp = Binder.Register<bool, TextBlock>(nameof(AllLanguages), BindMode.OneWay);
 
 		public TextBlock()
 		{
@@ -29,6 +30,12 @@ namespace Anamnesis.Styles.Controls
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
+		}
+
+		public bool AllLanguages
+		{
+			get => AllLanguagesDp.Get(this);
+			set => AllLanguagesDp.Set(this, value);
 		}
 
 		public static void OnKeyChanged(TextBlock sender, string val)
@@ -63,7 +70,14 @@ namespace Anamnesis.Styles.Controls
 			{
 				if (this.Value == null)
 				{
-					val = LocalizationService.GetString(this.Key);
+					if (this.AllLanguages)
+					{
+						val = LocalizationService.GetStringAllLanguages(this.Key);
+					}
+					else
+					{
+						val = LocalizationService.GetString(this.Key);
+					}
 				}
 				else
 				{

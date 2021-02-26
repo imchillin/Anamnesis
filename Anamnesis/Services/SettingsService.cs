@@ -26,6 +26,7 @@ namespace Anamnesis.Services
 		public static Settings Current => Instance.Settings!;
 
 		public Settings? Settings { get; private set; }
+		public bool FirstTimeUser { get; private set; }
 
 		public static void ShowDirectory()
 		{
@@ -44,11 +45,13 @@ namespace Anamnesis.Services
 
 			if (!File.Exists(settingsPath))
 			{
+				this.FirstTimeUser = true;
 				this.Settings = new Settings();
 				Save();
 			}
 			else
 			{
+				this.FirstTimeUser = false;
 				try
 				{
 					string json = File.ReadAllText(settingsPath);
