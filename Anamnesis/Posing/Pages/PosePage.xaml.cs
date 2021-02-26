@@ -283,6 +283,9 @@ namespace Anamnesis.PoseModule.Pages
 
 		private void OnCanvasMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
+			if (!this.isLeftMouseButtonDownOnWindow)
+				return;
+
 			this.isLeftMouseButtonDownOnWindow = false;
 			if (this.isDragging)
 			{
