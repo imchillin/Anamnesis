@@ -30,7 +30,7 @@ namespace Anamnesis.GUI.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
-		private static bool showOptions;
+		private static bool showOptions = false;
 		private static IFileSource? currentFileSource;
 		private static Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
 		private static bool isFlattened;
@@ -93,6 +93,12 @@ namespace Anamnesis.GUI.Views
 			}
 
 			Task.Run(this.UpdateEntries);
+
+			Type? optionsType = mode == Modes.Load ? fileInfos[0].LoadOptionsViewType : fileInfos[0].SaveOptionsViewType;
+			if (optionsType != null)
+			{
+				this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsType);
+			}
 		}
 
 		public event DrawerEvent? Close;

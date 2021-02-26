@@ -185,7 +185,7 @@
 				Text="{Binding FileExtension}" />
 		</Grid>
 
-		<Grid Grid.Row="4" Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}">
+		<Grid Grid.Row="4">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition />
@@ -199,15 +199,17 @@
 					<ana:TextBlock
 						Margin="6,0"
 						Foreground="{StaticResource MaterialDesignBody}"
-						Text="Advanced" />
+						Text="Advanced Options" />
 				</ToggleButton>
 			</Grid>
 
-			<ContentPresenter
-				Grid.Row="1"
-				Margin="6"
-				Content="{Binding OptionsControl}"
-				Visibility="{Binding ShowOptions, Converter={StaticResource B2V}}" />
+			<Grid Grid.Row="1" Visibility="{Binding ShowOptions, Converter={StaticResource B2V}}">
+				<ContentPresenter
+					Grid.Row="1"
+					Margin="6"
+					Content="{Binding OptionsControl}"
+					Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}" />
+			</Grid>
 
 		</Grid>
 
