@@ -8,6 +8,7 @@ namespace Anamnesis.PoseModule.Views
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using System.Linq;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
@@ -123,6 +124,19 @@ namespace Anamnesis.PoseModule.Views
 		{
 			this.FrameSkeleton();
 			this.OnCameraChanged(sender, null);
+		}
+
+		private void OnRegenerateSkeletonClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Skeleton?.File != null && this.Skeleton.File.IsGeneratedParenting)
+			{
+				this.Skeleton.File.Parenting = null;
+				Task.Run(async () =>
+				{
+					await Dispatch.MainThread();
+					await this.Skeleton.GenerateBones();
+				});
+			}
 		}
 
 		private void FrameSkeleton()

@@ -454,6 +454,7 @@ namespace Anamnesis.PoseModule
 					this.File.Race = this.Actor.Customize?.Race;
 				}
 
+				this.File.IsGeneratedParenting = true;
 				this.File.Parenting = new Dictionary<string, string>();
 				foreach (BoneVisual3d bone in this.Bones)
 				{
