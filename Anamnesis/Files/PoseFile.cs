@@ -63,10 +63,19 @@ namespace Anamnesis.Files
 
 		public async Task Apply(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config)
 		{
-			SkeletonViewModel? skeletonMem = actor?.ModelObject?.Skeleton?.Skeleton;
+			if (actor == null)
+				throw new ArgumentNullException(nameof(actor));
 
-			if (skeletonMem == null || skeleton.Bones == null)
-				throw new Exception("No skeleton in actor");
+			if (actor.ModelObject == null)
+				throw new Exception("Actor has no model");
+
+			if (actor.ModelObject.Skeleton == null)
+				throw new Exception("Actor model has no skeleton wrapper");
+
+			if (actor.ModelObject.Skeleton.Skeleton == null)
+				throw new Exception("Actor skeleton wrapper has no skeleton");
+
+			SkeletonViewModel skeletonMem = actor.ModelObject.Skeleton.Skeleton;
 
 			skeletonMem.MemoryMode = MemoryModes.None;
 
