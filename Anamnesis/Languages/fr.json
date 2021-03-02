@@ -36,6 +36,8 @@
 	"Home_Wiki": "Aide",
 	"Home_None": "Rien",
 
+	"FTUE_Message": "Bienvenue!\nMerci d'utiliser Anamesis! Pour commencer nous avons ouvert les paramètres pour vous. Veuillez sélectionner votre langue.",
+
 	"Scene_World_Header": "Monde",
 	"Scene_World_Time": "Temps:",
 	"Scene_World_Day": "Jour:",
