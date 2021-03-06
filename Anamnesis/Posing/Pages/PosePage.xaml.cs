@@ -61,6 +61,7 @@ namespace Anamnesis.PoseModule.Pages
 				////if (this.Skeleton != null && !this.PoseService.CanEdit)
 				////	this.Skeleton.CurrentBone = null;
 
+				this.Skeleton?.Reselect();
 				this.Skeleton?.ReadTranforms();
 			});
 		}

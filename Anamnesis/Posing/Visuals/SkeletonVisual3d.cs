@@ -313,6 +313,13 @@ namespace Anamnesis.PoseModule
 			return null;
 		}
 
+		public void Reselect()
+		{
+			List<BoneVisual3d> selection = new List<BoneVisual3d>(this.SelectedBones);
+			this.ClearSelection();
+			this.Select(selection);
+		}
+
 		public void ReadTranforms()
 		{
 			if (this.Bones == null)
