@@ -194,12 +194,13 @@
 			<Grid
 				Grid.Row="0"
 				Background="{StaticResource MaterialDesignPaper}"
+				Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}"
 				Cursor="Hand">
 				<ToggleButton IsChecked="{Binding ShowOptions}" Style="{StaticResource MaterialDesignExpanderRightHeaderStyle}">
 					<ana:TextBlock
 						Margin="6,0"
 						Foreground="{StaticResource MaterialDesignBody}"
-						Text="Advanced Options" />
+						Key="FileBrowser_Advanced" />
 				</ToggleButton>
 			</Grid>
 
@@ -207,8 +208,7 @@
 				<ContentPresenter
 					Grid.Row="1"
 					Margin="6"
-					Content="{Binding OptionsControl}"
-					Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}" />
+					Content="{Binding OptionsControl}"/>
 			</Grid>
 
 		</Grid>
@@ -221,6 +221,7 @@
 			</Grid.ColumnDefinitions>
 
 			<ana:IconButton
+				x:Name="SelectButton"
 				Grid.Column="0"
 				Margin="3"
 				Click="OnSelectClicked"
@@ -231,8 +232,12 @@
 				Grid.Column="1"
 				Margin="3"
 				Click="OnBrowseClicked"
-				Content="..."
-				ToolTip="Browse for a file" />
+				Content="...">
+
+				<Button.ToolTip>
+					<ana:TextBlock Key="FileBrowser_Browse"/>
+				</Button.ToolTip>
+			</Button>
 		</Grid>
 
 	</Grid>

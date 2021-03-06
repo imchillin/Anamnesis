@@ -30,7 +30,7 @@ namespace Anamnesis.GUI.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
-		private static bool showOptions = false;
+		private static bool showOptions = true;
 		private static IFileSource? currentFileSource;
 		private static Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
 		private static bool isFlattened;
@@ -49,6 +49,8 @@ namespace Anamnesis.GUI.Views
 			{
 				this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsType);
 			}
+
+			this.SelectButton.Text = mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
 		}
 
 		public FileBrowserView(FileInfoBase[] fileInfos, Modes mode)
@@ -56,6 +58,8 @@ namespace Anamnesis.GUI.Views
 			this.mode = mode;
 			this.fileInfos = fileInfos;
 			this.InitializeComponent();
+
+			this.SelectButton.Text = mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
 
 			this.ContentArea.DataContext = this;
 

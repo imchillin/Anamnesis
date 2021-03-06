@@ -1,5 +1,5 @@
 {
-	"Common_OpenFile": "Open",
+	"Common_OpenFile": "Load",
 	"Common_SaveFile": "Save",
 	"Common_Enable": "Enable",
 	"Common_Disable": "Disable",
@@ -14,7 +14,8 @@
 	"FileBrowser_GoUp": "Go Up",
 	"FileBrowser_Flatten": "Flatten Hierarchy",
 	"FileBrowser_CreateFolder": "Create Folder",
-	"FileBrowser_Advanced": "Advanced",
+	"FileBrowser_Advanced": "Advanced Options",
+	"FileBrowser_Browse": "Browse for a file",
 
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",
