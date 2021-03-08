@@ -108,6 +108,9 @@
 					<local:BoneView Canvas.Left="57" Canvas.Top="170" BoneName="CouterLeft" FlippedBoneName="CouterRight"/>
 					<local:BoneView Canvas.Left="183" Canvas.Top="170" BoneName="CouterRight" FlippedBoneName="CouterLeft"/>
 
+					<local:BoneView Canvas.Left="45" Canvas.Top="210" BoneName="ShieldLeft" FlippedBoneName="ShieldRight"/>
+					<local:BoneView Canvas.Left="192" Canvas.Top="210" BoneName="ShieldRight" FlippedBoneName="ShieldLeft"/>
+
 				</Canvas>
 			</Viewbox>
 
