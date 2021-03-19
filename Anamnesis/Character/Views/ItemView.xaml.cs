@@ -60,6 +60,8 @@ namespace Anamnesis.Character.Views
 			set => ItemModelDp.Set(this, value);
 		}
 
+		public ActorViewModel? Actor => this.DataContext as ActorViewModel;
+
 		public WeaponSubExtendedViewModel? ExtendedViewModel
 		{
 			get => WeaponExModelDp.Get(this);
@@ -75,7 +77,7 @@ namespace Anamnesis.Character.Views
 			set
 			{
 				IItem? item = GameDataService.Items?.Get((int)value);
-				this.SetItem(item);
+				this.SetItem(item, false);
 			}
 		}
 
@@ -126,10 +128,10 @@ namespace Anamnesis.Character.Views
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
 			EquipmentSelector selector = new EquipmentSelector(this.Slot);
-			SelectorDrawer.Show(selector, this.Item, this.SetItem);
+			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.PairEquip));
 		}
 
-		private void SetItem(IItem? item)
+		private void SetItem(IItem? item, bool pairEquip)
 		{
 			this.lockViewModel = true;
 
@@ -149,16 +151,34 @@ namespace Anamnesis.Character.Views
 				modelVariant = useSubModel ? (byte)item.SubModelVariant : (byte)item.ModelVariant;
 			}
 
-			if (this.ItemModel is ItemViewModel itemView)
+			if (pairEquip
+				&& this.ItemModel is WeaponViewModel
+				&& item != null
+				&& item.SubModelSet != 0
+				&& this.Actor?.MainHand != null
+				&& this.Actor?.OffHand != null)
 			{
-				itemView.Base = modelBase;
-				itemView.Variant = (byte)modelVariant;
+				this.Actor.MainHand.Set = item.ModelSet;
+				this.Actor.MainHand.Base = item.ModelBase;
+				this.Actor.MainHand.Variant = item.ModelVariant;
+
+				this.Actor.OffHand.Set = item.SubModelSet;
+				this.Actor.OffHand.Base = item.SubModelBase;
+				this.Actor.OffHand.Variant = item.SubModelVariant;
 			}
-			else if (this.ItemModel is WeaponViewModel weaponView)
+			else
 			{
-				weaponView.Set = modelSet;
-				weaponView.Base = modelBase;
-				weaponView.Variant = modelVariant;
+				if (this.ItemModel is ItemViewModel itemView)
+				{
+					itemView.Base = modelBase;
+					itemView.Variant = (byte)modelVariant;
+				}
+				else if (this.ItemModel is WeaponViewModel weaponView)
+				{
+					weaponView.Set = modelSet;
+					weaponView.Base = modelBase;
+					weaponView.Variant = modelVariant;
+				}
 			}
 
 			this.Item = item;

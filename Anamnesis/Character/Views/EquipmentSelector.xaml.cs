@@ -22,6 +22,7 @@ namespace Anamnesis.Character.Views
 	{
 		private static Mode mode = Mode.All;
 		private static Classes classFilter = Classes.All;
+		private static bool pairEquip = false;
 
 		private readonly ItemSlots slot;
 
@@ -130,6 +131,14 @@ namespace Anamnesis.Character.Views
 				}
 			}
 		}
+
+		public bool PairEquip
+		{
+			get => pairEquip;
+			set => pairEquip = value;
+		}
+
+		public bool IsWeaponSlot => this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand;
 
 		SelectorDrawer SelectorDrawer.ISelectorView.Selector
 		{
