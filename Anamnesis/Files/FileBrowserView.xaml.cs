@@ -30,7 +30,6 @@ namespace Anamnesis.GUI.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
-		private static bool showOptions = true;
 		private static IFileSource? currentFileSource;
 		private static Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
 		private static bool isFlattened;
@@ -122,8 +121,8 @@ namespace Anamnesis.GUI.Views
 
 		public bool ShowOptions
 		{
-			get => showOptions;
-			set => showOptions = value;
+			get => SettingsService.Current.ShowAdvancedOptions;
+			set => SettingsService.Current.ShowAdvancedOptions = value;
 		}
 
 		public string? FilePath { get; private set; }
