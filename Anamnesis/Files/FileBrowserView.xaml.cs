@@ -426,6 +426,9 @@ namespace Anamnesis.GUI.Views
 			if (this.Selected == null)
 				return;
 
+			await Task.Delay(50);
+			await Dispatch.MainThread();
+
 			this.Selected.Rename = this.Selected.Name;
 			this.Selected.IsRenaming = true;
 		}
@@ -560,7 +563,7 @@ namespace Anamnesis.GUI.Views
 				{
 					this.IsRenaming = false;
 
-					if (value == null || value == this.Name)
+					if (string.IsNullOrEmpty(value))
 						return;
 
 					foreach (char c in System.IO.Path.GetInvalidFileNameChars())
@@ -573,6 +576,7 @@ namespace Anamnesis.GUI.Views
 
 					Task.Run(async () =>
 					{
+						value = value.Trim();
 						await this.Entry.Rename(value);
 						await this.View.UpdateEntries();
 					});
