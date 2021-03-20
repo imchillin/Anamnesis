@@ -16,6 +16,8 @@
 	"FileBrowser_CreateFolder": "Create Folder",
 	"FileBrowser_Advanced": "Advanced Options",
 	"FileBrowser_Browse": "Browse for a file",
+	"FileBrowser_ReplaceTitle": "Overwrite file",
+	"FileBrowser_ReplaceMessage": "Are you sure you want to overwrite the file: \"{0}\"?",
 
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",

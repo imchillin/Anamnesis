@@ -430,7 +430,7 @@ namespace Anamnesis.GUI.Views
 			this.Selected.IsRenaming = true;
 		}
 
-		private void OnSelectClicked(object? sender, RoutedEventArgs? e)
+		private async void OnSelectClicked(object? sender, RoutedEventArgs? e)
 		{
 			if (!this.CanSelect)
 				return;
@@ -448,6 +448,17 @@ namespace Anamnesis.GUI.Views
 			else
 			{
 				this.FilePath = this.CurrentDir.Path + "/" + this.FileName;
+
+				string finalPath = this.FilePath + this.FileExtension;
+				if (File.Exists(finalPath))
+				{
+					string fileName = Path.GetFileNameWithoutExtension(finalPath);
+					bool? overwrite = await GenericDialog.Show(LocalizationService.GetStringFormatted("FileBrowser_ReplaceMessage", fileName), LocalizationService.GetString("FileBrowser_ReplaceTitle"), MessageBoxButton.YesNo);
+					if (overwrite != true)
+					{
+						return;
+					}
+				}
 			}
 
 			this.CloseDrawer();
