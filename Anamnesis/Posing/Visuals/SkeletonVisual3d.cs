@@ -340,6 +340,8 @@ namespace Anamnesis.PoseModule
 		{
 			this.Generating = true;
 
+			this.ClearSelection();
+
 			try
 			{
 				await Dispatch.MainThread();
