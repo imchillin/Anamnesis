@@ -57,10 +57,15 @@ namespace Anamnesis.PoseModule
 
 		public bool Generating { get; set; } = false;
 		public bool LinkEyes { get; set; } = true;
-		public bool FlipSides { get; set; } = false;
 		public ActorViewModel Actor { get; private set; }
 		public SkeletonFile? File { get; private set; }
 		public int SelectedCount => this.SelectedBones.Count;
+
+		public bool FlipSides
+		{
+			get => SettingsService.Current.FlipPoseGuiSides;
+			set => SettingsService.Current.FlipPoseGuiSides = value;
+		}
 
 		public BoneVisual3d? CurrentBone
 		{

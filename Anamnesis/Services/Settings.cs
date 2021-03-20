@@ -39,6 +39,7 @@ namespace Anamnesis.Services
 		public HomeWidgetType HomeWidget { get; set; } = HomeWidgetType.Art;
 		public bool UseCustomBorder { get; set; } = true;
 		public bool ShowAdvancedOptions { get; set; } = true;
+		public bool FlipPoseGuiSides { get; set; } = false;
 
 		public DateTimeOffset LastUpdateCheck { get; set; } = DateTimeOffset.MinValue;
 	}

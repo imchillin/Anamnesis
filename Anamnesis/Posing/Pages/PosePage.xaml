@@ -275,7 +275,7 @@
 								VerticalContentAlignment="Center"
 								IsChecked="{Binding Skeleton.FlipSides}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<ana:TextBlock Text="Flip Sides" />
+								<ana:TextBlock Key="Pose_FlipSides" />
 							</CheckBox>
 
 						</StackPanel>
