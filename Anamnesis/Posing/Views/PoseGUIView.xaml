@@ -116,13 +116,83 @@
 
 			<Grid Grid.Column="2">
 				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
 					<RowDefinition/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
+				<!-- Viera Ears 01 -->
+				<Viewbox Grid.Row="0" Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="128">
+					<Canvas Width="138" Height="196">
+						<Image Canvas.Left="0" Canvas.Top="0" Width="138" Height="196" Source="../../Assets/PoseCharacterVieraEars01Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+
+						<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="Ear01ALeft" FlippedBoneName="Ear01ARight"/>
+						<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="Ear01BLeft" FlippedBoneName="Ear01BRight"/>
+						<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="Ear01ARight" FlippedBoneName="Ear01ALeft"/>
+						<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="Ear01BRight" FlippedBoneName="Ear01BLeft"/>
+
+						<local:BoneView Canvas.Left="115" Canvas.Top="110" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
+						<local:BoneView Canvas.Left="115" Canvas.Top="140" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
+						<local:BoneView Canvas.Left="5" Canvas.Top="110" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
+						<local:BoneView Canvas.Left="5" Canvas.Top="140" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
+					</Canvas>
+				</Viewbox>
+
+				<!-- Viera Ears 02 -->
+				<Viewbox Grid.Row="0" Visibility="{Binding IsVieraEars02, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="128">
+					<Canvas Width="163" Height="142" Margin="0, -32, 0, 32">
+						<Image Canvas.Left="0" Canvas.Top="0" Width="163" Height="232" Source="../../Assets/PoseCharacterVieraEars0204Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+
+						<local:BoneView Canvas.Left="47" Canvas.Top="139" BoneName="Ear02ALeft" FlippedBoneName="Ear02ARight"/>
+						<local:BoneView Canvas.Left="31" Canvas.Top="64" BoneName="Ear02BLeft" FlippedBoneName="Ear02BRight"/>
+						<local:BoneView Canvas.Left="89" Canvas.Top="139" BoneName="Ear02ARight" FlippedBoneName="Ear02ALeft"/>
+						<local:BoneView Canvas.Left="105" Canvas.Top="64" BoneName="Ear02BRight" FlippedBoneName="Ear02BLeft"/>
+
+						<local:BoneView Canvas.Left="125" Canvas.Top="110" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
+						<local:BoneView Canvas.Left="125" Canvas.Top="140" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
+						<local:BoneView Canvas.Left="5" Canvas.Top="110" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
+						<local:BoneView Canvas.Left="5" Canvas.Top="140" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
+					</Canvas>
+				</Viewbox>
+
+				<!-- Viera Ears 03 -->
+				<Viewbox Grid.Row="0" Width="150" Visibility="{Binding IsVieraEars03, Converter={StaticResource B2V}, FallbackValue=Visible}" Height="128">
+					<Canvas Width="256" Height="122" Margin="-50, 0, -50, 0">
+						<Image Canvas.Left="0" Canvas.Top="0" Width="256" Height="122" Source="../../Assets/PoseCharacterVieraEars03Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+
+
+						<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="Ear03ALeft" FlippedBoneName="Ear03ARight"/>
+						<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="Ear03BLeft" FlippedBoneName="Ear03BRight"/>
+						<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="Ear03ARight" FlippedBoneName="Ear03ALeft"/>
+						<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="Ear03BRight" FlippedBoneName="Ear03BLeft"/>
+
+						<local:BoneView Canvas.Left="160" Canvas.Top="64" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
+						<local:BoneView Canvas.Left="160" Canvas.Top="90" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
+						<local:BoneView Canvas.Left="63" Canvas.Top="64" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
+						<local:BoneView Canvas.Left="63" Canvas.Top="90" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
+					</Canvas>
+				</Viewbox>
+
+				<!-- Viera Ears 04 -->
+				<Viewbox Grid.Row="0" Visibility="{Binding IsVieraEars04, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="128">
+					<Canvas Width="163" Height="142" Margin="0, -32, 0, 32">
+						<Image Canvas.Left="0" Canvas.Top="0" Width="163" Height="232" Source="../../Assets/PoseCharacterVieraEars0204Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+
+						<local:BoneView Canvas.Left="47" Canvas.Top="139" BoneName="Ear04ALeft" FlippedBoneName="Ear04ARight"/>
+						<local:BoneView Canvas.Left="31" Canvas.Top="64" BoneName="Ear04BLeft" FlippedBoneName="Ear04BRight"/>
+						<local:BoneView Canvas.Left="89" Canvas.Top="139" BoneName="Ear04ARight" FlippedBoneName="Ear04ALeft"/>
+						<local:BoneView Canvas.Left="105" Canvas.Top="64" BoneName="Ear04BRight" FlippedBoneName="Ear04BLeft"/>
+
+						<local:BoneView Canvas.Left="125" Canvas.Top="110" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
+						<local:BoneView Canvas.Left="125" Canvas.Top="140" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
+						<local:BoneView Canvas.Left="5" Canvas.Top="110" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
+						<local:BoneView Canvas.Left="5" Canvas.Top="140" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
+					</Canvas>
+				</Viewbox>
+
 				<!-- Hroth Face-->
-				<Viewbox Grid.Row="0" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}, FallbackValue=Visible}">
+				<Viewbox Grid.Row="1" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}, FallbackValue=Visible}">
 					<Canvas Width="300" Height="300" >
 						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Source="../../Assets/PoseCharacterHrothFaceBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
@@ -151,11 +221,57 @@
 					</Canvas>
 				</Viewbox>
 
+				<!-- Miqo Head & Face -->
+				<Viewbox Grid.Row="1" Visibility="{Binding IsMiqote, Converter={StaticResource B2V}, FallbackValue=Hidden}" Height="260" Margin="-20,0,0,0">
+					<Canvas Height="300" Width="300">
+						<Image Canvas.Left="2" Canvas.Top="0" Width="300" Height="300" Source="../../Assets/PoseCharacterMiqoFaceBackground.png" Opacity="0.09" Stretch="Uniform" IsHitTestVisible="False"/>
+
+						<local:BoneView Canvas.Left="141" Canvas.Top="290" BoneName="Jaw"/>
+						<local:BoneView Canvas.Left="141" Canvas.Top="180" BoneName="Nose"/>
+						<local:BoneView Canvas.Left="141" Canvas.Top="160" BoneName="Bridge"/>
+
+						<local:BoneView Canvas.Left="141" Canvas.Top="268" BoneName="LipLowerB"/>
+						<local:BoneView Canvas.Left="141" Canvas.Top="248" BoneName="LipLowerA"/>
+						<local:BoneView Canvas.Left="141" Canvas.Top="220" BoneName="LipUpperA"/>
+						<local:BoneView Canvas.Left="141" Canvas.Top="200" BoneName="LipUpperB"/>
+
+						<local:BoneView Canvas.Left="110" Canvas.Top="105" BoneName="BrowLeft" FlippedBoneName="BrowRight"/>
+						<local:BoneView Canvas.Left="90" Canvas.Top="140" BoneName="EyeLeft" FlippedBoneName="EyeRight"/>
+						<local:BoneView Canvas.Left="90" Canvas.Top="160" BoneName="EyelidLowerLeft" FlippedBoneName="EyelidLowerRight"/>
+						<local:BoneView Canvas.Left="90" Canvas.Top="120" BoneName="EyelidUpperLeft" FlippedBoneName="EyelidUpperRight"/>
+						<local:BoneView Canvas.Left="70" Canvas.Top="100" BoneName="EyebrowLeft" FlippedBoneName="EyebrowRight"/>
+						<local:BoneView Canvas.Left="50" Canvas.Top="55" BoneName="EarLeft" FlippedBoneName="EarRight"/>
+						<local:BoneView Canvas.Left="105" Canvas.Top="180" BoneName="CheekLeft" FlippedBoneName="CheekRight"/>
+						<local:BoneView Canvas.Left="103" Canvas.Top="232" BoneName="LipsLeft" FlippedBoneName="LipsRight"/>
+						<local:BoneView Canvas.Left="32" Canvas.Top="100" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
+						<local:BoneView Canvas.Left="32" Canvas.Top="130" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
+
+						<local:BoneView Canvas.Left="174" Canvas.Top="105" BoneName="BrowRight" FlippedBoneName="BrowLeft"/>
+						<local:BoneView Canvas.Left="191" Canvas.Top="140" BoneName="EyeRight" FlippedBoneName="EyeLeft"/>
+						<local:BoneView Canvas.Left="191" Canvas.Top="160" BoneName="EyelidLowerRight" FlippedBoneName="EyelidLowerLeft"/>
+						<local:BoneView Canvas.Left="191" Canvas.Top="120" BoneName="EyelidUpperRight" FlippedBoneName="EyelidUpperLeft"/>
+						<local:BoneView Canvas.Left="220" Canvas.Top="100" BoneName="EyebrowRight" FlippedBoneName="EyebrowLeft"/>
+						<local:BoneView Canvas.Left="232" Canvas.Top="55" BoneName="EarRight" FlippedBoneName="EarLeft"/>
+						<local:BoneView Canvas.Left="176" Canvas.Top="180" BoneName="CheekRight" FlippedBoneName="CheekLeft"/>
+						<local:BoneView Canvas.Left="180" Canvas.Top="232" BoneName="LipsRight" FlippedBoneName="LipsLeft"/>
+						<local:BoneView Canvas.Left="250" Canvas.Top="100" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
+						<local:BoneView Canvas.Left="250" Canvas.Top="130" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
+
+					</Canvas>
+				</Viewbox>
+
+
 
 				<!-- Head & Face -->
-				<Viewbox Grid.Row="0" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}, FallbackValue=Hidden}"  Height="220">
+				<Viewbox Grid.Row="1" Visibility="{Binding IsCustomFace, Converter={StaticResource !B2V}, FallbackValue=Hidden}"  Height="220">
 					<Canvas Height="300" Width="300">
-						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Source="../../Assets/PoseCharacterFaceBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+						
+						
+						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.08" Stretch="Uniform" IsHitTestVisible="False"
+							   Source="../../Assets/PoseCharacterFaceBackground.png" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
+						
+						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.08" Stretch="Uniform" IsHitTestVisible="False"
+							   Source="../../Assets/PoseCharacterVieraFaceBackground.png"  Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
 
 						<local:BoneView Canvas.Left="141" Canvas.Top="278" BoneName="Jaw"/>
 						<local:BoneView Canvas.Left="141" Canvas.Top="135" BoneName="Nose"/>
@@ -171,31 +287,32 @@
 						<local:BoneView Canvas.Left="68" Canvas.Top="96" BoneName="EyelidLowerLeft" FlippedBoneName="EyelidLowerRight"/>
 						<local:BoneView Canvas.Left="68" Canvas.Top="59" BoneName="EyelidUpperLeft" FlippedBoneName="EyelidUpperRight"/>
 						<local:BoneView Canvas.Left="52" Canvas.Top="24" BoneName="EyebrowLeft" FlippedBoneName="EyebrowRight"/>
-						<local:BoneView Canvas.Left="15" Canvas.Top="96" BoneName="EarLeft" FlippedBoneName="EarRight"/>
+						<local:BoneView Canvas.Left="15" Canvas.Top="96" BoneName="EarLeft" FlippedBoneName="EarRight" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
 						<local:BoneView Canvas.Left="68" Canvas.Top="150" BoneName="CheekLeft" FlippedBoneName="CheekRight"/>
 						<local:BoneView Canvas.Left="103" Canvas.Top="208" BoneName="LipsLeft" FlippedBoneName="LipsRight"/>
-						<local:BoneView Canvas.Left="20" Canvas.Top="150" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
-						<local:BoneView Canvas.Left="20" Canvas.Top="178" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
+						<local:BoneView Canvas.Left="20" Canvas.Top="150" BoneName="EarringALeft" FlippedBoneName="EarringARight" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
+						<local:BoneView Canvas.Left="20" Canvas.Top="178" BoneName="EarringBLeft" FlippedBoneName="EarringBRight" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
 
 						<local:BoneView Canvas.Left="183" Canvas.Top="33" BoneName="BrowRight" FlippedBoneName="BrowLeft"/>
 						<local:BoneView Canvas.Left="211" Canvas.Top="77" BoneName="EyeRight" FlippedBoneName="EyeLeft"/>
 						<local:BoneView Canvas.Left="215" Canvas.Top="95" BoneName="EyelidLowerRight" FlippedBoneName="EyelidLowerLeft"/>
 						<local:BoneView Canvas.Left="215" Canvas.Top="59" BoneName="EyelidUpperRight" FlippedBoneName="EyelidUpperLeft"/>
 						<local:BoneView Canvas.Left="231" Canvas.Top="24" BoneName="EyebrowRight" FlippedBoneName="EyebrowLeft"/>
-						<local:BoneView Canvas.Left="267" Canvas.Top="96" BoneName="EarRight" FlippedBoneName="EarLeft"/>
+						<local:BoneView Canvas.Left="267" Canvas.Top="96" BoneName="EarRight" FlippedBoneName="EarLeft" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
 						<local:BoneView Canvas.Left="215" Canvas.Top="150" BoneName="CheekRight" FlippedBoneName="CheekLeft"/>
 						<local:BoneView Canvas.Left="180" Canvas.Top="208" BoneName="LipsRight" FlippedBoneName="LipsLeft"/>
-						<local:BoneView Canvas.Left="263" Canvas.Top="150" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
-						<local:BoneView Canvas.Left="263" Canvas.Top="178" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
+						<local:BoneView Canvas.Left="263" Canvas.Top="150" BoneName="EarringARight" FlippedBoneName="EarringALeft" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
+						<local:BoneView Canvas.Left="263" Canvas.Top="178" BoneName="EarringBRight" FlippedBoneName="EarringBLeft" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
 
 					</Canvas>
 				</Viewbox>
 
 
-				<Grid Grid.Row="1" Margin="0, -20, 0, 0" Height="160">
+				<Grid Grid.Row="2" Margin="0, -20, 0, 0" Height="160">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
 					<!-- Left Hand -->
@@ -248,74 +365,25 @@
 
 						</Canvas>
 					</Viewbox>
+
+					<Grid Grid.Column="2" Height="90" Visibility="{Binding HasTailOrEars, Converter={StaticResource B2V}, FallbackValue=Visible}">
+
+						<!-- Tail -->
+						<Viewbox Visibility="{Binding HasTail, Converter={StaticResource B2V}, FallbackValue=Visible}" Width="85" Margin="-20, -30, -10, -30">
+							<Canvas Height="200" Width="128">
+								<Image Canvas.Left="0" Canvas.Top="0" Width="128" Height="200" Source="../../Assets/PoseCharacterTailBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+
+								<local:BoneView Canvas.Left="46" Canvas.Top="4" BoneName="TailA"/>
+								<local:BoneView Canvas.Left="73" Canvas.Top="28" BoneName="TailB"/>
+								<local:BoneView Canvas.Left="65" Canvas.Top="80" BoneName="TailC"/>
+								<local:BoneView Canvas.Left="55" Canvas.Top="128" BoneName="TailD"/>
+								<!--<local:BoneView Canvas.Left="65" Canvas.Top="168" BoneName="TailE"/>-->
+							</Canvas>
+						</Viewbox>
+					</Grid>
 				</Grid>
 
-				<Grid Grid.Row="2" Height="90" Visibility="{Binding HasTailOrEars, Converter={StaticResource B2V}, FallbackValue=Visible}">
-
-					<!-- Tail -->
-					<Viewbox Visibility="{Binding HasTail, Converter={StaticResource B2V}, FallbackValue=Visible}" Margin="0, -50, 0, 0">
-						<Canvas Height="200" Width="128">
-							<Image Canvas.Left="0" Canvas.Top="0" Width="128" Height="200" Source="../../Assets/PoseCharacterTailBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
-
-							<local:BoneView Canvas.Left="46" Canvas.Top="4" BoneName="TailA"/>
-							<local:BoneView Canvas.Left="73" Canvas.Top="28" BoneName="TailB"/>
-							<local:BoneView Canvas.Left="65" Canvas.Top="80" BoneName="TailC"/>
-							<local:BoneView Canvas.Left="55" Canvas.Top="128" BoneName="TailD"/>
-							<!--<local:BoneView Canvas.Left="65" Canvas.Top="168" BoneName="TailE"/>-->
-						</Canvas>
-					</Viewbox>
-
-
-					<!-- Viera Ears 01 -->
-					<Viewbox Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Margin="0, -60, 0, 0">
-						<Canvas Width="138" Height="196">
-							<Image Canvas.Left="0" Canvas.Top="0" Width="138" Height="196" Source="../../Assets/PoseCharacterVieraEars01Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
-
-							<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="Ear01ALeft" FlippedBoneName="Ear01ARight"/>
-							<local:BoneView Canvas.Left="22" Canvas.Top="98" BoneName="Ear01BLeft" FlippedBoneName="Ear01BRight"/>
-							<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="Ear01ARight" FlippedBoneName="Ear01ALeft"/>
-							<local:BoneView Canvas.Left="96" Canvas.Top="98" BoneName="Ear01BRight" FlippedBoneName="Ear01BLeft"/>
-						</Canvas>
-					</Viewbox>
-
-					<!-- Viera Ears 02 -->
-					<Viewbox Visibility="{Binding IsVieraEars02, Converter={StaticResource B2V}, FallbackValue=Collapsed}">
-						<Canvas Width="163" Height="232" Margin="0, -80, 0, -10">
-							<Image Canvas.Left="0" Canvas.Top="0" Width="163" Height="232" Source="../../Assets/PoseCharacterVieraEars02Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
-
-							<local:BoneView Canvas.Left="47" Canvas.Top="169" BoneName="Ear02ALeft" FlippedBoneName="Ear02ARight"/>
-							<local:BoneView Canvas.Left="31" Canvas.Top="106" BoneName="Ear02BLeft" FlippedBoneName="Ear02BRight"/>
-							<local:BoneView Canvas.Left="89" Canvas.Top="169" BoneName="Ear02ARight" FlippedBoneName="Ear02ALeft"/>
-							<local:BoneView Canvas.Left="105" Canvas.Top="106" BoneName="Ear02BRight" FlippedBoneName="Ear02BLeft"/>
-						</Canvas>
-					</Viewbox>
-
-					<!-- Viera Ears 03 -->
-					<Viewbox Width="150" Visibility="{Binding IsVieraEars03, Converter={StaticResource B2V}, FallbackValue=Visible}">
-						<Canvas Width="256" Height="122" Margin="-50, 0, -50, 0">
-							<Image Canvas.Left="0" Canvas.Top="0" Width="256" Height="122" Source="../../Assets/PoseCharacterVieraEars03Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
-
-
-							<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="Ear03ALeft" FlippedBoneName="Ear03ARight"/>
-							<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="Ear03BLeft" FlippedBoneName="Ear03BRight"/>
-							<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="Ear03ARight" FlippedBoneName="Ear03ALeft"/>
-							<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="Ear03BRight" FlippedBoneName="Ear03BLeft"/>
-						</Canvas>
-					</Viewbox>
-
-					<!-- Viera Ears 04 -->
-					<Viewbox Visibility="{Binding IsVieraEars04, Converter={StaticResource B2V}, FallbackValue=Collapsed}">
-						<Canvas Width="149" Height="232" Margin="0, -100, 0, -10">
-
-							<Image Canvas.Left="0" Canvas.Top="0" Width="149" Height="232" Source="../../Assets/PoseCharacterVieraEars04Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
-
-							<local:BoneView Canvas.Left="44" Canvas.Top="170" BoneName="Ear04ALeft" FlippedBoneName="Ear04ARight"/>
-							<local:BoneView Canvas.Left="26" Canvas.Top="104" BoneName="Ear04BLeft" FlippedBoneName="Ear04BRight"/>
-							<local:BoneView Canvas.Left="85" Canvas.Top="170" BoneName="Ear04ARight" FlippedBoneName="Ear04ALeft"/>
-							<local:BoneView Canvas.Left="102" Canvas.Top="104" BoneName="Ear04BRight" FlippedBoneName="Ear04BLeft"/>
-						</Canvas>
-					</Viewbox>
-				</Grid>
+				
 			</Grid>
 		</Grid>
 	</Grid>

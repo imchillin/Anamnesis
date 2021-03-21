@@ -105,6 +105,8 @@ namespace Anamnesis.PoseModule
 			|| this.Actor?.Customize?.Race == Appearance.Races.AuRa
 			|| this.Actor?.Customize?.Race == Appearance.Races.Hrothgar;
 
+		public bool IsCustomFace => this.IsMiqote || this.IsHrothgar;
+		public bool IsMiqote => this.Actor?.Customize?.Race == Appearance.Races.Miqote;
 		public bool IsViera => this.Actor?.Customize?.Race == Appearance.Races.Viera;
 		public bool IsVieraEars01 => this.IsViera && this.Actor?.Customize?.TailEarsType <= 1;
 		public bool IsVieraEars02 => this.IsViera && this.Actor?.Customize?.TailEarsType == 2;
