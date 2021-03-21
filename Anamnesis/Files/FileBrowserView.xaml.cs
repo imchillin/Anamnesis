@@ -169,7 +169,7 @@ namespace Anamnesis.GUI.Views
 				}
 				else
 				{
-					this.OptionsControl = null;
+					////this.OptionsControl = null;
 				}
 			}
 		}

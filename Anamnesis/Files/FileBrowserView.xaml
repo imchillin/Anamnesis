@@ -194,12 +194,12 @@
 			<Grid
 				Grid.Row="0"
 				Background="{StaticResource MaterialDesignPaper}"
-				Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}"
 				Cursor="Hand">
-				<ToggleButton IsChecked="{Binding ShowOptions}" Style="{StaticResource MaterialDesignExpanderRightHeaderStyle}">
+				<ToggleButton IsChecked="{Binding ShowOptions}" Style="{StaticResource MaterialDesignExpanderRightHeaderStyle}" IsEnabled="{Binding OptionsControl, Converter={StaticResource NotNullToBoolConverter}}">
 					<ana:TextBlock
 						Margin="6,0"
 						Foreground="{StaticResource MaterialDesignBody}"
+						Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}"
 						Key="FileBrowser_Advanced" />
 				</ToggleButton>
 			</Grid>
