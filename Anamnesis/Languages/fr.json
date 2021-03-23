@@ -132,7 +132,7 @@
 
 	"Character_ExWeapons_Header": "Armes Etendues",
 
-	"Pose_WarningNotGPose": "Le posing n'est disponible qu'en pose de groupe. Tapez /Gpose dans le chat.",
+	"Pose_WarningNotGPose": "Le posing n'est disponible qu'en pose de groupe. Tapez /gpose dans le chat.",
 	"Pose_WarningNotFrozen": "Le Posing n'est disponible que sur les personnages en pause. Mettez le personnage en pause dans la fenêtre des paramètres du Gpose.",
 	"Pose_GenerateSkeletonTitle": "Squelette non trouvé",
 	"Pose_GenerateSkeleton": "Aucun squelette sur le personnage {0}- En générer un ?\nSans squelette le parentage ne fonctionera pas",
