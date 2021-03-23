@@ -6,6 +6,7 @@ namespace Anamnesis.GameData.ViewModels
 {
 	using System;
 	using System.Windows.Media;
+	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
 	using Lumina.Excel;
@@ -49,6 +50,12 @@ namespace Anamnesis.GameData.ViewModels
 		public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
 
 		public Mod? Mod { get; private set; }
+
+		public bool IsFavorite
+		{
+			get => SettingsService.Current.IsFavorite(this);
+			set => SettingsService.Current.SetFavorite(this, value);
+		}
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

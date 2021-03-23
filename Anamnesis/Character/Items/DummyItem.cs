@@ -49,6 +49,12 @@ namespace Anamnesis.Character.Items
 		public ushort SubModelVariant { get; }
 		public ushort SubModelSet { get; }
 
+		public bool IsFavorite
+		{
+			get => SettingsService.Current.IsFavorite(this);
+			set => SettingsService.Current.SetFavorite(this, value);
+		}
+
 		public virtual bool FitsInSlot(ItemSlots slot)
 		{
 			return true;

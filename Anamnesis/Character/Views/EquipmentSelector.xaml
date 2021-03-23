@@ -30,7 +30,25 @@
 			</Border>
 		</Expander>
 
-		<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6, 0, 0, 0">
+		<ComboBox Grid.Row="1" Margin="6" SelectedIndex="{Binding ModeInt}">
+			<ComboBoxItem>
+				<controls:TextBlock Key="EquipmentSelector_All"/>
+			</ComboBoxItem>
+			<ComboBoxItem >
+				<controls:TextBlock Key="EquipmentSelector_Items"/>
+			</ComboBoxItem>
+			<ComboBoxItem >
+				<controls:TextBlock Key="EquipmentSelector_Props"/>
+			</ComboBoxItem>
+			<ComboBoxItem >
+				<controls:TextBlock Key="EquipmentSelector_Modded"/>
+			</ComboBoxItem>
+			<ComboBoxItem >
+				<controls:TextBlock Key="EquipmentSelector_Favorites"/>
+			</ComboBoxItem>
+		</ComboBox>
+
+			<!--<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6, 0, 0, 0">
 			<RadioButton Margin="3" IsChecked="{Binding AllMode}">
 				<controls:TextBlock Key="EquipmentSelector_All" Margin="0, -3, 6, 0"/>
 			</RadioButton>
@@ -46,7 +64,7 @@
 			<RadioButton Margin="3"  IsChecked="{Binding ModdedMode}">
 				<controls:TextBlock Key="EquipmentSelector_Modded" Margin="0, -3, 6, 0"/>
 			</RadioButton>
-		</StackPanel>
+		</StackPanel>-->
 
 		<CheckBox Grid.Row="2" Margin="10, 3, 10, 3" IsChecked="{Binding PairEquip}" Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
 			<controls:TextBlock Key="Character_Equipment_PairEquip"/>
@@ -57,6 +75,7 @@
 			x:Name="Selector"
 			Close="OnClose" 
 			Filter="OnFilter"
+			Sort="OnSort"
 			SelectionChanged="OnSelectionChanged">
 
 			<cm3Drawers:SelectorDrawer.ItemTemplate>
@@ -65,6 +84,7 @@
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
 						<Grid.RowDefinitions>
@@ -89,7 +109,9 @@
 
 						</StackPanel>
 
-						<Rectangle Grid.ColumnSpan="2" 
+				
+
+						<Rectangle Grid.ColumnSpan="3" 
 									   Grid.RowSpan="2" 
 									   Fill="Transparent" >
 							<ToolTipService.ToolTip>
@@ -129,6 +151,20 @@
 								</StackPanel>
 							</ToolTipService.ToolTip>
 						</Rectangle>
+
+						<Grid Grid.Column="2" Grid.RowSpan="2">
+
+							<ToggleButton Style="{StaticResource InvisibleToggleButton}" IsChecked="{Binding IsFavorite}" Margin="6,0,0,0" Padding="0">
+								<Grid>
+									<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
+												  Foreground="Black"
+												   Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
+									<fa:IconBlock Icon="Star" FontSize="13"
+										  Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
+								</Grid>
+							</ToggleButton>
+
+						</Grid>
 
 					</Grid>
 				</DataTemplate>

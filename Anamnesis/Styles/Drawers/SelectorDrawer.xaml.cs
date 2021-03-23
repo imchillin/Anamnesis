@@ -47,10 +47,12 @@ namespace Anamnesis.Styles.Drawers
 		}
 
 		public delegate bool FilterEvent(object item, string[]? search);
+		public delegate int SortEvent(object itemA, object itemB);
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public event DrawerEvent? Close;
 		public event FilterEvent? Filter;
+		public event SortEvent? Sort;
 		public event DrawerEvent? SelectionChanged;
 
 		public interface ISelectorView : IDrawer
@@ -299,6 +301,12 @@ namespace Anamnesis.Styles.Drawers
 
 			IOrderedEnumerable<ItemEntry>? sortedFilteredEntries = filteredEntries.OrderBy(cc => cc.OriginalIndex);
 
+			if (this.Sort != null)
+			{
+				Compare comp = new Compare(this.Sort);
+				sortedFilteredEntries = sortedFilteredEntries.OrderBy(cc => cc.Item, comp);
+			}
+
 			await Application.Current.Dispatcher.InvokeAsync(() =>
 			{
 				this.FilteredItems.Clear();
@@ -348,6 +356,24 @@ namespace Anamnesis.Styles.Drawers
 		{
 			public object Item;
 			public int OriginalIndex;
+		}
+
+		private class Compare : IComparer<object>
+		{
+			private SortEvent filter;
+
+			public Compare(SortEvent filter)
+			{
+				this.filter = filter;
+			}
+
+			int IComparer<object>.Compare(object? x, object? y)
+			{
+				if (x == null || y == null)
+					return 0;
+
+				return this.filter.Invoke(x, y);
+			}
 		}
 	}
 }
