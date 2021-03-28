@@ -130,11 +130,10 @@ namespace Anamnesis.PoseModule.Views
 		{
 			if (this.Skeleton?.File != null && this.Skeleton.File.IsGeneratedParenting)
 			{
-				this.Skeleton.File.Parenting = null;
 				Task.Run(async () =>
 				{
 					await Dispatch.MainThread();
-					await this.Skeleton.GenerateBones();
+					await this.Skeleton.GenerateBones(true);
 				});
 			}
 		}

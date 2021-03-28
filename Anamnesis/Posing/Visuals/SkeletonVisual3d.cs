@@ -338,7 +338,7 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		public async Task GenerateBones()
+		public async Task GenerateBones(bool forceGenerateParenting = false)
 		{
 			this.Generating = true;
 
@@ -363,7 +363,7 @@ namespace Anamnesis.PoseModule
 				SkeletonViewModel skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
 
 				////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
-				await this.Generate(skeletonVm);
+				await this.Generate(skeletonVm, forceGenerateParenting);
 
 				if (!GposeService.Instance.IsGpose)
 				{
@@ -416,13 +416,13 @@ namespace Anamnesis.PoseModule
 			return this;
 		}
 
-		private async Task Generate(SkeletonViewModel memory)
+		private async Task Generate(SkeletonViewModel memory, bool forceGenerateParenting = false)
 		{
 			this.File = memory.GetSkeletonFile(this.Actor);
 
 			bool autoSkeleton = false;
 
-			if ((this.File == null || this.File.Parenting == null) && GposeService.Instance.IsGpose)
+			if ((forceGenerateParenting || this.File == null || this.File.Parenting == null) && GposeService.Instance.IsGpose)
 			{
 				string message = LocalizationService.GetStringFormatted("Pose_GenerateSkeleton", this.Actor.DisplayName);
 				bool? result = await GenericDialog.Show(message, LocalizationService.GetString("Pose_GenerateSkeletonTitle"), MessageBoxButton.YesNo);
