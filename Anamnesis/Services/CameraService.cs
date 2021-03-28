@@ -69,6 +69,7 @@ namespace Anamnesis
 				{
 					this.DelimitCamera = false;
 					this.LockCameraPosition = false;
+					this.Camera.FreezeAngle = false;
 					continue;
 				}
 
