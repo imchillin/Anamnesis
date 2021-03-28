@@ -25,7 +25,7 @@ namespace Anamnesis.GameData.ViewModels
 		public string Masculine => this.Value.Masculine;
 		public string DisplayName => this.Value.Masculine;
 
-		public IEnumerable<ITribe> Tribes
+		public ITribe[] Tribes
 		{
 			get
 			{
@@ -36,8 +36,8 @@ namespace Anamnesis.GameData.ViewModels
 				{
 					Appearance.Races.Hyur => new[]
 					{
-					GameDataService.Tribes.Get((byte)Appearance.Tribes.Midlander),
-					GameDataService.Tribes.Get((byte)Appearance.Tribes.Highlander),
+						GameDataService.Tribes.Get((byte)Appearance.Tribes.Midlander),
+						GameDataService.Tribes.Get((byte)Appearance.Tribes.Highlander),
 					},
 
 					Appearance.Races.Elezen => new[]
