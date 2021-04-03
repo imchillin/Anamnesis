@@ -21,11 +21,6 @@ namespace Anamnesis.Services
 	{
 		private static readonly List<IService> Services = new List<IService>();
 
-		public delegate void ServiceEvent(string serviceName);
-
-		public static event ServiceEvent? OnServiceInitializing;
-		public static event ServiceEvent? OnServiceStarting;
-
 		public static bool IsInitialized { get; private set; } = false;
 		public static bool IsStarted { get; private set; } = false;
 
@@ -34,25 +29,14 @@ namespace Anamnesis.Services
 		{
 			try
 			{
-				Stopwatch sw = new Stopwatch();
-				sw.Start();
-
-				string serviceName = GetServiceName<T>();
+				if (IsStarted)
+					throw new Exception("Attempt to add service after services have started");
 
 				IService service = Activator.CreateInstance<T>();
 				Services.Add(service);
-
-				OnServiceInitializing?.Invoke(serviceName);
 				await service.Initialize();
 
-				// If we've already started, and this service is being added late (possibly by a module from its start method) start the service immediately.
-				if (IsStarted)
-				{
-					OnServiceStarting?.Invoke(serviceName);
-					await service.Start();
-				}
-
-				Log.Information($"Added service: {serviceName} in {sw.ElapsedMilliseconds}ms");
+				Log.Information($"Initialized service: {typeof(T).Name}");
 			}
 			catch (Exception ex)
 			{
@@ -83,7 +67,6 @@ namespace Anamnesis.Services
 			await Add<TexToolsService>();
 
 			IsInitialized = true;
-			Log.Information($"Services Initialized");
 
 			await this.StartServices();
 
@@ -92,23 +75,12 @@ namespace Anamnesis.Services
 
 		public async Task StartServices()
 		{
-			Stopwatch sw = new Stopwatch();
-
-			// Since starting a service _can_ add new services, copy the list first.
-			List<IService> services = new List<IService>(Services);
-			services.Reverse();
-			foreach (IService service in services)
+			foreach (IService service in Services)
 			{
-				string name = GetServiceName(service.GetType());
-				sw.Restart();
-				OnServiceStarting?.Invoke(name);
 				await service.Start();
-
-				Log.Information($"Started Service: {name} in {sw.ElapsedMilliseconds}ms");
 			}
 
 			IsStarted = true;
-			Log.Information($"Services Started");
 		}
 
 		public async Task ShutdownServices()
@@ -120,16 +92,6 @@ namespace Anamnesis.Services
 			{
 				await service.Shutdown();
 			}
-		}
-
-		private static string GetServiceName<T>()
-		{
-			return GetServiceName(typeof(T));
-		}
-
-		private static string GetServiceName(Type type)
-		{
-			return type.Name;
 		}
 
 		private static void CheckWindowsVersion()

@@ -27,6 +27,8 @@ namespace Anamnesis.Services
 
 		public static event LocalizationEvent? LocaleChanged;
 
+		public static bool Loaded => Exists && currentLocale != null;
+
 		public static void Add(string culture, string key, string value)
 		{
 			culture = culture.ToUpperInvariant();

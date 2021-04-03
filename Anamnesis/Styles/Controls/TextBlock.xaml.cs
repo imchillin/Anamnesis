@@ -41,6 +41,10 @@ namespace Anamnesis.Styles.Controls
 		public static void OnKeyChanged(TextBlock sender, string val)
 		{
 			sender.Key = val;
+
+			if (!LocalizationService.Loaded)
+				return;
+
 			sender.LoadString();
 		}
 
@@ -51,6 +55,9 @@ namespace Anamnesis.Styles.Controls
 
 		private void TextBlock_Loaded(object sender, RoutedEventArgs e)
 		{
+			if (!LocalizationService.Loaded)
+				return;
+
 			this.LoadString();
 		}
 

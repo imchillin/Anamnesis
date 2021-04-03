@@ -38,7 +38,7 @@ namespace Anamnesis.GUI
 
 			ViewService.ShowingDrawer += this.OnShowDrawer;
 
-			SettingsService.Current.PropertyChanged += this.OnSettingsChanged;
+			SettingsService.SettingsChanged += this.OnSettingsChanged;
 			this.OnSettingsChanged();
 
 			GameService.Instance.PropertyChanged += this.OnGameServicePropertyChanged;
@@ -293,7 +293,7 @@ namespace Anamnesis.GUI
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			SettingsService.Current.PropertyChanged -= this.OnSettingsChanged;
+			SettingsService.SettingsChanged -= this.OnSettingsChanged;
 			ViewService.ShowingDrawer -= this.OnShowDrawer;
 
 			SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);

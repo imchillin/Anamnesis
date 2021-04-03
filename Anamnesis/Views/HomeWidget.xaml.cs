@@ -21,8 +21,12 @@ namespace Anamnesis.Views
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			SettingsService.Current.PropertyChanged += this.OnSettingsChanged;
-			this.OnSettingsChanged();
+			SettingsService.SettingsChanged += this.OnSettingsChanged;
+
+			if (SettingsService.Exists)
+			{
+				this.OnSettingsChanged();
+			}
 		}
 
 		public SettingsService SettingsService => SettingsService.Instance;

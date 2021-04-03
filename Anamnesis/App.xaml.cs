@@ -84,9 +84,13 @@ namespace Anamnesis
 
 		private async Task Start()
 		{
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+
 			try
 			{
 				this.CheckForProcesses();
+
 				await Services.InitializeServices();
 
 				await Dispatch.MainThread();
@@ -101,6 +105,9 @@ namespace Anamnesis
 				Log.Error(ex, "Failed to start application");
 				ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), true);
 			}
+
+			sw.Stop();
+			Log.Information($"Started application in {sw.ElapsedMilliseconds}ms");
 		}
 
 		private void CheckForProcesses()
