@@ -11,29 +11,36 @@ namespace Anamnesis.Updater
 	using System.IO.Compression;
 	using System.Net;
 	using System.Net.Http;
-	using System.Reflection;
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
 	using Anamnesis.Services;
-	using Serilog;
 
 	public class UpdateService : ServiceBase<UpdateService>
 	{
 		public const string VersionFile = "Version.txt";
-
-		public static DateTimeOffset Version = DateTimeOffset.Now;
 
 		private const string Repository = "imchillin/Anamnesis";
 
 		private HttpClient httpClient = new HttpClient();
 		private Release? currentRelease;
 
+		public static DateTimeOffset Version { get; private set; } = DateTimeOffset.Now;
+		public static string? SupportedGameVersion { get; private set; }
+
 		private static string UpdateTempDir => Path.GetTempPath() + "/AnamnesisUpdateLatest/";
 
 		public override async Task Initialize()
 		{
 			await base.Initialize();
+
+			if (!File.Exists(VersionFile))
+				throw new Exception("No version file found");
+
+			string[] parts = File.ReadAllText(VersionFile).Split(';');
+
+			Version = DateTimeOffset.Parse(parts[0].Trim());
+			SupportedGameVersion = parts[1].Trim();
 
 			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
@@ -42,16 +49,6 @@ namespace Anamnesis.Updater
 				Log.Information("Last update check was less than 24 hours ago. Skipping.");
 				return;
 			}
-
-			string versionStr;
-			if (!File.Exists(VersionFile))
-				throw new Exception("No version file found");
-
-			versionStr = File.ReadAllText(VersionFile);
-			versionStr = versionStr.Split('\r')[0].Trim();
-
-			versionStr = versionStr.Trim();
-			Version = DateTimeOffset.Parse(versionStr);
 
 			if (Directory.Exists(UpdateTempDir))
 				Directory.Delete(UpdateTempDir, true);

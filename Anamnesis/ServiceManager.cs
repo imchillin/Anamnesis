@@ -67,7 +67,6 @@ namespace Anamnesis.Services
 			await Add<LocalizationService>();
 			await Add<ViewService>();
 			await Add<MemoryService>();
-			await Add<VersionService>();
 			await Add<AddressService>();
 			await Add<TargetService>();
 			await Add<FileService>();
@@ -76,9 +75,9 @@ namespace Anamnesis.Services
 			await Add<TimeService>();
 			await Add<CameraService>();
 			await Add<GposeService>();
-			await Add<GameDataService>();
 			await Add<SettingsService>();
 			await Add<Updater.UpdateService>();
+			await Add<GameDataService>();
 			await Add<PoseService>();
 			await Add<TipService>();
 			await Add<TexToolsService>();
@@ -87,6 +86,8 @@ namespace Anamnesis.Services
 			Log.Information($"Services Initialized");
 
 			await this.StartServices();
+
+			CheckWindowsVersion();
 		}
 
 		public async Task StartServices()
@@ -129,6 +130,18 @@ namespace Anamnesis.Services
 		private static string GetServiceName(Type type)
 		{
 			return type.Name;
+		}
+
+		private static void CheckWindowsVersion()
+		{
+			OperatingSystem os = Environment.OSVersion;
+			if (os.Platform != PlatformID.Win32NT)
+				throw new Exception("Only Windows NT or later is supported");
+
+			if (os.Version.Major != 10)
+			{
+				throw new Exception("Only Windows 10 is supported");
+			}
 		}
 	}
 }
