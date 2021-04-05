@@ -191,6 +191,10 @@ namespace Anamnesis.Memory
 			if (this.Pointer == null)
 				return;
 
+			// Don't perform actor refreshes while in gpose
+			if (GposeService.Instance.IsGpose)
+				return;
+
 			this.IsRefreshing = true;
 			MemoryModes oldMode = this.MemoryMode;
 			this.MemoryMode = MemoryModes.Read;
