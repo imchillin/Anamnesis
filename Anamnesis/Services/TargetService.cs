@@ -41,7 +41,7 @@ namespace Anamnesis
 			// Mannequins and housing NPC's get actor type changed, but squadron members do not.
 			if (actor.Kind == ActorTypes.EventNpc)
 			{
-				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertHousingNpcToPlayerMessage", actor.Name), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
+				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertHousingNpcToPlayerMessage", actor.DisplayName), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
 				if (result == true)
 				{
 					ActorViewModel? vm = actor.GetViewModel();
@@ -56,7 +56,7 @@ namespace Anamnesis
 			// Carbuncles get model type set to player (but not actor type!)
 			if (actor.Kind == ActorTypes.BattleNpc && (actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412))
 			{
-				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertCarbuncleToPlayerMessage", actor.Name), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
+				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertCarbuncleToPlayerMessage", actor.DisplayName), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
 				if (result == true)
 				{
 					ActorViewModel? vm = actor.GetViewModel();
@@ -224,12 +224,15 @@ namespace Anamnesis
 		{
 			private ActorViewModel? viewModel;
 
+			private string name;
+
 			public ActorTableActor(Actor actor, IntPtr pointer)
 			{
 				this.Model = actor;
 				this.Pointer = pointer;
 				this.IsValid = true;
 				this.Initials = string.Empty;
+				this.name = actor.Name;
 
 				this.UpdateInitials(actor.Name);
 			}
@@ -239,13 +242,14 @@ namespace Anamnesis
 			public Actor Model { get; set; }
 			public string Id => this.Model.Id;
 			public IntPtr? Pointer { get; private set; }
-			public string Name => this.viewModel == null ? this.Model.Name : this.viewModel.DisplayName;
 			public ActorTypes Kind => this.Model.ObjectKind;
 			public IconChar Icon => this.Model.ObjectKind.GetIcon();
 			public int ModelType => this.Model.ModelType;
 			public string Initials { get; private set; }
 			public bool IsValid { get; private set; }
 			public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
+
+			public string DisplayName => this.viewModel == null ? this.name : this.viewModel.DisplayName;
 
 			public float DistanceFromPlayer
 			{
@@ -312,12 +316,12 @@ namespace Anamnesis
 			{
 				return obj is ActorTableActor actor &&
 					   EqualityComparer<IntPtr?>.Default.Equals(this.Pointer, actor.Pointer) &&
-					   this.Name == actor.Name;
+					   this.name == actor.name;
 			}
 
 			public override int GetHashCode()
 			{
-				return HashCode.Combine(this.Pointer, this.Name);
+				return HashCode.Combine(this.Pointer, this.name);
 			}
 
 			private void Retarget()
@@ -331,7 +335,7 @@ namespace Anamnesis
 					bool found = false;
 					foreach (ActorTableActor actor in actors)
 					{
-						if (actor.Name == this.Name && actor.Pointer != null)
+						if (actor.name == this.name && actor.Pointer != null)
 						{
 							// Handle case where multiple actor table entries point ot the same actor, but
 							// its not the actor we actually want.
@@ -362,6 +366,7 @@ namespace Anamnesis
 					}
 					else if (this.viewModel != null)
 					{
+						this.name = this.viewModel.Name;
 						this.viewModel.OnRetargeted();
 					}
 

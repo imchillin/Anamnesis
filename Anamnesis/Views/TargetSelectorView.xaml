@@ -59,7 +59,7 @@
 							Margin="6,0,0,0"
 							FontWeight="DemiBold"
 							Foreground="{DynamicResource MaterialDesignBody}"
-							Text="{Binding Name}" />
+							Text="{Binding DisplayName}" />
 						<TextBlock
 							Grid.Column="2"
 							Margin="6,0,0,0"

@@ -81,28 +81,28 @@ namespace Anamnesis.Views
 
 		private bool OnFilter(object obj, string[]? search = null)
 		{
-			if (obj is TargetService.ActorTableActor item)
+			if (obj is TargetService.ActorTableActor actor)
 			{
-				if (!SearchUtility.Matches(item.Name, search))
+				if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Model.Name, search))
 					return false;
 
-				if (item.IsPinned)
+				if (actor.IsPinned)
 					return false;
 
-				if (!includePlayers && item.Kind == Memory.ActorTypes.Player)
+				if (!includePlayers && actor.Kind == Memory.ActorTypes.Player)
 					return false;
 
-				if (!includeCompanions && item.Kind == Memory.ActorTypes.Companion)
+				if (!includeCompanions && actor.Kind == Memory.ActorTypes.Companion)
 					return false;
 
-				if (!includeNPCs && (item.Kind == Memory.ActorTypes.BattleNpc || item.Kind == Memory.ActorTypes.EventNpc))
+				if (!includeNPCs && (actor.Kind == Memory.ActorTypes.BattleNpc || actor.Kind == Memory.ActorTypes.EventNpc))
 					return false;
 
 				if (!includeOther
-					&& item.Kind != Memory.ActorTypes.Player
-					&& item.Kind != Memory.ActorTypes.Companion
-					&& item.Kind != Memory.ActorTypes.BattleNpc
-					&& item.Kind != Memory.ActorTypes.EventNpc)
+					&& actor.Kind != Memory.ActorTypes.Player
+					&& actor.Kind != Memory.ActorTypes.Companion
+					&& actor.Kind != Memory.ActorTypes.BattleNpc
+					&& actor.Kind != Memory.ActorTypes.EventNpc)
 				{
 					return false;
 				}
