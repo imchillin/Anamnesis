@@ -160,18 +160,7 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			CharacterFileOptions.Result = lastSaveMode;
-			SaveResult result = await FileService.Save<CharacterFile>();
-			lastSaveMode = CharacterFileOptions.Result;
-
-			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
-				return;
-
-			CharacterFile file = new CharacterFile();
-			file.WriteToFile(this.Actor, lastSaveMode);
-
-			using FileStream stream = new FileStream(result.Path, FileMode.Create);
-			result.Info.SerializeFile(file, stream);
+			lastSaveMode = await CharacterFile.Save(this.Actor, lastSaveMode);
 		}
 
 		private void OnActorChanged(ActorViewModel? actor)

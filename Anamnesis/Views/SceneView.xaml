@@ -88,7 +88,7 @@
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
-			
+
 					<Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -143,7 +143,7 @@
 						<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TerritoryService.CurrentWeather.Name}" Margin="3, 0, 0, 0" FontSize="10"/>
 
 					</Grid>
-					
+
 					<!--<ComboBox Grid.Row="1" Grid.Column="1" SelectedItem="{Binding TerritoryService.CurrentWeather}" ItemsSource="{Binding TerritoryService.CurrentTerritory.Weathers}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
@@ -246,27 +246,6 @@
 				</Grid>
 			</GroupBox>
 
-		</Grid>
-
-		<Grid Grid.Column="2">
-
-			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition Height="auto"/>
-			</Grid.RowDefinitions>
-
-			
-
-
-			<!--<Grid Grid.Row="1" IsEnabled="{Binding GPoseService.IsOverworld}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-
-				<cm3:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
-				<cm3:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
-			</Grid>-->
 		</Grid>
 	</Grid>
 </UserControl>

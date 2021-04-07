@@ -5,6 +5,7 @@
 namespace Anamnesis.Files
 {
 	using System;
+	using System.IO;
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
 	using Anamnesis;
@@ -108,6 +109,25 @@ namespace Anamnesis.Files
 		public float? Transparency { get; set; }
 		public float? MuscleTone { get; set; }
 		public float? HeightMultiplier { get; set; }
+
+		public static async Task<SaveModes> Save(ActorViewModel? actor, SaveModes mode = SaveModes.All)
+		{
+			if (actor == null)
+				return mode;
+
+			SaveResult result = await FileService.Save<CharacterFile>();
+
+			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
+				return CharacterFileOptions.Result;
+
+			CharacterFile file = new CharacterFile();
+			file.WriteToFile(actor, mode);
+
+			using FileStream stream = new FileStream(result.Path, FileMode.Create);
+			result.Info.SerializeFile(file, stream);
+
+			return CharacterFileOptions.Result;
+		}
 
 		public void WriteToFile(ActorViewModel actor, SaveModes mode)
 		{

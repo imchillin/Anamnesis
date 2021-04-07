@@ -19,11 +19,13 @@ namespace Anamnesis
 	using PropertyChanged;
 
 	public delegate void SelectionEvent(ActorViewModel? actor);
+	public delegate void PinnedEvent(TargetService.ActorTableActor actor);
 
 	[AddINotifyPropertyChangedInterface]
 	public class TargetService : ServiceBase<TargetService>
 	{
 		public static event SelectionEvent? ActorSelected;
+		public static event PinnedEvent? ActorPinned;
 
 		public ActorViewModel? SelectedActor { get; private set; }
 		public ObservableCollection<ActorTableActor> PinnedActors { get; set; } = new ObservableCollection<ActorTableActor>();
@@ -71,6 +73,7 @@ namespace Anamnesis
 			await Dispatch.MainThread();
 			Instance.PinnedActors.Add(actor);
 			Instance.SelectActor(actor);
+			ActorPinned?.Invoke(actor);
 		}
 
 		public static void UnpinActor(ActorTableActor actor)

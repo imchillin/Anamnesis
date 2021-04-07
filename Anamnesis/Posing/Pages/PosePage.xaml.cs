@@ -96,20 +96,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			try
 			{
-				if (this.Skeleton != null)
-				{
-					if (this.Skeleton.Actor != actor)
-					{
-						this.Skeleton.Clear();
-						this.Skeleton = new SkeletonVisual3d(actor);
-						await this.Skeleton.GenerateBones();
-					}
-				}
-				else
-				{
-					this.Skeleton = new SkeletonVisual3d(actor);
-					await this.Skeleton.GenerateBones();
-				}
+				this.Skeleton = await PoseService.GetVisual(actor);
 
 				this.ThreeDView.DataContext = this.Skeleton;
 				this.GuiView.DataContext = this.Skeleton;
@@ -165,20 +152,7 @@ namespace Anamnesis.PoseModule.Pages
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
 			ActorViewModel? actor = this.DataContext as ActorViewModel;
-
-			if (actor == null || this.Skeleton == null)
-				return;
-
-			SaveResult result = await FileService.Save<PoseFile>();
-
-			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
-				return;
-
-			PoseFile file = new PoseFile();
-			file.WriteToFile(actor, this.Skeleton, FileConfig);
-
-			using FileStream stream = new FileStream(result.Path, FileMode.Create);
-			result.Info.SerializeFile(file, stream);
+			await PoseFile.Save(actor, this.Skeleton, FileConfig);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)

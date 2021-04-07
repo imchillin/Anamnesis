@@ -19,6 +19,7 @@ namespace Anamnesis.PoseModule
 	public class PoseService : ServiceBase<PoseService>
 	{
 		public static List<SkeletonFile> BoneNameFiles = new List<SkeletonFile>();
+		private static Dictionary<ActorViewModel, SkeletonVisual3d> actorSkeletons = new Dictionary<ActorViewModel, SkeletonVisual3d>();
 
 		private NopHookViewModel? freezeRot1;
 		private NopHookViewModel? freezeRot2;
@@ -134,6 +135,30 @@ namespace Anamnesis.PoseModule
 
 			SerializerService.SerializeFile("Data/Skeletons/" + name + ".json", skeleton);
 			BoneNameFiles.Add(skeleton);
+		}
+
+		public static async Task<SkeletonVisual3d> GetVisual(ActorViewModel actor)
+		{
+			SkeletonVisual3d skeleton;
+
+			if (actorSkeletons.ContainsKey(actor))
+			{
+				skeleton = actorSkeletons[actor];
+				skeleton.Clear();
+				actorSkeletons.Remove(actor);
+			}
+
+			// TODO: Why does a new skeleton work, but clearing an old one gives us "not a child of the specified visual" when writing?
+			////else
+			{
+				skeleton = new SkeletonVisual3d(actor);
+				actorSkeletons.Add(actor, skeleton);
+			}
+
+			skeleton.Clear();
+			await skeleton.GenerateBones();
+
+			return skeleton;
 		}
 
 		public override async Task Initialize()

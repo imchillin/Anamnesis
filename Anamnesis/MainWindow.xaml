@@ -133,7 +133,7 @@
 																		<TextBlock>
 																			<TextBlock.Text>
 																				<MultiBinding StringFormat="{}{0} ({1})">
-																					<Binding Path="Name" />
+																					<Binding Path="DisplayName" />
 																					<Binding Path="Kind" />
 																				</MultiBinding>
 																			</TextBlock.Text>
@@ -294,6 +294,8 @@
 				<Grid VerticalAlignment="Top">
 
 					<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+
+						<!--<views:MenuView />-->
 
 						<TextBlock
 							Margin="12,0,3,0"

@@ -71,7 +71,7 @@ namespace Anamnesis.PoseModule
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }
-		public TransformPtrViewModel ViewModel { get; private set; }
+		public TransformPtrViewModel ViewModel { get; set; }
 
 		public double SphereRadius
 		{

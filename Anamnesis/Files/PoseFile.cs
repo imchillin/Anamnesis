@@ -6,6 +6,7 @@ namespace Anamnesis.Files
 {
 	using System;
 	using System.Collections.Generic;
+	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Files.Infos;
 	using Anamnesis.Files.Types;
@@ -35,6 +36,27 @@ namespace Anamnesis.Files
 		public Configuration Config { get; set; } = new Configuration();
 
 		public Dictionary<string, Bone?>? Bones { get; set; }
+
+		public static async Task<Configuration> Save(ActorViewModel? actor, SkeletonVisual3d? skeleton, Configuration? config = null)
+		{
+			if (config == null)
+				config = new Configuration();
+
+			if (actor == null || skeleton == null)
+				return config;
+
+			SaveResult result = await FileService.Save<PoseFile>();
+
+			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
+				return config;
+
+			PoseFile file = new PoseFile();
+			file.WriteToFile(actor, skeleton, config);
+
+			using FileStream stream = new FileStream(result.Path, FileMode.Create);
+			result.Info.SerializeFile(file, stream);
+			return config;
+		}
 
 		public void WriteToFile(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config)
 		{
