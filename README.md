@@ -11,6 +11,8 @@ We actively encourage people to contribute to the project with their forks to im
 
 (It takes a few seconds to do a pull request, just be cool.)
 
+**We do NOT support the 'Unofficial' French release by Luna664.** Do not ask for assistance with that repo.
+
 ## Getting Started
 
 These instructions will get a copy of the project up and running on your local machine.
