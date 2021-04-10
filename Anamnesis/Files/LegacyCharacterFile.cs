@@ -16,7 +16,7 @@ namespace Anamnesis.Files
 	public class LegacyCharacterFileInfo : JsonFileInfoBase<LegacyCharacterFile>
 	{
 		public override string Extension => "cma";
-		public override string Name => "CMTool Appearance File";
+		public override string Name => "CMTool Appearance";
 		public override Type? LoadOptionsViewType => typeof(CharacterFileOptions);
 		public override Type? SaveOptionsViewType => typeof(CharacterFileOptions);
 		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files (CMTool Saves)", "%MyDocuments%/CMTool/Saves/") };

@@ -583,6 +583,24 @@ namespace Anamnesis.GUI.Views
 				}
 			}
 
+			public string? Metadata
+			{
+				get
+				{
+					if (this.Entry == null)
+						return null;
+
+					if (!string.IsNullOrEmpty(this.Directory))
+					{
+						return this.Directory + " - " + this.Entry.Metadata;
+					}
+					else
+					{
+						return this.Entry.Metadata;
+					}
+				}
+			}
+
 			public string Directory
 			{
 				get

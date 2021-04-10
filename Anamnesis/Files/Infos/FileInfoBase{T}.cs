@@ -32,6 +32,20 @@ namespace Anamnesis.Files.Infos
 			return type == typeof(T);
 		}
 
+		public override string? GetMetadata(IFileSource.IFile file)
+		{
+			if (file.Path == null)
+				return null;
+
+			using FileStream stream = new FileStream(file.Path, FileMode.Open);
+			T tFile = this.Deserialize(stream);
+
+			if (tFile.Author == null)
+				return base.GetMetadata(file);
+
+			return tFile.Author + " - " + base.GetMetadata(file);
+		}
+
 		protected abstract T Deserialize(Stream stream);
 		protected abstract void Serialize(T file, Stream stream);
 	}

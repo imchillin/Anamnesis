@@ -343,6 +343,7 @@ namespace Anamnesis.Files
 			public string? Name { get; }
 			public IFileSource Source { get; }
 			public bool Exists { get; }
+			public string? Metadata { get; }
 
 			public Task Delete();
 			public Task Rename(string newName);

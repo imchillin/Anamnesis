@@ -104,16 +104,12 @@
 			SelectionChanged="OnSelectionChanged">
 			<drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
-					<Grid>
+					<Grid Margin="0,-4,0,-4">
+
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="26" />
 							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
-
-						<Grid.RowDefinitions>
-							<RowDefinition />
-							<RowDefinition Height="Auto" />
-						</Grid.RowDefinitions>
 
 						<Grid.ContextMenu>
 							<ContextMenu IsEnabled="{Binding CanWrite}">
@@ -125,32 +121,46 @@
 						<fa:IconBlock
 							Grid.RowSpan="2"
 							Grid.Column="0"
-							Margin="3,0,3,0"
+							Margin="3,0,6,0"
 							VerticalAlignment="Center"
+							FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
+							FontSize="16"
 							Icon="{Binding Icon}" />
 
-						<TextBlock
-							Grid.Row="0"
+						<Grid
 							Grid.Column="1"
-							Margin="3,0,3,0"
-							Text="{Binding Name}"
-							Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}" />
-						<ana:RenameTextBox
-							Grid.Row="0"
-							Grid.Column="1"
-							Text="{Binding Rename}"
-							Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}" />
+							Height="28"
+							VerticalAlignment="Center">
 
-						<TextBlock
-							Grid.Row="1"
-							Grid.Column="1"
-							Margin="3,0,3,0"
-							FontSize="10"
-							Foreground="{DynamicResource MaterialDesignBody}"
-							Opacity="0.5"
-							Text="{Binding Directory}"
-							Visibility="{Binding Directory, Converter={StaticResource NotNullToVisibilityConverter}}" />
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
 
+							<TextBlock
+								Grid.Row="0"
+								Margin="3,0,3,0"
+								VerticalAlignment="Center"
+								FontSize="12"
+								Text="{Binding Name}"
+								Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}" />
+
+							<ana:RenameTextBox
+								Grid.Row="0"
+								Text="{Binding Rename}"
+								Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}" />
+
+							<TextBlock
+								Grid.Row="1"
+								Margin="3,0,3,0"
+								VerticalAlignment="Center"
+								FontSize="10"
+								Foreground="{DynamicResource MaterialDesignBodyLight}"
+								Opacity="0.5"
+								Text="{Binding Metadata}"
+								Visibility="{Binding Metadata, Converter={StaticResource NotNullToVisibilityConverter}}" />
+
+						</Grid>
 					</Grid>
 				</DataTemplate>
 			</drawers:SelectorDrawer.ItemTemplate>
@@ -195,12 +205,15 @@
 				Grid.Row="0"
 				Background="{StaticResource MaterialDesignPaper}"
 				Cursor="Hand">
-				<ToggleButton IsChecked="{Binding ShowOptions}" Style="{StaticResource MaterialDesignExpanderRightHeaderStyle}" IsEnabled="{Binding OptionsControl, Converter={StaticResource NotNullToBoolConverter}}">
+				<ToggleButton
+					IsChecked="{Binding ShowOptions}"
+					IsEnabled="{Binding OptionsControl, Converter={StaticResource NotNullToBoolConverter}}"
+					Style="{StaticResource MaterialDesignExpanderRightHeaderStyle}">
 					<ana:TextBlock
+						Key="FileBrowser_Advanced"
 						Margin="6,0"
 						Foreground="{StaticResource MaterialDesignBody}"
-						Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}"
-						Key="FileBrowser_Advanced" />
+						Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}" />
 				</ToggleButton>
 			</Grid>
 
@@ -208,7 +221,7 @@
 				<ContentPresenter
 					Grid.Row="1"
 					Margin="6"
-					Content="{Binding OptionsControl}"/>
+					Content="{Binding OptionsControl}" />
 			</Grid>
 
 		</Grid>
@@ -235,7 +248,7 @@
 				Content="...">
 
 				<Button.ToolTip>
-					<ana:TextBlock Key="FileBrowser_Browse"/>
+					<ana:TextBlock Key="FileBrowser_Browse" />
 				</Button.ToolTip>
 			</Button>
 		</Grid>
