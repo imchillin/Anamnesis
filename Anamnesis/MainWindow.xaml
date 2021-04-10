@@ -443,27 +443,44 @@
 
 			<Border
 				x:Name="Ftue"
-				Visibility="Collapsed"
 				Width="350"
-				VerticalAlignment="Top"
 				Margin="10"
-				Background="{StaticResource MaterialDesignPaper}" 
-				CornerRadius="3"
 				Padding="6"
+				VerticalAlignment="Top"
+				Background="{StaticResource MaterialDesignPaper}"
 				BorderBrush="{StaticResource PrimaryHueMidBrush}"
-				BorderThickness="1">
+				BorderThickness="1"
+				CornerRadius="3"
+				Visibility="Collapsed">
 
 				<Grid>
 
 					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition Height="Auto"/>
+						<RowDefinition />
+						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<ana:TextBlock Grid.Row="0" TextWrapping="Wrap" Margin="32, 0, 0, 10" Key="FTUE_Message" AllLanguages="True"/>
-					<Button Grid.Row="1" Content="OK" Style="{StaticResource TransparentButton}" HorizontalAlignment="Right" Width="75" Click="OnFtueOkClicked"/>
+					<ana:TextBlock
+						Key="FTUE_Message"
+						Grid.Row="0"
+						Margin="32,0,0,10"
+						AllLanguages="True"
+						TextWrapping="Wrap" />
+					<Button
+						Grid.Row="1"
+						Width="75"
+						HorizontalAlignment="Right"
+						Click="OnFtueOkClicked"
+						Content="OK"
+						Style="{StaticResource TransparentButton}" />
 
-					<Image Grid.RowSpan="2" Source=".\Assets\Hydaelyn.png" Width="64" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-32, -28, 0, 0"/>
+					<Image
+						Grid.RowSpan="2"
+						Width="64"
+						Margin="-32,-28,0,0"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Top"
+						Source=".\Assets\Hydaelyn.png" />
 
 				</Grid>
 			</Border>
