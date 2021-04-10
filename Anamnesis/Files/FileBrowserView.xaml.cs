@@ -601,7 +601,7 @@ namespace Anamnesis.GUI.Views
 				}
 			}
 
-			public string Directory
+			public string? Directory
 			{
 				get
 				{
@@ -620,10 +620,10 @@ namespace Anamnesis.GUI.Views
 
 					string? dirName = Path.GetDirectoryName(relativePath);
 
-					if (dirName == null)
-						return string.Empty;
+					if (string.IsNullOrEmpty(dirName))
+						return null;
 
-					return dirName;
+					return "\\" + dirName + "\\";
 				}
 			}
 		}
