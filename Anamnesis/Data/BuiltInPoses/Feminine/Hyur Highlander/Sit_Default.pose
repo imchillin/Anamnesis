@@ -1,9 +1,9 @@
 {
   "Config": {
-    "IncludeRotation": true,
-    "IncludePosition": false,
-    "IncludeScale": false,
-    "UseSelection": false
+    "UseSelection": false,
+    "LoadPositions": true,
+    "LoadRotations": true,
+    "LoadScales": true
   },
   "Bones": {
     "Root": {
@@ -741,5 +741,6 @@
       "Rotation": "-0.20846525, 0.71858037, -0.37968916, 0.54407775",
       "Scale": "0.9999995, 1.0000001, 0.9999996"
     }
-  }
+  },
+  "Author": "Cap\u0027n Kett"
 }
