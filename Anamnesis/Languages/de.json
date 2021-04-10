@@ -5,8 +5,8 @@
 	"Common_Disable": "Deaktivieren",
 	"Common_None": "Keine",
 	"Common_All": "Alle",
-
-	"Common_LinkVector": "X, Y, and Z, Achsen verbinden",
+	"Common_Scale": "Größe",
+	"Common_LinkVector": "Link X, Y, and Z, axis together",
 
 	"Error_NotInGame": "Nicht angemeldet",
 	"Error_WrongVersion": "Nicht unterstütze Spielversion: {0}. Kam in letzter Zeit ein Patch raus?\nDie Nutzung von Anamnesis mit nicht unterstützen Spieleversionen kann zu Fehlern und Abstürzen führen.\nWir arbeiten so schnell wie möglich an einem Update. Vielen Dank für die Geduld!",
@@ -15,10 +15,14 @@
 	"FileBrowser_Flatten": "Minimale Ansicht",
 	"FileBrowser_CreateFolder": "Ordner erstellen",
 	"FileBrowser_Advanced": "Erweitert",
+	"FileBrowser_Browse": "Datei suchen",
+	"FileBrowser_ReplaceTitle": "Datei überschreiben",
+	"FileBrowser_ReplaceMessage": "Willst du folgende Datei überschreiben?: \"{0}\"?",
 
 	"Target_Players": "Spieler",
 	"Target_Companions": "Begleiter",
 	"Target_Npc": "NSCs",
+	"Target_Other": "Andere",
 
 	"Target_ConvertToPlayerTitle": "Charakterauswahl",
 	"Target_ConvertHousingNpcToPlayerMessage": "Der Charakter: \"{0}\" scheint ein humanoider NSC zu sein. Möchtest du diesen zu einem Spieler machen? Das ist für manche NSCs nötig, aber nicht für alle.",
@@ -29,12 +33,15 @@
 	"EquipmentSelector_Props": "Requisiten",
 	"EquipmentSelector_Items": "Gegenstände",
 	"EquipmentSelector_Modded": "Modifiziertes",
+	"EquipmentSelector_Favorites": "Favoriten",
 
 	"Home_XmaTopToday": "Beste XMA Shots",
 	"Home_XmaLatest": "Neuste XMA Shots",
 	"Home_Art": "Gallerie",
 	"Home_Wiki": "Hilfe",
 	"Home_None": "Leer",
+
+	"FTUE_Message": "Willkommen!\nDanke, das du Anamnesis benutzt! Hier sind die Einstellungen, die du dir anschauen solltest. Bitte wähle deine Sprache aus.",
 
 	"Scene_World_Header": "Welt",
 	"Scene_World_Time": "Zeit:",
@@ -50,10 +57,16 @@
 	"Scene_Camera_Zoom": "Zoom:",
 	"Scene_Camera_FoV": "Blickwinkel:",
 
-	"Scene_Transform_Header": "Transform",
+	"Scene_Transform_Header": "Transformierung",
 	"Scene_Transform_Rotation": "Rotation:",
 	"Scene_Transform_Position": "Position:",
 	"Scene_Transform_Scale": "Größe:",
+
+	"Weather_Selector_Natural": "Natürlich",
+	"Weather_Selector_Natural_Tooltip": "Zeigt nur regional verfügbares Wetter an.",
+	"Weather_Selector_Unnatural": "Unnatürlich",
+	"Weather_Selector_Unnatural_Tooltip": "Zeigt nur nicht-regional verfügbares Wetter an.",
+	"Weather_Selector_All_Tooltip": "Alle anzeigen",
 
 	"Character_Appearance_Header": "Darstellung",
 	"Character_Appearance_Race": "Rasse:",
@@ -91,6 +104,14 @@
 	"Character_Equipment_Wrists": "Handgelenke:",
 	"Character_Equipment_RightRing": "Rechter Ring:",
 	"Character_Equipment_LeftRing": "Linker Ring:",
+	"Character_Equipment_PairEquip": "Beidhändig ausrüsten",
+	"Character_Equipment_Tint": "Farbton",
+	"Character_Equipment_Dye": "Farbstoff",
+	"Character_Equipment_Hide": "Waffe verstecken (Skalierung auf 0)",
+	"Character_Equipment_ItemId": "Item Id",
+	"Character_Equipment_ItemSet": "Set",
+	"Character_Equipment_ItemBase": "Basis",
+	"Character_Equipment_ItemVariant": "Variante",
 
 	"Character_Actor_Header": "Charakter",
 	"Character_Actor_Model": "Model:",
@@ -120,6 +141,8 @@
 	"Pose_WarningNotFrozen": "Posing funktionert nur mit eingefrorenen Charakteren. Friere den Charakter im GPose Fenster ein.",
 	"Pose_GenerateSkeletonTitle": "Skelett nicht gefunden",
 	"Pose_GenerateSkeleton": "Für diesen Charakter wurde kein Skelett gefunden {0}- Jetzt eins erstellen?\nOhne ein Skelett funktionert das Parenting nicht richtig.",
+	"Pose_Generating": "Erstelle Skelett. Einen Moment bite.",
+	"Pose_NoSkeleton": "Kein Skelett für diese Ansicht vorhanden.",
 
 	"Pose_Save": "Speichern",
 	"Pose_SaveBones": "{0} Knochen speichern",
@@ -129,9 +152,13 @@
 	"Pose_FreezePhysics": "Physik an/aus",
 	"Pose_Parenting": "Verknüpfen",
 	"Pose_LinkEyes": "Augen verknüpfen",
+	"Pose_FlipSides": "Seiten wechseln",
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Skalierung",
 	"Pose_Position": "Position",
+	"Pose_LoadRotation": "Knochenrotation laden",
+	"Pose_LoadScale": "Knochenskalierung laden",
+	"Pose_LoadPosition": "Knochenposition laden",
 
 	"Pose_EnableRotation": "R",
 	"Pose_EnableRotationTooltip": "Rotationsbearbeitung aktivieren",
