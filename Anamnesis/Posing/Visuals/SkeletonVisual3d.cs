@@ -57,10 +57,15 @@ namespace Anamnesis.PoseModule
 
 		public bool Generating { get; set; } = false;
 		public bool LinkEyes { get; set; } = true;
-		public bool FlipSides { get; set; } = false;
 		public ActorViewModel Actor { get; private set; }
 		public SkeletonFile? File { get; private set; }
 		public int SelectedCount => this.SelectedBones.Count;
+
+		public bool FlipSides
+		{
+			get => SettingsService.Current.FlipPoseGuiSides;
+			set => SettingsService.Current.FlipPoseGuiSides = value;
+		}
 
 		public BoneVisual3d? CurrentBone
 		{
@@ -100,6 +105,8 @@ namespace Anamnesis.PoseModule
 			|| this.Actor?.Customize?.Race == Appearance.Races.AuRa
 			|| this.Actor?.Customize?.Race == Appearance.Races.Hrothgar;
 
+		public bool IsCustomFace => this.IsMiqote || this.IsHrothgar;
+		public bool IsMiqote => this.Actor?.Customize?.Race == Appearance.Races.Miqote;
 		public bool IsViera => this.Actor?.Customize?.Race == Appearance.Races.Viera;
 		public bool IsVieraEars01 => this.IsViera && this.Actor?.Customize?.TailEarsType <= 1;
 		public bool IsVieraEars02 => this.IsViera && this.Actor?.Customize?.TailEarsType == 2;
@@ -313,6 +320,13 @@ namespace Anamnesis.PoseModule
 			return null;
 		}
 
+		public void Reselect()
+		{
+			List<BoneVisual3d> selection = new List<BoneVisual3d>(this.SelectedBones);
+			this.ClearSelection();
+			this.Select(selection);
+		}
+
 		public void ReadTranforms()
 		{
 			if (this.Bones == null)
@@ -324,55 +338,66 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		public async Task GenerateBones()
+		public async Task GenerateBones(bool forceGenerateParenting = false)
 		{
 			this.Generating = true;
 
-			await Dispatch.MainThread();
+			this.ClearSelection();
 
-			if (!GposeService.Instance.IsGpose)
+			try
+			{
+				await Dispatch.MainThread();
+
+				if (!GposeService.Instance.IsGpose)
+				{
+					this.Generating = false;
+					return;
+				}
+
+				this.Bones.Clear();
+				this.Children.Clear();
+
+				if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
+					return;
+
+				SkeletonViewModel skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
+
+				////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
+				await this.Generate(skeletonVm, forceGenerateParenting);
+
+				if (!GposeService.Instance.IsGpose)
+				{
+					this.Generating = false;
+					return;
+				}
+
+				// Map eyes together if they exist
+				BoneVisual3d? lEye = this.GetBone("EyeLeft");
+				BoneVisual3d? rEye = this.GetBone("EyeRight");
+				if (lEye != null && rEye != null)
+				{
+					lEye.LinkedEye = rEye;
+					rEye.LinkedEye = lEye;
+				}
+
+				foreach (BoneVisual3d bone in this.Bones)
+				{
+					bone.ReadTransform();
+				}
+
+				foreach (BoneVisual3d bone in this.Bones)
+				{
+					bone.ReadTransform();
+				}
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+			finally
 			{
 				this.Generating = false;
-				return;
 			}
-
-			this.Bones.Clear();
-			this.Children.Clear();
-
-			if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
-				return;
-
-			SkeletonViewModel skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
-
-			////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
-			await this.Generate(skeletonVm);
-
-			if (!GposeService.Instance.IsGpose)
-			{
-				this.Generating = false;
-				return;
-			}
-
-			// Map eyes together if they exist
-			BoneVisual3d? lEye = this.GetBone("EyeLeft");
-			BoneVisual3d? rEye = this.GetBone("EyeRight");
-			if (lEye != null && rEye != null)
-			{
-				lEye.LinkedEye = rEye;
-				rEye.LinkedEye = lEye;
-			}
-
-			foreach (BoneVisual3d bone in this.Bones)
-			{
-				bone.ReadTransform();
-			}
-
-			foreach (BoneVisual3d bone in this.Bones)
-			{
-				bone.ReadTransform();
-			}
-
-			this.Generating = false;
 		}
 
 		private ModelVisual3D GetVisual(string? name)
@@ -391,13 +416,13 @@ namespace Anamnesis.PoseModule
 			return this;
 		}
 
-		private async Task Generate(SkeletonViewModel memory)
+		private async Task Generate(SkeletonViewModel memory, bool forceGenerateParenting = false)
 		{
 			this.File = memory.GetSkeletonFile(this.Actor);
 
 			bool autoSkeleton = false;
 
-			if ((this.File == null || this.File.Parenting == null) && GposeService.Instance.IsGpose)
+			if ((forceGenerateParenting || this.File == null || this.File.Parenting == null) && GposeService.Instance.IsGpose)
 			{
 				string message = LocalizationService.GetStringFormatted("Pose_GenerateSkeleton", this.Actor.DisplayName);
 				bool? result = await GenericDialog.Show(message, LocalizationService.GetString("Pose_GenerateSkeletonTitle"), MessageBoxButton.YesNo);
@@ -445,6 +470,7 @@ namespace Anamnesis.PoseModule
 					this.File.Race = this.Actor.Customize?.Race;
 				}
 
+				this.File.IsGeneratedParenting = true;
 				this.File.Parenting = new Dictionary<string, string>();
 				foreach (BoneVisual3d bone in this.Bones)
 				{
@@ -496,7 +522,7 @@ namespace Anamnesis.PoseModule
 
 			for (int i = 0; i < vm.Transforms.Count; i++)
 			{
-				TransformViewModel? transform = vm.Transforms[i];
+				TransformPtrViewModel? transform = vm.Transforms[i];
 				string boneName = name + "_" + i;
 				BoneVisual3d bone = new BoneVisual3d(transform, this, boneName);
 				this.Bones.Add(bone);

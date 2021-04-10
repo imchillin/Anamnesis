@@ -20,15 +20,28 @@ namespace Anamnesis.Memory
 		public Vector Scale;
 	}
 
-	public class TransformViewModel : MemoryViewModelBase<Transform>, ITransform
+	public class TransformViewModel : StructViewModelBase<Transform>, ITransform
 	{
-		public TransformViewModel(IntPtr pointer, IMemoryViewModel? parent)
-			: base(pointer, parent)
+		public TransformViewModel(IMemoryViewModel parent, string propertyName)
+			: base(parent, propertyName)
 		{
 		}
 
-		public TransformViewModel(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
+		public bool CanTranslate => true;
+		[ModelField] public Vector Position { get; set; }
+
+		public bool CanRotate => true;
+		[ModelField] public Quaternion Rotation { get; set; }
+
+		public bool CanScale => true;
+		[ModelField] public Vector Scale { get; set; }
+	}
+
+	#pragma warning disable SA1402
+	public class TransformPtrViewModel : MemoryViewModelBase<Transform>, ITransform
+	{
+		public TransformPtrViewModel(IntPtr pointer, IMemoryViewModel? parent)
+			: base(pointer, parent)
 		{
 		}
 

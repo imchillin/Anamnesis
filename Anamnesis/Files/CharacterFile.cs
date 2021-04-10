@@ -5,9 +5,11 @@
 namespace Anamnesis.Files
 {
 	using System;
+	using System.IO;
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
 	using Anamnesis;
+	using Anamnesis.Character.Views;
 	using Anamnesis.Files.Infos;
 	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
@@ -19,6 +21,8 @@ namespace Anamnesis.Files
 	{
 		public override string Extension => "chara";
 		public override string Name => "Anamnesis Character File";
+		public override Type? LoadOptionsViewType => typeof(CharacterFileOptions);
+		public override Type? SaveOptionsViewType => typeof(CharacterFileOptions);
 		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files", SettingsService.Current.DefaultCharacterDirectory) };
 	}
 
@@ -45,7 +49,6 @@ namespace Anamnesis.Files
 
 		public string? Nickname { get; set; } = null;
 		public int ModelType { get; set; } = 0;
-		public ActorTypes? ActorType { get; set; } = null;
 
 		// appearance
 		public Appearance.Races? Race { get; set; }
@@ -107,11 +110,29 @@ namespace Anamnesis.Files
 		public float? MuscleTone { get; set; }
 		public float? HeightMultiplier { get; set; }
 
+		public static async Task<SaveModes> Save(ActorViewModel? actor, SaveModes mode = SaveModes.All)
+		{
+			if (actor == null)
+				return mode;
+
+			SaveResult result = await FileService.Save<CharacterFile>();
+
+			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
+				return CharacterFileOptions.Result;
+
+			CharacterFile file = new CharacterFile();
+			file.WriteToFile(actor, mode);
+
+			using FileStream stream = new FileStream(result.Path, FileMode.Create);
+			result.Info.SerializeFile(file, stream);
+
+			return CharacterFileOptions.Result;
+		}
+
 		public void WriteToFile(ActorViewModel actor, SaveModes mode)
 		{
 			this.Nickname = actor.Nickname;
 			this.ModelType = actor.ModelType;
-			this.ActorType = actor.ObjectKind;
 
 			if (actor.Customize == null)
 				return;
@@ -239,9 +260,6 @@ namespace Anamnesis.Files
 
 			actor.Nickname = this.Nickname;
 			actor.ModelType = this.ModelType;
-
-			if (this.ActorType != null && this.ActorType != ActorTypes.None)
-				actor.ObjectKind = (ActorTypes)this.ActorType;
 
 			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 			{

@@ -1,13 +1,7 @@
 
 \.vs/
-ConceptMatrix/obj/
-ConceptMatrix/bin/
-ConceptMatrixUpdater/obj
 packages/
-ConceptMatrixUpdater/bin/
-lib/SaintCoinach
 *.user
 bin/
 obj/
-ConceptMatrix3/ConceptMatrix3.xml
-ConceptMatrix3/ConceptMatrix3.xml
+deploy/

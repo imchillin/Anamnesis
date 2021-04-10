@@ -56,7 +56,8 @@ namespace Anamnesis.Files
 					stream.Seek(0x30, SeekOrigin.Begin);
 					using BinaryReader reader = new BinaryReader(stream);
 					string desc = Regex.Replace(Encoding.ASCII.GetString(reader.ReadBytes(164)), @"(?![ -~]|\r|\n).", string.Empty);
-					file.Name = slotNumber + ". " + desc.Substring(0, Math.Min(desc.Length, 50));
+					file.Name = desc.Substring(0, Math.Min(desc.Length, 50));
+					file.Metadata = slotNumber;
 
 					results.Add(file);
 				}
@@ -77,6 +78,7 @@ namespace Anamnesis.Files
 			public string? Name { get; set; }
 			public IFileSource Source { get; private set; }
 			public bool Exists => System.IO.File.Exists(this.Path);
+			public string? Metadata { get; set; }
 
 			public Task Delete()
 			{
@@ -102,6 +104,7 @@ namespace Anamnesis.Files
 			public string Path { get; private set; }
 			public IFileSource Source { get; private set; }
 			public bool Exists => true;
+			public string? Metadata { get; set; }
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{

@@ -8,6 +8,7 @@ namespace Anamnesis.Services
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Anamnesis.Serialization;
@@ -25,6 +26,8 @@ namespace Anamnesis.Services
 		private static Locale? currentLocale;
 
 		public static event LocalizationEvent? LocaleChanged;
+
+		public static bool Loaded => Exists && currentLocale != null;
 
 		public static void Add(string culture, string key, string value)
 		{
@@ -55,8 +58,16 @@ namespace Anamnesis.Services
 				string culture = Path.GetFileNameWithoutExtension(path);
 
 				string json = File.ReadAllText(path);
-				Dictionary<string, string> values = SerializerService.Deserialize<Dictionary<string, string>>(json);
-				Add(culture, values);
+
+				try
+				{
+					Dictionary<string, string> values = SerializerService.Deserialize<Dictionary<string, string>>(json);
+					Add(culture, values);
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, $"Failed to load language: {path}");
+				}
 			}
 		}
 
@@ -73,6 +84,26 @@ namespace Anamnesis.Services
 		{
 			string str = GetString(key);
 			return string.Format(str, param);
+		}
+
+		public static string GetStringAllLanguages(string key)
+		{
+			StringBuilder builder = new StringBuilder();
+
+			foreach ((string code, Locale locale) in Locales)
+			{
+				if (locale is GiberishLocale)
+					continue;
+
+				string val;
+				if (locale.Get(key, out val))
+				{
+					builder.AppendLine(val);
+					builder.AppendLine();
+				}
+			}
+
+			return builder.ToString().TrimEnd();
 		}
 
 		public static string GetString(string key, bool silent = false)

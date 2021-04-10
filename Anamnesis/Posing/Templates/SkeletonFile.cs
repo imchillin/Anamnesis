@@ -11,6 +11,8 @@ namespace Anamnesis.Posing.Templates
 	{
 		public int Depth = 0;
 
+		public bool IsGeneratedParenting { get; set; } = false;
+
 		public List<int>? ModelTypes { get; set; }
 		public Appearance.Races? Race { get; set; }
 		public Appearance.Ages? Age { get; set; }

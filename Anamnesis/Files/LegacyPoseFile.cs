@@ -8,18 +8,16 @@ namespace Anamnesis.Files
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.Reflection;
-	using System.Windows.Documents;
 	using Anamnesis.Files.Infos;
-	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
-	using Anamnesis.PoseModule;
-	using Anamnesis.Services;
+	using Anamnesis.Posing.Views;
 
-	#pragma warning disable SA1402, SA1649
+#pragma warning disable SA1402, SA1649
 	public class LegacyPoseFileInfo : JsonFileInfoBase<LegacyPoseFile>
 	{
 		public override string Extension => "cmp";
-		public override string Name => "CMTool Equipment Set";
+		public override string Name => "CMTool pose";
+		public override Type? LoadOptionsViewType => typeof(LoadOptions);
 		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files (CMTool)", "%MyDocuments%/CMTool/Matrix Saves/") };
 	}
 

@@ -50,7 +50,8 @@ namespace Anamnesis.Styles.Controls
 
 		private void TextArea_LostFocus(object sender, RoutedEventArgs e)
 		{
-			string newName = this.TextArea.Text;
+			this.Text = string.Empty;
+			this.Text = this.TextArea.Text;
 		}
 
 		private void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)

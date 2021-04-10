@@ -7,6 +7,12 @@ Anamnesis is the successor to [Concept Matrix (CMTool)](https://github.com/imchi
 
 This project is a work in progress and is not currently in a state to replace CMTool. Please do not download the code expecting it to work like CMTool. Check the [Releases](https://github.com/imchillin/Anamnesis/releases) page for official releases. 
 
+We actively encourage people to contribute to the project with their forks to improve the tool overall. With this said, we are **not** supporting builds done via forks and, if you've received a release of the tool from any repo that isn't [imchillin/Anamnesis](https://github.com/imchillin/Anamnesis), you are encouraged to bring the issue up with the person who packaged the build, as it will inevitably contain code we're unfamiliar with.
+
+(It takes a few seconds to do a pull request, just be cool.)
+
+**We do NOT support the 'Unofficial' French release by Luna664.** Do not ask for assistance with that repo.
+
 ## Getting Started
 
 These instructions will get a copy of the project up and running on your local machine.
@@ -27,6 +33,7 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 
 ## Translations
 * **[Maxunit](https://github.com/Maxunit)** - *German* 
+* **[Arianishka](https://github.com/Arianishka)** - *French*
 
 ## License
 

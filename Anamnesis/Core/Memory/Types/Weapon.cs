@@ -17,7 +17,7 @@ namespace Anamnesis.Memory
 	}
 
 	[AddINotifyPropertyChangedInterface]
-	public class WeaponViewModel : MemoryViewModelBase<Weapon>
+	public class WeaponViewModel : StructViewModelBase<Weapon>
 	{
 		public WeaponViewModel(IMemoryViewModel parent, string propertyName)
 			: base(parent, propertyName)

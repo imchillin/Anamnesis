@@ -36,8 +36,8 @@ namespace UpdateExtractor
 
 				Console.WriteLine(" done.");
 
-				string? destDir = Path.GetDirectoryName(targetPath);
-				string? currentExePath = Assembly.GetExecutingAssembly().Location;
+				string? destDir = Path.GetDirectoryName(targetPath) + "/";
+				string? currentExePath = System.AppContext.BaseDirectory;
 				string? sourceDir = Path.GetDirectoryName(currentExePath) + "/../";
 
 				if (string.IsNullOrEmpty(currentExePath))

@@ -26,6 +26,7 @@ namespace Anamnesis.GameData
 		bool IsWeapon { get; }
 
 		Mod? Mod { get; }
+		bool IsFavorite { get; set;  }
 
 		bool FitsInSlot(ItemSlots slot);
 	}

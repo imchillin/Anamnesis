@@ -37,7 +37,7 @@ namespace Anamnesis.PoseModule
 		private EmissiveMaterial hoverMaterial;
 		private EmissiveMaterial selectedMaterial;
 
-		public BoneVisual3d(TransformViewModel transform, SkeletonVisual3d skeleton, string name)
+		public BoneVisual3d(TransformPtrViewModel transform, SkeletonVisual3d skeleton, string name)
 		{
 			this.ViewModel = transform;
 			this.Skeleton = skeleton;
@@ -71,7 +71,7 @@ namespace Anamnesis.PoseModule
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }
-		public TransformViewModel ViewModel { get; private set; }
+		public TransformPtrViewModel ViewModel { get; set; }
 
 		public double SphereRadius
 		{
@@ -178,7 +178,7 @@ namespace Anamnesis.PoseModule
 
 			if (this.Parent != null)
 			{
-				TransformViewModel parentTransform = this.Parent.ViewModel;
+				TransformPtrViewModel parentTransform = this.Parent.ViewModel;
 				Point3D parentPosition = parentTransform.Position.ToMedia3DPoint();
 				Quaternion parentRot = parentTransform.Rotation.ToMedia3DQuaternion();
 				parentRot.Invert();

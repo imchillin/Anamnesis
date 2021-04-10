@@ -5,8 +5,10 @@
 namespace Anamnesis.Services
 {
 	using System;
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Windows;
+	using Anamnesis.GameData;
 	using PropertyChanged;
 
 	[Serializable]
@@ -38,5 +40,35 @@ namespace Anamnesis.Services
 		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
 		public HomeWidgetType HomeWidget { get; set; } = HomeWidgetType.Art;
 		public bool UseCustomBorder { get; set; } = true;
+		public bool ShowAdvancedOptions { get; set; } = true;
+		public bool FlipPoseGuiSides { get; set; } = false;
+
+		public List<IItem> FavoriteItems { get; set; } = new List<IItem>();
+
+		public DateTimeOffset LastUpdateCheck { get; set; } = DateTimeOffset.MinValue;
+
+		public bool IsFavorite(IItem item)
+		{
+			return this.FavoriteItems.Contains(item);
+		}
+
+		public void SetFavorite(IItem item, bool favorite)
+		{
+			bool isFavorite = this.IsFavorite(item);
+
+			if (favorite == isFavorite)
+				return;
+
+			if (favorite)
+			{
+				this.FavoriteItems.Add(item);
+			}
+			else
+			{
+				this.FavoriteItems.Remove(item);
+			}
+
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Settings.FavoriteItems)));
+		}
 	}
 }

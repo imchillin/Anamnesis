@@ -161,6 +161,9 @@ namespace Anamnesis.PoseModule.Views
 			{
 				foreach (BoneView childView in BoneViews[bone])
 				{
+					if (childView.Visibility != Visibility.Visible)
+						continue;
+
 					if (this.Parent is Canvas c1 && childView.Parent is Canvas c2 && c1 == c2)
 					{
 						Line line = new Line();

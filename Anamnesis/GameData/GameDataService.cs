@@ -5,12 +5,14 @@
 namespace Anamnesis.Services
 {
 	using System;
+	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
+	using Anamnesis.Updater;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
@@ -38,6 +40,14 @@ namespace Anamnesis.Services
 
 		public override Task Initialize()
 		{
+			string file = MemoryService.GamePath + "game/ffxivgame.ver";
+			string gameVer = File.ReadAllText(file);
+
+			if (gameVer != UpdateService.SupportedGameVersion)
+			{
+				Log.Error(LocalizationService.GetStringFormatted("Error_WrongVersion", gameVer));
+			}
+
 			try
 			{
 				this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");

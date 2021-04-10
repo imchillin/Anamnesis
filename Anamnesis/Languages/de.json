@@ -116,7 +116,7 @@
 
 	"Character_ExWeapons_Header": "Erweiterte Waffen",
 
-	"Pose_WarningNotGPose": "Posing ist nur in GPose möglich. Gehe in GPose mit /Gpose.",
+	"Pose_WarningNotGPose": "Posing ist nur in GPose möglich. Gehe in GPose mit /gpose.",
 	"Pose_WarningNotFrozen": "Posing funktionert nur mit eingefrorenen Charakteren. Friere den Charakter im GPose Fenster ein.",
 	"Pose_GenerateSkeletonTitle": "Skelett nicht gefunden",
 	"Pose_GenerateSkeleton": "Für diesen Charakter wurde kein Skelett gefunden {0}- Jetzt eins erstellen?\nOhne ein Skelett funktionert das Parenting nicht richtig.",

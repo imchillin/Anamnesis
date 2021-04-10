@@ -52,9 +52,16 @@ namespace Anamnesis.Services
 				byte check2 = MemoryService.Read<byte>(AddressService.GposeCheck2);
 				bool newGpose = check1 == 1 && check2 == 4;
 
-				if (newGpose != this.IsGpose || !this.initialized)
+				if (!this.initialized)
 				{
 					this.initialized = true;
+					this.IsGpose = newGpose;
+					this.IsOverworld = !this.IsGpose;
+					continue;
+				}
+
+				if (newGpose != this.IsGpose)
+				{
 					this.IsGpose = newGpose;
 					this.IsOverworld = !this.IsGpose;
 

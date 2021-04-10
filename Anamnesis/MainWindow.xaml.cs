@@ -15,6 +15,7 @@ namespace Anamnesis.GUI
 	using System.Windows.Controls.Primitives;
 	using System.Windows.Input;
 	using Anamnesis;
+	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Views;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
@@ -37,7 +38,7 @@ namespace Anamnesis.GUI
 
 			ViewService.ShowingDrawer += this.OnShowDrawer;
 
-			SettingsService.Current.PropertyChanged += this.OnSettingsChanged;
+			SettingsService.SettingsChanged += this.OnSettingsChanged;
 			this.OnSettingsChanged();
 
 			GameService.Instance.PropertyChanged += this.OnGameServicePropertyChanged;
@@ -292,7 +293,7 @@ namespace Anamnesis.GUI
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			SettingsService.Current.PropertyChanged -= this.OnSettingsChanged;
+			SettingsService.SettingsChanged -= this.OnSettingsChanged;
 			ViewService.ShowingDrawer -= this.OnShowDrawer;
 
 			SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
@@ -310,6 +311,20 @@ namespace Anamnesis.GUI
 				return;
 
 			UrlUtility.Open(url);
+		}
+
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (SettingsService.Instance.FirstTimeUser)
+			{
+				this.Ftue.Visibility = Visibility.Visible;
+				ViewService.ShowDrawer<SettingsView>();
+			}
+		}
+
+		private void OnFtueOkClicked(object sender, RoutedEventArgs e)
+		{
+			this.Ftue.Visibility = Visibility.Collapsed;
 		}
 	}
 }

@@ -11,23 +11,22 @@ namespace Anamnesis.Updater
 	using System.IO.Compression;
 	using System.Net;
 	using System.Net.Http;
-	using System.Reflection;
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
 	using Anamnesis.Services;
-	using Serilog;
 
 	public class UpdateService : ServiceBase<UpdateService>
 	{
 		public const string VersionFile = "Version.txt";
 
-		public static DateTimeOffset Version = DateTimeOffset.Now;
-
 		private const string Repository = "imchillin/Anamnesis";
 
 		private HttpClient httpClient = new HttpClient();
 		private Release? currentRelease;
+
+		public static DateTimeOffset Version { get; private set; } = DateTimeOffset.Now;
+		public static string? SupportedGameVersion { get; private set; }
 
 		private static string UpdateTempDir => Path.GetTempPath() + "/AnamnesisUpdateLatest/";
 
@@ -35,15 +34,21 @@ namespace Anamnesis.Updater
 		{
 			await base.Initialize();
 
-			string versionStr;
 			if (!File.Exists(VersionFile))
 				throw new Exception("No version file found");
 
-			versionStr = File.ReadAllText(VersionFile);
-			versionStr = versionStr.Split('\r')[0].Trim();
+			string[] parts = File.ReadAllText(VersionFile).Split(';');
 
-			versionStr = versionStr.Trim();
-			Version = DateTimeOffset.Parse(versionStr);
+			Version = DateTimeOffset.Parse(parts[0].Trim()).ToUniversalTime();
+			SupportedGameVersion = parts[1].Trim();
+
+			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
+			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
+			if (elapsed.TotalHours < 6)
+			{
+				Log.Information("Last update check was less than 6 hours ago. Skipping.");
+				return;
+			}
 
 			if (Directory.Exists(UpdateTempDir))
 				Directory.Delete(UpdateTempDir, true);
@@ -60,7 +65,13 @@ namespace Anamnesis.Updater
 				if (this.currentRelease == null)
 					throw new Exception("Failed to deserialize json response");
 
-				if (this.currentRelease.Published != null && this.currentRelease.Published > Version)
+				if (this.currentRelease.Published == null)
+					throw new Exception("No published timestamp in update json");
+
+				DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
+				published = published.ToUniversalTime();
+
+				if (this.currentRelease.Published != null && published > Version)
 				{
 					await Dispatch.MainThread();
 
@@ -68,12 +79,19 @@ namespace Anamnesis.Updater
 					dlg.Changes = this.currentRelease.Changes;
 					await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
 				}
+
+				SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
+				SettingsService.Save();
 			}
 			catch (HttpRequestException ex)
 			{
 				// 404 errors just mean there are no latest releases.
 				if (ex.StatusCode == HttpStatusCode.NotFound)
+				{
+					SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
+					SettingsService.Save();
 					return;
+				}
 
 				throw;
 			}

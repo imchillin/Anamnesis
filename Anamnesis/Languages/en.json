@@ -1,5 +1,5 @@
 {
-	"Common_OpenFile": "Open",
+	"Common_OpenFile": "Load",
 	"Common_SaveFile": "Save",
 	"Common_Enable": "Enable",
 	"Common_Disable": "Disable",
@@ -14,11 +14,15 @@
 	"FileBrowser_GoUp": "Go Up",
 	"FileBrowser_Flatten": "Flatten Hierarchy",
 	"FileBrowser_CreateFolder": "Create Folder",
-	"FileBrowser_Advanced": "Advanced",
+	"FileBrowser_Advanced": "Advanced Options",
+	"FileBrowser_Browse": "Browse for a file",
+	"FileBrowser_ReplaceTitle": "Overwrite file",
+	"FileBrowser_ReplaceMessage": "Are you sure you want to overwrite the file: \"{0}\"?",
 
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",
 	"Target_Npc": "NPCs",
+	"Target_Other": "Others",
 
 	"Target_ConvertToPlayerTitle": "Actor Selection",
 	"Target_ConvertHousingNpcToPlayerMessage": "The Actor: \"{0}\" appears to be a humanoid NPC. Do you want to change them to a player? This is required for some housing vendors, but not all.",
@@ -29,12 +33,15 @@
 	"EquipmentSelector_Props": "Props",
 	"EquipmentSelector_Items": "Items",
 	"EquipmentSelector_Modded": "Modded",
+	"EquipmentSelector_Favorites": "Favorites",
 
 	"Home_XmaTopToday": "XMA Top Today",
 	"Home_XmaLatest": "XMA Latest",
 	"Home_Art": "Gallery",
 	"Home_Wiki": "Help",
 	"Home_None": "None",
+
+	"FTUE_Message": "Welcome!\nThank you for using Anamnesis! To get you started, we've opened up the Settings panel for you. Please select your language!",
 
 	"Scene_World_Header": "World",
 	"Scene_World_Time": "Time:",
@@ -97,7 +104,7 @@
 	"Character_Equipment_Wrists": "Wrists:",
 	"Character_Equipment_RightRing": "Right Ring:",
 	"Character_Equipment_LeftRing": "Left Ring:",
-
+	"Character_Equipment_PairEquip": "Equip both hands",
 	"Character_Equipment_Tint": "Tint Color",
 	"Character_Equipment_Dye": "Dye",
 	"Character_Equipment_Hide": "Hide the weapon (by setting its scale to 0)",
@@ -130,10 +137,12 @@
 
 	"Character_ExWeapons_Header": "Extended Weapons",
 
-	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /Gpose in chat.",
+	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /gpose in chat.",
 	"Pose_WarningNotFrozen": "Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window.",
 	"Pose_GenerateSkeletonTitle": "Skeleton not found",
-	"Pose_GenerateSkeleton": "No skeleton was found for the actor {0}- generate one now?\nWithout a skeleton, parenting will not work correctly.",
+	"Pose_GenerateSkeleton": "No skeleton was found for the actor {0}. Generate one now?\nThis will reset the current pose.\nWithout a skeleton, parenting will not work correctly.",
+	"Pose_Generating": "Generating Skeleton. Please Wait.",
+	"Pose_NoSkeleton": "No Skeleton is bound to this view.",
 
 	"Pose_Save": "Save",
 	"Pose_SaveBones": "Save {0} Bones",
@@ -143,9 +152,13 @@
 	"Pose_FreezePhysics": "Freeze Physics",
 	"Pose_Parenting": "Parenting",
 	"Pose_LinkEyes": "Link Eyes",
+	"Pose_FlipSides": "Flip Sides",
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Scale",
 	"Pose_Position": "Position",
+	"Pose_LoadRotation": "Load Bone Rotations",
+	"Pose_LoadScale": "Load Bone Scales",
+	"Pose_LoadPosition": "Load Bone Positions",
 
 	"Pose_EnableRotation": "R",
 	"Pose_EnableRotationTooltip": "Enable editing rotation",
@@ -294,7 +307,7 @@
 	"Pose_ShieldLeft": "Shield Left",
 	"Pose_ShieldRight": "Shield Right",
 	"Pose_EarringALeft": "Earring A Left",
-	"Pose_EarringARight": "\"Earring A Right",
+	"Pose_EarringARight": "Earring A Right",
 	"Pose_ElbowLeft": "Elbow Left",
 	"Pose_ElbowRight": "Elbow Right",
 	"Pose_CouterLeft": "Couter Left",

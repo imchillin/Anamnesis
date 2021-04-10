@@ -23,9 +23,12 @@ namespace Anamnesis.Services
 		private string currentThemeSwatch = string.Empty;
 		private bool? currentThemeDark = null;
 
+		public static event PropertyChangedEventHandler? SettingsChanged;
+
 		public static Settings Current => Instance.Settings!;
 
 		public Settings? Settings { get; private set; }
+		public bool FirstTimeUser { get; private set; }
 
 		public static void ShowDirectory()
 		{
@@ -44,11 +47,13 @@ namespace Anamnesis.Services
 
 			if (!File.Exists(settingsPath))
 			{
+				this.FirstTimeUser = true;
 				this.Settings = new Settings();
 				Save();
 			}
 			else
 			{
+				this.FirstTimeUser = false;
 				try
 				{
 					string json = File.ReadAllText(settingsPath);
@@ -62,11 +67,11 @@ namespace Anamnesis.Services
 				}
 			}
 
-			this.Settings.PropertyChanged += this.SettingsChanged;
-			this.SettingsChanged(null, null);
+			this.Settings.PropertyChanged += this.OnSettingsChanged;
+			this.OnSettingsChanged(null, new PropertyChangedEventArgs(null));
 		}
 
-		private void SettingsChanged(object? sender, PropertyChangedEventArgs? e)
+		private void OnSettingsChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (this.Settings == null)
 				return;
@@ -82,6 +87,8 @@ namespace Anamnesis.Services
 			{
 				Save();
 			}
+
+			SettingsChanged?.Invoke(sender, e);
 		}
 	}
 }

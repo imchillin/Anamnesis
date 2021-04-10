@@ -237,4 +237,36 @@
 		</Setter>
 	</Style>
 
+	<Style TargetType="ToggleButton" x:Key="InvisibleToggleButton">
+		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ToggleButton">
+
+					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand">
+
+						<md:Ripple Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Focusable="False"
+									ContentStringFormat="{TemplateBinding ContentStringFormat}"
+									HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+									Padding="{TemplateBinding Padding}"
+									SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+						</md:Ripple>
+
+					</Grid>
+
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 </ResourceDictionary>
