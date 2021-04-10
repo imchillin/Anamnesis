@@ -39,14 +39,14 @@ namespace Anamnesis.Updater
 
 			string[] parts = File.ReadAllText(VersionFile).Split(';');
 
-			Version = DateTimeOffset.Parse(parts[0].Trim());
+			Version = DateTimeOffset.Parse(parts[0].Trim()).ToUniversalTime();
 			SupportedGameVersion = parts[1].Trim();
 
 			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
-			if (elapsed.TotalHours < 24)
+			if (elapsed.TotalHours < 6)
 			{
-				Log.Information("Last update check was less than 24 hours ago. Skipping.");
+				Log.Information("Last update check was less than 6 hours ago. Skipping.");
 				return;
 			}
 
@@ -65,7 +65,13 @@ namespace Anamnesis.Updater
 				if (this.currentRelease == null)
 					throw new Exception("Failed to deserialize json response");
 
-				if (this.currentRelease.Published != null && this.currentRelease.Published > Version)
+				if (this.currentRelease.Published == null)
+					throw new Exception("No published timestamp in update json");
+
+				DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
+				published = published.ToUniversalTime();
+
+				if (this.currentRelease.Published != null && published > Version)
 				{
 					await Dispatch.MainThread();
 
