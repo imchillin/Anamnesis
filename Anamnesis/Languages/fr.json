@@ -73,7 +73,7 @@
 	"Character_Appearance_Lips": "Lèvres:",
 	"Character_Appearance_Hair": "Cheveux:",
 	"Character_Appearance_Height": "Taille:",
-	"Character_Appearance_BustSize": "Tour de Poitrine:",
+	"Character_Appearance_BustSize": "Poitrine:",
 	"Character_Appearance_Muscle": "Muscle:",
 	"Character_Appearance_EarsSize": "Longeur Oreilles:",
 	"Character_Appearance_TailSize": "Longeur Queue:",
@@ -113,7 +113,7 @@
 	"Character_Actor_Alpha": "Opacité:",
 	"Character_Actor_EntityType": "Type:",
 	"Character_Actor_Nickname": "Surnom:",
-	"Character_Actor_DataPath": "Animations raciales:",
+	"Character_Actor_DataPath": "Animations\rraciales:",
 
 	"Character_Model_Header": "Modèle",
 	"Character_Model_Height": "Taille:",
