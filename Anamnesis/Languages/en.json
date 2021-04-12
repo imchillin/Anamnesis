@@ -69,6 +69,9 @@
 	"Weather_Selector_All_Tooltip": "Show all weathers",
 
 	"Character_Appearance_Header": "Appearance",
+	"Character_Appearance_FileHair": "Hair",
+	"Character_Appearaince_Body": "Body",
+	"Character_Appearaince_Face": "Face",
 	"Character_Appearance_Race": "Race:",
 	"Character_Appearance_Skin": "Skin:",
 	"Character_Appearance_Eyes": "Eyes:",
@@ -90,6 +93,9 @@
 	"Character_Appearance_Fur": "Fur:",
 
 	"Character_Equipment_Header": "Equipment",
+	"Character_Equipment_Gear": "Gear",
+	"Character_Equipment_Accessories": "Accessories",
+	"Character_Equipment_Weapons": "Weapons",
 	"Character_Equipment_Clear": "Remove all Equipment",
 	"Character_Equipment_NpcSmallclothes": "Equip NPC smallclothes",
 	"Character_Equipment_MainHand": "Main Hand:",

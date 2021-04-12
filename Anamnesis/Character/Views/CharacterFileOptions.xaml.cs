@@ -26,6 +26,32 @@ namespace Anamnesis.Character.Views
 
 		public event DialogEvent? Close;
 
+		public bool? Equipment
+		{
+			get
+			{
+				if (this.EquipmentGear && this.EquipmentAccessories && this.EquipmentWeapons)
+				{
+					return true;
+				}
+				else if (!this.EquipmentGear && !this.EquipmentAccessories && !this.EquipmentWeapons)
+				{
+					return false;
+				}
+
+				return null;
+			}
+			set
+			{
+				if (value == null)
+					value = false;
+
+				this.EquipmentGear = (bool)value;
+				this.EquipmentAccessories = (bool)value;
+				this.EquipmentWeapons = (bool)value;
+			}
+		}
+
 		public bool EquipmentGear
 		{
 			get => Result.HasFlag(CharacterFile.SaveModes.EquipmentGear);
@@ -42,6 +68,32 @@ namespace Anamnesis.Character.Views
 		{
 			get => Result.HasFlag(CharacterFile.SaveModes.EquipmentWeapons);
 			set => Result = Result.SetFlag(CharacterFile.SaveModes.EquipmentWeapons, value);
+		}
+
+		public bool? Appearance
+		{
+			get
+			{
+				if (this.AppearanceHair && this.AppearanceFace && this.AppearanceBody)
+				{
+					return true;
+				}
+				else if (!this.AppearanceHair && !this.AppearanceFace && !this.AppearanceBody)
+				{
+					return false;
+				}
+
+				return null;
+			}
+			set
+			{
+				if (value == null)
+					value = false;
+
+				this.AppearanceHair = (bool)value;
+				this.AppearanceFace = (bool)value;
+				this.AppearanceBody = (bool)value;
+			}
 		}
 
 		public bool AppearanceHair
