@@ -65,6 +65,7 @@ namespace Anamnesis.Services
 			await Add<PoseService>();
 			await Add<TipService>();
 			await Add<TexToolsService>();
+			await Add<FavoritesService>();
 
 			IsInitialized = true;
 
