@@ -13,7 +13,7 @@ namespace Anamnesis.GameData.Sheets
 
 	public class CustomizeSheet : LuminaSheet<ICharaMakeCustomize, CharaMakeCustomize, CharaMakeCustomizeViewModel>, ICharaMakeCustomizeData
 	{
-		public CustomizeSheet(Lumina lumina)
+		public CustomizeSheet(GameData lumina)
 			: base(lumina)
 		{
 		}

@@ -14,7 +14,7 @@ namespace Lumina
 	using global::Lumina.Data.Files;
 	using global::Lumina.Excel.GeneratedSheets;
 	using global::Lumina.Extensions;
-	using LuminaData = global::Lumina.Lumina;
+	using LuminaData = global::Lumina.GameData;
 
 	public static class LuminaExtensions
 	{

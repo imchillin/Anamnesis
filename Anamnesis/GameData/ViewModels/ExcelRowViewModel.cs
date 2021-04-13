@@ -9,13 +9,13 @@ namespace Anamnesis.GameData.ViewModels
 	using Lumina.Excel;
 
 	public abstract class ExcelRowViewModel<T> : IRow
-		where T : class, IExcelRow
+		where T : ExcelRow
 	{
-		protected readonly Lumina lumina;
+		protected readonly GameData lumina;
 
 		private ExcelSheet<T> sheet;
 
-		public ExcelRowViewModel(int key, ExcelSheet<T> sheet, Lumina lumina)
+		public ExcelRowViewModel(int key, ExcelSheet<T> sheet, GameData lumina)
 		{
 			this.sheet = sheet;
 			this.Key = key;

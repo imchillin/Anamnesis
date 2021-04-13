@@ -24,7 +24,7 @@ namespace Anamnesis.GameData.ViewModels
 
 		private ClassJobCategory classJob;
 
-		public ItemViewModel(int key, ExcelSheet<Item> sheet, Lumina lumina)
+		public ItemViewModel(int key, ExcelSheet<Item> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			this.classJob = this.Value.ClassJobCategory.Value;

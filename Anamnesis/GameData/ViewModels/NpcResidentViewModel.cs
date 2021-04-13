@@ -13,7 +13,7 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class NpcResidentViewModel : ExcelRowViewModel<ENpcResident>, INpcResident
 	{
-		public NpcResidentViewModel(int key, ExcelSheet<ENpcResident> sheet, Lumina lumina)
+		public NpcResidentViewModel(int key, ExcelSheet<ENpcResident> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}
