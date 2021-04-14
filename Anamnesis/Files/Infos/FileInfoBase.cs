@@ -22,6 +22,11 @@ namespace Anamnesis.Files.Infos
 		public abstract FileBase DeserializeFile(Stream stream);
 		public abstract void SerializeFile(FileBase file, Stream stream);
 
+		public virtual string? GetMetadata(IFileSource.IFile file)
+		{
+			return this.Name;
+		}
+
 		public abstract bool IsFile(Type type);
 
 		public IFileSource[] GetFileSources()

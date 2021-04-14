@@ -8,20 +8,17 @@ namespace Anamnesis.GameData.Sheets
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
-	using LuminaData = Lumina.Lumina;
+	using LuminaData = Lumina.GameData;
 
 	[Sheet("CharaMakeType", columnHash: 0x80d7db6d)]
-	public class CharaMakeType : IExcelRow
+	public class CharaMakeType : ExcelRow
 	{
 		public LazyRow<Race>? Race;
 		public LazyRow<Tribe>? Tribe;
 		public sbyte Gender;
 		public int[]? FacialFeatureOptions;
 
-		public uint RowId { get; set; }
-		public uint SubRowId { get; set; }
-
-		public void PopulateData(RowParser parser, LuminaData lumina, Language language)
+		public override void PopulateData(RowParser parser, LuminaData lumina, Language language)
 		{
 			this.RowId = parser.Row;
 			this.SubRowId = parser.SubRow;

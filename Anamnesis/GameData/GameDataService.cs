@@ -16,7 +16,7 @@ namespace Anamnesis.Services
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
-	using LuminaData = Lumina.Lumina;
+	using LuminaData = global::Lumina.GameData;
 
 	public class GameDataService : ServiceBase<GameDataService>
 	{

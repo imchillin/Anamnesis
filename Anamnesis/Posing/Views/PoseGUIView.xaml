@@ -95,12 +95,13 @@
 					<local:BoneView  Canvas.Left="100" Canvas.Top="54" BoneName="HairFrontLeft" FlippedBoneName="HairFrontRight"/>
 					<local:BoneView  Canvas.Left="140" Canvas.Top="54" BoneName="HairFrontRight" FlippedBoneName="HairFrontLeft"/>
 
-					<!--<local:SimplePoseBoneView Canvas.Left="80" Canvas.Top="160" BoneName="HolsterLeft"/>
-						<local:SimplePoseBoneView Canvas.Left="160" Canvas.Top="160" BoneName="HolsterRight"/>-->
+					<local:BoneView Canvas.Left="90" Canvas.Top="150" BoneName="HolsterLeft" FlippedBoneName="HolsterRight"/>
+					<local:BoneView Canvas.Left="146" Canvas.Top="150" BoneName="HolsterRight" FlippedBoneName="HolsterLeft"/>
 					<local:BoneView Canvas.Left="90" Canvas.Top="184" BoneName="SheatheLeft" FlippedBoneName="SheatheRight"/>
 					<local:BoneView Canvas.Left="149" Canvas.Top="184" BoneName="SheatheRight" FlippedBoneName="SheatheLeft"/>
-					<!--<local:SimplePoseBoneView Canvas.Left="97" Canvas.Top="170" BoneName="ScabbardLeft"/>
-						<local:SimplePoseBoneView Canvas.Left="142" Canvas.Top="170" BoneName="ScabbardLeft"/>-->
+					
+					<local:BoneView Canvas.Left="105" Canvas.Top="110" BoneName="ScabbardLeft" FlippedBoneName="ScabbardRight"/>
+					<local:BoneView Canvas.Left="135" Canvas.Top="110" BoneName="ScabbardRight" FlippedBoneName="ScabbardLeft"/>
 
 					<local:BoneView Canvas.Left="90" Canvas.Top="346" BoneName="PoleynLeft" FlippedBoneName="PoleynRight"/>
 					<local:BoneView Canvas.Left="149" Canvas.Top="346" BoneName="PoleynRight" FlippedBoneName="PoleynLeft"/>

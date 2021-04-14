@@ -21,7 +21,7 @@ namespace Anamnesis.Files
 	public class PoseFileInfo : JsonFileInfoBase<PoseFile>
 	{
 		public override string Extension => "pose";
-		public override string Name => "Anamnesis Pose File";
+		public override string Name => "Anamnesis Pose";
 		public override Type? LoadOptionsViewType => typeof(LoadOptions);
 
 		public override IFileSource[] FileSources => new[]

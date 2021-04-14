@@ -24,7 +24,7 @@ namespace Anamnesis.GameData.ViewModels
 
 		private ClassJobCategory classJob;
 
-		public ItemViewModel(int key, ExcelSheet<Item> sheet, Lumina lumina)
+		public ItemViewModel(int key, ExcelSheet<Item> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			this.classJob = this.Value.ClassJobCategory.Value;
@@ -53,8 +53,8 @@ namespace Anamnesis.GameData.ViewModels
 
 		public bool IsFavorite
 		{
-			get => SettingsService.Current.IsFavorite(this);
-			set => SettingsService.Current.SetFavorite(this, value);
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
 		}
 
 		public bool FitsInSlot(ItemSlots slot)

@@ -14,7 +14,7 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class RaceViewModel : ExcelRowViewModel<Race>, IRace
 	{
-		public RaceViewModel(int key, ExcelSheet<Race> sheet, Lumina lumina)
+		public RaceViewModel(int key, ExcelSheet<Race> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}

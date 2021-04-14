@@ -16,7 +16,7 @@ namespace Anamnesis.Files
 	public class LegacyPoseFileInfo : JsonFileInfoBase<LegacyPoseFile>
 	{
 		public override string Extension => "cmp";
-		public override string Name => "CMTool Equipment Set";
+		public override string Name => "CMTool pose";
 		public override Type? LoadOptionsViewType => typeof(LoadOptions);
 		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files (CMTool)", "%MyDocuments%/CMTool/Matrix Saves/") };
 	}

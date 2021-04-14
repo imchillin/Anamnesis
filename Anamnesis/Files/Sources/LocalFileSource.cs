@@ -104,7 +104,9 @@ namespace Anamnesis.Files
 
 						FileInfoBase info = FileService.GetFileInfo(extension);
 
-						results.Add(new File(filePath, info, this));
+						File file = new File(filePath, info, this);
+						file.Metadata = info.GetMetadata(file);
+						results.Add(file);
 					}
 					catch (Exception)
 					{
@@ -130,6 +132,7 @@ namespace Anamnesis.Files
 			public FileInfoBase? Type { get; private set; }
 			public IFileSource Source { get; private set; }
 			public bool Exists => Files.Exists(this.Path);
+			public string? Metadata { get; set; }
 
 			public Task Delete()
 			{
@@ -161,6 +164,7 @@ namespace Anamnesis.Files
 			public string Path { get; private set; }
 			public IFileSource Source { get; private set; }
 			public bool Exists => Directories.Exists(this.Path);
+			public string? Metadata { get; set; }
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{

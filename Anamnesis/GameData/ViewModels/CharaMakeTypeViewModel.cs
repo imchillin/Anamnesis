@@ -15,7 +15,7 @@ namespace Anamnesis.GameData.ViewModels
 	{
 		private List<ImageSource>? facialFeatureList;
 
-		public CharaMakeTypeViewModel(int key, ExcelSheet<CharaMakeType> sheet, Lumina lumina)
+		public CharaMakeTypeViewModel(int key, ExcelSheet<CharaMakeType> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}

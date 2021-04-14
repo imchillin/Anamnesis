@@ -19,9 +19,9 @@
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="240" />
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition />
-			<ColumnDefinition Width="240" />
+			<ColumnDefinition Width="Auto" MinWidth="230" />
 		</Grid.ColumnDefinitions>
 
 		<Grid

@@ -18,7 +18,7 @@ namespace Anamnesis.GameData.ViewModels
 	{
 		private IItem? item;
 
-		public DyeViewModel(int key, ExcelSheet<Stain> sheet, Lumina lumina)
+		public DyeViewModel(int key, ExcelSheet<Stain> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}

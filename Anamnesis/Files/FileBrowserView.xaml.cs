@@ -583,7 +583,25 @@ namespace Anamnesis.GUI.Views
 				}
 			}
 
-			public string Directory
+			public string? Metadata
+			{
+				get
+				{
+					if (this.Entry == null)
+						return null;
+
+					if (!string.IsNullOrEmpty(this.Directory))
+					{
+						return this.Directory + " - " + this.Entry.Metadata;
+					}
+					else
+					{
+						return this.Entry.Metadata;
+					}
+				}
+			}
+
+			public string? Directory
 			{
 				get
 				{
@@ -602,10 +620,10 @@ namespace Anamnesis.GUI.Views
 
 					string? dirName = Path.GetDirectoryName(relativePath);
 
-					if (dirName == null)
-						return string.Empty;
+					if (string.IsNullOrEmpty(dirName))
+						return null;
 
-					return dirName;
+					return "\\" + dirName + "\\";
 				}
 			}
 		}

@@ -14,7 +14,7 @@ namespace Anamnesis.GameData.ViewModels
 	{
 		private List<IWeather>? weathers;
 
-		public TerritoryTypeViewModel(int key, ExcelSheet<TerritoryType> sheet, Lumina lumina)
+		public TerritoryTypeViewModel(int key, ExcelSheet<TerritoryType> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}

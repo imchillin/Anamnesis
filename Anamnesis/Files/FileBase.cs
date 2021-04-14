@@ -10,5 +10,6 @@ namespace Anamnesis.Files
 	[Serializable]
 	public abstract class FileBase
 	{
+		public string? Author { get; set; }
 	}
 }

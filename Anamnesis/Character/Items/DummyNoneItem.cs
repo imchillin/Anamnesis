@@ -28,8 +28,8 @@ namespace Anamnesis.Character.Items
 
 		public bool IsFavorite
 		{
-			get => SettingsService.Current.IsFavorite(this);
-			set => SettingsService.Current.SetFavorite(this, value);
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
 		}
 
 		public bool FitsInSlot(ItemSlots slot)

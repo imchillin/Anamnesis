@@ -30,17 +30,20 @@ namespace Anamnesis.Character.Views
 			{
 				modelTypeNameLookup = new Dictionary<int, string>();
 
-				foreach (Monster monster in GameDataService.Monsters)
+				if (GameDataService.Monsters != null)
 				{
-					if (modelTypeNameLookup.ContainsKey(monster.ModelType))
+					foreach (Monster monster in GameDataService.Monsters)
 					{
-						string str = modelTypeNameLookup[monster.ModelType];
-						str += " / " + monster.Name;
-						modelTypeNameLookup[monster.ModelType] = str;
-					}
-					else
-					{
-						modelTypeNameLookup.Add(monster.ModelType, monster.Name);
+						if (modelTypeNameLookup.ContainsKey(monster.ModelType))
+						{
+							string str = modelTypeNameLookup[monster.ModelType];
+							str += " / " + monster.Name;
+							modelTypeNameLookup[monster.ModelType] = str;
+						}
+						else
+						{
+							modelTypeNameLookup.Add(monster.ModelType, monster.Name);
+						}
 					}
 				}
 			}

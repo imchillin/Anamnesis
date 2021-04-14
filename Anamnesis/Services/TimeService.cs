@@ -67,46 +67,54 @@ namespace Anamnesis
 			{
 				await Task.Delay(10);
 
-				if (!MemoryService.IsProcessAlive)
-					continue;
-
-				if (!GameService.Instance.IsSignedIn)
-					continue;
-
-				if (AddressService.Time == IntPtr.Zero)
-					continue;
-
-				// time is off by 19 minutes on windows
-				double offset = 19 * 60;
-
-				double timeSeconds = (DateTime.Now.ToUniversalTime() - Epoch).TotalSeconds;
-				double eorzeaSeconds = (timeSeconds * EorzeaTimeConstant) + offset;
-				this.RealTime = Epoch + TimeSpan.FromSeconds(eorzeaSeconds);
-
-				this.RealTimeOfDay = (this.RealTime.Hour * 60) + this.RealTime.Minute;
-				this.RealDayOfMonth = this.RealTime.Day;
-
-				////int currentTimeOffset = MemoryService.Read<int>(AddressService.Time);
-
-				if (this.Freeze)
+				try
 				{
-					int minuteOffset = this.TimeOfDay - this.RealTimeOfDay;
+					if (!MemoryService.IsProcessAlive)
+						continue;
 
-					int dayOffset = this.DayOfMonth - this.RealDayOfMonth;
-					minuteOffset += dayOffset * 24 * 60;
+					if (!GameService.Instance.IsSignedIn)
+						continue;
 
-					if (minuteOffset <= 0)
-						minuteOffset += 30 * 24 * 60;
+					if (AddressService.Time == IntPtr.Zero)
+						continue;
 
-					MemoryService.Write(AddressService.Time, minuteOffset * 60, "Time frozen");
+					// time is off by 19 minutes on windows
+					double offset = 19 * 60;
 
-					this.Time = this.RealTime.AddMinutes(minuteOffset);
+					double timeSeconds = (DateTime.Now.ToUniversalTime() - Epoch).TotalSeconds;
+					double eorzeaSeconds = (timeSeconds * EorzeaTimeConstant) + offset;
+					this.RealTime = Epoch + TimeSpan.FromSeconds(eorzeaSeconds);
+
+					this.RealTimeOfDay = (this.RealTime.Hour * 60) + this.RealTime.Minute;
+					this.RealDayOfMonth = this.RealTime.Day;
+
+					////int currentTimeOffset = MemoryService.Read<int>(AddressService.Time);
+
+					if (this.Freeze)
+					{
+						int minuteOffset = this.TimeOfDay - this.RealTimeOfDay;
+
+						int dayOffset = this.DayOfMonth - this.RealDayOfMonth;
+						minuteOffset += dayOffset * 24 * 60;
+
+						if (minuteOffset <= 0)
+							minuteOffset += 30 * 24 * 60;
+
+						MemoryService.Write(AddressService.Time, minuteOffset * 60, "Time frozen");
+
+						this.Time = this.RealTime.AddMinutes(minuteOffset);
+					}
+					else
+					{
+						this.TimeOfDay = this.RealTimeOfDay;
+						this.DayOfMonth = this.RealDayOfMonth;
+						this.Time = this.RealTime;
+					}
 				}
-				else
+				catch (Exception ex)
 				{
-					this.TimeOfDay = this.RealTimeOfDay;
-					this.DayOfMonth = this.RealDayOfMonth;
-					this.Time = this.RealTime;
+					Log.Error(ex, "Failed to update time");
+					return;
 				}
 			}
 		}
