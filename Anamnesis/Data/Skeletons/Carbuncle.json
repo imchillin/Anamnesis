@@ -1,8 +1,8 @@
 {
 	"ModelTypes": [ 409 ],
 	"BoneNames": {
-		"Body_0": "",
-		"Body_1": "",
+		"Body_0": "Root A",
+		"Body_1": "Root B",
 		"Body_2": "Spine A",
 		"Body_3": "Spine B",
 		"Body_4": "Back Left Leg",
