@@ -42,7 +42,12 @@ namespace Anamnesis.Core.Memory
 		{
 			get
 			{
-				return camera;
+				IntPtr address = MemoryService.ReadPtr(camera);
+
+				if (address == IntPtr.Zero)
+					throw new Exception("Failed to read camera address");
+
+				return address;
 			}
 			set
 			{
