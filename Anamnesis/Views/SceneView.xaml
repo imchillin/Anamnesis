@@ -88,7 +88,7 @@
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
-
+					<!-- 5.5 broken 
 					<Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -120,6 +120,7 @@
 						<ana:TextBlock Grid.Row="1" Grid.Column="1" Key="Scene_World_Day" Style="{StaticResource Label}"/>
 						<cm3:NumberBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
 					</Grid>
+					-->
 
 					<ana:TextBlock Grid.Row="1" Key="Scene_World_Weather" Style="{StaticResource Label}"/>
 
