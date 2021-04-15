@@ -40,7 +40,7 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x0F08)] public Weapon MainHand;
 		[FieldOffset(0x0F70)] public Weapon OffHand;
 		[FieldOffset(0x1040)] public Equipment Equipment;
-		[FieldOffset(0x1808)] public float Transparency;
+		////[FieldOffset(0x1808)] public float Transparency;
 		[FieldOffset(0x1898)] public Appearance Customize;
 
 		public string Id => this.Name + this.DataId;
