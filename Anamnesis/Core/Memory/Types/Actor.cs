@@ -69,7 +69,8 @@ namespace Anamnesis.Memory
 		[ModelField][Refresh] public AppearanceViewModel? Customize { get; set; }
 		[ModelField][Refresh] public int ModelType { get; set; }
 		[ModelField][Refresh] public RenderModes RenderMode { get; set; }
-		[ModelField] public float Transparency { get; set; }
+		/* 5.5 Broken [ModelField] */
+		public float Transparency { get; set; }
 		[ModelField][Refresh] public EquipmentViewModel? Equipment { get; set; }
 		[ModelField][Refresh] public WeaponViewModel? MainHand { get; set; }
 		[ModelField][Refresh] public WeaponViewModel? OffHand { get; set; }

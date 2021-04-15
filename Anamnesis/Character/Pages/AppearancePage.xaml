@@ -173,6 +173,7 @@
 							<views:ModelTypeEditor DataContext="{Binding Actor}" />
 						</Grid>
 
+						<!-- 5.5 Broken
 						<ana:TextBlock
 							Key="Character_Actor_Alpha"
 							Grid.Row="4"
@@ -186,6 +187,7 @@
 							Slider="Absolute"
 							TickFrequency="0.1"
 							Value="{Binding Actor.Transparency}" />
+						-->
 
 
 					</Grid>
