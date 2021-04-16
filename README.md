@@ -5,21 +5,14 @@ Anamnesis is a standalone tool that is used to modify certain clientside-only va
 
 Anamnesis is the successor to [Concept Matrix (CMTool)](https://github.com/imchillin/CMTool).
 
-This project is a work in progress and is not currently in a state to replace CMTool. Please do not download the code expecting it to work like CMTool. Check the [Releases](https://github.com/imchillin/Anamnesis/releases) page for official releases. 
+As of April 16th 2021, this project remains a work in progress and is not currently in a state to replace CMTool. Please do not download the code expecting it to work like CMTool.
 
 We actively encourage people to contribute to the project with their forks to improve the tool overall. With this said, we are **not** supporting builds done via forks and, if you've received a release of the tool from any repo that isn't [imchillin/Anamnesis](https://github.com/imchillin/Anamnesis), you are encouraged to bring the issue up with the person who packaged the build, as it will inevitably contain code we're unfamiliar with.
 
-(It takes a few seconds to do a pull request, just be cool.)
-
-**We do NOT support the 'Unofficial' French release by Luna664.** Do not ask for assistance with that repo.
-
 ## Getting Started
 
-These instructions will get a copy of the project up and running on your local machine.
-[Instructions coming soon]
-
 ### Prerequisites
-- [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) installed on your computer.
+- [.NET 5.0 Desktop Runtime (v5.0.2)](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.2-windows-x64-installer) installed on your computer.
 
 ### Usage
 
@@ -47,3 +40,4 @@ Thanks to the original work by the following people, we have the guidelines need
 * Special thanks to LeonBlade for the creation of the original trainer, SSTool. 
 * Special thanks to Ena and Johto for their work on Concept Matrix.
 * Special thanks to Goaat for their contributions and help.
+* Special thanks to those who have contributed via pull requests.
