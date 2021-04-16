@@ -86,5 +86,14 @@
 	},
 	{
 		"Text": "If you feel that a pose you made looks off, try replicating it yourself, in real life. You'll realise quite quickly how something should or should not bend if you try it yourself."
+	},
+	{	
+		"Text": "You can scale weapons to 0 while in GPose to make them disappear, in case you forgot to hide them earlier."
+	},
+	{
+		"Text": "Try using the Gizmo while posing!"
+	},
+	{
+		"Text": "The Gizmo updates in real time, and is based on your camera, so you can easily see what axis you're manipulating at a glance."
 	}
 ]
