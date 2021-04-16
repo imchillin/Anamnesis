@@ -7,7 +7,7 @@
 		"Text": "Tips on the main tab will give you tips."
 	},
 	{
-		"Text": "To restore your default appearance, close Anamnesis, then go to another area."
+		"Text": "To restore your default appearance, close Anamnesis, then go to another area, ensuring you've forced a loading screen with an area title."
 	},
 	{
 		"Text": "Use [Shift] and [Ctrl] to speed up or slow down the intervals of your rotation/position."
@@ -24,15 +24,15 @@
 	{
 		"Text": "Need more actors but have no friends? Use ARR housing NPCs!"
 	},
-	{	
-		"Text": "The Crystalline Means Discord has many useful guides to help you with using Anamnesis.",
-		"Url": "https://discord.com/invite/crystallinemeans" 
+	{
+		"Text": "The Wiki has useful guides to help you with using Anamnesis.",
+		"Url": "https://github.com/imchillin/Anamnesis/wiki"
 	},
 	{	
 		"Text": "Game updates will likely break the tool. Please be patient when this happens, and we will have a fix out ASAP."
 	},
 	{
-		"Text": "You can use ARR housing NPCs or Carbuncles as actors."
+		"Text": "You can use ARR housing NPCs or Carbuncles as extra actors."
 	},
 	{
 		"Text": "You can use poses made for other races, but they may require adjustment."
@@ -41,14 +41,14 @@
 		"Text": "If hair or ears go funny when loading a pose, turn Physics on, then off again."
 	},
 	{
-		"Text": "Make sure you're running Anamnesis as an Administrator"
+		"Text": "Make sure you're running Anamnesis as an Administrator."
 	},
 	{
-		"Text": "You can only pose actors while in GPose"
+		"Text": "You can only pose actors while in GPose."
 	},
 	{
 		"Text": "Anamnesis cannot be used for gameplay advantages. If you find an exploit using Anamnesis, please report it to the developers.",
-		"Url": "https://discord.com/invite/crystallinemeans"
+		"Url": "https://discord.gg/H65FCeS"
 	},
 	{
 		"Text": "You can set skin, skin glow, lip, eye, and hair colour by RGB using the Extended Appearance function."
@@ -63,20 +63,20 @@
 		"Text": "When it comes to PCs, only Friends or Party Members can be manipulated."
 	},
 	{	
-		"Text": "If you ever come across a bug that can be reproduced, please file the issue in our GitHub, or use the reporting channels in our Discord with proper formatting. Please provide us steps on how to reproduce the bug.",
+		"Text": "If you ever come across a bug that can be reproduced, please file the issue in our GitHub, ensuyring you have provided all the steps on how to reproduce the bug.",
 		"Url": "https://github.com/imchillin/Anamnesis/issues"
 	},
 	{
 		"Text": "Going in first-person mode allows you to capture perfect shots where normally the camera would block due to collision!"
 	},
 	{
-		"Text": "You need to set the time of day before entering GPose"
+		"Text": "You need to set the time of day before entering GPose."
 	},
 	{
-		"Text": "When using the Pose tab, if you don't have a bone selected you can use the Transform Function to change your actor's scale and position."
+		"Text": "When using the Pose tab, if you don't have a bone selected you can use the Transform function to change your actor's scale and position."
 	},
 	{	
-		"Text": "Remember to unfreeze time in the gpose menu before trying to change it via Anamnesis."
+		"Text": "Remember to unfreeze time in the GPose menu before trying to change it via Anamnesis."
 	},
 	{
 		"Text": "Don't be afraid to use real life model references to make your pose look more organic and natural."
