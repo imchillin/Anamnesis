@@ -14,6 +14,10 @@ We actively encourage people to contribute to the project with their forks to im
 ### Prerequisites
 - [.NET 5.0 Desktop Runtime (v5.0.2)](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.2-windows-x64-installer) installed on your computer.
 
+### Installation
+
+Download the latest build from [the releases page](https://github.com/imchillin/Anamnesis/releases/latest), then simply extract it to your location of choice, log in to the game, and run the tool.
+
 ### Usage
 
 Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesis/wiki) for guides and tutorials. If you have any questions that weren’t answered there, join us on [Discord](https://discord.gg/EenZwsN) and ask for help there.
