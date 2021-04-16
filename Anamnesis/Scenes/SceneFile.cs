@@ -35,8 +35,8 @@ namespace Anamnesis.Scenes
 
 		public Vector RootPosition { get; set; }
 
-		public int? TimeOfDay { get; set; }
-		public int? DayOfMonth { get; set; }
+		public long? TimeOfDay { get; set; }
+		public byte? DayOfMonth { get; set; }
 		public ushort? Weather { get; set; }
 
 		public bool? UnlimitCamera { get; set; }
@@ -168,7 +168,7 @@ namespace Anamnesis.Scenes
 			{
 				TimeService.Instance.Freeze = true;
 				TimeService.Instance.TimeOfDay = (int)this.TimeOfDay;
-				TimeService.Instance.DayOfMonth = (int)this.DayOfMonth;
+				TimeService.Instance.DayOfMonth = (byte)this.DayOfMonth;
 			}
 
 			if (config.IncludeWeather && this.Weather != null)
