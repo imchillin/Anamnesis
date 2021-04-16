@@ -46,7 +46,7 @@ namespace Anamnesis.Styles.Controls
 			this.Minimum = double.MinValue;
 			this.Maximum = double.MaxValue;
 			this.Wrap = false;
-			this.Text = "0";
+			this.Text = this.DisplayValue.ToString();
 			this.Slider = SliderModes.None;
 			this.Buttons = false;
 
@@ -307,6 +307,8 @@ namespace Anamnesis.Styles.Controls
 			OnSliderChanged(this, this.Slider);
 			OnButtonsChanged(this, this.Buttons);
 			OnTickChanged(this, this.TickFrequency);
+
+			this.Text = this.DisplayValue.ToString("0.###");
 		}
 
 		private double Validate(double v)
