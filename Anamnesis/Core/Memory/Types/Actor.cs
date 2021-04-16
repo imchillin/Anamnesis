@@ -10,6 +10,7 @@ namespace Anamnesis.Memory
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
+	using Anamnesis.Character.Utilities;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -37,6 +38,7 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x00F0)] public IntPtr ModelObject;
 		[FieldOffset(RenderModeOffset)] public RenderModes RenderMode;
 		[FieldOffset(0x01B4)] public int ModelType;
+		[FieldOffset(0x01E2)] public byte ClassJob;
 		[FieldOffset(0x0F08)] public Weapon MainHand;
 		[FieldOffset(0x0F70)] public Weapon OffHand;
 		[FieldOffset(0x1040)] public Equipment Equipment;
@@ -260,6 +262,10 @@ namespace Anamnesis.Memory
 			if (this.IsRefreshing)
 				return;
 
+			////if ((fieldName == nameof(Actor.MainHand) || fieldName == nameof(Actor.OffHand))
+			////	&& this.Model?.ClassJob >= 8 && this.Model?.ClassJob <= 18)
+			////	return;
+
 			base.OnViewToModel(fieldName, value);
 		}
 
@@ -270,6 +276,10 @@ namespace Anamnesis.Memory
 				Log.Debug($"Triggering actor refresh due to changed property: {viewModelProperty.Name}");
 				this.Refresh();
 			}
+
+			////if ((modelField.Name == nameof(Actor.MainHand) || modelField.Name == nameof(Actor.OffHand))
+			////	&& this.Model?.ClassJob >= 8 && this.Model?.ClassJob <= 18)
+			////	return false;
 
 			return base.HandleViewToModelUpdate(viewModelProperty, modelField);
 		}
