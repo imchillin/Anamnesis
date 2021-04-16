@@ -88,7 +88,6 @@
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
-					<!-- 5.5 broken 
 					<Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -115,12 +114,11 @@
 
 						<ana:TextBlock Grid.Row="0" Grid.Column="1" Key="Scene_World_Time" Style="{StaticResource Label}"/>
 						<ana:NumberBox Minimum="0" Maximum="1440" Grid.Column="2" Value="{Binding TimeService.TimeOfDay}" Margin="3" Slider="Absolute" IsEnabled="{Binding TimeService.Freeze}" TickFrequency="30"/>
-						<TextBlock Grid.Column="3" Text="{Binding TimeService.Time, StringFormat=t}" Margin="3, 3, 0, 3" Width="50" HorizontalAlignment="Right"/>
+						<TextBlock Grid.Column="3" Text="{Binding TimeService.TimeString}" Margin="3, 3, 0, 3" Width="50" HorizontalAlignment="Right"/>
 
 						<ana:TextBlock Grid.Row="1" Grid.Column="1" Key="Scene_World_Day" Style="{StaticResource Label}"/>
 						<cm3:NumberBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
 					</Grid>
-					-->
 
 					<ana:TextBlock Grid.Row="1" Key="Scene_World_Weather" Style="{StaticResource Label}"/>
 

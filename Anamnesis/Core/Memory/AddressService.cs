@@ -37,6 +37,7 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr GposeCheck2 { get; private set; }   // GPoseCheck2Offset
 		public static IntPtr Territory { get; private set; }
 		public static IntPtr GPose { get; private set; }
+		public static IntPtr TimeStop { get; private set; }
 
 		public static IntPtr Camera
 		{
@@ -64,7 +65,8 @@ namespace Anamnesis.Core.Memory
 				if (address == IntPtr.Zero)
 					throw new Exception("Failed to read time address");
 
-				address += 0x88;
+				// CMTools MovingTime offset
+				address += 0x1608;
 				return address;
 			}
 			set
@@ -82,6 +84,7 @@ namespace Anamnesis.Core.Memory
 				if (address == IntPtr.Zero)
 					throw new Exception("Failed to read weather address");
 
+				// CMtools Weather offset
 				address += 0x20;
 				return address;
 			}
@@ -100,6 +103,7 @@ namespace Anamnesis.Core.Memory
 				if (address == IntPtr.Zero)
 					throw new Exception("Failed to read gpose filters address");
 
+				// CMTools ForceWeather offset
 				address += 0x27;
 				return address;
 			}
@@ -114,6 +118,7 @@ namespace Anamnesis.Core.Memory
 				if (address == IntPtr.Zero)
 					throw new Exception("Failed to read gpose address");
 
+				// CMTools CamX offset
 				address += 0xA0;
 				return address;
 			}
@@ -137,7 +142,7 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 0F B6 83", 0, (p) => { ActorTable = p; }));
 			tasks.Add(GetAddressFromSignature("48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 3, (p) => { TargetManager = p + 0x80; }));
 
-			tasks.Add(GetAddressFromTextSignature("41 0F 29 5C 12 10", (p) => { SkeletonFreezeRotation = p; }));	// SkeletonAddress
+			tasks.Add(GetAddressFromTextSignature("41 0F 29 5C 12 10", (p) => { SkeletonFreezeRotation = p; }));    // SkeletonAddress
 			tasks.Add(GetAddressFromTextSignature("43 0F 29 5C 18 10", (p) => { SkeletonFreezeRotation2 = p; }));   // SkeletonAddress2
 			tasks.Add(GetAddressFromTextSignature("0F 29 5E 10 49 8B 73 28", (p) => { SkeletonFreezeRotation3 = p; })); // SkeletonAddress3
 			tasks.Add(GetAddressFromTextSignature("41 0F 29 44 12 20", (p) => { SkeletonFreezeScale = p; }));   // SkeletonAddress4
@@ -147,6 +152,7 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetBaseAddressFromSignature("4F 8B B4 C6 ?? ?? ?? ??", 4, true, (p) => { Camera = p; }));  // CameraAddress
 			tasks.Add(GetBaseAddressFromSignature("48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
 			tasks.Add(GetAddressFromSignature("8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
+			tasks.Add(GetAddressFromTextSignature("48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
 
 			tasks.Add(GetAddressFromTextSignature("0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
 			{
@@ -216,7 +222,7 @@ namespace Anamnesis.Core.Memory
 				}
 				else
 				{
-					ptr += skip + offset + 4;
+					ptr += offset + 4;
 				}
 
 				callback.Invoke(ptr);

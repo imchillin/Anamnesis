@@ -104,7 +104,7 @@
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<ana:NumberBox Grid.Column="0" Value="{Binding Appearance.Eyes}" Minimum="0" Maximum="255" Buttons="True" Margin="2, 2, 12, 2"/>
+					<ana:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Appearance.Eyes}" Minimum="1" Maximum="256" Buttons="True" Margin="2, 2, 12, 2"/>
 
 					<controls:ColorControl Grid.Column="1" ToolTip="Left Eye Color" Value="{Binding Appearance.LEyeColor}" Type="Eyes" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Margin="0"/>
 					<controls:ColorControl Grid.Column="2" ToolTip="Right Eye Color" Value="{Binding Appearance.REyeColor}" Type="Eyes" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Margin="0"/>
