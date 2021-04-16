@@ -40,7 +40,7 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x0F08)] public Weapon MainHand;
 		[FieldOffset(0x0F70)] public Weapon OffHand;
 		[FieldOffset(0x1040)] public Equipment Equipment;
-		////[FieldOffset(0x1808)] public float Transparency;
+		[FieldOffset(0x182C)] public float Transparency;
 		[FieldOffset(0x1898)] public Appearance Customize;
 
 		public string Id => this.Name + this.DataId;
@@ -69,8 +69,7 @@ namespace Anamnesis.Memory
 		[ModelField][Refresh] public AppearanceViewModel? Customize { get; set; }
 		[ModelField][Refresh] public int ModelType { get; set; }
 		[ModelField][Refresh] public RenderModes RenderMode { get; set; }
-		/* 5.5 Broken [ModelField] */
-		public float Transparency { get; set; }
+		[ModelField] public float Transparency { get; set; }
 		[ModelField][Refresh] public EquipmentViewModel? Equipment { get; set; }
 		[ModelField][Refresh] public WeaponViewModel? MainHand { get; set; }
 		[ModelField][Refresh] public WeaponViewModel? OffHand { get; set; }
