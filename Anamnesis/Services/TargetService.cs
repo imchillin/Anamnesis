@@ -40,8 +40,8 @@ namespace Anamnesis
 				}
 			}
 
-			// Mannequins and housing NPC's get actor type changed, but squadron members do not.
-			if (actor.Kind == ActorTypes.EventNpc)
+			// Mannequins and housing NPC's get actor type changed, but squadron members and lawn retainers do not.
+			if (actor.Kind == ActorTypes.EventNpc && actor.Model.DataId != 1011832)
 			{
 				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertHousingNpcToPlayerMessage", actor.DisplayName), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
 				if (result == true)
@@ -237,7 +237,7 @@ namespace Anamnesis
 				this.Initials = string.Empty;
 				this.name = actor.Name;
 
-				this.UpdateInitials(actor.Name);
+				this.UpdateInitials(this.DisplayName);
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;
@@ -338,12 +338,12 @@ namespace Anamnesis
 					bool found = false;
 					foreach (ActorTableActor actor in actors)
 					{
-						if (actor.name == this.name && actor.Pointer != null)
+						if (actor.Id == this.Id && actor.Pointer != null)
 						{
 							// Handle case where multiple actor table entries point ot the same actor, but
 							// its not the actor we actually want.
-							if (actor.Id != this.Id)
-								continue;
+							////if (actor.Id != this.Id)
+							////	continue;
 
 							if (this.viewModel != null)
 							{
