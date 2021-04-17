@@ -38,6 +38,13 @@ namespace Anamnesis.Services
 			return GposePrompt.WaitForChange(true, message);
 		}
 
+		public bool GetIsGPose()
+		{
+			byte check1 = MemoryService.Read<byte>(AddressService.GposeCheck);
+			byte check2 = MemoryService.Read<byte>(AddressService.GposeCheck2);
+			return check1 == 1 && check2 == 4;
+		}
+
 		public override Task Start()
 		{
 			Task.Run(this.CheckThread);
@@ -48,9 +55,7 @@ namespace Anamnesis.Services
 		{
 			while (this.IsAlive)
 			{
-				byte check1 = MemoryService.Read<byte>(AddressService.GposeCheck);
-				byte check2 = MemoryService.Read<byte>(AddressService.GposeCheck2);
-				bool newGpose = check1 == 1 && check2 == 4;
+				bool newGpose = this.GetIsGPose();
 
 				if (!this.initialized)
 				{

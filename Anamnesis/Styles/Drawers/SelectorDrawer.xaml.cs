@@ -62,6 +62,8 @@ namespace Anamnesis.Styles.Drawers
 
 		public ObservableCollection<object> FilteredItems { get; set; } = new ObservableCollection<object>();
 
+		public bool SearchEnabled { get; set; } = true;
+
 		public IEnumerable<object> Entries
 		{
 			get
