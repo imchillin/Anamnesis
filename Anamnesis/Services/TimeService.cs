@@ -73,9 +73,9 @@ namespace Anamnesis
 
 						this.TimeOfDay = (long)this.Time.TotalMinutes - (long)(this.Time.Days * 24 * 60);
 						this.DayOfMonth = (byte)this.Time.Days;
-
-						this.TimeString = string.Format("{0:D2}:{1:D2}", this.Time.Hours, this.Time.Minutes);
 					}
+
+					this.TimeString = string.Format("{0:D2}:{1:D2}", this.Time.Hours, this.Time.Minutes);
 				}
 				catch (Exception ex)
 				{
