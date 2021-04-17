@@ -82,7 +82,7 @@
 		"Text": "Don't be afraid to use real life model references to make your pose look more organic and natural."
 	},
 	{
-		"Text": "You can use Advanced Load to load hands and facial expression from other poses you've made to save time."
+		"Text": "You can use Advanced Load to load hands and facial expressions from other poses you've made to save time."
 	},
 	{
 		"Text": "If you feel that a pose you made looks off, try replicating it yourself, in real life. You'll realise quite quickly how something should or should not bend if you try it yourself."
@@ -95,5 +95,17 @@
 	},
 	{
 		"Text": "The Gizmo updates in real time, and is based on your camera, so you can easily see what axis you're manipulating at a glance."
+	},
+	{
+		"Text": "When using the Gizmo, if you right-click to lock an axis, you can use the scroll wheel to change the value, and use CTRL/SHIFT to change the speed."
+	},
+	{
+		"Text": "The Anamnesis Wiki has a lot of useful information about using Anamnesis!",
+		"Url": "https://github.com/imchillin/Anamnesis/wiki"
+	},
+	{
+		"Text": "The XIV Tools Discord's Wiki channel has many useful links and guides to help you use Anamnesis!",
+		"Url": https://discord.gg/H65FCeS"
 	}
+	
 ]
