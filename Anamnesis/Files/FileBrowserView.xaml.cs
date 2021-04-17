@@ -50,6 +50,7 @@ namespace Anamnesis.GUI.Views
 			}
 
 			this.SelectButton.Text = mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
+			this.Selector.SearchEnabled = mode == Modes.Load;
 		}
 
 		public FileBrowserView(FileInfoBase[] fileInfos, Modes mode)
@@ -59,6 +60,7 @@ namespace Anamnesis.GUI.Views
 			this.InitializeComponent();
 
 			this.SelectButton.Text = mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
+			this.Selector.SearchEnabled = mode == Modes.Load;
 
 			this.ContentArea.DataContext = this;
 
