@@ -102,7 +102,7 @@ namespace Anamnesis
 			int count = 0;
 			IntPtr startAddress;
 
-			if (GposeService.Instance.IsGpose)
+			if (GposeService.Instance.GetIsGPose())
 			{
 				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
 				startAddress = AddressService.GPoseActorTable + 8;
