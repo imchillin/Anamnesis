@@ -64,7 +64,7 @@
 			</GroupBox.Header>
 
 			<TextBlock TextWrapping="Wrap" Margin="6,0,0,15" Style="{StaticResource Body}">Want to follow development, ask a question, look for help, raise a bug, or just say hi? Visit us on
-				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discord.gg/EenZwsN" FontSize="12">Discord</Hyperlink>, or follow the XIV Tools 
+				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discord.gg/KvGJCCnG8t" FontSize="12">Discord</Hyperlink>, or follow the XIV Tools 
 				<fa:IconBlock Icon="Twitter"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://twitter.com/XIV_Tools" FontSize="12">Twitter</Hyperlink>!</TextBlock>
 		</GroupBox>
 		
