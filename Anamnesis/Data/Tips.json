@@ -32,7 +32,8 @@
 		"Text": "Game updates will likely break the tool. Please be patient when this happens, and we will have a fix out ASAP."
 	},
 	{
-		"Text": "You can use ARR housing NPCs or Carbuncles as extra actors."
+		"Text": "You can use ARR housing NPCs, Carbuncles, and other NPCs as detailed in the wiki as extra actors.",
+		"Url": "https://github.com/imchillin/Anamnesis/wiki"
 	},
 	{
 		"Text": "You can use poses made for other races, but they may require adjustment."
@@ -60,7 +61,7 @@
 		"Text": "You can change the window size in the Settings Panel."
 	},
 	{	
-		"Text": "When it comes to PCs, only Friends or Party Members can be manipulated."
+		"Text": "When it comes to PCs: Friends, Party Members, FC Members and Alliance Raid Members can be manipulated."
 	},
 	{	
 		"Text": "If you ever come across a bug that can be reproduced, please file the issue in our GitHub, ensuring you have provided all the steps on how to reproduce the bug.",
