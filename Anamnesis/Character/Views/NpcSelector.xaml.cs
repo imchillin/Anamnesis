@@ -27,6 +27,7 @@ namespace Anamnesis.Character.Views
 		private static bool includeMonster = true;
 		private static bool includeUnknown = true;
 		private static bool? includeModded = null;
+		private static bool? includeNamed = true;
 
 		public NpcSelector()
 		{
@@ -53,6 +54,7 @@ namespace Anamnesis.Character.Views
 		public bool IncludeMonster { get => includeMonster; set => includeMonster = value; }
 		public bool IncludeUnknown { get => includeUnknown; set => includeUnknown = value; }
 		public bool? IncludeModded { get => includeModded; set => includeModded = value; }
+		public bool? IncludeNamed { get => includeNamed; set => includeNamed = value; }
 
 		public INpcResident? Value
 		{
@@ -120,6 +122,12 @@ namespace Anamnesis.Character.Views
 					return false;
 
 				if (this.IncludeModded == false && npc.Mod != null)
+					return false;
+
+				if (this.IncludeNamed == true && string.IsNullOrEmpty(npc.Name))
+					return false;
+
+				if (this.IncludeNamed == false && !string.IsNullOrEmpty(npc.Name))
 					return false;
 
 				bool matches = false;
