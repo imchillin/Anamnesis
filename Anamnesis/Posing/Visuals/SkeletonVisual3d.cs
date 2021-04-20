@@ -468,6 +468,7 @@ namespace Anamnesis.PoseModule
 					this.File.ModelTypes = new List<int>();
 					this.File.ModelTypes.Add(this.Actor.ModelType);
 					this.File.Race = this.Actor.Customize?.Race;
+					this.File.Age = this.Actor.Customize?.Age;
 				}
 
 				this.File.IsGeneratedParenting = true;
