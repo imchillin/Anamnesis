@@ -20,7 +20,7 @@ Download the latest build from [the releases page](https://github.com/imchillin/
 
 ### Usage
 
-Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesis/wiki) for guides and tutorials. If you have any questions that weren’t answered there, join us on [Discord](https://discord.gg/EenZwsN) and ask for help there.
+Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesis/wiki) for guides and tutorials. If you have any questions that weren’t answered there, join us on [Discord](https://discord.gg/KvGJCCnG8t) and ask for help there.
 
 ## Authors
 
