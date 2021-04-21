@@ -49,10 +49,10 @@
 		<CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding SettingsService.Settings.UseCustomBorder}" Margin="6"/>
 
 		<ana:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
-		<ana:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="3" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
+		<ana:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="3" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
 
 		<ana:TextBlock Grid.Column="0" Grid.Row="4" Key="Settings_StayTransparent" Style="{StaticResource Label}"/>
-		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="4"/>
+		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="4" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
 
 		<ana:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
 		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="5" Margin="6"/>

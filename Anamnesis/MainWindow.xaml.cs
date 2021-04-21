@@ -85,6 +85,9 @@ namespace Anamnesis.GUI
 				}
 			}
 
+			if (!SettingsService.Current.UseCustomBorder || !SettingsService.Current.StayTransparent)
+				this.Opacity = 1.0;
+
 			this.ContentArea.Margin = new Thickness(SettingsService.Current.UseCustomBorder ? 10 : 0);
 
 			if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
@@ -225,7 +228,8 @@ namespace Anamnesis.GUI
 			if (SettingsService.Current.StayTransparent)
 				return;
 
-			this.Animate(Window.OpacityProperty, 1.0, 100);
+			this.Opacity = 1.0;
+			////this.Animate(Window.OpacityProperty, 1.0, 100);
 		}
 
 		private void Window_MouseLeave(object sender, MouseEventArgs e)
@@ -233,7 +237,8 @@ namespace Anamnesis.GUI
 			if (SettingsService.Current.Opacity == 1.0)
 				return;
 
-			this.Animate(Window.OpacityProperty, SettingsService.Current.Opacity, 250);
+			////this.Animate(Window.OpacityProperty, SettingsService.Current.Opacity, 250);
+			this.Opacity = SettingsService.Current.Opacity;
 		}
 
 		private void OnResizeDrag(object sender, DragDeltaEventArgs e)
