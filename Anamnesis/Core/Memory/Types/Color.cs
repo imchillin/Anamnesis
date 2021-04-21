@@ -5,6 +5,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Globalization;
 
 	public struct Color : IEquatable<Color>
 	{
@@ -40,15 +41,17 @@ namespace Anamnesis.Memory
 				throw new FormatException();
 
 			Color v = default;
-			v.R = float.Parse(parts[0]);
-			v.G = float.Parse(parts[1]);
-			v.B = float.Parse(parts[2]);
+			v.R = float.Parse(parts[0], CultureInfo.InvariantCulture);
+			v.G = float.Parse(parts[1], CultureInfo.InvariantCulture);
+			v.B = float.Parse(parts[2], CultureInfo.InvariantCulture);
 			return v;
 		}
 
 		public override string ToString()
 		{
-			return this.R + ", " + this.G + ", " + this.B;
+			return this.R.ToString(CultureInfo.InvariantCulture) + ", "
+				+ this.G.ToString(CultureInfo.InvariantCulture) + ", "
+				+ this.B.ToString(CultureInfo.InvariantCulture);
 		}
 
 		public override bool Equals(object? obj)

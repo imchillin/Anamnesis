@@ -5,6 +5,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Globalization;
 
 	public struct Color4 : IEquatable<Color4>
 	{
@@ -69,16 +70,19 @@ namespace Anamnesis.Memory
 				throw new FormatException();
 
 			Color4 v = default;
-			v.R = float.Parse(parts[0]);
-			v.G = float.Parse(parts[1]);
-			v.B = float.Parse(parts[2]);
-			v.A = float.Parse(parts[3]);
+			v.R = float.Parse(parts[0], CultureInfo.InvariantCulture);
+			v.G = float.Parse(parts[1], CultureInfo.InvariantCulture);
+			v.B = float.Parse(parts[2], CultureInfo.InvariantCulture);
+			v.A = float.Parse(parts[3], CultureInfo.InvariantCulture);
 			return v;
 		}
 
 		public override string ToString()
 		{
-			return this.R + ", " + this.G + ", " + this.B + ", " + this.A;
+			return this.R.ToString(CultureInfo.InvariantCulture) + ", "
+				+ this.G.ToString(CultureInfo.InvariantCulture) + ", "
+				+ this.B.ToString(CultureInfo.InvariantCulture) + ", "
+				+ this.A.ToString(CultureInfo.InvariantCulture);
 		}
 
 		public override bool Equals(object? obj)

@@ -5,6 +5,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Globalization;
 
 	public struct Vector2D
 	{
@@ -58,8 +59,8 @@ namespace Anamnesis.Memory
 				throw new FormatException();
 
 			Vector2D v = default;
-			v.X = float.Parse(parts[0]);
-			v.Y = float.Parse(parts[1]);
+			v.X = float.Parse(parts[0], CultureInfo.InvariantCulture);
+			v.Y = float.Parse(parts[1], CultureInfo.InvariantCulture);
 			return v;
 		}
 
@@ -81,7 +82,7 @@ namespace Anamnesis.Memory
 
 		public override string ToString()
 		{
-			return this.X + ", " + this.Y;
+			return this.X.ToString(CultureInfo.InvariantCulture) + ", " + this.Y.ToString(CultureInfo.InvariantCulture);
 		}
 	}
 }
