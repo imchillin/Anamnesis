@@ -42,6 +42,11 @@ namespace Anamnesis.Updater
 			Version = DateTimeOffset.Parse(parts[0].Trim()).ToUniversalTime();
 			SupportedGameVersion = parts[1].Trim();
 
+			// Debug builds should not attempt to update
+#if DEBUG
+			Version = DateTimeOffset.UtcNow;
+#endif
+
 			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
 			if (elapsed.TotalHours < 6)
