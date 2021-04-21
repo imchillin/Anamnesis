@@ -117,7 +117,7 @@ namespace Anamnesis
 
 			if (!File.Exists(currentDir + "/Anamnesis.exe"))
 			{
-				string? currentPath = Assembly.GetEntryAssembly()?.Location;
+				string? currentPath = AppContext.BaseDirectory;
 
 				if (string.IsNullOrEmpty(currentPath))
 					throw new Exception($"Failed to get current path");
