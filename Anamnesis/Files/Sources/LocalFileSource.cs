@@ -9,7 +9,7 @@ namespace Anamnesis.Files
 	using System.Threading.Tasks;
 	using Anamnesis.Files.Infos;
 	using Microsoft.VisualBasic.FileIO;
-
+	using Serilog;
 	using Directories = System.IO.Directory;
 	using Files = System.IO.File;
 	using Paths = System.IO.Path;
@@ -108,8 +108,9 @@ namespace Anamnesis.Files
 						file.Metadata = info.GetMetadata(file);
 						results.Add(file);
 					}
-					catch (Exception)
+					catch (Exception ex)
 					{
+						Log.Error(ex, "Failed to get file information");
 					}
 				}
 			}
