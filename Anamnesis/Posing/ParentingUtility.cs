@@ -54,6 +54,8 @@ namespace Anamnesis.Posing
 
 		private static async Task ParentBone(SkeletonVisual3d root, IEnumerable<BoneVisual3d> bones, BoneVisual3d bone)
 		{
+			// Must wait for ffxiv to update at least one frame
+			await Task.Delay(75);
 			await Dispatch.MainThread();
 
 			// Get the positions of all bones
@@ -69,7 +71,9 @@ namespace Anamnesis.Posing
 			bone.Rotation *= Quaternion.FromEuler(new Vector(0, 90, 0));
 			bone.WriteTransform(root, false);
 			bone.ViewModel.WriteToMemory(true);
-			await Task.Delay(32);
+
+			// Must wait for ffxiv to update at least one frame
+			await Task.Delay(75);
 			await Dispatch.MainThread();
 
 			// See if any bones moved as a result of the test bone rotation
@@ -113,8 +117,6 @@ namespace Anamnesis.Posing
 					otherBone.WriteTransform(root, false);
 				}
 			}
-
-			await Task.Delay(32);
 		}
 	}
 }
