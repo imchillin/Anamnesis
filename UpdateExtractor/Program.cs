@@ -49,24 +49,21 @@ namespace UpdateExtractor
 				if (string.IsNullOrEmpty(destDir))
 					throw new Exception("Unable to determine destination directory");
 
-				Console.WriteLine("Cleaning old version");
-				string[] files = Directory.GetFiles(destDir, "*.*", SearchOption.TopDirectoryOnly);
-				foreach (string file in files)
-				{
-					Console.WriteLine("    X " + file);
-					File.Delete(file);
-				}
+				if (!File.Exists(destDir + "Anamnesis.exe"))
+					throw new Exception($"No Anamnesis executable found in destination directory: {destDir}");
 
-				files = Directory.GetDirectories(destDir, "*", SearchOption.TopDirectoryOnly);
-				foreach (string file in files)
-				{
-					Console.WriteLine("    X " + file);
-					Directory.Delete(file, true);
-				}
+				Console.WriteLine("Cleaning old version");
+				DeleteFileIfExists(destDir + "Anamnesis.exe");
+				DeleteFileIfExists(destDir + "Anamnesis.pdb");
+				DeleteFileIfExists(destDir + "Anamnesis.xml");
+				DeleteFileIfExists(destDir + "Version.txt");
+
+				DeleteDirectoryIfExists(destDir + "Data");
+				DeleteDirectoryIfExists(destDir + "Languages");
 
 				Console.WriteLine("Copying Update Files");
 
-				files = Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories);
+				string[] files = Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories);
 				foreach (string sourceFile in files)
 				{
 					string destFile = sourceFile.Replace(sourceDir, destDir);
@@ -95,6 +92,22 @@ namespace UpdateExtractor
 				Console.WriteLine("Press any key to close this window.");
 				Console.ReadLine();
 			}
+		}
+
+		private static void DeleteFileIfExists(string path)
+		{
+			if (!File.Exists(path))
+				return;
+
+			File.Delete(path);
+		}
+
+		private static void DeleteDirectoryIfExists(string path)
+		{
+			if (!Directory.Exists(path))
+				return;
+
+			Directory.Delete(path, true);
 		}
 	}
 }
