@@ -54,6 +54,12 @@ namespace Anamnesis
 			_ = Task.Run(this.Tick);
 		}
 
+		public override Task Shutdown()
+		{
+			this.DelimitCamera = false;
+			return base.Shutdown();
+		}
+
 		private async Task Tick()
 		{
 			while (this.IsAlive)
