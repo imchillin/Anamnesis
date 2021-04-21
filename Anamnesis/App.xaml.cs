@@ -89,6 +89,7 @@ namespace Anamnesis
 
 			try
 			{
+				this.CheckWorkingDirectory();
 				this.CheckForProcesses();
 
 				await Services.InitializeServices();
@@ -108,6 +109,31 @@ namespace Anamnesis
 
 			sw.Stop();
 			Log.Information($"Started application in {sw.ElapsedMilliseconds}ms");
+		}
+
+		private void CheckWorkingDirectory()
+		{
+			string currentDir = Directory.GetCurrentDirectory();
+
+			if (!File.Exists(currentDir + "/Anamnesis.exe"))
+			{
+				string? currentPath = Assembly.GetEntryAssembly()?.Location;
+
+				if (string.IsNullOrEmpty(currentPath))
+					throw new Exception($"Failed to get current path");
+
+				string? newDir = Path.GetDirectoryName(currentPath);
+
+				if (string.IsNullOrEmpty(newDir))
+					throw new Exception($"Failed to get current directory");
+
+				currentDir = Path.GetFullPath(newDir);
+
+				if (!File.Exists(currentDir + "/Anamnesis.exe"))
+					throw new Exception($"Incorrect new working directory: {currentDir}");
+
+				Directory.SetCurrentDirectory(currentDir);
+			}
 		}
 
 		private void CheckForProcesses()
