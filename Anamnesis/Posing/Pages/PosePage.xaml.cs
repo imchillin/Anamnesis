@@ -11,12 +11,18 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
+	using System.Windows.Media.Media3D;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule.Extensions;
 	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
+
+	using CmQuaternion = Anamnesis.Memory.Quaternion;
+	using Quaternion = System.Windows.Media.Media3D.Quaternion;
+	using QuaternionExtensions = Anamnesis.PoseModule.QuaternionExtensions;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
@@ -45,6 +51,31 @@ namespace Anamnesis.PoseModule.Pages
 
 		public SkeletonVisual3d? Skeleton { get; private set; }
 		public PoseFile.Configuration FileConfiguration => FileConfig;
+
+		private static void MirrorBone(BoneVisual3d? targetBone)
+		{
+			if (targetBone != null)
+			{
+				targetBone.ReadTransform();
+				CmQuaternion newRotation = targetBone.Rotation;
+				CmQuaternion newRootRotation = ((MatrixTransform3D)targetBone.TransformToAncestor(targetBone)).Matrix.ToQuaternion().ToCmQuaternion();
+				newRotation = QuaternionExtensions.MirrorQuaternion(newRotation, newRootRotation);
+				//newRootRotation = QuaternionExtensions.MirrorQuaternion(newRootRotation);
+				//newRotation = newRotation * newRootRotation;
+				targetBone.Rotation = newRotation;
+				//foreach (Visual3D? child in targetBone.Children)
+				//{
+				//	if (child is BoneVisual3d childBone)
+				//	{
+				//			MirrorBone(childBone);
+				//	}
+				//}
+			}
+			else
+			{
+				return;
+			}
+		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -185,6 +216,29 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			this.Skeleton.Select(bones, SkeletonVisual3d.SelectMode.Add);
+		}
+
+		private void OnMirrorClicked(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (this.Skeleton == null)
+			{
+				return;
+			}
+			else
+			{// for now assume parenting on (can worry about non-parenting use case later)
+			 // if no bone selected, mirror both lumbar and waist bones
+				if (this.Skeleton.SelectedCount <= 0)
+				{
+					MirrorBone(this.Skeleton.GetBone("Waist"));
+					MirrorBone(this.Skeleton.GetBone("SpineA"));
+					return;
+				}
+				else
+				{
+					MirrorBone(this.Skeleton.CurrentBone);
+					return;
+				}
+			}
 		}
 
 		private void OnCanvasMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
