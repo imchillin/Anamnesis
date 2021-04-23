@@ -57,9 +57,16 @@ namespace Anamnesis.PoseModule.Pages
 			if (targetBone != null)
 			{
 				targetBone.ReadTransform();
-				CmQuaternion newRotation = targetBone.Rotation;
-				CmQuaternion newRootRotation = ((MatrixTransform3D)targetBone.TransformToAncestor(targetBone)).Matrix.ToQuaternion().ToCmQuaternion();
-				newRotation = QuaternionExtensions.MirrorQuaternion(newRotation, newRootRotation);
+				CmQuaternion newRotation = targetBone.ViewModel.Rotation; //character-relative transform?
+				CmQuaternion newRootRotation = targetBone.RootRotation;
+				newRotation = QuaternionExtensions.MirrorQuaternion(newRotation);
+				if (targetBone.Parent != null)
+                {
+					CmQuaternion parentRot = new CmQuaternion(targetBone.Parent.ViewModel.Rotation);
+					parentRot.Invert();
+					newRotation = parentRot * newRotation;
+                }
+				//newRotation = QuaternionExtensions.MirrorQuaternion(newRotation, newRootRotation);
 				//newRootRotation = QuaternionExtensions.MirrorQuaternion(newRootRotation);
 				//newRotation = newRotation * newRootRotation;
 				targetBone.Rotation = newRotation;

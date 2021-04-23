@@ -41,20 +41,12 @@ namespace Anamnesis.PoseModule
 			self.W = other.W;
 		}
 
-		public static CmQuaternion MirrorQuaternion(this CmQuaternion self, CmQuaternion rootRot)
+		public static CmQuaternion MirrorQuaternion(this CmQuaternion self)
 		{
 			Log.Debug("Pre-Mirrored Value: (" + self.X + ", " + self.Y + ", " + self.Z + ", " + self.W + ")");
-			Anamnesis.Memory.Vector euler = self.ToEuler();
-			Log.Debug("Pre-Mirrored Euler: (" + euler.X + ", " + euler.Y + ", " + euler.Z + ")");
-			euler.Z = 180 - euler.Z;
-			euler.Y = -euler.Y;
-			//return new CmQuaternion(euler.ToMedia3DVector().ToQuaternion().ToCmQuaternion());
-			//rootRot.Invert();
-			//self *= rootRot;
-			self = new CmQuaternion(self.Y, self.X, self.Z, self.W);
-			//self.Invert();
+			self = new CmQuaternion(self.Z, self.W, self.X, self.Y);
 
-			return self*(Quaternion.Identity.ToCmQuaternion());
+			return self;
 		}
 	}
 }
