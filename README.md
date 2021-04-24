@@ -31,6 +31,7 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 ## Translations
 * **[Maxunit](https://github.com/Maxunit)** - *German* 
 * **[Arianishka](https://github.com/Arianishka)** - *French*
+* **[wozaiha](https://github.com/wozaiha)** - *Chinese*
 
 ## License
 
