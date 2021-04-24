@@ -57,14 +57,17 @@ namespace Anamnesis.Services
 				this.FirstTimeUser = false;
 				try
 				{
+					await Dispatch.MainThread();
+
 					if (Keyboard.IsKeyDown(Key.LeftShift))
 						throw new Exception("User Abort");
 
 					string json = File.ReadAllText(settingsPath);
 					this.Settings = SerializerService.Deserialize<Settings>(json);
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
+					Log.Warning(ex, "Failed to load settings");
 					await GenericDialog.Show("Failed to load Settings. Your settings have been reset.", "Error", MessageBoxButton.OK);
 					this.Settings = new Settings();
 					Save();
