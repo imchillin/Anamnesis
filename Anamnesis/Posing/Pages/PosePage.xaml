@@ -122,6 +122,7 @@
 							<controls:TransformEditor
 								Grid.Row="2"
 								Grid.ColumnSpan="2"
+								IsEnabled="{Binding Skeleton.CanEditBone}"
 								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"
 								Value="{Binding Skeleton.CurrentBone}" />
 
