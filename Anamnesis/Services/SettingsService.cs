@@ -10,6 +10,7 @@ namespace Anamnesis.Services
 	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Input;
 	using Anamnesis;
 	using Anamnesis.Files;
 	using Anamnesis.GUI.Dialogs;
@@ -56,6 +57,9 @@ namespace Anamnesis.Services
 				this.FirstTimeUser = false;
 				try
 				{
+					if (Keyboard.IsKeyDown(Key.LeftShift))
+						throw new Exception("User Abort");
+
 					string json = File.ReadAllText(settingsPath);
 					this.Settings = SerializerService.Deserialize<Settings>(json);
 				}
