@@ -60,6 +60,7 @@ namespace UpdateExtractor
 
 				DeleteDirectoryIfExists(destDir + "Data");
 				DeleteDirectoryIfExists(destDir + "Languages");
+				DeleteDirectoryIfExists(destDir + "Updater");
 
 				Console.WriteLine("Copying Update Files");
 
