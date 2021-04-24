@@ -149,6 +149,15 @@ namespace Anamnesis.GUI.Views
 					this.FileName = this.selected?.Name ?? string.Empty;
 				}
 
+				if (this.selected != null && this.selected.Entry is IDirectory)
+				{
+					this.SelectButton.Text = LocalizationService.GetString("Common_OpenDir");
+				}
+				else
+				{
+					this.SelectButton.Text = this.mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
+				}
+
 				// show the options panel for the selected file type
 				if (this.selected != null && this.selected.Entry is IFile file)
 				{
@@ -464,6 +473,12 @@ namespace Anamnesis.GUI.Views
 						return;
 					}
 				}
+			}
+
+			if (this.Selected != null && this.Selected.Entry is IDirectory dir)
+			{
+				this.CurrentDir = dir;
+				return;
 			}
 
 			this.CloseDrawer();
