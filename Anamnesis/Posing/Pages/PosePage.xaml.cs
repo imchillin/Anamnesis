@@ -34,6 +34,8 @@ namespace Anamnesis.PoseModule.Pages
 
 		private static ILogger Log => Serilog.Log.ForContext<PosePage>();
 
+		private static bool isMirroring = false;
+
 		public static PoseFile.Configuration FileConfig = new PoseFile.Configuration();
 
 		private bool isLeftMouseButtonDownOnWindow;
@@ -51,6 +53,17 @@ namespace Anamnesis.PoseModule.Pages
 		public PoseService PoseService { get => PoseService.Instance; }
 		public TargetService TargetService { get => TargetService.Instance; }
 
+		public bool IsMirroring
+		{
+			get
+			{
+				return isMirroring;
+			}
+			set
+			{
+				isMirroring = value;
+			}
+		}
 		public SkeletonVisual3d? Skeleton { get; private set; }
 		public PoseFile.Configuration FileConfiguration => FileConfig;
 		
@@ -65,12 +78,12 @@ namespace Anamnesis.PoseModule.Pages
 		 *			- store the quat on the target bone
 		 *	- recursively mirror on all child bones
 		 */
-		private void MirrorBone(BoneVisual3d? targetBone)
+		private void MirrorBone(BoneVisual3d? targetBone, bool shouldFlip = true)
 		{
 			if (targetBone != null)
 			{
-				CmQuaternion newRotation = QuaternionExtensions.MirrorQuaternion(targetBone.ViewModel.Rotation); //character-relative transform?
-				if (targetBone.BoneName.EndsWith("Left"))
+				CmQuaternion newRotation = QuaternionExtensions.MirrorQuaternion(targetBone.ViewModel.Rotation); //character-relative transform
+				if (shouldFlip && targetBone.BoneName.EndsWith("Left"))
                 {
 					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(targetBone.BoneName.Replace("Left", "Right"));
 					if(rightBone != null)
@@ -81,10 +94,10 @@ namespace Anamnesis.PoseModule.Pages
                     }
 					else
                     {
-						Log.Error("could not find right bone of: " + targetBone.BoneName);
+						Log.Debug("could not find right bone of: " + targetBone.BoneName);
                     }
                 }
-				else if (targetBone.BoneName.EndsWith("Right"))
+				else if (shouldFlip && targetBone.BoneName.EndsWith("Right"))
                 {
 					//do nothing so it doesn't revert...
                 }
@@ -92,12 +105,16 @@ namespace Anamnesis.PoseModule.Pages
                 {
 					targetBone.ViewModel.Rotation = newRotation;
                 }
-				foreach (Visual3D? child in targetBone.Children)
+
+				if (PoseService.Instance.EnableParenting)
                 {
-					if (child is BoneVisual3d childBone)
-                    {
-						MirrorBone(childBone);
-                    }
+					foreach (Visual3D? child in targetBone.Children)
+					{
+						if (child is BoneVisual3d childBone)
+						{
+							MirrorBone(childBone, shouldFlip);
+						}
+					}
                 }
 			}
 		}
@@ -245,13 +262,9 @@ namespace Anamnesis.PoseModule.Pages
 
 		private void OnMirrorClicked(object sender, System.Windows.RoutedEventArgs e)
 		{
-			if (this.Skeleton == null)
-			{
-				return;
-			}
-			else
-			{// for now assume parenting on (can worry about non-parenting use case later)
-			 // if no bone selected, mirror both lumbar and waist bones
+			if (this.Skeleton != null && !this.IsMirroring)
+			{// if no bone selected, mirror both lumbar and waist bones
+				this.IsMirroring = true;
 				if (this.Skeleton.CurrentBone == null)
 				{
 					BoneVisual3d? waistBone = this.Skeleton.GetBone("Waist");
@@ -262,10 +275,19 @@ namespace Anamnesis.PoseModule.Pages
 					lumbarBone?.ReadTransform(true);
 				}
 				else
-				{
-					MirrorBone(this.Skeleton.CurrentBone);
-					this.Skeleton.CurrentBone.ReadTransform(true);
+				{// if targeted bone is a limb don't switch the respective left and right sides
+					BoneVisual3d targetBone = this.Skeleton.CurrentBone;
+					if (targetBone.BoneName.EndsWith("Left") || targetBone.BoneName.EndsWith("Right"))
+                    {
+						MirrorBone(targetBone, false);
+                    }
+					else
+                    {
+						MirrorBone(targetBone);
+                    }
+					targetBone.ReadTransform(true);
 				}
+				this.IsMirroring = false;
 			}
 		}
 

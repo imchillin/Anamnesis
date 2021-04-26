@@ -43,7 +43,7 @@ namespace Anamnesis.PoseModule
 
 		public static CmQuaternion MirrorQuaternion(this CmQuaternion self)
 		{
-			Log.Debug("Pre-Mirrored Value: (" + self.X + ", " + self.Y + ", " + self.Z + ", " + self.W + ")");
+			//Log.Debug("Pre-Mirrored Value: (" + self.X + ", " + self.Y + ", " + self.Z + ", " + self.W + ")");
 			self = new CmQuaternion(self.Z, self.W, self.X, self.Y);
 
 			return self;
