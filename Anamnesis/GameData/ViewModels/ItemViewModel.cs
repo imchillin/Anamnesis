@@ -6,6 +6,7 @@ namespace Anamnesis.GameData.ViewModels
 {
 	using System;
 	using System.Windows.Media;
+	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
 	using Lumina.Excel;
@@ -23,13 +24,15 @@ namespace Anamnesis.GameData.ViewModels
 
 		private ClassJobCategory classJob;
 
-		public ItemViewModel(int key, ExcelSheet<Item> sheet, Lumina lumina)
+		public ItemViewModel(int key, ExcelSheet<Item> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			this.classJob = this.Value.ClassJobCategory.Value;
 
 			LuminaExtensions.GetModel(this.Value.ModelMain, this.IsWeapon, out this.modelSet, out this.modelBase, out this.modelVariant);
 			LuminaExtensions.GetModel(this.Value.ModelSub, this.IsWeapon, out this.subModelSet, out this.subModelBase, out this.subModelVariant);
+
+			this.Mod = TexToolsService.GetMod(this);
 		}
 
 		public override string Name => this.Value.Name;
@@ -46,7 +49,13 @@ namespace Anamnesis.GameData.ViewModels
 
 		public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
 
-		public Mod? Mod => TexToolsService.GetMod(this);
+		public Mod? Mod { get; private set; }
+
+		public bool IsFavorite
+		{
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
+		}
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

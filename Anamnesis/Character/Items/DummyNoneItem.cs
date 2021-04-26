@@ -26,6 +26,12 @@ namespace Anamnesis.Character.Items
 		public Classes EquipableClasses => Classes.All;
 		public Mod? Mod => null;
 
+		public bool IsFavorite
+		{
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
+		}
+
 		public bool FitsInSlot(ItemSlots slot)
 		{
 			return true;

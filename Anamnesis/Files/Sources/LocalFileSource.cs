@@ -9,7 +9,7 @@ namespace Anamnesis.Files
 	using System.Threading.Tasks;
 	using Anamnesis.Files.Infos;
 	using Microsoft.VisualBasic.FileIO;
-
+	using Serilog;
 	using Directories = System.IO.Directory;
 	using Files = System.IO.File;
 	using Paths = System.IO.Path;
@@ -104,10 +104,13 @@ namespace Anamnesis.Files
 
 						FileInfoBase info = FileService.GetFileInfo(extension);
 
-						results.Add(new File(filePath, info, this));
+						File file = new File(filePath, info, this);
+						file.Metadata = info.GetMetadata(file);
+						results.Add(file);
 					}
-					catch (Exception)
+					catch (Exception ex)
 					{
+						Log.Error(ex, "Failed to get file information");
 					}
 				}
 			}
@@ -130,6 +133,7 @@ namespace Anamnesis.Files
 			public FileInfoBase? Type { get; private set; }
 			public IFileSource Source { get; private set; }
 			public bool Exists => Files.Exists(this.Path);
+			public string? Metadata { get; set; }
 
 			public Task Delete()
 			{
@@ -161,10 +165,20 @@ namespace Anamnesis.Files
 			public string Path { get; private set; }
 			public IFileSource Source { get; private set; }
 			public bool Exists => Directories.Exists(this.Path);
+			public string? Metadata { get; set; }
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{
-				string newPath = this.Path + "/" + "New Directory";
+				string basePath = this.Path + "New Directory";
+				string newPath = basePath;
+
+				int i = 1;
+				while (Directories.Exists(newPath))
+				{
+					newPath = $"{basePath} ({i})";
+					i++;
+				}
+
 				Directories.CreateDirectory(newPath);
 				return new Directory(newPath, (LocalFileSource)this.Source);
 			}
@@ -179,6 +193,10 @@ namespace Anamnesis.Files
 			public Task Rename(string newName)
 			{
 				string newPath = Paths.GetDirectoryName(this.Path) + "\\" + newName;
+
+				if (this.Path == newPath)
+					return Task.CompletedTask;
+
 				Directories.Move(this.Path, newPath);
 				this.Path = newPath;
 				return Task.CompletedTask;

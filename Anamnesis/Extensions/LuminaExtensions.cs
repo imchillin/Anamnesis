@@ -14,7 +14,7 @@ namespace Lumina
 	using global::Lumina.Data.Files;
 	using global::Lumina.Excel.GeneratedSheets;
 	using global::Lumina.Extensions;
-	using LuminaData = global::Lumina.Lumina;
+	using LuminaData = global::Lumina.GameData;
 
 	public static class LuminaExtensions
 	{
@@ -81,12 +81,12 @@ namespace Lumina
 		public static bool Contains(this ClassJobCategory self, Classes classJob)
 		{
 			string abr = classJob.GetAbbreviation();
-			FieldInfo? field = self.GetType().GetField(abr, BindingFlags.Public | BindingFlags.Instance);
+			PropertyInfo? property = self.GetType().GetProperty(abr, BindingFlags.Public | BindingFlags.Instance);
 
-			if (field == null)
+			if (property == null)
 				throw new Exception($"Unable to find ClassJob: {abr}");
 
-			object? val = field.GetValue(self);
+			object? val = property.GetValue(self);
 
 			if (val == null)
 				throw new Exception($"Unable to find ClassJob Value: {abr}");

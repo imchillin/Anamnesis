@@ -6,6 +6,8 @@ namespace Anamnesis.Views
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Net;
+	using System.Net.Http;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -13,6 +15,7 @@ namespace Anamnesis.Views
 	using System.Windows.Media.Animation;
 	using Anamnesis.Serialization;
 	using PropertyChanged;
+	using Serilog;
 
 	/// <summary>
 	/// Interaction logic for Gallery.xaml.
@@ -20,8 +23,11 @@ namespace Anamnesis.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class Gallery : UserControl
 	{
+		private const int ImageDelay = 5000;
+
 		private bool isImage1 = true;
 		private bool isRunning = false;
+		private bool skip = false;
 
 		public Gallery()
 		{
@@ -50,16 +56,26 @@ namespace Anamnesis.Views
 			this.isRunning = true;
 			Random rnd = new Random();
 
+			this.skip = true;
+
 			while (this.IsVisible)
 			{
 				List<Entry> entries = SerializerService.DeserializeFile<List<Entry>>("Data/Images.json");
 
 				while (this.IsVisible && entries.Count > 0)
 				{
+					int delay = 0;
+					while (!this.skip && delay < ImageDelay)
+					{
+						delay += 100;
+						await Task.Delay(100);
+					}
+
 					int index = rnd.Next(entries.Count);
 					await this.Show(entries[index], rnd);
 					entries.RemoveAt(index);
-					await Task.Delay(5000);
+
+					this.skip = false;
 				}
 			}
 
@@ -69,6 +85,31 @@ namespace Anamnesis.Views
 		private async Task Show(Entry entry, Random rnd)
 		{
 			if (entry.Url == null || entry.Author == null)
+				return;
+
+			bool valid = true;
+
+			try
+			{
+				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(entry.Url);
+				request.Method = "HEAD";
+				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+				if (response.StatusCode != HttpStatusCode.OK)
+				{
+					Log.Information($"Failed to get image from url: {entry.Url}: {response.StatusCode}");
+					valid = false;
+				}
+
+				response.Close();
+			}
+			catch (Exception ex)
+			{
+				Log.Information($"Failed to get image from url: {entry.Url}: {ex.Message}");
+				valid = false;
+			}
+
+			if (!valid)
 				return;
 
 			await Dispatch.MainThread();
@@ -111,10 +152,17 @@ namespace Anamnesis.Views
 			if (sb == null)
 				throw new System.Exception("Missing gallery storyboard");
 
+			sb.SpeedRatio = this.skip ? 10 : 1;
 			sb.Begin();
-			await Task.Delay(2000);
+
+			await Task.Delay(this.skip ? 200 : 2000);
 
 			oldHost.Opacity = 0.0;
+		}
+
+		private void OnMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			this.skip = true;
 		}
 
 		public class Entry

@@ -182,12 +182,23 @@ namespace Anamnesis.GUI.Windows
 
 		private void OnQuitClick(object sender, RoutedEventArgs e)
 		{
-			this.window?.Close();
+			try
+			{
+				this.window?.Close();
 
-			PoseService.Instance.SetEnabled(false);
+				if (PoseService.Exists)
+					PoseService.Instance.SetEnabled(false);
 
-			Process p = Process.GetCurrentProcess();
-			p.Kill();
+				Application.Current.Shutdown(2);
+			}
+			catch (Exception)
+			{
+			}
+			finally
+			{
+				Process p = Process.GetCurrentProcess();
+				p.Kill();
+			}
 		}
 
 		private void OnOkClick(object sender, RoutedEventArgs e)

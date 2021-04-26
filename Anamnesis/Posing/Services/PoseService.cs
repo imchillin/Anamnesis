@@ -19,6 +19,7 @@ namespace Anamnesis.PoseModule
 	public class PoseService : ServiceBase<PoseService>
 	{
 		public static List<SkeletonFile> BoneNameFiles = new List<SkeletonFile>();
+		private static Dictionary<ActorViewModel, SkeletonVisual3d> actorSkeletons = new Dictionary<ActorViewModel, SkeletonVisual3d>();
 
 		private NopHookViewModel? freezeRot1;
 		private NopHookViewModel? freezeRot2;
@@ -136,6 +137,30 @@ namespace Anamnesis.PoseModule
 			BoneNameFiles.Add(skeleton);
 		}
 
+		public static async Task<SkeletonVisual3d> GetVisual(ActorViewModel actor)
+		{
+			SkeletonVisual3d skeleton;
+
+			if (actorSkeletons.ContainsKey(actor))
+			{
+				skeleton = actorSkeletons[actor];
+				skeleton.Clear();
+				actorSkeletons.Remove(actor);
+			}
+
+			// TODO: Why does a new skeleton work, but clearing an old one gives us "not a child of the specified visual" when writing?
+			////else
+			{
+				skeleton = new SkeletonVisual3d(actor);
+				actorSkeletons.Add(actor, skeleton);
+			}
+
+			skeleton.Clear();
+			await skeleton.GenerateBones();
+
+			return skeleton;
+		}
+
 		public override async Task Initialize()
 		{
 			await base.Initialize();
@@ -156,8 +181,7 @@ namespace Anamnesis.PoseModule
 			string[] templates = Directory.GetFiles("Data/Skeletons/", "*.json");
 			foreach (string templatePath in templates)
 			{
-				SkeletonFile template = SerializerService.DeserializeFile<SkeletonFile>(templatePath);
-				this.Load(template);
+				this.Load(templatePath);
 			}
 		}
 
@@ -194,16 +218,32 @@ namespace Anamnesis.PoseModule
 			this.SetEnabled(false);
 		}
 
-		private void Load(SkeletonFile template)
+		private SkeletonFile Load(string path)
 		{
+			SkeletonFile template = SerializerService.DeserializeFile<SkeletonFile>(path);
 			BoneNameFiles.Add(template);
 
 			if (template.BasedOn != null)
 			{
-				SkeletonFile baseTemplate = SerializerService.DeserializeFile<SkeletonFile>("Data/Skeletons/" + template.BasedOn);
-				this.Load(baseTemplate);
+				SkeletonFile baseTemplate = this.Load("Data/Skeletons/" + template.BasedOn);
 				template.CopyBaseValues(baseTemplate);
 			}
+
+			// Validate that all bone names are unique
+			if (template.BoneNames != null)
+			{
+				HashSet<string> boneNames = new HashSet<string>();
+
+				foreach ((string orignal, string name) in template.BoneNames)
+				{
+					if (boneNames.Contains(name))
+						throw new Exception($"Duplicate bone name: {name} in skeleton file: {path}");
+
+					boneNames.Add(name);
+				}
+			}
+
+			return template;
 		}
 	}
 }

@@ -26,6 +26,12 @@ namespace Anamnesis.Character.Items
 		public Classes EquipableClasses => Classes.All;
 		public Mod? Mod => TexToolsService.GetMod(this.Name);
 
+		public bool IsFavorite
+		{
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
+		}
+
 		public bool FitsInSlot(ItemSlots slot)
 		{
 			return slot == ItemSlots.Body || slot == ItemSlots.Feet || slot == ItemSlots.Hands || slot == ItemSlots.Legs;

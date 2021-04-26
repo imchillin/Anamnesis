@@ -7,6 +7,7 @@
 			 xmlns:materialDesignColors="clr-namespace:MaterialDesignColors;assembly=MaterialDesignColors"
 			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
 			 Width="290"
 			 d:DesignHeight="450">
@@ -30,7 +31,9 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<ana:TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="0" Key="Settings_Language" Style="{StaticResource Label}"/>
+
+		<fa:IconBlock Grid.Column="0" HorizontalAlignment="Right" Icon="Language" FontSize="22"/>
+		<ana:TextBlock Margin="10,0,35,0" Grid.Column="0" Grid.Row="0" Key="Settings_Language" Style="{StaticResource Label}"/>
 		<ComboBox Margin="6" Grid.Column="1" Grid.Row="0" SelectedValue="{Binding SelectedLanguage}" ItemsSource="{Binding Languages, Mode=OneTime}">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
@@ -46,10 +49,10 @@
 		<CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding SettingsService.Settings.UseCustomBorder}" Margin="6"/>
 
 		<ana:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
-		<ana:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="3" Minimum="0.1" Maximum="1" TickFrequency="0.1"/>
+		<ana:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="3" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
 
 		<ana:TextBlock Grid.Column="0" Grid.Row="4" Key="Settings_StayTransparent" Style="{StaticResource Label}"/>
-		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="4"/>
+		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="4" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
 
 		<ana:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
 		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="5" Margin="6"/>

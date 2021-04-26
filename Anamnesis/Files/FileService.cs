@@ -10,6 +10,7 @@ namespace Anamnesis.Files
 	using System.IO;
 	using System.Text;
 	using System.Threading.Tasks;
+	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.Files.Infos;
 	using Anamnesis.GUI.Views;
@@ -142,6 +143,7 @@ namespace Anamnesis.Files
 						await Task.Delay(10);
 
 					result.Path = browser.FilePath;
+					result.Options = browser.OptionsControl;
 					useExplorerBrowser = browser.UseFileBrowser;
 				}
 
@@ -182,12 +184,14 @@ namespace Anamnesis.Files
 			return result;
 		}
 
-		public static async Task Save<T>(T file, string? path = null)
-			where T : FileBase, new()
+		public static async Task<SaveResult> Save<T>(string? path = null)
+			where T : FileBase
 		{
+			SaveResult result = default;
+
 			try
 			{
-				FileInfoBase info = GetFileInfo<T>();
+				result.Info = GetFileInfo<T>();
 
 				if (path == null)
 				{
@@ -195,7 +199,7 @@ namespace Anamnesis.Files
 
 					if (!useExplorerBrowser)
 					{
-						FileBrowserView browser = new FileBrowserView(info, FileBrowserView.Modes.Save);
+						FileBrowserView browser = new FileBrowserView(result.Info, FileBrowserView.Modes.Save);
 						await ViewService.ShowDrawer(browser);
 
 						while (browser.IsOpen)
@@ -203,6 +207,7 @@ namespace Anamnesis.Files
 
 						path = browser.FilePath;
 						useExplorerBrowser = browser.UseFileBrowser;
+						result.Options = browser.OptionsControl;
 					}
 
 					if (useExplorerBrowser)
@@ -210,10 +215,10 @@ namespace Anamnesis.Files
 						path = await App.Current.Dispatcher.InvokeAsync<string?>(() =>
 						{
 							SaveFileDialog dlg = new SaveFileDialog();
-							dlg.Filter = ToFilter(info);
-							bool? result = dlg.ShowDialog();
+							dlg.Filter = ToFilter(result.Info);
+							bool? dlgResult = dlg.ShowDialog();
 
-							if (result != true)
+							if (dlgResult != true)
 								return null;
 
 							string? dirName = Path.GetDirectoryName(dlg.FileName);
@@ -227,19 +232,22 @@ namespace Anamnesis.Files
 
 					if (path == null)
 					{
-						return;
+						return result;
 					}
 				}
 
-				path += "." + info.Extension;
+				path += "." + result.Info.Extension;
+				result.Path = path;
 
-				using FileStream stream = new FileStream(path, FileMode.Create);
-				info.SerializeFile(file, stream);
+				////using FileStream stream = new FileStream(path, FileMode.Create);
+				////info.SerializeFile(file, stream);
 			}
 			catch (Exception ex)
 			{
 				Log.Error(ex, "Failed to save file");
 			}
+
+			return result;
 		}
 
 		public static FileInfoBase GetFileInfo<T>()
@@ -317,6 +325,14 @@ namespace Anamnesis.Files
 		public FileBase? File;
 		public FileInfoBase? Info;
 		public string? Path;
+		public UserControl? Options;
+	}
+
+	public struct SaveResult
+	{
+		public string? Path;
+		public UserControl? Options;
+		public FileInfoBase? Info;
 	}
 
 	public interface IFileSource
@@ -327,6 +343,7 @@ namespace Anamnesis.Files
 			public string? Name { get; }
 			public IFileSource Source { get; }
 			public bool Exists { get; }
+			public string? Metadata { get; }
 
 			public Task Delete();
 			public Task Rename(string newName);

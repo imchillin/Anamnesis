@@ -1,109 +1,146 @@
-﻿<UserControl x:Class="Anamnesis.Character.Pages.AppearancePage"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:Anamnesis.Character.Pages"
-			 xmlns:views="clr-namespace:Anamnesis.Character.Views"
-			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls" xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
-			 mc:Ignorable="d" 
-			 d:DesignHeight="600"
-			 d:DesignWidth="1024"
-			 Loaded="OnLoaded"
-			 DataContextChanged="OnDataContextChanged">
-	
+﻿<UserControl
+	x:Class="Anamnesis.Character.Pages.AppearancePage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+	xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+	xmlns:local="clr-namespace:Anamnesis.Character.Pages"
+	xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:views="clr-namespace:Anamnesis.Character.Views"
+	d:DesignHeight="600"
+	d:DesignWidth="1024"
+	DataContextChanged="OnDataContextChanged"
+	Loaded="OnLoaded"
+	mc:Ignorable="d">
+
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="240"/>
-			<ColumnDefinition/>
-			<ColumnDefinition Width="240"/>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition />
+			<ColumnDefinition Width="Auto" MinWidth="230" />
 		</Grid.ColumnDefinitions>
 
-		<Grid Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding GPoseService.IsOverworld}">
+		<Grid
+			Grid.RowSpan="2"
+			Grid.Column="0"
+			IsEnabled="{Binding GPoseService.IsOverworld}">
 
-			<GroupBox Style="{StaticResource PanelGroupBox}" Padding="3, 0, 3, 0">
+			<GroupBox Padding="3,0,3,0" Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
-					<ana:Header Icon="ConciergeBell" Key="Character_Appearance_Header"/>
+					<ana:Header Key="Character_Appearance_Header" Icon="ConciergeBell" />
 				</GroupBox.Header>
-				
-				<views:AppearanceEditor DataContext="{Binding Actor}"/>
+
+				<views:AppearanceEditor DataContext="{Binding Actor}" />
 			</GroupBox>
 
 		</Grid>
 
-		<GroupBox Grid.Column="1" Style="{StaticResource PanelGroupBox}" Grid.Row="0">
+		<GroupBox
+			Grid.Row="0"
+			Grid.Column="1"
+			Style="{StaticResource PanelGroupBox}">
 			<GroupBox.Header>
-				<ana:Header Icon="ChessQueen" Key="Character_Equipment_Header"/>
+				<ana:Header Key="Character_Equipment_Header" Icon="ChessQueen" />
 			</GroupBox.Header>
 
 			<Grid>
 
-				<StackPanel Margin="0, -18, -4, 0" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Orientation="Horizontal">
+				<StackPanel
+					Height="20"
+					Margin="0,-18,-4,0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+					Orientation="Horizontal">
 
-					<Button Style="{StaticResource TransparentIconButton}"
-						Click="OnNpcSmallclothesClicked">
+					<Button Click="OnNpcSmallclothesClicked" Style="{StaticResource TransparentIconButton}">
 
 						<Button.ToolTip>
-							<ana:TextBlock Key="Character_Equipment_NpcSmallclothes"/>
+							<ana:TextBlock Key="Character_Equipment_NpcSmallclothes" />
 						</Button.ToolTip>
 
-						<fa:IconBlock Icon="UserShield" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="UserShield" />
 					</Button>
 
-					<Button Style="{StaticResource TransparentIconButton}"
-						Click="OnClearClicked">
+					<Button Click="OnClearClicked" Style="{StaticResource TransparentIconButton}">
 
 						<Button.ToolTip>
-							<ana:TextBlock Key="Character_Equipment_Clear"/>
+							<ana:TextBlock Key="Character_Equipment_Clear" />
 						</Button.ToolTip>
 
-						<fa:IconBlock Icon="Eraser" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="Eraser" />
 					</Button>
 				</StackPanel>
-				
-				<views:EquipmentEditor DataContext="{Binding Actor}"/>
+
+				<views:EquipmentEditor DataContext="{Binding Actor}" />
 			</Grid>
 		</GroupBox>
 
 		<Grid Grid.Column="2">
 
 			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
 			<StackPanel>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
-						<ana:Header Icon="Horse" Key="Character_Actor_Header"/>
+						<ana:Header Key="Character_Actor_Header" Icon="Horse" />
 					</GroupBox.Header>
 
-					<Grid Margin="0, -6, 0, 0">
+					<Grid Margin="0,-6,0,0">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
 
 						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition/>
-							<RowDefinition/>
-							<RowDefinition/>
-							<RowDefinition/>
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
 						</Grid.RowDefinitions>
 
-						<ana:TextBlock Grid.Row="0" Grid.Column="0" Key="Character_Actor_Nickname" Style="{StaticResource Label}"/>
-						<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Actor.Nickname}" Grid.ColumnSpan="2"/>
+						<ana:TextBlock
+							Key="Character_Actor_Nickname"
+							Grid.Row="0"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
+						<TextBox
+							Grid.Row="0"
+							Grid.Column="1"
+							Grid.ColumnSpan="2"
+							Text="{Binding Actor.Nickname}" />
 
-						<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Character_Actor_DataPath" Style="{StaticResource Label}"/>
-						<views:DataPathSelector Height="26" Grid.Row="1" Grid.Column="1" DataPath="{Binding Actor.ModelObject.DataPath}" DataHead="{Binding Actor.ModelObject.DataHead}" Tribe="{Binding Actor.Customize.Tribe}"/>
+						<ana:TextBlock
+							Key="Character_Actor_DataPath"
+							Grid.Row="1"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
+						<views:DataPathSelector
+							Grid.Row="1"
+							Grid.Column="1"
+							Height="26"
+							DataHead="{Binding Actor.ModelObject.DataHead}"
+							DataPath="{Binding Actor.ModelObject.DataPath}"
+							Tribe="{Binding Actor.Customize.Tribe}" />
 
-						<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_Actor_EntityType" Style="{StaticResource Label}"/>
-						<Grid Grid.Row="2" Grid.Column="1" IsEnabled="{Binding GPoseService.IsOverworld}" Margin="0, 2, 0, 0">
+						<ana:TextBlock
+							Key="Character_Actor_EntityType"
+							Grid.Row="2"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
+						<Grid
+							Grid.Row="2"
+							Grid.Column="1"
+							Margin="0,2,0,0"
+							IsEnabled="{Binding GPoseService.IsOverworld}">
 							<ComboBox Height="26" SelectedIndex="{Binding Actor.ObjectKindInt}">
 								<ComboBoxItem>None</ComboBoxItem>
 								<ComboBoxItem>Player</ComboBoxItem>
@@ -122,67 +159,92 @@
 								<ComboBoxItem>card Stand</ComboBoxItem>
 							</ComboBox>
 						</Grid>
-						
-						<ana:TextBlock Grid.Row="3" Grid.Column="0" Key="Character_Actor_Model" Style="{StaticResource Label}"/>
-						<Grid Grid.Row="3" Grid.Column="1" IsEnabled="{Binding GPoseService.IsOverworld}" Margin="0, 2, 0, 0">
-							<views:ModelTypeEditor DataContext="{Binding Actor}"/>
+
+						<ana:TextBlock
+							Key="Character_Actor_Model"
+							Grid.Row="3"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
+						<Grid
+							Grid.Row="3"
+							Grid.Column="1"
+							Margin="0,2,0,0"
+							IsEnabled="{Binding GPoseService.IsOverworld}">
+							<views:ModelTypeEditor DataContext="{Binding Actor}" />
 						</Grid>
 
-						<ana:TextBlock Grid.Row="4" Grid.Column="0" Key="Character_Actor_Alpha" Style="{StaticResource Label}"/>
-						<cm3Controls:NumberBox Grid.Row="4" Grid.Column="1" Value="{Binding Actor.Transparency}" Minimum="0.01" Maximum="1" TickFrequency="0.1" Slider="Absolute"/>
+						<ana:TextBlock
+							Key="Character_Actor_Alpha"
+							Grid.Row="4"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
+						<cm3Controls:NumberBox
+							Grid.Row="4"
+							Grid.Column="1"
+							Maximum="1"
+							Minimum="0.01"
+							Slider="Absolute"
+							TickFrequency="0.1"
+							Value="{Binding Actor.Transparency}" />
 
-						
+
 					</Grid>
 
 				</GroupBox>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
-						<ana:Header Icon="GraduationCap" Key="Character_Model_Header"/>
+						<ana:Header Key="Character_Model_Header" Icon="GraduationCap" />
 					</GroupBox.Header>
 
-					<views:CharacterModelEditor DataContext="{Binding Actor.ModelObject}"/>
+					<views:CharacterModelEditor DataContext="{Binding Actor.ModelObject}" />
 				</GroupBox>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}" Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
 					<GroupBox.Header>
-						<ana:Header Icon="UserCog" Key="Character_ExAppearance_Header"/>
+						<ana:Header Key="Character_ExAppearance_Header" Icon="UserCog" />
 					</GroupBox.Header>
 
-					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}"/>
+					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}" />
 
 				</GroupBox>
 			</StackPanel>
 
 			<Grid Grid.Row="1">
 				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
+					<RowDefinition />
+					<RowDefinition />
+					<RowDefinition />
 				</Grid.RowDefinitions>
 
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition Width="48"/>
-				</Grid.ColumnDefinitions>
+				<cm3Controls:IconButton
+					Grid.Row="0"
+					Margin="3"
+					Click="OnLoadNpcClicked"
+					Icon="ChessQueen"
+					Text="Load Other" />
 
-				<cm3Controls:IconButton Grid.Row="0" Grid.ColumnSpan="2" Icon="ChessQueen" Text="Load Other" Margin="3" Click="OnLoadNpcClicked"/>
+				<Button
+					Grid.Row="1"
+					Margin="3"
+					HorizontalContentAlignment="Left"
+					Click="OnLoadClicked">
+					<cm3Controls:TextBlock
+						HorizontalAlignment="Left"
+						FontWeight="Light"
+						Text="Load" />
+				</Button>
 
-				<Button Grid.Row="1" Grid.Column="0" Margin="3, 3, 0, 3" Style="{StaticResource ButtonLeft}" Click="OnLoadClicked">
-					<cm3Controls:TextBlock Text="Load"/>
+				<Button
+					Grid.Row="2"
+					Margin="3"
+					HorizontalContentAlignment="Left"
+					Click="OnSaveClicked">
+					<cm3Controls:TextBlock
+						HorizontalAlignment="Left"
+						FontWeight="Light"
+						Text="Save" />
 				</Button>
-				<Button Grid.Row="1" Grid.Column="1" Margin="0, 3, 3, 3" Style="{StaticResource ButtonRight}" Click="OnAdvLoadClicked">
-					<fa:IconBlock Icon="Wrench"/>
-				</Button>
-				<Line Y1="0" Y2="1" Grid.Row="1" Grid.Column="1" StrokeThickness="1" Stroke="{DynamicResource MaterialDesignCardBackground}" Stretch="Fill" HorizontalAlignment="Left" Margin="0, 6"/>
-
-				<Button Grid.Row="2" Grid.Column="0" Margin="3, 3, 0, 3" Style="{StaticResource ButtonLeft}" Click="OnSaveClicked">
-					<cm3Controls:TextBlock Text="Save"/>
-				</Button>
-				<Button Grid.Row="2" Grid.Column="1" Margin="0, 3, 3, 3" Style="{StaticResource ButtonRight}" Click="OnAdvSaveClicked">
-					<fa:IconBlock Icon="Wrench"/>
-				</Button>
-				<Line Y1="0" Y2="1" Grid.Row="2" Grid.Column="1" StrokeThickness="1" Stroke="{DynamicResource MaterialDesignCardBackground}" Stretch="Fill" HorizontalAlignment="Left" Margin="0, 6"/>
 
 			</Grid>
 		</Grid>

@@ -29,7 +29,8 @@
 		<CheckBox Grid.Row="1" Grid.Column="1" Content="Effects" Margin="6,0" IsChecked="{Binding IncludeEffect}"/>
 		<CheckBox Grid.Row="1" Grid.Column="2" Content="Monsters" Margin="6,0" IsChecked="{Binding IncludeMonster}"/>
 		<CheckBox Grid.Row="2" Grid.Column="0" Content="Unknown" Margin="6,0" IsChecked="{Binding IncludeUnknown}"/>
-		<CheckBox Grid.Row="2" Grid.Column="3" IsThreeState="True" Content="Modded" Margin="6,0" IsChecked="{Binding IncludeModded}"/>
+		<CheckBox Grid.Row="2" Grid.Column="1" IsThreeState="True" Content="Named" Margin="6,0" IsChecked="{Binding IncludeNamed}"/>
+		<CheckBox Grid.Row="2" Grid.Column="2" IsThreeState="True" Content="Modded" Margin="6,0" IsChecked="{Binding IncludeModded}"/>
 
 		<cm3Drawers:SelectorDrawer
 			Grid.Row="3"

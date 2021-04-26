@@ -104,7 +104,7 @@
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<ana:NumberBox Grid.Column="0" Value="{Binding Appearance.Eyes}" Minimum="0" Maximum="255" Buttons="True" Margin="2, 2, 12, 2"/>
+					<ana:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Appearance.Eyes}" Minimum="1" Maximum="256" Buttons="True" Margin="2, 2, 12, 2"/>
 
 					<controls:ColorControl Grid.Column="1" ToolTip="Left Eye Color" Value="{Binding Appearance.LEyeColor}" Type="Eyes" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Margin="0"/>
 					<controls:ColorControl Grid.Column="2" ToolTip="Right Eye Color" Value="{Binding Appearance.REyeColor}" Type="Eyes" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Margin="0"/>
@@ -154,7 +154,7 @@
 					<ana:NumberBox Grid.Column="0" Value="{Binding Appearance.Lips}" Minimum="0" Maximum="4" Buttons="True" Margin="0, 0, 12, 0"/>
 					<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}"/>
 					<CheckBox Grid.Column="2" IsChecked="{Binding Appearance.EnableLipColor}"/>
-					<controls:ColorControl Grid.Column="3" Value="{Binding Appearance.LipsToneFurPattern}" Type="Lips" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
+					<controls:ColorControl Grid.Column="3" Value="{Binding Appearance.LipsToneFurPattern}" IsEnabled="{Binding Appearance.EnableLipColor}" Type="Lips" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}"/>
 				</Grid>
 
 				<!-- Hair -->

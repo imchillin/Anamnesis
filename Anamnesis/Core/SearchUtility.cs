@@ -9,19 +9,19 @@ namespace Anamnesis
 	public static class SearchUtility
 	{
 		#pragma warning disable SA1011
-		public static bool Matches(string? input, string[]? querry)
+		public static bool Matches(string? input, string[]? query)
 		{
 			if (input == null)
 				return false;
 
-			if (querry == null)
+			if (query == null)
 				return true;
 
 			input = input.ToLower();
 			input = Regex.Replace(input, @"[^\w\d\s]", string.Empty);
 
 			bool matchesSearch = true;
-			foreach (string str in querry)
+			foreach (string str in query)
 			{
 				// ignore 'the'
 				if (str == "the")

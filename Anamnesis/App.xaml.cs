@@ -84,9 +84,14 @@ namespace Anamnesis
 
 		private async Task Start()
 		{
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+
 			try
 			{
+				this.CheckWorkingDirectory();
 				this.CheckForProcesses();
+
 				await Services.InitializeServices();
 
 				await Dispatch.MainThread();
@@ -100,6 +105,34 @@ namespace Anamnesis
 			{
 				Log.Error(ex, "Failed to start application");
 				ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), true);
+			}
+
+			sw.Stop();
+			Log.Information($"Started application in {sw.ElapsedMilliseconds}ms");
+		}
+
+		private void CheckWorkingDirectory()
+		{
+			string currentDir = Directory.GetCurrentDirectory();
+
+			if (!File.Exists(currentDir + "/Anamnesis.exe"))
+			{
+				string? currentPath = AppContext.BaseDirectory;
+
+				if (string.IsNullOrEmpty(currentPath))
+					throw new Exception($"Failed to get current path");
+
+				string? newDir = Path.GetDirectoryName(currentPath);
+
+				if (string.IsNullOrEmpty(newDir))
+					throw new Exception($"Failed to get current directory");
+
+				currentDir = Path.GetFullPath(newDir);
+
+				if (!File.Exists(currentDir + "/Anamnesis.exe"))
+					throw new Exception($"Incorrect new working directory: {currentDir}");
+
+				Directory.SetCurrentDirectory(currentDir);
 			}
 		}
 

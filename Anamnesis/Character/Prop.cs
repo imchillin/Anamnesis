@@ -7,6 +7,7 @@ namespace Anamnesis.Character
 	using System.Windows.Media;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
+	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 
 	public class Prop : IJsonRow, IItem
@@ -27,6 +28,12 @@ namespace Anamnesis.Character
 		public ImageSource? Icon => null;
 		public Classes EquipableClasses => Classes.All;
 		public Mod? Mod => null;
+
+		public bool IsFavorite
+		{
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
+		}
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

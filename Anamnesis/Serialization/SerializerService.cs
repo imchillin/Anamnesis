@@ -26,6 +26,7 @@ namespace Anamnesis.Serialization
 			Options.Converters.Add(new ColorConverter());
 			Options.Converters.Add(new QuaternionConverter());
 			Options.Converters.Add(new VectorConverter());
+			Options.Converters.Add(new IItemConverter());
 		}
 
 		public static string Serialize(object obj)

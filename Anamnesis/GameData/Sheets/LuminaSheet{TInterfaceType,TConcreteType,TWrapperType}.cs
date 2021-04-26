@@ -11,11 +11,11 @@ namespace Anamnesis.GameData.Sheets
 	using Anamnesis.GameData.ViewModels;
 	using Lumina.Excel;
 
-	using LuminaData = Lumina.Lumina;
+	using LuminaData = Lumina.GameData;
 
 	public class LuminaSheet<TInterfaceType, TConcreteType, TWrapperType> : ISheet<TInterfaceType>
 		where TInterfaceType : IRow
-		where TConcreteType : class, IExcelRow
+		where TConcreteType : ExcelRow
 		where TWrapperType : ExcelRowViewModel<TConcreteType>, TInterfaceType
 	{
 		private ExcelSheet<TConcreteType> excel;

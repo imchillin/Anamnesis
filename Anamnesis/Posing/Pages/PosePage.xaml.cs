@@ -6,6 +6,7 @@ namespace Anamnesis.PoseModule.Pages
 {
 	using System;
 	using System.Collections.Generic;
+	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -25,7 +26,7 @@ namespace Anamnesis.PoseModule.Pages
 	{
 		public const double DragThreshold = 20;
 
-		private static PoseFile.Configuration fileConfig = new PoseFile.Configuration();
+		public static PoseFile.Configuration FileConfig = new PoseFile.Configuration();
 
 		private bool isLeftMouseButtonDownOnWindow;
 		private bool isDragging;
@@ -43,8 +44,7 @@ namespace Anamnesis.PoseModule.Pages
 		public TargetService TargetService { get => TargetService.Instance; }
 
 		public SkeletonVisual3d? Skeleton { get; private set; }
-
-		public PoseFile.Configuration FileConfiguration => fileConfig;
+		public PoseFile.Configuration FileConfiguration => FileConfig;
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -61,6 +61,7 @@ namespace Anamnesis.PoseModule.Pages
 				////if (this.Skeleton != null && !this.PoseService.CanEdit)
 				////	this.Skeleton.CurrentBone = null;
 
+				this.Skeleton?.Reselect();
 				this.Skeleton?.ReadTranforms();
 			});
 		}
@@ -82,9 +83,6 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
-			if (!this.IsVisible)
-				return;
-
 			ActorViewModel? actor = this.DataContext as ActorViewModel;
 
 			if (actor == null)
@@ -93,36 +91,33 @@ namespace Anamnesis.PoseModule.Pages
 				return;
 			}
 
-			if (this.Skeleton != null)
+			if (!this.IsVisible)
+				return;
+
+			try
 			{
-				if (this.Skeleton.Actor != actor)
+				this.Skeleton = await PoseService.GetVisual(actor);
+
+				this.ThreeDView.DataContext = this.Skeleton;
+				this.GuiView.DataContext = this.Skeleton;
+				this.MatrixView.DataContext = this.Skeleton;
+
+				if (this.Skeleton.File != null)
 				{
-					this.Skeleton.Clear();
-					this.Skeleton = new SkeletonVisual3d(actor);
+					if (!this.Skeleton.File.AllowPoseGui)
+					{
+						this.ViewSelector.SelectedIndex = 1;
+					}
+
+					if (!this.Skeleton.File.AllowPoseMatrix)
+					{
+						this.ViewSelector.SelectedIndex = 2;
+					}
 				}
 			}
-			else
+			catch (Exception ex)
 			{
-				this.Skeleton = new SkeletonVisual3d(actor);
-			}
-
-			this.ThreeDView.DataContext = this.Skeleton;
-			this.GuiView.DataContext = this.Skeleton;
-			this.MatrixView.DataContext = this.Skeleton;
-
-			await this.Skeleton.GenerateBones();
-
-			if (this.Skeleton.File != null)
-			{
-				if (!this.Skeleton.File.AllowPoseGui)
-				{
-					this.ViewSelector.SelectedIndex = 1;
-				}
-
-				if (!this.Skeleton.File.AllowPoseMatrix)
-				{
-					this.ViewSelector.SelectedIndex = 2;
-				}
+				Log.Error(ex, "Failed to bind skeleton to view");
 			}
 		}
 
@@ -145,7 +140,7 @@ namespace Anamnesis.PoseModule.Pages
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(actor, this.Skeleton, fileConfig);
+					await poseFile.Apply(actor, this.Skeleton, FileConfig);
 				}
 			}
 			catch (Exception ex)
@@ -157,13 +152,7 @@ namespace Anamnesis.PoseModule.Pages
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
 			ActorViewModel? actor = this.DataContext as ActorViewModel;
-
-			if (actor == null || this.Skeleton == null)
-				return;
-
-			PoseFile file = new PoseFile();
-			file.WriteToFile(actor, this.Skeleton, fileConfig);
-			await FileService.Save(file);
+			await PoseFile.Save(actor, this.Skeleton, FileConfig);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)
@@ -269,6 +258,9 @@ namespace Anamnesis.PoseModule.Pages
 
 		private void OnCanvasMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
+			if (!this.isLeftMouseButtonDownOnWindow)
+				return;
+
 			this.isLeftMouseButtonDownOnWindow = false;
 			if (this.isDragging)
 			{

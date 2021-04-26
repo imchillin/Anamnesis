@@ -40,6 +40,28 @@ namespace Anamnesis.Character.Utilities
 			return itemLookup[lookupKey];
 		}
 
+		public static IItem GetDummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)
+		{
+			if (NoneItem.IsModel(modelSet, modelBase, modelVariant))
+				return NoneItem;
+
+			if (NpcBodyItem.IsModel(modelSet, modelBase, modelVariant))
+				return NpcBodyItem;
+
+			if (InvisibileBodyItem.IsModel(modelSet, modelBase, modelVariant))
+				return InvisibileBodyItem;
+
+			if (InvisibileHeadItem.IsModel(modelSet, modelBase, modelVariant))
+				return InvisibileHeadItem;
+
+			return new DummyItem(modelSet, modelBase, modelVariant);
+		}
+
+		public static bool IsModel(this IItem item, ushort modelSet, ushort modelBase, ushort modelVariant)
+		{
+			return item.ModelSet == modelSet && item.ModelBase == modelBase && item.ModelVariant == modelVariant;
+		}
+
 		private static IItem ItemSearch(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
 		{
 			foreach (IItem tItem in GameDataService.Items)

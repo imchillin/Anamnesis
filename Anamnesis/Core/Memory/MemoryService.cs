@@ -47,6 +47,7 @@ namespace Anamnesis.Memory
 		}
 
 		public bool EnableProcess { get; set; } = true;
+		public int LastTickCount { get; set; }
 
 		public static bool GetIsProcessAlive()
 		{
@@ -459,7 +460,7 @@ namespace Anamnesis.Memory
 						tickCount += viewModel.Tick();
 					}
 
-					if (tickCount > 1000)
+					if (this.LastTickCount < 1500 && tickCount > 1500)
 					{
 						StringBuilder b = new StringBuilder();
 						b.Append("Too many view model ticks:  ");
@@ -475,6 +476,8 @@ namespace Anamnesis.Memory
 
 						Log.Warning(b.ToString());
 					}
+
+					this.LastTickCount = tickCount;
 
 					if (sw.ElapsedMilliseconds > 100)
 					{

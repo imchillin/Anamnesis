@@ -10,6 +10,8 @@ namespace Anamnesis.TexTools
 	[Serializable]
 	public class Mod
 	{
+		private string? trimmedName = null;
+
 		// "name": "Dreadwyrm Choker of Aiming",
 		[JsonPropertyName("name")]
 		public string Name { get; set; } = string.Empty;
@@ -27,5 +29,26 @@ namespace Anamnesis.TexTools
 
 		[JsonPropertyName("modPack")]
 		public ModPack? ModPack { get; set; }
+
+		public string TrimmedName
+		{
+			get
+			{
+				if (this.trimmedName == null)
+				{
+					this.trimmedName = this.Name;
+
+					// TexTools adds left and right to the names of rings
+					this.trimmedName = this.trimmedName.Replace(" - Right", string.Empty);
+					this.trimmedName = this.trimmedName.Replace(" - Left", string.Empty);
+
+					// TexTools adds handedness to names of weapons
+					this.trimmedName = this.trimmedName.Replace(" - Main Hand", string.Empty);
+					this.trimmedName = this.trimmedName.Replace(" - Off Hand", string.Empty);
+				}
+
+				return this.trimmedName;
+			}
+		}
 	}
 }

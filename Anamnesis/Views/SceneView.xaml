@@ -88,7 +88,6 @@
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
-			
 					<Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -115,7 +114,7 @@
 
 						<ana:TextBlock Grid.Row="0" Grid.Column="1" Key="Scene_World_Time" Style="{StaticResource Label}"/>
 						<ana:NumberBox Minimum="0" Maximum="1440" Grid.Column="2" Value="{Binding TimeService.TimeOfDay}" Margin="3" Slider="Absolute" IsEnabled="{Binding TimeService.Freeze}" TickFrequency="30"/>
-						<TextBlock Grid.Column="3" Text="{Binding TimeService.Time, StringFormat=t}" Margin="3, 3, 0, 3" Width="50" HorizontalAlignment="Right"/>
+						<TextBlock Grid.Column="3" Text="{Binding TimeService.TimeString}" Margin="3, 3, 0, 3" Width="50" HorizontalAlignment="Right"/>
 
 						<ana:TextBlock Grid.Row="1" Grid.Column="1" Key="Scene_World_Day" Style="{StaticResource Label}"/>
 						<cm3:NumberBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
@@ -143,7 +142,7 @@
 						<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TerritoryService.CurrentWeather.Name}" Margin="3, 0, 0, 0" FontSize="10"/>
 
 					</Grid>
-					
+
 					<!--<ComboBox Grid.Row="1" Grid.Column="1" SelectedItem="{Binding TerritoryService.CurrentWeather}" ItemsSource="{Binding TerritoryService.CurrentTerritory.Weathers}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
@@ -246,27 +245,6 @@
 				</Grid>
 			</GroupBox>
 
-		</Grid>
-
-		<Grid Grid.Column="2">
-
-			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition Height="auto"/>
-			</Grid.RowDefinitions>
-
-			
-
-
-			<!--<Grid Grid.Row="1" IsEnabled="{Binding GPoseService.IsOverworld}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-
-				<cm3:IconButton Grid.Column="0" Icon="Upload" Text="Load..." Margin="3" Click="OnLoadClicked"/>
-				<cm3:IconButton Grid.Column="1" Icon="Download" Text="Save..." Margin="3" Click="OnSaveClicked"/>
-			</Grid>-->
 		</Grid>
 	</Grid>
 </UserControl>

@@ -43,6 +43,14 @@ namespace Anamnesis.GUI.Views
 		public FileBrowserView(FileInfoBase fileInfo, Modes mode)
 			: this(new[] { fileInfo }, mode)
 		{
+			Type? optionsType = mode == Modes.Load ? fileInfo.LoadOptionsViewType : fileInfo.SaveOptionsViewType;
+			if (optionsType != null)
+			{
+				this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsType);
+			}
+
+			this.SelectButton.Text = mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
+			this.Selector.SearchEnabled = mode == Modes.Load;
 		}
 
 		public FileBrowserView(FileInfoBase[] fileInfos, Modes mode)
@@ -50,6 +58,9 @@ namespace Anamnesis.GUI.Views
 			this.mode = mode;
 			this.fileInfos = fileInfos;
 			this.InitializeComponent();
+
+			this.SelectButton.Text = mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
+			this.Selector.SearchEnabled = mode == Modes.Load;
 
 			this.ContentArea.DataContext = this;
 
@@ -87,6 +98,12 @@ namespace Anamnesis.GUI.Views
 			}
 
 			Task.Run(this.UpdateEntries);
+
+			Type? optionsType = mode == Modes.Load ? fileInfos[0].LoadOptionsViewType : fileInfos[0].SaveOptionsViewType;
+			if (optionsType != null)
+			{
+				this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsType);
+			}
 		}
 
 		public event DrawerEvent? Close;
@@ -104,8 +121,15 @@ namespace Anamnesis.GUI.Views
 			private set;
 		}
 
+		public bool ShowOptions
+		{
+			get => SettingsService.Current.ShowAdvancedOptions;
+			set => SettingsService.Current.ShowAdvancedOptions = value;
+		}
+
 		public string? FilePath { get; private set; }
 		public bool UseFileBrowser { get; set; }
+		public UserControl? OptionsControl { get; set; }
 
 		public ObservableCollection<IFileSource> FileSources { get; private set; } = new ObservableCollection<IFileSource>();
 
@@ -123,6 +147,40 @@ namespace Anamnesis.GUI.Views
 				if (this.mode == Modes.Save)
 				{
 					this.FileName = this.selected?.Name ?? string.Empty;
+				}
+
+				if (this.selected != null && this.selected.Entry is IDirectory)
+				{
+					this.SelectButton.Text = LocalizationService.GetString("Common_OpenDir");
+				}
+				else
+				{
+					this.SelectButton.Text = this.mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
+				}
+
+				// show the options panel for the selected file type
+				if (this.selected != null && this.selected.Entry is IFile file)
+				{
+					FileInfoBase? fileType = file.Type;
+					Type? optionsViewType = this.mode == Modes.Load ? fileType?.LoadOptionsViewType : fileType?.SaveOptionsViewType;
+
+					if (this.OptionsControl == null && optionsViewType == null)
+						return;
+
+					if (this.OptionsControl?.GetType() == optionsViewType)
+						return;
+
+					if (optionsViewType == null)
+					{
+						this.OptionsControl = null;
+						return;
+					}
+
+					this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsViewType);
+				}
+				else
+				{
+					////this.OptionsControl = null;
 				}
 			}
 		}
@@ -379,11 +437,14 @@ namespace Anamnesis.GUI.Views
 			if (this.Selected == null)
 				return;
 
+			await Task.Delay(50);
+			await Dispatch.MainThread();
+
 			this.Selected.Rename = this.Selected.Name;
 			this.Selected.IsRenaming = true;
 		}
 
-		private void OnSelectClicked(object? sender, RoutedEventArgs? e)
+		private async void OnSelectClicked(object? sender, RoutedEventArgs? e)
 		{
 			if (!this.CanSelect)
 				return;
@@ -401,6 +462,23 @@ namespace Anamnesis.GUI.Views
 			else
 			{
 				this.FilePath = this.CurrentDir.Path + "/" + this.FileName;
+
+				string finalPath = this.FilePath + this.FileExtension;
+				if (File.Exists(finalPath))
+				{
+					string fileName = Path.GetFileNameWithoutExtension(finalPath);
+					bool? overwrite = await GenericDialog.Show(LocalizationService.GetStringFormatted("FileBrowser_ReplaceMessage", fileName), LocalizationService.GetString("FileBrowser_ReplaceTitle"), MessageBoxButton.YesNo);
+					if (overwrite != true)
+					{
+						return;
+					}
+				}
+			}
+
+			if (this.Selected != null && this.Selected.Entry is IDirectory dir)
+			{
+				this.CurrentDir = dir;
+				return;
 			}
 
 			this.CloseDrawer();
@@ -493,14 +571,6 @@ namespace Anamnesis.GUI.Views
 				}
 			}
 
-			public bool SupportsAdvanced
-			{
-				get
-				{
-					return true;
-				}
-			}
-
 			public bool IsRenaming { get; set; }
 
 			public string? Rename
@@ -510,7 +580,7 @@ namespace Anamnesis.GUI.Views
 				{
 					this.IsRenaming = false;
 
-					if (value == null || value == this.Name)
+					if (string.IsNullOrEmpty(value))
 						return;
 
 					foreach (char c in System.IO.Path.GetInvalidFileNameChars())
@@ -523,13 +593,32 @@ namespace Anamnesis.GUI.Views
 
 					Task.Run(async () =>
 					{
+						value = value.Trim();
 						await this.Entry.Rename(value);
 						await this.View.UpdateEntries();
 					});
 				}
 			}
 
-			public string Directory
+			public string? Metadata
+			{
+				get
+				{
+					if (this.Entry == null)
+						return null;
+
+					if (!string.IsNullOrEmpty(this.Directory))
+					{
+						return this.Directory + " - " + this.Entry.Metadata;
+					}
+					else
+					{
+						return this.Entry.Metadata;
+					}
+				}
+			}
+
+			public string? Directory
 			{
 				get
 				{
@@ -548,10 +637,10 @@ namespace Anamnesis.GUI.Views
 
 					string? dirName = Path.GetDirectoryName(relativePath);
 
-					if (dirName == null)
-						return string.Empty;
+					if (string.IsNullOrEmpty(dirName))
+						return null;
 
-					return dirName;
+					return "\\" + dirName + "\\";
 				}
 			}
 		}

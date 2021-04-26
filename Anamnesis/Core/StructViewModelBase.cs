@@ -24,6 +24,9 @@ namespace Anamnesis
 		void SetModel(object? model);
 		object? GetModel();
 
+		TParent? GetParent<TParent>()
+			where TParent : IStructViewModel;
+
 		void RaisePropertyChanged(string propertyName);
 	}
 
@@ -204,6 +207,18 @@ namespace Anamnesis
 			throw new Exception("View model is not correctly initialized");
 		}
 
+		public TParent? GetParent<TParent>()
+			where TParent : IStructViewModel
+		{
+			if (this is TParent t)
+				return t;
+
+			if (this.Parent == null)
+				return default;
+
+			return this.Parent.GetParent<TParent>();
+		}
+
 		void IStructViewModel.RaisePropertyChanged(string propertyName)
 		{
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -302,7 +317,9 @@ namespace Anamnesis
 		/// <summary>
 		/// Called when the backing model has changed the view model.
 		/// </summary>
-		protected abstract void OnModelToView(string fieldName, object? value);
+		protected virtual void OnModelToView(string fieldName, object? value)
+		{
+		}
 
 		private void OnThisPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{

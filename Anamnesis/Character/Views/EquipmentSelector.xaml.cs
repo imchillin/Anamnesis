@@ -20,8 +20,9 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
-		private static Mode mode = Mode.All;
+		private static Modes mode = Modes.All;
 		private static Classes classFilter = Classes.All;
+		private static bool pairEquip = false;
 
 		private readonly ItemSlots slot;
 
@@ -58,78 +59,38 @@ namespace Anamnesis.Character.Views
 		public event DrawerEvent? Close;
 		public event DrawerEvent? SelectionChanged;
 
-		private enum Mode
+		public enum Modes
 		{
 			All,
 			Items,
 			Props,
 			Modded,
+			Favorites,
 		}
 
 		public IItem? Value
 		{
-			get
-			{
-				return (IItem?)this.Selector.Value;
-			}
-
-			set
-			{
-				this.Selector.Value = value;
-			}
+			get => (IItem?)this.Selector.Value;
+			set => this.Selector.Value = value;
 		}
 
-		public bool AllMode
+		public int ModeInt
 		{
-			get => mode == Mode.All;
+			get => (int)mode;
 			set
 			{
-				if (value)
-				{
-					mode = Mode.All;
-					this.Selector.FilterItems();
-				}
+				mode = (Modes)value;
+				this.Selector.FilterItems();
 			}
 		}
 
-		public bool PropsMode
+		public bool PairEquip
 		{
-			get => mode == Mode.Props;
-			set
-			{
-				if (value)
-				{
-					mode = Mode.Props;
-					this.Selector.FilterItems();
-				}
-			}
+			get => pairEquip;
+			set => pairEquip = value;
 		}
 
-		public bool ItemsMode
-		{
-			get => mode == Mode.Items;
-			set
-			{
-				if (value)
-				{
-					mode = Mode.Items;
-					this.Selector.FilterItems();
-				}
-			}
-		}
-
-		public bool ModdedMode
-		{
-			get => mode == Mode.Modded;
-			set
-			{
-				if (value)
-				{
-					mode = Mode.Modded;
-					this.Selector.FilterItems();
-				}
-			}
-		}
+		public bool IsWeaponSlot => this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand;
 
 		SelectorDrawer SelectorDrawer.ISelectorView.Selector
 		{
@@ -163,6 +124,25 @@ namespace Anamnesis.Character.Views
 			this.SelectionChanged?.Invoke();
 		}
 
+		private int OnSort(object a, object b)
+		{
+			if (a is IItem itemA && b is IItem itemB)
+			{
+				if (itemA.IsFavorite && !itemB.IsFavorite)
+				{
+					return -1;
+				}
+				else if (!itemA.IsFavorite && itemB.IsFavorite)
+				{
+					return 1;
+				}
+
+				return itemA.Key.CompareTo(itemB.Key);
+			}
+
+			return 0;
+		}
+
 		private bool OnFilter(object obj, string[]? search = null)
 		{
 			if (obj is IItem item)
@@ -171,13 +151,16 @@ namespace Anamnesis.Character.Views
 				if (string.IsNullOrEmpty(item.Name))
 					return false;
 
-				if (mode == Mode.Items && (obj is Prop || item.Key == 0))
+				if (mode == Modes.Items && (obj is Prop || item.Key == 0))
 					return false;
 
-				if (mode == Mode.Props && !(obj is Prop))
+				if (mode == Modes.Props && !(obj is Prop))
 					return false;
 
-				if (mode == Mode.Modded && item.Mod == null)
+				if (mode == Modes.Modded && item.Mod == null)
+					return false;
+
+				if (mode == Modes.Favorites && !item.IsFavorite)
 					return false;
 
 				if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)

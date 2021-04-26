@@ -248,6 +248,7 @@
 		"BrowRight": "RootHead",
 		"LipUpperA": "RootHead",
 		"EyelidUpperLeft": "RootHead",
+		"no": null,
 		"EyelidUpperRight": "RootHead",
 		"LipLowerA": "Jaw",
 		"LipUpperB": "RootHead",
@@ -269,6 +270,25 @@
 		"TailA": "Waist",
 		"TailB": "TailA",
 		"TailC": "TailB",
-		"TailD": "TailC"
+		"TailD": "TailC",
+
+		"Met_0": "RootHead",
+		"Met_1": "RootHead",
+		"Met_2": "RootHead",
+		"Met_3": "RootHead",
+		"Met_4": "RootHead",
+		"Met_5": "RootHead",
+		"Met_6": "RootHead",
+		"Met_7": "RootHead",
+		"Met_8": "RootHead",
+		"Met_9": "RootHead",
+		"Met_10": "RootHead",
+		"Met_11": "RootHead",
+		"Met_12": "RootHead",
+		"Met_13": "RootHead",
+		"Met_14": "RootHead",
+		"Met_15": "RootHead",
+		"Met_16": "RootHead",
+		"Met_17": "RootHead"
 	}
 }

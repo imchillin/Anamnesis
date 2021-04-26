@@ -15,6 +15,7 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<Nullable>enable</Nullable>
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+		<TrimMode>CopyUsed</TrimMode>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -81,11 +82,14 @@
 		<None Remove="Assets\PoseCharacterFaceBackground.png" />
 		<None Remove="Assets\PoseCharacterHandBackground.png" />
 		<None Remove="Assets\PoseCharacterHrothFaceBackground.png" />
+		<None Remove="Assets\PoseCharacterMiqoFaceBackground.png" />
 		<None Remove="Assets\PoseCharacterTailBackground.png" />
 		<None Remove="Assets\PoseCharacterVieraEars01Background.png" />
+		<None Remove="Assets\PoseCharacterVieraEars0204Background.png" />
 		<None Remove="Assets\PoseCharacterVieraEars02Background.png" />
 		<None Remove="Assets\PoseCharacterVieraEars03Background.png" />
 		<None Remove="Assets\PoseCharacterVieraEars04Background.png" />
+		<None Remove="Assets\PoseCharacterVieraFaceBackground.png" />
 		<None Remove="Assets\Roles\crafters.png" />
 		<None Remove="Assets\Roles\damage.png" />
 		<None Remove="Assets\Roles\gatherers.png" />
@@ -120,8 +124,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="FontAwesome.Sharp" Version="5.15.3" />
-		<PackageReference Include="Lumina" Version="2.5.1" />
-		<PackageReference Include="Lumina.Excel" Version="5.40.0" />
+		<PackageReference Include="Lumina" Version="3.1.0" />
+		<PackageReference Include="Lumina.Excel" Version="5.50.0" />
 		<PackageReference Include="Markdig.Wpf.Signed" Version="0.4.0" />
 		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />
 		<PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
@@ -195,11 +199,12 @@
 		<Resource Include="Assets\PoseCharacterFaceBackground.png" />
 		<Resource Include="Assets\PoseCharacterHandBackground.png" />
 		<Resource Include="Assets\PoseCharacterHrothFaceBackground.png" />
+		<Resource Include="Assets\PoseCharacterMiqoFaceBackground.png" />
 		<Resource Include="Assets\PoseCharacterTailBackground.png" />
 		<Resource Include="Assets\PoseCharacterVieraEars01Background.png" />
-		<Resource Include="Assets\PoseCharacterVieraEars02Background.png" />
+		<Resource Include="Assets\PoseCharacterVieraEars0204Background.png" />
 		<Resource Include="Assets\PoseCharacterVieraEars03Background.png" />
-		<Resource Include="Assets\PoseCharacterVieraEars04Background.png" />
+		<Resource Include="Assets\PoseCharacterVieraFaceBackground.png" />
 		<Resource Include="Assets\Roles\crafters.png" />
 		<Resource Include="Assets\Roles\damage.png" />
 		<Resource Include="Assets\Roles\gatherers.png" />
@@ -330,7 +335,6 @@
 
 	<ItemGroup>
 		<Folder Include="Core\Localization\" />
-		<Folder Include="Posing\Dialogs\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -339,9 +343,5 @@
 			<Generator>ResXFileCodeGenerator</Generator>
 		</EmbeddedResource>
 	</ItemGroup>
-
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="copy &quot;..\Lib\PropertyChanged.dll&quot; &quot;$(TargetDir)PropertyChanged.dll&quot;&#xD;&#xA;&#xD;&#xA;del $(TargetDir)$(TargetName).xml&#xD;&#xA;del $(TargetDir)$(TargetName).deps.json&#xD;&#xA;del $(TargetDir)$(TargetName).runtimeconfig.dev.json&#xD;&#xA;&#xD;&#xA;md $(TargetDir)bin&#xD;&#xA;move /Y &quot;$(TargetDir)FontAwesome.Sharp.dll&quot; &quot;$(TargetDir)bin\FontAwesome.Sharp.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.dll&quot; &quot;$(TargetDir)bin\Lumina.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Lumina.Excel.dll&quot; &quot;$(TargetDir)bin\Lumina.Excel.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Signed.dll&quot; &quot;$(TargetDir)bin\Markdig.Signed.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Markdig.Wpf.dll&quot; &quot;$(TargetDir)bin\Markdig.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignColors.dll&quot; &quot;$(TargetDir)bin\MaterialDesignColors.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)MaterialDesignThemes.Wpf.dll&quot; &quot;$(TargetDir)bin\MaterialDesignThemes.Wpf.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)PropertyChanged.dll&quot; &quot;$(TargetDir)bin\PropertyChanged.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Serilog.dll&quot; &quot;$(TargetDir)bin\Serilog.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Serilog.Sinks.File.dll&quot; &quot;$(TargetDir)bin\Serilog.Sinks.File.dll&quot;&#xD;&#xA;move /Y &quot;$(TargetDir)Serilog.Sinks.Debug.dll&quot; &quot;$(TargetDir)bin\Serilog.Sinks.Debug.dll&quot;" />
-	</Target>
 
 </Project>

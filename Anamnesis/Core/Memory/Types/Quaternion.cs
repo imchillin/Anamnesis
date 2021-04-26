@@ -5,6 +5,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Globalization;
 
 	public struct Quaternion : IEquatable<Quaternion>
 	{
@@ -61,10 +62,10 @@ namespace Anamnesis.Memory
 				throw new FormatException();
 
 			Quaternion v = default;
-			v.X = float.Parse(parts[0]);
-			v.Y = float.Parse(parts[1]);
-			v.Z = float.Parse(parts[2]);
-			v.W = float.Parse(parts[3]);
+			v.X = float.Parse(parts[0], CultureInfo.InvariantCulture);
+			v.Y = float.Parse(parts[1], CultureInfo.InvariantCulture);
+			v.Z = float.Parse(parts[2], CultureInfo.InvariantCulture);
+			v.W = float.Parse(parts[3], CultureInfo.InvariantCulture);
 			return v;
 		}
 
@@ -188,7 +189,10 @@ namespace Anamnesis.Memory
 
 		public override string ToString()
 		{
-			return this.X + ", " + this.Y + ", " + this.Z + ", " + this.W;
+			return this.X.ToString(CultureInfo.InvariantCulture) + ", "
+				+ this.Y.ToString(CultureInfo.InvariantCulture) + ", "
+				+ this.Z.ToString(CultureInfo.InvariantCulture) + ", "
+				+ this.W.ToString(CultureInfo.InvariantCulture);
 		}
 
 		private static float Max(float a, float b, float c, float d)

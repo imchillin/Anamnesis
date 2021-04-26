@@ -10,6 +10,7 @@ namespace Anamnesis.Memory
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
+	using Anamnesis.Character.Utilities;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -37,11 +38,12 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x00F0)] public IntPtr ModelObject;
 		[FieldOffset(RenderModeOffset)] public RenderModes RenderMode;
 		[FieldOffset(0x01B4)] public int ModelType;
+		[FieldOffset(0x01E2)] public byte ClassJob;
 		[FieldOffset(0x0F08)] public Weapon MainHand;
 		[FieldOffset(0x0F70)] public Weapon OffHand;
 		[FieldOffset(0x1040)] public Equipment Equipment;
-		[FieldOffset(0x1808)] public float Transparency;
-		[FieldOffset(0x1878)] public Appearance Customize;
+		[FieldOffset(0x182C)] public float Transparency;
+		[FieldOffset(0x1898)] public Appearance Customize;
 
 		public string Id => this.Name + this.DataId;
 	}
@@ -55,7 +57,7 @@ namespace Anamnesis.Memory
 
 		private short refreshDelay;
 		private Task? refreshTask;
-		private bool wasPlayerForGPose;
+		private IntPtr? wasPlayerBeforeGPose;
 
 		public ActorViewModel(IntPtr pointer)
 			: base(pointer, null)
@@ -143,25 +145,17 @@ namespace Anamnesis.Memory
 				// Entering gpose
 				if (this.ObjectKind == ActorTypes.Player)
 				{
-					this.wasPlayerForGPose = true;
-					this.SetObjectKindDirect(ActorTypes.BattleNpc);
+					this.wasPlayerBeforeGPose = this.Pointer;
+					this.SetObjectKindDirect(ActorTypes.BattleNpc, this.Pointer);
 				}
 			}
 			else if (gpose.IsGpose && !gpose.IsChangingState)
 			{
 				// Entered gpose
-				if (this.wasPlayerForGPose)
+				if (this.wasPlayerBeforeGPose != null)
 				{
-					this.SetObjectKindDirect(ActorTypes.Player);
-				}
-			}
-			else if (!gpose.IsGpose && !gpose.IsChangingState)
-			{
-				// left gpose
-				if (this.wasPlayerForGPose)
-				{
-					this.SetObjectKindDirect(ActorTypes.Player);
-					this.wasPlayerForGPose = false;
+					this.SetObjectKindDirect(ActorTypes.Player, this.wasPlayerBeforeGPose);
+					this.SetObjectKindDirect(ActorTypes.Player, this.Pointer);
 				}
 			}
 		}
@@ -179,13 +173,12 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		public void SetObjectKindDirect(ActorTypes type)
+		public void SetObjectKindDirect(ActorTypes type, IntPtr? actorPointer)
 		{
-			if (this.Pointer == null)
+			if (actorPointer == null)
 				return;
 
-			IntPtr actorPointer = (IntPtr)this.Pointer;
-			IntPtr objectKindPointer = actorPointer + Actor.ObjectKindOffset;
+			IntPtr objectKindPointer = ((IntPtr)actorPointer) + Actor.ObjectKindOffset;
 			MemoryService.Write(objectKindPointer, (byte)type, "Set ObjectKind Direct");
 		}
 
@@ -198,6 +191,10 @@ namespace Anamnesis.Memory
 				return;
 
 			if (this.Pointer == null)
+				return;
+
+			// Don't perform actor refreshes while in gpose
+			if (GposeService.Instance.IsGpose)
 				return;
 
 			this.IsRefreshing = true;
@@ -265,6 +262,10 @@ namespace Anamnesis.Memory
 			if (this.IsRefreshing)
 				return;
 
+			////if ((fieldName == nameof(Actor.MainHand) || fieldName == nameof(Actor.OffHand))
+			////	&& this.Model?.ClassJob >= 8 && this.Model?.ClassJob <= 18)
+			////	return;
+
 			base.OnViewToModel(fieldName, value);
 		}
 
@@ -275,6 +276,10 @@ namespace Anamnesis.Memory
 				Log.Debug($"Triggering actor refresh due to changed property: {viewModelProperty.Name}");
 				this.Refresh();
 			}
+
+			////if ((modelField.Name == nameof(Actor.MainHand) || modelField.Name == nameof(Actor.OffHand))
+			////	&& this.Model?.ClassJob >= 8 && this.Model?.ClassJob <= 18)
+			////	return false;
 
 			return base.HandleViewToModelUpdate(viewModelProperty, modelField);
 		}

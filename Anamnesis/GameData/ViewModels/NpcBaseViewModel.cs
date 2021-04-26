@@ -11,7 +11,7 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class NpcBaseViewModel : ExcelRowViewModel<ENpcBase>, INpcBase
 	{
-		public NpcBaseViewModel(int key, ExcelSheet<ENpcBase> sheet, Lumina lumina)
+		public NpcBaseViewModel(int key, ExcelSheet<ENpcBase> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			this.Race = GameDataService.Races!.Get((int)this.Value.Race.Value.RowId);

@@ -5,10 +5,10 @@
 namespace Anamnesis.Character.Pages
 {
 	using System;
+	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis.Character.Dialogs;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Character.Views;
 	using Anamnesis.Files;
@@ -53,6 +53,7 @@ namespace Anamnesis.Character.Pages
 
 		private void OnClearClicked(object sender, RoutedEventArgs e)
 		{
+			this.Actor?.SetMemoryMode(MemoryModes.Write);
 			this.Actor?.Equipment?.Arms?.Clear();
 			this.Actor?.Equipment?.Chest?.Clear();
 			this.Actor?.Equipment?.Ear?.Clear();
@@ -66,40 +67,30 @@ namespace Anamnesis.Character.Pages
 
 			this.Actor?.ModelObject?.Weapons?.Hide();
 			this.Actor?.ModelObject?.Weapons?.SubModel?.Hide();
+			this.Actor?.SetMemoryMode(MemoryModes.ReadWrite);
 		}
 
 		private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
 		{
+			this.Actor?.SetMemoryMode(MemoryModes.Write);
 			this.Actor?.Equipment?.Ear?.Clear();
 			this.Actor?.Equipment?.Head?.Clear();
 			this.Actor?.Equipment?.LFinger?.Clear();
 			this.Actor?.Equipment?.Neck?.Clear();
 			this.Actor?.Equipment?.RFinger?.Clear();
 			this.Actor?.Equipment?.Wrist?.Clear();
-
 			this.Actor?.Equipment?.Arms?.Equip(ItemUtility.NpcBodyItem);
 			this.Actor?.Equipment?.Chest?.Equip(ItemUtility.NpcBodyItem);
 			this.Actor?.Equipment?.Legs?.Equip(ItemUtility.NpcBodyItem);
 			this.Actor?.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
+			this.Actor?.SetMemoryMode(MemoryModes.ReadWrite);
 		}
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				await this.Load(false);
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to load appearance");
-			}
-		}
-
-		private async void OnAdvLoadClicked(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				await this.Load(true);
+				await this.Load();
 			}
 			catch (Exception ex)
 			{
@@ -124,15 +115,18 @@ namespace Anamnesis.Character.Pages
 			await apFile.Apply(this.Actor, CharacterFile.SaveModes.All);
 		}
 
-		private async Task Load(bool advanced)
+		private async Task Load()
 		{
 			if (this.Actor == null)
 				return;
 
+			CharacterFileOptions.Result = lastLoadMode;
 			OpenResult result = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>();
 
 			if (result.File == null)
 				return;
+
+			lastLoadMode = CharacterFileOptions.Result;
 
 			if (result.File is LegacyCharacterFile legacyAllFile)
 				result.File = legacyAllFile.Upgrade();
@@ -145,20 +139,7 @@ namespace Anamnesis.Character.Pages
 
 			if (result.File is CharacterFile apFile)
 			{
-				CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
-
-				if (advanced)
-				{
-					CharacterFile.SaveModes newmode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Load Character...", lastLoadMode);
-
-					if (newmode == CharacterFile.SaveModes.None)
-						return;
-
-					lastLoadMode = newmode;
-					mode = lastLoadMode;
-				}
-
-				await apFile.Apply(this.Actor, mode);
+				await apFile.Apply(this.Actor, lastLoadMode);
 			}
 		}
 
@@ -166,7 +147,7 @@ namespace Anamnesis.Character.Pages
 		{
 			try
 			{
-				await this.Save(false);
+				await this.Save();
 			}
 			catch (Exception ex)
 			{
@@ -174,39 +155,12 @@ namespace Anamnesis.Character.Pages
 			}
 		}
 
-		private async void OnAdvSaveClicked(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				await this.Save(true);
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to save appearance");
-			}
-		}
-
-		private async Task Save(bool advanced)
+		private async Task Save()
 		{
 			if (this.Actor == null)
 				return;
 
-			CharacterFile.SaveModes mode = CharacterFile.SaveModes.All;
-
-			if (advanced)
-			{
-				CharacterFile.SaveModes newMode = await ViewService.ShowDialog<AppearanceModeSelectorDialog, CharacterFile.SaveModes>("Save Character...", lastSaveMode);
-
-				if (newMode == CharacterFile.SaveModes.None)
-					return;
-
-				mode = newMode;
-			}
-
-			CharacterFile file = new CharacterFile();
-			file.WriteToFile(this.Actor, mode);
-
-			await FileService.Save(file);
+			lastSaveMode = await CharacterFile.Save(this.Actor, lastSaveMode);
 		}
 
 		private void OnActorChanged(ActorViewModel? actor)

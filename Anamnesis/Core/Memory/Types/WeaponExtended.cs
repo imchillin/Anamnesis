@@ -22,11 +22,6 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public WeaponExtendedViewModel(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
-		{
-		}
-
 		[ModelField] public WeaponSubExtendedViewModel? SubModel { get; set; }
 	}
 
@@ -35,11 +30,6 @@ namespace Anamnesis.Memory
 	{
 		public WeaponSubExtendedViewModel(IntPtr pointer, IMemoryViewModel? parent)
 			: base(pointer, parent)
-		{
-		}
-
-		public WeaponSubExtendedViewModel(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
 		{
 		}
 

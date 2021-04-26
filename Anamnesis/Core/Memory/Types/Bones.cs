@@ -32,15 +32,10 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		public BonesViewModel(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
-		{
-		}
-
 		[ModelField] public int Count { get; set; }
 		[ModelField] public IntPtr TransformArray { get; set; }
 
-		public List<TransformViewModel> Transforms { get; set; } = new List<TransformViewModel>();
+		public List<TransformPtrViewModel> Transforms { get; set; } = new List<TransformPtrViewModel>();
 
 		protected override bool HandleModelToViewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
@@ -69,7 +64,7 @@ namespace Anamnesis.Memory
 							IntPtr ptr = this.TransformArray;
 							for (int i = 0; i < this.Count; i++)
 							{
-								this.Transforms.Add(new TransformViewModel(ptr, this));
+								this.Transforms.Add(new TransformPtrViewModel(ptr, this));
 								ptr += 0x30;
 							}
 						}
@@ -92,7 +87,7 @@ namespace Anamnesis.Memory
 
 		private void ClearTransforms()
 		{
-			foreach (TransformViewModel transform in this.Transforms)
+			foreach (TransformPtrViewModel transform in this.Transforms)
 			{
 				transform.Dispose();
 			}

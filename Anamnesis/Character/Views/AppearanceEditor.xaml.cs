@@ -150,10 +150,11 @@ namespace Anamnesis.Character.Views
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
 
-			if (this.Appearance.Tribe == 0)
+			this.Tribe = GameDataService.Tribes.Get((int)this.Appearance.Tribe);
+
+			if (this.Appearance.Tribe == 0 || this.Tribe == null)
 				this.Appearance.Tribe = this.Race.Tribes.First().Tribe;
 
-			this.Tribe = GameDataService.Tribes.Get((int)this.Appearance.Tribe);
 			this.TribeComboBox.SelectedItem = this.Tribe;
 
 			this.HasFur = this.Appearance.Race == AnAppearance.Races.Hrothgar;
@@ -231,10 +232,21 @@ namespace Anamnesis.Character.Views
 
 			this.appearanceLocked = true;
 
+			int oldTribeIndex = this.GetTribeIndex(this.Race, this.Tribe);
+
 			this.Race = race;
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
-			this.Tribe = this.Race.Tribes.First();
+
+			if (oldTribeIndex < 0 || oldTribeIndex > this.Race.Tribes.Length)
+			{
+				this.Tribe = this.Race.Tribes.First();
+			}
+			else
+			{
+				this.Tribe = this.Race.Tribes[oldTribeIndex];
+			}
+
 			this.TribeComboBox.SelectedItem = this.Tribe;
 
 			this.Appearance.Race = this.Race.Race;
@@ -262,6 +274,23 @@ namespace Anamnesis.Character.Views
 			this.Appearance.Tribe = this.Tribe.Tribe;
 
 			this.UpdateRaceAndTribe();
+		}
+
+		private int GetTribeIndex(IRace? race, ITribe? tribe)
+		{
+			if (race == null || tribe == null)
+				return -1;
+
+			ITribe[] tribes = race.Tribes;
+			for (int i = 0; i < tribes.Length; i++)
+			{
+				if (tribes[i] == tribe)
+				{
+					return i;
+				}
+			}
+
+			return -1;
 		}
 
 		/*private void CalculateHeight()

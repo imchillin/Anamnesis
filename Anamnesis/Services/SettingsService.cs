@@ -10,6 +10,7 @@ namespace Anamnesis.Services
 	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Input;
 	using Anamnesis;
 	using Anamnesis.Files;
 	using Anamnesis.GUI.Dialogs;
@@ -23,9 +24,12 @@ namespace Anamnesis.Services
 		private string currentThemeSwatch = string.Empty;
 		private bool? currentThemeDark = null;
 
+		public static event PropertyChangedEventHandler? SettingsChanged;
+
 		public static Settings Current => Instance.Settings!;
 
 		public Settings? Settings { get; private set; }
+		public bool FirstTimeUser { get; private set; }
 
 		public static void ShowDirectory()
 		{
@@ -44,29 +48,37 @@ namespace Anamnesis.Services
 
 			if (!File.Exists(settingsPath))
 			{
+				this.FirstTimeUser = true;
 				this.Settings = new Settings();
 				Save();
 			}
 			else
 			{
+				this.FirstTimeUser = false;
 				try
 				{
+					await Dispatch.MainThread();
+
+					if (Keyboard.IsKeyDown(Key.LeftShift))
+						throw new Exception("User Abort");
+
 					string json = File.ReadAllText(settingsPath);
 					this.Settings = SerializerService.Deserialize<Settings>(json);
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
+					Log.Warning(ex, "Failed to load settings");
 					await GenericDialog.Show("Failed to load Settings. Your settings have been reset.", "Error", MessageBoxButton.OK);
 					this.Settings = new Settings();
 					Save();
 				}
 			}
 
-			this.Settings.PropertyChanged += this.SettingsChanged;
-			this.SettingsChanged(null, null);
+			this.Settings.PropertyChanged += this.OnSettingsChanged;
+			this.OnSettingsChanged(null, new PropertyChangedEventArgs(null));
 		}
 
-		private void SettingsChanged(object? sender, PropertyChangedEventArgs? e)
+		private void OnSettingsChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (this.Settings == null)
 				return;
@@ -82,6 +94,8 @@ namespace Anamnesis.Services
 			{
 				Save();
 			}
+
+			SettingsChanged?.Invoke(sender, e);
 		}
 	}
 }

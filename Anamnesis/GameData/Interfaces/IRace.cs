@@ -14,6 +14,6 @@ namespace Anamnesis.GameData
 		string Masculine { get; }
 		string DisplayName { get; }
 
-		IEnumerable<ITribe> Tribes { get; }
+		ITribe[] Tribes { get; }
 	}
 }

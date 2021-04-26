@@ -33,6 +33,8 @@ namespace Anamnesis.Memory
 		bool WriteToMemory(bool force = false);
 		bool ReadFromMemory(bool force = false);
 
+		void SetMemoryMode(MemoryModes mode);
+
 		void AddChild(IMemoryViewModel child);
 		void RemoveChild(IMemoryViewModel child);
 	}
@@ -63,11 +65,6 @@ namespace Anamnesis.Memory
 			}
 
 			this.Tick();
-		}
-
-		public MemoryViewModelBase(IMemoryViewModel parent, string propertyName)
-			: base(parent, propertyName)
-		{
 		}
 
 		public IntPtr? Pointer { get; set; }
@@ -118,6 +115,11 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		public void SetMemoryMode(MemoryModes mode)
+		{
+			this.MemoryMode = mode;
+		}
+
 		public void Dispose()
 		{
 			for (int i = this.children.Count - 1; i >= 0; i--)
@@ -140,12 +142,18 @@ namespace Anamnesis.Memory
 
 		public void AddChild(IMemoryViewModel child)
 		{
-			this.children.Add(child);
+			lock (this)
+			{
+				this.children.Add(child);
+			}
 		}
 
 		public void RemoveChild(IMemoryViewModel child)
 		{
-			this.children.Remove(child);
+			lock (this)
+			{
+				this.children.Remove(child);
+			}
 		}
 
 		public override int Tick()

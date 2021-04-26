@@ -36,6 +36,8 @@
 	"Home_Wiki": "Aide",
 	"Home_None": "Rien",
 
+	"FTUE_Message": "Bienvenue!\nMerci d'utiliser Anamesis! Pour commencer nous avons ouvert les paramètres pour vous. Veuillez sélectionner votre langue.",
+
 	"Scene_World_Header": "Monde",
 	"Scene_World_Time": "Temps:",
 	"Scene_World_Day": "Jour:",
@@ -71,7 +73,7 @@
 	"Character_Appearance_Lips": "Lèvres:",
 	"Character_Appearance_Hair": "Cheveux:",
 	"Character_Appearance_Height": "Taille:",
-	"Character_Appearance_BustSize": "Tour de Poitrine:",
+	"Character_Appearance_BustSize": "Poitrine:",
 	"Character_Appearance_Muscle": "Muscle:",
 	"Character_Appearance_EarsSize": "Longeur Oreilles:",
 	"Character_Appearance_TailSize": "Longeur Queue:",
@@ -111,7 +113,7 @@
 	"Character_Actor_Alpha": "Opacité:",
 	"Character_Actor_EntityType": "Type:",
 	"Character_Actor_Nickname": "Surnom:",
-	"Character_Actor_DataPath": "Animations raciales:",
+	"Character_Actor_DataPath": "Animations\rraciales:",
 
 	"Character_Model_Header": "Modèle",
 	"Character_Model_Height": "Taille:",
@@ -130,7 +132,7 @@
 
 	"Character_ExWeapons_Header": "Armes Etendues",
 
-	"Pose_WarningNotGPose": "Le posing n'est disponible qu'en pose de groupe. Tapez /Gpose dans le chat.",
+	"Pose_WarningNotGPose": "Le posing n'est disponible qu'en pose de groupe. Tapez /gpose dans le chat.",
 	"Pose_WarningNotFrozen": "Le Posing n'est disponible que sur les personnages en pause. Mettez le personnage en pause dans la fenêtre des paramètres du Gpose.",
 	"Pose_GenerateSkeletonTitle": "Squelette non trouvé",
 	"Pose_GenerateSkeleton": "Aucun squelette sur le personnage {0}- En générer un ?\nSans squelette le parentage ne fonctionera pas",
@@ -310,7 +312,7 @@
 	"Pose_MiddleALeft": "Majeur A Gauche",
 	"Pose_MiddleARight": "Majeur A Droite",
 	"Pose_ThumbALeft": "Pouce A Gauche",
-	"Pose_ThumbARight": "Pouce A Droite,
+	"Pose_ThumbARight": "Pouce A Droite",
 	"Pose_WeaponLeft": "Arme Gauche",
 	"Pose_WeaponRight": "Arme Droite",
 	"Pose_EarringBLeft": "Boucle d'oreille B Gauche",

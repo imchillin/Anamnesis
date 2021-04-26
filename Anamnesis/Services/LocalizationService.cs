@@ -8,6 +8,7 @@ namespace Anamnesis.Services
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using Anamnesis.Serialization;
@@ -25,6 +26,8 @@ namespace Anamnesis.Services
 		private static Locale? currentLocale;
 
 		public static event LocalizationEvent? LocaleChanged;
+
+		public static bool Loaded => Exists && currentLocale != null;
 
 		public static void Add(string culture, string key, string value)
 		{
@@ -55,8 +58,16 @@ namespace Anamnesis.Services
 				string culture = Path.GetFileNameWithoutExtension(path);
 
 				string json = File.ReadAllText(path);
-				Dictionary<string, string> values = SerializerService.Deserialize<Dictionary<string, string>>(json);
-				Add(culture, values);
+
+				try
+				{
+					Dictionary<string, string> values = SerializerService.Deserialize<Dictionary<string, string>>(json);
+					Add(culture, values);
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, $"Failed to load language: {path}");
+				}
 			}
 		}
 
@@ -73,6 +84,23 @@ namespace Anamnesis.Services
 		{
 			string str = GetString(key);
 			return string.Format(str, param);
+		}
+
+		public static string GetStringAllLanguages(string key)
+		{
+			StringBuilder builder = new StringBuilder();
+
+			foreach ((string code, Locale locale) in Locales)
+			{
+				string val;
+				if (locale.Get(key, out val))
+				{
+					builder.AppendLine(val);
+					builder.AppendLine();
+				}
+			}
+
+			return builder.ToString().TrimEnd();
 		}
 
 		public static string GetString(string key, bool silent = false)
@@ -142,8 +170,6 @@ namespace Anamnesis.Services
 
 			currentLocale = Locales[FallbackCulture];
 			fallbackLocale = currentLocale;
-
-			Locales.Add("GIB", new GiberishLocale(fallbackLocale));
 		}
 
 		public override async Task Start()
@@ -182,66 +208,6 @@ namespace Anamnesis.Services
 					return false;
 
 				value = this.values[key];
-				return true;
-			}
-		}
-
-		/// <summary>
-		/// Converts any locale into gibberish English.
-		/// </summary>
-		private class GiberishLocale : Locale
-		{
-			private const string Characters = @"abcdefghijklmnopqrstuvwxyz";
-			private static Random random = new Random();
-
-			private Locale baseLocale;
-
-			public GiberishLocale(Locale baseLocale)
-				: base("Gib")
-			{
-				this.baseLocale = baseLocale;
-				this.Name = "Gibberish";
-			}
-
-			public override bool Get(string key, out string value)
-			{
-				if (!base.Get(key, out value))
-				{
-					string? str = null;
-
-					if (!this.baseLocale.Get(key, out str))
-						return false;
-
-					if (str == null)
-						return false;
-
-					char[] newStr = new char[str.Length];
-
-					for (int i = 0; i < str.Length; i++)
-					{
-						if (char.IsDigit(str[i]))
-						{
-							newStr[i] = random.Next(0, 9).ToString()[0];
-						}
-						else if (char.IsLetter(str[i]))
-						{
-							newStr[i] = Characters[random.Next(0, Characters.Length)];
-
-							if (char.IsUpper(str[i]))
-							{
-								newStr[i] = char.ToUpper(newStr[i]);
-							}
-						}
-						else
-						{
-							newStr[i] = str[i];
-						}
-					}
-
-					value = new string(newStr);
-					this.Add(key, value);
-				}
-
 				return true;
 			}
 		}

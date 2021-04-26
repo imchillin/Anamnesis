@@ -53,7 +53,7 @@
 				To help us fix this problem, please upload your 
 				<Hyperlink RequestNavigate="OnLogNavigate" NavigateUri="/">log file</Hyperlink>
 				to
-				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discordapp.com/channels/701987194910277642/722967293071589466/">Discord</Hyperlink>
+				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discordapp.com/channels/748454690118828163/834265007066841129/">Discord</Hyperlink>
 				or a new issue on 
 				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/Anamnesis/issues/new">GitHub</Hyperlink>.
 				<LineBreak/>

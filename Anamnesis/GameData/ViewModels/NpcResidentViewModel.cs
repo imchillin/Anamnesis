@@ -13,15 +13,15 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class NpcResidentViewModel : ExcelRowViewModel<ENpcResident>, INpcResident
 	{
-		public NpcResidentViewModel(int key, ExcelSheet<ENpcResident> sheet, Lumina lumina)
+		public NpcResidentViewModel(int key, ExcelSheet<ENpcResident> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}
 
-		public override string Name => string.IsNullOrEmpty(this.Singular) ? this.Key.ToString() : this.Singular;
+		public override string Name => this.Singular;
 		public string Singular => this.Value.Singular;
 		public string Plural => this.Value.Plural;
-		public string Title => this.Value.Title;
+		public string Title => !string.IsNullOrEmpty(this.Value.Title) ? this.Value.Title : this.Key.ToString();
 		public INpcBase? Appearance => GameDataService.BaseNPCs!.Get((int)this.Value.RowId);
 		public Mod? Mod => null;
 	}
