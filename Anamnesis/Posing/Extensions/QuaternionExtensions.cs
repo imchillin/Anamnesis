@@ -4,8 +4,8 @@
 
 namespace Anamnesis.PoseModule
 {
-    using Serilog;
-    using System;
+	using Serilog;
+	using System;
 	using System.Windows.Media.Media3D;
 
 	using CmQuaternion = Anamnesis.Memory.Quaternion;

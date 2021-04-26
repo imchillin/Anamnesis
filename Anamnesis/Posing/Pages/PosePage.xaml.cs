@@ -84,30 +84,30 @@ namespace Anamnesis.PoseModule.Pages
 			{
 				CmQuaternion newRotation = QuaternionExtensions.MirrorQuaternion(targetBone.ViewModel.Rotation); //character-relative transform
 				if (shouldFlip && targetBone.BoneName.EndsWith("Left"))
-                {
+				{
 					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(targetBone.BoneName.Replace("Left", "Right"));
 					if(rightBone != null)
-                    {
+					{
 						CmQuaternion rightRot = QuaternionExtensions.MirrorQuaternion(rightBone.ViewModel.Rotation);
 						targetBone.ViewModel.Rotation = rightRot;
 						rightBone.ViewModel.Rotation = newRotation;
-                    }
+					}
 					else
-                    {
+					{
 						Log.Debug("could not find right bone of: " + targetBone.BoneName);
-                    }
-                }
+					}
+				}
 				else if (shouldFlip && targetBone.BoneName.EndsWith("Right"))
-                {
+				{
 					//do nothing so it doesn't revert...
-                }
+				}
 				else
-                {
+				{
 					targetBone.ViewModel.Rotation = newRotation;
-                }
+				}
 
 				if (PoseService.Instance.EnableParenting)
-                {
+				{
 					foreach (Visual3D? child in targetBone.Children)
 					{
 						if (child is BoneVisual3d childBone)
@@ -115,7 +115,7 @@ namespace Anamnesis.PoseModule.Pages
 							MirrorBone(childBone, shouldFlip);
 						}
 					}
-                }
+				}
 			}
 		}
 
@@ -278,13 +278,13 @@ namespace Anamnesis.PoseModule.Pages
 				{// if targeted bone is a limb don't switch the respective left and right sides
 					BoneVisual3d targetBone = this.Skeleton.CurrentBone;
 					if (targetBone.BoneName.EndsWith("Left") || targetBone.BoneName.EndsWith("Right"))
-                    {
+					{
 						MirrorBone(targetBone, false);
-                    }
+					}
 					else
-                    {
+					{
 						MirrorBone(targetBone);
-                    }
+					}
 					targetBone.ReadTransform(true);
 				}
 				this.IsMirroring = false;
