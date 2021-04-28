@@ -167,11 +167,11 @@
 	"Pose_LoadScale": "Load Bone Scales",
 	"Pose_LoadPosition": "Load Bone Positions",
 
-	"Pose_EnableRotation": "Rot",
+	"Pose_EnableRotation": "R",
 	"Pose_EnableRotationTooltip": "Enable editing rotation",
-	"Pose_EnableScale": "Scale",
+	"Pose_EnableScale": "S",
 	"Pose_EnableScaleTooltip": "Enable editing scale",
-	"Pose_EnablePosition": "Pos",
+	"Pose_EnablePosition": "P",
 	"Pose_EnablePositionTooltip": "Enable editing positions",
 
 	"Pose_Matrix_HeadCategory": "Head",
