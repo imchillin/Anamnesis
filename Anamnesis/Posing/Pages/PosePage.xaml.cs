@@ -70,19 +70,19 @@ namespace Anamnesis.PoseModule.Pages
 		{
 			if (targetBone != null)
 			{
-				CmQuaternion newRotation = QuaternionExtensions.MirrorQuaternion(targetBone.ViewModel.Rotation); // character-relative transform
+				CmQuaternion newRotation = QuaternionExtensions.Mirror(targetBone.ViewModel.Rotation); // character-relative transform
 				if (shouldFlip && targetBone.BoneName.EndsWith("Left"))
 				{
 					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(targetBone.BoneName.Replace("Left", "Right"));
 					if (rightBone != null)
 					{
-						CmQuaternion rightRot = QuaternionExtensions.MirrorQuaternion(rightBone.ViewModel.Rotation);
+						CmQuaternion rightRot = rightBone.ViewModel.Rotation.Mirror();
 						targetBone.ViewModel.Rotation = rightRot;
 						rightBone.ViewModel.Rotation = newRotation;
 					}
 					else
 					{
-						Log.Debug("could not find right bone of: " + targetBone.BoneName);
+						Log.Warning("could not find right bone of: " + targetBone.BoneName);
 					}
 				}
 				else if (shouldFlip && targetBone.BoneName.EndsWith("Right"))
@@ -264,7 +264,8 @@ namespace Anamnesis.PoseModule.Pages
 					lumbarBone?.ReadTransform(true);
 				}
 				else
-				{// if targeted bone is a limb don't switch the respective left and right sides
+				{
+					// if targeted bone is a limb don't switch the respective left and right sides
 					BoneVisual3d targetBone = this.Skeleton.CurrentBone;
 					if (targetBone.BoneName.EndsWith("Left") || targetBone.BoneName.EndsWith("Right"))
 					{

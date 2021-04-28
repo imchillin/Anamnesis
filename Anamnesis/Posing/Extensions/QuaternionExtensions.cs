@@ -4,16 +4,12 @@
 
 namespace Anamnesis.PoseModule
 {
-	using System;
 	using System.Windows.Media.Media3D;
-	using Serilog;
 
 	using CmQuaternion = Anamnesis.Memory.Quaternion;
 
 	public static class QuaternionExtensions
 	{
-		private static ILogger Log => Serilog.Log.ForContext<CmQuaternion>();
-
 		public static Quaternion ToMedia3DQuaternion(this CmQuaternion self)
 		{
 			return new Quaternion(self.X, self.Y, self.Z, self.W);
@@ -40,12 +36,9 @@ namespace Anamnesis.PoseModule
 			self.W = other.W;
 		}
 
-		public static CmQuaternion MirrorQuaternion(this CmQuaternion self)
+		public static CmQuaternion Mirror(this CmQuaternion self)
 		{
-			// Log.Debug("Pre-Mirrored Value: (" + self.X + ", " + self.Y + ", " + self.Z + ", " + self.W + ")");
-			self = new CmQuaternion(self.Z, self.W, self.X, self.Y);
-
-			return self;
+			return new CmQuaternion(self.Z, self.W, self.X, self.Y);
 		}
 	}
 }
