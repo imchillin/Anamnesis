@@ -111,7 +111,7 @@
 							<Button
 								Grid.Row="1"
 								Grid.Column="1"
-								Margin="2,2,6,2"
+								Margin="45,2,6,2"
 								Padding="6,4"
 								Click="OnSelectChildrenClicked"
 								IsEnabled="{Binding Skeleton.HasSelection}"
@@ -119,6 +119,15 @@
 								<ana:TextBlock Text="Select Children" />
 							</Button>
 
+							<Button
+								Grid.Row="1"
+								Margin="71,2,98,2"
+								Padding="6,4"
+								Click="OnMirrorClicked"
+								Style="{StaticResource TransparentButton}" Grid.ColumnSpan="2">
+								<ana:TextBlock Text="Mirror" />
+							</Button>
+							
 							<controls:TransformEditor
 								Grid.Row="2"
 								Grid.ColumnSpan="2"

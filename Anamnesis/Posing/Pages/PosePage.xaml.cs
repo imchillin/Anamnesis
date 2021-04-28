@@ -11,12 +11,18 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
+	using System.Windows.Media.Media3D;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule.Extensions;
 	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
+
+	using CmQuaternion = Anamnesis.Memory.Quaternion;
+	using Quaternion = System.Windows.Media.Media3D.Quaternion;
+	using QuaternionExtensions = Anamnesis.PoseModule.QuaternionExtensions;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
@@ -25,6 +31,10 @@ namespace Anamnesis.PoseModule.Pages
 	public partial class PosePage : UserControl
 	{
 		public const double DragThreshold = 20;
+
+		private static ILogger Log => Serilog.Log.ForContext<PosePage>();
+
+		private static bool isMirroring = false;
 
 		public static PoseFile.Configuration FileConfig = new PoseFile.Configuration();
 
@@ -43,8 +53,71 @@ namespace Anamnesis.PoseModule.Pages
 		public PoseService PoseService { get => PoseService.Instance; }
 		public TargetService TargetService { get => TargetService.Instance; }
 
+		public bool IsMirroring
+		{
+			get
+			{
+				return isMirroring;
+			}
+			set
+			{
+				isMirroring = value;
+			}
+		}
 		public SkeletonVisual3d? Skeleton { get; private set; }
 		public PoseFile.Configuration FileConfiguration => FileConfig;
+		
+		/* Basic Idea:
+		 *	- get mirrored quat of targetBone 
+		 *  - check if its a 'left' bone
+		 *		- if it is:
+		 *			- get the mirrored quat of the corresponding right bone
+		 *			- store the first quat (from left bone) on the right bone
+		 *			- store the second quat (from right bone) on the left bone
+		 *		- if not:
+		 *			- store the quat on the target bone
+		 *	- recursively mirror on all child bones
+		 */
+		private void MirrorBone(BoneVisual3d? targetBone, bool shouldFlip = true)
+		{
+			if (targetBone != null)
+			{
+				CmQuaternion newRotation = QuaternionExtensions.MirrorQuaternion(targetBone.ViewModel.Rotation); //character-relative transform
+				if (shouldFlip && targetBone.BoneName.EndsWith("Left"))
+				{
+					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(targetBone.BoneName.Replace("Left", "Right"));
+					if(rightBone != null)
+					{
+						CmQuaternion rightRot = QuaternionExtensions.MirrorQuaternion(rightBone.ViewModel.Rotation);
+						targetBone.ViewModel.Rotation = rightRot;
+						rightBone.ViewModel.Rotation = newRotation;
+					}
+					else
+					{
+						Log.Debug("could not find right bone of: " + targetBone.BoneName);
+					}
+				}
+				else if (shouldFlip && targetBone.BoneName.EndsWith("Right"))
+				{
+					//do nothing so it doesn't revert...
+				}
+				else
+				{
+					targetBone.ViewModel.Rotation = newRotation;
+				}
+
+				if (PoseService.Instance.EnableParenting)
+				{
+					foreach (Visual3D? child in targetBone.Children)
+					{
+						if (child is BoneVisual3d childBone)
+						{
+							MirrorBone(childBone, shouldFlip);
+						}
+					}
+				}
+			}
+		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -185,6 +258,37 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			this.Skeleton.Select(bones, SkeletonVisual3d.SelectMode.Add);
+		}
+
+		private void OnMirrorClicked(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (this.Skeleton != null && !this.IsMirroring)
+			{// if no bone selected, mirror both lumbar and waist bones
+				this.IsMirroring = true;
+				if (this.Skeleton.CurrentBone == null)
+				{
+					BoneVisual3d? waistBone = this.Skeleton.GetBone("Waist");
+					BoneVisual3d? lumbarBone = this.Skeleton.GetBone("SpineA");
+					MirrorBone(waistBone);
+					MirrorBone(lumbarBone);
+					waistBone?.ReadTransform(true);
+					lumbarBone?.ReadTransform(true);
+				}
+				else
+				{// if targeted bone is a limb don't switch the respective left and right sides
+					BoneVisual3d targetBone = this.Skeleton.CurrentBone;
+					if (targetBone.BoneName.EndsWith("Left") || targetBone.BoneName.EndsWith("Right"))
+					{
+						MirrorBone(targetBone, false);
+					}
+					else
+					{
+						MirrorBone(targetBone);
+					}
+					targetBone.ReadTransform(true);
+				}
+				this.IsMirroring = false;
+			}
 		}
 
 		private void OnCanvasMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
