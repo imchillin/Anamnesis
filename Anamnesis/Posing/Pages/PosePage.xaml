@@ -64,8 +64,7 @@
 
 				<!--  Sidebar  -->
 				<Grid
-					Grid.Row="0"
-					Grid.RowSpan="2"
+					Grid.Row="1"
 					Grid.Column="2">
 					<Grid.RowDefinitions>
 						<RowDefinition />
@@ -93,32 +92,60 @@
 								Grid.Row="0"
 								Grid.ColumnSpan="2"
 								Margin="6"
-								HorizontalAlignment="Center"
-								FontSize="14"
+								Style="{StaticResource Header}"
 								Text="{Binding Skeleton.CurrentBone.Tooltip}" />
 
-							<Button
-								Grid.Row="1"
-								Grid.Column="0"
-								Margin="6,2,2,2"
-								Padding="6,4"
-								Click="OnClearClicked"
-								IsEnabled="{Binding Skeleton.HasSelection}"
-								Style="{StaticResource TransparentButton}">
-								<ana:TextBlock Text="Clear" />
-							</Button>
+							<ana:TextBlock
+								Grid.Row="0"
+								Grid.ColumnSpan="2"
+								Margin="6"
+								HorizontalAlignment="Left"
+								Key="Pose_NothingSelected"
+								Style="{StaticResource Header}"
+								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}"/>
 
-							<Button
-								Grid.Row="1"
-								Grid.Column="1"
-								Margin="2,2,6,2"
-								Padding="6,4"
-								Click="OnSelectChildrenClicked"
-								IsEnabled="{Binding Skeleton.HasSelection}"
-								Style="{StaticResource TransparentButton}">
-								<ana:TextBlock Text="Select Children" />
-							</Button>
+							<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{DynamicResource AttentionToActionBrush}" CornerRadius="3" Margin="1" IsEnabled="{Binding PoseService.IsEnabled}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition/>
+									</Grid.ColumnDefinitions>
 
+									<Button
+										Grid.Column="0"
+										Margin="2"
+										Padding="6,3"
+										Click="OnClearClicked"
+										IsEnabled="{Binding Skeleton.HasSelection}"
+										Style="{StaticResource TransparentButton}">	
+										<ana:TextBlock Text="Clear" />
+									</Button>
+
+									<Button
+										Grid.Column="1"
+										Margin="2"
+										Padding="6,3"
+										Click="OnSelectChildrenClicked"
+										IsEnabled="{Binding Skeleton.HasSelection}"
+										Style="{StaticResource TransparentButton}">
+										<ana:TextBlock Text="Select Children" />
+									</Button>
+
+									<Button
+										Grid.Column="2"
+										Margin="2"
+										Padding="6,3"
+										Click="OnMirrorClicked"
+										Style="{StaticResource TransparentButton}" Grid.ColumnSpan="2">
+										<ana:TextBlock Text="Mirror" />
+									</Button>
+
+								</Grid>
+							</Border>
+
+							
+							
 							<controls:TransformEditor
 								Grid.Row="2"
 								Grid.ColumnSpan="2"
@@ -141,18 +168,25 @@
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition />
-							<RowDefinition />
 						</Grid.RowDefinitions>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
 
 						<CheckBox
 							Margin="3"
+							Grid.ColumnSpan="2"
 							Content="Include Selected Bones Only"
 							IsChecked="{Binding FileConfiguration.UseSelection}" />
 
 						<Button
 							Grid.Row="1"
 							Margin="2"
-							HorizontalContentAlignment="Left"
+							Grid.Column="0"
+							Padding="0"
+							HorizontalContentAlignment="Center"
 							Click="OnOpenClicked"
 							IsEnabled="{Binding GposeService.IsGpose}">
 							<Grid>
@@ -168,9 +202,11 @@
 							</Grid>
 						</Button>
 						<Button
-							Grid.Row="2"
+							Grid.Row="1"
 							Margin="2"
-							HorizontalContentAlignment="Left"
+							Padding="0"
+							Grid.Column="1"
+							HorizontalContentAlignment="Center"
 							Click="OnSaveClicked">
 							<Grid>
 								<ana:TextBlock
@@ -190,6 +226,7 @@
 				<!--  top Bar  -->
 				<Border
 					Grid.Row="0"
+					Grid.ColumnSpan="2"
 					Margin="3"
 					VerticalAlignment="Stretch"
 					Background="{DynamicResource MaterialDesignCardBackground}"
@@ -285,7 +322,7 @@
 							Margin="3"
 							Padding="3"
 							HorizontalAlignment="Right"
-							Background="{DynamicResource MaterialDesignPaper}"
+							Background="{DynamicResource AttentionToActionBrush}"
 							CornerRadius="3">
 							<StackPanel Orientation="Horizontal">
 								<CheckBox
