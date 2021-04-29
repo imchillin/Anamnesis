@@ -21,7 +21,7 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="Button">
 
-					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand" x:Name="Content">
+					<Grid TextBlock.Foreground="{DynamicResource MaterialDesignBodyLight}" Cursor="Hand">
 						<Border Background="{DynamicResource MaterialDesignCardBackground}" x:Name="HoverBorder" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource MaterialDesignCardBackground}" Opacity="0">
 							<Border.Effect>
 								<DropShadowEffect ShadowDepth="0" BlurRadius="5" Opacity="0.5"/>
@@ -54,7 +54,6 @@
 						</Trigger>
 						<Trigger Property="IsEnabled" Value="false">
 							<Setter TargetName="Border" Property="Opacity" Value="0"/>
-							<Setter TargetName="Content" Property="Opacity" Value="0.5"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

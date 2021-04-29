@@ -258,9 +258,7 @@ namespace Anamnesis.Files
 			if (actor.ModelObject?.ExtendedAppearance != null)
 				actor.ModelObject.ExtendedAppearance.MemoryMode = MemoryModes.None;
 
-			if (!string.IsNullOrEmpty(this.Nickname))
-				actor.Nickname = this.Nickname;
-
+			actor.Nickname = this.Nickname;
 			actor.ModelType = this.ModelType;
 
 			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
