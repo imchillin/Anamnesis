@@ -33,11 +33,11 @@
 				Height="22" Width="22"
 				x:Name="LockedIndicator"
 				Unchecked="LockedIndicator_Unchecked">
-
+				
 				<ToggleButton.Content>
 					<fa:IconImage Icon="LockOpen" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Margin="3"/>
 				</ToggleButton.Content>
-
+				
 				<materialDesign:ToggleButtonAssist.OnContent>
 					<fa:IconImage Icon="Lock" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Margin="3" Opacity="0.75"/>
 				</materialDesign:ToggleButtonAssist.OnContent>

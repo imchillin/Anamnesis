@@ -91,7 +91,7 @@ namespace UpdateExtractor
 				Console.WriteLine("Please try again or download the update manually.");
 				Console.WriteLine();
 				Console.WriteLine("Press any key to close this window.");
-				Console.ReadKey();
+				Console.ReadLine();
 			}
 		}
 
