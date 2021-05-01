@@ -271,6 +271,7 @@
 		"TailB": "TailA",
 		"TailC": "TailB",
 		"TailD": "TailC",
+		"TailE": "TailD",
 
 		"Met_0": "RootHead",
 		"Met_1": "RootHead",
