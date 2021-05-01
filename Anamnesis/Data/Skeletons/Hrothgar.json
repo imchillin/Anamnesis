@@ -27,5 +27,13 @@
 		"Head_20": "LipUpperLeft",
 		"Head_21": "LipUpperRight",
 		"Head_22": "LipLowerA"
+	},
+
+	"Parenting": {
+		"LipUpperLeft": "RootHead",
+		"LipUpperRight": "RootHead",
+		"JawUpper": "RootHead",
+		"WhiskersLeft": "RootHead",
+		"WhiskersRight": "RootHead"
 	}
 }
