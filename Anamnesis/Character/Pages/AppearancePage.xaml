@@ -211,40 +211,37 @@
 			</StackPanel>
 
 			<Grid Grid.Row="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				
 				<Grid.RowDefinitions>
-					<RowDefinition />
 					<RowDefinition />
 					<RowDefinition />
 				</Grid.RowDefinitions>
 
 				<cm3Controls:IconButton
 					Grid.Row="0"
+					Grid.ColumnSpan="2"
 					Margin="3"
 					Click="OnLoadNpcClicked"
 					Icon="ChessQueen"
-					Text="Load Other" />
+					Key="Character_Appearance_LoadOther" />
 
-				<Button
-					Grid.Row="1"
+				<ana:IconButton Grid.Row="1"
+					Grid.Column="0"
 					Margin="3"
-					HorizontalContentAlignment="Left"
-					Click="OnLoadClicked">
-					<cm3Controls:TextBlock
-						HorizontalAlignment="Left"
-						FontWeight="Light"
-						Text="Load" />
-				</Button>
+					Icon="File"
+					Key="Common_OpenFile"
+					Click="OnLoadClicked"/>
 
-				<Button
-					Grid.Row="2"
+				<ana:IconButton Grid.Row="1"
+					Grid.Column="1"
 					Margin="3"
-					HorizontalContentAlignment="Left"
-					Click="OnSaveClicked">
-					<cm3Controls:TextBlock
-						HorizontalAlignment="Left"
-						FontWeight="Light"
-						Text="Save" />
-				</Button>
+					Icon="Save"
+					Key="Common_SaveFile"
+					Click="OnSaveClicked"/>
 
 			</Grid>
 		</Grid>
