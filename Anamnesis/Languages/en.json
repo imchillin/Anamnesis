@@ -156,6 +156,7 @@
 	"Pose_SaveBones": "Save {0} Bones",
 	"Pose_Load": "Load",
 	"Pose_LoadBones": "Load {0} Bones",
+	"Pose_Flip": "Flip",
 
 	"Pose_FreezePhysics": "Freeze Physics",
 	"Pose_Parenting": "Parenting",

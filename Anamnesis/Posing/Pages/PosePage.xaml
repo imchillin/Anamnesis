@@ -136,9 +136,9 @@
 										Grid.Column="2"
 										Margin="2"
 										Padding="6,3"
-										Click="OnMirrorClicked"
+										Click="OnFlipClicked"
 										Style="{StaticResource TransparentButton}" Grid.ColumnSpan="2">
-										<ana:TextBlock Text="Mirror" />
+										<ana:TextBlock Key="Pose_Flip" />
 									</Button>
 
 								</Grid>

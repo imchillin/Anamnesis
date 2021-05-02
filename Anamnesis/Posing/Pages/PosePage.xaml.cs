@@ -49,7 +49,7 @@ namespace Anamnesis.PoseModule.Pages
 		public PoseService PoseService { get => PoseService.Instance; }
 		public TargetService TargetService { get => TargetService.Instance; }
 
-		public bool IsMirroring { get; private set; }
+		public bool IsFlipping { get; private set; }
 		public SkeletonVisual3d? Skeleton { get; private set; }
 		public PoseFile.Configuration FileConfiguration => FileConfig;
 
@@ -64,13 +64,13 @@ namespace Anamnesis.PoseModule.Pages
 		 *          - store the second quat (from right bone) on the left bone
 		 *      - if not:
 		 *          - store the quat on the target bone
-		 *  - recursively mirror on all child bones
+		 *  - recursively flip on all child bones
 		 */
-		private void MirrorBone(BoneVisual3d? targetBone, bool shouldFlip = true)
+		private void FlipBone(BoneVisual3d? targetBone, bool shouldFlip = true)
 		{
 			if (targetBone != null)
 			{
-				CmQuaternion newRotation = QuaternionExtensions.Mirror(targetBone.ViewModel.Rotation); // character-relative transform
+				CmQuaternion newRotation = targetBone.ViewModel.Rotation.Mirror(); // character-relative transform
 				if (shouldFlip && targetBone.BoneName.EndsWith("Left"))
 				{
 					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(targetBone.BoneName.Replace("Left", "Right"));
@@ -100,7 +100,7 @@ namespace Anamnesis.PoseModule.Pages
 					{
 						if (child is BoneVisual3d childBone)
 						{
-							this.MirrorBone(childBone, shouldFlip);
+							this.FlipBone(childBone, shouldFlip);
 						}
 					}
 				}
@@ -248,18 +248,18 @@ namespace Anamnesis.PoseModule.Pages
 			this.Skeleton.Select(bones, SkeletonVisual3d.SelectMode.Add);
 		}
 
-		private void OnMirrorClicked(object sender, System.Windows.RoutedEventArgs e)
+		private void OnFlipClicked(object sender, System.Windows.RoutedEventArgs e)
 		{
-			if (this.Skeleton != null && !this.IsMirroring)
+			if (this.Skeleton != null && !this.IsFlipping)
 			{
-				// if no bone selected, mirror both lumbar and waist bones
-				this.IsMirroring = true;
+				// if no bone selected, flip both lumbar and waist bones
+				this.IsFlipping = true;
 				if (this.Skeleton.CurrentBone == null)
 				{
 					BoneVisual3d? waistBone = this.Skeleton.GetBone("Waist");
 					BoneVisual3d? lumbarBone = this.Skeleton.GetBone("SpineA");
-					this.MirrorBone(waistBone);
-					this.MirrorBone(lumbarBone);
+					this.FlipBone(waistBone);
+					this.FlipBone(lumbarBone);
 					waistBone?.ReadTransform(true);
 					lumbarBone?.ReadTransform(true);
 				}
@@ -269,17 +269,17 @@ namespace Anamnesis.PoseModule.Pages
 					BoneVisual3d targetBone = this.Skeleton.CurrentBone;
 					if (targetBone.BoneName.EndsWith("Left") || targetBone.BoneName.EndsWith("Right"))
 					{
-						this.MirrorBone(targetBone, false);
+						this.FlipBone(targetBone, false);
 					}
 					else
 					{
-						this.MirrorBone(targetBone);
+						this.FlipBone(targetBone);
 					}
 
 					targetBone.ReadTransform(true);
 				}
 
-				this.IsMirroring = false;
+				this.IsFlipping = false;
 			}
 		}
 
