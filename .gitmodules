@@ -1,4 +1,0 @@
-[submodule "lib/SaintCoinach"]
-	path = lib/SaintCoinach
-	url = https://github.com/Khyrou/SaintCoinach.git
-	branch = master
