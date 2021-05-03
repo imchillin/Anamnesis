@@ -398,7 +398,9 @@ namespace Anamnesis.Memory
 				App.Current.MainWindow.Topmost = false;
 
 				proc = ProcessSelector.FindProcess();
-				App.Current.MainWindow.Topmost = SettingsService.Current.AlwaysOnTop;
+
+				if (SettingsService.Exists)
+					App.Current.MainWindow.Topmost = SettingsService.Current.AlwaysOnTop;
 
 				await Dispatch.NonUiThread();
 			}

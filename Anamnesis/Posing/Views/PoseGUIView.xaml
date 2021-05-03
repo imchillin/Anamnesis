@@ -385,7 +385,7 @@
 								<local:BoneView Canvas.Left="73" Canvas.Top="28" BoneName="TailB"/>
 								<local:BoneView Canvas.Left="65" Canvas.Top="80" BoneName="TailC"/>
 								<local:BoneView Canvas.Left="55" Canvas.Top="128" BoneName="TailD"/>
-								<!--<local:BoneView Canvas.Left="65" Canvas.Top="168" BoneName="TailE"/>-->
+								<local:BoneView Canvas.Left="65" Canvas.Top="168" BoneName="TailE"/>
 							</Canvas>
 						</Viewbox>
 					</Grid>

@@ -156,6 +156,9 @@ namespace Anamnesis.Files
 		{
 			public Directory(string path, LocalFileSource source)
 			{
+				while (path.EndsWith('\\'))
+					path = path.Substring(0, path.Length - 1);
+
 				this.Path = path;
 				this.Name = Paths.GetFileName(path);
 				this.Source = source;
@@ -169,7 +172,7 @@ namespace Anamnesis.Files
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{
-				string basePath = this.Path + "New Directory";
+				string basePath = this.Path + "\\New Directory";
 				string newPath = basePath;
 
 				int i = 1;

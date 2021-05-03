@@ -144,7 +144,7 @@ namespace Anamnesis.GUI.Views
 			{
 				this.selected = value;
 
-				if (this.mode == Modes.Save)
+				if (this.mode == Modes.Save && this.selected?.Entry is IFile)
 				{
 					this.FileName = this.selected?.Name ?? string.Empty;
 				}
@@ -279,6 +279,7 @@ namespace Anamnesis.GUI.Views
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanGoUp)));
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentPath)));
 				Task.Run(this.UpdateEntries);
+				this.Selected = null;
 			}
 		}
 

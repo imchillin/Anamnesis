@@ -69,6 +69,7 @@
 	"Weather_Selector_Unnatural_Tooltip": "Only show weathers that are not normally available in the current territory",
 	"Weather_Selector_All_Tooltip": "Show all weathers",
 
+	"Character_Appearance_LoadOther": "Load Other",
 	"Character_Appearance_Header": "Appearance",
 	"Character_Appearance_FileHair": "Hair",
 	"Character_Appearaince_Body": "Body",
@@ -155,6 +156,7 @@
 	"Pose_SaveBones": "Save {0} Bones",
 	"Pose_Load": "Load",
 	"Pose_LoadBones": "Load {0} Bones",
+	"Pose_Flip": "Flip",
 
 	"Pose_FreezePhysics": "Freeze Physics",
 	"Pose_Parenting": "Parenting",
