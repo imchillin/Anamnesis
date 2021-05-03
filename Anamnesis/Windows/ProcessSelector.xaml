@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="Anamnesis.GUI.Windows.ProcessSelector"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Anamnesis.GUI.Windows"
+		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+		mc:Ignorable="d"
+		Width="550">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<StackPanel Margin="8">
+			<TextBlock Grid.Row="0" TextWrapping="Wrap" Text="Final Fantasy XIV process (ffxiv_dx11) not found." FontSize="16"/>
+			<TextBlock Grid.Row="0" TextWrapping="Wrap" Text="Please ensure the game is running, and is in DirectX 11 mode."/>
+		</StackPanel>
+
+		<Expander Grid.Row="1" IsExpanded="False" Expanded="OnManualExpanded" Collapsed="OnManualCollapsed">
+			<Expander.Header>
+				<Grid>
+					<TextBlock x:Name="AutoLabel" Grid.Row="0" Text="Waiting for process" FontSize="14"/>
+					<TextBlock x:Name="ManualLabel" Visibility="Collapsed" Grid.Row="0" Text="Manual" FontSize="14"/>
+				</Grid>
+			</Expander.Header>
+			
+			<Grid Height="450">
+
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+
+				<DataGrid Grid.Row="0" x:Name="ProcessGrid" SelectionChanged="OnSelectionChanged"  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow" CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserResizeRows="False">
+					<DataGrid.Columns>
+						<DataGridTemplateColumn>
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<fa:IconImage Icon="Lock" Visibility="{Binding Locked, Converter={StaticResource BoolToVisibilityConverter}}" Opacity="0.5" ToolTip="Process cannot be accessed"/>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+
+						<DataGridTemplateColumn>
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<Image Source="{Binding Path=AppIcon}" Width="24" Height="24" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+
+						<DataGridTextColumn Header="Process" Binding="{Binding Name}" Width="256"/>
+						<DataGridTextColumn Header="Started" Binding="{Binding StartTime}"/>
+					</DataGrid.Columns>
+				</DataGrid>
+
+				<Button Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="OnRefreshClicked" Margin="8, 0, 8, 8">
+					<fa:IconImage Icon="SyncAlt" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Width="16"/>
+				</Button>
+
+				<TextBlock Margin="6, 6, 100, 6" Grid.Row="1" TextWrapping="Wrap" Text="Warning: Selecting a process other than the DirectX 11 Final Fantasy XIV process can cause the selected process and Anmnesis to crash." FontSize="12"/>
+
+				<Button Grid.Row="1" x:Name="OkButton" Content="OK" HorizontalAlignment="Right" Width="84" Margin="8" Click="OnOkClicked" IsEnabled="False" Visibility="Collapsed"/>
+			</Grid>
+
+		</Expander>
+
+		<ProgressBar x:Name="ScanProgress" Grid.Row="1" IsIndeterminate="True" VerticalAlignment="Bottom" Margin="3"/>
+	</Grid>
+</UserControl>
