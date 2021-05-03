@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="Anamnesis.Character.Views.NpcSelector"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" Width="256">
+	<Grid Margin="0, 6, 0, 0">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<CheckBox Grid.Row="0" Grid.Column="0" Content="NPCs" Margin="6,0" IsChecked="{Binding IncludeNpc}"/>
+		<CheckBox Grid.Row="0" Grid.Column="1" Content="Characters" Margin="6,0" IsChecked="{Binding IncludeCharacter}"/>
+		<CheckBox Grid.Row="0" Grid.Column="2" Content="Mounts" Margin="6,0" IsChecked="{Binding IncludeMount}"/>
+		<CheckBox Grid.Row="1" Grid.Column="0" Content="Minions" Margin="6,0" IsChecked="{Binding IncludeMinion}"/>
+		<CheckBox Grid.Row="1" Grid.Column="1" Content="Effects" Margin="6,0" IsChecked="{Binding IncludeEffect}"/>
+		<CheckBox Grid.Row="1" Grid.Column="2" Content="Monsters" Margin="6,0" IsChecked="{Binding IncludeMonster}"/>
+		<CheckBox Grid.Row="2" Grid.Column="0" Content="Unknown" Margin="6,0" IsChecked="{Binding IncludeUnknown}"/>
+		<CheckBox Grid.Row="2" Grid.Column="1" IsThreeState="True" Content="Named" Margin="6,0" IsChecked="{Binding IncludeNamed}"/>
+		<CheckBox Grid.Row="2" Grid.Column="2" IsThreeState="True" Content="Modded" Margin="6,0" IsChecked="{Binding IncludeModded}"/>
+
+		<cm3Drawers:SelectorDrawer
+			Grid.Row="3"
+			Grid.ColumnSpan="3"
+			x:Name="Selector"
+			Close="OnClose" 
+			Filter="OnFilter"
+			SelectionChanged="OnSelectionChanged">
+
+			<cm3Drawers:SelectorDrawer.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<TextBlock Grid.Row="0" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
+
+						<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0">
+							<TextBlock Text="{Binding Title}" Style="{StaticResource Label}" Visibility="{Binding Title, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+							<fa:IconBlock Icon="pen" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+						</StackPanel>
+
+						<Rectangle Grid.ColumnSpan="2" 
+									   Grid.RowSpan="2" 
+									   Fill="Transparent" >
+							<ToolTipService.ToolTip>
+								<StackPanel Orientation="Vertical">
+									<TextBlock Text="{Binding Description}" Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+
+									<Grid Grid.Column="1" Grid.Row="2" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="3, 0, 0, 0">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="Auto"/>
+											<ColumnDefinition/>
+										</Grid.ColumnDefinitions>
+
+										<TextBlock Grid.Column="0" Text="Modded: " HorizontalAlignment="Left" />
+										<TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name}" HorizontalAlignment="Left" />
+									</Grid>
+								</StackPanel>
+							</ToolTipService.ToolTip>
+						</Rectangle>
+
+					</Grid>
+				</DataTemplate>
+			</cm3Drawers:SelectorDrawer.ItemTemplate>
+		</cm3Drawers:SelectorDrawer>
+	</Grid>
+</UserControl>

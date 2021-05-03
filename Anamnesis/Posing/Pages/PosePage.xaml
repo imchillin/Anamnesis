@@ -1,0 +1,434 @@
+﻿<UserControl
+	x:Class="Anamnesis.PoseModule.Pages.PosePage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+	xmlns:anaConverters="clr-namespace:Anamnesis.Styles.Converters"
+	xmlns:controls="clr-namespace:Anamnesis.PoseModule.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+	xmlns:local="clr-namespace:Anamnesis.PoseModule"
+	xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:views="clr-namespace:Anamnesis.PoseModule.Views"
+	d:DesignHeight="512"
+	d:DesignWidth="1024"
+	DataContextChanged="OnDataContextChanged"
+	Loaded="OnLoaded"
+	mc:Ignorable="d">
+
+	<Grid x:Name="ContentArea">
+
+		<Grid Visibility="{Binding Skeleton, Converter={StaticResource NullToVisibilityConverter}}">
+			<ana:TextBlock
+				Key="Pose_NoSkeleton"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center" />
+		</Grid>
+
+		<Grid Visibility="{Binding Skeleton, Converter={StaticResource NotNullToVisibilityConverter}}">
+
+			<Grid
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Visibility="{Binding Skeleton.Generating, Converter={StaticResource B2V}}">
+				<Grid.RowDefinitions>
+					<RowDefinition />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+				<ProgressBar
+					Width="100"
+					Height="100"
+					Margin="24"
+					IsIndeterminate="True"
+					Style="{StaticResource MaterialDesignCircularProgressBar}" />
+
+				<ana:TextBlock
+					Key="Pose_Generating"
+					Grid.Row="1"
+					Margin="24" />
+
+			</Grid>
+
+			<Grid Visibility="{Binding Skeleton.Generating, Converter={StaticResource !B2V}}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="220" />
+				</Grid.ColumnDefinitions>
+
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+
+				<!--  Sidebar  -->
+				<Grid
+					Grid.Row="1"
+					Grid.Column="2">
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+
+					<Border
+						Grid.Row="0"
+						Margin="3"
+						Background="{DynamicResource MaterialDesignCardBackground}"
+						CornerRadius="3">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="0.5*" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+
+							<ana:TextBlock
+								Grid.Row="0"
+								Grid.ColumnSpan="2"
+								Margin="6"
+								Style="{StaticResource Header}"
+								Text="{Binding Skeleton.CurrentBone.Tooltip}" />
+
+							<ana:TextBlock
+								Grid.Row="0"
+								Grid.ColumnSpan="2"
+								Margin="6"
+								HorizontalAlignment="Left"
+								Key="Pose_NothingSelected"
+								Style="{StaticResource Header}"
+								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}"/>
+
+							<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{DynamicResource AttentionToActionBrush}" CornerRadius="3" Margin="1" IsEnabled="{Binding PoseService.IsEnabled}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition/>
+									</Grid.ColumnDefinitions>
+
+									<Button
+										Grid.Column="0"
+										Margin="2"
+										Padding="6,3"
+										Click="OnClearClicked"
+										IsEnabled="{Binding Skeleton.HasSelection}"
+										Style="{StaticResource TransparentButton}">	
+										<ana:TextBlock Text="Clear" />
+									</Button>
+
+									<Button
+										Grid.Column="1"
+										Margin="2"
+										Padding="6,3"
+										Click="OnSelectChildrenClicked"
+										IsEnabled="{Binding Skeleton.HasSelection}"
+										Style="{StaticResource TransparentButton}">
+										<ana:TextBlock Text="Select Children" />
+									</Button>
+
+									<Button
+										Grid.Column="2"
+										Margin="2"
+										Padding="6,3"
+										Click="OnFlipClicked"
+										Style="{StaticResource TransparentButton}" Grid.ColumnSpan="2">
+										<ana:TextBlock Key="Pose_Flip" />
+									</Button>
+
+								</Grid>
+							</Border>
+
+							
+							
+							<controls:TransformEditor
+								Grid.Row="2"
+								Grid.ColumnSpan="2"
+								IsEnabled="{Binding Skeleton.CanEditBone}"
+								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"
+								Value="{Binding Skeleton.CurrentBone}" />
+
+							<Grid
+								Grid.Row="2"
+								Grid.ColumnSpan="2"
+								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}">
+								<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}" />
+							</Grid>
+
+						</Grid>
+					</Border>
+
+					<!--<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">-->
+					<Grid Grid.Row="1" Margin="2">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition />
+						</Grid.RowDefinitions>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<CheckBox
+							Margin="3"
+							Grid.ColumnSpan="2"
+							Content="Include Selected Bones Only"
+							IsChecked="{Binding FileConfiguration.UseSelection}" />
+
+						<Button
+							Grid.Row="1"
+							Margin="2"
+							Grid.Column="0"
+							Padding="0"
+							HorizontalContentAlignment="Center"
+							Click="OnOpenClicked"
+							IsEnabled="{Binding GposeService.IsGpose}">
+							<Grid>
+								<ana:TextBlock
+									Key="Pose_LoadBones"
+									FontWeight="Light"
+									Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource B2V}}"
+									Value="{Binding Skeleton.SelectedCount}" />
+								<ana:TextBlock
+									Key="Pose_Load"
+									FontWeight="Light"
+									Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource !B2V}}" />
+							</Grid>
+						</Button>
+						<Button
+							Grid.Row="1"
+							Margin="2"
+							Padding="0"
+							Grid.Column="1"
+							HorizontalContentAlignment="Center"
+							Click="OnSaveClicked">
+							<Grid>
+								<ana:TextBlock
+									Key="Pose_SaveBones"
+									FontWeight="Light"
+									Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource B2V}}"
+									Value="{Binding Skeleton.SelectedCount}" />
+								<ana:TextBlock
+									Key="Pose_Save"
+									FontWeight="Light"
+									Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource !B2V}}" />
+							</Grid>
+						</Button>
+					</Grid>
+				</Grid>
+
+				<!--  top Bar  -->
+				<Border
+					Grid.Row="0"
+					Grid.ColumnSpan="2"
+					Margin="3"
+					VerticalAlignment="Stretch"
+					Background="{DynamicResource MaterialDesignCardBackground}"
+					CornerRadius="3"
+					IsEnabled="{Binding GposeService.IsGpose}">
+					<Grid Height="35">
+						<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+							<ToggleButton
+								Width="75"
+								Margin="3"
+								IsChecked="{Binding PoseService.IsEnabled}"
+								Style="{StaticResource OutlineToggleButton}">
+								<Grid>
+									<ana:TextBlock
+										Key="Common_Disable"
+										Margin="12,0,12,0"
+										Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}" />
+									<ana:TextBlock
+										Key="Common_Enable"
+										Margin="12,0,12,0"
+										Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}" />
+								</Grid>
+							</ToggleButton>
+
+							<ListBox
+								x:Name="ViewSelector"
+								Margin="6,6,6,4"
+								SelectedIndex="0"
+								SelectionChanged="OnViewChanged"
+								Style="{StaticResource MaterialDesignToolToggleListBox}">
+								<ListBoxItem
+									Margin="1"
+									Padding="12,4,12,4"
+									Cursor="Hand"
+									ToolTip="GUI View"
+									Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
+									<fa:IconImage Foreground="{DynamicResource MaterialDesignBody}" Icon="ProjectDiagram" />
+								</ListBoxItem>
+								<ListBoxItem
+									Margin="1"
+									Padding="12,4,12,4"
+									Cursor="Hand"
+									ToolTip="Matrix View"
+									Visibility="{Binding Skeleton.File.AllowPoseMatrix, Converter={StaticResource B2V}}">
+									<fa:IconImage Foreground="{DynamicResource MaterialDesignBody}" Icon="BorderAll" />
+								</ListBoxItem>
+								<ListBoxItem
+									x:Name="View3dButton"
+									Margin="1"
+									Padding="12,4,12,4"
+									Cursor="Hand"
+									ToolTip="3D View">
+									<fa:IconImage Foreground="{DynamicResource MaterialDesignBody}" Icon="Cube" />
+								</ListBoxItem>
+							</ListBox>
+
+							<CheckBox
+								Margin="3,0,3,0"
+								VerticalContentAlignment="Center"
+								IsChecked="{Binding PoseService.FreezePhysics}"
+								IsEnabled="{Binding PoseService.IsEnabled}">
+								<ana:TextBlock Key="Pose_FreezePhysics" />
+							</CheckBox>
+
+							<CheckBox
+								Margin="3,0,3,0"
+								VerticalContentAlignment="Center"
+								IsChecked="{Binding PoseService.EnableParenting}"
+								IsEnabled="{Binding PoseService.IsEnabled}">
+								<ana:TextBlock Key="Pose_Parenting" />
+							</CheckBox>
+
+							<CheckBox
+								Margin="3,0,3,0"
+								VerticalContentAlignment="Center"
+								IsChecked="{Binding Skeleton.LinkEyes}"
+								IsEnabled="{Binding PoseService.IsEnabled}">
+								<ana:TextBlock Key="Pose_LinkEyes" />
+							</CheckBox>
+
+							<CheckBox
+								x:Name="FlipSidesOption"
+								Margin="3,0,3,0"
+								VerticalContentAlignment="Center"
+								IsChecked="{Binding Skeleton.FlipSides}"
+								IsEnabled="{Binding PoseService.IsEnabled}">
+								<ana:TextBlock Key="Pose_FlipSides" />
+							</CheckBox>
+
+						</StackPanel>
+
+						<Border
+							Margin="3"
+							Padding="3"
+							HorizontalAlignment="Right"
+							Background="{DynamicResource AttentionToActionBrush}"
+							CornerRadius="3">
+							<StackPanel Orientation="Horizontal">
+								<CheckBox
+									Margin="3"
+									VerticalContentAlignment="Center"
+									IsChecked="{Binding PoseService.FreezeRotation}"
+									IsEnabled="{Binding PoseService.IsEnabled}">
+									<ana:TextBlock Key="Pose_EnableRotation" Margin="0,-2,0,2" />
+
+									<CheckBox.ToolTip>
+										<ana:TextBlock Key="Pose_EnableRotationTooltip" />
+									</CheckBox.ToolTip>
+								</CheckBox>
+
+								<CheckBox
+									Margin="3"
+									VerticalContentAlignment="Center"
+									IsChecked="{Binding PoseService.FreezePositions}"
+									IsEnabled="{Binding PoseService.IsEnabled}">
+									<ana:TextBlock Key="Pose_EnablePosition" Margin="0,-2,0,2" />
+
+									<CheckBox.ToolTip>
+										<ana:TextBlock Key="Pose_EnablePositionTooltip" />
+									</CheckBox.ToolTip>
+								</CheckBox>
+
+								<CheckBox
+									Margin="3"
+									VerticalContentAlignment="Center"
+									IsChecked="{Binding PoseService.FreezeScale}"
+									IsEnabled="{Binding PoseService.IsEnabled}">
+									<ana:TextBlock Key="Pose_EnableScale" Margin="0,-2,0,2" />
+
+									<CheckBox.ToolTip>
+										<ana:TextBlock Key="Pose_EnableScaleTooltip" />
+									</CheckBox.ToolTip>
+								</CheckBox>
+							</StackPanel>
+						</Border>
+
+					</Grid>
+				</Border>
+
+
+				<!--  Content  -->
+				<Border
+					Grid.Row="1"
+					Margin="3"
+					Background="{DynamicResource MaterialDesignCardBackground}"
+					CornerRadius="3">
+					<Grid IsEnabled="{Binding PoseService.IsEnabled}">
+
+						<Grid
+							x:Name="MouseCanvas"
+							Grid.Row="1"
+							Background="Transparent"
+							MouseDown="OnCanvasMouseDown"
+							MouseMove="OnCanvasMouseMove"
+							MouseUp="OnCanvasMouseUp">
+							<Grid DataContext="{Binding Skeleton}">
+								<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed" />
+								<views:PoseGuiView x:Name="GuiView" Visibility="Visible" />
+								<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" />
+							</Grid>
+						</Grid>
+
+						<Canvas
+							x:Name="SelectionCanvas"
+							Grid.Row="1"
+							IsHitTestVisible="False">
+							<Border
+								x:Name="DragSelectionBorder"
+								BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+								BorderThickness="1"
+								CornerRadius="3"
+								Visibility="Collapsed">
+								<Border Background="{DynamicResource MaterialDesignBackground}" Opacity="0.1" />
+							</Border>
+						</Canvas>
+
+					</Grid>
+				</Border>
+
+				<Grid
+					Grid.Row="0"
+					Grid.RowSpan="2"
+					Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
+					<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.75" />
+					<StackPanel
+						Height="32"
+						HorizontalAlignment="Center"
+						Orientation="Horizontal">
+						<fa:IconImage
+							Margin="6,3,10,3"
+							Foreground="{DynamicResource MaterialDesignBody}"
+							Icon="ExclamationTriangle" />
+						<ana:TextBlock
+							Key="Pose_WarningNotGPose"
+							VerticalAlignment="Center"
+							FontSize="14"
+							Foreground="{DynamicResource MaterialDesignBody}" />
+					</StackPanel>
+				</Grid>
+			</Grid>
+
+		</Grid>
+
+	</Grid>
+</UserControl>

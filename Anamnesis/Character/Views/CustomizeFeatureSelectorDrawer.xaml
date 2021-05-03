@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="Anamnesis.Character.Views.CustomizeFeatureSelectorDrawer"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" Width="370">
+
+	<UserControl.Resources>
+		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
+			<Setter Property="Padding" Value="0"/>
+		</Style>
+	</UserControl.Resources>
+
+	<Grid Margin="6" x:Name="ContentArea">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,0,3,6" Buttons="True"/>
+
+		<ListBox Grid.Row="1" Name="List" SelectedItem="{Binding SelectedItem}">
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel x:Name="wrapPanel"/>
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+
+			<ListBox.ItemContainerStyle>
+				<Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemStyle}">
+					<Setter Property="BorderThickness" Value="0"/>
+					<Setter Property="Margin" Value="1"/>
+				</Style>
+			</ListBox.ItemContainerStyle>
+
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid Width="54" Height="54">
+						<Image Source="{Binding Icon}"/>
+						<Border x:Name="SelectedBorder" BorderThickness="3" BorderBrush="{DynamicResource PrimaryHueMidBrush}" Margin="0" CornerRadius="3"/>
+					</Grid>
+					
+					<DataTemplate.Triggers>
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="False">
+							<Setter TargetName="SelectedBorder" Property="Visibility" Value="Collapsed"/>
+						</DataTrigger>
+					</DataTemplate.Triggers>
+					
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
+</UserControl>
