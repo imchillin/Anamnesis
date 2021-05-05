@@ -22,10 +22,35 @@
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
-					<ColumnDefinition Width="128" />
+					<ColumnDefinition Width="183" />
 				</Grid.ColumnDefinitions>
 
-				<Grid Grid.Column="0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+
+				<Border Background="{DynamicResource AttentionToActionBrush}" CornerRadius="3" Margin="3, 0">
+					<StackPanel
+						Grid.Row="1"
+						IsEnabled="True"
+						Orientation="Horizontal">
+						<Button
+							Padding="6,2"
+							Margin="3"
+							Click="OnFrameClicked"
+							Content="Reset Camera"
+							Style="{StaticResource TransparentButton}" />
+						<Button
+							Padding="6,2"
+							Margin="3"
+							Click="OnRegenerateSkeletonClicked"
+							Content="Regenerate Skeleton"
+							Style="{StaticResource TransparentButton}" />
+					</StackPanel>
+				</Border>
+
+				<Grid Grid.Column="0" Grid.Row="1">
 					<Grid.RowDefinitions>
 						<RowDefinition />
 						<RowDefinition Height="Auto" />
@@ -44,27 +69,12 @@
 
 					</Viewport3D>
 
-					<StackPanel
-						Grid.Row="1"
-						Margin="3,0,0,0"
-						IsEnabled="True"
-						Orientation="Horizontal">
-						<Button
-							Padding="6,0"
-							Click="OnFrameClicked"
-							Content="Reset Camera"
-							Style="{StaticResource TransparentButton}" />
-						<Button
-							Padding="6,0"
-							Click="OnRegenerateSkeletonClicked"
-							Content="Regenerate Skeleton"
-							Style="{StaticResource TransparentButton}" />
-					</StackPanel>
+					
 
 				</Grid>
 
 
-				<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled">
+				<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" Grid.RowSpan="2">
 					<ItemsControl ItemsSource="{Binding Skeleton.Bones}">
 						<ItemsControl.ItemTemplate>
 							<DataTemplate>

@@ -4,7 +4,6 @@
 
 namespace Anamnesis.PoseModule
 {
-	using System;
 	using System.Windows.Media.Media3D;
 
 	using CmQuaternion = Anamnesis.Memory.Quaternion;
@@ -35,6 +34,11 @@ namespace Anamnesis.PoseModule
 			self.Y = other.Y;
 			self.Z = other.Z;
 			self.W = other.W;
+		}
+
+		public static CmQuaternion Mirror(this CmQuaternion self)
+		{
+			return new CmQuaternion(self.Z, self.W, self.X, self.Y);
 		}
 	}
 }

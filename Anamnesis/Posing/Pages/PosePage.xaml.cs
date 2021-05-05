@@ -11,12 +11,18 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
+	using System.Windows.Media.Media3D;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule.Extensions;
 	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
+
+	using CmQuaternion = Anamnesis.Memory.Quaternion;
+	using Quaternion = System.Windows.Media.Media3D.Quaternion;
+	using QuaternionExtensions = Anamnesis.PoseModule.QuaternionExtensions;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
@@ -43,8 +49,63 @@ namespace Anamnesis.PoseModule.Pages
 		public PoseService PoseService { get => PoseService.Instance; }
 		public TargetService TargetService { get => TargetService.Instance; }
 
+		public bool IsFlipping { get; private set; }
 		public SkeletonVisual3d? Skeleton { get; private set; }
 		public PoseFile.Configuration FileConfiguration => FileConfig;
+
+		private static ILogger Log => Serilog.Log.ForContext<PosePage>();
+
+		/* Basic Idea:
+		 * get mirrored quat of targetBone
+		 * check if its a 'left' bone
+		 *- if it is:
+		 *          - get the mirrored quat of the corresponding right bone
+		 *          - store the first quat (from left bone) on the right bone
+		 *          - store the second quat (from right bone) on the left bone
+		 *      - if not:
+		 *          - store the quat on the target bone
+		 *  - recursively flip on all child bones
+		 */
+		private void FlipBone(BoneVisual3d? targetBone, bool shouldFlip = true)
+		{
+			if (targetBone != null)
+			{
+				CmQuaternion newRotation = targetBone.ViewModel.Rotation.Mirror(); // character-relative transform
+				if (shouldFlip && targetBone.BoneName.EndsWith("Left"))
+				{
+					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(targetBone.BoneName.Replace("Left", "Right"));
+					if (rightBone != null)
+					{
+						CmQuaternion rightRot = rightBone.ViewModel.Rotation.Mirror();
+						targetBone.ViewModel.Rotation = rightRot;
+						rightBone.ViewModel.Rotation = newRotation;
+					}
+					else
+					{
+						Log.Warning("could not find right bone of: " + targetBone.BoneName);
+					}
+				}
+				else if (shouldFlip && targetBone.BoneName.EndsWith("Right"))
+				{
+					// do nothing so it doesn't revert...
+				}
+				else
+				{
+					targetBone.ViewModel.Rotation = newRotation;
+				}
+
+				if (PoseService.Instance.EnableParenting)
+				{
+					foreach (Visual3D? child in targetBone.Children)
+					{
+						if (child is BoneVisual3d childBone)
+						{
+							this.FlipBone(childBone, shouldFlip);
+						}
+					}
+				}
+			}
+		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -185,6 +246,41 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			this.Skeleton.Select(bones, SkeletonVisual3d.SelectMode.Add);
+		}
+
+		private void OnFlipClicked(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (this.Skeleton != null && !this.IsFlipping)
+			{
+				// if no bone selected, flip both lumbar and waist bones
+				this.IsFlipping = true;
+				if (this.Skeleton.CurrentBone == null)
+				{
+					BoneVisual3d? waistBone = this.Skeleton.GetBone("Waist");
+					BoneVisual3d? lumbarBone = this.Skeleton.GetBone("SpineA");
+					this.FlipBone(waistBone);
+					this.FlipBone(lumbarBone);
+					waistBone?.ReadTransform(true);
+					lumbarBone?.ReadTransform(true);
+				}
+				else
+				{
+					// if targeted bone is a limb don't switch the respective left and right sides
+					BoneVisual3d targetBone = this.Skeleton.CurrentBone;
+					if (targetBone.BoneName.EndsWith("Left") || targetBone.BoneName.EndsWith("Right"))
+					{
+						this.FlipBone(targetBone, false);
+					}
+					else
+					{
+						this.FlipBone(targetBone);
+					}
+
+					targetBone.ReadTransform(true);
+				}
+
+				this.IsFlipping = false;
+			}
 		}
 
 		private void OnCanvasMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

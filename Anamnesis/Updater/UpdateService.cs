@@ -192,7 +192,7 @@ namespace Anamnesis.Updater
 
 				// Start the update extractor
 				string procName = Process.GetCurrentProcess().ProcessName;
-				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", currentExePath + " " + procName);
+				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentExePath}\" {procName}");
 				Process.Start(start);
 
 				// Shutdown anamnesis

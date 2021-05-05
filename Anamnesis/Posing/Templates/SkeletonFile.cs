@@ -76,9 +76,18 @@ namespace Anamnesis.Posing.Templates
 				this.BoneNames.Add(key, name);
 			}
 
-			if (this.Parenting == null)
+			if (from.Parenting != null)
 			{
-				this.Parenting = from.Parenting;
+				if (this.Parenting == null)
+					this.Parenting = new Dictionary<string, string>();
+
+				foreach ((string bone, string parent) in from.Parenting)
+				{
+					if (this.Parenting.ContainsKey(bone))
+						continue;
+
+					this.Parenting.Add(bone, parent);
+				}
 			}
 		}
 	}

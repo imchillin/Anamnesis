@@ -69,6 +69,7 @@
 	"Weather_Selector_Unnatural_Tooltip": "Only show weathers that are not normally available in the current territory",
 	"Weather_Selector_All_Tooltip": "Show all weathers",
 
+	"Character_Appearance_LoadOther": "Load Other",
 	"Character_Appearance_Header": "Appearance",
 	"Character_Appearance_FileHair": "Hair",
 	"Character_Appearaince_Body": "Body",
@@ -150,11 +151,12 @@
 	"Pose_GenerateSkeleton": "No skeleton was found for the actor {0}. Generate one now?\nThis will disable posing, resetting all models to their default positions.\nWithout a skeleton, parenting will not work correctly.",
 	"Pose_Generating": "Generating Skeleton. Please Wait.",
 	"Pose_NoSkeleton": "No Skeleton is bound to this view.",
-
+	"Pose_NothingSelected": "Character - Nothing Selected",
 	"Pose_Save": "Save",
 	"Pose_SaveBones": "Save {0} Bones",
 	"Pose_Load": "Load",
 	"Pose_LoadBones": "Load {0} Bones",
+	"Pose_Flip": "Flip",
 
 	"Pose_FreezePhysics": "Freeze Physics",
 	"Pose_Parenting": "Parenting",
