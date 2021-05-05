@@ -152,7 +152,6 @@
 	"Pose_Generating": "Generation du squelette.Veuillez patienter",
 	"Pose_NoSkeleton": "Aucun Squelette lié à cette vue.",
 	"Pose_NothingSelected": "Personnage - Aucune selection",
-
 	"Pose_Save": "Sauvegarder",
 	"Pose_SaveBones": "Sauver l'os {0}",
 	"Pose_Load": "Charger",
