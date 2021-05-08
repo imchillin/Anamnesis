@@ -7,7 +7,7 @@
 			 xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" Width="200">
+			 d:DesignHeight="450" Width="220">
 	<Grid x:Name="ContentArea">
 
 		<Grid.RowDefinitions>
