@@ -221,6 +221,7 @@ namespace Anamnesis.PoseModule
 		private SkeletonFile Load(string path)
 		{
 			SkeletonFile template = SerializerService.DeserializeFile<SkeletonFile>(path);
+			template.Path = path;
 			BoneNameFiles.Add(template);
 
 			if (template.BasedOn != null)

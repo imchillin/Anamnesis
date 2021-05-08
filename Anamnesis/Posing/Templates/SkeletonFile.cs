@@ -10,6 +10,7 @@ namespace Anamnesis.Posing.Templates
 	public class SkeletonFile
 	{
 		public int Depth = 0;
+		public string Path = string.Empty;
 
 		public bool IsGeneratedParenting { get; set; } = false;
 
