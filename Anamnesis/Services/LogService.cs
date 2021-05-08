@@ -64,9 +64,10 @@ namespace Anamnesis.Services
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"/select, \"{currentLogPath}\"");
 		}
 
-		public Task Initialize()
+		public static void CreateLog()
 		{
-			instance = this;
+			if (!string.IsNullOrEmpty(currentLogPath))
+				return;
 
 			string dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath) + "\\";
 			dir = FileService.ParseToFilePath(dir);
@@ -103,7 +104,12 @@ namespace Anamnesis.Services
 				ver = File.ReadAllText("Version.txt");
 
 			Log.Information("Anamnesis Version: " + ver, "Info");
+		}
 
+		public Task Initialize()
+		{
+			instance = this;
+			CreateLog();
 			return Task.CompletedTask;
 		}
 
