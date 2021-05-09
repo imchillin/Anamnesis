@@ -5,100 +5,201 @@
 namespace Anamnesis.Files
 {
 	using System;
-	using Anamnesis;
+	using System.Globalization;
 	using Anamnesis.Character.Views;
 	using Anamnesis.Files.Infos;
-	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
-	using Anamnesis.Services;
 
 	#pragma warning disable SA1402, SA1649, IDE1006, SA1300
 	public class LegacyCharacterFileInfo : JsonFileInfoBase<LegacyCharacterFile>
 	{
+		private static IFileSource source = new LocalFileSource("Local Files (CMTool Saves)", "%MyDocuments%/CMTool/");
+
 		public override string Extension => "cma";
 		public override string Name => "CMTool Appearance";
 		public override Type? LoadOptionsViewType => typeof(CharacterFileOptions);
 		public override Type? SaveOptionsViewType => typeof(CharacterFileOptions);
-		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files (CMTool Saves)", "%MyDocuments%/CMTool/Saves/") };
+		public override IFileSource[] FileSources => new[] { source };
 	}
 
-	public class LegacyCharacterFile : LegacyEquipmentSetFile
+	public class LegacyJsonCharacterFileInfo : LegacyCharacterFileInfo
 	{
+		public override string Extension => "json";
+	}
+
+	public class LegacyCharacterFile : FileBase
+	{
+		public Item? MainHand { get; set; }
+		public Item? OffHand { get; set; }
+		public string? EquipmentBytes { get; set; }
 		public string? CharacterBytes { get; set; }
 		public Details? characterDetails { get; set; }
 
-		public new FileBase Upgrade()
+		public FileBase Upgrade()
 		{
-			if (this.CharacterBytes == null)
-				throw new Exception("CMTool Apearance file has no data");
+			CharacterFile file = new CharacterFile();
+			file.SaveMode = CharacterFile.SaveModes.All;
+			file.MainHand = this.MainHand?.Upgrade();
+			file.OffHand = this.OffHand?.Upgrade();
 
-			CharacterFile allFile = base.Upgrade();
-			allFile.SaveMode = CharacterFile.SaveModes.All;
+			if (this.EquipmentBytes != null)
+			{
+				byte[] data = this.StringtoBytes(this.EquipmentBytes);
 
-			byte[] data = this.StringtoBytes(this.CharacterBytes);
+				// From CM2: CharacterDetailsView2.xaml.cs line 801
+				file.HeadGear = new CharacterFile.ItemSave();
+				file.HeadGear.ModelBase = (ushort)(data[0] + (data[1] * 256));
+				file.HeadGear.ModelVariant = data[2];
+				file.HeadGear.DyeId = data[3];
 
-			// From CM2: MainWindow.xaml.cs line 708
-			allFile.Race = (Appearance.Races)data[0];
-			allFile.Gender = (Appearance.Genders)data[1];
-			allFile.Age = (Appearance.Ages)data[2];
-			allFile.Height = data[3];
-			allFile.Tribe = (Appearance.Tribes)data[4];
-			allFile.Head = data[5];
-			allFile.Hair = data[6];
-			allFile.EnableHighlights = data[7] != 0;
-			allFile.Skintone = data[8];
-			allFile.REyeColor = data[9];
-			allFile.HairTone = data[10];
-			allFile.Highlights = data[11];
-			allFile.FacialFeatures = (Appearance.FacialFeature)data[12];
-			allFile.LimbalEyes = data[13];
-			allFile.Eyebrows = data[14];
-			allFile.LEyeColor = data[15];
-			allFile.Eyes = data[16];
-			allFile.Nose = data[17];
-			allFile.Jaw = data[18];
-			allFile.Mouth = data[19];
-			allFile.LipsToneFurPattern = data[20];
-			allFile.EarMuscleTailSize = data[21];
-			allFile.TailEarsType = data[22];
-			allFile.Bust = data[23];
-			allFile.FacePaint = data[24];
-			allFile.FacePaintColor = data[25];
+				file.Body = new CharacterFile.ItemSave();
+				file.Body.ModelBase = (ushort)(data[4] + (data[5] * 256));
+				file.Body.ModelVariant = data[6];
+				file.Body.DyeId = data[7];
 
-			if (this.characterDetails?.ModelType != null)
-				allFile.ModelType = (int)this.characterDetails.ModelType.value;
+				file.Hands = new CharacterFile.ItemSave();
+				file.Hands.ModelBase = (ushort)(data[8] + (data[9] * 256));
+				file.Hands.ModelVariant = data[10];
+				file.Hands.DyeId = data[11];
 
-			if (this.characterDetails?.SkinRedPigment != null && this.characterDetails.SkinGreenPigment != null && this.characterDetails.SkinBluePigment != null)
-				allFile.SkinColor = new Color((float)this.characterDetails.SkinRedPigment.value, (float)this.characterDetails.SkinGreenPigment.value, (float)this.characterDetails.SkinBluePigment.value);
+				file.Legs = new CharacterFile.ItemSave();
+				file.Legs.ModelBase = (ushort)(data[12] + (data[13] * 256));
+				file.Legs.ModelVariant = data[14];
+				file.Legs.DyeId = data[15];
 
-			if (this.characterDetails?.SkinRedGloss != null && this.characterDetails.SkinGreenGloss != null && this.characterDetails.SkinBlueGloss != null)
-				allFile.SkinGloss = new Color((float)this.characterDetails.SkinRedGloss.value, (float)this.characterDetails.SkinGreenGloss.value, (float)this.characterDetails.SkinBlueGloss.value);
+				file.Feet = new CharacterFile.ItemSave();
+				file.Feet.ModelBase = (ushort)(data[16] + (data[17] * 256));
+				file.Feet.ModelVariant = data[18];
+				file.Feet.DyeId = data[19];
 
-			if (this.characterDetails?.LeftEyeRed != null && this.characterDetails.LeftEyeGreen != null && this.characterDetails.LeftEyeBlue != null)
-				allFile.LeftEyeColor = new Color((float)this.characterDetails.LeftEyeRed.value, (float)this.characterDetails.LeftEyeGreen.value, (float)this.characterDetails.LeftEyeBlue.value);
+				file.Ears = new CharacterFile.ItemSave();
+				file.Ears.ModelBase = (ushort)(data[20] + (data[21] * 256));
+				file.Ears.ModelVariant = data[22];
 
-			if (this.characterDetails?.RightEyeRed != null && this.characterDetails.RightEyeBlue != null && this.characterDetails.RightEyeGreen != null)
-				allFile.RightEyeColor = new Color((float)this.characterDetails.RightEyeRed.value, (float)this.characterDetails.RightEyeGreen.value, (float)this.characterDetails.RightEyeBlue.value);
+				file.Neck = new CharacterFile.ItemSave();
+				file.Neck.ModelBase = (ushort)(data[24] + (data[25] * 256));
+				file.Neck.ModelVariant = data[26];
 
-			if (this.characterDetails?.LimbalR != null && this.characterDetails.LimbalG != null && this.characterDetails.LimbalB != null)
-				allFile.LimbalRingColor = new Color((float)this.characterDetails.LimbalR.value, (float)this.characterDetails.LimbalG.value, (float)this.characterDetails.LimbalB.value);
+				file.Wrists = new CharacterFile.ItemSave();
+				file.Wrists.ModelBase = (ushort)(data[28] + (data[29] * 256));
+				file.Wrists.ModelVariant = data[30];
 
-			if (this.characterDetails?.HairRedPigment != null && this.characterDetails.HairGreenPigment != null && this.characterDetails.HairBluePigment != null)
-				allFile.HairColor = new Color((float)this.characterDetails.HairRedPigment.value, (float)this.characterDetails.HairGreenPigment.value, (float)this.characterDetails.HairBluePigment.value);
+				file.RightRing = new CharacterFile.ItemSave();
+				file.RightRing.ModelBase = (ushort)(data[32] + (data[33] * 256));
+				file.RightRing.ModelVariant = data[34];
 
-			if (this.characterDetails?.HairGlowRed != null && this.characterDetails.HairGlowGreen != null && this.characterDetails.HairGlowBlue != null)
-				allFile.HairGloss = new Color((float)this.characterDetails.HairGlowRed.value, (float)this.characterDetails.HairGlowGreen.value, (float)this.characterDetails.HairGlowBlue.value);
+				file.LeftRing = new CharacterFile.ItemSave();
+				file.LeftRing.ModelBase = (ushort)(data[36] + (data[37] * 256));
+				file.LeftRing.ModelVariant = data[38];
+			}
 
-			if (this.characterDetails?.HighlightRedPigment != null && this.characterDetails.HighlightGreenPigment != null && this.characterDetails.HighlightBluePigment != null)
-				allFile.HairHighlight = new Color((float)this.characterDetails.HighlightRedPigment.value, (float)this.characterDetails.HighlightGreenPigment.value, (float)this.characterDetails.HighlightBluePigment.value);
+			if (this.CharacterBytes != null)
+			{
+				byte[] data = this.StringtoBytes(this.CharacterBytes);
 
-			if (this.characterDetails?.LipsR != null && this.characterDetails?.LipsG != null && this.characterDetails?.LipsB != null && this.characterDetails?.LipsBrightness != null)
-				allFile.MouthColor = new Color4((float)this.characterDetails.LipsR.value, (float)this.characterDetails.LipsG.value, (float)this.characterDetails.LipsB.value, (float)this.characterDetails.LipsBrightness.value);
+				// From CM2: MainWindow.xaml.cs line 708
+				file.Race = (Appearance.Races)data[0];
+				file.Gender = (Appearance.Genders)data[1];
+				file.Age = (Appearance.Ages)data[2];
+				file.Height = data[3];
+				file.Tribe = (Appearance.Tribes)data[4];
+				file.Head = data[5];
+				file.Hair = data[6];
+				file.EnableHighlights = data[7] != 0;
+				file.Skintone = data[8];
+				file.REyeColor = data[9];
+				file.HairTone = data[10];
+				file.Highlights = data[11];
+				file.FacialFeatures = (Appearance.FacialFeature)data[12];
+				file.LimbalEyes = data[13];
+				file.Eyebrows = data[14];
+				file.LEyeColor = data[15];
+				file.Eyes = data[16];
+				file.Nose = data[17];
+				file.Jaw = data[18];
+				file.Mouth = data[19];
+				file.LipsToneFurPattern = data[20];
+				file.EarMuscleTailSize = data[21];
+				file.TailEarsType = data[22];
+				file.Bust = data[23];
+				file.FacePaint = data[24];
+				file.FacePaintColor = data[25];
 
-			if (this.characterDetails?.Height != null)
-				allFile.HeightMultiplier = (float)this.characterDetails.Height.value;
+				if (this.characterDetails?.ModelType != null)
+					file.ModelType = (int)this.characterDetails.ModelType.value;
 
-			return allFile;
+				if (this.characterDetails?.SkinRedPigment != null && this.characterDetails.SkinGreenPigment != null && this.characterDetails.SkinBluePigment != null)
+					file.SkinColor = new Color((float)this.characterDetails.SkinRedPigment.value, (float)this.characterDetails.SkinGreenPigment.value, (float)this.characterDetails.SkinBluePigment.value);
+
+				if (this.characterDetails?.SkinRedGloss != null && this.characterDetails.SkinGreenGloss != null && this.characterDetails.SkinBlueGloss != null)
+					file.SkinGloss = new Color((float)this.characterDetails.SkinRedGloss.value, (float)this.characterDetails.SkinGreenGloss.value, (float)this.characterDetails.SkinBlueGloss.value);
+
+				if (this.characterDetails?.LeftEyeRed != null && this.characterDetails.LeftEyeGreen != null && this.characterDetails.LeftEyeBlue != null)
+					file.LeftEyeColor = new Color((float)this.characterDetails.LeftEyeRed.value, (float)this.characterDetails.LeftEyeGreen.value, (float)this.characterDetails.LeftEyeBlue.value);
+
+				if (this.characterDetails?.RightEyeRed != null && this.characterDetails.RightEyeBlue != null && this.characterDetails.RightEyeGreen != null)
+					file.RightEyeColor = new Color((float)this.characterDetails.RightEyeRed.value, (float)this.characterDetails.RightEyeGreen.value, (float)this.characterDetails.RightEyeBlue.value);
+
+				if (this.characterDetails?.LimbalR != null && this.characterDetails.LimbalG != null && this.characterDetails.LimbalB != null)
+					file.LimbalRingColor = new Color((float)this.characterDetails.LimbalR.value, (float)this.characterDetails.LimbalG.value, (float)this.characterDetails.LimbalB.value);
+
+				if (this.characterDetails?.HairRedPigment != null && this.characterDetails.HairGreenPigment != null && this.characterDetails.HairBluePigment != null)
+					file.HairColor = new Color((float)this.characterDetails.HairRedPigment.value, (float)this.characterDetails.HairGreenPigment.value, (float)this.characterDetails.HairBluePigment.value);
+
+				if (this.characterDetails?.HairGlowRed != null && this.characterDetails.HairGlowGreen != null && this.characterDetails.HairGlowBlue != null)
+					file.HairGloss = new Color((float)this.characterDetails.HairGlowRed.value, (float)this.characterDetails.HairGlowGreen.value, (float)this.characterDetails.HairGlowBlue.value);
+
+				if (this.characterDetails?.HighlightRedPigment != null && this.characterDetails.HighlightGreenPigment != null && this.characterDetails.HighlightBluePigment != null)
+					file.HairHighlight = new Color((float)this.characterDetails.HighlightRedPigment.value, (float)this.characterDetails.HighlightGreenPigment.value, (float)this.characterDetails.HighlightBluePigment.value);
+
+				if (this.characterDetails?.LipsR != null && this.characterDetails?.LipsG != null && this.characterDetails?.LipsB != null && this.characterDetails?.LipsBrightness != null)
+					file.MouthColor = new Color4((float)this.characterDetails.LipsR.value, (float)this.characterDetails.LipsG.value, (float)this.characterDetails.LipsB.value, (float)this.characterDetails.LipsBrightness.value);
+
+				if (this.characterDetails?.Height != null)
+					file.HeightMultiplier = (float)this.characterDetails.Height.value;
+			}
+
+			return file;
+		}
+
+		protected byte[] StringtoBytes(string str)
+		{
+			string[] parts = str.Split(' ');
+			byte[] data = new byte[parts.Length];
+			for (int i = 0; i < parts.Length; i++)
+			{
+				data[i] = byte.Parse(parts[i], NumberStyles.HexNumber);
+			}
+
+			return data;
+		}
+
+		[Serializable]
+		public class Item
+		{
+			// Set.
+			public ushort Item1 { get; set; }
+
+			// Base.
+			public ushort Item2 { get; set; }
+
+			// Variant.
+			public ushort Item3 { get; set; }
+
+			// Dye.
+			public ushort Item4 { get; set; }
+
+			public CharacterFile.WeaponSave Upgrade()
+			{
+				CharacterFile.WeaponSave item = new CharacterFile.WeaponSave();
+				item.ModelSet = this.Item1;
+				item.ModelBase = this.Item2;
+				item.ModelVariant = (byte)this.Item3;
+				item.DyeId = (byte)this.Item4;
+				item.Scale = Vector.One;
+				item.Color = Color.White;
+				return item;
+			}
 		}
 
 		public class Details

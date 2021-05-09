@@ -121,18 +121,15 @@ namespace Anamnesis.Character.Pages
 				return;
 
 			CharacterFileOptions.Result = lastLoadMode;
-			OpenResult result = await FileService.Open<LegacyEquipmentSetFile, LegacyCharacterFile, DatCharacterFile, CharacterFile>();
+			OpenResult result = await FileService.Open<LegacyCharacterFile, DatCharacterFile, CharacterFile>();
 
 			if (result.File == null)
 				return;
 
 			lastLoadMode = CharacterFileOptions.Result;
 
-			if (result.File is LegacyCharacterFile legacyAllFile)
-				result.File = legacyAllFile.Upgrade();
-
-			if (result.File is LegacyEquipmentSetFile legacyEquipmentFile)
-				result.File = legacyEquipmentFile.Upgrade();
+			if (result.File is LegacyCharacterFile legacyFile)
+				result.File = legacyFile.Upgrade();
 
 			if (result.File is DatCharacterFile datFile)
 				result.File = datFile.Upgrade();

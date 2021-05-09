@@ -29,7 +29,7 @@ namespace Anamnesis.Files
 			new SceneFileInfo(),
 
 			new LegacyCharacterFileInfo(),
-			new LegacyEquipmentSetFileInfo(),
+			new LegacyJsonCharacterFileInfo(),
 			new LegacyPoseFileInfo(),
 		};
 
@@ -120,7 +120,7 @@ namespace Anamnesis.Files
 			List<FileInfoBase>? fileInfos = new List<FileInfoBase>();
 			foreach (Type fileType in fileTypes)
 			{
-				fileInfos.Add(GetFileInfo(fileType));
+				fileInfos.AddRange(GetFileInfos(fileType));
 			}
 
 			return Open(fileInfos.ToArray());
@@ -253,25 +253,42 @@ namespace Anamnesis.Files
 		public static FileInfoBase GetFileInfo<T>()
 			where T : FileBase
 		{
-			return GetFileInfo(typeof(T));
+			List<FileInfoBase> results = GetFileInfos(typeof(T));
+
+			if (results.Count > 1)
+				Log.Warning($"Multiple file infos found for file: {typeof(T)}. Using first.");
+
+			if (results.Count <= 0)
+				throw new Exception($"No file info for file: {typeof(T)}");
+
+			return results[0];
 		}
 
 		public static FileInfoBase GetFileInfo(FileBase file)
 		{
-			return GetFileInfo(file.GetType());
+			List<FileInfoBase> results = GetFileInfos(file.GetType());
+
+			if (results.Count > 1)
+				Log.Warning($"Multiple file infos found for file: {file}. Using first.");
+
+			if (results.Count <= 0)
+				throw new Exception($"No file info for file: {file}");
+
+			return results[0];
 		}
 
-		public static FileInfoBase GetFileInfo(Type type)
+		public static List<FileInfoBase> GetFileInfos(Type type)
 		{
+			List<FileInfoBase> results = new List<FileInfoBase>();
 			foreach (FileInfoBase fileInfo in FileInfos)
 			{
 				if (fileInfo.IsFile(type))
 				{
-					return fileInfo;
+					results.Add(fileInfo);
 				}
 			}
 
-			throw new Exception($"No file Info for file type: {type}");
+			return results;
 		}
 
 		public static FileInfoBase GetFileInfo(string extension)

@@ -73,6 +73,9 @@ namespace Anamnesis.GUI.Views
 
 				foreach (IFileSource source in sources)
 				{
+					if (this.FileSources.Contains(source))
+						continue;
+
 					this.FileSources.Add(source);
 				}
 			}
