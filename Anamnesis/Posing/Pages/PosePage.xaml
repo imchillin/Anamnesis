@@ -63,9 +63,7 @@
 				</Grid.RowDefinitions>
 
 				<!--  Sidebar  -->
-				<Grid
-					Grid.Row="1"
-					Grid.Column="2">
+				<Grid Grid.Row="1" Grid.Column="2">
 					<Grid.RowDefinitions>
 						<RowDefinition />
 						<RowDefinition Height="Auto" />
@@ -96,20 +94,26 @@
 								Text="{Binding Skeleton.CurrentBone.Tooltip}" />
 
 							<ana:TextBlock
+								Key="Pose_NothingSelected"
 								Grid.Row="0"
 								Grid.ColumnSpan="2"
 								Margin="6"
 								HorizontalAlignment="Left"
-								Key="Pose_NothingSelected"
 								Style="{StaticResource Header}"
-								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}"/>
+								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}" />
 
-							<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{DynamicResource AttentionToActionBrush}" CornerRadius="3" Margin="1" IsEnabled="{Binding PoseService.IsEnabled}">
+							<Border
+								Grid.Row="1"
+								Grid.ColumnSpan="2"
+								Margin="1"
+								Background="{DynamicResource AttentionToActionBrush}"
+								CornerRadius="3"
+								IsEnabled="{Binding PoseService.IsEnabled}">
 								<Grid>
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="Auto"/>
-										<ColumnDefinition Width="Auto"/>
-										<ColumnDefinition/>
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition />
 									</Grid.ColumnDefinitions>
 
 									<Button
@@ -118,7 +122,7 @@
 										Padding="6,3"
 										Click="OnClearClicked"
 										IsEnabled="{Binding Skeleton.HasSelection}"
-										Style="{StaticResource TransparentButton}">	
+										Style="{StaticResource TransparentButton}">
 										<ana:TextBlock Text="Clear" />
 									</Button>
 
@@ -134,18 +138,19 @@
 
 									<Button
 										Grid.Column="2"
+										Grid.ColumnSpan="2"
 										Margin="2"
 										Padding="6,3"
 										Click="OnFlipClicked"
-										Style="{StaticResource TransparentButton}" Grid.ColumnSpan="2">
+										Style="{StaticResource TransparentButton}">
 										<ana:TextBlock Key="Pose_Flip" />
 									</Button>
 
 								</Grid>
 							</Border>
 
-							
-							
+
+							<!--  bone transform  -->
 							<controls:TransformEditor
 								Grid.Row="2"
 								Grid.ColumnSpan="2"
@@ -153,13 +158,29 @@
 								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"
 								Value="{Binding Skeleton.CurrentBone}" />
 
+
 							<Grid
 								Grid.Row="2"
 								Grid.ColumnSpan="2"
 								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}">
-								<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}" />
-							</Grid>
 
+								<!--  Actor transforms in gpose  -->
+								<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}">
+									<controls:TransformEditor IsEnabled="{Binding TargetService.SelectedActor.IsAnimating, Converter={StaticResource NotConverter}}" Value="{Binding TargetService.SelectedActor.ModelObject.Transform}" />
+
+									<ana:InfoControl
+										Key="Pose_WarningNotFrozen"
+										Margin="0,2"
+										Visibility="{Binding TargetService.SelectedActor.IsAnimating, Converter={StaticResource B2V}}" />
+
+								</Grid>
+
+								<!--  Actor transform outside of gpose  -->
+								<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
+									<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}" />
+								</Grid>
+
+							</Grid>
 						</Grid>
 					</Border>
 
@@ -171,20 +192,20 @@
 						</Grid.RowDefinitions>
 
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition/>
-							<ColumnDefinition/>
+							<ColumnDefinition />
+							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
 
 						<CheckBox
-							Margin="3"
 							Grid.ColumnSpan="2"
+							Margin="3"
 							Content="Include Selected Bones Only"
 							IsChecked="{Binding FileConfiguration.UseSelection}" />
 
 						<Button
 							Grid.Row="1"
-							Margin="2"
 							Grid.Column="0"
+							Margin="2"
 							Padding="0"
 							HorizontalContentAlignment="Center"
 							Click="OnOpenClicked"
@@ -203,9 +224,9 @@
 						</Button>
 						<Button
 							Grid.Row="1"
+							Grid.Column="1"
 							Margin="2"
 							Padding="0"
-							Grid.Column="1"
 							HorizontalContentAlignment="Center"
 							Click="OnSaveClicked">
 							<Grid>
@@ -406,26 +427,12 @@
 					</Grid>
 				</Border>
 
-				<Grid
+				<ana:InfoControl
+					Key="Pose_WarningNotGPose"
+					Margin="6, 7"
 					Grid.Row="0"
 					Grid.RowSpan="2"
-					Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
-					<Rectangle Fill="{StaticResource MaterialDesignPaper}" Opacity="0.75" />
-					<StackPanel
-						Height="32"
-						HorizontalAlignment="Center"
-						Orientation="Horizontal">
-						<fa:IconImage
-							Margin="6,3,10,3"
-							Foreground="{DynamicResource MaterialDesignBody}"
-							Icon="ExclamationTriangle" />
-						<ana:TextBlock
-							Key="Pose_WarningNotGPose"
-							VerticalAlignment="Center"
-							FontSize="14"
-							Foreground="{DynamicResource MaterialDesignBody}" />
-					</StackPanel>
-				</Grid>
+					Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" />
 			</Grid>
 
 		</Grid>

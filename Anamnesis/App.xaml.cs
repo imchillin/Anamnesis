@@ -89,6 +89,8 @@ namespace Anamnesis
 
 			try
 			{
+				LogService.CreateLog();
+
 				this.CheckWorkingDirectory();
 				this.CheckForProcesses();
 
@@ -114,6 +116,7 @@ namespace Anamnesis
 		private void CheckWorkingDirectory()
 		{
 			string currentDir = Directory.GetCurrentDirectory();
+			Log.Information($"Check Working Directory: \"{currentDir}\"");
 
 			if (!File.Exists(currentDir + "/Anamnesis.exe"))
 			{
@@ -133,6 +136,7 @@ namespace Anamnesis
 					throw new Exception($"Incorrect new working directory: {currentDir}");
 
 				Directory.SetCurrentDirectory(currentDir);
+				Log.Information($"Set Working Directory: \"{currentDir}\"");
 			}
 		}
 

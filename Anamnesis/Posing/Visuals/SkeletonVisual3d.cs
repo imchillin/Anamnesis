@@ -410,6 +410,7 @@ namespace Anamnesis.PoseModule
 		private async Task Generate(SkeletonViewModel memory, bool forceGenerateParenting = false)
 		{
 			this.File = memory.GetSkeletonFile(this.Actor);
+			Log.Information($"Loaded skeleton file: {this.File?.Path}");
 
 			bool autoSkeleton = false;
 

@@ -146,7 +146,7 @@
 	"Character_ExWeapons_Header": "Extended Weapons",
 
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /gpose in chat.",
-	"Pose_WarningNotFrozen": "Posing is only available for frozen actors. Freeze this actor in the Group Pose Settings window.",
+	"Pose_WarningNotFrozen": "Actor motion must be disabled in the Group Pose settings.",
 	"Pose_GenerateSkeletonTitle": "Skeleton not found",
 	"Pose_GenerateSkeleton": "No skeleton was found for the actor {0}. Generate one now?\nThis will disable posing, resetting all models to their default positions.\nWithout a skeleton, parenting will not work correctly.",
 	"Pose_Generating": "Generating Skeleton. Please Wait.",
