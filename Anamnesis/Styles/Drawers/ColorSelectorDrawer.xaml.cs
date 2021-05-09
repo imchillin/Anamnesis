@@ -5,6 +5,8 @@
 namespace Anamnesis.Styles.Drawers
 {
 	using System;
+	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Reflection;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -13,14 +15,15 @@ namespace Anamnesis.Styles.Drawers
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.DependencyProperties;
-
+	using PropertyChanged;
 	using Binder = Anamnesis.Styles.DependencyProperties.Binder;
 	using WpfColor = System.Windows.Media.Color;
 
 	/// <summary>
 	/// Interaction logic for ColorSelectorDrawer.xaml.
 	/// </summary>
-	public partial class ColorSelectorDrawer : UserControl, IDrawer
+	[AddINotifyPropertyChangedInterface]
+	public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyPropertyChanged
 	{
 		public static readonly IBind<Color4> ValueDp = Binder.Register<Color4, ColorSelectorDrawer>(nameof(Value), OnValueChanged);
 		public static readonly IBind<WpfColor> WpfColorDp = Binder.Register<WpfColor, ColorSelectorDrawer>(nameof(WpfColor), OnWpfColorChanged);
@@ -40,10 +43,7 @@ namespace Anamnesis.Styles.Drawers
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			this.List.Items.Add(new ColorOption(Colors.Transparent, "Transparent"));
-			this.List.Items.Add(new ColorOption(Colors.White, "White"));
-			this.List.Items.Add(new ColorOption(Colors.Black, "Black"));
-
+			List<ColorOption> colors = new List<ColorOption>();
 			PropertyInfo[] properties = typeof(Colors).GetProperties(BindingFlags.Static | BindingFlags.Public);
 			foreach (PropertyInfo property in properties)
 			{
@@ -55,8 +55,24 @@ namespace Anamnesis.Styles.Drawers
 				if (obj == null)
 					continue;
 
-				WpfColor c = (WpfColor)obj;
-				this.List.Items.Add(new ColorOption(c, property.Name));
+				if (property.Name == "Transparent")
+					continue;
+
+				colors.Add(new ColorOption((WpfColor)obj, property.Name));
+			}
+
+			ColorConverter colorConverter = new ColorConverter();
+			colors.Sort((a, b) =>
+			{
+				string aHex = colorConverter.ConvertToString(a.Color);
+				string bHex = colorConverter.ConvertToString(b.Color);
+
+				return aHex.CompareTo(bHex);
+			});
+
+			foreach (ColorOption c in colors)
+			{
+				this.List.Items.Add(c);
 			}
 		}
 
@@ -64,6 +80,7 @@ namespace Anamnesis.Styles.Drawers
 
 		public event ValueChangedEventHandler? ValueChanged;
 		public event DrawerEvent? Close;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public Color4 Value
 		{
@@ -77,6 +94,7 @@ namespace Anamnesis.Styles.Drawers
 			set => WpfColorDp.Set(this, value);
 		}
 
+		[AlsoNotifyFor(nameof(RByte))]
 		public float R
 		{
 			get => ChannelRDp.Get(this);
@@ -101,6 +119,30 @@ namespace Anamnesis.Styles.Drawers
 			set => ChannelADp.Set(this, value);
 		}
 
+		public int RByte
+		{
+			get => (int)(ChannelRDp.Get(this) * 255);
+			set => ChannelRDp.Set(this, value / 255.0f);
+		}
+
+		public int GByte
+		{
+			get => (int)(ChannelGDp.Get(this) * 255);
+			set => ChannelGDp.Set(this, value / 255.0f);
+		}
+
+		public int BByte
+		{
+			get => (int)(ChannelBDp.Get(this) * 255);
+			set => ChannelBDp.Set(this, value / 255.0f);
+		}
+
+		public int AByte
+		{
+			get => (int)(ChannelADp.Get(this) * 255);
+			set => ChannelADp.Set(this, value / 255.0f);
+		}
+
 		public bool EnableAlpha
 		{
 			get => EnableAlphaDp.Get(this);
@@ -120,6 +162,12 @@ namespace Anamnesis.Styles.Drawers
 			sender.G = value.G;
 			sender.B = value.B;
 			sender.A = value.A;
+
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(RByte)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(BByte)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(GByte)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(AByte)));
+
 			sender.propertyLock = false;
 		}
 
@@ -134,6 +182,12 @@ namespace Anamnesis.Styles.Drawers
 			sender.G = sender.Value.G;
 			sender.B = sender.Value.B;
 			sender.A = sender.Value.A;
+
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(RByte)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(BByte)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(GByte)));
+			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(AByte)));
+
 			sender.propertyLock = false;
 		}
 
