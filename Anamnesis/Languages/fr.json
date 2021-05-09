@@ -9,7 +9,7 @@
 	"Common_Scale": "Taille",
 	"Common_LinkVector": "Lie les axes X, Y, et Z ensemble",
 
-	"Error_NotInGame": "Non connecté en jeu",
+	"Error_NotInGame": "Non connecté au jeu",
 	"Error_WrongVersion": "Version du jeu non supporté: {0}. Une mise à jour est-elle sortie récemment?\nUtiliser Anamnesis avec une version du jeu non supportée peux causer des crashs de l'app/du jeu.\nUne mise à jour sortira dès que possible. Merci de votre patience!",
 
 	"FileBrowser_GoUp": "Remonter",
@@ -146,7 +146,7 @@
 	"Character_ExWeapons_Header": "Armes Etendues",
 
 	"Pose_WarningNotGPose": "Le posing n'est disponible qu'en pose de groupe. Tapez /gpose dans le chat.",
-	"Pose_WarningNotFrozen": "Le Posing n'est disponible que sur les personnages en pause. Mettez le personnage en pause dans la fenêtre des paramètres du Gpose.",
+	"Pose_WarningNotFrozen": "Les mouvements des personnages doivent-être désactivés dans le menu de pose de groupe.",
 	"Pose_GenerateSkeletonTitle": "Squelette non trouvé",
 	"Pose_GenerateSkeleton": "Aucun squelette sur le personnage {0}- En générer un ?\nSans squelette le parentage ne fonctionera pas",
 	"Pose_Generating": "Generation du squelette.Veuillez patienter",
