@@ -404,5 +404,13 @@ namespace Anamnesis.PoseModule.Pages
 
 			this.MouseCanvas.ReleaseMouseCapture();
 		}
+
+		private void OnAnimatingWarningClick(object sender, MouseButtonEventArgs e)
+		{
+			if (this.TargetService.SelectedActor == null)
+				return;
+
+			this.TargetService.SelectedActor.IsAnimating = false;
+		}
 	}
 }

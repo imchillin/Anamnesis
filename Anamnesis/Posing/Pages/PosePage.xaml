@@ -171,7 +171,8 @@
 									<ana:InfoControl
 										Key="Pose_WarningNotFrozen"
 										Margin="0,2"
-										Visibility="{Binding TargetService.SelectedActor.IsAnimating, Converter={StaticResource B2V}}" />
+										Visibility="{Binding TargetService.SelectedActor.IsAnimating, Converter={StaticResource B2V}}"
+										MouseUp="OnAnimatingWarningClick"/>
 
 								</Grid>
 

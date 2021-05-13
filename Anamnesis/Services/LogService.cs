@@ -104,6 +104,17 @@ namespace Anamnesis.Services
 				ver = File.ReadAllText("Version.txt");
 
 			Log.Information("Anamnesis Version: " + ver, "Info");
+
+			// Check for XIVLauncher / Dalamud
+			Process[] xlProc = Process.GetProcessesByName("XIVLauncher.exe");
+			if (xlProc != null && xlProc.Length > 0)
+			{
+				Log.Information("Running XIVLauncher: true");
+			}
+			else
+			{
+				Log.Information("Running XIVLauncher: false");
+			}
 		}
 
 		public Task Initialize()
