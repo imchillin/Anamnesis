@@ -122,9 +122,7 @@ namespace Anamnesis.Services
 			instance = this;
 			CreateLog();
 
-			throw new Exception("Test");
-
-			////return Task.CompletedTask;
+			return Task.CompletedTask;
 		}
 
 		public Task Shutdown()
