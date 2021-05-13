@@ -40,7 +40,7 @@ namespace Anamnesis.Services
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, $"Failed to initialize service: {typeof(T).Name}");
+				Log.Fatal(ex, $"{typeof(T).Name} Error: {ex.Message}");
 			}
 		}
 
