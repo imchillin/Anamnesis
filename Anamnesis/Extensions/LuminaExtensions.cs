@@ -10,16 +10,19 @@ namespace Lumina
 	using System.Windows.Media.Imaging;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
-
 	using global::Lumina.Data.Files;
 	using global::Lumina.Excel.GeneratedSheets;
 	using global::Lumina.Extensions;
+	using Serilog;
 	using LuminaData = global::Lumina.GameData;
 
 	public static class LuminaExtensions
 	{
 		public static IItem GetItem(ItemSlots slot, ulong val)
 		{
+			if (val == 0)
+				return ItemUtility.NoneItem;
+
 			short modelSet;
 			short modelBase;
 			short modelVariant;
@@ -35,6 +38,16 @@ namespace Lumina
 				modelSet = 0;
 				modelBase = (short)val;
 				modelVariant = (short)(val >> 16);
+			}
+
+			// Some NPC's seem to have invalid equipment ids? or atleast ids that dont work as we expect.
+			if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
+			{
+				Log.Information($"Invalid item value: {val}");
+
+				modelSet = 0;
+				modelBase = 0;
+				modelVariant = 0;
 			}
 
 			return ItemUtility.GetItem(slot, (ushort)modelSet, (ushort)modelBase, (ushort)modelVariant);
