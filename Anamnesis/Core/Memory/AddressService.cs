@@ -184,8 +184,15 @@ namespace Anamnesis.Core.Memory
 
 			return Task.Run(() =>
 			{
-				IntPtr ptr = MemoryService.Scanner.GetStaticAddressFromSig(signature, offset);
-				callback.Invoke(ptr);
+				try
+				{
+					IntPtr ptr = MemoryService.Scanner.GetStaticAddressFromSig(signature, offset);
+					callback.Invoke(ptr);
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed to scan memory for signature");
+				}
 			});
 		}
 
@@ -196,8 +203,15 @@ namespace Anamnesis.Core.Memory
 
 			return Task.Run(() =>
 			{
-				IntPtr ptr = MemoryService.Scanner.ScanText(signature);
-				callback.Invoke(ptr);
+				try
+				{
+					IntPtr ptr = MemoryService.Scanner.ScanText(signature);
+					callback.Invoke(ptr);
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed to scan memory for text signature");
+				}
 			});
 		}
 
@@ -211,21 +225,28 @@ namespace Anamnesis.Core.Memory
 				if (MemoryService.Process?.MainModule == null)
 					return;
 
-				IntPtr ptr = MemoryService.Scanner.ScanText(signature);
-
-				ptr += skip;
-				int offset = MemoryService.Read<int>(ptr);
-
-				if (moduleBase)
+				try
 				{
-					ptr = MemoryService.Process.MainModule.BaseAddress + offset;
-				}
-				else
-				{
-					ptr += offset + 4;
-				}
+					IntPtr ptr = MemoryService.Scanner.ScanText(signature);
 
-				callback.Invoke(ptr);
+					ptr += skip;
+					int offset = MemoryService.Read<int>(ptr);
+
+					if (moduleBase)
+					{
+						ptr = MemoryService.Process.MainModule.BaseAddress + offset;
+					}
+					else
+					{
+						ptr += offset + 4;
+					}
+
+					callback.Invoke(ptr);
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed to scan memory for base address from signature");
+				}
 			});
 		}
 	}
