@@ -441,9 +441,20 @@ namespace Anamnesis.Files
 					return;
 
 				vm.Set = this.ModelSet;
-				vm.Base = this.ModelBase;
-				vm.Variant = this.ModelVariant;
-				vm.Dye = this.DyeId;
+
+				// sanity check values
+				if (vm.Set != 0)
+				{
+					vm.Base = this.ModelBase;
+					vm.Variant = this.ModelVariant;
+					vm.Dye = this.DyeId;
+				}
+				else
+				{
+					vm.Base = 0;
+					vm.Variant = 0;
+					vm.Dye = 0;
+				}
 			}
 		}
 

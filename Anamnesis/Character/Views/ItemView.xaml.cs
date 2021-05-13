@@ -133,6 +133,9 @@ namespace Anamnesis.Character.Views
 
 		private void SetItem(IItem? item, bool pairEquip)
 		{
+			if (item == this.Item)
+				return;
+
 			this.lockViewModel = true;
 
 			IMemoryViewModel? memory = this.ItemModel?.GetParent<IMemoryViewModel>();
@@ -172,12 +175,22 @@ namespace Anamnesis.Character.Views
 				{
 					itemView.Base = modelBase;
 					itemView.Variant = (byte)modelVariant;
+
+					if (modelSet == 0)
+					{
+						itemView.Dye = 0;
+					}
 				}
 				else if (this.ItemModel is WeaponViewModel weaponView)
 				{
 					weaponView.Set = modelSet;
 					weaponView.Base = modelBase;
 					weaponView.Variant = modelVariant;
+
+					if (modelSet == 0)
+					{
+						weaponView.Dye = 0;
+					}
 				}
 			}
 
@@ -222,6 +235,10 @@ namespace Anamnesis.Character.Views
 				else if (this.ItemModel is WeaponViewModel weapon)
 				{
 					this.Item = ItemUtility.GetItem(this.Slot, weapon.Set, weapon.Base, weapon.Variant);
+
+					if (weapon.Set == 0)
+						weapon.Dye = 0;
+
 					this.Dye = GameDataService.Dyes.Get(weapon.Dye);
 				}
 			}));
