@@ -8,6 +8,7 @@
 	"Common_All": "All",
 	"Common_Scale": "Scale",
 	"Common_LinkVector": "Link X, Y, and Z axes together",
+	"Common_Confirm": "Confirm",
 
 	"Error_NotInGame": "Not Signed In",
 	"Error_WrongVersion": "Unsupported game version: {0}. Has a patch come out recently?\nUsing Anamnesis with unsupported game versions can cause game/app crashes.\nWe will have an update out as soon as we can. Thank you for your patience!",
@@ -147,6 +148,7 @@
 
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /gpose in chat.",
 	"Pose_WarningNotFrozen": "Actor motion must be disabled in the Group Pose settings.",
+	"Pose_WarningQuit": "Are you sure you want to quit? Current pose will be lost.",
 	"Pose_GenerateSkeletonTitle": "Skeleton not found",
 	"Pose_GenerateSkeleton": "No skeleton was found for the actor {0}. Generate one now?\nThis will disable posing, resetting all models to their default positions.\nWithout a skeleton, parenting will not work correctly.",
 	"Pose_Generating": "Generating Skeleton. Please Wait.",

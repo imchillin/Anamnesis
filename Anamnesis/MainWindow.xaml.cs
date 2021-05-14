@@ -18,6 +18,7 @@ namespace Anamnesis.GUI
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Views;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 	using Anamnesis.Utils;
 	using Anamnesis.Views;
@@ -190,8 +191,18 @@ namespace Anamnesis.GUI
 			this.ActiveBorder.Visibility = Visibility.Collapsed;
 		}
 
-		private void OnCloseClick(object sender, RoutedEventArgs e)
+		private async void OnCloseClick(object sender, RoutedEventArgs e)
 		{
+			if (PoseService.Exists && PoseService.Instance.IsEnabled)
+			{
+				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
+
+				if (result != true)
+				{
+					return;
+				}
+			}
+
 			this.Close();
 		}
 
