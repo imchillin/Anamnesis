@@ -410,7 +410,7 @@ namespace Anamnesis.PoseModule.Pages
 			if (this.TargetService.SelectedActor == null)
 				return;
 
-			this.TargetService.SelectedActor.IsAnimating = false;
+			Log.Information("Animating: " + this.TargetService.SelectedActor.Animating);
 		}
 	}
 }
