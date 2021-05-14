@@ -19,6 +19,7 @@ namespace Anamnesis.GUI
 	using Anamnesis.GUI.Views;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using Anamnesis.Utils;
 	using Anamnesis.Views;
 	using PropertyChanged;
 
@@ -93,8 +94,12 @@ namespace Anamnesis.GUI
 			if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
 			{
 				this.hasSetPosition = true;
-				this.Left = SettingsService.Current.WindowPosition.X;
-				this.Top = SettingsService.Current.WindowPosition.Y;
+
+				if (ScreenUtils.IsOnScreen(SettingsService.Current.WindowPosition))
+				{
+					this.Left = SettingsService.Current.WindowPosition.X;
+					this.Top = SettingsService.Current.WindowPosition.Y;
+				}
 			}
 		}
 
