@@ -105,7 +105,7 @@
 							<Border
 								Grid.Row="1"
 								Grid.ColumnSpan="2"
-								Margin="1"
+								Margin="1, 0, 1, -4"
 								Background="{DynamicResource AttentionToActionBrush}"
 								CornerRadius="3"
 								IsEnabled="{Binding PoseService.IsEnabled}">
@@ -186,21 +186,22 @@
 
 					<!--<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">-->
 					<Grid Grid.Row="1" Margin="2">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition />
-						</Grid.RowDefinitions>
 
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition />
 							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
 
-						<CheckBox
-							Grid.ColumnSpan="2"
-							Margin="3"
-							Content="Include Selected Bones Only"
-							IsChecked="{Binding FileConfiguration.UseSelection}" />
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<Button Grid.Row="0" Grid.ColumnSpan="2" Margin="3" 
+								Click="OnLoadExpressionClicked"
+								Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
+							<ana:TextBlock Text="Load Expression" Margin="12,3" FontWeight="Light"/>
+						</Button>
 
 						<Button
 							Grid.Row="1"
@@ -214,12 +215,12 @@
 								<ana:TextBlock
 									Key="Pose_LoadBones"
 									FontWeight="Light"
-									Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource B2V}}"
+									Visibility="{Binding Skeleton.MultiSelection, Converter={StaticResource B2V}}"
 									Value="{Binding Skeleton.SelectedCount}" />
 								<ana:TextBlock
 									Key="Pose_Load"
 									FontWeight="Light"
-									Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource !B2V}}" />
+									Visibility="{Binding Skeleton.MultiSelection, Converter={StaticResource !B2V}}" />
 							</Grid>
 						</Button>
 						<Button
@@ -233,12 +234,12 @@
 								<ana:TextBlock
 									Key="Pose_SaveBones"
 									FontWeight="Light"
-									Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource B2V}}"
+									Visibility="{Binding Skeleton.MultiSelection, Converter={StaticResource B2V}}"
 									Value="{Binding Skeleton.SelectedCount}" />
 								<ana:TextBlock
 									Key="Pose_Save"
 									FontWeight="Light"
-									Visibility="{Binding FileConfiguration.UseSelection, Converter={StaticResource !B2V}}" />
+									Visibility="{Binding Skeleton.MultiSelection, Converter={StaticResource !B2V}}" />
 							</Grid>
 						</Button>
 					</Grid>
@@ -336,7 +337,6 @@
 								IsEnabled="{Binding PoseService.IsEnabled}">
 								<ana:TextBlock Key="Pose_FlipSides" />
 							</CheckBox>
-
 						</StackPanel>
 
 						<Border

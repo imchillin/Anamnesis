@@ -283,6 +283,15 @@ namespace Anamnesis.PoseModule.Pages
 			}
 		}
 
+		private void OnLoadExpressionClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Skeleton == null)
+				return;
+
+			this.Skeleton.SelectHead();
+			this.OnOpenClicked(sender, e);
+		}
+
 		private void OnCanvasMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			if (e.ChangedButton == MouseButton.Left)

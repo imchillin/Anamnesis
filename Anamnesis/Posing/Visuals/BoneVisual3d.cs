@@ -304,6 +304,17 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
+		public bool HasParent(BoneVisual3d target)
+		{
+			if (this.parent == null)
+				return false;
+
+			if (this.parent == target)
+				return true;
+
+			return this.parent.HasParent(target);
+		}
+
 		public override string ToString()
 		{
 			return base.ToString() + "(" + this.BoneName + ")";

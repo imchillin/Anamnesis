@@ -63,6 +63,7 @@ namespace Anamnesis.PoseModule
 		public bool CanEditBone => this.SelectedBones.Count == 1;
 		public bool HasSelection => this.SelectedBones.Count > 0;
 		public bool HasHover => this.HoverBones.Count > 0;
+		public bool MultiSelection => this.SelectedBones.Count > 1;
 
 		public bool FlipSides
 		{
@@ -192,6 +193,7 @@ namespace Anamnesis.PoseModule
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.MultiSelection)));
 		}
 
 		public void ClearSelection()
@@ -204,6 +206,7 @@ namespace Anamnesis.PoseModule
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.MultiSelection)));
 			});
 		}
 
@@ -249,6 +252,7 @@ namespace Anamnesis.PoseModule
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.MultiSelection)));
 		}
 
 		public bool GetIsBoneHovered(BoneVisual3d bone)
@@ -309,6 +313,58 @@ namespace Anamnesis.PoseModule
 			////Log.Information($"Optional bone not found: {name}");
 
 			return null;
+		}
+
+		/// <summary>
+		/// Returns true if the entire selection is head + face bones only.
+		/// Hacky special check for the loading of expresisons (#365).
+		/// </summary>
+		public bool GetIsHeadSelection()
+		{
+			BoneVisual3d? head = this.GetBone("Head");
+
+			if (head == null || !this.GetIsBoneSelected(head))
+				return false;
+
+			foreach (BoneVisual3d? bone in this.SelectedBones)
+			{
+				if (bone == head)
+					continue;
+
+				if (bone.HasParent(head))
+					continue;
+
+				return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Returns true if the entire selection is head + face bones only.
+		/// Hacky special check for the loading of expresisons (#365).
+		/// </summary>
+		public void SelectHead()
+		{
+			this.ClearSelection();
+
+			BoneVisual3d? headBone = this.GetBone("Head");
+			if (headBone == null)
+				return;
+
+			List<BoneVisual3d> headBones = new List<BoneVisual3d>();
+
+			headBones.Add(headBone);
+
+			foreach (BoneVisual3d bone in this.Bones)
+			{
+				if (bone.OriginalBoneName.StartsWith("Head_"))
+				{
+					headBones.Add(bone);
+				}
+			}
+
+			this.Select(headBones, SkeletonVisual3d.SelectMode.Add);
 		}
 
 		public void Reselect()
