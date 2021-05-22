@@ -34,6 +34,7 @@ namespace Anamnesis.Services
 
 				IService service = Activator.CreateInstance<T>();
 				Services.Add(service);
+				await Dispatch.MainThread();
 				await service.Initialize();
 
 				Log.Information($"Initialized service: {typeof(T).Name}");
@@ -50,6 +51,7 @@ namespace Anamnesis.Services
 			await Add<SerializerService>();
 			await Add<LocalizationService>();
 			await Add<ViewService>();
+			await Add<SettingsService>();
 			await Add<MemoryService>();
 			await Add<AddressService>();
 			await Add<TargetService>();
@@ -59,7 +61,6 @@ namespace Anamnesis.Services
 			await Add<TimeService>();
 			await Add<CameraService>();
 			await Add<GposeService>();
-			await Add<SettingsService>();
 			await Add<Updater.UpdateService>();
 			await Add<GameDataService>();
 			await Add<PoseService>();
@@ -76,6 +77,8 @@ namespace Anamnesis.Services
 
 		public async Task StartServices()
 		{
+			await Dispatch.MainThread();
+
 			foreach (IService service in Services)
 			{
 				await service.Start();

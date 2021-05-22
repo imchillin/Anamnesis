@@ -46,14 +46,10 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		public bool EnableProcess { get; set; } = true;
 		public int LastTickCount { get; set; }
 
 		public static bool GetIsProcessAlive()
 		{
-			if (!Instance.EnableProcess)
-				return false;
-
 			if (!Instance.IsAlive)
 				return false;
 
@@ -372,38 +368,21 @@ namespace Anamnesis.Memory
 
 		private async Task GetProcess()
 		{
-			Process[] processes = Process.GetProcesses();
 			Process? proc = null;
 
-			// Search for ffxiv process
-			if (this.EnableProcess)
-			{
-				foreach (Process process in processes)
-				{
-					if (process.ProcessName.ToLower().Contains("ffxiv_dx11"))
-					{
-						proc = process;
-					}
-				}
-			}
+			await Dispatch.MainThread();
 
-			// if no process, open the process selector GUI
-			if (proc == null)
-			{
-				await Dispatch.MainThread();
+			if (App.Current == null)
+				return;
 
-				if (App.Current == null)
-					return;
+			App.Current.MainWindow.Topmost = false;
 
-				App.Current.MainWindow.Topmost = false;
+			proc = ProcessSelector.FindProcess();
 
-				proc = ProcessSelector.FindProcess();
+			if (SettingsService.Exists)
+				App.Current.MainWindow.Topmost = SettingsService.Current.AlwaysOnTop;
 
-				if (SettingsService.Exists)
-					App.Current.MainWindow.Topmost = SettingsService.Current.AlwaysOnTop;
-
-				await Dispatch.NonUiThread();
-			}
+			await Dispatch.NonUiThread();
 
 			// if still no process, shutdown.
 			if (proc == null)

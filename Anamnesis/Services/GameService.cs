@@ -20,9 +20,6 @@ namespace Anamnesis.Services
 
 		public static bool GetIsSignedIn()
 		{
-			if (!MemoryService.Instance.EnableProcess)
-				return false;
-
 			if (TerritoryService.Instance.CurrentTerritory == null)
 				return false;
 

@@ -353,16 +353,6 @@
 								ToolTip="Enable verbose logging">
 								<fa:IconBlock FontSize="12" Icon="FileAlt" />
 							</ToggleButton>
-
-							<ToggleButton
-								Width="28"
-								Margin="3,0,0,0"
-								BorderThickness="0"
-								IsChecked="{Binding MemoryService.EnableProcess}"
-								Style="{DynamicResource TransparentIconToggleButton}"
-								ToolTip="Enable process">
-								<fa:IconBlock FontSize="12" Icon="Microchip" />
-							</ToggleButton>
 						</StackPanel>
 
 						<ToggleButton

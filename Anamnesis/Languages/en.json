@@ -10,6 +10,8 @@
 	"Common_LinkVector": "Link X, Y, and Z axes together",
 	"Common_Confirm": "Confirm",
 
+	"ProcessSelector_AllWarning": "Selecting a process other than the DirectX 11 Final Fantasy XIV process can cause the selected process and Anmnesis to crash",
+
 	"Error_NotInGame": "Not Signed In",
 	"Error_WrongVersion": "Unsupported game version: {0}. Has a patch come out recently?\nUsing Anamnesis with unsupported game versions can cause game/app crashes.\nWe will have an update out as soon as we can. Thank you for your patience!",
 

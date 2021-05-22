@@ -16,33 +16,74 @@ namespace Anamnesis.GUI.Windows
 	using System.Windows.Media;
 	using System.Windows.Media.Imaging;
 	using Anamnesis.Memory;
+	using PropertyChanged;
 
 	/// <summary>
 	/// Interaction logic for ProcessSelector.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
 	public partial class ProcessSelector : UserControl
 	{
 		public Process? Selected;
 
 		private bool isAutomatic = true;
 		private Dialog? window;
+		private bool showAll;
 
 		public ProcessSelector()
 		{
 			this.InitializeComponent();
+
+			this.ContentArea.DataContext = this;
+
 			this.OnRefreshClicked(null, null);
 
 			Task.Run(this.Scan);
 		}
 
+		public bool ShowAll
+		{
+			get => this.showAll;
+			set
+			{
+				this.showAll = value;
+				this.OnRefreshClicked(null, null);
+			}
+		}
+
 		public static Process? FindProcess()
 		{
+			// early out
+			Process[] processes = GetTargetProcesses();
+			if (processes.Length == 1)
+				return processes[0];
+
 			Dialog dlg = new Dialog();
 			ProcessSelector proc = new ProcessSelector();
 			proc.window = dlg;
 			dlg.ContentArea.Content = proc;
 			dlg.ShowDialog();
 			return proc.Selected;
+		}
+
+		private static Process[] GetTargetProcesses()
+		{
+			Process[] processes = Process.GetProcesses();
+			List<Process> results = new List<Process>();
+			foreach (Process process in processes)
+			{
+				if (IsTargetProcess(process.ProcessName))
+				{
+					results.Add(process);
+				}
+			}
+
+			return results.ToArray();
+		}
+
+		private static bool IsTargetProcess(string name)
+		{
+			return name.ToLower().Contains("ffxiv_dx11");
 		}
 
 		private static ImageSource IconToImageSource(Icon icon)
@@ -56,7 +97,10 @@ namespace Anamnesis.GUI.Windows
 			Process[] processes = Process.GetProcesses();
 			foreach (Process process in processes)
 			{
-				options.Add(new Option(process));
+				if (this.ShowAll || IsTargetProcess(process.ProcessName))
+				{
+					options.Add(new Option(process));
+				}
 			}
 
 			this.ProcessGrid.ItemsSource = options;
@@ -91,7 +135,6 @@ namespace Anamnesis.GUI.Windows
 		private void OnOkClicked(object sender, RoutedEventArgs e)
 		{
 			this.Selected = (this.ProcessGrid.SelectedValue as Option)?.Process;
-			MemoryService.Instance.EnableProcess = true;
 			this.window?.Close();
 		}
 
@@ -111,9 +154,6 @@ namespace Anamnesis.GUI.Windows
 				if (!this.isAutomatic)
 					continue;
 
-				if (!MemoryService.Instance.EnableProcess)
-					continue;
-
 				if (Application.Current == null)
 					return;
 
@@ -123,17 +163,18 @@ namespace Anamnesis.GUI.Windows
 				if (!loaded)
 					return;
 
-				Process[] processes = Process.GetProcesses();
-				foreach (Process process in processes)
-				{
-					if (process.ProcessName.ToLower().Contains("ffxiv_dx11"))
-					{
-						await Dispatch.MainThread();
-						this.Selected = process;
-						this.window?.Close();
+				Process[]? processes = GetTargetProcesses();
 
-						return;
-					}
+				if (processes.Length == 1)
+				{
+					await Dispatch.MainThread();
+					this.Selected = processes[0];
+					this.window?.Close();
+					return;
+				}
+				else if (processes.Length > 1)
+				{
+					this.ManualExpander.IsExpanded = true;
 				}
 			}
 		}
