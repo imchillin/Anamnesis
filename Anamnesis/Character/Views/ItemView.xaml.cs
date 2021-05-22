@@ -176,7 +176,7 @@ namespace Anamnesis.Character.Views
 					itemView.Base = modelBase;
 					itemView.Variant = (byte)modelVariant;
 
-					if (modelSet == 0)
+					if (modelBase == 0)
 					{
 						itemView.Dye = 0;
 					}
