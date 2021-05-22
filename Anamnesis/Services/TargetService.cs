@@ -56,7 +56,7 @@ namespace Anamnesis
 			}
 
 			// Carbuncles get model type set to player (but not actor type!)
-			if (actor.Kind == ActorTypes.BattleNpc && (actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412))
+			if (actor.Kind == ActorTypes.BattleNpc && (actor.ModelType == 1 || actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412))
 			{
 				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertCarbuncleToPlayerMessage", actor.DisplayName), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
 				if (result == true)

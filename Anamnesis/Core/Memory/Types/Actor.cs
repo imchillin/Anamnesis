@@ -236,8 +236,6 @@ namespace Anamnesis.Memory
 
 		public async Task ConvertToPlayer()
 		{
-			this.Nickname = this.Name + " (" + this.ObjectKind + ")";
-
 			if (this.ObjectKind == ActorTypes.EventNpc)
 			{
 				this.ObjectKind = ActorTypes.Player;
