@@ -257,6 +257,9 @@ namespace Anamnesis.Styles.Drawers
 		{
 			this.idle = false;
 
+			if (!this.SearchEnabled)
+				this.searchQuery = null;
+
 			ConcurrentQueue<ItemEntry> entries;
 			lock (this.entries)
 			{
