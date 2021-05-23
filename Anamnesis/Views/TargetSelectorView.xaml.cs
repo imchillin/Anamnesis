@@ -59,6 +59,10 @@ namespace Anamnesis.Views
 			set => includeOther = value;
 		}
 
+		public void OnClosed()
+		{
+		}
+
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			List<TargetService.ActorTableActor> actors = TargetService.GetActors();

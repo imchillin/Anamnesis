@@ -9,9 +9,11 @@ namespace Anamnesis.Services
 	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Media;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.GUI.Dialogs;
+	using Anamnesis.Memory;
 	using Anamnesis.Serialization;
 	using PropertyChanged;
 
@@ -19,6 +21,8 @@ namespace Anamnesis.Services
 	public class FavoritesService : ServiceBase<FavoritesService>
 	{
 		private static string filePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Favorites.json");
+
+		public static List<Color4>? Colors => Instance.Current?.Colors;
 
 		public Favorites? Current { get; set; }
 
@@ -90,6 +94,7 @@ namespace Anamnesis.Services
 		public class Favorites
 		{
 			public List<IItem> Items { get; set; } = new List<IItem>();
+			public List<Color4> Colors { get; set; } = new List<Color4>();
 		}
 	}
 }

@@ -74,6 +74,15 @@ namespace Anamnesis.Styles.Drawers
 			{
 				this.List.Items.Add(c);
 			}
+
+			if (FavoritesService.Colors != null)
+			{
+				foreach (Color4 color in FavoritesService.Colors)
+				{
+					ColorOption op = new ColorOption(color, string.Empty);
+					this.RecentList.Items.Add(op);
+				}
+			}
 		}
 
 		public delegate void ValueChangedEventHandler(Color4 value);
@@ -147,6 +156,24 @@ namespace Anamnesis.Styles.Drawers
 		{
 			get => EnableAlphaDp.Get(this);
 			set => EnableAlphaDp.Set(this, value);
+		}
+
+		public void OnClosed()
+		{
+			if (FavoritesService.Colors != null)
+			{
+				if (FavoritesService.Colors.Contains(this.Value))
+					return;
+
+				FavoritesService.Colors.Insert(0, this.Value);
+
+				while (FavoritesService.Colors.Count > 26)
+				{
+					FavoritesService.Colors.RemoveAt(26);
+				}
+
+				FavoritesService.Save();
+			}
 		}
 
 		private static void OnValueChanged(ColorSelectorDrawer sender, Color4 value)
@@ -260,6 +287,18 @@ namespace Anamnesis.Styles.Drawers
 			{
 				this.Name = name;
 				this.Color = c;
+			}
+
+			public ColorOption(Color4 c, string name)
+			{
+				this.Name = name;
+
+				WpfColor color = default(WpfColor);
+				color.ScR = c.R;
+				color.ScG = c.G;
+				color.ScB = c.B;
+				color.ScA = c.A;
+				this.Color = color;
 			}
 
 			public WpfColor Color { get; set; }

@@ -59,6 +59,10 @@ namespace Anamnesis.Styles.Drawers
 			SelectorDrawer.Show<ISelectable>(selector, current, (v) => changed.Invoke((T)v));
 		}
 
+		public void OnClosed()
+		{
+		}
+
 		private void OnClose()
 		{
 			this.Close?.Invoke();

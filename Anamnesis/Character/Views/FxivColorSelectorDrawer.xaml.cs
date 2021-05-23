@@ -91,6 +91,10 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
+		public void OnClosed()
+		{
+		}
+
 		public class Item
 		{
 			public ColorData.Entry Entry { get; set; }

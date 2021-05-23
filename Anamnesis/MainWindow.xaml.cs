@@ -163,6 +163,11 @@ namespace Anamnesis.GUI
 					await Task.Delay(250);
 				}
 
+				if (view is IDrawer drawer2)
+				{
+					drawer2.OnClosed();
+				}
+
 				GC.Collect();
 			});
 		}

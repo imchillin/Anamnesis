@@ -118,6 +118,10 @@ namespace Anamnesis.Styles.Drawers
 			});
 		}
 
+		public void OnClosed()
+		{
+		}
+
 		public void ClearItems()
 		{
 			lock (this.entries)

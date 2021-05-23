@@ -20,7 +20,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition />
+			<RowDefinition/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
@@ -61,21 +61,50 @@
 
 		</Grid>
 
-		<ListBox Grid.Row="4" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionChanged="OnSelectionChanged" Margin="2, 0, 1, 5" HorizontalAlignment="Center">
-			<ListBox.ItemsPanel>
-				<ItemsPanelTemplate>
-					<WrapPanel x:Name="wrapPanel"/>
-				</ItemsPanelTemplate>
-			</ListBox.ItemsPanel>
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<Rectangle Width="25" Height="22" Margin="1" ToolTip="{Binding Name}">
-						<Rectangle.Fill>
-							<SolidColorBrush Color="{Binding Color}"/>
-						</Rectangle.Fill>
-					</Rectangle>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+		<GroupBox Grid.Row="2">
+			<GroupBox.Header>
+				<TextBlock Text="Recent"/>
+			</GroupBox.Header>
+
+			<ListBox Name="RecentList" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionChanged="OnSelectionChanged" Margin="2, 0, 1, 5" HorizontalAlignment="Left">
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel x:Name="wrapPanel"/>
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Rectangle Width="18" Height="18" Margin="1" ToolTip="{Binding Name}">
+							<Rectangle.Fill>
+								<SolidColorBrush Color="{Binding Color}"/>
+							</Rectangle.Fill>
+						</Rectangle>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</GroupBox>
+
+		<GroupBox Grid.Row="3">
+			<GroupBox.Header>
+				<TextBlock Text="Standard"/>
+			</GroupBox.Header>
+		
+			<ListBox Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectionChanged="OnSelectionChanged" Margin="2, 0, 1, 5" HorizontalAlignment="Center">
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel x:Name="wrapPanel"/>
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Rectangle Width="18" Height="18" Margin="1" ToolTip="{Binding Name}">
+							<Rectangle.Fill>
+								<SolidColorBrush Color="{Binding Color}"/>
+							</Rectangle.Fill>
+						</Rectangle>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</GroupBox>
 	</Grid>
 </UserControl>

@@ -27,6 +27,7 @@ namespace Anamnesis.Services
 	public interface IDrawer
 	{
 		event DrawerEvent Close;
+		void OnClosed();
 	}
 
 	public interface IDialog<TResult> : IDialog

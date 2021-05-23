@@ -330,6 +330,10 @@ namespace Anamnesis.GUI.Views
 			}
 		}
 
+		public void OnClosed()
+		{
+		}
+
 		/// <summary>
 		/// Gets the last used file source if it is available, else returns "Local Files" or first source.
 		/// </summary>

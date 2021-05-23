@@ -77,6 +77,10 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
+		public void OnClosed()
+		{
+		}
+
 		private void OnClose()
 		{
 			this.Close?.Invoke();

@@ -74,6 +74,10 @@ namespace Anamnesis.Views
 
 		SelectorDrawer SelectorDrawer.ISelectorView.Selector => this.Selector;
 
+		public void OnClosed()
+		{
+		}
+
 		private void OnClose()
 		{
 			this.Close?.Invoke();

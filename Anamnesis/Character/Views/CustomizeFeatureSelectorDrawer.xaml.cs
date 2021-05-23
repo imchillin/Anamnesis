@@ -81,5 +81,9 @@ namespace Anamnesis.Character.Views
 				this.Selected = value.FeatureId;
 			}
 		}
+
+		public void OnClosed()
+		{
+		}
 	}
 }
