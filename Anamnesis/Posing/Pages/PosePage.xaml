@@ -185,7 +185,7 @@
 					</Border>
 
 					<!--<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">-->
-					<Grid Grid.Row="1" Margin="2">
+					<Grid Grid.Row="1" Margin="2" IsEnabled="{Binding GposeService.IsGpose}">
 
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition />
@@ -209,8 +209,7 @@
 							Margin="2"
 							Padding="0"
 							HorizontalContentAlignment="Center"
-							Click="OnOpenClicked"
-							IsEnabled="{Binding GposeService.IsGpose}">
+							Click="OnOpenClicked">
 							<Grid>
 								<ana:TextBlock
 									Key="Pose_LoadBones"
