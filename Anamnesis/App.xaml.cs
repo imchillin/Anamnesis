@@ -89,6 +89,8 @@ namespace Anamnesis
 
 			try
 			{
+				_ = Task.Run(this.PerformanceWatcher);
+
 				LogService.CreateLog();
 
 				this.CheckWorkingDirectory();
@@ -164,6 +166,26 @@ namespace Anamnesis
 				return context.LoadFromAssemblyPath(path);
 
 			return null;
+		}
+
+		private async Task PerformanceWatcher()
+		{
+			Stopwatch sw = new Stopwatch();
+			while (this._contentLoaded)
+			{
+				await Task.Delay(500);
+
+				sw.Restart();
+				await Dispatch.MainThread();
+				await Task.Delay(16);
+				await Dispatch.MainThread();
+				long ms = sw.ElapsedMilliseconds;
+
+				if (ms > 50)
+				{
+					Log.Warning($"UI thread took {ms}ms to tick");
+				}
+			}
 		}
 	}
 }
