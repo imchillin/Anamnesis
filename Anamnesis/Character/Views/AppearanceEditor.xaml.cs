@@ -179,6 +179,27 @@ namespace Anamnesis.Character.Views
 			this.IsEnabled = true;
 		}
 
+		private void OnGenderChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (this.Appearance == null)
+				return;
+
+			AnAppearance.Genders? gender = this.GenderComboBox.SelectedItem as AnAppearance.Genders?;
+
+			if (gender == null)
+				return;
+
+			// Do not change to masculine gender when a young miqo or aura as it will crash the game
+			if (this.Appearance.Age == AnAppearance.Ages.Young && (this.Appearance.Race == AnAppearance.Races.Miqote || this.Appearance.Race == AnAppearance.Races.AuRa))
+			{
+				this.Appearance.Age = AnAppearance.Ages.Normal;
+			}
+
+			this.Appearance.Gender = (AnAppearance.Genders)gender;
+
+			this.UpdateRaceAndTribe();
+		}
+
 		private async void OnHairClicked(object sender, RoutedEventArgs e)
 		{
 			if (this.Appearance == null)

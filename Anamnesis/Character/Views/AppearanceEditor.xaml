@@ -84,7 +84,7 @@
 					<ComboBox x:Name="RaceComboBox" Grid.Column="0" Grid.Row="0" SelectionChanged="OnRaceChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Margin="0, 0, 3, 0"/>
 					<ComboBox x:Name="TribeComboBox" Grid.Column="1" Grid.Row="0" SelectionChanged="OnTribeChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Margin="3, 0, 0, 0"/>
 
-					<ComboBox x:Name="GenderComboBox" Grid.Column="0" Grid.Row="1" SelectedItem="{Binding Appearance.Gender}" Visibility="{Binding HasGender, Converter={StaticResource B2V}}" Margin="0, 0, 3, 0"/>
+					<ComboBox x:Name="GenderComboBox" Grid.Column="0" Grid.Row="1" SelectionChanged="OnGenderChanged" SelectedItem="{Binding Appearance.Gender, Mode=OneWay}" Visibility="{Binding HasGender, Converter={StaticResource B2V}}" Margin="0, 0, 3, 0"/>
 					<ComboBox x:Name="AgeComboBox" Grid.Column="1" Grid.Row="1" SelectedItem="{Binding Appearance.Age}" Visibility="{Binding CanAge, Converter={StaticResource B2V}}" Margin="3, 0, 0, 0"/>
 
 				</Grid>
