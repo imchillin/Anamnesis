@@ -20,6 +20,7 @@ namespace Anamnesis.Serialization
 			Options.PropertyNameCaseInsensitive = false;
 			Options.IgnoreNullValues = true;
 			Options.AllowTrailingCommas = true;
+			Options.ReadCommentHandling = JsonCommentHandling.Skip;
 
 			Options.Converters.Add(new JsonStringEnumConverter());
 			Options.Converters.Add(new Color4Converter());
@@ -54,7 +55,7 @@ namespace Anamnesis.Serialization
 		}
 
 		public static T Deserialize<T>(string json)
-			where T : new()
+			where T : notnull
 		{
 			T? result = JsonSerializer.Deserialize<T>(json, Options);
 
