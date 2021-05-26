@@ -20,6 +20,7 @@ namespace Anamnesis.Serialization
 			Options.PropertyNameCaseInsensitive = false;
 			Options.IgnoreNullValues = true;
 			Options.AllowTrailingCommas = true;
+			Options.ReadCommentHandling = JsonCommentHandling.Skip;
 
 			Options.Converters.Add(new JsonStringEnumConverter());
 			Options.Converters.Add(new Color4Converter());
