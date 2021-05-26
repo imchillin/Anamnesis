@@ -5,6 +5,7 @@
 namespace Anamnesis.Services
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
@@ -12,6 +13,8 @@ namespace Anamnesis.Services
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
+	using Anamnesis.Serialization;
+	using Anamnesis.Serialization.Converters;
 	using Anamnesis.Updater;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
@@ -73,7 +76,7 @@ namespace Anamnesis.Services
 
 			// these are json files that we write by hand
 			Monsters = new JsonListSheet<Monster>("Data/Monsters.json");
-			Props = new JsonDictionarySheet<Prop>("Data/Props.json");
+			Props = new PropSheet("Data/Props.json");
 
 			return base.Initialize();
 		}

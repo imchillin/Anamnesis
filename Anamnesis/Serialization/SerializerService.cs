@@ -54,7 +54,7 @@ namespace Anamnesis.Serialization
 		}
 
 		public static T Deserialize<T>(string json)
-			where T : new()
+			where T : notnull
 		{
 			T? result = JsonSerializer.Deserialize<T>(json, Options);
 
