@@ -188,6 +188,7 @@ namespace Anamnesis.Character.Views
 				bool matches = false;
 
 				matches |= SearchUtility.Matches(item.Name, search);
+				matches |= SearchUtility.Matches(item.Description, search);
 				matches |= SearchUtility.Matches(item.ModelSet.ToString(), search);
 				matches |= SearchUtility.Matches(item.ModelBase.ToString(), search);
 				matches |= SearchUtility.Matches(item.ModelVariant.ToString(), search);
