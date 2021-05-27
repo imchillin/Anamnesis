@@ -10,6 +10,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
@@ -40,17 +41,13 @@ namespace Anamnesis.Character.Views
 
 			// Special case for hands to also list props
 			if (GameDataService.Props != null)
-			{
-				if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
-				{
-					this.Selector.AddItems(GameDataService.Props);
-				}
-			}
+				this.Selector.AddItems(GameDataService.Props);
 
 			if (GameDataService.Items != null)
-			{
 				this.Selector.AddItems(GameDataService.Items);
-			}
+
+			if (GameDataService.Perform != null)
+				this.Selector.AddItems(GameDataService.Perform);
 
 			this.JobFilterText.Text = classFilter.Describe();
 			this.Selector.FilterItems();
@@ -64,6 +61,7 @@ namespace Anamnesis.Character.Views
 			All,
 			Items,
 			Props,
+			Performance,
 			Modded,
 			Favorites,
 		}
@@ -159,6 +157,9 @@ namespace Anamnesis.Character.Views
 					return false;
 
 				if (mode == Modes.Props && !(obj is Prop))
+					return false;
+
+				if (mode == Modes.Performance && !(obj is PerformViewModel))
 					return false;
 
 				if (mode == Modes.Modded && item.Mod == null)

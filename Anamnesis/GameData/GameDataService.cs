@@ -29,6 +29,7 @@ namespace Anamnesis.Services
 		public static ISheet<IRace> Races { get; protected set; }
 		public static ISheet<ITribe> Tribes { get; protected set; }
 		public static ISheet<IItem> Items { get; protected set; }
+		public static ISheet<IItem> Perform { get; protected set; }
 		public static ISheet<IDye> Dyes { get; protected set; }
 		public static ISheet<INpcBase> BaseNPCs { get; protected set; }
 		public static ISheet<ITerritoryType> Territories { get; protected set; }
@@ -70,6 +71,9 @@ namespace Anamnesis.Services
 			CharacterMakeCustomize = new CustomizeSheet(this.lumina);
 			CharacterMakeTypes = new LuminaSheet<ICharaMakeType, GameData.Sheets.CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
 			ResidentNPCs = new LuminaSheet<INpcResident, ENpcResident, NpcResidentViewModel>(this.lumina);
+			Perform = new LuminaSheet<IItem, Perform, PerformViewModel>(this.lumina);
+
+			this.lumina.GetExcelSheet<Perform>();
 
 			// no view models for these
 			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();

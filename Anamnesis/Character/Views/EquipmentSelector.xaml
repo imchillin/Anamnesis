@@ -41,6 +41,9 @@
 				<controls:TextBlock Key="EquipmentSelector_Props"/>
 			</ComboBoxItem>
 			<ComboBoxItem >
+				<controls:TextBlock Key="EquipmentSelector_Performance"/>
+			</ComboBoxItem>
+			<ComboBoxItem >
 				<controls:TextBlock Key="EquipmentSelector_Modded"/>
 			</ComboBoxItem>
 			<ComboBoxItem >

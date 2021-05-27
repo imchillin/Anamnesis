@@ -115,6 +115,17 @@ namespace Anamnesis.Character.Utilities
 				}
 			}
 
+			if (GameDataService.Perform != null)
+			{
+				foreach (IItem tItem in GameDataService.Perform)
+				{
+					if (tItem.ModelSet == modelSet && tItem.ModelBase == modelBase && tItem.ModelVariant == modelVariant)
+					{
+						return tItem;
+					}
+				}
+			}
+
 			return new DummyItem(modelSet, modelBase, modelVariant);
 		}
 	}
