@@ -10,12 +10,12 @@
 	<Grid x:Name="ContentArea">
 		<StackPanel Margin="3" IsEnabled="{Binding Value, Converter={StaticResource NotNullToBoolConverter}}">
 
-			<GroupBox  IsEnabled="{Binding Value.CanRotate}">
+			<!--<GroupBox  IsEnabled="{Binding Value.CanRotate}">
 				<GroupBox.Header>
 					<controls:TextBlock Key="Pose_Rotation"/>
-				</GroupBox.Header>
-				<controls:QuaternionEditor Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}"/>
-			</GroupBox>
+				</GroupBox.Header>-->
+			
+			<controls:QuaternionEditor Margin="0,3,0,0" Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}" IsEnabled="{Binding Value.CanRotate}"/>
 			
 			<GroupBox IsEnabled="{Binding Value.CanTranslate}">
 				<GroupBox.Header>

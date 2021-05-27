@@ -45,9 +45,10 @@ namespace Anamnesis.PoseModule.Pages
 			this.ContentArea.DataContext = this;
 		}
 
+		public SettingsService SettingsService => SettingsService.Instance;
 		public GposeService GposeService => GposeService.Instance;
-		public PoseService PoseService { get => PoseService.Instance; }
-		public TargetService TargetService { get => TargetService.Instance; }
+		public PoseService PoseService => PoseService.Instance;
+		public TargetService TargetService => TargetService.Instance;
 
 		public bool IsFlipping { get; private set; }
 		public SkeletonVisual3d? Skeleton { get; private set; }

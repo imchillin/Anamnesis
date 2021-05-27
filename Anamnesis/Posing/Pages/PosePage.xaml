@@ -86,26 +86,24 @@
 								<RowDefinition />
 							</Grid.RowDefinitions>
 
-							<ana:TextBlock
-								Grid.Row="0"
-								Grid.ColumnSpan="2"
-								Margin="6"
-								Style="{StaticResource Header}"
-								Text="{Binding Skeleton.CurrentBone.Tooltip}" />
+							<Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="6, 3, 6, 3"
+								  Visibility="{Binding SettingsService.Settings.IsDyslexic, Converter={StaticResource !B2V}}">
+								
+								<ana:TextBlock
+									Style="{StaticResource Header}"
+									Text="{Binding Skeleton.CurrentBone.Tooltip}" />
 
-							<ana:TextBlock
-								Key="Pose_NothingSelected"
-								Grid.Row="0"
-								Grid.ColumnSpan="2"
-								Margin="6"
-								HorizontalAlignment="Left"
-								Style="{StaticResource Header}"
-								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}" />
+								<ana:TextBlock
+									Key="Pose_NothingSelected"
+									HorizontalAlignment="Left"
+									Style="{StaticResource Header}"
+									Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}" />
+							</Grid>
 
 							<Border
 								Grid.Row="1"
 								Grid.ColumnSpan="2"
-								Margin="1, 0, 1, -4"
+								Margin="1, 1, 1, -4"
 								Background="{DynamicResource AttentionToActionBrush}"
 								CornerRadius="3"
 								IsEnabled="{Binding PoseService.IsEnabled}">
