@@ -19,7 +19,8 @@
 		TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 		WindowStartupLocation="CenterOwner"
 		Loaded="Window_Loaded"
-		Unloaded="Window_Unloaded">
+		Unloaded="Window_Unloaded"
+		Style="{StaticResource AnaWindowStyle}">
 	
 	<Grid Margin="12">
 		<Border Background="{DynamicResource MaterialDesignPaper}"

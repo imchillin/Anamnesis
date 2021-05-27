@@ -23,10 +23,11 @@
 	MouseLeave="Window_MouseLeave"
 	ResizeMode="CanMinimize"
 	SizeToContent="WidthAndHeight"
-	TextBlock.FontSize="12"
 	TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 	Topmost="{Binding SettingsService.Settings.AlwaysOnTop}"
 	WindowStyle="None"
+	TextBlock.FontSize="12"
+	Style="{StaticResource AnaWindowStyle}"
 	mc:Ignorable="d">
 
 	<FrameworkElement.CommandBindings>

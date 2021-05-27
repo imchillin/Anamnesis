@@ -57,6 +57,9 @@
 		<ana:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
 		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="5" Margin="6"/>
 
+		<ana:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Dyslexic" Style="{StaticResource Label}"/>
+		<CheckBox IsChecked="{Binding SettingsService.Settings.IsDyslexic}" Grid.Column="1" Grid.Row="6" Margin="6"/>
+
 		<GroupBox Grid.Row="7" Grid.ColumnSpan="2">
 			<GroupBox.Header>
 				<ana:TextBlock Key="Settings_Directories"/>

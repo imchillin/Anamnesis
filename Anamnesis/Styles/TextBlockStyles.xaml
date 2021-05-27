@@ -15,7 +15,6 @@
 
 	<Style x:Key="Label" TargetType="TextBlock">
 		<Setter Property="FontWeight" Value="Normal" />
-		<Setter Property="FontSize" Value="12" />
 		<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
 		<Setter Property="HorizontalAlignment" Value="Right" />
 		<Setter Property="VerticalAlignment" Value="Center" />

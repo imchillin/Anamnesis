@@ -40,6 +40,7 @@ namespace Anamnesis.Services
 		public bool UseCustomBorder { get; set; } = true;
 		public bool ShowAdvancedOptions { get; set; } = true;
 		public bool FlipPoseGuiSides { get; set; } = false;
+		public bool IsDyslexic { get; set; } = false;
 
 		public DateTimeOffset LastUpdateCheck { get; set; } = DateTimeOffset.MinValue;
 	}

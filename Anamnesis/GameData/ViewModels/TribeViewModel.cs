@@ -20,7 +20,21 @@ namespace Anamnesis.GameData.ViewModels
 		public Appearance.Tribes Tribe => (Appearance.Tribes)this.Key;
 		public string Feminine => this.Value.Feminine;
 		public string Masculine => this.Value.Masculine;
-		public string DisplayName => this.DisplayName;
+
+		public string DisplayName
+		{
+			get
+			{
+				// big old hack to keep miqo tribe names short for the UI
+				if (this.Feminine.StartsWith("Seeker"))
+					return "Seeker";
+
+				if (this.Feminine.StartsWith("Keeper"))
+					return "Keeper";
+
+				return this.Feminine;
+			}
+		}
 
 		public bool Equals(ITribe? other)
 		{

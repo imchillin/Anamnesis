@@ -42,10 +42,10 @@
 	<Grid>
 		<ListBox
 			x:Name="FeaturesList"
-			Width="152"
 			ItemContainerStyle="{StaticResource ListBoxItemStyle}"
 			ScrollViewer.VerticalScrollBarVisibility="Hidden"
 			SelectionChanged="OnSelectionChanged"
+			Width="160"
 			SelectionMode="Multiple">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
@@ -57,9 +57,9 @@
 					<Grid Margin="1" Cursor="Hand">
 						<Border>
 							<Grid
-								Width="32"
-								Height="32"
-								Margin="2">
+								Width="26"
+								Height="26"
+								Margin="0">
 								<Image Source="/Assets/LegacyTattoo.png" />
 								<Image Source="{Binding Icon}" />
 							</Grid>

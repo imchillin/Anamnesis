@@ -11,12 +11,17 @@
 			 Margin="0"
 			 d:DesignWidth="300">
 
-	<GroupBox Margin="3, 0, 3, 12"  x:Name="ContentArea">
+	<GroupBox Margin="3, 0"  x:Name="ContentArea">
 		<GroupBox.Header>
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="{Binding SlotName}" FontWeight="Light" Margin="3,0,0,0" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12"/>
-				<TextBlock Text="{Binding Item.Name}" Margin="4, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12"/>
-			</StackPanel>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				
+				<TextBlock Grid.Column="0" Text="{Binding SlotName}" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+				<TextBlock Grid.Column="1" Text="{Binding Item.Name}" Margin="4, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+			</Grid>
 		</GroupBox.Header>
 
 		<Grid Margin="0, 2, 0, 0">
@@ -130,18 +135,24 @@
 
 			</StackPanel>
 
-			<Grid Grid.Row="2" Grid.Column="0" Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
-				<ToggleButton Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1">
+
+			<Grid Grid.Row="2" Grid.ColumnSpan="2" Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+
+				<ToggleButton Grid.Column="0" Height="20" Width="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1" Padding="0" Margin="0">
 					<ToggleButton.ToolTip>
 						<ana:TextBlock Key="Character_Equipment_Hide"/>
 					</ToggleButton.ToolTip>
-					
+
 					<fa:IconBlock Icon="EyeSlash" FontSize="12"/>
 				</ToggleButton>
-			</Grid>
 
-			<Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
-				<ana:VectorEditor Margin="4, 0, 0, 0" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" TickFrequency="0.1" Minimum="-10" Maximum="10"/>
+				<ana:VectorEditor Grid.Column="1" Margin="4, 0, 0, 0" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" TickFrequency="0.1" Minimum="-10" Maximum="10"/>
+
 			</Grid>
 
 		</Grid>

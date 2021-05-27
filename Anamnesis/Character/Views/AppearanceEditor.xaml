@@ -70,7 +70,7 @@
 
 				<!-- Race / Tribe / Gender / Age -->
 				<ana:TextBlock Grid.Column="0" Grid.Row="0" Key="Character_Appearance_Race" Style="{StaticResource Label}" Margin="0, 6, 6, 0"/>
-				<Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+				<Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="0, 0, 0, 2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition/>
@@ -82,10 +82,10 @@
 					</Grid.RowDefinitions>
 
 					<ComboBox x:Name="RaceComboBox" Grid.Column="0" Grid.Row="0" SelectionChanged="OnRaceChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Margin="0, 0, 3, 0"/>
-					<ComboBox x:Name="TribeComboBox" Grid.Column="1" Grid.Row="0" SelectionChanged="OnTribeChanged" ItemTemplate="{StaticResource GenderedComboBoxItem}" Margin="3, 0, 0, 0"/>
+					<ComboBox x:Name="TribeComboBox" Grid.Column="1" Grid.Row="0" SelectionChanged="OnTribeChanged" ItemTemplate="{StaticResource DisplayNameComboBox}" Margin="3, 0, 0, 0"/>
 
-					<ComboBox x:Name="GenderComboBox" Grid.Column="0" Grid.Row="1" SelectionChanged="OnGenderChanged" SelectedItem="{Binding Appearance.Gender, Mode=OneWay}" Visibility="{Binding HasGender, Converter={StaticResource B2V}}" Margin="0, 0, 3, 0"/>
-					<ComboBox x:Name="AgeComboBox" Grid.Column="1" Grid.Row="1" SelectedItem="{Binding Appearance.Age}" Visibility="{Binding CanAge, Converter={StaticResource B2V}}" Margin="3, 0, 0, 0"/>
+					<ComboBox x:Name="GenderComboBox" Grid.Column="0" Grid.Row="1" SelectionChanged="OnGenderChanged" SelectedItem="{Binding Appearance.Gender, Mode=OneWay}" Visibility="{Binding HasGender, Converter={StaticResource B2V}}" Margin="0, 3, 3, 0"/>
+					<ComboBox x:Name="AgeComboBox" Grid.Column="1" Grid.Row="1" SelectedItem="{Binding Appearance.Age}" Visibility="{Binding CanAge, Converter={StaticResource B2V}}" Margin="3, 3, 0, 0"/>
 
 				</Grid>
 
@@ -118,7 +118,7 @@
 
 				<!-- Facial Features -->
 				<ana:TextBlock Grid.Column="0" Grid.Row="5" Key="Character_Appearance_Features" Style="{StaticResource Label}"/>
-				<controls:FacialFeaturesControl Value="{Binding Appearance.FacialFeatures}" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Head="{Binding Appearance.Head}" Grid.Column="1" Grid.Row="5"  Margin="0, 3, 3, 3"/>
+				<controls:FacialFeaturesControl Value="{Binding Appearance.FacialFeatures}" Gender="{Binding Appearance.Gender}" Tribe="{Binding Appearance.Tribe}" Head="{Binding Appearance.Head}" Grid.Column="1" Grid.Row="5"  Margin="0, 3"/>
 
 				<!-- Face Paint  -->
 				<ana:TextBlock Grid.Column="0" Grid.Row="6" Key="Character_Appearance_FacePaint" Style="{StaticResource Label}"/>
@@ -187,21 +187,21 @@
 
 				<!-- Height -->
 				<ana:TextBlock Grid.Column="0" Grid.Row="9" Key="Character_Appearance_Height" Style="{StaticResource Label}"/>
-				<ana:NumberBox Grid.Column="1" Grid.Row="9" Value="{Binding Appearance.Height}" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
+				<ana:NumberBox Height="24" Grid.Column="1" Grid.Row="9" Value="{Binding Appearance.Height}" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 0, 0, 2"/>
 
 				<!-- Bust Size -->
 				<ana:TextBlock Grid.Column="0" Grid.Row="10" Key="Character_Appearance_BustSize" Style="{StaticResource Label}"/>
-				<ana:NumberBox Value="{Binding Appearance.Bust}" Grid.Column="1" Grid.Row="10" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 2, 0, 2"/>
+				<ana:NumberBox Value="{Binding Appearance.Bust}" Grid.Column="1" Grid.Row="10" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 0, 0, 2"/>
 
 				<!-- Muscle / Ears / Tail Size -->
 				<ana:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_Muscle" Style="{StaticResource Label}" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
-				<ana:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 2, 0, 2"/>
+				<ana:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 0, 0, 2"/>
 
 				<ana:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_EarsSize" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<ana:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 2, 0, 2"/>
+				<ana:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 0, 0, 2"/>
 
 				<ana:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_TailSize" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
-				<ana:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 2, 0, 2"/>
+				<ana:NumberBox Value="{Binding Appearance.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 0, 0, 2"/>
 
 				<!-- Jaw Type -->
 				<ana:TextBlock Grid.Row="13" Grid.Column="0" Key="Character_Appearance_Jaw" Style="{StaticResource Label}"/>
