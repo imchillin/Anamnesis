@@ -15,15 +15,6 @@ namespace Anamnesis.Services
 	{
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public enum HomeWidgetType
-		{
-			XmaTop,
-			XmaLatest,
-			Art,
-			Wiki,
-			None,
-		}
-
 		public string Language { get; set; } = "EN";
 		public bool AlwaysOnTop { get; set; } = true;
 		public bool ThemeDark { get; set; } = true;
@@ -36,7 +27,6 @@ namespace Anamnesis.Services
 		public string DefaultPoseDirectory { get; set; } = "%MyDocuments%/Anamnesis/Poses/";
 		public string DefaultCharacterDirectory { get; set; } = "%MyDocuments%/Anamnesis/Characters/";
 		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
-		public HomeWidgetType HomeWidget { get; set; } = HomeWidgetType.Art;
 		public bool UseCustomBorder { get; set; } = true;
 		public bool ShowAdvancedOptions { get; set; } = true;
 		public bool FlipPoseGuiSides { get; set; } = false;

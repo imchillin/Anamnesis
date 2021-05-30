@@ -14,7 +14,6 @@ namespace Anamnesis.Services
 	using Anamnesis.PoseModule;
 	using Anamnesis.Serialization;
 	using Anamnesis.TexTools;
-	using Anamnesis.XMA;
 	using Serilog;
 
 	public class ServiceManager
