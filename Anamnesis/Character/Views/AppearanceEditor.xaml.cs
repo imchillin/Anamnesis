@@ -167,7 +167,7 @@ namespace Anamnesis.Character.Views
 			bool canAge = this.Appearance.Tribe == AnAppearance.Tribes.Midlander;
 			canAge |= this.Appearance.Race == AnAppearance.Races.Miqote && this.Appearance.Gender == AnAppearance.Genders.Feminine;
 			canAge |= this.Appearance.Race == AnAppearance.Races.Elezen;
-			canAge |= this.Appearance.Race == AnAppearance.Races.AuRa && this.Appearance.Gender == AnAppearance.Genders.Feminine;
+			canAge |= this.Appearance.Race == AnAppearance.Races.AuRa;
 			this.CanAge = canAge;
 
 			if (this.Appearance.Tribe > 0)
@@ -190,7 +190,7 @@ namespace Anamnesis.Character.Views
 				return;
 
 			// Do not change to masculine gender when a young miqo or aura as it will crash the game
-			if (this.Appearance.Age == AnAppearance.Ages.Young && (this.Appearance.Race == AnAppearance.Races.Miqote || this.Appearance.Race == AnAppearance.Races.AuRa))
+			if (this.Appearance.Age == AnAppearance.Ages.Young && (this.Appearance.Race == AnAppearance.Races.Miqote))
 			{
 				this.Appearance.Age = AnAppearance.Ages.Normal;
 			}
