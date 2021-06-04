@@ -115,15 +115,6 @@ namespace Anamnesis.Updater
 		{
 			try
 			{
-				string? currentExePath = Environment.GetCommandLineArgs()[0];
-
-				if (string.IsNullOrEmpty(currentExePath))
-					throw new Exception("Unable to determine current assembly path");
-
-				currentExePath = currentExePath.Replace(".dll", ".exe");
-				if (!File.Exists(currentExePath))
-					throw new Exception("Unable to determine current executable path");
-
 				if (this.currentRelease == null)
 					throw new Exception("No release to download");
 
@@ -164,6 +155,7 @@ namespace Anamnesis.Updater
 
 				// Start the update extractor
 				ProcessStartInfo start = new ProcessStartInfo(installerFilePath);
+				start.Arguments = "/passive";
 				start.UseShellExecute = true;
 				Process.Start(start);
 

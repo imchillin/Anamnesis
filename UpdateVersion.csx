@@ -31,7 +31,7 @@ private static void Update(string path, string version)
 		if (newLine.Trim().StartsWith("\"ProductVersion\" = "))
 			newLine = $"        \"ProductVersion\" = \"8:{version}\"";
 
-		if (newLine.Trim().StartsWith("\"ProductCode\" = "))
+		if (newLine.StartsWith("        \"ProductCode\" = "))
 			newLine = $"        \"ProductCode\" = \"8:{{{Guid.NewGuid().ToString().ToUpper()}}}\"";
 
 		if (newLine.Trim().StartsWith("<AssemblyVersion>"))
