@@ -1,7 +1,3 @@
-# Anamnesis
-
-Anamnesis is a standalone tool that is used to modify certain clientside-only values and allow the user a greater degree of flexibility for making creative and interesting screenshots. 
-
 ## Getting started
 
 - Grab the latest version of the tool [**HERE**](https://github.com/imchillin/Anamnesis/releases/latest)
