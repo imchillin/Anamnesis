@@ -1,37 +1,31 @@
-## Welcome to GitHub Pages
+# Anamnesis
 
-You can use the [editor on GitHub](https://github.com/imchillin/Anamnesis/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Anamnesis is a standalone tool that is used to modify certain clientside-only values and allow the user a greater degree of flexibility for making creative and interesting screenshots. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Getting started
 
-### Markdown
+- Grab the latest version of the tool [**HERE**](https://github.com/imchillin/Anamnesis/releases/latest)
+    - Make sure you grab the file that has a date in the name and not the Source Code files.
+![Image](https://cdn.discordapp.com/attachments/748603327373377676/850317503631720488/unknown.png)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+- Extract the archive to your location of choice
+    - Please make sure you extract __everything__! Each file and folder in the archive is needed to make the tool work!
+- Log into the game
+- Run `Anamnesis.exe`
+    - You can even pin the tool to your taskbar for ease of access!
 
-```markdown
-Syntax highlighted code block
+### A quick note
 
-# Header 1
-## Header 2
-### Header 3
+Anamnesis is still in beta, and bugs are to be expected. It's far from a completed project, so please be on the lookout and [let us know about any issues or oddities you find](https://github.com/imchillin/Anamnesis/issues)!
 
-- Bulleted
-- List
+Additionally, Anamnesis currently only works with the International (JP/NA/EU) version of the game. We're sorry, KR and CN client users! We'll have this updated for you in the near future!
 
-1. Numbered
-2. List
+## Learn how to use the tool
 
-**Bold** and _Italic_ and `Code` text
+[Our wiki](https://github.com/imchillin/Anamnesis/wiki) is an ever-growing compendium of information on how to use the tool, as well as explanations of its various functions. We add to this as new features are implemented in the tool, as well!
 
-[Link](url) and ![Image](src)
-```
+## Getting help with the tool
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+If you've found a bug, or something that was working has suddenly stopped working, open up a ticked in the [Issues tab](https://github.com/imchillin/Anamnesis/issues). This allows us to give each query the attention it deserves, as well as consolidate issues and sort them into a priority list, which can easily be viewed at a glance
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/imchillin/Anamnesis/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Please note that a  Github account is required to post issues
