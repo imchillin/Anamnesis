@@ -305,6 +305,12 @@
 							Text="Anamnesis" />
 
 						<TextBlock
+							Margin="2,0,3,0"
+							VerticalAlignment="Center"
+							Opacity="0.5"
+							Text="{Binding UpdateService.Version}" />
+
+						<TextBlock
 							Margin="12,0,3,0"
 							VerticalAlignment="Center"
 							Opacity="0.5"

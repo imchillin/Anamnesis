@@ -5,3 +5,5 @@ packages/
 bin/
 obj/
 deploy/
+Setup/Release/
+Setup/Debug/

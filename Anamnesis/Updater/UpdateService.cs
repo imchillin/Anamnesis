@@ -14,6 +14,7 @@ namespace Anamnesis.Updater
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
+	using System.Windows;
 	using Anamnesis.Services;
 
 	public class UpdateService : ServiceBase<UpdateService>
@@ -25,7 +26,7 @@ namespace Anamnesis.Updater
 		private HttpClient httpClient = new HttpClient();
 		private Release? currentRelease;
 
-		public static DateTimeOffset Version { get; private set; } = DateTimeOffset.Now;
+		public static Version? Version => System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
 		public static string? SupportedGameVersion { get; private set; }
 
 		private static string UpdateTempDir => Path.GetTempPath() + "/AnamnesisUpdateLatest/";
@@ -37,15 +38,9 @@ namespace Anamnesis.Updater
 			if (!File.Exists(VersionFile))
 				throw new Exception("No version file found");
 
-			string[] parts = File.ReadAllText(VersionFile).Split(';');
+			string[] parts = File.ReadAllText(VersionFile).Split(";", StringSplitOptions.RemoveEmptyEntries);
 
-			Version = DateTimeOffset.Parse(parts[0].Trim()).ToUniversalTime();
 			SupportedGameVersion = parts[1].Trim();
-
-			// Debug builds should not attempt to update
-#if DEBUG
-			Version = DateTimeOffset.UtcNow;
-#endif
 
 			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
@@ -73,16 +68,30 @@ namespace Anamnesis.Updater
 				if (this.currentRelease.Published == null)
 					throw new Exception("No published timestamp in update json");
 
-				DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
-				published = published.ToUniversalTime();
+				// v1.0.0-beta
+				string? tag = this.currentRelease.TagName;
 
-				if (this.currentRelease.Published != null && published > Version)
+				if (tag == null)
+					throw new Exception("Publiched update has no tag");
+
+				if (tag.Contains('-'))
+					tag = tag.Split('-')[0];
+
+				tag = tag.Trim('v');
+
+				// ensuire this is a version tag (And not a date tag like v2021-05-05-beta)
+				if (tag.Contains('.'))
 				{
-					await Dispatch.MainThread();
+					Version newVersion = new Version(tag);
 
-					UpdateDialog dlg = new UpdateDialog();
-					dlg.Changes = this.currentRelease.Changes;
-					await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
+					if (this.currentRelease.Published != null && newVersion > Version)
+					{
+						await Dispatch.MainThread();
+
+						UpdateDialog dlg = new UpdateDialog();
+						dlg.Changes = this.currentRelease.Changes;
+						await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
+					}
 				}
 
 				SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;

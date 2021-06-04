@@ -16,7 +16,7 @@ namespace Anamnesis.GUI.Views
 		{
 			this.InitializeComponent();
 
-			this.VersionLabel.Text = UpdateService.Version.ToString("yyyy-MM-dd HH:mm");
+			this.VersionLabel.Text = UpdateService.Version?.ToString();
 		}
 
 		private void OnNavigate(object sender, RequestNavigateEventArgs e)
