@@ -29,8 +29,6 @@ namespace Anamnesis.Updater
 		public static Version? Version => System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
 		public static string? SupportedGameVersion { get; private set; }
 
-		private static string UpdateTempDir => Path.GetTempPath() + "/AnamnesisUpdateLatest/";
-
 		public override async Task Initialize()
 		{
 			await base.Initialize();
@@ -49,9 +47,6 @@ namespace Anamnesis.Updater
 				Log.Information("Last update check was less than 6 hours ago. Skipping.");
 				return;
 			}
-
-			if (Directory.Exists(UpdateTempDir))
-				Directory.Delete(UpdateTempDir, true);
 
 			if (!this.httpClient.DefaultRequestHeaders.Contains("User-Agent"))
 				this.httpClient.DefaultRequestHeaders.Add("User-Agent", "AutoUpdater");
@@ -141,20 +136,21 @@ namespace Anamnesis.Updater
 					if (tAsset.Name == null)
 						continue;
 
-					if (!tAsset.Name.EndsWith(".zip"))
+					if (!tAsset.Name.EndsWith(".msi"))
 						continue;
 
 					asset = tAsset;
 				}
 
 				if (asset == null)
-					throw new Exception("Failed to find asset for release");
+					throw new Exception("Failed to find msi asset for release");
 
 				if (asset.Url == null)
 					throw new Exception("Release asset has no url");
 
 				// Download asset to temp file
-				string zipFilePath = Path.GetTempFileName();
+				string installerFilePath = Path.GetTempFileName();
+				installerFilePath = installerFilePath.Replace(".tmp", ".msi");
 				using WebClient client = new WebClient();
 				if (updateProgress != null)
 				{
@@ -164,44 +160,11 @@ namespace Anamnesis.Updater
 					};
 				}
 
-				await client.DownloadFileTaskAsync(asset.Url, zipFilePath);
-
-				if (!Directory.Exists(UpdateTempDir))
-					Directory.CreateDirectory(UpdateTempDir);
-
-				using FileStream zipFile = new FileStream(zipFilePath, FileMode.Open);
-				using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Read);
-				archive.ExtractToDirectory(UpdateTempDir, true);
-				archive.Dispose();
-				await zipFile.DisposeAsync();
-
-				// Remove temp file
-				File.Delete(zipFilePath);
-
-				// While testing, do not copy the update files over our working files.
-				if (Debugger.IsAttached)
-				{
-					string? sourceDir = Path.GetDirectoryName(currentExePath);
-					if (string.IsNullOrEmpty(sourceDir))
-						throw new Exception("Unable to determine source directory");
-
-					Directory.Delete(UpdateTempDir, true);
-					string[] paths = Directory.GetFiles(".", "*.*", SearchOption.AllDirectories);
-					foreach (string path in paths)
-					{
-						string dest = path.Replace(".\\", UpdateTempDir + "\\");
-
-						string? dir = Path.GetDirectoryName(dest);
-						if (dir != null && !Directory.Exists(dir))
-							Directory.CreateDirectory(dir);
-
-						File.Copy(path, dest, true);
-					}
-				}
+				await client.DownloadFileTaskAsync(asset.Url, installerFilePath);
 
 				// Start the update extractor
-				string procName = Process.GetCurrentProcess().ProcessName;
-				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentExePath}\" {procName}");
+				ProcessStartInfo start = new ProcessStartInfo(installerFilePath);
+				start.UseShellExecute = true;
 				Process.Start(start);
 
 				// Shutdown anamnesis
