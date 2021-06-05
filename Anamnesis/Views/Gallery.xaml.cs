@@ -53,14 +53,15 @@ namespace Anamnesis.Views
 			{
 				Task.Run(this.Run);
 			}
-			}
+		}
 
 		private async Task Run()
 		{
 			if (this.isRunning)
 				return;
 
-			await Task.Delay(500);
+			while (!this.IsVisible)
+				await Task.Delay(500);
 
 			if (!SettingsService.Current.ShowGallery)
 				return;
