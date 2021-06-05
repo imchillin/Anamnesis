@@ -31,6 +31,7 @@ namespace Anamnesis.Services
 		public bool ShowAdvancedOptions { get; set; } = true;
 		public bool FlipPoseGuiSides { get; set; } = false;
 		public bool IsDyslexic { get; set; } = false;
+		public bool ShowGallery { get; set; } = true;
 
 		public DateTimeOffset LastUpdateCheck { get; set; } = DateTimeOffset.MinValue;
 	}

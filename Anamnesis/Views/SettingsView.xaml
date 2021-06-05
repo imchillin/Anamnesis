@@ -27,6 +27,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
@@ -60,7 +61,10 @@
 		<ana:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Dyslexic" Style="{StaticResource Label}"/>
 		<CheckBox IsChecked="{Binding SettingsService.Settings.IsDyslexic}" Grid.Column="1" Grid.Row="6" Margin="6"/>
 
-		<GroupBox Grid.Row="7" Grid.ColumnSpan="2">
+		<ana:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_ShowGallery" Style="{StaticResource Label}"/>
+		<CheckBox IsChecked="{Binding SettingsService.Settings.ShowGallery}" Grid.Column="1" Grid.Row="7" Margin="6"/>
+
+		<GroupBox Grid.Row="8" Grid.ColumnSpan="2">
 			<GroupBox.Header>
 				<ana:TextBlock Key="Settings_Directories"/>
 			</GroupBox.Header>
@@ -94,7 +98,7 @@
 		</GroupBox>
 		
 
-		<GroupBox Grid.Row="9" Grid.ColumnSpan="2">
+		<GroupBox Grid.Row="10" Grid.ColumnSpan="2">
 			<GroupBox.Header>
 				<ana:TextBlock Key="Settings_Theme"/>
 			</GroupBox.Header>

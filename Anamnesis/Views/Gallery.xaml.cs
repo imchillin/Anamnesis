@@ -6,6 +6,7 @@ namespace Anamnesis.Views
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Net;
 	using System.Net.Http;
 	using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace Anamnesis.Views
 	using System.Windows.Media;
 	using System.Windows.Media.Animation;
 	using Anamnesis.Serialization;
+	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
 
@@ -33,6 +35,9 @@ namespace Anamnesis.Views
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
+
+			SettingsService.SettingsChanged += this.OnSettingsChanged;
+			this.OnSettingsChanged(null, null);
 		}
 
 		public string? Image1Path { get; set; } = null;
@@ -40,17 +45,24 @@ namespace Anamnesis.Views
 		public string? Image2Path { get; set; } = null;
 		public string Image2Author { get; set; } = string.Empty;
 
-		private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void OnSettingsChanged(object? sender, PropertyChangedEventArgs? e)
 		{
-			if (this.IsVisible)
+			this.Visibility = SettingsService.Current.ShowGallery ? Visibility.Visible : Visibility.Hidden;
+
+			if (SettingsService.Current.ShowGallery && !this.isRunning)
 			{
 				Task.Run(this.Run);
 			}
-		}
+			}
 
 		private async Task Run()
 		{
 			if (this.isRunning)
+				return;
+
+			await Task.Delay(500);
+
+			if (!SettingsService.Current.ShowGallery)
 				return;
 
 			this.isRunning = true;
@@ -64,6 +76,12 @@ namespace Anamnesis.Views
 
 				while (this.IsVisible && entries.Count > 0)
 				{
+					if (!SettingsService.Current.ShowGallery)
+					{
+						this.isRunning = false;
+						return;
+					}
+
 					int delay = 0;
 					while (!this.skip && delay < ImageDelay)
 					{
