@@ -302,7 +302,7 @@ namespace Anamnesis.PoseModule.Pages
 			}
 		}
 
-		private void OnCanvasMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+		private void OnCanvasMouseMove(object sender, MouseEventArgs e)
 		{
 			if (this.Skeleton == null)
 				return;
@@ -330,6 +330,8 @@ namespace Anamnesis.PoseModule.Pages
 				this.DragSelectionBorder.Width = maxx - minx;
 				this.DragSelectionBorder.Height = maxy - miny;
 
+				List<BoneView> bones = new List<BoneView>();
+
 				foreach (BoneView bone in BoneView.All)
 				{
 					if (bone.Bone == null)
@@ -338,16 +340,21 @@ namespace Anamnesis.PoseModule.Pages
 					if (!bone.IsDescendantOf(this.MouseCanvas))
 						continue;
 
+					if (!bone.IsVisible)
+						continue;
+
 					Point relativePoint = bone.TransformToAncestor(this.MouseCanvas).Transform(new Point(0, 0));
 					if (relativePoint.X > minx && relativePoint.X < maxx && relativePoint.Y > miny && relativePoint.Y < maxy)
 					{
-						this.Skeleton.Hover(bone.Bone, true);
+						this.Skeleton.Hover(bone.Bone, true, false);
 					}
 					else
 					{
 						this.Skeleton.Hover(bone.Bone, false);
 					}
 				}
+
+				this.Skeleton.NotifyHover();
 			}
 			else if (this.isLeftMouseButtonDownOnWindow)
 			{

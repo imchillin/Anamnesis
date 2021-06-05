@@ -207,7 +207,7 @@ namespace Anamnesis.PoseModule
 			});
 		}
 
-		public void Hover(BoneVisual3d bone, bool hover)
+		public void Hover(BoneVisual3d bone, bool hover, bool notify = true)
 		{
 			if (this.HoverBones.Contains(bone) && !hover)
 			{
@@ -222,6 +222,14 @@ namespace Anamnesis.PoseModule
 				return;
 			}
 
+			if (notify)
+			{
+				this.NotifyHover();
+			}
+		}
+
+		public void NotifyHover()
+		{
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasHover)));
 		}
 
