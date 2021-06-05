@@ -14,8 +14,8 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Margin="8">
-			<TextBlock Grid.Row="0" TextWrapping="Wrap" Text="Final Fantasy XIV process (ffxiv_dx11) not found." FontSize="16"/>
-			<TextBlock Grid.Row="0" TextWrapping="Wrap" Text="Please ensure the game is running, and is in DirectX 11 mode."/>
+			<controls:TextBlock Grid.Row="0" TextWrapping="Wrap" Key="ProcessSelector_NotFound" FontSize="16"/>
+			<controls:TextBlock Grid.Row="0" TextWrapping="Wrap" Key="ProcessSelector_NotFound2" />
 		</StackPanel>
 
 		<Expander x:Name="ManualExpander" Grid.Row="1" IsExpanded="False" Expanded="OnManualExpanded" Collapsed="OnManualCollapsed">
