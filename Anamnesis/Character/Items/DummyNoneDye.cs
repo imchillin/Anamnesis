@@ -9,7 +9,7 @@ namespace Anamnesis.Character.Items
 
 	public class DummyNoneDye : IDye
 	{
-		public int Key => 0;
+		public uint Key => 0;
 		public byte Id => 0;
 		public string Name => "None";
 		public string? Description => null;

@@ -13,7 +13,7 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class WeatherViewModel : ExcelRowViewModel<Weather>, IWeather
 	{
-		public WeatherViewModel(int key, ExcelSheet<Weather> sheet, GameData lumina)
+		public WeatherViewModel(uint key, ExcelSheet<Weather> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}

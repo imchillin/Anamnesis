@@ -30,7 +30,7 @@ namespace Anamnesis.Scenes
 
 	public class SceneFile : FileBase
 	{
-		public int TerritoryId { get; set; }
+		public uint TerritoryId { get; set; }
 		public string? TerritoryName { get; set; }
 
 		public Vector RootPosition { get; set; }

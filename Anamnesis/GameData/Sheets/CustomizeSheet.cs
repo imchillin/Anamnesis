@@ -21,7 +21,7 @@ namespace Anamnesis.GameData.Sheets
 		public List<ICharaMakeCustomize> GetFeatureOptions(Features featureType, Appearance.Tribes tribe, Appearance.Genders gender)
 		{
 			List<ICharaMakeCustomize> results = new List<ICharaMakeCustomize>();
-			int fromIndex = this.GetFeatureStartIndex(featureType, tribe, gender);
+			uint fromIndex = (uint)this.GetFeatureStartIndex(featureType, tribe, gender);
 			int count = this.GetFeatureLength(featureType);
 
 			for (int i = 1; i < 200; i++)
@@ -114,9 +114,9 @@ namespace Anamnesis.GameData.Sheets
 			throw new Exception("Unrecognized feature: " + featureType);
 		}
 
-		private ICharaMakeCustomize? FindFeatureById(int from, int length, byte value)
+		private ICharaMakeCustomize? FindFeatureById(uint from, int length, byte value)
 		{
-			for (int i = from; i < from + length; i++)
+			for (uint i = from; i < from + length; i++)
 			{
 				ICharaMakeCustomize feature = this.Get(i);
 

@@ -137,7 +137,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="FontAwesome.Sharp" Version="5.15.3" />
-		<PackageReference Include="Lumina" Version="3.1.0" />
+		<PackageReference Include="Lumina" Version="3.3.0" />
 		<PackageReference Include="Lumina.Excel" Version="5.50.0" />
 		<PackageReference Include="Markdig.Wpf.Signed" Version="0.4.0" />
 		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />

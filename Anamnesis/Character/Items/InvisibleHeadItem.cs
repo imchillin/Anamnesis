@@ -24,7 +24,7 @@ namespace Anamnesis.Character.Items
 		public Classes EquipableClasses => Classes.All;
 		public bool IsWeapon => false;
 		public Mod? Mod => null;
-		public int Key => 0;
+		public uint Key => 0;
 
 		public bool IsFavorite
 		{

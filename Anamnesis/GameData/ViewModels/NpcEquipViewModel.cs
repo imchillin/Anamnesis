@@ -4,6 +4,7 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
+	using Anamnesis.Character.Utilities;
 	using Anamnesis.Services;
 	using Lumina;
 	using Lumina.Excel.GeneratedSheets;
@@ -11,36 +12,58 @@ namespace Anamnesis.GameData.ViewModels
 	public class NpcEquipViewModel : INpcEquip
 	{
 		public readonly ENpcBase Value;
+		public readonly NpcEquip? Equip;
 
 		public NpcEquipViewModel(ENpcBase value)
 		{
 			this.Value = value;
+
+			this.Equip = this.Value.NpcEquip.Value;
 		}
 
 		public int Key => 0;
-		public IItem MainHand => LuminaExtensions.GetItem(ItemSlots.MainHand, this.Value.ModelMainHand);
-		public IDye DyeMainHand => GameDataService.Dyes!.Get((int)this.Value.DyeMainHand.Value.RowId);
-		public IItem OffHand => LuminaExtensions.GetItem(ItemSlots.OffHand, this.Value.ModelOffHand);
-		public IDye DyeOffHand => GameDataService.Dyes!.Get((int)this.Value.DyeOffHand.Value.RowId);
-		public IItem Head => LuminaExtensions.GetItem(ItemSlots.Head, this.Value.ModelHead);
-		public IDye DyeHead => GameDataService.Dyes!.Get((int)this.Value.DyeHead.Value.RowId);
-		public IItem Body => LuminaExtensions.GetItem(ItemSlots.Body, this.Value.ModelBody);
-		public IDye DyeBody => GameDataService.Dyes!.Get((int)this.Value.DyeBody.Value.RowId);
-		public IItem Legs => LuminaExtensions.GetItem(ItemSlots.Legs, this.Value.ModelLegs);
-		public IDye DyeLegs => GameDataService.Dyes!.Get((int)this.Value.DyeLegs.Value.RowId);
-		public IItem Feet => LuminaExtensions.GetItem(ItemSlots.Feet, this.Value.ModelFeet);
-		public IDye DyeFeet => GameDataService.Dyes!.Get((int)this.Value.DyeFeet.Value.RowId);
-		public IItem Hands => LuminaExtensions.GetItem(ItemSlots.Hands, this.Value.ModelHands);
-		public IDye DyeHands => GameDataService.Dyes!.Get((int)this.Value.DyeHands.Value.RowId);
-		public IItem Wrists => LuminaExtensions.GetItem(ItemSlots.Wrists, this.Value.ModelWrists);
-		public IDye DyeWrists => GameDataService.Dyes!.Get((int)this.Value.DyeWrists.Value.RowId);
-		public IItem Neck => LuminaExtensions.GetItem(ItemSlots.Neck, this.Value.ModelNeck);
-		public IDye DyeNeck => GameDataService.Dyes!.Get((int)this.Value.DyeNeck.Value.RowId);
-		public IItem Ears => LuminaExtensions.GetItem(ItemSlots.Ears, this.Value.ModelEars);
-		public IDye DyeEars => GameDataService.Dyes!.Get((int)this.Value.DyeEars.Value.RowId);
-		public IItem LeftRing => LuminaExtensions.GetItem(ItemSlots.LeftRing, this.Value.ModelLeftRing);
-		public IDye DyeLeftRing => GameDataService.Dyes!.Get((int)this.Value.DyeLeftRing.Value.RowId);
-		public IItem RightRing => LuminaExtensions.GetItem(ItemSlots.RightRing, this.Value.ModelRightRing);
-		public IDye DyeRightRing => GameDataService.Dyes!.Get((int)this.Value.DyeRightRing.Value.RowId);
+		public IItem MainHand => LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, this.Value.ModelMainHand);
+		public IDye DyeMainHand => this.GetDye(this.Value.DyeMainHand.Value?.RowId);
+		public IItem OffHand => LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, this.Value.ModelOffHand);
+		public IDye DyeOffHand => this.GetDye(this.Value.DyeOffHand.Value?.RowId);
+		public IItem Head => this.GetItem(ItemSlots.Head, this.Value.ModelHead, this.Equip?.ModelHead);
+		public IDye DyeHead => this.GetDye(this.Value.DyeHead.Value?.RowId);
+		public IItem Body => this.GetItem(ItemSlots.Body, this.Value.ModelBody, this.Equip?.ModelBody);
+		public IDye DyeBody => this.GetDye(this.Value.DyeBody.Value?.RowId);
+		public IItem Legs => this.GetItem(ItemSlots.Legs, this.Value.ModelLegs, this.Equip?.ModelLegs);
+		public IDye DyeLegs => this.GetDye(this.Value.DyeLegs.Value?.RowId);
+		public IItem Feet => this.GetItem(ItemSlots.Feet, this.Value.ModelFeet, this.Equip?.ModelFeet);
+		public IDye DyeFeet => this.GetDye(this.Value.DyeFeet.Value?.RowId);
+		public IItem Hands => this.GetItem(ItemSlots.Hands, this.Value.ModelHands, this.Equip?.ModelHands);
+		public IDye DyeHands => this.GetDye(this.Value.DyeHands.Value?.RowId);
+		public IItem Wrists => this.GetItem(ItemSlots.Wrists, this.Value.ModelWrists, this.Equip?.ModelWrists);
+		public IDye DyeWrists => this.GetDye(this.Value.DyeWrists.Value?.RowId);
+		public IItem Neck => this.GetItem(ItemSlots.Neck, this.Value.ModelNeck, this.Equip?.ModelNeck);
+		public IDye DyeNeck => this.GetDye(this.Value.DyeNeck.Value?.RowId);
+		public IItem Ears => this.GetItem(ItemSlots.Ears, this.Value.ModelEars, this.Equip?.ModelEars);
+		public IDye DyeEars => this.GetDye(this.Value.DyeEars.Value?.RowId);
+		public IItem LeftRing => this.GetItem(ItemSlots.LeftRing, this.Value.ModelLeftRing, this.Equip?.ModelLeftRing);
+		public IDye DyeLeftRing => this.GetDye(this.Value.DyeLeftRing.Value?.RowId);
+		public IItem RightRing => this.GetItem(ItemSlots.RightRing, this.Value.ModelRightRing, this.Equip?.ModelRightRing);
+		public IDye DyeRightRing => this.GetDye(this.Value.DyeRightRing.Value?.RowId);
+
+		private IItem GetItem(ItemSlots slot, uint baseVal, uint? equipVal)
+		{
+			if (equipVal != null)
+				return LuminaExtensions.GetGearItem(slot, (uint)equipVal);
+
+			return LuminaExtensions.GetGearItem(slot, baseVal);
+		}
+
+		private IDye GetDye(uint? id)
+		{
+			if (GameDataService.Dyes == null)
+				return ItemUtility.NoneDye;
+
+			if (id == null)
+				return ItemUtility.NoneDye;
+
+			return GameDataService.Dyes.Get((uint)id);
+		}
 	}
 }

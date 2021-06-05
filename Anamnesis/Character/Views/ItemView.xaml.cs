@@ -68,7 +68,7 @@ namespace Anamnesis.Character.Views
 			set => WeaponExModelDp.Set(this, value);
 		}
 
-		public int ItemKey
+		public uint ItemKey
 		{
 			get
 			{
@@ -76,7 +76,7 @@ namespace Anamnesis.Character.Views
 			}
 			set
 			{
-				IItem? item = GameDataService.Items?.Get((int)value);
+				IItem? item = GameDataService.Items?.Get(value);
 				this.SetItem(item, false);
 			}
 		}

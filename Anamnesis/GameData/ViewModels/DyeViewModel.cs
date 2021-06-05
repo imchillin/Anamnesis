@@ -18,7 +18,7 @@ namespace Anamnesis.GameData.ViewModels
 	{
 		private IItem? item;
 
-		public DyeViewModel(int key, ExcelSheet<Stain> sheet, GameData lumina)
+		public DyeViewModel(uint key, ExcelSheet<Stain> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}
@@ -51,7 +51,7 @@ namespace Anamnesis.GameData.ViewModels
 
 			if (this.item == null)
 			{
-				int itemKey = DyeToItemKey(this.Key);
+				uint itemKey = DyeToItemKey(this.Key);
 
 				if (itemKey != 0)
 				{
@@ -66,7 +66,7 @@ namespace Anamnesis.GameData.ViewModels
 			return this.item;
 		}
 
-		private static int DyeToItemKey(int dyeKey)
+		private static uint DyeToItemKey(uint dyeKey)
 		{
 			switch (dyeKey)
 			{

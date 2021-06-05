@@ -32,7 +32,7 @@ namespace Anamnesis.Serialization.Converters
 			}
 			else
 			{
-				return GameDataService.Items.Get(int.Parse(str));
+				return GameDataService.Items.Get(uint.Parse(str));
 			}
 		}
 

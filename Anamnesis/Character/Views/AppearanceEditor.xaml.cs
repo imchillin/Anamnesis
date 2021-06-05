@@ -135,7 +135,7 @@ namespace Anamnesis.Character.Views
 				return;
 			}
 
-			this.Race = GameDataService.Races.Get((int)this.Appearance.Race);
+			this.Race = GameDataService.Races.Get((uint)this.Appearance.Race);
 
 			// Something has gone terribly wrong.
 			if (this.Race == null)
@@ -150,7 +150,7 @@ namespace Anamnesis.Character.Views
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
 
-			this.Tribe = GameDataService.Tribes.Get((int)this.Appearance.Tribe);
+			this.Tribe = GameDataService.Tribes.Get((uint)this.Appearance.Tribe);
 
 			if (this.Appearance.Tribe == 0 || this.Tribe == null)
 				this.Appearance.Tribe = this.Race.Tribes.First().Tribe;

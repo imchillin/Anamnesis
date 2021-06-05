@@ -12,7 +12,7 @@ namespace Anamnesis.Character
 
 	public class Prop : IJsonRow, IItem
 	{
-		public int Key { get; set; }
+		public uint Key { get; set; }
 
 		public string Name { get; set; } = string.Empty;
 		public string? Description { get; set; }

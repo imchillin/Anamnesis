@@ -11,7 +11,7 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class CharaMakeCustomizeViewModel : ExcelRowViewModel<CharaMakeCustomize>, ICharaMakeCustomize
 	{
-		public CharaMakeCustomizeViewModel(int key, ExcelSheet<CharaMakeCustomize> sheet, GameData lumina)
+		public CharaMakeCustomizeViewModel(uint key, ExcelSheet<CharaMakeCustomize> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}

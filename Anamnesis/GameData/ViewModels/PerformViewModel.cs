@@ -18,7 +18,7 @@ namespace Anamnesis.GameData.ViewModels
 		private ushort modelBase;
 		private ushort modelVariant;
 
-		public PerformViewModel(int key, ExcelSheet<Perform> sheet, GameData lumina)
+		public PerformViewModel(uint key, ExcelSheet<Perform> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			LuminaExtensions.GetModel(this.Value.ModelKey, true, out this.modelSet, out this.modelBase, out this.modelVariant);

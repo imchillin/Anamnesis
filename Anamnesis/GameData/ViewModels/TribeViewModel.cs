@@ -11,7 +11,7 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class TribeViewModel : ExcelRowViewModel<Tribe>, ITribe
 	{
-		public TribeViewModel(int key, ExcelSheet<Tribe> sheet, GameData lumina)
+		public TribeViewModel(uint key, ExcelSheet<Tribe> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}

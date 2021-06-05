@@ -76,7 +76,12 @@ namespace Anamnesis.Services
 			this.lumina.GetExcelSheet<Perform>();
 
 			// no view models for these
-			WeatherRates = this.lumina.GetExcelSheet<WeatherRate>();
+			ExcelSheet<WeatherRate>? sheet = this.lumina.GetExcelSheet<WeatherRate>();
+
+			if (sheet == null)
+				throw new Exception("No weather sheet");
+
+			WeatherRates = sheet;
 
 			// these are json files that we write by hand
 			Monsters = new JsonListSheet<Monster>("Data/Monsters.json");

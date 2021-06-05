@@ -18,29 +18,36 @@ namespace Lumina
 
 	public static class LuminaExtensions
 	{
-		public static IItem GetItem(ItemSlots slot, ulong val)
+		public static IItem GetWeaponItem(ItemSlots slot, ulong val)
 		{
 			if (val == 0)
 				return ItemUtility.NoneItem;
 
-			short modelSet;
-			short modelBase;
-			short modelVariant;
+			short modelSet = (short)val;
+			short modelBase = (short)(val >> 16);
+			short modelVariant = (short)(val >> 32);
 
-			if (slot == ItemSlots.MainHand || slot == ItemSlots.OffHand)
+			if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
 			{
-				modelSet = (short)val;
-				modelBase = (short)(val >> 16);
-				modelVariant = (short)(val >> 32);
-			}
-			else
-			{
+				Log.Information($"Invalid item value: {val}");
+
 				modelSet = 0;
-				modelBase = (short)val;
-				modelVariant = (short)(val >> 16);
+				modelBase = 0;
+				modelVariant = 0;
 			}
 
-			// Some NPC's seem to have invalid equipment ids? or atleast ids that dont work as we expect.
+			return ItemUtility.GetItem(slot, (ushort)modelSet, (ushort)modelBase, (ushort)modelVariant);
+		}
+
+		public static IItem GetGearItem(ItemSlots slot, uint val)
+		{
+			if (val == 0)
+				return ItemUtility.NoneItem;
+
+			short modelSet = 0;
+			short modelBase = (short)val;
+			short modelVariant = (short)(val >> 16);
+
 			if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
 			{
 				Log.Information($"Invalid item value: {val}");
@@ -76,7 +83,11 @@ namespace Lumina
 
 		public static ImageSource? GetImage(this LuminaData self, int imageId)
 		{
-			TexFile tex = self.GetIcon(imageId);
+			TexFile? tex = self.GetIcon(imageId);
+
+			if (tex == null)
+				return null;
+
 			return tex.GetImage();
 		}
 

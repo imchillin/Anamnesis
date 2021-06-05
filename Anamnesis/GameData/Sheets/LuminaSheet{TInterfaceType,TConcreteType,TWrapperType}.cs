@@ -19,7 +19,7 @@ namespace Anamnesis.GameData.Sheets
 		where TWrapperType : ExcelRowViewModel<TConcreteType>, TInterfaceType
 	{
 		private ExcelSheet<TConcreteType> excel;
-		private Dictionary<int, TWrapperType> wrapperCache = new Dictionary<int, TWrapperType>();
+		private Dictionary<uint, TWrapperType> wrapperCache = new Dictionary<uint, TWrapperType>();
 		private List<TInterfaceType>? all;
 
 		private LuminaData lumina;
@@ -27,7 +27,13 @@ namespace Anamnesis.GameData.Sheets
 		public LuminaSheet(LuminaData lumina)
 		{
 			this.lumina = lumina;
-			this.excel = lumina.GetExcelSheet<TConcreteType>();
+
+			ExcelSheet<TConcreteType>? sheet = lumina.GetExcelSheet<TConcreteType>();
+
+			if (sheet == null)
+				throw new Exception($"Failed to read lumina excel sheet: {typeof(TConcreteType)}");
+
+			this.excel = sheet;
 		}
 
 		private IEnumerable<TInterfaceType> All
@@ -40,7 +46,7 @@ namespace Anamnesis.GameData.Sheets
 
 					foreach (TConcreteType? entry in this.excel)
 					{
-						TInterfaceType viewModel = this.Get((int)entry.RowId);
+						TInterfaceType viewModel = this.Get(entry.RowId);
 						this.all.Add(viewModel);
 					}
 
@@ -59,13 +65,13 @@ namespace Anamnesis.GameData.Sheets
 			}
 		}
 
-		public bool Contains(int key)
+		public bool Contains(uint key)
 		{
 			TConcreteType? row = this.excel.GetRow((uint)key);
 			return row != null;
 		}
 
-		public TInterfaceType Get(int key)
+		public TInterfaceType Get(uint key)
 		{
 			lock (this.wrapperCache)
 			{
@@ -85,7 +91,7 @@ namespace Anamnesis.GameData.Sheets
 
 		public TInterfaceType Get(byte key)
 		{
-			return this.Get((int)key);
+			return this.Get((uint)key);
 		}
 
 		public IEnumerator<TInterfaceType> GetEnumerator()

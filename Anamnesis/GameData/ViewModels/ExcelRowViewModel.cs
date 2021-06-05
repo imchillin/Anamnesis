@@ -15,7 +15,7 @@ namespace Anamnesis.GameData.ViewModels
 
 		private ExcelSheet<T> sheet;
 
-		public ExcelRowViewModel(int key, ExcelSheet<T> sheet, GameData lumina)
+		public ExcelRowViewModel(uint key, ExcelSheet<T> sheet, GameData lumina)
 		{
 			this.sheet = sheet;
 			this.Key = key;
@@ -23,7 +23,12 @@ namespace Anamnesis.GameData.ViewModels
 
 			try
 			{
-				this.Value = this.sheet.GetRow((uint)this.Key);
+				T? row = this.sheet.GetRow(this.Key);
+
+				if (row == null)
+					throw new Exception($"No row found at {this.Key}");
+
+				this.Value = row;
 			}
 			catch (Exception ex)
 			{
@@ -31,7 +36,7 @@ namespace Anamnesis.GameData.ViewModels
 			}
 		}
 
-		public int Key
+		public uint Key
 		{
 			get;
 			private set;

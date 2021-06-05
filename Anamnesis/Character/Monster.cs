@@ -26,7 +26,7 @@ namespace Anamnesis.Character
 			Monster,
 		}
 
-		public int Key { get; set; }
+		public uint Key { get; set; }
 
 		public int ModelType { get; set; }
 		public string Name { get; set; } = string.Empty;
@@ -98,7 +98,7 @@ namespace Anamnesis.Character
 			public int LipColor => 0;
 			public int BustOrTone1 => 0;
 			public int HairColor => 0;
-			public int Key => 0;
+			public uint Key => 0;
 			public string Name => "Invalid";
 			public string? Description => null;
 			public INpcEquip NpcEquip => this;

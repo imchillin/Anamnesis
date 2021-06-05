@@ -12,16 +12,16 @@ namespace Anamnesis.GameData.Sheets
 	public class JsonListSheet<T> : ISheet<T>
 		where T : IJsonRow
 	{
-		private Dictionary<int, T> rows;
+		private Dictionary<uint, T> rows;
 
 		public JsonListSheet(string fileName)
 		{
 			try
 			{
 				List<T> rows = SerializerService.DeserializeFile<List<T>>(fileName);
-				this.rows = new Dictionary<int, T>();
+				this.rows = new Dictionary<uint, T>();
 
-				int index = 0;
+				uint index = 0;
 				foreach (T value in rows)
 				{
 					value.Key = index;
@@ -35,19 +35,19 @@ namespace Anamnesis.GameData.Sheets
 			}
 		}
 
-		public bool Contains(int key)
+		public bool Contains(uint key)
 		{
 			return this.rows.ContainsKey(key);
 		}
 
-		public T Get(int key)
+		public T Get(uint key)
 		{
 			return this.rows[key];
 		}
 
 		public T Get(byte key)
 		{
-			return this.rows[(int)key];
+			return this.rows[(uint)key];
 		}
 
 		public IEnumerator<T> GetEnumerator()

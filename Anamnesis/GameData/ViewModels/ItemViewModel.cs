@@ -22,9 +22,9 @@ namespace Anamnesis.GameData.ViewModels
 		private ushort subModelBase;
 		private ushort subModelVariant;
 
-		private ClassJobCategory classJob;
+		private ClassJobCategory? classJob;
 
-		public ItemViewModel(int key, ExcelSheet<Item> sheet, GameData lumina)
+		public ItemViewModel(uint key, ExcelSheet<Item> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			this.classJob = this.Value.ClassJobCategory.Value;
@@ -45,7 +45,7 @@ namespace Anamnesis.GameData.ViewModels
 		public ushort SubModelSet => this.subModelSet;
 		public ushort SubModelBase => this.subModelBase;
 		public ushort SubModelVariant => this.subModelVariant;
-		public Classes EquipableClasses => this.classJob.ToFlags();
+		public Classes EquipableClasses => this.classJob != null ? this.classJob.ToFlags() : Classes.None;
 
 		public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
 
@@ -59,7 +59,7 @@ namespace Anamnesis.GameData.ViewModels
 
 		public bool FitsInSlot(ItemSlots slot)
 		{
-			return this.Value.EquipSlotCategory.Value.Contains(slot);
+			return this.Value.EquipSlotCategory.Value?.Contains(slot) ?? false;
 		}
 	}
 }

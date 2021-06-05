@@ -9,9 +9,9 @@ namespace Anamnesis.GameData
 	public interface ISheet<T> : IEnumerable<T>
 		where T : IRow
 	{
-		bool Contains(int key);
+		bool Contains(uint key);
 
-		T Get(int key);
+		T Get(uint key);
 		T Get(byte key);
 	}
 }

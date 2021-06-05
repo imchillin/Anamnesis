@@ -18,7 +18,7 @@ namespace Anamnesis.Character.Items
 			this.ModelVariant = modelVariant;
 		}
 
-		public int Key => 0;
+		public uint Key => 0;
 		public bool IsWeapon => true;
 		public bool HasSubModel => false;
 		public string Name => LocalizationService.GetString("Item_Unknown");

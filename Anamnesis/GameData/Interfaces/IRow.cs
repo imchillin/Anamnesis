@@ -8,6 +8,6 @@ namespace Anamnesis.GameData
 
 	public interface IRow : ISelectable
 	{
-		int Key { get; }
+		uint Key { get; }
 	}
 }

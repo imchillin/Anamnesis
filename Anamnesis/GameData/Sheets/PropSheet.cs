@@ -14,15 +14,15 @@ namespace Anamnesis.GameData.Sheets
 
 	public class PropSheet : ISheet<Prop>
 	{
-		private Dictionary<int, Prop> rows;
+		private Dictionary<uint, Prop> rows;
 
 		public PropSheet(string fileName)
 		{
 			try
 			{
-				this.rows = new Dictionary<int, Prop>();
+				this.rows = new Dictionary<uint, Prop>();
 
-				int index = 0;
+				uint index = 0;
 				Dictionary<string, string> stringRows = SerializerService.DeserializeFile<Dictionary<string, string>>(fileName);
 				foreach ((string key, string value) in stringRows)
 				{
@@ -50,19 +50,19 @@ namespace Anamnesis.GameData.Sheets
 			}
 		}
 
-		public bool Contains(int key)
+		public bool Contains(uint key)
 		{
 			return this.rows.ContainsKey(key);
 		}
 
-		public Prop Get(int key)
+		public Prop Get(uint key)
 		{
 			return this.rows[key];
 		}
 
 		public Prop Get(byte key)
 		{
-			return this.rows[(int)key];
+			return this.rows[(uint)key];
 		}
 
 		public IEnumerator<Prop> GetEnumerator()
@@ -79,6 +79,6 @@ namespace Anamnesis.GameData.Sheets
 	#pragma warning disable SA1201
 	public interface IJsonRow : IRow
 	{
-		public new int Key { get; set; }
+		public new uint Key { get; set; }
 	}
 }

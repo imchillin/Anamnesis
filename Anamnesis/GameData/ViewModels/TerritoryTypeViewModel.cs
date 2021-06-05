@@ -14,7 +14,7 @@ namespace Anamnesis.GameData.ViewModels
 	{
 		private readonly List<IWeather> weathers = new List<IWeather>();
 
-		public TerritoryTypeViewModel(int key, ExcelSheet<TerritoryType> sheet, GameData lumina)
+		public TerritoryTypeViewModel(uint key, ExcelSheet<TerritoryType> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			this.GetWeathers();
@@ -33,7 +33,7 @@ namespace Anamnesis.GameData.ViewModels
 
 			this.weathers.Clear();
 
-			WeatherRate weatherRate = GameDataService.WeatherRates!.GetRow((uint)this.Value.WeatherRate);
+			WeatherRate? weatherRate = GameDataService.WeatherRates?.GetRow((uint)this.Value.WeatherRate);
 
 			if (weatherRate != null && weatherRate.UnkStruct0 != null)
 			{
@@ -42,7 +42,7 @@ namespace Anamnesis.GameData.ViewModels
 					if (wr.Weather == 0)
 						continue;
 
-					this.weathers.Add(GameDataService.Weathers!.Get(wr.Weather));
+					this.weathers.Add(GameDataService.Weathers!.Get((uint)wr.Weather));
 				}
 			}
 		}

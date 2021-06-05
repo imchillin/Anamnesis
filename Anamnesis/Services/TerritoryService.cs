@@ -18,7 +18,7 @@ namespace Anamnesis
 	{
 		private ushort currentWeatherId;
 
-		public int CurrentTerritoryId { get; private set; }
+		public uint CurrentTerritoryId { get; private set; }
 		public string CurrentTerritoryName { get; private set; } = "Unknown";
 		public ITerritoryType? CurrentTerritory { get; private set; }
 
@@ -79,7 +79,7 @@ namespace Anamnesis
 					{
 						if (newTerritoryId != this.CurrentTerritoryId)
 						{
-							this.CurrentTerritoryId = newTerritoryId;
+							this.CurrentTerritoryId = (uint)newTerritoryId;
 
 							if (GameDataService.Territories == null)
 							{

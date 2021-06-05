@@ -13,7 +13,7 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class NpcResidentViewModel : ExcelRowViewModel<ENpcResident>, INpcResident
 	{
-		public NpcResidentViewModel(int key, ExcelSheet<ENpcResident> sheet, GameData lumina)
+		public NpcResidentViewModel(uint key, ExcelSheet<ENpcResident> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 		}
@@ -22,7 +22,7 @@ namespace Anamnesis.GameData.ViewModels
 		public string Singular => this.Value.Singular;
 		public string Plural => this.Value.Plural;
 		public string Title => !string.IsNullOrEmpty(this.Value.Title) ? this.Value.Title : this.Key.ToString();
-		public INpcBase? Appearance => GameDataService.BaseNPCs!.Get((int)this.Value.RowId);
+		public INpcBase? Appearance => GameDataService.BaseNPCs!.Get(this.Value.RowId);
 		public Mod? Mod => null;
 	}
 }

@@ -17,7 +17,7 @@ namespace Anamnesis.Character.Items
 		public ushort ModelBase => 0;
 		public ushort ModelVariant => 0;
 		public ushort ModelSet => 0;
-		public int Key => 0;
+		public uint Key => 0;
 		public bool IsWeapon => true;
 		public bool HasSubModel => false;
 		public ushort SubModelBase => 0;
