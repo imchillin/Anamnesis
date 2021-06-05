@@ -212,12 +212,12 @@
 								<ana:TextBlock
 									Key="Pose_LoadBones"
 									FontWeight="Light"
-									Visibility="{Binding Skeleton.MultiSelection, Converter={StaticResource B2V}}"
+									Visibility="{Binding Skeleton.HasSelection, Converter={StaticResource B2V}}"
 									Value="{Binding Skeleton.SelectedCount}" />
 								<ana:TextBlock
 									Key="Pose_Load"
 									FontWeight="Light"
-									Visibility="{Binding Skeleton.MultiSelection, Converter={StaticResource !B2V}}" />
+									Visibility="{Binding Skeleton.HasSelection, Converter={StaticResource !B2V}}" />
 							</Grid>
 						</Button>
 						<Button
@@ -231,12 +231,12 @@
 								<ana:TextBlock
 									Key="Pose_SaveBones"
 									FontWeight="Light"
-									Visibility="{Binding Skeleton.MultiSelection, Converter={StaticResource B2V}}"
+									Visibility="{Binding Skeleton.HasSelection, Converter={StaticResource B2V}}"
 									Value="{Binding Skeleton.SelectedCount}" />
 								<ana:TextBlock
 									Key="Pose_Save"
 									FontWeight="Light"
-									Visibility="{Binding Skeleton.MultiSelection, Converter={StaticResource !B2V}}" />
+									Visibility="{Binding Skeleton.HasSelection, Converter={StaticResource !B2V}}" />
 							</Grid>
 						</Button>
 					</Grid>

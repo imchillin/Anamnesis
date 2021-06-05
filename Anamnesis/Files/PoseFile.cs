@@ -71,7 +71,7 @@ namespace Anamnesis.Files
 
 			foreach (BoneVisual3d bone in skeleton.Bones)
 			{
-				if (skeleton.MultiSelection && !skeleton.GetIsBoneSelected(bone))
+				if (skeleton.HasSelection && !skeleton.GetIsBoneSelected(bone))
 					continue;
 
 				Transform? trans = bone.ViewModel.Model;
@@ -132,7 +132,7 @@ namespace Anamnesis.Files
 							continue;
 						}
 
-						if (skeleton.MultiSelection && !skeleton.GetIsBoneSelected(bone))
+						if (skeleton.HasSelection && !skeleton.GetIsBoneSelected(bone))
 							continue;
 
 						TransformPtrViewModel vm = bone.ViewModel;
