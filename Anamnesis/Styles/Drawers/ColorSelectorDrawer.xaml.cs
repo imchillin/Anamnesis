@@ -162,14 +162,19 @@ namespace Anamnesis.Styles.Drawers
 		{
 			if (FavoritesService.Colors != null)
 			{
-				if (FavoritesService.Colors.Contains(this.Value))
-					return;
+				foreach (Color4 color in FavoritesService.Colors)
+				{
+					if (color.IsApproximately(this.Value))
+					{
+						return;
+					}
+				}
 
 				FavoritesService.Colors.Insert(0, this.Value);
 
-				while (FavoritesService.Colors.Count > 26)
+				while (FavoritesService.Colors.Count > 12)
 				{
-					FavoritesService.Colors.RemoveAt(26);
+					FavoritesService.Colors.RemoveAt(12);
 				}
 
 				FavoritesService.Save();
@@ -273,12 +278,24 @@ namespace Anamnesis.Styles.Drawers
 
 		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ColorOption? op = this.List.SelectedItem as ColorOption;
+			if (sender is ListBox list)
+			{
+				ColorOption? op = list.SelectedItem as ColorOption;
 
-			if (op == null)
-				return;
+				if (op == null)
+					return;
 
-			this.Value = op.AsColor();
+				this.Value = op.AsColor();
+
+				if (list == this.List)
+				{
+					this.RecentList.SelectedItem = null;
+				}
+				else if (list == this.RecentList)
+				{
+					this.List.SelectedItem = null;
+				}
+			}
 		}
 
 		private class ColorOption
@@ -306,7 +323,7 @@ namespace Anamnesis.Styles.Drawers
 
 			public Color4 AsColor()
 			{
-				return new Color4(this.Color.R / 255.0f, this.Color.G / 255.0f, this.Color.B / 255.0f, this.Color.A / 255.0f);
+				return new Color4(this.Color.ScR, this.Color.ScG, this.Color.ScB, this.Color.ScA);
 			}
 		}
 	}

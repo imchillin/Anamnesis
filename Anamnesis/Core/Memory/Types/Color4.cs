@@ -102,5 +102,14 @@ namespace Anamnesis.Memory
 		{
 			return HashCode.Combine(this.R, this.G, this.B, this.A);
 		}
+
+		public bool IsApproximately(Color4 other)
+		{
+			bool approx = true;
+			approx &= Math.Abs(this.R - other.R) < 0.05f;
+			approx &= Math.Abs(this.G - other.G) < 0.05f;
+			approx &= Math.Abs(this.B - other.B) < 0.05f;
+			return approx;
+		}
 	}
 }
