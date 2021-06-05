@@ -149,6 +149,8 @@
 
 	"Character_ExWeapons_Header": "Extended Weapons",
 
+	"Character_WarningGpose": "Appearance and Equipment can only be changed while not in Group Pose.",
+
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /gpose in chat.",
 	"Pose_WarningNotFrozen": "Actor motion must be disabled in the Group Pose settings.",
 	"Pose_WarningQuit": "Are you sure you want to quit? Current pose will be lost.",

@@ -79,6 +79,8 @@
 			</Grid>
 		</GroupBox>
 
+		<ana:InfoControl Grid.Column="0" Grid.ColumnSpan="2" Margin="12" Visibility="{Binding GPoseService.IsGpose, Converter={StaticResource B2V}}" Key="Character_WarningGpose"/>
+
 		<Grid Grid.Column="2">
 
 			<Grid.RowDefinitions>
