@@ -13,7 +13,7 @@ namespace UpdateExtractor
 	{
 		public static void Main(string[] args)
 		{
-			string destDir = args[0];
+			string? destDir = args[0];
 			string processName = args[1];
 			Console.WriteLine($"{processName} Updater");
 
@@ -44,6 +44,8 @@ namespace UpdateExtractor
 
 				if (string.IsNullOrEmpty(sourceDir))
 					throw new Exception("Unable to determine source directory");
+
+				destDir = Path.GetDirectoryName(destDir) + "\\";
 
 				if (string.IsNullOrEmpty(destDir))
 					throw new Exception("Unable to determine destination directory");

@@ -368,7 +368,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="move $(OutDir)\Data $(OutDir)..\Data&#xD;&#xA;move $(OutDir)\Languages $(OutDir)..\Languages" />
+	  <Exec Command="xcopy /S /Q /Y /F $(SolutionDir)Lib\PropertyChanged.dll $(OutDir)&#xD;&#xA;move $(OutDir)\Data $(OutDir)..\Data&#xD;&#xA;move $(OutDir)\Languages $(OutDir)..\Languages" />
 	</Target>
 
 </Project>
