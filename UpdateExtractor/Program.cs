@@ -13,7 +13,7 @@ namespace UpdateExtractor
 	{
 		public static void Main(string[] args)
 		{
-			string targetPath = args[0];
+			string destDir = args[0];
 			string processName = args[1];
 			Console.WriteLine($"{processName} Updater");
 
@@ -36,7 +36,6 @@ namespace UpdateExtractor
 
 				Console.WriteLine(" done.");
 
-				string? destDir = Path.GetDirectoryName(targetPath) + "/";
 				string? currentExePath = System.AppContext.BaseDirectory;
 				string? sourceDir = Path.GetDirectoryName(currentExePath) + "/../";
 
@@ -80,8 +79,10 @@ namespace UpdateExtractor
 				}
 
 				Console.WriteLine("Restarting application");
-				Console.WriteLine("    > " + targetPath);
-				ProcessStartInfo start = new ProcessStartInfo(targetPath);
+
+				string launch = destDir + "/AnamnesisLauncher.exe";
+				Console.WriteLine("    > " + launch);
+				ProcessStartInfo start = new ProcessStartInfo(launch);
 				Process.Start(start);
 			}
 			catch (Exception ex)
