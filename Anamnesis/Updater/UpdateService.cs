@@ -14,7 +14,6 @@ namespace Anamnesis.Updater
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
-	using System.Windows;
 	using Anamnesis.Services;
 
 	public class UpdateService : ServiceBase<UpdateService>
@@ -26,8 +25,10 @@ namespace Anamnesis.Updater
 		private HttpClient httpClient = new HttpClient();
 		private Release? currentRelease;
 
-		public static Version? Version => System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
+		public static DateTimeOffset Version { get; private set; } = DateTimeOffset.Now;
 		public static string? SupportedGameVersion { get; private set; }
+
+		private static string UpdateTempDir => Path.GetTempPath() + "/AnamnesisUpdateLatest/";
 
 		public override async Task Initialize()
 		{
@@ -36,9 +37,15 @@ namespace Anamnesis.Updater
 			if (!File.Exists(VersionFile))
 				throw new Exception("No version file found");
 
-			string[] parts = File.ReadAllText(VersionFile).Split(";", StringSplitOptions.RemoveEmptyEntries);
+			string[] parts = File.ReadAllText(VersionFile).Split(';');
 
+			Version = DateTimeOffset.Parse(parts[0].Trim()).ToUniversalTime();
 			SupportedGameVersion = parts[1].Trim();
+
+			// Debug builds should not attempt to update
+#if DEBUG
+			Version = DateTimeOffset.UtcNow;
+#endif
 
 			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
@@ -47,6 +54,9 @@ namespace Anamnesis.Updater
 				Log.Information("Last update check was less than 6 hours ago. Skipping.");
 				return;
 			}
+
+			if (Directory.Exists(UpdateTempDir))
+				Directory.Delete(UpdateTempDir, true);
 
 			if (!this.httpClient.DefaultRequestHeaders.Contains("User-Agent"))
 				this.httpClient.DefaultRequestHeaders.Add("User-Agent", "AutoUpdater");
@@ -63,30 +73,16 @@ namespace Anamnesis.Updater
 				if (this.currentRelease.Published == null)
 					throw new Exception("No published timestamp in update json");
 
-				// v1.0.0-beta
-				string? tag = this.currentRelease.TagName;
+				DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
+				published = published.ToUniversalTime();
 
-				if (tag == null)
-					throw new Exception("Publiched update has no tag");
-
-				if (tag.Contains('-'))
-					tag = tag.Split('-')[0];
-
-				tag = tag.Trim('v');
-
-				// ensuire this is a version tag (And not a date tag like v2021-05-05-beta)
-				if (tag.Contains('.'))
+				if (this.currentRelease.Published != null && published > Version)
 				{
-					Version newVersion = new Version(tag);
+					await Dispatch.MainThread();
 
-					if (this.currentRelease.Published != null && newVersion > Version)
-					{
-						await Dispatch.MainThread();
-
-						UpdateDialog dlg = new UpdateDialog();
-						dlg.Changes = this.currentRelease.Changes;
-						await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
-					}
+					UpdateDialog dlg = new UpdateDialog();
+					dlg.Changes = this.currentRelease.Changes;
+					await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
 				}
 
 				SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
@@ -115,6 +111,15 @@ namespace Anamnesis.Updater
 		{
 			try
 			{
+				string? currentExePath = Environment.GetCommandLineArgs()[0];
+
+				if (string.IsNullOrEmpty(currentExePath))
+					throw new Exception("Unable to determine current assembly path");
+
+				currentExePath = currentExePath.Replace(".dll", ".exe");
+				if (!File.Exists(currentExePath))
+					throw new Exception("Unable to determine current executable path");
+
 				if (this.currentRelease == null)
 					throw new Exception("No release to download");
 
@@ -127,21 +132,20 @@ namespace Anamnesis.Updater
 					if (tAsset.Name == null)
 						continue;
 
-					if (!tAsset.Name.EndsWith(".msi"))
+					if (!tAsset.Name.EndsWith(".zip"))
 						continue;
 
 					asset = tAsset;
 				}
 
 				if (asset == null)
-					throw new Exception("Failed to find msi asset for release");
+					throw new Exception("Failed to find asset for release");
 
 				if (asset.Url == null)
 					throw new Exception("Release asset has no url");
 
 				// Download asset to temp file
-				string installerFilePath = Path.GetTempFileName();
-				installerFilePath = installerFilePath.Replace(".tmp", ".msi");
+				string zipFilePath = Path.GetTempFileName();
 				using WebClient client = new WebClient();
 				if (updateProgress != null)
 				{
@@ -151,12 +155,44 @@ namespace Anamnesis.Updater
 					};
 				}
 
-				await client.DownloadFileTaskAsync(asset.Url, installerFilePath);
+				await client.DownloadFileTaskAsync(asset.Url, zipFilePath);
+
+				if (!Directory.Exists(UpdateTempDir))
+					Directory.CreateDirectory(UpdateTempDir);
+
+				using FileStream zipFile = new FileStream(zipFilePath, FileMode.Open);
+				using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Read);
+				archive.ExtractToDirectory(UpdateTempDir, true);
+				archive.Dispose();
+				await zipFile.DisposeAsync();
+
+				// Remove temp file
+				File.Delete(zipFilePath);
+
+				// While testing, do not copy the update files over our working files.
+				if (Debugger.IsAttached)
+				{
+					string? sourceDir = Path.GetDirectoryName(currentExePath);
+					if (string.IsNullOrEmpty(sourceDir))
+						throw new Exception("Unable to determine source directory");
+
+					Directory.Delete(UpdateTempDir, true);
+					string[] paths = Directory.GetFiles(".", "*.*", SearchOption.AllDirectories);
+					foreach (string path in paths)
+					{
+						string dest = path.Replace(".\\", UpdateTempDir + "\\");
+
+						string? dir = Path.GetDirectoryName(dest);
+						if (dir != null && !Directory.Exists(dir))
+							Directory.CreateDirectory(dir);
+
+						File.Copy(path, dest, true);
+					}
+				}
 
 				// Start the update extractor
-				ProcessStartInfo start = new ProcessStartInfo(installerFilePath);
-				start.Arguments = "/passive";
-				start.UseShellExecute = true;
+				string procName = Process.GetCurrentProcess().ProcessName;
+				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentExePath}\" {procName}");
 				Process.Start(start);
 
 				// Shutdown anamnesis

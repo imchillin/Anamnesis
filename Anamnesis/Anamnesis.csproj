@@ -126,12 +126,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="..\Version.txt" Link="Version.txt">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Fody" Version="6.3.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -364,6 +358,12 @@
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 			<Generator>ResXFileCodeGenerator</Generator>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Version.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
