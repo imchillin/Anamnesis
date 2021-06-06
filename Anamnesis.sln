@@ -5,13 +5,6 @@ VisualStudioVersion = 16.0.29230.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anamnesis", "Anamnesis\Anamnesis.csproj", "{04C21AF7-BD19-4180-A5E0-291E187C0936}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{28052761-F8DC-4ED9-BCC8-73DBACB09F6D}"
-	ProjectSection(SolutionItems) = preProject
-		UpdateVersion.bat = UpdateVersion.bat
-		UpdateVersion.csx = UpdateVersion.csx
-		Version.txt = Version.txt
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UpdateExtractor", "UpdateExtractor\UpdateExtractor.csproj", "{28786A77-C234-43B9-8365-33A70C4A216A}"
 EndProject
 Global
