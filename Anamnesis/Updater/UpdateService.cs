@@ -18,7 +18,7 @@ namespace Anamnesis.Updater
 
 	public class UpdateService : ServiceBase<UpdateService>
 	{
-		public const string VersionFile = "Version.txt";
+		public const string VersionFile = "bin/Version.txt";
 
 		private const string Repository = "imchillin/Anamnesis";
 
@@ -172,10 +172,6 @@ namespace Anamnesis.Updater
 				// While testing, do not copy the update files over our working files.
 				if (Debugger.IsAttached)
 				{
-					string? sourceDir = Path.GetDirectoryName(currentExePath);
-					if (string.IsNullOrEmpty(sourceDir))
-						throw new Exception("Unable to determine source directory");
-
 					Directory.Delete(UpdateTempDir, true);
 					string[] paths = Directory.GetFiles(".", "*.*", SearchOption.AllDirectories);
 					foreach (string path in paths)
@@ -191,8 +187,9 @@ namespace Anamnesis.Updater
 				}
 
 				// Start the update extractor
+				string currentDir = Directory.GetCurrentDirectory();
 				string procName = Process.GetCurrentProcess().ProcessName;
-				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentExePath}\" {procName}");
+				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentDir}\" {procName}");
 				Process.Start(start);
 
 				// Shutdown anamnesis

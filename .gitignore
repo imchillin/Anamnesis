@@ -7,3 +7,13 @@ obj/
 deploy/
 Setup/Release/
 Setup/Debug/
+*.tlog
+*.iobj
+*.ipdb
+*.filters
+*.pdb
+*.log
+*.obj
+*.idb
+*.recipe
+*.ilk

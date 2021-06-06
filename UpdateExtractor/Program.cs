@@ -54,6 +54,7 @@ namespace UpdateExtractor
 
 				Console.WriteLine("Cleaning old version");
 				DeleteFileIfExists(destDir + "Anamnesis.exe");
+				DeleteFileIfExists(destDir + "AnamnesisLauncher.exe");
 				DeleteFileIfExists(destDir + "Anamnesis.pdb");
 				DeleteFileIfExists(destDir + "Anamnesis.xml");
 				DeleteFileIfExists(destDir + "Version.txt");
@@ -61,6 +62,7 @@ namespace UpdateExtractor
 				DeleteDirectoryIfExists(destDir + "Data");
 				DeleteDirectoryIfExists(destDir + "Languages");
 				DeleteDirectoryIfExists(destDir + "Updater");
+				DeleteDirectoryIfExists(destDir + "bin");
 
 				Console.WriteLine("Copying Update Files");
 

@@ -120,7 +120,7 @@ namespace Anamnesis
 			string currentDir = Directory.GetCurrentDirectory();
 			Log.Information($"Check Working Directory: \"{currentDir}\"");
 
-			if (!File.Exists(currentDir + "/Anamnesis.exe"))
+			if (!File.Exists(currentDir + "/bin/Anamnesis.exe"))
 			{
 				string? currentPath = AppContext.BaseDirectory;
 
@@ -132,9 +132,9 @@ namespace Anamnesis
 				if (string.IsNullOrEmpty(newDir))
 					throw new Exception($"Failed to get current directory");
 
-				currentDir = Path.GetFullPath(newDir);
+				currentDir = Path.GetFullPath(newDir + "/../");
 
-				if (!File.Exists(currentDir + "/Anamnesis.exe"))
+				if (!File.Exists(currentDir + "/bin/Anamnesis.exe"))
 					throw new Exception($"Incorrect new working directory: {currentDir}");
 
 				Directory.SetCurrentDirectory(currentDir);
