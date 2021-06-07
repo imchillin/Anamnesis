@@ -9,7 +9,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<RootNamespace>Anamnesis</RootNamespace>
 		<ApplicationIcon>Assets\Concept Matrix.ico</ApplicationIcon>
-		<OutputPath>.\bin\</OutputPath>
+		<OutputPath>..\deploy\bin\</OutputPath>
 		<DocumentationFile>.\obj\Anamnesis.xml</DocumentationFile>
 		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;IDE0025;SA1011;SA1134;</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -366,6 +366,10 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="xcopy /S /Q /Y /F $(SolutionDir)Lib\PropertyChanged.dll $(OutDir)&#xD;&#xA;move $(OutDir)\Data $(OutDir)..\Data&#xD;&#xA;move $(OutDir)\Languages $(OutDir)..\Languages" />
+	</Target>
 
 </Project>
 

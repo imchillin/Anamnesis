@@ -37,7 +37,7 @@ namespace UpdateExtractor
 				Console.WriteLine(" done.");
 
 				string? currentExePath = System.AppContext.BaseDirectory;
-				string? sourceDir = Path.GetDirectoryName(currentExePath);
+				string? sourceDir = Path.GetDirectoryName(currentExePath) + "/../";
 
 				if (string.IsNullOrEmpty(currentExePath))
 					throw new Exception("Unable to determine current process path");
@@ -82,7 +82,7 @@ namespace UpdateExtractor
 
 				Console.WriteLine("Restarting application");
 
-				string launch = destDir + "/Anamnesis.exe";
+				string launch = destDir + "/AnamnesisLauncher.exe";
 				Console.WriteLine("    > " + launch);
 				ProcessStartInfo start = new ProcessStartInfo(launch);
 				Process.Start(start);

@@ -5,7 +5,7 @@
 	<AppendTargetFramework>False</AppendTargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<DocumentationFile>.\obj\UpdateExtractor.xml</DocumentationFile>
-	<OutputPath>.\bin\</OutputPath>
+	<OutputPath>..\deploy\Updater\</OutputPath>
 	<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;IDE0025;SA1011;SA1134;</NoWarn>
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	<Nullable>enable</Nullable>

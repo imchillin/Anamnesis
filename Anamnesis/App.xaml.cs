@@ -28,6 +28,11 @@ namespace Anamnesis
 	{
 		private static readonly ServiceManager Services = new ServiceManager();
 
+		public App()
+		{
+			AssemblyLoadContext.Default.Resolving += this.ResolveAssembly;
+		}
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
@@ -115,7 +120,7 @@ namespace Anamnesis
 			string currentDir = Directory.GetCurrentDirectory();
 			Log.Information($"Check Working Directory: \"{currentDir}\"");
 
-			if (!File.Exists(currentDir + "/Anamnesis.exe"))
+			if (!File.Exists(currentDir + "/bin/Anamnesis.exe"))
 			{
 				string? currentPath = AppContext.BaseDirectory;
 
@@ -127,9 +132,9 @@ namespace Anamnesis
 				if (string.IsNullOrEmpty(newDir))
 					throw new Exception($"Failed to get current directory");
 
-				currentDir = Path.GetFullPath(newDir);
+				currentDir = Path.GetFullPath(newDir + "/../");
 
-				if (!File.Exists(currentDir + "/Anamnesis.exe"))
+				if (!File.Exists(currentDir + "/bin/Anamnesis.exe"))
 					throw new Exception($"Incorrect new working directory: {currentDir}");
 
 				Directory.SetCurrentDirectory(currentDir);
@@ -149,6 +154,18 @@ namespace Anamnesis
 			{
 				throw new Exception($"Multiple {name} processes found. Please close all other instances.");
 			}
+		}
+
+		private Assembly? ResolveAssembly(AssemblyLoadContext context, AssemblyName name)
+		{
+			if (name.Name == null)
+				return null;
+
+			string path = AppContext.BaseDirectory + "/bin/" + name.Name + ".dll";
+			if (File.Exists(path))
+				return context.LoadFromAssemblyPath(path);
+
+			return null;
 		}
 
 		private async Task PerformanceWatcher()
