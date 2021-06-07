@@ -1,4 +1,4 @@
-
+deploy/
 \.vs/
 packages/
 *.user
