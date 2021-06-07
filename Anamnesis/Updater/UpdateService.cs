@@ -18,7 +18,7 @@ namespace Anamnesis.Updater
 
 	public class UpdateService : ServiceBase<UpdateService>
 	{
-		public const string VersionFile = "bin/Version.txt";
+		public const string VersionFile = "Version.txt";
 
 		private const string Repository = "imchillin/Anamnesis";
 
@@ -103,7 +103,6 @@ namespace Anamnesis.Updater
 			catch (Exception ex)
 			{
 				Log.Error(ex, "Failed to complete update check");
-				throw;
 			}
 		}
 
