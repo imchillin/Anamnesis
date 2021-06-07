@@ -34,13 +34,13 @@ string exec(const char* cmd)
     return result;
 }
 
-std::string GetCurrentDirectory()
+string GetCurrentDirectory()
 {
     char buffer[MAX_PATH];
     GetModuleFileNameA(NULL, buffer, MAX_PATH);
-    std::string::size_type pos = std::string(buffer).find_last_of("\\/");
+    string::size_type pos = std::string(buffer).find_last_of("\\/");
 
-    return std::string(buffer).substr(0, pos);
+    return string(buffer).substr(0, pos);
 }
 
 int main()
@@ -50,29 +50,41 @@ int main()
     GetConsoleMode(hStdin, &mode);
     SetConsoleMode(hStdin, mode & (~ENABLE_ECHO_INPUT));
 
+    // Hide the window
+#if !DEBUG
+    ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+#endif
 
-    cout << "Check .Net desktop runtime\n";
+    cout << ".Net check\n";
     string result = exec("dotnet --info");
 
     if (result.find("Microsoft.WindowsDesktop.App 5.0.6") == std::string::npos)
     {
-        cout << "Desktop runtime not found\n";
+        int promptResult = MessageBox(0, L"Download and Install .NET Desktop 5.0.6?", L".NET Desktop 5.0.6 not found", MB_YESNO);
+        if (promptResult != 6)
+            return 0;
 
-        string setupFile = GetCurrentDirectory().append("\\setupdotnet5.exe");
+        ::ShowWindow(::GetConsoleWindow(), SW_SHOW);
+        system("cls");
+        cout << "Downloading .NET Desktop 5.0.6";
 
         wstring dwnld_URL = L"https://download.visualstudio.microsoft.com/download/pr/6279dc90-f437-4481-82a5-73dd9f97da06/6519ef44735fd31115b9b1a81d6ff1e8/windowsdesktop-runtime-5.0.6-win-x64.exe";
+       
+        string setupFile = "setupdotnet5.exe";
         wstring stemp = wstring(setupFile.begin(), setupFile.end());
-        if (S_OK == URLDownloadToFile(NULL, dwnld_URL.c_str(), stemp.c_str(), 0, NULL))
+        HRESULT result = URLDownloadToFile(NULL, dwnld_URL.c_str(), stemp.c_str(), 0, NULL);
+        ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+
+        if (result != S_OK)
         {
-            cout << "Downloaded setup\n";
-            system(setupFile.c_str());
-            remove(setupFile.c_str());
+            MessageBox(0, L"Failed to download .net 5.", L"Error", MB_OK);
+            return 2;
         }
         else
         {
-            cout << "Setup download failed\n";
-            system("pause");
-            return 2;
+            ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+            system(setupFile.c_str());
+            remove(setupFile.c_str());
         }
     }
     else
@@ -80,7 +92,7 @@ int main()
         cout << "Desktop runtime found\n";
     }
 
-    string anaFile = "start ";
-    anaFile.append(GetCurrentDirectory().append("\\bin\\Anamnesis.exe"));
+    string anaFile = "\"" + GetCurrentDirectory() + "\\bin\\Anamnesis.exe\"";
+    cout << anaFile;
     system(anaFile.c_str());
 }
