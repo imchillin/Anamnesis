@@ -49,7 +49,7 @@ namespace Anamnesis.GameData.ViewModels
 
 		private IItem GetItem(ItemSlots slot, uint baseVal, uint? equipVal)
 		{
-			if (equipVal != null)
+			if (equipVal != null && equipVal != 0 && equipVal != uint.MaxValue && equipVal != long.MaxValue)
 				return LuminaExtensions.GetGearItem(slot, (uint)equipVal);
 
 			return LuminaExtensions.GetGearItem(slot, baseVal);
