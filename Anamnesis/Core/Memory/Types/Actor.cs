@@ -149,6 +149,13 @@ namespace Anamnesis.Memory
 				{
 					this.wasPlayerBeforeGPose = this.Pointer;
 					this.SetObjectKindDirect(ActorTypes.BattleNpc, this.Pointer);
+
+					// Sanity check that we do get turned back into a player
+					Task.Run(async () =>
+					{
+						await Task.Delay(3000);
+						this.SetObjectKindDirect(ActorTypes.Player, this.wasPlayerBeforeGPose);
+					});
 				}
 			}
 			else if (gpose.IsGpose && !gpose.IsChangingState)
