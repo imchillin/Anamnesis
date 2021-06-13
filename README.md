@@ -12,7 +12,7 @@ We actively encourage people to contribute to the project with their forks to im
 ## Getting Started
 
 ### Prerequisites
-- .NET 5.0 Desktop Runtime [x64](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.5-windows-x64-installer) installed on your computer.
+- .NET 5.0 Desktop Runtime [x64](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.5-windows-x64-installer) installed on your computer. Anamnesis will only work with 64-bit versions of Windows. Support will not be added for x86/32-bit versions of Windows.
 - Windows 10 (there are no plans to add support for older versions of Windows that [Microsoft is not in turn supporting](https://www.microsoft.com/en-au/windows/windows-7-end-of-life-support-information), or other operating systems).
 
 ### Installation
