@@ -45,13 +45,27 @@ namespace UpdateExtractor
 				if (string.IsNullOrEmpty(sourceDir))
 					throw new Exception("Unable to determine source directory");
 
-				destDir = Path.GetDirectoryName(destDir) + "\\";
-
 				if (string.IsNullOrEmpty(destDir))
 					throw new Exception("Unable to determine destination directory");
 
-				if (!File.Exists(destDir + "Anamnesis.exe"))
-					throw new Exception($"No Anamnesis executable found in destination directory: {destDir}");
+				// Is destDir actually a file path, get a directory instead.
+				if (File.Exists(destDir))
+				{
+					destDir = Path.GetDirectoryName(destDir);
+
+					if (string.IsNullOrEmpty(destDir))
+					{
+						throw new Exception("Unable to determine destination directory");
+					}
+				}
+
+				destDir = destDir.Replace('/', '\\');
+				destDir = destDir.Trim('\\');
+
+				string oldExe = destDir + "\\Anamnesis.exe";
+
+				if (!File.Exists(oldExe))
+					throw new Exception($"No Anamnesis executable found at: {oldExe}");
 
 				Console.WriteLine("Cleaning old version");
 				DeleteFileIfExists(destDir + "Anamnesis.exe");
@@ -82,7 +96,7 @@ namespace UpdateExtractor
 
 				Console.WriteLine("Restarting application");
 
-				string launch = destDir + "Anamnesis.exe";
+				string launch = destDir + "\\Anamnesis.exe";
 				Console.WriteLine("    > " + launch);
 				ProcessStartInfo start = new ProcessStartInfo(launch);
 				Process.Start(start);
