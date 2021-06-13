@@ -51,6 +51,7 @@ namespace Anamnesis.PoseModule.Pages
 		public TargetService TargetService => TargetService.Instance;
 
 		public bool IsFlipping { get; private set; }
+		public ActorViewModel? Actor { get; private set; }
 		public SkeletonVisual3d? Skeleton { get; private set; }
 		public PoseFile.Configuration FileConfiguration => FileConfig;
 
@@ -145,9 +146,9 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
-			ActorViewModel? actor = this.DataContext as ActorViewModel;
+			this.Actor = this.DataContext as ActorViewModel;
 
-			if (actor == null)
+			if (this.Actor == null || this.Actor.ModelObject == null)
 			{
 				this.Skeleton = null;
 				return;
@@ -158,7 +159,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			try
 			{
-				this.Skeleton = await PoseService.GetVisual(actor);
+				this.Skeleton = await PoseService.GetVisual(this.Actor);
 
 				this.ThreeDView.DataContext = this.Skeleton;
 				this.GuiView.DataContext = this.Skeleton;
@@ -187,9 +188,7 @@ namespace Anamnesis.PoseModule.Pages
 		{
 			try
 			{
-				ActorViewModel? actor = this.DataContext as ActorViewModel;
-
-				if (actor == null || this.Skeleton == null)
+				if (this.Actor == null || this.Skeleton == null)
 					return;
 
 				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>();
@@ -198,11 +197,11 @@ namespace Anamnesis.PoseModule.Pages
 					return;
 
 				if (result.File is LegacyPoseFile legacyFile)
-					result.File = legacyFile.Upgrade(actor.Customize?.Race ?? Appearance.Races.Hyur);
+					result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? Appearance.Races.Hyur);
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(actor, this.Skeleton, FileConfig);
+					await poseFile.Apply(this.Actor, this.Skeleton, FileConfig);
 				}
 			}
 			catch (Exception ex)
@@ -213,8 +212,7 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			ActorViewModel? actor = this.DataContext as ActorViewModel;
-			await PoseFile.Save(actor, this.Skeleton, FileConfig);
+			await PoseFile.Save(this.Actor, this.Skeleton, FileConfig);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)

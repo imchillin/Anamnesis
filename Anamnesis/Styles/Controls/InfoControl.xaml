@@ -10,7 +10,7 @@
 	d:DesignWidth="800"
 	mc:Ignorable="d">
 
-	<Grid VerticalAlignment="Bottom" Margin="3">
+	<Grid x:Name="ContentArea" VerticalAlignment="Bottom" Margin="3">
 
 		<Border Background="#CC222222" CornerRadius="3">
 			<Border.Effect>
@@ -29,13 +29,23 @@
 			</Grid.ColumnDefinitions>
 
 			<fa:IconBlock
+				Visibility="{Binding IsError, Converter={StaticResource !B2V}}"
 				Grid.Column="0"
 				Margin="0,3,6,3"
 				FontSize="20"
 				Foreground="Orange"
 				VerticalAlignment="Top"
 				Icon="ExclamationTriangle" />
-			
+
+			<fa:IconBlock
+				Visibility="{Binding IsError, Converter={StaticResource B2V}}"
+				Grid.Column="0"
+				Margin="0,3,6,3"
+				FontSize="20"
+				Foreground="DarkRed"
+				VerticalAlignment="Top"
+				Icon="Ban" />
+
 			<local:TextBlock
 				x:Name="TextBlock"
 				VerticalAlignment="Center"

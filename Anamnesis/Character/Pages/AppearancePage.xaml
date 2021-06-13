@@ -119,20 +119,6 @@
 							Grid.Column="1"
 							Grid.ColumnSpan="2"
 							Text="{Binding Actor.Nickname}" />
-
-						<ana:TextBlock
-							Key="Character_Actor_DataPath"
-							Grid.Row="1"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-						<views:DataPathSelector
-							Grid.Row="1"
-							Grid.Column="1"
-							Height="26"
-							DataHead="{Binding Actor.ModelObject.DataHead}"
-							DataPath="{Binding Actor.ModelObject.DataPath}"
-							Tribe="{Binding Actor.Customize.Tribe}" />
-
 						<ana:TextBlock
 							Key="Character_Actor_EntityType"
 							Grid.Row="2"
@@ -194,7 +180,7 @@
 
 				</GroupBox>
 
-				<GroupBox Style="{StaticResource PanelGroupBox}">
+				<GroupBox Style="{StaticResource PanelGroupBox}" Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
 					<GroupBox.Header>
 						<ana:Header Key="Character_Model_Header" Icon="GraduationCap" />
 					</GroupBox.Header>

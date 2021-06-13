@@ -158,6 +158,7 @@
 	"Pose_GenerateSkeleton": "No skeleton was found for the actor {0}. Generate one now?\nThis will disable posing, resetting all models to their default positions.\nWithout a skeleton, parenting will not work correctly.",
 	"Pose_Generating": "Generating Skeleton. Please Wait.",
 	"Pose_NoSkeleton": "No Skeleton is bound to this view.",
+	"Pose_NoModel": "This actor does not have a model.",
 	"Pose_NothingSelected": "Character - Nothing Selected",
 	"Pose_Save": "Save",
 	"Pose_SaveBones": "Save {0} Bones",

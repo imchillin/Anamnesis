@@ -23,13 +23,27 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
+		<ana:TextBlock
+			Key="Character_Actor_DataPath"
+			Grid.Row="0"
+			Grid.Column="0"
+			Style="{StaticResource Label}" />
+		
+		<local:DataPathSelector
+			Grid.Row="0"
+			Grid.Column="1"
+			Height="26"
+			DataHead="{Binding DataHead}"
+			DataPath="{Binding DataPath}"
+			Tribe="{Binding Actor.Customize.Tribe}" />
+
 		<!-- Height -->
-		<ana:TextBlock Key="Character_Model_Height" Style="{StaticResource Label}"/>
-		<ana:NumberBox Grid.Column="1" Slider="Absolute" Minimum="0.1" Maximum="2" Value="{Binding Height}" TickFrequency="0.01"/>
+		<ana:TextBlock Grid.Row="1" Key="Character_Model_Height" Style="{StaticResource Label}"/>
+		<ana:NumberBox Grid.Row="1" Grid.Column="1" Slider="Absolute" Minimum="0.1" Maximum="2" Value="{Binding Height}" TickFrequency="0.01"/>
 
 		<!-- Wetness -->
-		<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Character_Model_Wetness" Style="{StaticResource Label}"/>
-		<Grid Grid.Row="1" Grid.Column="1">
+		<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_Model_Wetness" Style="{StaticResource Label}"/>
+		<Grid Grid.Row="2" Grid.Column="1">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition/>

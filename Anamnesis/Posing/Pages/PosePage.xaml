@@ -19,13 +19,6 @@
 
 	<Grid x:Name="ContentArea">
 
-		<Grid Visibility="{Binding Skeleton, Converter={StaticResource NullToVisibilityConverter}}">
-			<ana:TextBlock
-				Key="Pose_NoSkeleton"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center" />
-		</Grid>
-
 		<Grid Visibility="{Binding Skeleton, Converter={StaticResource NotNullToVisibilityConverter}}">
 
 			<Grid
@@ -432,6 +425,16 @@
 					Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" />
 			</Grid>
 
+		</Grid>
+
+		<Grid Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
+			<Grid Visibility="{Binding Skeleton, Converter={StaticResource NullToVisibilityConverter}}">
+				<ana:InfoControl IsError="True" Key="Pose_NoSkeleton" VerticalAlignment="Bottom" Margin="12"/>
+			</Grid>
+		</Grid>
+
+		<Grid Visibility="{Binding Actor.ModelObject, Converter={StaticResource NullToVisibilityConverter}}">
+			<ana:InfoControl IsError="True" Key="Pose_NoModel" VerticalAlignment="Bottom" Margin="12"/>
 		</Grid>
 
 	</Grid>
