@@ -9,7 +9,9 @@
 	d:DesignHeight="450"
 	d:DesignWidth="232"
 	Loaded="OnLoaded"
+	Unloaded="OnUnloaded"
 	mc:Ignorable="d">
+	
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />

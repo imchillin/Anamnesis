@@ -14,6 +14,7 @@ namespace Anamnesis.Styles.Drawers
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
+	using System.Windows.Media;
 	using Anamnesis.Services;
 	using Serilog;
 
@@ -26,6 +27,7 @@ namespace Anamnesis.Styles.Drawers
 		public static readonly DependencyProperty ItemTemplateProperty = DependencyProperty.Register(nameof(ItemTemplate), typeof(DataTemplate), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 
 		private static Dictionary<Type, string?> searchInputs = new Dictionary<Type, string?>();
+		private static Dictionary<Type, double> scrollPositions = new Dictionary<Type, double>();
 		private List<ItemEntry> entries = new List<ItemEntry>();
 
 		private Type? objectType;
@@ -86,7 +88,40 @@ namespace Anamnesis.Styles.Drawers
 			set => this.SetValue(ItemTemplateProperty, value);
 		}
 
+		public double ScrollPosition
+		{
+			get
+			{
+				ScrollViewer? scroll = this.ScrollViewer;
+				if (scroll == null)
+					return 0;
+
+				return scroll.VerticalOffset;
+			}
+
+			set
+			{
+				ScrollViewer? scroll = this.ScrollViewer;
+				if (scroll == null)
+					return;
+
+				scroll.ScrollToVerticalOffset(value);
+			}
+		}
+
 		private static ILogger Log => Serilog.Log.ForContext<SelectorDrawer>();
+
+		private ScrollViewer? ScrollViewer
+		{
+			get
+			{
+				Decorator? border = VisualTreeHelper.GetChild(this.ListBox, 0) as Decorator;
+				if (border == null)
+					return null;
+
+				return border.Child as ScrollViewer;
+			}
+		}
 
 		public static void Show<TView, TValue>(TValue? current, Action<TValue> changed)
 			where TView : ISelectorView
@@ -110,10 +145,7 @@ namespace Anamnesis.Styles.Drawers
 				}
 			};
 
-			Task.Run(() =>
-			{
-				ViewService.ShowDrawer(view);
-			});
+			Task.Run(() => ViewService.ShowDrawer(view));
 		}
 
 		public void OnClosed()
@@ -178,21 +210,42 @@ namespace Anamnesis.Styles.Drawers
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			if (this.objectType != null && searchInputs.ContainsKey(this.objectType))
-				this.SearchBox.Text = searchInputs[this.objectType];
+			if (this.objectType != null)
+			{
+				if (searchInputs.ContainsKey(this.objectType))
+					this.SearchBox.Text = searchInputs[this.objectType];
+
+				if (scrollPositions.ContainsKey(this.objectType))
+				{
+					this.ScrollPosition = scrollPositions[this.objectType];
+				}
+			}
 
 			Keyboard.Focus(this.SearchBox);
 			this.SearchBox.CaretIndex = int.MaxValue;
 			this.loading = false;
 		}
 
-		private void OnSearchChanged(object sender, TextChangedEventArgs e)
+		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
 			if (this.objectType == null)
 				return;
 
 			if (!searchInputs.ContainsKey(this.objectType))
 				searchInputs.Add(this.objectType, null);
+
+			searchInputs[this.objectType] = this.SearchBox.Text;
+
+			if (!scrollPositions.ContainsKey(this.objectType))
+				scrollPositions.Add(this.objectType, 0);
+
+			scrollPositions[this.objectType] = this.ScrollPosition;
+		}
+
+		private void OnSearchChanged(object sender, TextChangedEventArgs e)
+		{
+			if (this.objectType == null)
+				return;
 
 			string str = this.SearchBox.Text;
 			searchInputs[this.objectType] = str;
