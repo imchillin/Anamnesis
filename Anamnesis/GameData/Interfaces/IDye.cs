@@ -11,5 +11,7 @@ namespace Anamnesis.GameData
 		byte Id { get; }
 		ImageSource? Icon { get; }
 		Brush? Color { get; }
+
+		bool IsFavorite { get; set; }
 	}
 }

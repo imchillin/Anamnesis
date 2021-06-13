@@ -4,6 +4,7 @@
 
 namespace Anamnesis.Character.Views
 {
+	using System.Collections.Generic;
 	using System.Windows.Controls;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
@@ -20,13 +21,15 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			this.Selector.AddItem(DyeUtility.NoneDye);
+			List<IDye> alldyes = new List<IDye>();
+			alldyes.Add(DyeUtility.NoneDye);
 
 			if (GameDataService.Dyes != null)
-			{
-				this.Selector.AddItems(GameDataService.Dyes);
-			}
+				alldyes.AddRange(GameDataService.Dyes);
 
+			alldyes.Sort((a, b) => b.IsFavorite.CompareTo(a.IsFavorite));
+
+			this.Selector.AddItems(alldyes);
 			this.Selector.FilterItems();
 		}
 

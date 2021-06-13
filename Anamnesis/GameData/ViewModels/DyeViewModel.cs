@@ -28,6 +28,12 @@ namespace Anamnesis.GameData.ViewModels
 		public override string? Description => this.GetDyeItem()?.Description;
 		public ImageSource? Icon => this.GetDyeItem()?.Icon;
 
+		public bool IsFavorite
+		{
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
+		}
+
 		public Brush? Color
 		{
 			get

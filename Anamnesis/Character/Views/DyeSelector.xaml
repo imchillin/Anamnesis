@@ -4,8 +4,9 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" Width="200">
+			 d:DesignHeight="450" Width="256">
 
 	<cm3Drawers:SelectorDrawer 
 		x:Name="Selector"
@@ -17,7 +18,8 @@
 				<Grid Height="32">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="32"/>
-						<ColumnDefinition Width="1*" />
+						<ColumnDefinition />
+						<ColumnDefinition Width="32" />
 					</Grid.ColumnDefinitions>
 
 					<Grid.RowDefinitions>
@@ -45,6 +47,16 @@
 					<Ellipse Grid.Row="1" Width="12" Height="12" StrokeThickness="1" 
 							 Fill="{Binding Color}" Visibility="{Binding Color, Converter={StaticResource NotNullToVisibilityConverter}}"
 							 Stroke="Black" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0, 0, -2, -2"/>
+
+					<ToggleButton Grid.Column="2" Grid.RowSpan="2" Style="{StaticResource InvisibleToggleButton}" IsChecked="{Binding IsFavorite}" Margin="6,0,0,0" Padding="0" VerticalAlignment="Center">
+						<Grid>
+							<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
+												  Foreground="Black"
+												   Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
+							<fa:IconBlock Icon="Star" FontSize="13"
+										  Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
+						</Grid>
+					</ToggleButton>
 
 				</Grid>
 			</DataTemplate>
