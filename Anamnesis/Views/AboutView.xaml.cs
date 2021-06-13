@@ -7,6 +7,7 @@ namespace Anamnesis.GUI.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Navigation;
+	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using Anamnesis.Updater;
 
@@ -16,7 +17,7 @@ namespace Anamnesis.GUI.Views
 		{
 			this.InitializeComponent();
 
-			this.VersionLabel.Text = UpdateService.Version.ToString();
+			this.VersionLabel.Text = UpdateService.Version.ToString("yyyy-MM-dd HH:mm");
 		}
 
 		private void OnNavigate(object sender, RequestNavigateEventArgs e)
@@ -32,6 +33,16 @@ namespace Anamnesis.GUI.Views
 		private void OnSetingsClicked(object sender, RoutedEventArgs e)
 		{
 			SettingsService.ShowDirectory();
+		}
+
+		private async void OnCheckForUpdatesClicked(object sender, RoutedEventArgs e)
+		{
+			bool didUpdate = await UpdateService.Instance.CheckForUpdates();
+
+			if (!didUpdate)
+			{
+				await GenericDialog.ShowLocalized("Update_NoUpdate", "Update_Title", MessageBoxButton.OK);
+			}
 		}
 	}
 }

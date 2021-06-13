@@ -25,7 +25,22 @@
 				<ana:TextBlock Key="About_Version_Header"/>
 			</GroupBox.Header>
 
-			<TextBlock x:Name="VersionLabel" FontSize="22" Margin="6,0,0,0"/>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				
+				<TextBlock x:Name="VersionLabel" Grid.Column="0" FontSize="22" Margin="6,0,0,0"/>
+				<Button Grid.Column="1" Width="28" Style="{StaticResource TransparentButton}" Click="OnCheckForUpdatesClicked">
+					<Button.ToolTip>
+						<ana:TextBlock Key="About_CheckForUpdates"/>
+					</Button.ToolTip>
+					
+					<fa:IconBlock Icon="Redo"/>
+				</Button>
+			</Grid>
+			
 
 		</GroupBox>
 		

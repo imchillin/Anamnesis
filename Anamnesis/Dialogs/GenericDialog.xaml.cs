@@ -30,6 +30,14 @@ namespace Anamnesis.GUI.Dialogs
 		public string? Left { get; set; }
 		public string? Right { get; set; }
 
+		public static Task<bool?> ShowLocalized(string messageKey, string captionKey, MessageBoxButton buttons)
+		{
+			string message = LocalizationService.GetString(messageKey, true);
+			string caption = LocalizationService.GetString(captionKey, true);
+
+			return Show(message, caption, buttons);
+		}
+
 		public static async Task<bool?> Show(string message, string caption, MessageBoxButton buttons)
 		{
 			await Dispatch.MainThread();

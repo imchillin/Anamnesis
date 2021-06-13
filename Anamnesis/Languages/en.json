@@ -425,9 +425,12 @@
 	"About_Contact_Header": "Get in Touch",
 	"About_Donate_Header": "Donate to the Devs!",
 	"About_Debug_Header": "Debugging",
-
+	"About_CheckForUpdates": "Check for updates",
 	"About_Debug_OpenLogs": "Logs",
 	"About_Debug_OpenSettings": "Settings",
+
+	"Update_Title": "Update",
+	"Update_NoUpdate": "No updates found",
 
 	"Item_Unknown": "Unknown",
 	"Item_None": "None",

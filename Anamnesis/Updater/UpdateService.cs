@@ -54,7 +54,10 @@ namespace Anamnesis.Updater
 				Log.Information("Last update check was less than 6 hours ago. Skipping.");
 				return;
 			}
+		}
 
+		public async Task<bool> CheckForUpdates()
+		{
 			if (Directory.Exists(UpdateTempDir))
 				Directory.Delete(UpdateTempDir, true);
 
@@ -76,7 +79,9 @@ namespace Anamnesis.Updater
 				DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
 				published = published.ToUniversalTime();
 
-				if (this.currentRelease.Published != null && published > Version)
+				bool update = this.currentRelease.Published != null && published > Version;
+
+				if (update)
 				{
 					await Dispatch.MainThread();
 
@@ -87,6 +92,7 @@ namespace Anamnesis.Updater
 
 				SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
 				SettingsService.Save();
+				return update;
 			}
 			catch (HttpRequestException ex)
 			{
@@ -95,7 +101,7 @@ namespace Anamnesis.Updater
 				{
 					SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;
 					SettingsService.Save();
-					return;
+					return false;
 				}
 
 				throw;
@@ -103,6 +109,7 @@ namespace Anamnesis.Updater
 			catch (Exception ex)
 			{
 				Log.Error(ex, "Failed to complete update check");
+				return false;
 			}
 		}
 

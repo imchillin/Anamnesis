@@ -14,9 +14,7 @@ namespace Anamnesis.Styles.Drawers
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using Anamnesis;
 	using Anamnesis.Services;
-	using PropertyChanged;
 	using Serilog;
 
 	/// <summary>
@@ -358,6 +356,12 @@ namespace Anamnesis.Styles.Drawers
 
 		private void OnDoubleClick(object sender, MouseButtonEventArgs e)
 		{
+			Point pos = e.GetPosition(this.ListBox);
+
+			// over scrollbar
+			if (pos.X > this.ListBox.ActualWidth - SystemParameters.VerticalScrollBarWidth)
+				return;
+
 			this.Close?.Invoke();
 		}
 
