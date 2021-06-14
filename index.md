@@ -1,5 +1,9 @@
 ## Getting started
 
+- Make sure you're running the latest version of the [**.NET Desktop Runtime v5.0.7 x64**](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.7-windows-x64-installer)
+    - Doublecheck you've gotten the right one! If the link here doesn't take you directly to the right file, you can locate the correct one here!
+![image](https://user-images.githubusercontent.com/56663405/121838744-dbc71300-cd1b-11eb-95c6-609a265689d6.png)
+
 - Grab the latest version of the tool [**HERE**](https://github.com/imchillin/Anamnesis/releases/latest)
     - Make sure you grab the file that has a date in the name and not the Source Code files.
 ![Image](https://cdn.discordapp.com/attachments/748603327373377676/850317503631720488/unknown.png)
