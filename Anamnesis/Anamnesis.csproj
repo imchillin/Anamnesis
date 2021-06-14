@@ -362,6 +362,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="Download DotNET Desktop Runtime.URL">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Version.txt">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
