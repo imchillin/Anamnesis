@@ -137,6 +137,9 @@ namespace Anamnesis.Memory
 
 		public void OnRetargeted()
 		{
+			if (this.ModelObject == null && this.model.ModelObject != IntPtr.Zero)
+				Log.Warning($"Actor has no model object: {this.model.ModelObject}");
+
 			if (this.Customize == null)
 				return;
 

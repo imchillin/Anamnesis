@@ -330,13 +330,22 @@ namespace Anamnesis.Memory
 
 				// bad pointers
 				bool isValidPointer = true;
-				long v = desiredPointer.ToInt64();
-				if (v < 0x0000000200000000)
-					isValidPointer = false;
 
 				// not a valid pointer
 				if (desiredPointer == IntPtr.Zero)
+				{
 					isValidPointer = false;
+				}
+				else
+				{
+					// TODO: This may prevent valid pointers from working correctly, but is necessary to prevent
+					// extended appearance pointing to invalid memory when transformed into a monster.
+					long v = desiredPointer.ToInt64();
+					if (v < 0x0000000200000000)
+					{
+						isValidPointer = false;
+					}
+				}
 
 				if (!isValidPointer)
 				{
