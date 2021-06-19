@@ -358,7 +358,7 @@
 								IsChecked="{Binding LogService.VerboseLogging}"
 								Style="{DynamicResource TransparentIconToggleButton}"
 								ToolTip="Enable verbose logging">
-								<fa:IconBlock FontSize="12" Icon="FileAlt" />
+								<ana:IconBlock FontSize="12" Icon="FileAlt" />
 							</ToggleButton>
 						</StackPanel>
 
@@ -373,7 +373,7 @@
 								<ana:TextBlock Key="Settings_AlwaysOnTop" />
 							</ToggleButton.ToolTip>
 
-							<fa:IconBlock FontSize="12" Icon="ThumbTack" />
+							<ana:IconBlock FontSize="12" Icon="ThumbTack" />
 						</ToggleButton>
 
 						<Button

@@ -55,10 +55,10 @@
 					<ana:TextBlock Key="FileBrowser_Flatten" />
 				</ToggleButton.ToolTip>
 				<ToggleButton.Content>
-					<fa:IconBlock FontSize="12" Icon="folder" />
+					<ana:IconBlock FontSize="12" Icon="folder" />
 				</ToggleButton.Content>
 				<materialDesign:ToggleButtonAssist.OnContent>
-					<fa:IconBlock FontSize="12" Icon="Copy" />
+					<ana:IconBlock FontSize="12" Icon="Copy" />
 				</materialDesign:ToggleButtonAssist.OnContent>
 			</ToggleButton>
 
@@ -118,7 +118,7 @@
 							</ContextMenu>
 						</Grid.ContextMenu>
 
-						<fa:IconBlock
+						<ana:IconBlock
 							Grid.RowSpan="2"
 							Grid.Column="0"
 							Margin="3,0,6,0"

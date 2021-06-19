@@ -9,7 +9,7 @@
 			 d:DesignHeight="450" d:DesignWidth="800">
 
 	<StackPanel Orientation="Horizontal" x:Name="ContentArea">
-		<fa:IconBlock Icon="{Binding Icon}" Margin="2, 2, 6, 0" Style="{StaticResource Header}"/>
+		<ana:IconBlock Icon="{Binding Icon}" Margin="2, 2, 6, 0" Style="{StaticResource Header}" FontSize="10"/>
 		<ana:TextBlock Text="{Binding Text}" Key="{Binding Key}" Style="{StaticResource Header}"/>
 	</StackPanel>
 </UserControl>
