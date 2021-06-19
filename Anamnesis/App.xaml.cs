@@ -135,6 +135,11 @@ namespace Anamnesis
 				Directory.SetCurrentDirectory(currentDir);
 				Log.Information($"Set Working Directory: \"{currentDir}\"");
 			}
+
+			if (currentDir.Contains("\\AppData\\Local\\Temp\\"))
+			{
+				throw new Exception("Attempt to run from temporary directory. (Are you running Anamneis from a zip file?)");
+			}
 		}
 
 		private void CheckForProcesses()
