@@ -273,7 +273,7 @@ namespace Anamnesis.Scenes
 				}
 
 				this.Pose = new PoseFile();
-				this.Pose.WriteToFile(actor, skeleton, config.Pose);
+				this.Pose.WriteToFile(actor, skeleton, config.Pose, false);
 
 				this.Character = new CharacterFile();
 				this.Character.WriteToFile(actor, config.Character);

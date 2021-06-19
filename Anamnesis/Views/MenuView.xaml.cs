@@ -56,7 +56,7 @@ namespace Anamnesis.Views
 				return;
 
 			SkeletonVisual3d skeletonVm = await PoseService.GetVisual(actorVm);
-			await PoseFile.Save(actorVm, skeletonVm);
+			await PoseFile.Save(actorVm, skeletonVm, null, false);
 		}
 	}
 

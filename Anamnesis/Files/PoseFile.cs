@@ -37,7 +37,7 @@ namespace Anamnesis.Files
 
 		public Dictionary<string, Bone?>? Bones { get; set; }
 
-		public static async Task<Configuration> Save(ActorViewModel? actor, SkeletonVisual3d? skeleton, Configuration? config = null)
+		public static async Task<Configuration> Save(ActorViewModel? actor, SkeletonVisual3d? skeleton, Configuration? config, bool selectionOnly)
 		{
 			if (config == null)
 				config = new Configuration();
@@ -51,14 +51,14 @@ namespace Anamnesis.Files
 				return config;
 
 			PoseFile file = new PoseFile();
-			file.WriteToFile(actor, skeleton, config);
+			file.WriteToFile(actor, skeleton, config, selectionOnly);
 
 			using FileStream stream = new FileStream(result.Path, FileMode.Create);
 			result.Info.SerializeFile(file, stream);
 			return config;
 		}
 
-		public void WriteToFile(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config)
+		public void WriteToFile(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config, bool selectionOnly)
 		{
 			this.Config = config;
 
@@ -71,7 +71,7 @@ namespace Anamnesis.Files
 
 			foreach (BoneVisual3d bone in skeleton.Bones)
 			{
-				if (skeleton.HasSelection && !skeleton.GetIsBoneSelected(bone))
+				if (selectionOnly && !skeleton.GetIsBoneSelected(bone))
 					continue;
 
 				Transform? trans = bone.ViewModel.Model;
@@ -83,7 +83,7 @@ namespace Anamnesis.Files
 			}
 		}
 
-		public async Task Apply(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config)
+		public async Task Apply(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config, bool selectionOnly)
 		{
 			if (actor == null)
 				throw new ArgumentNullException(nameof(actor));
@@ -132,7 +132,7 @@ namespace Anamnesis.Files
 							continue;
 						}
 
-						if (skeleton.HasSelection && !skeleton.GetIsBoneSelected(bone))
+						if (selectionOnly && !skeleton.GetIsBoneSelected(bone))
 							continue;
 
 						TransformPtrViewModel vm = bone.ViewModel;

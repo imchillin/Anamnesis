@@ -175,64 +175,19 @@
 						</Grid>
 					</Border>
 
-					<!--<Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource MaterialDesignCardBackground}" CornerRadius="3" Margin="3">-->
-					<Grid Grid.Row="1" Margin="2" IsEnabled="{Binding GposeService.IsGpose}">
+					<!-- save/load menu -->
+					<Menu Grid.Row="1" Margin="2, 2, 2, 5" IsEnabled="{Binding GposeService.IsGpose}">
+						<MenuItem Header="Pose_Load" Style="{StaticResource ButtonMenuItemLeft}" Width="76" Click="OnOpenClicked"/>
+						<MenuItem Style="{StaticResource ButtonMenuItemRight}">
+							<MenuItem Header="Pose_Expression" Style="{StaticResource AnaMenuItem}" Click="OnOpenExpressionClicked"/>
+							<MenuItem Header="Pose_Selected" Style="{StaticResource AnaMenuItem}" Click="OnOpenSelectedClicked" IsEnabled="{Binding Skeleton.HasSelection}"/>
+						</MenuItem>
 
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition />
-							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
-
-						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition/>
-						</Grid.RowDefinitions>
-
-						<Button Grid.Row="0" Grid.ColumnSpan="2" Margin="3" 
-								Click="OnLoadExpressionClicked"
-								Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
-							<ana:TextBlock Text="Load Expression" Margin="12,3" FontWeight="Light"/>
-						</Button>
-
-						<Button
-							Grid.Row="1"
-							Grid.Column="0"
-							Margin="2"
-							Padding="0"
-							HorizontalContentAlignment="Center"
-							Click="OnOpenClicked">
-							<Grid>
-								<ana:TextBlock
-									Key="Pose_LoadBones"
-									FontWeight="Light"
-									Visibility="{Binding Skeleton.HasSelection, Converter={StaticResource B2V}}"
-									Value="{Binding Skeleton.SelectedCount}" />
-								<ana:TextBlock
-									Key="Pose_Load"
-									FontWeight="Light"
-									Visibility="{Binding Skeleton.HasSelection, Converter={StaticResource !B2V}}" />
-							</Grid>
-						</Button>
-						<Button
-							Grid.Row="1"
-							Grid.Column="1"
-							Margin="2"
-							Padding="0"
-							HorizontalContentAlignment="Center"
-							Click="OnSaveClicked">
-							<Grid>
-								<ana:TextBlock
-									Key="Pose_SaveBones"
-									FontWeight="Light"
-									Visibility="{Binding Skeleton.HasSelection, Converter={StaticResource B2V}}"
-									Value="{Binding Skeleton.SelectedCount}" />
-								<ana:TextBlock
-									Key="Pose_Save"
-									FontWeight="Light"
-									Visibility="{Binding Skeleton.HasSelection, Converter={StaticResource !B2V}}" />
-							</Grid>
-						</Button>
-					</Grid>
+						<MenuItem Header="Pose_Save" Style="{StaticResource ButtonMenuItemLeft}" Width="76" Click="OnSaveClicked"/>
+						<MenuItem Style="{StaticResource ButtonMenuItemRight}">
+							<MenuItem Header="Pose_Selected" Style="{StaticResource AnaMenuItem}" Click="OnSaveSelectedClicked" IsEnabled="{Binding Skeleton.HasSelection}"/>
+						</MenuItem>
+					</Menu>
 				</Grid>
 
 				<!--  top Bar  -->

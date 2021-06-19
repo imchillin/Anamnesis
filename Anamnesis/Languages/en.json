@@ -161,9 +161,10 @@
 	"Pose_NoModel": "This actor does not have a model.",
 	"Pose_NothingSelected": "Character - Nothing Selected",
 	"Pose_Save": "Save",
-	"Pose_SaveBones": "Save {0} Bones",
 	"Pose_Load": "Load",
-	"Pose_LoadBones": "Load {0} Bones",
+	"Pose_Selected": "Selected Bones",
+	"Pose_Expression": "Expression",
+
 	"Pose_Flip": "Flip",
 
 	"Pose_FreezePhysics": "Freeze Physics",

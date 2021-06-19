@@ -186,6 +186,25 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
+			await this.Open(false);
+		}
+
+		private async void OnOpenSelectedClicked(object sender, RoutedEventArgs e)
+		{
+			await this.Open(true);
+		}
+
+		private async void OnOpenExpressionClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Skeleton == null)
+				return;
+
+			this.Skeleton.SelectHead();
+			await this.Open(true);
+		}
+
+		private async Task Open(bool selectionOnly)
+		{
 			try
 			{
 				if (this.Actor == null || this.Skeleton == null)
@@ -201,7 +220,7 @@ namespace Anamnesis.PoseModule.Pages
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(this.Actor, this.Skeleton, FileConfig);
+					await poseFile.Apply(this.Actor, this.Skeleton, FileConfig, selectionOnly);
 				}
 			}
 			catch (Exception ex)
@@ -212,7 +231,12 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			await PoseFile.Save(this.Actor, this.Skeleton, FileConfig);
+			await PoseFile.Save(this.Actor, this.Skeleton, FileConfig, false);
+		}
+
+		private async void OnSaveSelectedClicked(object sender, RoutedEventArgs e)
+		{
+			await PoseFile.Save(this.Actor, this.Skeleton, FileConfig, true);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)
@@ -280,15 +304,6 @@ namespace Anamnesis.PoseModule.Pages
 
 				this.IsFlipping = false;
 			}
-		}
-
-		private void OnLoadExpressionClicked(object sender, RoutedEventArgs e)
-		{
-			if (this.Skeleton == null)
-				return;
-
-			this.Skeleton.SelectHead();
-			this.OnOpenClicked(sender, e);
 		}
 
 		private void OnCanvasMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
