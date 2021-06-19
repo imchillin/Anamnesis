@@ -198,40 +198,12 @@
 				</GroupBox>
 			</StackPanel>
 
-			<Grid Grid.Row="1">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-				
-				<Grid.RowDefinitions>
-					<RowDefinition />
-					<RowDefinition />
-				</Grid.RowDefinitions>
+			<Menu Grid.Row="1" Margin="0, 2, 4, 5" IsEnabled="{Binding GposeService.IsGpose}">
+				<MenuItem Header="Pose_Load" Icon="FolderOpen" Style="{StaticResource ButtonMenuItemLeft}" Width="64" Click="OnLoadClicked"/>
+				<MenuItem Header="Character_Appearance_LoadOther" Icon="User" Style="{StaticResource ButtonMenuItemRight}" Width="64" Click="OnLoadNpcClicked"/>
 
-				<cm3Controls:IconButton
-					Grid.Row="0"
-					Grid.ColumnSpan="2"
-					Margin="3"
-					Click="OnLoadNpcClicked"
-					Icon="ChessQueen"
-					Key="Character_Appearance_LoadOther" />
-
-				<ana:IconButton Grid.Row="1"
-					Grid.Column="0"
-					Margin="3"
-					Icon="File"
-					Key="Common_OpenFile"
-					Click="OnLoadClicked"/>
-
-				<ana:IconButton Grid.Row="1"
-					Grid.Column="1"
-					Margin="3"
-					Icon="Save"
-					Key="Common_SaveFile"
-					Click="OnSaveClicked"/>
-
-			</Grid>
+				<MenuItem Header="Common_SaveFile" Icon="Save" Style="{StaticResource ButtonMenuItem}" Width="96" Click="OnSaveClicked" Margin="2, 0, 0, 0"/>
+			</Menu>
 		</Grid>
 	</Grid>
 </UserControl>

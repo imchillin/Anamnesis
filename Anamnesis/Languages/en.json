@@ -75,7 +75,7 @@
 	"Weather_Selector_Unnatural_Tooltip": "Only show weathers that are not normally available in the current territory",
 	"Weather_Selector_All_Tooltip": "Show all weathers",
 
-	"Character_Appearance_LoadOther": "Load Other",
+	"Character_Appearance_LoadOther": "NPC",
 	"Character_Appearance_Header": "Appearance",
 	"Character_Appearance_Body": "Body",
 	"Character_Appearance_Race": "Race",
