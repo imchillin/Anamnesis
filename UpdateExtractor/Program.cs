@@ -13,12 +13,17 @@ namespace UpdateExtractor
 	{
 		public static void Main(string[] args)
 		{
-			string? destDir = args[0];
-			string processName = args[1];
-			Console.WriteLine($"{processName} Updater");
+			string processName = "Unknown";
 
 			try
 			{
+				if (args.Length != 2)
+					throw new Exception("Invalid arguments. Update Extractor must be run with the following arguments: 1) destination directory, 2) name of orignal process.");
+
+				string? destDir = args[0];
+				processName = args[1];
+				Console.WriteLine($"{processName} Updater");
+
 				Console.Write($"Waiting for {processName} to terminate");
 				while (true)
 				{
@@ -107,7 +112,7 @@ namespace UpdateExtractor
 				Console.WriteLine($"Failed to update {processName}");
 				Console.WriteLine(ex.Message);
 				Console.WriteLine();
-				Console.WriteLine("Please try again or download the update manually.");
+				Console.WriteLine("Please download the update manually.");
 				Console.WriteLine();
 				Console.WriteLine("Press any key to close this window.");
 				Console.ReadKey();
