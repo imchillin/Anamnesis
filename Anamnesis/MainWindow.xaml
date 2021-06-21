@@ -12,6 +12,7 @@
 	xmlns:posePages="clr-namespace:Anamnesis.PoseModule.Pages"
 	xmlns:services="clr-namespace:Anamnesis"
 	xmlns:views="clr-namespace:Anamnesis.Views"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	Activated="Window_Activated"
 	AllowsTransparency="True"
 	Background="Transparent"
@@ -316,20 +317,20 @@
 							Opacity="0.5"
 							Text="{Binding TargetService.SelectedActor.DisplayName}" />
 
-						<ana:TextBlock
+						<XivToolsWpf:TextBlock
 							Key="Error_NotInGame"
 							Margin="12,0,3,0"
 							VerticalAlignment="Center"
 							Opacity="0.5"
 							Visibility="{Binding GameService.IsSignedIn, Converter={StaticResource !B2V}}" />
 
-						<fa:IconBlock
+						<XivToolsWpf:IconBlock
 							Margin="6,0,0,0"
 							FontWeight="Light"
 							Foreground="{DynamicResource MaterialDesignBodyLight}"
 							Icon="Sync"
 							Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
-						<fa:IconBlock
+						<XivToolsWpf:IconBlock
 							Margin="6,0,0,0"
 							FontWeight="Light"
 							Foreground="{DynamicResource MaterialDesignBodyLight}"
@@ -358,7 +359,7 @@
 								IsChecked="{Binding LogService.VerboseLogging}"
 								Style="{DynamicResource TransparentIconToggleButton}"
 								ToolTip="Enable verbose logging">
-								<ana:IconBlock FontSize="12" Icon="FileAlt" />
+								<XivToolsWpf:IconBlock FontSize="12" Icon="FileAlt" />
 							</ToggleButton>
 						</StackPanel>
 
@@ -370,10 +371,10 @@
 							Style="{DynamicResource TransparentIconToggleButton}">
 
 							<ToggleButton.ToolTip>
-								<ana:TextBlock Key="Settings_AlwaysOnTop" />
+								<XivToolsWpf:TextBlock Key="Settings_AlwaysOnTop" />
 							</ToggleButton.ToolTip>
 
-							<ana:IconBlock FontSize="12" Icon="ThumbTack" />
+							<XivToolsWpf:IconBlock FontSize="12" Icon="ThumbTack" />
 						</ToggleButton>
 
 						<Button
@@ -457,7 +458,7 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<ana:TextBlock
+					<XivToolsWpf:TextBlock
 						Key="FTUE_Message"
 						Grid.Row="0"
 						Margin="32,0,0,10"

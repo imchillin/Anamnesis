@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character.Views
@@ -16,8 +15,8 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
+	using XivToolsWpf.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for FacialFeaturesControl.xaml.

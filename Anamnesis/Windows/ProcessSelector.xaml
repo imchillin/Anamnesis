@@ -4,8 +4,10 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:Anamnesis.GUI.Windows"
-		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp" xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
-			 mc:Ignorable="d"
+		xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+		xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
+		xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+		mc:Ignorable="d"
 		Width="550">
 	<Grid x:Name="ContentArea">
 		<Grid.RowDefinitions>
@@ -14,8 +16,8 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Margin="8">
-			<controls:TextBlock Grid.Row="0" TextWrapping="Wrap" Key="ProcessSelector_NotFound" FontSize="16"/>
-			<controls:TextBlock Grid.Row="0" TextWrapping="Wrap" Key="ProcessSelector_NotFound2" />
+			<XivToolsWpf:TextBlock Grid.Row="0" TextWrapping="Wrap" Key="ProcessSelector_NotFound" FontSize="16"/>
+			<XivToolsWpf:TextBlock Grid.Row="0" TextWrapping="Wrap" Key="ProcessSelector_NotFound2" />
 		</StackPanel>
 
 		<Expander x:Name="ManualExpander" Grid.Row="1" IsExpanded="False" Expanded="OnManualExpanded" Collapsed="OnManualCollapsed">
@@ -67,10 +69,10 @@
 				</Button>
 
 				<CheckBox Grid.Row="1" Grid.Column="0" Margin="6" IsChecked="{Binding ShowAll}">
-					<controls:TextBlock Key="Common_All"/>
+					<XivToolsWpf:TextBlock Key="Common_All"/>
 				</CheckBox>
 
-				<controls:InfoControl Grid.Row="1" Grid.Column="1" Key="ProcessSelector_AllWarning" Margin="3" Visibility="{Binding ShowAll, Converter={StaticResource B2V}}"/>
+				<XivToolsWpf:InfoControl Grid.Row="1" Grid.Column="1" Key="ProcessSelector_AllWarning" Margin="3" Visibility="{Binding ShowAll, Converter={StaticResource B2V}}"/>
 				
 				<Button Grid.Row="1" Grid.Column="2" x:Name="OkButton" Content="OK" HorizontalAlignment="Right" Width="84" Margin="8" Click="OnOkClicked" IsEnabled="False" Visibility="Collapsed"/>
 			</Grid>

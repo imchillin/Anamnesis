@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Services
@@ -20,9 +19,7 @@ namespace Anamnesis.Services
 	{
 		private const string LogfilePath = "/Logs/";
 
-		private static LogService? instance;
-		private static string? currentLogPath;
-		private static LoggingLevelSwitch logLevel = new LoggingLevelSwitch()
+		private static readonly LoggingLevelSwitch LogLevel = new LoggingLevelSwitch()
 		{
 #if DEBUG
 			MinimumLevel = LogEventLevel.Verbose,
@@ -30,6 +27,9 @@ namespace Anamnesis.Services
 			MinimumLevel = LogEventLevel.Debug,
 #endif
 		};
+
+		private static LogService? instance;
+		private static string? currentLogPath;
 
 		public static LogService Instance
 		{
@@ -44,8 +44,8 @@ namespace Anamnesis.Services
 
 		public bool VerboseLogging
 		{
-			get => logLevel.MinimumLevel == LogEventLevel.Verbose;
-			set => logLevel.MinimumLevel = value ? LogEventLevel.Verbose : LogEventLevel.Debug;
+			get => LogLevel.MinimumLevel == LogEventLevel.Verbose;
+			set => LogLevel.MinimumLevel = value ? LogEventLevel.Verbose : LogEventLevel.Debug;
 		}
 
 		public static void ShowLogs()
@@ -87,7 +87,7 @@ namespace Anamnesis.Services
 			currentLogPath = dir + DateTime.Now.ToString(@"yyyy-MM-dd-HH-mm-ss") + ".txt";
 
 			LoggerConfiguration config = new LoggerConfiguration();
-			config.MinimumLevel.ControlledBy(logLevel);
+			config.MinimumLevel.ControlledBy(LogLevel);
 			config.WriteTo.File(currentLogPath);
 			config.WriteTo.Sink<ErrorDialogLogDestination>();
 			config.WriteTo.Debug();

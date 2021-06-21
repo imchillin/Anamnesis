@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.PoseModule.Controls
@@ -7,7 +6,7 @@ namespace Anamnesis.PoseModule.Controls
 	using System;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
-	using Anamnesis.Styles.DependencyProperties;
+	using XivToolsWpf.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for BoneEditor.xaml.

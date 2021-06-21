@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Controls
@@ -11,9 +10,9 @@ namespace Anamnesis.Styles.Controls
 	using Anamnesis;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.Styles.DependencyProperties;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
+	using XivToolsWpf.DependencyProperties;
 	using CmColor = Anamnesis.Memory.Color;
 	using WpfColor = System.Windows.Media.Color;
 

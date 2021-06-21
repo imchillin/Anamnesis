@@ -3,7 +3,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 Loaded="OnLoaded"
 			 DataContextChanged="OnDataContextChanged"
@@ -15,7 +15,7 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<cm3Controls:NumberBox Value="{Binding ModelType}" Minimum="0" Maximum="10000" Buttons="True"/>
+		<XivToolsWpf:NumberBox Value="{Binding ModelType}" Minimum="0" Maximum="10000" Buttons="True"/>
 		<TextBlock Margin="3, 0, 0, 0" x:Name="ModelName" Grid.Row="1" Grid.ColumnSpan="2" FontSize="10"/>
 
 	</Grid>

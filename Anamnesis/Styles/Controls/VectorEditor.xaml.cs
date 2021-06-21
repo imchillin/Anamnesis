@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Controls
@@ -8,8 +7,9 @@ namespace Anamnesis.Styles.Controls
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
+	using XivToolsWpf.Controls;
+	using XivToolsWpf.DependencyProperties;
 
 	using Vector = Anamnesis.Memory.Vector;
 

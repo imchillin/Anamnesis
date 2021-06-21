@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d">
 	<Grid x:Name="ContentArea">
 		
@@ -25,11 +26,11 @@
 		</Button>
 		
 		<Label Grid.Column="1" Content="R:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding R, Mode=TwoWay}" Grid.Column="2" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
+		<XivToolsWpf:NumberBox Value="{Binding R, Mode=TwoWay}" Grid.Column="2" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
 		<Label Grid.Column="3" Content="G:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding G, Mode=TwoWay}" Grid.Column="4" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
+		<XivToolsWpf:NumberBox Value="{Binding G, Mode=TwoWay}" Grid.Column="4" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
 		<Label Grid.Column="5" Content="B:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-		<local:NumberBox Value="{Binding B, Mode=TwoWay}" Grid.Column="6" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
+		<XivToolsWpf:NumberBox Value="{Binding B, Mode=TwoWay}" Grid.Column="6" Minimum="-10" Maximum="10" TickFrequency="0.01" Margin="0, 0, 0, 2"/>
 
 	</Grid>
 </UserControl>

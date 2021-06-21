@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Services
@@ -13,10 +12,9 @@ namespace Anamnesis.Services
 	using System.Windows;
 	using Anamnesis.Serialization;
 	using Serilog;
+	using XivToolsWpf.DependencyInjection;
 
-	public delegate void LocalizationEvent();
-
-	public class LocalizationService : ServiceBase<LocalizationService>
+	public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProvider
 	{
 		public const string FallbackCulture = "EN";
 
@@ -25,9 +23,11 @@ namespace Anamnesis.Services
 		private static Locale? fallbackLocale;
 		private static Locale? currentLocale;
 
-		public static event LocalizationEvent? LocaleChanged;
+		public event LocalizationEvent? LocaleChanged;
 
 		public static bool Loaded => Exists && currentLocale != null;
+
+		bool ILocaleProvider.Loaded => Loaded;
 
 		public static void Add(string culture, string key, string value)
 		{
@@ -145,7 +145,7 @@ namespace Anamnesis.Services
 				currentLocale = fallbackLocale;
 			}
 
-			LocaleChanged?.Invoke();
+			Instance.LocaleChanged?.Invoke();
 		}
 
 		public static Dictionary<string, string> GetAvailableLocales()
@@ -164,6 +164,8 @@ namespace Anamnesis.Services
 
 		public override async Task Initialize()
 		{
+			DependencyFactory.RegisterDependency<ILocaleProvider>(this);
+
 			await base.Initialize();
 
 			Add("Languages");
@@ -179,12 +181,17 @@ namespace Anamnesis.Services
 			SetLocale(SettingsService.Current.Language);
 		}
 
+		bool ILocaleProvider.HasString(string key) => HasString(key);
+		string ILocaleProvider.GetStringFormatted(string key, params string[] param) => GetStringFormatted(key, param);
+		string ILocaleProvider.GetStringAllLanguages(string key) => GetStringAllLanguages(key);
+		string ILocaleProvider.GetString(string key, bool silent) => GetString(key, silent);
+
 		private class Locale
 		{
 			public readonly string Culture;
 			public string Name;
 
-			private Dictionary<string, string> values = new Dictionary<string, string>();
+			private readonly Dictionary<string, string> values = new Dictionary<string, string>();
 
 			public Locale(string culture)
 			{

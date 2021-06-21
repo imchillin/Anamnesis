@@ -7,6 +7,7 @@
 			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d"
 			 Margin="0"
 			 d:DesignWidth="300">
@@ -62,31 +63,17 @@
 			</Button>
 
 			<StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding GPoseService.IsOverworld}">
-				<ana:NumberBox Width="42" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0">
-					<ana:NumberBox.ToolTip>
-						<ana:TextBlock Key="Character_Equipment_ItemId"/>
-					</ana:NumberBox.ToolTip>
-				</ana:NumberBox>
+				<XivToolsWpf:NumberBox Width="42" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0" ToolTip="Character_Equipment_ItemId"/>
 
-				<ana:NumberBox  Width="36" Value="{Binding ItemModel.Set}" Margin="0" FontSize="12"  FontWeight="Light" Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}">
-					<ana:NumberBox.ToolTip>
-						<ana:TextBlock Key="Character_Equipment_ItemSet"/>
-					</ana:NumberBox.ToolTip>
-				</ana:NumberBox>
-				
+				<XivToolsWpf:NumberBox  Width="36" Value="{Binding ItemModel.Set}" Margin="0" FontSize="12" FontWeight="Light"
+								ToolTip="Character_Equipment_ItemSet"
+								Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
 				<TextBlock Text="-" Style="{StaticResource Label}" Margin="0"  Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
-				<ana:NumberBox Width="36" Value="{Binding ItemModel.Base}" Margin="0" FontSize="12" FontWeight="Light">
-					<ana:NumberBox.ToolTip>
-						<ana:TextBlock Key="Character_Equipment_ItemBase"/>
-					</ana:NumberBox.ToolTip>
-				</ana:NumberBox>
-				
+				<XivToolsWpf:NumberBox Width="36" Value="{Binding ItemModel.Base}" Margin="0" FontSize="12" FontWeight="Light" ToolTip="Character_Equipment_ItemBase"/>
+
 				<TextBlock Text="-" Style="{StaticResource Label}" Margin="0" />
-				<ana:NumberBox Width="22" Value="{Binding ItemModel.Variant}" Margin="0" FontSize="12" FontWeight="Light">
-					<ana:NumberBox.ToolTip>
-						<ana:TextBlock Key="Character_Equipment_ItemVariant"/>
-					</ana:NumberBox.ToolTip>
-				</ana:NumberBox>
+				<XivToolsWpf:NumberBox Width="22" Value="{Binding ItemModel.Variant}" Margin="0" FontSize="12" FontWeight="Light" ToolTip="Character_Equipment_ItemVariant"/>
 			</StackPanel>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="2, 0, 0, 0" Orientation="Horizontal" Visibility="{Binding ItemModel.Set, Converter={StaticResource NotZeroToVisibilityConverter}}">
@@ -95,7 +82,7 @@
 											 Value="{Binding ExtendedViewModel.Tint}" 
 											 Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}">
 					<ana:RgbColorControl.ToolTip>
-						<ana:TextBlock Key="Character_Equipment_Tint"/>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_Tint"/>
 					</ana:RgbColorControl.ToolTip>
 					
 				</ana:RgbColorControl>
@@ -113,7 +100,7 @@
 							IsEnabled="{Binding GPoseService.IsOverworld}">
 
 					<Button.ToolTip>
-						<ana:TextBlock Key="Character_Equipment_Dye"/>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_Dye"/>
 					</Button.ToolTip>
 
 					<Grid>
@@ -145,7 +132,7 @@
 
 				<ToggleButton Grid.Column="0" Height="20" Width="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1" Padding="0" Margin="0">
 					<ToggleButton.ToolTip>
-						<ana:TextBlock Key="Character_Equipment_Hide"/>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_Hide"/>
 					</ToggleButton.ToolTip>
 
 					<fa:IconBlock Icon="EyeSlash" FontSize="12"/>

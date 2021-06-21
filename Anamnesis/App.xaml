@@ -7,6 +7,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 
+				<ResourceDictionary Source="pack://application:,,,/XivToolsWpf;component/Styles.xaml" />
+
+
 				<!-- Material Design -->
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Indigo.xaml" />
@@ -47,23 +50,10 @@
 
 				<!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Menu.xaml" />-->
 
-				<!-- Custom -->
-				<ResourceDictionary Source="Styles/GroupBoxStyles.xaml"/>
-				<ResourceDictionary Source="Styles/ButtonStyles.xaml"/>
-				<ResourceDictionary Source="Styles/TextBlockStyles.xaml"/>
-				<ResourceDictionary Source="Styles/ToggleButtonStyles.xaml"/>
-				<ResourceDictionary Source="Styles/ExpanderStyles.xaml"/>
-				<ResourceDictionary Source="Styles/TabControlStyles.xaml"/>
-				<ResourceDictionary Source="Styles/TextBoxStyles.xaml"/>
-				<ResourceDictionary Source="Styles/MenuStyles.xaml"/>
-				<ResourceDictionary Source="Styles/ComboBoxStyles.xaml"/>
-
-				<ResourceDictionary Source="Styles/MarkdownStyles.xaml"/>
-
 			</ResourceDictionary.MergedDictionaries>
 
 			<!-- Material Design:Styles-->
-			<Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedButton}" />
+			<!--<Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedButton}" />
 			<Style TargetType="{x:Type Calendar}" BasedOn="{StaticResource MaterialDesignCalendarPortrait}" />
 			<Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource MaterialDesignCheckBox}" />
 			<Style TargetType="{x:Type ContextMenu}" BasedOn="{StaticResource MaterialDesignContextMenu}" />
@@ -95,25 +85,13 @@
 			<Style TargetType="{x:Type ListView}" BasedOn="{StaticResource MaterialDesignListView}" />
 			<Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}" />
 			<Style TargetType="{x:Type Menu}" BasedOn="{StaticResource MaterialDesignMenu}" />
-			<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MaterialDesignMenuItem}" />
+			<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MaterialDesignMenuItem}" />-->
 
 			<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
 			<!-- Custom converters -->
-			<converters:StringHasContentToVisibilityConverter x:Key="StringHasContentToVisibility" />
-			<converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
-			<converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
-			<converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
-			<converters:NullToBoolConverter x:Key="NullToBoolConverter"/>
 			<BooleanToVisibilityConverter x:Key="B2V"/>
-			<converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
-			<converters:RadiansToDegreesConverter x:Key="Rad2Deg"/>
 			<converters:Vector2DRadiansToDegreesConverter x:Key="Vec2DRad2Deg"/>
-			<converters:NotZeroToVisibilityConverter x:Key="NotZeroToVisibility"/>
-			<converters:BoolInversionConverter x:Key="!B"/>
-
-			<!-- Multi converters -->
-			<converters:MultiBoolAndConverter x:Key="MultiBoolAnd"/>
 
 
 			<!-- dyslexic font -->

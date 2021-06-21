@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 DataContextChanged="OnDataContextChanged"
 			 mc:Ignorable="d" 
 			 MouseEnter="OnMouseEnter"
@@ -16,7 +17,7 @@
 
 	<Grid x:Name="ContentArea" Cursor="Hand">
 		<Grid.ToolTip>
-			<ana:TextBlock Text="{Binding Bone.Tooltip}"/>
+			<XivToolsWpf:TextBlock Text="{Binding Bone.Tooltip}"/>
 		</Grid.ToolTip>
 
 		<Ellipse Stroke="{DynamicResource PrimaryHueMidBrush}" StrokeThickness="1" Fill="{DynamicResource MaterialDesignPaper}" x:Name="BackgroundElipse"/>

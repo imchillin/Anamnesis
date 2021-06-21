@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Core.Memory
@@ -21,6 +20,9 @@ namespace Anamnesis.Core.Memory
 	/// </summary>
 	public sealed class SignatureScanner
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SignatureScanner"/> class.
+		/// </summary>
 		/// <param name="module">The ProcessModule to be used for scanning.</param>
 		public SignatureScanner(ProcessModule module)
 		{

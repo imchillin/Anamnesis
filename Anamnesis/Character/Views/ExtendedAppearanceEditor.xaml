@@ -7,6 +7,7 @@
 			 xmlns:anaConverters="clr-namespace:Anamnesis.Styles.Converters"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 
@@ -46,25 +47,25 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-			<ana:TextBlock Grid.Row="0" Grid.Column="1" Key="Character_ExAppearance_Skin" Style="{StaticResource Label}"/>
+			<XivToolsWpf:TextBlock Grid.Row="0" Grid.Column="1" Key="Character_ExAppearance_Skin" Style="{StaticResource Label}"/>
 			<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding SkinColor}" ToolTip="Skin Color"/>
 			<ana:RgbColorControl Grid.Row="0" Grid.Column="3" Value="{Binding SkinGloss}" ToolTip="Skin Glow Color"/>
 
-			<ana:TextBlock Grid.Row="1" Grid.Column="1" Key="Character_ExAppearance_Lips" Style="{StaticResource Label}"/>
+			<XivToolsWpf:TextBlock Grid.Row="1" Grid.Column="1" Key="Character_ExAppearance_Lips" Style="{StaticResource Label}"/>
 			<ana:RgbaColorControl Grid.Row="1" Grid.Column="2" Value="{Binding MouthColor}" ToolTip="Lips Color"/>
 
-			<ana:TextBlock Grid.Row="2" Grid.Column="1" Key="Character_ExAppearance_Eyes" Style="{StaticResource Label}"/>
+			<XivToolsWpf:TextBlock Grid.Row="2" Grid.Column="1" Key="Character_ExAppearance_Eyes" Style="{StaticResource Label}"/>
 			<ana:RgbColorControl Grid.Row="2" Grid.Column="2" ToolTip="Left Eye Color" Value="{Binding LeftEyeColor}"/>
 			<ana:RgbColorControl Grid.Row="2" Grid.Column="3" ToolTip="Right Eye Color" Value="{Binding RightEyeColor}"/>
 			<ana:RgbColorControl Grid.Row="2" Grid.Column="4" ToolTip="Limbal Ring Color" Value="{Binding LimbalRingColor}"/>
 
-			<ana:TextBlock Grid.Row="3" Grid.Column="1" Key="Character_ExAppearance_Hair" Style="{StaticResource Label}"/>
+			<XivToolsWpf:TextBlock Grid.Row="3" Grid.Column="1" Key="Character_ExAppearance_Hair" Style="{StaticResource Label}"/>
 			<ana:RgbColorControl Grid.Row="3" Grid.Column="2" Value="{Binding HairColor}" ToolTip="Hair Color"/>
 			<ana:RgbColorControl Grid.Row="3" Grid.Column="3" Value="{Binding HairGloss}" ToolTip="Hair Glow"/>
 			<ana:RgbColorControl Grid.Row="3" Grid.Column="4" Value="{Binding HairHighlight}" ToolTip="Highlight Color"/>
 
-			<ana:TextBlock Grid.Row="4" Grid.Column="1" Key="Character_ExAppearance_Muscle" Style="{StaticResource Label}"/>
-			<ana:NumberBox Grid.Row="4" Value="{Binding MuscleTone}" Grid.Column="2" Grid.ColumnSpan="5" Slider="Absolute" Minimum="0" Maximum="5" TickFrequency="0.1"/>
+			<XivToolsWpf:TextBlock Grid.Row="4" Grid.Column="1" Key="Character_ExAppearance_Muscle" Style="{StaticResource Label}"/>
+			<XivToolsWpf:NumberBox Grid.Row="4" Value="{Binding MuscleTone}" Grid.Column="2" Grid.ColumnSpan="5" Slider="Absolute" Minimum="0" Maximum="5" TickFrequency="0.1"/>
 
 		</Grid>
 	</Grid>

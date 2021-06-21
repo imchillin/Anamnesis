@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory
@@ -54,7 +53,7 @@ namespace Anamnesis.Memory
 	{
 		private const short RefreshDelay = 250;
 
-		private static Dictionary<string, string> nicknameLookup = new Dictionary<string, string>();
+		private static readonly Dictionary<string, string> NicknameLookup = new Dictionary<string, string>();
 
 		private short refreshDelay;
 		private Task? refreshTask;
@@ -90,8 +89,8 @@ namespace Anamnesis.Memory
 		{
 			get
 			{
-				if (nicknameLookup.ContainsKey(this.Id))
-					return nicknameLookup[this.Id];
+				if (NicknameLookup.ContainsKey(this.Id))
+					return NicknameLookup[this.Id];
 
 				return null;
 			}
@@ -100,17 +99,17 @@ namespace Anamnesis.Memory
 			{
 				if (value == null)
 				{
-					if (nicknameLookup.ContainsKey(this.Id))
+					if (NicknameLookup.ContainsKey(this.Id))
 					{
-						nicknameLookup.Remove(this.Id);
+						NicknameLookup.Remove(this.Id);
 					}
 				}
 				else
 				{
-					if (!nicknameLookup.ContainsKey(this.Id))
-						nicknameLookup.Add(this.Id, string.Empty);
+					if (!NicknameLookup.ContainsKey(this.Id))
+						NicknameLookup.Add(this.Id, string.Empty);
 
-					nicknameLookup[this.Id] = value;
+					NicknameLookup[this.Id] = value;
 				}
 			}
 		}

@@ -1,0 +1,53 @@
+﻿root = true
+
+[*.cs]
+indent_style = tab
+file_header_template = © Anamnesis.\nLicensed under the MIT license.
+
+dotnet_diagnostic.SA1027.severity = none
+dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1503.severity = none
+dotnet_diagnostic.SA1633.severity = none
+dotnet_diagnostic.SA1401.severity = none
+dotnet_diagnostic.SA1601.severity = none
+dotnet_diagnostic.SA1602.severity = none
+dotnet_diagnostic.SA1516.severity = none
+dotnet_diagnostic.SA1618.severity = none
+dotnet_diagnostic.SA1611.severity = none
+dotnet_diagnostic.SA1615.severity = none
+dotnet_diagnostic.SA1011.severity = none
+
+dotnet_diagnostic.IDE0022.severity = none
+dotnet_diagnostic.IDE0023.severity = none
+dotnet_diagnostic.IDE1006.severity = warning
+dotnet_diagnostic.IDE0044.severity = warning
+dotnet_diagnostic.IDE0073.severity = warning
+dotnet_diagnostic.IDE0025.severity = none
+dotnet_diagnostic.IDE0027.severity = none
+dotnet_diagnostic.IDE0059.severity = none
+
+dotnet_diagnostic.UNT0001.severity = warning
+dotnet_diagnostic.UNT0002.severity = warning
+dotnet_diagnostic.UNT0003.severity = warning
+dotnet_diagnostic.UNT0004.severity = warning
+dotnet_diagnostic.UNT0005.severity = warning
+dotnet_diagnostic.UNT0006.severity = warning
+dotnet_diagnostic.UNT0007.severity = warning
+dotnet_diagnostic.UNT0008.severity = warning
+dotnet_diagnostic.UNT0009.severity = warning
+dotnet_diagnostic.UNT0010.severity = warning
+dotnet_diagnostic.UNT0011.severity = warning
+dotnet_diagnostic.UNT0012.severity = warning
+dotnet_diagnostic.UNT0013.severity = none
+dotnet_diagnostic.UNT0014.severity = warning
+dotnet_diagnostic.UNT0015.severity = warning
+dotnet_diagnostic.UNT0016.severity = warning
+dotnet_diagnostic.UNT0017.severity = warning
+dotnet_diagnostic.UNT0018.severity = warning
+dotnet_diagnostic.UNT0019.severity = warning
+dotnet_diagnostic.UNT0020.severity = warning
+
+dotnet_diagnostic.CS1591.severity = none
+dotnet_diagnostic.CS0067.severity = none
+
+dotnet_diagnostic.CA1416.severity = none

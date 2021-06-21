@@ -6,6 +6,7 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"
 			 Width="250">
@@ -22,7 +23,7 @@
 
 		<GroupBox Grid.Row="0">
 			<GroupBox.Header>
-				<ana:TextBlock Key="About_Version_Header"/>
+				<XivToolsWpf:TextBlock Key="About_Version_Header"/>
 			</GroupBox.Header>
 
 			<Grid>
@@ -34,7 +35,7 @@
 				<TextBlock x:Name="VersionLabel" Grid.Column="0" FontSize="22" Margin="6,0,0,0"/>
 				<Button Grid.Column="1" Width="28" Style="{StaticResource TransparentButton}" Click="OnCheckForUpdatesClicked">
 					<Button.ToolTip>
-						<ana:TextBlock Key="About_CheckForUpdates"/>
+						<XivToolsWpf:TextBlock Key="About_CheckForUpdates"/>
 					</Button.ToolTip>
 					
 					<fa:IconBlock Icon="Redo"/>
@@ -46,7 +47,7 @@
 		
 		<GroupBox Grid.Row="1">
 			<GroupBox.Header>
-				<ana:TextBlock Key="About_OpenSource_Header"/>
+				<XivToolsWpf:TextBlock Key="About_OpenSource_Header"/>
 			</GroupBox.Header>
 
 			<TextBlock TextWrapping="Wrap" Margin="6,0,0,15" Style="{StaticResource Body}">Anamnesis is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
@@ -75,7 +76,7 @@
 		</GroupBox>
 		<GroupBox Grid.Row="2">
 			<GroupBox.Header>
-				<ana:TextBlock Key="About_Contact_Header"/>
+				<XivToolsWpf:TextBlock Key="About_Contact_Header"/>
 			</GroupBox.Header>
 
 			<TextBlock TextWrapping="Wrap" Margin="6,0,0,15" Style="{StaticResource Body}">Want to follow development, ask a question, look for help, raise a bug, or just say hi? Visit us on
@@ -85,7 +86,7 @@
 		
 		<GroupBox Grid.Row="3">
 			<GroupBox.Header>
-				<ana:TextBlock Key="About_Donate_Header"/>
+				<XivToolsWpf:TextBlock Key="About_Donate_Header"/>
 			</GroupBox.Header>
 
 			<TextBlock TextWrapping="Wrap" Margin="6,0,0,15" Style="{StaticResource Body}">This project is a labor of love. Please consider donating to the members of the dev team via Ko-fi to say thank you!<LineBreak />
@@ -95,7 +96,7 @@
 
 		<GroupBox Grid.Row="4">
 			<GroupBox.Header>
-				<ana:TextBlock Key="About_Debug_Header"/>
+				<XivToolsWpf:TextBlock Key="About_Debug_Header"/>
 			</GroupBox.Header>
 
 			<Grid>
@@ -110,11 +111,11 @@
 				</Grid.RowDefinitions>
 
 				<Button Margin="3" Click="OnLogsClicked" Grid.Column="0" Grid.Row="0" Style="{StaticResource TransparentButton}">
-					<ana:TextBlock Key="About_Debug_OpenLogs" Margin="3"/>
+					<XivToolsWpf:TextBlock Key="About_Debug_OpenLogs" Margin="3"/>
 				</Button>
 
 				<Button Margin="3" Click="OnSetingsClicked" Grid.Column="1" Grid.Row="0" Style="{StaticResource TransparentButton}">
-					<ana:TextBlock Key="About_Debug_OpenSettings" Margin="3"/>
+					<XivToolsWpf:TextBlock Key="About_Debug_OpenSettings" Margin="3"/>
 				</Button>
 			</Grid>
 		</GroupBox>

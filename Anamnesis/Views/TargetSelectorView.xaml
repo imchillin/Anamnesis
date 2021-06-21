@@ -8,6 +8,7 @@
 	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 	xmlns:local="clr-namespace:Anamnesis.Views"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	Loaded="OnLoaded"
@@ -24,16 +25,16 @@
 			Margin="4,6,4,0"
 			Orientation="Horizontal">
 			<CheckBox Margin="6,0" IsChecked="{Binding IncludePlayers}">
-				<ana:TextBlock Key="Target_Players" />
+				<XivToolsWpf:TextBlock Key="Target_Players" />
 			</CheckBox>
 			<CheckBox Margin="6,0" IsChecked="{Binding IncludeCompanions}">
-				<ana:TextBlock Key="Target_Companions" />
+				<XivToolsWpf:TextBlock Key="Target_Companions" />
 			</CheckBox>
 			<CheckBox Margin="6,0" IsChecked="{Binding IncludeNPCs}">
-				<ana:TextBlock Key="Target_Npc" />
+				<XivToolsWpf:TextBlock Key="Target_Npc" />
 			</CheckBox>
 			<CheckBox Margin="6,0" IsChecked="{Binding IncludeOther}">
-				<ana:TextBlock Key="Target_Other" />
+				<XivToolsWpf:TextBlock Key="Target_Other" />
 			</CheckBox>
 		</StackPanel>
 

@@ -3,9 +3,8 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:Anamnesis.Styles.Drawers"
-			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450"
 			 Width="280">
@@ -45,18 +44,18 @@
 			</Grid.RowDefinitions>
 
 			<Label Grid.Column="0" Grid.Row="0" Content="R:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-			<controls:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding R}" TickFrequency="0.1" Minimum="-25" Maximum="25" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding R}" TickFrequency="0.1" Minimum="-25" Maximum="25" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2"/>
 			<Label Grid.Column="0" Grid.Row="1" Content="G:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-			<controls:NumberBox Grid.Column="1" Grid.Row="1"  Value="{Binding G}" TickFrequency="0.1" Minimum="-25" Maximum="25" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox Grid.Column="1" Grid.Row="1"  Value="{Binding G}" TickFrequency="0.1" Minimum="-25" Maximum="25" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2"/>
 			<Label Grid.Column="0" Grid.Row="2" Content="B:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
-			<controls:NumberBox  Grid.Column="1" Grid.Row="2" Value="{Binding B}" TickFrequency="0.1" Minimum="-25" Maximum="25" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox  Grid.Column="1" Grid.Row="2" Value="{Binding B}" TickFrequency="0.1" Minimum="-25" Maximum="25" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2"/>
 			<Label Grid.Column="0" Grid.Row="3" Content="A:" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Visibility="{Binding EnableAlpha, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-			<controls:NumberBox  Grid.Column="1" Grid.Row="3" Value="{Binding A}" TickFrequency="0.1" Minimum="-25" Maximum="25" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2" Visibility="{Binding EnableAlpha, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+			<XivToolsWpf:NumberBox  Grid.Column="1" Grid.Row="3" Value="{Binding A}" TickFrequency="0.1" Minimum="-25" Maximum="25" Slider="Absolute" Wrap="False" Margin="0, 0, 0, 2" Visibility="{Binding EnableAlpha, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-			<controls:NumberBox Grid.Column="2" Grid.Row="0" Value="{Binding RByte}" TickFrequency="1" Minimum="-6375" Maximum="6375" Slider="None" Wrap="False" Margin="0, 0, 0, 2"/>
-			<controls:NumberBox Grid.Column="2" Grid.Row="1"  Value="{Binding GByte}" TickFrequency="1" Minimum="-6375" Maximum="6375" Slider="None" Wrap="False" Margin="0, 0, 0, 2"/>
-			<controls:NumberBox Grid.Column="2" Grid.Row="2" Value="{Binding BByte}" TickFrequency="1" Minimum="-6375" Maximum="6375" Slider="None" Wrap="False" Margin="0, 0, 0, 2"/>
-			<controls:NumberBox Grid.Column="2" Grid.Row="3" Value="{Binding AByte}" TickFrequency="1" Minimum="-6375" Maximum="6375" Slider="None" Wrap="False" Margin="0, 0, 0, 2" Visibility="{Binding EnableAlpha, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+			<XivToolsWpf:NumberBox Grid.Column="2" Grid.Row="0" Value="{Binding RByte}" TickFrequency="1" Minimum="-6375" Maximum="6375" Slider="None" Wrap="False" Margin="0, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox Grid.Column="2" Grid.Row="1"  Value="{Binding GByte}" TickFrequency="1" Minimum="-6375" Maximum="6375" Slider="None" Wrap="False" Margin="0, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox Grid.Column="2" Grid.Row="2" Value="{Binding BByte}" TickFrequency="1" Minimum="-6375" Maximum="6375" Slider="None" Wrap="False" Margin="0, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox Grid.Column="2" Grid.Row="3" Value="{Binding AByte}" TickFrequency="1" Minimum="-6375" Maximum="6375" Slider="None" Wrap="False" Margin="0, 0, 0, 2" Visibility="{Binding EnableAlpha, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
 
 		</Grid>

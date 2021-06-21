@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character.Views
@@ -10,8 +9,8 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
+	using XivToolsWpf.DependencyProperties;
 	using WpfColor = System.Windows.Media.Color;
 
 	/// <summary>

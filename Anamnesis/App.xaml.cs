@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis
@@ -102,7 +101,7 @@ namespace Anamnesis
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, "Failed to start application");
+				Log.Warning(ex, "Failed to start application");
 				ErrorDialog.ShowError(ExceptionDispatchInfo.Capture(ex), true);
 			}
 

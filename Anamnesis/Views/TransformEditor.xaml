@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="200">
 
@@ -19,14 +20,14 @@
 			
 			<GroupBox IsEnabled="{Binding Value.CanTranslate}">
 				<GroupBox.Header>
-					<controls:TextBlock Key="Pose_Position"/>
+					<XivToolsWpf:TextBlock Key="Pose_Position"/>
 				</GroupBox.Header>
 				<controls:VectorEditor Value="{Binding Value.Position}" Expanded="True" Minimum="-4096" Maximum="4096" Sliders="Relative" TickFrequency="0.01"/>
 			</GroupBox>
 
 			<GroupBox IsEnabled="{Binding Value.CanScale}">
 				<GroupBox.Header>
-					<controls:TextBlock Key="Pose_Scale"/>
+					<XivToolsWpf:TextBlock Key="Pose_Scale"/>
 				</GroupBox.Header>
 				<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1" CanLink="True"/>
 			</GroupBox>

@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.PoseModule
@@ -28,14 +27,13 @@ namespace Anamnesis.PoseModule
 	{
 		private readonly RotateTransform3D rotation;
 		private readonly TranslateTransform3D position;
+		private readonly Sphere sphere;
+		private readonly Material defaultMaterial;
+		private readonly EmissiveMaterial hoverMaterial;
+		private readonly EmissiveMaterial selectedMaterial;
 
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
-		private Sphere sphere;
-
-		private Material defaultMaterial;
-		private EmissiveMaterial hoverMaterial;
-		private EmissiveMaterial selectedMaterial;
 
 		public BoneVisual3d(TransformPtrViewModel transform, SkeletonVisual3d skeleton, string name)
 		{

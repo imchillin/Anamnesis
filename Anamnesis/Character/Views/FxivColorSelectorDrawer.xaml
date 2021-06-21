@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" Width="174">
 
@@ -21,7 +22,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<controls:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,6,3,6" Buttons="True"/>
+		<XivToolsWpf:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,6,3,6" Buttons="True"/>
 
 		<ListBox Grid.Row="2" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedItem}" Margin="3">
 			<ListBox.ItemsPanel>

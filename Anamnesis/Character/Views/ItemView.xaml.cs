@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character.Views
@@ -14,10 +13,9 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.Styles.DependencyProperties;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
-
+	using XivToolsWpf.DependencyProperties;
 	using Vector = Anamnesis.Memory.Vector;
 
 	/// <summary>

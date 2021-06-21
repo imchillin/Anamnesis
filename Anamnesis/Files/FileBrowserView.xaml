@@ -9,6 +9,7 @@
 	xmlns:local="clr-namespace:Anamnesis.GUI.Views"
 	xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	Width="256"
 	d:DesignHeight="450"
 	mc:Ignorable="d">
@@ -52,13 +53,13 @@
 				IsChecked="{Binding IsFlattened}"
 				Style="{StaticResource MaterialDesignActionToggleButton}">
 				<ToggleButton.ToolTip>
-					<ana:TextBlock Key="FileBrowser_Flatten" />
+					<XivToolsWpf:TextBlock Key="FileBrowser_Flatten" />
 				</ToggleButton.ToolTip>
 				<ToggleButton.Content>
-					<ana:IconBlock FontSize="12" Icon="folder" />
+					<XivToolsWpf:IconBlock FontSize="12" Icon="folder" />
 				</ToggleButton.Content>
 				<materialDesign:ToggleButtonAssist.OnContent>
-					<ana:IconBlock FontSize="12" Icon="Copy" />
+					<XivToolsWpf:IconBlock FontSize="12" Icon="Copy" />
 				</materialDesign:ToggleButtonAssist.OnContent>
 			</ToggleButton>
 
@@ -69,7 +70,7 @@
 				IsEnabled="{Binding FileSource.CanWrite}"
 				Style="{StaticResource TransparentButton}">
 				<Button.ToolTip>
-					<ana:TextBlock Key="FileBrowser_CreateFolder" />
+					<XivToolsWpf:TextBlock Key="FileBrowser_CreateFolder" />
 				</Button.ToolTip>
 
 				<fa:IconBlock Icon="FolderPlus" />
@@ -82,7 +83,7 @@
 				IsEnabled="{Binding CanGoUp}"
 				Style="{StaticResource TransparentButton}">
 				<Button.ToolTip>
-					<ana:TextBlock Key="FileBrowser_GoUp" />
+					<XivToolsWpf:TextBlock Key="FileBrowser_GoUp" />
 				</Button.ToolTip>
 
 				<fa:IconBlock Icon="LevelUpAlt" Opacity="0.5" />
@@ -118,7 +119,7 @@
 							</ContextMenu>
 						</Grid.ContextMenu>
 
-						<ana:IconBlock
+						<XivToolsWpf:IconBlock
 							Grid.RowSpan="2"
 							Grid.Column="0"
 							Margin="3,0,6,0"
@@ -145,7 +146,7 @@
 								Text="{Binding Name}"
 								Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}" />
 
-							<ana:RenameTextBox
+							<XivToolsWpf:RenameTextBox
 								Grid.Row="0"
 								Text="{Binding Rename}"
 								Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}" />
@@ -209,7 +210,7 @@
 					IsChecked="{Binding ShowOptions}"
 					IsEnabled="{Binding OptionsControl, Converter={StaticResource NotNullToBoolConverter}}"
 					Style="{StaticResource MaterialDesignExpanderRightHeaderStyle}">
-					<ana:TextBlock
+					<XivToolsWpf:TextBlock
 						Key="FileBrowser_Advanced"
 						Margin="6,0"
 						Foreground="{StaticResource MaterialDesignBody}"
@@ -233,7 +234,7 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<ana:IconButton
+			<XivToolsWpf:IconButton
 				x:Name="SelectButton"
 				Grid.Column="0"
 				Margin="3"
@@ -248,7 +249,7 @@
 				Content="...">
 
 				<Button.ToolTip>
-					<ana:TextBlock Key="FileBrowser_Browse" />
+					<XivToolsWpf:TextBlock Key="FileBrowser_Browse" />
 				</Button.ToolTip>
 			</Button>
 		</Grid>

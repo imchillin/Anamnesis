@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Controls
@@ -7,8 +6,8 @@ namespace Anamnesis.Styles.Controls
 	using System.ComponentModel;
 	using System.Windows.Controls;
 	using Anamnesis.GameData;
-	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
+	using XivToolsWpf.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for ClassFilterItem.xaml.

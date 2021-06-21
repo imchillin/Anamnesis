@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.PoseModule.Views
@@ -12,9 +11,9 @@ namespace Anamnesis.PoseModule.Views
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Shapes;
-	using Anamnesis.Styles.DependencyProperties;
 	using MaterialDesignThemes.Wpf;
 	using Serilog;
+	using XivToolsWpf.DependencyProperties;
 
 	public partial class BoneView : UserControl, IBone
 	{
