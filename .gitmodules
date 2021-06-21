@@ -1,4 +1,3 @@
-[submodule "lib/SaintCoinach"]
-	path = lib/SaintCoinach
-	url = https://github.com/Khyrou/SaintCoinach.git
-	branch = master
+[submodule "Lib/XivToolsWpf"]
+	path = Lib/XivToolsWpf
+	url = https://github.com/XIV-Tools/XivToolsWpf
