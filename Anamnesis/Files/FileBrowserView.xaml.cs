@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.GUI.Views
@@ -30,12 +29,12 @@ namespace Anamnesis.GUI.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
+		private static readonly Stack<IFileSource.IDirectory> CurrentPathValue = new Stack<IFileSource.IDirectory>();
 		private static IFileSource? currentFileSource;
-		private static Stack<IFileSource.IDirectory> currentPath = new Stack<IFileSource.IDirectory>();
 		private static bool isFlattened;
 
-		private FileInfoBase[] fileInfos;
-		private Modes mode;
+		private readonly FileInfoBase[] fileInfos;
+		private readonly Modes mode;
 		private string? fileName;
 		private EntryWrapper? selected;
 		private bool updatingEntries = false;
@@ -236,7 +235,7 @@ namespace Anamnesis.GUI.Views
 					return;
 
 				currentFileSource = value;
-				currentPath.Clear();
+				CurrentPathValue.Clear();
 				this.CurrentDir = value?.GetDefaultDirectory();
 			}
 		}
@@ -245,7 +244,7 @@ namespace Anamnesis.GUI.Views
 		{
 			get
 			{
-				return currentPath.Count > 1;
+				return CurrentPathValue.Count > 1;
 			}
 		}
 
@@ -254,7 +253,7 @@ namespace Anamnesis.GUI.Views
 			get
 			{
 				string str = string.Empty;
-				foreach (IFileSource.IDirectory dir in currentPath.Reverse())
+				foreach (IFileSource.IDirectory dir in CurrentPathValue.Reverse())
 				{
 					str += dir.Name + "/";
 				}
@@ -267,17 +266,17 @@ namespace Anamnesis.GUI.Views
 		{
 			get
 			{
-				if (currentPath.Count <= 0)
+				if (CurrentPathValue.Count <= 0)
 					return null;
 
-				return currentPath.Peek();
+				return CurrentPathValue.Peek();
 			}
 			private set
 			{
 				if (value == null)
 					return;
 
-				currentPath.Push(value);
+				CurrentPathValue.Push(value);
 
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanGoUp)));
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentPath)));
@@ -426,7 +425,7 @@ namespace Anamnesis.GUI.Views
 
 		private void OnGoUpClicked(object? sender, RoutedEventArgs e)
 		{
-			currentPath.Pop();
+			CurrentPathValue.Pop();
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanGoUp)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentPath)));

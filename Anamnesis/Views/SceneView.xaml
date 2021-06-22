@@ -8,6 +8,7 @@
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:cm3="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 
@@ -43,7 +44,7 @@
 								<RowDefinition/>
 							</Grid.RowDefinitions>
 
-							<ana:Header Icon="Question" Text="Did you know"/>
+							<XivToolsWpf:Header Icon="Question" Text="Did you know"/>
 							<TextBlock Margin="3, 0, 3, 0" Grid.Row="1" TextWrapping="Wrap" FontSize="14" Text="{Binding TipService.Tip.Text}" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
 						</Grid>
 					</Button>
@@ -70,7 +71,7 @@
 			<GroupBox Grid.Row="0" Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
-						<ana:Header Icon="Globe" Key="Scene_World_Header"/>
+						<XivToolsWpf:Header Icon="Globe" Key="Scene_World_Header"/>
 						<TextBlock Text=" - " Style="{StaticResource Header}" Margin="3, 0, 0, 0"/>
 						<TextBlock Text="{Binding TerritoryService.CurrentTerritoryName}" Style="{StaticResource Header}" Margin="3, 0, 0, 0"/>
 					</StackPanel>
@@ -111,15 +112,15 @@
 							</materialdesign:ToggleButtonAssist.OnContent>
 						</ToggleButton>
 
-						<ana:TextBlock Grid.Row="0" Grid.Column="1" Key="Scene_World_Time" Style="{StaticResource Label}"/>
-						<ana:NumberBox Minimum="0" Maximum="1440" Grid.Column="2" Value="{Binding TimeService.TimeOfDay}" Margin="3" Slider="Absolute" IsEnabled="{Binding TimeService.Freeze}" TickFrequency="30"/>
+						<XivToolsWpf:TextBlock Grid.Row="0" Grid.Column="1" Key="Scene_World_Time" Style="{StaticResource Label}"/>
+						<XivToolsWpf:NumberBox Minimum="0" Maximum="1440" Grid.Column="2" Value="{Binding TimeService.TimeOfDay}" Margin="3" Slider="Absolute" IsEnabled="{Binding TimeService.Freeze}" TickFrequency="30"/>
 						<TextBlock Grid.Column="3" Text="{Binding TimeService.TimeString}" Margin="3, 3, 0, 3" Width="50" HorizontalAlignment="Right"/>
 
-						<ana:TextBlock Grid.Row="1" Grid.Column="1" Key="Scene_World_Day" Style="{StaticResource Label}"/>
-						<cm3:NumberBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
+						<XivToolsWpf:TextBlock Grid.Row="1" Grid.Column="1" Key="Scene_World_Day" Style="{StaticResource Label}"/>
+						<XivToolsWpf:NumberBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Buttons="True" Slider="Absolute" Minimum="0" Maximum="31"/>
 					</Grid>
 
-					<ana:TextBlock Grid.Row="1" Key="Scene_World_Weather" Style="{StaticResource Label}"/>
+					<XivToolsWpf:TextBlock Grid.Row="1" Key="Scene_World_Weather" Style="{StaticResource Label}"/>
 
 					<Grid Grid.Row="1" Grid.Column="1">
 						<Grid.ColumnDefinitions>
@@ -136,7 +137,7 @@
 							<Image Grid.Column="0" Source="{Binding TerritoryService.CurrentWeather.Icon}" Width="22" Height="22"/>
 						</Button>
 
-						<ana:NumberBox Grid.Column="1" Grid.Row="0" Minimum="0" Maximum="256" Value="{Binding TerritoryService.CurrentWeatherId}"/>
+						<XivToolsWpf:NumberBox Grid.Column="1" Grid.Row="0" Minimum="0" Maximum="256" Value="{Binding TerritoryService.CurrentWeatherId}"/>
 
 						<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding TerritoryService.CurrentWeather.Name}" Margin="3, 0, 0, 0" FontSize="10"/>
 
@@ -164,7 +165,7 @@
 
 			<GroupBox Grid.Row="2" Style="{StaticResource PanelGroupBox}" IsEnabled="{Binding GposeService.IsGpose}">
 				<GroupBox.Header>
-					<ana:Header Icon="Camera" Key="Scene_Camera_Header"/>
+					<XivToolsWpf:Header Icon="Camera" Key="Scene_Camera_Header"/>
 				</GroupBox.Header>
 
 				<Grid>
@@ -184,10 +185,10 @@
 						<RowDefinition/>
 					</Grid.RowDefinitions>
 
-					<ana:TextBlock Grid.Row="0" Key="Scene_Camera_Delimit" Style="{StaticResource Label}"/>
+					<XivToolsWpf:TextBlock Grid.Row="0" Key="Scene_Camera_Delimit" Style="{StaticResource Label}"/>
 					<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding CameraService.DelimitCamera}"/>
 
-					<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Scene_Camera_Position" Style="{StaticResource Label}"/>
+					<XivToolsWpf:TextBlock Grid.Row="1" Grid.Column="0" Key="Scene_Camera_Position" Style="{StaticResource Label}"/>
 					<Grid Grid.Row="1" Grid.Column="1">
 
 						<Grid.ColumnDefinitions>
@@ -208,7 +209,7 @@
 						<cm3:VectorEditor IsEnabled="{Binding CameraService.LockCameraPosition}" Grid.Column="1" TickFrequency="0.05" Value="{Binding CameraService.CameraPosition}" Expanded="True" Sliders="Relative" Minimum="-4096" Maximum="4096"/>
 					</Grid>
 
-					<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Scene_Camera_Angle" Style="{StaticResource Label}"/>
+					<XivToolsWpf:TextBlock Grid.Row="2" Grid.Column="0" Key="Scene_Camera_Angle" Style="{StaticResource Label}"/>
 					<Grid Grid.Row="2" Grid.Column="1">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -229,17 +230,17 @@
 					</Grid>
 
 
-					<ana:TextBlock Grid.Row="3" Grid.Column="0" Key="Scene_Camera_Rotation" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-180" Maximum="180" Wrap="True" TickFrequency="1"/>
+					<XivToolsWpf:TextBlock Grid.Row="3" Grid.Column="0" Key="Scene_Camera_Rotation" Style="{StaticResource Label}"/>
+					<XivToolsWpf:NumberBox Grid.Row="3" Grid.Column="1" Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-180" Maximum="180" Wrap="True" TickFrequency="1"/>
 
-					<ana:TextBlock Grid.Row="4" Grid.Column="0" Key="Scene_Camera_Pan" Style="{StaticResource Label}"/>
-					<cm3:Vector2DEditor Grid.Row="4" Grid.Column="1" Value="{Binding CameraService.Camera.Pan, Converter={StaticResource Vec2DRad2Deg}}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
+					<XivToolsWpf:TextBlock Grid.Row="4" Grid.Column="0" Key="Scene_Camera_Pan" Style="{StaticResource Label}"/>
+					<ana:Vector2DEditor Grid.Row="4" Grid.Column="1" Value="{Binding CameraService.Camera.Pan, Converter={StaticResource Vec2DRad2Deg}}" Minimum="-180" Maximum="180" Expanded="True" Wrap="True" TickFrequency="1"/>
 
-					<ana:TextBlock Grid.Row="5" Grid.Column="0" Key="Scene_Camera_Zoom" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding CameraService.Camera.Zoom}" Buttons="True" Slider="Absolute" Minimum="{Binding CameraService.Camera.MinZoom}" Maximum="{Binding CameraService.Camera.MaxZoom}" TickFrequency="1"/>
+					<XivToolsWpf:TextBlock Grid.Row="5" Grid.Column="0" Key="Scene_Camera_Zoom" Style="{StaticResource Label}"/>
+					<XivToolsWpf:NumberBox Grid.Row="5" Grid.Column="1" Value="{Binding CameraService.Camera.Zoom}" Buttons="True" Slider="Absolute" Minimum="{Binding CameraService.Camera.MinZoom}" Maximum="{Binding CameraService.Camera.MaxZoom}" TickFrequency="1"/>
 
-					<ana:TextBlock Grid.Row="6" Grid.Column="0" Key="Scene_Camera_FoV" Style="{StaticResource Label}"/>
-					<cm3:NumberBox Grid.Row="6" Grid.Column="1" Value="{Binding CameraService.Camera.FieldOfView, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-40" Maximum="100" TickFrequency="1"/>
+					<XivToolsWpf:TextBlock Grid.Row="6" Grid.Column="0" Key="Scene_Camera_FoV" Style="{StaticResource Label}"/>
+					<XivToolsWpf:NumberBox Grid.Row="6" Grid.Column="1" Value="{Binding CameraService.Camera.FieldOfView, Converter={StaticResource Rad2Deg}}" Buttons="True" Slider="Absolute" Minimum="-40" Maximum="100" TickFrequency="1"/>
 
 				</Grid>
 			</GroupBox>

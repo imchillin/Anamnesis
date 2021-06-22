@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 	
@@ -94,10 +95,10 @@
 
 		<StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Center" Grid.ColumnSpan="3" Margin="3, 3, 3, 6">
 			<Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnNoneClicked">
-				<local:TextBlock Key="Common_None"/>
+				<XivToolsWpf:TextBlock Key="Common_None"/>
 			</Button>
 			<Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnAllClicked">
-				<local:TextBlock Key="Common_All"/>
+				<XivToolsWpf:TextBlock Key="Common_All"/>
 			</Button>
 		</StackPanel>
 

@@ -11,6 +11,7 @@
 	xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:views="clr-namespace:Anamnesis.PoseModule.Views"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	d:DesignHeight="512"
 	d:DesignWidth="1024"
 	DataContextChanged="OnDataContextChanged"
@@ -37,7 +38,7 @@
 					IsIndeterminate="True"
 					Style="{StaticResource MaterialDesignCircularProgressBar}" />
 
-				<ana:TextBlock
+				<XivToolsWpf:TextBlock
 					Key="Pose_Generating"
 					Grid.Row="1"
 					Margin="24" />
@@ -81,12 +82,12 @@
 
 							<Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="6, 3, 6, 3"
 								  Visibility="{Binding SettingsService.Settings.IsDyslexic, Converter={StaticResource !B2V}}">
-								
-								<ana:TextBlock
+
+								<XivToolsWpf:TextBlock
 									Style="{StaticResource Header}"
 									Text="{Binding Skeleton.CurrentBone.Tooltip}" />
 
-								<ana:TextBlock
+								<XivToolsWpf:TextBlock
 									Key="Pose_NothingSelected"
 									HorizontalAlignment="Left"
 									Style="{StaticResource Header}"
@@ -114,7 +115,7 @@
 										Click="OnClearClicked"
 										IsEnabled="{Binding Skeleton.HasSelection}"
 										Style="{StaticResource TransparentButton}">
-										<ana:TextBlock Text="Clear" />
+										<XivToolsWpf:TextBlock Text="Clear" />
 									</Button>
 
 									<Button
@@ -124,7 +125,7 @@
 										Click="OnSelectChildrenClicked"
 										IsEnabled="{Binding Skeleton.HasSelection}"
 										Style="{StaticResource TransparentButton}">
-										<ana:TextBlock Text="Select Children" />
+										<XivToolsWpf:TextBlock Text="Select Children" />
 									</Button>
 
 									<Button
@@ -134,7 +135,7 @@
 										Padding="6,3"
 										Click="OnFlipClicked"
 										Style="{StaticResource TransparentButton}">
-										<ana:TextBlock Key="Pose_Flip" />
+										<XivToolsWpf:TextBlock Key="Pose_Flip" />
 									</Button>
 
 								</Grid>
@@ -159,7 +160,7 @@
 								<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}">
 									<controls:TransformEditor IsEnabled="{Binding TargetService.SelectedActor.IsAnimating, Converter={StaticResource NotConverter}}" Value="{Binding TargetService.SelectedActor.ModelObject.Transform}" />
 
-									<ana:InfoControl
+									<XivToolsWpf:InfoControl
 										Key="Pose_WarningNotFrozen"
 										Margin="0,2"
 										Visibility="{Binding TargetService.SelectedActor.IsAnimating, Converter={StaticResource B2V}}"/>
@@ -176,7 +177,7 @@
 					</Border>
 
 					<!-- save/load menu -->
-					<Menu Grid.Row="1" Margin="2, 2, 2, 5" IsEnabled="{Binding GposeService.IsGpose}">
+					<Menu Grid.Row="1" Margin="0, 2, 0, 4" IsEnabled="{Binding GposeService.IsGpose}" Style="{StaticResource AnaMenu}">
 						<MenuItem Header="Pose_Load" Icon="FolderOpen"  Style="{StaticResource ButtonMenuItemLeft}" Width="76" Click="OnOpenClicked"/>
 						<MenuItem Style="{StaticResource ButtonMenuItemRight}">
 							<MenuItem Header="Pose_Expression" Style="{StaticResource AnaMenuItem}" Click="OnOpenExpressionClicked"/>
@@ -207,11 +208,11 @@
 								IsChecked="{Binding PoseService.IsEnabled}"
 								Style="{StaticResource OutlineToggleButton}">
 								<Grid>
-									<ana:TextBlock
+									<XivToolsWpf:TextBlock
 										Key="Common_Disable"
 										Margin="12,0,12,0"
 										Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}" />
-									<ana:TextBlock
+									<XivToolsWpf:TextBlock
 										Key="Common_Enable"
 										Margin="12,0,12,0"
 										Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}" />
@@ -255,7 +256,7 @@
 								VerticalContentAlignment="Center"
 								IsChecked="{Binding PoseService.FreezePhysics}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<ana:TextBlock Key="Pose_FreezePhysics" />
+								<XivToolsWpf:TextBlock Key="Pose_FreezePhysics" />
 							</CheckBox>
 
 							<CheckBox
@@ -263,7 +264,7 @@
 								VerticalContentAlignment="Center"
 								IsChecked="{Binding PoseService.EnableParenting}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<ana:TextBlock Key="Pose_Parenting" />
+								<XivToolsWpf:TextBlock Key="Pose_Parenting" />
 							</CheckBox>
 
 							<CheckBox
@@ -271,7 +272,7 @@
 								VerticalContentAlignment="Center"
 								IsChecked="{Binding Skeleton.LinkEyes}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<ana:TextBlock Key="Pose_LinkEyes" />
+								<XivToolsWpf:TextBlock Key="Pose_LinkEyes" />
 							</CheckBox>
 
 							<CheckBox
@@ -280,7 +281,7 @@
 								VerticalContentAlignment="Center"
 								IsChecked="{Binding Skeleton.FlipSides}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<ana:TextBlock Key="Pose_FlipSides" />
+								<XivToolsWpf:TextBlock Key="Pose_FlipSides" />
 							</CheckBox>
 						</StackPanel>
 
@@ -296,10 +297,10 @@
 									VerticalContentAlignment="Center"
 									IsChecked="{Binding PoseService.FreezeRotation}"
 									IsEnabled="{Binding PoseService.IsEnabled}">
-									<ana:TextBlock Key="Pose_EnableRotation" Margin="0,-2,0,2" />
+									<XivToolsWpf:TextBlock Key="Pose_EnableRotation" Margin="0,-2,0,2" />
 
 									<CheckBox.ToolTip>
-										<ana:TextBlock Key="Pose_EnableRotationTooltip" />
+										<XivToolsWpf:TextBlock Key="Pose_EnableRotationTooltip" />
 									</CheckBox.ToolTip>
 								</CheckBox>
 
@@ -308,10 +309,10 @@
 									VerticalContentAlignment="Center"
 									IsChecked="{Binding PoseService.FreezePositions}"
 									IsEnabled="{Binding PoseService.IsEnabled}">
-									<ana:TextBlock Key="Pose_EnablePosition" Margin="0,-2,0,2" />
+									<XivToolsWpf:TextBlock Key="Pose_EnablePosition" Margin="0,-2,0,2" />
 
 									<CheckBox.ToolTip>
-										<ana:TextBlock Key="Pose_EnablePositionTooltip" />
+										<XivToolsWpf:TextBlock Key="Pose_EnablePositionTooltip" />
 									</CheckBox.ToolTip>
 								</CheckBox>
 
@@ -320,10 +321,10 @@
 									VerticalContentAlignment="Center"
 									IsChecked="{Binding PoseService.FreezeScale}"
 									IsEnabled="{Binding PoseService.IsEnabled}">
-									<ana:TextBlock Key="Pose_EnableScale" Margin="0,-2,0,2" />
+									<XivToolsWpf:TextBlock Key="Pose_EnableScale" Margin="0,-2,0,2" />
 
 									<CheckBox.ToolTip>
-										<ana:TextBlock Key="Pose_EnableScaleTooltip" />
+										<XivToolsWpf:TextBlock Key="Pose_EnableScaleTooltip" />
 									</CheckBox.ToolTip>
 								</CheckBox>
 							</StackPanel>
@@ -372,7 +373,7 @@
 					</Grid>
 				</Border>
 
-				<ana:InfoControl
+				<XivToolsWpf:InfoControl
 					Key="Pose_WarningNotGPose"
 					Margin="6, 7"
 					Grid.Row="0"
@@ -384,12 +385,12 @@
 
 		<Grid Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
 			<Grid Visibility="{Binding Skeleton, Converter={StaticResource NullToVisibilityConverter}}">
-				<ana:InfoControl IsError="True" Key="Pose_NoSkeleton" VerticalAlignment="Bottom" Margin="12"/>
+				<XivToolsWpf:InfoControl IsError="True" Key="Pose_NoSkeleton" VerticalAlignment="Bottom" Margin="12"/>
 			</Grid>
 		</Grid>
 
 		<Grid Visibility="{Binding Actor.ModelObject, Converter={StaticResource NullToVisibilityConverter}}">
-			<ana:InfoControl IsError="True" Key="Pose_NoModel" VerticalAlignment="Bottom" Margin="12"/>
+			<XivToolsWpf:InfoControl IsError="True" Key="Pose_NoModel" VerticalAlignment="Bottom" Margin="12"/>
 		</Grid>
 
 	</Grid>

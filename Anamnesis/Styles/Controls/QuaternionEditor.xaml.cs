@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Controls
@@ -11,12 +10,11 @@ namespace Anamnesis.Styles.Controls
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
-	using Anamnesis.Styles.DependencyProperties;
 	using Anamnesis.Three3D;
 	using Anamnesis.ThreeD;
 	using Anamnesis.ThreeD.Lines;
 	using PropertyChanged;
-
+	using XivToolsWpf.DependencyProperties;
 	using CmQuaternion = Anamnesis.Memory.Quaternion;
 	using Color = System.Windows.Media.Color;
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;

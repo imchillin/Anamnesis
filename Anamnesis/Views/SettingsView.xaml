@@ -8,6 +8,7 @@
 			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:XivToolsWPF="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 Width="290"
 			 d:DesignHeight="450">
@@ -34,7 +35,7 @@
 
 
 		<fa:IconBlock Grid.Column="0" HorizontalAlignment="Right" Icon="Language" FontSize="22"/>
-		<ana:TextBlock Margin="10,0,35,0" Grid.Column="0" Grid.Row="0" Key="Settings_Language" Style="{StaticResource Label}"/>
+		<XivToolsWPF:TextBlock Margin="10,0,35,0" Grid.Column="0" Grid.Row="0" Key="Settings_Language" Style="{StaticResource Label}"/>
 		<ComboBox Margin="6" Grid.Column="1" Grid.Row="0" SelectedValue="{Binding SelectedLanguage}" ItemsSource="{Binding Languages, Mode=OneTime}">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
@@ -43,30 +44,30 @@
 			</ComboBox.ItemTemplate>
 		</ComboBox>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_AlwaysOnTop" Style="{StaticResource Label}"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_AlwaysOnTop" Style="{StaticResource Label}"/>
 		<CheckBox Grid.Column="1" Grid.Row="1" IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}" Margin="6"/>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_UseCustomBorder" Style="{StaticResource Label}"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_UseCustomBorder" Style="{StaticResource Label}"/>
 		<CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding SettingsService.Settings.UseCustomBorder}" Margin="6"/>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
-		<ana:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="3" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
+		<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="3" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="4" Key="Settings_StayTransparent" Style="{StaticResource Label}"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="4" Key="Settings_StayTransparent" Style="{StaticResource Label}"/>
 		<CheckBox Margin="6" IsChecked="{Binding SettingsService.Settings.StayTransparent}" Grid.Column="1" Grid.Row="4" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
 		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="5" Margin="6"/>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Dyslexic" Style="{StaticResource Label}"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Dyslexic" Style="{StaticResource Label}"/>
 		<CheckBox IsChecked="{Binding SettingsService.Settings.IsDyslexic}" Grid.Column="1" Grid.Row="6" Margin="6"/>
 
-		<ana:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_ShowGallery" Style="{StaticResource Label}"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_ShowGallery" Style="{StaticResource Label}"/>
 		<CheckBox IsChecked="{Binding SettingsService.Settings.ShowGallery}" Grid.Column="1" Grid.Row="7" Margin="6"/>
 
 		<GroupBox Grid.Row="8" Grid.ColumnSpan="2">
 			<GroupBox.Header>
-				<ana:TextBlock Key="Settings_Directories"/>
+				<XivToolsWPF:TextBlock Key="Settings_Directories"/>
 			</GroupBox.Header>
 			
 			<Grid>
@@ -82,11 +83,11 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 
-				<ana:TextBlock Grid.Row="0" Grid.Column="0" Key="Settings_Dir_Characters" Style="{StaticResource Label}"/>
+				<XivToolsWPF:TextBlock Grid.Row="0" Grid.Column="0" Key="Settings_Dir_Characters" Style="{StaticResource Label}"/>
 				<TextBox Grid.Row="0" Grid.Column="1" Margin="3, 0, 0, 0" Text="{Binding SettingsService.Settings.DefaultCharacterDirectory}" IsEnabled="False"/>
 				<Button Grid.Row="0" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseCharacter"/>
 
-				<ana:TextBlock Grid.Row="1" Grid.Column="0" Key="Settings_Dir_Poses" Style="{StaticResource Label}"/>
+				<XivToolsWPF:TextBlock Grid.Row="1" Grid.Column="0" Key="Settings_Dir_Poses" Style="{StaticResource Label}"/>
 				<TextBox Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0" Text="{Binding SettingsService.Settings.DefaultPoseDirectory}" IsEnabled="False"/>
 				<Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowsePose"/>
 
@@ -100,7 +101,7 @@
 
 		<GroupBox Grid.Row="10" Grid.ColumnSpan="2">
 			<GroupBox.Header>
-				<ana:TextBlock Key="Settings_Theme"/>
+				<XivToolsWPF:TextBlock Key="Settings_Theme"/>
 			</GroupBox.Header>
 			
 			<Grid>
@@ -111,9 +112,9 @@
 				</Grid.RowDefinitions>
 
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-					<ana:TextBlock Key="Settings_Theme_Hydaelyn" VerticalAlignment="Center"/>
+					<XivToolsWPF:TextBlock Key="Settings_Theme_Hydaelyn" VerticalAlignment="Center"/>
 					<ToggleButton Margin="6" Grid.Row="0" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Left" IsChecked="{Binding SettingsService.Settings.ThemeDark}"/>
-					<ana:TextBlock Key="Settings_Theme_Zodiark" VerticalAlignment="Center"/>
+					<XivToolsWPF:TextBlock Key="Settings_Theme_Zodiark" VerticalAlignment="Center"/>
 				</StackPanel>
 				
 				<ListBox Grid.Row="1" ItemsSource="{Binding Swatches.Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">

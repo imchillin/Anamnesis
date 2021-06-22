@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Character.Views
@@ -8,8 +7,8 @@ namespace Anamnesis.Character.Views
 	using System.Collections.ObjectModel;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
-	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
+	using XivToolsWpf.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for DataPathSelector.xaml.

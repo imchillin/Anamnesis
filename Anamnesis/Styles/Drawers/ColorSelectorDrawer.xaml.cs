@@ -1,5 +1,4 @@
 ﻿// © Anamnesis.
-// Developed by W and A Walsh.
 // Licensed under the MIT license.
 
 namespace Anamnesis.Styles.Drawers
@@ -14,9 +13,10 @@ namespace Anamnesis.Styles.Drawers
 	using System.Windows.Media;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using Anamnesis.Styles.DependencyProperties;
 	using PropertyChanged;
-	using Binder = Anamnesis.Styles.DependencyProperties.Binder;
+	using XivToolsWpf.DependencyProperties;
+	using Binder = XivToolsWpf.DependencyProperties.Binder;
+
 	using WpfColor = System.Windows.Media.Color;
 
 	/// <summary>

@@ -3,15 +3,14 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:fa="http://schemas.fontawesome.io/icons/"
-			 xmlns:cm3Converters="clr-namespace:Anamnesis.Styles.Converters"
 			 xmlns:local="clr-namespace:Anamnesis.PoseModule.Views"
+			 xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="B2V"/>
-		<cm3Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+		<XivToolsWpf.Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
 	</UserControl.Resources>
 
 	<Grid x:Name="ContentArea">

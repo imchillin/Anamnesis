@@ -7,6 +7,7 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:xtw="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 	<Grid>
@@ -23,7 +24,7 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<ana:TextBlock
+		<xtw:TextBlock
 			Key="Character_Actor_DataPath"
 			Grid.Row="0"
 			Grid.Column="0"
@@ -38,11 +39,11 @@
 			Tribe="{Binding Actor.Customize.Tribe}" />
 
 		<!-- Height -->
-		<ana:TextBlock Grid.Row="1" Key="Character_Model_Height" Style="{StaticResource Label}"/>
-		<ana:NumberBox Grid.Row="1" Grid.Column="1" Slider="Absolute" Minimum="0.1" Maximum="2" Value="{Binding Height}" TickFrequency="0.01"/>
+		<xtw:TextBlock Grid.Row="1" Key="Character_Model_Height" Style="{StaticResource Label}"/>
+		<xtw:NumberBox Grid.Row="1" Grid.Column="1" Slider="Absolute" Minimum="0.1" Maximum="2" Value="{Binding Height}" TickFrequency="0.01"/>
 
 		<!-- Wetness -->
-		<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_Model_Wetness" Style="{StaticResource Label}"/>
+		<xtw:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_Model_Wetness" Style="{StaticResource Label}"/>
 		<Grid Grid.Row="2" Grid.Column="1">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
@@ -63,16 +64,16 @@
 				</materialdesign:ToggleButtonAssist.OnContent>
 
 				<ToggleButton.ToolTip>
-					<ana:TextBlock x:Name="ModeTooltip" Key="Character_Model_WetNone"/>
+					<xtw:TextBlock x:Name="ModeTooltip" Key="Character_Model_WetNone"/>
 				</ToggleButton.ToolTip>
 				
 			</ToggleButton>
 
-			<ana:NumberBox x:Name="WetSlider" Grid.Column="1" Slider="Absolute" Minimum="0" Maximum="1" Value="{Binding Wetness}" TickFrequency="0.01"/>
+			<xtw:NumberBox x:Name="WetSlider" Grid.Column="1" Slider="Absolute" Minimum="0" Maximum="1" Value="{Binding Wetness}" TickFrequency="0.01"/>
 		</Grid>
 
 		<!-- Bust Scale -->
-		<ana:TextBlock Grid.Row="4" Grid.Column="0" Key="Character_Model_BustScale" Style="{StaticResource Label}"/>
+		<xtw:TextBlock Grid.Row="4" Grid.Column="0" Key="Character_Model_BustScale" Style="{StaticResource Label}"/>
 		<ana:VectorEditor Grid.Row="4" Grid.Column="1" Value="{Binding Bust.Scale}" Expanded="False" CanLink="True" Minimum="0" Maximum="10"/>
 
 	</Grid>

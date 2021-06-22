@@ -6,6 +6,7 @@
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" Width="256">
 
@@ -21,7 +22,7 @@
 		<Expander Style="{StaticResource Cm3Expander}">
 			<Expander.Header>
 				<StackPanel>
-					<controls:TextBlock Key="EquipmentSelector_Classes" Foreground="{DynamicResource MaterialDesignBody}"/>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_Classes" Foreground="{DynamicResource MaterialDesignBody}"/>
 					<TextBlock x:Name="JobFilterText" Text="All" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="10"/>
 				</StackPanel>
 			</Expander.Header>
@@ -32,22 +33,22 @@
 
 		<ComboBox Grid.Row="1" Margin="6" SelectedIndex="{Binding ModeInt}">
 			<ComboBoxItem>
-				<controls:TextBlock Key="EquipmentSelector_All"/>
+				<XivToolsWpf:TextBlock Key="EquipmentSelector_All"/>
 			</ComboBoxItem>
 			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Items"/>
+				<XivToolsWpf:TextBlock Key="EquipmentSelector_Items"/>
 			</ComboBoxItem>
 			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Props"/>
+				<XivToolsWpf:TextBlock Key="EquipmentSelector_Props"/>
 			</ComboBoxItem>
 			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Performance"/>
+				<XivToolsWpf:TextBlock Key="EquipmentSelector_Performance"/>
 			</ComboBoxItem>
 			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Modded"/>
+				<XivToolsWpf:TextBlock Key="EquipmentSelector_Modded"/>
 			</ComboBoxItem>
 			<ComboBoxItem >
-				<controls:TextBlock Key="EquipmentSelector_Favorites"/>
+				<XivToolsWpf:TextBlock Key="EquipmentSelector_Favorites"/>
 			</ComboBoxItem>
 		</ComboBox>
 
@@ -70,7 +71,7 @@
 		</StackPanel>-->
 
 		<CheckBox Grid.Row="2" Margin="10, 3, 10, 3" IsChecked="{Binding PairEquip}" Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
-			<controls:TextBlock Key="Character_Equipment_PairEquip"/>
+			<XivToolsWpf:TextBlock Key="Character_Equipment_PairEquip"/>
 		</CheckBox>
 
 		<cm3Drawers:SelectorDrawer

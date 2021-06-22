@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d"
 			 d:DesignWidth="256">
 	<Grid x:Name="ContentArea">
@@ -17,10 +18,10 @@
 			</Grid.ColumnDefinitions>
 
 			<TextBlock Grid.Column="0" Text="X:" Style="{StaticResource Label}"/>
-			<local:NumberBox Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="1" Margin="-3, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="1" Margin="-3, 0, 0, 2"/>
 
 			<TextBlock Grid.Column="2" Text="Y:" Style="{StaticResource Label}"/>
-			<local:NumberBox Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="3" Margin="-3, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Wrap="{Binding Wrap}" Grid.Column="3" Margin="-3, 0, 0, 2"/>
 		</Grid>
 
 		<Grid Visibility="{Binding Expanded, Converter={StaticResource B2V}}">
@@ -35,9 +36,9 @@
 			</Grid.RowDefinitions>
 
 			<TextBlock Grid.Column="0" Grid.Row="0" Text="X:" Style="{StaticResource Label}"/>
-			<local:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="Absolute" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox Grid.Column="1" Grid.Row="0" Value="{Binding X, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="Absolute" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
 			<TextBlock Grid.Column="0" Grid.Row="1" Text="Y:" Style="{StaticResource Label}"/>
-			<local:NumberBox Grid.Column="1" Grid.Row="1"  Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="Absolute" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
+			<XivToolsWpf:NumberBox Grid.Column="1" Grid.Row="1"  Value="{Binding Y, Mode=TwoWay}" TickFrequency="{Binding TickFrequency}" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Slider="Absolute" Buttons="True" Wrap="{Binding Wrap}" Margin="0, 0, 0, 2"/>
 		</Grid>
 	</Grid>
 </UserControl>

@@ -6,6 +6,7 @@
 			 xmlns:local="clr-namespace:Anamnesis.Views"
 			 xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" Width="220">
 	<Grid x:Name="ContentArea">
@@ -25,26 +26,26 @@
 
 			<RadioButton Grid.Column="0" IsChecked="{Binding NaturalWeathers}" Margin="3">
 				<RadioButton.ToolTip>
-					<ana:TextBlock Key="Weather_Selector_Natural_Tooltip"/>
+					<XivToolsWpf:TextBlock Key="Weather_Selector_Natural_Tooltip"/>
 				</RadioButton.ToolTip>
-				
-				<ana:TextBlock Key="Weather_Selector_Natural"/>
+
+				<XivToolsWpf:TextBlock Key="Weather_Selector_Natural"/>
 			</RadioButton>
 
 			<RadioButton Grid.Column="1" IsChecked="{Binding UnnaturalWeathers}" Margin="3">
 				<RadioButton.ToolTip>
-					<ana:TextBlock Key="Weather_Selector_Unnatural_Tooltip"/>
+					<XivToolsWpf:TextBlock Key="Weather_Selector_Unnatural_Tooltip"/>
 				</RadioButton.ToolTip>
-				
-				<ana:TextBlock Key="Weather_Selector_Unnatural"/>
+
+				<XivToolsWpf:TextBlock Key="Weather_Selector_Unnatural"/>
 			</RadioButton>
 
 			<RadioButton Grid.Column="2" IsChecked="{Binding AllWeathers}" Margin="3">
 				<RadioButton.ToolTip>
-					<ana:TextBlock Key="Weather_Selector_All_Tooltip"/>
+					<XivToolsWpf:TextBlock Key="Weather_Selector_All_Tooltip"/>
 				</RadioButton.ToolTip>
-				
-				<ana:TextBlock Key="Common_All"/>
+
+				<XivToolsWpf:TextBlock Key="Common_All"/>
 			</RadioButton>
 		</Grid>
 
