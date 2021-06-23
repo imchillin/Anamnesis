@@ -1,4 +1,4 @@
-﻿// Concept Matrix 3.
+﻿// © Anamnesis.
 // Licensed under the MIT license.
 
 namespace UpdateExtractor
@@ -41,10 +41,9 @@ namespace UpdateExtractor
 
 				Console.WriteLine(" done.");
 
-				string? currentExePath = System.AppContext.BaseDirectory;
-				string? sourceDir = Path.GetDirectoryName(currentExePath);
+				string sourceDir = Path.GetTempPath() + "/AnamnesisUpdateLatest/";
 
-				if (string.IsNullOrEmpty(currentExePath))
+				if (!Directory.Exists(sourceDir))
 					throw new Exception("Unable to determine current process path");
 
 				if (string.IsNullOrEmpty(sourceDir))
