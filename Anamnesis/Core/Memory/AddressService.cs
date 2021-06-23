@@ -152,6 +152,15 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetBaseAddressFromSignature("48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
 			tasks.Add(GetAddressFromSignature("8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
 			tasks.Add(GetAddressFromTextSignature("48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
+			tasks.Add(GetAddressFromSignature("49 8B 9D ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));
+			tasks.Add(GetAddressFromSignature("4C 8B 05 ?? ?? ?? ?? 41 8B 80 ?? ?? ?? ?? C1 E8 02", 0, (p) => { GPoseFilters = p; }));
+			tasks.Add(GetAddressFromSignature("48 8B 15 ?? ?? ?? ?? 48 89 6C 24", 0, (p) => { GposeCheck = p; }));
+			tasks.Add(GetAddressFromSignature("8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
+			tasks.Add(GetAddressFromSignature("48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
+			tasks.Add(GetAddressFromSignature("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 8E", 0, (p) => {
+				GPoseActorTable = p + 0x14A0;
+				GPoseTargetManager = p + 0x14A0;
+			}));
 
 			tasks.Add(GetAddressFromTextSignature("0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
 			{
@@ -159,17 +168,6 @@ namespace Anamnesis.Core.Memory
 				SkeletonFreezePhysics2 = p - 0x9;   // SkeletonAddress2
 				SkeletonFreezePhysics3 = p + 0xA;   // SkeletonAddress3
 			}));
-
-			// TODO: replace these manual CMTool offsets with signatures
-			IntPtr baseAddress = MemoryService.Process.MainModule.BaseAddress;
-
-			Weather = baseAddress + 0x1D753C8;	// WeaptherOffset
-			GPoseActorTable = baseAddress + 0x1DC1560;	// GPoseEntityOffset
-			GPoseTargetManager = baseAddress + 0x1DC1560;	// GPoseEntityOffset
-			GPoseFilters = baseAddress + 0x1D9DBD8;
-			GposeCheck = baseAddress + 0x1DC3D60;
-			GposeCheck2 = baseAddress + 0x1DC3D40;
-			GPose = baseAddress + 0x1DC0180;
 
 			await Task.WhenAll(tasks.ToArray());
 
