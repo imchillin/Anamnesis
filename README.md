@@ -29,6 +29,10 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 * **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
 * **[damphands](https://github.com/damphands)** - *Wiki and tip curating* 
 
+## Community Developers
+
+* **[SoyaX](https://github.com/SoyaX)**
+
 ## Translations
 * **[Maxunit](https://github.com/Maxunit)** - *German* 
 * **[Arianishka](https://github.com/Arianishka)** - *French*
