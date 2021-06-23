@@ -188,6 +188,7 @@
 			<TextBox
 				x:Name="FileNameInputBox"
 				Grid.Column="0"
+				Style="{StaticResource MaterialDesignTextBox}"
 				Text="{Binding FileName}" />
 			<TextBlock
 				Grid.Column="1"
@@ -209,7 +210,7 @@
 				<ToggleButton
 					IsChecked="{Binding ShowOptions}"
 					IsEnabled="{Binding OptionsControl, Converter={StaticResource NotNullToBoolConverter}}"
-					Style="{StaticResource MaterialDesignExpanderRightHeaderStyle}">
+					Style="{StaticResource MaterialDesignExpanderToggleButton}">
 					<XivToolsWpf:TextBlock
 						Key="FileBrowser_Advanced"
 						Margin="6,0"
