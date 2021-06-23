@@ -65,8 +65,9 @@ namespace UpdateExtractor
 
 				destDir = destDir.Replace('/', '\\');
 				destDir = destDir.Trim('\\');
+				destDir += "\\";
 
-				string oldExe = destDir + "\\Anamnesis.exe";
+				string oldExe = destDir + "Anamnesis.exe";
 
 				if (!File.Exists(oldExe))
 					throw new Exception($"No Anamnesis executable found at: {oldExe}");
@@ -100,7 +101,7 @@ namespace UpdateExtractor
 
 				Console.WriteLine("Restarting application");
 
-				string launch = destDir + "\\Anamnesis.exe";
+				string launch = destDir + "Anamnesis.exe";
 				Console.WriteLine("    > " + launch);
 				ProcessStartInfo start = new ProcessStartInfo(launch);
 				Process.Start(start);
