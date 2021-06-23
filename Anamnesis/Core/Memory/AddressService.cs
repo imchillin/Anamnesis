@@ -157,7 +157,8 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("48 8B 15 ?? ?? ?? ?? 48 89 6C 24", 0, (p) => { GposeCheck = p; }));
 			tasks.Add(GetAddressFromSignature("8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
 			tasks.Add(GetAddressFromSignature("48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
-			tasks.Add(GetAddressFromSignature("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 8E", 0, (p) => {
+			tasks.Add(GetAddressFromSignature("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 8E", 0, (p) =>
+			{
 				GPoseActorTable = p + 0x14A0;
 				GPoseTargetManager = p + 0x14A0;
 			}));
