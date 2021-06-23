@@ -19,7 +19,7 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Expander Style="{StaticResource Cm3Expander}">
+		<Expander Style="{StaticResource MaterialDesignExpander}">
 			<Expander.Header>
 				<StackPanel>
 					<XivToolsWpf:TextBlock Key="EquipmentSelector_Classes" Foreground="{DynamicResource MaterialDesignBody}"/>
