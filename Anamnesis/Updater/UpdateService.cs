@@ -21,7 +21,7 @@ namespace Anamnesis.Updater
 
 		private const string Repository = "imchillin/Anamnesis";
 
-		private HttpClient httpClient = new HttpClient();
+		private readonly HttpClient httpClient = new HttpClient();
 		private Release? currentRelease;
 
 		public static DateTimeOffset Version { get; private set; } = DateTimeOffset.Now;
@@ -84,7 +84,7 @@ namespace Anamnesis.Updater
 				{
 					await Dispatch.MainThread();
 
-					UpdateDialog dlg = new UpdateDialog();
+					UpdateDialog dlg = new();
 					dlg.Changes = this.currentRelease.Changes;
 					await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
 				}
@@ -137,7 +137,7 @@ namespace Anamnesis.Updater
 					if (tAsset.Name == null)
 						continue;
 
-					if (!tAsset.Name.EndsWith(".zip"))
+					if (!tAsset.Name.EndsWith(".zip", StringComparison.InvariantCulture))
 						continue;
 
 					asset = tAsset;
@@ -151,7 +151,7 @@ namespace Anamnesis.Updater
 
 				// Download asset to temp file
 				string zipFilePath = Path.GetTempFileName();
-				using WebClient client = new WebClient();
+				using WebClient client = new();
 				if (updateProgress != null)
 				{
 					client.DownloadProgressChanged += (object sender, DownloadProgressChangedEventArgs e) =>
@@ -165,8 +165,8 @@ namespace Anamnesis.Updater
 				if (!Directory.Exists(UpdateTempDir))
 					Directory.CreateDirectory(UpdateTempDir);
 
-				using FileStream zipFile = new FileStream(zipFilePath, FileMode.Open);
-				using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Read);
+				using FileStream zipFile = new(zipFilePath, FileMode.Open);
+				using ZipArchive archive = new(zipFile, ZipArchiveMode.Read);
 				archive.ExtractToDirectory(UpdateTempDir, true);
 				archive.Dispose();
 				await zipFile.DisposeAsync();
@@ -194,7 +194,7 @@ namespace Anamnesis.Updater
 				// Start the update extractor
 				string currentDir = Directory.GetCurrentDirectory();
 				string procName = Process.GetCurrentProcess().ProcessName;
-				ProcessStartInfo start = new ProcessStartInfo(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentDir}\" {procName}");
+				ProcessStartInfo start = new(UpdateTempDir + "/Updater/UpdateExtractor.exe", $"\"{currentDir}\" {procName}");
 				Process.Start(start);
 
 				// Shutdown anamnesis
