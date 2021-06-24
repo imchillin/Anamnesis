@@ -12,9 +12,9 @@ namespace Anamnesis.Services
 	[AddINotifyPropertyChangedInterface]
 	public class GameService : ServiceBase<GameService>
 	{
-		public static bool Ready { get; private set; } = false;
+		public static bool Ready => Exists && Instance.IsSignedIn;
 
-		public bool IsSignedIn => Ready;
+		public bool IsSignedIn { get; private set; }
 
 		public static bool GetIsSignedIn()
 		{
@@ -61,7 +61,7 @@ namespace Anamnesis.Services
 		{
 			while (this.IsAlive)
 			{
-				Ready = GetIsSignedIn();
+				this.IsSignedIn = GetIsSignedIn();
 
 				if (!this.IsSignedIn)
 				{
