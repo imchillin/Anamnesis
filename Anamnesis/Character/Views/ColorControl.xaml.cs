@@ -85,6 +85,9 @@ namespace Anamnesis.Character.Views
 
 		private static void OnTribeChanged(ColorControl sender, Appearance.Tribes value)
 		{
+			if (!Enum.IsDefined<Appearance.Tribes>(value))
+				return;
+
 			sender.colors = sender.GetColors();
 			sender.PreviewColor.Color = sender.WpfColor;
 		}
