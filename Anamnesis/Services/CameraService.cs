@@ -65,6 +65,9 @@ namespace Anamnesis
 			{
 				await Task.Delay(50);
 
+				if (!GameService.Ready)
+					continue;
+
 				if (this.Camera == null)
 					continue;
 

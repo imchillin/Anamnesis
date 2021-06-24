@@ -4,9 +4,6 @@
 namespace Anamnesis.Services
 {
 	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Text;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
@@ -15,33 +12,43 @@ namespace Anamnesis.Services
 	[AddINotifyPropertyChangedInterface]
 	public class GameService : ServiceBase<GameService>
 	{
-		public bool IsSignedIn { get; private set; }
+		public static bool Ready { get; private set; } = false;
+
+		public bool IsSignedIn => Ready;
 
 		public static bool GetIsSignedIn()
 		{
-			if (TerritoryService.Instance.CurrentTerritory == null)
-				return false;
-
-			IntPtr startAddress;
-			if (GposeService.Instance.IsGpose)
+			try
 			{
-				startAddress = AddressService.GPoseActorTable + 8;
+				if (TerritoryService.Instance.CurrentTerritory == null)
+					return false;
+
+				IntPtr startAddress;
+				if (GposeService.Instance.IsGpose)
+				{
+					startAddress = AddressService.GPoseActorTable + 8;
+				}
+				else
+				{
+					startAddress = AddressService.ActorTable;
+				}
+
+				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable);
+
+				if (ptr == IntPtr.Zero)
+					return false;
+
+				Actor actor = MemoryService.Read<Actor>(ptr);
+				if (string.IsNullOrEmpty(actor.Name))
+					return false;
+
+				return true;
 			}
-			else
+			catch (Exception ex)
 			{
-				startAddress = AddressService.ActorTable;
+				Log.Warning(ex, "Failed to safely check for sign in");
+				return false;
 			}
-
-			IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable);
-
-			if (ptr == IntPtr.Zero)
-				return false;
-
-			Actor actor = MemoryService.Read<Actor>(ptr);
-			if (string.IsNullOrEmpty(actor.Name))
-				return false;
-
-			return true;
 		}
 
 		public override Task Initialize()
@@ -54,7 +61,7 @@ namespace Anamnesis.Services
 		{
 			while (this.IsAlive)
 			{
-				this.IsSignedIn = GetIsSignedIn();
+				Ready = GetIsSignedIn();
 
 				if (!this.IsSignedIn)
 				{
