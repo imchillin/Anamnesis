@@ -137,7 +137,7 @@ namespace Anamnesis
 
 			if (currentDir.Contains("\\AppData\\Local\\Temp\\"))
 			{
-				throw new Exception("Attempt to run from temporary directory. (Are you running Anamneis from a zip file?)");
+				throw new Exception("Attempt to run from temporary directory. (Are you running Anamnesis from a zip file?)");
 			}
 		}
 
