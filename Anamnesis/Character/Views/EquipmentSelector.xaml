@@ -31,28 +31,16 @@
 			</Border>
 		</Expander>
 
-		<ComboBox Grid.Row="1" Margin="6" SelectedIndex="{Binding ModeInt}">
-			<ComboBoxItem>
-				<XivToolsWpf:TextBlock Key="EquipmentSelector_All"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<XivToolsWpf:TextBlock Key="EquipmentSelector_Items"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<XivToolsWpf:TextBlock Key="EquipmentSelector_Props"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<XivToolsWpf:TextBlock Key="EquipmentSelector_Performance"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<XivToolsWpf:TextBlock Key="EquipmentSelector_Modded"/>
-			</ComboBoxItem>
-			<ComboBoxItem >
-				<XivToolsWpf:TextBlock Key="EquipmentSelector_Favorites"/>
-			</ComboBoxItem>
-		</ComboBox>
-
-			<!--<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6, 0, 0, 0">
+        <Expander Style="{StaticResource MaterialDesignExpander}" Grid.Row="1">
+            <Expander.Header>
+                <XivToolsWpf:TextBlock Key="EquipmentSelector_Categories" Foreground="{DynamicResource MaterialDesignBody}"/>
+            </Expander.Header>
+            <Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="3">
+                <controls:ItemCategoryFilter Value="{Binding CategoryFilter}"/>
+            </Border>
+        </Expander>
+		
+		<!--<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6, 0, 0, 0">
 			<RadioButton Margin="3" IsChecked="{Binding AllMode}">
 				<controls:TextBlock Key="EquipmentSelector_All" Margin="0, -3, 6, 0"/>
 			</RadioButton>
