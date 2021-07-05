@@ -143,8 +143,8 @@ namespace Anamnesis.Character.Views
 					return false;
 
 				bool categoryFiltered = false;
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Items) && obj is not Prop && item.Key != 0;
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && obj is Prop && obj is not PerformViewModel;
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Items) && obj is not Prop && obj is not PerformViewModel && item.Key != 0;
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && obj is Prop;
 				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && obj is PerformViewModel;
 				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
 				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;
