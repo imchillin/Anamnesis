@@ -4,13 +4,13 @@
 namespace Anamnesis.Character.Views
 {
 	using System;
-	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Services;
+	using Anamnesis.Styles.Controls;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 
@@ -20,8 +20,8 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
-		private static Modes mode = Modes.All;
 		private static Classes classFilter = Classes.All;
+		private static ItemCategories categoryFilter = ItemCategories.All;
 		private static bool pairEquip = false;
 
 		private readonly ItemSlots slot;
@@ -55,30 +55,10 @@ namespace Anamnesis.Character.Views
 		public event DrawerEvent? Close;
 		public event DrawerEvent? SelectionChanged;
 
-		public enum Modes
-		{
-			All,
-			Items,
-			Props,
-			Performance,
-			Modded,
-			Favorites,
-		}
-
 		public IItem? Value
 		{
 			get => (IItem?)this.Selector.Value;
 			set => this.Selector.Value = value;
-		}
-
-		public int ModeInt
-		{
-			get => (int)mode;
-			set
-			{
-				mode = (Modes)value;
-				this.Selector.FilterItems();
-			}
 		}
 
 		public bool PairEquip
@@ -107,6 +87,16 @@ namespace Anamnesis.Character.Views
 			{
 				classFilter = value;
 				this.JobFilterText.Text = value.Describe();
+				this.Selector.FilterItems();
+			}
+		}
+
+		public ItemCategories CategoryFilter
+		{
+			get => categoryFilter;
+			set
+			{
+				categoryFilter = value;
 				this.Selector.FilterItems();
 			}
 		}
@@ -152,19 +142,13 @@ namespace Anamnesis.Character.Views
 				if (string.IsNullOrEmpty(item.Name))
 					return false;
 
-				if (mode == Modes.Items && (obj is Prop || item.Key == 0))
-					return false;
-
-				if (mode == Modes.Props && !(obj is Prop))
-					return false;
-
-				if (mode == Modes.Performance && !(obj is PerformViewModel))
-					return false;
-
-				if (mode == Modes.Modded && item.Mod == null)
-					return false;
-
-				if (mode == Modes.Favorites && !item.IsFavorite)
+				bool categoryFiltered = false;
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Items) && obj is not Prop && obj is not PerformViewModel && item.Key != 0;
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && obj is Prop;
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && obj is PerformViewModel;
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;
+				if (!categoryFiltered)
 					return false;
 
 				if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
