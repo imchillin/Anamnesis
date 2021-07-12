@@ -11,13 +11,16 @@ namespace Anamnesis.Styles.Controls
 	{
 		None = 0,
 
-		Items = 1 << 0,
-		Props = 1 << 1,
-		Performance = 1 << 2,
-		Modded = 1 << 3,
-		Favorites = 1 << 4,
+		Standard = 1 << 0,
+		Premium = 1 << 1,
+		Limited = 1 << 2,
+		Deprecated = 1 << 3,
+		Props = 1 << 4,
+		Performance = 1 << 5,
+		Modded = 1 << 6,
+		Favorites = 1 << 7,
 
-		All = Items | Props | Performance | Modded | Favorites,
+		All = Standard | Premium | Limited | Deprecated | Props | Performance | Modded | Favorites,
 	}
 
 	public static class ItemCategoriesExtensions
