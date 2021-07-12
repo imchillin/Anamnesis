@@ -5,6 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.PoseModule.Views"
 			 xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
@@ -21,6 +22,39 @@
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
+
+			<XivToolsWpf:TextBlock Key="Pose_GuiFlip" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="0, 3, 6, 0" Opacity="0.3"
+					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}}" />
+
+			<XivToolsWpf:TextBlock Key="Pose_GuiNotFlip" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="0, 3, 6, 0" Opacity="0.3"
+					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}}" />
+
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					    Visibility="{Binding FlipSides, Converter={StaticResource !B2V}}" />
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}}" />
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}}" />
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}}" />
+
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					    Visibility="{Binding FlipSides, Converter={StaticResource !B2V}}" />
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}}" />
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}}" />
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}}" />
+
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					    Visibility="{Binding FlipSides, Converter={StaticResource !B2V}}" />
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}}" />
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}}" />
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}}" />
 
 			<!-- Body -->
 			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256">

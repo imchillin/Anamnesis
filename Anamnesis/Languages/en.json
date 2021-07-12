@@ -164,9 +164,11 @@
 	"Pose_Load": "Load",
 	"Pose_Selected": "Selected Bones",
 	"Pose_Expression": "Expression",
-
 	"Pose_Flip": "Flip",
-
+	"Pose_Left": "L",
+	"Pose_Right": "R",
+	"Pose_GuiFlip": "Facing towards",
+	"Pose_GuiNotFlip": "Facing away",
 	"Pose_FreezePhysics": "Freeze Physics",
 	"Pose_Parenting": "Parenting",
 	"Pose_LinkEyes": "Link Eyes",
