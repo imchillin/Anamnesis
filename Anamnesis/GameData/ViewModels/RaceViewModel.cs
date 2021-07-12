@@ -19,7 +19,7 @@ namespace Anamnesis.GameData.ViewModels
 		}
 
 		public override string Name => this.Race.ToString();
-		public Appearance.Races Race => (Appearance.Races)this.Key;
+		public Customize.Races Race => (Customize.Races)this.Key;
 		public string Feminine => this.Value.Feminine;
 		public string Masculine => this.Value.Masculine;
 		public string DisplayName => this.Value.Masculine;
@@ -33,52 +33,52 @@ namespace Anamnesis.GameData.ViewModels
 
 				return this.Race switch
 				{
-					Appearance.Races.Hyur => new[]
+					Customize.Races.Hyur => new[]
 					{
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Midlander),
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Highlander),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Midlander),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Highlander),
 					},
 
-					Appearance.Races.Elezen => new[]
+					Customize.Races.Elezen => new[]
 					{
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Wildwood),
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Duskwight),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Wildwood),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Duskwight),
 					},
 
-					Appearance.Races.Lalafel => new[]
+					Customize.Races.Lalafel => new[]
 					{
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Plainsfolk),
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Dunesfolk),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Plainsfolk),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Dunesfolk),
 					},
 
-					Appearance.Races.Miqote => new[]
+					Customize.Races.Miqote => new[]
 					{
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.SeekerOfTheSun),
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.KeeperOfTheMoon),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.SeekerOfTheSun),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.KeeperOfTheMoon),
 					},
 
-					Appearance.Races.Roegadyn => new[]
+					Customize.Races.Roegadyn => new[]
 					{
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.SeaWolf),
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Hellsguard),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.SeaWolf),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Hellsguard),
 					},
 
-					Appearance.Races.AuRa => new[]
+					Customize.Races.AuRa => new[]
 					{
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Raen),
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Xaela),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Raen),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Xaela),
 					},
 
-					Appearance.Races.Hrothgar => new[]
+					Customize.Races.Hrothgar => new[]
 					{
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Helions),
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.TheLost),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Helions),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.TheLost),
 					},
 
-					Appearance.Races.Viera => new[]
+					Customize.Races.Viera => new[]
 					{
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Rava),
-						GameDataService.Tribes.Get((byte)Appearance.Tribes.Veena),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Rava),
+						GameDataService.Tribes.Get((byte)Customize.Tribes.Veena),
 					},
 
 					_ => throw new Exception($"Unrecognized race {this.Race}"),

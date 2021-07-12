@@ -14,7 +14,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Services;
 	using PropertyChanged;
 
-	using AnAppearance = Anamnesis.Memory.Appearance;
+	using AnAppearance = Anamnesis.Memory.Customize;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
@@ -29,8 +29,8 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Genders));
-			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(Appearance.Ages));
+			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Customize.Genders));
+			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(Customize.Ages));
 
 			List<IRace> races = new List<IRace>();
 			foreach (IRace race in GameDataService.Races)

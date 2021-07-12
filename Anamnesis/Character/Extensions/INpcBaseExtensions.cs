@@ -16,8 +16,8 @@ namespace Anamnesis.Character
 			file.ModelType = npc.ModelType;
 			file.Race = npc.Race.Race;
 			file.Tribe = npc.Tribe.Tribe;
-			file.Gender = (Appearance.Genders)npc.Gender;
-			file.Age = (Appearance.Ages)npc.BodyType;
+			file.Gender = (Customize.Genders)npc.Gender;
+			file.Age = (Customize.Ages)npc.BodyType;
 			file.Height = (byte)npc.Height;
 			file.Head = (byte)npc.Face;
 			file.Hair = (byte)npc.HairStyle;
@@ -27,7 +27,7 @@ namespace Anamnesis.Character
 			file.LEyeColor = (byte)npc.EyeHeterochromia;
 			file.HairTone = (byte)npc.HairColor;
 			file.Highlights = (byte)npc.HairHighlightColor;
-			file.FacialFeatures = (Appearance.FacialFeature)npc.FacialFeature;
+			file.FacialFeatures = (Customize.FacialFeature)npc.FacialFeature;
 			file.LimbalEyes = 0; // TODO: Can npc's have limbal rings?
 			file.Eyebrows = (byte)npc.Eyebrows;
 			file.Eyes = (byte)npc.EyeShape;

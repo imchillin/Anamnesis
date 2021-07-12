@@ -8,7 +8,7 @@ namespace Anamnesis.GameData
 
 	public interface ITribe : IRow, IEquatable<ITribe>
 	{
-		Appearance.Tribes Tribe { get; }
+		Customize.Tribes Tribe { get; }
 		string Feminine { get; }
 		string Masculine { get; }
 		string DisplayName { get; }

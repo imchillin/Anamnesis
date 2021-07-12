@@ -8,7 +8,7 @@ namespace Anamnesis.GameData
 
 	public interface IRace : IRow
 	{
-		Appearance.Races Race { get; }
+		Customize.Races Race { get; }
 		string Feminine { get; }
 		string Masculine { get; }
 		string DisplayName { get; }

@@ -24,9 +24,9 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FacialFeaturesControl : UserControl
 	{
-		public static readonly IBind<Appearance.FacialFeature> ValueDp = Binder.Register<Appearance.FacialFeature, FacialFeaturesControl>(nameof(Value), OnValueChanged);
-		public static readonly IBind<Appearance.Genders> GenderDp = Binder.Register<Appearance.Genders, FacialFeaturesControl>(nameof(Gender), OnGenderChanged);
-		public static readonly IBind<Appearance.Tribes> TribeDp = Binder.Register<Appearance.Tribes, FacialFeaturesControl>(nameof(Tribe), OnTribeChanged);
+		public static readonly IBind<Customize.FacialFeature> ValueDp = Binder.Register<Customize.FacialFeature, FacialFeaturesControl>(nameof(Value), OnValueChanged);
+		public static readonly IBind<Customize.Genders> GenderDp = Binder.Register<Customize.Genders, FacialFeaturesControl>(nameof(Gender), OnGenderChanged);
+		public static readonly IBind<Customize.Tribes> TribeDp = Binder.Register<Customize.Tribes, FacialFeaturesControl>(nameof(Tribe), OnTribeChanged);
 		public static readonly IBind<byte> HeadDp = Binder.Register<byte, FacialFeaturesControl>(nameof(Head), OnHeadChanged);
 
 		private readonly List<Option> features = new List<Option>();
@@ -38,13 +38,13 @@ namespace Anamnesis.Character.Views
 			OnValueChanged(this, this.Value);
 		}
 
-		public Appearance.Genders Gender
+		public Customize.Genders Gender
 		{
 			get => GenderDp.Get(this);
 			set => GenderDp.Set(this, value);
 		}
 
-		public Appearance.Tribes Tribe
+		public Customize.Tribes Tribe
 		{
 			get => TribeDp.Get(this);
 			set => TribeDp.Set(this, value);
@@ -56,19 +56,19 @@ namespace Anamnesis.Character.Views
 			set => HeadDp.Set(this, value);
 		}
 
-		public Appearance.FacialFeature Value
+		public Customize.FacialFeature Value
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
 		}
 
-		private static void OnGenderChanged(FacialFeaturesControl sender, Appearance.Genders value)
+		private static void OnGenderChanged(FacialFeaturesControl sender, Customize.Genders value)
 		{
 			sender.GetFeatures();
 			OnValueChanged(sender, sender.Value);
 		}
 
-		private static void OnTribeChanged(FacialFeaturesControl sender, Appearance.Tribes value)
+		private static void OnTribeChanged(FacialFeaturesControl sender, Customize.Tribes value)
 		{
 			sender.GetFeatures();
 			OnValueChanged(sender, sender.Value);
@@ -80,7 +80,7 @@ namespace Anamnesis.Character.Views
 			OnValueChanged(sender, sender.Value);
 		}
 
-		private static void OnValueChanged(FacialFeaturesControl sender, Appearance.FacialFeature value)
+		private static void OnValueChanged(FacialFeaturesControl sender, Customize.FacialFeature value)
 		{
 			sender.locked = true;
 			foreach (Option op in sender.features)
@@ -134,24 +134,24 @@ namespace Anamnesis.Character.Views
 			}
 
 			Option legacyTattoo = new Option();
-			legacyTattoo.Value = Appearance.FacialFeature.LegacyTattoo;
+			legacyTattoo.Value = Customize.FacialFeature.LegacyTattoo;
 			this.features.Add(legacyTattoo);
 
 			this.FeaturesList.ItemsSource = this.features;
 			this.locked = false;
 		}
 
-		private Appearance.FacialFeature GetValue(int index)
+		private Customize.FacialFeature GetValue(int index)
 		{
 			switch (index)
 			{
-				case 0: return Appearance.FacialFeature.First;
-				case 1: return Appearance.FacialFeature.Second;
-				case 2: return Appearance.FacialFeature.Third;
-				case 3: return Appearance.FacialFeature.Fourth;
-				case 4: return Appearance.FacialFeature.Fifth;
-				case 5: return Appearance.FacialFeature.Sixth;
-				case 6: return Appearance.FacialFeature.Seventh;
+				case 0: return Customize.FacialFeature.First;
+				case 1: return Customize.FacialFeature.Second;
+				case 2: return Customize.FacialFeature.Third;
+				case 3: return Customize.FacialFeature.Fourth;
+				case 4: return Customize.FacialFeature.Fifth;
+				case 5: return Customize.FacialFeature.Sixth;
+				case 6: return Customize.FacialFeature.Seventh;
 			}
 
 			throw new Exception("Invalid index value");
@@ -162,7 +162,7 @@ namespace Anamnesis.Character.Views
 			if (this.locked)
 				return;
 
-			Appearance.FacialFeature flags = Appearance.FacialFeature.None;
+			Customize.FacialFeature flags = Customize.FacialFeature.None;
 			foreach (Option? op in this.FeaturesList.SelectedItems)
 			{
 				if (op == null)
@@ -177,7 +177,7 @@ namespace Anamnesis.Character.Views
 		[AddINotifyPropertyChangedInterface]
 		private class Option
 		{
-			public Appearance.FacialFeature Value { get; set; }
+			public Customize.FacialFeature Value { get; set; }
 			public ImageSource? Icon { get; set; }
 			public int Index { get; set; }
 			public bool Selected { get; set; }

@@ -16,7 +16,7 @@ namespace Anamnesis.GameData.ViewModels
 		}
 
 		public override string Name => this.Tribe.ToString();
-		public Appearance.Tribes Tribe => (Appearance.Tribes)this.Key;
+		public Customize.Tribes Tribe => (Customize.Tribes)this.Key;
 		public string Feminine => this.Value.Feminine;
 		public string Masculine => this.Value.Masculine;
 

@@ -215,7 +215,7 @@ namespace Anamnesis.PoseModule.Pages
 					return;
 
 				if (result.File is LegacyPoseFile legacyFile)
-					result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? Appearance.Races.Hyur);
+					result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? Customize.Races.Hyur);
 
 				if (result.File is PoseFile poseFile)
 				{

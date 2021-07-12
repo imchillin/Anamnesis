@@ -9,13 +9,13 @@ namespace Anamnesis.Character.Converters
 	using System.Windows.Data;
 	using Anamnesis.Memory;
 
-	[ValueConversion(typeof(Appearance.Genders), typeof(Visibility))]
+	[ValueConversion(typeof(Customize.Genders), typeof(Visibility))]
 	public class MasculineGenderToVisibilityConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			Appearance.Genders gender = (Appearance.Genders)value;
-			return gender == Appearance.Genders.Masculine ? Visibility.Visible : Visibility.Collapsed;
+			Customize.Genders gender = (Customize.Genders)value;
+			return gender == Customize.Genders.Masculine ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

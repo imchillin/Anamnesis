@@ -14,8 +14,8 @@ namespace Anamnesis.Posing.Templates
 		public bool IsGeneratedParenting { get; set; } = false;
 
 		public List<int>? ModelTypes { get; set; }
-		public Appearance.Races? Race { get; set; }
-		public Appearance.Ages? Age { get; set; }
+		public Customize.Races? Race { get; set; }
+		public Customize.Ages? Age { get; set; }
 		public bool AllowPoseGui { get; set; } = false;
 		public bool AllowPoseMatrix { get; set; } = false;
 		public string? BasedOn { get; set; }

@@ -14,7 +14,7 @@ namespace Anamnesis.GameData
 
 	public interface ICharaMakeCustomizeData : ISheet<ICharaMakeCustomize>
 	{
-		List<ICharaMakeCustomize> GetFeatureOptions(Features feature, Appearance.Tribes tribe, Appearance.Genders gender);
-		ICharaMakeCustomize? GetFeature(Features feature, Appearance.Tribes tribe, Appearance.Genders gender, byte featureId);
+		List<ICharaMakeCustomize> GetFeatureOptions(Features feature, Customize.Tribes tribe, Customize.Genders gender);
+		ICharaMakeCustomize? GetFeature(Features feature, Customize.Tribes tribe, Customize.Genders gender, byte featureId);
 	}
 }

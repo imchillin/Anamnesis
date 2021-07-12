@@ -50,11 +50,11 @@ namespace Anamnesis.Files
 		public int ModelType { get; set; } = 0;
 
 		// appearance
-		public Appearance.Races? Race { get; set; }
-		public Appearance.Genders? Gender { get; set; }
-		public Appearance.Ages? Age { get; set; }
+		public Customize.Races? Race { get; set; }
+		public Customize.Genders? Gender { get; set; }
+		public Customize.Ages? Age { get; set; }
 		public byte? Height { get; set; }
-		public Appearance.Tribes? Tribe { get; set; }
+		public Customize.Tribes? Tribe { get; set; }
 		public byte? Head { get; set; }
 		public byte? Hair { get; set; }
 		public bool? EnableHighlights { get; set; }
@@ -62,7 +62,7 @@ namespace Anamnesis.Files
 		public byte? REyeColor { get; set; }
 		public byte? HairTone { get; set; }
 		public byte? Highlights { get; set; }
-		public Appearance.FacialFeature? FacialFeatures { get; set; }
+		public Customize.FacialFeature? FacialFeatures { get; set; }
 		public byte? LimbalEyes { get; set; }
 		public byte? Eyebrows { get; set; }
 		public byte? LEyeColor { get; set; }
@@ -304,16 +304,16 @@ namespace Anamnesis.Files
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
 				if (this.Race != null)
-					actor.Customize.Race = (Appearance.Races)this.Race;
+					actor.Customize.Race = (Customize.Races)this.Race;
 
 				if (this.Gender != null)
-					actor.Customize.Gender = (Appearance.Genders)this.Gender;
+					actor.Customize.Gender = (Customize.Genders)this.Gender;
 
 				if (this.Tribe != null)
-					actor.Customize.Tribe = (Appearance.Tribes)this.Tribe;
+					actor.Customize.Tribe = (Customize.Tribes)this.Tribe;
 
 				if (this.Age != null)
-					actor.Customize.Age = (Appearance.Ages)this.Age;
+					actor.Customize.Age = (Customize.Ages)this.Age;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
@@ -325,7 +325,7 @@ namespace Anamnesis.Files
 					actor.Customize.REyeColor = (byte)this.REyeColor;
 
 				if (this.FacialFeatures != null)
-					actor.Customize.FacialFeatures = (Appearance.FacialFeature)this.FacialFeatures;
+					actor.Customize.FacialFeatures = (Customize.FacialFeature)this.FacialFeatures;
 
 				if (this.LimbalEyes != null)
 					actor.Customize.LimbalEyes = (byte)this.LimbalEyes;
