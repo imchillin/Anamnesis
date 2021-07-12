@@ -59,7 +59,13 @@ namespace Anamnesis.Character.Views
 		public double HeightCm { get; set; }
 		public string? HeightFeet { get; set; }
 
-		public AppearanceViewModel? Appearance
+		public ActorViewModel? Actor
+		{
+			get;
+			private set;
+		}
+
+		public CustomizeViewModel? Customize
 		{
 			get;
 			private set;
@@ -77,19 +83,20 @@ namespace Anamnesis.Character.Views
 
 		private void OnActorChanged(ActorViewModel? actor)
 		{
+			this.Actor = actor;
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
 
 			this.Hair = null;
 			this.FacePaint = null;
 
-			if (this.Appearance != null)
-				this.Appearance.PropertyChanged -= this.OnAppearancePropertyChanged;
+			if (this.Customize != null)
+				this.Customize.PropertyChanged -= this.OnAppearancePropertyChanged;
 
 			if (actor == null || actor.Customize == null)
 				return;
 
-			this.Appearance = actor.Customize;
-			this.Appearance.PropertyChanged += this.OnAppearancePropertyChanged;
+			this.Customize = actor.Customize;
+			this.Customize.PropertyChanged += this.OnAppearancePropertyChanged;
 
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -102,10 +109,10 @@ namespace Anamnesis.Character.Views
 			if (this.appearanceLocked)
 				return;
 
-			if (e.PropertyName == nameof(AppearanceViewModel.Race) ||
-				e.PropertyName == nameof(AppearanceViewModel.Tribe) ||
-				e.PropertyName == nameof(AppearanceViewModel.Hair) ||
-				e.PropertyName == nameof(AppearanceViewModel.FacePaint))
+			if (e.PropertyName == nameof(CustomizeViewModel.Race) ||
+				e.PropertyName == nameof(CustomizeViewModel.Tribe) ||
+				e.PropertyName == nameof(CustomizeViewModel.Hair) ||
+				e.PropertyName == nameof(CustomizeViewModel.FacePaint))
 			{
 				Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
 			}
@@ -122,19 +129,19 @@ namespace Anamnesis.Character.Views
 			if (GameDataService.CharacterMakeCustomize == null)
 				throw new Exception("CharacterMakeCustomize not loaded");
 
-			if (this.Appearance == null)
+			if (this.Customize == null)
 			{
 				this.IsEnabled = false;
 				return;
 			}
 
-			if (this.Appearance.Race == 0 || this.Appearance.Race > AnAppearance.Races.Viera)
+			if (this.Customize.Race == 0 || this.Customize.Race > AnAppearance.Races.Viera)
 			{
 				this.IsEnabled = false;
 				return;
 			}
 
-			this.Race = GameDataService.Races.Get((uint)this.Appearance.Race);
+			this.Race = GameDataService.Races.Get((uint)this.Customize.Race);
 
 			// Something has gone terribly wrong.
 			if (this.Race == null)
@@ -149,30 +156,30 @@ namespace Anamnesis.Character.Views
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
 
-			this.Tribe = GameDataService.Tribes.Get((uint)this.Appearance.Tribe);
+			this.Tribe = GameDataService.Tribes.Get((uint)this.Customize.Tribe);
 
-			if (this.Appearance.Tribe == 0 || this.Tribe == null)
-				this.Appearance.Tribe = this.Race.Tribes.First().Tribe;
+			if (this.Customize.Tribe == 0 || this.Tribe == null)
+				this.Customize.Tribe = this.Race.Tribes.First().Tribe;
 
 			this.TribeComboBox.SelectedItem = this.Tribe;
 
-			this.HasFur = this.Appearance.Race == AnAppearance.Races.Hrothgar;
-			this.HasTail = this.Appearance.Race == AnAppearance.Races.Hrothgar || this.Appearance.Race == AnAppearance.Races.Miqote || this.Appearance.Race == AnAppearance.Races.AuRa;
-			this.HasLimbal = this.Appearance.Race == AnAppearance.Races.AuRa;
-			this.HasEars = this.Appearance.Race == AnAppearance.Races.Viera || this.Appearance.Race == AnAppearance.Races.Lalafel || this.Appearance.Race == AnAppearance.Races.Elezen;
+			this.HasFur = this.Customize.Race == AnAppearance.Races.Hrothgar;
+			this.HasTail = this.Customize.Race == AnAppearance.Races.Hrothgar || this.Customize.Race == AnAppearance.Races.Miqote || this.Customize.Race == AnAppearance.Races.AuRa;
+			this.HasLimbal = this.Customize.Race == AnAppearance.Races.AuRa;
+			this.HasEars = this.Customize.Race == AnAppearance.Races.Viera || this.Customize.Race == AnAppearance.Races.Lalafel || this.Customize.Race == AnAppearance.Races.Elezen;
 			this.HasMuscles = !this.HasEars && !this.HasTail;
-			this.HasGender = this.Appearance.Race != AnAppearance.Races.Hrothgar && this.Appearance.Race != AnAppearance.Races.Viera;
+			this.HasGender = this.Customize.Race != AnAppearance.Races.Hrothgar && this.Customize.Race != AnAppearance.Races.Viera;
 
-			bool canAge = this.Appearance.Tribe == AnAppearance.Tribes.Midlander;
-			canAge |= this.Appearance.Race == AnAppearance.Races.Miqote && this.Appearance.Gender == AnAppearance.Genders.Feminine;
-			canAge |= this.Appearance.Race == AnAppearance.Races.Elezen;
-			canAge |= this.Appearance.Race == AnAppearance.Races.AuRa;
+			bool canAge = this.Customize.Tribe == AnAppearance.Tribes.Midlander;
+			canAge |= this.Customize.Race == AnAppearance.Races.Miqote && this.Customize.Gender == AnAppearance.Genders.Feminine;
+			canAge |= this.Customize.Race == AnAppearance.Races.Elezen;
+			canAge |= this.Customize.Race == AnAppearance.Races.AuRa;
 			this.CanAge = canAge;
 
-			if (this.Appearance.Tribe > 0)
+			if (this.Customize.Tribe > 0)
 			{
-				this.Hair = GameDataService.CharacterMakeCustomize.GetFeature(Features.Hair, this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.Hair);
-				this.FacePaint = GameDataService.CharacterMakeCustomize.GetFeature(Features.FacePaint, this.Appearance.Tribe, this.Appearance.Gender, this.Appearance.FacePaint);
+				this.Hair = GameDataService.CharacterMakeCustomize.GetFeature(Features.Hair, this.Customize.Tribe, this.Customize.Gender, this.Customize.Hair);
+				this.FacePaint = GameDataService.CharacterMakeCustomize.GetFeature(Features.FacePaint, this.Customize.Tribe, this.Customize.Gender, this.Customize.FacePaint);
 			}
 
 			this.IsEnabled = true;
@@ -180,7 +187,7 @@ namespace Anamnesis.Character.Views
 
 		private void OnGenderChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (this.Appearance == null)
+			if (this.Customize == null)
 				return;
 
 			AnAppearance.Genders? gender = this.GenderComboBox.SelectedItem as AnAppearance.Genders?;
@@ -189,25 +196,25 @@ namespace Anamnesis.Character.Views
 				return;
 
 			// Do not change to masculine gender when a young miqo or aura as it will crash the game
-			if (this.Appearance.Age == AnAppearance.Ages.Young && (this.Appearance.Race == AnAppearance.Races.Miqote))
+			if (this.Customize.Age == AnAppearance.Ages.Young && (this.Customize.Race == AnAppearance.Races.Miqote))
 			{
-				this.Appearance.Age = AnAppearance.Ages.Normal;
+				this.Customize.Age = AnAppearance.Ages.Normal;
 			}
 
-			this.Appearance.Gender = (AnAppearance.Genders)gender;
+			this.Customize.Gender = (AnAppearance.Genders)gender;
 
 			this.UpdateRaceAndTribe();
 		}
 
 		private async void OnHairClicked(object sender, RoutedEventArgs e)
 		{
-			if (this.Appearance == null)
+			if (this.Customize == null)
 				return;
 
-			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(Features.Hair, this.Appearance.Gender, this.Appearance.Tribe, this.Appearance.Hair);
+			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(Features.Hair, this.Customize.Gender, this.Customize.Tribe, this.Customize.Hair);
 			selector.SelectionChanged += (v) =>
 			{
-				this.Appearance.Hair = v;
+				this.Customize.Hair = v;
 			};
 
 			await ViewService.ShowDrawer(selector);
@@ -215,13 +222,13 @@ namespace Anamnesis.Character.Views
 
 		private async void OnFacePaintClicked(object sender, RoutedEventArgs e)
 		{
-			if (this.Appearance == null)
+			if (this.Customize == null)
 				return;
 
-			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(Features.FacePaint, this.Appearance.Gender, this.Appearance.Tribe, this.Appearance.FacePaint);
+			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(Features.FacePaint, this.Customize.Gender, this.Customize.Tribe, this.Customize.FacePaint);
 			selector.SelectionChanged += (v) =>
 			{
-				this.Appearance.FacePaint = v;
+				this.Customize.FacePaint = v;
 			};
 
 			await ViewService.ShowDrawer(selector);
@@ -231,7 +238,7 @@ namespace Anamnesis.Character.Views
 		{
 			IRace? race = this.RaceComboBox.SelectedItem as IRace;
 
-			if (race == null || this.Appearance == null)
+			if (race == null || this.Customize == null)
 				return;
 
 			// did we change?
@@ -239,13 +246,13 @@ namespace Anamnesis.Character.Views
 				return;
 
 			if (race.Race == AnAppearance.Races.Hrothgar)
-				this.Appearance.Gender = AnAppearance.Genders.Masculine;
+				this.Customize.Gender = AnAppearance.Genders.Masculine;
 
 			if (race.Race == AnAppearance.Races.Viera)
-				this.Appearance.Gender = AnAppearance.Genders.Feminine;
+				this.Customize.Gender = AnAppearance.Genders.Feminine;
 
 			// reset age when chaing race
-			this.Appearance.Age = AnAppearance.Ages.Normal;
+			this.Customize.Age = AnAppearance.Ages.Normal;
 
 			if (this.Race == race)
 				return;
@@ -269,8 +276,8 @@ namespace Anamnesis.Character.Views
 
 			this.TribeComboBox.SelectedItem = this.Tribe;
 
-			this.Appearance.Race = this.Race.Race;
-			this.Appearance.Tribe = this.Tribe.Tribe;
+			this.Customize.Race = this.Race.Race;
+			this.Customize.Tribe = this.Tribe.Tribe;
 
 			this.UpdateRaceAndTribe();
 
@@ -279,7 +286,7 @@ namespace Anamnesis.Character.Views
 
 		private void OnTribeChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (this.Appearance == null)
+			if (this.Customize == null)
 				return;
 
 			ITribe? tribe = this.TribeComboBox.SelectedItem as ITribe;
@@ -288,10 +295,10 @@ namespace Anamnesis.Character.Views
 				return;
 
 			// reset age when chaing tribe
-			this.Appearance.Age = AnAppearance.Ages.Normal;
+			this.Customize.Age = AnAppearance.Ages.Normal;
 
 			this.Tribe = tribe;
-			this.Appearance.Tribe = this.Tribe.Tribe;
+			this.Customize.Tribe = this.Tribe.Tribe;
 
 			this.UpdateRaceAndTribe();
 		}

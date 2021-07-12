@@ -109,14 +109,14 @@ namespace Anamnesis.Memory
 	}
 
 	#pragma warning disable SA1402
-	public class AppearanceViewModel : StructViewModelBase<Customize>
+	public class CustomizeViewModel : StructViewModelBase<Customize>
 	{
-		public AppearanceViewModel(ActorViewModel parent)
+		public CustomizeViewModel(ActorViewModel parent)
 			: base(parent, nameof(ActorViewModel.Customize))
 		{
 		}
 
-		public AppearanceViewModel(ActorViewModel parent, string propertyName)
+		public CustomizeViewModel(ActorViewModel parent, string propertyName)
 			: base(parent, propertyName)
 		{
 		}

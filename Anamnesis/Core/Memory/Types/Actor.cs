@@ -68,7 +68,7 @@ namespace Anamnesis.Memory
 		[ModelField] public int DataId { get; set; }
 		[ModelField][Refresh] public ActorTypes ObjectKind { get; set; }
 		[ModelField] public byte SubKind { get; set; }
-		[ModelField][Refresh] public AppearanceViewModel? Customize { get; set; }
+		[ModelField][Refresh] public CustomizeViewModel? Customize { get; set; }
 		[ModelField][Refresh] public int ModelType { get; set; }
 		[ModelField] public bool IsAnimating { get; set; }
 		[ModelField][Refresh] public RenderModes RenderMode { get; set; }
