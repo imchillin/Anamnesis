@@ -28,10 +28,10 @@
 
 			<GroupBox Padding="3,0,3,0" Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
-					<XivToolsWpf:Header Key="Character_Appearance_Header" Icon="ConciergeBell" />
+					<XivToolsWpf:Header Key="Character_Customize_Header" Icon="ConciergeBell" />
 				</GroupBox.Header>
 
-				<views:AppearanceEditor DataContext="{Binding Actor}" />
+				<views:CustomizeEditor DataContext="{Binding Actor}" />
 			</GroupBox>
 
 		</Grid>

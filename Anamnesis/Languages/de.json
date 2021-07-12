@@ -76,7 +76,7 @@
 	"Weather_Selector_All_Tooltip": "Alle anzeigen",
 
 	"Character_Appearance_LoadOther": "Andere laden",
-	"Character_Appearance_Header": "Aussehen",
+	"Character_Customize_Header": "Aussehen",
 	"Character_Appearance_Body": "Körper",
 	"Character_Appearance_Race": "Rasse",
 	"Character_Appearance_Skin": "Haut",
@@ -102,7 +102,6 @@
 	"Character_Equipment_Gear": "Ausrüstung",
 	"Character_Equipment_Clear": "Ausrüstung entfernen",
 	"Character_Equipment_Weapons": "Waffen",
-	"Character_Equipment_Clear": "Ausrüstung entfernen",
 	"Character_Equipment_NpcSmallclothes": "NPC Smallclothes ausrüsten",
 	"Character_Equipment_MainHand": "Hauptwaffe",
 	"Character_Equipment_OffHand": "Nebenwaffe",

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Anamnesis.Character.Views.AppearanceEditor"
+﻿<UserControl x:Class="Anamnesis.Character.Views.CustomizeEditor"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -41,7 +41,7 @@
 	<Grid x:Name="ContentArea">
 		<StackPanel>
 
-			<Grid Grid.Row="0" x:Name="AppearanceArea">
+			<Grid Grid.Row="0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition/>

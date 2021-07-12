@@ -20,11 +20,11 @@ namespace Anamnesis.Character.Views
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	public partial class AppearanceEditor : UserControl
+	public partial class CustomizeEditor : UserControl
 	{
 		private bool appearanceLocked = false;
 
-		public AppearanceEditor()
+		public CustomizeEditor()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
