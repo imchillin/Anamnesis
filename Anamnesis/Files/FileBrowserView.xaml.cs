@@ -468,9 +468,20 @@ namespace Anamnesis.GUI.Views
 			}
 			else
 			{
-				this.FilePath = this.CurrentDir.Path + "/" + this.FileName;
+				if (this.FileName == null)
+					return;
 
+				foreach (char character in Path.GetInvalidFileNameChars())
+				{
+					if (this.FileName.Contains(character))
+					{
+						return;
+					}
+				}
+
+				this.FilePath = this.CurrentDir.Path + "/" + this.FileName;
 				string finalPath = this.FilePath + this.FileExtension;
+
 				if (File.Exists(finalPath))
 				{
 					string fileName = Path.GetFileNameWithoutExtension(finalPath);
