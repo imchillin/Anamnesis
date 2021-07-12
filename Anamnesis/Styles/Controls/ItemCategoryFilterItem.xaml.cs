@@ -28,6 +28,7 @@ namespace Anamnesis.Styles.Controls
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public string? Text { get; set; }
+		public string? ToolText { get; set; }
 
 		public ItemCategories Value
 		{

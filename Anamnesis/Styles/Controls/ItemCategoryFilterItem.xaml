@@ -10,6 +10,9 @@
 
     <Grid x:Name="ContentArea">
         <CheckBox Padding="3" IsChecked="{Binding IsSelected}">
+            <CheckBox.ToolTip>
+                <XivToolsWpf:TextBlock Key="{Binding ToolText}"/>
+            </CheckBox.ToolTip>
             <XivToolsWpf:TextBlock Key="{Binding Text}"/>
         </CheckBox>
     </Grid>
