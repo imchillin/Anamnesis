@@ -150,17 +150,24 @@ namespace Anamnesis.Character.Views
 				if (string.IsNullOrEmpty(item.Name))
 					return false;
 
-				ItemCategories manualCategory = ManualItemCategories.GetValueOrDefault(item.Key, ItemCategories.Standard);
+				ItemCategories itemCategory = ItemCategories.None;
+				if (obj is ItemViewModel)
+					itemCategory = ManualItemCategories.GetValueOrDefault(item.Key, ItemCategories.Standard);
+				else if (obj is Prop)
+					itemCategory = ItemCategories.Props;
+				else if (obj is PerformViewModel)
+					itemCategory = ItemCategories.Performance;
+
 				bool categoryFiltered = false;
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && obj is ItemViewModel && manualCategory.HasFlag(ItemCategories.Standard);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Premium) && obj is ItemViewModel && manualCategory.HasFlag(ItemCategories.Premium);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Limited) && obj is ItemViewModel && manualCategory.HasFlag(ItemCategories.Limited);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Deprecated) && obj is ItemViewModel && manualCategory.HasFlag(ItemCategories.Deprecated);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && obj is Prop;
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && obj is PerformViewModel;
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && itemCategory.HasFlag(ItemCategories.Standard);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Premium) && itemCategory.HasFlag(ItemCategories.Premium);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Limited) && itemCategory.HasFlag(ItemCategories.Limited);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Deprecated) && itemCategory.HasFlag(ItemCategories.Deprecated);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && itemCategory.HasFlag(ItemCategories.Props);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && itemCategory.HasFlag(ItemCategories.Performance);
 				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
 				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;
-				if (!categoryFiltered)
+				if (!categoryFiltered && itemCategory != ItemCategories.None)
 					return false;
 
 				if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
