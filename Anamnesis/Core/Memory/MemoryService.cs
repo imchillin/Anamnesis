@@ -17,12 +17,13 @@ namespace Anamnesis.Memory
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
+	using XivToolsWpf;
 
 	[AddINotifyPropertyChangedInterface]
 	public class MemoryService : ServiceBase<MemoryService>
 	{
-		private static List<IMemoryViewModel> rootViewModels = new List<IMemoryViewModel>();
-		private static Dictionary<Type, bool[]> structMasks = new Dictionary<Type, bool[]>();
+		private static readonly List<IMemoryViewModel> RootViewModels = new List<IMemoryViewModel>();
+		private static readonly Dictionary<Type, bool[]> StructMasks = new Dictionary<Type, bool[]>();
 		private static ulong memoryTickCount = 0;
 		private readonly Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
 
@@ -240,12 +241,12 @@ namespace Anamnesis.Memory
 
 		internal static void RegisterViewModel(IMemoryViewModel vm)
 		{
-			rootViewModels.Add(vm);
+			RootViewModels.Add(vm);
 		}
 
 		internal static void ClearViewModel(IMemoryViewModel vm)
 		{
-			rootViewModels.Remove(vm);
+			RootViewModels.Remove(vm);
 		}
 
 		[DllImport("kernel32.dll", SetLastError = true)]
@@ -297,8 +298,8 @@ namespace Anamnesis.Memory
 		{
 			Type type = typeof(T);
 
-			if (structMasks.ContainsKey(type))
-				return structMasks[type];
+			if (StructMasks.ContainsKey(type))
+				return StructMasks[type];
 
 			int size = Marshal.SizeOf(type);
 			byte[] buffer = new byte[size];
@@ -329,7 +330,7 @@ namespace Anamnesis.Memory
 				mask[i] = buffer[i] == buffer2[i];
 			}
 
-			structMasks.Add(type, mask);
+			StructMasks.Add(type, mask);
 			return mask;
 		}
 
@@ -423,9 +424,9 @@ namespace Anamnesis.Memory
 					memoryTickCount++;
 
 					List<IMemoryViewModel> viewModels;
-					lock (rootViewModels)
+					lock (RootViewModels)
 					{
-						viewModels = new List<IMemoryViewModel>(rootViewModels);
+						viewModels = new List<IMemoryViewModel>(RootViewModels);
 					}
 
 					foreach (IMemoryViewModel viewModel in viewModels)

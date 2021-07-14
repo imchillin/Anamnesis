@@ -23,12 +23,13 @@ namespace Anamnesis.GUI
 	using Anamnesis.Utils;
 	using Anamnesis.Views;
 	using PropertyChanged;
+	using XivToolsWpf.Windows;
 
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	public partial class MainWindow : Window
+	public partial class MainWindow : ChromedWindow
 	{
 		private bool hasSetPosition = false;
 
@@ -66,8 +67,11 @@ namespace Anamnesis.GUI
 			this.WindowScale.ScaleX = SettingsService.Current.Scale;
 			this.WindowScale.ScaleY = SettingsService.Current.Scale;
 
-			if (SettingsService.Current.UseCustomBorder != this.AllowsTransparency)
+			if (SettingsService.Current.EnableTranslucency != this.EnableTranslucency)
 			{
+				this.EnableTranslucency = SettingsService.Current.EnableTranslucency;
+
+				// relaod the window
 				if (this.IsLoaded)
 				{
 					App.Current.MainWindow = new MainWindow();
@@ -75,23 +79,10 @@ namespace Anamnesis.GUI
 					App.Current.MainWindow.Show();
 					return;
 				}
-
-				if (SettingsService.Current.UseCustomBorder)
-				{
-					this.WindowStyle = WindowStyle.None;
-					this.AllowsTransparency = true;
-				}
-				else
-				{
-					this.AllowsTransparency = false;
-					this.WindowStyle = WindowStyle.ThreeDBorderWindow;
-				}
 			}
 
-			if (!SettingsService.Current.UseCustomBorder || !SettingsService.Current.StayTransparent)
+			if (!SettingsService.Current.StayTransparent)
 				this.Opacity = 1.0;
-
-			this.ContentArea.Margin = new Thickness(SettingsService.Current.UseCustomBorder ? 10 : 0);
 
 			if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
 			{
@@ -171,50 +162,6 @@ namespace Anamnesis.GUI
 
 				GC.Collect();
 			});
-		}
-
-		private void OnTitleBarMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton == MouseButton.Left)
-			{
-				this.DragMove();
-			}
-		}
-
-		private void Window_Activated(object sender, EventArgs e)
-		{
-			if (!SettingsService.Current.UseCustomBorder)
-			{
-				this.ActiveBorder.Visibility = Visibility.Collapsed;
-				return;
-			}
-
-			this.ActiveBorder.Visibility = Visibility.Visible;
-		}
-
-		private void Window_Deactivated(object sender, EventArgs e)
-		{
-			this.ActiveBorder.Visibility = Visibility.Collapsed;
-		}
-
-		private async void OnCloseClick(object sender, RoutedEventArgs e)
-		{
-			if (PoseService.Exists && PoseService.Instance.IsEnabled)
-			{
-				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
-
-				if (result != true)
-				{
-					return;
-				}
-			}
-
-			this.Close();
-		}
-
-		private void OnMinimiseClick(object sender, RoutedEventArgs e)
-		{
-			this.WindowState = WindowState.Minimized;
 		}
 
 		private void OnSettingsClick(object sender, RoutedEventArgs e)
@@ -318,8 +265,19 @@ namespace Anamnesis.GUI
 			}
 		}
 
-		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		private async void Window_Closing(object sender, CancelEventArgs e)
 		{
+			if (PoseService.Exists && PoseService.Instance.IsEnabled)
+			{
+				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
+
+				if (result != true)
+				{
+					e.Cancel = true;
+					return;
+				}
+			}
+
 			SettingsService.SettingsChanged -= this.OnSettingsChanged;
 			ViewService.ShowingDrawer -= this.OnShowDrawer;
 

@@ -6,6 +6,7 @@ namespace Anamnesis.Views
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using Anamnesis.Services;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for GposePrompt.xaml.

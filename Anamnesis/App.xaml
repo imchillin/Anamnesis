@@ -52,48 +52,12 @@
 
 			</ResourceDictionary.MergedDictionaries>
 
-			<!-- Material Design:Styles-->
-			<!--<Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedButton}" />
-			<Style TargetType="{x:Type Calendar}" BasedOn="{StaticResource MaterialDesignCalendarPortrait}" />
-			<Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource MaterialDesignCheckBox}" />
-			<Style TargetType="{x:Type ContextMenu}" BasedOn="{StaticResource MaterialDesignContextMenu}" />
-			<Style TargetType="{x:Type Thumb}" BasedOn="{StaticResource MaterialDesignThumb}" />
-			<Style TargetType="{x:Type DataGrid}" BasedOn="{StaticResource MaterialDesignDataGrid}" />
-			<Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource MaterialDesignDataGridCell}" />
-			<Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}" />
-			<Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource MaterialDesignDataGridRow}" />
-			<Style TargetType="{x:Type DataGridRowHeader}" BasedOn="{StaticResource MaterialDesignDataGridRowHeader}" />
-			<Style TargetType="{x:Type DatePicker}" BasedOn="{StaticResource MaterialDesignDatePicker}" />
-			<Style TargetType="{x:Type Expander}" BasedOn="{StaticResource MaterialDesignExpander}" />
-			<Style TargetType="{x:Type GridSplitter}" BasedOn="{StaticResource MaterialDesignGridSplitter}" />
-			<Style TargetType="{x:Type Label}" BasedOn="{StaticResource MaterialDesignLabel}" />
-			<Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource MaterialDesignListBox}" />
-			<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}" />
-			<Style TargetType="{x:Type PasswordBox}" BasedOn="{StaticResource MaterialDesignPasswordBox}" />
-			<Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource MaterialDesignLinearProgressBar}" />
-			<Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource MaterialDesignRadioButton}" />
-			<Style TargetType="{x:Type RepeatButton}" BasedOn="{StaticResource MaterialDesignRaisedButton}" />
-			<Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource MaterialDesignScrollBar}" />
-			<Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MaterialDesignScrollViewer}" />
-			<Style TargetType="{x:Type Slider}" BasedOn="{StaticResource MaterialDesignSlider}" />
-			<Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" />
-			<Style TargetType="{x:Type ToolBar}" BasedOn="{StaticResource MaterialDesignToolBar}" />
-			<Style TargetType="{x:Type ToolBarTray}" BasedOn="{StaticResource MaterialDesignToolBarTray}" />
-			<Style TargetType="{x:Type ToolTip}" BasedOn="{StaticResource MaterialDesignToolTip}" />
-			<Style TargetType="{x:Type TreeView}" BasedOn="{StaticResource MaterialDesignTreeView}" />
-			<Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MaterialDesignTreeViewItem}" />
-			<Style TargetType="{x:Type ListView}" BasedOn="{StaticResource MaterialDesignListView}" />
-			<Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}" />
-			<Style TargetType="{x:Type Menu}" BasedOn="{StaticResource MaterialDesignMenu}" />
-			<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MaterialDesignMenuItem}" />-->
-
 			<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
 			<!-- Custom converters -->
 			<BooleanToVisibilityConverter x:Key="B2V"/>
 			<converters:Vector2DRadiansToDegreesConverter x:Key="Vec2DRad2Deg"/>
-
-
+			
 			<!-- dyslexic font -->
 		
 			<FontFamily x:Key="OpenDyslexic">pack://application:,,,/Assets/Fonts/#OpenDyslexic</FontFamily>

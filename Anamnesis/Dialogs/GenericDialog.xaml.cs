@@ -9,6 +9,7 @@ namespace Anamnesis.GUI.Dialogs
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.Services;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for GenericDialog.xaml.

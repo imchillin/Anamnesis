@@ -16,6 +16,7 @@ namespace Anamnesis
 	using Anamnesis.Styles;
 	using FontAwesome.Sharp;
 	using PropertyChanged;
+	using XivToolsWpf;
 
 	public delegate void SelectionEvent(ActorViewModel? actor);
 	public delegate void PinnedEvent(TargetService.ActorTableActor actor);

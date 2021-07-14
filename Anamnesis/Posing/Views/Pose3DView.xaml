@@ -15,92 +15,86 @@
 	mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
-		<Border
-			Grid.Row="1"
-			Margin="0,3,3,3"
-			Background="{DynamicResource MaterialDesignCardBackground}"
-			CornerRadius="3">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition />
-					<ColumnDefinition Width="183" />
-				</Grid.ColumnDefinitions>
 
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
+		<Grid Margin="0, 3, 0, 0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition Width="183" />
+			</Grid.ColumnDefinitions>
 
-				<Border Background="{DynamicResource AttentionToActionBrush}" CornerRadius="3" Margin="3, 0">
-					<StackPanel
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+
+			<Border Background="{DynamicResource AttentionToActionBrush}" CornerRadius="3" Margin="3, 0">
+				<StackPanel
 						Grid.Row="1"
 						IsEnabled="True"
 						Orientation="Horizontal">
-						<Button
+					<Button
 							Padding="6,2"
 							Margin="3"
 							Click="OnFrameClicked"
 							Content="Reset Camera"
 							Style="{StaticResource TransparentButton}" />
-						<Button
+					<Button
 							Padding="6,2"
 							Margin="3"
 							Click="OnRegenerateSkeletonClicked"
 							Content="Regenerate Skeleton"
 							Style="{StaticResource TransparentButton}" />
-					</StackPanel>
-				</Border>
+				</StackPanel>
+			</Border>
 
-				<Grid Grid.Column="0" Grid.Row="1">
-					<Grid.RowDefinitions>
-						<RowDefinition />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
+			<Grid Grid.Column="0" Grid.Row="1">
+				<Grid.RowDefinitions>
+					<RowDefinition />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
 
-					<Viewport3D x:Name="Viewport" Grid.Row="0">
-						<ModelVisual3D>
-							<ModelVisual3D.Content>
-								<Model3DGroup>
-									<AmbientLight Color="White" />
-								</Model3DGroup>
-							</ModelVisual3D.Content>
-						</ModelVisual3D>
+				<Viewport3D x:Name="Viewport" Grid.Row="0">
+					<ModelVisual3D>
+						<ModelVisual3D.Content>
+							<Model3DGroup>
+								<AmbientLight Color="White" />
+							</Model3DGroup>
+						</ModelVisual3D.Content>
+					</ModelVisual3D>
 
-						<ModelVisual3D x:Name="SkeletonRoot" />
+					<ModelVisual3D x:Name="SkeletonRoot" />
 
-					</Viewport3D>
-
-					
-
-				</Grid>
+				</Viewport3D>
 
 
-				<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" Grid.RowSpan="2">
-					<ItemsControl ItemsSource="{Binding Skeleton.Bones}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<Grid>
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="32" />
-										<ColumnDefinition />
-									</Grid.ColumnDefinitions>
 
-									<views:BoneView Grid.Column="0" />
+			</Grid>
 
-									<XivToolsWpf:TextBlock
+
+			<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" Grid.RowSpan="2">
+				<ItemsControl ItemsSource="{Binding Skeleton.Bones}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="32" />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+
+								<views:BoneView Grid.Column="0" />
+
+								<XivToolsWpf:TextBlock
 										Grid.Column="1"
 										VerticalAlignment="Center"
 										FontSize="11"
 										FontWeight="Light"
 										Text="{Binding Tooltip}" />
-								</Grid>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-				</ScrollViewer>
+							</Grid>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
 
-			</Grid>
-
-		</Border>
+		</Grid>
 	</Grid>
 </UserControl>

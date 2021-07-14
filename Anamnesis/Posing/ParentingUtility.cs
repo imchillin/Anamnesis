@@ -9,6 +9,7 @@ namespace Anamnesis.Posing
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Serilog;
+	using XivToolsWpf;
 
 	public static class ParentingUtility
 	{

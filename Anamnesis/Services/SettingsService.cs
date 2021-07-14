@@ -15,10 +15,11 @@ namespace Anamnesis.Services
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Serialization;
 	using MaterialDesignThemes.Wpf;
+	using XivToolsWpf;
 
 	public class SettingsService : ServiceBase<SettingsService>
 	{
-		private static string settingsPath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Settings.json");
+		private static readonly string SettingsPath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Settings.json");
 
 		private string currentThemeSwatch = string.Empty;
 		private bool? currentThemeDark = null;
@@ -38,14 +39,14 @@ namespace Anamnesis.Services
 		public static void Save()
 		{
 			string json = SerializerService.Serialize(Instance.Settings!);
-			File.WriteAllText(settingsPath, json);
+			File.WriteAllText(SettingsPath, json);
 		}
 
 		public override async Task Initialize()
 		{
 			await base.Initialize();
 
-			if (!File.Exists(settingsPath))
+			if (!File.Exists(SettingsPath))
 			{
 				this.FirstTimeUser = true;
 				this.Settings = new Settings();
@@ -61,7 +62,7 @@ namespace Anamnesis.Services
 					if (Keyboard.IsKeyDown(Key.LeftShift))
 						throw new Exception("User Abort");
 
-					string json = File.ReadAllText(settingsPath);
+					string json = File.ReadAllText(SettingsPath);
 					this.Settings = SerializerService.Deserialize<Settings>(json);
 				}
 				catch (Exception ex)

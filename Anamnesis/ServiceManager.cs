@@ -14,6 +14,7 @@ namespace Anamnesis.Services
 	using Anamnesis.Serialization;
 	using Anamnesis.TexTools;
 	using Serilog;
+	using XivToolsWpf;
 
 	public class ServiceManager
 	{

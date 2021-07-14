@@ -14,6 +14,7 @@ namespace Anamnesis.Updater
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
 	using Anamnesis.Services;
+	using XivToolsWpf;
 
 	public class UpdateService : ServiceBase<UpdateService>
 	{

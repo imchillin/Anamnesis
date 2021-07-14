@@ -21,6 +21,7 @@ namespace Anamnesis.PoseModule
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
+	using XivToolsWpf;
 	using AnQuaternion = Anamnesis.Memory.Quaternion;
 
 	[AddINotifyPropertyChangedInterface]

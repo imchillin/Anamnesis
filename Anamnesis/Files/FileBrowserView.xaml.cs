@@ -21,7 +21,10 @@ namespace Anamnesis.GUI.Views
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
+	using XivToolsWpf;
 	using static Anamnesis.Files.IFileSource;
+
+	using SearchUtility = Anamnesis.SearchUtility;
 
 	/// <summary>
 	/// Interaction logic for FileBrowserView.xaml.

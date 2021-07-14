@@ -16,6 +16,7 @@ namespace Anamnesis.GUI.Windows
 	using System.Windows.Media.Imaging;
 	using Anamnesis.Memory;
 	using PropertyChanged;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for ProcessSelector.xaml.
