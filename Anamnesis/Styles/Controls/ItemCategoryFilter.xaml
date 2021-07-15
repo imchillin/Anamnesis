@@ -15,11 +15,22 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Vertical" Margin="3, 3, 3, 6">
-            <local:ItemCategoryFilterItem Category="Items" Text="EquipmentSelector_Items" Value="{Binding Value}"/>
-            <local:ItemCategoryFilterItem Category="Props" Text="EquipmentSelector_Props" Value="{Binding Value}"/>
-            <local:ItemCategoryFilterItem Category="Performance" Text="EquipmentSelector_Performance" Value="{Binding Value}"/>
-            <local:ItemCategoryFilterItem Category="Modded" Text="EquipmentSelector_Modded" Value="{Binding Value}"/>
-            <local:ItemCategoryFilterItem Category="Favorites" Text="EquipmentSelector_Favorites" Value="{Binding Value}"/>
+            <local:ItemCategoryFilterItem Category="Standard" Value="{Binding Value}"
+                                          Text="EquipmentSelector_Standard" ToolText="EquipmentSelector_StandardTip"/>
+            <local:ItemCategoryFilterItem Category="Premium" Value="{Binding Value}"
+                                          Text="EquipmentSelector_Premium" ToolText="EquipmentSelector_PremiumTip"/>
+            <local:ItemCategoryFilterItem Category="Limited" Value="{Binding Value}"
+                                          Text="EquipmentSelector_Limited" ToolText="EquipmentSelector_LimitedTip"/>
+            <local:ItemCategoryFilterItem Category="Deprecated" Value="{Binding Value}"
+                                          Text="EquipmentSelector_Deprecated" ToolText="EquipmentSelector_DeprecatedTip"/>
+            <local:ItemCategoryFilterItem Category="Props" Value="{Binding Value}"
+                                          Text="EquipmentSelector_Props" ToolText="EquipmentSelector_PropsTip"/>
+            <local:ItemCategoryFilterItem Category="Performance" Value="{Binding Value}"
+                                          Text="EquipmentSelector_Performance" ToolText="EquipmentSelector_PerformanceTip"/>
+            <local:ItemCategoryFilterItem Category="Modded" Value="{Binding Value}"
+                                          Text="EquipmentSelector_Modded" ToolText="EquipmentSelector_ModdedTip"/>
+            <local:ItemCategoryFilterItem Category="Favorites" Value="{Binding Value}"
+                                          Text="EquipmentSelector_Favorites" ToolText="EquipmentSelector_FavoritesTip"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Grid.ColumnSpan="3" Margin="3, 3, 3, 6">

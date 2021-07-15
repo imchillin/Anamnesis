@@ -4,11 +4,13 @@
 namespace Anamnesis.Character.Views
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.ViewModels;
+	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Controls;
 	using Anamnesis.Styles.Drawers;
@@ -20,11 +22,17 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
+		private static readonly Dictionary<uint, ItemCategories> ManualItemCategories;
 		private static Classes classFilter = Classes.All;
 		private static ItemCategories categoryFilter = ItemCategories.All;
 		private static bool pairEquip = false;
 
 		private readonly ItemSlots slot;
+
+		static EquipmentSelector()
+		{
+			ManualItemCategories = SerializerService.DeserializeFile<Dictionary<uint, ItemCategories>>("Data/ItemCategories.json");
+		}
 
 		public EquipmentSelector(ItemSlots slot)
 		{
@@ -142,13 +150,24 @@ namespace Anamnesis.Character.Views
 				if (string.IsNullOrEmpty(item.Name))
 					return false;
 
+				ItemCategories itemCategory = ItemCategories.None;
+				if (obj is ItemViewModel)
+					itemCategory = ManualItemCategories.GetValueOrDefault(item.Key, ItemCategories.Standard);
+				else if (obj is Prop)
+					itemCategory = ItemCategories.Props;
+				else if (obj is PerformViewModel)
+					itemCategory = ItemCategories.Performance;
+
 				bool categoryFiltered = false;
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Items) && obj is not Prop && obj is not PerformViewModel && item.Key != 0;
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && obj is Prop;
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && obj is PerformViewModel;
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && itemCategory.HasFlag(ItemCategories.Standard);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Premium) && itemCategory.HasFlag(ItemCategories.Premium);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Limited) && itemCategory.HasFlag(ItemCategories.Limited);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Deprecated) && itemCategory.HasFlag(ItemCategories.Deprecated);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && itemCategory.HasFlag(ItemCategories.Props);
+				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && itemCategory.HasFlag(ItemCategories.Performance);
 				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
 				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;
-				if (!categoryFiltered)
+				if (!categoryFiltered && itemCategory != ItemCategories.None)
 					return false;
 
 				if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
