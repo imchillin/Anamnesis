@@ -63,6 +63,8 @@ namespace Anamnesis.GUI
 
 		protected override void OnActivated(EventArgs e)
 		{
+			base.OnActivated(e);
+
 			if (SettingsService.Current.Opacity == 1.0)
 			{
 				this.Opacity = 1.0;
@@ -70,16 +72,16 @@ namespace Anamnesis.GUI
 			}
 
 			this.Opacity = 1.0;
-			base.OnActivated(e);
 		}
 
 		protected override void OnDeactivated(EventArgs e)
 		{
+			base.OnDeactivated(e);
+
 			if (SettingsService.Current.Opacity == 1.0)
 				return;
 
 			this.Opacity = SettingsService.Current.Opacity;
-			base.OnDeactivated(e);
 		}
 
 		private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
