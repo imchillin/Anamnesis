@@ -293,47 +293,53 @@
 						Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
 				</StackPanel>
 
-				<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+				<Grid HorizontalAlignment="Right">
 
-					<!--  Debugging toggles  -->
-					<StackPanel
-						HorizontalAlignment="Right"
-						Orientation="Horizontal"
-						Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
+					<Border Background="Black" CornerRadius="3, 3, 0, 0" Opacity="0.5" VerticalAlignment="Bottom" Height="2" Width="59" HorizontalAlignment="Right"
+							Visibility="{Binding EnableTranslucency, Converter={StaticResource !B2V}}"/>
 
-						<TextBlock
-							VerticalAlignment="Center"
-							Opacity="0.5"
-							Text="{Binding MemoryService.LastTickCount}"
-							ToolTip="Memory models ticked" />
+					<StackPanel  Orientation="Horizontal">
+
+						<!--  Debugging toggles  -->
+						<StackPanel
+							HorizontalAlignment="Right"
+							Orientation="Horizontal"
+							Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
+
+							<TextBlock
+								VerticalAlignment="Center"
+								Opacity="0.5"
+								Text="{Binding MemoryService.LastTickCount}"
+								ToolTip="Memory models ticked" />
+
+							<ToggleButton
+								Width="28"
+								Margin="3,0,0,0"
+								BorderThickness="0"
+								IsChecked="{Binding LogService.VerboseLogging}"
+								Foreground="{Binding TitlebarForeground}"
+								Style="{DynamicResource TransparentIconToggleButton}"
+								ToolTip="Enable verbose logging">
+								<XivToolsWpf:IconBlock FontSize="12" Icon="FileAlt"/>
+							</ToggleButton>
+						</StackPanel>
 
 						<ToggleButton
 							Width="28"
 							Margin="3,0,0,0"
 							BorderThickness="0"
-							IsChecked="{Binding LogService.VerboseLogging}"
+							IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}"
 							Foreground="{Binding TitlebarForeground}"
-							Style="{DynamicResource TransparentIconToggleButton}"
-							ToolTip="Enable verbose logging">
-							<XivToolsWpf:IconBlock FontSize="12" Icon="FileAlt" />
+							Style="{DynamicResource TransparentIconToggleButton}">
+
+							<ToggleButton.ToolTip>
+								<XivToolsWpf:TextBlock Key="Settings_AlwaysOnTop" />
+							</ToggleButton.ToolTip>
+
+							<XivToolsWpf:IconBlock FontSize="12" Icon="ThumbTack"/>
 						</ToggleButton>
 					</StackPanel>
-
-					<ToggleButton
-						Width="28"
-						Margin="3,0,0,0"
-						BorderThickness="0"
-						IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}"
-						Foreground="{Binding TitlebarForeground}"
-						Style="{DynamicResource TransparentIconToggleButton}">
-
-						<ToggleButton.ToolTip>
-							<XivToolsWpf:TextBlock Key="Settings_AlwaysOnTop" />
-						</ToggleButton.ToolTip>
-
-						<XivToolsWpf:IconBlock FontSize="12" Icon="ThumbTack" />
-					</ToggleButton>
-				</StackPanel>
+				</Grid>
 			</Grid>
 
 			<!--  Drawer flyouts  -->
