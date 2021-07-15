@@ -61,9 +61,29 @@ namespace Anamnesis.GUI
 		public bool IsDebug => false;
 #endif
 
+		protected override void OnActivated(EventArgs e)
+		{
+			if (SettingsService.Current.Opacity == 1.0)
+			{
+				this.Opacity = 1.0;
+				return;
+			}
+
+			this.Opacity = 1.0;
+			base.OnActivated(e);
+		}
+
+		protected override void OnDeactivated(EventArgs e)
+		{
+			if (SettingsService.Current.Opacity == 1.0)
+				return;
+
+			this.Opacity = SettingsService.Current.Opacity;
+			base.OnDeactivated(e);
+		}
+
 		private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
 		{
-			this.Opacity = SettingsService.Current.Opacity;
 			this.WindowScale.ScaleX = SettingsService.Current.Scale;
 			this.WindowScale.ScaleY = SettingsService.Current.Scale;
 
@@ -81,8 +101,8 @@ namespace Anamnesis.GUI
 				}
 			}
 
-			if (!SettingsService.Current.StayTransparent)
-				this.Opacity = 1.0;
+			if (SettingsService.Current.Opacity < 1)
+				this.TransprentWhenNotInFocus = true;
 
 			if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
 			{
@@ -164,7 +184,7 @@ namespace Anamnesis.GUI
 			});
 		}
 
-		private void OnSettingsClick(object sender, RoutedEventArgs e)
+		private async void OnSettingsClick(object sender, RoutedEventArgs e)
 		{
 			if (this.DrawerHost.IsRightDrawerOpen)
 			{
@@ -172,7 +192,19 @@ namespace Anamnesis.GUI
 				return;
 			}
 
-			ViewService.ShowDrawer<SettingsView>();
+			if (PoseService.Exists && PoseService.Instance.IsEnabled)
+			{
+				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
+
+				if (result != true)
+				{
+					return;
+				}
+
+				PoseService.Instance.IsEnabled = false;
+			}
+
+			await ViewService.ShowDrawer<SettingsView>();
 		}
 
 		private void OnAboutClick(object sender, RoutedEventArgs e)
@@ -184,30 +216,6 @@ namespace Anamnesis.GUI
 			}
 
 			ViewService.ShowDrawer<AboutView>();
-		}
-
-		private void Window_MouseEnter(object sender, MouseEventArgs e)
-		{
-			if (SettingsService.Current.Opacity == 1.0)
-			{
-				this.Opacity = 1.0;
-				return;
-			}
-
-			if (SettingsService.Current.StayTransparent)
-				return;
-
-			this.Opacity = 1.0;
-			////this.Animate(Window.OpacityProperty, 1.0, 100);
-		}
-
-		private void Window_MouseLeave(object sender, MouseEventArgs e)
-		{
-			if (SettingsService.Current.Opacity == 1.0)
-				return;
-
-			////this.Animate(Window.OpacityProperty, SettingsService.Current.Opacity, 250);
-			this.Opacity = SettingsService.Current.Opacity;
 		}
 
 		private void OnResizeDrag(object sender, DragDeltaEventArgs e)

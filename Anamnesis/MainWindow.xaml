@@ -18,8 +18,6 @@
 	Closing="Window_Closing"
 	Icon="/Assets/Concept Matrix.ico"
 	Loaded="Window_Loaded"
-	MouseEnter="Window_MouseEnter"
-	MouseLeave="Window_MouseLeave"
 	ResizeMode="CanMinimize"
 	SizeToContent="WidthAndHeight"
 	MinWidth="256"
