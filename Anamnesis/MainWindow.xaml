@@ -351,12 +351,12 @@
 				Grid.ColumnSpan="2"
 				Margin="1">
 				<materialdesign:DrawerHost.RightDrawerContent>
-					<Grid MinWidth="64" Background="{DynamicResource MaterialDesignCardBackground}">
+					<Grid MinWidth="64">
 						<ContentPresenter x:Name="DrawerRight" />
 					</Grid>
 				</materialdesign:DrawerHost.RightDrawerContent>
 				<materialdesign:DrawerHost.LeftDrawerContent>
-					<Grid MinWidth="64" Background="{DynamicResource MaterialDesignCardBackground}">
+					<Grid MinWidth="64">
 						<ContentPresenter x:Name="DrawerLeft" />
 					</Grid>
 				</materialdesign:DrawerHost.LeftDrawerContent>
