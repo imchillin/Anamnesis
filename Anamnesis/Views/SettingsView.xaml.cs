@@ -6,12 +6,9 @@ namespace Anamnesis.GUI.Views
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Windows;
-	using System.Windows.Controls;
 	using System.Windows.Forms;
 	using Anamnesis.Files;
 	using Anamnesis.Services;
-	using MaterialDesignColors;
-	using Microsoft.Win32;
 	using PropertyChanged;
 
 	/// <summary>
@@ -48,31 +45,9 @@ namespace Anamnesis.GUI.Views
 			this.Languages = languages;
 		}
 
-		public SwatchesProvider Swatches => new SwatchesProvider();
 		public SettingsService SettingsService => SettingsService.Instance;
 
 		public IEnumerable<LanguageOption> Languages { get; }
-
-		public Swatch SelectedSwatch
-		{
-			get
-			{
-				foreach (Swatch sw in this.Swatches.Swatches)
-				{
-					if (sw.Name == SettingsService.Current.ThemeSwatch)
-					{
-						return sw;
-					}
-				}
-
-				return this.Swatches.Swatches.First();
-			}
-
-			set
-			{
-				SettingsService.Current.ThemeSwatch = value.Name;
-			}
-		}
 
 		public LanguageOption SelectedLanguage
 		{

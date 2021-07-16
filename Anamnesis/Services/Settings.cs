@@ -16,8 +16,6 @@ namespace Anamnesis.Services
 
 		public string Language { get; set; } = "EN";
 		public bool AlwaysOnTop { get; set; } = true;
-		public bool ThemeDark { get; set; } = true;
-		public string ThemeSwatch { get; set; } = @"deeporange";
 		public double Opacity { get; set; } = 1.0;
 		public double Scale { get; set; } = 1.0;
 		public bool UseWindowsExplorer { get; set; } = false;

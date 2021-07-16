@@ -66,7 +66,7 @@
 			<GroupBox.Header>
 				<XivToolsWPF:TextBlock Key="Settings_Directories"/>
 			</GroupBox.Header>
-			
+
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
@@ -91,67 +91,10 @@
 				<!--<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Settings_Dir_Scenes" Style="{StaticResource Label}"/>
 				<TextBox Grid.Row="2" Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultSceneDirectory}" IsEnabled="False"/>
 				<Button Grid.Row="2" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseScene"/>-->
-				
+
 			</Grid>
 		</GroupBox>
-		
 
-		<GroupBox Grid.Row="10" Grid.ColumnSpan="2">
-			<GroupBox.Header>
-				<XivToolsWPF:TextBlock Key="Settings_Theme"/>
-			</GroupBox.Header>
-			
-			<Grid>
-
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-					<XivToolsWPF:TextBlock Key="Settings_Theme_Hydaelyn" VerticalAlignment="Center"/>
-					<ToggleButton Margin="6" Grid.Row="0" Style="{DynamicResource MaterialDesignSwitchToggleButton}" HorizontalAlignment="Left" IsChecked="{Binding SettingsService.Settings.ThemeDark}"/>
-					<XivToolsWPF:TextBlock Key="Settings_Theme_Zodiark" VerticalAlignment="Center"/>
-				</StackPanel>
-				
-				<ListBox Grid.Row="1" ItemsSource="{Binding Swatches.Swatches, Mode=OneTime}" SelectedValue="{Binding SelectedSwatch}">
-					<ListBox.ItemsPanel>
-						<ItemsPanelTemplate>
-							<WrapPanel x:Name="wrapPanel"/>
-						</ItemsPanelTemplate>
-					</ListBox.ItemsPanel>
-
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<Grid Width="40" Margin="0">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition/>
-									<ColumnDefinition/>
-								</Grid.ColumnDefinitions>
-
-								<Border Grid.ColumnSpan="2">
-									<Border.Background>
-										<SolidColorBrush Color="{Binding ExemplarHue.Color, Mode=OneTime}" />
-									</Border.Background>
-								</Border>
-								<Border Grid.Column="1" Visibility="{Binding IsAccented, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
-									<Border.Background>
-										<SolidColorBrush Color="{Binding AccentExemplarHue.Color, Mode=OneTime}" />
-									</Border.Background>
-								</Border>
-
-								<TextBlock  Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="6">
-									<TextBlock.Foreground>
-										<SolidColorBrush Color="{Binding ExemplarHue.Foreground, Mode=OneTime}" />
-									</TextBlock.Foreground>
-								</TextBlock>
-							</Grid>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</Grid>
-		</GroupBox>
-		
 	</Grid>
 
 </UserControl>

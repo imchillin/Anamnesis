@@ -88,6 +88,8 @@ namespace Anamnesis
 
 				LogService.CreateLog();
 
+				Themes.ApplySystemTheme();
+
 				this.CheckWorkingDirectory();
 				this.CheckForProcesses();
 

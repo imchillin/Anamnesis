@@ -21,9 +21,6 @@ namespace Anamnesis.Services
 	{
 		private static readonly string SettingsPath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Settings.json");
 
-		private string currentThemeSwatch = string.Empty;
-		private bool? currentThemeDark = null;
-
 		public static event PropertyChangedEventHandler? SettingsChanged;
 
 		public static Settings Current => Instance.Settings!;
@@ -82,13 +79,6 @@ namespace Anamnesis.Services
 		{
 			if (this.Settings == null)
 				return;
-
-			if (this.currentThemeSwatch != this.Settings.ThemeSwatch || this.currentThemeDark != this.Settings.ThemeDark)
-			{
-				this.currentThemeSwatch = this.Settings.ThemeSwatch;
-				this.currentThemeDark = this.Settings.ThemeDark;
-				new PaletteHelper().Apply(this.Settings.ThemeSwatch, this.Settings.ThemeDark);
-			}
 
 			if (sender is Settings settings)
 			{
