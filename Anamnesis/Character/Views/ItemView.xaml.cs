@@ -15,6 +15,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
+	using XivToolsWpf;
 	using XivToolsWpf.DependencyProperties;
 	using Vector = Anamnesis.Memory.Vector;
 
@@ -220,26 +221,43 @@ namespace Anamnesis.Character.Views
 			if (this.lockViewModel)
 				return;
 
-			Application.Current.Dispatcher.Invoke((Action)(() =>
+			Task.Run(async () =>
 			{
+				await Task.Yield();
+
+				await Dispatch.MainThread();
 				if (this.ItemModel == null || !this.ItemModel.Enabled || GameDataService.Dyes == null)
 					return;
 
-				if (this.ItemModel is ItemViewModel item)
-				{
-					this.Item = ItemUtility.GetItem(this.Slot, 0, item.Base, item.Variant);
-					this.Dye = GameDataService.Dyes.Get(item.Dye);
-				}
-				else if (this.ItemModel is WeaponViewModel weapon)
-				{
-					this.Item = ItemUtility.GetItem(this.Slot, weapon.Set, weapon.Base, weapon.Variant);
+				IStructViewModel? valueVm = this.ItemModel;
 
-					if (weapon.Set == 0)
-						weapon.Dye = 0;
+				await Dispatch.NonUiThread();
 
-					this.Dye = GameDataService.Dyes.Get(weapon.Dye);
+				if (valueVm is ItemViewModel itemVm)
+				{
+					IItem? item = ItemUtility.GetItem(this.Slot, 0, itemVm.Base, itemVm.Variant);
+					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
+
+					await Dispatch.MainThread();
+
+					this.Item = item;
+					this.Dye = dye;
 				}
-			}));
+				else if (valueVm is WeaponViewModel weaponVm)
+				{
+					IItem? item = ItemUtility.GetItem(this.Slot, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
+
+					if (weaponVm.Set == 0)
+						weaponVm.Dye = 0;
+
+					IDye? dye = GameDataService.Dyes.Get(weaponVm.Dye);
+
+					await Dispatch.MainThread();
+
+					this.Item = item;
+					this.Dye = dye;
+				}
+			});
 		}
 	}
 }
