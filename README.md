@@ -32,6 +32,7 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 ## Community Developers
 
 * **[SoyaX](https://github.com/SoyaX)**
+* **[JKAnderson](https://github.com/JKAnderson)**
 
 ## Translations
 * **[Maxunit](https://github.com/Maxunit)** - *German* 
