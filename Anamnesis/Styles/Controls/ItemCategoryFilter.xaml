@@ -14,7 +14,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Vertical" Margin="3, 3, 3, 6">
+        <StackPanel Orientation="Vertical" Margin="10,0">
             <local:ItemCategoryFilterItem Category="Standard" Value="{Binding Value}"
                                           Text="EquipmentSelector_Standard" ToolText="EquipmentSelector_StandardTip"/>
             <local:ItemCategoryFilterItem Category="Premium" Value="{Binding Value}"

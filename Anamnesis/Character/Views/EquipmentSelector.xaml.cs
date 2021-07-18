@@ -69,28 +69,13 @@ namespace Anamnesis.Character.Views
 			set => this.Selector.Value = value;
 		}
 
-		public bool PairEquip
-		{
-			get => pairEquip;
-			set => pairEquip = value;
-		}
-
 		public bool IsWeaponSlot => this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand;
 
-		SelectorDrawer SelectorDrawer.ISelectorView.Selector
-		{
-			get
-			{
-				return this.Selector;
-			}
-		}
+		SelectorDrawer SelectorDrawer.ISelectorView.Selector => this.Selector;
 
 		public Classes ClassFilter
 		{
-			get
-			{
-				return classFilter;
-			}
+			get => classFilter;
 			set
 			{
 				classFilter = value;
@@ -107,6 +92,12 @@ namespace Anamnesis.Character.Views
 				categoryFilter = value;
 				this.Selector.FilterItems();
 			}
+		}
+
+		public bool PairEquip
+		{
+			get => pairEquip;
+			set => pairEquip = value;
 		}
 
 		public void OnClosed()
@@ -144,76 +135,31 @@ namespace Anamnesis.Character.Views
 
 		private bool OnFilter(object obj, string[]? search = null)
 		{
-			if (obj is IItem item)
+			if (obj is not IItem item)
+				return false;
+
+			// skip items without names
+			if (string.IsNullOrEmpty(item.Name))
+				return false;
+
+			if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
 			{
-				// skip items without names
-				if (string.IsNullOrEmpty(item.Name))
+				if (!item.IsWeapon)
 					return false;
-
-				ItemCategories itemCategory = ItemCategories.None;
-				if (obj is ItemViewModel)
-					itemCategory = ManualItemCategories.GetValueOrDefault(item.Key, ItemCategories.Standard);
-				else if (obj is Prop)
-					itemCategory = ItemCategories.Props;
-				else if (obj is PerformViewModel)
-					itemCategory = ItemCategories.Performance;
-
-				bool categoryFiltered = false;
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && itemCategory.HasFlag(ItemCategories.Standard);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Premium) && itemCategory.HasFlag(ItemCategories.Premium);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Limited) && itemCategory.HasFlag(ItemCategories.Limited);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Deprecated) && itemCategory.HasFlag(ItemCategories.Deprecated);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && itemCategory.HasFlag(ItemCategories.Props);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && itemCategory.HasFlag(ItemCategories.Performance);
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
-				categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;
-				if (!categoryFiltered && itemCategory != ItemCategories.None)
+			}
+			else
+			{
+				if (!item.FitsInSlot(this.slot))
 					return false;
-
-				if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
-				{
-					if (!item.IsWeapon)
-					{
-						return false;
-					}
-				}
-				else
-				{
-					if (!item.FitsInSlot(this.slot))
-					{
-						return false;
-					}
-				}
-
-				if (!this.HasClass(this.ClassFilter, item.EquipableClasses))
-					return false;
-
-				bool matches = false;
-
-				matches |= SearchUtility.Matches(item.Name, search);
-				matches |= SearchUtility.Matches(item.Description, search);
-				matches |= SearchUtility.Matches(item.ModelSet.ToString(), search);
-				matches |= SearchUtility.Matches(item.ModelBase.ToString(), search);
-				matches |= SearchUtility.Matches(item.ModelVariant.ToString(), search);
-
-				if (item.HasSubModel)
-				{
-					matches |= SearchUtility.Matches(item.SubModelSet.ToString(), search);
-					matches |= SearchUtility.Matches(item.SubModelBase.ToString(), search);
-					matches |= SearchUtility.Matches(item.SubModelVariant.ToString(), search);
-				}
-
-				matches |= SearchUtility.Matches(item.Key.ToString(), search);
-
-				if (item.Mod != null && item.Mod.ModPack != null)
-				{
-					matches |= SearchUtility.Matches(item.Mod.ModPack.Name, search);
-				}
-
-				return matches;
 			}
 
-			return false;
+			if (!this.HasClass(this.ClassFilter, item.EquipableClasses))
+				return false;
+
+			if (!this.ValidCategory(item))
+				return false;
+
+			return this.MatchesSearch(item, search);
 		}
 
 		private bool HasClass(Classes a, Classes b)
@@ -230,6 +176,56 @@ namespace Anamnesis.Character.Views
 			}
 
 			return false;
+		}
+
+		private bool ValidCategory(IItem item)
+		{
+			ItemCategories itemCategory = ItemCategories.None;
+			if (item is ItemViewModel)
+				itemCategory = ManualItemCategories.GetValueOrDefault(item.Key, ItemCategories.Standard);
+			else if (item is Prop)
+				itemCategory = ItemCategories.Props;
+			else if (item is PerformViewModel)
+				itemCategory = ItemCategories.Performance;
+
+			// Always let uncategorized items through, otherwise there would be no way to get to them
+			bool categoryFiltered = itemCategory == ItemCategories.None;
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && itemCategory.HasFlag(ItemCategories.Standard);
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Premium) && itemCategory.HasFlag(ItemCategories.Premium);
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Limited) && itemCategory.HasFlag(ItemCategories.Limited);
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Deprecated) && itemCategory.HasFlag(ItemCategories.Deprecated);
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && itemCategory.HasFlag(ItemCategories.Props);
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && itemCategory.HasFlag(ItemCategories.Performance);
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;
+			return categoryFiltered;
+		}
+
+		private bool MatchesSearch(IItem item, string[]? search = null)
+		{
+			bool matches = false;
+
+			matches |= SearchUtility.Matches(item.Name, search);
+			matches |= SearchUtility.Matches(item.Description, search);
+			matches |= SearchUtility.Matches(item.ModelSet.ToString(), search);
+			matches |= SearchUtility.Matches(item.ModelBase.ToString(), search);
+			matches |= SearchUtility.Matches(item.ModelVariant.ToString(), search);
+
+			if (item.HasSubModel)
+			{
+				matches |= SearchUtility.Matches(item.SubModelSet.ToString(), search);
+				matches |= SearchUtility.Matches(item.SubModelBase.ToString(), search);
+				matches |= SearchUtility.Matches(item.SubModelVariant.ToString(), search);
+			}
+
+			matches |= SearchUtility.Matches(item.Key.ToString(), search);
+
+			if (item.Mod != null && item.Mod.ModPack != null)
+			{
+				matches |= SearchUtility.Matches(item.Mod.ModPack.Name, search);
+			}
+
+			return matches;
 		}
 	}
 }
