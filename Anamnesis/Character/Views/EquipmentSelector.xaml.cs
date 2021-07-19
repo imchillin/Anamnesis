@@ -25,10 +25,11 @@ namespace Anamnesis.Character.Views
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
 		private static readonly Dictionary<uint, ItemCategories> ManualItemCategories;
+
 		private static Classes classFilter = Classes.All;
 		private static ItemCategories categoryFilter = ItemCategories.All;
 		private static bool hideLocked = true;
-		private static bool pairEquip = false;
+		private static bool autoOffhand = true;
 
 		private readonly ItemSlots slot;
 		private readonly Memory.ActorViewModel? actor;
@@ -74,6 +75,7 @@ namespace Anamnesis.Character.Views
 			set => this.Selector.Value = value;
 		}
 
+		public bool IsMainHandSlot => this.slot == ItemSlots.MainHand;
 		public bool IsWeaponSlot => this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand;
 
 		SelectorDrawer SelectorDrawer.ISelectorView.Selector => this.Selector;
@@ -109,10 +111,10 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
-		public bool PairEquip
+		public bool AutoOffhand
 		{
-			get => pairEquip;
-			set => pairEquip = value;
+			get => autoOffhand;
+			set => autoOffhand = value;
 		}
 
 		public void OnClosed()

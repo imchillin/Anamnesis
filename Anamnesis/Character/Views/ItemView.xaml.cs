@@ -127,69 +127,56 @@ namespace Anamnesis.Character.Views
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
 			EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
-			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.PairEquip));
+			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand));
 		}
 
-		private void SetItem(IItem? item, bool pairEquip)
+		private void SetItem(IItem? item, bool autoOffhand)
 		{
-			if (item == this.Item)
-				return;
-
 			this.lockViewModel = true;
-
 			IMemoryViewModel? memory = this.ItemModel?.GetParent<IMemoryViewModel>();
 			memory?.SetMemoryMode(MemoryModes.Write);
-
-			ushort modelSet = 0;
-			ushort modelBase = 0;
-			ushort modelVariant = 0;
 
 			if (item != null)
 			{
 				bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
+				ushort modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
+				ushort modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
+				ushort modelVariant = useSubModel ? item.SubModelVariant : item.ModelVariant;
 
-				modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
-				modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
-				modelVariant = useSubModel ? (byte)item.SubModelVariant : (byte)item.ModelVariant;
-			}
-
-			if (pairEquip
-				&& this.ItemModel is WeaponViewModel
-				&& item != null
-				&& item.SubModelSet != 0
-				&& this.Actor?.MainHand != null
-				&& this.Actor?.OffHand != null)
-			{
-				this.Actor.MainHand.Set = item.ModelSet;
-				this.Actor.MainHand.Base = item.ModelBase;
-				this.Actor.MainHand.Variant = item.ModelVariant;
-
-				this.Actor.OffHand.Set = item.SubModelSet;
-				this.Actor.OffHand.Base = item.SubModelBase;
-				this.Actor.OffHand.Variant = item.SubModelVariant;
-			}
-			else
-			{
-				if (this.ItemModel is ItemViewModel itemView)
+				static void SetModel(IStructViewModel? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
 				{
-					itemView.Base = modelBase;
-					itemView.Variant = (byte)modelVariant;
-
-					if (modelBase == 0)
+					if (itemModel is ItemViewModel itemView)
 					{
-						itemView.Dye = 0;
+						itemView.Base = modelBase;
+						itemView.Variant = (byte)modelVariant;
+
+						if (modelBase == 0)
+						{
+							itemView.Dye = 0;
+						}
+					}
+					else if (itemModel is WeaponViewModel weaponView)
+					{
+						weaponView.Set = modelSet;
+						weaponView.Base = modelBase;
+						weaponView.Variant = modelVariant;
+
+						if (modelSet == 0)
+						{
+							weaponView.Dye = 0;
+						}
 					}
 				}
-				else if (this.ItemModel is WeaponViewModel weaponView)
-				{
-					weaponView.Set = modelSet;
-					weaponView.Base = modelBase;
-					weaponView.Variant = modelVariant;
 
-					if (modelSet == 0)
-					{
-						weaponView.Dye = 0;
-					}
+				SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
+				if (autoOffhand && this.Slot == ItemSlots.MainHand
+					&& item is GameData.ViewModels.ItemViewModel ivm
+					&& ivm.Value.EquipSlotCategory.Value?.OffHand == -1)
+				{
+					if (ivm.HasSubModel)
+						SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
+					else
+						SetModel(this.Actor?.OffHand, 0, 0, 0);
 				}
 			}
 
