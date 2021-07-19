@@ -7,9 +7,11 @@ namespace Anamnesis.GUI.Views
 	using System.Linq;
 	using System.Windows;
 	using System.Windows.Forms;
+	using System.Windows.Media;
 	using Anamnesis.Files;
 	using Anamnesis.Services;
 	using PropertyChanged;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for ThemeSettingsView.xaml.
@@ -105,6 +107,19 @@ namespace Anamnesis.GUI.Views
 				return;
 
 			SettingsService.Current.DefaultSceneDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
+		}
+
+		private void OnColorChange(object sender, RoutedEventArgs e)
+		{
+			SettingsService.Current.CustomColor = this.clrPicker.Color.ToString();
+			Themes.ApplySystemTheme(SettingsService.Current.UseCustomColor, (Color)ColorConverter.ConvertFromString(this.clrPicker.Color.ToString()));
+		}
+
+		private void UpdateColor(object sender, RoutedEventArgs e)
+		{
+			bool useCustomColor = SettingsService.Current.UseCustomColor;
+			string customColor = SettingsService.Current.CustomColor;
+			Themes.ApplySystemTheme(useCustomColor, useCustomColor ? (Color)ColorConverter.ConvertFromString(customColor) : null);
 		}
 
 		public class LanguageOption

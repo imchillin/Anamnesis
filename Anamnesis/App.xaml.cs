@@ -12,6 +12,7 @@ namespace Anamnesis
 	using System.Runtime.Loader;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Media;
 	using System.Windows.Threading;
 	using Anamnesis.GUI;
 	using Anamnesis.GUI.Windows;
@@ -88,12 +89,12 @@ namespace Anamnesis
 
 				LogService.CreateLog();
 
-				Themes.ApplySystemTheme();
-
 				this.CheckWorkingDirectory();
 				this.CheckForProcesses();
 
 				await Services.InitializeServices();
+
+				Themes.ApplySystemTheme(SettingsService.Current.UseCustomColor, (Color)ColorConverter.ConvertFromString(SettingsService.Current.CustomColor));
 
 				await Dispatch.MainThread();
 

@@ -29,8 +29,9 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition/>
-			<RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 
@@ -62,7 +63,10 @@
 		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_ShowGallery" Style="{StaticResource Label}"/>
 		<CheckBox IsChecked="{Binding SettingsService.Settings.ShowGallery}" Grid.Column="1" Grid.Row="7" Margin="6"/>
 
-		<GroupBox Grid.Row="8" Grid.ColumnSpan="2">
+        <XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="8" Key="" Text="Use custom color" Style="{StaticResource Label}"/>
+        <CheckBox IsChecked="{Binding SettingsService.Settings.UseCustomColor}" Unchecked="UpdateColor" Checked="UpdateColor" Grid.Column="1" Grid.Row="8" Margin="6"/>
+
+        <GroupBox Grid.Row="9" Grid.ColumnSpan="2">
 			<GroupBox.Header>
 				<XivToolsWPF:TextBlock Key="Settings_Directories"/>
 			</GroupBox.Header>
@@ -78,6 +82,7 @@
 					<RowDefinition/>
 					<RowDefinition/>
 					<RowDefinition/>
+                    <RowDefinition/>
 				</Grid.RowDefinitions>
 
 				<XivToolsWPF:TextBlock Grid.Row="0" Grid.Column="0" Key="Settings_Dir_Characters" Style="{StaticResource Label}"/>
@@ -88,7 +93,12 @@
 				<TextBox Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultPoseDirectory}" IsEnabled="False"/>
 				<Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowsePose"/>
 
-				<!--<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Settings_Dir_Scenes" Style="{StaticResource Label}"/>
+                <XivToolsWPF:TextBlock Grid.Row="2" Grid.Column="0" Key="Settings_Custom_Color" Style="{StaticResource Label}"/>
+                <wpf:ColorPicker Color="{Binding SettingsService.Settings.CustomColor}" Grid.Row="2" Grid.Column="1" Width="200" Height="180" Name="clrPicker" IsEnabled="{Binding SettingsService.Current.UseCustomColor}"/>
+
+                <Button Grid.Row="3" Grid.Column="1" Height="30" Style="{StaticResource TransparentButton}" Content="Save" Click="OnColorChange" IsEnabled="{Binding SettingsService.Current.UseCustomColor}"/>
+
+                <!--<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Settings_Dir_Scenes" Style="{StaticResource Label}"/>
 				<TextBox Grid.Row="2" Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultSceneDirectory}" IsEnabled="False"/>
 				<Button Grid.Row="2" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseScene"/>-->
 
