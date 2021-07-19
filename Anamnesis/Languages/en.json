@@ -35,6 +35,8 @@
 	"Target_ConvertCarbuncleToPlayerMessage": "The Actor: \"{0}\" appears to be a Companion or Pet. Do you want to change them to an editable actor to allow for posing and appearance changes?",
 
 	"EquipmentSelector_Classes": "Classes / Jobs",
+	"EquipmentSelector_HideLocked": "Hide race/gender-locked items",
+
 	"EquipmentSelector_Categories": "Categories",
 	"EquipmentSelector_Standard": "Standard Items",
 	"EquipmentSelector_StandardTip": "Items obtainable through normal gameplay",

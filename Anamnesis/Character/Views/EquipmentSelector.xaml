@@ -38,6 +38,9 @@
             <Line X1="0" X2="1" StrokeThickness="1" Margin="2" Stroke="{DynamicResource MaterialDesignCardBackground}" Stretch="Fill"/>
 
             <StackPanel Margin="10,2">
+                <CheckBox Padding="3" IsChecked="{Binding HideLocked}">
+                    <XivToolsWpf:TextBlock Key="EquipmentSelector_HideLocked"/>
+                </CheckBox>
                 <CheckBox Padding="3" IsChecked="{Binding PairEquip}" Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
                     <XivToolsWpf:TextBlock Key="Character_Equipment_PairEquip"/>
                 </CheckBox>

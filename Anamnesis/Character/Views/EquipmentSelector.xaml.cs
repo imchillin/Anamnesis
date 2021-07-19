@@ -14,7 +14,9 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Controls;
 	using Anamnesis.Styles.Drawers;
+	using Lumina.Excel.GeneratedSheets;
 	using PropertyChanged;
+	using static Anamnesis.Memory.Customize;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
@@ -25,18 +27,21 @@ namespace Anamnesis.Character.Views
 		private static readonly Dictionary<uint, ItemCategories> ManualItemCategories;
 		private static Classes classFilter = Classes.All;
 		private static ItemCategories categoryFilter = ItemCategories.All;
+		private static bool hideLocked = true;
 		private static bool pairEquip = false;
 
 		private readonly ItemSlots slot;
+		private readonly Memory.ActorViewModel? actor;
 
 		static EquipmentSelector()
 		{
 			ManualItemCategories = SerializerService.DeserializeFile<Dictionary<uint, ItemCategories>>("Data/ItemCategories.json");
 		}
 
-		public EquipmentSelector(ItemSlots slot)
+		public EquipmentSelector(ItemSlots slot, Memory.ActorViewModel? actor)
 		{
 			this.slot = slot;
+			this.actor = actor;
 
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
@@ -90,6 +95,16 @@ namespace Anamnesis.Character.Views
 			set
 			{
 				categoryFilter = value;
+				this.Selector.FilterItems();
+			}
+		}
+
+		public bool HideLocked
+		{
+			get => hideLocked;
+			set
+			{
+				hideLocked = value;
 				this.Selector.FilterItems();
 			}
 		}
@@ -159,6 +174,9 @@ namespace Anamnesis.Character.Views
 			if (!this.ValidCategory(item))
 				return false;
 
+			if (this.HideLocked && item is ItemViewModel ivm && !this.CanEquip(ivm))
+				return false;
+
 			return this.MatchesSearch(item, search);
 		}
 
@@ -199,6 +217,29 @@ namespace Anamnesis.Character.Views
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;
 			return categoryFiltered;
+		}
+
+		private bool CanEquip(ItemViewModel item)
+		{
+			EquipRaceCategory? equipRaceCategory = GameDataService.EquipRaceCategories.GetRow(item.Value.EquipRestriction);
+			if (equipRaceCategory == null || this.actor == null || this.actor.Customize == null)
+				return true;
+
+			Genders gender = this.actor.Customize.Gender;
+			bool validGender = (gender == Genders.Masculine && equipRaceCategory.Male)
+				|| (gender == Genders.Feminine && equipRaceCategory.Female);
+
+			Races race = this.actor.Customize.Race;
+			bool validRace = (race == Races.Hyur && equipRaceCategory.Hyur)
+				|| (race == Races.Elezen && equipRaceCategory.Elezen)
+				|| (race == Races.Lalafel && equipRaceCategory.Lalafell)
+				|| (race == Races.Miqote && equipRaceCategory.Miqote)
+				|| (race == Races.Roegadyn && equipRaceCategory.Roegadyn)
+				|| (race == Races.AuRa && equipRaceCategory.AuRa)
+				|| (race == Races.Hrothgar && equipRaceCategory.Unknown6)
+				|| (race == Races.Viera && equipRaceCategory.Unknown7);
+
+			return validGender && validRace;
 		}
 
 		private bool MatchesSearch(IItem item, string[]? search = null)

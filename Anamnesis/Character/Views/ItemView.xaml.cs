@@ -126,7 +126,7 @@ namespace Anamnesis.Character.Views
 
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
-			EquipmentSelector selector = new EquipmentSelector(this.Slot);
+			EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
 			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.PairEquip));
 		}
 

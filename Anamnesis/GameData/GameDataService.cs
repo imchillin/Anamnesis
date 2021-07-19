@@ -3,24 +3,20 @@
 
 namespace Anamnesis.Services
 {
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Threading.Tasks;
-	using Anamnesis.Character;
-	using Anamnesis.GameData;
-	using Anamnesis.GameData.Sheets;
-	using Anamnesis.GameData.ViewModels;
-	using Anamnesis.Memory;
-	using Anamnesis.Serialization;
-	using Anamnesis.Serialization.Converters;
-	using Anamnesis.Updater;
-	using Lumina.Excel;
-	using Lumina.Excel.GeneratedSheets;
+    using System;
+    using System.IO;
+    using System.Threading.Tasks;
+    using Anamnesis.Character;
+    using Anamnesis.GameData;
+    using Anamnesis.GameData.Sheets;
+    using Anamnesis.GameData.ViewModels;
+    using Anamnesis.Memory;
+    using Anamnesis.Updater;
+    using Lumina.Excel;
+    using Lumina.Excel.GeneratedSheets;
+    using LuminaData = global::Lumina.GameData;
 
-	using LuminaData = global::Lumina.GameData;
-
-	public class GameDataService : ServiceBase<GameDataService>
+    public class GameDataService : ServiceBase<GameDataService>
 	{
 		private LuminaData? lumina;
 
@@ -37,6 +33,7 @@ namespace Anamnesis.Services
 		public static ISheet<ICharaMakeType> CharacterMakeTypes { get; protected set; }
 		public static ISheet<INpcResident> ResidentNPCs { get; protected set; }
 		public static ExcelSheet<WeatherRate> WeatherRates { get; protected set; }
+		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; protected set; }
 		public static ISheet<Monster> Monsters { get; private set; }
 		public static ISheet<Prop> Props { get; private set; }
 		#pragma warning restore CS8618
@@ -75,12 +72,17 @@ namespace Anamnesis.Services
 			this.lumina.GetExcelSheet<Perform>();
 
 			// no view models for these
-			ExcelSheet<WeatherRate>? sheet = this.lumina.GetExcelSheet<WeatherRate>();
+			static ExcelSheet<T> GetNotNullExcelSheet<T>(LuminaData lumina)
+			    where T : ExcelRow
+			{
+				ExcelSheet<T>? sheet = lumina.GetExcelSheet<T>();
+				if (sheet == null)
+					throw new Exception($"Missing sheet {typeof(T).Name}");
+				return sheet;
+			}
 
-			if (sheet == null)
-				throw new Exception("No weather sheet");
-
-			WeatherRates = sheet;
+			WeatherRates = GetNotNullExcelSheet<WeatherRate>(this.lumina);
+			EquipRaceCategories = GetNotNullExcelSheet<EquipRaceCategory>(this.lumina);
 
 			// these are json files that we write by hand
 			Monsters = new JsonListSheet<Monster>("Data/Monsters.json");
