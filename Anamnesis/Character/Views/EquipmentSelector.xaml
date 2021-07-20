@@ -41,6 +41,9 @@
                 <CheckBox Padding="3" IsChecked="{Binding HideLocked}">
                     <XivToolsWpf:TextBlock Key="EquipmentSelector_HideLocked"/>
                 </CheckBox>
+                <CheckBox Padding="3" IsChecked="{Binding Ambidextrous}" Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
+                    <XivToolsWpf:TextBlock Key="EquipmentSelector_Ambidextrous"/>
+                </CheckBox>
                 <CheckBox Padding="3" IsChecked="{Binding AutoOffhand}" Visibility="{Binding IsMainHandSlot, Converter={StaticResource B2V}}">
                     <CheckBox.ToolTip>
                         <XivToolsWpf:TextBlock Key="EquipmentSelector_AutoOffhandTip"/>

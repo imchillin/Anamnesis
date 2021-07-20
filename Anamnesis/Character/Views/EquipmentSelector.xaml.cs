@@ -29,6 +29,7 @@ namespace Anamnesis.Character.Views
 		private static Classes classFilter = Classes.All;
 		private static ItemCategories categoryFilter = ItemCategories.All;
 		private static bool hideLocked = true;
+		private static bool ambidextrous = false;
 		private static bool autoOffhand = true;
 
 		private readonly ItemSlots slot;
@@ -111,6 +112,16 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
+		public bool Ambidextrous
+		{
+			get => ambidextrous;
+			set
+			{
+				ambidextrous = value;
+				this.Selector.FilterItems();
+			}
+		}
+
 		public bool AutoOffhand
 		{
 			get => autoOffhand;
@@ -159,7 +170,7 @@ namespace Anamnesis.Character.Views
 			if (string.IsNullOrEmpty(item.Name))
 				return false;
 
-			if (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand)
+			if (this.Ambidextrous && (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand))
 			{
 				if (!item.IsWeapon)
 					return false;
