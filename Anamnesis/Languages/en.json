@@ -35,6 +35,11 @@
 	"Target_ConvertCarbuncleToPlayerMessage": "The Actor: \"{0}\" appears to be a Companion or Pet. Do you want to change them to an editable actor to allow for posing and appearance changes?",
 
 	"EquipmentSelector_Classes": "Classes / Jobs",
+	"EquipmentSelector_HideLocked": "Hide race/gender-locked items",
+	"EquipmentSelector_Ambidextrous": "Allow all weapons in either hand",
+	"EquipmentSelector_AutoOffhand": "Auto-equip offhand",
+	"EquipmentSelector_AutoOffhandTip": "Automatically equip paired weapons in the offhand, and unequip the offhand when equipping two-handed weapons",
+
 	"EquipmentSelector_Categories": "Categories",
 	"EquipmentSelector_Standard": "Standard Items",
 	"EquipmentSelector_StandardTip": "Items obtainable through normal gameplay",
@@ -127,7 +132,6 @@
 	"Character_Equipment_Wrists": "Wrists",
 	"Character_Equipment_RightRing": "Right Ring",
 	"Character_Equipment_LeftRing": "Left Ring",
-	"Character_Equipment_PairEquip": "Equip both hands",
 	"Character_Equipment_Tint": "Tint Color",
 	"Character_Equipment_Dye": "Dye",
 	"Character_Equipment_Hide": "Hide the weapon (by setting its scale to 0)",
