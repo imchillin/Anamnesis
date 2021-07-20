@@ -31,6 +31,7 @@ namespace Anamnesis.Character.Views
 		private static bool hideLocked = true;
 		private static bool ambidextrous = false;
 		private static bool autoOffhand = true;
+		private static bool showFilters = false;
 
 		private readonly ItemSlots slot;
 		private readonly Memory.ActorViewModel? actor;
@@ -74,6 +75,12 @@ namespace Anamnesis.Character.Views
 		{
 			get => (IItem?)this.Selector.Value;
 			set => this.Selector.Value = value;
+		}
+
+		public bool ShowFilters
+		{
+			get => showFilters;
+			set => showFilters = value;
 		}
 
 		public bool IsMainHandSlot => this.slot == ItemSlots.MainHand;
