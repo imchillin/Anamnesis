@@ -3,20 +3,20 @@
 
 namespace Anamnesis.Services
 {
-    using System;
-    using System.IO;
-    using System.Threading.Tasks;
-    using Anamnesis.Character;
-    using Anamnesis.GameData;
-    using Anamnesis.GameData.Sheets;
-    using Anamnesis.GameData.ViewModels;
-    using Anamnesis.Memory;
-    using Anamnesis.Updater;
-    using Lumina.Excel;
-    using Lumina.Excel.GeneratedSheets;
-    using LuminaData = global::Lumina.GameData;
+	using System;
+	using System.IO;
+	using System.Threading.Tasks;
+	using Anamnesis.Character;
+	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
+	using Anamnesis.GameData.ViewModels;
+	using Anamnesis.Memory;
+	using Anamnesis.Updater;
+	using Lumina.Excel;
+	using Lumina.Excel.GeneratedSheets;
+	using LuminaData = global::Lumina.GameData;
 
-    public class GameDataService : ServiceBase<GameDataService>
+	public class GameDataService : ServiceBase<GameDataService>
 	{
 		private LuminaData? lumina;
 
@@ -43,9 +43,9 @@ namespace Anamnesis.Services
 			string file = MemoryService.GamePath + "game/ffxivgame.ver";
 			string gameVer = File.ReadAllText(file);
 
-			if (gameVer != UpdateService.SupportedGameVersion)
+			if (gameVer != VersionInfo.ValidatedGameVersion)
 			{
-				Log.Error(LocalizationService.GetStringFormatted("Error_WrongVersion", gameVer));
+				Log.Warning($"Anamnesis has not been validated against this game version: {gameVer}. This may cause problems.");
 			}
 
 			try
@@ -73,7 +73,7 @@ namespace Anamnesis.Services
 
 			// no view models for these
 			static ExcelSheet<T> GetNotNullExcelSheet<T>(LuminaData lumina)
-			    where T : ExcelRow
+				where T : ExcelRow
 			{
 				ExcelSheet<T>? sheet = lumina.GetExcelSheet<T>();
 				if (sheet == null)

@@ -18,15 +18,10 @@ namespace Anamnesis.Updater
 
 	public class UpdateService : ServiceBase<UpdateService>
 	{
-		public const string VersionFile = "Version.txt";
-
 		private const string Repository = "imchillin/Anamnesis";
 
 		private readonly HttpClient httpClient = new HttpClient();
 		private Release? currentRelease;
-
-		public static DateTimeOffset Version { get; private set; } = DateTimeOffset.Now;
-		public static string? SupportedGameVersion { get; private set; }
 
 		private static string UpdateTempDir => Path.GetTempPath() + "/AnamnesisUpdateLatest/";
 
@@ -34,19 +29,8 @@ namespace Anamnesis.Updater
 		{
 			await base.Initialize();
 
-			if (!File.Exists(VersionFile))
-				throw new Exception("No version file found");
-
-			string[] parts = File.ReadAllText(VersionFile).Split(';');
-
-			Version = DateTimeOffset.Parse(parts[0].Trim()).ToUniversalTime();
-			SupportedGameVersion = parts[1].Trim();
-
 			// Debug builds should not attempt to update
-#if DEBUG
-			Version = DateTimeOffset.UtcNow;
-#endif
-
+#if !DEBUG
 			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
 			if (elapsed.TotalHours < 6)
@@ -54,6 +38,7 @@ namespace Anamnesis.Updater
 				Log.Information("Last update check was less than 6 hours ago. Skipping.");
 				return;
 			}
+#endif
 		}
 
 		public async Task<bool> CheckForUpdates()
@@ -79,7 +64,7 @@ namespace Anamnesis.Updater
 				DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
 				published = published.ToUniversalTime();
 
-				bool update = this.currentRelease.Published != null && published > Version;
+				bool update = this.currentRelease.Published != null && published > VersionInfo.Date;
 
 				if (update)
 				{

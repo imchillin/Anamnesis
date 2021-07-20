@@ -15,7 +15,6 @@
 	"ProcessSelector_NotFound2": "Please ensure the game is running, and is in DirectX 11 mode.",
 
 	"Error_NotInGame": "Not Signed In",
-	"Error_WrongVersion": "Unsupported game version: {0}. Has a patch come out recently?\nUsing Anamnesis with unsupported game versions can cause game/app crashes.\nWe will have an update out as soon as we can. Thank you for your patience!",
 
 	"FileBrowser_GoUp": "Go Up",
 	"FileBrowser_Flatten": "Flatten Hierarchy",
