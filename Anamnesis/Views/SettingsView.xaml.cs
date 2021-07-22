@@ -109,19 +109,6 @@ namespace Anamnesis.GUI.Views
 			SettingsService.Current.DefaultSceneDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
 		}
 
-		private void OnColorChange(object sender, RoutedEventArgs e)
-		{
-			SettingsService.Current.CustomColor = this.clrPicker.Color.ToString();
-			Themes.ApplySystemTheme(SettingsService.Current.UseCustomColor, (Color)ColorConverter.ConvertFromString(this.clrPicker.Color.ToString()));
-		}
-
-		private void UpdateColor(object sender, RoutedEventArgs e)
-		{
-			bool useCustomColor = SettingsService.Current.UseCustomColor;
-			string customColor = SettingsService.Current.CustomColor;
-			Themes.ApplySystemTheme(useCustomColor, useCustomColor ? (Color)ColorConverter.ConvertFromString(customColor) : null);
-		}
-
 		public class LanguageOption
 		{
 			public LanguageOption(string key, string display)

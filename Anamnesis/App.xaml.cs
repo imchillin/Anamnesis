@@ -94,7 +94,7 @@ namespace Anamnesis
 
 				await Services.InitializeServices();
 
-				Themes.ApplySystemTheme(SettingsService.Current.UseCustomColor, (Color)ColorConverter.ConvertFromString(SettingsService.Current.CustomColor));
+				SettingsService.ApplyTheme();
 
 				await Dispatch.MainThread();
 

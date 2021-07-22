@@ -6,6 +6,7 @@ namespace Anamnesis.Services
 	using System;
 	using System.ComponentModel;
 	using System.Windows;
+	using System.Windows.Media;
 	using PropertyChanged;
 
 	[Serializable]
@@ -28,8 +29,10 @@ namespace Anamnesis.Services
 		public bool IsDyslexic { get; set; } = false;
 		public bool ShowGallery { get; set; } = true;
 		public bool EnableTranslucency { get; set; } = true;
-		public bool UseCustomColor { get; set; } = false;
-		public string CustomColor { get; set; } = "#00FF00";
+
+		public bool OverrideSystemTheme { get; set; } = false;
+		public Color ThemeColor { get; set; } = Color.FromArgb(255, 247, 99, 12);
+		public bool ThemeLight { get; set; } = false;
 
 		public DateTimeOffset LastUpdateCheck { get; set; } = DateTimeOffset.MinValue;
 	}

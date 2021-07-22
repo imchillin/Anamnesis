@@ -39,6 +39,18 @@ namespace Anamnesis.Services
 			File.WriteAllText(SettingsPath, json);
 		}
 
+		public static void ApplyTheme()
+		{
+			if (Current.OverrideSystemTheme)
+			{
+				Themes.ApplyCustomTheme(Current.ThemeLight, Current.ThemeColor);
+			}
+			else
+			{
+				Themes.ApplySystemTheme();
+			}
+		}
+
 		public override async Task Initialize()
 		{
 			await base.Initialize();
@@ -85,6 +97,7 @@ namespace Anamnesis.Services
 				Save();
 			}
 
+			ApplyTheme();
 			SettingsChanged?.Invoke(sender, e);
 		}
 	}

@@ -433,11 +433,12 @@
 	"Settings_Dir_Poses": "Poses",
 	"Settings_Dir_Scenes": "Scenes",
 	"Settings_Theme": "Theme",
-	"Settings_Theme_Hydaelyn": "Hydaelyn",
-	"Settings_Theme_Zodiark": "Zodiark",
+	"Settings_Theme_Override": "Override system theme",
+	"Settings_Theme_Light": "Light Mode",
+	"Settings_Theme_Color": "Color",
 	"Settings_Dyslexic": "Use dyslexic friendly font.",
 	"Settings_ShowGallery": "Show Gallery",
-	"Settings_Custom_Color": "Custom color",
+
 
 	"About_Version_Header": "Version",
 	"About_OpenSource_Header": "Proudly Open Source",
