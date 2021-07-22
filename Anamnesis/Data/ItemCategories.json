@@ -3287,6 +3287,8 @@
   "2971": "Premium, Limited",
   // Lady's Yukata (Black)
   "2972": "Premium, Limited",
+  // Red Summer Top
+  "2973": "Premium, Limited",
   // Green Summer Top
   "2974": "Premium, Limited",
   // Blue Summer Top
@@ -3295,6 +3297,8 @@
   "2976": "Premium, Limited",
   // Lunar Summer Top
   "2977": "Premium, Limited",
+  // Red Summer Halter
+  "2978": "Premium, Limited",
   // Green Summer Halter
   "2979": "Premium, Limited",
   // Blue Summer Halter
@@ -3403,6 +3407,8 @@
   "3284": "Premium, Limited",
   // Lady's Knickers (Gold)
   "3285": "Premium, Limited",
+  // Red Summer Trunks
+  "3286": "Premium, Limited",
   // Green Summer Trunks
   "3287": "Premium, Limited",
   // Blue Summer Trunks
@@ -3411,6 +3417,8 @@
   "3289": "Premium, Limited",
   // Lunar Summer Trunks
   "3290": "Premium, Limited",
+  // Red Summer Tanga
+  "3291": "Premium, Limited",
   // Green Summer Tanga
   "3292": "Premium, Limited",
   // Blue Summer Tanga
@@ -5330,7 +5338,7 @@
   // Head Engineer's Attire
   "14862": "Premium",
   // Ironworks Engineer's Goggles
-  "14863": "Deprecated",
+  "14863": "Premium",
   // Ironworks Engineer's Doublet
   "14864": "Deprecated",
   // Ironworks Engineer's Gloves
@@ -6347,6 +6355,8 @@
   "17304": "Deprecated",
   // Sunburst Ring of Casting
   "17305": "Deprecated",
+  // Inferno Jacket
+  "17470": "Limited",
   // Lord Commander's Coat
   "17473": "Premium",
   // Lord Commander's Gloves
@@ -6361,6 +6371,16 @@
   "17479": "Premium, Limited",
   // Songbird Boots
   "17480": "Premium, Limited",
+  // Royal Seneschal's Chapeau
+  "17481": "Premium, Limited",
+  // Royal Seneschal's Coat
+  "17482": "Premium, Limited",
+  // Royal Seneschal's Fingerless Gloves
+  "17483": "Premium, Limited",
+  // Royal Seneschal's Breeches
+  "17484": "Premium, Limited",
+  // Royal Seneschal's Boots
+  "17485": "Premium, Limited",
   // Paissa Earring
   "17495": "Limited",
   // Leonhart Jacket
@@ -7648,9 +7668,9 @@
   // Resshi Zori
   "33666": "Premium",
   // Oracle Top
-  "33751": "Limited",
+  "33751": "Premium",
   // Oracle Pantalettes
-  "33752": "Limited",
+  "33752": "Premium",
   // Oracle Leggings
-  "33753": "Limited",
+  "33753": "Premium",
 }
