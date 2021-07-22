@@ -241,7 +241,10 @@ namespace Anamnesis.Character.Views
 
 		private bool CanEquip(ItemViewModel item)
 		{
-			EquipRaceCategory? equipRaceCategory = GameDataService.EquipRaceCategories.GetRow(item.Value.EquipRestriction);
+			EquipRaceCategory? equipRaceCategory;
+			lock (GameDataService.EquipRaceCategories)
+				equipRaceCategory = GameDataService.EquipRaceCategories.GetRow(item.Value.EquipRestriction);
+
 			if (equipRaceCategory == null || this.actor == null || this.actor.Customize == null)
 				return true;
 
