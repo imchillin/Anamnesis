@@ -98,12 +98,7 @@ namespace Anamnesis.Services
 			Log.Information("Framework: " + RuntimeInformation.FrameworkDescription, "Info");
 			Log.Information("OS Architecture: " + RuntimeInformation.OSArchitecture.ToString(), "Info");
 			Log.Information("Process Architecture: " + RuntimeInformation.ProcessArchitecture.ToString(), "Info");
-
-			string ver = "Unknown";
-			if (File.Exists("Version.txt"))
-				ver = File.ReadAllText("Version.txt");
-
-			Log.Information("Anamnesis Version: " + ver, "Info");
+			Log.Information("Anamnesis Version: " + VersionInfo.Date, "Info");
 
 			// Check for XIVLauncher / Dalamud
 			Process[] xlProc = Process.GetProcessesByName("XIVLauncher.exe");
