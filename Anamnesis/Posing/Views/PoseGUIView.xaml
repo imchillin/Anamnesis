@@ -157,7 +157,7 @@
 				</Grid.RowDefinitions>
 
 				<!-- Viera Ears 01 -->
-				<Viewbox Grid.Row="0" Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="128">
+				<Viewbox Grid.Row="0" Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="110">
 					<Canvas Width="138" Height="196">
 						<Image Canvas.Left="0" Canvas.Top="0" Width="138" Height="196" Source="../../Assets/PoseCharacterVieraEars01Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
@@ -174,7 +174,7 @@
 				</Viewbox>
 
 				<!-- Viera Ears 02 -->
-				<Viewbox Grid.Row="0" Visibility="{Binding IsVieraEars02, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="128">
+				<Viewbox Grid.Row="0" Visibility="{Binding IsVieraEars02, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="110">
 					<Canvas Width="163" Height="142" Margin="0, -32, 0, 32">
 						<Image Canvas.Left="0" Canvas.Top="0" Width="163" Height="232" Source="../../Assets/PoseCharacterVieraEars0204Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
@@ -191,7 +191,7 @@
 				</Viewbox>
 
 				<!-- Viera Ears 03 -->
-				<Viewbox Grid.Row="0" Width="150" Visibility="{Binding IsVieraEars03, Converter={StaticResource B2V}, FallbackValue=Visible}" Height="128">
+				<Viewbox Grid.Row="0" Width="150" Visibility="{Binding IsVieraEars03, Converter={StaticResource B2V}, FallbackValue=Visible}" Height="110">
 					<Canvas Width="256" Height="122" Margin="-50, 0, -50, 0">
 						<Image Canvas.Left="0" Canvas.Top="0" Width="256" Height="122" Source="../../Assets/PoseCharacterVieraEars03Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
@@ -209,7 +209,7 @@
 				</Viewbox>
 
 				<!-- Viera Ears 04 -->
-				<Viewbox Grid.Row="0" Visibility="{Binding IsVieraEars04, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="128">
+				<Viewbox Grid.Row="0" Visibility="{Binding IsVieraEars04, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="110">
 					<Canvas Width="163" Height="142" Margin="0, -32, 0, 32">
 						<Image Canvas.Left="0" Canvas.Top="0" Width="163" Height="232" Source="../../Assets/PoseCharacterVieraEars0204Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
@@ -304,7 +304,7 @@
 
 
 				<!-- Head & Face -->
-				<Viewbox Grid.Row="1" Visibility="{Binding IsCustomFace, Converter={StaticResource !B2V}, FallbackValue=Hidden}"  Height="220">
+				<Viewbox Grid.Row="1" Visibility="{Binding IsCustomFace, Converter={StaticResource !B2V}, FallbackValue=Hidden}" Height="220">
 					<Canvas Height="300" Width="300">
 						
 						
