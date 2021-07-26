@@ -23,5 +23,11 @@ namespace Anamnesis.GameData.ViewModels
 		public string Title => !string.IsNullOrEmpty(this.Value.Title) ? this.Value.Title : this.Key.ToString();
 		public INpcBase? Appearance => GameDataService.BaseNPCs!.Get(this.Value.RowId);
 		public Mod? Mod => null;
+
+		public bool IsFavorite
+		{
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
+		}
 	}
 }
