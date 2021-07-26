@@ -24,6 +24,10 @@ namespace Anamnesis.Services
 		{
 			try
 			{
+				const string tipsUrl = "https://raw.githubusercontent.com/imchillin/Anamnesis/master/Anamnesis/Data/Tips2.json";
+				var updatedTips = SerializerService.DeserializeUrl<List<TipEntry>>(tipsUrl);
+				if (updatedTips != null)
+					SerializerService.SerializeFile("Data/Tips.json", updatedTips);
 				this.tips = SerializerService.DeserializeFile<List<TipEntry>>("Data/Tips.json");
 			}
 			catch (Exception ex)

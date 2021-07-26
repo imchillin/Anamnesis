@@ -3,13 +3,15 @@
 
 namespace Anamnesis.Serialization
 {
-	using System;
-	using System.IO;
-	using System.Text.Json;
-	using System.Text.Json.Serialization;
-	using Anamnesis.Serialization.Converters;
+    using System;
+    using System.IO;
+    using System.Net.Http;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
+    using Anamnesis.Serialization.Converters;
+    using Anamnesis.Services;
 
-	public class SerializerService : ServiceBase<SerializerService>
+    public class SerializerService : ServiceBase<SerializerService>
 	{
 		public static JsonSerializerOptions Options = new JsonSerializerOptions();
 
@@ -74,6 +76,24 @@ namespace Anamnesis.Serialization
 				throw new Exception("Failed to deserialize object");
 
 			return result;
+		}
+
+		public static T? DeserializeUrl<T>(string url)
+			where T : new()
+		{
+			try
+			{
+				var httpClient = new HttpClient();
+				var response = httpClient.GetAsync(url).Result;
+				string json = response.Content.ReadAsStringAsync().Result;
+				T? result = JsonSerializer.Deserialize<T>(json, Options);
+				return result;
+			}
+			catch (Exception)
+			{
+				Log.Information("Failed to deserialize json from url");
+				return default(T);
+			}
 		}
 	}
 }
