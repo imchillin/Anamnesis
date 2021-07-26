@@ -345,11 +345,11 @@
 			<!--  Drawer flyouts  -->
 			<materialdesign:DrawerHost
 				x:Name="DrawerHost"
+				Margin="1, 28, 1, 1"
 				Grid.Row="0"
 				Grid.RowSpan="2"
 				Grid.Column="0"
-				Grid.ColumnSpan="2"
-				Margin="1">
+				Grid.ColumnSpan="2">
 				<materialdesign:DrawerHost.RightDrawerContent>
 					<Grid MinWidth="64">
 						<ContentPresenter x:Name="DrawerRight" />
