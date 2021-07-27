@@ -5,6 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" Width="256">
 
@@ -51,9 +52,8 @@
 					<ToggleButton Grid.Column="2" Grid.RowSpan="2" Style="{StaticResource InvisibleToggleButton}" IsChecked="{Binding IsFavorite}" Margin="6,0,0,0" Padding="0" VerticalAlignment="Center">
 						<Grid>
 							<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
-												  Foreground="Black"
 												   Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
-							<fa:IconBlock Icon="Star" FontSize="13"
+							<xivToolsWpf:IconBlock Icon="Star" FontSize="13"
 										  Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
 						</Grid>
 					</ToggleButton>

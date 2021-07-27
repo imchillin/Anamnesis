@@ -5,6 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" Width="256">
 	<Grid Margin="0, 6, 0, 0">
@@ -42,54 +43,61 @@
 
 			<cm3Drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
-                    <Grid>
+					<Grid>
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
 
-                        <Grid.RowDefinitions>
+						<Grid.RowDefinitions>
 							<RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
 
 						<TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="3, 0, 0, 0">
-                            <TextBlock Text="{Binding Title}" Style="{StaticResource Label}" Visibility="{Binding Title, Converter={StaticResource NotNullToVisibilityConverter}}"/>
-                            <fa:IconBlock Icon="pen" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>
-                        </StackPanel>
+						<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="3, 0, 0, 0">
+							<TextBlock Text="{Binding Title}" Style="{StaticResource Label}" Visibility="{Binding Title, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+							<fa:IconBlock Icon="pen" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+						</StackPanel>
 
-                        <Rectangle Grid.ColumnSpan="2" 
+						<Rectangle Grid.ColumnSpan="2" 
 									   Grid.RowSpan="2" 
 									   Fill="Transparent" >
-                            <ToolTipService.ToolTip>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{Binding Description}" Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+							<ToolTipService.ToolTip>
+								<StackPanel Orientation="Vertical">
+									<TextBlock Text="{Binding Description}" Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
-                                    <Grid Grid.Column="1" Grid.Row="2" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="3, 0, 0, 0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
+									<Grid Grid.Column="1" Grid.Row="2" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="3, 0, 0, 0">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="Auto"/>
+											<ColumnDefinition/>
+										</Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="0" Text="Modded: " HorizontalAlignment="Left" />
-                                        <TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name}" HorizontalAlignment="Left" />
-                                    </Grid>
-                                </StackPanel>
-                            </ToolTipService.ToolTip>
-                        </Rectangle>
-                        <ToggleButton Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource InvisibleToggleButton}" IsChecked="{Binding IsFavorite}" Margin="6,0,0,0" Padding="0" VerticalAlignment="Center">
-                            <Grid>
-                                <fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
-												  Foreground="Black"
+										<TextBlock Grid.Column="0" Text="Modded: " HorizontalAlignment="Left" />
+										<TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name}" HorizontalAlignment="Left" />
+									</Grid>
+								</StackPanel>
+							</ToolTipService.ToolTip>
+						</Rectangle>
+						
+						<ToggleButton Grid.Row="0"
+									  Grid.Column="1"
+									  Grid.RowSpan="2"
+									  Style="{StaticResource InvisibleToggleButton}"
+									  IsChecked="{Binding IsFavorite}" 
+									  Margin="6,0,0,0"
+									  Padding="0"
+									  VerticalAlignment="Center">
+							<Grid VerticalAlignment="Center">
+								<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
 												   Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
-                                <fa:IconBlock Icon="Star" FontSize="13"
+								<xivToolsWpf:IconBlock Icon="Star" FontSize="13"
 										  Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
-                            </Grid>
-                        </ToggleButton>
-                    </Grid>
+							</Grid>
+						</ToggleButton>
+					</Grid>
 				</DataTemplate>
 			</cm3Drawers:SelectorDrawer.ItemTemplate>
 		</cm3Drawers:SelectorDrawer>
