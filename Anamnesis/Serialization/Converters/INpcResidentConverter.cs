@@ -9,7 +9,7 @@ namespace Anamnesis.Serialization.Converters
 	using Anamnesis.GameData;
 	using Anamnesis.Services;
 
-	public class IModelConverter : JsonConverter<INpcResident>
+	public class INpcResidentConverter : JsonConverter<INpcResident>
 	{
 		public override INpcResident Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
