@@ -11,7 +11,7 @@ namespace Anamnesis
 		/// The time this version was published.
 		/// </summary>
 		// TODO: This should get filled in by a build server.
-		public static readonly DateTime Date = new DateTime(2021, 07, 20, 20, 00, 00);
+		public static readonly DateTime Date = new DateTime(2021, 07, 26, 17, 30, 00);
 
 		/// <summary>
 		/// The latest gamve version that the tool has been validated for.

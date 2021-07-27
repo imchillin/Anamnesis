@@ -24,12 +24,19 @@ namespace Anamnesis.Character
 
 		public static BitmapImage GetIcon(this ItemSlots self)
 		{
-			BitmapImage logo = new BitmapImage();
-			logo.BeginInit();
-			logo.UriSource = new Uri("pack://application:,,,/Anamnesis;component/Assets/Slots/" + self.ToString() + ".png");
-			logo.EndInit();
-
-			return logo;
+			try
+			{
+				BitmapImage logo = new BitmapImage();
+				logo.BeginInit();
+				logo.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+				logo.UriSource = new Uri("pack://application:,,,/Anamnesis;component/Assets/Slots/" + self.ToString() + ".png");
+				logo.EndInit();
+				return logo;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to get icon for slot: {self}", ex);
+			}
 		}
 	}
 }
