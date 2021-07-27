@@ -74,7 +74,7 @@ namespace Anamnesis.Views
 			while (this.IsVisible)
 			{
 				const string galleryUrl = "https://raw.githubusercontent.com/imchillin/Anamnesis/master/Anamnesis/Data/Images.json";
-				var updatedGallery = SerializerService.DeserializeUrl<List<Entry>>(galleryUrl);
+				List<Entry>? updatedGallery = await SerializerService.DeserializeUrlAsync<List<Entry>>(galleryUrl);
 				if (updatedGallery != null)
 					SerializerService.SerializeFile("Data/Images.json", updatedGallery);
 				List<Entry> entries = SerializerService.DeserializeFile<List<Entry>>("Data/Images.json");

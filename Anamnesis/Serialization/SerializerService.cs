@@ -8,8 +8,8 @@ namespace Anamnesis.Serialization
     using System.Net.Http;
     using System.Text.Json;
     using System.Text.Json.Serialization;
+    using System.Threading.Tasks;
     using Anamnesis.Serialization.Converters;
-    using Anamnesis.Services;
 
     public class SerializerService : ServiceBase<SerializerService>
 	{
@@ -78,21 +78,21 @@ namespace Anamnesis.Serialization
 			return result;
 		}
 
-		public static T? DeserializeUrl<T>(string url)
-			where T : new()
+		public static async Task<T?> DeserializeUrlAsync<T>(string url)
+			where T : class
 		{
 			try
 			{
-				var httpClient = new HttpClient();
-				var response = httpClient.GetAsync(url).Result;
-				string json = response.Content.ReadAsStringAsync().Result;
+				HttpClient? httpClient = new HttpClient();
+				HttpResponseMessage? response = await httpClient.GetAsync(url).ConfigureAwait(false);
+				string json = await response.Content.ReadAsStringAsync();
 				T? result = JsonSerializer.Deserialize<T>(json, Options);
-				return result;
+				return null;
 			}
 			catch (Exception)
 			{
 				Log.Information("Failed to deserialize json from url");
-				return default(T);
+				return null;
 			}
 		}
 	}
