@@ -33,8 +33,20 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			this.Selector.AddItems(GameDataService.ResidentNPCs);
-			this.Selector.AddItems(GameDataService.Monsters);
+			List<INpcResident> allNpcs = new List<INpcResident>();
+			List<Monster> allMonsters = new List<Monster>();
+
+			if (GameDataService.ResidentNPCs != null)
+				allNpcs.AddRange(GameDataService.ResidentNPCs);
+
+			if (GameDataService.Monsters != null)
+				allMonsters.AddRange(GameDataService.Monsters);
+
+			allNpcs.Sort((a, b) => b.IsFavorite.CompareTo(a.IsFavorite));
+			allMonsters.Sort((a, b) => b.IsFavorite.CompareTo(a.IsFavorite));
+
+			this.Selector.AddItems(allNpcs);
+			this.Selector.AddItems(allMonsters);
 
 			this.Selector.FilterItems();
 

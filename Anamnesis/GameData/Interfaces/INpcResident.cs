@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData
 {
+	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 
 	public interface INpcResident : IRow
@@ -14,5 +15,11 @@ namespace Anamnesis.GameData
 		public INpcBase? Appearance { get; }
 
 		Mod? Mod { get; }
+
+		public bool IsFavorite
+		{
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
+		}
 	}
 }

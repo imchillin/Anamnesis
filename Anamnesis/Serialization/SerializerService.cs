@@ -29,6 +29,7 @@ namespace Anamnesis.Serialization
 			Options.Converters.Add(new IItemConverter());
 			Options.Converters.Add(new IDyeConverter());
 			Options.Converters.Add(new ItemCategoriesConverter());
+			Options.Converters.Add(new IModelConverter());
 		}
 
 		public static string Serialize(object obj)

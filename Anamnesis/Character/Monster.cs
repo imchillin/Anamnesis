@@ -46,6 +46,12 @@ namespace Anamnesis.Character
 
 		public Mod? Mod => TexToolsService.GetMod(this);
 
+		public bool IsFavorite
+		{
+			get => FavoritesService.IsFavorite(this);
+			set => FavoritesService.SetFavorite(this, value);
+		}
+
 		public class MonsterAppearance : INpcBase, INpcEquip
 		{
 			public MonsterAppearance(Monster monster)

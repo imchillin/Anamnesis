@@ -87,6 +87,37 @@ namespace Anamnesis.Services
 			Save();
 		}
 
+		public static bool IsFavorite(INpcResident item)
+		{
+			if (Instance.Current == null)
+				return false;
+
+			return Instance.Current.Models.Contains(item);
+		}
+
+		public static void SetFavorite(INpcResident item, bool favorite)
+		{
+			if (Instance.Current == null)
+				return;
+
+			bool isFavorite = IsFavorite(item);
+
+			if (favorite == isFavorite)
+				return;
+
+			if (favorite)
+			{
+				Instance.Current.Models.Add(item);
+			}
+			else
+			{
+				Instance.Current.Models.Remove(item);
+			}
+
+			Instance.RaisePropertyChanged(nameof(Favorites.Items));
+			Save();
+		}
+
 		public static void Save()
 		{
 			if (Instance.Current == null)
@@ -126,6 +157,7 @@ namespace Anamnesis.Services
 			public List<IItem> Items { get; set; } = new List<IItem>();
 			public List<IDye> Dyes { get; set; } = new List<IDye>();
 			public List<Color4> Colors { get; set; } = new List<Color4>();
+			public List<INpcResident> Models { get; set; } = new List<INpcResident>();
 		}
 	}
 }
