@@ -33,6 +33,10 @@
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Rectangle Width="19" Height="19" Margin="0">
+						<Rectangle.ToolTip>
+							<TextBlock Text="{Binding Entry.Hex}"/>
+						</Rectangle.ToolTip>
+						
 						<Rectangle.Fill>
 							<SolidColorBrush Color="{Binding Entry.WpfColor}"/>
 						</Rectangle.Fill>

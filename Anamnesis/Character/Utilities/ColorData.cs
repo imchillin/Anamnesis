@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Utilities
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Windows.Media;
 	using Anamnesis.Memory;
 
 	using cmColor = Anamnesis.Memory.Color;
@@ -159,6 +160,7 @@ namespace Anamnesis.Character.Utilities
 
 		public struct Entry
 		{
+			public string Hex => $"#{this.WpfColor.R:X2}{this.WpfColor.G:X2}{this.WpfColor.B:X2}";
 			public cmColor CmColor { get; set; }
 			public wpfColor WpfColor { get; set; }
 			public bool Skip { get; set; }
