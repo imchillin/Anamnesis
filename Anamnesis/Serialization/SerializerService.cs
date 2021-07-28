@@ -87,7 +87,7 @@ namespace Anamnesis.Serialization
 				HttpResponseMessage? response = await httpClient.GetAsync(url).ConfigureAwait(false);
 				string json = await response.Content.ReadAsStringAsync();
 				T? result = JsonSerializer.Deserialize<T>(json, Options);
-				return null;
+				return result;
 			}
 			catch (Exception)
 			{
