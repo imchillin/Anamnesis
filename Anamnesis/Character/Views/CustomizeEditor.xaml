@@ -125,7 +125,7 @@
 				<!-- Face Paint  -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="6" Key="Character_Appearance_FacePaint" Style="{StaticResource Label}"/>
 
-				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 2, 2, 2">
+				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 0, 2, 0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
@@ -199,29 +199,29 @@
 
 				<!-- Muscle / Ears / Tail Size -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_Muscle" Style="{StaticResource Label}" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
-				<XivToolsWpf:NumberBox Value="{Binding Customize.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 0, 0, 2"/>
+				<XivToolsWpf:NumberBox Value="{Binding Customize.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute"/>
 
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_EarsSize" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<XivToolsWpf:NumberBox Value="{Binding Customize.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 0, 0, 2"/>
+				<XivToolsWpf:NumberBox Value="{Binding Customize.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute"/>
 
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_TailSize" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
-				<XivToolsWpf:NumberBox Value="{Binding Customize.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute" Margin="0, 0, 0, 2"/>
+				<XivToolsWpf:NumberBox Value="{Binding Customize.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute"/>
 
 				<!-- Jaw Type -->
 				<XivToolsWpf:TextBlock Grid.Row="13" Grid.Column="0" Key="Character_Appearance_Jaw" Style="{StaticResource Label}"/>
-				<XivToolsWpf:NumberBox Grid.Row="13" Value="{Binding Customize.Jaw}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
+				<XivToolsWpf:NumberBox Grid.Row="13" Value="{Binding Customize.Jaw}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True"/>
 
 				<!-- Eyebrows type -->
 				<XivToolsWpf:TextBlock Grid.Row="14" Grid.Column="0" Key="Character_Appearance_Eyebrows" Style="{StaticResource Label}"/>
-				<XivToolsWpf:NumberBox Grid.Row="14" Value="{Binding Customize.Eyebrows}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
+				<XivToolsWpf:NumberBox Grid.Row="14" Value="{Binding Customize.Eyebrows}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True"/>
 
 				<!-- Nose Type -->
 				<XivToolsWpf:TextBlock Grid.Row="15" Grid.Column="0" Key="Character_Appearance_Nose" Style="{StaticResource Label}"/>
-				<XivToolsWpf:NumberBox Grid.Row="15" Value="{Binding Customize.Nose}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
+				<XivToolsWpf:NumberBox Grid.Row="15" Value="{Binding Customize.Nose}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True"/>
 
 				<!-- Ear Type -->
 				<XivToolsWpf:TextBlock Grid.Row="16" Grid.Column="0" Key="Character_Appearance_Ears" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<XivToolsWpf:NumberBox Grid.Row="16" Value="{Binding Customize.TailEarsType}" Grid.Column="1" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True" Margin="0, 2, 0, 2"/>
+				<XivToolsWpf:NumberBox Grid.Row="16" Value="{Binding Customize.TailEarsType}" Grid.Column="1" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
 
 				<!-- Tail Type -->
 				<XivToolsWpf:TextBlock Grid.Row="17" Grid.Column="0" Key="Character_Appearance_Tail" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}, UpdateSourceTrigger=PropertyChanged}"/>
