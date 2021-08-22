@@ -3,20 +3,32 @@
 
 namespace Anamnesis.Posing.Extensions
 {
-	using System.Collections.Generic;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Posing.Templates;
 
 	public static class SkeletonViewModelExtensions
 	{
-		public static SkeletonFile? GetSkeletonFile(this SkeletonViewModel self, ActorViewModel actor)
+		public static SkeletonTemplateFile? GetSkeletonTemplate(this SkeletonViewModel self, ActorViewModel actor)
+		{
+			SkeletonTemplateFile? skel = GetSkeletonTemplate(self, actor, false);
+
+			if (skel == null)
+				skel = GetSkeletonTemplate(self, actor, true);
+
+			return skel;
+		}
+
+		private static SkeletonTemplateFile? GetSkeletonTemplate(this SkeletonViewModel self, ActorViewModel actor, bool includeGenerated)
 		{
 			int maxDepth = int.MinValue;
-			SkeletonFile? maxSkel = null;
+			SkeletonTemplateFile? maxSkel = null;
 
-			foreach (SkeletonFile template in PoseService.BoneNameFiles)
+			foreach (SkeletonTemplateFile template in PoseService.SkeletonTemplates)
 			{
+				if (template.IsGeneratedParenting != includeGenerated)
+					continue;
+
 				if (template.IsValid(self, actor))
 				{
 					if (template.Depth > maxDepth)

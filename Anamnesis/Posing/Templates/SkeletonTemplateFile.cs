@@ -6,7 +6,7 @@ namespace Anamnesis.Posing.Templates
 	using System.Collections.Generic;
 	using Anamnesis.Memory;
 
-	public class SkeletonFile
+	public class SkeletonTemplateFile
 	{
 		public int Depth = 0;
 		public string Path = string.Empty;
@@ -52,7 +52,7 @@ namespace Anamnesis.Posing.Templates
 			return true;
 		}
 
-		public void CopyBaseValues(SkeletonFile from)
+		public void CopyBaseValues(SkeletonTemplateFile from)
 		{
 			this.Depth = from.Depth + 1;
 

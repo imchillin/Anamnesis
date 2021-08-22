@@ -17,8 +17,8 @@ namespace Anamnesis.PoseModule
 	[AddINotifyPropertyChangedInterface]
 	public class PoseService : ServiceBase<PoseService>
 	{
-		public static List<SkeletonFile> BoneNameFiles = new List<SkeletonFile>();
-		private static Dictionary<ActorViewModel, SkeletonVisual3d> actorSkeletons = new Dictionary<ActorViewModel, SkeletonVisual3d>();
+		public static List<SkeletonTemplateFile> SkeletonTemplates = new List<SkeletonTemplateFile>();
+		private static readonly Dictionary<ActorViewModel, SkeletonVisual3d> ActorSkeletons = new Dictionary<ActorViewModel, SkeletonVisual3d>();
 
 		private NopHookViewModel? freezeRot1;
 		private NopHookViewModel? freezeRot2;
@@ -111,7 +111,7 @@ namespace Anamnesis.PoseModule
 
 		public bool CanEdit { get; set; }
 
-		public static void SaveTemplate(SkeletonFile skeleton)
+		public static void SaveTemplate(SkeletonTemplateFile skeleton)
 		{
 			string name = "Generated_";
 
@@ -133,25 +133,25 @@ namespace Anamnesis.PoseModule
 				name += "_" + skeleton.Age;
 
 			SerializerService.SerializeFile("Data/Skeletons/" + name + ".json", skeleton);
-			BoneNameFiles.Add(skeleton);
+			SkeletonTemplates.Add(skeleton);
 		}
 
 		public static async Task<SkeletonVisual3d> GetVisual(ActorViewModel actor)
 		{
 			SkeletonVisual3d skeleton;
 
-			if (actorSkeletons.ContainsKey(actor))
+			if (ActorSkeletons.ContainsKey(actor))
 			{
-				skeleton = actorSkeletons[actor];
+				skeleton = ActorSkeletons[actor];
 				skeleton.Clear();
-				actorSkeletons.Remove(actor);
+				ActorSkeletons.Remove(actor);
 			}
 
 			// TODO: Why does a new skeleton work, but clearing an old one gives us "not a child of the specified visual" when writing?
 			////else
 			{
 				skeleton = new SkeletonVisual3d(actor);
-				actorSkeletons.Add(actor, skeleton);
+				ActorSkeletons.Add(actor, skeleton);
 			}
 
 			skeleton.Clear();
@@ -217,15 +217,15 @@ namespace Anamnesis.PoseModule
 			this.SetEnabled(false);
 		}
 
-		private SkeletonFile Load(string path)
+		private SkeletonTemplateFile Load(string path)
 		{
-			SkeletonFile template = SerializerService.DeserializeFile<SkeletonFile>(path);
+			SkeletonTemplateFile template = SerializerService.DeserializeFile<SkeletonTemplateFile>(path);
 			template.Path = path;
-			BoneNameFiles.Add(template);
+			SkeletonTemplates.Add(template);
 
 			if (template.BasedOn != null)
 			{
-				SkeletonFile baseTemplate = this.Load("Data/Skeletons/" + template.BasedOn);
+				SkeletonTemplateFile baseTemplate = this.Load("Data/Skeletons/" + template.BasedOn);
 				template.CopyBaseValues(baseTemplate);
 			}
 

@@ -58,7 +58,7 @@ namespace Anamnesis.PoseModule
 		public bool Generating { get; set; } = false;
 		public bool LinkEyes { get; set; } = true;
 		public ActorViewModel Actor { get; private set; }
-		public SkeletonFile? File { get; private set; }
+		public SkeletonTemplateFile? File { get; private set; }
 		public int SelectedCount => this.SelectedBones.Count;
 		public bool CanEditBone => this.SelectedBones.Count == 1;
 		public bool HasSelection => this.SelectedBones.Count > 0;
@@ -469,7 +469,7 @@ namespace Anamnesis.PoseModule
 
 		private async Task Generate(SkeletonViewModel memory, bool forceGenerateParenting = false)
 		{
-			this.File = memory.GetSkeletonFile(this.Actor);
+			this.File = memory.GetSkeletonTemplate(this.Actor);
 			Log.Information($"Loaded skeleton file: {this.File?.Path}");
 
 			bool autoSkeleton = false;
@@ -516,7 +516,7 @@ namespace Anamnesis.PoseModule
 
 				if (this.File == null)
 				{
-					this.File = new SkeletonFile();
+					this.File = new SkeletonTemplateFile();
 					this.File.ModelTypes = new List<int>();
 					this.File.ModelTypes.Add(this.Actor.ModelType);
 					this.File.Race = this.Actor.Customize?.Race;
