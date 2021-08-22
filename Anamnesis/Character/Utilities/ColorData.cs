@@ -108,54 +108,18 @@ namespace Anamnesis.Character.Utilities
 		{
 			bool isMasculine = gender == Customize.Genders.Masculine;
 
-			switch (tribe)
-			{
-				case Customize.Tribes.Midlander: return isMasculine ? 4608 : 3328;
-				case Customize.Tribes.Highlander: return isMasculine ? 7168 : 5888;
-				case Customize.Tribes.Wildwood: return isMasculine ? 9728 : 8448;
-				case Customize.Tribes.Duskwight: return isMasculine ? 12288 : 11008;
-				case Customize.Tribes.Plainsfolk: return isMasculine ? 14848 : 13568;
-				case Customize.Tribes.Dunesfolk: return isMasculine ? 17408 : 16128;
-				case Customize.Tribes.SeekerOfTheSun: return isMasculine ? 19968 : 18688;
-				case Customize.Tribes.KeeperOfTheMoon: return isMasculine ? 22528 : 21248;
-				case Customize.Tribes.SeaWolf: return isMasculine ? 25088 : 23808;
-				case Customize.Tribes.Hellsguard: return isMasculine ? 27648 : 26368;
-				case Customize.Tribes.Raen: return isMasculine ? 28928 : 30208;
-				case Customize.Tribes.Xaela: return isMasculine ? 31488 : 32768;
-				case Customize.Tribes.Helions: return 34048;
-				case Customize.Tribes.TheLost: return 35840;
-				case Customize.Tribes.Rava: return 40448;
-				case Customize.Tribes.Veena: return 43008;
-			}
-
-			throw new Exception("Unknown tribe: " + tribe);
+			int genderValue = isMasculine ? 0 : 1;
+			int listIndex = ((((int)tribe * 2) + genderValue) * 5) + 3;
+			return listIndex * 256;
 		}
 
 		private static int GetTribeHairStartIndex(Customize.Tribes tribe, Customize.Genders gender)
 		{
 			bool isMasculine = gender == Customize.Genders.Masculine;
 
-			switch (tribe)
-			{
-				case Customize.Tribes.Midlander: return isMasculine ? 4864 : 3584;
-				case Customize.Tribes.Highlander: return isMasculine ? 7424 : 6144;
-				case Customize.Tribes.Wildwood: return isMasculine ? 9984 : 8704;
-				case Customize.Tribes.Duskwight: return isMasculine ? 12544 : 11264;
-				case Customize.Tribes.Plainsfolk: return isMasculine ? 15104 : 13824;
-				case Customize.Tribes.Dunesfolk: return isMasculine ? 17664 : 16384;
-				case Customize.Tribes.SeekerOfTheSun: return isMasculine ? 20224 : 18944;
-				case Customize.Tribes.KeeperOfTheMoon: return isMasculine ? 22784 : 21504;
-				case Customize.Tribes.SeaWolf: return isMasculine ? 25344 : 24064;
-				case Customize.Tribes.Hellsguard: return isMasculine ? 27904 : 26624;
-				case Customize.Tribes.Raen: return isMasculine ? 30464 : 29184;
-				case Customize.Tribes.Xaela: return isMasculine ? 33024 : 31744;
-				case Customize.Tribes.Helions: return 34304;
-				case Customize.Tribes.TheLost: return 36608;
-				case Customize.Tribes.Rava: return 40704;
-				case Customize.Tribes.Veena: return 43264;
-			}
-
-			throw new Exception("Unknown tribe: " + tribe);
+			int genderValue = isMasculine ? 0 : 1;
+			int listIndex = ((((int)tribe * 2) + genderValue) * 5) + 4;
+			return listIndex * 256;
 		}
 
 		public struct Entry
