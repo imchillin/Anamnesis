@@ -29,6 +29,7 @@ namespace Anamnesis.Services
 		public bool IsDyslexic { get; set; } = false;
 		public bool ShowGallery { get; set; } = true;
 		public bool EnableTranslucency { get; set; } = true;
+		public bool ExtendIntoWindowChrome { get; set; } = true;
 
 		public bool OverrideSystemTheme { get; set; } = false;
 		public Color ThemeColor { get; set; } = Color.FromArgb(255, 247, 99, 12);

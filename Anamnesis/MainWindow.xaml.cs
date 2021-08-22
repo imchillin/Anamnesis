@@ -89,9 +89,11 @@ namespace Anamnesis.GUI
 			this.WindowScale.ScaleX = SettingsService.Current.Scale;
 			this.WindowScale.ScaleY = SettingsService.Current.Scale;
 
-			if (SettingsService.Current.EnableTranslucency != this.EnableTranslucency)
+			if (SettingsService.Current.EnableTranslucency != this.EnableTranslucency ||
+				SettingsService.Current.ExtendIntoWindowChrome != this.ExtendIntoChrome)
 			{
 				this.EnableTranslucency = SettingsService.Current.EnableTranslucency;
+				this.ExtendIntoChrome = SettingsService.Current.ExtendIntoWindowChrome;
 
 				// relaod the window
 				if (this.IsLoaded)
