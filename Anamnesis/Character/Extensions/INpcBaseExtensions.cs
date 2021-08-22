@@ -21,7 +21,7 @@ namespace Anamnesis.Character
 			file.Height = (byte)npc.Height;
 			file.Head = (byte)npc.Face;
 			file.Hair = (byte)npc.HairStyle;
-			file.EnableHighlights = npc.HairHighlightColor > 1;
+			file.EnableHighlights = npc.EnableHairHighlight;
 			file.Skintone = (byte)npc.SkinColor;
 			file.REyeColor = (byte)npc.EyeColor;
 			file.LEyeColor = (byte)npc.EyeHeterochromia;

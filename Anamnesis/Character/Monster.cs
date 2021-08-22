@@ -88,7 +88,7 @@ namespace Anamnesis.Character
 			public ITribe Tribe => GameDataService.Tribes.Get(1);
 			public int Face => 1;
 			public int HairStyle => 1;
-			public int HairHighlight => 1;
+			public bool EnableHairHighlight => false;
 			public int SkinColor => 1;
 			public int EyeHeterochromia => 1;
 			public int HairHighlightColor => 1;

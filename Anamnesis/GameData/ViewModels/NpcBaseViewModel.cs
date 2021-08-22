@@ -34,7 +34,7 @@ namespace Anamnesis.GameData.ViewModels
 		public int Height => this.Value.Height;
 		public int Face => this.Value.Face;
 		public int HairStyle => this.Value.HairStyle;
-		public int HairHighlight => this.Value.HairHighlight;
+		public bool EnableHairHighlight => this.Value.HairHighlight > 1;
 		public int SkinColor => this.Value.SkinColor;
 		public int EyeHeterochromia => this.Value.EyeHeterochromia;
 		public int HairHighlightColor => this.Value.HairHighlightColor;

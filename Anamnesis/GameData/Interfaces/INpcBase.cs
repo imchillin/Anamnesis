@@ -17,7 +17,7 @@ namespace Anamnesis.GameData
 		ITribe Tribe { get; }
 		int Face { get; }
 		int HairStyle { get; }
-		int HairHighlight { get; }
+		bool EnableHairHighlight { get; }
 		int SkinColor { get; }
 		INpcEquip NpcEquip { get; }
 		int EyeHeterochromia { get; }
