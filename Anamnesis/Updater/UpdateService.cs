@@ -38,6 +38,8 @@ namespace Anamnesis.Updater
 				Log.Information("Last update check was less than 6 hours ago. Skipping.");
 				return;
 			}
+
+			await this.CheckForUpdates();
 #endif
 		}
 
