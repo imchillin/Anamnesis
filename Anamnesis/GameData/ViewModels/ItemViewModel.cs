@@ -13,15 +13,15 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class ItemViewModel : ExcelRowViewModel<Item>, IItem
 	{
-		private ushort modelSet;
-		private ushort modelBase;
-		private ushort modelVariant;
+		private readonly ushort modelSet;
+		private readonly ushort modelBase;
+		private readonly ushort modelVariant;
 
-		private ushort subModelSet;
-		private ushort subModelBase;
-		private ushort subModelVariant;
+		private readonly ushort subModelSet;
+		private readonly ushort subModelBase;
+		private readonly ushort subModelVariant;
 
-		private ClassJobCategory? classJob;
+		private readonly ClassJobCategory? classJob;
 
 		public ItemViewModel(uint key, ExcelSheet<Item> sheet, GameData lumina)
 			: base(key, sheet, lumina)

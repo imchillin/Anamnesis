@@ -12,7 +12,7 @@ namespace Anamnesis.Character.Items
 	{
 		public string Name => LocalizationService.GetString("Item_NpcBody");
 		public string? Description => LocalizationService.GetString("Item_NpcBodyDesc");
-		public ImageSource? Icon => null;
+		public ImageSource? Icon => GameDataService.Items.Get(10033).Icon;
 		public ushort ModelBase => 9903;
 		public ushort ModelVariant => 1;
 		public ushort ModelSet => 0;

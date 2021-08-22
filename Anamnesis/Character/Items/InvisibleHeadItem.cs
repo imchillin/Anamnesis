@@ -12,7 +12,7 @@ namespace Anamnesis.Character.Items
 	{
 		public string Name => LocalizationService.GetString("Item_InvisibleHead");
 		public string? Description => LocalizationService.GetString("Item_InvisibleHeadDesc");
-		public ImageSource? Icon => null;
+		public ImageSource? Icon => GameDataService.Items.Get(10032).Icon;
 		public ushort ModelSet => 0;
 		public ushort ModelBase => 6103;
 		public ushort ModelVariant => 254;

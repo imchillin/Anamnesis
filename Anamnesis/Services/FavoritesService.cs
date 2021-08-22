@@ -8,7 +8,6 @@ namespace Anamnesis.Services
 	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using System.Windows.Media;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.GUI.Dialogs;
@@ -19,7 +18,7 @@ namespace Anamnesis.Services
 	[AddINotifyPropertyChangedInterface]
 	public class FavoritesService : ServiceBase<FavoritesService>
 	{
-		private static string filePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Favorites.json");
+		private static readonly string FilePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Favorites.json");
 
 		public static List<Color4>? Colors => Instance.Current?.Colors;
 
@@ -124,14 +123,14 @@ namespace Anamnesis.Services
 				return;
 
 			string json = SerializerService.Serialize(Instance.Current);
-			File.WriteAllText(filePath, json);
+			File.WriteAllText(FilePath, json);
 		}
 
 		public override async Task Initialize()
 		{
 			await base.Initialize();
 
-			if (!File.Exists(filePath))
+			if (!File.Exists(FilePath))
 			{
 				this.Current = new Favorites();
 				Save();
@@ -140,7 +139,7 @@ namespace Anamnesis.Services
 			{
 				try
 				{
-					string json = File.ReadAllText(filePath);
+					string json = File.ReadAllText(FilePath);
 					this.Current = SerializerService.Deserialize<Favorites>(json);
 				}
 				catch (Exception)

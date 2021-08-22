@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Views
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.Character.Utilities;
@@ -85,6 +86,7 @@ namespace Anamnesis.Character.Views
 
 		public bool IsMainHandSlot => this.slot == ItemSlots.MainHand;
 		public bool IsWeaponSlot => this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand;
+		public bool IsSmallclothesSlot => this.slot > ItemSlots.Head && this.slot <= ItemSlots.OffHand;
 
 		SelectorDrawer SelectorDrawer.ISelectorView.Selector => this.Selector;
 
@@ -290,6 +292,23 @@ namespace Anamnesis.Character.Views
 			}
 
 			return matches;
+		}
+
+		private void OnClearClicked(object sender, RoutedEventArgs e)
+		{
+			this.Value = ItemUtility.NoneItem;
+		}
+
+		private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.IsSmallclothesSlot)
+			{
+				this.Value = ItemUtility.NpcBodyItem;
+			}
+			else
+			{
+				this.Value = ItemUtility.NoneItem;
+			}
 		}
 	}
 }
