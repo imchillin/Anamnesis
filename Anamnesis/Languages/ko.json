@@ -10,9 +10,9 @@
 	"Common_LinkVector": "X, Y, Z축을 연동",
 	"Common_Confirm": "확인",
 
-	"ProcessSelector_AllWarning": "DirectX 11 Final Fantasy XIV가 아닌 다른 프로세스를 선택하면 해당 프로세스와 Anmnesis가 충돌합니다.",
-	"ProcessSelector_NotFound": "Final Fantasy XIV 프로세스 (ffxiv_dx11) 찾을 수 없음",
-	"ProcessSelector_NotFound2": "게임이 DirectX 11 모드에서 실행 중인지 확인하세요.",
+	"ProcessSelector_AllWarning": "DirectX 11 Final Fantasy XIV가 아닌 다른 프로세스를 선택하면 해당 프로세스와 Anmnesis가 충돌하게 됩니다.",
+	"ProcessSelector_NotFound": "Final Fantasy XIV 프로세스 (ffxiv_dx11) 찾을 수 없습니다.",
+	"ProcessSelector_NotFound2": "게임이 DirectX 11 모드로 실행 중인지 확인하세요.",
 
 	"Error_NotInGame": "로그인하지 않음",
 
@@ -438,7 +438,6 @@
 	"Settings_Theme_Color": "색상",
 	"Settings_Dyslexic": "난독 친화 폰트 사용",
 	"Settings_ShowGallery": "갤러리 보이기",
-
 
 	"About_Version_Header": "버전",
 	"About_OpenSource_Header": "오픈 소스",
