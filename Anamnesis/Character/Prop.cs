@@ -34,6 +34,9 @@ namespace Anamnesis.Character
 			set => FavoritesService.SetFavorite(this, value);
 		}
 
+		public bool IsOwnable => false;
+		public bool IsOwned { get; set; }
+
 		public bool FitsInSlot(ItemSlots slot)
 		{
 			return slot == ItemSlots.MainHand || slot == ItemSlots.OffHand;

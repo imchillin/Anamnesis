@@ -38,6 +38,7 @@
 	"EquipmentSelector_Ambidextrous": "Allow all weapons in either hand",
 	"EquipmentSelector_AutoOffhand": "Auto-equip offhand",
 	"EquipmentSelector_AutoOffhandTip": "Automatically equip paired weapons in the offhand, and unequip the offhand when equipping two-handed weapons",
+	"EquipmentSelector_OwnedTip": "Mark as owned; all owned items are included in the Standard Items category",
 
 	"EquipmentSelector_Categories": "Categories",
 	"EquipmentSelector_Standard": "Standard Items",
