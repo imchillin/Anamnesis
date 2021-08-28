@@ -28,15 +28,16 @@
 			Key="Character_Actor_DataPath"
 			Grid.Row="0"
 			Grid.Column="0"
-			Style="{StaticResource Label}" />
-		
+			Style="{StaticResource Label}"/>
+
 		<local:DataPathSelector
 			Grid.Row="0"
 			Grid.Column="1"
 			Height="26"
 			DataHead="{Binding DataHead}"
 			DataPath="{Binding DataPath}"
-			Tribe="{Binding Actor.Customize.Tribe}" />
+			Tribe="{Binding Actor.Customize.Tribe}"
+			IsEnabled="{Binding IsPlayer}"/>
 
 		<!-- Height -->
 		<xtw:TextBlock Grid.Row="1" Key="Character_Model_Height" Style="{StaticResource Label}"/>
@@ -74,7 +75,8 @@
 
 		<!-- Bust Scale -->
 		<xtw:TextBlock Grid.Row="4" Grid.Column="0" Key="Character_Model_BustScale" Style="{StaticResource Label}"/>
-		<ana:VectorEditor Grid.Row="4" Grid.Column="1" Value="{Binding Bust.Scale}" Expanded="False" CanLink="True" Minimum="0" Maximum="10"/>
+		<ana:VectorEditor Grid.Row="4" Grid.Column="1" Value="{Binding Bust.Scale}" Expanded="False" CanLink="True" Minimum="0" Maximum="10"
+						  IsEnabled="{Binding IsPlayer}"/>
 
 	</Grid>
 </UserControl>

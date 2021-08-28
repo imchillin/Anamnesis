@@ -83,12 +83,14 @@ namespace Anamnesis.Memory
 			set => this.FreezeValue(nameof(ModelViewModel.Drenched), value, value ? 5 : 0);
 		}
 
+		public bool IsPlayer => Enum.IsDefined(typeof(Model.DataPaths), this.DataPath);
+
 		protected override bool HandleModelToViewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
 			if (viewModelProperty.Name == nameof(ModelViewModel.ExtendedAppearance))
 			{
 				// No extended appearance for anything that isn't a player!
-				if (this.DataPath > (short)Anamnesis.Memory.Model.DataPaths.Viera)
+				if (!this.IsPlayer)
 				{
 					if (this.ExtendedAppearance != null)
 					{

@@ -41,9 +41,9 @@ namespace Anamnesis.Memory
 	public abstract class MemoryViewModelBase<T> : StructViewModelBase<T>, IMemoryViewModel
 		where T : struct
 	{
-		private Dictionary<string, (PropertyInfo, FieldInfo, object?)> freezeValues = new Dictionary<string, (PropertyInfo, FieldInfo, object?)>();
+		private readonly Dictionary<string, (PropertyInfo, FieldInfo, object?)> freezeValues = new Dictionary<string, (PropertyInfo, FieldInfo, object?)>();
+		private readonly List<IMemoryViewModel> children = new List<IMemoryViewModel>();
 		private bool isAllFrozen = false;
-		private List<IMemoryViewModel> children = new List<IMemoryViewModel>();
 
 		public MemoryViewModelBase(IntPtr pointer, IMemoryViewModel? parent)
 			: base(parent)
@@ -327,26 +327,7 @@ namespace Anamnesis.Memory
 					}
 				}
 
-				// bad pointers
-				bool isValidPointer = true;
-
-				// not a valid pointer
 				if (desiredPointer == IntPtr.Zero)
-				{
-					isValidPointer = false;
-				}
-				else
-				{
-					// TODO: This may prevent valid pointers from working correctly, but is necessary to prevent
-					// extended appearance pointing to invalid memory when transformed into a monster.
-					long v = desiredPointer.ToInt64();
-					if (v < 0x0000000200000000)
-					{
-						isValidPointer = false;
-					}
-				}
-
-				if (!isValidPointer)
 				{
 					bool wasNull = lhs == null;
 
