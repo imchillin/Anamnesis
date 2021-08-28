@@ -193,17 +193,7 @@ namespace Anamnesis.PoseModule
 			this.boneViewScale.ScaleY = scale;
 			this.boneViewScale.ScaleZ = scale;
 
-			Quaternion q = this.rotation.Quaternion;
-			q.Conjugate();
-
-			if (this.Parent != null)
-			{
-				TransformPtrViewModel parentTransform = this.Parent.ViewModel;
-				Quaternion parentRot = parentTransform.Rotation.ToMedia3DQuaternion();
-				parentRot.Invert();
-				q = parentRot * q;
-			}
-
+			// TODO: Billboard this object so it always faces towards the camera.
 			this.boneViewRotation.Quaternion = Quaternion.Identity;
 		}
 
