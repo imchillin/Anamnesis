@@ -5,32 +5,30 @@ namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.Collections.Generic;
-	using System.ComponentModel;
+	using System.Windows;
+	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Extensions;
-	using Anamnesis.Posing.Templates;
+	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Services;
 	using Anamnesis.ThreeD;
 	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
 
 	using CmQuaternion = Anamnesis.Memory.Quaternion;
-	using CmTransform = Anamnesis.Memory.Transform;
 	using CmVector = Anamnesis.Memory.Vector;
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;
-	using WinColor = System.Windows.Media.Color;
 
 	[AddINotifyPropertyChangedInterface]
 	public class BoneVisual3d : ModelVisual3D, ITransform, IBone
 	{
-		private readonly RotateTransform3D rotation;
+		private readonly QuaternionRotation3D rotation;
 		private readonly TranslateTransform3D position;
-		private readonly Sphere sphere;
-		private readonly Material defaultMaterial;
-		private readonly EmissiveMaterial hoverMaterial;
-		private readonly EmissiveMaterial selectedMaterial;
+
+		private readonly ScaleTransform3D boneViewScale;
+		private readonly QuaternionRotation3D boneViewRotation;
 
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
@@ -40,11 +38,14 @@ namespace Anamnesis.PoseModule
 			this.ViewModel = transform;
 			this.Skeleton = skeleton;
 
-			this.rotation = new RotateTransform3D();
+			this.rotation = new QuaternionRotation3D();
+
+			RotateTransform3D rot = new RotateTransform3D();
+			rot.Rotation = this.rotation;
 			this.position = new TranslateTransform3D();
 
 			Transform3DGroup transformGroup = new Transform3DGroup();
-			transformGroup.Children.Add(this.rotation);
+			transformGroup.Children.Add(rot);
 			transformGroup.Children.Add(this.position);
 
 			this.Transform = transformGroup;
@@ -52,30 +53,53 @@ namespace Anamnesis.PoseModule
 			PaletteHelper ph = new PaletteHelper();
 			ITheme t = ph.GetTheme();
 
-			this.defaultMaterial = new DiffuseMaterial(new SolidColorBrush(WinColor.FromArgb(64, 0, 0, 0)));
-			this.hoverMaterial = new EmissiveMaterial(new SolidColorBrush(t.PrimaryDark.Color));
-			this.selectedMaterial = new EmissiveMaterial(new SolidColorBrush(t.PrimaryMid.Color));
-
-			System.Windows.Media.Color c1 = System.Windows.Media.Color.FromArgb(200, 255, 255, 255);
-			this.sphere = new Sphere();
-			this.sphere.Radius = 0.02;
-			this.sphere.Material = this.defaultMaterial;
-			this.Children.Add(this.sphere);
-
 			this.OriginalBoneName = name;
 			this.BoneName = name;
 
-			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
+			Viewport2DVisual3D v2d = new Viewport2DVisual3D();
+
+			MeshGeometry3D geo = new MeshGeometry3D();
+			geo.Positions.Add(new Point3D(-1, 1, 0));
+			geo.Positions.Add(new Point3D(-1, -1, 0));
+			geo.Positions.Add(new Point3D(1, -1, 0));
+			geo.Positions.Add(new Point3D(1, 1, 0));
+			geo.TextureCoordinates.Add(new Point(0, 0));
+			geo.TextureCoordinates.Add(new Point(0, 1));
+			geo.TextureCoordinates.Add(new Point(1, 1));
+			geo.TextureCoordinates.Add(new Point(1, 0));
+			geo.TriangleIndices.Add(0);
+			geo.TriangleIndices.Add(1);
+			geo.TriangleIndices.Add(2);
+			geo.TriangleIndices.Add(0);
+			geo.TriangleIndices.Add(2);
+			geo.TriangleIndices.Add(3);
+			v2d.Geometry = geo;
+
+			Transform3DGroup trans = new Transform3DGroup();
+
+			this.boneViewRotation = new QuaternionRotation3D();
+			rot = new RotateTransform3D();
+			rot.Rotation = this.boneViewRotation;
+			trans.Children.Add(rot);
+
+			this.boneViewScale = new ScaleTransform3D();
+			this.boneViewScale.ScaleX = 0.1f;
+			this.boneViewScale.ScaleY = 0.1f;
+			this.boneViewScale.ScaleZ = 0.1f;
+			trans.Children.Add(this.boneViewScale);
+
+			v2d.Transform = trans;
+
+			v2d.Material = new DiffuseMaterial(new SolidColorBrush(Colors.White));
+			v2d.Visual = new BoneView();
+
+			Viewport2DVisual3D.SetIsVisualHostMaterial(v2d.Material, true);
+
+			this.Children.Add(v2d);
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }
 		public TransformPtrViewModel ViewModel { get; set; }
-
-		public double SphereRadius
-		{
-			get => this.sphere.Radius;
-			set => this.sphere.Radius = value;
-		}
 
 		public bool IsEnabled { get; set; } = true;
 		public string OriginalBoneName { get; set; }
@@ -161,6 +185,28 @@ namespace Anamnesis.PoseModule
 
 		public BoneVisual3d? Visual => this;
 
+		public virtual void OnCameraUpdated(Pose3DView owner)
+		{
+			double scale = (owner.CameraDistance * 0.02) - 0.02;
+			scale = Math.Clamp(scale, 0.02, 10);
+			this.boneViewScale.ScaleX = scale;
+			this.boneViewScale.ScaleY = scale;
+			this.boneViewScale.ScaleZ = scale;
+
+			Quaternion q = this.rotation.Quaternion;
+			q.Conjugate();
+
+			if (this.Parent != null)
+			{
+				TransformPtrViewModel parentTransform = this.Parent.ViewModel;
+				Quaternion parentRot = parentTransform.Rotation.ToMedia3DQuaternion();
+				parentRot.Invert();
+				q = parentRot * q;
+			}
+
+			this.boneViewRotation.Quaternion = Quaternion.Identity;
+		}
+
 		public virtual void ReadTransform(bool readChildren = false)
 		{
 			if (!this.IsEnabled)
@@ -197,7 +243,7 @@ namespace Anamnesis.PoseModule
 			this.Rotation = rotation.ToCmQuaternion();
 
 			// Set the Media3D hierarchy transforms
-			this.rotation.Rotation = new QuaternionRotation3D(rotation);
+			this.rotation.Quaternion = rotation;
 			this.position.OffsetX = position.X;
 			this.position.OffsetY = position.Y;
 			this.position.OffsetZ = position.Z;
@@ -230,7 +276,7 @@ namespace Anamnesis.PoseModule
 				return;
 
 			// Apply the current values to the visual tree
-			this.rotation.Rotation = new QuaternionRotation3D(this.Rotation.ToMedia3DQuaternion());
+			this.rotation.Quaternion = this.Rotation.ToMedia3DQuaternion();
 			this.position.OffsetX = this.Position.X;
 			this.position.OffsetY = this.Position.Y;
 			this.position.OffsetZ = this.Position.Z;
@@ -316,24 +362,6 @@ namespace Anamnesis.PoseModule
 		public override string ToString()
 		{
 			return base.ToString() + "(" + this.BoneName + ")";
-		}
-
-		private void OnSkeletonPropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(SkeletonVisual3d.CurrentBone) || e.PropertyName == nameof(SkeletonVisual3d.HasHover))
-			{
-				this.sphere.Material = this.defaultMaterial;
-
-				if (this.Skeleton.GetIsBoneHovered(this))
-				{
-					this.sphere.Material = this.hoverMaterial;
-				}
-
-				if (this.Skeleton.GetIsBoneSelected(this))
-				{
-					this.sphere.Material = this.selectedMaterial;
-				}
-			}
 		}
 	}
 }

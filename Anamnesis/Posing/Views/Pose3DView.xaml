@@ -47,11 +47,10 @@
 				</StackPanel>
 			</Border>
 
-			<Grid Grid.Column="0" Grid.Row="1">
-				<Grid.RowDefinitions>
-					<RowDefinition />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
+			<Grid Grid.Column="0" Grid.Row="1"
+				  MouseMove="Viewport_MouseMove"
+				  MouseWheel="Viewport_MouseWheel"
+				  Background="Transparent">
 
 				<Viewport3D x:Name="Viewport" Grid.Row="0">
 					<ModelVisual3D>
@@ -65,9 +64,6 @@
 					<ModelVisual3D x:Name="SkeletonRoot" />
 
 				</Viewport3D>
-
-
-
 			</Grid>
 
 

@@ -10,6 +10,7 @@ namespace Anamnesis.PoseModule.Views
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
 	using PropertyChanged;
@@ -49,9 +50,14 @@ namespace Anamnesis.PoseModule.Views
 			{
 				CameraService.Instance.Camera.PropertyChanged += this.OnCameraChanged;
 			}
+
+			Task.Run(this.UpdateCamera);
 		}
 
 		public SkeletonVisual3d? Skeleton { get; set; }
+
+		public double CameraDistance { get; set; }
+		public Quaternion CameraRotation { get; set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
@@ -108,23 +114,15 @@ namespace Anamnesis.PoseModule.Views
 			vm.Select(selected);
 		}
 
-		private async void OnCameraChanged(object? sender, PropertyChangedEventArgs? e)
+		private void OnCameraChanged(object? sender, PropertyChangedEventArgs? e)
 		{
 			if (CameraService.Instance == null || CameraService.Instance.Camera == null)
 				return;
-
-			await Dispatch.MainThread();
-
-			////this.camera.Position = CameraService.Instance.CameraPosition.ToMedia3DPoint();
-			QuaternionRotation3D rot = (QuaternionRotation3D)this.cameraRotaion.Rotation;
-			rot.Quaternion = CameraService.Instance.Camera.Rotation3d;
-			this.cameraRotaion.Rotation = rot;
 		}
 
 		private void OnFrameClicked(object sender, RoutedEventArgs e)
 		{
 			this.FrameSkeleton();
-			this.OnCameraChanged(sender, null);
 		}
 
 		private void OnRegenerateSkeletonClicked(object sender, RoutedEventArgs e)
@@ -158,13 +156,49 @@ namespace Anamnesis.PoseModule.Views
 
 			pos /= this.Skeleton.Bones.Count;
 
-			double d = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
-			Point3D center = new Point3D(pos.X, pos.Y, pos.Z - (d + 3));
-			this.camera.Position = center;
+			this.CameraDistance = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
+		}
 
-			foreach (BoneVisual3d visual in this.Skeleton.Bones)
+		private void Viewport_MouseMove(object sender, MouseEventArgs e)
+		{
+		}
+
+		private void Viewport_MouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			this.CameraDistance -= e.Delta / 120;
+			this.CameraDistance = Math.Clamp(this.CameraDistance, 0, 300);
+		}
+
+		private async Task UpdateCamera()
+		{
+			await Dispatch.MainThread();
+
+			while (this.IsLoaded)
 			{
-				visual.SphereRadius = d / 128;
+				if (!this.IsVisible)
+					await Task.Delay(100);
+
+				await Task.Delay(33);
+				await Dispatch.MainThread();
+
+				if (this.Skeleton == null || CameraService.Instance.Camera == null)
+					continue;
+
+				// TODO: allow the user to rotate camera with the mouse instead
+				this.CameraRotation = CameraService.Instance.Camera.Rotation3d;
+
+				QuaternionRotation3D rot = (QuaternionRotation3D)this.cameraRotaion.Rotation;
+				rot.Quaternion = this.CameraRotation;
+				this.cameraRotaion.Rotation = rot;
+
+				Point3D pos = this.camera.Position;
+				pos.Z = -this.CameraDistance;
+				this.camera.Position = pos;
+
+				foreach (BoneVisual3d visual in this.Skeleton.Bones)
+				{
+					visual.OnCameraUpdated(this);
+				}
 			}
 		}
 	}
