@@ -12,7 +12,7 @@ namespace Anamnesis.GameData.ViewModels
 	{
 		protected readonly GameData lumina;
 
-		private ExcelSheet<T> sheet;
+		private readonly ExcelSheet<T> sheet;
 
 		public ExcelRowViewModel(uint key, ExcelSheet<T> sheet, GameData lumina)
 		{
