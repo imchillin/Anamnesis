@@ -13,7 +13,7 @@ namespace Anamnesis.GameData.Sheets
 
 	public class PropSheet : ISheet<Prop>
 	{
-		private Dictionary<uint, Prop> rows;
+		private readonly Dictionary<uint, Prop> rows;
 
 		public PropSheet(string fileName)
 		{
