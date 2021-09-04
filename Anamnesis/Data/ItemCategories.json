@@ -3705,6 +3705,8 @@
   "4411": "Limited",
   // Azeyma's Ring
   "4412": "Limited",
+  // Althyk's Ring
+  "4413": "Limited",
   // Menphina's Ring
   "4414": "Limited",
   // Nophica's Ring
@@ -3713,6 +3715,12 @@
   "4416": "Limited",
   // Nymeia's Ring
   "4417": "Limited",
+  // Oschon's Ring
+  "4418": "Limited",
+  // Thaliak's Ring
+  "4419": "Limited",
+  // Halone's Ring
+  "4420": "Limited",
   // Lominsan Ring
   "4427": "Limited",
   // Gridanian Ring
@@ -7574,15 +7582,15 @@
   // Ruby Carbuncle Slippers
   "30277": "Premium",
   // Summer's Flame Hat
-  "30750": "Limited",
+  "30750": "Premium, Limited",
   // Summer's Flame Top
-  "30751": "Limited",
+  "30751": "Premium, Limited",
   // Summer's Flame Wrist Torque
-  "30752": "Limited",
+  "30752": "Premium, Limited",
   // Summer's Flame Pareo
-  "30753": "Limited",
+  "30753": "Premium, Limited",
   // Summer's Flame Sandals
-  "30754": "Limited",
+  "30754": "Premium, Limited",
   // Katana of the King's Counsel
   "30807": "Limited",
   // Rapier of the Serpent Lord
