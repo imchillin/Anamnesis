@@ -4,15 +4,14 @@
 namespace Anamnesis.PoseModule.Views
 {
 	using System;
-	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
+	using Anamnesis.Posing.Visuals;
 	using PropertyChanged;
 	using XivToolsWpf;
 	using Colors = System.Windows.Media.Colors;
@@ -23,26 +22,28 @@ namespace Anamnesis.PoseModule.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class Pose3DView : UserControl
 	{
-		private readonly PerspectiveCamera camera;
-		private readonly RotateTransform3D cameraRotaion;
-		private readonly TranslateTransform3D cameraPosition;
+		public readonly PerspectiveCamera Camera;
+		public readonly RotateTransform3D CameraRotaion;
+		public readonly TranslateTransform3D CameraPosition;
+
+		private bool cameraIsTicking = false;
 
 		public Pose3DView()
 		{
 			this.InitializeComponent();
 
-			this.camera = new PerspectiveCamera(new Point3D(0, 0.75, -4), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
-			this.Viewport.Camera = this.camera;
+			this.Camera = new PerspectiveCamera(new Point3D(0, 0.75, -4), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
+			this.Viewport.Camera = this.Camera;
 
-			this.cameraRotaion = new RotateTransform3D();
+			this.CameraRotaion = new RotateTransform3D();
 			QuaternionRotation3D camRot = new QuaternionRotation3D();
 			camRot.Quaternion = CameraService.Instance.Camera?.Rotation3d ?? Quaternion.Identity;
-			this.cameraRotaion.Rotation = camRot;
-			this.cameraPosition = new TranslateTransform3D();
+			this.CameraRotaion.Rotation = camRot;
+			this.CameraPosition = new TranslateTransform3D();
 			Transform3DGroup transformGroup = new Transform3DGroup();
-			transformGroup.Children.Add(this.cameraRotaion);
-			transformGroup.Children.Add(this.cameraPosition);
-			this.camera.Transform = transformGroup;
+			transformGroup.Children.Add(this.CameraRotaion);
+			transformGroup.Children.Add(this.CameraPosition);
+			this.Camera.Transform = transformGroup;
 
 			this.ContentArea.DataContext = this;
 
@@ -59,9 +60,12 @@ namespace Anamnesis.PoseModule.Views
 		public double CameraDistance { get; set; }
 		public Quaternion CameraRotation { get; set; }
 
+		public Quaternion Billboard { get; private set; }
+
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			this.OnDataContextChanged(null, default);
+			Task.Run(this.UpdateCamera);
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -171,6 +175,11 @@ namespace Anamnesis.PoseModule.Views
 
 		private async Task UpdateCamera()
 		{
+			if (this.cameraIsTicking)
+				return;
+
+			this.cameraIsTicking = true;
+
 			await Dispatch.MainThread();
 
 			while (this.IsLoaded)
@@ -187,19 +196,31 @@ namespace Anamnesis.PoseModule.Views
 				// TODO: allow the user to rotate camera with the mouse instead
 				this.CameraRotation = CameraService.Instance.Camera.Rotation3d;
 
-				QuaternionRotation3D rot = (QuaternionRotation3D)this.cameraRotaion.Rotation;
+				// Update the billboard rotation
+				Vector3D angle = this.CameraRotation.ToEulerAngles();
+				angle.Y -= 45;
+				angle.Y += 180;
+				angle.Z = -angle.Z;
+				this.Billboard = angle.ToQuaternion();
+
+				// Apply camera rotation
+				QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotaion.Rotation;
 				rot.Quaternion = this.CameraRotation;
-				this.cameraRotaion.Rotation = rot;
+				this.CameraRotaion.Rotation = rot;
 
-				Point3D pos = this.camera.Position;
+				// Apply camera position
+				Point3D pos = this.Camera.Position;
 				pos.Z = -this.CameraDistance;
-				this.camera.Position = pos;
+				this.Camera.Position = pos;
 
-				foreach (BoneVisual3d visual in this.Skeleton.Bones)
+				// Notify bone targets that the camera has updated
+				foreach (BoneTargetVisual3d visual in this.Skeleton.BoneTargets)
 				{
 					visual.OnCameraUpdated(this);
 				}
 			}
+
+			this.cameraIsTicking = false;
 		}
 	}
 }

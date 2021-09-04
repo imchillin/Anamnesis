@@ -6,9 +6,8 @@ namespace Anamnesis.Memory.Types
 	using System;
 	using System.Runtime.InteropServices;
 	using System.Windows.Media.Media3D;
-	using Anamnesis.Services;
-	using Anamnesis.ThreeD;
 	using PropertyChanged;
+	using XivToolsWpf.Meida3D;
 
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Camera
