@@ -3,7 +3,6 @@
 
 namespace Anamnesis.GameData
 {
-	using System.Collections.Generic;
 	using System.Windows.Media;
 	using Anamnesis.TexTools;
 
@@ -24,9 +23,11 @@ namespace Anamnesis.GameData
 
 		bool IsWeapon { get; }
 
+		ItemCategories Category { get; }
+
 		Mod? Mod { get; }
 		bool IsFavorite { get; set; }
-		bool IsOwnable { get; }
+		bool CanOwn { get; }
 		bool IsOwned { get; set; }
 
 		bool FitsInSlot(ItemSlots slot);

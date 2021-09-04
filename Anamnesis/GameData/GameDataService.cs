@@ -6,14 +6,13 @@ namespace Anamnesis.Services
 	using System;
 	using System.IO;
 	using System.Threading.Tasks;
-	using Anamnesis.Character;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
-	using Anamnesis.Updater;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
+
 	using LuminaData = global::Lumina.GameData;
 
 	public class GameDataService : ServiceBase<GameDataService>
@@ -36,6 +35,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; protected set; }
 		public static ISheet<Monster> Monsters { get; private set; }
 		public static ISheet<Prop> Props { get; private set; }
+		public static ISheet<ItemCategory> ItemCategories { get; private set; }
 		#pragma warning restore CS8618
 
 		public override Task Initialize()
@@ -87,6 +87,7 @@ namespace Anamnesis.Services
 			// these are json files that we write by hand
 			Monsters = new JsonListSheet<Monster>("Data/Monsters.json");
 			Props = new PropSheet("Data/Props.json");
+			ItemCategories = new JsonDictionarySheet<ItemCategories, ItemCategory>("Data/ItemCategories.json");
 
 			return base.Initialize();
 		}

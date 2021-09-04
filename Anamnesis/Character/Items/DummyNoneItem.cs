@@ -31,8 +31,10 @@ namespace Anamnesis.Character.Items
 			set => FavoritesService.SetFavorite(this, value);
 		}
 
-		public bool IsOwnable => false;
+		public bool CanOwn => false;
 		public bool IsOwned { get; set; }
+
+		public ItemCategories Category => ItemCategories.Standard;
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

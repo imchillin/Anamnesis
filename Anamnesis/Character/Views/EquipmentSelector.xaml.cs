@@ -25,26 +25,18 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorView
 	{
-		private static readonly Dictionary<uint, ItemCategories> ManualItemCategories;
-
 		private static Classes classFilter = Classes.All;
 		private static ItemCategories categoryFilter = ItemCategories.All;
-		private static bool hideLocked = true;
+		private static bool showLocked = true;
 		private static bool ambidextrous = false;
 		private static bool autoOffhand = true;
 		private static bool showFilters = false;
 
-		private readonly ItemSlots slot;
 		private readonly Memory.ActorViewModel? actor;
-
-		static EquipmentSelector()
-		{
-			ManualItemCategories = SerializerService.DeserializeFile<Dictionary<uint, ItemCategories>>("Data/ItemCategories.json");
-		}
 
 		public EquipmentSelector(ItemSlots slot, Memory.ActorViewModel? actor)
 		{
-			this.slot = slot;
+			this.Slot = slot;
 			this.actor = actor;
 
 			this.InitializeComponent();
@@ -84,9 +76,10 @@ namespace Anamnesis.Character.Views
 			set => showFilters = value;
 		}
 
-		public bool IsMainHandSlot => this.slot == ItemSlots.MainHand;
-		public bool IsWeaponSlot => this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand;
-		public bool IsSmallclothesSlot => this.slot > ItemSlots.Head && this.slot <= ItemSlots.OffHand;
+		public ItemSlots Slot { get; set; }
+		public bool IsMainHandSlot => this.Slot == ItemSlots.MainHand;
+		public bool IsWeaponSlot => this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
+		public bool IsSmallclothesSlot => this.Slot > ItemSlots.Head && this.Slot <= ItemSlots.OffHand;
 
 		SelectorDrawer SelectorDrawer.ISelectorView.Selector => this.Selector;
 
@@ -111,12 +104,12 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
-		public bool HideLocked
+		public bool ShowLocked
 		{
-			get => hideLocked;
+			get => showLocked;
 			set
 			{
-				hideLocked = value;
+				showLocked = value;
 				this.Selector.FilterItems();
 			}
 		}
@@ -179,14 +172,14 @@ namespace Anamnesis.Character.Views
 			if (string.IsNullOrEmpty(item.Name))
 				return false;
 
-			if (this.Ambidextrous && (this.slot == ItemSlots.MainHand || this.slot == ItemSlots.OffHand))
+			if (this.Ambidextrous && this.IsWeaponSlot)
 			{
 				if (!item.IsWeapon)
 					return false;
 			}
 			else
 			{
-				if (!item.FitsInSlot(this.slot))
+				if (!item.FitsInSlot(this.Slot))
 					return false;
 			}
 
@@ -196,7 +189,7 @@ namespace Anamnesis.Character.Views
 			if (!this.ValidCategory(item))
 				return false;
 
-			if (this.HideLocked && item is ItemViewModel ivm && !this.CanEquip(ivm))
+			if (!this.ShowLocked && item is ItemViewModel ivm && !this.CanEquip(ivm))
 				return false;
 
 			return this.MatchesSearch(item, search);
@@ -220,17 +213,12 @@ namespace Anamnesis.Character.Views
 
 		private bool ValidCategory(IItem item)
 		{
-			ItemCategories itemCategory = ItemCategories.None;
-			if (item is ItemViewModel)
-				itemCategory = ManualItemCategories.GetValueOrDefault(item.Key, ItemCategories.Standard);
-			else if (item is Prop)
-				itemCategory = ItemCategories.Props;
-			else if (item is PerformViewModel)
-				itemCategory = ItemCategories.Performance;
+			ItemCategories itemCategory = item.Category;
 
-			// Always let uncategorized items through, otherwise there would be no way to get to them
-			bool categoryFiltered = itemCategory == ItemCategories.None;
-			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && (itemCategory.HasFlag(ItemCategories.Standard) || item.IsOwned);
+			// Include none category
+			bool categoryFiltered = this.CategoryFilter.HasFlag(ItemCategories.Standard) && itemCategory == ItemCategories.None;
+
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && itemCategory.HasFlag(ItemCategories.Standard);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Premium) && itemCategory.HasFlag(ItemCategories.Premium);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Limited) && itemCategory.HasFlag(ItemCategories.Limited);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Deprecated) && itemCategory.HasFlag(ItemCategories.Deprecated);
@@ -238,6 +226,7 @@ namespace Anamnesis.Character.Views
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && itemCategory.HasFlag(ItemCategories.Performance);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Owned) && item.IsOwned;
 			return categoryFiltered;
 		}
 

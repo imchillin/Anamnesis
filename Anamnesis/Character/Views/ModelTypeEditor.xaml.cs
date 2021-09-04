@@ -3,14 +3,13 @@
 
 namespace Anamnesis.Character.Views
 {
-	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-	using global::Anamnesis.Styles.Drawers;
 
 	/// <summary>
 	/// Interaction logic for ModelTypeEditor.xaml.
