@@ -41,16 +41,20 @@
 					<XivToolsWpf:TextBlock Key="EquipmentSelector_Categories" Foreground="{DynamicResource MaterialDesignBody}"/>
 				</GroupBox.Header>
 				<Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="3">
-					<controls:ItemCategoryFilter Value="{Binding CategoryFilter}"/>
+					<controls:ItemCategoryFilter Value="{Binding CategoryFilter}" IsWeaponSlot="{Binding IsWeaponSlot, Mode=OneWay}"/>
 				</Border>
 			</GroupBox>
 
 			<GroupBox Style="{StaticResource Cm3GroupBox}">
+				<GroupBox.Header>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_FilterOther" Foreground="{DynamicResource MaterialDesignBody}"/>
+				</GroupBox.Header>
+				
 				<StackPanel Margin="8, 3">
-					<CheckBox Padding="3" IsChecked="{Binding HideLocked}">
-						<XivToolsWpf:TextBlock Key="EquipmentSelector_HideLocked"/>
+					<CheckBox IsChecked="{Binding ShowLocked}">
+						<XivToolsWpf:TextBlock Key="EquipmentSelector_ShowLocked"/>
 					</CheckBox>
-					<CheckBox Padding="3" IsChecked="{Binding Ambidextrous}" Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
+					<CheckBox IsChecked="{Binding Ambidextrous}" Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
 						<XivToolsWpf:TextBlock Key="EquipmentSelector_Ambidextrous"/>
 					</CheckBox>
 					
@@ -195,18 +199,37 @@
 						</Rectangle>
 
 						<Grid Grid.Column="2" Grid.RowSpan="2">
+							<Grid.RowDefinitions>
+								<RowDefinition/>
+								<RowDefinition/>
+							</Grid.RowDefinitions>
 
-							<ToggleButton Style="{StaticResource InvisibleToggleButton}" IsChecked="{Binding IsFavorite}" Margin="6,0,0,0" Padding="0">
+							<ToggleButton Grid.Row="0" Style="{StaticResource InvisibleToggleButton}" IsChecked="{Binding IsFavorite}" Margin="6,0,0,0" Padding="0">
+								<ToggleButton.ToolTip>
+									<XivToolsWpf:TextBlock Key="EquipmentSelector_FavoriteToggleTip"/>
+								</ToggleButton.ToolTip>
+								
 								<Grid>
 									<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
-												   Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
+										Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
 									<XivToolsWpf:IconBlock Icon="Star" FontSize="13"
-										  Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
+										Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
 								</Grid>
 							</ToggleButton>
 
+							<ToggleButton Grid.Row="1" Style="{StaticResource InvisibleToggleButton}" IsChecked="{Binding IsOwned}" Margin="6,3,0,0" Padding="0"
+								Visibility="{Binding CanOwn, Converter={StaticResource B2V}}">
+								<ToggleButton.ToolTip>
+									<XivToolsWpf:TextBlock Key="EquipmentSelector_OwnedToggleTip"/>
+								</ToggleButton.ToolTip>
+								<Grid>
+									<fa:IconBlock Icon="DollarSign" FontSize="13" Opacity="0.25"
+										Visibility="{Binding IsOwned, Converter={StaticResource !B2V}}"/>
+									<fa:IconBlock Icon="DollarSign"  FontSize="13"
+										Visibility="{Binding IsOwned, Converter={StaticResource B2V}}"/>
+								</Grid>
+							</ToggleButton>
 						</Grid>
-
 					</Grid>
 				</DataTemplate>
 			</cm3Drawers:SelectorDrawer.ItemTemplate>

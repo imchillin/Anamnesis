@@ -125,6 +125,7 @@ namespace Anamnesis.Files
 				this.Name = Paths.GetFileNameWithoutExtension(path);
 				this.Type = info;
 				this.Source = source;
+				this.DateModified = Files.GetLastWriteTime(path);
 			}
 
 			public string Name { get; private set; }
@@ -133,6 +134,7 @@ namespace Anamnesis.Files
 			public IFileSource Source { get; private set; }
 			public bool Exists => Files.Exists(this.Path);
 			public string? Metadata { get; set; }
+			public DateTime? DateModified { get; set; }
 
 			public Task Delete()
 			{
@@ -161,6 +163,7 @@ namespace Anamnesis.Files
 				this.Path = path;
 				this.Name = Paths.GetFileName(path);
 				this.Source = source;
+				this.DateModified = Directories.GetLastWriteTime(path);
 			}
 
 			public string Name { get; private set; }
@@ -168,6 +171,7 @@ namespace Anamnesis.Files
 			public IFileSource Source { get; private set; }
 			public bool Exists => Directories.Exists(this.Path);
 			public string? Metadata { get; set; }
+			public DateTime? DateModified { get; set; }
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{

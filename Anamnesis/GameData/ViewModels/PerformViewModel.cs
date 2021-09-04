@@ -3,7 +3,6 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
-	using System;
 	using System.Windows.Media;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
@@ -13,9 +12,9 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class PerformViewModel : ExcelRowViewModel<Perform>, IItem
 	{
-		private ushort modelSet;
-		private ushort modelBase;
-		private ushort modelVariant;
+		private readonly ushort modelSet;
+		private readonly ushort modelBase;
+		private readonly ushort modelVariant;
 
 		public PerformViewModel(uint key, ExcelSheet<Perform> sheet, GameData lumina)
 			: base(key, sheet, lumina)
@@ -45,6 +44,11 @@ namespace Anamnesis.GameData.ViewModels
 			get => FavoritesService.IsFavorite(this);
 			set => FavoritesService.SetFavorite(this, value);
 		}
+
+		public bool CanOwn => false;
+		public bool IsOwned { get; set; }
+
+		public ItemCategories Category => ItemCategories.Performance;
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

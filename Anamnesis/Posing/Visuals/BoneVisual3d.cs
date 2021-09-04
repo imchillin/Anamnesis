@@ -5,17 +5,13 @@ namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Windows;
-	using System.Windows.Controls;
-	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Extensions;
-	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Services;
-	using Anamnesis.ThreeD;
 	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
+	using XivToolsWpf.Meida3D;
 
 	using CmQuaternion = Anamnesis.Memory.Quaternion;
 	using CmVector = Anamnesis.Memory.Vector;
@@ -26,9 +22,6 @@ namespace Anamnesis.PoseModule
 	{
 		private readonly QuaternionRotation3D rotation;
 		private readonly TranslateTransform3D position;
-
-		private readonly ScaleTransform3D boneViewScale;
-		private readonly QuaternionRotation3D boneViewRotation;
 
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
@@ -55,47 +48,6 @@ namespace Anamnesis.PoseModule
 
 			this.OriginalBoneName = name;
 			this.BoneName = name;
-
-			Viewport2DVisual3D v2d = new Viewport2DVisual3D();
-
-			MeshGeometry3D geo = new MeshGeometry3D();
-			geo.Positions.Add(new Point3D(-1, 1, 0));
-			geo.Positions.Add(new Point3D(-1, -1, 0));
-			geo.Positions.Add(new Point3D(1, -1, 0));
-			geo.Positions.Add(new Point3D(1, 1, 0));
-			geo.TextureCoordinates.Add(new Point(0, 0));
-			geo.TextureCoordinates.Add(new Point(0, 1));
-			geo.TextureCoordinates.Add(new Point(1, 1));
-			geo.TextureCoordinates.Add(new Point(1, 0));
-			geo.TriangleIndices.Add(0);
-			geo.TriangleIndices.Add(1);
-			geo.TriangleIndices.Add(2);
-			geo.TriangleIndices.Add(0);
-			geo.TriangleIndices.Add(2);
-			geo.TriangleIndices.Add(3);
-			v2d.Geometry = geo;
-
-			Transform3DGroup trans = new Transform3DGroup();
-
-			this.boneViewRotation = new QuaternionRotation3D();
-			rot = new RotateTransform3D();
-			rot.Rotation = this.boneViewRotation;
-			trans.Children.Add(rot);
-
-			this.boneViewScale = new ScaleTransform3D();
-			this.boneViewScale.ScaleX = 0.1f;
-			this.boneViewScale.ScaleY = 0.1f;
-			this.boneViewScale.ScaleZ = 0.1f;
-			trans.Children.Add(this.boneViewScale);
-
-			v2d.Transform = trans;
-
-			v2d.Material = new DiffuseMaterial(new SolidColorBrush(Colors.White));
-			v2d.Visual = new BoneView();
-
-			Viewport2DVisual3D.SetIsVisualHostMaterial(v2d.Material, true);
-
-			this.Children.Add(v2d);
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }
@@ -183,19 +135,19 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		public BoneVisual3d? Visual => this;
-
-		public virtual void OnCameraUpdated(Pose3DView owner)
+		public Vector3D WorldPosition
 		{
-			double scale = (owner.CameraDistance * 0.02) - 0.02;
-			scale = Math.Clamp(scale, 0.02, 10);
-			this.boneViewScale.ScaleX = scale;
-			this.boneViewScale.ScaleY = scale;
-			this.boneViewScale.ScaleZ = scale;
+			get
+			{
+				GeneralTransform3D trans = this.TransformToAncestor(this.Skeleton);
 
-			// TODO: Billboard this object so it always faces towards the camera.
-			this.boneViewRotation.Quaternion = Quaternion.Identity;
+				Point3D p;
+				trans.TryTransform(default, out p);
+				return (Vector3D)p;
+			}
 		}
+
+		public BoneVisual3d? Visual => this;
 
 		public virtual void ReadTransform(bool readChildren = false)
 		{

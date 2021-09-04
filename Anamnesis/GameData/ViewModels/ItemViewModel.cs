@@ -56,6 +56,15 @@ namespace Anamnesis.GameData.ViewModels
 			set => FavoritesService.SetFavorite(this, value);
 		}
 
+		public bool CanOwn => this.Category.HasFlag(ItemCategories.Premium);
+		public bool IsOwned
+		{
+			get => FavoritesService.IsOwned(this);
+			set => FavoritesService.SetOwned(this, value);
+		}
+
+		public ItemCategories Category => ItemCategory.GetCategory(this);
+
 		public bool FitsInSlot(ItemSlots slot)
 		{
 			return this.Value.EquipSlotCategory.Value?.Contains(slot) ?? false;

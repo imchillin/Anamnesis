@@ -5,21 +5,26 @@ namespace Anamnesis.Styles.Controls
 {
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.GameData;
+	using PropertyChanged;
 	using XivToolsWpf.DependencyProperties;
 
 	/// <summary>
 	/// Interaction logic for ItemCategoryFilter.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
 	public partial class ItemCategoryFilter : UserControl
 	{
-		public static DependencyProperty<ItemCategories> ValueDp
-			= Binder.Register<ItemCategories, ItemCategoryFilter>(nameof(ItemCategoryFilter.Value));
+		public static DependencyProperty<ItemCategories> ValueDp = Binder.Register<ItemCategories, ItemCategoryFilter>(nameof(ItemCategoryFilter.Value));
+		public static DependencyProperty<bool> IsWeaponSlotDp = Binder.Register<bool, ItemCategoryFilter>(nameof(ItemCategoryFilter.IsWeaponSlot));
 
 		public ItemCategoryFilter()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 		}
+
+		public bool IsWeaponSlot { get; set; }
 
 		public ItemCategories Value
 		{

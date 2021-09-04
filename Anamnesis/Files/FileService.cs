@@ -357,6 +357,7 @@ namespace Anamnesis.Files
 		{
 			public string? Path { get; }
 			public string? Name { get; }
+			public DateTime? DateModified { get; }
 			public IFileSource Source { get; }
 			public bool Exists { get; }
 			public string? Metadata { get; }

@@ -15,6 +15,7 @@
 	"ProcessSelector_NotFound2": "Please ensure the game is running, and is in DirectX 11 mode.",
 
 	"Error_NotInGame": "Not Signed In",
+	"Error_FavoritesFail": "Failed to load favorites. Your favorites have been reset.",
 
 	"FileBrowser_GoUp": "Go Up",
 	"FileBrowser_Flatten": "Flatten Hierarchy",
@@ -23,6 +24,10 @@
 	"FileBrowser_Browse": "Browse for a file",
 	"FileBrowser_ReplaceTitle": "Overwrite file",
 	"FileBrowser_ReplaceMessage": "Are you sure you want to overwrite the file: \"{0}\"?",
+
+	"FileBrowser_Sort": "Sorting mode",
+	"FileBrowser_SortAlpha": "By Name (A to Z)",
+	"FileBrowser_SortDate": "By Date (Newst to Oldest)",
 
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",
@@ -34,11 +39,12 @@
 	"Target_ConvertCarbuncleToPlayerMessage": "The Actor: \"{0}\" appears to be a Companion or Pet. Do you want to change them to an editable actor to allow for posing and appearance changes?",
 
 	"EquipmentSelector_Classes": "Classes / Jobs",
-	"EquipmentSelector_HideLocked": "Hide race/gender-locked items",
+	"EquipmentSelector_ShowLocked": "Show race/gender-locked items",
 	"EquipmentSelector_Ambidextrous": "Allow all weapons in either hand",
 	"EquipmentSelector_AutoOffhand": "Auto-equip offhand",
 	"EquipmentSelector_AutoOffhandTip": "Automatically equip paired weapons in the offhand, and unequip the offhand when equipping two-handed weapons",
 
+	"EquipmentSelector_FilterOther": "Other",
 	"EquipmentSelector_Categories": "Categories",
 	"EquipmentSelector_Standard": "Standard Items",
 	"EquipmentSelector_StandardTip": "Items obtainable through normal gameplay",
@@ -53,9 +59,13 @@
 	"EquipmentSelector_Performance": "Performance",
 	"EquipmentSelector_PerformanceTip": "Instruments used for Bard performances",
 	"EquipmentSelector_Modded": "Modded",
-	"EquipmentSelector_ModdedTip": "Items added via mods",
+	"EquipmentSelector_ModdedTip": "Items that have been modified",
 	"EquipmentSelector_Favorites": "Favorites",
-	"EquipmentSelector_FavoritesTip": "Always include favorited items, regardless of category",
+	"EquipmentSelector_FavoritesTip": "Items marked as a favorite",
+	"EquipmentSelector_FavoriteToggleTip": "Mark this item a a favorite",
+	"EquipmentSelector_Owned": "Owned",
+	"EquipmentSelector_OwnedTip": "Items marked as owned",
+	"EquipmentSelector_OwnedToggleTip": "Mark this premium item as owned",
 
 	"Home_XmaTopToday": "XMA Top Today",
 	"Home_XmaLatest": "XMA Latest",

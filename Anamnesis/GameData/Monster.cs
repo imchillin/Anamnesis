@@ -1,12 +1,11 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character
+namespace Anamnesis.GameData
 {
 	using System;
 	using Anamnesis.Character.Items;
 	using Anamnesis.Character.Utilities;
-	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;

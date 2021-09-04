@@ -12,13 +12,13 @@ namespace Anamnesis.Files
 	#pragma warning disable SA1402, SA1649, IDE1006, SA1300
 	public class LegacyCharacterFileInfo : JsonFileInfoBase<LegacyCharacterFile>
 	{
-		private static IFileSource source = new LocalFileSource("Local Files (CMTool Saves)", "%MyDocuments%/CMTool/");
+		private static readonly IFileSource Source = new LocalFileSource("Local Files (CMTool Saves)", "%MyDocuments%/CMTool/");
 
 		public override string Extension => "cma";
 		public override string Name => "CMTool Appearance";
 		public override Type? LoadOptionsViewType => typeof(CharacterFileOptions);
 		public override Type? SaveOptionsViewType => typeof(CharacterFileOptions);
-		public override IFileSource[] FileSources => new[] { source };
+		public override IFileSource[] FileSources => new[] { Source };
 	}
 
 	public class LegacyJsonCharacterFileInfo : LegacyCharacterFileInfo

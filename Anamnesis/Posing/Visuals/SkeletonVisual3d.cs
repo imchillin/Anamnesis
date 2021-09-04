@@ -7,26 +7,28 @@ namespace Anamnesis.PoseModule
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
-	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Input;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Memory;
-	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Posing;
 	using Anamnesis.Posing.Extensions;
 	using Anamnesis.Posing.Templates;
+	using Anamnesis.Posing.Visuals;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
 	using XivToolsWpf;
+
 	using AnQuaternion = Anamnesis.Memory.Quaternion;
 
 	[AddINotifyPropertyChangedInterface]
 	public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	{
+		public readonly List<BoneTargetVisual3d> BoneTargets = new List<BoneTargetVisual3d>();
+
 		public List<BoneVisual3d> SelectedBones = new List<BoneVisual3d>();
 		public HashSet<BoneVisual3d> HoverBones = new HashSet<BoneVisual3d>();
 
@@ -501,6 +503,8 @@ namespace Anamnesis.PoseModule
 				}
 			}
 
+			this.AddBoneTargets();
+
 			if (autoSkeleton)
 			{
 				try
@@ -579,6 +583,23 @@ namespace Anamnesis.PoseModule
 				string boneName = name + "_" + i;
 				BoneVisual3d bone = new BoneVisual3d(transform, this, boneName);
 				this.Bones.Add(bone);
+			}
+		}
+
+		private void AddBoneTargets()
+		{
+			foreach (BoneTargetVisual3d boneTarget in this.BoneTargets)
+			{
+				this.Children.Remove(boneTarget);
+			}
+
+			this.BoneTargets.Clear();
+
+			foreach (BoneVisual3d boneVisual in this.Bones)
+			{
+				BoneTargetVisual3d boneTarget = new BoneTargetVisual3d(boneVisual);
+				this.BoneTargets.Add(boneTarget);
+				this.Children.Add(boneTarget);
 			}
 		}
 

@@ -9,18 +9,16 @@ namespace Anamnesis.GUI.Views
 	using System.ComponentModel;
 	using System.IO;
 	using System.Linq;
+	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using Anamnesis;
 	using Anamnesis.Files;
 	using Anamnesis.Files.Infos;
-	using Anamnesis.Files.Types;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
-	using Serilog;
 	using XivToolsWpf;
 	using static Anamnesis.Files.IFileSource;
 
@@ -35,6 +33,7 @@ namespace Anamnesis.GUI.Views
 		private static readonly Stack<IFileSource.IDirectory> CurrentPathValue = new Stack<IFileSource.IDirectory>();
 		private static IFileSource? currentFileSource;
 		private static bool isFlattened;
+		private static Sort sortMode;
 
 		private readonly FileInfoBase[] fileInfos;
 		private readonly Modes mode;
@@ -102,6 +101,8 @@ namespace Anamnesis.GUI.Views
 				});
 			}
 
+			this.PropertyChanged?.Invoke(this, new(nameof(FileBrowserView.SortMode)));
+
 			Task.Run(this.UpdateEntries);
 
 			Type? optionsType = mode == Modes.Load ? fileInfos[0].LoadOptionsViewType : fileInfos[0].SaveOptionsViewType;
@@ -120,6 +121,14 @@ namespace Anamnesis.GUI.Views
 			Save,
 		}
 
+		public enum Sort
+		{
+			None = -1,
+
+			AlphaNumeric,
+			Date,
+		}
+
 		public bool IsOpen
 		{
 			get;
@@ -130,6 +139,22 @@ namespace Anamnesis.GUI.Views
 		{
 			get => SettingsService.Current.ShowAdvancedOptions;
 			set => SettingsService.Current.ShowAdvancedOptions = value;
+		}
+
+		public int SortModeInt
+		{
+			get => (int)this.SortMode;
+			set => this.SortMode = (Sort)value;
+		}
+
+		public Sort SortMode
+		{
+			get => sortMode;
+			set
+			{
+				sortMode = value;
+				Task.Run(this.UpdateEntries);
+			}
 		}
 
 		public string? FilePath { get; private set; }
@@ -426,6 +451,49 @@ namespace Anamnesis.GUI.Views
 			return false;
 		}
 
+		private int OnSort(object itemA, object itemB)
+		{
+			if (itemA is EntryWrapper entryA && itemB is EntryWrapper entryB)
+			{
+				return this.OnSort(entryA, entryB);
+			}
+
+			return 0;
+		}
+
+		private int OnSort(EntryWrapper a, EntryWrapper b)
+		{
+			// Directoreis alweays go to the top.
+			if (a.Entry is IDirectory && b.Entry is IFile)
+				return -1;
+
+			if (a.Entry is IFile && b.Entry is IDirectory)
+				return 1;
+
+			if (sortMode == Sort.None)
+			{
+				return 0;
+			}
+			else if (sortMode == Sort.AlphaNumeric)
+			{
+				if (a.Name == null || b.Name == null)
+					return 0;
+
+				return a.Name.CompareTo(b.Name);
+			}
+			else if (sortMode == Sort.Date)
+			{
+				if (a.DateModified == null || b.DateModified == null)
+					return 0;
+
+				DateTime dateA = (DateTime)a.DateModified;
+				DateTime dateB = (DateTime)b.DateModified;
+				return dateA.CompareTo(dateB);
+			}
+
+			return 0;
+		}
+
 		private void OnGoUpClicked(object? sender, RoutedEventArgs e)
 		{
 			CurrentPathValue.Pop();
@@ -569,6 +637,7 @@ namespace Anamnesis.GUI.Views
 
 			public bool? CanWrite => this.View.FileSource?.CanWrite;
 			public string? Name => this.Entry.Name;
+			public DateTime? DateModified => this.Entry.DateModified;
 
 			public string Icon
 			{
@@ -628,14 +697,26 @@ namespace Anamnesis.GUI.Views
 					if (this.Entry == null)
 						return null;
 
+					StringBuilder b = new StringBuilder();
+
 					if (!string.IsNullOrEmpty(this.Directory))
 					{
-						return this.Directory + " - " + this.Entry.Metadata;
+						b.Append(this.Directory);
+						b.Append(" ");
 					}
-					else
+
+					if (!string.IsNullOrEmpty(this.Entry.Metadata))
 					{
-						return this.Entry.Metadata;
+						b.Append(this.Entry.Metadata);
+						b.Append(" ");
 					}
+
+					if (this.Entry.DateModified != null)
+					{
+						b.Append(this.Entry.DateModified);
+					}
+
+					return b.ToString();
 				}
 			}
 

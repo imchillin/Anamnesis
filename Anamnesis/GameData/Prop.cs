@@ -1,10 +1,9 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character
+namespace Anamnesis.GameData
 {
 	using System.Windows.Media;
-	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
@@ -33,6 +32,11 @@ namespace Anamnesis.Character
 			get => FavoritesService.IsFavorite(this);
 			set => FavoritesService.SetFavorite(this, value);
 		}
+
+		public bool CanOwn => false;
+		public bool IsOwned { get; set; }
+
+		public ItemCategories Category => ItemCategories.Props;
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

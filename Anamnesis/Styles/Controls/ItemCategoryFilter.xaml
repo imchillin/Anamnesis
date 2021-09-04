@@ -8,38 +8,43 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 
-    <Grid x:Name="ContentArea">
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+	<Grid x:Name="ContentArea">
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
 
-        <StackPanel Orientation="Vertical" Margin="10,0">
-            <local:ItemCategoryFilterItem Category="Standard" Value="{Binding Value}"
-                                          Text="EquipmentSelector_Standard" ToolText="EquipmentSelector_StandardTip"/>
-            <local:ItemCategoryFilterItem Category="Premium" Value="{Binding Value}"
-                                          Text="EquipmentSelector_Premium" ToolText="EquipmentSelector_PremiumTip"/>
-            <local:ItemCategoryFilterItem Category="Limited" Value="{Binding Value}"
-                                          Text="EquipmentSelector_Limited" ToolText="EquipmentSelector_LimitedTip"/>
-            <local:ItemCategoryFilterItem Category="Deprecated" Value="{Binding Value}"
-                                          Text="EquipmentSelector_Deprecated" ToolText="EquipmentSelector_DeprecatedTip"/>
-            <local:ItemCategoryFilterItem Category="Props" Value="{Binding Value}"
-                                          Text="EquipmentSelector_Props" ToolText="EquipmentSelector_PropsTip"/>
-            <local:ItemCategoryFilterItem Category="Performance" Value="{Binding Value}"
-                                          Text="EquipmentSelector_Performance" ToolText="EquipmentSelector_PerformanceTip"/>
-            <local:ItemCategoryFilterItem Category="Modded" Value="{Binding Value}"
-                                          Text="EquipmentSelector_Modded" ToolText="EquipmentSelector_ModdedTip"/>
-            <local:ItemCategoryFilterItem Category="Favorites" Value="{Binding Value}"
-                                          Text="EquipmentSelector_Favorites" ToolText="EquipmentSelector_FavoritesTip"/>
-        </StackPanel>
+		<StackPanel Orientation="Vertical" Margin="10,6, 0, 0">
 
-        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Grid.ColumnSpan="3" Margin="3, 3, 3, 6">
-            <Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnNoneClicked">
-                <XivToolsWpf:TextBlock Key="Common_None"/>
-            </Button>
-            <Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnAllClicked">
-                <XivToolsWpf:TextBlock Key="Common_All"/>
-            </Button>
-        </StackPanel>
-    </Grid>
+			<local:ItemCategoryFilterItem Category="Standard" Value="{Binding Value}"
+										  Text="EquipmentSelector_Standard" ToolText="EquipmentSelector_StandardTip"/>
+			<local:ItemCategoryFilterItem Category="Premium" Value="{Binding Value}"
+										  Text="EquipmentSelector_Premium" ToolText="EquipmentSelector_PremiumTip"/>
+			<local:ItemCategoryFilterItem Category="Limited" Value="{Binding Value}"
+										  Text="EquipmentSelector_Limited" ToolText="EquipmentSelector_LimitedTip"/>
+			<local:ItemCategoryFilterItem Category="Deprecated" Value="{Binding Value}"
+										  Text="EquipmentSelector_Deprecated" ToolText="EquipmentSelector_DeprecatedTip"/>
+			<local:ItemCategoryFilterItem Category="Props" Value="{Binding Value}"
+										  Text="EquipmentSelector_Props" ToolText="EquipmentSelector_PropsTip"
+										  Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}"/>
+			<local:ItemCategoryFilterItem Category="Performance" Value="{Binding Value}"
+										  Text="EquipmentSelector_Performance" ToolText="EquipmentSelector_PerformanceTip"
+										  Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}"/>
+			<local:ItemCategoryFilterItem Category="Modded" Value="{Binding Value}"
+										  Text="EquipmentSelector_Modded" ToolText="EquipmentSelector_ModdedTip"/>
+			<local:ItemCategoryFilterItem Category="Favorites" Value="{Binding Value}"
+										  Text="EquipmentSelector_Favorites" ToolText="EquipmentSelector_FavoritesTip"/>
+			<local:ItemCategoryFilterItem Category="Owned" Value="{Binding Value}"
+										  Text="EquipmentSelector_Owned" ToolText="EquipmentSelector_OwnedTip"/>
+		</StackPanel>
+
+		<StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Grid.ColumnSpan="3" Margin="3">
+			<Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnNoneClicked">
+				<XivToolsWpf:TextBlock Key="Common_None"/>
+			</Button>
+			<Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnAllClicked">
+				<XivToolsWpf:TextBlock Key="Common_All"/>
+			</Button>
+		</StackPanel>
+	</Grid>
 </UserControl>

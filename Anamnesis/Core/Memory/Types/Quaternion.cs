@@ -10,8 +10,8 @@ namespace Anamnesis.Memory
 	{
 		public static readonly Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
-		private static float deg2Rad = ((float)Math.PI * 2) / 360;
-		private static float rad2Deg = 360 / ((float)Math.PI * 2);
+		private static readonly float Deg2Rad = ((float)Math.PI * 2) / 360;
+		private static readonly float Rad2Deg = 360 / ((float)Math.PI * 2);
 
 		public Quaternion(float x, float y, float z, float w)
 		{
@@ -74,9 +74,9 @@ namespace Anamnesis.Memory
 		/// <returns>Quaternion from Euler angles.</returns>
 		public static Quaternion FromEuler(Vector euler)
 		{
-			double yaw = euler.Y * deg2Rad;
-			double pitch = euler.X * deg2Rad;
-			double roll = euler.Z * deg2Rad;
+			double yaw = euler.Y * Deg2Rad;
+			double pitch = euler.X * Deg2Rad;
+			double roll = euler.Z * Deg2Rad;
 
 			double c1 = Math.Cos(yaw / 2);
 			double s1 = Math.Sin(yaw / 2);
@@ -125,7 +125,7 @@ namespace Anamnesis.Memory
 				v.Z = (float)Math.Atan2((2 * this.X * this.W) - (2 * this.Y * this.Z), 1 - (2 * sqx) - (2 * sqz));
 			}
 
-			v *= rad2Deg;
+			v *= Rad2Deg;
 			v.NormalizeAngles();
 
 			return v;

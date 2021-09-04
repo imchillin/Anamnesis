@@ -11,7 +11,7 @@ namespace Anamnesis.GameData.Sheets
 	public class JsonListSheet<T> : ISheet<T>
 		where T : IJsonRow
 	{
-		private Dictionary<uint, T> rows;
+		private readonly Dictionary<uint, T> rows;
 
 		public JsonListSheet(string fileName)
 		{
