@@ -12,6 +12,7 @@ namespace Anamnesis.Files
 	using Anamnesis.Files.Infos;
 
 	using Directories = System.IO.Directory;
+	using Files = System.IO.File;
 	using Paths = System.IO.Path;
 
 	public class DatFileSource : IFileSource
@@ -57,6 +58,7 @@ namespace Anamnesis.Files
 					string desc = Regex.Replace(Encoding.ASCII.GetString(reader.ReadBytes(164)), @"(?![ -~]|\r|\n).", string.Empty);
 					file.Name = desc.Substring(0, Math.Min(desc.Length, 50));
 					file.Metadata = slotNumber;
+					file.DateModified = Files.GetLastWriteTime(filePath);
 
 					results.Add(file);
 				}
@@ -78,6 +80,7 @@ namespace Anamnesis.Files
 			public IFileSource Source { get; private set; }
 			public bool Exists => System.IO.File.Exists(this.Path);
 			public string? Metadata { get; set; }
+			public DateTime? DateModified { get; set; }
 
 			public Task Delete()
 			{
@@ -104,6 +107,7 @@ namespace Anamnesis.Files
 			public IFileSource Source { get; private set; }
 			public bool Exists => true;
 			public string? Metadata { get; set; }
+			public DateTime? DateModified => null;
 
 			public IFileSource.IDirectory CreateSubDirectory()
 			{

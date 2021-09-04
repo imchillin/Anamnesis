@@ -43,6 +43,7 @@
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition />
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
 			<ToggleButton
@@ -95,6 +96,32 @@
 				VerticalAlignment="Center"
 				Text="{Binding CurrentPath}" />
 
+			<ComboBox Grid.Column="4" Margin="0, 3, 6, 0" Height="22" 
+					  Style="{StaticResource MaterialDesignDataGridComboBox}"
+					  SelectedIndex="{Binding SortModeInt, Mode=TwoWay}">
+
+				<ComboBox.ToolTip>
+					<XivToolsWpf:TextBlock Key="FileBrowser_Sort"/>
+				</ComboBox.ToolTip>
+
+				<ComboBoxItem>
+					<ComboBoxItem.ToolTip>
+						<XivToolsWpf:TextBlock Key="FileBrowser_SortAlpha"/>
+					</ComboBoxItem.ToolTip>
+					
+					<XivToolsWpf:IconBlock Icon="SortAlphaDown"/>
+				</ComboBoxItem>
+
+				<ComboBoxItem>
+					<ComboBoxItem.ToolTip>
+						<XivToolsWpf:TextBlock Key="FileBrowser_SortDate"/>
+					</ComboBoxItem.ToolTip>
+					
+					<XivToolsWpf:IconBlock Icon="CalendarAlt"/>
+				</ComboBoxItem>
+
+			</ComboBox>
+
 		</Grid>
 
 		<drawers:SelectorDrawer
@@ -102,6 +129,7 @@
 			Grid.Row="2"
 			Close="OnClose"
 			Filter="OnFilter"
+			Sort="OnSort"
 			SelectionChanged="OnSelectionChanged">
 			<drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
@@ -208,15 +236,18 @@
 				Background="{StaticResource MaterialDesignPaper}"
 				Cursor="Hand">
 				<ToggleButton
-					IsChecked="{Binding ShowOptions}"
+					IsChecked="{Binding ShowOptions, Converter={StaticResource !B}}"
 					IsEnabled="{Binding OptionsControl, Converter={StaticResource NotNullToBoolConverter}}"
 					Style="{StaticResource MaterialDesignExpanderToggleButton}">
-					<XivToolsWpf:TextBlock
-						Key="FileBrowser_Advanced"
-						Margin="6,0"
-						Foreground="{StaticResource MaterialDesignBody}"
-						Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}" />
 				</ToggleButton>
+
+				<XivToolsWpf:TextBlock
+					Key="FileBrowser_Advanced"
+					Margin="28,0"
+					VerticalAlignment="Center"
+					Foreground="{StaticResource MaterialDesignBody}"
+					Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}"
+					IsHitTestVisible="False"/>
 			</Grid>
 
 			<Grid Grid.Row="1" Visibility="{Binding ShowOptions, Converter={StaticResource B2V}}">

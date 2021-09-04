@@ -23,7 +23,7 @@ namespace Anamnesis.Files.Infos
 
 		public virtual string? GetMetadata(IFileSource.IFile file)
 		{
-			return this.Name;
+			return null;
 		}
 
 		public abstract bool IsFile(Type type);

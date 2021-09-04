@@ -24,6 +24,10 @@
 	"FileBrowser_ReplaceTitle": "Overwrite file",
 	"FileBrowser_ReplaceMessage": "Are you sure you want to overwrite the file: \"{0}\"?",
 
+	"FileBrowser_Sort": "Sorting mode",
+	"FileBrowser_SortAlpha": "By Name (A to Z)",
+	"FileBrowser_SortDate": "By Date (Newst to Oldest)",
+
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",
 	"Target_Npc": "NPCs",
