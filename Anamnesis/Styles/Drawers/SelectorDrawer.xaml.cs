@@ -25,9 +25,9 @@ namespace Anamnesis.Styles.Drawers
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 		public static readonly DependencyProperty ItemTemplateProperty = DependencyProperty.Register(nameof(ItemTemplate), typeof(DataTemplate), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
 
-		private static Dictionary<Type, string?> searchInputs = new Dictionary<Type, string?>();
-		private static Dictionary<Type, double> scrollPositions = new Dictionary<Type, double>();
-		private List<ItemEntry> entries = new List<ItemEntry>();
+		private static readonly Dictionary<Type, string?> SearchInputs = new Dictionary<Type, string?>();
+		private static readonly Dictionary<Type, double> ScrollPositions = new Dictionary<Type, double>();
+		private readonly List<ItemEntry> entries = new List<ItemEntry>();
 
 		private Type? objectType;
 		private bool searching = false;
@@ -211,12 +211,12 @@ namespace Anamnesis.Styles.Drawers
 		{
 			if (this.objectType != null)
 			{
-				if (searchInputs.ContainsKey(this.objectType))
-					this.SearchBox.Text = searchInputs[this.objectType];
+				if (SearchInputs.ContainsKey(this.objectType))
+					this.SearchBox.Text = SearchInputs[this.objectType];
 
-				if (scrollPositions.ContainsKey(this.objectType))
+				if (ScrollPositions.ContainsKey(this.objectType))
 				{
-					this.ScrollPosition = scrollPositions[this.objectType];
+					this.ScrollPosition = ScrollPositions[this.objectType];
 				}
 			}
 
@@ -230,15 +230,15 @@ namespace Anamnesis.Styles.Drawers
 			if (this.objectType == null)
 				return;
 
-			if (!searchInputs.ContainsKey(this.objectType))
-				searchInputs.Add(this.objectType, null);
+			if (!SearchInputs.ContainsKey(this.objectType))
+				SearchInputs.Add(this.objectType, null);
 
-			searchInputs[this.objectType] = this.SearchBox.Text;
+			SearchInputs[this.objectType] = this.SearchBox.Text;
 
-			if (!scrollPositions.ContainsKey(this.objectType))
-				scrollPositions.Add(this.objectType, 0);
+			if (!ScrollPositions.ContainsKey(this.objectType))
+				ScrollPositions.Add(this.objectType, 0);
 
-			scrollPositions[this.objectType] = this.ScrollPosition;
+			ScrollPositions[this.objectType] = this.ScrollPosition;
 		}
 
 		private void OnSearchChanged(object sender, TextChangedEventArgs e)
@@ -247,7 +247,7 @@ namespace Anamnesis.Styles.Drawers
 				return;
 
 			string str = this.SearchBox.Text;
-			searchInputs[this.objectType] = str;
+			SearchInputs[this.objectType] = str;
 			Task.Run(async () => { await this.Search(str); });
 		}
 
@@ -425,7 +425,7 @@ namespace Anamnesis.Styles.Drawers
 
 		private class Compare : IComparer<object>
 		{
-			private SortEvent filter;
+			private readonly SortEvent filter;
 
 			public Compare(SortEvent filter)
 			{

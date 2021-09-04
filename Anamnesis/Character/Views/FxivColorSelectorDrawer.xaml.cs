@@ -15,8 +15,8 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 	{
+		private readonly List<Item> items = new List<Item>();
 		private Item? selectedItem;
-		private List<Item> items = new List<Item>();
 
 		public FxivColorSelectorDrawer(ColorData.Entry[] colors, int selectedIndex)
 		{

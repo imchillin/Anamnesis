@@ -7,9 +7,9 @@ namespace Anamnesis.Memory
 
 	public class NopHookViewModel
 	{
-		private IntPtr address;
-		private byte[] originalValue;
-		private byte[] nopValue;
+		private readonly IntPtr address;
+		private readonly byte[] originalValue;
+		private readonly byte[] nopValue;
 		private bool value;
 
 		public NopHookViewModel(IntPtr address, int count)

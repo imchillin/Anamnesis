@@ -34,7 +34,7 @@ namespace Anamnesis
 		where T : struct
 	{
 		protected T model;
-		private Dictionary<string, (PropertyInfo, FieldInfo)> binds = new Dictionary<string, (PropertyInfo, FieldInfo)>();
+		private readonly Dictionary<string, (PropertyInfo, FieldInfo)> binds = new Dictionary<string, (PropertyInfo, FieldInfo)>();
 		private bool suppressViewToModelEvents = false;
 
 		public StructViewModelBase()

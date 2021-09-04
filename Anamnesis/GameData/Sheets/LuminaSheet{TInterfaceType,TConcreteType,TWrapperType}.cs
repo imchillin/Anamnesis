@@ -17,11 +17,11 @@ namespace Anamnesis.GameData.Sheets
 		where TConcreteType : ExcelRow
 		where TWrapperType : ExcelRowViewModel<TConcreteType>, TInterfaceType
 	{
-		private ExcelSheet<TConcreteType> excel;
-		private Dictionary<uint, TWrapperType> wrapperCache = new Dictionary<uint, TWrapperType>();
-		private List<TInterfaceType>? all;
+		private readonly ExcelSheet<TConcreteType> excel;
+		private readonly Dictionary<uint, TWrapperType> wrapperCache = new Dictionary<uint, TWrapperType>();
+		private readonly LuminaData lumina;
 
-		private LuminaData lumina;
+		private List<TInterfaceType>? all;
 
 		public LuminaSheet(LuminaData lumina)
 		{
