@@ -14,14 +14,11 @@ namespace Anamnesis.GUI.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using Anamnesis;
 	using Anamnesis.Files;
 	using Anamnesis.Files.Infos;
-	using Anamnesis.Files.Types;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
-	using Serilog;
 	using XivToolsWpf;
 	using static Anamnesis.Files.IFileSource;
 
@@ -36,10 +33,10 @@ namespace Anamnesis.GUI.Views
 		private static readonly Stack<IFileSource.IDirectory> CurrentPathValue = new Stack<IFileSource.IDirectory>();
 		private static IFileSource? currentFileSource;
 		private static bool isFlattened;
+		private static Sort sortMode;
 
 		private readonly FileInfoBase[] fileInfos;
 		private readonly Modes mode;
-		private Sort sortMode;
 		private string? fileName;
 		private EntryWrapper? selected;
 		private bool updatingEntries = false;
@@ -106,8 +103,7 @@ namespace Anamnesis.GUI.Views
 
 			this.PropertyChanged?.Invoke(this, new(nameof(FileBrowserView.SortMode)));
 
-			this.SortMode = Sort.AlphaNumeric;
-			////Task.Run(this.UpdateEntries);
+			Task.Run(this.UpdateEntries);
 
 			Type? optionsType = mode == Modes.Load ? fileInfos[0].LoadOptionsViewType : fileInfos[0].SaveOptionsViewType;
 			if (optionsType != null)
@@ -153,10 +149,10 @@ namespace Anamnesis.GUI.Views
 
 		public Sort SortMode
 		{
-			get => this.sortMode;
+			get => sortMode;
 			set
 			{
-				this.sortMode = value;
+				sortMode = value;
 				Task.Run(this.UpdateEntries);
 			}
 		}
@@ -474,18 +470,18 @@ namespace Anamnesis.GUI.Views
 			if (a.Entry is IFile && b.Entry is IDirectory)
 				return 1;
 
-			if (this.sortMode == Sort.None)
+			if (sortMode == Sort.None)
 			{
 				return 0;
 			}
-			else if (this.sortMode == Sort.AlphaNumeric)
+			else if (sortMode == Sort.AlphaNumeric)
 			{
 				if (a.Name == null || b.Name == null)
 					return 0;
 
 				return a.Name.CompareTo(b.Name);
 			}
-			else if (this.sortMode == Sort.Date)
+			else if (sortMode == Sort.Date)
 			{
 				if (a.DateModified == null || b.DateModified == null)
 					return 0;
