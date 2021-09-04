@@ -173,9 +173,11 @@ namespace Anamnesis.Services
 					string json = File.ReadAllText(FilePath);
 					this.Current = SerializerService.Deserialize<Favorites>(json);
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
-					await GenericDialog.Show("Failed to load favorites. Your favorites have been reset.", "Error", MessageBoxButton.OK);
+					Log.Error(ex, LocalizationService.GetString("Error_FavoritesFail"));
+
+					this.Current = new Favorites();
 					Save();
 				}
 			}

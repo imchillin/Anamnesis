@@ -15,6 +15,7 @@
 	"ProcessSelector_NotFound2": "Please ensure the game is running, and is in DirectX 11 mode.",
 
 	"Error_NotInGame": "Not Signed In",
+	"Error_FavoritesFail": "Failed to load favorites. Your favorites have been reset.",
 
 	"FileBrowser_GoUp": "Go Up",
 	"FileBrowser_Flatten": "Flatten Hierarchy",
