@@ -230,7 +230,7 @@ namespace Anamnesis.Character.Views
 
 			// Always let uncategorized items through, otherwise there would be no way to get to them
 			bool categoryFiltered = itemCategory == ItemCategories.None;
-			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && itemCategory.HasFlag(ItemCategories.Standard);
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && (itemCategory.HasFlag(ItemCategories.Standard) || item.IsOwned);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Premium) && itemCategory.HasFlag(ItemCategories.Premium);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Limited) && itemCategory.HasFlag(ItemCategories.Limited);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Deprecated) && itemCategory.HasFlag(ItemCategories.Deprecated);
