@@ -56,7 +56,7 @@ namespace Anamnesis.GameData.ViewModels
 			set => FavoritesService.SetFavorite(this, value);
 		}
 
-		public bool CanOwn => this.Category.HasFlag(ItemCategories.Premium);
+		public bool CanOwn => this.Category.HasFlag(ItemCategories.Premium) || this.Category.HasFlag(ItemCategories.Limited);
 		public bool IsOwned
 		{
 			get => FavoritesService.IsOwned(this);

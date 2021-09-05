@@ -64,8 +64,8 @@
 	"EquipmentSelector_FavoritesTip": "Items marked as a favorite",
 	"EquipmentSelector_FavoriteToggleTip": "Mark this item a a favorite",
 	"EquipmentSelector_Owned": "Owned",
-	"EquipmentSelector_OwnedTip": "Items marked as owned",
-	"EquipmentSelector_OwnedToggleTip": "Mark this premium item as owned",
+	"EquipmentSelector_OwnedTip": "Premium or Limited Items marked as owned",
+	"EquipmentSelector_OwnedToggleTip": "Mark this premium or limited item as owned",
 
 	"Home_XmaTopToday": "XMA Top Today",
 	"Home_XmaLatest": "XMA Latest",
