@@ -114,6 +114,8 @@ namespace Anamnesis.Files
 			if (actor == null)
 				return mode;
 
+			CharacterFileOptions.Result = mode;
+
 			SaveResult result = await FileService.Save<CharacterFile>();
 
 			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
