@@ -18,10 +18,10 @@ jobs:
         format: "YYYY MM DD"
       
     - name: Test with environment variables
-      run: echo $TAG_NAME - $RELEASE_NAME
+      run: echo $TAG_NAME - $RELEASE_NAME - v${{ steps.date.date }}-beta - ${{ steps.date.date }} (Beta)
       env:
-        TagName: v${{ steps.date.outputs.date }}-beta
-        ReleaseName: nightly-release-${{ steps.date.outputs.date }}
+        TagName: v${{ steps.date.date }}-beta
+        ReleaseName: nightly-release-${{ steps.date.date }}
     
 #    - name: Checkout
 #      uses: actions/checkout@v2
