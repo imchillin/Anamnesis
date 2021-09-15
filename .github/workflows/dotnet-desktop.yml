@@ -37,6 +37,7 @@ jobs:
       uses: mikepenz/release-changelog-builder-action@v2.4.1
       with:
         #configuration: 'changelogConfig.json'
+        toTag: v${{ steps.version-date.outputs.formattedTime }}-beta
         commitMode: true
         failOnError: true
         token: ${{ secrets.GITHUB_TOKEN }}
