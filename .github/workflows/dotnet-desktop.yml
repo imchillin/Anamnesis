@@ -27,10 +27,10 @@ jobs:
         draft: true
         token: ${{ secrets.GITHUB_TOKEN }}
         
-#   - name: Checkout
-#     uses: actions/checkout@v2
-#     with:
-#       fetch-depth: 0
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - name: Changelog
       id: Changelog
