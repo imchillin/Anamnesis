@@ -7,32 +7,21 @@ jobs:
 
   build:
 
-    #runs-on: windows-latest
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     
-    - name: Get current time
+    - name: Get version date
       uses: 1466587594/get-current-time@v2
-      id: current-time
+      id: version-date
       with:
         format: YYYY-MM-DD
         
-#    - name: Use current time
-#      env:
-#        TIME: "${{ steps.current-time.outputs.time }}"
-#        R_TIME: "${{ steps.current-time.outputs.readableTime }}"
-#        F_TIME: "${{ steps.current-time.outputs.formattedTime }}"
-#        YEAR: "${{ steps.current-time.outputs.year }}"
-#        MONTH: "${{ steps.current-time.outputs.month }}"
-#        DAY: "${{ steps.current-time.outputs.day }}"
-#      run: echo $TIME $R_TIME $F_TIME $YEAR $MONTH $DAY
-    
-    - name: Generate Changelog
-      uses: heinrichreimer/github-changelog-generator-action@v2.1.1
-      id: Changelog
+    - name: Get current time
+      uses: 1466587594/get-current-time@v2
+      id: build-time
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        format: YYYY, MM, DD, HH, mm, ss
       
     - name: Checkout
       uses: actions/checkout@v2
@@ -41,6 +30,13 @@ jobs:
         
     - name: Checkout Submodules
       uses: snickerbockers/submodules-init@v4
+      
+    - name: Write Version file
+      uses: visiosto/replace-value@v1.0.0
+      with:
+        file: './Anamnesis/VersionInfo.cs'
+        replaced: '2000, 00, 00, 00, 00, 00'
+        value: ${ steps.build-time.outputs.formattedTime }}
 
     - name: Install .NET Core
       uses: actions/setup-dotnet@v1.8.2
@@ -63,9 +59,9 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: "release.zip"
-        name: ${{ steps.current-time.outputs.formattedTime }} (Beta)
-        tag: v${{ steps.current-time.outputs.formattedTime }}-beta
-        body: ${{ steps.Changelog.outputs.changelog }}
+        name: ${{ steps.version-date.outputs.formattedTime }} (Beta)
+        tag: v${{ steps.version-date.outputs.formattedTime }}-beta
+        #body: ${{ steps.Changelog.outputs.changelog }}
         draft: true
         token: ${{ secrets.GITHUB_TOKEN }}
 
