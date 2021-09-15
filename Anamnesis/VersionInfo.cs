@@ -10,8 +10,8 @@ namespace Anamnesis
 		/// <summary>
 		/// The time this version was published.
 		/// </summary>
-		// TODO: This should get filled in by a build server.
-		public static readonly DateTime Date = new DateTime(2021, 09, 05, 16, 30, 00);
+		// This is written to by the build server. do not change.
+		public static readonly DateTime Date = new DateTime(2000, 00, 00, 00, 00, 00);
 
 		/// <summary>
 		/// The latest gamve version that the tool has been validated for.
