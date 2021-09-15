@@ -39,8 +39,6 @@ jobs:
         #configuration: 'changelogConfig.json'
         commitMode: true
         failOnError: true
-        owner: "imchillin"
-        repo: "Anamnesis"
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release
