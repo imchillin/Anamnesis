@@ -11,11 +11,16 @@ jobs:
 
     steps:
     
-    - name: Generate Changelog
-      id: Changelog
-      uses: heinrichreimer/action-github-changelog-generator@v2.2
+    - name: Get version date
+      uses: 1466587594/get-current-time@v2
+      id: version-date
       with:
-        dateFormat: 'YYYY-MM-DD'
+        format: YYYY-MM-DD
+
+    - name: Tag Changelog
+      id: Changelog
+      uses: loopwerk/tag-changelog@v1.0.4
+      with:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release
@@ -24,8 +29,9 @@ jobs:
         allowUpdates: true
         name: ${{ steps.version-date.outputs.formattedTime }} (Beta)
         tag: v${{ steps.version-date.outputs.formattedTime }}-beta
-        body: ${{ steps.Changelog.outputs.changelog }}
+        body: ${{ steps.Changelog.outputs.changes }}
         draft: true
+        token: ${{ secrets.GITHUB_TOKEN }}
 
 #  build:
 #
