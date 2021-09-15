@@ -11,7 +11,13 @@ jobs:
 
     steps:
     
-    - name: Upload Release
+    - name: Get version date
+      uses: 1466587594/get-current-time@v2
+      id: version-date
+      with:
+        format: YYYY-MM-DD
+        
+    - name: Create Release draft
       uses: ncipollo/release-action@v1
       with:
         allowUpdates: true
@@ -21,16 +27,10 @@ jobs:
         draft: true
         token: ${{ secrets.GITHUB_TOKEN }}
         
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    
-    - name: Get version date
-      uses: 1466587594/get-current-time@v2
-      id: version-date
-      with:
-        format: YYYY-MM-DD
+#   - name: Checkout
+#     uses: actions/checkout@v2
+#     with:
+#       fetch-depth: 0
 
     - name: Changelog
       id: Changelog
