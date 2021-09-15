@@ -2,9 +2,6 @@ name: Publish Anamnesis
 
 on:
   workflow_dispatch:
-  
-  env:
-    Version: Available for all jobs in this workflow
 
 jobs:
 
