@@ -11,6 +11,16 @@ jobs:
 
     steps:
     
+    - name: Upload Release
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        name: ${{ steps.version-date.outputs.formattedTime }} (Beta)
+        tag: v${{ steps.version-date.outputs.formattedTime }}-beta
+        body: 'changelog generating...'
+        draft: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
     - name: Checkout
       uses: actions/checkout@v2
       with:
