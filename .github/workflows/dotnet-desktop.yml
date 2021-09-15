@@ -11,6 +11,11 @@ jobs:
 
     steps:
     
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    
     - name: Get version date
       uses: 1466587594/get-current-time@v2
       id: version-date
