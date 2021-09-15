@@ -19,8 +19,10 @@ jobs:
 
     - name: Tag Changelog
       id: Changelog
-      uses: loopwerk/tag-changelog@v1.0.4
+      uses: mikepenz/release-changelog-builder-action@v2.4.1
       with:
+        failOnError: true
+        commitMode: true
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release
@@ -29,7 +31,7 @@ jobs:
         allowUpdates: true
         name: ${{ steps.version-date.outputs.formattedTime }} (Beta)
         tag: v${{ steps.version-date.outputs.formattedTime }}-beta
-        body: ${{ steps.Changelog.outputs.changes }}
+        body: ${{ steps.Changelog.outputs.changelog }}
         draft: true
         token: ${{ secrets.GITHUB_TOKEN }}
 
