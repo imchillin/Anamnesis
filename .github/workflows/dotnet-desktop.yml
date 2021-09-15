@@ -28,53 +28,45 @@ jobs:
 #        DAY: "${{ steps.current-time.outputs.day }}"
 #      run: echo $TIME $R_TIME $F_TIME $YEAR $MONTH $DAY
     
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+    - name: Generate Changelog
+      uses: scottbrenner/generate-changelog-action@master
+      id: Changelog
+    
+    #- name: Checkout
+    #  uses: actions/checkout@v2
+    #  with:
+    #    fetch-depth: 0
         
-    - name: Checkout Submodules
-      uses: snickerbockers/submodules-init@v4
+    #- name: Checkout Submodules
+    #  uses: snickerbockers/submodules-init@v4
 
     # Install the .NET Core workload
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v1.8.2
-      with:
-        dotnet-version: 5.0.x
+    #- name: Install .NET Core
+    #  uses: actions/setup-dotnet@v1.8.2
+    #  with:
+    #    dotnet-version: 5.0.x
    
     # Deploy Anamnesis
-    - name: Deploy Anamnesis
-      run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml"
+    #- name: Deploy Anamnesis
+    #  run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml"
       
     # Deploy Updater
-    - name: Deploy Update Extractor
-      run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
+    #- name: Deploy Update Extractor
+    #  run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
 
-    - name: Zip Release
-      uses: TheDoctor0/zip-release@0.6.0
-      with:
-        path: './publish/'
-        exclusions: '*.pdb* *.xml*'
-        
-    - name: Run Changelog CI
-      uses: saadmk11/changelog-ci@v0.8.0
-      with:
-        changelog_type: commit_message 
-        # Optional, only required when you want more customization
-        # e.g: group your changelog by labels with custom titles,
-        # different version prefix, pull request title and version number regex etc.
-        # config file can be in JSON or YAML format.
-        #config_file: changelog-ci-config.json
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    #- name: Zip Release
+    #  uses: TheDoctor0/zip-release@0.6.0
+    #  with:
+    #    path: './publish/'
+    #    exclusions: '*.pdb* *.xml*'
         
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "release.zip"
+        #artifacts: "release.zip"
         name: ${{ steps.current-time.outputs.formattedTime }} (Beta)
         tag: v${{ steps.current-time.outputs.formattedTime }}-beta
-        body_file: 'CHANGELOG.md'
+        body: ${{ steps.Changelog.outputs.changelog }}
         draft: true
         token: ${{ secrets.GITHUB_TOKEN }}
 
