@@ -7,10 +7,6 @@ jobs:
 
   build:
 
-    strategy:
-      matrix:
-        configuration: [Debug, Release]
-
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
@@ -32,14 +28,12 @@ jobs:
 
     # Restore
     - name: Restore the application
-      run: msbuild Anamnesis.sln /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+      run: msbuild Anamnesis.sln /t:Restore /p:Configuration=Release
    
     # Deploy Anamnesis
     - name: Deploy
-      run: Anamnesis/Anamnesis.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      run: msbuild Anamnesis/Anamnesis.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
       
     # Deploy Updater
     - name: Deploy
-      run: UpdateExtractor/UpdateExtractor.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      run: msbuild UpdateExtractor/UpdateExtractor.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
