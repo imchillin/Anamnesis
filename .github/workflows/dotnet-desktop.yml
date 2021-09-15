@@ -15,6 +15,11 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
+        
+    - name: Checkout submodules
+      # You may pin to the exact commit or the version.
+      # uses: textbook/git-checkout-submodule-action@0cb23c7e6a67085e1dc5e884920bd620f7b9c469
+      uses: textbook/git-checkout-submodule-action@2.1.1
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -31,9 +36,9 @@ jobs:
       run: msbuild Anamnesis.sln /t:Restore /p:Configuration=Release
    
     # Deploy Anamnesis
-    - name: Deploy
+    - name: Deploy Anamnesis
       run: msbuild Anamnesis/Anamnesis.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
       
     # Deploy Updater
-    - name: Deploy
+    - name: Deploy Update Extractor
       run: msbuild UpdateExtractor/UpdateExtractor.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
