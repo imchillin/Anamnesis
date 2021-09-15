@@ -23,22 +23,14 @@ jobs:
 
     # Install the .NET Core workload
     - name: Install .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v1.8.2
       with:
         dotnet-version: 5.0.x
-
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
-
-    # Restore
-    - name: Restore the application
-      run: msbuild Anamnesis.sln /t:Restore /p:Configuration=Release
    
     # Deploy Anamnesis
     - name: Deploy Anamnesis
-      run: msbuild Anamnesis/Anamnesis.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml"
       
     # Deploy Updater
     - name: Deploy Update Extractor
-      run: msbuild UpdateExtractor/UpdateExtractor.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
