@@ -11,9 +11,10 @@ jobs:
 
     steps:
     
-    - name: Get current date
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+    - name: calculate-dates-and-times
+      uses: lee-dohm/calculate-dates-and-times@v1.0.2
+      with:
+        format: "YYYY MM DD"
       
     - name: Test with environment variables
       run: echo $TAG_NAME - $RELEASE_NAME
@@ -21,46 +22,47 @@ jobs:
         TagName: v${{ steps.date.outputs.date }}-beta
         ReleaseName: nightly-release-${{ steps.date.outputs.date }}
     
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        
-    - name: Checkout Submodules
-      uses: snickerbockers/submodules-init@v4
-
-    # Install the .NET Core workload
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v1.8.2
-      with:
-        dotnet-version: 5.0.x
-   
-    # Deploy Anamnesis
-    - name: Deploy Anamnesis
-      run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml"
-      
-    # Deploy Updater
-    - name: Deploy Update Extractor
-      run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
-
-    - name: Zip Release
-      uses: TheDoctor0/zip-release@0.6.0
-      with:
-        path: './publish/'
-        exclusions: '*.pdb* *.xml*'
-        
-    - name: Tag Changelog
-      id: changelog
-      uses: loopwerk/tag-changelog@v1.0.4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Upload Release
-      uses: ncipollo/release-action@v1
-      with:
-        artifacts: "release.zip"
-        name: ${{ steps.date.outputs.date }} (Beta)
-        tag: v${{ steps.date.outputs.date }}-beta
-        body: ${{ steps.changelog.outputs.changes }}
-        draft: true
-        token: ${{ secrets.GITHUB_TOKEN }}
+#    - name: Checkout
+#      uses: actions/checkout@v2
+#      with:
+#        fetch-depth: 0
+#        
+#    - name: Checkout Submodules
+#      uses: snickerbockers/submodules-init@v4
+#
+#    # Install the .NET Core workload
+#    - name: Install .NET Core
+#      uses: actions/setup-dotnet@v1.8.2
+#      with:
+#        dotnet-version: 5.0.x
+#   
+#    # Deploy Anamnesis
+#    - name: Deploy Anamnesis
+#      run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml"
+#      
+#    # Deploy Updater
+#    - name: Deploy Update Extractor
+#      run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
+#
+#    - name: Zip Release
+#      uses: TheDoctor0/zip-release@0.6.0
+#      with:
+#        path: './publish/'
+#        exclusions: '*.pdb* *.xml*'
+#        
+#    - name: Tag Changelog
+#      id: changelog
+#      uses: loopwerk/tag-changelog@v1.0.4
+#      with:
+#        token: ${{ secrets.GITHUB_TOKEN }}
+#        
+#    - name: Upload Release
+#      uses: ncipollo/release-action@v1
+#      with:
+#        artifacts: "release.zip"
+#        name: ${{ steps.date.outputs.date }} (Beta)
+#        tag: v${{ steps.date.outputs.date }}-beta
+#        body: ${{ steps.changelog.outputs.changes }}
+#        draft: true
+#        token: ${{ secrets.GITHUB_TOKEN }}
+#
