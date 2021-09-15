@@ -36,7 +36,7 @@ jobs:
       with:
         file: './Anamnesis/VersionInfo.cs'
         replaced: '2000, 00, 00, 00, 00, 00'
-        value: ${ steps.build-time.outputs.formattedTime }}
+        value: ${{ steps.build-time.outputs.formattedTime }}
 
     - name: Install .NET Core
       uses: actions/setup-dotnet@v1.8.2
