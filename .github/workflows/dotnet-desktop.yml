@@ -99,7 +99,8 @@ jobs:
     - name: Zip Release
       uses: TheDoctor0/zip-release@0.6.0
       with:
-        path: './publish/'
+        filename: '../release.zip'
+        directory: './publish/'
         exclusions: '*.pdb* *.xml*'
         
     - name: Upload Release
