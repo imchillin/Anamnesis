@@ -25,8 +25,6 @@ jobs:
     - name: Tag Changelog
       id: Changelog
       uses: Bullrich/generate-release-changelog@master
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
       env:
         REPO: ${{ github.repository }}
 
