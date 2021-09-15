@@ -51,45 +51,51 @@ namespace Anamnesis.Services
 			try
 			{
 				this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
+
+				Races = new LuminaSheet<IRace, Race, RaceViewModel>(this.lumina);
+				Tribes = new LuminaSheet<ITribe, Tribe, TribeViewModel>(this.lumina);
+				Items = new LuminaSheet<IItem, Lumina.Excel.GeneratedSheets.Item, GameData.ViewModels.ItemViewModel>(this.lumina);
+				Dyes = new LuminaSheet<IDye, Stain, DyeViewModel>(this.lumina);
+				BaseNPCs = new LuminaSheet<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
+				Territories = new LuminaSheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
+				Weathers = new LuminaSheet<IWeather, Weather, WeatherViewModel>(this.lumina);
+				CharacterMakeCustomize = new CustomizeSheet(this.lumina);
+				CharacterMakeTypes = new LuminaSheet<ICharaMakeType, GameData.Sheets.CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
+				ResidentNPCs = new LuminaSheet<INpcResident, ENpcResident, NpcResidentViewModel>(this.lumina);
+				Perform = new LuminaSheet<IItem, Perform, PerformViewModel>(this.lumina);
+				WeatherRates = GetNotNullExcelSheet<WeatherRate>(this.lumina);
+				EquipRaceCategories = GetNotNullExcelSheet<EquipRaceCategory>(this.lumina);
 			}
 			catch (Exception ex)
 			{
 				throw new Exception("Failed to initialize Lumina (Are your game files up to date?)", ex);
 			}
 
-			Races = new LuminaSheet<IRace, Race, RaceViewModel>(this.lumina);
-			Tribes = new LuminaSheet<ITribe, Tribe, TribeViewModel>(this.lumina);
-			Items = new LuminaSheet<IItem, Lumina.Excel.GeneratedSheets.Item, GameData.ViewModels.ItemViewModel>(this.lumina);
-			Dyes = new LuminaSheet<IDye, Stain, DyeViewModel>(this.lumina);
-			BaseNPCs = new LuminaSheet<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
-			Territories = new LuminaSheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
-			Weathers = new LuminaSheet<IWeather, Weather, WeatherViewModel>(this.lumina);
-			CharacterMakeCustomize = new CustomizeSheet(this.lumina);
-			CharacterMakeTypes = new LuminaSheet<ICharaMakeType, GameData.Sheets.CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
-			ResidentNPCs = new LuminaSheet<INpcResident, ENpcResident, NpcResidentViewModel>(this.lumina);
-			Perform = new LuminaSheet<IItem, Perform, PerformViewModel>(this.lumina);
-
-			this.lumina.GetExcelSheet<Perform>();
-
-			// no view models for these
-			static ExcelSheet<T> GetNotNullExcelSheet<T>(LuminaData lumina)
-				where T : ExcelRow
+			// these are json files that we write by hand
+			try
 			{
-				ExcelSheet<T>? sheet = lumina.GetExcelSheet<T>();
-				if (sheet == null)
-					throw new Exception($"Missing sheet {typeof(T).Name}");
-				return sheet;
+				Monsters = new JsonListSheet<Monster>("Data/Monsters.json");
+				Props = new PropSheet("Data/Props.json");
+				ItemCategories = new JsonDictionarySheet<ItemCategories, ItemCategory>("Data/ItemCategories.json");
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Failed to read data sheets", ex);
 			}
 
-			WeatherRates = GetNotNullExcelSheet<WeatherRate>(this.lumina);
-			EquipRaceCategories = GetNotNullExcelSheet<EquipRaceCategory>(this.lumina);
-
-			// these are json files that we write by hand
-			Monsters = new JsonListSheet<Monster>("Data/Monsters.json");
-			Props = new PropSheet("Data/Props.json");
-			ItemCategories = new JsonDictionarySheet<ItemCategories, ItemCategory>("Data/ItemCategories.json");
-
 			return base.Initialize();
+		}
+
+		// no view models for these
+		private static ExcelSheet<T> GetNotNullExcelSheet<T>(LuminaData lumina)
+			where T : ExcelRow
+		{
+			ExcelSheet<T>? sheet = lumina.GetExcelSheet<T>();
+
+			if (sheet == null)
+				throw new Exception($"Missing sheet {typeof(T).Name}");
+
+			return sheet;
 		}
 	}
 }
