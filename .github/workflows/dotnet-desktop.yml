@@ -16,10 +16,10 @@ jobs:
       with:
         fetch-depth: 0
         
-    - name: Checkout submodules
+    - name: Checkout Submodules
       # You may pin to the exact commit or the version.
-      # uses: textbook/git-checkout-submodule-action@0cb23c7e6a67085e1dc5e884920bd620f7b9c469
-      uses: textbook/git-checkout-submodule-action@2.1.1
+      # uses: snickerbockers/submodules-init@74927a8bb0fe1bb0f1f1e4d102384a8e69f19171
+      uses: snickerbockers/submodules-init@v4
 
     # Install the .NET Core workload
     - name: Install .NET Core
