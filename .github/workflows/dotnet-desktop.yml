@@ -2,23 +2,34 @@ name: Publish Anamnesis
 
 on:
   workflow_dispatch:
+  
+  env:
+    Version: Available for all jobs in this workflow
 
 jobs:
 
   build:
 
-    runs-on: windows-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: windows-latest
 
     steps:
+    
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      
+    - name: Test with environment variables
+      run: echo $TAG_NAME - $RELEASE_NAME
+      env:
+        TagName: v${{ steps.date.outputs.date }}-beta
+        ReleaseName: nightly-release-${{ steps.date.outputs.date }}
+    
     - name: Checkout
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
         
     - name: Checkout Submodules
-      # You may pin to the exact commit or the version.
-      # uses: snickerbockers/submodules-init@74927a8bb0fe1bb0f1f1e4d102384a8e69f19171
       uses: snickerbockers/submodules-init@v4
 
     # Install the .NET Core workload
@@ -34,3 +45,25 @@ jobs:
     # Deploy Updater
     - name: Deploy Update Extractor
       run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
+
+    - name: Zip Release
+      uses: TheDoctor0/zip-release@0.6.0
+      with:
+        path: './publish/'
+        exclusions: '*.pdb* *.xml*'
+        
+    - name: Tag Changelog
+      id: changelog
+      uses: loopwerk/tag-changelog@v1.0.4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Upload Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "release.zip"
+        name: ${{ steps.date.outputs.date }} (Beta)
+        tag: v${{ steps.date.outputs.date }}-beta
+        body: ${{ steps.changelog.outputs.changes }}
+        draft: true
+        token: ${{ secrets.GITHUB_TOKEN }}
