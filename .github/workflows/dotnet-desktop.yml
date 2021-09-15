@@ -56,11 +56,17 @@ jobs:
         path: './publish/'
         exclusions: '*.pdb* *.xml*'
         
-    - name: Tag Changelog
-      id: changelog
-      uses: loopwerk/tag-changelog@v1.0.4
+    - name: Run Changelog CI
+      uses: saadmk11/changelog-ci@v0.8.0
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        changelog_type: commit_message 
+        # Optional, only required when you want more customization
+        # e.g: group your changelog by labels with custom titles,
+        # different version prefix, pull request title and version number regex etc.
+        # config file can be in JSON or YAML format.
+        #config_file: changelog-ci-config.json
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         
     - name: Upload Release
       uses: ncipollo/release-action@v1
@@ -68,7 +74,7 @@ jobs:
         artifacts: "release.zip"
         name: ${{ steps.current-time.outputs.formattedTime }} (Beta)
         tag: v${{ steps.current-time.outputs.formattedTime }}-beta
-        body: ${{ steps.changelog.outputs.changes }}
+        body_file: 'CHANGELOG.md'
         draft: true
         token: ${{ secrets.GITHUB_TOKEN }}
 
