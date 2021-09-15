@@ -12,6 +12,7 @@ jobs:
     steps:
     
     - name: calculate-dates-and-times
+      id: date
       uses: lee-dohm/calculate-dates-and-times@v1.0.2
       with:
         format: "YYYY MM DD"
