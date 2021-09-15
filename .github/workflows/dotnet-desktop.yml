@@ -19,11 +19,11 @@ jobs:
 
     - name: Tag Changelog
       id: Changelog
-      uses: mikepenz/release-changelog-builder-action@v2.4.1
+      uses: Bullrich/generate-release-changelog@master
       with:
-        failOnError: true
-        commitMode: true
         token: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        REPO: ${{ github.repository }}
 
     - name: Upload Release
       uses: ncipollo/release-action@v1
