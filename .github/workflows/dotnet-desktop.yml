@@ -26,9 +26,11 @@ jobs:
       id: Changelog
       uses: mikepenz/release-changelog-builder-action@v2.4.1
       with:
-        configuration: 'changelogConfig.json'
+        #configuration: 'changelogConfig.json'
         commitMode: true
         failOnError: true
+        owner: "imchillin"
+        repo: "Anamnesis"
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release
