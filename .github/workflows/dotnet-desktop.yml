@@ -29,8 +29,11 @@ jobs:
 #      run: echo $TIME $R_TIME $F_TIME $YEAR $MONTH $DAY
     
     - name: Generate Changelog
-      uses: scottbrenner/generate-changelog-action@master
+      uses: heinrichreimer/github-changelog-generator-action@v2.1.1
       id: Changelog
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+      
     
     #- name: Checkout
     #  uses: actions/checkout@v2
