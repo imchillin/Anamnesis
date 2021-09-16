@@ -71,18 +71,18 @@ namespace Anamnesis
 				if (this.Camera == null)
 					continue;
 
-				this.Camera.Pointer = AddressService.Camera;
-
-				if (!GposeService.Instance.IsGpose || GposeService.Instance.IsChangingState)
-				{
-					this.DelimitCamera = false;
-					this.LockCameraPosition = false;
-					this.Camera.FreezeAngle = false;
-					continue;
-				}
-
 				try
 				{
+					this.Camera.Pointer = AddressService.Camera;
+
+					if (!GposeService.Instance.IsGpose || GposeService.Instance.IsChangingState)
+					{
+						this.DelimitCamera = false;
+						this.LockCameraPosition = false;
+						this.Camera.FreezeAngle = false;
+						continue;
+					}
+
 					if (this.LockCameraPosition)
 					{
 						MemoryService.Write(AddressService.GPoseCamera, this.CameraPosition, "Camera Locked");
@@ -95,6 +95,7 @@ namespace Anamnesis
 				catch (Exception ex)
 				{
 					Log.Warning(ex, "Failed to update camera");
+					await Task.Delay(1000);
 				}
 			}
 		}
