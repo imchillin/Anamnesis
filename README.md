@@ -41,6 +41,7 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 * **[Arianishka](https://github.com/Arianishka)** - *French*
 * **[wozaiha](https://github.com/wozaiha)** - *Chinese*
 * **[ajiiisai](https://github.com/ajiiisai)** - *Spanish*
+* **[ModernTiger](https://github.com/ModernTiger)** - *Korean*
 
 ## License
 
