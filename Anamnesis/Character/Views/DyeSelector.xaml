@@ -12,7 +12,8 @@
 	<cm3Drawers:SelectorDrawer 
 		x:Name="Selector"
 		Close="OnClose" 
-		Filter="OnFilter">
+		Filter="OnFilter"
+		Sort="OnSort">
 
 		<cm3Drawers:SelectorDrawer.ItemTemplate>
 			<DataTemplate>

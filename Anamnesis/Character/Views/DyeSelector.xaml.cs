@@ -20,15 +20,11 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			List<IDye> alldyes = new List<IDye>();
-			alldyes.Add(DyeUtility.NoneDye);
+			this.Selector.AddItem(DyeUtility.NoneDye);
 
 			if (GameDataService.Dyes != null)
-				alldyes.AddRange(GameDataService.Dyes);
+				this.Selector.AddItems(GameDataService.Dyes);
 
-			alldyes.Sort((a, b) => b.IsFavorite.CompareTo(a.IsFavorite));
-
-			this.Selector.AddItems(alldyes);
 			this.Selector.FilterItems();
 		}
 
@@ -79,6 +75,19 @@ namespace Anamnesis.Character.Views
 			}
 
 			return false;
+		}
+
+		private int OnSort(object a, object b)
+		{
+			if (a == DyeUtility.NoneDye)
+				return -1;
+
+			if (a is IDye dyeA && b is IDye dyeB)
+			{
+				return dyeB.IsFavorite.CompareTo(dyeA.IsFavorite);
+			}
+
+			return 0;
 		}
 	}
 }
