@@ -7,9 +7,11 @@ namespace Anamnesis.Memory
 	using System.Collections.Generic;
 	using System.Reflection;
 	using System.Runtime.InteropServices;
+	using System.Text;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
 	using Anamnesis.Character.Utilities;
+	using Anamnesis.Core.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -26,8 +28,8 @@ namespace Anamnesis.Memory
 		public const int RenderModeOffset = 0x0104;
 
 		[FieldOffset(0x0030)]
-		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 30)]
-		public string Name;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+		public byte[] NameBytes;
 
 		[FieldOffset(0x0080)] public int DataId;
 		[FieldOffset(ObjectKindOffset)] public ActorTypes ObjectKind;
@@ -46,6 +48,12 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x1898)] public Customize Customize;
 
 		public string Id => this.Name + this.DataId;
+
+		public string Name
+		{
+			get => SeString.FromSeStringBytes(this.NameBytes);
+			set => this.NameBytes = SeString.ToSeStringBytes(value);
+		}
 	}
 
 	[AddINotifyPropertyChangedInterface]
@@ -64,7 +72,6 @@ namespace Anamnesis.Memory
 		{
 		}
 
-		[ModelField] public string Name { get; set; } = string.Empty;
 		[ModelField] public int DataId { get; set; }
 		[ModelField][Refresh] public ActorTypes ObjectKind { get; set; }
 		[ModelField] public byte SubKind { get; set; }
@@ -83,6 +90,12 @@ namespace Anamnesis.Memory
 		public bool PendingRefresh { get; set; } = false;
 
 		public string Id => this.model.Id;
+
+		public string Name
+		{
+			get => this.model.Name;
+			set => this.model.Name = value;
+		}
 
 		[AlsoNotifyFor(nameof(ActorViewModel.DisplayName))]
 		public string? Nickname
