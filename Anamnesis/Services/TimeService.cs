@@ -74,7 +74,16 @@ namespace Anamnesis
 						this.DayOfMonth = (byte)this.Time.Days;
 					}
 
-					this.TimeString = string.Format("{0:D2}:{1:D2}", this.Time.Hours, this.Time.Minutes);
+					int hours = this.Time.Hours;
+					int minutes = this.Time.Minutes;
+
+					if (hours < 0)
+						hours += 24;
+
+					if (minutes < 0)
+						minutes += 60;
+
+					this.TimeString = string.Format("{0:D2}:{1:D2}", hours, minutes);
 				}
 				catch (Exception ex)
 				{
