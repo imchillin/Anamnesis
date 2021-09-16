@@ -6,7 +6,7 @@
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" Width="174">
+			 d:DesignHeight="450" Width="166">
 
 	<UserControl.Resources>
 		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
@@ -22,9 +22,9 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<XivToolsWpf:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,6,3,6" Buttons="True"/>
+		<XivToolsWpf:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,6,3,0" Buttons="True"/>
 
-		<ListBox Grid.Row="2" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedItem}" Margin="3">
+		<ListBox Grid.Row="2" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedItem}" Margin="3, 0, 2, 4">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
 					<WrapPanel x:Name="wrapPanel"/>
@@ -32,7 +32,7 @@
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Rectangle Width="19" Height="19" Margin="0">
+					<Rectangle Width="18" Height="18" Margin="0">
 						<Rectangle.ToolTip>
 							<TextBlock Text="{Binding Entry.Hex}"/>
 						</Rectangle.ToolTip>
