@@ -10,6 +10,7 @@ namespace Anamnesis.Services
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
+	using Lumina.Data;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
@@ -18,6 +19,15 @@ namespace Anamnesis.Services
 	public class GameDataService : ServiceBase<GameDataService>
 	{
 		private LuminaData? lumina;
+
+		public enum ClientRegion
+		{
+			Global,
+			Korean,
+			Chinese,
+		}
+
+		public static ClientRegion Region { get; private set; }
 
 		#pragma warning disable CS8618
 		public static ISheet<IRace> Races { get; protected set; }
@@ -48,9 +58,28 @@ namespace Anamnesis.Services
 				Log.Warning($"Anamnesis has not been validated against this game version: {gameVer}. This may cause problems.");
 			}
 
+			Language defaultLuminaLaunguage = Language.English;
+			Region = ClientRegion.Global;
+
+			if (File.Exists(Path.Combine(MemoryService.GamePath, "FFXIVBoot.exe")) || File.Exists(Path.Combine(MemoryService.GamePath, "rail_files", "rail_game_identify.json")))
+			{
+				Region = ClientRegion.Chinese;
+				defaultLuminaLaunguage = Language.ChineseSimplified;
+				Log.Warning($"Anamnesis has not been validated against this game region: {Region}. This may cause problems.");
+			}
+			else if (File.Exists(Path.Combine(MemoryService.GamePath, "boot", "FFXIV_Boot.exe")))
+			{
+				Region = ClientRegion.Korean;
+				defaultLuminaLaunguage = Language.Korean;
+				Log.Warning($"Anamnesis has not been validated against this game region: {Region}. This may cause problems.");
+			}
+
 			try
 			{
-				this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\");
+				Lumina.LuminaOptions options = new Lumina.LuminaOptions();
+				options.DefaultExcelLanguage = defaultLuminaLaunguage;
+
+				this.lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\", options);
 
 				Races = new LuminaSheet<IRace, Race, RaceViewModel>(this.lumina);
 				Tribes = new LuminaSheet<ITribe, Tribe, TribeViewModel>(this.lumina);
