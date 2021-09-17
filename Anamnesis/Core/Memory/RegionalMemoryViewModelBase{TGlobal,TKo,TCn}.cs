@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using Anamnesis.Services;
 
 	public abstract class RegionalMemoryViewModelBase<TGlobal, TKo, TCn> : MemoryViewModelBase
 		where TGlobal : struct
@@ -17,7 +18,14 @@ namespace Anamnesis.Memory
 
 		public override Type GetModelType()
 		{
-			return typeof(TGlobal);
+			switch (GameDataService.Region)
+			{
+				case GameDataService.ClientRegion.Global: return typeof(TGlobal);
+				case GameDataService.ClientRegion.Korean: return typeof(TKo);
+				case GameDataService.ClientRegion.Chinese: return typeof(TCn);
+			}
+
+			throw new Exception($"Invalid client region: {GameDataService.Region}");
 		}
 	}
 }
