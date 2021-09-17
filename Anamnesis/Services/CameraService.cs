@@ -63,7 +63,7 @@ namespace Anamnesis
 		{
 			while (this.IsAlive)
 			{
-				await Task.Delay(50);
+				await Task.Delay(33);
 
 				if (!GameService.Ready)
 					continue;
