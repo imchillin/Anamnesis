@@ -24,16 +24,10 @@ namespace Anamnesis.Memory
 
 			this.Pointer = pointer;
 
-			if (parent == null)
-			{
-				MemoryService.RegisterViewModel(this);
-			}
-			else
-			{
+			if (parent != null)
 				parent.AddChild(this);
-			}
 
-			this.Tick();
+			this.ReadChanges();
 		}
 
 		public IntPtr? Pointer { get; set; }
@@ -99,11 +93,7 @@ namespace Anamnesis.Memory
 			if (this.children.Count > 0)
 				Log.Warning("not all memory view model children were removed during disposal");
 
-			if (this.Parent == null)
-			{
-				MemoryService.ClearViewModel(this);
-			}
-			else
+			if (this.Parent != null)
 			{
 				this.Parent.RemoveChild(this);
 			}
@@ -125,14 +115,12 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		public override int Tick()
+		public override void ReadChanges()
 		{
-			int count = 0;
-
 			lock (this)
 			{
 				if (!this.Enabled)
-					return count;
+					return;
 
 				if (this.Pointer != null)
 				{
@@ -140,17 +128,14 @@ namespace Anamnesis.Memory
 				}
 				else
 				{
-					return base.Tick();
+					base.ReadChanges();
 				}
 
 				foreach (IMemoryViewModel child in this.children)
 				{
-					count++;
-					count += child.Tick();
+					child.ReadChanges();
 				}
 			}
-
-			return count;
 		}
 
 		public bool WriteToMemory(bool force = false)

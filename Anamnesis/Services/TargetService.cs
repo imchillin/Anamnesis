@@ -132,6 +132,8 @@ namespace Anamnesis
 		public override async Task Start()
 		{
 			await base.Start();
+
+			_ = Task.Run(this.TickSelectedActor);
 		}
 
 		public void ClearSelection()
@@ -207,6 +209,26 @@ namespace Anamnesis
 		{
 			this.SelectedActor = actor;
 			ActorSelected?.Invoke(actor);
+		}
+
+		private async Task TickSelectedActor()
+		{
+			while (this.IsAlive)
+			{
+				await Task.Delay(33);
+
+				if (this.SelectedActor == null)
+					continue;
+
+				try
+				{
+					this.SelectedActor.ReadChanges();
+				}
+				catch (Exception ex)
+				{
+					Log.Error("Failed to tick selected actor", ex);
+				}
+			}
 		}
 
 		[AddINotifyPropertyChangedInterface]

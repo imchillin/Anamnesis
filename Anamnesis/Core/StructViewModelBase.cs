@@ -158,16 +158,15 @@ namespace Anamnesis
 			return this.model;
 		}
 
-		public virtual int Tick()
+		public virtual void ReadChanges()
 		{
 			if (!this.Enabled)
-				return 0;
+				return;
 
 			if (this.Parent != null && this.ParentProperty != null)
 			{
 				object? obj = this.ParentProperty.GetValue(this.Parent);
 				this.SetModel(obj);
-				return 0;
 			}
 
 			throw new Exception("View model is not correctly initialized");

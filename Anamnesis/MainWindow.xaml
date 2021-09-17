@@ -306,12 +306,6 @@
 							Orientation="Horizontal"
 							Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
 
-							<TextBlock
-								VerticalAlignment="Center"
-								Opacity="0.5"
-								Text="{Binding MemoryService.LastTickCount}"
-								ToolTip="Memory models ticked" />
-
 							<ToggleButton
 								Width="28"
 								Margin="3,0,0,0"

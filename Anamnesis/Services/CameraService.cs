@@ -75,6 +75,8 @@ namespace Anamnesis
 				{
 					this.Camera.Pointer = AddressService.Camera;
 
+					this.Camera.ReadChanges();
+
 					if (!GposeService.Instance.IsGpose || GposeService.Instance.IsChangingState)
 					{
 						this.DelimitCamera = false;

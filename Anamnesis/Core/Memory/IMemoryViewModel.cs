@@ -19,7 +19,7 @@ namespace Anamnesis.Memory
 	public interface IMemoryViewModel : IStructViewModel, IDisposable
 	{
 		IntPtr? Pointer { get; set; }
-		int Tick();
+		void ReadChanges();
 		bool WriteToMemory(bool force = false);
 		bool ReadFromMemory(bool force = false);
 

@@ -9,22 +9,18 @@ namespace Anamnesis.Memory
 	using System.Diagnostics;
 	using System.IO;
 	using System.Runtime.InteropServices;
-	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Services;
 	using PropertyChanged;
-	using Serilog;
 	using XivToolsWpf;
 
 	[AddINotifyPropertyChangedInterface]
 	public class MemoryService : ServiceBase<MemoryService>
 	{
-		private static readonly List<IMemoryViewModel> RootViewModels = new List<IMemoryViewModel>();
 		private static readonly Dictionary<Type, bool[]> StructMasks = new Dictionary<Type, bool[]>();
-		private static ulong memoryTickCount = 0;
 		private readonly Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
 
 		public static IntPtr Handle { get; private set; }
@@ -60,16 +56,6 @@ namespace Anamnesis.Memory
 				return false;
 
 			return true;
-		}
-
-		public static async Task WaitForMemoryTick()
-		{
-			ulong waitTillTick = memoryTickCount += 2;
-
-			while (memoryTickCount <= waitTillTick)
-			{
-				await Task.Delay(16);
-			}
 		}
 
 		public static IntPtr ReadPtr(IntPtr address)
@@ -224,7 +210,6 @@ namespace Anamnesis.Memory
 		public override async Task Start()
 		{
 			await base.Start();
-			new Thread(new ThreadStart(this.TickMemoryViewModelThread)).Start();
 		}
 
 		/// <summary>
@@ -274,16 +259,6 @@ namespace Anamnesis.Memory
 			}
 
 			Scanner = new SignatureScanner(process.MainModule);
-		}
-
-		internal static void RegisterViewModel(IMemoryViewModel vm)
-		{
-			RootViewModels.Add(vm);
-		}
-
-		internal static void ClearViewModel(IMemoryViewModel vm)
-		{
-			RootViewModels.Remove(vm);
 		}
 
 		[DllImport("kernel32.dll", SetLastError = true)]
@@ -445,79 +420,6 @@ namespace Anamnesis.Memory
 			this.OpenProcess(proc);
 			await AddressService.Scan();
 			IsProcessAlive = true;
-		}
-
-		private void TickMemoryViewModelThread()
-		{
-			try
-			{
-				Stopwatch sw = new Stopwatch();
-				while (this.IsAlive)
-				{
-					sw.Restart();
-
-					// 60 ticks per second
-					Thread.Sleep(16);
-
-					if (App.Current == null)
-						return;
-
-					if (!IsProcessAlive)
-						continue;
-
-					if (GposeService.Instance.IsChangingState)
-						continue;
-
-					int tickCount = 0;
-					memoryTickCount++;
-
-					List<IMemoryViewModel> viewModels;
-					lock (RootViewModels)
-					{
-						viewModels = new List<IMemoryViewModel>(RootViewModels);
-					}
-
-					foreach (IMemoryViewModel viewModel in viewModels)
-					{
-						if (!this.IsAlive)
-							return;
-
-						if (!GameService.Instance.IsSignedIn)
-							continue;
-
-						tickCount++;
-						tickCount += viewModel.Tick();
-					}
-
-					if (this.LastTickCount < 1500 && tickCount > 1500)
-					{
-						StringBuilder b = new StringBuilder();
-						b.Append("Too many view model ticks:  ");
-						b.Append(tickCount);
-						b.AppendLine(" (are we leaking memory?)");
-
-						b.AppendLine("Root view models:");
-						foreach (IMemoryViewModel vm in viewModels)
-						{
-							b.Append("    ");
-							b.AppendLine(vm.ToString());
-						}
-
-						Log.Warning(b.ToString());
-					}
-
-					this.LastTickCount = tickCount;
-
-					if (sw.ElapsedMilliseconds > 100)
-					{
-						Log.Warning("Took " + sw.ElapsedMilliseconds + "ms to tick memory");
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Memory thread exception");
-			}
 		}
 
 		private async Task ProcessWatcherTask()
