@@ -4,9 +4,8 @@
 namespace Anamnesis.Services
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using Anamnesis.Core.Memory;
-	using Anamnesis.Memory;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
@@ -23,23 +22,9 @@ namespace Anamnesis.Services
 				if (TerritoryService.Instance.CurrentTerritory == null)
 					return false;
 
-				IntPtr startAddress;
-				if (GposeService.Instance.IsGpose)
-				{
-					startAddress = AddressService.GPoseActorTable + 8;
-				}
-				else
-				{
-					startAddress = AddressService.ActorTable;
-				}
+				List<TargetService.ActorTableActor> actors = TargetService.GetActors();
 
-				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable);
-
-				if (ptr == IntPtr.Zero)
-					return false;
-
-				Actor actor = MemoryService.Read<Actor>(ptr);
-				if (string.IsNullOrEmpty(actor.Name))
+				if (actors.Count <= 0)
 					return false;
 
 				return true;

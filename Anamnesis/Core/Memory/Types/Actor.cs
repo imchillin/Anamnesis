@@ -39,12 +39,6 @@ namespace Anamnesis.Memory
 		[FieldOffset(0x182C)] public float Transparency;
 		[FieldOffset(0x1898)] public Customize Customize;
 
-		public string Id => this.Name + this.DataId;
-
-		public string Name
-		{
-			get => SeString.FromSeStringBytes(this.NameBytes);
-			set => this.NameBytes = SeString.ToSeStringBytes(value);
-		}
+		public string Name => SeString.FromSeStringBytes(this.NameBytes);
 	}
 }

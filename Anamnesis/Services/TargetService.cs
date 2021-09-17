@@ -41,7 +41,7 @@ namespace Anamnesis
 			}
 
 			// Mannequins and housing NPC's get actor type changed, but squadron members and lawn retainers do not.
-			if (actor.Kind == ActorTypes.EventNpc && actor.Model.DataId != 1011832)
+			/*if (actor.Kind == ActorTypes.EventNpc && actor.DataId != 1011832)
 			{
 				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertHousingNpcToPlayerMessage", actor.DisplayName), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
 				if (result == true)
@@ -51,7 +51,6 @@ namespace Anamnesis
 						return;
 
 					await vm.ConvertToPlayer();
-					actor.Model = (Actor)vm.Model!;
 				}
 			}
 
@@ -66,9 +65,8 @@ namespace Anamnesis
 						return;
 
 					await vm.ConvertToPlayer();
-					actor.Model = (Actor)vm.Model!;
 				}
-			}
+			}*/
 
 			await Dispatch.MainThread();
 			Instance.PinnedActors.Add(actor);
@@ -124,7 +122,7 @@ namespace Anamnesis
 				if (ptr == IntPtr.Zero)
 					continue;
 
-				Actor actor = MemoryService.Read<Actor>(ptr);
+				ActorViewModel actor = new ActorViewModel(ptr);
 
 				if (string.IsNullOrEmpty(actor.Name))
 					continue;
@@ -227,38 +225,43 @@ namespace Anamnesis
 		{
 			private ActorViewModel? viewModel;
 
-			private string name;
-
-			public ActorTableActor(Actor actor, IntPtr pointer)
+			public ActorTableActor(ActorViewModel actor, IntPtr pointer)
 			{
-				this.Model = actor;
+				this.viewModel = actor;
+
 				this.Pointer = pointer;
 				this.IsValid = true;
 				this.Initials = string.Empty;
-				this.name = actor.Name;
+				this.Name = actor.Name;
+				this.Id = actor.Id;
+				this.Kind = this.viewModel.ObjectKind;
+				this.ModelType = this.viewModel.ModelType;
 
 				this.UpdateInitials(this.DisplayName);
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;
 
-			public Actor Model { get; set; }
-			public string Id => this.Model.Id;
+			public string Name { get; private set; }
+			public string Id { get; private set; }
 			public IntPtr? Pointer { get; private set; }
-			public ActorTypes Kind => this.Model.ObjectKind;
-			public IconChar Icon => this.Model.ObjectKind.GetIcon();
-			public int ModelType => this.Model.ModelType;
+			public ActorTypes Kind { get; private set; }
+			public IconChar Icon => this.Kind.GetIcon();
+			public int ModelType { get; private set; }
 			public string Initials { get; private set; }
 			public bool IsValid { get; private set; }
 			public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
 
-			public string DisplayName => this.viewModel == null ? this.name : this.viewModel.DisplayName;
+			public string DisplayName => this.viewModel == null ? this.Name : this.viewModel.DisplayName;
 
 			public float DistanceFromPlayer
 			{
 				get
 				{
-					return new System.Numerics.Vector2(this.Model.DistanceFromPlayerX, this.Model.DistanceFromPlayerY).Length();
+					if (this.viewModel == null)
+						return 0;
+
+					return new System.Numerics.Vector2(this.viewModel.DistanceFromPlayerX, this.viewModel.DistanceFromPlayerY).Length();
 				}
 			}
 
@@ -319,12 +322,12 @@ namespace Anamnesis
 			{
 				return obj is ActorTableActor actor &&
 					   EqualityComparer<IntPtr?>.Default.Equals(this.Pointer, actor.Pointer) &&
-					   this.name == actor.name;
+					   this.Name == actor.Name;
 			}
 
 			public override int GetHashCode()
 			{
-				return HashCode.Combine(this.Pointer, this.name);
+				return HashCode.Combine(this.Pointer, this.Name);
 			}
 
 			private void Retarget()
@@ -355,7 +358,6 @@ namespace Anamnesis
 							}
 
 							this.Pointer = actor.Pointer;
-							this.Model = actor.Model;
 							this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
 							found = true;
 							break;
@@ -369,7 +371,7 @@ namespace Anamnesis
 					}
 					else if (this.viewModel != null)
 					{
-						this.name = this.viewModel.Name;
+						this.Name = this.viewModel.Name;
 						this.viewModel.OnRetargeted();
 					}
 

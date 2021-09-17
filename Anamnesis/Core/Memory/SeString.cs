@@ -8,8 +8,11 @@ namespace Anamnesis.Core.Memory
 
 	public static class SeString
 	{
-		public static string FromSeStringBytes(byte[] self)
+		public static string FromSeStringBytes(byte[]? self)
 		{
+			if (self == null)
+				return string.Empty;
+
 			int i;
 			for (i = 0; i < self.Length; i++)
 			{

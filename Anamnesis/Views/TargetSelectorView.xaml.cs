@@ -86,7 +86,7 @@ namespace Anamnesis.Views
 		{
 			if (obj is TargetService.ActorTableActor actor)
 			{
-				if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Model.Name, search))
+				if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Name, search))
 					return false;
 
 				if (actor.IsPinned)

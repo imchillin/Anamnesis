@@ -8,6 +8,7 @@ namespace Anamnesis.Memory
 	using System.Reflection;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
+	using Anamnesis.Core.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -27,9 +28,12 @@ namespace Anamnesis.Memory
 		{
 		}
 
+		[ModelField] public byte[]? NameBytes { get; set; }
 		[ModelField] public int DataId { get; set; }
 		[ModelField] [Refresh] public ActorTypes ObjectKind { get; set; }
 		[ModelField] public byte SubKind { get; set; }
+		[ModelField] public byte DistanceFromPlayerX { get; set; }
+		[ModelField] public byte DistanceFromPlayerY { get; set; }
 		[ModelField] [Refresh] public CustomizeViewModel? Customize { get; set; }
 		[ModelField] [Refresh] public int ModelType { get; set; }
 		[ModelField] public bool IsAnimating { get; set; }
@@ -44,8 +48,8 @@ namespace Anamnesis.Memory
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
 
-		public string Id => this.Model.Id;
-		public string Name => this.Model.Name;
+		public string Id => this.Name + this.DataId;
+		public string Name => SeString.FromSeStringBytes(this.NameBytes);
 
 		[AlsoNotifyFor(nameof(ActorViewModel.DisplayName))]
 		public string? Nickname
@@ -99,9 +103,6 @@ namespace Anamnesis.Memory
 
 		public void OnRetargeted()
 		{
-			if (this.ModelObject == null && this.Model.ModelObject != IntPtr.Zero)
-				Log.Warning($"Actor has no model object: {this.Model.ModelObject}");
-
 			if (this.Customize == null)
 				return;
 
