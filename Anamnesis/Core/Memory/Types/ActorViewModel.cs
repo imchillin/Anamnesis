@@ -44,13 +44,8 @@ namespace Anamnesis.Memory
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
 
-		public string Id => this.model.Id;
-
-		public string Name
-		{
-			get => this.model.Name;
-			set => this.model.Name = value;
-		}
+		public string Id => this.Model.Id;
+		public string Name => this.Model.Name;
 
 		[AlsoNotifyFor(nameof(ActorViewModel.DisplayName))]
 		public string? Nickname
@@ -104,8 +99,8 @@ namespace Anamnesis.Memory
 
 		public void OnRetargeted()
 		{
-			if (this.ModelObject == null && this.model.ModelObject != IntPtr.Zero)
-				Log.Warning($"Actor has no model object: {this.model.ModelObject}");
+			if (this.ModelObject == null && this.Model.ModelObject != IntPtr.Zero)
+				Log.Warning($"Actor has no model object: {this.Model.ModelObject}");
 
 			if (this.Customize == null)
 				return;

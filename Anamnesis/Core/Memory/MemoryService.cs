@@ -116,14 +116,51 @@ namespace Anamnesis.Memory
 			throw new Exception($"Failed to read memory {typeof(T)} from address {address}");
 		}
 
+		public static object Read(IntPtr address, Type type)
+		{
+			if (address == IntPtr.Zero)
+				throw new Exception("Invalid address");
+
+			for (int attempt = 0; attempt < 10; attempt++)
+			{
+				int size = Marshal.SizeOf(type);
+				IntPtr mem = Marshal.AllocHGlobal(size);
+
+				if (ReadProcessMemory(Handle, address, mem, size, out _))
+				{
+					object? val = Marshal.PtrToStructure(mem, type);
+					Marshal.FreeHGlobal(mem);
+
+					if (val == null)
+						continue;
+
+					return val;
+				}
+
+				Thread.Sleep(100);
+			}
+
+			throw new Exception($"Failed to read memory {type} from address {address}");
+		}
+
 		public static void Write<T>(IntPtr address, T value, string purpose)
 			where T : struct
+		{
+			Write(address, value, typeof(T), purpose);
+		}
+
+		public static void Write(IntPtr address, object value, string purpose)
+		{
+			Write(address, value, value.GetType(), purpose);
+		}
+
+		public static void Write(IntPtr address, object value, Type type, string purpose)
 		{
 			if (address == IntPtr.Zero)
 				return;
 
 			// Read the existing memory to oldBuffer
-			int size = Marshal.SizeOf(typeof(T));
+			int size = Marshal.SizeOf(value);
 			byte[] oldBuffer = new byte[size];
 			ReadProcessMemory(Handle, address, oldBuffer, size, out _);
 
@@ -131,13 +168,13 @@ namespace Anamnesis.Memory
 			byte[] newbuffer = new byte[size];
 			IntPtr mem = Marshal.AllocHGlobal(size);
 
-			Marshal.StructureToPtr<T>(value, mem, false);
+			Marshal.StructureToPtr(value, mem, false);
 			Marshal.Copy(mem, newbuffer, 0, size);
 			Marshal.FreeHGlobal(mem);
 
 			// Apply only memory that is allowed by the mask.
 			// this prevents writing memory for values that we dont have in our structs.
-			bool[] mask = GetMask<T>();
+			bool[] mask = GetMask(type);
 			int diff = 0;
 			for (int i = 0; i < size; i++)
 			{
@@ -152,7 +189,7 @@ namespace Anamnesis.Memory
 			if (diff <= 0)
 				return;
 
-			Log.Verbose($"Writing: {diff} bytes to {address} for model type {value.GetType().Name} for reason: {purpose}");
+			Log.Verbose($"Writing: {diff} bytes to {address} for model type {type.Name} for reason: {purpose}");
 
 			// Write the oldBuffer (which has now had newBuffer merged over it) to the process
 			WriteProcessMemory(Handle, address, oldBuffer, size, out _);
@@ -296,12 +333,20 @@ namespace Anamnesis.Memory
 		private static bool[] GetMask<T>()
 			where T : struct
 		{
-			Type type = typeof(T);
+			return GetMask(typeof(T));
+		}
 
-			if (StructMasks.ContainsKey(type))
-				return StructMasks[type];
+		/// <summary>
+		/// Gets or generates a new mask for the given struct.
+		/// The mask indicates which bytes of memory the struct uses, and which bytes should not be
+		/// changed in memory.
+		/// </summary>
+		private static bool[] GetMask(Type structureType)
+		{
+			if (StructMasks.ContainsKey(structureType))
+				return StructMasks[structureType];
 
-			int size = Marshal.SizeOf(type);
+			int size = Marshal.SizeOf(structureType);
 			byte[] buffer = new byte[size];
 			byte[] buffer2 = new byte[size];
 
@@ -312,12 +357,15 @@ namespace Anamnesis.Memory
 			// read buffer2 to a struct
 			IntPtr mem = Marshal.AllocHGlobal(size);
 			Marshal.Copy(buffer, 0, mem, size);
-			T val = Marshal.PtrToStructure<T>(mem);
+			object? obj = Marshal.PtrToStructure(mem, structureType);
 			Marshal.FreeHGlobal(mem);
+
+			if (obj == null)
+				throw new Exception($"Failed to create instance of structure type: {structureType}");
 
 			// write the struct to buffer2
 			mem = Marshal.AllocHGlobal(size);
-			Marshal.StructureToPtr(val, mem, false);
+			Marshal.StructureToPtr(obj, mem, false);
 			Marshal.Copy(mem, buffer2, 0, size);
 			Marshal.FreeHGlobal(mem);
 
@@ -330,7 +378,7 @@ namespace Anamnesis.Memory
 				mask[i] = buffer[i] == buffer2[i];
 			}
 
-			StructMasks.Add(type, mask);
+			StructMasks.Add(structureType, mask);
 			return mask;
 		}
 

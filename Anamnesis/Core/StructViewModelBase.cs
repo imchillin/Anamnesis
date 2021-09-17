@@ -12,34 +12,18 @@ namespace Anamnesis
 	using PropertyChanged;
 	using Serilog;
 
-	#pragma warning disable SA1649
 	public delegate void ViewModelEvent(object sender);
 
-	public interface IStructViewModel : INotifyPropertyChanged
-	{
-		IStructViewModel? Parent { get; }
-		bool Enabled { get; set; }
-		Type GetModelType();
-		void SetModel(object? model);
-		object? GetModel();
-
-		TParent? GetParent<TParent>()
-			where TParent : IStructViewModel;
-
-		void RaisePropertyChanged(string propertyName);
-	}
-
 	[AddINotifyPropertyChangedInterface]
-	public abstract class StructViewModelBase<T> : IStructViewModel, INotifyPropertyChanged
-		where T : struct
+	public abstract class StructViewModelBase : IStructViewModel, INotifyPropertyChanged
 	{
-		protected T model;
+		protected object model;
 		private readonly Dictionary<string, (PropertyInfo, FieldInfo)> binds = new Dictionary<string, (PropertyInfo, FieldInfo)>();
 		private bool suppressViewToModelEvents = false;
 
 		public StructViewModelBase()
 		{
-			Type modelType = typeof(T);
+			Type modelType = this.GetModelType();
 			PropertyInfo[]? properties = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
 			foreach (PropertyInfo property in properties)
@@ -64,6 +48,13 @@ namespace Anamnesis
 
 			this.PropertyChanged += this.OnThisPropertyChanged;
 			this.Enabled = true;
+
+			object? model = Activator.CreateInstance(this.GetModelType());
+
+			if (model == null)
+				throw new Exception($"Failed to create instance of model type: {this.GetModelType()}");
+
+			this.model = model;
 		}
 
 		public StructViewModelBase(IStructViewModel? parent)
@@ -106,14 +97,6 @@ namespace Anamnesis
 		public IStructViewModel? Parent { get; protected set; }
 		public PropertyInfo? ParentProperty { get; }
 
-		public T? Model
-		{
-			get
-			{
-				return this.model;
-			}
-		}
-
 		public virtual string Path
 		{
 			get
@@ -133,14 +116,11 @@ namespace Anamnesis
 			}
 		}
 
-		protected static ILogger Log => Serilog.Log.ForContext<StructViewModelBase<T>>();
+		protected static ILogger Log => Serilog.Log.ForContext<StructViewModelBase>();
 
-		public Type GetModelType()
-		{
-			return typeof(T);
-		}
+		public abstract Type GetModelType();
 
-		public void Import(T model)
+		public virtual void Import(object model)
 		{
 			foreach ((PropertyInfo viewModelProperty, FieldInfo modelField) in this.binds.Values)
 			{
@@ -148,19 +128,7 @@ namespace Anamnesis
 			}
 		}
 
-		public void SetModel(object? model)
-		{
-			if (model is T tModel)
-			{
-				this.SetModel(tModel);
-			}
-			else
-			{
-				throw new Exception($"Invalid model type. Expected: {typeof(T)}, got: {model?.GetType()}");
-			}
-		}
-
-		public void SetModel(T? model)
+		public virtual void SetModel(object? model)
 		{
 			if (!MemoryService.IsProcessAlive)
 				return;
@@ -168,7 +136,7 @@ namespace Anamnesis
 			if (model == null)
 				throw new Exception("Attempt to set null model to view model");
 
-			this.model = (T)model;
+			this.model = model;
 
 			bool changed = false;
 			this.suppressViewToModelEvents = true;
@@ -198,8 +166,7 @@ namespace Anamnesis
 			if (this.Parent != null && this.ParentProperty != null)
 			{
 				object? obj = this.ParentProperty.GetValue(this.Parent);
-				T? val = (T?)obj;
-				this.SetModel(val);
+				this.SetModel(obj);
 				return 0;
 			}
 
