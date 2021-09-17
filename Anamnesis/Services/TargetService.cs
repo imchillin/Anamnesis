@@ -19,7 +19,7 @@ namespace Anamnesis
 	using XivToolsWpf;
 
 	public delegate void SelectionEvent(ActorViewModel? actor);
-	public delegate void PinnedEvent(TargetService.ActorTableActor actor);
+	public delegate void PinnedEvent(TargetService.PinnedActor actor);
 
 	[AddINotifyPropertyChangedInterface]
 	public class TargetService : ServiceBase<TargetService>
@@ -28,11 +28,11 @@ namespace Anamnesis
 		public static event PinnedEvent? ActorPinned;
 
 		public ActorViewModel? SelectedActor { get; private set; }
-		public ObservableCollection<ActorTableActor> PinnedActors { get; set; } = new ObservableCollection<ActorTableActor>();
+		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
-		public static async Task PinActor(ActorTableActor actor)
+		public static async Task PinActor(ActorViewModel actor)
 		{
-			foreach (ActorTableActor otherActor in Instance.PinnedActors)
+			foreach (PinnedActor otherActor in Instance.PinnedActors)
 			{
 				if (actor.Pointer == otherActor.Pointer)
 				{
@@ -41,40 +41,34 @@ namespace Anamnesis
 			}
 
 			// Mannequins and housing NPC's get actor type changed, but squadron members and lawn retainers do not.
-			/*if (actor.Kind == ActorTypes.EventNpc && actor.DataId != 1011832)
+			if (actor.ObjectKind == ActorTypes.EventNpc && actor.DataId != 1011832)
 			{
-				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertHousingNpcToPlayerMessage", actor.DisplayName), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
+				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertHousingNpcToPlayerMessage", actor.Name), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
 				if (result == true)
 				{
-					ActorViewModel? vm = actor.GetViewModel();
-					if (vm == null)
-						return;
-
-					await vm.ConvertToPlayer();
+					await actor.ConvertToPlayer();
 				}
 			}
 
 			// Carbuncles get model type set to player (but not actor type!)
-			if (actor.Kind == ActorTypes.BattleNpc && (actor.ModelType == 1 || actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412))
+			if (actor.ObjectKind == ActorTypes.BattleNpc && (actor.ModelType == 1 || actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412))
 			{
 				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertCarbuncleToPlayerMessage", actor.DisplayName), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
 				if (result == true)
 				{
-					ActorViewModel? vm = actor.GetViewModel();
-					if (vm == null)
-						return;
-
-					await vm.ConvertToPlayer();
+					await actor.ConvertToPlayer();
 				}
-			}*/
+			}
+
+			PinnedActor pined = new PinnedActor(actor);
 
 			await Dispatch.MainThread();
-			Instance.PinnedActors.Add(actor);
-			Instance.SelectActor(actor);
-			ActorPinned?.Invoke(actor);
+			Instance.PinnedActors.Add(pined);
+			Instance.SelectActor(pined);
+			ActorPinned?.Invoke(pined);
 		}
 
-		public static void UnpinActor(ActorTableActor actor)
+		public static void UnpinActor(PinnedActor actor)
 		{
 			Instance.PinnedActors.Remove(actor);
 
@@ -89,14 +83,23 @@ namespace Anamnesis
 					Instance.SelectActorViewModel(null);
 				}
 			}
-
-			actor.Clear();
 		}
 
-		public static List<ActorTableActor> GetActors()
+		public static bool IsPinned(ActorViewModel actor)
 		{
-			List<ActorTableActor> actorPointers = new List<ActorTableActor>();
+			foreach (PinnedActor pinned in Instance.PinnedActors)
+			{
+				if (pinned.Id == actor.Id)
+				{
+					return true;
+				}
+			}
 
+			return false;
+		}
+
+		public static List<ActorViewModel> GetAllActors()
+		{
 			int count = 0;
 			IntPtr startAddress;
 
@@ -104,17 +107,15 @@ namespace Anamnesis
 			{
 				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
 				startAddress = AddressService.GPoseActorTable + 8;
-				////ingameTargetAddress = MemoryService.ReadPtr(AddressService.GPoseTargetManager);
 			}
 			else
 			{
 				// why 424?
 				count = 424;
 				startAddress = AddressService.ActorTable;
-				////ingameTargetAddress = MemoryService.ReadPtr(AddressService.TargetManager);
 			}
 
-			List<ActorTableActor> results = new List<ActorTableActor>();
+			List<ActorViewModel> results = new List<ActorViewModel>();
 			for (int i = 0; i < count; i++)
 			{
 				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
@@ -122,12 +123,7 @@ namespace Anamnesis
 				if (ptr == IntPtr.Zero)
 					continue;
 
-				ActorViewModel actor = new ActorViewModel(ptr);
-
-				if (string.IsNullOrEmpty(actor.Name))
-					continue;
-
-				results.Add(new ActorTableActor(actor, ptr));
+				results.Add(new ActorViewModel(ptr));
 			}
 
 			return results;
@@ -136,13 +132,6 @@ namespace Anamnesis
 		public override async Task Start()
 		{
 			await base.Start();
-
-			List<ActorTableActor> actors = TargetService.GetActors();
-
-			if (actors.Count <= 0)
-				return;
-
-			await PinActor(actors[0]);
 		}
 
 		public void ClearSelection()
@@ -157,7 +146,7 @@ namespace Anamnesis
 			{
 				this.SelectedActor = null;
 
-				foreach (ActorTableActor actor in this.PinnedActors)
+				foreach (PinnedActor actor in this.PinnedActors)
 				{
 					actor.SelectionChanged();
 				}
@@ -204,11 +193,11 @@ namespace Anamnesis
 			}
 		}
 
-		public void SelectActor(ActorTableActor actor)
+		public void SelectActor(PinnedActor actor)
 		{
 			this.SelectActorViewModel(actor.GetViewModel());
 
-			foreach (ActorTableActor ac in this.PinnedActors)
+			foreach (PinnedActor ac in this.PinnedActors)
 			{
 				ac.SelectionChanged();
 			}
@@ -221,49 +210,30 @@ namespace Anamnesis
 		}
 
 		[AddINotifyPropertyChangedInterface]
-		public class ActorTableActor : INotifyPropertyChanged
+		public class PinnedActor : INotifyPropertyChanged
 		{
 			private ActorViewModel? viewModel;
 
-			public ActorTableActor(ActorViewModel actor, IntPtr pointer)
+			public PinnedActor(ActorViewModel actorVm)
 			{
-				this.viewModel = actor;
-
-				this.Pointer = pointer;
-				this.IsValid = true;
-				this.Initials = string.Empty;
-				this.Name = actor.Name;
-				this.Id = actor.Id;
-				this.Kind = this.viewModel.ObjectKind;
-				this.ModelType = this.viewModel.ModelType;
-
-				this.UpdateInitials(this.DisplayName);
+				this.Id = actorVm.Id;
+				this.viewModel = actorVm;
+				this.Retarget();
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;
 
-			public string Name { get; private set; }
+			public string? Name { get; private set; }
 			public string Id { get; private set; }
 			public IntPtr? Pointer { get; private set; }
 			public ActorTypes Kind { get; private set; }
 			public IconChar Icon => this.Kind.GetIcon();
 			public int ModelType { get; private set; }
-			public string Initials { get; private set; }
+			public string? Initials { get; private set; }
 			public bool IsValid { get; private set; }
 			public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
 
-			public string DisplayName => this.viewModel == null ? this.Name : this.viewModel.DisplayName;
-
-			public float DistanceFromPlayer
-			{
-				get
-				{
-					if (this.viewModel == null)
-						return 0;
-
-					return new System.Numerics.Vector2(this.viewModel.DistanceFromPlayerX, this.viewModel.DistanceFromPlayerY).Length();
-				}
-			}
+			public string? DisplayName => this.viewModel == null ? this.Name : this.viewModel.DisplayName;
 
 			public bool IsSelected
 			{
@@ -287,42 +257,28 @@ namespace Anamnesis
 				}
 			}
 
+			public override string? ToString()
+			{
+				if (this.viewModel == null)
+					return base.ToString();
+
+				return this.viewModel.DisplayName;
+			}
+
+			public void Dispose()
+			{
+				this.viewModel?.Dispose();
+			}
+
 			public void SelectionChanged()
 			{
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsSelected)));
-			}
-
-			/// <summary>
-			/// Compares actor identity, does not compare pointers.
-			/// </summary>
-			public bool Is(ActorTableActor other)
-			{
-				// TODO: Handle cases where multiple actors share a name, but are different actors
-				// perhaps compare modelType and customize values?
-				return this.Id == other.Id;
-			}
-
-			public void Clear()
-			{
-				this.Pointer = null;
-
-				if (this.viewModel != null)
-					this.viewModel.Dispose();
-
-				this.viewModel = null;
 			}
 
 			public ActorViewModel? GetViewModel()
 			{
 				this.Retarget();
 				return this.viewModel;
-			}
-
-			public override bool Equals(object? obj)
-			{
-				return obj is ActorTableActor actor &&
-					   EqualityComparer<IntPtr?>.Default.Equals(this.Pointer, actor.Pointer) &&
-					   this.Name == actor.Name;
 			}
 
 			public override int GetHashCode()
@@ -337,46 +293,31 @@ namespace Anamnesis
 					if (this.viewModel != null)
 						this.viewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
 
-					List<ActorTableActor> actors = TargetService.GetActors();
-					bool found = false;
-					foreach (ActorTableActor actor in actors)
+					foreach (ActorViewModel actor in TargetService.GetAllActors())
 					{
-						if (actor.Id == this.Id && actor.Pointer != null)
-						{
-							// Handle case where multiple actor table entries point ot the same actor, but
-							// its not the actor we actually want.
-							////if (actor.Id != this.Id)
-							////	continue;
+						if (actor.Id != this.Id || actor.Pointer == null)
+							continue;
 
-							if (this.viewModel != null)
-							{
-								this.viewModel.Pointer = actor.Pointer;
-							}
-							else
-							{
-								this.viewModel = new ActorViewModel((IntPtr)actor.Pointer);
-							}
-
-							this.Pointer = actor.Pointer;
-							this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
-							found = true;
-							break;
-						}
-					}
-
-					if (!found)
-					{
-						this.viewModel?.Dispose();
-						this.viewModel = null;
-					}
-					else if (this.viewModel != null)
-					{
+						this.viewModel = actor;
 						this.Name = this.viewModel.Name;
 						this.viewModel.OnRetargeted();
+						this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+						this.Pointer = this.viewModel.Pointer;
+						this.Kind = this.viewModel.ObjectKind;
+						this.ModelType = this.viewModel.ModelType;
+
+						this.UpdateInitials(this.DisplayName);
+
+						this.IsValid = true;
+						Log.Information($"Retargeted actor: {this.Initials}");
+
+						return;
 					}
 
-					Log.Information($"Retargeting actor: {this.Initials}. Success: {found}. Checked {actors.Count} actors.");
-					this.IsValid = found;
+					this.viewModel?.Dispose();
+					Log.Warning($"Lost actor: {this.Initials}");
+
+					this.IsValid = false;
 				}
 			}
 
@@ -388,7 +329,7 @@ namespace Anamnesis
 				}
 			}
 
-			private void UpdateInitials(string name)
+			private void UpdateInitials(string? name)
 			{
 				if (string.IsNullOrWhiteSpace(name))
 					return;

@@ -242,7 +242,7 @@ namespace Anamnesis.GUI
 
 		private void OnUnpinActorClicked(object sender, RoutedEventArgs e)
 		{
-			if (sender is FrameworkElement el && el.DataContext is TargetService.ActorTableActor actor)
+			if (sender is FrameworkElement el && el.DataContext is TargetService.PinnedActor actor)
 			{
 				TargetService.UnpinActor(actor);
 			}
@@ -258,7 +258,7 @@ namespace Anamnesis.GUI
 
 		private void OnConvertActorClicked(object sender, RoutedEventArgs e)
 		{
-			if (sender is FrameworkElement el && el.DataContext is TargetService.ActorTableActor actor)
+			if (sender is FrameworkElement el && el.DataContext is TargetService.PinnedActor actor)
 			{
 				ActorViewModel? vm = actor.GetViewModel();
 

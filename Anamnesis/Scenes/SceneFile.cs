@@ -70,12 +70,12 @@ namespace Anamnesis.Scenes
 				this.Weather = TerritoryService.Instance.CurrentWeatherId;
 			}
 
-			Dictionary<TargetService.ActorTableActor, SceneActor>? actors = null;
+			Dictionary<TargetService.PinnedActor, SceneActor>? actors = null;
 			if (config.IncludeActors)
 			{
 				actors = await ActorNamer.GetActors(TargetService.Instance.PinnedActors);
 
-				foreach ((TargetService.ActorTableActor tableActor, SceneActor sceneActor) in actors)
+				foreach ((TargetService.PinnedActor tableActor, SceneActor sceneActor) in actors)
 				{
 					ActorViewModel? actor = tableActor.GetViewModel();
 
@@ -108,7 +108,7 @@ namespace Anamnesis.Scenes
 			{
 				this.Actors = new List<SceneActor>();
 
-				foreach ((TargetService.ActorTableActor tableActor, SceneActor sceneActor) in actors)
+				foreach ((TargetService.PinnedActor tableActor, SceneActor sceneActor) in actors)
 				{
 					ActorViewModel? vm = tableActor.GetViewModel();
 
@@ -127,7 +127,7 @@ namespace Anamnesis.Scenes
 
 		public async Task Apply(Configuration config)
 		{
-			Dictionary<SceneActor, TargetService.ActorTableActor>? lookup = null;
+			Dictionary<SceneActor, TargetService.PinnedActor>? lookup = null;
 
 			if (config.IncludeActors && this.Actors != null)
 				lookup = await ActorSelector.GetActors(this.Actors);
@@ -139,7 +139,7 @@ namespace Anamnesis.Scenes
 				if (lookup != null && lookup.Count > 0)
 				{
 					// Use the position of the first valid actor as the root position
-					foreach ((SceneActor scene, TargetService.ActorTableActor actor) in lookup)
+					foreach ((SceneActor scene, TargetService.PinnedActor actor) in lookup)
 					{
 						ActorViewModel? actorVm = actor.GetViewModel();
 
@@ -179,7 +179,7 @@ namespace Anamnesis.Scenes
 			{
 				if (await GposeService.LeaveGpose("You must not be in Gpose to apply actor appearances"))
 				{
-					foreach ((SceneActor scene, TargetService.ActorTableActor actor) in lookup)
+					foreach ((SceneActor scene, TargetService.PinnedActor actor) in lookup)
 					{
 						ActorViewModel? actorVm = actor.GetViewModel();
 
@@ -192,7 +192,7 @@ namespace Anamnesis.Scenes
 
 				if (await GposeService.EnterGpose("You must be in Gpose to apply actor poses"))
 				{
-					foreach ((SceneActor scene, TargetService.ActorTableActor actor) in lookup)
+					foreach ((SceneActor scene, TargetService.PinnedActor actor) in lookup)
 					{
 						ActorViewModel? actorVm = actor.GetViewModel();
 

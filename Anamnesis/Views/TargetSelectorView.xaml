@@ -43,6 +43,7 @@
 			Grid.Row="1"
 			Close="OnClose"
 			Filter="OnFilter"
+			Sort="OnSort"
 			SelectionChanged="OnSelectionChanged">
 
 			<cm3Drawers:SelectorDrawer.ItemTemplate>

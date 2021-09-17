@@ -51,6 +51,8 @@ namespace Anamnesis.Memory
 		public string Id => this.Name + this.DataId;
 		public string Name => SeString.FromSeStringBytes(this.NameBytes);
 
+		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
+
 		[AlsoNotifyFor(nameof(ActorViewModel.DisplayName))]
 		public string? Nickname
 		{

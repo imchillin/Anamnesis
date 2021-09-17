@@ -8,6 +8,7 @@ namespace Anamnesis.Views
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -64,9 +65,7 @@ namespace Anamnesis.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			List<TargetService.ActorTableActor> actors = TargetService.GetActors();
-			actors.Sort((a, b) => a.DistanceFromPlayer.CompareTo(b.DistanceFromPlayer));
-			this.Selector.AddItems(actors);
+			this.Selector.AddItems(TargetService.GetAllActors());
 			this.Selector.FilterItems();
 		}
 
@@ -74,7 +73,7 @@ namespace Anamnesis.Views
 		{
 			this.Close?.Invoke();
 
-			TargetService.ActorTableActor? actor = this.Selector.Value as TargetService.ActorTableActor;
+			ActorViewModel? actor = this.Selector.Value as ActorViewModel;
 
 			if (actor == null)
 				return;
@@ -82,30 +81,40 @@ namespace Anamnesis.Views
 			Task.Run(() => TargetService.PinActor(actor));
 		}
 
+		private int OnSort(object a, object b)
+		{
+			if (a is ActorViewModel actorA && b is ActorViewModel actorB)
+			{
+				return actorA.DistanceFromPlayer.CompareTo(actorB.DistanceFromPlayer);
+			}
+
+			return 0;
+		}
+
 		private bool OnFilter(object obj, string[]? search = null)
 		{
-			if (obj is TargetService.ActorTableActor actor)
+			if (obj is ActorViewModel actor)
 			{
 				if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Name, search))
 					return false;
 
-				if (actor.IsPinned)
+				if (TargetService.IsPinned(actor))
 					return false;
 
-				if (!includePlayers && actor.Kind == Memory.ActorTypes.Player)
+				if (!includePlayers && actor.ObjectKind == Memory.ActorTypes.Player)
 					return false;
 
-				if (!includeCompanions && actor.Kind == Memory.ActorTypes.Companion)
+				if (!includeCompanions && actor.ObjectKind == Memory.ActorTypes.Companion)
 					return false;
 
-				if (!includeNPCs && (actor.Kind == Memory.ActorTypes.BattleNpc || actor.Kind == Memory.ActorTypes.EventNpc))
+				if (!includeNPCs && (actor.ObjectKind == Memory.ActorTypes.BattleNpc || actor.ObjectKind == Memory.ActorTypes.EventNpc))
 					return false;
 
 				if (!includeOther
-					&& actor.Kind != Memory.ActorTypes.Player
-					&& actor.Kind != Memory.ActorTypes.Companion
-					&& actor.Kind != Memory.ActorTypes.BattleNpc
-					&& actor.Kind != Memory.ActorTypes.EventNpc)
+					&& actor.ObjectKind != Memory.ActorTypes.Player
+					&& actor.ObjectKind != Memory.ActorTypes.Companion
+					&& actor.ObjectKind != Memory.ActorTypes.BattleNpc
+					&& actor.ObjectKind != Memory.ActorTypes.EventNpc)
 				{
 					return false;
 				}

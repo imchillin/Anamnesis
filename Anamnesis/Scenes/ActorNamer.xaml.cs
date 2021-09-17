@@ -15,14 +15,14 @@ namespace Anamnesis.Scenes
 	/// Interaction logic for ActorSelector.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	public partial class ActorNamer : UserControl, IDialog<Dictionary<TargetService.ActorTableActor, SceneFile.SceneActor>>
+	public partial class ActorNamer : UserControl, IDialog<Dictionary<TargetService.PinnedActor, SceneFile.SceneActor>>
 	{
-		public ActorNamer(IEnumerable<TargetService.ActorTableActor> actors)
+		public ActorNamer(IEnumerable<TargetService.PinnedActor> actors)
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			foreach (TargetService.ActorTableActor actor in actors)
+			foreach (TargetService.PinnedActor actor in actors)
 			{
 				this.Entries.Add(new Entry(actor));
 			}
@@ -31,12 +31,12 @@ namespace Anamnesis.Scenes
 		public event DialogEvent? Close;
 
 		public ObservableCollection<Entry> Entries { get; set; } = new ObservableCollection<Entry>();
-		public Dictionary<TargetService.ActorTableActor, SceneFile.SceneActor> Result { get; set; } = new Dictionary<TargetService.ActorTableActor, SceneFile.SceneActor>();
+		public Dictionary<TargetService.PinnedActor, SceneFile.SceneActor> Result { get; set; } = new Dictionary<TargetService.PinnedActor, SceneFile.SceneActor>();
 
-		public static async Task<Dictionary<TargetService.ActorTableActor, SceneFile.SceneActor>> GetActors(IEnumerable<TargetService.ActorTableActor> actors)
+		public static async Task<Dictionary<TargetService.PinnedActor, SceneFile.SceneActor>> GetActors(IEnumerable<TargetService.PinnedActor> actors)
 		{
 			ActorNamer selector = new ActorNamer(actors);
-			return await ViewService.ShowDialog<ActorNamer, Dictionary<TargetService.ActorTableActor, SceneFile.SceneActor>>("Name Actors", selector);
+			return await ViewService.ShowDialog<ActorNamer, Dictionary<TargetService.PinnedActor, SceneFile.SceneActor>>("Name Actors", selector);
 		}
 
 		public void Cancel()
@@ -58,14 +58,14 @@ namespace Anamnesis.Scenes
 		[AddINotifyPropertyChangedInterface]
 		public class Entry
 		{
-			public Entry(TargetService.ActorTableActor actor)
+			public Entry(TargetService.PinnedActor actor)
 			{
 				this.SceneActor = new SceneFile.SceneActor();
 				this.TableActor = actor;
 			}
 
 			public SceneFile.SceneActor SceneActor { get; set; }
-			public TargetService.ActorTableActor TableActor { get; set; }
+			public TargetService.PinnedActor TableActor { get; set; }
 		}
 	}
 }

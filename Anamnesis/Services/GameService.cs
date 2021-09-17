@@ -4,7 +4,6 @@
 namespace Anamnesis.Services
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using PropertyChanged;
 
@@ -22,10 +21,8 @@ namespace Anamnesis.Services
 				if (TerritoryService.Instance.CurrentTerritory == null)
 					return false;
 
-				List<TargetService.ActorTableActor> actors = TargetService.GetActors();
-
-				if (actors.Count <= 0)
-					return false;
+				////if (TargetService.Instance.AllActors.Count <= 0)
+				////	return false;
 
 				return true;
 			}
