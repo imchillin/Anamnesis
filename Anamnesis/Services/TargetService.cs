@@ -133,6 +133,13 @@ namespace Anamnesis
 		{
 			await base.Start();
 
+			List<ActorViewModel> allaCtors = GetAllActors();
+
+			if (allaCtors.Count > 0)
+			{
+				await PinActor(allaCtors[0]);
+			}
+
 			_ = Task.Run(this.TickSelectedActor);
 		}
 
