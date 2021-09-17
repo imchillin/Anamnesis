@@ -12,14 +12,4 @@ namespace Anamnesis.Memory
 	{
 		[FieldOffset(0x68)] public IntPtr Skeleton;
 	}
-
-	public class SkeletonWrapperViewModel : MemoryViewModelBase<SkeletonWrapper>
-	{
-		public SkeletonWrapperViewModel(IntPtr pointer, IMemoryViewModel? parent)
-			: base(pointer, parent)
-		{
-		}
-
-		[ModelField] public SkeletonViewModel? Skeleton { get; set; }
-	}
 }

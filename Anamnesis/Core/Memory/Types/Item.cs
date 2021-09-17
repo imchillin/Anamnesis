@@ -5,9 +5,11 @@ namespace Anamnesis.Memory
 {
 	using System.Runtime.InteropServices;
 
-	[StructLayout(LayoutKind.Explicit)]
-	public struct Bust
+	[StructLayout(LayoutKind.Sequential)]
+	public struct Item
 	{
-		[FieldOffset(0x68)] public Vector Scale;
+		public ushort Base;
+		public byte Variant;
+		public byte Dye;
 	}
 }
