@@ -66,6 +66,9 @@ namespace Anamnesis.Updater
 				DateTimeOffset published = (DateTimeOffset)this.currentRelease.Published;
 				published = published.ToUniversalTime();
 
+				// Bump the published time down by a few hours to account for release upload times.
+				published = published.AddHours(-4);
+
 				bool update = this.currentRelease.Published != null && published > VersionInfo.Date;
 
 				if (update)
