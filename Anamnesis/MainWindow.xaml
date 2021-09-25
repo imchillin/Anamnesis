@@ -300,6 +300,51 @@
 
 					<StackPanel  Orientation="Horizontal">
 
+						<Button
+							Click="OnWikiClicked"
+							Background="Transparent"
+							Foreground="{Binding TitlebarForeground}"
+							Padding="0"
+							
+							VerticalAlignment="Top"
+							Margin="25, -5, 42, 0"
+							BorderThickness="0">
+
+							<Border BorderThickness="1"
+									BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+									CornerRadius="0, 0, 3, 3"
+									SnapsToDevicePixels="True"
+									Height="30"
+									Width="75">
+
+								<Grid>
+									<Rectangle Fill="{DynamicResource PrimaryHueMidBrush}" 
+											   Opacity="0.1"/>
+
+									<StackPanel HorizontalAlignment="Center" 
+												VerticalAlignment="Center"
+												Orientation="Horizontal">
+
+										<XivToolsWpf:IconBlock Icon="QuestionCircle"
+															   FontSize="12" 
+															   Margin="0, 0, 6, 0"/>
+
+										<XivToolsWpf:TextBlock FontSize="12" 
+															   FontWeight="Light" 
+															   Key="Help_Title"/>
+
+										<XivToolsWpf:IconBlock Icon="ExternalLinkAlt"
+															   FontSize="8" 
+															   Margin="10, 0, 0, 4"/>
+									</StackPanel>
+								</Grid>
+							</Border>
+
+							<Button.ToolTip>
+								<XivToolsWpf:TextBlock Key="Help_Tip" />
+							</Button.ToolTip>
+						</Button>
+
 						<!--  Debugging toggles  -->
 						<StackPanel
 							HorizontalAlignment="Right"

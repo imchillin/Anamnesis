@@ -323,5 +323,10 @@ namespace Anamnesis.GUI
 		{
 			this.Ftue.Visibility = Visibility.Collapsed;
 		}
+
+		private void OnWikiClicked(object sender, RoutedEventArgs e)
+		{
+			UrlUtility.Open("https://github.com/imchillin/Anamnesis/wiki");
+		}
 	}
 }

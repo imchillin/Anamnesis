@@ -473,5 +473,8 @@
 	"Item_InvisibleBody": "Invisible",
 	"Item_InvisibleBodyDesc": "Turns you invisible (Except for your head)",
 	"Item_InvisibleHead": "Invisible",
-	"Item_InvisibleHeadDesc": "Turns your head invisible"
+	"Item_InvisibleHeadDesc": "Turns your head invisible",
+
+	"Help_Title": "Help",
+	"Help_Tip": "Visit the wiki"
 }
