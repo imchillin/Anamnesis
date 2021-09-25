@@ -83,7 +83,7 @@ namespace Anamnesis.Views
 
 		private int OnSort(object a, object b)
 		{
-			if (a is ActorViewModel actorA && b is ActorViewModel actorB)
+			if (a is ActorBasicViewModel actorA && b is ActorBasicViewModel actorB)
 			{
 				return actorA.DistanceFromPlayer.CompareTo(actorB.DistanceFromPlayer);
 			}
