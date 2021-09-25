@@ -123,7 +123,7 @@ namespace Anamnesis.Memory
 					return val;
 				}
 
-				Thread.Sleep(100);
+				Thread.Sleep(16);
 			}
 
 			throw new Exception($"Failed to read memory {type} from address {address}");

@@ -24,10 +24,12 @@ namespace Anamnesis.Memory
 
 			this.Pointer = pointer;
 
-			if (parent != null)
-				parent.AddChild(this);
-
 			this.ReadChanges();
+
+			if (parent != null)
+			{
+				parent.AddChild(this);
+			}
 		}
 
 		public IntPtr? Pointer { get; set; }
@@ -169,9 +171,16 @@ namespace Anamnesis.Memory
 			if (!force && !this.MemoryMode.HasFlag(MemoryModes.Read))
 				return false;
 
+			////try
+			////{
 			object? model = MemoryService.Read((IntPtr)this.Pointer, this.GetModelType());
-
 			this.SetModel(model);
+			/*}
+			catch (Exception ex)
+			{
+				Log.Verbose(ex, "Failed to read " + this.Path);
+				return false;
+			}*/
 
 			return true;
 		}
@@ -309,11 +318,21 @@ namespace Anamnesis.Memory
 				}
 				else
 				{
-					lhs = Activator.CreateInstance(viewModelProperty.PropertyType, desiredPointer, this) as IMemoryViewModel;
-				}
+					try
+					{
+						lhs = Activator.CreateInstance(viewModelProperty.PropertyType, desiredPointer, this) as IMemoryViewModel;
+					}
+					catch (Exception ex)
+					{
+						Log.Warning(ex, $"Failed to create view model and read memory for property: {viewModelProperty.Name} in {this}");
+						return true;
+					}
 
-				if (lhs == null)
-					throw new Exception($"Failed to create instance of view model: {viewModelProperty.PropertyType}");
+					if (lhs == null)
+						throw new Exception($"Failed to create instance of view model: {viewModelProperty.PropertyType}");
+
+					vm = (IMemoryViewModel)lhs;
+				}
 
 				viewModelProperty.SetValue(this, lhs);
 				this.OnModelToView(modelField.Name, rhs);
