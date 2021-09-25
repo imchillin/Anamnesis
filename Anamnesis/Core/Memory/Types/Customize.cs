@@ -22,7 +22,7 @@ namespace Anamnesis.Memory
 		public byte HairTone;
 		public byte Highlights;
 		public FacialFeature FacialFeatures;
-		public byte LimbalEyes;
+		public byte FacialFeatureColor;
 		public byte Eyebrows;
 		public byte LEyeColor;
 		public byte Eyes;

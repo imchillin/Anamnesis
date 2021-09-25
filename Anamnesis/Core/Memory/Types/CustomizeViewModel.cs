@@ -31,7 +31,7 @@ namespace Anamnesis.Memory
 		[ModelField] public byte HairTone { get; set; }
 		[ModelField] public byte Highlights { get; set; }
 		[ModelField] public Customize.FacialFeature FacialFeatures { get; set; }
-		[ModelField] public byte LimbalEyes { get; set; }
+		[ModelField] public byte FacialFeatureColor { get; set; }
 		[ModelField] public byte Eyebrows { get; set; }
 		[ModelField] public byte LEyeColor { get; set; }
 		[ModelField] public byte Eyes { get; set; }

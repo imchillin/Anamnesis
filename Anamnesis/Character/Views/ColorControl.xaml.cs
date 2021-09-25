@@ -22,6 +22,7 @@ namespace Anamnesis.Character.Views
 		public static readonly IBind<byte> ValueDp = Binder.Register<byte, ColorControl>(nameof(Value), OnValueChanged);
 		public static readonly IBind<Customize.Genders> GenderDp = Binder.Register<Customize.Genders, ColorControl>(nameof(Gender), OnGenderChanged);
 		public static readonly IBind<Customize.Tribes> TribeDp = Binder.Register<Customize.Tribes, ColorControl>(nameof(Tribe), OnTribeChanged);
+		public static readonly IBind<string> ToolTipKeyDp = Binder.Register<string, ColorControl>(nameof(ToolTipKey));
 
 		private ColorData.Entry[]? colors;
 
@@ -64,6 +65,12 @@ namespace Anamnesis.Character.Views
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
+		}
+
+		public string ToolTipKey
+		{
+			get => ToolTipKeyDp.Get(this);
+			set => ToolTipKeyDp.Set(this, value);
 		}
 
 		public WpfColor WpfColor

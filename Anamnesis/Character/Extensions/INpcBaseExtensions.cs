@@ -29,7 +29,7 @@ namespace Anamnesis.Character
 			file.HairTone = (byte)npc.HairColor;
 			file.Highlights = (byte)npc.HairHighlightColor;
 			file.FacialFeatures = (Customize.FacialFeature)npc.FacialFeature;
-			file.LimbalEyes = 0; // TODO: Can npc's have limbal rings?
+			file.LimbalEyes = (byte)npc.FacialFeatureColor;
 			file.Eyebrows = (byte)npc.Eyebrows;
 			file.Eyes = (byte)npc.EyeShape;
 			file.Nose = (byte)npc.Nose;

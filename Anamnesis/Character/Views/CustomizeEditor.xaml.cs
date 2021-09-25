@@ -46,7 +46,6 @@ namespace Anamnesis.Character.Views
 
 		public bool HasGender { get; set; }
 		public bool HasFur { get; set; }
-		public bool HasLimbal { get; set; }
 		public bool HasTail { get; set; }
 		public bool HasEars { get; set; }
 		public bool HasMuscles { get; set; }
@@ -165,7 +164,6 @@ namespace Anamnesis.Character.Views
 
 			this.HasFur = this.Customize.Race == AnAppearance.Races.Hrothgar;
 			this.HasTail = this.Customize.Race == AnAppearance.Races.Hrothgar || this.Customize.Race == AnAppearance.Races.Miqote || this.Customize.Race == AnAppearance.Races.AuRa;
-			this.HasLimbal = this.Customize.Race == AnAppearance.Races.AuRa;
 			this.HasEars = this.Customize.Race == AnAppearance.Races.Viera || this.Customize.Race == AnAppearance.Races.Lalafel || this.Customize.Race == AnAppearance.Races.Elezen;
 			this.HasMuscles = !this.HasEars && !this.HasTail;
 			this.HasGender = this.Customize.Race != AnAppearance.Races.Hrothgar && this.Customize.Race != AnAppearance.Races.Viera;

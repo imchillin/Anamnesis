@@ -103,20 +103,30 @@
 						<ColumnDefinition/>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.Eyes}" Minimum="1" Maximum="256" Buttons="True" Margin="2, 2, 12, 2"/>
+					<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.Eyes}" Minimum="1" Maximum="256" Buttons="True" Margin="2, 2, 6, 2"/>
 
-					<controls:ColorControl Grid.Column="1" ToolTip="Left Eye Color" Value="{Binding Customize.LEyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
-					<controls:ColorControl Grid.Column="2" ToolTip="Right Eye Color" Value="{Binding Customize.REyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
-					<controls:ColorControl Grid.Column="3" ToolTip="Limbal Ring Color" Value="{Binding Customize.LimbalEyes}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Visibility="{Binding HasLimbal, Converter={StaticResource B2V}}" Margin="0"/>
+					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_EyeLeft" Value="{Binding Customize.LEyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
+					<controls:ColorControl Grid.Column="2" ToolTipKey="Character_Appearance_EyeRight" Value="{Binding Customize.REyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
 
 				</Grid>
 
 				<!-- Face Type -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="4" Key="Character_Appearance_Face" Style="{StaticResource Label}"/>
-				<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="1" Grid.Row="4" Minimum="1" Maximum="255"  Margin="0, 2, 0, 2" Buttons="True"/>
+				<Grid Grid.Column="1" Grid.Row="4" Margin="0, 2, -1, 2">
+
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="0" Grid.Row="4" Minimum="1" Maximum="255"  Margin="0, 2, 30, 2" Buttons="True"/>
+					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_FacialFeatureColor" Value="{Binding Customize.LimbalEyes}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
+
+				</Grid>
+				
+
 
 				<!-- Facial Features -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="5" Key="Character_Appearance_Features" Style="{StaticResource Label}"/>

@@ -122,6 +122,9 @@
 	"Character_Appearance_Ears": "Ears",
 	"Character_Appearance_Tail": "Tail",
 	"Character_Appearance_Fur": "Fur",
+	"Character_Appearance_EyeLeft": "Left Eye Color",
+	"Character_Appearance_EyeRight": "Right Eye Color",
+	"Character_Appearance_FacialFeatureColor": "Facial Feature Color (Limbal rings)",
 
 	"Character_Equipment_Header": "Equipment",
 	"Character_Equipment_Gear": "Gear",

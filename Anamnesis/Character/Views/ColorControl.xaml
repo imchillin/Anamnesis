@@ -3,21 +3,24 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:Anamnesis.Character.Views"
-			 xmlns:cm3Converters="clr-namespace:Anamnesis.Styles.Converters;assembly=Styles"
-			 xmlns:cm3Controls="clr-namespace:Anamnesis.Styles.Controls;assembly=Styles"
+			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d"
 			 HorizontalAlignment="Left"
 			 SnapsToDevicePixels="True">
-	
-	<Button Height="20" Width="20" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" VerticalAlignment="Center" Background="Transparent">
-		<Border Height="18" Width="18" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1" x:Name="ContentArea">
+
+	<Button Height="22" Width="22" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" VerticalAlignment="Center" Background="Transparent" x:Name="ContentArea">
+		<Button.ToolTip>
+			<xivToolsWpf:TextBlock Key="{Binding ToolTipKey}"/>
+		</Button.ToolTip>
+
+		<Border Height="20" Width="20" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1">
 			<Border.Background>
 				<SolidColorBrush x:Name="PreviewColor" Color="{Binding WpfColor, FallbackValue=White}"/>
 			</Border.Background>
 
 			<!--<TextBlock Text="{Binding Value}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="10"/>-->
 		</Border>
+
 	</Button>
 
 </UserControl>

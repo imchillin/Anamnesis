@@ -63,7 +63,7 @@ namespace Anamnesis.Files
 		public byte? HairTone { get; set; }
 		public byte? Highlights { get; set; }
 		public Customize.FacialFeature? FacialFeatures { get; set; }
-		public byte? LimbalEyes { get; set; }
+		public byte? LimbalEyes { get; set; }	// facial feature color
 		public byte? Eyebrows { get; set; }
 		public byte? LEyeColor { get; set; }
 		public byte? Eyes { get; set; }
@@ -212,7 +212,7 @@ namespace Anamnesis.Files
 			{
 				this.Head = actor.Customize?.Head;
 				this.REyeColor = actor.Customize?.REyeColor;
-				this.LimbalEyes = actor.Customize?.LimbalEyes;
+				this.LimbalEyes = actor.Customize?.FacialFeatureColor;
 				this.FacialFeatures = actor.Customize?.FacialFeatures;
 				this.Eyebrows = actor.Customize?.Eyebrows;
 				this.LEyeColor = actor.Customize?.LEyeColor;
@@ -330,7 +330,7 @@ namespace Anamnesis.Files
 					actor.Customize.FacialFeatures = (Customize.FacialFeature)this.FacialFeatures;
 
 				if (this.LimbalEyes != null)
-					actor.Customize.LimbalEyes = (byte)this.LimbalEyes;
+					actor.Customize.FacialFeatureColor = (byte)this.LimbalEyes;
 
 				if (this.Eyebrows != null)
 					actor.Customize.Eyebrows = (byte)this.Eyebrows;
