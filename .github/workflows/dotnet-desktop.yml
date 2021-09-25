@@ -99,7 +99,7 @@ jobs:
     - name: Zip Release
       uses: TheDoctor0/zip-release@0.6.0
       with:
-        filename: '../release.zip'
+        filename: '../${{ steps.version-date.outputs.formattedTime }}.zip'
         directory: './publish/'
         exclusions: '*.pdb* *.xml*'
         
@@ -107,7 +107,7 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         allowUpdates: true
-        artifacts: "release.zip"
+        artifacts: "${{ steps.version-date.outputs.formattedTime }}.zip"
         name: ${{ steps.version-date.outputs.formattedTime }} (Beta)
         tag: v${{ steps.version-date.outputs.formattedTime }}-beta
         #body: ${{ steps.Changelog.outputs.changelog }}
