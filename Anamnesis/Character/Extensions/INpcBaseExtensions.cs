@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Character
 {
+	using System;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
@@ -18,7 +19,7 @@ namespace Anamnesis.Character
 			file.Tribe = npc.Tribe.Tribe;
 			file.Gender = (Customize.Genders)npc.Gender;
 			file.Age = (Customize.Ages)npc.BodyType;
-			file.Height = (byte)npc.Height;
+			file.Height = (byte)Math.Min(npc.Height, 100);
 			file.Head = (byte)npc.Face;
 			file.Hair = (byte)npc.HairStyle;
 			file.EnableHighlights = npc.EnableHairHighlight;
