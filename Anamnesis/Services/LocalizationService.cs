@@ -29,23 +29,23 @@ namespace Anamnesis.Services
 
 		bool ILocaleProvider.Loaded => Loaded;
 
-		public static void Add(string culture, string key, string value)
+		public static void Add(string culture, string cultureName, string key, string value)
 		{
 			culture = culture.ToUpperInvariant();
 
 			if (!Locales.ContainsKey(culture))
-				Locales.Add(culture, new Locale(culture));
+				Locales.Add(culture, new Locale(culture, cultureName));
 
 			Locale locale = Locales[culture];
 
 			Locales[culture].Add(key, value);
 		}
 
-		public static void Add(string culture, Dictionary<string, string> values)
+		public static void Add(string culture, string cultureName, Dictionary<string, string> values)
 		{
 			foreach ((string key, string value) in values)
 			{
-				Add(culture, key, value);
+				Add(culture, cultureName, key, value);
 			}
 		}
 
@@ -62,7 +62,12 @@ namespace Anamnesis.Services
 				try
 				{
 					Dictionary<string, string> values = SerializerService.Deserialize<Dictionary<string, string>>(json);
-					Add(culture, values);
+
+					string? name;
+					if (!values.TryGetValue("Language", out name))
+						name = culture.ToUpper();
+
+					Add(culture, name, values);
 				}
 				catch (Exception ex)
 				{
@@ -193,10 +198,10 @@ namespace Anamnesis.Services
 
 			private readonly Dictionary<string, string> values = new Dictionary<string, string>();
 
-			public Locale(string culture)
+			public Locale(string culture, string name)
 			{
 				this.Culture = culture;
-				this.Name = culture;
+				this.Name = name;
 			}
 
 			public virtual void Add(string key, string value)

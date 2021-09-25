@@ -1,4 +1,6 @@
 {
+	"Language": "English",
+
 	"Common_OpenFile": "Load",
 	"Common_SaveFile": "Save",
 	"Common_OpenDir": "Open",
