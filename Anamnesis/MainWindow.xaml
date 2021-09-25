@@ -415,14 +415,12 @@
 
 			<Border
 				x:Name="Ftue"
-				Width="350"
-				Margin="10"
-				Padding="6"
+				Width="666"
+				Height="523"
+				Margin="0, 27, 287, 0"
 				VerticalAlignment="Top"
-				Background="{StaticResource MaterialDesignPaper}"
-				BorderBrush="{StaticResource PrimaryHueMidBrush}"
+				Background="{StaticResource MaterialDesignBackground}"
 				BorderThickness="1"
-				CornerRadius="3"
 				Visibility="Collapsed">
 
 				<Grid>
@@ -432,24 +430,37 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<XivToolsWpf:TextBlock
-						Key="FTUE_Message"
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+
+					<ScrollViewer 
 						Grid.Row="0"
-						Margin="32,0,0,10"
-						AllLanguages="True"
-						TextWrapping="Wrap" />
+						Grid.Column="1">
+						
+						<XivToolsWpf:TextBlock
+							Key="FTUE_Message"
+							AllLanguages="True"
+							TextWrapping="Wrap"
+							Margin="12"/>
+					</ScrollViewer>
+					
 					<Button
 						Grid.Row="1"
 						Width="75"
 						HorizontalAlignment="Right"
 						Click="OnFtueOkClicked"
 						Content="OK"
-						Style="{StaticResource TransparentButton}" />
+						Style="{StaticResource TransparentButton}"
+						Grid.Column="2"
+						Margin="6"/>
 
 					<Image
 						Grid.RowSpan="2"
+						Grid.Column="0"
+						Margin="10, 10, 0, 0"
 						Width="64"
-						Margin="-32,-28,0,0"
 						HorizontalAlignment="Left"
 						VerticalAlignment="Top"
 						Source=".\Assets\Hydaelyn.png" />

@@ -78,6 +78,7 @@ namespace Anamnesis.Services
 				{
 					Log.Warning(ex, "Failed to load settings");
 					await GenericDialog.Show("Failed to load Settings. Your settings have been reset.", "Error", MessageBoxButton.OK);
+					this.FirstTimeUser = true;
 					this.Settings = new Settings();
 					Save();
 				}
