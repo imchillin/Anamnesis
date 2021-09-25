@@ -238,8 +238,14 @@ namespace Anamnesis.Files
 				path += "." + result.Info.Extension;
 				result.Path = path;
 
-				////using FileStream stream = new FileStream(path, FileMode.Create);
-				////info.SerializeFile(file, stream);
+				string? dir = Path.GetDirectoryName(path);
+				if (dir == null)
+					throw new Exception("No directory in save path");
+
+				if (!Directory.Exists(dir))
+				{
+					Directory.CreateDirectory(dir);
+				}
 			}
 			catch (Exception ex)
 			{
