@@ -74,7 +74,7 @@
 								<TextBlock.Text>
 									<MultiBinding StringFormat="{}{0} ({1})">
 										<Binding Path="DisplayName" />
-										<Binding Path="Kind" />
+										<Binding Path="ObjectKind" />
 									</MultiBinding>
 								</TextBlock.Text>
 							</TextBlock>

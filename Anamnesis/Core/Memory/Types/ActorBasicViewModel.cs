@@ -7,6 +7,8 @@ namespace Anamnesis.Memory
 	using System.Collections.Generic;
 	using System.Reflection;
 	using Anamnesis.Core.Memory;
+	using Anamnesis.Styles;
+	using FontAwesome.Sharp;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
@@ -22,6 +24,7 @@ namespace Anamnesis.Memory
 		[ModelField] public byte[]? NameBytes { get; set; }
 		[ModelField] public int DataId { get; set; }
 		[ModelField] [Refresh] public ActorTypes ObjectKind { get; set; }
+
 		[ModelField] public byte SubKind { get; set; }
 		[ModelField] public byte DistanceFromPlayerX { get; set; }
 		[ModelField] public byte DistanceFromPlayerY { get; set; }
@@ -32,6 +35,7 @@ namespace Anamnesis.Memory
 
 		public string Id => this.Name + this.DataId;
 		public string Name => SeString.FromSeStringBytes(this.NameBytes);
+		public IconChar Icon => this.ObjectKind.GetIcon();
 
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
 
