@@ -30,15 +30,20 @@ namespace Anamnesis
 		public ActorViewModel? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
-		public static async Task PinActor(ActorViewModel actor)
+		public static async Task PinActor(ActorBasicViewModel basicActor)
 		{
+			if (basicActor.Pointer == null)
+				return;
+
 			foreach (PinnedActor otherActor in Instance.PinnedActors)
 			{
-				if (actor.Pointer == otherActor.Pointer)
+				if (basicActor.Pointer == otherActor.Pointer)
 				{
 					return;
 				}
 			}
+
+			ActorViewModel actor = new ActorViewModel((IntPtr)basicActor.Pointer);
 
 			// Mannequins and housing NPC's get actor type changed, but squadron members and lawn retainers do not.
 			if (actor.ObjectKind == ActorTypes.EventNpc && actor.DataId != 1011832)
@@ -85,7 +90,7 @@ namespace Anamnesis
 			}
 		}
 
-		public static bool IsPinned(ActorViewModel actor)
+		public static bool IsPinned(ActorBasicViewModel actor)
 		{
 			foreach (PinnedActor pinned in Instance.PinnedActors)
 			{
@@ -98,7 +103,7 @@ namespace Anamnesis
 			return false;
 		}
 
-		public static List<ActorViewModel> GetAllActors()
+		public static List<ActorBasicViewModel> GetAllActors()
 		{
 			int count = 0;
 			IntPtr startAddress;
@@ -115,7 +120,7 @@ namespace Anamnesis
 				startAddress = AddressService.ActorTable;
 			}
 
-			List<ActorViewModel> results = new List<ActorViewModel>();
+			List<ActorBasicViewModel> results = new();
 			for (int i = 0; i < count; i++)
 			{
 				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
@@ -123,7 +128,7 @@ namespace Anamnesis
 				if (ptr == IntPtr.Zero)
 					continue;
 
-				results.Add(new ActorViewModel(ptr));
+				results.Add(new ActorBasicViewModel(ptr));
 			}
 
 			return results;
@@ -133,7 +138,7 @@ namespace Anamnesis
 		{
 			await base.Start();
 
-			List<ActorViewModel> allaCtors = GetAllActors();
+			List<ActorBasicViewModel> allaCtors = GetAllActors();
 
 			if (allaCtors.Count > 0)
 			{
@@ -322,12 +327,12 @@ namespace Anamnesis
 					if (this.viewModel != null)
 						this.viewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
 
-					foreach (ActorViewModel actor in TargetService.GetAllActors())
+					foreach (ActorBasicViewModel actor in TargetService.GetAllActors())
 					{
 						if (actor.Id != this.Id || actor.Pointer == null)
 							continue;
 
-						this.viewModel = actor;
+						this.viewModel = new ActorViewModel((IntPtr)actor.Pointer);
 						this.Name = this.viewModel.Name;
 						this.viewModel.OnRetargeted();
 						this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;

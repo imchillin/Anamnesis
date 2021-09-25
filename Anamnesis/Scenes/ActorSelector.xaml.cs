@@ -69,7 +69,7 @@ namespace Anamnesis.Scenes
 			}
 
 			public string? Identifier => this.SceneActor.Identifier;
-			public List<ActorViewModel> AllActors => TargetService.GetAllActors();
+			public List<ActorBasicViewModel> AllActors => TargetService.GetAllActors();
 
 			public TargetService.PinnedActor? Actor { get; set; }
 		}

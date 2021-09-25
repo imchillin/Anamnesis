@@ -73,7 +73,7 @@ namespace Anamnesis.Views
 		{
 			this.Close?.Invoke();
 
-			ActorViewModel? actor = this.Selector.Value as ActorViewModel;
+			ActorBasicViewModel? actor = this.Selector.Value as ActorBasicViewModel;
 
 			if (actor == null)
 				return;
@@ -93,7 +93,7 @@ namespace Anamnesis.Views
 
 		private bool OnFilter(object obj, string[]? search = null)
 		{
-			if (obj is ActorViewModel actor)
+			if (obj is ActorBasicViewModel actor)
 			{
 				if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Name, search))
 					return false;

@@ -4,41 +4,27 @@
 namespace Anamnesis.Memory
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Reflection;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
-	using Anamnesis.Core.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
-	public class ActorViewModel : MemoryViewModelBase<Actor>
+	public class ActorViewModel : ActorBasicViewModel
 	{
 		private const short RefreshDelay = 250;
-
-		private static readonly Dictionary<string, string> NicknameLookup = new Dictionary<string, string>();
 
 		private short refreshDelay;
 		private Task? refreshTask;
 		private IntPtr? wasPlayerBeforeGPose;
 
 		public ActorViewModel(IntPtr pointer)
-			: base(pointer, null)
+			: base(pointer)
 		{
 		}
 
-		[ModelField] public byte[]? NameBytes { get; set; }
-		[ModelField] public int DataId { get; set; }
-		[ModelField] [Refresh] public ActorTypes ObjectKind { get; set; }
-		[ModelField] public byte SubKind { get; set; }
-		[ModelField] public byte DistanceFromPlayerX { get; set; }
-		[ModelField] public byte DistanceFromPlayerY { get; set; }
 		[ModelField] [Refresh] public CustomizeViewModel? Customize { get; set; }
-		[ModelField] [Refresh] public int ModelType { get; set; }
-		[ModelField] public bool IsAnimating { get; set; }
-		[ModelField] [Refresh] public RenderModes RenderMode { get; set; }
-		[ModelField] public float Transparency { get; set; }
 		[ModelField] [Refresh] public EquipmentViewModel? Equipment { get; set; }
 		[ModelField] [Refresh] public WeaponViewModel? MainHand { get; set; }
 		[ModelField] [Refresh] public WeaponViewModel? OffHand { get; set; }
@@ -48,63 +34,10 @@ namespace Anamnesis.Memory
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
 
-		public string Id => this.Name + this.DataId;
-		public string Name => SeString.FromSeStringBytes(this.NameBytes);
-
-		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
-
-		[AlsoNotifyFor(nameof(ActorViewModel.DisplayName))]
-		public string? Nickname
+		public override void OnRetargeted()
 		{
-			get
-			{
-				if (NicknameLookup.ContainsKey(this.Id))
-					return NicknameLookup[this.Id];
+			base.OnRetargeted();
 
-				return null;
-			}
-
-			set
-			{
-				if (value == null)
-				{
-					if (NicknameLookup.ContainsKey(this.Id))
-					{
-						NicknameLookup.Remove(this.Id);
-					}
-				}
-				else
-				{
-					if (!NicknameLookup.ContainsKey(this.Id))
-						NicknameLookup.Add(this.Id, string.Empty);
-
-					NicknameLookup[this.Id] = value;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets the Nickname or if not set, the Name.
-		/// </summary>
-		public string DisplayName
-		{
-			get
-			{
-				if (this.Nickname == null)
-					return this.Name;
-
-				return this.Nickname;
-			}
-		}
-
-		public int ObjectKindInt
-		{
-			get => (int)this.ObjectKind;
-			set => this.ObjectKind = (ActorTypes)value;
-		}
-
-		public void OnRetargeted()
-		{
 			if (this.Customize == null)
 				return;
 
@@ -148,15 +81,6 @@ namespace Anamnesis.Memory
 			{
 				this.refreshTask = Task.Run(this.RefreshTask);
 			}
-		}
-
-		public void SetObjectKindDirect(ActorTypes type, IntPtr? actorPointer)
-		{
-			if (actorPointer == null)
-				return;
-
-			IntPtr objectKindPointer = ((IntPtr)actorPointer) + Actor.ObjectKindOffset;
-			MemoryService.Write(objectKindPointer, (byte)type, "Set ObjectKind Direct");
 		}
 
 		/// <summary>
