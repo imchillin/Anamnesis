@@ -69,7 +69,7 @@ namespace Anamnesis.Updater
 				// Bump the published time down by a few hours to account for release upload times.
 				published = published.AddHours(-4);
 
-				bool update = this.currentRelease.Published != null && published > VersionInfo.Date;
+				bool update = published > VersionInfo.Date;
 
 				if (update)
 				{
