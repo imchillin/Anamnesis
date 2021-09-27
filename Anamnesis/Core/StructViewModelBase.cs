@@ -19,7 +19,7 @@ namespace Anamnesis
 	public abstract class StructViewModelBase : IStructViewModel, INotifyPropertyChanged
 	{
 		protected object model;
-		private readonly Dictionary<string, (PropertyInfo, FieldInfo)> binds = new Dictionary<string, (PropertyInfo, FieldInfo)>();
+		private readonly Dictionary<string, BindInfo> binds = new Dictionary<string, BindInfo>();
 		private bool suppressViewToModelEvents = false;
 
 		public StructViewModelBase()
@@ -44,7 +44,9 @@ namespace Anamnesis
 					continue;
 				}
 
-				this.binds.Add(name, (property, modelField));
+				BindInfo bind = new BindInfo(property, modelField);
+
+				this.binds.Add(name, bind);
 			}
 
 			this.PropertyChanged += this.OnThisPropertyChanged;
@@ -123,9 +125,22 @@ namespace Anamnesis
 
 		public virtual void Import(object model)
 		{
-			foreach ((PropertyInfo viewModelProperty, FieldInfo modelField) in this.binds.Values)
+			// Import properties that are not view models first
+			foreach (BindInfo bind in this.binds.Values)
 			{
-				viewModelProperty.SetValue(this, modelField.GetValue(model));
+				if (bind.IsViewModel)
+					continue;
+
+				bind.ViewModelProperty.SetValue(this, bind.ModelField.GetValue(model));
+			}
+
+			// Import properties that are view models last
+			foreach (BindInfo bind in this.binds.Values)
+			{
+				if (!bind.IsViewModel)
+					continue;
+
+				bind.ViewModelProperty.SetValue(this, bind.ModelField.GetValue(model));
 			}
 		}
 
@@ -141,9 +156,23 @@ namespace Anamnesis
 
 			bool changed = false;
 			this.suppressViewToModelEvents = true;
-			foreach ((PropertyInfo viewModelProperty, FieldInfo modelField) in this.binds.Values)
+
+			// Update properties that are not view models first
+			foreach (BindInfo bind in this.binds.Values)
 			{
-				changed |= this.HandleModelToViewUpdate(viewModelProperty, modelField);
+				if (bind.IsViewModel)
+					continue;
+
+				changed |= this.HandleModelToViewUpdate(bind.ViewModelProperty, bind.ModelField);
+			}
+
+			// Update properties that are view models last
+			foreach (BindInfo bind in this.binds.Values)
+			{
+				if (!bind.IsViewModel)
+					continue;
+
+				changed |= this.HandleModelToViewUpdate(bind.ViewModelProperty, bind.ModelField);
 			}
 
 			this.suppressViewToModelEvents = false;
@@ -333,12 +362,26 @@ namespace Anamnesis
 			if (!this.binds.ContainsKey(e.PropertyName))
 				return;
 
-			(PropertyInfo viewModelProperty, FieldInfo modelField) = this.binds[e.PropertyName];
-			bool changed = this.HandleViewToModelUpdate(viewModelProperty, modelField);
+			BindInfo bind = this.binds[e.PropertyName];
+			bool changed = this.HandleViewToModelUpdate(bind.ViewModelProperty, bind.ModelField);
 
 			if (changed)
 			{
 				this.ViewModelChanged?.Invoke(this);
+			}
+		}
+
+		private class BindInfo
+		{
+			public readonly PropertyInfo ViewModelProperty;
+			public readonly FieldInfo ModelField;
+			public readonly bool IsViewModel;
+
+			public BindInfo(PropertyInfo viewModelProperty, FieldInfo modelField)
+			{
+				this.ViewModelProperty = viewModelProperty;
+				this.ModelField = modelField;
+				this.IsViewModel = typeof(IStructViewModel).IsAssignableFrom(viewModelProperty.PropertyType);
 			}
 		}
 	}
