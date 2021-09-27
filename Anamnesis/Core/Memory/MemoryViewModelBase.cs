@@ -324,7 +324,9 @@ namespace Anamnesis.Memory
 					}
 					catch (Exception ex)
 					{
-						Log.Warning(ex, $"Failed to create view model and read memory for property: {viewModelProperty.Name} in {this}");
+						// This is normal for memory that has somethign resembling an address but is not a valid object
+						// for example, monsters do not have weapons.
+						Log.Verbose(ex, $"Failed to create view model and read memory for property: {viewModelProperty.Name} in {this}");
 						return true;
 					}
 
