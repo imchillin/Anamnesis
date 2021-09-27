@@ -171,16 +171,8 @@ namespace Anamnesis.Memory
 			if (!force && !this.MemoryMode.HasFlag(MemoryModes.Read))
 				return false;
 
-			////try
-			////{
 			object? model = MemoryService.Read((IntPtr)this.Pointer, this.GetModelType());
 			this.SetModel(model);
-			/*}
-			catch (Exception ex)
-			{
-				Log.Verbose(ex, "Failed to read " + this.Path);
-				return false;
-			}*/
 
 			return true;
 		}
@@ -310,25 +302,13 @@ namespace Anamnesis.Memory
 					vm = (IMemoryViewModel)lhs;
 
 					if (vm.Pointer == desiredPointer)
-					{
 						return false;
-					}
 
 					vm.Pointer = desiredPointer;
 				}
 				else
 				{
-					try
-					{
-						lhs = Activator.CreateInstance(viewModelProperty.PropertyType, desiredPointer, this) as IMemoryViewModel;
-					}
-					catch (Exception ex)
-					{
-						// This is normal for memory that has somethign resembling an address but is not a valid object
-						// for example, monsters do not have weapons.
-						Log.Verbose(ex, $"Failed to create view model and read memory for property: {viewModelProperty.Name} in {this}");
-						return true;
-					}
+					lhs = Activator.CreateInstance(viewModelProperty.PropertyType, desiredPointer, this) as IMemoryViewModel;
 
 					if (lhs == null)
 						throw new Exception($"Failed to create instance of view model: {viewModelProperty.PropertyType}");
