@@ -106,8 +106,8 @@ namespace Anamnesis.Memory
 			// for the refresh without the rest of the model's values, as writing most of the other
 			// values will crash the game.
 			IntPtr actorPointer = (IntPtr)this.Pointer;
-			IntPtr objectKindPointer = actorPointer + Actor.ObjectKindOffset;
-			IntPtr renderModePointer = actorPointer + Actor.RenderModeOffset;
+			IntPtr objectKindPointer = actorPointer + this.ObjectKindOffset;
+			IntPtr renderModePointer = actorPointer + this.RenderModeOffset;
 
 			if (this.ObjectKind == ActorTypes.Player)
 			{
@@ -135,24 +135,30 @@ namespace Anamnesis.Memory
 
 		public async Task ConvertToPlayer()
 		{
-			if (this.ObjectKind == ActorTypes.EventNpc)
-			{
-				this.ObjectKind = ActorTypes.Player;
-				await this.RefreshAsync();
+			if (this.Pointer == null)
+				return;
 
-				if (this.ModelType != 0)
-				{
-					this.ModelType = 0;
-				}
-			}
+			this.MemoryMode = MemoryModes.None;
+
+			IntPtr actorPointer = (IntPtr)this.Pointer;
+			IntPtr objectKindPointer = actorPointer + this.ObjectKindOffset;
+			IntPtr modelTypePointer = actorPointer + this.ModelTypeOffset;
 
 			// Carbuncles get model type set to player (but not actor type!)
 			if (this.ObjectKind == ActorTypes.BattleNpc && (this.ModelType == 409 || this.ModelType == 410 || this.ModelType == 412))
 			{
-				this.ModelType = 0;
+				MemoryService.Write(modelTypePointer, 0, "Convert to player");
 			}
 
+			this.MemoryMode = MemoryModes.ReadWrite;
+
 			await DefaultCharacterFile.Default.Apply(this, Files.CharacterFile.SaveModes.All);
+
+			if (this.ObjectKind == ActorTypes.EventNpc)
+			{
+				MemoryService.Write(objectKindPointer, (byte)ActorTypes.Player, "Convert to player");
+				await this.RefreshAsync();
+			}
 		}
 
 		protected override void OnViewToModel(string fieldName, object? value)
