@@ -109,7 +109,7 @@ namespace Anamnesis.Files
 					}
 					catch (Exception ex)
 					{
-						Log.Error(ex, "Failed to get file information");
+						Log.Error(ex, $"Failed to get file information for file: {Paths.GetFileName(filePath)}");
 					}
 				}
 			}
