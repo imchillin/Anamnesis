@@ -238,7 +238,7 @@ namespace Anamnesis
 				}
 				catch (Exception ex)
 				{
-					Log.Error("Failed to tick selected actor", ex);
+					Log.Error(ex, "Failed to tick selected actor");
 				}
 			}
 		}
