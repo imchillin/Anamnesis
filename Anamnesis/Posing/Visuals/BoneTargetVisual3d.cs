@@ -62,7 +62,7 @@ namespace Anamnesis.Posing.Visuals
 
 			this.viewportTransform.Rotation = owner.Billboard;
 
-			double scale = (owner.CameraDistance * 0.02) - 0.02;
+			double scale = (owner.CameraDistance * 0.015) - 0.02;
 			scale = Math.Clamp(scale, 0.02, 10);
 			this.viewportTransform.UniformScale = scale;
 		}

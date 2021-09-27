@@ -197,11 +197,10 @@ namespace Anamnesis.PoseModule.Views
 				this.CameraRotation = CameraService.Instance.Camera.Rotation3d;
 
 				// Update the billboard rotation
-				Vector3D angle = this.CameraRotation.ToEulerAngles();
-				angle.Y -= 45;
-				angle.Y += 180;
-				angle.Z = -angle.Z;
-				this.Billboard = angle.ToQuaternion();
+				Quaternion flip = new Quaternion(new Vector3D(0, 1, 0), 180);
+				Quaternion angle = this.CameraRotation;
+				angle *= flip;
+				this.Billboard = angle;
 
 				// Apply camera rotation
 				QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotaion.Rotation;
