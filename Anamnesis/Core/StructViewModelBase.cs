@@ -7,6 +7,7 @@ namespace Anamnesis
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Reflection;
+	using System.Runtime.InteropServices;
 	using System.Text;
 	using Anamnesis.Memory;
 	using PropertyChanged;
@@ -182,6 +183,41 @@ namespace Anamnesis
 				return default;
 
 			return this.Parent.GetParent<TParent>();
+		}
+
+		public int GetOffset(string propertyName)
+		{
+			PropertyInfo? property = this.GetType().GetProperty(propertyName);
+			if (property == null)
+				throw new Exception($"view model: {this.GetType()} does not contain property: {propertyName}");
+
+			return this.GetOffset(property);
+		}
+
+		public int GetOffset(PropertyInfo viewModelProperty)
+		{
+			ModelFieldAttribute? modelFielAttribute = viewModelProperty.GetCustomAttribute<ModelFieldAttribute>();
+
+			if (modelFielAttribute == null)
+				throw new Exception("Attempt to get offset for property that is not a model field binding");
+
+			Type modelType = this.GetModelType();
+			FieldInfo? modelField = modelType.GetField(viewModelProperty.Name);
+
+			if (modelField == null)
+				throw new Exception($"Model: {modelType} does not have field: {viewModelProperty.Name}");
+
+			return this.GetOffset(modelField);
+		}
+
+		public int GetOffset(FieldInfo modelField)
+		{
+			FieldOffsetAttribute? offsetAttribute = modelField.GetCustomAttribute<FieldOffsetAttribute>();
+
+			if (offsetAttribute == null)
+				throw new NotImplementedException($"Attempt to get offset for model: {this.GetModelType()} field: {modelField.Name} that does not have an explicit offset. This is not supported.");
+
+			return offsetAttribute.Value;
 		}
 
 		void IStructViewModel.RaisePropertyChanged(string propertyName)

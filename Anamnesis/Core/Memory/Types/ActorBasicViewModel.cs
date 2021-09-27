@@ -39,6 +39,10 @@ namespace Anamnesis.Memory
 
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
 
+		public int ObjectKindOffset => this.GetOffset(nameof(this.ObjectKind));
+		public int RenderModeOffset => this.GetOffset(nameof(this.RenderMode));
+		public int ModelTypeOffset => this.GetOffset(nameof(this.ModelType));
+
 		[AlsoNotifyFor(nameof(ActorViewModel.DisplayName))]
 		public string? Nickname
 		{
@@ -98,7 +102,7 @@ namespace Anamnesis.Memory
 			if (actorPointer == null)
 				return;
 
-			IntPtr objectKindPointer = ((IntPtr)actorPointer) + Actor.ObjectKindOffset;
+			IntPtr objectKindPointer = ((IntPtr)actorPointer) + this.ObjectKindOffset;
 			MemoryService.Write(objectKindPointer, (byte)type, "Set ObjectKind Direct");
 		}
 
