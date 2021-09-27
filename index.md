@@ -1,4 +1,4 @@
-## Getting started
+# The Anamnesis Quick Start Guide
 
 - Make sure you're running the latest version of the [**.NET Desktop Runtime v5.0.9 x64**](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.9-windows-x64-installer)
     - Doublecheck you've gotten the right one! If the link here doesn't take you directly to the right file, you can locate the correct one here!
@@ -9,7 +9,7 @@
 ![Image](https://cdn.discordapp.com/attachments/748603327373377676/850317503631720488/unknown.png)
 
 - Extract the archive to your location of choice
-    - Please make sure you extract __everything__! Each file and folder in the archive is needed to make the tool work!
+    - Please make sure you extract __EVERYTHING__! Each file and folder in the archive is needed to make the tool work!
 - Log into the game
 
 - Run `Anamnesis.exe`
