@@ -5,45 +5,14 @@ namespace Anamnesis.Files
 {
 	using System;
 	using System.IO;
-	using System.Text;
-	using System.Text.RegularExpressions;
-	using System.Threading.Tasks;
-	using Anamnesis.Files.Infos;
-	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
-	using Anamnesis.Services;
-	using Paths = System.IO.Path;
-
-	#pragma warning disable SA1402, SA1649
-	public class DatCharacterFileInfo : FileInfoBase<DatCharacterFile>
-	{
-		public override string Extension => "dat";
-		public override string Name => "Ffxiv Character appearance save";
-		public override IFileSource[] FileSources => new[] { new DatFileSource() };
-
-		protected override DatCharacterFile Deserialize(Stream stream)
-		{
-			DatCharacterFile file = new DatCharacterFile();
-
-			using BinaryReader reader = new BinaryReader(stream);
-
-			stream.Seek(0x10, SeekOrigin.Begin);
-			file.Data = reader.ReadBytes(26);
-
-			stream.Seek(0x30, SeekOrigin.Begin);
-
-			return file;
-		}
-
-		protected override void Serialize(DatCharacterFile file, Stream stream)
-		{
-			throw new NotSupportedException();
-		}
-	}
 
 	public class DatCharacterFile : FileBase
 	{
 		public byte[]? Data;
+
+		public override string FileExtension => ".dat";
+		public override string TypeName => "Ffxiv Character appearance save";
 
 		public CharacterFile Upgrade()
 		{
@@ -77,6 +46,25 @@ namespace Anamnesis.Files
 			file.Bust = this.Data[23];
 			file.FacePaint = this.Data[24];
 			file.FacePaintColor = this.Data[25];
+			return file;
+		}
+
+		public override void Serialize(Stream stream)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override FileBase Deserialize(Stream stream)
+		{
+			DatCharacterFile file = new DatCharacterFile();
+
+			using BinaryReader reader = new BinaryReader(stream);
+
+			stream.Seek(0x10, SeekOrigin.Begin);
+			file.Data = reader.ReadBytes(26);
+
+			stream.Seek(0x30, SeekOrigin.Begin);
+
 			return file;
 		}
 	}

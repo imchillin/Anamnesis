@@ -14,13 +14,10 @@ namespace Anamnesis.GUI.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using Anamnesis.Files;
-	using Anamnesis.Files.Infos;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using XivToolsWpf;
-	using static Anamnesis.Files.IFileSource;
 
 	using SearchUtility = Anamnesis.SearchUtility;
 
@@ -30,64 +27,41 @@ namespace Anamnesis.GUI.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
 	{
-		private static readonly Stack<IFileSource.IDirectory> CurrentPathValue = new Stack<IFileSource.IDirectory>();
-		private static IFileSource? currentFileSource;
 		private static bool isFlattened;
 		private static Sort sortMode;
 
-		private readonly FileInfoBase[] fileInfos;
 		private readonly Modes mode;
 		private string? fileName;
 		private EntryWrapper? selected;
 		private bool updatingEntries = false;
+		private DirectoryInfo currentDir;
 
-		public FileBrowserView(FileInfoBase fileInfo, Modes mode)
-			: this(new[] { fileInfo }, mode)
+		public FileBrowserView(DirectoryInfo[] directories, string defaultName, Modes mode)
+			: this(directories[0], defaultName, mode)
 		{
-			Type? optionsType = mode == Modes.Load ? fileInfo.LoadOptionsViewType : fileInfo.SaveOptionsViewType;
-			if (optionsType != null)
+			foreach (DirectoryInfo dir in directories)
 			{
-				this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsType);
+				this.FileSources.Add(dir);
 			}
-
-			this.SelectButton.Text = mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
-			this.Selector.SearchEnabled = mode == Modes.Load;
 		}
 
-		public FileBrowserView(FileInfoBase[] fileInfos, Modes mode)
+		public FileBrowserView(DirectoryInfo baseDirectory, string defaultName, Modes mode)
 		{
 			this.mode = mode;
-			this.fileInfos = fileInfos;
+			this.BaseDir = baseDirectory;
+			this.currentDir = baseDirectory;
+
 			this.InitializeComponent();
 
-			this.SelectButton.Text = mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
 			this.Selector.SearchEnabled = mode == Modes.Load;
 
 			this.ContentArea.DataContext = this;
-
-			foreach (FileInfoBase info in fileInfos)
-			{
-				IFileSource[]? sources = info.GetFileSources();
-
-				if (sources == null)
-					continue;
-
-				foreach (IFileSource source in sources)
-				{
-					if (this.FileSources.Contains(source))
-						continue;
-
-					this.FileSources.Add(source);
-				}
-			}
-
-			this.FileSource = this.GetDefaultFileSource();
 
 			this.IsOpen = true;
 
 			if (this.mode == Modes.Save)
 			{
-				this.FileName = "New " + fileInfos[0].Name;
+				this.FileName = "New " + defaultName;
 
 				Task.Run(async () =>
 				{
@@ -104,12 +78,6 @@ namespace Anamnesis.GUI.Views
 			this.PropertyChanged?.Invoke(this, new(nameof(FileBrowserView.SortMode)));
 
 			Task.Run(this.UpdateEntries);
-
-			Type? optionsType = mode == Modes.Load ? fileInfos[0].LoadOptionsViewType : fileInfos[0].SaveOptionsViewType;
-			if (optionsType != null)
-			{
-				this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsType);
-			}
 		}
 
 		public event DrawerEvent? Close;
@@ -135,12 +103,6 @@ namespace Anamnesis.GUI.Views
 			private set;
 		}
 
-		public bool ShowOptions
-		{
-			get => SettingsService.Current.ShowAdvancedOptions;
-			set => SettingsService.Current.ShowAdvancedOptions = value;
-		}
-
 		public int SortModeInt
 		{
 			get => (int)this.SortMode;
@@ -157,60 +119,22 @@ namespace Anamnesis.GUI.Views
 			}
 		}
 
+		public ObservableCollection<DirectoryInfo> FileSources { get; } = new ObservableCollection<DirectoryInfo>();
+
 		public string? FilePath { get; private set; }
 		public bool UseFileBrowser { get; set; }
-		public UserControl? OptionsControl { get; set; }
-
-		public ObservableCollection<IFileSource> FileSources { get; private set; } = new ObservableCollection<IFileSource>();
 
 		public EntryWrapper? Selected
 		{
-			get
-			{
-				return this.selected;
-			}
+			get => this.selected;
 
 			set
 			{
 				this.selected = value;
 
-				if (this.mode == Modes.Save && this.selected?.Entry is IFile)
+				if (this.mode == Modes.Save && this.selected?.Entry is FileInfo)
 				{
 					this.FileName = this.selected?.Name ?? string.Empty;
-				}
-
-				if (this.selected != null && this.selected.Entry is IDirectory)
-				{
-					this.SelectButton.Text = LocalizationService.GetString("Common_OpenDir");
-				}
-				else
-				{
-					this.SelectButton.Text = this.mode == Modes.Load ? LocalizationService.GetString("Common_OpenFile") : LocalizationService.GetString("Common_SaveFile");
-				}
-
-				// show the options panel for the selected file type
-				if (this.selected != null && this.selected.Entry is IFile file)
-				{
-					FileInfoBase? fileType = file.Type;
-					Type? optionsViewType = this.mode == Modes.Load ? fileType?.LoadOptionsViewType : fileType?.SaveOptionsViewType;
-
-					if (this.OptionsControl == null && optionsViewType == null)
-						return;
-
-					if (this.OptionsControl?.GetType() == optionsViewType)
-						return;
-
-					if (optionsViewType == null)
-					{
-						this.OptionsControl = null;
-						return;
-					}
-
-					this.OptionsControl = (UserControl?)Activator.CreateInstance(optionsViewType);
-				}
-				else
-				{
-					////this.OptionsControl = null;
 				}
 			}
 		}
@@ -239,85 +163,28 @@ namespace Anamnesis.GUI.Views
 			{
 				this.fileName = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanSelect)));
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanSelectAdvanced)));
 			}
 		}
 
-		public string FileExtension
+		public bool ShowFileName => this.mode == Modes.Save;
+		public bool CanGoUp => this.CurrentDir != this.BaseDir;
+		public string? CurrentPath => this.CurrentDir?.FullName.Replace(this.BaseDir.FullName.Trim('\\'), string.Empty);
+		public bool IsModeOpen => this.mode == Modes.Load;
+
+		public DirectoryInfo BaseDir { get; set; }
+
+		public DirectoryInfo CurrentDir
 		{
-			get
-			{
-				return "." + this.fileInfos[0].Extension;
-			}
-		}
+			get => this.currentDir;
 
-		public IFileSource? FileSource
-		{
-			get
-			{
-				return currentFileSource;
-			}
-			set
-			{
-				if (value == null)
-					return;
-
-				currentFileSource = value;
-				CurrentPathValue.Clear();
-				this.CurrentDir = value?.GetDefaultDirectory();
-			}
-		}
-
-		public bool CanGoUp
-		{
-			get
-			{
-				return CurrentPathValue.Count > 1;
-			}
-		}
-
-		public string CurrentPath
-		{
-			get
-			{
-				string str = string.Empty;
-				foreach (IFileSource.IDirectory dir in CurrentPathValue.Reverse())
-				{
-					str += dir.Name + "/";
-				}
-
-				return str;
-			}
-		}
-
-		public IFileSource.IDirectory? CurrentDir
-		{
-			get
-			{
-				if (CurrentPathValue.Count <= 0)
-					return null;
-
-				return CurrentPathValue.Peek();
-			}
 			private set
 			{
-				if (value == null)
-					return;
-
-				CurrentPathValue.Push(value);
+				this.currentDir = value;
 
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanGoUp)));
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentPath)));
 				Task.Run(this.UpdateEntries);
 				this.Selected = null;
-			}
-		}
-
-		public bool ShowFileName
-		{
-			get
-			{
-				return this.mode == Modes.Save;
 			}
 		}
 
@@ -331,28 +198,7 @@ namespace Anamnesis.GUI.Views
 				}
 				else
 				{
-					if (this.FileSource?.CanWrite != true)
-						return false;
-
-					return this.CurrentDir != null && !string.IsNullOrWhiteSpace(this.FileName);
-				}
-			}
-		}
-
-		public bool CanSelectAdvanced
-		{
-			get
-			{
-				if (!this.CanSelect)
-					return false;
-
-				if (this.mode == Modes.Load)
-				{
-					return true;
-				}
-				else
-				{
-					return true; //// this.fileInfos[0].SupportsAdvancedMode;
+					return !string.IsNullOrWhiteSpace(this.FileName);
 				}
 			}
 		}
@@ -361,52 +207,32 @@ namespace Anamnesis.GUI.Views
 		{
 		}
 
-		/// <summary>
-		/// Gets the last used file source if it is available, else returns "Local Files" or first source.
-		/// </summary>
-		private IFileSource GetDefaultFileSource()
-		{
-			if (currentFileSource != null)
-			{
-				foreach (IFileSource source in this.FileSources)
-				{
-					if (source == currentFileSource)
-					{
-						return source;
-					}
-				}
-			}
-
-			if (this.FileSources == null || this.FileSources.Count <= 0)
-				throw new Exception("No file sources");
-
-			foreach (IFileSource source in this.FileSources)
-			{
-				// Bit of a hack, but always prefer the anamnesis file source if its available
-				if (source.Name == "Local Files")
-				{
-					return source;
-				}
-			}
-
-			return this.FileSources[0];
-		}
-
 		private async Task UpdateEntries()
 		{
-			if (this.FileSource == null || this.CurrentDir == null)
-				return;
-
 			while (this.updatingEntries)
 				await Task.Delay(10);
 
 			this.updatingEntries = true;
-			IEnumerable<IFileSource.IEntry> entries = await this.FileSource.GetEntries(this.CurrentDir, this.IsFlattened, this.fileInfos);
+
 			this.Selector.ClearItems();
 
-			foreach (IFileSource.IEntry entry in entries)
+			EnumerationOptions op = new EnumerationOptions();
+			op.RecurseSubdirectories = this.IsFlattened;
+			op.ReturnSpecialDirectories = false;
+
+			if (!this.IsFlattened)
 			{
-				this.Selector.AddItem(new EntryWrapper(entry, this));
+				DirectoryInfo[] directories = this.CurrentDir.GetDirectories("*", op);
+				foreach (DirectoryInfo dir in directories)
+				{
+					this.Selector.AddItem(new EntryWrapper(dir, this));
+				}
+			}
+
+			FileInfo[] files = this.CurrentDir.GetFiles("*.*", op);
+			foreach (FileInfo file in files)
+			{
+				this.Selector.AddItem(new EntryWrapper(file, this));
 			}
 
 			this.Selector.FilterItems();
@@ -418,12 +244,12 @@ namespace Anamnesis.GUI.Views
 			if (this.Selected == null)
 				return;
 
-			if (this.Selected.Entry is IFileSource.IDirectory directory)
+			if (this.Selected.Entry is DirectoryInfo directory)
 			{
 				this.CurrentDir = directory;
 				return;
 			}
-			else if (this.Selected.Entry is IFileSource.IFile file)
+			else if (this.Selected.Entry is FileInfo file)
 			{
 				this.OnSelectClicked(null, null);
 			}
@@ -464,10 +290,10 @@ namespace Anamnesis.GUI.Views
 		private int OnSort(EntryWrapper a, EntryWrapper b)
 		{
 			// Directoreis alweays go to the top.
-			if (a.Entry is IDirectory && b.Entry is IFile)
+			if (a.Entry is DirectoryInfo && b.Entry is FileInfo)
 				return -1;
 
-			if (a.Entry is IFile && b.Entry is IDirectory)
+			if (a.Entry is FileInfo && b.Entry is DirectoryInfo)
 				return 1;
 
 			if (sortMode == Sort.None)
@@ -496,7 +322,10 @@ namespace Anamnesis.GUI.Views
 
 		private void OnGoUpClicked(object? sender, RoutedEventArgs e)
 		{
-			CurrentPathValue.Pop();
+			if (this.currentDir.Parent == null || this.currentDir == this.BaseDir)
+				return;
+
+			this.CurrentDir = this.currentDir.Parent;
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanGoUp)));
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentPath)));
@@ -505,10 +334,7 @@ namespace Anamnesis.GUI.Views
 
 		private async void OnCreateFolderClicked(object? sender, RoutedEventArgs e)
 		{
-			if (this.CurrentDir == null)
-				return;
-
-			IDirectory newDir = this.CurrentDir.CreateSubDirectory();
+			DirectoryInfo newDir = this.CurrentDir.CreateSubdirectory("New Folder");
 			await this.UpdateEntries();
 			this.Select(newDir);
 
@@ -522,19 +348,16 @@ namespace Anamnesis.GUI.Views
 			this.Selected.IsRenaming = true;
 		}
 
-		private async void OnSelectClicked(object? sender, RoutedEventArgs? e)
+		private void OnSelectClicked(object? sender, RoutedEventArgs? e)
 		{
 			if (!this.CanSelect)
 				return;
 
-			if (this.CurrentDir == null)
-				return;
-
 			if (this.mode == Modes.Load)
 			{
-				if (this.Selected != null && this.Selected.Entry is IFileSource.IFile file)
+				if (this.Selected != null && this.Selected.Entry is FileInfo file)
 				{
-					this.FilePath = file.Path;
+					this.FilePath = file.FullName;
 				}
 			}
 			else
@@ -550,21 +373,10 @@ namespace Anamnesis.GUI.Views
 					}
 				}
 
-				this.FilePath = this.CurrentDir.Path + "/" + this.FileName;
-				string finalPath = this.FilePath + this.FileExtension;
-
-				if (File.Exists(finalPath))
-				{
-					string fileName = Path.GetFileNameWithoutExtension(finalPath);
-					bool? overwrite = await GenericDialog.Show(LocalizationService.GetStringFormatted("FileBrowser_ReplaceMessage", fileName), LocalizationService.GetString("FileBrowser_ReplaceTitle"), MessageBoxButton.YesNo);
-					if (overwrite != true)
-					{
-						return;
-					}
-				}
+				this.FilePath = this.CurrentDir.FullName + "/" + this.FileName;
 			}
 
-			if (this.Selected != null && this.Selected.Entry is IDirectory dir)
+			if (this.Selected != null && this.Selected.Entry is DirectoryInfo dir)
 			{
 				this.CurrentDir = dir;
 				return;
@@ -589,7 +401,7 @@ namespace Anamnesis.GUI.Views
 			if (confirmed != true)
 				return;
 
-			await this.Selected.Entry.Delete();
+			this.Selected.Entry.Delete();
 
 			_ = Task.Run(this.UpdateEntries);
 		}
@@ -609,41 +421,52 @@ namespace Anamnesis.GUI.Views
 			this.Close?.Invoke();
 		}
 
-		private void Select(IEntry entry)
+		private void Select(FileSystemInfo entry)
 		{
 			foreach (EntryWrapper? wrapper in this.Selector.Entries)
 			{
 				if (wrapper == null)
 					continue;
 
-				if (wrapper.Entry.Path == entry.Path)
+				if (wrapper.Entry == entry)
 				{
 					this.selected = wrapper;
 				}
 			}
 		}
 
+		private void OnSourceChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.Source is ComboBox cb && cb.SelectedItem is DirectoryInfo dir)
+			{
+				if (dir == this.BaseDir)
+					return;
+
+				this.BaseDir = dir;
+				this.CurrentDir = dir;
+			}
+		}
+
 		[AddINotifyPropertyChangedInterface]
 		public class EntryWrapper
 		{
-			public readonly IFileSource.IEntry Entry;
+			public readonly FileSystemInfo Entry;
 			public readonly FileBrowserView View;
 
-			public EntryWrapper(IFileSource.IEntry entry, FileBrowserView view)
+			public EntryWrapper(FileSystemInfo entry, FileBrowserView view)
 			{
 				this.Entry = entry;
 				this.View = view;
 			}
 
-			public bool? CanWrite => this.View.FileSource?.CanWrite;
-			public string? Name => this.Entry.Name;
-			public DateTime? DateModified => this.Entry.DateModified;
+			public string Name => Path.GetFileNameWithoutExtension(this.Entry.Name);
+			public DateTime? DateModified => this.Entry.LastWriteTime;
 
 			public string Icon
 			{
 				get
 				{
-					if (this.Entry is IFileSource.IDirectory)
+					if (this.Entry is DirectoryInfo)
 						return "folder";
 
 					return "file";
@@ -673,7 +496,7 @@ namespace Anamnesis.GUI.Views
 					if (string.IsNullOrEmpty(value))
 						return;
 
-					foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+					foreach (char c in Path.GetInvalidFileNameChars())
 					{
 						if (value.Contains(c))
 						{
@@ -684,7 +507,18 @@ namespace Anamnesis.GUI.Views
 					Task.Run(async () =>
 					{
 						value = value.Trim();
-						await this.Entry.Rename(value);
+
+						string newPath = this.Entry.FullName.Replace(this.Name, value);
+
+						if (this.Entry is FileInfo file)
+						{
+							file.MoveTo(newPath);
+						}
+						else if (this.Entry is DirectoryInfo dir)
+						{
+							dir.MoveTo(newPath);
+						}
+
 						await this.View.UpdateEntries();
 					});
 				}
@@ -705,16 +539,7 @@ namespace Anamnesis.GUI.Views
 						b.Append(" ");
 					}
 
-					if (!string.IsNullOrEmpty(this.Entry.Metadata))
-					{
-						b.Append(this.Entry.Metadata);
-						b.Append(" ");
-					}
-
-					if (this.Entry.DateModified != null)
-					{
-						b.Append(this.Entry.DateModified);
-					}
+					b.Append(this.Entry.LastWriteTime);
 
 					return b.ToString();
 				}
@@ -724,10 +549,10 @@ namespace Anamnesis.GUI.Views
 			{
 				get
 				{
-					if (this.View.CurrentDir == null || this.View.CurrentDir.Path == null)
+					if (this.View.CurrentDir == null)
 						return string.Empty;
 
-					string relativePath = this.Entry.Path?.Replace(this.View.CurrentDir.Path, string.Empty) ?? string.Empty;
+					string relativePath = this.Entry.FullName?.Replace(this.View.CurrentDir.FullName, string.Empty) ?? string.Empty;
 
 					if (relativePath != null)
 					{

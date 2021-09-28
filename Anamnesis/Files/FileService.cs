@@ -9,30 +9,26 @@ namespace Anamnesis.Files
 	using System.IO;
 	using System.Text;
 	using System.Threading.Tasks;
-	using System.Windows.Controls;
+	using System.Windows;
 	using Anamnesis;
-	using Anamnesis.Files.Infos;
+	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Views;
-	using Anamnesis.Scenes;
 	using Anamnesis.Services;
 	using Microsoft.Win32;
-	using Serilog;
 
 	public class FileService : ServiceBase<FileService>
 	{
-		public static readonly List<FileInfoBase> FileInfos = new List<FileInfoBase>()
-		{
-			new CharacterFileInfo(),
-			new PoseFileInfo(),
-			new DatCharacterFileInfo(),
-			new SceneFileInfo(),
-
-			new LegacyCharacterFileInfo(),
-			new LegacyJsonCharacterFileInfo(),
-			new LegacyPoseFileInfo(),
-		};
-
 		public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
+
+		private static readonly Dictionary<Type, string> TypeNameLookup = new Dictionary<Type, string>();
+		private static readonly Dictionary<Type, string> TypeExtensionLookup = new Dictionary<Type, string>();
+
+		public static DirectoryInfo DefaultPoseDirectory => new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultPoseDirectory));
+		public static DirectoryInfo DefaultCharacterDirectory => new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCharacterDirectory));
+		public static DirectoryInfo DefaultSceneDirectory => new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultSceneDirectory));
+		public static DirectoryInfo BuiltInPoseDirectory => new DirectoryInfo(ParseToFilePath("%CurrentDir%/Data/BuiltInPoses/"));
+		public static DirectoryInfo CMToolSaveDir => new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/Matrix Saves/"));
+		public static DirectoryInfo FFxivDatCharacterDirectory => new DirectoryInfo(ParseToFilePath("%MyDocuments%/My Games/FINAL FANTASY XIV - A Realm Reborn/"));
 
 		/// <summary>
 		/// Replaces special folders (%ApplicationData%) with the actual path.
@@ -84,48 +80,37 @@ namespace Anamnesis.Files
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"\"{dir}\"");
 		}
 
-		public static async Task<OpenResult> Open<T>()
+		public static async Task<OpenResult> Open<T>(params DirectoryInfo[] directories)
 			where T : FileBase
 		{
-			return await Open(typeof(T));
+			return await Open(directories, typeof(T));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2>()
+		public static async Task<OpenResult> Open<T1, T2>(params DirectoryInfo[] directories)
 			where T1 : FileBase
 			where T2 : FileBase
 		{
-			return await Open(typeof(T1), typeof(T2));
+			return await Open(directories, typeof(T1), typeof(T2));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3>()
+		public static async Task<OpenResult> Open<T1, T2, T3>(params DirectoryInfo[] directories)
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 		{
-			return await Open(typeof(T1), typeof(T2), typeof(T3));
+			return await Open(directories, typeof(T1), typeof(T2), typeof(T3));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3, T4>()
+		public static async Task<OpenResult> Open<T1, T2, T3, T4>(params DirectoryInfo[] directories)
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 			where T4 : FileBase
 		{
-			return await Open(typeof(T1), typeof(T2), typeof(T3), typeof(T4));
+			return await Open(directories, typeof(T1), typeof(T2), typeof(T3), typeof(T4));
 		}
 
-		public static Task<OpenResult> Open(params Type[] fileTypes)
-		{
-			List<FileInfoBase>? fileInfos = new List<FileInfoBase>();
-			foreach (Type fileType in fileTypes)
-			{
-				fileInfos.AddRange(GetFileInfos(fileType));
-			}
-
-			return Open(fileInfos.ToArray());
-		}
-
-		public static async Task<OpenResult> Open(params FileInfoBase[] fileInfos)
+		public static async Task<OpenResult> Open(DirectoryInfo[] directories, params Type[] fileTypes)
 		{
 			OpenResult result = default;
 
@@ -135,14 +120,13 @@ namespace Anamnesis.Files
 
 				if (!useExplorerBrowser)
 				{
-					FileBrowserView browser = new FileBrowserView(fileInfos, FileBrowserView.Modes.Load);
+					FileBrowserView browser = new FileBrowserView(directories, string.Empty, FileBrowserView.Modes.Load);
 					await ViewService.ShowDrawer(browser);
 
 					while (browser.IsOpen)
 						await Task.Delay(10);
 
 					result.Path = browser.FilePath;
-					result.Options = browser.OptionsControl;
 					useExplorerBrowser = browser.UseFileBrowser;
 				}
 
@@ -151,7 +135,7 @@ namespace Anamnesis.Files
 					result.Path = await App.Current.Dispatcher.InvokeAsync<string?>(() =>
 					{
 						OpenFileDialog dlg = new OpenFileDialog();
-						dlg.Filter = ToAnyFilter(fileInfos);
+						dlg.Filter = ToAnyFilter(fileTypes);
 						bool? result = dlg.ShowDialog();
 
 						if (result != true)
@@ -164,14 +148,40 @@ namespace Anamnesis.Files
 				if (result.Path == null)
 					return result;
 
-				string extension = Path.GetExtension(result.Path);
-				result.Info = GetFileInfo(extension);
-
 				using FileStream stream = new FileStream(result.Path, FileMode.Open);
-				result.File = result.Info.DeserializeFile(stream);
+				string extension = Path.GetExtension(result.Path);
+
+				Exception? lastException = null;
+				foreach (Type fileType in fileTypes)
+				{
+					string typeExtension = GetFileTypeExtension(fileType);
+
+					if (typeExtension == extension)
+					{
+						try
+						{
+							FileBase? file = Activator.CreateInstance(fileType) as FileBase;
+
+							if (file == null)
+								throw new Exception($"Failed to create instance of file type: {fileType}");
+
+							result.File = file.Deserialize(stream);
+						}
+						catch (Exception ex)
+						{
+							Log.Verbose(ex, $"Attempted to deserialize file: {result.Path} as type: {fileType} failed.");
+							lastException = ex;
+						}
+					}
+				}
 
 				if (result.File == null)
-					throw new Exception("File failed to deserialize");
+				{
+					if (lastException == null)
+						throw new Exception($"Unrecognised file: {result.Path}");
+
+					throw lastException;
+				}
 
 				return result;
 			}
@@ -183,22 +193,30 @@ namespace Anamnesis.Files
 			return result;
 		}
 
-		public static async Task<SaveResult> Save<T>(string? path = null)
+		public static Task<SaveResult> Save<T>(params DirectoryInfo[] directories)
+			where T : FileBase
+		{
+			return Save<T>(null, directories);
+		}
+
+		public static async Task<SaveResult> Save<T>(string? defaultPath, params DirectoryInfo[] directories)
 			where T : FileBase
 		{
 			SaveResult result = default;
 
+			string? path = defaultPath;
+
 			try
 			{
-				result.Info = GetFileInfo<T>();
-
 				if (path == null)
 				{
 					bool useExplorerBrowser = SettingsService.Current.UseWindowsExplorer;
 
+					string typeName = GetFileTypeName(typeof(T));
+
 					if (!useExplorerBrowser)
 					{
-						FileBrowserView browser = new FileBrowserView(result.Info, FileBrowserView.Modes.Save);
+						FileBrowserView browser = new FileBrowserView(directories, typeName, FileBrowserView.Modes.Save);
 						await ViewService.ShowDrawer(browser);
 
 						while (browser.IsOpen)
@@ -206,7 +224,6 @@ namespace Anamnesis.Files
 
 						path = browser.FilePath;
 						useExplorerBrowser = browser.UseFileBrowser;
-						result.Options = browser.OptionsControl;
 					}
 
 					if (useExplorerBrowser)
@@ -214,18 +231,13 @@ namespace Anamnesis.Files
 						path = await App.Current.Dispatcher.InvokeAsync<string?>(() =>
 						{
 							SaveFileDialog dlg = new SaveFileDialog();
-							dlg.Filter = ToFilter(result.Info);
+							dlg.Filter = ToFilter(typeof(T));
 							bool? dlgResult = dlg.ShowDialog();
 
 							if (dlgResult != true)
 								return null;
 
-							string? dirName = Path.GetDirectoryName(dlg.FileName);
-
-							if (dirName == null)
-								throw new Exception("Failed to parse file name: " + dlg.FileName);
-
-							return Path.Combine(dirName, Path.GetFileNameWithoutExtension(dlg.FileName));
+							return dlg.FileName;
 						});
 					}
 
@@ -235,8 +247,17 @@ namespace Anamnesis.Files
 					}
 				}
 
-				path += "." + result.Info.Extension;
-				result.Path = path;
+				result.Path = path + GetFileTypeExtension(typeof(T));
+
+				if (File.Exists(result.Path))
+				{
+					string fileName = Path.GetFileNameWithoutExtension(result.Path);
+					bool? overwrite = await GenericDialog.Show(LocalizationService.GetStringFormatted("FileBrowser_ReplaceMessage", fileName), LocalizationService.GetString("FileBrowser_ReplaceTitle"), MessageBoxButton.YesNo);
+					if (overwrite != true)
+					{
+						return await Save<T>(defaultPath, directories);
+					}
+				}
 
 				string? dir = Path.GetDirectoryName(path);
 				if (dir == null)
@@ -255,89 +276,66 @@ namespace Anamnesis.Files
 			return result;
 		}
 
-		public static FileInfoBase GetFileInfo<T>()
-			where T : FileBase
-		{
-			List<FileInfoBase> results = GetFileInfos(typeof(T));
-
-			if (results.Count > 1)
-				Log.Warning($"Multiple file infos found for file: {typeof(T)}. Using first.");
-
-			if (results.Count <= 0)
-				throw new Exception($"No file info for file: {typeof(T)}");
-
-			return results[0];
-		}
-
-		public static FileInfoBase GetFileInfo(FileBase file)
-		{
-			List<FileInfoBase> results = GetFileInfos(file.GetType());
-
-			if (results.Count > 1)
-				Log.Warning($"Multiple file infos found for file: {file}. Using first.");
-
-			if (results.Count <= 0)
-				throw new Exception($"No file info for file: {file}");
-
-			return results[0];
-		}
-
-		public static List<FileInfoBase> GetFileInfos(Type type)
-		{
-			List<FileInfoBase> results = new List<FileInfoBase>();
-			foreach (FileInfoBase fileInfo in FileInfos)
-			{
-				if (fileInfo.IsFile(type))
-				{
-					results.Add(fileInfo);
-				}
-			}
-
-			return results;
-		}
-
-		public static FileInfoBase GetFileInfo(string extension)
-		{
-			if (extension.StartsWith("."))
-				extension = extension.Substring(1, extension.Length - 1);
-
-			foreach (FileInfoBase fileInfo in FileInfos)
-			{
-				if (fileInfo.Extension == extension)
-				{
-					return fileInfo;
-				}
-			}
-
-			throw new Exception($"Unable to determine file info from extension: \"{extension}\"");
-		}
-
-		private static string ToAnyFilter(params FileInfoBase[] infos)
+		private static string ToAnyFilter(params Type[] types)
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append("Any|");
 
-			foreach (FileInfoBase type in infos)
-				builder.Append("*." + type.Extension + ";");
+			foreach (Type type in types)
+				builder.Append("*" + GetFileTypeExtension(type) + ";");
 
-			foreach (FileInfoBase type in infos)
+			foreach (Type type in types)
 			{
 				builder.Append("|");
-				builder.Append(type.Name);
+				builder.Append(GetFileTypeName(type));
 				builder.Append("|");
-				builder.Append("*." + type.Extension);
+				builder.Append("*" + GetFileTypeExtension(type));
 			}
 
 			return builder.ToString();
 		}
 
-		private static string ToFilter(FileInfoBase info)
+		private static string ToFilter(Type type)
 		{
 			StringBuilder builder = new StringBuilder();
-			builder.Append(info.Name);
+			builder.Append(GetFileTypeName(type));
 			builder.Append("|");
-			builder.Append("*." + info.Extension);
+			builder.Append("*" + GetFileTypeExtension(type));
 			return builder.ToString();
+		}
+
+		private static string GetFileTypeName(Type fileType)
+		{
+			string? name;
+			if (!TypeNameLookup.TryGetValue(fileType, out name))
+			{
+				FileBase? file = Activator.CreateInstance(fileType) as FileBase;
+
+				if (file == null)
+					throw new Exception($"Failed to create instance of file type: {fileType}");
+
+				name = file.TypeName;
+				TypeNameLookup.Add(fileType, name);
+			}
+
+			return name;
+		}
+
+		private static string GetFileTypeExtension(Type fileType)
+		{
+			string? name;
+			if (!TypeExtensionLookup.TryGetValue(fileType, out name))
+			{
+				FileBase? file = Activator.CreateInstance(fileType) as FileBase;
+
+				if (file == null)
+					throw new Exception($"Failed to create instance of file type: {fileType}");
+
+				name = file.FileExtension;
+				TypeExtensionLookup.Add(fileType, name);
+			}
+
+			return name;
 		}
 	}
 
@@ -345,48 +343,11 @@ namespace Anamnesis.Files
 	public struct OpenResult
 	{
 		public FileBase? File;
-		public FileInfoBase? Info;
 		public string? Path;
-		public UserControl? Options;
 	}
 
 	public struct SaveResult
 	{
 		public string? Path;
-		public UserControl? Options;
-		public FileInfoBase? Info;
-	}
-
-	public interface IFileSource
-	{
-		public interface IEntry
-		{
-			public string? Path { get; }
-			public string? Name { get; }
-			public DateTime? DateModified { get; }
-			public IFileSource Source { get; }
-			public bool Exists { get; }
-			public string? Metadata { get; }
-
-			public Task Delete();
-			public Task Rename(string newName);
-		}
-
-		public interface IFile : IEntry
-		{
-			public FileInfoBase? Type { get; }
-		}
-
-		public interface IDirectory : IEntry
-		{
-			public IDirectory CreateSubDirectory();
-		}
-
-		public bool CanRead { get; }
-		public bool CanWrite { get; }
-		public string Name { get; }
-
-		public IDirectory GetDefaultDirectory();
-		public Task<IEnumerable<IEntry>> GetEntries(IDirectory current, bool recursive, FileInfoBase[] fileTypes);
 	}
 }

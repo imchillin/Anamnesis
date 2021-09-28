@@ -3,19 +3,7 @@
 
 namespace Anamnesis.Files
 {
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Text;
-	using System.Text.RegularExpressions;
-	using System.Threading.Tasks;
-	using Anamnesis.Files.Infos;
-
-	using Directories = System.IO.Directory;
-	using Files = System.IO.File;
-	using Paths = System.IO.Path;
-
-	public class DatFileSource : IFileSource
+	/*public class DatFileSource : IFileSource
 	{
 		public string Name => "FFXIV Saved Appearance Data";
 		public bool CanRead => true;
@@ -125,5 +113,5 @@ namespace Anamnesis.Files
 				return Task.CompletedTask;
 			}
 		}
-	}
+	}*/
 }

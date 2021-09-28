@@ -180,6 +180,7 @@
 						<MenuItem Header="Pose_Load" Icon="FolderOpen"  Style="{StaticResource ButtonMenuItemLeft}" Width="76" Click="OnOpenClicked"/>
 						<MenuItem Style="{StaticResource ButtonMenuItemRight}">
 							<MenuItem Header="Pose_Expression" Style="{StaticResource AnaMenuItem}" Click="OnOpenExpressionClicked"/>
+							<MenuItem Header="Pose_ScalePack" Style="{StaticResource AnaMenuItem}" Click="OnOpenScaleClicked"/>
 							<MenuItem Header="Pose_Selected" Style="{StaticResource AnaMenuItem}" Click="OnOpenSelectedClicked" IsEnabled="{Binding Skeleton.HasSelection}"/>
 						</MenuItem>
 

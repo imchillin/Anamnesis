@@ -5,7 +5,6 @@ namespace Anamnesis.PoseModule.Pages
 {
 	using System;
 	using System.Collections.Generic;
-	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -13,7 +12,6 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
-	using Anamnesis.PoseModule.Extensions;
 	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -30,8 +28,6 @@ namespace Anamnesis.PoseModule.Pages
 	public partial class PosePage : UserControl
 	{
 		public const double DragThreshold = 20;
-
-		public static PoseFile.Configuration FileConfig = new PoseFile.Configuration();
 
 		private bool isLeftMouseButtonDownOnWindow;
 		private bool isDragging;
@@ -52,7 +48,6 @@ namespace Anamnesis.PoseModule.Pages
 		public bool IsFlipping { get; private set; }
 		public ActorViewModel? Actor { get; private set; }
 		public SkeletonVisual3d? Skeleton { get; private set; }
-		public PoseFile.Configuration FileConfiguration => FileConfig;
 
 		private static ILogger Log => Serilog.Log.ForContext<PosePage>();
 
@@ -185,12 +180,17 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
-			await this.Open(false);
+			await this.Open(false, false);
+		}
+
+		private async void OnOpenScaleClicked(object sender, RoutedEventArgs e)
+		{
+			await this.Open(false, true);
 		}
 
 		private async void OnOpenSelectedClicked(object sender, RoutedEventArgs e)
 		{
-			await this.Open(true);
+			await this.Open(true, false);
 		}
 
 		private async void OnOpenExpressionClicked(object sender, RoutedEventArgs e)
@@ -199,17 +199,20 @@ namespace Anamnesis.PoseModule.Pages
 				return;
 
 			this.Skeleton.SelectHead();
-			await this.Open(true);
+			await this.Open(true, false);
 		}
 
-		private async Task Open(bool selectionOnly)
+		private async Task Open(bool selectionOnly, bool scaleOnly)
 		{
 			try
 			{
 				if (this.Actor == null || this.Skeleton == null)
 					return;
 
-				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>();
+				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>(
+					FileService.DefaultPoseDirectory,
+					FileService.BuiltInPoseDirectory,
+					FileService.CMToolSaveDir);
 
 				if (result.File == null)
 					return;
@@ -219,7 +222,7 @@ namespace Anamnesis.PoseModule.Pages
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(this.Actor, this.Skeleton, FileConfig, selectionOnly);
+					await poseFile.Apply(this.Actor, this.Skeleton, selectionOnly, scaleOnly);
 				}
 			}
 			catch (Exception ex)
@@ -230,12 +233,12 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			await PoseFile.Save(this.Actor, this.Skeleton, FileConfig, false);
+			await PoseFile.Save(this.Actor, this.Skeleton, false);
 		}
 
 		private async void OnSaveSelectedClicked(object sender, RoutedEventArgs e)
 		{
-			await PoseFile.Save(this.Actor, this.Skeleton, FileConfig, true);
+			await PoseFile.Save(this.Actor, this.Skeleton, true);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)

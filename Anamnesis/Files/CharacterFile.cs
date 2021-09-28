@@ -5,28 +5,12 @@ namespace Anamnesis.Files
 {
 	using System;
 	using System.IO;
-	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
-	using Anamnesis;
-	using Anamnesis.Character.Views;
-	using Anamnesis.Files.Infos;
-	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
-	using Anamnesis.Services;
 	using Serilog;
 
-#pragma warning disable SA1402, SA1649
-	public class CharacterFileInfo : JsonFileInfoBase<CharacterFile>
-	{
-		public override string Extension => "chara";
-		public override string Name => "Anamnesis Character File";
-		public override Type? LoadOptionsViewType => typeof(CharacterFileOptions);
-		public override Type? SaveOptionsViewType => typeof(CharacterFileOptions);
-		public override IFileSource[] FileSources => new[] { new LocalFileSource("Local Files", SettingsService.Current.DefaultCharacterDirectory) };
-	}
-
 	[Serializable]
-	public class CharacterFile : FileBase
+	public class CharacterFile : JsonFileBase
 	{
 		[Flags]
 		public enum SaveModes
@@ -41,8 +25,14 @@ namespace Anamnesis.Files
 			AppearanceBody = 32,
 			AppearanceExtended = 64,
 
+			Equipment = EquipmentGear | EquipmentAccessories,
+			Appearance = AppearanceHair | AppearanceFace | AppearanceBody | AppearanceExtended,
+
 			All = EquipmentGear | EquipmentAccessories | EquipmentWeapons | AppearanceHair | AppearanceFace | AppearanceBody | AppearanceExtended,
 		}
+
+		public override string FileExtension => ".chara";
+		public override string TypeName => "Anamnesis Character File";
 
 		public SaveModes SaveMode { get; set; } = SaveModes.All;
 
@@ -109,25 +99,21 @@ namespace Anamnesis.Files
 		public float? MuscleTone { get; set; }
 		public float? HeightMultiplier { get; set; }
 
-		public static async Task<SaveModes> Save(ActorViewModel? actor, SaveModes mode = SaveModes.All)
+		public static async Task Save(ActorViewModel? actor, SaveModes mode = SaveModes.All)
 		{
 			if (actor == null)
-				return mode;
+				return;
 
-			CharacterFileOptions.Result = mode;
+			SaveResult result = await FileService.Save<CharacterFile>(FileService.DefaultCharacterDirectory);
 
-			SaveResult result = await FileService.Save<CharacterFile>();
-
-			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
-				return CharacterFileOptions.Result;
+			if (result.Path == null)
+				return;
 
 			CharacterFile file = new CharacterFile();
 			file.WriteToFile(actor, mode);
 
 			using FileStream stream = new FileStream(result.Path, FileMode.Create);
-			result.Info.SerializeFile(file, stream);
-
-			return CharacterFileOptions.Result;
+			file.Serialize(stream);
 		}
 
 		public void WriteToFile(ActorViewModel actor, SaveModes mode)

@@ -29,7 +29,7 @@
 			Margin="6"
 			ItemsSource="{Binding FileSources}"
 			SelectedIndex="0"
-			SelectedItem="{Binding FileSource}">
+			SelectionChanged="OnSourceChanged">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Name}" />
@@ -159,7 +159,8 @@
 						<Grid
 							Grid.Column="1"
 							Height="28"
-							VerticalAlignment="Center">
+							VerticalAlignment="Center"
+							Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}">
 
 							<Grid.RowDefinitions>
 								<RowDefinition />
@@ -174,11 +175,6 @@
 								Text="{Binding Name}"
 								Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}" />
 
-							<XivToolsWpf:RenameTextBox
-								Grid.Row="0"
-								Text="{Binding Rename}"
-								Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}" />
-
 							<TextBlock
 								Grid.Row="1"
 								Margin="3,0,3,0"
@@ -190,6 +186,17 @@
 								Visibility="{Binding Metadata, Converter={StaticResource NotNullToVisibilityConverter}}" />
 
 						</Grid>
+
+						<Grid
+							Grid.Column="1"
+							Height="28"
+							VerticalAlignment="Center"
+							Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}">
+
+							<XivToolsWpf:RenameTextBox Text="{Binding Rename}"/>
+
+						</Grid>
+						
 					</Grid>
 				</DataTemplate>
 			</drawers:SelectorDrawer.ItemTemplate>
@@ -225,66 +232,40 @@
 				Text="{Binding FileExtension}" />
 		</Grid>
 
-		<Grid Grid.Row="4">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition />
-			</Grid.RowDefinitions>
-
-			<Grid
-				Grid.Row="0"
-				Background="{StaticResource MaterialDesignPaper}"
-				Cursor="Hand">
-				<ToggleButton
-					IsChecked="{Binding ShowOptions, Converter={StaticResource !B}}"
-					IsEnabled="{Binding OptionsControl, Converter={StaticResource NotNullToBoolConverter}}"
-					Style="{StaticResource MaterialDesignExpanderToggleButton}">
-				</ToggleButton>
-
-				<XivToolsWpf:TextBlock
-					Key="FileBrowser_Advanced"
-					Margin="28,0"
-					VerticalAlignment="Center"
-					Foreground="{StaticResource MaterialDesignBody}"
-					Visibility="{Binding OptionsControl, Converter={StaticResource NotNullToVisibilityConverter}}"
-					IsHitTestVisible="False"/>
-			</Grid>
-
-			<Grid Grid.Row="1" Visibility="{Binding ShowOptions, Converter={StaticResource B2V}}">
-				<ContentPresenter
-					Grid.Row="1"
-					Margin="6"
-					Content="{Binding OptionsControl}" />
-			</Grid>
-
-		</Grid>
-
-		<!--  Options  -->
 		<Grid Grid.Row="5" Margin="6">
+
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition/>
+				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 
-			<XivToolsWpf:IconButton
-				x:Name="SelectButton"
-				Grid.Column="0"
-				Margin="3"
-				Click="OnSelectClicked"
-				Icon="Check"
-				IsEnabled="{Binding CanSelect, FallbackValue=false}"
-				Text="Select" />
-			<Button
-				Grid.Column="1"
-				Margin="3"
-				Click="OnBrowseClicked"
-				Content="...">
+			<Menu Grid.Column="0" Style="{StaticResource AnaMenu}">
 
-				<Button.ToolTip>
-					<XivToolsWpf:TextBlock Key="FileBrowser_Browse" />
-				</Button.ToolTip>
-			</Button>
+				<MenuItem Header="Common_SaveFile"
+						  Icon="Check"
+						  Style="{StaticResource ButtonMenuItem}"
+						  Width="76" 
+						  Click="OnSelectClicked"
+						   Visibility="{Binding IsModeOpen, Converter={StaticResource !B2V}}"/>
+
+				<MenuItem Header="Common_OpenFile"
+						  Icon="Check"
+						  Style="{StaticResource ButtonMenuItem}"
+						  Width="76"
+						  Click="OnSelectClicked"
+						  Visibility="{Binding IsModeOpen, Converter={StaticResource B2V}}"/>
+
+			</Menu>
+
+			<Menu Grid.Column="1" Style="{StaticResource AnaMenu}">
+				<MenuItem Header="FileBrowser_BrowseKey" Style="{StaticResource ButtonMenuItem}" Click="OnBrowseClicked" Width="32">
+					<MenuItem.ToolTip>
+						<XivToolsWpf:TextBlock Key="FileBrowser_Browse"/>
+					</MenuItem.ToolTip>
+				</MenuItem>
+			</Menu>
 		</Grid>
+		
 
 	</Grid>
 </UserControl>

@@ -130,6 +130,25 @@ namespace Anamnesis.Styles.Drawers
 			Show(view, current, changed);
 		}
 
+		public static async Task<TValue?> ShowAsync<TView, TValue>(TValue? current)
+			where TView : ISelectorView
+			where TValue : class
+		{
+			ISelectorView view = Activator.CreateInstance<TView>();
+
+			view.Selector.objectType = typeof(TValue);
+			view.Selector.Value = current;
+			await ViewService.ShowDrawer(view);
+
+			bool open = true;
+			view.Close += () => open = false;
+
+			while (open)
+				await Task.Delay(100);
+
+			return view.Selector.Value as TValue;
+		}
+
 		public static void Show<TValue>(ISelectorView view, TValue? current, Action<TValue> changed)
 			where TValue : class
 		{

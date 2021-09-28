@@ -24,9 +24,6 @@ namespace Anamnesis.Character.Pages
 	[AddINotifyPropertyChangedInterface]
 	public partial class AppearancePage : UserControl
 	{
-		private static CharacterFile.SaveModes lastSaveMode = CharacterFile.SaveModes.All;
-		private static CharacterFile.SaveModes lastLoadMode = CharacterFile.SaveModes.All;
-
 		public AppearancePage()
 		{
 			this.InitializeComponent();
@@ -87,22 +84,55 @@ namespace Anamnesis.Character.Pages
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
-			try
-			{
-				await this.Load();
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to load appearance");
-			}
+			await this.Load(CharacterFile.SaveModes.All);
 		}
 
-		private void OnLoadNpcClicked(object sender, RoutedEventArgs e)
+		private async void OnLoadEquipmentClicked(object sender, RoutedEventArgs e)
 		{
-			SelectorDrawer.Show<NpcSelector, INpcResident>(null, (v) => { this.ApplyNpc(v); });
+			await this.Load(CharacterFile.SaveModes.Equipment);
 		}
 
-		private async void ApplyNpc(INpcResident? npc)
+		private async void OnLoadAppearanceClicked(object sender, RoutedEventArgs e)
+		{
+			await this.Load(CharacterFile.SaveModes.Appearance);
+		}
+
+		private async void OnLoadWeaponsClicked(object sender, RoutedEventArgs e)
+		{
+			await this.Load(CharacterFile.SaveModes.EquipmentWeapons);
+		}
+
+		private async void OnLoadNpcClicked(object sender, RoutedEventArgs e)
+		{
+			await this.LoadNpc(CharacterFile.SaveModes.All);
+		}
+
+		private async void OnLoadNpcEquipmentClicked(object sender, RoutedEventArgs e)
+		{
+			await this.LoadNpc(CharacterFile.SaveModes.Equipment);
+		}
+
+		private async void OnLoadNpcAppearanceClicked(object sender, RoutedEventArgs e)
+		{
+			await this.LoadNpc(CharacterFile.SaveModes.Appearance);
+		}
+
+		private async void OnLoadNpcWeaponsClicked(object sender, RoutedEventArgs e)
+		{
+			await this.LoadNpc(CharacterFile.SaveModes.EquipmentWeapons);
+		}
+
+		private async Task LoadNpc(CharacterFile.SaveModes mode)
+		{
+			INpcResident? npc = await SelectorDrawer.ShowAsync<NpcSelector, INpcResident>(null);
+
+			if (npc == null)
+				return;
+
+			await this.ApplyNpc(npc, mode);
+		}
+
+		private async Task ApplyNpc(INpcResident? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
 		{
 			if (this.Actor == null || npc == null)
 				return;
@@ -111,31 +141,38 @@ namespace Anamnesis.Character.Pages
 				return;
 
 			CharacterFile apFile = npc.Appearance.ToFile();
-			await apFile.Apply(this.Actor, CharacterFile.SaveModes.All);
+			await apFile.Apply(this.Actor, mode);
 		}
 
-		private async Task Load()
+		private async Task Load(CharacterFile.SaveModes mode)
 		{
 			if (this.Actor == null)
 				return;
 
-			CharacterFileOptions.Result = lastLoadMode;
-			OpenResult result = await FileService.Open<LegacyCharacterFile, DatCharacterFile, CharacterFile>();
-
-			if (result.File == null)
-				return;
-
-			lastLoadMode = CharacterFileOptions.Result;
-
-			if (result.File is LegacyCharacterFile legacyFile)
-				result.File = legacyFile.Upgrade();
-
-			if (result.File is DatCharacterFile datFile)
-				result.File = datFile.Upgrade();
-
-			if (result.File is CharacterFile apFile)
+			try
 			{
-				await apFile.Apply(this.Actor, lastLoadMode);
+				OpenResult result = await FileService.Open<LegacyCharacterFile, DatCharacterFile, CharacterFile>(
+					FileService.DefaultCharacterDirectory,
+					FileService.FFxivDatCharacterDirectory,
+					FileService.CMToolSaveDir);
+
+				if (result.File == null)
+					return;
+
+				if (result.File is LegacyCharacterFile legacyFile)
+					result.File = legacyFile.Upgrade();
+
+				if (result.File is DatCharacterFile datFile)
+					result.File = datFile.Upgrade();
+
+				if (result.File is CharacterFile apFile)
+				{
+					await apFile.Apply(this.Actor, mode);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to load appearance");
 			}
 		}
 
@@ -156,7 +193,7 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			lastSaveMode = await CharacterFile.Save(this.Actor, lastSaveMode);
+			await CharacterFile.Save(this.Actor);
 		}
 
 		private void OnActorChanged(ActorViewModel? actor)

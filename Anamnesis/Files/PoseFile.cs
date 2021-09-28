@@ -7,60 +7,36 @@ namespace Anamnesis.Files
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
-	using Anamnesis.Files.Infos;
-	using Anamnesis.Files.Types;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
-	using Anamnesis.Posing.Views;
-	using Anamnesis.Services;
-	using PropertyChanged;
 	using Serilog;
 
-#pragma warning disable SA1402, SA1649
-	public class PoseFileInfo : JsonFileInfoBase<PoseFile>
+	public class PoseFile : JsonFileBase
 	{
-		public override string Extension => "pose";
-		public override string Name => "Anamnesis Pose";
-		public override Type? LoadOptionsViewType => typeof(LoadOptions);
-
-		public override IFileSource[] FileSources => new[]
-		{
-			new LocalFileSource("Local Files", SettingsService.Current.DefaultPoseDirectory),
-			new BuiltInFileSource("BuiltInPoses/"),
-		};
-	}
-
-	public class PoseFile : FileBase
-	{
-		public Configuration Config { get; set; } = new Configuration();
+		public override string FileExtension => ".pose";
+		public override string TypeName => "Anamnesis Pose";
 
 		public Dictionary<string, Bone?>? Bones { get; set; }
 
-		public static async Task<Configuration> Save(ActorViewModel? actor, SkeletonVisual3d? skeleton, Configuration? config, bool selectionOnly)
+		public static async Task Save(ActorViewModel? actor, SkeletonVisual3d? skeleton, bool selectionOnly)
 		{
-			if (config == null)
-				config = new Configuration();
-
 			if (actor == null || skeleton == null)
-				return config;
+				return;
 
-			SaveResult result = await FileService.Save<PoseFile>();
+			SaveResult result = await FileService.Save<PoseFile>(FileService.DefaultPoseDirectory);
 
-			if (string.IsNullOrEmpty(result.Path) || result.Info == null)
-				return config;
+			if (string.IsNullOrEmpty(result.Path))
+				return;
 
 			PoseFile file = new PoseFile();
-			file.WriteToFile(actor, skeleton, config, selectionOnly);
+			file.WriteToFile(actor, skeleton, selectionOnly);
 
 			using FileStream stream = new FileStream(result.Path, FileMode.Create);
-			result.Info.SerializeFile(file, stream);
-			return config;
+			file.Serialize(stream);
 		}
 
-		public void WriteToFile(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config, bool selectionOnly)
+		public void WriteToFile(ActorViewModel actor, SkeletonVisual3d skeleton, bool selectionOnly)
 		{
-			this.Config = config;
-
 			////SkeletonViewModel? skeletonMem = actor?.ModelObject?.Skeleton?.Skeleton;
 
 			if (skeleton == null || skeleton.Bones == null)
@@ -82,7 +58,7 @@ namespace Anamnesis.Files
 			}
 		}
 
-		public async Task Apply(ActorViewModel actor, SkeletonVisual3d skeleton, Configuration config, bool selectionOnly)
+		public async Task Apply(ActorViewModel actor, SkeletonVisual3d skeleton, bool selectionOnly, bool scaleOnly)
 		{
 			if (actor == null)
 				throw new ArgumentNullException(nameof(actor));
@@ -136,17 +112,17 @@ namespace Anamnesis.Files
 
 						TransformPtrViewModel vm = bone.ViewModel;
 
-						if (PoseService.Instance.FreezePositions && savedBone.Position != null && config.LoadPositions)
+						if (PoseService.Instance.FreezePositions && savedBone.Position != null && !scaleOnly)
 						{
 							vm.Position = (Vector)savedBone.Position;
 						}
 
-						if (PoseService.Instance.FreezeRotation && savedBone.Rotation != null && config.LoadRotations)
+						if (PoseService.Instance.FreezeRotation && savedBone.Rotation != null && !scaleOnly)
 						{
 							vm.Rotation = (Quaternion)savedBone.Rotation;
 						}
 
-						if (PoseService.Instance.FreezeScale && savedBone.Scale != null && config.LoadScales)
+						if (PoseService.Instance.FreezeScale && savedBone.Scale != null)
 						{
 							vm.Scale = (Vector)savedBone.Scale;
 						}
@@ -175,13 +151,13 @@ namespace Anamnesis.Files
 			PoseService.Instance.CanEdit = true;
 		}
 
-		[AddINotifyPropertyChangedInterface]
+		/*[AddINotifyPropertyChangedInterface]
 		public class Configuration
 		{
 			public bool LoadPositions { get; set; } = true;
 			public bool LoadRotations { get; set; } = true;
 			public bool LoadScales { get; set; } = true;
-		}
+		}*/
 
 		[Serializable]
 		public class Bone

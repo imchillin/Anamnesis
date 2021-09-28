@@ -83,6 +83,7 @@
 			<Grid.RowDefinitions>
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
 			<StackPanel>
@@ -196,12 +197,40 @@
 				</GroupBox>
 			</StackPanel>
 
-			<Menu Grid.Row="1" Margin="0, 2, 4, 5" IsEnabled="{Binding GposeService.IsGpose}" Style="{StaticResource AnaMenu}">
-				<MenuItem Header="Pose_Load" Icon="FolderOpen" Style="{StaticResource ButtonMenuItemLeft}" Width="64" Click="OnLoadClicked"/>
-				<MenuItem Header="Character_Appearance_LoadOther" Icon="User" Style="{StaticResource ButtonMenuItemRight}" Width="64" Click="OnLoadNpcClicked"/>
+			<Menu Grid.Row="1"
+				  Margin="0,3, 3, 4"
+				  IsEnabled="{Binding GposeService.IsGpose}"
+				  Style="{StaticResource AnaMenu}">
 
-				<MenuItem Header="Common_SaveFile" Icon="Save" Style="{StaticResource ButtonMenuItem}" Width="96" Click="OnSaveClicked" Margin="2, 0, 0, 0"/>
+				<MenuItem Header="Pose_Load" 
+						  Icon="FolderOpen" 
+						  Style="{StaticResource ButtonMenuItemLeft}" 
+						  Click="OnLoadClicked"/>
+
+				<MenuItem Style="{StaticResource ButtonMenuItemRight}" Margin="-1,0,1,0">
+					<MenuItem Header="Character_Equipment_Header" Style="{StaticResource AnaMenuItem}" Click="OnLoadEquipmentClicked"/>
+					<MenuItem Header="Character_Appearance_Header" Style="{StaticResource AnaMenuItem}" Click="OnLoadAppearanceClicked"/>
+					<MenuItem Header="Character_Equipment_Weapons" Style="{StaticResource AnaMenuItem}" Click="OnLoadWeaponsClicked"/>
+				</MenuItem>
+
+				<MenuItem Header="Character_Appearance_LoadOther" 
+						  Icon="User" 
+						  Style="{StaticResource ButtonMenuItemLeft}" 
+						  Click="OnLoadNpcClicked"/>
+
+				<MenuItem Style="{StaticResource ButtonMenuItemRight}" Margin="-1,0,3,0">
+					<MenuItem Header="Character_Equipment_Header" Style="{StaticResource AnaMenuItem}" Click="OnLoadNpcEquipmentClicked"/>
+					<MenuItem Header="Character_Appearance_Header" Style="{StaticResource AnaMenuItem}" Click="OnLoadNpcAppearanceClicked"/>
+					<MenuItem Header="Character_Equipment_Weapons" Style="{StaticResource AnaMenuItem}" Click="OnLoadNpcWeaponsClicked"/>
+				</MenuItem>
+
+				<MenuItem Header="Common_SaveFile"
+						  Icon="Save"
+						  Style="{StaticResource ButtonMenuItem}"
+						  Click="OnSaveClicked"/>
+
 			</Menu>
+
 		</Grid>
 	</Grid>
 </UserControl>
