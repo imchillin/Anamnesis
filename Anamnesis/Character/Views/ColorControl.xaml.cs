@@ -124,7 +124,7 @@ namespace Anamnesis.Character.Views
 
 		private ColorData.Entry[]? GetColors()
 		{
-			if (this.Tribe == 0)
+			if (!Enum.IsDefined(this.Tribe))
 				return null;
 
 			switch (this.Type)

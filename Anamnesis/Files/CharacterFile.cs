@@ -237,6 +237,12 @@ namespace Anamnesis.Files
 			if (actor.Customize == null)
 				return;
 
+			if (this.Tribe != null && !Enum.IsDefined((Customize.Tribes)this.Tribe))
+				throw new Exception($"Invalid tribe: {this.Tribe} in appearance file");
+
+			if (this.Race != null && !Enum.IsDefined((Customize.Races)this.Race))
+				throw new Exception($"Invalid race: {this.Race} in appearance file");
+
 			Log.Information("Reading appearance from file");
 
 			actor.AutomaticRefreshEnabled = false;

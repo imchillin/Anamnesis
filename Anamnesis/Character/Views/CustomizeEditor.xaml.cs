@@ -155,6 +155,9 @@ namespace Anamnesis.Character.Views
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
 
+			if (!Enum.IsDefined(this.Customize.Tribe))
+				this.Customize.Tribe = AnAppearance.Tribes.Midlander;
+
 			this.Tribe = GameDataService.Tribes.Get((uint)this.Customize.Tribe);
 
 			if (this.Customize.Tribe == 0 || this.Tribe == null)
