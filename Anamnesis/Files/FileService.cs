@@ -120,7 +120,8 @@ namespace Anamnesis.Files
 
 				if (!useExplorerBrowser)
 				{
-					FileBrowserView browser = new FileBrowserView(directories, string.Empty, FileBrowserView.Modes.Load);
+					HashSet<string> extensions = ToExtensions(fileTypes);
+					FileBrowserView browser = new FileBrowserView(directories, extensions, string.Empty, FileBrowserView.Modes.Load);
 					await ViewService.ShowDrawer(browser);
 
 					while (browser.IsOpen)
@@ -216,7 +217,12 @@ namespace Anamnesis.Files
 
 					if (!useExplorerBrowser)
 					{
-						FileBrowserView browser = new FileBrowserView(directories, typeName, FileBrowserView.Modes.Save);
+						HashSet<string> extensions = new HashSet<string>()
+						{
+							GetFileTypeExtension(typeof(T)),
+						};
+
+						FileBrowserView browser = new FileBrowserView(directories, extensions, typeName, FileBrowserView.Modes.Save);
 						await ViewService.ShowDrawer(browser);
 
 						while (browser.IsOpen)
@@ -302,6 +308,16 @@ namespace Anamnesis.Files
 			builder.Append("|");
 			builder.Append("*" + GetFileTypeExtension(type));
 			return builder.ToString();
+		}
+
+		private static HashSet<string> ToExtensions(params Type[] types)
+		{
+			HashSet<string> results = new();
+
+			foreach (Type type in types)
+				results.Add(GetFileTypeExtension(type));
+
+			return results;
 		}
 
 		private static string GetFileTypeName(Type fileType)

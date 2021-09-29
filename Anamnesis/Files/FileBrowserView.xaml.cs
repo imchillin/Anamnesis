@@ -4,6 +4,7 @@
 namespace Anamnesis.GUI.Views
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using System.IO;
@@ -29,13 +30,14 @@ namespace Anamnesis.GUI.Views
 		private static Sort sortMode;
 
 		private readonly Modes mode;
+		private readonly HashSet<string> validExtensions;
 		private string? fileName;
 		private EntryWrapper? selected;
 		private bool updatingEntries = false;
 		private DirectoryInfo currentDir;
 
-		public FileBrowserView(DirectoryInfo[] directories, string defaultName, Modes mode)
-			: this(directories[0], defaultName, mode)
+		public FileBrowserView(DirectoryInfo[] directories, HashSet<string> extensions, string defaultName, Modes mode)
+			: this(directories[0], extensions, defaultName, mode)
 		{
 			foreach (DirectoryInfo dir in directories)
 			{
@@ -43,11 +45,12 @@ namespace Anamnesis.GUI.Views
 			}
 		}
 
-		public FileBrowserView(DirectoryInfo baseDirectory, string defaultName, Modes mode)
+		public FileBrowserView(DirectoryInfo baseDirectory, HashSet<string> extensions, string defaultName, Modes mode)
 		{
 			this.mode = mode;
 			this.BaseDir = baseDirectory;
 			this.currentDir = baseDirectory;
+			this.validExtensions = extensions;
 
 			this.InitializeComponent();
 
@@ -230,6 +233,9 @@ namespace Anamnesis.GUI.Views
 			FileInfo[] files = this.CurrentDir.GetFiles("*.*", op);
 			foreach (FileInfo file in files)
 			{
+				if (!this.validExtensions.Contains(file.Extension))
+					continue;
+
 				this.Selector.AddItem(new EntryWrapper(file, this));
 			}
 
