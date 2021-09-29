@@ -7,6 +7,7 @@ namespace Anamnesis.Files
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.Reflection;
+	using System.Text.Json.Serialization;
 	using Anamnesis.Memory;
 
 	public class LegacyPoseFile : JsonFileBase
@@ -447,6 +448,11 @@ namespace Anamnesis.Files
 			foreach (PropertyInfo propertyInfo in props)
 			{
 				string boneName = propertyInfo.Name;
+
+				// ignore properties that are not in the json.
+				JsonIgnoreAttribute? ignore = propertyInfo.GetCustomAttribute<JsonIgnoreAttribute>();
+				if (ignore != null)
+					continue;
 
 				if (boneName == "Race")
 					continue;
