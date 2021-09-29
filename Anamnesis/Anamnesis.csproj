@@ -337,7 +337,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Core\Localization\" />
 		<Folder Include="Properties\" />
 	</ItemGroup>
 
