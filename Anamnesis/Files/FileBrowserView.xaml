@@ -224,7 +224,8 @@
 				x:Name="FileNameInputBox"
 				Grid.Column="0"
 				Style="{StaticResource MaterialDesignTextBox}"
-				Text="{Binding FileName}" />
+				Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"
+				PreviewKeyUp="OnFileNameKey"/>
 			<TextBlock
 				Grid.Column="1"
 				Margin="2,0,0,0"
@@ -246,13 +247,15 @@
 						  Style="{StaticResource ButtonMenuItem}"
 						  Width="76" 
 						  Click="OnSelectClicked"
-						   Visibility="{Binding IsModeOpen, Converter={StaticResource !B2V}}"/>
+						  IsEnabled="{Binding CanSelect}"
+						  Visibility="{Binding IsModeOpen, Converter={StaticResource !B2V}}"/>
 
 				<MenuItem Header="Common_OpenFile"
 						  Icon="Check"
 						  Style="{StaticResource ButtonMenuItem}"
 						  Width="76"
 						  Click="OnSelectClicked"
+						  IsEnabled="{Binding CanSelect}"
 						  Visibility="{Binding IsModeOpen, Converter={StaticResource B2V}}"/>
 
 			</Menu>

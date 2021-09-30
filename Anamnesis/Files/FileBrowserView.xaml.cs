@@ -6,7 +6,6 @@ namespace Anamnesis.GUI.Views
 	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
-	using System.ComponentModel;
 	using System.IO;
 	using System.Text;
 	using System.Threading.Tasks;
@@ -24,14 +23,13 @@ namespace Anamnesis.GUI.Views
 	/// Interaction logic for FileBrowserView.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	public partial class FileBrowserView : UserControl, IDrawer, INotifyPropertyChanged
+	public partial class FileBrowserView : UserControl, IDrawer
 	{
 		private static bool isFlattened;
 		private static Sort sortMode;
 
 		private readonly Modes mode;
 		private readonly HashSet<string> validExtensions;
-		private string? fileName;
 		private EntryWrapper? selected;
 		private bool updatingEntries = false;
 		private DirectoryInfo currentDir;
@@ -76,13 +74,12 @@ namespace Anamnesis.GUI.Views
 				});
 			}
 
-			this.PropertyChanged?.Invoke(this, new(nameof(FileBrowserView.SortMode)));
+			////this.PropertyChanged?.Invoke(this, new(nameof(FileBrowserView.SortMode)));
 
 			Task.Run(this.UpdateEntries);
 		}
 
 		public event DrawerEvent? Close;
-		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public enum Modes
 		{
@@ -154,18 +151,8 @@ namespace Anamnesis.GUI.Views
 			}
 		}
 
-		public string? FileName
-		{
-			get
-			{
-				return this.fileName;
-			}
-			set
-			{
-				this.fileName = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanSelect)));
-			}
-		}
+		[AlsoNotifyFor(nameof(CanSelect))]
+		public string? FileName { get; set; }
 
 		public bool ShowFileName => this.mode == Modes.Save;
 		public bool CanGoUp => this.CurrentDir != this.BaseDir;
@@ -174,6 +161,7 @@ namespace Anamnesis.GUI.Views
 
 		public DirectoryInfo BaseDir { get; set; }
 
+		[AlsoNotifyFor(nameof(CanGoUp), nameof(CurrentPath))]
 		public DirectoryInfo CurrentDir
 		{
 			get => this.currentDir;
@@ -182,8 +170,6 @@ namespace Anamnesis.GUI.Views
 			{
 				this.currentDir = value;
 
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanGoUp)));
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentPath)));
 				Task.Run(this.UpdateEntries);
 				this.Selected = null;
 			}
@@ -331,8 +317,6 @@ namespace Anamnesis.GUI.Views
 
 			this.CurrentDir = this.currentDir.Parent;
 
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanGoUp)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentPath)));
 			Task.Run(this.UpdateEntries);
 		}
 
@@ -350,6 +334,15 @@ namespace Anamnesis.GUI.Views
 
 			this.Selected.Rename = this.Selected.Name;
 			this.Selected.IsRenaming = true;
+		}
+
+		private void OnFileNameKey(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Return || e.Key == Key.Enter)
+			{
+				e.Handled = true;
+				this.OnSelectClicked(sender, e);
+			}
 		}
 
 		private void OnSelectClicked(object? sender, RoutedEventArgs? e)
