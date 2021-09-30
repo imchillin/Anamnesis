@@ -10,11 +10,17 @@
 	xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-	Width="256"
+	Width="350"
 	d:DesignHeight="450"
 	mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -24,65 +30,69 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<!--  Source  -->
-		<ComboBox
-			Margin="6"
-			ItemsSource="{Binding FileSources}"
-			SelectedIndex="0"
-			SelectionChanged="OnSourceChanged">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Name}" />
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
+		<Grid Background="{DynamicResource MaterialDesignShadowBrush}"
+			  Grid.Column="0"
+			  Grid.RowSpan="6">
 
-		<Grid Grid.Row="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
+			<ListBox ItemsSource="{Binding Shortcuts}"
+					 Style="{DynamicResource MaterialDesignListBox}"
+					 SelectedItem="{Binding BaseDir}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Image Source="{Binding Icon}"
+							   Width="48"
+							   Height="40">
+							<Image.ToolTip>
+								<StackPanel>
+									<XivToolsWpf:TextBlock Key="{Binding LabelKey}"
+														   FontWeight="Bold" />
+									<XivToolsWpf:TextBlock Text="{Binding Path}" />
+								</StackPanel>
+							</Image.ToolTip>
+						</Image>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
 
-			<ToggleButton
-				Grid.Column="0"
-				Width="22"
-				Height="22"
-				Margin="6,0,3,0"
-				IsChecked="{Binding IsFlattened}"
-				Style="{StaticResource MaterialDesignActionToggleButton}">
+			<ToggleButton Width="32"
+						  Height="32"
+						  Margin="6, 6, 6, 10"
+						  IsChecked="{Binding IsFlattened}"
+						  Style="{StaticResource MaterialDesignActionToggleButton}"
+						  VerticalAlignment="Bottom">
+
 				<ToggleButton.ToolTip>
 					<XivToolsWpf:TextBlock Key="FileBrowser_Flatten" />
 				</ToggleButton.ToolTip>
 				<ToggleButton.Content>
-					<XivToolsWpf:IconBlock FontSize="12" Icon="folder" />
+					<XivToolsWpf:IconBlock FontSize="12"
+										   Icon="folder" />
 				</ToggleButton.Content>
 				<materialDesign:ToggleButtonAssist.OnContent>
-					<XivToolsWpf:IconBlock FontSize="12" Icon="Copy" />
+					<XivToolsWpf:IconBlock FontSize="12"
+										   Icon="Copy" />
 				</materialDesign:ToggleButtonAssist.OnContent>
 			</ToggleButton>
+		</Grid>
+
+		<Grid Grid.Row="1"
+			  Grid.Column="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
 
 			<Button
-				Grid.Column="1"
-				Margin="3"
-				Click="OnCreateFolderClicked"
-				IsEnabled="{Binding FileSource.CanWrite}"
-				Style="{StaticResource TransparentButton}">
-				<Button.ToolTip>
-					<XivToolsWpf:TextBlock Key="FileBrowser_CreateFolder" />
-				</Button.ToolTip>
-
-				<fa:IconBlock Icon="FolderPlus" />
-			</Button>
-
-			<Button
-				Grid.Column="2"
+				Grid.Column="0"
 				Margin="3"
 				Click="OnGoUpClicked"
 				IsEnabled="{Binding CanGoUp}"
-				Style="{StaticResource TransparentButton}">
+				Style="{StaticResource TransparentButton}"
+				Width="32"
+				Height="28">
+				
 				<Button.ToolTip>
 					<XivToolsWpf:TextBlock Key="FileBrowser_GoUp" />
 				</Button.ToolTip>
@@ -91,12 +101,25 @@
 			</Button>
 
 			<TextBlock
-				Grid.Column="3"
+				Grid.Column="1"
 				Margin="3,0,3,0"
 				VerticalAlignment="Center"
 				Text="{Binding CurrentPath}" />
 
-			<ComboBox Grid.Column="4" Margin="0, 3, 6, 0" Height="22" 
+			<Button Grid.Column="2"
+					Margin="3"
+					Click="OnCreateFolderClicked"
+					IsEnabled="{Binding FileSource.CanWrite}"
+					Style="{StaticResource TransparentButton}">
+				
+				<Button.ToolTip>
+					<XivToolsWpf:TextBlock Key="FileBrowser_CreateFolder" />
+				</Button.ToolTip>
+
+				<fa:IconBlock Icon="FolderPlus" />
+			</Button>
+
+			<ComboBox Grid.Column="3" Margin="6, 3, 6, 0" Height="22" 
 					  Style="{StaticResource MaterialDesignDataGridComboBox}"
 					  SelectedIndex="{Binding SortModeInt, Mode=TwoWay}">
 
@@ -124,13 +147,13 @@
 
 		</Grid>
 
-		<drawers:SelectorDrawer
-			x:Name="Selector"
-			Grid.Row="2"
-			Close="OnClose"
-			Filter="OnFilter"
-			Sort="OnSort"
-			SelectionChanged="OnSelectionChanged">
+		<drawers:SelectorDrawer x:Name="Selector"
+								Grid.Row="2"
+								Grid.Column="1"
+								Close="OnClose"
+								Filter="OnFilter"
+								Sort="OnSort"
+								SelectionChanged="OnSelectionChanged">
 			<drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
 					<Grid Margin="0,-4,0,-4">
@@ -211,10 +234,10 @@
 			</ListBox.ItemContainerStyle>
 		</ListBox>-->
 
-		<Grid
-			Grid.Row="3"
-			Margin="6"
-			Visibility="{Binding ShowFileName, Converter={StaticResource B2V}}">
+		<Grid Grid.Row="3"
+			  Grid.Column="1"
+			  Margin="6"
+			  Visibility="{Binding ShowFileName, Converter={StaticResource B2V}}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
 				<ColumnDefinition Width="Auto" />
@@ -233,7 +256,9 @@
 				Text="{Binding FileExtension}" />
 		</Grid>
 
-		<Grid Grid.Row="5" Margin="6">
+		<Grid Grid.Row="5"
+			  Margin="6"
+			  Grid.Column="1">
 
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition/>

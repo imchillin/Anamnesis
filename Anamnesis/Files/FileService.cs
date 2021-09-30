@@ -10,6 +10,8 @@ namespace Anamnesis.Files
 	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Media;
+	using System.Windows.Media.Imaging;
 	using Anamnesis;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Views;
@@ -23,12 +25,40 @@ namespace Anamnesis.Files
 		private static readonly Dictionary<Type, string> TypeNameLookup = new Dictionary<Type, string>();
 		private static readonly Dictionary<Type, string> TypeExtensionLookup = new Dictionary<Type, string>();
 
-		public static DirectoryInfo DefaultPoseDirectory => new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultPoseDirectory));
-		public static DirectoryInfo DefaultCharacterDirectory => new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCharacterDirectory));
-		public static DirectoryInfo DefaultSceneDirectory => new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultSceneDirectory));
-		public static DirectoryInfo BuiltInPoseDirectory => new DirectoryInfo(ParseToFilePath("%InstallDir%/Data/BuiltInPoses/"));
-		public static DirectoryInfo CMToolSaveDir => new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/Matrix Saves/"));
-		public static DirectoryInfo FFxivDatCharacterDirectory => new DirectoryInfo(ParseToFilePath("%MyDocuments%/My Games/FINAL FANTASY XIV - A Realm Reborn/"));
+		public static Shortcut Desktop => new Shortcut(
+			new DirectoryInfo(ParseToFilePath("%Desktop%")),
+			"Shortcuts/Desktop.png",
+			"Shortcut_Desktop");
+
+		public static Shortcut DefaultPoseDirectory => new Shortcut(
+			new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultPoseDirectory)),
+			"Shortcuts/Anamnesis.png",
+			"Shortcut_AnamnesisPose");
+
+		public static Shortcut DefaultCharacterDirectory => new Shortcut(
+			new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCharacterDirectory)),
+			"Shortcuts/Anamnesis.png",
+			"Shortcut_AnamnesisCharacter");
+
+		public static Shortcut DefaultSceneDirectory => new Shortcut(
+			new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultSceneDirectory)),
+			"Shortcuts/Anamnesis.png",
+			"Shortcut_AnamnesisScenes");
+
+		public static Shortcut BuiltInPoseDirectory => new Shortcut(
+			new DirectoryInfo(ParseToFilePath("%InstallDir%/Data/BuiltInPoses/")),
+			"Shortcuts/AnamnesisBuiltIn.png",
+			"Shortcut_BuiltInPose");
+
+		public static Shortcut CMToolSaveDir => new Shortcut(
+			new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/Matrix Saves/")),
+			"Shortcuts/cmtool.png",
+			"Shortcut_CMToolPose");
+
+		public static Shortcut FFxivDatCharacterDirectory => new Shortcut(
+			new DirectoryInfo(ParseToFilePath("%MyDocuments%/My Games/FINAL FANTASY XIV - A Realm Reborn/")),
+			"Shortcuts/ffxiv.png",
+			"Shortcut_FfxivAppearance");
 
 		/// <summary>
 		/// Replaces special folders (%ApplicationData%) with the actual path.
@@ -81,37 +111,37 @@ namespace Anamnesis.Files
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"\"{dir}\"");
 		}
 
-		public static async Task<OpenResult> Open<T>(params DirectoryInfo[] directories)
+		public static async Task<OpenResult> Open<T>(params Shortcut[] shortcuts)
 			where T : FileBase
 		{
-			return await Open(directories, typeof(T));
+			return await Open(shortcuts, typeof(T));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2>(params DirectoryInfo[] directories)
+		public static async Task<OpenResult> Open<T1, T2>(params Shortcut[] shortcuts)
 			where T1 : FileBase
 			where T2 : FileBase
 		{
-			return await Open(directories, typeof(T1), typeof(T2));
+			return await Open(shortcuts, typeof(T1), typeof(T2));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3>(params DirectoryInfo[] directories)
+		public static async Task<OpenResult> Open<T1, T2, T3>(params Shortcut[] shortcuts)
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 		{
-			return await Open(directories, typeof(T1), typeof(T2), typeof(T3));
+			return await Open(shortcuts, typeof(T1), typeof(T2), typeof(T3));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3, T4>(params DirectoryInfo[] directories)
+		public static async Task<OpenResult> Open<T1, T2, T3, T4>(params Shortcut[] shortcuts)
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 			where T4 : FileBase
 		{
-			return await Open(directories, typeof(T1), typeof(T2), typeof(T3), typeof(T4));
+			return await Open(shortcuts, typeof(T1), typeof(T2), typeof(T3), typeof(T4));
 		}
 
-		public static async Task<OpenResult> Open(DirectoryInfo[] directories, params Type[] fileTypes)
+		public static async Task<OpenResult> Open(Shortcut[] shortcuts, params Type[] fileTypes)
 		{
 			OpenResult result = default;
 
@@ -122,7 +152,7 @@ namespace Anamnesis.Files
 				if (!useExplorerBrowser)
 				{
 					HashSet<string> extensions = ToExtensions(fileTypes);
-					FileBrowserView browser = new FileBrowserView(directories, extensions, string.Empty, FileBrowserView.Modes.Load);
+					FileBrowserView browser = new FileBrowserView(shortcuts, extensions, string.Empty, FileBrowserView.Modes.Load);
 					await ViewService.ShowDrawer(browser);
 
 					while (browser.IsOpen)
@@ -195,13 +225,13 @@ namespace Anamnesis.Files
 			return result;
 		}
 
-		public static Task<SaveResult> Save<T>(params DirectoryInfo[] directories)
+		public static Task<SaveResult> Save<T>(params Shortcut[] directories)
 			where T : FileBase
 		{
 			return Save<T>(null, directories);
 		}
 
-		public static async Task<SaveResult> Save<T>(string? defaultPath, params DirectoryInfo[] directories)
+		public static async Task<SaveResult> Save<T>(string? defaultPath, params Shortcut[] directories)
 			where T : FileBase
 		{
 			SaveResult result = default;
@@ -366,5 +396,27 @@ namespace Anamnesis.Files
 	public struct SaveResult
 	{
 		public string? Path;
+	}
+
+	public class Shortcut
+	{
+		public DirectoryInfo Directory { get; private set; }
+		public ImageSource? Icon { get; private set; }
+		public string LabelKey { get; private set; }
+
+		public string Path => FileService.ParseFromFilePath(this.Directory.FullName);
+
+		public Shortcut(DirectoryInfo dir, string icon, string key)
+		{
+			this.Directory = dir;
+			this.LabelKey = key;
+
+			if (!string.IsNullOrEmpty(icon))
+			{
+				BitmapImage newIcon = new BitmapImage(new Uri($"pack://application:,,,/Anamnesis;component/Assets/{icon}"));
+				newIcon.Freeze();
+				this.Icon = newIcon;
+			}
+		}
 	}
 }

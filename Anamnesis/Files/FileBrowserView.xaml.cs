@@ -12,6 +12,7 @@ namespace Anamnesis.GUI.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
+	using Anamnesis.Files;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -32,25 +33,26 @@ namespace Anamnesis.GUI.Views
 		private readonly HashSet<string> validExtensions;
 		private EntryWrapper? selected;
 		private bool updatingEntries = false;
-		private DirectoryInfo currentDir;
 
-		public FileBrowserView(DirectoryInfo[] directories, HashSet<string> extensions, string defaultName, Modes mode)
-			: this(directories[0], extensions, defaultName, mode)
+		public FileBrowserView(Shortcut[] shortcuts, HashSet<string> extensions, string defaultName, Modes mode)
+			: this(shortcuts[0], extensions, defaultName, mode)
 		{
-			foreach (DirectoryInfo dir in directories)
+			foreach (Shortcut shortcut in shortcuts)
 			{
-				this.FileSources.Add(dir);
+				this.Shortcuts.Add(shortcut);
 			}
+
+			this.Shortcuts.Add(FileService.Desktop);
 		}
 
-		public FileBrowserView(DirectoryInfo baseDirectory, HashSet<string> extensions, string defaultName, Modes mode)
+		public FileBrowserView(Shortcut baseDirectory, HashSet<string> extensions, string defaultName, Modes mode)
 		{
-			this.mode = mode;
-			this.BaseDir = baseDirectory;
-			this.currentDir = baseDirectory;
-			this.validExtensions = extensions;
-
 			this.InitializeComponent();
+
+			this.BaseDir = baseDirectory;
+			this.CurrentDir = baseDirectory.Directory;
+			this.mode = mode;
+			this.validExtensions = extensions;
 
 			this.Selector.SearchEnabled = mode == Modes.Load;
 
@@ -117,7 +119,7 @@ namespace Anamnesis.GUI.Views
 			}
 		}
 
-		public ObservableCollection<DirectoryInfo> FileSources { get; } = new ObservableCollection<DirectoryInfo>();
+		public ObservableCollection<Shortcut> Shortcuts { get; } = new ObservableCollection<Shortcut>();
 
 		public string? FilePath { get; private set; }
 		public bool UseFileBrowser { get; set; }
@@ -155,25 +157,16 @@ namespace Anamnesis.GUI.Views
 		public string? FileName { get; set; }
 
 		public bool ShowFileName => this.mode == Modes.Save;
-		public bool CanGoUp => this.CurrentDir.FullName.TrimEnd('\\') != this.BaseDir.FullName.TrimEnd('\\');
-		public string? CurrentPath => this.CurrentDir?.FullName.Replace(this.BaseDir.FullName.Trim('\\'), string.Empty);
+		public bool CanGoUp => this.CurrentDir.FullName.TrimEnd('\\') != this.BaseDir.Directory.FullName.TrimEnd('\\');
+		public string? CurrentPath => this.CurrentDir?.FullName.Replace(this.BaseDir.Directory.FullName.Trim('\\'), string.Empty);
 		public bool IsModeOpen => this.mode == Modes.Load;
 
-		public DirectoryInfo BaseDir { get; set; }
+		[OnChangedMethod(nameof(OnBaseDirChanged))]
+		public Shortcut BaseDir { get; set; }
 
 		[AlsoNotifyFor(nameof(CanGoUp), nameof(CurrentPath))]
-		public DirectoryInfo CurrentDir
-		{
-			get => this.currentDir;
-
-			private set
-			{
-				this.currentDir = value;
-
-				Task.Run(this.UpdateEntries);
-				this.Selected = null;
-			}
-		}
+		[OnChangedMethod(nameof(OnCurrentDirChanged))]
+		public DirectoryInfo CurrentDir { get; private set; }
 
 		public bool CanSelect
 		{
@@ -192,6 +185,17 @@ namespace Anamnesis.GUI.Views
 
 		public void OnClosed()
 		{
+		}
+
+		private void OnBaseDirChanged()
+		{
+			this.CurrentDir = this.BaseDir.Directory;
+		}
+
+		private void OnCurrentDirChanged()
+		{
+			this.Selected = null;
+			Task.Run(this.UpdateEntries);
 		}
 
 		private async Task UpdateEntries()
@@ -312,10 +316,10 @@ namespace Anamnesis.GUI.Views
 
 		private void OnGoUpClicked(object? sender, RoutedEventArgs e)
 		{
-			if (this.currentDir.Parent == null || this.currentDir == this.BaseDir)
+			if (this.CurrentDir.Parent == null)
 				return;
 
-			this.CurrentDir = this.currentDir.Parent;
+			this.CurrentDir = this.CurrentDir.Parent;
 
 			Task.Run(this.UpdateEntries);
 		}
@@ -429,18 +433,6 @@ namespace Anamnesis.GUI.Views
 				{
 					this.selected = wrapper;
 				}
-			}
-		}
-
-		private void OnSourceChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (e.Source is ComboBox cb && cb.SelectedItem is DirectoryInfo dir)
-			{
-				if (dir == this.BaseDir)
-					return;
-
-				this.BaseDir = dir;
-				this.CurrentDir = dir;
 			}
 		}
 
