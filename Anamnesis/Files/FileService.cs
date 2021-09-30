@@ -26,7 +26,7 @@ namespace Anamnesis.Files
 		public static DirectoryInfo DefaultPoseDirectory => new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultPoseDirectory));
 		public static DirectoryInfo DefaultCharacterDirectory => new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCharacterDirectory));
 		public static DirectoryInfo DefaultSceneDirectory => new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultSceneDirectory));
-		public static DirectoryInfo BuiltInPoseDirectory => new DirectoryInfo(ParseToFilePath("%CurrentDir%/Data/BuiltInPoses/"));
+		public static DirectoryInfo BuiltInPoseDirectory => new DirectoryInfo(ParseToFilePath("%InstallDir%/Data/BuiltInPoses/"));
 		public static DirectoryInfo CMToolSaveDir => new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/Matrix Saves/"));
 		public static DirectoryInfo FFxivDatCharacterDirectory => new DirectoryInfo(ParseToFilePath("%MyDocuments%/My Games/FINAL FANTASY XIV - A Realm Reborn/"));
 
@@ -44,7 +44,8 @@ namespace Anamnesis.Files
 			}
 
 			// Special case for "AppData" instead of "ApplicationData"
-			path = path.Replace($"%AppData%", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+			path = path.Replace("%AppData%", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+			path = path.Replace("%InstallDir%", Directory.GetCurrentDirectory());
 			path = path.Replace('/', '\\');
 			return path;
 		}
