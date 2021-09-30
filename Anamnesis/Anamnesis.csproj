@@ -49,6 +49,11 @@
 
 	<ItemGroup>
 		<Resource Include="Assets\*.*" />
+		<Resource Include="Assets\Classes\*.*" />
+		<Resource Include="Assets\Fonts\*.*" />
+		<Resource Include="Assets\Roles\*.*" />
+		<Resource Include="Assets\Shortcuts\*.*" />
+		<Resource Include="Assets\Slots\*.*" />
 		<Resource Include="FodyWeavers.xml" />
 	</ItemGroup>
 
