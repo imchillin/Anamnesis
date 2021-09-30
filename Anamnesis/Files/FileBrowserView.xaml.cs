@@ -155,7 +155,7 @@ namespace Anamnesis.GUI.Views
 		public string? FileName { get; set; }
 
 		public bool ShowFileName => this.mode == Modes.Save;
-		public bool CanGoUp => this.CurrentDir != this.BaseDir;
+		public bool CanGoUp => this.CurrentDir.FullName.TrimEnd('\\') != this.BaseDir.FullName.TrimEnd('\\');
 		public string? CurrentPath => this.CurrentDir?.FullName.Replace(this.BaseDir.FullName.Trim('\\'), string.Empty);
 		public bool IsModeOpen => this.mode == Modes.Load;
 
