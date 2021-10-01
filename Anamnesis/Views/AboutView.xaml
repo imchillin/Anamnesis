@@ -70,6 +70,8 @@
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/DotNetAnalyzers/StyleCopAnalyzers" FontSize="12">StyleCop Analyzers</Hyperlink>
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/Kryptos-FR/markdig.wpf" FontSize="12">Markdig.WPF</Hyperlink>
+					<LineBreak />
+					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://brailleinstitute.org/freefont" FontSize="12" >Atkinson Hyperlegible Font</Hyperlink>
 			</TextBlock>
 
 			

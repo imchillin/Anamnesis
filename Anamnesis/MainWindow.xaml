@@ -24,6 +24,7 @@
 	MinHeight="128"
 	TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 	Topmost="{Binding SettingsService.Settings.AlwaysOnTop}"
+	Style="{DynamicResource AnaWindowStyle}"
 	TextBlock.FontSize="12"
 	mc:Ignorable="d">
 

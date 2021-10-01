@@ -59,13 +59,14 @@
 			<converters:Vector2DRadiansToDegreesConverter x:Key="Vec2DRad2Deg"/>
 			
 			<!-- dyslexic font -->
-		
-			<FontFamily x:Key="OpenDyslexic">pack://application:,,,/Assets/Fonts/#OpenDyslexic</FontFamily>
+
+			<FontFamily x:Key="Atkinson-Hyperlegible">pack://application:,,,/Assets/Fonts/#Atkinson Hyperlegible</FontFamily>
 			
-			<Style x:Key="AnaWindowStyle" TargetType="{x:Type Window}">
+			<Style x:Key="AnaWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource ChromedWindowStyle}">
 				<Style.Triggers>
-					<DataTrigger Binding="{Binding SettingsService.Settings.IsDyslexic}" Value="true">
-						<Setter Property="FontFamily" Value="{StaticResource OpenDyslexic}" />
+					<DataTrigger Binding="{Binding SettingsService.Settings.UseHyperlegibleFont}" Value="true">
+						<Setter Property="FontFamily" Value="{StaticResource Atkinson-Hyperlegible}" />
+						<Setter Property="FontSize" Value="20" />
 					</DataTrigger>
 				</Style.Triggers>
 			</Style>

@@ -61,8 +61,8 @@
 		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_UseWindowsExplorer" Style="{StaticResource Label}"/>
 		<CheckBox IsChecked="{Binding SettingsService.Settings.UseWindowsExplorer}" Grid.Column="1" Grid.Row="6" Margin="6"/>
 		
-		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_Dyslexic" Style="{StaticResource Label}"/>
-		<CheckBox IsChecked="{Binding SettingsService.Settings.IsDyslexic}" Grid.Column="1" Grid.Row="7" Margin="6"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_Hyperlegible" Style="{StaticResource Label}"/>
+		<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="7" Margin="6"/>
 
 		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="8" Key="Settings_ShowGallery" Style="{StaticResource Label}"/>
 		<CheckBox IsChecked="{Binding SettingsService.Settings.ShowGallery}" Grid.Column="1" Grid.Row="8" Margin="6"/>

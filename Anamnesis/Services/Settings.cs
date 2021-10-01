@@ -26,7 +26,7 @@ namespace Anamnesis.Services
 		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
 		public bool ShowAdvancedOptions { get; set; } = true;
 		public bool FlipPoseGuiSides { get; set; } = false;
-		public bool IsDyslexic { get; set; } = false;
+		public bool UseHyperlegibleFont { get; set; } = false;
 		public bool ShowGallery { get; set; } = true;
 		public bool EnableTranslucency { get; set; } = true;
 		public bool ExtendIntoWindowChrome { get; set; } = true;
