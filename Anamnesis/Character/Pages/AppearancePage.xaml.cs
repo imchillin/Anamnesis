@@ -102,34 +102,35 @@ namespace Anamnesis.Character.Pages
 			await this.Load(CharacterFile.SaveModes.EquipmentWeapons);
 		}
 
-		private async void OnLoadNpcClicked(object sender, RoutedEventArgs e)
+		private void OnLoadNpcClicked(object sender, RoutedEventArgs e)
 		{
-			await this.LoadNpc(CharacterFile.SaveModes.All);
+			this.LoadNpc(CharacterFile.SaveModes.All);
 		}
 
-		private async void OnLoadNpcEquipmentClicked(object sender, RoutedEventArgs e)
+		private void OnLoadNpcEquipmentClicked(object sender, RoutedEventArgs e)
 		{
-			await this.LoadNpc(CharacterFile.SaveModes.Equipment);
+			this.LoadNpc(CharacterFile.SaveModes.Equipment);
 		}
 
-		private async void OnLoadNpcAppearanceClicked(object sender, RoutedEventArgs e)
+		private void OnLoadNpcAppearanceClicked(object sender, RoutedEventArgs e)
 		{
-			await this.LoadNpc(CharacterFile.SaveModes.Appearance);
+			this.LoadNpc(CharacterFile.SaveModes.Appearance);
 		}
 
-		private async void OnLoadNpcWeaponsClicked(object sender, RoutedEventArgs e)
+		private void OnLoadNpcWeaponsClicked(object sender, RoutedEventArgs e)
 		{
-			await this.LoadNpc(CharacterFile.SaveModes.EquipmentWeapons);
+			this.LoadNpc(CharacterFile.SaveModes.EquipmentWeapons);
 		}
 
-		private async Task LoadNpc(CharacterFile.SaveModes mode)
+		private void LoadNpc(CharacterFile.SaveModes mode)
 		{
-			INpcResident? npc = await SelectorDrawer.ShowAsync<NpcSelector, INpcResident>(null);
+			SelectorDrawer.Show<NpcSelector, INpcResident>(null, (npc) =>
+			{
+				if (npc == null)
+					return;
 
-			if (npc == null)
-				return;
-
-			await this.ApplyNpc(npc, mode);
+				Task.Run(() => this.ApplyNpc(npc, mode));
+			});
 		}
 
 		private async Task ApplyNpc(INpcResident? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
