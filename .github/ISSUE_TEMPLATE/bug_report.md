@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a report to help us improve. Please check the Issue list, including closed tickets, to make sure you're not opening up a duplicate ticket, as duplicates will be closed without notice.
 title: ''
 labels: ''
 assignees: ''
