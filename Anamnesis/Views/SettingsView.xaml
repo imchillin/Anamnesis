@@ -28,6 +28,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition />
@@ -57,11 +58,14 @@
 		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
 		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="5" Margin="6"/>
 
-		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Dyslexic" Style="{StaticResource Label}"/>
-		<CheckBox IsChecked="{Binding SettingsService.Settings.IsDyslexic}" Grid.Column="1" Grid.Row="6" Margin="6"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_UseWindowsExplorer" Style="{StaticResource Label}"/>
+		<CheckBox IsChecked="{Binding SettingsService.Settings.UseWindowsExplorer}" Grid.Column="1" Grid.Row="6" Margin="6"/>
+		
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_Dyslexic" Style="{StaticResource Label}"/>
+		<CheckBox IsChecked="{Binding SettingsService.Settings.IsDyslexic}" Grid.Column="1" Grid.Row="7" Margin="6"/>
 
-		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_ShowGallery" Style="{StaticResource Label}"/>
-		<CheckBox IsChecked="{Binding SettingsService.Settings.ShowGallery}" Grid.Column="1" Grid.Row="7" Margin="6"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="8" Key="Settings_ShowGallery" Style="{StaticResource Label}"/>
+		<CheckBox IsChecked="{Binding SettingsService.Settings.ShowGallery}" Grid.Column="1" Grid.Row="8" Margin="6"/>
 
 
 
