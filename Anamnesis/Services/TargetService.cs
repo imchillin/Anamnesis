@@ -30,6 +30,8 @@ namespace Anamnesis
 		public ActorViewModel? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
+		private static bool EnableActorTicking { get; set; }
+
 		public static async Task PinActor(ActorBasicViewModel basicActor)
 		{
 			if (basicActor.Pointer == null)
@@ -77,7 +79,7 @@ namespace Anamnesis
 		{
 			Instance.PinnedActors.Remove(actor);
 
-			if (actor.GetViewModel() == Instance.SelectedActor)
+			if (actor.ViewModel == Instance.SelectedActor)
 			{
 				if (Instance.PinnedActors.Count > 0)
 				{
@@ -145,7 +147,7 @@ namespace Anamnesis
 				await PinActor(allaCtors[0]);
 			}
 
-			_ = Task.Run(this.TickSelectedActor);
+			_ = Task.Run(this.TickPinnedActors);
 		}
 
 		public void ClearSelection()
@@ -223,22 +225,21 @@ namespace Anamnesis
 			ActorSelected?.Invoke(actor);
 		}
 
-		private async Task TickSelectedActor()
+		private async Task TickPinnedActors()
 		{
 			while (this.IsAlive)
 			{
 				await Task.Delay(33);
 
-				if (this.SelectedActor == null)
+				if (!TargetService.EnableActorTicking)
+				{
+					await Task.Delay(100);
 					continue;
-
-				try
-				{
-					this.SelectedActor.ReadChanges();
 				}
-				catch (Exception ex)
+
+				foreach (PinnedActor actor in this.PinnedActors)
 				{
-					Log.Error(ex, "Failed to tick selected actor");
+					actor.Tick();
 				}
 			}
 		}
@@ -246,16 +247,16 @@ namespace Anamnesis
 		[AddINotifyPropertyChangedInterface]
 		public class PinnedActor : INotifyPropertyChanged
 		{
-			private ActorViewModel? viewModel;
-
 			public PinnedActor(ActorViewModel actorVm)
 			{
 				this.Id = actorVm.Id;
-				this.viewModel = actorVm;
+				this.ViewModel = actorVm;
 				this.Retarget();
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;
+
+			public ActorViewModel? ViewModel { get; private set; }
 
 			public string? Name { get; private set; }
 			public string Id { get; private set; }
@@ -267,7 +268,8 @@ namespace Anamnesis
 			public bool IsValid { get; private set; }
 			public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
 
-			public string? DisplayName => this.viewModel == null ? this.Name : this.viewModel.DisplayName;
+			public string? DisplayName => this.ViewModel == null ? this.Name : this.ViewModel.DisplayName;
+			public bool IsRetargeting { get; private set; } = false;
 
 			public bool IsSelected
 			{
@@ -293,15 +295,15 @@ namespace Anamnesis
 
 			public override string? ToString()
 			{
-				if (this.viewModel == null)
+				if (this.ViewModel == null)
 					return base.ToString();
 
-				return this.viewModel.DisplayName;
+				return this.ViewModel.DisplayName;
 			}
 
 			public void Dispose()
 			{
-				this.viewModel?.Dispose();
+				this.ViewModel?.Dispose();
 			}
 
 			public void SelectionChanged()
@@ -312,7 +314,7 @@ namespace Anamnesis
 			public ActorViewModel? GetViewModel()
 			{
 				this.Retarget();
-				return this.viewModel;
+				return this.ViewModel;
 			}
 
 			public override int GetHashCode()
@@ -320,49 +322,81 @@ namespace Anamnesis
 				return HashCode.Combine(this.Pointer, this.Name);
 			}
 
+			public void Tick()
+			{
+				lock (this)
+				{
+					if (this.IsRetargeting)
+						return;
+
+					if (this.ViewModel == null)
+						return;
+
+					try
+					{
+						this.ViewModel.ReadChanges();
+					}
+					catch (Exception ex)
+					{
+						Log.Error(ex, "Failed to tick selected actor");
+					}
+				}
+			}
+
 			private void Retarget()
 			{
 				lock (this)
 				{
-					if (this.viewModel != null)
-						this.viewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
+					this.IsRetargeting = true;
 
-					IntPtr? previousPointerBeforeGPose = this.viewModel?.PreviousPointerBeforeGPose;
+					if (this.ViewModel != null)
+						this.ViewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
 
 					foreach (ActorBasicViewModel actor in TargetService.GetAllActors())
 					{
 						if (actor.Id != this.Id || actor.Pointer == null)
 							continue;
 
-						this.viewModel = new ActorViewModel((IntPtr)actor.Pointer);
-						this.viewModel.PreviousPointerBeforeGPose = previousPointerBeforeGPose;
-						this.Name = this.viewModel.Name;
-						this.viewModel.OnRetargeted();
-						this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;
-						this.Pointer = this.viewModel.Pointer;
-						this.Kind = this.viewModel.ObjectKind;
-						this.ModelType = this.viewModel.ModelType;
+						if (this.ViewModel != null)
+						{
+							this.ViewModel.Pointer = actor.Pointer;
+							this.ViewModel.ReadChanges();
+						}
+						else
+						{
+							this.ViewModel = new ActorViewModel((IntPtr)actor.Pointer);
+						}
+
+						this.Name = this.ViewModel.Name;
+						this.ViewModel.OnRetargeted();
+						this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+						this.Pointer = this.ViewModel.Pointer;
+						this.Kind = this.ViewModel.ObjectKind;
+						this.ModelType = this.ViewModel.ModelType;
 
 						this.UpdateInitials(this.DisplayName);
 
 						this.IsValid = true;
 						Log.Information($"Retargeted actor: {this.Initials}");
 
+						this.IsRetargeting = false;
+
 						return;
 					}
 
-					this.viewModel?.Dispose();
+					this.ViewModel?.Dispose();
 					Log.Warning($"Lost actor: {this.Initials}");
 
 					this.IsValid = false;
+					this.IsRetargeting = false;
 				}
 			}
 
 			private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
 			{
-				if (this.viewModel != null && e.PropertyName == nameof(ActorViewModel.DisplayName))
+				if (this.ViewModel != null && e.PropertyName == nameof(ActorViewModel.DisplayName))
 				{
-					this.UpdateInitials(this.viewModel.DisplayName);
+					this.UpdateInitials(this.ViewModel.DisplayName);
 				}
 			}
 
