@@ -219,30 +219,9 @@ namespace Anamnesis.GUI.Views
 
 			try
 			{
-				if (this.CurrentDir.Exists)
-				{
-					EnumerationOptions op = new EnumerationOptions();
-					op.RecurseSubdirectories = this.IsFlattened;
-					op.ReturnSpecialDirectories = false;
-
-					if (!this.IsFlattened)
-					{
-						DirectoryInfo[] directories = this.CurrentDir.GetDirectories("*", op);
-						foreach (DirectoryInfo dir in directories)
-						{
-							this.Selector.AddItem(new EntryWrapper(dir, this));
-						}
-					}
-
-					FileInfo[] files = this.CurrentDir.GetFiles("*.*", op);
-					foreach (FileInfo file in files)
-					{
-						if (!this.validExtensions.Contains(file.Extension))
-							continue;
-
-						this.Selector.AddItem(new EntryWrapper(file, this));
-					}
-				}
+				List<EntryWrapper> results = new();
+				this.GetEntries(this.CurrentDir, ref results);
+				this.Selector.AddItems(results);
 			}
 			catch (Exception ex)
 			{
@@ -251,6 +230,40 @@ namespace Anamnesis.GUI.Views
 
 			await this.Selector.FilterItemsAsync();
 			this.updatingEntries = false;
+		}
+
+		private void GetEntries(DirectoryInfo dir, ref List<EntryWrapper> results)
+		{
+			if (!dir.Exists)
+				return;
+
+			FileInfo[] files = dir.GetFiles();
+			foreach (FileInfo file in files)
+			{
+				if (!this.validExtensions.Contains(file.Extension))
+					continue;
+
+				results.Add(new EntryWrapper(file, this));
+			}
+
+			DirectoryInfo[] directories = dir.GetDirectories();
+			foreach (DirectoryInfo subDir in directories)
+			{
+				List<EntryWrapper> subResults = new();
+				this.GetEntries(subDir, ref subResults);
+
+				if (subResults.Count == 0)
+					continue;
+
+				if (!this.IsFlattened)
+				{
+					results.Add(new EntryWrapper(subDir, this));
+				}
+				else
+				{
+					results.AddRange(subResults);
+				}
+			}
 		}
 
 		private void OnClose()
