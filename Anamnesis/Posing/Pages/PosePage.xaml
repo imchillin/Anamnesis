@@ -197,15 +197,14 @@
 					Grid.ColumnSpan="2"
 					Margin="3"
 					VerticalAlignment="Stretch"
-					Style="{StaticResource Panel}"
-					IsEnabled="{Binding GposeService.IsGpose}">
+					Style="{StaticResource Panel}">
 					<Grid Height="35">
 						<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-							<ToggleButton
-								Width="75"
-								Margin="3"
-								IsChecked="{Binding PoseService.IsEnabled}"
-								Style="{StaticResource OutlineToggleButton}">
+							<ToggleButton Width="75"
+										  Margin="3"
+										  IsEnabled="{Binding GposeService.IsGpose}"
+										  IsChecked="{Binding PoseService.IsEnabled}"
+										  Style="{StaticResource OutlineToggleButton}">
 								<Grid>
 									<XivToolsWpf:TextBlock
 										Key="Common_Disable"
