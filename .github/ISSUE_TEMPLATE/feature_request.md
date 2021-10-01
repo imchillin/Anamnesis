@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for this project. Please make sure you've checked the Issue list and the Limitations list on the Wiki before making feature requests, as duplicates will be closed without notice, including requests for features that have already been added to the list of features that cannot/will not be added.
+about: Suggest an idea for the tool. Please make sure you've checked the Issue list and Wiki before making requests, as requests for anything in the 'cannot/will not add' list will be closed without notice.
 title: ''
 labels: Enhancement
 assignees: ''
