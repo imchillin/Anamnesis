@@ -327,12 +327,15 @@ namespace Anamnesis
 					if (this.viewModel != null)
 						this.viewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
 
+					IntPtr? previousPointerBeforeGPose = this.viewModel?.PreviousPointerBeforeGPose;
+
 					foreach (ActorBasicViewModel actor in TargetService.GetAllActors())
 					{
 						if (actor.Id != this.Id || actor.Pointer == null)
 							continue;
 
 						this.viewModel = new ActorViewModel((IntPtr)actor.Pointer);
+						this.viewModel.PreviousPointerBeforeGPose = previousPointerBeforeGPose;
 						this.Name = this.viewModel.Name;
 						this.viewModel.OnRetargeted();
 						this.viewModel.PropertyChanged += this.OnViewModelPropertyChanged;

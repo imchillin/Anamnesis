@@ -17,7 +17,6 @@ namespace Anamnesis.Memory
 
 		private short refreshDelay;
 		private Task? refreshTask;
-		private IntPtr? wasPlayerBeforeGPose;
 
 		public ActorViewModel(IntPtr pointer)
 			: base(pointer)
@@ -33,6 +32,7 @@ namespace Anamnesis.Memory
 		public bool AutomaticRefreshEnabled { get; set; } = true;
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
+		public IntPtr? PreviousPointerBeforeGPose { get; set; }
 
 		public override void OnRetargeted()
 		{
@@ -48,23 +48,23 @@ namespace Anamnesis.Memory
 				// Entering gpose
 				if (this.ObjectKind == ActorTypes.Player)
 				{
-					this.wasPlayerBeforeGPose = this.Pointer;
+					this.PreviousPointerBeforeGPose = this.Pointer;
 					this.SetObjectKindDirect(ActorTypes.BattleNpc, this.Pointer);
 
 					// Sanity check that we do get turned back into a player
 					Task.Run(async () =>
 					{
 						await Task.Delay(3000);
-						this.SetObjectKindDirect(ActorTypes.Player, this.wasPlayerBeforeGPose);
+						this.SetObjectKindDirect(ActorTypes.Player, this.PreviousPointerBeforeGPose);
 					});
 				}
 			}
 			else if (gpose.IsGpose && !gpose.IsChangingState)
 			{
 				// Entered gpose
-				if (this.wasPlayerBeforeGPose != null)
+				if (this.PreviousPointerBeforeGPose != null)
 				{
-					this.SetObjectKindDirect(ActorTypes.Player, this.wasPlayerBeforeGPose);
+					this.SetObjectKindDirect(ActorTypes.Player, this.PreviousPointerBeforeGPose);
 					this.SetObjectKindDirect(ActorTypes.Player, this.Pointer);
 				}
 			}
