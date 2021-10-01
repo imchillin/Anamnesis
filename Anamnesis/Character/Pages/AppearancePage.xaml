@@ -127,7 +127,7 @@
 							Grid.Row="2"
 							Grid.Column="1"
 							Margin="0,2,0,0"
-							IsEnabled="{Binding GPoseService.IsOverworld}">
+							>
 							<ComboBox SelectedIndex="{Binding Actor.ObjectKindInt}">
 								<ComboBoxItem>None</ComboBoxItem>
 								<ComboBoxItem>Player</ComboBoxItem>
