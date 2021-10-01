@@ -14,7 +14,7 @@
 	xmlns:views="clr-namespace:Anamnesis.Views"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	xmlns:XivToolsWpfWindows="clr-namespace:XivToolsWpf.Windows;assembly=XivToolsWpf"
-	
+	xmlns:system="clr-namespace:System;assembly=System.Runtime"
 	Closing="Window_Closing"
 	Icon="/Assets/Concept Matrix.ico"
 	Loaded="Window_Loaded"
@@ -74,7 +74,14 @@
 											Grid.Row="1"
 											MaxHeight="300"
 											HorizontalScrollBarVisibility="Disabled"
-											VerticalScrollBarVisibility="Hidden">
+											VerticalScrollBarVisibility="Auto">
+
+											<ScrollViewer.Resources>
+												<system:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">
+													5
+												</system:Double>
+											</ScrollViewer.Resources>
+
 											<StackPanel Orientation="Vertical">
 												<ItemsControl Margin="0,2,0,2" ItemsSource="{Binding TargetService.PinnedActors}">
 													<ItemsControl.ItemTemplate>
