@@ -218,6 +218,11 @@ namespace Anamnesis.Styles.Drawers
 			Task.Run(this.DoFilter);
 		}
 
+		public Task FilterItemsAsync()
+		{
+			return this.DoFilter();
+		}
+
 		private static void OnValueChangedStatic(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (sender is SelectorDrawer view)

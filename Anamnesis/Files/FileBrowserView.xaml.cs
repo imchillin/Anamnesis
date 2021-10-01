@@ -16,6 +16,7 @@ namespace Anamnesis.GUI.Views
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
+	using Serilog;
 	using XivToolsWpf;
 
 	using SearchUtility = Anamnesis.SearchUtility;
@@ -35,22 +36,32 @@ namespace Anamnesis.GUI.Views
 		private bool updatingEntries = false;
 
 		public FileBrowserView(Shortcut[] shortcuts, HashSet<string> extensions, string defaultName, Modes mode)
-			: this(shortcuts[0], extensions, defaultName, mode)
 		{
+			if (shortcuts.Length == 0)
+				throw new Exception("At least one shortcut must be provided to the file browser constructor");
+
+			this.InitializeComponent();
+
+			Shortcut? defaultShortcut = null;
+
 			foreach (Shortcut shortcut in shortcuts)
 			{
+				if (mode == Modes.Load && shortcut.Directory.Exists && defaultShortcut == null)
+					defaultShortcut = shortcut;
+
 				this.Shortcuts.Add(shortcut);
 			}
 
 			this.Shortcuts.Add(FileService.Desktop);
-		}
 
-		public FileBrowserView(Shortcut baseDirectory, HashSet<string> extensions, string defaultName, Modes mode)
-		{
-			this.InitializeComponent();
+			if (defaultShortcut == null)
+				defaultShortcut = this.Shortcuts[0];
 
-			this.BaseDir = baseDirectory;
-			this.CurrentDir = baseDirectory.Directory;
+			// TODO: If we have a last used directory, we should determine which shortcut leads to it
+			// and set the base dir and current dir to match.
+			this.BaseDir = defaultShortcut;
+			this.CurrentDir = defaultShortcut.Directory;
+
 			this.mode = mode;
 			this.validExtensions = extensions;
 
@@ -204,32 +215,41 @@ namespace Anamnesis.GUI.Views
 				await Task.Delay(10);
 
 			this.updatingEntries = true;
-
 			this.Selector.ClearItems();
 
-			EnumerationOptions op = new EnumerationOptions();
-			op.RecurseSubdirectories = this.IsFlattened;
-			op.ReturnSpecialDirectories = false;
-
-			if (!this.IsFlattened)
+			try
 			{
-				DirectoryInfo[] directories = this.CurrentDir.GetDirectories("*", op);
-				foreach (DirectoryInfo dir in directories)
+				if (this.CurrentDir.Exists)
 				{
-					this.Selector.AddItem(new EntryWrapper(dir, this));
+					EnumerationOptions op = new EnumerationOptions();
+					op.RecurseSubdirectories = this.IsFlattened;
+					op.ReturnSpecialDirectories = false;
+
+					if (!this.IsFlattened)
+					{
+						DirectoryInfo[] directories = this.CurrentDir.GetDirectories("*", op);
+						foreach (DirectoryInfo dir in directories)
+						{
+							this.Selector.AddItem(new EntryWrapper(dir, this));
+						}
+					}
+
+					FileInfo[] files = this.CurrentDir.GetFiles("*.*", op);
+					foreach (FileInfo file in files)
+					{
+						if (!this.validExtensions.Contains(file.Extension))
+							continue;
+
+						this.Selector.AddItem(new EntryWrapper(file, this));
+					}
 				}
 			}
-
-			FileInfo[] files = this.CurrentDir.GetFiles("*.*", op);
-			foreach (FileInfo file in files)
+			catch (Exception ex)
 			{
-				if (!this.validExtensions.Contains(file.Extension))
-					continue;
-
-				this.Selector.AddItem(new EntryWrapper(file, this));
+				Log.Error(ex, "Failed to update file list");
 			}
 
-			this.Selector.FilterItems();
+			await this.Selector.FilterItemsAsync();
 			this.updatingEntries = false;
 		}
 
