@@ -53,6 +53,8 @@ namespace Anamnesis.Services
 			string file = MemoryService.GamePath + "game/ffxivgame.ver";
 			string gameVer = File.ReadAllText(file);
 
+			Log.Information($"Found game version: {gameVer}");
+
 			if (gameVer != VersionInfo.ValidatedGameVersion)
 			{
 				Log.Warning($"Anamnesis has not been validated against this game version: {gameVer}. This may cause problems.");
@@ -65,14 +67,14 @@ namespace Anamnesis.Services
 			{
 				Region = ClientRegion.Chinese;
 				defaultLuminaLaunguage = Language.ChineseSimplified;
-				Log.Warning($"Anamnesis has not been validated against this game region: {Region}. This may cause problems.");
 			}
 			else if (File.Exists(Path.Combine(MemoryService.GamePath, "boot", "FFXIV_Boot.exe")))
 			{
 				Region = ClientRegion.Korean;
 				defaultLuminaLaunguage = Language.Korean;
-				Log.Warning($"Anamnesis has not been validated against this game region: {Region}. This may cause problems.");
 			}
+
+			Log.Information($"Found game client region: {Region}");
 
 			try
 			{

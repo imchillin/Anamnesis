@@ -98,7 +98,7 @@ namespace Anamnesis.Services
 			Log.Information("Framework: " + RuntimeInformation.FrameworkDescription, "Info");
 			Log.Information("OS Architecture: " + RuntimeInformation.OSArchitecture.ToString(), "Info");
 			Log.Information("Process Architecture: " + RuntimeInformation.ProcessArchitecture.ToString(), "Info");
-			Log.Information("Anamnesis Version: " + VersionInfo.Date, "Info");
+			Log.Information("Anamnesis Version: " + VersionInfo.Date.ToString(@"yyyy-MM-dd HH:mm"), "Info");
 		}
 
 		public Task Initialize()
