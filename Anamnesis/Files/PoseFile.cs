@@ -28,21 +28,22 @@ namespace Anamnesis.Files
 
 		public Dictionary<string, Bone?>? Bones { get; set; }
 
-		public static async Task Save(ActorViewModel? actor, SkeletonVisual3d? skeleton, bool selectionOnly)
+		public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorViewModel? actor, SkeletonVisual3d? skeleton, bool selectionOnly)
 		{
 			if (actor == null || skeleton == null)
-				return;
+				return null;
 
-			SaveResult result = await FileService.Save<PoseFile>(FileService.DefaultPoseDirectory);
+			SaveResult result = await FileService.Save<PoseFile>(dir, FileService.DefaultPoseDirectory);
 
-			if (string.IsNullOrEmpty(result.Path))
-				return;
+			if (result.Path == null)
+				return null;
 
 			PoseFile file = new PoseFile();
 			file.WriteToFile(actor, skeleton, selectionOnly);
 
-			using FileStream stream = new FileStream(result.Path, FileMode.Create);
+			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
 			file.Serialize(stream);
+			return result.Directory;
 		}
 
 		public void WriteToFile(ActorViewModel actor, SkeletonVisual3d skeleton, bool selectionOnly)

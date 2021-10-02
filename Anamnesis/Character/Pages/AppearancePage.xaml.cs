@@ -24,6 +24,9 @@ namespace Anamnesis.Character.Pages
 	[AddINotifyPropertyChangedInterface]
 	public partial class AppearancePage : UserControl
 	{
+		private static DirectoryInfo? lastLoadDir;
+		private static DirectoryInfo? lastSaveDir;
+
 		public AppearancePage()
 		{
 			this.InitializeComponent();
@@ -163,12 +166,15 @@ namespace Anamnesis.Character.Pages
 			try
 			{
 				OpenResult result = await FileService.Open<LegacyCharacterFile, DatCharacterFile, CharacterFile>(
+					lastLoadDir,
 					FileService.DefaultCharacterDirectory,
 					FileService.FFxivDatCharacterDirectory,
 					FileService.CMToolSaveDir);
 
 				if (result.File == null)
 					return;
+
+				lastLoadDir = result.Directory;
 
 				if (result.File is LegacyCharacterFile legacyFile)
 					result.File = legacyFile.Upgrade();
@@ -204,7 +210,7 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			await CharacterFile.Save(this.Actor);
+			lastSaveDir = await CharacterFile.Save(lastSaveDir, this.Actor);
 		}
 
 		private void OnActorChanged(ActorViewModel? actor)

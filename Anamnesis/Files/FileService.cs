@@ -111,37 +111,37 @@ namespace Anamnesis.Files
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"\"{dir}\"");
 		}
 
-		public static async Task<OpenResult> Open<T>(params Shortcut[] shortcuts)
+		public static async Task<OpenResult> Open<T>(DirectoryInfo? defaultDirectory, params Shortcut[] shortcuts)
 			where T : FileBase
 		{
-			return await Open(shortcuts, typeof(T));
+			return await Open(defaultDirectory, shortcuts, typeof(T));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2>(params Shortcut[] shortcuts)
+		public static async Task<OpenResult> Open<T1, T2>(DirectoryInfo? defaultDirectory, params Shortcut[] shortcuts)
 			where T1 : FileBase
 			where T2 : FileBase
 		{
-			return await Open(shortcuts, typeof(T1), typeof(T2));
+			return await Open(defaultDirectory, shortcuts, typeof(T1), typeof(T2));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3>(params Shortcut[] shortcuts)
+		public static async Task<OpenResult> Open<T1, T2, T3>(DirectoryInfo? defaultDirectory, params Shortcut[] shortcuts)
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 		{
-			return await Open(shortcuts, typeof(T1), typeof(T2), typeof(T3));
+			return await Open(defaultDirectory, shortcuts, typeof(T1), typeof(T2), typeof(T3));
 		}
 
-		public static async Task<OpenResult> Open<T1, T2, T3, T4>(params Shortcut[] shortcuts)
+		public static async Task<OpenResult> Open<T1, T2, T3, T4>(DirectoryInfo? defaultDirectory, params Shortcut[] shortcuts)
 			where T1 : FileBase
 			where T2 : FileBase
 			where T3 : FileBase
 			where T4 : FileBase
 		{
-			return await Open(shortcuts, typeof(T1), typeof(T2), typeof(T3), typeof(T4));
+			return await Open(defaultDirectory, shortcuts, typeof(T1), typeof(T2), typeof(T3), typeof(T4));
 		}
 
-		public static async Task<OpenResult> Open(Shortcut[] shortcuts, params Type[] fileTypes)
+		public static async Task<OpenResult> Open(DirectoryInfo? defaultDirectory, Shortcut[] shortcuts, params Type[] fileTypes)
 		{
 			OpenResult result = default;
 
@@ -152,19 +152,19 @@ namespace Anamnesis.Files
 				if (!useExplorerBrowser)
 				{
 					HashSet<string> extensions = ToExtensions(fileTypes);
-					FileBrowserView browser = new FileBrowserView(shortcuts, extensions, string.Empty, FileBrowserView.Modes.Load);
+					FileBrowserView browser = new FileBrowserView(shortcuts, extensions, defaultDirectory, null, FileBrowserView.Modes.Load);
 					await ViewService.ShowDrawer(browser);
 
 					while (browser.IsOpen)
 						await Task.Delay(10);
 
-					result.Path = browser.FilePath;
+					result.Path = browser.FinalSelection as FileInfo;
 					useExplorerBrowser = browser.UseFileBrowser;
 				}
 
 				if (useExplorerBrowser)
 				{
-					result.Path = await App.Current.Dispatcher.InvokeAsync<string?>(() =>
+					result.Path = await App.Current.Dispatcher.InvokeAsync<FileInfo?>(() =>
 					{
 						OpenFileDialog dlg = new OpenFileDialog();
 						dlg.Filter = ToAnyFilter(fileTypes);
@@ -173,15 +173,15 @@ namespace Anamnesis.Files
 						if (result != true)
 							return null;
 
-						return dlg.FileName;
+						return new FileInfo(dlg.FileName);
 					});
 				}
 
 				if (result.Path == null)
 					return result;
 
-				using FileStream stream = new FileStream(result.Path, FileMode.Open);
-				string extension = Path.GetExtension(result.Path);
+				using FileStream stream = new FileStream(result.Path.FullName, FileMode.Open);
+				string extension = Path.GetExtension(result.Path.FullName);
 
 				Exception? lastException = null;
 				foreach (Type fileType in fileTypes)
@@ -225,84 +225,73 @@ namespace Anamnesis.Files
 			return result;
 		}
 
-		public static Task<SaveResult> Save<T>(params Shortcut[] directories)
-			where T : FileBase
-		{
-			return Save<T>(null, directories);
-		}
-
-		public static async Task<SaveResult> Save<T>(string? defaultPath, params Shortcut[] directories)
+		public static async Task<SaveResult> Save<T>(DirectoryInfo? defaultDirectory, params Shortcut[] directories)
 			where T : FileBase
 		{
 			SaveResult result = default;
+			////result.Path = defaultPath;
 
-			string? path = defaultPath;
+			string ext = GetFileTypeExtension(typeof(T));
 
 			try
 			{
-				if (path == null)
+				bool useExplorerBrowser = SettingsService.Current.UseWindowsExplorer;
+
+				string typeName = GetFileTypeName(typeof(T));
+
+				if (!useExplorerBrowser)
 				{
-					bool useExplorerBrowser = SettingsService.Current.UseWindowsExplorer;
-
-					string typeName = GetFileTypeName(typeof(T));
-
-					if (!useExplorerBrowser)
+					HashSet<string> extensions = new HashSet<string>()
 					{
-						HashSet<string> extensions = new HashSet<string>()
-						{
-							GetFileTypeExtension(typeof(T)),
-						};
+						GetFileTypeExtension(typeof(T)),
+					};
 
-						FileBrowserView browser = new FileBrowserView(directories, extensions, typeName, FileBrowserView.Modes.Save);
-						await ViewService.ShowDrawer(browser);
+					FileBrowserView browser = new FileBrowserView(directories, extensions, defaultDirectory, typeName, FileBrowserView.Modes.Save);
+					await ViewService.ShowDrawer(browser);
 
-						while (browser.IsOpen)
-							await Task.Delay(10);
+					while (browser.IsOpen)
+						await Task.Delay(10);
 
-						path = browser.FilePath;
-						useExplorerBrowser = browser.UseFileBrowser;
-					}
-
-					if (useExplorerBrowser)
-					{
-						path = await App.Current.Dispatcher.InvokeAsync<string?>(() =>
-						{
-							SaveFileDialog dlg = new SaveFileDialog();
-							dlg.Filter = ToFilter(typeof(T));
-							bool? dlgResult = dlg.ShowDialog();
-
-							if (dlgResult != true)
-								return null;
-
-							return dlg.FileName;
-						});
-					}
-
-					if (path == null)
-					{
-						return result;
-					}
+					result.Path = browser.FinalSelection as FileInfo;
+					useExplorerBrowser = browser.UseFileBrowser;
 				}
 
-				result.Path = path + GetFileTypeExtension(typeof(T));
-
-				if (File.Exists(result.Path))
+				if (useExplorerBrowser)
 				{
-					string fileName = Path.GetFileNameWithoutExtension(result.Path);
+					result.Path = await App.Current.Dispatcher.InvokeAsync<FileInfo?>(() =>
+					{
+						SaveFileDialog dlg = new SaveFileDialog();
+						dlg.Filter = ToFilter(typeof(T));
+						dlg.InitialDirectory = defaultDirectory?.FullName;
+						bool? dlgResult = dlg.ShowDialog();
+
+						if (dlgResult != true)
+							return null;
+
+						return new FileInfo(dlg.FileName);
+					});
+				}
+
+				if (result.Path == null)
+					return result;
+
+				if (result.Path.Exists)
+				{
+					string fileName = Path.GetFileNameWithoutExtension(result.Path.FullName);
 					bool? overwrite = await GenericDialog.Show(LocalizationService.GetStringFormatted("FileBrowser_ReplaceMessage", fileName), LocalizationService.GetString("FileBrowser_ReplaceTitle"), MessageBoxButton.YesNo);
 					if (overwrite != true)
 					{
-						return await Save<T>(defaultPath, directories);
+						return await Save<T>(defaultDirectory, directories);
 					}
 				}
 
-				string? dir = Path.GetDirectoryName(path);
+				DirectoryInfo? dir = result.Path.Directory;
 				if (dir == null)
 					throw new Exception("No directory in save path");
 
-				if (!Directory.Exists(dir))
+				if (!dir.Exists)
 				{
-					Directory.CreateDirectory(dir);
+					dir.Create();
 				}
 			}
 			catch (Exception ex)
@@ -390,12 +379,16 @@ namespace Anamnesis.Files
 	public struct OpenResult
 	{
 		public FileBase? File;
-		public string? Path;
+		public FileInfo? Path;
+
+		public DirectoryInfo? Directory => this.Path?.Directory;
 	}
 
 	public struct SaveResult
 	{
-		public string? Path;
+		public FileInfo? Path;
+
+		public DirectoryInfo? Directory => this.Path?.Directory;
 	}
 
 	public class Shortcut

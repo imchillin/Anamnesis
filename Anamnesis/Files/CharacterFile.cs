@@ -99,21 +99,22 @@ namespace Anamnesis.Files
 		public float? MuscleTone { get; set; }
 		public float? HeightMultiplier { get; set; }
 
-		public static async Task Save(ActorViewModel? actor, SaveModes mode = SaveModes.All)
+		public static async Task<DirectoryInfo?> Save(DirectoryInfo? defaultDir, ActorViewModel? actor, SaveModes mode = SaveModes.All)
 		{
 			if (actor == null)
-				return;
+				return null;
 
-			SaveResult result = await FileService.Save<CharacterFile>(FileService.DefaultCharacterDirectory);
+			SaveResult result = await FileService.Save<CharacterFile>(defaultDir, FileService.DefaultCharacterDirectory);
 
 			if (result.Path == null)
-				return;
+				return null;
 
 			CharacterFile file = new CharacterFile();
 			file.WriteToFile(actor, mode);
 
-			using FileStream stream = new FileStream(result.Path, FileMode.Create);
+			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
 			file.Serialize(stream);
+			return result.Directory;
 		}
 
 		public void WriteToFile(ActorViewModel actor, SaveModes mode)

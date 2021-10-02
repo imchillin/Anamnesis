@@ -35,18 +35,23 @@ namespace Anamnesis.GUI.Views
 		private EntryWrapper? selected;
 		private bool updatingEntries = false;
 
-		public FileBrowserView(Shortcut[] shortcuts, HashSet<string> extensions, string defaultName, Modes mode)
+		public FileBrowserView(Shortcut[] shortcuts, HashSet<string> extensions, DirectoryInfo? defaultDir, string? defaultName, Modes mode)
 		{
 			if (shortcuts.Length == 0)
 				throw new Exception("At least one shortcut must be provided to the file browser constructor");
 
 			this.InitializeComponent();
 
-			Shortcut? defaultShortcut = null;
+			if (defaultDir != null && !defaultDir.Exists)
+				defaultDir = null;
 
+			Shortcut? defaultShortcut = null;
 			foreach (Shortcut shortcut in shortcuts)
 			{
 				if (mode == Modes.Load && shortcut.Directory.Exists && defaultShortcut == null)
+					defaultShortcut = shortcut;
+
+				if (defaultDir != null && shortcut.Directory.FullName.Contains(defaultDir.FullName))
 					defaultShortcut = shortcut;
 
 				this.Shortcuts.Add(shortcut);
@@ -57,10 +62,11 @@ namespace Anamnesis.GUI.Views
 			if (defaultShortcut == null)
 				defaultShortcut = this.Shortcuts[0];
 
-			// TODO: If we have a last used directory, we should determine which shortcut leads to it
-			// and set the base dir and current dir to match.
+			if (defaultDir == null)
+				defaultDir = defaultShortcut.Directory;
+
 			this.BaseDir = defaultShortcut;
-			this.CurrentDir = defaultShortcut.Directory;
+			this.CurrentDir = defaultDir;
 
 			this.mode = mode;
 			this.validExtensions = extensions;
@@ -132,8 +138,9 @@ namespace Anamnesis.GUI.Views
 
 		public ObservableCollection<Shortcut> Shortcuts { get; } = new ObservableCollection<Shortcut>();
 
-		public string? FilePath { get; private set; }
 		public bool UseFileBrowser { get; set; }
+
+		public FileSystemInfo? FinalSelection { get; private set; }
 
 		public EntryWrapper? Selected
 		{
@@ -389,9 +396,9 @@ namespace Anamnesis.GUI.Views
 
 			if (this.mode == Modes.Load)
 			{
-				if (this.Selected != null && this.Selected.Entry is FileInfo file)
+				if (this.Selected != null)
 				{
-					this.FilePath = file.FullName;
+					this.FinalSelection = this.Selected.Entry;
 				}
 			}
 			else
@@ -407,7 +414,7 @@ namespace Anamnesis.GUI.Views
 					}
 				}
 
-				this.FilePath = this.CurrentDir.FullName + "/" + this.FileName;
+				this.FinalSelection = new FileInfo(this.CurrentDir.FullName + "/" + this.FileName);
 			}
 
 			if (this.Selected != null && this.Selected.Entry is DirectoryInfo dir)

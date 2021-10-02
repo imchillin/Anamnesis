@@ -5,6 +5,7 @@ namespace Anamnesis.PoseModule.Pages
 {
 	using System;
 	using System.Collections.Generic;
+	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -18,8 +19,6 @@ namespace Anamnesis.PoseModule.Pages
 	using Serilog;
 
 	using CmQuaternion = Anamnesis.Memory.Quaternion;
-	using Quaternion = System.Windows.Media.Media3D.Quaternion;
-	using QuaternionExtensions = Anamnesis.PoseModule.QuaternionExtensions;
 
 	/// <summary>
 	/// Interaction logic for CharacterPoseView.xaml.
@@ -28,6 +27,9 @@ namespace Anamnesis.PoseModule.Pages
 	public partial class PosePage : UserControl
 	{
 		public const double DragThreshold = 20;
+
+		private static DirectoryInfo? lastLoadDir;
+		private static DirectoryInfo? lastSaveDir;
 
 		private bool isLeftMouseButtonDownOnWindow;
 		private bool isDragging;
@@ -221,12 +223,15 @@ namespace Anamnesis.PoseModule.Pages
 				PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
 
 				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>(
+					lastLoadDir,
 					FileService.DefaultPoseDirectory,
 					FileService.BuiltInPoseDirectory,
 					FileService.CMToolSaveDir);
 
 				if (result.File == null)
 					return;
+
+				lastLoadDir = result.Directory;
 
 				if (result.File is LegacyPoseFile legacyFile)
 					result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? Customize.Races.Hyur);
@@ -244,12 +249,12 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			await PoseFile.Save(this.Actor, this.Skeleton, false);
+			lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, false);
 		}
 
 		private async void OnSaveSelectedClicked(object sender, RoutedEventArgs e)
 		{
-			await PoseFile.Save(this.Actor, this.Skeleton, true);
+			lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, true);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)
