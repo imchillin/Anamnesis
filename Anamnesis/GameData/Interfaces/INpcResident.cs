@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData
 {
+	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 
@@ -21,5 +22,7 @@ namespace Anamnesis.GameData
 			get => FavoritesService.IsFavorite(this);
 			set => FavoritesService.SetFavorite(this, value);
 		}
+
+		public bool CanFavorite => true;
 	}
 }

@@ -51,6 +51,8 @@ namespace Anamnesis.GameData
 			set => FavoritesService.SetFavorite(this, value);
 		}
 
+		public bool CanFavorite => false; // Currently cant favorite monsters...
+
 		public class MonsterAppearance : INpcBase, INpcEquip
 		{
 			public MonsterAppearance(Monster monster)
