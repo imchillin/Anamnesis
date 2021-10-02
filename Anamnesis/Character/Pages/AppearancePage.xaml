@@ -1,34 +1,35 @@
-﻿<UserControl
-	x:Class="Anamnesis.Character.Pages.AppearancePage"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:views="clr-namespace:Anamnesis.Character.Views"
-	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-	d:DesignHeight="600"
-	d:DesignWidth="1024"
-	DataContextChanged="OnDataContextChanged"
-	Loaded="OnLoaded"
-	mc:Ignorable="d">
+﻿<UserControl x:Class="Anamnesis.Character.Pages.AppearancePage"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:views="clr-namespace:Anamnesis.Character.Views"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 d:DesignHeight="600"
+			 d:DesignWidth="1024"
+			 DataContextChanged="OnDataContextChanged"
+			 Loaded="OnLoaded"
+			 mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition />
-			<ColumnDefinition Width="Auto" MinWidth="230" />
+			<ColumnDefinition Width="Auto"
+							  MinWidth="230" />
 		</Grid.ColumnDefinitions>
 
-		<Grid
-			Grid.RowSpan="2"
-			Grid.Column="0"
-			IsEnabled="{Binding GPoseService.IsOverworld}">
+		<Grid Grid.RowSpan="2"
+			  Grid.Column="0"
+			  IsEnabled="{Binding GPoseService.IsOverworld}">
 
-			<GroupBox Padding="3,0,3,0" Style="{StaticResource PanelGroupBox}">
+			<GroupBox Padding="3,0,3,0"
+					  Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
-					<XivToolsWpf:Header Key="Character_Customize_Header" Icon="ConciergeBell" />
+					<XivToolsWpf:Header Key="Character_Customize_Header"
+										Icon="ConciergeBell" />
 				</GroupBox.Header>
 
 				<views:CustomizeEditor DataContext="{Binding Actor}" />
@@ -36,47 +37,55 @@
 
 		</Grid>
 
-		<GroupBox
-			Grid.Row="0"
-			Grid.Column="1"
-			Style="{StaticResource PanelGroupBox}">
+		<GroupBox Grid.Row="0"
+				  Grid.Column="1"
+				  Style="{StaticResource PanelGroupBox}">
 			<GroupBox.Header>
-				<XivToolsWpf:Header Key="Character_Equipment_Header" Icon="ChessQueen" />
+				<XivToolsWpf:Header Key="Character_Equipment_Header"
+									Icon="ChessQueen" />
 			</GroupBox.Header>
 
 			<Grid>
 
-				<StackPanel
-					Height="20"
-					Margin="0,-18,-4,0"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Top"
-					Orientation="Horizontal">
+				<StackPanel Height="20"
+							Margin="0,-18,-4,0"
+							HorizontalAlignment="Right"
+							VerticalAlignment="Top"
+							Orientation="Horizontal">
 
-					<Button Click="OnNpcSmallclothesClicked" Style="{StaticResource TransparentIconButton}">
+					<Button Click="OnNpcSmallclothesClicked"
+							Style="{StaticResource TransparentIconButton}">
 
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_NpcSmallclothes" />
 						</Button.ToolTip>
 
-						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="UserShield" />
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
+									  Icon="UserShield" />
 					</Button>
 
-					<Button Click="OnClearClicked" Style="{StaticResource TransparentIconButton}">
+					<Button Click="OnClearClicked"
+							Style="{StaticResource TransparentIconButton}">
 
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_Clear" />
 						</Button.ToolTip>
 
-						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="Eraser" />
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
+									  Icon="Eraser" />
 					</Button>
 				</StackPanel>
 
-				<views:EquipmentEditor DataContext="{Binding Actor}" Margin="0, 0, 0, -10"/>
+				<views:EquipmentEditor DataContext="{Binding Actor}"
+									   Margin="0, 0, 0, -10" />
 			</Grid>
 		</GroupBox>
 
-		<XivToolsWpf:InfoControl Grid.Column="0" Grid.ColumnSpan="2" Margin="12" Visibility="{Binding GPoseService.IsGpose, Converter={StaticResource B2V}}" Key="Character_WarningGpose"/>
+		<XivToolsWpf:InfoControl Grid.Column="0"
+								 Grid.ColumnSpan="2"
+								 Margin="12"
+								 Visibility="{Binding GPoseService.IsGpose, Converter={StaticResource B2V}}"
+								 Key="Character_WarningGpose" />
 
 		<Grid Grid.Column="2">
 
@@ -90,7 +99,8 @@
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
-						<XivToolsWpf:Header Key="Character_Actor_Header" Icon="Horse" />
+						<XivToolsWpf:Header Key="Character_Actor_Header"
+											Icon="Horse" />
 					</GroupBox.Header>
 
 					<Grid Margin="0,-6,0,0">
@@ -107,27 +117,22 @@
 							<RowDefinition />
 						</Grid.RowDefinitions>
 
-						<XivToolsWpf:TextBlock
-							Key="Character_Actor_Nickname"
-							Grid.Row="0"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-						<TextBox
-							Grid.Row="0"
-							Grid.Column="1"
-							Grid.ColumnSpan="2"
-							Style="{StaticResource MaterialDesignTextBox}"
-							Text="{Binding Actor.Nickname}" />
-						<XivToolsWpf:TextBlock
-							Key="Character_Actor_EntityType"
-							Grid.Row="2"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-						<Grid
-							Grid.Row="2"
-							Grid.Column="1"
-							Margin="0,2,0,0"
-							>
+						<XivToolsWpf:TextBlock Key="Character_Actor_Nickname"
+											   Grid.Row="0"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+						<TextBox Grid.Row="0"
+								 Grid.Column="1"
+								 Grid.ColumnSpan="2"
+								 Style="{StaticResource MaterialDesignTextBox}"
+								 Text="{Binding Actor.Nickname}" />
+						<XivToolsWpf:TextBlock Key="Character_Actor_EntityType"
+											   Grid.Row="2"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+						<Grid Grid.Row="2"
+							  Grid.Column="1"
+							  Margin="0,2,0,0">
 							<ComboBox SelectedIndex="{Binding Actor.ObjectKindInt}">
 								<ComboBoxItem>None</ComboBoxItem>
 								<ComboBoxItem>Player</ComboBoxItem>
@@ -147,49 +152,49 @@
 							</ComboBox>
 						</Grid>
 
-						<XivToolsWpf:TextBlock
-							Key="Character_Actor_Model"
-							Grid.Row="3"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-						<Grid
-							Grid.Row="3"
-							Grid.Column="1"
-							Margin="0,2,0,0"
-							IsEnabled="{Binding GPoseService.IsOverworld}">
+						<XivToolsWpf:TextBlock Key="Character_Actor_Model"
+											   Grid.Row="3"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+						<Grid Grid.Row="3"
+							  Grid.Column="1"
+							  Margin="0,2,0,0"
+							  IsEnabled="{Binding GPoseService.IsOverworld}">
 							<views:ModelTypeEditor DataContext="{Binding Actor}" />
 						</Grid>
 
-						<XivToolsWpf:TextBlock
-							Key="Character_Actor_Alpha"
-							Grid.Row="4"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-						<XivToolsWpf:NumberBox
-							Grid.Row="4"
-							Grid.Column="1"
-							Maximum="1"
-							Minimum="0.01"
-							Slider="Absolute"
-							TickFrequency="0.1"
-							Value="{Binding Actor.Transparency}" />
+						<XivToolsWpf:TextBlock Key="Character_Actor_Alpha"
+											   Grid.Row="4"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+						<XivToolsWpf:NumberBox Grid.Row="4"
+											   Grid.Column="1"
+											   Maximum="1"
+											   Minimum="0.01"
+											   Slider="Absolute"
+											   TickFrequency="0.1"
+											   Value="{Binding Actor.Transparency}" />
 
 
 					</Grid>
 
 				</GroupBox>
 
-				<GroupBox Style="{StaticResource PanelGroupBox}" Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
+				<GroupBox Style="{StaticResource PanelGroupBox}"
+						  Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
 					<GroupBox.Header>
-						<XivToolsWpf:Header Key="Character_Model_Header" Icon="GraduationCap" />
+						<XivToolsWpf:Header Key="Character_Model_Header"
+											Icon="GraduationCap" />
 					</GroupBox.Header>
 
 					<views:CharacterModelEditor DataContext="{Binding Actor.ModelObject}" />
 				</GroupBox>
 
-				<GroupBox Style="{StaticResource PanelGroupBox}" Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
+				<GroupBox Style="{StaticResource PanelGroupBox}"
+						  Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
 					<GroupBox.Header>
-						<XivToolsWpf:Header Key="Character_ExAppearance_Header" Icon="UserCog" />
+						<XivToolsWpf:Header Key="Character_ExAppearance_Header"
+											Icon="UserCog" />
 					</GroupBox.Header>
 
 					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}" />
@@ -202,32 +207,60 @@
 				  IsEnabled="{Binding GposeService.IsGpose}"
 				  Style="{StaticResource AnaMenu}">
 
-				<MenuItem Header="Pose_Load" 
-						  Icon="FolderOpen" 
-						  Style="{StaticResource ButtonMenuItemLeft}" 
-						  Click="OnLoadClicked"/>
+				<MenuItem Header="Common_OpenFile"
+						  Icon="FolderOpen"
+						  Style="{StaticResource ButtonMenuItemLeft}"
+						  Click="OnLoadClicked" />
 
-				<MenuItem Style="{StaticResource ButtonMenuItemRight}" Margin="-1,0,1,0">
-					<MenuItem Header="Character_Equipment_Header" Style="{StaticResource AnaMenuItem}" Click="OnLoadEquipmentClicked"/>
-					<MenuItem Header="Character_Appearance_Header" Style="{StaticResource AnaMenuItem}" Click="OnLoadAppearanceClicked"/>
-					<MenuItem Header="Character_Equipment_Weapons" Style="{StaticResource AnaMenuItem}" Click="OnLoadWeaponsClicked"/>
+				<MenuItem Style="{StaticResource ButtonMenuItemRight}"
+						  Margin="-1,0,1,0">
+					<MenuItem Header="Character_Appearance_Header"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnLoadAppearanceClicked" />
+					
+					<MenuItem Header="Character_Equipment_Header"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnLoadEquipmentClicked" />
+
+					<MenuItem Header="Character_Equipment_Gear"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnLoadGearClicked" />
+					
+					<MenuItem Header="Character_Equipment_Accessories"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnLoadAccessoriesClicked" />
+					
+					<MenuItem Header="Character_Equipment_Weapons"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnLoadWeaponsClicked" />
+
 				</MenuItem>
 
-				<MenuItem Header="Character_Appearance_LoadOther" 
-						  Icon="User" 
-						  Style="{StaticResource ButtonMenuItemLeft}" 
-						  Click="OnLoadNpcClicked"/>
+				<MenuItem Header="Character_Appearance_LoadOther"
+						  Icon="User"
+						  Style="{StaticResource ButtonMenuItemLeft}"
+						  Click="OnLoadNpcClicked" />
 
-				<MenuItem Style="{StaticResource ButtonMenuItemRight}" Margin="-1,0,3,0">
-					<MenuItem Header="Character_Equipment_Header" Style="{StaticResource AnaMenuItem}" Click="OnLoadNpcEquipmentClicked"/>
-					<MenuItem Header="Character_Appearance_Header" Style="{StaticResource AnaMenuItem}" Click="OnLoadNpcAppearanceClicked"/>
-					<MenuItem Header="Character_Equipment_Weapons" Style="{StaticResource AnaMenuItem}" Click="OnLoadNpcWeaponsClicked"/>
+				<MenuItem Style="{StaticResource ButtonMenuItemRight}"
+						  Margin="-1,0,3,0">
+					
+					<MenuItem Header="Character_Equipment_Header"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnLoadNpcEquipmentClicked" />
+					
+					<MenuItem Header="Character_Appearance_Header"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnLoadNpcAppearanceClicked" />
+					
+					<MenuItem Header="Character_Equipment_Weapons"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnLoadNpcWeaponsClicked" />
 				</MenuItem>
 
 				<MenuItem Header="Common_SaveFile"
 						  Icon="Save"
 						  Style="{StaticResource ButtonMenuItem}"
-						  Click="OnSaveClicked"/>
+						  Click="OnSaveClicked" />
 
 			</Menu>
 

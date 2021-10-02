@@ -92,6 +92,16 @@ namespace Anamnesis.Character.Pages
 			await this.Load(CharacterFile.SaveModes.Equipment);
 		}
 
+		private async void OnLoadGearClicked(object sender, RoutedEventArgs e)
+		{
+			await this.Load(CharacterFile.SaveModes.EquipmentGear);
+		}
+
+		private async void OnLoadAccessoriesClicked(object sender, RoutedEventArgs e)
+		{
+			await this.Load(CharacterFile.SaveModes.EquipmentAccessories);
+		}
+
 		private async void OnLoadAppearanceClicked(object sender, RoutedEventArgs e)
 		{
 			await this.Load(CharacterFile.SaveModes.Appearance);
