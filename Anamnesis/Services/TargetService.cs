@@ -128,7 +128,14 @@ namespace Anamnesis
 				if (ptr == IntPtr.Zero)
 					continue;
 
-				results.Add(new ActorBasicViewModel(ptr));
+				try
+				{
+					results.Add(new ActorBasicViewModel(ptr));
+				}
+				catch (Exception ex)
+				{
+					Log.Warning(ex, $"Faield to create Actor Basic View Model for address: {ptr}");
+				}
 			}
 
 			return results;
