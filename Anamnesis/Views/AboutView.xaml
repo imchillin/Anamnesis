@@ -9,9 +9,9 @@
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="600"
-			 Width="250">
+			 Width="310">
 
-	<Grid Margin="6, 0, 0, 0">
+	<Grid Margin="6, 0, 0, 3">
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
