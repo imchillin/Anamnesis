@@ -30,8 +30,6 @@ namespace Anamnesis
 		public ActorViewModel? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
-		private static bool EnableActorTicking { get; set; }
-
 		public static async Task PinActor(ActorBasicViewModel basicActor)
 		{
 			if (basicActor.Pointer == null)
@@ -230,12 +228,6 @@ namespace Anamnesis
 			while (this.IsAlive)
 			{
 				await Task.Delay(33);
-
-				if (!TargetService.EnableActorTicking)
-				{
-					await Task.Delay(100);
-					continue;
-				}
 
 				foreach (PinnedActor actor in this.PinnedActors)
 				{
