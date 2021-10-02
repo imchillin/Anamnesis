@@ -262,7 +262,7 @@ namespace Anamnesis.Files
 					{
 						SaveFileDialog dlg = new SaveFileDialog();
 						dlg.Filter = ToFilter(typeof(T));
-						dlg.InitialDirectory = defaultDirectory?.FullName;
+						dlg.InitialDirectory = defaultDirectory?.FullName ?? string.Empty;
 						bool? dlgResult = dlg.ShowDialog();
 
 						if (dlgResult != true)
