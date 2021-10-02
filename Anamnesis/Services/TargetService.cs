@@ -138,11 +138,18 @@ namespace Anamnesis
 		{
 			await base.Start();
 
-			List<ActorBasicViewModel> allaCtors = GetAllActors();
-
-			if (allaCtors.Count > 0)
+			try
 			{
-				await PinActor(allaCtors[0]);
+				List<ActorBasicViewModel> allaCtors = GetAllActors();
+
+				if (allaCtors.Count > 0)
+				{
+					await PinActor(allaCtors[0]);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to pin default actor");
 			}
 
 			_ = Task.Run(this.TickPinnedActors);
