@@ -180,17 +180,22 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnOpenClicked(object sender, RoutedEventArgs e)
 		{
-			await this.Open(false, false);
+			await this.Open(false, PoseFile.Mode.Rotation);
 		}
 
 		private async void OnOpenScaleClicked(object sender, RoutedEventArgs e)
 		{
-			await this.Open(false, true);
+			await this.Open(false, PoseFile.Mode.Scale);
 		}
 
 		private async void OnOpenSelectedClicked(object sender, RoutedEventArgs e)
 		{
-			await this.Open(true, false);
+			await this.Open(true, PoseFile.Mode.Rotation);
+		}
+
+		private async void OnOpenAllClicked(object sender, RoutedEventArgs e)
+		{
+			await this.Open(true, PoseFile.Mode.All);
 		}
 
 		private async void OnOpenExpressionClicked(object sender, RoutedEventArgs e)
@@ -199,15 +204,21 @@ namespace Anamnesis.PoseModule.Pages
 				return;
 
 			this.Skeleton.SelectHead();
-			await this.Open(true, false);
+			await this.Open(true, PoseFile.Mode.Rotation);
+			this.Skeleton.ClearSelection();
 		}
 
-		private async Task Open(bool selectionOnly, bool scaleOnly)
+		private async Task Open(bool selectionOnly, PoseFile.Mode mode)
 		{
 			try
 			{
 				if (this.Actor == null || this.Skeleton == null)
 					return;
+
+				PoseService.Instance.SetEnabled(true);
+				PoseService.Instance.FreezeScale |= mode.HasFlag(PoseFile.Mode.Scale);
+				PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
+				PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
 
 				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>(
 					FileService.DefaultPoseDirectory,
@@ -222,7 +233,7 @@ namespace Anamnesis.PoseModule.Pages
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(this.Actor, this.Skeleton, selectionOnly, scaleOnly);
+					await poseFile.Apply(this.Actor, this.Skeleton, selectionOnly, mode);
 				}
 			}
 			catch (Exception ex)

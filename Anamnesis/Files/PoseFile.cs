@@ -13,6 +13,16 @@ namespace Anamnesis.Files
 
 	public class PoseFile : JsonFileBase
 	{
+		[Flags]
+		public enum Mode
+		{
+			Rotation = 1,
+			Scale = 2,
+			Position = 4,
+
+			All = Rotation | Scale | Position,
+		}
+
 		public override string FileExtension => ".pose";
 		public override string TypeName => "Anamnesis Pose";
 
@@ -58,7 +68,7 @@ namespace Anamnesis.Files
 			}
 		}
 
-		public async Task Apply(ActorViewModel actor, SkeletonVisual3d skeleton, bool selectionOnly, bool scaleOnly)
+		public async Task Apply(ActorViewModel actor, SkeletonVisual3d skeleton, bool selectionOnly, Mode mode)
 		{
 			if (actor == null)
 				throw new ArgumentNullException(nameof(actor));
@@ -112,17 +122,17 @@ namespace Anamnesis.Files
 
 						TransformPtrViewModel vm = bone.ViewModel;
 
-						if (PoseService.Instance.FreezePositions && savedBone.Position != null && !scaleOnly)
+						if (savedBone.Position != null && mode.HasFlag(Mode.Position))
 						{
 							vm.Position = (Vector)savedBone.Position;
 						}
 
-						if (PoseService.Instance.FreezeRotation && savedBone.Rotation != null && !scaleOnly)
+						if (savedBone.Rotation != null && mode.HasFlag(Mode.Rotation))
 						{
 							vm.Rotation = (Quaternion)savedBone.Rotation;
 						}
 
-						if (PoseService.Instance.FreezeScale && savedBone.Scale != null)
+						if (savedBone.Scale != null && mode.HasFlag(Mode.Scale))
 						{
 							vm.Scale = (Vector)savedBone.Scale;
 						}
