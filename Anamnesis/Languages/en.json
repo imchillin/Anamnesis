@@ -99,6 +99,7 @@
 	"Scene_Camera_Pan": "Pan",
 	"Scene_Camera_Zoom": "Zoom",
 	"Scene_Camera_FoV": "FoV",
+	"Scene_Camera_GPoseWarn": "Camera controls are only available while in Group Pose",
 
 	"Scene_Transform_Header": "Transform",
 	"Scene_Transform_Rotation": "Rotation",
