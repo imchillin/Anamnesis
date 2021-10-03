@@ -165,11 +165,11 @@ namespace Anamnesis.Character.Pages
 
 			try
 			{
-				OpenResult result = await FileService.Open<LegacyCharacterFile, DatCharacterFile, CharacterFile>(
+				OpenResult result = await FileService.Open<LegacyCharacterFile, LegacyCharacterFileJson, DatCharacterFile, CharacterFile>(
 					lastLoadDir,
 					FileService.DefaultCharacterDirectory,
 					FileService.FFxivDatCharacterDirectory,
-					FileService.CMToolSaveDir);
+					FileService.CMToolAppearanceSaveDir);
 
 				if (result.File == null)
 					return;

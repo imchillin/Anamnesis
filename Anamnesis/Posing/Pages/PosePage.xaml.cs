@@ -226,7 +226,7 @@ namespace Anamnesis.PoseModule.Pages
 					lastLoadDir,
 					FileService.DefaultPoseDirectory,
 					FileService.BuiltInPoseDirectory,
-					FileService.CMToolSaveDir);
+					FileService.CMToolPoseSaveDir);
 
 				if (result.File == null)
 					return;
