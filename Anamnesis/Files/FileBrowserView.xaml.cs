@@ -7,6 +7,7 @@ namespace Anamnesis.GUI.Views
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.IO;
+	using System.Linq;
 	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
@@ -414,7 +415,9 @@ namespace Anamnesis.GUI.Views
 					}
 				}
 
-				this.FinalSelection = new FileInfo(this.CurrentDir.FullName + "/" + this.FileName);
+				string ext = this.validExtensions.First();
+
+				this.FinalSelection = new FileInfo(this.CurrentDir.FullName + "\\" + this.FileName + ext);
 			}
 
 			if (this.Selected != null && this.Selected.Entry is DirectoryInfo dir)
