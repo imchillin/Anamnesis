@@ -219,21 +219,28 @@ namespace Anamnesis.GUI.Views
 
 		private async Task UpdateEntries()
 		{
+			lock (this)
+			{
+			}
+
 			while (this.updatingEntries)
 				await Task.Delay(10);
 
-			this.updatingEntries = true;
-			this.Selector.ClearItems();
+			lock (this)
+			{
+				this.updatingEntries = true;
+				this.Selector.ClearItems();
 
-			try
-			{
-				List<EntryWrapper> results = new();
-				this.GetEntries(this.CurrentDir, ref results);
-				this.Selector.AddItems(results);
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to update file list");
+				try
+				{
+					List<EntryWrapper> results = new();
+					this.GetEntries(this.CurrentDir, ref results);
+					this.Selector.AddItems(results);
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed to update file list");
+				}
 			}
 
 			await this.Selector.FilterItemsAsync();
