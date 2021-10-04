@@ -73,6 +73,12 @@ namespace Anamnesis
 
 				try
 				{
+					if (!MemoryService.IsProcessAlive)
+					{
+						await Task.Delay(1000);
+						continue;
+					}
+
 					this.Camera.Pointer = AddressService.Camera;
 
 					this.Camera.ReadChanges();
