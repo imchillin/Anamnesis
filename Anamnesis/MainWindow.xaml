@@ -303,9 +303,6 @@
 
 				<Grid HorizontalAlignment="Right">
 
-					<Border Background="Black" CornerRadius="3, 3, 0, 0" Opacity="0.5" VerticalAlignment="Bottom" Height="2" Width="59" HorizontalAlignment="Right"
-							Visibility="{Binding EnableTranslucency, Converter={StaticResource !B2V}}"/>
-
 					<StackPanel  Orientation="Horizontal">
 
 						<Button
@@ -365,6 +362,7 @@
 								BorderThickness="0"
 								IsChecked="{Binding LogService.VerboseLogging}"
 								Foreground="{Binding TitlebarForeground}"
+								Background="{DynamicResource MaterialDesignCardBackground}"
 								Style="{DynamicResource TransparentIconToggleButton}"
 								ToolTip="Enable verbose logging">
 								<XivToolsWpf:IconBlock FontSize="12" Icon="FileAlt"/>
@@ -377,6 +375,7 @@
 							BorderThickness="0"
 							IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}"
 							Foreground="{Binding TitlebarForeground}"
+							Background="{DynamicResource MaterialDesignCardBackground}"
 							Style="{DynamicResource TransparentIconToggleButton}">
 
 							<ToggleButton.ToolTip>

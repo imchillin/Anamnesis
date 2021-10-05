@@ -130,12 +130,12 @@
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 
-				<ToggleButton Grid.Column="0" Height="20" Width="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1" Padding="0" Margin="0">
+				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1" Padding="0" Margin="0">
 					<ToggleButton.ToolTip>
 						<XivToolsWpf:TextBlock Key="Character_Equipment_Hide"/>
 					</ToggleButton.ToolTip>
 
-					<fa:IconBlock Icon="EyeSlash" FontSize="12"/>
+					<fa:IconBlock Icon="EyeSlash" FontSize="10"/>
 				</ToggleButton>
 
 				<ana:VectorEditor Grid.Column="1" Margin="4, 0, 0, 0" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" TickFrequency="0.1" Minimum="-10" Maximum="10"/>

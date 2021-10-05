@@ -23,7 +23,7 @@
 
 			<ToggleButton Grid.Column="0" Style="{StaticResource TransparentIconToggleButton}" Margin="2, 0, -2, 0" IsChecked="{Binding Linked}"
 					Visibility="{Binding CanLink, Converter={StaticResource B2V}}"
-					Height="20" Width="20"
+					Height="20"
 					Padding="0">
 
 				<ToggleButton.ToolTip>
@@ -74,7 +74,11 @@
 				<Line Grid.Row="2" X1="0" X2="1" Stretch="Fill" Stroke="{DynamicResource MaterialDesignBodyLight}" StrokeThickness="1" SnapsToDevicePixels="True" Margin="0, 6, 0, 11" VerticalAlignment="Bottom"/>
 
 				<ToggleButton Grid.RowSpan="3" Style="{StaticResource TransparentIconToggleButton}" Opacity="0.01" Margin="-2, 0, -2, 0" IsChecked="{Binding Linked}">
-					<fa:IconBlock Grid.Row="1" Icon="Link" FontSize="10" Margin="0, 3, 0, 3"/>
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Common_LinkVector" />
+					</ToggleButton.ToolTip>
+					
+					<fa:IconBlock Grid.Row="1" Icon="Link" FontSize="10"/>
 				</ToggleButton>
 
 			</Grid>
