@@ -338,13 +338,19 @@ namespace Anamnesis
 					if (this.ViewModel == null)
 						return;
 
-					try
+					lock (this.ViewModel)
 					{
-						this.ViewModel.ReadChanges();
-					}
-					catch (Exception ex)
-					{
-						Log.Error(ex, "Failed to tick selected actor");
+						if (!this.ViewModel.CanTick())
+							return;
+
+						try
+						{
+							this.ViewModel.ReadChanges();
+						}
+						catch (Exception ex)
+						{
+							Log.Error(ex, "Failed to tick selected actor");
+						}
 					}
 				}
 			}

@@ -121,11 +121,13 @@
 											   Grid.Row="0"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
+						
 						<TextBox Grid.Row="0"
 								 Grid.Column="1"
 								 Grid.ColumnSpan="2"
 								 Style="{StaticResource MaterialDesignTextBox}"
-								 Text="{Binding Actor.Nickname}" />
+								 Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}"/>
+						
 						<XivToolsWpf:TextBlock Key="Character_Actor_EntityType"
 											   Grid.Row="2"
 											   Grid.Column="0"

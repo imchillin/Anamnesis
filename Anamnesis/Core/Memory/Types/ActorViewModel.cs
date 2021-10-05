@@ -34,6 +34,11 @@ namespace Anamnesis.Memory
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
 
+		public bool CanTick()
+		{
+			return !this.PendingRefresh && !this.IsRefreshing;
+		}
+
 		public override void OnRetargeted()
 		{
 			base.OnRetargeted();
@@ -88,8 +93,13 @@ namespace Anamnesis.Memory
 		/// </summary>
 		public async Task RefreshAsync()
 		{
-			if (this.IsRefreshing)
-				return;
+			lock (this)
+			{
+				if (this.IsRefreshing)
+				{
+					return;
+				}
+			}
 
 			if (this.Pointer == null)
 				return;
@@ -195,7 +205,8 @@ namespace Anamnesis.Memory
 			// while the refresh was running
 			while (this.refreshDelay > 0)
 			{
-				this.PendingRefresh = true;
+				lock (this)
+					this.PendingRefresh = true;
 
 				while (this.refreshDelay > 0)
 				{
@@ -203,16 +214,10 @@ namespace Anamnesis.Memory
 					this.refreshDelay -= 10;
 				}
 
-				this.PendingRefresh = false;
-				await this.RefreshAsync();
-			}
-		}
+				lock (this)
+					this.PendingRefresh = false;
 
-		private class RefreshAttribute : Attribute
-		{
-			public static bool IsSet(PropertyInfo property)
-			{
-				return property.GetCustomAttribute<RefreshAttribute>() != null;
+				await this.RefreshAsync();
 			}
 		}
 	}

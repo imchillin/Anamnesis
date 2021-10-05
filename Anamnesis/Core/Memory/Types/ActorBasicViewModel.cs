@@ -106,11 +106,12 @@ namespace Anamnesis.Memory
 			MemoryService.Write(objectKindPointer, (byte)type, "Set ObjectKind Direct");
 		}
 
-		private class RefreshAttribute : Attribute
+		protected class RefreshAttribute : Attribute
 		{
 			public static bool IsSet(PropertyInfo property)
 			{
-				return property.GetCustomAttribute<RefreshAttribute>() != null;
+				RefreshAttribute? attrib = property.GetCustomAttribute<RefreshAttribute>();
+				return attrib != null;
 			}
 		}
 	}
