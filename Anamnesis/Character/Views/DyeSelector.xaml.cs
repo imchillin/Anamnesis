@@ -79,18 +79,21 @@ namespace Anamnesis.Character.Views
 
 		private int OnSort(object a, object b)
 		{
+			if (a == b)
+				return 0;
+
+			if (a == DyeUtility.NoneDye && b != DyeUtility.NoneDye)
+				return -1;
+
+			if (a != DyeUtility.NoneDye && b == DyeUtility.NoneDye)
+				return 1;
+
 			if (a is IDye dyeA && b is IDye dyeB)
 			{
-				if (a == DyeUtility.NoneDye)
+				if (dyeA.IsFavorite && !dyeB.IsFavorite)
 					return -1;
 
-				if (b == DyeUtility.NoneDye)
-					return 1;
-
-				if (dyeA.IsFavorite)
-					return -1;
-
-				if (dyeB.IsFavorite)
+				if (!dyeA.IsFavorite && dyeB.IsFavorite)
 					return 1;
 
 				return -dyeB.Key.CompareTo(dyeA.Key);
