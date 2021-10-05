@@ -87,6 +87,8 @@ namespace Anamnesis.Memory
 
 		public void Dispose()
 		{
+			this.MemoryMode = MemoryModes.None;
+
 			for (int i = this.children.Count - 1; i >= 0; i--)
 			{
 				this.children[i].Dispose();

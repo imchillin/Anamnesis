@@ -391,6 +391,7 @@ namespace Anamnesis
 					}
 
 					this.ViewModel?.Dispose();
+					this.ViewModel = null;
 					Log.Warning($"Lost actor: {this.Initials}");
 
 					this.IsValid = false;
