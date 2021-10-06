@@ -377,27 +377,12 @@ namespace Anamnesis.Files
 			// Setting customize values will reset the extended appearance, which me must read.
 			await actor.ReadFromMemoryAsync(true);
 
+			await Task.Delay(150);
+
 			if (actor.ModelObject?.ExtendedAppearance != null)
+			{
 				await actor.ModelObject.ExtendedAppearance.ReadFromMemoryAsync(true);
 
-			// write everything that is reset by actor refreshes
-			/*if (this.IncludeSection(SaveModes.EquipmentGear, mode))
-			{
-				if (this.MainHand != null)
-				{
-					actor.SetValue(Offsets.Main.MainHandColor, this.MainHand.Color);
-					actor.SetValue(Offsets.Main.MainHandScale, this.MainHand.Scale);
-				}
-
-				if (this.OffHand != null)
-				{
-					actor.SetValue(Offsets.Main.OffhandColor, this.OffHand.Color);
-					actor.SetValue(Offsets.Main.OffhandScale, this.OffHand.Scale);
-				}
-			}*/
-
-			if (actor.ModelObject?.ExtendedAppearance != null)
-			{
 				bool usedExAppearance = false;
 
 				if (this.IncludeSection(SaveModes.AppearanceHair, mode))
@@ -448,6 +433,8 @@ namespace Anamnesis.Files
 			actor.MemoryMode = MemoryModes.ReadWrite;
 			actor.WriteToMemory(true);
 			actor.AutomaticRefreshEnabled = true;
+
+			Log.Information("Read appearance from file");
 		}
 
 		private bool IncludeSection(SaveModes section, SaveModes mode)

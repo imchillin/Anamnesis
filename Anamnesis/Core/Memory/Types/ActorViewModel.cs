@@ -108,6 +108,8 @@ namespace Anamnesis.Memory
 			if (GposeService.Instance.IsGpose)
 				return;
 
+			Log.Information($"Begining actor refresh for actor pointer: {this.Pointer}");
+
 			this.IsRefreshing = true;
 			MemoryModes oldMode = this.MemoryMode;
 			this.MemoryMode = MemoryModes.Read;
@@ -137,7 +139,9 @@ namespace Anamnesis.Memory
 				MemoryService.Write(renderModePointer, (int)RenderModes.Draw, "Actor Refresh (2 / 2)");
 			}
 
-			await Task.Delay(75);
+			await Task.Delay(150);
+
+			Log.Information($"Completed actor refresh for actor pointer: {this.Pointer}");
 
 			this.IsRefreshing = false;
 			this.MemoryMode = oldMode;
