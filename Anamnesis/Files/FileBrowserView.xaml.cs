@@ -498,7 +498,7 @@ namespace Anamnesis.GUI.Views
 				this.View = view;
 			}
 
-			public string Name => Path.GetFileNameWithoutExtension(this.Entry.Name);
+			public string Name => this.Entry is DirectoryInfo ? this.Entry.Name : Path.GetFileNameWithoutExtension(this.Entry.Name);
 			public DateTime? DateModified => this.Entry.LastWriteTime;
 
 			public string Icon
