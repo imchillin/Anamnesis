@@ -24,7 +24,20 @@
 				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
 
-			<fa:IconBlock Width="16" Icon="Search" />
+			<Button Style="{DynamicResource TransparentIconButton}"
+					Click="OnClearSearchClicked"
+					Margin="0, 6, 0, 6"
+					IsEnabled="{Binding HasSearch}">
+				<Grid>
+					<fa:IconBlock Width="16"
+								  Icon="Search"
+								  Visibility="{Binding HasSearch, Converter={StaticResource !B2V}}" />
+
+					<fa:IconBlock Width="16"
+								  Icon="TimesCircle"
+								  Visibility="{Binding HasSearch, Converter={StaticResource B2V}}" />
+				</Grid>
+			</Button>
 
 			<TextBox
 				x:Name="SearchBox"

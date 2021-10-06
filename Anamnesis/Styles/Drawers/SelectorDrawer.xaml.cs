@@ -15,11 +15,13 @@ namespace Anamnesis.Styles.Drawers
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using Anamnesis.Services;
+	using PropertyChanged;
 	using Serilog;
 
 	/// <summary>
 	/// Interaction logic for SelectorDrawer.xaml.
 	/// </summary>
+	[AddINotifyPropertyChangedInterface]
 	public partial class SelectorDrawer : UserControl, INotifyPropertyChanged, IDrawer
 	{
 		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(SelectorDrawer), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnValueChangedStatic)));
@@ -62,6 +64,7 @@ namespace Anamnesis.Styles.Drawers
 		public ObservableCollection<object> FilteredItems { get; set; } = new ObservableCollection<object>();
 
 		public bool SearchEnabled { get; set; } = true;
+		public bool HasSearch { get; set; } = false;
 
 		public IEnumerable<object> Entries
 		{
@@ -271,8 +274,18 @@ namespace Anamnesis.Styles.Drawers
 				return;
 
 			string str = this.SearchBox.Text;
+
+			this.HasSearch = !string.IsNullOrWhiteSpace(str);
+
 			SearchInputs[this.objectType] = str;
 			Task.Run(async () => { await this.Search(str); });
+
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.HasSearch)));
+		}
+
+		private void OnClearSearchClicked(object sender, RoutedEventArgs e)
+		{
+			this.SearchBox.Text = string.Empty;
 		}
 
 		private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
