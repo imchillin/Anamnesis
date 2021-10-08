@@ -246,14 +246,14 @@
 				<MenuItem Style="{StaticResource ButtonMenuItemRight}"
 						  Margin="-1,0,3,0">
 					
+					<MenuItem Header="Character_Appearance_Header"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnLoadNpcAppearanceClicked" />					
+					
 					<MenuItem Header="Character_Equipment_Header"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnLoadNpcEquipmentClicked" />
-					
-					<MenuItem Header="Character_Appearance_Header"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadNpcAppearanceClicked" />
-					
+							
 					<MenuItem Header="Character_Equipment_Weapons"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnLoadNpcWeaponsClicked" />
