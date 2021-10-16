@@ -99,12 +99,9 @@ namespace Anamnesis.Memory
 		/// </summary>
 		public async Task RefreshAsync()
 		{
-			lock (this)
+			if (this.IsRefreshing)
 			{
-				if (this.IsRefreshing)
-				{
-					return;
-				}
+				return;
 			}
 
 			if (this.Pointer == null)
