@@ -113,10 +113,19 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		protected override void ActorRefresh()
+		protected override void ActorRefresh(string propertyName)
 		{
 			if (!this.AutomaticRefreshEnabled)
 				return;
+
+			if (this.IsRefreshing)
+			{
+				// dont refresh because of a refresh!
+				if (propertyName == nameof(this.ObjectKind) || propertyName == nameof(this.RenderMode))
+				{
+					return;
+				}
+			}
 
 			this.Refresh();
 		}

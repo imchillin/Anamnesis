@@ -247,6 +247,7 @@ namespace Anamnesis.Files
 			Log.Information("Reading appearance from file");
 
 			actor.AutomaticRefreshEnabled = false;
+			actor.EnableReading = false;
 
 			if (actor.ObjectKind != ActorTypes.Player)
 			{
@@ -413,6 +414,7 @@ namespace Anamnesis.Files
 			}
 
 			actor.AutomaticRefreshEnabled = true;
+			actor.EnableReading = true;
 
 			Log.Information("Finished reading appearance from file");
 		}

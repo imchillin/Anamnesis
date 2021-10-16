@@ -14,6 +14,9 @@ namespace Anamnesis.Memory
 	{
 		public IntPtr Address = IntPtr.Zero;
 
+		public bool EnableReading = true;
+		public bool EnableWriting = true;
+
 		protected readonly List<MemoryBase> Children = new List<MemoryBase>();
 		private readonly Dictionary<string, BindInfo> binds = new Dictionary<string, BindInfo>();
 
@@ -115,17 +118,36 @@ namespace Anamnesis.Memory
 			return true;
 		}
 
-		protected virtual void ActorRefresh()
+		protected virtual bool CanRead()
+		{
+			if (this.Parent != null)
+				return this.EnableReading && this.Parent.CanRead();
+
+			return this.EnableReading;
+		}
+
+		protected virtual bool CanWrite()
+		{
+			if (this.Parent != null)
+				return this.EnableWriting && this.Parent.CanWrite();
+
+			return this.EnableWriting;
+		}
+
+		protected virtual void ActorRefresh(string propertyName)
 		{
 			if (this.Parent != null)
 			{
-				this.Parent.ActorRefresh();
+				this.Parent.ActorRefresh(propertyName);
 			}
 		}
 
 		private void ReadAllFromMemory()
 		{
 			if (this.Address == IntPtr.Zero)
+				return;
+
+			if (!this.CanRead())
 				return;
 
 			lock (this)
@@ -156,6 +178,9 @@ namespace Anamnesis.Memory
 
 		private void ReadFromMemory(BindInfo bind)
 		{
+			if (!this.CanRead())
+				return;
+
 			if (this.isWriting)
 				throw new Exception("Attempt to read memory while writing it");
 
@@ -240,6 +265,9 @@ namespace Anamnesis.Memory
 
 		private void WriteToMemory(BindInfo bind)
 		{
+			if (!this.CanWrite())
+				return;
+
 			if (this.isReading)
 				throw new Exception("Attempt to write memory while reading it");
 
@@ -292,7 +320,7 @@ namespace Anamnesis.Memory
 
 			if (bind.Flags.HasFlag(BindFlags.ActorRefresh))
 			{
-				this.ActorRefresh();
+				this.ActorRefresh(e.PropertyName);
 			}
 		}
 
