@@ -7,14 +7,13 @@ namespace Anamnesis
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
-	using Anamnesis.Memory.Types;
 	using Anamnesis.Services;
 
 	public class CameraService : ServiceBase<CameraService>
 	{
-		private bool delimitCamera;
+		public readonly CameraMemory Camera = new CameraMemory();
 
-		public CameraViewModel? Camera { get; set; }
+		private bool delimitCamera;
 
 		public bool LockCameraPosition
 		{
@@ -48,8 +47,6 @@ namespace Anamnesis
 		{
 			await base.Start();
 
-			this.Camera = new CameraViewModel(AddressService.Camera, null);
-
 			_ = Task.Run(this.Tick);
 		}
 
@@ -79,9 +76,7 @@ namespace Anamnesis
 						continue;
 					}
 
-					this.Camera.Pointer = AddressService.Camera;
-
-					this.Camera.ReadChanges();
+					this.Camera.SetAddress(AddressService.Camera);
 
 					if (!GposeService.Instance.IsGpose || GposeService.Instance.IsChangingState)
 					{
