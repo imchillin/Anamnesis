@@ -99,7 +99,7 @@ namespace Anamnesis.Files
 		public float? MuscleTone { get; set; }
 		public float? HeightMultiplier { get; set; }
 
-		public static async Task<DirectoryInfo?> Save(DirectoryInfo? defaultDir, ActorViewModel? actor, SaveModes mode = SaveModes.All)
+		public static async Task<DirectoryInfo?> Save(DirectoryInfo? defaultDir, ActorMemory? actor, SaveModes mode = SaveModes.All)
 		{
 			if (actor == null)
 				return null;
@@ -117,7 +117,7 @@ namespace Anamnesis.Files
 			return result.Directory;
 		}
 
-		public void WriteToFile(ActorViewModel actor, SaveModes mode)
+		public void WriteToFile(ActorMemory actor, SaveModes mode)
 		{
 			this.Nickname = actor.Nickname;
 			this.ModelType = actor.ModelType;
@@ -233,30 +233,26 @@ namespace Anamnesis.Files
 			}
 		}
 
-		public async Task Apply(ActorViewModel actor, SaveModes mode)
+		public async Task Apply(ActorMemory actor, SaveModes mode)
 		{
-			if (actor.Customize == null)
-				return;
-
 			if (this.Tribe != null && !Enum.IsDefined((Customize.Tribes)this.Tribe))
 				throw new Exception($"Invalid tribe: {this.Tribe} in appearance file");
 
 			if (this.Race != null && !Enum.IsDefined((Customize.Races)this.Race))
 				throw new Exception($"Invalid race: {this.Race} in appearance file");
 
+			if (actor.Customize == null)
+				return;
+
 			Log.Information("Reading appearance from file");
 
 			actor.AutomaticRefreshEnabled = false;
-			actor.MemoryMode = MemoryModes.None;
 
 			if (actor.ObjectKind != ActorTypes.Player)
 			{
 				actor.ObjectKind = ActorTypes.Player;
 				await actor.RefreshAsync();
 			}
-
-			if (actor.ModelObject?.ExtendedAppearance != null)
-				actor.ModelObject.ExtendedAppearance.MemoryMode = MemoryModes.None;
 
 			if (!string.IsNullOrEmpty(this.Nickname))
 				actor.Nickname = this.Nickname;
@@ -377,18 +373,15 @@ namespace Anamnesis.Files
 					actor.Customize.Bust = (byte)this.Bust;
 			}
 
-			actor.WriteToMemory(true);
 			await actor.RefreshAsync();
 
 			// Setting customize values will reset the extended appearance, which me must read.
-			await actor.ReadFromMemoryAsync(true);
+			actor.Tick();
 
 			await Task.Delay(150);
 
 			if (actor.ModelObject?.ExtendedAppearance != null)
 			{
-				await actor.ModelObject.ExtendedAppearance.ReadFromMemoryAsync(true);
-
 				bool usedExAppearance = false;
 
 				if (this.IncludeSection(SaveModes.AppearanceHair, mode))
@@ -430,14 +423,8 @@ namespace Anamnesis.Files
 					usedExAppearance |= this.SkinGloss != null;
 					usedExAppearance |= this.MuscleTone != null;
 				}
-
-				////actor.ModelObject.ExtendedAppearance.Freeze = usedExAppearance;
-				actor.ModelObject.ExtendedAppearance.MemoryMode = MemoryModes.ReadWrite;
-				actor.ModelObject.ExtendedAppearance.WriteToMemory(true);
 			}
 
-			actor.MemoryMode = MemoryModes.ReadWrite;
-			actor.WriteToMemory(true);
 			actor.AutomaticRefreshEnabled = true;
 
 			Log.Information("Finished reading appearance from file");
@@ -455,7 +442,7 @@ namespace Anamnesis.Files
 			{
 			}
 
-			public WeaponSave(WeaponViewModel from)
+			public WeaponSave(WeaponMemory from)
 			{
 				this.ModelSet = from.Set;
 				this.ModelBase = from.Base;
@@ -470,7 +457,7 @@ namespace Anamnesis.Files
 			public ushort ModelVariant { get; set; }
 			public byte DyeId { get; set; }
 
-			public void Write(WeaponViewModel? vm)
+			public void Write(WeaponMemory? vm)
 			{
 				if (vm == null)
 					return;
@@ -500,7 +487,7 @@ namespace Anamnesis.Files
 			{
 			}
 
-			public ItemSave(ItemViewModel from)
+			public ItemSave(ItemMemory from)
 			{
 				this.ModelBase = from.Base;
 				this.ModelVariant = from.Variant;
@@ -511,7 +498,7 @@ namespace Anamnesis.Files
 			public byte ModelVariant { get; set; }
 			public byte DyeId { get; set; }
 
-			public void Write(ItemViewModel? vm)
+			public void Write(ItemMemory? vm)
 			{
 				if (vm == null)
 					return;

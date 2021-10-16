@@ -107,6 +107,9 @@ namespace Anamnesis.Memory
 			if (address == IntPtr.Zero)
 				throw new Exception("Invalid address");
 
+			if (type.IsEnum)
+				type = type.GetEnumUnderlyingType();
+
 			for (int attempt = 0; attempt < 10; attempt++)
 			{
 				int size = Marshal.SizeOf(type);

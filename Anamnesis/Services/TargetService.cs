@@ -8,9 +8,7 @@ namespace Anamnesis
 	using System.Collections.ObjectModel;
 	using System.ComponentModel;
 	using System.Threading.Tasks;
-	using System.Windows;
 	using Anamnesis.Core.Memory;
-	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles;
@@ -18,7 +16,7 @@ namespace Anamnesis
 	using PropertyChanged;
 	using XivToolsWpf;
 
-	public delegate void SelectionEvent(ActorViewModel? actor);
+	public delegate void SelectionEvent(ActorMemory? actor);
 	public delegate void PinnedEvent(TargetService.PinnedActor actor);
 
 	[AddINotifyPropertyChangedInterface]
@@ -27,24 +25,25 @@ namespace Anamnesis
 		public static event SelectionEvent? ActorSelected;
 		public static event PinnedEvent? ActorPinned;
 
-		public ActorViewModel? SelectedActor { get; private set; }
+		public ActorMemory? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
-		public static async Task PinActor(ActorBasicViewModel basicActor)
+		public static async Task PinActor(ActorBasicMemory basicActor)
 		{
-			if (basicActor.Pointer == null)
+			if (basicActor.Address == IntPtr.Zero)
 				return;
 
 			foreach (PinnedActor otherActor in Instance.PinnedActors)
 			{
-				if (basicActor.Pointer == otherActor.Pointer)
+				if (basicActor.Address == otherActor.Pointer)
 				{
 					return;
 				}
 			}
 
-			ActorViewModel actor = new ActorViewModel((IntPtr)basicActor.Pointer);
-			PinnedActor pined = new PinnedActor(actor);
+			ActorMemory memory = new();
+			memory.SetAddress(basicActor.Address);
+			PinnedActor pined = new PinnedActor(memory);
 
 			await Dispatch.MainThread();
 			Instance.PinnedActors.Add(pined);
@@ -56,7 +55,7 @@ namespace Anamnesis
 		{
 			Instance.PinnedActors.Remove(actor);
 
-			if (actor.ViewModel == Instance.SelectedActor)
+			if (actor.Memory == Instance.SelectedActor)
 			{
 				if (Instance.PinnedActors.Count > 0)
 				{
@@ -64,12 +63,12 @@ namespace Anamnesis
 				}
 				else
 				{
-					Instance.SelectActorViewModel(null);
+					Instance.SelectActor((ActorMemory?)null);
 				}
 			}
 		}
 
-		public static bool IsPinned(ActorBasicViewModel actor)
+		public static bool IsPinned(ActorBasicMemory actor)
 		{
 			foreach (PinnedActor pinned in Instance.PinnedActors)
 			{
@@ -82,7 +81,7 @@ namespace Anamnesis
 			return false;
 		}
 
-		public static List<ActorBasicViewModel> GetAllActors()
+		public static List<ActorBasicMemory> GetAllActors()
 		{
 			int count = 0;
 			IntPtr startAddress;
@@ -99,7 +98,7 @@ namespace Anamnesis
 				startAddress = AddressService.ActorTable;
 			}
 
-			List<ActorBasicViewModel> results = new();
+			List<ActorBasicMemory> results = new();
 			for (int i = 0; i < count; i++)
 			{
 				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
@@ -109,7 +108,9 @@ namespace Anamnesis
 
 				try
 				{
-					results.Add(new ActorBasicViewModel(ptr));
+					ActorBasicMemory actor = new();
+					actor.SetAddress(ptr);
+					results.Add(actor);
 				}
 				catch (Exception ex)
 				{
@@ -158,9 +159,9 @@ namespace Anamnesis
 			{
 				try
 				{
-					List<ActorBasicViewModel> allActors = GetAllActors();
+					List<ActorBasicMemory> allActors = GetAllActors();
 
-					foreach (ActorBasicViewModel actor in allActors)
+					foreach (ActorBasicMemory actor in allActors)
 					{
 						if (string.IsNullOrEmpty(actor.Name))
 							continue;
@@ -239,7 +240,7 @@ namespace Anamnesis
 
 		public void SelectActor(PinnedActor actor)
 		{
-			this.SelectActorViewModel(actor.GetViewModel());
+			this.SelectActor(actor.GetMemory());
 
 			foreach (PinnedActor ac in this.PinnedActors)
 			{
@@ -247,7 +248,7 @@ namespace Anamnesis
 			}
 		}
 
-		public void SelectActorViewModel(ActorViewModel? actor)
+		public void SelectActor(ActorMemory? actor)
 		{
 			this.SelectedActor = actor;
 			ActorSelected?.Invoke(actor);
@@ -269,16 +270,17 @@ namespace Anamnesis
 		[AddINotifyPropertyChangedInterface]
 		public class PinnedActor : INotifyPropertyChanged
 		{
-			public PinnedActor(ActorViewModel actorVm)
+			public PinnedActor(ActorMemory memory)
 			{
-				this.Id = actorVm.Id;
-				this.ViewModel = actorVm;
+				this.Id = memory.Id;
+				this.Memory = memory;
 				this.Retarget();
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;
 
-			public ActorViewModel? ViewModel { get; private set; }
+			public ActorMemory? Memory { get; private set; }
+			////public ActorViewModel? ViewModel { get; private set; }
 
 			public string? Name { get; private set; }
 			public string Id { get; private set; }
@@ -290,7 +292,7 @@ namespace Anamnesis
 			public bool IsValid { get; private set; }
 			public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
 
-			public string? DisplayName => this.ViewModel == null ? this.Name : this.ViewModel.DisplayName;
+			public string? DisplayName => this.Memory == null ? this.Name : this.Memory.DisplayName;
 			public bool IsRetargeting { get; private set; } = false;
 
 			public bool IsSelected
@@ -300,7 +302,7 @@ namespace Anamnesis
 					if (this.Pointer == null)
 						return false;
 
-					return TargetService.Instance.SelectedActor?.Pointer == this.Pointer;
+					return TargetService.Instance.SelectedActor?.Address == this.Pointer;
 				}
 
 				set
@@ -317,15 +319,14 @@ namespace Anamnesis
 
 			public override string? ToString()
 			{
-				if (this.ViewModel == null)
+				if (this.Memory == null)
 					return base.ToString();
 
-				return this.ViewModel.DisplayName;
+				return this.Memory.DisplayName;
 			}
 
 			public void Dispose()
 			{
-				this.ViewModel?.Dispose();
 			}
 
 			public void SelectionChanged()
@@ -333,10 +334,10 @@ namespace Anamnesis
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsSelected)));
 			}
 
-			public ActorViewModel? GetViewModel()
+			public ActorMemory? GetMemory()
 			{
 				this.Retarget();
-				return this.ViewModel;
+				return this.Memory;
 			}
 
 			public override int GetHashCode()
@@ -351,24 +352,21 @@ namespace Anamnesis
 					if (this.IsRetargeting)
 						return;
 
-					if (this.ViewModel == null || this.ViewModel.Pointer == null)
+					if (this.Memory == null || this.Memory.Address == IntPtr.Zero)
 						return;
 
-					if (!IsActorInActorTable((IntPtr)this.ViewModel.Pointer))
+					if (!IsActorInActorTable(this.Memory.Address))
 					{
 						Log.Information($"Actor: {this.Initials} was not in actor table");
 						this.Retarget();
 						return;
 					}
 
-					lock (this.ViewModel)
+					lock (this.Memory)
 					{
-						if (!this.ViewModel.CanTick())
-							return;
-
 						try
 						{
-							this.ViewModel.ReadChanges();
+							this.Memory.Tick();
 						}
 						catch (Exception ex)
 						{
@@ -384,30 +382,31 @@ namespace Anamnesis
 				{
 					this.IsRetargeting = true;
 
-					if (this.ViewModel != null)
-						this.ViewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
+					if (this.Memory != null)
+						this.Memory.PropertyChanged -= this.OnViewModelPropertyChanged;
 
-					foreach (ActorBasicViewModel actor in TargetService.GetAllActors())
+					foreach (ActorBasicMemory actor in TargetService.GetAllActors())
 					{
-						if (actor.Id != this.Id || actor.Pointer == null)
+						if (actor.Id != this.Id || actor.Address == IntPtr.Zero)
 							continue;
 
-						if (this.ViewModel != null)
+						if (this.Memory != null)
 						{
-							this.ViewModel.Pointer = actor.Pointer;
-							this.ViewModel.ReadChanges();
+							this.Memory.Address = actor.Address;
+							this.Memory.Tick();
 						}
 						else
 						{
-							this.ViewModel = new ActorViewModel((IntPtr)actor.Pointer);
+							this.Memory = new ActorMemory();
+							this.Memory.SetAddress(actor.Address);
 						}
 
-						this.Name = this.ViewModel.Name;
-						this.ViewModel.OnRetargeted();
-						this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
-						this.Pointer = this.ViewModel.Pointer;
-						this.Kind = this.ViewModel.ObjectKind;
-						this.ModelType = this.ViewModel.ModelType;
+						this.Name = this.Memory.Name;
+						////this.Memory.OnRetargeted();
+						this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
+						this.Pointer = this.Memory.Address;
+						this.Kind = this.Memory.ObjectKind;
+						this.ModelType = this.Memory.ModelType;
 
 						this.UpdateInitials(this.DisplayName);
 
@@ -419,8 +418,8 @@ namespace Anamnesis
 						return;
 					}
 
-					this.ViewModel?.Dispose();
-					this.ViewModel = null;
+					this.Memory?.Dispose();
+					this.Memory = null;
 					Log.Warning($"Lost actor: {this.Initials}");
 
 					this.IsValid = false;
@@ -430,9 +429,9 @@ namespace Anamnesis
 
 			private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
 			{
-				if (this.ViewModel != null && e.PropertyName == nameof(ActorViewModel.DisplayName))
+				if (this.Memory != null && e.PropertyName == nameof(ActorMemory.DisplayName))
 				{
-					this.UpdateInitials(this.ViewModel.DisplayName);
+					this.UpdateInitials(this.Memory.DisplayName);
 				}
 			}
 

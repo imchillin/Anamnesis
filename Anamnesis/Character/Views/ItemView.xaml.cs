@@ -59,7 +59,7 @@ namespace Anamnesis.Character.Views
 			set => ItemModelDp.Set(this, value);
 		}
 
-		public ActorViewModel? Actor => this.DataContext as ActorViewModel;
+		public ActorMemory? Actor => this.DataContext as ActorMemory;
 
 		public WeaponSubExtendedViewModel? ExtendedViewModel
 		{
@@ -136,7 +136,9 @@ namespace Anamnesis.Character.Views
 			IMemoryViewModel? memory = this.ItemModel?.GetParent<IMemoryViewModel>();
 			memory?.SetMemoryMode(MemoryModes.Write);
 
-			if (item != null)
+			throw new NotImplementedException();
+
+			/*if (item != null)
 			{
 				bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
 				ushort modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
@@ -145,7 +147,7 @@ namespace Anamnesis.Character.Views
 
 				static void SetModel(IStructViewModel? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
 				{
-					if (itemModel is ItemViewModel itemView)
+					if (itemModel is ItemMemory itemView)
 					{
 						itemView.Base = modelBase;
 						itemView.Variant = (byte)modelVariant;
@@ -155,7 +157,7 @@ namespace Anamnesis.Character.Views
 							itemView.Dye = 0;
 						}
 					}
-					else if (itemModel is WeaponViewModel weaponView)
+					else if (itemModel is WeaponMemory weaponView)
 					{
 						weaponView.Set = modelSet;
 						weaponView.Base = modelBase;
@@ -182,7 +184,7 @@ namespace Anamnesis.Character.Views
 
 			this.Item = item;
 			memory?.SetMemoryMode(MemoryModes.ReadWrite);
-			this.lockViewModel = false;
+			this.lockViewModel = false;*/
 		}
 
 		private void OnDyeClick(object sender, RoutedEventArgs e)

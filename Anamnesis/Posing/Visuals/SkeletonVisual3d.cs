@@ -34,7 +34,7 @@ namespace Anamnesis.PoseModule
 
 		private readonly QuaternionRotation3D rootRotation;
 
-		public SkeletonVisual3d(ActorViewModel actor)
+		public SkeletonVisual3d(ActorMemory actor)
 		{
 			this.Actor = actor;
 			////Task.Run(this.GenerateBones);
@@ -59,7 +59,7 @@ namespace Anamnesis.PoseModule
 
 		public bool Generating { get; set; } = false;
 		public bool LinkEyes { get; set; } = true;
-		public ActorViewModel Actor { get; private set; }
+		public ActorMemory Actor { get; private set; }
 		public SkeletonTemplateFile? File { get; private set; }
 		public int SelectedCount => this.SelectedBones.Count;
 		public bool CanEditBone => this.SelectedBones.Count == 1;
@@ -413,7 +413,7 @@ namespace Anamnesis.PoseModule
 				if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
 					return;
 
-				SkeletonViewModel skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
+				SkeletonMemory skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
 
 				////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
 				await this.Generate(skeletonVm, forceGenerateParenting);
@@ -469,7 +469,7 @@ namespace Anamnesis.PoseModule
 			return this;
 		}
 
-		private async Task Generate(SkeletonViewModel memory, bool forceGenerateParenting = false)
+		private async Task Generate(SkeletonMemory memory, bool forceGenerateParenting = false)
 		{
 			this.File = memory.GetSkeletonTemplate(this.Actor);
 			Log.Information($"Loaded skeleton file: {this.File?.Path}");
@@ -572,18 +572,20 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		private void GetBones(BonesViewModel? vm, string name)
+		private void GetBones(BonesMemory? vm, string name)
 		{
 			if (vm == null)
 				return;
 
-			for (int i = 0; i < vm.Transforms.Count; i++)
+			throw new NotImplementedException();
+
+			/*for (int i = 0; i < vm.Transforms.Count; i++)
 			{
 				TransformPtrViewModel? transform = vm.Transforms[i];
 				string boneName = name + "_" + i;
 				BoneVisual3d bone = new BoneVisual3d(transform, this, boneName);
 				this.Bones.Add(bone);
-			}
+			}*/
 		}
 
 		private void AddBoneTargets()

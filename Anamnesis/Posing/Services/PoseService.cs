@@ -18,7 +18,7 @@ namespace Anamnesis.PoseModule
 	public class PoseService : ServiceBase<PoseService>
 	{
 		public static List<SkeletonTemplateFile> SkeletonTemplates = new List<SkeletonTemplateFile>();
-		private static readonly Dictionary<ActorViewModel, SkeletonVisual3d> ActorSkeletons = new Dictionary<ActorViewModel, SkeletonVisual3d>();
+		private static readonly Dictionary<ActorMemory, SkeletonVisual3d> ActorSkeletons = new Dictionary<ActorMemory, SkeletonVisual3d>();
 
 		private NopHookViewModel? freezeRot1;
 		private NopHookViewModel? freezeRot2;
@@ -136,7 +136,7 @@ namespace Anamnesis.PoseModule
 			SkeletonTemplates.Add(skeleton);
 		}
 
-		public static async Task<SkeletonVisual3d> GetVisual(ActorViewModel actor)
+		public static async Task<SkeletonVisual3d> GetVisual(ActorMemory actor)
 		{
 			SkeletonVisual3d skeleton;
 

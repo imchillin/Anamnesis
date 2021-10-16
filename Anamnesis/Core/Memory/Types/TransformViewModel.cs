@@ -6,7 +6,7 @@ namespace Anamnesis.Memory
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
-	public class TransformViewModel : StructViewModelBase<Transform>, ITransform
+	public class TransformViewModel : StructViewModelBase<Transform>
 	{
 		public TransformViewModel(IMemoryViewModel parent, string propertyName)
 			: base(parent, propertyName)

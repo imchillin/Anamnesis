@@ -58,13 +58,13 @@ namespace Anamnesis.Character.Views
 		public double HeightCm { get; set; }
 		public string? HeightFeet { get; set; }
 
-		public ActorViewModel? Actor
+		public ActorMemory? Actor
 		{
 			get;
 			private set;
 		}
 
-		public CustomizeViewModel? Customize
+		public ActorCustomizeMemory? Customize
 		{
 			get;
 			private set;
@@ -72,15 +72,15 @@ namespace Anamnesis.Character.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.OnActorChanged(this.DataContext as ActorViewModel);
+			this.OnActorChanged(this.DataContext as ActorMemory);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			this.OnActorChanged(this.DataContext as ActorViewModel);
+			this.OnActorChanged(this.DataContext as ActorMemory);
 		}
 
-		private void OnActorChanged(ActorViewModel? actor)
+		private void OnActorChanged(ActorMemory? actor)
 		{
 			this.Actor = actor;
 			Application.Current.Dispatcher.Invoke(() => this.IsEnabled = false);
@@ -108,10 +108,10 @@ namespace Anamnesis.Character.Views
 			if (this.appearanceLocked)
 				return;
 
-			if (e.PropertyName == nameof(CustomizeViewModel.Race) ||
-				e.PropertyName == nameof(CustomizeViewModel.Tribe) ||
-				e.PropertyName == nameof(CustomizeViewModel.Hair) ||
-				e.PropertyName == nameof(CustomizeViewModel.FacePaint))
+			if (e.PropertyName == nameof(ActorCustomizeMemory.Race) ||
+				e.PropertyName == nameof(ActorCustomizeMemory.Tribe) ||
+				e.PropertyName == nameof(ActorCustomizeMemory.Hair) ||
+				e.PropertyName == nameof(ActorCustomizeMemory.FacePaint))
 			{
 				Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
 			}

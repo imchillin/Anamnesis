@@ -32,9 +32,9 @@ namespace Anamnesis.Character.Views
 		private static bool autoOffhand = true;
 		private static bool showFilters = false;
 
-		private readonly Memory.ActorViewModel? actor;
+		private readonly Memory.ActorMemory? actor;
 
-		public EquipmentSelector(ItemSlots slot, Memory.ActorViewModel? actor)
+		public EquipmentSelector(ItemSlots slot, Memory.ActorMemory? actor)
 		{
 			this.Slot = slot;
 			this.actor = actor;

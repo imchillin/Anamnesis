@@ -52,7 +52,7 @@ namespace Anamnesis.Character.Views
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			ActorViewModel? actorVm = this.DataContext as ActorViewModel;
+			ActorMemory? actorVm = this.DataContext as ActorMemory;
 
 			if (actorVm == null)
 				return;
@@ -62,7 +62,7 @@ namespace Anamnesis.Character.Views
 
 		private void OnActorVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(ActorViewModel.ModelType))
+			if (e.PropertyName == nameof(ActorMemory.ModelType))
 			{
 				this.GetModelName();
 			}
@@ -72,7 +72,7 @@ namespace Anamnesis.Character.Views
 		{
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				ActorViewModel? actorVm = this.DataContext as ActorViewModel;
+				ActorMemory? actorVm = this.DataContext as ActorMemory;
 
 				if (actorVm == null)
 					return;

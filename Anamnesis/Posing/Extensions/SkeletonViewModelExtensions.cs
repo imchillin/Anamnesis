@@ -9,7 +9,7 @@ namespace Anamnesis.Posing.Extensions
 
 	public static class SkeletonViewModelExtensions
 	{
-		public static SkeletonTemplateFile? GetSkeletonTemplate(this SkeletonViewModel self, ActorViewModel actor)
+		public static SkeletonTemplateFile? GetSkeletonTemplate(this SkeletonMemory self, ActorMemory actor)
 		{
 			SkeletonTemplateFile? skel = GetSkeletonTemplate(self, actor, false);
 
@@ -19,7 +19,7 @@ namespace Anamnesis.Posing.Extensions
 			return skel;
 		}
 
-		private static SkeletonTemplateFile? GetSkeletonTemplate(this SkeletonViewModel self, ActorViewModel actor, bool includeGenerated)
+		private static SkeletonTemplateFile? GetSkeletonTemplate(this SkeletonMemory self, ActorMemory actor, bool includeGenerated)
 		{
 			int maxDepth = int.MinValue;
 			SkeletonTemplateFile? maxSkel = null;

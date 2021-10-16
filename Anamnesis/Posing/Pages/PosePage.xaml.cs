@@ -48,7 +48,7 @@ namespace Anamnesis.PoseModule.Pages
 		public TargetService TargetService => TargetService.Instance;
 
 		public bool IsFlipping { get; private set; }
-		public ActorViewModel? Actor { get; private set; }
+		public ActorMemory? Actor { get; private set; }
 		public SkeletonVisual3d? Skeleton { get; private set; }
 
 		private static ILogger Log => Serilog.Log.ForContext<PosePage>();
@@ -142,7 +142,7 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 		{
-			this.Actor = this.DataContext as ActorViewModel;
+			this.Actor = this.DataContext as ActorMemory;
 
 			if (this.Actor == null || this.Actor.ModelObject == null)
 			{

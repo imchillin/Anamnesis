@@ -20,7 +20,7 @@ namespace Anamnesis.GUI.Views
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			ActorViewModel? actor = this.DataContext as ActorViewModel;
+			ActorMemory? actor = this.DataContext as ActorMemory;
 
 			if (actor == null)
 				return;

@@ -28,7 +28,7 @@ namespace Anamnesis.Files
 
 		public Dictionary<string, Bone?>? Bones { get; set; }
 
-		public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorViewModel? actor, SkeletonVisual3d? skeleton, bool selectionOnly)
+		public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, bool selectionOnly)
 		{
 			if (actor == null || skeleton == null)
 				return null;
@@ -46,7 +46,7 @@ namespace Anamnesis.Files
 			return result.Directory;
 		}
 
-		public void WriteToFile(ActorViewModel actor, SkeletonVisual3d skeleton, bool selectionOnly)
+		public void WriteToFile(ActorMemory actor, SkeletonVisual3d skeleton, bool selectionOnly)
 		{
 			////SkeletonViewModel? skeletonMem = actor?.ModelObject?.Skeleton?.Skeleton;
 
@@ -69,7 +69,7 @@ namespace Anamnesis.Files
 			}
 		}
 
-		public async Task Apply(ActorViewModel actor, SkeletonVisual3d skeleton, bool selectionOnly, Mode mode)
+		public async Task Apply(ActorMemory actor, SkeletonVisual3d skeleton, bool selectionOnly, Mode mode)
 		{
 			if (actor == null)
 				throw new ArgumentNullException(nameof(actor));
@@ -83,9 +83,7 @@ namespace Anamnesis.Files
 			if (actor.ModelObject.Skeleton.Skeleton == null)
 				throw new Exception("Actor skeleton wrapper has no skeleton");
 
-			SkeletonViewModel skeletonMem = actor.ModelObject.Skeleton.Skeleton;
-
-			skeletonMem.MemoryMode = MemoryModes.None;
+			SkeletonMemory skeletonMem = actor.ModelObject.Skeleton.Skeleton;
 
 			PoseService.Instance.SetEnabled(true);
 			PoseService.Instance.CanEdit = false;
@@ -155,9 +153,8 @@ namespace Anamnesis.Files
 			}
 
 			await Task.Delay(100);
-			skeletonMem.MemoryMode = MemoryModes.ReadWrite;
 
-			await skeletonMem.ReadFromMemoryAsync();
+			skeletonMem.Tick();
 
 			PoseService.Instance.CanEdit = true;
 		}

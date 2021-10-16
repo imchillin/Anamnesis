@@ -35,11 +35,11 @@ namespace Anamnesis.Character.Pages
 		}
 
 		public GposeService GPoseService => GposeService.Instance;
-		public ActorViewModel? Actor { get; private set; }
+		public ActorMemory? Actor { get; private set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.OnActorChanged(this.DataContext as ActorViewModel);
+			this.OnActorChanged(this.DataContext as ActorMemory);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -47,12 +47,11 @@ namespace Anamnesis.Character.Pages
 			if (!this.IsVisible)
 				return;
 
-			this.OnActorChanged(this.DataContext as ActorViewModel);
+			this.OnActorChanged(this.DataContext as ActorMemory);
 		}
 
 		private void OnClearClicked(object sender, RoutedEventArgs e)
 		{
-			this.Actor?.SetMemoryMode(MemoryModes.Write);
 			this.Actor?.Equipment?.Arms?.Clear();
 			this.Actor?.Equipment?.Chest?.Clear();
 			this.Actor?.Equipment?.Ear?.Clear();
@@ -66,12 +65,10 @@ namespace Anamnesis.Character.Pages
 
 			this.Actor?.ModelObject?.Weapons?.Hide();
 			this.Actor?.ModelObject?.Weapons?.SubModel?.Hide();
-			this.Actor?.SetMemoryMode(MemoryModes.ReadWrite);
 		}
 
 		private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
 		{
-			this.Actor?.SetMemoryMode(MemoryModes.Write);
 			this.Actor?.Equipment?.Ear?.Clear();
 			this.Actor?.Equipment?.Head?.Clear();
 			this.Actor?.Equipment?.LFinger?.Clear();
@@ -82,7 +79,6 @@ namespace Anamnesis.Character.Pages
 			this.Actor?.Equipment?.Chest?.Equip(ItemUtility.NpcBodyItem);
 			this.Actor?.Equipment?.Legs?.Equip(ItemUtility.NpcBodyItem);
 			this.Actor?.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
-			this.Actor?.SetMemoryMode(MemoryModes.ReadWrite);
 		}
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
@@ -213,7 +209,7 @@ namespace Anamnesis.Character.Pages
 			lastSaveDir = await CharacterFile.Save(lastSaveDir, this.Actor);
 		}
 
-		private void OnActorChanged(ActorViewModel? actor)
+		private void OnActorChanged(ActorMemory? actor)
 		{
 			this.Actor = actor;
 
