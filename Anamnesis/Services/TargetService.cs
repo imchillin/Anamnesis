@@ -120,22 +120,59 @@ namespace Anamnesis
 			return results;
 		}
 
+		public static bool IsActorInActorTable(IntPtr pointer)
+		{
+			int count = 0;
+			IntPtr startAddress;
+
+			if (GposeService.Instance.GetIsGPose())
+			{
+				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
+				startAddress = AddressService.GPoseActorTable + 8;
+			}
+			else
+			{
+				// why 424?
+				count = 424;
+				startAddress = AddressService.ActorTable;
+			}
+
+			for (int i = 0; i < count; i++)
+			{
+				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
+
+				if (ptr == pointer)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		public override async Task Start()
 		{
 			await base.Start();
 
-			try
+			if (GameService.Instance.IsSignedIn)
 			{
-				List<ActorBasicViewModel> allaCtors = GetAllActors();
-
-				if (allaCtors.Count > 0)
+				try
 				{
-					await PinActor(allaCtors[0]);
+					List<ActorBasicViewModel> allActors = GetAllActors();
+
+					foreach (ActorBasicViewModel actor in allActors)
+					{
+						if (string.IsNullOrEmpty(actor.Name))
+							continue;
+
+						await PinActor(actor);
+						break;
+					}
 				}
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to pin default actor");
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed to pin default actor");
+				}
 			}
 
 			_ = Task.Run(this.TickPinnedActors);
@@ -314,8 +351,15 @@ namespace Anamnesis
 					if (this.IsRetargeting)
 						return;
 
-					if (this.ViewModel == null)
+					if (this.ViewModel == null || this.ViewModel.Pointer == null)
 						return;
+
+					if (!IsActorInActorTable((IntPtr)this.ViewModel.Pointer))
+					{
+						Log.Information($"Actor: {this.Initials} was not in actor table");
+						this.Retarget();
+						return;
+					}
 
 					lock (this.ViewModel)
 					{
