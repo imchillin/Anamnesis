@@ -260,9 +260,9 @@ namespace Anamnesis
 			{
 				await Task.Delay(33);
 
-				foreach (PinnedActor actor in this.PinnedActors)
+				for (int i = this.PinnedActors.Count - 1; i >= 0; i--)
 				{
-					actor.Tick();
+					this.PinnedActors[i].Tick();
 				}
 			}
 		}
@@ -362,16 +362,16 @@ namespace Anamnesis
 						return;
 					}
 
-					lock (this.Memory)
+					try
 					{
-						try
-						{
-							this.Memory.Tick();
-						}
-						catch (Exception ex)
-						{
-							Log.Error(ex, "Failed to tick selected actor");
-						}
+						this.Memory.Tick();
+					}
+					catch (Exception ex)
+					{
+						Log.Error(ex, "Failed to tick selected actor");
+						this.Memory.Dispose();
+						this.Memory = null;
+						this.IsValid = false;
 					}
 				}
 			}

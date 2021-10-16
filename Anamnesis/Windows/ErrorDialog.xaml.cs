@@ -16,6 +16,7 @@ namespace Anamnesis.GUI.Windows
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 	using Serilog;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for ErrorDialog.xaml.
@@ -57,7 +58,7 @@ namespace Anamnesis.GUI.Windows
 			}
 		}
 
-		public static void ShowError(ExceptionDispatchInfo ex, bool isCriticial)
+		public static async void ShowError(ExceptionDispatchInfo ex, bool isCriticial)
 		{
 			if (Application.Current == null)
 				return;
@@ -65,35 +66,34 @@ namespace Anamnesis.GUI.Windows
 			if (ex.SourceException is ErrorException)
 				return;
 
-			Application.Current.Dispatcher.Invoke(() =>
+			await Dispatch.MainThread();
+
+			try
 			{
-				try
-				{
-					SplashWindow.HideWindow();
+				SplashWindow.HideWindow();
 
-					Dialog dlg = new Dialog();
-					ErrorDialog errorDialog = new ErrorDialog(ex, isCriticial);
-					errorDialog.window = dlg;
+				Dialog dlg = new Dialog();
+				ErrorDialog errorDialog = new ErrorDialog(ex, isCriticial);
+				errorDialog.window = dlg;
 
-					if (SettingsService.Exists && SettingsService.Instance.Settings != null)
-						dlg.Topmost = SettingsService.Current.AlwaysOnTop;
+				if (SettingsService.Exists && SettingsService.Instance.Settings != null)
+					dlg.Topmost = SettingsService.Current.AlwaysOnTop;
 
-					dlg.ContentArea.Content = errorDialog;
-					dlg.ShowDialog();
+				dlg.ContentArea.Content = errorDialog;
+				dlg.ShowDialog();
 
-					if (Application.Current == null)
-						return;
+				if (Application.Current == null)
+					return;
 
-					if (isCriticial)
-						Application.Current.Shutdown(2);
+				if (isCriticial)
+					Application.Current.Shutdown(2);
 
-					SplashWindow.ShowWindow();
-				}
-				catch (Exception ex)
-				{
-					Log.Error(new ErrorException(ex), "Failed to display error dialog");
-				}
-			});
+				SplashWindow.ShowWindow();
+			}
+			catch (Exception newEx)
+			{
+				Log.Error(new ErrorException(newEx), "Failed to display error dialog");
+			}
 		}
 
 		private void StackTraceFormatter(string? stackTrace)
