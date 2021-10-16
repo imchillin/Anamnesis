@@ -27,7 +27,7 @@ namespace Anamnesis.Character.Views
 	{
 		public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
 		public static readonly IBind<IStructViewModel?> ItemModelDp = Binder.Register<IStructViewModel?, ItemView>(nameof(ItemModel), OnItemModelChanged, BindMode.TwoWay);
-		public static readonly IBind<WeaponSubExtendedViewModel?> WeaponExModelDp = Binder.Register<WeaponSubExtendedViewModel?, ItemView>(nameof(ExtendedViewModel));
+		public static readonly IBind<WeaponSubModelMemory?> WeaponExModelDp = Binder.Register<WeaponSubModelMemory?, ItemView>(nameof(ExtendedViewModel));
 
 		private bool lockViewModel = false;
 
@@ -61,7 +61,7 @@ namespace Anamnesis.Character.Views
 
 		public ActorMemory? Actor => this.DataContext as ActorMemory;
 
-		public WeaponSubExtendedViewModel? ExtendedViewModel
+		public WeaponSubModelMemory? ExtendedViewModel
 		{
 			get => WeaponExModelDp.Get(this);
 			set => WeaponExModelDp.Set(this, value);
@@ -194,11 +194,11 @@ namespace Anamnesis.Character.Views
 				if (v == null)
 					return;
 
-				if (this.ItemModel is ItemViewModel item)
+				if (this.ItemModel is ItemMemory item)
 				{
 					item.Dye = v.Id;
 				}
-				else if (this.ItemModel is WeaponViewModel weapon)
+				else if (this.ItemModel is WeaponMemory weapon)
 				{
 					weapon.Dye = v.Id;
 				}
@@ -222,7 +222,7 @@ namespace Anamnesis.Character.Views
 
 				await Dispatch.NonUiThread();
 
-				if (valueVm is ItemViewModel itemVm)
+				if (valueVm is ItemMemory itemVm)
 				{
 					IItem? item = ItemUtility.GetItem(this.Slot, 0, itemVm.Base, itemVm.Variant);
 					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
@@ -232,7 +232,7 @@ namespace Anamnesis.Character.Views
 					this.Item = item;
 					this.Dye = dye;
 				}
-				else if (valueVm is WeaponViewModel weaponVm)
+				else if (valueVm is WeaponMemory weaponVm)
 				{
 					IItem? item = ItemUtility.GetItem(this.Slot, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
 
