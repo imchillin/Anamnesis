@@ -114,6 +114,10 @@ namespace Anamnesis.Memory
 			for (int attempt = 0; attempt < 10; attempt++)
 			{
 				int size = Marshal.SizeOf(readType);
+
+				if (readType == typeof(bool))
+					size = 1;
+
 				IntPtr mem = Marshal.AllocHGlobal(size);
 
 				if (ReadProcessMemory(Handle, address, mem, size, out _))
@@ -160,6 +164,10 @@ namespace Anamnesis.Memory
 			if (type == typeof(bool))
 			{
 				buffer = new[] { (byte)((bool)value == true ? 1 : 255) };
+			}
+			else if (type == typeof(byte))
+			{
+				buffer = new[] { (byte)value };
 			}
 			else if (type == typeof(int))
 			{
