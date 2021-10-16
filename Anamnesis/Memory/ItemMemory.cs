@@ -7,9 +7,9 @@ namespace Anamnesis.Memory
 
 	public class ItemMemory : MemoryBase, IEquipmentItemMemory
 	{
-		[Bind(0x000)] public ushort Base { get; set; }
-		[Bind(0x002)] public byte Variant { get; set; }
-		[Bind(0x003)] public byte Dye { get; set; }
+		[Bind(0x000, BindFlags.ActorRefresh)] public ushort Base { get; set; }
+		[Bind(0x002, BindFlags.ActorRefresh)] public byte Variant { get; set; }
+		[Bind(0x003, BindFlags.ActorRefresh)] public byte Dye { get; set; }
 
 		public void Clear()
 		{

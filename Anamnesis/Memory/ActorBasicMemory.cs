@@ -12,7 +12,7 @@ namespace Anamnesis.Memory
 	{
 		[Bind(0x0030)] public SeString NameBytes { get; set; }
 		[Bind(0x0080)] public int DataId { get; set; }
-		[Bind(0x008c)] public ActorTypes ObjectKind { get; set; }
+		[Bind(0x008c, BindFlags.ActorRefresh)] public ActorTypes ObjectKind { get; set; }
 		[Bind(0x0090)] public byte DistanceFromPlayerX { get; set; }
 		[Bind(0x0092)] public byte DistanceFromPlayerY { get; set; }
 

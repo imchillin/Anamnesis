@@ -87,7 +87,7 @@ namespace Anamnesis.Memory
 			this.Children.Clear();
 		}
 
-		public void Tick()
+		public virtual void Tick()
 		{
 			if (this.Address == IntPtr.Zero)
 				return;
@@ -113,6 +113,14 @@ namespace Anamnesis.Memory
 		protected virtual bool ShouldBind(BindInfo bind)
 		{
 			return true;
+		}
+
+		protected virtual void ActorRefresh()
+		{
+			if (this.Parent != null)
+			{
+				this.Parent.ActorRefresh();
+			}
 		}
 
 		private void ReadAllFromMemory()
@@ -280,6 +288,11 @@ namespace Anamnesis.Memory
 			lock (this)
 			{
 				this.WriteToMemory(bind);
+			}
+
+			if (bind.Flags.HasFlag(BindFlags.ActorRefresh))
+			{
+				this.ActorRefresh();
 			}
 		}
 

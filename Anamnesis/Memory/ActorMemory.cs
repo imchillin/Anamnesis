@@ -23,7 +23,7 @@ namespace Anamnesis.Memory
 		[Bind(0x008D)] public byte SubKind { get; set; }
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 		[Bind(0x0104)] public RenderModes RenderMode { get; set; }
-		[Bind(0x01B4)] public int ModelType { get; set; }
+		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
 		[Bind(0x01E2)] public byte ClassJob { get; set; }
 		[Bind(0x07C4)] public bool IsAnimating { get; set; }
 		[Bind(0x0F08)] public WeaponMemory? MainHand { get; set; }
@@ -55,6 +55,16 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		public override void Tick()
+		{
+			// Since writing is immadiate from poperties, we don't want to tick (read) anything
+			// during a refresh.
+			if (this.IsRefreshing || this.PendingRefresh)
+				return;
+
+			base.Tick();
+		}
+
 		/// <summary>
 		/// Refresh the actor to force the game to load any changed values for appearance.
 		/// </summary>
@@ -63,32 +73,46 @@ namespace Anamnesis.Memory
 			if (this.IsRefreshing || GposeService.Instance.IsGpose)
 				return;
 
-			Log.Information($"Begining actor refresh for actor address: {this.Address}");
-
-			this.IsRefreshing = true;
-
-			if (this.ObjectKind == ActorTypes.Player)
+			try
 			{
-				this.ObjectKind = ActorTypes.BattleNpc;
-				this.RenderMode = RenderModes.Unload;
-				await Task.Delay(75);
-				this.RenderMode = RenderModes.Draw;
-				await Task.Delay(75);
-				this.ObjectKind = ActorTypes.Player;
-				this.RenderMode = RenderModes.Draw;
+				Log.Information($"Begining actor refresh for actor address: {this.Address}");
+
+				this.IsRefreshing = true;
+
+				if (this.ObjectKind == ActorTypes.Player)
+				{
+					this.ObjectKind = ActorTypes.BattleNpc;
+					this.RenderMode = RenderModes.Unload;
+					await Task.Delay(75);
+					this.RenderMode = RenderModes.Draw;
+					await Task.Delay(75);
+					this.ObjectKind = ActorTypes.Player;
+					this.RenderMode = RenderModes.Draw;
+				}
+				else
+				{
+					this.RenderMode = RenderModes.Unload;
+					await Task.Delay(75);
+					this.RenderMode = RenderModes.Draw;
+				}
+
+				await Task.Delay(150);
+
+				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}
-			else
+			catch (Exception ex)
 			{
-				this.RenderMode = RenderModes.Unload;
-				await Task.Delay(75);
-				this.RenderMode = RenderModes.Draw;
+				Log.Error(ex, "Failed to refresh actor");
 			}
+			finally
+			{
+				this.IsRefreshing = false;
+			}
+		}
 
-			await Task.Delay(150);
-
-			Log.Information($"Completed actor refresh for actor address: {this.Address}");
-
-			this.IsRefreshing = false;
+		protected override void ActorRefresh()
+		{
+			this.Refresh();
 		}
 
 		protected override bool ShouldBind(BindInfo bind)
