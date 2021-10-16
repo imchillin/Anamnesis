@@ -42,7 +42,7 @@ namespace Anamnesis.Memory
 		[Bind(0x050)] public TransformMemory? Transform { get; set; }
 		[Bind(0x0A0, BindFlags.Pointer)] public SkeletonWrapperMemory? Skeleton { get; set; }
 		[Bind(0x148, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
-		[Bind(0x240, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearance { get; set; }
+		[Bind(0x240, 0x028, 0x020, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearance { get; set; }
 		[Bind(0x26C)] public float Height { get; set; }
 		[Bind(0x2B0)] public float Wetness { get; set; }
 		[Bind(0x2BC)] public float Drenched { get; set; }

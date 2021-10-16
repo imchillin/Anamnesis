@@ -39,7 +39,7 @@ namespace Anamnesis.Memory
 
 			binds.Sort((a, b) =>
 			{
-				return b.IsChildMemory.CompareTo(a.IsChildMemory);
+				return a.IsChildMemory.CompareTo(b.IsChildMemory);
 			});
 
 			this.binds = binds.ToArray();
@@ -116,12 +116,23 @@ namespace Anamnesis.Memory
 
 		private void ReadFromMemory(BindInfo bind)
 		{
-			IntPtr bindAddress = this.Address + bind.Offset;
+			IntPtr bindAddress = this.Address + bind.Offsets[0];
+
+			if (bind.Offsets.Length > 1 && !bind.Flags.HasFlag(BindFlags.Pointer))
+				throw new Exception("Bind address has multiple offsets but is not a pointer. This is not supported.");
 
 			if (typeof(MemoryBase).IsAssignableFrom(bind.Type))
 			{
 				if (bind.Flags.HasFlag(BindFlags.Pointer))
+				{
 					bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+
+					for (int i = 1; i < bind.Offsets.Length; i++)
+					{
+						bindAddress += bind.Offsets[i];
+						bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+					}
+				}
 
 				if (bindAddress == IntPtr.Zero)
 					return;
@@ -173,17 +184,29 @@ namespace Anamnesis.Memory
 		[AttributeUsage(AttributeTargets.Property)]
 		public class BindAttribute : Attribute
 		{
-			public readonly int Offset;
+			public readonly int[] Offsets;
 			public readonly BindFlags Flags;
 
 			public BindAttribute(int offset)
 			{
-				this.Offset = offset;
+				this.Offsets = new[] { offset };
 			}
 
 			public BindAttribute(int offset, BindFlags flags)
 			{
-				this.Offset = offset;
+				this.Offsets = new[] { offset };
+				this.Flags = flags;
+			}
+
+			public BindAttribute(int offset, int offset2, BindFlags flags)
+			{
+				this.Offsets = new[] { offset, offset2 };
+				this.Flags = flags;
+			}
+
+			public BindAttribute(int offset, int offset2, int offset3, BindFlags flags)
+			{
+				this.Offsets = new[] { offset, offset2, offset3 };
 				this.Flags = flags;
 			}
 		}
@@ -200,7 +223,7 @@ namespace Anamnesis.Memory
 			}
 
 			public string Name => this.Property.Name;
-			public int Offset => this.Attribute.Offset;
+			public int[] Offsets => this.Attribute.Offsets;
 			public Type Type => this.Property.PropertyType;
 			public BindFlags Flags => this.Attribute.Flags;
 
