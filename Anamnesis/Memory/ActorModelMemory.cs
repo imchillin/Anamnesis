@@ -3,6 +3,8 @@
 
 namespace Anamnesis.Memory
 {
+	using System;
+
 	public class ActorModelMemory : MemoryBase
 	{
 		/// <summary>
@@ -46,5 +48,39 @@ namespace Anamnesis.Memory
 		[Bind(0x2BC)] public float Drenched { get; set; }
 		[Bind(0x938)] public short DataPath { get; set; }
 		[Bind(0x93C)] public byte DataHead { get; set; }
+
+		public bool LockWetness
+		{
+			get => this.IsFrozen(nameof(ActorModelMemory.Wetness));
+			set => this.SetFrozen(nameof(ActorModelMemory.Wetness), value);
+		}
+
+		public bool ForceDrenched
+		{
+			get => this.IsFrozen(nameof(ActorModelMemory.Drenched));
+			set => this.SetFrozen(nameof(ActorModelMemory.Drenched), value, value ? 5 : 0);
+		}
+
+		public bool IsPlayer => Enum.IsDefined(typeof(ActorModelMemory.DataPaths), this.DataPath);
+
+		protected override bool ShouldBind(BindInfo bind)
+		{
+			if (bind.Name == nameof(ActorModelMemory.ExtendedAppearance))
+			{
+				// No extended appearance for anything that isn't a player!
+				if (!this.IsPlayer)
+				{
+					if (this.ExtendedAppearance != null)
+					{
+						this.ExtendedAppearance.Dispose();
+						this.ExtendedAppearance = null;
+					}
+
+					return false;
+				}
+			}
+
+			return base.ShouldBind(bind);
+		}
 	}
 }

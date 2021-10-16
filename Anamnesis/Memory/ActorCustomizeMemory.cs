@@ -3,6 +3,8 @@
 
 namespace Anamnesis.Memory
 {
+	using System;
+
 	public class ActorCustomizeMemory : MemoryBase
 	{
 		[Bind(0x000, BindFlags.ActorRefresh)] public Customize.Races Race { get; set; }

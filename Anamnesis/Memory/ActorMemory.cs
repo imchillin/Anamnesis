@@ -36,6 +36,12 @@ namespace Anamnesis.Memory
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
 
+		public int ObjectKindInt
+		{
+			get => (int)this.ObjectKind;
+			set => this.ObjectKind = (ActorTypes)value;
+		}
+
 		/// <summary>
 		/// Refresh the actor to force the game to load any changed values for appearance.
 		/// </summary>

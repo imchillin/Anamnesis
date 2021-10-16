@@ -26,7 +26,7 @@ namespace Anamnesis.Character.Views
 			Drenched,
 		}
 
-		public ModelViewModel? Model => this.DataContext as ModelViewModel;
+		public ActorModelMemory? Model => this.DataContext as ActorModelMemory;
 
 		private void OnModeToggleClicked(object sender, RoutedEventArgs e)
 		{

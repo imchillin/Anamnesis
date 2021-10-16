@@ -58,7 +58,7 @@ namespace Anamnesis.Memory
 
 		protected static ILogger Log => Serilog.Log.ForContext<StructViewModelBase>();
 
-		public void SetAddress(IntPtr address)
+		public virtual void SetAddress(IntPtr address)
 		{
 			this.Address = address;
 
@@ -85,6 +85,16 @@ namespace Anamnesis.Memory
 			this.ReadFromMemory();
 		}
 
+		protected bool IsFrozen(string propertyName)
+		{
+			return false;
+		}
+
+		protected void SetFrozen(string propertyName, bool freeze, object? value = null)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected virtual bool ShouldBind(BindInfo bind)
 		{
 			return true;
@@ -106,22 +116,14 @@ namespace Anamnesis.Memory
 
 		private void ReadFromMemory(BindInfo bind)
 		{
-			IntPtr address = this.Address + bind.Offset;
+			IntPtr bindAddress = this.Address + bind.Offset;
 
 			if (typeof(MemoryBase).IsAssignableFrom(bind.Type))
 			{
-				IntPtr childAddress = IntPtr.Zero;
-
 				if (bind.Flags.HasFlag(BindFlags.Pointer))
-				{
-					childAddress = MemoryService.Read<IntPtr>(address);
-				}
-				else
-				{
-					childAddress = address + bind.Offset;
-				}
+					bindAddress = MemoryService.Read<IntPtr>(bindAddress);
 
-				if (childAddress == IntPtr.Zero)
+				if (bindAddress == IntPtr.Zero)
 					return;
 
 				MemoryBase? childMemory = bind.Property.GetValue(this) as MemoryBase;
@@ -137,12 +139,12 @@ namespace Anamnesis.Memory
 				}
 
 				// Has this bind changed
-				if (childMemory.Address == childAddress)
+				if (childMemory.Address == bindAddress)
 					return;
 
 				try
 				{
-					childMemory.SetAddress(childAddress);
+					childMemory.SetAddress(bindAddress);
 					bind.Property.SetValue(this, childMemory);
 				}
 				catch (Exception ex)
@@ -152,7 +154,7 @@ namespace Anamnesis.Memory
 			}
 			else
 			{
-				object memValue = MemoryService.Read(address, bind.Type);
+				object memValue = MemoryService.Read(bindAddress, bind.Type);
 				object? currentValue = bind.Property.GetValue(this);
 
 				if (currentValue == null)

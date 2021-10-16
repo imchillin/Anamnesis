@@ -122,7 +122,7 @@
 					</Grid.ColumnDefinitions>
 
 					<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="0" Grid.Row="4" Minimum="1" Maximum="255"  Margin="0, 2, 30, 2" Buttons="True"/>
-					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_FacialFeatureColor" Value="{Binding Customize.LimbalEyes}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
+					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_FacialFeatureColor" Value="{Binding Customize.FacialFeatureColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
 
 				</Grid>
 				
