@@ -73,6 +73,9 @@ namespace Anamnesis.Memory
 			if (this.IsRefreshing || GposeService.Instance.IsGpose)
 				return;
 
+			if (this.Address == IntPtr.Zero)
+				return;
+
 			try
 			{
 				Log.Information($"Begining actor refresh for actor address: {this.Address}");
@@ -112,6 +115,9 @@ namespace Anamnesis.Memory
 
 		protected override void ActorRefresh()
 		{
+			if (!this.AutomaticRefreshEnabled)
+				return;
+
 			this.Refresh();
 		}
 
