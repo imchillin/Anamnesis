@@ -382,17 +382,11 @@ namespace Anamnesis.Files
 
 			if (actor.ModelObject?.ExtendedAppearance != null)
 			{
-				bool usedExAppearance = false;
-
 				if (this.IncludeSection(SaveModes.AppearanceHair, mode))
 				{
 					actor.ModelObject.ExtendedAppearance.HairColor = this.HairColor ?? actor.ModelObject.ExtendedAppearance.HairColor;
 					actor.ModelObject.ExtendedAppearance.HairGloss = this.HairGloss ?? actor.ModelObject.ExtendedAppearance.HairGloss;
 					actor.ModelObject.ExtendedAppearance.HairHighlight = this.HairHighlight ?? actor.ModelObject.ExtendedAppearance.HairHighlight;
-
-					usedExAppearance |= this.HairColor != null;
-					usedExAppearance |= this.HairGloss != null;
-					usedExAppearance |= this.HairHighlight != null;
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceFace, mode))
@@ -401,11 +395,6 @@ namespace Anamnesis.Files
 					actor.ModelObject.ExtendedAppearance.RightEyeColor = this.RightEyeColor ?? actor.ModelObject.ExtendedAppearance.RightEyeColor;
 					actor.ModelObject.ExtendedAppearance.LimbalRingColor = this.LimbalRingColor ?? actor.ModelObject.ExtendedAppearance.LimbalRingColor;
 					actor.ModelObject.ExtendedAppearance.MouthColor = this.MouthColor ?? actor.ModelObject.ExtendedAppearance.MouthColor;
-
-					usedExAppearance |= this.LeftEyeColor != null;
-					usedExAppearance |= this.RightEyeColor != null;
-					usedExAppearance |= this.LimbalRingColor != null;
-					usedExAppearance |= this.MouthColor != null;
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceBody, mode))
@@ -417,11 +406,9 @@ namespace Anamnesis.Files
 					actor.ModelObject.Height = this.HeightMultiplier ?? actor.ModelObject.Height;
 
 					if (actor.ModelObject.Bust?.Scale != null)
+					{
 						actor.ModelObject.Bust.Scale = this.BustScale ?? actor.ModelObject.Bust.Scale;
-
-					usedExAppearance |= this.SkinColor != null;
-					usedExAppearance |= this.SkinGloss != null;
-					usedExAppearance |= this.MuscleTone != null;
+					}
 				}
 			}
 
