@@ -5,6 +5,8 @@ namespace Anamnesis.Services
 {
 	using System;
 	using System.Threading.Tasks;
+	using Anamnesis.Core.Memory;
+	using Anamnesis.Memory;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
@@ -18,11 +20,16 @@ namespace Anamnesis.Services
 		{
 			try
 			{
-				if (TerritoryService.Instance.CurrentTerritory == null)
+				if (GameDataService.Territories == null)
 					return false;
 
-				////if (TargetService.Instance.AllActors.Count <= 0)
-				////	return false;
+				int territoryID = MemoryService.Read<int>(AddressService.Territory);
+
+				if (territoryID == -1)
+					return false;
+
+				if (!GameDataService.Territories.Contains((uint)territoryID))
+					return false;
 
 				return true;
 			}

@@ -154,7 +154,7 @@ namespace Anamnesis
 		{
 			await base.Start();
 
-			if (GameService.Instance.IsSignedIn)
+			if (GameService.GetIsSignedIn())
 			{
 				try
 				{
