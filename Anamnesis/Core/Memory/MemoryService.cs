@@ -20,7 +20,6 @@ namespace Anamnesis.Memory
 	[AddINotifyPropertyChangedInterface]
 	public class MemoryService : ServiceBase<MemoryService>
 	{
-		private static readonly Dictionary<Type, bool[]> StructMasks = new Dictionary<Type, bool[]>();
 		private readonly Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
 
 		public static IntPtr Handle { get; private set; }
@@ -153,40 +152,50 @@ namespace Anamnesis.Memory
 			if (address == IntPtr.Zero)
 				return;
 
-			// Read the existing memory to oldBuffer
-			int size = Marshal.SizeOf(value);
-			byte[] oldBuffer = new byte[size];
-			ReadProcessMemory(Handle, address, oldBuffer, size, out _);
+			if (type.IsEnum)
+				type = type.GetEnumUnderlyingType();
 
-			// Marshal the struct to newBuffer
-			byte[] newbuffer = new byte[size];
-			IntPtr mem = Marshal.AllocHGlobal(size);
+			byte[] buffer;
 
-			Marshal.StructureToPtr(value, mem, false);
-			Marshal.Copy(mem, newbuffer, 0, size);
-			Marshal.FreeHGlobal(mem);
-
-			// Apply only memory that is allowed by the mask.
-			// this prevents writing memory for values that we dont have in our structs.
-			bool[] mask = GetMask(type);
-			int diff = 0;
-			for (int i = 0; i < size; i++)
+			if (type == typeof(bool))
 			{
-				if (mask[i] && oldBuffer[i] != newbuffer[i])
+				buffer = new[] { (byte)((bool)value == true ? 1 : 255) };
+			}
+			else if (type == typeof(int))
+			{
+				buffer = BitConverter.GetBytes((int)value);
+			}
+			else if (type == typeof(uint))
+			{
+				buffer = BitConverter.GetBytes((uint)value);
+			}
+			else if (type == typeof(short))
+			{
+				buffer = BitConverter.GetBytes((short)value);
+			}
+			else if (type == typeof(ushort))
+			{
+				buffer = BitConverter.GetBytes((ushort)value);
+			}
+			else
+			{
+				try
 				{
-					oldBuffer[i] = newbuffer[i];
-					diff++;
+					int size = Marshal.SizeOf(type);
+					buffer = new byte[size];
+					IntPtr mem = Marshal.AllocHGlobal(size);
+					Marshal.StructureToPtr(value, mem, false);
+					Marshal.Copy(mem, buffer, 0, size);
+					Marshal.FreeHGlobal(mem);
+				}
+				catch (Exception ex)
+				{
+					throw new Exception($"Failed to marshal type: {type} to memory", ex);
 				}
 			}
 
-			// No change, nothing to write.
-			if (diff <= 0)
-				return;
-
-			Log.Verbose($"Writing: {diff} bytes to {address} for model type {type.Name} for reason: {purpose}");
-
-			// Write the oldBuffer (which has now had newBuffer merged over it) to the process
-			WriteProcessMemory(Handle, address, oldBuffer, size, out _);
+			Log.Verbose($"Writing: {buffer.Length} bytes to {address} for type {type.Name} for reason: {purpose}");
+			WriteProcessMemory(Handle, address, buffer, buffer.Length, out _);
 		}
 
 		public static bool Read(UIntPtr address, byte[] buffer, UIntPtr size)
@@ -307,63 +316,6 @@ namespace Anamnesis.Memory
 
 		[DllImport("kernel32.dll")]
 		private static extern int CloseHandle(IntPtr hObject);
-
-		/// <summary>
-		/// Gets or generates a new mask for the given struct.
-		/// The mask indicates which bytes of memory the struct uses, and which bytes should not be
-		/// changed in memory.
-		/// </summary>
-		private static bool[] GetMask<T>()
-			where T : struct
-		{
-			return GetMask(typeof(T));
-		}
-
-		/// <summary>
-		/// Gets or generates a new mask for the given struct.
-		/// The mask indicates which bytes of memory the struct uses, and which bytes should not be
-		/// changed in memory.
-		/// </summary>
-		private static bool[] GetMask(Type structureType)
-		{
-			if (StructMasks.ContainsKey(structureType))
-				return StructMasks[structureType];
-
-			int size = Marshal.SizeOf(structureType);
-			byte[] buffer = new byte[size];
-			byte[] buffer2 = new byte[size];
-
-			// Write 255 to all bytes in the buffer
-			for (int i = 0; i < size; i++)
-				buffer[i] = 255;
-
-			// read buffer2 to a struct
-			IntPtr mem = Marshal.AllocHGlobal(size);
-			Marshal.Copy(buffer, 0, mem, size);
-			object? obj = Marshal.PtrToStructure(mem, structureType);
-			Marshal.FreeHGlobal(mem);
-
-			if (obj == null)
-				throw new Exception($"Failed to create instance of structure type: {structureType}");
-
-			// write the struct to buffer2
-			mem = Marshal.AllocHGlobal(size);
-			Marshal.StructureToPtr(obj, mem, false);
-			Marshal.Copy(mem, buffer2, 0, size);
-			Marshal.FreeHGlobal(mem);
-
-			// generate a mask fore ach bit
-			bool[] mask = new bool[size];
-			for (int i = 0; i < size; i++)
-			{
-				// if the buffer bit (255) has not been changed to the default bit (0) then
-				// the bit was written to by the marshaling.
-				mask[i] = buffer[i] == buffer2[i];
-			}
-
-			StructMasks.Add(structureType, mask);
-			return mask;
-		}
 
 		private static int CheckSeDebugPrivilege(out bool isDebugEnabled)
 		{
