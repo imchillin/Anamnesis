@@ -15,7 +15,7 @@ namespace Anamnesis.Memory
 		public IntPtr Address = IntPtr.Zero;
 
 		protected readonly List<MemoryBase> Children = new List<MemoryBase>();
-		private readonly BindInfo[] binds;
+		private readonly Dictionary<string, BindInfo> binds = new Dictionary<string, BindInfo>();
 
 		public MemoryBase()
 		{
@@ -35,15 +35,10 @@ namespace Anamnesis.Memory
 					continue;
 				}
 
-				binds.Add(new BindInfo(property, attribute));
+				this.binds.Add(property.Name, new BindInfo(property, attribute));
 			}
 
-			binds.Sort((a, b) =>
-			{
-				return a.IsChildMemory.CompareTo(b.IsChildMemory);
-			});
-
-			this.binds = binds.ToArray();
+			this.PropertyChanged += this.OnSelfPropertyChanged;
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
@@ -122,8 +117,22 @@ namespace Anamnesis.Memory
 			if (this.Address == IntPtr.Zero)
 				return;
 
-			foreach (BindInfo bind in this.binds)
+			foreach (BindInfo bind in this.binds.Values)
 			{
+				if (!bind.IsChildMemory)
+					continue;
+
+				if (!this.ShouldBind(bind))
+					continue;
+
+				this.ReadFromMemory(bind);
+			}
+
+			foreach (BindInfo bind in this.binds.Values)
+			{
+				if (bind.IsChildMemory)
+					continue;
+
 				if (!this.ShouldBind(bind))
 					continue;
 
@@ -197,6 +206,10 @@ namespace Anamnesis.Memory
 			}
 
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(bind.Property.Name));
+		}
+
+		private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
 		}
 
 		[AttributeUsage(AttributeTargets.Property)]

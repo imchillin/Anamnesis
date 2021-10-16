@@ -107,21 +107,26 @@ namespace Anamnesis.Memory
 			if (address == IntPtr.Zero)
 				throw new Exception("Invalid address");
 
+			Type readType = type;
+
 			if (type.IsEnum)
-				type = type.GetEnumUnderlyingType();
+				readType = type.GetEnumUnderlyingType();
 
 			for (int attempt = 0; attempt < 10; attempt++)
 			{
-				int size = Marshal.SizeOf(type);
+				int size = Marshal.SizeOf(readType);
 				IntPtr mem = Marshal.AllocHGlobal(size);
 
 				if (ReadProcessMemory(Handle, address, mem, size, out _))
 				{
-					object? val = Marshal.PtrToStructure(mem, type);
+					object? val = Marshal.PtrToStructure(mem, readType);
 					Marshal.FreeHGlobal(mem);
 
 					if (val == null)
 						continue;
+
+					if (type.IsEnum)
+						val = Enum.ToObject(type, val);
 
 					return val;
 				}
