@@ -134,55 +134,57 @@ namespace Anamnesis.Character.Views
 		{
 			this.lockViewModel = true;
 
-			throw new NotImplementedException();
-
-			/*if (item != null)
+			if (item != null)
 			{
 				bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
 				ushort modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
 				ushort modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
 				ushort modelVariant = useSubModel ? item.SubModelVariant : item.ModelVariant;
 
-				static void SetModel(IStructViewModel? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
-				{
-					if (itemModel is ItemMemory itemView)
-					{
-						itemView.Base = modelBase;
-						itemView.Variant = (byte)modelVariant;
+				this.SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
 
-						if (modelBase == 0)
-						{
-							itemView.Dye = 0;
-						}
-					}
-					else if (itemModel is WeaponMemory weaponView)
-					{
-						weaponView.Set = modelSet;
-						weaponView.Base = modelBase;
-						weaponView.Variant = modelVariant;
-
-						if (modelSet == 0)
-						{
-							weaponView.Dye = 0;
-						}
-					}
-				}
-
-				SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
 				if (autoOffhand && this.Slot == ItemSlots.MainHand
 					&& item is GameData.ViewModels.ItemViewModel ivm
 					&& ivm.Value.EquipSlotCategory.Value?.OffHand == -1)
 				{
 					if (ivm.HasSubModel)
-						SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
+					{
+						this.SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
+					}
 					else
-						SetModel(this.Actor?.OffHand, 0, 0, 0);
+					{
+						this.SetModel(this.Actor?.OffHand, 0, 0, 0);
+					}
 				}
 			}
 
 			this.Item = item;
-			memory?.SetMemoryMode(MemoryModes.ReadWrite);
-			this.lockViewModel = false;*/
+			this.lockViewModel = false;
+		}
+
+		private void SetModel(IEquipmentItemMemory? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
+		{
+			if (itemModel is ItemMemory itemView)
+			{
+				itemView.Base = modelBase;
+				itemView.Variant = (byte)modelVariant;
+
+				if (modelBase == 0)
+				{
+					itemView.Dye = 0;
+				}
+			}
+			else if (itemModel is WeaponMemory weaponView)
+			{
+				weaponView.Set = modelSet;
+				weaponView.Base = modelBase;
+				weaponView.Variant = modelVariant;
+
+				if (modelSet == 0)
+				{
+					weaponView.Dye = 0;
+				}
+			}
 		}
 
 		private void OnDyeClick(object sender, RoutedEventArgs e)
