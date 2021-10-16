@@ -20,8 +20,8 @@ namespace Anamnesis.Character.Views
 	public partial class ColorControl : UserControl
 	{
 		public static readonly IBind<byte> ValueDp = Binder.Register<byte, ColorControl>(nameof(Value), OnValueChanged);
-		public static readonly IBind<Customize.Genders> GenderDp = Binder.Register<Customize.Genders, ColorControl>(nameof(Gender), OnGenderChanged);
-		public static readonly IBind<Customize.Tribes> TribeDp = Binder.Register<Customize.Tribes, ColorControl>(nameof(Tribe), OnTribeChanged);
+		public static readonly IBind<ActorCustomizeMemory.Genders> GenderDp = Binder.Register<ActorCustomizeMemory.Genders, ColorControl>(nameof(Gender), OnGenderChanged);
+		public static readonly IBind<ActorCustomizeMemory.Tribes> TribeDp = Binder.Register<ActorCustomizeMemory.Tribes, ColorControl>(nameof(Tribe), OnTribeChanged);
 		public static readonly IBind<string> ToolTipKeyDp = Binder.Register<string, ColorControl>(nameof(ToolTipKey));
 
 		private ColorData.Entry[]? colors;
@@ -48,13 +48,13 @@ namespace Anamnesis.Character.Views
 			set;
 		}
 
-		public Customize.Genders Gender
+		public ActorCustomizeMemory.Genders Gender
 		{
 			get => GenderDp.Get(this);
 			set => GenderDp.Set(this, value);
 		}
 
-		public Customize.Tribes Tribe
+		public ActorCustomizeMemory.Tribes Tribe
 		{
 			get => TribeDp.Get(this);
 			set => TribeDp.Set(this, value);
@@ -84,15 +84,15 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
-		private static void OnGenderChanged(ColorControl sender, Customize.Genders value)
+		private static void OnGenderChanged(ColorControl sender, ActorCustomizeMemory.Genders value)
 		{
 			sender.colors = sender.GetColors();
 			sender.PreviewColor.Color = sender.WpfColor;
 		}
 
-		private static void OnTribeChanged(ColorControl sender, Customize.Tribes value)
+		private static void OnTribeChanged(ColorControl sender, ActorCustomizeMemory.Tribes value)
 		{
-			if (!Enum.IsDefined<Customize.Tribes>(value))
+			if (!Enum.IsDefined<ActorCustomizeMemory.Tribes>(value))
 				return;
 
 			sender.colors = sender.GetColors();

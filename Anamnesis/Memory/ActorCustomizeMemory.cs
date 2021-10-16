@@ -7,11 +7,82 @@ namespace Anamnesis.Memory
 
 	public class ActorCustomizeMemory : MemoryBase
 	{
-		[Bind(0x000, BindFlags.ActorRefresh)] public Customize.Races Race { get; set; }
-		[Bind(0x001, BindFlags.ActorRefresh)] public Customize.Genders Gender { get; set; }
-		[Bind(0x002, BindFlags.ActorRefresh)] public Customize.Ages Age { get; set; }
+		public enum Genders : byte
+		{
+			Masculine = 0,
+			Feminine = 1,
+		}
+
+		public enum Races : byte
+		{
+			Hyur = 1,
+			Elezen = 2,
+			Lalafel = 3,
+			Miqote = 4,
+			Roegadyn = 5,
+			AuRa = 6,
+			Hrothgar = 7,
+			Viera = 8,
+		}
+
+		public enum Tribes : byte
+		{
+			Midlander = 1,
+			Highlander = 2,
+			Wildwood = 3,
+			Duskwight = 4,
+			Plainsfolk = 5,
+			Dunesfolk = 6,
+			SeekerOfTheSun = 7,
+			KeeperOfTheMoon = 8,
+			SeaWolf = 9,
+			Hellsguard = 10,
+			Raen = 11,
+			Xaela = 12,
+			Helions = 13,
+			TheLost = 14,
+			Rava = 15,
+			Veena = 16,
+		}
+
+		public enum Ages : byte
+		{
+			Normal = 1,
+			Old = 3,
+			Young = 4,
+		}
+
+		[Flags]
+		public enum FacialFeature : byte
+		{
+			None = 0,
+			First = 1,
+			Second = 2,
+			Third = 4,
+			Fourth = 8,
+			Fifth = 16,
+			Sixth = 32,
+			Seventh = 64,
+			LegacyTattoo = 128,
+		}
+
+		/*public static Customize Default()
+		{
+			Customize ap = default;
+
+			ap.Race = Races.Hyur;
+			ap.Gender = Genders.Feminine;
+			ap.Age = Ages.Normal;
+			ap.Tribe = Tribes.Midlander;
+
+			return ap;
+		}*/
+
+		[Bind(0x000, BindFlags.ActorRefresh)] public Races Race { get; set; }
+		[Bind(0x001, BindFlags.ActorRefresh)] public Genders Gender { get; set; }
+		[Bind(0x002, BindFlags.ActorRefresh)] public Ages Age { get; set; }
 		[Bind(0x003, BindFlags.ActorRefresh)] public byte Height { get; set; }
-		[Bind(0x004, BindFlags.ActorRefresh)] public Customize.Tribes Tribe { get; set; }
+		[Bind(0x004, BindFlags.ActorRefresh)] public Tribes Tribe { get; set; }
 		[Bind(0x005, BindFlags.ActorRefresh)] public byte Head { get; set; }
 		[Bind(0x006, BindFlags.ActorRefresh)] public byte Hair { get; set; }
 		[Bind(0x007, BindFlags.ActorRefresh)] public byte HighlightType { get; set; }
@@ -19,7 +90,7 @@ namespace Anamnesis.Memory
 		[Bind(0x009, BindFlags.ActorRefresh)] public byte REyeColor { get; set; }
 		[Bind(0x00a, BindFlags.ActorRefresh)] public byte HairTone { get; set; }
 		[Bind(0x00b, BindFlags.ActorRefresh)] public byte Highlights { get; set; }
-		[Bind(0x00c, BindFlags.ActorRefresh)] public Customize.FacialFeature FacialFeatures { get; set; }
+		[Bind(0x00c, BindFlags.ActorRefresh)] public FacialFeature FacialFeatures { get; set; }
 		[Bind(0x00d, BindFlags.ActorRefresh)] public byte FacialFeatureColor { get; set; }
 		[Bind(0x00e, BindFlags.ActorRefresh)] public byte Eyebrows { get; set; }
 		[Bind(0x00f, BindFlags.ActorRefresh)] public byte LEyeColor { get; set; }

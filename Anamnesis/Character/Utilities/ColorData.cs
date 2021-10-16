@@ -48,13 +48,13 @@ namespace Anamnesis.Character.Utilities
 			Colors = colors.ToArray();
 		}
 
-		public static Entry[] GetSkin(Customize.Tribes tribe, Customize.Genders gender)
+		public static Entry[] GetSkin(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 		{
 			int from = GetTribeSkinStartIndex(tribe, gender);
 			return Span(from, 192);
 		}
 
-		public static Entry[] GetHair(Customize.Tribes tribe, Customize.Genders gender)
+		public static Entry[] GetHair(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 		{
 			int from = GetTribeHairStartIndex(tribe, gender);
 			return Span(from, 192);
@@ -104,18 +104,18 @@ namespace Anamnesis.Character.Utilities
 			return entries;
 		}
 
-		private static int GetTribeSkinStartIndex(Customize.Tribes tribe, Customize.Genders gender)
+		private static int GetTribeSkinStartIndex(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 		{
-			bool isMasculine = gender == Customize.Genders.Masculine;
+			bool isMasculine = gender == ActorCustomizeMemory.Genders.Masculine;
 
 			int genderValue = isMasculine ? 0 : 1;
 			int listIndex = ((((int)tribe * 2) + genderValue) * 5) + 3;
 			return listIndex * 256;
 		}
 
-		private static int GetTribeHairStartIndex(Customize.Tribes tribe, Customize.Genders gender)
+		private static int GetTribeHairStartIndex(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 		{
-			bool isMasculine = gender == Customize.Genders.Masculine;
+			bool isMasculine = gender == ActorCustomizeMemory.Genders.Masculine;
 
 			int genderValue = isMasculine ? 0 : 1;
 			int listIndex = ((((int)tribe * 2) + genderValue) * 5) + 4;

@@ -40,11 +40,11 @@ namespace Anamnesis.Files
 		public int ModelType { get; set; } = 0;
 
 		// appearance
-		public Customize.Races? Race { get; set; }
-		public Customize.Genders? Gender { get; set; }
-		public Customize.Ages? Age { get; set; }
+		public ActorCustomizeMemory.Races? Race { get; set; }
+		public ActorCustomizeMemory.Genders? Gender { get; set; }
+		public ActorCustomizeMemory.Ages? Age { get; set; }
 		public byte? Height { get; set; }
-		public Customize.Tribes? Tribe { get; set; }
+		public ActorCustomizeMemory.Tribes? Tribe { get; set; }
 		public byte? Head { get; set; }
 		public byte? Hair { get; set; }
 		public bool? EnableHighlights { get; set; }
@@ -52,7 +52,7 @@ namespace Anamnesis.Files
 		public byte? REyeColor { get; set; }
 		public byte? HairTone { get; set; }
 		public byte? Highlights { get; set; }
-		public Customize.FacialFeature? FacialFeatures { get; set; }
+		public ActorCustomizeMemory.FacialFeature? FacialFeatures { get; set; }
 		public byte? LimbalEyes { get; set; }	// facial feature color
 		public byte? Eyebrows { get; set; }
 		public byte? LEyeColor { get; set; }
@@ -235,10 +235,10 @@ namespace Anamnesis.Files
 
 		public async Task Apply(ActorMemory actor, SaveModes mode)
 		{
-			if (this.Tribe != null && !Enum.IsDefined((Customize.Tribes)this.Tribe))
+			if (this.Tribe != null && !Enum.IsDefined((ActorCustomizeMemory.Tribes)this.Tribe))
 				throw new Exception($"Invalid tribe: {this.Tribe} in appearance file");
 
-			if (this.Race != null && !Enum.IsDefined((Customize.Races)this.Race))
+			if (this.Race != null && !Enum.IsDefined((ActorCustomizeMemory.Races)this.Race))
 				throw new Exception($"Invalid race: {this.Race} in appearance file");
 
 			if (actor.Customize == null)
@@ -301,16 +301,16 @@ namespace Anamnesis.Files
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode))
 			{
 				if (this.Race != null)
-					actor.Customize.Race = (Customize.Races)this.Race;
+					actor.Customize.Race = (ActorCustomizeMemory.Races)this.Race;
 
 				if (this.Gender != null)
-					actor.Customize.Gender = (Customize.Genders)this.Gender;
+					actor.Customize.Gender = (ActorCustomizeMemory.Genders)this.Gender;
 
 				if (this.Tribe != null)
-					actor.Customize.Tribe = (Customize.Tribes)this.Tribe;
+					actor.Customize.Tribe = (ActorCustomizeMemory.Tribes)this.Tribe;
 
 				if (this.Age != null)
-					actor.Customize.Age = (Customize.Ages)this.Age;
+					actor.Customize.Age = (ActorCustomizeMemory.Ages)this.Age;
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode))
@@ -322,7 +322,7 @@ namespace Anamnesis.Files
 					actor.Customize.REyeColor = (byte)this.REyeColor;
 
 				if (this.FacialFeatures != null)
-					actor.Customize.FacialFeatures = (Customize.FacialFeature)this.FacialFeatures;
+					actor.Customize.FacialFeatures = (ActorCustomizeMemory.FacialFeature)this.FacialFeatures;
 
 				if (this.LimbalEyes != null)
 					actor.Customize.FacialFeatureColor = (byte)this.LimbalEyes;

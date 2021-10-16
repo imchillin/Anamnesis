@@ -234,7 +234,7 @@ namespace Anamnesis.PoseModule.Pages
 				lastLoadDir = result.Directory;
 
 				if (result.File is LegacyPoseFile legacyFile)
-					result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? Customize.Races.Hyur);
+					result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? ActorCustomizeMemory.Races.Hyur);
 
 				if (result.File is PoseFile poseFile)
 				{

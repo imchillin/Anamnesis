@@ -20,9 +20,9 @@ namespace Anamnesis.GameData.ViewModels
 		}
 
 		public override string Name => this.Key.ToString();
-		public Customize.Genders Gender => (Customize.Genders)this.Value.Gender;
-		public Customize.Races Race => (Customize.Races)this.Value.Race!.Row;
-		public Customize.Tribes Tribe => (Customize.Tribes)this.Value.Tribe!.Row;
+		public ActorCustomizeMemory.Genders Gender => (ActorCustomizeMemory.Genders)this.Value.Gender;
+		public ActorCustomizeMemory.Races Race => (ActorCustomizeMemory.Races)this.Value.Race!.Row;
+		public ActorCustomizeMemory.Tribes Tribe => (ActorCustomizeMemory.Tribes)this.Value.Tribe!.Row;
 
 		public IEnumerable<ImageSource> FacialFeatures
 		{

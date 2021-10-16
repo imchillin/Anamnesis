@@ -15,14 +15,14 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 	{
-		private readonly Customize.Genders gender;
-		private readonly Customize.Tribes tribe;
+		private readonly ActorCustomizeMemory.Genders gender;
+		private readonly ActorCustomizeMemory.Tribes tribe;
 		private readonly Features feature;
 
 		private byte selected;
 		private ICharaMakeCustomize? selectedItem;
 
-		public CustomizeFeatureSelectorDrawer(Features feature, Customize.Genders gender, Customize.Tribes tribe, byte value)
+		public CustomizeFeatureSelectorDrawer(Features feature, ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Tribes tribe, byte value)
 		{
 			this.InitializeComponent();
 

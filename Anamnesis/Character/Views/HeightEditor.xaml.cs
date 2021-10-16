@@ -19,9 +19,9 @@ namespace Anamnesis.Character.Views
 	{
 		public static readonly IBind<byte> ValueDp = Binder.Register<byte, HeightEditor>(nameof(Value), OnValueChanged);
 
-		public static readonly IBind<Customize.Tribes> TribeDp = Binder.Register<Customize.Tribes, HeightEditor>(nameof(Tribe), OnTribeChanged);
-		public static readonly IBind<Customize.Genders> GenderDp = Binder.Register<Customize.Genders, HeightEditor>(nameof(Gender), OnGenderChanged);
-		public static readonly IBind<Customize.Ages> AgeDp = Binder.Register<Customize.Ages, HeightEditor>(nameof(Age), OnAgeChanged);
+		public static readonly IBind<ActorCustomizeMemory.Tribes> TribeDp = Binder.Register<ActorCustomizeMemory.Tribes, HeightEditor>(nameof(Tribe), OnTribeChanged);
+		public static readonly IBind<ActorCustomizeMemory.Genders> GenderDp = Binder.Register<ActorCustomizeMemory.Genders, HeightEditor>(nameof(Gender), OnGenderChanged);
+		public static readonly IBind<ActorCustomizeMemory.Ages> AgeDp = Binder.Register<ActorCustomizeMemory.Ages, HeightEditor>(nameof(Age), OnAgeChanged);
 
 		public HeightEditor()
 		{
@@ -38,19 +38,19 @@ namespace Anamnesis.Character.Views
 			set => ValueDp.Set(this, value);
 		}
 
-		public Customize.Tribes Tribe
+		public ActorCustomizeMemory.Tribes Tribe
 		{
 			get => TribeDp.Get(this);
 			set => TribeDp.Set(this, value);
 		}
 
-		public Customize.Genders Gender
+		public ActorCustomizeMemory.Genders Gender
 		{
 			get => GenderDp.Get(this);
 			set => GenderDp.Set(this, value);
 		}
 
-		public Customize.Ages Age
+		public ActorCustomizeMemory.Ages Age
 		{
 			get => AgeDp.Get(this);
 			set => AgeDp.Set(this, value);
@@ -68,17 +68,17 @@ namespace Anamnesis.Character.Views
 			sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ValueCm)));
 		}
 
-		private static void OnTribeChanged(HeightEditor sender, Customize.Tribes value)
+		private static void OnTribeChanged(HeightEditor sender, ActorCustomizeMemory.Tribes value)
 		{
 			OnValueChanged(sender, 0);
 		}
 
-		private static void OnGenderChanged(HeightEditor sender, Customize.Genders value)
+		private static void OnGenderChanged(HeightEditor sender, ActorCustomizeMemory.Genders value)
 		{
 			OnValueChanged(sender, 0);
 		}
 
-		private static void OnAgeChanged(HeightEditor sender, Customize.Ages value)
+		private static void OnAgeChanged(HeightEditor sender, ActorCustomizeMemory.Ages value)
 		{
 			OnValueChanged(sender, 0);
 		}
@@ -98,10 +98,10 @@ namespace Anamnesis.Character.Views
 			return (byte)(((cm - min) / (max - min)) * 100);
 		}
 
-		private (double min, double max) GetHeightRange(Customize.Tribes tribe, Customize.Genders gender, Customize.Ages age)
+		private (double min, double max) GetHeightRange(ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Ages age)
 		{
 			// no support for old or young height calculations
-			if (age != Customize.Ages.Normal)
+			if (age != ActorCustomizeMemory.Ages.Normal)
 				return (0, 0);
 
 			double min = this.GetMinHeight(gender, tribe);
@@ -110,85 +110,85 @@ namespace Anamnesis.Character.Views
 			return (min, max);
 		}
 
-		private double GetMinHeight(Customize.Genders gender, Customize.Tribes tribe)
+		private double GetMinHeight(ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Tribes tribe)
 		{
-			bool isMale = gender == Customize.Genders.Masculine;
+			bool isMale = gender == ActorCustomizeMemory.Genders.Masculine;
 
 			switch (tribe)
 			{
 				// Hyur
-				case Customize.Tribes.Midlander: return isMale ? 168 : 157.4;
-				case Customize.Tribes.Highlander: return isMale ? 184.8 : 173.1;
+				case ActorCustomizeMemory.Tribes.Midlander: return isMale ? 168 : 157.4;
+				case ActorCustomizeMemory.Tribes.Highlander: return isMale ? 184.8 : 173.1;
 
 				// Elezen
-				case Customize.Tribes.Wildwood:
-				case Customize.Tribes.Duskwight: return isMale ? 194.1 : 183.5;
+				case ActorCustomizeMemory.Tribes.Wildwood:
+				case ActorCustomizeMemory.Tribes.Duskwight: return isMale ? 194.1 : 183.5;
 
 				// Lalafel
-				case Customize.Tribes.Plainsfolk:
-				case Customize.Tribes.Dunesfolk: return 86.9;
+				case ActorCustomizeMemory.Tribes.Plainsfolk:
+				case ActorCustomizeMemory.Tribes.Dunesfolk: return 86.9;
 
 				// Miqo'te
-				case Customize.Tribes.SeekerOfTheSun:
-				case Customize.Tribes.KeeperOfTheMoon: return isMale ? 159.2 : 149.7;
+				case ActorCustomizeMemory.Tribes.SeekerOfTheSun:
+				case ActorCustomizeMemory.Tribes.KeeperOfTheMoon: return isMale ? 159.2 : 149.7;
 
 				// Roegadyn
-				case Customize.Tribes.SeaWolf:
-				case Customize.Tribes.Hellsguard: return isMale ? 213.5 : 192;
+				case ActorCustomizeMemory.Tribes.SeaWolf:
+				case ActorCustomizeMemory.Tribes.Hellsguard: return isMale ? 213.5 : 192;
 
 				// Au Ra
-				case Customize.Tribes.Raen:
-				case Customize.Tribes.Xaela: return isMale ? 203 : 146;
+				case ActorCustomizeMemory.Tribes.Raen:
+				case ActorCustomizeMemory.Tribes.Xaela: return isMale ? 203 : 146;
 
 				// Hrothgar
-				case Customize.Tribes.Helions:
-				case Customize.Tribes.TheLost: return isMale ? 196.2 : 0;
+				case ActorCustomizeMemory.Tribes.Helions:
+				case ActorCustomizeMemory.Tribes.TheLost: return isMale ? 196.2 : 0;
 
 				// Viera
-				case Customize.Tribes.Rava:
-				case Customize.Tribes.Veena: return isMale ? 172.2 : 178.8;
+				case ActorCustomizeMemory.Tribes.Rava:
+				case ActorCustomizeMemory.Tribes.Veena: return isMale ? 172.2 : 178.8;
 			}
 
 			return 0;
 		}
 
-		private double GetMaxHeight(Customize.Genders gender, Customize.Tribes tribe)
+		private double GetMaxHeight(ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Tribes tribe)
 		{
-			bool isMale = gender == Customize.Genders.Masculine;
+			bool isMale = gender == ActorCustomizeMemory.Genders.Masculine;
 
 			switch (tribe)
 			{
 				// Hyur
-				case Customize.Tribes.Midlander: return isMale ? 182 : 170.5;
-				case Customize.Tribes.Highlander: return isMale ? 200.2 : 187.6;
+				case ActorCustomizeMemory.Tribes.Midlander: return isMale ? 182 : 170.5;
+				case ActorCustomizeMemory.Tribes.Highlander: return isMale ? 200.2 : 187.6;
 
 				// Elezen
-				case Customize.Tribes.Wildwood:
-				case Customize.Tribes.Duskwight: return isMale ? 209.8 : 198.4;
+				case ActorCustomizeMemory.Tribes.Wildwood:
+				case ActorCustomizeMemory.Tribes.Duskwight: return isMale ? 209.8 : 198.4;
 
 				// Lalafel
-				case Customize.Tribes.Plainsfolk:
-				case Customize.Tribes.Dunesfolk: return 97;
+				case ActorCustomizeMemory.Tribes.Plainsfolk:
+				case ActorCustomizeMemory.Tribes.Dunesfolk: return 97;
 
 				// Miqo'te
-				case Customize.Tribes.SeekerOfTheSun:
-				case Customize.Tribes.KeeperOfTheMoon: return isMale ? 173.2 : 162.2;
+				case ActorCustomizeMemory.Tribes.SeekerOfTheSun:
+				case ActorCustomizeMemory.Tribes.KeeperOfTheMoon: return isMale ? 173.2 : 162.2;
 
 				// Roegadyn
-				case Customize.Tribes.SeaWolf:
-				case Customize.Tribes.Hellsguard: return isMale ? 230.4 : 222.7;
+				case ActorCustomizeMemory.Tribes.SeaWolf:
+				case ActorCustomizeMemory.Tribes.Hellsguard: return isMale ? 230.4 : 222.7;
 
 				// Au Ra
-				case Customize.Tribes.Raen:
-				case Customize.Tribes.Xaela: return isMale ? 217 : 158.5;
+				case ActorCustomizeMemory.Tribes.Raen:
+				case ActorCustomizeMemory.Tribes.Xaela: return isMale ? 217 : 158.5;
 
 				// Hrothgar
-				case Customize.Tribes.Helions:
-				case Customize.Tribes.TheLost: return isMale ? 212.9 : 0;
+				case ActorCustomizeMemory.Tribes.Helions:
+				case ActorCustomizeMemory.Tribes.TheLost: return isMale ? 212.9 : 0;
 
 				// Viera
-				case Customize.Tribes.Rava:
-				case Customize.Tribes.Veena: return isMale ? 186.5 : 191.4;
+				case ActorCustomizeMemory.Tribes.Rava:
+				case ActorCustomizeMemory.Tribes.Veena: return isMale ? 186.5 : 191.4;
 			}
 
 			return 0;

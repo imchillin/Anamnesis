@@ -9,9 +9,9 @@ namespace Anamnesis.GameData
 
 	public interface ICharaMakeType : IRow
 	{
-		Customize.Genders Gender { get; }
-		Customize.Races Race { get; }
-		Customize.Tribes Tribe { get; }
+		ActorCustomizeMemory.Genders Gender { get; }
+		ActorCustomizeMemory.Races Race { get; }
+		ActorCustomizeMemory.Tribes Tribe { get; }
 		IEnumerable<ImageSource> FacialFeatures { get; }
 	}
 }

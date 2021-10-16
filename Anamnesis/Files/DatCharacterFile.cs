@@ -20,11 +20,11 @@ namespace Anamnesis.Files
 				throw new Exception("Dat Appearance Fila has no data.");
 
 			CharacterFile file = new CharacterFile();
-			file.Race = (Customize.Races)this.Data[0];
-			file.Gender = (Customize.Genders)this.Data[1];
-			file.Age = (Customize.Ages)this.Data[2];
+			file.Race = (ActorCustomizeMemory.Races)this.Data[0];
+			file.Gender = (ActorCustomizeMemory.Genders)this.Data[1];
+			file.Age = (ActorCustomizeMemory.Ages)this.Data[2];
 			file.Height = this.Data[3];
-			file.Tribe = (Customize.Tribes)this.Data[4];
+			file.Tribe = (ActorCustomizeMemory.Tribes)this.Data[4];
 			file.Head = this.Data[5];
 			file.Hair = this.Data[6];
 			file.EnableHighlights = this.Data[7] != 0;
@@ -32,7 +32,7 @@ namespace Anamnesis.Files
 			file.REyeColor = this.Data[9];
 			file.HairTone = this.Data[10];
 			file.Highlights = this.Data[11];
-			file.FacialFeatures = (Customize.FacialFeature)this.Data[12];
+			file.FacialFeatures = (ActorCustomizeMemory.FacialFeature)this.Data[12];
 			file.LimbalEyes = this.Data[13];
 			file.Eyebrows = this.Data[14];
 			file.LEyeColor = this.Data[15];

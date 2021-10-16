@@ -17,7 +17,7 @@ namespace Anamnesis.GameData.Sheets
 		{
 		}
 
-		public List<ICharaMakeCustomize> GetFeatureOptions(Features featureType, Customize.Tribes tribe, Customize.Genders gender)
+		public List<ICharaMakeCustomize> GetFeatureOptions(Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 		{
 			List<ICharaMakeCustomize> results = new List<ICharaMakeCustomize>();
 			uint fromIndex = (uint)this.GetFeatureStartIndex(featureType, tribe, gender);
@@ -36,7 +36,7 @@ namespace Anamnesis.GameData.Sheets
 			return results;
 		}
 
-		public ICharaMakeCustomize? GetFeature(Features featureType, Customize.Tribes tribe, Customize.Genders gender, byte featureId)
+		public ICharaMakeCustomize? GetFeature(Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender, byte featureId)
 		{
 			List<ICharaMakeCustomize> hairs = this.GetFeatureOptions(featureType, tribe, gender);
 			foreach (ICharaMakeCustomize hair in hairs)
@@ -50,52 +50,52 @@ namespace Anamnesis.GameData.Sheets
 			return null;
 		}
 
-		private int GetFeatureStartIndex(Features featureType, Customize.Tribes tribe, Customize.Genders gender)
+		private int GetFeatureStartIndex(Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 		{
-			bool isMale = gender == Customize.Genders.Masculine;
+			bool isMale = gender == ActorCustomizeMemory.Genders.Masculine;
 
 			if (featureType == Features.Hair)
 			{
 				switch (tribe)
 				{
-					case Customize.Tribes.Midlander: return isMale ? 0 : 100;
-					case Customize.Tribes.Highlander: return isMale ? 200 : 300;
-					case Customize.Tribes.Wildwood: return isMale ? 400 : 500;
-					case Customize.Tribes.Duskwight: return isMale ? 400 : 500;
-					case Customize.Tribes.Plainsfolk: return isMale ? 600 : 700;
-					case Customize.Tribes.Dunesfolk: return isMale ? 600 : 700;
-					case Customize.Tribes.SeekerOfTheSun: return isMale ? 800 : 900;
-					case Customize.Tribes.KeeperOfTheMoon: return isMale ? 800 : 900;
-					case Customize.Tribes.SeaWolf: return isMale ? 1000 : 1100;
-					case Customize.Tribes.Hellsguard: return isMale ? 1000 : 1100;
-					case Customize.Tribes.Raen: return isMale ? 1200 : 1300;
-					case Customize.Tribes.Xaela: return isMale ? 1200 : 1300;
-					case Customize.Tribes.Helions: return 1400;
-					case Customize.Tribes.TheLost: return 1400;
-					case Customize.Tribes.Rava: return 1500;
-					case Customize.Tribes.Veena: return 1500;
+					case ActorCustomizeMemory.Tribes.Midlander: return isMale ? 0 : 100;
+					case ActorCustomizeMemory.Tribes.Highlander: return isMale ? 200 : 300;
+					case ActorCustomizeMemory.Tribes.Wildwood: return isMale ? 400 : 500;
+					case ActorCustomizeMemory.Tribes.Duskwight: return isMale ? 400 : 500;
+					case ActorCustomizeMemory.Tribes.Plainsfolk: return isMale ? 600 : 700;
+					case ActorCustomizeMemory.Tribes.Dunesfolk: return isMale ? 600 : 700;
+					case ActorCustomizeMemory.Tribes.SeekerOfTheSun: return isMale ? 800 : 900;
+					case ActorCustomizeMemory.Tribes.KeeperOfTheMoon: return isMale ? 800 : 900;
+					case ActorCustomizeMemory.Tribes.SeaWolf: return isMale ? 1000 : 1100;
+					case ActorCustomizeMemory.Tribes.Hellsguard: return isMale ? 1000 : 1100;
+					case ActorCustomizeMemory.Tribes.Raen: return isMale ? 1200 : 1300;
+					case ActorCustomizeMemory.Tribes.Xaela: return isMale ? 1200 : 1300;
+					case ActorCustomizeMemory.Tribes.Helions: return 1400;
+					case ActorCustomizeMemory.Tribes.TheLost: return 1400;
+					case ActorCustomizeMemory.Tribes.Rava: return 1500;
+					case ActorCustomizeMemory.Tribes.Veena: return 1500;
 				}
 			}
 			else if (featureType == Features.FacePaint)
 			{
 				switch (tribe)
 				{
-					case Customize.Tribes.Midlander: return isMale ? 1600 : 1650;
-					case Customize.Tribes.Highlander: return isMale ? 1700 : 1750;
-					case Customize.Tribes.Wildwood: return isMale ? 1800 : 1850;
-					case Customize.Tribes.Duskwight: return isMale ? 1900 : 1950;
-					case Customize.Tribes.Plainsfolk: return isMale ? 2000 : 2050;
-					case Customize.Tribes.Dunesfolk: return isMale ? 2100 : 2150;
-					case Customize.Tribes.SeekerOfTheSun: return isMale ? 2200 : 2250;
-					case Customize.Tribes.KeeperOfTheMoon: return isMale ? 2300 : 2350;
-					case Customize.Tribes.SeaWolf: return isMale ? 2400 : 2450;
-					case Customize.Tribes.Hellsguard: return isMale ? 2500 : 2550;
-					case Customize.Tribes.Raen: return isMale ? 2600 : 2650;
-					case Customize.Tribes.Xaela: return isMale ? 2700 : 2750;
-					case Customize.Tribes.Helions: return 2800;
-					case Customize.Tribes.TheLost: return 2850;
-					case Customize.Tribes.Rava: return 2900;
-					case Customize.Tribes.Veena: return 2950;
+					case ActorCustomizeMemory.Tribes.Midlander: return isMale ? 1600 : 1650;
+					case ActorCustomizeMemory.Tribes.Highlander: return isMale ? 1700 : 1750;
+					case ActorCustomizeMemory.Tribes.Wildwood: return isMale ? 1800 : 1850;
+					case ActorCustomizeMemory.Tribes.Duskwight: return isMale ? 1900 : 1950;
+					case ActorCustomizeMemory.Tribes.Plainsfolk: return isMale ? 2000 : 2050;
+					case ActorCustomizeMemory.Tribes.Dunesfolk: return isMale ? 2100 : 2150;
+					case ActorCustomizeMemory.Tribes.SeekerOfTheSun: return isMale ? 2200 : 2250;
+					case ActorCustomizeMemory.Tribes.KeeperOfTheMoon: return isMale ? 2300 : 2350;
+					case ActorCustomizeMemory.Tribes.SeaWolf: return isMale ? 2400 : 2450;
+					case ActorCustomizeMemory.Tribes.Hellsguard: return isMale ? 2500 : 2550;
+					case ActorCustomizeMemory.Tribes.Raen: return isMale ? 2600 : 2650;
+					case ActorCustomizeMemory.Tribes.Xaela: return isMale ? 2700 : 2750;
+					case ActorCustomizeMemory.Tribes.Helions: return 2800;
+					case ActorCustomizeMemory.Tribes.TheLost: return 2850;
+					case ActorCustomizeMemory.Tribes.Rava: return 2900;
+					case ActorCustomizeMemory.Tribes.Veena: return 2950;
 				}
 			}
 

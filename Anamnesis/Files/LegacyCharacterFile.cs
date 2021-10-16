@@ -82,11 +82,11 @@ namespace Anamnesis.Files
 				byte[] data = this.StringtoBytes(this.CharacterBytes);
 
 				// From CM2: MainWindow.xaml.cs line 708
-				file.Race = (Customize.Races)data[0];
-				file.Gender = (Customize.Genders)data[1];
-				file.Age = (Customize.Ages)data[2];
+				file.Race = (ActorCustomizeMemory.Races)data[0];
+				file.Gender = (ActorCustomizeMemory.Genders)data[1];
+				file.Age = (ActorCustomizeMemory.Ages)data[2];
 				file.Height = data[3];
-				file.Tribe = (Customize.Tribes)data[4];
+				file.Tribe = (ActorCustomizeMemory.Tribes)data[4];
 				file.Head = data[5];
 				file.Hair = data[6];
 				file.EnableHighlights = data[7] != 0;
@@ -94,7 +94,7 @@ namespace Anamnesis.Files
 				file.REyeColor = data[9];
 				file.HairTone = data[10];
 				file.Highlights = data[11];
-				file.FacialFeatures = (Customize.FacialFeature)data[12];
+				file.FacialFeatures = (ActorCustomizeMemory.FacialFeature)data[12];
 				file.LimbalEyes = data[13];
 				file.Eyebrows = data[14];
 				file.LEyeColor = data[15];

@@ -433,7 +433,7 @@ namespace Anamnesis.Files
 		public string? ExTopHSize { get; set; }
 		public string? ExTopISize { get; set; }
 
-		public PoseFile Upgrade(Customize.Races race)
+		public PoseFile Upgrade(ActorCustomizeMemory.Races race)
 		{
 			PoseFile file = new PoseFile();
 			Type legacyType = this.GetType();
@@ -441,7 +441,7 @@ namespace Anamnesis.Files
 			if (this.Race == null)
 				throw new Exception("Legacy pose file has no race specified");
 
-			Customize.Races fileRace = (Customize.Races)byte.Parse(this.Race);
+			ActorCustomizeMemory.Races fileRace = (ActorCustomizeMemory.Races)byte.Parse(this.Race);
 			file.Bones = new Dictionary<string, PoseFile.Bone?>();
 
 			PropertyInfo[] props = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance);
@@ -466,10 +466,10 @@ namespace Anamnesis.Files
 				PropertyInfo? rotProp = legacyType.GetProperty(boneName);
 				PropertyInfo? scaleProp = legacyType.GetProperty(boneName + "Size");
 
-				if (boneName.StartsWith(@"Hroth") && fileRace != Customize.Races.Hrothgar)
+				if (boneName.StartsWith(@"Hroth") && fileRace != ActorCustomizeMemory.Races.Hrothgar)
 					continue;
 
-				if (boneName.StartsWith("Viera") && fileRace != Customize.Races.Viera)
+				if (boneName.StartsWith("Viera") && fileRace != ActorCustomizeMemory.Races.Viera)
 					continue;
 
 				boneName = boneName.Replace(@"Hroth", string.Empty);

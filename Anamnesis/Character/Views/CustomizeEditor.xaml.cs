@@ -14,7 +14,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Services;
 	using PropertyChanged;
 
-	using AnAppearance = Anamnesis.Memory.Customize;
+	using AnAppearance = Anamnesis.Memory.ActorCustomizeMemory;
 
 	/// <summary>
 	/// Interaction logic for AppearancePage.xaml.
@@ -29,8 +29,8 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(Customize.Genders));
-			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(Customize.Ages));
+			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(ActorCustomizeMemory.Genders));
+			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(ActorCustomizeMemory.Ages));
 
 			List<IRace> races = new List<IRace>();
 			foreach (IRace race in GameDataService.Races)
@@ -155,8 +155,8 @@ namespace Anamnesis.Character.Views
 
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
 
-			if (!Enum.IsDefined(this.Customize.Tribe))
-				this.Customize.Tribe = AnAppearance.Tribes.Midlander;
+			if (!Enum.IsDefined<ActorCustomizeMemory.Tribes>((ActorCustomizeMemory.Tribes)this.Customize.Tribe))
+				this.Customize.Tribe = ActorCustomizeMemory.Tribes.Midlander;
 
 			this.Tribe = GameDataService.Tribes.Get((uint)this.Customize.Tribe);
 

@@ -17,7 +17,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Styles.Drawers;
 	using Lumina.Excel.GeneratedSheets;
 	using PropertyChanged;
-	using static Anamnesis.Memory.Customize;
+	using static Anamnesis.Memory.ActorCustomizeMemory;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
