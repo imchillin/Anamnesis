@@ -12,7 +12,7 @@ namespace Anamnesis.Memory
 		[Bind(0x010)] public int Count { get; set; }
 		////[Bind(0x018, BindFlags.Pointer)] public IntPtr TransformArray { get; set; }
 
-		public List<TransformPtrViewModel> Transforms { get; set; } = new List<TransformPtrViewModel>();
+		public List<TransformMemory> Transforms { get; set; } = new List<TransformMemory>();
 
 		/*protected override bool HandleModelToViewUpdate(PropertyInfo viewModelProperty, FieldInfo modelField)
 		{
@@ -64,7 +64,7 @@ namespace Anamnesis.Memory
 
 		private void ClearTransforms()
 		{
-			foreach (TransformPtrViewModel transform in this.Transforms)
+			foreach (TransformMemory transform in this.Transforms)
 			{
 				transform.Dispose();
 			}

@@ -60,12 +60,7 @@ namespace Anamnesis.Files
 				if (selectionOnly && !skeleton.GetIsBoneSelected(bone))
 					continue;
 
-				Transform? trans = bone.ViewModel.Model;
-
-				if (trans == null)
-					throw new Exception("Bone is missing transform");
-
-				this.Bones.Add(bone.BoneName, new Bone(trans.Value));
+				this.Bones.Add(bone.BoneName, new Bone(bone.ViewModel));
 			}
 		}
 
@@ -119,7 +114,7 @@ namespace Anamnesis.Files
 						if (selectionOnly && !skeleton.GetIsBoneSelected(bone))
 							continue;
 
-						TransformPtrViewModel vm = bone.ViewModel;
+						TransformMemory vm = bone.ViewModel;
 
 						if (savedBone.Position != null && mode.HasFlag(Mode.Position))
 						{
@@ -174,7 +169,7 @@ namespace Anamnesis.Files
 			{
 			}
 
-			public Bone(Transform trans)
+			public Bone(TransformMemory trans)
 			{
 				this.Position = trans.Position;
 				this.Rotation = trans.Rotation;

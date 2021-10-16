@@ -70,7 +70,6 @@ namespace Anamnesis.Posing
 			Quaternion oldRot = bone.Rotation;
 			bone.Rotation *= Quaternion.FromEuler(new Vector(0, 90, 0));
 			bone.WriteTransform(root, false);
-			bone.ViewModel.WriteToMemory(true);
 
 			// Must wait for ffxiv to update at least one frame
 			await Task.Delay(75);
@@ -105,7 +104,6 @@ namespace Anamnesis.Posing
 			// Restore the test bone rotation
 			bone.Rotation = oldRot;
 			bone.WriteTransform(root, false);
-			bone.ViewModel.WriteToMemory(true);
 
 			// restore all initial bone positions
 			foreach (BoneVisual3d otherBone in bones)
