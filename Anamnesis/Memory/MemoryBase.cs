@@ -132,7 +132,7 @@ namespace Anamnesis.Memory
 			{
 				foreach (BindInfo bind in this.binds.Values)
 				{
-					if (!bind.IsChildMemory)
+					if (bind.IsChildMemory)
 						continue;
 
 					if (!this.ShouldBind(bind))
@@ -143,7 +143,7 @@ namespace Anamnesis.Memory
 
 				foreach (BindInfo bind in this.binds.Values)
 				{
-					if (bind.IsChildMemory)
+					if (!bind.IsChildMemory)
 						continue;
 
 					if (!this.ShouldBind(bind))
