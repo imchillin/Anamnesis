@@ -17,6 +17,9 @@ namespace Anamnesis.Memory
 		protected readonly List<MemoryBase> Children = new List<MemoryBase>();
 		private readonly Dictionary<string, BindInfo> binds = new Dictionary<string, BindInfo>();
 
+		private bool isReading;
+		private bool isWriting;
+
 		public MemoryBase()
 		{
 			PropertyInfo[]? properties = this.GetType().GetProperties();
@@ -60,7 +63,7 @@ namespace Anamnesis.Memory
 
 			try
 			{
-				this.ReadFromMemory();
+				this.ReadAllFromMemory();
 			}
 			catch (Exception ex)
 			{
@@ -89,7 +92,7 @@ namespace Anamnesis.Memory
 			if (this.Address == IntPtr.Zero)
 				return;
 
-			this.ReadFromMemory();
+			this.ReadAllFromMemory();
 
 			foreach (MemoryBase child in this.Children)
 			{
@@ -112,104 +115,172 @@ namespace Anamnesis.Memory
 			return true;
 		}
 
-		private void ReadFromMemory()
+		private void ReadAllFromMemory()
 		{
 			if (this.Address == IntPtr.Zero)
 				return;
 
-			foreach (BindInfo bind in this.binds.Values)
+			lock (this)
 			{
-				if (!bind.IsChildMemory)
-					continue;
+				foreach (BindInfo bind in this.binds.Values)
+				{
+					if (!bind.IsChildMemory)
+						continue;
 
-				if (!this.ShouldBind(bind))
-					continue;
+					if (!this.ShouldBind(bind))
+						continue;
 
-				this.ReadFromMemory(bind);
-			}
+					this.ReadFromMemory(bind);
+				}
 
-			foreach (BindInfo bind in this.binds.Values)
-			{
-				if (bind.IsChildMemory)
-					continue;
+				foreach (BindInfo bind in this.binds.Values)
+				{
+					if (bind.IsChildMemory)
+						continue;
 
-				if (!this.ShouldBind(bind))
-					continue;
+					if (!this.ShouldBind(bind))
+						continue;
 
-				this.ReadFromMemory(bind);
+					this.ReadFromMemory(bind);
+				}
 			}
 		}
 
 		private void ReadFromMemory(BindInfo bind)
 		{
-			IntPtr bindAddress = this.Address + bind.Offsets[0];
+			if (this.isWriting)
+				throw new Exception("Attempt to read memory while writing it");
 
-			if (bind.Offsets.Length > 1 && !bind.Flags.HasFlag(BindFlags.Pointer))
-				throw new Exception("Bind address has multiple offsets but is not a pointer. This is not supported.");
+			this.isReading = true;
 
-			if (typeof(MemoryBase).IsAssignableFrom(bind.Type))
+			try
 			{
-				if (bind.Flags.HasFlag(BindFlags.Pointer))
-				{
-					bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+				IntPtr bindAddress = this.Address + bind.Offsets[0];
 
-					for (int i = 1; i < bind.Offsets.Length; i++)
+				if (bind.Offsets.Length > 1 && !bind.Flags.HasFlag(BindFlags.Pointer))
+					throw new Exception("Bind address has multiple offsets but is not a pointer. This is not supported.");
+
+				if (typeof(MemoryBase).IsAssignableFrom(bind.Type))
+				{
+					if (bind.Flags.HasFlag(BindFlags.Pointer))
 					{
-						bindAddress += bind.Offsets[i];
 						bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+
+						for (int i = 1; i < bind.Offsets.Length; i++)
+						{
+							bindAddress += bind.Offsets[i];
+							bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+						}
 					}
-				}
 
-				if (bindAddress == IntPtr.Zero)
-					return;
+					if (bindAddress == IntPtr.Zero)
+						return;
 
-				MemoryBase? childMemory = bind.Property.GetValue(this) as MemoryBase;
-
-				if (childMemory == null)
-				{
-					childMemory = Activator.CreateInstance(bind.Type) as MemoryBase;
+					MemoryBase? childMemory = bind.Property.GetValue(this) as MemoryBase;
 
 					if (childMemory == null)
-						throw new Exception($"Failed to create instance of child memory type: {bind.Type}");
+					{
+						childMemory = Activator.CreateInstance(bind.Type) as MemoryBase;
 
-					childMemory.Parent = this;
-					this.Children.Add(childMemory);
+						if (childMemory == null)
+							throw new Exception($"Failed to create instance of child memory type: {bind.Type}");
+
+						childMemory.Parent = this;
+						this.Children.Add(childMemory);
+					}
+
+					// Has this bind changed
+					if (childMemory.Address == bindAddress)
+						return;
+
+					try
+					{
+						childMemory.SetAddress(bindAddress);
+						bind.Property.SetValue(this, childMemory);
+					}
+					catch (Exception ex)
+					{
+						Log.Warning(ex, $"Failed to bind to child memory: {bind.Name}");
+					}
 				}
-
-				// Has this bind changed
-				if (childMemory.Address == bindAddress)
-					return;
-
-				try
+				else
 				{
-					childMemory.SetAddress(bindAddress);
-					bind.Property.SetValue(this, childMemory);
+					object memValue = MemoryService.Read(bindAddress, bind.Type);
+					object? currentValue = bind.Property.GetValue(this);
+
+					if (currentValue == null)
+						throw new Exception($"Failed to get bind value: {bind.Name} from memory: {this.GetType()}");
+
+					// Has this bind changed
+					if (currentValue.Equals(memValue))
+						return;
+
+					bind.Property.SetValue(this, memValue);
 				}
-				catch (Exception ex)
-				{
-					Log.Warning(ex, $"Failed to bind to child memory: {bind.Name}");
-				}
+
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(bind.Property.Name));
 			}
-			else
+			catch (Exception)
 			{
-				object memValue = MemoryService.Read(bindAddress, bind.Type);
-				object? currentValue = bind.Property.GetValue(this);
-
-				if (currentValue == null)
-					throw new Exception($"Failed to get bind value: {bind.Name} from memory: {this.GetType()}");
-
-				// Has this bind changed
-				if (currentValue.Equals(memValue))
-					return;
-
-				bind.Property.SetValue(this, memValue);
+				throw;
 			}
+			finally
+			{
+				this.isReading = false;
+			}
+		}
 
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(bind.Property.Name));
+		private void WriteToMemory(BindInfo bind)
+		{
+			if (this.isReading)
+				throw new Exception("Attempt to write memory while reading it");
+
+			this.isWriting = true;
+
+			try
+			{
+				if (bind.Flags.HasFlag(BindFlags.Pointer))
+					throw new NotSupportedException("Attempt to write a pointer value to memory.");
+
+				if (bind.Offsets.Length > 1 && !bind.Flags.HasFlag(BindFlags.Pointer))
+					throw new Exception("Bind address has multiple offsets but is not a pointer. This is not supported.");
+
+				IntPtr bindAddress = this.Address + bind.Offsets[0];
+				object? val = bind.Property.GetValue(this);
+
+				if (val == null)
+					throw new Exception("Attempt to write null value to memory");
+
+				MemoryService.Write(bindAddress, val, $"memory: {this} bind: {bind} changed");
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+			finally
+			{
+				this.isWriting = false;
+			}
 		}
 
 		private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
+			// Dont process property changes if we are reading memory, since these will just be changes from memory
+			// and we only care about changes from anamnesis here.
+			if (this.isReading)
+				return;
+
+			if (string.IsNullOrEmpty(e.PropertyName))
+				return;
+
+			BindInfo? bind;
+			if (!this.binds.TryGetValue(e.PropertyName, out bind))
+				return;
+
+			lock (this)
+			{
+				this.WriteToMemory(bind);
+			}
 		}
 
 		[AttributeUsage(AttributeTargets.Property)]
