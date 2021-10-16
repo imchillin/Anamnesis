@@ -113,6 +113,9 @@ namespace Anamnesis.Character.Views
 				e.PropertyName == nameof(ActorCustomizeMemory.Hair) ||
 				e.PropertyName == nameof(ActorCustomizeMemory.FacePaint))
 			{
+				if (Application.Current == null)
+					return;
+
 				Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
 			}
 		}

@@ -14,6 +14,7 @@ namespace Anamnesis.Memory
 	{
 		public IntPtr Address = IntPtr.Zero;
 
+		protected readonly List<MemoryBase> Children = new List<MemoryBase>();
 		private readonly BindInfo[] binds;
 
 		public MemoryBase()
@@ -74,7 +75,18 @@ namespace Anamnesis.Memory
 
 		public void Dispose()
 		{
+			if (this.Parent != null)
+				this.Parent.Children.Remove(this);
+
 			this.Address = IntPtr.Zero;
+			this.Parent = null;
+
+			for (int i = this.Children.Count - 1; i >= 0; i--)
+			{
+				this.Children[i].Dispose();
+			}
+
+			this.Children.Clear();
 		}
 
 		public void Tick()
@@ -83,6 +95,11 @@ namespace Anamnesis.Memory
 				return;
 
 			this.ReadFromMemory();
+
+			foreach (MemoryBase child in this.Children)
+			{
+				child.Tick();
+			}
 		}
 
 		protected bool IsFrozen(string propertyName)
@@ -147,6 +164,7 @@ namespace Anamnesis.Memory
 						throw new Exception($"Failed to create instance of child memory type: {bind.Type}");
 
 					childMemory.Parent = this;
+					this.Children.Add(childMemory);
 				}
 
 				// Has this bind changed
