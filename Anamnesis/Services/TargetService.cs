@@ -44,27 +44,6 @@ namespace Anamnesis
 			}
 
 			ActorViewModel actor = new ActorViewModel((IntPtr)basicActor.Pointer);
-
-			// Mannequins and housing NPC's get actor type changed, but squadron members and lawn retainers do not.
-			if (actor.ObjectKind == ActorTypes.EventNpc && actor.DataId != 1011832)
-			{
-				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertHousingNpcToPlayerMessage", actor.Name), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
-				if (result == true)
-				{
-					await actor.ConvertToPlayer();
-				}
-			}
-
-			// Carbuncles get model type set to player (but not actor type!)
-			if (actor.ObjectKind == ActorTypes.BattleNpc && (actor.ModelType == 1 || actor.ModelType == 409 || actor.ModelType == 410 || actor.ModelType == 412))
-			{
-				bool? result = await GenericDialog.Show(LocalizationService.GetStringFormatted("Target_ConvertCarbuncleToPlayerMessage", actor.DisplayName), LocalizationService.GetString("Target_ConvertToPlayerTitle"), MessageBoxButton.YesNo);
-				if (result == true)
-				{
-					await actor.ConvertToPlayer();
-				}
-			}
-
 			PinnedActor pined = new PinnedActor(actor);
 
 			await Dispatch.MainThread();

@@ -256,19 +256,6 @@ namespace Anamnesis.GUI
 			}
 		}
 
-		private void OnConvertActorClicked(object sender, RoutedEventArgs e)
-		{
-			if (sender is FrameworkElement el && el.DataContext is TargetService.PinnedActor actor)
-			{
-				ActorViewModel? vm = actor.GetViewModel();
-
-				if (vm == null)
-					return;
-
-				Task.Run(vm.ConvertToPlayer);
-			}
-		}
-
 		private void OnGameServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (!GameService.Instance.IsSignedIn)

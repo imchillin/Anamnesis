@@ -36,7 +36,13 @@ namespace Anamnesis.Memory
 
 		public bool CanTick()
 		{
-			return !this.PendingRefresh && !this.IsRefreshing;
+			if (this.PendingRefresh || this.IsRefreshing)
+				return false;
+
+			if (!this.MemoryMode.HasFlag(MemoryModes.Read))
+				return false;
+
+			return true;
 		}
 
 		public override void OnRetargeted()
@@ -145,34 +151,6 @@ namespace Anamnesis.Memory
 
 			this.IsRefreshing = false;
 			this.MemoryMode = oldMode;
-		}
-
-		public async Task ConvertToPlayer()
-		{
-			if (this.Pointer == null)
-				return;
-
-			this.MemoryMode = MemoryModes.None;
-
-			IntPtr actorPointer = (IntPtr)this.Pointer;
-			IntPtr objectKindPointer = actorPointer + this.ObjectKindOffset;
-			IntPtr modelTypePointer = actorPointer + this.ModelTypeOffset;
-
-			// Carbuncles get model type set to player (but not actor type!)
-			if (this.ObjectKind == ActorTypes.BattleNpc && (this.ModelType == 409 || this.ModelType == 410 || this.ModelType == 412))
-			{
-				MemoryService.Write(modelTypePointer, 0, "Convert to player");
-			}
-
-			this.MemoryMode = MemoryModes.ReadWrite;
-
-			await DefaultCharacterFile.Default.Apply(this, Files.CharacterFile.SaveModes.All);
-
-			if (this.ObjectKind == ActorTypes.EventNpc)
-			{
-				MemoryService.Write(objectKindPointer, (byte)ActorTypes.Player, "Convert to player");
-				await this.RefreshAsync();
-			}
 		}
 
 		protected override void OnViewToModel(string fieldName, object? value)

@@ -249,6 +249,12 @@ namespace Anamnesis.Files
 			actor.AutomaticRefreshEnabled = false;
 			actor.MemoryMode = MemoryModes.None;
 
+			if (actor.ObjectKind != ActorTypes.Player)
+			{
+				actor.ObjectKind = ActorTypes.Player;
+				await actor.RefreshAsync();
+			}
+
 			if (actor.ModelObject?.ExtendedAppearance != null)
 				actor.ModelObject.ExtendedAppearance.MemoryMode = MemoryModes.None;
 
@@ -434,7 +440,7 @@ namespace Anamnesis.Files
 			actor.WriteToMemory(true);
 			actor.AutomaticRefreshEnabled = true;
 
-			Log.Information("Read appearance from file");
+			Log.Information("Finished reading appearance from file");
 		}
 
 		private bool IncludeSection(SaveModes section, SaveModes mode)

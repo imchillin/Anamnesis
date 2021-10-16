@@ -45,10 +45,6 @@
 	"Target_Npc": "NPCs",
 	"Target_Other": "Others",
 
-	"Target_ConvertToPlayerTitle": "Actor Selection",
-	"Target_ConvertHousingNpcToPlayerMessage": "The Actor: \"{0}\" appears to be a humanoid NPC. Do you want to change them to a player? This is required for some housing vendors, but not all.",
-	"Target_ConvertCarbuncleToPlayerMessage": "The Actor: \"{0}\" appears to be a Companion or Pet. Do you want to change them to an editable actor to allow for posing and appearance changes?",
-
 	"EquipmentSelector_Classes": "Classes / Jobs",
 	"EquipmentSelector_ShowLocked": "Show race/gender-locked items",
 	"EquipmentSelector_Ambidextrous": "Allow all weapons in either hand",

@@ -97,8 +97,8 @@
 
 																	<ToggleButton.ContextMenu>
 																		<ContextMenu>
-																			<MenuItem Click="OnUnpinActorClicked" Header="Unpin" />
-																			<MenuItem Click="OnConvertActorClicked" Header="Convert to player" />
+																			<MenuItem Click="OnUnpinActorClicked"
+																					  Header="Unpin" />
 																		</ContextMenu>
 																	</ToggleButton.ContextMenu>
 
