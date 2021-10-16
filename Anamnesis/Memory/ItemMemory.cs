@@ -5,7 +5,7 @@ namespace Anamnesis.Memory
 {
 	using Anamnesis.GameData;
 
-	public class ItemMemory : MemoryBase
+	public class ItemMemory : MemoryBase, IEquipmentItemMemory
 	{
 		[Bind(0x000)] public ushort Base { get; set; }
 		[Bind(0x002)] public byte Variant { get; set; }

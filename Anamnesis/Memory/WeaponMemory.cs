@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Memory
 {
-	public class WeaponMemory : MemoryBase
+	public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 	{
 		[Bind(0x000)] public ushort Set { get; set; }
 		[Bind(0x002)] public ushort Base { get; set; }

@@ -26,7 +26,7 @@ namespace Anamnesis.Character.Views
 	public partial class ItemView : UserControl
 	{
 		public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
-		public static readonly IBind<IStructViewModel?> ItemModelDp = Binder.Register<IStructViewModel?, ItemView>(nameof(ItemModel), OnItemModelChanged, BindMode.TwoWay);
+		public static readonly IBind<IEquipmentItemMemory?> ItemModelDp = Binder.Register<IEquipmentItemMemory?, ItemView>(nameof(ItemModel), OnItemModelChanged, BindMode.TwoWay);
 		public static readonly IBind<WeaponSubModelMemory?> WeaponExModelDp = Binder.Register<WeaponSubModelMemory?, ItemView>(nameof(ExtendedViewModel));
 
 		private bool lockViewModel = false;
@@ -53,7 +53,7 @@ namespace Anamnesis.Character.Views
 		public IDye? Dye { get; set; }
 		public ImageSource? IconSource { get; set; }
 
-		public IStructViewModel? ItemModel
+		public IEquipmentItemMemory? ItemModel
 		{
 			get => ItemModelDp.Get(this);
 			set => ItemModelDp.Set(this, value);
@@ -110,7 +110,7 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
-		private static void OnItemModelChanged(ItemView sender, IStructViewModel? value)
+		private static void OnItemModelChanged(ItemView sender, IEquipmentItemMemory? value)
 		{
 			if (sender.ItemModel != null)
 				sender.ItemModel.PropertyChanged -= sender.OnViewModelPropertyChanged;
@@ -133,8 +133,6 @@ namespace Anamnesis.Character.Views
 		private void SetItem(IItem? item, bool autoOffhand)
 		{
 			this.lockViewModel = true;
-			IMemoryViewModel? memory = this.ItemModel?.GetParent<IMemoryViewModel>();
-			memory?.SetMemoryMode(MemoryModes.Write);
 
 			throw new NotImplementedException();
 
@@ -215,10 +213,10 @@ namespace Anamnesis.Character.Views
 				await Task.Yield();
 
 				await Dispatch.MainThread();
-				if (this.ItemModel == null || !this.ItemModel.Enabled || GameDataService.Dyes == null)
+				if (this.ItemModel == null || GameDataService.Dyes == null)
 					return;
 
-				IStructViewModel? valueVm = this.ItemModel;
+				IEquipmentItemMemory? valueVm = this.ItemModel;
 
 				await Dispatch.NonUiThread();
 

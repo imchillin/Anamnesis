@@ -56,7 +56,7 @@ namespace Anamnesis.Memory
 
 		public MemoryBase? Parent { get; private set; }
 
-		protected static ILogger Log => Serilog.Log.ForContext<StructViewModelBase>();
+		protected static ILogger Log => Serilog.Log.ForContext<MemoryBase>();
 
 		public virtual void SetAddress(IntPtr address)
 		{
