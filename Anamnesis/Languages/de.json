@@ -1,4 +1,6 @@
 {
+	"Language": "Deutsch",
+	
 	"Common_OpenFile": "Laden",
 	"Common_SaveFile": "Speichern",
 	"Common_OpenDir": "Öffnen",
@@ -10,28 +12,38 @@
 	"Common_LinkVector": "Link X, Y, and Z, axis together",
 	"Common_Confirm": "Bestätigen",
 	
-	"ProcessSelector_AllWarning": "Bitte den Final Fantasy XIV DirectX 11 Prozess auswählen. Das Auswählen anderer Prozesse diese oder Anamnesis zum Absturz bringen.",
+	"ProcessSelector_AllWarning": "Bitte den Final Fantasy XIV DirectX 11 Prozess auswählen. Das Auswählen anderer Prozesse kann diese und Anamnesis zum Absturz bringen.",
 	"ProcessSelector_NotFound": "Final Fantasy XIV Prozess (ffxiv_dx11) nicht gefunden.",
 	"ProcessSelector_NotFound2": "Bitte versicherer, dass das Spiel im DirectX 11 Modus läuft.",
 
 	"Error_NotInGame": "Nicht angemeldet",
+	"Error_FavoritesFail": "Laden von Favoriten fehlgeschlagen. Deine Favoriten wurden zurückgesetzt.",
 	
 	"FileBrowser_GoUp": "Zurück",
 	"FileBrowser_Flatten": "Minimale Ansicht",
 	"FileBrowser_CreateFolder": "Ordner erstellen",
 	"FileBrowser_Advanced": "Erweitert",
+	"FileBrowser_BrowseKey": "...",
 	"FileBrowser_Browse": "Datei suchen",
 	"FileBrowser_ReplaceTitle": "Datei überschreiben",
 	"FileBrowser_ReplaceMessage": "Willst du folgende Datei überschreiben?: \"{0}\"?",
+	
+	"FileBrowser_Sort": "Sortieren nach",
+	"FileBrowser_SortAlpha": "Name (Alphabetisch)",
+	"FileBrowser_SortDate": "Datum (Neueste zuerst)",
+
+	"Shortcut_AnamnesisPose": "Anamnesis Posen",
+	"Shortcut_AnamnesisCharacter": "Anamnesis Charaktere",
+	"Shortcut_AnamnesisScenes": "Anamnesis Szenen",
+	"Shortcut_BuiltInPose": "Vorgegebene Posen",
+	"Shortcut_CMToolPose": "CMTool Posen",
+	"Shortcut_FfxivAppearance": "Gespeicherte FFXIV Charaktere",
+	"Shortcut_Desktop": "Desktop",
 
 	"Target_Players": "Spieler",
 	"Target_Companions": "Begleiter",
 	"Target_Npc": "NSCs",
 	"Target_Other": "Andere",
-
-	"Target_ConvertToPlayerTitle": "Charakterauswahl",
-	"Target_ConvertHousingNpcToPlayerMessage": "Der Charakter: \"{0}\" scheint ein humanoider NSC zu sein. Möchtest du diesen zu einem Spieler machen? Das ist für manche NSCs nötig, aber nicht für alle.",
-	"Target_ConvertCarbuncleToPlayerMessage": "Der Charakter: \"{0}\" scheint ein Karbunkel zu sein. Willst du diesen in einen bearbeitbaren Charakter für Posing und veränderbares Aussehen ändern?",
 
 	"EquipmentSelector_Classes": "Klassen / Berufe",
 	"EquipmentSelector_HideLocked": "Rasse/Geschlecht-spezifische Items ausblenden",				
@@ -39,15 +51,16 @@
 	"EquipmentSelector_AutoOffhand": "Nebenhand automatisch ausrüsten",
 	"EquipmentSelector_AutoOffhandTip": "Zugehörige Nebenhandwaffe automatisch ausrüsten und automatisch bei Doppelhandwaffen entfernen.",
 
-	"EquipmentSelector_Categories": "Kategorien",
-	"EquipmentSelector_Standard": "Standard Items",
-	"EquipmentSelector_StandardTip": "Items, die man durch normales spielen bekommt",
-	"EquipmentSelector_Premium": "Premium Items",
-	"EquipmentSelector_PremiumTip": "Items, die man durch Echtgeldkäufe bekommt",
-	"EquipmentSelector_Limited": "Limitierte Items",
-	"EquipmentSelector_LimitedTip": "Limitierte Items (Events etc)",
-	"EquipmentSelector_Deprecated": "Veraltete Items",
-	"EquipmentSelector_DeprecatedTip": "Veraltete Items, welche nicht mehr verfügbar sind",
+	"EquipmentSelector_FilterOther": "Andere",
+	"EquipmentSelector_Categories": "Kategorien",	  
+	"EquipmentSelector_Standard": "Standard-Gegenstände",
+	"EquipmentSelector_StandardTip": "Gegenstände, die man durch normales spielen bekommt",
+	"EquipmentSelector_Premium": "Premium-Gegenstände",
+	"EquipmentSelector_PremiumTip": "Gegenstände, die man durch Echtgeldkäufe bekommt",
+	"EquipmentSelector_Limited": "Limitierte Gegenstände",
+	"EquipmentSelector_LimitedTip": "Limitierte Gegenstände (Events etc)",
+	"EquipmentSelector_Deprecated": "Veraltete Gegenstände",
+	"EquipmentSelector_DeprecatedTip": "Veraltete Gegenstände, welche nicht mehr verfügbar sind",
 	"EquipmentSelector_Props": "Requisiten",
 	"EquipmentSelector_PropsTip": "Verschiede Modelle, die in Zwischensequenzen etc. vorkommen.",
 	"EquipmentSelector_Performance": "Musikinstrumente",
@@ -56,6 +69,10 @@
 	"EquipmentSelector_ModdedTip": "Modifizierte Items",
 	"EquipmentSelector_Favorites": "Favoriten",
 	"EquipmentSelector_FavoritesTip": "Immer Favouriten mit einbeziehen",
+	"EquipmentSelector_FavoriteToggleTip": "Diesen Gegenstand als Favorite markieren",
+	"EquipmentSelector_Owned": "In Besitz",
+	"EquipmentSelector_OwnedTip": "Premium- oder Limitierten Gegenstand markiert",
+	"EquipmentSelector_OwnedToggleTip": "Markiere diesen Premium- oder Limitierten Gegenstand",
 
 	"Home_XmaTopToday": "Beste XMA Shots",
 	"Home_XmaLatest": "Neuste XMA Shots",
@@ -78,8 +95,9 @@
 	"Scene_Camera_Pan": "Schwenkung",
 	"Scene_Camera_Zoom": "Zoom",
 	"Scene_Camera_FoV": "Blickwinkel",
+	"Scene_Camera_GPoseWarn": "Kameraeinstellungen sind nur in GPose verfübar.",
 
-	"Scene_Transform_Header": "Transformierung",
+	"Scene_Transform_Header": "Transformieren",
 	"Scene_Transform_Rotation": "Rotation",
 	"Scene_Transform_Position": "Position",
 	"Scene_Transform_Scale": "Größe",
@@ -90,8 +108,12 @@
 	"Weather_Selector_Unnatural_Tooltip": "Zeigt nur nicht-regional verfügbares Wetter an.",
 	"Weather_Selector_All_Tooltip": "Alle anzeigen",
 
-	"Character_Appearance_LoadOther": "Andere laden",
-	"Character_Customize_Header": "Aussehen",
+	"Character_Load_FfxivDat": "Gespeicherte FFXIV Charaktere",
+	"Character_Load_CMTool": "CMTool Saves",
+	
+	"Character_Appearance_LoadOther": "NSC",
+	"Character_Customize_Header": "Anpassen",
+	"Character_Appearance_Header": "Aussehen",
 	"Character_Appearance_Body": "Körper",
 	"Character_Appearance_Race": "Rasse",
 	"Character_Appearance_Skin": "Haut",
@@ -112,7 +134,10 @@
 	"Character_Appearance_Ears": "Ohren",
 	"Character_Appearance_Tail": "Schwanz",
 	"Character_Appearance_Fur": "Fell",
-
+	"Character_Appearance_EyeLeft": "Linke Augenfarbe",
+	"Character_Appearance_EyeRight": "Rechte Augenfarbe",
+	"Character_Appearance_FacialFeatureColor": "Farbe des Merkmals (Äußere Iris)",
+	
 	"Character_Equipment_Header": "Ausrüstung",
 	"Character_Equipment_Gear": "Ausrüstung",
 	"Character_Equipment_Accessories": "Accessories",
@@ -190,9 +215,7 @@
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Skalierung",
 	"Pose_Position": "Position",
-	"Pose_LoadRotation": "Knochenrotation laden",
-	"Pose_LoadScale": "Knochenskalierung laden",
-	"Pose_LoadPosition": "Knochenposition laden",
+	"Pose_All": "Alle (Position, Rotation, Skalierung)",
 
 	"Pose_EnableRotation": "R",
 	"Pose_EnableRotationTooltip": "Rotationsbearbeitung aktivieren",
@@ -428,6 +451,7 @@
 	"Settings_WindowOpacity": "Transparenz",
 	"Settings_StayTransparent": "Transparenz beibehalten",
 	"Settings_WindowSize": "Fenstergröße",
+	"Settings_UseWindowsExplorer": "Windows Explorer verwenden",
 	"Settings_Directories": "Ordnerpfade",
 	"Settings_Dir_Characters": "Charaktere",
 	"Settings_Dir_Poses": "Posen",
@@ -461,4 +485,7 @@
 	"Item_InvisibleBodyDesc": "Du wirst unsichtbar (nur dein Kopf nicht)",
 	"Item_InvisibleHead": "Unsichtbar",
 	"Item_InvisibleHeadDesc": "Dein Kopf wird unsichtbar"
+	
+	"Help_Title": "Hilfe",
+	"Help_Tip": "Wiki aufrufen"
 }
