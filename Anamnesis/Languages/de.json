@@ -484,7 +484,7 @@
 	"Item_InvisibleBody": "Unsichtbar",
 	"Item_InvisibleBodyDesc": "Du wirst unsichtbar (nur dein Kopf nicht)",
 	"Item_InvisibleHead": "Unsichtbar",
-	"Item_InvisibleHeadDesc": "Dein Kopf wird unsichtbar"
+	"Item_InvisibleHeadDesc": "Dein Kopf wird unsichtbar",
 	
 	"Help_Title": "Hilfe",
 	"Help_Tip": "Wiki aufrufen"
