@@ -21,4 +21,4 @@ Steps to reproduce the behaviour:
 A clear and concise description of what you expected to happen.
 
 **Log file**
-Drag and drop the related log file(s) into the window, and they will be uploaded as part of your bug report. Please avoid using screenshots, as they very rarely provide any information of use to the developers.
+Drag and drop the related log file(s) into the window, and they will be uploaded as part of your bug report. Please avoid using screenshots, as they very rarely provide any information of use to the developers. If your issue would benefit from additional evidence, such as a pose or appearance file, please package them into a `.zip` archive and upload them as well.
