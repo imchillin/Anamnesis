@@ -312,34 +312,9 @@
 										   Style="{StaticResource Label}" />
 					<Grid Grid.Row="1"
 						  Grid.Column="1">
-
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
-
-						<ToggleButton Grid.RowSpan="2"
-									  Grid.Column="0"
-									  Style="{DynamicResource MaterialDesignActionToggleButton}"
-									  Height="22"
-									  Width="22"
-									  Padding="0"
-									  Margin="0"
-									  IsChecked="{Binding CameraService.LockCameraPosition}">
-							<ToggleButton.Content>
-								<fa:IconBlock Icon="LockOpen"
-											  FontSize="12" />
-							</ToggleButton.Content>
-							<materialdesign:ToggleButtonAssist.OnContent>
-								<fa:IconBlock Icon="Lock"
-											  FontSize="12" />
-							</materialdesign:ToggleButtonAssist.OnContent>
-						</ToggleButton>
-
-						<cm3:VectorEditor IsEnabled="{Binding CameraService.LockCameraPosition}"
-										  Grid.Column="1"
-										  TickFrequency="0.05"
-										  Value="{Binding CameraService.CameraPosition}"
+						
+						<cm3:VectorEditor TickFrequency="0.05"
+										  Value="{Binding CameraService.GPoseCamera.Position}"
 										  Expanded="True"
 										  Sliders="Relative"
 										  Minimum="-4096"
@@ -376,7 +351,6 @@
 
 						<cm3:Vector2DEditor Grid.Column="1"
 											Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}"
-											IsEnabled="{Binding CameraService.Camera.FreezeAngle}"
 											Minimum="-180"
 											Maximum="180"
 											Expanded="True"

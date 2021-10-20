@@ -11,15 +11,10 @@ namespace Anamnesis
 
 	public class CameraService : ServiceBase<CameraService>
 	{
-		public readonly CameraMemory Camera = new CameraMemory();
-
 		private bool delimitCamera;
 
-		public bool LockCameraPosition
-		{
-			get;
-			set;
-		}
+		public CameraMemory Camera { get; set; } = new CameraMemory();
+		public GPoseCameraMemory GPoseCamera { get; set; } = new GPoseCameraMemory();
 
 		public bool DelimitCamera
 		{
@@ -40,8 +35,6 @@ namespace Anamnesis
 				this.Camera.YMax = value ? -1.5f : -1.4f;
 			}
 		}
-
-		public Vector CameraPosition { get; set; }
 
 		public override async Task Start()
 		{
@@ -76,24 +69,15 @@ namespace Anamnesis
 						continue;
 					}
 
-					this.Camera.SetAddress(AddressService.Camera);
-
 					if (!GposeService.Instance.IsGpose || GposeService.Instance.IsChangingState)
 					{
 						this.DelimitCamera = false;
-						this.LockCameraPosition = false;
 						this.Camera.FreezeAngle = false;
 						continue;
 					}
 
-					if (this.LockCameraPosition)
-					{
-						MemoryService.Write(AddressService.GPoseCamera, this.CameraPosition, "Camera Locked");
-					}
-					else
-					{
-						this.CameraPosition = MemoryService.Read<Vector>(AddressService.GPoseCamera);
-					}
+					this.Camera.SetAddress(AddressService.Camera);
+					this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
 				}
 				catch (Exception ex)
 				{
