@@ -270,8 +270,8 @@ namespace Anamnesis.Memory
 
 					try
 					{
-						childMemory.SetAddress(bindAddress);
 						bind.Property.SetValue(this, childMemory);
+						childMemory.SetAddress(bindAddress);
 					}
 					catch (Exception ex)
 					{

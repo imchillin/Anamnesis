@@ -13,6 +13,9 @@ namespace Anamnesis.Memory
 	{
 		private readonly List<T> items = new();
 
+		private int lastCount = 0;
+		private IntPtr lastAddress = IntPtr.Zero;
+
 		[Bind(0x000)] public int Count { get; protected set; }
 		[Bind(0x008, BindFlags.Pointer)] public IntPtr ArrayAddress { get; protected set; }
 
@@ -23,6 +26,18 @@ namespace Anamnesis.Memory
 
 		public IEnumerator<T> GetEnumerator() => this.items.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => this.items.GetEnumerator();
+
+		public override void Tick()
+		{
+			try
+			{
+				base.Tick();
+			}
+			catch(Exception ex)
+			{
+				Log.Warning(ex, "Failed to tick array");
+			}
+		}
 
 		protected void UpdateArray()
 		{
@@ -38,19 +53,22 @@ namespace Anamnesis.Memory
 				if (this.ArrayAddress == IntPtr.Zero || this.Count <= 0)
 					return;
 
-				// Odd hack, but this pointer becomes gibberish _alot_
-				if ((int)this.ArrayAddress < 0)
-					return;
-
-				IntPtr address = this.ArrayAddress;
-				for (int i = 0; i < this.Count; i++)
+				try
 				{
-					T instance = Activator.CreateInstance<T>();
-					instance.Parent = this;
-					instance.SetAddress(address);
-					this.items.Add(instance);
+					IntPtr address = this.ArrayAddress;
+					for (int i = 0; i < this.Count; i++)
+					{
+						T instance = Activator.CreateInstance<T>();
+						instance.Parent = this;
+						instance.SetAddress(address);
+						this.items.Add(instance);
 
-					address += instance.Size;
+						address += instance.Size;
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Warning(ex, "Failed to map array");
 				}
 			}
 		}
@@ -64,6 +82,13 @@ namespace Anamnesis.Memory
 
 			if (!this.IsReading)
 				throw new Exception("Array properties should only change while reading memory");
+
+			// did these values actually change
+			if (this.lastCount == this.Count && this.lastAddress == this.ArrayAddress)
+				return;
+
+			this.lastCount = this.Count;
+			this.lastAddress = this.ArrayAddress;
 
 			this.UpdateArray();
 		}
