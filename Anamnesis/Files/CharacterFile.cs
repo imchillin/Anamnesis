@@ -377,7 +377,9 @@ namespace Anamnesis.Files
 			await actor.RefreshAsync();
 
 			// Setting customize values will reset the extended appearance, which me must read.
+			actor.EnableReading = true;
 			actor.Tick();
+			actor.EnableReading = false;
 
 			await Task.Delay(150);
 
