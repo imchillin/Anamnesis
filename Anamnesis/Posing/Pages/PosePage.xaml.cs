@@ -197,7 +197,7 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnOpenAllClicked(object sender, RoutedEventArgs e)
 		{
-			await this.Open(true, PoseFile.Mode.All);
+			await this.Open(false, PoseFile.Mode.All);
 		}
 
 		private async void OnOpenExpressionClicked(object sender, RoutedEventArgs e)
