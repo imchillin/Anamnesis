@@ -32,12 +32,6 @@ namespace Anamnesis.Memory
 				if (attribute == null)
 					continue;
 
-				/*if (property.PropertyType == typeof(IntPtr))
-				{
-					Log.Error($"Attempt to use IntPtr as memory bind target: {property.Name} in memory model: {this.GetType()}. This is not allowed!");
-					continue;
-				}*/
-
 				this.binds.Add(property.Name, new BindInfo(property, attribute));
 			}
 
@@ -106,12 +100,34 @@ namespace Anamnesis.Memory
 
 		protected bool IsFrozen(string propertyName)
 		{
-			return false;
+			BindInfo? bind;
+			if (!this.binds.TryGetValue(propertyName, out bind))
+				throw new Exception("Attempt to freeze value that is not a bind");
+
+			return bind.FreezeValue != null;
 		}
 
 		protected void SetFrozen(string propertyName, bool freeze, object? value = null)
 		{
-			throw new NotImplementedException();
+			BindInfo? bind;
+			if (!this.binds.TryGetValue(propertyName, out bind))
+				throw new Exception("Attempt to freeze value that is not a bind");
+
+			if (bind.IsChildMemory)
+				throw new NotSupportedException("Attempt to freeze child memory");
+
+			if (freeze)
+			{
+				if (value == null)
+					value = bind.Property.GetValue(this);
+
+				bind.FreezeValue = value;
+				bind.Property.SetValue(this, value);
+			}
+			else
+			{
+				bind.FreezeValue = null;
+			}
 		}
 
 		protected virtual bool ShouldBind(BindInfo bind)
@@ -274,6 +290,14 @@ namespace Anamnesis.Memory
 					if (currentValue.Equals(memValue))
 						return;
 
+					if (bind.FreezeValue != null)
+					{
+						memValue = bind.FreezeValue;
+						this.IsReading = false;
+						this.WriteToMemory(bind);
+						this.IsReading = true;
+					}
+
 					bind.Property.SetValue(this, memValue);
 				}
 
@@ -370,6 +394,8 @@ namespace Anamnesis.Memory
 			public int[] Offsets => this.Attribute.Offsets;
 			public Type Type => this.Property.PropertyType;
 			public BindFlags Flags => this.Attribute.Flags;
+
+			public object? FreezeValue { get; set; }
 
 			public bool IsChildMemory => typeof(MemoryBase).IsAssignableFrom(this.Type);
 
