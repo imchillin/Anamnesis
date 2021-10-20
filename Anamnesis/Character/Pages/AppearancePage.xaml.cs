@@ -150,8 +150,15 @@ namespace Anamnesis.Character.Pages
 			if (npc.Appearance == null)
 				return;
 
-			CharacterFile apFile = npc.Appearance.ToFile();
-			await apFile.Apply(this.Actor, mode);
+			try
+			{
+				CharacterFile apFile = npc.Appearance.ToFile();
+				await apFile.Apply(this.Actor, mode);
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to load NPC appearance");
+			}
 		}
 
 		private async Task Load(CharacterFile.SaveModes mode)

@@ -38,6 +38,10 @@ namespace Anamnesis.Memory
 				if (this.ArrayAddress == IntPtr.Zero || this.Count <= 0)
 					return;
 
+				// Odd hack, but this pointer becomes gibberish _alot_
+				if ((int)this.ArrayAddress < 0)
+					return;
+
 				IntPtr address = this.ArrayAddress;
 				for (int i = 0; i < this.Count; i++)
 				{
