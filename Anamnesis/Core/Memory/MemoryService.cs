@@ -111,13 +111,12 @@ namespace Anamnesis.Memory
 			if (type.IsEnum)
 				readType = type.GetEnumUnderlyingType();
 
+			if (type == typeof(bool))
+				readType = typeof(OneByteBool);
+
 			for (int attempt = 0; attempt < 10; attempt++)
 			{
 				int size = Marshal.SizeOf(readType);
-
-				if (readType == typeof(bool))
-					size = 1;
-
 				IntPtr mem = Marshal.AllocHGlobal(size);
 
 				if (ReadProcessMemory(Handle, address, mem, size, out _))
@@ -130,6 +129,9 @@ namespace Anamnesis.Memory
 
 					if (type.IsEnum)
 						val = Enum.ToObject(type, val);
+
+					if (val is OneByteBool obb)
+						return obb.Value;
 
 					return val;
 				}
@@ -446,6 +448,14 @@ namespace Anamnesis.Memory
 		{
 			public LUID Luid;
 			public uint Attributes;
+		}
+
+		// Special struct for handling 1 byte bool marshaling
+		private struct OneByteBool
+		{
+			#pragma warning disable CS0649
+			[MarshalAs(UnmanagedType.I1)]
+			public bool Value;
 		}
 	}
 }
