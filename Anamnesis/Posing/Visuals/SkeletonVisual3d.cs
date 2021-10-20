@@ -387,6 +387,7 @@ namespace Anamnesis.PoseModule
 
 			foreach (BoneVisual3d bone in this.Bones)
 			{
+				bone.ViewModel.Tick();
 				bone.ReadTransform();
 			}
 		}

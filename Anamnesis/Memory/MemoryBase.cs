@@ -47,7 +47,7 @@ namespace Anamnesis.Memory
 			ActorRefresh = 2,
 		}
 
-		public MemoryBase? Parent { get; private set; }
+		public MemoryBase? Parent { get; set; }
 		public bool IsReading { get; private set; }
 		public bool IsWriting { get; private set; }
 
