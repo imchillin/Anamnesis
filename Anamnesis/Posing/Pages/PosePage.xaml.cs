@@ -12,6 +12,7 @@ namespace Anamnesis.PoseModule.Pages
 	using System.Windows.Input;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Files;
+	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Views;
 	using Anamnesis.Services;
@@ -204,6 +205,16 @@ namespace Anamnesis.PoseModule.Pages
 		{
 			if (this.Skeleton == null)
 				return;
+
+			if (this.PoseService.FreezePositions)
+			{
+				bool? result = await GenericDialog.ShowLocalized("Pose_WarningExpresionPositions", "Common_Confirm", MessageBoxButton.OKCancel);
+
+				if (result != true)
+				{
+					return;
+				}
+			}
 
 			this.Skeleton.SelectHead();
 			await this.Open(true, PoseFile.Mode.Rotation);
