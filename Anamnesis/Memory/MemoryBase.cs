@@ -20,9 +20,6 @@ namespace Anamnesis.Memory
 		protected readonly List<MemoryBase> Children = new List<MemoryBase>();
 		private readonly Dictionary<string, BindInfo> binds = new Dictionary<string, BindInfo>();
 
-		private bool isReading;
-		private bool isWriting;
-
 		public MemoryBase()
 		{
 			PropertyInfo[]? properties = this.GetType().GetProperties();
@@ -35,11 +32,11 @@ namespace Anamnesis.Memory
 				if (attribute == null)
 					continue;
 
-				if (property.PropertyType == typeof(IntPtr))
+				/*if (property.PropertyType == typeof(IntPtr))
 				{
 					Log.Error($"Attempt to use IntPtr as memory bind target: {property.Name} in memory model: {this.GetType()}. This is not allowed!");
 					continue;
-				}
+				}*/
 
 				this.binds.Add(property.Name, new BindInfo(property, attribute));
 			}
@@ -57,6 +54,10 @@ namespace Anamnesis.Memory
 		}
 
 		public MemoryBase? Parent { get; private set; }
+		public bool IsReading { get; private set; }
+		public bool IsWriting { get; private set; }
+
+		public virtual int Size { get => throw new NotSupportedException(); }
 
 		protected static ILogger Log => Serilog.Log.ForContext<MemoryBase>();
 
@@ -142,6 +143,31 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		protected virtual void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			// Dont process property changes if we are reading memory, since these will just be changes from memory
+			// and we only care about changes from anamnesis here.
+			if (this.IsReading)
+				return;
+
+			if (string.IsNullOrEmpty(e.PropertyName))
+				return;
+
+			BindInfo? bind;
+			if (!this.binds.TryGetValue(e.PropertyName, out bind))
+				return;
+
+			lock (this)
+			{
+				this.WriteToMemory(bind);
+			}
+
+			if (bind.Flags.HasFlag(BindFlags.ActorRefresh))
+			{
+				this.ActorRefresh(e.PropertyName);
+			}
+		}
+
 		private void ReadAllFromMemory()
 		{
 			if (this.Address == IntPtr.Zero)
@@ -181,10 +207,10 @@ namespace Anamnesis.Memory
 			if (!this.CanRead())
 				return;
 
-			if (this.isWriting)
+			if (this.IsWriting)
 				throw new Exception("Attempt to read memory while writing it");
 
-			this.isReading = true;
+			this.IsReading = true;
 
 			try
 			{
@@ -259,7 +285,7 @@ namespace Anamnesis.Memory
 			}
 			finally
 			{
-				this.isReading = false;
+				this.IsReading = false;
 			}
 		}
 
@@ -268,10 +294,10 @@ namespace Anamnesis.Memory
 			if (!this.CanWrite())
 				return;
 
-			if (this.isReading)
+			if (this.IsReading)
 				throw new Exception("Attempt to write memory while reading it");
 
-			this.isWriting = true;
+			this.IsWriting = true;
 
 			try
 			{
@@ -295,32 +321,7 @@ namespace Anamnesis.Memory
 			}
 			finally
 			{
-				this.isWriting = false;
-			}
-		}
-
-		private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			// Dont process property changes if we are reading memory, since these will just be changes from memory
-			// and we only care about changes from anamnesis here.
-			if (this.isReading)
-				return;
-
-			if (string.IsNullOrEmpty(e.PropertyName))
-				return;
-
-			BindInfo? bind;
-			if (!this.binds.TryGetValue(e.PropertyName, out bind))
-				return;
-
-			lock (this)
-			{
-				this.WriteToMemory(bind);
-			}
-
-			if (bind.Flags.HasFlag(BindFlags.ActorRefresh))
-			{
-				this.ActorRefresh(e.PropertyName);
+				this.IsWriting = false;
 			}
 		}
 

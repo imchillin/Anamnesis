@@ -574,18 +574,16 @@ namespace Anamnesis.PoseModule
 
 		private void GetBones(BonesMemory? vm, string name)
 		{
-			if (vm == null)
+			if (vm == null || vm.Transforms == null)
 				return;
 
-			throw new NotImplementedException();
-
-			/*for (int i = 0; i < vm.Transforms.Count; i++)
+			for (int i = 0; i < vm.Transforms.Count; i++)
 			{
-				TransformPtrViewModel? transform = vm.Transforms[i];
+				TransformMemory? transform = vm.Transforms[i];
 				string boneName = name + "_" + i;
 				BoneVisual3d bone = new BoneVisual3d(transform, this, boneName);
 				this.Bones.Add(bone);
-			}*/
+			}
 		}
 
 		private void AddBoneTargets()
