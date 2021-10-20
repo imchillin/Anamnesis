@@ -115,6 +115,7 @@ namespace Anamnesis.Files
 							continue;
 
 						TransformMemory vm = bone.ViewModel;
+						vm.Tick();
 
 						if (savedBone.Position != null && mode.HasFlag(Mode.Position))
 						{
