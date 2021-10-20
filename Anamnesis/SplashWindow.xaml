@@ -16,7 +16,7 @@
 		Title="Starting..."
 		WindowStartupLocation="CenterScreen"
 		MouseDown="OnMouseDown"
-		Icon="/Assets/Concept Matrix.ico">
+		Icon="/Assets/Anamnesis.ico">
 
 
 	<Grid Width="100" Height="100" Margin="10">
@@ -28,6 +28,6 @@
 		</Ellipse>
 
 		<ProgressBar Style="{DynamicResource MaterialDesignCircularProgressBar}" Foreground="AliceBlue" IsIndeterminate="True" Width="100" Height="100"/>
-		<Image Grid.Row="0" Source="Assets/Concept Matrix.png" Width="100" Height="100" Margin="0,0,0,0"/>
+		<Image Grid.Row="0" Source="Assets/Anamnesis.png" Width="100" Height="100" Margin="0,0,0,0"/>
 	</Grid>
 </Window>

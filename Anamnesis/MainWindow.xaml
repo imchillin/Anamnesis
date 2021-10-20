@@ -16,7 +16,7 @@
 	xmlns:XivToolsWpfWindows="clr-namespace:XivToolsWpf.Windows;assembly=XivToolsWpf"
 	xmlns:system="clr-namespace:System;assembly=System.Runtime"
 	Closing="Window_Closing"
-	Icon="/Assets/Concept Matrix.ico"
+	Icon="/Assets/Anamnesis.ico"
 	Loaded="Window_Loaded"
 	ResizeMode="CanMinimize"
 	SizeToContent="WidthAndHeight"
