@@ -193,6 +193,7 @@
 	"Pose_WarningNotGPose": "仅在集体动作中可以修改动作造型。在聊天框输入/集体动作。",
 	"Pose_WarningNotFrozen": "仅能修改被冻结的角色. 请在集体动作设置框中冻结该角色。",
 	"Pose_WarningQuit": "你确定要退出吗？当前动作造型将会丢失。",
+	"Pose_WarningExpresionPositions": "你试图在位置被冻结时加载表情，这可能会产生非预期的结果。是否继续？",
 	"Pose_GenerateSkeletonTitle": "没有找到骨骼",
 	"Pose_GenerateSkeleton": "没有找到{0}的骨骼。现在创建吗?\n这会取消动作造型修改, 将所有模型重置到原位。\n没有骨骼时, 父子节点关系可能出现问题。",
 	"Pose_Generating": "正在创建骨骼。请稍后。",
