@@ -236,6 +236,7 @@ namespace Anamnesis.PoseModule.Pages
 				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>(
 					lastLoadDir,
 					FileService.DefaultPoseDirectory,
+					FileService.StandardPoseDirectory,
 					FileService.CMToolPoseSaveDir);
 
 				if (result.File == null)

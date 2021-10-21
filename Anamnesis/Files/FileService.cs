@@ -45,6 +45,11 @@ namespace Anamnesis.Files
 			"Shortcuts/Anamnesis.png",
 			"Shortcut_AnamnesisScenes");
 
+		public static Shortcut StandardPoseDirectory => new Shortcut(
+			new DirectoryInfo(ParseToFilePath("%AppData%/Anamnesis/StandardPoses/")),
+			"Shortcuts/AnamnesisBuiltIn.png",
+			"Shortcut_BuiltInPose");
+
 		public static Shortcut CMToolPoseSaveDir => new Shortcut(
 			new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/Matrix Saves/")),
 			"Shortcuts/cmtool.png",

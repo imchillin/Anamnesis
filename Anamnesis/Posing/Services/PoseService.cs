@@ -5,6 +5,7 @@ namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
@@ -183,6 +184,8 @@ namespace Anamnesis.PoseModule
 			{
 				this.Load(templatePath);
 			}
+
+			_ = Task.Run(ExtractStandardPoses);
 		}
 
 		public override async Task Shutdown()
@@ -211,6 +214,61 @@ namespace Anamnesis.PoseModule
 			EnabledChanged?.Invoke(enabled);
 
 			this.RaisePropertyChanged(nameof(this.IsEnabled));
+		}
+
+		private static async Task ExtractStandardPoses()
+		{
+			try
+			{
+				DirectoryInfo standardPoseDir = FileService.StandardPoseDirectory.Directory;
+				string verFile = standardPoseDir.FullName + "\\ver.txt";
+
+				if (standardPoseDir.Exists)
+				{
+					string verText = await File.ReadAllTextAsync(verFile);
+					DateTime standardPoseVersion = DateTime.Parse(verText);
+
+					if (standardPoseVersion == VersionInfo.Date)
+					{
+						Log.Information($"Standard pose library up to date");
+						return;
+					}
+
+					standardPoseDir.Delete(true);
+				}
+
+				standardPoseDir.Create();
+				await File.WriteAllTextAsync(verFile, VersionInfo.Date.ToString());
+
+				string[] poses = EmbeddedFileUtility.GetAllFilesInDirectory("\\Data\\StandardPoses\\");
+				foreach (string posePath in poses)
+				{
+					string destPath = posePath;
+					destPath = destPath.Replace('.', '\\');
+					destPath = destPath.Replace('_', ' ');
+					destPath = destPath.Replace("Data\\StandardPoses\\", string.Empty);
+					destPath = destPath.Replace("\\pose", ".pose");
+					destPath = standardPoseDir.FullName + destPath;
+
+					string? destDir = Path.GetDirectoryName(destPath);
+
+					if (destDir == null)
+						throw new Exception($"Failed to get directory name from path: {destPath}");
+
+					if (!Directory.Exists(destDir))
+						Directory.CreateDirectory(destDir);
+
+					using Stream contents = EmbeddedFileUtility.Load(posePath);
+					using FileStream fileStream = new FileStream(destPath, FileMode.Create);
+					await contents.CopyToAsync(fileStream);
+				}
+
+				Log.Information($"Extracted standard pose library");
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to extract standard pose library");
+			}
 		}
 
 		private void OnGposeStateChanging()
