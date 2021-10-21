@@ -140,14 +140,8 @@ namespace Anamnesis
 			}
 
 			if (currentDir.Contains("\\AppData\\Local\\Temp\\"))
-				throw new Exception("Attempt to run from temporary directory. (Are you running Anamnesis from a zip file?)");
-
-			if (!Directory.Exists(currentDir + "\\Data\\"))
-				throw new Exception("Missing 'Data' directory. (Did you unzip all of the files?)");
-
-			if (!Directory.Exists(currentDir + "\\Languages\\"))
 			{
-				throw new Exception("Missing 'Languages' directory. (Did you unzip all of the files?)");
+				throw new Exception("Attempt to run from temporary directory. (Are you running Anamnesis from a zip file?)");
 			}
 		}
 

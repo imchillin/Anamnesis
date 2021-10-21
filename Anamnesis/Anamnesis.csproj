@@ -55,6 +55,9 @@
 		<Resource Include="Assets\Shortcuts\*.*" />
 		<Resource Include="Assets\Slots\*.*" />
 		<Resource Include="FodyWeavers.xml" />
+
+		<EmbeddedResource Include="Languages\*.*" />
+		<EmbeddedResource Include="Data\**\*.*" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -62,15 +65,6 @@
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</ApplicationDefinition>
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="Data\**\*.*">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Languages\*.*">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
 
 	<ItemGroup>

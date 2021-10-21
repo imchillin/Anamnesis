@@ -10,6 +10,7 @@ namespace Anamnesis.Services
 	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using Anamnesis.Files;
 	using Anamnesis.Serialization;
 	using Serilog;
 	using XivToolsWpf.DependencyInjection;
@@ -46,33 +47,6 @@ namespace Anamnesis.Services
 			foreach ((string key, string value) in values)
 			{
 				Add(culture, cultureName, key, value);
-			}
-		}
-
-		public static void Add(string searchPath)
-		{
-			string[] paths = Directory.GetFiles(searchPath);
-
-			foreach (string path in paths)
-			{
-				string culture = Path.GetFileNameWithoutExtension(path);
-
-				string json = File.ReadAllText(path);
-
-				try
-				{
-					Dictionary<string, string> values = SerializerService.Deserialize<Dictionary<string, string>>(json);
-
-					string? name;
-					if (!values.TryGetValue("Language", out name))
-						name = culture.ToUpper();
-
-					Add(culture, name, values);
-				}
-				catch (Exception ex)
-				{
-					Log.Error(ex, $"Failed to load language: {path}");
-				}
 			}
 		}
 
@@ -173,7 +147,25 @@ namespace Anamnesis.Services
 
 			await base.Initialize();
 
-			Add("Languages");
+			string[] languageFilePaths = EmbeddedFileUtility.GetAllFilesInDirectory("Languages");
+			foreach (string languageFilePath in languageFilePaths)
+			{
+				try
+				{
+					string fileName = EmbeddedFileUtility.GetFileName(languageFilePath);
+					Dictionary<string, string> values = EmbeddedFileUtility.Load<Dictionary<string, string>>(languageFilePath);
+
+					string? name;
+					if (!values.TryGetValue("Language", out name))
+						name = fileName.ToUpper();
+
+					Add(fileName, name, values);
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, $"Failed to load language: {languageFilePath}");
+				}
+			}
 
 			currentLocale = Locales[FallbackCulture];
 			fallbackLocale = currentLocale;

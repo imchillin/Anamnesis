@@ -6,9 +6,7 @@ namespace Anamnesis.GameData.Sheets
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
-	using System.Text.Json.Serialization;
-	using Anamnesis.Character;
-	using Anamnesis.Serialization;
+	using Anamnesis.Files;
 	using Anamnesis.Serialization.Converters;
 
 	public class PropSheet : ISheet<Prop>
@@ -22,7 +20,7 @@ namespace Anamnesis.GameData.Sheets
 				this.rows = new Dictionary<uint, Prop>();
 
 				uint index = 0;
-				Dictionary<string, string> stringRows = SerializerService.DeserializeFile<Dictionary<string, string>>(fileName);
+				Dictionary<string, string> stringRows = EmbeddedFileUtility.Load<Dictionary<string, string>>(fileName);
 				foreach ((string key, string value) in stringRows)
 				{
 					string[] parts = value.Split(';', StringSplitOptions.RemoveEmptyEntries);

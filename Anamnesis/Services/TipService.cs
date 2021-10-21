@@ -7,6 +7,7 @@ namespace Anamnesis.Services
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Threading.Tasks;
+	using Anamnesis.Files;
 	using Anamnesis.Serialization;
 
 	public class TipService : ServiceBase<TipService>
@@ -24,7 +25,7 @@ namespace Anamnesis.Services
 		{
 			try
 			{
-				this.tips = SerializerService.DeserializeFile<List<TipEntry>>("Data/Tips.json");
+				this.tips = EmbeddedFileUtility.Load<List<TipEntry>>("Data/Tips.json");
 			}
 			catch (Exception ex)
 			{

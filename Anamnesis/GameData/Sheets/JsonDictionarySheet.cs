@@ -6,6 +6,7 @@ namespace Anamnesis.GameData.Sheets
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using Anamnesis.Files;
 	using Anamnesis.Serialization;
 
 	public class JsonDictionarySheet<TValue, TWrapper> : ISheet<TWrapper>
@@ -17,7 +18,7 @@ namespace Anamnesis.GameData.Sheets
 		{
 			try
 			{
-				Dictionary<uint, TValue>? data = SerializerService.DeserializeFile<Dictionary<uint, TValue>>(fileName);
+				Dictionary<uint, TValue>? data = EmbeddedFileUtility.Load<Dictionary<uint, TValue>>(fileName);
 
 				foreach ((uint key, TValue value) in data)
 				{

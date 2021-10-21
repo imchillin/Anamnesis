@@ -6,6 +6,7 @@ namespace Anamnesis.GameData.Sheets
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using Anamnesis.Files;
 	using Anamnesis.Serialization;
 
 	public class JsonListSheet<T> : ISheet<T>
@@ -17,7 +18,7 @@ namespace Anamnesis.GameData.Sheets
 		{
 			try
 			{
-				List<T> rows = SerializerService.DeserializeFile<List<T>>(fileName);
+				List<T> rows = EmbeddedFileUtility.Load<List<T>>(fileName);
 				this.rows = new Dictionary<uint, T>();
 
 				uint index = 0;

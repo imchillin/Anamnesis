@@ -13,6 +13,7 @@ namespace Anamnesis.Views
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Media.Animation;
+	using Anamnesis.Files;
 	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -73,7 +74,7 @@ namespace Anamnesis.Views
 
 			while (this.IsVisible)
 			{
-				List<Entry> entries = SerializerService.DeserializeFile<List<Entry>>("Data/Images.json");
+				List<Entry> entries = EmbeddedFileUtility.Load<List<Entry>>("Data/Images.json");
 
 				while (this.IsVisible && entries.Count > 0)
 				{

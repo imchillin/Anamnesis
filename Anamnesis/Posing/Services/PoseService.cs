@@ -8,6 +8,7 @@ namespace Anamnesis.PoseModule
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
+	using Anamnesis.Files;
 	using Anamnesis.Memory;
 	using Anamnesis.Posing.Templates;
 	using Anamnesis.Serialization;
@@ -177,7 +178,7 @@ namespace Anamnesis.PoseModule
 
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
 
-			string[] templates = Directory.GetFiles("Data/Skeletons/", "*.json");
+			string[] templates = EmbeddedFileUtility.GetAllFilesInDirectory("Data/Skeletons/");
 			foreach (string templatePath in templates)
 			{
 				this.Load(templatePath);
@@ -219,7 +220,7 @@ namespace Anamnesis.PoseModule
 
 		private SkeletonTemplateFile Load(string path)
 		{
-			SkeletonTemplateFile template = SerializerService.DeserializeFile<SkeletonTemplateFile>(path);
+			SkeletonTemplateFile template = EmbeddedFileUtility.Load<SkeletonTemplateFile>(path);
 			template.Path = path;
 			SkeletonTemplates.Add(template);
 

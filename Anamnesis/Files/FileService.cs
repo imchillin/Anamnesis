@@ -45,11 +45,6 @@ namespace Anamnesis.Files
 			"Shortcuts/Anamnesis.png",
 			"Shortcut_AnamnesisScenes");
 
-		public static Shortcut BuiltInPoseDirectory => new Shortcut(
-			new DirectoryInfo(ParseToFilePath("%InstallDir%/Data/BuiltInPoses/")),
-			"Shortcuts/AnamnesisBuiltIn.png",
-			"Shortcut_BuiltInPose");
-
 		public static Shortcut CMToolPoseSaveDir => new Shortcut(
 			new DirectoryInfo(ParseToFilePath("%MyDocuments%/CMTool/Matrix Saves/")),
 			"Shortcuts/cmtool.png",
