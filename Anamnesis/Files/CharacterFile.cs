@@ -249,7 +249,7 @@ namespace Anamnesis.Files
 			actor.AutomaticRefreshEnabled = false;
 			actor.EnableReading = false;
 
-			if (actor.ObjectKind != ActorTypes.Player)
+			if (actor.ObjectKind != ActorTypes.Player && actor.ObjectKind != ActorTypes.BattleNpc)
 			{
 				actor.ObjectKind = ActorTypes.Player;
 				await actor.RefreshAsync();
