@@ -173,6 +173,10 @@ namespace Anamnesis.Memory
 			if (!this.binds.TryGetValue(e.PropertyName, out bind))
 				return;
 
+			object? val = bind.Property.GetValue(this);
+			if (val == null || bind.Flags.HasFlag(BindFlags.Pointer))
+				return;
+
 			lock (this)
 			{
 				this.WriteToMemory(bind);
