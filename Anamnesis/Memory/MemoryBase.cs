@@ -98,6 +98,15 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		public IntPtr GetAddressOfProperty(string propertyName)
+		{
+			BindInfo? bind;
+			if (!this.binds.TryGetValue(propertyName, out bind))
+				throw new Exception("Attempt to get address of property that is not a bind");
+
+			return bind.GetAddress(this.Address);
+		}
+
 		protected bool IsFrozen(string propertyName)
 		{
 			BindInfo? bind;
@@ -234,27 +243,13 @@ namespace Anamnesis.Memory
 
 			try
 			{
-				IntPtr bindAddress = this.Address + bind.Offsets[0];
+				IntPtr bindAddress = bind.GetAddress(this.Address);
 
-				if (bind.Offsets.Length > 1 && !bind.Flags.HasFlag(BindFlags.Pointer))
-					throw new Exception("Bind address has multiple offsets but is not a pointer. This is not supported.");
+				if (bindAddress == IntPtr.Zero)
+					return;
 
 				if (typeof(MemoryBase).IsAssignableFrom(bind.Type))
 				{
-					if (bind.Flags.HasFlag(BindFlags.Pointer))
-					{
-						bindAddress = MemoryService.Read<IntPtr>(bindAddress);
-
-						for (int i = 1; i < bind.Offsets.Length; i++)
-						{
-							bindAddress += bind.Offsets[i];
-							bindAddress = MemoryService.Read<IntPtr>(bindAddress);
-						}
-					}
-
-					if (bindAddress == IntPtr.Zero)
-						return;
-
 					MemoryBase? childMemory = bind.Property.GetValue(this) as MemoryBase;
 
 					if (childMemory == null)
@@ -402,6 +397,30 @@ namespace Anamnesis.Memory
 			public object? FreezeValue { get; set; }
 
 			public bool IsChildMemory => typeof(MemoryBase).IsAssignableFrom(this.Type);
+
+			public IntPtr GetAddress(IntPtr objAddress)
+			{
+				IntPtr bindAddress = objAddress + this.Offsets[0];
+
+				if (this.Offsets.Length > 1 && !this.Flags.HasFlag(BindFlags.Pointer))
+					throw new Exception("Bind address has multiple offsets but is not a pointer. This is not supported.");
+
+				if (typeof(MemoryBase).IsAssignableFrom(this.Type))
+				{
+					if (this.Flags.HasFlag(BindFlags.Pointer))
+					{
+						bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+
+						for (int i = 1; i < this.Offsets.Length; i++)
+						{
+							bindAddress += this.Offsets[i];
+							bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+						}
+					}
+				}
+
+				return bindAddress;
+			}
 
 			public override string ToString()
 			{

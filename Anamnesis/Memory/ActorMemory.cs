@@ -14,6 +14,8 @@ namespace Anamnesis.Memory
 		private short refreshDelay;
 		private Task? refreshTask;
 
+		private IntPtr? previousObjectKindAddressBeforeGPose;
+
 		public enum RenderModes : int
 		{
 			Draw = 0,
@@ -110,6 +112,37 @@ namespace Anamnesis.Memory
 			finally
 			{
 				this.IsRefreshing = false;
+			}
+		}
+
+		public void OnRetargeted()
+		{
+			GposeService gpose = GposeService.Instance;
+
+			if (gpose.IsGpose && gpose.IsChangingState)
+			{
+				// Entering gpose
+				if (this.ObjectKind == ActorTypes.Player)
+				{
+					this.previousObjectKindAddressBeforeGPose = this.GetAddressOfProperty(nameof(this.ObjectKind));
+					this.ObjectKind = ActorTypes.BattleNpc;
+
+					// Sanity check that we do get turned back into a player
+					Task.Run(async () =>
+					{
+						await Task.Delay(3000);
+						MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
+					});
+				}
+			}
+			else if (gpose.IsGpose && !gpose.IsChangingState)
+			{
+				// Entered gpose
+				if (this.previousObjectKindAddressBeforeGPose != null)
+				{
+					MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
+					this.ObjectKind = ActorTypes.Player;
+				}
 			}
 		}
 

@@ -402,7 +402,7 @@ namespace Anamnesis
 						}
 
 						this.Name = this.Memory.Name;
-						////this.Memory.OnRetargeted();
+						this.Memory.OnRetargeted();
 						this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
 						this.Pointer = this.Memory.Address;
 						this.Kind = this.Memory.ObjectKind;
