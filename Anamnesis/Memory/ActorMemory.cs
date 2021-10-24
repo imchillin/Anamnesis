@@ -163,13 +163,23 @@ namespace Anamnesis.Memory
 			this.Refresh();
 		}
 
-		protected override bool ShouldBind(BindInfo bind)
+		protected override bool CanWrite(BindInfo bind)
 		{
-			// Only object kind and render mode can be changed while refreshing.
-			if (this.IsRefreshing && bind.Name != nameof(this.ObjectKind) && bind.Name != nameof(this.RenderMode))
-				return false;
+			if (this.IsRefreshing || this.PendingRefresh)
+			{
+				if (bind.Memory != this)
+				{
+					// Do not allow writing of any properties form sub-memory while we are refreshing
+					return false;
+				}
+				else
+				{
+					// do not allow writing of any properties except the ones needed for refresh during a refresh.
+					return bind.Property.Name == nameof(this.ObjectKind) || bind.Property.Name == nameof(this.RenderMode);
+				}
+			}
 
-			return base.ShouldBind(bind);
+			return base.CanWrite(bind);
 		}
 
 		private async Task RefreshTask()

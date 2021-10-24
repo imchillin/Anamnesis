@@ -13,7 +13,7 @@ namespace Anamnesis.Memory
 		[Bind(0x680, BindFlags.Pointer)] public BonesMemory? Met { get; set; }
 		[Bind(0x840, BindFlags.Pointer)] public BonesMemory? Top { get; set; }
 
-		protected override bool ShouldBind(BindInfo bind)
+		protected override bool CanRead(BindInfo bind)
 		{
 			// This is a hack, but only player models seem to have  Head, Gair, Met, and Top skeletons. everyone else gets gibberish memory
 			// that really confuses the marshaler
@@ -25,7 +25,7 @@ namespace Anamnesis.Memory
 				}
 			}
 
-			return base.ShouldBind(bind);
+			return base.CanRead(bind);
 		}
 	}
 }

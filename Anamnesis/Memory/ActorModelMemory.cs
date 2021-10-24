@@ -63,7 +63,7 @@ namespace Anamnesis.Memory
 
 		public bool IsPlayer => Enum.IsDefined(typeof(ActorModelMemory.DataPaths), this.DataPath);
 
-		protected override bool ShouldBind(BindInfo bind)
+		protected override bool CanRead(BindInfo bind)
 		{
 			if (bind.Name == nameof(ActorModelMemory.ExtendedAppearance))
 			{
@@ -80,7 +80,7 @@ namespace Anamnesis.Memory
 				}
 			}
 
-			return base.ShouldBind(bind);
+			return base.CanRead(bind);
 		}
 	}
 }

@@ -32,7 +32,7 @@ namespace Anamnesis.Memory
 				if (attribute == null)
 					continue;
 
-				this.binds.Add(property.Name, new BindInfo(property, attribute));
+				this.binds.Add(property.Name, new BindInfo(this, property, attribute));
 			}
 
 			this.PropertyChanged += this.OnSelfPropertyChanged;
@@ -139,23 +139,18 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		protected virtual bool ShouldBind(BindInfo bind)
-		{
-			return true;
-		}
-
-		protected virtual bool CanRead()
+		protected virtual bool CanRead(BindInfo bind)
 		{
 			if (this.Parent != null)
-				return this.EnableReading && this.Parent.CanRead();
+				return this.EnableReading && this.Parent.CanRead(bind);
 
 			return this.EnableReading;
 		}
 
-		protected virtual bool CanWrite()
+		protected virtual bool CanWrite(BindInfo bind)
 		{
 			if (this.Parent != null)
-				return this.EnableWriting && this.Parent.CanWrite();
+				return this.EnableWriting && this.Parent.CanWrite(bind);
 
 			return this.EnableWriting;
 		}
@@ -186,6 +181,9 @@ namespace Anamnesis.Memory
 			if (val == null || bind.Flags.HasFlag(BindFlags.Pointer))
 				return;
 
+			if (!this.CanWrite(bind))
+				return;
+
 			lock (this)
 			{
 				this.WriteToMemory(bind);
@@ -202,9 +200,6 @@ namespace Anamnesis.Memory
 			if (this.Address == IntPtr.Zero)
 				return;
 
-			if (!this.CanRead())
-				return;
-
 			lock (this)
 			{
 				foreach (BindInfo bind in this.binds.Values)
@@ -212,7 +207,7 @@ namespace Anamnesis.Memory
 					if (bind.IsChildMemory)
 						continue;
 
-					if (!this.ShouldBind(bind))
+					if (!this.CanRead(bind))
 						continue;
 
 					this.ReadFromMemory(bind);
@@ -223,7 +218,7 @@ namespace Anamnesis.Memory
 					if (!bind.IsChildMemory)
 						continue;
 
-					if (!this.ShouldBind(bind))
+					if (!this.CanRead(bind))
 						continue;
 
 					this.ReadFromMemory(bind);
@@ -233,7 +228,7 @@ namespace Anamnesis.Memory
 
 		private void ReadFromMemory(BindInfo bind)
 		{
-			if (!this.CanRead())
+			if (!this.CanRead(bind))
 				return;
 
 			if (this.IsWriting)
@@ -314,7 +309,7 @@ namespace Anamnesis.Memory
 
 		private void WriteToMemory(BindInfo bind)
 		{
-			if (!this.CanWrite())
+			if (!this.CanWrite(bind))
 				return;
 
 			if (this.IsReading)
@@ -380,11 +375,13 @@ namespace Anamnesis.Memory
 
 		public class BindInfo
 		{
+			public readonly MemoryBase Memory;
 			public readonly PropertyInfo Property;
 			public readonly BindAttribute Attribute;
 
-			public BindInfo(PropertyInfo property, BindAttribute attribute)
+			public BindInfo(MemoryBase memory, PropertyInfo property, BindAttribute attribute)
 			{
+				this.Memory = memory;
 				this.Property = property;
 				this.Attribute = attribute;
 			}
