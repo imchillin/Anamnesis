@@ -79,8 +79,7 @@
 								<RowDefinition />
 							</Grid.RowDefinitions>
 
-							<Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="6, 3, 6, 3"
-								  Visibility="{Binding SettingsService.Settings.IsDyslexic, Converter={StaticResource !B2V}}">
+							<Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="6, 3, 6, 3">
 
 								<XivToolsWpf:TextBlock
 									Style="{StaticResource Header}"
@@ -168,7 +167,7 @@
 
 								<!--  Actor transform outside of gpose  -->
 								<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
-									<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}" />
+									<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}"/>
 								</Grid>
 
 							</Grid>

@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Memory
 {
-	public class TransformMemory : MemoryBase
+	public class TransformMemory : MemoryBase, ITransform
 	{
 		[Bind(0x000)] public Vector Position { get; set; }
 		[Bind(0x010)] public Quaternion Rotation { get; set; }
