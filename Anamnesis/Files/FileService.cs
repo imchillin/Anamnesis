@@ -172,6 +172,12 @@ namespace Anamnesis.Files
 					result.Path = await App.Current.Dispatcher.InvokeAsync<FileInfo?>(() =>
 					{
 						OpenFileDialog dlg = new OpenFileDialog();
+
+						foreach (Shortcut? shortcut in shortcuts)
+						{
+							dlg.CustomPlaces.Add(new FileDialogCustomPlace(ParseToFilePath(shortcut.Path)));
+						}
+
 						dlg.Filter = ToAnyFilter(fileTypes);
 						bool? result = dlg.ShowDialog();
 
