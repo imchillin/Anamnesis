@@ -165,7 +165,7 @@ namespace Anamnesis.Memory
 
 		protected override bool CanWrite(BindInfo bind)
 		{
-			if (this.IsRefreshing || this.PendingRefresh)
+			if (this.IsRefreshing)
 			{
 				if (bind.Memory != this)
 				{
