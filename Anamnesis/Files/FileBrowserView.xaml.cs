@@ -49,10 +49,10 @@ namespace Anamnesis.GUI.Views
 			Shortcut? defaultShortcut = null;
 			foreach (Shortcut shortcut in shortcuts)
 			{
-				if (mode == Modes.Load && shortcut.Directory.Exists && defaultShortcut == null)
+				if (defaultDir == null && mode == Modes.Load && shortcut.Directory.Exists && defaultShortcut == null)
 					defaultShortcut = shortcut;
 
-				if (defaultDir != null && shortcut.Directory.FullName.Contains(defaultDir.FullName))
+				if (defaultDir != null && defaultDir.FullName.Contains(shortcut.Directory.FullName))
 					defaultShortcut = shortcut;
 
 				this.Shortcuts.Add(shortcut);
@@ -61,7 +61,10 @@ namespace Anamnesis.GUI.Views
 			this.Shortcuts.Add(FileService.Desktop);
 
 			if (defaultShortcut == null)
+			{
 				defaultShortcut = this.Shortcuts[0];
+				defaultDir = null;
+			}
 
 			if (defaultDir == null)
 				defaultDir = defaultShortcut.Directory;
