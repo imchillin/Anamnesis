@@ -191,8 +191,11 @@
 						<MenuItem Style="{StaticResource ButtonMenuItemRight}">
 							<MenuItem Header="Pose_All"
 									  Style="{StaticResource AnaMenuItem}"
-									  Click="OnOpenAllClicked" />
-							
+									  Click="OnOpenAllClicked" >
+								<MenuItem.ToolTip>
+									<XivToolsWpf:TextBlock Key="Pose_AllTooltip" />
+								</MenuItem.ToolTip>
+							</MenuItem>
 							<MenuItem Header="Pose_Expression" 
 									  Style="{StaticResource AnaMenuItem}" 
 									  Click="OnOpenExpressionClicked"/>
