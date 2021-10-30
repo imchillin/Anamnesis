@@ -302,6 +302,9 @@ namespace Anamnesis
 					if (this.Pointer == null)
 						return false;
 
+					if (this.Memory != null && TargetService.Instance.SelectedActor == this.Memory)
+						return true;
+
 					return TargetService.Instance.SelectedActor?.Address == this.Pointer;
 				}
 
@@ -351,6 +354,12 @@ namespace Anamnesis
 				{
 					if (this.IsRetargeting)
 						return;
+
+					if (!this.IsValid)
+					{
+						this.Retarget();
+						return;
+					}
 
 					if (this.Memory == null || this.Memory.Address == IntPtr.Zero)
 						return;
@@ -418,9 +427,17 @@ namespace Anamnesis
 						return;
 					}
 
-					this.Memory?.Dispose();
-					this.Memory = null;
-					Log.Warning($"Lost actor: {this.Initials}");
+					if (this.Memory != null)
+					{
+						if (this.IsSelected)
+						{
+							TargetService.Instance.ClearSelection();
+						}
+
+						this.Memory.Dispose();
+						this.Memory = null;
+						Log.Warning($"Lost actor: {this.Initials}");
+					}
 
 					this.IsValid = false;
 					this.IsRetargeting = false;
