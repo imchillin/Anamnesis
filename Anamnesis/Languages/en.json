@@ -17,7 +17,7 @@
 	"ProcessSelector_NotFound2": "Please ensure the game is running, and is in DirectX 11 mode.",
 
 	"Error_NotInGame": "Not Signed In",
-	"Error_FavoritesFail": "Failed to load favorites. Your favorites have been reset.",
+	"Error_FavoritesFail": "Failed to load favourites. Your favourites have been reset.",
 
 	"FileBrowser_GoUp": "Go Up",
 	"FileBrowser_Flatten": "Flatten Hierarchy",
@@ -37,7 +37,7 @@
 	"Shortcut_AnamnesisScenes": "Anamnesis Scenes",
 	"Shortcut_BuiltInPose": "Built In Poses",
 	"Shortcut_CMToolPose": "CMTool Poses",
-	"Shortcut_FfxivAppearance": "FFXIV Saved appearances",
+	"Shortcut_FfxivAppearance": "FFXIV saved appearances",
 	"Shortcut_Desktop": "Desktop",
 
 	"Target_Players": "Players",
@@ -48,8 +48,8 @@
 	"EquipmentSelector_Classes": "Classes / Jobs",
 	"EquipmentSelector_ShowLocked": "Show race/gender-locked items",
 	"EquipmentSelector_Ambidextrous": "Allow all weapons in either hand",
-	"EquipmentSelector_AutoOffhand": "Auto-equip offhand",
-	"EquipmentSelector_AutoOffhandTip": "Automatically equip paired weapons in the offhand, and unequip the offhand when equipping two-handed weapons",
+	"EquipmentSelector_AutoOffhand": "Auto-equip off-hand",
+	"EquipmentSelector_AutoOffhandTip": "Automatically equip paired weapons in the off-hand, and unequip the off-hand when equipping two-handed weapons",
 
 	"EquipmentSelector_FilterOther": "Other",
 	"EquipmentSelector_Categories": "Categories",
@@ -67,15 +67,13 @@
 	"EquipmentSelector_PerformanceTip": "Instruments used for Bard performances",
 	"EquipmentSelector_Modded": "Modded",
 	"EquipmentSelector_ModdedTip": "Items that have been modified",
-	"EquipmentSelector_Favorites": "Favorites",
-	"EquipmentSelector_FavoritesTip": "Items marked as a favorite",
-	"EquipmentSelector_FavoriteToggleTip": "Mark this item a a favorite",
+	"EquipmentSelector_Favorites": "Favourites",
+	"EquipmentSelector_FavoritesTip": "Items marked as a favourite",
+	"EquipmentSelector_FavoriteToggleTip": "Mark this item a a favourite",
 	"EquipmentSelector_Owned": "Owned",
 	"EquipmentSelector_OwnedTip": "Premium or Limited Items marked as owned",
 	"EquipmentSelector_OwnedToggleTip": "Mark this premium or limited item as owned",
 
-	"Home_XmaTopToday": "XMA Top Today",
-	"Home_XmaLatest": "XMA Latest",
 	"Home_Art": "Gallery",
 	"Home_Wiki": "Help",
 	"Home_None": "None",
@@ -216,7 +214,8 @@
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Scale",
 	"Pose_Position": "Position",
-	"Pose_All": "All (Positions, Rotations, Scales)",
+	"Pose_All": "Load Full Transforms",
+	"Pose_AllTooltip":  "Loads Rotation, Scale, and Positioning at the same time (advanced)",
 
 	"Pose_EnableRotation": "R",
 	"Pose_EnableRotationTooltip": "Enable editing rotation",
@@ -488,5 +487,5 @@
 	"Item_InvisibleHeadDesc": "Turns your head invisible",
 
 	"Help_Title": "Help",
-	"Help_Tip": "Visit the wiki"
+	"Help_Tip": "Visit the Wiki"
 }
