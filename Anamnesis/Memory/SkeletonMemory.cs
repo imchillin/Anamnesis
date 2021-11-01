@@ -19,7 +19,7 @@ namespace Anamnesis.Memory
 			// that really confuses the marshaler
 			if (this.Parent?.Parent?.Parent is ActorMemory actor)
 			{
-				if (actor.ModelType != 0 && bind.Name != nameof(SkeletonMemory.Body))
+				if (actor.ModelType != 0 && bind.Memory == this && bind.Name != nameof(SkeletonMemory.Body))
 				{
 					return false;
 				}

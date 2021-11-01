@@ -156,7 +156,8 @@ namespace Anamnesis.PoseModule.Pages
 
 			try
 			{
-				this.Skeleton = await PoseService.GetVisual(this.Actor);
+				this.Skeleton = PoseService.GetVisual(this.Actor);
+				await this.Skeleton.GenerateBones();
 
 				this.ThreeDView.DataContext = this.Skeleton;
 				this.GuiView.DataContext = this.Skeleton;

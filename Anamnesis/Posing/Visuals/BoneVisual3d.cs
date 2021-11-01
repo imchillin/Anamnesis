@@ -8,6 +8,7 @@ namespace Anamnesis.PoseModule
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule.Extensions;
+	using Anamnesis.Posing.Visuals;
 	using Anamnesis.Services;
 	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
@@ -22,6 +23,7 @@ namespace Anamnesis.PoseModule
 	{
 		private readonly QuaternionRotation3D rotation;
 		private readonly TranslateTransform3D position;
+		private readonly BoneTargetVisual3d target;
 
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
@@ -45,6 +47,9 @@ namespace Anamnesis.PoseModule
 
 			PaletteHelper ph = new PaletteHelper();
 			ITheme t = ph.GetTheme();
+
+			this.target = new BoneTargetVisual3d(this);
+			this.Children.Add(this.target);
 
 			this.OriginalBoneName = name;
 			this.BoneName = name;
@@ -132,18 +137,6 @@ namespace Anamnesis.PoseModule
 					return rot;
 
 				return rot * this.Parent.ViewModel.Rotation;
-			}
-		}
-
-		public Vector3D WorldPosition
-		{
-			get
-			{
-				GeneralTransform3D trans = this.TransformToAncestor(this.Skeleton);
-
-				Point3D p;
-				trans.TryTransform(default, out p);
-				return (Vector3D)p;
 			}
 		}
 

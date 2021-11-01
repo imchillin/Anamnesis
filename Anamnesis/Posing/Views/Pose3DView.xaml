@@ -32,17 +32,10 @@
 						Grid.Row="1"
 						IsEnabled="True"
 						Orientation="Horizontal">
-					<Button
-							Padding="6,2"
+					<Button Padding="6,2"
 							Margin="3"
 							Click="OnFrameClicked"
 							Content="Reset Camera"
-							Style="{StaticResource TransparentButton}" />
-					<Button
-							Padding="6,2"
-							Margin="3"
-							Click="OnRegenerateSkeletonClicked"
-							Content="Regenerate Skeleton"
 							Style="{StaticResource TransparentButton}" />
 				</StackPanel>
 			</Border>

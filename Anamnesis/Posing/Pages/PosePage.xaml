@@ -21,30 +21,6 @@
 	<Grid x:Name="ContentArea">
 
 		<Grid Visibility="{Binding Skeleton, Converter={StaticResource NotNullToVisibilityConverter}}">
-
-			<Grid
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"
-				Visibility="{Binding Skeleton.Generating, Converter={StaticResource B2V}}">
-				<Grid.RowDefinitions>
-					<RowDefinition />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-
-				<ProgressBar
-					Width="100"
-					Height="100"
-					Margin="24"
-					IsIndeterminate="True"
-					Style="{StaticResource MaterialDesignCircularProgressBar}" />
-
-				<XivToolsWpf:TextBlock
-					Key="Pose_Generating"
-					Grid.Row="1"
-					Margin="24" />
-
-			</Grid>
-
 			<Grid Visibility="{Binding Skeleton.Generating, Converter={StaticResource !B2V}}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />

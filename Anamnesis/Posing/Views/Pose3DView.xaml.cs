@@ -60,8 +60,6 @@ namespace Anamnesis.PoseModule.Views
 		public double CameraDistance { get; set; }
 		public Quaternion CameraRotation { get; set; }
 
-		public Quaternion Billboard { get; private set; }
-
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			this.OnDataContextChanged(null, default);
@@ -80,7 +78,6 @@ namespace Anamnesis.PoseModule.Views
 			if (this.Skeleton == null)
 				return;
 
-			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 			this.SkeletonRoot.Children.Clear();
 
 			if (!this.SkeletonRoot.Children.Contains(this.Skeleton))
@@ -89,14 +86,6 @@ namespace Anamnesis.PoseModule.Views
 			this.SkeletonRoot.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
 
 			this.FrameSkeleton();
-		}
-
-		private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(SkeletonVisual3d.Generating))
-			{
-				this.FrameSkeleton();
-			}
 		}
 
 		private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -127,18 +116,6 @@ namespace Anamnesis.PoseModule.Views
 		private void OnFrameClicked(object sender, RoutedEventArgs e)
 		{
 			this.FrameSkeleton();
-		}
-
-		private void OnRegenerateSkeletonClicked(object sender, RoutedEventArgs e)
-		{
-			if (this.Skeleton?.File != null && this.Skeleton.File.IsGeneratedParenting)
-			{
-				Task.Run(async () =>
-				{
-					await Dispatch.MainThread();
-					await this.Skeleton.GenerateBones(true);
-				});
-			}
 		}
 
 		private void FrameSkeleton()
@@ -193,14 +170,10 @@ namespace Anamnesis.PoseModule.Views
 				if (this.Skeleton == null || CameraService.Instance.Camera == null)
 					continue;
 
+				this.Skeleton.ReadTranforms();
+
 				// TODO: allow the user to rotate camera with the mouse instead
 				this.CameraRotation = CameraService.Instance.Camera.Rotation3d;
-
-				// Update the billboard rotation
-				Quaternion flip = new Quaternion(new Vector3D(0, 1, 0), 180);
-				Quaternion angle = this.CameraRotation;
-				angle *= flip;
-				this.Billboard = angle;
 
 				// Apply camera rotation
 				QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotaion.Rotation;
@@ -211,12 +184,6 @@ namespace Anamnesis.PoseModule.Views
 				Point3D pos = this.Camera.Position;
 				pos.Z = -this.CameraDistance;
 				this.Camera.Position = pos;
-
-				// Notify bone targets that the camera has updated
-				foreach (BoneTargetVisual3d visual in this.Skeleton.BoneTargets)
-				{
-					visual.OnCameraUpdated(this);
-				}
 			}
 
 			this.cameraIsTicking = false;

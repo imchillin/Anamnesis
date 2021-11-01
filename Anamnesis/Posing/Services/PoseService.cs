@@ -20,6 +20,9 @@ namespace Anamnesis.PoseModule
 	public class PoseService : ServiceBase<PoseService>
 	{
 		public static List<SkeletonTemplateFile> SkeletonTemplates = new List<SkeletonTemplateFile>();
+
+		private const string GeneratedSkeletonDirectory = "%AppData%/Anamnesis/Skeletons/";
+
 		private static readonly Dictionary<ActorMemory, SkeletonVisual3d> ActorSkeletons = new Dictionary<ActorMemory, SkeletonVisual3d>();
 
 		private NopHookViewModel? freezeRot1;
@@ -113,32 +116,7 @@ namespace Anamnesis.PoseModule
 
 		public bool CanEdit { get; set; }
 
-		public static void SaveTemplate(SkeletonTemplateFile skeleton)
-		{
-			string name = "Generated_";
-
-			if (skeleton.ModelTypes != null)
-			{
-				for (int i = 0; i < skeleton.ModelTypes.Count; i++)
-				{
-					if (i > 0)
-						name += "_";
-
-					name += skeleton.ModelTypes[i];
-				}
-			}
-
-			if (skeleton.Race != null)
-				name += "_" + skeleton.Race;
-
-			if (skeleton.Age != null)
-				name += "_" + skeleton.Age;
-
-			SerializerService.SerializeFile("Data/Skeletons/" + name + ".json", skeleton);
-			SkeletonTemplates.Add(skeleton);
-		}
-
-		public static async Task<SkeletonVisual3d> GetVisual(ActorMemory actor)
+		public static SkeletonVisual3d GetVisual(ActorMemory actor)
 		{
 			SkeletonVisual3d skeleton;
 
@@ -157,8 +135,6 @@ namespace Anamnesis.PoseModule
 			}
 
 			skeleton.Clear();
-			await skeleton.GenerateBones();
-
 			return skeleton;
 		}
 
@@ -182,7 +158,18 @@ namespace Anamnesis.PoseModule
 			string[] templates = EmbeddedFileUtility.GetAllFilesInDirectory("Data/Skeletons/");
 			foreach (string templatePath in templates)
 			{
-				this.Load(templatePath);
+				this.Load(templatePath, true);
+			}
+
+			string generatedDir = FileService.ParseToFilePath(GeneratedSkeletonDirectory);
+
+			if (!Directory.Exists(generatedDir))
+				Directory.CreateDirectory(generatedDir);
+
+			templates = Directory.GetFiles(generatedDir);
+			foreach (string templatePath in templates)
+			{
+				this.Load(templatePath, false);
 			}
 
 			_ = Task.Run(ExtractStandardPoses);
@@ -276,15 +263,25 @@ namespace Anamnesis.PoseModule
 			this.SetEnabled(false);
 		}
 
-		private SkeletonTemplateFile Load(string path)
+		private SkeletonTemplateFile Load(string path, bool embedded)
 		{
-			SkeletonTemplateFile template = EmbeddedFileUtility.Load<SkeletonTemplateFile>(path);
+			SkeletonTemplateFile template;
+
+			if (embedded)
+			{
+				template = EmbeddedFileUtility.Load<SkeletonTemplateFile>(path);
+			}
+			else
+			{
+				template = SerializerService.DeserializeFile<SkeletonTemplateFile>(path);
+			}
+
 			template.Path = path;
 			SkeletonTemplates.Add(template);
 
 			if (template.BasedOn != null)
 			{
-				SkeletonTemplateFile baseTemplate = this.Load("Data/Skeletons/" + template.BasedOn);
+				SkeletonTemplateFile baseTemplate = this.Load("Data/Skeletons/" + template.BasedOn, embedded);
 				template.CopyBaseValues(baseTemplate);
 			}
 

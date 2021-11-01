@@ -97,6 +97,13 @@ namespace Anamnesis.Memory
 				&& this.Z == other.Z;
 		}
 
+		public bool IsApproximately(Vector other, float errorMargin = 0.001f)
+		{
+			return IsApproximately(this.X, other.X, errorMargin)
+				&& IsApproximately(this.Y, other.Y, errorMargin)
+				&& IsApproximately(this.Z, other.Z, errorMargin);
+		}
+
 		public override int GetHashCode()
 		{
 			return HashCode.Combine(this.X, this.Y, this.Z);
@@ -116,6 +123,12 @@ namespace Anamnesis.Memory
 				angle += 360;
 
 			return angle;
+		}
+
+		private static bool IsApproximately(float a, float b, float errorMargin)
+		{
+			float d = MathF.Abs(a - b);
+			return d < errorMargin;
 		}
 	}
 }

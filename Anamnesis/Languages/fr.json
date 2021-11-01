@@ -145,9 +145,6 @@
 
 	"Pose_WarningNotGPose": "Le posing n'est disponible qu'en pose de groupe. Tapez /gpose dans le chat.",
 	"Pose_WarningNotFrozen": "Les mouvements des personnages doivent-être désactivés dans le menu de pose de groupe.",
-	"Pose_GenerateSkeletonTitle": "Squelette non trouvé",
-	"Pose_GenerateSkeleton": "Aucun squelette sur le personnage {0}- En générer un ?\nSans squelette le parentage ne fonctionera pas",
-	"Pose_Generating": "Generation du squelette.Veuillez patienter",
 	"Pose_NoSkeleton": "Aucun Squelette lié à cette vue.",
 	"Pose_NothingSelected": "Personnage - Aucune selection",
 	"Pose_Save": "Sauvegarder",
