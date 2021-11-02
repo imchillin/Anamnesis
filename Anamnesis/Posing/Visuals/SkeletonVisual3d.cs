@@ -12,6 +12,7 @@ namespace Anamnesis.PoseModule
 	using System.Windows.Input;
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Memory;
+	using Anamnesis.Posing;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
@@ -297,22 +298,25 @@ namespace Anamnesis.PoseModule
 			if (this.Actor.ModelObject.Skeleton.Count <= 0)
 				return null;
 
+			string? modernName = LegacyBoneNameConverter.GetModernName(name);
+			if (modernName != null)
+				name = modernName;
+
+			BoneVisual3d? best = null;
 			foreach (BoneVisual3d bone in this.Bones)
 			{
 				if (bone.BoneName == name)
 				{
-					return bone;
-				}
+					if (best != null)
+						Log.Warning("Multiple bones with the same name!");
 
-				if (bone.OriginalBoneName == name)
-				{
-					return bone;
+					best = bone;
 				}
 			}
 
 			////Log.Information($"Optional bone not found: {name}");
 
-			return null;
+			return best;
 		}
 
 		/// <summary>
@@ -348,7 +352,9 @@ namespace Anamnesis.PoseModule
 		{
 			this.ClearSelection();
 
-			BoneVisual3d? headBone = this.GetBone("Head");
+			throw new NotImplementedException();
+
+			/*BoneVisual3d? headBone = this.GetBone("Head");
 			if (headBone == null)
 				return;
 
@@ -364,7 +370,7 @@ namespace Anamnesis.PoseModule
 				}
 			}
 
-			this.Select(headBones, SkeletonVisual3d.SelectMode.Add);
+			this.Select(headBones, SkeletonVisual3d.SelectMode.Add);*/
 		}
 
 		public void Reselect()
@@ -470,6 +476,8 @@ namespace Anamnesis.PoseModule
 					bones.Add(new BoneVisual3d(transform, this, name));
 				}
 
+				CheatBoneNames(partialSkeletonIndex, bones);
+
 				// Set parents now all the bones are loaded
 				for (int boneIndex = 0; boneIndex < count; boneIndex++)
 				{
@@ -491,6 +499,184 @@ namespace Anamnesis.PoseModule
 				{
 					this.Bones.Add(bone);
 				}
+			}
+		}
+
+#pragma warning disable
+
+		private static Dictionary<string, string> BodyBoneNames = new Dictionary<string, string>
+		{
+			{ "Body_0", "Root" },
+			{ "Body_1", "Abdomen" },
+			{ "Body_2", "Throw" },
+			{ "Body_3", "Waist" },
+			{ "Body_4", "SpineA" },
+			{ "Body_5", "LegLeft" },
+			{ "Body_6", "LegRight" },
+			{ "Body_7", "HolsterLeft" },
+			{ "Body_8", "HolsterRight" },
+			{ "Body_9", "SheatheLeft" },
+			{ "Body_10", "SheatheRight" },
+			{ "Body_11", "SpineB" },
+			{ "Body_12", "ClothBackALeft" },
+			{ "Body_13", "ClothBackARight" },
+			{ "Body_14", "ClothFrontALeft" },
+			{ "Body_15", "ClothFrontARight" },
+			{ "Body_16", "ClothSideALeft" },
+			{ "Body_17", "ClothSideARight" },
+			{ "Body_18", "KneeLeft" },
+			{ "Body_19", "KneeRight" },
+			{ "Body_20", "BreastLeft" },
+			{ "Body_21", "BreastRight" },
+			{ "Body_22", "SpineC" },
+			{ "Body_23", "ClothBackBLeft" },
+			{ "Body_24", "ClothBackBRight" },
+			{ "Body_25", "ClothFrontBLeft" },
+			{ "Body_26", "ClothFrontBRight" },
+			{ "Body_27", "ClothSideBLeft" },
+			{ "Body_28", "ClothSideBRight" },
+			{ "Body_29", "CalfLeft" },
+			{ "Body_30", "CalfRight" },
+			{ "Body_31", "ScabbardLeft" },
+			{ "Body_32", "ScabbardRight" },
+			{ "Body_33", "Neck" },
+			{ "Body_34", "ClavicleLeft" },
+			{ "Body_35", "ClavicleRight" },
+			{ "Body_36", "ClothBackCLeft" },
+			{ "Body_37", "ClothBackCRight" },
+			{ "Body_38", "ClothFrontCLeft" },
+			{ "Body_39", "ClothFrontCRight" },
+			{ "Body_40", "ClothSideCLeft" },
+			{ "Body_41", "ClothSideCRight" },
+			{ "Body_42", "PoleynLeft" },
+			{ "Body_43", "PoleynRight" },
+			{ "Body_44", "FootLeft" },
+			{ "Body_45", "FootRight" },
+			{ "Body_46", "Head" },
+			{ "Body_47", "ArmLeft" },
+			{ "Body_48", "ArmRight" },
+			{ "Body_49", "PauldronLeft" },
+			{ "Body_50", "PauldronRight" },
+			{ "Body_51", "Unknown00" },
+			{ "Body_52", "ToesLeft" },
+			{ "Body_53", "ToesRight" },
+			{ "Body_54", "HairA" },
+			{ "Body_55", "HairFrontLeft" },
+			{ "Body_56", "HairFrontRight" },
+			{ "Body_57", "EarLeft" },
+			{ "Body_58", "EarRight" },
+			{ "Body_59", "ForearmLeft" },
+			{ "Body_60", "ForearmRight" },
+			{ "Body_61", "ShoulderLeft" },
+			{ "Body_62", "ShoulderRight" },
+			{ "Body_63", "HairB" },
+			{ "Body_64", "HandLeft" },
+			{ "Body_65", "HandRight" },
+			{ "Body_66", "ShieldLeft" },
+			{ "Body_67", "ShieldRight" },
+			{ "Body_68", "EarringALeft" },
+			{ "Body_69", "EarringARight" },
+			{ "Body_70", "ElbowLeft" },
+			{ "Body_71", "ElbowRight" },
+			{ "Body_72", "CouterLeft" },
+			{ "Body_73", "CouterRight" },
+			{ "Body_74", "WristLeft" },
+			{ "Body_75", "WristRight" },
+			{ "Body_76", "IndexALeft" },
+			{ "Body_77", "IndexARight" },
+			{ "Body_78", "PinkyALeft" },
+			{ "Body_79", "PinkyARight" },
+			{ "Body_80", "RingALeft" },
+			{ "Body_81", "RingARight" },
+			{ "Body_82", "MiddleALeft" },
+			{ "Body_83", "MiddleARight" },
+			{ "Body_84", "ThumbALeft" },
+			{ "Body_85", "ThumbARight" },
+			{ "Body_86", "WeaponLeft" },
+			{ "Body_87", "WeaponRight" },
+			{ "Body_88", "EarringBLeft" },
+			{ "Body_89", "EarringBRight" },
+			{ "Body_90", "IndexBLeft" },
+			{ "Body_91", "IndexBRight" },
+			{ "Body_92", "PinkyBLeft" },
+			{ "Body_93", "PinkyBRight" },
+			{ "Body_94", "RingBLeft" },
+			{ "Body_95", "RingBRight" },
+			{ "Body_96", "MiddleBLeft" },
+			{ "Body_97", "MiddleBRight" },
+			{ "Body_98", "ThumbBLeft" },
+			{ "Body_99", "ThumbBRight" },
+			{ "Body_100", "TailA" },
+			{ "Body_101", "TailB" },
+			{ "Body_102", "TailC" },
+			{ "Body_103", "TailD" },
+			{ "Body_104", "TailE" },
+			{ "Head_0", "RootHead" },
+			{ "Head_1", "Jaw" },
+			{ "Head_2", "EyelidLowerLeft" },
+			{ "Head_3", "EyelidLowerRight" },
+			{ "Head_4", "EyeLeft" },
+			{ "Head_5", "EyeRight" },
+			{ "Head_6", "Nose" },
+			{ "Head_7", "CheekLeft" },
+			{ "Head_8", "CheekRight" },
+			{ "Head_9", "LipsLeft" },
+			{ "Head_10", "LipsRight" },
+			{ "Head_11", "EyebrowLeft" },
+			{ "Head_12", "EyebrowRight" },
+			{ "Head_13", "Bridge" },
+			{ "Head_14", "BrowLeft" },
+			{ "Head_15", "BrowRight" },
+			{ "Head_16", "LipUpperA" },
+			{ "Head_17", "EyelidUpperLeft" },
+			{ "Head_18", "EyelidUpperRight" },
+			{ "Head_19", "LipLowerA" },
+			{ "Head_20", "LipUpperB" },
+			{ "Head_21", "LipLowerB" },
+		};
+
+		private static void CheatBoneNames(int partIndex, List<BoneVisual3d> bones)
+		{
+			string cat = partIndex switch
+			{
+				0 => "Body",
+				1 => "Head",
+				2 => "Hair",
+				3 => "Met",
+				4 => "Top",
+			};
+
+			for (int i = 0; i < bones.Count; i++)
+			{
+				LogNewBoneLoc(cat, i, bones);
+			}
+		}
+
+		private static void LogNewBoneLoc(string cat, int i, List<BoneVisual3d> bones)
+		{
+			string oldKeyName = $"{cat}_{i}";
+			string newKeyName = bones[i].BoneName;
+			string locName = oldKeyName;
+
+			if (BodyBoneNames.ContainsKey(oldKeyName))
+				locName = BodyBoneNames[oldKeyName];
+
+			string oldLocValue = LocalizationService.GetString($"Pose_{locName}", true);
+			string newLocValue = LocalizationService.GetString($"Pose_{newKeyName}", true);
+
+			if (string.IsNullOrEmpty(oldLocValue))
+				return;
+
+			if (!string.IsNullOrEmpty(newLocValue))
+			{
+				if (oldLocValue != newLocValue)
+				{
+					Log.Warning($"{newLocValue} != {oldLocValue}");
+				}
+			}
+			else
+			{
+				Log.Information($"\"Pose_{newKeyName}\": \"{oldLocValue}\",");
 			}
 		}
 

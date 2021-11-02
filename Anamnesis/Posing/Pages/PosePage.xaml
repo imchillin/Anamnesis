@@ -57,9 +57,15 @@
 
 							<Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="6, 3, 6, 3">
 
-								<XivToolsWpf:TextBlock
-									Style="{StaticResource Header}"
-									Text="{Binding Skeleton.CurrentBone.Tooltip}" />
+								<XivToolsWpf:TextBlock Style="{StaticResource Header}"
+													   Text="{Binding Skeleton.CurrentBone.Tooltip}"
+													   FontWeight="Bold"/>
+
+								<XivToolsWpf:TextBlock Style="{StaticResource Header}"
+													   Text="{Binding Skeleton.CurrentBone.BoneName}" 
+													   HorizontalAlignment="Right"
+													   FontSize="10"
+													   VerticalAlignment="Top"/>
 
 								<XivToolsWpf:TextBlock
 									Key="Pose_NothingSelected"

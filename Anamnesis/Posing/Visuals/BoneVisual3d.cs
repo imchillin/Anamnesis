@@ -50,8 +50,6 @@ namespace Anamnesis.PoseModule
 
 			this.target = new BoneTargetVisual3d(this);
 			this.Children.Add(this.target);
-
-			this.OriginalBoneName = name;
 			this.BoneName = name;
 		}
 
@@ -59,7 +57,6 @@ namespace Anamnesis.PoseModule
 		public TransformMemory ViewModel { get; set; }
 
 		public bool IsEnabled { get; set; } = true;
-		public string OriginalBoneName { get; set; }
 		public string BoneName { get; set; }
 
 		public bool CanRotate => PoseService.Instance.FreezeRotation;

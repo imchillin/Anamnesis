@@ -61,6 +61,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Data\LegacyBoneNameConverter.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Posing\LegacyBoneNameConverter.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ApplicationDefinition Update="App.xaml">
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
