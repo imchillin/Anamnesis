@@ -11,12 +11,7 @@ namespace Anamnesis.PoseModule
 	using System.Windows;
 	using System.Windows.Input;
 	using System.Windows.Media.Media3D;
-	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Memory;
-	using Anamnesis.Posing;
-	using Anamnesis.Posing.Extensions;
-	using Anamnesis.Posing.Templates;
-	using Anamnesis.Posing.Visuals;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
@@ -57,7 +52,6 @@ namespace Anamnesis.PoseModule
 
 		public bool LinkEyes { get; set; } = true;
 		public ActorMemory Actor { get; private set; }
-		public SkeletonTemplateFile? File { get; private set; }
 		public int SelectedCount => this.SelectedBones.Count;
 		public bool CanEditBone => this.SelectedBones.Count == 1;
 		public bool HasSelection => this.SelectedBones.Count > 0;
@@ -296,8 +290,11 @@ namespace Anamnesis.PoseModule
 
 		public BoneVisual3d? GetBone(string name)
 		{
-			// only show actors that have a body
-			if (this.Actor?.ModelObject?.Skeleton?.Skeleton?.Body == null)
+			if (this.Actor?.ModelObject?.Skeleton == null)
+				return null;
+
+			// only show actors that have atleast one partial skeleton
+			if (this.Actor.ModelObject.Skeleton.Count <= 0)
 				return null;
 
 			foreach (BoneVisual3d bone in this.Bones)
@@ -408,10 +405,10 @@ namespace Anamnesis.PoseModule
 				this.Bones.Clear();
 				this.Children.Clear();
 
-				if (this.Actor?.ModelObject?.Skeleton?.Skeleton == null)
+				if (this.Actor?.ModelObject?.Skeleton == null)
 					return;
 
-				SkeletonMemory skeletonVm = this.Actor.ModelObject.Skeleton.Skeleton;
+				SkeletonMemory skeletonVm = this.Actor.ModelObject.Skeleton;
 
 				////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
 				this.Generate(skeletonVm);
@@ -446,12 +443,9 @@ namespace Anamnesis.PoseModule
 
 		private void Generate(SkeletonMemory memory)
 		{
-			this.File = memory.GetSkeletonTemplate(this.Actor);
-			Log.Information($"Loaded skeleton file: {this.File?.Path}");
-
 			// Get all bones
 			this.Bones.Clear();
-			this.GetBones(memory.Body, "Body");
+			/*this.GetBones(memory.Body, "Body");
 			this.GetBones(memory.Head, "Head");
 			this.GetBones(memory.Hair, "Hair");
 			this.GetBones(memory.Met, "Met");
@@ -468,41 +462,29 @@ namespace Anamnesis.PoseModule
 					}
 				}
 			}
-
-			if (this.File != null && this.File.Parenting != null)
+			// parenting from file
+			foreach (BoneVisual3d bone in this.Bones)
 			{
-				// parenting from file
-				foreach (BoneVisual3d bone in this.Bones)
+				string? parentBoneName;
+				if (this.File.Parenting.TryGetValue(bone.BoneName, out parentBoneName) || this.File.Parenting.TryGetValue(bone.OriginalBoneName, out parentBoneName))
 				{
-					string? parentBoneName;
-					if (this.File.Parenting.TryGetValue(bone.BoneName, out parentBoneName) || this.File.Parenting.TryGetValue(bone.OriginalBoneName, out parentBoneName))
-					{
-						bone.Parent = this.GetBone(parentBoneName);
+					bone.Parent = this.GetBone(parentBoneName);
 
-						if (bone.Parent == null)
-						{
-							throw new Exception($"Failed to find target parent bone: {parentBoneName}");
-						}
-					}
-					else
+					if (bone.Parent == null)
 					{
-						this.Children.Add(bone);
+						throw new Exception($"Failed to find target parent bone: {parentBoneName}");
 					}
 				}
-			}
-			else
-			{
-				// no parenting...
-				PoseService.Instance.EnableParenting = false;
-
-				foreach (BoneVisual3d bone in this.Bones)
+				else
 				{
 					this.Children.Add(bone);
 				}
-			}
+			}*/
+
+			throw new NotImplementedException();
 		}
 
-		private void GetBones(BonesMemory? vm, string name)
+		private void GetBones(RenderSkeletonMemory? vm, string name)
 		{
 			if (vm == null || vm.Transforms == null)
 				return;

@@ -45,6 +45,7 @@ namespace Anamnesis.Memory
 			None = 0,
 			Pointer = 1,
 			ActorRefresh = 2,
+			DontCacheOffsets = 4,
 		}
 
 		public MemoryBase? Parent { get; set; }
@@ -104,7 +105,7 @@ namespace Anamnesis.Memory
 			if (!this.binds.TryGetValue(propertyName, out bind))
 				throw new Exception("Attempt to get address of property that is not a bind");
 
-			return bind.GetAddress(this.Address);
+			return bind.GetAddress();
 		}
 
 		protected bool IsFrozen(string propertyName)
@@ -238,7 +239,7 @@ namespace Anamnesis.Memory
 
 			try
 			{
-				IntPtr bindAddress = bind.GetAddress(this.Address);
+				IntPtr bindAddress = bind.GetAddress();
 
 				if (bindAddress == IntPtr.Zero)
 					return;
@@ -322,10 +323,7 @@ namespace Anamnesis.Memory
 				if (bind.Flags.HasFlag(BindFlags.Pointer))
 					throw new NotSupportedException("Attempt to write a pointer value to memory.");
 
-				if (bind.Offsets.Length > 1 && !bind.Flags.HasFlag(BindFlags.Pointer))
-					throw new Exception("Bind address has multiple offsets but is not a pointer. This is not supported.");
-
-				IntPtr bindAddress = this.Address + bind.Offsets[0];
+				IntPtr bindAddress = bind.GetAddress();
 				object? val = bind.Property.GetValue(this);
 
 				if (val == null)
@@ -346,12 +344,18 @@ namespace Anamnesis.Memory
 		[AttributeUsage(AttributeTargets.Property)]
 		public class BindAttribute : Attribute
 		{
-			public readonly int[] Offsets;
+			public readonly int[]? Offsets;
 			public readonly BindFlags Flags;
+			public readonly string? OffsetPropertyName;
 
 			public BindAttribute(int offset)
 			{
 				this.Offsets = new[] { offset };
+			}
+
+			public BindAttribute(string offsetProperty)
+			{
+				this.OffsetPropertyName = offsetProperty;
 			}
 
 			public BindAttribute(int offset, BindFlags flags)
@@ -378,16 +382,26 @@ namespace Anamnesis.Memory
 			public readonly MemoryBase Memory;
 			public readonly PropertyInfo Property;
 			public readonly BindAttribute Attribute;
+			public readonly PropertyInfo? OffsetProperty;
+
+			private int[]? offsets;
 
 			public BindInfo(MemoryBase memory, PropertyInfo property, BindAttribute attribute)
 			{
 				this.Memory = memory;
 				this.Property = property;
 				this.Attribute = attribute;
+
+				if (attribute.OffsetPropertyName != null)
+				{
+					Type memoryType = memory.GetType();
+					this.OffsetProperty = memoryType.GetProperty(attribute.OffsetPropertyName);
+				}
+
+				this.GetOffsets();
 			}
 
 			public string Name => this.Property.Name;
-			public int[] Offsets => this.Attribute.Offsets;
 			public Type Type => this.Property.PropertyType;
 			public BindFlags Flags => this.Attribute.Flags;
 
@@ -395,11 +409,14 @@ namespace Anamnesis.Memory
 
 			public bool IsChildMemory => typeof(MemoryBase).IsAssignableFrom(this.Type);
 
-			public IntPtr GetAddress(IntPtr objAddress)
+			public IntPtr GetAddress()
 			{
-				IntPtr bindAddress = objAddress + this.Offsets[0];
+				if (this.offsets == null)
+					this.offsets = this.GetOffsets();
 
-				if (this.Offsets.Length > 1 && !this.Flags.HasFlag(BindFlags.Pointer))
+				IntPtr bindAddress = this.Memory.Address + this.offsets[0];
+
+				if (this.offsets.Length > 1 && !this.Flags.HasFlag(BindFlags.Pointer))
 					throw new Exception("Bind address has multiple offsets but is not a pointer. This is not supported.");
 
 				if (typeof(MemoryBase).IsAssignableFrom(this.Type))
@@ -408,15 +425,43 @@ namespace Anamnesis.Memory
 					{
 						bindAddress = MemoryService.Read<IntPtr>(bindAddress);
 
-						for (int i = 1; i < this.Offsets.Length; i++)
+						for (int i = 1; i < this.offsets.Length; i++)
 						{
-							bindAddress += this.Offsets[i];
+							bindAddress += this.offsets[i];
 							bindAddress = MemoryService.Read<IntPtr>(bindAddress);
 						}
 					}
 				}
+				else if (this.Flags.HasFlag(BindFlags.Pointer))
+				{
+					bindAddress = MemoryService.Read<IntPtr>(bindAddress);
+				}
+
+				if (this.Flags.HasFlag(BindFlags.DontCacheOffsets))
+					this.offsets = null;
 
 				return bindAddress;
+			}
+
+			public int[] GetOffsets()
+			{
+				if (this.Attribute.Offsets != null)
+					return this.Attribute.Offsets;
+
+				if (this.OffsetProperty != null)
+				{
+					object? offsetValue = this.OffsetProperty.GetValue(this.Memory);
+
+					if (offsetValue is int[] offsetInts)
+						return offsetInts;
+
+					if (offsetValue is int offset)
+						return new int[] { offset };
+
+					throw new Exception($"Unknown offset type: {offsetValue} bind: {this}");
+				}
+
+				throw new Exception($"No offsets for bind: {this}");
 			}
 
 			public override string ToString()

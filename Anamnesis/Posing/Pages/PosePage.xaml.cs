@@ -162,19 +162,6 @@ namespace Anamnesis.PoseModule.Pages
 				this.ThreeDView.DataContext = this.Skeleton;
 				this.GuiView.DataContext = this.Skeleton;
 				this.MatrixView.DataContext = this.Skeleton;
-
-				if (this.Skeleton.File != null)
-				{
-					if (!this.Skeleton.File.AllowPoseGui)
-					{
-						this.ViewSelector.SelectedIndex = 1;
-					}
-
-					if (!this.Skeleton.File.AllowPoseMatrix)
-					{
-						this.ViewSelector.SelectedIndex = 2;
-					}
-				}
 			}
 			catch (Exception ex)
 			{

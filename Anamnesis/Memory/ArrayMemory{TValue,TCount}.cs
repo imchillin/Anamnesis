@@ -8,23 +8,51 @@ namespace Anamnesis.Memory
 	using System.Collections.Generic;
 	using System.ComponentModel;
 
-	public class ArrayMemory<T> : MemoryBase, IEnumerable<T>
-		where T : MemoryBase
+	public abstract class ArrayMemory<TValue, TCount> : MemoryBase, IEnumerable<TValue>
+		where TValue : MemoryBase
+		where TCount : struct
 	{
-		private readonly List<T> items = new();
+		private readonly List<TValue> items = new();
 
 		private int lastCount = 0;
 		private IntPtr lastAddress = IntPtr.Zero;
 
-		[Bind(0x000)] public int Count { get; protected set; }
-		[Bind(0x008, BindFlags.Pointer)] public IntPtr ArrayAddress { get; protected set; }
+		[Bind(nameof(CountOffset))] public TCount ArrayCount { get; set; }
+		[Bind(nameof(AddressOffset))] public IntPtr ArrayAddress { get; set; }
 
-		public T this[int index]
+		public virtual int CountOffset => 0x000;
+		public virtual int AddressOffset => 0x008;
+
+		public int Count
+		{
+			get
+			{
+				// Kinda hacky, but no support for generic numbers yet!
+				if (this.ArrayCount is int i)
+					return i;
+
+				if (this.ArrayCount is short s)
+					return s;
+
+				if (this.ArrayCount is long l)
+					return (int)l;
+
+				if (this.ArrayCount is ulong r)
+					return (int)r;
+
+				if (this.ArrayCount is ushort u)
+					return u;
+
+				throw new Exception($"Array count type: {typeof(TCount)} is not a number!");
+			}
+		}
+
+		public TValue this[int index]
 		{
 			get => this.items[index];
 		}
 
-		public IEnumerator<T> GetEnumerator() => this.items.GetEnumerator();
+		public IEnumerator<TValue> GetEnumerator() => this.items.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => this.items.GetEnumerator();
 
 		public override void Tick()
@@ -43,9 +71,10 @@ namespace Anamnesis.Memory
 		{
 			lock (this.items)
 			{
-				foreach (T item in this.items)
+				foreach (TValue item in this.items)
 				{
 					item.Dispose();
+					this.Children.Remove(item);
 				}
 
 				this.items.Clear();
@@ -58,10 +87,11 @@ namespace Anamnesis.Memory
 					IntPtr address = this.ArrayAddress;
 					for (int i = 0; i < this.Count; i++)
 					{
-						T instance = Activator.CreateInstance<T>();
+						TValue instance = Activator.CreateInstance<TValue>();
 						instance.Parent = this;
 						instance.SetAddress(address);
 						this.items.Add(instance);
+						this.Children.Add(instance);
 
 						address += instance.Size;
 					}
@@ -77,11 +107,8 @@ namespace Anamnesis.Memory
 		{
 			base.OnSelfPropertyChanged(sender, e);
 
-			if (e.PropertyName != nameof(this.Count) && e.PropertyName != nameof(this.ArrayAddress))
-				return;
-
 			if (!this.IsReading)
-				throw new Exception("Array properties should only change while reading memory");
+				return;
 
 			// did these values actually change
 			if (this.lastCount == this.Count && this.lastAddress == this.ArrayAddress)

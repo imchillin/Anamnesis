@@ -73,12 +73,9 @@ namespace Anamnesis.Files
 				throw new Exception("Actor has no model");
 
 			if (actor.ModelObject.Skeleton == null)
-				throw new Exception("Actor model has no skeleton wrapper");
+				throw new Exception("Actor model has no skeleton");
 
-			if (actor.ModelObject.Skeleton.Skeleton == null)
-				throw new Exception("Actor skeleton wrapper has no skeleton");
-
-			SkeletonMemory skeletonMem = actor.ModelObject.Skeleton.Skeleton;
+			SkeletonMemory? skeletonMem = actor.ModelObject.Skeleton;
 
 			PoseService.Instance.SetEnabled(true);
 			PoseService.Instance.CanEdit = false;

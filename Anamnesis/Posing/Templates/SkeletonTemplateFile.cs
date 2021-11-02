@@ -23,7 +23,7 @@ namespace Anamnesis.Posing.Templates
 		public Dictionary<string, string>? BoneNames { get; set; }
 		public Dictionary<string, string>? Parenting { get; set; }
 
-		public bool IsValid(SkeletonMemory self, ActorMemory actor)
+		public bool IsValid(PartialSkeletonArrayMemory self, ActorMemory actor)
 		{
 			if (this.ModelTypes != null)
 			{

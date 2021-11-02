@@ -8,17 +8,17 @@ namespace Anamnesis.Memory
 	using System.Runtime.InteropServices;
 	using System.Text;
 
-	public struct SeString
+	public struct Utf8String
 	{
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
 		public byte[]? Bytes;
 
-		public static bool operator ==(SeString left, SeString right)
+		public static bool operator ==(Utf8String left, Utf8String right)
 		{
 			return left.Equals(right);
 		}
 
-		public static bool operator !=(SeString left, SeString right)
+		public static bool operator !=(Utf8String left, Utf8String right)
 		{
 			return !(left == right);
 		}
@@ -50,7 +50,7 @@ namespace Anamnesis.Memory
 
 		public override bool Equals(object? obj)
 		{
-			if (obj is SeString other)
+			if (obj is Utf8String other)
 			{
 				if (this.Bytes == null)
 					return other.Bytes == null;
