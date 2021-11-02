@@ -468,6 +468,12 @@ namespace Anamnesis.PoseModule
 
 				List<BoneVisual3d> bones = new List<BoneVisual3d>();
 
+				// TODO: since multiple partial skeletons can contain the same bone, we need to dtermine a priority
+				// for which one should be mapped, OR we should allow a single BoneVisual3D to control multiple bones
+				// with the same name.
+				// e.g: the Head bone 'j_kao' and jaw bone 'j_ago' appear in the body, head, and hair skeletons.
+				// the main jaw bone we want needs to be the head version (partialSkeleton 2).
+
 				// Load all bones first
 				for (int boneIndex = 0; boneIndex < count; boneIndex++)
 				{
