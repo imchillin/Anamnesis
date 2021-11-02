@@ -445,56 +445,52 @@ namespace Anamnesis.PoseModule
 		{
 			// Get all bones
 			this.Bones.Clear();
-			/*this.GetBones(memory.Body, "Body");
-			this.GetBones(memory.Head, "Head");
-			this.GetBones(memory.Hair, "Hair");
-			this.GetBones(memory.Met, "Met");
-			this.GetBones(memory.Top, "Top");
 
-			if (this.File != null && this.File.BoneNames != null)
+			for (int partialSkeletonIndex = 0; partialSkeletonIndex < memory.Count; partialSkeletonIndex++)
 			{
-				foreach (BoneVisual3d bone in this.Bones)
+				PartialSkeletonMemory partialSkeleton = memory[partialSkeletonIndex];
+
+				HkaPoseMemory? bestHkaPose = partialSkeleton.Pose1;
+
+				if (bestHkaPose == null || bestHkaPose.Skeleton?.Bones == null || bestHkaPose.Skeleton?.ParentIndices == null || bestHkaPose.Transforms == null)
 				{
-					string? newName;
-					if (this.File.BoneNames.TryGetValue(bone.BoneName, out newName))
+					Log.Warning("Failed to find best HkaSkeleton for partial skeleton");
+					continue;
+				}
+
+				int count = bestHkaPose.Transforms.Count;
+
+				List<BoneVisual3d> bones = new List<BoneVisual3d>();
+
+				// Load all bones first
+				for (int boneIndex = 0; boneIndex < count; boneIndex++)
+				{
+					string name = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
+					TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
+					bones.Add(new BoneVisual3d(transform, this, name));
+				}
+
+				// Set parents now all the bones are loaded
+				for (int boneIndex = 0; boneIndex < count; boneIndex++)
+				{
+					int parentIndex = bestHkaPose.Skeleton.ParentIndices[boneIndex];
+
+					if (parentIndex < 0)
 					{
-						bone.BoneName = newName;
+						// this bone has no parent, is root.
+						this.Children.Add(bones[boneIndex]);
+					}
+					else
+					{
+						bones[boneIndex].Parent = bones[parentIndex];
 					}
 				}
-			}
-			// parenting from file
-			foreach (BoneVisual3d bone in this.Bones)
-			{
-				string? parentBoneName;
-				if (this.File.Parenting.TryGetValue(bone.BoneName, out parentBoneName) || this.File.Parenting.TryGetValue(bone.OriginalBoneName, out parentBoneName))
+
+				// push the results into the bone list
+				foreach (BoneVisual3d bone in bones)
 				{
-					bone.Parent = this.GetBone(parentBoneName);
-
-					if (bone.Parent == null)
-					{
-						throw new Exception($"Failed to find target parent bone: {parentBoneName}");
-					}
+					this.Bones.Add(bone);
 				}
-				else
-				{
-					this.Children.Add(bone);
-				}
-			}*/
-
-			throw new NotImplementedException();
-		}
-
-		private void GetBones(RenderSkeletonMemory? vm, string name)
-		{
-			if (vm == null || vm.Transforms == null)
-				return;
-
-			for (int i = 0; i < vm.Transforms.Count; i++)
-			{
-				TransformMemory? transform = vm.Transforms[i];
-				string boneName = name + "_" + i;
-				BoneVisual3d bone = new BoneVisual3d(transform, this, boneName);
-				this.Bones.Add(bone);
 			}
 		}
 

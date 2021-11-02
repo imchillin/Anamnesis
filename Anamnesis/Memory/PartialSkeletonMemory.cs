@@ -14,7 +14,5 @@ namespace Anamnesis.Memory
 		[Bind(0x148, BindFlags.Pointer)] public HkaPoseMemory? Pose2 { get; set; }
 		[Bind(0x150, BindFlags.Pointer)] public HkaPoseMemory? Pose3 { get; set; }
 		[Bind(0x158, BindFlags.Pointer)] public HkaPoseMemory? Pose4 { get; set; }
-
-		[Bind(0x160)] public RenderSkeletonMemory? PartialSkeleton { get; set; }
 	}
 }
