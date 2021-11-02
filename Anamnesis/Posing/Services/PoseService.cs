@@ -5,13 +5,11 @@ namespace Anamnesis.PoseModule
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Diagnostics;
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
-	using Anamnesis.Posing.Templates;
 	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -19,10 +17,6 @@ namespace Anamnesis.PoseModule
 	[AddINotifyPropertyChangedInterface]
 	public class PoseService : ServiceBase<PoseService>
 	{
-		public static List<SkeletonTemplateFile> SkeletonTemplates = new List<SkeletonTemplateFile>();
-
-		private const string GeneratedSkeletonDirectory = "%AppData%/Anamnesis/Skeletons/";
-
 		private static readonly Dictionary<ActorMemory, SkeletonVisual3d> ActorSkeletons = new Dictionary<ActorMemory, SkeletonVisual3d>();
 
 		private NopHookViewModel? freezeRot1;
@@ -155,23 +149,6 @@ namespace Anamnesis.PoseModule
 
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
 
-			string[] templates = EmbeddedFileUtility.GetAllFilesInDirectory("Data/Skeletons/");
-			foreach (string templatePath in templates)
-			{
-				this.Load(templatePath, true);
-			}
-
-			string generatedDir = FileService.ParseToFilePath(GeneratedSkeletonDirectory);
-
-			if (!Directory.Exists(generatedDir))
-				Directory.CreateDirectory(generatedDir);
-
-			templates = Directory.GetFiles(generatedDir);
-			foreach (string templatePath in templates)
-			{
-				this.Load(templatePath, false);
-			}
-
 			_ = Task.Run(ExtractStandardPoses);
 		}
 
@@ -261,45 +238,6 @@ namespace Anamnesis.PoseModule
 		private void OnGposeStateChanging()
 		{
 			this.SetEnabled(false);
-		}
-
-		private SkeletonTemplateFile Load(string path, bool embedded)
-		{
-			SkeletonTemplateFile template;
-
-			if (embedded)
-			{
-				template = EmbeddedFileUtility.Load<SkeletonTemplateFile>(path);
-			}
-			else
-			{
-				template = SerializerService.DeserializeFile<SkeletonTemplateFile>(path);
-			}
-
-			template.Path = path;
-			SkeletonTemplates.Add(template);
-
-			if (template.BasedOn != null)
-			{
-				SkeletonTemplateFile baseTemplate = this.Load("Data/Skeletons/" + template.BasedOn, embedded);
-				template.CopyBaseValues(baseTemplate);
-			}
-
-			// Validate that all bone names are unique
-			if (template.BoneNames != null)
-			{
-				HashSet<string> boneNames = new HashSet<string>();
-
-				foreach ((string orignal, string name) in template.BoneNames)
-				{
-					if (boneNames.Contains(name))
-						throw new Exception($"Duplicate bone name: {name} in skeleton file: {path}");
-
-					boneNames.Add(name);
-				}
-			}
-
-			return template;
 		}
 	}
 }

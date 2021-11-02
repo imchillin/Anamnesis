@@ -10,6 +10,7 @@ namespace Anamnesis.Memory
 
 		public class TransformArrayMemory : ArrayMemory<TransformMemory, int>
 		{
+			public override int ElementSize => 48;
 		}
 	}
 }

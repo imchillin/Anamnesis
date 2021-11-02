@@ -52,8 +52,6 @@ namespace Anamnesis.Memory
 		public bool IsReading { get; private set; }
 		public bool IsWriting { get; private set; }
 
-		public virtual int Size { get => throw new NotSupportedException(); }
-
 		protected static ILogger Log => Serilog.Log.ForContext<MemoryBase>();
 
 		public virtual void SetAddress(IntPtr address)
@@ -397,8 +395,6 @@ namespace Anamnesis.Memory
 					Type memoryType = memory.GetType();
 					this.OffsetProperty = memoryType.GetProperty(attribute.OffsetPropertyName);
 				}
-
-				this.GetOffsets();
 			}
 
 			public string Name => this.Property.Name;

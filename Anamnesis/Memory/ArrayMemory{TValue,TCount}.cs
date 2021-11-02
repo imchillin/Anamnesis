@@ -9,7 +9,6 @@ namespace Anamnesis.Memory
 	using System.ComponentModel;
 
 	public abstract class ArrayMemory<TValue, TCount> : MemoryBase, IEnumerable<TValue>
-		where TValue : MemoryBase
 		where TCount : struct
 	{
 		private readonly List<TValue> items = new();
@@ -22,6 +21,7 @@ namespace Anamnesis.Memory
 
 		public virtual int CountOffset => 0x000;
 		public virtual int AddressOffset => 0x008;
+		public abstract int ElementSize { get; }
 
 		public int Count
 		{
@@ -73,8 +73,11 @@ namespace Anamnesis.Memory
 			{
 				foreach (TValue item in this.items)
 				{
-					item.Dispose();
-					this.Children.Remove(item);
+					if (item is MemoryBase memory)
+					{
+						memory.Dispose();
+						this.Children.Remove(memory);
+					}
 				}
 
 				this.items.Clear();
@@ -82,18 +85,39 @@ namespace Anamnesis.Memory
 				if (this.ArrayAddress == IntPtr.Zero || this.Count <= 0)
 					return;
 
+				// !!
+				if (this.Count > 2000)
+					return;
+
 				try
 				{
 					IntPtr address = this.ArrayAddress;
 					for (int i = 0; i < this.Count; i++)
 					{
-						TValue instance = Activator.CreateInstance<TValue>();
-						instance.Parent = this;
-						instance.SetAddress(address);
-						this.items.Add(instance);
-						this.Children.Add(instance);
+						if (typeof(MemoryBase).IsAssignableFrom(typeof(TValue)))
+						{
+							TValue instance = Activator.CreateInstance<TValue>();
+							MemoryBase? memory = instance as MemoryBase;
 
-						address += instance.Size;
+							if (memory == null)
+								throw new Exception($"Faield to create instance of type: {typeof(TValue)}");
+
+							memory.Parent = this;
+							memory.SetAddress(address);
+							this.Children.Add(memory);
+							this.items.Add(instance);
+						}
+						else
+						{
+							object? instance = MemoryService.Read(address, typeof(TValue));
+
+							if (instance is TValue instanceValue)
+							{
+								this.items.Add(instanceValue);
+							}
+						}
+
+						address += this.ElementSize;
 					}
 				}
 				catch (Exception ex)
