@@ -270,8 +270,8 @@ namespace Anamnesis.GUI.Views
 				List<EntryWrapper> subResults = new();
 				this.GetEntries(subDir, ref subResults);
 
-				if (subResults.Count == 0)
-					continue;
+				////if (subResults.Count == 0)
+				////	continue;
 
 				if (!this.IsFlattened)
 				{
@@ -482,7 +482,7 @@ namespace Anamnesis.GUI.Views
 				if (wrapper == null)
 					continue;
 
-				if (wrapper.Entry == entry)
+				if (wrapper.Entry.FullName == entry.FullName)
 				{
 					this.selected = wrapper;
 				}
