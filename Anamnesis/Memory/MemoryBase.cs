@@ -194,6 +194,11 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		protected virtual void RaisePropertyChanged(string propertyName)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
 		private void ReadAllFromMemory()
 		{
 			if (this.Address == IntPtr.Zero)

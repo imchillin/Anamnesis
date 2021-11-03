@@ -26,7 +26,8 @@
 			  IsEnabled="{Binding GPoseService.IsOverworld}">
 
 			<GroupBox Padding="3,0,3,0"
-					  Style="{StaticResource PanelGroupBox}">
+					  Style="{StaticResource PanelGroupBox}"
+					  Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
 				<GroupBox.Header>
 					<XivToolsWpf:Header Key="Character_Customize_Header"
 										Icon="ConciergeBell" />
@@ -39,7 +40,8 @@
 
 		<GroupBox Grid.Row="0"
 				  Grid.Column="1"
-				  Style="{StaticResource PanelGroupBox}">
+				  Style="{StaticResource PanelGroupBox}"
+				  Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
 			<GroupBox.Header>
 				<XivToolsWpf:Header Key="Character_Equipment_Header"
 									Icon="ChessQueen" />
@@ -54,7 +56,8 @@
 							Orientation="Horizontal">
 
 					<Button Click="OnNpcSmallclothesClicked"
-							Style="{StaticResource TransparentIconButton}">
+							Style="{StaticResource TransparentIconButton}"
+							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
 
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_NpcSmallclothes" />
@@ -77,7 +80,45 @@
 				</StackPanel>
 
 				<views:EquipmentEditor DataContext="{Binding Actor}"
-									   Margin="0, 0, 0, -10" />
+									   Margin="0, 0, 0, -10"/>
+
+			
+			</Grid>
+		</GroupBox>
+
+		<GroupBox Grid.Row="0"
+				  Grid.Column="1"
+				  Style="{StaticResource PanelGroupBox}"
+				  Visibility="{Binding Actor.IsPlayer, Converter={StaticResource !B2V}}">
+
+			<GroupBox.Header>
+				<XivToolsWpf:Header Key="Character_Equipment_Monster_Header"
+									Icon="ChessQueen" />
+			</GroupBox.Header>
+
+			<Grid>
+				<StackPanel Height="20"
+							Margin="0,-18,-4,0"
+							HorizontalAlignment="Right"
+							VerticalAlignment="Top"
+							Orientation="Horizontal">
+
+					<Button Click="OnClearClicked"
+							Style="{StaticResource TransparentIconButton}">
+
+						<Button.ToolTip>
+							<XivToolsWpf:TextBlock Key="Character_Equipment_Clear" />
+						</Button.ToolTip>
+
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
+									  Icon="Eraser" />
+					</Button>
+				</StackPanel>
+
+				<views:MonsterVariantView DataContext="{Binding Actor}"
+										  Margin="0, 0, 0, -10"
+										  Visibility="{Binding IsPlayer, Converter={StaticResource !B2V}}" />
+
 			</Grid>
 		</GroupBox>
 
@@ -182,15 +223,17 @@
 
 				</GroupBox>
 
-				<GroupBox Style="{StaticResource PanelGroupBox}"
-						  Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
-					<GroupBox.Header>
-						<XivToolsWpf:Header Key="Character_Model_Header"
-											Icon="GraduationCap" />
-					</GroupBox.Header>
+				<Grid Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
+					<GroupBox Style="{StaticResource PanelGroupBox}"
+							  Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
+						<GroupBox.Header>
+							<XivToolsWpf:Header Key="Character_Model_Header"
+												Icon="GraduationCap" />
+						</GroupBox.Header>
 
-					<views:CharacterModelEditor DataContext="{Binding Actor}" />
-				</GroupBox>
+						<views:CharacterModelEditor DataContext="{Binding Actor}" />
+					</GroupBox>
+				</Grid>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}"
 						  Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">

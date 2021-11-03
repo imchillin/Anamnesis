@@ -38,6 +38,8 @@ namespace Anamnesis.Memory
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
 
+		public bool IsPlayer => this.ModelObject != null && Enum.IsDefined(typeof(ActorModelMemory.DataPaths), this.ModelObject.DataPath);
+
 		public int ObjectKindInt
 		{
 			get => (int)this.ObjectKind;
@@ -113,6 +115,10 @@ namespace Anamnesis.Memory
 			{
 				this.IsRefreshing = false;
 			}
+
+			this.RaisePropertyChanged(nameof(this.IsPlayer));
+			await Task.Delay(150);
+			this.RaisePropertyChanged(nameof(this.IsPlayer));
 		}
 
 		public void OnRetargeted()

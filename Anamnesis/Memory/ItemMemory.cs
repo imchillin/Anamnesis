@@ -14,9 +14,9 @@ namespace Anamnesis.Memory
 		// Item's dont have a 'Set' but the UI wants to bind to something, so...
 		public ushort Set { get; set; } = 0;
 
-		public void Clear()
+		public void Clear(bool isPlayer)
 		{
-			this.Base = 0;
+			this.Base = (ushort)(isPlayer ? 0 : 1);
 			this.Variant = 0;
 			this.Dye = 0;
 		}

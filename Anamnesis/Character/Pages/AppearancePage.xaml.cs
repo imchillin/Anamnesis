@@ -52,16 +52,19 @@ namespace Anamnesis.Character.Pages
 
 		private void OnClearClicked(object sender, RoutedEventArgs e)
 		{
-			this.Actor?.Equipment?.Arms?.Clear();
-			this.Actor?.Equipment?.Chest?.Clear();
-			this.Actor?.Equipment?.Ear?.Clear();
-			this.Actor?.Equipment?.Feet?.Clear();
-			this.Actor?.Equipment?.Head?.Clear();
-			this.Actor?.Equipment?.Legs?.Clear();
-			this.Actor?.Equipment?.LFinger?.Clear();
-			this.Actor?.Equipment?.Neck?.Clear();
-			this.Actor?.Equipment?.RFinger?.Clear();
-			this.Actor?.Equipment?.Wrist?.Clear();
+			if (this.Actor == null)
+				return;
+
+			this.Actor.Equipment?.Arms?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Chest?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Ear?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Feet?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Head?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Legs?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Neck?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsPlayer);
 
 			this.Actor?.ModelObject?.Weapons?.Hide();
 			this.Actor?.ModelObject?.Weapons?.SubModel?.Hide();
@@ -69,16 +72,25 @@ namespace Anamnesis.Character.Pages
 
 		private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
 		{
-			this.Actor?.Equipment?.Ear?.Clear();
-			this.Actor?.Equipment?.Head?.Clear();
-			this.Actor?.Equipment?.LFinger?.Clear();
-			this.Actor?.Equipment?.Neck?.Clear();
-			this.Actor?.Equipment?.RFinger?.Clear();
-			this.Actor?.Equipment?.Wrist?.Clear();
-			this.Actor?.Equipment?.Arms?.Equip(ItemUtility.NpcBodyItem);
-			this.Actor?.Equipment?.Chest?.Equip(ItemUtility.NpcBodyItem);
-			this.Actor?.Equipment?.Legs?.Equip(ItemUtility.NpcBodyItem);
-			this.Actor?.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
+			if (this.Actor == null)
+				return;
+
+			if (!this.Actor.IsPlayer)
+			{
+				this.OnClearClicked(sender, e);
+				return;
+			}
+
+			this.Actor.Equipment?.Ear?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Head?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Neck?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Arms?.Equip(ItemUtility.NpcBodyItem);
+			this.Actor.Equipment?.Chest?.Equip(ItemUtility.NpcBodyItem);
+			this.Actor.Equipment?.Legs?.Equip(ItemUtility.NpcBodyItem);
+			this.Actor.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
 		}
 
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
