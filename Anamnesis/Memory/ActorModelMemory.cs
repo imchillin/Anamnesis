@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using Anamnesis.Services;
 
 	public class ActorModelMemory : MemoryBase
 	{
@@ -76,6 +77,14 @@ namespace Anamnesis.Memory
 						this.ExtendedAppearance = null;
 					}
 
+					return false;
+				}
+			}
+
+			if (bind.Memory == this && bind.Name == nameof(ActorModelMemory.Skeleton))
+			{
+				if (!GposeService.Instance.IsGpose)
+				{
 					return false;
 				}
 			}
