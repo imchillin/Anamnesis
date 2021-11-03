@@ -34,14 +34,20 @@
 			Grid.Row="0"
 			Grid.Column="1"
 			Height="26"
-			DataHead="{Binding DataHead}"
-			DataPath="{Binding DataPath}"
-			Tribe="{Binding Actor.Customize.Tribe}"
-			IsEnabled="{Binding IsPlayer}"/>
+			DataHead="{Binding ModelObject.DataHead}"
+			DataPath="{Binding ModelObject.DataPath}"
+			Tribe="{Binding Customize.Tribe}"
+			IsEnabled="{Binding ModelObject.IsPlayer}"/>
 
 		<!-- Height -->
 		<xtw:TextBlock Grid.Row="1" Key="Character_Model_Height" Style="{StaticResource Label}"/>
-		<xtw:NumberBox Grid.Row="1" Grid.Column="1" Slider="Absolute" Minimum="0.1" Maximum="2" Value="{Binding Height}" TickFrequency="0.01"/>
+		<xtw:NumberBox Grid.Row="1"
+					   Grid.Column="1"
+					   Slider="Absolute"
+					   Minimum="0.1"
+					   Maximum="2"
+					   Value="{Binding ModelObject.Height}"
+					   TickFrequency="0.01"/>
 
 		<!-- Wetness -->
 		<xtw:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_Model_Wetness" Style="{StaticResource Label}"/>
@@ -70,13 +76,21 @@
 				
 			</ToggleButton>
 
-			<xtw:NumberBox x:Name="WetSlider" Grid.Column="1" Slider="Absolute" Minimum="0" Maximum="1" Value="{Binding Wetness}" TickFrequency="0.01"/>
+			<xtw:NumberBox x:Name="WetSlider"
+						   Grid.Column="1"
+						   Slider="Absolute"
+						   Minimum="0"
+						   Maximum="1"
+						   Value="{Binding ModelObject.Wetness}"
+						   TickFrequency="0.01"/>
 		</Grid>
 
 		<!-- Bust Scale -->
 		<xtw:TextBlock Grid.Row="4" Grid.Column="0" Key="Character_Model_BustScale" Style="{StaticResource Label}"/>
-		<ana:VectorEditor Grid.Row="4" Grid.Column="1" Value="{Binding Bust.Scale}" Expanded="False" CanLink="True" Minimum="0" Maximum="10"
-						  IsEnabled="{Binding IsPlayer}"/>
+		<ana:VectorEditor Grid.Row="4"
+						  Grid.Column="1"
+						  Value="{Binding ModelObject.Bust.Scale}" Expanded="False" CanLink="True" Minimum="0" Maximum="10"
+						  IsEnabled="{Binding ModelObject.IsPlayer}"/>
 
 	</Grid>
 </UserControl>

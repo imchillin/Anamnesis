@@ -9,5 +9,6 @@ namespace Anamnesis.Memory
 	{
 		ushort Base { get; set; }
 		byte Dye { get; set; }
+		ushort Set { get; set; }
 	}
 }

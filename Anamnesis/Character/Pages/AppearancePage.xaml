@@ -189,7 +189,7 @@
 											Icon="GraduationCap" />
 					</GroupBox.Header>
 
-					<views:CharacterModelEditor DataContext="{Binding Actor.ModelObject}" />
+					<views:CharacterModelEditor DataContext="{Binding Actor}" />
 				</GroupBox>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}"
