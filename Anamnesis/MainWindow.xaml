@@ -39,10 +39,143 @@
 	</Window.Title>
 
 	<Grid x:Name="ContentArea">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		
+		<!--  TitleBar  -->
+		<Grid VerticalAlignment="Top"
+			  Grid.Row="0"
+			  Height="26"
+			  Margin="0,0,150,0"
+			  TextBlock.Foreground="{Binding TitlebarForeground}">
+
+			<StackPanel HorizontalAlignment="Left"
+						Orientation="Horizontal"
+						IsHitTestVisible="False">
+
+				<!--<views:MenuView />-->
+
+				<TextBlock Margin="12,0,3,0"
+						   VerticalAlignment="Center"
+						   Text="Anamnesis" />
+
+				<TextBlock Margin="2,0,3,0"
+						   VerticalAlignment="Center"
+						   Opacity="0.5"
+						   Text="-" />
+
+				<TextBlock Margin="3,0,3,0"
+						   VerticalAlignment="Center"
+						   Text="{Binding TargetService.SelectedActor.DisplayName}" />
+
+				<XivToolsWpf:TextBlock Key="Error_NotInGame"
+									   Margin="12,0,3,0"
+									   VerticalAlignment="Center"
+									   Visibility="{Binding GameService.IsSignedIn, Converter={StaticResource !B2V}}" />
+
+				<XivToolsWpf:IconBlock Margin="6,0,0,0"
+									   FontWeight="Light"
+									   Foreground="{Binding TitlebarForeground}"
+									   Icon="Sync"
+									   Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
+				<XivToolsWpf:IconBlock Margin="6,0,0,0"
+									   FontWeight="Light"
+									   Foreground="{Binding TitlebarForeground}"
+									   Icon="Hourglass"
+									   Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
+			</StackPanel>
+
+			<Grid HorizontalAlignment="Right">
+
+				<StackPanel  Orientation="Horizontal">
+
+					<Button Click="OnWikiClicked"
+							Background="Transparent"
+							Foreground="{Binding TitlebarForeground}"
+							Padding="0"
+							VerticalAlignment="Top"
+							Margin="25, -5, 42, 0"
+							BorderThickness="0">
+
+						<Border BorderThickness="1"
+								BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+								CornerRadius="0, 0, 3, 3"
+								SnapsToDevicePixels="True"
+								Height="30"
+								Width="75">
+
+							<Grid>
+								<Rectangle Fill="{DynamicResource PrimaryHueMidBrush}"
+										   Opacity="0.1" />
+
+								<StackPanel HorizontalAlignment="Center"
+											VerticalAlignment="Center"
+											Orientation="Horizontal">
+
+									<XivToolsWpf:IconBlock Icon="QuestionCircle"
+														   FontSize="12"
+														   Margin="0, 0, 6, 0" />
+
+									<XivToolsWpf:TextBlock FontSize="12"
+														   FontWeight="Light"
+														   Key="Help_Title" />
+
+									<XivToolsWpf:IconBlock Icon="ExternalLinkAlt"
+														   FontSize="8"
+														   Margin="10, 0, 0, 4" />
+								</StackPanel>
+							</Grid>
+						</Border>
+
+						<Button.ToolTip>
+							<XivToolsWpf:TextBlock Key="Help_Tip" />
+						</Button.ToolTip>
+					</Button>
+
+					<!--  Debugging toggles  -->
+					<StackPanel HorizontalAlignment="Right"
+								Orientation="Horizontal"
+								Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
+
+						<ToggleButton Width="28"
+									  Margin="3,0,0,0"
+									  BorderThickness="0"
+									  IsChecked="{Binding LogService.VerboseLogging}"
+									  Foreground="{Binding TitlebarForeground}"
+									  Background="{DynamicResource MaterialDesignCardBackground}"
+									  Style="{DynamicResource TransparentIconToggleButton}"
+									  ToolTip="Enable verbose logging">
+							<XivToolsWpf:IconBlock FontSize="12"
+												   Icon="FileAlt" />
+						</ToggleButton>
+					</StackPanel>
+
+					<ToggleButton Width="28"
+								  Margin="3,0,0,0"
+								  BorderThickness="0"
+								  IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}"
+								  Foreground="{Binding TitlebarForeground}"
+								  Background="{DynamicResource MaterialDesignCardBackground}"
+								  Style="{DynamicResource TransparentIconToggleButton}">
+
+						<ToggleButton.ToolTip>
+							<XivToolsWpf:TextBlock Key="Settings_AlwaysOnTop" />
+						</ToggleButton.ToolTip>
+
+						<XivToolsWpf:IconBlock FontSize="12"
+											   Icon="ThumbTack" />
+					</ToggleButton>
+				</StackPanel>
+			</Grid>
+		</Grid>
+
 		<Grid
-			Width="958"
-			Height="552"
-			Margin="1">
+			Width="900"
+			Height="500"
+			Grid.Row="1">
 
 			<Grid.LayoutTransform>
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5" />
@@ -62,17 +195,17 @@
 
 								<Grid Grid.RowSpan="2" Grid.Column="0">
 
-									<Grid Width="47">
+									<Grid Width="47"
+										  Margin="0, 6, 0, 0">
 
 										<Grid.RowDefinitions>
-											<RowDefinition Height="32" />
 											<RowDefinition Height="Auto" />
 											<RowDefinition />
 											<RowDefinition Height="Auto" />
 										</Grid.RowDefinitions>
 
 										<ScrollViewer
-											Grid.Row="1"
+											Grid.Row="0"
 											MaxHeight="300"
 											HorizontalScrollBarVisibility="Disabled"
 											VerticalScrollBarVisibility="Auto">
@@ -169,13 +302,13 @@
 										</ScrollViewer>
 
 										<StackPanel
-											Grid.Row="2"
+											Grid.Row="1"
 											Margin="3,12,0,0"
 											HorizontalAlignment="Left"
 											IsItemsHost="true"
 											Orientation="Vertical" />
 
-										<StackPanel Grid.Row="3">
+										<StackPanel Grid.Row="2">
 											<Button
 												Height="32"
 												Margin="2"
@@ -207,7 +340,7 @@
 									</Grid>
 								</Grid>
 
-								<Grid Grid.Column="1" Margin="0, 28, 0, 0">
+								<Grid Grid.Column="1">
 									<ContentPresenter
 										Grid.Row="1"
 										Margin="0,0,0,0"
@@ -258,147 +391,17 @@
 				<TextBlock Text="To get started, add an actor." Style="{StaticResource Label}" HorizontalAlignment="Center"/>
 			</Grid>-->
 
-			<!--  TitleBar  -->
-			<Grid VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" Margin="0,0,150,0" TextBlock.Foreground="{Binding TitlebarForeground}">
-
-				<StackPanel HorizontalAlignment="Left" Orientation="Horizontal" IsHitTestVisible="False">
-
-					<!--<views:MenuView />-->
-
-					<TextBlock
-						Margin="12,0,3,0"
-						VerticalAlignment="Center"
-						Text="Anamnesis" />
-
-					<TextBlock
-						Margin="2,0,3,0"
-						VerticalAlignment="Center"
-						Opacity="0.5"
-						Text="-" />
-
-					<TextBlock
-						Margin="3,0,3,0"
-						VerticalAlignment="Center"
-						Text="{Binding TargetService.SelectedActor.DisplayName}" />
-
-					<XivToolsWpf:TextBlock
-						Key="Error_NotInGame"
-						Margin="12,0,3,0"
-						VerticalAlignment="Center"
-						Visibility="{Binding GameService.IsSignedIn, Converter={StaticResource !B2V}}" />
-
-					<XivToolsWpf:IconBlock
-						Margin="6,0,0,0"
-						FontWeight="Light"
-						Foreground="{Binding TitlebarForeground}"
-						Icon="Sync"
-						Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
-					<XivToolsWpf:IconBlock
-						Margin="6,0,0,0"
-						FontWeight="Light"
-						Foreground="{Binding TitlebarForeground}"
-						Icon="Hourglass"
-						Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
-				</StackPanel>
-
-				<Grid HorizontalAlignment="Right">
-
-					<StackPanel  Orientation="Horizontal">
-
-						<Button
-							Click="OnWikiClicked"
-							Background="Transparent"
-							Foreground="{Binding TitlebarForeground}"
-							Padding="0"
-							
-							VerticalAlignment="Top"
-							Margin="25, -5, 42, 0"
-							BorderThickness="0">
-
-							<Border BorderThickness="1"
-									BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-									CornerRadius="0, 0, 3, 3"
-									SnapsToDevicePixels="True"
-									Height="30"
-									Width="75">
-
-								<Grid>
-									<Rectangle Fill="{DynamicResource PrimaryHueMidBrush}" 
-											   Opacity="0.1"/>
-
-									<StackPanel HorizontalAlignment="Center" 
-												VerticalAlignment="Center"
-												Orientation="Horizontal">
-
-										<XivToolsWpf:IconBlock Icon="QuestionCircle"
-															   FontSize="12" 
-															   Margin="0, 0, 6, 0"/>
-
-										<XivToolsWpf:TextBlock FontSize="12" 
-															   FontWeight="Light" 
-															   Key="Help_Title"/>
-
-										<XivToolsWpf:IconBlock Icon="ExternalLinkAlt"
-															   FontSize="8" 
-															   Margin="10, 0, 0, 4"/>
-									</StackPanel>
-								</Grid>
-							</Border>
-
-							<Button.ToolTip>
-								<XivToolsWpf:TextBlock Key="Help_Tip" />
-							</Button.ToolTip>
-						</Button>
-
-						<!--  Debugging toggles  -->
-						<StackPanel
-							HorizontalAlignment="Right"
-							Orientation="Horizontal"
-							Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
-
-							<ToggleButton
-								Width="28"
-								Margin="3,0,0,0"
-								BorderThickness="0"
-								IsChecked="{Binding LogService.VerboseLogging}"
-								Foreground="{Binding TitlebarForeground}"
-								Background="{DynamicResource MaterialDesignCardBackground}"
-								Style="{DynamicResource TransparentIconToggleButton}"
-								ToolTip="Enable verbose logging">
-								<XivToolsWpf:IconBlock FontSize="12" Icon="FileAlt"/>
-							</ToggleButton>
-						</StackPanel>
-
-						<ToggleButton
-							Width="28"
-							Margin="3,0,0,0"
-							BorderThickness="0"
-							IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}"
-							Foreground="{Binding TitlebarForeground}"
-							Background="{DynamicResource MaterialDesignCardBackground}"
-							Style="{DynamicResource TransparentIconToggleButton}">
-
-							<ToggleButton.ToolTip>
-								<XivToolsWpf:TextBlock Key="Settings_AlwaysOnTop" />
-							</ToggleButton.ToolTip>
-
-							<XivToolsWpf:IconBlock FontSize="12" Icon="ThumbTack"/>
-						</ToggleButton>
-					</StackPanel>
-				</Grid>
-			</Grid>
-
 			<!--  Drawer flyouts  -->
 			<materialdesign:DrawerHost
 				x:Name="DrawerHost"
-				Margin="1, 28, 1, 1"
+				Margin="1"
 				Grid.Row="0"
 				Grid.RowSpan="2"
 				Grid.Column="0"
 				Grid.ColumnSpan="2">
 				<materialdesign:DrawerHost.RightDrawerContent>
 					<Grid MinWidth="64">
-						<ContentPresenter x:Name="DrawerRight" />
+						<ContentPresenter x:Name="DrawerRight" Margin="0, 0, 3, 1"/>
 					</Grid>
 				</materialdesign:DrawerHost.RightDrawerContent>
 				<materialdesign:DrawerHost.LeftDrawerContent>
@@ -484,7 +487,8 @@
 			HorizontalAlignment="Right"
 			VerticalAlignment="Bottom"
 			Cursor="SizeNWSE"
-			DragDelta="OnResizeDrag" />
+			DragDelta="OnResizeDrag"
+			Grid.Row="1"/>
 
 	</Grid>
 </XivToolsWpfWindows:ChromedWindow>
