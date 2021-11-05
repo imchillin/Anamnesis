@@ -94,7 +94,8 @@ namespace Anamnesis.Updater
 					return false;
 				}
 
-				throw;
+				Log.Error(ex, "Failed to complete update check");
+				return false;
 			}
 			catch (Exception ex)
 			{
