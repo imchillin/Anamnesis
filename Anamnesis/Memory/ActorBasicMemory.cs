@@ -10,11 +10,13 @@ namespace Anamnesis.Memory
 
 	public class ActorBasicMemory : MemoryBase
 	{
-		[Bind(0x0030)] public Utf8String NameBytes { get; set; }
-		[Bind(0x0080)] public int DataId { get; set; }
-		[Bind(0x008c, BindFlags.ActorRefresh)] public ActorTypes ObjectKind { get; set; }
-		[Bind(0x0090)] public byte DistanceFromPlayerX { get; set; }
-		[Bind(0x0092)] public byte DistanceFromPlayerY { get; set; }
+		[Bind(0x030)] public Utf8String NameBytes { get; set; }
+		[Bind(0x074)] public uint ObjectId { get; set; }
+		[Bind(0x080)] public uint DataId { get; set; }
+		[Bind(0x084)] public uint OwnerId { get; set; }
+		[Bind(0x08c, BindFlags.ActorRefresh)] public ActorTypes ObjectKind { get; set; }
+		[Bind(0x090)] public byte DistanceFromPlayerX { get; set; }
+		[Bind(0x092)] public byte DistanceFromPlayerY { get; set; }
 
 		public string Id => this.Name + this.DataId;
 		public string Name => this.NameBytes.ToString();
