@@ -22,6 +22,7 @@ namespace Anamnesis.Character.Views
 		private static bool includeResidentNpc = true;
 		private static bool includeBattleNpc = true;
 		private static bool includeEventNpc = true;
+		private static bool includeMount = true;
 		private static bool? includeModded = null;
 
 		public NpcSelector()
@@ -37,6 +38,9 @@ namespace Anamnesis.Character.Views
 
 			if (GameDataService.EventNPCs != null)
 				this.Selector.AddItems(GameDataService.EventNPCs);
+
+			if (GameDataService.Mounts != null)
+				this.Selector.AddItems(GameDataService.Mounts);
 
 			this.Selector.FilterItems();
 
@@ -63,6 +67,12 @@ namespace Anamnesis.Character.Views
 		{
 			get => includeEventNpc;
 			set => includeEventNpc = value;
+		}
+
+		public bool IncludeMount
+		{
+			get => includeMount;
+			set => includeMount = value;
 		}
 
 		public bool? IncludeModded
@@ -134,6 +144,18 @@ namespace Anamnesis.Character.Views
 
 				if (!this.IncludeEventNpc && npc is ENpcBaseViewModel)
 					return false;
+
+				if (npc is MountViewModel)
+				{
+					if (!this.IncludeMount)
+						return false;
+
+					// Mounts with model Id 0 are just empty entries.
+					if (npc.ModelCharaRow == 0)
+					{
+						return false;
+					}
+				}
 
 				bool matches = false;
 				matches |= SearchUtility.Matches(npc.Name, search);

@@ -36,9 +36,10 @@ namespace Anamnesis.GameData
 		int BustOrTone1 { get; }
 		int HairColor { get; }
 
-		public Mod? Mod => null;
-		public bool IsFavorite => false;
-		public string? Title => null;
+		string? Title { get; }
+		Mod? Mod { get; }
+		bool IsFavorite { get; }
+		bool CanFavorite { get; }
 	}
 
 	public interface INpcEquip

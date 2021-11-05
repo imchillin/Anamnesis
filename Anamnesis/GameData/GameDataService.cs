@@ -39,6 +39,7 @@ namespace Anamnesis.Services
 		public static ISheet<IDye> Dyes { get; protected set; }
 		public static ISheet<INpcBase> EventNPCs { get; protected set; }
 		public static ISheet<INpcBase> BattleNPCs { get; protected set; }
+		public static ISheet<INpcBase> Mounts { get; protected set; }
 		public static ISheet<ITerritoryType> Territories { get; protected set; }
 		public static ISheet<IWeather> Weathers { get; protected set; }
 		public static ICharaMakeCustomizeData CharacterMakeCustomize { get; protected set; }
@@ -91,6 +92,7 @@ namespace Anamnesis.Services
 				Dyes = new LuminaSheet<IDye, Stain, DyeViewModel>(this.lumina);
 				EventNPCs = new LuminaSheet<INpcBase, ENpcBase, ENpcBaseViewModel>(this.lumina);
 				BattleNPCs = new LuminaSheet<INpcBase, BNpcBase, BNpcBaseViewModel>(this.lumina);
+				Mounts = new LuminaSheet<INpcBase, Mount, MountViewModel>(this.lumina);
 				Territories = new LuminaSheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
 				Weathers = new LuminaSheet<IWeather, Weather, WeatherViewModel>(this.lumina);
 				CharacterMakeCustomize = new CustomizeSheet(this.lumina);
@@ -116,8 +118,6 @@ namespace Anamnesis.Services
 				throw new Exception("Failed to read data sheets", ex);
 			}
 
-			this.Test();
-
 			return base.Initialize();
 		}
 
@@ -131,26 +131,6 @@ namespace Anamnesis.Services
 				throw new Exception($"Missing sheet {typeof(T).Name}");
 
 			return sheet;
-		}
-
-		private void Test()
-		{
-			if (this.lumina == null)
-				return;
-
-			ExcelSheet<BNpcBase>? sheet = this.lumina.GetExcelSheet<BNpcBase>();
-
-			if (sheet == null)
-				return;
-
-			////ModelChara? mob = sheet.GetRow(3330);
-
-			foreach (BNpcBase mob in sheet)
-			{
-				if (mob.ModelChara.Row == 3330)
-				{
-				}
-			}
 		}
 	}
 }

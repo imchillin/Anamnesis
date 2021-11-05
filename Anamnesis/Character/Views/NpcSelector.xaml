@@ -18,40 +18,41 @@
 		</Grid.RowDefinitions>
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition/>
-			<ColumnDefinition/>
+			<ColumnDefinition />
+			<ColumnDefinition />
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 
-		<TextBlock Grid.Row="0"
-				   Grid.Column="0"
-				   Text="NPC:"
-				   Margin="3"/>
-
 		<CheckBox Grid.Row="0"
-				  Grid.Column="1"
-				  Content="Resident"
+				  Grid.Column="0"
+				  Content="Resident NPC"
 				  Margin="6,0"
 				  IsChecked="{Binding IncludeResidentNpc}" />
 
 		<CheckBox Grid.Row="0"
-				  Grid.Column="2"
-				  Content="Battle"
+				  Grid.Column="1"
+				  Content="Battle NPC"
 				  Margin="6,0"
 				  IsChecked="{Binding IncludeBattleNpc}" />
 
 		<CheckBox Grid.Row="0"
-				  Grid.Column="3"
-				  Content="Event"
+				  Grid.Column="2"
+				  Content="Event NPC"
 				  Margin="6,0"
 				  IsChecked="{Binding IncludeEventNpc}" />
+
+		<CheckBox Grid.Row="1"
+				  Grid.Column="0"
+				  Grid.ColumnSpan="2"
+				  Content="Mount"
+				  Margin="6,0"
+				  IsChecked="{Binding IncludeMount}" />
 
 		<CheckBox Grid.Row="2" Grid.Column="2" IsThreeState="True" Content="Modded" Margin="6,0" IsChecked="{Binding IncludeModded}"/>
 
 		<cm3Drawers:SelectorDrawer
 			Grid.Row="3"
-			Grid.ColumnSpan="4"
+			Grid.ColumnSpan="3"
 			x:Name="Selector"
 			Close="OnClose" 
 			Filter="OnFilter"
