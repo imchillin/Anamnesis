@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
+	using Anamnesis.Character;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
@@ -32,7 +33,6 @@ namespace Anamnesis.GameData.ViewModels
 
 		public override string Name => $"Event NPC #{this.Key}";
 
-		public string Title => this.ModelCharaRow.ToString();
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
 

@@ -23,6 +23,7 @@ namespace Anamnesis.Character.Views
 		private static bool includeBattleNpc = true;
 		private static bool includeEventNpc = true;
 		private static bool includeMount = true;
+		private static bool includeCompanion = true;
 		private static bool? includeModded = null;
 
 		public NpcSelector()
@@ -41,6 +42,9 @@ namespace Anamnesis.Character.Views
 
 			if (GameDataService.Mounts != null)
 				this.Selector.AddItems(GameDataService.Mounts);
+
+			if (GameDataService.Companions != null)
+				this.Selector.AddItems(GameDataService.Companions);
 
 			this.Selector.FilterItems();
 
@@ -73,6 +77,12 @@ namespace Anamnesis.Character.Views
 		{
 			get => includeMount;
 			set => includeMount = value;
+		}
+
+		public bool IncludeCompanion
+		{
+			get => includeCompanion;
+			set => includeCompanion = value;
 		}
 
 		public bool? IncludeModded
@@ -139,12 +149,6 @@ namespace Anamnesis.Character.Views
 					}
 				}
 
-				if (!this.IncludeBattleNpc && npc is BNpcBaseViewModel)
-					return false;
-
-				if (!this.IncludeEventNpc && npc is ENpcBaseViewModel)
-					return false;
-
 				if (npc is MountViewModel)
 				{
 					if (!this.IncludeMount)
@@ -156,6 +160,24 @@ namespace Anamnesis.Character.Views
 						return false;
 					}
 				}
+
+				if (npc is CompanionViewModel)
+				{
+					if (!this.IncludeCompanion)
+						return false;
+
+					// Companions with model Id 0 are just empty entries.
+					if (npc.ModelCharaRow == 0)
+					{
+						return false;
+					}
+				}
+
+				if (!this.IncludeBattleNpc && npc is BNpcBaseViewModel)
+					return false;
+
+				if (!this.IncludeEventNpc && npc is ENpcBaseViewModel)
+					return false;
 
 				bool matches = false;
 				matches |= SearchUtility.Matches(npc.Name, search);

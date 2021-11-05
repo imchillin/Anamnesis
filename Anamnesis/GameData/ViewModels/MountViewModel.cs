@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
+	using Anamnesis.Character;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
@@ -51,7 +52,6 @@ namespace Anamnesis.GameData.ViewModels
 		public uint ModelCharaRow => this.Value.ModelChara.Row;
 		public INpcEquip NpcEquip => new MountEquip(this.Value);
 
-		public string Title => this.ModelCharaRow.ToString();
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
 

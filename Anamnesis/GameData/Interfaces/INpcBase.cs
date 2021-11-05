@@ -36,7 +36,6 @@ namespace Anamnesis.GameData
 		int BustOrTone1 { get; }
 		int HairColor { get; }
 
-		string? Title { get; }
 		Mod? Mod { get; }
 		bool IsFavorite { get; }
 		bool CanFavorite { get; }

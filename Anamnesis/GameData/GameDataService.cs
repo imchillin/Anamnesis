@@ -40,6 +40,7 @@ namespace Anamnesis.Services
 		public static ISheet<INpcBase> EventNPCs { get; protected set; }
 		public static ISheet<INpcBase> BattleNPCs { get; protected set; }
 		public static ISheet<INpcBase> Mounts { get; protected set; }
+		public static ISheet<INpcBase> Companions { get; protected set; }
 		public static ISheet<ITerritoryType> Territories { get; protected set; }
 		public static ISheet<IWeather> Weathers { get; protected set; }
 		public static ICharaMakeCustomizeData CharacterMakeCustomize { get; protected set; }
@@ -93,6 +94,7 @@ namespace Anamnesis.Services
 				EventNPCs = new LuminaSheet<INpcBase, ENpcBase, ENpcBaseViewModel>(this.lumina);
 				BattleNPCs = new LuminaSheet<INpcBase, BNpcBase, BNpcBaseViewModel>(this.lumina);
 				Mounts = new LuminaSheet<INpcBase, Mount, MountViewModel>(this.lumina);
+				Companions = new LuminaSheet<INpcBase, Companion, CompanionViewModel>(this.lumina);
 				Territories = new LuminaSheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
 				Weathers = new LuminaSheet<IWeather, Weather, WeatherViewModel>(this.lumina);
 				CharacterMakeCustomize = new CustomizeSheet(this.lumina);
