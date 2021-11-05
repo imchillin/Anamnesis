@@ -20,11 +20,6 @@ namespace Anamnesis.TexTools
 			return GetMod(item.Name);
 		}
 
-		public static Mod? GetMod(Monster item)
-		{
-			return GetMod(item.Name);
-		}
-
 		public static Mod? GetMod(string itemName)
 		{
 			if (modList == null)

@@ -145,7 +145,7 @@ namespace Anamnesis.Character.Pages
 
 		private void LoadNpc(CharacterFile.SaveModes mode)
 		{
-			SelectorDrawer.Show<NpcSelector, INpcResident>(null, (npc) =>
+			SelectorDrawer.Show<NpcSelector, INpcBase>(null, (npc) =>
 			{
 				if (npc == null)
 					return;
@@ -154,17 +154,14 @@ namespace Anamnesis.Character.Pages
 			});
 		}
 
-		private async Task ApplyNpc(INpcResident? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
+		private async Task ApplyNpc(INpcBase? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
 		{
 			if (this.Actor == null || npc == null)
 				return;
 
-			if (npc.Appearance == null)
-				return;
-
 			try
 			{
-				CharacterFile apFile = npc.Appearance.ToFile();
+				CharacterFile apFile = npc.ToFile();
 				await apFile.Apply(this.Actor, mode);
 			}
 			catch (Exception ex)

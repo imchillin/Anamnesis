@@ -3,13 +3,15 @@
 
 namespace Anamnesis.GameData
 {
+	using Anamnesis.TexTools;
+
 	public interface INpcBase : IRow
 	{
 		int FacePaintColor { get; }
 		int FacePaint { get; }
 		int ExtraFeature2OrBust { get; }
 		int ExtraFeature1 { get; }
-		int ModelType { get; }
+		uint ModelCharaRow { get; }
 		IRace Race { get; }
 		int Gender { get; }
 		int BodyType { get; }
@@ -33,6 +35,10 @@ namespace Anamnesis.GameData
 		int LipColor { get; }
 		int BustOrTone1 { get; }
 		int HairColor { get; }
+
+		public Mod? Mod => null;
+		public bool IsFavorite => false;
+		public string? Title => null;
 	}
 
 	public interface INpcEquip

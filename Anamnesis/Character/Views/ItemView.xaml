@@ -63,17 +63,19 @@
 			</Button>
 
 			<StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding GPoseService.IsOverworld}">
-				<XivToolsWpf:NumberBox Width="42" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0" ToolTip="Character_Equipment_ItemId"/>
+				<XivToolsWpf:NumberBox Width="33" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 10, 0" ToolTip="Character_Equipment_ItemId"/>
 
-				<XivToolsWpf:NumberBox  Width="36" Value="{Binding ItemModel.Set}" Margin="0" FontSize="12" FontWeight="Light"
+				<XivToolsWpf:NumberBox  Width="28" Value="{Binding ItemModel.Set}" FontSize="12" FontWeight="Light"
 								ToolTip="Character_Equipment_ItemSet"
-								Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
+								Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}"/>
 
-				<TextBlock Text="-" Style="{StaticResource Label}" Margin="0"  Visibility="{Binding IsWeapon, Converter={StaticResource BoolToVisibilityConverter}}"/>
-				<XivToolsWpf:NumberBox Width="36" Value="{Binding ItemModel.Base}" Margin="0" FontSize="12" FontWeight="Light" ToolTip="Character_Equipment_ItemBase"/>
+				<TextBlock Text="," Style="{StaticResource Label}" Margin="0" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}"/>
+				<XivToolsWpf:NumberBox MinWidth="20" Value="{Binding ItemModel.Base}" FontSize="12" FontWeight="Light" 
+									   ToolTip="Character_Equipment_ItemBase"/>
 
-				<TextBlock Text="-" Style="{StaticResource Label}" Margin="0" />
-				<XivToolsWpf:NumberBox Width="22" Value="{Binding ItemModel.Variant}" Margin="0" FontSize="12" FontWeight="Light" ToolTip="Character_Equipment_ItemVariant"/>
+				<TextBlock Text="," Style="{StaticResource Label}" Margin="0" />
+				<XivToolsWpf:NumberBox Width="20" Value="{Binding ItemModel.Variant}" FontSize="12" FontWeight="Light" 
+									   ToolTip="Character_Equipment_ItemVariant"/>
 			</StackPanel>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="2, 0, 0, 0" Orientation="Horizontal" Visibility="{Binding ItemModel.Set, Converter={StaticResource NotZeroToVisibilityConverter}}">

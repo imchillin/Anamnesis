@@ -4,8 +4,10 @@
 namespace Anamnesis.Services
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
+	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
@@ -35,15 +37,15 @@ namespace Anamnesis.Services
 		public static ISheet<IItem> Items { get; protected set; }
 		public static ISheet<IItem> Perform { get; protected set; }
 		public static ISheet<IDye> Dyes { get; protected set; }
-		public static ISheet<INpcBase> BaseNPCs { get; protected set; }
+		public static ISheet<INpcBase> EventNPCs { get; protected set; }
+		public static ISheet<INpcBase> BattleNPCs { get; protected set; }
 		public static ISheet<ITerritoryType> Territories { get; protected set; }
 		public static ISheet<IWeather> Weathers { get; protected set; }
 		public static ICharaMakeCustomizeData CharacterMakeCustomize { get; protected set; }
 		public static ISheet<ICharaMakeType> CharacterMakeTypes { get; protected set; }
-		public static ISheet<INpcResident> ResidentNPCs { get; protected set; }
+		public static ISheet<INpcBase> ResidentNPCs { get; protected set; }
 		public static ExcelSheet<WeatherRate> WeatherRates { get; protected set; }
 		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; protected set; }
-		public static ISheet<Monster> Monsters { get; private set; }
 		public static ISheet<Prop> Props { get; private set; }
 		public static ISheet<ItemCategory> ItemCategories { get; private set; }
 		#pragma warning restore CS8618
@@ -87,12 +89,13 @@ namespace Anamnesis.Services
 				Tribes = new LuminaSheet<ITribe, Tribe, TribeViewModel>(this.lumina);
 				Items = new LuminaSheet<IItem, Lumina.Excel.GeneratedSheets.Item, GameData.ViewModels.ItemViewModel>(this.lumina);
 				Dyes = new LuminaSheet<IDye, Stain, DyeViewModel>(this.lumina);
-				BaseNPCs = new LuminaSheet<INpcBase, ENpcBase, NpcBaseViewModel>(this.lumina);
+				EventNPCs = new LuminaSheet<INpcBase, ENpcBase, ENpcBaseViewModel>(this.lumina);
+				BattleNPCs = new LuminaSheet<INpcBase, BNpcBase, BNpcBaseViewModel>(this.lumina);
 				Territories = new LuminaSheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
 				Weathers = new LuminaSheet<IWeather, Weather, WeatherViewModel>(this.lumina);
 				CharacterMakeCustomize = new CustomizeSheet(this.lumina);
 				CharacterMakeTypes = new LuminaSheet<ICharaMakeType, GameData.Sheets.CharaMakeType, CharaMakeTypeViewModel>(this.lumina);
-				ResidentNPCs = new LuminaSheet<INpcResident, ENpcResident, NpcResidentViewModel>(this.lumina);
+				ResidentNPCs = new LuminaSheet<INpcBase, ENpcResident, NpcResidentViewModel>(this.lumina);
 				Perform = new LuminaSheet<IItem, Perform, PerformViewModel>(this.lumina);
 				WeatherRates = GetNotNullExcelSheet<WeatherRate>(this.lumina);
 				EquipRaceCategories = GetNotNullExcelSheet<EquipRaceCategory>(this.lumina);
@@ -105,7 +108,6 @@ namespace Anamnesis.Services
 			// these are json files that we write by hand
 			try
 			{
-				Monsters = new JsonListSheet<Monster>("Data/Monsters.json");
 				Props = new PropSheet("Data/Props.json");
 				ItemCategories = new JsonDictionarySheet<ItemCategories, ItemCategory>("Data/ItemCategories.json");
 			}
@@ -113,6 +115,8 @@ namespace Anamnesis.Services
 			{
 				throw new Exception("Failed to read data sheets", ex);
 			}
+
+			this.Test();
 
 			return base.Initialize();
 		}
@@ -127,6 +131,26 @@ namespace Anamnesis.Services
 				throw new Exception($"Missing sheet {typeof(T).Name}");
 
 			return sheet;
+		}
+
+		private void Test()
+		{
+			if (this.lumina == null)
+				return;
+
+			ExcelSheet<BNpcBase>? sheet = this.lumina.GetExcelSheet<BNpcBase>();
+
+			if (sheet == null)
+				return;
+
+			////ModelChara? mob = sheet.GetRow(3330);
+
+			foreach (BNpcBase mob in sheet)
+			{
+				if (mob.ModelChara.Row == 3330)
+				{
+				}
+			}
 		}
 	}
 }

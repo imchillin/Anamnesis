@@ -117,7 +117,7 @@ namespace Anamnesis.Services
 			Save();
 		}
 
-		public static bool IsFavorite(INpcResident item)
+		public static bool IsFavorite(INpcBase item)
 		{
 			if (Instance.Current == null)
 				return false;
@@ -125,7 +125,7 @@ namespace Anamnesis.Services
 			return Instance.Current.Models.Contains(item);
 		}
 
-		public static void SetFavorite(INpcResident item, bool favorite)
+		public static void SetFavorite(INpcBase item, bool favorite)
 		{
 			if (Instance.Current == null)
 				return;
@@ -189,7 +189,7 @@ namespace Anamnesis.Services
 			public List<IItem> Items { get; set; } = new List<IItem>();
 			public List<IDye> Dyes { get; set; } = new List<IDye>();
 			public List<Color4> Colors { get; set; } = new List<Color4>();
-			public List<INpcResident> Models { get; set; } = new List<INpcResident>();
+			public List<INpcBase> Models { get; set; } = new List<INpcBase>();
 			public List<IItem> Owned { get; set; } = new List<IItem>();
 		}
 	}

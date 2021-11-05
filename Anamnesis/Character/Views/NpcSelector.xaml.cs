@@ -8,6 +8,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
@@ -18,35 +19,24 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class NpcSelector : UserControl, SelectorDrawer.ISelectorView, INotifyPropertyChanged
 	{
-		private static bool includeNpc = true;
-		private static bool includeCharacter = true;
-		private static bool includeMount = true;
-		private static bool includeMinion = true;
-		private static bool includeEffect = true;
-		private static bool includeMonster = true;
-		private static bool includeUnknown = true;
+		private static bool includeResidentNpc = true;
+		private static bool includeBattleNpc = true;
+		private static bool includeEventNpc = true;
 		private static bool? includeModded = null;
-		private static bool? includeNamed = true;
 
 		public NpcSelector()
 		{
 			this.InitializeComponent();
 			this.DataContext = this;
 
-			List<INpcResident> allNpcs = new List<INpcResident>();
-			List<Monster> allMonsters = new List<Monster>();
-
 			if (GameDataService.ResidentNPCs != null)
-				allNpcs.AddRange(GameDataService.ResidentNPCs);
+				this.Selector.AddItems(GameDataService.ResidentNPCs);
 
-			if (GameDataService.Monsters != null)
-				allMonsters.AddRange(GameDataService.Monsters);
+			if (GameDataService.BattleNPCs != null)
+				this.Selector.AddItems(GameDataService.BattleNPCs);
 
-			allNpcs.Sort((a, b) => b.IsFavorite.CompareTo(a.IsFavorite));
-			allMonsters.Sort((a, b) => b.IsFavorite.CompareTo(a.IsFavorite));
-
-			this.Selector.AddItems(allNpcs);
-			this.Selector.AddItems(allMonsters);
+			if (GameDataService.EventNPCs != null)
+				this.Selector.AddItems(GameDataService.EventNPCs);
 
 			this.Selector.FilterItems();
 
@@ -57,21 +47,35 @@ namespace Anamnesis.Character.Views
 		public event DrawerEvent? SelectionChanged;
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public bool IncludeNpc { get => includeNpc; set => includeNpc = value; }
-		public bool IncludeCharacter { get => includeCharacter; set => includeCharacter = value; }
-		public bool IncludeMount { get => includeMount; set => includeMount = value; }
-		public bool IncludeMinion { get => includeMinion; set => includeMinion = value; }
-		public bool IncludeEffect { get => includeEffect; set => includeEffect = value; }
-		public bool IncludeMonster { get => includeMonster; set => includeMonster = value; }
-		public bool IncludeUnknown { get => includeUnknown; set => includeUnknown = value; }
-		public bool? IncludeModded { get => includeModded; set => includeModded = value; }
-		public bool? IncludeNamed { get => includeNamed; set => includeNamed = value; }
+		public bool IncludeResidentNpc
+		{
+			get => includeResidentNpc;
+			set => includeResidentNpc = value;
+		}
 
-		public INpcResident? Value
+		public bool IncludeBattleNpc
+		{
+			get => includeBattleNpc;
+			set => includeBattleNpc = value;
+		}
+
+		public bool IncludeEventNpc
+		{
+			get => includeEventNpc;
+			set => includeEventNpc = value;
+		}
+
+		public bool? IncludeModded
+		{
+			get => includeModded;
+			set => includeModded = value;
+		}
+
+		public INpcBase? Value
 		{
 			get
 			{
-				return (INpcResident?)this.Selector.Value;
+				return (INpcBase?)this.Selector.Value;
 			}
 
 			set
@@ -104,52 +108,37 @@ namespace Anamnesis.Character.Views
 
 		private bool OnFilter(object obj, string[]? search = null)
 		{
-			if (obj is INpcResident npc)
+			if (obj is INpcBase npc)
 			{
-				if (npc.Appearance == null || npc.Appearance.Race == null || npc.Appearance.Race.Key == 0)
-					return false;
-
-				if (!this.IncludeNpc && !(obj is Monster))
-					return false;
-
-				if (obj is Monster mon)
-				{
-					if (!this.IncludeCharacter && mon.Type == Monster.Types.Character)
-						return false;
-
-					if (!this.IncludeEffect && mon.Type == Monster.Types.Effect)
-						return false;
-
-					if (!this.IncludeMinion && mon.Type == Monster.Types.Minion)
-						return false;
-
-					if (!this.IncludeMonster && mon.Type == Monster.Types.Monster)
-						return false;
-
-					if (!this.IncludeMount && mon.Type == Monster.Types.Mount)
-						return false;
-
-					if (!this.IncludeUnknown && mon.Type == Monster.Types.Unknown)
-						return false;
-				}
-
 				if (this.IncludeModded == true && npc.Mod == null)
 					return false;
 
 				if (this.IncludeModded == false && npc.Mod != null)
 					return false;
 
-				if (this.IncludeNamed == true && string.IsNullOrEmpty(npc.Name))
+				if (npc is NpcResidentViewModel)
+				{
+					if (!this.IncludeResidentNpc)
+						return false;
+
+					// Npc residents without names are useless, since the same
+					// npc will just appear in the event npc list anyway.
+					if (string.IsNullOrEmpty(npc.Name))
+					{
+						return false;
+					}
+				}
+
+				if (!this.IncludeBattleNpc && npc is BNpcBaseViewModel)
 					return false;
 
-				if (this.IncludeNamed == false && !string.IsNullOrEmpty(npc.Name))
+				if (!this.IncludeEventNpc && npc is ENpcBaseViewModel)
 					return false;
 
 				bool matches = false;
-				matches |= SearchUtility.Matches(npc.Singular, search);
-				matches |= SearchUtility.Matches(npc.Plural, search);
-				matches |= SearchUtility.Matches(npc.Title, search);
+				matches |= SearchUtility.Matches(npc.Name, search);
 				matches |= SearchUtility.Matches(npc.Key.ToString(), search);
+				matches |= SearchUtility.Matches(npc.ModelCharaRow.ToString(), search);
 
 				if (npc.Mod != null && npc.Mod.ModPack != null)
 				{

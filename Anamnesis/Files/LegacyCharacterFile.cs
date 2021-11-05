@@ -110,7 +110,7 @@ namespace Anamnesis.Files
 				file.FacePaintColor = data[25];
 
 				if (this.characterDetails?.ModelType != null)
-					file.ModelType = (int)this.characterDetails.ModelType.value;
+					file.ModelType = (uint)this.characterDetails.ModelType.value;
 
 				if (this.characterDetails?.SkinRedPigment != null && this.characterDetails.SkinGreenPigment != null && this.characterDetails.SkinBluePigment != null)
 					file.SkinColor = new Color((float)this.characterDetails.SkinRedPigment.value, (float)this.characterDetails.SkinGreenPigment.value, (float)this.characterDetails.SkinBluePigment.value);

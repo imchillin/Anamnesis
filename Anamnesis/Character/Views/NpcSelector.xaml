@@ -7,7 +7,7 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" Width="256">
+			 d:DesignHeight="450">
 	<Grid Margin="0, 6, 0, 0">
 
 		<Grid.RowDefinitions>
@@ -18,24 +18,40 @@
 		</Grid.RowDefinitions>
 
 		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 			<ColumnDefinition/>
-			<ColumnDefinition/>
+			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 
-		<CheckBox Grid.Row="0" Grid.Column="0" Content="NPCs" Margin="6,0" IsChecked="{Binding IncludeNpc}"/>
-		<CheckBox Grid.Row="0" Grid.Column="1" Content="Characters" Margin="6,0" IsChecked="{Binding IncludeCharacter}"/>
-		<CheckBox Grid.Row="0" Grid.Column="2" Content="Mounts" Margin="6,0" IsChecked="{Binding IncludeMount}"/>
-		<CheckBox Grid.Row="1" Grid.Column="0" Content="Minions" Margin="6,0" IsChecked="{Binding IncludeMinion}"/>
-		<CheckBox Grid.Row="1" Grid.Column="1" Content="Effects" Margin="6,0" IsChecked="{Binding IncludeEffect}"/>
-		<CheckBox Grid.Row="1" Grid.Column="2" Content="Monsters" Margin="6,0" IsChecked="{Binding IncludeMonster}"/>
-		<CheckBox Grid.Row="2" Grid.Column="0" Content="Unknown" Margin="6,0" IsChecked="{Binding IncludeUnknown}"/>
-		<CheckBox Grid.Row="2" Grid.Column="1" IsThreeState="True" Content="Named" Margin="6,0" IsChecked="{Binding IncludeNamed}"/>
+		<TextBlock Grid.Row="0"
+				   Grid.Column="0"
+				   Text="NPC:"
+				   Margin="3"/>
+
+		<CheckBox Grid.Row="0"
+				  Grid.Column="1"
+				  Content="Resident"
+				  Margin="6,0"
+				  IsChecked="{Binding IncludeResidentNpc}" />
+
+		<CheckBox Grid.Row="0"
+				  Grid.Column="2"
+				  Content="Battle"
+				  Margin="6,0"
+				  IsChecked="{Binding IncludeBattleNpc}" />
+
+		<CheckBox Grid.Row="0"
+				  Grid.Column="3"
+				  Content="Event"
+				  Margin="6,0"
+				  IsChecked="{Binding IncludeEventNpc}" />
+
 		<CheckBox Grid.Row="2" Grid.Column="2" IsThreeState="True" Content="Modded" Margin="6,0" IsChecked="{Binding IncludeModded}"/>
 
 		<cm3Drawers:SelectorDrawer
 			Grid.Row="3"
-			Grid.ColumnSpan="3"
+			Grid.ColumnSpan="4"
 			x:Name="Selector"
 			Close="OnClose" 
 			Filter="OnFilter"

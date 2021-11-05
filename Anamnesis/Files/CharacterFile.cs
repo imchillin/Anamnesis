@@ -37,7 +37,7 @@ namespace Anamnesis.Files
 		public SaveModes SaveMode { get; set; } = SaveModes.All;
 
 		public string? Nickname { get; set; } = null;
-		public int ModelType { get; set; } = 0;
+		public uint ModelType { get; set; } = 0;
 
 		// appearance
 		public ActorCustomizeMemory.Races? Race { get; set; }
@@ -120,7 +120,7 @@ namespace Anamnesis.Files
 		public void WriteToFile(ActorMemory actor, SaveModes mode)
 		{
 			this.Nickname = actor.Nickname;
-			this.ModelType = actor.ModelType;
+			this.ModelType = (uint)actor.ModelType;
 
 			if (actor.Customize == null)
 				return;
@@ -258,7 +258,7 @@ namespace Anamnesis.Files
 			if (!string.IsNullOrEmpty(this.Nickname))
 				actor.Nickname = this.Nickname;
 
-			actor.ModelType = this.ModelType;
+			actor.ModelType = (int)this.ModelType;
 
 			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 			{
