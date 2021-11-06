@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
+	using System.Windows.Media;
 	using Anamnesis.Character;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Services;
@@ -48,12 +49,16 @@ namespace Anamnesis.GameData.ViewModels
 		public int BustOrTone1 => 0;
 		public int HairColor => 0;
 
-		public override string Name => !string.IsNullOrEmpty(this.Value.Singular) ? this.Value.Singular : $"Minion #{this.Key}";
+		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);
+		public override string Name => this.HasName ? this.Value.Singular : $"Minion #{this.Key}";
+		public override string? Description => this.Value?.MinionRace.Value?.Name?.ToString();
 		public uint ModelCharaRow => this.Value.Model.Row;
 		public INpcEquip NpcEquip => ItemUtility.DummyNoneNpcEquip;
+		public string TypeKey => "Npc_Companion";
 
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
+		public bool HasName => !string.IsNullOrEmpty(this.Value.Singular);
 
 		public bool IsFavorite
 		{

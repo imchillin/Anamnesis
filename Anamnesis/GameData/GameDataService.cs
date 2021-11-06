@@ -6,12 +6,16 @@ namespace Anamnesis.Services
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+	using System.Text;
 	using System.Threading.Tasks;
+	using Anamnesis.Character;
 	using Anamnesis.Character.Utilities;
+	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
+	using Anamnesis.Serialization;
 	using Lumina.Data;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
@@ -20,6 +24,9 @@ namespace Anamnesis.Services
 
 	public class GameDataService : ServiceBase<GameDataService>
 	{
+		private static Dictionary<string, string>? npcNames;
+		private static ExcelSheet<BNpcName>? battleNpcNames;
+
 		private LuminaData? lumina;
 
 		public enum ClientRegion
@@ -51,6 +58,35 @@ namespace Anamnesis.Services
 		public static ISheet<Prop> Props { get; private set; }
 		public static ISheet<ItemCategory> ItemCategories { get; private set; }
 		#pragma warning restore CS8618
+
+		public static string? GetNpcName(INpcBase npc)
+		{
+			if (npcNames == null)
+				return null;
+
+			string stringKey = npc.ToStringKey();
+			string? name;
+
+			if (!npcNames.TryGetValue(stringKey, out name))
+				return null;
+
+			// Is this a BattleNpcName entry?
+			if (name.Contains("B:"))
+			{
+				if (battleNpcNames == null)
+					return name;
+
+				uint bNpcNameKey = uint.Parse(name.Remove(0, 2));
+
+				BNpcName? row = battleNpcNames.GetRow(bNpcNameKey);
+				if (row == null || string.IsNullOrEmpty(row.Singular))
+					return name;
+
+				return row.Singular;
+			}
+
+			return name;
+		}
 
 		public override Task Initialize()
 		{
@@ -93,6 +129,7 @@ namespace Anamnesis.Services
 				Dyes = new LuminaSheet<IDye, Stain, DyeViewModel>(this.lumina);
 				EventNPCs = new LuminaSheet<INpcBase, ENpcBase, ENpcBaseViewModel>(this.lumina);
 				BattleNPCs = new LuminaSheet<INpcBase, BNpcBase, BNpcBaseViewModel>(this.lumina);
+				battleNpcNames = this.lumina.GetExcelSheet<BNpcName>();
 				Mounts = new LuminaSheet<INpcBase, Mount, MountViewModel>(this.lumina);
 				Companions = new LuminaSheet<INpcBase, Companion, CompanionViewModel>(this.lumina);
 				Territories = new LuminaSheet<ITerritoryType, TerritoryType, TerritoryTypeViewModel>(this.lumina);
@@ -114,6 +151,7 @@ namespace Anamnesis.Services
 			{
 				Props = new PropSheet("Data/Props.json");
 				ItemCategories = new JsonDictionarySheet<ItemCategories, ItemCategory>("Data/ItemCategories.json");
+				npcNames = EmbeddedFileUtility.Load<Dictionary<string, string>>("Data/NpcNames.json");
 			}
 			catch (Exception ex)
 			{

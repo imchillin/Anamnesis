@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData
 {
+	using System.Windows.Media;
 	using Anamnesis.TexTools;
 
 	public interface INpcBase : IRow
@@ -36,9 +37,12 @@ namespace Anamnesis.GameData
 		int BustOrTone1 { get; }
 		int HairColor { get; }
 
+		ImageSource? Icon { get; }
 		Mod? Mod { get; }
 		bool IsFavorite { get; }
 		bool CanFavorite { get; }
+		bool HasName { get; }
+		string TypeKey { get; }
 	}
 
 	public interface INpcEquip

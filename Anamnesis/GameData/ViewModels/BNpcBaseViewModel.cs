@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
+	using System.Windows.Media;
 	using Anamnesis.Character;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
@@ -12,6 +13,8 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class BNpcBaseViewModel : ExcelRowViewModel<BNpcBase>, INpcBase
 	{
+		private readonly string? name;
+
 		public BNpcBaseViewModel(uint key, ExcelSheet<BNpcBase> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
@@ -32,6 +35,8 @@ namespace Anamnesis.GameData.ViewModels
 
 			this.Race = GameDataService.Races!.Get(raceId);
 			this.Tribe = GameDataService.Tribes!.Get(tribeId);
+
+			this.name = GameDataService.GetNpcName(this);
 		}
 
 		public IRace Race { get; private set; }
@@ -62,12 +67,16 @@ namespace Anamnesis.GameData.ViewModels
 		public int BustOrTone1 => this.Value.BNpcCustomize.Value?.BustOrTone1 ?? 0;
 		public int HairColor => this.Value.BNpcCustomize.Value?.HairColor ?? 0;
 
-		public override string Name => $"Battle NPC #{this.Key}";
+		public ImageSource? Icon => null;
+		public override string Name => this.name ?? $"Battle NPC #{this.Key}";
+		public override string? Description => null;
 		public uint ModelCharaRow => this.Value.ModelChara.Row;
 		public INpcEquip NpcEquip => new NpcEquipViewModel(this.Value.NpcEquip.Value!);
+		public string TypeKey => "Npc_Battle";
 
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
+		public bool HasName => this.name != null;
 
 		public bool IsFavorite
 		{

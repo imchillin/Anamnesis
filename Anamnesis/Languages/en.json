@@ -487,6 +487,12 @@
 	"Item_InvisibleHead": "Invisible",
 	"Item_InvisibleHeadDesc": "Turns your head invisible",
 
+	"Npc_Battle": "Battle NPC",
+	"Npc_Resident": "Resident NPC",
+	"Npc_Event": "Event NPC",
+	"Npc_Mount": "Mount",
+	"Npc_Companion":  "Minion",
+
 	"Help_Title": "Help",
 	"Help_Tip": "Visit the Wiki"
 }

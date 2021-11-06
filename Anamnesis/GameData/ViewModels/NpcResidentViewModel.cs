@@ -3,7 +3,7 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
-	using System;
+	using System.Windows.Media;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
@@ -17,13 +17,17 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
-		public override string Name => this.Singular;
+		public ImageSource? Icon => null;
+		public override string Name => this.HasName ? this.Singular : $"Resident #{this.Key}";
 		public string Singular => this.Value.Singular;
 		public string Plural => this.Value.Plural;
 		public string Title => this.Value.Title;
 		public INpcBase Appearance => GameDataService.EventNPCs!.Get(this.Value.RowId);
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
+		public bool HasName => !string.IsNullOrEmpty(this.Singular);
+		public override string? Description => this.Title;
+		public string TypeKey => "Npc_Resident";
 
 		public bool IsFavorite
 		{

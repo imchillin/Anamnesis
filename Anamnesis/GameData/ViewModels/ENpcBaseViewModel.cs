@@ -3,7 +3,7 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
-	using Anamnesis.Character;
+	using System.Windows.Media;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
@@ -12,6 +12,8 @@ namespace Anamnesis.GameData.ViewModels
 
 	public class ENpcBaseViewModel : ExcelRowViewModel<ENpcBase>, INpcBase
 	{
+		private readonly string? name;
+
 		public ENpcBaseViewModel(uint key, ExcelSheet<ENpcBase> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
@@ -26,15 +28,20 @@ namespace Anamnesis.GameData.ViewModels
 
 			this.Race = GameDataService.Races!.Get(raceId);
 			this.Tribe = GameDataService.Tribes!.Get(tribeId);
+
+			this.name = GameDataService.GetNpcName(this);
 		}
 
 		public IRace Race { get; private set; }
 		public ITribe Tribe { get; private set; }
 
-		public override string Name => $"Event NPC #{this.Key}";
-
+		public ImageSource? Icon => null;
+		public override string Name => this.name ?? $"Event NPC #{this.Key}";
+		public override string? Description => null;
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
+		public bool HasName => this.name != null;
+		public string TypeKey => "Npc_Event";
 
 		public bool IsFavorite
 		{

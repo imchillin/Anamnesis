@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData.ViewModels
 {
+	using System.Windows.Media;
 	using Anamnesis.Character;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Services;
@@ -48,12 +49,16 @@ namespace Anamnesis.GameData.ViewModels
 		public int BustOrTone1 => 0;
 		public int HairColor => 0;
 
-		public override string Name => !string.IsNullOrEmpty(this.Value.Singular) ? this.Value.Singular : $"Mount #{this.Key}";
+		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);
+		public override string Name => this.HasName ? this.Value.Singular : $"Mount #{this.Key}";
+		public override string? Description => null;
 		public uint ModelCharaRow => this.Value.ModelChara.Row;
 		public INpcEquip NpcEquip => new MountEquip(this.Value);
+		public string TypeKey => "Npc_Mount";
 
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
+		public bool HasName => !string.IsNullOrEmpty(this.Value.Singular);
 
 		public bool IsFavorite
 		{

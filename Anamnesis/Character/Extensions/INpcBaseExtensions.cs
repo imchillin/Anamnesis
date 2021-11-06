@@ -6,10 +6,74 @@ namespace Anamnesis.Character
 	using System;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 
 	public static class INpcBaseExtensions
 	{
+		public static string ToStringKey(this INpcBase npc)
+		{
+			Type type = npc.GetType();
+			char t;
+
+			if (type == typeof(NpcResidentViewModel))
+			{
+				t = 'R';
+			}
+			else if (type == typeof(BNpcBaseViewModel))
+			{
+				t = 'B';
+			}
+			else if (type == typeof(ENpcBaseViewModel))
+			{
+				t = 'E';
+			}
+			else if (type == typeof(CompanionViewModel))
+			{
+				t = 'C';
+			}
+			else if (type == typeof(MountViewModel))
+			{
+				t = 'M';
+			}
+			else
+			{
+				throw new Exception($"Unknown Npc Type: {type}");
+			}
+
+			return $"{t}:{npc.Key}";
+		}
+
+		public static INpcBase FromStringKey(string stringKey)
+		{
+			string[] parts = stringKey.Split(':');
+			if (parts.Length <= 1)
+			{
+				uint key = uint.Parse(stringKey);
+				return GameDataService.ResidentNPCs.Get(key);
+			}
+			else if (parts.Length == 2)
+			{
+				char t = parts[0][0];
+				uint key = uint.Parse(parts[1]);
+
+				return t switch
+				{
+					'R' => GameDataService.ResidentNPCs.Get(key),
+					'B' => GameDataService.BattleNPCs.Get(key),
+					'E' => GameDataService.EventNPCs.Get(key),
+					'C' => GameDataService.Companions.Get(key),
+					'M' => GameDataService.Mounts.Get(key),
+					_ => throw new Exception($"Unrecognized Npc type key: {t}"),
+				};
+			}
+			else
+			{
+				throw new Exception($"Unrecognized NPC key: {stringKey}");
+			}
+		}
+
 		public static CharacterFile ToFile(this INpcBase npc)
 		{
 			CharacterFile file = new CharacterFile();

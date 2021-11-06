@@ -6,58 +6,71 @@
 			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 mc:Ignorable="d" 
+			 mc:Ignorable="d"
+			 Width="250"
 			 d:DesignHeight="450">
 	<Grid Margin="0, 6, 0, 0">
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition/>
+			<RowDefinition />
 		</Grid.RowDefinitions>
+		
+		<Grid Grid.Row="0" Margin="6">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition />
+			</Grid.RowDefinitions>
 
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-			<ColumnDefinition />
-			<ColumnDefinition />
-		</Grid.ColumnDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
 
-		<CheckBox Grid.Row="0"
-				  Grid.Column="0"
-				  Content="Resident NPC"
-				  Margin="6,0"
-				  IsChecked="{Binding IncludeResidentNpc}" />
+			<CheckBox Grid.Row="0"
+					  Grid.Column="0"
+					  Content="Resident NPCs"
+					  IsChecked="{Binding IncludeResidentNpc}" />
 
-		<CheckBox Grid.Row="0"
-				  Grid.Column="1"
-				  Content="Battle NPC"
-				  Margin="6,0"
-				  IsChecked="{Binding IncludeBattleNpc}" />
+			<CheckBox Grid.Row="0"
+					  Grid.Column="1"
+					  Content="Battle NPCs"
+					  IsChecked="{Binding IncludeBattleNpc}" />
 
-		<CheckBox Grid.Row="0"
-				  Grid.Column="2"
-				  Content="Event NPC"
-				  Margin="6,0"
-				  IsChecked="{Binding IncludeEventNpc}" />
+			<CheckBox Grid.Row="1"
+					  Grid.Column="0"
+					  Content="Event NPCs"
+					  IsChecked="{Binding IncludeEventNpc}" />
 
-		<CheckBox Grid.Row="1"
-				  Grid.Column="0"
-				  Content="Mount"
-				  Margin="6,0"
-				  IsChecked="{Binding IncludeMount}" />
+			<CheckBox Grid.Row="1"
+					  Grid.Column="1"
+					  Content="Mounts"
+					  IsChecked="{Binding IncludeMount}" />
 
-		<CheckBox Grid.Row="1"
-				  Grid.Column="1"
-				  Content="Minion"
-				  Margin="6,0"
-				  IsChecked="{Binding IncludeCompanion}" />
+			<CheckBox Grid.Row="3"
+					  Grid.Column="0"
+					  Content="Minions"
+					  IsChecked="{Binding IncludeCompanion}" />
 
-		<CheckBox Grid.Row="2" Grid.Column="2" IsThreeState="True" Content="Modded" Margin="6,0" IsChecked="{Binding IncludeModded}"/>
+			<CheckBox Grid.Row="4"
+					  Grid.Column="0"
+					  IsThreeState="True"
+					  Content="Named"
+					  IsChecked="{Binding IncludeNamed}" />
+		
+			<CheckBox Grid.Row="4"
+					  Grid.Column="1"
+					  IsThreeState="True"
+					  Content="Modded"
+					  IsChecked="{Binding IncludeModded}"/>
+
+		</Grid>
 
 		<cm3Drawers:SelectorDrawer
-			Grid.Row="3"
-			Grid.ColumnSpan="3"
+			Grid.Row="1"
 			x:Name="Selector"
 			Close="OnClose" 
 			Filter="OnFilter"
@@ -66,7 +79,6 @@
 			<cm3Drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
 					<Grid>
-
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition />
 							<ColumnDefinition Width="Auto"/>
@@ -107,7 +119,23 @@
 									   Fill="Transparent" >
 							<ToolTipService.ToolTip>
 								<StackPanel Orientation="Vertical">
+									<TextBlock Text="{Binding Name}"
+											   FontWeight="Bold"
+											   Visibility="{Binding HasName, Converter={StaticResource B2V}}" />
+									
 									<TextBlock Text="{Binding Description}" Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+
+									<StackPanel Orientation="Horizontal">
+										<xivToolsWpf:TextBlock Key="{Binding TypeKey}" />
+										<xivToolsWpf:TextBlock Text=": #" Margin="0" />
+										<TextBlock Text="{Binding Key}" />
+									</StackPanel>
+
+									<StackPanel Orientation="Horizontal">
+										<xivToolsWpf:TextBlock Key="Character_Actor_Model" Margin="2, 0, 0, 0" />
+										<xivToolsWpf:TextBlock Text=": #" Margin="0" />
+										<TextBlock Text="{Binding ModelCharaRow}" Margin="0" />
+									</StackPanel>
 
 									<Grid Grid.Column="1" Grid.Row="2" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="3, 0, 0, 0">
 										<Grid.ColumnDefinitions>

@@ -24,6 +24,7 @@ namespace Anamnesis.Character.Views
 		private static bool includeEventNpc = true;
 		private static bool includeMount = true;
 		private static bool includeCompanion = true;
+		private static bool? includeNamed = true;
 		private static bool? includeModded = null;
 
 		public NpcSelector()
@@ -85,6 +86,12 @@ namespace Anamnesis.Character.Views
 			set => includeCompanion = value;
 		}
 
+		public bool? IncludeNamed
+		{
+			get => includeNamed;
+			set => includeNamed = value;
+		}
+
 		public bool? IncludeModded
 		{
 			get => includeModded;
@@ -130,6 +137,12 @@ namespace Anamnesis.Character.Views
 		{
 			if (obj is INpcBase npc)
 			{
+				if (this.IncludeNamed == true && !npc.HasName)
+					return false;
+
+				if (this.IncludeNamed == false && npc.HasName)
+					return false;
+
 				if (this.IncludeModded == true && npc.Mod == null)
 					return false;
 
