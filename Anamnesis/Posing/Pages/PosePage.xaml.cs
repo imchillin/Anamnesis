@@ -65,32 +65,44 @@ namespace Anamnesis.PoseModule.Pages
 		 *          - store the quat on the target bone
 		 *  - recursively flip on all child bones
 		 */
+
+		// TODO: This doesn't seem to be working correctly after the skeleton upgrade. not sure why...
 		private void FlipBone(BoneVisual3d? targetBone, bool shouldFlip = true)
 		{
 			if (targetBone != null)
 			{
-				CmQuaternion newRotation = targetBone.ViewModel.Rotation.Mirror(); // character-relative transform
-				if (shouldFlip && targetBone.BoneName.EndsWith("Left"))
+				CmQuaternion newRotation = targetBone.TransformMemory.Rotation.Mirror(); // character-relative transform
+				if (shouldFlip && targetBone.BoneName.EndsWith("_l"))
 				{
-					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(targetBone.BoneName.Replace("Left", "Right"));
+					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(targetBone.BoneName.Replace("_l", "_r"));
 					if (rightBone != null)
 					{
-						CmQuaternion rightRot = rightBone.ViewModel.Rotation.Mirror();
-						targetBone.ViewModel.Rotation = rightRot;
-						rightBone.ViewModel.Rotation = newRotation;
+						CmQuaternion rightRot = rightBone.Rotation.Mirror();
+						foreach (TransformMemory transformMemory in targetBone.TransformMemories)
+						{
+							transformMemory.Rotation = rightRot;
+						}
+
+						foreach (TransformMemory transformMemory in rightBone.TransformMemories)
+						{
+							transformMemory.Rotation = newRotation;
+						}
 					}
 					else
 					{
 						Log.Warning("could not find right bone of: " + targetBone.BoneName);
 					}
 				}
-				else if (shouldFlip && targetBone.BoneName.EndsWith("Right"))
+				else if (shouldFlip && targetBone.BoneName.EndsWith("_r"))
 				{
 					// do nothing so it doesn't revert...
 				}
 				else
 				{
-					targetBone.ViewModel.Rotation = newRotation;
+					foreach (TransformMemory transformMemory in targetBone.TransformMemories)
+					{
+						transformMemory.Rotation = newRotation;
+					}
 				}
 
 				if (PoseService.Instance.EnableParenting)
@@ -237,7 +249,23 @@ namespace Anamnesis.PoseModule.Pages
 
 				if (result.File is PoseFile poseFile)
 				{
-					await poseFile.Apply(this.Actor, this.Skeleton, selectionOnly, mode);
+					HashSet<string>? bones = null;
+					if (selectionOnly)
+					{
+						bones = new HashSet<string>();
+
+						foreach ((string name, BoneVisual3d visual) in this.Skeleton.Bones)
+						{
+							if (this.Skeleton.GetIsBoneSelected(visual))
+							{
+								bones.Add(name);
+							}
+						}
+					}
+
+					this.Skeleton.ClearSelection();
+					await poseFile.Apply(this.Actor, this.Skeleton, bones, mode);
+					this.Skeleton.ClearSelection();
 				}
 			}
 			catch (Exception ex)

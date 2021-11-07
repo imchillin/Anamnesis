@@ -21,6 +21,8 @@ namespace Anamnesis.PoseModule
 	[AddINotifyPropertyChangedInterface]
 	public class BoneVisual3d : ModelVisual3D, ITransform, IBone
 	{
+		public readonly List<TransformMemory> TransformMemories = new List<TransformMemory>();
+
 		private readonly QuaternionRotation3D rotation;
 		private readonly TranslateTransform3D position;
 		private readonly BoneTargetVisual3d target;
@@ -28,9 +30,8 @@ namespace Anamnesis.PoseModule
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
 
-		public BoneVisual3d(TransformMemory transform, SkeletonVisual3d skeleton, string name)
+		public BoneVisual3d(SkeletonVisual3d skeleton, string name)
 		{
-			this.ViewModel = transform;
 			this.Skeleton = skeleton;
 
 			this.rotation = new QuaternionRotation3D();
@@ -54,7 +55,7 @@ namespace Anamnesis.PoseModule
 		}
 
 		public SkeletonVisual3d Skeleton { get; private set; }
-		public TransformMemory ViewModel { get; set; }
+		public TransformMemory TransformMemory => this.TransformMemories[0];
 
 		public bool IsEnabled { get; set; } = true;
 		public string BoneName { get; set; }
@@ -133,20 +134,28 @@ namespace Anamnesis.PoseModule
 				if (this.Parent == null)
 					return rot;
 
-				return rot * this.Parent.ViewModel.Rotation;
+				return rot * this.Parent.TransformMemory.Rotation;
 			}
 		}
 
 		public BoneVisual3d? Visual => this;
+
+		public virtual void Tick()
+		{
+			foreach (TransformMemory transformMemory in this.TransformMemories)
+			{
+				transformMemory.Tick();
+			}
+		}
 
 		public virtual void ReadTransform(bool readChildren = false)
 		{
 			if (!this.IsEnabled)
 				return;
 
-			this.Position = this.ViewModel.Position;
-			this.Rotation = this.ViewModel.Rotation;
-			this.Scale = this.ViewModel.Scale;
+			this.Position = this.TransformMemory.Position;
+			this.Rotation = this.TransformMemory.Rotation;
+			this.Scale = this.TransformMemory.Scale;
 
 			// Convert the character-relative transform into a parent-relative transform
 			Point3D position = this.Position.ToMedia3DPoint();
@@ -154,7 +163,7 @@ namespace Anamnesis.PoseModule
 
 			if (this.Parent != null)
 			{
-				TransformMemory parentTransform = this.Parent.ViewModel;
+				TransformMemory parentTransform = this.Parent.TransformMemory;
 				Point3D parentPosition = parentTransform.Position.ToMedia3DPoint();
 				Quaternion parentRot = parentTransform.Rotation.ToMedia3DQuaternion();
 				parentRot.Invert();
@@ -234,18 +243,34 @@ namespace Anamnesis.PoseModule
 			position.Z = (float)transform.Matrix.OffsetZ;
 
 			// and push those values to the game memory
-			if (PoseService.Instance.FreezePositions)
-				this.ViewModel.Position = position;
+			foreach (TransformMemory? transformMemory in this.TransformMemories)
+			{
+				if (PoseService.Instance.FreezePositions)
+				{
+					transformMemory.Position = position;
+				}
 
-			if (PoseService.Instance.FreezeScale)
-				this.ViewModel.Scale = this.Scale;
+				if (PoseService.Instance.FreezeScale)
+				{
+					transformMemory.Scale = this.Scale;
+				}
 
-			if (PoseService.Instance.FreezeRotation)
-				this.ViewModel.Rotation = rotation.ToCmQuaternion();
+				if (PoseService.Instance.FreezeRotation)
+				{
+					transformMemory.Rotation = rotation.ToCmQuaternion();
+				}
+			}
 
 			if (this.LinkedEye != null && this.Skeleton.LinkEyes)
 			{
-				this.LinkedEye.ViewModel.Rotation = this.ViewModel.Rotation;
+				foreach (TransformMemory? transformMemory in this.LinkedEye.TransformMemories)
+				{
+					if (PoseService.Instance.FreezeRotation)
+					{
+						transformMemory.Rotation = rotation.ToCmQuaternion();
+					}
+				}
+
 				this.LinkedEye.Rotation = this.Rotation;
 			}
 

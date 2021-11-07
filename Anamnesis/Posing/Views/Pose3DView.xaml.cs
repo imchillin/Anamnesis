@@ -126,16 +126,26 @@ namespace Anamnesis.PoseModule.Views
 
 			Rect3D bounds = default;
 
-			Vector3D pos = this.Skeleton.Bones.First().ViewModel.Position.ToMedia3DVector();
-			foreach (BoneVisual3d visual in this.Skeleton.Bones)
+			Vector3D? pos = null;
+			foreach (BoneVisual3d visual in this.Skeleton.Bones.Values)
 			{
-				pos += visual.ViewModel.Position.ToMedia3DVector();
+				if (pos == null)
+				{
+					pos = visual.Position.ToMedia3DVector();
+				}
+				else
+				{
+					pos = pos + visual.Position.ToMedia3DVector();
+				}
 
-				Point3D point = visual.ViewModel.Position.ToMedia3DPoint();
+				Point3D point = visual.Position.ToMedia3DPoint();
 				bounds.Union(point);
 			}
 
-			pos /= this.Skeleton.Bones.Count;
+			if (pos == null)
+				return;
+
+			pos = pos / this.Skeleton.Bones.Count;
 
 			this.CameraDistance = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
 		}

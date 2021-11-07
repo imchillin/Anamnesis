@@ -61,7 +61,7 @@
 
 
 			<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" Grid.RowSpan="2">
-				<ItemsControl ItemsSource="{Binding Skeleton.Bones}">
+				<ItemsControl ItemsSource="{Binding Skeleton.AllBones}">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
 							<Grid>

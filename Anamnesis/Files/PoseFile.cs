@@ -9,6 +9,7 @@ namespace Anamnesis.Files
 	using System.Threading.Tasks;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
+	using Anamnesis.Posing;
 	using Serilog;
 
 	public class PoseFile : JsonFileBase
@@ -55,16 +56,16 @@ namespace Anamnesis.Files
 
 			this.Bones = new Dictionary<string, Bone?>();
 
-			foreach (BoneVisual3d bone in skeleton.Bones)
+			foreach (BoneVisual3d bone in skeleton.Bones.Values)
 			{
 				if (selectionOnly && !skeleton.GetIsBoneSelected(bone))
 					continue;
 
-				this.Bones.Add(bone.BoneName, new Bone(bone.ViewModel));
+				this.Bones.Add(bone.BoneName, new Bone(bone));
 			}
 		}
 
-		public async Task Apply(ActorMemory actor, SkeletonVisual3d skeleton, bool selectionOnly, Mode mode)
+		public async Task Apply(ActorMemory actor, SkeletonVisual3d skeleton, HashSet<string>? bones, Mode mode)
 		{
 			if (actor == null)
 				throw new ArgumentNullException(nameof(actor));
@@ -86,8 +87,8 @@ namespace Anamnesis.Files
 			// the pose that matches the expression, it wont break.
 			// We then just set the head back to where it should be afterwards.
 			BoneVisual3d? headBone = skeleton.GetIsHeadSelection() ? skeleton.GetBone("Head") : null;
-			headBone?.ReadTransform(true);
-			Quaternion? originalHeadRotation = headBone?.ViewModel.Rotation;
+			headBone?.Tick();
+			Quaternion? originalHeadRotation = headBone?.TransformMemory.Rotation;
 
 			if (this.Bones != null)
 			{
@@ -100,33 +101,38 @@ namespace Anamnesis.Files
 						if (savedBone == null)
 							continue;
 
-						BoneVisual3d? bone = skeleton.GetBone(name);
+						string boneName = name;
+						string? modernName = LegacyBoneNameConverter.GetModernName(name);
+						if (modernName != null)
+							boneName = modernName;
+
+						BoneVisual3d? bone = skeleton.GetBone(boneName);
 
 						if (bone == null)
 						{
-							Log.Warning($"Bone: \"{name}\" not found");
+							Log.Warning($"Bone: \"{boneName}\" not found");
 							continue;
 						}
 
-						if (selectionOnly && !skeleton.GetIsBoneSelected(bone))
+						if (bones != null && !bones.Contains(boneName))
 							continue;
 
-						TransformMemory vm = bone.ViewModel;
-						vm.Tick();
-
-						if (savedBone.Position != null && mode.HasFlag(Mode.Position))
+						foreach (TransformMemory transformMemory in bone.TransformMemories)
 						{
-							vm.Position = (Vector)savedBone.Position;
-						}
+							if (savedBone.Position != null && mode.HasFlag(Mode.Position))
+							{
+								transformMemory.Position = (Vector)savedBone.Position;
+							}
 
-						if (savedBone.Rotation != null && mode.HasFlag(Mode.Rotation))
-						{
-							vm.Rotation = (Quaternion)savedBone.Rotation;
-						}
+							if (savedBone.Rotation != null && mode.HasFlag(Mode.Rotation))
+							{
+								transformMemory.Rotation = (Quaternion)savedBone.Rotation;
+							}
 
-						if (savedBone.Scale != null && mode.HasFlag(Mode.Scale))
-						{
-							vm.Scale = (Vector)savedBone.Scale;
+							if (savedBone.Scale != null && mode.HasFlag(Mode.Scale))
+							{
+								transformMemory.Scale = (Vector)savedBone.Scale;
+							}
 						}
 
 						bone.ReadTransform();
@@ -140,7 +146,11 @@ namespace Anamnesis.Files
 			// Restore the head bone rotation if we were only loading an expression
 			if (headBone != null && originalHeadRotation != null)
 			{
-				headBone.ViewModel.Rotation = (Quaternion)originalHeadRotation;
+				foreach (TransformMemory vm in headBone.TransformMemories)
+				{
+					vm.Rotation = (Quaternion)originalHeadRotation;
+				}
+
 				headBone.ReadTransform();
 				headBone.WriteTransform(skeleton, true);
 			}
@@ -167,11 +177,11 @@ namespace Anamnesis.Files
 			{
 			}
 
-			public Bone(TransformMemory trans)
+			public Bone(BoneVisual3d boneVisual)
 			{
-				this.Position = trans.Position;
-				this.Rotation = trans.Rotation;
-				this.Scale = trans.Scale;
+				this.Position = boneVisual.Position;
+				this.Rotation = boneVisual.Rotation;
+				this.Scale = boneVisual.Scale;
 			}
 
 			public Vector? Position { get; set; }

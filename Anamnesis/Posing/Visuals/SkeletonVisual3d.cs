@@ -23,8 +23,9 @@ namespace Anamnesis.PoseModule
 	[AddINotifyPropertyChangedInterface]
 	public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	{
-		public List<BoneVisual3d> SelectedBones = new List<BoneVisual3d>();
-		public HashSet<BoneVisual3d> HoverBones = new HashSet<BoneVisual3d>();
+		public readonly Dictionary<string, BoneVisual3d> Bones = new Dictionary<string, BoneVisual3d>();
+		public readonly List<BoneVisual3d> SelectedBones = new List<BoneVisual3d>();
+		public readonly HashSet<BoneVisual3d> HoverBones = new HashSet<BoneVisual3d>();
 
 		private readonly QuaternionRotation3D rootRotation;
 
@@ -58,6 +59,8 @@ namespace Anamnesis.PoseModule
 		public bool HasSelection => this.SelectedBones.Count > 0;
 		public bool HasHover => this.HoverBones.Count > 0;
 
+		public IEnumerable<BoneVisual3d> AllBones => this.Bones.Values;
+
 		public bool FlipSides
 		{
 			get => SettingsService.Current.FlipPoseGuiSides;
@@ -79,8 +82,6 @@ namespace Anamnesis.PoseModule
 				throw new NotSupportedException();
 			}
 		}
-
-		public ObservableCollection<BoneVisual3d> Bones { get; private set; } = new ObservableCollection<BoneVisual3d>();
 
 		public bool HasTail => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote
 			|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.AuRa
@@ -188,6 +189,32 @@ namespace Anamnesis.PoseModule
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
 		}
 
+		public void Select(List<BoneVisual3d> bones, SelectMode mode)
+		{
+			if (mode == SelectMode.Override)
+				this.SelectedBones.Clear();
+
+			foreach (BoneVisual3d bone in bones)
+			{
+				if (this.SelectedBones.Contains(bone))
+				{
+					if (mode == SelectMode.Toggle)
+					{
+						this.SelectedBones.Remove(bone);
+					}
+				}
+				else
+				{
+					this.SelectedBones.Add(bone);
+				}
+			}
+
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
+		}
+
 		public void ClearSelection()
 		{
 			this.SelectedBones.Clear();
@@ -225,32 +252,6 @@ namespace Anamnesis.PoseModule
 		public void NotifyHover()
 		{
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasHover)));
-		}
-
-		public void Select(List<BoneVisual3d> bones, SelectMode mode)
-		{
-			if (mode == SelectMode.Override)
-				this.SelectedBones.Clear();
-
-			foreach (BoneVisual3d bone in bones)
-			{
-				if (this.SelectedBones.Contains(bone))
-				{
-					if (mode == SelectMode.Toggle)
-					{
-						this.SelectedBones.Remove(bone);
-					}
-				}
-				else
-				{
-					this.SelectedBones.Add(bone);
-				}
-			}
-
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
 		}
 
 		public bool GetIsBoneHovered(BoneVisual3d bone)
@@ -302,21 +303,10 @@ namespace Anamnesis.PoseModule
 			if (modernName != null)
 				name = modernName;
 
-			BoneVisual3d? best = null;
-			foreach (BoneVisual3d bone in this.Bones)
-			{
-				if (bone.BoneName == name)
-				{
-					if (best != null)
-						Log.Warning("Multiple bones with the same name!");
+			BoneVisual3d? bone;
+			this.Bones.TryGetValue(name, out bone);
 
-					best = bone;
-				}
-			}
-
-			////Log.Information($"Optional bone not found: {name}");
-
-			return best;
+			return bone;
 		}
 
 		/// <summary>
@@ -352,25 +342,28 @@ namespace Anamnesis.PoseModule
 		{
 			this.ClearSelection();
 
-			throw new NotImplementedException();
-
-			/*BoneVisual3d? headBone = this.GetBone("Head");
+			BoneVisual3d? headBone = this.GetBone("j_kao");
 			if (headBone == null)
 				return;
 
 			List<BoneVisual3d> headBones = new List<BoneVisual3d>();
-
 			headBones.Add(headBone);
 
-			foreach (BoneVisual3d bone in this.Bones)
+			this.GetBoneChildren(headBone, ref headBones);
+
+			this.Select(headBones, SkeletonVisual3d.SelectMode.Add);
+		}
+
+		public void GetBoneChildren(BoneVisual3d bone, ref List<BoneVisual3d> bones)
+		{
+			foreach (Visual3D child in bone.Children)
 			{
-				if (bone.OriginalBoneName.StartsWith("Head_"))
+				if (child is BoneVisual3d childBone)
 				{
-					headBones.Add(bone);
+					bones.Add(childBone);
+					this.GetBoneChildren(childBone, ref bones);
 				}
 			}
-
-			this.Select(headBones, SkeletonVisual3d.SelectMode.Add);*/
 		}
 
 		public void Reselect()
@@ -385,12 +378,12 @@ namespace Anamnesis.PoseModule
 			if (this.Bones == null)
 				return;
 
-			foreach (BoneVisual3d bone in this.Bones)
+			foreach ((string name, BoneVisual3d bone) in this.Bones)
 			{
 				if (this.GetIsBoneSelected(bone))
 					continue;
 
-				bone.ViewModel.Tick();
+				bone.Tick();
 				bone.ReadTransform();
 			}
 		}
@@ -431,12 +424,12 @@ namespace Anamnesis.PoseModule
 					rEye.LinkedEye = lEye;
 				}
 
-				foreach (BoneVisual3d bone in this.Bones)
+				foreach ((string name, BoneVisual3d bone) in this.Bones)
 				{
 					bone.ReadTransform();
 				}
 
-				foreach (BoneVisual3d bone in this.Bones)
+				foreach ((string name, BoneVisual3d bone) in this.Bones)
 				{
 					bone.ReadTransform();
 				}
@@ -466,42 +459,46 @@ namespace Anamnesis.PoseModule
 
 				int count = bestHkaPose.Transforms.Count;
 
-				List<BoneVisual3d> bones = new List<BoneVisual3d>();
-
-				// TODO: since multiple partial skeletons can contain the same bone, we need to dtermine a priority
-				// for which one should be mapped, OR we should allow a single BoneVisual3D to control multiple bones
-				// with the same name.
-				// e.g: the Head bone 'j_kao' and jaw bone 'j_ago' appear in the body, head, and hair skeletons.
-				// the main jaw bone we want needs to be the head version (partialSkeleton 2).
-
 				// Load all bones first
 				for (int boneIndex = 0; boneIndex < count; boneIndex++)
 				{
 					string name = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
 					TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
-					bones.Add(new BoneVisual3d(transform, this, name));
+
+					BoneVisual3d visual;
+					if (this.Bones.ContainsKey(name))
+					{
+						visual = this.Bones[name];
+					}
+					else
+					{
+						// new bone
+						visual = new BoneVisual3d(this, name);
+						this.Bones.Add(name, visual);
+					}
+
+					visual.TransformMemories.Add(transform);
 				}
 
 				// Set parents now all the bones are loaded
 				for (int boneIndex = 0; boneIndex < count; boneIndex++)
 				{
 					int parentIndex = bestHkaPose.Skeleton.ParentIndices[boneIndex];
+					string boneName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
+
+					if (this.Bones[boneName].Parent != null)
+						continue;
 
 					if (parentIndex < 0)
 					{
 						// this bone has no parent, is root.
-						this.Children.Add(bones[boneIndex]);
+						this.Children.Add(this.Bones[boneName]);
 					}
 					else
 					{
-						bones[boneIndex].Parent = bones[parentIndex];
+						string parentBoneName = bestHkaPose.Skeleton.Bones[parentIndex].Name.ToString();
+						this.Bones[boneName].Parent = this.Bones[parentBoneName];
 					}
-				}
-
-				// push the results into the bone list
-				foreach (BoneVisual3d bone in bones)
-				{
-					this.Bones.Add(bone);
 				}
 			}
 		}
