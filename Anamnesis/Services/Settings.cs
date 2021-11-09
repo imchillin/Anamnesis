@@ -17,10 +17,12 @@ namespace Anamnesis.Services
 
 		public string Language { get; set; } = "EN";
 		public bool AlwaysOnTop { get; set; } = true;
+		public bool OverlayWindow { get; set; } = false;
 		public double Opacity { get; set; } = 1.0;
 		public double Scale { get; set; } = 1.0;
 		public bool UseWindowsExplorer { get; set; } = false;
 		public Point WindowPosition { get; set; }
+		public Point OverlayWindowPosition { get; set; }
 		public string DefaultPoseDirectory { get; set; } = "%MyDocuments%/Anamnesis/Poses/";
 		public string DefaultCharacterDirectory { get; set; } = "%MyDocuments%/Anamnesis/Characters/";
 		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";

@@ -463,7 +463,7 @@
 	"Settings_Theme_Color": "Color",
 	"Settings_Hyperlegible": "Use Atkinson Hyperlegible font",
 	"Settings_ShowGallery": "Show Gallery",
-
+	"Settings_OverlayWindow": "Mini window",
 
 	"About_Version_Header": "Version",
 	"About_OpenSource_Header": "Proudly Open Source",
@@ -491,7 +491,7 @@
 	"Npc_Resident": "Resident NPC",
 	"Npc_Event": "Event NPC",
 	"Npc_Mount": "Mount",
-	"Npc_Companion":  "Minion",
+	"Npc_Companion": "Minion",
 
 	"Help_Title": "Help",
 	"Help_Tip": "Visit the Wiki"

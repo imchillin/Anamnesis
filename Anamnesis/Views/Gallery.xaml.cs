@@ -61,18 +61,19 @@ namespace Anamnesis.Views
 			if (this.isRunning)
 				return;
 
-			while (!this.IsVisible)
-				await Task.Delay(500);
-
 			if (!SettingsService.Current.ShowGallery)
 				return;
 
 			this.isRunning = true;
+
+			while (!this.IsVisible)
+				await Task.Delay(500);
+
 			Random rnd = new Random();
 
 			this.skip = true;
 
-			while (this.IsVisible)
+			while (Application.Current != null && SettingsService.Current.ShowGallery)
 			{
 				List<Entry> entries = EmbeddedFileUtility.Load<List<Entry>>("Data/Images.json");
 
@@ -98,8 +99,6 @@ namespace Anamnesis.Views
 					this.skip = false;
 				}
 			}
-
-			this.isRunning = false;
 		}
 
 		private async Task Show(Entry entry, Random rnd)

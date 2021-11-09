@@ -1,0 +1,28 @@
+﻿<Window x:Class="Anamnesis.Windows.MiniWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Anamnesis.Windows"
+		mc:Ignorable="d"
+		Title="Anamnesis"
+		Background="Transparent"
+		WindowStyle="None"
+		AllowsTransparency="True"
+		Width="48"
+		Height="48"
+		MouseDown="OnMouseDown"
+		MouseUp="OnMouseUp"
+		LocationChanged="OnLocationChanged"
+		Closing="OnClosing"
+		Loaded="OnLoaded"
+		Cursor="Hand"
+		Topmost="True"
+		ResizeMode="NoResize">
+
+	<Grid>
+		<Image Grid.Row="0"
+			   Source="../Assets/Anamnesis.png"
+			   Margin="0" />
+	</Grid>
+</Window>

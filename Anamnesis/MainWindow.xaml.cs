@@ -22,6 +22,7 @@ namespace Anamnesis.GUI
 	using Anamnesis.Updater;
 	using Anamnesis.Utils;
 	using Anamnesis.Views;
+	using Anamnesis.Windows;
 	using PropertyChanged;
 	using XivToolsWpf.Windows;
 
@@ -31,6 +32,7 @@ namespace Anamnesis.GUI
 	[AddINotifyPropertyChangedInterface]
 	public partial class MainWindow : ChromedWindow
 	{
+		private MiniWindow? mini;
 		private bool hasSetPosition = false;
 
 		public MainWindow()
@@ -117,6 +119,17 @@ namespace Anamnesis.GUI
 					this.Left = SettingsService.Current.WindowPosition.X;
 					this.Top = SettingsService.Current.WindowPosition.Y;
 				}
+			}
+
+			if (this.mini != null && !SettingsService.Current.OverlayWindow)
+			{
+				this.mini.Close();
+				this.mini = null;
+			}
+			else if (this.mini == null && SettingsService.Current.OverlayWindow)
+			{
+				this.mini = new MiniWindow(this);
+				this.mini.Show();
 			}
 		}
 
@@ -266,6 +279,8 @@ namespace Anamnesis.GUI
 
 		private async void Window_Closing(object sender, CancelEventArgs e)
 		{
+			this.mini?.Close();
+
 			if (PoseService.Exists && PoseService.Instance.IsEnabled)
 			{
 				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
@@ -299,6 +314,8 @@ namespace Anamnesis.GUI
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
+			this.mini?.Show();
+
 			if (SettingsService.Instance.FirstTimeUser)
 			{
 				this.Ftue.Visibility = Visibility.Visible;
