@@ -62,7 +62,21 @@ namespace Anamnesis.Memory
 			set => this.SetFrozen(nameof(ActorModelMemory.Drenched), value, value ? 5 : 0);
 		}
 
-		public bool IsPlayer => Enum.IsDefined(typeof(ActorModelMemory.DataPaths), this.DataPath);
+		public bool IsPlayer
+		{
+			get
+			{
+				if (!Enum.IsDefined(typeof(ActorModelMemory.DataPaths), this.DataPath))
+					return false;
+
+				if (this.Parent is ActorMemory actor)
+				{
+					return actor.ModelType == 0;
+				}
+
+				return true;
+			}
+		}
 
 		protected override bool CanRead(BindInfo bind)
 		{
