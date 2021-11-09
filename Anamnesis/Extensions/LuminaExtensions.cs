@@ -28,7 +28,7 @@ namespace Lumina
 
 			if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
 			{
-				Log.Information($"Invalid item value: {val}");
+				Log.Warning($"Invalid item value: {val}");
 
 				modelSet = 0;
 				modelBase = 0;
@@ -49,7 +49,7 @@ namespace Lumina
 
 			if (modelSet < 0 || modelBase < 0 || modelVariant < 0)
 			{
-				Log.Information($"Invalid item value: {val}");
+				Log.Warning($"Invalid item value: {val}");
 
 				modelSet = 0;
 				modelBase = 0;
