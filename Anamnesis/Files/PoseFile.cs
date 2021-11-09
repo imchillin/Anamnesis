@@ -29,7 +29,7 @@ namespace Anamnesis.Files
 
 		public Dictionary<string, Bone?>? Bones { get; set; }
 
-		public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, bool selectionOnly)
+		public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, HashSet<string>? bones = null)
 		{
 			if (actor == null || skeleton == null)
 				return null;
@@ -40,17 +40,15 @@ namespace Anamnesis.Files
 				return null;
 
 			PoseFile file = new PoseFile();
-			file.WriteToFile(actor, skeleton, selectionOnly);
+			file.WriteToFile(actor, skeleton, bones);
 
 			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
 			file.Serialize(stream);
 			return result.Directory;
 		}
 
-		public void WriteToFile(ActorMemory actor, SkeletonVisual3d skeleton, bool selectionOnly)
+		public void WriteToFile(ActorMemory actor, SkeletonVisual3d skeleton, HashSet<string>? bones)
 		{
-			////SkeletonViewModel? skeletonMem = actor?.ModelObject?.Skeleton?.Skeleton;
-
 			if (skeleton == null || skeleton.Bones == null)
 				throw new Exception("No skeleton in actor");
 
@@ -58,7 +56,7 @@ namespace Anamnesis.Files
 
 			foreach (BoneVisual3d bone in skeleton.Bones.Values)
 			{
-				if (selectionOnly && !skeleton.GetIsBoneSelected(bone))
+				if (bones != null && !bones.Contains(bone.BoneName))
 					continue;
 
 				this.Bones.Add(bone.BoneName, new Bone(bone));
@@ -86,9 +84,19 @@ namespace Anamnesis.Files
 			// Since all facial bones are parented to the head, if we load the head rotation from
 			// the pose that matches the expression, it wont break.
 			// We then just set the head back to where it should be afterwards.
-			BoneVisual3d? headBone = skeleton.GetIsHeadSelection() ? skeleton.GetBone("Head") : null;
-			headBone?.Tick();
-			Quaternion? originalHeadRotation = headBone?.TransformMemory.Rotation;
+			BoneVisual3d? headBone = null;
+			Quaternion? originalHeadRotation = null;
+
+			if (bones != null && bones.Contains("j_kao"))
+			{
+				headBone = skeleton.GetBone("j_kao");
+
+				if (headBone == null)
+					throw new Exception("Unable to find head (j_kao) bone.");
+
+				headBone.Tick();
+				originalHeadRotation = headBone?.TransformMemory.Rotation;
+			}
 
 			if (this.Bones != null)
 			{
@@ -179,9 +187,9 @@ namespace Anamnesis.Files
 
 			public Bone(BoneVisual3d boneVisual)
 			{
-				this.Position = boneVisual.Position;
-				this.Rotation = boneVisual.Rotation;
-				this.Scale = boneVisual.Scale;
+				this.Position = boneVisual.TransformMemory.Position;
+				this.Rotation = boneVisual.TransformMemory.Rotation;
+				this.Scale = boneVisual.TransformMemory.Scale;
 			}
 
 			public Vector? Position { get; set; }

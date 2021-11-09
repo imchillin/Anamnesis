@@ -309,35 +309,6 @@ namespace Anamnesis.PoseModule
 			return bone;
 		}
 
-		/// <summary>
-		/// Returns true if the entire selection is head + face bones only.
-		/// Hacky special check for the loading of expresisons (#365).
-		/// </summary>
-		public bool GetIsHeadSelection()
-		{
-			BoneVisual3d? head = this.GetBone("Head");
-
-			if (head == null || !this.GetIsBoneSelected(head))
-				return false;
-
-			foreach (BoneVisual3d? bone in this.SelectedBones)
-			{
-				if (bone == head)
-					continue;
-
-				if (bone.HasParent(head))
-					continue;
-
-				return false;
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Returns true if the entire selection is head + face bones only.
-		/// Hacky special check for the loading of expresisons (#365).
-		/// </summary>
 		public void SelectHead()
 		{
 			this.ClearSelection();

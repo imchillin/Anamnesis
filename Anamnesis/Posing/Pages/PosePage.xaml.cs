@@ -276,12 +276,21 @@ namespace Anamnesis.PoseModule.Pages
 
 		private async void OnSaveClicked(object sender, RoutedEventArgs e)
 		{
-			lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, false);
+			lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton);
 		}
 
 		private async void OnSaveSelectedClicked(object sender, RoutedEventArgs e)
 		{
-			lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, true);
+			if (this.Skeleton == null)
+				return;
+
+			HashSet<string> bones = new HashSet<string>();
+			foreach (BoneVisual3d bone in this.Skeleton.SelectedBones)
+			{
+				bones.Add(bone.BoneName);
+			}
+
+			lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, bones);
 		}
 
 		private void OnViewChanged(object sender, SelectionChangedEventArgs e)
