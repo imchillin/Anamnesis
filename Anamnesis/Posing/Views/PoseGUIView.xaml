@@ -230,22 +230,22 @@
 					<Canvas Width="330" Height="380" >
 						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Source="../../Assets/PoseCharacterHrothFaceBackground.png" Opacity="0.09" Stretch="Uniform" IsHitTestVisible="False"/>
 
-						<local:BoneView Canvas.Left="72" Canvas.Top="180" BoneName="WhiskersLeft" FlippedBoneName="WhiskersRight"/>
-						<local:BoneView Canvas.Left="209" Canvas.Top="180" BoneName="WhiskersRight" FlippedBoneName="WhiskersLeft"/>
+						<local:BoneView Canvas.Left="72" Canvas.Top="180" BoneName="HrothWhiskersLeft" FlippedBoneName="HrothWhiskersRight"/>
+						<local:BoneView Canvas.Left="209" Canvas.Top="180" BoneName="HrothWhiskersRight" FlippedBoneName="HrothWhiskersLeft"/>
 						<local:BoneView Canvas.Left="49" Canvas.Top="90" BoneName="EyebrowLeft" FlippedBoneName="EyebrowRight"/>
 						<local:BoneView Canvas.Left="232" Canvas.Top="90" BoneName="EyebrowRight" FlippedBoneName="EyebrowLeft"/>
 						<local:BoneView Canvas.Left="140" Canvas.Top="120" BoneName="Bridge"/>
 						<local:BoneView Canvas.Left="109" Canvas.Top="105" BoneName="BrowLeft" FlippedBoneName="BrowRight"/>
 						<local:BoneView Canvas.Left="170" Canvas.Top="105" BoneName="BrowRight" FlippedBoneName="BrowLeft"/>
-						<local:BoneView Canvas.Left="140" Canvas.Top="200" BoneName="JawUpper"/>
-						<local:BoneView Canvas.Left="140" Canvas.Top="220" BoneName="LipUpperA"/>
+						<local:BoneView Canvas.Left="140" Canvas.Top="200" BoneName="HrothJawUpper"/>
+						<local:BoneView Canvas.Left="140" Canvas.Top="220" BoneName="HrothLipUpper"/>
 						<local:BoneView Canvas.Left="77" Canvas.Top="110" BoneName="EyelidUpperLeft" FlippedBoneName="EyelidUpperRight"/>
 						<local:BoneView Canvas.Left="202" Canvas.Top="110" BoneName="EyelidUpperRight" FlippedBoneName="EyelidUpperLeft"/>
-						<local:BoneView Canvas.Left="80" Canvas.Top="230" BoneName="LipsLeft" FlippedBoneName="LipsRight"/>
-						<local:BoneView Canvas.Left="200" Canvas.Top="230" BoneName="LipsRight" FlippedBoneName="LipsLeft"/>
-						<local:BoneView Canvas.Left="80" Canvas.Top="210" BoneName="LipUpperLeft" FlippedBoneName="LipUpperRight"/>
-						<local:BoneView Canvas.Left="200" Canvas.Top="210" BoneName="LipUpperRight" FlippedBoneName="LipUpperLeft"/>
-						<local:BoneView Canvas.Left="140" Canvas.Top="242" BoneName="LipLowerA"/>
+						<local:BoneView Canvas.Left="80" Canvas.Top="230" BoneName="HrothLipsLeft" FlippedBoneName="HrothLipsRight"/>
+						<local:BoneView Canvas.Left="200" Canvas.Top="230" BoneName="HrothLipsRight" FlippedBoneName="HrothLipsLeft"/>
+						<local:BoneView Canvas.Left="80" Canvas.Top="210" BoneName="HrothLipUpperLeft" FlippedBoneName="HrothLipUpperRight"/>
+						<local:BoneView Canvas.Left="200" Canvas.Top="210" BoneName="HrothLipUpperRight" FlippedBoneName="HrothLipUpperLeft"/>
+						<local:BoneView Canvas.Left="140" Canvas.Top="242" BoneName="HrothLipLower"/>
 						<local:BoneView Canvas.Left="140" Canvas.Top="175" BoneName="Nose"/>
 						<local:BoneView Canvas.Left="140" Canvas.Top="275" BoneName="Jaw"/>
 						<local:BoneView Canvas.Left="190" Canvas.Top="125" BoneName="EyeRight" FlippedBoneName="EyeLeft"/>
