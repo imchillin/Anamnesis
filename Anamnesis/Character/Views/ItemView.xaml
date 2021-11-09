@@ -78,7 +78,12 @@
 									   ToolTip="Character_Equipment_ItemVariant"/>
 			</StackPanel>
 
-			<StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="2, 0, 0, 0" Orientation="Horizontal" Visibility="{Binding ItemModel.Set, Converter={StaticResource NotZeroToVisibilityConverter}}">
+			<StackPanel Grid.Row="1"
+						Grid.Column="1"
+						Grid.ColumnSpan="2"
+						Margin="2, 0, 0, 0"
+						Orientation="Horizontal"
+						Visibility="{Binding CanDye, Converter={StaticResource B2V}}">
 
 				<ana:RgbColorControl Margin="2, 2, 0, 0" 
 											 Value="{Binding ExtendedViewModel.Tint}" 

@@ -52,6 +52,7 @@ namespace Anamnesis.Character.Views
 		public IItem? Item { get; set; }
 		public IDye? Dye { get; set; }
 		public ImageSource? IconSource { get; set; }
+		public bool CanDye { get; set; }
 
 		public IEquipmentItemMemory? ItemModel
 		{
@@ -189,6 +190,9 @@ namespace Anamnesis.Character.Views
 
 		private void OnDyeClick(object sender, RoutedEventArgs e)
 		{
+			if (!this.CanDye)
+				return;
+
 			SelectorDrawer.Show<DyeSelector, IDye>(this.Dye, (v) =>
 			{
 				if (v == null)
@@ -246,6 +250,8 @@ namespace Anamnesis.Character.Views
 					this.Item = item;
 					this.Dye = dye;
 				}
+
+				this.CanDye = !this.IsWeapon || this.ItemModel?.Set != 0;
 			});
 		}
 	}
