@@ -504,17 +504,6 @@ namespace Anamnesis.GUI.Views
 			public string Name => this.Entry is DirectoryInfo ? this.Entry.Name : Path.GetFileNameWithoutExtension(this.Entry.Name);
 			public DateTime? DateModified => this.Entry.LastWriteTime;
 
-			public string Icon
-			{
-				get
-				{
-					if (this.Entry is DirectoryInfo)
-						return "folder";
-
-					return "file";
-				}
-			}
-
 			public bool CanSelect
 			{
 				get
@@ -526,6 +515,7 @@ namespace Anamnesis.GUI.Views
 				}
 			}
 
+			public bool IsDirectory => this.Entry is DirectoryInfo;
 			public bool IsRenaming { get; set; }
 
 			public string? Rename

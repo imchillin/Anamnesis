@@ -1,26 +1,25 @@
-﻿<UserControl
-	x:Class="Anamnesis.GUI.Views.FileBrowserView"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
-	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-	xmlns:local="clr-namespace:Anamnesis.GUI.Views"
-	xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-	Width="350"
-	d:DesignHeight="450"
-	mc:Ignorable="d">
+﻿<UserControl x:Class="Anamnesis.GUI.Views.FileBrowserView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:local="clr-namespace:Anamnesis.GUI.Views"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 Width="350"
+			 d:DesignHeight="450"
+			 mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
-		
+
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -61,31 +60,30 @@
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition />
 				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<Button
-				Grid.Column="0"
-				Margin="3"
-				Click="OnGoUpClicked"
-				IsEnabled="{Binding CanGoUp}"
-				Style="{StaticResource TransparentButton}"
-				Width="32"
-				Height="28">
-				
+			<Button Grid.Column="0"
+					Margin="3"
+					Click="OnGoUpClicked"
+					IsEnabled="{Binding CanGoUp}"
+					Style="{StaticResource TransparentButton}"
+					Width="32"
+					Height="28">
+
 				<Button.ToolTip>
 					<XivToolsWpf:TextBlock Key="FileBrowser_GoUp" />
 				</Button.ToolTip>
 
-				<fa:IconBlock Icon="LevelUpAlt" Opacity="0.5" />
+				<fa:IconBlock Icon="LevelUpAlt"
+							  Opacity="0.5" />
 			</Button>
 
-			<TextBlock
-				Grid.Column="1"
-				Margin="3,0,3,0"
-				VerticalAlignment="Center"
-				Text="{Binding CurrentPath}" />
+			<TextBlock Grid.Column="1"
+					   Margin="3,0,3,0"
+					   VerticalAlignment="Center"
+					   Text="{Binding CurrentPath}" />
 
 			<Button Grid.Column="2"
 					Margin="3"
@@ -93,7 +91,7 @@
 					Click="OnCreateFolderClicked"
 					IsEnabled="{Binding FileSource.CanWrite}"
 					Style="{StaticResource TransparentButton}">
-				
+
 				<Button.ToolTip>
 					<XivToolsWpf:TextBlock Key="FileBrowser_CreateFolder" />
 				</Button.ToolTip>
@@ -116,28 +114,30 @@
 									   Icon="Sitemap" />
 			</ToggleButton>
 
-			<ComboBox Grid.Column="4" Margin="6, 3, 6, 0" Height="22" 
+			<ComboBox Grid.Column="4"
+					  Margin="6, 3, 6, 0"
+					  Height="22"
 					  Style="{StaticResource MaterialDesignDataGridComboBox}"
 					  SelectedIndex="{Binding SortModeInt, Mode=TwoWay}">
 
 				<ComboBox.ToolTip>
-					<XivToolsWpf:TextBlock Key="FileBrowser_Sort"/>
+					<XivToolsWpf:TextBlock Key="FileBrowser_Sort" />
 				</ComboBox.ToolTip>
 
 				<ComboBoxItem>
 					<ComboBoxItem.ToolTip>
-						<XivToolsWpf:TextBlock Key="FileBrowser_SortAlpha"/>
+						<XivToolsWpf:TextBlock Key="FileBrowser_SortAlpha" />
 					</ComboBoxItem.ToolTip>
-					
-					<XivToolsWpf:IconBlock Icon="SortAlphaDown"/>
+
+					<XivToolsWpf:IconBlock Icon="SortAlphaDown" />
 				</ComboBoxItem>
 
 				<ComboBoxItem>
 					<ComboBoxItem.ToolTip>
-						<XivToolsWpf:TextBlock Key="FileBrowser_SortDate"/>
+						<XivToolsWpf:TextBlock Key="FileBrowser_SortDate" />
 					</ComboBoxItem.ToolTip>
-					
-					<XivToolsWpf:IconBlock Icon="CalendarAlt"/>
+
+					<XivToolsWpf:IconBlock Icon="CalendarAlt" />
 				</ComboBoxItem>
 
 			</ComboBox>
@@ -162,61 +162,69 @@
 
 						<Grid.ContextMenu>
 							<ContextMenu IsEnabled="{Binding CanWrite}">
-								<MenuItem Click="OnDeleteClick" Header="Delete" />
-								<MenuItem Click="OnRenameClick" Header="Rename" />
+								<MenuItem Click="OnDeleteClick"
+										  Header="Delete" />
+								<MenuItem Click="OnRenameClick"
+										  Header="Rename" />
 							</ContextMenu>
 						</Grid.ContextMenu>
 
-						<XivToolsWpf:IconBlock
-							Grid.RowSpan="2"
-							Grid.Column="0"
-							Margin="3,0,6,0"
-							VerticalAlignment="Center"
-							FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
-							FontSize="16"
-							Icon="{Binding Icon}" />
+						<XivToolsWpf:IconBlock Grid.RowSpan="2"
+											   Grid.Column="0"
+											   Margin="3,0,6,0"
+											   VerticalAlignment="Center"
+											   FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
+											   FontSize="16"
+											   Foreground="#FFDA70"
+											   Icon="Folder"
+											   Visibility="{Binding IsDirectory, Converter={StaticResource B2V}}"/>
 
-						<Grid
-							Grid.Column="1"
-							Height="28"
-							VerticalAlignment="Center"
-							Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}">
+						<XivToolsWpf:IconBlock Grid.RowSpan="2"
+											   Grid.Column="0"
+											   Margin="3,0,6,0"
+											   VerticalAlignment="Center"
+											   FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
+											   FontSize="16"
+											   Icon="FileAlt"
+											   Visibility="{Binding IsDirectory, Converter={StaticResource !B2V}}" />
+
+						<Grid Grid.Column="1"
+							  Height="28"
+							  VerticalAlignment="Center"
+							  Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}">
 
 							<Grid.RowDefinitions>
 								<RowDefinition />
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<TextBlock
-								Grid.Row="0"
-								Margin="3,0,3,0"
-								VerticalAlignment="Center"
-								FontSize="12"
-								Text="{Binding Name}"
-								Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}" />
+							<TextBlock Grid.Row="0"
+									   Margin="3,0,3,0"
+									   VerticalAlignment="Center"
+									   FontSize="12"
+									   Text="{Binding Name}"
+									   Visibility="{Binding IsRenaming, Converter={StaticResource !B2V}}" />
 
-							<TextBlock
-								Grid.Row="1"
-								Margin="3,0,3,0"
-								VerticalAlignment="Center"
-								FontSize="10"
-								Foreground="{DynamicResource MaterialDesignBodyLight}"
-								Opacity="0.5"
-								Text="{Binding Metadata}"
-								Visibility="{Binding Metadata, Converter={StaticResource NotNullToVisibilityConverter}}" />
+							<TextBlock Grid.Row="1"
+									   Margin="3,0,3,0"
+									   VerticalAlignment="Center"
+									   FontSize="10"
+									   Foreground="{DynamicResource MaterialDesignBodyLight}"
+									   Opacity="0.5"
+									   Text="{Binding Metadata}"
+									   Visibility="{Binding Metadata, Converter={StaticResource NotNullToVisibilityConverter}}" />
 
 						</Grid>
 
-						<Grid
-							Grid.Column="1"
-							Height="28"
-							VerticalAlignment="Center"
-							Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}">
+						<Grid Grid.Column="1"
+							  Height="28"
+							  VerticalAlignment="Center"
+							  Visibility="{Binding IsRenaming, Converter={StaticResource B2V}}">
 
-							<XivToolsWpf:RenameTextBox Text="{Binding Rename}"/>
+							<XivToolsWpf:RenameTextBox Text="{Binding Rename}" />
 
 						</Grid>
-						
+
 					</Grid>
 				</DataTemplate>
 			</drawers:SelectorDrawer.ItemTemplate>
@@ -240,17 +248,15 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<TextBox
-				x:Name="FileNameInputBox"
-				Grid.Column="0"
-				Style="{StaticResource MaterialDesignTextBox}"
-				Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"
-				PreviewKeyUp="OnFileNameKey"/>
-			<TextBlock
-				Grid.Column="1"
-				Margin="2,0,0,0"
-				VerticalAlignment="Center"
-				Text="{Binding FileExtension}" />
+			<TextBox x:Name="FileNameInputBox"
+					 Grid.Column="0"
+					 Style="{StaticResource MaterialDesignTextBox}"
+					 Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"
+					 PreviewKeyUp="OnFileNameKey" />
+			<TextBlock Grid.Column="1"
+					   Margin="2,0,0,0"
+					   VerticalAlignment="Center"
+					   Text="{Binding FileExtension}" />
 		</Grid>
 
 		<Grid Grid.Row="5"
@@ -259,9 +265,9 @@
 			  Grid.ColumnSpan="2">
 
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="64"/>
+				<ColumnDefinition Width="64" />
 				<ColumnDefinition />
-				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
 			<Menu Grid.Column="0"
@@ -277,15 +283,16 @@
 				</MenuItem>
 			</Menu>
 
-			<Menu Grid.Column="2" Style="{StaticResource AnaMenu}">
+			<Menu Grid.Column="2"
+				  Style="{StaticResource AnaMenu}">
 
 				<MenuItem Header="Common_SaveFile"
 						  Icon="Check"
 						  Style="{StaticResource ButtonMenuItem}"
-						  Width="128" 
+						  Width="128"
 						  Click="OnSelectClicked"
 						  IsEnabled="{Binding CanSelect}"
-						  Visibility="{Binding IsModeOpen, Converter={StaticResource !B2V}}"/>
+						  Visibility="{Binding IsModeOpen, Converter={StaticResource !B2V}}" />
 
 				<MenuItem Header="Common_OpenFile"
 						  Icon="Check"
@@ -293,13 +300,13 @@
 						  Width="128"
 						  Click="OnSelectClicked"
 						  IsEnabled="{Binding CanSelect}"
-						  Visibility="{Binding IsModeOpen, Converter={StaticResource B2V}}"/>
+						  Visibility="{Binding IsModeOpen, Converter={StaticResource B2V}}" />
 
 			</Menu>
 
-			
+
 		</Grid>
-		
+
 
 	</Grid>
 </UserControl>
