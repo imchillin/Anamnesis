@@ -56,8 +56,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Thanks to the original work by the following people, we have the guidelines needed to create Anamnesis.
 
-* Special thanks to KrisanThyme and Seria Myouna for the creation of Posing Matrix.
-* Special thanks to LeonBlade for the creation of the original trainer, SSTool. 
-* Special thanks to Ena and Johto for their work on Concept Matrix.
-* Special thanks to Goaat for their contributions and help.
+* Special thanks to PerchBird for extensive research into game memory structure and Havok skeletons in-game.
+* Special thanks to those who have worked on all iterations of Concept Matrix and SSTool, the foundation Anamnesis is built on.
 * Special thanks to those who have contributed via pull requests.
