@@ -20,6 +20,7 @@ namespace Anamnesis.Windows
 		private bool isHidden = false;
 		private Point downPos;
 		private bool mouseDown = false;
+		private bool isDeactivating = false;
 
 		public MiniWindow(Window main)
 		{
@@ -37,14 +38,20 @@ namespace Anamnesis.Windows
 			this.OnLocationChanged(null, null);
 		}
 
-		private void Main_Deactivated(object? sender, System.EventArgs e)
+		private async void Main_Deactivated(object? sender, System.EventArgs e)
 		{
 			this.isHidden = true;
 			this.main.Hide();
+			this.isDeactivating = true;
+			await Task.Delay(200);
+			this.isDeactivating = false;
 		}
 
 		private void OnMouseDown(object sender, MouseButtonEventArgs e)
 		{
+			if (this.isDeactivating)
+				return;
+
 			this.mouseDown = true;
 
 			this.downPos.X = this.Left;
@@ -58,6 +65,9 @@ namespace Anamnesis.Windows
 				return;
 
 			this.mouseDown = false;
+
+			if (this.isDeactivating)
+				return;
 
 			if (!this.isHidden)
 				return;
