@@ -19,6 +19,7 @@ namespace Anamnesis.Memory
 
 		protected readonly List<MemoryBase> Children = new List<MemoryBase>();
 		private readonly Dictionary<string, BindInfo> binds = new Dictionary<string, BindInfo>();
+		private readonly HashSet<BindInfo> delayedBinds = new HashSet<BindInfo>();
 
 		public MemoryBase()
 		{
@@ -162,6 +163,33 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		protected virtual void WriteDelayedBinds()
+		{
+			lock (this)
+			{
+				foreach (BindInfo bind in this.delayedBinds)
+				{
+					// If we still cant write this bind, just skip it.
+					if (!this.CanWrite(bind))
+						continue;
+
+					this.WriteToMemory(bind);
+
+					if (bind.Flags.HasFlag(BindFlags.ActorRefresh))
+					{
+						this.ActorRefresh(bind.Property.Name);
+					}
+				}
+			}
+
+			this.delayedBinds.Clear();
+
+			foreach (MemoryBase? child in this.Children)
+			{
+				child.WriteDelayedBinds();
+			}
+		}
+
 		protected virtual void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			// Dont process property changes if we are reading memory, since these will just be changes from memory
@@ -181,7 +209,12 @@ namespace Anamnesis.Memory
 				return;
 
 			if (!this.CanWrite(bind))
+			{
+				// If this bind couldn't be written right now, add it to the delayed bind list
+				// to attempt to write later.
+				this.delayedBinds.Add(bind);
 				return;
+			}
 
 			lock (this)
 			{

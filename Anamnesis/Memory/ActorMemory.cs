@@ -114,6 +114,7 @@ namespace Anamnesis.Memory
 			finally
 			{
 				this.IsRefreshing = false;
+				this.WriteDelayedBinds();
 			}
 
 			this.RaisePropertyChanged(nameof(this.IsPlayer));
@@ -175,6 +176,8 @@ namespace Anamnesis.Memory
 			{
 				if (bind.Memory != this)
 				{
+					Log.Warning("Skipping Bind " + bind);
+
 					// Do not allow writing of any properties form sub-memory while we are refreshing
 					return false;
 				}
