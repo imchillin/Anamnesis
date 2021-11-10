@@ -245,17 +245,17 @@ namespace Anamnesis.PoseModule
 			// and push those values to the game memory
 			foreach (TransformMemory? transformMemory in this.TransformMemories)
 			{
-				if (PoseService.Instance.FreezePositions)
+				if (this.CanTranslate)
 				{
 					transformMemory.Position = position;
 				}
 
-				if (PoseService.Instance.FreezeScale)
+				if (this.CanScale)
 				{
 					transformMemory.Scale = this.Scale;
 				}
 
-				if (PoseService.Instance.FreezeRotation)
+				if (this.CanRotate)
 				{
 					transformMemory.Rotation = rotation.ToCmQuaternion();
 				}
@@ -265,7 +265,7 @@ namespace Anamnesis.PoseModule
 			{
 				foreach (TransformMemory? transformMemory in this.LinkedEye.TransformMemories)
 				{
-					if (PoseService.Instance.FreezeRotation)
+					if (this.LinkedEye.CanRotate)
 					{
 						transformMemory.Rotation = rotation.ToCmQuaternion();
 					}
