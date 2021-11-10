@@ -179,15 +179,24 @@
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="2" Key="Pose_Unique" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="3" Orientation="Horizontal" >
-							<local:BoneView BoneName="Hair_0" Label="0"/>
-							<local:BoneView BoneName="Hair_1" Label="1"/>
-							<local:BoneView BoneName="Hair_2" Label="2"/>
-							<local:BoneView BoneName="Hair_3" Label="3"/>
-							<local:BoneView BoneName="Hair_4" Label="4"/>
-							<local:BoneView BoneName="Hair_5" Label="5"/>
-							<local:BoneView BoneName="Hair_6" Label="6"/>
-						</StackPanel>
+
+						<ItemsControl Grid.Column="3"
+									  ItemsSource="{Binding HairBones}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+											   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
+											   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
+											   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<local:BoneView />
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
 
 						<XivToolsWpf:TextBlock Grid.Column="4" Key="Pose_Earrings" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="5" Orientation="Horizontal" >
@@ -617,7 +626,7 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox>
+				<GroupBox  Visibility="{Binding HasEquipmentBones, Converter={StaticResource B2V}}">
 					<GroupBox.Header>
 						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
 							<XivToolsWpf:TextBlock Key="Pose_Matrix_EquipmentCategory"/>
@@ -625,51 +634,66 @@
 					</GroupBox.Header>
 
 					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="72"/>
-							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
-
 						<Grid.RowDefinitions>
 							<RowDefinition/>
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_EqHelm" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="Met_0" Label="0"/>
-							<local:BoneView BoneName="Met_1" Label="1"/>
-							<local:BoneView BoneName="Met_2" Label="2"/>
-							<local:BoneView BoneName="Met_3" Label="3"/>
-							<local:BoneView BoneName="Met_4" Label="4"/>
-							<local:BoneView BoneName="Met_5" Label="5"/>
-							<local:BoneView BoneName="Met_6" Label="6"/>
-							<local:BoneView BoneName="Met_7" Label="7"/>
-							<local:BoneView BoneName="Met_8" Label="8"/>
-							<local:BoneView BoneName="Met_9" Label="9"/>
-							<local:BoneView BoneName="Met_10" Label="10"/>
-							<local:BoneView BoneName="Met_11" Label="11"/>
-							<local:BoneView BoneName="Met_12" Label="12"/>
-							<local:BoneView BoneName="Met_13" Label="13"/>
-							<local:BoneView BoneName="Met_14" Label="14"/>
-							<local:BoneView BoneName="Met_15" Label="15"/>
-							<local:BoneView BoneName="Met_16" Label="16"/>
-							<local:BoneView BoneName="Met_17" Label="17"/>
-						</StackPanel>
+						<Grid Grid.Row="0" Visibility="{Binding MetBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="72" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+							<XivToolsWpf:TextBlock Grid.Column="0"
+												   Grid.Row="0"
+												   Key="Pose_EqHelm"
+												   Style="{DynamicResource Label}"
+												   Margin="16, 0, 3, 0" />
 
-						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_EqTop" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
-							<local:BoneView BoneName="Top_0" Label="0"/>
-							<local:BoneView BoneName="Top_1" Label="1"/>
-							<local:BoneView BoneName="Top_2" Label="2"/>
-							<local:BoneView BoneName="Top_3" Label="3"/>
-							<local:BoneView BoneName="Top_4" Label="4"/>
-							<local:BoneView BoneName="Top_5" Label="5"/>
-							<local:BoneView BoneName="Top_6" Label="6"/>
-							<local:BoneView BoneName="Top_7" Label="7"/>
-							<local:BoneView BoneName="Top_8" Label="8"/>
-							<local:BoneView BoneName="Top_9" Label="9"/>
-						</StackPanel>
+							<ItemsControl Grid.Column="1"
+										  Grid.Row="0"
+										  ItemsSource="{Binding MetBones}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+												   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
+												   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
+												   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<local:BoneView />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</Grid>
+
+						<Grid Grid.Row="1" Visibility="{Binding TopBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="72" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+						
+							<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_EqTop" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+							<ItemsControl Grid.Column="1" ItemsSource="{Binding TopBones}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+												   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
+												   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
+												   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<local:BoneView />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</Grid>
 					</Grid>
 				</GroupBox>
 

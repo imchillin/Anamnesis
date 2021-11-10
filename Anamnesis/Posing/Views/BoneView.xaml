@@ -18,8 +18,8 @@
 	<Grid x:Name="ContentArea" Cursor="Hand">
 		<Grid.ToolTip>
 			<StackPanel>
-				<XivToolsWpf:TextBlock Text="{Binding Bone.BoneName}" FontWeight="Bold" />
-				<XivToolsWpf:TextBlock Text="{Binding Bone.Tooltip}" />
+				<XivToolsWpf:TextBlock Text="{Binding Bone.Tooltip}" FontWeight="Bold" />
+				<XivToolsWpf:TextBlock Text="{Binding Bone.BoneName}" />
 			</StackPanel>
 		</Grid.ToolTip>
 

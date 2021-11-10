@@ -28,6 +28,9 @@ namespace Anamnesis.PoseModule
 		public readonly HashSet<BoneVisual3d> HoverBones = new HashSet<BoneVisual3d>();
 
 		private readonly QuaternionRotation3D rootRotation;
+		private readonly List<BoneVisual3d> hairBones = new List<BoneVisual3d>();
+		private readonly List<BoneVisual3d> metBones = new List<BoneVisual3d>();
+		private readonly List<BoneVisual3d> topBones = new List<BoneVisual3d>();
 
 		public SkeletonVisual3d(ActorMemory actor)
 		{
@@ -58,8 +61,12 @@ namespace Anamnesis.PoseModule
 		public bool CanEditBone => this.SelectedBones.Count == 1;
 		public bool HasSelection => this.SelectedBones.Count > 0;
 		public bool HasHover => this.HoverBones.Count > 0;
+		public bool HasEquipmentBones => this.metBones.Count > 0 || this.topBones.Count > 0;
 
 		public IEnumerable<BoneVisual3d> AllBones => this.Bones.Values;
+		public IEnumerable<BoneVisual3d> HairBones => this.hairBones;
+		public IEnumerable<BoneVisual3d> MetBones => this.metBones;
+		public IEnumerable<BoneVisual3d> TopBones => this.topBones;
 
 		public bool FlipSides
 		{
@@ -415,6 +422,7 @@ namespace Anamnesis.PoseModule
 		{
 			// Get all bones
 			this.Bones.Clear();
+			this.hairBones.Clear();
 
 			for (int partialSkeletonIndex = 0; partialSkeletonIndex < memory.Count; partialSkeletonIndex++)
 			{
@@ -446,6 +454,23 @@ namespace Anamnesis.PoseModule
 						// new bone
 						visual = new BoneVisual3d(this, name);
 						this.Bones.Add(name, visual);
+					}
+
+					// Special logic to get the Hair, Met, and Helm bones for pose matrix.
+					if (partialSkeletonIndex == 2)
+					{
+						if (name == "j_kao")
+							continue;
+
+						this.hairBones.Add(visual);
+					}
+					else if (partialSkeletonIndex == 3)
+					{
+						this.metBones.Add(visual);
+					}
+					else if (partialSkeletonIndex == 4)
+					{
+						this.topBones.Add(visual);
 					}
 
 					visual.TransformMemories.Add(transform);
