@@ -377,7 +377,7 @@ namespace Anamnesis
 					}
 					catch (Exception ex)
 					{
-						Log.Error(ex, "Failed to tick selected actor");
+						Log.Warning(ex, "Failed to tick actor");
 						this.Memory.Dispose();
 						this.Memory = null;
 						this.IsValid = false;
