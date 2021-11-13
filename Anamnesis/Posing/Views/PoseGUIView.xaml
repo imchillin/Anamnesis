@@ -84,10 +84,10 @@
 					<local:BoneView Canvas.Left="188" Canvas.Top="230" BoneName="WristRight" FlippedBoneName="WristLeft"/>
 					<local:BoneView Canvas.Left="94" Canvas.Top="255" BoneName="LegLeft" FlippedBoneName="LegRight"/>
 					<local:BoneView Canvas.Left="143" Canvas.Top="255" BoneName="LegRight" FlippedBoneName="LegLeft"/>
-					<local:BoneView Canvas.Left="103" Canvas.Top="333" BoneName="KneeLeft" FlippedBoneName="KneeRight"/>
-					<local:BoneView Canvas.Left="132" Canvas.Top="333" BoneName="KneeRight" FlippedBoneName="KneeLeft"/>
-					<local:BoneView Canvas.Left="83" Canvas.Top="333" BoneName="CalfLeft" FlippedBoneName="CalfRight"/>
-					<local:BoneView Canvas.Left="152" Canvas.Top="333" BoneName="CalfRight" FlippedBoneName="CalfLeft"/>
+					<local:BoneView Canvas.Left="90" Canvas.Top="320" BoneName="KneeLeft" FlippedBoneName="KneeRight"/>
+					<local:BoneView Canvas.Left="143" Canvas.Top="320" BoneName="KneeRight" FlippedBoneName="KneeLeft"/>
+					<local:BoneView Canvas.Left="86" Canvas.Top="343" BoneName="CalfLeft" FlippedBoneName="CalfRight"/>
+					<local:BoneView Canvas.Left="148" Canvas.Top="343" BoneName="CalfRight" FlippedBoneName="CalfLeft"/>
 					<local:BoneView Canvas.Left="80" Canvas.Top="460" BoneName="FootLeft" FlippedBoneName="FootRight"/>
 					<local:BoneView Canvas.Left="156" Canvas.Top="460" BoneName="FootRight" FlippedBoneName="FootLeft"/>
 					<local:BoneView Canvas.Left="73" Canvas.Top="480" BoneName="ToesLeft" FlippedBoneName="ToesRight"/>
