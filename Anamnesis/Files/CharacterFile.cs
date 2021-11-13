@@ -381,7 +381,7 @@ namespace Anamnesis.Files
 			actor.Tick();
 			actor.EnableReading = false;
 
-			await Task.Delay(150);
+			await Task.Delay(500);
 
 			if (actor.ModelObject?.ExtendedAppearance != null)
 			{
