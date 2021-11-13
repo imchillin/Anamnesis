@@ -390,8 +390,87 @@ namespace Anamnesis.PoseModule
 
 				SkeletonMemory skeletonVm = this.Actor.ModelObject.Skeleton;
 
-				////TemplateSkeleton template = skeletonVm.GetTemplate(this.Actor);
-				this.Generate(skeletonVm);
+				// Get all bones
+				this.Bones.Clear();
+				this.hairBones.Clear();
+
+				for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeletonVm.Count; partialSkeletonIndex++)
+				{
+					PartialSkeletonMemory partialSkeleton = skeletonVm[partialSkeletonIndex];
+
+					HkaPoseMemory? bestHkaPose = partialSkeleton.Pose1;
+
+					if (bestHkaPose == null || bestHkaPose.Skeleton?.Bones == null || bestHkaPose.Skeleton?.ParentIndices == null || bestHkaPose.Transforms == null)
+					{
+						Log.Warning("Failed to find best HkaSkeleton for partial skeleton");
+						continue;
+					}
+
+					int count = bestHkaPose.Transforms.Count;
+
+					// Load all bones first
+					for (int boneIndex = 0; boneIndex < count; boneIndex++)
+					{
+						string name = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
+						TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
+
+						BoneVisual3d visual;
+						if (this.Bones.ContainsKey(name))
+						{
+							visual = this.Bones[name];
+						}
+						else
+						{
+							// new bone
+							visual = new BoneVisual3d(this, name);
+							this.Bones.Add(name, visual);
+						}
+
+						// Do not allow modification of the root bone, things get weird.
+						if (name == "n_root")
+							visual.IsTransformLocked = true;
+
+						// Special logic to get the Hair, Met, and Helm bones for pose matrix.
+						if (partialSkeletonIndex == 2)
+						{
+							if (name == "j_kao")
+								continue;
+
+							this.hairBones.Add(visual);
+						}
+						else if (partialSkeletonIndex == 3)
+						{
+							this.metBones.Add(visual);
+						}
+						else if (partialSkeletonIndex == 4)
+						{
+							this.topBones.Add(visual);
+						}
+
+						visual.TransformMemories.Add(transform);
+					}
+
+					// Set parents now all the bones are loaded
+					for (int boneIndex = 0; boneIndex < count; boneIndex++)
+					{
+						int parentIndex = bestHkaPose.Skeleton.ParentIndices[boneIndex];
+						string boneName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
+
+						if (this.Bones[boneName].Parent != null)
+							continue;
+
+						if (parentIndex < 0)
+						{
+							// this bone has no parent, is root.
+							this.Children.Add(this.Bones[boneName]);
+						}
+						else
+						{
+							string parentBoneName = bestHkaPose.Skeleton.Bones[parentIndex].Name.ToString();
+							this.Bones[boneName].Parent = this.Bones[parentBoneName];
+						}
+					}
+				}
 
 				if (!GposeService.Instance.IsGpose)
 					return;
@@ -418,87 +497,6 @@ namespace Anamnesis.PoseModule
 			catch (Exception)
 			{
 				throw;
-			}
-		}
-
-		private void Generate(SkeletonMemory memory)
-		{
-			// Get all bones
-			this.Bones.Clear();
-			this.hairBones.Clear();
-
-			for (int partialSkeletonIndex = 0; partialSkeletonIndex < memory.Count; partialSkeletonIndex++)
-			{
-				PartialSkeletonMemory partialSkeleton = memory[partialSkeletonIndex];
-
-				HkaPoseMemory? bestHkaPose = partialSkeleton.Pose1;
-
-				if (bestHkaPose == null || bestHkaPose.Skeleton?.Bones == null || bestHkaPose.Skeleton?.ParentIndices == null || bestHkaPose.Transforms == null)
-				{
-					Log.Warning("Failed to find best HkaSkeleton for partial skeleton");
-					continue;
-				}
-
-				int count = bestHkaPose.Transforms.Count;
-
-				// Load all bones first
-				for (int boneIndex = 0; boneIndex < count; boneIndex++)
-				{
-					string name = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
-					TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
-
-					BoneVisual3d visual;
-					if (this.Bones.ContainsKey(name))
-					{
-						visual = this.Bones[name];
-					}
-					else
-					{
-						// new bone
-						visual = new BoneVisual3d(this, name);
-						this.Bones.Add(name, visual);
-					}
-
-					// Special logic to get the Hair, Met, and Helm bones for pose matrix.
-					if (partialSkeletonIndex == 2)
-					{
-						if (name == "j_kao")
-							continue;
-
-						this.hairBones.Add(visual);
-					}
-					else if (partialSkeletonIndex == 3)
-					{
-						this.metBones.Add(visual);
-					}
-					else if (partialSkeletonIndex == 4)
-					{
-						this.topBones.Add(visual);
-					}
-
-					visual.TransformMemories.Add(transform);
-				}
-
-				// Set parents now all the bones are loaded
-				for (int boneIndex = 0; boneIndex < count; boneIndex++)
-				{
-					int parentIndex = bestHkaPose.Skeleton.ParentIndices[boneIndex];
-					string boneName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
-
-					if (this.Bones[boneName].Parent != null)
-						continue;
-
-					if (parentIndex < 0)
-					{
-						// this bone has no parent, is root.
-						this.Children.Add(this.Bones[boneName]);
-					}
-					else
-					{
-						string parentBoneName = bestHkaPose.Skeleton.Bones[parentIndex].Name.ToString();
-						this.Bones[boneName].Parent = this.Bones[parentBoneName];
-					}
-				}
 			}
 		}
 

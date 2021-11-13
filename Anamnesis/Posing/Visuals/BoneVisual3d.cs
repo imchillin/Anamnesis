@@ -60,16 +60,18 @@ namespace Anamnesis.PoseModule
 		public bool IsEnabled { get; set; } = true;
 		public string BoneName { get; set; }
 
-		public bool CanRotate => PoseService.Instance.FreezeRotation;
+		public bool CanRotate => PoseService.Instance.FreezeRotation && !this.IsTransformLocked;
 		public CmQuaternion Rotation { get; set; }
-		public bool CanScale => PoseService.Instance.FreezeScale;
+		public bool CanScale => PoseService.Instance.FreezeScale && !this.IsTransformLocked;
 		public CmVector Scale { get; set; }
-		public bool CanTranslate => PoseService.Instance.FreezePositions;
+		public bool CanTranslate => PoseService.Instance.FreezePositions && !this.IsTransformLocked;
 		public CmVector Position { get; set; }
 
 		public BoneVisual3d? LinkedEye { get; set; }
 
 		public virtual string TooltipKey => "Pose_" + this.BoneName;
+
+		public bool IsTransformLocked { get; set; } = false;
 
 		public string Tooltip
 		{
