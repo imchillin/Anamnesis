@@ -3,8 +3,6 @@
 
 namespace Anamnesis.Memory
 {
-	using System;
-
 	public class ExtendedAppearanceMemory : MemoryBase
 	{
 		[Bind(0x00)] public Color SkinColor { get; set; }
@@ -17,5 +15,23 @@ namespace Anamnesis.Memory
 		[Bind(0x60)] public Color LeftEyeColor { get; set; }
 		[Bind(0x70)] public Color RightEyeColor { get; set; }
 		[Bind(0x80)] public Color LimbalRingColor { get; set; }
+
+		public bool Freeze
+		{
+			get => this.IsFrozen(nameof(this.SkinColor));
+			set
+			{
+				this.SetFrozen(nameof(this.SkinColor), value);
+				this.SetFrozen(nameof(this.MuscleTone), value);
+				this.SetFrozen(nameof(this.MouthColor), value);
+				this.SetFrozen(nameof(this.MouthColor), value);
+				this.SetFrozen(nameof(this.HairColor), value);
+				this.SetFrozen(nameof(this.HairGloss), value);
+				this.SetFrozen(nameof(this.HairHighlight), value);
+				this.SetFrozen(nameof(this.LeftEyeColor), value);
+				this.SetFrozen(nameof(this.RightEyeColor), value);
+				this.SetFrozen(nameof(this.LimbalRingColor), value);
+			}
+		}
 	}
 }
