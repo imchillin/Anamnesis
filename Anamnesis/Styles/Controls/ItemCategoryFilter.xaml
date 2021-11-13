@@ -1,50 +1,115 @@
 ﻿<UserControl x:Class="Anamnesis.Styles.Controls.ItemCategoryFilter"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:local="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800">
+			 mc:Ignorable="d"
+			 d:DesignHeight="450"
+			 d:DesignWidth="800">
 
 	<Grid x:Name="ContentArea">
 		<Grid.RowDefinitions>
-			<RowDefinition/>
-			<RowDefinition/>
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
 		</Grid.RowDefinitions>
 
-		<StackPanel Orientation="Vertical" Margin="10,6, 0, 0">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
 
-			<local:ItemCategoryFilterItem Category="Standard" Value="{Binding Value}"
-										  Text="EquipmentSelector_Standard" ToolText="EquipmentSelector_StandardTip"/>
-			<local:ItemCategoryFilterItem Category="Premium" Value="{Binding Value}"
-										  Text="EquipmentSelector_Premium" ToolText="EquipmentSelector_PremiumTip"/>
-			<local:ItemCategoryFilterItem Category="Limited" Value="{Binding Value}"
-										  Text="EquipmentSelector_Limited" ToolText="EquipmentSelector_LimitedTip"/>
-			<local:ItemCategoryFilterItem Category="Deprecated" Value="{Binding Value}"
-										  Text="EquipmentSelector_Deprecated" ToolText="EquipmentSelector_DeprecatedTip"/>
-			<local:ItemCategoryFilterItem Category="Props" Value="{Binding Value}"
-										  Text="EquipmentSelector_Props" ToolText="EquipmentSelector_PropsTip"
-										  Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}"/>
-			<local:ItemCategoryFilterItem Category="Performance" Value="{Binding Value}"
-										  Text="EquipmentSelector_Performance" ToolText="EquipmentSelector_PerformanceTip"
-										  Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}"/>
-			<local:ItemCategoryFilterItem Category="Modded" Value="{Binding Value}"
-										  Text="EquipmentSelector_Modded" ToolText="EquipmentSelector_ModdedTip"/>
-			<local:ItemCategoryFilterItem Category="Favorites" Value="{Binding Value}"
-										  Text="EquipmentSelector_Favorites" ToolText="EquipmentSelector_FavoritesTip"/>
-			<local:ItemCategoryFilterItem Category="Owned" Value="{Binding Value}"
-										  Text="EquipmentSelector_Owned" ToolText="EquipmentSelector_OwnedTip"/>
-		</StackPanel>
+		<local:ItemCategoryFilterItem Category="Standard"
+									  Value="{Binding Value}"
+									  Text="EquipmentSelector_Standard"
+									  ToolText="EquipmentSelector_StandardTip" 
+									  Grid.Row="0"
+									  Grid.Column="0"/>
+		
+		<local:ItemCategoryFilterItem Category="Premium"
+									  Value="{Binding Value}"
+									  Text="EquipmentSelector_Premium"
+									  ToolText="EquipmentSelector_PremiumTip"
+									  Grid.Row="1"
+									  Grid.Column="0"/>
+		
+		<local:ItemCategoryFilterItem Category="Limited"
+									  Value="{Binding Value}"
+									  Text="EquipmentSelector_Limited"
+									  ToolText="EquipmentSelector_LimitedTip"
+									  Grid.Row="2"
+									  Grid.Column="0"/>
+		
+		<local:ItemCategoryFilterItem Category="Deprecated"
+									  Value="{Binding Value}"
+									  Text="EquipmentSelector_Deprecated"
+									  ToolText="EquipmentSelector_DeprecatedTip"
+									  Grid.Row="3"
+									  Grid.Column="0"/>
+		
+		<local:ItemCategoryFilterItem Category="Props"
+									  Value="{Binding Value}"
+									  Text="EquipmentSelector_Props"
+									  ToolText="EquipmentSelector_PropsTip"
+									  Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}"
+									  Grid.Row="0"
+									  Grid.Column="1"/>
 
-		<StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Grid.ColumnSpan="3" Margin="3">
-			<Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnNoneClicked">
-				<XivToolsWpf:TextBlock Key="Common_None"/>
+		<local:ItemCategoryFilterItem Category="Performance"
+									  Value="{Binding Value}"
+									  Text="EquipmentSelector_Performance"
+									  ToolText="EquipmentSelector_PerformanceTip"
+									  Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}"
+									  Grid.Row="1"
+									  Grid.Column="1"/>
+		
+		<local:ItemCategoryFilterItem Category="Modded"
+									  Value="{Binding Value}"
+									  Text="EquipmentSelector_Modded"
+									  ToolText="EquipmentSelector_ModdedTip"
+									  Grid.Row="2"
+									  Grid.Column="1"/>
+		
+		<local:ItemCategoryFilterItem Category="Favorites"
+									  Value="{Binding Value}"
+									  Text="EquipmentSelector_Favorites"
+									  ToolText="EquipmentSelector_FavoritesTip"
+									  Grid.Row="3"
+									  Grid.Column="1"/>
+		
+		<local:ItemCategoryFilterItem Category="Owned"
+									  Value="{Binding Value}"
+									  Text="EquipmentSelector_Owned"
+									  ToolText="EquipmentSelector_OwnedTip"
+									  Grid.Row="4"
+									  Grid.Column="1"/>
+
+
+		<StackPanel Orientation="Horizontal"
+					Grid.Row="5"
+					HorizontalAlignment="Center"
+					Grid.ColumnSpan="3"
+					Margin="3">
+			
+			<Button Style="{StaticResource TransparentButton}"
+					Padding="3"
+					MinWidth="64"
+					Click="OnNoneClicked">
+				<XivToolsWpf:TextBlock Key="Common_None" />
 			</Button>
-			<Button Style="{StaticResource TransparentButton}" Padding="3" MinWidth="64" Click="OnAllClicked">
-				<XivToolsWpf:TextBlock Key="Common_All"/>
+			
+			<Button Style="{StaticResource TransparentButton}"
+					Padding="3"
+					MinWidth="64"
+					Click="OnAllClicked">
+				<XivToolsWpf:TextBlock Key="Common_All" />
 			</Button>
+			
 		</StackPanel>
 	</Grid>
 </UserControl>
