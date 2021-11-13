@@ -170,17 +170,47 @@
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
-						<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_General" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="1" Orientation="Horizontal" >
+						<XivToolsWpf:TextBlock Grid.Column="0"
+											   Key="Pose_Earrings"
+											   Style="{DynamicResource Label}"
+											   Margin="16, 0, 3, 0" />
+						<StackPanel Grid.Column="1"
+									Orientation="Horizontal">
+							<local:BoneView BoneName="EarringALeft"
+											Label="L1" />
+							<local:BoneView BoneName="EarringARight"
+											Label="L2" />
+							<local:BoneView BoneName="EarringBLeft"
+											Label="R1" />
+							<local:BoneView BoneName="EarringBRight"
+											Label="R2" />
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="2"
+											   Key="Pose_Whiskers"
+											   Style="{DynamicResource Label}"
+											   Margin="16, 0, 3, 0"
+											   Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}" />
+						<StackPanel Grid.Column="3"
+									Orientation="Horizontal"
+									Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}">
+							<local:BoneView BoneName="HrothWhiskersLeft"
+											Label="L" />
+							<local:BoneView BoneName="HrothWhiskersRight"
+											Label="R" />
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="4" Key="Pose_General" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="5" Orientation="Horizontal" >
 							<local:BoneView BoneName="HairFrontLeft" Label="L"/>
 							<local:BoneView BoneName="HairFrontRight" Label="R"/>
 							<local:BoneView BoneName="HairA" Label="1"/>
 							<local:BoneView BoneName="HairB" Label="2"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="2" Key="Pose_Unique" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<XivToolsWpf:TextBlock Grid.Column="6" Key="Pose_Unique" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 
-						<ItemsControl Grid.Column="3"
+						<ItemsControl Grid.Column="7"
 									  ItemsSource="{Binding HairBones}">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
@@ -197,20 +227,6 @@
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl>
-
-						<XivToolsWpf:TextBlock Grid.Column="4" Key="Pose_Earrings" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="5" Orientation="Horizontal" >
-							<local:BoneView BoneName="EarringALeft" Label="L1"/>
-							<local:BoneView BoneName="EarringARight" Label="L2"/>
-							<local:BoneView BoneName="EarringBLeft" Label="R1"/>
-							<local:BoneView BoneName="EarringBRight" Label="R2"/>
-						</StackPanel>
-
-						<XivToolsWpf:TextBlock Grid.Column="6" Key="Pose_Whiskers" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
-						<StackPanel Grid.Column="7" Orientation="Horizontal" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}">
-							<local:BoneView BoneName="HrothWhiskersLeft" Label="L"/>
-							<local:BoneView BoneName="HrothWhiskersRight" Label="R"/>
-						</StackPanel>
 
 					</Grid>
 				</GroupBox>
