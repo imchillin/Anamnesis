@@ -208,6 +208,9 @@ namespace Anamnesis.Memory
 			if (val == null || bind.Flags.HasFlag(BindFlags.Pointer))
 				return;
 
+			if (bind.FreezeValue != null)
+				bind.FreezeValue = bind.Property.GetValue(this);
+
 			if (!this.CanWrite(bind))
 			{
 				// If this bind couldn't be written right now, add it to the delayed bind list
