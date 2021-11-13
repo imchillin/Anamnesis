@@ -62,8 +62,8 @@
 							<local:BoneView BoneName="EarRight" Label="R"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="8" Key="Pose_VieraEars" Style="{DynamicResource Label}" Visibility="{Binding IsVieraEars02, Converter={StaticResource B2V}}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsVieraEars02, Converter={StaticResource B2V}}">
+						<XivToolsWpf:TextBlock Grid.Column="8" Key="Pose_VieraEars" Style="{DynamicResource Label}" Visibility="{Binding IsViera, Converter={StaticResource B2V}}" Margin="16, 0, 3, 0"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsVieraEars01, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="VieraEar01ALeft" Label="L1"/>
 							<local:BoneView BoneName="VieraEar01ARight" Label="L2"/>
 							<local:BoneView BoneName="VieraEar01BLeft" Label="R1"/>

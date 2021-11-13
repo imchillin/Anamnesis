@@ -161,10 +161,10 @@
 					<Canvas Width="138" Height="196">
 						<Image Canvas.Left="0" Canvas.Top="0" Width="138" Height="196" Source="../../Assets/PoseCharacterVieraEars01Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
-						<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="Ear01ALeft" FlippedBoneName="Ear01ARight"/>
-						<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="Ear01BLeft" FlippedBoneName="Ear01BRight"/>
-						<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="Ear01ARight" FlippedBoneName="Ear01ALeft"/>
-						<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="Ear01BRight" FlippedBoneName="Ear01BLeft"/>
+						<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar01ALeft" FlippedBoneName="VieraEar01ARight"/>
+						<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="VieraEar01BLeft" FlippedBoneName="VieraEar01BRight"/>
+						<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar01ARight" FlippedBoneName="VieraEar01ALeft"/>
+						<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="VieraEar01BRight" FlippedBoneName="VieraEar01BLeft"/>
 
 						<local:BoneView Canvas.Left="115" Canvas.Top="110" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
 						<local:BoneView Canvas.Left="115" Canvas.Top="140" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
@@ -178,10 +178,10 @@
 					<Canvas Width="163" Height="142" Margin="0, -32, 0, 32">
 						<Image Canvas.Left="0" Canvas.Top="0" Width="163" Height="232" Source="../../Assets/PoseCharacterVieraEars0204Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
-						<local:BoneView Canvas.Left="47" Canvas.Top="139" BoneName="Ear02ALeft" FlippedBoneName="Ear02ARight"/>
-						<local:BoneView Canvas.Left="31" Canvas.Top="64" BoneName="Ear02BLeft" FlippedBoneName="Ear02BRight"/>
-						<local:BoneView Canvas.Left="89" Canvas.Top="139" BoneName="Ear02ARight" FlippedBoneName="Ear02ALeft"/>
-						<local:BoneView Canvas.Left="105" Canvas.Top="64" BoneName="Ear02BRight" FlippedBoneName="Ear02BLeft"/>
+						<local:BoneView Canvas.Left="47" Canvas.Top="139" BoneName="VieraEar02ALeft" FlippedBoneName="VieraEar02ARight"/>
+						<local:BoneView Canvas.Left="31" Canvas.Top="64" BoneName="VieraEar02BLeft" FlippedBoneName="VieraEar02BRight"/>
+						<local:BoneView Canvas.Left="89" Canvas.Top="139" BoneName="VieraEar02ARight" FlippedBoneName="VieraEar02ALeft"/>
+						<local:BoneView Canvas.Left="105" Canvas.Top="64" BoneName="VieraEar02BRight" FlippedBoneName="VieraEar02BLeft"/>
 
 						<local:BoneView Canvas.Left="125" Canvas.Top="110" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
 						<local:BoneView Canvas.Left="125" Canvas.Top="140" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
@@ -196,10 +196,10 @@
 						<Image Canvas.Left="0" Canvas.Top="0" Width="256" Height="122" Source="../../Assets/PoseCharacterVieraEars03Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
 
-						<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="Ear03ALeft" FlippedBoneName="Ear03ARight"/>
-						<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="Ear03BLeft" FlippedBoneName="Ear03BRight"/>
-						<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="Ear03ARight" FlippedBoneName="Ear03ALeft"/>
-						<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="Ear03BRight" FlippedBoneName="Ear03BLeft"/>
+						<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="VieraEar03ALeft" FlippedBoneName="VieraEar03ARight"/>
+						<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="VieraEar03BLeft" FlippedBoneName="VieraEar03BRight"/>
+						<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="VieraEar03ARight" FlippedBoneName="VieraEar03ALeft"/>
+						<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="VieraEar03BRight" FlippedBoneName="VieraEar03BLeft"/>
 
 						<local:BoneView Canvas.Left="160" Canvas.Top="64" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
 						<local:BoneView Canvas.Left="160" Canvas.Top="90" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
@@ -213,10 +213,10 @@
 					<Canvas Width="163" Height="142" Margin="0, -32, 0, 32">
 						<Image Canvas.Left="0" Canvas.Top="0" Width="163" Height="232" Source="../../Assets/PoseCharacterVieraEars0204Background.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
-						<local:BoneView Canvas.Left="47" Canvas.Top="139" BoneName="Ear04ALeft" FlippedBoneName="Ear04ARight"/>
-						<local:BoneView Canvas.Left="31" Canvas.Top="64" BoneName="Ear04BLeft" FlippedBoneName="Ear04BRight"/>
-						<local:BoneView Canvas.Left="89" Canvas.Top="139" BoneName="Ear04ARight" FlippedBoneName="Ear04ALeft"/>
-						<local:BoneView Canvas.Left="105" Canvas.Top="64" BoneName="Ear04BRight" FlippedBoneName="Ear04BLeft"/>
+						<local:BoneView Canvas.Left="47" Canvas.Top="139" BoneName="VieraEar04ALeft" FlippedBoneName="VieraEar04ARight"/>
+						<local:BoneView Canvas.Left="31" Canvas.Top="64" BoneName="VieraEar04BLeft" FlippedBoneName="VieraEar04BRight"/>
+						<local:BoneView Canvas.Left="89" Canvas.Top="139" BoneName="VieraEar04ARight" FlippedBoneName="VieraEar04ALeft"/>
+						<local:BoneView Canvas.Left="105" Canvas.Top="64" BoneName="VieraEar04BRight" FlippedBoneName="VieraEar04BLeft"/>
 
 						<local:BoneView Canvas.Left="125" Canvas.Top="110" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
 						<local:BoneView Canvas.Left="125" Canvas.Top="140" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
