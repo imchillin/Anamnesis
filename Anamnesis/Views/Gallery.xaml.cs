@@ -76,9 +76,13 @@ namespace Anamnesis.Views
 			while (Application.Current != null && SettingsService.Current.ShowGallery)
 			{
 				List<Entry> entries = EmbeddedFileUtility.Load<List<Entry>>("Data/Images.json");
+				Log.Information("Loading gallery image list");
 
-				while (this.IsVisible && entries.Count > 0)
+				while (entries.Count > 0)
 				{
+					if (!this.IsVisible)
+						await Task.Delay(5000);
+
 					if (!SettingsService.Current.ShowGallery)
 					{
 						this.isRunning = false;
