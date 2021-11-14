@@ -8,8 +8,10 @@ namespace Anamnesis.Memory
 	using System.ComponentModel;
 	using System.Reflection;
 	using Anamnesis.Services;
+	using PropertyChanged;
 	using Serilog;
 
+	[AddINotifyPropertyChangedInterface]
 	public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	{
 		public IntPtr Address = IntPtr.Zero;
@@ -49,8 +51,13 @@ namespace Anamnesis.Memory
 			DontCacheOffsets = 4,
 		}
 
+		[DoNotNotify]
 		public MemoryBase? Parent { get; set; }
+
+		[DoNotNotify]
 		public bool IsReading { get; private set; }
+
+		[DoNotNotify]
 		public bool IsWriting { get; private set; }
 
 		protected static ILogger Log => Serilog.Log.ForContext<MemoryBase>();
