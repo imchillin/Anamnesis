@@ -402,7 +402,18 @@ namespace Anamnesis
 						if (this.Memory != null)
 						{
 							this.Memory.Address = actor.Address;
-							this.Memory.Tick();
+
+							try
+							{
+								this.Memory.Tick();
+							}
+							catch (Exception)
+							{
+								this.Memory.Dispose();
+								this.Memory = null;
+								this.IsValid = false;
+								return;
+							}
 						}
 						else
 						{
