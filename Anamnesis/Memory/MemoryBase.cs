@@ -55,6 +55,9 @@ namespace Anamnesis.Memory
 		public MemoryBase? Parent { get; set; }
 
 		[DoNotNotify]
+		public BindInfo? ParentBind { get; set; }
+
+		[DoNotNotify]
 		public bool IsReading { get; private set; }
 
 		[DoNotNotify]
@@ -87,6 +90,7 @@ namespace Anamnesis.Memory
 
 			this.Address = IntPtr.Zero;
 			this.Parent = null;
+			this.ParentBind = null;
 
 			for (int i = this.Children.Count - 1; i >= 0; i--)
 			{
@@ -105,6 +109,14 @@ namespace Anamnesis.Memory
 
 			foreach (MemoryBase child in this.Children)
 			{
+				if (child.ParentBind != null)
+				{
+					if (!this.CanRead(child.ParentBind))
+					{
+						continue;
+					}
+				}
+
 				child.Tick();
 			}
 		}
@@ -306,6 +318,7 @@ namespace Anamnesis.Memory
 							throw new Exception($"Failed to create instance of child memory type: {bind.Type}");
 
 						childMemory.Parent = this;
+						childMemory.ParentBind = bind;
 						this.Children.Add(childMemory);
 					}
 
