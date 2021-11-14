@@ -379,9 +379,8 @@ namespace Anamnesis.Files
 			// Setting customize values will reset the extended appearance, which me must read.
 			actor.EnableReading = true;
 			actor.Tick();
-			actor.EnableReading = false;
 
-			await Task.Delay(500);
+			Log.Verbose("Begin reading Extended Appearance from file");
 
 			if (actor.ModelObject?.ExtendedAppearance != null)
 			{
