@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Character.Utilities
 {
-	using System.Collections.Generic;
+	using System.Collections.Concurrent;
 	using Anamnesis.Character.Items;
 	using Anamnesis.GameData;
 	using Anamnesis.Services;
@@ -17,7 +17,7 @@ namespace Anamnesis.Character.Utilities
 		public static readonly InvisibleHeadItem InvisibileHeadItem = new InvisibleHeadItem();
 		public static readonly DummyNoneNpcEquip DummyNoneNpcEquip = new DummyNoneNpcEquip();
 
-		private static readonly Dictionary<string, IItem> ItemLookup = new Dictionary<string, IItem>();
+		private static readonly ConcurrentDictionary<string, IItem> ItemLookup = new ConcurrentDictionary<string, IItem>();
 
 		/// <summary>
 		/// Searches the gamedata service item list for an item with the given model attributes.
@@ -34,7 +34,7 @@ namespace Anamnesis.Character.Utilities
 			if (!ItemLookup.ContainsKey(lookupKey))
 			{
 				IItem item = ItemSearch(slot, modelSet, modelBase, modelVariant);
-				ItemLookup.Add(lookupKey, item);
+				ItemLookup.TryAdd(lookupKey, item);
 			}
 
 			return ItemLookup[lookupKey];

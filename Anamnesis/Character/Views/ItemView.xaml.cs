@@ -223,12 +223,13 @@ namespace Anamnesis.Character.Views
 					return;
 
 				IEquipmentItemMemory? valueVm = this.ItemModel;
+				ItemSlots slots = this.Slot;
 
 				await Dispatch.NonUiThread();
 
 				if (valueVm is ItemMemory itemVm)
 				{
-					IItem? item = ItemUtility.GetItem(this.Slot, 0, itemVm.Base, itemVm.Variant);
+					IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant);
 					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
 
 					await Dispatch.MainThread();
@@ -238,7 +239,7 @@ namespace Anamnesis.Character.Views
 				}
 				else if (valueVm is WeaponMemory weaponVm)
 				{
-					IItem? item = ItemUtility.GetItem(this.Slot, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
+					IItem? item = ItemUtility.GetItem(slots, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
 
 					if (weaponVm.Set == 0)
 						weaponVm.Dye = 0;
