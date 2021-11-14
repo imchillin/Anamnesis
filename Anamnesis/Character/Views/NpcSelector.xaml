@@ -80,6 +80,7 @@
 				<DataTemplate>
 					<Grid>
 						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition />
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
@@ -89,11 +90,25 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<Border Width="32"
+								Height="32"
+								Background="#444444"
+								Grid.RowSpan="2"
+								CornerRadius="3"
+								Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
+							<Grid>
+								<Image Source="{Binding Icon}"
+									   Margin="1" />
+								<Image Source="/Assets/IconBorderSmall.png"
+									   Margin="-2, 0, -2, -4" />
+							</Grid>
+						</Border>
+
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
 
 						<StackPanel Orientation="Horizontal"
 									Grid.Row="1"
-									Grid.Column="0"
+									Grid.Column="1"
 									Margin="3, 0, 0, 0">
 
 							<xivToolsWpf:TextBlock Key="Character_Actor_Model"
@@ -114,9 +129,10 @@
 							<fa:IconBlock Icon="pen" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 						</StackPanel>
 
-						<Rectangle Grid.ColumnSpan="2" 
-									   Grid.RowSpan="2" 
-									   Fill="Transparent" >
+						<Rectangle Grid.Column="1"
+								   Grid.ColumnSpan="2" 
+								   Grid.RowSpan="2" 
+								   Fill="Transparent" >
 							<ToolTipService.ToolTip>
 								<StackPanel Orientation="Vertical">
 									<TextBlock Text="{Binding Name}"
@@ -151,7 +167,7 @@
 						</Rectangle>
 						
 						<ToggleButton Grid.Row="0"
-									  Grid.Column="1"
+									  Grid.Column="2"
 									  Grid.RowSpan="2"
 									  Style="{StaticResource InvisibleToggleButton}"
 									  Visibility="{Binding CanFavorite, Converter={StaticResource B2V}}"
