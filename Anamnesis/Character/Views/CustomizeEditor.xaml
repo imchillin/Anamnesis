@@ -93,11 +93,11 @@
 
 				<!-- Skintone -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="2" Key="Character_Appearance_Skin" Style="{StaticResource Label}"/>
-				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding Customize.Skintone}" Type="Skin" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0, 2, 0, 2"/>
+				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding Customize.Skintone}" Type="Skin" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0, 2, 0, 0"/>
 
 				<!-- Eyes -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="3" Key="Character_Appearance_Eyes" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="3" Margin="0, 2, -1, 2">
+				<Grid Grid.Column="1" Grid.Row="3">
 
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
@@ -105,7 +105,7 @@
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.Eyes}" Minimum="1" Maximum="256" Buttons="True" Margin="2, 2, 6, 2"/>
+					<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.Eyes}" Minimum="1" Maximum="256" Buttons="True" Margin="2, 0, 6, 2"/>
 
 					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_EyeLeft" Value="{Binding Customize.LEyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
 					<controls:ColorControl Grid.Column="2" ToolTipKey="Character_Appearance_EyeRight" Value="{Binding Customize.REyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
@@ -114,14 +114,14 @@
 
 				<!-- Face Type -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="4" Key="Character_Appearance_Face" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="4" Margin="0, 2, -1, 2">
+				<Grid Grid.Column="1" Grid.Row="4" Margin="0, 0, 0, 2">
 
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="0" Grid.Row="4" Minimum="1" Maximum="255"  Margin="0, 2, 30, 2" Buttons="True"/>
+					<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="0" Grid.Row="4" Minimum="1" Maximum="255"  Margin="0, 0, 30, 2" Buttons="True"/>
 					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_FacialFeatureColor" Value="{Binding Customize.FacialFeatureColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
 
 				</Grid>
@@ -130,12 +130,12 @@
 
 				<!-- Facial Features -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="5" Key="Character_Appearance_Features" Style="{StaticResource Label}"/>
-				<controls:FacialFeaturesControl Value="{Binding Customize.FacialFeatures}" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Head="{Binding Customize.Head}" Grid.Column="1" Grid.Row="5"  Margin="0, 3"/>
+				<controls:FacialFeaturesControl Value="{Binding Customize.FacialFeatures}" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Head="{Binding Customize.Head}" Grid.Column="1" Grid.Row="5"/>
 
 				<!-- Face Paint  -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="6" Key="Character_Appearance_FacePaint" Style="{StaticResource Label}"/>
 
-				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 0, 2, 0">
+				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 2, 0, 2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
@@ -153,9 +153,37 @@
 					<controls:ColorControl Grid.Column="1" Value="{Binding Customize.FacePaintColor}" Type="FacePaint" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}"/>
 				</Grid>
 
+				
+
+				<!-- Hair -->
+				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="7" Key="Character_Appearance_Hair" Style="{StaticResource Label}"/>
+
+				<Grid Grid.Column="1" Grid.Row="7" Margin="0, 2, 0, 0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked">
+						<Border Width="32" Height="32" Margin="2">
+							<Image Source="{Binding Hair.Icon}" Visibility="{Binding Hair, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+						</Border>
+					</Button>
+
+					<controls:ColorControl Grid.Column="1" Value="{Binding Customize.HairTone}" Type="Hair" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" ToolTip="Hair Color"/>
+
+					<TextBlock Grid.Column="2" Text="Highlight:" Margin="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Label}"/>
+					<CheckBox Grid.Column="3" IsChecked="{Binding Customize.EnableHighlights}" ToolTip="Enable Highlights" HorizontalAlignment="Center"/>
+					<controls:ColorControl Grid.Column="4" Value="{Binding Customize.Highlights}" Type="HairHighlights" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" IsEnabled="{Binding Customize.EnableHighlights}" ToolTip="Highlight Color"/>
+
+				</Grid>
+				
 				<!-- Mouth / Lips  -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="7" Key="Character_Appearance_Lips" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="7" Margin="0, 2, 0, 2">
+				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="8" Key="Character_Appearance_Lips" Style="{StaticResource Label}"/>
+				<Grid Grid.Column="1" Grid.Row="8">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition Width="Auto"/>
@@ -167,34 +195,6 @@
 					<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}"/>
 					<CheckBox Grid.Column="2" IsChecked="{Binding Customize.EnableLipColor}"/>
 					<controls:ColorControl Grid.Column="3" Value="{Binding Customize.LipsToneFurPattern}" IsEnabled="{Binding Customize.EnableLipColor}" Type="Lips" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}"/>
-				</Grid>
-
-				<!-- Hair -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="8" Key="Character_Appearance_Hair" Style="{StaticResource Label}"/>
-
-				<Grid Grid.Column="1" Grid.Row="8" Margin="0, 2, 0, 2">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
-					</Grid.ColumnDefinitions>
-
-
-					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked">
-						<Border Width="32" Height="32" Margin="2">
-							<Image Source="{Binding Hair.Icon}" Visibility="{Binding Hair, Converter={StaticResource NotNullToVisibilityConverter}}"/>
-						</Border>
-					</Button>
-
-
-					<controls:ColorControl Grid.Column="1" Value="{Binding Customize.HairTone}" Type="Hair" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" ToolTip="Hair Color"/>
-
-					<TextBlock Grid.Column="2" Text="Highlight:" Margin="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Label}"/>
-					<CheckBox Grid.Column="3" IsChecked="{Binding Customize.EnableHighlights}" ToolTip="Enable Highlights" HorizontalAlignment="Center"/>
-					<controls:ColorControl Grid.Column="4" Value="{Binding Customize.Highlights}" Type="HairHighlights" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" IsEnabled="{Binding Customize.EnableHighlights}" ToolTip="Highlight Color"/>
-
 				</Grid>
 
 				<!-- Height -->
