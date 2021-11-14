@@ -53,6 +53,7 @@ namespace Anamnesis.Character.Views
 		public IDye? Dye { get; set; }
 		public ImageSource? IconSource { get; set; }
 		public bool CanDye { get; set; }
+		public bool IsLoading { get; set; }
 
 		public IEquipmentItemMemory? ItemModel
 		{
@@ -222,6 +223,8 @@ namespace Anamnesis.Character.Views
 				if (this.ItemModel == null || GameDataService.Dyes == null)
 					return;
 
+				this.IsLoading = true;
+
 				IEquipmentItemMemory? valueVm = this.ItemModel;
 				ItemSlots slots = this.Slot;
 
@@ -253,6 +256,7 @@ namespace Anamnesis.Character.Views
 				}
 
 				this.CanDye = !this.IsWeapon || this.ItemModel?.Set != 0;
+				this.IsLoading = false;
 			});
 		}
 	}

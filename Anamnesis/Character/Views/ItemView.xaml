@@ -62,6 +62,8 @@
 				</Grid>
 			</Button>
 
+			<ProgressBar IsIndeterminate="True" Style="{StaticResource MaterialDesignCircularProgressBar}" Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsLoading, Converter={StaticResource B2V}}"/>
+
 			<StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding GPoseService.IsOverworld}">
 				<XivToolsWpf:NumberBox Width="33" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 10, 0" ToolTip="Character_Equipment_ItemId"/>
 
