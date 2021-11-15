@@ -642,7 +642,7 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox  Visibility="{Binding HasEquipmentBones, Converter={StaticResource B2V}}">
+				<GroupBox Visibility="{Binding HasEquipmentBones, Converter={StaticResource B2V}}">
 					<GroupBox.Header>
 						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
 							<XivToolsWpf:TextBlock Key="Pose_Matrix_EquipmentCategory"/>

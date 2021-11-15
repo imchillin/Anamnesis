@@ -35,7 +35,6 @@ namespace Anamnesis.PoseModule
 		public SkeletonVisual3d(ActorMemory actor)
 		{
 			this.Actor = actor;
-			////Task.Run(this.GenerateBones);
 			Task.Run(this.WriteSkeletonThread);
 
 			if (actor.ModelObject?.Transform != null)
@@ -150,10 +149,10 @@ namespace Anamnesis.PoseModule
 				this.SelectedBones.Add(bone.Visual);
 			}
 
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.CurrentBone));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasSelection));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.SelectedCount));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.CanEditBone));
 		}
 
 		public void Select(IEnumerable<IBone> bones)
@@ -190,10 +189,10 @@ namespace Anamnesis.PoseModule
 				}
 			}
 
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.CurrentBone));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasSelection));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.SelectedCount));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.CanEditBone));
 		}
 
 		public void Select(List<BoneVisual3d> bones, SelectMode mode)
@@ -216,10 +215,10 @@ namespace Anamnesis.PoseModule
 				}
 			}
 
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.CurrentBone));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasSelection));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.SelectedCount));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.CanEditBone));
 		}
 
 		public void ClearSelection()
@@ -228,10 +227,10 @@ namespace Anamnesis.PoseModule
 
 			Application.Current?.Dispatcher.Invoke(() =>
 			{
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CurrentBone)));
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasSelection)));
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.SelectedCount)));
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.CanEditBone)));
+				this.RaisePropertyChanged(nameof(SkeletonVisual3d.CurrentBone));
+				this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasSelection));
+				this.RaisePropertyChanged(nameof(SkeletonVisual3d.SelectedCount));
+				this.RaisePropertyChanged(nameof(SkeletonVisual3d.CanEditBone));
 			});
 		}
 
@@ -258,7 +257,7 @@ namespace Anamnesis.PoseModule
 
 		public void NotifyHover()
 		{
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SkeletonVisual3d.HasHover)));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasHover));
 		}
 
 		public bool GetIsBoneHovered(BoneVisual3d bone)
@@ -430,21 +429,21 @@ namespace Anamnesis.PoseModule
 						if (name == "n_root")
 							visual.IsTransformLocked = true;
 
-						// Special logic to get the Hair, Met, and Helm bones for pose matrix.
-						if (partialSkeletonIndex == 2)
+						if (name != "j_kao")
 						{
-							if (name == "j_kao")
-								continue;
-
-							this.hairBones.Add(visual);
-						}
-						else if (partialSkeletonIndex == 3)
-						{
-							this.metBones.Add(visual);
-						}
-						else if (partialSkeletonIndex == 4)
-						{
-							this.topBones.Add(visual);
+							// Special logic to get the Hair, Met, and Helm bones for pose matrix.
+							if (partialSkeletonIndex == 2)
+							{
+								this.hairBones.Add(visual);
+							}
+							else if (partialSkeletonIndex == 3)
+							{
+								this.metBones.Add(visual);
+							}
+							else if (partialSkeletonIndex == 4)
+							{
+								this.topBones.Add(visual);
+							}
 						}
 
 						visual.TransformMemories.Add(transform);
@@ -471,6 +470,12 @@ namespace Anamnesis.PoseModule
 						}
 					}
 				}
+
+				this.RaisePropertyChanged(nameof(SkeletonVisual3d.AllBones));
+				this.RaisePropertyChanged(nameof(SkeletonVisual3d.HairBones));
+				this.RaisePropertyChanged(nameof(SkeletonVisual3d.MetBones));
+				this.RaisePropertyChanged(nameof(SkeletonVisual3d.TopBones));
+				this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasEquipmentBones));
 
 				if (!GposeService.Instance.IsGpose)
 					return;
@@ -532,6 +537,11 @@ namespace Anamnesis.PoseModule
 				return;
 
 			this.rootRotation.Quaternion = this.RootRotation.ToMedia3DQuaternion();
+		}
+
+		private void RaisePropertyChanged(string propertyName)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 
