@@ -78,6 +78,9 @@ namespace Anamnesis
 
 					this.Camera.SetAddress(AddressService.Camera);
 					this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
+
+					this.Camera.Tick();
+					this.GPoseCamera.Tick();
 				}
 				catch (Exception ex)
 				{
