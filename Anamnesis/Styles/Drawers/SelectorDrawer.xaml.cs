@@ -17,6 +17,7 @@ namespace Anamnesis.Styles.Drawers
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for SelectorDrawer.xaml.
@@ -35,13 +36,13 @@ namespace Anamnesis.Styles.Drawers
 		private bool searching = false;
 		private bool idle = true;
 		private string[]? searchQuery;
-		private bool loading = false;
+		private bool xamlLoading = false;
 		private bool abortSearch = false;
 
 		public SelectorDrawer()
 		{
 			this.InitializeComponent();
-			this.loading = true;
+			this.xamlLoading = true;
 			this.DataContext = this;
 
 			this.PropertyChanged += this.OnPropertyChanged;
@@ -49,12 +50,14 @@ namespace Anamnesis.Styles.Drawers
 
 		public delegate bool FilterEvent(object item, string[]? search);
 		public delegate int SortEvent(object itemA, object itemB);
+		public delegate Task GetItemsEvent();
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public event DrawerEvent? Close;
 		public event FilterEvent? Filter;
 		public event SortEvent? Sort;
 		public event DrawerEvent? SelectionChanged;
+		public event GetItemsEvent? LoadItems;
 
 		public interface ISelectorView : IDrawer
 		{
@@ -65,6 +68,7 @@ namespace Anamnesis.Styles.Drawers
 
 		public bool SearchEnabled { get; set; } = true;
 		public bool HasSearch { get; set; } = false;
+		public bool ItemsLoading { get; set; } = false;
 
 		public IEnumerable<object> Entries
 		{
@@ -249,7 +253,24 @@ namespace Anamnesis.Styles.Drawers
 
 			Keyboard.Focus(this.SearchBox);
 			this.SearchBox.CaretIndex = int.MaxValue;
-			this.loading = false;
+			this.xamlLoading = false;
+
+			if (this.LoadItems != null)
+			{
+				Task.Run(async () =>
+				{
+					await Dispatch.MainThread();
+					this.ItemsLoading = true;
+
+					await Dispatch.NonUiThread();
+					await this.LoadItems.Invoke();
+
+					await Dispatch.MainThread();
+					this.ItemsLoading = false;
+
+					this.FilterItems();
+				});
+			}
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -301,7 +322,7 @@ namespace Anamnesis.Styles.Drawers
 			this.idle = false;
 			this.abortSearch = true;
 
-			if (!this.loading)
+			if (!this.xamlLoading)
 				await Task.Delay(50);
 
 			try
