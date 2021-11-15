@@ -5,11 +5,12 @@ namespace Anamnesis.GameData.Sheets
 {
 	using System;
 	using System.Collections;
+	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.ViewModels;
 	using Lumina.Excel;
-
+	using Serilog;
 	using LuminaData = Lumina.GameData;
 
 	public class LuminaSheet<TInterfaceType, TConcreteType, TWrapperType> : ISheet<TInterfaceType>
@@ -18,7 +19,7 @@ namespace Anamnesis.GameData.Sheets
 		where TWrapperType : ExcelRowViewModel<TConcreteType>, TInterfaceType
 	{
 		private readonly ExcelSheet<TConcreteType> excel;
-		private readonly Dictionary<uint, TWrapperType> wrapperCache = new Dictionary<uint, TWrapperType>();
+		private readonly ConcurrentDictionary<uint, TWrapperType> wrapperCache = new ConcurrentDictionary<uint, TWrapperType>();
 		private readonly LuminaData lumina;
 
 		public LuminaSheet(LuminaData lumina)
@@ -44,20 +45,26 @@ namespace Anamnesis.GameData.Sheets
 
 		public TInterfaceType Get(uint key)
 		{
-			lock (this.wrapperCache)
+			if (!this.wrapperCache.ContainsKey(key))
 			{
-				if (!this.wrapperCache.ContainsKey(key))
+				TWrapperType? wrapper;
+
+				try
 				{
-					TWrapperType? wrapper = Activator.CreateInstance(typeof(TWrapperType), key, this.excel, this.lumina) as TWrapperType;
-
-					if (wrapper == null)
-						throw new Exception($"Failed to create instance of Lumina data wrapper: {typeof(TWrapperType)}");
-
-					this.wrapperCache.Add(key, wrapper);
+					wrapper = Activator.CreateInstance(typeof(TWrapperType), key, this.excel, this.lumina) as TWrapperType;
+				}
+				catch (Exception ex)
+				{
+					throw new Exception($"Failed to create instance of Lumina data wrapper: {typeof(TWrapperType)}", ex);
 				}
 
-				return this.wrapperCache[key];
+				if (wrapper == null)
+					throw new Exception($"Failed to create instance of Lumina data wrapper: {typeof(TWrapperType)}");
+
+				this.wrapperCache.TryAdd(key, wrapper);
 			}
+
+			return this.wrapperCache[key];
 		}
 
 		public TInterfaceType Get(byte key)
@@ -67,22 +74,20 @@ namespace Anamnesis.GameData.Sheets
 
 		public IEnumerator<TInterfaceType> GetEnumerator()
 		{
-			for (uint i = 0; i < this.excel.RowCount; i++)
+			lock (this.excel)
 			{
-				TInterfaceType value = this.Get(i);
-				yield return value;
-				continue;
+				foreach (TConcreteType concrete in this.excel)
+				{
+					TInterfaceType value = this.Get(concrete.RowId);
+					yield return value;
+					continue;
+				}
 			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			for (uint i = 0; i < this.excel.RowCount; i++)
-			{
-				TInterfaceType value = this.Get(i);
-				yield return value;
-				continue;
-			}
+			return this.GetEnumerator();
 		}
 	}
 }
