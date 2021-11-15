@@ -538,15 +538,32 @@ namespace Anamnesis.GUI.Views
 					{
 						value = value.Trim();
 
-						string newPath = this.Entry.FullName.Replace(this.Name, value);
+						string? dirPath = Path.GetDirectoryName(this.Entry.FullName);
+						string? name = Path.GetFileName(this.Entry.FullName);
 
-						if (this.Entry is FileInfo file)
+						if (dirPath == null || name == null)
+							return;
+
+						name = name.Replace(name, value);
+						string newPath = Path.Combine(dirPath, name);
+
+						if (newPath == this.Entry.FullName)
+							return;
+
+						try
 						{
-							file.MoveTo(newPath);
+							if (this.Entry is FileInfo file)
+							{
+								file.MoveTo(newPath);
+							}
+							else if (this.Entry is DirectoryInfo dir)
+							{
+								dir.MoveTo(newPath);
+							}
 						}
-						else if (this.Entry is DirectoryInfo dir)
+						catch (Exception ex)
 						{
-							dir.MoveTo(newPath);
+							Log.Error(ex, $"Failed to rename file entry to: {newPath}");
 						}
 
 						await this.View.UpdateEntries();
