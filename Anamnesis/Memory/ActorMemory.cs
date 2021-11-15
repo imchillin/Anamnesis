@@ -86,6 +86,8 @@ namespace Anamnesis.Memory
 
 				this.IsRefreshing = true;
 
+				await Task.Delay(16);
+
 				if (this.ObjectKind == ActorTypes.Player)
 				{
 					this.ObjectKind = ActorTypes.BattleNpc;
