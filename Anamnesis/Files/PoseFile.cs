@@ -74,23 +74,25 @@ namespace Anamnesis.Files
 			if (actor.ModelObject.Skeleton == null)
 				throw new Exception("Actor model has no skeleton");
 
+			if (this.Bones == null)
+				return;
+
 			SkeletonMemory? skeletonMem = actor.ModelObject.Skeleton;
 
 			PoseService.Instance.SetEnabled(true);
 			PoseService.Instance.CanEdit = false;
 			await Task.Delay(100);
 
+			BoneVisual3d? headBone = skeleton.GetBone("j_kao");
+			BoneVisual3d? visorBone = skeleton.GetBone("j_ex_met_va");
+
 			// Facial expressions hack:
 			// Since all facial bones are parented to the head, if we load the head rotation from
 			// the pose that matches the expression, it wont break.
 			// We then just set the head back to where it should be afterwards.
-			BoneVisual3d? headBone = null;
 			Quaternion? originalHeadRotation = null;
-
 			if (bones != null && bones.Contains("j_kao"))
 			{
-				headBone = skeleton.GetBone("j_kao");
-
 				if (headBone == null)
 					throw new Exception("Unable to find head (j_kao) bone.");
 
@@ -98,57 +100,62 @@ namespace Anamnesis.Files
 				originalHeadRotation = headBone?.TransformMemory.Rotation;
 			}
 
-			if (this.Bones != null)
+			// Visor hack:
+			// Get the relative rotation of the visor for later
+			Quaternion? originalVisorRotation = null;
+			if (headBone != null && visorBone != null)
 			{
-				// Apply all transforms a few times to ensure parent-inherited values are caluclated correctly, and to ensure
-				// we dont end up with some values read during a ffxiv frame update.
-				for (int i = 0; i < 3; i++)
+				originalVisorRotation = visorBone.Rotation;
+			}
+
+			// Apply all transforms a few times to ensure parent-inherited values are caluclated correctly, and to ensure
+			// we dont end up with some values read during a ffxiv frame update.
+			for (int i = 0; i < 3; i++)
+			{
+				foreach ((string name, Bone? savedBone) in this.Bones)
 				{
-					foreach ((string name, Bone? savedBone) in this.Bones)
+					if (savedBone == null)
+						continue;
+
+					string boneName = name;
+					string? modernName = LegacyBoneNameConverter.GetModernName(name);
+					if (modernName != null)
+						boneName = modernName;
+
+					BoneVisual3d? bone = skeleton.GetBone(boneName);
+
+					if (bone == null)
 					{
-						if (savedBone == null)
-							continue;
-
-						string boneName = name;
-						string? modernName = LegacyBoneNameConverter.GetModernName(name);
-						if (modernName != null)
-							boneName = modernName;
-
-						BoneVisual3d? bone = skeleton.GetBone(boneName);
-
-						if (bone == null)
-						{
-							Log.Warning($"Bone: \"{boneName}\" not found");
-							continue;
-						}
-
-						if (bones != null && !bones.Contains(boneName))
-							continue;
-
-						foreach (TransformMemory transformMemory in bone.TransformMemories)
-						{
-							if (savedBone.Position != null && mode.HasFlag(Mode.Position))
-							{
-								transformMemory.Position = (Vector)savedBone.Position;
-							}
-
-							if (savedBone.Rotation != null && mode.HasFlag(Mode.Rotation))
-							{
-								transformMemory.Rotation = (Quaternion)savedBone.Rotation;
-							}
-
-							if (savedBone.Scale != null && mode.HasFlag(Mode.Scale))
-							{
-								transformMemory.Scale = (Vector)savedBone.Scale;
-							}
-						}
-
-						bone.ReadTransform();
-						bone.WriteTransform(skeleton, false);
+						Log.Warning($"Bone: \"{boneName}\" not found");
+						continue;
 					}
 
-					await Task.Delay(1);
+					if (bones != null && !bones.Contains(boneName))
+						continue;
+
+					foreach (TransformMemory transformMemory in bone.TransformMemories)
+					{
+						if (savedBone.Position != null && mode.HasFlag(Mode.Position))
+						{
+							transformMemory.Position = (Vector)savedBone.Position;
+						}
+
+						if (savedBone.Rotation != null && mode.HasFlag(Mode.Rotation))
+						{
+							transformMemory.Rotation = (Quaternion)savedBone.Rotation;
+						}
+
+						if (savedBone.Scale != null && mode.HasFlag(Mode.Scale))
+						{
+							transformMemory.Scale = (Vector)savedBone.Scale;
+						}
+					}
+
+					bone.ReadTransform();
+					bone.WriteTransform(skeleton, false);
 				}
+
+				await Task.Delay(1);
 			}
 
 			// Restore the head bone rotation if we were only loading an expression
@@ -163,20 +170,20 @@ namespace Anamnesis.Files
 				headBone.WriteTransform(skeleton, true);
 			}
 
+			// Visor hack:
+			// If we dont have a custom visor position, restore the original head-relative rotation.
+			if (visorBone != null && !this.Bones.ContainsKey("j_ex_met_va") && originalVisorRotation != null)
+			{
+				visorBone.Rotation = (Quaternion)originalVisorRotation;
+				visorBone.WriteTransform(skeleton, false);
+			}
+
 			await Task.Delay(100);
 
 			skeletonMem.Tick();
 
 			PoseService.Instance.CanEdit = true;
 		}
-
-		/*[AddINotifyPropertyChangedInterface]
-		public class Configuration
-		{
-			public bool LoadPositions { get; set; } = true;
-			public bool LoadRotations { get; set; } = true;
-			public bool LoadScales { get; set; } = true;
-		}*/
 
 		[Serializable]
 		public class Bone
