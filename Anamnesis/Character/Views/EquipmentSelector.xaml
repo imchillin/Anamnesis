@@ -113,11 +113,13 @@
 
 		</StackPanel>
 
-		<cm3Drawers:SelectorDrawer Width="256"
+		<cm3Drawers:SelectorDrawer 
+			Width="256"
 			Grid.Column="1"
 			Grid.Row="1"
 			x:Name="Selector"
-			Close="OnClose" 
+			LoadItems="OnLoadItems"
+			Close="OnClose"
 			Filter="OnFilter"
 			Sort="OnSort"
 			SelectionChanged="OnSelectionChanged">

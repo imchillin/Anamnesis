@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Views
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis;
@@ -44,23 +45,7 @@ namespace Anamnesis.Character.Views
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
 
-			this.Selector.AddItem(ItemUtility.NoneItem);
-			this.Selector.AddItem(ItemUtility.NpcBodyItem);
-			this.Selector.AddItem(ItemUtility.InvisibileBodyItem);
-			this.Selector.AddItem(ItemUtility.InvisibileHeadItem);
-
-			// Special case for hands to also list props
-			if (GameDataService.Props != null)
-				this.Selector.AddItems(GameDataService.Props);
-
-			if (GameDataService.Items != null)
-				this.Selector.AddItems(GameDataService.Items);
-
-			if (GameDataService.Perform != null)
-				this.Selector.AddItems(GameDataService.Perform);
-
 			this.JobFilterText.Text = classFilter.Describe();
-			this.Selector.FilterItems();
 		}
 
 		public event DrawerEvent? Close;
@@ -144,6 +129,26 @@ namespace Anamnesis.Character.Views
 		private void OnSelectionChanged()
 		{
 			this.SelectionChanged?.Invoke();
+		}
+
+		private Task OnLoadItems()
+		{
+			this.Selector.AddItem(ItemUtility.NoneItem);
+			this.Selector.AddItem(ItemUtility.NpcBodyItem);
+			this.Selector.AddItem(ItemUtility.InvisibileBodyItem);
+			this.Selector.AddItem(ItemUtility.InvisibileHeadItem);
+
+			// Special case for hands to also list props
+			if (GameDataService.Props != null)
+				this.Selector.AddItems(GameDataService.Props);
+
+			if (GameDataService.Items != null)
+				this.Selector.AddItems(GameDataService.Items);
+
+			if (GameDataService.Perform != null)
+				this.Selector.AddItems(GameDataService.Perform);
+
+			return Task.CompletedTask;
 		}
 
 		private int OnSort(object a, object b)
