@@ -83,13 +83,18 @@ namespace Anamnesis.Files
 			PoseService.Instance.CanEdit = false;
 			await Task.Delay(100);
 
-			BoneVisual3d? headBone = skeleton.GetBone("j_kao");
-			BoneVisual3d? visorBone = skeleton.GetBone("j_ex_met_va");
+			// Create a back up of the relative rotations of every bones
+			Dictionary<string, Quaternion> unPosedBoneRotations = new Dictionary<string, Quaternion>();
+			foreach ((string name, BoneVisual3d bone) in skeleton.Bones)
+			{
+				unPosedBoneRotations.Add(name, bone.Rotation);
+			}
 
 			// Facial expressions hack:
 			// Since all facial bones are parented to the head, if we load the head rotation from
 			// the pose that matches the expression, it wont break.
 			// We then just set the head back to where it should be afterwards.
+			BoneVisual3d? headBone = skeleton.GetBone("j_kao");
 			Quaternion? originalHeadRotation = null;
 			if (bones != null && bones.Contains("j_kao"))
 			{
@@ -98,14 +103,6 @@ namespace Anamnesis.Files
 
 				headBone.Tick();
 				originalHeadRotation = headBone?.TransformMemory.Rotation;
-			}
-
-			// Visor hack:
-			// Get the relative rotation of the visor for later
-			Quaternion? originalVisorRotation = null;
-			if (headBone != null && visorBone != null)
-			{
-				originalVisorRotation = visorBone.Rotation;
 			}
 
 			// Apply all transforms a few times to ensure parent-inherited values are caluclated correctly, and to ensure
@@ -132,6 +129,9 @@ namespace Anamnesis.Files
 
 					if (bones != null && !bones.Contains(boneName))
 						continue;
+
+					// Remove this bone from the relative rotations backup
+					unPosedBoneRotations.Remove(boneName);
 
 					foreach (TransformMemory transformMemory in bone.TransformMemories)
 					{
@@ -170,12 +170,16 @@ namespace Anamnesis.Files
 				headBone.WriteTransform(skeleton, true);
 			}
 
-			// Visor hack:
-			// If we dont have a custom visor position, restore the original head-relative rotation.
-			if (visorBone != null && !this.Bones.ContainsKey("j_ex_met_va") && originalVisorRotation != null)
+			// Restore the relative rotations of any bones that we did not explicitly write to.
+			foreach((string name, Quaternion rotation) in unPosedBoneRotations)
 			{
-				visorBone.Rotation = (Quaternion)originalVisorRotation;
-				visorBone.WriteTransform(skeleton, false);
+				BoneVisual3d? bone = skeleton.GetBone(name);
+
+				if (bone == null)
+					continue;
+
+				bone.Rotation = rotation;
+				bone.WriteTransform(skeleton, false);
 			}
 
 			await Task.Delay(100);
