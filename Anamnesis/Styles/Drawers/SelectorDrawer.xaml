@@ -12,7 +12,7 @@
 	Unloaded="OnUnloaded"
 	mc:Ignorable="d">
 	
-	<Grid>
+	<Grid x:Name="ContentArea">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
@@ -61,5 +61,16 @@
 			SelectedItem="{Binding Value}"
 			SelectionChanged="OnSelectionChanged"
 			VirtualizingStackPanel.IsVirtualizing="True" />
+
+		<ProgressBar
+			Width="48"
+			Height="48"
+			Grid.Row="1"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center"
+			IsIndeterminate="True"
+			x:Name="ProgressBar"
+			Style="{StaticResource MaterialDesignCircularProgressBar}"/>
+
 	</Grid>
 </UserControl>

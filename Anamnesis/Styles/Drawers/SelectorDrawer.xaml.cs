@@ -43,9 +43,10 @@ namespace Anamnesis.Styles.Drawers
 		{
 			this.InitializeComponent();
 			this.xamlLoading = true;
-			this.DataContext = this;
+			this.ContentArea.DataContext = this;
 
 			this.PropertyChanged += this.OnPropertyChanged;
+			this.ProgressBar.Visibility = Visibility.Visible;
 		}
 
 		public delegate bool FilterEvent(object item, string[]? search);
@@ -68,7 +69,6 @@ namespace Anamnesis.Styles.Drawers
 
 		public bool SearchEnabled { get; set; } = true;
 		public bool HasSearch { get; set; } = false;
-		public bool ItemsLoading { get; set; } = false;
 
 		public IEnumerable<object> Entries
 		{
@@ -259,17 +259,18 @@ namespace Anamnesis.Styles.Drawers
 			{
 				Task.Run(async () =>
 				{
-					await Dispatch.MainThread();
-					this.ItemsLoading = true;
-
 					await Dispatch.NonUiThread();
 					await this.LoadItems.Invoke();
 
-					await Dispatch.MainThread();
-					this.ItemsLoading = false;
+					await this.FilterItemsAsync();
 
-					this.FilterItems();
+					await Dispatch.MainThread();
+					this.ProgressBar.Visibility = Visibility.Collapsed;
 				});
+			}
+			else
+			{
+				this.ProgressBar.Visibility = Visibility.Collapsed;
 			}
 		}
 
