@@ -9,6 +9,7 @@ namespace Anamnesis.Views
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for WeatherSelector.xaml.

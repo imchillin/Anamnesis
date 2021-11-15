@@ -11,6 +11,7 @@ namespace Anamnesis.Views
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for TargetSelectorView.xaml.

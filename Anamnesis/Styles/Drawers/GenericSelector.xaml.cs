@@ -8,6 +8,7 @@ namespace Anamnesis.Styles.Drawers
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.Services;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for GenericSelector.xaml.

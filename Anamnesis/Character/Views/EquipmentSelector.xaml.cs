@@ -17,6 +17,8 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Styles.Drawers;
 	using Lumina.Excel.GeneratedSheets;
 	using PropertyChanged;
+	using XivToolsWpf;
+
 	using static Anamnesis.Memory.ActorCustomizeMemory;
 
 	/// <summary>

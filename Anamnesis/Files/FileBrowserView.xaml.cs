@@ -20,8 +20,6 @@ namespace Anamnesis.GUI.Views
 	using Serilog;
 	using XivToolsWpf;
 
-	using SearchUtility = Anamnesis.SearchUtility;
-
 	/// <summary>
 	/// Interaction logic for FileBrowserView.xaml.
 	/// </summary>
