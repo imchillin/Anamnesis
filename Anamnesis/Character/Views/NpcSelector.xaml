@@ -74,6 +74,8 @@
 			x:Name="Selector"
 			Close="OnClose" 
 			Filter="OnFilter"
+			Sort="OnSort"
+			LoadItems="OnLoadItems"
 			SelectionChanged="OnSelectionChanged">
 
 			<cm3Drawers:SelectorDrawer.ItemTemplate>

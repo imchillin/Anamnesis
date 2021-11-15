@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Views
 {
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.GameData;
@@ -12,6 +13,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.
@@ -31,23 +33,6 @@ namespace Anamnesis.Character.Views
 		{
 			this.InitializeComponent();
 			this.DataContext = this;
-
-			if (GameDataService.ResidentNPCs != null)
-				this.Selector.AddItems(GameDataService.ResidentNPCs);
-
-			if (GameDataService.BattleNPCs != null)
-				this.Selector.AddItems(GameDataService.BattleNPCs);
-
-			if (GameDataService.EventNPCs != null)
-				this.Selector.AddItems(GameDataService.EventNPCs);
-
-			if (GameDataService.Mounts != null)
-				this.Selector.AddItems(GameDataService.Mounts);
-
-			if (GameDataService.Companions != null)
-				this.Selector.AddItems(GameDataService.Companions);
-
-			this.Selector.FilterItems();
 
 			this.PropertyChanged += this.OnSelfPropertyChanged;
 		}
@@ -123,6 +108,26 @@ namespace Anamnesis.Character.Views
 		{
 		}
 
+		private Task OnLoadItems()
+		{
+			if (GameDataService.ResidentNPCs != null)
+				this.Selector.AddItems(GameDataService.ResidentNPCs);
+
+			if (GameDataService.BattleNPCs != null)
+				this.Selector.AddItems(GameDataService.BattleNPCs);
+
+			if (GameDataService.EventNPCs != null)
+				this.Selector.AddItems(GameDataService.EventNPCs);
+
+			if (GameDataService.Mounts != null)
+				this.Selector.AddItems(GameDataService.Mounts);
+
+			if (GameDataService.Companions != null)
+				this.Selector.AddItems(GameDataService.Companions);
+
+			return Task.CompletedTask;
+		}
+
 		private void OnClose()
 		{
 			this.Close?.Invoke();
@@ -131,6 +136,61 @@ namespace Anamnesis.Character.Views
 		private void OnSelectionChanged()
 		{
 			this.SelectionChanged?.Invoke();
+		}
+
+		private int OnSort(object a, object b)
+		{
+			if (a == b)
+				return 0;
+
+			if (a is INpcBase npcA && b is INpcBase npcB)
+			{
+				// Faorites to the top
+				if (npcA.IsFavorite && !npcB.IsFavorite)
+					return -1;
+
+				if (!npcA.IsFavorite && npcB.IsFavorite)
+					return 1;
+
+				// Then Residents
+				if (npcA is NpcResidentViewModel && npcB is not NpcResidentViewModel)
+					return -1;
+
+				if (npcA is not NpcResidentViewModel && npcB is NpcResidentViewModel)
+					return 1;
+
+				// Then Mounts
+				if (npcA is MountViewModel && npcB is not MountViewModel)
+					return -1;
+
+				if (npcA is not MountViewModel && npcB is MountViewModel)
+					return 1;
+
+				// Then Minions
+				if (npcA is CompanionViewModel && npcB is not CompanionViewModel)
+					return -1;
+
+				if (npcA is not CompanionViewModel && npcB is CompanionViewModel)
+					return 1;
+
+				// Then Battle NPCs
+				if (npcA is BNpcBaseViewModel && npcB is not BNpcBaseViewModel)
+					return -1;
+
+				if (npcA is not BNpcBaseViewModel && npcB is BNpcBaseViewModel)
+					return 1;
+
+				// Then Event NPCs
+				if (npcA is ENpcBaseViewModel && npcB is not ENpcBaseViewModel)
+					return -1;
+
+				if (npcA is not ENpcBaseViewModel && npcB is ENpcBaseViewModel)
+					return 1;
+
+				return -npcB.Key.CompareTo(npcA.Key);
+			}
+
+			return 0;
 		}
 
 		private bool OnFilter(object obj, string[]? search = null)
