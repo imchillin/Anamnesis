@@ -393,7 +393,7 @@ namespace Anamnesis.PoseModule
 				this.Bones.Clear();
 				this.hairBones.Clear();
 
-				for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeletonVm.Count; partialSkeletonIndex++)
+				for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeletonVm.ItemCount; partialSkeletonIndex++)
 				{
 					PartialSkeletonMemory partialSkeleton = skeletonVm[partialSkeletonIndex];
 

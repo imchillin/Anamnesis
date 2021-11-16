@@ -22,6 +22,7 @@ namespace Anamnesis.Memory
 		public virtual int CountOffset => 0x000;
 		public virtual int AddressOffset => 0x008;
 		public abstract int ElementSize { get; }
+		public int ItemCount => this.items.Count;
 
 		public int Count
 		{
