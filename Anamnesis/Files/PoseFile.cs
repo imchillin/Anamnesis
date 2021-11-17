@@ -87,6 +87,9 @@ namespace Anamnesis.Files
 			Dictionary<string, Quaternion> unPosedBoneRotations = new Dictionary<string, Quaternion>();
 			foreach ((string name, BoneVisual3d bone) in skeleton.Bones)
 			{
+				if (name == "n_root")
+					continue;
+
 				unPosedBoneRotations.Add(name, bone.Rotation);
 			}
 
@@ -135,17 +138,17 @@ namespace Anamnesis.Files
 
 					foreach (TransformMemory transformMemory in bone.TransformMemories)
 					{
-						if (savedBone.Position != null && mode.HasFlag(Mode.Position))
+						if (savedBone.Position != null && mode.HasFlag(Mode.Position) && bone.CanTranslate)
 						{
 							transformMemory.Position = (Vector)savedBone.Position;
 						}
 
-						if (savedBone.Rotation != null && mode.HasFlag(Mode.Rotation))
+						if (savedBone.Rotation != null && mode.HasFlag(Mode.Rotation) && bone.CanRotate)
 						{
 							transformMemory.Rotation = (Quaternion)savedBone.Rotation;
 						}
 
-						if (savedBone.Scale != null && mode.HasFlag(Mode.Scale))
+						if (savedBone.Scale != null && mode.HasFlag(Mode.Scale) && bone.CanScale)
 						{
 							transformMemory.Scale = (Vector)savedBone.Scale;
 						}
