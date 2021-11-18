@@ -173,6 +173,21 @@ namespace Anamnesis.Files
 					{
 						OpenFileDialog dlg = new OpenFileDialog();
 
+						if (defaultDirectory == null)
+						{
+							Shortcut? defaultShortcut = null;
+							foreach (Shortcut shortcut in shortcuts)
+							{
+								if (defaultDirectory == null && shortcut.Directory.Exists && defaultShortcut == null)
+								{
+									defaultDirectory = shortcut.Directory;
+								}
+							}
+						}
+
+						if (defaultDirectory != null)
+							dlg.InitialDirectory = defaultDirectory.FullName;
+
 						foreach (Shortcut? shortcut in shortcuts)
 						{
 							dlg.CustomPlaces.Add(new FileDialogCustomPlace(ParseToFilePath(shortcut.Path)));
