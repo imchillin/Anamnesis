@@ -32,7 +32,7 @@
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Rectangle Width="18" Height="18" Margin="0">
+					<Rectangle Width="18" Height="17" Margin="0">
 						<Rectangle.ToolTip>
 							<TextBlock Text="{Binding Entry.Hex}"/>
 						</Rectangle.ToolTip>

@@ -123,6 +123,7 @@
 					<local:BoneView  Canvas.Left="110" Canvas.Top="307" BoneName="ClothBackBLeft" FlippedBoneName="ClothBackBRight"/>
 					<local:BoneView  Canvas.Left="110" Canvas.Top="422" BoneName="ClothBackCLeft" FlippedBoneName="ClothBackCRight"/>
 
+					<local:BoneView  Canvas.Left="120" Canvas.Top="34" BoneName="j_ex_met_va"/>
 					<local:BoneView  Canvas.Left="120" Canvas.Top="54" BoneName="HairA"/>
 					<local:BoneView  Canvas.Left="120" Canvas.Top="83" BoneName="HairB"/>
 					<local:BoneView  Canvas.Left="100" Canvas.Top="54" BoneName="HairFrontLeft" FlippedBoneName="HairFrontRight"/>
