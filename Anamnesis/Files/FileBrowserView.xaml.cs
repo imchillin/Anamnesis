@@ -363,6 +363,17 @@ namespace Anamnesis.GUI.Views
 			return 0;
 		}
 
+		private void OnShortcutClicked(object sender, RoutedEventArgs e)
+		{
+			if (sender is Button btn && btn.DataContext is Shortcut shortcut)
+			{
+				if (this.BaseDir != shortcut)
+					this.BaseDir = shortcut;
+
+				this.OnBaseDirChanged();
+			}
+		}
+
 		private void OnGoUpClicked(object? sender, RoutedEventArgs e)
 		{
 			if (this.CurrentDir.Parent == null)
