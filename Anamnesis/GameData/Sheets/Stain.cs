@@ -1,31 +1,29 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.ViewModels
+namespace Anamnesis.GameData.Sheets
 {
 	using System;
 	using System.Windows.Media;
-	using Anamnesis.Character.Items;
+	using Anamnesis.Character.Utilities;
 	using Anamnesis.Services;
-	using Lumina;
+	using Lumina.Data;
 	using Lumina.Excel;
-	using Lumina.Excel.GeneratedSheets;
+	using Lumina.Text;
 
 	using MediaColor = System.Windows.Media.Color;
 
-	public class DyeViewModel : ExcelRowViewModel<Stain>, IDye
+	[Sheet("Stain", 2722238056u)]
+	public class Stain : ExcelRow, IDye
 	{
-		private IItem? item;
-
-		public DyeViewModel(uint key, ExcelSheet<Stain> sheet, GameData lumina)
-			: base(key, sheet, lumina)
-		{
-		}
-
 		public byte Id => (byte)this.RowId;
-		public override string Name => this.Value?.Name ?? "Unkown";
-		public override string? Description => this.GetDyeItem()?.Description;
-		public ImageSource? Icon => this.GetDyeItem()?.Icon;
+		public string Name { get; private set; } = string.Empty;
+		public byte Shade { get; private set; }
+		public Brush? Color { get; private set; }
+
+		public string Description { get; private set; } = string.Empty;
+		public ImageSource? Icon { get; private set; } = null;
+		public Item? Item { get; private set; } = null;
 
 		public bool IsFavorite
 		{
@@ -33,42 +31,26 @@ namespace Anamnesis.GameData.ViewModels
 			set => FavoritesService.SetFavorite(this, value);
 		}
 
-		public Brush? Color
+		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 		{
-			get
-			{
-				byte[]? colorBytes = BitConverter.GetBytes(this.Value.Color);
+			base.PopulateData(parser, gameData, language);
 
-				if (colorBytes == null)
-					return null;
+			byte[] colorBytes = BitConverter.GetBytes(parser.ReadColumn<uint>(0));
+			this.Color = new SolidColorBrush(MediaColor.FromRgb(colorBytes[2], colorBytes[1], colorBytes[0]));
 
-				return new SolidColorBrush(MediaColor.FromRgb(colorBytes[2], colorBytes[1], colorBytes[0]));
-			}
-		}
+			this.Shade = parser.ReadColumn<byte>(1);
+			this.Name = parser.ReadColumn<SeString>(3) ?? string.Empty;
 
-		public IItem? GetDyeItem()
-		{
 			if (this.RowId == 0)
-				return null;
+				return;
 
-			if (GameDataService.Items == null)
-				return null;
+			uint itemKey = DyeToItemKey(this.RowId);
 
-			if (this.item == null)
+			if (itemKey != 0)
 			{
-				uint itemKey = DyeToItemKey(this.RowId);
-
-				if (itemKey != 0)
-				{
-					this.item = GameDataService.Items.Get(itemKey);
-				}
-				else
-				{
-					this.item = null;
-				}
+				this.Item = GameDataService.Items.Get(itemKey);
+				this.Icon = this.Item.Icon;
 			}
-
-			return this.item;
 		}
 
 		private static uint DyeToItemKey(uint dyeKey)
@@ -189,11 +171,9 @@ namespace Anamnesis.GameData.ViewModels
 				case 118: return 8749;
 				case 119: return 8750;
 				case 120: return 8751;
-
-				default: return 0;
 			}
 
-			throw new Exception("Failed to find item key for dye key: " + dyeKey);
+			return 0;
 		}
 	}
 }
