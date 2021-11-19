@@ -44,7 +44,7 @@ namespace Anamnesis.GameData.Sheets
 			return (ushort)(val >> 16);
 		}
 
-		public static TRow? ReadRowReference<TColumn, TRow>(this RowParser self, int column)
+		public static TRow? ReadRowReference<TColumn, TRow>(this RowParser self, int column, int minValue = int.MinValue)
 			where TRow : ExcelRow
 		{
 			TColumn? id = self.ReadColumn<TColumn>(column);
@@ -56,11 +56,15 @@ namespace Anamnesis.GameData.Sheets
 
 			if (id is byte bVal)
 			{
-				return sheet.GetOrDefault(bVal);
+				return sheet.GetOrDefault((byte)Math.Max(bVal, minValue));
 			}
 			else if (id is uint iVal)
 			{
-				return sheet.GetOrDefault(iVal);
+				return sheet.GetOrDefault((uint)Math.Max(iVal, minValue));
+			}
+			else if (id is ushort sVal)
+			{
+				return sheet.GetOrDefault((ushort)Math.Max(sVal, minValue));
 			}
 
 			throw new Exception($"Unrecognized row reference key type: {typeof(TColumn)}");

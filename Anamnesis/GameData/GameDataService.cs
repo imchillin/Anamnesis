@@ -46,7 +46,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<Item> Items { get; private set; }
 		public static ExcelSheet<Perform> Perform { get; private set; }
 		public static ExcelSheet<Stain> Dyes { get; private set; }
-		public static ISheet<INpcBase> EventNPCs { get; private set; }
+		public static ExcelSheet<EventNpcBase> EventNPCs { get; private set; }
 		public static ISheet<INpcBase> BattleNPCs { get; private set; }
 		public static ISheet<INpcBase> Mounts { get; private set; }
 		public static ISheet<INpcBase> Companions { get; private set; }
@@ -149,8 +149,8 @@ namespace Anamnesis.Services
 				Tribes = GetSheet<Tribe>();
 				Items = GetSheet<Item>();
 				Dyes = GetSheet<Stain>();
+				EventNPCs = GetSheet<EventNpcBase>();
 
-				EventNPCs = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.ENpcBase, ENpcBaseViewModel>(lumina);
 				BattleNPCs = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.BNpcBase, BNpcBaseViewModel>(lumina);
 				battleNpcNames = ExcelSheet<Lumina.Excel.GeneratedSheets.BNpcName>.GetSheet(lumina);
 				Mounts = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.Mount, MountViewModel>(lumina);

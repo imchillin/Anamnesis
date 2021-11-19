@@ -9,6 +9,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Controls;
 	using Anamnesis;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
@@ -181,10 +182,10 @@ namespace Anamnesis.Character.Views
 					return 1;
 
 				// Then Event NPCs
-				if (npcA is ENpcBaseViewModel && npcB is not ENpcBaseViewModel)
+				if (npcA is EventNpc && npcB is not EventNpc)
 					return -1;
 
-				if (npcA is not ENpcBaseViewModel && npcB is ENpcBaseViewModel)
+				if (npcA is not EventNpc && npcB is EventNpc)
 					return 1;
 
 				return -npcB.RowId.CompareTo(npcA.RowId);
@@ -249,7 +250,7 @@ namespace Anamnesis.Character.Views
 				if (!this.IncludeBattleNpc && npc is BNpcBaseViewModel)
 					return false;
 
-				if (!this.IncludeEventNpc && npc is ENpcBaseViewModel)
+				if (!this.IncludeEventNpc && npc is EventNpc)
 					return false;
 
 				bool matches = false;

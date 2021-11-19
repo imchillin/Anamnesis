@@ -15,7 +15,6 @@ namespace Anamnesis.Character.Utilities
 		public static readonly NpcBodyItem NpcBodyItem = new NpcBodyItem();
 		public static readonly InvisibleBodyItem InvisibileBodyItem = new InvisibleBodyItem();
 		public static readonly InvisibleHeadItem InvisibileHeadItem = new InvisibleHeadItem();
-		public static readonly DummyNoneNpcEquip DummyNoneNpcEquip = new DummyNoneNpcEquip();
 
 		private static readonly ConcurrentDictionary<string, IItem> ItemLookup = new ConcurrentDictionary<string, IItem>();
 

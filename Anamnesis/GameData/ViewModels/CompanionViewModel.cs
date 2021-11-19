@@ -53,7 +53,7 @@ namespace Anamnesis.GameData.ViewModels
 		public override string Name => this.HasName ? this.Value.Singular : $"Minion #{this.RowId}";
 		public override string? Description => this.Value?.MinionRace.Value?.Name?.ToString();
 		public uint ModelCharaRow => this.Value.Model.Row;
-		public INpcEquip NpcEquip => ItemUtility.DummyNoneNpcEquip;
+		////public INpcEquip NpcEquip => ItemUtility.DummyNoneNpcEquip;
 		public string TypeKey => "Npc_Companion";
 
 		public Mod? Mod => null;
@@ -64,6 +64,36 @@ namespace Anamnesis.GameData.ViewModels
 		{
 			get => FavoritesService.IsFavorite(this);
 			set => FavoritesService.SetFavorite(this, value);
+		}
+
+		public IItem? MainHand => null;
+		public IDye? DyeMainHand => null;
+		public IItem? OffHand => null;
+		public IDye? DyeOffHand => null;
+		public IItem? Head => null;
+		public IDye? DyeHead => null;
+		public IItem? Body => null;
+		public IDye? DyeBody => null;
+		public IItem? Legs => null;
+		public IDye? DyeLegs => null;
+		public IItem? Feet => null;
+		public IDye? DyeFeet => null;
+		public IItem? Hands => null;
+		public IDye? DyeHands => null;
+		public IItem? Wrists => null;
+		public IDye? DyeWrists => null;
+		public IItem? Neck => null;
+		public IDye? DyeNeck => null;
+		public IItem? Ears => null;
+		public IDye? DyeEars => null;
+		public IItem? LeftRing => null;
+		public IDye? DyeLeftRing => null;
+		public IItem? RightRing => null;
+		public IDye? DyeRightRing => null;
+
+		public INpcAppearance? GetAppearance()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

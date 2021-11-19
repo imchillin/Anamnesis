@@ -8,7 +8,7 @@ namespace Anamnesis.GameData.ViewModels
 	using Lumina;
 	using Lumina.Excel.GeneratedSheets;
 
-	public class NpcEquipViewModel : INpcEquip
+	public class NpcEquipViewModel
 	{
 		public readonly NpcEquip Value;
 

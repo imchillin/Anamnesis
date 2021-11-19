@@ -53,7 +53,7 @@ namespace Anamnesis.GameData.ViewModels
 		public override string Name => this.HasName ? this.Value.Singular : $"Mount #{this.RowId}";
 		public override string? Description => null;
 		public uint ModelCharaRow => this.Value.ModelChara.Row;
-		public INpcEquip NpcEquip => new MountEquip(this.Value);
+		////public INpcEquip NpcEquip => new MountEquip(this.Value);
 		public string TypeKey => "Npc_Mount";
 
 		public Mod? Mod => null;
@@ -66,7 +66,37 @@ namespace Anamnesis.GameData.ViewModels
 			set => FavoritesService.SetFavorite(this, value);
 		}
 
-		public class MountEquip : INpcEquip
+		public IItem? MainHand => null;
+		public IDye? DyeMainHand => null;
+		public IItem? OffHand => null;
+		public IDye? DyeOffHand => null;
+		public IItem? Head => null;
+		public IDye? DyeHead => null;
+		public IItem? Body => null;
+		public IDye? DyeBody => null;
+		public IItem? Legs => null;
+		public IDye? DyeLegs => null;
+		public IItem? Feet => null;
+		public IDye? DyeFeet => null;
+		public IItem? Hands => null;
+		public IDye? DyeHands => null;
+		public IItem? Wrists => null;
+		public IDye? DyeWrists => null;
+		public IItem? Neck => null;
+		public IDye? DyeNeck => null;
+		public IItem? Ears => null;
+		public IDye? DyeEars => null;
+		public IItem? LeftRing => null;
+		public IDye? DyeLeftRing => null;
+		public IItem? RightRing => null;
+		public IDye? DyeRightRing => null;
+
+		public INpcAppearance? GetAppearance()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/*public class MountEquip : INpcEquip
 		{
 			private readonly Mount value;
 
@@ -99,6 +129,6 @@ namespace Anamnesis.GameData.ViewModels
 			public IDye DyeLeftRing => DyeUtility.NoneDye;
 			public IItem RightRing => ItemUtility.NoneItem;
 			public IDye DyeRightRing => DyeUtility.NoneDye;
-		}
+		}*/
 	}
 }

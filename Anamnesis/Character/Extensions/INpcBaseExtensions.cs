@@ -6,6 +6,7 @@ namespace Anamnesis.Character
 	using System;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
@@ -25,7 +26,7 @@ namespace Anamnesis.Character
 			{
 				t = 'B';
 			}
-			else if (type == typeof(ENpcBaseViewModel))
+			else if (type == typeof(EventNpc) || type == typeof(EventNpcBase))
 			{
 				t = 'E';
 			}
@@ -76,6 +77,19 @@ namespace Anamnesis.Character
 
 		public static CharacterFile ToFile(this INpcBase npc)
 		{
+			INpcAppearance? appearance = npc.GetAppearance();
+
+			if (appearance == null)
+				throw new Exception($"No NPc appearance for npc: {npc}");
+
+			return appearance.ToFile();
+		}
+
+		public static CharacterFile ToFile(this INpcAppearance npc)
+		{
+			if (npc.Race == null || npc.Tribe == null)
+				throw new Exception("NPC missing race or tribe");
+
 			CharacterFile file = new CharacterFile();
 			file.SaveMode = CharacterFile.SaveModes.All;
 			file.ModelType = npc.ModelCharaRow;
@@ -106,25 +120,28 @@ namespace Anamnesis.Character
 			file.FacePaint = (byte)npc.FacePaint;
 			file.FacePaintColor = (byte)npc.FacePaintColor;
 
-			file.MainHand = WeaponFromItem(npc.NpcEquip.MainHand, npc.NpcEquip.DyeMainHand);
-			file.OffHand = WeaponFromItem(npc.NpcEquip.OffHand, npc.NpcEquip.DyeOffHand);
+			file.MainHand = WeaponFromItem(npc.MainHand, npc.DyeMainHand);
+			file.OffHand = WeaponFromItem(npc.OffHand, npc.DyeOffHand);
 
-			file.HeadGear = GearFromItem(npc.NpcEquip.Head, npc.NpcEquip.DyeHead);
-			file.Body = GearFromItem(npc.NpcEquip.Body, npc.NpcEquip.DyeBody);
-			file.Hands = GearFromItem(npc.NpcEquip.Hands, npc.NpcEquip.DyeHands);
-			file.Legs = GearFromItem(npc.NpcEquip.Legs, npc.NpcEquip.DyeLegs);
-			file.Feet = GearFromItem(npc.NpcEquip.Feet, npc.NpcEquip.DyeFeet);
-			file.Ears = GearFromItem(npc.NpcEquip.Ears, npc.NpcEquip.DyeEars);
-			file.Neck = GearFromItem(npc.NpcEquip.Neck, npc.NpcEquip.DyeNeck);
-			file.Wrists = GearFromItem(npc.NpcEquip.Wrists, npc.NpcEquip.DyeWrists);
-			file.LeftRing = GearFromItem(npc.NpcEquip.LeftRing, npc.NpcEquip.DyeLeftRing);
-			file.RightRing = GearFromItem(npc.NpcEquip.RightRing, npc.NpcEquip.DyeRightRing);
+			file.HeadGear = GearFromItem(npc.Head, npc.DyeHead);
+			file.Body = GearFromItem(npc.Body, npc.DyeBody);
+			file.Hands = GearFromItem(npc.Hands, npc.DyeHands);
+			file.Legs = GearFromItem(npc.Legs, npc.DyeLegs);
+			file.Feet = GearFromItem(npc.Feet, npc.DyeFeet);
+			file.Ears = GearFromItem(npc.Ears, npc.DyeEars);
+			file.Neck = GearFromItem(npc.Neck, npc.DyeNeck);
+			file.Wrists = GearFromItem(npc.Wrists, npc.DyeWrists);
+			file.LeftRing = GearFromItem(npc.LeftRing, npc.DyeLeftRing);
+			file.RightRing = GearFromItem(npc.RightRing, npc.DyeRightRing);
 
 			return file;
 		}
 
-		private static CharacterFile.WeaponSave WeaponFromItem(IItem item, IDye dye)
+		private static CharacterFile.WeaponSave? WeaponFromItem(IItem? item, IDye? dye)
 		{
+			if (item == null)
+				return null;
+
 			CharacterFile.WeaponSave save = new CharacterFile.WeaponSave();
 
 			save.Color = Color.White;
@@ -139,8 +156,11 @@ namespace Anamnesis.Character
 			return save;
 		}
 
-		private static CharacterFile.ItemSave GearFromItem(IItem item, IDye dye)
+		private static CharacterFile.ItemSave? GearFromItem(IItem? item, IDye? dye)
 		{
+			if (item == null)
+				return null;
+
 			CharacterFile.ItemSave save = new CharacterFile.ItemSave();
 
 			save.ModelBase = item.ModelBase;
