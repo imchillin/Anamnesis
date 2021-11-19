@@ -4,6 +4,7 @@
 namespace Anamnesis.GameData
 {
 	using System.Windows.Media;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.TexTools;
 
 	public interface INpcBase : IRow
@@ -13,11 +14,11 @@ namespace Anamnesis.GameData
 		int ExtraFeature2OrBust { get; }
 		int ExtraFeature1 { get; }
 		uint ModelCharaRow { get; }
-		IRace Race { get; }
+		Race Race { get; }
 		int Gender { get; }
 		int BodyType { get; }
 		int Height { get; }
-		ITribe Tribe { get; }
+		Tribe Tribe { get; }
 		int Face { get; }
 		int HairStyle { get; }
 		bool EnableHairHighlight { get; }

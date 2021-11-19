@@ -6,23 +6,23 @@ namespace Anamnesis.GameData.ViewModels
 	using System.Windows.Media;
 	using Anamnesis.Character;
 	using Anamnesis.Character.Utilities;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
 	using Lumina.Excel;
-	using Lumina.Excel.GeneratedSheets;
 
-	public class CompanionViewModel : ExcelRowViewModel<Companion>, INpcBase
+	public class CompanionViewModel : ExcelRowViewModel<Lumina.Excel.GeneratedSheets.Companion>, INpcBase
 	{
-		public CompanionViewModel(uint key, ExcelSheet<Companion> sheet, GameData lumina)
+		public CompanionViewModel(uint key, Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Companion> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			this.Race = GameDataService.Races!.Get(1);
 			this.Tribe = GameDataService.Tribes!.Get(1);
 		}
 
-		public IRace Race { get; private set; }
-		public ITribe Tribe { get; private set; }
+		public Race Race { get; private set; }
+		public Tribe Tribe { get; private set; }
 
 		public int FacePaintColor => 0;
 		public int FacePaint => 0;

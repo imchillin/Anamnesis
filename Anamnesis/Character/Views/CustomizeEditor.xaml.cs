@@ -10,6 +10,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -32,10 +33,10 @@ namespace Anamnesis.Character.Views
 			this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(ActorCustomizeMemory.Genders));
 			this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(ActorCustomizeMemory.Ages));
 
-			List<IRace> races = new List<IRace>();
-			foreach (IRace race in GameDataService.Races)
+			List<Race> races = new List<Race>();
+			foreach (Race race in GameDataService.Races)
 			{
-				if (race.Key == 0)
+				if (race.RowId == 0)
 					continue;
 
 				races.Add(race);
@@ -52,8 +53,8 @@ namespace Anamnesis.Character.Views
 		public bool CanAge { get; set; }
 		public ICharaMakeCustomize? Hair { get; set; }
 		public ICharaMakeCustomize? FacePaint { get; set; }
-		public IRace? Race { get; set; }
-		public ITribe? Tribe { get; set; }
+		public Race? Race { get; set; }
+		public Tribe? Tribe { get; set; }
 
 		public double HeightCm { get; set; }
 		public string? HeightFeet { get; set; }
@@ -143,7 +144,7 @@ namespace Anamnesis.Character.Views
 				return;
 			}
 
-			this.Race = GameDataService.Races.Get((uint)this.Customize.Race);
+			this.Race = GameDataService.Races.GetRow((uint)this.Customize.Race);
 
 			// Something has gone terribly wrong.
 			if (this.Race == null)
@@ -164,7 +165,7 @@ namespace Anamnesis.Character.Views
 			this.Tribe = GameDataService.Tribes.Get((uint)this.Customize.Tribe);
 
 			if (this.Customize.Tribe == 0 || this.Tribe == null)
-				this.Customize.Tribe = this.Race.Tribes.First().Tribe;
+				this.Customize.Tribe = this.Race.Tribes.First().CustomizeTribe;
 
 			this.TribeComboBox.SelectedItem = this.Tribe;
 
@@ -240,7 +241,7 @@ namespace Anamnesis.Character.Views
 
 		private void OnRaceChanged(object sender, SelectionChangedEventArgs e)
 		{
-			IRace? race = this.RaceComboBox.SelectedItem as IRace;
+			Race? race = this.RaceComboBox.SelectedItem as Race;
 
 			if (race == null || this.Customize == null)
 				return;
@@ -249,10 +250,10 @@ namespace Anamnesis.Character.Views
 			if (race == this.Race)
 				return;
 
-			if (race.Race == AnAppearance.Races.Hrothgar)
+			if (race.CustomizeRace == AnAppearance.Races.Hrothgar)
 				this.Customize.Gender = AnAppearance.Genders.Masculine;
 
-			if (race.Race == AnAppearance.Races.Viera)
+			if (race.CustomizeRace == AnAppearance.Races.Viera)
 				this.Customize.Gender = AnAppearance.Genders.Feminine;
 
 			// reset age when chaing race
@@ -280,8 +281,8 @@ namespace Anamnesis.Character.Views
 
 			this.TribeComboBox.SelectedItem = this.Tribe;
 
-			this.Customize.Race = this.Race.Race;
-			this.Customize.Tribe = this.Tribe.Tribe;
+			this.Customize.Race = this.Race.CustomizeRace;
+			this.Customize.Tribe = this.Tribe.CustomizeTribe;
 
 			this.UpdateRaceAndTribe();
 
@@ -293,7 +294,7 @@ namespace Anamnesis.Character.Views
 			if (this.Customize == null)
 				return;
 
-			ITribe? tribe = this.TribeComboBox.SelectedItem as ITribe;
+			Tribe? tribe = this.TribeComboBox.SelectedItem as Tribe;
 
 			if (tribe == null || this.Tribe == tribe)
 				return;
@@ -302,17 +303,17 @@ namespace Anamnesis.Character.Views
 			this.Customize.Age = AnAppearance.Ages.Normal;
 
 			this.Tribe = tribe;
-			this.Customize.Tribe = this.Tribe.Tribe;
+			this.Customize.Tribe = this.Tribe.CustomizeTribe;
 
 			this.UpdateRaceAndTribe();
 		}
 
-		private int GetTribeIndex(IRace? race, ITribe? tribe)
+		private int GetTribeIndex(Race? race, Tribe? tribe)
 		{
 			if (race == null || tribe == null)
 				return -1;
 
-			ITribe[] tribes = race.Tribes;
+			Tribe[] tribes = race.Tribes;
 			for (int i = 0; i < tribes.Length; i++)
 			{
 				if (tribes[i] == tribe)

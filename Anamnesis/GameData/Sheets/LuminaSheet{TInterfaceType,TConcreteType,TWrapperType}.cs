@@ -18,7 +18,7 @@ namespace Anamnesis.GameData.Sheets
 		where TConcreteType : ExcelRow
 		where TWrapperType : ExcelRowViewModel<TConcreteType>, TInterfaceType
 	{
-		private readonly ExcelSheet<TConcreteType> excel;
+		private readonly Lumina.Excel.ExcelSheet<TConcreteType> excel;
 		private readonly ConcurrentDictionary<uint, TWrapperType> wrapperCache = new ConcurrentDictionary<uint, TWrapperType>();
 		private readonly LuminaData lumina;
 
@@ -26,7 +26,7 @@ namespace Anamnesis.GameData.Sheets
 		{
 			this.lumina = lumina;
 
-			ExcelSheet<TConcreteType>? sheet = lumina.GetExcelSheet<TConcreteType>();
+			Lumina.Excel.ExcelSheet<TConcreteType>? sheet = lumina.GetExcelSheet<TConcreteType>();
 
 			if (sheet == null)
 				throw new Exception($"Failed to read lumina excel sheet: {typeof(TConcreteType)}");

@@ -32,8 +32,8 @@ namespace Anamnesis.GameData.ViewModels
 			this.name = GameDataService.GetNpcName(this);
 		}
 
-		public IRace Race { get; private set; }
-		public ITribe Tribe { get; private set; }
+		public Sheets.Race Race { get; private set; }
+		public Sheets.Tribe Tribe { get; private set; }
 
 		public ImageSource? Icon => null;
 		public override string Name => this.name ?? $"Event NPC #{this.Key}";

@@ -5,17 +5,17 @@ namespace Anamnesis.GameData.ViewModels
 {
 	using System.Windows.Media;
 	using Anamnesis.Character;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
 	using Lumina.Excel;
-	using Lumina.Excel.GeneratedSheets;
 
-	public class BNpcBaseViewModel : ExcelRowViewModel<BNpcBase>, INpcBase
+	public class BNpcBaseViewModel : ExcelRowViewModel<Lumina.Excel.GeneratedSheets.BNpcBase>, INpcBase
 	{
 		private readonly string? name;
 
-		public BNpcBaseViewModel(uint key, ExcelSheet<BNpcBase> sheet, GameData lumina)
+		public BNpcBaseViewModel(uint key, Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.BNpcBase> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
 			uint raceId = 1;
@@ -39,8 +39,8 @@ namespace Anamnesis.GameData.ViewModels
 			this.name = GameDataService.GetNpcName(this);
 		}
 
-		public IRace Race { get; private set; }
-		public ITribe Tribe { get; private set; }
+		public Race Race { get; private set; }
+		public Tribe Tribe { get; private set; }
 
 		public int FacePaintColor => this.Value.BNpcCustomize.Value?.FacePaintColor ?? 0;
 		public int FacePaint => this.Value.BNpcCustomize.Value?.FacePaint ?? 0;

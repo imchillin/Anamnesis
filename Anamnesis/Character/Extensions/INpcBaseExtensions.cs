@@ -79,8 +79,8 @@ namespace Anamnesis.Character
 			CharacterFile file = new CharacterFile();
 			file.SaveMode = CharacterFile.SaveModes.All;
 			file.ModelType = npc.ModelCharaRow;
-			file.Race = npc.Race.Race;
-			file.Tribe = npc.Tribe.Tribe;
+			file.Race = npc.Race.CustomizeRace;
+			file.Tribe = npc.Tribe.CustomizeTribe;
 			file.Gender = (ActorCustomizeMemory.Genders)npc.Gender;
 			file.Age = (ActorCustomizeMemory.Ages)npc.BodyType;
 			file.Height = (byte)Math.Min(npc.Height, 100);

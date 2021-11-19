@@ -13,6 +13,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Media.Imaging;
 	using Anamnesis;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -102,13 +103,16 @@ namespace Anamnesis.Character.Views
 			ImageSource[]? facialFeatures = null;
 			if (GameDataService.CharacterMakeTypes != null)
 			{
-				foreach (ICharaMakeType set in GameDataService.CharacterMakeTypes)
+				foreach (CharaMakeType set in GameDataService.CharacterMakeTypes)
 				{
 					if (set.Tribe != this.Tribe)
 						continue;
 
 					if (set.Gender != this.Gender)
 						continue;
+
+					if (set.FacialFeatures == null)
+						throw new Exception("Missing facial features");
 
 					facialFeatures = set.FacialFeatures.ToArray();
 					break;

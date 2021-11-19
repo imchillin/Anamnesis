@@ -17,12 +17,12 @@ namespace Anamnesis.GameData.ViewModels
 		public MountViewModel(uint key, ExcelSheet<Mount> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
-			this.Race = GameDataService.Races!.Get(1);
-			this.Tribe = GameDataService.Tribes!.Get(1);
+			this.Race = GameDataService.Races.Get(1);
+			this.Tribe = GameDataService.Tribes.Get(1);
 		}
 
-		public IRace Race { get; private set; }
-		public ITribe Tribe { get; private set; }
+		public Sheets.Race Race { get; private set; }
+		public Sheets.Tribe Tribe { get; private set; }
 
 		public int FacePaintColor => 0;
 		public int FacePaint => 0;

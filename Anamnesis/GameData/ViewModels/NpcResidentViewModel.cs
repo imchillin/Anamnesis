@@ -40,11 +40,11 @@ namespace Anamnesis.GameData.ViewModels
 		public int ExtraFeature2OrBust => this.Appearance.ExtraFeature2OrBust;
 		public int ExtraFeature1 => this.Appearance.ExtraFeature1;
 		public uint ModelCharaRow => this.Appearance.ModelCharaRow;
-		public IRace Race => this.Appearance.Race;
+		public Sheets.Race Race => this.Appearance.Race;
 		public int Gender => this.Appearance.Gender;
 		public int BodyType => this.Appearance.BodyType;
 		public int Height => this.Appearance.Height;
-		public ITribe Tribe => this.Appearance.Tribe;
+		public Sheets.Tribe Tribe => this.Appearance.Tribe;
 		public int Face => this.Appearance.Face;
 		public int HairStyle => this.Appearance.HairStyle;
 		public bool EnableHairHighlight => this.Appearance.EnableHairHighlight;
