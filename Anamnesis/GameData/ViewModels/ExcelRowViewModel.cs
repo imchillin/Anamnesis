@@ -17,25 +17,25 @@ namespace Anamnesis.GameData.ViewModels
 		public ExcelRowViewModel(uint key, ExcelSheet<T> sheet, GameData lumina)
 		{
 			this.sheet = sheet;
-			this.Key = key;
+			this.RowId = key;
 			this.lumina = lumina;
 
 			try
 			{
-				T? row = this.sheet.GetRow(this.Key);
+				T? row = this.sheet.GetRow(this.RowId);
 
 				if (row == null)
-					throw new Exception($"No row found at {this.Key}");
+					throw new Exception($"No row found at {this.RowId}");
 
 				this.Value = row;
 			}
 			catch (Exception ex)
 			{
-				throw new Exception($"Failed to read Lumina row: {this.Key} for type: {typeof(T).Name}", ex);
+				throw new Exception($"Failed to read Lumina row: {this.RowId} for type: {typeof(T).Name}", ex);
 			}
 		}
 
-		public uint Key
+		public uint RowId
 		{
 			get;
 			private set;

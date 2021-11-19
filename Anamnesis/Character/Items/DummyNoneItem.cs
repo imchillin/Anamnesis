@@ -11,12 +11,12 @@ namespace Anamnesis.Character.Items
 	public class DummyNoneItem : IItem
 	{
 		public string Name => LocalizationService.GetString("Item_None");
-		public string? Description => LocalizationService.GetString("Item_NoneDesc");
+		public string Description => LocalizationService.GetString("Item_NoneDesc");
 		public ImageSource? Icon => null;
 		public ushort ModelBase => 0;
 		public ushort ModelVariant => 0;
 		public ushort ModelSet => 0;
-		public uint Key => 0;
+		public uint RowId => 0;
 		public bool IsWeapon => true;
 		public bool HasSubModel => false;
 		public ushort SubModelBase => 0;

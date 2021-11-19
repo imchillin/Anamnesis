@@ -17,11 +17,11 @@ namespace Anamnesis.Character.Items
 			this.ModelVariant = modelVariant;
 		}
 
-		public uint Key => 0;
+		public uint RowId => 0;
 		public bool IsWeapon => true;
 		public bool HasSubModel => false;
 		public string Name => LocalizationService.GetString("Item_Unknown");
-		public string? Description => null;
+		public string Description => string.Empty;
 		public ImageSource? Icon => null;
 		public Classes EquipableClasses => Classes.All;
 		public Mod? Mod => null;

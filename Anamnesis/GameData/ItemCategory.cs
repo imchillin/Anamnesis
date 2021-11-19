@@ -9,12 +9,12 @@ namespace Anamnesis.GameData
 
 	public class ItemCategory : JsonDictionarySheet<ItemCategories, ItemCategory>.Entry
 	{
-		public static ItemCategories GetCategory(IItem item)
+		public static ItemCategories GetCategory(Item item)
 		{
-			if (!GameDataService.ItemCategories.Contains(item.Key))
+			if (!GameDataService.ItemCategories.Contains(item.RowId))
 				return ItemCategories.None;
 
-			ItemCategories category = GameDataService.ItemCategories.Get(item.Key).Value;
+			ItemCategories category = GameDataService.ItemCategories.Get(item.RowId).Value;
 
 			if (FavoritesService.IsFavorite(item))
 				category = category.SetFlag(ItemCategories.Favorites, true);

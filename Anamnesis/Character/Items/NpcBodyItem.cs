@@ -11,12 +11,12 @@ namespace Anamnesis.Character.Items
 	public class NpcBodyItem : IItem
 	{
 		public string Name => LocalizationService.GetString("Item_NpcBody");
-		public string? Description => LocalizationService.GetString("Item_NpcBodyDesc");
-		public ImageSource? Icon => GameDataService.Items.Get(10033).Icon;
+		public string Description => LocalizationService.GetString("Item_NpcBodyDesc");
+		public ImageSource? Icon => GameDataService.Items.Get(10033)?.Icon;
 		public ushort ModelBase => 9903;
 		public ushort ModelVariant => 1;
 		public ushort ModelSet => 0;
-		public uint Key => 0;
+		public uint RowId => 0;
 		public bool IsWeapon => false;
 		public bool HasSubModel => false;
 		public ushort SubModelBase => 0;

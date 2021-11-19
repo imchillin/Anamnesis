@@ -3,20 +3,20 @@
 
 namespace Anamnesis.Services
 {
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Threading.Tasks;
-	using System.Windows;
-	using Anamnesis.Files;
-	using Anamnesis.GameData;
-	using Anamnesis.GUI.Dialogs;
-	using Anamnesis.Memory;
-	using Anamnesis.Serialization;
-	using PropertyChanged;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Threading.Tasks;
+    using Anamnesis.Files;
+    using Anamnesis.GameData;
+    using Anamnesis.GameData.Sheets;
+    using Anamnesis.GUI.Dialogs;
+    using Anamnesis.Memory;
+    using Anamnesis.Serialization;
+    using PropertyChanged;
 
-	[AddINotifyPropertyChangedInterface]
-	public class FavoritesService : ServiceBase<FavoritesService>
+    [AddINotifyPropertyChangedInterface]
+    public class FavoritesService : ServiceBase<FavoritesService>
 	{
 		private static readonly string FilePath = FileService.ParseToFilePath(FileService.StoreDirectory + "/Favorites.json");
 
@@ -55,7 +55,7 @@ namespace Anamnesis.Services
 			Save();
 		}
 
-		public static bool IsOwned(IItem item)
+		public static bool IsOwned(Item item)
 		{
 			if (Instance.Current == null)
 				return false;
@@ -63,7 +63,7 @@ namespace Anamnesis.Services
 			return Instance.Current.Owned.Contains(item);
 		}
 
-		public static void SetOwned(IItem item, bool favorite)
+		public static void SetOwned(Item item, bool favorite)
 		{
 			if (Instance.Current == null)
 				return;

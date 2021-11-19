@@ -18,7 +18,7 @@ namespace Anamnesis.GameData.ViewModels
 		}
 
 		public ImageSource? Icon => null;
-		public override string Name => this.HasName ? this.Singular : $"Resident #{this.Key}";
+		public override string Name => this.HasName ? this.Singular : $"Resident #{this.RowId}";
 		public string Singular => this.Value.Singular;
 		public string Plural => this.Value.Plural;
 		public string Title => this.Value.Title;

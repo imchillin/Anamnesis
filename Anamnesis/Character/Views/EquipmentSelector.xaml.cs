@@ -11,12 +11,12 @@ namespace Anamnesis.Character.Views
 	using Anamnesis;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Controls;
 	using Anamnesis.Styles.Drawers;
-	using Lumina.Excel.GeneratedSheets;
 	using PropertyChanged;
 	using XivToolsWpf;
 
@@ -164,7 +164,7 @@ namespace Anamnesis.Character.Views
 					return 1;
 				}
 
-				return itemA.Key.CompareTo(itemB.Key);
+				return itemA.RowId.CompareTo(itemB.RowId);
 			}
 
 			return 0;
@@ -196,7 +196,7 @@ namespace Anamnesis.Character.Views
 			if (!this.ValidCategory(item))
 				return false;
 
-			if (!this.ShowLocked && item is ItemViewModel ivm && !this.CanEquip(ivm))
+			if (!this.ShowLocked && item is Item ivm && !this.CanEquip(ivm))
 				return false;
 
 			return this.MatchesSearch(item, search);
@@ -237,30 +237,12 @@ namespace Anamnesis.Character.Views
 			return categoryFiltered;
 		}
 
-		private bool CanEquip(ItemViewModel item)
+		private bool CanEquip(Item item)
 		{
-			EquipRaceCategory? equipRaceCategory;
-			lock (GameDataService.EquipRaceCategories)
-				equipRaceCategory = GameDataService.EquipRaceCategories.GetRow(item.Value.EquipRestriction);
-
-			if (equipRaceCategory == null || this.actor == null || this.actor.Customize == null)
+			if (item.EquipRestriction == null || this.actor == null || this.actor.Customize == null)
 				return true;
 
-			Genders gender = this.actor.Customize.Gender;
-			bool validGender = (gender == Genders.Masculine && equipRaceCategory.Male)
-				|| (gender == Genders.Feminine && equipRaceCategory.Female);
-
-			Races race = this.actor.Customize.Race;
-			bool validRace = (race == Races.Hyur && equipRaceCategory.Hyur)
-				|| (race == Races.Elezen && equipRaceCategory.Elezen)
-				|| (race == Races.Lalafel && equipRaceCategory.Lalafell)
-				|| (race == Races.Miqote && equipRaceCategory.Miqote)
-				|| (race == Races.Roegadyn && equipRaceCategory.Roegadyn)
-				|| (race == Races.AuRa && equipRaceCategory.AuRa)
-				|| (race == Races.Hrothgar && equipRaceCategory.Unknown6)
-				|| (race == Races.Viera && equipRaceCategory.Unknown7);
-
-			return validGender && validRace;
+			return item.EquipRestriction.CanEquip(this.actor.Customize.Race, this.actor.Customize.Gender);
 		}
 
 		private bool MatchesSearch(IItem item, string[]? search = null)
@@ -280,7 +262,7 @@ namespace Anamnesis.Character.Views
 				matches |= SearchUtility.Matches(item.SubModelVariant.ToString(), search);
 			}
 
-			matches |= SearchUtility.Matches(item.Key.ToString(), search);
+			matches |= SearchUtility.Matches(item.RowId.ToString(), search);
 
 			if (item.Mod != null && item.Mod.ModPack != null)
 			{

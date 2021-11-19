@@ -50,7 +50,7 @@ namespace Anamnesis.GameData.ViewModels
 		public int HairColor => 0;
 
 		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);
-		public override string Name => this.HasName ? this.Value.Singular : $"Mount #{this.Key}";
+		public override string Name => this.HasName ? this.Value.Singular : $"Mount #{this.RowId}";
 		public override string? Description => null;
 		public uint ModelCharaRow => this.Value.ModelChara.Row;
 		public INpcEquip NpcEquip => new MountEquip(this.Value);

@@ -26,8 +26,8 @@ namespace Anamnesis.GameData.ViewModels
 			if (tribeId <= 0)
 				tribeId = 1;
 
-			this.Race = GameDataService.Races!.Get(raceId);
-			this.Tribe = GameDataService.Tribes!.Get(tribeId);
+			this.Race = GameDataService.Races.Get(raceId);
+			this.Tribe = GameDataService.Tribes.Get(tribeId);
 
 			this.name = GameDataService.GetNpcName(this);
 		}
@@ -36,7 +36,7 @@ namespace Anamnesis.GameData.ViewModels
 		public Sheets.Tribe Tribe { get; private set; }
 
 		public ImageSource? Icon => null;
-		public override string Name => this.name ?? $"Event NPC #{this.Key}";
+		public override string Name => this.name ?? $"Event NPC #{this.RowId}";
 		public override string? Description => null;
 		public Mod? Mod => null;
 		public bool CanFavorite => true;

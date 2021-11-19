@@ -47,9 +47,9 @@ namespace Anamnesis.Serialization.Converters
 
 		public override void Write(Utf8JsonWriter writer, IItem value, JsonSerializerOptions options)
 		{
-			if (value.Key != 0)
+			if (value.RowId != 0)
 			{
-				writer.WriteStringValue($"{value.Key}");
+				writer.WriteStringValue($"{value.RowId}");
 			}
 			else
 			{

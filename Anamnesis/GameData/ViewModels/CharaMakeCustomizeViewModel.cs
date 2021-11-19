@@ -15,7 +15,7 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
-		public override string Name => "Feature " + this.Key;
+		public override string Name => "Feature " + this.RowId;
 		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);
 		public byte FeatureId => this.Value.FeatureID;
 	}

@@ -6,8 +6,13 @@ namespace Anamnesis.GameData
 	using System.Windows.Media;
 	using Anamnesis.TexTools;
 
-	public interface IItem : IRow
+	public interface IItem
 	{
+		uint RowId { get; }
+
+		string Name { get; }
+		string Description { get; }
+
 		ImageSource? Icon { get; }
 
 		ushort ModelSet { get; }

@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.Sheets
 {
 	using System;
 	using System.Collections;
+	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Reflection;
@@ -19,6 +20,8 @@ namespace Anamnesis.GameData.Sheets
 		where T : ExcelRow
 	{
 		private readonly Lumina.GameData gameData;
+
+		private readonly ConcurrentDictionary<ulong, T> cache = new ConcurrentDictionary<ulong, T>();
 
 		public ExcelSheet(ExcelHeaderFile headerFile, string name, Language requestedLanguage, Lumina.GameData gameData)
 			: base(headerFile, name, requestedLanguage, gameData)
@@ -41,12 +44,7 @@ namespace Anamnesis.GameData.Sheets
 			return this.Get((uint)row);
 		}
 
-		public T Get(uint row)
-		{
-			return this.GetRow(row, uint.MaxValue);
-		}
-
-		public new T GetRow(uint row, uint subRow)
+		public T Get(uint row, uint subRow = uint.MaxValue)
 		{
 			T? value = this.GetRowInternal(row, subRow);
 
@@ -54,6 +52,11 @@ namespace Anamnesis.GameData.Sheets
 				throw new Exception($"No row: {row} in sheet {this.GetType()}");
 
 			return value;
+		}
+
+		public T? GetOrDefault(uint row, uint subRow = uint.MaxValue)
+		{
+			return this.GetRowInternal(row, subRow);
 		}
 
 		// Copies almost verbatum from /Lumina/src/Lumina/Excel/ExcelSheet.cs#L80
@@ -177,16 +180,38 @@ namespace Anamnesis.GameData.Sheets
 
 		private T? GetRowInternal(uint row, uint subRow = uint.MaxValue)
 		{
-			ulong cacheKey = ExcelSheetImpl.GetCacheKey(row, subRow);
+			try
+			{
+				ulong cacheKey = ExcelSheetImpl.GetCacheKey(row, subRow);
 
-			RowParser? rowParser = this.GetRowParser(row, subRow);
+				T? value;
+				if (this.cache.TryGetValue(cacheKey, out value))
+					return value;
 
-			if (rowParser == null)
-				return null;
+				// Lumina does not support concurrent access to the rowParser
+				// or underlying FileResource.Stream, so make sure we dont concurrently
+				// load rows.
+				lock (this)
+				{
+					RowParser? rowParser = this.GetRowParser(row);
 
-			T val = Activator.CreateInstance<T>();
-			val.PopulateData(rowParser, this.gameData, this.RequestedLanguage);
-			return val;
+					if (rowParser == null)
+						return null;
+
+					T val = Activator.CreateInstance<T>();
+
+					val.PopulateData(rowParser, this.gameData, this.RequestedLanguage);
+
+					this.cache.TryAdd(cacheKey, val);
+
+					return val;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Verbose(ex.Message);
+				throw;
+			}
 		}
 	}
 }

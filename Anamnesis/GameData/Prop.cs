@@ -10,10 +10,10 @@ namespace Anamnesis.GameData
 
 	public class Prop : IJsonRow, IItem
 	{
-		public uint Key { get; set; }
+		public uint RowId { get; set; }
 
 		public string Name { get; set; } = string.Empty;
-		public string? Description { get; set; }
+		public string Description { get; set; } = string.Empty;
 		public ushort ModelBase { get; set; }
 		public ushort ModelVariant { get; set; }
 		public ushort ModelSet { get; set; }

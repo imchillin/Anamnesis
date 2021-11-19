@@ -75,12 +75,12 @@ namespace Lumina
 			}
 		}
 
-		public static ImageSource? GetImage(this LuminaData self, uint imageId)
+		public static ImageSource? GetImage(this LuminaData self, int imageId)
 		{
-			return self.GetImage((int)imageId);
+			return self.GetImage((uint)imageId);
 		}
 
-		public static ImageSource? GetImage(this LuminaData self, int imageId)
+		public static ImageSource? GetImage(this LuminaData self, uint imageId)
 		{
 			TexFile? tex = self.GetIcon(imageId);
 

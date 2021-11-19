@@ -17,8 +17,8 @@ namespace Anamnesis.GameData.ViewModels
 		public CompanionViewModel(uint key, Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Companion> sheet, GameData lumina)
 			: base(key, sheet, lumina)
 		{
-			this.Race = GameDataService.Races!.Get(1);
-			this.Tribe = GameDataService.Tribes!.Get(1);
+			this.Race = GameDataService.Races.Get(1);
+			this.Tribe = GameDataService.Tribes.Get(1);
 		}
 
 		public Race Race { get; private set; }
@@ -50,7 +50,7 @@ namespace Anamnesis.GameData.ViewModels
 		public int HairColor => 0;
 
 		public ImageSource? Icon => this.lumina.GetImage(this.Value.Icon);
-		public override string Name => this.HasName ? this.Value.Singular : $"Minion #{this.Key}";
+		public override string Name => this.HasName ? this.Value.Singular : $"Minion #{this.RowId}";
 		public override string? Description => this.Value?.MinionRace.Value?.Name?.ToString();
 		public uint ModelCharaRow => this.Value.Model.Row;
 		public INpcEquip NpcEquip => ItemUtility.DummyNoneNpcEquip;

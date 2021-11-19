@@ -187,7 +187,7 @@ namespace Anamnesis.Character.Views
 				if (npcA is not ENpcBaseViewModel && npcB is ENpcBaseViewModel)
 					return 1;
 
-				return -npcB.Key.CompareTo(npcA.Key);
+				return -npcB.RowId.CompareTo(npcA.RowId);
 			}
 
 			return 0;
@@ -254,7 +254,7 @@ namespace Anamnesis.Character.Views
 
 				bool matches = false;
 				matches |= SearchUtility.Matches(npc.Name, search);
-				matches |= SearchUtility.Matches(npc.Key.ToString(), search);
+				matches |= SearchUtility.Matches(npc.RowId.ToString(), search);
 				matches |= SearchUtility.Matches(npc.ModelCharaRow.ToString(), search);
 
 				if (npc.Mod != null && npc.Mod.ModPack != null)

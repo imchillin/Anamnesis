@@ -97,7 +97,7 @@ namespace Anamnesis.Character.Views
 				if (!dyeA.IsFavorite && dyeB.IsFavorite)
 					return 1;
 
-				return -dyeB.Key.CompareTo(dyeA.Key);
+				return -dyeB.RowId.CompareTo(dyeA.RowId);
 			}
 
 			return 0;

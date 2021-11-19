@@ -23,7 +23,7 @@ namespace Anamnesis.GameData.Sheets
 				foreach ((uint key, TValue value) in data)
 				{
 					TWrapper entry = new TWrapper();
-					entry.Key = key;
+					entry.RowId = key;
 					entry.SetValue(value);
 					this.rows.Add(key, entry);
 				}
@@ -64,7 +64,7 @@ namespace Anamnesis.GameData.Sheets
 
 		public class Entry : IRow
 		{
-			public uint Key { get; set; }
+			public uint RowId { get; set; }
 			public string Name => string.Empty;
 			public string? Description => null;
 			public TValue? Value { get; private set; }

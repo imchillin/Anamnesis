@@ -6,7 +6,6 @@ namespace Anamnesis.TexTools
 	using System;
 	using System.IO;
 	using System.Threading.Tasks;
-	using Anamnesis.Character;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Serialization;

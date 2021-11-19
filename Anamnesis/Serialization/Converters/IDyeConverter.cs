@@ -24,7 +24,7 @@ namespace Anamnesis.Serialization.Converters
 
 		public override void Write(Utf8JsonWriter writer, IDye value, JsonSerializerOptions options)
 		{
-			writer.WriteStringValue($"{value.Key}");
+			writer.WriteStringValue($"{value.RowId}");
 		}
 	}
 }

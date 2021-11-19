@@ -24,7 +24,7 @@ namespace Anamnesis.GameData.Sheets
 				uint index = 0;
 				foreach (T value in rows)
 				{
-					value.Key = index;
+					value.RowId = index;
 					this.rows.Add(index, value);
 					index++;
 				}

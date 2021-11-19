@@ -22,7 +22,7 @@ namespace Anamnesis.GameData.ViewModels
 		{
 		}
 
-		public byte Id => (byte)this.Key;
+		public byte Id => (byte)this.RowId;
 		public override string Name => this.Value?.Name ?? "Unkown";
 		public override string? Description => this.GetDyeItem()?.Description;
 		public ImageSource? Icon => this.GetDyeItem()?.Icon;
@@ -48,7 +48,7 @@ namespace Anamnesis.GameData.ViewModels
 
 		public IItem? GetDyeItem()
 		{
-			if (this.Key == 0)
+			if (this.RowId == 0)
 				return null;
 
 			if (GameDataService.Items == null)
@@ -56,7 +56,7 @@ namespace Anamnesis.GameData.ViewModels
 
 			if (this.item == null)
 			{
-				uint itemKey = DyeToItemKey(this.Key);
+				uint itemKey = DyeToItemKey(this.RowId);
 
 				if (itemKey != 0)
 				{

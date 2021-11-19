@@ -11,12 +11,15 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Media;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
+	using Serilog;
 	using XivToolsWpf;
 	using XivToolsWpf.DependencyProperties;
+
 	using Vector = Anamnesis.Memory.Vector;
 
 	/// <summary>
@@ -73,7 +76,7 @@ namespace Anamnesis.Character.Views
 		{
 			get
 			{
-				return this.Item?.Key ?? 0;
+				return this.Item?.RowId ?? 0;
 			}
 			set
 			{
@@ -146,8 +149,8 @@ namespace Anamnesis.Character.Views
 				this.SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
 
 				if (autoOffhand && this.Slot == ItemSlots.MainHand
-					&& item is GameData.ViewModels.ItemViewModel ivm
-					&& ivm.Value.EquipSlotCategory.Value?.OffHand == -1)
+					&& item is Item ivm
+					&& ivm.EquipSlot?.OffHand == -1)
 				{
 					if (ivm.HasSubModel)
 					{
@@ -218,44 +221,51 @@ namespace Anamnesis.Character.Views
 			Task.Run(async () =>
 			{
 				await Task.Yield();
-
 				await Dispatch.MainThread();
 				if (this.ItemModel == null || GameDataService.Dyes == null)
 					return;
 
 				this.IsLoading = true;
 
-				IEquipmentItemMemory? valueVm = this.ItemModel;
-				ItemSlots slots = this.Slot;
-
-				await Dispatch.NonUiThread();
-
-				if (valueVm is ItemMemory itemVm)
+				try
 				{
-					IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant);
-					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
+					IEquipmentItemMemory? valueVm = this.ItemModel;
+					ItemSlots slots = this.Slot;
 
-					await Dispatch.MainThread();
+					await Dispatch.NonUiThread();
 
-					this.Item = item;
-					this.Dye = dye;
+					if (valueVm is ItemMemory itemVm)
+					{
+						IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant);
+						IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
+
+						await Dispatch.MainThread();
+
+						this.Item = item;
+						this.Dye = dye;
+					}
+					else if (valueVm is WeaponMemory weaponVm)
+					{
+						IItem? item = ItemUtility.GetItem(slots, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
+
+						if (weaponVm.Set == 0)
+							weaponVm.Dye = 0;
+
+						IDye? dye = GameDataService.Dyes.Get(weaponVm.Dye);
+
+						await Dispatch.MainThread();
+
+						this.Item = item;
+						this.Dye = dye;
+					}
+
+					this.CanDye = !this.IsWeapon || this.ItemModel?.Set != 0;
 				}
-				else if (valueVm is WeaponMemory weaponVm)
+				catch (Exception ex)
 				{
-					IItem? item = ItemUtility.GetItem(slots, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
-
-					if (weaponVm.Set == 0)
-						weaponVm.Dye = 0;
-
-					IDye? dye = GameDataService.Dyes.Get(weaponVm.Dye);
-
-					await Dispatch.MainThread();
-
-					this.Item = item;
-					this.Dye = dye;
+					Log.Error(ex, "Failed to update item");
 				}
 
-				this.CanDye = !this.IsWeapon || this.ItemModel?.Set != 0;
 				this.IsLoading = false;
 			});
 		}

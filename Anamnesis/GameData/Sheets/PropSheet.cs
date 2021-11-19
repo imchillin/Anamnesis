@@ -76,6 +76,6 @@ namespace Anamnesis.GameData.Sheets
 	#pragma warning disable SA1201
 	public interface IJsonRow : IRow
 	{
-		public new uint Key { get; set; }
+		public new uint RowId { get; set; }
 	}
 }

@@ -68,7 +68,7 @@ namespace Anamnesis.GameData.ViewModels
 		public int HairColor => this.Value.BNpcCustomize.Value?.HairColor ?? 0;
 
 		public ImageSource? Icon => null;
-		public override string Name => this.name ?? $"Battle NPC #{this.Key}";
+		public override string Name => this.name ?? $"Battle NPC #{this.RowId}";
 		public override string? Description => null;
 		public uint ModelCharaRow => this.Value.ModelChara.Row;
 		public INpcEquip NpcEquip => new NpcEquipViewModel(this.Value.NpcEquip.Value!);

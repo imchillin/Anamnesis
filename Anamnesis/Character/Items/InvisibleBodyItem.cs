@@ -11,8 +11,8 @@ namespace Anamnesis.Character.Items
 	public class InvisibleBodyItem : IItem
 	{
 		public string Name => LocalizationService.GetString("Item_InvisibleBody");
-		public string? Description => LocalizationService.GetString("Item_InvisibleBodyDesc");
-		public ImageSource? Icon => GameDataService.Items.Get(10033).Icon;
+		public string Description => LocalizationService.GetString("Item_InvisibleBodyDesc");
+		public ImageSource? Icon => GameDataService.Items.Get(10033)?.Icon;
 		public ushort ModelSet => 0;
 		public ushort ModelBase => 6103;
 		public ushort ModelVariant => 254;
@@ -23,7 +23,7 @@ namespace Anamnesis.Character.Items
 		public Classes EquipableClasses => Classes.All;
 		public bool IsWeapon => false;
 		public Mod? Mod => null;
-		public uint Key => 0;
+		public uint RowId => 0;
 
 		public bool IsFavorite
 		{
