@@ -4,7 +4,7 @@
 namespace Anamnesis.GameData.Sheets
 {
 	using System;
-	using System.Collections.Generic;
+	using System.Collections.Concurrent;
 	using System.Windows.Media;
 	using System.Windows.Media.Imaging;
 	using Anamnesis.Services;
@@ -16,7 +16,7 @@ namespace Anamnesis.GameData.Sheets
 	{
 		public readonly uint ImageId;
 
-		private static readonly Dictionary<uint, WeakReference<ImageSource>> ImageCache = new Dictionary<uint, WeakReference<ImageSource>>();
+		private WeakReference<ImageSource>? cachedImage;
 
 		public ImageReference(uint imageId)
 		{
@@ -39,16 +39,13 @@ namespace Anamnesis.GameData.Sheets
 				return null;
 
 			ImageSource? img;
-			WeakReference<ImageSource>? imgRef;
-			if (ImageCache.TryGetValue(this.ImageId, out imgRef))
+
+			if (this.cachedImage != null && this.cachedImage.TryGetTarget(out img))
 			{
-				if (imgRef.TryGetTarget(out img) && img != null)
-				{
-					return img;
-				}
+				return img;
 			}
 
-			Log.Verbose($"Image {this.ImageId} not in cache. loaing.");
+			Log.Verbose($"Loading image {this.ImageId}");
 
 			TexFile? tex = GameDataService.LuminaData.GetIcon(this.ImageId);
 
@@ -59,8 +56,10 @@ namespace Anamnesis.GameData.Sheets
 			bmp.Freeze();
 			img = bmp;
 
-			imgRef = new WeakReference<ImageSource>(img);
-			ImageCache.Add(this.ImageId, imgRef);
+			if (this.cachedImage == null)
+				this.cachedImage = new WeakReference<ImageSource>(img);
+
+			this.cachedImage.SetTarget(img);
 			return img;
 		}
 	}
