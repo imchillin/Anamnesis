@@ -51,8 +51,8 @@ namespace Anamnesis.Character.Views
 		public bool HasEars { get; set; }
 		public bool HasMuscles { get; set; }
 		public bool CanAge { get; set; }
-		public ICharaMakeCustomize? Hair { get; set; }
-		public ICharaMakeCustomize? FacePaint { get; set; }
+		public CharaMakeCustomize? Hair { get; set; }
+		public CharaMakeCustomize? FacePaint { get; set; }
 		public Race? Race { get; set; }
 		public Tribe? Tribe { get; set; }
 
@@ -183,8 +183,8 @@ namespace Anamnesis.Character.Views
 
 			if (this.Customize.Tribe > 0)
 			{
-				this.Hair = GameDataService.CharacterMakeCustomize.GetFeature(Features.Hair, this.Customize.Tribe, this.Customize.Gender, this.Customize.Hair);
-				this.FacePaint = GameDataService.CharacterMakeCustomize.GetFeature(Features.FacePaint, this.Customize.Tribe, this.Customize.Gender, this.Customize.FacePaint);
+				this.Hair = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.Hair, this.Customize.Tribe, this.Customize.Gender, this.Customize.Hair);
+				this.FacePaint = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.FacePaint, this.Customize.Tribe, this.Customize.Gender, this.Customize.FacePaint);
 			}
 
 			this.IsEnabled = true;
@@ -216,7 +216,7 @@ namespace Anamnesis.Character.Views
 			if (this.Customize == null)
 				return;
 
-			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(Features.Hair, this.Customize.Gender, this.Customize.Tribe, this.Customize.Hair);
+			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(CustomizeSheet.Features.Hair, this.Customize.Gender, this.Customize.Tribe, this.Customize.Hair);
 			selector.SelectionChanged += (v) =>
 			{
 				this.Customize.Hair = v;
@@ -230,7 +230,7 @@ namespace Anamnesis.Character.Views
 			if (this.Customize == null)
 				return;
 
-			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(Features.FacePaint, this.Customize.Gender, this.Customize.Tribe, this.Customize.FacePaint);
+			CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(CustomizeSheet.Features.FacePaint, this.Customize.Gender, this.Customize.Tribe, this.Customize.FacePaint);
 			selector.SelectionChanged += (v) =>
 			{
 				this.Customize.FacePaint = v;

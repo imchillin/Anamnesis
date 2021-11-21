@@ -4,7 +4,7 @@
 namespace Anamnesis.Character.Views
 {
 	using System.Windows.Controls;
-	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -17,12 +17,12 @@ namespace Anamnesis.Character.Views
 	{
 		private readonly ActorCustomizeMemory.Genders gender;
 		private readonly ActorCustomizeMemory.Tribes tribe;
-		private readonly Features feature;
+		private readonly CustomizeSheet.Features feature;
 
 		private byte selected;
-		private ICharaMakeCustomize? selectedItem;
+		private CharaMakeCustomize? selectedItem;
 
-		public CustomizeFeatureSelectorDrawer(Features feature, ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Tribes tribe, byte value)
+		public CustomizeFeatureSelectorDrawer(CustomizeSheet.Features feature, ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Tribes tribe, byte value)
 		{
 			this.InitializeComponent();
 
@@ -60,7 +60,7 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
-		public ICharaMakeCustomize? SelectedItem
+		public CharaMakeCustomize? SelectedItem
 		{
 			get
 			{

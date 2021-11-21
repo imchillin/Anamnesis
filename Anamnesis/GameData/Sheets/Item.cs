@@ -55,7 +55,7 @@ namespace Anamnesis.GameData.Sheets
 
 			this.Description = parser.ReadColumn<SeString>(8) ?? string.Empty;
 			this.Name = parser.ReadColumn<SeString>(9) ?? string.Empty;
-			this.Icon = gameData.GetImage(parser.ReadColumn<ushort>(10));
+			this.Icon = parser.ReadImageReference<ushort>(10);
 
 			this.EquipSlot = parser.ReadRowReference<byte, EquipSlotCategory>(17);
 			this.EquipRestriction = parser.ReadRowReference<byte, EquipRaceCategory>(42);

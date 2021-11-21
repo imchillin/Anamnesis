@@ -5,27 +5,25 @@ namespace Anamnesis.GameData.Sheets
 {
 	using System;
 	using System.Collections.Generic;
-	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
-	using Lumina;
-	using Lumina.Excel.GeneratedSheets;
 
-	public class CustomizeSheet : LuminaSheet<ICharaMakeCustomize, CharaMakeCustomize, CharaMakeCustomizeViewModel>, ICharaMakeCustomizeData
+	public static class CustomizeSheet
 	{
-		public CustomizeSheet(GameData lumina)
-			: base(lumina)
+		public enum Features
 		{
+			Hair,
+			FacePaint,
 		}
 
-		public List<ICharaMakeCustomize> GetFeatureOptions(Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
+		public static List<CharaMakeCustomize> GetFeatureOptions(this ExcelSheet<CharaMakeCustomize> self, Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 		{
-			List<ICharaMakeCustomize> results = new List<ICharaMakeCustomize>();
-			uint fromIndex = (uint)this.GetFeatureStartIndex(featureType, tribe, gender);
-			int count = this.GetFeatureLength(featureType);
+			List<CharaMakeCustomize> results = new List<CharaMakeCustomize>();
+			uint fromIndex = (uint)GetFeatureStartIndex(featureType, tribe, gender);
+			int count = GetFeatureLength(featureType);
 
 			for (int i = 1; i < 200; i++)
 			{
-				ICharaMakeCustomize? feature = this.FindFeatureById(fromIndex, count, (byte)i);
+				CharaMakeCustomize? feature = self.FindFeatureById(fromIndex, count, (byte)i);
 
 				if (feature == null)
 					continue;
@@ -36,10 +34,10 @@ namespace Anamnesis.GameData.Sheets
 			return results;
 		}
 
-		public ICharaMakeCustomize? GetFeature(Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender, byte featureId)
+		public static CharaMakeCustomize? GetFeature(this ExcelSheet<CharaMakeCustomize> self, Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender, byte featureId)
 		{
-			List<ICharaMakeCustomize> hairs = this.GetFeatureOptions(featureType, tribe, gender);
-			foreach (ICharaMakeCustomize hair in hairs)
+			List<CharaMakeCustomize> hairs = self.GetFeatureOptions(featureType, tribe, gender);
+			foreach (CharaMakeCustomize hair in hairs)
 			{
 				if (hair.FeatureId == featureId)
 				{
@@ -50,7 +48,7 @@ namespace Anamnesis.GameData.Sheets
 			return null;
 		}
 
-		private int GetFeatureStartIndex(Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
+		private static int GetFeatureStartIndex(Features featureType, ActorCustomizeMemory.Tribes tribe, ActorCustomizeMemory.Genders gender)
 		{
 			bool isMale = gender == ActorCustomizeMemory.Genders.Masculine;
 
@@ -102,7 +100,7 @@ namespace Anamnesis.GameData.Sheets
 			throw new Exception("Unrecognized tribe: " + tribe);
 		}
 
-		private int GetFeatureLength(Features featureType)
+		private static int GetFeatureLength(Features featureType)
 		{
 			switch (featureType)
 			{
@@ -113,11 +111,11 @@ namespace Anamnesis.GameData.Sheets
 			throw new Exception("Unrecognized feature: " + featureType);
 		}
 
-		private ICharaMakeCustomize? FindFeatureById(uint from, int length, byte value)
+		private static CharaMakeCustomize? FindFeatureById(this ExcelSheet<CharaMakeCustomize> self, uint from, int length, byte value)
 		{
 			for (uint i = from; i < from + length; i++)
 			{
-				ICharaMakeCustomize feature = this.Get(i);
+				CharaMakeCustomize feature = self.Get(i);
 
 				if (feature == null)
 					continue;

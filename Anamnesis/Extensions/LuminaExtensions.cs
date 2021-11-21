@@ -82,6 +82,9 @@ namespace Lumina
 
 		public static ImageSource? GetImage(this LuminaData self, uint imageId)
 		{
+			if (imageId == 0)
+				return null;
+
 			TexFile? tex = self.GetIcon(imageId);
 
 			if (tex == null)

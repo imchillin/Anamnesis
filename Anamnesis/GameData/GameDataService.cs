@@ -52,7 +52,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<Companion> Companions { get; private set; }
 		public static ExcelSheet<Territory> Territories { get; private set; }
 		public static ExcelSheet<Weather> Weathers { get; private set; }
-		public static ICharaMakeCustomizeData CharacterMakeCustomize { get; private set; }
+		public static ExcelSheet<CharaMakeCustomize> CharacterMakeCustomize { get; private set; }
 		public static ExcelSheet<CharaMakeType> CharacterMakeTypes { get; private set; }
 		public static ISheet<INpcBase> ResidentNPCs { get; private set; }
 		public static ExcelSheet<Lumina.Excel.GeneratedSheets.WeatherRate> WeatherRates { get; private set; }
@@ -155,8 +155,8 @@ namespace Anamnesis.Services
 				Companions = GetSheet<Companion>();
 				Territories = GetSheet<Territory>();
 				Weathers = GetSheet<Weather>();
+				CharacterMakeCustomize = GetSheet<CharaMakeCustomize>();
 
-				CharacterMakeCustomize = new CustomizeSheet(LuminaData);
 				CharacterMakeTypes = GetSheet<CharaMakeType>();
 				ResidentNPCs = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.ENpcResident, NpcResidentViewModel>(LuminaData);
 				Perform = GetSheet<Perform>();
