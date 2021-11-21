@@ -3,15 +3,15 @@
 
 namespace Anamnesis.GameData
 {
-	using System.Windows.Media;
 	using Anamnesis.GameData.Excel;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.TexTools;
 
 	public interface INpcBase : IRow
 	{
 		uint ModelCharaRow { get; }
 
-		ImageSource? Icon { get; }
+		ImageReference? Icon { get; }
 		Mod? Mod { get; }
 		bool IsFavorite { get; }
 		bool CanFavorite { get; }

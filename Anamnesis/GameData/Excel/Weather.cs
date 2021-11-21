@@ -17,7 +17,7 @@ namespace Anamnesis.GameData.Excel
 		public string Description { get; private set; } = string.Empty;
 		public ushort WeatherId => (ushort)this.RowId;
 
-		public ImageSource? Icon { get; private set; }
+		public ImageReference? Icon { get; private set; }
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 		{

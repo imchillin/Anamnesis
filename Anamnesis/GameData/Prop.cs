@@ -23,7 +23,7 @@ namespace Anamnesis.GameData
 		public ushort SubModelBase => 0;
 		public ushort SubModelVariant => 0;
 		public ushort SubModelSet => 0;
-		public ImageSource? Icon => null;
+		public ImageReference? Icon => null;
 		public Classes EquipableClasses => Classes.All;
 		public Mod? Mod => null;
 

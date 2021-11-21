@@ -14,8 +14,8 @@ namespace Anamnesis.GameData.Excel
 	public class CharaMakeCustomize : ExcelRow
 	{
 		public string Name { get; set; } = string.Empty;
-		public ImageSource? Icon { get; private set; }
-		public ImageSource? ItemIcon { get; private set; }
+		public ImageReference? Icon { get; private set; }
+		public ImageReference? ItemIcon { get; private set; }
 		public byte FeatureId { get; private set; }
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)

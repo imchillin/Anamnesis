@@ -4,9 +4,8 @@
 namespace Anamnesis.GameData.Excel
 {
 	using System.Collections.Generic;
-	using System.Windows.Media;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
-	using Lumina;
 	using Lumina.Data;
 	using Lumina.Excel;
 
@@ -23,7 +22,7 @@ namespace Anamnesis.GameData.Excel
 		public ActorCustomizeMemory.Tribes Tribe { get; private set; }
 
 		public int[]? FacialFeatureOptions { get; private set; }
-		public List<ImageSource>? FacialFeatures { get; private set; }
+		public List<ImageReference>? FacialFeatures { get; private set; }
 
 		public override void PopulateData(RowParser parser, LuminaData lumina, Language language)
 		{
@@ -35,18 +34,12 @@ namespace Anamnesis.GameData.Excel
 			this.Gender = (ActorCustomizeMemory.Genders)parser.ReadColumn<sbyte>(2);
 
 			this.FacialFeatureOptions = new int[7 * 8];
-			this.FacialFeatures = new List<ImageSource>();
+			this.FacialFeatures = new List<ImageReference>();
 
 			for (int i = 0; i < 7 * 8; i++)
 			{
 				this.FacialFeatureOptions[i] = parser.ReadColumn<int>(3291 + i);
-
-				ImageSource? img = lumina.GetImage(this.FacialFeatureOptions[i]);
-
-				if (img == null)
-					continue;
-
-				this.FacialFeatures.Add(img);
+				this.FacialFeatures.Add(new ImageReference(this.FacialFeatureOptions[i]));
 			}
 		}
 	}

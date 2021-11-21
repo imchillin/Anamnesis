@@ -8,6 +8,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using Anamnesis.GameData.Excel;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -94,7 +95,7 @@ namespace Anamnesis.Character.Views
 			if (this.Tribe == 0)
 				return;
 
-			ImageSource[]? facialFeatures = null;
+			ImageReference[]? facialFeatures = null;
 			if (GameDataService.CharacterMakeTypes != null)
 			{
 				foreach (CharaMakeType set in GameDataService.CharacterMakeTypes)
@@ -176,7 +177,7 @@ namespace Anamnesis.Character.Views
 		private class Option
 		{
 			public ActorCustomizeMemory.FacialFeature Value { get; set; }
-			public ImageSource? Icon { get; set; }
+			public ImageReference? Icon { get; set; }
 			public int Index { get; set; }
 			public bool Selected { get; set; }
 		}

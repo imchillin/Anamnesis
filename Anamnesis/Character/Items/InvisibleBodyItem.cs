@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Items
 {
 	using System.Windows.Media;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 
@@ -12,7 +13,7 @@ namespace Anamnesis.Character.Items
 	{
 		public string Name => LocalizationService.GetString("Item_InvisibleBody");
 		public string Description => LocalizationService.GetString("Item_InvisibleBodyDesc");
-		public ImageSource? Icon => GameDataService.Items.Get(10033)?.Icon;
+		public ImageReference? Icon => GameDataService.Items.Get(10033)?.Icon;
 		public ushort ModelSet => 0;
 		public ushort ModelBase => 6103;
 		public ushort ModelVariant => 254;

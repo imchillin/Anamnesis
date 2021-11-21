@@ -142,7 +142,7 @@
 						<Border Width="32" Height="32" Background="#444444" Grid.RowSpan="3" CornerRadius="3"
 								Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
 							<Grid>
-								<Image Source="{Binding Icon}" Margin="1"/>
+								<Image Source="{Binding Icon, IsAsync=True, Converter={StaticResource Img}}" Margin="1"/>
 								<Image Source="/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
 							</Grid>
 						</Border>
@@ -213,9 +213,9 @@
 								
 								<Grid>
 									<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
-										Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
+												  Visibility="{Binding IsFavorite, IsAsync=True, Converter={StaticResource !B2V}, FallbackValue=Visible}"/>
 									<XivToolsWpf:IconBlock Icon="Star" FontSize="13"
-										Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
+														   Visibility="{Binding IsFavorite, IsAsync=True, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 								</Grid>
 							</ToggleButton>
 
@@ -226,9 +226,9 @@
 								</ToggleButton.ToolTip>
 								<Grid>
 									<fa:IconBlock Icon="DollarSign" FontSize="13" Opacity="0.25"
-										Visibility="{Binding IsOwned, Converter={StaticResource !B2V}}"/>
+												  Visibility="{Binding IsOwned, IsAsync=True, Converter={StaticResource !B2V}, FallbackValue=Collapsed}"/>
 									<fa:IconBlock Icon="DollarSign"  FontSize="13"
-										Visibility="{Binding IsOwned, Converter={StaticResource B2V}}"/>
+												  Visibility="{Binding IsOwned, IsAsync=True, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 								</Grid>
 							</ToggleButton>
 						</Grid>

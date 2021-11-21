@@ -48,7 +48,9 @@
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
-						<Image Grid.Column="0" Grid.RowSpan="2" Source="{Binding Icon}" Width="32" Height="32"/>
+						<Image Grid.Column="0"
+							   Grid.RowSpan="2"
+							   Source="{Binding Icon, Converter={StaticResource Img}}" Width="32" Height="32"/>
 						
 						<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}" VerticalAlignment="Center" Margin="3, 0, 0, 0"/>
 						<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding WeatherId}" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12" VerticalAlignment="Center" Margin="3, 0, 0, 0"/>

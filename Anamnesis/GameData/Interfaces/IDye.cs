@@ -4,11 +4,12 @@
 namespace Anamnesis.GameData
 {
 	using System.Windows.Media;
+	using Anamnesis.GameData.Sheets;
 
 	public interface IDye : IRow
 	{
 		byte Id { get; }
-		ImageSource? Icon { get; }
+		ImageReference? Icon { get; }
 		Brush? Color { get; }
 
 		bool IsFavorite { get; set; }

@@ -5,15 +5,10 @@ namespace Lumina
 {
 	using System;
 	using System.Reflection;
-	using System.Windows.Media;
-	using System.Windows.Media.Imaging;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
-	using global::Lumina.Data.Files;
-	using global::Lumina.Excel.GeneratedSheets;
-	using global::Lumina.Extensions;
+	using Lumina.Excel.GeneratedSheets;
 	using Serilog;
-	using LuminaData = global::Lumina.GameData;
 
 	public static class LuminaExtensions
 	{
@@ -73,35 +68,6 @@ namespace Lumina
 				modelBase = (ushort)val;
 				modelVariant = (ushort)(val >> 16);
 			}
-		}
-
-		public static ImageSource? GetImage(this LuminaData self, int imageId)
-		{
-			return self.GetImage((uint)imageId);
-		}
-
-		public static ImageSource? GetImage(this LuminaData self, uint imageId)
-		{
-			if (imageId == 0)
-				return null;
-
-			TexFile? tex = self.GetIcon(imageId);
-
-			if (tex == null)
-				return null;
-
-			return tex.GetImage();
-		}
-
-		public static ImageSource? GetImage(this TexFile self)
-		{
-			if (self == null)
-				return null;
-
-			BitmapSource bmp = BitmapSource.Create(self.Header.Width, self.Header.Height, 96, 96, PixelFormats.Bgra32, null, self.ImageData, self.Header.Width * 4);
-			bmp.Freeze();
-
-			return bmp;
 		}
 
 		public static bool Contains(this ClassJobCategory self, Classes classJob)

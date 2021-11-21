@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Items
 {
 	using System.Windows.Media;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 
 	public class DummyNoneDye : IDye
@@ -13,7 +14,7 @@ namespace Anamnesis.Character.Items
 		public byte Id => 0;
 		public string Name => "None";
 		public string? Description => null;
-		public ImageSource? Icon => null;
+		public ImageReference? Icon => null;
 		public Brush? Color => null;
 
 		public bool IsFavorite

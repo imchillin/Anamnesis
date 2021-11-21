@@ -61,7 +61,7 @@
 								Height="26"
 								Margin="0">
 								<Image Source="/Assets/LegacyTattoo.png" />
-								<Image Source="{Binding Icon}" />
+								<Image Source="{Binding Icon, Converter={StaticResource Img}}" />
 							</Grid>
 						</Border>
 						<!--<TextBlock Text="{Binding Index}"/>-->

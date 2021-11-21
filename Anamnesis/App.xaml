@@ -57,7 +57,8 @@
 			<!-- Custom converters -->
 			<BooleanToVisibilityConverter x:Key="B2V"/>
 			<converters:Vector2DRadiansToDegreesConverter x:Key="Vec2DRad2Deg"/>
-			
+			<converters:ImageReferenceConverter x:Key="Img" />
+
 			<!-- dyslexic font -->
 
 			<FontFamily x:Key="Atkinson-Hyperlegible">pack://application:,,,/Assets/Fonts/#Atkinson Hyperlegible</FontFamily>

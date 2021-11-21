@@ -42,8 +42,8 @@
 							Click="OnShortcutClicked"
 							BorderThickness="0"
 							Margin="2">
-							
-							<Image Source="{Binding Icon}">
+
+							<Image Source="{Binding Icon, Converter={StaticResource Img}}">
 								<Image.ToolTip>
 									<StackPanel>
 										<XivToolsWpf:TextBlock Key="{Binding LabelKey}"

@@ -28,7 +28,7 @@ namespace Anamnesis.GameData.Excel
 		public string Description { get; private set; } = string.Empty;
 		public uint ModelCharaRow { get; private set; }
 
-		public ImageSource? Icon => null;
+		public ImageReference? Icon => null;
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
 		public bool HasName => this.name != null;

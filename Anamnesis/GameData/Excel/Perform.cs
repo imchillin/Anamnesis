@@ -24,7 +24,7 @@ namespace Anamnesis.GameData.Excel
 		public ushort ModelVariant { get; private set; }
 		public Mod? Mod { get; private set; }
 
-		public ImageSource? Icon => null;
+		public ImageReference? Icon => null;
 		public bool HasSubModel => false;
 		public ushort SubModelSet => 0;
 		public ushort SubModelBase => 0;

@@ -21,7 +21,7 @@ namespace Anamnesis.GameData.Excel
 	{
 		public string Name { get; private set; } = string.Empty;
 		public string Description { get; private set; } = string.Empty;
-		public ImageSource? Icon { get; private set; }
+		public ImageReference? Icon { get; private set; }
 		public ushort ModelSet { get; private set; }
 		public ushort ModelBase { get; private set; }
 		public ushort ModelVariant { get; private set; }

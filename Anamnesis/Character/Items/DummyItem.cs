@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Items
 {
 	using System.Windows.Media;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 
@@ -22,7 +23,7 @@ namespace Anamnesis.Character.Items
 		public bool HasSubModel => false;
 		public string Name => LocalizationService.GetString("Item_Unknown");
 		public string Description => string.Empty;
-		public ImageSource? Icon => null;
+		public ImageReference? Icon => null;
 		public Classes EquipableClasses => Classes.All;
 		public Mod? Mod => null;
 

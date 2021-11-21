@@ -6,6 +6,7 @@ namespace Anamnesis.GameData.Excel
 	using System;
 	using System.Windows.Media;
 	using Anamnesis.Character.Utilities;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Lumina.Data;
 	using Lumina.Excel;
@@ -23,7 +24,7 @@ namespace Anamnesis.GameData.Excel
 		public Brush? Color { get; private set; }
 
 		public string Description { get; private set; } = string.Empty;
-		public ImageSource? Icon { get; private set; } = null;
+		public ImageReference? Icon { get; private set; } = null;
 		public Item? Item { get; private set; } = null;
 
 		public bool IsFavorite

@@ -41,8 +41,8 @@
 				<DataTemplate>
 					<Grid Width="54"
 						  Height="54">
-						
-						<Image Source="{Binding Icon}"/>
+
+						<Image Source="{Binding Icon, Converter={StaticResource Img}}"/>
 						<Border x:Name="SelectedBorder"
 								BorderThickness="3"
 								BorderBrush="{DynamicResource PrimaryHueMidBrush}"

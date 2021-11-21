@@ -3,7 +3,7 @@
 
 namespace Anamnesis.GameData
 {
-	using System.Windows.Media;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.TexTools;
 
 	public interface IItem
@@ -13,7 +13,7 @@ namespace Anamnesis.GameData
 		string Name { get; }
 		string Description { get; }
 
-		ImageSource? Icon { get; }
+		ImageReference? Icon { get; }
 
 		ushort ModelSet { get; }
 		ushort ModelBase { get; }
