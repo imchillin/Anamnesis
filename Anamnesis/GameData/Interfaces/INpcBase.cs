@@ -21,7 +21,7 @@ namespace Anamnesis.GameData
 		INpcAppearance? GetAppearance();
 	}
 
-	public interface INpcAppearance : INpcBase
+	public interface INpcAppearance
 	{
 		int FacePaintColor { get; }
 		int FacePaint { get; }

@@ -175,17 +175,17 @@ namespace Anamnesis.Character.Views
 					return 1;
 
 				// Then Battle NPCs
-				if (npcA is BNpcBaseViewModel && npcB is not BNpcBaseViewModel)
+				if (npcA is BattleNpc && npcB is not BattleNpc)
 					return -1;
 
-				if (npcA is not BNpcBaseViewModel && npcB is BNpcBaseViewModel)
+				if (npcA is not BattleNpc && npcB is BattleNpc)
 					return 1;
 
 				// Then Event NPCs
-				if (npcA is EventNpc && npcB is not EventNpc)
+				if (npcA is EventNpcAppearance && npcB is not EventNpcAppearance)
 					return -1;
 
-				if (npcA is not EventNpc && npcB is EventNpc)
+				if (npcA is not EventNpcAppearance && npcB is EventNpcAppearance)
 					return 1;
 
 				return -npcB.RowId.CompareTo(npcA.RowId);
@@ -247,7 +247,7 @@ namespace Anamnesis.Character.Views
 					}
 				}
 
-				if (!this.IncludeBattleNpc && npc is BNpcBaseViewModel)
+				if (!this.IncludeBattleNpc && npc is BattleNpc)
 					return false;
 
 				if (!this.IncludeEventNpc && npc is EventNpc)

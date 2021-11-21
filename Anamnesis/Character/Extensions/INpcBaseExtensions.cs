@@ -22,11 +22,11 @@ namespace Anamnesis.Character
 			{
 				t = 'R';
 			}
-			else if (type == typeof(BNpcBaseViewModel))
+			else if (type == typeof(BattleNpc))
 			{
 				t = 'B';
 			}
-			else if (type == typeof(EventNpc) || type == typeof(EventNpcBase))
+			else if (type == typeof(EventNpc))
 			{
 				t = 'E';
 			}
@@ -82,57 +82,57 @@ namespace Anamnesis.Character
 			if (appearance == null)
 				throw new Exception($"No NPc appearance for npc: {npc}");
 
-			return appearance.ToFile();
+			return ToFile(npc, appearance);
 		}
 
-		public static CharacterFile ToFile(this INpcAppearance npc)
+		private static CharacterFile ToFile(INpcBase npc, INpcAppearance appearance)
 		{
-			if (npc.Race == null || npc.Tribe == null)
+			if (appearance.Race == null || appearance.Tribe == null)
 				throw new Exception("NPC missing race or tribe");
 
 			CharacterFile file = new CharacterFile();
 			file.SaveMode = CharacterFile.SaveModes.All;
 			file.ModelType = npc.ModelCharaRow;
-			file.Race = npc.Race.CustomizeRace;
-			file.Tribe = npc.Tribe.CustomizeTribe;
-			file.Gender = (ActorCustomizeMemory.Genders)npc.Gender;
-			file.Age = (ActorCustomizeMemory.Ages)npc.BodyType;
-			file.Height = (byte)Math.Min(npc.Height, 100);
-			file.Head = (byte)npc.Face;
-			file.Hair = (byte)npc.HairStyle;
-			file.EnableHighlights = npc.EnableHairHighlight;
-			file.Skintone = (byte)npc.SkinColor;
-			file.REyeColor = (byte)npc.EyeColor;
-			file.LEyeColor = (byte)npc.EyeHeterochromia;
-			file.HairTone = (byte)npc.HairColor;
-			file.Highlights = (byte)npc.HairHighlightColor;
-			file.FacialFeatures = (ActorCustomizeMemory.FacialFeature)npc.FacialFeature;
-			file.LimbalEyes = (byte)npc.FacialFeatureColor;
-			file.Eyebrows = (byte)npc.Eyebrows;
-			file.Eyes = (byte)npc.EyeShape;
-			file.Nose = (byte)npc.Nose;
-			file.Jaw = (byte)npc.Jaw;
-			file.Mouth = (byte)npc.Mouth;
-			file.LipsToneFurPattern = (byte)npc.LipColor;
-			file.EarMuscleTailSize = (byte)npc.ExtraFeature1;
-			file.TailEarsType = (byte)npc.ExtraFeature2OrBust;
-			file.Bust = (byte)npc.ExtraFeature2OrBust;
-			file.FacePaint = (byte)npc.FacePaint;
-			file.FacePaintColor = (byte)npc.FacePaintColor;
+			file.Race = appearance.Race.CustomizeRace;
+			file.Tribe = appearance.Tribe.CustomizeTribe;
+			file.Gender = (ActorCustomizeMemory.Genders)appearance.Gender;
+			file.Age = (ActorCustomizeMemory.Ages)appearance.BodyType;
+			file.Height = (byte)Math.Min(appearance.Height, 100);
+			file.Head = (byte)appearance.Face;
+			file.Hair = (byte)appearance.HairStyle;
+			file.EnableHighlights = appearance.EnableHairHighlight;
+			file.Skintone = (byte)appearance.SkinColor;
+			file.REyeColor = (byte)appearance.EyeColor;
+			file.LEyeColor = (byte)appearance.EyeHeterochromia;
+			file.HairTone = (byte)appearance.HairColor;
+			file.Highlights = (byte)appearance.HairHighlightColor;
+			file.FacialFeatures = (ActorCustomizeMemory.FacialFeature)appearance.FacialFeature;
+			file.LimbalEyes = (byte)appearance.FacialFeatureColor;
+			file.Eyebrows = (byte)appearance.Eyebrows;
+			file.Eyes = (byte)appearance.EyeShape;
+			file.Nose = (byte)appearance.Nose;
+			file.Jaw = (byte)appearance.Jaw;
+			file.Mouth = (byte)appearance.Mouth;
+			file.LipsToneFurPattern = (byte)appearance.LipColor;
+			file.EarMuscleTailSize = (byte)appearance.ExtraFeature1;
+			file.TailEarsType = (byte)appearance.ExtraFeature2OrBust;
+			file.Bust = (byte)appearance.ExtraFeature2OrBust;
+			file.FacePaint = (byte)appearance.FacePaint;
+			file.FacePaintColor = (byte)appearance.FacePaintColor;
 
-			file.MainHand = WeaponFromItem(npc.MainHand, npc.DyeMainHand);
-			file.OffHand = WeaponFromItem(npc.OffHand, npc.DyeOffHand);
+			file.MainHand = WeaponFromItem(appearance.MainHand, appearance.DyeMainHand);
+			file.OffHand = WeaponFromItem(appearance.OffHand, appearance.DyeOffHand);
 
-			file.HeadGear = GearFromItem(npc.Head, npc.DyeHead);
-			file.Body = GearFromItem(npc.Body, npc.DyeBody);
-			file.Hands = GearFromItem(npc.Hands, npc.DyeHands);
-			file.Legs = GearFromItem(npc.Legs, npc.DyeLegs);
-			file.Feet = GearFromItem(npc.Feet, npc.DyeFeet);
-			file.Ears = GearFromItem(npc.Ears, npc.DyeEars);
-			file.Neck = GearFromItem(npc.Neck, npc.DyeNeck);
-			file.Wrists = GearFromItem(npc.Wrists, npc.DyeWrists);
-			file.LeftRing = GearFromItem(npc.LeftRing, npc.DyeLeftRing);
-			file.RightRing = GearFromItem(npc.RightRing, npc.DyeRightRing);
+			file.HeadGear = GearFromItem(appearance.Head, appearance.DyeHead);
+			file.Body = GearFromItem(appearance.Body, appearance.DyeBody);
+			file.Hands = GearFromItem(appearance.Hands, appearance.DyeHands);
+			file.Legs = GearFromItem(appearance.Legs, appearance.DyeLegs);
+			file.Feet = GearFromItem(appearance.Feet, appearance.DyeFeet);
+			file.Ears = GearFromItem(appearance.Ears, appearance.DyeEars);
+			file.Neck = GearFromItem(appearance.Neck, appearance.DyeNeck);
+			file.Wrists = GearFromItem(appearance.Wrists, appearance.DyeWrists);
+			file.LeftRing = GearFromItem(appearance.LeftRing, appearance.DyeLeftRing);
+			file.RightRing = GearFromItem(appearance.RightRing, appearance.DyeRightRing);
 
 			return file;
 		}
