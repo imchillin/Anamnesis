@@ -28,7 +28,7 @@ namespace Anamnesis.Services
 				if (territoryID == -1)
 					return false;
 
-				if (!GameDataService.Territories.Contains((uint)territoryID))
+				if (GameDataService.Territories.GetOrDefault((uint)territoryID) == null)
 					return false;
 
 				return true;

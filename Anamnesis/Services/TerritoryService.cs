@@ -8,6 +8,7 @@ namespace Anamnesis
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -19,7 +20,7 @@ namespace Anamnesis
 
 		public uint CurrentTerritoryId { get; private set; }
 		public string CurrentTerritoryName { get; private set; } = "Unknown";
-		public ITerritoryType? CurrentTerritory { get; private set; }
+		public Territory? CurrentTerritory { get; private set; }
 
 		public ushort CurrentWeatherId
 		{
@@ -33,16 +34,11 @@ namespace Anamnesis
 					return;
 
 				this.currentWeatherId = value;
-				this.CurrentWeather = null;
-
-				if (GameDataService.Weathers.Contains(value))
-				{
-					this.CurrentWeather = GameDataService.Weathers.Get(value);
-				}
+				this.CurrentWeather = GameDataService.Weathers.GetOrDefault(value);
 			}
 		}
 
-		public IWeather? CurrentWeather { get; set; }
+		public Weather? CurrentWeather { get; set; }
 
 		public override async Task Start()
 		{

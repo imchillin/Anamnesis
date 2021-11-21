@@ -6,6 +6,7 @@ namespace Anamnesis.Views
 	using System;
 	using System.Windows.Controls;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
@@ -17,7 +18,7 @@ namespace Anamnesis.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class WeatherSelector : UserControl, SelectorDrawer.ISelectorView
 	{
-		private static Modes mode = Modes.All;
+		private static bool natrualWeathers = true;
 
 		public WeatherSelector()
 		{
@@ -35,41 +36,14 @@ namespace Anamnesis.Views
 		public event DrawerEvent? Close;
 		public event DrawerEvent? SelectionChanged;
 
-		[Flags]
-		public enum Modes
-		{
-			Natural = 1,
-			Unnatural = 2,
-
-			All = Natural | Unnatural,
-		}
-
-		public Modes Mode
-		{
-			get => mode;
-			set
-			{
-				mode = value;
-				this.Selector.FilterItems();
-			}
-		}
-
 		public bool NaturalWeathers
 		{
-			get => this.Mode == Modes.Natural;
-			set => this.Mode = Modes.Natural;
-		}
-
-		public bool UnnaturalWeathers
-		{
-			get => this.Mode == Modes.Unnatural;
-			set => this.Mode = Modes.Unnatural;
-		}
-
-		public bool AllWeathers
-		{
-			get => this.Mode == Modes.All;
-			set => this.Mode = Modes.All;
+			get => natrualWeathers;
+			set
+			{
+				natrualWeathers = value;
+				this.Selector.FilterItems();
+			}
 		}
 
 		SelectorDrawer SelectorDrawer.ISelectorView.Selector => this.Selector;
@@ -90,17 +64,16 @@ namespace Anamnesis.Views
 
 		private bool OnFilter(object obj, string[]? search = null)
 		{
-			if (obj is IWeather weather)
+			if (obj is Weather weather)
 			{
+				if (weather.RowId == 0)
+					return false;
+
 				if (TerritoryService.Instance.CurrentTerritory != null)
 				{
 					bool isNatural = TerritoryService.Instance.CurrentTerritory.Weathers.Contains(weather);
 
-					if (this.Mode == Modes.Natural && !isNatural)
-					{
-						return false;
-					}
-					else if (this.Mode == Modes.Unnatural && isNatural)
+					if (natrualWeathers && !isNatural)
 					{
 						return false;
 					}

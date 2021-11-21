@@ -12,13 +12,32 @@ namespace Anamnesis.GameData.Sheets
 
 	public static class RowParserExtensions
 	{
-		public static ImageSource? ReadImageReference(this RowParser self, int column)
+		public static ImageSource? ReadImageReference<TColumn>(this RowParser self, int column)
 		{
 			if (GameDataService.LuminaData == null)
 				throw new Exception("Game Data Service is not initialized");
 
-			ushort id = self.ReadColumn<ushort>(column);
-			return GameDataService.LuminaData.GetImage(id);
+			TColumn? id = self.ReadColumn<TColumn>(column);
+
+			if (id == null)
+				return null;
+
+			if (id is ushort uVal)
+			{
+				return GameDataService.LuminaData.GetImage(uVal);
+			}
+			else if (id is int iVal)
+			{
+				return GameDataService.LuminaData.GetImage(iVal);
+			}
+			else if (id is uint uiVal)
+			{
+				return GameDataService.LuminaData.GetImage(uiVal);
+			}
+			else
+			{
+				throw new Exception($"Unrecognised image reference column type: {typeof(TColumn)}");
+			}
 		}
 
 		public static string? ReadString(this RowParser self, int column)

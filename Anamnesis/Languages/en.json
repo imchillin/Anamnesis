@@ -100,11 +100,8 @@
 	"Scene_Transform_Position": "Position",
 	"Scene_Transform_Scale": "Scale",
 
-	"Weather_Selector_Natural": "Natural",
+	"Weather_Selector_Natural": "Natural Only",
 	"Weather_Selector_Natural_Tooltip": "Only show weathers that are normally available in the current territory",
-	"Weather_Selector_Unnatural": "Unnatural",
-	"Weather_Selector_Unnatural_Tooltip": "Only show weathers that are not normally available in the current territory",
-	"Weather_Selector_All_Tooltip": "Show all weathers",
 
 	"Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
 	"Character_Load_CMTool": "CMTool save",

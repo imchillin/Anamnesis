@@ -38,7 +38,7 @@ namespace Anamnesis.GameData.Sheets
 			this.name = parser.ReadString(0);
 			this.ModelCharaRow = (uint)parser.ReadColumn<ushort>(8);
 			////Scale = parser.ReadColumn<byte>(9);
-			this.Icon = parser.ReadImageReference(26);
+			this.Icon = parser.ReadImageReference<ushort>(26);
 		}
 
 		public INpcAppearance? GetAppearance()

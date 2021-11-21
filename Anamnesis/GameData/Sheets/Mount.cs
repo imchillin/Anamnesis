@@ -56,7 +56,7 @@ namespace Anamnesis.GameData.Sheets
 			this.equipLeg = parser.ReadColumn<int>(27);
 			this.equipFoot = parser.ReadColumn<int>(28);
 
-			this.Icon = parser.ReadImageReference(30);
+			this.Icon = parser.ReadImageReference<ushort>(30);
 		}
 
 		public INpcAppearance? GetAppearance()

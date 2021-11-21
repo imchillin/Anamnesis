@@ -18,35 +18,14 @@
 
 		<Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0, 6, 0, 0">
 
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="Auto"/>
-			</Grid.ColumnDefinitions>
+			<CheckBox IsChecked="{Binding NaturalWeathers}">
 
-			<RadioButton Grid.Column="0" IsChecked="{Binding NaturalWeathers}" Margin="3">
-				<RadioButton.ToolTip>
-					<XivToolsWpf:TextBlock Key="Weather_Selector_Natural_Tooltip"/>
-				</RadioButton.ToolTip>
-
-				<XivToolsWpf:TextBlock Key="Weather_Selector_Natural"/>
-			</RadioButton>
-
-			<RadioButton Grid.Column="1" IsChecked="{Binding UnnaturalWeathers}" Margin="3">
-				<RadioButton.ToolTip>
-					<XivToolsWpf:TextBlock Key="Weather_Selector_Unnatural_Tooltip"/>
-				</RadioButton.ToolTip>
-
-				<XivToolsWpf:TextBlock Key="Weather_Selector_Unnatural"/>
-			</RadioButton>
-
-			<RadioButton Grid.Column="2" IsChecked="{Binding AllWeathers}" Margin="3">
-				<RadioButton.ToolTip>
-					<XivToolsWpf:TextBlock Key="Weather_Selector_All_Tooltip"/>
-				</RadioButton.ToolTip>
-
-				<XivToolsWpf:TextBlock Key="Common_All"/>
-			</RadioButton>
+				<CheckBox.ToolTip>
+					<XivToolsWpf:TextBlock Key="Weather_Selector_Natural_Tooltip" />
+				</CheckBox.ToolTip>
+				
+				<XivToolsWpf:TextBlock Key="Weather_Selector_Natural" />
+			</CheckBox>
 		</Grid>
 
 		<drawers:SelectorDrawer

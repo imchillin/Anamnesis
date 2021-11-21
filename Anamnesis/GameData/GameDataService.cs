@@ -50,8 +50,8 @@ namespace Anamnesis.Services
 		public static ExcelSheet<BattleNpc> BattleNPCs { get; private set; }
 		public static ExcelSheet<Mount> Mounts { get; private set; }
 		public static ExcelSheet<Companion> Companions { get; private set; }
-		public static ISheet<ITerritoryType> Territories { get; private set; }
-		public static ISheet<IWeather> Weathers { get; private set; }
+		public static ExcelSheet<Territory> Territories { get; private set; }
+		public static ExcelSheet<Weather> Weathers { get; private set; }
 		public static ICharaMakeCustomizeData CharacterMakeCustomize { get; private set; }
 		public static ExcelSheet<CharaMakeType> CharacterMakeTypes { get; private set; }
 		public static ISheet<INpcBase> ResidentNPCs { get; private set; }
@@ -153,9 +153,9 @@ namespace Anamnesis.Services
 				BattleNPCs = GetSheet<BattleNpc>();
 				Mounts = GetSheet<Mount>();
 				Companions = GetSheet<Companion>();
+				Territories = GetSheet<Territory>();
+				Weathers = GetSheet<Weather>();
 
-				Territories = new LuminaSheet<ITerritoryType, Lumina.Excel.GeneratedSheets.TerritoryType, TerritoryTypeViewModel>(LuminaData);
-				Weathers = new LuminaSheet<IWeather, Lumina.Excel.GeneratedSheets.Weather, WeatherViewModel>(LuminaData);
 				CharacterMakeCustomize = new CustomizeSheet(LuminaData);
 				CharacterMakeTypes = GetSheet<CharaMakeType>();
 				ResidentNPCs = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.ENpcResident, NpcResidentViewModel>(LuminaData);
