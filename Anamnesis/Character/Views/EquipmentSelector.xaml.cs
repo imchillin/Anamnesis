@@ -4,23 +4,16 @@
 namespace Anamnesis.Character.Views
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
-	using Anamnesis.GameData.Sheets;
-	using Anamnesis.GameData.ViewModels;
-	using Anamnesis.Serialization;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Services;
-	using Anamnesis.Styles.Controls;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 	using XivToolsWpf;
-
-	using static Anamnesis.Memory.ActorCustomizeMemory;
 
 	/// <summary>
 	/// Interaction logic for EquipmentSelector.xaml.

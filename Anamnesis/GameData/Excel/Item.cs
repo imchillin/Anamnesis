@@ -1,10 +1,11 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Sheets
+namespace Anamnesis.GameData.Excel
 {
 	using System;
 	using System.Windows.Media;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
@@ -47,11 +48,13 @@ namespace Anamnesis.GameData.Sheets
 			set => FavoritesService.SetOwned(this, value);
 		}
 
-		public ItemCategories Category => ItemCategory.GetCategory(this);
+		public ItemCategories Category { get; private set; }
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 		{
 			base.PopulateData(parser, gameData, language);
+
+			this.Category = GameDataService.GetCategory(this);
 
 			this.Description = parser.ReadColumn<SeString>(8) ?? string.Empty;
 			this.Name = parser.ReadColumn<SeString>(9) ?? string.Empty;

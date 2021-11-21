@@ -11,7 +11,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Media;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
-	using Anamnesis.GameData.Sheets;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;

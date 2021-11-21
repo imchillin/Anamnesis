@@ -1,9 +1,10 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Sheets
+namespace Anamnesis.GameData.Excel
 {
 	using System.Collections.Generic;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Lumina.Data;
 	using Lumina.Excel;

@@ -5,15 +5,9 @@ namespace Anamnesis.Character.Views
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Drawing;
-	using System.Linq;
-	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using System.Windows.Media;
-	using System.Windows.Media.Imaging;
-	using Anamnesis;
-	using Anamnesis.GameData;
-	using Anamnesis.GameData.Sheets;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;

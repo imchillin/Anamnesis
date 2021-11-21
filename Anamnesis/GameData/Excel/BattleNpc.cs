@@ -1,10 +1,11 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Sheets
+namespace Anamnesis.GameData.Excel
 {
 	using System;
 	using System.Windows.Media;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
@@ -63,7 +64,7 @@ namespace Anamnesis.GameData.Sheets
 			{
 				this.ModelCharaRow = npc.ModelCharaRow;
 
-				ExcelSheet<BNpcCustomize>? customizeSheet = GameDataService.GetSheet<BNpcCustomize>();
+				Sheets.ExcelSheet<BNpcCustomize>? customizeSheet = GameDataService.GetSheet<BNpcCustomize>();
 				BNpcCustomize? customize = customizeSheet?.GetOrDefault(npc.customizeRow);
 				if (customize != null)
 				{
@@ -99,7 +100,7 @@ namespace Anamnesis.GameData.Sheets
 					this.HairColor = customize.HairColor;
 				}
 
-				ExcelSheet<NpcEquip>? equipSheet = GameDataService.GetSheet<NpcEquip>();
+				Sheets.ExcelSheet<NpcEquip>? equipSheet = GameDataService.GetSheet<NpcEquip>();
 				NpcEquip? npcEquip = equipSheet.Get(npc.equipRow);
 				if (npcEquip != null)
 				{

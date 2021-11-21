@@ -4,20 +4,15 @@
 namespace Anamnesis.Services
 {
 	using System;
-	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.IO;
-	using System.Linq;
-	using System.Text;
 	using System.Threading.Tasks;
 	using Anamnesis.Character;
-	using Anamnesis.Character.Utilities;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.GameData.Sheets;
-	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
-	using Anamnesis.Serialization;
 	using Lumina.Data;
 
 	using LuminaData = global::Lumina.GameData;
@@ -29,7 +24,7 @@ namespace Anamnesis.Services
 		private static readonly Dictionary<Type, Lumina.Excel.ExcelSheetImpl> Sheets = new Dictionary<Type, Lumina.Excel.ExcelSheetImpl>();
 
 		private static Dictionary<string, string>? npcNames;
-		private static ExcelSheet<Lumina.Excel.GeneratedSheets.BNpcName>? battleNpcNames;
+		private static Dictionary<uint, ItemCategories>? itemCategories;
 
 		public enum ClientRegion
 		{
@@ -57,8 +52,9 @@ namespace Anamnesis.Services
 		public static ExcelSheet<ResidentNpc> ResidentNPCs { get; private set; }
 		public static ExcelSheet<Lumina.Excel.GeneratedSheets.WeatherRate> WeatherRates { get; private set; }
 		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; private set; }
-		public static ISheet<Prop> Props { get; private set; }
-		public static ISheet<ItemCategory> ItemCategories { get; private set; }
+		public static ExcelSheet<BattleNpcName> BattleNpcNames { get; private set; }
+
+		public static PropSheet Props { get; private set; }
 		#pragma warning restore CS8618
 
 		public static ExcelSheet<T> GetSheet<T>()
@@ -95,12 +91,12 @@ namespace Anamnesis.Services
 			// Is this a BattleNpcName entry?
 			if (name.Contains("B:"))
 			{
-				if (battleNpcNames == null)
+				if (BattleNpcNames == null)
 					return name;
 
 				uint bNpcNameKey = uint.Parse(name.Remove(0, 2));
 
-				Lumina.Excel.GeneratedSheets.BNpcName? row = battleNpcNames.GetRow(bNpcNameKey);
+				Lumina.Excel.GeneratedSheets.BNpcName? row = BattleNpcNames.GetRow(bNpcNameKey);
 				if (row == null || string.IsNullOrEmpty(row.Singular))
 					return name;
 
@@ -108,6 +104,21 @@ namespace Anamnesis.Services
 			}
 
 			return name;
+		}
+
+		public static ItemCategories GetCategory(Item item)
+		{
+			ItemCategories category = ItemCategories.None;
+			if (itemCategories != null && !itemCategories.TryGetValue(item.RowId, out category))
+				category = ItemCategories.None;
+
+			if (FavoritesService.IsFavorite(item))
+				category = category.SetFlag(ItemCategories.Favorites, true);
+
+			if (FavoritesService.IsOwned(item))
+				category = category.SetFlag(ItemCategories.Owned, true);
+
+			return category;
 		}
 
 		public override Task Initialize()
@@ -138,6 +149,18 @@ namespace Anamnesis.Services
 
 			Log.Information($"Found game client region: {Region}");
 
+			// these are json files that we write by hand
+			try
+			{
+				Props = new PropSheet("Data/Props.json");
+				itemCategories = EmbeddedFileUtility.Load<Dictionary<uint, ItemCategories>>("Data/ItemCategories.json");
+				npcNames = EmbeddedFileUtility.Load<Dictionary<string, string>>("Data/NpcNames.json");
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Failed to read data sheets", ex);
+			}
+
 			try
 			{
 				Lumina.LuminaOptions options = new Lumina.LuminaOptions();
@@ -161,24 +184,11 @@ namespace Anamnesis.Services
 				Perform = GetSheet<Perform>();
 				WeatherRates = GetSheet<Lumina.Excel.GeneratedSheets.WeatherRate>();
 				EquipRaceCategories = GetSheet<EquipRaceCategory>();
-
-				battleNpcNames = ExcelSheet<Lumina.Excel.GeneratedSheets.BNpcName>.GetSheet(LuminaData);
+				BattleNpcNames = GetSheet<BattleNpcName>();
 			}
 			catch (Exception ex)
 			{
 				throw new Exception("Failed to initialize Lumina (Are your game files up to date?)", ex);
-			}
-
-			// these are json files that we write by hand
-			try
-			{
-				Props = new PropSheet("Data/Props.json");
-				ItemCategories = new JsonDictionarySheet<ItemCategories, ItemCategory>("Data/ItemCategories.json");
-				npcNames = EmbeddedFileUtility.Load<Dictionary<string, string>>("Data/NpcNames.json");
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("Failed to read data sheets", ex);
 			}
 
 			return base.Initialize();

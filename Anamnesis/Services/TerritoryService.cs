@@ -8,7 +8,7 @@ namespace Anamnesis
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GameData;
-	using Anamnesis.GameData.Sheets;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using PropertyChanged;

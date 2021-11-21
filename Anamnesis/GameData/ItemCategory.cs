@@ -4,34 +4,6 @@
 namespace Anamnesis.GameData
 {
 	using System;
-	using Anamnesis.GameData.Sheets;
-	using Anamnesis.Services;
-
-	public class ItemCategory : JsonDictionarySheet<ItemCategories, ItemCategory>.Entry
-	{
-		public static ItemCategories GetCategory(Item item)
-		{
-			if (!GameDataService.ItemCategories.Contains(item.RowId))
-				return ItemCategories.None;
-
-			ItemCategories category = GameDataService.ItemCategories.Get(item.RowId).Value;
-
-			if (FavoritesService.IsFavorite(item))
-				category = category.SetFlag(ItemCategories.Favorites, true);
-
-			if (FavoritesService.IsOwned(item))
-				category = category.SetFlag(ItemCategories.Owned, true);
-
-			return category;
-		}
-
-		public override void SetValue(ItemCategories value)
-		{
-			base.SetValue(value);
-		}
-	}
-
-#pragma warning disable
 
 	[Flags]
 	public enum ItemCategories
@@ -51,6 +23,7 @@ namespace Anamnesis.GameData
 		All = Standard | Premium | Limited | Deprecated | Props | Performance | Modded | Favorites | Owned,
 	}
 
+	#pragma warning disable SA1649
 	public static class ItemCategoriesExtensions
 	{
 		public static ItemCategories SetFlag(this ItemCategories a, ItemCategories b, bool enabled)

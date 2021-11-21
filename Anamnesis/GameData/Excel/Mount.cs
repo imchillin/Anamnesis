@@ -1,11 +1,12 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Sheets
+namespace Anamnesis.GameData.Excel
 {
 	using System;
 	using System.Windows.Media;
 	using Anamnesis.Character.Utilities;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina;
@@ -73,7 +74,7 @@ namespace Anamnesis.GameData.Sheets
 			{
 				this.ModelCharaRow = mount.ModelCharaRow;
 
-				ExcelSheet<BNpcCustomize>? customizeSheet = GameDataService.GetSheet<BNpcCustomize>();
+				Sheets.ExcelSheet<BNpcCustomize>? customizeSheet = GameDataService.GetSheet<BNpcCustomize>();
 				BNpcCustomize? customize = customizeSheet?.GetOrDefault(mount.customizeRow);
 				if (customize != null)
 				{

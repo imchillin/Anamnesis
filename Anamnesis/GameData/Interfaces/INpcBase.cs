@@ -4,7 +4,7 @@
 namespace Anamnesis.GameData
 {
 	using System.Windows.Media;
-	using Anamnesis.GameData.Sheets;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.TexTools;
 
 	public interface INpcBase : IRow

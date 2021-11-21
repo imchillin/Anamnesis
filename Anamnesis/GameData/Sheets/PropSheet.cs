@@ -9,7 +9,7 @@ namespace Anamnesis.GameData.Sheets
 	using Anamnesis.Files;
 	using Anamnesis.Serialization.Converters;
 
-	public class PropSheet : ISheet<Prop>
+	public class PropSheet : IEnumerable<Prop>
 	{
 		private readonly Dictionary<uint, Prop> rows;
 

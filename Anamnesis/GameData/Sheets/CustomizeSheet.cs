@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.Sheets
 {
 	using System;
 	using System.Collections.Generic;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Memory;
 
 	public static class CustomizeSheet

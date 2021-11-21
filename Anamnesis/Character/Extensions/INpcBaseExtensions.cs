@@ -6,7 +6,7 @@ namespace Anamnesis.Character
 	using System;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
-	using Anamnesis.GameData.Sheets;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 

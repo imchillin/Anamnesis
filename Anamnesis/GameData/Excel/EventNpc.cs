@@ -1,9 +1,10 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Sheets
+namespace Anamnesis.GameData.Excel
 {
 	using System.Windows.Media;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
 	using Lumina.Data;
@@ -42,7 +43,7 @@ namespace Anamnesis.GameData.Sheets
 
 		public INpcAppearance? GetAppearance()
 		{
-			ExcelSheet<EventNpcAppearance> sheet = GameDataService.GetSheet<EventNpcAppearance>();
+			Sheets.ExcelSheet<EventNpcAppearance> sheet = GameDataService.GetSheet<EventNpcAppearance>();
 			return sheet.Get(this.RowId);
 		}
 	}

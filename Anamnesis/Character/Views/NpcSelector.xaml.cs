@@ -3,14 +3,11 @@
 
 namespace Anamnesis.Character.Views
 {
-	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
-	using Anamnesis;
 	using Anamnesis.GameData;
-	using Anamnesis.GameData.Sheets;
-	using Anamnesis.GameData.ViewModels;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;

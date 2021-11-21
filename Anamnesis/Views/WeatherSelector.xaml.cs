@@ -5,8 +5,7 @@ namespace Anamnesis.Views
 {
 	using System;
 	using System.Windows.Controls;
-	using Anamnesis.GameData;
-	using Anamnesis.GameData.Sheets;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;

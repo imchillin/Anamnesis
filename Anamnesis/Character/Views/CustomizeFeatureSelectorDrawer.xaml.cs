@@ -4,6 +4,7 @@
 namespace Anamnesis.Character.Views
 {
 	using System.Windows.Controls;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
