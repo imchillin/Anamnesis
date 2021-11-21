@@ -50,7 +50,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<CharaMakeCustomize> CharacterMakeCustomize { get; private set; }
 		public static ExcelSheet<CharaMakeType> CharacterMakeTypes { get; private set; }
 		public static ExcelSheet<ResidentNpc> ResidentNPCs { get; private set; }
-		public static ExcelSheet<Lumina.Excel.GeneratedSheets.WeatherRate> WeatherRates { get; private set; }
+		public static ExcelSheet<WeatherRate> WeatherRates { get; private set; }
 		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; private set; }
 		public static ExcelSheet<BattleNpcName> BattleNpcNames { get; private set; }
 
@@ -96,7 +96,7 @@ namespace Anamnesis.Services
 
 				uint bNpcNameKey = uint.Parse(name.Remove(0, 2));
 
-				Lumina.Excel.GeneratedSheets.BNpcName? row = BattleNpcNames.GetRow(bNpcNameKey);
+				BattleNpcName? row = BattleNpcNames.GetRow(bNpcNameKey);
 				if (row == null || string.IsNullOrEmpty(row.Singular))
 					return name;
 
@@ -182,7 +182,7 @@ namespace Anamnesis.Services
 				CharacterMakeTypes = GetSheet<CharaMakeType>();
 				ResidentNPCs = GetSheet<ResidentNpc>();
 				Perform = GetSheet<Perform>();
-				WeatherRates = GetSheet<Lumina.Excel.GeneratedSheets.WeatherRate>();
+				WeatherRates = GetSheet<WeatherRate>();
 				EquipRaceCategories = GetSheet<EquipRaceCategory>();
 				BattleNpcNames = GetSheet<BattleNpcName>();
 			}

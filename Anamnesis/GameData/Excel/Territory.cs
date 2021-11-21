@@ -10,6 +10,8 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
+	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+
 	[Sheet("TerritoryType", 3076097095u)]
 	public class Territory : ExcelRow
 	{

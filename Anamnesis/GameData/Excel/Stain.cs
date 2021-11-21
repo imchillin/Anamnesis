@@ -11,6 +11,7 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Excel;
 	using Lumina.Text;
 
+	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 	using MediaColor = System.Windows.Media.Color;
 
 	[Sheet("Stain", 2722238056u)]

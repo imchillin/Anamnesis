@@ -10,6 +10,8 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Excel;
 	using Lumina.Text;
 
+	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+
 	[Sheet("Race", 872644730u)]
 	public class Race : ExcelRow
 	{

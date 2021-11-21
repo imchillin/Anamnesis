@@ -10,6 +10,7 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Data;
 	using Lumina.Excel;
 
+	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 	using LuminaData = Lumina.GameData;
 
 	[Sheet("CharaMakeType", columnHash: 0x80d7db6d)]

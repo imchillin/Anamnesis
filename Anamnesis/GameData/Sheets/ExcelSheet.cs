@@ -17,7 +17,7 @@ namespace Anamnesis.GameData.Sheets
 	using Serilog;
 
 	public class ExcelSheet<T> : Lumina.Excel.ExcelSheet<T>, IEnumerable<T>, IEnumerable
-		where T : ExcelRow
+		where T : Lumina.Excel.ExcelRow
 	{
 		private readonly Lumina.GameData gameData;
 

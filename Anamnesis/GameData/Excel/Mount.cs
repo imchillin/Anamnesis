@@ -14,6 +14,8 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
 
+	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+
 	[Sheet("Mount", 2247824408u)]
 	public class Mount : ExcelRow, INpcBase
 	{

@@ -88,7 +88,7 @@ namespace Anamnesis.GameData.Sheets
 		}
 
 		public static TRow? ReadRowReference<TColumn, TRow>(this RowParser self, int column, int minValue = int.MinValue)
-			where TRow : ExcelRow
+			where TRow : Lumina.Excel.ExcelRow
 		{
 			TColumn? id = self.ReadColumn<TColumn>(column);
 

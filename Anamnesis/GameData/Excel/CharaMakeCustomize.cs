@@ -8,6 +8,8 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Data;
 	using Lumina.Excel;
 
+	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+
 	[Sheet("CharaMakeCustomize", 732348175u)]
 	public class CharaMakeCustomize : ExcelRow
 	{

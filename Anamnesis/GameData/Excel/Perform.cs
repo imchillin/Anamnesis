@@ -11,6 +11,8 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Excel;
 	using Lumina.Text;
 
+	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+
 	[Sheet("Perform", 2079858601u)]
 	public class Perform : ExcelRow, IItem
 	{

@@ -10,6 +10,8 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Data;
 	using Lumina.Excel;
 
+	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+
 	[Sheet("ENpcResident", 4149192844u)]
 	public class ResidentNpc : ExcelRow, INpcBase
 	{

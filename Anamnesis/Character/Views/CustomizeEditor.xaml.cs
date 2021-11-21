@@ -156,7 +156,6 @@ namespace Anamnesis.Character.Views
 			this.IsEnabled = true;
 
 			this.RaceComboBox.SelectedItem = this.Race;
-
 			this.TribeComboBox.ItemsSource = this.Race.Tribes;
 
 			if (!Enum.IsDefined<ActorCustomizeMemory.Tribes>((ActorCustomizeMemory.Tribes)this.Customize.Tribe))

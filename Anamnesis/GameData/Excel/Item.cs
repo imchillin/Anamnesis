@@ -14,6 +14,8 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Excel.GeneratedSheets;
 	using Lumina.Text;
 
+	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+
 	[Sheet("Item", 2148100297u)]
 	public class Item : ExcelRow, IItem
 	{
