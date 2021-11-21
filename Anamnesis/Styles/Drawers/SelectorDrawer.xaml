@@ -59,14 +59,8 @@
 				 MouseDoubleClick="OnDoubleClick"
 				 SelectedItem="{Binding Value}"
 				 SelectionChanged="OnSelectionChanged"
-				 VirtualizingStackPanel.IsVirtualizing="True">
-			<ListBox.Template>
-				<ControlTemplate>
-					<VirtualizingStackPanel Background="Black"
-								IsItemsHost="True">
-					</VirtualizingStackPanel>
-				</ControlTemplate>
-			</ListBox.Template>
+				 VirtualizingStackPanel.IsVirtualizing="True"
+				 VirtualizingStackPanel.VirtualizationMode="Recycling">
 		</ListBox>
 
 		<ProgressBar
