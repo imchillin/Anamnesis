@@ -168,10 +168,10 @@ namespace Anamnesis.Character.Views
 					return 1;
 
 				// Then Minions
-				if (npcA is CompanionViewModel && npcB is not CompanionViewModel)
+				if (npcA is Companion && npcB is not Companion)
 					return -1;
 
-				if (npcA is not CompanionViewModel && npcB is CompanionViewModel)
+				if (npcA is not Companion && npcB is Companion)
 					return 1;
 
 				// Then Battle NPCs
@@ -235,7 +235,7 @@ namespace Anamnesis.Character.Views
 					}
 				}
 
-				if (npc is CompanionViewModel)
+				if (npc is Companion)
 				{
 					if (!this.IncludeCompanion)
 						return false;

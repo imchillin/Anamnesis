@@ -30,7 +30,7 @@ namespace Anamnesis.Character
 			{
 				t = 'E';
 			}
-			else if (type == typeof(CompanionViewModel))
+			else if (type == typeof(Companion))
 			{
 				t = 'C';
 			}
