@@ -51,16 +51,23 @@
 
 		</Grid>
 
-		<ListBox
-			x:Name="ListBox"
-			Grid.Row="1"
-			HorizontalContentAlignment="Stretch"
-			ItemTemplate="{Binding ItemTemplate}"
-			ItemsSource="{Binding FilteredItems}"
-			MouseDoubleClick="OnDoubleClick"
-			SelectedItem="{Binding Value}"
-			SelectionChanged="OnSelectionChanged"
-			VirtualizingStackPanel.IsVirtualizing="True" />
+		<ListBox x:Name="ListBox"
+				 Grid.Row="1"
+				 HorizontalContentAlignment="Stretch"
+				 ItemTemplate="{Binding ItemTemplate}"
+				 ItemsSource="{Binding FilteredItems}"
+				 MouseDoubleClick="OnDoubleClick"
+				 SelectedItem="{Binding Value}"
+				 SelectionChanged="OnSelectionChanged"
+				 VirtualizingStackPanel.IsVirtualizing="True">
+			<ListBox.Template>
+				<ControlTemplate>
+					<VirtualizingStackPanel Background="Black"
+								IsItemsHost="True">
+					</VirtualizingStackPanel>
+				</ControlTemplate>
+			</ListBox.Template>
+		</ListBox>
 
 		<ProgressBar
 			Width="48"
