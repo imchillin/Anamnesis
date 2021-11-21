@@ -150,7 +150,7 @@
 						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
 
 						<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0">
-							<TextBlock Text="{Binding Key}" Style="{StaticResource Label}" Visibility="{Binding Key, Converter={StaticResource NotZeroToVisibility}}"/>
+							<TextBlock Text="{Binding RowId}" Style="{StaticResource Label}" Visibility="{Binding RowId, Converter={StaticResource NotZeroToVisibility}}"/>
 							<fa:IconBlock Icon="pen" FontSize="8" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 							<TextBlock Text="{Binding Description}" Style="{StaticResource Label}"/>
 
@@ -163,7 +163,7 @@
 									   Fill="Transparent" >
 							<ToolTipService.ToolTip>
 								<StackPanel Orientation="Vertical">
-									<TextBlock Text="{Binding Key}" FontWeight="DemiBold"/>
+									<TextBlock Text="{Binding RowId}" FontWeight="DemiBold"/>
 									<TextBlock Text="{Binding Name}" FontWeight="DemiBold"/>
 									<TextBlock Text="{Binding Description}" Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
@@ -181,8 +181,8 @@
 											<RowDefinition/>
 										</Grid.RowDefinitions>
 
-										<TextBlock Grid.Column="0" Grid.Row="0" Text="Item Id: " HorizontalAlignment="Left" Visibility="{Binding Key, Converter={StaticResource NotZeroToVisibility}}"/>
-										<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Key}" Visibility="{Binding Key, Converter={StaticResource NotZeroToVisibility}}"/>
+										<TextBlock Grid.Column="0" Grid.Row="0" Text="Item Id: " HorizontalAlignment="Left" Visibility="{Binding RowId, Converter={StaticResource NotZeroToVisibility}}"/>
+										<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding RowId}" Visibility="{Binding RowId, Converter={StaticResource NotZeroToVisibility}}"/>
 
 										<TextBlock Grid.Column="0" Grid.Row="1" Text="Set: " HorizontalAlignment="Left" />
 										<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding ModelSet}"/>
