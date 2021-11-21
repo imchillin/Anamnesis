@@ -52,17 +52,19 @@ namespace Anamnesis.GameData.Sheets
 		public INpcAppearance? GetAppearance()
 		{
 			if (this.appearance == null)
-				this.appearance = new BattleNpcAppearance(this.customizeRow, this.equipRow);
+				this.appearance = new BattleNpcAppearance(this);
 
 			return this.appearance;
 		}
 
 		public class BattleNpcAppearance : INpcAppearance
 		{
-			public BattleNpcAppearance(ushort customizeRow, ushort equipRow)
+			public BattleNpcAppearance(BattleNpc npc)
 			{
+				this.ModelCharaRow = npc.ModelCharaRow;
+
 				ExcelSheet<BNpcCustomize>? customizeSheet = GameDataService.GetSheet<BNpcCustomize>();
-				BNpcCustomize? customize = customizeSheet?.GetOrDefault(customizeRow);
+				BNpcCustomize? customize = customizeSheet?.GetOrDefault(npc.customizeRow);
 				if (customize != null)
 				{
 					this.Race = GameDataService.Races.Get(Math.Max(customize.Race.Row, 1));
@@ -98,7 +100,7 @@ namespace Anamnesis.GameData.Sheets
 				}
 
 				ExcelSheet<NpcEquip>? equipSheet = GameDataService.GetSheet<NpcEquip>();
-				NpcEquip? npcEquip = equipSheet.Get(equipRow);
+				NpcEquip? npcEquip = equipSheet.Get(npc.equipRow);
 				if (npcEquip != null)
 				{
 					this.MainHand = LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, npcEquip.ModelMainHand);
@@ -127,6 +129,8 @@ namespace Anamnesis.GameData.Sheets
 					this.DyeRightRing = GameDataService.Dyes.Get(npcEquip.DyeRightRing.Row);
 				}
 			}
+
+			public uint ModelCharaRow { get; private set; }
 
 			public int FacePaintColor { get; private set; }
 			public int FacePaint { get; private set; }

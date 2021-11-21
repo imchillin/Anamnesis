@@ -7,7 +7,6 @@ namespace Anamnesis.GameData.Sheets
 	using System.Collections;
 	using System.Collections.Generic;
 	using Anamnesis.Files;
-	using Anamnesis.Serialization;
 
 	public class JsonDictionarySheet<TValue, TWrapper> : ISheet<TWrapper>
 		where TWrapper : JsonDictionarySheet<TValue, TWrapper>.Entry, new()

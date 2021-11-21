@@ -154,10 +154,10 @@ namespace Anamnesis.Character.Views
 					return 1;
 
 				// Then Residents
-				if (npcA is NpcResidentViewModel && npcB is not NpcResidentViewModel)
+				if (npcA is ResidentNpc && npcB is not ResidentNpc)
 					return -1;
 
-				if (npcA is not NpcResidentViewModel && npcB is NpcResidentViewModel)
+				if (npcA is not ResidentNpc && npcB is ResidentNpc)
 					return 1;
 
 				// Then Mounts
@@ -210,7 +210,7 @@ namespace Anamnesis.Character.Views
 				if (this.IncludeModded == false && npc.Mod != null)
 					return false;
 
-				if (npc is NpcResidentViewModel)
+				if (npc is ResidentNpc)
 				{
 					if (!this.IncludeResidentNpc)
 						return false;

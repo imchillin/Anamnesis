@@ -23,6 +23,8 @@ namespace Anamnesis.GameData
 
 	public interface INpcAppearance
 	{
+		uint ModelCharaRow { get; }
+
 		int FacePaintColor { get; }
 		int FacePaint { get; }
 		int ExtraFeature2OrBust { get; }

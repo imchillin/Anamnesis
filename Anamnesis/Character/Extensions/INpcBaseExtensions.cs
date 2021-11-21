@@ -7,7 +7,6 @@ namespace Anamnesis.Character
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
-	using Anamnesis.GameData.ViewModels;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 
@@ -18,7 +17,7 @@ namespace Anamnesis.Character
 			Type type = npc.GetType();
 			char t;
 
-			if (type == typeof(NpcResidentViewModel))
+			if (type == typeof(ResidentNpc))
 			{
 				t = 'R';
 			}
@@ -82,17 +81,17 @@ namespace Anamnesis.Character
 			if (appearance == null)
 				throw new Exception($"No NPc appearance for npc: {npc}");
 
-			return ToFile(npc, appearance);
+			return appearance.ToFile();
 		}
 
-		private static CharacterFile ToFile(INpcBase npc, INpcAppearance appearance)
+		private static CharacterFile ToFile(this INpcAppearance appearance)
 		{
 			if (appearance.Race == null || appearance.Tribe == null)
 				throw new Exception("NPC missing race or tribe");
 
 			CharacterFile file = new CharacterFile();
 			file.SaveMode = CharacterFile.SaveModes.All;
-			file.ModelType = npc.ModelCharaRow;
+			file.ModelType = appearance.ModelCharaRow;
 			file.Race = appearance.Race.CustomizeRace;
 			file.Tribe = appearance.Tribe.CustomizeTribe;
 			file.Gender = (ActorCustomizeMemory.Genders)appearance.Gender;

@@ -8,8 +8,10 @@ namespace Anamnesis.GameData.Sheets
 	using Lumina.Excel;
 
 	[Sheet("ENpcBase", 2457028568u)]
-	public class EventNpcAppearance : EventNpc, INpcAppearance
+	public class EventNpcAppearance : ExcelRow, INpcAppearance
 	{
+		public uint ModelCharaRow { get; private set; }
+
 		public int FacePaintColor { get; private set; }
 		public int FacePaint { get; private set; }
 		public int ExtraFeature2OrBust { get; private set; }
@@ -66,6 +68,7 @@ namespace Anamnesis.GameData.Sheets
 		{
 			base.PopulateData(parser, gameData, language);
 
+			this.ModelCharaRow = (uint)parser.ReadColumn<ushort>(35);
 			this.Race = parser.ReadRowReference<byte, Race>(36, 1);
 			this.Gender = parser.ReadColumn<byte>(37);
 			this.BodyType = parser.ReadColumn<byte>(38);

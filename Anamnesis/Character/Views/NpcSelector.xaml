@@ -111,7 +111,8 @@
 						<StackPanel Orientation="Horizontal"
 									Grid.Row="1"
 									Grid.Column="1"
-									Margin="3, 0, 0, 0">
+									Margin="3, 0, 0, 0"
+									Visibility="{Binding ModelCharaRow, Converter={StaticResource NotZeroToVisibility}}">
 
 							<xivToolsWpf:TextBlock Key="Character_Actor_Model"
 												   Style="{StaticResource Label}"

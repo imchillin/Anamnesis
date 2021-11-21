@@ -71,6 +71,8 @@ namespace Anamnesis.GameData.Sheets
 		{
 			public MountAppearance(Mount mount)
 			{
+				this.ModelCharaRow = mount.ModelCharaRow;
+
 				ExcelSheet<BNpcCustomize>? customizeSheet = GameDataService.GetSheet<BNpcCustomize>();
 				BNpcCustomize? customize = customizeSheet?.GetOrDefault(mount.customizeRow);
 				if (customize != null)
@@ -113,6 +115,7 @@ namespace Anamnesis.GameData.Sheets
 				this.Feet = LuminaExtensions.GetGearItem(ItemSlots.Feet, (uint)mount.equipFoot);
 			}
 
+			public uint ModelCharaRow { get; private set; }
 			public int FacePaintColor { get; private set; }
 			public int FacePaint { get; private set; }
 			public int ExtraFeature2OrBust { get; private set; }
