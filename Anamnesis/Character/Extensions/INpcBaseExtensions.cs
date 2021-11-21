@@ -34,7 +34,7 @@ namespace Anamnesis.Character
 			{
 				t = 'C';
 			}
-			else if (type == typeof(MountViewModel))
+			else if (type == typeof(Mount))
 			{
 				t = 'M';
 			}

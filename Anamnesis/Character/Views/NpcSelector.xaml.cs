@@ -161,10 +161,10 @@ namespace Anamnesis.Character.Views
 					return 1;
 
 				// Then Mounts
-				if (npcA is MountViewModel && npcB is not MountViewModel)
+				if (npcA is Mount && npcB is not Mount)
 					return -1;
 
-				if (npcA is not MountViewModel && npcB is MountViewModel)
+				if (npcA is not Mount && npcB is Mount)
 					return 1;
 
 				// Then Minions
@@ -223,7 +223,7 @@ namespace Anamnesis.Character.Views
 					}
 				}
 
-				if (npc is MountViewModel)
+				if (npc is Mount)
 				{
 					if (!this.IncludeMount)
 						return false;

@@ -24,12 +24,12 @@ namespace Anamnesis.Services
 
 	public class GameDataService : ServiceBase<GameDataService>
 	{
+		internal static LuminaData? LuminaData;
+
 		private static readonly Dictionary<Type, Lumina.Excel.ExcelSheetImpl> Sheets = new Dictionary<Type, Lumina.Excel.ExcelSheetImpl>();
 
 		private static Dictionary<string, string>? npcNames;
 		private static ExcelSheet<Lumina.Excel.GeneratedSheets.BNpcName>? battleNpcNames;
-
-		private static LuminaData? lumina;
 
 		public enum ClientRegion
 		{
@@ -48,7 +48,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<Stain> Dyes { get; private set; }
 		public static ExcelSheet<EventNpc> EventNPCs { get; private set; }
 		public static ExcelSheet<BattleNpc> BattleNPCs { get; private set; }
-		public static ISheet<INpcBase> Mounts { get; private set; }
+		public static ExcelSheet<Mount> Mounts { get; private set; }
 		public static ISheet<INpcBase> Companions { get; private set; }
 		public static ISheet<ITerritoryType> Territories { get; private set; }
 		public static ISheet<IWeather> Weathers { get; private set; }
@@ -72,10 +72,10 @@ namespace Anamnesis.Services
 				if (Sheets.TryGetValue(type, out sheet) && sheet is ExcelSheet<T> sheetT)
 					return sheetT;
 
-				if (lumina == null)
+				if (LuminaData == null)
 					throw new Exception("Game Data Service has not been initialized");
 
-				sheet = ExcelSheet<T>.GetSheet(lumina);
+				sheet = ExcelSheet<T>.GetSheet(LuminaData);
 				Sheets.Add(type, sheet);
 				return (ExcelSheet<T>)sheet;
 			}
@@ -143,7 +143,7 @@ namespace Anamnesis.Services
 				Lumina.LuminaOptions options = new Lumina.LuminaOptions();
 				options.DefaultExcelLanguage = defaultLuminaLaunguage;
 
-				lumina = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\", options);
+				LuminaData = new LuminaData(MemoryService.GamePath + "\\game\\sqpack\\", options);
 
 				Races = GetSheet<Race>();
 				Tribes = GetSheet<Tribe>();
@@ -151,18 +151,19 @@ namespace Anamnesis.Services
 				Dyes = GetSheet<Stain>();
 				EventNPCs = GetSheet<EventNpc>();
 				BattleNPCs = GetSheet<BattleNpc>();
+				Mounts = GetSheet<Mount>();
 
-				battleNpcNames = ExcelSheet<Lumina.Excel.GeneratedSheets.BNpcName>.GetSheet(lumina);
-				Mounts = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.Mount, MountViewModel>(lumina);
-				Companions = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.Companion, CompanionViewModel>(lumina);
-				Territories = new LuminaSheet<ITerritoryType, Lumina.Excel.GeneratedSheets.TerritoryType, TerritoryTypeViewModel>(lumina);
-				Weathers = new LuminaSheet<IWeather, Lumina.Excel.GeneratedSheets.Weather, WeatherViewModel>(lumina);
-				CharacterMakeCustomize = new CustomizeSheet(lumina);
+				Companions = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.Companion, CompanionViewModel>(LuminaData);
+				Territories = new LuminaSheet<ITerritoryType, Lumina.Excel.GeneratedSheets.TerritoryType, TerritoryTypeViewModel>(LuminaData);
+				Weathers = new LuminaSheet<IWeather, Lumina.Excel.GeneratedSheets.Weather, WeatherViewModel>(LuminaData);
+				CharacterMakeCustomize = new CustomizeSheet(LuminaData);
 				CharacterMakeTypes = GetSheet<CharaMakeType>();
-				ResidentNPCs = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.ENpcResident, NpcResidentViewModel>(lumina);
+				ResidentNPCs = new LuminaSheet<INpcBase, Lumina.Excel.GeneratedSheets.ENpcResident, NpcResidentViewModel>(LuminaData);
 				Perform = GetSheet<Perform>();
 				WeatherRates = GetSheet<Lumina.Excel.GeneratedSheets.WeatherRate>();
 				EquipRaceCategories = GetSheet<EquipRaceCategory>();
+
+				battleNpcNames = ExcelSheet<Lumina.Excel.GeneratedSheets.BNpcName>.GetSheet(LuminaData);
 			}
 			catch (Exception ex)
 			{
