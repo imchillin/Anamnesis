@@ -4,7 +4,6 @@
 namespace Anamnesis.GameData.Sheets
 {
 	using System;
-	using System.Collections.Concurrent;
 	using System.Windows.Media;
 	using System.Windows.Media.Imaging;
 	using Anamnesis.Services;
@@ -47,7 +46,10 @@ namespace Anamnesis.GameData.Sheets
 
 			Log.Verbose($"Loading image {this.ImageId}");
 
-			TexFile? tex = GameDataService.LuminaData.GetIcon(this.ImageId);
+			////TexFile? tex = GameDataService.LuminaData.GetIcon(this.ImageId);
+			////string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}.tex";
+			string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}_hr1.tex";
+			TexFile? tex = GameDataService.LuminaData.GetFile<TexFile>(path);
 
 			if (tex == null)
 				return null;
