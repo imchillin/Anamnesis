@@ -29,7 +29,7 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 
 ## Authors
 
-* **[Yuuki](https://github.com/Yuuki-Walsh)** - *Main development*
+* **[Yuki](https://github.com/Yuuki-Walsh)** - *Main development*
 * **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
 * **[damphands](https://github.com/damphands)** - *Wiki and tip curating* 
 
