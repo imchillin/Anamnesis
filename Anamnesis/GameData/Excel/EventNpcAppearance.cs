@@ -106,7 +106,7 @@ namespace Anamnesis.GameData.Excel
 
 			this.MainHand = LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, parser.ReadColumn<ulong>(65));
 			this.DyeMainHand = parser.ReadRowReference<byte, Stain>(66);
-			this.OffHand = LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, parser.ReadColumn<ulong>(65));
+			this.OffHand = LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, parser.ReadColumn<ulong>(67));
 			this.DyeOffHand = parser.ReadRowReference<byte, Stain>(68);
 			this.Head = this.GetItem(ItemSlots.Head, parser.ReadColumn<uint>(69), npcEquip?.ModelHead);
 			this.DyeHead = parser.ReadRowReference<byte, Stain>(70);
