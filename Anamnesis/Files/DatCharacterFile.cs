@@ -7,7 +7,7 @@ namespace Anamnesis.Files
 	using System.IO;
 	using Anamnesis.Memory;
 
-	public class DatCharacterFile : FileBase
+	public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 	{
 		public byte[]? Data;
 

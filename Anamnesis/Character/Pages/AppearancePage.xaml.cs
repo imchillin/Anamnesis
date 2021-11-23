@@ -177,7 +177,7 @@ namespace Anamnesis.Character.Pages
 
 			try
 			{
-				OpenResult result = await FileService.Open<LegacyCharacterFile, LegacyCharacterFileJson, DatCharacterFile, CharacterFile>(
+				OpenResult result = await FileService.Open<LegacyCharacterFile, LegacyCharacterFileJson, LegacyLegacyCharacterFileJson, DatCharacterFile, CharacterFile>(
 					lastLoadDir,
 					FileService.DefaultCharacterDirectory,
 					FileService.FFxivDatCharacterDirectory,
@@ -188,11 +188,8 @@ namespace Anamnesis.Character.Pages
 
 				lastLoadDir = result.Directory;
 
-				if (result.File is LegacyCharacterFile legacyFile)
+				if (result.File is IUpgradeCharacterFile legacyFile)
 					result.File = legacyFile.Upgrade();
-
-				if (result.File is DatCharacterFile datFile)
-					result.File = datFile.Upgrade();
 
 				if (result.File is CharacterFile apFile)
 				{
