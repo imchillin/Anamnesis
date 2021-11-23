@@ -50,9 +50,9 @@
 				<XivToolsWpf:TextBlock Key="About_OpenSource_Header"/>
 			</GroupBox.Header>
 
-			<TextBlock TextWrapping="Wrap" Margin="6,0,0,15" Style="{StaticResource Body}">Anamnesis is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
+			<TextBlock TextWrapping="Wrap" Margin="6,0,0,10" Style="{StaticResource Body}">Anamnesis is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
 				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/Anamnesis" FontSize="12">GitHub</Hyperlink>.
-					<LineBreak /><LineBreak />
+					<LineBreak />
 					Anamnesis is built with the following projects:
 					<LineBreak />
 					<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/NotAdam/Lumina" FontSize="12" >Lumina</Hyperlink>
@@ -81,7 +81,7 @@
 				<XivToolsWpf:TextBlock Key="About_Contact_Header"/>
 			</GroupBox.Header>
 
-			<TextBlock TextWrapping="Wrap" Margin="6,0,0,15" Style="{StaticResource Body}">Want to follow development, ask a question, look for help, raise a bug, or just say hi? Visit us on
+			<TextBlock TextWrapping="Wrap" Margin="6,0,0,10" Style="{StaticResource Body}">Want to follow development, ask a question, look for help, raise a bug, or just say hi? Visit us on
 				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discord.gg/KvGJCCnG8t" FontSize="12">Discord</Hyperlink>, or follow the XIV Tools 
 				<fa:IconBlock Icon="Twitter"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://twitter.com/XIV_Tools" FontSize="12">Twitter</Hyperlink>!</TextBlock>
 		</GroupBox>
@@ -92,7 +92,7 @@
 			</GroupBox.Header>
 
 			<TextBlock TextWrapping="Wrap" Margin="6,0,0,15" Style="{StaticResource Body}">This project is a labor of love. Please consider donating to the members of the dev team via Ko-fi to say thank you!<LineBreak />
-				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/aniki" FontSize="12">Yuuki &amp; Ani-Ki's shared Ko-fi</Hyperlink>
+				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/aniki" FontSize="12">Yuki &amp; Ani-Ki's shared Ko-fi</Hyperlink>
 			</TextBlock>
 		</GroupBox>
 
