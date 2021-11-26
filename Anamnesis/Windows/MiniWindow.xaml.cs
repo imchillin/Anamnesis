@@ -56,7 +56,11 @@ namespace Anamnesis.Windows
 
 			this.downPos.X = this.Left;
 			this.downPos.Y = this.Top;
-			this.DragMove();
+
+			if (e.LeftButton == MouseButtonState.Pressed)
+			{
+				this.DragMove();
+			}
 		}
 
 		private void OnMouseUp(object sender, MouseButtonEventArgs e)
@@ -81,6 +85,7 @@ namespace Anamnesis.Windows
 			if (delta.Length > 100)
 				return;
 
+			this.OnLocationChanged(null, null);
 			this.main.Show();
 			this.isHidden = false;
 		}
