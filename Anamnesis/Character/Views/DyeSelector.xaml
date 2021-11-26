@@ -38,7 +38,7 @@
 
 					<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
 
-					<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Key}" Margin="6, 0, 0, 0" FontWeight="Light"  Foreground="{DynamicResource MaterialDesignBody}"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding RowId}" Margin="6, 0, 0, 0" FontWeight="Light"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
 					<Rectangle Grid.ColumnSpan="2" 
 								   Grid.RowSpan="2" 

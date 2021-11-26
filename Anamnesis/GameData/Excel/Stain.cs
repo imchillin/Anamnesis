@@ -39,6 +39,7 @@ namespace Anamnesis.GameData.Excel
 
 			byte[] colorBytes = BitConverter.GetBytes(parser.ReadColumn<uint>(0));
 			this.Color = new SolidColorBrush(MediaColor.FromRgb(colorBytes[2], colorBytes[1], colorBytes[0]));
+			this.Color.Freeze();
 
 			this.Shade = parser.ReadColumn<byte>(1);
 			this.Name = parser.ReadColumn<SeString>(3) ?? string.Empty;
