@@ -6,6 +6,7 @@ namespace Anamnesis.Files
 	using System;
 	using System.IO;
 	using System.Threading.Tasks;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Serilog;
@@ -253,10 +254,24 @@ namespace Anamnesis.Files
 			{
 				actor.EnableReading = false;
 
-				if (actor.ObjectKind != ActorTypes.Player && actor.ObjectKind != ActorTypes.BattleNpc && actor.ObjectKind != ActorTypes.EventNpc)
+				// If we are inside a house, and we target an event NPC,
+				// we should change them to a player for gposing.
+				Territory? territory = TerritoryService.Instance.CurrentTerritory;
+				if (TerritoryService.Exists && territory != null && territory.IsHouse)
 				{
-					actor.ObjectKind = ActorTypes.Player;
-					await actor.RefreshAsync();
+					if (actor.ObjectKind == ActorTypes.EventNpc)
+					{
+						actor.ObjectKind = ActorTypes.Player;
+						await actor.RefreshAsync();
+					}
+				}
+				else
+				{
+					if (actor.ObjectKind != ActorTypes.Player && actor.ObjectKind != ActorTypes.BattleNpc && actor.ObjectKind != ActorTypes.EventNpc)
+					{
+						actor.ObjectKind = ActorTypes.Player;
+						await actor.RefreshAsync();
+					}
 				}
 
 				if (!string.IsNullOrEmpty(this.Nickname))

@@ -9,16 +9,42 @@ namespace Anamnesis.GameData.Excel
 	using Lumina.Data;
 	using Lumina.Excel;
 	using Lumina.Excel.GeneratedSheets;
-
+	using Serilog;
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
 	[Sheet("TerritoryType", 3076097095u)]
 	public class Territory : ExcelRow
 	{
+		private static readonly HashSet<uint> HousingTerritories = new()
+		{
+			282,
+			283,
+			284,
+			342,
+			343,
+			344,
+			345,
+			346,
+			347,
+			384,
+			385,
+			386,
+			608,
+			609,
+			610,
+			649,
+			650,
+			651,
+			652,
+		};
+
 		public string Name { get; private set; } = "Unknown";
 		public string Place { get; private set; } = "Unknown";
 		public string Region { get; private set; } = "Unknown";
 		public string Zone { get; private set; } = "Unknown";
+
+		public bool IsHouse { get; private set; } = false;
+
 		public List<Weather> Weathers { get; private set; } = new List<Weather>();
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
@@ -43,6 +69,8 @@ namespace Anamnesis.GameData.Excel
 					this.Weathers.Add(GameDataService.Weathers.Get((uint)wr.Weather));
 				}
 			}
+
+			this.IsHouse = HousingTerritories.Contains(this.RowId);
 		}
 	}
 }
