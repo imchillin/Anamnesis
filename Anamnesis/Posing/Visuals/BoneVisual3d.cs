@@ -12,6 +12,7 @@ namespace Anamnesis.PoseModule
 	using Anamnesis.Services;
 	using MaterialDesignThemes.Wpf;
 	using PropertyChanged;
+	using Serilog;
 	using XivToolsWpf.Meida3D;
 
 	using CmQuaternion = Anamnesis.Memory.Quaternion;
@@ -19,13 +20,13 @@ namespace Anamnesis.PoseModule
 	using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
 	[AddINotifyPropertyChangedInterface]
-	public class BoneVisual3d : ModelVisual3D, ITransform, IBone
+	public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 	{
 		public readonly List<TransformMemory> TransformMemories = new List<TransformMemory>();
 
 		private readonly QuaternionRotation3D rotation;
 		private readonly TranslateTransform3D position;
-		private readonly BoneTargetVisual3d target;
+		private BoneTargetVisual3d? target;
 
 		private BoneVisual3d? parent;
 		private Line? lineToParent;
@@ -51,6 +52,7 @@ namespace Anamnesis.PoseModule
 
 			this.target = new BoneTargetVisual3d(this);
 			this.Children.Add(this.target);
+
 			this.BoneName = name;
 		}
 
@@ -141,6 +143,24 @@ namespace Anamnesis.PoseModule
 		}
 
 		public BoneVisual3d? Visual => this;
+
+		public void Dispose()
+		{
+			this.Children.Clear();
+			this.target?.Dispose();
+			this.target = null;
+
+			this.parent?.Children.Remove(this);
+
+			if (this.lineToParent != null)
+			{
+				this.parent?.Children.Remove(this.lineToParent);
+				this.lineToParent.Dispose();
+				this.lineToParent = null;
+			}
+
+			this.parent = null;
+		}
 
 		public virtual void Tick()
 		{

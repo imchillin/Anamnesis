@@ -11,6 +11,7 @@ namespace Anamnesis.PoseModule.Views
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Shapes;
+	using Anamnesis.PoseModule.Pages;
 	using MaterialDesignThemes.Wpf;
 	using Serilog;
 	using XivToolsWpf.DependencyProperties;
@@ -20,9 +21,6 @@ namespace Anamnesis.PoseModule.Views
 		public static readonly IBind<string> LabelDp = Binder.Register<string, BoneView>(nameof(Label));
 		public static readonly IBind<string> NameDp = Binder.Register<string, BoneView>(nameof(BoneName));
 		public static readonly IBind<string> FlippedNameDp = Binder.Register<string, BoneView>(nameof(FlippedBoneName));
-
-		private static readonly Dictionary<BoneVisual3d, List<BoneView>> BoneViews = new Dictionary<BoneVisual3d, List<BoneView>>();
-		private static readonly List<BoneView> AllViews = new List<BoneView>();
 
 		private readonly List<Line> linesToChildren = new List<Line>();
 		private readonly List<Line> mouseLinesToChildren = new List<Line>();
@@ -37,8 +35,6 @@ namespace Anamnesis.PoseModule.Views
 
 			this.IsEnabledChanged += this.OnIsEnabledChanged;
 		}
-
-		public static IEnumerable<BoneView> All => AllViews;
 
 		public BoneVisual3d? Bone { get; private set; }
 
@@ -74,11 +70,6 @@ namespace Anamnesis.PoseModule.Views
 
 				return this.FlippedBoneName;
 			}
-		}
-
-		public static bool HasView(BoneVisual3d bone)
-		{
-			return BoneViews.ContainsKey(bone);
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -155,10 +146,16 @@ namespace Anamnesis.PoseModule.Views
 
 			this.linesToChildren.Clear();
 
-			BoneVisual3d? bone = this.Bone?.Parent;
-			if (bone != null && BoneViews.ContainsKey(bone))
+			PosePage? page = this.FindParent<PosePage>();
+			if (page == null)
+				return;
+
+			BoneVisual3d? parent = this.Bone?.Parent;
+			if (parent != null)
 			{
-				foreach (BoneView childView in BoneViews[bone])
+				List<BoneView> parentViews = page.GetBoneViews(parent);
+
+				foreach (BoneView childView in parentViews)
 				{
 					if (childView.Visibility != Visibility.Visible)
 						continue;
@@ -208,25 +205,14 @@ namespace Anamnesis.PoseModule.Views
 
 		private void SetBone(BoneVisual3d? bone)
 		{
-			if (!AllViews.Contains(this))
-				AllViews.Add(this);
-
-			if (this.Bone != null)
-			{
-				if (BoneViews.ContainsKey(this.Bone))
-				{
-					BoneViews[this.Bone].Remove(this);
-				}
-			}
+			PosePage? page = this.FindParent<PosePage>();
+			if (page != null)
+				page.BoneViews.Add(this);
 
 			this.Bone = bone;
 
 			if (this.Bone != null)
 			{
-				if (!BoneViews.ContainsKey(this.Bone))
-					BoneViews.Add(this.Bone, new List<BoneView>());
-
-				BoneViews[this.Bone].Add(this);
 				this.IsEnabled = true;
 
 				// Wait for all bone views to load, then draw the skeleton
@@ -319,6 +305,24 @@ namespace Anamnesis.PoseModule.Views
 				line.Stroke = stroke;
 				line.StrokeThickness = thickness;
 			}
+		}
+
+		private void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			PosePage? page = this.FindParent<PosePage>();
+			if (page == null)
+				return;
+
+			page.BoneViews.Add(this);
+		}
+
+		private void OnUnloaded(object sender, RoutedEventArgs e)
+		{
+			PosePage? page = this.FindParent<PosePage>();
+			if (page == null)
+				return;
+
+			page.BoneViews.Remove(this);
 		}
 	}
 }

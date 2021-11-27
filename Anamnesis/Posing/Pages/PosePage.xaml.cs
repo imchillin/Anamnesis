@@ -18,7 +18,7 @@ namespace Anamnesis.PoseModule.Pages
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
-
+	using XivToolsWpf;
 	using CmQuaternion = Anamnesis.Memory.Quaternion;
 
 	/// <summary>
@@ -29,12 +29,16 @@ namespace Anamnesis.PoseModule.Pages
 	{
 		public const double DragThreshold = 20;
 
+		public HashSet<BoneView> BoneViews = new HashSet<BoneView>();
+
 		private static DirectoryInfo? lastLoadDir;
 		private static DirectoryInfo? lastSaveDir;
 
 		private bool isLeftMouseButtonDownOnWindow;
 		private bool isDragging;
 		private Point origMouseDownPoint;
+
+		private Task? writeSkeletonTask;
 
 		public PosePage()
 		{
@@ -53,6 +57,20 @@ namespace Anamnesis.PoseModule.Pages
 		public SkeletonVisual3d? Skeleton { get; private set; }
 
 		private static ILogger Log => Serilog.Log.ForContext<PosePage>();
+
+		public List<BoneView> GetBoneViews(BoneVisual3d bone)
+		{
+			List<BoneView> results = new List<BoneView>();
+			foreach (BoneView boneView in this.BoneViews)
+			{
+				if (boneView.Bone == bone)
+				{
+					results.Add(boneView);
+				}
+			}
+
+			return results;
+		}
 
 		/* Basic Idea:
 		 * get mirrored quat of targetBone
@@ -157,8 +175,15 @@ namespace Anamnesis.PoseModule.Pages
 		{
 			this.Actor = this.DataContext as ActorMemory;
 
+			this.ThreeDView.DataContext = null;
+			this.GuiView.DataContext = null;
+			this.MatrixView.DataContext = null;
+
+			this.BoneViews.Clear();
+
 			if (this.Actor == null || this.Actor.ModelObject == null)
 			{
+				this.Skeleton?.Clear();
 				this.Skeleton = null;
 				return;
 			}
@@ -168,12 +193,19 @@ namespace Anamnesis.PoseModule.Pages
 
 			try
 			{
-				this.Skeleton = PoseService.GetVisual(this.Actor);
-				await this.Skeleton.GenerateBones();
+				if (this.Skeleton == null)
+					this.Skeleton = new SkeletonVisual3d();
+
+				await this.Skeleton.SetActor(this.Actor);
 
 				this.ThreeDView.DataContext = this.Skeleton;
 				this.GuiView.DataContext = this.Skeleton;
 				this.MatrixView.DataContext = this.Skeleton;
+
+				if (this.writeSkeletonTask == null || this.writeSkeletonTask.IsCompleted)
+				{
+					this.writeSkeletonTask = Task.Run(this.WriteSkeletonThread);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -399,7 +431,7 @@ namespace Anamnesis.PoseModule.Pages
 
 				List<BoneView> bones = new List<BoneView>();
 
-				foreach (BoneView bone in BoneView.All)
+				foreach (BoneView bone in this.BoneViews)
 				{
 					if (bone.Bone == null)
 						continue;
@@ -455,7 +487,7 @@ namespace Anamnesis.PoseModule.Pages
 
 					List<BoneView> toSelect = new List<BoneView>();
 
-					foreach (BoneView bone in BoneView.All)
+					foreach (BoneView bone in this.BoneViews)
 					{
 						if (bone.Bone == null)
 							continue;
@@ -487,6 +519,19 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			this.MouseCanvas.ReleaseMouseCapture();
+		}
+
+		private async Task WriteSkeletonThread()
+		{
+			while (Application.Current != null && this.Skeleton != null)
+			{
+				await Dispatch.MainThread();
+
+				this.Skeleton.WriteSkeleton();
+
+				// up to 60 times a second
+				await Task.Delay(16);
+			}
 		}
 	}
 }

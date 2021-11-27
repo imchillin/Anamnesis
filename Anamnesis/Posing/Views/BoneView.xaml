@@ -7,6 +7,8 @@
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 DataContextChanged="OnDataContextChanged"
 			 mc:Ignorable="d" 
+			 Loaded="OnLoaded"
+			 Unloaded="OnUnloaded"
 			 MouseEnter="OnMouseEnter"
 			 MouseLeave="OnMouseLeave"
 			 MouseUp="OnMouseUp"

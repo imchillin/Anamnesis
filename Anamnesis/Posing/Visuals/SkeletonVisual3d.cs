@@ -32,14 +32,8 @@ namespace Anamnesis.PoseModule
 		private readonly List<BoneVisual3d> metBones = new List<BoneVisual3d>();
 		private readonly List<BoneVisual3d> topBones = new List<BoneVisual3d>();
 
-		public SkeletonVisual3d(ActorMemory actor)
+		public SkeletonVisual3d()
 		{
-			this.Actor = actor;
-			Task.Run(this.WriteSkeletonThread);
-
-			if (actor.ModelObject?.Transform != null)
-				actor.ModelObject.Transform.PropertyChanged += this.OnTransformPropertyChanged;
-
 			this.rootRotation = new QuaternionRotation3D();
 			this.Transform = new RotateTransform3D(this.rootRotation);
 			this.OnTransformPropertyChanged(null, null);
@@ -55,7 +49,7 @@ namespace Anamnesis.PoseModule
 		}
 
 		public bool LinkEyes { get; set; } = true;
-		public ActorMemory Actor { get; private set; }
+		public ActorMemory? Actor { get; private set; }
 		public int SelectedCount => this.SelectedBones.Count;
 		public bool CanEditBone => this.SelectedBones.Count == 1;
 		public bool HasSelection => this.SelectedBones.Count > 0;
@@ -116,8 +110,8 @@ namespace Anamnesis.PoseModule
 		public void Clear()
 		{
 			this.ClearSelection();
+			this.ClearBones();
 			this.HoverBones.Clear();
-			this.Bones.Clear();
 			this.Children.Clear();
 		}
 
@@ -368,8 +362,35 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		public async Task GenerateBones()
+		public void ClearBones()
 		{
+			foreach (BoneVisual3d bone in this.Bones.Values)
+			{
+				bone.Dispose();
+			}
+
+			this.Bones.Clear();
+
+			this.hairBones.Clear();
+			this.metBones.Clear();
+			this.topBones.Clear();
+
+			this.SelectedBones.Clear();
+			this.HoverBones.Clear();
+		}
+
+		public async Task SetActor(ActorMemory actor)
+		{
+			if (this.Actor != null && this.Actor.ModelObject?.Transform != null)
+				this.Actor.ModelObject.Transform.PropertyChanged += this.OnTransformPropertyChanged;
+
+			this.Actor = actor;
+
+			if (actor.ModelObject?.Transform != null)
+				actor.ModelObject.Transform.PropertyChanged += this.OnTransformPropertyChanged;
+
+			this.Clear();
+
 			await Dispatch.MainThread();
 
 			this.ClearSelection();
@@ -381,7 +402,7 @@ namespace Anamnesis.PoseModule
 				if (!GposeService.Instance.IsGpose)
 					return;
 
-				this.Bones.Clear();
+				this.ClearBones();
 				this.Children.Clear();
 
 				if (this.Actor?.ModelObject?.Skeleton == null)
@@ -390,7 +411,7 @@ namespace Anamnesis.PoseModule
 				SkeletonMemory skeletonVm = this.Actor.ModelObject.Skeleton;
 
 				// Get all bones
-				this.Bones.Clear();
+				this.ClearBones();
 				this.hairBones.Clear();
 
 				for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeletonVm.ItemCount; partialSkeletonIndex++)
@@ -505,27 +526,19 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		private async Task WriteSkeletonThread()
+		public void WriteSkeleton()
 		{
-			while (Application.Current != null && this.Bones != null)
+			if (this.CurrentBone != null && PoseService.Instance.IsEnabled)
 			{
-				await Dispatch.MainThread();
-
-				if (this.CurrentBone != null && PoseService.Instance.IsEnabled)
+				try
 				{
-					try
-					{
-						this.CurrentBone.WriteTransform(this);
-					}
-					catch (Exception ex)
-					{
-						Log.Error(ex, $"Failed to write bone transform: {this.CurrentBone.BoneName}");
-						this.ClearSelection();
-					}
+					this.CurrentBone.WriteTransform(this);
 				}
-
-				// up to 60 times a second
-				await Task.Delay(16);
+				catch (Exception ex)
+				{
+					Log.Error(ex, $"Failed to write bone transform: {this.CurrentBone.BoneName}");
+					this.ClearSelection();
+				}
 			}
 		}
 

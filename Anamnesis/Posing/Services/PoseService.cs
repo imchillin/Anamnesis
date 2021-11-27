@@ -4,21 +4,17 @@
 namespace Anamnesis.PoseModule
 {
 	using System;
-	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
-	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
 	public class PoseService : ServiceBase<PoseService>
 	{
-		private static readonly Dictionary<ActorMemory, SkeletonVisual3d> ActorSkeletons = new Dictionary<ActorMemory, SkeletonVisual3d>();
-
 		private NopHookViewModel? freezeRot1;
 		private NopHookViewModel? freezeRot2;
 		private NopHookViewModel? freezeRot3;
@@ -109,28 +105,6 @@ namespace Anamnesis.PoseModule
 		public bool EnableParenting { get; set; } = true;
 
 		public bool CanEdit { get; set; }
-
-		public static SkeletonVisual3d GetVisual(ActorMemory actor)
-		{
-			SkeletonVisual3d skeleton;
-
-			if (ActorSkeletons.ContainsKey(actor))
-			{
-				skeleton = ActorSkeletons[actor];
-				skeleton.Clear();
-				ActorSkeletons.Remove(actor);
-			}
-
-			// TODO: Why does a new skeleton work, but clearing an old one gives us "not a child of the specified visual" when writing?
-			////else
-			{
-				skeleton = new SkeletonVisual3d(actor);
-				ActorSkeletons.Add(actor, skeleton);
-			}
-
-			skeleton.Clear();
-			return skeleton;
-		}
 
 		public override async Task Initialize()
 		{

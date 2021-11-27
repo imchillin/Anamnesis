@@ -24,6 +24,7 @@ namespace Anamnesis
 	{
 		public static event SelectionEvent? ActorSelected;
 		public static event PinnedEvent? ActorPinned;
+		public static event PinnedEvent? ActorUnPinned;
 
 		public ActorMemory? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
@@ -66,6 +67,8 @@ namespace Anamnesis
 					Instance.SelectActor((ActorMemory?)null);
 				}
 			}
+
+			ActorUnPinned?.Invoke(actor);
 		}
 
 		public static bool IsPinned(ActorBasicMemory actor)

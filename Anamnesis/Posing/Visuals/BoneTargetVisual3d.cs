@@ -10,7 +10,7 @@ namespace Anamnesis.Posing.Visuals
 	using Anamnesis.PoseModule.Views;
 	using XivToolsWpf.Meida3D;
 
-	public class BoneTargetVisual3d : ModelVisual3D
+	public class BoneTargetVisual3d : ModelVisual3D, IDisposable
 	{
 		private readonly PrsTransform transform = new PrsTransform();
 		private readonly PrsTransform sphereTransform = new PrsTransform();
@@ -39,6 +39,15 @@ namespace Anamnesis.Posing.Visuals
 			this.sphere.Material = this.normal;
 			this.sphere.Transform = this.sphereTransform.Transform;
 			this.Children.Add(this.sphere);
+		}
+
+		public void Dispose()
+		{
+			this.bone.Skeleton.PropertyChanged -= this.Skeleton_PropertyChanged;
+			this.Children.Clear();
+
+			this.sphere.Children.Clear();
+			this.sphere.Content = null;
 		}
 
 		public virtual void OnCameraUpdated(Pose3DView owner)
