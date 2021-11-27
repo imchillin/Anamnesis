@@ -86,6 +86,7 @@ namespace Anamnesis
 			try
 			{
 				_ = Task.Run(this.PerformanceWatcher);
+				_ = Task.Run(this.MemoryWatcher);
 
 				LogService.CreateLog();
 
@@ -171,6 +172,17 @@ namespace Anamnesis
 				{
 					Log.Warning($"UI thread took {ms}ms to tick");
 				}
+			}
+		}
+
+		private async Task MemoryWatcher()
+		{
+			Process proc = Process.GetCurrentProcess();
+
+			while (this._contentLoaded)
+			{
+				await Task.Delay(10000);
+				Log.Information($"{proc.PrivateMemorySize64 / 1024 / 1024}Mb memory In use.");
 			}
 		}
 	}
