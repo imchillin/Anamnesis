@@ -13,6 +13,7 @@ namespace Anamnesis.PoseModule.Views
 	using System.Windows.Media.Media3D;
 	using Anamnesis.Posing.Visuals;
 	using PropertyChanged;
+	using Serilog;
 	using XivToolsWpf;
 	using Colors = System.Windows.Media.Colors;
 
@@ -177,23 +178,30 @@ namespace Anamnesis.PoseModule.Views
 				await Task.Delay(33);
 				await Dispatch.MainThread();
 
-				if (this.Skeleton == null || CameraService.Instance.Camera == null)
+				try
+				{
+					if (this.Skeleton == null || CameraService.Instance.Camera == null)
 					continue;
 
-				this.Skeleton.ReadTranforms();
+					this.Skeleton.ReadTranforms();
 
-				// TODO: allow the user to rotate camera with the mouse instead
-				this.CameraRotation = CameraService.Instance.Camera.Rotation3d;
+					// TODO: allow the user to rotate camera with the mouse instead
+					this.CameraRotation = CameraService.Instance.Camera.Rotation3d;
 
-				// Apply camera rotation
-				QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotaion.Rotation;
-				rot.Quaternion = this.CameraRotation;
-				this.CameraRotaion.Rotation = rot;
+					// Apply camera rotation
+					QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotaion.Rotation;
+					rot.Quaternion = this.CameraRotation;
+					this.CameraRotaion.Rotation = rot;
 
-				// Apply camera position
-				Point3D pos = this.Camera.Position;
-				pos.Z = -this.CameraDistance;
-				this.Camera.Position = pos;
+					// Apply camera position
+					Point3D pos = this.Camera.Position;
+					pos.Z = -this.CameraDistance;
+					this.Camera.Position = pos;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed to update pose camera");
+				}
 			}
 
 			this.cameraIsTicking = false;
