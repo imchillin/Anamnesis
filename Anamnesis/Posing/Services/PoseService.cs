@@ -185,7 +185,11 @@ namespace Anamnesis.PoseModule
 					destPath = destPath.Replace('.', '\\');
 					destPath = destPath.Replace('_', ' ');
 					destPath = destPath.Replace("Data\\StandardPoses\\", string.Empty);
+
+					// restore file extensions
 					destPath = destPath.Replace("\\pose", ".pose");
+					destPath = destPath.Replace("\\txt", ".txt");
+
 					destPath = standardPoseDir.FullName + destPath;
 
 					string? destDir = Path.GetDirectoryName(destPath);

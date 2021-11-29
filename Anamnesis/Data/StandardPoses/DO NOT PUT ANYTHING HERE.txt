@@ -1,0 +1,4 @@
+Seriously.
+This entire directory gets wiped on each Anamnesis update.
+
+Your poses should go in your Documents/Anamnsis/Poses folder.
