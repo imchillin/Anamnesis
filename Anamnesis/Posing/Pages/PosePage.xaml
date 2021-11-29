@@ -108,7 +108,7 @@
 										<XivToolsWpf:TextBlock Text="Select Children" />
 									</Button>
 
-									<!--<Button
+									<Button
 										Grid.Column="2"
 										Grid.ColumnSpan="2"
 										Margin="2"
@@ -116,7 +116,7 @@
 										Click="OnFlipClicked"
 										Style="{StaticResource TransparentButton}">
 										<XivToolsWpf:TextBlock Key="Pose_Flip" />
-									</Button>-->
+									</Button>
 
 								</Grid>
 							</Border>

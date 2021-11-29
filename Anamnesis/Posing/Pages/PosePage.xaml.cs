@@ -92,10 +92,14 @@ namespace Anamnesis.PoseModule.Pages
 				CmQuaternion newRotation = targetBone.TransformMemory.Rotation.Mirror(); // character-relative transform
 				if (shouldFlip && targetBone.BoneName.EndsWith("_l"))
 				{
-					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(targetBone.BoneName.Replace("_l", "_r"));
+					string rightBoneString = targetBone.BoneName.Substring(0, targetBone.BoneName.Length - 2) + "_r"; // removes the "_l" and replaces it with "_r"
+					/*	Useful debug lines to make sure the correct bones are grabbed...
+					 *	Log.Information("flipping: " + targetBone.BoneName);
+					 *	Log.Information("right flip target: " + rightBoneString); */
+					BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(rightBoneString);
 					if (rightBone != null)
 					{
-						CmQuaternion rightRot = rightBone.Rotation.Mirror();
+						CmQuaternion rightRot = rightBone.TransformMemory.Rotation.Mirror();
 						foreach (TransformMemory transformMemory in targetBone.TransformMemories)
 						{
 							transformMemory.Rotation = rightRot;
@@ -376,7 +380,7 @@ namespace Anamnesis.PoseModule.Pages
 				{
 					// if targeted bone is a limb don't switch the respective left and right sides
 					BoneVisual3d targetBone = this.Skeleton.CurrentBone;
-					if (targetBone.BoneName.EndsWith("Left") || targetBone.BoneName.EndsWith("Right"))
+					if (targetBone.BoneName.EndsWith("_l") || targetBone.BoneName.EndsWith("_r"))
 					{
 						this.FlipBone(targetBone, false);
 					}
