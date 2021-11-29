@@ -140,21 +140,21 @@
 							  Grid.Column="1"
 							  Margin="0,2,0,0">
 							<ComboBox SelectedIndex="{Binding Actor.ObjectKindInt}">
-								<ComboBoxItem>None</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">None</ComboBoxItem>
 								<ComboBoxItem>Player</ComboBoxItem>
 								<ComboBoxItem>Battle NPC</ComboBoxItem>
 								<ComboBoxItem>Event NPC</ComboBoxItem>
-								<ComboBoxItem>Treasure</ComboBoxItem>
-								<ComboBoxItem>Aetheryte</ComboBoxItem>
-								<ComboBoxItem>Gathering Point</ComboBoxItem>
-								<ComboBoxItem>Event Object</ComboBoxItem>
-								<ComboBoxItem>Mount</ComboBoxItem>
-								<ComboBoxItem>Companion</ComboBoxItem>
-								<ComboBoxItem>Retainer</ComboBoxItem>
-								<ComboBoxItem>Area</ComboBoxItem>
-								<ComboBoxItem>Housing</ComboBoxItem>
-								<ComboBoxItem>Cutscene</ComboBoxItem>
-								<ComboBoxItem>card Stand</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Treasure</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Aetheryte</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Gathering Point</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Event Object</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Mount</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Companion</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Retainer</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Area</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Housing</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">Cutscene</ComboBoxItem>
+								<ComboBoxItem IsEnabled="False">card Stand</ComboBoxItem>
 							</ComboBox>
 						</Grid>
 
