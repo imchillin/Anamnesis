@@ -130,7 +130,7 @@ namespace Anamnesis.Services
 
 			if (gameVer != VersionInfo.ValidatedGameVersion)
 			{
-				Log.Warning($"Anamnesis has not been validated against this game version: {gameVer}. This may cause problems.");
+				Log.Error($"Anamnesis has not been validated against this game version: {gameVer}. This may cause problems.");
 			}
 
 			Language defaultLuminaLaunguage = Language.English;
