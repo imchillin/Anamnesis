@@ -177,11 +177,24 @@ namespace Anamnesis.Character.Pages
 
 			try
 			{
-				OpenResult result = await FileService.Open<LegacyCharacterFile, LegacyCharacterFileJson, LegacyLegacyCharacterFileJson, DatCharacterFile, CharacterFile>(
-					lastLoadDir,
+				Shortcut[]? shortcuts = new[]
+				{
 					FileService.DefaultCharacterDirectory,
 					FileService.FFxivDatCharacterDirectory,
-					FileService.CMToolAppearanceSaveDir);
+					FileService.CMToolAppearanceSaveDir,
+				};
+
+				Type[] types = new[]
+				{
+					typeof(CmToolAppearanceFile),
+					typeof(CmToolAppearanceJsonFile),
+					typeof(CmToolGearsetFile),
+					typeof(CmToolLegacyAppearanceFile),
+					typeof(DatCharacterFile),
+					typeof(CharacterFile),
+				};
+
+				OpenResult result = await FileService.Open(lastLoadDir, shortcuts, types);
 
 				if (result.File == null)
 					return;

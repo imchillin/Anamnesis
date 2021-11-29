@@ -116,47 +116,7 @@ namespace Anamnesis.Files
 			Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", $"\"{dir}\"");
 		}
 
-		public static async Task<OpenResult> Open<T>(DirectoryInfo? defaultDirectory, params Shortcut[] shortcuts)
-			where T : FileBase
-		{
-			return await Open(defaultDirectory, shortcuts, typeof(T));
-		}
-
-		public static async Task<OpenResult> Open<T1, T2>(DirectoryInfo? defaultDirectory, params Shortcut[] shortcuts)
-			where T1 : FileBase
-			where T2 : FileBase
-		{
-			return await Open(defaultDirectory, shortcuts, typeof(T1), typeof(T2));
-		}
-
-		public static async Task<OpenResult> Open<T1, T2, T3>(DirectoryInfo? defaultDirectory, params Shortcut[] shortcuts)
-			where T1 : FileBase
-			where T2 : FileBase
-			where T3 : FileBase
-		{
-			return await Open(defaultDirectory, shortcuts, typeof(T1), typeof(T2), typeof(T3));
-		}
-
-		public static async Task<OpenResult> Open<T1, T2, T3, T4>(DirectoryInfo? defaultDirectory, params Shortcut[] shortcuts)
-			where T1 : FileBase
-			where T2 : FileBase
-			where T3 : FileBase
-			where T4 : FileBase
-		{
-			return await Open(defaultDirectory, shortcuts, typeof(T1), typeof(T2), typeof(T3), typeof(T4));
-		}
-
-		public static async Task<OpenResult> Open<T1, T2, T3, T4, T5>(DirectoryInfo? defaultDirectory, params Shortcut[] shortcuts)
-			where T1 : FileBase
-			where T2 : FileBase
-			where T3 : FileBase
-			where T4 : FileBase
-			where T5 : FileBase
-		{
-			return await Open(defaultDirectory, shortcuts, typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5));
-		}
-
-		public static async Task<OpenResult> Open(DirectoryInfo? defaultDirectory, Shortcut[] shortcuts, params Type[] fileTypes)
+		public static async Task<OpenResult> Open(DirectoryInfo? defaultDirectory, Shortcut[] shortcuts, Type[] fileTypes)
 		{
 			OpenResult result = default;
 
@@ -234,6 +194,7 @@ namespace Anamnesis.Files
 
 							using FileStream stream = new FileStream(result.Path.FullName, FileMode.Open);
 							result.File = file.Deserialize(stream);
+							break;
 						}
 						catch (Exception ex)
 						{

@@ -269,18 +269,27 @@ namespace Anamnesis.PoseModule.Pages
 				PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
 				PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
 
-				OpenResult result = await FileService.Open<PoseFile, LegacyPoseFile>(
-					lastLoadDir,
+				Type[] types = new[]
+				{
+					typeof(PoseFile),
+					typeof(CmToolPoseFile),
+				};
+
+				Shortcut[] shortcuts = new[]
+				{
 					FileService.DefaultPoseDirectory,
 					FileService.StandardPoseDirectory,
-					FileService.CMToolPoseSaveDir);
+					FileService.CMToolPoseSaveDir,
+				};
+
+				OpenResult result = await FileService.Open(lastLoadDir, shortcuts, types);
 
 				if (result.File == null)
 					return;
 
 				lastLoadDir = result.Directory;
 
-				if (result.File is LegacyPoseFile legacyFile)
+				if (result.File is CmToolPoseFile legacyFile)
 					result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? ActorCustomizeMemory.Races.Hyur);
 
 				if (result.File is PoseFile poseFile)

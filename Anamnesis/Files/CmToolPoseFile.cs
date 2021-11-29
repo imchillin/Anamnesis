@@ -10,7 +10,7 @@ namespace Anamnesis.Files
 	using System.Text.Json.Serialization;
 	using Anamnesis.Memory;
 
-	public class LegacyPoseFile : JsonFileBase
+	public class CmToolPoseFile : JsonFileBase
 	{
 		public override string FileExtension => ".cmp";
 		public override string TypeName => "CMTool pose";

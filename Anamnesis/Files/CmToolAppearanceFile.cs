@@ -8,7 +8,7 @@ namespace Anamnesis.Files
 	using Anamnesis.Memory;
 
 	#pragma warning disable IDE1006, SA1300
-	public class LegacyCharacterFile : JsonFileBase, IUpgradeCharacterFile
+	public class CmToolAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 	{
 		public override string FileExtension => ".cma";
 		public override string TypeName => "CMTool Appearance";
