@@ -26,8 +26,8 @@ namespace Anamnesis.GameData.Excel
 
 		public override void PopulateData(RowParser parser, LuminaData lumina, Language language)
 		{
-			this.RowId = parser.Row;
-			this.SubRowId = parser.SubRow;
+			this.RowId = parser.RowId;
+			this.SubRowId = parser.SubRowId;
 
 			this.Race = (ActorCustomizeMemory.Races)parser.ReadColumn<int>(0);
 			this.Tribe = (ActorCustomizeMemory.Tribes)parser.ReadColumn<int>(1);
