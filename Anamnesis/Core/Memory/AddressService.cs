@@ -18,9 +18,7 @@ namespace Anamnesis.Core.Memory
 
 		// Static offsets
 		public static IntPtr ActorTable { get; private set; }
-		public static IntPtr TargetManager { get; private set; }
 		public static IntPtr GPoseActorTable { get; private set; }
-		public static IntPtr GPoseTargetManager { get; private set; }
 		public static IntPtr GPoseFilters { get; private set; }
 		public static IntPtr SkeletonFreezeRotation { get; private set; }   // SkeletonOffset
 		public static IntPtr SkeletonFreezeRotation2 { get; private set; }  // SkeletonOffset2
@@ -62,7 +60,7 @@ namespace Anamnesis.Core.Memory
 				IntPtr address = MemoryService.ReadPtr(time);
 
 				if (address == IntPtr.Zero)
-					throw new Exception("Failed to read time address");
+					return IntPtr.Zero;
 
 				// CMTools MovingTime offset
 				address += 0x1608;
@@ -138,32 +136,26 @@ namespace Anamnesis.Core.Memory
 
 			// Scan for all static addresses
 			// Some signatures taken from Dalamud: https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Game/ClientState/ClientStateAddressResolver.cs
-			tasks.Add(GetAddressFromSignature("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 0F B6 83", 0, (p) => { ActorTable = p; }));
-			tasks.Add(GetAddressFromSignature("48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 3, (p) => { TargetManager = p + 0x80; }));
+			tasks.Add(GetAddressFromSignature("ActorTable", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 0F B6 83", 0, (p) => { ActorTable = p; }));
+			tasks.Add(GetAddressFromTextSignature("SkeletonFreezeRotation", "41 0F 29 5C 12 10", (p) => { SkeletonFreezeRotation = p; }));    // SkeletonAddress
+			tasks.Add(GetAddressFromTextSignature("SkeletonFreezeRotation2", "43 0F 29 5C 18 10", (p) => { SkeletonFreezeRotation2 = p; }));   // SkeletonAddress2
+			tasks.Add(GetAddressFromTextSignature("SkeletonFreezeRotation3", "0F 29 5E 10 49 8B 73 28", (p) => { SkeletonFreezeRotation3 = p; })); // SkeletonAddress3
+			tasks.Add(GetAddressFromTextSignature("SkeletonFreezeScale", "41 0F 29 44 12 20", (p) => { SkeletonFreezeScale = p; }));   // SkeletonAddress4
+			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition", "41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
+			tasks.Add(GetAddressFromTextSignature("SkeletonFreezeScale2", "43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
+			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition2", "43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
+			tasks.Add(GetBaseAddressFromSignature("Camera", "4F 8B B4 C6 ?? ?? ?? ??", 4, true, (p) => { Camera = p; }));  // CameraAddress
+			tasks.Add(GetBaseAddressFromSignature("Time", "48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
+			tasks.Add(GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
+			tasks.Add(GetAddressFromTextSignature("TimeStop", "48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
+			tasks.Add(GetAddressFromSignature("Weather", "49 8B 9D ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));
+			tasks.Add(GetAddressFromSignature("GPoseFilters", "4C 8B 05 ?? ?? ?? ?? 41 8B 80 ?? ?? ?? ?? C1 E8 02", 0, (p) => { GPoseFilters = p; }));
+			tasks.Add(GetAddressFromSignature("GposeCheck", "48 8B 15 ?? ?? ?? ?? 48 89 6C 24", 0, (p) => { GposeCheck = p; }));
+			tasks.Add(GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
+			tasks.Add(GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
+			tasks.Add(GetAddressFromSignature("GPoseActorTable / GPoseTargetManager", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 8E", 0, (p) => GPoseActorTable = p + 0x14A0));
 
-			tasks.Add(GetAddressFromTextSignature("41 0F 29 5C 12 10", (p) => { SkeletonFreezeRotation = p; }));    // SkeletonAddress
-			tasks.Add(GetAddressFromTextSignature("43 0F 29 5C 18 10", (p) => { SkeletonFreezeRotation2 = p; }));   // SkeletonAddress2
-			tasks.Add(GetAddressFromTextSignature("0F 29 5E 10 49 8B 73 28", (p) => { SkeletonFreezeRotation3 = p; })); // SkeletonAddress3
-			tasks.Add(GetAddressFromTextSignature("41 0F 29 44 12 20", (p) => { SkeletonFreezeScale = p; }));   // SkeletonAddress4
-			tasks.Add(GetAddressFromTextSignature("41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
-			tasks.Add(GetAddressFromTextSignature("43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
-			tasks.Add(GetAddressFromTextSignature("43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
-			tasks.Add(GetBaseAddressFromSignature("4F 8B B4 C6 ?? ?? ?? ??", 4, true, (p) => { Camera = p; }));  // CameraAddress
-			tasks.Add(GetBaseAddressFromSignature("48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
-			tasks.Add(GetAddressFromSignature("8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
-			tasks.Add(GetAddressFromTextSignature("48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
-			tasks.Add(GetAddressFromSignature("49 8B 9D ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));
-			tasks.Add(GetAddressFromSignature("4C 8B 05 ?? ?? ?? ?? 41 8B 80 ?? ?? ?? ?? C1 E8 02", 0, (p) => { GPoseFilters = p; }));
-			tasks.Add(GetAddressFromSignature("48 8B 15 ?? ?? ?? ?? 48 89 6C 24", 0, (p) => { GposeCheck = p; }));
-			tasks.Add(GetAddressFromSignature("8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
-			tasks.Add(GetAddressFromSignature("48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
-			tasks.Add(GetAddressFromSignature("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 8E", 0, (p) =>
-			{
-				GPoseActorTable = p + 0x14A0;
-				GPoseTargetManager = p + 0x14A0;
-			}));
-
-			tasks.Add(GetAddressFromTextSignature("0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
+			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
 			{
 				SkeletonFreezePhysics = p;  // PhysicsAddress
 				SkeletonFreezePhysics2 = p - 0x9;   // SkeletonAddress2
@@ -175,7 +167,7 @@ namespace Anamnesis.Core.Memory
 			Log.Information($"Took {sw.ElapsedMilliseconds}ms to scan for {tasks.Count} addresses");
 		}
 
-		private static Task GetAddressFromSignature(string signature, int offset, Action<IntPtr> callback)
+		private static Task GetAddressFromSignature(string name, string signature, int offset, Action<IntPtr> callback)
 		{
 			if (MemoryService.Scanner == null)
 				throw new Exception("No memory scanner");
@@ -189,12 +181,12 @@ namespace Anamnesis.Core.Memory
 				}
 				catch (Exception ex)
 				{
-					Log.Fatal(ex, "Failed to scan memory for signature. (Have you tried restarting FFXIV?)");
+					Log.Fatal(ex, $"Failed to scan memory for signature: {name} (Have you tried restarting FFXIV?)");
 				}
 			});
 		}
 
-		private static Task GetAddressFromTextSignature(string signature, Action<IntPtr> callback)
+		private static Task GetAddressFromTextSignature(string name, string signature, Action<IntPtr> callback)
 		{
 			if (MemoryService.Scanner == null)
 				throw new Exception("No memory scanner");
@@ -208,12 +200,12 @@ namespace Anamnesis.Core.Memory
 				}
 				catch (Exception ex)
 				{
-					Log.Fatal(ex, "Failed to scan memory for text signature (Have you tried restarting FFXIV?)");
+					Log.Fatal(ex, $"Failed to scan memory for text signature: {name} (Have you tried restarting FFXIV?)");
 				}
 			});
 		}
 
-		private static Task GetBaseAddressFromSignature(string signature, int skip, bool moduleBase, Action<IntPtr> callback)
+		private static Task GetBaseAddressFromSignature(string name, string signature, int skip, bool moduleBase, Action<IntPtr> callback)
 		{
 			if (MemoryService.Scanner == null)
 				throw new Exception("No memory scanner");
@@ -243,7 +235,8 @@ namespace Anamnesis.Core.Memory
 				}
 				catch (Exception ex)
 				{
-					Log.Fatal(ex, "Failed to scan memory for base address from signature (Have you tried restarting FFXIV?)");
+					Log.Fatal(ex, $"Failed to scan memory for base address from signature: {name} (Have you tried restarting FFXIV?)");
+					callback.Invoke(IntPtr.Zero);
 				}
 			});
 		}
