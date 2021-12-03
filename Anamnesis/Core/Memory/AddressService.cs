@@ -181,7 +181,7 @@ namespace Anamnesis.Core.Memory
 				}
 				catch (Exception ex)
 				{
-					Log.Fatal(ex, $"Failed to scan memory for signature: {name} (Have you tried restarting FFXIV?)");
+					Log.Error(ex, $"Failed to scan memory for signature: {name} (Have you tried restarting FFXIV?)");
 				}
 			});
 		}
@@ -200,7 +200,7 @@ namespace Anamnesis.Core.Memory
 				}
 				catch (Exception ex)
 				{
-					Log.Fatal(ex, $"Failed to scan memory for text signature: {name} (Have you tried restarting FFXIV?)");
+					Log.Error(ex, $"Failed to scan memory for text signature: {name} (Have you tried restarting FFXIV?)");
 				}
 			});
 		}
@@ -235,7 +235,7 @@ namespace Anamnesis.Core.Memory
 				}
 				catch (Exception ex)
 				{
-					Log.Fatal(ex, $"Failed to scan memory for base address from signature: {name} (Have you tried restarting FFXIV?)");
+					Log.Error(ex, $"Failed to scan memory for base address from signature: {name} (Have you tried restarting FFXIV?)");
 					callback.Invoke(IntPtr.Zero);
 				}
 			});
