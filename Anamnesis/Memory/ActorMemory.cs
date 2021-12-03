@@ -29,12 +29,16 @@ namespace Anamnesis.Memory
 		[Bind(0x01E2)] public byte ClassJob { get; set; }
 		[Bind(0x07C4)] public bool IsAnimating { get; set; }
 
-		// From here down offsets are wrong
-		[Bind(0x0F08)] public WeaponMemory? MainHand { get; set; }
-		[Bind(0x0F70)] public WeaponMemory? OffHand { get; set; }
-		[Bind(0x1040)] public ActorEquipmentMemory? Equipment { get; set; }
-		[Bind(0x182C)] public float Transparency { get; set; }
-		[Bind(0x1898)] public ActorCustomizeMemory? Customize { get; set; }
+		////[Bind(0x0F08)]
+		public WeaponMemory? MainHand { get; set; }
+		////[Bind(0x0F70)]
+		public WeaponMemory? OffHand { get; set; }
+		////[Bind(0x1040)]
+		public ActorEquipmentMemory? Equipment { get; set; }
+		////[Bind(0x182C)]
+		public float Transparency { get; set; }
+		////[Bind(0x1898)]
+		public ActorCustomizeMemory? Customize { get; set; }
 
 		public bool AutomaticRefreshEnabled { get; set; } = true;
 		public bool IsRefreshing { get; set; } = false;
