@@ -10,7 +10,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("Weather", 47129921u)]
+	[Sheet("Weather", 0x02cf2541)]
 	public class Weather : ExcelRow
 	{
 		public string Name { get; private set; } = string.Empty;

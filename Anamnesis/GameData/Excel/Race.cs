@@ -12,7 +12,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("Race", 872644730u)]
+	[Sheet("Race", 0x3403807a)]
 	public class Race : ExcelRow
 	{
 		public string Name => this.CustomizeRace.ToString();

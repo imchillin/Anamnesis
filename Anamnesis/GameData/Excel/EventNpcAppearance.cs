@@ -10,7 +10,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("ENpcBase", 2457028568u)]
+	[Sheet("ENpcBase", 0x927347d8)]
 	public class EventNpcAppearance : ExcelRow, INpcAppearance
 	{
 		public uint ModelCharaRow { get; private set; }

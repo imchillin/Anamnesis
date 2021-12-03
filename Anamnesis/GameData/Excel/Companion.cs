@@ -13,7 +13,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("Companion", 2002798787u)]
+	[Sheet("Companion", 0x776048c3)]
 	public class Companion : ExcelRow, INpcBase
 	{
 		private string? name;

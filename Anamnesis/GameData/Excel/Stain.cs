@@ -15,7 +15,7 @@ namespace Anamnesis.GameData.Excel
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 	using MediaColor = System.Windows.Media.Color;
 
-	[Sheet("Stain", 2722238056u)]
+	[Sheet("Stain", 0xa2420e68)]
 	public class Stain : ExcelRow, IDye
 	{
 		public byte Id => (byte)this.RowId;

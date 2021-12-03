@@ -13,7 +13,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("Perform", 2079858601u)]
+	[Sheet("Perform", 0x7bf81fa9)]
 	public class Perform : ExcelRow, IItem
 	{
 		public string Name { get; private set; } = string.Empty;

@@ -9,7 +9,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("EquipRaceCategory", 4178882968u)]
+	[Sheet("EquipRaceCategory", 0xf914b198)]
 	public class EquipRaceCategory : ExcelRow
 	{
 		public bool Hyur { get; private set; }

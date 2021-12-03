@@ -9,7 +9,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("BNpcName", 2007444896u)]
+	[Sheet("BNpcName", 0x77a72da0)]
 	public class BattleNpcName : ExcelRow
 	{
 		public string Singular { get; private set; } = string.Empty;

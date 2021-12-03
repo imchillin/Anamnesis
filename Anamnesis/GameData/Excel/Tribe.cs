@@ -10,7 +10,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("Tribe", 3880212987u)]
+	[Sheet("Tribe", 0xe74759fb)]
 	public class Tribe : ExcelRow
 	{
 		public string Name => this.CustomizeTribe.ToString();

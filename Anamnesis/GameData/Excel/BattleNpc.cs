@@ -15,7 +15,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("BNpcBase", 3717274695u)]
+	[Sheet("BNpcBase", 0xdd911c47)]
 	public class BattleNpc : ExcelRow, INpcBase
 	{
 		private string? name;

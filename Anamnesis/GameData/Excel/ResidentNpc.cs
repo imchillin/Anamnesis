@@ -12,7 +12,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("ENpcResident", 4149192844u)]
+	[Sheet("ENpcResident", 0xf74fa88c)]
 	public class ResidentNpc : ExcelRow, INpcBase
 	{
 		private string? name;

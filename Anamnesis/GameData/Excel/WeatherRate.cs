@@ -8,7 +8,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("WeatherRate", 1196080354u)]
+	[Sheet("WeatherRate", 0x474abce2)]
 	public class WeatherRate : ExcelRow
 	{
 		public UnkStruct0Struct[]? UnkStruct0 { get; private set; }

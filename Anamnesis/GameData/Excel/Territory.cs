@@ -12,7 +12,7 @@ namespace Anamnesis.GameData.Excel
 	using Serilog;
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("TerritoryType", 3076097095u)]
+	[Sheet("TerritoryType", 0x5baa595e)]
 	public class Territory : ExcelRow
 	{
 		private static readonly HashSet<uint> HousingTerritories = new()

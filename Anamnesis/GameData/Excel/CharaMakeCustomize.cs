@@ -10,7 +10,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("CharaMakeCustomize", 732348175u)]
+	[Sheet("CharaMakeCustomize", 0x2ba6bf0f)]
 	public class CharaMakeCustomize : ExcelRow
 	{
 		public string Name { get; set; } = string.Empty;
