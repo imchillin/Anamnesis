@@ -90,12 +90,30 @@ namespace Anamnesis.PoseModule
 		public bool IsCustomFace => this.IsMiqote || this.IsHrothgar;
 		public bool IsMiqote => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote;
 		public bool IsViera => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Viera;
-		public bool IsVieraEars01 => this.IsViera && this.Actor?.Customize?.TailEarsType <= 1;
-		public bool IsVieraEars02 => this.IsViera && this.Actor?.Customize?.TailEarsType == 2;
-		public bool IsVieraEars03 => this.IsViera && this.Actor?.Customize?.TailEarsType == 3;
-		public bool IsVieraEars04 => this.IsViera && this.Actor?.Customize?.TailEarsType == 4;
 		public bool IsHrothgar => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar;
 		public bool HasTailOrEars => this.IsViera || this.HasTail;
+
+		public bool IsVieraEarsFlop
+		{
+			get
+			{
+				if (!this.IsViera)
+					return false;
+
+				ActorCustomizeMemory? customize = this.Actor?.Customize;
+
+				if (customize == null)
+					return false;
+
+				if (customize.Gender == ActorCustomizeMemory.Genders.Feminine && customize.TailEarsType == 3)
+					return true;
+
+				if (customize.Gender == ActorCustomizeMemory.Genders.Masculine && customize.TailEarsType == 2)
+					return true;
+
+				return false;
+			}
+		}
 
 		public AnQuaternion RootRotation
 		{
