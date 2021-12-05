@@ -37,7 +37,7 @@ namespace Anamnesis.Memory
 		public ActorEquipmentMemory? Equipment { get; set; }
 		////[Bind(0x182C)]
 		public float Transparency { get; set; }
-		
+
 		[Bind(0x0DD8)]public ActorCustomizeMemory? Customize { get; set; }
 
 		public bool AutomaticRefreshEnabled { get; set; } = true;
