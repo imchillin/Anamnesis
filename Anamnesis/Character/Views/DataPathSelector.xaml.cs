@@ -7,6 +7,7 @@ namespace Anamnesis.Character.Views
 	using System.Collections.ObjectModel;
 	using System.Windows.Controls;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 	using PropertyChanged;
 	using XivToolsWpf.DependencyProperties;
 
@@ -29,35 +30,20 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 
 			this.SelectedPath = this.GetOption(this.DataPath);
+
+			foreach (ActorModelMemory.DataPaths dataPathVal in Enum.GetValues<ActorModelMemory.DataPaths>())
+			{
+				string? name = Enum.GetName(dataPathVal);
+
+				if (name == null)
+					continue;
+
+				string locName = LocalizationService.GetString($"Character_Data_{name}");
+				this.PathOptions.Add(new DataPathOption(locName, dataPathVal));
+			}
 		}
 
-		public ObservableCollection<DataPathOption> PathOptions { get; set; } = new ObservableCollection<DataPathOption>()
-		{
-			new DataPathOption("Midlander Masculine", 101),
-			new DataPathOption("Midlander Masculine Child", 104),
-			new DataPathOption("Midlander Feminine", 201),
-			new DataPathOption("Midlander Feminine Child", 204),
-			new DataPathOption("Highlander Masculine", 301),
-			new DataPathOption("Highlander Feminine", 401),
-			new DataPathOption("Elezen Masculine", 501),
-			new DataPathOption("Elezen Masculine Child", 504),
-			new DataPathOption("Elezen Feminine", 601),
-			new DataPathOption("Elezen Feminine Child", 604),
-			new DataPathOption("Miqo'te Masculine", 701),
-			new DataPathOption("Miqo'te Masculine Child", 704),
-			new DataPathOption("Miqo'te Feminine", 801),
-			new DataPathOption("Miqo'te Feminine Child", 804),
-			new DataPathOption("Roegadyn Masculine", 901),
-			new DataPathOption("Roegadyn Feminine", 1001),
-			new DataPathOption("Lalafell Masculine", 1101),
-			new DataPathOption("Lalafell Feminine", 1201),
-			new DataPathOption("Au Ra Masculine", 1301),
-			new DataPathOption("Au Ra Feminine", 1401),
-			new DataPathOption("Hrothgar", 1501),
-			new DataPathOption("Viera", 1801),
-			new DataPathOption("Padjal Masculine", 9104),
-			new DataPathOption("Padjal Feminine", 9204),
-		};
+		public ObservableCollection<DataPathOption> PathOptions { get; set; } = new ObservableCollection<DataPathOption>();
 
 		public short DataPath
 		{
@@ -133,10 +119,10 @@ namespace Anamnesis.Character.Views
 
 		public class DataPathOption
 		{
-			public DataPathOption(string name, short path)
+			public DataPathOption(string name, ActorModelMemory.DataPaths path)
 			{
 				this.Name = name;
-				this.PathValue = path;
+				this.PathValue = (short)path;
 			}
 
 			public short PathValue { get; private set; }

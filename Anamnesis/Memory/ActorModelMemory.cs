@@ -33,8 +33,10 @@ namespace Anamnesis.Memory
 			LalafellFeminine = 1201,
 			AuRaMasculine = 1301,
 			AuRaFeminine = 1401,
-			Hrothgar = 1501,
-			Viera = 1801,
+			HrothgarMasculine = 1501,
+			////HrothgarFeminine = 1601,
+			VieraMasculine = 1701,
+			VieraFeminine = 1801,
 			PadjalMasculine = 9104,
 			PadjalFeminine = 9204,
 		}

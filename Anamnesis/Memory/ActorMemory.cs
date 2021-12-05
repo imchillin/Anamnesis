@@ -44,7 +44,7 @@ namespace Anamnesis.Memory
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
 
-		public bool IsPlayer => this.ModelObject != null && Enum.IsDefined(typeof(ActorModelMemory.DataPaths), this.ModelObject.DataPath);
+		public bool IsPlayer => this.ModelObject != null && this.ModelObject.IsPlayer;
 
 		public int ObjectKindInt
 		{
