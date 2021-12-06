@@ -144,16 +144,18 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition", "41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezeScale2", "43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition2", "43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
-			tasks.Add(GetBaseAddressFromSignature("Camera", "4F 8B B4 C6 ?? ?? ?? ??", 4, true, (p) => { Camera = p; }));  // CameraAddress
-			tasks.Add(GetBaseAddressFromSignature("Time", "48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
 			tasks.Add(GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
-			tasks.Add(GetAddressFromTextSignature("TimeStop", "48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
 			tasks.Add(GetAddressFromSignature("Weather", "49 8B 9D ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));
 			tasks.Add(GetAddressFromSignature("GPoseFilters", "4C 8B 05 ?? ?? ?? ?? 41 8B 80 ?? ?? ?? ?? C1 E8 02", 0, (p) => { GPoseFilters = p; }));
 			tasks.Add(GetAddressFromSignature("GposeCheck", "48 8B 15 ?? ?? ?? ?? 48 89 6C 24", 0, (p) => { GposeCheck = p; }));
 			tasks.Add(GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
-			tasks.Add(GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
 			tasks.Add(GetAddressFromSignature("GPoseActorTable / GPoseTargetManager", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 8E", 0, (p) => GPoseActorTable = p + 0x14A0));
+			tasks.Add(GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
+
+			// Mising Signature for Endwalker
+			tasks.Add(GetAddressFromTextSignature("TimeStop", "48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
+			tasks.Add(GetBaseAddressFromSignature("Time", "48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
+			tasks.Add(GetBaseAddressFromSignature("Camera", "4F 8B B4 C6 ?? ?? ?? ??", 4, true, (p) => { Camera = p; })); // CameraAddress
 
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
 			{
