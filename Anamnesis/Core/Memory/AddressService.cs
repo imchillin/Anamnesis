@@ -13,7 +13,6 @@ namespace Anamnesis.Core.Memory
 	public class AddressService : ServiceBase<AddressService>
 	{
 		private static IntPtr weather;
-		private static IntPtr time;
 		private static IntPtr cameraManager;
 
 		// Static offsets
@@ -35,6 +34,7 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr Territory { get; private set; }
 		public static IntPtr GPose { get; private set; }
 		public static IntPtr TimeStop { get; private set; }
+		public static IntPtr Time { get; set; }
 
 		public static IntPtr Camera
 		{
@@ -46,25 +46,6 @@ namespace Anamnesis.Core.Memory
 					throw new Exception("Failed to read camera address");
 
 				return address;
-			}
-		}
-
-		public static IntPtr Time
-		{
-			get
-			{
-				IntPtr address = MemoryService.ReadPtr(time);
-
-				if (address == IntPtr.Zero)
-					return IntPtr.Zero;
-
-				// CMTools MovingTime offset
-				address += 0x1608;
-				return address;
-			}
-			set
-			{
-				time = value;
 			}
 		}
 
@@ -150,8 +131,23 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
 
 			// Mising Signature for Endwalker
-			////tasks.Add(GetAddressFromTextSignature("TimeStop", "48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
-			////tasks.Add(GetBaseAddressFromSignature("Time", "48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
+			tasks.Add(GetAddressFromTextSignature(
+				"TimeStop",
+				"48 89 5C 24 ?? 57 48 83 EC 30 4C 8B 15",
+				(p) =>
+				{
+					TimeStop = p + 0x19;
+				}));
+
+			tasks.Add(GetAddressFromTextSignature(
+				"Time",
+				"48 C7 05 ?? ?? ?? ?? 00 00 00 00 E8 ?? ?? ?? ?? 48 8D ?? ?? ?? 00 00 E8 ?? ?? ?? ?? 48 8D",
+				(p) =>
+				{
+					int fwOffset = MemoryService.Read<int>(p + 3);
+					Time = MemoryService.ReadPtr(p + 11 + fwOffset);
+					Time += 0x1770;
+				}));
 
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
 			{
