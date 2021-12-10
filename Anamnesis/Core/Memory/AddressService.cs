@@ -150,8 +150,8 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
 
 			// Mising Signature for Endwalker
-			tasks.Add(GetAddressFromTextSignature("TimeStop", "48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
-			tasks.Add(GetBaseAddressFromSignature("Time", "48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
+			////tasks.Add(GetAddressFromTextSignature("TimeStop", "48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
+			////tasks.Add(GetBaseAddressFromSignature("Time", "48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
 
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
 			{
