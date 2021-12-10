@@ -14,7 +14,7 @@ namespace Anamnesis.Core.Memory
 	{
 		private static IntPtr weather;
 		private static IntPtr time;
-		private static IntPtr camera;
+		private static IntPtr cameraManager;
 
 		// Static offsets
 		public static IntPtr ActorTable { get; private set; }
@@ -40,16 +40,12 @@ namespace Anamnesis.Core.Memory
 		{
 			get
 			{
-				IntPtr address = MemoryService.ReadPtr(camera);
+				IntPtr address = MemoryService.ReadPtr(cameraManager);
 
 				if (address == IntPtr.Zero)
 					throw new Exception("Failed to read camera address");
 
 				return address;
-			}
-			set
-			{
-				camera = value;
 			}
 		}
 
@@ -151,11 +147,11 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
 			tasks.Add(GetAddressFromSignature("GPoseActorTable / GPoseTargetManager", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 8E", 0, (p) => GPoseActorTable = p + 0x14A0));
 			tasks.Add(GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
+			tasks.Add(GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
 
 			// Mising Signature for Endwalker
 			tasks.Add(GetAddressFromTextSignature("TimeStop", "48 89 ?? 08 16 00 00 48 69", (p) => { TimeStop = p; }));
 			tasks.Add(GetBaseAddressFromSignature("Time", "48 8B 15 ?? ?? ?? ?? 4C 8B 82 18 16 00 00", 3, false, (p) => { Time = p; }));  // TimeAddress
-			tasks.Add(GetBaseAddressFromSignature("Camera", "4F 8B B4 C6 ?? ?? ?? ??", 4, true, (p) => { Camera = p; })); // CameraAddress
 
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
 			{
