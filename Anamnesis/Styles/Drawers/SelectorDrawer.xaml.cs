@@ -266,6 +266,8 @@ namespace Anamnesis.Styles.Drawers
 
 					await Dispatch.MainThread();
 					this.ProgressBar.Visibility = Visibility.Collapsed;
+
+					this.ListBox.ScrollIntoView(this.Value);
 				});
 			}
 			else
