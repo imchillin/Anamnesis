@@ -176,7 +176,7 @@
 					</Viewbox>
 
 					<!-- Viera Ears 02 -->
-					<Viewbox Visibility="{Binding IsVieraEarsFlop, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="110">
+					<Viewbox Visibility="{Binding IsVieraEarsFlop, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="100">
 						<Canvas Width="163" Height="142" Margin="-60, 20, 30, -20">
 							<Image Canvas.Left="0" Canvas.Top="0" Width="256" Height="122" Source="../../Assets/PoseCharacterVieraEarsFlopBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
