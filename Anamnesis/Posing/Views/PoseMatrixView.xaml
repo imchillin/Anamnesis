@@ -65,26 +65,26 @@
 						<XivToolsWpf:TextBlock Grid.Column="8" Key="Pose_VieraEars" Style="{DynamicResource Label}" Visibility="{Binding IsViera, Converter={StaticResource B2V}}" Margin="16, 0, 3, 0"/>
 						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars01, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="VieraEar01ALeft" Label="L1"/>
-							<local:BoneView BoneName="VieraEar01ARight" Label="L2"/>
-							<local:BoneView BoneName="VieraEar01BLeft" Label="R1"/>
+							<local:BoneView BoneName="VieraEar01BLeft" Label="L2"/>
+							<local:BoneView BoneName="VieraEar01ARight" Label="R1"/>
 							<local:BoneView BoneName="VieraEar01BRight" Label="R2"/>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="VieraEar02ALeft" Label="L1"/>
-							<local:BoneView BoneName="VieraEar02ARight" Label="L2"/>
-							<local:BoneView BoneName="VieraEar02BLeft" Label="R1"/>
+							<local:BoneView BoneName="VieraEar02BLeft" Label="L2"/>
+							<local:BoneView BoneName="VieraEar02ARight" Label="R1"/>
 							<local:BoneView BoneName="VieraEar02BRight" Label="R2"/>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="VieraEar03ALeft" Label="L1"/>
-							<local:BoneView BoneName="VieraEar03ARight" Label="L2"/>
-							<local:BoneView BoneName="VieraEar03BLeft" Label="R1"/>
+							<local:BoneView BoneName="VieraEar03BLeft" Label="L2"/>
+							<local:BoneView BoneName="VieraEar03ARight" Label="R1"/>
 							<local:BoneView BoneName="VieraEar03BRight" Label="R2"/>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="VieraEar04ALeft" Label="L1"/>
-							<local:BoneView BoneName="VieraEar04ARight" Label="L2"/>
-							<local:BoneView BoneName="VieraEar04BLeft" Label="R1"/>
+							<local:BoneView BoneName="VieraEar04BLeft" Label="L2"/>
+							<local:BoneView BoneName="VieraEar04ARight" Label="R1"/>
 							<local:BoneView BoneName="VieraEar04BRight" Label="R2"/>
 						</StackPanel>
 
@@ -178,9 +178,9 @@
 									Orientation="Horizontal">
 							<local:BoneView BoneName="EarringALeft"
 											Label="L1" />
-							<local:BoneView BoneName="EarringARight"
-											Label="L2" />
 							<local:BoneView BoneName="EarringBLeft"
+											Label="L2" />
+							<local:BoneView BoneName="EarringARight"
 											Label="R1" />
 							<local:BoneView BoneName="EarringBRight"
 											Label="R2" />
