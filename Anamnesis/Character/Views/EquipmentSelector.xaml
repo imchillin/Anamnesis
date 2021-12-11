@@ -121,6 +121,7 @@
 			Close="OnClose"
 			Filter="OnFilter"
 			Sort="OnSort"
+			Width="256"
 			SelectionChanged="OnSelectionChanged">
 
 			<cm3Drawers:SelectorDrawer.ItemTemplate>

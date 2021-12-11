@@ -118,6 +118,9 @@ namespace Anamnesis.GameData
 		{
 			switch (job)
 			{
+				case Classes.None: return null;
+				case Classes.All: return null;
+
 				case Classes.Alchemist: return Roles.Crafters;
 				case Classes.Arcanist: return Roles.Damage;
 				case Classes.Archer: return Roles.Damage;
