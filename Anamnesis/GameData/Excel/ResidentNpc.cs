@@ -3,7 +3,6 @@
 
 namespace Anamnesis.GameData.Excel
 {
-	using System.Windows.Media;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.TexTools;
@@ -16,8 +15,9 @@ namespace Anamnesis.GameData.Excel
 	public class ResidentNpc : ExcelRow, INpcBase
 	{
 		private string? name;
+		private EventNpc? eventNpc;
 
-		public string Name => this.name ?? $"Resident NPC #{this.RowId}";
+		public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
 		public string Description { get; private set; } = string.Empty;
 		public uint ModelCharaRow { get; private set; }
 
@@ -25,7 +25,7 @@ namespace Anamnesis.GameData.Excel
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
 		public bool HasName => this.name != null;
-		public string TypeKey => "Npc_Resident";
+		public string TypeName => "Resident NPC";
 
 		public bool IsFavorite
 		{
@@ -40,14 +40,16 @@ namespace Anamnesis.GameData.Excel
 			this.name = parser.ReadString(0);
 			this.Description = parser.ReadString(8) ?? string.Empty;
 
-			this.ModelCharaRow = 0; // hmm...
+			this.eventNpc = GameDataService.EventNPCs.Get(this.RowId);
+			this.ModelCharaRow = this.eventNpc.ModelCharaRow;
 		}
 
 		public INpcAppearance? GetAppearance()
 		{
-			// Resident npc's actually just duplicate event npcs...
-			EventNpc eventNpc = GameDataService.EventNPCs.Get(this.RowId);
-			return eventNpc.GetAppearance();
+			if (this.eventNpc == null)
+				return null;
+
+			return this.eventNpc.GetAppearance();
 		}
 	}
 }

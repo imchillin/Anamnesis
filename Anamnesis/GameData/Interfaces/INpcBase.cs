@@ -16,7 +16,7 @@ namespace Anamnesis.GameData
 		bool IsFavorite { get; }
 		bool CanFavorite { get; }
 		bool HasName { get; }
-		string TypeKey { get; }
+		string TypeName { get; }
 
 		INpcAppearance? GetAppearance();
 	}

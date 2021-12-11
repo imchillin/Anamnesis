@@ -24,7 +24,7 @@ namespace Anamnesis.GameData.Excel
 		private ushort equipRow;
 		private BattleNpcAppearance? appearance;
 
-		public string Name => this.name ?? $"Battle NPC #{this.RowId}";
+		public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
 		public string Description { get; private set; } = string.Empty;
 		public uint ModelCharaRow { get; private set; }
 
@@ -32,7 +32,7 @@ namespace Anamnesis.GameData.Excel
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
 		public bool HasName => this.name != null;
-		public string TypeKey => "Npc_Battle";
+		public string TypeName => "Battle NPC";
 
 		public bool IsFavorite
 		{

@@ -30,7 +30,7 @@ namespace Anamnesis.GameData.Excel
 
 		private MountAppearance? appearance;
 
-		public string Name => this.name ?? $"Mount #{this.RowId}";
+		public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
 		public string Description { get; private set; } = string.Empty;
 		public uint ModelCharaRow { get; private set; }
 
@@ -38,7 +38,7 @@ namespace Anamnesis.GameData.Excel
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
 		public bool HasName => this.name != null;
-		public string TypeKey => "Npc_Mount";
+		public string TypeName => "Mount";
 
 		public bool IsFavorite
 		{

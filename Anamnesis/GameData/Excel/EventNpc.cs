@@ -17,7 +17,7 @@ namespace Anamnesis.GameData.Excel
 	{
 		private string? name;
 
-		public string Name => this.name ?? $"Event NPC #{this.RowId}";
+		public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
 		public string Description { get; private set; } = string.Empty;
 		public uint ModelCharaRow { get; private set; }
 
@@ -25,7 +25,7 @@ namespace Anamnesis.GameData.Excel
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
 		public bool HasName => this.name != null;
-		public string TypeKey => "Npc_Event";
+		public string TypeName => "Event NPC";
 
 		public bool IsFavorite
 		{

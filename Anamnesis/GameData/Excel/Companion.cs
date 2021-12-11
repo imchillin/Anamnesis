@@ -19,7 +19,7 @@ namespace Anamnesis.GameData.Excel
 		private string? name;
 		private CompanionAppearance? appearance;
 
-		public string Name => this.name ?? $"Minion #{this.RowId}";
+		public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
 		public string Description { get; private set; } = string.Empty;
 		public uint ModelCharaRow { get; private set; }
 
@@ -27,7 +27,7 @@ namespace Anamnesis.GameData.Excel
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
 		public bool HasName => this.name != null;
-		public string TypeKey => "Npc_Companion";
+		public string TypeName => "Minion";
 
 		public bool IsFavorite
 		{

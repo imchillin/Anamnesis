@@ -26,8 +26,7 @@
 			  IsEnabled="{Binding GPoseService.IsOverworld}">
 
 			<GroupBox Padding="3,0,3,0"
-					  Style="{StaticResource PanelGroupBox}"
-					  IsEnabled="{Binding Actor.IsPlayer}">
+					  Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
 					<XivToolsWpf:Header Key="Character_Customize_Header"
 										Icon="ConciergeBell" />

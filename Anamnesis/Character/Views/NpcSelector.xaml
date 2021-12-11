@@ -7,7 +7,6 @@
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d"
-			 Width="250"
 			 d:DesignHeight="450">
 	<Grid Margin="0, 6, 0, 0">
 
@@ -76,11 +75,12 @@
 			Filter="OnFilter"
 			Sort="OnSort"
 			LoadItems="OnLoadItems"
-			SelectionChanged="OnSelectionChanged">
+			SelectionChanged="OnSelectionChanged"
+			Width="256">
 
 			<cm3Drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
-					<Grid>
+					<Grid Width="223">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition />
@@ -145,9 +145,9 @@
 									<TextBlock Text="{Binding Description}" Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
 									<StackPanel Orientation="Horizontal">
-										<xivToolsWpf:TextBlock Key="{Binding TypeKey}" />
+										<xivToolsWpf:TextBlock Text="{Binding TypeName}" />
 										<xivToolsWpf:TextBlock Text=": #" Margin="0" />
-										<TextBlock Text="{Binding Key}" />
+										<TextBlock Text="{Binding RowId}" />
 									</StackPanel>
 
 									<StackPanel Orientation="Horizontal">

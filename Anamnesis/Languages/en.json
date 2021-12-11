@@ -1,7 +1,7 @@
 {
 	"Language": "English",
 
-	"Common_Endwalker": "Broken by Endwalker",
+	"Common_Endwalker": "Time control is out of order",
 
 	"Common_OpenFile": "Load",
 	"Common_SaveFile": "Save",
@@ -513,12 +513,6 @@
 	"Item_InvisibleBodyDesc": "Turns you invisible (Except for your head)",
 	"Item_InvisibleHead": "Invisible",
 	"Item_InvisibleHeadDesc": "Turns your head invisible",
-
-	"Npc_Battle": "Battle NPC",
-	"Npc_Resident": "Resident NPC",
-	"Npc_Event": "Event NPC",
-	"Npc_Mount": "Mount",
-	"Npc_Companion": "Minion",
 
 	"Help_Title": "Help",
 	"Help_Tip": "Visit the Wiki"
