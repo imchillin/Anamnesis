@@ -38,7 +38,9 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 * **[SoyaX](https://github.com/SoyaX)**
 * **[JKAnderson](https://github.com/JKAnderson)**
 * **[ajiiisai](https://github.com/ajiiisai)**
-* **[JKAnderson](https://github.com/JKAnderson)**
+* **[Reyli](https://github.com/Reyli)**
+* **[goaaats](https://github.com/goaaats)**
+* **[AsgardXIV](https://github.com/AsgardXIV)**
 
 ## Translations
 * **[Maxunit](https://github.com/Maxunit)** - *German* 
