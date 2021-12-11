@@ -93,6 +93,11 @@ namespace Anamnesis.PoseModule
 		public bool IsHrothgar => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar;
 		public bool HasTailOrEars => this.IsViera || this.HasTail;
 
+		public bool IsEars01 => this.Actor?.Customize?.TailEarsType <= 1;
+		public bool IsEars02 => this.Actor?.Customize?.TailEarsType == 2;
+		public bool IsEars03 => this.Actor?.Customize?.TailEarsType == 3;
+		public bool IsEars04 => this.Actor?.Customize?.TailEarsType == 4;
+
 		public bool IsVieraEarsFlop
 		{
 			get
