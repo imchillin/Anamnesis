@@ -70,40 +70,6 @@ namespace Lumina
 			}
 		}
 
-		public static bool Contains(this ClassJobCategory self, Classes classJob)
-		{
-			string abr = classJob.GetAbbreviation();
-			PropertyInfo? property = self.GetType().GetProperty(abr, BindingFlags.Public | BindingFlags.Instance);
-
-			if (property == null)
-				throw new Exception($"Unable to find ClassJob: {abr}");
-
-			object? val = property.GetValue(self);
-
-			if (val == null)
-				throw new Exception($"Unable to find ClassJob Value: {abr}");
-
-			return (bool)val;
-		}
-
-		public static Classes ToFlags(this ClassJobCategory self)
-		{
-			Classes classes = Classes.None;
-
-			foreach (Classes? job in Enum.GetValues(typeof(Classes)))
-			{
-				if (job == null || job == Classes.None || job == Classes.All)
-					continue;
-
-				if (self.Contains((Classes)job))
-				{
-					classes |= (Classes)job;
-				}
-			}
-
-			return classes;
-		}
-
 		public static bool Contains(this EquipSlotCategory self, ItemSlots slot)
 		{
 			switch (slot)

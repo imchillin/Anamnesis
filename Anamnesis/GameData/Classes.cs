@@ -7,6 +7,7 @@ namespace Anamnesis.GameData
 	using System.Collections.Generic;
 	using System.Runtime.CompilerServices;
 	using System.Text;
+	using Anamnesis.GameData.Sheets;
 
 #pragma warning disable SA1649
 
@@ -15,100 +16,55 @@ namespace Anamnesis.GameData
 	{
 		None = 0,
 
-		Alchemist = 1,
-		Arcanist = 2,
-		Archer = 4,
-		Armorer = 8,
-		Astrologian = 16,
-		Bard = 32,
-		BlackMage = 64,
-		Blacksmith = 128,
-		BlueMage = 256,
-		Botanist = 512,
-		Carpenter = 1024,
-		Conjurer = 2048,
-		Culinarian = 4096,
-		Dancer = 8192,
-		DarkKnight = 16384,
-		Dragoon = 32768,
-		Fisher = 65536,
-		Gladiator = 131072,
-		Goldsmith = 262144,
-		Gunbreaker = 524288,
-		Lancer = 1048576,
-		Leatherworker = 2097152,
-		Machinist = 4194304,
-		Marauder = 8388608,
-		Miner = 16777216,
-		Monk = 33554432,
-		Ninja = 67108864,
-		Paladin = 134217728,
-		Pugilist = 268435456,
-		RedMage = 536870912,
-		Rogue = 1073741824,
-		Samurai = 2147483648,
-		Scholar = 4294967296,
-		Summoner = 8589934592,
-		Thaumaturge = 17179869184,
-		Warrior = 34359738368,
-		Weaver = 68719476736,
-		WhiteMage = 137438953472,
+		Alchemist = 1L << 1,
+		Arcanist = 1L << 2,
+		Archer = 1L << 3,
+		Armorer = 1L << 4,
+		Astrologian = 1L << 5,
+		Bard = 1L << 6,
+		BlackMage = 1L << 7,
+		Blacksmith = 1L << 8,
+		BlueMage = 1L << 9,
+		Botanist = 1L << 10,
+		Carpenter = 1L << 11,
+		Conjurer = 1L << 12,
+		Culinarian = 1L << 13,
+		Dancer = 1L << 14,
+		DarkKnight = 1L << 15,
+		Dragoon = 1L << 16,
+		Fisher = 1L << 17,
+		Gladiator = 1L << 18,
+		Goldsmith = 1L << 19,
+		Gunbreaker = 1L << 20,
+		Lancer = 1L << 21,
+		Leatherworker = 1L << 22,
+		Machinist = 1L << 23,
+		Marauder = 1L << 24,
+		Miner = 1L << 25,
+		Monk = 1L << 26,
+		Ninja = 1L << 27,
+		Paladin = 1L << 28,
+		Pugilist = 1L << 29,
+		RedMage = 1L << 30,
+		Rogue = 1L << 31,
+		Samurai = 1L << 32,
+		Scholar = 1L << 33,
+		Summoner = 1L << 34,
+		Thaumaturge = 1L << 35,
+		Warrior = 1L << 36,
+		Weaver = 1L << 37,
+		WhiteMage = 1L << 38,
+		Reaper = 1L << 39,
+		Sage = 1L << 40,
 
 		All = Alchemist | Arcanist | Archer | Armorer | Astrologian | Bard | BlackMage | Blacksmith | BlueMage | Botanist
 			| Carpenter | Conjurer | Culinarian | Dancer | DarkKnight | Dragoon | Fisher | Gladiator | Goldsmith | Gunbreaker
 			| Lancer | Leatherworker | Machinist | Marauder | Miner | Monk | Ninja | Paladin | Pugilist | RedMage | Rogue
-			| Samurai | Scholar | Summoner | Thaumaturge | Warrior | Weaver | WhiteMage,
+			| Samurai | Scholar | Summoner | Thaumaturge | Warrior | Weaver | WhiteMage | Reaper | Sage,
 	}
 
 	public static class ClassesExtensions
 	{
-		public static string GetAbbreviation(this Classes job)
-		{
-			switch (job)
-			{
-				case Classes.Alchemist: return "ALC";
-				case Classes.Arcanist: return "ACN";
-				case Classes.Archer: return "ARC";
-				case Classes.Armorer: return "ARM";
-				case Classes.Astrologian: return "AST";
-				case Classes.Bard: return "BRD";
-				case Classes.BlackMage: return "BLM";
-				case Classes.Blacksmith: return "BSM";
-				case Classes.BlueMage: return "BLU";
-				case Classes.Botanist: return "BTN";
-				case Classes.Carpenter: return "CRP";
-				case Classes.Conjurer: return "CNJ";
-				case Classes.Culinarian: return "CUL";
-				case Classes.Dancer: return "DNC";
-				case Classes.DarkKnight: return "DRK";
-				case Classes.Dragoon: return "DRG";
-				case Classes.Fisher: return "FSH";
-				case Classes.Gladiator: return "GLA";
-				case Classes.Goldsmith: return "GSM";
-				case Classes.Gunbreaker: return "GNB";
-				case Classes.Lancer: return "LNC";
-				case Classes.Leatherworker: return "LTW";
-				case Classes.Machinist: return "MCH";
-				case Classes.Marauder: return "MRD";
-				case Classes.Miner: return "MIN";
-				case Classes.Monk: return "MNK";
-				case Classes.Ninja: return "NIN";
-				case Classes.Paladin: return "PLD";
-				case Classes.Pugilist: return "PGL";
-				case Classes.RedMage: return "RDM";
-				case Classes.Rogue: return "ROG";
-				case Classes.Samurai: return "SAM";
-				case Classes.Scholar: return "SCH";
-				case Classes.Summoner: return "SMN";
-				case Classes.Thaumaturge: return "THM";
-				case Classes.Warrior: return "WAR";
-				case Classes.Weaver: return "WVR";
-				case Classes.WhiteMage: return "WHM";
-			}
-
-			throw new Exception("No abbreviation for class: " + job);
-		}
-
 		public static string? GetName(this Classes job)
 		{
 			switch (job)
@@ -151,9 +107,11 @@ namespace Anamnesis.GameData
 				case Classes.Warrior: return "Warrior";
 				case Classes.Weaver: return "Weaver";
 				case Classes.WhiteMage: return "White Mage";
+				case Classes.Reaper: return "Reaper";
+				case Classes.Sage: return "Sage";
 			}
 
-			return null;
+			throw new Exception($"No name for class/job: {job}");
 		}
 
 		public static Roles? GetRole(this Classes job)
@@ -198,9 +156,65 @@ namespace Anamnesis.GameData
 				case Classes.Warrior: return Roles.Tanks;
 				case Classes.Weaver: return Roles.Crafters;
 				case Classes.WhiteMage: return Roles.Healers;
+				case Classes.Reaper: return Roles.Damage;
+				case Classes.Sage: return Roles.Healers;
 			}
 
-			return null;
+			throw new Exception($"No role for class/job: {job}");
+		}
+
+		public static ImageReference GetIcon(this Classes job)
+		{
+			return new ImageReference(job.GetIconId());
+		}
+
+		public static int GetIconId(this Classes job)
+		{
+			switch (job)
+			{
+				case Classes.Alchemist: return 062014;
+				case Classes.Arcanist: return 062026;
+				case Classes.Archer: return 062005;
+				case Classes.Armorer: return 062010;
+				case Classes.Astrologian: return 062033;
+				case Classes.Bard: return 062023;
+				case Classes.BlackMage: return 062025;
+				case Classes.Blacksmith: return 062009;
+				case Classes.BlueMage: return 062036;
+				case Classes.Botanist: return 062017;
+				case Classes.Carpenter: return 062008;
+				case Classes.Conjurer: return 062006;
+				case Classes.Culinarian: return 062015;
+				case Classes.Dancer: return 062038;
+				case Classes.DarkKnight: return 062032;
+				case Classes.Dragoon: return 062022;
+				case Classes.Fisher: return 062018;
+				case Classes.Gladiator: return 062001;
+				case Classes.Goldsmith: return 062011;
+				case Classes.Gunbreaker: return 062037;
+				case Classes.Lancer: return 062004;
+				case Classes.Leatherworker: return 062012;
+				case Classes.Machinist: return 062031;
+				case Classes.Marauder: return 062003;
+				case Classes.Miner: return 062016;
+				case Classes.Monk: return 062020;
+				case Classes.Ninja: return 062030;
+				case Classes.Paladin: return 062019;
+				case Classes.Pugilist: return 062002;
+				case Classes.Reaper: return 062039;
+				case Classes.RedMage: return 062035;
+				case Classes.Rogue: return 062029;
+				case Classes.Sage: return 062040;
+				case Classes.Samurai: return 062034;
+				case Classes.Scholar: return 062028;
+				case Classes.Summoner: return 062027;
+				case Classes.Thaumaturge: return 062007;
+				case Classes.Warrior: return 062021;
+				case Classes.Weaver: return 062013;
+				case Classes.WhiteMage: return 062024;
+			}
+
+			throw new Exception($"No icon for class/job: {job}");
 		}
 
 		public static Classes SetFlag(this Classes a, Classes b, bool enabled)

@@ -45,6 +45,7 @@
 			<local:ClassFilterItem Class="Conjurer" Value="{Binding Value}"/>
 			<local:ClassFilterItem Class="Scholar" Value="{Binding Value}"/>
 			<local:ClassFilterItem Class="WhiteMage" Value="{Binding Value}"/>
+			<local:ClassFilterItem Class="Sage" Value="{Binding Value}"/>
 		</WrapPanel>
 
 		<!-- Damage -->
@@ -68,6 +69,7 @@
 			<local:ClassFilterItem Class="Samurai" Value="{Binding Value}"/>
 			<local:ClassFilterItem Class="Summoner" Value="{Binding Value}"/>
 			<local:ClassFilterItem Class="Thaumaturge" Value="{Binding Value}"/>
+			<local:ClassFilterItem Class="Reaper" Value="{Binding Value}"/>
 		</WrapPanel>
 
 		<!-- Gatherers -->

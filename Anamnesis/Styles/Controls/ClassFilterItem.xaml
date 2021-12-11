@@ -11,7 +11,7 @@
 					  IsChecked="{Binding IsSelected}" BorderThickness="0" Margin="0">
 
 			<Grid>
-				<Image Source="{Binding ImageSource}"/>
+				<Image Source="{Binding Image, Converter={StaticResource Img}}"/>
 				<Image Source="/Assets/classBorder.png" Visibility="{Binding IsSelected, Converter={StaticResource B2V}}"/>
 			</Grid>
 		</ToggleButton>
