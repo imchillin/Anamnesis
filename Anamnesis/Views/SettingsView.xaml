@@ -64,10 +64,28 @@
 		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_Hyperlegible" Style="{StaticResource Label}"/>
 		<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="7" Margin="6"/>
 
-		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="8" Key="Settings_ShowGallery" Style="{StaticResource Label}"/>
-		<CheckBox IsChecked="{Binding SettingsService.Settings.ShowGallery}" Grid.Column="1" Grid.Row="8" Margin="6"/>
+		<Grid Grid.Row="8" Grid.ColumnSpan="2" Margin="0, 0, 4, 0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
 
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition />
+			</Grid.RowDefinitions>
 
+			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_Gallery" Style="{StaticResource Label}"/>
+			<ComboBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Margin="1" x:Name="GalleryCombobox" SelectionChanged="OnGalleryChanged">
+				<ComboBoxItem> <XivToolsWPF:TextBlock Key="Settings_Gallery_None"/></ComboBoxItem>
+				<ComboBoxItem> <XivToolsWPF:TextBlock Key="Settings_Gallery_Curated"/></ComboBoxItem>
+				<ComboBoxItem> <XivToolsWPF:TextBlock Key="Settings_Gallery_Local"/></ComboBoxItem>
+			</ComboBox>
+				
+			<TextBox Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.GalleryDirectory}" IsEnabled="False"/>
+			<Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseGallery"/>
+		</Grid>
 
 		<GroupBox Grid.Row="9" Grid.ColumnSpan="2">
 			<GroupBox.Header>

@@ -30,6 +30,7 @@ namespace Anamnesis.Services
 		public bool FlipPoseGuiSides { get; set; } = false;
 		public bool UseHyperlegibleFont { get; set; } = false;
 		public bool ShowGallery { get; set; } = true;
+		public string? GalleryDirectory { get; set; }
 		public bool EnableTranslucency { get; set; } = true;
 		public bool ExtendIntoWindowChrome { get; set; } = true;
 

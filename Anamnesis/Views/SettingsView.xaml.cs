@@ -6,6 +6,7 @@ namespace Anamnesis.GUI.Views
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Windows;
+	using System.Windows.Controls;
 	using System.Windows.Forms;
 	using System.Windows.Media;
 	using Anamnesis.Files;
@@ -45,6 +46,19 @@ namespace Anamnesis.GUI.Views
 			}
 
 			this.Languages = languages;
+
+			if (!SettingsService.Current.ShowGallery)
+			{
+				this.GalleryCombobox.SelectedIndex = 0;
+			}
+			else if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
+			{
+				this.GalleryCombobox.SelectedIndex = 1;
+			}
+			else
+			{
+				this.GalleryCombobox.SelectedIndex = 2;
+			}
 		}
 
 		public SettingsService SettingsService => SettingsService.Instance;
@@ -107,6 +121,32 @@ namespace Anamnesis.GUI.Views
 				return;
 
 			SettingsService.Current.DefaultSceneDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
+		}
+
+		private void OnBrowseGallery(object sender, RoutedEventArgs e)
+		{
+			FolderBrowserDialog dlg = new FolderBrowserDialog();
+
+			if (SettingsService.Current.GalleryDirectory != null)
+				dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.GalleryDirectory);
+
+			DialogResult result = dlg.ShowDialog();
+
+			if (result != DialogResult.OK)
+				return;
+
+			SettingsService.Current.GalleryDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
+		}
+
+		private void OnGalleryChanged(object sender, SelectionChangedEventArgs e)
+		{
+			// 0 - none
+			// 1 - Curated
+			// 2 - Local
+			if (this.GalleryCombobox.SelectedIndex != 2)
+				SettingsService.Current.GalleryDirectory = null;
+
+			SettingsService.Current.ShowGallery = this.GalleryCombobox.SelectedIndex != 0;
 		}
 
 		public class LanguageOption

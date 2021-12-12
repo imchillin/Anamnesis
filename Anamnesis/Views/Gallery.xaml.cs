@@ -6,6 +6,7 @@ namespace Anamnesis.Views
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.IO;
 	using System.Net;
 	using System.Net.Http;
 	using System.Threading.Tasks;
@@ -75,7 +76,30 @@ namespace Anamnesis.Views
 
 			while (Application.Current != null && SettingsService.Current.ShowGallery)
 			{
-				List<Entry> entries = EmbeddedFileUtility.Load<List<Entry>>("Data/Images.json");
+				List<Entry> entries;
+
+				if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
+				{
+					entries = EmbeddedFileUtility.Load<List<Entry>>("Data/Images.json");
+				}
+				else
+				{
+					string[] files = Directory.GetFiles(FileService.ParseToFilePath(SettingsService.Current.GalleryDirectory), "*.*", SearchOption.AllDirectories);
+
+					entries = new List<Entry>();
+					foreach (string filePath in files)
+					{
+						string ext = Path.GetExtension(filePath);
+						if (ext != ".jpg" && ext != ".png" && ext != ".jpeg" && ext != ".bmp")
+							continue;
+
+						Entry entry = new Entry();
+						entry.Url = filePath;
+						entry.Author = Path.GetFileNameWithoutExtension(filePath);
+						entries.Add(entry);
+					}
+				}
+
 				Log.Information("Loading gallery image list");
 
 				while (entries.Count > 0)
@@ -112,24 +136,31 @@ namespace Anamnesis.Views
 
 			bool valid = true;
 
-			try
+			if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
 			{
-				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(entry.Url);
-				request.Method = "HEAD";
-				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-				if (response.StatusCode != HttpStatusCode.OK)
+				try
 				{
-					Log.Information($"Failed to get image from url: {entry.Url}: {response.StatusCode}");
+					HttpWebRequest request = (HttpWebRequest)WebRequest.Create(entry.Url);
+					request.Method = "HEAD";
+					HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+					if (response.StatusCode != HttpStatusCode.OK)
+					{
+						Log.Information($"Failed to get image from url: {entry.Url}: {response.StatusCode}");
+						valid = false;
+					}
+
+					response.Close();
+				}
+				catch (Exception ex)
+				{
+					Log.Information($"Failed to get image from url: {entry.Url}: {ex.Message}");
 					valid = false;
 				}
-
-				response.Close();
 			}
-			catch (Exception ex)
+			else
 			{
-				Log.Information($"Failed to get image from url: {entry.Url}: {ex.Message}");
-				valid = false;
+				valid = true;
 			}
 
 			if (!valid)
