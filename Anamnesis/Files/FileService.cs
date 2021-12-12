@@ -305,14 +305,14 @@ namespace Anamnesis.Files
 			builder.Append("Any|");
 
 			foreach (Type type in types)
-				builder.Append("*" + GetFileTypeFilter(type) + ";");
+				builder.Append("*" + GetFileTypeFilter(type).Extension + ";");
 
 			foreach (Type type in types)
 			{
 				builder.Append("|");
 				builder.Append(GetFileTypeName(type));
 				builder.Append("|");
-				builder.Append("*" + GetFileTypeFilter(type));
+				builder.Append("*" + GetFileTypeFilter(type).Extension);
 			}
 
 			return builder.ToString();
@@ -323,7 +323,7 @@ namespace Anamnesis.Files
 			StringBuilder builder = new StringBuilder();
 			builder.Append(GetFileTypeName(type));
 			builder.Append("|");
-			builder.Append("*" + GetFileTypeFilter(type));
+			builder.Append("*" + GetFileTypeFilter(type).Extension);
 			return builder.ToString();
 		}
 
