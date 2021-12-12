@@ -48,9 +48,10 @@ namespace Anamnesis.Services
 		{
 			await Add<LogService>();
 			await Add<SerializerService>();
+			await Add<SettingsService>();
+			await Add<Updater.UpdateService>();
 			await Add<LocalizationService>();
 			await Add<ViewService>();
-			await Add<SettingsService>();
 			await Add<MemoryService>();
 			await Add<AddressService>();
 			await Add<TargetService>();
@@ -60,7 +61,6 @@ namespace Anamnesis.Services
 			await Add<TimeService>();
 			await Add<CameraService>();
 			await Add<GposeService>();
-			await Add<Updater.UpdateService>();
 			await Add<GameDataService>();
 			await Add<PoseService>();
 			await Add<TipService>();
