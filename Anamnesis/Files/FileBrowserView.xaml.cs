@@ -51,8 +51,18 @@ namespace Anamnesis.GUI.Views
 				if (defaultDir == null && mode == Modes.Load && shortcut.Directory.Exists && defaultShortcut == null)
 					defaultShortcut = shortcut;
 
-				if (defaultDir != null && defaultDir.FullName.Contains(shortcut.Directory.FullName))
-					defaultShortcut = shortcut;
+				if (defaultDir != null)
+				{
+					string defaultDirName = defaultDir.FullName;
+
+					if (!defaultDirName.EndsWith("\\"))
+						defaultDirName += "\\";
+
+					if (defaultDirName.Contains(shortcut.Directory.FullName))
+					{
+						defaultShortcut = shortcut;
+					}
+				}
 
 				this.Shortcuts.Add(shortcut);
 			}
