@@ -68,7 +68,7 @@ namespace Anamnesis.GameData.Sheets
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, $"Failed to load Image: {this.ImageId} form lumina");
+				Log.Warning(ex, $"Failed to load Image: {this.ImageId} form lumina");
 			}
 
 			return null;
