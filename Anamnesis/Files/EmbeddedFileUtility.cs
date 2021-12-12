@@ -46,6 +46,14 @@ namespace Anamnesis.Files
 			return stream;
 		}
 
+		public static byte[] LoadBytes(string path)
+		{
+			Stream? stream = Load(path);
+			MemoryStream? memoryStream = new MemoryStream();
+			stream.CopyTo(memoryStream);
+			return memoryStream.ToArray();
+		}
+
 		public static string GetFileName(string path)
 		{
 			string[] filePathParts = path.Split('.');

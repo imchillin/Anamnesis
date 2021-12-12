@@ -6,6 +6,7 @@ namespace Anamnesis.Character.Utilities
 	using System;
 	using System.Collections.Generic;
 	using System.Windows.Media;
+	using Anamnesis.Files;
 	using Anamnesis.Memory;
 
 	using cmColor = Anamnesis.Memory.Color;
@@ -18,7 +19,8 @@ namespace Anamnesis.Character.Utilities
 		static ColorData()
 		{
 			List<Entry> colors = new List<Entry>();
-			byte[] buffer = Resources.colors;
+
+			byte[] buffer = EmbeddedFileUtility.LoadBytes("Data\\colors.dat");
 
 			int at = 0;
 			while (at < buffer.Length)
