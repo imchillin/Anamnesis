@@ -9,6 +9,7 @@ namespace Anamnesis.GUI.Views
 	using System.IO;
 	using System.Linq;
 	using System.Text;
+	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -30,11 +31,11 @@ namespace Anamnesis.GUI.Views
 		private static Sort sortMode;
 
 		private readonly Modes mode;
-		private readonly HashSet<string> validExtensions;
+		private readonly IEnumerable<FileFilter> filters;
 		private EntryWrapper? selected;
 		private bool updatingEntries = false;
 
-		public FileBrowserView(Shortcut[] shortcuts, HashSet<string> extensions, DirectoryInfo? defaultDir, string? defaultName, Modes mode)
+		public FileBrowserView(Shortcut[] shortcuts, IEnumerable<FileFilter> filters, DirectoryInfo? defaultDir, string? defaultName, Modes mode)
 		{
 			if (shortcuts.Length == 0)
 				throw new Exception("At least one shortcut must be provided to the file browser constructor");
@@ -71,7 +72,7 @@ namespace Anamnesis.GUI.Views
 			this.CurrentDir = defaultDir;
 
 			this.mode = mode;
-			this.validExtensions = extensions;
+			this.filters = filters;
 
 			this.Selector.SearchEnabled = mode == Modes.Load;
 
@@ -256,10 +257,21 @@ namespace Anamnesis.GUI.Views
 			FileInfo[] files = dir.GetFiles();
 			foreach (FileInfo file in files)
 			{
-				if (!this.validExtensions.Contains(file.Extension))
+				// file must pass at least one filter
+				FileFilter? passedfilter = null;
+				foreach (FileFilter filter in this.filters)
+				{
+					if (filter.Passes(file))
+					{
+						passedfilter = filter;
+						break;
+					}
+				}
+
+				if (passedfilter == null)
 					continue;
 
-				results.Add(new EntryWrapper(file, this));
+				results.Add(new EntryWrapper(file, this, passedfilter));
 			}
 
 			DirectoryInfo[] directories = dir.GetDirectories();
@@ -273,7 +285,7 @@ namespace Anamnesis.GUI.Views
 
 				if (!this.IsFlattened)
 				{
-					results.Add(new EntryWrapper(subDir, this));
+					results.Add(new EntryWrapper(subDir, this, null));
 				}
 				else
 				{
@@ -434,7 +446,7 @@ namespace Anamnesis.GUI.Views
 					}
 				}
 
-				string ext = this.validExtensions.First();
+				string ext = this.filters.First().Extension;
 
 				this.FinalSelection = new FileInfo(this.CurrentDir.FullName + "\\" + this.FileName + ext);
 			}
@@ -503,14 +515,31 @@ namespace Anamnesis.GUI.Views
 		{
 			public readonly FileSystemInfo Entry;
 			public readonly FileBrowserView View;
+			public readonly FileFilter? Filter;
 
-			public EntryWrapper(FileSystemInfo entry, FileBrowserView view)
+			public EntryWrapper(FileSystemInfo entry, FileBrowserView view, FileFilter? filter)
 			{
 				this.Entry = entry;
 				this.View = view;
+				this.Filter = filter;
 			}
 
-			public string Name => this.Entry is DirectoryInfo ? this.Entry.Name : Path.GetFileNameWithoutExtension(this.Entry.Name);
+			public string Name
+			{
+				get
+				{
+					if (this.Entry is DirectoryInfo)
+						return this.Entry.Name;
+
+					if (this.Filter != null && this.Filter.GetNameCallback != null)
+					{
+						return this.Filter.GetNameCallback(this.Entry);
+					}
+
+					return Path.GetFileNameWithoutExtension(this.Entry.Name);
+				}
+			}
+
 			public DateTime? DateModified => this.Entry.LastWriteTime;
 
 			public bool CanSelect

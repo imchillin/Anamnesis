@@ -23,7 +23,7 @@ namespace Anamnesis.Files
 		public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
 
 		private static readonly Dictionary<Type, string> TypeNameLookup = new Dictionary<Type, string>();
-		private static readonly Dictionary<Type, string> TypeExtensionLookup = new Dictionary<Type, string>();
+		private static readonly Dictionary<Type, FileFilter> FileTypeFilterLookup = new Dictionary<Type, FileFilter>();
 
 		public static Shortcut Desktop => new Shortcut(
 			new DirectoryInfo(ParseToFilePath("%Desktop%")),
@@ -126,8 +126,8 @@ namespace Anamnesis.Files
 
 				if (!useExplorerBrowser)
 				{
-					HashSet<string> extensions = ToExtensions(fileTypes);
-					FileBrowserView browser = new FileBrowserView(shortcuts, extensions, defaultDirectory, null, FileBrowserView.Modes.Load);
+					List<FileFilter> filters = ToFileFilters(fileTypes);
+					FileBrowserView browser = new FileBrowserView(shortcuts, filters, defaultDirectory, null, FileBrowserView.Modes.Load);
 					await ViewService.ShowDrawer(browser);
 
 					while (browser.IsOpen)
@@ -181,9 +181,9 @@ namespace Anamnesis.Files
 				Exception? lastException = null;
 				foreach (Type fileType in fileTypes)
 				{
-					string typeExtension = GetFileTypeExtension(fileType);
+					FileFilter filter = GetFileTypeFilter(fileType);
 
-					if (typeExtension == extension)
+					if (filter.Extension == extension)
 					{
 						try
 						{
@@ -228,7 +228,7 @@ namespace Anamnesis.Files
 			SaveResult result = default;
 			////result.Path = defaultPath;
 
-			string ext = GetFileTypeExtension(typeof(T));
+			string ext = GetFileTypeFilter(typeof(T)).Extension;
 
 			try
 			{
@@ -238,12 +238,12 @@ namespace Anamnesis.Files
 
 				if (!useExplorerBrowser)
 				{
-					HashSet<string> extensions = new HashSet<string>()
+					List<FileFilter> filters = new List<FileFilter>()
 					{
-						GetFileTypeExtension(typeof(T)),
+						GetFileTypeFilter(typeof(T)),
 					};
 
-					FileBrowserView browser = new FileBrowserView(directories, extensions, defaultDirectory, typeName, FileBrowserView.Modes.Save);
+					FileBrowserView browser = new FileBrowserView(directories, filters, defaultDirectory, typeName, FileBrowserView.Modes.Save);
 					await ViewService.ShowDrawer(browser);
 
 					while (browser.IsOpen)
@@ -305,14 +305,14 @@ namespace Anamnesis.Files
 			builder.Append("Any|");
 
 			foreach (Type type in types)
-				builder.Append("*" + GetFileTypeExtension(type) + ";");
+				builder.Append("*" + GetFileTypeFilter(type) + ";");
 
 			foreach (Type type in types)
 			{
 				builder.Append("|");
 				builder.Append(GetFileTypeName(type));
 				builder.Append("|");
-				builder.Append("*" + GetFileTypeExtension(type));
+				builder.Append("*" + GetFileTypeFilter(type));
 			}
 
 			return builder.ToString();
@@ -323,16 +323,16 @@ namespace Anamnesis.Files
 			StringBuilder builder = new StringBuilder();
 			builder.Append(GetFileTypeName(type));
 			builder.Append("|");
-			builder.Append("*" + GetFileTypeExtension(type));
+			builder.Append("*" + GetFileTypeFilter(type));
 			return builder.ToString();
 		}
 
-		private static HashSet<string> ToExtensions(params Type[] types)
+		private static List<FileFilter> ToFileFilters(params Type[] types)
 		{
-			HashSet<string> results = new();
+			List<FileFilter> results = new();
 
 			foreach (Type type in types)
-				results.Add(GetFileTypeExtension(type));
+				results.Add(GetFileTypeFilter(type));
 
 			return results;
 		}
@@ -354,21 +354,21 @@ namespace Anamnesis.Files
 			return name;
 		}
 
-		private static string GetFileTypeExtension(Type fileType)
+		private static FileFilter GetFileTypeFilter(Type fileType)
 		{
-			string? name;
-			if (!TypeExtensionLookup.TryGetValue(fileType, out name))
+			FileFilter? filter;
+			if (!FileTypeFilterLookup.TryGetValue(fileType, out filter))
 			{
 				FileBase? file = Activator.CreateInstance(fileType) as FileBase;
 
 				if (file == null)
 					throw new Exception($"Failed to create instance of file type: {fileType}");
 
-				name = file.FileExtension;
-				TypeExtensionLookup.Add(fileType, name);
+				filter = file.GetFilter();
+				FileTypeFilterLookup.Add(fileType, filter);
 			}
 
-			return name;
+			return filter;
 		}
 	}
 

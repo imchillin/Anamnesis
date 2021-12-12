@@ -5,14 +5,46 @@ namespace Anamnesis.Files
 {
 	using System;
 	using System.IO;
+	using System.Text;
+	using System.Text.RegularExpressions;
 	using Anamnesis.Memory;
+	using Serilog;
 
 	public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 	{
 		public byte[]? Data;
 
 		public override string FileExtension => ".dat";
+		public override string FileRegex => "FFXIV_CHARA_[0-9]+";
 		public override string TypeName => "Ffxiv Character appearance save";
+		public override Func<FileSystemInfo, string> GetFilename => GetName;
+
+		public static string GetName(FileSystemInfo file)
+		{
+			string fileName = Path.GetFileNameWithoutExtension(file.FullName);
+
+			try
+			{
+				string slotNumber = fileName.Replace("FFXIV_CHARA_", string.Empty);
+
+				FileStream stream = new FileStream(file.FullName, FileMode.Open);
+				stream.Seek(0x30, SeekOrigin.Begin);
+				using BinaryReader reader = new BinaryReader(stream);
+
+				byte[] bytes = reader.ReadBytes(164);
+				string desc = Encoding.ASCII.GetString(bytes);
+				Regex.Replace(desc, @"(?![ -~]|\r|\n).", string.Empty);
+				string name = desc.Substring(0, Math.Min(desc.Length, 50));
+
+				return $"{slotNumber} - {name}";
+			}
+			catch (Exception)
+			{
+				Log.Warning($"Failed to get dat file name from file");
+			}
+
+			return fileName;
+		}
 
 		public CharacterFile Upgrade()
 		{

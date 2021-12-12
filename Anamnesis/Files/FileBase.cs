@@ -13,15 +13,21 @@ namespace Anamnesis.Files
 	{
 		public string? Author { get; set; }
 
-		[JsonIgnore]
-		public virtual string TypeName => this.GetType().Name;
-
-		[JsonIgnore]
-		public abstract string FileExtension { get; }
+		[JsonIgnore] public virtual string TypeName => this.GetType().Name;
+		[JsonIgnore] public abstract string FileExtension { get; }
+		[JsonIgnore] public virtual string? FileRegex => null;
+		[JsonIgnore] public virtual Func<FileSystemInfo, string> GetFilename => (f) => Path.GetFileNameWithoutExtension(f.FullName);
 
 		public abstract void Serialize(Stream stream);
-
 		public abstract FileBase Deserialize(Stream stream);
+
+		public FileFilter GetFilter()
+		{
+			FileFilter filter = new FileFilter(this.FileExtension, this.FileRegex);
+			filter.GetNameCallback = this.GetFilename;
+
+			return filter;
+		}
 	}
 
 	#pragma warning disable SA1402
