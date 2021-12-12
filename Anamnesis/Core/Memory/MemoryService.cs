@@ -252,6 +252,17 @@ namespace Anamnesis.Memory
 			if (process.MainModule == null)
 				throw new Exception("Process has no main module");
 
+			// checke the game version as soon as we can
+			string file = MemoryService.GamePath + "game/ffxivgame.ver";
+			string gameVer = File.ReadAllText(file);
+
+			Log.Information($"Found game version: {gameVer}");
+
+			if (gameVer != VersionInfo.ValidatedGameVersion)
+			{
+				Log.Error($"Anamnesis has not been validated against this game version: {gameVer}. This may cause problems.");
+			}
+
 			Handle = OpenProcess(0x001F0FFF, true, process.Id);
 			if (Handle == IntPtr.Zero)
 			{

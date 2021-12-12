@@ -123,16 +123,6 @@ namespace Anamnesis.Services
 
 		public override Task Initialize()
 		{
-			string file = MemoryService.GamePath + "game/ffxivgame.ver";
-			string gameVer = File.ReadAllText(file);
-
-			Log.Information($"Found game version: {gameVer}");
-
-			if (gameVer != VersionInfo.ValidatedGameVersion)
-			{
-				Log.Error($"Anamnesis has not been validated against this game version: {gameVer}. This may cause problems.");
-			}
-
 			Language defaultLuminaLaunguage = Language.English;
 			Region = ClientRegion.Global;
 
