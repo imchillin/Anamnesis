@@ -44,25 +44,34 @@ namespace Anamnesis.GameData.Sheets
 				return img;
 			}
 
-			Log.Verbose($"Loading image {this.ImageId}");
+			try
+			{
+				Log.Verbose($"Loading image {this.ImageId}");
 
-			////TexFile? tex = GameDataService.LuminaData.GetIcon(this.ImageId);
-			////string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}.tex";
-			string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}_hr1.tex";
-			TexFile? tex = GameDataService.LuminaData.GetFile<TexFile>(path);
+				////TexFile? tex = GameDataService.LuminaData.GetIcon(this.ImageId);
+				////string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}.tex";
+				string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}_hr1.tex";
+				TexFile? tex = GameDataService.LuminaData.GetFile<TexFile>(path);
 
-			if (tex == null)
-				return null;
+				if (tex == null)
+					return null;
 
-			BitmapSource bmp = BitmapSource.Create(tex.Header.Width, tex.Header.Height, 96, 96, PixelFormats.Bgra32, null, tex.ImageData, tex.Header.Width * 4);
-			bmp.Freeze();
-			img = bmp;
+				BitmapSource bmp = BitmapSource.Create(tex.Header.Width, tex.Header.Height, 96, 96, PixelFormats.Bgra32, null, tex.ImageData, tex.Header.Width * 4);
+				bmp.Freeze();
+				img = bmp;
 
-			if (this.cachedImage == null)
-				this.cachedImage = new WeakReference<ImageSource>(img);
+				if (this.cachedImage == null)
+					this.cachedImage = new WeakReference<ImageSource>(img);
 
-			this.cachedImage.SetTarget(img);
-			return img;
+				this.cachedImage.SetTarget(img);
+				return img;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, $"Failed to load Image: {this.ImageId} form lumina");
+			}
+
+			return null;
 		}
 	}
 }
