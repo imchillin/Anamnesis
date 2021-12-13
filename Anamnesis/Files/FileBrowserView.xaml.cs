@@ -45,8 +45,12 @@ namespace Anamnesis.GUI.Views
 			if (defaultDir != null && !defaultDir.Exists)
 				defaultDir = null;
 
+			List<Shortcut> finalShortcuts = new List<Shortcut>();
+			finalShortcuts.AddRange(shortcuts);
+			finalShortcuts.Add(FileService.Desktop);
+
 			Shortcut? defaultShortcut = null;
-			foreach (Shortcut shortcut in shortcuts)
+			foreach (Shortcut shortcut in finalShortcuts)
 			{
 				if (defaultDir == null && mode == Modes.Load && shortcut.Directory.Exists && defaultShortcut == null)
 					defaultShortcut = shortcut;
@@ -66,8 +70,6 @@ namespace Anamnesis.GUI.Views
 
 				this.Shortcuts.Add(shortcut);
 			}
-
-			this.Shortcuts.Add(FileService.Desktop);
 
 			if (defaultShortcut == null)
 			{
