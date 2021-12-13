@@ -17,6 +17,7 @@ namespace Anamnesis.Files
 	using Anamnesis.GUI.Views;
 	using Anamnesis.Services;
 	using Microsoft.Win32;
+	using Serilog;
 
 	public class FileService : ServiceBase<FileService>
 	{
@@ -403,9 +404,16 @@ namespace Anamnesis.Files
 
 			if (!string.IsNullOrEmpty(icon))
 			{
-				BitmapImage newIcon = new BitmapImage(new Uri($"pack://application:,,,/Anamnesis;component/Assets/{icon}"));
-				newIcon.Freeze();
-				this.Icon = newIcon;
+				try
+				{
+					BitmapImage newIcon = new BitmapImage(new Uri($"pack://application:,,,/Anamnesis;component/Assets/{icon}"));
+					newIcon.Freeze();
+					this.Icon = newIcon;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed to load icon for shortcut");
+				}
 			}
 		}
 	}
