@@ -13,11 +13,11 @@ namespace Anamnesis
 	[AddINotifyPropertyChangedInterface]
 	public class TimeService : ServiceBase<TimeService>
 	{
-		private NopHookViewModel? timeFreezeHook;
+		private TimeMemoryViewModel? timeFreezeHook;
 
 		public TimeSpan Time { get; private set; }
 		public string TimeString { get; private set; } = "00:00";
-		public long TimeOfDay { get; set; }
+		public uint TimeOfDay { get; set; }
 		public byte DayOfMonth { get; set; }
 
 		public bool Freeze
@@ -30,7 +30,7 @@ namespace Anamnesis
 		{
 			await base.Initialize();
 
-			this.timeFreezeHook = new NopHookViewModel(AddressService.TimeStop, 7);
+			this.timeFreezeHook = new TimeMemoryViewModel(AddressService.TimeStop);
 
 			_ = Task.Run(this.CheckTime);
 		}
@@ -61,16 +61,16 @@ namespace Anamnesis
 
 					if (this.Freeze)
 					{
-						long newTime = (long)((this.TimeOfDay * 60) + (86400 * (this.DayOfMonth - 1)));
+						uint newTime = (uint)((this.TimeOfDay * 60) + (86400 * (this.DayOfMonth - 1)));
 						this.Time = TimeSpan.FromSeconds(newTime);
-						MemoryService.Write(AddressService.Time, newTime, "Time frozen");
+						this.timeFreezeHook?.SetTime(newTime);
 					}
 					else
 					{
 						long timeVal = MemoryService.Read<long>(AddressService.Time) % 2764800;
 						this.Time = TimeSpan.FromSeconds(timeVal);
 
-						this.TimeOfDay = (long)this.Time.TotalMinutes - (long)(this.Time.Days * 24 * 60);
+						this.TimeOfDay = (uint)((uint)this.Time.TotalMinutes - (long)(this.Time.Days * 24 * 60));
 						this.DayOfMonth = (byte)this.Time.Days;
 					}
 
