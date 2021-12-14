@@ -59,6 +59,6 @@
 			</materialDesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<cm3:VectorEditor Grid.Row="2" Value="{Binding Euler}" Expanded="True" Minimum="0" Maximum="360" TickFrequency="{Binding TickFrequency}" Wrap="True"/>
+		<cm3:VectorEditor Grid.Row="2" Value="{Binding Euler}" Expanded="True" Minimum="0" Maximum="360" TickFrequency="{Binding TickFrequency}" Wrap="{Binding Settings.WrapRotationSliders}"/>
 	</Grid>
 </UserControl>

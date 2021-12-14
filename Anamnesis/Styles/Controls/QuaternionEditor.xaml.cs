@@ -10,6 +10,7 @@ namespace Anamnesis.Styles.Controls
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
+	using Anamnesis.Services;
 	using PropertyChanged;
 	using XivToolsWpf.DependencyProperties;
 	using XivToolsWpf.Meida3D;
@@ -84,6 +85,8 @@ namespace Anamnesis.Styles.Controls
 			get => EulerDp.Get(this);
 			set => EulerDp.Set(this, value);
 		}
+
+		public Settings Settings => SettingsService.Current;
 
 		public Quaternion Root
 		{
