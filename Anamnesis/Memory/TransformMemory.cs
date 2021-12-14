@@ -12,5 +12,7 @@ namespace Anamnesis.Memory
 		public bool CanTranslate => true;
 		public bool CanRotate => true;
 		public bool CanScale => true;
+
+		public Quaternion RootRotation => Quaternion.Identity;
 	}
 }
