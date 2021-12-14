@@ -5,7 +5,7 @@ namespace Anamnesis.Memory
 {
 	using System;
 
-	public class TimeMemoryViewModel
+	public class TimeMemory
 	{
 		private readonly IntPtr address;
 		private readonly byte[] originalValue;
@@ -13,7 +13,7 @@ namespace Anamnesis.Memory
 
 		private bool value;
 
-		public TimeMemoryViewModel(IntPtr address)
+		public TimeMemory(IntPtr address)
 		{
 			this.address = address;
 
@@ -22,7 +22,7 @@ namespace Anamnesis.Memory
 			MemoryService.Read(this.address, this.originalValue, this.originalValue.Length);
 		}
 
-		public bool Enabled
+		public bool Freeze
 		{
 			get
 			{
@@ -32,17 +32,17 @@ namespace Anamnesis.Memory
 			set
 			{
 				this.value = value;
-				this.SetEnabled(value);
+				this.SetFrozen(value);
 			}
 		}
 
-		public void SetEnabled(bool enabled)
+		public void SetFrozen(bool enabled)
 		{
 			this.value = enabled;
 
 			if (enabled)
 			{
-				// Write Nop
+				// Write new function
 				MemoryService.Write(this.address, this.newTimeAsm);
 			}
 			else
@@ -54,7 +54,7 @@ namespace Anamnesis.Memory
 
 		public void SetTime(uint newTime)
 		{
-			// Write Nop
+			// Write time into the function
 			MemoryService.Write(this.address + 0x3, BitConverter.GetBytes(newTime));
 		}
 	}

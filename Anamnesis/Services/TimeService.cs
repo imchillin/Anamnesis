@@ -13,7 +13,7 @@ namespace Anamnesis
 	[AddINotifyPropertyChangedInterface]
 	public class TimeService : ServiceBase<TimeService>
 	{
-		private TimeMemoryViewModel? timeFreezeHook;
+		private TimeMemory? timeMemory;
 
 		public TimeSpan Time { get; private set; }
 		public string TimeString { get; private set; } = "00:00";
@@ -22,15 +22,15 @@ namespace Anamnesis
 
 		public bool Freeze
 		{
-			get => this.timeFreezeHook?.Enabled ?? false;
-			set => this.timeFreezeHook?.SetEnabled(value);
+			get => this.timeMemory?.Freeze ?? false;
+			set => this.timeMemory?.SetFrozen(value);
 		}
 
 		public override async Task Initialize()
 		{
 			await base.Initialize();
 
-			this.timeFreezeHook = new TimeMemoryViewModel(AddressService.TimeStop);
+			this.timeMemory = new TimeMemory(AddressService.TimeAsm);
 
 			_ = Task.Run(this.CheckTime);
 		}
@@ -56,18 +56,18 @@ namespace Anamnesis
 					if (!GameService.Instance.IsSignedIn)
 						continue;
 
-					if (AddressService.Time == IntPtr.Zero)
+					if (AddressService.TimeReal == IntPtr.Zero)
 						continue;
 
 					if (this.Freeze)
 					{
 						uint newTime = (uint)((this.TimeOfDay * 60) + (86400 * (this.DayOfMonth - 1)));
 						this.Time = TimeSpan.FromSeconds(newTime);
-						this.timeFreezeHook?.SetTime(newTime);
+						this.timeMemory?.SetTime(newTime);
 					}
 					else
 					{
-						long timeVal = MemoryService.Read<long>(AddressService.Time) % 2764800;
+						long timeVal = MemoryService.Read<long>(AddressService.TimeReal) % 2764800;
 						this.Time = TimeSpan.FromSeconds(timeVal);
 
 						this.TimeOfDay = (uint)((uint)this.Time.TotalMinutes - (long)(this.Time.Days * 24 * 60));

@@ -33,8 +33,8 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr GposeCheck2 { get; private set; }   // GPoseCheck2Offset
 		public static IntPtr Territory { get; private set; }
 		public static IntPtr GPose { get; private set; }
-		public static IntPtr TimeStop { get; private set; }
-		public static IntPtr Time { get; set; }
+		public static IntPtr TimeAsm { get; private set; }
+		public static IntPtr TimeReal { get; set; }
 
 		public static IntPtr Camera
 		{
@@ -136,7 +136,7 @@ namespace Anamnesis.Core.Memory
 				"48 89 5C 24 ?? 57 48 83 EC 30 4C 8B 15",
 				(p) =>
 				{
-					TimeStop = p + 0x19;
+					TimeAsm = p + 0x19;
 				}));
 
 			tasks.Add(GetAddressFromTextSignature(
@@ -145,8 +145,8 @@ namespace Anamnesis.Core.Memory
 				(p) =>
 				{
 					int fwOffset = MemoryService.Read<int>(p + 3);
-					Time = MemoryService.ReadPtr(p + 11 + fwOffset);
-					Time += 0x1770;
+					TimeReal = MemoryService.ReadPtr(p + 11 + fwOffset);
+					TimeReal += 0x1770;
 				}));
 
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
