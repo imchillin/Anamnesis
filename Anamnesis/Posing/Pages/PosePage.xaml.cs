@@ -308,9 +308,7 @@ namespace Anamnesis.PoseModule.Pages
 						}
 					}
 
-					this.Skeleton.ClearSelection();
 					await poseFile.Apply(this.Actor, this.Skeleton, bones, mode);
-					this.Skeleton.ClearSelection();
 				}
 			}
 			catch (Exception ex)
