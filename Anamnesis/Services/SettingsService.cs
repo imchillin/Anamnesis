@@ -10,6 +10,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Input;
+	using System.Windows.Media;
 	using Anamnesis;
 	using Anamnesis.Files;
 	using Anamnesis.GUI.Dialogs;
@@ -73,6 +74,12 @@ namespace Anamnesis.Services
 
 					string json = File.ReadAllText(SettingsPath);
 					this.Settings = SerializerService.Deserialize<Settings>(json);
+
+					if (SystemParameters.WindowGlassColor == Colors.Black)
+					{
+						this.Settings.OverrideSystemTheme = true;
+						this.Settings.ThemeColor = Colors.Pink;
+					}
 				}
 				catch (Exception ex)
 				{
