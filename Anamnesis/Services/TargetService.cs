@@ -381,11 +381,23 @@ namespace Anamnesis
 					catch (Exception ex)
 					{
 						Log.Warning(ex, "Failed to tick actor");
-						this.Memory.Dispose();
-						this.Memory = null;
-						this.IsValid = false;
+						this.SetInvalid();
 					}
 				}
+			}
+
+			private void SetInvalid()
+			{
+				if (this.Memory != null)
+				{
+					if (this.IsSelected)
+						TargetService.Instance.ClearSelection();
+
+					this.Memory.Dispose();
+					this.Memory = null;
+				}
+
+				this.IsValid = false;
 			}
 
 			private void Retarget()
@@ -410,11 +422,10 @@ namespace Anamnesis
 							{
 								this.Memory.Tick();
 							}
-							catch (Exception)
+							catch (Exception ex)
 							{
-								this.Memory.Dispose();
-								this.Memory = null;
-								this.IsValid = false;
+								Log.Warning(ex, "Failed to tick actor");
+								this.SetInvalid();
 								return;
 							}
 						}
@@ -443,14 +454,8 @@ namespace Anamnesis
 
 					if (this.Memory != null)
 					{
-						if (this.IsSelected)
-						{
-							TargetService.Instance.ClearSelection();
-						}
-
-						this.Memory.Dispose();
-						this.Memory = null;
 						Log.Warning($"Lost actor: {this.Initials}");
+						this.SetInvalid();
 					}
 
 					this.IsValid = false;
