@@ -540,6 +540,9 @@ namespace Anamnesis.PoseModule.Pages
 			{
 				await Dispatch.MainThread();
 
+				if (this.Skeleton == null)
+					return;
+
 				this.Skeleton.WriteSkeleton();
 
 				// up to 60 times a second
