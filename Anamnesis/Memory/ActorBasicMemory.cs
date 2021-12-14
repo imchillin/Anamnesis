@@ -18,7 +18,7 @@ namespace Anamnesis.Memory
 		[Bind(0x090)] public byte DistanceFromPlayerX { get; set; }
 		[Bind(0x092)] public byte DistanceFromPlayerY { get; set; }
 
-		public string Id => this.Name + this.DataId;
+		public string Id => this.Name;
 		public string Name => this.NameBytes.ToString();
 		public IconChar Icon => this.ObjectKind.GetIcon();
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
