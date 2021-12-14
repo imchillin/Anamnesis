@@ -34,22 +34,30 @@ namespace Anamnesis
 			if (basicActor.Address == IntPtr.Zero)
 				return;
 
-			foreach (PinnedActor otherActor in Instance.PinnedActors)
+			try
 			{
-				if (basicActor.Address == otherActor.Pointer)
+				foreach (PinnedActor otherActor in Instance.PinnedActors)
 				{
-					return;
+					if (basicActor.Address == otherActor.Pointer)
+					{
+						Log.Information($"Actor already pinned: {otherActor.Initials}");
+						return;
+					}
 				}
+
+				ActorMemory memory = new();
+				memory.SetAddress(basicActor.Address);
+				PinnedActor pined = new PinnedActor(memory);
+
+				await Dispatch.MainThread();
+				Instance.PinnedActors.Add(pined);
+				Instance.SelectActor(pined);
+				ActorPinned?.Invoke(pined);
 			}
-
-			ActorMemory memory = new();
-			memory.SetAddress(basicActor.Address);
-			PinnedActor pined = new PinnedActor(memory);
-
-			await Dispatch.MainThread();
-			Instance.PinnedActors.Add(pined);
-			Instance.SelectActor(pined);
-			ActorPinned?.Invoke(pined);
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to pin actor");
+			}
 		}
 
 		public static void UnpinActor(PinnedActor actor)
@@ -376,6 +384,9 @@ namespace Anamnesis
 
 					try
 					{
+						if (GposeService.Instance.IsChangingState)
+							return;
+
 						this.Memory.Tick();
 					}
 					catch (Exception ex)
@@ -435,6 +446,8 @@ namespace Anamnesis
 							this.Memory.SetAddress(actor.Address);
 						}
 
+						IntPtr? oldPointer = this.Pointer;
+
 						this.Name = this.Memory.Name;
 						this.Memory.OnRetargeted();
 						this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
@@ -445,7 +458,10 @@ namespace Anamnesis
 						this.UpdateInitials(this.DisplayName);
 
 						this.IsValid = true;
-						Log.Information($"Retargeted actor: {this.Initials}");
+
+						// dont log every time we just select an actor.
+						if (oldPointer != null && oldPointer != this.Pointer)
+							Log.Information($"Retargeted actor: {this.Initials} from {oldPointer} to {this.Pointer}");
 
 						this.IsRetargeting = false;
 
