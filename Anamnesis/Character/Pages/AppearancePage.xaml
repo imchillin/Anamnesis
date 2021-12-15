@@ -211,7 +211,7 @@
 
 			<Menu Grid.Row="1"
 				  Margin="0,3, 3, 4"
-				  IsEnabled="{Binding GposeService.IsGpose}"
+				  IsEnabled="{Binding GPoseService.IsGpose, Converter={StaticResource NotConverter}}"
 				  Style="{StaticResource AnaMenu}">
 
 				<MenuItem Header="Common_OpenFile"
