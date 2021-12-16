@@ -181,7 +181,7 @@ namespace Anamnesis
 
 			while (this._contentLoaded)
 			{
-				await Task.Delay(10000);
+				await Task.Delay(60000);
 				Log.Information($"{proc.PrivateMemorySize64 / 1024 / 1024}Mb memory In use.");
 			}
 		}
