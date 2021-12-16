@@ -273,7 +273,14 @@ namespace Anamnesis.Memory
 					if (!this.CanRead(bind))
 						continue;
 
-					this.ReadFromMemory(bind);
+					try
+					{
+						this.ReadFromMemory(bind);
+					}
+					catch (Exception ex)
+					{
+						throw new Exception($"Failed to read {this.GetType()} - {bind.Name}", ex);
+					}
 				}
 
 				foreach (BindInfo bind in this.binds.Values)
@@ -284,7 +291,14 @@ namespace Anamnesis.Memory
 					if (!this.CanRead(bind))
 						continue;
 
-					this.ReadFromMemory(bind);
+					try
+					{
+						this.ReadFromMemory(bind);
+					}
+					catch (Exception ex)
+					{
+						throw new Exception($"Failed to read {this.GetType()} - {bind.Name}", ex);
+					}
 				}
 			}
 		}
