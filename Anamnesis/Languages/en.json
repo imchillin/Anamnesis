@@ -473,6 +473,7 @@
 	"Settings_Header": "Settings",
 	"Settings_Language": "Language",
 	"Settings_AlwaysOnTop": "Always on top",
+	"Settings_Overlay": "Mini mode",
 	"Settings_Translucency": "Window Translucency",
 	"Settings_WindowOpacity": "Window opacity",
 	"Settings_StayTransparent": "Stay transparent",

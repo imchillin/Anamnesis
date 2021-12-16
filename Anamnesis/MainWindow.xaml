@@ -156,22 +156,6 @@
 					<ToggleButton Width="28"
 								  Margin="3,0,0,0"
 								  BorderThickness="0"
-								  IsChecked="{Binding SettingsService.Settings.OverlayWindow}"
-								  Foreground="{Binding TitlebarForeground}"
-								  Background="{DynamicResource MaterialDesignCardBackground}"
-								  Style="{DynamicResource TransparentIconToggleButton}">
-
-						<ToggleButton.ToolTip>
-							<XivToolsWpf:TextBlock Key="Settings_OverlayWindow" />
-						</ToggleButton.ToolTip>
-
-						<XivToolsWpf:IconBlock FontSize="12"
-											   Icon="CompressAlt" />
-					</ToggleButton>
-
-					<ToggleButton Width="28"
-								  Margin="3,0,0,0"
-								  BorderThickness="0"
 								  IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}"
 								  Foreground="{Binding TitlebarForeground}"
 								  Background="{DynamicResource MaterialDesignCardBackground}"
