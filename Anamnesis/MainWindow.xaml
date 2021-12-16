@@ -425,9 +425,9 @@
 
 			<Border
 				x:Name="Ftue"
-				Width="666"
-				Height="523"
-				Margin="0, 27, 287, 0"
+				Width="604"
+				Height="497"
+				Margin="0, 0, 290, 0"
 				VerticalAlignment="Top"
 				Background="{StaticResource MaterialDesignBackground}"
 				BorderThickness="1"
