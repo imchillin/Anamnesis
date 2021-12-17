@@ -211,7 +211,6 @@
 
 			<Menu Grid.Row="1"
 				  Margin="0,3, 3, 4"
-				  IsEnabled="{Binding GPoseService.IsOverworld}"
 				  Style="{StaticResource AnaMenu}">
 
 				<MenuItem Header="Common_OpenFile"
