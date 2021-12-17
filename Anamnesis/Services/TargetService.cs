@@ -26,6 +26,8 @@ namespace Anamnesis
 		public static event PinnedEvent? ActorPinned;
 		public static event PinnedEvent? ActorUnPinned;
 
+		public static ActorBasicMemory PlayerTargetedActor { get; private set; } = new();
+
 		public ActorMemory? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
@@ -57,6 +59,16 @@ namespace Anamnesis
 			catch (Exception ex)
 			{
 				Log.Error(ex, "Failed to pin actor");
+			}
+		}
+
+		public static async Task PinPlayerTargetedActor()
+		{
+			UpdatePlayerTarget();
+
+			if (PlayerTargetedActor.IsSet)
+			{
+				await PinActor(PlayerTargetedActor);
 			}
 		}
 
@@ -160,6 +172,26 @@ namespace Anamnesis
 			}
 
 			return false;
+		}
+
+		public static void UpdatePlayerTarget()
+		{
+			// Update player target if needed
+			var currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
+			if (currentPlayerTargetPtr != IntPtr.Zero)
+			{
+				if (currentPlayerTargetPtr != PlayerTargetedActor.Address)
+				{
+					PlayerTargetedActor.SetAddress(currentPlayerTargetPtr);
+				}
+			}
+			else
+			{
+				if (PlayerTargetedActor.IsSet)
+				{
+					PlayerTargetedActor.Dispose();
+				}
+			}
 		}
 
 		public override async Task Start()
@@ -275,6 +307,8 @@ namespace Anamnesis
 				{
 					this.PinnedActors[i].Tick();
 				}
+
+				UpdatePlayerTarget();
 			}
 		}
 

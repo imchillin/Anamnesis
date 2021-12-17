@@ -313,6 +313,24 @@
 													<fa:IconBlock FontSize="12" Icon="Plus" />
 												</Button>
 
+												<Grid Margin="0,3">
+													<Button
+														Click="OnAddPlayerTargetActorClicked"
+														IsEnabled="{Binding TargetService.PlayerTargetedActor.IsSet}"
+														Width="32"
+														Height="32"
+														Background="Transparent"
+														Foreground="{DynamicResource PrimaryHueMidBrush}"
+														Style="{DynamicResource MaterialDesignFloatingActionButton}">
+														<fa:IconBlock FontSize="12" Icon="Bullseye" />
+														<Button.ToolTip>
+															<StackPanel>
+																<TextBlock Text="{Binding TargetService.PlayerTargetedActor.Name}" />
+															</StackPanel>
+														</Button.ToolTip>
+													</Button>
+
+												</Grid>
 											</StackPanel>
 
 										</ScrollViewer>

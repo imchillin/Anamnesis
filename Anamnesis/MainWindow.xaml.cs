@@ -253,6 +253,11 @@ namespace Anamnesis.GUI
 			ViewService.ShowDrawer<TargetSelectorView>(DrawerDirection.Left);
 		}
 
+		private async void OnAddPlayerTargetActorClicked(object sender, RoutedEventArgs e)
+		{
+			await TargetService.PinPlayerTargetedActor();
+		}
+
 		private void OnUnpinActorClicked(object sender, RoutedEventArgs e)
 		{
 			if (sender is FrameworkElement el && el.DataContext is TargetService.PinnedActor actor)
