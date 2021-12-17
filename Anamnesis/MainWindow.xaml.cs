@@ -4,10 +4,7 @@
 namespace Anamnesis.GUI
 {
 	using System;
-	using System.Collections.Generic;
 	using System.ComponentModel;
-	using System.Diagnostics;
-	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -251,11 +248,6 @@ namespace Anamnesis.GUI
 		private void OnAddActorClicked(object sender, RoutedEventArgs e)
 		{
 			ViewService.ShowDrawer<TargetSelectorView>(DrawerDirection.Left);
-		}
-
-		private async void OnAddPlayerTargetActorClicked(object sender, RoutedEventArgs e)
-		{
-			await TargetService.PinPlayerTargetedActor();
 		}
 
 		private void OnUnpinActorClicked(object sender, RoutedEventArgs e)

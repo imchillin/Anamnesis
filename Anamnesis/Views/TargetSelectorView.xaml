@@ -17,6 +17,7 @@
 	<Grid x:Name="ContentArea">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto"/>
 			<RowDefinition />
 		</Grid.RowDefinitions>
 
@@ -38,9 +39,25 @@
 			</CheckBox>
 		</StackPanel>
 
+		<Grid Grid.Row="1">
+
+			<Button Click="OnAddPlayerTargetActorClicked"
+					IsEnabled="{Binding TargetService.IsPlayerTargetPinnable}"
+					Height="28"
+					Margin="6"
+					Style="{DynamicResource TransparentButton}">
+
+				<StackPanel Orientation="Horizontal">
+					<fa:IconBlock FontSize="12" Icon="Bullseye" Margin="0, 0, 6, 0"/>
+					<TextBlock Text="{Binding TargetService.PlayerTarget.Name}" />
+				</StackPanel>
+			
+			</Button>
+		</Grid>
+
 		<cm3Drawers:SelectorDrawer
 			x:Name="Selector"
-			Grid.Row="1"
+			Grid.Row="2"
 			Close="OnClose"
 			Filter="OnFilter"
 			Sort="OnSort"

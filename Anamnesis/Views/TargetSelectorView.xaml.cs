@@ -36,6 +36,8 @@ namespace Anamnesis.Views
 		public event DrawerEvent? Close;
 		public event PropertyChangedEventHandler? PropertyChanged;
 
+		public TargetService TargetService => TargetService.Instance;
+
 		public bool IncludePlayers
 		{
 			get => includePlayers;
@@ -62,6 +64,12 @@ namespace Anamnesis.Views
 
 		public void OnClosed()
 		{
+		}
+
+		private async void OnAddPlayerTargetActorClicked(object sender, RoutedEventArgs e)
+		{
+			await TargetService.PinPlayerTargetedActor();
+			this.OnClose();
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
