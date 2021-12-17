@@ -26,8 +26,8 @@ namespace Anamnesis
 		public static event PinnedEvent? ActorPinned;
 		public static event PinnedEvent? ActorUnPinned;
 
-		public ActorBasicMemory PlayerTargetedActor { get; private set; } = new();
-		public bool IsPlayerTargetPinnable => CanPinActor(this.PlayerTargetedActor);
+		public ActorBasicMemory PlayerTarget { get; private set; } = new();
+		public bool IsPlayerTargetPinnable => CanPinActor(this.PlayerTarget);
 		public ActorMemory? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
@@ -67,7 +67,7 @@ namespace Anamnesis
 
 		public static bool CanPinActor(ActorBasicMemory actorBasicMemory)
 		{
-			if(actorBasicMemory.IsSet)
+			if(actorBasicMemory.Address != IntPtr.Zero)
 			{
 				return CanPinActorType(actorBasicMemory.ObjectKind);
 			}
@@ -92,16 +92,7 @@ namespace Anamnesis
 		public static async Task PinPlayerTargetedActor()
 		{
 			Instance.UpdatePlayerTarget();
-
-			var target = Instance.PlayerTargetedActor;
-
-			if (target.IsSet)
-			{
-				if(target.ObjectKind == ActorTypes.Player || target.ObjectKind == ActorTypes.EventNpc || target.ObjectKind == ActorTypes.Companion || target.ObjectKind == ActorTypes.BattleNpc)
-				{
-					await PinActor(target);
-				}
-			}
+			await PinActor(Instance.PlayerTarget);
 		}
 
 		public static void UnpinActor(PinnedActor actor)
@@ -212,19 +203,19 @@ namespace Anamnesis
 			var currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
 			if (currentPlayerTargetPtr != IntPtr.Zero)
 			{
-				if (currentPlayerTargetPtr != this.PlayerTargetedActor.Address)
+				if (currentPlayerTargetPtr != this.PlayerTarget.Address)
 				{
-					this.PlayerTargetedActor.SetAddress(currentPlayerTargetPtr);
-					this.RaisePropertyChanged(nameof(TargetService.PlayerTargetedActor));
+					this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
+					this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
 					this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
 				}
 			}
 			else
 			{
-				if (this.PlayerTargetedActor.IsSet)
+				if (this.PlayerTarget.Address != IntPtr.Zero)
 				{
-					this.PlayerTargetedActor.Dispose();
-					this.RaisePropertyChanged(nameof(TargetService.PlayerTargetedActor));
+					this.PlayerTarget.Dispose();
+					this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
 					this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
 				}
 			}

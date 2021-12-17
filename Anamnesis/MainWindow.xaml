@@ -309,7 +309,7 @@
 														<fa:IconBlock FontSize="12" Icon="Bullseye" />
 														<Button.ToolTip>
 															<StackPanel>
-																<TextBlock Text="{Binding TargetService.PlayerTargetedActor.Name}" />
+																<TextBlock Text="{Binding TargetService.PlayerTarget.Name}" />
 															</StackPanel>
 														</Button.ToolTip>
 													</Button>

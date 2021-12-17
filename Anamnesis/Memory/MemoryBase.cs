@@ -51,8 +51,6 @@ namespace Anamnesis.Memory
 			DontCacheOffsets = 4,
 		}
 
-		public bool IsSet => this.Address != IntPtr.Zero;
-
 		[DoNotNotify]
 		public MemoryBase? Parent { get; set; }
 
@@ -83,8 +81,6 @@ namespace Anamnesis.Memory
 			{
 				throw new Exception($"Failed to read {this.GetType().Name} from memory address: {address}", ex);
 			}
-
-			this.RaisePropertyChanged(nameof(this.IsSet));
 		}
 
 		public void Dispose()
@@ -102,8 +98,6 @@ namespace Anamnesis.Memory
 			}
 
 			this.Children.Clear();
-
-			this.RaisePropertyChanged(nameof(this.IsSet));
 		}
 
 		public virtual void Tick()
@@ -279,14 +273,7 @@ namespace Anamnesis.Memory
 					if (!this.CanRead(bind))
 						continue;
 
-					try
-					{
-						this.ReadFromMemory(bind);
-					}
-					catch (Exception ex)
-					{
-						throw new Exception($"Failed to read {this.GetType()} - {bind.Name}", ex);
-					}
+					this.ReadFromMemory(bind);
 				}
 
 				foreach (BindInfo bind in this.binds.Values)
@@ -297,14 +284,7 @@ namespace Anamnesis.Memory
 					if (!this.CanRead(bind))
 						continue;
 
-					try
-					{
-						this.ReadFromMemory(bind);
-					}
-					catch (Exception ex)
-					{
-						throw new Exception($"Failed to read {this.GetType()} - {bind.Name}", ex);
-					}
+					this.ReadFromMemory(bind);
 				}
 			}
 		}
