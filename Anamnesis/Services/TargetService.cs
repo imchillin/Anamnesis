@@ -26,6 +26,8 @@ namespace Anamnesis
 		public static event PinnedEvent? ActorPinned;
 		public static event PinnedEvent? ActorUnPinned;
 
+		public ActorBasicMemory PlayerTarget { get; private set; } = new();
+		public bool IsPlayerTargetPinnable => CanPinActor(this.PlayerTarget);
 		public ActorMemory? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
@@ -33,6 +35,12 @@ namespace Anamnesis
 		{
 			if (basicActor.Address == IntPtr.Zero)
 				return;
+
+			if (!CanPinActor(basicActor))
+			{
+				Log.Warning($"You cannot pin actor of type: {basicActor.ObjectKind}");
+				return;
+			}
 
 			try
 			{
@@ -58,6 +66,36 @@ namespace Anamnesis
 			{
 				Log.Error(ex, "Failed to pin actor");
 			}
+		}
+
+		public static bool CanPinActor(ActorBasicMemory actorBasicMemory)
+		{
+			if(actorBasicMemory.Address != IntPtr.Zero)
+			{
+				return CanPinActorType(actorBasicMemory.ObjectKind);
+			}
+
+			return false;
+		}
+
+		public static bool CanPinActorType(ActorTypes actorType)
+		{
+			switch (actorType)
+			{
+				case ActorTypes.Player:
+				case ActorTypes.BattleNpc:
+				case ActorTypes.EventNpc:
+				case ActorTypes.Companion:
+					return true;
+			}
+
+			return false;
+		}
+
+		public static async Task PinPlayerTargetedActor()
+		{
+			Instance.UpdatePlayerTarget();
+			await PinActor(Instance.PlayerTarget);
 		}
 
 		public static void UnpinActor(PinnedActor actor)
@@ -160,6 +198,49 @@ namespace Anamnesis
 			}
 
 			return false;
+		}
+
+		public void UpdatePlayerTarget()
+		{
+			IntPtr currentPlayerTargetPtr = IntPtr.Zero;
+
+			try
+			{
+				if (GposeService.Instance.IsGpose)
+				{
+					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.GPoseTarget);
+				}
+				else
+				{
+					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
+				}
+			}
+			catch
+			{
+				// If the memory read fails the target will be 0x0
+			}
+
+			try
+			{
+				if (currentPlayerTargetPtr != this.PlayerTarget.Address)
+				{
+					if (currentPlayerTargetPtr == IntPtr.Zero)
+					{
+						this.PlayerTarget.Dispose();
+					}
+					else
+					{
+						this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
+					}
+
+					this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
+					this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
+				}
+			}
+			catch
+			{
+				// This section can only fail when FFXIV isn't running (fail to set address) so it should be safe to ignore
+			}
 		}
 
 		public override async Task Start()
@@ -275,6 +356,8 @@ namespace Anamnesis
 				{
 					this.PinnedActors[i].Tick();
 				}
+
+				this.UpdatePlayerTarget();
 			}
 		}
 
