@@ -37,7 +37,10 @@ namespace Anamnesis
 				return;
 
 			if (!CanPinActor(basicActor))
+			{
+				Log.Warning($"You cannot pin actor of type: {basicActor.ObjectKind}");
 				return;
+			}
 
 			try
 			{
