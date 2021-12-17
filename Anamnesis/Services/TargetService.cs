@@ -204,37 +204,29 @@ namespace Anamnesis
 		{
 			try
 			{
+				IntPtr currentPlayerTargetPtr = IntPtr.Zero;
 				if (GposeService.Instance.IsGpose)
 				{
-					if (this.PlayerTarget.Address != IntPtr.Zero)
-					{
-						this.PlayerTarget.Dispose();
-						this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
-						this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
-					}
+					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.GPoseTarget);
 				}
 				else
 				{
-					IntPtr currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
+					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
+				}
 
-					if (currentPlayerTargetPtr != IntPtr.Zero)
+				if (currentPlayerTargetPtr != this.PlayerTarget.Address)
+				{
+					if (currentPlayerTargetPtr == IntPtr.Zero)
 					{
-						if (currentPlayerTargetPtr != this.PlayerTarget.Address)
-						{
-							this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
-							this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
-							this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
-						}
+						this.PlayerTarget.Dispose();
 					}
 					else
 					{
-						if (this.PlayerTarget.Address != IntPtr.Zero)
-						{
-							this.PlayerTarget.Dispose();
-							this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
-							this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
-						}
+						this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
 					}
+
+					this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
+					this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
 				}
 			}
 			catch
