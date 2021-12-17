@@ -253,7 +253,7 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			this.Skeleton.SelectHead();
-			await this.Open(true, PoseFile.Mode.Rotation);
+			await this.Open(true, PoseFile.Mode.Rotation | PoseFile.Mode.Scale);
 			this.Skeleton.ClearSelection();
 		}
 
