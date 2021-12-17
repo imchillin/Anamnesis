@@ -268,6 +268,7 @@ namespace Anamnesis.Character.Views
 		private void OnClearClicked(object sender, RoutedEventArgs e)
 		{
 			this.Value = ItemUtility.NoneItem;
+			this.Selector.RaiseSelectionChanged();
 		}
 
 		private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
@@ -280,6 +281,8 @@ namespace Anamnesis.Character.Views
 			{
 				this.Value = ItemUtility.NoneItem;
 			}
+
+			this.Selector.RaiseSelectionChanged();
 		}
 	}
 }

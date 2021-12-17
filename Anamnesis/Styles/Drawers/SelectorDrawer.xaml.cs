@@ -230,6 +230,11 @@ namespace Anamnesis.Styles.Drawers
 			return this.DoFilter();
 		}
 
+		public void RaiseSelectionChanged()
+		{
+			this.SelectionChanged?.Invoke();
+		}
+
 		private static void OnValueChangedStatic(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (sender is SelectorDrawer view)
@@ -450,7 +455,7 @@ namespace Anamnesis.Styles.Drawers
 			if (this.searching)
 				return;
 
-			this.SelectionChanged?.Invoke();
+			this.RaiseSelectionChanged();
 		}
 
 		private async void OnSearchBoxKeyDown(object sender, KeyEventArgs e)
