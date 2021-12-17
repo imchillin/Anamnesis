@@ -202,9 +202,10 @@ namespace Anamnesis
 
 		public void UpdatePlayerTarget()
 		{
+			IntPtr currentPlayerTargetPtr = IntPtr.Zero;
+
 			try
 			{
-				IntPtr currentPlayerTargetPtr = IntPtr.Zero;
 				if (GposeService.Instance.IsGpose)
 				{
 					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.GPoseTarget);
@@ -213,7 +214,14 @@ namespace Anamnesis
 				{
 					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
 				}
+			}
+			catch
+			{
+				// If the memory read fails the target will be 0x0
+			}
 
+			try
+			{
 				if (currentPlayerTargetPtr != this.PlayerTarget.Address)
 				{
 					if (currentPlayerTargetPtr == IntPtr.Zero)
@@ -231,7 +239,7 @@ namespace Anamnesis
 			}
 			catch
 			{
-				// If this fails it's not fatal and we can safely ignore
+				// This section can only fail when FFXIV isn't running (fail to set address) so it should be safe to ignore
 			}
 		}
 
