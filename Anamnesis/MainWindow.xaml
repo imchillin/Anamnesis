@@ -316,7 +316,7 @@
 												<Grid Margin="0,3">
 													<Button
 														Click="OnAddPlayerTargetActorClicked"
-														IsEnabled="{Binding TargetService.PlayerTargetedActor.IsSet}"
+														IsEnabled="{Binding TargetService.IsPlayerTargetPinnable}"
 														Width="32"
 														Height="32"
 														Background="Transparent"

@@ -26,14 +26,17 @@ namespace Anamnesis
 		public static event PinnedEvent? ActorPinned;
 		public static event PinnedEvent? ActorUnPinned;
 
-		public static ActorBasicMemory PlayerTargetedActor { get; private set; } = new();
-
+		public ActorBasicMemory PlayerTargetedActor { get; private set; } = new();
+		public bool IsPlayerTargetPinnable => CanPinActor(this.PlayerTargetedActor);
 		public ActorMemory? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
 		public static async Task PinActor(ActorBasicMemory basicActor)
 		{
 			if (basicActor.Address == IntPtr.Zero)
+				return;
+
+			if (!CanPinActor(basicActor))
 				return;
 
 			try
@@ -62,13 +65,42 @@ namespace Anamnesis
 			}
 		}
 
+		public static bool CanPinActor(ActorBasicMemory actorBasicMemory)
+		{
+			if(actorBasicMemory.IsSet)
+			{
+				return CanPinActorType(actorBasicMemory.ObjectKind);
+			}
+
+			return false;
+		}
+
+		public static bool CanPinActorType(ActorTypes actorType)
+		{
+			switch (actorType)
+			{
+				case ActorTypes.Player:
+				case ActorTypes.BattleNpc:
+				case ActorTypes.EventNpc:
+				case ActorTypes.Companion:
+					return true;
+			}
+
+			return false;
+		}
+
 		public static async Task PinPlayerTargetedActor()
 		{
-			UpdatePlayerTarget();
+			Instance.UpdatePlayerTarget();
 
-			if (PlayerTargetedActor.IsSet)
+			var target = Instance.PlayerTargetedActor;
+
+			if (target.IsSet)
 			{
-				await PinActor(PlayerTargetedActor);
+				if(target.ObjectKind == ActorTypes.Player || target.ObjectKind == ActorTypes.EventNpc || target.ObjectKind == ActorTypes.Companion || target.ObjectKind == ActorTypes.BattleNpc)
+				{
+					await PinActor(target);
+				}
 			}
 		}
 
@@ -174,22 +206,26 @@ namespace Anamnesis
 			return false;
 		}
 
-		public static void UpdatePlayerTarget()
+		public void UpdatePlayerTarget()
 		{
 			// Update player target if needed
 			var currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
 			if (currentPlayerTargetPtr != IntPtr.Zero)
 			{
-				if (currentPlayerTargetPtr != PlayerTargetedActor.Address)
+				if (currentPlayerTargetPtr != this.PlayerTargetedActor.Address)
 				{
-					PlayerTargetedActor.SetAddress(currentPlayerTargetPtr);
+					this.PlayerTargetedActor.SetAddress(currentPlayerTargetPtr);
+					this.RaisePropertyChanged(nameof(TargetService.PlayerTargetedActor));
+					this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
 				}
 			}
 			else
 			{
-				if (PlayerTargetedActor.IsSet)
+				if (this.PlayerTargetedActor.IsSet)
 				{
-					PlayerTargetedActor.Dispose();
+					this.PlayerTargetedActor.Dispose();
+					this.RaisePropertyChanged(nameof(TargetService.PlayerTargetedActor));
+					this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
 				}
 			}
 		}
@@ -308,7 +344,7 @@ namespace Anamnesis
 					this.PinnedActors[i].Tick();
 				}
 
-				UpdatePlayerTarget();
+				this.UpdatePlayerTarget();
 			}
 		}
 
