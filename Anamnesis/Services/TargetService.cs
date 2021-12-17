@@ -202,38 +202,44 @@ namespace Anamnesis
 
 		public void UpdatePlayerTarget()
 		{
-			if(GposeService.Instance.IsGpose)
+			try
 			{
-				// Disable in gpose
-				if(this.PlayerTarget.Address != IntPtr.Zero)
+				if (GposeService.Instance.IsGpose)
 				{
-					this.PlayerTarget.Dispose();
-					this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
-					this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
-				}
-			}
-			else
-			{
-				// Update player target if needed
-				var currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
-				if (currentPlayerTargetPtr != IntPtr.Zero)
-				{
-					if (currentPlayerTargetPtr != this.PlayerTarget.Address)
-					{
-						this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
-						this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
-						this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
-					}
-				}
-				else
-				{
-					if (this.PlayerTarget.Address != IntPtr.Zero || GposeService.Instance.IsGpose)
+					if (this.PlayerTarget.Address != IntPtr.Zero)
 					{
 						this.PlayerTarget.Dispose();
 						this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
 						this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
 					}
 				}
+				else
+				{
+					IntPtr currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
+
+					if (currentPlayerTargetPtr != IntPtr.Zero)
+					{
+						if (currentPlayerTargetPtr != this.PlayerTarget.Address)
+						{
+							this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
+							this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
+							this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
+						}
+					}
+					else
+					{
+						if (this.PlayerTarget.Address != IntPtr.Zero)
+						{
+							this.PlayerTarget.Dispose();
+							this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
+							this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
+						}
+					}
+				}
+			}
+			catch
+			{
+				// If this fails it's not fatal and we can safely ignore
 			}
 		}
 
