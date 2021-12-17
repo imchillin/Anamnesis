@@ -573,10 +573,13 @@ namespace Anamnesis.GUI.Views
 				get => this.Name;
 				set
 				{
-					this.IsRenaming = false;
-
 					if (string.IsNullOrEmpty(value))
 						return;
+
+					if (!this.IsRenaming)
+						return;
+
+					this.IsRenaming = false;
 
 					foreach (char c in Path.GetInvalidFileNameChars())
 					{
@@ -591,7 +594,7 @@ namespace Anamnesis.GUI.Views
 						value = value.Trim();
 
 						string? dirPath = Path.GetDirectoryName(this.Entry.FullName);
-						string? name = Path.GetFileName(this.Entry.FullName);
+						string? name = Path.GetFileNameWithoutExtension(this.Entry.FullName);
 
 						if (dirPath == null || name == null)
 							return;
@@ -606,6 +609,8 @@ namespace Anamnesis.GUI.Views
 						{
 							if (this.Entry is FileInfo file)
 							{
+								string? extension = Path.GetExtension(this.Entry.FullName);
+								newPath += extension;
 								file.MoveTo(newPath);
 							}
 							else if (this.Entry is DirectoryInfo dir)

@@ -7,9 +7,11 @@ namespace Anamnesis.Windows
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Input;
+	using System.Windows.Media.Animation;
 	using Anamnesis.Services;
 	using Anamnesis.Utils;
 	using Serilog;
+	using XivToolsWpf;
 
 	/// <summary>
 	/// Interaction logic for MiniWindow.xaml.
@@ -31,6 +33,8 @@ namespace Anamnesis.Windows
 
 			this.Left = SettingsService.Current.OverlayWindowPosition.X;
 			this.Top = SettingsService.Current.OverlayWindowPosition.Y;
+
+			_ = Task.Run(this.Ping);
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
@@ -42,6 +46,9 @@ namespace Anamnesis.Windows
 		{
 			this.isHidden = true;
 			this.main.Hide();
+
+			((Storyboard)this.Resources["AnimateCloseStoryboard"]).Begin(this);
+
 			this.isDeactivating = true;
 			await Task.Delay(200);
 			this.isDeactivating = false;
@@ -86,6 +93,7 @@ namespace Anamnesis.Windows
 				return;
 
 			this.OnLocationChanged(null, null);
+			((Storyboard)this.Resources["AnimateOpenStoryboard"]).Begin(this);
 			this.main.Show();
 			this.isHidden = false;
 		}
@@ -100,15 +108,19 @@ namespace Anamnesis.Windows
 			if (double.IsNaN(this.main.Height) || double.IsNaN(this.main.Width))
 				return;
 
-			Point tl = new Point(this.Left + this.Width, this.Top);
-			Point tr = new Point(this.Left + this.Width + this.main.Width, this.Top);
-			Point bl = new Point(this.Left + this.Width, this.Top + this.main.Height);
+			double centerX = this.Left + (this.Width / 2);
+			double centerY = this.Top + (this.Width / 2);
+			double iconRadius = 22;
+
+			Point tl = new Point(centerX + iconRadius, centerY - iconRadius);
+			Point tr = new Point(centerX + iconRadius + this.main.Width, centerY - iconRadius);
+			Point bl = new Point(centerX + iconRadius, centerY - iconRadius + this.main.Height);
 
 			if (!ScreenUtils.IsOnScreen(tr))
-				tl.X = this.Left - this.main.Width;
+				tl.X = centerX - iconRadius - this.main.Width;
 
 			if (!ScreenUtils.IsOnScreen(bl))
-				tl.Y = (this.Top + this.Height) - this.main.Height;
+				tl.Y = (centerY + iconRadius) - this.main.Height;
 
 			this.main.Left = tl.X;
 			this.main.Top = tl.Y;
@@ -118,6 +130,20 @@ namespace Anamnesis.Windows
 		private void OnClosing(object sender, CancelEventArgs e)
 		{
 			this.main.Deactivated -= this.Main_Deactivated;
+		}
+
+		private async Task Ping()
+		{
+			while (this.main != null && this.Dispatcher != null)
+			{
+				await Task.Delay(3000);
+				await Dispatch.MainThread();
+
+				if (!this.isHidden)
+					continue;
+
+				((Storyboard)this.Resources["AnimateIdleStoryboard"]).Begin(this);
+			}
 		}
 	}
 }

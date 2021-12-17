@@ -50,11 +50,14 @@
 		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_AlwaysOnTop" Style="{StaticResource Label}"/>
 		<CheckBox Grid.Column="1" Grid.Row="1" IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}" Margin="6"/>
 
-		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_Translucency" Style="{StaticResource Label}"/>
-		<CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding SettingsService.Settings.EnableTranslucency}" Margin="6"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_Overlay" Style="{StaticResource Label}"/>
+		<CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding SettingsService.Settings.OverlayWindow}" Margin="6"/>
 
-		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
-		<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="3" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_Translucency" Style="{StaticResource Label}"/>
+		<CheckBox Grid.Column="1" Grid.Row="3" IsChecked="{Binding SettingsService.Settings.EnableTranslucency}" Margin="6"/>
+
+		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="4" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
+		<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="4" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
 
 		<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
 		<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="5" Margin="6"/>

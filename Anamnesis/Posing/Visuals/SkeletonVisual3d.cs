@@ -87,7 +87,7 @@ namespace Anamnesis.PoseModule
 			|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.AuRa
 			|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar;
 
-		public bool IsCustomFace => this.IsMiqote || this.IsHrothgar;
+		public bool IsCustomFace => this.Actor == null ? false : this.IsMiqote || this.IsHrothgar;
 		public bool IsMiqote => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote;
 		public bool IsViera => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Viera;
 		public bool IsHrothgar => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar;
