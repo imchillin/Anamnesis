@@ -31,7 +31,7 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 
 * **[Yuki](https://github.com/Yuki-Walsh)** - *Main development*
 * **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
-* **[damphands](https://github.com/damphands)** - *Wiki and tip curating* 
+* **[Peebs-miqo](https://github.com/Peebs-miqo)** - *Wiki and tip curating* 
 
 ## Community Developers
 
