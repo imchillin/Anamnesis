@@ -84,7 +84,16 @@ namespace Anamnesis.Views
 				}
 				else
 				{
-					string[] files = Directory.GetFiles(FileService.ParseToFilePath(SettingsService.Current.GalleryDirectory), "*.*", SearchOption.AllDirectories);
+					string dir = FileService.ParseToFilePath(SettingsService.Current.GalleryDirectory);
+
+					if (!Directory.Exists(dir))
+					{
+						await Dispatch.MainThread();
+						SettingsService.Current.GalleryDirectory = null;
+						continue;
+					}
+
+					string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
 
 					entries = new List<Entry>();
 					foreach (string filePath in files)
