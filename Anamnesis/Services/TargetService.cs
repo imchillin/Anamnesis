@@ -27,6 +27,7 @@ namespace Anamnesis
 		public static event PinnedEvent? ActorUnPinned;
 
 		public ActorBasicMemory PlayerTarget { get; private set; } = new();
+		public bool IsPlayerTargetPinnable => CanPinActor(this.PlayerTarget);
 		public ActorMemory? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
@@ -201,29 +202,37 @@ namespace Anamnesis
 
 		public void UpdatePlayerTarget()
 		{
-			// Update player target if needed
-			var currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
-			if (currentPlayerTargetPtr != IntPtr.Zero)
+			if(GposeService.Instance.IsGpose)
 			{
-				if (currentPlayerTargetPtr != this.PlayerTarget.Address)
-				{
-					this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
-				}
-				else if(GposeService.Instance.IsGpose)
-				{
-					this.PlayerTarget.Dispose();
-				}
-
-				this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
-				this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
-			}
-			else
-			{
-				if (this.PlayerTarget.Address != IntPtr.Zero)
+				// Disable in gpose
+				if(this.PlayerTarget.Address != IntPtr.Zero)
 				{
 					this.PlayerTarget.Dispose();
 					this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
 					this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
+				}
+			}
+			else
+			{
+				// Update player target if needed
+				var currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
+				if (currentPlayerTargetPtr != IntPtr.Zero)
+				{
+					if (currentPlayerTargetPtr != this.PlayerTarget.Address)
+					{
+						this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
+						this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
+						this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
+					}
+				}
+				else
+				{
+					if (this.PlayerTarget.Address != IntPtr.Zero || GposeService.Instance.IsGpose)
+					{
+						this.PlayerTarget.Dispose();
+						this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
+						this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
+					}
 				}
 			}
 		}
