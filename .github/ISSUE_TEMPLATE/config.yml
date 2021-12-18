@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: XIV Tools Discord Server
+  - name: Just have a question?
+    url: https://github.com/imchillin/Anamnesis/wiki
+    about: Most basic questions can be answered by reading our Wiki.
+  - name: Need further assistance?
     url: https://discord.gg/KvGJCCnG8t
-    about: General help with the tool outside bug reports should be directed to the Community Support channel of the XIV Tools Discord server.
+    about: If you've looked through the wiki and can't get an answer about how to use the tool, please head to the Community Support channel on the XIV Tools Discord Server.
