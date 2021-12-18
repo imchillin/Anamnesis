@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using System.Collections.Generic;
 	using Anamnesis.Styles;
 	using Anamnesis.Utils;
 	using FontAwesome.Sharp;
@@ -11,19 +12,25 @@ namespace Anamnesis.Memory
 
 	public class ActorBasicMemory : MemoryBase
 	{
+		private ActorBasicMemory? owner;
+
 		[Bind(0x030)] public Utf8String NameBytes { get; set; }
 		[Bind(0x074)] public uint ObjectId { get; set; }
 		[Bind(0x080)] public uint DataId { get; set; }
 		[Bind(0x084)] public uint OwnerId { get; set; }
+
 		[Bind(0x08c, BindFlags.ActorRefresh)] public ActorTypes ObjectKind { get; set; }
 		[Bind(0x090)] public byte DistanceFromPlayerX { get; set; }
 		[Bind(0x092)] public byte DistanceFromPlayerY { get; set; }
 
+		// owner Id is not consistant in gpose,m causing carbuncles to be lost.
 		public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.OwnerId}";
+
 		public string Name => this.NameBytes.ToString();
 		public IconChar Icon => this.ObjectKind.GetIcon();
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
 		public string NameHash => HashUtility.GetHashString(this.Name, true);
+		public string? OwnerActorId => this.GetOwner()?.Id;
 
 		[AlsoNotifyFor(nameof(ActorMemory.DisplayName))]
 		public string? Nickname { get; set; }
@@ -33,9 +40,41 @@ namespace Anamnesis.Memory
 		/// </summary>
 		public string DisplayName => this.Nickname ?? this.Name;
 
+		/// <summary>
+		/// Get owner will return the owener of a carbuncle or minion, however
+		/// only while outside of gpose. Making this fucntion USELESS.
+		/// once inside of gpose, the owner becomes itself. Thanks SQEX.
+		/// </summary>
+		/// <returns>This actors owner actor.</returns>
+		public ActorBasicMemory? GetOwner()
+		{
+			// do we own ourselves?
+			if (this.OwnerId == this.ObjectId)
+				return null;
+
+			// do we already have the correct owner?
+			if (this.owner != null && this.owner.ObjectId == this.OwnerId)
+				return this.owner;
+
+			this.owner = null;
+
+			List<ActorBasicMemory>? actors = TargetService.GetAllActors();
+
+			foreach(ActorBasicMemory actor in actors)
+			{
+				if (actor.ObjectId == this.OwnerId)
+				{
+					this.owner = actor;
+					break;
+				}
+			}
+
+			return this.owner;
+		}
+
 		public override string ToString()
 		{
-			return $"Actor {this.Id}";
+			return $"{this.Id}";
 		}
 	}
 }
