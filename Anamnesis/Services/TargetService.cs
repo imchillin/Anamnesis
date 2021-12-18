@@ -369,6 +369,7 @@ namespace Anamnesis
 			public PinnedActor(ActorMemory memory)
 			{
 				this.Id = memory.Id;
+				this.IdNoOwner = memory.IdNoOwner;
 				this.Memory = memory;
 				this.Retarget();
 			}
@@ -380,6 +381,7 @@ namespace Anamnesis
 
 			public string? Name { get; private set; }
 			public string Id { get; private set; }
+			public string IdNoOwner { get; private set; }
 			public IntPtr? Pointer { get; private set; }
 			public ActorTypes Kind { get; private set; }
 			public IconChar Icon => this.Kind.GetIcon();
@@ -505,14 +507,35 @@ namespace Anamnesis
 					if (this.Memory != null)
 						this.Memory.PropertyChanged -= this.OnViewModelPropertyChanged;
 
+					ActorBasicMemory? newBasic = null;
+
+					// Search for an exact match first
 					foreach (ActorBasicMemory actor in TargetService.GetAllActors())
 					{
 						if (actor.Id != this.Id || actor.Address == IntPtr.Zero)
 							continue;
 
+						newBasic = actor;
+					}
+
+					// fall back to ignoring owners
+					if (newBasic == null)
+					{
+						// Inside of gpose, drop the owner since they dont work.
+						foreach (ActorBasicMemory actor in TargetService.GetAllActors())
+						{
+							if (actor.IdNoOwner != this.IdNoOwner || actor.Address == IntPtr.Zero)
+								continue;
+
+							newBasic = actor;
+						}
+					}
+
+					if (newBasic != null)
+					{
 						if (this.Memory != null)
 						{
-							this.Memory.Address = actor.Address;
+							this.Memory.Address = newBasic.Address;
 
 							try
 							{
@@ -528,7 +551,7 @@ namespace Anamnesis
 						else
 						{
 							this.Memory = new ActorMemory();
-							this.Memory.SetAddress(actor.Address);
+							this.Memory.SetAddress(newBasic.Address);
 						}
 
 						IntPtr? oldPointer = this.Pointer;
@@ -587,7 +610,8 @@ namespace Anamnesis
 					{
 						this.Initials = string.Empty;
 
-						string[] parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+						string[] parts = name.Split('(', StringSplitOptions.RemoveEmptyEntries);
+						parts = parts[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
 						foreach (string part in parts)
 						{
 							this.Initials += part[0] + ".";
