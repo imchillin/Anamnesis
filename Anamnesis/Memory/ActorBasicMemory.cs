@@ -23,7 +23,7 @@ namespace Anamnesis.Memory
 		public string Name => this.NameBytes.ToString();
 		public IconChar Icon => this.ObjectKind.GetIcon();
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
-		public string NameHash => HashUtility.GetHashString(this.Name);
+		public string NameHash => HashUtility.GetHashString(this.Name, true);
 
 		[AlsoNotifyFor(nameof(ActorMemory.DisplayName))]
 		public string? Nickname { get; set; }
