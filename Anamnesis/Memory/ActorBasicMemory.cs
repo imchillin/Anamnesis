@@ -41,7 +41,7 @@ namespace Anamnesis.Memory
 		public string DisplayName => this.Nickname ?? this.Name;
 
 		/// <summary>
-		/// Get owner will return the owener of a carbuncle or minion, however
+		/// Get owner will return the owner of a carbuncle or minion, however
 		/// only while outside of gpose. Making this fucntion USELESS.
 		/// once inside of gpose, the owner becomes itself. Thanks SQEX.
 		/// </summary>
