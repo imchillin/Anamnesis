@@ -7,6 +7,7 @@ namespace Anamnesis.Character
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Excel;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 
@@ -37,6 +38,10 @@ namespace Anamnesis.Character
 			{
 				t = 'M';
 			}
+			else if (type == typeof(ModelListEntry))
+			{
+				t = 'F';
+			}
 			else
 			{
 				throw new Exception($"Unknown Npc Type: {type}");
@@ -65,6 +70,7 @@ namespace Anamnesis.Character
 					'E' => GameDataService.EventNPCs.Get(key),
 					'C' => GameDataService.Companions.Get(key),
 					'M' => GameDataService.Mounts.Get(key),
+					'F' => GameDataService.ModelList.Get(key),
 					_ => throw new Exception($"Unrecognized Npc type key: {t}"),
 				};
 			}
@@ -86,14 +92,23 @@ namespace Anamnesis.Character
 
 		private static CharacterFile ToFile(this INpcAppearance appearance)
 		{
-			if (appearance.Race == null || appearance.Tribe == null)
-				throw new Exception("NPC missing race or tribe");
+			if (appearance == null)
+				throw new ArgumentNullException(nameof(appearance));
+
+			ActorCustomizeMemory.Races? race = appearance.Race?.CustomizeRace;
+			ActorCustomizeMemory.Tribes? tribe = appearance.Tribe?.CustomizeTribe;
+
+			if (race == null)
+				race = ActorCustomizeMemory.Races.Hyur;
+
+			if (tribe == null)
+				tribe = ActorCustomizeMemory.Tribes.Midlander;
 
 			CharacterFile file = new CharacterFile();
 			file.SaveMode = CharacterFile.SaveModes.All;
 			file.ModelType = appearance.ModelCharaRow;
-			file.Race = appearance.Race.CustomizeRace;
-			file.Tribe = appearance.Tribe.CustomizeTribe;
+			file.Race = race;
+			file.Tribe = tribe;
 			file.Gender = (ActorCustomizeMemory.Genders)appearance.Gender;
 			file.Age = (ActorCustomizeMemory.Ages)appearance.BodyType;
 			file.Height = (byte)Math.Min(appearance.Height, 100);

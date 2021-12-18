@@ -30,6 +30,7 @@ namespace Anamnesis.Serialization
 			Options.Converters.Add(new IDyeConverter());
 			Options.Converters.Add(new ItemCategoriesConverter());
 			Options.Converters.Add(new INpcBaseConverter());
+			Options.Converters.Add(new ImageReferenceConverter());
 		}
 
 		public static string Serialize(object obj)

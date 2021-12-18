@@ -209,66 +209,79 @@
 				</GroupBox>
 			</StackPanel>
 
-			<Menu Grid.Row="1"
-				  Margin="0,3, 3, 4"
-				  Style="{StaticResource AnaMenu}">
+			<StackPanel Orientation="Vertical" Grid.Row="1">
+				<Menu Style="{StaticResource AnaMenu}" Margin="0,3, 0, 2"  HorizontalAlignment="Right">
 
-				<MenuItem Header="Common_OpenFile"
+					<MenuItem Header="Common_OpenFile"
 						  Icon="FolderOpen"
 						  Style="{StaticResource ButtonMenuItemLeft}"
 						  Click="OnLoadClicked" />
 
-				<MenuItem Style="{StaticResource ButtonMenuItemRight}"
+					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
 						  Margin="-1,0,1,0">
-					<MenuItem Header="Character_Appearance_Header"
+						<MenuItem Header="Character_Appearance_Header"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnLoadAppearanceClicked" />
-					
-					<MenuItem Header="Character_Equipment_Header"
+
+						<MenuItem Header="Character_Equipment_Header"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnLoadEquipmentClicked" />
 
-					<MenuItem Header="Character_Equipment_Gear"
+						<MenuItem Header="Character_Equipment_Gear"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnLoadGearClicked" />
-					
-					<MenuItem Header="Character_Equipment_Accessories"
+
+						<MenuItem Header="Character_Equipment_Accessories"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnLoadAccessoriesClicked" />
-					
-					<MenuItem Header="Character_Equipment_Weapons"
+
+						<MenuItem Header="Character_Equipment_Weapons"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnLoadWeaponsClicked" />
 
-				</MenuItem>
+					</MenuItem>
 
-				<MenuItem Header="Character_Appearance_LoadOther"
+					<MenuItem Header="Character_Appearance_LoadNpc"
 						  Icon="User"
 						  Style="{StaticResource ButtonMenuItemLeft}"
 						  Click="OnLoadNpcClicked" />
 
-				<MenuItem Style="{StaticResource ButtonMenuItemRight}"
+					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
 						  Margin="-1,0,3,0">
-					
-					<MenuItem Header="Character_Appearance_Header"
+
+						<MenuItem Header="Character_Appearance_Header"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadNpcAppearanceClicked" />					
-					
-					<MenuItem Header="Character_Equipment_Header"
+							  Click="OnLoadNpcAppearanceClicked" />
+
+						<MenuItem Header="Character_Equipment_Header"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnLoadNpcEquipmentClicked" />
-							
-					<MenuItem Header="Character_Equipment_Weapons"
+
+						<MenuItem Header="Character_Equipment_Weapons"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnLoadNpcWeaponsClicked" />
-				</MenuItem>
+					</MenuItem>
 
-				<MenuItem Header="Common_SaveFile"
-						  Icon="Save"
-						  Style="{StaticResource ButtonMenuItem}"
-						  Click="OnSaveClicked" />
+					<MenuItem Style="{StaticResource ButtonMenuItem}"
+							  Header="Character_Appearance_LoadObject"
+							  Icon="MugHot"
+							  Margin="-1,0,3,0"
+							 Click="OnLoadObjectClicked">
+					</MenuItem>
 
-			</Menu>
+
+				</Menu>
+
+				<Menu Style="{StaticResource AnaMenu}" Margin="0,3, 3, 4" HorizontalAlignment="Right">
+					<MenuItem Header="Common_SaveFile"
+							  Icon="Save"
+							  Width="238"
+							  Style="{StaticResource ButtonMenuItem}"
+							  Click="OnSaveClicked" />
+				</Menu>
+			</StackPanel>
+
+			
 
 		</Grid>
 	</Grid>

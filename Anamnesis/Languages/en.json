@@ -106,7 +106,8 @@
 	"Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
 	"Character_Load_CMTool": "CMTool save",
 
-	"Character_Appearance_LoadOther": "NPC",
+	"Character_Appearance_LoadNpc": "NPC",
+	"Character_Appearance_LoadObject": "Object",
 	"Character_Customize_Header": "Customize",
 	"Character_Appearance_Header": "Appearance",
 	"Character_Appearance_Body": "Body",

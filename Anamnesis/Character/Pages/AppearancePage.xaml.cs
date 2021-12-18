@@ -12,6 +12,7 @@ namespace Anamnesis.Character.Pages
 	using Anamnesis.Character.Views;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
@@ -151,6 +152,17 @@ namespace Anamnesis.Character.Pages
 					return;
 
 				Task.Run(() => this.ApplyNpc(npc, mode));
+			});
+		}
+
+		private void OnLoadObjectClicked(object sender, RoutedEventArgs e)
+		{
+			SelectorDrawer.Show<ModelListSelector, ModelListEntry>(null, (npc) =>
+			{
+				if (npc == null)
+					return;
+
+				Task.Run(() => this.ApplyNpc(npc, CharacterFile.SaveModes.Appearance));
 			});
 		}
 

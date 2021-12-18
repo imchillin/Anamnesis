@@ -123,6 +123,9 @@ namespace Anamnesis.Character.Views
 			if (GameDataService.Companions != null)
 				this.Selector.AddItems(GameDataService.Companions);
 
+			if (GameDataService.ModelList != null)
+				this.Selector.AddItems(GameDataService.ModelList);
+
 			return Task.CompletedTask;
 		}
 
