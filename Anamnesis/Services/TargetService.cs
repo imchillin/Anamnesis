@@ -208,7 +208,7 @@ namespace Anamnesis
 			{
 				if (GposeService.Instance.IsGpose)
 				{
-					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.GPoseTarget);
+					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0xC0);
 				}
 				else
 				{
