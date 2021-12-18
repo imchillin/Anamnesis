@@ -48,7 +48,7 @@ namespace Anamnesis
 				{
 					if (basicActor.Address == otherActor.Pointer)
 					{
-						Log.Information($"Actor already pinned: {otherActor.Initials}");
+						Log.Information($"Actor already pinned: {otherActor}");
 						return;
 					}
 				}
@@ -56,6 +56,8 @@ namespace Anamnesis
 				ActorMemory memory = new();
 				memory.SetAddress(basicActor.Address);
 				PinnedActor pined = new PinnedActor(memory);
+
+				Log.Information($"Pinning actor: {pined}");
 
 				await Dispatch.MainThread();
 				Instance.PinnedActors.Add(pined);
@@ -419,7 +421,7 @@ namespace Anamnesis
 				if (this.Memory == null)
 					return base.ToString();
 
-				return this.Memory.DisplayName;
+				return this.Memory.ToString();
 			}
 
 			public void Dispose()
@@ -460,7 +462,7 @@ namespace Anamnesis
 
 					if (!IsActorInActorTable(this.Memory.Address))
 					{
-						Log.Information($"Actor: {this.Initials} was not in actor table");
+						Log.Information($"Actor: {this} was not in actor table");
 						this.Retarget();
 						return;
 					}
@@ -544,7 +546,7 @@ namespace Anamnesis
 
 						// dont log every time we just select an actor.
 						if (oldPointer != null && oldPointer != this.Pointer)
-							Log.Information($"Retargeted actor: {this.Initials} from {oldPointer} to {this.Pointer}");
+							Log.Information($"Retargeted actor: {this} from {oldPointer} to {this.Pointer}");
 
 						this.IsRetargeting = false;
 
@@ -553,7 +555,7 @@ namespace Anamnesis
 
 					if (this.Memory != null)
 					{
-						Log.Warning($"Lost actor: {this.Initials}");
+						Log.Warning($"Lost actor: {this}");
 						this.SetInvalid();
 					}
 

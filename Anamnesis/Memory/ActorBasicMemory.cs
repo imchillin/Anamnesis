@@ -5,6 +5,7 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using Anamnesis.Styles;
+	using Anamnesis.Utils;
 	using FontAwesome.Sharp;
 	using PropertyChanged;
 
@@ -18,10 +19,11 @@ namespace Anamnesis.Memory
 		[Bind(0x090)] public byte DistanceFromPlayerX { get; set; }
 		[Bind(0x092)] public byte DistanceFromPlayerY { get; set; }
 
-		public string Id => this.Name;
+		public string Id => $"n{this.NameHash}_d{this.DataId}";
 		public string Name => this.NameBytes.ToString();
 		public IconChar Icon => this.ObjectKind.GetIcon();
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
+		public string NameHash => HashUtility.GetHashString(this.Name);
 
 		[AlsoNotifyFor(nameof(ActorMemory.DisplayName))]
 		public string? Nickname { get; set; }
@@ -30,5 +32,10 @@ namespace Anamnesis.Memory
 		/// Gets the Nickname or if not set, the Name.
 		/// </summary>
 		public string DisplayName => this.Nickname ?? this.Name;
+
+		public override string ToString()
+		{
+			return $"Actor {this.Id}";
+		}
 	}
 }
