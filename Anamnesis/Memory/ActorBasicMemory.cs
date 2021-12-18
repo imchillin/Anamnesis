@@ -29,7 +29,6 @@ namespace Anamnesis.Memory
 		public IconChar Icon => this.ObjectKind.GetIcon();
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
 		public string NameHash => HashUtility.GetHashString(this.NameBytes.ToString(), true);
-		public string? OwnerActorId => this.GetOwner()?.Id;
 
 		[AlsoNotifyFor(nameof(ActorMemory.DisplayName))]
 		public string? Nickname { get; set; }
@@ -45,10 +44,11 @@ namespace Anamnesis.Memory
 			{
 				string name = this.NameBytes.ToString();
 
-				ActorBasicMemory? owner = this.GetOwner();
+				// Geting owner now can be expensive, so disable this for now.
+				/*ActorBasicMemory? owner = this.GetOwner();
 
 				if (owner != null)
-					name += $" ({owner.DisplayName})";
+					name += $" ({owner.DisplayName})";*/
 
 				return name;
 			}
