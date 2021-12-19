@@ -72,7 +72,7 @@ namespace Anamnesis
 
 		public static bool CanPinActor(ActorBasicMemory actorBasicMemory)
 		{
-			if(actorBasicMemory.Address != IntPtr.Zero)
+			if (actorBasicMemory.Address != IntPtr.Zero)
 			{
 				return CanPinActorType(actorBasicMemory.ObjectKind);
 			}
@@ -119,17 +119,25 @@ namespace Anamnesis
 			ActorUnPinned?.Invoke(actor);
 		}
 
-		public static bool IsPinned(ActorBasicMemory actor)
+		public static PinnedActor? GetPinned(ActorBasicMemory actor)
 		{
-			foreach (PinnedActor pinned in Instance.PinnedActors)
+			foreach (PinnedActor pinned in TargetService.Instance.PinnedActors)
 			{
-				if (pinned.Id == actor.Id)
+				if (pinned.Memory == null)
+					continue;
+
+				if (pinned.Memory.Id == actor.Id)
 				{
-					return true;
+					return pinned;
 				}
 			}
 
-			return false;
+			return null;
+		}
+
+		public static bool IsPinned(ActorBasicMemory actor)
+		{
+			return GetPinned(actor) != null;
 		}
 
 		public static List<ActorBasicMemory> GetAllActors()
@@ -369,7 +377,7 @@ namespace Anamnesis
 			public PinnedActor(ActorMemory memory)
 			{
 				this.Id = memory.Id;
-				this.IdNoOwner = memory.IdNoAddress;
+				this.IdNoAddress = memory.IdNoAddress;
 				this.Memory = memory;
 				this.Retarget();
 			}
@@ -381,7 +389,7 @@ namespace Anamnesis
 
 			public string? Name { get; private set; }
 			public string Id { get; private set; }
-			public string IdNoOwner { get; private set; }
+			public string IdNoAddress { get; private set; }
 			public IntPtr? Pointer { get; private set; }
 			public ActorTypes Kind { get; private set; }
 			public IconChar Icon => this.Kind.GetIcon();
@@ -516,18 +524,24 @@ namespace Anamnesis
 							continue;
 
 						newBasic = actor;
+						break;
 					}
 
-					// fall back to ignoring owners
+					// fall back to ignoring addresses
 					if (newBasic == null)
 					{
-						// Inside of gpose, drop the owner since they dont work.
 						foreach (ActorBasicMemory actor in TargetService.GetAllActors())
 						{
-							if (actor.IdNoAddress != this.IdNoOwner || actor.Address == IntPtr.Zero)
+							if (actor.IdNoAddress != this.IdNoAddress || actor.Address == IntPtr.Zero)
+								continue;
+
+							// Is this actor memory already pinned to a differnet pin?
+							PinnedActor? pinned = TargetService.GetPinned(actor);
+							if (pinned != this && pinned != null)
 								continue;
 
 							newBasic = actor;
+							break;
 						}
 					}
 
@@ -556,6 +570,8 @@ namespace Anamnesis
 
 						IntPtr? oldPointer = this.Pointer;
 
+						this.Id = this.Memory.Id;
+						this.IdNoAddress = this.Memory.IdNoAddress;
 						this.Name = this.Memory.Name;
 						this.Memory.OnRetargeted();
 						this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
