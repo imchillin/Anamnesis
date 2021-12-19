@@ -23,7 +23,7 @@ namespace Anamnesis.Memory
 		[Bind(0x090)] public byte DistanceFromPlayerX { get; set; }
 		[Bind(0x092)] public byte DistanceFromPlayerY { get; set; }
 
-		public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.OwnerId}";
+		public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.ObjectId}";
 		public string IdNoOwner => $"n{this.NameHash}_d{this.DataId}";
 
 		public IconChar Icon => this.ObjectKind.GetIcon();
