@@ -22,6 +22,9 @@ namespace Anamnesis
 	[AddINotifyPropertyChangedInterface]
 	public class TargetService : ServiceBase<TargetService>
 	{
+		public static readonly int OverworldPlayerTargetOffset = 0x80;
+		public static readonly int GPosePlayerTargetOffset = 0x98;
+
 		public static event SelectionEvent? ActorSelected;
 		public static event PinnedEvent? ActorPinned;
 		public static event PinnedEvent? ActorUnPinned;
@@ -201,6 +204,22 @@ namespace Anamnesis
 			return false;
 		}
 
+		public static void SetPlayerTarget(PinnedActor actor)
+		{
+			var ptr = actor?.Pointer;
+			if (ptr != null)
+			{
+				if (GposeService.Instance.IsGpose)
+				{
+					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset), (IntPtr)ptr, "Update player target");
+				}
+				else
+				{
+					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset), (IntPtr)ptr, "Update player target");
+				}
+			}
+		}
+
 		public void UpdatePlayerTarget()
 		{
 			IntPtr currentPlayerTargetPtr = IntPtr.Zero;
@@ -209,11 +228,11 @@ namespace Anamnesis
 			{
 				if (GposeService.Instance.IsGpose)
 				{
-					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0xC0);
+					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset));
 				}
 				else
 				{
-					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(AddressService.PlayerTargetSystem + 0x80);
+					currentPlayerTargetPtr = MemoryService.Read<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset));
 				}
 			}
 			catch

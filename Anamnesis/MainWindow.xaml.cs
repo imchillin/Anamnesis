@@ -258,6 +258,14 @@ namespace Anamnesis.GUI
 			}
 		}
 
+		private void OnTargetActorClicked(object sender, RoutedEventArgs e)
+		{
+			if (sender is FrameworkElement el && el.DataContext is TargetService.PinnedActor actor)
+			{
+				TargetService.SetPlayerTarget(actor);
+			}
+		}
+
 		private void OnActorPinPreviewMouseUp(object sender, MouseButtonEventArgs e)
 		{
 			if (e.ChangedButton == MouseButton.Middle)
