@@ -369,7 +369,7 @@ namespace Anamnesis
 			public PinnedActor(ActorMemory memory)
 			{
 				this.Id = memory.Id;
-				this.IdNoOwner = memory.IdNoOwner;
+				this.IdNoOwner = memory.IdNoAddress;
 				this.Memory = memory;
 				this.Retarget();
 			}
@@ -524,7 +524,7 @@ namespace Anamnesis
 						// Inside of gpose, drop the owner since they dont work.
 						foreach (ActorBasicMemory actor in TargetService.GetAllActors())
 						{
-							if (actor.IdNoOwner != this.IdNoOwner || actor.Address == IntPtr.Zero)
+							if (actor.IdNoAddress != this.IdNoOwner || actor.Address == IntPtr.Zero)
 								continue;
 
 							newBasic = actor;

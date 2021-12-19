@@ -23,8 +23,8 @@ namespace Anamnesis.Memory
 		[Bind(0x090)] public byte DistanceFromPlayerX { get; set; }
 		[Bind(0x092)] public byte DistanceFromPlayerY { get; set; }
 
-		public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.ObjectId}";
-		public string IdNoOwner => $"n{this.NameHash}_d{this.DataId}";
+		public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
+		public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}";
 
 		public IconChar Icon => this.ObjectKind.GetIcon();
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
