@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.Views"
+			 xmlns:controls="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450" d:DesignWidth="800">
 
@@ -17,42 +18,58 @@
 			<DoubleAnimation Storyboard.TargetName="Image1Host" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:2" />
 		</Storyboard>
 	</UserControl.Resources>
-	
-	<Grid x:Name="ContentArea" Margin="6, 30, 6, 6" MouseDown="OnMouseDown">
 
-		<Border BorderBrush="White" MinHeight="256" MinWidth="256" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image1Host" Opacity="0"  Visibility="{Binding Image1Path, Converter={StaticResource NotNullToVisibilityConverter}}">
-			<Border.Effect>
-				<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="0.5"/>
-			</Border.Effect>
+	<Grid Margin="6, 4, 0, 0" x:Name="ContentArea" >
 
-			<Border.RenderTransform>
-				<RotateTransform x:Name="Image1Rotate" Angle="5" CenterX="200" CenterY="200"/>
-			</Border.RenderTransform>
+		<StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal" IsEnabled="{Binding CanSkip}">
 
-			<Grid>
-				<Rectangle Fill="White" Margin="-3"/>
-				<TextBlock Text="Oops! No Image!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0, 0, 0, 20"/>
-				<Image Source="{Binding Image1Path}" x:Name="Image1" Margin="0, 0, 0, 20"/>
-				<TextBlock Text="{Binding Image1Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2, 4, 2, 0"/>
-			</Grid>
-		</Border>
+			<ProgressBar IsIndeterminate="True" Style="{StaticResource MaterialDesignCircularProgressBar}" Margin="2, 10, 6, 2" Visibility="{Binding CanSkip, Converter={StaticResource !B2V}}"/>
 
-		<Border BorderBrush="White" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image2Host" Opacity="0" Visibility="{Binding Image2Path, Converter={StaticResource NotNullToVisibilityConverter}}">
-			<Border.Effect>
-				<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="0.5"/>
-			</Border.Effect>
+			<Button Width="32" Height="32" Style="{DynamicResource TransparentIconButton}" Click="OnPrevClicked">
+				<controls:IconBlock Icon="ArrowLeft"/>
+			</Button>
 
-			<Border.RenderTransform>
-				<RotateTransform x:Name="Image2Rotate" Angle="-5" CenterX="200" CenterY="200"/>
-			</Border.RenderTransform>
+			<Button Width="32" Height="32" Style="{DynamicResource TransparentIconButton}" Click="OnNextClicked">
+				<controls:IconBlock Icon="ArrowRight"/>
+			</Button>
+		</StackPanel>
 
-			<Grid>
-				<Rectangle Fill="White" Margin="-3"/>
-				<TextBlock Text="Oops! No Image!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0, 0, 0, 20"/>
-				<Image Source="{Binding Image2Path}" x:Name="Image2" Margin="0, 0, 0, 20"/>
-				<TextBlock Text="{Binding Image2Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2, 4, 2, 0"/>
-			</Grid>
-		</Border>
+		<Grid Margin="30" MouseDown="OnMouseDown" Cursor="Hand">
+
+			<Border BorderBrush="White" MinHeight="256" MinWidth="256" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image1Host" Opacity="0"  Visibility="{Binding Image1Path, Converter={StaticResource NotNullToVisibilityConverter}}">
+				<Border.Effect>
+					<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="0.5"/>
+				</Border.Effect>
+
+				<Border.RenderTransform>
+					<RotateTransform x:Name="Image1Rotate" Angle="5" CenterX="200" CenterY="200"/>
+				</Border.RenderTransform>
+
+				<Grid>
+					<Rectangle Fill="White" Margin="-3"/>
+					<TextBlock Text="Oops! No Image!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0, 0, 0, 20"/>
+					<Image Source="{Binding Image1Path}" x:Name="Image1" Margin="0, 0, 0, 20"/>
+					<TextBlock Text="{Binding Image1Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2, 4, 2, 0"/>
+				</Grid>
+			</Border>
+
+			<Border BorderBrush="White" BorderThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" Background="White" x:Name="Image2Host" Opacity="0" Visibility="{Binding Image2Path, Converter={StaticResource NotNullToVisibilityConverter}}">
+				<Border.Effect>
+					<DropShadowEffect ShadowDepth="0" BlurRadius="15" Opacity="0.5"/>
+				</Border.Effect>
+
+				<Border.RenderTransform>
+					<RotateTransform x:Name="Image2Rotate" Angle="-5" CenterX="200" CenterY="200"/>
+				</Border.RenderTransform>
+
+				<Grid>
+					<Rectangle Fill="White" Margin="-3"/>
+					<TextBlock Text="Oops! No Image!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0, 0, 0, 20"/>
+					<Image Source="{Binding Image2Path}" x:Name="Image2" Margin="0, 0, 0, 20"/>
+					<TextBlock Text="{Binding Image2Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2, 4, 2, 0"/>
+				</Grid>
+			</Border>
+		</Grid>
 	</Grid>
-	
+
 </UserControl>

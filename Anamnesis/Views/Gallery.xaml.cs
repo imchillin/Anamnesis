@@ -8,14 +8,14 @@ namespace Anamnesis.Views
 	using System.ComponentModel;
 	using System.IO;
 	using System.Net;
-	using System.Net.Http;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Media.Animation;
+	using Anamnesis.Core.Extensions;
 	using Anamnesis.Files;
-	using Anamnesis.Serialization;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
@@ -31,7 +31,9 @@ namespace Anamnesis.Views
 
 		private bool isImage1 = true;
 		private bool isRunning = false;
-		private bool skip = false;
+		private bool forceUpdate = false;
+		private int currentIndex = 0;
+		private Entry? currentEntry = null;
 
 		public Gallery()
 		{
@@ -42,6 +44,7 @@ namespace Anamnesis.Views
 			this.OnSettingsChanged(null, null);
 		}
 
+		public bool CanSkip { get; set; } = false;
 		public string? Image1Path { get; set; } = null;
 		public string Image1Author { get; set; } = string.Empty;
 		public string? Image2Path { get; set; } = null;
@@ -72,7 +75,7 @@ namespace Anamnesis.Views
 
 			Random rnd = new Random();
 
-			this.skip = true;
+			this.forceUpdate = true;
 
 			while (Application.Current != null && SettingsService.Current.ShowGallery)
 			{
@@ -111,7 +114,9 @@ namespace Anamnesis.Views
 
 				Log.Information("Loading gallery image list");
 
-				while (entries.Count > 0)
+				entries.Shuffle();
+
+				while(this.isRunning)
 				{
 					if (!this.IsVisible)
 						await Task.Delay(5000);
@@ -123,17 +128,16 @@ namespace Anamnesis.Views
 					}
 
 					int delay = 0;
-					while (!this.skip && delay < ImageDelay)
+					while (!this.forceUpdate && delay < ImageDelay)
 					{
 						delay += 100;
 						await Task.Delay(100);
 					}
 
-					int index = rnd.Next(entries.Count);
-					await this.Show(entries[index], rnd);
-					entries.RemoveAt(index);
+					this.currentIndex++;
+					await this.Show(entries[this.currentIndex], rnd);
 
-					this.skip = false;
+					this.forceUpdate = false;
 				}
 			}
 		}
@@ -143,7 +147,11 @@ namespace Anamnesis.Views
 			if (entry.Url == null || entry.Author == null)
 				return;
 
+			await Dispatch.MainThread();
+			this.CanSkip = false;
 			bool valid = true;
+
+			await Dispatch.NonUiThread();
 
 			if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
 			{
@@ -172,10 +180,15 @@ namespace Anamnesis.Views
 				valid = true;
 			}
 
-			if (!valid)
-				return;
-
 			await Dispatch.MainThread();
+
+			if (!valid)
+			{
+				this.CanSkip = true;
+				return;
+			}
+
+			this.currentEntry = entry;
 
 			UIElement oldHost = this.isImage1 ? this.Image1Host : this.Image2Host;
 
@@ -208,6 +221,8 @@ namespace Anamnesis.Views
 
 			await Dispatch.MainThread();
 
+			this.CanSkip = true;
+
 			host.Opacity = 0.0;
 
 			Storyboard? sb = this.Resources[this.isImage1 ? "StoryboardImage1" : "StoryboardImage2"] as Storyboard;
@@ -215,17 +230,34 @@ namespace Anamnesis.Views
 			if (sb == null)
 				throw new System.Exception("Missing gallery storyboard");
 
-			sb.SpeedRatio = this.skip ? 10 : 1;
+			sb.SpeedRatio = this.forceUpdate ? 10 : 1;
 			sb.Begin();
 
-			await Task.Delay(this.skip ? 200 : 2000);
+			await Task.Delay(this.forceUpdate ? 200 : 2000);
 
 			oldHost.Opacity = 0.0;
 		}
 
-		private void OnMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		private void OnMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			this.skip = true;
+			if (this.currentEntry == null || this.currentEntry.Url == null)
+				return;
+
+			UrlUtility.Open(this.currentEntry.Url);
+		}
+
+		private void OnPrevClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.currentIndex > 1)
+			{
+				this.currentIndex -= 2;
+				this.forceUpdate = true;
+			}
+		}
+
+		private void OnNextClicked(object sender, RoutedEventArgs e)
+		{
+			this.forceUpdate = true;
 		}
 
 		public class Entry

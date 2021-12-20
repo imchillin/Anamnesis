@@ -28,7 +28,7 @@
 
 			<local:Gallery Grid.Row="0"
 						   Grid.RowSpan="2"
-						   Margin="10, 0, 10, 100" />
+						   Margin="0, 0, 0, 100" />
 
 			<Grid Grid.Row="1"
 				  Margin="0, -100, 0, 0">
