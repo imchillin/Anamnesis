@@ -232,6 +232,9 @@
 																		<ContextMenu>
 																			<MenuItem Click="OnUnpinActorClicked"
 																					  Header="Unpin" />
+
+																			<MenuItem Click="OnTargetActorClicked"
+																					  Header="Target" />
 																		</ContextMenu>
 																	</ToggleButton.ContextMenu>
 
