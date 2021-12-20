@@ -132,13 +132,12 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
 			tasks.Add(GetAddressFromSignature("PlayerTargetSystem", "48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 0, (p) => { PlayerTargetSystem = p; }));
 
-			// Mising Signature for Endwalker
 			tasks.Add(GetAddressFromTextSignature(
-				"TimeStop",
-				"48 89 5C 24 ?? 57 48 83 EC 30 4C 8B 15",
+				"TimeAsm",
+				"48 89 5C 24 ?? 57 48 83 EC 20 48 8B F9 48 8B DA 48 81 C1 ?? ?? ?? ?? E8 ?? ?? ?? ?? 4C 8B 87",
 				(p) =>
 				{
-					TimeAsm = p + 0x19;
+					TimeAsm = p + 0xE5;
 				}));
 
 			tasks.Add(GetAddressFromTextSignature(
@@ -146,9 +145,11 @@ namespace Anamnesis.Core.Memory
 				"48 C7 05 ?? ?? ?? ?? 00 00 00 00 E8 ?? ?? ?? ?? 48 8D ?? ?? ?? 00 00 E8 ?? ?? ?? ?? 48 8D",
 				(p) =>
 				{
-					int fwOffset = MemoryService.Read<int>(p + 3);
-					TimeReal = MemoryService.ReadPtr(p + 11 + fwOffset);
-					TimeReal += 0x1770;
+					int frameworkOffset = MemoryService.Read<int>(p + 3);
+					IntPtr frameworkPtr = MemoryService.ReadPtr(p + 11 + frameworkOffset);
+					TimeReal = frameworkPtr + 0x1770;
+
+					// For reference, gpose time is at frameworkPtr + 0x1798 if it's ever needed
 				}));
 
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
