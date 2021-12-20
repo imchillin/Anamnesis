@@ -17,7 +17,7 @@ namespace Anamnesis
 
 		public TimeSpan Time { get; private set; }
 		public string TimeString { get; private set; } = "00:00";
-		public uint TimeOfDay { get; set; }
+		public long TimeOfDay { get; set; }
 		public byte DayOfMonth { get; set; }
 
 		public bool Freeze
@@ -30,7 +30,7 @@ namespace Anamnesis
 		{
 			await base.Initialize();
 
-			this.timeMemory = new TimeMemory(AddressService.TimeAsm);
+			this.timeMemory = new TimeMemory();
 
 			_ = Task.Run(this.CheckTime);
 		}
@@ -61,16 +61,15 @@ namespace Anamnesis
 
 					if (this.Freeze)
 					{
-						uint newTime = (uint)((this.TimeOfDay * 60) + (86400 * (this.DayOfMonth - 1)));
+						long newTime = (long)((this.TimeOfDay * 60) + (86400 * (this.DayOfMonth - 1)));
 						this.Time = TimeSpan.FromSeconds(newTime);
 						this.timeMemory?.SetTime(newTime);
 					}
 					else
 					{
-						long timeVal = MemoryService.Read<long>(AddressService.TimeReal) % 2764800;
+						long timeVal = this.timeMemory!.CurrentTime % 2764800;
 						this.Time = TimeSpan.FromSeconds(timeVal);
-
-						this.TimeOfDay = (uint)((uint)this.Time.TotalMinutes - (long)(this.Time.Days * 24 * 60));
+						this.TimeOfDay = (long)(this.Time.TotalMinutes - (this.Time.Days * 24 * 60));
 						this.DayOfMonth = (byte)this.Time.Days;
 					}
 

@@ -5,22 +5,24 @@ namespace Anamnesis.Memory
 {
 	using System;
 
+	using Anamnesis.Core.Memory;
+
 	public class TimeMemory
 	{
-		private readonly IntPtr address;
-		private readonly byte[] originalValue;
-		private readonly byte[] newTimeAsm = new byte[] { 0x49, 0xC7, 0xC1, 0x00, 0x00, 0x00, 0x00 };
+		private readonly byte[] originalTimeAsm;
+
+		private readonly byte[] newTimeAsm = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 
 		private bool value;
 
-		public TimeMemory(IntPtr address)
+		public TimeMemory()
 		{
-			this.address = address;
+			this.originalTimeAsm = new byte[this.newTimeAsm.Length];
 
-			this.originalValue = new byte[7];
-
-			MemoryService.Read(this.address, this.originalValue, this.originalValue.Length);
+			MemoryService.Read(AddressService.TimeAsm, this.originalTimeAsm, this.originalTimeAsm.Length);
 		}
+
+		public long CurrentTime => MemoryService.Read<long>(AddressService.TimeReal);
 
 		public bool Freeze
 		{
@@ -42,20 +44,20 @@ namespace Anamnesis.Memory
 
 			if (enabled)
 			{
-				// Write new function
-				MemoryService.Write(this.address, this.newTimeAsm);
+				// We disable the game code which updates Eorzea Time
+				MemoryService.Write(AddressService.TimeAsm, this.newTimeAsm);
 			}
 			else
 			{
-				// Write the original value
-				MemoryService.Write(this.address, this.originalValue);
+				// We write the Eorzea time update code back
+				MemoryService.Write(AddressService.TimeAsm, this.originalTimeAsm);
 			}
 		}
 
-		public void SetTime(uint newTime)
+		public void SetTime(long newTime)
 		{
-			// Write time into the function
-			MemoryService.Write(this.address + 0x3, BitConverter.GetBytes(newTime));
+			// As long as Eorzea Time updating is disabled we can just set it directly
+			MemoryService.Write(AddressService.TimeReal, BitConverter.GetBytes(newTime));
 		}
 	}
 }
