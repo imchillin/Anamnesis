@@ -317,23 +317,24 @@ namespace Anamnesis.Memory
 			{
 				IntPtr bindAddress = bind.GetAddress();
 
-				if (bindAddress == IntPtr.Zero)
+				if (bindAddress == IntPtr.Zero || bindAddress == bind.LastFailureAddress)
 					return;
 
 				if (typeof(MemoryBase).IsAssignableFrom(bind.Type))
 				{
 					MemoryBase? childMemory = bind.Property.GetValue(this) as MemoryBase;
 
+					bool isNew = false;
+
 					if (childMemory == null)
 					{
+						isNew = true;
 						childMemory = Activator.CreateInstance(bind.Type) as MemoryBase;
 
 						if (childMemory == null)
+						{
 							throw new Exception($"Failed to create instance of child memory type: {bind.Type}");
-
-						childMemory.Parent = this;
-						childMemory.ParentBind = bind;
-						this.Children.Add(childMemory);
+						}
 					}
 
 					// Has this bind changed
@@ -342,12 +343,20 @@ namespace Anamnesis.Memory
 
 					try
 					{
-						bind.Property.SetValue(this, childMemory);
 						childMemory.SetAddress(bindAddress);
+						bind.Property.SetValue(this, childMemory);
+
+						if (isNew)
+						{
+							childMemory.Parent = this;
+							childMemory.ParentBind = bind;
+							this.Children.Add(childMemory);
+						}
 					}
 					catch (Exception ex)
 					{
 						Log.Warning(ex, $"Failed to bind to child memory: {bind.Name}");
+						bind.LastFailureAddress = bindAddress;
 					}
 				}
 				else
@@ -481,6 +490,7 @@ namespace Anamnesis.Memory
 			public BindFlags Flags => this.Attribute.Flags;
 
 			public object? FreezeValue { get; set; }
+			public IntPtr? LastFailureAddress { get; set; }
 
 			public bool IsChildMemory => typeof(MemoryBase).IsAssignableFrom(this.Type);
 
