@@ -6,6 +6,7 @@ namespace Anamnesis.PoseModule.Pages
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -525,7 +526,7 @@ namespace Anamnesis.PoseModule.Pages
 			{
 				if (this.Skeleton != null && !this.Skeleton.HasHover)
 				{
-					this.Skeleton?.ClearSelection();
+					this.Skeleton.Select(Enumerable.Empty<IBone>());
 				}
 			}
 
