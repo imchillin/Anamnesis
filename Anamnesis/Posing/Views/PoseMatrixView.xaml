@@ -127,24 +127,33 @@
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="2" Key="Pose_Jaw" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<local:BoneView Grid.Column="3" Grid.Row="2" BoneName="Jaw"/>
-
+						<StackPanel Grid.Column="3" Grid.Row="2" Orientation="Horizontal">
+							<local:BoneView BoneName="Jaw"/>
+							<local:BoneView BoneName="HrothJawUpper" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
+						</StackPanel>
+						
 						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="2" Key="Pose_Mouth" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="5" Grid.Row="2" Orientation="Horizontal">
-							<local:BoneView BoneName="LipsLeft" Label="L"/>
-							<local:BoneView BoneName="LipsRight" Label="R"/>
+							<local:BoneView BoneName="LipsLeft" Label="L" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
+							<local:BoneView BoneName="LipsRight" Label="R" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
+							<local:BoneView BoneName="HrothLipsLeft" Label="L" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
+							<local:BoneView BoneName="HrothLipsRight" Label="R" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="2" Key="Pose_UpperLip" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="7" Grid.Row="2" Orientation="Horizontal">
-							<local:BoneView BoneName="LipUpperA" Label="1"/>
-							<local:BoneView BoneName="LipUpperB" Label="2"/>
+							<local:BoneView BoneName="LipUpperA" Label="1" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
+							<local:BoneView BoneName="LipUpperB" Label="2" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
+							<local:BoneView BoneName="HrothLipUpperLeft" Label="L" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
+							<local:BoneView BoneName="HrothLipUpper" Label="C" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
+							<local:BoneView BoneName="HrothLipUpperRight" Label="R" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="8" Grid.Row="2" Key="Pose_LowerLip" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="9" Grid.Row="2" Orientation="Horizontal">
-							<local:BoneView BoneName="LipLowerA" Label="1"/>
+							<local:BoneView BoneName="LipLowerA" Label="1" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
 							<local:BoneView BoneName="LipLowerB" Label="2" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
+							<local:BoneView BoneName="HrothLipLower" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 					</Grid>
