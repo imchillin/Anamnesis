@@ -6,6 +6,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:views="clr-namespace:Anamnesis.Character.Views"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 xmlns:anaMem="clr-namespace:Anamnesis.Memory"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
 			 DataContextChanged="OnDataContextChanged"
@@ -138,22 +139,18 @@
 						<Grid Grid.Row="2"
 							  Grid.Column="1"
 							  Margin="0,2,0,0">
-							<ComboBox SelectedIndex="{Binding Actor.ObjectKindInt}">
-								<ComboBoxItem IsEnabled="False">None</ComboBoxItem>
-								<ComboBoxItem>Player</ComboBoxItem>
-								<ComboBoxItem>Battle NPC</ComboBoxItem>
-								<ComboBoxItem>Event NPC</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Treasure</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Aetheryte</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Gathering Point</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Event Object</ComboBoxItem>
-								<ComboBoxItem>Mount</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Companion</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Retainer</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Area</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Housing</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Cutscene</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">card Stand</ComboBoxItem>
+							<ComboBox ItemsSource="{Binding Source={x:Static anaMem:ActorType.AllActorTypes}}" SelectedIndex="{Binding Actor.ObjectKindInt}">
+								<ComboBox.ItemContainerStyle>
+									<Style TargetType="{x:Type ComboBoxItem}">
+										<Setter Property="IsEnabled" Value="{Binding IsTypeSupported}"/>
+									</Style>
+								</ComboBox.ItemContainerStyle>
+								
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Name}" />
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
 							</ComboBox>
 						</Grid>
 

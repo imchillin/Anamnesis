@@ -30,7 +30,7 @@ namespace Anamnesis
 		public static event PinnedEvent? ActorUnPinned;
 
 		public ActorBasicMemory PlayerTarget { get; private set; } = new();
-		public bool IsPlayerTargetPinnable => this.PlayerTarget.Address != IntPtr.Zero && CanPinActorType(this.PlayerTarget.ObjectKind);
+		public bool IsPlayerTargetPinnable => this.PlayerTarget.Address != IntPtr.Zero && ActorType.IsActorTypeSupported(this.PlayerTarget.ObjectKind);
 		public ActorMemory? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
@@ -39,7 +39,7 @@ namespace Anamnesis
 			if (basicActor.Address == IntPtr.Zero)
 				return;
 
-			if (!CanPinActorType(basicActor.ObjectKind))
+			if (!ActorType.IsActorTypeSupported(basicActor.ObjectKind))
 			{
 				Log.Warning($"You cannot pin actor of type: {basicActor.ObjectKind}");
 				return;
@@ -72,20 +72,6 @@ namespace Anamnesis
 			{
 				Log.Error(ex, "Failed to pin actor");
 			}
-		}
-
-		public static bool CanPinActorType(ActorTypes actorType)
-		{
-			switch (actorType)
-			{
-				case ActorTypes.Player:
-				case ActorTypes.BattleNpc:
-				case ActorTypes.EventNpc:
-				case ActorTypes.Companion:
-					return true;
-			}
-
-			return false;
 		}
 
 		public static async Task PinPlayerTargetedActor()
