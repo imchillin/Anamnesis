@@ -490,7 +490,7 @@ namespace Anamnesis.PoseModule
 							}
 						}
 
-						visual.TransformMemories.Add(transform);
+						visual.TransformMemories.Insert(0, transform);
 					}
 
 					// Set parents now all the bones are loaded
