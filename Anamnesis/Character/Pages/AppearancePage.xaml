@@ -147,7 +147,7 @@
 								<ComboBoxItem IsEnabled="False">Aetheryte</ComboBoxItem>
 								<ComboBoxItem IsEnabled="False">Gathering Point</ComboBoxItem>
 								<ComboBoxItem IsEnabled="False">Event Object</ComboBoxItem>
-								<ComboBoxItem IsEnabled="False">Mount</ComboBoxItem>
+								<ComboBoxItem>Mount</ComboBoxItem>
 								<ComboBoxItem IsEnabled="False">Companion</ComboBoxItem>
 								<ComboBoxItem IsEnabled="False">Retainer</ComboBoxItem>
 								<ComboBoxItem IsEnabled="False">Area</ComboBoxItem>
