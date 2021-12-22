@@ -12,6 +12,7 @@ namespace Anamnesis.GameData.Sheets
 		public enum Categories
 		{
 			FashionAccessory,
+			Effect,
 		}
 
 		public uint ModelCharaRow { get; set; }
