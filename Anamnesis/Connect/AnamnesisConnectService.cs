@@ -5,73 +5,59 @@ namespace Anamnesis.Connect
 {
 	using System;
 	using System.IO;
-	using System.IO.Pipes;
 	using System.Threading.Tasks;
-	using Anamnesis.Memory;
 	using AnamnesisConnect;
 
 	public class AnamnesisConnectService : ServiceBase<AnamnesisConnectService>
 	{
-		private const int ConnectionTimeout = 1000;
-
-		private NamedPipeClientStream? client;
-		private StreamReader? reader;
-		private StreamWriter? writer;
+		private static CommFile? comm;
 
 		public override async Task Initialize()
 		{
 			await base.Initialize();
-			_ = Task.Run(this.Run);
+
+			string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+			string path = appData + "\\XIVLauncher\\devPlugins\\AnamnesisConnect\\CommFile.txt";
+
+			// If there isn't a commfile in devplugins, then check the default plugin dir.
+			if (!File.Exists(path))
+			{
+				string pluginDir = appData + "\\XIVLauncher\\installedPlugins\\AnamnesisConnect\\";
+				if (Directory.Exists(pluginDir))
+				{
+					string[] versionDirs = Directory.GetDirectories(pluginDir);
+					path = versionDirs[versionDirs.Length - 1] + "\\CommFile.txt";
+				}
+			}
+
+			if (!File.Exists(path))
+				return;
+
+			comm = new CommFile(path, false);
+
+			await Task.Delay(5000);
+
+			this.Send("hello!");
+		}
+
+		public override async Task Shutdown()
+		{
+			await base.Shutdown();
 		}
 
 		public void Send(string message)
 		{
-			if (this.writer == null)
-				return;
-
-			this.writer.WriteLine(message);
-			this.writer.Flush();
-		}
-
-		private async Task Run()
-		{
 			try
 			{
-				if (MemoryService.Process == null)
+				if (comm == null)
 					return;
 
-				int procId = MemoryService.Process.Id;
-				string name = Settings.PipeName + procId;
-
-				Log.Information($"Starting client for pipe: {name}");
-
-				this.client = new NamedPipeClientStream(Settings.PipeName);
-				await this.client.ConnectAsync(ConnectionTimeout);
-				this.reader = new StreamReader(this.client);
-				this.writer = new StreamWriter(this.client);
-
-				await Task.Delay(1000);
-
-				this.Send("Hello world");
-
-				while (this.IsAlive)
-				{
-					string? message = await this.reader.ReadLineAsync();
-					Log.Information("Recieved message: " + message);
-				}
-			}
-			catch (TimeoutException)
-			{
-				Log.Information("Anamnesis Connect timed out");
+				comm.SetAction(message);
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, "Anamnesis Connect error");
+				Log.Error(ex, "Failed to send message");
 			}
-
-			this.client?.Dispose();
-			this.reader?.Dispose();
-			this.writer?.Dispose();
 		}
 	}
 }
