@@ -6,7 +6,10 @@ namespace Anamnesis.Connect
 	using System;
 	using System.IO;
 	using System.Threading.Tasks;
+	using Anamnesis.GUI;
+	using Anamnesis.Memory;
 	using AnamnesisConnect;
+	using XivToolsWpf;
 
 	public class AnamnesisConnectService : ServiceBase<AnamnesisConnectService>
 	{
@@ -21,24 +24,13 @@ namespace Anamnesis.Connect
 		{
 			await base.Initialize();
 
-			string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			string path = appData + "\\XIVLauncher\\devPlugins\\AnamnesisConnect\\CommFile.txt";
-
-			// If there isn't a commfile in devplugins, then check the default plugin dir.
-			if (!File.Exists(path))
+			if (MemoryService.Process == null)
 			{
-				string pluginDir = appData + "\\XIVLauncher\\installedPlugins\\AnamnesisConnect\\";
-				if (Directory.Exists(pluginDir))
-				{
-					string[] versionDirs = Directory.GetDirectories(pluginDir);
-					path = versionDirs[versionDirs.Length - 1] + "\\CommFile.txt";
-				}
+				Log.Warning("No ffxiv process");
+				return;
 			}
 
-			if (!File.Exists(path))
-				return;
-
-			comm = new CommFile(path, false);
+			comm = new CommFile(MemoryService.Process, false);
 
 			this.Send("Connected");
 		}
