@@ -5,6 +5,7 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Threading.Tasks;
+	using Anamnesis.Connect;
 	using Anamnesis.Services;
 
 	public class ActorMemory : ActorBasicMemory
@@ -122,6 +123,8 @@ namespace Anamnesis.Memory
 			this.RaisePropertyChanged(nameof(this.IsPlayer));
 			await Task.Delay(150);
 			this.RaisePropertyChanged(nameof(this.IsPlayer));
+
+			AnamnesisConnectService.PenumbraRedraw(this.Name);
 		}
 
 		public void OnRetargeted()

@@ -12,6 +12,11 @@ namespace Anamnesis.Connect
 	{
 		private static CommFile? comm;
 
+		public static void PenumbraRedraw(string name)
+		{
+			Instance.Send($"/penumbra redraw {name}");
+		}
+
 		public override async Task Initialize()
 		{
 			await base.Initialize();
@@ -35,14 +40,14 @@ namespace Anamnesis.Connect
 
 			comm = new CommFile(path, false);
 
-			await Task.Delay(5000);
-
-			this.Send("hello!");
+			this.Send("Connected");
 		}
 
 		public override async Task Shutdown()
 		{
 			await base.Shutdown();
+			this.Send("Disconnected");
+			comm?.Stop();
 		}
 
 		public void Send(string message)
