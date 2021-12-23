@@ -86,6 +86,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Lib\AnamnesisConnect\Shared\AnamnesisConnect.Shared.csproj" />
 	  <ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
 	</ItemGroup>
 

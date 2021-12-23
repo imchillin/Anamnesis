@@ -7,6 +7,7 @@ namespace Anamnesis.Services
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Threading.Tasks;
+	using Anamnesis.Connect;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Files;
 	using Anamnesis.Memory;
@@ -66,6 +67,7 @@ namespace Anamnesis.Services
 			await Add<TipService>();
 			await Add<TexToolsService>();
 			await Add<FavoritesService>();
+			////await Add<AnamnesisConnectService>();
 
 			IsInitialized = true;
 
