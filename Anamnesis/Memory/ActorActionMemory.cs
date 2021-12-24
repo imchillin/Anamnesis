@@ -12,6 +12,7 @@ namespace Anamnesis.Memory
 
 		public enum ActionTypes : byte
 		{
+			None = 0x0,
 			Emote = 0x1,
 			Action = 0x2,
 		}
@@ -20,5 +21,6 @@ namespace Anamnesis.Memory
 		[Bind(0x08)] public uint ActorObjectId { get; set; }
 		[Bind(0x10)] public ActionTypes ActionType { get; set; }
 		[Bind(0x14)] public ushort ActionId { get; set; }
+		[Bind(0x70)] public IntPtr GPoseActorPtr { get; set; }
 	}
 }

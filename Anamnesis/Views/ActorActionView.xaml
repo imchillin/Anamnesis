@@ -20,7 +20,7 @@
 
 		<TextBlock Grid.Column="0" Grid.Row="0">Type</TextBlock>
 		<ComboBox Grid.Column="1" Grid.Row="0" SelectedIndex="{Binding ActionType, Mode=TwoWay}">
-			<ComboBoxItem IsEnabled="false">None</ComboBoxItem>
+			<ComboBoxItem>None</ComboBoxItem>
 			<ComboBoxItem>Emote</ComboBoxItem>
 			<ComboBoxItem>Action</ComboBoxItem>
 		</ComboBox>
