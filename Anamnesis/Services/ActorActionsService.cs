@@ -12,12 +12,79 @@ namespace Anamnesis.Services
 
     public class ActorActionsService : ServiceBase<ActorActionsService>
 	{
-		public override Task Start()
+		private IEnumerable<ActorActionMemory>? actionTable = null;
+
+		public override async Task Start()
 		{
-			return base.Start();
+			await base.Start();
 		}
 
-		public IEnumerable<ActorActionMemory> GetTable()
+		public bool SetAction(ActorBasicMemory actor, ActorActionMemory.ActionTypes actionType, ushort actionId)
+		{
+			ActorActionMemory? targetAction = null;
+
+			// Make sure we have the latest version
+			this.RefreshTable();
+
+			// First search for an existing entry
+			foreach (var entry in this.actionTable!)
+			{
+				if (entry.ActorPtr == actor.Address && entry.ActorObjectId == actor.ObjectId)
+				{
+					targetAction = entry;
+					break;
+				}
+			}
+
+			if (targetAction == null)
+			{
+				// Next we search for an empty entry
+				foreach (var entry in this.actionTable!)
+				{
+					if (entry.ActorPtr == IntPtr.Zero && entry.ActorObjectId == 0xE0000000)
+					{
+						targetAction = entry;
+						break;
+					}
+				}
+			}
+
+			// If there is no space maybe we should write a random one?
+			if (targetAction == null)
+				return false;
+
+			// Update table entry
+			targetAction.ActorPtr = actor.Address;
+			targetAction.ActorObjectId = actor.ObjectId;
+			targetAction.ActionType = actionType;
+			targetAction.ActionId = actionId;
+
+			return true;
+		}
+
+		public IEnumerable<ActorActionMemory> GetTable(bool refresh = false)
+		{
+			if (refresh || this.actionTable == null)
+				this.RefreshTable();
+
+			return this.actionTable!;
+		}
+
+		public void RefreshTable()
+		{
+			if (this.actionTable == null)
+			{
+				this.actionTable = this.ReadTable();
+				return;
+			}
+
+			foreach (var action in this.actionTable)
+			{
+				action.Tick();
+			}
+		}
+
+		private IEnumerable<ActorActionMemory> ReadTable()
 		{
 			IntPtr tableStart = MemoryService.ReadPtr(AddressService.ActorActionTable) + 0x5B0;
 
@@ -32,44 +99,6 @@ namespace Anamnesis.Services
 			}
 
 			return result;
-		}
-
-		public void SetActorAction(ActorBasicMemory actor, ActorActionMemory.ActionTypes actionType, ushort actionId)
-		{
-			ActorActionMemory? toSet = null;
-			var table = this.GetTable();
-
-			// First search for an existing entry
-			foreach (var entry in table)
-			{
-				if (entry.ActorPtr == actor.Address && entry.ActorObjectId == actor.ObjectId)
-				{
-					toSet = entry;
-					break;
-				}
-			}
-
-			if (toSet == null)
-			{
-				// Next we search for an empty entry
-				foreach (var entry in table)
-				{
-					if (entry.ActorPtr == IntPtr.Zero && entry.ActorObjectId == 0xE0000000)
-					{
-						toSet = entry;
-						break;
-					}
-				}
-			}
-
-			// If there is no space maybe we should write a random one?
-			if (toSet == null)
-				return;
-
-			toSet.ActorPtr = actor.Address;
-			toSet.ActorObjectId = actor.ObjectId;
-			toSet.ActionType = actionType;
-			toSet.ActionId = actionId;
 		}
 	}
 }

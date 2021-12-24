@@ -23,7 +23,7 @@ namespace Anamnesis.Views
 			var selectedActor = TargetService.Instance.SelectedActor;
 			if (selectedActor != null)
 			{
-				ActorActionsService.Instance.SetActorAction(selectedActor, (ActorActionMemory.ActionTypes)this.ActionType, this.ActionId);
+				ActorActionsService.Instance.SetAction(selectedActor, (ActorActionMemory.ActionTypes)this.ActionType, this.ActionId);
 			}
 		}
 	}
