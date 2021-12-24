@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="Anamnesis.Views.ActorActionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Anamnesis.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="150">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Grid.Column="0" Grid.Row="0">Type</TextBlock>
+		<ComboBox Grid.Column="1" Grid.Row="0" SelectedValue="{Binding ActionType, Mode=TwoWay}">
+			<ComboBoxItem IsEnabled="false">None</ComboBoxItem>
+			<ComboBoxItem>Emote</ComboBoxItem>
+			<ComboBoxItem>Action</ComboBoxItem>
+		</ComboBox>
+
+		<TextBlock Grid.Column="0" Grid.Row="1">ID</TextBlock>
+		<TextBox Grid.Column="1" Grid.Row="1" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding ActionId}" />
+
+		<Button Grid.Row="2" Grid.Column="1" Click="ApplyAction_Click">Apply</Button>
+	</Grid>
+</UserControl>

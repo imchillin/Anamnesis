@@ -36,6 +36,7 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr TimeAsm { get; private set; }
 		public static IntPtr TimeReal { get; set; }
 		public static IntPtr PlayerTargetSystem { get; set; }
+		public static IntPtr ActorActionTable { get; set; }
 
 		public static IntPtr Camera
 		{
@@ -131,6 +132,7 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
 			tasks.Add(GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
 			tasks.Add(GetAddressFromSignature("PlayerTargetSystem", "48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 0, (p) => { PlayerTargetSystem = p; }));
+			tasks.Add(GetAddressFromSignature("ActorActionTable", "48 8B 0D ?? ?? ?? ?? 41 B1 0A", 0, (p) => { ActorActionTable = p; }));
 
 			tasks.Add(GetAddressFromTextSignature(
 				"TimeAsm",
