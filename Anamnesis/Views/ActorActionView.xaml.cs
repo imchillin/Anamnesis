@@ -15,7 +15,7 @@ namespace Anamnesis.Views
 			this.InitializeComponent();
 		}
 
-		public ActorActionMemory.ActionTypes ActionType { get; set; } = ActorActionMemory.ActionTypes.Emote;
+		public int ActionType { get; set; } = (int)ActorActionMemory.ActionTypes.Emote;
 		public ushort ActionId { get; set; } = 232;
 
 		private void ApplyAction_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -23,7 +23,7 @@ namespace Anamnesis.Views
 			var selectedActor = TargetService.Instance.SelectedActor;
 			if (selectedActor != null)
 			{
-				ActorActionsService.Instance.SetActorAction(selectedActor, this.ActionType, this.ActionId);
+				ActorActionsService.Instance.SetActorAction(selectedActor, (ActorActionMemory.ActionTypes)this.ActionType, this.ActionId);
 			}
 		}
 	}
