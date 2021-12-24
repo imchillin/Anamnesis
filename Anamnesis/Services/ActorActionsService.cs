@@ -39,19 +39,10 @@ namespace Anamnesis.Services
 			ActorActionMemory? toSet = null;
 			var table = this.GetTable();
 
-			foreach (var entry in table.Take(5))
-			{
-				toSet = entry;
-				toSet.ActorPtr = actor.Address;
-				toSet.ActorObjectId = actor.ObjectId;
-				toSet.ActionType = actionType;
-				toSet.ActionId = actionId;
-			}
-
 			// First search for an existing entry
 			foreach (var entry in table)
 			{
-				if (entry.ActorPtr == actor.Address || entry.ActorObjectId == actor.ObjectId)
+				if (entry.ActorPtr == actor.Address && entry.ActorObjectId == actor.ObjectId)
 				{
 					toSet = entry;
 					break;
@@ -63,7 +54,7 @@ namespace Anamnesis.Services
 				// Next we search for an empty entry
 				foreach (var entry in table)
 				{
-					if (entry.ActorPtr == IntPtr.Zero || entry.ActorObjectId == 0xE)
+					if (entry.ActorPtr == IntPtr.Zero)
 					{
 						toSet = entry;
 						break;
