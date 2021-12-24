@@ -389,8 +389,8 @@
 						<TabItem.Header>
 							<fa:IconImage
 								Foreground="{DynamicResource MaterialDesignBodyLight}"
-								Icon="Ambulance"
-								ToolTip="Pose" />
+								Icon="Bicycle"
+								ToolTip="Animate" />
 						</TabItem.Header>
 
 						<views:ActorActionView />
