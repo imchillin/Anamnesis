@@ -54,7 +54,7 @@ namespace Anamnesis.Services
 				// Next we search for an empty entry
 				foreach (var entry in table)
 				{
-					if (entry.ActorPtr == IntPtr.Zero)
+					if (entry.ActorPtr == IntPtr.Zero && entry.ActorObjectId == 0xE0000000)
 					{
 						toSet = entry;
 						break;
