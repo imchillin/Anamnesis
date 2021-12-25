@@ -52,6 +52,7 @@ namespace Anamnesis.Services
 			targetAction.ActionType = actionType;
 			targetAction.ActionId = actionId;
 
+			// This is pretty hacky, but when using an action it always seems to set this. Would be nice to understand what this does a little more
 			if(actionType == ActorActionMemory.ActionTypes.Action)
 			{
 				targetAction.SubActionType = 1;
