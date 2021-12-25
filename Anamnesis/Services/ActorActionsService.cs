@@ -19,7 +19,7 @@ namespace Anamnesis.Services
 			await base.Start();
 		}
 
-		public bool SetAction(ActorBasicMemory actor, ActorActionMemory.ActionTypes actionType, ushort actionId)
+		public bool SetAction(ActorBasicMemory actor, ActorActionMemory.ActionTypes actionType, uint actionId)
 		{
 			ActorActionMemory? targetAction = null;
 
@@ -51,6 +51,12 @@ namespace Anamnesis.Services
 			// Update table entry
 			targetAction.ActionType = actionType;
 			targetAction.ActionId = actionId;
+
+			if(actionType == ActorActionMemory.ActionTypes.Action)
+			{
+				targetAction.SubActionType = 1;
+				targetAction.SubActionId = actionId;
+			}
 
 			return true;
 		}
