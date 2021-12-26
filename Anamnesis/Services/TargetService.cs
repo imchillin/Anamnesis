@@ -192,16 +192,22 @@ namespace Anamnesis
 
 		public static void SetPlayerTarget(PinnedActor actor)
 		{
-			var ptr = actor?.Pointer;
-			if (ptr != null)
+			if (actor.IsValid)
 			{
-				if (GposeService.Instance.IsGpose)
+				IntPtr? ptr = actor.Pointer;
+				if (ptr != null && ptr != IntPtr.Zero)
 				{
-					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset), (IntPtr)ptr, "Update player target");
-				}
-				else
-				{
-					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset), (IntPtr)ptr, "Update player target");
+					if (IsActorInActorTable((IntPtr)ptr))
+					{
+						if (GposeService.Instance.IsGpose)
+						{
+							MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset), (IntPtr)ptr, "Update player target");
+						}
+						else
+						{
+							MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset), (IntPtr)ptr, "Update player target");
+						}
+					}
 				}
 			}
 		}
