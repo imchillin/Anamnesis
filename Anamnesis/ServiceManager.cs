@@ -67,7 +67,7 @@ namespace Anamnesis.Services
 			await Add<TipService>();
 			await Add<TexToolsService>();
 			await Add<FavoritesService>();
-			await Add<ActorActionsService>();
+			await Add<AnimationService>();
 			await Add<AnamnesisConnectService>();
 
 			IsInitialized = true;

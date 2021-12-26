@@ -393,7 +393,7 @@
 								ToolTip="Animate" />
 						</TabItem.Header>
 
-						<views:ActorActionView />
+						<views:ActorAnimationView />
 					</TabItem>
 				</TabControl>
 			</Grid>

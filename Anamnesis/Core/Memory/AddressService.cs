@@ -36,7 +36,7 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr TimeAsm { get; private set; }
 		public static IntPtr TimeReal { get; set; }
 		public static IntPtr PlayerTargetSystem { get; set; }
-		public static IntPtr ActorActionTable { get; set; }
+		public static IntPtr AnimationPatch { get; set; }
 
 		public static IntPtr Camera
 		{
@@ -123,6 +123,7 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition", "41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezeScale2", "43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition2", "43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
+			tasks.Add(GetAddressFromTextSignature("AnimationPatch", "66 89 8B D0 00 00 00 48 8B 43 60 48 85 C0", (p) => { AnimationPatch = p; }));
 			tasks.Add(GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
 			tasks.Add(GetAddressFromSignature("Weather", "49 8B 9D ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));
 			tasks.Add(GetAddressFromSignature("GPoseFilters", "4C 8B 05 ?? ?? ?? ?? 41 8B 80 ?? ?? ?? ?? C1 E8 02", 0, (p) => { GPoseFilters = p; }));
@@ -132,7 +133,6 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
 			tasks.Add(GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
 			tasks.Add(GetAddressFromSignature("PlayerTargetSystem", "48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 0, (p) => { PlayerTargetSystem = p; }));
-			tasks.Add(GetAddressFromSignature("ActorActionTable", "48 8B 0D ?? ?? ?? ?? 41 B1 0A", 0, (p) => { ActorActionTable = p; }));
 
 			tasks.Add(GetAddressFromTextSignature(
 				"TimeAsm",

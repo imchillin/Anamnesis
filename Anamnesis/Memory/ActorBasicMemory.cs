@@ -22,6 +22,9 @@ namespace Anamnesis.Memory
 		[Bind(0x08c, BindFlags.ActorRefresh)] public ActorTypes ObjectKind { get; set; }
 		[Bind(0x090)] public byte DistanceFromPlayerX { get; set; }
 		[Bind(0x092)] public byte DistanceFromPlayerY { get; set; }
+		[Bind(0x0F30)] public uint TargetAnimation { get; set; }
+		[Bind(0x0F4C)] public uint NextAnimation { get; set; }
+		public uint DesiredAnimation { get; set; }
 
 		public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
 		public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}";
