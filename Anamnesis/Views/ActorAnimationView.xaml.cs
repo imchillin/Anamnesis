@@ -4,7 +4,6 @@
 namespace Anamnesis.Views
 {
 	using System.Windows.Controls;
-	using Anamnesis.Memory;
 	using Anamnesis.Services;
 
 	public partial class ActorAnimationView : UserControl
@@ -12,28 +11,54 @@ namespace Anamnesis.Views
 		public ActorAnimationView()
 		{
 			this.DataContext = this;
+			this.AnimationService = AnimationService.Instance;
+			this.GPoseService = GposeService.Instance;
 			this.InitializeComponent();
 		}
 
-		public ushort AnimationId { get; set; } = 8376;
+		public uint AnimationId { get; set; } = 8376;
+		public int RepeatTimer { get; set; } = 5;
+
+		public AnimationService AnimationService { get; set; }
+		public GposeService GPoseService { get; set; }
 
 		private void ApplyAction_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			this.AnimationService = AnimationService.Instance;
+
+			var selectedActor = TargetService.Instance.SelectedActor;
+			if (selectedActor != null)
+			{
+				this.AnimationService.AnimateActor(selectedActor, this.AnimationId, this.RepeatTimer);
+			}
+		}
+
+		private void IdleAction_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			var selectedActor = TargetService.Instance.SelectedActor;
 			if (selectedActor != null)
 			{
-				AnimationService.Instance.AnimateActor(selectedActor, this.AnimationId);
+				this.AnimationService.AnimateActor(selectedActor, 3, 0);
+			}
+		}
+
+		private void DrawAction_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			var selectedActor = TargetService.Instance.SelectedActor;
+			if (selectedActor != null)
+			{
+				this.AnimationService.AnimateActor(selectedActor, 190, 0);
 			}
 		}
 
 		private void DisableAction_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			AnimationService.Instance.Enabled = false;
+			this.AnimationService.Enabled = false;
 		}
 
 		private void EnableAction_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			AnimationService.Instance.Enabled = true;
+			this.AnimationService.Enabled = true;
 		}
 	}
 }

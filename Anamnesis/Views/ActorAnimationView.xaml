@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Anamnesis.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="150">
+	<Grid Margin="100" IsEnabled="{Binding GPoseService.IsGpose}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
 			<ColumnDefinition/>
@@ -14,16 +14,38 @@
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="25"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<TextBlock Grid.Column="0" Grid.Row="0">ID</TextBlock>
-		<TextBox Grid.Column="1" Grid.Row="0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding AnimationId}" />
+		<Button Grid.Row="0" Grid.Column="0" Click="EnableAction_Click" IsEnabled="{Binding AnimationService.Enabled, Converter={StaticResource NotConverter}}">Enable</Button>
+		<Button Grid.Row="0" Grid.Column="1" Click="DisableAction_Click" IsEnabled="{Binding AnimationService.Enabled}">Disable</Button>
 
-		<Button Grid.Row="1" Grid.Column="1" Click="ApplyAction_Click">Apply</Button>
+		<Grid Grid.Row="2" Grid.ColumnSpan="2" IsEnabled="{Binding AnimationService.Enabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="20"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			
+			<TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">ID</TextBlock>
+			<TextBox Grid.Column="1" Grid.Row="0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding AnimationId}" />
+
+			<TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right">Repeat After</TextBlock>
+			<TextBox Grid.Column="1" Grid.Row="1" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding RepeatTimer}" />
+
+			<Button Grid.Row="2" Grid.Column="1" Click="ApplyAction_Click">Apply</Button>
+
+			<Button Grid.Row="4" Grid.Column="1" Click="IdleAction_Click">Reset</Button>
+			<Button Grid.Row="4" Grid.Column="0" Click="DrawAction_Click">Draw Weapon</Button>
+		</Grid>
 		
-		<Button Grid.Row="2" Grid.Column="0" Click="EnableAction_Click">Enable</Button>
-		<Button Grid.Row="2" Grid.Column="1" Click="DisableAction_Click">Disable</Button>
 	</Grid>
 </UserControl>
