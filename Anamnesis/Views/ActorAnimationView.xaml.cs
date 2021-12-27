@@ -16,8 +16,8 @@ namespace Anamnesis.Views
 			this.InitializeComponent();
 		}
 
-		public uint AnimationId { get; set; } = 8376;
-		public int RepeatTimer { get; set; } = 5;
+		public uint AnimationId { get; set; } = 8047;
+		public int RepeatTimer { get; set; } = 0;
 
 		public AnimationService AnimationService { get; set; }
 		public GposeService GPoseService { get; set; }
