@@ -16,8 +16,8 @@ We actively encourage people to contribute to the project with their forks to im
 ## Getting Started
 
 ### Prerequisites
-- [.NET 5.0 Desktop Runtime x64](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.9-windows-x64-installer) installed on your computer. Anamnesis will only work with 64-bit versions of Windows. Support will not be added for x86/32-bit versions of Windows.
-- Windows 10 (there are no plans to add support for older versions of Windows that [Microsoft is not in turn supporting](https://www.microsoft.com/en-au/windows/windows-7-end-of-life-support-information), or other operating systems).
+- [.NET 5.0 Desktop Runtime x64](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.13-windows-x64-installer) installed on your computer. Anamnesis will only work with 64-bit versions of Windows. Support will not be added for x86/32-bit versions of Windows.
+- Windows 10 or 11 (there are no plans to add support for older versions of Windows that [Microsoft is not in turn supporting](https://www.microsoft.com/en-au/windows/windows-7-end-of-life-support-information), or other operating systems).
 
 ### Installation
 
@@ -33,14 +33,17 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 * **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
 * **[Peebs-miqo](https://github.com/Peebs-miqo)** - *Wiki and tip curating* 
 
+## God Tier Contributing Developers
+
+* **[AsgardXIV](https://github.com/AsgardXIV)**
+* **[SoyaX](https://github.com/SoyaX)**
+* **[Reyli](https://github.com/Reyli)**
+
 ## Community Developers
 
-* **[SoyaX](https://github.com/SoyaX)**
 * **[JKAnderson](https://github.com/JKAnderson)**
 * **[ajiiisai](https://github.com/ajiiisai)**
-* **[Reyli](https://github.com/Reyli)**
 * **[goaaats](https://github.com/goaaats)**
-* **[AsgardXIV](https://github.com/AsgardXIV)**
 
 ## Translations
 * **[Maxunit](https://github.com/Maxunit)** - *German* 
