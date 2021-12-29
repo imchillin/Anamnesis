@@ -216,7 +216,8 @@
 				<Border
 					Grid.Column="1"
 					Style="{StaticResource Panel}"
-					Margin="6, 0, 0, 0">
+					Margin="6, 0, 0, 0"
+					IsEnabled="{Binding PoseService.IsEnabled, Converter={StaticResource !B}}">
 					<views1:AnimationEditor DataContext="{Binding Actor}"/>
 				</Border>
 
