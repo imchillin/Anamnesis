@@ -45,6 +45,7 @@ namespace Anamnesis.Character.Views
 		}
 
 		public GposeService GPoseService => GposeService.Instance;
+		public ActorRefreshService ActorRefreshService => ActorRefreshService.Instance;
 
 		public ItemSlots Slot
 		{

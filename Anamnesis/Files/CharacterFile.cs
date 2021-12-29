@@ -250,7 +250,7 @@ namespace Anamnesis.Files
 
 			actor.AutomaticRefreshEnabled = false;
 
-			if (!GposeService.Instance.GetIsGPose())
+			if (ActorRefreshService.GetCanRefresh())
 			{
 				actor.EnableReading = false;
 

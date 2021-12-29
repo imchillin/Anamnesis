@@ -10,6 +10,7 @@ namespace Anamnesis.Character.Pages
 	using System.Windows.Controls;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Character.Views;
+	using Anamnesis.Connect;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
@@ -36,6 +37,8 @@ namespace Anamnesis.Character.Pages
 		}
 
 		public GposeService GPoseService => GposeService.Instance;
+		public AnamnesisConnectService AnamnesisConnectService => AnamnesisConnectService.Instance;
+		public ActorRefreshService ActorRefreshService => ActorRefreshService.Instance;
 		public ActorMemory? Actor { get; private set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
