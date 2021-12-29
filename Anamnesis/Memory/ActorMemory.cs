@@ -84,7 +84,10 @@ namespace Anamnesis.Memory
 		/// </summary>
 		public async Task RefreshAsync()
 		{
-			if (this.IsRefreshing || GposeService.Instance.IsGpose)
+			if (this.IsRefreshing)
+				return;
+
+			if (!ActorRefreshService.Instance.CanRefresh)
 				return;
 
 			if (this.Address == IntPtr.Zero)

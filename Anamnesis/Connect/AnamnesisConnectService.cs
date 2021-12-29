@@ -16,7 +16,7 @@ namespace Anamnesis.Connect
 
 		public static void PenumbraRedraw(string name)
 		{
-			Instance.Send($"-penumbra \"{name}\"");
+			comm?.Send(Actions.PenumbraRedraw, name);
 		}
 
 		public override async Task Initialize()
@@ -29,34 +29,23 @@ namespace Anamnesis.Connect
 				return;
 			}
 
-			comm = new CommFile(MemoryService.Process, false);
+			comm = new CommFile(MemoryService.Process, CommFile.Mode.Client);
+			comm.OnLog = (s) => Log.Information(s);
+			comm.OnError = (ex) => Log.Error(ex, "Anamnesis Connect Error");
 
-			// TODO: going to need two-way comms for this.
-			IsPenumbraConnected = false;
+			bool connected = await comm.Connect();
 
-			this.Send("Connected");
+			if (connected)
+			{
+				// TODO: going to need two-way comms for this.
+				IsPenumbraConnected = true;
+			}
 		}
 
 		public override async Task Shutdown()
 		{
 			await base.Shutdown();
-			this.Send("Disconnected");
 			comm?.Stop();
-		}
-
-		public void Send(string message)
-		{
-			try
-			{
-				if (comm == null)
-					return;
-
-				comm.SetAction(message);
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to send message");
-			}
 		}
 	}
 }
