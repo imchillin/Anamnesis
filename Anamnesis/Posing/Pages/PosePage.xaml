@@ -12,6 +12,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:views="clr-namespace:Anamnesis.PoseModule.Views"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:views1="clr-namespace:Anamnesis.Character.Views"
 	d:DesignHeight="512"
 	d:DesignWidth="1024"
 	DataContextChanged="OnDataContextChanged"
@@ -216,11 +217,7 @@
 					Grid.Column="1"
 					Style="{StaticResource Panel}"
 					Margin="6, 0, 0, 0">
-					<Grid Height="35">
-						<StackPanel Orientation="Horizontal">
-							<XivToolsWpf:IconBlock Icon="Running" Margin="6"/>
-						</StackPanel>
-					</Grid>
+					<views1:AnimationEditor DataContext="{Binding Actor}"/>
 				</Border>
 
 				<!-- Pose Control -->
