@@ -116,17 +116,17 @@ namespace Anamnesis.Services
 				if (animation.State == ActorAnimation.ExecutionState.Executed)
 					return;
 
-				animation.State = ActorAnimation.ExecutionState.Executing;
-
 				// The flow below is a little confusing, but basically we need to ensure that the animation is reset and then we can play our custom animation.
 				// First we need to set TargetAnimation to 0 and wait for NextAnimation to tick over to 0 as well.
 				// Then we make sure the animation mode is what we want a frame before we set our animation.
 				// Once that's done, we set TargetAnimation to the actual animation we want, and again wait for the engine to tick that into NextAnimation.
 				// Finally we set TargetAnimation to 0 again which will cause the engine to fire the now queued animation in NextAnimation.
 				// This takes a couple of frames to work through, which is why this requires a tick thread to drive all that through.
+				animation.State = ActorAnimation.ExecutionState.Executing;
+
 				if (animation.Actor.TargetAnimation != animation.AnimationId && animation.Actor.TargetAnimation != 0)
 				{
-					animation.Actor.TargetAnimation = animation.AnimationId;
+					animation.Actor.TargetAnimation = 0;
 					return;
 				}
 
