@@ -5,6 +5,7 @@ namespace Anamnesis.Character.Views
 {
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
@@ -69,10 +70,12 @@ namespace Anamnesis.Character.Views
 
 		private void OnSearchClicked(object sender, RoutedEventArgs e)
 		{
-			SelectorDrawer.Show<ModelListSelector, ModelListEntry>(null, (npc) =>
+			SelectorDrawer.Show<AnimationSelector, ActionTimeline>(null, (action) =>
 			{
-				if (npc == null)
+				if (action == null)
 					return;
+
+				this.AnimationId = action.RowId;
 
 				this.OnPlayClicked(null, null);
 			});

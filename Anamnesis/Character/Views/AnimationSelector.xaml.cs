@@ -7,6 +7,7 @@ namespace Anamnesis.Character.Views
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
@@ -29,11 +30,11 @@ namespace Anamnesis.Character.Views
 		public event DrawerEvent? SelectionChanged;
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public ModelListEntry? Value
+		public ActionTimeline? Value
 		{
 			get
 			{
-				return (ModelListEntry?)this.Selector.Value;
+				return (ActionTimeline?)this.Selector.Value;
 			}
 
 			set
@@ -57,7 +58,7 @@ namespace Anamnesis.Character.Views
 		private Task OnLoadItems()
 		{
 			if (GameDataService.ModelList != null)
-				this.Selector.AddItems(GameDataService.ModelList);
+				this.Selector.AddItems(GameDataService.ActionTimelines);
 
 			return Task.CompletedTask;
 		}
@@ -74,22 +75,38 @@ namespace Anamnesis.Character.Views
 
 		private bool OnFilter(object obj, string[]? search = null)
 		{
-			if (obj is INpcBase npc)
+			if (obj is ActionTimeline action)
 			{
 				bool matches = false;
-				matches |= SearchUtility.Matches(npc.Name, search);
-				matches |= SearchUtility.Matches(npc.RowId.ToString(), search);
-				matches |= SearchUtility.Matches(npc.ModelCharaRow.ToString(), search);
+				matches |= SearchUtility.Matches(action.Key, search);
+				matches |= SearchUtility.Matches(action.RowId.ToString(), search);
 
-				if (npc.Mod != null && npc.Mod.ModPack != null)
-				{
-					matches |= SearchUtility.Matches(npc.Mod.ModPack.Name, search);
-				}
+				if (string.IsNullOrEmpty(action.Key))
+					return false;
 
 				return matches;
 			}
 
 			return false;
+		}
+
+		private int OnSort(object a, object b)
+		{
+			if (a == b)
+				return 0;
+
+			if (a is ActionTimeline actionA && b is ActionTimeline actionB)
+			{
+				if (actionA.Key == null)
+					return 1;
+
+				if (actionB.Key == null)
+					return -1;
+
+				return -actionB.Key.CompareTo(actionA.Key);
+			}
+
+			return 0;
 		}
 	}
 }

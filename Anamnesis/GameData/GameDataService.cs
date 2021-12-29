@@ -53,6 +53,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<WeatherRate> WeatherRates { get; private set; }
 		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; private set; }
 		public static ExcelSheet<BattleNpcName> BattleNpcNames { get; private set; }
+		public static ExcelSheet<ActionTimeline> ActionTimelines { get; private set; }
 
 		public static PropSheet Props { get; private set; }
 		public static ModelListSheet ModelList { get; private set; }
@@ -177,6 +178,7 @@ namespace Anamnesis.Services
 				WeatherRates = GetSheet<WeatherRate>();
 				EquipRaceCategories = GetSheet<EquipRaceCategory>();
 				BattleNpcNames = GetSheet<BattleNpcName>();
+				ActionTimelines = GetSheet<ActionTimeline>();
 			}
 			catch (Exception ex)
 			{
