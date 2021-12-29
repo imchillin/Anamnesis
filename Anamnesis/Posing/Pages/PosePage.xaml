@@ -40,7 +40,7 @@
 
 				<Border
 					Grid.Row="0"
-					Margin="3"
+					Margin="3, 0, 3, 2"
 					Style="{StaticResource Panel}">
 					<Grid>
 						<Grid.ColumnDefinitions>
@@ -156,7 +156,7 @@
 				</Border>
 
 				<!-- save/load menu -->
-				<Menu Grid.Row="1" Margin="0, 2, 0, 4" IsEnabled="{Binding GposeService.IsGpose}" Style="{StaticResource AnaMenu}">
+				<Menu Grid.Row="1" Margin="2, 2, 0, 4" IsEnabled="{Binding GposeService.IsGpose}" Style="{StaticResource AnaMenu}">
 					<MenuItem Header="Common_OpenFile"
 								Icon="FolderOpen"
 								Style="{StaticResource ButtonMenuItemLeft}"
@@ -198,31 +198,36 @@
 				</Menu>
 			</Grid>
 
-			<!--  top Bar  -->
-			<Border
-				Grid.Row="0"
-				Grid.ColumnSpan="2"
-				Margin="3"
-				VerticalAlignment="Stretch"
-				Style="{StaticResource Panel}">
-				<Grid Height="35">
+			<Border Grid.RowSpan="2" Style="{StaticResource Panel}" Margin="3, 3, 0, 3"/>
+
+			<!-- top Bars -->
+			<Grid Grid.Row="0"
+				  Grid.ColumnSpan="2"
+				  Margin="3"
+				  VerticalAlignment="Stretch">
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition Width="220"/>
+				</Grid.ColumnDefinitions>
+
+				<!-- Animation Control -->
+				<Border
+					Grid.Column="1"
+					Style="{StaticResource Panel}"
+					Margin="6, 0, 0, 0">
+					<Grid Height="35">
+						<StackPanel Orientation="Horizontal">
+							<XivToolsWpf:IconBlock Icon="Running" Margin="6"/>
+						</StackPanel>
+					</Grid>
+				</Border>
+
+				<!-- Pose Control -->
+				<Grid Height="35" Grid.Column="0">
 					<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-						<ToggleButton Width="75"
-										Margin="3"
-										IsEnabled="{Binding GposeService.IsGpose}"
-										IsChecked="{Binding PoseService.IsEnabled}"
-										Style="{StaticResource OutlineToggleButton}">
-							<Grid>
-								<XivToolsWpf:TextBlock
-									Key="Common_Disable"
-									Margin="12,0,12,0"
-									Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource B2V}}" />
-								<XivToolsWpf:TextBlock
-									Key="Common_Enable"
-									Margin="12,0,12,0"
-									Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}" />
-							</Grid>
-						</ToggleButton>
+
+						<CheckBox IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding PoseService.IsEnabled}" Margin="6, 6, 0, 6"/>
 
 						<ListBox
 							x:Name="ViewSelector"
@@ -232,27 +237,27 @@
 							Style="{StaticResource MaterialDesignToolToggleListBox}">
 							<ListBoxItem
 								Margin="1"
-								Padding="12,4,12,4"
+								Padding="8,4"
 								Cursor="Hand"
 								ToolTip="GUI View"
 								Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
-								<fa:IconImage Foreground="{DynamicResource MaterialDesignBody}" Icon="ProjectDiagram" />
+								<XivToolsWpf:IconBlock Icon="ProjectDiagram" FontSize="10"/>
 							</ListBoxItem>
 							<ListBoxItem
 								Margin="1"
-								Padding="12,4,12,4"
+								Padding="8,4"
 								Cursor="Hand"
 								ToolTip="Matrix View"
 								Visibility="{Binding Skeleton.File.AllowPoseMatrix, Converter={StaticResource B2V}}">
-								<fa:IconImage Foreground="{DynamicResource MaterialDesignBody}" Icon="BorderAll" />
+								<XivToolsWpf:IconBlock Icon="BorderAll" FontSize="10"/>
 							</ListBoxItem>
 							<ListBoxItem
 								x:Name="View3dButton"
 								Margin="1"
-								Padding="12,4,12,4"
+								Padding="8,4"
 								Cursor="Hand"
 								ToolTip="3D View">
-								<fa:IconImage Foreground="{DynamicResource MaterialDesignBody}" Icon="Cube" />
+								<XivToolsWpf:IconBlock Icon="Cube" FontSize="10"/>
 							</ListBoxItem>
 						</ListBox>
 
@@ -336,46 +341,42 @@
 					</Border>
 
 				</Grid>
-			</Border>
 
+			</Grid>
 
 			<!--  Content  -->
-			<Border
-				Grid.Row="1"
-				Margin="3"
-				Style="{StaticResource Panel}">
-				<Grid IsEnabled="{Binding PoseService.IsEnabled}">
+			<Grid Grid.Row="1"
+					Margin="3"
+					IsEnabled="{Binding PoseService.IsEnabled}">
 
-					<Grid
-						x:Name="MouseCanvas"
-						Grid.Row="1"
-						Background="Transparent"
-						MouseDown="OnCanvasMouseDown"
-						MouseMove="OnCanvasMouseMove"
-						MouseUp="OnCanvasMouseUp">
-						<Grid DataContext="{Binding Skeleton}">
-							<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed" />
-							<views:PoseGuiView x:Name="GuiView" Visibility="Visible" />
-							<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" />
-						</Grid>
+				<Grid
+					x:Name="MouseCanvas"
+					Grid.Row="1"
+					Background="Transparent"
+					MouseDown="OnCanvasMouseDown"
+					MouseMove="OnCanvasMouseMove"
+					MouseUp="OnCanvasMouseUp">
+					<Grid DataContext="{Binding Skeleton}">
+						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed" />
+						<views:PoseGuiView x:Name="GuiView" Visibility="Visible" />
+						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" />
 					</Grid>
-
-					<Canvas
-						x:Name="SelectionCanvas"
-						Grid.Row="1"
-						IsHitTestVisible="False">
-						<Border
-							x:Name="DragSelectionBorder"
-							BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-							BorderThickness="1"
-							CornerRadius="3"
-							Visibility="Collapsed">
-							<Border Background="{DynamicResource MaterialDesignBackground}" Opacity="0.1" />
-						</Border>
-					</Canvas>
-
 				</Grid>
-			</Border>
+
+				<Canvas
+					x:Name="SelectionCanvas"
+					Grid.Row="1"
+					IsHitTestVisible="False">
+					<Border
+						x:Name="DragSelectionBorder"
+						BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+						BorderThickness="1"
+						CornerRadius="3"
+						Visibility="Collapsed">
+						<Border Background="{DynamicResource MaterialDesignBackground}" Opacity="0.1" />
+					</Border>
+				</Canvas>
+			</Grid>
 
 			<XivToolsWpf:InfoControl
 				Key="Pose_WarningNotGPose"
@@ -383,6 +384,13 @@
 				Grid.Row="0"
 				Grid.RowSpan="2"
 				Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" />
+
+			<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}"
+				  Grid.Row="0"
+				  Grid.RowSpan="2">
+				<XivToolsWpf:InfoControl IsError="False" Key="Pose_NotEnabled" VerticalAlignment="Bottom" Margin="6, 7" 
+										 Visibility="{Binding PoseService.IsEnabled, Converter={StaticResource !B2V}}"/>
+			</Grid>
 		</Grid>
 
 		<Grid Visibility="{Binding Actor, Converter={StaticResource NotNullToVisibilityConverter}}">
