@@ -43,6 +43,9 @@ namespace Anamnesis.Services
 		{
 			this.ClearAnimation(actor);
 
+			if (desiredAnimation >= GameDataService.ActionTimelines.RowCount)
+				return;
+
 			ActorAnimation animationEntry = new()
 			{
 				Actor = actor,
