@@ -4,6 +4,7 @@
 namespace Anamnesis.Views
 {
 	using System.Windows.Controls;
+	using Anamnesis.Memory;
 	using Anamnesis.Services;
 
 	public partial class ActorAnimationView : UserControl
@@ -30,7 +31,7 @@ namespace Anamnesis.Views
 			var selectedActor = TargetService.Instance.SelectedActor;
 			if (selectedActor != null)
 			{
-				this.AnimationService.AnimateActor(selectedActor, this.AnimationId, this.SlowMotion, this.RepeatTimer);
+				this.AnimationService.AnimateActor(selectedActor, this.AnimationId, this.SlowMotion ? ActorMemory.AnimationModes.SlowMotion : ActorMemory.AnimationModes.Normal, this.RepeatTimer);
 			}
 		}
 
