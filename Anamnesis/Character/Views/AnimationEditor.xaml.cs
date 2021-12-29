@@ -11,6 +11,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
+	using Serilog;
 
 	[AddINotifyPropertyChangedInterface]
 	public partial class AnimationEditor : UserControl
@@ -39,7 +40,7 @@ namespace Anamnesis.Character.Views
 			set
 			{
 				this.animationId = value;
-				this.OnPlayClicked(null, null);
+				////this.OnPlayClicked(null, null);
 			}
 		}
 
@@ -76,7 +77,6 @@ namespace Anamnesis.Character.Views
 					return;
 
 				this.AnimationId = action.RowId;
-
 				this.OnPlayClicked(null, null);
 			});
 		}
