@@ -220,6 +220,7 @@
 	"Pose_WarningExpresionPositions": "You are attempting to load an expression while Positions are frozen, this may have undesired results. Continue?",
 	"Pose_NoSkeleton": "No Skeleton is bound to this view.",
 	"Pose_NoModel": "This actor does not have a model.",
+	"Pose_NotEnabled": "Posing mode must be enabled.",
 	"Pose_NothingSelected": "Character - Nothing Selected",
 	"Pose_LoadTip": "Load a pose from a file",
 	"Pose_Selected": "Selected Bones",
