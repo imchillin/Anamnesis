@@ -35,6 +35,7 @@ namespace Anamnesis.Memory
 		[Bind(0x0DD8)] public ActorCustomizeMemory? Customize { get; set; }
 		[Bind(0x0F30)] public uint TargetAnimation { get; set; }
 		[Bind(0x0F4C)] public uint NextAnimation { get; set; }
+		[Bind(0x0FA7)] public byte AnimationMode { get; set; }
 		[Bind(0x18B8)] public float Transparency { get; set; }
 
 		public bool AutomaticRefreshEnabled { get; set; } = true;

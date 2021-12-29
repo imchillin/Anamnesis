@@ -14,7 +14,8 @@ namespace Anamnesis.Services
 	public class AnimationService : ServiceBase<AnimationService>
 	{
 		private readonly List<ActorAnimation> animatingActors = new();
-		private NopHookViewModel? nopHook;
+		private NopHookViewModel? animationNopHook;
+		private NopHookViewModel? slowMotionNopHook;
 
 		private bool isEnabled = false;
 
@@ -32,12 +33,13 @@ namespace Anamnesis.Services
 
 		public override Task Start()
 		{
-			this.nopHook = new NopHookViewModel(AddressService.AnimationPatch, 0x7);
+			this.animationNopHook = new NopHookViewModel(AddressService.AnimationPatch, 0x7);
+			this.slowMotionNopHook = new NopHookViewModel(AddressService.SlowMotionPatch, 0x9);
 			Task.Run(this.CheckThread);
 			return base.Start();
 		}
 
-		public void AnimateActor(ActorMemory actor, uint desiredAnimation, int repeatAfter = 0)
+		public void AnimateActor(ActorMemory actor, uint desiredAnimation, bool slowMotion = false, int repeatAfter = 0)
 		{
 			this.ClearAnimation(actor);
 
@@ -45,6 +47,7 @@ namespace Anamnesis.Services
 			{
 				Actor = actor,
 				AnimationId = desiredAnimation,
+				SlowMotion = slowMotion,
 				RepeatAfter = repeatAfter,
 			};
 
@@ -122,13 +125,14 @@ namespace Anamnesis.Services
 				// This takes a couple of frames to work through, which is why this requires a tick thread to drive all that through.
 				if (animation.Actor.TargetAnimation != animation.AnimationId && animation.Actor.TargetAnimation != 0)
 				{
-					animation.Actor.TargetAnimation = 0;
+					animation.Actor.TargetAnimation = animation.AnimationId;
 					return;
 				}
 
 				if (animation.Actor.TargetAnimation == 0 && animation.Actor.NextAnimation == 0)
 				{
 					animation.Actor.TargetAnimation = animation.AnimationId;
+					animation.Actor.AnimationMode = (byte)(animation.SlowMotion ? 0x3E : 0x3F);
 					return;
 				}
 
@@ -154,12 +158,14 @@ namespace Anamnesis.Services
 
 			if (enabled)
 			{
-				this.nopHook?.SetEnabled(true);
+				this.animationNopHook?.SetEnabled(true);
+				this.slowMotionNopHook?.SetEnabled(true);
 			}
 			else
 			{
 				this.ClearAll();
-				this.nopHook?.SetEnabled(false);
+				this.animationNopHook?.SetEnabled(false);
+				this.slowMotionNopHook?.SetEnabled(false);
 			}
 		}
 
@@ -174,6 +180,7 @@ namespace Anamnesis.Services
 
 			public ActorMemory? Actor { get; init; }
 			public uint AnimationId { get; init; }
+			public bool SlowMotion { get; init; }
 			public int RepeatAfter { get; init; }
 			public DateTime LastPlayed { get; set; } = new();
 			public ExecutionState State { get; set; } = ExecutionState.Begin;

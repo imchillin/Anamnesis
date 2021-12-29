@@ -31,6 +31,7 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="20"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
@@ -41,10 +42,13 @@
 			<TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right">Repeat After</TextBlock>
 			<TextBox Grid.Column="1" Grid.Row="1" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding RepeatTimer}" />
 
-			<Button Grid.Row="2" Grid.Column="1" Click="ApplyAction_Click">Apply</Button>
+			<TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Slow Motion</TextBlock>
+			<CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding SlowMotion}" />
 
-			<Button Grid.Row="4" Grid.Column="1" Click="IdleAction_Click">Reset</Button>
-			<Button Grid.Row="4" Grid.Column="0" Click="DrawAction_Click">Draw Weapon</Button>
+			<Button Grid.Row="3" Grid.Column="1" Click="ApplyAction_Click">Apply</Button>
+
+			<Button Grid.Row="5" Grid.Column="1" Click="IdleAction_Click">Reset</Button>
+			<Button Grid.Row="5" Grid.Column="0" Click="DrawAction_Click">Draw Weapon</Button>
 		</Grid>
 		
 	</Grid>

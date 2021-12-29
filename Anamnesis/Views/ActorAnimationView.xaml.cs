@@ -18,6 +18,7 @@ namespace Anamnesis.Views
 
 		public uint AnimationId { get; set; } = 8047;
 		public int RepeatTimer { get; set; } = 0;
+		public bool SlowMotion { get; set; } = false;
 
 		public AnimationService AnimationService { get; set; }
 		public GposeService GPoseService { get; set; }
@@ -29,7 +30,7 @@ namespace Anamnesis.Views
 			var selectedActor = TargetService.Instance.SelectedActor;
 			if (selectedActor != null)
 			{
-				this.AnimationService.AnimateActor(selectedActor, this.AnimationId, this.RepeatTimer);
+				this.AnimationService.AnimateActor(selectedActor, this.AnimationId, this.SlowMotion, this.RepeatTimer);
 			}
 		}
 
@@ -38,7 +39,7 @@ namespace Anamnesis.Views
 			var selectedActor = TargetService.Instance.SelectedActor;
 			if (selectedActor != null)
 			{
-				this.AnimationService.AnimateActor(selectedActor, 3, 0);
+				this.AnimationService.AnimateActor(selectedActor, 3);
 			}
 		}
 
@@ -47,7 +48,7 @@ namespace Anamnesis.Views
 			var selectedActor = TargetService.Instance.SelectedActor;
 			if (selectedActor != null)
 			{
-				this.AnimationService.AnimateActor(selectedActor, 190, 0);
+				this.AnimationService.AnimateActor(selectedActor, 190);
 			}
 		}
 
