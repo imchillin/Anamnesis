@@ -23,6 +23,12 @@ namespace Anamnesis.Memory
 			Unload = 2,
 		}
 
+		public enum AnimationModes : int
+		{
+			Normal = 0x3F,
+			SlowMotion = 0x3E,
+		}
+
 		[Bind(0x008D)] public byte SubKind { get; set; }
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 		[Bind(0x0104)] public RenderModes RenderMode { get; set; }
@@ -35,7 +41,7 @@ namespace Anamnesis.Memory
 		[Bind(0x0DD8)] public ActorCustomizeMemory? Customize { get; set; }
 		[Bind(0x0F30)] public uint TargetAnimation { get; set; }
 		[Bind(0x0F4C)] public uint NextAnimation { get; set; }
-		[Bind(0x0FA7)] public byte AnimationMode { get; set; }
+		[Bind(0x0FA7)] public AnimationModes AnimationMode { get; set; }
 		[Bind(0x18B8)] public float Transparency { get; set; }
 
 		public bool AutomaticRefreshEnabled { get; set; } = true;
