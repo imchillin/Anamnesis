@@ -43,7 +43,7 @@ namespace Anamnesis.Services
 		{
 			this.ClearAnimation(actor);
 
-			var animationEntry = new ActorAnimation()
+			ActorAnimation animationEntry = new()
 			{
 				Actor = actor,
 				AnimationId = desiredAnimation,
@@ -80,7 +80,7 @@ namespace Anamnesis.Services
 					if (!GposeService.Instance.IsGpose)
 						this.Enabled = false; // Should only run in gpose
 
-					foreach (var actor in this.animatingActors)
+					foreach (ActorAnimation actor in this.animatingActors)
 					{
 						this.TickActor(actor);
 					}

@@ -472,6 +472,13 @@
 	"Pose_j_f_dlip": "Lips Lower",
 	"Pose_j_ex_met_va": "Visor",
 
+	"Animation_Enable": "Enable Animation Control",
+	"Animation_Search": "Search for an animation",
+	"Animation_DrawWeapon": "Draw Weapon",
+	"Animation_Apply": "Play Animation",
+	"Animation_SlowMo": "Slow Motion",
+	"Animation_Reset": "Reset Animation",
+
 	"Settings_Header": "Settings",
 	"Settings_Language": "Language",
 	"Settings_AlwaysOnTop": "Always on top",

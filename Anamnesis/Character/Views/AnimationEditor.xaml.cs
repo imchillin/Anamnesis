@@ -5,13 +5,18 @@ namespace Anamnesis.Character.Views
 {
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
 	public partial class AnimationEditor : UserControl
 	{
+		private bool slowMotion;
+		private uint animationId = 8047;
+
 		public AnimationEditor()
 		{
 			this.InitializeComponent();
@@ -20,7 +25,35 @@ namespace Anamnesis.Character.Views
 
 		public ActorMemory? Actor { get; private set; }
 		public AnimationService AnimationService => AnimationService.Instance;
-		public GposeService GPoseService => GposeService.Instance;
+		public GposeService GposeService => GposeService.Instance;
+
+		public int RepeatTimer { get; set; } = 0;
+
+		public uint AnimationId
+		{
+			get
+			{
+				return this.animationId;
+			}
+			set
+			{
+				this.animationId = value;
+				this.OnPlayClicked(null, null);
+			}
+		}
+
+		public bool SlowMotion
+		{
+			get
+			{
+				return this.slowMotion;
+			}
+			set
+			{
+				this.slowMotion = value;
+				this.OnPlayClicked(null, null);
+			}
+		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
@@ -32,6 +65,42 @@ namespace Anamnesis.Character.Views
 			{
 				this.Actor = null;
 			}
+		}
+
+		private void OnSearchClicked(object sender, RoutedEventArgs e)
+		{
+			SelectorDrawer.Show<ModelListSelector, ModelListEntry>(null, (npc) =>
+			{
+				if (npc == null)
+					return;
+
+				this.OnPlayClicked(null, null);
+			});
+		}
+
+		private void OnDrawWeaponClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor == null)
+				return;
+
+			this.AnimationService.AnimateActor(this.Actor, 190);
+		}
+
+		private void OnPlayClicked(object? sender, RoutedEventArgs? e)
+		{
+			if (this.Actor == null)
+				return;
+
+			ActorMemory.AnimationModes mode = this.SlowMotion ? ActorMemory.AnimationModes.SlowMotion : ActorMemory.AnimationModes.Normal;
+			this.AnimationService.AnimateActor(this.Actor, this.AnimationId, mode, this.RepeatTimer);
+		}
+
+		private void OnResetClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor == null)
+				return;
+
+			this.AnimationService.AnimateActor(this.Actor, 3);
 		}
 	}
 }
