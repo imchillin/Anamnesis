@@ -97,7 +97,16 @@ namespace Anamnesis.Services
 
 			foreach (IService service in Services)
 			{
-				await service.Shutdown();
+				try
+				{
+					// If this throws an exception we should keep trying to shut down the rest
+					// not doing so can leave the game memory in a corrupt state
+					await service.Shutdown();
+				}
+				catch(Exception ex)
+				{
+					Log.Error(ex, "Failed to shutdown service.");
+				}
 			}
 		}
 
