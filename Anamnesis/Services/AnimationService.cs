@@ -19,7 +19,7 @@ namespace Anamnesis.Services
 
 		private bool isEnabled = false;
 
-		public int TickDelay { get; set; } = 10;
+		public int TickDelay { get; set; } = 50;
 
 		public bool Enabled
 		{
