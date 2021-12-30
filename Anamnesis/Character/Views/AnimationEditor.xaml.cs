@@ -6,7 +6,6 @@ namespace Anamnesis.Character.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.GameData.Excel;
-	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
@@ -29,7 +28,7 @@ namespace Anamnesis.Character.Views
 		public AnimationService AnimationService => AnimationService.Instance;
 		public GposeService GposeService => GposeService.Instance;
 
-		public int RepeatTimer { get; set; } = 0;
+		public float RepeatTimer { get; set; } = 0;
 
 		public uint AnimationId
 		{
