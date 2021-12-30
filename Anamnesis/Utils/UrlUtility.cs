@@ -13,7 +13,7 @@ namespace Anamnesis
 		{
 			try
 			{
-				Process.Start(new ProcessStartInfo(@"cmd", $"/c start {url}") { CreateNoWindow = true });
+				Process.Start(new ProcessStartInfo(@"cmd", $"/c start \"\" \"{url}\"") { CreateNoWindow = true });
 			}
 			catch (Exception ex)
 			{
