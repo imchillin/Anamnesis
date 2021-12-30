@@ -51,7 +51,7 @@ namespace Anamnesis.Services
 				Actor = actor,
 				AnimationId = desiredAnimation,
 				AnimationMode = animationMode,
-				RepeatAfter = 5,
+				RepeatAfter = repeatAfter,
 			};
 
 			this.animatingActors.Add(animationEntry);
