@@ -54,6 +54,18 @@
 							VerticalAlignment="Top"
 							Orientation="Horizontal">
 
+					<Button Click="OnRaceGearClicked"
+							Style="{StaticResource TransparentIconButton}"
+							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
+
+						<Button.ToolTip>
+							<XivToolsWpf:TextBlock Key="Character_Equipment_RaceGear" />
+						</Button.ToolTip>
+
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
+									  Icon="UserAstronaut" />
+					</Button>
+
 					<Button Click="OnNpcSmallclothesClicked"
 							Style="{StaticResource TransparentIconButton}"
 							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">

@@ -97,6 +97,52 @@ namespace Anamnesis.Character.Pages
 			this.Actor.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
 		}
 
+		private void OnRaceGearClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor == null)
+				return;
+
+			if (this.Actor.Customize?.Race == null)
+				return;
+
+			var race = GameDataService.Races.GetRow((uint)this.Actor.Customize.Race);
+
+			if (race == null)
+				return;
+
+			if(this.Actor.Customize.Gender == ActorCustomizeMemory.Genders.Masculine)
+			{
+				var body = GameDataService.Items.Get((uint)race.RSEMBody);
+				var hands = GameDataService.Items.Get((uint)race.RSEMHands);
+				var legs = GameDataService.Items.Get((uint)race.RSEMLegs);
+				var feet = GameDataService.Items.Get((uint)race.RSEMFeet);
+
+				this.Actor.Equipment?.Chest?.Equip(body);
+				this.Actor.Equipment?.Arms?.Equip(hands);
+				this.Actor.Equipment?.Legs?.Equip(legs);
+				this.Actor.Equipment?.Feet?.Equip(feet);
+			}
+			else
+			{
+				var body = GameDataService.Items.Get((uint)race.RSEFBody);
+				var hands = GameDataService.Items.Get((uint)race.RSEFHands);
+				var legs = GameDataService.Items.Get((uint)race.RSEFLegs);
+				var feet = GameDataService.Items.Get((uint)race.RSEFFeet);
+
+				this.Actor.Equipment?.Chest?.Equip(body);
+				this.Actor.Equipment?.Arms?.Equip(hands);
+				this.Actor.Equipment?.Legs?.Equip(legs);
+				this.Actor.Equipment?.Feet?.Equip(feet);
+			}
+
+			this.Actor.Equipment?.Ear?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Head?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Neck?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsPlayer);
+			this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsPlayer);
+		}
+
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
 			await this.Load(CharacterFile.SaveModes.All);
