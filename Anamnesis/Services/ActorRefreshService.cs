@@ -12,30 +12,32 @@ namespace Anamnesis.Services
 
 		public static bool GetCanRefresh()
 		{
-			if (AnamnesisConnectService.IsPenumbraConnected)
-				return true;
-
-			return GposeService.Instance.GetIsGPose();
-		}
-
-		public override Task Initialize()
-		{
-			GposeService.GposeStateChanging += () => this.SetCanRefresh();
-			AnamnesisConnectService.Instance.PropertyChanged += (s, e) => this.SetCanRefresh();
-
-			this.SetCanRefresh();
-
-			return base.Initialize();
-		}
-
-		private void SetCanRefresh()
-		{
 			bool canRefresh = GposeService.Instance.IsOverworld;
 
 			if (AnamnesisConnectService.IsPenumbraConnected)
 				canRefresh = true;
 
-			this.CanRefresh = canRefresh;
+			return canRefresh;
+		}
+
+		public override Task Initialize()
+		{
+			GposeService.GposeStateChanging += () => this.UpdateCanRefresh();
+			AnamnesisConnectService.Instance.PropertyChanged += (s, e) => this.UpdateCanRefresh();
+			return base.Initialize();
+		}
+
+		public override Task Start()
+		{
+			this.UpdateCanRefresh();
+			return base.Start();
+		}
+
+		private void UpdateCanRefresh()
+		{
+			bool canRefresh = GetCanRefresh();
+			if (canRefresh != this.CanRefresh)
+				this.CanRefresh = canRefresh;
 		}
 	}
 }

@@ -139,7 +139,7 @@ namespace Anamnesis.Views
 					if (this.currentIndex >= entries.Count)
 						this.currentIndex = 0;
 
-					if (this == null || entries == null)
+					if (this == null || entries == null || entries.Count == 0)
 						return;
 
 					await this.Show(entries[this.currentIndex], rnd);
