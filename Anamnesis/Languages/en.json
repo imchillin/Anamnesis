@@ -12,7 +12,7 @@
 	"Common_LinkVector": "Link X, Y, and Z axes together",
 	"Common_Confirm": "Confirm",
 
-	"ProcessSelector_AllWarning": "Selecting a process other than the DirectX 11 Final Fantasy XIV process can cause the selected process and Anmnesis to crash",
+	"ProcessSelector_AllWarning": "Selecting a process other than the DirectX 11 Final Fantasy XIV process can cause the selected process and Anamnesis to crash",
 	"ProcessSelector_NotFound": "Final Fantasy XIV process (ffxiv_dx11) not found.",
 	"ProcessSelector_NotFound2": "Please ensure the game is running, and is in DirectX 11 mode.",
 

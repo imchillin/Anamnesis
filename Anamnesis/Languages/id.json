@@ -12,7 +12,7 @@
 	"Common_LinkVector": "Menyambungkan titik sumbu X, Y, dan Z menjadi satu.",
 	"Common_Confirm": "Konfirmasi",
 
-	"ProcessSelector_AllWarning": "Memilih proses lain selain Final Fantasy XIV pada mode DirectX 11 dapat menyebabkan aplikasi Anamesis berhenti secara paksa",
+	"ProcessSelector_AllWarning": "Memilih proses lain selain Final Fantasy XIV pada mode DirectX 11 dapat menyebabkan aplikasi Anamnesis berhenti secara paksa",
 	"ProcessSelector_NotFound": "Proses Final Fantasy XIV (ffxiv_dx11) tidak ditemukan.",
 	"ProcessSelector_NotFound2": "Tolong pastikan gamenya telah berjalan dan dalam mode DirectX 11.",
 

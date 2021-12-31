@@ -1,4 +1,6 @@
 {
+	"Language": "Español",
+
 	"Common_OpenFile": "Cargar",
 	"Common_SaveFile": "Guardar",
 	"Common_OpenDir": "Abrir",
@@ -10,7 +12,7 @@
 	"Common_LinkVector": "Agrupar los ejes X, Y y Z ",
 	"Common_Confirm": "Confirmar",
 
-	"ProcessSelector_AllWarning": "Seleccionar otro proceso que no sea el proceso DirectX11 de Final Fantasy XIV puede causer el cierre del proceso seleccionado y Anamensis",
+	"ProcessSelector_AllWarning": "Seleccionar otro proceso que no sea el proceso DirectX11 de Final Fantasy XIV puede causer el cierre del proceso seleccionado y Anamnesis",
 
 	"Error_NotInGame": "No ha iniciado sesion",
 	"Error_WrongVersion": "Version del juego no compatible: {0}. ¿Ha salido un parche recientemente?\nUsar Anamnesis con versiones no compatibles puede provocar cierres del juego/aplicación.\nTendremos una actualización tan pronto como no sea posible. ¡Gracias por su paciencia!",
