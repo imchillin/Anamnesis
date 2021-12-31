@@ -57,6 +57,16 @@ namespace Anamnesis.Services
 			this.animatingActors.AddOrUpdate(actor, (_) => animationEntry, (_, _) => animationEntry);
 		}
 
+		public ActorAnimation? GetAnimation(ActorMemory actor)
+		{
+			ActorAnimation? animation = null;
+
+			if (this.animatingActors.TryGetValue(actor, out animation))
+				return animation;
+
+			return null;
+		}
+
 		public void ClearAnimation(ActorMemory actor)
 		{
 			this.animatingActors.TryRemove(actor, out _);
@@ -210,7 +220,7 @@ namespace Anamnesis.Services
 			}
 		}
 
-		private class ActorAnimation
+		public class ActorAnimation
 		{
 			public enum ExecutionState
 			{
