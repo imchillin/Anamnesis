@@ -4,7 +4,7 @@
 namespace Anamnesis.Services
 {
 	using System;
-	using System.Collections.Generic;
+	using System.Collections.Concurrent;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
@@ -13,11 +13,13 @@ namespace Anamnesis.Services
 	[AddINotifyPropertyChangedInterface]
 	public class AnimationService : ServiceBase<AnimationService>
 	{
-		private readonly List<ActorAnimation> animatingActors = new();
+		private readonly ConcurrentDictionary<ActorMemory, ActorAnimation> animatingActors = new();
 		private NopHookViewModel? animationNopHook;
 		private NopHookViewModel? slowMotionNopHook;
 
 		private bool isEnabled = false;
+
+		public int TickDelay { get; set; } = 50;
 
 		public bool Enabled
 		{
@@ -35,13 +37,14 @@ namespace Anamnesis.Services
 		{
 			this.animationNopHook = new NopHookViewModel(AddressService.AnimationPatch, 0x7);
 			this.slowMotionNopHook = new NopHookViewModel(AddressService.SlowMotionPatch, 0x9);
-			Task.Run(this.CheckThread);
+			Task.Run(this.TickThread);
 			return base.Start();
 		}
 
-		public void AnimateActor(ActorMemory actor, uint desiredAnimation, ActorMemory.AnimationModes animationMode = ActorMemory.AnimationModes.Normal, int repeatAfter = 0)
+		public void AnimateActor(ActorMemory actor, uint desiredAnimation, ActorMemory.AnimationModes animationMode = ActorMemory.AnimationModes.Normal, float repeatAfter = 0)
 		{
-			this.ClearAnimation(actor);
+			if (desiredAnimation >= GameDataService.ActionTimelines.RowCount)
+				return;
 
 			ActorAnimation animationEntry = new()
 			{
@@ -51,12 +54,22 @@ namespace Anamnesis.Services
 				RepeatAfter = repeatAfter,
 			};
 
-			this.animatingActors.Add(animationEntry);
+			this.animatingActors.AddOrUpdate(actor, (_) => animationEntry, (_, _) => animationEntry);
 		}
 
-		public void ClearAnimation(ActorBasicMemory actor)
+		public ActorAnimation? GetAnimation(ActorMemory actor)
 		{
-			this.animatingActors.RemoveAll(p => p.Actor == actor);
+			ActorAnimation? animation = null;
+
+			if (this.animatingActors.TryGetValue(actor, out animation))
+				return animation;
+
+			return null;
+		}
+
+		public void ClearAnimation(ActorMemory actor)
+		{
+			this.animatingActors.TryRemove(actor, out _);
 		}
 
 		public void ClearAll()
@@ -71,7 +84,7 @@ namespace Anamnesis.Services
 			await base.Shutdown();
 		}
 
-		private async Task CheckThread()
+		private async Task TickThread()
 		{
 			while (this.IsAlive)
 			{
@@ -80,13 +93,13 @@ namespace Anamnesis.Services
 					if (!GposeService.Instance.IsGpose)
 						this.Enabled = false; // Should only run in gpose
 
-					foreach (ActorAnimation actor in this.animatingActors)
+					foreach ((_, ActorAnimation actor) in this.animatingActors)
 					{
 						this.TickActor(actor);
 					}
 				}
 
-				await Task.Delay(100);
+				await Task.Delay(this.TickDelay);
 			}
 		}
 
@@ -96,25 +109,11 @@ namespace Anamnesis.Services
 			{
 				if (!animation.Actor.IsAnimating)
 				{
-					if(animation.State != ActorAnimation.ExecutionState.Begin)
+					if (animation.State != ActorAnimation.ExecutionState.Begin)
 						animation.LastPlayed = DateTime.Now;
 
 					return;
 				}
-
-				if (animation.State == ActorAnimation.ExecutionState.Executed && animation.RepeatAfter == 0)
-					return;
-
-				if (animation.State == ActorAnimation.ExecutionState.Executed && animation.RepeatAfter != 0)
-				{
-					if (DateTime.Now > animation.LastPlayed.Add(TimeSpan.FromSeconds(animation.RepeatAfter)))
-					{
-						animation.State = ActorAnimation.ExecutionState.Begin;
-					}
-				}
-
-				if (animation.State == ActorAnimation.ExecutionState.Executed)
-					return;
 
 				// The flow below is a little confusing, but basically we need to ensure that the animation is reset and then we can play our custom animation.
 				// First we need to set TargetAnimation to 0 and wait for NextAnimation to tick over to 0 as well.
@@ -122,32 +121,78 @@ namespace Anamnesis.Services
 				// Once that's done, we set TargetAnimation to the actual animation we want, and again wait for the engine to tick that into NextAnimation.
 				// Finally we set TargetAnimation to 0 again which will cause the engine to fire the now queued animation in NextAnimation.
 				// This takes a couple of frames to work through, which is why this requires a tick thread to drive all that through.
-				animation.State = ActorAnimation.ExecutionState.Executing;
-
-				if (animation.Actor.TargetAnimation != animation.AnimationId && animation.Actor.TargetAnimation != 0)
+				switch (animation.State)
 				{
-					animation.Actor.TargetAnimation = 0;
-					return;
-				}
+					case ActorAnimation.ExecutionState.Idle:
+						if(animation.RepeatAfter != 0)
+						{
+							if (DateTime.Now > animation.LastPlayed.Add(TimeSpan.FromSeconds(animation.RepeatAfter)))
+							{
+								animation.State = ActorAnimation.ExecutionState.Begin;
+							}
+						}
 
-				if(animation.AnimationMode != animation.Actor.AnimationMode)
-				{
-					animation.Actor.AnimationMode = animation.AnimationMode;
-					return;
-				}
+						return;
 
-				if (animation.Actor.TargetAnimation == 0 && animation.Actor.NextAnimation == 0)
-				{
-					animation.Actor.TargetAnimation = animation.AnimationId;
-					return;
-				}
+					case ActorAnimation.ExecutionState.Begin:
+						{
+							animation.Actor.TargetAnimation = 0;
+							animation.State = ActorAnimation.ExecutionState.Resetting;
+						}
 
-				if (animation.Actor.TargetAnimation == animation.AnimationId && animation.Actor.NextAnimation == animation.AnimationId)
-				{
-					animation.Actor.TargetAnimation = 0;
-					animation.LastPlayed = DateTime.Now;
-					animation.State = ActorAnimation.ExecutionState.Executed;
-					return;
+						return;
+
+					case ActorAnimation.ExecutionState.Resetting:
+						{
+							if (animation.Actor.TargetAnimation == 0 && animation.Actor.NextAnimation == 0)
+							{
+								animation.State = ActorAnimation.ExecutionState.SetMode;
+							}
+						}
+
+						return;
+
+					case ActorAnimation.ExecutionState.SetMode:
+						{
+							if (animation.AnimationMode != animation.Actor.AnimationMode)
+							{
+								animation.Actor.AnimationMode = animation.AnimationMode;
+							}
+
+							animation.State = ActorAnimation.ExecutionState.Prepare;
+						}
+
+						return;
+
+					case ActorAnimation.ExecutionState.Prepare:
+						{
+							animation.Actor.TargetAnimation = animation.AnimationId;
+							animation.State = ActorAnimation.ExecutionState.Fire;
+						}
+
+						return;
+
+					case ActorAnimation.ExecutionState.Fire:
+						{
+							if (animation.Actor.TargetAnimation == animation.AnimationId && animation.Actor.NextAnimation == animation.AnimationId)
+							{
+								animation.Actor.TargetAnimation = 0;
+								animation.State = ActorAnimation.ExecutionState.Firing;
+							}
+						}
+
+						return;
+
+					case ActorAnimation.ExecutionState.Firing:
+						{
+							if (animation.Actor.TargetAnimation == 0 && animation.Actor.NextAnimation == 0)
+							{
+								animation.LastPlayed = DateTime.Now;
+								animation.State = ActorAnimation.ExecutionState.Idle;
+							}
+						}
+
+						return;
 				}
 			}
 		}
@@ -175,19 +220,23 @@ namespace Anamnesis.Services
 			}
 		}
 
-		private class ActorAnimation
+		public class ActorAnimation
 		{
 			public enum ExecutionState
 			{
+				Idle,
 				Begin,
-				Executing,
-				Executed,
+				Resetting,
+				Prepare,
+				SetMode,
+				Fire,
+				Firing,
 			}
 
 			public ActorMemory? Actor { get; init; }
 			public uint AnimationId { get; init; }
 			public ActorMemory.AnimationModes AnimationMode { get; init; }
-			public int RepeatAfter { get; init; }
+			public float RepeatAfter { get; init; }
 			public DateTime LastPlayed { get; set; } = new();
 			public ExecutionState State { get; set; } = ExecutionState.Begin;
 		}
