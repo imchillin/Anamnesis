@@ -52,7 +52,7 @@ namespace Anamnesis.Character.Views
 			set
 			{
 				this.slowMotion = value;
-				this.OnPlayClicked(null, null);
+				////this.OnPlayClicked(null, null);
 			}
 		}
 
@@ -65,6 +65,29 @@ namespace Anamnesis.Character.Views
 			else
 			{
 				this.Actor = null;
+			}
+
+			this.RefreshUI();
+		}
+
+		private void RefreshUI()
+		{
+			AnimationService.ActorAnimation? animation = null;
+
+			if(this.Actor != null)
+				animation = this.AnimationService.GetAnimation(this.Actor);
+
+			if(animation != null)
+			{
+				this.AnimationId = animation.AnimationId;
+				this.RepeatTimer = animation.RepeatAfter;
+				this.SlowMotion = animation.AnimationMode == ActorMemory.AnimationModes.SlowMotion;
+			}
+			else
+			{
+				this.AnimationId = 8047;
+				this.RepeatTimer = 0f;
+				this.SlowMotion = false;
 			}
 		}
 
