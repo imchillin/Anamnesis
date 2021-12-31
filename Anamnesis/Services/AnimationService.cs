@@ -4,7 +4,7 @@
 namespace Anamnesis.Services
 {
 	using System;
-	using System.Collections.Generic;
+	using System.Collections.Concurrent;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
@@ -13,7 +13,7 @@ namespace Anamnesis.Services
 	[AddINotifyPropertyChangedInterface]
 	public class AnimationService : ServiceBase<AnimationService>
 	{
-		private readonly List<ActorAnimation> animatingActors = new();
+		private readonly ConcurrentDictionary<ActorMemory, ActorAnimation> animatingActors = new();
 		private NopHookViewModel? animationNopHook;
 		private NopHookViewModel? slowMotionNopHook;
 
@@ -43,8 +43,6 @@ namespace Anamnesis.Services
 
 		public void AnimateActor(ActorMemory actor, uint desiredAnimation, ActorMemory.AnimationModes animationMode = ActorMemory.AnimationModes.Normal, float repeatAfter = 0)
 		{
-			this.ClearAnimation(actor);
-
 			if (desiredAnimation >= GameDataService.ActionTimelines.RowCount)
 				return;
 
@@ -56,12 +54,12 @@ namespace Anamnesis.Services
 				RepeatAfter = repeatAfter,
 			};
 
-			this.animatingActors.Add(animationEntry);
+			this.animatingActors.AddOrUpdate(actor, (_) => animationEntry, (_, _) => animationEntry);
 		}
 
-		public void ClearAnimation(ActorBasicMemory actor)
+		public void ClearAnimation(ActorMemory actor)
 		{
-			this.animatingActors.RemoveAll(p => p.Actor == actor);
+			this.animatingActors.TryRemove(actor, out _);
 		}
 
 		public void ClearAll()
@@ -85,7 +83,7 @@ namespace Anamnesis.Services
 					if (!GposeService.Instance.IsGpose)
 						this.Enabled = false; // Should only run in gpose
 
-					foreach (ActorAnimation actor in this.animatingActors)
+					foreach ((_, ActorAnimation actor) in this.animatingActors)
 					{
 						this.TickActor(actor);
 					}
