@@ -22,7 +22,7 @@ namespace Anamnesis.Services
 
 		public override Task Initialize()
 		{
-			GposeService.GposeStateChanged += () => this.UpdateCanRefresh();
+			GposeService.GposeStateChanging += () => this.UpdateCanRefresh();
 			AnamnesisConnectService.Instance.PropertyChanged += (s, e) => this.UpdateCanRefresh();
 			return base.Initialize();
 		}
