@@ -65,7 +65,7 @@
 			<ProgressBar IsIndeterminate="True" Style="{StaticResource MaterialDesignCircularProgressBar}" Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsLoading, Converter={StaticResource B2V}}"/>
 
 			<StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding ActorRefreshService.CanRefresh}">
-				<XivToolsWpf:NumberBox Width="33" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 10, 0" ToolTip="Character_Equipment_ItemId"/>
+				<XivToolsWpf:NumberBox Width="38" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0" ToolTip="Character_Equipment_ItemId"/>
 
 				<XivToolsWpf:NumberBox  Width="28" Value="{Binding ItemModel.Set}" FontSize="12" FontWeight="Light"
 								ToolTip="Character_Equipment_ItemSet"
