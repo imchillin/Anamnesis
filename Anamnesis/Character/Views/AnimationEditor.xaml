@@ -41,15 +41,41 @@
 				<XivToolsWpf:IconBlock Icon="HandSparkles"/>
 			</Button>
 
-			<ToggleButton Grid.Column="1" Style="{StaticResource TransparentIconToggleButton}"
-						  IsChecked="{Binding SlowMotion}"
+			<ToggleButton x:Name="ToggleTimeControl" Grid.Column="1" Style="{StaticResource TransparentIconToggleButton}"
 						  Height="28"
 						  Width="28">
+
 				<ToggleButton.ToolTip>
-					<XivToolsWpf:TextBlock Key="Animation_SlowMo"/>
+					<XivToolsWpf:TextBlock Key="Animation_TimeControl"/>
 				</ToggleButton.ToolTip>
 
-				<XivToolsWpf:IconBlock Icon="Stopwatch"/>
+				<StackPanel>
+					<XivToolsWpf:IconBlock Icon="Stopwatch"/>
+					<Popup IsOpen="{Binding IsChecked, ElementName=ToggleTimeControl}" StaysOpen="False">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="30"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="Animation_SlowMo" Style="{StaticResource Label}" HorizontalAlignment="Left"/>
+							<CheckBox Grid.Column="1" Grid.Row="0" IsChecked="{Binding SlowMotion}" />
+
+
+							<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Animation_RepeatAfterPrefix" Style="{StaticResource Label}" HorizontalAlignment="Left"/>
+							<XivToolsWpf:NumberBox Grid.Column="1" Grid.Row="1" Value="{Binding RepeatTimer}"  Margin="0, 0, 0, 0" />
+							<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Animation_RepeatAfterSuffix" Style="{StaticResource Label}" HorizontalAlignment="Left"/>	
+						</Grid>
+					</Popup>
+				</StackPanel>
+
+				
 			</ToggleButton>
 
 			<Button Grid.Column="2" Click="OnSearchClicked" Style="{StaticResource TransparentIconButton}">

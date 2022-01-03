@@ -477,6 +477,9 @@
 	"Animation_DrawWeapon": "Draw Weapon",
 	"Animation_Apply": "Play Animation",
 	"Animation_SlowMo": "Slow Motion",
+	"Animation_TimeControl": "Time Control",
+	"Animation_RepeatAfterPrefix": "Repeat after",
+	"Animation_RepeatAfterSuffix": "second(s)",
 	"Animation_Reset": "Reset Animation",
 
 	"Settings_Header": "Settings",
