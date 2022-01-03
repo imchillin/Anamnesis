@@ -27,6 +27,10 @@ namespace Anamnesis.Files
 		public override string FileExtension => ".pose";
 		public override string TypeName => "Anamnesis Pose";
 
+		public Vector? Position { get; set; }
+		public Quaternion? Rotation { get; set; }
+		public Vector? Scale { get; set; }
+
 		public Dictionary<string, Bone?>? Bones { get; set; }
 
 		public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, HashSet<string>? bones = null)
@@ -49,8 +53,15 @@ namespace Anamnesis.Files
 
 		public void WriteToFile(ActorMemory actor, SkeletonVisual3d skeleton, HashSet<string>? bones)
 		{
+			if (actor.ModelObject == null || actor.ModelObject.Transform == null)
+				throw new Exception("No model in actor");
+
 			if (skeleton == null || skeleton.Bones == null)
 				throw new Exception("No skeleton in actor");
+
+			this.Rotation = actor.ModelObject.Transform.Rotation;
+			this.Position = actor.ModelObject.Transform.Position;
+			this.Scale = actor.ModelObject.Transform.Scale;
 
 			this.Bones = new Dictionary<string, Bone?>();
 
@@ -68,7 +79,7 @@ namespace Anamnesis.Files
 			if (actor == null)
 				throw new ArgumentNullException(nameof(actor));
 
-			if (actor.ModelObject == null)
+			if (actor.ModelObject == null || actor.ModelObject.Transform == null)
 				throw new Exception("Actor has no model");
 
 			if (actor.ModelObject.Skeleton == null)
@@ -76,6 +87,18 @@ namespace Anamnesis.Files
 
 			if (this.Bones == null)
 				return;
+
+			/*
+			// Positions would be nice... but they are per-map!
+			if (this.Position != null)
+				actor.ModelObject.Transform.Position = this.Position;
+			*/
+
+			if (this.Scale != null)
+				actor.ModelObject.Transform.Scale = (Vector)this.Scale;
+
+			if (this.Rotation != null)
+				actor.ModelObject.Transform.Rotation = (Quaternion)this.Rotation;
 
 			SkeletonMemory? skeletonMem = actor.ModelObject.Skeleton;
 
