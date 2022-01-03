@@ -167,15 +167,13 @@ namespace Anamnesis.Services
 				}
 			}
 
-			currentLocale = Locales[FallbackCulture];
-			fallbackLocale = currentLocale;
+			fallbackLocale = Locales[FallbackCulture];
+			SetLocale(SettingsService.Current.Language);
 		}
 
 		public override async Task Start()
 		{
 			await base.Start();
-
-			SetLocale(SettingsService.Current.Language);
 		}
 
 		bool ILocaleProvider.HasString(string key) => HasString(key);
