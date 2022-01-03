@@ -1,4 +1,6 @@
 {
+	"Language": "한국어",
+
 	"Common_OpenFile": "불러오기",
 	"Common_SaveFile": "저장",
 	"Common_OpenDir": "열기",
@@ -10,7 +12,7 @@
 	"Common_LinkVector": "X, Y, Z축을 연동",
 	"Common_Confirm": "확인",
 
-	"ProcessSelector_AllWarning": "DirectX 11 Final Fantasy XIV가 아닌 다른 프로세스를 선택하면 해당 프로세스와 Anmnesis가 충돌하게 됩니다.",
+	"ProcessSelector_AllWarning": "DirectX 11 Final Fantasy XIV가 아닌 다른 프로세스를 선택하면 해당 프로세스와 Anamnesis가 충돌하게 됩니다.",
 	"ProcessSelector_NotFound": "Final Fantasy XIV 프로세스 (ffxiv_dx11) 찾을 수 없습니다.",
 	"ProcessSelector_NotFound2": "게임이 DirectX 11 모드로 실행 중인지 확인하세요.",
 

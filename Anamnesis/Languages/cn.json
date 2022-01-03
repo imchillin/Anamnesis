@@ -12,7 +12,7 @@
 	"Common_LinkVector": "同时调节XYZ值",
 	"Common_Confirm": "确定",
 
-	"ProcessSelector_AllWarning": "若选择DirectX 11模式的最终幻想XIV以外的进程会导致所选进程和Anmnesis崩溃",
+	"ProcessSelector_AllWarning": "若选择DirectX 11模式的最终幻想XIV以外的进程会导致所选进程和Anamnesis崩溃",
 	"ProcessSelector_NotFound": "没有找到最终幻想XIV进程 (ffxiv_dx11)。",
 	"ProcessSelector_NotFound2": "请确保游戏正在运行，并处于DirectX 11模式。",
 
