@@ -21,6 +21,14 @@ namespace Anamnesis.GameData.Excel
 
 		public string Feminine { get; private set; } = string.Empty;
 		public string Masculine { get; private set; } = string.Empty;
+		public int RSEMBody { get; private set; } = 0;
+		public int RSEMHands { get; private set; } = 0;
+		public int RSEMLegs { get; private set; } = 0;
+		public int RSEMFeet { get; private set; } = 0;
+		public int RSEFBody { get; private set; } = 0;
+		public int RSEFHands { get; private set; } = 0;
+		public int RSEFLegs { get; private set; } = 0;
+		public int RSEFFeet { get; private set; } = 0;
 		public Tribe[] Tribes { get; private set; } = new Tribe[0];
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
@@ -29,6 +37,15 @@ namespace Anamnesis.GameData.Excel
 
 			this.Masculine = parser.ReadColumn<SeString>(0) ?? string.Empty;
 			this.Feminine = parser.ReadColumn<SeString>(1) ?? string.Empty;
+
+			this.RSEMBody = parser.ReadColumn<int>(2);
+			this.RSEMHands = parser.ReadColumn<int>(3);
+			this.RSEMLegs = parser.ReadColumn<int>(4);
+			this.RSEMFeet = parser.ReadColumn<int>(5);
+			this.RSEFBody = parser.ReadColumn<int>(6);
+			this.RSEFHands = parser.ReadColumn<int>(7);
+			this.RSEFLegs = parser.ReadColumn<int>(8);
+			this.RSEFFeet = parser.ReadColumn<int>(9);
 
 			if (!Enum.IsDefined<ActorCustomizeMemory.Races>(this.CustomizeRace))
 				return;
