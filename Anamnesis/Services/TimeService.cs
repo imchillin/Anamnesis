@@ -14,8 +14,8 @@ namespace Anamnesis
 	public class TimeService : ServiceBase<TimeService>
 	{
 		private TimeMemory? timeMemory;
+		private DateTimeOffset baseTime;
 
-		public DateTimeOffset Time { get; private set; }
 		public string TimeString { get; private set; } = "00:00";
 		public int TimeOfDay { get; set; }
 		public int DayOfMonth { get; set; }
@@ -62,17 +62,17 @@ namespace Anamnesis
 					if (this.Freeze)
 					{
 						var offset = TimeSpan.FromDays(this.DayOfMonth - 1) + TimeSpan.FromMinutes(this.TimeOfDay);
-						this.Time = new DateTimeOffset(this.Time.Year, this.Time.Month, 1, 0, 0, 0, TimeSpan.Zero) + offset;
-						this.timeMemory?.SetTime(this.Time.ToUnixTimeSeconds());
+						var newTime = new DateTimeOffset(this.baseTime.Year, this.baseTime.Month, 1, 0, 0, 0, TimeSpan.Zero) + offset;
+						this.timeMemory?.SetTime(newTime.ToUnixTimeSeconds());
+						this.TimeString = newTime.ToString("HH:mm");
 					}
 					else
 					{
-						this.Time = DateTimeOffset.FromUnixTimeSeconds(this.timeMemory!.CurrentTime);
-						this.TimeOfDay = (int)this.Time.TimeOfDay.TotalMinutes;
-						this.DayOfMonth = this.Time.Day;
+						this.baseTime = DateTimeOffset.FromUnixTimeSeconds(this.timeMemory!.CurrentTime);
+						this.TimeOfDay = (int)this.baseTime.TimeOfDay.TotalMinutes;
+						this.DayOfMonth = this.baseTime.Day;
+						this.TimeString = this.baseTime.ToString("HH:mm");
 					}
-
-					this.TimeString = this.Time.ToString("HH:mm");
 				}
 				catch (Exception ex)
 				{
