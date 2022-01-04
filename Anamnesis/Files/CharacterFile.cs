@@ -425,9 +425,11 @@ namespace Anamnesis.Files
 					actor.ModelObject.ExtendedAppearance.SkinGloss = this.SkinGloss ?? actor.ModelObject.ExtendedAppearance.SkinGloss;
 					actor.ModelObject.ExtendedAppearance.MuscleTone = this.MuscleTone ?? actor.ModelObject.ExtendedAppearance.MuscleTone;
 					actor.Transparency = this.Transparency ?? actor.Transparency;
-					actor.ModelObject.Height = this.HeightMultiplier ?? actor.ModelObject.Height;
 
-					if (actor.ModelObject.Bust?.Scale != null)
+					if (Float.IsValid(this.HeightMultiplier))
+						actor.ModelObject.Height = this.HeightMultiplier ?? actor.ModelObject.Height;
+
+					if (actor.ModelObject.Bust?.Scale != null && Vector.IsValid(this.BustScale))
 					{
 						actor.ModelObject.Bust.Scale = this.BustScale ?? actor.ModelObject.Bust.Scale;
 					}

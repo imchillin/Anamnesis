@@ -78,6 +78,15 @@ namespace Anamnesis.Memory
 			return v;
 		}
 
+		public static bool IsValid(Vector? vec)
+		{
+			if (vec == null)
+				return false;
+
+			Vector v = (Vector)vec;
+			return v.IsValid();
+		}
+
 		public void NormalizeAngles()
 		{
 			this.X = NormalizeAngle(this.X);
@@ -102,6 +111,15 @@ namespace Anamnesis.Memory
 			return IsApproximately(this.X, other.X, errorMargin)
 				&& IsApproximately(this.Y, other.Y, errorMargin)
 				&& IsApproximately(this.Z, other.Z, errorMargin);
+		}
+
+		public bool IsValid()
+		{
+			bool valid = Float.IsValid(this.X);
+			valid &= Float.IsValid(this.Y);
+			valid &= Float.IsValid(this.Z);
+
+			return valid;
 		}
 
 		public override int GetHashCode()
