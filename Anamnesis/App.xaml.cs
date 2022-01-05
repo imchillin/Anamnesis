@@ -99,6 +99,24 @@ namespace Anamnesis
 
 				await Dispatch.MainThread();
 
+				// Wait for any child windows to close.
+				bool wait = true;
+				while (wait)
+				{
+					wait = false;
+
+					foreach (Window window in this.Windows)
+					{
+						if (window.Owner == this.MainWindow)
+						{
+							wait = true;
+							await Task.Delay(500);
+						}
+					}
+				}
+
+				await Dispatch.MainThread();
+
 				Window oldwindow = this.MainWindow;
 				this.MainWindow = new Anamnesis.GUI.MainWindow();
 				this.MainWindow.Show();
