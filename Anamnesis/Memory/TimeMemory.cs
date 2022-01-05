@@ -9,17 +9,13 @@ namespace Anamnesis.Memory
 
 	public class TimeMemory
 	{
-		private readonly byte[] originalTimeAsm;
-
-		private readonly byte[] newTimeAsm = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+		private readonly NopHookViewModel timeAsmHook;
 
 		private bool value;
 
 		public TimeMemory()
 		{
-			this.originalTimeAsm = new byte[this.newTimeAsm.Length];
-
-			MemoryService.Read(AddressService.TimeAsm, this.originalTimeAsm, this.originalTimeAsm.Length);
+			this.timeAsmHook = new NopHookViewModel(AddressService.TimeAsm, 0x07);
 		}
 
 		public long CurrentTime => MemoryService.Read<long>(AddressService.TimeReal);
@@ -45,12 +41,12 @@ namespace Anamnesis.Memory
 			if (enabled)
 			{
 				// We disable the game code which updates Eorzea Time
-				MemoryService.Write(AddressService.TimeAsm, this.newTimeAsm);
+				this.timeAsmHook.Enabled = true;
 			}
 			else
 			{
 				// We write the Eorzea time update code back
-				MemoryService.Write(AddressService.TimeAsm, this.originalTimeAsm);
+				this.timeAsmHook.Enabled = false;
 			}
 		}
 
