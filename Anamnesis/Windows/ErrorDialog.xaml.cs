@@ -73,6 +73,7 @@ namespace Anamnesis.GUI.Windows
 				SplashWindow.HideWindow();
 
 				Dialog dlg = new Dialog();
+				dlg.TitleText.Text = "Anamnesis v" + VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
 				ErrorDialog errorDialog = new ErrorDialog(ex, isCriticial);
 				errorDialog.window = dlg;
 
