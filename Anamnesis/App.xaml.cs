@@ -120,6 +120,16 @@ namespace Anamnesis
 				Window oldwindow = this.MainWindow;
 				this.MainWindow = new Anamnesis.GUI.MainWindow();
 				this.MainWindow.Show();
+
+				if (this.MainWindow.Left < SystemParameters.VirtualScreenLeft)
+					this.MainWindow.Left = SystemParameters.VirtualScreenLeft;
+				if (this.MainWindow.Top < SystemParameters.VirtualScreenTop)
+					this.MainWindow.Top = SystemParameters.VirtualScreenTop;
+				if (this.MainWindow.Left + this.MainWindow.Width > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth)
+					this.MainWindow.Left = SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - this.MainWindow.Width;
+				if (this.MainWindow.Top + this.MainWindow.Height > SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight)
+					this.MainWindow.Top = SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - this.MainWindow.Height;
+
 				oldwindow.Close();
 			}
 			catch (Exception ex)
