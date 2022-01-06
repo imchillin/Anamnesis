@@ -128,9 +128,22 @@ namespace Anamnesis.Character
 			file.Jaw = (byte)appearance.Jaw;
 			file.Mouth = (byte)appearance.Mouth;
 			file.LipsToneFurPattern = (byte)appearance.LipColor;
-			file.EarMuscleTailSize = (byte)appearance.ExtraFeature1;
-			file.TailEarsType = (byte)appearance.ExtraFeature2OrBust;
-			file.Bust = (byte)appearance.ExtraFeature2OrBust;
+
+			if (appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Miqote ||
+				appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.AuRa ||
+				appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Viera ||
+				appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Hrothgar)
+			{
+				file.EarMuscleTailSize = (byte)appearance.ExtraFeature1;
+				file.TailEarsType = (byte)appearance.ExtraFeature2OrBust;
+				file.Bust = (byte)appearance.BustOrTone1;
+			}
+			else
+			{
+				file.Bust = (byte)appearance.ExtraFeature1;
+				file.EarMuscleTailSize = (byte)appearance.BustOrTone1;
+			}
+
 			file.FacePaint = (byte)appearance.FacePaint;
 			file.FacePaintColor = (byte)appearance.FacePaintColor;
 
