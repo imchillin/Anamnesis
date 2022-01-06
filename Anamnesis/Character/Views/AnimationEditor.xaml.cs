@@ -6,6 +6,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.GameData.Excel;
+	using Anamnesis.GameData.Interfaces;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
@@ -93,12 +94,12 @@ namespace Anamnesis.Character.Views
 
 		private void OnSearchClicked(object sender, RoutedEventArgs e)
 		{
-			SelectorDrawer.Show<AnimationSelector, ActionTimeline>(null, (action) =>
+			SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
 			{
-				if (action == null)
+				if (animation == null)
 					return;
 
-				this.AnimationId = action.RowId;
+				this.AnimationId = animation.ActionTimelineRowId;
 				this.OnPlayClicked(null, null);
 			});
 		}

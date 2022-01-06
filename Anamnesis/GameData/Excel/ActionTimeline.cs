@@ -3,6 +3,7 @@
 
 namespace Anamnesis.GameData.Excel
 {
+	using Anamnesis.GameData.Interfaces;
 	using Anamnesis.GameData.Sheets;
 	using Lumina.Data;
 	using Lumina.Excel;
@@ -10,12 +11,16 @@ namespace Anamnesis.GameData.Excel
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
 	[Sheet("ActionTimeline", 0x3ae4a5a0)]
-	public class ActionTimeline : ExcelRow
+	public class ActionTimeline : ExcelRow, IAnimation
 	{
 		public byte Type { get; set; }
 		public string? Key { get; set; }
 		public byte ActionTimelineIDMode { get; set; }
 		public byte IsLoop { get; set; }
+
+		public string? Name => this.Key;
+		public uint ActionTimelineRowId => this.RowId;
+		public ImageReference? Icon => null;
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 		{
