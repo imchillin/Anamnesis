@@ -281,14 +281,12 @@
 
 				</Menu>
 
-				<Menu Style="{StaticResource AnaMenu}" Margin="0,3, 3, 4" HorizontalAlignment="Right">
-					<MenuItem Header="Common_SaveFile"
-							  Icon="Save"
-							  Width="238"
-							  Style="{StaticResource ButtonMenuItem}"
-							  Click="OnSaveClicked" />
-				</Menu>
-			</StackPanel>
+                <MenuItem Header="Common_SaveFile"
+                          Icon="Save"
+                          Margin="2, 3, 3, 4"
+                          Style="{StaticResource ButtonMenuItem}"
+                          Click="OnSaveClicked" />
+            </StackPanel>
 
 			
 
