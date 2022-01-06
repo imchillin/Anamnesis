@@ -208,8 +208,8 @@
 											   IsEnabled="{Binding TimeService.Freeze}"
 											   Buttons="True"
 											   Slider="Absolute"
-											   Minimum="0"
-											   Maximum="31" />
+											   Minimum="1"
+											   Maximum="32" />
 					</Grid>
 
 					<XivToolsWpf:TextBlock Grid.Row="1"
