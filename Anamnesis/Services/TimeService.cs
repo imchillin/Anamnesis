@@ -67,7 +67,7 @@ namespace Anamnesis
 						long timeVal = this.timeMemory!.CurrentTime % 2764800;
 						long secondInDay = timeVal % 86400;
 						this.TimeOfDay = (long)(secondInDay / 60f);
-						this.DayOfMonth = (byte)(timeVal / 86400f);
+						this.DayOfMonth = (byte)(Math.Floor(timeVal / 86400f) + 1);
 					}
 
 					var displayTime = TimeSpan.FromMinutes(this.TimeOfDay);
