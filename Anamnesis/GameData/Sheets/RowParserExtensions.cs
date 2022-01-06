@@ -101,7 +101,11 @@ namespace Anamnesis.GameData.Sheets
 			{
 				return sheet.GetOrDefault((byte)Math.Max(bVal, minValue));
 			}
-			else if (id is uint iVal)
+			else if (id is uint uVal)
+			{
+				return sheet.GetOrDefault((uint)Math.Max(uVal, minValue));
+			}
+			else if (id is int iVal)
 			{
 				return sheet.GetOrDefault((uint)Math.Max(iVal, minValue));
 			}

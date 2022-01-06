@@ -23,7 +23,27 @@
 			<cm3Drawers:SelectorDrawer.ItemTemplate>
 				<DataTemplate>
 					<Grid Width="223">
-						<TextBlock Text="{Binding Key}" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<Border Width="32" Height="32" Background="#444444" Grid.RowSpan="2" CornerRadius="3" Margin="0, 0, 6, 0"
+								Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
+							<Grid>
+								<Image Source="{Binding Icon, Converter={StaticResource Img}}" Margin="1"/>
+								<Image Source="/Assets/IconBorderSmall.png" Margin="-2, 0, -2, -4"/>
+							</Grid>
+						</Border>
+
+
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ActionTimelineRowId}" Foreground="{DynamicResource MaterialDesignBody}"/>
 					</Grid>
 				</DataTemplate>
 			</cm3Drawers:SelectorDrawer.ItemTemplate>
