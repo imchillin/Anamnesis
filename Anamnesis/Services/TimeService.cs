@@ -14,11 +14,9 @@ namespace Anamnesis
 	public class TimeService : ServiceBase<TimeService>
 	{
 		private TimeMemory? timeMemory;
-		private DateTimeOffset baseTime;
-
 		public string TimeString { get; private set; } = "00:00";
-		public int TimeOfDay { get; set; }
-		public int DayOfMonth { get; set; }
+		public long TimeOfDay { get; set; }
+		public byte DayOfMonth { get; set; }
 
 		public bool Freeze
 		{
@@ -61,18 +59,20 @@ namespace Anamnesis
 
 					if (this.Freeze)
 					{
-						var offset = TimeSpan.FromDays(this.DayOfMonth - 1) + TimeSpan.FromMinutes(this.TimeOfDay);
-						var newTime = new DateTimeOffset(this.baseTime.Year, this.baseTime.Month, 1, 0, 0, 0, TimeSpan.Zero) + offset;
-						this.timeMemory?.SetTime(newTime.ToUnixTimeSeconds());
-						this.TimeString = newTime.ToString("HH:mm");
+						long newTime = (long)((this.TimeOfDay * 60) + (86400 * (this.DayOfMonth - 1)));
+						this.timeMemory?.SetTime(newTime);
 					}
 					else
 					{
-						this.baseTime = DateTimeOffset.FromUnixTimeSeconds(this.timeMemory!.CurrentTime);
-						this.TimeOfDay = (int)this.baseTime.TimeOfDay.TotalMinutes;
-						this.DayOfMonth = this.baseTime.Day;
-						this.TimeString = this.baseTime.ToString("HH:mm");
+						long timeVal = this.timeMemory!.CurrentTime % 2764800;
+						long secondInDay = timeVal % 86400;
+						this.TimeOfDay = (long)(secondInDay / 60f);
+						this.DayOfMonth = (byte)(timeVal / 86400f);
 					}
+
+					var displayTime = TimeSpan.FromMinutes(this.TimeOfDay);
+
+					this.TimeString = string.Format("{0:D2}:{1:D2}", displayTime.Hours, displayTime.Minutes);
 				}
 				catch (Exception ex)
 				{
