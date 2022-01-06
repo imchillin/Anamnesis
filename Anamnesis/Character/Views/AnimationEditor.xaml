@@ -16,13 +16,17 @@
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
-		<CheckBox Grid.Column="0" Margin="8, 3, 3, 3" IsChecked="{Binding AnimationService.Enabled}">
-			<CheckBox.ToolTip>
+		<ToggleButton Grid.Column="0"
+					  Style="{StaticResource MaterialDesignSwitchToggleButton}"
+					  IsChecked="{Binding AnimationService.Enabled}"
+					  Height="28"
+					  Margin="6,1,0,0">
+			<ToggleButton.ToolTip>
 				<XivToolsWpf:TextBlock Key="Animation_Enable"/>
-			</CheckBox.ToolTip>
-		</CheckBox>
+			</ToggleButton.ToolTip>
+		</ToggleButton>
 
-		<Grid Grid.Column="1" Margin="0, 3, 3, 3" IsEnabled="{Binding AnimationService.Enabled}">
+		<Grid Grid.Column="1" Margin="0, 3, 2, 3" IsEnabled="{Binding AnimationService.Enabled}">
 
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
@@ -88,7 +92,7 @@
 				<XivToolsWpf:IconBlock Icon="Search"/>
 			</Button>
 
-			<XivToolsWpf:NumberBox Value="{Binding AnimationId}" Grid.Column="3" Margin="6, 0, 3, -4" />
+			<XivToolsWpf:NumberBox Value="{Binding AnimationId}" Grid.Column="3" Margin="0, 0, 0, -7" />
 
 			<Button Grid.Column="4" Click="OnPlayClicked" Style="{StaticResource TransparentIconButton}">
 				<Button.ToolTip>

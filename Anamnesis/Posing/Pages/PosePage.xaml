@@ -225,7 +225,13 @@
 				<Grid Height="35" Grid.Column="0">
 					<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
 
-						<CheckBox IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding PoseService.IsEnabled}" Margin="6, 6, 0, 6"/>
+						<ToggleButton
+							Style="{StaticResource MaterialDesignSwitchToggleButton}"
+							IsEnabled="{Binding GposeService.IsGpose}" 
+							IsChecked="{Binding PoseService.IsEnabled}"
+							Height="28"
+							Margin="8,0,0,0">
+						</ToggleButton>
 
 						<ListBox
 							x:Name="ViewSelector"
