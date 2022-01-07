@@ -4,7 +4,6 @@
 namespace Anamnesis.Services
 {
 	using System;
-	using System.Collections.Concurrent;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
@@ -13,13 +12,15 @@ namespace Anamnesis.Services
 	[AddINotifyPropertyChangedInterface]
 	public class AnimationService : ServiceBase<AnimationService>
 	{
-		private readonly ConcurrentDictionary<ActorMemory, ActorAnimation> animatingActors = new();
-		private NopHookViewModel? animationNopHook;
-		private NopHookViewModel? slowMotionNopHook;
+		private const ushort ResetAnimationId = 3;
+		private const ushort DrawWeaponAnimationid = 190;
+
+		private readonly byte[] originalPatchBytes = new byte[0x7];
+		private readonly byte[] replacementPatchBytes = new byte[0x7];
+
+		private NopHookViewModel? animationSpeedHook;
 
 		private bool isEnabled = false;
-
-		public int TickDelay { get; set; } = 50;
 
 		public bool Enabled
 		{
@@ -35,166 +36,49 @@ namespace Anamnesis.Services
 
 		public override Task Start()
 		{
-			this.animationNopHook = new NopHookViewModel(AddressService.AnimationPatch, 0x7);
-			this.slowMotionNopHook = new NopHookViewModel(AddressService.SlowMotionPatch, 0x9);
-			Task.Run(this.TickThread);
+			GposeService.GposeStateChanging += this.GposeService_GposeStateChanging;
+
+			this.animationSpeedHook = new NopHookViewModel(AddressService.AnimationSpeedPatch, 0x9);
+
+			MemoryService.Read(AddressService.AnimationOverridePatch, this.originalPatchBytes, this.originalPatchBytes.Length);
+			Array.Copy(this.originalPatchBytes, this.replacementPatchBytes, this.replacementPatchBytes.Length);
+			this.replacementPatchBytes[this.replacementPatchBytes.Length - 1] = (byte)0x2;
+
+			this.GposeService_GposeStateChanging();
+
 			return base.Start();
 		}
 
-		public void AnimateActor(ActorMemory actor, uint desiredAnimation, ActorMemory.AnimationModes animationMode = ActorMemory.AnimationModes.Normal, float repeatAfter = 0)
+		public void ApplyAnimationOverride(ActorMemory actor, ushort? animationId, float? animationSpeed, bool interrupt)
 		{
-			if (desiredAnimation >= GameDataService.ActionTimelines.RowCount)
-				return;
-
-			ActorAnimation animationEntry = new()
+			if (animationSpeed != null && actor.AnimationSpeed != animationSpeed)
 			{
-				Actor = actor,
-				AnimationId = desiredAnimation,
-				AnimationMode = animationMode,
-				RepeatAfter = repeatAfter,
-			};
+				MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeed)), animationSpeed, "Animation Override");
+			}
 
-			this.animatingActors.AddOrUpdate(actor, (_) => animationEntry, (_, _) => animationEntry);
+			if (animationId != null && actor.AnimationOverride != animationId)
+			{
+				if (animationId < GameDataService.ActionTimelines.RowCount)
+				{
+					MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.AnimationOverride)), animationId, "Animation Override");
+				}
+			}
+
+			if (interrupt)
+			{
+				MemoryService.Write<ushort>(actor.GetAddressOfProperty(nameof(ActorMemory.TargetAnimation)), 0, "Animation Override");
+			}
 		}
 
-		public ActorAnimation? GetAnimation(ActorMemory actor)
-		{
-			ActorAnimation? animation = null;
+		public void ResetAnimationOverride(ActorMemory actor) => this.ApplyAnimationOverride(actor, ResetAnimationId, 1, true);
 
-			if (this.animatingActors.TryGetValue(actor, out animation))
-				return animation;
-
-			return null;
-		}
-
-		public void ClearAnimation(ActorMemory actor)
-		{
-			this.animatingActors.TryRemove(actor, out _);
-		}
-
-		public void ClearAll()
-		{
-			this.animatingActors.Clear();
-		}
+		public void DrawWeapon(ActorMemory actor) => this.ApplyAnimationOverride(actor, DrawWeaponAnimationid, null, true);
 
 		public override async Task Shutdown()
 		{
 			this.Enabled = false;
 
 			await base.Shutdown();
-		}
-
-		private async Task TickThread()
-		{
-			while (this.IsAlive)
-			{
-				if (this.isEnabled)
-				{
-					if (!GposeService.Instance.IsGpose)
-						this.Enabled = false; // Should only run in gpose
-
-					foreach ((_, ActorAnimation actor) in this.animatingActors)
-					{
-						this.TickActor(actor);
-					}
-				}
-
-				await Task.Delay(this.TickDelay);
-			}
-		}
-
-		private void TickActor(ActorAnimation animation)
-		{
-			if (animation.Actor != null)
-			{
-				if (!animation.Actor.IsAnimating)
-				{
-					if (animation.State != ActorAnimation.ExecutionState.Begin)
-						animation.LastPlayed = DateTime.Now;
-
-					return;
-				}
-
-				// The flow below is a little confusing, but basically we need to ensure that the animation is reset and then we can play our custom animation.
-				// First we need to set TargetAnimation to 0 and wait for NextAnimation to tick over to 0 as well.
-				// Then we make sure the animation mode is what we want a frame before we set our animation.
-				// Once that's done, we set TargetAnimation to the actual animation we want, and again wait for the engine to tick that into NextAnimation.
-				// Finally we set TargetAnimation to 0 again which will cause the engine to fire the now queued animation in NextAnimation.
-				// This takes a couple of frames to work through, which is why this requires a tick thread to drive all that through.
-				switch (animation.State)
-				{
-					case ActorAnimation.ExecutionState.Idle:
-						if(animation.RepeatAfter != 0)
-						{
-							if (DateTime.Now > animation.LastPlayed.Add(TimeSpan.FromSeconds(animation.RepeatAfter)))
-							{
-								animation.State = ActorAnimation.ExecutionState.Begin;
-							}
-						}
-
-						return;
-
-					case ActorAnimation.ExecutionState.Begin:
-						{
-							animation.Actor.TargetAnimation = 0;
-							animation.State = ActorAnimation.ExecutionState.Resetting;
-						}
-
-						return;
-
-					case ActorAnimation.ExecutionState.Resetting:
-						{
-							if (animation.Actor.TargetAnimation == 0 && animation.Actor.NextAnimation == 0)
-							{
-								animation.State = ActorAnimation.ExecutionState.SetMode;
-							}
-						}
-
-						return;
-
-					case ActorAnimation.ExecutionState.SetMode:
-						{
-							if (animation.AnimationMode != animation.Actor.AnimationMode)
-							{
-								animation.Actor.AnimationMode = animation.AnimationMode;
-							}
-
-							animation.State = ActorAnimation.ExecutionState.Prepare;
-						}
-
-						return;
-
-					case ActorAnimation.ExecutionState.Prepare:
-						{
-							animation.Actor.TargetAnimation = animation.AnimationId;
-							animation.State = ActorAnimation.ExecutionState.Fire;
-						}
-
-						return;
-
-					case ActorAnimation.ExecutionState.Fire:
-						{
-							if (animation.Actor.TargetAnimation == animation.AnimationId && animation.Actor.NextAnimation == animation.AnimationId)
-							{
-								animation.Actor.TargetAnimation = 0;
-								animation.State = ActorAnimation.ExecutionState.Firing;
-							}
-						}
-
-						return;
-
-					case ActorAnimation.ExecutionState.Firing:
-						{
-							if (animation.Actor.TargetAnimation == 0 && animation.Actor.NextAnimation == 0)
-							{
-								animation.LastPlayed = DateTime.Now;
-								animation.State = ActorAnimation.ExecutionState.Idle;
-							}
-						}
-
-						return;
-				}
-			}
 		}
 
 		private void SetEnabled(bool enabled)
@@ -209,36 +93,19 @@ namespace Anamnesis.Services
 
 			if (enabled)
 			{
-				this.animationNopHook?.SetEnabled(true);
-				this.slowMotionNopHook?.SetEnabled(true);
+				this.animationSpeedHook?.SetEnabled(true);
+				MemoryService.Write(AddressService.AnimationOverridePatch, this.replacementPatchBytes);
 			}
 			else
 			{
-				this.ClearAll();
-				this.animationNopHook?.SetEnabled(false);
-				this.slowMotionNopHook?.SetEnabled(false);
+				this.animationSpeedHook?.SetEnabled(false);
+				MemoryService.Write(AddressService.AnimationOverridePatch, this.originalPatchBytes);
 			}
 		}
 
-		public class ActorAnimation
+		private void GposeService_GposeStateChanging()
 		{
-			public enum ExecutionState
-			{
-				Idle,
-				Begin,
-				Resetting,
-				Prepare,
-				SetMode,
-				Fire,
-				Firing,
-			}
-
-			public ActorMemory? Actor { get; init; }
-			public uint AnimationId { get; init; }
-			public ActorMemory.AnimationModes AnimationMode { get; init; }
-			public float RepeatAfter { get; init; }
-			public DateTime LastPlayed { get; set; } = new();
-			public ExecutionState State { get; set; } = ExecutionState.Begin;
+			this.Enabled = GposeService.Instance.IsGpose;
 		}
 	}
 }
