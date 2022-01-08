@@ -145,33 +145,51 @@ namespace Anamnesis.Memory
 			this.RaisePropertyChanged(nameof(this.IsPlayer));
 		}
 
+		public bool CanHasNpcFace()
+		{
+			int index = TargetService.GetActorTableIndex(this.Address);
+
+			// only the local player should get npc faces!
+			if (index != 0)
+				return false;
+
+			if (this.Customize?.Head > 10)
+				return true;
+
+			return false;
+		}
+
 		public void OnRetargeted()
 		{
 			GposeService gpose = GposeService.Instance;
 
-			if (gpose.IsGpose && gpose.IsChangingState)
+			// dont apply the npc face hack to actors that dont need it, since it breaks weirdly sometimes.
+			if (this.CanHasNpcFace() || this.previousObjectKindAddressBeforeGPose != null)
 			{
-				// Entering gpose
-				if (this.ObjectKind == ActorTypes.Player)
+				if (gpose.IsGpose && gpose.IsChangingState)
 				{
-					this.previousObjectKindAddressBeforeGPose = this.GetAddressOfProperty(nameof(this.ObjectKind));
-					this.ObjectKind = ActorTypes.BattleNpc;
-
-					// Sanity check that we do get turned back into a player
-					Task.Run(async () =>
+					// Entering gpose
+					if (this.ObjectKind == ActorTypes.Player)
 					{
-						await Task.Delay(3000);
-						MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
-					});
+						this.previousObjectKindAddressBeforeGPose = this.GetAddressOfProperty(nameof(this.ObjectKind));
+						this.ObjectKind = ActorTypes.BattleNpc;
+
+						// Sanity check that we do get turned back into a player
+						Task.Run(async () =>
+						{
+							await Task.Delay(3000);
+							MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
+						});
+					}
 				}
-			}
-			else if (gpose.IsGpose && !gpose.IsChangingState)
-			{
-				// Entered gpose
-				if (this.previousObjectKindAddressBeforeGPose != null)
+				else if (gpose.IsGpose && !gpose.IsChangingState)
 				{
-					MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
-					this.ObjectKind = ActorTypes.Player;
+					// Entered gpose
+					if (this.previousObjectKindAddressBeforeGPose != null)
+					{
+						MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
+						this.ObjectKind = ActorTypes.Player;
+					}
 				}
 			}
 		}
