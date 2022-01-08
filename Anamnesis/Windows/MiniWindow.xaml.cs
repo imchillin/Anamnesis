@@ -129,7 +129,14 @@ namespace Anamnesis.Windows
 
 		private void OnClosing(object sender, CancelEventArgs e)
 		{
-			this.main.Deactivated -= this.Main_Deactivated;
+			if (!SettingsService.Current.OverlayWindow)
+			{
+				this.main.Deactivated -= this.Main_Deactivated;
+			}
+			else
+			{
+				e.Cancel = true;
+			}
 		}
 
 		private async Task Ping()

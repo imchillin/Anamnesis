@@ -284,8 +284,6 @@ namespace Anamnesis.GUI
 
 		private async void Window_Closing(object sender, CancelEventArgs e)
 		{
-			this.mini?.Close();
-
 			if (PoseService.Exists && PoseService.Instance.IsEnabled)
 			{
 				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
@@ -302,6 +300,8 @@ namespace Anamnesis.GUI
 
 			SettingsService.Current.WindowPosition = new Point(this.Left, this.Top);
 			SettingsService.Save();
+
+			Application.Current.Shutdown();
 		}
 
 		private void OpenHyperlink(object sender, ExecutedRoutedEventArgs e)
