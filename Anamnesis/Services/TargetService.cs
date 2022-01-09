@@ -153,7 +153,7 @@ namespace Anamnesis
 				}
 				catch (Exception ex)
 				{
-					Log.Warning(ex, $"Faield to create Actor Basic View Model for address: {ptr}");
+					Log.Warning(ex, $"Failed to create Actor Basic View Model for address: {ptr}");
 				}
 			}
 
