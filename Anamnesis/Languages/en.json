@@ -257,6 +257,7 @@
 	"Pose_Matrix_LegsCategory": "Legs",
 	"Pose_Matrix_ClothesCategory": "Clothes",
 	"Pose_Matrix_EquipmentCategory": "Equipment",
+	"Pose_Matrix_WeaponCategory": "Weapons",
 	"Pose_Matrix_OtherCategory": "Other",
 
 	"Pose_CharacterRoot": "Character",
@@ -316,6 +317,8 @@
 	"Pose_ClothesSides": "Sides",
 	"Pose_EqHelm": "Helm",
 	"Pose_EqTop": "Top",
+	"Pose_WeaponMainHand": "Main Hand",
+	"Pose_WeaponOffHand": "Off Hand",
 	"Pose_OtherHead": "Head",
 	"Pose_OtherAbdomen": "Abdomen",
 	"Pose_OtherThrow": "Throw",

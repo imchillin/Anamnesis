@@ -131,7 +131,7 @@
 							<local:BoneView BoneName="Jaw"/>
 							<local:BoneView BoneName="HrothJawUpper" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
 						</StackPanel>
-						
+
 						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="2" Key="Pose_Mouth" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="5" Grid.Row="2" Orientation="Horizontal">
 							<local:BoneView BoneName="LipsLeft" Label="L" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
@@ -700,7 +700,7 @@
 								<ColumnDefinition Width="72" />
 								<ColumnDefinition />
 							</Grid.ColumnDefinitions>
-						
+
 							<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_EqTop" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 							<ItemsControl Grid.Column="1" ItemsSource="{Binding TopBones}">
 								<ItemsControl.ItemsPanel>
@@ -722,8 +722,78 @@
 					</Grid>
 				</GroupBox>
 
-			</StackPanel>
+				<GroupBox Visibility="{Binding HasWeaponBones, Converter={StaticResource B2V}}">
+					<GroupBox.Header>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<XivToolsWpf:TextBlock Key="Pose_Matrix_WeaponCategory"/>
+						</Button>
+					</GroupBox.Header>
 
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<Grid Grid.Row="0" Visibility="{Binding MainHandBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+							<XivToolsWpf:TextBlock Grid.Column="0"
+												   Grid.Row="0"
+												   Key="Pose_WeaponMainHand"
+												   Style="{DynamicResource Label}"
+												   Margin="16, 0, 3, 0" />
+
+							<ItemsControl Grid.Column="1"
+										  Grid.Row="0"
+										  ItemsSource="{Binding MainHandBones}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+												   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
+												   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
+												   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<local:BoneView />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</Grid>
+
+						<Grid Grid.Row="1" Visibility="{Binding OffHandBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+
+							<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_WeaponOffHand" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+							<ItemsControl Grid.Column="1" ItemsSource="{Binding OffHandBones}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+												   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
+												   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
+												   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<local:BoneView />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</Grid>
+					</Grid>
+				</GroupBox>
+				
+			</StackPanel>
 		</Grid>
 	</ScrollViewer>
 </UserControl>

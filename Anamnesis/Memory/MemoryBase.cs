@@ -215,16 +215,16 @@ namespace Anamnesis.Memory
 
 		protected virtual void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			// Dont process property changes if we are reading memory, since these will just be changes from memory
-			// and we only care about changes from anamnesis here.
-			if (this.IsReading)
-				return;
-
 			if (string.IsNullOrEmpty(e.PropertyName))
 				return;
 
 			BindInfo? bind;
 			if (!this.binds.TryGetValue(e.PropertyName, out bind))
+				return;
+
+			// Dont process property changes if we are reading memory, since these will just be changes from memory
+			// and we only care about changes from anamnesis here.
+			if (bind.IsReading)
 				return;
 
 			object? val = bind.Property.GetValue(this);
@@ -308,10 +308,11 @@ namespace Anamnesis.Memory
 			if (!this.CanRead(bind))
 				return;
 
-			if (this.IsWriting)
+			if (bind.IsWriting)
 				throw new Exception("Attempt to read memory while writing it");
 
 			this.IsReading = true;
+			bind.IsReading = true;
 
 			try
 			{
@@ -375,8 +376,10 @@ namespace Anamnesis.Memory
 					{
 						memValue = bind.FreezeValue;
 						this.IsReading = false;
+						bind.IsReading = false;
 						this.WriteToMemory(bind);
 						this.IsReading = true;
+						bind.IsReading = true;
 					}
 
 					bind.Property.SetValue(this, memValue);
@@ -391,6 +394,7 @@ namespace Anamnesis.Memory
 			finally
 			{
 				this.IsReading = false;
+				bind.IsReading = false;
 			}
 		}
 
@@ -399,10 +403,11 @@ namespace Anamnesis.Memory
 			if (!this.CanWrite(bind))
 				return;
 
-			if (this.IsReading)
+			if (bind.IsReading)
 				throw new Exception("Attempt to write memory while reading it");
 
 			this.IsWriting = true;
+			bind.IsWriting = true;
 
 			try
 			{
@@ -424,6 +429,7 @@ namespace Anamnesis.Memory
 			finally
 			{
 				this.IsWriting = false;
+				bind.IsWriting = false;
 			}
 		}
 
@@ -490,6 +496,8 @@ namespace Anamnesis.Memory
 			public BindFlags Flags => this.Attribute.Flags;
 
 			public object? FreezeValue { get; set; }
+			public bool IsReading { get; set; } = false;
+			public bool IsWriting { get; set; } = false;
 			public IntPtr? LastFailureAddress { get; set; }
 
 			public bool IsChildMemory => typeof(MemoryBase).IsAssignableFrom(this.Type);

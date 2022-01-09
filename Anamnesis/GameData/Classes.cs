@@ -311,7 +311,7 @@ namespace Anamnesis.GameData
 				string? name = selected[0].GetName();
 
 				if (name == null)
-					throw new Exception("Faield to get name of class: " + selected[0]);
+					throw new Exception("Failed to get name of class: " + selected[0]);
 
 				return (string)name;
 			}
