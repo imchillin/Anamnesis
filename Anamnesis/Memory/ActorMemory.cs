@@ -43,6 +43,7 @@ namespace Anamnesis.Memory
 		[Bind(0x0FA4)] public float AnimationSpeed { get; set; }
 		[Bind(0x1102)] public ushort AnimationOverride { get; set; }
 		[Bind(0x18B8)] public float Transparency { get; set; }
+		[Bind(0x19C0)] public byte AnimationMode { get; set; }
 
 		public bool AutomaticRefreshEnabled { get; set; } = true;
 		public bool IsRefreshing { get; set; } = false;

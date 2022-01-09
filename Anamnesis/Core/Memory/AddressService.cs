@@ -37,7 +37,6 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr TimeReal { get; set; }
 		public static IntPtr PlayerTargetSystem { get; set; }
 		public static IntPtr AnimationSpeedPatch { get; set; }
-		public static IntPtr AnimationOverridePatch { get; set; }
 
 		public static IntPtr Camera
 		{
@@ -124,7 +123,6 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition", "41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezeScale2", "43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition2", "43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
-			tasks.Add(GetAddressFromTextSignature("AnimationOverridePatch", "F6 83 ?? ?? ?? ?? 01 74 ?? 48 8D BB ?? ?? ?? ??", (p) => { AnimationOverridePatch = p; }));
 			tasks.Add(GetAddressFromTextSignature("AnimationSpeedPatch", "F3 0F 11 94 ?? ?? ?? ?? ?? 80 89 ?? ?? ?? ?? 01", (p) => { AnimationSpeedPatch = p; }));
 			tasks.Add(GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
 			tasks.Add(GetAddressFromSignature("Weather", "49 8B 9D ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));

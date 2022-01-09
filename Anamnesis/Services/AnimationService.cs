@@ -15,9 +15,7 @@ namespace Anamnesis.Services
 	{
 		private const ushort ResetAnimationId = 0;
 		private const ushort DrawWeaponAnimationid = 190;
-
-		private readonly byte[] originalPatchBytes = new byte[0x7];
-		private readonly byte[] replacementPatchBytes = new byte[0x7];
+		private const byte AnimationOverrideMode = 0x8;
 
 		private NopHookViewModel? animationSpeedHook;
 
@@ -42,10 +40,6 @@ namespace Anamnesis.Services
 
 			this.animationSpeedHook = new NopHookViewModel(AddressService.AnimationSpeedPatch, 0x9);
 
-			MemoryService.Read(AddressService.AnimationOverridePatch, this.originalPatchBytes, this.originalPatchBytes.Length);
-			Array.Copy(this.originalPatchBytes, this.replacementPatchBytes, this.replacementPatchBytes.Length);
-			this.replacementPatchBytes[this.replacementPatchBytes.Length - 1] = 0x2;
-
 			this.AutoUpdateEnabledStatus();
 
 			return base.Start();
@@ -53,6 +47,8 @@ namespace Anamnesis.Services
 
 		public void ApplyAnimationOverride(ActorMemory actor, ushort? animationId, float? animationSpeed, bool interrupt)
 		{
+			MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.AnimationMode)), AnimationOverrideMode, "Animation Mode Override");
+
 			if (animationSpeed != null && actor.AnimationSpeed != animationSpeed)
 			{
 				MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeed)), animationSpeed, "Animation Speed Override");
@@ -96,12 +92,10 @@ namespace Anamnesis.Services
 			if (enabled)
 			{
 				this.animationSpeedHook?.SetEnabled(true);
-				MemoryService.Write(AddressService.AnimationOverridePatch, this.replacementPatchBytes);
 			}
 			else
 			{
 				this.animationSpeedHook?.SetEnabled(false);
-				MemoryService.Write(AddressService.AnimationOverridePatch, this.originalPatchBytes);
 			}
 		}
 
