@@ -227,6 +227,8 @@
 	"Pose_Selected": "Selected Bones",
 	"Pose_Expression": "Expression",
 	"Pose_ScalePack": "Body Scale",
+	"Pose_Clear": "Clear",
+	"Pose_SelectChildren": "Select Children",
 	"Pose_Flip": "Flip",
 	"Pose_Left": "L",
 	"Pose_Right": "R",
