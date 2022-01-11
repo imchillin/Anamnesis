@@ -49,6 +49,7 @@ namespace Anamnesis.Memory
 			Pointer = 1,
 			ActorRefresh = 2,
 			DontCacheOffsets = 4,
+			OnlyInGPose = 8,
 		}
 
 		[DoNotNotify]
@@ -316,6 +317,9 @@ namespace Anamnesis.Memory
 
 			try
 			{
+				if (bind.Flags.HasFlag(BindFlags.OnlyInGPose) && !GposeService.Instance.IsGpose)
+					return;
+
 				IntPtr bindAddress = bind.GetAddress();
 
 				if (bindAddress == IntPtr.Zero || bindAddress == bind.LastFailureAddress)

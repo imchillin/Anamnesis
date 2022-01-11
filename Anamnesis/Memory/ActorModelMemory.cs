@@ -4,7 +4,6 @@
 namespace Anamnesis.Memory
 {
 	using System;
-	using Anamnesis.Services;
 
 	public class ActorModelMemory : MemoryBase
 	{
@@ -43,7 +42,7 @@ namespace Anamnesis.Memory
 
 		[Bind(0x030, BindFlags.Pointer)] public ExtendedWeaponMemory? Weapons { get; set; }
 		[Bind(0x050)] public TransformMemory? Transform { get; set; }
-		[Bind(0x0A0, BindFlags.Pointer)] public SkeletonMemory? Skeleton { get; set; }
+		[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose)] public SkeletonMemory? Skeleton { get; set; }
 		[Bind(0x148, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
 		[Bind(0x240, 0x028, 0x020, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearance { get; set; }
 		[Bind(0x26C)] public float Height { get; set; }
@@ -93,14 +92,6 @@ namespace Anamnesis.Memory
 						this.ExtendedAppearance = null;
 					}
 
-					return false;
-				}
-			}
-
-			if (bind.Memory == this && bind.Name == nameof(ActorModelMemory.Skeleton))
-			{
-				if (!GposeService.Instance.IsGpose)
-				{
 					return false;
 				}
 			}
