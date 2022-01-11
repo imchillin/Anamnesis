@@ -56,7 +56,7 @@
 
 							<Rectangle Fill="Transparent" />
 
-							<Image Source="{Binding ItemIcon}"
+							<Image Source="{Binding ItemIcon, Converter={StaticResource Img}}"
 								   Margin="3"
 								   Width="16"
 								   Height="16"

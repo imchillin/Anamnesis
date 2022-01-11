@@ -116,8 +116,19 @@ namespace Anamnesis.Character
 			file.Hair = (byte)appearance.HairStyle;
 			file.EnableHighlights = appearance.EnableHairHighlight;
 			file.Skintone = (byte)appearance.SkinColor;
-			file.REyeColor = (byte)appearance.EyeColor;
-			file.LEyeColor = (byte)appearance.EyeHeterochromia;
+
+			// not sure anyone has -1 as an eye value, but juuust in case.
+			if (appearance.EyeHeterochromia == -1)
+			{
+				file.REyeColor = (byte)appearance.EyeColor;
+				file.LEyeColor = (byte)appearance.EyeColor;
+			}
+			else
+			{
+				file.REyeColor = (byte)appearance.EyeHeterochromia;
+				file.LEyeColor = (byte)appearance.EyeColor;
+			}
+
 			file.HairTone = (byte)appearance.HairColor;
 			file.Highlights = (byte)appearance.HairHighlightColor;
 			file.FacialFeatures = (ActorCustomizeMemory.FacialFeature)appearance.FacialFeature;
