@@ -94,11 +94,14 @@ namespace Anamnesis.Files
 				actor.ModelObject.Transform.Position = this.Position;
 			*/
 
-			if (this.Scale != null)
-				actor.ModelObject.Transform.Scale = (Vector)this.Scale;
+			if (bones == null)
+			{
+				if (mode.HasFlag(Mode.Scale) && this.Scale != null)
+					actor.ModelObject.Transform.Scale = (Vector)this.Scale;
 
-			if (this.Rotation != null)
-				actor.ModelObject.Transform.Rotation = (Quaternion)this.Rotation;
+				if (mode.HasFlag(Mode.Rotation) && this.Rotation != null)
+					actor.ModelObject.Transform.Rotation = (Quaternion)this.Rotation;
+			}
 
 			SkeletonMemory? skeletonMem = actor.ModelObject.Skeleton;
 
