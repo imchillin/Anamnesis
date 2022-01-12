@@ -8,6 +8,7 @@ namespace Anamnesis.Windows
 	using System.Windows;
 	using System.Windows.Input;
 	using System.Windows.Media.Animation;
+	using Anamnesis.GUI;
 	using Anamnesis.Services;
 	using Anamnesis.Utils;
 	using Serilog;
@@ -18,13 +19,13 @@ namespace Anamnesis.Windows
 	/// </summary>
 	public partial class MiniWindow : Window
 	{
-		private readonly Window main;
+		private readonly MainWindow main;
 		private bool isHidden = false;
 		private Point downPos;
 		private bool mouseDown = false;
 		private bool isDeactivating = false;
 
-		public MiniWindow(Window main)
+		public MiniWindow(MainWindow main)
 		{
 			this.main = main;
 			this.InitializeComponent();
@@ -95,6 +96,10 @@ namespace Anamnesis.Windows
 			this.OnLocationChanged(null, null);
 			((Storyboard)this.Resources["AnimateOpenStoryboard"]).Begin(this);
 			this.main.Show();
+
+			if (this.main.WindowState == WindowState.Minimized)
+				this.main.WindowState = WindowState.Normal;
+
 			this.isHidden = false;
 		}
 
@@ -129,7 +134,14 @@ namespace Anamnesis.Windows
 
 		private void OnClosing(object sender, CancelEventArgs e)
 		{
-			this.main.Deactivated -= this.Main_Deactivated;
+			if (!this.main.IsClosing && SettingsService.Current.OverlayWindow)
+			{
+				e.Cancel = true;
+			}
+			else
+			{
+				this.main.Deactivated -= this.Main_Deactivated;
+			}
 		}
 
 		private async Task Ping()

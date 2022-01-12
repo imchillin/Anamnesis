@@ -46,6 +46,8 @@ namespace Anamnesis.GUI
 			GameService.Instance.PropertyChanged += this.OnGameServicePropertyChanged;
 		}
 
+		public bool IsClosing { get; private set; } = false;
+
 		public GameService GameService => GameService.Instance;
 		public SettingsService SettingsService => SettingsService.Instance;
 		public GposeService GposeService => GposeService.Instance;
@@ -284,8 +286,6 @@ namespace Anamnesis.GUI
 
 		private async void Window_Closing(object sender, CancelEventArgs e)
 		{
-			this.mini?.Close();
-
 			if (PoseService.Exists && PoseService.Instance.IsEnabled)
 			{
 				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
@@ -296,6 +296,9 @@ namespace Anamnesis.GUI
 					return;
 				}
 			}
+
+			this.IsClosing = true;
+			this.mini?.Close();
 
 			SettingsService.SettingsChanged -= this.OnSettingsChanged;
 			ViewService.ShowingDrawer -= this.OnShowDrawer;
