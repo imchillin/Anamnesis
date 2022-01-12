@@ -40,9 +40,10 @@ namespace Anamnesis.Memory
 		[Bind(0x0DB0)] public ActorEquipmentMemory? Equipment { get; set; }
 		[Bind(0x0DD8)] public ActorCustomizeMemory? Customize { get; set; }
 		[Bind(0x0F30)] public uint TargetAnimation { get; set; }
-		[Bind(0x0F4C)] public uint NextAnimation { get; set; }
-		[Bind(0x0FA7)] public AnimationModes AnimationMode { get; set; }
+		[Bind(0x0FA4)] public float AnimationSpeed { get; set; }
+		[Bind(0x1102)] public ushort AnimationOverride { get; set; }
 		[Bind(0x18B8)] public float Transparency { get; set; }
+		[Bind(0x19C0)] public byte AnimationMode { get; set; }
 
 		public bool AutomaticRefreshEnabled { get; set; } = true;
 		public bool IsRefreshing { get; set; } = false;

@@ -3,21 +3,21 @@
 
 namespace Anamnesis.Character.Views
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis.GameData.Excel;
 	using Anamnesis.GameData.Interfaces;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
-	using Serilog;
 
 	[AddINotifyPropertyChangedInterface]
 	public partial class AnimationEditor : UserControl
 	{
-		private bool slowMotion;
-		private uint animationId = 8047;
+		private readonly Dictionary<ActorMemory, AnimationOverride> activeOverrides = new();
 
 		public AnimationEditor()
 		{
@@ -27,35 +27,8 @@ namespace Anamnesis.Character.Views
 
 		public ActorMemory? Actor { get; private set; }
 		public AnimationService AnimationService => AnimationService.Instance;
-		public GposeService GposeService => GposeService.Instance;
-
-		public float RepeatTimer { get; set; } = 0;
-
-		public uint AnimationId
-		{
-			get
-			{
-				return this.animationId;
-			}
-			set
-			{
-				this.animationId = value;
-				////this.OnPlayClicked(null, null);
-			}
-		}
-
-		public bool SlowMotion
-		{
-			get
-			{
-				return this.slowMotion;
-			}
-			set
-			{
-				this.slowMotion = value;
-				////this.OnPlayClicked(null, null);
-			}
-		}
+		public ushort AnimationId { get; set; } = 8047;
+		public float AnimationSpeed { get; set; } = 1.0f;
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
@@ -73,23 +46,17 @@ namespace Anamnesis.Character.Views
 
 		private void RefreshUI()
 		{
-			AnimationService.ActorAnimation? animation = null;
+			this.activeOverrides.Where((i) => i.Key.Address == IntPtr.Zero || !TargetService.IsActorInActorTable(i.Key.Address)).ToList().ForEach((i) => this.activeOverrides.Remove(i.Key));
 
-			if(this.Actor != null)
-				animation = this.AnimationService.GetAnimation(this.Actor);
+			AnimationOverride? animOverride = null;
 
-			if(animation != null)
+			if (this.Actor != null)
 			{
-				this.AnimationId = animation.AnimationId;
-				this.RepeatTimer = animation.RepeatAfter;
-				this.SlowMotion = animation.AnimationMode == ActorMemory.AnimationModes.SlowMotion;
+				this.activeOverrides.TryGetValue(this.Actor, out animOverride);
 			}
-			else
-			{
-				this.AnimationId = 8047;
-				this.RepeatTimer = 0f;
-				this.SlowMotion = false;
-			}
+
+			this.AnimationId = animOverride?.AnimationId ?? 8047;
+			this.AnimationSpeed = animOverride?.AnimationSpeed ?? 1.0f;
 		}
 
 		private void OnSearchClicked(object sender, RoutedEventArgs e)
@@ -99,7 +66,7 @@ namespace Anamnesis.Character.Views
 				if (animation == null)
 					return;
 
-				this.AnimationId = animation.ActionTimelineRowId;
+				this.AnimationId = (ushort)animation.ActionTimelineRowId;
 				this.OnPlayClicked(null, null);
 			});
 		}
@@ -109,16 +76,26 @@ namespace Anamnesis.Character.Views
 			if (this.Actor == null)
 				return;
 
-			this.AnimationService.AnimateActor(this.Actor, 190);
+			this.AnimationService.DrawWeapon(this.Actor);
 		}
 
-		private void OnPlayClicked(object? sender, RoutedEventArgs? e)
+		private void OnPlayClicked(object? sender, RoutedEventArgs? e) => this.ApplyCurrentAnimation(true);
+
+		private void OnQueueClicked(object? sender, RoutedEventArgs? e) => this.ApplyCurrentAnimation(false);
+
+		private void ApplyCurrentAnimation(bool interrupt)
 		{
 			if (this.Actor == null)
 				return;
 
-			ActorMemory.AnimationModes mode = this.SlowMotion ? ActorMemory.AnimationModes.SlowMotion : ActorMemory.AnimationModes.Normal;
-			this.AnimationService.AnimateActor(this.Actor, this.AnimationId, mode, this.RepeatTimer);
+			AnimationOverride animOverride = new()
+			{
+				AnimationId = this.AnimationId,
+				AnimationSpeed = this.AnimationSpeed,
+			};
+
+			this.AnimationService.ApplyAnimationOverride(this.Actor, animOverride.AnimationId, animOverride.AnimationSpeed, interrupt);
+			this.activeOverrides[this.Actor] = animOverride;
 		}
 
 		private void OnResetClicked(object sender, RoutedEventArgs e)
@@ -126,7 +103,13 @@ namespace Anamnesis.Character.Views
 			if (this.Actor == null)
 				return;
 
-			this.AnimationService.AnimateActor(this.Actor, 3);
+			this.AnimationService.ResetAnimationOverride(this.Actor);
+		}
+
+		public class AnimationOverride
+		{
+			public ushort? AnimationId { get; set; } = null;
+			public float? AnimationSpeed { get; set; } = null;
 		}
 	}
 }
