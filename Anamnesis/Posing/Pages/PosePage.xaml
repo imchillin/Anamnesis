@@ -95,7 +95,7 @@
 									Click="OnClearClicked"
 									IsEnabled="{Binding Skeleton.HasSelection}"
 									Style="{StaticResource TransparentButton}">
-									<XivToolsWpf:TextBlock Text="Clear" />
+									<XivToolsWpf:TextBlock Key="Pose_Clear" />
 								</Button>
 
 								<Button
@@ -105,7 +105,7 @@
 									Click="OnSelectChildrenClicked"
 									IsEnabled="{Binding Skeleton.HasSelection}"
 									Style="{StaticResource TransparentButton}">
-									<XivToolsWpf:TextBlock Text="Select Children" />
+									<XivToolsWpf:TextBlock Key="Pose_SelectChildren" />
 								</Button>
 
 								<Button
