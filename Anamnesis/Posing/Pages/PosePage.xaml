@@ -136,19 +136,8 @@
 							Grid.ColumnSpan="2"
 							Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}">
 
-							<!--  Actor transforms in gpose  -->
-							<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}">
-								<controls:TransformEditor IsEnabled="{Binding TargetService.SelectedActor.IsAnimating, Converter={StaticResource NotConverter}}" Value="{Binding TargetService.SelectedActor.ModelObject.Transform}" />
-
-								<XivToolsWpf:InfoControl
-									Key="Pose_WarningNotFrozen"
-									Margin="0,2"
-									Visibility="{Binding TargetService.SelectedActor.IsAnimating, Converter={StaticResource B2V}}"/>
-
-							</Grid>
-
-							<!--  Actor transform outside of gpose  -->
-							<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
+							<!--  Actor transform -->
+							<Grid>
 								<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}"/>
 							</Grid>
 

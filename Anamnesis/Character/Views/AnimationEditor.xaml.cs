@@ -25,6 +25,8 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 		}
 
+		public WorldService WorldService => WorldService.Instance;
+
 		public ActorMemory? Actor { get; private set; }
 		public AnimationService AnimationService => AnimationService.Instance;
 		public ushort AnimationId { get; set; } = 8047;

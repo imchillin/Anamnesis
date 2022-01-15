@@ -485,6 +485,7 @@
 	"Animation_Speed": "Speed",
 	"Animation_AnimationId": "Animation Id",
 	"Animation_Reset": "Reset Animation",
+	"Animation_FreezePosition": "Freeze Actor/Camera World Position",
 
 	"Settings_Header": "Settings",
 	"Settings_Language": "Language",

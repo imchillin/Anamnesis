@@ -23,12 +23,6 @@ namespace Anamnesis.Memory
 			Unload = 2,
 		}
 
-		public enum AnimationModes : int
-		{
-			Normal = 0x3F,
-			SlowMotion = 0x3E,
-		}
-
 		[Bind(0x008D)] public byte SubKind { get; set; }
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 		[Bind(0x0104)] public RenderModes RenderMode { get; set; }
