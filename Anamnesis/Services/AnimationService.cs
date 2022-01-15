@@ -13,9 +13,9 @@ namespace Anamnesis.Services
 	[AddINotifyPropertyChangedInterface]
 	public class AnimationService : ServiceBase<AnimationService>
 	{
-		private const ushort ResetAnimationId = 0;
+		private const ushort ResetAnimationId = 3;
 		private const ushort DrawWeaponAnimationid = 190;
-		private const byte AnimationOverrideMode = 0x8;
+		private const byte AnimationOverrideMode = 16;
 
 		private NopHookViewModel? animationSpeedHook;
 
