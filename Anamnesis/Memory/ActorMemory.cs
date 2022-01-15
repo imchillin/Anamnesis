@@ -29,6 +29,8 @@ namespace Anamnesis.Memory
 		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
 		[Bind(0x01E2)] public byte ClassJob { get; set; }
 		[Bind(0x07C4)] public bool IsAnimating { get; set; }
+		[Bind(0x0C30, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
+		[Bind(0x0C38)] public bool IsMounted { get; set; }
 		[Bind(0x0C78)] public WeaponMemory? MainHand { get; set; }
 		[Bind(0x0CE0)] public WeaponMemory? OffHand { get; set; }
 		[Bind(0x0DB0)] public ActorEquipmentMemory? Equipment { get; set; }
