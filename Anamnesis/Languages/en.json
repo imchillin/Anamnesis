@@ -216,7 +216,7 @@
 	"Character_WarningGpose": "Appearance and Equipment can only be changed while not in Group Pose.",
 
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /gpose in chat.",
-	"Pose_WarningNotFrozen": "Actor motion must be disabled in the Group Pose settings.",
+	"Pose_WarningNotFrozen": "Actor motion must be disabled in the Group Pose settings, or actor positions must be frozen in Animation control.",
 	"Pose_WarningQuit": "Are you sure you want to quit? Current pose will be lost.",
 	"Pose_WarningExpresionPositions": "You are attempting to load an expression while Positions are frozen, this may have undesired results. Continue?",
 	"Pose_NoSkeleton": "No Skeleton is bound to this view.",

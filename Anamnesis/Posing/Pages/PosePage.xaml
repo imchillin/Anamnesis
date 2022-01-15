@@ -136,8 +136,24 @@
 							Grid.ColumnSpan="2"
 							Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}">
 
+							<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}">
+								<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}" />
+
+								<XivToolsWpf:InfoControl
+									Key="Pose_WarningNotFrozen"
+									Margin="0,2">
+
+									<XivToolsWpf:InfoControl.Visibility>
+										<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
+											<Binding Path="TargetService.SelectedActor.IsAnimating"/>
+											<Binding Path="WorldService.WorldPositionNotFrozen"/>
+										</MultiBinding>
+									</XivToolsWpf:InfoControl.Visibility>
+								</XivToolsWpf:InfoControl>
+							</Grid>
+
 							<!--  Actor transform -->
-							<Grid>
+							<Grid Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}">
 								<controls:TransformEditor Value="{Binding TargetService.SelectedActor.ModelObject.Transform}"/>
 							</Grid>
 

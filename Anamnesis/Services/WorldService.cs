@@ -16,6 +16,8 @@ namespace Anamnesis.Services
 		private NopHookViewModel? freezeGposeTargetPosition1;
 		private NopHookViewModel? freezeGposeTargetPosition2;
 
+		public bool WorldPositionNotFrozen => !this.FreezeWorldPosition;
+
 		public bool FreezeWorldPosition
 		{
 			get
@@ -29,6 +31,7 @@ namespace Anamnesis.Services
 				this.freezeGposeTargetPosition1?.SetEnabled(value);
 				this.freezeGposeTargetPosition2?.SetEnabled(value);
 				this.RaisePropertyChanged(nameof(WorldService.FreezeWorldPosition));
+				this.RaisePropertyChanged(nameof(WorldService.WorldPositionNotFrozen));
 			}
 		}
 

@@ -52,6 +52,7 @@ namespace Anamnesis.PoseModule.Pages
 		public GposeService GposeService => GposeService.Instance;
 		public PoseService PoseService => PoseService.Instance;
 		public TargetService TargetService => TargetService.Instance;
+		public WorldService WorldService => WorldService.Instance;
 
 		public bool IsFlipping { get; private set; }
 		public ActorMemory? Actor { get; private set; }
