@@ -33,6 +33,7 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition />
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
@@ -63,16 +64,19 @@
 			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
 			<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="5" Margin="6"/>
 
-			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_UseWindowsExplorer" Style="{StaticResource Label}"/>
-			<CheckBox IsChecked="{Binding SettingsService.Settings.UseWindowsExplorer}" Grid.Column="1" Grid.Row="6" Margin="6"/>
-		
-			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_Hyperlegible" Style="{StaticResource Label}"/>
-			<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="7" Margin="6"/>
-		
-			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="8" Key="Settings_WrapRotations" Style="{StaticResource Label}"/>
-			<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Grid.Row="8" Margin="6"/>
+			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_ShowFileExtensions" Style="{StaticResource Label}"/>
+			<CheckBox IsChecked="{Binding SettingsService.Settings.ShowFileExtensions}" Grid.Column="1" Grid.Row="6" Margin="6"/>
 
-			<Grid Grid.Row="9" Grid.ColumnSpan="2" Margin="0, 0, 4, 0">
+			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_UseWindowsExplorer" Style="{StaticResource Label}"/>
+			<CheckBox IsChecked="{Binding SettingsService.Settings.UseWindowsExplorer}" Grid.Column="1" Grid.Row="7" Margin="6"/>
+		
+			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="8" Key="Settings_Hyperlegible" Style="{StaticResource Label}"/>
+			<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="8" Margin="6"/>
+		
+			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="9" Key="Settings_WrapRotations" Style="{StaticResource Label}"/>
+			<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Grid.Row="9" Margin="6"/>
+
+			<Grid Grid.Row="10" Grid.ColumnSpan="2" Margin="0, 0, 4, 0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition/>
@@ -95,7 +99,7 @@
 				<Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseGallery"/>
 			</Grid>
 
-			<GroupBox Grid.Row="10" Grid.ColumnSpan="2">
+			<GroupBox Grid.Row="11" Grid.ColumnSpan="2">
 				<GroupBox.Header>
 					<XivToolsWPF:TextBlock Key="Settings_Directories"/>
 				</GroupBox.Header>
@@ -129,7 +133,7 @@
 				</Grid>
 			</GroupBox>
 
-			<GroupBox Grid.Row="11" Grid.ColumnSpan="2">
+			<GroupBox Grid.Row="12" Grid.ColumnSpan="2">
 				<GroupBox.Header>
 					<XivToolsWPF:TextBlock Key="Settings_Theme"/>
 				</GroupBox.Header>

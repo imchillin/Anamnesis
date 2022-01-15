@@ -20,6 +20,7 @@ namespace Anamnesis.Services
 		public bool OverlayWindow { get; set; } = false;
 		public double Opacity { get; set; } = 1.0;
 		public double Scale { get; set; } = 1.0;
+		public bool ShowFileExtensions { get; set; } = false;
 		public bool UseWindowsExplorer { get; set; } = false;
 		public Point WindowPosition { get; set; }
 		public Point OverlayWindowPosition { get; set; }

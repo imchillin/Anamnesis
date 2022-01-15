@@ -17,6 +17,7 @@ namespace Anamnesis.Files
 		[JsonIgnore] public abstract string FileExtension { get; }
 		[JsonIgnore] public virtual string? FileRegex => null;
 		[JsonIgnore] public virtual Func<FileSystemInfo, string> GetFilename => (f) => Path.GetFileNameWithoutExtension(f.FullName);
+		[JsonIgnore] public virtual Func<FileSystemInfo, string> GetFullFilename => (f) => Path.GetFileName(f.FullName);
 
 		public abstract void Serialize(Stream stream);
 		public abstract FileBase Deserialize(Stream stream);
@@ -25,6 +26,7 @@ namespace Anamnesis.Files
 		{
 			FileFilter filter = new FileFilter(this.FileExtension, this.FileRegex);
 			filter.GetNameCallback = this.GetFilename;
+			filter.GetFullNameCallback = this.GetFullFilename;
 
 			return filter;
 		}

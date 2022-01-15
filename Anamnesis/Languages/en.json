@@ -27,6 +27,7 @@
 	"FileBrowser_Browse": "Browse for a file",
 	"FileBrowser_ReplaceTitle": "Overwrite file",
 	"FileBrowser_ReplaceMessage": "Are you sure you want to overwrite the file: \"{0}\"?",
+	"FileBrowser_ExtensionShort": "Ext",
 
 	"FileBrowser_Sort": "Sorting mode",
 	"FileBrowser_SortAlpha": "By Name (A to Z)",
@@ -495,6 +496,7 @@
 	"Settings_WindowOpacity": "Window opacity",
 	"Settings_StayTransparent": "Stay transparent",
 	"Settings_WindowSize": "Window size",
+	"Settings_ShowFileExtensions": "Show File Extensions",
 	"Settings_UseWindowsExplorer": "Use Windows file browser",
 	"Settings_Directories": "Directories",
 	"Settings_Dir_Characters": "Characters",

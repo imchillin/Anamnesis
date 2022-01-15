@@ -11,6 +11,7 @@ namespace Anamnesis.Files
 		public readonly string Extension;
 		public readonly string? Regex;
 		public Func<FileSystemInfo, string>? GetNameCallback;
+		public Func<FileSystemInfo, string>? GetFullNameCallback;
 
 		public FileFilter(string extension, string? regex)
 		{

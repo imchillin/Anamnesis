@@ -151,6 +151,7 @@ namespace Anamnesis.GUI.Views
 			}
 		}
 
+		public SettingsService SettingsService => SettingsService.Instance;
 		public ObservableCollection<Shortcut> Shortcuts { get; } = new ObservableCollection<Shortcut>();
 
 		public bool UseFileBrowser { get; set; }
@@ -185,6 +186,8 @@ namespace Anamnesis.GUI.Views
 				Task.Run(this.UpdateEntries);
 			}
 		}
+
+		public bool ShowExtensions { get; set; } = false;
 
 		[AlsoNotifyFor(nameof(CanSelect))]
 		public string? FileName { get; set; }
@@ -502,6 +505,11 @@ namespace Anamnesis.GUI.Views
 			this.Selected.IsRenaming = true;
 		}
 
+		private void OnShowExtensionClicked(object sender, RoutedEventArgs e)
+		{
+			Task.Run(this.UpdateEntries);
+		}
+
 		private void CloseDrawer()
 		{
 			this.IsOpen = false;
@@ -543,10 +551,16 @@ namespace Anamnesis.GUI.Views
 					if (this.Entry is DirectoryInfo)
 						return this.Entry.Name;
 
-					if (this.Filter != null && this.Filter.GetNameCallback != null)
+					if (this.Filter != null && this.Filter.GetNameCallback != null && this.Filter.GetFullNameCallback != null)
 					{
+						if (SettingsService.Current.ShowFileExtensions || this.View.ShowExtensions)
+							return this.Filter.GetFullNameCallback(this.Entry);
+
 						return this.Filter.GetNameCallback(this.Entry);
 					}
+
+					if (SettingsService.Current.ShowFileExtensions || this.View.ShowExtensions)
+						return Path.GetFileName(this.Entry.Name);
 
 					return Path.GetFileNameWithoutExtension(this.Entry.Name);
 				}

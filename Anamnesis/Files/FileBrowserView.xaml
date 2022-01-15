@@ -68,6 +68,7 @@
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
 			<Button Grid.Column="0"
@@ -91,7 +92,18 @@
 					   VerticalAlignment="Center"
 					   Text="{Binding CurrentPath}" />
 
-			<Button Grid.Column="2"
+			<ToggleButton Grid.Column="2"
+						  Margin="3"
+						  Width="32"
+						  IsChecked="{Binding ShowExtensions}"
+						  Style="{StaticResource OutlineToggleButton}"
+						  Visibility="{Binding SettingsService.Settings.ShowFileExtensions, Converter={StaticResource !B2V}}"
+						  Click="OnShowExtensionClicked">
+				<XivToolsWpf:TextBlock
+					Key="FileBrowser_ExtensionShort"/>
+			</ToggleButton>
+
+			<Button Grid.Column="3"
 					Margin="3"
 					Width="32"
 					Click="OnCreateFolderClicked"
@@ -107,7 +119,7 @@
 
 			<ToggleButton Width="32"
 						  Height="32"
-						  Grid.Column="3"
+						  Grid.Column="4"
 						  IsChecked="{Binding IsFlattened}"
 						  Style="{DynamicResource TransparentIconToggleButton}"
 						  VerticalAlignment="Bottom">
@@ -120,7 +132,7 @@
 									   Icon="Sitemap" />
 			</ToggleButton>
 
-			<ComboBox Grid.Column="4"
+			<ComboBox Grid.Column="5"
 					  Margin="6, 3, 6, 0"
 					  Height="22"
 					  Style="{StaticResource MaterialDesignDataGridComboBox}"
