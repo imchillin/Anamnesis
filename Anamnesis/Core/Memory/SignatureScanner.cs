@@ -32,8 +32,11 @@ namespace Anamnesis.Core.Memory
 			// Limit the search space to .text section.
 			this.SetupSearchSpace(module);
 
-			Log.Information($"Module base: {this.TextSectionBase}");
-			Log.Information($"Module size: {this.TextSectionSize}");
+			Log.Information($"Signature Scanner Created: {module.ModuleName}");
+			Log.Information($"Module Text base: {this.TextSectionBase}");
+			Log.Information($"Module Text size: {this.TextSectionSize}");
+			Log.Information($"Module Data base: {this.DataSectionBase}");
+			Log.Information($"Module Data size: {this.DataSectionSize}");
 		}
 
 		public bool IsCopy { get; private set; }
