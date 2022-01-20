@@ -37,6 +37,11 @@ namespace Anamnesis.Core.Memory
 			Log.Information($"Module Text size: {this.TextSectionSize}");
 			Log.Information($"Module Data base: {this.DataSectionBase}");
 			Log.Information($"Module Data size: {this.DataSectionSize}");
+
+			if (this.TextSectionSize <= 0 || this.DataSectionSize <= 0)
+			{
+				throw new Exception("Process module is invalid");
+			}
 		}
 
 		public bool IsCopy { get; private set; }
