@@ -5,6 +5,8 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Collections.Generic;
+	using Anamnesis.Connect;
+	using Anamnesis.PoseModule;
 	using Anamnesis.Styles;
 	using Anamnesis.Utils;
 	using FontAwesome.Sharp;
@@ -33,7 +35,26 @@ namespace Anamnesis.Memory
 		[AlsoNotifyFor(nameof(ActorMemory.DisplayName))]
 		public string? Nickname { get; set; }
 
-		public bool IsGPoseActor { get; set; } = false;
+		[AlsoNotifyFor(nameof(ActorMemory.IsOverworldActor), nameof(ActorMemory.CanRefresh))]
+		public bool IsGPoseActor { get; private set; } = false;
+
+		[AlsoNotifyFor(nameof(IsGPoseActor))]
+		public bool IsOverworldActor => !this.IsGPoseActor;
+
+		[AlsoNotifyFor(nameof(IsGPoseActor))]
+		public bool CanRefresh
+		{
+			get
+			{
+				if (PoseService.Instance.IsEnabled)
+					return false;
+
+				if (AnamnesisConnectService.IsPenumbraConnected)
+					return true;
+
+				return this.IsOverworldActor;
+			}
+		}
 
 		/// <summary>
 		/// Gets the Nickname or if not set, the Name.
@@ -54,6 +75,17 @@ namespace Anamnesis.Memory
 
 				return name;
 			}
+		}
+
+		public void SetAddress(IntPtr address, bool isGPose)
+		{
+			this.IsGPoseActor = isGPose;
+			base.SetAddress(address);
+		}
+
+		public override void SetAddress(IntPtr address)
+		{
+			throw new InvalidOperationException("Use isGPose override");
 		}
 
 		/// <summary>

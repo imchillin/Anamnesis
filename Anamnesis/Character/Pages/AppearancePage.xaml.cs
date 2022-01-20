@@ -36,9 +36,6 @@ namespace Anamnesis.Character.Pages
 			this.ContentArea.DataContext = this;
 		}
 
-		public GposeService GPoseService => GposeService.Instance;
-		public AnamnesisConnectService AnamnesisConnectService => AnamnesisConnectService.Instance;
-		public ActorRefreshService ActorRefreshService => ActorRefreshService.Instance;
 		public ActorMemory? Actor { get; private set; }
 
 		private void OnLoaded(object sender, RoutedEventArgs e)

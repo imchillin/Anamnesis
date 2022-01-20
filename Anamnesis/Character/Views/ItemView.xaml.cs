@@ -44,9 +44,6 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 		}
 
-		public GposeService GPoseService => GposeService.Instance;
-		public ActorRefreshService ActorRefreshService => ActorRefreshService.Instance;
-
 		public ItemSlots Slot
 		{
 			get => SlotDp.Get(this);
@@ -65,7 +62,7 @@ namespace Anamnesis.Character.Views
 			set => ItemModelDp.Set(this, value);
 		}
 
-		public ActorMemory? Actor => this.DataContext as ActorMemory;
+		public ActorMemory? Actor { get; private set; }
 
 		public WeaponSubModelMemory? ExtendedViewModel
 		{
@@ -132,6 +129,9 @@ namespace Anamnesis.Character.Views
 
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
+			if (this.Actor?.CanRefresh != true)
+				return;
+
 			EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
 			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand));
 		}
@@ -269,6 +269,11 @@ namespace Anamnesis.Character.Views
 
 				this.IsLoading = false;
 			});
+		}
+
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			this.Actor = this.DataContext as ActorMemory;
 		}
 	}
 }

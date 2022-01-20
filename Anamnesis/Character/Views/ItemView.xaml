@@ -10,7 +10,8 @@
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d"
 			 Margin="0"
-			 d:DesignWidth="300">
+			 d:DesignWidth="300"
+             DataContextChanged="OnDataContextChanged">
 
 	<GroupBox Margin="3, 0"  x:Name="ContentArea">
 		<GroupBox.Header>
@@ -43,7 +44,7 @@
 					Grid.Row="0"
 					Grid.RowSpan="2"
 					Style="{DynamicResource TransparentButton}"
-					IsEnabled="{Binding ActorRefreshService.CanRefresh}">
+					IsEnabled="{Binding Actor.CanRefresh}">
 				<Grid>
 					<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="6" Opacity="0.3"/>
 
@@ -64,7 +65,7 @@
 
 			<ProgressBar IsIndeterminate="True" Style="{StaticResource MaterialDesignCircularProgressBar}" Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsLoading, Converter={StaticResource B2V}}"/>
 
-			<StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding ActorRefreshService.CanRefresh}">
+            <StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding Actor.CanRefresh}">
 				<XivToolsWpf:NumberBox Width="38" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0" ToolTip="Character_Equipment_ItemId"/>
 
 				<XivToolsWpf:NumberBox  Width="28" Value="{Binding ItemModel.Set}" FontSize="12" FontWeight="Light"
@@ -106,7 +107,7 @@
 							Width="20"
 							VerticalAlignment="Top"
 							Style="{DynamicResource TransparentButton}"
-							IsEnabled="{Binding GPoseService.IsOverworld}">
+							IsEnabled="{Binding Actor.IsOverworldActor}">
 
 					<Button.ToolTip>
 						<XivToolsWpf:TextBlock Key="Character_Equipment_Dye"/>

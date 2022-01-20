@@ -69,7 +69,6 @@ namespace Anamnesis.Services
 			await Add<FavoritesService>();
 			await Add<AnimationService>();
 			await Add<AnamnesisConnectService>();
-			await Add<ActorRefreshService>();
 			await Add<WorldService>();
 
 			IsInitialized = true;
