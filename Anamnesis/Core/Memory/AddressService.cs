@@ -28,6 +28,7 @@ namespace Anamnesis.Core.Memory
 		public static IntPtr SkeletonFreezePhysics { get; private set; }    // PhysicsOffset
 		public static IntPtr SkeletonFreezePhysics2 { get; private set; }   // PhysicsOffset2
 		public static IntPtr SkeletonFreezePhysics3 { get; private set; }   // PhysicsOffset3
+		public static IntPtr BonePositionFreeze { get; private set; }
 		public static IntPtr WorldPositionFreeze { get; set; }
 		public static IntPtr WorldRotationFreeze { get; set; }
 		public static IntPtr GPoseCameraTargetPositionFreeze { get; set; }
@@ -125,6 +126,7 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition", "41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezeScale2", "43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
 			tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition2", "43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
+			tasks.Add(GetAddressFromTextSignature("BonePositionFreeze", "43 0F 29 24 ??", (p) => { BonePositionFreeze = p; }));
 			tasks.Add(GetAddressFromTextSignature("WorldPositionFreeze", "F3 0F 11 78 ?? F3 0F 11 70 ?? F3 44 0F 11 40 ?? 48 83 48 ?? 02", (p) => { WorldPositionFreeze = p; }));
 			tasks.Add(GetAddressFromTextSignature("WorldRotationFreeze", "0F 11 40 ?? 48 8B 8B ?? ?? ?? ?? 0F B6 81 ?? ?? ?? ?? 24 0F 3C 03 75 ?? 48 8B 01 B2 01 FF 50 ?? 48 8B 83 ?? ?? ?? ??", (p) => { WorldRotationFreeze = p; }));
 			tasks.Add(GetAddressFromTextSignature("GPoseCameraTargetPositionFreeze", "F3 0F 11 89 ?? ?? ?? ?? 48 8B D9 F3 0F 11 91 ?? ?? ?? ??", (p) => { GPoseCameraTargetPositionFreeze = p; }));

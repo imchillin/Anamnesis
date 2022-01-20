@@ -25,6 +25,7 @@ namespace Anamnesis.PoseModule
 		private NopHookViewModel? freezePhysics1;
 		private NopHookViewModel? freezePhysics2;
 		private NopHookViewModel? freezePhysics3;
+		private NopHookViewModel? freezeBonePositions;
 
 		private bool isEnabled;
 
@@ -102,6 +103,18 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
+		public bool FreezeBonePositions
+		{
+			get
+			{
+				return this.freezeBonePositions?.Enabled ?? false;
+			}
+			set
+			{
+				this.freezeBonePositions?.SetEnabled(value);
+			}
+		}
+
 		public bool EnableParenting { get; set; } = true;
 
 		public bool CanEdit { get; set; }
@@ -120,6 +133,7 @@ namespace Anamnesis.PoseModule
 			this.freezePhysics1 = new NopHookViewModel(AddressService.SkeletonFreezePhysics, 4);
 			this.freezePhysics2 = new NopHookViewModel(AddressService.SkeletonFreezePhysics2, 3);
 			this.freezePhysics3 = new NopHookViewModel(AddressService.SkeletonFreezePhysics3, 4);
+			this.freezeBonePositions = new NopHookViewModel(AddressService.BonePositionFreeze, 5);
 
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
 
@@ -148,6 +162,8 @@ namespace Anamnesis.PoseModule
 			this.EnableParenting = true;
 			this.FreezePhysics = enabled;
 			this.FreezeRotation = enabled;
+			this.FreezeBonePositions = enabled;
+			WorldService.Instance.FreezeWorldPosition = enabled;
 
 			EnabledChanged?.Invoke(enabled);
 
