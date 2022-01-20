@@ -143,11 +143,13 @@ namespace Anamnesis.PoseModule
 
 			this.isEnabled = enabled;
 
-			this.FreezePositions = false;
-			this.FreezeScale = false;
 			this.EnableParenting = true;
+			this.FreezeScale = enabled;
+			this.FreezePositions = enabled;
 			this.FreezePhysics = enabled;
 			this.FreezeRotation = enabled;
+
+			WorldService.Instance.FreezeWorldPosition = enabled;
 
 			EnabledChanged?.Invoke(enabled);
 
