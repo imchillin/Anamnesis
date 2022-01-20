@@ -10,6 +10,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Controls;
 	using Anamnesis.GameData.Interfaces;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
@@ -25,7 +26,7 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 		}
 
-		public WorldService WorldService => WorldService.Instance;
+		public PoseService PoseService => PoseService.Instance;
 
 		public ActorMemory? Actor { get; private set; }
 		public AnimationService AnimationService => AnimationService.Instance;

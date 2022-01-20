@@ -146,7 +146,7 @@
 									<XivToolsWpf:InfoControl.Visibility>
 										<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
 											<Binding Path="TargetService.SelectedActor.IsAnimating"/>
-											<Binding Path="WorldService.WorldPositionNotFrozen"/>
+											<Binding Path="PoseService.WorldPositionNotFrozen"/>
 										</MultiBinding>
 									</XivToolsWpf:InfoControl.Visibility>
 								</XivToolsWpf:InfoControl>

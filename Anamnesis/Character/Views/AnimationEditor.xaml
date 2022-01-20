@@ -23,7 +23,7 @@
 		</Grid.ColumnDefinitions>
 
 		<ToggleButton Grid.Column="0" Style="{StaticResource TransparentIconToggleButton}"
-						  IsChecked="{Binding WorldService.FreezeWorldPosition}"
+						  IsChecked="{Binding PoseService.FreezeWorldPosition}"
 						  Height="28"
 						  Width="28">
 			<ToggleButton.ToolTip>
