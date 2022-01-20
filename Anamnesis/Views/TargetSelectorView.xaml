@@ -73,26 +73,37 @@
 						</Grid.ColumnDefinitions>
 
 						<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}" />
-						<TextBlock
-							Grid.Column="1"
-							Margin="6,0,0,0"
-							FontWeight="DemiBold"
-							Foreground="{DynamicResource MaterialDesignBody}"
-							Text="{Binding DisplayName}" />
-						<TextBlock
+
+                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+							<TextBlock
+								Margin="6,0,0,0"
+								FontWeight="DemiBold"
+								Foreground="{DynamicResource MaterialDesignBody}"
+								Text="{Binding DisplayName}" />
+                            
+							<TextBlock
+								Margin="6,0,0,0"
+								FontWeight="Light"
+								Foreground="{DynamicResource MaterialDesignBody}"
+								Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"
+								Text="(GPose)" />
+                        </StackPanel>
+
+                        <TextBlock
 							Grid.Column="2"
 							Margin="6,0,0,0"
 							HorizontalAlignment="Right"
 							FontWeight="Light"
 							Foreground="{DynamicResource MaterialDesignBody}"
 							Text="{Binding DistanceFromPlayer, StringFormat={}{0:#0} ym}" />
-						<Grid.ToolTip>
+
+                        <Grid.ToolTip>
 							<TextBlock>
 								<TextBlock.Text>
 									<MultiBinding StringFormat="{}{0} ({1})">
 										<Binding Path="DisplayName" />
-										<Binding Path="ObjectKind" />
-									</MultiBinding>
+                                        <Binding Path="ObjectKind" />
+                                    </MultiBinding>
 								</TextBlock.Text>
 							</TextBlock>
 						</Grid.ToolTip>

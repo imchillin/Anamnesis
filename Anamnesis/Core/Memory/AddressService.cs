@@ -17,7 +17,6 @@ namespace Anamnesis.Core.Memory
 
 		// Static offsets
 		public static IntPtr ActorTable { get; private set; }
-		public static IntPtr GPoseActorTable { get; private set; }
 		public static IntPtr GPoseFilters { get; private set; }
 		public static IntPtr SkeletonFreezeRotation { get; private set; }   // SkeletonOffset
 		public static IntPtr SkeletonFreezeRotation2 { get; private set; }  // SkeletonOffset2
@@ -135,7 +134,6 @@ namespace Anamnesis.Core.Memory
 			tasks.Add(GetAddressFromSignature("GPoseFilters", "4C 8B 05 ?? ?? ?? ?? 41 8B 80 ?? ?? ?? ?? C1 E8 02", 0, (p) => { GPoseFilters = p; }));
 			tasks.Add(GetAddressFromSignature("GposeCheck", "48 8B 15 ?? ?? ?? ?? 48 89 6C 24", 0, (p) => { GposeCheck = p; }));
 			tasks.Add(GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
-			tasks.Add(GetAddressFromSignature("GPoseActorTable / GPoseTargetManager", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 8E", 0, (p) => GPoseActorTable = p + 0x14A0));
 			tasks.Add(GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
 			tasks.Add(GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
 			tasks.Add(GetAddressFromSignature("PlayerTargetSystem", "48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 0, (p) => { PlayerTargetSystem = p; }));

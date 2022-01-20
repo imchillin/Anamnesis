@@ -122,25 +122,11 @@ namespace Anamnesis
 
 		public static List<ActorBasicMemory> GetAllActors()
 		{
-			int count = 0;
-			IntPtr startAddress;
-
-			if (GposeService.Instance.GetIsGPose())
-			{
-				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
-				startAddress = AddressService.GPoseActorTable + 8;
-			}
-			else
-			{
-				// why 424?
-				count = 424;
-				startAddress = AddressService.ActorTable;
-			}
-
 			List<ActorBasicMemory> results = new();
-			for (int i = 0; i < count; i++)
+
+			for (int i = 0; i < 424; i++)
 			{
-				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
+				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
 
 				if (ptr == IntPtr.Zero)
 					continue;
@@ -149,6 +135,7 @@ namespace Anamnesis
 				{
 					ActorBasicMemory actor = new();
 					actor.SetAddress(ptr);
+					actor.IsGPoseActor = i >= 200;
 					results.Add(actor);
 				}
 				catch (Exception ex)
@@ -162,24 +149,9 @@ namespace Anamnesis
 
 		public static int GetActorTableIndex(IntPtr pointer)
 		{
-			int count = 0;
-			IntPtr startAddress;
-
-			if (GposeService.Instance.GetIsGPose())
+			for (int i = 0; i < 424; i++)
 			{
-				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
-				startAddress = AddressService.GPoseActorTable + 8;
-			}
-			else
-			{
-				// why 424?
-				count = 424;
-				startAddress = AddressService.ActorTable;
-			}
-
-			for (int i = 0; i < count; i++)
-			{
-				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
+				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
 
 				if (ptr == pointer)
 				{

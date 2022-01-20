@@ -33,6 +33,8 @@ namespace Anamnesis.Memory
 		[AlsoNotifyFor(nameof(ActorMemory.DisplayName))]
 		public string? Nickname { get; set; }
 
+		public bool IsGPoseActor { get; set; } = false;
+
 		/// <summary>
 		/// Gets the Nickname or if not set, the Name.
 		/// </summary>
