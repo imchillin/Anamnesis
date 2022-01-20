@@ -104,6 +104,9 @@ namespace Anamnesis.Views
 		{
 			if (obj is ActorBasicMemory actor)
 			{
+				if (GposeService.Instance.IsGpose != actor.IsGPoseActor)
+					return false;
+
 				if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Name, search))
 					return false;
 

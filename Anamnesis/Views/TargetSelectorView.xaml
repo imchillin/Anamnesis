@@ -81,12 +81,12 @@
 								Foreground="{DynamicResource MaterialDesignBody}"
 								Text="{Binding DisplayName}" />
                             
-							<TextBlock
+							<XivToolsWpf:TextBlock
 								Margin="6,0,0,0"
 								FontWeight="Light"
 								Foreground="{DynamicResource MaterialDesignBody}"
 								Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"
-								Text="(GPose)" />
+								Key="Target_Gpose" />
                         </StackPanel>
 
                         <TextBlock

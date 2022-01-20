@@ -494,11 +494,18 @@ namespace Anamnesis
 						this.Memory.PropertyChanged -= this.OnViewModelPropertyChanged;
 
 					ActorBasicMemory? newBasic = null;
+					bool isGPose = GposeService.GetIsGPose();
+
+					List<ActorBasicMemory> allActors = TargetService.GetAllActors();
 
 					// Search for an exact match first
-					foreach (ActorBasicMemory actor in TargetService.GetAllActors())
+					foreach (ActorBasicMemory actor in allActors)
 					{
 						if (actor.Id != this.Id || actor.Address == IntPtr.Zero)
+							continue;
+
+						// Don't consider overworld actors while we are in gpose
+						if (isGPose && actor.IsOverworldActor)
 							continue;
 
 						newBasic = actor;
@@ -508,9 +515,13 @@ namespace Anamnesis
 					// fall back to ignoring addresses
 					if (newBasic == null)
 					{
-						foreach (ActorBasicMemory actor in TargetService.GetAllActors())
+						foreach (ActorBasicMemory actor in allActors)
 						{
 							if (actor.IdNoAddress != this.IdNoAddress || actor.Address == IntPtr.Zero)
+								continue;
+
+							// Don't consider overworld actors while we are in gpose
+							if (isGPose && actor.IsOverworldActor)
 								continue;
 
 							// Is this actor memory already pinned to a differnet pin?
@@ -527,7 +538,8 @@ namespace Anamnesis
 					{
 						if (this.Memory != null)
 						{
-							this.Memory.Address = newBasic.Address;
+							////this.Memory.Address = newBasic.Address;
+							this.Memory.SetAddress(newBasic.Address, newBasic.IsGPoseActor);
 
 							try
 							{

@@ -7,6 +7,7 @@ namespace Anamnesis.Memory
 	using System.Collections.Generic;
 	using Anamnesis.Connect;
 	using Anamnesis.PoseModule;
+	using Anamnesis.Services;
 	using Anamnesis.Styles;
 	using Anamnesis.Utils;
 	using FontAwesome.Sharp;

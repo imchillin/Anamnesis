@@ -26,7 +26,7 @@ namespace Anamnesis.Services
 		[AlsoNotifyFor(nameof(GposeService.IsChangingState))]
 		public bool IsNotChangingState { get => !this.IsChangingState; }
 
-		public bool GetIsGPose()
+		public static bool GetIsGPose()
 		{
 			byte check1 = MemoryService.Read<byte>(AddressService.GposeCheck);
 			byte check2 = MemoryService.Read<byte>(AddressService.GposeCheck2);
@@ -43,7 +43,7 @@ namespace Anamnesis.Services
 		{
 			while (this.IsAlive)
 			{
-				bool newGpose = this.GetIsGPose();
+				bool newGpose = GetIsGPose();
 
 				if (!this.initialized)
 				{
