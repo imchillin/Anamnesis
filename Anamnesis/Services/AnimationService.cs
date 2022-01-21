@@ -3,7 +3,6 @@
 
 namespace Anamnesis.Services
 {
-	using System;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
@@ -13,22 +12,20 @@ namespace Anamnesis.Services
 	[AddINotifyPropertyChangedInterface]
 	public class AnimationService : ServiceBase<AnimationService>
 	{
-		private const ushort ResetAnimationId = 0;
 		private const ushort DrawWeaponAnimationid = 190;
-		private const byte AnimationOverrideMode = 0x8;
 
 		private NopHookViewModel? animationSpeedHook;
 
-		private bool isEnabled = false;
+		private bool speedControlEnabled = false;
 
-		public bool Enabled
+		public bool SpeedControlEnabled
 		{
-			get => this.isEnabled;
+			get => this.speedControlEnabled;
 			set
 			{
-				if (this.isEnabled != value)
+				if (this.speedControlEnabled != value)
 				{
-					this.SetEnabled(value);
+					this.SetSpeedControlEnabled(value);
 				}
 			}
 		}
@@ -45,11 +42,27 @@ namespace Anamnesis.Services
 			return base.Start();
 		}
 
-		public void ApplyAnimationOverride(ActorMemory actor, ushort? animationId, float? animationSpeed, bool interrupt)
-		{
-			MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.AnimationMode)), AnimationOverrideMode, "Animation Mode Override");
+		public void PlayAnimation(ActorMemory actor, ushort? animationId, float? animationSpeed, bool interrupt) => this.ApplyAnimationOverride(actor, animationId, animationSpeed, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
+		public void ResetAnimationOverride(ActorMemory actor) => this.ApplyAnimationOverride(actor, 0, 1f, true, ActorMemory.CharacterModes.Normal, 0);
+		public void DrawWeapon(ActorMemory actor) => this.ApplyAnimationOverride(actor, DrawWeaponAnimationid, null, true, ActorMemory.CharacterModes.AnimLock, 0);
+		public void StopAnimation(ActorMemory actor) => this.ApplyAnimationOverride(actor, null, 0.0f, false, ActorMemory.CharacterModes.EmoteLoop, 0);
 
-			if (animationSpeed != null && actor.AnimationSpeed != animationSpeed)
+		public override async Task Shutdown()
+		{
+			GposeService.GposeStateChanging -= this.GposeService_GposeStateChanging;
+			PoseService.EnabledChanged -= this.PoseService_EnabledChanged;
+
+			this.SpeedControlEnabled = false;
+
+			await base.Shutdown();
+		}
+
+		private void ApplyAnimationOverride(ActorMemory actor, ushort? animationId, float? animationSpeed, bool interrupt, ActorMemory.CharacterModes mode, byte modeInput)
+		{
+			MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.CharacterMode)), mode, "Animation Mode Override");
+			MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.CharacterModeInput)), modeInput, "Animation Mode Override");
+
+			if (this.SpeedControlEnabled && animationSpeed != null && actor.AnimationSpeed != animationSpeed)
 			{
 				MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeed)), animationSpeed, "Animation Speed Override");
 			}
@@ -68,26 +81,12 @@ namespace Anamnesis.Services
 			}
 		}
 
-		public void ResetAnimationOverride(ActorMemory actor) => this.ApplyAnimationOverride(actor, ResetAnimationId, 1, true);
-
-		public void DrawWeapon(ActorMemory actor) => this.ApplyAnimationOverride(actor, DrawWeaponAnimationid, null, true);
-
-		public override async Task Shutdown()
+		private void SetSpeedControlEnabled(bool enabled)
 		{
-			GposeService.GposeStateChanging -= this.GposeService_GposeStateChanging;
-			PoseService.EnabledChanged -= this.PoseService_EnabledChanged;
-
-			this.Enabled = false;
-
-			await base.Shutdown();
-		}
-
-		private void SetEnabled(bool enabled)
-		{
-			if (this.isEnabled == enabled)
+			if (this.speedControlEnabled == enabled)
 				return;
 
-			this.isEnabled = enabled;
+			this.speedControlEnabled = enabled;
 
 			if (enabled)
 			{
@@ -101,7 +100,7 @@ namespace Anamnesis.Services
 
 		private void AutoUpdateEnabledStatus()
 		{
-			this.Enabled = GposeService.Instance.IsGpose && !PoseService.Instance.IsEnabled;
+			this.SpeedControlEnabled = GposeService.Instance.IsGpose;
 		}
 
 		private void GposeService_GposeStateChanging() => this.AutoUpdateEnabledStatus();

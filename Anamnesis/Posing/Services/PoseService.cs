@@ -25,6 +25,10 @@ namespace Anamnesis.PoseModule
 		private NopHookViewModel? freezePhysics1;
 		private NopHookViewModel? freezePhysics2;
 		private NopHookViewModel? freezePhysics3;
+		private NopHookViewModel? freezeWorldPosition;
+		private NopHookViewModel? freezeWorldRotation;
+		private NopHookViewModel? freezeGposeTargetPosition1;
+		private NopHookViewModel? freezeGposeTargetPosition2;
 
 		private bool isEnabled;
 
@@ -102,6 +106,25 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
+		public bool WorldPositionNotFrozen => !this.FreezeWorldPosition;
+
+		public bool FreezeWorldPosition
+		{
+			get
+			{
+				return this.freezeWorldPosition?.Enabled ?? false;
+			}
+			set
+			{
+				this.freezeWorldPosition?.SetEnabled(value);
+				this.freezeWorldRotation?.SetEnabled(value);
+				this.freezeGposeTargetPosition1?.SetEnabled(value);
+				this.freezeGposeTargetPosition2?.SetEnabled(value);
+				this.RaisePropertyChanged(nameof(PoseService.FreezeWorldPosition));
+				this.RaisePropertyChanged(nameof(PoseService.WorldPositionNotFrozen));
+			}
+		}
+
 		public bool EnableParenting { get; set; } = true;
 
 		public bool CanEdit { get; set; }
@@ -120,6 +143,16 @@ namespace Anamnesis.PoseModule
 			this.freezePhysics1 = new NopHookViewModel(AddressService.SkeletonFreezePhysics, 4);
 			this.freezePhysics2 = new NopHookViewModel(AddressService.SkeletonFreezePhysics2, 3);
 			this.freezePhysics3 = new NopHookViewModel(AddressService.SkeletonFreezePhysics3, 4);
+			this.freezeWorldPosition = new NopHookViewModel(AddressService.WorldPositionFreeze, 16);
+			this.freezeWorldRotation = new NopHookViewModel(AddressService.WorldRotationFreeze, 4);
+
+			// We need to keep the MOV in the middle here otherwise we invalidate the ptr, but we patch the rest:
+			//     MOVSS dword ptr[RCX + 0xa0],XMM1
+			//     MOV RBX,RCX
+			//     MOVSS dword ptr[RCX + 0xa4],XMM2
+			//     MOVSS dword ptr[RCX + 0xa8],XMM3
+			this.freezeGposeTargetPosition1 = new NopHookViewModel(AddressService.GPoseCameraTargetPositionFreeze, 8);
+			this.freezeGposeTargetPosition2 = new NopHookViewModel(AddressService.GPoseCameraTargetPositionFreeze + 8 + 3, 16);
 
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
 
@@ -138,16 +171,18 @@ namespace Anamnesis.PoseModule
 			if (enabled && !GposeService.Instance.IsGpose)
 				throw new Exception("Attempt to enable posing outside of gpose");
 
+			// We should ensure these are what we want as something external could have toggled them (like anim control)
+			this.FreezePositions = false;
+			this.FreezeScale = false;
+			this.EnableParenting = true;
+			this.FreezeWorldPosition = enabled;
+			this.FreezePhysics = enabled;
+			this.FreezeRotation = enabled;
+
 			if (this.isEnabled == enabled)
 				return;
 
 			this.isEnabled = enabled;
-
-			this.FreezePositions = false;
-			this.FreezeScale = false;
-			this.EnableParenting = true;
-			this.FreezePhysics = enabled;
-			this.FreezeRotation = enabled;
 
 			EnabledChanged?.Invoke(enabled);
 
@@ -215,7 +250,8 @@ namespace Anamnesis.PoseModule
 
 		private void OnGposeStateChanging()
 		{
-			this.SetEnabled(false);
+			if (GposeService.Instance.IsOverworld)
+				this.SetEnabled(false);
 		}
 	}
 }

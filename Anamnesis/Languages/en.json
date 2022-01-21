@@ -483,6 +483,7 @@
 	"Animation_Search": "Search for an animation",
 	"Animation_DrawWeapon": "Draw Weapon",
 	"Animation_Play": "Play Animation",
+	"Animation_Pause": "Pause Animation",
 	"Animation_Queue": "Queue Animation",
 	"Animation_Speed": "Speed",
 	"Animation_AnimationId": "Animation Id",

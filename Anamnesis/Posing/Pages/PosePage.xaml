@@ -146,7 +146,7 @@
 									<XivToolsWpf:InfoControl.Visibility>
 										<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
 											<Binding Path="TargetService.SelectedActor.IsAnimating"/>
-											<Binding Path="WorldService.WorldPositionNotFrozen"/>
+											<Binding Path="PoseService.WorldPositionNotFrozen"/>
 										</MultiBinding>
 									</XivToolsWpf:InfoControl.Visibility>
 								</XivToolsWpf:InfoControl>
@@ -221,8 +221,7 @@
 				<Border
 					Grid.Column="1"
 					Style="{StaticResource Panel}"
-					Margin="6, 0, 0, 0"
-					IsEnabled="{Binding PoseService.IsEnabled, Converter={StaticResource !B}}">
+					Margin="6, 0, 0, 0">
 					<views1:AnimationEditor DataContext="{Binding Actor}"/>
 				</Border>
 
