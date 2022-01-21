@@ -505,8 +505,8 @@ namespace Anamnesis
 							continue;
 
 						// Don't consider overworld actors while we are in gpose
-						if (isGPose && actor.IsOverworldActor)
-							continue;
+						////if (isGPose && actor.IsOverworldActor)
+						////	continue;
 
 						newBasic = actor;
 						break;
@@ -521,8 +521,8 @@ namespace Anamnesis
 								continue;
 
 							// Don't consider overworld actors while we are in gpose
-							if (isGPose && actor.IsOverworldActor)
-								continue;
+							////if (isGPose && actor.IsOverworldActor)
+							////	continue;
 
 							// Is this actor memory already pinned to a differnet pin?
 							PinnedActor? pinned = TargetService.GetPinned(actor);
