@@ -84,7 +84,7 @@ namespace Anamnesis.Memory
 			if (this.IsRefreshing)
 				return;
 
-			if (!ActorRefreshService.Instance.CanRefresh)
+			if (!this.CanRefresh)
 				return;
 
 			if (this.Address == IntPtr.Zero)

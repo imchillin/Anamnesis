@@ -377,7 +377,7 @@ namespace Anamnesis.PoseModule
 			if (this.Bones == null)
 				return;
 
-			if (!GposeService.Instance.GetIsGPose())
+			if (!GposeService.GetIsGPose())
 				return;
 
 			foreach ((string name, BoneVisual3d bone) in this.Bones)

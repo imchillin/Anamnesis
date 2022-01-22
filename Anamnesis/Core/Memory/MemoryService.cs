@@ -246,6 +246,8 @@ namespace Anamnesis.Memory
 		{
 			Process = process;
 
+			Log.Information($"Opening game process: {process.MainModule?.FileName}");
+
 			if (!Process.Responding)
 				throw new Exception("Target process id not responding");
 

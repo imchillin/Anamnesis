@@ -24,7 +24,7 @@
 
 		<Grid Grid.RowSpan="2"
 			  Grid.Column="0"
-			  IsEnabled="{Binding ActorRefreshService.CanRefresh}">
+			  IsEnabled="{Binding Actor.CanRefresh}">
 
 			<GroupBox Padding="3,0,3,0"
 					  Style="{StaticResource PanelGroupBox}">
@@ -100,7 +100,7 @@
 		<XivToolsWpf:InfoControl Grid.Column="0"
 								 Grid.ColumnSpan="2"
 								 Margin="12"
-								 Visibility="{Binding ActorRefreshService.CanRefresh, Converter={StaticResource !B2V}}"
+								 Visibility="{Binding Actor.CanRefresh, Converter={StaticResource !B2V}}"
 								 Key="Character_WarningGpose" />
 
 		<Grid Grid.Column="2">
@@ -173,7 +173,7 @@
 						<Grid Grid.Row="3"
 							  Grid.Column="1"
 							  Margin="0,2,0,0"
-							  IsEnabled="{Binding GPoseService.IsOverworld}">
+							  IsEnabled="{Binding Actor.IsOverworldActor}">
 							<views:ModelTypeEditor DataContext="{Binding Actor}" />
 						</Grid>
 

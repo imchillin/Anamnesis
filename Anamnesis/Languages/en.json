@@ -45,6 +45,7 @@
 	"Target_Companions": "Companions",
 	"Target_Npc": "NPCs",
 	"Target_Other": "Others",
+	"Target_Gpose": "(GPose)",
 
 	"EquipmentSelector_Classes": "Classes / Jobs",
 	"EquipmentSelector_ShowLocked": "Show race/gender-locked items",

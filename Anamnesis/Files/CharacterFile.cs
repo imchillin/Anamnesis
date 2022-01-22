@@ -250,7 +250,7 @@ namespace Anamnesis.Files
 
 			actor.AutomaticRefreshEnabled = false;
 
-			if (ActorRefreshService.GetCanRefresh())
+			if (actor.CanRefresh)
 			{
 				actor.EnableReading = false;
 

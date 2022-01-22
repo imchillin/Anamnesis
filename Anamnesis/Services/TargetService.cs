@@ -58,7 +58,7 @@ namespace Anamnesis
 				}
 
 				ActorMemory memory = new();
-				memory.SetAddress(basicActor.Address);
+				memory.SetAddress(basicActor.Address, basicActor.IsGPoseActor);
 				PinnedActor pined = new PinnedActor(memory);
 
 				Log.Information($"Pinning actor: {pined}");
@@ -122,25 +122,11 @@ namespace Anamnesis
 
 		public static List<ActorBasicMemory> GetAllActors()
 		{
-			int count = 0;
-			IntPtr startAddress;
-
-			if (GposeService.Instance.GetIsGPose())
-			{
-				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
-				startAddress = AddressService.GPoseActorTable + 8;
-			}
-			else
-			{
-				// why 424?
-				count = 424;
-				startAddress = AddressService.ActorTable;
-			}
-
 			List<ActorBasicMemory> results = new();
-			for (int i = 0; i < count; i++)
+
+			for (int i = 0; i < 424; i++)
 			{
-				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
+				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
 
 				if (ptr == IntPtr.Zero)
 					continue;
@@ -148,7 +134,7 @@ namespace Anamnesis
 				try
 				{
 					ActorBasicMemory actor = new();
-					actor.SetAddress(ptr);
+					actor.SetAddress(ptr, i >= 200 && i < 250);
 					results.Add(actor);
 				}
 				catch (Exception ex)
@@ -162,24 +148,9 @@ namespace Anamnesis
 
 		public static int GetActorTableIndex(IntPtr pointer)
 		{
-			int count = 0;
-			IntPtr startAddress;
-
-			if (GposeService.Instance.GetIsGPose())
+			for (int i = 0; i < 424; i++)
 			{
-				count = MemoryService.Read<int>(AddressService.GPoseActorTable);
-				startAddress = AddressService.GPoseActorTable + 8;
-			}
-			else
-			{
-				// why 424?
-				count = 424;
-				startAddress = AddressService.ActorTable;
-			}
-
-			for (int i = 0; i < count; i++)
-			{
-				IntPtr ptr = MemoryService.ReadPtr(startAddress + (i * 8));
+				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
 
 				if (ptr == pointer)
 				{
@@ -247,7 +218,7 @@ namespace Anamnesis
 					}
 					else
 					{
-						this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
+						this.PlayerTarget.SetAddress(currentPlayerTargetPtr, false);
 					}
 
 					this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
@@ -523,12 +494,19 @@ namespace Anamnesis
 						this.Memory.PropertyChanged -= this.OnViewModelPropertyChanged;
 
 					ActorBasicMemory? newBasic = null;
+					bool isGPose = GposeService.GetIsGPose();
+
+					List<ActorBasicMemory> allActors = TargetService.GetAllActors();
 
 					// Search for an exact match first
-					foreach (ActorBasicMemory actor in TargetService.GetAllActors())
+					foreach (ActorBasicMemory actor in allActors)
 					{
 						if (actor.Id != this.Id || actor.Address == IntPtr.Zero)
 							continue;
+
+						// Don't consider overworld actors while we are in gpose
+						////if (isGPose && actor.IsOverworldActor)
+						////	continue;
 
 						newBasic = actor;
 						break;
@@ -537,10 +515,14 @@ namespace Anamnesis
 					// fall back to ignoring addresses
 					if (newBasic == null)
 					{
-						foreach (ActorBasicMemory actor in TargetService.GetAllActors())
+						foreach (ActorBasicMemory actor in allActors)
 						{
 							if (actor.IdNoAddress != this.IdNoAddress || actor.Address == IntPtr.Zero)
 								continue;
+
+							// Don't consider overworld actors while we are in gpose
+							////if (isGPose && actor.IsOverworldActor)
+							////	continue;
 
 							// Is this actor memory already pinned to a differnet pin?
 							PinnedActor? pinned = TargetService.GetPinned(actor);
@@ -556,7 +538,8 @@ namespace Anamnesis
 					{
 						if (this.Memory != null)
 						{
-							this.Memory.Address = newBasic.Address;
+							////this.Memory.Address = newBasic.Address;
+							this.Memory.SetAddress(newBasic.Address, newBasic.IsGPoseActor);
 
 							try
 							{
@@ -572,7 +555,7 @@ namespace Anamnesis
 						else
 						{
 							this.Memory = new ActorMemory();
-							this.Memory.SetAddress(newBasic.Address);
+							this.Memory.SetAddress(newBasic.Address, newBasic.IsGPoseActor);
 						}
 
 						IntPtr? oldPointer = this.Pointer;
