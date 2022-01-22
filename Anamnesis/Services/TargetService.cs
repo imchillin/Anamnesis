@@ -58,7 +58,7 @@ namespace Anamnesis
 				}
 
 				ActorMemory memory = new();
-				memory.SetAddress(basicActor.Address, basicActor.IsGPoseActor);
+				memory.SetAddress(basicActor.Address);
 				PinnedActor pined = new PinnedActor(memory);
 
 				Log.Information($"Pinning actor: {pined}");
@@ -134,7 +134,7 @@ namespace Anamnesis
 				try
 				{
 					ActorBasicMemory actor = new();
-					actor.SetAddress(ptr, i >= 200 && i < 250);
+					actor.SetAddress(ptr);
 					results.Add(actor);
 				}
 				catch (Exception ex)
@@ -218,7 +218,7 @@ namespace Anamnesis
 					}
 					else
 					{
-						this.PlayerTarget.SetAddress(currentPlayerTargetPtr, false);
+						this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
 					}
 
 					this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
@@ -539,7 +539,7 @@ namespace Anamnesis
 						if (this.Memory != null)
 						{
 							////this.Memory.Address = newBasic.Address;
-							this.Memory.SetAddress(newBasic.Address, newBasic.IsGPoseActor);
+							this.Memory.SetAddress(newBasic.Address);
 
 							try
 							{
@@ -555,7 +555,7 @@ namespace Anamnesis
 						else
 						{
 							this.Memory = new ActorMemory();
-							this.Memory.SetAddress(newBasic.Address, newBasic.IsGPoseActor);
+							this.Memory.SetAddress(newBasic.Address);
 						}
 
 						IntPtr? oldPointer = this.Pointer;
