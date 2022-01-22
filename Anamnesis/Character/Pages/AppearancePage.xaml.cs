@@ -13,9 +13,11 @@ namespace Anamnesis.Character.Pages
 	using Anamnesis.Connect;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using Anamnesis.Styles;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
 	using Serilog;
@@ -140,6 +142,96 @@ namespace Anamnesis.Character.Pages
 			this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsPlayer);
 		}
 
+		private void OnChangeCompanionClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor?.HasCompanion == true && this.Actor?.Companion != null)
+			{
+				SelectorDrawer.Show<NpcSelector, INpcBase>(
+					null,
+					(npc) =>
+					{
+						if (npc == null)
+							return;
+
+						if (npc is not Companion)
+							return;
+
+						Task.Run(async () =>
+						{
+							this.Actor.Companion.DataId = npc.RowId;
+							await this.ApplyNpc(npc, CharacterFile.SaveModes.All, this.Actor.Companion);
+						});
+					},
+					(view) => view.ChangeFilter(
+					new NpcSelector.NpcFilter()
+					{
+						IncludeCompanion = true,
+					}));
+			}
+		}
+
+		private void OnChangeMountClicked(object sender, RoutedEventArgs e)
+		{
+			if(this.Actor?.IsMounted == true && this.Actor?.Mount != null)
+			{
+				SelectorDrawer.Show<NpcSelector, INpcBase>(
+					null,
+					(npc) =>
+					{
+						if (npc == null)
+							return;
+
+						if (npc is not Mount)
+							return;
+
+						var mount = (Mount)npc;
+
+						Task.Run(async () =>
+						{
+							this.Actor.MountId = (ushort)mount.RowId;
+							await this.ApplyNpc(mount, CharacterFile.SaveModes.All, this.Actor.Mount);
+							await this.Actor.RefreshAsync();
+						});
+					},
+					(view) => view.ChangeFilter(
+					new NpcSelector.NpcFilter()
+					{
+						IncludeMount = true,
+					}));
+			}
+		}
+
+		private void OnChangeOrnamentClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor?.IsUsingOrnament == true && this.Actor?.Ornament != null)
+			{
+				SelectorDrawer.Show<NpcSelector, INpcBase>(
+					null,
+					(npc) =>
+					{
+						if (npc == null)
+							return;
+
+						if (npc is not Ornament)
+							return;
+
+						var ornament = (Ornament)npc;
+
+						Task.Run(async () =>
+						{
+							this.Actor.CharacterModeInput = (byte)ornament.RowId;
+							this.Actor.Ornament.AttachmentPoint = (byte)ornament.AttachPoint;
+							await this.ApplyNpc(ornament, CharacterFile.SaveModes.All, this.Actor.Ornament);
+						});
+					},
+					(view) => view.ChangeFilter(
+					new NpcSelector.NpcFilter()
+					{
+						IncludeOrnament = true,
+					}));
+			}
+		}
+
 		private async void OnLoadClicked(object sender, RoutedEventArgs e)
 		{
 			await this.Load(CharacterFile.SaveModes.All);
@@ -212,15 +304,18 @@ namespace Anamnesis.Character.Pages
 			});
 		}
 
-		private async Task ApplyNpc(INpcBase? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
+		private async Task ApplyNpc(INpcBase? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All, ActorMemory? targetActor = null)
 		{
-			if (this.Actor == null || npc == null)
+			if (targetActor == null)
+				targetActor = this.Actor;
+
+			if (targetActor == null || npc == null)
 				return;
 
 			try
 			{
 				CharacterFile apFile = npc.ToFile();
-				await apFile.Apply(this.Actor, mode);
+				await apFile.Apply(targetActor, mode);
 			}
 			catch (Exception ex)
 			{
@@ -299,7 +394,7 @@ namespace Anamnesis.Character.Pages
 
 			Application.Current.Dispatcher.InvokeAsync(() =>
 			{
-				bool hasValidSelection = actor != null && (actor.ObjectKind == ActorTypes.Player || actor.ObjectKind == ActorTypes.BattleNpc || actor.ObjectKind == ActorTypes.EventNpc);
+				bool hasValidSelection = actor != null && actor.ObjectKind.IsSupportedType();
 				this.IsEnabled = hasValidSelection;
 			});
 		}

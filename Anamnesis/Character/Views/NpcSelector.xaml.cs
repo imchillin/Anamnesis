@@ -19,19 +19,13 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class NpcSelector : UserControl, SelectorDrawer.ISelectorView, INotifyPropertyChanged
 	{
-		private static bool includeResidentNpc = true;
-		private static bool includeBattleNpc = true;
-		private static bool includeEventNpc = true;
-		private static bool includeMount = true;
-		private static bool includeCompanion = true;
-		private static bool? includeNamed = true;
-		private static bool? includeModded = null;
-
 		public NpcSelector()
 		{
 			this.InitializeComponent();
 			this.DataContext = this;
+			this.Filter = GlobalFilter;
 
+			this.Filter.PropertyChanged += this.OnSelfPropertyChanged;
 			this.PropertyChanged += this.OnSelfPropertyChanged;
 		}
 
@@ -39,47 +33,7 @@ namespace Anamnesis.Character.Views
 		public event DrawerEvent? SelectionChanged;
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public bool IncludeResidentNpc
-		{
-			get => includeResidentNpc;
-			set => includeResidentNpc = value;
-		}
-
-		public bool IncludeBattleNpc
-		{
-			get => includeBattleNpc;
-			set => includeBattleNpc = value;
-		}
-
-		public bool IncludeEventNpc
-		{
-			get => includeEventNpc;
-			set => includeEventNpc = value;
-		}
-
-		public bool IncludeMount
-		{
-			get => includeMount;
-			set => includeMount = value;
-		}
-
-		public bool IncludeCompanion
-		{
-			get => includeCompanion;
-			set => includeCompanion = value;
-		}
-
-		public bool? IncludeNamed
-		{
-			get => includeNamed;
-			set => includeNamed = value;
-		}
-
-		public bool? IncludeModded
-		{
-			get => includeModded;
-			set => includeModded = value;
-		}
+		public NpcFilter Filter { get; private set; }
 
 		public INpcBase? Value
 		{
@@ -102,6 +56,24 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
+		private static NpcFilter GlobalFilter { get; set; } = new()
+		{
+			TypesLocked = false,
+			IncludeResidentNpc = true,
+			IncludeBattleNpc = true,
+			IncludeEventNpc = true,
+			IncludeMount = true,
+			IncludeCompanion = true,
+			IncludeOrnament = true,
+		};
+
+		public void ChangeFilter(NpcFilter filter)
+		{
+			this.Filter.PropertyChanged -= this.OnSelfPropertyChanged;
+			this.Filter = filter;
+			this.Filter.PropertyChanged += this.OnSelfPropertyChanged;
+		}
+
 		public void OnClosed()
 		{
 		}
@@ -122,6 +94,9 @@ namespace Anamnesis.Character.Views
 
 			if (GameDataService.Companions != null)
 				this.Selector.AddItems(GameDataService.Companions);
+
+			if (GameDataService.Ornaments != null)
+				this.Selector.AddItems(GameDataService.Ornaments);
 
 			return Task.CompletedTask;
 		}
@@ -185,6 +160,13 @@ namespace Anamnesis.Character.Views
 				if (npcA is not EventNpcAppearance && npcB is EventNpcAppearance)
 					return 1;
 
+				// Then Ornaments
+				if (npcA is Ornament && npcB is not Ornament)
+					return -1;
+
+				if (npcA is not Ornament && npcB is Ornament)
+					return 1;
+
 				return -npcB.RowId.CompareTo(npcA.RowId);
 			}
 
@@ -195,21 +177,21 @@ namespace Anamnesis.Character.Views
 		{
 			if (obj is INpcBase npc)
 			{
-				if (this.IncludeNamed == true && !npc.HasName)
+				if (this.Filter.IncludeNamed == true && !npc.HasName)
 					return false;
 
-				if (this.IncludeNamed == false && npc.HasName)
+				if (this.Filter.IncludeNamed == false && npc.HasName)
 					return false;
 
-				if (this.IncludeModded == true && npc.Mod == null)
+				if (this.Filter.IncludeModded == true && npc.Mod == null)
 					return false;
 
-				if (this.IncludeModded == false && npc.Mod != null)
+				if (this.Filter.IncludeModded == false && npc.Mod != null)
 					return false;
 
 				if (npc is ResidentNpc)
 				{
-					if (!this.IncludeResidentNpc)
+					if (!this.Filter.IncludeResidentNpc)
 						return false;
 
 					// Npc residents without names are useless, since the same
@@ -222,7 +204,7 @@ namespace Anamnesis.Character.Views
 
 				if (npc is Mount)
 				{
-					if (!this.IncludeMount)
+					if (!this.Filter.IncludeMount)
 						return false;
 
 					// Mounts with model Id 0 are just empty entries.
@@ -234,7 +216,7 @@ namespace Anamnesis.Character.Views
 
 				if (npc is Companion)
 				{
-					if (!this.IncludeCompanion)
+					if (!this.Filter.IncludeCompanion)
 						return false;
 
 					// Companions with model Id 0 are just empty entries.
@@ -244,10 +226,22 @@ namespace Anamnesis.Character.Views
 					}
 				}
 
-				if (!this.IncludeBattleNpc && npc is BattleNpc)
+				if (npc is Ornament)
+				{
+					if (!this.Filter.IncludeOrnament)
+						return false;
+
+					// Ornaments with model Id 0 are just empty entries.
+					if (npc.ModelCharaRow == 0)
+					{
+						return false;
+					}
+				}
+
+				if (!this.Filter.IncludeBattleNpc && npc is BattleNpc)
 					return false;
 
-				if (!this.IncludeEventNpc && npc is EventNpc)
+				if (!this.Filter.IncludeEventNpc && npc is EventNpc)
 					return false;
 
 				bool matches = false;
@@ -269,6 +263,22 @@ namespace Anamnesis.Character.Views
 		private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			this.Selector.FilterItems();
+		}
+
+		[AddINotifyPropertyChangedInterface]
+		public class NpcFilter : INotifyPropertyChanged
+		{
+			public event PropertyChangedEventHandler? PropertyChanged;
+
+			public bool IncludeResidentNpc { get; set; } = false;
+			public bool IncludeBattleNpc { get; set; } = false;
+			public bool IncludeEventNpc { get; set; } = false;
+			public bool IncludeMount { get; set; } = false;
+			public bool IncludeCompanion { get; set; } = false;
+			public bool IncludeOrnament { get; set; } = false;
+			public bool? IncludeNamed { get; set; } = true;
+			public bool? IncludeModded { get; set; } = null;
+			public bool TypesLocked { get; set; } = true;
 		}
 	}
 }

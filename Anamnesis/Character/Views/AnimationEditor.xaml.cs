@@ -83,6 +83,14 @@ namespace Anamnesis.Character.Views
 			this.AnimationService.DrawWeapon(this.Actor);
 		}
 
+		private void OnIdleCharacterClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor == null)
+				return;
+
+			this.AnimationService.IdleCharacter(this.Actor);
+		}
+
 		private void OnPlayClicked(object? sender, RoutedEventArgs? e) => this.ApplyCurrentAnimation(true);
 
 		private void OnQueueClicked(object? sender, RoutedEventArgs? e) => this.ApplyCurrentAnimation(false);
@@ -92,7 +100,7 @@ namespace Anamnesis.Character.Views
 			if (this.Actor == null)
 				return;
 
-			this.AnimationService.StopAnimation(this.Actor);
+			this.AnimationService.TogglePaused(this.Actor, this.AnimationSpeed);
 		}
 
 		private void ApplyCurrentAnimation(bool interrupt)

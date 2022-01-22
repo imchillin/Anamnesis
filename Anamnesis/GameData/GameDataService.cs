@@ -55,6 +55,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<BattleNpcName> BattleNpcNames { get; private set; }
 		public static ExcelSheet<ActionTimeline> ActionTimelines { get; private set; }
 		public static ExcelSheet<Emote> Emotes { get; private set; }
+		public static ExcelSheet<Ornament> Ornaments { get; private set; }
 
 		public static PropSheet Props { get; private set; }
 		public static ModelListSheet ModelList { get; private set; }
@@ -181,6 +182,7 @@ namespace Anamnesis.Services
 				BattleNpcNames = GetSheet<BattleNpcName>();
 				ActionTimelines = GetSheet<ActionTimeline>();
 				Emotes = GetSheet<Emote>();
+				Ornaments = GetSheet<Ornament>();
 			}
 			catch (Exception ex)
 			{
