@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using PropertyChanged;
 
 	public class ActorCustomizeMemory : MemoryBase
 	{
@@ -121,6 +122,22 @@ namespace Anamnesis.Memory
 		{
 			get => this.Mouth >= 128;
 			set => this.Mouth = (byte)(this.Lips + (value ? 128 : 0));
+		}
+
+		[AlsoNotifyFor(nameof(LEyeColor), nameof(REyeColor))]
+		public bool LinkEyeColors { get; set; }
+
+		[AlsoNotifyFor(nameof(LEyeColor))]
+		public byte MainEyeColor
+		{
+			get => this.LEyeColor;
+			set
+			{
+				if (this.LinkEyeColors)
+					this.REyeColor = value;
+
+				this.LEyeColor = value;
+			}
 		}
 	}
 }

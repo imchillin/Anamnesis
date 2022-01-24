@@ -95,15 +95,29 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
 					<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.Eyes}" Minimum="1" Maximum="256" Buttons="True" Margin="2, 0, 6, 2"/>
 
-					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_EyeLeft" Value="{Binding Customize.LEyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
-					<controls:ColorControl Grid.Column="2" ToolTipKey="Character_Appearance_EyeRight" Value="{Binding Customize.REyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
+                    <controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_EyeLeft" Value="{Binding Customize.MainEyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
 
-				</Grid>
+                    <ToggleButton Grid.Column="2" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Customize.LinkEyeColors}">
+                        <XivToolsWpf:IconBlock Icon="Link" FontSize="10"/>
+                    </ToggleButton>
+                    <Line StrokeThickness="1" X1="0" X2="3" Grid.Column="2" Stroke="White" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Line StrokeThickness="1" X1="0" X2="3" Grid.Column="2" Stroke="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+                    <controls:ColorControl Grid.Column="3"
+                                           ToolTipKey="Character_Appearance_EyeRight"
+                                           IsEnabled="{Binding Customize.LinkEyeColors, Converter={StaticResource !B}}"
+                                           Value="{Binding Customize.REyeColor}"
+                                           Type="Eyes"
+                                           Gender="{Binding Customize.Gender}"
+                                           Tribe="{Binding Customize.Tribe}"
+                                           Margin="0"/>
+                </Grid>
 
 				<!-- Face Type -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="4" Key="Character_Appearance_Face" Style="{StaticResource Label}"/>
@@ -111,11 +125,11 @@
 
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
-						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="78"/>
 					</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="0" Grid.Row="4" Minimum="1" Maximum="255"  Margin="0, 0, 30, 2" Buttons="True"/>
-					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_FacialFeatureColor" Value="{Binding Customize.FacialFeatureColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
+					<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="0" Grid.Row="4" Minimum="1" Maximum="255" Margin="0, 0, 0, 2" Buttons="True"/>
+					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_FacialFeatureColor" Value="{Binding Customize.FacialFeatureColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="6,0,0,0" HorizontalAlignment="Left"/>
 
 				</Grid>
 				
