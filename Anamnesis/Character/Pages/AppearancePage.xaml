@@ -54,6 +54,36 @@
 							VerticalAlignment="Top"
 							Orientation="Horizontal">
 
+					<Button Click="OnChangeCompanionClicked"
+							Style="{StaticResource TransparentIconButton}"
+							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}"
+							IsEnabled="{Binding Actor.HasCompanion}"
+							>
+
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
+									  Icon="Cat" />
+					</Button>
+
+					<Button Click="OnChangeMountClicked"
+							Style="{StaticResource TransparentIconButton}"
+							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}"
+							IsEnabled="{Binding Actor.IsMounted}"
+							>
+
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
+									  Icon="Horse" />
+					</Button>
+
+					<Button Click="OnChangeOrnamentClicked"
+							Style="{StaticResource TransparentIconButton}"
+							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}"
+							IsEnabled="{Binding Actor.IsUsingOrnament}"
+							>
+
+						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
+									  Icon="PiedPiperHat" />
+					</Button>
+
 					<Button Click="OnRaceGearClicked"
 							Style="{StaticResource TransparentIconButton}"
 							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
@@ -154,7 +184,7 @@
 							<ComboBox ItemsSource="{Binding Source={x:Static anaMem:ActorType.AllActorTypes}}" SelectedIndex="{Binding Actor.ObjectKindInt}">
 								<ComboBox.ItemContainerStyle>
 									<Style TargetType="{x:Type ComboBoxItem}">
-										<Setter Property="IsEnabled" Value="{Binding IsTypeSupported}"/>
+										<Setter Property="IsEnabled" Value="{Binding IsSupportedType}"/>
 									</Style>
 								</ComboBox.ItemContainerStyle>
 								

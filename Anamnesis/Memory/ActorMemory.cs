@@ -7,6 +7,7 @@ namespace Anamnesis.Memory
 	using System.Threading.Tasks;
 	using Anamnesis.Connect;
 	using Anamnesis.Services;
+	using PropertyChanged;
 
 	public class ActorMemory : ActorBasicMemory
 	{
@@ -23,6 +24,18 @@ namespace Anamnesis.Memory
 			Unload = 2,
 		}
 
+		public enum CharacterModes : byte
+		{
+			None = 0,
+			Normal = 1,
+			EmoteLoop = 3,
+			HasAttachment = 4,
+			AnimLock = 8,
+			Carrying = 9,
+			InPositionLoop = 11,
+			Performance = 16,
+		}
+
 		[Bind(0x008D)] public byte SubKind { get; set; }
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 		[Bind(0x0104)] public RenderModes RenderMode { get; set; }
@@ -30,22 +43,35 @@ namespace Anamnesis.Memory
 		[Bind(0x01E2)] public byte ClassJob { get; set; }
 		[Bind(0x07C4)] public bool IsAnimating { get; set; }
 		[Bind(0x0C30, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
-		[Bind(0x0C38)] public bool IsMounted { get; set; }
+		[Bind(0x0C38)] public ushort MountId { get; set; }
+		[Bind(0x0C58, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
 		[Bind(0x0C78)] public WeaponMemory? MainHand { get; set; }
 		[Bind(0x0CE0)] public WeaponMemory? OffHand { get; set; }
 		[Bind(0x0DB0)] public ActorEquipmentMemory? Equipment { get; set; }
 		[Bind(0x0DD8)] public ActorCustomizeMemory? Customize { get; set; }
+		[Bind(0x0E08, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 		[Bind(0x0F30)] public uint TargetAnimation { get; set; }
 		[Bind(0x0FA4)] public float AnimationSpeed { get; set; }
-		[Bind(0x1102)] public ushort AnimationOverride { get; set; }
+		[Bind(0x110C)] public ushort AnimationOverride { get; set; }
 		[Bind(0x18B8)] public float Transparency { get; set; }
-		[Bind(0x19C0)] public byte AnimationMode { get; set; }
+		[Bind(0x19C0)] public CharacterModes CharacterMode { get; set; }
+		[Bind(0x19C1)] public byte CharacterModeInput { get; set; }
+		[Bind(0x19F4)] public byte AttachmentPoint { get; set; }
 
 		public bool AutomaticRefreshEnabled { get; set; } = true;
 		public bool IsRefreshing { get; set; } = false;
 		public bool PendingRefresh { get; set; } = false;
 
 		public bool IsPlayer => this.ModelObject != null && this.ModelObject.IsPlayer;
+
+		[DependsOn(nameof(CharacterMode), nameof(CharacterModeInput), nameof(MountId), nameof(Mount))]
+		public bool IsMounted => this.CharacterMode == CharacterModes.HasAttachment && this.CharacterModeInput == 0 && this.MountId != 0 && this.Mount != null;
+
+		[DependsOn(nameof(CharacterMode), nameof(CharacterModeInput), nameof(Ornament))]
+		public bool IsUsingOrnament => this.CharacterMode == CharacterModes.HasAttachment && this.CharacterModeInput != 0 && this.Ornament != null;
+
+		[DependsOn(nameof(Companion))]
+		public bool HasCompanion => this.Companion != null;
 
 		public int ObjectKindInt
 		{

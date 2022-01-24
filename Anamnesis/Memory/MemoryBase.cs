@@ -322,7 +322,7 @@ namespace Anamnesis.Memory
 
 				IntPtr bindAddress = bind.GetAddress();
 
-				if (bindAddress == IntPtr.Zero || bindAddress == bind.LastFailureAddress)
+				if (bindAddress == bind.LastFailureAddress)
 					return;
 
 				if (typeof(MemoryBase).IsAssignableFrom(bind.Type))
@@ -331,7 +331,7 @@ namespace Anamnesis.Memory
 
 					bool isNew = false;
 
-					if (childMemory == null)
+					if (childMemory == null && bindAddress != IntPtr.Zero)
 					{
 						isNew = true;
 						childMemory = Activator.CreateInstance(bind.Type) as MemoryBase;
@@ -342,20 +342,30 @@ namespace Anamnesis.Memory
 						}
 					}
 
-					// Has this bind changed
+					if (childMemory == null)
+						return;
+
 					if (childMemory.Address == bindAddress)
 						return;
 
 					try
 					{
-						childMemory.SetAddress(bindAddress);
-						bind.Property.SetValue(this, childMemory);
-
-						if (isNew)
+						if (bindAddress == IntPtr.Zero)
 						{
-							childMemory.Parent = this;
-							childMemory.ParentBind = bind;
-							this.Children.Add(childMemory);
+							bind.Property.SetValue(this, null);
+							this.Children.Remove(childMemory);
+						}
+						else
+						{
+							childMemory.SetAddress(bindAddress);
+							bind.Property.SetValue(this, childMemory);
+
+							if (isNew)
+							{
+								childMemory.Parent = this;
+								childMemory.ParentBind = bind;
+								this.Children.Add(childMemory);
+							}
 						}
 					}
 					catch (Exception ex)

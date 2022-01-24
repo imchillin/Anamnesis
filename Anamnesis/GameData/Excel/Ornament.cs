@@ -3,8 +3,6 @@
 
 namespace Anamnesis.GameData.Excel
 {
-	using System;
-	using System.Windows.Media;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;
@@ -12,31 +10,26 @@ namespace Anamnesis.GameData.Excel
 	using Lumina;
 	using Lumina.Data;
 	using Lumina.Excel;
-	using Lumina.Excel.GeneratedSheets;
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("Mount", 0x85fb1418)]
-	public class Mount : ExcelRow, INpcBase
+	[Sheet("Ornament", 0x6768819a)]
+	public class Ornament : ExcelRow, INpcBase
 	{
 		private string? name;
 
-		private int equipHead;
-		private int equipBody;
-		private int equipLeg;
-		private int equipFoot;
-
-		private MountAppearance? appearance;
+		private OrnamentAppearance? appearance;
 
 		public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
 		public string Description { get; private set; } = string.Empty;
 		public uint ModelCharaRow { get; private set; }
+		public byte AttachPoint { get; private set; }
 
 		public ImageReference? Icon { get; private set; }
 		public Mod? Mod => null;
 		public bool CanFavorite => true;
 		public bool HasName => this.name != null;
-		public string TypeName => "Mount";
+		public string TypeName => "Ornament";
 
 		public bool IsFavorite
 		{
@@ -48,35 +41,25 @@ namespace Anamnesis.GameData.Excel
 		{
 			base.PopulateData(parser, gameData, language);
 
-			this.name = parser.ReadString(0);
-			this.ModelCharaRow = (uint)parser.ReadColumn<int>(8);
-
-			this.equipHead = parser.ReadColumn<int>(25);
-			this.equipBody = parser.ReadColumn<int>(26);
-			this.equipLeg = parser.ReadColumn<int>(27);
-			this.equipFoot = parser.ReadColumn<int>(28);
-
-			this.Icon = parser.ReadImageReference<ushort>(30);
+			this.ModelCharaRow = (uint)parser.ReadColumn<ushort>(0);
+			this.AttachPoint = parser.ReadColumn<byte>(1);
+			this.Icon = parser.ReadImageReference<ushort>(5);
+			this.name = parser.ReadString(7);
 		}
 
 		public INpcAppearance? GetAppearance()
 		{
 			if (this.appearance == null)
-				this.appearance = new MountAppearance(this);
+				this.appearance = new OrnamentAppearance(this);
 
 			return this.appearance;
 		}
 
-		public class MountAppearance : INpcAppearance
+		public class OrnamentAppearance : INpcAppearance
 		{
-			public MountAppearance(Mount mount)
+			public OrnamentAppearance(Ornament ornament)
 			{
-				this.ModelCharaRow = mount.ModelCharaRow;
-
-				this.Head = LuminaExtensions.GetGearItem(ItemSlots.Head, (uint)mount.equipHead);
-				this.Body = LuminaExtensions.GetGearItem(ItemSlots.Body, (uint)mount.equipBody);
-				this.Legs = LuminaExtensions.GetGearItem(ItemSlots.Legs, (uint)mount.equipLeg);
-				this.Feet = LuminaExtensions.GetGearItem(ItemSlots.Feet, (uint)mount.equipFoot);
+				this.ModelCharaRow = ornament.ModelCharaRow;
 			}
 
 			public uint ModelCharaRow { get; private set; }
@@ -111,13 +94,13 @@ namespace Anamnesis.GameData.Excel
 			public IDye DyeMainHand => DyeUtility.NoneDye;
 			public IItem OffHand => ItemUtility.NoneItem;
 			public IDye DyeOffHand => DyeUtility.NoneDye;
-			public IItem Head { get; private set; }
+			public IItem Head => ItemUtility.NoneItem;
 			public IDye DyeHead => DyeUtility.NoneDye;
-			public IItem Body { get; private set; }
+			public IItem Body => ItemUtility.NoneItem;
 			public IDye DyeBody => DyeUtility.NoneDye;
-			public IItem Legs { get; private set; }
+			public IItem Legs => ItemUtility.NoneItem;
 			public IDye DyeLegs => DyeUtility.NoneDye;
-			public IItem Feet { get; private set; }
+			public IItem Feet => ItemUtility.NoneItem;
 			public IDye DyeFeet => DyeUtility.NoneDye;
 			public IItem Hands => ItemUtility.NoneItem;
 			public IDye DyeHands => DyeUtility.NoneDye;

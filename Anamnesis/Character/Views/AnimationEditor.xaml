@@ -9,10 +9,9 @@
              d:DesignHeight="35" d:DesignWidth="200"
 			 DataContextChanged="OnDataContextChanged">
 
-	<Grid x:Name="ContentArea" IsEnabled="{Binding AnimationService.Enabled}">
+	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
@@ -20,10 +19,13 @@
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+
 		</Grid.ColumnDefinitions>
 
 		<ToggleButton Grid.Column="0" Style="{StaticResource TransparentIconToggleButton}"
-						  IsChecked="{Binding WorldService.FreezeWorldPosition}"
+						  IsChecked="{Binding PoseService.FreezeWorldPosition}"
+						  IsEnabled="{Binding GposeService.IsGpose}"
 						  Height="28"
 						  Width="28">
 			<ToggleButton.ToolTip>
@@ -32,15 +34,7 @@
 			<XivToolsWpf:IconBlock Icon="LocationArrow"/>
 		</ToggleButton>
 
-		<Button Grid.Column="1" Click="OnDrawWeaponClicked" Style="{StaticResource TransparentIconButton}">
-			<Button.ToolTip>
-				<XivToolsWpf:TextBlock Key="Animation_DrawWeapon"/>
-			</Button.ToolTip>
-
-			<XivToolsWpf:IconBlock Icon="HandSparkles"/>
-		</Button>
-
-		<Button Grid.Column="2" Click="OnSearchClicked" Style="{StaticResource TransparentIconButton}">
+		<Button Grid.Column="1" Click="OnSearchClicked" Style="{StaticResource TransparentIconButton}">
 			<Button.ToolTip>
 				<XivToolsWpf:TextBlock Key="Animation_Search"/>
 			</Button.ToolTip>
@@ -48,27 +42,27 @@
 			<XivToolsWpf:IconBlock Icon="Search"/>
 		</Button>
 
-		<XivToolsWpf:NumberBox Value="{Binding AnimationId}" Grid.Column="3" Margin="0, 0, 0, -7">
+		<XivToolsWpf:NumberBox Value="{Binding AnimationId}" Grid.Column="2" Margin="0, 0, 0, -7">
 			<XivToolsWpf:NumberBox.ToolTip>
 				<XivToolsWpf:TextBlock Key="Animation_AnimationId"/>
 			</XivToolsWpf:NumberBox.ToolTip>
 		</XivToolsWpf:NumberBox>
 
-		<XivToolsWpf:NumberBox Value="{Binding AnimationSpeed}" Grid.Column="4" Margin="2, 0, 0, -7">
+		<XivToolsWpf:NumberBox Value="{Binding AnimationSpeed}" Grid.Column="3" Margin="2, 0, 0, -7" IsEnabled="{Binding AnimationService.SpeedControlEnabled}">
 			<XivToolsWpf:NumberBox.ToolTip>
 				<XivToolsWpf:TextBlock Key="Animation_Speed"/>
 			</XivToolsWpf:NumberBox.ToolTip>
 		</XivToolsWpf:NumberBox>
 
-		<Button Grid.Column="5" Click="OnQueueClicked" Style="{StaticResource TransparentIconButton}">
+		<Button Grid.Column="4" Click="OnPauseClicked" Style="{StaticResource TransparentIconButton}" IsEnabled="{Binding AnimationService.SpeedControlEnabled}">
 			<Button.ToolTip>
-				<XivToolsWpf:TextBlock Key="Animation_Queue"/>
+				<XivToolsWpf:TextBlock Key="Animation_Pause"/>
 			</Button.ToolTip>
 
-			<XivToolsWpf:IconBlock Icon="Plus"/>
+			<XivToolsWpf:IconBlock Icon="Pause"/>
 		</Button>
 
-		<Button Grid.Column="6" Click="OnPlayClicked" Style="{StaticResource TransparentIconButton}">
+		<Button Grid.Column="5" Click="OnPlayClicked" Style="{StaticResource TransparentIconButton}">
 			<Button.ToolTip>
 				<XivToolsWpf:TextBlock Key="Animation_Play"/>
 			</Button.ToolTip>
@@ -76,12 +70,51 @@
 			<XivToolsWpf:IconBlock Icon="Play"/>
 		</Button>
 
-		<Button Grid.Column="7" Click="OnResetClicked" Style="{StaticResource TransparentIconButton}">
-			<Button.ToolTip>
-				<XivToolsWpf:TextBlock Key="Animation_Reset"/>
-			</Button.ToolTip>
+		<Grid Grid.Column="6">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
 
-			<XivToolsWpf:IconBlock Icon="Undo"/>
-		</Button>
+			<Button Grid.Row="0" Click="OnDrawWeaponClicked" Style="{StaticResource TransparentIconButton}">
+				<Button.ToolTip>
+					<XivToolsWpf:TextBlock Key="Animation_DrawWeapon"/>
+				</Button.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="HandSparkles"/>
+			</Button>
+
+			<Button Grid.Row="2" Click="OnIdleCharacterClicked" Style="{StaticResource TransparentIconButton}">
+				<Button.ToolTip>
+					<XivToolsWpf:TextBlock Key="Animation_IdleCharacter"/>
+				</Button.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="HandRock"/>
+			</Button>
+		</Grid>
+
+		<Grid Grid.Column="7">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<Button Grid.Row="0" Click="OnQueueClicked" Style="{StaticResource TransparentIconButton}">
+				<Button.ToolTip>
+					<XivToolsWpf:TextBlock Key="Animation_Queue"/>
+				</Button.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="Plus"/>
+			</Button>
+
+			<Button Grid.Row="1" Click="OnResetClicked" Style="{StaticResource TransparentIconButton}">
+				<Button.ToolTip>
+					<XivToolsWpf:TextBlock Key="Animation_Reset"/>
+				</Button.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="Undo"/>
+			</Button>
+		</Grid>
+		
 	</Grid>
 </UserControl>

@@ -12,16 +12,16 @@
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		
-		<Grid Grid.Row="0" Margin="6">
+		<Grid Grid.Row="0" Margin="6" IsEnabled="{Binding Filter.TypesLocked, Converter={StaticResource NotConverter}}">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
 				<RowDefinition/>
 				<RowDefinition/>
 				<RowDefinition/>
-				<RowDefinition />
 			</Grid.RowDefinitions>
 
 			<Grid.ColumnDefinitions>
@@ -32,44 +32,61 @@
 			<CheckBox Grid.Row="0"
 					  Grid.Column="0"
 					  Content="Resident NPCs"
-					  IsChecked="{Binding IncludeResidentNpc}" />
+					  IsChecked="{Binding Filter.IncludeResidentNpc}" />
 
 			<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  Content="Battle NPCs"
-					  IsChecked="{Binding IncludeBattleNpc}" />
+					  IsChecked="{Binding Filter.IncludeBattleNpc}" />
 
 			<CheckBox Grid.Row="1"
 					  Grid.Column="0"
 					  Content="Event NPCs"
-					  IsChecked="{Binding IncludeEventNpc}" />
+					  IsChecked="{Binding Filter.IncludeEventNpc}" />
 
 			<CheckBox Grid.Row="1"
 					  Grid.Column="1"
 					  Content="Mounts"
-					  IsChecked="{Binding IncludeMount}" />
+					  IsChecked="{Binding Filter.IncludeMount}" />
 
 			<CheckBox Grid.Row="3"
 					  Grid.Column="0"
 					  Content="Minions"
-					  IsChecked="{Binding IncludeCompanion}" />
+					  IsChecked="{Binding Filter.IncludeCompanion}" />
 
-			<CheckBox Grid.Row="4"
+			<CheckBox Grid.Row="3"
+					  Grid.Column="1"
+					  Content="Ornaments"
+					  IsChecked="{Binding Filter.IncludeOrnament}" />
+
+		</Grid>
+
+		<Grid Grid.Row="1" Margin="6">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<CheckBox Grid.Row="0"
 					  Grid.Column="0"
 					  IsThreeState="True"
 					  Content="Named"
-					  IsChecked="{Binding IncludeNamed}" />
-		
-			<CheckBox Grid.Row="4"
+					  IsChecked="{Binding Filter.IncludeNamed}" />
+
+			<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  IsThreeState="True"
 					  Content="Modded"
-					  IsChecked="{Binding IncludeModded}"/>
+					  IsChecked="{Binding Filter.IncludeModded}"/>
 
 		</Grid>
 
 		<cm3Drawers:SelectorDrawer
-			Grid.Row="1"
+			Grid.Row="2"
 			x:Name="Selector"
 			Close="OnClose" 
 			Filter="OnFilter"

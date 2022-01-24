@@ -10,6 +10,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Controls;
 	using Anamnesis.GameData.Interfaces;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
@@ -25,7 +26,8 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 		}
 
-		public WorldService WorldService => WorldService.Instance;
+		public PoseService PoseService => PoseService.Instance;
+		public GposeService GposeService => GposeService.Instance;
 
 		public ActorMemory? Actor { get; private set; }
 		public AnimationService AnimationService => AnimationService.Instance;
@@ -81,9 +83,25 @@ namespace Anamnesis.Character.Views
 			this.AnimationService.DrawWeapon(this.Actor);
 		}
 
+		private void OnIdleCharacterClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor == null)
+				return;
+
+			this.AnimationService.IdleCharacter(this.Actor);
+		}
+
 		private void OnPlayClicked(object? sender, RoutedEventArgs? e) => this.ApplyCurrentAnimation(true);
 
 		private void OnQueueClicked(object? sender, RoutedEventArgs? e) => this.ApplyCurrentAnimation(false);
+
+		private void OnPauseClicked(object? sender, RoutedEventArgs? e)
+		{
+			if (this.Actor == null)
+				return;
+
+			this.AnimationService.TogglePaused(this.Actor, this.AnimationSpeed);
+		}
 
 		private void ApplyCurrentAnimation(bool interrupt)
 		{
@@ -96,7 +114,7 @@ namespace Anamnesis.Character.Views
 				AnimationSpeed = this.AnimationSpeed,
 			};
 
-			this.AnimationService.ApplyAnimationOverride(this.Actor, animOverride.AnimationId, animOverride.AnimationSpeed, interrupt);
+			this.AnimationService.PlayAnimation(this.Actor, animOverride.AnimationId, animOverride.AnimationSpeed, interrupt);
 			this.activeOverrides[this.Actor] = animOverride;
 		}
 

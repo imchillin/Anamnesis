@@ -4,6 +4,7 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Collections.Generic;
+	using Anamnesis.Styles;
 
 	public enum ActorTypes : byte
 	{
@@ -22,16 +23,17 @@ namespace Anamnesis.Memory
 		Housing = 0x0C,
 		Cutscene = 0x0D,
 		CardStand = 0x0E,
+		Ornament = 0x0F,
 	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "Not the first type")]
 	public class ActorType
 	{
-		public ActorType(string name, ActorTypes value, bool isSupported)
+		public ActorType(string name, ActorTypes value)
 		{
 			this.Name = name;
 			this.Value = value;
-			this.IsTypeSupported = isSupported;
+			this.IsSupportedType = value.IsSupportedType();
 		}
 
 		public static IEnumerable<ActorType> AllActorTypes
@@ -43,8 +45,7 @@ namespace Anamnesis.Memory
 				foreach (ActorTypes value in Enum.GetValues(typeof(ActorTypes)))
 				{
 					var name = Enum.GetName(typeof(ActorTypes), value);
-					var isSupported = IsActorTypeSupported(value);
-					actorTypes.Add(new ActorType(name!, value, isSupported));
+					actorTypes.Add(new ActorType(name!, value));
 				}
 
 				return actorTypes;
@@ -53,21 +54,6 @@ namespace Anamnesis.Memory
 
 		public string Name { get; private set; }
 		public ActorTypes Value { get; private set; }
-		public bool IsTypeSupported { get; private set; }
-
-		public static bool IsActorTypeSupported(ActorTypes actorType)
-		{
-			switch (actorType)
-			{
-				case ActorTypes.Player:
-				case ActorTypes.BattleNpc:
-				case ActorTypes.EventNpc:
-				case ActorTypes.Companion:
-				case ActorTypes.Mount:
-					return true;
-			}
-
-			return false;
-		}
+		public bool IsSupportedType { get; private set; }
 	}
 }

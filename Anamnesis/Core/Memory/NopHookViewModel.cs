@@ -36,13 +36,15 @@ namespace Anamnesis.Memory
 
 			set
 			{
-				this.value = value;
 				this.SetEnabled(value);
 			}
 		}
 
 		public void SetEnabled(bool enabled)
 		{
+			if (enabled == this.value)
+				return;
+
 			this.value = enabled;
 
 			if (enabled)

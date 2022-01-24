@@ -8,6 +8,22 @@ namespace Anamnesis.Styles
 
 	public static class ActorTypesExtensions
 	{
+		public static bool IsSupportedType(this ActorTypes actorType)
+		{
+			switch (actorType)
+			{
+				case ActorTypes.Player:
+				case ActorTypes.BattleNpc:
+				case ActorTypes.EventNpc:
+				case ActorTypes.Companion:
+				case ActorTypes.Mount:
+				case ActorTypes.Ornament:
+					return true;
+			}
+
+			return false;
+		}
+
 		public static IconChar GetIcon(this ActorTypes type)
 		{
 			switch (type)
@@ -20,6 +36,8 @@ namespace Anamnesis.Styles
 				case ActorTypes.Companion: return IconChar.Cat;
 				case ActorTypes.Retainer: return IconChar.ConciergeBell;
 				case ActorTypes.Housing: return IconChar.Chair;
+				case ActorTypes.Mount: return IconChar.Horse;
+				case ActorTypes.Ornament: return IconChar.PiedPiperHat;
 			}
 
 			return IconChar.Question;

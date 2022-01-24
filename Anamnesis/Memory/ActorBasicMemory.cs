@@ -21,7 +21,7 @@ namespace Anamnesis.Memory
 		[Bind(0x074)] public uint ObjectId { get; set; }
 		[Bind(0x080)] public uint DataId { get; set; }
 		[Bind(0x084)] public uint OwnerId { get; set; }
-
+		[Bind(0x088)] public ushort ObjectIndex { get; set; }
 		[Bind(0x08c, BindFlags.ActorRefresh)] public ActorTypes ObjectKind { get; set; }
 		[Bind(0x090)] public byte DistanceFromPlayerX { get; set; }
 		[Bind(0x092)] public byte DistanceFromPlayerY { get; set; }
@@ -33,16 +33,16 @@ namespace Anamnesis.Memory
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
 		public string NameHash => HashUtility.GetHashString(this.NameBytes.ToString(), true);
 
-		[AlsoNotifyFor(nameof(ActorMemory.DisplayName))]
+		[AlsoNotifyFor(nameof(DisplayName))]
 		public string? Nickname { get; set; }
 
-		[AlsoNotifyFor(nameof(ActorMemory.IsOverworldActor), nameof(ActorMemory.CanRefresh))]
-		public bool IsGPoseActor { get; private set; } = false;
+		[DependsOn(nameof(ObjectIndex))]
+		public bool IsGPoseActor => this.ObjectIndex >= 200 && this.ObjectIndex < 244;
 
-		[AlsoNotifyFor(nameof(IsGPoseActor))]
+		[DependsOn(nameof(IsGPoseActor))]
 		public bool IsOverworldActor => !this.IsGPoseActor;
 
-		[AlsoNotifyFor(nameof(IsGPoseActor))]
+		[DependsOn(nameof(IsOverworldActor))]
 		public bool CanRefresh
 		{
 			get
@@ -76,17 +76,6 @@ namespace Anamnesis.Memory
 
 				return name;
 			}
-		}
-
-		public void SetAddress(IntPtr address, bool isGPose)
-		{
-			this.IsGPoseActor = isGPose;
-			base.SetAddress(address);
-		}
-
-		public override void SetAddress(IntPtr address)
-		{
-			throw new InvalidOperationException("Use isGPose override");
 		}
 
 		/// <summary>

@@ -30,7 +30,7 @@ namespace Anamnesis
 		public static event PinnedEvent? ActorUnPinned;
 
 		public ActorBasicMemory PlayerTarget { get; private set; } = new();
-		public bool IsPlayerTargetPinnable => this.PlayerTarget.Address != IntPtr.Zero && ActorType.IsActorTypeSupported(this.PlayerTarget.ObjectKind);
+		public bool IsPlayerTargetPinnable => this.PlayerTarget.Address != IntPtr.Zero && this.PlayerTarget.ObjectKind.IsSupportedType();
 		public ActorMemory? SelectedActor { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
 
@@ -39,7 +39,7 @@ namespace Anamnesis
 			if (basicActor.Address == IntPtr.Zero)
 				return;
 
-			if (!ActorType.IsActorTypeSupported(basicActor.ObjectKind))
+			if (!basicActor.ObjectKind.IsSupportedType())
 			{
 				Log.Warning($"You cannot pin actor of type: {basicActor.ObjectKind}");
 				return;
@@ -58,7 +58,7 @@ namespace Anamnesis
 				}
 
 				ActorMemory memory = new();
-				memory.SetAddress(basicActor.Address, basicActor.IsGPoseActor);
+				memory.SetAddress(basicActor.Address);
 				PinnedActor pined = new PinnedActor(memory);
 
 				Log.Information($"Pinning actor: {pined}");
@@ -134,7 +134,7 @@ namespace Anamnesis
 				try
 				{
 					ActorBasicMemory actor = new();
-					actor.SetAddress(ptr, i >= 200 && i < 250);
+					actor.SetAddress(ptr);
 					results.Add(actor);
 				}
 				catch (Exception ex)
@@ -164,6 +164,20 @@ namespace Anamnesis
 		public static bool IsActorInActorTable(IntPtr pointer)
 		{
 			return GetActorTableIndex(pointer) != -1;
+		}
+
+		public static List<IntPtr> GetActorTable()
+		{
+			List<IntPtr> results = new();
+
+			for (int i = 0; i < 424; i++)
+			{
+				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
+				if(ptr != IntPtr.Zero)
+					results.Add(ptr);
+			}
+
+			return results;
 		}
 
 		public static void SetPlayerTarget(PinnedActor actor)
@@ -218,7 +232,7 @@ namespace Anamnesis
 					}
 					else
 					{
-						this.PlayerTarget.SetAddress(currentPlayerTargetPtr, false);
+						this.PlayerTarget.SetAddress(currentPlayerTargetPtr);
 					}
 
 					this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
@@ -539,7 +553,7 @@ namespace Anamnesis
 						if (this.Memory != null)
 						{
 							////this.Memory.Address = newBasic.Address;
-							this.Memory.SetAddress(newBasic.Address, newBasic.IsGPoseActor);
+							this.Memory.SetAddress(newBasic.Address);
 
 							try
 							{
@@ -555,7 +569,7 @@ namespace Anamnesis
 						else
 						{
 							this.Memory = new ActorMemory();
-							this.Memory.SetAddress(newBasic.Address, newBasic.IsGPoseActor);
+							this.Memory.SetAddress(newBasic.Address);
 						}
 
 						IntPtr? oldPointer = this.Pointer;

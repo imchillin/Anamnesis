@@ -129,11 +129,15 @@ namespace Anamnesis.Styles.Drawers
 			}
 		}
 
-		public static void Show<TView, TValue>(TValue? current, Action<TValue> changed)
+		public static void Show<TView, TValue>(TValue? current, Action<TValue> changed, Action<TView>? setup = null)
 			where TView : ISelectorView
 			where TValue : class
 		{
-			ISelectorView view = Activator.CreateInstance<TView>();
+			TView view = Activator.CreateInstance<TView>();
+
+			if (setup != null)
+				setup(view);
+
 			Show(view, current, changed);
 		}
 

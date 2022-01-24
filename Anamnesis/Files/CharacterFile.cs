@@ -265,14 +265,6 @@ namespace Anamnesis.Files
 						await actor.RefreshAsync();
 					}
 				}
-				else
-				{
-					if (actor.ObjectKind != ActorTypes.Player && actor.ObjectKind != ActorTypes.BattleNpc && actor.ObjectKind != ActorTypes.EventNpc)
-					{
-						actor.ObjectKind = ActorTypes.Player;
-						await actor.RefreshAsync();
-					}
-				}
 
 				if (!string.IsNullOrEmpty(this.Nickname))
 					actor.Nickname = this.Nickname;

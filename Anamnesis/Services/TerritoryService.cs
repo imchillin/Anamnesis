@@ -13,10 +13,14 @@ namespace Anamnesis
 	using Anamnesis.Services;
 	using PropertyChanged;
 
+	public delegate void TerritoryEvent();
+
 	[AddINotifyPropertyChangedInterface]
 	public class TerritoryService : ServiceBase<TerritoryService>
 	{
 		private ushort currentWeatherId;
+
+		public static event TerritoryEvent? TerritoryChanged;
 
 		public uint CurrentTerritoryId { get; private set; }
 		public string CurrentTerritoryName { get; private set; } = "Unknown";
@@ -85,6 +89,8 @@ namespace Anamnesis
 								this.CurrentTerritory = GameDataService.Territories.Get(this.CurrentTerritoryId);
 								this.CurrentTerritoryName = this.CurrentTerritory?.Place + " (" + this.CurrentTerritory?.Region + ")";
 							}
+
+							TerritoryChanged?.Invoke();
 						}
 
 						// Update weather
