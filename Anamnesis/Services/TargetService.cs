@@ -166,6 +166,20 @@ namespace Anamnesis
 			return GetActorTableIndex(pointer) != -1;
 		}
 
+		public static List<IntPtr> GetActorTable()
+		{
+			List<IntPtr> results = new();
+
+			for (int i = 0; i < 424; i++)
+			{
+				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
+				if(ptr != IntPtr.Zero)
+					results.Add(ptr);
+			}
+
+			return results;
+		}
+
 		public static void SetPlayerTarget(PinnedActor actor)
 		{
 			if (actor.IsValid)
