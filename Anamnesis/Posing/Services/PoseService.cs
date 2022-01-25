@@ -171,18 +171,17 @@ namespace Anamnesis.PoseModule
 			if (enabled && !GposeService.Instance.IsGpose)
 				throw new Exception("Attempt to enable posing outside of gpose");
 
-			// We should ensure these are what we want as something external could have toggled them (like anim control)
-			this.FreezePositions = false;
-			this.FreezeScale = false;
-			this.EnableParenting = true;
-			this.FreezeWorldPosition = enabled;
-			this.FreezePhysics = enabled;
-			this.FreezeRotation = enabled;
+			this.FreezeWorldPosition = enabled; // This one can be toggled externally so we always set it
 
 			if (this.isEnabled == enabled)
 				return;
 
 			this.isEnabled = enabled;
+			this.FreezePhysics = enabled;
+			this.FreezeRotation = enabled;
+			this.FreezePositions = false;
+			this.FreezeScale = false;
+			this.EnableParenting = true;
 
 			EnabledChanged?.Invoke(enabled);
 
