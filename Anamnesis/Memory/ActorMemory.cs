@@ -170,7 +170,7 @@ namespace Anamnesis.Memory
 
 		public bool CanHasNpcFace()
 		{
-			int index = TargetService.GetActorTableIndex(this.Address);
+			int index = ActorService.Instance.GetActorTableIndex(this.Address);
 
 			// only the local player should get npc faces!
 			if (index != 0)
