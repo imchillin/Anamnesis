@@ -66,10 +66,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Data\ModelList.json" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <EmbeddedResource Include="Posing\LegacyBoneNameConverter.cs" />
 	</ItemGroup>
 

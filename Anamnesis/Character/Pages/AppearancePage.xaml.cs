@@ -202,18 +202,7 @@ namespace Anamnesis.Character.Pages
 				Task.Run(() => this.ApplyNpc(npc, mode));
 			});
 		}
-
-		private void OnLoadObjectClicked(object sender, RoutedEventArgs e)
-		{
-			SelectorDrawer.Show<ModelListSelector, ModelListEntry>(null, (npc) =>
-			{
-				if (npc == null)
-					return;
-
-				Task.Run(() => this.ApplyNpc(npc, CharacterFile.SaveModes.Appearance));
-			});
-		}
-
+    
 		private async Task ApplyNpc(INpcBase? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
 		{
 			if (this.Actor == null || npc == null)
