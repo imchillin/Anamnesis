@@ -46,7 +46,7 @@ namespace Anamnesis
 
 			List<ActorBasicMemory> results = new();
 
-			foreach(var ptr in this.ActorTable)
+			foreach(var ptr in this.actorTable)
 			{
 				if (ptr == IntPtr.Zero)
 					continue;
