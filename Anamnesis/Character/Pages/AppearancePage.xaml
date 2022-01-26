@@ -119,7 +119,7 @@
 											Icon="Horse" />
 					</GroupBox.Header>
 
-					<Grid Margin="0,-6,0,0">
+					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition />
@@ -196,7 +196,7 @@
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
 						
-						<StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1">
+						<StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1" Margin="0, 6, 0, 0">
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Mount}" SubActorType="Mount" Margin="3,0"/>
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Companion}" SubActorType="Companion" Margin="3,0"/>
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Ornament}" SubActorType="Ornament" Margin="3,0"/>
@@ -215,7 +215,7 @@
 												Icon="GraduationCap" />
 						</GroupBox.Header>
 
-						<views:CharacterModelEditor DataContext="{Binding Actor}" Margin="0, -4"/>
+						<views:CharacterModelEditor DataContext="{Binding Actor}"/>
 					</GroupBox>
 				</Grid>
 
@@ -226,7 +226,7 @@
 											Icon="UserCog" />
 					</GroupBox.Header>
 
-					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}" Margin="0, 0, 0, -4"/>
+					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}"/>
 
 				</GroupBox>
 			</StackPanel>

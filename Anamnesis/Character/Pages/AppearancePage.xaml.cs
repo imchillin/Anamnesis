@@ -202,7 +202,7 @@ namespace Anamnesis.Character.Pages
 				Task.Run(() => this.ApplyNpc(npc, mode));
 			});
 		}
-    
+
 		private async Task ApplyNpc(INpcBase? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
 		{
 			if (this.Actor == null || npc == null)
