@@ -16,7 +16,7 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		
-		<Grid Grid.Row="0" Margin="6" IsEnabled="{Binding Filter.TypesLocked, Converter={StaticResource NotConverter}}">
+		<Grid Grid.Row="0" Margin="6" Visibility="{Binding Filter.TypesLocked, Converter={StaticResource !B2V}}">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
 				<RowDefinition/>
