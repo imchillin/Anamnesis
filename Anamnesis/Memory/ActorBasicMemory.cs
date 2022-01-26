@@ -96,7 +96,7 @@ namespace Anamnesis.Memory
 
 			this.owner = null;
 
-			List<ActorBasicMemory>? actors = TargetService.GetAllActors();
+			List<ActorBasicMemory>? actors = ActorService.Instance.GetAllActors();
 
 			foreach(ActorBasicMemory actor in actors)
 			{

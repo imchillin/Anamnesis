@@ -74,7 +74,7 @@ namespace Anamnesis.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.Selector.AddItems(TargetService.GetAllActors());
+			this.Selector.AddItems(ActorService.Instance.GetAllActors());
 			this.Selector.FilterItems();
 		}
 
