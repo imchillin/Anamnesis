@@ -59,7 +59,7 @@ namespace Anamnesis.Character.Views
 			if (GameDataService.Emotes != null)
 				this.Selector.AddItems(GameDataService.Emotes);
 
-			if (GameDataService.ModelList != null)
+			if (GameDataService.ActionTimelines != null)
 				this.Selector.AddItems(GameDataService.ActionTimelines);
 
 			return Task.CompletedTask;

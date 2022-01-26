@@ -38,10 +38,6 @@ namespace Anamnesis.Character
 			{
 				t = 'M';
 			}
-			else if (type == typeof(ModelListEntry))
-			{
-				t = 'F';
-			}
 			else
 			{
 				throw new Exception($"Unknown Npc Type: {type}");
@@ -70,7 +66,6 @@ namespace Anamnesis.Character
 					'E' => GameDataService.EventNPCs.Get(key),
 					'C' => GameDataService.Companions.Get(key),
 					'M' => GameDataService.Mounts.Get(key),
-					'F' => GameDataService.ModelList.Get(key),
 					_ => throw new Exception($"Unrecognized Npc type key: {t}"),
 				};
 			}

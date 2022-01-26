@@ -249,7 +249,9 @@
 			</StackPanel>
 
 			<StackPanel Orientation="Vertical" Grid.Row="1">
-				<Menu Style="{StaticResource AnaMenu}" Margin="0,3, 0, 2"  HorizontalAlignment="Right">
+				<Menu Grid.Row="1"
+				  Margin="0,3, 3, 4"
+				  Style="{StaticResource AnaMenu}">
 
 					<MenuItem Header="Common_OpenFile"
 						  Icon="FolderOpen"
@@ -301,22 +303,12 @@
 							  Click="OnLoadNpcWeaponsClicked" />
 					</MenuItem>
 
-					<MenuItem Style="{StaticResource ButtonMenuItem}"
-							  Header="Character_Appearance_LoadObject"
-							  Icon="MugHot"
-							  Margin="-1,0,3,0"
-							 Click="OnLoadObjectClicked">
-					</MenuItem>
-
-
+					<MenuItem Header="Common_SaveFile"
+						  Icon="Save"
+						  Style="{StaticResource ButtonMenuItem}"
+						  Click="OnSaveClicked" />
 				</Menu>
-
-                <MenuItem Header="Common_SaveFile"
-                          Icon="Save"
-                          Margin="2, 3, 3, 4"
-                          Style="{StaticResource ButtonMenuItem}"
-                          Click="OnSaveClicked" />
-            </StackPanel>
+			</StackPanel>
 
 			
 
