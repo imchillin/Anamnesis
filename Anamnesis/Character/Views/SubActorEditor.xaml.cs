@@ -4,6 +4,7 @@
 namespace Anamnesis.Character.Views
 {
 	using System;
+	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
@@ -15,6 +16,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
+	using XivToolsWpf;
 	using XivToolsWpf.DependencyProperties;
 
 	/// <summary>
@@ -23,7 +25,7 @@ namespace Anamnesis.Character.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class SubActorEditor : UserControl
 	{
-		public static readonly IBind<ActorMemory?> ActorDp = Binder.Register<ActorMemory?, SubActorEditor>(nameof(Actor), BindMode.OneWay);
+		public static readonly IBind<ActorMemory?> ActorDp = Binder.Register<ActorMemory?, SubActorEditor>(nameof(Actor), OnActorChanged, BindMode.OneWay);
 		public static readonly IBind<ActorMemory?> SubActorDp = Binder.Register<ActorMemory?, SubActorEditor>(nameof(SubActor), OnChanged, BindMode.TwoWay);
 		public static readonly IBind<Types> TypeDp = Binder.Register<Types, SubActorEditor>(nameof(SubActorType), OnTypeChanged);
 
@@ -82,17 +84,35 @@ namespace Anamnesis.Character.Views
 		public ImageSource? IconSource { get; set; }
 		public string TypeKey => "SubActor_" + this.SubActorType;
 
-		private static void OnChanged(SubActorEditor sender, ActorMemory? value)
+		private static void OnActorChanged(SubActorEditor sender, ActorMemory? oldValue, ActorMemory? newValue)
 		{
-			if (value == null || sender.Actor == null)
+			if (oldValue != null)
+			{
+				oldValue.PropertyChanged -= sender.OnActorPropertyChanged;
+			}
+
+			if (newValue != null)
+			{
+				newValue.PropertyChanged += sender.OnActorPropertyChanged;
+			}
+		}
+
+		private static void OnChanged(SubActorEditor sender, ActorMemory? oldValue, ActorMemory? newValue)
+		{
+			if (oldValue != null)
+				oldValue.PropertyChanged -= sender.OnActorPropertyChanged;
+
+			if (newValue == null || sender.Actor == null)
 			{
 				sender.Npc = null;
 				return;
 			}
 
+			newValue.PropertyChanged += sender.OnActorPropertyChanged;
+
 			if (sender.SubActorType == Types.Companion)
 			{
-				sender.Npc = GameDataService.Companions.GetRow(value.DataId);
+				sender.Npc = GameDataService.Companions.GetRow(newValue.DataId);
 			}
 			else if (sender.SubActorType == Types.Mount)
 			{
@@ -118,6 +138,17 @@ namespace Anamnesis.Character.Views
 			catch (Exception ex)
 			{
 				throw new Exception($"Failed to get icon for sub actor type: {value}", ex);
+			}
+		}
+
+		private async void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(ActorMemory.MountId)
+				|| e.PropertyName == nameof(ActorMemory.CharacterModeInput)
+				|| e.PropertyName == nameof(ActorMemory.DataId))
+			{
+				await Dispatch.MainThread();
+				OnChanged(this, this.SubActor, this.SubActor);
 			}
 		}
 
