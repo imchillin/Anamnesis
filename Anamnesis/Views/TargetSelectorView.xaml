@@ -17,6 +17,7 @@
 	<Grid x:Name="ContentArea">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto"/>
 			<RowDefinition />
 		</Grid.RowDefinitions>
@@ -34,12 +35,24 @@
 			<CheckBox Margin="6,0" IsChecked="{Binding IncludeNPCs}">
 				<XivToolsWpf:TextBlock Key="Target_Npc" />
 			</CheckBox>
+		</StackPanel>
+
+		<StackPanel
+			Grid.Row="1"
+			Margin="4,6,4,0"
+			Orientation="Horizontal">
+			<CheckBox Margin="6,0" IsChecked="{Binding IncludeMounts}">
+				<XivToolsWpf:TextBlock Key="Target_Mounts" />
+			</CheckBox>
+			<CheckBox Margin="6,0" IsChecked="{Binding IncludeOrnaments}">
+				<XivToolsWpf:TextBlock Key="Target_Ornaments" />
+			</CheckBox>
 			<CheckBox Margin="6,0" IsChecked="{Binding IncludeOther}">
 				<XivToolsWpf:TextBlock Key="Target_Other" />
 			</CheckBox>
 		</StackPanel>
 
-		<Grid Grid.Row="1">
+		<Grid Grid.Row="2">
 
 			<Button Click="OnAddPlayerTargetActorClicked"
 					IsEnabled="{Binding TargetService.IsPlayerTargetPinnable}"
@@ -57,7 +70,7 @@
 
 		<cm3Drawers:SelectorDrawer
 			x:Name="Selector"
-			Grid.Row="2"
+			Grid.Row="3"
 			Close="OnClose"
 			Filter="OnFilter"
 			Sort="OnSort"
