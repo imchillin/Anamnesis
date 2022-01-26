@@ -22,6 +22,8 @@ namespace Anamnesis.Views
 		private static bool includePlayers = true;
 		private static bool includeCompanions = true;
 		private static bool includeNPCs = true;
+		private static bool includeMounts = true;
+		private static bool includeOrnaments = true;
 		private static bool includeOther = false;
 
 		public TargetSelectorView()
@@ -56,6 +58,18 @@ namespace Anamnesis.Views
 			set => includeNPCs = value;
 		}
 
+		public bool IncludeMounts
+		{
+			get => includeMounts;
+			set => includeMounts = value;
+		}
+
+		public bool IncludeOrnaments
+		{
+			get => includeOrnaments;
+			set => includeOrnaments = value;
+		}
+
 		public bool IncludeOther
 		{
 			get => includeOther;
@@ -74,7 +88,7 @@ namespace Anamnesis.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			this.Selector.AddItems(TargetService.GetAllActors());
+			this.Selector.AddItems(ActorService.Instance.GetAllActors());
 			this.Selector.FilterItems();
 		}
 
@@ -94,6 +108,12 @@ namespace Anamnesis.Views
 		{
 			if (a is ActorBasicMemory actorA && b is ActorBasicMemory actorB)
 			{
+				if (actorA.IsGPoseActor && !actorB.IsGPoseActor)
+					return -1;
+
+				if (!actorA.IsGPoseActor && actorB.IsGPoseActor)
+					return 1;
+
 				return actorA.DistanceFromPlayer.CompareTo(actorB.DistanceFromPlayer);
 			}
 
@@ -119,6 +139,12 @@ namespace Anamnesis.Views
 				if (!includeCompanions && actor.ObjectKind == Memory.ActorTypes.Companion)
 					return false;
 
+				if (!includeMounts && actor.ObjectKind == Memory.ActorTypes.Mount)
+					return false;
+
+				if (!includeOrnaments && actor.ObjectKind == Memory.ActorTypes.Ornament)
+					return false;
+
 				if (!includeNPCs && (actor.ObjectKind == Memory.ActorTypes.BattleNpc || actor.ObjectKind == Memory.ActorTypes.EventNpc))
 					return false;
 
@@ -126,7 +152,9 @@ namespace Anamnesis.Views
 					&& actor.ObjectKind != Memory.ActorTypes.Player
 					&& actor.ObjectKind != Memory.ActorTypes.Companion
 					&& actor.ObjectKind != Memory.ActorTypes.BattleNpc
-					&& actor.ObjectKind != Memory.ActorTypes.EventNpc)
+					&& actor.ObjectKind != Memory.ActorTypes.EventNpc
+					&& actor.ObjectKind != Memory.ActorTypes.Mount
+					&& actor.ObjectKind != Memory.ActorTypes.Ornament)
 				{
 					return false;
 				}

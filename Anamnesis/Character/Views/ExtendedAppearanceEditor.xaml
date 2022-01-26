@@ -51,8 +51,8 @@
 			<ana:RgbColorControl Grid.Row="0" Grid.Column="2" Value="{Binding SkinColor}" ToolTip="Skin Color"/>
 			<ana:RgbColorControl Grid.Row="0" Grid.Column="3" Value="{Binding SkinGloss}" ToolTip="Skin Glow Color"/>
 
-			<XivToolsWpf:TextBlock Grid.Row="1" Grid.Column="1" Key="Character_ExAppearance_Lips" Style="{StaticResource Label}"/>
-			<ana:RgbaColorControl Grid.Row="1" Grid.Column="2" Value="{Binding MouthColor}" ToolTip="Lips Color"/>
+			<XivToolsWpf:TextBlock Grid.Row="0" Grid.Column="5" Key="Character_ExAppearance_Lips" Style="{StaticResource Label}"/>
+			<ana:RgbaColorControl Grid.Row="0" Grid.Column="6" Value="{Binding MouthColor}" ToolTip="Lips Color"/>
 
 			<XivToolsWpf:TextBlock Grid.Row="2" Grid.Column="1" Key="Character_ExAppearance_Eyes" Style="{StaticResource Label}"/>
 			<ana:RgbColorControl Grid.Row="2" Grid.Column="2" ToolTip="Left Eye Color" Value="{Binding LeftEyeColor}"/>

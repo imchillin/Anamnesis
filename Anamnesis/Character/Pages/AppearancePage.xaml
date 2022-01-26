@@ -54,36 +54,6 @@
 							VerticalAlignment="Top"
 							Orientation="Horizontal">
 
-					<Button Click="OnChangeCompanionClicked"
-							Style="{StaticResource TransparentIconButton}"
-							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}"
-							IsEnabled="{Binding Actor.HasCompanion}"
-							>
-
-						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
-									  Icon="Cat" />
-					</Button>
-
-					<Button Click="OnChangeMountClicked"
-							Style="{StaticResource TransparentIconButton}"
-							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}"
-							IsEnabled="{Binding Actor.IsMounted}"
-							>
-
-						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
-									  Icon="Horse" />
-					</Button>
-
-					<Button Click="OnChangeOrnamentClicked"
-							Style="{StaticResource TransparentIconButton}"
-							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}"
-							IsEnabled="{Binding Actor.IsUsingOrnament}"
-							>
-
-						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
-									  Icon="PiedPiperHat" />
-					</Button>
-
 					<Button Click="OnRaceGearClicked"
 							Style="{StaticResource TransparentIconButton}"
 							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
@@ -161,6 +131,7 @@
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
+							<RowDefinition />
 						</Grid.RowDefinitions>
 
 						<XivToolsWpf:TextBlock Key="Character_Actor_Nickname"
@@ -220,6 +191,18 @@
 											   Value="{Binding Actor.Transparency}" />
 
 
+						<XivToolsWpf:TextBlock Key="SubActor_Title"
+											   Grid.Row="5"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+						
+						<StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1">
+							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Mount}" SubActorType="Mount" Margin="3,0"/>
+							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Companion}" SubActorType="Companion" Margin="3,0"/>
+							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Ornament}" SubActorType="Ornament" Margin="3,0"/>
+						</StackPanel>
+
+
 					</Grid>
 
 				</GroupBox>
@@ -232,7 +215,7 @@
 												Icon="GraduationCap" />
 						</GroupBox.Header>
 
-						<views:CharacterModelEditor DataContext="{Binding Actor}" />
+						<views:CharacterModelEditor DataContext="{Binding Actor}" Margin="0, -4"/>
 					</GroupBox>
 				</Grid>
 
@@ -243,7 +226,7 @@
 											Icon="UserCog" />
 					</GroupBox.Header>
 
-					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}" />
+					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}" Margin="0, 0, 0, -4"/>
 
 				</GroupBox>
 			</StackPanel>

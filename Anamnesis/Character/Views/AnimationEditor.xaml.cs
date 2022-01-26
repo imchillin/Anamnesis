@@ -13,12 +13,13 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
+	using Anamnesis.Utils;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
 	public partial class AnimationEditor : UserControl
 	{
-		private readonly Dictionary<ActorMemory, AnimationOverride> activeOverrides = new();
+		private readonly Dictionary<ActorRef<ActorMemory>, AnimationOverride> activeOverrides = new();
 
 		public AnimationEditor()
 		{
@@ -29,7 +30,7 @@ namespace Anamnesis.Character.Views
 		public PoseService PoseService => PoseService.Instance;
 		public GposeService GposeService => GposeService.Instance;
 
-		public ActorMemory? Actor { get; private set; }
+		public ActorRef<ActorMemory>? ActorRef { get; private set; }
 		public AnimationService AnimationService => AnimationService.Instance;
 		public ushort AnimationId { get; set; } = 8047;
 		public float AnimationSpeed { get; set; } = 1.0f;
@@ -38,11 +39,11 @@ namespace Anamnesis.Character.Views
 		{
 			if (this.DataContext is ActorMemory actor)
 			{
-				this.Actor = actor;
+				this.ActorRef = new ActorRef<ActorMemory>(actor);
 			}
 			else
 			{
-				this.Actor = null;
+				this.ActorRef = null;
 			}
 
 			this.RefreshUI();
@@ -50,13 +51,13 @@ namespace Anamnesis.Character.Views
 
 		private void RefreshUI()
 		{
-			this.activeOverrides.Where((i) => i.Key.Address == IntPtr.Zero || !TargetService.IsActorInActorTable(i.Key.Address)).ToList().ForEach((i) => this.activeOverrides.Remove(i.Key));
+			this.activeOverrides.Where((i) => i.Key.IsValid).ToList().ForEach((i) => this.activeOverrides.Remove(i.Key));
 
 			AnimationOverride? animOverride = null;
 
-			if (this.Actor != null)
+			if (this.ActorRef != null)
 			{
-				this.activeOverrides.TryGetValue(this.Actor, out animOverride);
+				this.activeOverrides.TryGetValue(this.ActorRef, out animOverride);
 			}
 
 			this.AnimationId = animOverride?.AnimationId ?? 8047;
@@ -77,18 +78,18 @@ namespace Anamnesis.Character.Views
 
 		private void OnDrawWeaponClicked(object sender, RoutedEventArgs e)
 		{
-			if (this.Actor == null)
+			if (this.ActorRef == null)
 				return;
 
-			this.AnimationService.DrawWeapon(this.Actor);
+			this.AnimationService.DrawWeapon(this.ActorRef);
 		}
 
 		private void OnIdleCharacterClicked(object sender, RoutedEventArgs e)
 		{
-			if (this.Actor == null)
+			if (this.ActorRef == null)
 				return;
 
-			this.AnimationService.IdleCharacter(this.Actor);
+			this.AnimationService.IdleCharacter(this.ActorRef);
 		}
 
 		private void OnPlayClicked(object? sender, RoutedEventArgs? e) => this.ApplyCurrentAnimation(true);
@@ -97,15 +98,15 @@ namespace Anamnesis.Character.Views
 
 		private void OnPauseClicked(object? sender, RoutedEventArgs? e)
 		{
-			if (this.Actor == null)
+			if (this.ActorRef == null)
 				return;
 
-			this.AnimationService.TogglePaused(this.Actor, this.AnimationSpeed);
+			this.AnimationService.TogglePaused(this.ActorRef, this.AnimationSpeed);
 		}
 
 		private void ApplyCurrentAnimation(bool interrupt)
 		{
-			if (this.Actor == null)
+			if (this.ActorRef == null || !this.ActorRef.IsValid)
 				return;
 
 			AnimationOverride animOverride = new()
@@ -114,16 +115,16 @@ namespace Anamnesis.Character.Views
 				AnimationSpeed = this.AnimationSpeed,
 			};
 
-			this.AnimationService.PlayAnimation(this.Actor, animOverride.AnimationId, animOverride.AnimationSpeed, interrupt);
-			this.activeOverrides[this.Actor] = animOverride;
+			this.AnimationService.PlayAnimation(this.ActorRef, animOverride.AnimationId, animOverride.AnimationSpeed, interrupt);
+			this.activeOverrides[this.ActorRef] = animOverride;
 		}
 
 		private void OnResetClicked(object sender, RoutedEventArgs e)
 		{
-			if (this.Actor == null)
+			if (this.ActorRef == null)
 				return;
 
-			this.AnimationService.ResetAnimationOverride(this.Actor);
+			this.AnimationService.ResetAnimationOverride(this.ActorRef);
 		}
 
 		public class AnimationOverride

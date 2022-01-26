@@ -55,6 +55,7 @@ namespace Anamnesis.Services
 			await Add<ViewService>();
 			await Add<MemoryService>();
 			await Add<AddressService>();
+			await Add<ActorService>();
 			await Add<TargetService>();
 			await Add<FileService>();
 			await Add<TerritoryService>();
