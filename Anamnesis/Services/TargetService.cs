@@ -120,66 +120,6 @@ namespace Anamnesis
 			return GetPinned(actor) != null;
 		}
 
-		public static List<ActorBasicMemory> GetAllActors()
-		{
-			List<ActorBasicMemory> results = new();
-
-			for (int i = 0; i < 424; i++)
-			{
-				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
-
-				if (ptr == IntPtr.Zero)
-					continue;
-
-				try
-				{
-					ActorBasicMemory actor = new();
-					actor.SetAddress(ptr);
-					results.Add(actor);
-				}
-				catch (Exception ex)
-				{
-					Log.Warning(ex, $"Failed to create Actor Basic View Model for address: {ptr}");
-				}
-			}
-
-			return results;
-		}
-
-		public static int GetActorTableIndex(IntPtr pointer)
-		{
-			for (int i = 0; i < 424; i++)
-			{
-				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
-
-				if (ptr == pointer)
-				{
-					return i;
-				}
-			}
-
-			return -1;
-		}
-
-		public static bool IsActorInActorTable(IntPtr pointer)
-		{
-			return GetActorTableIndex(pointer) != -1;
-		}
-
-		public static List<IntPtr> GetActorTable()
-		{
-			List<IntPtr> results = new();
-
-			for (int i = 0; i < 424; i++)
-			{
-				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
-				if(ptr != IntPtr.Zero)
-					results.Add(ptr);
-			}
-
-			return results;
-		}
-
 		public static void SetPlayerTarget(PinnedActor actor)
 		{
 			if (actor.IsValid)
@@ -187,7 +127,7 @@ namespace Anamnesis
 				IntPtr? ptr = actor.Pointer;
 				if (ptr != null && ptr != IntPtr.Zero)
 				{
-					if (IsActorInActorTable((IntPtr)ptr))
+					if (ActorService.Instance.IsActorInTable((IntPtr)ptr))
 					{
 						if (GposeService.Instance.IsGpose)
 						{
@@ -253,7 +193,7 @@ namespace Anamnesis
 			{
 				try
 				{
-					List<ActorBasicMemory> allActors = GetAllActors();
+					List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
 
 					foreach (ActorBasicMemory actor in allActors)
 					{
@@ -462,7 +402,7 @@ namespace Anamnesis
 					if (this.Memory == null || this.Memory.Address == IntPtr.Zero)
 						return;
 
-					if (!IsActorInActorTable(this.Memory.Address))
+					if (!ActorService.Instance.IsActorInTable(this.Memory.Address))
 					{
 						Log.Information($"Actor: {this} was not in actor table");
 						this.Retarget();
@@ -510,7 +450,7 @@ namespace Anamnesis
 					ActorBasicMemory? newBasic = null;
 					bool isGPose = GposeService.GetIsGPose();
 
-					List<ActorBasicMemory> allActors = TargetService.GetAllActors();
+					List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
 
 					// Search for an exact match first
 					foreach (ActorBasicMemory actor in allActors)

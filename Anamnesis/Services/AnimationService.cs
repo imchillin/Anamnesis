@@ -10,7 +10,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
-	using Anamnesis.PoseModule;
+	using Anamnesis.Utils;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
@@ -20,7 +20,7 @@ namespace Anamnesis.Services
 		private const ushort DrawWeaponAnimationId = 34;
 		private const ushort IdleAnimationId = 3;
 
-		private readonly ConcurrentDictionary<IntPtr, AnimationState> animationStates = new();
+		private readonly ConcurrentDictionary<ActorRef<ActorMemory>, AnimationState> animationStates = new();
 
 		private NopHookViewModel? animationSpeedHook;
 		private bool speedControlEnabled = false;
@@ -63,95 +63,110 @@ namespace Anamnesis.Services
 			await base.Shutdown();
 		}
 
-		public void DrawWeapon(ActorMemory actor) => this.PlayAnimation(actor, DrawWeaponAnimationId, 1.0f, true);
-		public void IdleCharacter(ActorMemory actor) => this.PlayAnimation(actor, IdleAnimationId, 1.0f, true);
+		public void DrawWeapon(ActorRef<ActorMemory> actor) => this.PlayAnimation(actor, DrawWeaponAnimationId, 1.0f, true);
+		public void IdleCharacter(ActorRef<ActorMemory> actor) => this.PlayAnimation(actor, IdleAnimationId, 1.0f, true);
 
-		public void PlayAnimation(ActorMemory actor, ushort? animationId, float? animationSpeed, bool interrupt)
+		public void PlayAnimation(ActorRef<ActorMemory> actorRef, ushort? animationId, float? animationSpeed, bool interrupt)
 		{
-			var animState = this.GetAnimationState(actor);
+			if (!actorRef.TryGetMemory(out var memory))
+				return;
+
+			var animState = this.GetAnimationState(actorRef);
 
 			if (animState.Status == AnimationState.AnimationStatus.Paused)
-				this.Unpause(actor);
+				this.Unpause(actorRef);
 
 			if (animState.Status == AnimationState.AnimationStatus.Inactive)
 			{
-				animState.OriginalCharacterMode = actor.CharacterMode;
-				animState.OriginalCharacterModeInput = actor.CharacterModeInput;
+				animState.OriginalCharacterMode = memory.CharacterMode;
+				animState.OriginalCharacterModeInput = memory.CharacterModeInput;
 			}
 
 			animState.Status = AnimationState.AnimationStatus.Active;
-			this.ApplyAnimationOverride(actor, animationId, animationSpeed, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
+			this.ApplyAnimationOverride(memory, animationId, animationSpeed, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
 		}
 
-		public void ResetAnimationOverride(ActorMemory actor)
+		public void ResetAnimationOverride(ActorRef<ActorMemory> actorRef)
 		{
-			var animState = this.GetAnimationState(actor);
+			if (!actorRef.TryGetMemory(out var memory))
+				return;
+
+			var animState = this.GetAnimationState(actorRef);
 
 			if (animState.Status == AnimationState.AnimationStatus.Paused)
-				this.Unpause(actor);
+				this.Unpause(actorRef);
 
 			if (animState.Status == AnimationState.AnimationStatus.Active)
 			{
 				ActorMemory.CharacterModes mode = animState.OriginalCharacterMode;
 				byte modeInput = animState.OriginalCharacterModeInput;
 
-				if (!this.CanSafelyApplyMode(actor, mode, modeInput))
+				if (!this.CanSafelyApplyMode(memory, mode, modeInput))
 				{
 					mode = ActorMemory.CharacterModes.Normal;
 					modeInput = 0;
 				}
 
 				animState.Status = AnimationState.AnimationStatus.Inactive;
-				this.ApplyAnimationOverride(actor, 0, 1f, true, mode, modeInput);
+				this.ApplyAnimationOverride(memory, 0, 1f, true, mode, modeInput);
 			}
 		}
 
-		public void TogglePaused(ActorMemory actor, float newSpeed = 1.0f)
+		public void TogglePaused(ActorRef<ActorMemory> actorRef, float newSpeed = 1.0f)
 		{
-			var animState = this.GetAnimationState(actor);
+			if (!actorRef.IsValid)
+				return;
+
+			var animState = this.GetAnimationState(actorRef);
 
 			if (animState.Status == AnimationState.AnimationStatus.Paused)
 			{
-				this.Unpause(actor, newSpeed);
+				this.Unpause(actorRef, newSpeed);
 			}
 			else
 			{
-				this.Pause(actor);
+				this.Pause(actorRef);
 			}
 		}
 
-		public void Unpause(ActorMemory actor, float newSpeed = 1.0f)
+		public void Unpause(ActorRef<ActorMemory> actorRef, float newSpeed = 1.0f)
 		{
-			var animState = this.GetAnimationState(actor);
+			if (!actorRef.TryGetMemory(out var memory))
+				return;
+
+			var animState = this.GetAnimationState(actorRef);
 
 			if (animState.Status == AnimationState.AnimationStatus.Paused)
 			{
 				ActorMemory.CharacterModes mode = animState.PausedCharacterMode;
 				byte modeInput = animState.PausedCharacterModeInput;
 
-				if (!this.CanSafelyApplyMode(actor, mode, modeInput))
+				if (!this.CanSafelyApplyMode(memory, mode, modeInput))
 				{
 					mode = ActorMemory.CharacterModes.Normal;
 					modeInput = 0;
 				}
 
 				animState.Status = animState.PausedStatus;
-				this.ApplyAnimationOverride(actor, null, newSpeed, false, mode, modeInput);
+				this.ApplyAnimationOverride(memory, null, newSpeed, false, mode, modeInput);
 			}
 		}
 
-		public void Pause(ActorMemory actor)
+		public void Pause(ActorRef<ActorMemory> actorRef)
 		{
-			var animState = this.GetAnimationState(actor);
+			if (!actorRef.TryGetMemory(out var memory))
+				return;
+
+			var animState = this.GetAnimationState(actorRef);
 
 			if (animState.Status != AnimationState.AnimationStatus.Paused)
 			{
 				animState.PausedStatus = animState.Status;
-				animState.PausedCharacterMode = actor.CharacterMode;
-				animState.PausedCharacterModeInput = actor.CharacterModeInput;
+				animState.PausedCharacterMode = memory.CharacterMode;
+				animState.PausedCharacterModeInput = memory.CharacterModeInput;
 				animState.Status = AnimationState.AnimationStatus.Paused;
 
-				this.ApplyAnimationOverride(actor, null, 0.0f, false, ActorMemory.CharacterModes.EmoteLoop, 0);
+				this.ApplyAnimationOverride(memory, null, 0.0f, false, ActorMemory.CharacterModes.EmoteLoop, 0);
 			}
 		}
 
@@ -167,14 +182,9 @@ namespace Anamnesis.Services
 
 		private void CleanupAllAnimationOverrides()
 		{
-			var actorTable = TargetService.GetActorTable();
-
-			foreach ((_, var state) in this.animationStates)
+			foreach ((var actorRef, _) in this.animationStates)
 			{
-				if (this.IsValidEntry(state, actorTable))
-				{
-					this.ResetAnimationOverride(state.Actor!);
-				}
+					this.ResetAnimationOverride(actorRef);
 			}
 
 			this.animationStates.Clear();
@@ -182,32 +192,19 @@ namespace Anamnesis.Services
 
 		private void CleanupInvalidOverrides()
 		{
-			var actorTable = TargetService.GetActorTable();
-
-			var stale = this.animationStates.Select(x => x.Value).Where(state => !this.IsValidEntry(state, actorTable)).ToList();
-			foreach (var state in stale)
+			var stale = this.animationStates.Select(x => x.Key).Where(actor => !actor.IsValid).ToList();
+			foreach (var actorRef in stale)
 			{
-				AnimationState? removedState;
-				this.animationStates.TryRemove(state.Address, out removedState);
+				this.animationStates.TryRemove(actorRef, out var removedState);
 			}
 		}
 
 		private void CleanupPaused()
 		{
-			var actorTable = TargetService.GetActorTable();
-
-			foreach ((_, var state) in this.animationStates)
+			foreach ((var actorRef, _) in this.animationStates)
 			{
-				if (this.IsValidEntry(state, actorTable))
-				{
-					this.Unpause(state.Actor!);
-				}
+				this.Unpause(actorRef);
 			}
-		}
-
-		private bool IsValidEntry(AnimationState state, List<IntPtr> actorTable)
-		{
-			return state.Actor != null && state.Actor!.Address != IntPtr.Zero && state.Address == state.Actor!.Address && actorTable.Contains(state.Address) && state.ObjectId == state.Actor.ObjectId;
 		}
 
 		private bool CanSafelyApplyMode(ActorMemory actor, ActorMemory.CharacterModes mode, byte modeInput)
@@ -222,30 +219,30 @@ namespace Anamnesis.Services
 			return true;
 		}
 
-		private void ApplyAnimationOverride(ActorMemory actor, ushort? animationId, float? animationSpeed, bool interrupt, ActorMemory.CharacterModes mode, byte modeInput)
+		private void ApplyAnimationOverride(ActorMemory memory, ushort? animationId, float? animationSpeed, bool interrupt, ActorMemory.CharacterModes mode, byte modeInput)
 		{
-			if (this.SpeedControlEnabled && animationSpeed != null && actor.AnimationSpeed != animationSpeed)
+			if (this.SpeedControlEnabled && animationSpeed != null && memory.AnimationSpeed != animationSpeed)
 			{
-				MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeed)), animationSpeed, "Animation Speed Override");
+				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeed)), animationSpeed, "Animation Speed Override");
 			}
 
-			if (animationId != null && actor.AnimationOverride != animationId)
+			if (animationId != null && memory.AnimationOverride != animationId)
 			{
 				if (animationId < GameDataService.ActionTimelines.RowCount)
 				{
-					MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.AnimationOverride)), animationId, "Animation ID Override");
+					MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.AnimationOverride)), animationId, "Animation ID Override");
 				}
 			}
 
-			MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.CharacterModeInput)), modeInput, "Animation Mode Override"); // Always set the input before the mode
-			MemoryService.Write(actor.GetAddressOfProperty(nameof(ActorMemory.CharacterMode)), mode, "Animation Mode Override");
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeInput)), modeInput, "Animation Mode Override"); // Always set the input before the mode
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterMode)), mode, "Animation Mode Override");
 
 			if (interrupt)
 			{
-				MemoryService.Write<ushort>(actor.GetAddressOfProperty(nameof(ActorMemory.TargetAnimation)), 0, "Animation Interrupt");
+				MemoryService.Write<ushort>(memory.GetAddressOfProperty(nameof(ActorMemory.TargetAnimation)), 0, "Animation Interrupt");
 			}
 
-			actor.Tick();
+			memory.Tick();
 		}
 
 		private void SetSpeedControlEnabled(bool enabled)
@@ -270,20 +267,25 @@ namespace Anamnesis.Services
 
 		private void TerritoryService_TerritoryChanged() => this.CleanupAllAnimationOverrides();
 
-		private AnimationState GetAnimationState(ActorMemory actor)
+		private AnimationState GetAnimationState(ActorRef<ActorMemory> actorRef)
 		{
 			AnimationState animState = new();
 
-			if (this.animationStates.TryAdd(actor.Address, animState))
+			if (this.animationStates.TryAdd(actorRef, animState))
 			{
-				animState.Actor = actor;
-				animState.ObjectId = actor.ObjectId;
-				animState.Address = actor.Address;
-				animState.OriginalCharacterMode = actor.CharacterMode;
-				animState.OriginalCharacterModeInput = actor.CharacterModeInput;
+				if(actorRef.TryGetMemory(out var memory))
+				{
+					animState.OriginalCharacterMode = memory.CharacterMode;
+					animState.OriginalCharacterModeInput = memory.CharacterModeInput;
+				}
+				else
+				{
+					animState.OriginalCharacterMode = ActorMemory.CharacterModes.Normal;
+					animState.OriginalCharacterModeInput = 0;
+				}
 			}
 
-			return this.animationStates[actor.Address];
+			return this.animationStates[actorRef];
 		}
 
 		public class AnimationState
@@ -294,10 +296,6 @@ namespace Anamnesis.Services
 				Active,
 				Paused,
 			}
-
-			public uint ObjectId { get; set; }
-			public IntPtr Address { get; set; }
-			public ActorMemory? Actor { get; set; }
 
 			public AnimationStatus Status { get; set; } = AnimationStatus.Inactive;
 			public ActorMemory.CharacterModes OriginalCharacterMode { get; set; }
