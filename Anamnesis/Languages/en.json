@@ -49,6 +49,11 @@
 	"Target_Other": "Others",
 	"Target_Gpose": "(GPose)",
 
+	"SubActor_Title": "Sub Actors",
+	"SubActor_Mount": "Mount",
+	"SubActor_Companion": "Minion",
+	"SubActor_Ornament": "Fashion Accessory",
+
 	"EquipmentSelector_Classes": "Classes / Jobs",
 	"EquipmentSelector_ShowLocked": "Show race/gender-locked items",
 	"EquipmentSelector_Ambidextrous": "Allow all weapons in either hand",

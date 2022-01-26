@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Anamnesis.Character.Views"
-             mc:Ignorable="d" 
+			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 mc:Ignorable="d" 
              Height="32" Width="32">
 	
     <Grid x:Name="ContentArea">
@@ -18,20 +19,28 @@
 			Style="{DynamicResource TransparentButton}"
 			IsEnabled="{Binding SubActor, Converter={StaticResource NotNullToBoolConverter}}">
 
-			<Grid Visibility="{Binding SubActor, Converter={StaticResource NotNullToVisibilityConverter}}">
-				<Grid>
-					<Image Source="{Binding Npc.Icon, Converter={StaticResource Img}}" Margin="2"/>
-					<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Npc.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+			<Grid>
+				<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="2" Opacity="0.5"/>
+
+				<Grid Visibility="{Binding SubActor, Converter={StaticResource NotNullToVisibilityConverter}}">
+					<Grid>
+						<Image Source="{Binding Npc.Icon, Converter={StaticResource Img}}" Margin="2"/>
+						<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Npc.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+					</Grid>
 				</Grid>
-
-				<Grid.ToolTip>
-					<StackPanel>
-						<TextBlock Text="{Binding Npc.Name}" FontWeight="DemiBold"/>
-						<TextBlock Text="{Binding Npc.Description}" Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
-					</StackPanel>
-				</Grid.ToolTip>
-
 			</Grid>
 		</Button>
+		
+		<Grid.ToolTip>
+			<StackPanel>
+				<xivToolsWpf:TextBlock Key="{Binding TypeKey}" FontWeight="DemiBold"/>
+
+				<StackPanel Visibility="{Binding SubActor, Converter={StaticResource NotNullToVisibilityConverter}}">
+					<TextBlock Text="{Binding Npc.Name}"/>
+					<TextBlock Text="{Binding Npc.Description}" Visibility="{Binding Npc.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+				</StackPanel>
+			</StackPanel>
+		</Grid.ToolTip>
+
 	</Grid>
 </UserControl>

@@ -221,6 +221,11 @@
 											   Value="{Binding Actor.Transparency}" />
 
 
+						<XivToolsWpf:TextBlock Key="SubActor_Title"
+											   Grid.Row="5"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+						
 						<StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1">
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Mount}" SubActorType="Mount" Margin="3,0"/>
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Companion}" SubActorType="Companion" Margin="3,0"/>

@@ -3,9 +3,11 @@
 
 namespace Anamnesis.Character.Views
 {
+	using System;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
+	using System.Windows.Media.Imaging;
 	using Anamnesis.GameData;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
@@ -20,12 +22,14 @@ namespace Anamnesis.Character.Views
 	{
 		public static readonly IBind<ActorMemory?> ActorDp = Binder.Register<ActorMemory?, SubActorEditor>(nameof(Actor), BindMode.OneWay);
 		public static readonly IBind<ActorMemory?> SubActorDp = Binder.Register<ActorMemory?, SubActorEditor>(nameof(SubActor), OnChanged, BindMode.TwoWay);
-		public static readonly IBind<Types> TypeDp = Binder.Register<Types, SubActorEditor>(nameof(SubActorType));
+		public static readonly IBind<Types> TypeDp = Binder.Register<Types, SubActorEditor>(nameof(SubActorType), OnTypeChanged);
 
 		public SubActorEditor()
 		{
 			this.InitializeComponent();
 			this.ContentArea.DataContext = this;
+
+			OnTypeChanged(this, this.SubActorType);
 		}
 
 		public enum Types
@@ -54,6 +58,8 @@ namespace Anamnesis.Character.Views
 		}
 
 		public INpcBase? Npc { get; set; }
+		public ImageSource? IconSource { get; set; }
+		public string TypeKey => "SubActor_" + this.SubActorType;
 
 		private static void OnChanged(SubActorEditor sender, ActorMemory? value)
 		{
@@ -74,6 +80,23 @@ namespace Anamnesis.Character.Views
 			else if (sender.SubActorType == Types.Ornament)
 			{
 				sender.Npc = GameDataService.Ornaments.GetRow(sender.Actor.CharacterModeInput);
+			}
+		}
+
+		private static void OnTypeChanged(SubActorEditor sender, Types value)
+		{
+			try
+			{
+				BitmapImage logo = new BitmapImage();
+				logo.BeginInit();
+				logo.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+				logo.UriSource = new Uri("pack://application:,,,/Anamnesis;component/Assets/Slots/" + value.ToString() + ".png");
+				logo.EndInit();
+				sender.IconSource = logo;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to get icon for sub actor type: {value}", ex);
 			}
 		}
 
