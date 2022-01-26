@@ -116,6 +116,11 @@ namespace Anamnesis.Memory
 					{
 						continue;
 					}
+
+					if (child.ParentBind.Flags.HasFlag(BindFlags.OnlyInGPose) && !GposeService.Instance.IsGpose)
+					{
+						continue;
+					}
 				}
 
 				child.Tick();
