@@ -44,6 +44,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<EventNpc> EventNPCs { get; private set; }
 		public static ExcelSheet<BattleNpc> BattleNPCs { get; private set; }
 		public static ExcelSheet<Mount> Mounts { get; private set; }
+		public static ExcelSheet<MountCustomize> MountCustomize { get; private set; }
 		public static ExcelSheet<Companion> Companions { get; private set; }
 		public static ExcelSheet<Territory> Territories { get; private set; }
 		public static ExcelSheet<Weather> Weathers { get; private set; }
@@ -168,6 +169,7 @@ namespace Anamnesis.Services
 				EventNPCs = GetSheet<EventNpc>();
 				BattleNPCs = GetSheet<BattleNpc>();
 				Mounts = GetSheet<Mount>();
+				MountCustomize = GetSheet<MountCustomize>();
 				Companions = GetSheet<Companion>();
 				Territories = GetSheet<Territory>();
 				Weathers = GetSheet<Weather>();
