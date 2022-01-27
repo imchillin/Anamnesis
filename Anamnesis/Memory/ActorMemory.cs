@@ -5,7 +5,6 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Threading.Tasks;
-	using Anamnesis.Connect;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -122,34 +121,26 @@ namespace Anamnesis.Memory
 
 				this.IsRefreshing = true;
 
-				if (AnamnesisConnectService.IsPenumbraConnected)
+				await Task.Delay(16);
+
+				if (this.ObjectKind == ActorTypes.Player)
 				{
-					AnamnesisConnectService.PenumbraRedraw(this.Name);
-					await Task.Delay(150);
+					this.ObjectKind = ActorTypes.BattleNpc;
+					this.RenderMode = RenderModes.Unload;
+					await Task.Delay(75);
+					this.RenderMode = RenderModes.Draw;
+					await Task.Delay(75);
+					this.ObjectKind = ActorTypes.Player;
+					this.RenderMode = RenderModes.Draw;
 				}
 				else
 				{
-					await Task.Delay(16);
-
-					if (this.ObjectKind == ActorTypes.Player)
-					{
-						this.ObjectKind = ActorTypes.BattleNpc;
-						this.RenderMode = RenderModes.Unload;
-						await Task.Delay(75);
-						this.RenderMode = RenderModes.Draw;
-						await Task.Delay(75);
-						this.ObjectKind = ActorTypes.Player;
-						this.RenderMode = RenderModes.Draw;
-					}
-					else
-					{
-						this.RenderMode = RenderModes.Unload;
-						await Task.Delay(75);
-						this.RenderMode = RenderModes.Draw;
-					}
-
-					await Task.Delay(150);
+					this.RenderMode = RenderModes.Unload;
+					await Task.Delay(75);
+					this.RenderMode = RenderModes.Draw;
 				}
+
+				await Task.Delay(150);
 
 				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}

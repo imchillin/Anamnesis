@@ -5,7 +5,6 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Collections.Generic;
-	using Anamnesis.Connect;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
 	using Anamnesis.Styles;
@@ -49,9 +48,6 @@ namespace Anamnesis.Memory
 			{
 				if (PoseService.Instance.IsEnabled)
 					return false;
-
-				if (AnamnesisConnectService.IsPenumbraConnected)
-					return true;
 
 				return this.IsOverworldActor;
 			}
