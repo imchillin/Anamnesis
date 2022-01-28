@@ -9,6 +9,7 @@ namespace Anamnesis.Character.Views
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Media.Imaging;
+	using Anamnesis.Character.Utilities;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Excel;
@@ -192,29 +193,15 @@ namespace Anamnesis.Character.Views
 
 			if (npc is Mount mount)
 			{
-				if (this.Actor.Mount == null)
-					return;
-
-				this.Actor.MountId = (ushort)mount.RowId;
-				await apFile.Apply(this.Actor.Mount, CharacterFile.SaveModes.All);
-				await this.Actor.RefreshAsync();
+				await SubActorUtility.SwitchMount(this.Actor, mount);
 			}
 			else if (npc is Companion companion)
 			{
-				if (this.Actor.Companion == null)
-					return;
-
-				this.Actor.Companion.DataId = companion.RowId;
-				await apFile.Apply(this.Actor.Companion, CharacterFile.SaveModes.All);
+				await SubActorUtility.SwitchCompanion(this.Actor, companion);
 			}
 			else if (npc is Ornament ornament)
 			{
-				if (this.Actor.Ornament == null)
-					return;
-
-				this.Actor.CharacterModeInput = (byte)ornament.RowId;
-				this.Actor.Ornament.AttachmentPoint = (byte)ornament.AttachPoint;
-				await apFile.Apply(this.Actor.Ornament, CharacterFile.SaveModes.All);
+				await SubActorUtility.SwitchOrnament(this.Actor, ornament);
 			}
 		}
 	}

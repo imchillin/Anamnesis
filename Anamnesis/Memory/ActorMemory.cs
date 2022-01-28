@@ -36,6 +36,7 @@ namespace Anamnesis.Memory
 		}
 
 		[Bind(0x008D)] public byte SubKind { get; set; }
+		[Bind(0x0B4)] public float Scale { get; set; }
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 		[Bind(0x0104)] public RenderModes RenderMode { get; set; }
 		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
