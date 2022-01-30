@@ -17,12 +17,6 @@ namespace Anamnesis.Memory
 
 		private IntPtr? previousObjectKindAddressBeforeGPose;
 
-		public enum RenderModes : int
-		{
-			Draw = 0,
-			Unload = 2,
-		}
-
 		public enum CharacterModes : byte
 		{
 			None = 0,
@@ -38,7 +32,6 @@ namespace Anamnesis.Memory
 		[Bind(0x008D)] public byte SubKind { get; set; }
 		[Bind(0x0B4)] public float Scale { get; set; }
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
-		[Bind(0x0104)] public RenderModes RenderMode { get; set; }
 		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
 		[Bind(0x01E2)] public byte ClassJob { get; set; }
 		[Bind(0x07C4)] public bool IsAnimating { get; set; }

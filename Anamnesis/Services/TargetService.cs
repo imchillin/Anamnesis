@@ -306,6 +306,10 @@ namespace Anamnesis
 		[AddINotifyPropertyChangedInterface]
 		public class PinnedActor : INotifyPropertyChanged
 		{
+			private bool wasGpose = false;
+			private bool wasVisible = false;
+			private bool overworldInGPose = false;
+
 			public PinnedActor(ActorMemory memory)
 			{
 				this.Id = memory.Id;
@@ -409,6 +413,26 @@ namespace Anamnesis
 						return;
 					}
 
+					if (this.wasGpose && GposeService.Instance.IsOverworld)
+					{
+						Log.Information($"Actor: {this} was a gpose actor and we are now in the overworld");
+						this.Retarget();
+						return;
+					}
+
+					if (!this.overworldInGPose && this.Memory.IsHidden && this.wasVisible && !this.wasGpose && GposeService.Instance.IsGpose)
+					{
+						Log.Information($"Actor: {this} was hidden entering the gpose boundary");
+						this.Retarget();
+						return;
+					}
+
+					if(this.Memory.IsOverworldActor)
+					{
+						// If we made it here we may be an overworld actor that was not copied to gpose, we should flag so any future unloads due to changing clothes do not cause us to retarget
+						this.overworldInGPose = GposeService.Instance.IsGpose;
+					}
+
 					try
 					{
 						if (GposeService.Instance.IsChangingState)
@@ -458,9 +482,9 @@ namespace Anamnesis
 						if (actor.Id != this.Id || actor.Address == IntPtr.Zero)
 							continue;
 
-						// Don't consider overworld actors while we are in gpose
-						////if (isGPose && actor.IsOverworldActor)
-						////	continue;
+						// Don't consider hidden actors for retargeting
+						if (actor.IsHidden)
+							continue;
 
 						newBasic = actor;
 						break;
@@ -472,6 +496,10 @@ namespace Anamnesis
 						foreach (ActorBasicMemory actor in allActors)
 						{
 							if (actor.IdNoAddress != this.IdNoAddress || actor.Address == IntPtr.Zero)
+								continue;
+
+							// Don't consider hidden actors for retargeting
+							if(actor.IsHidden)
 								continue;
 
 							// Don't consider overworld actors while we are in gpose
@@ -522,6 +550,8 @@ namespace Anamnesis
 						this.Pointer = this.Memory.Address;
 						this.Kind = this.Memory.ObjectKind;
 						this.ModelType = this.Memory.ModelType;
+						this.wasGpose = this.Memory.IsGPoseActor;
+						this.wasVisible = !this.Memory.IsHidden;
 
 						this.UpdateInitials(this.DisplayName);
 
