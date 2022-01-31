@@ -32,10 +32,11 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 * **[Yuki](https://github.com/Yuki-Walsh)** - *Main development*
 * **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
 * **[Peebs-miqo](https://github.com/Peebs-miqo)** - *Wiki and tip curating* 
+* **[AsgardXIV](https://github.com/AsgardXIV)** - *Animation god*
 
 ## God Tier Contributing Developers
 
-* **[AsgardXIV](https://github.com/AsgardXIV)**
+* **[HoloWise](https://github.com/HoloWise)**
 * **[SoyaX](https://github.com/SoyaX)**
 * **[Reyli](https://github.com/Reyli)**
 
