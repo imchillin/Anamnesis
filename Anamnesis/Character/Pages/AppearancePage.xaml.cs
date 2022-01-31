@@ -10,7 +10,6 @@ namespace Anamnesis.Character.Pages
 	using System.Windows.Controls;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.Character.Views;
-	using Anamnesis.Connect;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Excel;

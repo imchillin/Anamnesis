@@ -31,6 +31,7 @@ namespace Anamnesis.GameData.Excel
 		public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
 		public string Description { get; private set; } = string.Empty;
 		public uint ModelCharaRow { get; private set; }
+		public byte MountCustomizeRow { get; private set; }
 
 		public ImageReference? Icon { get; private set; }
 		public Mod? Mod => null;
@@ -50,6 +51,7 @@ namespace Anamnesis.GameData.Excel
 
 			this.name = parser.ReadString(0);
 			this.ModelCharaRow = (uint)parser.ReadColumn<int>(8);
+			this.MountCustomizeRow = parser.ReadColumn<byte>(16);
 
 			this.equipHead = parser.ReadColumn<int>(25);
 			this.equipBody = parser.ReadColumn<int>(26);

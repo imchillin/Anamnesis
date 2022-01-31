@@ -1,6 +1,3 @@
 [submodule "Lib/XivToolsWpf"]
 	path = Lib/XivToolsWpf
 	url = https://github.com/XIV-Tools/XivToolsWpf
-[submodule "Lib/AnamnesisConnect"]
-	path = Lib/AnamnesisConnect
-	url = https://github.com/XIV-Tools/AnamnesisConnect

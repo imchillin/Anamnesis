@@ -5,7 +5,6 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Threading.Tasks;
-	using Anamnesis.Connect;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -17,12 +16,6 @@ namespace Anamnesis.Memory
 		private Task? refreshTask;
 
 		private IntPtr? previousObjectKindAddressBeforeGPose;
-
-		public enum RenderModes : int
-		{
-			Draw = 0,
-			Unload = 2,
-		}
 
 		public enum CharacterModes : byte
 		{
@@ -37,8 +30,8 @@ namespace Anamnesis.Memory
 		}
 
 		[Bind(0x008D)] public byte SubKind { get; set; }
+		[Bind(0x0B4)] public float Scale { get; set; }
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
-		[Bind(0x0104)] public RenderModes RenderMode { get; set; }
 		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
 		[Bind(0x01E2)] public byte ClassJob { get; set; }
 		[Bind(0x07C4)] public bool IsAnimating { get; set; }
@@ -122,34 +115,26 @@ namespace Anamnesis.Memory
 
 				this.IsRefreshing = true;
 
-				if (AnamnesisConnectService.IsPenumbraConnected)
+				await Task.Delay(16);
+
+				if (this.ObjectKind == ActorTypes.Player)
 				{
-					AnamnesisConnectService.PenumbraRedraw(this.Name);
-					await Task.Delay(150);
+					this.ObjectKind = ActorTypes.BattleNpc;
+					this.RenderMode = RenderModes.Unload;
+					await Task.Delay(75);
+					this.RenderMode = RenderModes.Draw;
+					await Task.Delay(75);
+					this.ObjectKind = ActorTypes.Player;
+					this.RenderMode = RenderModes.Draw;
 				}
 				else
 				{
-					await Task.Delay(16);
-
-					if (this.ObjectKind == ActorTypes.Player)
-					{
-						this.ObjectKind = ActorTypes.BattleNpc;
-						this.RenderMode = RenderModes.Unload;
-						await Task.Delay(75);
-						this.RenderMode = RenderModes.Draw;
-						await Task.Delay(75);
-						this.ObjectKind = ActorTypes.Player;
-						this.RenderMode = RenderModes.Draw;
-					}
-					else
-					{
-						this.RenderMode = RenderModes.Unload;
-						await Task.Delay(75);
-						this.RenderMode = RenderModes.Draw;
-					}
-
-					await Task.Delay(150);
+					this.RenderMode = RenderModes.Unload;
+					await Task.Delay(75);
+					this.RenderMode = RenderModes.Draw;
 				}
+
+				await Task.Delay(150);
 
 				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}
