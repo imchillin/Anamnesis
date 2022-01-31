@@ -3087,10 +3087,14 @@
   "2632": "Limited",
   // Moogle Cap
   "2633": "Limited",
+  // Helm of Light
+  "2634": "Limited",
   // Judge's Chain Coif
   "2635": "Limited",
   // Judge's Goggles
   "2636": "Limited",
+  // Onion Helm
+  "2637": "Limited",
   // Pumpkin Head
   "2638": "Premium, Limited",
   // Unripened Pumpkin Head
@@ -3589,6 +3593,8 @@
   "3695": "Deprecated",
   // Aetherial Felt Dress Gloves
   "3697": "Deprecated",
+  // Hermes' Shoes
+  "3744": "Limited",
   // Judge's Sollerets
   "3745": "Limited",
   // Judge's Thighboots
@@ -3667,6 +3673,70 @@
   "3915": "Deprecated",
   // Aetherial Raptorskin Leg Guards
   "3917": "Deprecated",
+  // Aetherial Brass Wristlets
+  "4096": "Deprecated",
+  // Aetherial Hard Leather Wristbands
+  "4098": "Deprecated",
+  // Aetherial Coral Armillae
+  "4101": "Deprecated",
+  // Aetherial Silver Wristlets
+  "4104": "Deprecated",
+  // Aetherial Goatskin Wristbands
+  "4107": "Deprecated",
+  // Aetherial Sunstone Bracelet
+  "4110": "Deprecated",
+  // Aetherial Danburite Bracelet
+  "4112": "Deprecated",
+  // Aetherial Malachite Bracelet
+  "4114": "Deprecated",
+  // Aetherial Sphene Bracelet
+  "4116": "Deprecated",
+  // Aetherial Fluorite Bracelet
+  "4118": "Deprecated",
+  // Aetherial Lapis Lazuli Bracelet
+  "4120": "Deprecated",
+  // Aetherial Bone Armillae
+  "4122": "Deprecated",
+  // Aetherial Mythril Wristlets
+  "4125": "Deprecated",
+  // Aetherial Boarskin Wristbands
+  "4131": "Deprecated",
+  // Aetherial Garnet Bracelet
+  "4134": "Deprecated",
+  // Aetherial Goshenite Bracelet
+  "4136": "Deprecated",
+  // Aetherial Peridot Bracelet
+  "4138": "Deprecated",
+  // Aetherial Heliodor Bracelet
+  "4140": "Deprecated",
+  // Aetherial Amethyst Bracelet
+  "4142": "Deprecated",
+  // Aetherial Aquamarine Bracelet
+  "4144": "Deprecated",
+  // Aetherial Pearl Bracelet
+  "4146": "Deprecated",
+  // Aetherial Red Coral Armillae
+  "4148": "Deprecated",
+  // Aetherial Electrum Wristlets
+  "4151": "Deprecated",
+  // Aetherial Raptorskin Wristbands
+  "4154": "Deprecated",
+  // Aetherial Rubellite Bracelet
+  "4157": "Deprecated",
+  // Aetherial Zircon Bracelet
+  "4159": "Deprecated",
+  // Aetherial Tourmaline Bracelet
+  "4161": "Deprecated",
+  // Aetherial Amber Bracelet
+  "4163": "Deprecated",
+  // Aetherial Spinel Bracelet
+  "4165": "Deprecated",
+  // Aetherial Turquoise Bracelet
+  "4167": "Deprecated",
+  // Aetherial Black Pearl Bracelet
+  "4169": "Deprecated",
+  // Aetherial Tortoiseshell Armillae
+  "4171": "Deprecated",
   // Voice of the Just
   "4196": "Limited",
   // Moonlet
@@ -3679,6 +3749,54 @@
   "4202": "Limited",
   // Bomb Earrings
   "4203": "Limited",
+  // Aetherial Brass Ear Cuffs
+  "4210": "Deprecated",
+  // Aetherial Sunstone Earrings
+  "4215": "Deprecated",
+  // Aetherial Danburite Earrings
+  "4217": "Deprecated",
+  // Aetherial Malachite Earrings
+  "4219": "Deprecated",
+  // Aetherial Sphene Earrings
+  "4221": "Deprecated",
+  // Aetherial Fluorite Earrings
+  "4223": "Deprecated",
+  // Aetherial Lapis Lazuli Earrings
+  "4225": "Deprecated",
+  // Aetherial Silver Ear Cuffs
+  "4227": "Deprecated",
+  // Aetherial Garnet Earrings
+  "4234": "Deprecated",
+  // Aetherial Goshenite Earrings
+  "4236": "Deprecated",
+  // Aetherial Peridot Earrings
+  "4238": "Deprecated",
+  // Aetherial Heliodor Earrings
+  "4240": "Deprecated",
+  // Aetherial Amethyst Earrings
+  "4242": "Deprecated",
+  // Aetherial Aquamarine Earrings
+  "4244": "Deprecated",
+  // Aetherial Pearl Earrings
+  "4246": "Deprecated",
+  // Aetherial Mythril Ear Cuffs
+  "4248": "Deprecated",
+  // Aetherial Rubellite Earrings
+  "4259": "Deprecated",
+  // Aetherial Zircon Earrings
+  "4261": "Deprecated",
+  // Aetherial Tourmaline Earrings
+  "4263": "Deprecated",
+  // Aetherial Amber Earrings
+  "4265": "Deprecated",
+  // Aetherial Spinel Earrings
+  "4267": "Deprecated",
+  // Aetherial Turquoise Earrings
+  "4269": "Deprecated",
+  // Aetherial Black Pearl Earrings
+  "4271": "Deprecated",
+  // Aetherial Electrum Ear Cuffs
+  "4273": "Deprecated",
   // White Ravens
   "4287": "Limited",
   // Paramour's Pendant
@@ -3687,6 +3805,62 @@
   "4302": "Premium, Limited",
   // Band of Eternal Passion
   "4303": "Premium",
+  // Aetherial Brass Gorget
+  "4310": "Deprecated",
+  // Aetherial Fang Necklace
+  "4312": "Deprecated",
+  // Aetherial Silver Gorget
+  "4316": "Deprecated",
+  // Aetherial Horn Necklace
+  "4318": "Deprecated",
+  // Aetherial Sunstone Choker
+  "4321": "Deprecated",
+  // Aetherial Danburite Choker
+  "4323": "Deprecated",
+  // Aetherial Malachite Choker
+  "4325": "Deprecated",
+  // Aetherial Sphene Choker
+  "4327": "Deprecated",
+  // Aetherial Fluorite Choker
+  "4329": "Deprecated",
+  // Aetherial Lapis Lazuli Choker
+  "4331": "Deprecated",
+  // Aetherial Mythril Gorget
+  "4336": "Deprecated",
+  // Aetherial Wolf Necklace
+  "4338": "Deprecated",
+  // Aetherial Garnet Choker
+  "4340": "Deprecated",
+  // Aetherial Goshenite Choker
+  "4342": "Deprecated",
+  // Aetherial Peridot Choker
+  "4344": "Deprecated",
+  // Aetherial Heliodor Choker
+  "4346": "Deprecated",
+  // Aetherial Amethyst Choker
+  "4348": "Deprecated",
+  // Aetherial Aquamarine Choker
+  "4350": "Deprecated",
+  // Aetherial Pearl Choker
+  "4352": "Deprecated",
+  // Aetherial Electrum Gorget
+  "4362": "Deprecated",
+  // Aetherial Red Coral Necklace
+  "4364": "Deprecated",
+  // Aetherial Rubellite Choker
+  "4366": "Deprecated",
+  // Aetherial Zircon Choker
+  "4368": "Deprecated",
+  // Aetherial Tourmaline Choker
+  "4370": "Deprecated",
+  // Aetherial Amber Choker
+  "4372": "Deprecated",
+  // Aetherial Spinel Choker
+  "4374": "Deprecated",
+  // Aetherial Turquoise Choker
+  "4376": "Deprecated",
+  // Aetherial Black Pearl Choker
+  "4378": "Deprecated",
   // Pristine Egg Ring
   "4404": "Premium, Limited",
   // Midnight Egg Ring
@@ -3727,6 +3901,60 @@
   "4428": "Limited",
   // Ul'dahn Ring
   "4429": "Limited",
+  // Aetherial Brass Ring
+  "4432": "Deprecated",
+  // Aetherial Coral Ring
+  "4434": "Deprecated",
+  // Aetherial Silver Ring
+  "4441": "Deprecated",
+  // Aetherial Sunstone Ring
+  "4443": "Deprecated",
+  // Aetherial Danburite Ring
+  "4445": "Deprecated",
+  // Aetherial Malachite Ring
+  "4447": "Deprecated",
+  // Aetherial Sphene Ring
+  "4449": "Deprecated",
+  // Aetherial Fluorite Ring
+  "4451": "Deprecated",
+  // Aetherial Lapis Lazuli Ring
+  "4453": "Deprecated",
+  // Aetherial Horn Ring
+  "4455": "Deprecated",
+  // Aetherial Mythril Ring
+  "4466": "Deprecated",
+  // Aetherial Garnet Ring
+  "4469": "Deprecated",
+  // Aetherial Goshenite Ring
+  "4471": "Deprecated",
+  // Aetherial Peridot Ring
+  "4473": "Deprecated",
+  // Aetherial Heliodor Ring
+  "4475": "Deprecated",
+  // Aetherial Amethyst Ring
+  "4477": "Deprecated",
+  // Aetherial Aquamarine Ring
+  "4479": "Deprecated",
+  // Aetherial Pearl Ring
+  "4481": "Deprecated",
+  // Aetherial Red Coral Ring
+  "4486": "Deprecated",
+  // Aetherial Electrum Ring
+  "4500": "Deprecated",
+  // Aetherial Rubellite Ring
+  "4503": "Deprecated",
+  // Aetherial Zircon Ring
+  "4505": "Deprecated",
+  // Aetherial Tourmaline Ring
+  "4507": "Deprecated",
+  // Aetherial Amber Ring
+  "4509": "Deprecated",
+  // Aetherial Spinel Ring
+  "4511": "Deprecated",
+  // Aetherial Turquoise Ring
+  "4513": "Deprecated",
+  // Aetherial Black Pearl Ring
+  "4515": "Deprecated",
   // Blazefire Saber
   "6033": "Premium, Limited",
   // l'Cie Bardiche
@@ -4088,9 +4316,9 @@
   // Bootlets of Eternal Devotion
   "8692": "Premium",
   // Promise of Passion
-  "8694": "Premium",
+  "8694": "Deprecated",
   // Promise of Devotion
-  "8695": "Premium",
+  "8695": "Deprecated",
   // Moogle Head
   "8706": "Premium, Limited",
   // Moogle Body
@@ -4757,6 +4985,8 @@
   "13327": "Premium",
   // Gaelicap
   "13328": "Limited",
+  // Demon Brick Earring
+  "13329": "Limited",
   // Amatsu Hachigane
   "13330": "Limited",
   // Amatsu Togi
@@ -5573,6 +5803,8 @@
   "15944": "Premium",
   // Chicken Knife
   "16038": "Limited",
+  // Ala Mhigan Earrings
+  "16039": "Limited",
   // Abes Jacket
   "16042": "Premium, Limited",
   // Abes Gloves
@@ -5943,6 +6175,8 @@
   "16612": "Premium, Limited",
   // Vampire's Vest
   "16613": "Premium, Limited",
+  // Red Tori Kabuto
+  "16614": "Premium, Limited",
   // Black Tori Kabuto
   "16615": "Premium, Limited",
   // Sunstreak Helm of Fending
@@ -7089,6 +7323,8 @@
   "22456": "Premium",
   // Inoshishi Kabuto
   "22457": "Premium, Limited",
+  // Crimson Inoshishi Kabuto
+  "22458": "Premium, Limited",
   // Topaz Carbuncle Slippers
   "22499": "Premium",
   // Mun'gaek Hat
@@ -7347,6 +7583,8 @@
   "24195": "Limited",
   // Moddey Dhoo Sabatons
   "24196": "Limited",
+  // Crimson Nezumi Kabuto
+  "24236": "Premium, Limited",
   // Cobalt Nezumi Kabuto
   "24237": "Premium, Limited",
   // Aetheryte Earring
@@ -7389,6 +7627,152 @@
   "24615": "Limited",
   // Exclusive Eastern Journey Battle Staff
   "25055": "Premium",
+  // Deepshadow Sword
+  "25468": "Deprecated",
+  // Deepshadow Knuckles
+  "25469": "Deprecated",
+  // Deepshadow Axe
+  "25470": "Deprecated",
+  // Deepshadow Lance
+  "25471": "Deprecated",
+  // Deepshadow Crossbow
+  "25472": "Deprecated",
+  // Deepshadow Daggers
+  "25473": "Deprecated",
+  // Deepshadow Claymore
+  "25474": "Deprecated",
+  // Deepshadow Pistol
+  "25475": "Deprecated",
+  // Deepshadow Signum
+  "25476": "Deprecated",
+  // Deepshadow Scythe
+  "25477": "Deprecated",
+  // Deepshadow Grimoire
+  "25478": "Deprecated",
+  // Deepshadow Codex
+  "25479": "Deprecated",
+  // Deepshadow Planisphere
+  "25480": "Deprecated",
+  // Deepshadow Blade
+  "25481": "Deprecated",
+  // Deepshadow Tuck
+  "25482": "Deprecated",
+  // Deepshadow Manatrigger
+  "25483": "Deprecated",
+  // Deepshadow Glaives
+  "25484": "Deprecated",
+  // Deepshadow Shield
+  "25485": "Deprecated",
+  // Deepshadow Helm of Fending
+  "25486": "Deprecated",
+  // Deepshadow Cuirass of Fending
+  "25487": "Deprecated",
+  // Deepshadow Gauntlets of Fending
+  "25488": "Deprecated",
+  // Deepshadow Breeches of Fending
+  "25489": "Deprecated",
+  // Deepshadow Sollerets of Fending
+  "25490": "Deprecated",
+  // Deepshadow Helm of Maiming
+  "25492": "Deprecated",
+  // Deepshadow Cuirass of Maiming
+  "25493": "Deprecated",
+  // Deepshadow Gauntlets of Maiming
+  "25494": "Deprecated",
+  // Deepshadow Breeches of Maiming
+  "25495": "Deprecated",
+  // Deepshadow Sollerets of Maiming
+  "25496": "Deprecated",
+  // Deepshadow Halfmask of Striking
+  "25498": "Deprecated",
+  // Deepshadow Scale Mail of Striking
+  "25499": "Deprecated",
+  // Deepshadow Gloves of Striking
+  "25500": "Deprecated",
+  // Deepshadow Bottoms of Striking
+  "25501": "Deprecated",
+  // Deepshadow Greaves of Striking
+  "25502": "Deprecated",
+  // Deepshadow Chapeau of Aiming
+  "25504": "Deprecated",
+  // Deepshadow Coat of Aiming
+  "25505": "Deprecated",
+  // Deepshadow Gloves of Aiming
+  "25506": "Deprecated",
+  // Deepshadow Breeches of Aiming
+  "25507": "Deprecated",
+  // Deepshadow Greaves of Aiming
+  "25508": "Deprecated",
+  // Deepshadow Mask of Scouting
+  "25510": "Deprecated",
+  // Deepshadow Scale Mail of Scouting
+  "25511": "Deprecated",
+  // Deepshadow Gloves of Scouting
+  "25512": "Deprecated",
+  // Deepshadow Bottoms of Scouting
+  "25513": "Deprecated",
+  // Deepshadow Greaves of Scouting
+  "25514": "Deprecated",
+  // Deepshadow Hood of Healing
+  "25516": "Deprecated",
+  // Deepshadow Scale Mail of Healing
+  "25517": "Deprecated",
+  // Deepshadow Armguards of Healing
+  "25518": "Deprecated",
+  // Deepshadow Breeches of Healing
+  "25519": "Deprecated",
+  // Deepshadow Greaves of Healing
+  "25520": "Deprecated",
+  // Deepshadow Hood of Casting
+  "25522": "Deprecated",
+  // Deepshadow Scale Mail of Casting
+  "25523": "Deprecated",
+  // Deepshadow Armguards of Casting
+  "25524": "Deprecated",
+  // Deepshadow Breeches of Casting
+  "25525": "Deprecated",
+  // Deepshadow Greaves of Casting
+  "25526": "Deprecated",
+  // Deepshadow Earring of Fending
+  "25528": "Deprecated",
+  // Deepshadow Earring of Slaying
+  "25529": "Deprecated",
+  // Deepshadow Earring of Aiming
+  "25530": "Deprecated",
+  // Deepshadow Earring of Healing
+  "25531": "Deprecated",
+  // Deepshadow Earring of Casting
+  "25532": "Deprecated",
+  // Deepshadow Necklace of Fending
+  "25533": "Deprecated",
+  // Deepshadow Necklace of Slaying
+  "25534": "Deprecated",
+  // Deepshadow Necklace of Aiming
+  "25535": "Deprecated",
+  // Deepshadow Necklace of Healing
+  "25536": "Deprecated",
+  // Deepshadow Necklace of Casting
+  "25537": "Deprecated",
+  // Deepshadow Bracelet of Fending
+  "25538": "Deprecated",
+  // Deepshadow Bracelet of Slaying
+  "25539": "Deprecated",
+  // Deepshadow Bracelet of Aiming
+  "25540": "Deprecated",
+  // Deepshadow Bracelet of Healing
+  "25541": "Deprecated",
+  // Deepshadow Bracelet of Casting
+  "25542": "Deprecated",
+  // Deepshadow Ring of Fending
+  "25543": "Deprecated",
+  // Deepshadow Ring of Slaying
+  "25544": "Deprecated",
+  // Deepshadow Ring of Aiming
+  "25545": "Deprecated",
+  // Deepshadow Ring of Healing
+  "25546": "Deprecated",
+  // Deepshadow Ring of Casting
+  "25547": "Deprecated",
   // Koro Kabuto
   "27333": "Limited",
   // Koro Oyoroi
@@ -7441,10 +7825,14 @@
   "27946": "Premium, Limited",
   // White Moonfire Happi
   "27947": "Premium, Limited",
+  // Red Moonfire Happi
+  "27948": "Premium, Limited",
   // Black Moonfire Happi
   "27949": "Premium, Limited",
   // Moonfire Tabi
   "27950": "Premium, Limited",
+  // Replica White Ravens
+  "27956": "Premium",
   // Majestic Dress
   "28553": "Premium",
   // Majestic Wristdresses
@@ -7452,9 +7840,9 @@
   // Majestic Boots
   "28555": "Premium",
   // Crimson Ushi Kabuto
-  "28556": "Limited",
+  "28556": "Premium, Limited",
   // Black Ushi Kabuto
-  "28557": "Limited",
+  "28557": "Premium, Limited",
   // Valentione Rose Hat
   "28558": "Premium, Limited",
   // Valentione Rose Waistcoat
@@ -7545,6 +7933,152 @@
   "28608": "Premium",
   // Eastern Lady Errant's Boots
   "28609": "Premium",
+  // Crystarium Sword
+  "29179": "Deprecated",
+  // Crystarium Knuckles
+  "29180": "Deprecated",
+  // Crystarium Labrys
+  "29181": "Deprecated",
+  // Crystarium Spear
+  "29182": "Deprecated",
+  // Crystarium Composite Bow
+  "29183": "Deprecated",
+  // Crystarium Daggers
+  "29184": "Deprecated",
+  // Crystarium Greatsword
+  "29185": "Deprecated",
+  // Crystarium Culverin
+  "29186": "Deprecated",
+  // Crystarium Cane
+  "29187": "Deprecated",
+  // Crystarium Rod
+  "29188": "Deprecated",
+  // Crystarium Index
+  "29189": "Deprecated",
+  // Crystarium Codex
+  "29190": "Deprecated",
+  // Crystarium Planisphere
+  "29191": "Deprecated",
+  // Crystarium Samurai Blade
+  "29192": "Deprecated",
+  // Crystarium Rapier
+  "29193": "Deprecated",
+  // Crystarium Manatrigger
+  "29194": "Deprecated",
+  // Crystarium War Quoits
+  "29195": "Deprecated",
+  // Crystarium Kite Shield
+  "29196": "Deprecated",
+  // Crystarium Circlet of Fending
+  "29197": "Deprecated",
+  // Crystarium Tabard of Fending
+  "29198": "Deprecated",
+  // Crystarium Gauntlets of Fending
+  "29199": "Deprecated",
+  // Crystarium Trousers of Fending
+  "29200": "Deprecated",
+  // Crystarium Thighboots of Fending
+  "29201": "Deprecated",
+  // Crystarium Circlet of Maiming
+  "29203": "Deprecated",
+  // Crystarium Tabard of Maiming
+  "29204": "Deprecated",
+  // Crystarium Gauntlets of Maiming
+  "29205": "Deprecated",
+  // Crystarium Trousers of Maiming
+  "29206": "Deprecated",
+  // Crystarium Thighboots of Maiming
+  "29207": "Deprecated",
+  // Crystarium Turban of Striking
+  "29209": "Deprecated",
+  // Crystarium Coat of Striking
+  "29210": "Deprecated",
+  // Crystarium Gloves of Striking
+  "29211": "Deprecated",
+  // Crystarium Pantaloons of Striking
+  "29212": "Deprecated",
+  // Crystarium Shoes of Striking
+  "29213": "Deprecated",
+  // Crystarium Blinder of Aiming
+  "29215": "Deprecated",
+  // Crystarium Coat of Aiming
+  "29216": "Deprecated",
+  // Crystarium Gloves of Aiming
+  "29217": "Deprecated",
+  // Crystarium Breeches of Aiming
+  "29218": "Deprecated",
+  // Crystarium Boots of Aiming
+  "29219": "Deprecated",
+  // Crystarium Hat of Scouting
+  "29221": "Deprecated",
+  // Crystarium Coat of Scouting
+  "29222": "Deprecated",
+  // Crystarium Gloves of Scouting
+  "29223": "Deprecated",
+  // Crystarium Pantaloons of Scouting
+  "29224": "Deprecated",
+  // Crystarium Boots of Scouting
+  "29225": "Deprecated",
+  // Crystarium Turban of Healing
+  "29227": "Deprecated",
+  // Crystarium Robe of Healing
+  "29228": "Deprecated",
+  // Crystarium Gloves of Healing
+  "29229": "Deprecated",
+  // Crystarium Pantaloons of Healing
+  "29230": "Deprecated",
+  // Crystarium Shoes of Healing
+  "29231": "Deprecated",
+  // Crystarium Halfmask of Casting
+  "29233": "Deprecated",
+  // Crystarium Robe of Casting
+  "29234": "Deprecated",
+  // Crystarium Shortgloves of Casting
+  "29235": "Deprecated",
+  // Crystarium Hose of Casting
+  "29236": "Deprecated",
+  // Crystarium Boots of Casting
+  "29237": "Deprecated",
+  // Crystarium Earrings of Fending
+  "29239": "Deprecated",
+  // Crystarium Earrings of Slaying
+  "29240": "Deprecated",
+  // Crystarium Earrings of Aiming
+  "29241": "Deprecated",
+  // Crystarium Earrings of Healing
+  "29242": "Deprecated",
+  // Crystarium Earrings of Casting
+  "29243": "Deprecated",
+  // Crystarium Choker of Fending
+  "29244": "Deprecated",
+  // Crystarium Choker of Slaying
+  "29245": "Deprecated",
+  // Crystarium Choker of Aiming
+  "29246": "Deprecated",
+  // Crystarium Choker of Healing
+  "29247": "Deprecated",
+  // Crystarium Choker of Casting
+  "29248": "Deprecated",
+  // Crystarium Wristband of Fending
+  "29249": "Deprecated",
+  // Crystarium Wristband of Slaying
+  "29250": "Deprecated",
+  // Crystarium Wristband of Aiming
+  "29251": "Deprecated",
+  // Crystarium Wristband of Healing
+  "29252": "Deprecated",
+  // Crystarium Wristband of Casting
+  "29253": "Deprecated",
+  // Crystarium Ring of Fending
+  "29254": "Deprecated",
+  // Crystarium Ring of Slaying
+  "29255": "Deprecated",
+  // Crystarium Ring of Aiming
+  "29256": "Deprecated",
+  // Crystarium Ring of Healing
+  "29257": "Deprecated",
+  // Crystarium Ring of Casting
+  "29258": "Deprecated",
   // Seneschal's Monocle
   "30042": "Premium, Limited",
   // Princess's Peach Corsage
@@ -7623,8 +8157,160 @@
   "31416": "Premium",
   // Dirndl's Pumps
   "31417": "Premium",
+  // Sharlayan Prodigy's Suit
+  "31418": "Premium",
+  // Cryptlurker's Sword
+  "32418": "Deprecated",
+  // Cryptlurker's Tonfa
+  "32419": "Deprecated",
+  // Cryptlurker's War Axe
+  "32420": "Deprecated",
+  // Cryptlurker's Spear
+  "32421": "Deprecated",
+  // Cryptlurker's Composite Bow
+  "32422": "Deprecated",
+  // Cryptlurker's Cleavers
+  "32423": "Deprecated",
+  // Cryptlurker's Guillotine
+  "32424": "Deprecated",
+  // Cryptlurker's Pistol
+  "32425": "Deprecated",
+  // Cryptlurker's Crook
+  "32426": "Deprecated",
+  // Cryptlurker's Rod
+  "32427": "Deprecated",
+  // Cryptlurker's Index
+  "32428": "Deprecated",
+  // Cryptlurker's Codex
+  "32429": "Deprecated",
+  // Cryptlurker's Planisphere
+  "32430": "Deprecated",
+  // Cryptlurker's Samurai Blade
+  "32431": "Deprecated",
+  // Cryptlurker's Tuck
+  "32432": "Deprecated",
+  // Cryptlurker's Manatrigger
+  "32433": "Deprecated",
+  // Cryptlurker's War Quoits
+  "32434": "Deprecated",
+  // Cryptlurker's Kite Shield
+  "32435": "Deprecated",
+  // Cryptlurker's Elmo of Fending
+  "32436": "Deprecated",
+  // Cryptlurker's Cuirass of Fending
+  "32437": "Deprecated",
+  // Cryptlurker's Gauntlets of Fending
+  "32438": "Deprecated",
+  // Cryptlurker's Hose of Fending
+  "32439": "Deprecated",
+  // Cryptlurker's Sollerets of Fending
+  "32440": "Deprecated",
+  // Cryptlurker's Helm of Maiming
+  "32442": "Deprecated",
+  // Cryptlurker's Cuirass of Maiming
+  "32443": "Deprecated",
+  // Cryptlurker's Vambraces of Maiming
+  "32444": "Deprecated",
+  // Cryptlurker's Hose of Maiming
+  "32445": "Deprecated",
+  // Cryptlurker's Sollerets of Maiming
+  "32446": "Deprecated",
+  // Cryptlurker's Mesail of Striking
+  "32448": "Deprecated",
+  // Cryptlurker's Corselet of Striking
+  "32449": "Deprecated",
+  // Cryptlurker's Vambraces of Striking
+  "32450": "Deprecated",
+  // Cryptlurker's Hose of Striking
+  "32451": "Deprecated",
+  // Cryptlurker's Boots of Striking
+  "32452": "Deprecated",
+  // Cryptlurker's Helm of Aiming
+  "32454": "Deprecated",
+  // Cryptlurker's Corselet of Aiming
+  "32455": "Deprecated",
+  // Cryptlurker's Vambraces of Aiming
+  "32456": "Deprecated",
+  // Cryptlurker's Hose of Aiming
+  "32457": "Deprecated",
+  // Cryptlurker's Boots of Aiming
+  "32458": "Deprecated",
+  // Cryptlurker's Mesail of Scouting
+  "32460": "Deprecated",
+  // Cryptlurker's Corselet of Scouting
+  "32461": "Deprecated",
+  // Cryptlurker's Vambraces of Scouting
+  "32462": "Deprecated",
+  // Cryptlurker's Hose of Scouting
+  "32463": "Deprecated",
+  // Cryptlurker's Boots of Scouting
+  "32464": "Deprecated",
+  // Cryptlurker's Helm of Healing
+  "32466": "Deprecated",
+  // Cryptlurker's Robe of Healing
+  "32467": "Deprecated",
+  // Cryptlurker's Vambraces of Healing
+  "32468": "Deprecated",
+  // Cryptlurker's Chausses of Healing
+  "32469": "Deprecated",
+  // Cryptlurker's Shoes of Healing
+  "32470": "Deprecated",
+  // Cryptlurker's Mesail of Casting
+  "32472": "Deprecated",
+  // Cryptlurker's Robe of Casting
+  "32473": "Deprecated",
+  // Cryptlurker's Vambraces of Casting
+  "32474": "Deprecated",
+  // Cryptlurker's Chausses of Casting
+  "32475": "Deprecated",
+  // Cryptlurker's Shoes of Casting
+  "32476": "Deprecated",
+  // Cryptlurker's Earring of Fending
+  "32478": "Deprecated",
+  // Cryptlurker's Earring of Slaying
+  "32479": "Deprecated",
+  // Cryptlurker's Earring of Aiming
+  "32480": "Deprecated",
+  // Cryptlurker's Earring of Healing
+  "32481": "Deprecated",
+  // Cryptlurker's Earring of Casting
+  "32482": "Deprecated",
+  // Cryptlurker's Choker of Fending
+  "32483": "Deprecated",
+  // Cryptlurker's Choker of Slaying
+  "32484": "Deprecated",
+  // Cryptlurker's Choker of Aiming
+  "32485": "Deprecated",
+  // Cryptlurker's Choker of Healing
+  "32486": "Deprecated",
+  // Cryptlurker's Choker of Casting
+  "32487": "Deprecated",
+  // Cryptlurker's Bracelet of Fending
+  "32488": "Deprecated",
+  // Cryptlurker's Bracelet of Slaying
+  "32489": "Deprecated",
+  // Cryptlurker's Bracelet of Aiming
+  "32490": "Deprecated",
+  // Cryptlurker's Bracelet of Healing
+  "32491": "Deprecated",
+  // Cryptlurker's Bracelet of Casting
+  "32492": "Deprecated",
+  // Cryptlurker's Ring of Fending
+  "32493": "Deprecated",
+  // Cryptlurker's Ring of Slaying
+  "32494": "Deprecated",
+  // Cryptlurker's Ring of Aiming
+  "32495": "Deprecated",
+  // Cryptlurker's Ring of Healing
+  "32496": "Deprecated",
+  // Cryptlurker's Ring of Casting
+  "32497": "Deprecated",
   // Lovely Moogle Cap
   "32803": "Limited",
+  // Golden Tora Kabuto
+  "32804": "Limited",
+  // Silver Tora Kabuto
+  "32805": "Limited",
   // Collegiate Blazer (Tie)
   "32806": "Premium",
   // Collegiate Slacks
@@ -7637,6 +8323,8 @@
   "32810": "Premium",
   // Collegiate Shoes (Tall Socks)
   "32811": "Premium",
+  // Brand-new Alphinaud's Attire
+  "33042": "Premium",
   // Shadowstalker's Helm
   "33445": "Limited",
   // Shadowstalker's Armor
@@ -7680,5 +8368,33 @@
   // Oracle Pantalettes
   "33752": "Premium",
   // Oracle Leggings
-  "33753": "Premium"
+  "33753": "Premium",
+  // Death Scythe
+  "35754": "Limited",
+  // Hellhound Scythe
+  "35755": "Limited",
+  // Hellhound Pendulums
+  "35773": "Limited",
+  // Little Lady's Crown
+  "35857": "Limited",
+  // Clown's Hat
+  "35863": "Limited",
+  // Clown's Top
+  "35864": "Limited",
+  // Clown's Shortgloves
+  "35865": "Limited",
+  // Clown's Bottoms
+  "35866": "Limited",
+  // Clown's Boots
+  "35867": "Limited",
+  // Blackbosom Void Reaper
+  "36335": "Premium",
+  // Omega-M Attire
+  "36336": "Premium",
+  // Omega-F Attire
+  "36337": "Premium",
+  // Omega-M Ear Cuffs
+  "36338": "Premium",
+  // Omega-F Earrings
+  "36339": "Premium",
 }
