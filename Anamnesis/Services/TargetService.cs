@@ -315,7 +315,7 @@ namespace Anamnesis
 				this.Id = memory.Id;
 				this.IdNoAddress = memory.IdNoAddress;
 				this.Memory = memory;
-				this.UpdateActorInfo();
+				this.Retarget();
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;
@@ -381,8 +381,8 @@ namespace Anamnesis
 
 			public ActorMemory? GetMemory()
 			{
-				this.Tick();
-				return this.IsValid ? this.Memory : null;
+				this.Retarget();
+				return this.Memory;
 			}
 
 			public override int GetHashCode()
@@ -542,7 +542,20 @@ namespace Anamnesis
 
 						IntPtr? oldPointer = this.Pointer;
 
-						this.UpdateActorInfo();
+						this.Id = this.Memory.Id;
+						this.IdNoAddress = this.Memory.IdNoAddress;
+						this.Name = this.Memory.Name;
+						this.Memory.OnRetargeted();
+						this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
+						this.Pointer = this.Memory.Address;
+						this.Kind = this.Memory.ObjectKind;
+						this.ModelType = this.Memory.ModelType;
+						this.wasGpose = this.Memory.IsGPoseActor;
+						this.wasVisible = !this.Memory.IsHidden;
+
+						this.UpdateInitials(this.DisplayName);
+
+						this.IsValid = true;
 
 						// dont log every time we just select an actor.
 						if (oldPointer != null && oldPointer != this.Pointer)
@@ -570,27 +583,6 @@ namespace Anamnesis
 				{
 					this.UpdateInitials(this.Memory.DisplayName);
 				}
-			}
-
-			private void UpdateActorInfo()
-			{
-				if (this.Memory == null)
-					return;
-
-				this.Id = this.Memory.Id;
-				this.IdNoAddress = this.Memory.IdNoAddress;
-				this.Name = this.Memory.Name;
-				this.Memory.OnRetargeted();
-				this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
-				this.Pointer = this.Memory.Address;
-				this.Kind = this.Memory.ObjectKind;
-				this.ModelType = this.Memory.ModelType;
-				this.wasGpose = this.Memory.IsGPoseActor;
-				this.wasVisible = !this.Memory.IsHidden;
-
-				this.UpdateInitials(this.DisplayName);
-
-				this.IsValid = true;
 			}
 
 			private void UpdateInitials(string? name)
