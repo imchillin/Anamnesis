@@ -40,7 +40,7 @@ namespace Anamnesis.GUI.Views
 
 			if (!didUpdate)
 			{
-				await GenericDialog.ShowLocalized("Update_NoUpdate", "Update_Title", MessageBoxButton.OK);
+				await GenericDialog.ShowLocalizedAsync("Update_NoUpdate", "Update_Title", MessageBoxButton.OK);
 			}
 		}
 	}

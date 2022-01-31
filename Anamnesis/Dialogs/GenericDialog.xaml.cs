@@ -7,7 +7,6 @@ namespace Anamnesis.GUI.Dialogs
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
-	using Anamnesis;
 	using Anamnesis.Services;
 	using XivToolsWpf;
 
@@ -30,15 +29,25 @@ namespace Anamnesis.GUI.Dialogs
 		public string? Left { get; set; }
 		public string? Right { get; set; }
 
-		public static Task<bool?> ShowLocalized(string messageKey, string captionKey, MessageBoxButton buttons)
+		public static void ShowLocalized(string messageKey, string captionKey)
+		{
+			Task.Run(() => ShowLocalizedAsync(messageKey, captionKey, MessageBoxButton.OK));
+		}
+
+		public static Task<bool?> ShowLocalizedAsync(string messageKey, string captionKey, MessageBoxButton buttons)
 		{
 			string message = LocalizationService.GetString(messageKey, true);
 			string caption = LocalizationService.GetString(captionKey, true);
 
-			return Show(message, caption, buttons);
+			return ShowAsync(message, caption, buttons);
 		}
 
-		public static async Task<bool?> Show(string message, string caption, MessageBoxButton buttons)
+		public static void Show(string message, string caption)
+		{
+			Task.Run(() => ShowAsync(message, caption, MessageBoxButton.OK));
+		}
+
+		public static async Task<bool?> ShowAsync(string message, string caption, MessageBoxButton buttons)
 		{
 			await Dispatch.MainThread();
 

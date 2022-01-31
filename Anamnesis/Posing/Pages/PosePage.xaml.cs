@@ -245,7 +245,7 @@ namespace Anamnesis.PoseModule.Pages
 
 			if (this.PoseService.FreezePositions)
 			{
-				bool? result = await GenericDialog.ShowLocalized("Pose_WarningExpresionPositions", "Common_Confirm", MessageBoxButton.OKCancel);
+				bool? result = await GenericDialog.ShowLocalizedAsync("Pose_WarningExpresionPositions", "Common_Confirm", MessageBoxButton.OKCancel);
 
 				if (result != true)
 				{

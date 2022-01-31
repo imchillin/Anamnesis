@@ -12,6 +12,7 @@ namespace Anamnesis.Memory
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
+	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Services;
 	using PropertyChanged;
@@ -262,7 +263,8 @@ namespace Anamnesis.Memory
 
 			if (gameVer != VersionInfo.ValidatedGameVersion)
 			{
-				Log.Error($"Anamnesis has not been validated against this game version: {gameVer}. This may cause problems.");
+				Log.Warning($"Unrecognized game version: {gameVer}. Current validated version is: {VersionInfo.ValidatedGameVersion}");
+				GenericDialog.ShowLocalized("Error_WrongVersion", "Error_WrongVersionTitle");
 			}
 
 			Handle = OpenProcess(0x001F0FFF, true, process.Id);

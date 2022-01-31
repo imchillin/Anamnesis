@@ -18,6 +18,8 @@
 
 	"Error_NotInGame": "Not Signed In",
 	"Error_FavoritesFail": "Failed to load favourites. Your favourites have been reset.",
+	"Error_WrongVersionTitle": "Game version changed",
+	"Error_WrongVersion": "Anamnesis has not been validated against this game version, this may cause problems.\n\nIf a game patch was recently released, check for Anamnesis updates.",
 
 	"FileBrowser_GoUp": "Go Up",
 	"FileBrowser_Flatten": "Flatten Hierarchy",

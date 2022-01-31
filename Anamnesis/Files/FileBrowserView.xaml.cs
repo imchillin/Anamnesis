@@ -486,7 +486,7 @@ namespace Anamnesis.GUI.Views
 			if (this.Selected == null)
 				return;
 
-			bool? confirmed = await GenericDialog.Show("Are you sure you want to delete: \"" + this.Selected.Name + "\"", "Confirm", MessageBoxButton.OKCancel);
+			bool? confirmed = await GenericDialog.ShowAsync("Are you sure you want to delete: \"" + this.Selected.Name + "\"", "Confirm", MessageBoxButton.OKCancel);
 
 			if (confirmed != true)
 				return;

@@ -210,7 +210,7 @@ namespace Anamnesis.GUI
 
 			if (PoseService.Exists && PoseService.Instance.IsEnabled)
 			{
-				bool? result = await GenericDialog.ShowLocalized("Pose_WarningQuit", "Common_Confirm", MessageBoxButton.OKCancel);
+				bool? result = await GenericDialog.ShowLocalizedAsync("Pose_WarningQuit", "Common_Confirm", MessageBoxButton.OKCancel);
 
 				if (result != true)
 				{
@@ -288,7 +288,7 @@ namespace Anamnesis.GUI
 		{
 			if (PoseService.Exists && PoseService.Instance.IsEnabled)
 			{
-				bool? result = await GenericDialog.Show(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
+				bool? result = await GenericDialog.ShowAsync(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
 
 				if (result != true)
 				{
