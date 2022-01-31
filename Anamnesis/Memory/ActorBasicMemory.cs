@@ -16,6 +16,12 @@ namespace Anamnesis.Memory
 	{
 		private ActorBasicMemory? owner;
 
+		public enum RenderModes : int
+		{
+			Draw = 0,
+			Unload = 2,
+		}
+
 		[Bind(0x030)] public Utf8String NameBytes { get; set; }
 		[Bind(0x074)] public uint ObjectId { get; set; }
 		[Bind(0x080)] public uint DataId { get; set; }
@@ -24,6 +30,7 @@ namespace Anamnesis.Memory
 		[Bind(0x08c, BindFlags.ActorRefresh)] public ActorTypes ObjectKind { get; set; }
 		[Bind(0x090)] public byte DistanceFromPlayerX { get; set; }
 		[Bind(0x092)] public byte DistanceFromPlayerY { get; set; }
+		[Bind(0x0104)] public RenderModes RenderMode { get; set; }
 
 		public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
 		public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}";
@@ -40,6 +47,9 @@ namespace Anamnesis.Memory
 
 		[DependsOn(nameof(IsGPoseActor))]
 		public bool IsOverworldActor => !this.IsGPoseActor;
+
+		[DependsOn(nameof(RenderMode))]
+		public bool IsHidden => this.RenderMode != RenderModes.Draw;
 
 		[DependsOn(nameof(IsOverworldActor))]
 		public bool CanRefresh

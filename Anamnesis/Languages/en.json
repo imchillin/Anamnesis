@@ -47,6 +47,7 @@
 	"Target_Mounts": "Mounts",
 	"Target_Ornaments": "Ornaments",
 	"Target_Other": "Others",
+	"Target_Hidden": "Show Hidden/Unloaded",
 	"Target_Gpose": "(GPose)",
 
 	"SubActor_Title": "Sub Actors",

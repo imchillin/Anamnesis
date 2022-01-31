@@ -25,6 +25,7 @@ namespace Anamnesis.Views
 		private static bool includeMounts = true;
 		private static bool includeOrnaments = true;
 		private static bool includeOther = false;
+		private static bool includeHidden = false;
 
 		public TargetSelectorView()
 		{
@@ -74,6 +75,12 @@ namespace Anamnesis.Views
 		{
 			get => includeOther;
 			set => includeOther = value;
+		}
+
+		public bool IncludeHidden
+		{
+			get => includeHidden;
+			set => includeHidden = value;
 		}
 
 		public void OnClosed()
@@ -131,6 +138,9 @@ namespace Anamnesis.Views
 					return false;
 
 				if (TargetService.IsPinned(actor))
+					return false;
+
+				if (!includeHidden && actor.IsHidden)
 					return false;
 
 				if (!includePlayers && actor.ObjectKind == Memory.ActorTypes.Player)
