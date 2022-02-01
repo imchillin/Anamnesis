@@ -19,7 +19,7 @@ namespace Anamnesis.Services
 		public static event GposeEvent? GposeStateChanged;
 
 		public bool IsGpose { get; private set; }
-		public bool IsOverworld { get; private set; }
+		public bool IsOverworld => !this.IsGpose;
 
 		public bool IsChangingState { get; private set; }
 
@@ -49,14 +49,12 @@ namespace Anamnesis.Services
 				{
 					this.initialized = true;
 					this.IsGpose = newGpose;
-					this.IsOverworld = !this.IsGpose;
 					continue;
 				}
 
 				if (newGpose != this.IsGpose)
 				{
 					this.IsGpose = newGpose;
-					this.IsOverworld = !this.IsGpose;
 
 					GposeStateChanging?.Invoke();
 					this.IsChangingState = true;

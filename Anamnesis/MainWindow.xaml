@@ -285,6 +285,21 @@
 																		Foreground="Black"
 																		Icon="{Binding Icon}" />
 																</Grid>
+
+																<Grid
+																	Width="15"
+																	Height="15"
+																	Margin="0,-4,4,0"
+																	HorizontalAlignment="Right"
+																	VerticalAlignment="Bottom"
+																	Visibility="{Binding IsValid, Converter={StaticResource B2V}}">
+																	<Ellipse Fill="{DynamicResource PrimaryHueMidBrush}" Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}" />
+																	<fa:IconImage
+																		Margin="2,1,1,2"
+																		Foreground="Black"
+																		Icon="Camera"
+																		Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"/>
+																</Grid>
 															</Grid>
 
 														</DataTemplate>

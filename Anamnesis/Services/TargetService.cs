@@ -193,11 +193,20 @@ namespace Anamnesis
 			{
 				try
 				{
+					bool isGpose = GposeService.GetIsGPose();
+
 					List<ActorBasicMemory> allActors = ActorService.Instance.GetAllActors();
 
+					// We want the first non-hidden actor with a name in the same mode as the game
 					foreach (ActorBasicMemory actor in allActors)
 					{
+						if (actor.IsHidden)
+							continue;
+
 						if (string.IsNullOrEmpty(actor.Name))
+							continue;
+
+						if (actor.IsGPoseActor != isGpose)
 							continue;
 
 						await PinActor(actor);
@@ -306,16 +315,12 @@ namespace Anamnesis
 		[AddINotifyPropertyChangedInterface]
 		public class PinnedActor : INotifyPropertyChanged
 		{
-			private bool wasGpose = false;
-			private bool wasVisible = false;
-			private bool overworldInGPose = false;
-
 			public PinnedActor(ActorMemory memory)
 			{
 				this.Id = memory.Id;
 				this.IdNoAddress = memory.IdNoAddress;
 				this.Memory = memory;
-				this.Retarget();
+				this.UpdateActorInfo();
 			}
 
 			public event PropertyChangedEventHandler? PropertyChanged;
@@ -332,6 +337,8 @@ namespace Anamnesis
 			public int ModelType { get; private set; }
 			public string? Initials { get; private set; }
 			public bool IsValid { get; private set; }
+			public bool IsGPoseActor { get; private set; }
+			public bool IsHidden { get; private set; }
 			public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
 
 			public string? DisplayName => this.Memory == null ? this.Name : this.Memory.DisplayName;
@@ -381,7 +388,7 @@ namespace Anamnesis
 
 			public ActorMemory? GetMemory()
 			{
-				this.Retarget();
+				this.Tick();
 				return this.Memory;
 			}
 
@@ -413,24 +420,18 @@ namespace Anamnesis
 						return;
 					}
 
-					if (this.wasGpose && GposeService.Instance.IsOverworld)
+					if (this.IsGPoseActor && GposeService.Instance.IsOverworld)
 					{
 						Log.Information($"Actor: {this} was a gpose actor and we are now in the overworld");
 						this.Retarget();
 						return;
 					}
 
-					if (!this.overworldInGPose && this.Memory.IsHidden && this.wasVisible && !this.wasGpose && GposeService.Instance.IsGpose)
+					if (this.Memory.IsHidden && !this.IsHidden && !this.IsGPoseActor && !this.Memory.IsRefreshing && GposeService.Instance.IsGpose)
 					{
 						Log.Information($"Actor: {this} was hidden entering the gpose boundary");
 						this.Retarget();
 						return;
-					}
-
-					if(this.Memory.IsOverworldActor)
-					{
-						// If we made it here we may be an overworld actor that was not copied to gpose, we should flag so any future unloads due to changing clothes do not cause us to retarget
-						this.overworldInGPose = GposeService.Instance.IsGpose;
 					}
 
 					try
@@ -542,20 +543,7 @@ namespace Anamnesis
 
 						IntPtr? oldPointer = this.Pointer;
 
-						this.Id = this.Memory.Id;
-						this.IdNoAddress = this.Memory.IdNoAddress;
-						this.Name = this.Memory.Name;
-						this.Memory.OnRetargeted();
-						this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
-						this.Pointer = this.Memory.Address;
-						this.Kind = this.Memory.ObjectKind;
-						this.ModelType = this.Memory.ModelType;
-						this.wasGpose = this.Memory.IsGPoseActor;
-						this.wasVisible = !this.Memory.IsHidden;
-
-						this.UpdateInitials(this.DisplayName);
-
-						this.IsValid = true;
+						this.UpdateActorInfo();
 
 						// dont log every time we just select an actor.
 						if (oldPointer != null && oldPointer != this.Pointer)
@@ -575,6 +563,27 @@ namespace Anamnesis
 					this.IsValid = false;
 					this.IsRetargeting = false;
 				}
+			}
+
+			private void UpdateActorInfo()
+			{
+				if (this.Memory == null)
+					return;
+
+				this.Id = this.Memory.Id;
+				this.IdNoAddress = this.Memory.IdNoAddress;
+				this.Name = this.Memory.Name;
+				this.Memory.OnRetargeted();
+				this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
+				this.Pointer = this.Memory.Address;
+				this.Kind = this.Memory.ObjectKind;
+				this.ModelType = this.Memory.ModelType;
+				this.IsGPoseActor = this.Memory.IsGPoseActor;
+				this.IsHidden = this.Memory.IsHidden;
+
+				this.UpdateInitials(this.DisplayName);
+
+				this.IsValid = true;
 			}
 
 			private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
