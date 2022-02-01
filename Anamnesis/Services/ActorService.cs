@@ -16,6 +16,8 @@ namespace Anamnesis
 	{
 		private const int TickDelay = 10;
 		private const int ActorTableSize = 424;
+		private const int GPoseIndexStart = 200;
+		private const int GPoseIndexEnd = 244;
 
 		private readonly IntPtr[] actorTable = new IntPtr[ActorTableSize];
 
@@ -38,6 +40,17 @@ namespace Anamnesis
 		}
 
 		public bool IsActorInTable(MemoryBase memory, bool refresh = false) => this.IsActorInTable(memory.Address, refresh);
+
+		public bool IsGPoseActor(int objectIndex) => objectIndex >= GPoseIndexStart && objectIndex < GPoseIndexEnd;
+
+		public bool IsGPoseActor(IntPtr actorAddress)
+		{
+			int objectIndex = this.GetActorTableIndex(actorAddress);
+			return this.IsGPoseActor(objectIndex);
+		}
+
+		public bool IsOverworldActor(int objectIndex) => !this.IsGPoseActor(objectIndex);
+		public bool IsOverworldActor(IntPtr actorAddress) => !this.IsGPoseActor(actorAddress);
 
 		public List<ActorBasicMemory> GetAllActors(bool refresh = false)
 		{
