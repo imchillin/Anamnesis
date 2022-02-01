@@ -48,14 +48,13 @@ namespace Anamnesis
 
 				try
 				{
-					if (!MemoryService.IsProcessAlive)
-						continue;
+					if (!MemoryService.IsProcessAlive || !GameService.Instance.IsSignedIn || AddressService.TimeReal == IntPtr.Zero)
+					{
+						if (this.Freeze)
+							this.Freeze = false;
 
-					if (!GameService.Instance.IsSignedIn)
 						continue;
-
-					if (AddressService.TimeReal == IntPtr.Zero)
-						continue;
+					}
 
 					if (this.Freeze)
 					{
