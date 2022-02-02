@@ -14,6 +14,7 @@ namespace Anamnesis.Views
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using System.Windows.Media.Animation;
+	using System.Windows.Media.Imaging;
 	using Anamnesis.Core.Extensions;
 	using Anamnesis.Files;
 	using Anamnesis.Services;
@@ -28,6 +29,8 @@ namespace Anamnesis.Views
 	public partial class Gallery : UserControl
 	{
 		private const int ImageDelay = 5000;
+
+		private readonly Dictionary<string, BitmapImage> images = new Dictionary<string, BitmapImage>();
 
 		private bool isImage1 = true;
 		private bool isRunning = false;
@@ -45,9 +48,9 @@ namespace Anamnesis.Views
 		}
 
 		public bool CanSkip { get; set; } = false;
-		public string? Image1Path { get; set; } = null;
+		public BitmapImage? Image1Bitmap { get; set; } = null;
 		public string Image1Author { get; set; } = string.Empty;
-		public string? Image2Path { get; set; } = null;
+		public BitmapImage? Image2Bitmap { get; set; } = null;
 		public string Image2Author { get; set; } = string.Empty;
 
 		private void OnSettingsChanged(object? sender, PropertyChangedEventArgs? e)
@@ -116,9 +119,12 @@ namespace Anamnesis.Views
 
 				entries.Shuffle();
 
-				while(this.isRunning)
+				if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
+					entries = entries.GetRange(0, 20);
+
+				while (this.isRunning)
 				{
-					if (!this.IsVisible)
+					while (!this.IsVisible)
 						await Task.Delay(5000);
 
 					if (!SettingsService.Current.ShowGallery)
@@ -162,24 +168,33 @@ namespace Anamnesis.Views
 
 			if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
 			{
-				try
+				if (!this.images.ContainsKey(entry.Url))
 				{
-					HttpWebRequest request = (HttpWebRequest)WebRequest.Create(entry.Url);
-					request.Method = "HEAD";
-					HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-					if (response.StatusCode != HttpStatusCode.OK)
+					try
 					{
-						Log.Information($"Failed to get image from url: {entry.Url}: {response.StatusCode}");
+						HttpWebRequest request = (HttpWebRequest)WebRequest.Create(entry.Url);
+						request.Method = "HEAD";
+						HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+						if (response.StatusCode != HttpStatusCode.OK)
+						{
+							Log.Information($"Failed to get image from url: {entry.Url}: {response.StatusCode}");
+							valid = false;
+						}
+						else
+						{
+							BitmapImage? bitmapImage = this.SaveImage(entry.Url);
+							if (bitmapImage != null)
+								this.images.Add(entry.Url, bitmapImage);
+						}
+
+						response.Close();
+					}
+					catch (Exception ex)
+					{
+						Log.Information($"Failed to get image from url: {entry.Url}: {ex.Message}");
 						valid = false;
 					}
-
-					response.Close();
-				}
-				catch (Exception ex)
-				{
-					Log.Information($"Failed to get image from url: {entry.Url}: {ex.Message}");
-					valid = false;
 				}
 			}
 			else
@@ -206,7 +221,15 @@ namespace Anamnesis.Views
 
 			if (this.isImage1)
 			{
-				this.Image1Path = entry.Url;
+				if (this.images.ContainsKey(entry.Url))
+				{
+					this.Image1Bitmap = this.images[entry.Url];
+				}
+				else
+				{
+					this.Image1Bitmap = new BitmapImage(new Uri(entry.Url));
+				}
+
 				this.Image1Author = entry.Author;
 				image = this.Image1;
 				host = this.Image1Host;
@@ -214,7 +237,15 @@ namespace Anamnesis.Views
 			}
 			else
 			{
-				this.Image2Path = entry.Url;
+				if (this.images.ContainsKey(entry.Url))
+				{
+					this.Image2Bitmap = this.images[entry.Url];
+				}
+				else
+				{
+					this.Image2Bitmap = new BitmapImage(new Uri(entry.Url));
+				}
+
 				this.Image2Author = entry.Author;
 				image = this.Image2;
 				host = this.Image2Host;
@@ -265,6 +296,35 @@ namespace Anamnesis.Views
 		private void OnNextClicked(object sender, RoutedEventArgs e)
 		{
 			this.forceUpdate = true;
+		}
+
+		private BitmapImage? SaveImage(string url)
+		{
+			using (WebClient webClient = new WebClient())
+			{
+				byte[] imageData = webClient.DownloadData(url);
+
+				if (imageData.Length == 0 || imageData == null)
+				{
+					Log.Information($"Failed to get image from url: {url}: No data downloaded");
+					return null;
+				}
+
+				var bitmapImage = new BitmapImage();
+
+				using (MemoryStream memoryStream = new MemoryStream(imageData))
+				{
+					memoryStream.Position = 0;
+					bitmapImage.BeginInit();
+					bitmapImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+					bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+					bitmapImage.StreamSource = memoryStream;
+					bitmapImage.EndInit();
+				}
+
+				bitmapImage.Freeze();
+				return bitmapImage;
+			}
 		}
 
 		public class Entry

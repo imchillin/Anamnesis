@@ -48,7 +48,7 @@
 				<Grid>
 					<Rectangle Fill="White" Margin="-3"/>
 					<TextBlock Text="Oops! No Image!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0, 0, 0, 20"/>
-					<Image Source="{Binding Image1Path}" x:Name="Image1" Margin="0, 0, 0, 20"/>
+					<Image Source="{Binding Image1Bitmap}" x:Name="Image1" Margin="0, 0, 0, 20"/>
 					<TextBlock Text="{Binding Image1Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2, 4, 2, 0"/>
 				</Grid>
 			</Border>
@@ -65,7 +65,7 @@
 				<Grid>
 					<Rectangle Fill="White" Margin="-3"/>
 					<TextBlock Text="Oops! No Image!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0, 0, 0, 20"/>
-					<Image Source="{Binding Image2Path}" x:Name="Image2" Margin="0, 0, 0, 20"/>
+					<Image Source="{Binding Image2Bitmap}" x:Name="Image2" Margin="0, 0, 0, 20"/>
 					<TextBlock Text="{Binding Image2Author}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="Black" Margin="2, 4, 2, 0"/>
 				</Grid>
 			</Border>
