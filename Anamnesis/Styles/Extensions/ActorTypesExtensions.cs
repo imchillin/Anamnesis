@@ -18,6 +18,7 @@ namespace Anamnesis.Styles
 				case ActorTypes.Companion:
 				case ActorTypes.Mount:
 				case ActorTypes.Ornament:
+				case ActorTypes.Retainer:
 					return true;
 			}
 
