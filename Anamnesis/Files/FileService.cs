@@ -308,11 +308,11 @@ namespace Anamnesis.Files
 		/// </summary>
 		public static string CacheRemoteFile(string url, string? filePath)
 		{
-			string cachedir = ParseToFilePath(CacheDirectory);
+			string cacheDir = ParseToFilePath(CacheDirectory);
 
-			if (!Directory.Exists(cachedir))
+			if (!Directory.Exists(cacheDir))
 			{
-				Directory.CreateDirectory(cachedir);
+				Directory.CreateDirectory(cacheDir);
 			}
 
 			Uri uri = new Uri(url);
@@ -321,7 +321,7 @@ namespace Anamnesis.Files
 
 			if (filePath != null)
 			{
-				localFile = string.Format("{0}{1}", cachedir, filePath);
+				localFile = cacheDir + filePath;
 
 				string? directoryName = Path.GetDirectoryName(localFile);
 				if (directoryName != null && !Directory.Exists(directoryName))
@@ -331,7 +331,7 @@ namespace Anamnesis.Files
 			}
 			else
 			{
-				localFile = string.Format("{0}{1}", cachedir, uri.Segments[uri.Segments.Length - 1]);
+				localFile = cacheDir + uri.Segments[uri.Segments.Length - 1];
 			}
 
 			if (!File.Exists(localFile))
