@@ -7,6 +7,7 @@ namespace Anamnesis.Files
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
+	using System.Net;
 	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
@@ -16,12 +17,14 @@ namespace Anamnesis.Files
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Views;
 	using Anamnesis.Services;
+	using Anamnesis.Utils;
 	using Microsoft.Win32;
 	using Serilog;
 
 	public class FileService : ServiceBase<FileService>
 	{
 		public static readonly string StoreDirectory = "%AppData%/Anamnesis/";
+		public static readonly string CacheDirectory = "%AppData%/Anamnesis/RemoteCache/";
 
 		private static readonly Dictionary<Type, string> TypeNameLookup = new Dictionary<Type, string>();
 		private static readonly Dictionary<Type, FileFilter> FileTypeFilterLookup = new Dictionary<Type, FileFilter>();
@@ -298,6 +301,81 @@ namespace Anamnesis.Files
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Caches remote file, returns path to file if successful or file exists or original url if unsuccessful. Allows to custom file names to avoid overwrite.
+		/// </summary>
+		public static string CacheRemoteFile(string url, string? filePath)
+		{
+			string cachedir = ParseToFilePath(CacheDirectory);
+
+			if (!Directory.Exists(cachedir))
+			{
+				Directory.CreateDirectory(cachedir);
+			}
+
+			Uri uri = new Uri(url);
+
+			string localFile;
+
+			if (filePath != null)
+			{
+				localFile = string.Format("{0}{1}", cachedir, filePath);
+
+				string? directoryName = Path.GetDirectoryName(localFile);
+				if (directoryName != null && !Directory.Exists(directoryName))
+				{
+					Directory.CreateDirectory(directoryName);
+				}
+			}
+			else
+			{
+				localFile = string.Format("{0}{1}", cachedir, uri.Segments[uri.Segments.Length - 1]);
+			}
+
+			if (!File.Exists(localFile))
+			{
+				try
+				{
+					using (FileStream stream = new FileStream(localFile, FileMode.Create, FileAccess.Write))
+					{
+						byte[] data;
+						HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+						HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+						Stream responseStream = response.GetResponseStream();
+
+						using (MemoryStream memoryStream = new MemoryStream((int)response.ContentLength))
+						{
+							responseStream.CopyTo(memoryStream);
+							data = memoryStream.ToArray();
+						}
+
+						stream.Write(data, 0, data.Length);
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Information($"Failed to cache data from url: {url}: {ex.Message}");
+					return url;
+				}
+			}
+
+			return localFile;
+		}
+
+		/// <summary>
+		/// Caches remote image, returns path to image if successful or image exists or original url if unsuccessful.
+		/// Generates name based on hash of original url to avoid overwriting of images with same name.
+		/// </summary>
+		public static string CacheRemoteImage(string url, string originalUrl)
+		{
+			Uri uri = new Uri(url);
+
+			string imagePath = "ImageCache/" + HashUtility.GetHashString(originalUrl) + Path.GetExtension(uri.Segments[uri.Segments.Length - 1]);
+
+			return CacheRemoteFile(url, imagePath);
 		}
 
 		private static string ToAnyFilter(params Type[] types)

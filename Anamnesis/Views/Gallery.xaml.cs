@@ -116,9 +116,9 @@ namespace Anamnesis.Views
 
 				entries.Shuffle();
 
-				while(this.isRunning)
+				while (this.isRunning)
 				{
-					if (!this.IsVisible)
+					while (!this.IsVisible)
 						await Task.Delay(5000);
 
 					if (!SettingsService.Current.ShowGallery)
@@ -206,7 +206,26 @@ namespace Anamnesis.Views
 
 			if (this.isImage1)
 			{
-				this.Image1Path = entry.Url;
+				if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
+				{
+					string finallink;
+
+					if (entry.Url.Contains("cdn.discordapp.com") || entry.Url.Contains("media.discordapp.net"))
+					{
+						finallink = this.GetOptimizedDiscordLink(entry.Url, entry.Width ?? 0, entry.Height ?? 0);
+					}
+					else
+					{
+						finallink = entry.Url;
+					}
+
+					this.Image1Path = FileService.CacheRemoteImage(finallink, entry.Url);
+				}
+				else
+				{
+					this.Image1Path = entry.Url;
+				}
+
 				this.Image1Author = entry.Author;
 				image = this.Image1;
 				host = this.Image1Host;
@@ -214,7 +233,26 @@ namespace Anamnesis.Views
 			}
 			else
 			{
-				this.Image2Path = entry.Url;
+				if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
+				{
+					string finallink;
+
+					if (entry.Url.Contains("cdn.discordapp.com") || entry.Url.Contains("media.discordapp.net"))
+					{
+						finallink = this.GetOptimizedDiscordLink(entry.Url, entry.Width ?? 0, entry.Height ?? 0);
+					}
+					else
+					{
+						finallink = entry.Url;
+					}
+
+					this.Image2Path = FileService.CacheRemoteImage(finallink, entry.Url);
+				}
+				else
+				{
+					this.Image2Path = entry.Url;
+				}
+
 				this.Image2Author = entry.Author;
 				image = this.Image2;
 				host = this.Image2Host;
@@ -245,6 +283,56 @@ namespace Anamnesis.Views
 			oldHost.Opacity = 0.0;
 		}
 
+		private string GetOptimizedDiscordLink(string url, int width, int height)
+		{
+			if (width == 0 || height == 0)
+				return url;
+
+			UriBuilder uriBuilder = new UriBuilder(url);
+
+			uriBuilder.Host = "media.discordapp.net";
+
+			var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+
+			if(width > height)
+			{
+				double ratio = (double)height / (double)width;
+				query["width"] = Convert.ToString(720);
+				query["height"] = Convert.ToString((int)(ratio * 720));
+			}
+			else
+			{
+				double ratio = (double)width / (double)height;
+				query["width"] = Convert.ToString((int)(ratio * 720));
+				query["height"] = Convert.ToString(720);
+			}
+
+			uriBuilder.Query = query.ToString();
+
+			try
+			{
+				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriBuilder.ToString());
+				request.Method = "HEAD";
+				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+				if (response.StatusCode != HttpStatusCode.OK)
+				{
+					Log.Information($"Failed to get samaller thumbnail from url: {uriBuilder}: {response.StatusCode}");
+					response.Close();
+					return url;
+				}
+
+				response.Close();
+			}
+			catch (Exception ex)
+			{
+				Log.Information($"Failed to get smaller thumbnail from url: {uriBuilder}: {ex.Message}");
+				return url;
+			}
+
+			return uriBuilder.ToString();
+		}
+
 		private void OnMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			if (this.currentEntry == null || this.currentEntry.Url == null)
@@ -271,6 +359,8 @@ namespace Anamnesis.Views
 		{
 			public string? Url { get; set; }
 			public string? Author { get; set; }
+			public int? Width { get; set; }
+			public int? Height { get; set; }
 		}
 	}
 }
