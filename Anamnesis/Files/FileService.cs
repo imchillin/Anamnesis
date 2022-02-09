@@ -162,12 +162,19 @@ namespace Anamnesis.Files
 						if (defaultDirectory != null)
 							dlg.InitialDirectory = defaultDirectory.FullName;
 
+						if (!Directory.Exists(dlg.InitialDirectory))
+						{
+							Log.Warning($"Initial directory of open dialog is invalid: {dlg.InitialDirectory}");
+							dlg.InitialDirectory = null;
+						}
+
 						foreach (Shortcut? shortcut in shortcuts)
 						{
 							dlg.CustomPlaces.Add(new FileDialogCustomPlace(ParseToFilePath(shortcut.Path)));
 						}
 
 						dlg.Filter = ToAnyFilter(fileTypes);
+
 						bool? result = dlg.ShowDialog();
 
 						if (result != true)
@@ -264,6 +271,13 @@ namespace Anamnesis.Files
 						SaveFileDialog dlg = new SaveFileDialog();
 						dlg.Filter = ToFilter(typeof(T));
 						dlg.InitialDirectory = defaultDirectory?.FullName ?? string.Empty;
+
+						if (!Directory.Exists(dlg.InitialDirectory))
+						{
+							Log.Warning($"Initial directory of save dialog is invalid: {dlg.InitialDirectory}");
+							dlg.InitialDirectory = null;
+						}
+
 						bool? dlgResult = dlg.ShowDialog();
 
 						if (dlgResult != true)
@@ -338,22 +352,20 @@ namespace Anamnesis.Files
 			{
 				try
 				{
-					using (FileStream stream = new FileStream(localFile, FileMode.Create, FileAccess.Write))
+					using FileStream stream = new FileStream(localFile, FileMode.Create, FileAccess.Write);
+					byte[] data;
+					HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+					HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+					Stream responseStream = response.GetResponseStream();
+
+					using (MemoryStream memoryStream = new MemoryStream((int)response.ContentLength))
 					{
-						byte[] data;
-						HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-						HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-						Stream responseStream = response.GetResponseStream();
-
-						using (MemoryStream memoryStream = new MemoryStream((int)response.ContentLength))
-						{
-							responseStream.CopyTo(memoryStream);
-							data = memoryStream.ToArray();
-						}
-
-						stream.Write(data, 0, data.Length);
+						responseStream.CopyTo(memoryStream);
+						data = memoryStream.ToArray();
 					}
+
+					stream.Write(data, 0, data.Length);
 				}
 				catch (Exception ex)
 				{
