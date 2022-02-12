@@ -88,9 +88,28 @@
 						Orientation="Horizontal"
 						Visibility="{Binding CanDye, Converter={StaticResource B2V}}">
 
+
+				<!-- Head/Hat Visbility and Visor -->
+				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}" Visibility="{Binding IsHead, Converter={StaticResource B2V}}" IsChecked="{Binding Actor.HatHidden}" BorderThickness="1" Padding="0" Margin="0">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_HatToggle"/>
+					</ToggleButton.ToolTip>
+
+					<fa:IconBlock Icon="EyeSlash" FontSize="10"/>
+				</ToggleButton>
+
+				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}"  IsEnabled="{Binding Actor.CanRefresh}" Visibility="{Binding IsHead, Converter={StaticResource B2V}}" IsChecked="{Binding Actor.VisorToggled}" BorderThickness="1" Padding="0" Margin="0">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_VisorToggle"/>
+					</ToggleButton.ToolTip>
+
+					<fa:IconBlock Icon="Mask" FontSize="10"/>
+				</ToggleButton>
+
+				<!-- Weapon Tint -->
 				<ana:RgbColorControl Margin="2, 2, 0, 0" 
-											 Value="{Binding ExtendedViewModel.Tint}" 
-											 Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}">
+				                     Value="{Binding ExtendedViewModel.Tint}" 
+				                     Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}">
 					<ana:RgbColorControl.ToolTip>
 						<XivToolsWpf:TextBlock Key="Character_Equipment_Tint"/>
 					</ana:RgbColorControl.ToolTip>
@@ -107,7 +126,7 @@
 							Width="20"
 							VerticalAlignment="Top"
 							Style="{DynamicResource TransparentButton}"
-							IsEnabled="{Binding Actor.IsOverworldActor}">
+							IsEnabled="{Binding Actor.CanRefresh}">
 
 					<Button.ToolTip>
 						<XivToolsWpf:TextBlock Key="Character_Equipment_Dye"/>
@@ -128,6 +147,8 @@
 					</Grid>
 				</Button>
 
+				
+
 				<TextBlock Text="{Binding Dye.Name}" Margin="6, 2, 0, 0" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}" Style="{StaticResource Label}"/>
 
 			</StackPanel>
@@ -137,18 +158,28 @@
 
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 
-				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1" Padding="0" Margin="0">
+				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ItemModel.WeaponHidden}" BorderThickness="1" Padding="0" Margin="0">
 					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_Hide"/>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponToggle"/>
 					</ToggleButton.ToolTip>
 
 					<fa:IconBlock Icon="EyeSlash" FontSize="10"/>
 				</ToggleButton>
 
-				<ana:VectorEditor Grid.Column="1" Margin="4, 0, 0, 0" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" TickFrequency="0.1" Minimum="-10" Maximum="10"/>
+				<ToggleButton Grid.Column="1" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1" Padding="0" Margin="0">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponScale"/>
+					</ToggleButton.ToolTip>
+
+					<fa:IconBlock Icon="BalanceScale" FontSize="10"/>
+				</ToggleButton>
+
+				<ana:VectorEditor Grid.Column="2" Margin="4, 0, 0, 0" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" TickFrequency="0.1" Minimum="-10" Maximum="10"/>
+
 
 			</Grid>
 
