@@ -29,6 +29,14 @@ namespace Anamnesis.Memory
 			Performance = 16,
 		}
 
+		[Flags]
+		public enum CharacterFlagDefs : byte
+		{
+			None = 0,
+			HatHidden = 1 << 0,
+			VisorToggled = 1 << 4,
+		}
+
 		[Bind(0x008D)] public byte SubKind { get; set; }
 		[Bind(0x0B4)] public float Scale { get; set; }
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
@@ -42,6 +50,7 @@ namespace Anamnesis.Memory
 		[Bind(0x0CE0)] public WeaponMemory? OffHand { get; set; }
 		[Bind(0x0DB0)] public ActorEquipmentMemory? Equipment { get; set; }
 		[Bind(0x0DD8)] public ActorCustomizeMemory? Customize { get; set; }
+		[Bind(0x0DF6, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 		[Bind(0x0E08, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 		[Bind(0x0F30)] public uint TargetAnimation { get; set; }
 		[Bind(0x0FA4)] public float AnimationSpeed { get; set; }
@@ -65,6 +74,40 @@ namespace Anamnesis.Memory
 
 		[DependsOn(nameof(Companion))]
 		public bool HasCompanion => this.Companion != null;
+
+		[DependsOn(nameof(CharacterFlags))]
+		public bool HatHidden
+		{
+			get => this.CharacterFlags.HasFlag(CharacterFlagDefs.HatHidden);
+			set
+			{
+				if (value)
+				{
+					this.CharacterFlags |= CharacterFlagDefs.HatHidden;
+				}
+				else
+				{
+					this.CharacterFlags &= ~CharacterFlagDefs.HatHidden;
+				}
+			}
+		}
+
+		[DependsOn(nameof(CharacterFlags))]
+		public bool VisorToggled
+		{
+			get => this.CharacterFlags.HasFlag(CharacterFlagDefs.VisorToggled);
+			set
+			{
+				if (value)
+				{
+					this.CharacterFlags |= CharacterFlagDefs.VisorToggled;
+				}
+				else
+				{
+					this.CharacterFlags &= ~CharacterFlagDefs.VisorToggled;
+				}
+			}
+		}
 
 		public int ObjectKindInt
 		{

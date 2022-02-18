@@ -96,6 +96,14 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
+		public bool IsHead
+		{
+			get
+			{
+				return this.Slot == ItemSlots.Head;
+			}
+		}
+
 		public bool IsValidWeapon
 		{
 			get
