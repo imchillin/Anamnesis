@@ -9,6 +9,7 @@ namespace Anamnesis.Files
 	using System.Text.Json.Serialization;
 	using System.Windows.Media.Imaging;
 	using Anamnesis.Serialization;
+	using Anamnesis.Services;
 	using PropertyChanged;
 
 	[Serializable]
@@ -26,7 +27,14 @@ namespace Anamnesis.Files
 		[JsonIgnore] public virtual Func<FileSystemInfo, string> GetFullFilename => (f) => Path.GetFileName(f.FullName);
 		[JsonIgnore] public BitmapImage? ImageSource => this.GetImage();
 
-		public abstract void Serialize(Stream stream);
+		public virtual void Serialize(Stream stream)
+		{
+			if (this.Author == null)
+			{
+				this.Author = SettingsService.Current.DefaultAuthor;
+			}
+		}
+
 		public abstract FileBase Deserialize(Stream stream);
 
 		public FileFilter GetFilter()
@@ -66,6 +74,8 @@ namespace Anamnesis.Files
 	{
 		public override void Serialize(Stream stream)
 		{
+			base.Serialize(stream);
+
 			using TextWriter writer = new StreamWriter(stream);
 			string json = SerializerService.Serialize(this);
 			writer.Write(json);

@@ -541,6 +541,7 @@
 	"Settings_Hyperlegible": "Use Atkinson Hyperlegible font",
 	"Settings_OverlayWindow": "Mini window",
 	"Settings_WrapRotations": "Wrap rotation sliders",
+	"Settings_DefaultAuthor": "Default Author Name",
 
 	"About_Version_Header": "Version",
 	"About_OpenSource_Header": "Proudly Open Source",

@@ -10,6 +10,7 @@ namespace Anamnesis.Files
 	using System.Windows.Media.Imaging;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Windows;
+	using Anamnesis.Services;
 	using Microsoft.Win32;
 	using PropertyChanged;
 
@@ -28,6 +29,11 @@ namespace Anamnesis.Files
 			this.Info = info;
 			this.File = file;
 			this.dlg = dlg;
+
+			if (file.Author == null)
+			{
+				file.Author = SettingsService.Current.DefaultAuthor;
+			}
 		}
 
 		public FileSystemInfo Info { get; private set; }
