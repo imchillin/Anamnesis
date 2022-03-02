@@ -77,6 +77,11 @@
 						  Margin="6, 0, 0, 0"
 						  IsChecked="{Binding ShowFilters}"
 						  Height="32">
+
+				<ToggleButton.ToolTip>
+					<XivToolsWpf:TextBlock Key="Common_Filters" />
+				</ToggleButton.ToolTip>
+
 				<StackPanel Orientation="Horizontal">
 					<XivToolsWpf:IconBlock Icon="AngleLeft" Margin="0, 0, 6, 0"/>
 					<XivToolsWpf:IconBlock Icon="Filter"/>
@@ -95,7 +100,7 @@
 
 			<Button Click="OnClearClicked" Style="{StaticResource TransparentIconButton}">
 				<Button.ToolTip>
-					<XivToolsWpf:TextBlock Key="Character_Equipment_Clear" />
+					<XivToolsWpf:TextBlock Key="Character_Equipment_ClearSlot" />
 				</Button.ToolTip>
 
 				<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="Eraser" />
