@@ -256,7 +256,7 @@
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Scale",
 	"Pose_Position": "Position",
-	"Pose_All": "Load Full Transforms",
+	"Pose_All": "Full Transforms (Advanced)",
 	"Pose_AllTooltip": "Loads Rotation, Scale, and Positioning at the same time (advanced)",
 
 	"Pose_EnableRotation": "R",
