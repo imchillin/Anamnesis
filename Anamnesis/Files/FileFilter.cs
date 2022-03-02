@@ -10,13 +10,15 @@ namespace Anamnesis.Files
 	{
 		public readonly string Extension;
 		public readonly string? Regex;
+		public readonly Type FileType;
 		public Func<FileSystemInfo, string>? GetNameCallback;
 		public Func<FileSystemInfo, string>? GetFullNameCallback;
 
-		public FileFilter(string extension, string? regex)
+		public FileFilter(Type fileType, string extension, string? regex)
 		{
 			this.Extension = extension;
 			this.Regex = regex;
+			this.FileType = fileType;
 		}
 
 		public bool Passes(FileInfo file)

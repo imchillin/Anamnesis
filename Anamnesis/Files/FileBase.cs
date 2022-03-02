@@ -12,6 +12,10 @@ namespace Anamnesis.Files
 	public abstract class FileBase
 	{
 		public string? Author { get; set; }
+		public string? Description { get; set; }
+		public string? Version { get; set; }
+		public string? IconPath { get; set; }
+		public string? ImagePath { get; set; }
 
 		[JsonIgnore] public virtual string TypeName => this.GetType().Name;
 		[JsonIgnore] public abstract string FileExtension { get; }
@@ -24,7 +28,7 @@ namespace Anamnesis.Files
 
 		public FileFilter GetFilter()
 		{
-			FileFilter filter = new FileFilter(this.FileExtension, this.FileRegex);
+			FileFilter filter = new FileFilter(this.GetType(), this.FileExtension, this.FileRegex);
 			filter.GetNameCallback = this.GetFilename;
 			filter.GetFullNameCallback = this.GetFullFilename;
 

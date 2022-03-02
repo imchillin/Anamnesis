@@ -173,8 +173,33 @@
 				<DataTemplate>
 					<Grid Margin="0,-4,0,-4">
 
+						<Grid.ToolTip>
+							<StackPanel Orientation="Horizontal">
+								
+								<Image MaxWidth="100" MaxHeight="200" Margin="0, 0, 6, 0" Source="{Binding ImagePath}"/>
+
+								<StackPanel Orientation="Vertical" Visibility="{Binding IsDirectory, Converter={StaticResource !B2V}}">
+									<XivToolsWpf:TextBlock Text="{Binding Name}" FontWeight="Bold" Visibility="{Binding IsNameCustom, Converter={StaticResource !B2V}}"/>
+									<XivToolsWpf:TextBlock Text="{Binding FileName}" FontWeight="Bold"/>
+
+									<XivToolsWpf:TextBlock Text="{Binding File.Description}" Visibility="{Binding File.Description, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="0, 6"/>
+								
+									<StackPanel Orientation="Horizontal" Visibility="{Binding File.Author, Converter={StaticResource NotNullToVisibilityConverter}}">
+										<XivToolsWpf:TextBlock Text="Author:" Margin="0, 0, 6, 0"/>
+										<XivToolsWpf:TextBlock Text="{Binding File.Author}"/>
+									</StackPanel>
+
+									<StackPanel Orientation="Horizontal" Visibility="{Binding File.Version, Converter={StaticResource NotNullToVisibilityConverter}}">
+										<XivToolsWpf:TextBlock Text="Version:" Margin="0, 0, 6, 0"/>
+										<XivToolsWpf:TextBlock Text="{Binding File.Version}"/>
+									</StackPanel>
+								
+								</StackPanel>
+							</StackPanel>
+						</Grid.ToolTip>
+
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="26" />
+							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
 
@@ -187,24 +212,39 @@
 							</ContextMenu>
 						</Grid.ContextMenu>
 
-						<XivToolsWpf:IconBlock Grid.RowSpan="2"
-											   Grid.Column="0"
-											   Margin="3,0,6,0"
-											   VerticalAlignment="Center"
-											   FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
-											   FontSize="16"
-											   Foreground="#FFDA70"
-											   Icon="Folder"
-											   Visibility="{Binding IsDirectory, Converter={StaticResource B2V}}"/>
+						<Grid Grid.RowSpan="2"
+							  Grid.Column="0"
+							  Visibility="{Binding IsDirectory, Converter={StaticResource !B2V}}"
+							  Width="28" Height="28">
 
-						<XivToolsWpf:IconBlock Grid.RowSpan="2"
-											   Grid.Column="0"
-											   Margin="3,0,6,0"
-											   VerticalAlignment="Center"
-											   FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
-											   FontSize="16"
-											   Icon="FileAlt"
-											   Visibility="{Binding IsDirectory, Converter={StaticResource !B2V}}" />
+							<XivToolsWpf:IconBlock 
+								VerticalAlignment="Center"
+								FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
+								FontSize="16"
+								Icon="FileAlt"
+								Margin="3,0,6,0"
+								Visibility="{Binding IconPath, Converter={StaticResource NullToVisibilityConverter}}"/>
+
+
+							<Border CornerRadius="6" BorderThickness="1"
+									Visibility="{Binding IconPath, Converter={StaticResource NotNullToVisibilityConverter}}">
+								<Border.Background>
+									<ImageBrush Stretch="Fill" ImageSource="{Binding IconPath}"/>
+								</Border.Background>
+							</Border>
+
+						</Grid>
+
+						<XivToolsWpf:IconBlock 
+							Grid.RowSpan="2"
+							Grid.Column="0"
+							Margin="3,0,6,0"
+							VerticalAlignment="Center"
+							FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
+							FontSize="16"
+							Foreground="#FFDA70"
+							Icon="Folder"
+							Visibility="{Binding IsDirectory, Converter={StaticResource B2V}}"/>
 
 						<Grid Grid.Column="1"
 							  Height="28"

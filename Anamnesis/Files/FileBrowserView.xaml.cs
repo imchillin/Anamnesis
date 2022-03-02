@@ -537,11 +537,29 @@ namespace Anamnesis.GUI.Views
 			public readonly FileBrowserView View;
 			public readonly FileFilter? Filter;
 
+			private FileBase? file;
+
 			public EntryWrapper(FileSystemInfo entry, FileBrowserView view, FileFilter? filter)
 			{
 				this.Entry = entry;
 				this.View = view;
 				this.Filter = filter;
+			}
+
+			public FileBase? File
+			{
+				get
+				{
+					if (this.file == null)
+					{
+						if (this.Filter == null)
+							return null;
+
+						this.file = FileService.Load((FileInfo)this.Entry, this.Filter.FileType);
+					}
+
+					return this.file;
+				}
 			}
 
 			public string Name
@@ -686,6 +704,37 @@ namespace Anamnesis.GUI.Views
 						return null;
 
 					return "\\" + dirName + "\\";
+				}
+			}
+
+			public string FileName => Path.GetFileName(this.Entry.FullName);
+			public bool IsNameCustom => this.Filter != null && this.Filter.GetNameCallback != null;
+
+			public string? ImagePath
+			{
+				get
+				{
+					if (this.File == null || this.File.ImagePath == null)
+						return null;
+
+					if (Uri.IsWellFormedUriString(this.File.ImagePath, UriKind.Absolute))
+						return this.File.ImagePath;
+
+					return Path.GetDirectoryName(this.Entry.FullName) + "\\" + this.File.ImagePath;
+				}
+			}
+
+			public string? IconPath
+			{
+				get
+				{
+					if (this.File == null || this.File.IconPath == null)
+						return null;
+
+					if (Uri.IsWellFormedUriString(this.File.IconPath, UriKind.Absolute))
+						return this.File.IconPath;
+
+					return Path.GetDirectoryName(this.Entry.FullName) + "\\" + this.File.IconPath;
 				}
 			}
 		}

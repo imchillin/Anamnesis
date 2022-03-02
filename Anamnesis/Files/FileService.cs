@@ -187,42 +187,7 @@ namespace Anamnesis.Files
 				if (result.Path == null)
 					return result;
 
-				string extension = Path.GetExtension(result.Path.FullName);
-
-				Exception? lastException = null;
-				foreach (Type fileType in fileTypes)
-				{
-					FileFilter filter = GetFileTypeFilter(fileType);
-
-					if (filter.Extension == extension)
-					{
-						try
-						{
-							FileBase? file = Activator.CreateInstance(fileType) as FileBase;
-
-							if (file == null)
-								throw new Exception($"Failed to create instance of file type: {fileType}");
-
-							using FileStream stream = new FileStream(result.Path.FullName, FileMode.Open);
-							result.File = file.Deserialize(stream);
-							break;
-						}
-						catch (Exception ex)
-						{
-							Log.Verbose(ex, $"Attempted to deserialize file: {result.Path} as type: {fileType} failed.");
-							lastException = ex;
-						}
-					}
-				}
-
-				if (result.File == null)
-				{
-					if (lastException == null)
-						throw new Exception($"Unrecognised file: {result.Path}");
-
-					throw lastException;
-				}
-
+				result.File = Load(result.Path, fileTypes);
 				return result;
 			}
 			catch (Exception ex)
@@ -231,6 +196,64 @@ namespace Anamnesis.Files
 			}
 
 			return result;
+		}
+
+		public static FileBase? Load(FileInfo info, Type fileType)
+		{
+			string extension = Path.GetExtension(info.FullName);
+
+			try
+			{
+				FileBase? file = Activator.CreateInstance(fileType) as FileBase;
+
+				if (file == null)
+					throw new Exception($"Failed to create instance of file type: {fileType}");
+
+				using FileStream stream = new FileStream(info.FullName, FileMode.Open);
+				return file.Deserialize(stream);
+			}
+			catch (Exception ex)
+			{
+				Log.Verbose(ex, $"Attempted to deserialize file: {info} as type: {fileType} failed.");
+				throw;
+			}
+
+			throw new Exception($"Unrecognised file: {info}");
+		}
+
+		public static FileBase? Load(FileInfo info, Type[] fileTypes)
+		{
+			string extension = Path.GetExtension(info.FullName);
+
+			Exception? lastException = null;
+			foreach (Type fileType in fileTypes)
+			{
+				FileFilter filter = GetFileTypeFilter(fileType);
+
+				if (filter.Extension == extension)
+				{
+					try
+					{
+						FileBase? file = Activator.CreateInstance(fileType) as FileBase;
+
+						if (file == null)
+							throw new Exception($"Failed to create instance of file type: {fileType}");
+
+						using FileStream stream = new FileStream(info.FullName, FileMode.Open);
+						return file.Deserialize(stream);
+					}
+					catch (Exception ex)
+					{
+						Log.Verbose(ex, $"Attempted to deserialize file: {info} as type: {fileType} failed.");
+						lastException = ex;
+					}
+				}
+			}
+
+			if (lastException != null)
+				throw lastException;
+
+			throw new Exception($"Unrecognised file: {info}");
 		}
 
 		public static async Task<SaveResult> Save<T>(DirectoryInfo? defaultDirectory, params Shortcut[] directories)
