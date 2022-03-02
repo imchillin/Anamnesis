@@ -267,7 +267,7 @@ namespace Anamnesis.Character.Pages
 		{
 			try
 			{
-				await this.Save();
+				await this.Save(false);
 			}
 			catch (Exception ex)
 			{
@@ -275,12 +275,40 @@ namespace Anamnesis.Character.Pages
 			}
 		}
 
-		private async Task Save()
+		private async void OnSaveMetaClicked(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				await this.Save(true);
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to save appearance");
+			}
+		}
+
+		private async Task Save(bool editMeta, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
 		{
 			if (this.Actor == null)
 				return;
 
-			lastSaveDir = await CharacterFile.Save(lastSaveDir, this.Actor);
+			SaveResult result = await FileService.Save<CharacterFile>(lastSaveDir, FileService.DefaultCharacterDirectory);
+
+			if (result.Path == null)
+				return;
+
+			CharacterFile file = new CharacterFile();
+			file.WriteToFile(this.Actor, mode);
+
+			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
+			file.Serialize(stream);
+
+			lastSaveDir = result.Directory;
+
+			if (editMeta)
+			{
+				FileMetaEditor.Show(result.Path, file);
+			}
 		}
 
 		private void OnActorChanged(ActorMemory? actor)

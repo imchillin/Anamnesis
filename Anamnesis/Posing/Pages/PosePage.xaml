@@ -209,6 +209,10 @@
 					<MenuItem Header="Common_SaveFile" Icon="Save" Style="{StaticResource ButtonMenuItemLeft}" Width="76" Click="OnSaveClicked"/>
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
 						<MenuItem Header="Pose_Selected" Style="{StaticResource AnaMenuItem}" Click="OnSaveSelectedClicked" IsEnabled="{Binding Skeleton.HasSelection}"/>
+
+						<MenuItem Header="Common_SaveFileMeta"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnSaveMetaClicked" />
 					</MenuItem>
 				</Menu>
 			</Grid>

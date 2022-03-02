@@ -33,7 +33,7 @@ namespace Anamnesis.Files
 
 		public Dictionary<string, Bone?>? Bones { get; set; }
 
-		public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, HashSet<string>? bones = null)
+		public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, HashSet<string>? bones = null, bool editMeta = false)
 		{
 			if (actor == null || skeleton == null)
 				return null;
@@ -48,6 +48,10 @@ namespace Anamnesis.Files
 
 			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
 			file.Serialize(stream);
+
+			if (editMeta)
+				FileMetaEditor.Show(result.Path, file);
+
 			return result.Directory;
 		}
 

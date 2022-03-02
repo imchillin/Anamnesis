@@ -335,6 +335,11 @@ namespace Anamnesis.PoseModule.Pages
 			lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton);
 		}
 
+		private async void OnSaveMetaClicked(object sender, RoutedEventArgs e)
+		{
+			lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, null, true);
+		}
+
 		private async void OnSaveSelectedClicked(object sender, RoutedEventArgs e)
 		{
 			if (this.Skeleton == null)

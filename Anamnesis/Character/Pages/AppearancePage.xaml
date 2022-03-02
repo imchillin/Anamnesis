@@ -288,8 +288,17 @@
 
 					<MenuItem Header="Common_SaveFile"
 						  Icon="Save"
-						  Style="{StaticResource ButtonMenuItem}"
+						  Style="{StaticResource ButtonMenuItemLeft}"
 						  Click="OnSaveClicked" />
+
+					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
+						  Margin="-1,0,3,0">
+						
+						<MenuItem Header="Common_SaveFileMeta"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnSaveMetaClicked" />
+						
+					</MenuItem>
 				</Menu>
 			</StackPanel>
 
