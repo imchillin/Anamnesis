@@ -201,7 +201,7 @@ namespace Anamnesis.Memory
 			int index = ActorService.Instance.GetActorTableIndex(this.Address);
 
 			// only the local player should get npc faces!
-			if (index != 0)
+			if (index != 0 && index != 201)
 				return false;
 
 			if (this.Customize?.Head > 10)
