@@ -4,9 +4,12 @@
 namespace Anamnesis.Files
 {
 	using System;
+	using System.ComponentModel;
 	using System.IO;
 	using System.Text.Json.Serialization;
+	using System.Windows.Media.Imaging;
 	using Anamnesis.Serialization;
+	using PropertyChanged;
 
 	[Serializable]
 	public abstract class FileBase
@@ -14,14 +17,14 @@ namespace Anamnesis.Files
 		public string? Author { get; set; }
 		public string? Description { get; set; }
 		public string? Version { get; set; }
-		public string? IconPath { get; set; }
-		public string? ImagePath { get; set; }
+		public string? Base64Image { get; set; }
 
 		[JsonIgnore] public virtual string TypeName => this.GetType().Name;
 		[JsonIgnore] public abstract string FileExtension { get; }
 		[JsonIgnore] public virtual string? FileRegex => null;
 		[JsonIgnore] public virtual Func<FileSystemInfo, string> GetFilename => (f) => Path.GetFileNameWithoutExtension(f.FullName);
 		[JsonIgnore] public virtual Func<FileSystemInfo, string> GetFullFilename => (f) => Path.GetFileName(f.FullName);
+		[JsonIgnore] public BitmapImage? ImageSource => this.GetImage();
 
 		public abstract void Serialize(Stream stream);
 		public abstract FileBase Deserialize(Stream stream);
@@ -33,6 +36,27 @@ namespace Anamnesis.Files
 			filter.GetFullNameCallback = this.GetFullFilename;
 
 			return filter;
+		}
+
+		public BitmapImage? GetImage()
+		{
+			if (this.Base64Image == null)
+				return null;
+
+			byte[] binaryData = Convert.FromBase64String(this.Base64Image);
+
+			BitmapImage bi = new BitmapImage();
+			bi.BeginInit();
+			bi.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+			bi.StreamSource = new MemoryStream(binaryData);
+			bi.EndInit();
+
+			return bi;
+		}
+
+		public void SetImage(byte[] binaryData)
+		{
+			this.Base64Image = Convert.ToBase64String(binaryData);
 		}
 	}
 

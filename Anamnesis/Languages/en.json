@@ -36,6 +36,11 @@
 	"FileBrowser_SortAlpha": "By Name (A to Z)",
 	"FileBrowser_SortDate": "By Date (Newest to Oldest)",
 
+	"FileMeta_Author": "Author:",
+	"FileMeta_Version": "Version:",
+	"FileMeta_Description": "Description:",
+	"FileMeta_ImageFromClip": "Paste an image from the clipboard",
+
 	"Shortcut_AnamnesisPose": "Anamnesis Poses",
 	"Shortcut_AnamnesisCharacter": "Anamnesis Characters",
 	"Shortcut_AnamnesisScenes": "Anamnesis Scenes",

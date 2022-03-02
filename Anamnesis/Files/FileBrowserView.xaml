@@ -176,21 +176,21 @@
 						<Grid.ToolTip>
 							<StackPanel Orientation="Horizontal">
 								
-								<Image MaxWidth="100" MaxHeight="200" Margin="0, 0, 6, 0" Source="{Binding ImagePath}"/>
+								<Image MaxWidth="100" MaxHeight="200" Margin="0, 0, 6, 0" Source="{Binding File.ImageSource}"/>
 
 								<StackPanel Orientation="Vertical" Visibility="{Binding IsDirectory, Converter={StaticResource !B2V}}">
 									<XivToolsWpf:TextBlock Text="{Binding Name}" FontWeight="Bold" Visibility="{Binding IsNameCustom, Converter={StaticResource !B2V}}"/>
 									<XivToolsWpf:TextBlock Text="{Binding FileName}" FontWeight="Bold"/>
 
-									<XivToolsWpf:TextBlock Text="{Binding File.Description}" Visibility="{Binding File.Description, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="0, 6"/>
+									<XivToolsWpf:TextBlock Width="200" TextWrapping="Wrap" Text="{Binding File.Description}" Visibility="{Binding File.Description, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="0, 6"/>
 								
 									<StackPanel Orientation="Horizontal" Visibility="{Binding File.Author, Converter={StaticResource NotNullToVisibilityConverter}}">
-										<XivToolsWpf:TextBlock Text="Author:" Margin="0, 0, 6, 0"/>
+										<XivToolsWpf:TextBlock Key="FileMeta_Author" Margin="0, 0, 6, 0"/>
 										<XivToolsWpf:TextBlock Text="{Binding File.Author}"/>
 									</StackPanel>
 
 									<StackPanel Orientation="Horizontal" Visibility="{Binding File.Version, Converter={StaticResource NotNullToVisibilityConverter}}">
-										<XivToolsWpf:TextBlock Text="Version:" Margin="0, 0, 6, 0"/>
+										<XivToolsWpf:TextBlock Key="FileMeta_Version" Margin="0, 0, 6, 0"/>
 										<XivToolsWpf:TextBlock Text="{Binding File.Version}"/>
 									</StackPanel>
 								
@@ -207,6 +207,8 @@
 							<ContextMenu IsEnabled="{Binding CanWrite}">
 								<MenuItem Click="OnDeleteClick"
 										  Header="Delete" />
+								<MenuItem Click="OnEditClick"
+										  Header="Edit" />
 								<MenuItem Click="OnRenameClick"
 										  Header="Rename" />
 							</ContextMenu>
@@ -222,17 +224,14 @@
 								FontFamily="/FontAwesome.Sharp;component/fonts/#Font Awesome 5 Free Solid"
 								FontSize="16"
 								Icon="FileAlt"
-								Margin="3,0,6,0"
-								Visibility="{Binding IconPath, Converter={StaticResource NullToVisibilityConverter}}"/>
+								Margin="3,0,6,0"/>
 
-
-							<Border CornerRadius="6" BorderThickness="1"
+							<!--<Border CornerRadius="6" BorderThickness="1"
 									Visibility="{Binding IconPath, Converter={StaticResource NotNullToVisibilityConverter}}">
 								<Border.Background>
 									<ImageBrush Stretch="Fill" ImageSource="{Binding IconPath}"/>
 								</Border.Background>
-							</Border>
-
+							</Border>-->
 						</Grid>
 
 						<XivToolsWpf:IconBlock 

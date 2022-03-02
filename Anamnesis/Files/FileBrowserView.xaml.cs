@@ -496,6 +496,17 @@ namespace Anamnesis.GUI.Views
 			_ = Task.Run(this.UpdateEntries);
 		}
 
+		private void OnEditClick(object sender, RoutedEventArgs e)
+		{
+			if (this.Selected == null)
+				return;
+
+			if (this.Selected.File == null)
+				return;
+
+			FileMetaEditor.Show(this.Selected.Entry, this.Selected.File);
+		}
+
 		private void OnRenameClick(object sender, RoutedEventArgs e)
 		{
 			if (this.Selected == null)
@@ -709,34 +720,6 @@ namespace Anamnesis.GUI.Views
 
 			public string FileName => Path.GetFileName(this.Entry.FullName);
 			public bool IsNameCustom => this.Filter != null && this.Filter.GetNameCallback != null;
-
-			public string? ImagePath
-			{
-				get
-				{
-					if (this.File == null || this.File.ImagePath == null)
-						return null;
-
-					if (Uri.IsWellFormedUriString(this.File.ImagePath, UriKind.Absolute))
-						return this.File.ImagePath;
-
-					return Path.GetDirectoryName(this.Entry.FullName) + "\\" + this.File.ImagePath;
-				}
-			}
-
-			public string? IconPath
-			{
-				get
-				{
-					if (this.File == null || this.File.IconPath == null)
-						return null;
-
-					if (Uri.IsWellFormedUriString(this.File.IconPath, UriKind.Absolute))
-						return this.File.IconPath;
-
-					return Path.GetDirectoryName(this.Entry.FullName) + "\\" + this.File.IconPath;
-				}
-			}
 		}
 	}
 }

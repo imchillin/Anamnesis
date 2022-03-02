@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="Anamnesis.Files.FileMetaEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Anamnesis.Windows"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+             mc:Ignorable="d" 
+             Width="450"
+			 MaxHeight="450">
+	
+    <Grid x:Name="ContentArea">
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="128"/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<Border Grid.ColumnSpan="2" Margin="3, 3, 3, 0" Background="#33000000" CornerRadius="3">
+				<Image Source="{Binding ImageSource}" Margin="3"/>
+			</Border>
+
+			<Button Grid.Row="1" Margin="3" Style="{DynamicResource TransparentButton}" Click="OnImageClipboardClicked">
+				<XivToolsWpf:IconBlock Icon="Clipboard"/>
+
+				<Button.ToolTip>
+					<XivToolsWpf:TextBlock Key="FileMeta_ImageFromClip"/>
+				</Button.ToolTip>
+			</Button>
+
+			<Button Grid.Row="1" Grid.Column="1" Margin="3" Style="{DynamicResource TransparentButton}" Content="..." Click="OnImageBrowseClicked">
+				<Button.ToolTip>
+					<XivToolsWpf:TextBlock Key="FileBrowser_Browse"/>
+				</Button.ToolTip>
+			</Button>
+		</Grid>
+		
+		<Grid Grid.Column="1" Margin="6">
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="FileMeta_Author" Style="{DynamicResource Label}"/>
+			<TextBox Grid.Column="1" Grid.Row="0" Text="{Binding File.Author}" MaxLines="1" Style="{DynamicResource MaterialDesignTextBox}"/>
+
+			<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="FileMeta_Version" Style="{DynamicResource Label}"/>
+			<TextBox Grid.Column="1" Grid.Row="1" Text="{Binding File.Version}" MaxLines="1" Style="{DynamicResource MaterialDesignTextBox}"/>
+
+			<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="2" Key="FileMeta_Description" Style="{DynamicResource Label}" Margin="0, 12, 6, 0"/>
+			<TextBox Grid.Column="1" Grid.Row="2" Text="{Binding File.Description}" Height="72" AcceptsReturn="True" MaxLines="8" Style="{DynamicResource MaterialDesignTextBox}" Margin="0, 12, 0, 0"/>
+
+			<Button Grid.Row="5" HorizontalAlignment="Right" Grid.Column="1" Margin="0, 12, 0, 0" Click="OnSaveClicked">
+				<XivToolsWpf:TextBlock Key="Common_SaveFile" />
+			</Button>
+			
+		</Grid>
+
+	
+
+	</Grid>
+</UserControl>
