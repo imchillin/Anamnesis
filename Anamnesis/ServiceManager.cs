@@ -9,6 +9,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Files;
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Serialization;

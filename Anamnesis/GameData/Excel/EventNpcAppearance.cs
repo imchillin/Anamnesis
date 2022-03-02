@@ -104,6 +104,9 @@ namespace Anamnesis.GameData.Excel
 
 			Lumina.Excel.GeneratedSheets.NpcEquip? npcEquip = parser.ReadRowReference<ushort, Lumina.Excel.GeneratedSheets.NpcEquip>(63);
 
+			if (npcEquip?.RowId == 175)
+				npcEquip = null;
+
 			this.MainHand = LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, parser.ReadColumn<ulong>(65));
 			this.DyeMainHand = parser.ReadRowReference<byte, Stain>(66);
 			this.OffHand = LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, parser.ReadColumn<ulong>(67));
