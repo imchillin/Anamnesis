@@ -24,9 +24,10 @@ namespace Anamnesis.Character.Views
 		private static Classes classFilter = Classes.All;
 		private static ItemCategories categoryFilter = ItemCategories.All;
 		private static bool showLocked = true;
-		private static bool ambidextrous = false;
 		private static bool autoOffhand = true;
 		private static bool showFilters = false;
+		private static bool forceMainModel = false;
+		private static bool forceOffModel = false;
 
 		private readonly Memory.ActorMemory? actor;
 
@@ -58,6 +59,7 @@ namespace Anamnesis.Character.Views
 
 		public ItemSlots Slot { get; set; }
 		public bool IsMainHandSlot => this.Slot == ItemSlots.MainHand;
+		public bool IsOffHandSlot => this.Slot == ItemSlots.OffHand;
 		public bool IsWeaponSlot => this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
 		public bool IsSmallclothesSlot => this.Slot > ItemSlots.Head && this.Slot <= ItemSlots.OffHand;
 
@@ -94,20 +96,30 @@ namespace Anamnesis.Character.Views
 			}
 		}
 
-		public bool Ambidextrous
-		{
-			get => ambidextrous;
-			set
-			{
-				ambidextrous = value;
-				this.Selector.FilterItems();
-			}
-		}
-
 		public bool AutoOffhand
 		{
 			get => autoOffhand;
 			set => autoOffhand = value;
+		}
+
+		public bool ForceMainModel
+		{
+			get => forceMainModel;
+			set
+			{
+				forceMainModel = value;
+				this.Selector.FilterItems();
+			}
+		}
+
+		public bool ForceOffModel
+		{
+			get => forceOffModel;
+			set
+			{
+				forceOffModel = value;
+				this.Selector.FilterItems();
+			}
 		}
 
 		public void OnClosed()
@@ -172,8 +184,11 @@ namespace Anamnesis.Character.Views
 			if (string.IsNullOrEmpty(item.Name))
 				return false;
 
-			if (this.Ambidextrous && this.IsWeaponSlot)
+			if (this.IsWeaponSlot)
 			{
+				if (!forceMainModel && !item.HasSubModel)
+					return false;
+
 				if (!item.IsWeapon)
 					return false;
 			}

@@ -19,10 +19,11 @@
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Column="0" Width="256" Grid.RowSpan="2" Visibility="{Binding ShowFilters, Converter={StaticResource B2V}}">
+		<StackPanel Grid.Column="0" Width="256" Grid.RowSpan="3" Visibility="{Binding ShowFilters, Converter={StaticResource B2V}}">
 			<GroupBox Style="{StaticResource Cm3GroupBox}">
 				<GroupBox.Header>
 					<StackPanel>
@@ -54,10 +55,6 @@
 					<CheckBox IsChecked="{Binding ShowLocked}">
 						<XivToolsWpf:TextBlock Key="EquipmentSelector_ShowLocked"/>
 					</CheckBox>
-					<CheckBox IsChecked="{Binding Ambidextrous}" Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
-						<XivToolsWpf:TextBlock Key="EquipmentSelector_Ambidextrous"/>
-					</CheckBox>
-					
 				</StackPanel>
 			</GroupBox>
 		</StackPanel>
@@ -104,6 +101,15 @@
 				<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="Eraser" />
 			</Button>
 
+
+
+		</StackPanel>
+
+		<StackPanel Grid.Row="1"
+					Grid.Column="1"
+					Margin="6, 0, 0, 0"
+					Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}">
+
 			<CheckBox Padding="3" IsChecked="{Binding AutoOffhand}" Visibility="{Binding IsMainHandSlot, Converter={StaticResource B2V}}">
 				<CheckBox.ToolTip>
 					<XivToolsWpf:TextBlock Key="EquipmentSelector_AutoOffhandTip"/>
@@ -111,11 +117,24 @@
 				<XivToolsWpf:TextBlock Key="EquipmentSelector_AutoOffhand"/>
 			</CheckBox>
 
+			<CheckBox Padding="3" IsChecked="{Binding ForceMainModel}" Visibility="{Binding IsOffHandSlot, Converter={StaticResource B2V}}">
+				<CheckBox.ToolTip>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_ForceMainModelTooltip"/>
+				</CheckBox.ToolTip>
+				<XivToolsWpf:TextBlock Key="EquipmentSelector_ForceMainModel"/>
+			</CheckBox>
+
+			<CheckBox Padding="3" IsChecked="{Binding ForceOffModel}" Visibility="{Binding IsMainHandSlot, Converter={StaticResource B2V}}">
+				<CheckBox.ToolTip>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_ForceOffModelTooltip"/>
+				</CheckBox.ToolTip>
+				<XivToolsWpf:TextBlock Key="EquipmentSelector_ForceOffModel"/>
+			</CheckBox>
 		</StackPanel>
 
 		<cm3Drawers:SelectorDrawer
 			Grid.Column="1"
-			Grid.Row="1"
+			Grid.Row="2"
 			x:Name="Selector"
 			LoadItems="OnLoadItems"
 			Close="OnClose"

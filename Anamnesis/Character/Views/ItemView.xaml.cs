@@ -79,7 +79,7 @@ namespace Anamnesis.Character.Views
 			set
 			{
 				IItem? item = GameDataService.Items?.Get(value);
-				this.SetItem(item, false);
+				this.SetItem(item);
 			}
 		}
 
@@ -141,16 +141,29 @@ namespace Anamnesis.Character.Views
 				return;
 
 			EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
-			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand));
+			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
 		}
 
-		private void SetItem(IItem? item, bool autoOffhand)
+		private void SetItem(IItem? item, bool autoOffhand = false, bool forceMain = false, bool forceOff = false)
 		{
 			this.lockViewModel = true;
 
 			if (item != null)
 			{
 				bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
+
+				if (item.HasSubModel)
+				{
+					if (forceMain)
+					{
+						useSubModel = false;
+					}
+					else if (forceOff)
+					{
+						useSubModel = true;
+					}
+				}
+
 				ushort modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
 				ushort modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
 				ushort modelVariant = useSubModel ? item.SubModelVariant : item.ModelVariant;
