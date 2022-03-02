@@ -238,6 +238,18 @@ namespace Anamnesis.PoseModule.Pages
 			await this.Open(false, PoseFile.Mode.All);
 		}
 
+		private async void OnOpenBodyClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Skeleton == null)
+				return;
+
+			this.Skeleton.SelectHead();
+			this.Skeleton.InvertSelection();
+
+			await this.Open(true, PoseFile.Mode.Rotation);
+			this.Skeleton.ClearSelection();
+		}
+
 		private async void OnOpenExpressionClicked(object sender, RoutedEventArgs e)
 		{
 			if (this.Skeleton == null)

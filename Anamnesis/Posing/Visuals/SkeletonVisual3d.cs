@@ -353,6 +353,28 @@ namespace Anamnesis.PoseModule
 			this.Select(headBones, SkeletonVisual3d.SelectMode.Add);
 		}
 
+		public void InvertSelection()
+		{
+			foreach ((string name, BoneVisual3d bone) in this.Bones)
+			{
+				bool selected = this.SelectedBones.Contains(bone);
+
+				if (selected)
+				{
+					this.SelectedBones.Remove(bone);
+				}
+				else
+				{
+					this.SelectedBones.Add(bone);
+				}
+			}
+
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.CurrentBone));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasSelection));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.SelectedCount));
+			this.RaisePropertyChanged(nameof(SkeletonVisual3d.CanEditBone));
+		}
+
 		public void GetBoneChildren(BoneVisual3d bone, ref List<BoneVisual3d> bones)
 		{
 			foreach (Visual3D child in bone.Children)

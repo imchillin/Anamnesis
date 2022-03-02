@@ -183,6 +183,15 @@
 								<XivToolsWpf:TextBlock Key="Pose_AllTooltip" />
 							</MenuItem.ToolTip>
 						</MenuItem>
+
+						<MenuItem Header="Pose_Body" 
+									Style="{StaticResource AnaMenuItem}" 
+									Click="OnOpenBodyClicked">
+							<MenuItem.ToolTip>
+								<XivToolsWpf:TextBlock Key="Pose_BodyTooltip" />
+							</MenuItem.ToolTip>
+						</MenuItem>
+
 						<MenuItem Header="Pose_Expression" 
 									Style="{StaticResource AnaMenuItem}" 
 									Click="OnOpenExpressionClicked"/>

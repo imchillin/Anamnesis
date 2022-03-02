@@ -247,6 +247,8 @@
 	"Pose_Selected": "Selected Bones",
 	"Pose_Expression": "Expression",
 	"Pose_ScalePack": "Body Scale",
+	"Pose_Body": "Body Pose",
+	"Pose_BodyTooltip": "Loads a pose onto the entire actor except for the face",
 	"Pose_Clear": "Clear",
 	"Pose_SelectChildren": "Select Children",
 	"Pose_Flip": "Flip",
