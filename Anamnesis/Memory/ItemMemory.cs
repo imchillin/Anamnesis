@@ -26,5 +26,13 @@ namespace Anamnesis.Memory
 			this.Base = item.ModelBase;
 			this.Variant = (byte)item.ModelVariant;
 		}
+
+		public bool Is(IItem? item)
+		{
+			if (item == null)
+				return false;
+
+			return this.Base == item.ModelBase && this.Variant == item.ModelVariant;
+		}
 	}
 }

@@ -128,6 +128,8 @@
 	"Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
 	"Character_Load_CMTool": "CMTool save",
 
+	"Character_SearchNpcAppearances": "Search for NPC appearances that match this page",
+
 	"Character_Appearance_LoadNpc": "NPC",
 	"Character_Appearance_LoadObject": "Object",
 	"Character_Customize_Header": "Customize",

@@ -32,7 +32,7 @@
 					<XivToolsWpf:Header Key="Character_Customize_Header"
 										Icon="ConciergeBell" />
 				</GroupBox.Header>
-
+				
 				<views:CustomizeEditor DataContext="{Binding Actor}" />
 			</GroupBox>
 
@@ -107,6 +107,7 @@
 
 			<Grid.RowDefinitions>
 				<RowDefinition />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
@@ -231,7 +232,24 @@
 				</GroupBox>
 			</StackPanel>
 
-			<StackPanel Orientation="Vertical" Grid.Row="1">
+			<StackPanel 
+				Grid.Row="1"
+				Margin="2, 2, 2, 0"
+				Orientation="Horizontal">
+				
+				<Button Click="OnFindNpcClicked"
+							Style="{StaticResource TransparentButton}">
+
+					<Button.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_SearchNpcAppearances" />
+					</Button.ToolTip>
+
+					<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="Search" />
+				</Button>
+				
+			</StackPanel>
+
+			<StackPanel Orientation="Vertical" Grid.Row="2">
 				<Menu Grid.Row="1"
 				  Margin="0,3, 3, 4"
 				  Style="{StaticResource AnaMenu}">
