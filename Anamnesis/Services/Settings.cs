@@ -34,6 +34,7 @@ namespace Anamnesis.Services
 		public string? GalleryDirectory { get; set; }
 		public bool EnableTranslucency { get; set; } = true;
 		public bool ExtendIntoWindowChrome { get; set; } = true;
+		public bool UseExternalRefresh { get; set; } = false;
 
 		public bool OverrideSystemTheme { get; set; } = false;
 		public Color ThemeColor { get; set; } = Color.FromArgb(255, 247, 99, 12);

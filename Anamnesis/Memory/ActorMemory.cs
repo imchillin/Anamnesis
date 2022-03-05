@@ -158,26 +158,35 @@ namespace Anamnesis.Memory
 
 				this.IsRefreshing = true;
 
-				await Task.Delay(16);
-
-				if (this.ObjectKind == ActorTypes.Player)
+				if (SettingsService.Current.UseExternalRefresh)
 				{
-					this.ObjectKind = ActorTypes.BattleNpc;
-					this.RenderMode = RenderModes.Unload;
-					await Task.Delay(75);
-					this.RenderMode = RenderModes.Draw;
-					await Task.Delay(75);
-					this.ObjectKind = ActorTypes.Player;
-					this.RenderMode = RenderModes.Draw;
+					// TODO: it would be great if we could somehow notify the
+					// external refresh service that we want a refresh right now.
+					return;
 				}
 				else
 				{
-					this.RenderMode = RenderModes.Unload;
-					await Task.Delay(75);
-					this.RenderMode = RenderModes.Draw;
-				}
+					await Task.Delay(16);
 
-				await Task.Delay(150);
+					if (this.ObjectKind == ActorTypes.Player)
+					{
+						this.ObjectKind = ActorTypes.BattleNpc;
+						this.RenderMode = RenderModes.Unload;
+						await Task.Delay(75);
+						this.RenderMode = RenderModes.Draw;
+						await Task.Delay(75);
+						this.ObjectKind = ActorTypes.Player;
+						this.RenderMode = RenderModes.Draw;
+					}
+					else
+					{
+						this.RenderMode = RenderModes.Unload;
+						await Task.Delay(75);
+						this.RenderMode = RenderModes.Draw;
+					}
+
+					await Task.Delay(150);
+				}
 
 				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}
