@@ -29,7 +29,7 @@
 				<GroupBox.Header>
 					<XivToolsWpf:TextBlock Key="Pose_Scale"/>
 				</GroupBox.Header>
-				<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1" CanLink="True"/>
+				<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1" CanLink="True" Linked="True"/>
 			</GroupBox>
 		</StackPanel>
 	</Grid>

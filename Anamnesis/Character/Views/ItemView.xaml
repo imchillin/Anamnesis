@@ -178,7 +178,7 @@
 					<fa:IconBlock Icon="BalanceScale" FontSize="10"/>
 				</ToggleButton>
 
-				<ana:VectorEditor Grid.Column="2" Margin="4, 0, 0, 0" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" TickFrequency="0.1" Minimum="-10" Maximum="10"/>
+				<ana:VectorEditor Grid.Column="2" Margin="4, 0, 0, 0" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" Linked="True" Sliders="None" TickFrequency="0.1" Minimum="-10" Maximum="10"/>
 
 
 			</Grid>
