@@ -115,6 +115,9 @@ namespace Anamnesis.Memory
 			set => this.ObjectKind = (ActorTypes)value;
 		}
 
+		[DependsOn(nameof(ObjectIndex), nameof(CharacterMode))]
+		public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.Instance.IsLocalOverworldPlayer(this.ObjectIndex);
+
 		/// <summary>
 		/// Refresh the actor to force the game to load any changed values for appearance.
 		/// </summary>
@@ -207,10 +210,8 @@ namespace Anamnesis.Memory
 
 		public bool CanHasNpcFace()
 		{
-			int index = ActorService.Instance.GetActorTableIndex(this.Address);
-
 			// only the local player should get npc faces!
-			if (index != 0 && index != 201)
+			if (!ActorService.Instance.IsLocalPlayer(this.Address))
 				return false;
 
 			if (this.Customize?.Head > 10)
