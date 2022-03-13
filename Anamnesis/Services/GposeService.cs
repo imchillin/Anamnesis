@@ -19,6 +19,8 @@ namespace Anamnesis.Services
 		public static event GposeEvent? GposeStateChanged;
 
 		public bool IsGpose { get; private set; }
+
+		[DependsOn(nameof(IsGpose))]
 		public bool IsOverworld => !this.IsGpose;
 
 		public bool IsChangingState { get; private set; }

@@ -9,7 +9,7 @@
              d:DesignHeight="35" d:DesignWidth="200"
 			 DataContextChanged="OnDataContextChanged">
 
-	<Grid x:Name="ContentArea">
+	<Grid x:Name="ContentArea" IsEnabled="{Binding ActorRef.Memory.CanAnimate}">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
