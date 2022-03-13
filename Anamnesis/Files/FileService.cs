@@ -525,7 +525,7 @@ namespace Anamnesis.Files
 				}
 				catch (Exception ex)
 				{
-					Log.Error(ex, "Failed to load icon for shortcut");
+					Log.Error(ex, $"Failed to load icon for shortcut: {icon}");
 				}
 			}
 		}
