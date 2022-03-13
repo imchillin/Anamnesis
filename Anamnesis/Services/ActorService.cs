@@ -18,6 +18,8 @@ namespace Anamnesis
 		private const int ActorTableSize = 424;
 		private const int GPoseIndexStart = 200;
 		private const int GPoseIndexEnd = 244;
+		private const int OverworldPlayerIndex = 0;
+		private const int GPosePlayerIndex = 201;
 
 		private readonly IntPtr[] actorTable = new IntPtr[ActorTableSize];
 
@@ -46,11 +48,40 @@ namespace Anamnesis
 		public bool IsGPoseActor(IntPtr actorAddress)
 		{
 			int objectIndex = this.GetActorTableIndex(actorAddress);
+
+			if (objectIndex == -1)
+				return false;
+
 			return this.IsGPoseActor(objectIndex);
 		}
 
 		public bool IsOverworldActor(int objectIndex) => !this.IsGPoseActor(objectIndex);
 		public bool IsOverworldActor(IntPtr actorAddress) => !this.IsGPoseActor(actorAddress);
+
+		public bool IsLocalOverworldPlayer(int objectIndex) => objectIndex == OverworldPlayerIndex;
+		public bool IsLocalOverworldPlayer(IntPtr actorAddress)
+		{
+			int objectIndex = this.GetActorTableIndex(actorAddress);
+
+			if (objectIndex == -1)
+				return false;
+
+			return this.IsLocalOverworldPlayer(objectIndex);
+		}
+
+		public bool IsLocalGPosePlayer(int objectIndex) => objectIndex == GPosePlayerIndex;
+		public bool IsLocalGPosePlayer(IntPtr actorAddress)
+		{
+			int objectIndex = this.GetActorTableIndex(actorAddress);
+
+			if (objectIndex == -1)
+				return false;
+
+			return this.IsLocalGPosePlayer(objectIndex);
+		}
+
+		public bool IsLocalPlayer(int objectIndex) => this.IsLocalOverworldPlayer(objectIndex) || this.IsLocalGPosePlayer(objectIndex);
+		public bool IsLocalPlayer(IntPtr actorAddress) => this.IsLocalOverworldPlayer(actorAddress) || this.IsLocalGPosePlayer(actorAddress);
 
 		public List<ActorBasicMemory> GetAllActors(bool refresh = false)
 		{
