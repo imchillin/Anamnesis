@@ -18,8 +18,7 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition />
-			<ColumnDefinition Width="Auto"
-							  MinWidth="230" />
+			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid Grid.RowSpan="2"
@@ -92,7 +91,7 @@
 				</StackPanel>
 
 				<views:EquipmentEditor DataContext="{Binding Actor}"
-									   Margin="0, 0, 0, -10" />
+									   Margin="0, 0, 0, -10"/>
 
 
 			</Grid>
@@ -102,7 +101,7 @@
 								 Grid.ColumnSpan="2"
 								 Margin="12"
 								 Visibility="{Binding Actor.CanRefresh, Converter={StaticResource !B2V}}"
-								 Key="Character_WarningGpose" />
+								 Key="Character_WarningGpose"/>
 
 		<Grid Grid.Column="2">
 
@@ -287,10 +286,10 @@
 					<MenuItem Header="Character_Appearance_LoadNpc"
 						  Icon="User"
 						  Style="{StaticResource ButtonMenuItemLeft}"
-						  Click="OnLoadNpcClicked" />
+						  Click="OnLoadNpcClicked"/>
 
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
-						  Margin="-1,0,3,0">
+						  Margin="-1,0,1,0">
 
 						<MenuItem Header="Character_Appearance_Header"
 							  Style="{StaticResource AnaMenuItem}"
@@ -311,7 +310,7 @@
 						  Click="OnSaveClicked" />
 
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
-						  Margin="-1,0,3,0">
+						  Margin="-1,0,0,0">
 						
 						<MenuItem Header="Common_SaveFileMeta"
 							  Style="{StaticResource AnaMenuItem}"
