@@ -13,16 +13,18 @@
 			 d:DesignWidth="300"
              DataContextChanged="OnDataContextChanged">
 
-	<GroupBox Margin="3, 0"  x:Name="ContentArea">
+	<GroupBox Margin="3, 0" x:Name="ContentArea">
 		<GroupBox.Header>
-			<Grid>
+			<Grid MaxWidth="150">
 				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 				
 				<TextBlock Grid.Column="0" Text="{Binding SlotName}" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-				<TextBlock Grid.Column="1" Text="{Binding Item.Name}" Margin="4, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+				<TextBlock Grid.Column="1" Text=":" Margin="0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+				<TextBlock Grid.Column="2" Text="{Binding Item.Name}" Margin="4, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
 			</Grid>
 		</GroupBox.Header>
 
@@ -66,18 +68,18 @@
 			<ProgressBar IsIndeterminate="True" Style="{StaticResource MaterialDesignCircularProgressBar}" Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsLoading, Converter={StaticResource B2V}}"/>
 
             <StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding Actor.CanRefresh}">
-				<XivToolsWpf:NumberBox Width="38" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0" ToolTip="Character_Equipment_ItemId"/>
+				<!--<XivToolsWpf:NumberBox Width="38" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0" ToolTip="Character_Equipment_ItemId"/>-->
 
-				<XivToolsWpf:NumberBox  Width="28" Value="{Binding ItemModel.Set}" FontSize="12" FontWeight="Light"
+				<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Set}" FontSize="12" FontWeight="Light"
 								ToolTip="Character_Equipment_ItemSet"
 								Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}"/>
 
-				<TextBlock Text="," Style="{StaticResource Label}" Margin="0" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}"/>
-				<XivToolsWpf:NumberBox MinWidth="20" Value="{Binding ItemModel.Base}" FontSize="12" FontWeight="Light" 
+				<TextBlock Text="," Style="{StaticResource Label}" Margin="2, 2, 4, 0" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}"/>
+				<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Base}" FontSize="12" FontWeight="Light" 
 									   ToolTip="Character_Equipment_ItemBase"/>
 
-				<TextBlock Text="," Style="{StaticResource Label}" Margin="0" />
-				<XivToolsWpf:NumberBox Width="20" Value="{Binding ItemModel.Variant}" FontSize="12" FontWeight="Light" 
+				<TextBlock Text="," Style="{StaticResource Label}" Margin="2, 2, 4, 0" />
+				<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Variant}" FontSize="12" FontWeight="Light" 
 									   ToolTip="Character_Equipment_ItemVariant"/>
 			</StackPanel>
 
@@ -88,6 +90,15 @@
 						Orientation="Horizontal"
 						Visibility="{Binding CanDye, Converter={StaticResource B2V}}">
 
+				<!-- Weapon Visibility -->
+				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ItemModel.WeaponHidden}" BorderThickness="1" Padding="0" Margin="0"
+							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+					<ToggleButton.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponToggle"/>
+					</ToggleButton.ToolTip>
+
+					<fa:IconBlock Icon="EyeSlash" FontSize="10"/>
+				</ToggleButton>
 
 				<!-- Head/Hat Visbility and Visor -->
 				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}" Visibility="{Binding IsHead, Converter={StaticResource B2V}}" IsChecked="{Binding Actor.HatHidden}" BorderThickness="1" Padding="0" Margin="0">
@@ -147,40 +158,13 @@
 					</Grid>
 				</Button>
 
-				
-
-				<TextBlock Text="{Binding Dye.Name}" Margin="6, 2, 0, 0" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}" Style="{StaticResource Label}"/>
+				<!--<TextBlock Text="{Binding Dye.Name}" Margin="6, 2, 0, 0" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}" Style="{StaticResource Label}"/>-->
 
 			</StackPanel>
 
 
 			<Grid Grid.Row="2" Grid.ColumnSpan="2" Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
-
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-
-				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ItemModel.WeaponHidden}" BorderThickness="1" Padding="0" Margin="0">
-					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponToggle"/>
-					</ToggleButton.ToolTip>
-
-					<fa:IconBlock Icon="EyeSlash" FontSize="10"/>
-				</ToggleButton>
-
-				<ToggleButton Grid.Column="1" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ExtendedViewModel.IsHidden}" BorderThickness="1" Padding="0" Margin="0">
-					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponScale"/>
-					</ToggleButton.ToolTip>
-
-					<fa:IconBlock Icon="BalanceScale" FontSize="10"/>
-				</ToggleButton>
-
-				<ana:VectorEditor Grid.Column="2" Margin="4, 0, 0, 0" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" Linked="True" Sliders="None" TickFrequency="0.1" Minimum="-10" Maximum="10"/>
-
-
+				<ana:VectorEditor Grid.Column="2" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" Linked="True" Sliders="None" TickFrequency="0.1" Minimum="-10" Maximum="10"/>
 			</Grid>
 
 		</Grid>
