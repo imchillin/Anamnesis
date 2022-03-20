@@ -219,6 +219,12 @@ namespace Anamnesis.Files
 
 		public async Task Apply(ActorMemory actor, SaveModes mode)
 		{
+			if (this.Tribe == 0)
+				this.Tribe = ActorCustomizeMemory.Tribes.Midlander;
+
+			if (this.Race == 0)
+				this.Race = ActorCustomizeMemory.Races.Hyur;
+
 			if (this.Tribe != null && !Enum.IsDefined((ActorCustomizeMemory.Tribes)this.Tribe))
 				throw new Exception($"Invalid tribe: {this.Tribe} in appearance file");
 
