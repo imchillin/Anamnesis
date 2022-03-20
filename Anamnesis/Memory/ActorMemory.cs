@@ -163,8 +163,7 @@ namespace Anamnesis.Memory
 
 				if (SettingsService.Current.UseExternalRefresh)
 				{
-					// TODO: it would be great if we could somehow notify the
-					// external refresh service that we want a refresh right now.
+					await Penumbra.Penumbra.Redraw(this.Name);
 					return;
 				}
 				else
