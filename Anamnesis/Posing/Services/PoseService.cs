@@ -171,8 +171,6 @@ namespace Anamnesis.PoseModule
 			if (enabled && !GposeService.Instance.IsGpose)
 				throw new Exception("Attempt to enable posing outside of gpose");
 
-			this.FreezeWorldPosition = enabled; // This one can be toggled externally so we always set it
-
 			if (this.isEnabled == enabled)
 				return;
 
@@ -250,7 +248,10 @@ namespace Anamnesis.PoseModule
 		private void OnGposeStateChanging()
 		{
 			if (GposeService.Instance.IsOverworld)
+			{
 				this.SetEnabled(false);
+				this.FreezeWorldPosition = false;
+			}
 		}
 	}
 }
