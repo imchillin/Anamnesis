@@ -20,6 +20,9 @@ namespace Anamnesis.Character.Utilities
 			List<ExcelRow> names = new();
 			SearchNames(actor.Name, ref names);
 
+			if (actor.Nickname != null)
+				SearchNames(actor.Nickname, ref names);
+
 			List<INpcBase> appearances = new();
 			Search(actor, GameDataService.BattleNPCs, ref appearances);
 			Search(actor, GameDataService.EventNPCs, ref appearances);
