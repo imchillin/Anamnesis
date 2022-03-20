@@ -545,8 +545,8 @@
 	"Settings_OverlayWindow": "Mini window",
 	"Settings_WrapRotations": "Wrap rotation sliders",
 	"Settings_DefaultAuthor": "Default Author Name",
-	"Settings_UseExternalRefresh": "Use External Refresh",
-
+	"Settings_UseExternalRefresh": "Use Penumbra Redraw",
+	"Settings_UseExternalRefreshTooltip": "Use the Penumbra redraw command instead of Anamnesis' character refresh.\n\nRequires the Penumbra Http API to be enabled.",
 	"About_Version_Header": "Version",
 	"About_OpenSource_Header": "Proudly Open Source",
 	"About_Contact_Header": "Get in Touch",

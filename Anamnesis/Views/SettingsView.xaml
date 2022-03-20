@@ -79,8 +79,18 @@
 			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="9" Key="Settings_WrapRotations" Style="{StaticResource Label}"/>
 			<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Grid.Row="9" Margin="6"/>
 
-			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="10" Key="Settings_UseExternalRefresh" Style="{StaticResource Label}"/>
-			<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="10" Margin="6"/>
+			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="10" Key="Settings_UseExternalRefresh" Style="{StaticResource Label}">
+				<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="10" Margin="6">
+					<CheckBox.ToolTip>
+						<XivToolsWPF:TextBlock Key="Settings_UseExternalRefreshTooltip"/>
+					</CheckBox.ToolTip>
+				</CheckBox>
+			</XivToolsWPF:TextBlock>
+			<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="10" Margin="6">
+				<CheckBox.ToolTip>
+					<XivToolsWPF:TextBlock Key="Settings_UseExternalRefreshTooltip"/>
+				</CheckBox.ToolTip>
+			</CheckBox>
 
 			<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="11" Key="Settings_DefaultAuthor" Style="{StaticResource Label}"/>
 			<TextBox Text="{Binding SettingsService.Settings.DefaultAuthor}" Grid.Column="1" Grid.Row="11" Margin="6" Style="{StaticResource MaterialDesignTextBox}"/>
