@@ -417,7 +417,7 @@
   "B:12989": "Red Girl (Giant)",
   "B:13": "B:397",
   "B:130": "Kalong",
-  "B:13020": "Diamond Weapon",
+  "B:13020": "B:9953",
   "B:13021": "Floating Right Hand (Diamond Weapon)",
   "B:13022": "Floating Left Hand (Diamond Weapon)",
   "B:13027": "White Lance (Red Girl)",
@@ -2831,7 +2831,7 @@
   "E:1035424": "B:10077",
   "E:1035431": "B:9920",
   "E:1035432": "Red Girl (Creepy)",
-  "E:1036273": "Diamond Weapon",
+  "E:1036273": "B:9953",
   "E:1036296": "B:10099",
   "E:1036298": "B:10041",
   "E:1036358": "Azys Lla ADS (Cuboid - Silver - Yellow)",
@@ -2843,5 +2843,6 @@
 
   "B:9257": "B:10217",
   "B:13214": "B:10217",
-  "E:1028352": "B:10217"
+  "E:1028352": "B:10217",
+  "B:13023": "B:9953"
 }
