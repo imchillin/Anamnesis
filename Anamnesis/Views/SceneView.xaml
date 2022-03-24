@@ -37,13 +37,13 @@
 					  Margin="12, 0, 0, 32"
 					  Height="128"
 					  IsHitTestVisible="False">
-					<Image Source="/Assets/Anamnesis-tan.png"
+					<Image Source="/Assets/Amaurotine.png"
 						   Visibility="{Binding TipService.IsAmaurotine, Converter={StaticResource B2V}}" />
 					<Image Source="/Assets/Hydaelyn.png"
 						   Visibility="{Binding TipService.IsHydaelyn, Converter={StaticResource B2V}}" />
 					<Image Source="/Assets/Zodiark.png"
 						   Visibility="{Binding TipService.IsZodiark, Converter={StaticResource B2V}}" />
-					<Image Source="/Assets/AnamTan.png"
+					<Image Source="/Assets/Anamnesis-tan.png"
 						   Visibility="{Binding TipService.IsAnamTan, Converter={StaticResource B2V}}" />
 				</Grid>
 

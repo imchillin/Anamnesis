@@ -41,12 +41,12 @@ namespace Anamnesis.Services
 		{
 			Random rnd = new Random();
 
-			int portraitId = rnd.Next(0, 3);
+			int portraitId = rnd.Next(0, 4);
 
 			this.IsHydaelyn = portraitId == 0;
 			this.IsZodiark = portraitId == 1;
 			this.IsAmaurotine = portraitId == 2;
-			////this.IsAnamTan = portraitId == 3;
+			this.IsAnamTan = portraitId == 3;
 
 			if (this.tips == null)
 			{
