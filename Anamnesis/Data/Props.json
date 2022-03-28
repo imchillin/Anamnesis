@@ -16,7 +16,7 @@
     "9001, 254, 1": "Coin",
     "9001, 253, 1": "Shovel",
     "9001, 252, 1": "Meol",
-    "9001, 251, 1": "Fruit;Nectarine", //Previously "Poison Fruit" but unsure the context on that.
+    "9001, 251, 1": "Fruit;Nectarine",
     "9001, 250, 1": "Grub",
     "9001, 249, 1": "Apple",
     "9001, 248, 1": "DNC Soulstone",
@@ -51,7 +51,7 @@
     "9001, 197, 1": "White Gemstone;Jewel",
     "9001, 189, 1": "SAM Soulstone;Samurai Soulstone",
     "9001, 188, 1": "RDM Soulstone;Red Mage Soulstone",
-    //  "9001, 187, 1": "Magatama Bead", I don't know what it is but it's not that.
+    "9001, 187, 1": "Yasakani–no–Magatama",
     "9001, 185, 1": "Large Glass Gem",
     "9001, 179, 1": "Broken Garlean Sword",
     "9001, 175, 1": "Ascian Mask",
@@ -75,7 +75,7 @@
     "9001, 145, 1": "Cup",
     "9001, 143, 1": "Tea Cup",
     "9001, 144, 1": "Sake Cup",
-    "9001, 132, 1": "Large Eye", //Nidhoggs?
+    "9001, 132, 1": "Eye of Nidhogg;Dead",
     "9001, 133, 1": "Crystal",
     "9001, 134, 1": "Bouquet of Flowers",
     "9001, 129, 1": "Charred Book",
@@ -89,7 +89,7 @@
     "9001, 115, 1": "DRK Soulstone;Dark Knight Soulstone",
     "9001, 114, 1": "AST Soulstone;Astrologian Soulstone",
     "9001, 113, 1": "MCH Soulstone;Machinist Soulstone",
-    "9001, 112, 1": "Wrench;Spanner", //No shame in adding this
+    "9001, 112, 1": "Wrench;Spanner",
     "9001, 110, 1": "Knights of the Round Sword",
     "9001, 107, 1": "Menu/Flier",
     "9001, 105, 1": "Goblet;Cup, Chalice",
@@ -136,12 +136,12 @@
     "9001, 21, 1": "Wine Cup",
     "9001, 20, 1": "Wine Bottle",
     "9001, 19, 1": "Rectangular Crate",
-    "9001, 18, 1": "Baby;it\u0027s really a baby", //I'm not changing this, can we agree this is a fucking weird prop
+    "9001, 18, 1": "Baby;This should not be classified as a weapon, SE",
     "9001, 17, 1": "Metal Cup",
     "9001, 16, 1": "Bowl/Wok",
-    "9001, 15, 1": "Stone Tablet;The Ten Commandments",
+    "9001, 15, 1": "Stone Tablet",
     "9001, 14, 1": "White Rock",
-    "9001, 13, 1": "Smelting Ladle", //Not sure
+    "9001, 13, 1": "Smelting Ladle",
     "9001, 12, 1": "Hot Iron in Tongs",
     "9001, 11, 1": "Spatula",
     "9001, 10, 1": "Cooking Whisk",
@@ -235,35 +235,35 @@
     "9001, 237, 1": "Golden Key",
     "9001, 236, 1": "White Ball",
     "9001, 235, 1": "Sealed Envelope",
-    "9001, 233, 1": "Blue Health Potion", //Named Health Potion since it matches the icon for a health potion exactly, despite being blue.
+    "9001, 233, 1": "Potion",
     "9001, 231, 1": "Golden Pouch",
     "9001, 229, 1": "Katana", //Unknown Origin
-    "9001, 220, 1": "Unlit Paper Lantern", //Looks like one to me but would love a second opinion.
-    "9001, 214, 1": "Black Mask", //Ascian? Unsure.
+    "9001, 220, 1": "Unlit Paper Lantern",
+    "9001, 214, 1": "Minor Ascian Mask",
     "9001, 213, 1": "Short Wooden Pole",
     "9001, 212, 1": "Rag",
     "9001, 209, 1": "Brown Pouch",
     "9001, 196, 1": "Large Rolled Papers",
     "9001, 193, 1": "Half of DRK Soulstone;Broken Dark Knight Soulstone",
-    //  "9001, 186, 1": "Unknown Sword", I don't know what this is but it looks noteworthy.
-    "9001, 180, 1": "Broken Garlean Sword Blade;This item is the tip of the Broken Garlean Sword prop",
+    "9001, 186, 1": "Susano\u0027s Sword",
+    "9001, 180, 1": "Garlean Sword Blade Fragment",
     "9001, 177, 1": "Glasses",
     "9001, 176, 1": "Flintlock Pistol",
-    "9001, 174, 1": "Wide Dagger", //Unknown what it is but it sticks out. Ceremonial weapon maybe?
-    "9001, 168, 1": "Large Broken Sword Blade; This item is the tip of the Large Broken Sword prop", //It's big and sticks out. A villains sword?
-    "9001, 167, 1": "Large Broken Sword",
+    "9001, 174, 1": "Gladiator Sword",
+    "9001, 168, 1": "Regulus Van Hydrus\u0027 Sword;Blade fragment", 
+    "9001, 167, 1": "Regulus Van Hydrus\u0027 Sword;Hilt fragment",
     "9001, 164, 1": "Zenos\u0027 Sword Carrier",
     "9001, 140, 1": "Missile",
     "9001, 139, 1": "Arrow",
     "9001, 72, 1": "Black Tipped Arrow",
     "9001, 71, 1": "Silver Tipped Arrow",
-    "9001, 138, 1": "Arm Guard", // It's something else I think but it looks like one. 9001, 137, 1 is the same but reversed. Do they combine? Separate arms? Unsure.
+    "9001, 138, 1": "Arm Guard",
     "9001, 135, 1": "Silver Mask",
     "9001, 130, 1": "Kunai",
     "9001, 124, 1": "Decorated Flintlock",
-    //  "9001, 111, 1": "Machinist Hip Device", Dunno its name
-    "9001, 106, 1": "Raubahn\u0027s Left Arm; If you don't want to equip the title, I guess equipping this will do...",
-    "9001, 92, 1": "Calling Card; The card used in the early Hildibrand quests",
+    "9001, 111, 1": "Machinist Ammo Pack",
+    "9001, 106, 1": "Raubahn\u0027s Left Arm; Sicko",
+    "9001, 92, 1": "Calling Card; ARR Hildibrand questline",
     "9001, 91, 1": "Large Briefcase",
     "9001, 64, 1": "Skyworker\u0027s Goggles",
     "9001, 45, 1": "Shortened Arrow",
@@ -318,5 +318,6 @@
     "9084, 1, 1": "Sharlayan Paper",
     "201, 70, 1": "G-Warrior\u0027s Sword; Sword used by the G-warrior",
     "1911, 1, 0": "Reaper Avatar",
-    "9001, 318, 1": "Sharlayan Coffee Cup"
+    "9001, 318, 1": "Sharlayan Coffee Cup",
+    "9033, 26, 1": "Aetherite Shard"
 }
