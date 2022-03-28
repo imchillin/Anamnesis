@@ -163,6 +163,7 @@ namespace Anamnesis.PoseModule
 		{
 			await base.Shutdown();
 			this.SetEnabled(false);
+			this.FreezeWorldPosition = false;
 		}
 
 		public void SetEnabled(bool enabled)
