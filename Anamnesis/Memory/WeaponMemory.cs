@@ -36,6 +36,22 @@ namespace Anamnesis.Memory
 				{
 					this.WeaponFlags &= ~WeaponFlagDefs.WeaponHidden;
 				}
+
+				if (this.Model?.Transform == null)
+					return;
+
+				// If the weapon is unsheathed (in hands) the visibility flag won't work,
+				// so fall back to setting the weapons scale to 0.
+				if (!this.IsSheathed)
+				{
+					this.Model.Transform.Scale = value ? Vector.Zero : Vector.One;
+				}
+
+				// Special handling for a weapon with 0 scale that has been sheathed attempting to un-hide
+				else if (!value && this.Model.Transform.Scale == Vector.Zero)
+				{
+					this.Model.Transform.Scale = Vector.One;
+				}
 			}
 		}
 	}
