@@ -208,17 +208,15 @@
 
 				</GroupBox>
 
-				<Grid Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
-					<GroupBox Style="{StaticResource PanelGroupBox}"
-							  Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
-						<GroupBox.Header>
-							<XivToolsWpf:Header Key="Character_Model_Header"
+				<GroupBox Style="{StaticResource PanelGroupBox}"
+						  Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
+					<GroupBox.Header>
+						<XivToolsWpf:Header Key="Character_Model_Header"
 												Icon="GraduationCap" />
-						</GroupBox.Header>
+					</GroupBox.Header>
 
-						<views:CharacterModelEditor DataContext="{Binding Actor}"/>
-					</GroupBox>
-				</Grid>
+					<views:CharacterModelEditor DataContext="{Binding Actor}"/>
+				</GroupBox>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}"
 						  Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
