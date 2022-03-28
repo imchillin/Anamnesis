@@ -186,8 +186,8 @@ namespace Anamnesis.Character.Views
 
 			if (this.IsWeaponSlot)
 			{
-				if (this.Slot == ItemSlots.OffHand && !forceMainModel && !item.HasSubModel)
-					return false;
+				////if (this.Slot == ItemSlots.OffHand && !forceMainModel && !item.HasSubModel)
+				////	return false;
 
 				if (!item.IsWeapon)
 					return false;
