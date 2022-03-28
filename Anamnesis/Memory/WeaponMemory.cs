@@ -19,6 +19,7 @@ namespace Anamnesis.Memory
 		[Bind(0x004, BindFlags.ActorRefresh)] public ushort Variant { get; set; }
 		[Bind(0x006, BindFlags.ActorRefresh)] public byte Dye { get; set; }
 		[Bind(0x008, BindFlags.Pointer)] public WeaponModelMemory? Model { get; set; }
+		[Bind(0x040)] public bool IsSheathed { get; set; }
 		[Bind(0x05C)] public WeaponFlagDefs WeaponFlags { get; set; }
 
 		[DependsOn(nameof(WeaponFlags))]
