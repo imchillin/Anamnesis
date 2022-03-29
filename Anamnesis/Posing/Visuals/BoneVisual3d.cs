@@ -265,23 +265,34 @@ namespace Anamnesis.PoseModule
 			position.Z = (float)transform.Matrix.OffsetZ;
 
 			// and push those values to the game memory
+			bool changed = false;
 			foreach (TransformMemory? transformMemory in this.TransformMemories)
 			{
-				if (this.CanTranslate)
+				if (this.CanTranslate && !transformMemory.Position.IsApproximately(position))
 				{
 					transformMemory.Position = position;
+					changed = true;
 				}
 
-				if (this.CanScale)
+				if (this.CanScale && !transformMemory.Scale.IsApproximately(this.Scale))
 				{
 					transformMemory.Scale = this.Scale;
+					changed = true;
 				}
 
 				if (this.CanRotate)
 				{
-					transformMemory.Rotation = rotation.ToCmQuaternion();
+					CmQuaternion newRot = rotation.ToCmQuaternion();
+					if (!transformMemory.Rotation.IsApproximately(newRot))
+					{
+						transformMemory.Rotation = newRot;
+						changed = true;
+					}
 				}
 			}
+
+			if (!changed)
+				return;
 
 			if (this.LinkedEye != null && this.Skeleton.LinkEyes)
 			{
@@ -289,7 +300,11 @@ namespace Anamnesis.PoseModule
 				{
 					if (this.LinkedEye.CanRotate)
 					{
-						transformMemory.Rotation = rotation.ToCmQuaternion();
+						CmQuaternion newRot = rotation.ToCmQuaternion();
+						if (!transformMemory.Rotation.IsApproximately(newRot))
+						{
+							transformMemory.Rotation = rotation.ToCmQuaternion();
+						}
 					}
 				}
 

@@ -96,6 +96,14 @@ namespace Anamnesis.Memory
 			return new Quaternion((float)x, (float)y, (float)z, (float)w);
 		}
 
+		public bool IsApproximately(Quaternion other, float errorMargin = 0.001f)
+		{
+			return IsApproximately(this.X, other.X, errorMargin)
+				&& IsApproximately(this.Y, other.Y, errorMargin)
+				&& IsApproximately(this.Z, other.Z, errorMargin)
+				&& IsApproximately(this.W, other.W, errorMargin);
+		}
+
 		public Vector ToEuler()
 		{
 			Vector v = default;
@@ -206,6 +214,12 @@ namespace Anamnesis.Memory
 				a = d;
 
 			return a;
+		}
+
+		private static bool IsApproximately(float a, float b, float errorMargin)
+		{
+			float d = MathF.Abs(a - b);
+			return d < errorMargin;
 		}
 	}
 }
