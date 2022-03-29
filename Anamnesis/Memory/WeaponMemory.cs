@@ -22,10 +22,10 @@ namespace Anamnesis.Memory
 		[Bind(0x040)] public bool IsSheathed { get; set; }
 		[Bind(0x05C)] public WeaponFlagDefs WeaponFlags { get; set; }
 
-		[DependsOn(nameof(WeaponFlags))]
+		[DependsOn(nameof(WeaponFlags), nameof(IsSheathed))]
 		public bool WeaponHidden
 		{
-			get => this.WeaponFlags.HasFlag(WeaponFlagDefs.WeaponHidden);
+			get => (this.IsSheathed && this.WeaponFlags.HasFlag(WeaponFlagDefs.WeaponHidden)) || (!this.IsSheathed && this.Model?.Transform?.Scale == Vector.Zero);
 			set
 			{
 				if (value)
