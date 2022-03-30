@@ -88,7 +88,7 @@ namespace Anamnesis.Services
 
 			public void ChangeToNpc()
 			{
-				MemoryService.Write(this.OriginalTypeAddress, ActorTypes.BattleNpc, "NPC face hack restore");
+				MemoryService.Write(this.OriginalTypeAddress, ActorTypes.BattleNpc, "NPC face hack change");
 			}
 
 			public void RestoreFromNpc()
