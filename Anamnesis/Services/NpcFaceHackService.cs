@@ -11,7 +11,7 @@ namespace Anamnesis.Services
 	/// <summary>
 	/// The NPC Face hack requires us to turn all pinned overworld non-npc actors into NPC's just as they enter gpose, then change
 	/// the original overworld actors and the new gpose actors back to their original type.
-	/// This means that duroing the gpose loading screen, all actors should be npcs, allowing them to all load npc options.
+	/// This means that during the gpose loading screen, all actors should be npcs, allowing them to all load npc options.
 	/// </summary>
 	public class NpcFaceHackService : ServiceBase<NpcFaceHackService>
 	{
@@ -89,8 +89,6 @@ namespace Anamnesis.Services
 			public void ChangeToNpc()
 			{
 				MemoryService.Write(this.OriginalTypeAddress, ActorTypes.BattleNpc, "NPC face hack restore");
-
-				////this.Memory.ObjectKind = ActorTypes.BattleNpc;
 			}
 
 			public void RestoreFromNpc()
@@ -99,41 +97,7 @@ namespace Anamnesis.Services
 
 				MemoryService.Write(newTypeAddress, this.OriginalType, "NPC face hack restore (new)");
 				MemoryService.Write(this.OriginalTypeAddress, this.OriginalType, "NPC face hack restore (original)");
-
-				////this.Memory.ObjectKind = this.OriginalType;
 			}
 		}
-
-		/*private void Do()
-		{
-			if (this.previousObjectKindAddressBeforeGPose != null)
-			{
-				if (gpose.IsGpose && gpose.IsChangingState)
-				{
-					// Entering gpose
-					if (this.ObjectKind == ActorTypes.Player)
-					{
-						this.previousObjectKindAddressBeforeGPose = this.GetAddressOfProperty(nameof(this.ObjectKind));
-						this.ObjectKind = ActorTypes.BattleNpc;
-
-						// Sanity check that we do get turned back into a player
-						Task.Run(async () =>
-						{
-							await Task.Delay(3000);
-							MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
-						});
-					}
-				}
-				else if (gpose.IsGpose && !gpose.IsChangingState)
-				{
-					// Entered gpose
-					if (this.previousObjectKindAddressBeforeGPose != null)
-					{
-						MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
-						this.ObjectKind = ActorTypes.Player;
-					}
-				}
-			}
-		}*/
 	}
 }
