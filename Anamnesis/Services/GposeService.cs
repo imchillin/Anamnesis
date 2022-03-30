@@ -8,7 +8,7 @@ namespace Anamnesis.Services
 	using Anamnesis.Memory;
 	using PropertyChanged;
 
-	public delegate void GposeEvent();
+	public delegate void GposeEvent(bool newState);
 
 	[AddINotifyPropertyChangedInterface]
 	public class GposeService : ServiceBase<GposeService>
@@ -58,24 +58,17 @@ namespace Anamnesis.Services
 				{
 					this.IsGpose = newGpose;
 
-					GposeStateChanging?.Invoke();
+					GposeStateChanging?.Invoke(newGpose);
 					this.IsChangingState = true;
-
-					// retarget as we enter to allow modification of the actor before it loads
-					await TargetService.Instance.Retarget();
-
 					await Task.Delay(1000);
 					this.IsChangingState = false;
-
-					// retarget again as we have now loaded
-					await TargetService.Instance.Retarget();
-
-					GposeStateChanged?.Invoke();
+					GposeStateChanged?.Invoke(newGpose);
 				}
 
 				this.IsChangingState = false;
 
-				await Task.Delay(100);
+				// ~30 fps
+				await Task.Delay(32);
 			}
 		}
 	}

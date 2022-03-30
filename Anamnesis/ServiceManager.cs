@@ -69,6 +69,7 @@ namespace Anamnesis.Services
 			await Add<TexToolsService>();
 			await Add<FavoritesService>();
 			await Add<AnimationService>();
+			await Add<NpcFaceHackService>();
 
 			IsInitialized = true;
 

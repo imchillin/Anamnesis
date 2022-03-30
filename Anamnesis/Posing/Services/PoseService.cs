@@ -246,9 +246,9 @@ namespace Anamnesis.PoseModule
 			}
 		}
 
-		private void OnGposeStateChanging()
+		private void OnGposeStateChanging(bool isGPose)
 		{
-			if (GposeService.Instance.IsOverworld)
+			if (!isGPose)
 			{
 				this.SetEnabled(false);
 				this.FreezeWorldPosition = false;

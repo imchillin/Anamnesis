@@ -15,8 +15,6 @@ namespace Anamnesis.Memory
 		private short refreshDelay;
 		private Task? refreshTask;
 
-		private IntPtr? previousObjectKindAddressBeforeGPose;
-
 		public enum CharacterModes : byte
 		{
 			None = 0,
@@ -205,53 +203,6 @@ namespace Anamnesis.Memory
 			this.RaisePropertyChanged(nameof(this.IsPlayer));
 			await Task.Delay(150);
 			this.RaisePropertyChanged(nameof(this.IsPlayer));
-		}
-
-		public bool CanHasNpcFace()
-		{
-			// only the local player should get npc faces!
-			if (!ActorService.Instance.IsLocalPlayer(this.Address))
-				return false;
-
-			if (this.Customize?.Head > 10)
-				return true;
-
-			return false;
-		}
-
-		public void OnRetargeted()
-		{
-			GposeService gpose = GposeService.Instance;
-
-			// dont apply the npc face hack to actors that dont need it, since it breaks weirdly sometimes.
-			if (this.CanHasNpcFace() || this.previousObjectKindAddressBeforeGPose != null)
-			{
-				if (gpose.IsGpose && gpose.IsChangingState)
-				{
-					// Entering gpose
-					if (this.ObjectKind == ActorTypes.Player)
-					{
-						this.previousObjectKindAddressBeforeGPose = this.GetAddressOfProperty(nameof(this.ObjectKind));
-						this.ObjectKind = ActorTypes.BattleNpc;
-
-						// Sanity check that we do get turned back into a player
-						Task.Run(async () =>
-						{
-							await Task.Delay(3000);
-							MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
-						});
-					}
-				}
-				else if (gpose.IsGpose && !gpose.IsChangingState)
-				{
-					// Entered gpose
-					if (this.previousObjectKindAddressBeforeGPose != null)
-					{
-						MemoryService.Write((IntPtr)this.previousObjectKindAddressBeforeGPose, ActorTypes.Player, "NPC face fix");
-						this.ObjectKind = ActorTypes.Player;
-					}
-				}
-			}
 		}
 
 		protected override void ActorRefresh(string propertyName)

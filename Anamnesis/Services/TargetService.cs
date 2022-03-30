@@ -189,6 +189,9 @@ namespace Anamnesis
 		{
 			await base.Start();
 
+			GposeService.GposeStateChanging += this.OnGposeStateChanging;
+			GposeService.GposeStateChanged += this.OnGposeStateChanged;
+
 			if (GameService.GetIsSignedIn())
 			{
 				try
@@ -295,6 +298,16 @@ namespace Anamnesis
 		{
 			this.SelectedActor = actor;
 			ActorSelected?.Invoke(actor);
+		}
+
+		private async void OnGposeStateChanging(bool isGPose)
+		{
+			await this.Retarget();
+		}
+
+		private async void OnGposeStateChanged(bool isGPose)
+		{
+			await this.Retarget();
 		}
 
 		private async Task TickPinnedActors()
@@ -573,7 +586,6 @@ namespace Anamnesis
 				this.Id = this.Memory.Id;
 				this.IdNoAddress = this.Memory.IdNoAddress;
 				this.Name = this.Memory.Name;
-				this.Memory.OnRetargeted();
 				this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
 				this.Pointer = this.Memory.Address;
 				this.Kind = this.Memory.ObjectKind;

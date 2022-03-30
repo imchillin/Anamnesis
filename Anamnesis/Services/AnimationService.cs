@@ -39,12 +39,12 @@ namespace Anamnesis.Services
 
 		public override Task Start()
 		{
-			GposeService.GposeStateChanging += this.GposeService_GposeStateChanging;
-			TerritoryService.TerritoryChanged += this.TerritoryService_TerritoryChanged;
+			GposeService.GposeStateChanging += this.OnGposeStateChanging;
+			TerritoryService.TerritoryChanged += this.OnTerritoryChanged;
 
 			this.animationSpeedHook = new NopHookViewModel(AddressService.AnimationSpeedPatch, 0x9);
 
-			this.GposeService_GposeStateChanging();
+			this.OnGposeStateChanging(GposeService.Instance.IsGpose);
 
 			_ = Task.Run(this.CheckThread);
 
@@ -53,8 +53,8 @@ namespace Anamnesis.Services
 
 		public override async Task Shutdown()
 		{
-			GposeService.GposeStateChanging -= this.GposeService_GposeStateChanging;
-			TerritoryService.TerritoryChanged -= this.TerritoryService_TerritoryChanged;
+			GposeService.GposeStateChanging -= this.OnGposeStateChanging;
+			TerritoryService.TerritoryChanged -= this.OnTerritoryChanged;
 
 			this.SpeedControlEnabled = false;
 
@@ -263,9 +263,9 @@ namespace Anamnesis.Services
 			this.speedControlEnabled = enabled;
 		}
 
-		private void GposeService_GposeStateChanging() => this.SpeedControlEnabled = GposeService.Instance.IsGpose;
+		private void OnGposeStateChanging(bool isGPose) => this.SpeedControlEnabled = isGPose;
 
-		private void TerritoryService_TerritoryChanged() => this.CleanupAllAnimationOverrides();
+		private void OnTerritoryChanged() => this.CleanupAllAnimationOverrides();
 
 		private AnimationState GetAnimationState(ActorRef<ActorMemory> actorRef)
 		{
