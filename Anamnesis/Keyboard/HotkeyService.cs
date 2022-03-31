@@ -62,6 +62,19 @@ namespace Anamnesis.Keyboard
 			KeyToFunction.Add(dicKey, function);
 		}
 
+		public static KeyCombination? GetBind(string function)
+		{
+			foreach ((var keys, string func) in KeyToFunction)
+			{
+				if (func == function)
+				{
+					return new KeyCombination(keys.Item1, keys.Item2);
+				}
+			}
+
+			return null;
+		}
+
 		public override Task Start()
 		{
 			Hook.Start();

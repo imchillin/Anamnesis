@@ -7,6 +7,7 @@
 			 xmlns:views="clr-namespace:Anamnesis.Character.Views"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 xmlns:anaMem="clr-namespace:Anamnesis.Memory"
+			 xmlns:ana="clr-namespace:Anamnesis.Views"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
 			 DataContextChanged="OnDataContextChanged"
@@ -82,7 +83,10 @@
 							Style="{StaticResource TransparentIconButton}">
 
 						<Button.ToolTip>
-							<XivToolsWpf:TextBlock Key="Character_Equipment_Clear" />
+							<StackPanel>
+								<XivToolsWpf:TextBlock Key="Character_Equipment_Clear" />
+								<ana:HotkeyPrompt Function="AppearancePage.ClearEquipment"/>
+							</StackPanel>
 						</Button.ToolTip>
 
 						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"

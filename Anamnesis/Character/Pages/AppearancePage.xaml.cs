@@ -37,7 +37,7 @@ namespace Anamnesis.Character.Pages
 
 			this.ContentArea.DataContext = this;
 
-			HotkeyService.RegisterHotkeyHandler("ApeparancePage.ClearEquipment", () => this.OnClearClicked());
+			HotkeyService.RegisterHotkeyHandler("AppearancePage.ClearEquipment", () => this.OnClearClicked());
 		}
 
 		public ActorMemory? Actor { get; private set; }

@@ -68,7 +68,7 @@ namespace Anamnesis.Services
 			{ "QuaternionEditor.RotateXMinusSlow", new KeyCombination(Key.D, ModifierKeys.Control) },
 			{ "QuaternionEditor.RotateYPlusSlow", new KeyCombination(Key.Q, ModifierKeys.Control) },
 			{ "QuaternionEditor.RotateYMinusSlow", new KeyCombination(Key.E, ModifierKeys.Control) },
-			{ "ApeparancePage.ClearEquipment", new KeyCombination(Key.C, ModifierKeys.Control | ModifierKeys.Shift) },
+			{ "AppearancePage.ClearEquipment", new KeyCombination(Key.C, ModifierKeys.Control | ModifierKeys.Shift) },
 		};
 	}
 }
