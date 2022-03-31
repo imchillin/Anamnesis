@@ -28,6 +28,7 @@ namespace Anamnesis.Styles.Controls
 		public static readonly IBind<double> MaxDp = Binder.Register<double, VectorEditor>(nameof(Maximum), OnMaximumChanged);
 		public static readonly IBind<bool> CanLinkDp = Binder.Register<bool, VectorEditor>(nameof(CanLink));
 		public static readonly IBind<bool> LinkedDp = Binder.Register<bool, VectorEditor>(nameof(Linked));
+		public static readonly IBind<bool> UncapTextInputDp = Binder.Register<bool, VectorEditor>(nameof(UncapTextInput), BindMode.OneWay);
 
 		private bool lockChangedEvent = false;
 
@@ -93,6 +94,12 @@ namespace Anamnesis.Styles.Controls
 		{
 			get => LinkedDp.Get(this);
 			set => LinkedDp.Set(this, value);
+		}
+
+		public bool UncapTextInput
+		{
+			get => UncapTextInputDp.Get(this);
+			set => UncapTextInputDp.Set(this, value);
 		}
 
 		[AlsoNotifyFor(nameof(VectorEditor.Value))]

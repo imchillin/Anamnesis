@@ -47,7 +47,8 @@
 					   Minimum="0.1"
 					   Maximum="2"
 					   Value="{Binding ModelObject.Height}"
-					   TickFrequency="0.01"/>
+					   TickFrequency="0.01"
+					   UncapTextInput="True"/>
 
 		<!-- Wetness -->
 		<xtw:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_Model_Wetness" Style="{StaticResource Label}"/>
