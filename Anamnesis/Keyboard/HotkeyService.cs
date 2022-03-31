@@ -61,6 +61,19 @@ namespace Anamnesis.Keyboard
 
 		private bool OnKeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 		{
+			bool handled = this.HandleKey(key, state, modifiers);
+
+			// Forward any unused keys to ffxiv if Anamnesis has focus
+			if (!handled && MainWindow.HasFocus && Keyboard.FocusedElement == null)
+			{
+				MemoryService.SendKey(key, state);
+			}
+
+			return handled;
+		}
+
+		private bool HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
+		{
 			// Only process the hotkeys if we have focus
 			bool processInputs = MainWindow.HasFocus;
 

@@ -11,9 +11,11 @@ namespace Anamnesis.Memory
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using System.Windows.Input;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Windows;
+	using Anamnesis.Keyboard;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using XivToolsWpf;
@@ -237,6 +239,23 @@ namespace Anamnesis.Memory
 			return WriteProcessMemory(Handle, address, buffer, buffer.Length, out _);
 		}
 
+		public static void SendKey(Key key, KeyboardKeyStates state)
+		{
+			if (Process == null)
+				return;
+
+			int vkey = KeyInterop.VirtualKeyFromKey(key);
+
+			if (state == KeyboardKeyStates.Pressed)
+			{
+				PostMessage(Process.MainWindowHandle, 0x100, (IntPtr)vkey, IntPtr.Zero);
+			}
+			else if (state == KeyboardKeyStates.Released)
+			{
+				PostMessage(Process.MainWindowHandle, 0x0101, (IntPtr)vkey, IntPtr.Zero);
+			}
+		}
+
 		public override async Task Initialize()
 		{
 			await base.Initialize();
@@ -337,6 +356,9 @@ namespace Anamnesis.Memory
 
 		[DllImport("user32.dll")]
 		private static extern IntPtr GetForegroundWindow();
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
 		private async Task GetProcess()
 		{
