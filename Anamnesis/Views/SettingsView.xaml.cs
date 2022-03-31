@@ -10,6 +10,7 @@ namespace Anamnesis.GUI.Views
 	using System.Windows.Forms;
 	using System.Windows.Media;
 	using Anamnesis.Files;
+	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using XivToolsWpf;
@@ -147,6 +148,11 @@ namespace Anamnesis.GUI.Views
 				SettingsService.Current.GalleryDirectory = null;
 
 			SettingsService.Current.ShowGallery = this.GalleryCombobox.SelectedIndex != 0;
+		}
+
+		private void OnPenumbraRefreshChecked(object sender, RoutedEventArgs e)
+		{
+			GenericDialog.ShowLocalized("Settings_UseExternalRefreshTooltip", "Settings_UseExternalRefresh");
 		}
 
 		public class LanguageOption

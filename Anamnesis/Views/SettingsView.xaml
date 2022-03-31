@@ -86,7 +86,7 @@
 					</CheckBox.ToolTip>
 				</CheckBox>
 			</XivToolsWPF:TextBlock>
-			<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="10" Margin="6">
+			<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="10" Margin="6" Checked="OnPenumbraRefreshChecked">
 				<CheckBox.ToolTip>
 					<XivToolsWPF:TextBlock Key="Settings_UseExternalRefreshTooltip"/>
 				</CheckBox.ToolTip>
