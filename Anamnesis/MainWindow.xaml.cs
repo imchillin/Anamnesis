@@ -29,6 +29,8 @@ namespace Anamnesis.GUI
 	[AddINotifyPropertyChangedInterface]
 	public partial class MainWindow : ChromedWindow
 	{
+		public static bool HasFocus = false;
+
 		private MiniWindow? mini;
 		private bool hasSetPosition = false;
 
@@ -340,6 +342,16 @@ namespace Anamnesis.GUI
 		private void OnWikiClicked(object sender, RoutedEventArgs e)
 		{
 			UrlUtility.Open("https://github.com/imchillin/Anamnesis/wiki");
+		}
+
+		private void OnActivated(object sender, EventArgs e)
+		{
+			HasFocus = true;
+		}
+
+		private void OnDeactivated(object sender, EventArgs e)
+		{
+			HasFocus = false;
 		}
 	}
 }

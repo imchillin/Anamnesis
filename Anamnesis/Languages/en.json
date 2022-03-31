@@ -547,6 +547,7 @@
 	"Settings_DefaultAuthor": "Default Author Name",
 	"Settings_UseExternalRefresh": "Use Penumbra Redraw",
 	"Settings_UseExternalRefreshTooltip": "Use the Penumbra redraw command instead of Anamnesis' character refresh.\n\nRequires the Penumbra Http API to be enabled.",
+	"Settings_GameHotKeysTooltip": "Enable the use of shortcut keys even when FFXIV has focus.\nThis will prevent FFXIV from recieving the used keys.",
 	"About_Version_Header": "Version",
 	"About_OpenSource_Header": "Proudly Open Source",
 	"About_Contact_Header": "Get in Touch",

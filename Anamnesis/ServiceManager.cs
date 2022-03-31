@@ -70,6 +70,7 @@ namespace Anamnesis.Services
 			await Add<FavoritesService>();
 			await Add<AnimationService>();
 			await Add<NpcFaceHackService>();
+			await Add<Keyboard.HotkeyService>();
 
 			IsInitialized = true;
 

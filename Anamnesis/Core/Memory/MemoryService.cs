@@ -27,6 +27,7 @@ namespace Anamnesis.Memory
 		public static SignatureScanner? Scanner { get; private set; }
 		public static Process? Process { get; private set; }
 		public static bool IsProcessAlive { get; private set; }
+		public static bool DoesProcessHaveFocus { get; private set; }
 
 		public static string GamePath
 		{
@@ -43,6 +44,15 @@ namespace Anamnesis.Memory
 		}
 
 		public int LastTickCount { get; set; }
+
+		public static bool GetDoesProcessHaveFocus()
+		{
+			if (Process == null)
+				return false;
+
+			IntPtr wnd = GetForegroundWindow();
+			return wnd == Process.MainWindowHandle;
+		}
 
 		public static bool GetIsProcessAlive()
 		{
@@ -325,6 +335,9 @@ namespace Anamnesis.Memory
 		[DllImport("kernel32.dll")]
 		private static extern int CloseHandle(IntPtr hObject);
 
+		[DllImport("user32.dll")]
+		private static extern IntPtr GetForegroundWindow();
+
 		private async Task GetProcess()
 		{
 			Process? proc = null;
@@ -364,6 +377,7 @@ namespace Anamnesis.Memory
 			{
 				await Task.Delay(100);
 
+				DoesProcessHaveFocus = GetDoesProcessHaveFocus();
 				IsProcessAlive = GetIsProcessAlive();
 
 				if (!IsProcessAlive)

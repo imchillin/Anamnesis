@@ -26,7 +26,9 @@
 	Topmost="{Binding SettingsService.Settings.AlwaysOnTop}"
 	Style="{DynamicResource AnaWindowStyle}"
 	TextBlock.FontSize="12"
-	mc:Ignorable="d">
+	mc:Ignorable="d"
+	Activated="OnActivated"
+	Deactivated="OnDeactivated">
 
 	<FrameworkElement.CommandBindings>
 		<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
@@ -152,6 +154,22 @@
 												   Icon="FileAlt" />
 						</ToggleButton>
 					</StackPanel>
+
+					<ToggleButton Width="28"
+								  Margin="3,0,0,0"
+								  BorderThickness="0"
+								  IsChecked="{Binding SettingsService.Settings.EnableGameHotKeyHooks}"
+								  Foreground="{Binding TitlebarForeground}"
+								  Background="{DynamicResource MaterialDesignCardBackground}"
+								  Style="{DynamicResource TransparentIconToggleButton}">
+
+						<ToggleButton.ToolTip>
+							<XivToolsWpf:TextBlock Key="Settings_GameHotKeysTooltip" />
+						</ToggleButton.ToolTip>
+
+						<XivToolsWpf:IconBlock FontSize="12"
+											   Icon="Keyboard" />
+					</ToggleButton>
 
 					<ToggleButton Width="28"
 								  Margin="3,0,0,0"
