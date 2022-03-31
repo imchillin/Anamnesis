@@ -246,6 +246,15 @@ namespace Anamnesis.Memory
 
 			int vkey = KeyInterop.VirtualKeyFromKey(key);
 
+			if (key == Key.LeftShift || key == Key.RightShift)
+				vkey = 0x10;
+
+			if (key == Key.LeftCtrl || key == Key.RightCtrl)
+				vkey = 0x11;
+
+			if (key == Key.LeftAlt || key == Key.RightAlt)
+				vkey = 0x12;
+
 			if (state == KeyboardKeyStates.Pressed)
 			{
 				PostMessage(Process.MainWindowHandle, 0x100, (IntPtr)vkey, IntPtr.Zero);
