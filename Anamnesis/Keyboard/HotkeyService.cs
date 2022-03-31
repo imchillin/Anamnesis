@@ -18,6 +18,28 @@ namespace Anamnesis.Keyboard
 		private static readonly Dictionary<string, List<Func<KeyboardKeyStates, bool>>> FunctionToCallback = new();
 		private static readonly Dictionary<(Key, ModifierKeys), string> KeyToFunction = new();
 
+		public static void RegisterHotkeyHandler(string function, Action callback)
+		{
+			RegisterHotkeyHandler(function, () =>
+			{
+				callback.Invoke();
+				return true;
+			});
+		}
+
+		public static void RegisterHotkeyHandler(string function, Func<bool> callback)
+		{
+			RegisterHotkeyHandler(function, (s) =>
+			{
+				if (s == KeyboardKeyStates.Pressed)
+				{
+					return callback.Invoke();
+				}
+
+				return true;
+			});
+		}
+
 		public static void RegisterHotkeyHandler(string function, Func<KeyboardKeyStates, bool> callback)
 		{
 			lock (FunctionToCallback)

@@ -14,6 +14,7 @@ namespace Anamnesis.Character.Pages
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Excel;
 	using Anamnesis.GameData.Sheets;
+	using Anamnesis.Keyboard;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles;
@@ -35,6 +36,8 @@ namespace Anamnesis.Character.Pages
 			this.InitializeComponent();
 
 			this.ContentArea.DataContext = this;
+
+			HotkeyService.RegisterHotkeyHandler("ApeparancePage.ClearEquipment", () => this.OnClearClicked());
 		}
 
 		public ActorMemory? Actor { get; private set; }
@@ -52,7 +55,7 @@ namespace Anamnesis.Character.Pages
 			this.OnActorChanged(this.DataContext as ActorMemory);
 		}
 
-		private void OnClearClicked(object sender, RoutedEventArgs e)
+		private void OnClearClicked(object? sender = null, RoutedEventArgs? e = null)
 		{
 			if (this.Actor == null)
 				return;
