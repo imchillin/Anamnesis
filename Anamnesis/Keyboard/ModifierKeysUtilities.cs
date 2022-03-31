@@ -6,19 +6,8 @@
 // https://github.com/kfirprods/NonInvasiveKeyboardHook
 namespace Anamnesis.Keyboard
 {
-	using System;
+	using System.Windows.Input;
 
-	[Flags]
-	public enum ModifierKeys
-	{
-		None = 0,
-		Alt = 1,
-		Control = 2,
-		Shift = 4,
-		WindowsKey = 8,
-	}
-
-	#pragma warning disable SA1649
 	public static class ModifierKeysUtilities
 	{
 		public static ModifierKeys GetModifierKeyFromCode(int keyCode)
@@ -42,7 +31,7 @@ namespace Anamnesis.Keyboard
 
 				case 0x5B:
 				case 0x5C:
-					return ModifierKeys.WindowsKey;
+					return ModifierKeys.Windows;
 
 				default:
 					return ModifierKeys.None;

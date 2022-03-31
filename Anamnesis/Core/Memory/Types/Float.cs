@@ -20,5 +20,18 @@ namespace Anamnesis.Memory
 
 			return true;
 		}
+
+		public static float Wrap(float number, float min = 0, float max = 360)
+		{
+			float range = max - min;
+
+			if (number >= max)
+				number -= range;
+
+			if (number < min)
+				number += range;
+
+			return number;
+		}
 	}
 }

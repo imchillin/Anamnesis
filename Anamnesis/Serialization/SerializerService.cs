@@ -31,6 +31,7 @@ namespace Anamnesis.Serialization
 			Options.Converters.Add(new ItemCategoriesConverter());
 			Options.Converters.Add(new INpcBaseConverter());
 			Options.Converters.Add(new ImageReferenceConverter());
+			Options.Converters.Add(new KeyCombinationConverter());
 		}
 
 		public static string Serialize(object obj)

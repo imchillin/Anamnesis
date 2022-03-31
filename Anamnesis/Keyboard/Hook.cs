@@ -33,7 +33,7 @@ namespace Anamnesis.Keyboard
 		private LowLevelKeyboardProc? hook;
 		private bool isStarted;
 
-		public delegate bool KeyboardInput(Key key, KeyStates state, ModifierKeys modifiers);
+		public delegate bool KeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers);
 		private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
 		public event KeyboardInput? OnKeyboardInput;
@@ -81,7 +81,7 @@ namespace Anamnesis.Keyboard
 		[DllImport("kernel32.dll")]
 		private static extern IntPtr LoadLibrary(string lpFileName);
 
-		private bool HandleKeyPress(Key key, KeyStates state)
+		private bool HandleKeyPress(Key key, KeyboardKeyStates state)
 		{
 			if (this.OnKeyboardInput != null)
 			{
@@ -137,19 +137,19 @@ namespace Anamnesis.Keyboard
 				// Trigger callbacks that are registered for this key, but only once per key press
 				if (!this.downKeys.Contains(vkCode))
 				{
-					used = this.HandleKeyPress(key, KeyStates.Pressed);
+					used = this.HandleKeyPress(key, KeyboardKeyStates.Pressed);
 					this.downKeys.Add(vkCode);
 				}
 				else
 				{
-					used = this.HandleKeyPress(key, KeyStates.Down);
+					used = this.HandleKeyPress(key, KeyboardKeyStates.Down);
 				}
 			}
 
 			// If the keyboard event is a KeyUp event (i.e. key released)
 			if (wParam == (IntPtr)WmKeyUp || wParam == (IntPtr)WmSysKeyUp)
 			{
-				used = this.HandleKeyPress(key, KeyStates.Released);
+				used = this.HandleKeyPress(key, KeyboardKeyStates.Released);
 
 				// If the released key is a modifier key, remove it from the HashSet of modifier keys
 				if (modifierKey != ModifierKeys.None)

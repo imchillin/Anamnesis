@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Keyboard
 {
-	public enum KeyStates
+	public enum KeyboardKeyStates
 	{
 		Pressed,
 		Down,

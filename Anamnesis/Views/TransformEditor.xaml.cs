@@ -3,9 +3,10 @@
 
 namespace Anamnesis.PoseModule.Controls
 {
-	using System;
 	using System.Windows.Controls;
+	using Anamnesis.Keyboard;
 	using Anamnesis.Memory;
+	using Serilog;
 	using XivToolsWpf.DependencyProperties;
 
 	/// <summary>

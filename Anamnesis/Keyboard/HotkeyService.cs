@@ -15,16 +15,10 @@ namespace Anamnesis.Keyboard
 	{
 		private static readonly Hook Hook = new();
 
-		private static readonly List<Binding> Bindings = new List<Binding>()
-		{
-			new Binding("TransformEditor.RotateXPlus", Key.W),
-			new Binding("TransformEditor.RotateXMinus", Key.S),
-		};
-
-		private static readonly Dictionary<string, List<Func<bool>>> FunctionToCallback = new();
+		private static readonly Dictionary<string, List<Func<KeyboardKeyStates, bool>>> FunctionToCallback = new();
 		private static readonly Dictionary<(Key, ModifierKeys), string> KeyToFunction = new();
 
-		public static void RegisterHotKeyHandler(string function, Func<bool> callback)
+		public static void RegisterHotkeyHandler(string function, Func<KeyboardKeyStates, bool> callback)
 		{
 			lock (FunctionToCallback)
 			{
@@ -34,14 +28,6 @@ namespace Anamnesis.Keyboard
 				FunctionToCallback[function].Add(callback);
 				Log.Verbose($"Adding hotkey binding: {function}");
 			}
-		}
-
-		public static void RegisterBinding(Binding bind)
-		{
-			if (bind.Function == null)
-				return;
-
-			RegisterHotkey(bind.Key, bind.Modifers, bind.Function);
 		}
 
 		public static void RegisterHotkey(Key key, ModifierKeys modifiers, string function)
@@ -59,9 +45,9 @@ namespace Anamnesis.Keyboard
 			Hook.Start();
 			Hook.OnKeyboardInput += this.OnKeyboardInput;
 
-			foreach (Binding bind in Bindings)
+			foreach ((string function, KeyCombination keys) in SettingsService.Current.KeyboardBindings)
 			{
-				RegisterBinding(bind);
+				RegisterHotkey(keys.Key, keys.Modifiers, function);
 			}
 
 			return base.Start();
@@ -73,13 +59,13 @@ namespace Anamnesis.Keyboard
 			return base.Shutdown();
 		}
 
-		private bool OnKeyboardInput(Key key, KeyStates state, ModifierKeys modifiers)
+		private bool OnKeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 		{
 			// Only process the hotkeys if we have focus
 			bool processInputs = MainWindow.HasFocus;
 
 			// Or if FFXIV has focus and the hooks are enabled
-			if (MemoryService.DoesProcessHaveFocus && SettingsService.Current.EnableGameHotKeyHooks)
+			if (MemoryService.DoesProcessHaveFocus && SettingsService.Current.EnableGameHotkeyHooks)
 				processInputs = true;
 
 			if (!processInputs)
@@ -97,32 +83,13 @@ namespace Anamnesis.Keyboard
 
 			foreach (var callback in FunctionToCallback[func])
 			{
-				if (callback.Invoke())
+				if (callback.Invoke(state))
 				{
 					return true;
 				}
 			}
 
 			return false;
-		}
-
-		[Serializable]
-		public class Binding
-		{
-			public Binding(string fucntion, Key key, ModifierKeys modifiers = ModifierKeys.None)
-			{
-				this.Key = key;
-				this.Modifers = modifiers;
-				this.Function = fucntion;
-			}
-
-			public Binding()
-			{
-			}
-
-			public Key Key { get; set; }
-			public ModifierKeys Modifers { get; set; }
-			public string? Function { get; set; }
 		}
 	}
 }
