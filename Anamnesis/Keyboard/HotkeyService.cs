@@ -109,11 +109,11 @@ namespace Anamnesis.Keyboard
 
 		private bool HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 		{
-			// Only process the hotkeys if we have focus
-			bool processInputs = MainWindow.HasFocus;
+			// Only process the hotkeys if we have focus but not to a text box.
+			bool processInputs = MainWindow.HasFocus && Keyboard.FocusedElement == null;
 
-			// Or if FFXIV has focus and the hooks are enabled
-			if (MemoryService.DoesProcessHaveFocus && SettingsService.Current.EnableGameHotkeyHooks)
+			// Or if FFXIV has focus, the hooks are enabled, and the user is in gpose.
+			if (MemoryService.DoesProcessHaveFocus && SettingsService.Current.EnableGameHotkeyHooks && GposeService.Instance.IsGpose)
 				processInputs = true;
 
 			if (!processInputs)
