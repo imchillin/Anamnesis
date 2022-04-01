@@ -11,6 +11,7 @@ namespace Anamnesis.Services
 	using System.Threading.Tasks;
 	using Anamnesis.Files;
 	using Anamnesis.GUI.Windows;
+	using Anamnesis.Windows;
 	using Serilog;
 	using Serilog.Core;
 	using Serilog.Events;

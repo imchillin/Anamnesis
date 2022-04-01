@@ -17,9 +17,11 @@ namespace Anamnesis
 	using Anamnesis.GUI;
 	using Anamnesis.GUI.Windows;
 	using Anamnesis.Services;
+	using Anamnesis.Windows;
 	using MaterialDesignThemes.Wpf;
 	using Serilog;
 	using XivToolsWpf;
+
 	using Application = System.Windows.Application;
 
 	/// <summary>
