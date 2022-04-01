@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Penumbra
 {
+	using System;
 	using System.IO;
 	using System.Net;
 	using System.Text;
@@ -66,7 +67,7 @@ namespace Anamnesis.Penumbra
 					Log.Warning("Penumbra Http API error\n\n" + text);
 				}
 
-				throw;
+				throw new Exception("Penumbra Http API error. (Have you enabled the Penumbra HTTP Api?)", ex);
 			}
 		}
 	}
