@@ -15,40 +15,52 @@ namespace Anamnesis.Keyboard
 	{
 		private static readonly Hook Hook = new();
 
-		private static readonly Dictionary<string, List<Func<KeyboardKeyStates, bool>>> FunctionToCallback = new();
+		private static readonly Dictionary<string, List<Handler>> FunctionToHandlers = new();
 		private static readonly Dictionary<(Key, ModifierKeys), string> KeyToFunction = new();
 
 		public static void RegisterHotkeyHandler(string function, Action callback)
 		{
-			RegisterHotkeyHandler(function, () =>
-			{
-				callback.Invoke();
-				return true;
-			});
+			RegisterHotkeyHandler(function, new Handler(callback));
 		}
 
 		public static void RegisterHotkeyHandler(string function, Func<bool> callback)
 		{
-			RegisterHotkeyHandler(function, (s) =>
-			{
-				if (s == KeyboardKeyStates.Pressed)
-				{
-					return callback.Invoke();
-				}
-
-				return true;
-			});
+			RegisterHotkeyHandler(function, new Handler(callback));
 		}
 
 		public static void RegisterHotkeyHandler(string function, Func<KeyboardKeyStates, bool> callback)
 		{
-			lock (FunctionToCallback)
-			{
-				if (!FunctionToCallback.ContainsKey(function))
-					FunctionToCallback.Add(function, new());
+			RegisterHotkeyHandler(function, new Handler(callback));
+		}
 
-				FunctionToCallback[function].Add(callback);
-				Log.Verbose($"Adding hotkey binding: {function}");
+		public static void RegisterHotkeyHandler(string function, Handler handler)
+		{
+			lock (FunctionToHandlers)
+			{
+				if (!FunctionToHandlers.ContainsKey(function))
+					FunctionToHandlers.Add(function, new());
+
+				FunctionToHandlers[function].Insert(0, handler);
+				Log.Verbose($"Adding hotkey binding: {function} for {handler.Owner}");
+			}
+		}
+
+		public static void ClearHotkeyHandler(string function, object owner)
+		{
+			lock (FunctionToHandlers)
+			{
+				if (!FunctionToHandlers.ContainsKey(function))
+					return;
+
+				for(int i = FunctionToHandlers[function].Count - 1; i >= 0; i--)
+				{
+					if (FunctionToHandlers[function][i].Owner != owner)
+						continue;
+
+					FunctionToHandlers[function].RemoveAt(i);
+				}
+
+				Log.Verbose($"Clearing hotkey binding: {function} for {owner}");
 			}
 		}
 
@@ -126,18 +138,63 @@ namespace Anamnesis.Keyboard
 
 			string func = KeyToFunction[dicKey];
 
-			if (!FunctionToCallback.ContainsKey(func))
+			if (!FunctionToHandlers.ContainsKey(func))
 				return false;
 
-			foreach (var callback in FunctionToCallback[func])
+			foreach (Handler handler in FunctionToHandlers[func])
 			{
-				if (callback.Invoke(state))
+				if (handler.Invoke(state))
 				{
 					return true;
 				}
 			}
 
 			return false;
+		}
+
+		public class Handler
+		{
+			public Func<KeyboardKeyStates, bool> Callback;
+			public object? Owner;
+
+			public Handler(Func<KeyboardKeyStates, bool> callback)
+			{
+				this.Callback = callback;
+				this.Owner = callback.Target;
+			}
+
+			public Handler(Func<bool> callback)
+			{
+				this.Callback = (s) =>
+				{
+					if (s == KeyboardKeyStates.Pressed)
+					{
+						return callback.Invoke();
+					}
+
+					return true;
+				};
+
+				this.Owner = callback.Target;
+			}
+
+			public Handler(Action callback)
+			{
+				this.Callback = (s) =>
+				{
+					if (s == KeyboardKeyStates.Pressed)
+						callback.Invoke();
+
+					return true;
+				};
+
+				this.Owner = callback.Target;
+			}
+
+			public bool Invoke(KeyboardKeyStates state)
+			{
+				return this.Callback.Invoke(state);
+			}
 		}
 	}
 }

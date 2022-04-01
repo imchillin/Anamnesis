@@ -10,6 +10,7 @@ namespace Anamnesis.Character.Views
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Excel;
+	using Anamnesis.Keyboard;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
@@ -40,6 +41,8 @@ namespace Anamnesis.Character.Views
 			this.ContentArea.DataContext = this;
 
 			this.JobFilterText.Text = classFilter.Describe();
+
+			HotkeyService.RegisterHotkeyHandler("AppearancePage.ClearEquipment", this.ClearSlot);
 		}
 
 		public event DrawerEvent? Close;
@@ -124,6 +127,7 @@ namespace Anamnesis.Character.Views
 
 		public void OnClosed()
 		{
+			HotkeyService.ClearHotkeyHandler("AppearancePage.ClearEquipment", this);
 		}
 
 		private void OnClose()
@@ -280,7 +284,12 @@ namespace Anamnesis.Character.Views
 			return matches;
 		}
 
-		private void OnClearClicked(object sender, RoutedEventArgs e)
+		private void ClearSlot()
+		{
+			this.OnClearClicked();
+		}
+
+		private void OnClearClicked(object? sender = null, RoutedEventArgs? e = null)
 		{
 			this.Value = ItemUtility.NoneItem;
 			this.Selector.RaiseSelectionChanged();
