@@ -62,11 +62,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Data\LegacyBoneNameConverter.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="Posing\LegacyBoneNameConverter.cs" />
+	  <Content Include="$(AppData)\Anamnesis\Settings.json" Link="Settings.json" />
 	</ItemGroup>
 
 	<ItemGroup>
