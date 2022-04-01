@@ -21,7 +21,7 @@
 		"Text": "You can change the current theme in the Settings Panel."
 	},
 	{
-		"Text": "Need more actors but have no friends? Use ARR housing NPCs!"
+		"Text": "Need more actors but have no friends? Use housing NPCs!"
 	},
 	{
 		"Text": "The Wiki has useful guides to help you with using Anamnesis.",
@@ -31,7 +31,7 @@
 		"Text": "Game updates will likely break the tool. Please be patient when this happens, and we will have a fix out ASAP."
 	},
 	{
-		"Text": "You can use ARR housing NPCs, Carbuncles, and other NPCs as detailed in the wiki as extra actors.",
+		"Text": "You can use housing NPCs, Carbuncles, and other NPCs as detailed in the wiki as extra actors.",
 		"Url": "https://github.com/imchillin/Anamnesis/wiki"
 	},
 	{
@@ -68,9 +68,6 @@
 	},
 	{
 		"Text": "Going in first-person mode allows you to capture perfect shots where normally the camera would block due to collision!"
-	},
-	{
-		"Text": "You need to set the time of day before entering GPose."
 	},
 	{
 		"Text": "When using the Pose tab, if you don't have a bone selected you can use the Transform function to change your actor's scale and position."
