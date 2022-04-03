@@ -220,7 +220,7 @@
 
 			<GroupBox Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
-					<XivToolsWPF:Header Key="Settings_OtherHeader"
+					<XivToolsWPF:Header Key="Settings_PenumbraHeader"
 										Icon="Question" />
 				</GroupBox.Header>
 			
@@ -232,15 +232,13 @@
 
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
-					<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="10" Key="Settings_UseExternalRefresh" Style="{StaticResource Label}"/>
+					<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_UseExternalRefresh" Style="{StaticResource Label}"/>
+					<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="0" Margin="6"/>
 
-					<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="10" Margin="6" Checked="OnPenumbraRefreshChecked">
-						<CheckBox.ToolTip>
-							<XivToolsWPF:TextBlock Key="Settings_UseExternalRefreshTooltip"/>
-						</CheckBox.ToolTip>
-					</CheckBox>
+					<XivToolsWPF:InfoControl Grid.Row="1" Key="Settings_UseExternalRefreshWarning" Width="237" Grid.ColumnSpan="2"/>
 				</Grid>
 			</GroupBox>
 
@@ -252,55 +250,73 @@
 									Icon="Keyboard" />
 			</GroupBox.Header>
 
-			<ListBox x:Name="HotkeyList">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+
+				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_EnableHotkeys" Style="{StaticResource Label}"/>
+				<CheckBox IsChecked="{Binding SettingsService.Settings.EnableHotkeys}" Grid.Column="1" Grid.Row="0" Margin="6"/>
+
+				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_EnableGameHotkeys" Style="{StaticResource Label}"/>
+				<CheckBox IsChecked="{Binding SettingsService.Settings.EnableGameHotkeyHooks}" Grid.Column="1" Grid.Row="1" Margin="6"/>
+
+				<ListBox x:Name="HotkeyList" Grid.Row="2" Grid.ColumnSpan="2">
 			
-				<ListBox.ItemContainerStyle>
-					<Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
-						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-					</Style>
-				</ListBox.ItemContainerStyle>
+					<ListBox.ItemContainerStyle>
+						<Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+						</Style>
+					</ListBox.ItemContainerStyle>
 
-				<ListBox.GroupStyle>
-					<GroupStyle >
-						<GroupStyle.ContainerStyle>
-							<Style TargetType="{x:Type GroupItem}">
-								<Setter Property="Template">
-									<Setter.Value>
-										<ControlTemplate>
-											<GroupBox Header="{Binding Name}" Margin="3, 6, 3, 0">
-												<ItemsPresenter Margin="6,0,0,0"/>
-											</GroupBox>
-										</ControlTemplate>
-									</Setter.Value>
-								</Setter>
-							</Style>
-						</GroupStyle.ContainerStyle>
-					</GroupStyle>
-				</ListBox.GroupStyle>
+					<ListBox.GroupStyle>
+						<GroupStyle >
+							<GroupStyle.ContainerStyle>
+								<Style TargetType="{x:Type GroupItem}">
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate>
+												<GroupBox Header="{Binding Name}" Margin="3, 6, 3, 0">
+													<ItemsPresenter Margin="6,0,0,0"/>
+												</GroupBox>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+								</Style>
+							</GroupStyle.ContainerStyle>
+						</GroupStyle>
+					</ListBox.GroupStyle>
 
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition/>
-								<ColumnDefinition Width="64"/>
-							</Grid.ColumnDefinitions>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition/>
+									<ColumnDefinition Width="64"/>
+								</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="0" Text="{Binding Name}"/>
+								<TextBlock Grid.Column="0" Text="{Binding Name}"/>
 
-							<StackPanel Orientation="Horizontal" Grid.Column="1" >
-								<StackPanel Orientation="Horizontal" Visibility="{Binding ModifierName, Converter={StaticResource NotNullToVisibilityConverter}}">
-									<TextBlock Text="{Binding ModifierName}"/>
-									<TextBlock Text=", "/>
+								<StackPanel Orientation="Horizontal" Grid.Column="1" >
+									<StackPanel Orientation="Horizontal" Visibility="{Binding ModifierName, Converter={StaticResource NotNullToVisibilityConverter}}">
+										<TextBlock Text="{Binding ModifierName}"/>
+										<TextBlock Text=", "/>
+									</StackPanel>
+									<TextBlock Text="{Binding KeyName}"/>
 								</StackPanel>
-								<TextBlock Text="{Binding KeyName}"/>
-							</StackPanel>
 							
-						</Grid>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
-				
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</Grid>
 		</GroupBox>
 
 	</Grid>

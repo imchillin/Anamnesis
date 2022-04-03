@@ -169,14 +169,6 @@ namespace Anamnesis.GUI.Views
 			SettingsService.Current.ShowGallery = this.GalleryCombobox.SelectedIndex != 0;
 		}
 
-		private void OnPenumbraRefreshChecked(object sender, RoutedEventArgs e)
-		{
-			if (SettingsService.Current.UseExternalRefresh)
-				return;
-
-			GenericDialog.ShowLocalized("Settings_UseExternalRefreshTooltip", "Settings_UseExternalRefresh");
-		}
-
 		public class LanguageOption
 		{
 			public LanguageOption(string key, string display)

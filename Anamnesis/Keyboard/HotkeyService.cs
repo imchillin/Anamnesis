@@ -131,6 +131,13 @@ namespace Anamnesis.Keyboard
 
 		private bool HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 		{
+			// Never intercept the tab key
+			if (key == Key.Tab)
+				return false;
+
+			if (!SettingsService.Current.EnableHotkeys)
+				return false;
+
 			// Only process the hotkeys if we have focus but not to a text box.
 			bool processInputs = MainWindow.HasFocus && !(Keyboard.FocusedElement is TextBoxBase);
 

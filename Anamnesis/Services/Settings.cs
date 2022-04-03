@@ -39,6 +39,7 @@ namespace Anamnesis.Services
 		public bool ExtendIntoWindowChrome { get; set; } = true;
 		public bool UseExternalRefresh { get; set; } = false;
 		public bool EnableGameHotkeyHooks { get; set; } = false;
+		public bool EnableHotkeys { get; set; } = true;
 
 		public bool OverrideSystemTheme { get; set; } = false;
 		public Color ThemeColor { get; set; } = Color.FromArgb(255, 247, 99, 12);
