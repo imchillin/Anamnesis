@@ -301,7 +301,14 @@ namespace Anamnesis
 			if (index >= this.PinnedActors.Count || index < 0)
 				return;
 
-			this.SelectActor(this.PinnedActors[index]);
+			if (this.PinnedActors[index].IsSelected)
+			{
+				SetPlayerTarget(this.PinnedActors[index]);
+			}
+			else
+			{
+				this.SelectActor(this.PinnedActors[index]);
+			}
 		}
 
 		public int GetSelectedIndex()
