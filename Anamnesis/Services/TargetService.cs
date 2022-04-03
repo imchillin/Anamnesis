@@ -9,6 +9,7 @@ namespace Anamnesis
 	using System.ComponentModel;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
+	using Anamnesis.Keyboard;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles;
@@ -192,6 +193,17 @@ namespace Anamnesis
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
 			GposeService.GposeStateChanged += this.OnGposeStateChanged;
 
+			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned1", () => this.SelectActor(0));
+			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned2", () => this.SelectActor(1));
+			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned3", () => this.SelectActor(2));
+			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned4", () => this.SelectActor(3));
+			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned5", () => this.SelectActor(4));
+			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned6", () => this.SelectActor(5));
+			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned7", () => this.SelectActor(6));
+			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned8", () => this.SelectActor(7));
+			HotkeyService.RegisterHotkeyHandler("TargetService.NextPinned", () => this.NextPinned());
+			HotkeyService.RegisterHotkeyHandler("TargetService.PrevPinned", () => this.PrevPinned());
+
 			if (GameService.GetIsSignedIn())
 			{
 				try
@@ -282,6 +294,49 @@ namespace Anamnesis
 			{
 				this.SelectActor(this.PinnedActors[0]);
 			}
+		}
+
+		public void SelectActor(int index)
+		{
+			if (index >= this.PinnedActors.Count || index < 0)
+				return;
+
+			this.SelectActor(this.PinnedActors[index]);
+		}
+
+		public int GetSelectedIndex()
+		{
+			for (int i = 0; i < this.PinnedActors.Count; i++)
+			{
+				if (this.PinnedActors[i].IsSelected)
+				{
+					return i;
+				}
+			}
+
+			return 0;
+		}
+
+		public void NextPinned()
+		{
+			int selectedIndex = this.GetSelectedIndex();
+			selectedIndex++;
+
+			if (selectedIndex >= this.PinnedActors.Count)
+				selectedIndex = 0;
+
+			this.SelectActor(selectedIndex);
+		}
+
+		public void PrevPinned()
+		{
+			int selectedIndex = this.GetSelectedIndex();
+			selectedIndex--;
+
+			if (selectedIndex < 0)
+				selectedIndex = this.PinnedActors.Count - 1;
+
+			this.SelectActor(selectedIndex);
 		}
 
 		public void SelectActor(PinnedActor actor)

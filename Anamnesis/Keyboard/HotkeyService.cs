@@ -6,10 +6,12 @@ namespace Anamnesis.Keyboard
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
+	using System.Windows.Controls.Primitives;
 	using System.Windows.Input;
 	using Anamnesis.GUI;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using XivToolsWpf;
 
 	public class HotkeyService : ServiceBase<HotkeyService>
 	{
@@ -93,6 +95,7 @@ namespace Anamnesis.Keyboard
 			{
 				// Slight delay before starting the keyboard binding service.
 				await Task.Delay(1000);
+				await Dispatch.MainThread();
 
 				Hook.OnKeyboardInput += this.OnKeyboardInput;
 
@@ -118,7 +121,7 @@ namespace Anamnesis.Keyboard
 			bool handled = this.HandleKey(key, state, modifiers);
 
 			// Forward any unused keys to ffxiv if Anamnesis has focus
-			if (!handled && MainWindow.HasFocus && Keyboard.FocusedElement == null)
+			if (!handled && MainWindow.HasFocus && !(Keyboard.FocusedElement is TextBoxBase))
 			{
 				MemoryService.SendKey(key, state);
 			}
@@ -129,7 +132,7 @@ namespace Anamnesis.Keyboard
 		private bool HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 		{
 			// Only process the hotkeys if we have focus but not to a text box.
-			bool processInputs = MainWindow.HasFocus && Keyboard.FocusedElement == null;
+			bool processInputs = MainWindow.HasFocus && !(Keyboard.FocusedElement is TextBoxBase);
 
 			// Or if FFXIV has focus, the hooks are enabled, and the user is in gpose.
 			if (MemoryService.DoesProcessHaveFocus && SettingsService.Current.EnableGameHotkeyHooks && GposeService.Instance.IsGpose)
