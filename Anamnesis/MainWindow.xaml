@@ -394,7 +394,7 @@
 			</Grid>
 
 			<views1:SettingsView Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}"
-								 Margin="50, 0, 0, 3"/>
+								 Margin="50, 0, 3, 3"/>
 
 			<StackPanel Width="48" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="4"
 						Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}">

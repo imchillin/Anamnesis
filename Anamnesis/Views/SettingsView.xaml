@@ -15,8 +15,8 @@
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="256"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
@@ -245,6 +245,63 @@
 			</GroupBox>
 
 		</StackPanel>
+
+		<GroupBox Grid.Column="2" Style="{StaticResource PanelGroupBox}">
+			<GroupBox.Header>
+				<XivToolsWPF:Header Key="Settings_KeysHeader"
+									Icon="Keyboard" />
+			</GroupBox.Header>
+
+			<ListBox x:Name="HotkeyList">
+			
+				<ListBox.ItemContainerStyle>
+					<Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+					</Style>
+				</ListBox.ItemContainerStyle>
+
+				<ListBox.GroupStyle>
+					<GroupStyle >
+						<GroupStyle.ContainerStyle>
+							<Style TargetType="{x:Type GroupItem}">
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate>
+											<GroupBox Header="{Binding Name}" Margin="3, 6, 3, 0">
+												<ItemsPresenter Margin="6,0,0,0"/>
+											</GroupBox>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</Style>
+						</GroupStyle.ContainerStyle>
+					</GroupStyle>
+				</ListBox.GroupStyle>
+
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition Width="64"/>
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Grid.Column="0" Text="{Binding Name}"/>
+
+							<StackPanel Orientation="Horizontal" Grid.Column="1" >
+								<StackPanel Orientation="Horizontal" Visibility="{Binding ModifierName, Converter={StaticResource NotNullToVisibilityConverter}}">
+									<TextBlock Text="{Binding ModifierName}"/>
+									<TextBlock Text=", "/>
+								</StackPanel>
+								<TextBlock Text="{Binding KeyName}"/>
+							</StackPanel>
+							
+						</Grid>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+				
+		</GroupBox>
 
 	</Grid>
 
