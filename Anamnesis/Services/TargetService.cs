@@ -594,27 +594,12 @@ namespace Anamnesis
 
 					if (newBasic != null)
 					{
-						if (this.Memory != null)
-						{
-							////this.Memory.Address = newBasic.Address;
-							this.Memory.SetAddress(newBasic.Address);
+						if(this.Memory != null)
+							this.Memory.Dispose();
 
-							try
-							{
-								this.Memory.Tick();
-							}
-							catch (Exception ex)
-							{
-								Log.Warning(ex, "Failed to tick actor");
-								this.SetInvalid();
-								return;
-							}
-						}
-						else
-						{
-							this.Memory = new ActorMemory();
-							this.Memory.SetAddress(newBasic.Address);
-						}
+						// Reusing the old actor can cause issues so we always recreate when retargeting.
+						this.Memory = new ActorMemory();
+						this.Memory.SetAddress(newBasic.Address);
 
 						IntPtr? oldPointer = this.Pointer;
 
