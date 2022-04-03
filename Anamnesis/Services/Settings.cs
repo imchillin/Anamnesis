@@ -39,6 +39,7 @@ namespace Anamnesis.Services
 		public bool ExtendIntoWindowChrome { get; set; } = true;
 		public bool UseExternalRefresh { get; set; } = false;
 		public bool EnableGameHotkeyHooks { get; set; } = false;
+		public bool EnableHotkeys { get; set; } = true;
 
 		public bool OverrideSystemTheme { get; set; } = false;
 		public Color ThemeColor { get; set; } = Color.FromArgb(255, 247, 99, 12);
@@ -69,6 +70,20 @@ namespace Anamnesis.Services
 			{ "QuaternionEditor.RotateYPlusSlow", new KeyCombination(Key.Q, ModifierKeys.Control) },
 			{ "QuaternionEditor.RotateYMinusSlow", new KeyCombination(Key.E, ModifierKeys.Control) },
 			{ "AppearancePage.ClearEquipment", new KeyCombination(Key.C, ModifierKeys.Control | ModifierKeys.Shift) },
+			{ "TargetService.SelectPinned1", new KeyCombination(Key.F1) },
+			{ "TargetService.SelectPinned2", new KeyCombination(Key.F2) },
+			{ "TargetService.SelectPinned3", new KeyCombination(Key.F3) },
+			{ "TargetService.SelectPinned4", new KeyCombination(Key.F4) },
+			{ "TargetService.SelectPinned5", new KeyCombination(Key.F5) },
+			{ "TargetService.SelectPinned6", new KeyCombination(Key.F6) },
+			{ "TargetService.SelectPinned7", new KeyCombination(Key.F7) },
+			{ "TargetService.SelectPinned8", new KeyCombination(Key.F8) },
+			{ "TargetService.NextPinned", new KeyCombination(Key.Right, ModifierKeys.Control) },
+			{ "TargetService.PrevPinned", new KeyCombination(Key.Left, ModifierKeys.Control) },
+			{ "MainWindow.SceneTab", new KeyCombination(Key.D1) },
+			{ "MainWindow.AppearanceTab", new KeyCombination(Key.D2) },
+			{ "MainWindow.PoseTab", new KeyCombination(Key.D3) },
+			{ "MainWindow.AnimationTab", new KeyCombination(Key.D4) },
 		};
 	}
 }

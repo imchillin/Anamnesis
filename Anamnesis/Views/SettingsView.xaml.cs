@@ -3,14 +3,20 @@
 
 namespace Anamnesis.GUI.Views
 {
+	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Linq;
+	using System.Text;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Data;
 	using System.Windows.Forms;
+	using System.Windows.Input;
 	using System.Windows.Media;
 	using Anamnesis.Files;
 	using Anamnesis.GUI.Dialogs;
+	using Anamnesis.Keyboard;
 	using Anamnesis.Services;
 	using PropertyChanged;
 	using XivToolsWpf;
@@ -39,14 +45,27 @@ namespace Anamnesis.GUI.Views
 			sizes.Add(2.0);
 			this.SizeSelector.ItemsSource = sizes;
 
-			List<LanguageOption> languages = new List<LanguageOption>();
-
+			List<LanguageOption> languages = new();
 			foreach ((string key, string name) in LocalizationService.GetAvailableLocales())
 			{
 				languages.Add(new LanguageOption(key, name));
 			}
 
 			this.Languages = languages;
+
+			List<HotkeyOption> hotkeys = new();
+			foreach((string function, KeyCombination keys) in SettingsService.Current.KeyboardBindings)
+			{
+				hotkeys.Add(new HotkeyOption(function, keys));
+			}
+
+			this.Hotkeys = hotkeys;
+
+			ICollectionView view = CollectionViewSource.GetDefaultView(this.Hotkeys);
+			view.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+			view.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
+			view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+			this.HotkeyList.ItemsSource = view;
 
 			if (!SettingsService.Current.ShowGallery)
 			{
@@ -65,6 +84,7 @@ namespace Anamnesis.GUI.Views
 		public SettingsService SettingsService => SettingsService.Instance;
 
 		public IEnumerable<LanguageOption> Languages { get; }
+		public IEnumerable<HotkeyOption> Hotkeys { get; }
 
 		public LanguageOption SelectedLanguage
 		{
@@ -150,11 +170,6 @@ namespace Anamnesis.GUI.Views
 			SettingsService.Current.ShowGallery = this.GalleryCombobox.SelectedIndex != 0;
 		}
 
-		private void OnPenumbraRefreshChecked(object sender, RoutedEventArgs e)
-		{
-			GenericDialog.ShowLocalized("Settings_UseExternalRefreshTooltip", "Settings_UseExternalRefresh");
-		}
-
 		public class LanguageOption
 		{
 			public LanguageOption(string key, string display)
@@ -165,6 +180,88 @@ namespace Anamnesis.GUI.Views
 
 			public string Key { get; }
 			public string Display { get; }
+		}
+
+		public class HotkeyOption
+		{
+			private readonly KeyCombination keys;
+			private readonly string function;
+
+			public HotkeyOption(string function, KeyCombination keys)
+			{
+				this.keys = keys;
+				this.function = function;
+
+				string[] parts = this.function.Split('.');
+				if (parts.Length == 2)
+				{
+					this.Category = LocalizationService.GetString("HotkeyCategory_" + parts[0], true);
+					if (this.Category == string.Empty)
+						this.Category = parts[0];
+
+					this.Name = LocalizationService.GetString("Hotkey_" + parts[1], true);
+					if (this.Name == string.Empty)
+						this.Name = parts[1];
+				}
+				else
+				{
+					this.Category = string.Empty;
+					this.Name = LocalizationService.GetString("Hotkey_" + function, true);
+					if (this.Name == string.Empty)
+						this.Name = function;
+				}
+			}
+
+			public string Category { get; }
+			public string Name { get; }
+
+			public string KeyName => this.keys.Key.ToString();
+			public string? ModifierName
+			{
+				get
+				{
+					if (this.keys.Modifiers == ModifierKeys.None)
+						return null;
+
+					StringBuilder builder = new StringBuilder();
+					bool hasContent = false;
+
+					if (this.keys.Modifiers.HasFlag(ModifierKeys.Control))
+					{
+						builder.Append("Ctrl");
+						hasContent = true;
+					}
+
+					if (this.keys.Modifiers.HasFlag(ModifierKeys.Shift))
+					{
+						if (hasContent)
+							builder.Append(", ");
+
+						builder.Append("Shift");
+						hasContent = true;
+					}
+
+					if (this.keys.Modifiers.HasFlag(ModifierKeys.Alt))
+					{
+						if (hasContent)
+							builder.Append(", ");
+
+						builder.Append("Alt");
+						hasContent = true;
+					}
+
+					if (this.keys.Modifiers.HasFlag(ModifierKeys.Windows))
+					{
+						if (hasContent)
+							builder.Append(", ");
+
+						builder.Append("Win");
+						hasContent = true;
+					}
+
+					return builder.ToString();
+				}
+			}
 		}
 	}
 }

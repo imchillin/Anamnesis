@@ -13,6 +13,7 @@ namespace Anamnesis.GUI
 	using Anamnesis;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Views;
+	using Anamnesis.Keyboard;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
@@ -46,6 +47,11 @@ namespace Anamnesis.GUI
 			this.OnSettingsChanged();
 
 			GameService.Instance.PropertyChanged += this.OnGameServicePropertyChanged;
+
+			HotkeyService.RegisterHotkeyHandler("MainWindow.SceneTab", () => this.SceneTab.Focus());
+			HotkeyService.RegisterHotkeyHandler("MainWindow.AppearanceTab", () => this.AppearanceTab.Focus());
+			HotkeyService.RegisterHotkeyHandler("MainWindow.PoseTab", () => this.PoseTab.Focus());
+			HotkeyService.RegisterHotkeyHandler("MainWindow.AnimationTab", () => this.PoseTab.Focus());
 		}
 
 		public bool IsClosing { get; private set; } = false;
@@ -63,6 +69,12 @@ namespace Anamnesis.GUI
 #else
 		public bool IsDebug => false;
 #endif
+
+		public bool ShowSettings
+		{
+			get;
+			set;
+		}
 
 		protected override void OnActivated(EventArgs e)
 		{
@@ -202,7 +214,7 @@ namespace Anamnesis.GUI
 			});
 		}
 
-		private async void OnSettingsClick(object sender, RoutedEventArgs e)
+		/*private async void OnSettingsClick(object sender, RoutedEventArgs e)
 		{
 			if (this.DrawerHost.IsRightDrawerOpen)
 			{
@@ -223,7 +235,7 @@ namespace Anamnesis.GUI
 			}
 
 			await ViewService.ShowDrawer<SettingsView>();
-		}
+		}*/
 
 		private void OnAboutClick(object sender, RoutedEventArgs e)
 		{
@@ -342,6 +354,11 @@ namespace Anamnesis.GUI
 		private void OnWikiClicked(object sender, RoutedEventArgs e)
 		{
 			UrlUtility.Open("https://github.com/imchillin/Anamnesis/wiki");
+		}
+
+		private void OnBackClicked(object sender, RoutedEventArgs e)
+		{
+			this.ShowSettings = false;
 		}
 
 		private void OnActivated(object sender, EventArgs e)
