@@ -70,6 +70,12 @@ namespace Anamnesis.GUI
 		public bool IsDebug => false;
 #endif
 
+		public bool ShowSettings
+		{
+			get;
+			set;
+		}
+
 		protected override void OnActivated(EventArgs e)
 		{
 			base.OnActivated(e);
@@ -208,7 +214,7 @@ namespace Anamnesis.GUI
 			});
 		}
 
-		private async void OnSettingsClick(object sender, RoutedEventArgs e)
+		/*private async void OnSettingsClick(object sender, RoutedEventArgs e)
 		{
 			if (this.DrawerHost.IsRightDrawerOpen)
 			{
@@ -229,7 +235,7 @@ namespace Anamnesis.GUI
 			}
 
 			await ViewService.ShowDrawer<SettingsView>();
-		}
+		}*/
 
 		private void OnAboutClick(object sender, RoutedEventArgs e)
 		{
@@ -348,6 +354,11 @@ namespace Anamnesis.GUI
 		private void OnWikiClicked(object sender, RoutedEventArgs e)
 		{
 			UrlUtility.Open("https://github.com/imchillin/Anamnesis/wiki");
+		}
+
+		private void OnBackClicked(object sender, RoutedEventArgs e)
+		{
+			this.ShowSettings = false;
 		}
 
 		private void OnActivated(object sender, EventArgs e)

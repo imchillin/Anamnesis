@@ -14,7 +14,7 @@
 	xmlns:views="clr-namespace:Anamnesis.Views"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	xmlns:XivToolsWpfWindows="clr-namespace:XivToolsWpf.Windows;assembly=XivToolsWpf"
-	xmlns:system="clr-namespace:System;assembly=System.Runtime"
+	xmlns:system="clr-namespace:System;assembly=System.Runtime" xmlns:views1="clr-namespace:Anamnesis.GUI.Views"
 	Closing="Window_Closing"
 	Icon="/Assets/Anamnesis.ico"
 	Loaded="Window_Loaded"
@@ -199,7 +199,8 @@
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5" />
 			</Grid.LayoutTransform>
 
-			<Grid IsEnabled="{Binding GposeService.IsNotChangingState}" Margin="3,0,3,3">
+			<Grid IsEnabled="{Binding GposeService.IsNotChangingState}" Margin="3,0,3,3"
+				  Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
 				<TabControl x:Name="Tabs" TabStripPlacement="Left">
 
 					<TabControl.Template>
@@ -343,36 +344,6 @@
 											HorizontalAlignment="Left"
 											IsItemsHost="true"
 											Orientation="Vertical" />
-
-										<StackPanel Grid.Row="2">
-											<Button
-												Height="32"
-												Margin="2"
-												BorderThickness="0"
-												Click="OnAboutClick"
-												Style="{StaticResource TransparentButton}"
-												ToolTip="About">
-												<fa:IconBlock
-													FontSize="12"
-													Foreground="{DynamicResource MaterialDesignBody}"
-													Icon="Info"
-													Opacity="0.5" />
-											</Button>
-
-											<Button
-												Height="32"
-												Margin="2"
-												BorderThickness="0"
-												Click="OnSettingsClick"
-												Style="{StaticResource TransparentButton}"
-												ToolTip="Settings">
-												<fa:IconBlock
-													FontSize="12"
-													Foreground="{DynamicResource MaterialDesignBody}"
-													Icon="Cog"
-													Opacity="0.5" />
-											</Button>
-										</StackPanel>
 									</Grid>
 								</Grid>
 
@@ -421,6 +392,54 @@
 					</TabItem>
 				</TabControl>
 			</Grid>
+
+			<views1:SettingsView Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}"
+								 Margin="50, 0, 0, 3"/>
+
+			<StackPanel Width="48" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="4"
+						Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}">
+				
+				<Button Height="32"
+						Margin="2"
+						BorderThickness="0"
+						Style="{StaticResource TransparentButton}"
+						Click="OnBackClicked">
+
+					<fa:IconBlock FontSize="12"
+								  Foreground="{DynamicResource MaterialDesignBody}"
+								  Icon="ArrowLeft"
+								  Opacity="0.5" />
+				</Button>
+				
+			</StackPanel>
+			
+			<StackPanel Width="48" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4">
+				<Button Height="32"
+						Margin="2"
+						BorderThickness="0"
+						Click="OnAboutClick"
+						Style="{StaticResource TransparentButton}"
+						ToolTip="About">
+					
+					<fa:IconBlock FontSize="12"
+								  Foreground="{DynamicResource MaterialDesignBody}"
+								  Icon="Info"
+								  Opacity="0.5" />
+				</Button>
+
+				<ToggleButton Height="42"
+							  Margin="2"
+						  	  BorderThickness="0"
+						      Style="{StaticResource TabToggle}"
+							  IsChecked="{Binding ShowSettings}"
+							  ToolTip="Settings">
+					
+					<fa:IconBlock FontSize="16"
+								  Foreground="{DynamicResource MaterialDesignBody}"
+								  Icon="Cog"
+								  Opacity="0.5" />
+				</ToggleButton>
+			</StackPanel>
 
 			<!--<Grid Margin="48, 22, 1, 1" Visibility="{Binding TargetService.SelectedActor, Converter={StaticResource NullToVisibilityConverter}}">
 				<Rectangle Fill="{DynamicResource MaterialDesignPaper}" Opacity="0.9"/>

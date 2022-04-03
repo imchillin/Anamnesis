@@ -152,6 +152,9 @@ namespace Anamnesis.GUI.Views
 
 		private void OnPenumbraRefreshChecked(object sender, RoutedEventArgs e)
 		{
+			if (SettingsService.Current.UseExternalRefresh)
+				return;
+
 			GenericDialog.ShowLocalized("Settings_UseExternalRefreshTooltip", "Settings_UseExternalRefresh");
 		}
 
