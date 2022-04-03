@@ -7,6 +7,7 @@ namespace Anamnesis.GUI.Views
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Linq;
+	using System.Text;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Data;
@@ -219,14 +220,46 @@ namespace Anamnesis.GUI.Views
 			{
 				get
 				{
-					return this.keys.Modifiers switch
+					if (this.keys.Modifiers == ModifierKeys.None)
+						return null;
+
+					StringBuilder builder = new StringBuilder();
+					bool hasContent = false;
+
+					if (this.keys.Modifiers.HasFlag(ModifierKeys.Control))
 					{
-						ModifierKeys.Control => "Ctrl",
-						ModifierKeys.Shift => "Shift",
-						ModifierKeys.Alt => "Alt",
-						ModifierKeys.Windows => "Win",
-						_ => null,
-					};
+						builder.Append("Ctrl");
+						hasContent = true;
+					}
+
+					if (this.keys.Modifiers.HasFlag(ModifierKeys.Shift))
+					{
+						if (hasContent)
+							builder.Append(", ");
+
+						builder.Append("Shift");
+						hasContent = true;
+					}
+
+					if (this.keys.Modifiers.HasFlag(ModifierKeys.Alt))
+					{
+						if (hasContent)
+							builder.Append(", ");
+
+						builder.Append("Alt");
+						hasContent = true;
+					}
+
+					if (this.keys.Modifiers.HasFlag(ModifierKeys.Windows))
+					{
+						if (hasContent)
+							builder.Append(", ");
+
+						builder.Append("Win");
+						hasContent = true;
+					}
+
+					return builder.ToString();
 				}
 			}
 		}

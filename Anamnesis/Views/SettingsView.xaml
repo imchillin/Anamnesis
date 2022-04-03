@@ -299,7 +299,7 @@
 							<Grid>
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition/>
-									<ColumnDefinition Width="64"/>
+									<ColumnDefinition Width="75"/>
 								</Grid.ColumnDefinitions>
 
 								<TextBlock Grid.Column="0" Text="{Binding Name}"/>
