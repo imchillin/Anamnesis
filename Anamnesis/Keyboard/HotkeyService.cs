@@ -89,13 +89,20 @@ namespace Anamnesis.Keyboard
 
 		public override Task Start()
 		{
-			Hook.Start();
-			Hook.OnKeyboardInput += this.OnKeyboardInput;
-
-			foreach ((string function, KeyCombination keys) in SettingsService.Current.KeyboardBindings)
+			Task.Run(async () =>
 			{
-				RegisterHotkey(keys.Key, keys.Modifiers, function);
-			}
+				// Slight delay before starting the keyboard binding service.
+				await Task.Delay(1000);
+
+				Hook.OnKeyboardInput += this.OnKeyboardInput;
+
+				foreach ((string function, KeyCombination keys) in SettingsService.Current.KeyboardBindings)
+				{
+					RegisterHotkey(keys.Key, keys.Modifiers, function);
+				}
+
+				Hook.Start();
+			});
 
 			return base.Start();
 		}
