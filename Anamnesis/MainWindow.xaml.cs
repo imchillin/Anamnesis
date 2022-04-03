@@ -13,6 +13,7 @@ namespace Anamnesis.GUI
 	using Anamnesis;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.GUI.Views;
+	using Anamnesis.Keyboard;
 	using Anamnesis.Memory;
 	using Anamnesis.PoseModule;
 	using Anamnesis.Services;
@@ -46,6 +47,11 @@ namespace Anamnesis.GUI
 			this.OnSettingsChanged();
 
 			GameService.Instance.PropertyChanged += this.OnGameServicePropertyChanged;
+
+			HotkeyService.RegisterHotkeyHandler("MainWindow.SceneTab", () => this.SceneTab.Focus());
+			HotkeyService.RegisterHotkeyHandler("MainWindow.AppearanceTab", () => this.AppearanceTab.Focus());
+			HotkeyService.RegisterHotkeyHandler("MainWindow.PoseTab", () => this.PoseTab.Focus());
+			HotkeyService.RegisterHotkeyHandler("MainWindow.AnimationTab", () => this.PoseTab.Focus());
 		}
 
 		public bool IsClosing { get; private set; } = false;

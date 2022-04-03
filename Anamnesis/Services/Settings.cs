@@ -79,6 +79,10 @@ namespace Anamnesis.Services
 			{ "TargetService.SelectPinned8", new KeyCombination(Key.F8) },
 			{ "TargetService.NextPinned", new KeyCombination(Key.Right, ModifierKeys.Control) },
 			{ "TargetService.PrevPinned", new KeyCombination(Key.Left, ModifierKeys.Control) },
+			{ "MainWindow.SceneTab", new KeyCombination(Key.D1) },
+			{ "MainWindow.AppearanceTab", new KeyCombination(Key.D2) },
+			{ "MainWindow.PoseTab", new KeyCombination(Key.D3) },
+			{ "MainWindow.AnimationTab", new KeyCombination(Key.D4) },
 		};
 	}
 }
