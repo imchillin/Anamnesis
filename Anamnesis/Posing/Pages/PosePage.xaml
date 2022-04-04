@@ -33,7 +33,15 @@
 			</Grid.RowDefinitions>
 
 			<!--  Sidebar  -->
-			<Grid Grid.Row="1" Grid.Column="2">
+            <ToggleButton Grid.Row="0" Grid.Column="2" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding PoseService.FreezeWorldPosition}" BorderThickness="1" Padding="0" Margin="0"
+							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+                <ToggleButton.ToolTip>
+                    <XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>
+                </ToggleButton.ToolTip>
+                <fa:IconBlock Icon="LocationArrow" FontSize="10"/>
+            </ToggleButton>
+            
+            <Grid Grid.Row="1" Grid.Column="2">
 				<Grid.RowDefinitions>
 					<RowDefinition />
 					<RowDefinition Height="Auto" />
@@ -145,7 +153,7 @@
 
 									<XivToolsWpf:InfoControl.Visibility>
 										<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
-											<Binding Path="TargetService.SelectedActor.IsAnimating"/>
+											<Binding Path="TargetService.SelectedActor.IsMotionEnabled"/>
 											<Binding Path="PoseService.WorldPositionNotFrozen"/>
 										</MultiBinding>
 									</XivToolsWpf:InfoControl.Visibility>
@@ -229,14 +237,6 @@
 					<ColumnDefinition/>
 					<ColumnDefinition Width="220"/>
 				</Grid.ColumnDefinitions>
-
-				<!-- Animation Control -->
-				<Border
-					Grid.Column="1"
-					Style="{StaticResource Panel}"
-					Margin="6, 0, 0, 0">
-					<views1:AnimationEditor DataContext="{Binding Actor}"/>
-				</Border>
 
 				<!-- Pose Control -->
 				<Grid Height="35" Grid.Column="0">

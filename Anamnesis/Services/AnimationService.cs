@@ -3,14 +3,12 @@
 
 namespace Anamnesis.Services
 {
-	using System;
-	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
-	using Anamnesis.Utils;
 	using PropertyChanged;
 
 	[AddINotifyPropertyChangedInterface]
@@ -20,7 +18,7 @@ namespace Anamnesis.Services
 		private const ushort DrawWeaponAnimationId = 34;
 		private const ushort IdleAnimationId = 3;
 
-		private readonly ConcurrentDictionary<ActorRef<ActorMemory>, AnimationState> animationStates = new();
+		private readonly HashSet<ActorMemory> overriddenActors = new();
 
 		private NopHookViewModel? animationSpeedHook;
 		private bool speedControlEnabled = false;
@@ -40,7 +38,6 @@ namespace Anamnesis.Services
 		public override Task Start()
 		{
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
-			TerritoryService.TerritoryChanged += this.OnTerritoryChanged;
 
 			this.animationSpeedHook = new NopHookViewModel(AddressService.AnimationSpeedPatch, 0x9);
 
@@ -54,121 +51,67 @@ namespace Anamnesis.Services
 		public override async Task Shutdown()
 		{
 			GposeService.GposeStateChanging -= this.OnGposeStateChanging;
-			TerritoryService.TerritoryChanged -= this.OnTerritoryChanged;
 
 			this.SpeedControlEnabled = false;
 
-			this.CleanupAllAnimationOverrides();
+			this.ResetOverriddenActors();
 
 			await base.Shutdown();
 		}
 
-		public void DrawWeapon(ActorRef<ActorMemory> actor) => this.PlayAnimation(actor, DrawWeaponAnimationId, 1.0f, true);
-		public void IdleCharacter(ActorRef<ActorMemory> actor) => this.PlayAnimation(actor, IdleAnimationId, 1.0f, true);
-
-		public void PlayAnimation(ActorRef<ActorMemory> actorRef, ushort? animationId, float? animationSpeed, bool interrupt)
+		public void ApplyAnimationOverride(ActorMemory memory, ushort? animationId, float? animationSpeed, bool interrupt)
 		{
-			if (!actorRef.TryGetMemory(out var memory))
+			if (!memory.IsValid)
 				return;
 
-			var animState = this.GetAnimationState(actorRef);
-
-			if (animState.Status == AnimationState.AnimationStatus.Paused)
-				this.Unpause(actorRef);
-
-			if (animState.Status == AnimationState.AnimationStatus.Inactive)
-			{
-				animState.OriginalCharacterMode = memory.CharacterMode;
-				animState.OriginalCharacterModeInput = memory.CharacterModeInput;
-			}
-
-			animState.Status = AnimationState.AnimationStatus.Active;
-			this.ApplyAnimationOverride(memory, animationId, animationSpeed, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
+			this.ApplyAnimation(memory, animationId, animationSpeed, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
+			this.overriddenActors.Add(memory);
 		}
 
-		public void ResetAnimationOverride(ActorRef<ActorMemory> actorRef)
+		public void ResetAnimationOverride(ActorMemory memory)
 		{
-			if (!actorRef.TryGetMemory(out var memory))
+			if (!memory.IsValid)
 				return;
 
-			var animState = this.GetAnimationState(actorRef);
-
-			if (animState.Status == AnimationState.AnimationStatus.Paused)
-				this.Unpause(actorRef);
-
-			if (animState.Status == AnimationState.AnimationStatus.Active)
-			{
-				ActorMemory.CharacterModes mode = animState.OriginalCharacterMode;
-				byte modeInput = animState.OriginalCharacterModeInput;
-
-				if (!this.CanSafelyApplyMode(memory, mode, modeInput))
-				{
-					mode = ActorMemory.CharacterModes.Normal;
-					modeInput = 0;
-				}
-
-				animState.Status = AnimationState.AnimationStatus.Inactive;
-				this.ApplyAnimationOverride(memory, 0, 1f, true, mode, modeInput);
-			}
+			this.ApplyAnimation(memory, 0, 1.0f, true, ActorMemory.CharacterModes.Normal, 0);
+			this.overriddenActors.Remove(memory);
 		}
 
-		public void TogglePaused(ActorRef<ActorMemory> actorRef, float newSpeed = 1.0f)
+		public void PauseActor(ActorMemory memory)
 		{
-			if (!actorRef.IsValid)
+			if (!memory.IsValid)
 				return;
 
-			var animState = this.GetAnimationState(actorRef);
+			var oldMode = memory.CharacterMode;
+			var oldModeInput = memory.CharacterModeInput;
 
-			if (animState.Status == AnimationState.AnimationStatus.Paused)
+			Task.Run(() =>
 			{
-				this.Unpause(actorRef, newSpeed);
-			}
-			else
-			{
-				this.Pause(actorRef);
-			}
+				this.ApplyAnimation(memory, null, 0.0f, false, ActorMemory.CharacterModes.EmoteLoop, 0);
+				Thread.Sleep(100);
+				this.ApplyAnimation(memory, null, 0.0f, false, oldMode, oldModeInput);
+			});
 		}
 
-		public void Unpause(ActorRef<ActorMemory> actorRef, float newSpeed = 1.0f)
+		public void UnpauseActor(ActorMemory memory)
 		{
-			if (!actorRef.TryGetMemory(out var memory))
+			if (!memory.IsValid)
 				return;
 
-			var animState = this.GetAnimationState(actorRef);
+			var oldMode = memory.CharacterMode;
+			var oldModeInput = memory.CharacterModeInput;
 
-			if (animState.Status == AnimationState.AnimationStatus.Paused)
+			Task.Run(() =>
 			{
-				ActorMemory.CharacterModes mode = animState.PausedCharacterMode;
-				byte modeInput = animState.PausedCharacterModeInput;
-
-				if (!this.CanSafelyApplyMode(memory, mode, modeInput))
-				{
-					mode = ActorMemory.CharacterModes.Normal;
-					modeInput = 0;
-				}
-
-				animState.Status = animState.PausedStatus;
-				this.ApplyAnimationOverride(memory, null, newSpeed, false, mode, modeInput);
-			}
+				this.ApplyAnimation(memory, null, 0.0f, false, ActorMemory.CharacterModes.EmoteLoop, 0);
+				Thread.Sleep(100);
+				this.ApplyAnimation(memory, null, 1.0f, false, oldMode, oldModeInput);
+			});
 		}
 
-		public void Pause(ActorRef<ActorMemory> actorRef)
-		{
-			if (!actorRef.TryGetMemory(out var memory))
-				return;
+		public void ApplyIdle(ActorMemory memory) => this.ApplyAnimationOverride(memory, IdleAnimationId, 1.0f, true);
 
-			var animState = this.GetAnimationState(actorRef);
-
-			if (animState.Status != AnimationState.AnimationStatus.Paused)
-			{
-				animState.PausedStatus = animState.Status;
-				animState.PausedCharacterMode = memory.CharacterMode;
-				animState.PausedCharacterModeInput = memory.CharacterModeInput;
-				animState.Status = AnimationState.AnimationStatus.Paused;
-
-				this.ApplyAnimationOverride(memory, null, 0.0f, false, ActorMemory.CharacterModes.EmoteLoop, 0);
-			}
-		}
+		public void DrawWeapon(ActorMemory memory) => this.ApplyAnimationOverride(memory, DrawWeaponAnimationId, 1.0f, true);
 
 		private async Task CheckThread()
 		{
@@ -176,50 +119,11 @@ namespace Anamnesis.Services
 			{
 				await Task.Delay(TickDelay);
 
-				this.CleanupInvalidOverrides();
+				this.CleanupInvalidActors();
 			}
 		}
 
-		private void CleanupAllAnimationOverrides()
-		{
-			foreach ((var actorRef, _) in this.animationStates)
-			{
-					this.ResetAnimationOverride(actorRef);
-			}
-
-			this.animationStates.Clear();
-		}
-
-		private void CleanupInvalidOverrides()
-		{
-			var stale = this.animationStates.Select(x => x.Key).Where(actor => !actor.IsValid).ToList();
-			foreach (var actorRef in stale)
-			{
-				this.animationStates.TryRemove(actorRef, out var removedState);
-			}
-		}
-
-		private void CleanupPaused()
-		{
-			foreach ((var actorRef, _) in this.animationStates)
-			{
-				this.Unpause(actorRef);
-			}
-		}
-
-		private bool CanSafelyApplyMode(ActorMemory actor, ActorMemory.CharacterModes mode, byte modeInput)
-		{
-			// We do some special handling for mounts and ornaments so we don't crash if an overworld actor dismounted during posing
-			if (mode == ActorMemory.CharacterModes.HasAttachment)
-			{
-				if ((modeInput == 0 && actor.Mount == null) || (modeInput != 0 && actor.Ornament == null))
-					return false;
-			}
-
-			return true;
-		}
-
-		private void ApplyAnimationOverride(ActorMemory memory, ushort? animationId, float? animationSpeed, bool interrupt, ActorMemory.CharacterModes mode, byte modeInput)
+		private void ApplyAnimation(ActorMemory memory, ushort? animationId, float? animationSpeed, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
 		{
 			if (this.SpeedControlEnabled && animationSpeed != null && memory.AnimationSpeed != animationSpeed)
 			{
@@ -234,8 +138,16 @@ namespace Anamnesis.Services
 				}
 			}
 
-			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeInput)), modeInput, "Animation Mode Override"); // Always set the input before the mode
-			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterMode)), mode, "Animation Mode Override");
+			// Always set the input before the mode
+			if (modeInput != null && memory.CharacterModeInput != modeInput)
+			{
+				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeInput)), modeInput, "Animation Mode Input Override");
+			}
+
+			if (mode != null && memory.CharacterMode != mode)
+			{
+				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterMode)), mode, "Animation Mode Override");
+			}
 
 			if (interrupt)
 			{
@@ -256,7 +168,6 @@ namespace Anamnesis.Services
 			}
 			else
 			{
-				this.CleanupPaused();
 				this.animationSpeedHook?.SetEnabled(false);
 			}
 
@@ -265,45 +176,24 @@ namespace Anamnesis.Services
 
 		private void OnGposeStateChanging(bool isGPose) => this.SpeedControlEnabled = isGPose;
 
-		private void OnTerritoryChanged() => this.CleanupAllAnimationOverrides();
-
-		private AnimationState GetAnimationState(ActorRef<ActorMemory> actorRef)
+		private void ResetOverriddenActors()
 		{
-			AnimationState animState = new();
-
-			if (this.animationStates.TryAdd(actorRef, animState))
+			foreach (var actor in this.overriddenActors.ToList())
 			{
-				if(actorRef.TryGetMemory(out var memory))
+				if(actor.IsValid && actor.IsAnimationOverriden)
 				{
-					animState.OriginalCharacterMode = memory.CharacterMode;
-					animState.OriginalCharacterModeInput = memory.CharacterModeInput;
-				}
-				else
-				{
-					animState.OriginalCharacterMode = ActorMemory.CharacterModes.Normal;
-					animState.OriginalCharacterModeInput = 0;
+					this.ResetAnimationOverride(actor);
 				}
 			}
-
-			return this.animationStates[actorRef];
 		}
 
-		public class AnimationState
+		private void CleanupInvalidActors()
 		{
-			public enum AnimationStatus
+			var stale = this.overriddenActors.Where(actor => !actor.IsValid).ToList();
+			foreach (var actorRef in stale)
 			{
-				Inactive,
-				Active,
-				Paused,
+				this.overriddenActors.Remove(actorRef);
 			}
-
-			public AnimationStatus Status { get; set; } = AnimationStatus.Inactive;
-			public ActorMemory.CharacterModes OriginalCharacterMode { get; set; }
-			public byte OriginalCharacterModeInput { get; set; }
-
-			public AnimationStatus PausedStatus { get; set; }
-			public ActorMemory.CharacterModes PausedCharacterMode { get; set; }
-			public byte PausedCharacterModeInput { get; set; }
 		}
 	}
 }

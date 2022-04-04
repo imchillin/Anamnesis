@@ -76,11 +76,11 @@ namespace Anamnesis.Memory
 
 			try
 			{
-				this.ReadAllFromMemory();
+				this.Tick();
 			}
 			catch (Exception ex)
 			{
-				throw new Exception($"Failed to read {this.GetType().Name} from memory address: {address}", ex);
+				throw new Exception($"Failed to initially tick {this.GetType().Name} from memory address: {address}", ex);
 			}
 		}
 
