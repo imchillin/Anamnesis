@@ -30,13 +30,14 @@ namespace Anamnesis.GUI
 	[AddINotifyPropertyChangedInterface]
 	public partial class MainWindow : ChromedWindow
 	{
-		public static bool HasFocus = false;
-
+		private static MainWindow? instance;
 		private MiniWindow? mini;
 		private bool hasSetPosition = false;
 
 		public MainWindow()
 		{
+			instance = this;
+
 			this.InitializeComponent();
 
 			this.DataContext = this;
@@ -53,6 +54,8 @@ namespace Anamnesis.GUI
 			HotkeyService.RegisterHotkeyHandler("MainWindow.PoseTab", () => this.PoseTab.Focus());
 			HotkeyService.RegisterHotkeyHandler("MainWindow.ActionTab", () => this.ActionTab.Focus());
 		}
+
+		public static new bool IsActive => instance?.GetIsActive() ?? false;
 
 		public bool IsClosing { get; private set; } = false;
 
@@ -359,16 +362,6 @@ namespace Anamnesis.GUI
 		private void OnBackClicked(object sender, RoutedEventArgs e)
 		{
 			this.ShowSettings = false;
-		}
-
-		private void OnActivated(object sender, EventArgs e)
-		{
-			HasFocus = true;
-		}
-
-		private void OnDeactivated(object sender, EventArgs e)
-		{
-			HasFocus = false;
 		}
 	}
 }

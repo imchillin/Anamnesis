@@ -26,9 +26,7 @@
 	Topmost="{Binding SettingsService.Settings.AlwaysOnTop}"
 	Style="{DynamicResource AnaWindowStyle}"
 	TextBlock.FontSize="12"
-	mc:Ignorable="d"
-	Activated="OnActivated"
-	Deactivated="OnDeactivated">
+	mc:Ignorable="d">
 
 	<FrameworkElement.CommandBindings>
 		<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
