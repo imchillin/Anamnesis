@@ -24,7 +24,7 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<xtw:TextBlock
+		<!--<xtw:TextBlock
 			Key="Character_Actor_DataPath"
 			Grid.Row="0"
 			Grid.Column="0"
@@ -37,7 +37,7 @@
 			DataHead="{Binding ModelObject.DataHead}"
 			DataPath="{Binding ModelObject.DataPath}"
 			Tribe="{Binding Customize.Tribe}"
-			IsEnabled="{Binding ModelObject.IsPlayer}"/>
+			IsEnabled="{Binding ModelObject.IsPlayer}"/>-->
 
 		<!-- Height -->
 		<xtw:TextBlock Grid.Row="1" Key="Character_Model_Height" Style="{StaticResource Label}"/>

@@ -41,7 +41,7 @@
 
 				<Border
 					Grid.Row="0"
-					Margin="3, 0, 3, 2"
+					Margin="3, 3, 3, 2"
 					Style="{StaticResource Panel}">
 					<Grid>
 						<Grid.ColumnDefinitions>
@@ -229,7 +229,8 @@
 			<!-- top Bars -->
 			<Grid Grid.Row="0"
 				  Grid.ColumnSpan="2"
-				  VerticalAlignment="Stretch">
+				  VerticalAlignment="Stretch"
+				  Margin="3, 2, 0, 0">
 
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
