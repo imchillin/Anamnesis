@@ -81,6 +81,18 @@ namespace Anamnesis.Services
 			}
 		}
 
+		public static byte[] GetFileData(string path)
+		{
+			if (LuminaData == null)
+				throw new Exception("Game Data Service has not been initialized");
+
+			FileResource? file = LuminaData.GetFile(path);
+			if (file == null)
+				throw new Exception($"Failed to read file from game data: \"{path}\"");
+
+			return file.Data;
+		}
+
 		public static string? GetNpcName(INpcBase npc)
 		{
 			if (npcNames == null)
