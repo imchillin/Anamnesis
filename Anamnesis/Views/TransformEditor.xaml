@@ -17,8 +17,15 @@
 				</GroupBox.Header>-->
 			
 			<controls:QuaternionEditor Margin="0,3,0,0" Value="{Binding Value.Rotation}" RootRotation="{Binding Value.RootRotation, Mode=OneWay}" IsEnabled="{Binding Value.CanRotate}"/>
-			
-			<GroupBox IsEnabled="{Binding Value.CanTranslate}">
+
+			<GroupBox>
+				<GroupBox.IsEnabled>
+					<MultiBinding Converter="{StaticResource MultiBoolAnd}">
+						<Binding Path="Value.CanTranslate"/>
+						<Binding Path="CanTranslate"/>
+					</MultiBinding>
+				</GroupBox.IsEnabled>
+				
 				<GroupBox.Header>
 					<XivToolsWpf:TextBlock Key="Pose_Position"/>
 				</GroupBox.Header>

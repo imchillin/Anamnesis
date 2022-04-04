@@ -9,6 +9,7 @@
 			 xmlns:anaMem="clr-namespace:Anamnesis.Memory"
 			 xmlns:ana="clr-namespace:Anamnesis.Views"
              xmlns:converters="clr-namespace:Anamnesis.Character.Converters"
+			 xmlns:controls="clr-namespace:Anamnesis.PoseModule.Controls"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
 			 DataContextChanged="OnDataContextChanged"
@@ -21,9 +22,9 @@
 
     <Grid x:Name="ContentArea">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="220"/>
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
@@ -321,5 +322,19 @@
                 </GroupBox>
             </StackPanel>
         </Grid>
+
+		<Grid Grid.Column="2">
+			<GroupBox Style="{StaticResource PanelGroupBox}">
+			    <controls:TransformEditor Value="{Binding Actor.ModelObject.Transform}">
+					<controls:TransformEditor.CanTranslate>
+						<MultiBinding Converter="{StaticResource AnyBoolIsFalseToBool}">
+							<Binding Path="Actor.IsMotionEnabled"/>
+							<Binding Path="PoseService.WorldPositionNotFrozen"/>
+							<Binding Path="GposeService.IsGpose"/>
+						</MultiBinding>
+					</controls:TransformEditor.CanTranslate>
+				</controls:TransformEditor>
+			</GroupBox>
+		</Grid>
     </Grid>
 </UserControl>
