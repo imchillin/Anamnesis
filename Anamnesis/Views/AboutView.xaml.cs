@@ -16,7 +16,14 @@ namespace Anamnesis.GUI.Views
 		{
 			this.InitializeComponent();
 
-			this.VersionLabel.Text = VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
+			if (VersionInfo.Date.Year <= 2000)
+			{
+				this.VersionLabel.Text = "Developer";
+			}
+			else
+			{
+				this.VersionLabel.Text = VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
+			}
 		}
 
 		private void OnNavigate(object sender, RequestNavigateEventArgs e)
