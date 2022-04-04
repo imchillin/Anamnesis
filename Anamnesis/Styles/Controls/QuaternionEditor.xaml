@@ -12,20 +12,18 @@
 
 	<Grid x:Name="ContentArea">
 		<Grid.RowDefinitions>
+			<RowDefinition/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="100"/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<Grid Grid.RowSpan="2" MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseLeave="OnViewportMouseLeave" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportMouseWheel">
+		<Grid MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseLeave="OnViewportMouseLeave" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportMouseWheel">
 			<Rectangle Fill="Transparent"/>
 			<Viewport3D x:Name="Viewport"/>
 		</Grid>
 
 		<StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" ToolTip="Right-Click an axis to lock rotation to it"
-					Orientation="Horizontal">
+					Orientation="Horizontal"
+					VerticalAlignment="Top">
 			<ToggleButton  
 				IsEnabled="False"
 				Style="{StaticResource MaterialDesignActionToggleButton}"
@@ -49,7 +47,8 @@
 
 		<ToggleButton Grid.Row="0" HorizontalAlignment="Right" 
 					  Style="{StaticResource MaterialDesignActionToggleButton}" IsChecked="{Binding WorldSpace}" Height="22" Width="22"
-					  ToolTip="World / Local space rotation">
+					  ToolTip="World / Local space rotation"
+					  VerticalAlignment="Top">
 
 			<ToggleButton.Content>
 				<TextBlock Text="L" Margin="-3, -3, -3, 0" FontSize="16" FontWeight="Bold" IsHitTestVisible="False"/>
@@ -59,6 +58,6 @@
 			</materialDesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<cm3:VectorEditor Grid.Row="2" Value="{Binding Euler}" Expanded="True" Minimum="0" Maximum="360" TickFrequency="{Binding TickFrequency}" Wrap="{Binding Settings.WrapRotationSliders}"/>
+		<cm3:VectorEditor Grid.Row="1" Value="{Binding Euler}" Expanded="True" Minimum="0" Maximum="360" TickFrequency="{Binding TickFrequency}" Wrap="{Binding Settings.WrapRotationSliders}"/>
 	</Grid>
 </UserControl>

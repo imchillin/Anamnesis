@@ -72,7 +72,7 @@ namespace Anamnesis.Styles.Controls
 			this.rotationGizmo = new RotationGizmo(this);
 			this.Viewport.Children.Add(this.rotationGizmo);
 
-			this.Viewport.Camera = new PerspectiveCamera(new Point3D(0, 0, -2.5), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
+			this.Viewport.Camera = new PerspectiveCamera(new Point3D(0, 0, -2.0), new Vector3D(0, 0, 1), new Vector3D(0, 1, 0), 45);
 
 			this.worldSpace = false;
 		}

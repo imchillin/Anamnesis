@@ -324,8 +324,14 @@
         </Grid>
 
 		<Grid Grid.Column="2">
-			<GroupBox Style="{StaticResource PanelGroupBox}">
-			    <controls:TransformEditor Value="{Binding Actor.ModelObject.Transform}">
+			<GroupBox Style="{StaticResource PanelGroupBox}" Padding="-2">
+
+				<GroupBox.Header>
+					<XivToolsWpf:Header Key="Scene_Transform_Header"
+										Icon="User" />
+				</GroupBox.Header>
+
+				<controls:TransformEditor Value="{Binding Actor.ModelObject.Transform}">
 					<controls:TransformEditor.CanTranslate>
 						<MultiBinding Converter="{StaticResource AnyBoolIsFalseToBool}">
 							<Binding Path="Actor.IsMotionEnabled"/>

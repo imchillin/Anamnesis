@@ -16,36 +16,32 @@
 
 	<Grid x:Name="ContentArea">
 
-		<Grid Margin="0, 3, 0, 0">
+		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
 				<ColumnDefinition Width="183" />
 			</Grid.ColumnDefinitions>
 
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition/>
-			</Grid.RowDefinitions>
-
-			<Border Background="{DynamicResource AttentionToActionBrush}" CornerRadius="3" Margin="3, 0">
-				<StackPanel
-						Grid.Row="1"
-						IsEnabled="True"
-						Orientation="Horizontal">
-					<Button Padding="6,2"
-							Margin="3"
-							Click="OnFrameClicked"
-							Content="Reset Camera"
-							Style="{StaticResource TransparentButton}" />
-				</StackPanel>
-			</Border>
-
-			<Grid Grid.Column="0" Grid.Row="1"
+			<Grid Grid.Column="0"
 				  MouseMove="Viewport_MouseMove"
 				  MouseWheel="Viewport_MouseWheel"
 				  Background="Transparent">
 
-				<Viewport3D x:Name="Viewport" Grid.Row="0">
+				<StackPanel
+					IsEnabled="True"
+					Orientation="Horizontal"
+					Margin="100, 0, 0, 0"
+					VerticalAlignment="Top">
+					
+					<Button Padding="6,2"
+						Margin="3"
+						Click="OnFrameClicked"
+						Content="Reset Camera"
+						Style="{StaticResource TransparentButton}" />
+					
+				</StackPanel>
+
+				<Viewport3D x:Name="Viewport">
 					<ModelVisual3D>
 						<ModelVisual3D.Content>
 							<Model3DGroup>

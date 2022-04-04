@@ -33,15 +33,7 @@
 			</Grid.RowDefinitions>
 
 			<!--  Sidebar  -->
-            <ToggleButton Grid.Row="0" Grid.Column="2" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding PoseService.FreezeWorldPosition}" BorderThickness="1" Padding="0" Margin="0"
-							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
-                <ToggleButton.ToolTip>
-                    <XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>
-                </ToggleButton.ToolTip>
-                <fa:IconBlock Icon="LocationArrow" FontSize="10"/>
-            </ToggleButton>
-            
-            <Grid Grid.Row="1" Grid.Column="2">
+            <Grid Grid.RowSpan="2" Grid.Column="2">
 				<Grid.RowDefinitions>
 					<RowDefinition />
 					<RowDefinition Height="Auto" />
@@ -63,7 +55,7 @@
 							<RowDefinition />
 						</Grid.RowDefinitions>
 
-						<Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="6, 3, 6, 3">
+						<Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="8, 4, 6, 3">
 
 							<XivToolsWpf:TextBlock Style="{StaticResource Header}"
 													Text="{Binding Skeleton.CurrentBone.Tooltip}"
@@ -85,7 +77,7 @@
 						<Border
 							Grid.Row="1"
 							Grid.ColumnSpan="2"
-							Margin="1, 1, 1, -4"
+							Margin="3"
 							Background="{DynamicResource AttentionToActionBrush}"
 							CornerRadius="3"
 							IsEnabled="{Binding PoseService.IsEnabled}">
@@ -156,8 +148,7 @@
 
 								<XivToolsWpf:InfoControl
 									Key="Pose_WarningNotFrozen"
-									VerticalAlignment="Top"
-									Margin="0,227,0,2">
+									Margin="0,0,0,45">
 
 									<XivToolsWpf:InfoControl.Visibility>
 										<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
@@ -233,12 +224,11 @@
 				</Menu>
 			</Grid>
 
-			<Border Grid.RowSpan="2" Style="{StaticResource Panel}" Margin="3, 3, 0, 3"/>
+			<Border Grid.Row="1" Style="{StaticResource Panel}" Margin="3, 0, 0, 3"/>
 
 			<!-- top Bars -->
 			<Grid Grid.Row="0"
 				  Grid.ColumnSpan="2"
-				  Margin="3"
 				  VerticalAlignment="Stretch">
 
 				<Grid.ColumnDefinitions>
@@ -255,51 +245,31 @@
 							IsEnabled="{Binding GposeService.IsGpose}" 
 							IsChecked="{Binding PoseService.IsEnabled}"
 							Height="28"
-							Margin="8,0,0,0">
+							Margin="8,0,6,0">
 						</ToggleButton>
 
-						<ListBox
-							x:Name="ViewSelector"
-							Margin="6,6,6,4"
-							SelectedIndex="0"
-							SelectionChanged="OnViewChanged"
-							Style="{StaticResource MaterialDesignToolToggleListBox}">
-							<ListBoxItem
-								Margin="1"
-								Padding="8,4"
-								Cursor="Hand"
-								ToolTip="GUI View"
-								Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
-								<XivToolsWpf:IconBlock Icon="ProjectDiagram" FontSize="10"/>
-							</ListBoxItem>
-							<ListBoxItem
-								Margin="1"
-								Padding="8,4"
-								Cursor="Hand"
-								ToolTip="Matrix View"
-								Visibility="{Binding Skeleton.File.AllowPoseMatrix, Converter={StaticResource B2V}}">
-								<XivToolsWpf:IconBlock Icon="BorderAll" FontSize="10"/>
-							</ListBoxItem>
-							<ListBoxItem
-								x:Name="View3dButton"
-								Margin="1"
-								Padding="8,4"
-								Cursor="Hand"
-								ToolTip="3D View">
-								<XivToolsWpf:IconBlock Icon="Cube" FontSize="10"/>
-							</ListBoxItem>
-						</ListBox>
-
 						<CheckBox
-							Margin="3,0,3,0"
+							Margin="3,0,6,0"
 							VerticalContentAlignment="Center"
 							IsChecked="{Binding PoseService.FreezePhysics}"
 							IsEnabled="{Binding PoseService.IsEnabled}">
 							<XivToolsWpf:TextBlock Key="Pose_FreezePhysics" />
 						</CheckBox>
 
+						<CheckBox Margin="3,0,6,0"
+								  IsEnabled="{Binding GposeService.IsGpose}"
+								  IsChecked="{Binding PoseService.FreezeWorldPosition}"
+								  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+
+							<ToggleButton.ToolTip>
+								<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>
+							</ToggleButton.ToolTip>
+							
+							<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositions" />
+						</CheckBox>
+
 						<CheckBox
-							Margin="3,0,3,0"
+							Margin="3,0,6,0"
 							VerticalContentAlignment="Center"
 							IsChecked="{Binding PoseService.EnableParenting}"
 							IsEnabled="{Binding PoseService.IsEnabled}">
@@ -307,29 +277,20 @@
 						</CheckBox>
 
 						<CheckBox
-							Margin="3,0,3,0"
+							Margin="3,0,6,0"
 							VerticalContentAlignment="Center"
 							IsChecked="{Binding Skeleton.LinkEyes}"
 							IsEnabled="{Binding PoseService.IsEnabled}">
 							<XivToolsWpf:TextBlock Key="Pose_LinkEyes" />
 						</CheckBox>
-
-						<CheckBox
-							x:Name="FlipSidesOption"
-							Margin="3,0,3,0"
-							VerticalContentAlignment="Center"
-							IsChecked="{Binding Skeleton.FlipSides}"
-							IsEnabled="{Binding PoseService.IsEnabled}">
-							<XivToolsWpf:TextBlock Key="Pose_FlipSides" />
-						</CheckBox>
 					</StackPanel>
 
 					<Border
-						Margin="3"
+						Margin="3,3,0,3"
 						Padding="3"
 						HorizontalAlignment="Right"
 						Background="{DynamicResource AttentionToActionBrush}"
-						CornerRadius="3">
+						CornerRadius="6">
 						<StackPanel Orientation="Horizontal">
 							<CheckBox
 								Margin="3"
@@ -372,7 +333,6 @@
 				</Grid>
 
 			</Grid>
-
 			<!--  Content  -->
 			<Grid Grid.Row="1"
 					Margin="3"
@@ -388,7 +348,7 @@
 					<Grid DataContext="{Binding Skeleton}">
 						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed" />
 						<views:PoseGuiView x:Name="GuiView" Visibility="Visible" />
-						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" />
+						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" Margin="0, 28, 0, 0"/>
 					</Grid>
 				</Grid>
 
@@ -405,6 +365,39 @@
 						<Border Background="{DynamicResource MaterialDesignBackground}" Opacity="0.1" />
 					</Border>
 				</Canvas>
+			</Grid>
+
+			<Grid Grid.Row="1" VerticalAlignment="Top" Margin="6,3">
+				<ListBox
+					x:Name="ViewSelector"
+					SelectedIndex="0"
+					SelectionChanged="OnViewChanged"
+					Style="{StaticResource MaterialDesignToolToggleListBox}">
+					<ListBoxItem
+								Margin="1"
+								Padding="8,4"
+								Cursor="Hand"
+								ToolTip="GUI View"
+								Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
+						<XivToolsWpf:IconBlock Icon="ProjectDiagram" FontSize="10"/>
+					</ListBoxItem>
+					<ListBoxItem
+								Margin="1"
+								Padding="8,4"
+								Cursor="Hand"
+								ToolTip="Matrix View"
+								Visibility="{Binding Skeleton.File.AllowPoseMatrix, Converter={StaticResource B2V}}">
+						<XivToolsWpf:IconBlock Icon="BorderAll" FontSize="10"/>
+					</ListBoxItem>
+					<ListBoxItem
+								x:Name="View3dButton"
+								Margin="1"
+								Padding="8,4"
+								Cursor="Hand"
+								ToolTip="3D View">
+						<XivToolsWpf:IconBlock Icon="Cube" FontSize="10"/>
+					</ListBoxItem>
+				</ListBox>
 			</Grid>
 
 			<XivToolsWpf:InfoControl
