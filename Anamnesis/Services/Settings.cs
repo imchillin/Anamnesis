@@ -82,8 +82,8 @@ namespace Anamnesis.Services
 			{ "TargetService.PrevPinned", new KeyCombination(Key.Left, ModifierKeys.Control) },
 			{ "MainWindow.SceneTab", new KeyCombination(Key.D1) },
 			{ "MainWindow.AppearanceTab", new KeyCombination(Key.D2) },
-			{ "MainWindow.PoseTab", new KeyCombination(Key.D3) },
-			{ "MainWindow.AnimationTab", new KeyCombination(Key.D4) },
+			{ "MainWindow.ActionTab", new KeyCombination(Key.D3) },
+			{ "MainWindow.PoseTab", new KeyCombination(Key.D4) },
 		};
 	}
 }

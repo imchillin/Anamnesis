@@ -630,9 +630,9 @@
 	"Hotkey_PrevPinned": "Select Previous Actor",
 
 	"HotkeyCategory_MainWindow": "Window",
-	"MainWindow.SceneTab": "View Scene Tab",
-	"MainWindow.AppearanceTab": "View Appearance Tab",
-	"MainWindow.PoseTab": "View Pose Tab",
-	"MainWindow.AnimationTab": "View Animation Tab"
+	"Hotkey_SceneTab": "View Scene Tab",
+	"Hotkey_AppearanceTab": "View Appearance Tab",
+	"Hotkey_PoseTab": "View Pose Tab",
+	"Hotkey_ActionTab": "View Action Tab"
 
 }
