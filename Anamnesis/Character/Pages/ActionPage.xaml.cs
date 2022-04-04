@@ -141,12 +141,18 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor?.IsValid != true)
 				return;
 
+			if (this.Actor.AnimationSpeed == 0)
+				return;
+
 			this.AnimationService.PauseActor(this.Actor);
 		}
 
 		private void OnUnpauseOverrideAnimation(object sender, RoutedEventArgs e)
 		{
 			if (this.Actor?.IsValid != true)
+				return;
+
+			if (this.Actor.AnimationSpeed != 0)
 				return;
 
 			this.AnimationService.UnpauseActor(this.Actor);

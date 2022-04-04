@@ -265,6 +265,7 @@
 	"Character_Action_AnimationPause": "Pause",
 	"Character_Action_AnimationUnpause": "Unpause",
 	"Character_Action_AnimationOverridePauseBlocked": "Only available within GPose.",
+	"Character_Action_AnimationOverrideGposeFrozen": "Actor motion is frozen by GPose",
 	"Character_Action_GlobalFreezeWorldPositions": "Freeze Positions",
 	"Character_Action_GlobalFreezeWorldPositionsTooltip": "Freeze Actor/Camera World Positions",
 

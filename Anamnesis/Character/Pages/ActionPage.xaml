@@ -145,30 +145,30 @@
                             </CheckBox.ToolTip>
                         </CheckBox>
 
-                        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0, 6, 0, 0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
                             <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
+                                <RowDefinition Height="32"/>
+								<RowDefinition Height="28"/>
                             </Grid.RowDefinitions>
 
-                            <Button Grid.Row="0" Grid.Column="0" Click="OnApplyOverrideAnimation" >
+                            <Button Grid.Row="0" Grid.Column="0" Click="OnApplyOverrideAnimation" Style="{StaticResource TransparentButton}">
                                 <XivToolsWpf:TextBlock Key="Character_Action_AnimationApply"/>
                             </Button>
 
-                            <Button Grid.Row="0" Grid.Column="1"  Click="OnResetOverrideAnimation" IsEnabled="{Binding Actor.IsAnimationOverriden}">
+							<Button Grid.Row="0" Grid.Column="1"  Click="OnResetOverrideAnimation" IsEnabled="{Binding Actor.IsAnimationOverriden}" Style="{StaticResource TransparentButton}">
                                 <XivToolsWpf:TextBlock Key="Character_Action_AnimationReset"/>
                             </Button>
 
-                            <Button Grid.Row="1" Grid.Column="0" Click="OnDrawWeaponOverrideAnimation" >
+							<Button Grid.Row="1" Grid.Column="0" Click="OnDrawWeaponOverrideAnimation" Style="{StaticResource TransparentButton}">
                                 <XivToolsWpf:TextBlock Key="Character_Action_AnimationDrawWeapon"/>
                             </Button>
 
-                            <Button Grid.Row="1" Grid.Column="1"  Click="OnIdleOverrideAnimation">
+							<Button Grid.Row="1" Grid.Column="1"  Click="OnIdleOverrideAnimation" Style="{StaticResource TransparentButton}">
                                 <XivToolsWpf:TextBlock Key="Character_Action_AnimationIdle"/>
                             </Button>
                         </Grid>
@@ -185,26 +185,22 @@
 											Icon="Icicles" />
                     </GroupBox.Header>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+					<Grid IsEnabled="{Binding Actor.IsMotionEnabled}" Height="40">
+						<ToggleButton Grid.Row="0" Grid.Column="0" Click="OnPauseOverrideAnimation"
+									  IsChecked="{Binding Actor.AnimationSpeed, Converter={StaticResource IsZeroToBool}, Mode=OneWay}"
+									  Style="{StaticResource OutlineToggleButton}"
+									  Checked="OnPauseOverrideAnimation"
+									  Unchecked="OnUnpauseOverrideAnimation">
+							<Grid>
+								<XivToolsWpf:TextBlock Key="Character_Action_AnimationPause" Visibility="{Binding Actor.AnimationSpeed, Converter={StaticResource NotZeroToVisibility}}"/>
+								<XivToolsWpf:TextBlock Key="Character_Action_AnimationUnpause" Visibility="{Binding Actor.AnimationSpeed, Converter={StaticResource IsZeroToVisibility}}"/>
+							</Grid>
+						</ToggleButton>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+						<XivToolsWpf:InfoControl Visibility="{Binding Actor.IsMotionEnabled, Converter={StaticResource !B2V}}" Grid.Row="0" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideGposeFrozen" />
+						<XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}" Grid.Row="0" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverridePauseBlocked" />
 
-                        <Button Grid.Row="0" Grid.Column="0"  Click="OnPauseOverrideAnimation">
-                            <XivToolsWpf:TextBlock Key="Character_Action_AnimationPause"/>
-                        </Button>
-
-                        <Button Grid.Row="0" Grid.Column="1"  Click="OnUnpauseOverrideAnimation">
-                            <XivToolsWpf:TextBlock Key="Character_Action_AnimationUnpause"/>
-                        </Button>
-
-                        <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}" Grid.Row="0" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverridePauseBlocked" />
-                    </Grid>
+					</Grid>
                 </GroupBox>
             </StackPanel>
 
