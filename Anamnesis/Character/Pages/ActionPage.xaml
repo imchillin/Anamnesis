@@ -34,7 +34,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-
+         
             <StackPanel Grid.Row="0">
                 <GroupBox Style="{StaticResource PanelGroupBox}">
                     <GroupBox.Header>
@@ -69,12 +69,12 @@
 			                Tribe="{Binding Actor.Customize.Tribe}"
 			            />
 
-                        <XivToolsWpf:TextBlock Key="Character_Action_LipMovement"
+                        <XivToolsWpf:TextBlock Key="Character_Action_LipAnimation"
 											   Grid.Row="1"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
 
-                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.LipAnimation, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="Name" />
+                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.LipAnimationOverride, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="Name" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -110,11 +110,11 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
 
-                            <XivToolsWpf:NumberBox Grid.Column="1" Value="{Binding AnimationOverride.AnimationId}"  Buttons="True"
+                            <XivToolsWpf:NumberBox Grid.Column="1" Value="{Binding AnimationOverride.BaseAnimationId}"  Buttons="True"
 										   Minimum="0"
 										   TickFrequency="1" />
 
-                            <Button Grid.Column="0" Click="OnAnimationSearchClicked"  Style="{StaticResource TransparentButton}">
+                            <Button Grid.Column="0" Click="OnBaseAnimationSearchClicked"  Style="{StaticResource TransparentButton}">
                                 <Button.ToolTip>
                                     <XivToolsWpf:TextBlock Key="Character_Action_AnimationSearch"/>
                                 </Button.ToolTip>
@@ -122,17 +122,6 @@
                                 <XivToolsWpf:IconBlock Icon="Search"/>
                             </Button>
                         </Grid>
-
-                        <XivToolsWpf:TextBlock Key="Character_Action_AnimationSpeed"
-											   Grid.Row="1"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
-
-                        <XivToolsWpf:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding AnimationOverride.Speed}" IsEnabled="{Binding AnimationService.SpeedControlEnabled}"  Buttons="True"
-										   Minimum="-5"
-                                           Maximum="5"
-                                           Slider="Absolute"
-										   TickFrequency="0.1" />
 
                         <XivToolsWpf:TextBlock Key="Character_Action_AnimationInterrupt"
 											   Grid.Row="2"
@@ -182,30 +171,141 @@
             <StackPanel Grid.Row="2" IsEnabled="{Binding AnimationService.SpeedControlEnabled}">
                 <GroupBox Style="{StaticResource PanelGroupBox}">
                     <GroupBox.Header>
-                        <XivToolsWpf:Header Key="Character_Action_AnimationPauseControl"
+                        <XivToolsWpf:Header Key="Character_Action_AnimationSpeedControl"
 											Icon="Icicles" />
                     </GroupBox.Header>
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition  Height="Auto" />
+                        </Grid.RowDefinitions>
 
-					<Grid IsEnabled="{Binding Actor.IsMotionEnabled}" Height="40">
-						<ToggleButton Grid.Row="0" Grid.Column="0" Click="OnPauseOverrideAnimation"
-									  IsChecked="{Binding Actor.AnimationSpeed, Converter={StaticResource IsZeroToBool}, Mode=OneWay}"
-									  Style="{StaticResource OutlineToggleButton}"
-									  Checked="OnPauseOverrideAnimation"
-									  Unchecked="OnUnpauseOverrideAnimation">
-							<Grid>
-								<XivToolsWpf:TextBlock Key="Character_Action_AnimationPause" Visibility="{Binding Actor.AnimationSpeed, Converter={StaticResource NotZeroToVisibility}}"/>
-								<XivToolsWpf:TextBlock Key="Character_Action_AnimationUnpause" Visibility="{Binding Actor.AnimationSpeed, Converter={StaticResource IsZeroToVisibility}}"/>
-							</Grid>
-						</ToggleButton>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-						<XivToolsWpf:InfoControl Visibility="{Binding Actor.IsMotionEnabled, Converter={StaticResource !B2V}}" Grid.Row="0" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideGposeFrozen" />
-						<XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}" Grid.Row="0" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverridePauseBlocked" />
+                        <XivToolsWpf:TextBlock Key="Character_Action_BaseAnimation"
+											   Grid.Row="0"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
 
-					</Grid>
+                        <XivToolsWpf:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding Actor.BaseAnimationSpeed}" IsEnabled="{Binding AnimationService.SpeedControlEnabled}"  Buttons="True"
+										   Minimum="-5"
+                                           Maximum="5"
+                                           Slider="Absolute"
+										   TickFrequency="0.05" />
+
+                        <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource TransparentButton}" Click="OnPauseBase" IsEnabled="{Binding Actor.BaseAnimationSpeed, Converter={StaticResource NotZeroToBool}, Mode=OneWay}">
+                            <XivToolsWpf:IconBlock Icon="Pause"/>
+                        </Button>
+
+                        <Button Grid.Row="0" Grid.Column="3" Style="{StaticResource TransparentButton}" Click="OnResumeBase">
+                            <XivToolsWpf:IconBlock Icon="Undo"/>
+                        </Button>
+
+                        <XivToolsWpf:TextBlock Key="Character_Action_LipAnimation"
+											   Grid.Row="1"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+
+                        <XivToolsWpf:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Actor.LipAnimationSpeed}" IsEnabled="{Binding AnimationService.SpeedControlEnabled}"  Buttons="True"
+										   Minimum="0"
+                                           Maximum="3"
+                                           Slider="Absolute"
+										   TickFrequency="0.05" />
+
+                        <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource TransparentButton}" Click="OnPauseLips" IsEnabled="{Binding Actor.LipAnimationSpeed, Converter={StaticResource NotZeroToBool}, Mode=OneWay}">
+                            <XivToolsWpf:IconBlock Icon="Pause"/>
+                        </Button>
+
+                        <Button Grid.Row="1" Grid.Column="3" Style="{StaticResource TransparentButton}" Click="OnResumeLips">
+                            <XivToolsWpf:IconBlock Icon="Undo"/>
+                        </Button>
+
+                        <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}" Grid.Row="0" Grid.ColumnSpan="4" Grid.RowSpan="2" Key="Character_Action_AnimationOverrideSpeedBlocked" />
+                    </Grid>
                 </GroupBox>
             </StackPanel>
 
             <StackPanel Grid.Row="3">
+                <GroupBox Style="{StaticResource PanelGroupBox}">
+                    <GroupBox.Header>
+                        <XivToolsWpf:Header Key="Character_Action_AnimationBlending"
+											Icon="RulerCombined" />
+                    </GroupBox.Header>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <XivToolsWpf:TextBlock
+			                Key="Character_Action_AnimationId"
+			                Grid.Row="0"
+			                Grid.Column="0"
+			                Style="{StaticResource Label}"/>
+
+
+                        <Grid Grid.Row="0" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Button Grid.Column="0" Click="OnBlendAnimationSearchClicked"  Style="{StaticResource TransparentButton}">
+                                <Button.ToolTip>
+                                    <XivToolsWpf:TextBlock Key="Character_Action_AnimationSearch"/>
+                                </Button.ToolTip>
+
+                                <XivToolsWpf:IconBlock Icon="Search"/>
+                            </Button>
+
+                            <XivToolsWpf:NumberBox Grid.Column="1"  Value="{Binding AnimationOverride.BlendAnimationId}"  Buttons="True"
+										   Minimum="0"
+										   TickFrequency="1" />
+                        </Grid>
+                        
+
+                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" Style="{StaticResource TransparentButton}">
+                            <XivToolsWpf:TextBlock Key="Character_Action_AnimationBlend"/>
+                        </Button>
+
+                        <XivToolsWpf:TextBlock
+			                Key="Character_Action_AnimationBlendWarning"
+			                Grid.Row="2"
+			                Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Left"
+                            FontSize="10"
+                            FontStyle="Italic"
+                            TextWrapping="Wrap"
+			                Style="{StaticResource Label}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+               
+            </StackPanel>
+
+            <StackPanel Grid.Row="1">
                 <GroupBox Style="{StaticResource PanelGroupBox}">
                     <GroupBox.Header>
                         <XivToolsWpf:Header Key="Character_Action_AnimationStatus"
@@ -224,9 +324,13 @@
                             <RowDefinition />
                             <RowDefinition />
                             <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
                         </Grid.RowDefinitions>
 
-                        <XivToolsWpf:TextBlock Key="Character_Action_BaseAnimation"
+                        <XivToolsWpf:TextBlock Key="Character_Action_Mode"
 											   Grid.Row="0"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
@@ -236,95 +340,155 @@
                                  Grid.ColumnSpan="2"
 								 Style="{StaticResource MaterialDesignTextBox}"
                                  IsReadOnly="True"
-								 Text="{Binding Path=Actor.TargetAnimation}"/>
+								 Text="{Binding Path=Actor.CharacterModeRaw}">
+                            <TextBox.ToolTip>
+                                <XivToolsWpf:TextBlock Key="Character_Action_ModeId"/>
+                            </TextBox.ToolTip>
+                        </TextBox>
 
                         <TextBox Grid.Row="1"
 								 Grid.Column="1"
                                  Grid.ColumnSpan="2"
 								 Style="{StaticResource MaterialDesignTextBox}"
                                  IsReadOnly="True"
-								 Text="{Binding Path=Actor.TargetAnimation, Converter={StaticResource animToName}}"/>
-
-                        <XivToolsWpf:TextBlock Key="Character_Action_LipMovement"
-											   Grid.Row="2"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
+								 Text="{Binding Path=Actor.CharacterMode, FallbackValue='?'}">
+                            <TextBox.ToolTip>
+                                <XivToolsWpf:TextBlock Key="Character_Action_ModeName"/>
+                            </TextBox.ToolTip>
+                        </TextBox>
 
                         <TextBox Grid.Row="2"
 								 Grid.Column="1"
                                  Grid.ColumnSpan="2"
 								 Style="{StaticResource MaterialDesignTextBox}"
                                  IsReadOnly="True"
-								 Text="{Binding Path=Actor.LipAnimation}"/>
+								 Text="{Binding Path=Actor.CharacterModeInput}">
+                            <TextBox.ToolTip>
+                                <XivToolsWpf:TextBlock Key="Character_Action_ModeInput"/>
+                            </TextBox.ToolTip>
+                        </TextBox>
+
+                        <XivToolsWpf:TextBlock Key="Character_Action_BaseAnimation"
+											   Grid.Row="3"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
 
                         <TextBox Grid.Row="3"
 								 Grid.Column="1"
                                  Grid.ColumnSpan="2"
 								 Style="{StaticResource MaterialDesignTextBox}"
                                  IsReadOnly="True"
-								 Text="{Binding Path=Actor.LipAnimation, Converter={StaticResource animToName}}"/>
-
-                        <XivToolsWpf:TextBlock Key="Character_Action_AnimationSpeed"
-											   Grid.Row="4"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
+								 Text="{Binding Path=Actor.TargetAnimation}">
+                            <TextBox.ToolTip>
+                                <XivToolsWpf:TextBlock Key="Character_Action_AnimationId"/>
+                            </TextBox.ToolTip>
+                        </TextBox>
 
                         <TextBox Grid.Row="4"
 								 Grid.Column="1"
                                  Grid.ColumnSpan="2"
 								 Style="{StaticResource MaterialDesignTextBox}"
                                  IsReadOnly="True"
-								 Text="{Binding Path=Actor.AnimationSpeed}"/>
+								 Text="{Binding Path=Actor.TargetAnimation, Converter={StaticResource animToName}}">
+                            <TextBox.ToolTip>
+                                <XivToolsWpf:TextBlock Key="Character_Action_AnimationName"/>
+                            </TextBox.ToolTip>
+                        </TextBox>
 
-                    </Grid>
-                </GroupBox>
-            </StackPanel>
-        </Grid>
+                        <TextBox Grid.Row="5"
+								 Grid.Column="1"
+                                 Grid.ColumnSpan="2"
+								 Style="{StaticResource MaterialDesignTextBox}"
+                                 IsReadOnly="True"
+								 Text="{Binding Path=Actor.BaseAnimationSpeed}">
+                            <TextBox.ToolTip>
+                                <XivToolsWpf:TextBlock Key="Character_Action_AnimationSpeed"/>
+                            </TextBox.ToolTip>
+                        </TextBox>
 
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <StackPanel Grid.Row="0">
-                <GroupBox Style="{StaticResource PanelGroupBox}">
-                    <GroupBox.Header>
-                        <XivToolsWpf:Header Key="Character_Action_GlobalSettings"
-											Icon="Globe" />
-                    </GroupBox.Header>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-
-                        <XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositions"
-											   Grid.Row="0"
+                        <XivToolsWpf:TextBlock Key="Character_Action_LipAnimation"
+											   Grid.Row="6"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
 
-                        <ToggleButton Grid.Row="0" Grid.Column="1" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding PoseService.FreezeWorldPosition}" BorderThickness="1" Padding="0" Margin="0"
-							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+                        <TextBox Grid.Row="6"
+								 Grid.Column="1"
+                                 Grid.ColumnSpan="2"
+								 Style="{StaticResource MaterialDesignTextBox}"
+                                 IsReadOnly="True"
+								 Text="{Binding Path=Actor.LipAnimationOverride}">
+                            <TextBox.ToolTip>
+                                <XivToolsWpf:TextBlock Key="Character_Action_AnimationId"/>
+                            </TextBox.ToolTip>
+                        </TextBox>
 
-                            <ToggleButton.ToolTip>
-                                <XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>
-                            </ToggleButton.ToolTip>
+                        <TextBox Grid.Row="7"
+								 Grid.Column="1"
+                                 Grid.ColumnSpan="2"
+								 Style="{StaticResource MaterialDesignTextBox}"
+                                 IsReadOnly="True"
+								 Text="{Binding Path=Actor.LipAnimationOverride, Converter={StaticResource animToName}}">
+                            <TextBox.ToolTip>
+                                <XivToolsWpf:TextBlock Key="Character_Action_AnimationName"/>
+                            </TextBox.ToolTip>
+                        </TextBox>
 
-                            <fa:IconBlock Icon="LocationArrow" FontSize="10"/>
-                        </ToggleButton>
-
+                        <TextBox Grid.Row="8"
+								 Grid.Column="1"
+                                 Grid.ColumnSpan="2"
+								 Style="{StaticResource MaterialDesignTextBox}"
+                                 IsReadOnly="True"
+								 Text="{Binding Path=Actor.LipAnimationSpeed}">
+                            <TextBox.ToolTip>
+                                <XivToolsWpf:TextBlock Key="Character_Action_AnimationSpeed"/>
+                            </TextBox.ToolTip>
+                        </TextBox>
                     </Grid>
                 </GroupBox>
             </StackPanel>
         </Grid>
 
 		<Grid Grid.Column="2">
-			<GroupBox Style="{StaticResource PanelGroupBox}" Padding="-2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <GroupBox Grid.Row="0" Style="{StaticResource PanelGroupBox}">
+                <GroupBox.Header>
+                    <XivToolsWpf:Header Key="Character_Action_GlobalSettings"
+											Icon="Globe" />
+                </GroupBox.Header>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositions"
+											   Grid.Row="0"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+
+                    <ToggleButton Grid.Row="0" Grid.Column="1" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding PoseService.FreezeWorldPosition}" BorderThickness="1" Padding="0" Margin="0"
+							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+
+                        <ToggleButton.ToolTip>
+                            <XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>
+                        </ToggleButton.ToolTip>
+
+                        <fa:IconBlock Icon="LocationArrow" FontSize="10"/>
+                    </ToggleButton>
+
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Row="1" Style="{StaticResource PanelGroupBox}" Padding="-2">
 
 				<GroupBox.Header>
 					<XivToolsWpf:Header Key="Scene_Transform_Header"

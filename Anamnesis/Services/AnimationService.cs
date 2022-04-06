@@ -59,13 +59,27 @@ namespace Anamnesis.Services
 			await base.Shutdown();
 		}
 
-		public void ApplyAnimationOverride(ActorMemory memory, ushort? animationId, float? animationSpeed, bool interrupt)
+		public void ApplyAnimationOverride(ActorMemory memory, ushort? animationId, bool interrupt)
 		{
 			if (!memory.IsValid)
 				return;
 
-			this.ApplyAnimation(memory, animationId, animationSpeed, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
+			this.ApplyAnimation(memory, animationId, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
 			this.overriddenActors.Add(memory);
+		}
+
+		public void BlendAnimation(ActorMemory memory, ushort animationId)
+		{
+			if (!memory.IsValid)
+				return;
+
+			Task.Run(async () =>
+			{
+				var oldAnim = memory.LipAnimationOverride;
+				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.LipAnimationOverride)), animationId, "Animation ID Override");
+				await Task.Delay(100);
+				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.LipAnimationOverride)), oldAnim, "Animation ID Override");
+			});
 		}
 
 		public void ResetAnimationOverride(ActorMemory memory)
@@ -73,45 +87,18 @@ namespace Anamnesis.Services
 			if (!memory.IsValid)
 				return;
 
-			this.ApplyAnimation(memory, 0, 1.0f, true, ActorMemory.CharacterModes.Normal, 0);
+			this.ApplyAnimation(memory, 0, true, ActorMemory.CharacterModes.Normal, 0);
+
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.BaseAnimationSpeedInternal)), 1.0f, "Animation Speed Reset");
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.LipAnimationSpeedInternal)), 1.0f, "Animation Speed Reset");
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeedTrigger)), 2.0f, "Animation Speed Reset");
+
 			this.overriddenActors.Remove(memory);
 		}
 
-		public void PauseActor(ActorMemory memory)
-		{
-			if (!memory.IsValid)
-				return;
+		public void ApplyIdle(ActorMemory memory) => this.ApplyAnimationOverride(memory, IdleAnimationId, true);
 
-			var oldMode = memory.CharacterMode;
-			var oldModeInput = memory.CharacterModeInput;
-
-			Task.Run(() =>
-			{
-				this.ApplyAnimation(memory, null, 0.0f, false, ActorMemory.CharacterModes.EmoteLoop, 0);
-				Thread.Sleep(100);
-				this.ApplyAnimation(memory, null, 0.0f, false, oldMode, oldModeInput);
-			});
-		}
-
-		public void UnpauseActor(ActorMemory memory)
-		{
-			if (!memory.IsValid)
-				return;
-
-			var oldMode = memory.CharacterMode;
-			var oldModeInput = memory.CharacterModeInput;
-
-			Task.Run(() =>
-			{
-				this.ApplyAnimation(memory, null, 0.0f, false, ActorMemory.CharacterModes.EmoteLoop, 0);
-				Thread.Sleep(100);
-				this.ApplyAnimation(memory, null, 1.0f, false, oldMode, oldModeInput);
-			});
-		}
-
-		public void ApplyIdle(ActorMemory memory) => this.ApplyAnimationOverride(memory, IdleAnimationId, 1.0f, true);
-
-		public void DrawWeapon(ActorMemory memory) => this.ApplyAnimationOverride(memory, DrawWeaponAnimationId, 1.0f, true);
+		public void DrawWeapon(ActorMemory memory) => this.ApplyAnimationOverride(memory, DrawWeaponAnimationId, true);
 
 		private async Task CheckThread()
 		{
@@ -123,18 +110,13 @@ namespace Anamnesis.Services
 			}
 		}
 
-		private void ApplyAnimation(ActorMemory memory, ushort? animationId, float? animationSpeed, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
+		private void ApplyAnimation(ActorMemory memory, ushort? animationId, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
 		{
-			if (this.SpeedControlEnabled && animationSpeed != null && memory.AnimationSpeed != animationSpeed)
-			{
-				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeed)), animationSpeed, "Animation Speed Override");
-			}
-
-			if (animationId != null && memory.AnimationOverride != animationId)
+			if (animationId != null && memory.BaseAnimationOverride != animationId)
 			{
 				if (animationId < GameDataService.ActionTimelines.RowCount)
 				{
-					MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.AnimationOverride)), animationId, "Animation ID Override");
+					MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.BaseAnimationOverride)), animationId, "Animation ID Override");
 				}
 			}
 
@@ -146,7 +128,7 @@ namespace Anamnesis.Services
 
 			if (mode != null && memory.CharacterMode != mode)
 			{
-				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterMode)), mode, "Animation Mode Override");
+				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.CharacterModeRaw)), mode, "Animation Mode Override");
 			}
 
 			if (interrupt)
