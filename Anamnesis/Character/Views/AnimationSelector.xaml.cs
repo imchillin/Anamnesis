@@ -3,7 +3,9 @@
 
 namespace Anamnesis.Character.Views
 {
+	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows.Controls;
 	using Anamnesis.GameData.Excel;
@@ -57,12 +59,20 @@ namespace Anamnesis.Character.Views
 		private Task OnLoadItems()
 		{
 			if (GameDataService.Emotes != null)
-				this.Selector.AddItems(GameDataService.Emotes);
+				this.AddItems(GameDataService.Emotes);
 
 			if (GameDataService.ActionTimelines != null)
-				this.Selector.AddItems(GameDataService.ActionTimelines);
+				this.AddItems(GameDataService.Actions);
+
+			if (GameDataService.ActionTimelines != null)
+				this.AddItems(GameDataService.ActionTimelines);
 
 			return Task.CompletedTask;
+		}
+
+		private void AddItems(IEnumerable<IAnimation> animationEnum)
+		{
+			this.Selector.AddItems(animationEnum.Where(x => x.ActionTimelineRowId != 0));
 		}
 
 		private void OnClose()

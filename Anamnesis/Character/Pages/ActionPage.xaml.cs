@@ -38,7 +38,6 @@ namespace Anamnesis.Character.Pages
 		public IEnumerable<ActionTimeline> LipSyncTypes { get; private set; }
 		public UserAnimationOverride AnimationOverride { get; private set; } = new();
 
-		public IAnimation? LastAnimationSelected { get; set; } = null;
 		public ConditionalWeakTable<ActorMemory, UserAnimationOverride> UserAnimationOverrides { get; private set; } = new();
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
@@ -78,8 +77,8 @@ namespace Anamnesis.Character.Pages
 					if (actor.IsAnimationOverriden == true)
 					{
 						this.AnimationOverride = new();
-						this.AnimationOverride.AnimationId = actor.AnimationOverride;
-						this.AnimationOverride.Speed = actor.AnimationSpeed;
+						this.AnimationOverride.BaseAnimationId = actor.BaseAnimationOverride;
+						this.AnimationOverride.BlendAnimationId = 0;
 					}
 					else
 					{
@@ -89,18 +88,31 @@ namespace Anamnesis.Character.Pages
 			}
 		}
 
-		private void OnAnimationSearchClicked(object sender, RoutedEventArgs e)
+		private void OnBaseAnimationSearchClicked(object sender, RoutedEventArgs e)
 		{
 			if (this.Actor == null)
 				return;
 
-			SelectorDrawer.Show<AnimationSelector, IAnimation>(this.LastAnimationSelected, (animation) =>
+			SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
 			{
 				if (animation == null)
 					return;
 
-				this.LastAnimationSelected = animation;
-				this.AnimationOverride.AnimationId = (ushort)animation.ActionTimelineRowId;
+				this.AnimationOverride.BaseAnimationId = (ushort)animation.ActionTimelineRowId;
+			});
+		}
+
+		private void OnBlendAnimationSearchClicked(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor == null)
+				return;
+
+			SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
+			{
+				if (animation == null)
+					return;
+
+				this.AnimationOverride.BlendAnimationId = (ushort)animation.ActionTimelineRowId;
 			});
 		}
 
@@ -109,7 +121,7 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor?.IsValid != true)
 				return;
 
-			this.AnimationService.ApplyAnimationOverride(this.Actor, this.AnimationOverride.AnimationId, this.AnimationOverride.Speed, this.AnimationOverride.Interrupt);
+			this.AnimationService.ApplyAnimationOverride(this.Actor, this.AnimationOverride.BaseAnimationId, this.AnimationOverride.Interrupt);
 		}
 
 		private void OnDrawWeaponOverrideAnimation(object sender, RoutedEventArgs e)
@@ -118,6 +130,14 @@ namespace Anamnesis.Character.Pages
 				return;
 
 			this.AnimationService.DrawWeapon(this.Actor);
+		}
+
+		private void OnBlendAnimation(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor?.IsValid != true)
+				return;
+
+			this.AnimationService.BlendAnimation(this.Actor, this.AnimationOverride.BlendAnimationId);
 		}
 
 		private void OnIdleOverrideAnimation(object sender, RoutedEventArgs e)
@@ -136,33 +156,43 @@ namespace Anamnesis.Character.Pages
 			this.AnimationService.ResetAnimationOverride(this.Actor);
 		}
 
-		private void OnPauseOverrideAnimation(object sender, RoutedEventArgs e)
+		private void OnPauseBase(object sender, RoutedEventArgs e)
 		{
 			if (this.Actor?.IsValid != true)
 				return;
 
-			if (this.Actor.AnimationSpeed == 0)
-				return;
-
-			this.AnimationService.PauseActor(this.Actor);
+			this.Actor.BaseAnimationSpeed = 0.0f;
 		}
 
-		private void OnUnpauseOverrideAnimation(object sender, RoutedEventArgs e)
+		private void OnResumeBase(object sender, RoutedEventArgs e)
 		{
 			if (this.Actor?.IsValid != true)
 				return;
 
-			if (this.Actor.AnimationSpeed != 0)
+			this.Actor.BaseAnimationSpeed = 1.0f;
+		}
+
+		private void OnPauseLips(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor?.IsValid != true)
 				return;
 
-			this.AnimationService.UnpauseActor(this.Actor);
+			this.Actor.LipAnimationSpeed = 0.0f;
+		}
+
+		private void OnResumeLips(object sender, RoutedEventArgs e)
+		{
+			if (this.Actor?.IsValid != true)
+				return;
+
+			this.Actor.LipAnimationSpeed = 1.0f;
 		}
 
 		[AddINotifyPropertyChangedInterface]
 		public class UserAnimationOverride
 		{
-			public ushort AnimationId { get; set; } = 0;
-			public float Speed { get; set; } = 1.0f;
+			public ushort BaseAnimationId { get; set; } = 0;
+			public ushort BlendAnimationId { get; set; } = 0;
 			public bool Interrupt { get; set; } = true;
 		}
 	}

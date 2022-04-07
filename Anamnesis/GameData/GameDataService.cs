@@ -54,6 +54,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<WeatherRate> WeatherRates { get; private set; }
 		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; private set; }
 		public static ExcelSheet<BattleNpcName> BattleNpcNames { get; private set; }
+		public static ExcelSheet<GameData.Excel.Action> Actions { get; private set; }
 		public static ExcelSheet<ActionTimeline> ActionTimelines { get; private set; }
 		public static ExcelSheet<Emote> Emotes { get; private set; }
 		public static ExcelSheet<Ornament> Ornaments { get; private set; }
@@ -192,6 +193,7 @@ namespace Anamnesis.Services
 				WeatherRates = GetSheet<WeatherRate>();
 				EquipRaceCategories = GetSheet<EquipRaceCategory>();
 				BattleNpcNames = GetSheet<BattleNpcName>();
+				Actions = GetSheet<GameData.Excel.Action>();
 				ActionTimelines = GetSheet<ActionTimeline>();
 				Emotes = GetSheet<Emote>();
 				Ornaments = GetSheet<Ornament>();
