@@ -90,9 +90,9 @@ namespace Anamnesis.Character.Utilities
 						jsonBuilder.Append("R:");
 					}
 
-					jsonBuilder.Append(appearance.RowId.ToString());
+					jsonBuilder.Append(appearance.RowId.ToString("D5"));
 					jsonBuilder.Append("\": \"B:");
-					jsonBuilder.Append(name.RowId.ToString());
+					jsonBuilder.Append(name.RowId.ToString("D5"));
 					jsonBuilder.AppendLine("\",");
 				}
 
