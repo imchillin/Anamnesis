@@ -20,6 +20,7 @@ namespace Anamnesis.Memory
 		{
 			Draw = 0,
 			Unload = 2,
+			Load = 4,
 		}
 
 		[Bind(0x030)] public Utf8String NameBytes { get; set; }
@@ -87,6 +88,12 @@ namespace Anamnesis.Memory
 
 				return name;
 			}
+		}
+
+		[DependsOn(nameof(ObjectIndex), nameof(Address))]
+		public bool IsValid
+		{
+			get => this.Address != IntPtr.Zero && ActorService.Instance.GetActorTableIndex(this.Address) == this.ObjectIndex;
 		}
 
 		/// <summary>

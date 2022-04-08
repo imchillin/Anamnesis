@@ -54,7 +54,6 @@
 		<Resource Include="Assets\Roles\*.*" />
 		<Resource Include="Assets\Shortcuts\*.*" />
 		<Resource Include="Assets\Slots\*.*" />
-		<Resource Include="Data\colors.dat" />
 		<Resource Include="FodyWeavers.xml" />
 
 		<EmbeddedResource Include="Languages\*.*" />

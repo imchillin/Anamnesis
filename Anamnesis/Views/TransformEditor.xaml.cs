@@ -15,10 +15,14 @@ namespace Anamnesis.PoseModule.Controls
 	public partial class TransformEditor : UserControl
 	{
 		public static readonly IBind<ITransform> ValueDp = Binder.Register<ITransform, TransformEditor>(nameof(Value));
+		public static readonly IBind<bool> CanTranslateDp = Binder.Register<bool, TransformEditor>(nameof(CanTranslate), BindMode.OneWay);
 
 		public TransformEditor()
 		{
 			this.InitializeComponent();
+
+			this.CanTranslate = true;
+
 			this.ContentArea.DataContext = this;
 		}
 
@@ -26,6 +30,12 @@ namespace Anamnesis.PoseModule.Controls
 		{
 			get => ValueDp.Get(this);
 			set => ValueDp.Set(this, value);
+		}
+
+		public bool CanTranslate
+		{
+			get => CanTranslateDp.Get(this);
+			set => CanTranslateDp.Set(this, value);
 		}
 	}
 }

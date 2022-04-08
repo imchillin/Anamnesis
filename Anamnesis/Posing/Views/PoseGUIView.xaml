@@ -15,6 +15,18 @@
 	</UserControl.Resources>
 
 	<Grid x:Name="ContentArea">
+
+		<Grid VerticalAlignment="Top" Margin="100,0,0,0" Height="22">
+			<CheckBox
+				x:Name="FlipSidesOption"
+				Margin="3,0,3,0"
+				VerticalContentAlignment="Center"
+				IsChecked="{Binding FlipSides}">
+				
+				<XivToolsWpf:TextBlock Key="Pose_FlipSides" />
+			</CheckBox>
+		</Grid>
+		
 		<Grid ClipToBounds="True">
 
 			<Grid.ColumnDefinitions>

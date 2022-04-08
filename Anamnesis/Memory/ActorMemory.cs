@@ -40,7 +40,7 @@ namespace Anamnesis.Memory
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
 		[Bind(0x01E2)] public byte ClassJob { get; set; }
-		[Bind(0x07C4)] public bool IsAnimating { get; set; }
+		[Bind(0x07C4)] public bool IsMotionEnabled { get; set; }
 		[Bind(0x0C30, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
 		[Bind(0x0C38)] public ushort MountId { get; set; }
 		[Bind(0x0C58, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
@@ -50,11 +50,14 @@ namespace Anamnesis.Memory
 		[Bind(0x0DD8)] public ActorCustomizeMemory? Customize { get; set; }
 		[Bind(0x0DF6, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 		[Bind(0x0E08, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
-		[Bind(0x0F30)] public uint TargetAnimation { get; set; }
-		[Bind(0x0FA4)] public float AnimationSpeed { get; set; }
-		[Bind(0x110C)] public ushort AnimationOverride { get; set; }
+		[Bind(0x0F30)] public ushort TargetAnimation { get; set; }
+		[Bind(0x0FA4)] public float BaseAnimationSpeedInternal { get; set; }
+		[Bind(0x0FA8)] public float AnimationSpeedTrigger { get; set; }
+		[Bind(0x0FC0)] public float LipAnimationSpeedInternal { get; set; }
+		[Bind(0x110C)] public ushort BaseAnimationOverride { get; set; }
+		[Bind(0x110E)] public ushort LipAnimationOverride { get; set; }
 		[Bind(0x18B8)] public float Transparency { get; set; }
-		[Bind(0x19C0)] public CharacterModes CharacterMode { get; set; }
+		[Bind(0x19C0)] public byte CharacterModeRaw { get; set; }
 		[Bind(0x19C1)] public byte CharacterModeInput { get; set; }
 		[Bind(0x19F4)] public byte AttachmentPoint { get; set; }
 
@@ -63,6 +66,19 @@ namespace Anamnesis.Memory
 		public bool PendingRefresh { get; set; } = false;
 
 		public bool IsPlayer => this.ModelObject != null && this.ModelObject.IsPlayer;
+
+		[DependsOn(nameof(CharacterModeRaw))]
+		public CharacterModes CharacterMode
+		{
+			get
+			{
+				return (CharacterModes)this.CharacterModeRaw;
+			}
+			set
+			{
+				this.CharacterModeRaw = (byte)value;
+			}
+		}
 
 		[DependsOn(nameof(CharacterMode), nameof(CharacterModeInput), nameof(MountId), nameof(Mount))]
 		public bool IsMounted => this.CharacterMode == CharacterModes.HasAttachment && this.CharacterModeInput == 0 && this.MountId != 0 && this.Mount != null;
@@ -115,6 +131,31 @@ namespace Anamnesis.Memory
 
 		[DependsOn(nameof(ObjectIndex), nameof(CharacterMode))]
 		public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.Instance.IsLocalOverworldPlayer(this.ObjectIndex);
+
+		[DependsOn(nameof(CharacterMode))]
+		public bool IsAnimationOverriden => this.CharacterMode == CharacterModes.AnimLock;
+
+		[DependsOn(nameof(BaseAnimationSpeedInternal))]
+		public float BaseAnimationSpeed
+		{
+			get => this.BaseAnimationSpeedInternal;
+			set
+			{
+				this.BaseAnimationSpeedInternal = value;
+				this.AnimationSpeedTrigger = this.AnimationSpeedTrigger == 0.0f ? 1.0f : 0.0f;
+			}
+		}
+
+		[DependsOn(nameof(LipAnimationSpeedInternal))]
+		public float LipAnimationSpeed
+		{
+			get => this.LipAnimationSpeedInternal;
+			set
+			{
+				this.LipAnimationSpeedInternal = value;
+				this.AnimationSpeedTrigger = this.AnimationSpeedTrigger == 0.0f ? 1.0f : 0.0f;
+			}
+		}
 
 		/// <summary>
 		/// Refresh the actor to force the game to load any changed values for appearance.

@@ -26,9 +26,7 @@
 	Topmost="{Binding SettingsService.Settings.AlwaysOnTop}"
 	Style="{DynamicResource AnaWindowStyle}"
 	TextBlock.FontSize="12"
-	mc:Ignorable="d"
-	Activated="OnActivated"
-	Deactivated="OnDeactivated">
+	mc:Ignorable="d">
 
 	<FrameworkElement.CommandBindings>
 		<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
@@ -362,8 +360,7 @@
 						<TabItem.Header>
 							<fa:IconImage
 								Foreground="{DynamicResource MaterialDesignBodyLight}"
-								Icon="HouseUser"
-								ToolTip="Scene" />
+								Icon="HouseUser"/>
 						</TabItem.Header>
 
 						<views:SceneView />
@@ -374,18 +371,26 @@
 							<fa:IconImage
 								Foreground="{DynamicResource MaterialDesignBodyLight}"
 								Icon="UserEdit"
-								IsEnabled="{Binding GameService.IsSignedIn}"
-								ToolTip="Character" />
+								IsEnabled="{Binding GameService.IsSignedIn}"/>
 						</TabItem.Header>
 
 						<characterPages:AppearancePage DataContext="{Binding TargetService.SelectedActor}" />
 					</TabItem>
-					<TabItem x:Name="PoseTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+					<TabItem x:Name="ActionTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+                        <TabItem.Header>
+                            <fa:IconImage
+								Foreground="{DynamicResource MaterialDesignBodyLight}"
+								Icon="Biking"
+								IsEnabled="{Binding GameService.IsSignedIn}"/>
+                        </TabItem.Header>
+
+                        <characterPages:ActionPage DataContext="{Binding TargetService.SelectedActor}" />
+                    </TabItem>
+                    <TabItem x:Name="PoseTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 						<TabItem.Header>
 							<fa:IconImage
 								Foreground="{DynamicResource MaterialDesignBodyLight}"
-								Icon="Running"
-								ToolTip="Pose" />
+								Icon="Running"/>
 						</TabItem.Header>
 
 						<posePages:PosePage DataContext="{Binding TargetService.SelectedActor}" />

@@ -54,6 +54,7 @@ namespace Anamnesis.Services
 		public static ExcelSheet<WeatherRate> WeatherRates { get; private set; }
 		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; private set; }
 		public static ExcelSheet<BattleNpcName> BattleNpcNames { get; private set; }
+		public static ExcelSheet<GameData.Excel.Action> Actions { get; private set; }
 		public static ExcelSheet<ActionTimeline> ActionTimelines { get; private set; }
 		public static ExcelSheet<Emote> Emotes { get; private set; }
 		public static ExcelSheet<Ornament> Ornaments { get; private set; }
@@ -79,6 +80,18 @@ namespace Anamnesis.Services
 				Sheets.Add(type, sheet);
 				return (ExcelSheet<T>)sheet;
 			}
+		}
+
+		public static byte[] GetFileData(string path)
+		{
+			if (LuminaData == null)
+				throw new Exception("Game Data Service has not been initialized");
+
+			FileResource? file = LuminaData.GetFile(path);
+			if (file == null)
+				throw new Exception($"Failed to read file from game data: \"{path}\"");
+
+			return file.Data;
 		}
 
 		public static string? GetNpcName(INpcBase npc)
@@ -180,6 +193,7 @@ namespace Anamnesis.Services
 				WeatherRates = GetSheet<WeatherRate>();
 				EquipRaceCategories = GetSheet<EquipRaceCategory>();
 				BattleNpcNames = GetSheet<BattleNpcName>();
+				Actions = GetSheet<GameData.Excel.Action>();
 				ActionTimelines = GetSheet<ActionTimeline>();
 				Emotes = GetSheet<Emote>();
 				Ornaments = GetSheet<Ornament>();

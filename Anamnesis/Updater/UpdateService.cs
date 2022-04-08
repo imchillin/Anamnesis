@@ -29,8 +29,10 @@ namespace Anamnesis.Updater
 		{
 			await base.Initialize();
 
-			// Debug builds should not attempt to update
-#if !DEBUG
+			// Don't check for updates if the VersionInfo hasn't been written by the build process.
+			if (VersionInfo.Date.Year <= 2000)
+				return;
+
 			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
 			if (elapsed.TotalHours < 6)
@@ -40,7 +42,6 @@ namespace Anamnesis.Updater
 			}
 
 			await this.CheckForUpdates();
-#endif
 		}
 
 		public async Task<bool> CheckForUpdates()

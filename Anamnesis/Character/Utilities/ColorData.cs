@@ -5,9 +5,8 @@ namespace Anamnesis.Character.Utilities
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Windows.Media;
-	using Anamnesis.Files;
 	using Anamnesis.Memory;
+	using Anamnesis.Services;
 
 	using cmColor = Anamnesis.Memory.Color;
 	using wpfColor = System.Windows.Media.Color;
@@ -20,7 +19,7 @@ namespace Anamnesis.Character.Utilities
 		{
 			List<Entry> colors = new List<Entry>();
 
-			byte[] buffer = EmbeddedFileUtility.LoadBytes("Data\\colors.dat");
+			byte[] buffer = GameDataService.GetFileData("chara/xls/charamake/human.cmp");
 
 			int at = 0;
 			while (at < buffer.Length)
