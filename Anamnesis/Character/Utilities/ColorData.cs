@@ -7,7 +7,7 @@ namespace Anamnesis.Character.Utilities
 	using System.Collections.Generic;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
-
+	using Serilog;
 	using cmColor = Anamnesis.Memory.Color;
 	using wpfColor = System.Windows.Media.Color;
 
@@ -19,31 +19,38 @@ namespace Anamnesis.Character.Utilities
 		{
 			List<Entry> colors = new List<Entry>();
 
-			byte[] buffer = GameDataService.GetFileData("chara/xls/charamake/human.cmp");
-
-			int at = 0;
-			while (at < buffer.Length)
+			try
 			{
-				int r = buffer[at + 0] & 0xFF;
-				int g = buffer[at + 1] & 0xFF;
-				int b = buffer[at + 2] & 0xFF;
-				int a = buffer[at + 3] & 0xFF;
+				byte[] buffer = GameDataService.GetFileData("chara/xls/charamake/human.cmp");
 
-				Entry entry = default;
-				entry.CmColor = new cmColor(r / 255.0f, g / 255.0f, b / 255.0f);
+				int at = 0;
+				while (at < buffer.Length)
+				{
+					int r = buffer[at + 0] & 0xFF;
+					int g = buffer[at + 1] & 0xFF;
+					int b = buffer[at + 2] & 0xFF;
+					int a = buffer[at + 3] & 0xFF;
 
-				wpfColor c2 = (wpfColor)entry.WpfColor;
-				c2.R = buffer[at + 0];
-				c2.G = buffer[at + 1];
-				c2.B = buffer[at + 2];
-				c2.A = buffer[at + 3];
-				entry.WpfColor = c2;
+					Entry entry = default;
+					entry.CmColor = new cmColor(r / 255.0f, g / 255.0f, b / 255.0f);
 
-				////= new Color.FromArgb((a << 24) | (r << 16) | (g << 8) | b);
+					wpfColor c2 = (wpfColor)entry.WpfColor;
+					c2.R = buffer[at + 0];
+					c2.G = buffer[at + 1];
+					c2.B = buffer[at + 2];
+					c2.A = buffer[at + 3];
+					entry.WpfColor = c2;
 
-				colors.Add(entry);
+					////= new Color.FromArgb((a << 24) | (r << 16) | (g << 8) | b);
 
-				at += 4;
+					colors.Add(entry);
+
+					at += 4;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to read game color data.");
 			}
 
 			Colors = colors.ToArray();
