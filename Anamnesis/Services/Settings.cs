@@ -18,6 +18,12 @@ namespace Anamnesis.Services
 	{
 		public event PropertyChangedEventHandler? PropertyChanged;
 
+		public enum Fonts
+		{
+			Default,
+			Hyperlegible,
+		}
+
 		public string Language { get; set; } = "EN";
 		public bool AlwaysOnTop { get; set; } = true;
 		public bool OverlayWindow { get; set; } = false;
@@ -32,7 +38,7 @@ namespace Anamnesis.Services
 		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
 		public bool ShowAdvancedOptions { get; set; } = true;
 		public bool FlipPoseGuiSides { get; set; } = false;
-		public bool UseHyperlegibleFont { get; set; } = false;
+		public Fonts Font { get; set; } = Fonts.Default;
 		public bool ShowGallery { get; set; } = true;
 		public string? GalleryDirectory { get; set; }
 		public bool EnableTranslucency { get; set; } = true;

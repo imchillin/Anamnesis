@@ -71,8 +71,19 @@
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
 				<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="5" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
 
-				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Hyperlegible" Style="{StaticResource Label}"/>
-				<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="6" Margin="6"/>
+				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Font" Style="{StaticResource Label}"/>
+				<!--<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="6" Margin="6"/>-->
+
+				<ComboBox Grid.Column="1" Grid.Row="6" Width="150" HorizontalAlignment="Left"
+						  SelectedItem="{Binding SelectedFont}"
+						  ItemsSource="{Binding Fonts}">
+
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<XivToolsWPF:TextBlock Key="{Binding Key}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_WrapRotations" Style="{StaticResource Label}"/>
 				<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Grid.Row="7" Margin="6"/>
@@ -130,7 +141,8 @@
 						</Grid.RowDefinitions>
 
 						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_Gallery" Style="{StaticResource Label}"/>
-						<ComboBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Margin="1" x:Name="GalleryCombobox" SelectionChanged="OnGalleryChanged">
+						<ComboBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Margin="1" x:Name="GalleryCombobox" SelectionChanged="OnGalleryChanged"
+								  HorizontalAlignment="Left" Width="200">
 							<ComboBoxItem>
 								<XivToolsWPF:TextBlock Key="Settings_Gallery_None"/>
 							</ComboBoxItem>

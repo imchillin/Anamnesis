@@ -45,6 +45,14 @@ namespace Anamnesis.GUI.Views
 			sizes.Add(2.0);
 			this.SizeSelector.ItemsSource = sizes;
 
+			List<FontOption> fonts = new();
+			foreach (Settings.Fonts font in Enum.GetValues<Settings.Fonts>())
+			{
+				fonts.Add(new FontOption(font));
+			}
+
+			this.Fonts = fonts;
+
 			List<LanguageOption> languages = new();
 			foreach ((string key, string name) in LocalizationService.GetAvailableLocales())
 			{
@@ -83,8 +91,30 @@ namespace Anamnesis.GUI.Views
 
 		public SettingsService SettingsService => SettingsService.Instance;
 
+		public IEnumerable<FontOption> Fonts { get; }
 		public IEnumerable<LanguageOption> Languages { get; }
 		public IEnumerable<HotkeyOption> Hotkeys { get; }
+
+		public FontOption SelectedFont
+		{
+			get
+			{
+				foreach (FontOption font in this.Fonts)
+				{
+					if (font.Font == SettingsService.Current.Font)
+					{
+						return font;
+					}
+				}
+
+				return this.Fonts.First();
+			}
+
+			set
+			{
+				SettingsService.Current.Font = value.Font;
+			}
+		}
 
 		public LanguageOption SelectedLanguage
 		{
@@ -168,6 +198,18 @@ namespace Anamnesis.GUI.Views
 				SettingsService.Current.GalleryDirectory = null;
 
 			SettingsService.Current.ShowGallery = this.GalleryCombobox.SelectedIndex != 0;
+		}
+
+		public class FontOption
+		{
+			public FontOption(Settings.Fonts font)
+			{
+				this.Key = "Settings_Font_" + font.ToString();
+				this.Font = font;
+			}
+
+			public string Key { get; }
+			public Settings.Fonts Font { get; }
 		}
 
 		public class LanguageOption

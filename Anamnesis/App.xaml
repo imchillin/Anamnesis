@@ -59,13 +59,12 @@
 			<converters:Vector2DRadiansToDegreesConverter x:Key="Vec2DRad2Deg"/>
 			<converters:ImageReferenceConverter x:Key="Img" />
 
-			<!-- dyslexic font -->
-
+			<!-- Atkinson-Hyperlegible font -->
 			<FontFamily x:Key="Atkinson-Hyperlegible">pack://application:,,,/Assets/Fonts/#Atkinson Hyperlegible</FontFamily>
 			
 			<Style x:Key="AnaWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource ChromedWindowStyle}">
 				<Style.Triggers>
-					<DataTrigger Binding="{Binding SettingsService.Settings.UseHyperlegibleFont}" Value="true">
+					<DataTrigger Binding="{Binding SettingsService.Settings.Font}" Value="Hyperlegible">
 						<Setter Property="FontFamily" Value="{StaticResource Atkinson-Hyperlegible}" />
 						<Setter Property="FontSize" Value="20" />
 					</DataTrigger>
