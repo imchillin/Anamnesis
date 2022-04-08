@@ -485,10 +485,6 @@
 
 			<Border
 				x:Name="Ftue"
-				Width="604"
-				Height="497"
-				Margin="0, 0, 290, 0"
-				VerticalAlignment="Top"
 				Background="{StaticResource MaterialDesignBackground}"
 				BorderThickness="1"
 				Visibility="Collapsed">
@@ -529,8 +525,8 @@
 					<Image
 						Grid.RowSpan="2"
 						Grid.Column="0"
-						Margin="10, 10, 0, 0"
-						Width="64"
+						Margin="32, 32, 0, 0"
+						Width="128"
 						HorizontalAlignment="Left"
 						VerticalAlignment="Top"
 						Source=".\Assets\Hydaelyn.png" />

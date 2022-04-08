@@ -344,14 +344,13 @@ namespace Anamnesis.GUI
 			if (SettingsService.Instance.FirstTimeUser)
 			{
 				this.Ftue.Visibility = Visibility.Visible;
-				ViewService.ShowDrawer<SettingsView>();
+				this.ShowSettings = true;
 			}
 		}
 
 		private void OnFtueOkClicked(object sender, RoutedEventArgs e)
 		{
 			this.Ftue.Visibility = Visibility.Collapsed;
-			this.DrawerHost.IsRightDrawerOpen = false;
 		}
 
 		private void OnWikiClicked(object sender, RoutedEventArgs e)
