@@ -98,7 +98,7 @@ namespace Anamnesis.Character.Utilities
 
 				messageBuilder.AppendLine(jsonBuilder.ToString());
 				messageBuilder.AppendLine();
-				messageBuilder.AppendLine("This NPCNames entry block has been coppied to your clipboard.");
+				messageBuilder.AppendLine("This NPCNames entry block has been copied to your clipboard.");
 
 				await ClipboardUtility.CopyToClipboard(jsonBuilder.ToString());
 
