@@ -240,13 +240,14 @@
 				Orientation="Horizontal">
 				
 				<Button Click="OnFindNpcClicked"
-							Style="{StaticResource TransparentButton}">
+							Style="{StaticResource TransparentButton}"
+						Padding="6,3">
 
 					<Button.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_SearchNpcAppearances" />
+						<XivToolsWpf:TextBlock Key="Character_SearchNpcAppearancesTooltip" />
 					</Button.ToolTip>
 
-					<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="Search" />
+					<XivToolsWpf:TextBlock Key="Character_SearchNpcAppearances" />
 				</Button>
 				
 			</StackPanel>

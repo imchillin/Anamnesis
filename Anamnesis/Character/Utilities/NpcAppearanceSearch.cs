@@ -3,97 +3,106 @@
 
 namespace Anamnesis.Character.Utilities
 {
+	using System;
 	using System.Collections.Generic;
 	using System.Text;
+	using System.Threading.Tasks;
+	using System.Windows;
+	using Anamnesis.Dialogs;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Excel;
 	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
+	using Anamnesis.Utils;
 	using Lumina.Excel;
 	using Serilog;
+	using XivToolsWpf;
 
 	public static class NpcAppearanceSearch
 	{
 		public static void Search(ActorMemory actor)
 		{
+			Task.Factory.StartNew(() => SearchAsync(actor));
+		}
+
+		public static async Task SearchAsync(ActorMemory actor)
+		{
 			List<ExcelRow> names = new();
-			SearchNames(actor.Name, ref names);
-
-			if (actor.Nickname != null)
-				SearchNames(actor.Nickname, ref names);
-
 			List<INpcBase> appearances = new();
-			Search(actor, GameDataService.BattleNPCs, ref appearances);
-			Search(actor, GameDataService.EventNPCs, ref appearances);
-			Search(actor, GameDataService.ResidentNPCs, ref appearances);
 
-			if (appearances.Count <= 0 && names.Count <= 0)
+			using (WaitDialog dlg = await WaitDialog.ShowAsync("Please Wait...", "NPC Appearance search"))
 			{
-				GenericDialog.Show("No results", "NPC Appearance search");
+				await dlg.SetProgress(0.01);
+				SearchNames(actor.Name, ref names);
+
+				await dlg.SetProgress(0.25);
+				if (actor.Nickname != null)
+					SearchNames(actor.Nickname, ref names);
+
+				await dlg.SetProgress(0.5);
+				Search(actor, GameDataService.BattleNPCs, ref appearances);
+				await dlg.SetProgress(0.75);
+				Search(actor, GameDataService.EventNPCs, ref appearances);
+				////await dlg.SetProgress(0.8);
+				////Search(actor, GameDataService.ResidentNPCs, ref appearances);
+
+				await dlg.SetProgress(1.0);
+			}
+
+			if (appearances.Count <= 0)
+			{
+				GenericDialog.Show($"Appearance not found", "NPC Appearance search");
+			}
+			else if (names.Count <= 0)
+			{
+				if (actor.Nickname != null)
+				{
+					GenericDialog.Show($"Name \"{actor.Name}\" or \"{actor.Nickname}\" not found", "NPC Appearance search");
+				}
+				else
+				{
+					GenericDialog.Show($"Name \"{actor.Name}\" not found", "NPC Appearance search");
+				}
 			}
 			else
 			{
-				StringBuilder builder = new();
-				if (appearances.Count > 0)
+				StringBuilder messageBuilder = new();
+				messageBuilder.AppendLine($"Found {appearances.Count} appearances with {names.Count} names");
+				messageBuilder.AppendLine();
+
+				StringBuilder jsonBuilder = new();
+				ExcelRow name = names[0];
+				foreach (INpcBase appearance in appearances)
 				{
-					builder.Append(appearances.Count);
-					builder.AppendLine(" appearances:");
+					jsonBuilder.Append('\"');
 
-					foreach (var result in appearances)
+					if (appearance is BattleNpc)
 					{
-						if (result is BattleNpc)
-						{
-							builder.Append("B:");
-						}
-						else if (result is EventNpc)
-						{
-							builder.Append("E:");
-						}
-						else if (result is ResidentNpc)
-						{
-							builder.Append("R:");
-						}
-
-						builder.Append(result.RowId.ToString());
-
-						if (result.HasName)
-						{
-							builder.Append(" (");
-							builder.Append(result.Name);
-							builder.Append(")");
-						}
-
-						builder.AppendLine();
+						jsonBuilder.Append("B:");
 					}
-				}
-
-				if (names.Count > 0)
-				{
-					builder.Append(names.Count);
-					builder.AppendLine(" names:");
-					foreach (ExcelRow result in names)
+					else if (appearance is EventNpc)
 					{
-						if (result is BattleNpcName)
-						{
-							builder.Append("B:");
-						}
-						else if (result is EventNpc)
-						{
-							builder.Append("E:");
-						}
-						else if (result is ResidentNpc)
-						{
-							builder.Append("R:");
-						}
-
-						builder.AppendLine(result.RowId.ToString());
+						jsonBuilder.Append("E:");
+					}
+					else if (appearance is ResidentNpc)
+					{
+						jsonBuilder.Append("R:");
 					}
 
-					builder.AppendLine();
+					jsonBuilder.Append(appearance.RowId.ToString());
+					jsonBuilder.Append("\": \"B:");
+					jsonBuilder.Append(name.RowId.ToString());
+					jsonBuilder.AppendLine("\",");
 				}
 
-				GenericDialog.Show(builder.ToString(), "NPC Appearance search");
+				messageBuilder.AppendLine(jsonBuilder.ToString());
+				messageBuilder.AppendLine();
+				messageBuilder.AppendLine("This NPCNames entry block has been coppied to your clipboard.");
+
+				await ClipboardUtility.CopyToClipboard(jsonBuilder.ToString());
+
+				await GenericDialog.ShowAsync(messageBuilder.ToString(), "NPC Appearance search", MessageBoxButton.OK);
 			}
 		}
 

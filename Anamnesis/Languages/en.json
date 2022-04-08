@@ -128,7 +128,8 @@
 	"Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
 	"Character_Load_CMTool": "CMTool save",
 
-	"Character_SearchNpcAppearances": "Search for NPC appearances that match this page",
+	"Character_SearchNpcAppearances": "Search for this NPC",
+	"Character_SearchNpcAppearancesTooltip": "Search for Battle and Event NPCs that use the selected appearance. USed to generate NPCNames list entries.",
 
 	"Character_Appearance_LoadNpc": "NPC",
 	"Character_Appearance_LoadObject": "Object",
