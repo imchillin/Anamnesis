@@ -7,6 +7,7 @@ namespace Anamnesis.Memory
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Reflection;
 
 	public abstract class ArrayMemory<TValue, TCount> : MemoryBase, IEnumerable<TValue>
 		where TCount : struct
@@ -104,6 +105,7 @@ namespace Anamnesis.Memory
 								throw new Exception($"Faield to create instance of type: {typeof(TValue)}");
 
 							memory.Parent = this;
+							memory.ParentBind = new ArrayBindInfo(this, i);
 							memory.SetAddress(address);
 							this.Children.Add(memory);
 							this.items.Add(instance);
@@ -143,6 +145,27 @@ namespace Anamnesis.Memory
 			this.lastAddress = this.ArrayAddress;
 
 			this.UpdateArray();
+		}
+
+		public class ArrayBindInfo : BindInfo
+		{
+			private readonly int index;
+
+			public ArrayBindInfo(MemoryBase memory, int index)
+				: base(memory)
+			{
+				this.index = index;
+			}
+
+			public override string Name => this.index.ToString();
+			public override string Path => $"[{this.index}]";
+			public override Type Type => typeof(TValue);
+			public override BindFlags Flags => BindFlags.None;
+
+			public override IntPtr GetAddress()
+			{
+				throw new NotSupportedException();
+			}
 		}
 	}
 }

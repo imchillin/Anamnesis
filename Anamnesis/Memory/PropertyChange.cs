@@ -7,13 +7,13 @@ namespace Anamnesis.Memory
 
 	public struct PropertyChange
 	{
-		public readonly List<MemoryBase.BindInfo> BindPath;
+		public readonly List<BindInfo> BindPath;
 		public readonly object? OldValue;
 		public readonly object? NewValue;
 
 		private string path;
 
-		public PropertyChange(MemoryBase.BindInfo bind, object? oldValue, object? newValue)
+		public PropertyChange(BindInfo bind, object? oldValue, object? newValue)
 		{
 			this.BindPath = new();
 			this.BindPath.Add(bind);
@@ -21,17 +21,17 @@ namespace Anamnesis.Memory
 			this.OldValue = oldValue;
 			this.NewValue = newValue;
 
-			this.path = bind.Name;
+			this.path = bind.Path;
 		}
 
-		public readonly MemoryBase.BindInfo Origin => this.BindPath[0];
+		public readonly BindInfo Origin => this.BindPath[0];
 
 		public string TerminalPropertyName => this.BindPath[0].Name;
 
-		public void AddPath(MemoryBase.BindInfo bind)
+		public void AddPath(BindInfo bind)
 		{
 			this.BindPath.Add(bind);
-			this.path = bind.Name + "." + this.path;
+			this.path = bind.Path + this.path;
 		}
 
 		public override string ToString()

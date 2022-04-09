@@ -264,7 +264,7 @@ namespace Anamnesis.Memory
 				}
 			}
 
-			if (change.Origin.Attribute.Flags.HasFlag(BindFlags.ActorRefresh))
+			if (change.Origin.Flags.HasFlag(BindFlags.ActorRefresh))
 			{
 				this.Refresh();
 			}
@@ -284,7 +284,7 @@ namespace Anamnesis.Memory
 				else
 				{
 					// do not allow writing of any properties except the ones needed for refresh during a refresh.
-					return bind.Property.Name == nameof(this.ObjectKind) || bind.Property.Name == nameof(this.RenderMode);
+					return bind.Name == nameof(this.ObjectKind) || bind.Name == nameof(this.RenderMode);
 				}
 			}
 
