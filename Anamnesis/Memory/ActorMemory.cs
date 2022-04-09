@@ -11,7 +11,7 @@ namespace Anamnesis.Memory
 	public class ActorMemory : ActorBasicMemory
 	{
 		private const short RefreshDelay = 250;
-
+		private readonly History history = new();
 		private short refreshDelay;
 		private Task? refreshTask;
 
@@ -172,6 +172,8 @@ namespace Anamnesis.Memory
 
 		public override void Tick()
 		{
+			this.history.Tick();
+
 			// Since writing is immadiate from poperties, we don't want to tick (read) anything
 			// during a refresh.
 			if (this.IsRefreshing || this.PendingRefresh)
@@ -248,6 +250,8 @@ namespace Anamnesis.Memory
 
 		protected override void HandlePropertyChanged(PropertyChange change)
 		{
+			this.history.Record(change);
+
 			if (!this.AutomaticRefreshEnabled)
 				return;
 

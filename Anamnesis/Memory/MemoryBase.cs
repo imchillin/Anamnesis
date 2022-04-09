@@ -19,9 +19,9 @@ namespace Anamnesis.Memory
 		public bool EnableReading = true;
 		public bool EnableWriting = true;
 
-		protected readonly List<MemoryBase> Children = new List<MemoryBase>();
-		private readonly Dictionary<string, BindInfo> binds = new Dictionary<string, BindInfo>();
-		private readonly HashSet<BindInfo> delayedBinds = new HashSet<BindInfo>();
+		protected readonly List<MemoryBase> Children = new();
+		private readonly Dictionary<string, BindInfo> binds = new();
+		private readonly HashSet<BindInfo> delayedBinds = new();
 
 		public MemoryBase()
 		{
@@ -195,6 +195,10 @@ namespace Anamnesis.Memory
 		{
 			if (this.Parent != null)
 			{
+				if (this.ParentBind == null)
+					throw new Exception("Parent was not null, but parent bind was!");
+
+				change.AddPath(this.ParentBind);
 				this.Parent.HandlePropertyChanged(change);
 			}
 		}
