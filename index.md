@@ -1,15 +1,15 @@
 # The Anamnesis Quick Start Guide
 
-- Make sure you're running the latest version of the [**.NET Desktop Runtime v5.0.9 x64**](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.9-windows-x64-installer)
+- Make sure you're running the latest version of the [**.NET Desktop Runtime v5.0.14 x64**](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.14-windows-x64-installer)
     - Doublecheck you've gotten the right one! If the link here doesn't take you directly to the right file, you can locate the correct one here!
 ![image](https://cdn.discordapp.com/attachments/832783253018640414/891464078512492544/unknown.png)
 
 - Grab the latest version of the tool [**HERE**](https://github.com/imchillin/Anamnesis/releases/latest)
-    - Make sure you grab the file that has a date in the name and not the Source Code files.
+    - Make sure you grab the file that has a date in the name and **not** the Source Code files.
 ![Image](https://cdn.discordapp.com/attachments/748603327373377676/850317503631720488/unknown.png)
 
 - Extract the archive to your location of choice
-    - Please make sure you extract __EVERYTHING__! Each file and folder in the archive is needed to make the tool work!
+    - Or you can run it from the archive!
 - Log into the game
 
 - Run `Anamnesis.exe`
@@ -18,8 +18,6 @@
 ### A quick note
 
 Anamnesis is still in beta, and bugs are to be expected. It's far from a completed project, so please be on the lookout and [let us know about any issues or oddities you find](https://github.com/imchillin/Anamnesis/issues)!
-
-Additionally, Anamnesis currently only works with the International (JP/NA/EU) version of the game. We're sorry, KR and CN client users! We'll have this updated for you in the near future!
 
 ## Learn how to use the tool
 
