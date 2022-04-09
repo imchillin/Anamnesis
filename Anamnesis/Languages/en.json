@@ -107,6 +107,8 @@
 	"Scene_World_Day": "Day",
 	"Scene_World_Weather": "Weather",
 
+	"System_History": "History",
+
 	"Scene_Camera_Header": "Camera",
 	"Scene_Camera_Delimit": "Delimit",
 	"Scene_Camera_Position": "Position",

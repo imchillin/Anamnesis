@@ -17,6 +17,7 @@
 		  Visibility="{Binding DataContext, Converter={StaticResource NotNullToVisibilityConverter}}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="300" />
 		</Grid.ColumnDefinitions>
 
@@ -110,7 +111,35 @@
 			</Grid>
 		</Grid>
 
-		<Grid Grid.Column="1"
+		<GroupBox Grid.Column="1" Style="{StaticResource PanelGroupBox}" Width="200">
+
+			<GroupBox.Header>
+				<StackPanel Orientation="Horizontal">
+					<XivToolsWpf:Header Icon="Undo" Key="System_History" />
+					<TextBlock Text="(" Margin="6,0,2,0"/>
+					<TextBlock Text="{Binding TargetService.SelectedActor.DisplayName}"/>
+					<TextBlock Text=")" Margin="2,0,0,0"/>
+				</StackPanel>
+			</GroupBox.Header>
+
+			<ItemsControl ItemsSource="{Binding TargetService.SelectedActor.History.Entries}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal" Height="20">
+
+							<StackPanel.ToolTip>
+								<TextBlock Text="{Binding ChangesDisplay}"/>
+							</StackPanel.ToolTip>
+
+							<TextBlock Text="Actor"/>
+							<TextBlock Text="{Binding Name}"/>
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</GroupBox>
+
+		<Grid Grid.Column="2"
 			  IsEnabled="{Binding GameService.IsSignedIn}">
 
 			<Grid.RowDefinitions>

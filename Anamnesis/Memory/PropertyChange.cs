@@ -8,9 +8,10 @@ namespace Anamnesis.Memory
 	public struct PropertyChange
 	{
 		public readonly List<BindInfo> BindPath;
-		public readonly object? OldValue;
-		public readonly object? NewValue;
 		public readonly Origins Origin;
+
+		public object? OldValue;
+		public object? NewValue;
 
 		private string path;
 
@@ -25,6 +26,19 @@ namespace Anamnesis.Memory
 			this.path = bind.Path;
 
 			this.Origin = origin;
+		}
+
+		public PropertyChange(PropertyChange other)
+		{
+			this.BindPath = new();
+			this.BindPath.AddRange(other.BindPath);
+
+			this.OldValue = other.OldValue;
+			this.NewValue = other.NewValue;
+
+			this.path = other.path;
+
+			this.Origin = other.Origin;
 		}
 
 		public enum Origins

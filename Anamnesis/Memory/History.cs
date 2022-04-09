@@ -5,9 +5,12 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
 	using System.Text;
+	using System.Threading.Tasks;
 	using PropertyChanged;
 	using Serilog;
+	using XivToolsWpf;
 
 	[AddINotifyPropertyChangedInterface]
 	public class History
@@ -27,6 +30,7 @@ namespace Anamnesis.Memory
 
 		public int Count { get; private set; }
 		public int CurrentChangeCount { get; private set; }
+		public ObservableCollection<HistoryEntry> Entries { get; private set; } = new();
 
 		/// <summary>
 		/// Tick must be called periodically to push changes to the history stack when they are old enough.
@@ -59,6 +63,12 @@ namespace Anamnesis.Memory
 			HistoryEntry restore = this.history.Pop();
 			restore.Restore();
 
+			Task.Run(async () =>
+			{
+				await Dispatch.MainThread();
+				this.Entries.Remove(restore);
+			});
+
 			this.Count = this.history.Count;
 		}
 
@@ -69,7 +79,14 @@ namespace Anamnesis.Memory
 
 			Log.Verbose($"Comitting change set:\n{this.current}");
 
-			this.history.Push(this.current);
+			HistoryEntry oldEntry = this.current;
+			this.history.Push(oldEntry);
+
+			Task.Run(async () =>
+			{
+				await Dispatch.MainThread();
+				this.Entries.Add(oldEntry);
+			});
 
 			if (this.history.Count > MaxHistory)
 			{
@@ -104,6 +121,8 @@ namespace Anamnesis.Memory
 
 			public bool HasChanges => this.changes.Count > 0;
 			public int Count => this.changes.Count;
+			public string Name => this.ToString();
+			public string ChangesDisplay => this.ToString();
 
 			public void Restore()
 			{
@@ -135,7 +154,24 @@ namespace Anamnesis.Memory
 			public override string ToString()
 			{
 				StringBuilder builder = new();
+
+				// Flatten the changes to repeated changes to the same value dont show up
+				Dictionary<BindInfo, PropertyChange> flattenedChanges = new();
 				foreach (PropertyChange change in this.changes)
+				{
+					if (!flattenedChanges.ContainsKey(change.OriginBind))
+					{
+						flattenedChanges.Add(change.OriginBind, new(change));
+					}
+					else
+					{
+						PropertyChange existingChange = flattenedChanges[change.OriginBind];
+						existingChange.NewValue = change.NewValue;
+						flattenedChanges[change.OriginBind] = existingChange;
+					}
+				}
+
+				foreach (PropertyChange change in flattenedChanges.Values)
 				{
 					builder.AppendLine(change.ToString());
 				}
