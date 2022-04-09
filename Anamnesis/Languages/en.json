@@ -646,6 +646,9 @@
 	"Hotkey_SceneTab": "View Scene Tab",
 	"Hotkey_AppearanceTab": "View Appearance Tab",
 	"Hotkey_PoseTab": "View Pose Tab",
-	"Hotkey_ActionTab": "View Action Tab"
+	"Hotkey_ActionTab": "View Action Tab",
 
+	"HotkeyCategory_System": "System",
+	"Hotkey_Undo": "Undo",
+	"Hotkey_Redo": "Redo"
 }

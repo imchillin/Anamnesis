@@ -91,6 +91,8 @@ namespace Anamnesis.Services
 			{ "MainWindow.AppearanceTab", new KeyCombination(Key.D2) },
 			{ "MainWindow.ActionTab", new KeyCombination(Key.D3) },
 			{ "MainWindow.PoseTab", new KeyCombination(Key.D4) },
+			{ "System.Undo", new KeyCombination(Key.Z, ModifierKeys.Control) },
+			{ "System.Redo", new KeyCombination(Key.Y, ModifierKeys.Control) },
 		};
 	}
 }

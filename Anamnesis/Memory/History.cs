@@ -37,6 +37,10 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		public void StepBack()
+		{
+		}
+
 		public void Commit()
 		{
 			if (!this.current.HasChanges)
