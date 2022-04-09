@@ -8,6 +8,7 @@ namespace Anamnesis.Views
 	using System.Windows;
 	using System.Windows.Controls;
 	using Anamnesis.Files;
+	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
@@ -56,6 +57,12 @@ namespace Anamnesis.Views
 
 		private async void OnLoadCamera(object sender, RoutedEventArgs e)
 		{
+			ActorBasicMemory? targetActor = this.TargetService.PlayerTarget;
+			if (targetActor == null || !targetActor.IsValid)
+				return;
+			ActorMemory actorMemory = new ActorMemory();
+			actorMemory.SetAddress(targetActor.Address);
+
 			try
 			{
 				Shortcut[]? shortcuts = new[]
@@ -77,7 +84,7 @@ namespace Anamnesis.Views
 
 				if (result.File is CameraShotFile camFile)
 				{
-					camFile.Apply(CameraService.Instance);
+					camFile.Apply(CameraService.Instance, actorMemory);
 				}
 			}
 			catch (Exception ex)
@@ -88,6 +95,12 @@ namespace Anamnesis.Views
 
 		private async void OnSaveCamera(object sender, RoutedEventArgs e)
 		{
+			ActorBasicMemory? targetActor = this.TargetService.PlayerTarget;
+			if (targetActor == null || !targetActor.IsValid)
+				return;
+			ActorMemory actorMemory = new ActorMemory();
+			actorMemory.SetAddress(targetActor.Address);
+
 			SaveResult result = await FileService.Save<CameraShotFile>(lastSaveDir, FileService.DefaultCameraDirectory);
 
 			if (result.Path == null)
@@ -96,7 +109,7 @@ namespace Anamnesis.Views
 			lastSaveDir = result.Directory;
 
 			CameraShotFile file = new CameraShotFile();
-			file.WriteToFile(CameraService.Instance);
+			file.WriteToFile(CameraService.Instance, actorMemory);
 
 			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
 			file.Serialize(stream);
