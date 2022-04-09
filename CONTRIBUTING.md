@@ -3,13 +3,17 @@
 Thank you for taking the time to contribute to the project! We welcome any reasonable contribution to the repository, and we have a few guidelines in place.
 
 ## Table of Contents
-- Can I have a TL;DR?
-- How can I contribute to Anamnesis?
-  - Reporting bugs
-    - Before submitting a bug report
-    - Submitting a bug report
-  - Suggesting enhancements to existing features, within reason
-  - Code contributions and pull requests
+- [Can I have a TL;DR?](#can-i-have-a-tldr-i-only-want-to-ask-something)
+- [How can I contribute to Anamnesis?](#how-can-i-contribute-to-anamnesis)
+  - [Reporting bugs](#reporting-bugs)
+    - [Before submitting a bug report](#before-submitting-a-bug-report)
+    - [Submitting a bug report](#submitting-a-bug-report)
+  - [Suggesting enhancements to existing features, within reason](#suggesting-enhancements-to-existing-features-within-reason)
+    - [Before making a feature request](#before-making-a-feature-request)
+    - [Submitting a feature request](#submitting-a-feature-request)
+  - [Code contributions and pull requests](#code-contributions-and-pull-requests)
+    - [Getting Anamnesis set up on your machine](#getting-anamnesis-set-up-on-your-machine)
+    - [Submitting a pull request](#submitting-a-pull-request)
 
 
 ## Can I have a TL;DR? I only want to ask something.
