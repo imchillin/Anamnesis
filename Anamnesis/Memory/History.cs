@@ -23,6 +23,8 @@ namespace Anamnesis.Memory
 			this.history.Push(new());
 		}
 
+		public static bool IsRestoring { get; private set; } = false;
+
 		/// <summary>
 		/// Tick must be called periodically to push changes to the history stack when they are old enough.
 		/// </summary>
@@ -39,6 +41,19 @@ namespace Anamnesis.Memory
 
 		public void StepBack()
 		{
+			// Ensure any pending changes are comitted to be undone.
+			if (this.current.HasChanges)
+				this.Commit();
+
+			if (this.history.Count <= 0)
+				return;
+
+			IsRestoring = true;
+
+			HistoryEntry restore = this.history.Pop();
+			restore.Restore();
+
+			IsRestoring = false;
 		}
 
 		public void Commit()
@@ -49,13 +64,14 @@ namespace Anamnesis.Memory
 			Log.Verbose($"Comitting change set:\n{this.current}");
 
 			this.history.Push(this.current);
-			this.current = new();
 
 			if (this.history.Count > MaxHistory)
 			{
 				Log.Warning($"History depth exceded max: {MaxHistory}. Flushing");
 				this.history.Clear();
 			}
+
+			this.current = new();
 		}
 
 		public void Record(PropertyChange change)
@@ -76,6 +92,20 @@ namespace Anamnesis.Memory
 			private readonly List<PropertyChange> changes = new();
 
 			public bool HasChanges => this.changes.Count > 0;
+
+			public void Restore()
+			{
+				Log.Verbose($"Restoring change set:\n{this}");
+
+				for (int i = this.changes.Count - 1; i >= 0; i--)
+				{
+					PropertyChange change = this.changes[i];
+					if (change.OriginBind is PropertyBindInfo propertyBind)
+					{
+						propertyBind.Property.SetValue(propertyBind.Memory, change.OldValue);
+					}
+				}
+			}
 
 			public void Record(PropertyChange change)
 			{

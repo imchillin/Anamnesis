@@ -29,7 +29,8 @@ namespace Anamnesis.Memory
 
 		public enum Origins
 		{
-			Anamnesis,
+			User,
+			History,
 			Game,
 		}
 
@@ -39,8 +40,8 @@ namespace Anamnesis.Memory
 
 		public bool ShouldRecord()
 		{
-			// Don't record changes that originate in game
-			if (this.Origin == Origins.Game)
+			// Don't record changes that originate anywhere other than the user interface.
+			if (this.Origin != Origins.User)
 				return false;
 
 			foreach (BindInfo bind in this.BindPath)

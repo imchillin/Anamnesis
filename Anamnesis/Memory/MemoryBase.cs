@@ -209,7 +209,8 @@ namespace Anamnesis.Memory
 
 					if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
 					{
-						this.OnPropertyChanged(bind, oldVal, bind.LastValue, PropertyChange.Origins.Anamnesis);
+						var origin = History.IsRestoring ? PropertyChange.Origins.History : PropertyChange.Origins.User;
+						this.OnPropertyChanged(bind, oldVal, bind.LastValue, origin);
 					}
 				}
 			}
@@ -260,7 +261,8 @@ namespace Anamnesis.Memory
 
 			if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
 			{
-				this.OnPropertyChanged(bind, oldVal, bind.LastValue, PropertyChange.Origins.Anamnesis);
+				var origin = History.IsRestoring ? PropertyChange.Origins.History : PropertyChange.Origins.User;
+				this.OnPropertyChanged(bind, oldVal, bind.LastValue, origin);
 			}
 
 			bind.LastValue = val;
