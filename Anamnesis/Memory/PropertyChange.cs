@@ -12,6 +12,7 @@ namespace Anamnesis.Memory
 
 		public object? OldValue;
 		public object? NewValue;
+		public string? Name;
 
 		private string path;
 
@@ -26,6 +27,7 @@ namespace Anamnesis.Memory
 			this.path = bind.Path;
 
 			this.Origin = origin;
+			this.Name = null;
 		}
 
 		public PropertyChange(PropertyChange other)
@@ -39,6 +41,7 @@ namespace Anamnesis.Memory
 			this.path = other.path;
 
 			this.Origin = other.Origin;
+			this.Name = other.Name;
 		}
 
 		public enum Origins

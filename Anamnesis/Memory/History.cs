@@ -8,6 +8,7 @@ namespace Anamnesis.Memory
 	using System.Collections.ObjectModel;
 	using System.Text;
 	using System.Threading.Tasks;
+	using Anamnesis.Services;
 	using PropertyChanged;
 	using Serilog;
 	using XivToolsWpf;
@@ -80,6 +81,7 @@ namespace Anamnesis.Memory
 			Log.Verbose($"Comitting change set:\n{this.current}");
 
 			HistoryEntry oldEntry = this.current;
+			oldEntry.Name = oldEntry.GetName();
 			this.history.Push(oldEntry);
 
 			Task.Run(async () =>
@@ -105,6 +107,9 @@ namespace Anamnesis.Memory
 			if (!change.ShouldRecord())
 				return;
 
+			if (change.Name == null)
+				change.Name = change.ToString();
+
 			Log.Verbose($"Recording Change: {change}");
 
 			this.lastChangeTime = DateTime.Now;
@@ -121,8 +126,8 @@ namespace Anamnesis.Memory
 
 			public bool HasChanges => this.changes.Count > 0;
 			public int Count => this.changes.Count;
-			public string Name => this.ToString();
-			public string ChangesDisplay => this.ToString();
+			public string Name { get; set; } = string.Empty;
+			public string ChangeList => this.GetChangeList();
 
 			public void Restore()
 			{
@@ -151,7 +156,30 @@ namespace Anamnesis.Memory
 				}
 			}
 
-			public override string ToString()
+			public string GetName()
+			{
+				HashSet<string> names = new();
+				foreach (PropertyChange change in this.changes)
+				{
+					if (change.Name == null)
+						continue;
+
+					names.Add(change.Name);
+				}
+
+				StringBuilder builder = new();
+				foreach (string name in names)
+				{
+					if (builder.Length > 0)
+						builder.Append(", ");
+
+					builder.AppendLine(name);
+				}
+
+				return builder.ToString();
+			}
+
+			public string GetChangeList()
 			{
 				StringBuilder builder = new();
 

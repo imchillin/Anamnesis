@@ -125,15 +125,14 @@
 			<ItemsControl ItemsSource="{Binding TargetService.SelectedActor.History.Entries}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<StackPanel Orientation="Horizontal" Height="20">
+						<Grid>
 
-							<StackPanel.ToolTip>
-								<TextBlock Text="{Binding ChangesDisplay}"/>
-							</StackPanel.ToolTip>
+							<Grid.ToolTip>
+								<TextBlock Text="{Binding ChangeList}"/>
+							</Grid.ToolTip>
 
-							<TextBlock Text="Actor"/>
 							<TextBlock Text="{Binding Name}"/>
-						</StackPanel>
+						</Grid>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
