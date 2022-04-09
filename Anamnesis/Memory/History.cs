@@ -173,7 +173,7 @@ namespace Anamnesis.Memory
 					if (builder.Length > 0)
 						builder.Append(", ");
 
-					builder.AppendLine(name);
+					builder.Append(name);
 				}
 
 				return builder.ToString();
@@ -201,7 +201,10 @@ namespace Anamnesis.Memory
 
 				foreach (PropertyChange change in flattenedChanges.Values)
 				{
-					builder.AppendLine(change.ToString());
+					if (builder.Length > 0)
+						builder.AppendLine();
+
+					builder.Append(change.ToString());
 				}
 
 				return builder.ToString();

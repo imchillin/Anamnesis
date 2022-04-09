@@ -36,6 +36,8 @@ namespace Anamnesis.PoseModule
 
 		public static event PoseEvent? EnabledChanged;
 
+		public static string? SelectedBoneName { get; set; }
+
 		public bool IsEnabled
 		{
 			get

@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory
 {
 	using System.Collections.Generic;
+	using System.Linq;
 
 	public struct PropertyChange
 	{
@@ -54,6 +55,7 @@ namespace Anamnesis.Memory
 		public readonly BindInfo OriginBind => this.BindPath[0];
 
 		public string TerminalPropertyName => this.BindPath[0].Name;
+		public string TopPropertyName => this.BindPath.Last().Name;
 
 		public bool ShouldRecord()
 		{

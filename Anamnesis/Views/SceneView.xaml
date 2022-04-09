@@ -127,9 +127,9 @@
 					<DataTemplate>
 						<Grid>
 
-							<Grid.ToolTip>
-								<TextBlock Text="{Binding ChangeList}"/>
-							</Grid.ToolTip>
+							<!--<Grid.ToolTip>
+								<TextBlock Text="{Binding Count}"/>
+							</Grid.ToolTip>-->
 
 							<TextBlock Text="{Binding Name}"/>
 						</Grid>

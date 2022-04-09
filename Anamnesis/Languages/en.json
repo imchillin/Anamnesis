@@ -652,5 +652,7 @@
 
 	"HotkeyCategory_System": "System",
 	"Hotkey_Undo": "Undo",
-	"Hotkey_Redo": "Redo"
+	"Hotkey_Redo": "Redo",
+
+	"History_ChangeBone": "Change Bone: \"{0}\""
 }
