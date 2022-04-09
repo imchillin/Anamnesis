@@ -175,9 +175,9 @@ namespace Anamnesis.Memory
 			return this.EnableWriting;
 		}
 
-		protected void OnPropertyChanged(BindInfo bind, object? oldValue, object? newValue)
+		protected void OnPropertyChanged(BindInfo bind, object? oldValue, object? newValue, PropertyChange.Origins origin)
 		{
-			PropertyChange change = new(bind, oldValue, newValue);
+			PropertyChange change = new(bind, oldValue, newValue, origin);
 			this.HandlePropertyChanged(change);
 		}
 
@@ -209,7 +209,7 @@ namespace Anamnesis.Memory
 
 					if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
 					{
-						this.OnPropertyChanged(bind, oldVal, bind.LastValue);
+						this.OnPropertyChanged(bind, oldVal, bind.LastValue, PropertyChange.Origins.Anamnesis);
 					}
 				}
 			}
@@ -260,7 +260,7 @@ namespace Anamnesis.Memory
 
 			if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
 			{
-				this.OnPropertyChanged(bind, oldVal, bind.LastValue);
+				this.OnPropertyChanged(bind, oldVal, bind.LastValue, PropertyChange.Origins.Anamnesis);
 			}
 
 			bind.LastValue = val;
@@ -364,6 +364,8 @@ namespace Anamnesis.Memory
 					{
 						if (bindAddress == IntPtr.Zero)
 						{
+							this.OnPropertyChanged(bind, bind.Property.GetValue(this), null, PropertyChange.Origins.Game);
+
 							bind.Property.SetValue(this, null);
 							bind.LastValue = null;
 							this.Children.Remove(childMemory);
@@ -371,6 +373,7 @@ namespace Anamnesis.Memory
 						else
 						{
 							childMemory.SetAddress(bindAddress);
+							this.OnPropertyChanged(bind, bind.Property.GetValue(this), childMemory, PropertyChange.Origins.Game);
 							bind.Property.SetValue(this, childMemory);
 							bind.LastValue = childMemory;
 
@@ -410,6 +413,7 @@ namespace Anamnesis.Memory
 						bind.IsReading = true;
 					}
 
+					this.OnPropertyChanged(bind, bind.Property.GetValue(this), memValue, PropertyChange.Origins.Game);
 					bind.Property.SetValue(this, memValue);
 					bind.LastValue = memValue;
 				}

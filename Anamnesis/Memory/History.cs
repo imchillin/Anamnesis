@@ -56,6 +56,9 @@ namespace Anamnesis.Memory
 
 		public void Record(PropertyChange change)
 		{
+			if (!change.ShouldRecord())
+				return;
+
 			Log.Verbose($"Recording Change: {change}");
 
 			this.lastChangeTime = DateTime.Now;

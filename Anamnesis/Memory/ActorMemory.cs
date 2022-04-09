@@ -264,7 +264,7 @@ namespace Anamnesis.Memory
 				}
 			}
 
-			if (change.Origin.Flags.HasFlag(BindFlags.ActorRefresh))
+			if (change.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh) && change.Origin == PropertyChange.Origins.Anamnesis)
 			{
 				this.Refresh();
 			}
