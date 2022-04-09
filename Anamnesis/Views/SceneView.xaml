@@ -296,6 +296,7 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
 						<RowDefinition />
 					</Grid.RowDefinitions>
 
@@ -306,7 +307,7 @@
 							  Grid.Column="1"
 							  IsChecked="{Binding CameraService.DelimitCamera}" />
 
-					<XivToolsWpf:TextBlock Grid.Row="1"
+                        <XivToolsWpf:TextBlock Grid.Row="1"
 										   Grid.Column="0"
 										   Key="Scene_Camera_Position"
 										   Style="{StaticResource Label}" />
@@ -412,8 +413,25 @@
 										   Maximum="100"
 										   TickFrequency="1" />
 
+                    <Grid Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-					<XivToolsWpf:InfoControl Grid.RowSpan="10"
+                        <Button Grid.Column="0" Click="OnLoadCamera" Style="{StaticResource TransparentButton}">
+                            <XivToolsWpf:TextBlock Key="Common_OpenFile"/>
+                        </Button>
+
+                        <Button Grid.Column="1"  Click="OnSaveCamera" Style="{StaticResource TransparentButton}">
+                            <XivToolsWpf:TextBlock Key="Common_SaveFile"/>
+                        </Button>
+                    </Grid>
+
+                    
+
+
+                    <XivToolsWpf:InfoControl Grid.RowSpan="10"
 											 Grid.ColumnSpan="2"
 											 Key="Scene_Camera_GPoseWarn"
 											 Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" />

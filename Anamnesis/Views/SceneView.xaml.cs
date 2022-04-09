@@ -3,8 +3,11 @@
 
 namespace Anamnesis.Views
 {
+	using System;
+	using System.IO;
 	using System.Windows;
 	using System.Windows.Controls;
+	using Anamnesis.Files;
 	using Anamnesis.Services;
 	using Anamnesis.Styles.Drawers;
 	using PropertyChanged;
@@ -16,6 +19,9 @@ namespace Anamnesis.Views
 	[AddINotifyPropertyChangedInterface]
 	public partial class SceneView : UserControl
 	{
+		private static DirectoryInfo? lastLoadDir;
+		private static DirectoryInfo? lastSaveDir;
+
 		public SceneView()
 		{
 			this.InitializeComponent();
@@ -46,6 +52,54 @@ namespace Anamnesis.Views
 			{
 				this.TerritoryService.CurrentWeather = w;
 			});
+		}
+
+		private async void OnLoadCamera(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				Shortcut[]? shortcuts = new[]
+				{
+					FileService.DefaultCameraDirectory,
+				};
+
+				Type[] types = new[]
+				{
+						typeof(CameraFile),
+				};
+
+				OpenResult result = await FileService.Open(lastLoadDir, shortcuts, types);
+
+				if (result.File == null)
+					return;
+
+				lastLoadDir = result.Directory;
+
+				if (result.File is CameraFile camFile)
+				{
+					camFile.Apply(CameraService.Instance);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to load camera");
+			}
+		}
+
+		private async void OnSaveCamera(object sender, RoutedEventArgs e)
+		{
+			SaveResult result = await FileService.Save<CameraFile>(lastSaveDir, FileService.DefaultCameraDirectory);
+
+			if (result.Path == null)
+				return;
+
+			lastSaveDir = result.Directory;
+
+			CameraFile file = new CameraFile();
+			file.WriteToFile(CameraService.Instance);
+
+			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
+			file.Serialize(stream);
 		}
 	}
 }
