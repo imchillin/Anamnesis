@@ -220,7 +220,7 @@
 							<Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowsePose"/>
 
                             <XivToolsWPF:TextBlock Grid.Row="2" Grid.Column="0" Key="Settings_Dir_Cameras" Style="{StaticResource Label}"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultCameraDirectory}" IsEnabled="False"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultCameraShotsDirectory}" IsEnabled="False"/>
                             <Button Grid.Row="2" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseCamera"/>
 
                             <!--

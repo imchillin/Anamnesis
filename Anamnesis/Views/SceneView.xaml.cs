@@ -65,7 +65,7 @@ namespace Anamnesis.Views
 
 				Type[] types = new[]
 				{
-						typeof(CameraFile),
+						typeof(CameraShotFile),
 				};
 
 				OpenResult result = await FileService.Open(lastLoadDir, shortcuts, types);
@@ -75,7 +75,7 @@ namespace Anamnesis.Views
 
 				lastLoadDir = result.Directory;
 
-				if (result.File is CameraFile camFile)
+				if (result.File is CameraShotFile camFile)
 				{
 					camFile.Apply(CameraService.Instance);
 				}
@@ -88,14 +88,14 @@ namespace Anamnesis.Views
 
 		private async void OnSaveCamera(object sender, RoutedEventArgs e)
 		{
-			SaveResult result = await FileService.Save<CameraFile>(lastSaveDir, FileService.DefaultCameraDirectory);
+			SaveResult result = await FileService.Save<CameraShotFile>(lastSaveDir, FileService.DefaultCameraDirectory);
 
 			if (result.Path == null)
 				return;
 
 			lastSaveDir = result.Directory;
 
-			CameraFile file = new CameraFile();
+			CameraShotFile file = new CameraShotFile();
 			file.WriteToFile(CameraService.Instance);
 
 			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);

@@ -7,10 +7,10 @@ namespace Anamnesis.Files
 	using Anamnesis.Memory;
 
 	[Serializable]
-	public class CameraFile : JsonFileBase
+	public class CameraShotFile : JsonFileBase
 	{
-		public override string FileExtension => ".acam";
-		public override string TypeName => "Anamnesis Camera File";
+		public override string FileExtension => ".shot";
+		public override string TypeName => "Anamnesis Camera Shot";
 
 		public bool DelimitCamera { get; set; }
 		public float Zoom { get; set; }

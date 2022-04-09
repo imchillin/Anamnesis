@@ -165,13 +165,13 @@ namespace Anamnesis.GUI.Views
 		private void OnBrowseCamera(object sender, RoutedEventArgs e)
 		{
 			FolderBrowserDialog dlg = new FolderBrowserDialog();
-			dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.DefaultCameraDirectory);
+			dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.DefaultCameraShotDirectory);
 			DialogResult result = dlg.ShowDialog();
 
 			if (result != DialogResult.OK)
 				return;
 
-			SettingsService.Current.DefaultCameraDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
+			SettingsService.Current.DefaultCameraShotDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
 		}
 
 		private void OnBrowseScene(object sender, RoutedEventArgs e)
