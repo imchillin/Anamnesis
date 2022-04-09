@@ -46,6 +46,8 @@ namespace Anamnesis.PoseModule.Pages
 			this.InitializeComponent();
 
 			this.ContentArea.DataContext = this;
+
+			HistoryService.OnHistoryApplied += this.OnHistoryApplied;
 		}
 
 		public SettingsService SettingsService => SettingsService.Instance;
@@ -547,6 +549,11 @@ namespace Anamnesis.PoseModule.Pages
 			}
 
 			this.MouseCanvas.ReleaseMouseCapture();
+		}
+
+		private void OnHistoryApplied()
+		{
+			this.Skeleton?.CurrentBone?.ReadTransform();
 		}
 
 		private async Task WriteSkeletonThread()

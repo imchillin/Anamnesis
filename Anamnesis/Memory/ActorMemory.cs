@@ -10,8 +10,6 @@ namespace Anamnesis.Memory
 
 	public class ActorMemory : ActorBasicMemory
 	{
-		public readonly History History = new();
-
 		private const short RefreshDelay = 250;
 		private short refreshDelay;
 		private Task? refreshTask;
@@ -61,6 +59,8 @@ namespace Anamnesis.Memory
 		[Bind(0x19C0)] public byte CharacterModeRaw { get; set; }
 		[Bind(0x19C1)] public byte CharacterModeInput { get; set; }
 		[Bind(0x19F4)] public byte AttachmentPoint { get; set; }
+
+		public History History { get; private set; } = new();
 
 		public bool AutomaticRefreshEnabled { get; set; } = true;
 		public bool IsRefreshing { get; set; } = false;

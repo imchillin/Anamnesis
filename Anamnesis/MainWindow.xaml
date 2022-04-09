@@ -70,27 +70,33 @@
 				<TextBlock Margin="3,0,3,0"
 						   VerticalAlignment="Center"
 						   Text="{Binding TargetService.SelectedActor.DisplayName}" />
-
-				<XivToolsWpf:TextBlock Key="Error_NotInGame"
-									   Margin="12,0,3,0"
-									   VerticalAlignment="Center"
-									   Visibility="{Binding GameService.IsSignedIn, Converter={StaticResource !B2V}}" />
-
-				<XivToolsWpf:IconBlock Margin="6,0,0,0"
-									   FontWeight="Light"
-									   Foreground="{Binding TitlebarForeground}"
-									   Icon="Sync"
-									   Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
-				<XivToolsWpf:IconBlock Margin="6,0,0,0"
-									   FontWeight="Light"
-									   Foreground="{Binding TitlebarForeground}"
-									   Icon="Hourglass"
-									   Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
 			</StackPanel>
 
 			<Grid HorizontalAlignment="Right">
 
 				<StackPanel  Orientation="Horizontal">
+
+					<XivToolsWpf:TextBlock Key="Error_NotInGame"
+									   Margin="12,0,3,0"
+									   VerticalAlignment="Center"
+									   Visibility="{Binding GameService.IsSignedIn, Converter={StaticResource !B2V}}" />
+
+					<XivToolsWpf:IconBlock Margin="6,0,0,0"
+									   FontWeight="Light"
+									   Foreground="{Binding TitlebarForeground}"
+									   Icon="Sync"
+									   Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
+					<XivToolsWpf:IconBlock Margin="6,0,0,0"
+									   FontWeight="Light"
+									   Foreground="{Binding TitlebarForeground}"
+									   Icon="Hourglass"
+									   Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
+
+					<XivToolsWpf:IconBlock Margin="6,0,0,0"
+									   FontWeight="Light"
+									   Foreground="{Binding TitlebarForeground}"
+									   Icon="Undo"
+									   Visibility="{Binding TargetService.SelectedActor.History.CurrentChangeCount, Converter={StaticResource NotZeroToVisibility}, FallbackValue=Collapsed}" />
 
 					<Button Click="OnWikiClicked"
 							Background="Transparent"

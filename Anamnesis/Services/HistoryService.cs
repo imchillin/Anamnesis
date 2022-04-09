@@ -9,6 +9,12 @@ namespace Anamnesis.Services
 
 	public class HistoryService : ServiceBase<HistoryService>
 	{
+		public delegate void HistoryAppliedEvent();
+
+		public static event HistoryAppliedEvent? OnHistoryApplied;
+
+		public static bool IsRestoring { get; private set; } = false;
+
 		public override Task Initialize()
 		{
 			HotkeyService.RegisterHotkeyHandler("System.Undo", this.StepBack);
@@ -19,16 +25,34 @@ namespace Anamnesis.Services
 
 		private void StepBack()
 		{
+			this.Step(false);
+		}
+
+		private void StepForward()
+		{
+			this.Step(true);
+		}
+
+		private void Step(bool forward)
+		{
 			ActorMemory? actor = TargetService.Instance.SelectedActor;
 
 			if (actor == null)
 				return;
 
-			actor.History.StepBack();
-		}
+			IsRestoring = true;
 
-		private void StepForward()
-		{
+			if (forward)
+			{
+				actor.History.StepForward();
+			}
+			else
+			{
+				actor.History.StepBack();
+			}
+
+			OnHistoryApplied?.Invoke();
+			IsRestoring = false;
 		}
 	}
 }

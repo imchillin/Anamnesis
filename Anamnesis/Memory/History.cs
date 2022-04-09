@@ -6,8 +6,10 @@ namespace Anamnesis.Memory
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
+	using PropertyChanged;
 	using Serilog;
 
+	[AddINotifyPropertyChangedInterface]
 	public class History
 	{
 		private const int MaxHistory = 1024 * 1024; // a lot.
@@ -23,7 +25,8 @@ namespace Anamnesis.Memory
 			this.history.Push(new());
 		}
 
-		public static bool IsRestoring { get; private set; } = false;
+		public int Count { get; private set; }
+		public int CurrentChangeCount { get; private set; }
 
 		/// <summary>
 		/// Tick must be called periodically to push changes to the history stack when they are old enough.
@@ -39,6 +42,11 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		public void StepForward()
+		{
+			throw new NotImplementedException();
+		}
+
 		public void StepBack()
 		{
 			// Ensure any pending changes are comitted to be undone.
@@ -48,12 +56,10 @@ namespace Anamnesis.Memory
 			if (this.history.Count <= 0)
 				return;
 
-			IsRestoring = true;
-
 			HistoryEntry restore = this.history.Pop();
 			restore.Restore();
 
-			IsRestoring = false;
+			this.Count = this.history.Count;
 		}
 
 		public void Commit()
@@ -72,6 +78,9 @@ namespace Anamnesis.Memory
 			}
 
 			this.current = new();
+
+			this.Count = this.history.Count;
+			this.CurrentChangeCount = 0;
 		}
 
 		public void Record(PropertyChange change)
@@ -83,6 +92,8 @@ namespace Anamnesis.Memory
 
 			this.lastChangeTime = DateTime.Now;
 			this.current.Record(change);
+
+			this.CurrentChangeCount = this.current.Count;
 		}
 
 		public class HistoryEntry
@@ -92,6 +103,7 @@ namespace Anamnesis.Memory
 			private readonly List<PropertyChange> changes = new();
 
 			public bool HasChanges => this.changes.Count > 0;
+			public int Count => this.changes.Count;
 
 			public void Restore()
 			{
