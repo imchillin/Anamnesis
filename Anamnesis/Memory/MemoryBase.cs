@@ -50,6 +50,7 @@ namespace Anamnesis.Memory
 			ActorRefresh = 2,
 			DontCacheOffsets = 4,
 			OnlyInGPose = 8,
+			DontRecordHistory = 16,
 		}
 
 		[DoNotNotify]
@@ -184,11 +185,17 @@ namespace Anamnesis.Memory
 			return this.EnableWriting;
 		}
 
-		protected virtual void ActorRefresh(string propertyName)
+		protected void OnPropertyChanged(BindInfo bind, object? oldValue, object? newValue)
+		{
+			PropertyChange change = new(bind, oldValue, newValue);
+			this.HandlePropertyChanged(change);
+		}
+
+		protected virtual void HandlePropertyChanged(PropertyChange change)
 		{
 			if (this.Parent != null)
 			{
-				this.Parent.ActorRefresh(propertyName);
+				this.Parent.HandlePropertyChanged(change);
 			}
 		}
 
@@ -202,11 +209,13 @@ namespace Anamnesis.Memory
 					if (!this.CanWrite(bind))
 						continue;
 
+					object? oldVal = bind.LastValue;
+
 					this.WriteToMemory(bind);
 
-					if (bind.Flags.HasFlag(BindFlags.ActorRefresh))
+					if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
 					{
-						this.ActorRefresh(bind.Property.Name);
+						this.OnPropertyChanged(bind, oldVal, bind.LastValue);
 					}
 				}
 			}
@@ -248,15 +257,19 @@ namespace Anamnesis.Memory
 				return;
 			}
 
+			object? oldVal = bind.LastValue;
+
 			lock (this)
 			{
 				this.WriteToMemory(bind);
 			}
 
-			if (bind.Flags.HasFlag(BindFlags.ActorRefresh))
+			if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
 			{
-				this.ActorRefresh(e.PropertyName);
+				this.OnPropertyChanged(bind, oldVal, bind.LastValue);
 			}
+
+			bind.LastValue = val;
 		}
 
 		protected virtual void RaisePropertyChanged(string propertyName)
@@ -358,12 +371,14 @@ namespace Anamnesis.Memory
 						if (bindAddress == IntPtr.Zero)
 						{
 							bind.Property.SetValue(this, null);
+							bind.LastValue = null;
 							this.Children.Remove(childMemory);
 						}
 						else
 						{
 							childMemory.SetAddress(bindAddress);
 							bind.Property.SetValue(this, childMemory);
+							bind.LastValue = childMemory;
 
 							if (isNew)
 							{
@@ -402,6 +417,7 @@ namespace Anamnesis.Memory
 					}
 
 					bind.Property.SetValue(this, memValue);
+					bind.LastValue = memValue;
 				}
 
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(bind.Property.Name));
@@ -440,6 +456,7 @@ namespace Anamnesis.Memory
 					throw new Exception("Attempt to write null value to memory");
 
 				MemoryService.Write(bindAddress, val, $"memory: {this} bind: {bind} changed");
+				bind.LastValue = val;
 			}
 			catch (Exception)
 			{
@@ -515,6 +532,7 @@ namespace Anamnesis.Memory
 			public BindFlags Flags => this.Attribute.Flags;
 
 			public object? FreezeValue { get; set; }
+			public object? LastValue { get; set; }
 			public bool IsReading { get; set; } = false;
 			public bool IsWriting { get; set; } = false;
 			public IntPtr? LastFailureAddress { get; set; }

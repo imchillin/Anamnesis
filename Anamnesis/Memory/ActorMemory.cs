@@ -246,7 +246,7 @@ namespace Anamnesis.Memory
 			this.RaisePropertyChanged(nameof(this.IsPlayer));
 		}
 
-		protected override void ActorRefresh(string propertyName)
+		protected override void HandlePropertyChanged(PropertyChange change)
 		{
 			if (!this.AutomaticRefreshEnabled)
 				return;
@@ -254,13 +254,16 @@ namespace Anamnesis.Memory
 			if (this.IsRefreshing)
 			{
 				// dont refresh because of a refresh!
-				if (propertyName == nameof(this.ObjectKind) || propertyName == nameof(this.RenderMode))
+				if (change.TerminalPropertyName == nameof(this.ObjectKind) || change.TerminalPropertyName == nameof(this.RenderMode))
 				{
 					return;
 				}
 			}
 
-			this.Refresh();
+			if (change.Origin.Attribute.Flags.HasFlag(BindFlags.ActorRefresh))
+			{
+				this.Refresh();
+			}
 		}
 
 		protected override bool CanWrite(BindInfo bind)
