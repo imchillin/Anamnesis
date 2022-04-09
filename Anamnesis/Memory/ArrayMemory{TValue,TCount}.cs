@@ -149,16 +149,16 @@ namespace Anamnesis.Memory
 
 		public class ArrayBindInfo : BindInfo
 		{
-			private readonly int index;
+			public readonly int Index;
 
 			public ArrayBindInfo(MemoryBase memory, int index)
 				: base(memory)
 			{
-				this.index = index;
+				this.Index = index;
 			}
 
-			public override string Name => this.index.ToString();
-			public override string Path => $"[{this.index}]";
+			public override string Name => this.Index.ToString();
+			public override string Path => $"[{this.Index}]";
 			public override Type Type => typeof(TValue);
 			public override BindFlags Flags => BindFlags.None;
 
