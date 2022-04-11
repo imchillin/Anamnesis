@@ -61,11 +61,12 @@ namespace Anamnesis.Services
 				{
 					TargetService.Instance.ClearSelection();
 				}
-				else
+
+				/*else
 				{
 					await Task.Delay(1000);
 					TargetService.Instance.EnsureSelection();
-				}
+				}*/
 
 				await Task.Delay(16);
 			}

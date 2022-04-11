@@ -584,6 +584,7 @@
 	"Settings_GameHotkeysTooltip": "Enable the use of hotkeys even when FFXIV has focus while in GPose.\nThis will prevent FFXIV from recieving the used keys.",
 	"Settings_EnableHotkeys": "Enable Hotkeys",
 	"Settings_EnableGameHotkeys": "Enable In-Game Hotkeys",
+	"About_Title": "About Anamnesis",
 	"About_Version_Header": "Version",
 	"About_OpenSource_Header": "Proudly Open Source",
 	"About_Contact_Header": "Get in Touch",
