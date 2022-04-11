@@ -36,7 +36,15 @@ namespace Anamnesis.Memory
 			get
 			{
 				if (Process == null)
+				{
+#if DEBUG
+					if (SettingsService.Current.DebugGamePath != null)
+					{
+						return SettingsService.Current.DebugGamePath;
+					}
+#endif
 					throw new Exception("No game process");
+				}
 
 				if (Process.MainModule == null)
 					throw new Exception("Process has no main module");
@@ -388,6 +396,7 @@ namespace Anamnesis.Memory
 			await Dispatch.NonUiThread();
 
 			// if still no process, shutdown.
+#if !DEBUG
 			if (proc == null)
 			{
 				await Dispatch.MainThread();
@@ -399,6 +408,7 @@ namespace Anamnesis.Memory
 
 			this.OpenProcess(proc);
 			await AddressService.Scan();
+#endif
 			IsProcessAlive = true;
 		}
 
@@ -443,7 +453,7 @@ namespace Anamnesis.Memory
 		// Special struct for handling 1 byte bool marshaling
 		private struct OneByteBool
 		{
-			#pragma warning disable CS0649
+#pragma warning disable CS0649
 			[MarshalAs(UnmanagedType.I1)]
 			public bool Value;
 		}

@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Services
 {
+	using System;
 	using System.Threading.Tasks;
 	using Anamnesis.Core.Memory;
 	using Anamnesis.Memory;
@@ -30,6 +31,9 @@ namespace Anamnesis.Services
 
 		public static bool GetIsGPose()
 		{
+			if (AddressService.GposeCheck == IntPtr.Zero)
+				return false;
+
 			byte check1 = MemoryService.Read<byte>(AddressService.GposeCheck);
 			byte check2 = MemoryService.Read<byte>(AddressService.GposeCheck2);
 			return check1 == 1 && check2 == 4;

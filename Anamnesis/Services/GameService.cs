@@ -18,6 +18,11 @@ namespace Anamnesis.Services
 
 		public static bool GetIsSignedIn()
 		{
+#if DEBUG
+			if (MemoryService.Process == null)
+				return true;
+#endif
+
 			try
 			{
 				if (GameDataService.Territories == null)

@@ -117,6 +117,8 @@ namespace Anamnesis
 					this.CurrentTerritoryId = 0;
 					this.CurrentTerritory = null;
 					this.CurrentTerritoryName = "Unknown";
+
+					await Task.Delay(1000);
 				}
 			}
 		}

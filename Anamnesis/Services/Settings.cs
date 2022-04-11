@@ -56,6 +56,8 @@ namespace Anamnesis.Services
 
 		public DateTimeOffset LastUpdateCheck { get; set; } = DateTimeOffset.MinValue;
 
+		public string? DebugGamePath { get; set; }
+
 		public Dictionary<string, KeyCombination> KeyboardBindings { get; set; } = new()
 		{
 			{ "QuaternionEditor.RotateZPlus", new KeyCombination(Key.S) },
