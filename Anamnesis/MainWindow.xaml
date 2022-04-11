@@ -417,9 +417,12 @@
 				<Button Height="30"
 						Margin="2"
 						BorderThickness="0"
-						Click="OnAboutClick"
-						Style="{StaticResource TransparentButton}"
-						ToolTip="About">
+						Click="OnHistoryClick"
+						Style="{StaticResource TransparentButton}">
+
+					<Button.ToolTip>
+						<XivToolsWpf:TextBlock Key="System_History"/>
+					</Button.ToolTip>
 
 					<fa:IconBlock FontSize="12"
 								  Foreground="{DynamicResource MaterialDesignBody}"

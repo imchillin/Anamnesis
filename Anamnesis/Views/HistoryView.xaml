@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="Anamnesis.Views.HistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Anamnesis.Views"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 mc:Ignorable="d" 
+             Width="256">
+
+	<GroupBox x:Name="ContentArea" Style="{StaticResource Cm3GroupBox}">
+		<GroupBox.Header>
+			<StackPanel Orientation="Horizontal">
+				<XivToolsWpf:Header Icon="Undo" Key="System_History" />
+				<TextBlock Text="(" Margin="6,0,2,0"/>
+				<TextBlock Text="{Binding TargetService.SelectedActor.DisplayName}"/>
+				<TextBlock Text=")" Margin="2,0,0,0"/>
+			</StackPanel>
+		</GroupBox.Header>
+
+		<ItemsControl ItemsSource="{Binding TargetService.SelectedActor.History.Entries}">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+
+						<!--<Grid.ToolTip>
+							<TextBlock Text="{Binding Count}"/>
+						</Grid.ToolTip>-->
+
+						<TextBlock Text="{Binding Name}"/>
+					</Grid>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+	</GroupBox>
+</UserControl>

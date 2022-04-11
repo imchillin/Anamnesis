@@ -264,6 +264,11 @@ namespace Anamnesis.GUI
 			ViewService.ShowDrawer<AboutView>();
 		}
 
+		private void OnHistoryClick(object sender, RoutedEventArgs e)
+		{
+			ViewService.ShowDrawer<HistoryView>();
+		}
+
 		private void OnResizeDrag(object sender, DragDeltaEventArgs e)
 		{
 			double scale = this.WindowScale.ScaleX;
