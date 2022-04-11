@@ -5,6 +5,7 @@ namespace Anamnesis.Files
 {
 	using System;
 	using Anamnesis.Memory;
+	using Anamnesis.PoseModule;
 
 	[Serializable]
 	public class CameraShotFile : JsonFileBase
@@ -15,31 +16,44 @@ namespace Anamnesis.Files
 		public bool DelimitCamera { get; set; }
 		public float Zoom { get; set; }
 		public float FieldOfView { get; set; }
-		public Vector2D Angle { get; set; }
 		public Vector2D Pan { get; set; }
-		public float Rotation { get; set; }
 		public Vector Position { get; set; }
+		public Vector Rotation { get; set; }
 
-		public void Apply(CameraService camService)
+		public void Apply(CameraService camService, ActorMemory actor)
 		{
 			camService.DelimitCamera = this.DelimitCamera;
 			camService.Camera.Zoom = this.Zoom;
 			camService.Camera.FieldOfView = this.FieldOfView;
-			camService.Camera.Angle = this.Angle;
 			camService.Camera.Pan = this.Pan;
-			camService.Camera.Rotation = this.Rotation;
-			camService.GPoseCamera.Position = this.Position;
+
+			if (actor.ModelObject?.Transform?.Position != null)
+				camService.GPoseCamera.Position = this.Position + actor.ModelObject.Transform.Position;
+
+			if (actor.ModelObject?.Transform?.Rotation != null)
+			{
+				Vector actorEuler = actor.ModelObject.Transform.Rotation.ToEuler();
+				Vector adjusted = actorEuler + this.Rotation;
+				camService.Camera.Euler = adjusted.ToMedia3DVector();
+			}
 		}
 
-		public void WriteToFile(CameraService camService)
+		public void WriteToFile(CameraService camService, ActorMemory actor)
 		{
 			this.DelimitCamera = camService.DelimitCamera;
 			this.Zoom = camService.Camera.Zoom;
 			this.FieldOfView = camService.Camera.FieldOfView;
-			this.Angle = camService.Camera.Angle;
 			this.Pan = camService.Camera.Pan;
-			this.Rotation = camService.Camera.Rotation;
-			this.Position = camService.GPoseCamera.Position;
+
+			if (actor.ModelObject?.Transform?.Position != null)
+				this.Position = camService.GPoseCamera.Position - actor.ModelObject.Transform.Position;
+
+			if (actor.ModelObject?.Transform?.Rotation != null)
+			{
+				Vector actorEuler = actor.ModelObject.Transform.Rotation.ToEuler();
+				Vector cameraEuler = camService.Camera.Euler.ToCmVector();
+				this.Rotation = cameraEuler - actorEuler;
+			}
 		}
 	}
 }
