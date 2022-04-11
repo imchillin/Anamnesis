@@ -211,7 +211,8 @@ namespace Anamnesis
 #if DEBUG
 			if (MemoryService.Process == null)
 			{
-				await TargetService.PinActor(new DummyActor());
+				await TargetService.PinActor(new DummyActor(1));
+				await TargetService.PinActor(new DummyActor(2));
 				return;
 			}
 #endif

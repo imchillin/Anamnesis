@@ -44,7 +44,7 @@ namespace Anamnesis.Memory
 		public string? Nickname { get; set; }
 
 		[DependsOn(nameof(ObjectIndex))]
-		public bool IsGPoseActor => this.ObjectIndex >= 200 && this.ObjectIndex < 244;
+		public virtual bool IsGPoseActor => this.ObjectIndex >= 200 && this.ObjectIndex < 244;
 
 		[DependsOn(nameof(IsGPoseActor))]
 		public bool IsOverworldActor => !this.IsGPoseActor;

@@ -7,12 +7,14 @@ namespace Anamnesis.Memory
 
 	public class DummyActor : ActorMemory
 	{
-		public DummyActor()
+		public DummyActor(int id)
 		{
-			this.Address = (IntPtr)1;
+			this.Address = (IntPtr)id;
 			this.ObjectKind = ActorTypes.Player;
-			this.Nickname = "Dummy Actor";
+			this.Nickname = "Dummy Actor " + id;
 		}
+
+		public override bool IsGPoseActor => false;
 
 		public override void Tick()
 		{
