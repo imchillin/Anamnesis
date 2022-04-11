@@ -48,7 +48,6 @@
 		<!--  TitleBar  -->
 		<Grid VerticalAlignment="Top"
 			  Grid.Row="0"
-			  Height="26"
 			  Margin="0,0,150,0"
 			  TextBlock.Foreground="{Binding TitlebarForeground}">
 
@@ -74,12 +73,7 @@
 
 				<StackPanel  Orientation="Horizontal">
 
-					<XivToolsWpf:TextBlock Key="Error_NotInGame"
-									   Margin="12,0,3,0"
-									   VerticalAlignment="Center"
-									   Visibility="{Binding GameService.IsSignedIn, Converter={StaticResource !B2V}}" />
-
-					<XivToolsWpf:IconBlock Margin="6,0,0,0"
+					<!--<XivToolsWpf:IconBlock Margin="6,0,0,0"
 									   FontWeight="Light"
 									   Foreground="{Binding TitlebarForeground}"
 									   Icon="Sync"
@@ -94,21 +88,21 @@
 									   FontWeight="Light"
 									   Foreground="{Binding TitlebarForeground}"
 									   Icon="Undo"
-									   Visibility="{Binding TargetService.SelectedActor.History.CurrentChangeCount, Converter={StaticResource NotZeroToVisibility}, FallbackValue=Collapsed}" />
+									   Visibility="{Binding TargetService.SelectedActor.History.CurrentChangeCount, Converter={StaticResource NotZeroToVisibility}, FallbackValue=Collapsed}" />-->
 
 					<Button Click="OnWikiClicked"
 							Background="Transparent"
 							Foreground="{Binding TitlebarForeground}"
 							Padding="0"
 							VerticalAlignment="Top"
-							Margin="25, -5, 42, 0"
+							Margin="25, -5, 22, 0"
 							BorderThickness="0">
 
 						<Border BorderThickness="1"
 								BorderBrush="{DynamicResource PrimaryHueMidBrush}"
 								CornerRadius="0, 0, 3, 3"
 								SnapsToDevicePixels="True"
-								Height="30"
+								Height="32"
 								Width="75">
 
 							<Grid>
@@ -202,7 +196,7 @@
 
 		<Grid
 			Width="900"
-			Height="540"
+			Height="536"
 			Grid.RowSpan="2">
 
 			<Grid.LayoutTransform>
@@ -231,7 +225,7 @@
 						</ScrollViewer.Resources>
 
 						<StackPanel Orientation="Horizontal">
-							
+
 							<ToggleButton 
 								Margin="3, 3, 0, 0"
 						  		BorderThickness="0"
@@ -242,7 +236,7 @@
 								ToolTip="Settings">
 
 								<XivToolsWpf:IconBlock Icon="Cog"/>
-								
+
 							</ToggleButton>
 
 							<ItemsControl Margin="0,3,0,0" ItemsSource="{Binding TargetService.PinnedActors}" >
@@ -251,7 +245,7 @@
 										<StackPanel Orientation="Horizontal"/>
 									</ItemsPanelTemplate>
 								</ItemsControl.ItemsPanel>
-								
+
 								<ItemsControl.ItemTemplate>
 									<DataTemplate>
 										<Grid Margin="3,0">
@@ -387,16 +381,16 @@
 						<characterPages:AppearancePage DataContext="{Binding TargetService.SelectedActor}" />
 					</TabItem>
 					<TabItem x:Name="ActionTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
-                        <TabItem.Header>
-                            <fa:IconImage
+						<TabItem.Header>
+							<fa:IconImage
 								Foreground="{DynamicResource MaterialDesignBodyLight}"
 								Icon="Biking"
 								IsEnabled="{Binding GameService.IsSignedIn}"/>
-                        </TabItem.Header>
+						</TabItem.Header>
 
-                        <characterPages:ActionPage DataContext="{Binding TargetService.SelectedActor}" />
-                    </TabItem>
-                    <TabItem x:Name="PoseTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+						<characterPages:ActionPage DataContext="{Binding TargetService.SelectedActor}" />
+					</TabItem>
+					<TabItem x:Name="PoseTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 						<TabItem.Header>
 							<fa:IconImage
 								Foreground="{DynamicResource MaterialDesignBodyLight}"
@@ -406,30 +400,30 @@
 						<posePages:PosePage DataContext="{Binding TargetService.SelectedActor}" />
 					</TabItem>
 				</TabControl>
-			</Grid>
 
-			<views1:SettingsView Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}"
-								 Height="545"
-								 Margin="50, 34, 3, 3"/>
+				<StackPanel Grid.Row="1" Width="48" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
 
-			<StackPanel Width="48" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4">
-
-				<Button Height="30"
+					<Button Height="30"
 						Margin="2"
 						BorderThickness="0"
 						Click="OnHistoryClick"
 						Style="{StaticResource TransparentButton}">
 
-					<Button.ToolTip>
-						<XivToolsWpf:TextBlock Key="System_History"/>
-					</Button.ToolTip>
+						<Button.ToolTip>
+							<XivToolsWpf:TextBlock Key="System_History"/>
+						</Button.ToolTip>
 
-					<fa:IconBlock FontSize="12"
+						<fa:IconBlock FontSize="12"
 								  Foreground="{DynamicResource MaterialDesignBody}"
 								  Icon="Undo"
 								  Opacity="0.5" />
-				</Button>
-			</StackPanel>
+					</Button>
+				</StackPanel>
+			</Grid>
+
+			<views1:SettingsView Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}"
+								 Height="500"
+								 Margin="3, 28, 3, 0"/>
 
 			<!--<Grid Margin="48, 22, 1, 1" Visibility="{Binding TargetService.SelectedActor, Converter={StaticResource NullToVisibilityConverter}}">
 				<Rectangle Fill="{DynamicResource MaterialDesignPaper}" Opacity="0.9"/>
