@@ -34,18 +34,18 @@ namespace Anamnesis.Memory
 			VisorToggled = 1 << 4,
 		}
 
-		[Bind(0x008D)] public byte SubKind { get; set; } // TODO: Verify for 6.1
-		[Bind(0x0B4)] public float Scale { get; set; } // TODO: Verify for 6.1
-		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; } // TODO: Verify for 6.1
-		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; } // TODO: Verify for 6.1
-		[Bind(0x01E2)] public byte ClassJob { get; set; } // TODO: Verify for 6.1
+		[Bind(0x008D)] public byte SubKind { get; set; }
+		[Bind(0x0B4)] public float Scale { get; set; }
+		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
+		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
+		[Bind(0x01E0)] public byte ClassJob { get; set; }
 		[Bind(0x0650, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
 		[Bind(0x0658)] public ushort MountId { get; set; }
 		[Bind(0x06B0, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
-		[Bind(0x0C78)] public WeaponMemory? MainHand { get; set; } // TODO: Verify for 6.1
-		[Bind(0x0CE0)] public WeaponMemory? OffHand { get; set; } // TODO: Verify for 6.1
-		[Bind(0x0DB0)] public ActorEquipmentMemory? Equipment { get; set; } // TODO: Verify for 6.1
-		[Bind(0x0DD8)] public ActorCustomizeMemory? Customize { get; set; } // TODO: Verify for 6.1
+		[Bind(0x06D0)] public WeaponMemory? MainHand { get; set; }
+		[Bind(0x0738)] public WeaponMemory? OffHand { get; set; }
+		[Bind(0x0808)] public ActorEquipmentMemory? Equipment { get; set; }
+		[Bind(0x0830)] public ActorCustomizeMemory? Customize { get; set; }
 		[Bind(0x084E, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 		[Bind(0x0860, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 		[Bind(0x09A0)] public ushort TargetAnimation { get; set; }
@@ -55,10 +55,10 @@ namespace Anamnesis.Memory
 		[Bind(0x0B8C)] public ushort BaseAnimationOverride { get; set; }
 		[Bind(0x0B8E)] public ushort LipAnimationOverride { get; set; }
 		[Bind(0x11E4)] public bool IsMotionEnabled { get; set; }
-		[Bind(0x18B8)] public float Transparency { get; set; } // TODO: Verify for 6.1
+		[Bind(0x19E0)] public float Transparency { get; set; }
 		[Bind(0x1ABC)] public byte CharacterModeRaw { get; set; }
 		[Bind(0x1ABD)] public byte CharacterModeInput { get; set; }
-		[Bind(0x19F4)] public byte AttachmentPoint { get; set; } // TODO: Verify for 6.1
+		[Bind(0x1AE4)] public byte AttachmentPoint { get; set; }
 
 		public History History { get; private set; } = new();
 
