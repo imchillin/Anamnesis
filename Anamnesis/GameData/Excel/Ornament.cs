@@ -13,7 +13,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("Ornament", 0x6768819a)]
+	[Sheet("Ornament", 0x72256cce)]
 	public class Ornament : ExcelRow, INpcBase
 	{
 		private string? name;
@@ -43,8 +43,8 @@ namespace Anamnesis.GameData.Excel
 
 			this.ModelCharaRow = (uint)parser.ReadColumn<ushort>(0);
 			this.AttachPoint = parser.ReadColumn<byte>(1);
-			this.Icon = parser.ReadImageReference<ushort>(5);
-			this.name = parser.ReadString(7);
+			this.Icon = parser.ReadImageReference<ushort>(7);
+			this.name = parser.ReadString(9);
 		}
 
 		public INpcAppearance? GetAppearance()
