@@ -402,13 +402,16 @@ namespace Anamnesis.Memory
 				await Dispatch.MainThread();
 				App.Current.MainWindow.Close();
 				App.Current.Shutdown();
-
 				return;
 			}
-
-			this.OpenProcess(proc);
-			await AddressService.Scan();
 #endif
+
+			if(proc != null)
+			{
+				this.OpenProcess(proc);
+				await AddressService.Scan();
+			}
+
 			IsProcessAlive = true;
 		}
 

@@ -34,31 +34,31 @@ namespace Anamnesis.Memory
 			VisorToggled = 1 << 4,
 		}
 
-		[Bind(0x008D)] public byte SubKind { get; set; }
-		[Bind(0x0B4)] public float Scale { get; set; }
-		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
-		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
-		[Bind(0x01E2)] public byte ClassJob { get; set; }
-		[Bind(0x07C4)] public bool IsMotionEnabled { get; set; }
-		[Bind(0x0C30, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
-		[Bind(0x0C38)] public ushort MountId { get; set; }
-		[Bind(0x0C58, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
-		[Bind(0x0C78)] public WeaponMemory? MainHand { get; set; }
-		[Bind(0x0CE0)] public WeaponMemory? OffHand { get; set; }
-		[Bind(0x0DB0)] public ActorEquipmentMemory? Equipment { get; set; }
-		[Bind(0x0DD8)] public ActorCustomizeMemory? Customize { get; set; }
-		[Bind(0x0DF6, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
-		[Bind(0x0E08, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
-		[Bind(0x0F30)] public ushort TargetAnimation { get; set; }
-		[Bind(0x0FA4)] public float BaseAnimationSpeedInternal { get; set; }
-		[Bind(0x0FA8)] public float AnimationSpeedTrigger { get; set; }
-		[Bind(0x0FC0)] public float LipAnimationSpeedInternal { get; set; }
-		[Bind(0x110C)] public ushort BaseAnimationOverride { get; set; }
-		[Bind(0x110E)] public ushort LipAnimationOverride { get; set; }
-		[Bind(0x18B8)] public float Transparency { get; set; }
-		[Bind(0x19C0)] public byte CharacterModeRaw { get; set; }
-		[Bind(0x19C1)] public byte CharacterModeInput { get; set; }
-		[Bind(0x19F4)] public byte AttachmentPoint { get; set; }
+		[Bind(0x008D)] public byte SubKind { get; set; } // TODO: Verify for 6.1
+		[Bind(0x0B4)] public float Scale { get; set; } // TODO: Verify for 6.1
+		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; } // TODO: Verify for 6.1
+		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; } // TODO: Verify for 6.1
+		[Bind(0x01E2)] public byte ClassJob { get; set; } // TODO: Verify for 6.1
+		[Bind(0x0650, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
+		[Bind(0x0658)] public ushort MountId { get; set; }
+		[Bind(0x06B0, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
+		[Bind(0x0C78)] public WeaponMemory? MainHand { get; set; } // TODO: Verify for 6.1
+		[Bind(0x0CE0)] public WeaponMemory? OffHand { get; set; } // TODO: Verify for 6.1
+		[Bind(0x0DB0)] public ActorEquipmentMemory? Equipment { get; set; } // TODO: Verify for 6.1
+		[Bind(0x0DD8)] public ActorCustomizeMemory? Customize { get; set; } // TODO: Verify for 6.1
+		[Bind(0x084E, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+		[Bind(0x0860, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
+		[Bind(0x09A0)] public ushort TargetAnimation { get; set; }
+		[Bind(0x0A14)] public float BaseAnimationSpeedInternal { get; set; }
+		[Bind(0x0A18)] public float AnimationSpeedTrigger { get; set; }
+		[Bind(0x0A30)] public float LipAnimationSpeedInternal { get; set; }
+		[Bind(0x0B8C)] public ushort BaseAnimationOverride { get; set; }
+		[Bind(0x0B8E)] public ushort LipAnimationOverride { get; set; }
+		[Bind(0x11E4)] public bool IsMotionEnabled { get; set; }
+		[Bind(0x18B8)] public float Transparency { get; set; } // TODO: Verify for 6.1
+		[Bind(0x1ABC)] public byte CharacterModeRaw { get; set; }
+		[Bind(0x1ABD)] public byte CharacterModeInput { get; set; }
+		[Bind(0x19F4)] public byte AttachmentPoint { get; set; } // TODO: Verify for 6.1
 
 		public History History { get; private set; } = new();
 
