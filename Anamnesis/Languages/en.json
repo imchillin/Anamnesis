@@ -72,7 +72,7 @@
 	"EquipmentSelector_ForceMainModel": "Force main hand model",
 	"EquipmentSelector_ForceMainModelTooltip": "Use the main hand model instead of the off hand model.",
 	"EquipmentSelector_ForceOffModel": "Force off hand model",
-	"EquipmentSelector_ForceOffModelTooltip": "Use the off hand model instead of the off hand model.",
+	"EquipmentSelector_ForceOffModelTooltip": "Use the off hand model instead of the main hand model.",
 
 	"EquipmentSelector_FilterOther": "Other",
 	"EquipmentSelector_Categories": "Categories",
@@ -562,7 +562,7 @@
 	"Settings_Directories": "Directories",
 	"Settings_Dir_Characters": "Characters",
 	"Settings_Dir_Poses": "Poses",
-	"Settings_Dir_Cameras": "Cameras",
+	"Settings_Dir_CameraShots": "Cam Shots",
 	"Settings_Dir_Scenes": "Scenes",
 	"Settings_GalleryHeader": "Gallery",
 	"Settings_Gallery": "Mode",

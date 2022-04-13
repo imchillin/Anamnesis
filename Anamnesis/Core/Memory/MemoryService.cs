@@ -186,7 +186,7 @@ namespace Anamnesis.Memory
 
 			if (type == typeof(bool))
 			{
-				buffer = new[] { (byte)((bool)value == true ? 1 : 255) };
+				buffer = new[] { (byte)((bool)value == true ? 1 : 0) };
 			}
 			else if (type == typeof(byte))
 			{
