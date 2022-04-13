@@ -19,9 +19,9 @@ namespace Anamnesis.Memory
 		public bool EnableReading = true;
 		public bool EnableWriting = true;
 
-		protected readonly List<MemoryBase> Children = new List<MemoryBase>();
-		private readonly Dictionary<string, BindInfo> binds = new Dictionary<string, BindInfo>();
-		private readonly HashSet<BindInfo> delayedBinds = new HashSet<BindInfo>();
+		protected readonly List<MemoryBase> Children = new();
+		private readonly Dictionary<string, PropertyBindInfo> binds = new();
+		private readonly HashSet<BindInfo> delayedBinds = new();
 
 		public MemoryBase()
 		{
@@ -35,22 +35,13 @@ namespace Anamnesis.Memory
 				if (attribute == null)
 					continue;
 
-				this.binds.Add(property.Name, new BindInfo(this, property, attribute));
+				this.binds.Add(property.Name, new PropertyBindInfo(this, property, attribute));
 			}
 
 			this.PropertyChanged += this.OnSelfPropertyChanged;
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public enum BindFlags
-		{
-			None = 0,
-			Pointer = 1,
-			ActorRefresh = 2,
-			DontCacheOffsets = 4,
-			OnlyInGPose = 8,
-		}
 
 		[DoNotNotify]
 		public MemoryBase? Parent { get; set; }
@@ -129,7 +120,7 @@ namespace Anamnesis.Memory
 
 		public IntPtr GetAddressOfProperty(string propertyName)
 		{
-			BindInfo? bind;
+			PropertyBindInfo? bind;
 			if (!this.binds.TryGetValue(propertyName, out bind))
 				throw new Exception("Attempt to get address of property that is not a bind");
 
@@ -138,7 +129,7 @@ namespace Anamnesis.Memory
 
 		protected bool IsFrozen(string propertyName)
 		{
-			BindInfo? bind;
+			PropertyBindInfo? bind;
 			if (!this.binds.TryGetValue(propertyName, out bind))
 				throw new Exception("Attempt to freeze value that is not a bind");
 
@@ -147,7 +138,7 @@ namespace Anamnesis.Memory
 
 		protected void SetFrozen(string propertyName, bool freeze, object? value = null)
 		{
-			BindInfo? bind;
+			PropertyBindInfo? bind;
 			if (!this.binds.TryGetValue(propertyName, out bind))
 				throw new Exception("Attempt to freeze value that is not a bind");
 
@@ -184,11 +175,21 @@ namespace Anamnesis.Memory
 			return this.EnableWriting;
 		}
 
-		protected virtual void ActorRefresh(string propertyName)
+		protected void OnPropertyChanged(BindInfo bind, object? oldValue, object? newValue, PropertyChange.Origins origin)
+		{
+			PropertyChange change = new(bind, oldValue, newValue, origin);
+			this.HandlePropertyChanged(change);
+		}
+
+		protected virtual void HandlePropertyChanged(PropertyChange change)
 		{
 			if (this.Parent != null)
 			{
-				this.Parent.ActorRefresh(propertyName);
+				if (this.ParentBind == null)
+					throw new Exception("Parent was not null, but parent bind was!");
+
+				change.AddPath(this.ParentBind);
+				this.Parent.HandlePropertyChanged(change);
 			}
 		}
 
@@ -196,17 +197,20 @@ namespace Anamnesis.Memory
 		{
 			lock (this)
 			{
-				foreach (BindInfo bind in this.delayedBinds)
+				foreach (PropertyBindInfo bind in this.delayedBinds)
 				{
 					// If we still cant write this bind, just skip it.
 					if (!this.CanWrite(bind))
 						continue;
 
+					object? oldVal = bind.LastValue;
+
 					this.WriteToMemory(bind);
 
-					if (bind.Flags.HasFlag(BindFlags.ActorRefresh))
+					if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
 					{
-						this.ActorRefresh(bind.Property.Name);
+						var origin = HistoryService.IsRestoring ? PropertyChange.Origins.History : PropertyChange.Origins.User;
+						this.OnPropertyChanged(bind, oldVal, bind.LastValue, origin);
 					}
 				}
 			}
@@ -224,7 +228,7 @@ namespace Anamnesis.Memory
 			if (string.IsNullOrEmpty(e.PropertyName))
 				return;
 
-			BindInfo? bind;
+			PropertyBindInfo? bind;
 			if (!this.binds.TryGetValue(e.PropertyName, out bind))
 				return;
 
@@ -248,15 +252,20 @@ namespace Anamnesis.Memory
 				return;
 			}
 
+			object? oldVal = bind.LastValue;
+
 			lock (this)
 			{
 				this.WriteToMemory(bind);
 			}
 
-			if (bind.Flags.HasFlag(BindFlags.ActorRefresh))
+			if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
 			{
-				this.ActorRefresh(e.PropertyName);
+				var origin = HistoryService.IsRestoring ? PropertyChange.Origins.History : PropertyChange.Origins.User;
+				this.OnPropertyChanged(bind, oldVal, bind.LastValue, origin);
 			}
+
+			bind.LastValue = val;
 		}
 
 		protected virtual void RaisePropertyChanged(string propertyName)
@@ -271,7 +280,7 @@ namespace Anamnesis.Memory
 
 			lock (this)
 			{
-				foreach (BindInfo bind in this.binds.Values)
+				foreach (PropertyBindInfo bind in this.binds.Values)
 				{
 					if (bind.IsChildMemory)
 						continue;
@@ -289,7 +298,7 @@ namespace Anamnesis.Memory
 					}
 				}
 
-				foreach (BindInfo bind in this.binds.Values)
+				foreach (PropertyBindInfo bind in this.binds.Values)
 				{
 					if (!bind.IsChildMemory)
 						continue;
@@ -309,7 +318,7 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		private void ReadFromMemory(BindInfo bind)
+		private void ReadFromMemory(PropertyBindInfo bind)
 		{
 			if (!this.CanRead(bind))
 				return;
@@ -357,13 +366,18 @@ namespace Anamnesis.Memory
 					{
 						if (bindAddress == IntPtr.Zero)
 						{
+							this.OnPropertyChanged(bind, bind.Property.GetValue(this), null, PropertyChange.Origins.Game);
+
 							bind.Property.SetValue(this, null);
+							bind.LastValue = null;
 							this.Children.Remove(childMemory);
 						}
 						else
 						{
 							childMemory.SetAddress(bindAddress);
+							this.OnPropertyChanged(bind, bind.Property.GetValue(this), childMemory, PropertyChange.Origins.Game);
 							bind.Property.SetValue(this, childMemory);
+							bind.LastValue = childMemory;
 
 							if (isNew)
 							{
@@ -401,7 +415,9 @@ namespace Anamnesis.Memory
 						bind.IsReading = true;
 					}
 
+					this.OnPropertyChanged(bind, bind.Property.GetValue(this), memValue, PropertyChange.Origins.Game);
 					bind.Property.SetValue(this, memValue);
+					bind.LastValue = memValue;
 				}
 
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(bind.Property.Name));
@@ -417,7 +433,7 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		private void WriteToMemory(BindInfo bind)
+		private void WriteToMemory(PropertyBindInfo bind)
 		{
 			if (!this.CanWrite(bind))
 				return;
@@ -440,6 +456,7 @@ namespace Anamnesis.Memory
 					throw new Exception("Attempt to write null value to memory");
 
 				MemoryService.Write(bindAddress, val, $"memory: {this} bind: {bind} changed");
+				bind.LastValue = val;
 			}
 			catch (Exception)
 			{
@@ -449,136 +466,6 @@ namespace Anamnesis.Memory
 			{
 				this.IsWriting = false;
 				bind.IsWriting = false;
-			}
-		}
-
-		[AttributeUsage(AttributeTargets.Property)]
-		public class BindAttribute : Attribute
-		{
-			public readonly int[]? Offsets;
-			public readonly BindFlags Flags;
-			public readonly string? OffsetPropertyName;
-
-			public BindAttribute(int offset)
-			{
-				this.Offsets = new[] { offset };
-			}
-
-			public BindAttribute(string offsetProperty)
-			{
-				this.OffsetPropertyName = offsetProperty;
-			}
-
-			public BindAttribute(int offset, BindFlags flags)
-			{
-				this.Offsets = new[] { offset };
-				this.Flags = flags;
-			}
-
-			public BindAttribute(int offset, int offset2, BindFlags flags)
-			{
-				this.Offsets = new[] { offset, offset2 };
-				this.Flags = flags;
-			}
-
-			public BindAttribute(int offset, int offset2, int offset3, BindFlags flags)
-			{
-				this.Offsets = new[] { offset, offset2, offset3 };
-				this.Flags = flags;
-			}
-		}
-
-		public class BindInfo
-		{
-			public readonly MemoryBase Memory;
-			public readonly PropertyInfo Property;
-			public readonly BindAttribute Attribute;
-			public readonly PropertyInfo? OffsetProperty;
-
-			private int[]? offsets;
-
-			public BindInfo(MemoryBase memory, PropertyInfo property, BindAttribute attribute)
-			{
-				this.Memory = memory;
-				this.Property = property;
-				this.Attribute = attribute;
-
-				if (attribute.OffsetPropertyName != null)
-				{
-					Type memoryType = memory.GetType();
-					this.OffsetProperty = memoryType.GetProperty(attribute.OffsetPropertyName);
-				}
-			}
-
-			public string Name => this.Property.Name;
-			public Type Type => this.Property.PropertyType;
-			public BindFlags Flags => this.Attribute.Flags;
-
-			public object? FreezeValue { get; set; }
-			public bool IsReading { get; set; } = false;
-			public bool IsWriting { get; set; } = false;
-			public IntPtr? LastFailureAddress { get; set; }
-
-			public bool IsChildMemory => typeof(MemoryBase).IsAssignableFrom(this.Type);
-
-			public IntPtr GetAddress()
-			{
-				if (this.offsets == null)
-					this.offsets = this.GetOffsets();
-
-				IntPtr bindAddress = this.Memory.Address + this.offsets[0];
-
-				if (this.offsets.Length > 1 && !this.Flags.HasFlag(BindFlags.Pointer))
-					throw new Exception("Bind address has multiple offsets but is not a pointer. This is not supported.");
-
-				if (typeof(MemoryBase).IsAssignableFrom(this.Type))
-				{
-					if (this.Flags.HasFlag(BindFlags.Pointer))
-					{
-						bindAddress = MemoryService.Read<IntPtr>(bindAddress);
-
-						for (int i = 1; i < this.offsets.Length; i++)
-						{
-							bindAddress += this.offsets[i];
-							bindAddress = MemoryService.Read<IntPtr>(bindAddress);
-						}
-					}
-				}
-				else if (this.Flags.HasFlag(BindFlags.Pointer))
-				{
-					bindAddress = MemoryService.Read<IntPtr>(bindAddress);
-				}
-
-				if (this.Flags.HasFlag(BindFlags.DontCacheOffsets))
-					this.offsets = null;
-
-				return bindAddress;
-			}
-
-			public int[] GetOffsets()
-			{
-				if (this.Attribute.Offsets != null)
-					return this.Attribute.Offsets;
-
-				if (this.OffsetProperty != null)
-				{
-					object? offsetValue = this.OffsetProperty.GetValue(this.Memory);
-
-					if (offsetValue is int[] offsetInts)
-						return offsetInts;
-
-					if (offsetValue is int offset)
-						return new int[] { offset };
-
-					throw new Exception($"Unknown offset type: {offsetValue} bind: {this}");
-				}
-
-				throw new Exception($"No offsets for bind: {this}");
-			}
-
-			public override string ToString()
-			{
-				return $"Bind: {this.Name} ({this.Type})";
 			}
 		}
 	}

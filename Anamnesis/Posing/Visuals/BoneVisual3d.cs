@@ -238,6 +238,9 @@ namespace Anamnesis.PoseModule
 			if (!this.IsEnabled)
 				return;
 
+			if (HistoryService.IsRestoring)
+				return;
+
 			foreach (TransformMemory transformMemory in this.TransformMemories)
 			{
 				transformMemory.EnableReading = false;

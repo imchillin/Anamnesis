@@ -33,6 +33,7 @@ namespace Anamnesis.GUI
 		private static MainWindow? instance;
 		private MiniWindow? mini;
 		private bool hasSetPosition = false;
+		private bool showSettings;
 
 		public MainWindow()
 		{
@@ -43,6 +44,7 @@ namespace Anamnesis.GUI
 			this.DataContext = this;
 
 			ViewService.ShowingDrawer += this.OnShowDrawer;
+			TargetService.ActorSelected += this.OnActorSelected;
 
 			SettingsService.SettingsChanged += this.OnSettingsChanged;
 			this.OnSettingsChanged();
@@ -75,8 +77,14 @@ namespace Anamnesis.GUI
 
 		public bool ShowSettings
 		{
-			get;
-			set;
+			get => this.showSettings;
+			set
+			{
+				if (value)
+					this.TargetService.ClearSelection();
+
+				this.showSettings = this.TargetService.SelectedActor == null;
+			}
 		}
 
 		protected override void OnActivated(EventArgs e)
@@ -149,6 +157,11 @@ namespace Anamnesis.GUI
 			}
 		}
 
+		private void OnActorSelected(ActorMemory? actor)
+		{
+			this.ShowSettings = false;
+		}
+
 		private async Task OnShowDrawer(UserControl view, DrawerDirection direction)
 		{
 			await Application.Current.Dispatcher.InvokeAsync(async () =>
@@ -171,32 +184,32 @@ namespace Anamnesis.GUI
 				switch (direction)
 				{
 					case DrawerDirection.Left:
-					{
-						this.DrawerLeft.Content = view;
-						this.DrawerHost.IsLeftDrawerOpen = true;
-						break;
-					}
+						{
+							this.DrawerLeft.Content = view;
+							this.DrawerHost.IsLeftDrawerOpen = true;
+							break;
+						}
 
 					case DrawerDirection.Top:
-					{
-						this.DrawerTop.Content = view;
-						this.DrawerHost.IsTopDrawerOpen = true;
-						break;
-					}
+						{
+							this.DrawerTop.Content = view;
+							this.DrawerHost.IsTopDrawerOpen = true;
+							break;
+						}
 
 					case DrawerDirection.Right:
-					{
-						this.DrawerRight.Content = view;
-						this.DrawerHost.IsRightDrawerOpen = true;
-						break;
-					}
+						{
+							this.DrawerRight.Content = view;
+							this.DrawerHost.IsRightDrawerOpen = true;
+							break;
+						}
 
 					case DrawerDirection.Bottom:
-					{
-						this.DrawerBottom.Content = view;
-						this.DrawerHost.IsBottomDrawerOpen = true;
-						break;
-					}
+						{
+							this.DrawerBottom.Content = view;
+							this.DrawerHost.IsBottomDrawerOpen = true;
+							break;
+						}
 				}
 
 				// Wait while any of the drawer areas remain open
@@ -249,6 +262,11 @@ namespace Anamnesis.GUI
 			}
 
 			ViewService.ShowDrawer<AboutView>();
+		}
+
+		private void OnHistoryClick(object sender, RoutedEventArgs e)
+		{
+			ViewService.ShowDrawer<HistoryView>();
 		}
 
 		private void OnResizeDrag(object sender, DragDeltaEventArgs e)
@@ -344,14 +362,13 @@ namespace Anamnesis.GUI
 			if (SettingsService.Instance.FirstTimeUser)
 			{
 				this.Ftue.Visibility = Visibility.Visible;
-				ViewService.ShowDrawer<SettingsView>();
+				this.ShowSettings = true;
 			}
 		}
 
 		private void OnFtueOkClicked(object sender, RoutedEventArgs e)
 		{
 			this.Ftue.Visibility = Visibility.Collapsed;
-			this.DrawerHost.IsRightDrawerOpen = false;
 		}
 
 		private void OnWikiClicked(object sender, RoutedEventArgs e)

@@ -59,6 +59,10 @@ namespace Anamnesis
 				}
 
 				ActorMemory memory = new();
+
+				if (basicActor is ActorMemory actorMemory)
+					memory = actorMemory;
+
 				memory.SetAddress(basicActor.Address);
 				PinnedActor pined = new PinnedActor(memory);
 
@@ -203,6 +207,15 @@ namespace Anamnesis
 			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned8", () => this.SelectActor(7));
 			HotkeyService.RegisterHotkeyHandler("TargetService.NextPinned", () => this.NextPinned());
 			HotkeyService.RegisterHotkeyHandler("TargetService.PrevPinned", () => this.PrevPinned());
+
+#if DEBUG
+			if (MemoryService.Process == null)
+			{
+				await TargetService.PinActor(new DummyActor(1));
+				await TargetService.PinActor(new DummyActor(2));
+				return;
+			}
+#endif
 
 			if (GameService.GetIsSignedIn())
 			{
@@ -358,6 +371,9 @@ namespace Anamnesis
 
 		public void SelectActor(ActorMemory? actor)
 		{
+			if (this.SelectedActor == actor)
+				return;
+
 			this.SelectedActor = actor;
 			ActorSelected?.Invoke(actor);
 		}
@@ -370,6 +386,7 @@ namespace Anamnesis
 		private async void OnGposeStateChanged(bool isGPose)
 		{
 			await this.Retarget();
+			this.EnsureSelection();
 		}
 
 		private async Task TickPinnedActors()
@@ -540,6 +557,15 @@ namespace Anamnesis
 
 			private void Retarget()
 			{
+#if DEBUG
+				if (MemoryService.Process == null)
+				{
+					this.IsValid = true;
+					this.IsRetargeting = false;
+					return;
+				}
+#endif
+
 				lock (this)
 				{
 					this.IsRetargeting = true;

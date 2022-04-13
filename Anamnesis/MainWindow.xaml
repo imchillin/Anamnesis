@@ -48,15 +48,18 @@
 		<!--  TitleBar  -->
 		<Grid VerticalAlignment="Top"
 			  Grid.Row="0"
-			  Height="26"
 			  Margin="0,0,150,0"
 			  TextBlock.Foreground="{Binding TitlebarForeground}">
 
-			<StackPanel HorizontalAlignment="Left"
+			<Border Background="{StaticResource MaterialDesignPaper}"
+					Margin="0, 1, 0, 0"
+					CornerRadius="0, 6, 0, 0"
+					   IsHitTestVisible="False"
+					   Visibility="{Binding SettingsService.Settings.EnableTranslucency, Converter={StaticResource !B2V}}"/>
+
+			<!--<StackPanel HorizontalAlignment="Left"
 						Orientation="Horizontal"
 						IsHitTestVisible="False">
-
-				<!--<views:MenuView />-->
 
 				<TextBlock Margin="12,0,3,0"
 						   VerticalAlignment="Center"
@@ -70,41 +73,42 @@
 				<TextBlock Margin="3,0,3,0"
 						   VerticalAlignment="Center"
 						   Text="{Binding TargetService.SelectedActor.DisplayName}" />
-
-				<XivToolsWpf:TextBlock Key="Error_NotInGame"
-									   Margin="12,0,3,0"
-									   VerticalAlignment="Center"
-									   Visibility="{Binding GameService.IsSignedIn, Converter={StaticResource !B2V}}" />
-
-				<XivToolsWpf:IconBlock Margin="6,0,0,0"
-									   FontWeight="Light"
-									   Foreground="{Binding TitlebarForeground}"
-									   Icon="Sync"
-									   Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
-				<XivToolsWpf:IconBlock Margin="6,0,0,0"
-									   FontWeight="Light"
-									   Foreground="{Binding TitlebarForeground}"
-									   Icon="Hourglass"
-									   Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
-			</StackPanel>
+			</StackPanel>-->
 
 			<Grid HorizontalAlignment="Right">
 
 				<StackPanel  Orientation="Horizontal">
+
+					<!--<XivToolsWpf:IconBlock Margin="6,0,0,0"
+									   FontWeight="Light"
+									   Foreground="{Binding TitlebarForeground}"
+									   Icon="Sync"
+									   Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
+					<XivToolsWpf:IconBlock Margin="6,0,0,0"
+									   FontWeight="Light"
+									   Foreground="{Binding TitlebarForeground}"
+									   Icon="Hourglass"
+									   Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
+
+					<XivToolsWpf:IconBlock Margin="6,0,0,0"
+									   FontWeight="Light"
+									   Foreground="{Binding TitlebarForeground}"
+									   Icon="Undo"
+									   Visibility="{Binding TargetService.SelectedActor.History.CurrentChangeCount, Converter={StaticResource NotZeroToVisibility}, FallbackValue=Collapsed}" />-->
 
 					<Button Click="OnWikiClicked"
 							Background="Transparent"
 							Foreground="{Binding TitlebarForeground}"
 							Padding="0"
 							VerticalAlignment="Top"
-							Margin="25, -5, 42, 0"
+							Margin="25, -5, 22, 0"
 							BorderThickness="0">
 
 						<Border BorderThickness="1"
 								BorderBrush="{DynamicResource PrimaryHueMidBrush}"
 								CornerRadius="0, 0, 3, 3"
 								SnapsToDevicePixels="True"
-								Height="30"
+								Height="32"
 								Width="75">
 
 							<Grid>
@@ -153,6 +157,14 @@
 						</ToggleButton>
 					</StackPanel>
 
+					<Button Width="28" Style="{StaticResource TransparentButton}" BorderThickness="0" Click="OnAboutClick">
+						<Button.ToolTip>
+							<XivToolsWpf:TextBlock Key="About_Title"/>
+						</Button.ToolTip>
+						
+						<XivToolsWpf:IconBlock Icon="InfoCircle"/>
+					</Button>
+
 					<ToggleButton Width="28"
 								  Margin="3,0,0,0"
 								  BorderThickness="0"
@@ -190,17 +202,150 @@
 
 		<Grid
 			Width="900"
-			Height="500"
-			Grid.Row="1">
+			Height="536"
+			Grid.RowSpan="2">
 
 			<Grid.LayoutTransform>
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5" />
 			</Grid.LayoutTransform>
 
-			<Grid IsEnabled="{Binding GposeService.IsNotChangingState}" Margin="3,0,3,3"
-				  Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
-				<TabControl x:Name="Tabs" TabStripPlacement="Left">
+			<Grid IsEnabled="{Binding GposeService.IsNotChangingState}" Margin="3,0,3,3">
 
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+
+				<!-- Pinned Actors -->
+				<Grid Grid.ColumnSpan="2" Grid.Row="0" Margin="0, 0, 0, -4">
+					<ScrollViewer
+						HorizontalAlignment="Left"
+						MaxWidth="528"
+						HorizontalScrollBarVisibility="Auto"
+						VerticalScrollBarVisibility="Disabled">
+
+						<ScrollViewer.Resources>
+							<system:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">
+								5
+							</system:Double>
+						</ScrollViewer.Resources>
+
+						<StackPanel Orientation="Horizontal">
+
+							<ToggleButton 
+								Margin="3, 3, 0, 0"
+						  		BorderThickness="0"
+								Height="32"
+								Width="32"
+								Style="{StaticResource TransparentIconToggleButton}"
+								IsChecked="{Binding ShowSettings}"
+								ToolTip="Settings">
+
+								<XivToolsWpf:IconBlock Icon="Cog"/>
+
+							</ToggleButton>
+
+							<ItemsControl Margin="0,3,0,0" ItemsSource="{Binding TargetService.PinnedActors}" >
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel Orientation="Horizontal"/>
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<Grid Margin="3,0">
+											<ToggleButton Height="32"
+														  MinWidth="64"
+													  	  IsChecked="{Binding IsSelected}"
+														  PreviewMouseUp="OnActorPinPreviewMouseUp"
+														  Style="{DynamicResource TransparentIconToggleButton}"
+														  Margin="0, 0, -4, 0">
+
+												<ToggleButton.ContextMenu>
+													<ContextMenu>
+														<MenuItem Click="OnUnpinActorClicked" Header="Unpin" />
+
+														<MenuItem Visibility="{Binding IsValid, Converter={StaticResource B2V}}" 
+																  Click="OnTargetActorClicked"
+																  Header="Target" />
+													</ContextMenu>
+												</ToggleButton.ContextMenu>
+
+												<StackPanel Orientation="Horizontal">
+
+													<Grid Margin="3, 0"
+														  Width="15"
+														  Height="15">
+
+														<XivToolsWpf:IconBlock Margin="2,1,1,2"
+																	  Icon="{Binding Icon}"
+																	  Visibility="{Binding IsValid, Converter={StaticResource B2V}}"/>
+
+
+														<XivToolsWpf:IconBlock Margin="2,1,1,2"
+																	  Icon="TimesCircle"
+																	  Foreground="Red"
+																	  Visibility="{Binding IsValid, Converter={StaticResource !B2V}}"/>
+													</Grid>
+
+													<XivToolsWpf:IconBlock FontSize="10" Margin="3, 0, 3, 0" Icon="Camera"
+																  Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"/>
+
+													<TextBlock Margin="3,0,0,2"
+														HorizontalAlignment="Center"
+														VerticalAlignment="Center"
+														FontSize="14"
+														FontWeight="SemiBold"
+														Text="{Binding Initials}" />
+
+												</StackPanel>
+
+												<ToggleButton.ToolTip>
+													<StackPanel>
+														<TextBlock>
+															<TextBlock.Text>
+																<MultiBinding StringFormat="{}{0} ({1})">
+																	<Binding Path="DisplayName" />
+																	<Binding Path="Kind" />
+																</MultiBinding>
+															</TextBlock.Text>
+														</TextBlock>
+
+														<TextBlock Text="This actor could not be found" Visibility="{Binding IsValid, Converter={StaticResource !B2V}}" />
+
+													</StackPanel>
+												</ToggleButton.ToolTip>
+
+											</ToggleButton>
+										</Grid>
+
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+
+							<Button
+								Click="OnAddActorClicked"
+								MinWidth="32"
+								Height="28"
+								Background="Transparent"
+								Margin="4,5,0,0"
+								VerticalAlignment="Top"
+								Foreground="{DynamicResource PrimaryHueMidBrush}"
+								Style="{DynamicResource TransparentButton}"
+								BorderThickness="0">
+								<StackPanel Orientation="Horizontal" Margin="6,0,6,0">
+									<XivToolsWpf:TextBlock Key="Target_AddActor" Margin="0, 0, 6, 0" FontWeight="Bold" 
+														   Visibility="{Binding TargetService.PinnedActors.Count, Converter={StaticResource IsZeroToVisibility}}"/>
+									<fa:IconBlock FontSize="12" Icon="Plus" />
+								</StackPanel>
+							</Button>
+						</StackPanel>
+
+					</ScrollViewer>
+				</Grid>
+
+				<TabControl x:Name="Tabs" Grid.Row="1" Height="500" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
 					<TabControl.Template>
 						<ControlTemplate TargetType="TabControl">
 
@@ -210,147 +355,17 @@
 									<ColumnDefinition />
 								</Grid.ColumnDefinitions>
 
-								<Grid Grid.RowSpan="2" Grid.Column="0">
+								<StackPanel
+									Grid.Column="0"
+									Margin="3,1,0,0"
+									HorizontalAlignment="Left"
+									IsItemsHost="true"
+									Orientation="Vertical" />
 
-									<Grid Width="47"
-										  Margin="0, 6, 0, 0">
-
-										<Grid.RowDefinitions>
-											<RowDefinition Height="Auto" />
-											<RowDefinition />
-											<RowDefinition Height="Auto" />
-										</Grid.RowDefinitions>
-
-										<ScrollViewer
-											Grid.Row="0"
-											MaxHeight="275"
-											HorizontalScrollBarVisibility="Disabled"
-											VerticalScrollBarVisibility="Auto">
-
-											<ScrollViewer.Resources>
-												<system:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">
-													5
-												</system:Double>
-											</ScrollViewer.Resources>
-
-											<StackPanel Orientation="Vertical">
-												<ItemsControl Margin="0,2,0,2" ItemsSource="{Binding TargetService.PinnedActors}">
-													<ItemsControl.ItemTemplate>
-														<DataTemplate>
-															<Grid Margin="0,3">
-																<ToggleButton
-																	Width="32"
-																	Height="32"
-																	IsChecked="{Binding IsSelected}"
-																	PreviewMouseUp="OnActorPinPreviewMouseUp"
-																	Style="{DynamicResource RoundToggleButton}">
-
-																	<ToggleButton.ContextMenu>
-																		<ContextMenu>
-																			<MenuItem Click="OnUnpinActorClicked"
-																					  Header="Unpin" />
-
-																			<MenuItem Visibility="{Binding IsValid, Converter={StaticResource B2V}}" 
-																					  Click="OnTargetActorClicked"
-																					  Header="Target" />
-																		</ContextMenu>
-																	</ToggleButton.ContextMenu>
-
-																	<TextBlock
-																		Margin="0,0,0,2"
-																		HorizontalAlignment="Center"
-																		VerticalAlignment="Center"
-																		FontSize="14"
-																		FontWeight="SemiBold"
-																		Text="{Binding Initials}" />
-
-																	<ToggleButton.ToolTip>
-																		<StackPanel>
-																			<TextBlock>
-																				<TextBlock.Text>
-																					<MultiBinding StringFormat="{}{0} ({1})">
-																						<Binding Path="DisplayName" />
-																						<Binding Path="Kind" />
-																					</MultiBinding>
-																				</TextBlock.Text>
-																			</TextBlock>
-
-																			<TextBlock Text="This actor could not be found" Visibility="{Binding IsValid, Converter={StaticResource !B2V}}" />
-
-																		</StackPanel>
-																	</ToggleButton.ToolTip>
-
-																</ToggleButton>
-
-																<Ellipse
-																	Width="32"
-																	Height="32"
-																	Stroke="Red"
-																	StrokeThickness="1"
-																	Visibility="{Binding IsValid, Converter={StaticResource !B2V}}" />
-
-																<Grid
-																	Width="15"
-																	Height="15"
-																	Margin="0,-4,4,0"
-																	HorizontalAlignment="Right"
-																	VerticalAlignment="Top"
-																	Visibility="{Binding IsValid, Converter={StaticResource B2V}}">
-																	<Ellipse Fill="{DynamicResource PrimaryHueMidBrush}" />
-																	<fa:IconImage
-																		Margin="2,1,1,2"
-																		Foreground="Black"
-																		Icon="{Binding Icon}" />
-																</Grid>
-
-																<Grid
-																	Width="15"
-																	Height="15"
-																	Margin="0,-4,4,0"
-																	HorizontalAlignment="Right"
-																	VerticalAlignment="Bottom"
-																	Visibility="{Binding IsValid, Converter={StaticResource B2V}}">
-																	<Ellipse Fill="{DynamicResource PrimaryHueMidBrush}" Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}" />
-																	<fa:IconImage
-																		Margin="2,1,1,2"
-																		Foreground="Black"
-																		Icon="Camera"
-																		Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"/>
-																</Grid>
-															</Grid>
-
-														</DataTemplate>
-													</ItemsControl.ItemTemplate>
-												</ItemsControl>
-
-												<Button
-													Click="OnAddActorClicked"
-													Width="32"
-													Height="32"
-													Background="Transparent"
-													Foreground="{DynamicResource PrimaryHueMidBrush}"
-													Style="{DynamicResource MaterialDesignFloatingActionButton}">
-													<fa:IconBlock FontSize="12" Icon="Plus" />
-												</Button>
-											</StackPanel>
-
-										</ScrollViewer>
-
-										<StackPanel
-											Grid.Row="1"
-											Margin="3,12,0,0"
-											HorizontalAlignment="Left"
-											IsItemsHost="true"
-											Orientation="Vertical" />
-									</Grid>
-								</Grid>
-
-								<Grid Grid.Column="1">
-									<ContentPresenter
-										Grid.Row="1"
-										Margin="0,0,0,0"
-										ContentSource="SelectedContent" />
-								</Grid>
+								<ContentPresenter
+									Grid.Column="1"
+									Margin="0,0,0,0"
+									ContentSource="SelectedContent" />
 
 							</Grid>
 						</ControlTemplate>
@@ -377,16 +392,16 @@
 						<characterPages:AppearancePage DataContext="{Binding TargetService.SelectedActor}" />
 					</TabItem>
 					<TabItem x:Name="ActionTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
-                        <TabItem.Header>
-                            <fa:IconImage
+						<TabItem.Header>
+							<fa:IconImage
 								Foreground="{DynamicResource MaterialDesignBodyLight}"
 								Icon="Biking"
 								IsEnabled="{Binding GameService.IsSignedIn}"/>
-                        </TabItem.Header>
+						</TabItem.Header>
 
-                        <characterPages:ActionPage DataContext="{Binding TargetService.SelectedActor}" />
-                    </TabItem>
-                    <TabItem x:Name="PoseTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+						<characterPages:ActionPage DataContext="{Binding TargetService.SelectedActor}" />
+					</TabItem>
+					<TabItem x:Name="PoseTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 						<TabItem.Header>
 							<fa:IconImage
 								Foreground="{DynamicResource MaterialDesignBodyLight}"
@@ -396,55 +411,30 @@
 						<posePages:PosePage DataContext="{Binding TargetService.SelectedActor}" />
 					</TabItem>
 				</TabControl>
+
+				<StackPanel Grid.Row="1" Width="48" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
+
+					<Button Height="30"
+						Margin="2"
+						BorderThickness="0"
+						Click="OnHistoryClick"
+						Style="{StaticResource TransparentButton}">
+
+						<Button.ToolTip>
+							<XivToolsWpf:TextBlock Key="System_History"/>
+						</Button.ToolTip>
+
+						<fa:IconBlock FontSize="12"
+								  Foreground="{DynamicResource MaterialDesignBody}"
+								  Icon="Undo"
+								  Opacity="0.5" />
+					</Button>
+				</StackPanel>
 			</Grid>
 
 			<views1:SettingsView Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}"
-								 Margin="50, 0, 3, 3"/>
-
-			<StackPanel Width="48" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="4"
-						Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}">
-				
-				<Button Height="32"
-						Margin="2"
-						BorderThickness="0"
-						Style="{StaticResource TransparentButton}"
-						Click="OnBackClicked">
-
-					<fa:IconBlock FontSize="12"
-								  Foreground="{DynamicResource MaterialDesignBody}"
-								  Icon="ArrowLeft"
-								  Opacity="0.5" />
-				</Button>
-				
-			</StackPanel>
-			
-			<StackPanel Width="48" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4">
-				<Button Height="32"
-						Margin="2"
-						BorderThickness="0"
-						Click="OnAboutClick"
-						Style="{StaticResource TransparentButton}"
-						ToolTip="About">
-					
-					<fa:IconBlock FontSize="12"
-								  Foreground="{DynamicResource MaterialDesignBody}"
-								  Icon="Info"
-								  Opacity="0.5" />
-				</Button>
-
-				<ToggleButton Height="42"
-							  Margin="2"
-						  	  BorderThickness="0"
-						      Style="{StaticResource TabToggle}"
-							  IsChecked="{Binding ShowSettings}"
-							  ToolTip="Settings">
-					
-					<fa:IconBlock FontSize="16"
-								  Foreground="{DynamicResource MaterialDesignBody}"
-								  Icon="Cog"
-								  Opacity="0.5" />
-				</ToggleButton>
-			</StackPanel>
+								 Height="500"
+								 Margin="3, 28, 3, 0"/>
 
 			<!--<Grid Margin="48, 22, 1, 1" Visibility="{Binding TargetService.SelectedActor, Converter={StaticResource NullToVisibilityConverter}}">
 				<Rectangle Fill="{DynamicResource MaterialDesignPaper}" Opacity="0.9"/>
@@ -485,10 +475,6 @@
 
 			<Border
 				x:Name="Ftue"
-				Width="604"
-				Height="497"
-				Margin="0, 0, 290, 0"
-				VerticalAlignment="Top"
 				Background="{StaticResource MaterialDesignBackground}"
 				BorderThickness="1"
 				Visibility="Collapsed">
@@ -529,8 +515,8 @@
 					<Image
 						Grid.RowSpan="2"
 						Grid.Column="0"
-						Margin="10, 10, 0, 0"
-						Width="64"
+						Margin="32, 32, 0, 0"
+						Width="128"
 						HorizontalAlignment="Left"
 						VerticalAlignment="Top"
 						Source=".\Assets\Hydaelyn.png" />

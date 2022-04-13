@@ -22,7 +22,7 @@ namespace Anamnesis.Windows
 			if (Application.Current == null)
 				return;
 
-			if (ex.SourceException is ErrorException)
+			if (ex.SourceException is ErrorException || ex.SourceException?.InnerException is ErrorException)
 				return;
 
 			await Dispatch.MainThread();

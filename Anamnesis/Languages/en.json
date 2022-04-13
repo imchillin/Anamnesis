@@ -50,6 +50,7 @@
 	"Shortcut_FfxivAppearance": "FFXIV saved appearances",
 	"Shortcut_Desktop": "Desktop",
 
+	"Target_AddActor":  "Add Actor",
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",
 	"Target_Npc": "NPCs",
@@ -71,7 +72,7 @@
 	"EquipmentSelector_ForceMainModel": "Force main hand model",
 	"EquipmentSelector_ForceMainModelTooltip": "Use the main hand model instead of the off hand model.",
 	"EquipmentSelector_ForceOffModel": "Force off hand model",
-	"EquipmentSelector_ForceOffModelTooltip": "Use the off hand model instead of the off hand model.",
+	"EquipmentSelector_ForceOffModelTooltip": "Use the off hand model instead of the main hand model.",
 
 	"EquipmentSelector_FilterOther": "Other",
 	"EquipmentSelector_Categories": "Categories",
@@ -107,6 +108,8 @@
 	"Scene_World_Day": "Day",
 	"Scene_World_Weather": "Weather",
 
+	"System_History": "History",
+
 	"Scene_Camera_Header": "Camera",
 	"Scene_Camera_Delimit": "Delimit",
 	"Scene_Camera_Position": "Position",
@@ -128,7 +131,8 @@
 	"Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
 	"Character_Load_CMTool": "CMTool save",
 
-	"Character_SearchNpcAppearances": "Search for NPC appearances that match this page",
+	"Character_SearchNpcAppearances": "Search for this NPC",
+	"Character_SearchNpcAppearancesTooltip": "Search for Battle and Event NPCs that use the selected appearance. Used to generate NPCNames list entries.",
 
 	"Character_Appearance_LoadNpc": "NPC",
 	"Character_Appearance_LoadObject": "Object",
@@ -558,6 +562,7 @@
 	"Settings_Directories": "Directories",
 	"Settings_Dir_Characters": "Characters",
 	"Settings_Dir_Poses": "Poses",
+	"Settings_Dir_CameraShots": "Cam Shots",
 	"Settings_Dir_Scenes": "Scenes",
 	"Settings_GalleryHeader": "Gallery",
 	"Settings_Gallery": "Mode",
@@ -568,7 +573,9 @@
 	"Settings_Theme_Override": "Override system theme",
 	"Settings_Theme_Light": "Light Mode",
 	"Settings_Theme_Color": "Color",
-	"Settings_Hyperlegible": "Use Atkinson Hyperlegible font",
+	"Settings_Font": "Font",
+	"Settings_Font_Hyperlegible": "Atkinson Hyperlegible",
+	"Settings_Font_Default": "Default",
 	"Settings_OverlayWindow": "Mini window",
 	"Settings_WrapRotations": "Wrap rotation sliders",
 	"Settings_DefaultAuthor": "Default Author Name",
@@ -578,6 +585,7 @@
 	"Settings_GameHotkeysTooltip": "Enable the use of hotkeys even when FFXIV has focus while in GPose.\nThis will prevent FFXIV from recieving the used keys.",
 	"Settings_EnableHotkeys": "Enable Hotkeys",
 	"Settings_EnableGameHotkeys": "Enable In-Game Hotkeys",
+	"About_Title": "About Anamnesis",
 	"About_Version_Header": "Version",
 	"About_OpenSource_Header": "Proudly Open Source",
 	"About_Contact_Header": "Get in Touch",
@@ -642,6 +650,11 @@
 	"Hotkey_SceneTab": "View Scene Tab",
 	"Hotkey_AppearanceTab": "View Appearance Tab",
 	"Hotkey_PoseTab": "View Pose Tab",
-	"Hotkey_ActionTab": "View Action Tab"
+	"Hotkey_ActionTab": "View Action Tab",
 
+	"HotkeyCategory_System": "System",
+	"Hotkey_Undo": "Undo",
+	"Hotkey_Redo": "Redo",
+
+	"History_ChangeBone": "Change Bone: \"{0}\""
 }

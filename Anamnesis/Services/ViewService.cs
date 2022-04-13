@@ -68,6 +68,17 @@ namespace Anamnesis.Services
 			return ShowingDrawer.Invoke(control, direction);
 		}
 
+		public static Task ShowDialog<TView>(string title)
+			where TView : IDialog
+		{
+			UserControl? userControl = CreateView<TView>();
+
+			if (userControl is TView view)
+				return ShowDialog<TView>(title, view);
+
+			throw new InvalidOperationException();
+		}
+
 		public static Task<TResult> ShowDialog<TView, TResult>(string title)
 			where TView : IDialog<TResult>
 		{
@@ -91,6 +102,26 @@ namespace Anamnesis.Services
 			}
 
 			throw new InvalidOperationException();
+		}
+
+		public static Task ShowDialog<TView>(string title, TView view)
+			where TView : IDialog
+		{
+			Dialog dlg = new Dialog();
+			dlg.ContentArea.Content = view;
+			dlg.TitleText.Text = title;
+			dlg.Owner = App.Current.MainWindow;
+
+			IDialog? dialogInterface = dlg.ContentArea.Content as IDialog;
+
+			if (dialogInterface == null)
+				throw new Exception("Dialog interface not found");
+
+			dialogInterface.Close += () => dlg.Close();
+
+			dlg.ShowDialog();
+
+			return Task.CompletedTask;
 		}
 
 		public static Task<TResult> ShowDialog<TView, TResult>(string title, TView view)

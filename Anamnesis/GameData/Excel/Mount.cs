@@ -16,7 +16,7 @@ namespace Anamnesis.GameData.Excel
 
 	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-	[Sheet("Mount", 0x85fb1418)]
+	[Sheet("Mount", 0x8885ae41)]
 	public class Mount : ExcelRow, INpcBase
 	{
 		private string? name;

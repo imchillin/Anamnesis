@@ -18,6 +18,11 @@ namespace Anamnesis.Services
 
 		public static bool GetIsSignedIn()
 		{
+#if DEBUG
+			if (MemoryService.Process == null)
+				return true;
+#endif
+
 			try
 			{
 				if (GameDataService.Territories == null)
@@ -56,11 +61,12 @@ namespace Anamnesis.Services
 				{
 					TargetService.Instance.ClearSelection();
 				}
-				else
+
+				/*else
 				{
 					await Task.Delay(1000);
 					TargetService.Instance.EnsureSelection();
-				}
+				}*/
 
 				await Task.Delay(16);
 			}

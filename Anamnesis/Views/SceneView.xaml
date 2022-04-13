@@ -17,6 +17,7 @@
 		  Visibility="{Binding DataContext, Converter={StaticResource NotNullToVisibilityConverter}}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="300" />
 		</Grid.ColumnDefinitions>
 
@@ -110,7 +111,7 @@
 			</Grid>
 		</Grid>
 
-		<Grid Grid.Column="1"
+		<Grid Grid.Column="2"
 			  IsEnabled="{Binding GameService.IsSignedIn}">
 
 			<Grid.RowDefinitions>
@@ -296,6 +297,7 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
 						<RowDefinition />
 					</Grid.RowDefinitions>
 
@@ -306,7 +308,7 @@
 							  Grid.Column="1"
 							  IsChecked="{Binding CameraService.DelimitCamera}" />
 
-					<XivToolsWpf:TextBlock Grid.Row="1"
+                        <XivToolsWpf:TextBlock Grid.Row="1"
 										   Grid.Column="0"
 										   Key="Scene_Camera_Position"
 										   Style="{StaticResource Label}" />
@@ -412,8 +414,13 @@
 										   Maximum="100"
 										   TickFrequency="1" />
 
+					<Menu Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource AnaMenu}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+						<MenuItem Header="Common_OpenFile" Icon="FolderOpen" Click="OnLoadCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
+						<MenuItem Header="Common_SaveFile" Icon="Save" Click="OnSaveCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
+					</Menu>
 
-					<XivToolsWpf:InfoControl Grid.RowSpan="10"
+
+                    <XivToolsWpf:InfoControl Grid.RowSpan="10"
 											 Grid.ColumnSpan="2"
 											 Key="Scene_Camera_GPoseWarn"
 											 Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" />
