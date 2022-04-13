@@ -386,6 +386,7 @@ namespace Anamnesis
 		private async void OnGposeStateChanged(bool isGPose)
 		{
 			await this.Retarget();
+			this.EnsureSelection();
 		}
 
 		private async Task TickPinnedActors()
