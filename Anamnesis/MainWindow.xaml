@@ -320,14 +320,19 @@
 
 							<Button
 								Click="OnAddActorClicked"
-								Width="32"
+								MinWidth="32"
 								Height="28"
 								Background="Transparent"
-								Margin="4,0,0,0"
+								Margin="4,5,0,0"
+								VerticalAlignment="Top"
 								Foreground="{DynamicResource PrimaryHueMidBrush}"
 								Style="{DynamicResource TransparentButton}"
 								BorderThickness="0">
-								<fa:IconBlock FontSize="12" Icon="Plus" />
+								<StackPanel Orientation="Horizontal" Margin="6,0,6,0">
+									<XivToolsWpf:TextBlock Key="Target_AddActor" Margin="0, 0, 6, 0" FontWeight="Bold" 
+														   Visibility="{Binding TargetService.PinnedActors.Count, Converter={StaticResource IsZeroToVisibility}}"/>
+									<fa:IconBlock FontSize="12" Icon="Plus" />
+								</StackPanel>
 							</Button>
 						</StackPanel>
 
