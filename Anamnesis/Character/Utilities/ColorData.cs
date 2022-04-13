@@ -108,6 +108,10 @@ namespace Anamnesis.Character.Utilities
 		private static Entry[] Span(int from, int count)
 		{
 			Entry[] entries = new Entry[count];
+
+			if (Colors.Length <= 0)
+				return entries;
+
 			Array.Copy(Colors, from, entries, 0, count);
 			return entries;
 		}
