@@ -71,7 +71,7 @@
 	"EquipmentSelector_ForceMainModel": "Force main hand model",
 	"EquipmentSelector_ForceMainModelTooltip": "Use the main hand model instead of the off hand model.",
 	"EquipmentSelector_ForceOffModel": "Force off hand model",
-	"EquipmentSelector_ForceOffModelTooltip": "Use the off hand model instead of the off hand model.",
+	"EquipmentSelector_ForceOffModelTooltip": "Use the off hand model instead of the main hand model.",
 
 	"EquipmentSelector_FilterOther": "Other",
 	"EquipmentSelector_Categories": "Categories",
