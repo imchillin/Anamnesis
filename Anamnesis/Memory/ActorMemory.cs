@@ -30,8 +30,9 @@ namespace Anamnesis.Memory
 		public enum CharacterFlagDefs : byte
 		{
 			None = 0,
-			HatHidden = 1 << 0,
-			VisorToggled = 1 << 4,
+			WeaponsVisible = 1 << 1,
+			WeaponsDrawn = 1 << 2,
+			VisorToggled = 1 << 3,
 		}
 
 		[Bind(0x008D)] public byte SubKind { get; set; }
@@ -46,7 +47,8 @@ namespace Anamnesis.Memory
 		[Bind(0x0738)] public WeaponMemory? OffHand { get; set; }
 		[Bind(0x0808)] public ActorEquipmentMemory? Equipment { get; set; }
 		[Bind(0x0830)] public ActorCustomizeMemory? Customize { get; set; }
-		[Bind(0x084E, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+		[Bind(0x084E, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
+		[Bind(0x084F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 		[Bind(0x0860, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 		[Bind(0x09A0)] public ushort TargetAnimation { get; set; }
 		[Bind(0x0A14)] public float BaseAnimationSpeedInternal { get; set; }
@@ -89,23 +91,6 @@ namespace Anamnesis.Memory
 
 		[DependsOn(nameof(Companion))]
 		public bool HasCompanion => this.Companion != null;
-
-		[DependsOn(nameof(CharacterFlags))]
-		public bool HatHidden
-		{
-			get => this.CharacterFlags.HasFlag(CharacterFlagDefs.HatHidden);
-			set
-			{
-				if (value)
-				{
-					this.CharacterFlags |= CharacterFlagDefs.HatHidden;
-				}
-				else
-				{
-					this.CharacterFlags &= ~CharacterFlagDefs.HatHidden;
-				}
-			}
-		}
 
 		[DependsOn(nameof(CharacterFlags))]
 		public bool VisorToggled
