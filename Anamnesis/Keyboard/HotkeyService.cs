@@ -21,12 +21,7 @@ namespace Anamnesis.Keyboard
 		private static readonly Dictionary<string, List<Handler>> FunctionToHandlers = new();
 		private static readonly Dictionary<(Key, ModifierKeys), string> KeyToFunction = new();
 
-		public enum KeyBehavior
-		{
-			Handled,
-			Unhandled,
-			Blocked,
-		}
+		private static HashSet<Key> keyDownSentToGame = new();
 
 		public static void RegisterHotkeyHandler(string function, Action callback)
 		{
@@ -126,25 +121,32 @@ namespace Anamnesis.Keyboard
 
 		private bool OnKeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 		{
-			KeyBehavior behavior = this.HandleKey(key, state, modifiers);
+			bool handled = this.HandleKey(key, state, modifiers);
+
+			// was key pressed when we _had_ focus?
 
 			// Forward any unused keys to ffxiv if Anamnesis has focus
-			if (behavior == KeyBehavior.Unhandled && MainWindow.IsActive && !(Keyboard.FocusedElement is TextBoxBase))
+			if (!handled && !(Keyboard.FocusedElement is TextBoxBase))
 			{
-				MemoryService.SendKey(key, state);
+				if (MainWindow.IsActive && state == KeyboardKeyStates.Pressed)
+				{
+					keyDownSentToGame.Add(key);
+					MemoryService.SendKey(key, state);
+				}
+				else if (state == KeyboardKeyStates.Released && keyDownSentToGame.Contains(key))
+				{
+					keyDownSentToGame.Remove(key);
+					MemoryService.SendKey(key, state);
+				}
 			}
 
-			return behavior == KeyBehavior.Handled;
+			return handled;
 		}
 
-		private KeyBehavior HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
+		private bool HandleKey(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 		{
-			// Never intercept the tab key
-			if (key == Key.Tab)
-				return KeyBehavior.Blocked;
-
 			if (!SettingsService.Current.EnableHotkeys)
-				return KeyBehavior.Unhandled;
+				return false;
 
 			// Only process the hotkeys if we have focus but not to a text box.
 			bool processInputs = MainWindow.IsActive && !(Keyboard.FocusedElement is TextBoxBase);
@@ -154,27 +156,27 @@ namespace Anamnesis.Keyboard
 				processInputs = true;
 
 			if (!processInputs)
-				return KeyBehavior.Unhandled;
+				return false;
 
 			var dicKey = (key, modifiers);
 
 			if (!KeyToFunction.ContainsKey(dicKey))
-				return KeyBehavior.Unhandled;
+				return false;
 
 			string func = KeyToFunction[dicKey];
 
 			if (!FunctionToHandlers.ContainsKey(func))
-				return KeyBehavior.Unhandled;
+				return false;
 
 			foreach (Handler handler in FunctionToHandlers[func])
 			{
 				if (handler.Invoke(state))
 				{
-					return KeyBehavior.Handled;
+					return true;
 				}
 			}
 
-			return KeyBehavior.Unhandled;
+			return false;
 		}
 
 		public class Handler
