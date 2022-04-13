@@ -51,6 +51,12 @@
 			  Margin="0,0,150,0"
 			  TextBlock.Foreground="{Binding TitlebarForeground}">
 
+			<Border Background="{StaticResource MaterialDesignPaper}"
+					Margin="0, 1, 0, 0"
+					CornerRadius="0, 6, 0, 0"
+					   IsHitTestVisible="False"
+					   Visibility="{Binding SettingsService.Settings.EnableTranslucency, Converter={StaticResource !B2V}}"/>
+
 			<!--<StackPanel HorizontalAlignment="Left"
 						Orientation="Horizontal"
 						IsHitTestVisible="False">
