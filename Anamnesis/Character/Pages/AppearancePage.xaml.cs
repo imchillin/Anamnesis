@@ -49,9 +49,6 @@ namespace Anamnesis.Character.Pages
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			if (!this.IsVisible)
-				return;
-
 			this.OnActorChanged(this.DataContext as ActorMemory);
 		}
 
