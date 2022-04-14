@@ -369,6 +369,7 @@ namespace Anamnesis
 			{
 				// Raise the event in case the underlying memory changed
 				this.RaisePropertyChanged(nameof(TargetService.CurrentlyPinned));
+				this.RaisePropertyChanged(nameof(TargetService.SelectedActor));
 				return;
 			}
 
