@@ -60,6 +60,7 @@ namespace Anamnesis.GUI
 		public static new bool IsActive => instance?.GetIsActive() ?? false;
 
 		public bool IsClosing { get; private set; } = false;
+		public bool IsDrawerOpen { get; private set; } = false;
 
 		public GameService GameService => GameService.Instance;
 		public SettingsService SettingsService => SettingsService.Instance;
@@ -181,6 +182,8 @@ namespace Anamnesis.GUI
 					drawer.Close += () => this.DrawerHost.IsBottomDrawerOpen = false;
 				}
 
+				this.IsDrawerOpen = true;
+
 				switch (direction)
 				{
 					case DrawerDirection.Left:
@@ -226,32 +229,11 @@ namespace Anamnesis.GUI
 					drawer2.OnClosed();
 				}
 
+				this.IsDrawerOpen = false;
+
 				GC.Collect();
 			});
 		}
-
-		/*private async void OnSettingsClick(object sender, RoutedEventArgs e)
-		{
-			if (this.DrawerHost.IsRightDrawerOpen)
-			{
-				this.DrawerHost.IsRightDrawerOpen = false;
-				return;
-			}
-
-			if (PoseService.Exists && PoseService.Instance.IsEnabled)
-			{
-				bool? result = await GenericDialog.ShowLocalizedAsync("Pose_WarningQuit", "Common_Confirm", MessageBoxButton.OKCancel);
-
-				if (result != true)
-				{
-					return;
-				}
-
-				PoseService.Instance.IsEnabled = false;
-			}
-
-			await ViewService.ShowDrawer<SettingsView>();
-		}*/
 
 		private void OnAboutClick(object sender, RoutedEventArgs e)
 		{

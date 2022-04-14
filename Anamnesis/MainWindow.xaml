@@ -77,7 +77,7 @@
 
 			<Grid HorizontalAlignment="Right">
 
-				<StackPanel  Orientation="Horizontal">
+				<StackPanel  Orientation="Horizontal" Margin="0, 2, 0, 0">
 
 					<!--<XivToolsWpf:IconBlock Margin="6,0,0,0"
 									   FontWeight="Light"
@@ -157,7 +157,7 @@
 						</ToggleButton>
 					</StackPanel>
 
-					<Button Width="28" Style="{StaticResource TransparentButton}" BorderThickness="0" Click="OnAboutClick">
+					<Button Width="28" Style="{StaticResource TransparentIconButton}" Click="OnAboutClick">
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="About_Title"/>
 						</Button.ToolTip>
@@ -217,7 +217,7 @@
 				</Grid.RowDefinitions>
 
 				<!-- Pinned Actors -->
-				<Grid Grid.ColumnSpan="2" Grid.Row="0" Margin="0, 0, 0, -4">
+				<Grid Grid.ColumnSpan="2" Grid.Row="0" Margin="0, 0, 0, -4" IsEnabled="{Binding IsDrawerOpen, Converter={StaticResource !B}}">
 					<ScrollViewer
 						HorizontalAlignment="Left"
 						MaxWidth="528"
@@ -444,9 +444,8 @@
 			<!--  Drawer flyouts  -->
 			<materialdesign:DrawerHost
 				x:Name="DrawerHost"
-				Margin="1"
-				Grid.Row="0"
-				Grid.RowSpan="2"
+				Margin="1, 33, 1, 1"
+				Grid.Row="1"
 				Grid.Column="0"
 				Grid.ColumnSpan="2">
 				<materialdesign:DrawerHost.RightDrawerContent>
