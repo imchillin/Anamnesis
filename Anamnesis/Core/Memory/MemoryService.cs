@@ -289,7 +289,7 @@ namespace Anamnesis.Memory
 		/// <summary>
 		/// Open the PC game process with all security and access rights.
 		/// </summary>
-		public void OpenProcess(Process process)
+		public async Task OpenProcess(Process process)
 		{
 			Process = process;
 
@@ -310,7 +310,7 @@ namespace Anamnesis.Memory
 			if (gameVer != VersionInfo.ValidatedGameVersion)
 			{
 				Log.Warning($"Unrecognized game version: {gameVer}. Current validated version is: {VersionInfo.ValidatedGameVersion}");
-				GenericDialog.ShowLocalized("Error_WrongVersion", "Error_WrongVersionTitle");
+				await GenericDialog.ShowLocalizedAsync("Error_WrongVersion", "Error_WrongVersionTitle");
 			}
 
 			Handle = OpenProcess(0x001F0FFF, true, process.Id);
@@ -408,7 +408,7 @@ namespace Anamnesis.Memory
 
 			if(proc != null)
 			{
-				this.OpenProcess(proc);
+				await this.OpenProcess(proc);
 				await AddressService.Scan();
 			}
 

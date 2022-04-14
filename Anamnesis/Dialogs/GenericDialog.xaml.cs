@@ -34,7 +34,7 @@ namespace Anamnesis.GUI.Dialogs
 			Task.Run(() => ShowLocalizedAsync(messageKey, captionKey, MessageBoxButton.OK));
 		}
 
-		public static Task<bool?> ShowLocalizedAsync(string messageKey, string captionKey, MessageBoxButton buttons)
+		public static Task<bool?> ShowLocalizedAsync(string messageKey, string captionKey, MessageBoxButton buttons = MessageBoxButton.OK)
 		{
 			string message = LocalizationService.GetString(messageKey, true);
 			string caption = LocalizationService.GetString(captionKey, true);
