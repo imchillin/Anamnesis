@@ -67,17 +67,22 @@ namespace Anamnesis.Services
 
 		private void OnGposeStateChanged(bool isGPose)
 		{
-			// Restore the original types to all the pinned actors we changed previously.
-			foreach (var actor in this.actors)
+			Task.Run(async () =>
 			{
-				actor.RestoreFromNpc();
-			}
+				await Task.Delay(1000);
 
-			// Once we're fully back out of gpose, clear the tracked actors
-			if (!isGPose)
-			{
-				this.actors.Clear();
-			}
+				// Restore the original types to all the pinned actors we changed previously.
+				foreach (var actor in this.actors)
+				{
+					actor.RestoreFromNpc();
+				}
+
+				// Once we're fully back out of gpose, clear the tracked actors
+				if (!isGPose)
+				{
+					this.actors.Clear();
+				}
+			});
 		}
 
 		private class Actor
@@ -107,7 +112,15 @@ namespace Anamnesis.Services
 
 			public void RestoreFromNpc()
 			{
-				IntPtr newTypeAddress = this.Memory.GetAddressOfProperty(nameof(ActorBasicMemory.ObjectKind));
+				var memory = this.Pinned.GetMemory();
+
+				if (memory == null)
+					throw new Exception("Unable to get memory from pinned actor");
+
+				IntPtr newTypeAddress = memory.GetAddressOfProperty(nameof(ActorBasicMemory.ObjectKind));
+
+				if (newTypeAddress == this.OriginalTypeAddress)
+					Log.Error($"Failed to change gpose actor type to {this.OriginalType}. Memory has not updated.");
 
 				MemoryService.Write(newTypeAddress, this.OriginalType, "NPC face hack restore (new)");
 				MemoryService.Write(this.OriginalTypeAddress, this.OriginalType, "NPC face hack restore (original)");
