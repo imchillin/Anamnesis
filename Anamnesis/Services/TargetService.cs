@@ -32,8 +32,12 @@ namespace Anamnesis
 
 		public ActorBasicMemory PlayerTarget { get; private set; } = new();
 		public bool IsPlayerTargetPinnable => this.PlayerTarget.Address != IntPtr.Zero && this.PlayerTarget.ObjectKind.IsSupportedType();
-		public ActorMemory? SelectedActor { get; private set; }
+
+		public PinnedActor? CurrentlyPinned { get; private set; }
 		public ObservableCollection<PinnedActor> PinnedActors { get; set; } = new ObservableCollection<PinnedActor>();
+
+		[DependsOn(nameof(CurrentlyPinned))]
+		public ActorMemory? SelectedActor => this.CurrentlyPinned?.Memory;
 
 		public static async Task PinActor(ActorBasicMemory basicActor)
 		{
@@ -97,7 +101,7 @@ namespace Anamnesis
 				}
 				else
 				{
-					Instance.SelectActor((ActorMemory?)null);
+					Instance.SelectActor(null);
 				}
 			}
 
@@ -260,7 +264,7 @@ namespace Anamnesis
 
 			App.Current.Dispatcher.Invoke(() =>
 			{
-				this.SelectedActor = null;
+				this.CurrentlyPinned = null;
 
 				foreach (PinnedActor actor in this.PinnedActors)
 				{
@@ -293,7 +297,7 @@ namespace Anamnesis
 
 			App.Current.Dispatcher.Invoke(() =>
 			{
-				this.SelectedActor = null;
+				this.CurrentlyPinned = null;
 				this.PinnedActors.Clear();
 			});
 		}
@@ -301,7 +305,7 @@ namespace Anamnesis
 		public async Task Retarget()
 		{
 			await Dispatch.MainThread();
-			this.SelectedActor = null;
+			this.CurrentlyPinned = null;
 
 			if (this.PinnedActors.Count > 0)
 			{
@@ -359,23 +363,23 @@ namespace Anamnesis
 			this.SelectActor(selectedIndex);
 		}
 
-		public void SelectActor(PinnedActor actor)
+		public void SelectActor(PinnedActor? actor)
 		{
-			this.SelectActor(actor.GetMemory());
+			if(this.CurrentlyPinned == actor)
+			{
+				// Raise the event in case the underlying memory changed
+				this.RaisePropertyChanged(nameof(TargetService.CurrentlyPinned));
+				return;
+			}
+
+			this.CurrentlyPinned = actor;
+
+			ActorSelected?.Invoke(actor?.Memory);
 
 			foreach (PinnedActor ac in this.PinnedActors)
 			{
 				ac.SelectionChanged();
 			}
-		}
-
-		public void SelectActor(ActorMemory? actor)
-		{
-			if (this.SelectedActor == actor)
-				return;
-
-			this.SelectedActor = actor;
-			ActorSelected?.Invoke(actor);
 		}
 
 		private async void OnGposeStateChanging(bool isGPose)
@@ -440,13 +444,7 @@ namespace Anamnesis
 			{
 				get
 				{
-					if (this.Pointer == null)
-						return false;
-
-					if (this.Memory != null && TargetService.Instance.SelectedActor == this.Memory)
-						return true;
-
-					return TargetService.Instance.SelectedActor?.Address == this.Pointer;
+					return TargetService.Instance.CurrentlyPinned == this;
 				}
 
 				set
@@ -633,7 +631,14 @@ namespace Anamnesis
 
 						// dont log every time we just select an actor.
 						if (oldPointer != null && oldPointer != this.Pointer)
+						{
 							Log.Information($"Retargeted actor: {this} from {oldPointer} to {this.Pointer}");
+
+							if(this.IsSelected)
+							{
+								TargetService.Instance.SelectActor(this);
+							}
+						}
 
 						this.IsRetargeting = false;
 

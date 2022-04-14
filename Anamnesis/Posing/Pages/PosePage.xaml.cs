@@ -195,9 +195,6 @@ namespace Anamnesis.PoseModule.Pages
 				return;
 			}
 
-			if (!this.IsVisible)
-				return;
-
 			try
 			{
 				if (this.Skeleton == null)
