@@ -8,6 +8,7 @@ namespace Anamnesis.Views
 	using System.ComponentModel;
 	using System.IO;
 	using System.Net;
+	using System.Net.Http;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
@@ -164,17 +165,14 @@ namespace Anamnesis.Views
 			{
 				try
 				{
-					HttpWebRequest request = (HttpWebRequest)WebRequest.Create(entry.Url);
-					request.Method = "HEAD";
-					HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+					using HttpClient client = new HttpClient();
+					using var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, entry.Url));
 
-					if (response.StatusCode != HttpStatusCode.OK)
+					if(!response.IsSuccessStatusCode)
 					{
 						Log.Information($"Failed to get image from url: {entry.Url}: {response.StatusCode}");
 						valid = false;
 					}
-
-					response.Close();
 				}
 				catch (Exception ex)
 				{
@@ -212,14 +210,14 @@ namespace Anamnesis.Views
 
 					if (entry.Url.Contains("cdn.discordapp.com") || entry.Url.Contains("media.discordapp.net"))
 					{
-						finallink = this.GetOptimizedDiscordLink(entry.Url, entry.Width ?? 0, entry.Height ?? 0);
+						finallink = await this.GetOptimizedDiscordLink(entry.Url, entry.Width ?? 0, entry.Height ?? 0);
 					}
 					else
 					{
 						finallink = entry.Url;
 					}
 
-					this.Image1Path = FileService.CacheRemoteImage(finallink, entry.Url);
+					this.Image1Path = await FileService.CacheRemoteImage(finallink, entry.Url);
 				}
 				else
 				{
@@ -239,14 +237,14 @@ namespace Anamnesis.Views
 
 					if (entry.Url.Contains("cdn.discordapp.com") || entry.Url.Contains("media.discordapp.net"))
 					{
-						finallink = this.GetOptimizedDiscordLink(entry.Url, entry.Width ?? 0, entry.Height ?? 0);
+						finallink = await this.GetOptimizedDiscordLink(entry.Url, entry.Width ?? 0, entry.Height ?? 0);
 					}
 					else
 					{
 						finallink = entry.Url;
 					}
 
-					this.Image2Path = FileService.CacheRemoteImage(finallink, entry.Url);
+					this.Image2Path = await FileService.CacheRemoteImage(finallink, entry.Url);
 				}
 				else
 				{
@@ -283,7 +281,7 @@ namespace Anamnesis.Views
 			oldHost.Opacity = 0.0;
 		}
 
-		private string GetOptimizedDiscordLink(string url, int width, int height)
+		private async Task<string> GetOptimizedDiscordLink(string url, int width, int height)
 		{
 			if (width == 0 || height == 0)
 				return url;
@@ -311,18 +309,14 @@ namespace Anamnesis.Views
 
 			try
 			{
-				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriBuilder.ToString());
-				request.Method = "HEAD";
-				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+				using HttpClient client = new HttpClient();
+				using var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, uriBuilder.ToString()));
 
-				if (response.StatusCode != HttpStatusCode.OK)
+				if (!response.IsSuccessStatusCode)
 				{
 					Log.Information($"Failed to get samaller thumbnail from url: {uriBuilder}: {response.StatusCode}");
-					response.Close();
 					return url;
 				}
-
-				response.Close();
 			}
 			catch (Exception ex)
 			{

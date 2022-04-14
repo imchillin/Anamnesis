@@ -17,7 +17,7 @@ namespace Anamnesis.Serialization
 		{
 			Options.WriteIndented = true;
 			Options.PropertyNameCaseInsensitive = false;
-			Options.IgnoreNullValues = true;
+			Options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 			Options.AllowTrailingCommas = true;
 			Options.ReadCommentHandling = JsonCommentHandling.Skip;
 

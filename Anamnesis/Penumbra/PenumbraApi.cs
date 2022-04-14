@@ -6,6 +6,8 @@ namespace Anamnesis.Penumbra
 	using System;
 	using System.IO;
 	using System.Net;
+	using System.Net.Http;
+	using System.Net.Http.Headers;
 	using System.Text;
 	using System.Threading.Tasks;
 	using Anamnesis.Serialization;
@@ -24,49 +26,36 @@ namespace Anamnesis.Penumbra
 		public static async Task<T> Post<T>(string route, object content)
 			where T : notnull
 		{
-			WebResponse response = await PostRequest(route, content);
+			HttpResponseMessage response = await PostRequest(route, content);
 
-			using StreamReader? sr = new StreamReader(response.GetResponseStream());
+			using StreamReader? sr = new StreamReader(await response.Content.ReadAsStreamAsync());
 			string json = sr.ReadToEnd();
 
 			return SerializerService.Deserialize<T>(json);
 		}
 
-		private static async Task<WebResponse> PostRequest(string route, object content)
+		private static async Task<HttpResponseMessage> PostRequest(string route, object content)
 		{
 			if (!route.StartsWith('/'))
 				route = '/' + route;
 
-			string json = SerializerService.Serialize(content);
-
-			WebRequest request = WebRequest.Create(Url + route);
-			request.Timeout = TimeoutMs;
-			request.ContentType = "application/json; charset=utf-8";
-			request.Method = "POST";
-			UTF8Encoding encoding = new UTF8Encoding();
-			byte[] data = encoding.GetBytes(json);
-			request.ContentLength = data.Length;
-			Stream newStream = await request.GetRequestStreamAsync();
-			newStream.Write(data, 0, data.Length);
-			newStream.Close();
-
 			try
 			{
-				return await request.GetResponseAsync();
+				string json = SerializerService.Serialize(content);
+
+				using HttpClient client = new HttpClient();
+				client.Timeout = TimeSpan.FromMilliseconds(TimeoutMs);
+				var buffer = Encoding.UTF8.GetBytes(json);
+				var byteContent = new ByteArrayContent(buffer);
+				byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+				using var response = await client.PostAsync(Url + route, byteContent);
+
+				return response;
 			}
-			catch (WebException ex)
+			catch (Exception ex)
 			{
-				using WebResponse? response = ex.Response;
-
-				if (response is HttpWebResponse httpResponse)
-				{
-					using Stream responseData = response.GetResponseStream();
-					using var reader = new StreamReader(responseData);
-					string text = reader.ReadToEnd();
-
-					Log.Warning("Penumbra Http API error\n\n" + text);
-				}
-
+				Log.Warning(ex, "Penumbra Http API error");
 				throw new Exception("Penumbra Http API error. (Have you enabled the Penumbra HTTP Api?)", ex);
 			}
 		}

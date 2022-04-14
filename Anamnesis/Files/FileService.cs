@@ -8,6 +8,7 @@ namespace Anamnesis.Files
 	using System.Diagnostics;
 	using System.IO;
 	using System.Net;
+	using System.Net.Http;
 	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
@@ -348,7 +349,7 @@ namespace Anamnesis.Files
 		/// <summary>
 		/// Caches remote file, returns path to file if successful or file exists or original url if unsuccessful. Allows to custom file names to avoid overwrite.
 		/// </summary>
-		public static string CacheRemoteFile(string url, string? filePath)
+		public static async Task<string> CacheRemoteFile(string url, string? filePath)
 		{
 			string cacheDir = ParseToFilePath(CacheDirectory);
 
@@ -382,18 +383,22 @@ namespace Anamnesis.Files
 				{
 					using FileStream stream = new FileStream(localFile, FileMode.Create, FileAccess.Write);
 					byte[] data;
-					HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-					HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-					Stream responseStream = response.GetResponseStream();
+					using HttpClient client = new HttpClient();
+					using var response = await client.GetAsync(url);
 
-					using (MemoryStream memoryStream = new MemoryStream((int)response.ContentLength))
+					if(response.IsSuccessStatusCode)
 					{
-						responseStream.CopyTo(memoryStream);
-						data = memoryStream.ToArray();
-					}
+						Stream responseStream = response.Content.ReadAsStream();
 
-					stream.Write(data, 0, data.Length);
+						using (MemoryStream memoryStream = new MemoryStream((int)response.Content!.Headers!.ContentLength!))
+						{
+							responseStream.CopyTo(memoryStream);
+							data = memoryStream.ToArray();
+						}
+
+						stream.Write(data, 0, data.Length);
+					}
 				}
 				catch (Exception ex)
 				{
@@ -409,13 +414,13 @@ namespace Anamnesis.Files
 		/// Caches remote image, returns path to image if successful or image exists or original url if unsuccessful.
 		/// Generates name based on hash of original url to avoid overwriting of images with same name.
 		/// </summary>
-		public static string CacheRemoteImage(string url, string originalUrl)
+		public static async Task<string> CacheRemoteImage(string url, string originalUrl)
 		{
 			Uri uri = new Uri(url);
 
 			string imagePath = "ImageCache/" + HashUtility.GetHashString(originalUrl) + Path.GetExtension(uri.Segments[uri.Segments.Length - 1]);
 
-			return CacheRemoteFile(url, imagePath);
+			return await CacheRemoteFile(url, imagePath);
 		}
 
 		private static string ToAnyFilter(params Type[] types)
