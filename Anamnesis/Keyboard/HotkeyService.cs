@@ -133,11 +133,12 @@ namespace Anamnesis.Keyboard
 					keyDownSentToGame.Add(key);
 					MemoryService.SendKey(key, state);
 				}
-				else if (state == KeyboardKeyStates.Released && keyDownSentToGame.Contains(key))
-				{
-					keyDownSentToGame.Remove(key);
-					MemoryService.SendKey(key, state);
-				}
+			}
+
+			if (state == KeyboardKeyStates.Released && keyDownSentToGame.Contains(key))
+			{
+				keyDownSentToGame.Remove(key);
+				MemoryService.SendKey(key, state);
 			}
 
 			return handled;
