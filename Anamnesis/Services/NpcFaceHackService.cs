@@ -40,9 +40,23 @@ namespace Anamnesis.Services
 					if (pinnedActor.Memory.ObjectKind != ActorTypes.Player)
 						continue;
 
-					var actor = new Actor(pinnedActor);
-					this.actors.Add(actor);
-					actor.ChangeToNpc();
+					Actor? actor = null;
+
+					try
+					{
+						actor = new Actor(pinnedActor);
+					}
+					catch (Exception ex)
+					{
+						Log.Error(ex, "Face hack timing failure");
+						continue;
+					}
+
+					if(actor != null)
+					{
+						this.actors.Add(actor);
+						actor.ChangeToNpc();
+					}
 				}
 			}
 			else
@@ -78,7 +92,7 @@ namespace Anamnesis.Services
 				var memory = pinned.GetMemory();
 
 				if (memory == null)
-					throw new Exception("Unable to get memory from piunned actor");
+					throw new Exception("Unable to get memory from pinned actor");
 
 				this.Pinned = pinned;
 				this.Memory = memory;
