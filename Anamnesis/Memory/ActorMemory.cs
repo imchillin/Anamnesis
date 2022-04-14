@@ -30,13 +30,13 @@ namespace Anamnesis.Memory
 		public enum CharacterFlagDefs : byte
 		{
 			None = 0,
-			WeaponsVisible = 1 << 1,
-			WeaponsDrawn = 1 << 2,
+			WeaponsVisible = 1 << 0,
+			WeaponsDrawn = 1 << 1,
 			VisorToggled = 1 << 3,
 		}
 
 		[Bind(0x008D)] public byte SubKind { get; set; }
-		[Bind(0x0B4)] public float Scale { get; set; }
+		[Bind(0x00B4)] public float Scale { get; set; }
 		[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 		[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
 		[Bind(0x01E0)] public byte ClassJob { get; set; }
