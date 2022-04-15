@@ -27,12 +27,17 @@ namespace Anamnesis.Files
 			camService.Camera.FieldOfView = this.FieldOfView;
 			camService.Camera.Pan = this.Pan;
 
-			if (actor.ModelObject?.Transform?.Position != null)
-				camService.GPoseCamera.Position = this.Position + actor.ModelObject.Transform.Position;
-
-			if (actor.ModelObject?.Transform?.Rotation != null)
+			if (actor.ModelObject?.Transform?.Rotation != null && actor.ModelObject?.Transform?.Position != null)
 			{
-				Vector actorEuler = actor.ModelObject.Transform.Rotation.ToEuler();
+				// First we use the 0 rotation position and rotate it around the actor by it's current rotation in local space
+				Quaternion actorRotation = actor.ModelObject.Transform.Rotation;
+				Vector rotatedRelativePosition = actorRotation * this.Position;
+
+				// Adjust camera position to world space
+				camService.GPoseCamera.Position = actor.ModelObject.Transform.Position + rotatedRelativePosition;
+
+				// Now we apply the angle offset of the camera to the actor
+				Vector actorEuler = actorRotation.ToEuler();
 				Vector adjusted = actorEuler + this.Rotation;
 				camService.Camera.Euler = adjusted.ToMedia3DVector();
 			}
@@ -45,12 +50,21 @@ namespace Anamnesis.Files
 			this.FieldOfView = camService.Camera.FieldOfView;
 			this.Pan = camService.Camera.Pan;
 
-			if (actor.ModelObject?.Transform?.Position != null)
-				this.Position = camService.GPoseCamera.Position - actor.ModelObject.Transform.Position;
-
-			if (actor.ModelObject?.Transform?.Rotation != null)
+			if (actor.ModelObject?.Transform?.Rotation != null && actor.ModelObject?.Transform?.Position != null)
 			{
-				Vector actorEuler = actor.ModelObject.Transform.Rotation.ToEuler();
+				Quaternion actorRotation = actor.ModelObject.Transform.Rotation;
+
+				// First we get the local coords of the current camera position in relation to the actor
+				Vector localRelativePositon = camService.GPoseCamera.Position - actor.ModelObject.Transform.Position;
+
+				// Now we calculate what the position would be if the actor had a 0 rotation
+				Quaternion invertedActorRotation = actorRotation;
+				invertedActorRotation.Invert();
+				Vector rotatedRelativePosition = invertedActorRotation * localRelativePositon;
+				this.Position = rotatedRelativePosition;
+
+				// We save the angle of the camera as an offset from the angle of the actor
+				Vector actorEuler = actorRotation.ToEuler();
 				Vector cameraEuler = camService.Camera.Euler.ToCmVector();
 				this.Rotation = cameraEuler - actorEuler;
 			}

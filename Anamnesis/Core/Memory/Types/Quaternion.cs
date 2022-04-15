@@ -53,6 +53,26 @@ namespace Anamnesis.Memory
 			return new Quaternion(x, y, z, w);
 		}
 
+		public static Vector operator *(Quaternion left, Vector right)
+		{
+			float num = left.X * 2f;
+			float num2 = left.Y * 2f;
+			float num3 = left.Z * 2f;
+			float num4 = left.X * num;
+			float num5 = left.Y * num2;
+			float num6 = left.Z * num3;
+			float num7 = left.X * num2;
+			float num8 = left.X * num3;
+			float num9 = left.Y * num3;
+			float num10 = left.W * num;
+			float num11 = left.W * num2;
+			float num12 = left.W * num3;
+			float x = ((1f - (num5 + num6)) * right.X) + ((num7 - num12) * right.Y) + ((num8 + num11) * right.Z);
+			float y = ((num7 + num12) * right.X) + ((1f - (num4 + num6)) * right.Y) + ((num9 - num10) * right.Z);
+			float z = ((num8 - num11) * right.X) + ((num9 + num10) * right.Y) + ((1f - (num4 + num5)) * right.Z);
+			return new Vector(x, y, z);
+		}
+
 		public static Quaternion FromString(string str)
 		{
 			string[] parts = str.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
