@@ -44,11 +44,6 @@ namespace Anamnesis.Files
 			"Shortcuts/Anamnesis.png",
 			"Shortcut_AnamnesisCharacter");
 
-		public static Shortcut DefaultCameraDirectory => new Shortcut(
-			new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCameraShotDirectory)),
-			"Shortcuts/Anamnesis.png",
-			"Shortcut_AnamnesisScenes");
-
 		public static Shortcut DefaultSceneDirectory => new Shortcut(
 			new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultSceneDirectory)),
 			"Shortcuts/Anamnesis.png",
