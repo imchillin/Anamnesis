@@ -380,25 +380,18 @@ namespace Anamnesis.Files
 			{
 				try
 				{
-					using FileStream stream = new FileStream(localFile, FileMode.Create, FileAccess.Write);
-					byte[] data;
+					using FileStream fileStream = new FileStream(localFile, FileMode.Create, FileAccess.Write);
 					HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 					HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
 					Stream responseStream = response.GetResponseStream();
+					responseStream.CopyTo(fileStream);
 
-					using (MemoryStream memoryStream = new MemoryStream((int)response.ContentLength))
-					{
-						responseStream.CopyTo(memoryStream);
-						data = memoryStream.ToArray();
-					}
-
-					stream.Write(data, 0, data.Length);
+					Log.Verbose($"Cached remote file: {url}. {fileStream.Position} bytes.");
 				}
 				catch (Exception ex)
 				{
-					Log.Information($"Failed to cache data from url: {url}: {ex.Message}");
-					return url;
+					throw new Exception($"Failed to cache data from url: {url}", ex);
 				}
 			}
 
@@ -409,11 +402,10 @@ namespace Anamnesis.Files
 		/// Caches remote image, returns path to image if successful or image exists or original url if unsuccessful.
 		/// Generates name based on hash of original url to avoid overwriting of images with same name.
 		/// </summary>
-		public static string CacheRemoteImage(string url, string originalUrl)
+		public static string CacheRemoteImage(string url)
 		{
 			Uri uri = new Uri(url);
-
-			string imagePath = "ImageCache/" + HashUtility.GetHashString(originalUrl) + Path.GetExtension(uri.Segments[uri.Segments.Length - 1]);
+			string imagePath = "ImageCache/" + HashUtility.GetHashString(url) + Path.GetExtension(uri.Segments[uri.Segments.Length - 1]);
 
 			return CacheRemoteFile(url, imagePath);
 		}
