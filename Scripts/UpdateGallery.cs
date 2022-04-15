@@ -26,11 +26,15 @@ public class UpdateGallery : ScriptBase
 		if (entries == null)
 			throw new Exception("Failed to deserialize npc names");
 
-		for (int i = entries.Count - 1; i >= 0; i--)
+		HashSet<string> toRemove = new();
+
+		Parallel.For(0, entries.Count, (i, t) =>
 		{
 			Entry entry = entries[i];
-			Log($"{entries.Count - i} / {entries.Count}");
-			Console.SetCursorPosition(0, Console.CursorTop - 1);
+
+			if (entry.Url == null)
+				return;
+
 			HttpWebResponse? response = null;
 			HttpWebRequest? request = null;
 
@@ -47,8 +51,9 @@ public class UpdateGallery : ScriptBase
 
 			if (response == null || response.StatusCode != HttpStatusCode.OK)
 			{
-				Log($"Removing image: {entry.Author} url: {entry.Url}");
-				entries.RemoveAt(i);
+				Log($"{i.ToString("d3")} [ X ]");
+				toRemove.Add(entry.Url);
+				return;
 			}
 
 			if (response != null)
@@ -60,7 +65,7 @@ public class UpdateGallery : ScriptBase
 			if (entry.Thumbnail == null)
 			{
 				Uri uri = new Uri(entry.Url);
-				string imagePath = uri.Segments[uri.Segments.Length - 1];
+				string imagePath = HashUtility.GetHashString(entry.Url) + "--" + uri.Segments[uri.Segments.Length - 1];
 
 				try
 				{
@@ -76,13 +81,28 @@ public class UpdateGallery : ScriptBase
 					using (Image img = Image.FromFile(imagePath))
 					{
 						entry.Thumbnail = GetOptimizedDiscordLink(entry.Url, img.Width, img.Height);
-						Log($"Generated Thumbnail: {entry.Thumbnail}");
 					}
 
 					File.Delete(imagePath);
+
+					Log($"{i.ToString("d3")} [ T ]");
+					return;
 				}
 				catch (WebException)
 				{
+				}
+			}
+
+			Log($"{i.ToString("d3")} [ O ]");
+		});
+
+		foreach (string url in toRemove)
+		{
+			for (int i = entries.Count - 1; i > 0; i--)
+			{
+				if (entries[i].Url == url || entries[i].Url == null)
+				{
+					entries.RemoveAt(i);
 				}
 			}
 		}
