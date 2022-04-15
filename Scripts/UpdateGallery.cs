@@ -14,7 +14,7 @@ public class UpdateGallery : ScriptBase
 
 	public override string Name => "Update Gallery";
 
-	public override Task Run()
+	public override void Run()
 	{
 		JsonSerializerOptions op = new();
 		op.AllowTrailingCommas = true;
@@ -109,8 +109,6 @@ public class UpdateGallery : ScriptBase
 
 		json = JsonSerializer.Serialize(entries, op);
 		File.WriteAllText(filePath, json);
-
-		return Task.CompletedTask;
 	}
 
 	private string GetOptimizedDiscordLink(string url, int width, int height)

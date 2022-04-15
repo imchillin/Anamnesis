@@ -11,7 +11,7 @@ public class CleanNpcNames : ScriptBase
 
 	public override string Name => "Clean NPC names";
 
-	public override Task Run()
+	public override void Run()
 	{
 		JsonSerializerOptions op = new();
 		op.AllowTrailingCommas = true;
@@ -59,8 +59,6 @@ public class CleanNpcNames : ScriptBase
 
 		json = JsonSerializer.Serialize(entries, op);
 		File.WriteAllText(filePath, json);
-
-		return Task.CompletedTask;
 	}
 
 	public class Entry

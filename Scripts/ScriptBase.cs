@@ -7,7 +7,7 @@ using System.Reflection;
 public abstract class ScriptBase
 {
 	public abstract string Name { get; }
-	public abstract Task Run();
+	public abstract void Run();
 
 	public static List<ScriptBase> GetAllScripts()
 	{
