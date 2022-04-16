@@ -35,6 +35,8 @@ namespace Anamnesis.Services
 			}
 		}
 
+		public bool BlendLocked { get; private set; }
+
 		public override Task Start()
 		{
 			GposeService.GposeStateChanging += this.OnGposeStateChanging;
@@ -70,15 +72,21 @@ namespace Anamnesis.Services
 
 		public void BlendAnimation(ActorMemory memory, ushort animationId)
 		{
+			if (this.BlendLocked)
+				return;
+
 			if (!memory.IsValid)
 				return;
 
+			this.BlendLocked = true;
+
 			Task.Run(async () =>
 			{
-				var oldAnim = memory.LipAnimationOverride;
-				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.LipAnimationOverride)), animationId, "Animation ID Override");
-				await Task.Delay(100);
-				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.LipAnimationOverride)), oldAnim, "Animation ID Override");
+				var oldAnim = memory.BaseAnimationOverride;
+				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.BaseAnimationOverride)), animationId, "Blend Animation ID Override");
+				await Task.Delay(66);
+				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.BaseAnimationOverride)), oldAnim, "Blend Animation ID Override");
+				this.BlendLocked = false;
 			});
 		}
 
@@ -89,9 +97,11 @@ namespace Anamnesis.Services
 
 			this.ApplyAnimation(memory, 0, true, ActorMemory.CharacterModes.Normal, 0);
 
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.LipAnimationOverride)), 0, "Blend Animation ID Override");
+
 			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.BaseAnimationSpeedInternal)), 1.0f, "Animation Speed Reset");
 			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.LipAnimationSpeedInternal)), 1.0f, "Animation Speed Reset");
-			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeedTrigger)), 2.0f, "Animation Speed Reset");
+			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeedTrigger)), 1.0f, "Animation Speed Reset");
 
 			this.overriddenActors.Remove(memory);
 		}
@@ -162,7 +172,7 @@ namespace Anamnesis.Services
 		{
 			foreach (var actor in this.overriddenActors.ToList())
 			{
-				if(actor.IsValid && actor.IsAnimationOverriden)
+				if(actor.IsValid && actor.IsAnimationOverridden)
 				{
 					this.ResetAnimationOverride(actor);
 				}
