@@ -54,5 +54,10 @@ namespace Anamnesis.Memory
 				}
 			}
 		}
+
+		public void Clear()
+		{
+			this.Dye = 0;
+		}
 	}
 }

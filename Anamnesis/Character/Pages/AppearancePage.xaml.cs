@@ -57,6 +57,8 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
+			this.Actor.MainHand?.Clear();
+			this.Actor.OffHand?.Clear();
 			this.Actor.Equipment?.Arms?.Clear(this.Actor.IsPlayer);
 			this.Actor.Equipment?.Chest?.Clear(this.Actor.IsPlayer);
 			this.Actor.Equipment?.Ear?.Clear(this.Actor.IsPlayer);
