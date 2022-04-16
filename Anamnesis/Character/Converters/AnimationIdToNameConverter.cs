@@ -20,7 +20,7 @@ namespace Anamnesis.Character.Converters
 			{
 				ushort animId = (ushort)value;
 				ActionTimeline timeline = GameDataService.ActionTimelines.Get(animId);
-				animationName = timeline.Name ?? LocalizationService.GetString("Character_Action_NoAnimation");
+				animationName = timeline.Key ?? LocalizationService.GetString("Character_Action_NoAnimation");
 			}
 			catch
 			{

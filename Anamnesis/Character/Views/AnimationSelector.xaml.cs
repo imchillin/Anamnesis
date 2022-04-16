@@ -59,20 +59,15 @@ namespace Anamnesis.Character.Views
 		private Task OnLoadItems()
 		{
 			if (GameDataService.Emotes != null)
-				this.AddItems(GameDataService.Emotes);
+				this.Selector.AddItems(GameDataService.Emotes);
 
 			if (GameDataService.ActionTimelines != null)
-				this.AddItems(GameDataService.Actions);
+				this.Selector.AddItems(GameDataService.Actions);
 
 			if (GameDataService.ActionTimelines != null)
-				this.AddItems(GameDataService.ActionTimelines);
+				this.Selector.AddItems(GameDataService.ActionTimelines);
 
 			return Task.CompletedTask;
-		}
-
-		private void AddItems(IEnumerable<IAnimation> animationEnum)
-		{
-			this.Selector.AddItems(animationEnum.Where(x => x.ActionTimelineRowId != 0));
 		}
 
 		private void OnClose()
@@ -89,13 +84,18 @@ namespace Anamnesis.Character.Views
 		{
 			if (obj is IAnimation animation)
 			{
-				bool matches = false;
-				matches |= SearchUtility.Matches(animation.Name, search);
-				matches |= SearchUtility.Matches(animation.ActionTimelineRowId.ToString(), search);
-
-				// Filter out actions without keys
-				if (string.IsNullOrEmpty(animation.Name))
+				// Filter out any that are clearly invalid
+				if (string.IsNullOrEmpty(animation.DisplayName) || animation.Timeline == null || string.IsNullOrEmpty(animation.Timeline.Key))
 					return false;
+
+				bool matches = false;
+				matches |= SearchUtility.Matches(animation.DisplayName, search);
+
+				if(animation.Timeline != null)
+				{
+					matches |= SearchUtility.Matches(animation.Timeline.Key, search);
+					matches |= SearchUtility.Matches(animation.Timeline.AnimationId.ToString(), search);
+				}
 
 				return matches;
 			}
@@ -110,20 +110,26 @@ namespace Anamnesis.Character.Views
 
 			if (a is IAnimation animA && b is IAnimation animB)
 			{
-				// Emotes to the top
+				// Emotes and Actions to the top
 				if (animA is Emote && animB is not Emote)
 					return -1;
 
 				if (animA is not Emote && animB is Emote)
 					return 1;
 
-				if (animA.Name == null)
-					return 1;
-
-				if (animB.Name == null)
+				if (animA is Action && animB is not Action)
 					return -1;
 
-				return -animB.Name.CompareTo(animA.Name);
+				if (animA is not Action && animB is Action)
+					return 1;
+
+				if (animA.DisplayName == null)
+					return 1;
+
+				if (animB.DisplayName == null)
+					return -1;
+
+				return -animB.DisplayName.CompareTo(animA.DisplayName);
 			}
 
 			return 0;

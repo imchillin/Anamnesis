@@ -74,7 +74,7 @@
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
 
-                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.LipAnimationOverride, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="Name" />
+                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.LipAnimationOverride, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="DisplayName" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
