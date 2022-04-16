@@ -183,6 +183,11 @@ namespace Anamnesis.Character.Views
 						this.SetModel(this.Actor?.OffHand, 0, 0, 0);
 					}
 				}
+
+				if (item == ItemUtility.NoneItem || item == ItemUtility.EmperorsNewFists)
+				{
+					this.Dye = ItemUtility.NoneDye;
+				}
 			}
 
 			this.Item = item;
