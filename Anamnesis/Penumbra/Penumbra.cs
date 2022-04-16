@@ -14,6 +14,8 @@ namespace Anamnesis.Penumbra
 			data.Type = RedrawData.RedrawType.WithSettings;
 
 			await PenumbraApi.Post("/redraw", data);
+
+			await Task.Delay(500);
 		}
 
 		public class RedrawData
