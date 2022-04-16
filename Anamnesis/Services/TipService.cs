@@ -78,7 +78,7 @@ namespace Anamnesis.Services
 
 			while (this.IsAlive)
 			{
-				await Task.Delay(30000);
+				await Task.Delay(10000);
 				this.NextTip();
 			}
 		}
