@@ -142,7 +142,7 @@ namespace Anamnesis.Character.Views
 
 		private Task OnLoadItems()
 		{
-			if (!this.IsWeaponSlot)
+			if (!this.IsMainHandSlot)
 				this.Selector.AddItem(ItemUtility.NoneItem);
 
 			this.Selector.AddItem(ItemUtility.NpcBodyItem);
@@ -306,7 +306,7 @@ namespace Anamnesis.Character.Views
 
 		private void OnClearClicked(object? sender = null, RoutedEventArgs? e = null)
 		{
-			if (this.IsWeaponSlot)
+			if (this.IsMainHandSlot)
 			{
 				this.Value = ItemUtility.EmperorsNewFists;
 			}

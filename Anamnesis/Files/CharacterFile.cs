@@ -6,6 +6,7 @@ namespace Anamnesis.Files
 	using System;
 	using System.IO;
 	using System.Threading.Tasks;
+	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData.Excel;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
@@ -261,8 +262,8 @@ namespace Anamnesis.Files
 
 				if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 				{
-					this.MainHand?.Write(actor.MainHand);
-					this.OffHand?.Write(actor.OffHand);
+					this.MainHand?.Write(actor.MainHand, true);
+					this.OffHand?.Write(actor.OffHand, false);
 				}
 
 				if (this.IncludeSection(SaveModes.EquipmentGear, mode))
@@ -449,7 +450,7 @@ namespace Anamnesis.Files
 			public ushort ModelVariant { get; set; }
 			public byte DyeId { get; set; }
 
-			public void Write(WeaponMemory? vm)
+			public void Write(WeaponMemory? vm, bool isMainHand)
 			{
 				if (vm == null)
 					return;
@@ -465,9 +466,20 @@ namespace Anamnesis.Files
 				}
 				else
 				{
-					vm.Base = 0;
-					vm.Variant = 0;
-					vm.Dye = 0;
+					if (isMainHand)
+					{
+						vm.Set = ItemUtility.EmperorsNewFists.ModelSet;
+						vm.Base = ItemUtility.EmperorsNewFists.ModelBase;
+						vm.Variant = ItemUtility.EmperorsNewFists.ModelVariant;
+					}
+					else
+					{
+						vm.Set = 0;
+						vm.Base = 0;
+						vm.Variant = 0;
+					}
+
+					vm.Dye = ItemUtility.NoneDye.Id;
 				}
 			}
 		}
