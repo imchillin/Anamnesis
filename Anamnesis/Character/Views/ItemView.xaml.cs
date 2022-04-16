@@ -8,6 +8,7 @@ namespace Anamnesis.Character.Views
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Input;
 	using System.Windows.Media;
 	using Anamnesis.Character.Utilities;
 	using Anamnesis.GameData;
@@ -142,6 +143,17 @@ namespace Anamnesis.Character.Views
 
 			EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
 			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
+		}
+
+		private void OnMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			if (this.Actor?.CanRefresh != true)
+				return;
+
+			if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
+			{
+				this.ItemModel?.Clear(this.Actor.IsPlayer);
+			}
 		}
 
 		private void SetItem(IItem? item, bool autoOffhand = false, bool forceMain = false, bool forceOff = false)

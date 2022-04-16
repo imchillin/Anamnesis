@@ -43,6 +43,7 @@
 			<Button 
 					Width="48" Height="48"
 					Click="OnClick"
+					MouseUp="OnMouseUp"
 					Grid.Row="0"
 					Grid.RowSpan="2"
 					Style="{DynamicResource TransparentButton}"
