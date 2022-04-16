@@ -3,12 +3,13 @@
 
 namespace Anamnesis.GameData.Interfaces
 {
+	using Anamnesis.GameData.Excel;
 	using Anamnesis.GameData.Sheets;
 
 	public interface IAnimation
     {
-		public string? Name { get; }
-		public uint ActionTimelineRowId { get; }
+		public string? DisplayName { get; }
 		public ImageReference? Icon { get; }
+		public ActionTimeline? Timeline { get; }
 	}
 }

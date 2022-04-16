@@ -14,24 +14,22 @@ namespace Anamnesis.GameData.Excel
 	[Sheet("Action", 0xfedb4d9a)]
 	public class Action : ExcelRow, IAnimation
 	{
-		public string? Name { get; set; }
+		public string? DisplayName { get; set; }
 		public ImageReference? Icon { get; private set; }
-		public uint ActionTimelineRowId { get; private set; }
-		public ActionTimeline? ActionTimeline { get; private set; }
+		public ActionTimeline? Timeline { get; private set; }
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 		{
 			base.PopulateData(parser, gameData, language);
 
-			this.Name = parser.ReadString(0);
+			this.DisplayName = parser.ReadString(0);
 			this.Icon = parser.ReadImageReference<ushort>(2);
 
 			short animationRow = parser.ReadColumn<short>(7);
 
 			if(animationRow >= 0)
 			{
-				this.ActionTimeline = GameDataService.ActionTimelines.Get(this.ActionTimelineRowId);
-				this.ActionTimelineRowId = (uint)animationRow;
+				this.Timeline = GameDataService.ActionTimelines.Get((uint)animationRow);
 			}
 		}
 	}

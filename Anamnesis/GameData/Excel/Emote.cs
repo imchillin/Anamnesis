@@ -13,16 +13,15 @@ namespace Anamnesis.GameData.Excel
 	[Sheet("Emote", 0xf3afded2)]
 	public class Emote : ExcelRow, IAnimation
 	{
-		public string? Name { get; private set; }
-		public uint ActionTimelineRowId { get; private set; }
-		public ActionTimeline? ActionTimeline { get; private set; }
+		public string? DisplayName { get; private set; }
+		public ActionTimeline? Timeline { get; private set; }
 		public ImageReference? Icon { get; private set; }
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 		{
 			base.PopulateData(parser, gameData, language);
 
-			this.Name = parser.ReadString(0);
+			this.DisplayName = parser.ReadString(0);
 
 			ActionTimeline? a = parser.ReadRowReference<ushort, ActionTimeline>(1);
 			ActionTimeline? b = parser.ReadRowReference<ushort, ActionTimeline>(2);
@@ -32,8 +31,7 @@ namespace Anamnesis.GameData.Excel
 			ActionTimeline? f = parser.ReadRowReference<ushort, ActionTimeline>(6);
 			ActionTimeline? g = parser.ReadRowReference<ushort, ActionTimeline>(7);
 
-			this.ActionTimeline = a;
-			this.ActionTimelineRowId = this.ActionTimeline?.RowId ?? 0;
+			this.Timeline = a;
 
 			this.Icon = parser.ReadImageReference<ushort>(20);
 		}

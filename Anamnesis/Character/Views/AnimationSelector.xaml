@@ -31,6 +31,7 @@
 						<Grid.RowDefinitions>
 							<RowDefinition/>
 							<RowDefinition/>
+                            <RowDefinition/>
 						</Grid.RowDefinitions>
 
 						<Border Width="32" Height="32" Background="#444444" Grid.RowSpan="2" CornerRadius="3" Margin="0, 0, 6, 0"
@@ -42,8 +43,9 @@
 						</Border>
 
 
-						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}"/>
-						<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ActionTimelineRowId}" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DisplayName}" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Timeline.RowId}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Timeline.Key}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 					</Grid>
 				</DataTemplate>
 			</cm3Drawers:SelectorDrawer.ItemTemplate>

@@ -28,7 +28,7 @@ namespace Anamnesis.Character.Pages
 			this.ContentArea.DataContext = this;
 
 			// Grab "no animation" and all "speak/" animations, which are the only ones valid in this slot
-			this.LipSyncTypes = GameDataService.ActionTimelines.Where(x => x.RowId == 0 || (x.Name?.StartsWith("speak/") ?? false));
+			this.LipSyncTypes = GameDataService.ActionTimelines.Where(x => x.AnimationId == 0 || (x.Key?.StartsWith("speak/") ?? false));
 		}
 
 		public GposeService GposeService => GposeService.Instance;
@@ -92,10 +92,10 @@ namespace Anamnesis.Character.Pages
 
 			SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
 			{
-				if (animation == null)
+				if (animation == null || animation.Timeline == null)
 					return;
 
-				this.AnimationOverride.BaseAnimationId = (ushort)animation.ActionTimelineRowId;
+				this.AnimationOverride.BaseAnimationId = animation.Timeline.AnimationId;
 			});
 		}
 
@@ -106,10 +106,10 @@ namespace Anamnesis.Character.Pages
 
 			SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
 			{
-				if (animation == null)
+				if (animation == null || animation.Timeline == null)
 					return;
 
-				this.AnimationOverride.BlendAnimationId = (ushort)animation.ActionTimelineRowId;
+				this.AnimationOverride.BlendAnimationId = animation.Timeline.AnimationId;
 			});
 		}
 
