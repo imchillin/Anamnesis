@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory
 {
 	using System;
+	using Anamnesis.Character.Utilities;
 	using PropertyChanged;
 
 	public class WeaponMemory : MemoryBase, IEquipmentItemMemory
@@ -55,8 +56,13 @@ namespace Anamnesis.Memory
 			}
 		}
 
-		public void Clear()
+		public void Clear(bool isPlayer)
 		{
+			// Clear the weapon to the Emperor's New Fists
+			// Since having actually no weapon is bad.
+			this.Set = ItemUtility.EmperorsNewFists.ModelSet;
+			this.Base = ItemUtility.EmperorsNewFists.ModelBase;
+			this.Variant = ItemUtility.EmperorsNewFists.ModelVariant;
 			this.Dye = 0;
 		}
 	}

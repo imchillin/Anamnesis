@@ -3,7 +3,6 @@
 
 namespace Anamnesis.Character.Items
 {
-	using System.Windows.Media;
 	using Anamnesis.GameData;
 	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Services;

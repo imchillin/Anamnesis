@@ -18,6 +18,8 @@ namespace Anamnesis.Character.Utilities
 
 		private static readonly ConcurrentDictionary<string, IItem> ItemLookup = new ConcurrentDictionary<string, IItem>();
 
+		public static IItem EmperorsNewFists => GameDataService.Items.Get(13775);
+
 		/// <summary>
 		/// Searches the gamedata service item list for an item with the given model attributes.
 		/// </summary>

@@ -12,8 +12,6 @@ namespace Anamnesis.Character.Pages
 	using Anamnesis.Character.Views;
 	using Anamnesis.Files;
 	using Anamnesis.GameData;
-	using Anamnesis.GameData.Excel;
-	using Anamnesis.GameData.Sheets;
 	using Anamnesis.Keyboard;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
@@ -57,8 +55,8 @@ namespace Anamnesis.Character.Pages
 			if (this.Actor == null)
 				return;
 
-			this.Actor.MainHand?.Clear();
-			this.Actor.OffHand?.Clear();
+			this.Actor.MainHand?.Clear(this.Actor.IsPlayer);
+			this.Actor.OffHand?.Clear(this.Actor.IsPlayer);
 			this.Actor.Equipment?.Arms?.Clear(this.Actor.IsPlayer);
 			this.Actor.Equipment?.Chest?.Clear(this.Actor.IsPlayer);
 			this.Actor.Equipment?.Ear?.Clear(this.Actor.IsPlayer);

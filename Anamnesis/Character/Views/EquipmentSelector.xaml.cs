@@ -142,7 +142,9 @@ namespace Anamnesis.Character.Views
 
 		private Task OnLoadItems()
 		{
-			this.Selector.AddItem(ItemUtility.NoneItem);
+			if (!this.IsWeaponSlot)
+				this.Selector.AddItem(ItemUtility.NoneItem);
+
 			this.Selector.AddItem(ItemUtility.NpcBodyItem);
 			this.Selector.AddItem(ItemUtility.InvisibileBodyItem);
 			this.Selector.AddItem(ItemUtility.InvisibileHeadItem);
@@ -171,6 +173,19 @@ namespace Anamnesis.Character.Views
 				else if (!itemA.IsFavorite && itemB.IsFavorite)
 				{
 					return 1;
+				}
+
+				// Push the Emperor's New Fists to the top of the list for weapons.
+				if (this.IsWeaponSlot)
+				{
+					if (itemA == ItemUtility.EmperorsNewFists && itemB != ItemUtility.EmperorsNewFists)
+					{
+						return -1;
+					}
+					else if (itemA != ItemUtility.EmperorsNewFists && itemB == ItemUtility.EmperorsNewFists)
+					{
+						return 1;
+					}
 				}
 
 				return itemA.RowId.CompareTo(itemB.RowId);
@@ -291,7 +306,15 @@ namespace Anamnesis.Character.Views
 
 		private void OnClearClicked(object? sender = null, RoutedEventArgs? e = null)
 		{
-			this.Value = ItemUtility.NoneItem;
+			if (this.IsWeaponSlot)
+			{
+				this.Value = ItemUtility.EmperorsNewFists;
+			}
+			else
+			{
+				this.Value = ItemUtility.NoneItem;
+			}
+
 			this.Selector.RaiseSelectionChanged();
 		}
 
