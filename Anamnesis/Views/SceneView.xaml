@@ -297,9 +297,8 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-						<RowDefinition />
-					</Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
 
 					<XivToolsWpf:TextBlock Grid.Row="0"
 										   Key="Scene_Camera_Delimit"
@@ -413,11 +412,6 @@
 										   Minimum="-40"
 										   Maximum="100"
 										   TickFrequency="1" />
-
-					<Menu Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource AnaMenu}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-						<MenuItem Header="Common_OpenFile" Icon="FolderOpen" Click="OnLoadCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
-						<MenuItem Header="Common_SaveFile" Icon="Save" Click="OnSaveCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
-					</Menu>
 
 
                     <XivToolsWpf:InfoControl Grid.RowSpan="10"
