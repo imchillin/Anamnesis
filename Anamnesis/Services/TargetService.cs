@@ -198,9 +198,6 @@ namespace Anamnesis
 		{
 			await base.Start();
 
-			GposeService.GposeStateChanging += this.OnGposeStateChanging;
-			GposeService.GposeStateChanged += this.OnGposeStateChanged;
-
 			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned1", () => this.SelectActor(0));
 			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned2", () => this.SelectActor(1));
 			HotkeyService.RegisterHotkeyHandler("TargetService.SelectPinned3", () => this.SelectActor(2));
@@ -256,7 +253,7 @@ namespace Anamnesis
 
 		public void ClearSelection()
 		{
-			if (this.SelectedActor == null)
+			if (this.CurrentlyPinned == null)
 				return;
 
 			if (App.Current == null)
@@ -300,17 +297,6 @@ namespace Anamnesis
 				this.CurrentlyPinned = null;
 				this.PinnedActors.Clear();
 			});
-		}
-
-		public async Task Retarget()
-		{
-			await Dispatch.MainThread();
-			this.CurrentlyPinned = null;
-
-			if (this.PinnedActors.Count > 0)
-			{
-				this.SelectActor(this.PinnedActors[0]);
-			}
 		}
 
 		public void SelectActor(int index)
@@ -365,33 +351,26 @@ namespace Anamnesis
 
 		public void SelectActor(PinnedActor? actor)
 		{
-			if(this.CurrentlyPinned == actor)
+			App.Current.Dispatcher.Invoke(() =>
 			{
-				// Raise the event in case the underlying memory changed
-				this.RaisePropertyChanged(nameof(TargetService.CurrentlyPinned));
-				this.RaisePropertyChanged(nameof(TargetService.SelectedActor));
-				return;
-			}
+				if (this.CurrentlyPinned == actor)
+				{
+					// Raise the event in case the underlying memory changed
+					this.RaisePropertyChanged(nameof(TargetService.CurrentlyPinned));
+					this.RaisePropertyChanged(nameof(TargetService.SelectedActor));
+				}
+				else
+				{
+					this.CurrentlyPinned = actor;
+				}
 
-			this.CurrentlyPinned = actor;
+				ActorSelected?.Invoke(actor?.Memory);
 
-			ActorSelected?.Invoke(actor?.Memory);
-
-			foreach (PinnedActor ac in this.PinnedActors)
-			{
-				ac.SelectionChanged();
-			}
-		}
-
-		private async void OnGposeStateChanging(bool isGPose)
-		{
-			await this.Retarget();
-		}
-
-		private async void OnGposeStateChanged(bool isGPose)
-		{
-			await this.Retarget();
-			this.EnsureSelection();
+				foreach (PinnedActor ac in this.PinnedActors)
+				{
+					ac.SelectionChanged();
+				}
+			});
 		}
 
 		private async Task TickPinnedActors()
@@ -544,11 +523,11 @@ namespace Anamnesis
 			{
 				if (this.Memory != null)
 				{
-					if (this.IsSelected)
-						TargetService.Instance.ClearSelection();
-
 					this.Memory.Dispose();
 					this.Memory = null;
+
+					if (this.IsSelected)
+						TargetService.Instance.SelectActor(this);
 				}
 
 				this.IsValid = false;
@@ -634,11 +613,11 @@ namespace Anamnesis
 						if (oldPointer != null && oldPointer != this.Pointer)
 						{
 							Log.Information($"Retargeted actor: {this} from {oldPointer} to {this.Pointer}");
+						}
 
-							if(this.IsSelected)
-							{
-								TargetService.Instance.SelectActor(this);
-							}
+						if (this.IsSelected)
+						{
+							TargetService.Instance.SelectActor(this);
 						}
 
 						this.IsRetargeting = false;
