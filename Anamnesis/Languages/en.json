@@ -597,6 +597,9 @@
 	"Update_Title": "Update",
 	"Update_NoUpdate": "No updates found",
 
+	"DevBuild_Title": "Development Build",
+	"DevBuild_Body": "This is an experimental development build of Anamnesis and is not officially supported. These builds are likely to contain serious issues and should be avoided unless you know what you are doing.\n\nWould you like to continue using this build?\nSelecting no will offer you an update to the latest supported build.",
+
 	"Item_Unknown": "Unknown",
 	"Item_None": "None",
 	"Item_NoneDesc": "Nothing",

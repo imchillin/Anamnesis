@@ -50,8 +50,8 @@ namespace Anamnesis.Services
 			await Add<LogService>();
 			await Add<SerializerService>();
 			await Add<SettingsService>();
-			await Add<Updater.UpdateService>();
 			await Add<LocalizationService>();
+			await Add<Updater.UpdateService>();
 			await Add<ViewService>();
 			await Add<MemoryService>();
 			await Add<AddressService>();
