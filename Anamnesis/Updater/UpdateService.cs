@@ -13,6 +13,7 @@ namespace Anamnesis.Updater
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
 	using System.Threading.Tasks;
+	using Anamnesis.GUI.Dialogs;
 	using Anamnesis.Services;
 	using XivToolsWpf;
 
@@ -29,13 +30,27 @@ namespace Anamnesis.Updater
 		{
 			await base.Initialize();
 
-			// Don't check for updates if the VersionInfo hasn't been written by the build process.
+			bool skipTimeCheck = false;
+
+			// Determine if this is a dev build
 			if (VersionInfo.Date.Year <= 2000)
-				return;
+			{
+				// Don't show if there is a debugger attached
+				if (Debugger.IsAttached)
+					return;
+
+				// Prompt the user
+				var result = await GenericDialog.ShowLocalizedAsync("DevBuild_Body", "DevBuild_Title", System.Windows.MessageBoxButton.YesNo);
+				if (result == true)
+					return;
+
+				// Always skip the time check if they say no
+				skipTimeCheck = true;
+			}
 
 			DateTimeOffset lastCheck = SettingsService.Current.LastUpdateCheck;
 			TimeSpan elapsed = DateTimeOffset.Now - lastCheck;
-			if (elapsed.TotalHours < 6)
+			if (elapsed.TotalHours < 6 && !skipTimeCheck)
 			{
 				Log.Information("Last update check was less than 6 hours ago. Skipping.");
 				return;
