@@ -50,7 +50,7 @@
 	"Shortcut_FfxivAppearance": "FFXIV saved appearances",
 	"Shortcut_Desktop": "Desktop",
 
-	"Target_AddActor":  "Add Actor",
+	"Target_AddActor": "Add Actor",
 	"Target_Players": "Players",
 	"Target_Companions": "Companions",
 	"Target_Npc": "NPCs",
@@ -251,6 +251,7 @@
 	"Character_Action_AnimationStatus": "Animation Status",
 	"Character_Action_AnimationOverride": "Animation Override",
 	"Character_Action_AnimationOverrideBlocked": "Animation Override is only available for your local overworld player when you are idle. Please stop any emotes or actions you are performing.",
+	"Character_Action_AnimationOverrideBlendBlocked": "Animation Blending is only avaiable once you have overidden the base animation in the Animation Override section above.",
 	"Character_Action_AnimationSpeedControl": "Animation Speed Control",
 	"Character_Action_AnimationBlending": "Animation Blending",
 	"Character_Action_GlobalSettings": "Global Settings",

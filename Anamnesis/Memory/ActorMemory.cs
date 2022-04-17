@@ -119,7 +119,7 @@ namespace Anamnesis.Memory
 		public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.Instance.IsLocalOverworldPlayer(this.ObjectIndex);
 
 		[DependsOn(nameof(CharacterMode))]
-		public bool IsAnimationOverriden => this.CharacterMode == CharacterModes.AnimLock;
+		public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
 
 		[DependsOn(nameof(BaseAnimationSpeedInternal))]
 		public float BaseAnimationSpeed
@@ -128,7 +128,7 @@ namespace Anamnesis.Memory
 			set
 			{
 				this.BaseAnimationSpeedInternal = value;
-				this.AnimationSpeedTrigger = this.AnimationSpeedTrigger == 0.0f ? 1.0f : 0.0f;
+				this.AnimationSpeedTrigger = value;
 			}
 		}
 
@@ -139,7 +139,7 @@ namespace Anamnesis.Memory
 			set
 			{
 				this.LipAnimationSpeedInternal = value;
-				this.AnimationSpeedTrigger = this.AnimationSpeedTrigger == 0.0f ? 1.0f : 0.0f;
+				this.AnimationSpeedTrigger = (this.AnimationSpeedTrigger > this.BaseAnimationSpeedInternal) ? this.BaseAnimationSpeed : this.BaseAnimationSpeed + 0.001f;
 			}
 		}
 
