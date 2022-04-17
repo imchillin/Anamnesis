@@ -84,7 +84,7 @@ namespace Anamnesis.GUI
 				if (value)
 					this.TargetService.ClearSelection();
 
-				this.showSettings = this.TargetService.SelectedActor == null;
+				this.showSettings = value;
 			}
 		}
 
@@ -161,6 +161,9 @@ namespace Anamnesis.GUI
 		private void OnActorSelected(ActorMemory? actor)
 		{
 			this.ShowSettings = false;
+
+			if (actor == null)
+				this.Tabs.SelectedIndex = 0;
 		}
 
 		private async Task OnShowDrawer(UserControl view, DrawerDirection direction)

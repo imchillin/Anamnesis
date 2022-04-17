@@ -60,6 +60,9 @@ namespace Anamnesis.Memory
 				if (PoseService.Instance.IsEnabled)
 					return false;
 
+				if (PoseService.Instance.FreezeWorldPosition)
+					return false;
+
 				// If there is some sort of external refresh service
 				// assume we can always refresh.
 				if (SettingsService.Current.UseExternalRefresh)
