@@ -150,7 +150,7 @@
                                 <XivToolsWpf:TextBlock Key="Character_Action_AnimationApply"/>
                             </Button>
 
-							<Button Grid.Row="0" Grid.Column="1"  Click="OnResetOverrideAnimation" IsEnabled="{Binding Actor.IsAnimationOverriden}" Style="{StaticResource TransparentButton}">
+                            <Button Grid.Row="0" Grid.Column="1"  Click="OnResetOverrideAnimation" IsEnabled="{Binding Actor.IsAnimationOverridden}" Style="{StaticResource TransparentButton}">
                                 <XivToolsWpf:TextBlock Key="Character_Action_AnimationReset"/>
                             </Button>
 
@@ -168,7 +168,73 @@
                 </GroupBox>
             </StackPanel>
 
-            <StackPanel Grid.Row="2" IsEnabled="{Binding AnimationService.SpeedControlEnabled}">
+            <StackPanel Grid.Row="2">
+                <GroupBox Style="{StaticResource PanelGroupBox}">
+                    <GroupBox.Header>
+                        <XivToolsWpf:Header Key="Character_Action_AnimationBlending"
+											Icon="RulerCombined" />
+                    </GroupBox.Header>
+
+                    <Grid IsEnabled="{Binding Actor.IsAnimationOverridden}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <XivToolsWpf:TextBlock
+			                Key="Character_Action_AnimationId"
+			                Grid.Row="0"
+			                Grid.Column="0"
+			                Style="{StaticResource Label}"/>
+
+
+                        <Grid Grid.Row="0" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="0" Click="OnBlendAnimationSearchClicked"  Style="{StaticResource TransparentButton}">
+                                <Button.ToolTip>
+                                    <XivToolsWpf:TextBlock Key="Character_Action_AnimationSearch"/>
+                                </Button.ToolTip>
+
+                                <XivToolsWpf:IconBlock Icon="Search"/>
+                            </Button>
+
+                            <XivToolsWpf:NumberBox Grid.Column="1"  Value="{Binding AnimationOverride.BlendAnimationId}"  Buttons="True"
+										   Minimum="0"
+										   TickFrequency="1" />
+                        </Grid>
+
+
+                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" IsEnabled="{Binding AnimationService.BlendLocked, Converter={StaticResource NotConverter}}" Style="{StaticResource TransparentButton}">
+                            <XivToolsWpf:TextBlock Key="Character_Action_AnimationBlend"/>
+                        </Button>
+
+                        <XivToolsWpf:TextBlock
+			                Key="Character_Action_AnimationBlendWarning"
+			                Grid.Row="2"
+			                Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Left"
+                            FontSize="10"
+                            FontStyle="Italic"
+                            TextWrapping="Wrap"
+			                Style="{StaticResource Label}"/>
+
+                        <XivToolsWpf:InfoControl Visibility="{Binding Actor.IsAnimationOverridden, Converter={StaticResource !B2V}}" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="3" Key="Character_Action_AnimationOverrideBlendBlocked" />
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" IsEnabled="{Binding AnimationService.SpeedControlEnabled}">
                 <GroupBox Style="{StaticResource PanelGroupBox}">
                     <GroupBox.Header>
                         <XivToolsWpf:Header Key="Character_Action_AnimationSpeedControl"
@@ -226,70 +292,6 @@
                         </Button>
 
                         <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}" Grid.Row="0" Grid.ColumnSpan="4" Grid.RowSpan="2" Key="Character_Action_AnimationOverrideSpeedBlocked" />
-                    </Grid>
-                </GroupBox>
-            </StackPanel>
-
-            <StackPanel Grid.Row="3">
-                <GroupBox Style="{StaticResource PanelGroupBox}">
-                    <GroupBox.Header>
-                        <XivToolsWpf:Header Key="Character_Action_AnimationBlending"
-											Icon="RulerCombined" />
-                    </GroupBox.Header>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <XivToolsWpf:TextBlock
-			                Key="Character_Action_AnimationId"
-			                Grid.Row="0"
-			                Grid.Column="0"
-			                Style="{StaticResource Label}"/>
-
-
-                        <Grid Grid.Row="0" Grid.Column="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            
-                            <Button Grid.Column="0" Click="OnBlendAnimationSearchClicked"  Style="{StaticResource TransparentButton}">
-                                <Button.ToolTip>
-                                    <XivToolsWpf:TextBlock Key="Character_Action_AnimationSearch"/>
-                                </Button.ToolTip>
-
-                                <XivToolsWpf:IconBlock Icon="Search"/>
-                            </Button>
-
-                            <XivToolsWpf:NumberBox Grid.Column="1"  Value="{Binding AnimationOverride.BlendAnimationId}"  Buttons="True"
-										   Minimum="0"
-										   TickFrequency="1" />
-                        </Grid>
-                        
-
-                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" Style="{StaticResource TransparentButton}">
-                            <XivToolsWpf:TextBlock Key="Character_Action_AnimationBlend"/>
-                        </Button>
-
-                        <XivToolsWpf:TextBlock
-			                Key="Character_Action_AnimationBlendWarning"
-			                Grid.Row="2"
-			                Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Left"
-                            FontSize="10"
-                            FontStyle="Italic"
-                            TextWrapping="Wrap"
-			                Style="{StaticResource Label}"/>
                     </Grid>
                 </GroupBox>
             </StackPanel>

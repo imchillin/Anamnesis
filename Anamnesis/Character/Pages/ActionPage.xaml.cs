@@ -71,7 +71,7 @@ namespace Anamnesis.Character.Pages
 				}
 				else
 				{
-					if (actor.IsAnimationOverriden == true)
+					if (actor.IsAnimationOverridden == true)
 					{
 						this.AnimationOverride = new();
 						this.AnimationOverride.BaseAnimationId = actor.BaseAnimationOverride;
