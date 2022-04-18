@@ -40,6 +40,10 @@ namespace Anamnesis.Services
 					if (pinnedActor.Memory.ObjectKind != ActorTypes.Player)
 						continue;
 
+					// If it's already a gpose actor it's too late
+					if (pinnedActor.Memory.IsGPoseActor)
+						continue;
+
 					Actor? actor = null;
 
 					try
@@ -119,11 +123,17 @@ namespace Anamnesis.Services
 
 				IntPtr newTypeAddress = memory.GetAddressOfProperty(nameof(ActorBasicMemory.ObjectKind));
 
-				if (newTypeAddress == this.OriginalTypeAddress)
-					Log.Error($"Failed to change gpose actor type to {this.OriginalType}. Memory has not updated.");
-
-				MemoryService.Write(newTypeAddress, this.OriginalType, "NPC face hack restore (new)");
 				MemoryService.Write(this.OriginalTypeAddress, this.OriginalType, "NPC face hack restore (original)");
+
+				// If the address didn't change or it's still an overworld actor it never copied
+				if (memory.IsGPoseActor && newTypeAddress != this.OriginalTypeAddress)
+				{
+					MemoryService.Write(newTypeAddress, this.OriginalType, "NPC face hack restore (new)");
+				}
+				else
+				{
+					Log.Information($"Failed to reset GPose actor to {this.OriginalType}. IsOverworld: {memory.IsOverworldActor}. This could be a timing issue or the actor may not have been copied into GPose.");
+				}
 			}
 		}
 	}
