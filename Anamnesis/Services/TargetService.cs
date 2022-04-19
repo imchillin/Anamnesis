@@ -409,7 +409,7 @@ namespace Anamnesis
 			public string IdNoAddress { get; private set; }
 			public IntPtr? Pointer { get; private set; }
 			public ActorTypes Kind { get; private set; }
-			public IconChar Icon => this.Kind.GetIcon();
+			public IconChar Icon { get; private set; }
 			public int ModelType { get; private set; }
 			public string? Initials { get; private set; }
 			public bool IsValid { get; private set; }
@@ -647,6 +647,7 @@ namespace Anamnesis
 				this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
 				this.Pointer = this.Memory.Address;
 				this.Kind = this.Memory.ObjectKind;
+				this.Icon = this.Memory.ObjectKind.GetIcon();
 				this.ModelType = this.Memory.ModelType;
 				this.IsGPoseActor = this.Memory.IsGPoseActor;
 				this.IsHidden = this.Memory.IsHidden;
@@ -658,9 +659,14 @@ namespace Anamnesis
 
 			private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
 			{
-				if (this.Memory != null && e.PropertyName == nameof(ActorMemory.DisplayName))
+				if (this.Memory == null)
+					return;
+
+				if(e.PropertyName == nameof(ActorMemory.DisplayName) || e.PropertyName == nameof(ActorMemory.ObjectKind))
 				{
 					this.UpdateInitials(this.Memory.DisplayName);
+					this.Kind = this.Memory.ObjectKind;
+					this.Icon = this.Memory.ObjectKind.GetIcon();
 				}
 			}
 

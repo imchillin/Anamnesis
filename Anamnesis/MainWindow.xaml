@@ -274,14 +274,10 @@
 
 												<StackPanel Orientation="Horizontal">
 
-													<Grid Margin="3, 0"
-														  Width="15"
-														  Height="15">
-
+													<Grid Margin="3, 0">
 														<XivToolsWpf:IconBlock Margin="2,1,1,2"
 																	  Icon="{Binding Icon}"
 																	  Visibility="{Binding IsValid, Converter={StaticResource B2V}}"/>
-
 
 														<XivToolsWpf:IconBlock Margin="2,1,1,2"
 																	  Icon="TimesCircle"
