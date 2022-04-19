@@ -8,6 +8,7 @@
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 xmlns:anaMem="clr-namespace:Anamnesis.Memory"
 			 xmlns:ana="clr-namespace:Anamnesis.Views"
+			 xmlns:converters="clr-namespace:Anamnesis.Converters"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
 			 DataContextChanged="OnDataContextChanged"
@@ -234,7 +235,7 @@
 				</GroupBox>
 			</StackPanel>
 
-			<StackPanel 
+			<!--<StackPanel 
 				Grid.Row="1"
 				Margin="2, 2, 2, 0"
 				Orientation="Horizontal">
@@ -250,7 +251,25 @@
 					<XivToolsWpf:TextBlock Key="Character_SearchNpcAppearances" />
 				</Button>
 				
-			</StackPanel>
+			</StackPanel>-->
+
+			<XivToolsWpf:InfoControl Key="Warning_NpcFaceTitle">
+
+				<XivToolsWpf:InfoControl.Resources>
+					<converters:NpcFaceGposeConverter x:Key="NpcFaceConverter"/>
+				</XivToolsWpf:InfoControl.Resources>
+
+				<XivToolsWpf:InfoControl.Visibility>
+					<MultiBinding Converter="{StaticResource NpcFaceConverter}">
+						<Binding Path="Actor.ObjectKind"/>
+						<Binding Path="Actor.Customize.Head"/>
+					</MultiBinding>
+				</XivToolsWpf:InfoControl.Visibility>
+
+				<XivToolsWpf:InfoControl.ToolTip>
+					<XivToolsWpf:TextBlock Key="Warning_NpcFace" MaxWidth="256" TextWrapping="Wrap"/>
+				</XivToolsWpf:InfoControl.ToolTip>
+			</XivToolsWpf:InfoControl>
 
 			<StackPanel Orientation="Vertical" Grid.Row="2">
 				<Menu Grid.Row="1"

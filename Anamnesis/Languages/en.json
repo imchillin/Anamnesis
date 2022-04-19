@@ -23,6 +23,9 @@
 	"Error_WrongVersionTitle": "Game version changed",
 	"Error_WrongVersion": "Anamnesis has not been validated against this game version. This may cause problems.\n\nIf a game patch was recently released, check for Anamnesis updates. If there's no update, or there are no reports of the tool not working, then you can simply press 'OK' to continue.",
 
+	"Warning_NpcFaceTitle": "NPC Face not GPose compatible",
+	"Warning_NpcFace": "The selected character uses options that are not available to players, and you have applied it to something other than a Battle NPC (Carbuncle, Chocobo).\n\nThe appearance will reset to valid player options when entering GPose.",
+
 	"FileBrowser_GoUp": "Go Up",
 	"FileBrowser_Flatten": "Flatten Hierarchy",
 	"FileBrowser_CreateFolder": "Create Folder",
