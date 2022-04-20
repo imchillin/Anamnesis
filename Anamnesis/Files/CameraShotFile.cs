@@ -29,13 +29,12 @@ namespace Anamnesis.Files
 
 			if (actor.ModelObject?.Transform?.Rotation != null && actor.ModelObject?.Transform?.Position != null)
 			{
-				// First we use the 0 rotation position and rotate it around the actor by it's current rotation in local space
-				Vector actorEuler = actor.ModelObject.Transform.Rotation.ToEuler();
-
 				// We assume the actor is stood flat on the ground
+				Vector actorEuler = actor.ModelObject.Transform.Rotation.ToEuler();
 				actorEuler.X = 0;
 				actorEuler.Z = 0;
 
+				// First we use the 0 rotation position and rotate it around the actor by it's current rotation in local space
 				Vector rotatedRelativePosition = Quaternion.FromEuler(actorEuler) * this.Position;
 
 				// Adjust camera position to world space
@@ -56,10 +55,8 @@ namespace Anamnesis.Files
 
 			if (actor.ModelObject?.Transform?.Rotation != null && actor.ModelObject?.Transform?.Position != null)
 			{
-				Quaternion actorRotation = actor.ModelObject.Transform.Rotation;
-				Vector actorEuler = actorRotation.ToEuler();
-
 				// We assume the actor is stood flat on the ground
+				Vector actorEuler = actor.ModelObject.Transform.Rotation.ToEuler();
 				actorEuler.Z = 0;
 				actorEuler.X = 0;
 
