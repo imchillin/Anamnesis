@@ -208,6 +208,7 @@
 								<RowDefinition/>
 								<RowDefinition/>
 								<RowDefinition/>
+								<RowDefinition/>
 							</Grid.RowDefinitions>
 
 							<XivToolsWPF:TextBlock Grid.Row="0" Grid.Column="0" Key="Settings_Dir_Characters" Style="{StaticResource Label}"/>
@@ -216,7 +217,11 @@
 
 							<XivToolsWPF:TextBlock Grid.Row="1" Grid.Column="0" Key="Settings_Dir_Poses" Style="{StaticResource Label}"/>
 							<TextBox Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultPoseDirectory}" IsEnabled="False"/>
-                            <Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowsePose"/>
+							<Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowsePose"/>
+
+                            <XivToolsWPF:TextBlock Grid.Row="2" Grid.Column="0" Key="Settings_Dir_CameraShots" Style="{StaticResource Label}"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultCameraShotDirectory}" IsEnabled="False"/>
+                            <Button Grid.Row="2" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseCamera"/>
 
                             <!--
 							<ana:TextBlock Grid.Row="2" Grid.Column="0" Key="Settings_Dir_Scenes" Style="{StaticResource Label}"/>

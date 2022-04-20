@@ -36,6 +36,7 @@ namespace Anamnesis.Services
 		public Point OverlayWindowPosition { get; set; }
 		public string DefaultPoseDirectory { get; set; } = "%MyDocuments%/Anamnesis/Poses/";
 		public string DefaultCharacterDirectory { get; set; } = "%MyDocuments%/Anamnesis/Characters/";
+		public string DefaultCameraShotDirectory { get; set; } = "%MyDocuments%/Anamnesis/CameraShots/";
 		public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
 		public bool ShowAdvancedOptions { get; set; } = true;
 		public bool FlipPoseGuiSides { get; set; } = false;
