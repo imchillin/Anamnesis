@@ -6,13 +6,13 @@ namespace Anamnesis.Keyboard
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
+	using System.Windows;
 	using System.Windows.Controls.Primitives;
 	using System.Windows.Input;
 	using Anamnesis.GUI;
 	using Anamnesis.Memory;
 	using Anamnesis.Services;
 	using XivToolsWpf;
-	using XivToolsWpf.Windows;
 
 	public class HotkeyService : ServiceBase<HotkeyService>
 	{
@@ -21,7 +21,7 @@ namespace Anamnesis.Keyboard
 		private static readonly Dictionary<string, List<Handler>> FunctionToHandlers = new();
 		private static readonly Dictionary<(Key, ModifierKeys), string> KeyToFunction = new();
 
-		private static HashSet<Key> keyDownSentToGame = new();
+		private static readonly HashSet<Key> KeyDownSentToGame = new();
 
 		public static void RegisterHotkeyHandler(string function, Action callback)
 		{
@@ -102,9 +102,9 @@ namespace Anamnesis.Keyboard
 
 				Hook.OnKeyboardInput += this.OnKeyboardInput;
 
-				foreach ((string function, KeyCombination keys) in SettingsService.Current.KeyboardBindings)
+				foreach ((string function, KeyCombination key) in SettingsService.Current.KeyboardBindings.GetBinds())
 				{
-					RegisterHotkey(keys.Key, keys.Modifiers, function);
+					RegisterHotkey(key.Key, key.Modifiers, function);
 				}
 
 				Hook.Start();
@@ -121,6 +121,10 @@ namespace Anamnesis.Keyboard
 
 		private bool OnKeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 		{
+			// Do not intercept or forward these keys.
+			if (key == Key.Tab || key == Key.Return || key == Key.Escape)
+				return false;
+
 			bool handled = this.HandleKey(key, state, modifiers);
 
 			// was key pressed when we _had_ focus?
@@ -130,14 +134,14 @@ namespace Anamnesis.Keyboard
 			{
 				if (MainWindow.IsActive && state == KeyboardKeyStates.Pressed)
 				{
-					keyDownSentToGame.Add(key);
+					KeyDownSentToGame.Add(key);
 					MemoryService.SendKey(key, state);
 				}
 			}
 
-			if (state == KeyboardKeyStates.Released && keyDownSentToGame.Contains(key))
+			if (state == KeyboardKeyStates.Released && KeyDownSentToGame.Contains(key))
 			{
-				keyDownSentToGame.Remove(key);
+				KeyDownSentToGame.Remove(key);
 				MemoryService.SendKey(key, state);
 			}
 
@@ -221,6 +225,14 @@ namespace Anamnesis.Keyboard
 
 			public bool Invoke(KeyboardKeyStates state)
 			{
+				if (this.Callback.Target is UIElement uiElement)
+				{
+					if (!uiElement.IsVisible)
+					{
+						return false;
+					}
+				}
+
 				return this.Callback.Invoke(state);
 			}
 		}

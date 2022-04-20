@@ -62,7 +62,7 @@ namespace Anamnesis.GUI.Views
 			this.Languages = languages;
 
 			List<HotkeyOption> hotkeys = new();
-			foreach((string function, KeyCombination keys) in SettingsService.Current.KeyboardBindings)
+			foreach ((string function, KeyCombination keys) in SettingsService.Current.KeyboardBindings.GetBinds())
 			{
 				hotkeys.Add(new HotkeyOption(function, keys));
 			}

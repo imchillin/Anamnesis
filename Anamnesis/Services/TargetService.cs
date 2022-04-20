@@ -299,10 +299,10 @@ namespace Anamnesis
 			});
 		}
 
-		public void SelectActor(int index)
+		public bool SelectActor(int index)
 		{
 			if (index >= this.PinnedActors.Count || index < 0)
-				return;
+				return false;
 
 			if (this.PinnedActors[index].IsSelected)
 			{
@@ -312,6 +312,8 @@ namespace Anamnesis
 			{
 				this.SelectActor(this.PinnedActors[index]);
 			}
+
+			return true;
 		}
 
 		public int GetSelectedIndex()
