@@ -5,6 +5,7 @@ namespace Anamnesis.Memory
 {
 	using System;
 	using System.Threading.Tasks;
+	using Anamnesis.Penumbra;
 	using Anamnesis.Services;
 	using PropertyChanged;
 
@@ -188,9 +189,9 @@ namespace Anamnesis.Memory
 
 				this.IsRefreshing = true;
 
-				if (SettingsService.Current.UseExternalRefresh)
+				if (SettingsService.Current.EnablePenumbraApi)
 				{
-					await Penumbra.Penumbra.Redraw(this.Name);
+					await PenumbraService.Redraw(this.Name, this.CharacterCollectionName);
 					return;
 				}
 				else

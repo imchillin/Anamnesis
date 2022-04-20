@@ -247,7 +247,7 @@
 					</Grid.RowDefinitions>
 
 					<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_UseExternalRefresh" Style="{StaticResource Label}"/>
-					<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="0" Margin="6"/>
+					<CheckBox IsChecked="{Binding SettingsService.Settings.EnablePenumbraApi}" Grid.Column="1" Grid.Row="0" Margin="6"/>
 
 					<XivToolsWPF:InfoControl Grid.Row="1" Key="Settings_UseExternalRefreshWarning" Width="237" Grid.ColumnSpan="2"/>
 				</Grid>

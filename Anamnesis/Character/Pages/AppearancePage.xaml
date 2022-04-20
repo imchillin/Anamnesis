@@ -120,6 +120,49 @@
 			<StackPanel>
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">
+
+					<GroupBox.Header>
+						<XivToolsWpf:Header Key="Character_Actor_Header"
+											Icon="Question" />
+					</GroupBox.Header>
+
+					<Grid Margin="0, 0, 0, 0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition />
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+
+						<XivToolsWpf:TextBlock Key="Character_Actor_Nickname"
+											   Grid.Row="0"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+
+						<TextBox Grid.Row="0"
+								 Grid.Column="1"
+								 Style="{StaticResource MaterialDesignTextBox}"
+								 Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}"/>
+
+						<XivToolsWpf:TextBlock Text="Penumbra Collection"
+											   Grid.Row="1"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}"
+											   Visibility="{Binding Penumbra.IsEnabled, Converter={StaticResource B2V}}"/>
+
+						<ComboBox Grid.Row="1"
+								  Grid.Column="1"
+								  ItemsSource="{Binding Penumbra.Collections}"
+								  SelectedValue="{Binding Actor.CharacterCollectionName}"
+								  Visibility="{Binding Penumbra.IsEnabled, Converter={StaticResource B2V}}"/>
+					</Grid>
+					
+				</GroupBox>
+
+				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
 						<XivToolsWpf:Header Key="Character_Actor_Header"
 											Icon="Horse" />
@@ -140,16 +183,7 @@
 							<RowDefinition />
 						</Grid.RowDefinitions>
 
-						<XivToolsWpf:TextBlock Key="Character_Actor_Nickname"
-											   Grid.Row="0"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
 						
-						<TextBox Grid.Row="0"
-								 Grid.Column="1"
-								 Grid.ColumnSpan="2"
-								 Style="{StaticResource MaterialDesignTextBox}"
-								 Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}"/>
 						
 						<XivToolsWpf:TextBlock Key="Character_Actor_EntityType"
 											   Grid.Row="2"
@@ -271,7 +305,7 @@
 				</XivToolsWpf:InfoControl.ToolTip>
 			</XivToolsWpf:InfoControl>
 
-			<StackPanel Orientation="Vertical" Grid.Row="2">
+			<StackPanel Orientation="Vertical" Grid.Row="3">
 				<Menu Grid.Row="1"
 				  Margin="0,3, 3, 4"
 				  Style="{StaticResource AnaMenu}">

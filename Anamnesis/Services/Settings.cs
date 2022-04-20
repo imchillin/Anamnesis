@@ -44,7 +44,7 @@ namespace Anamnesis.Services
 		public string? GalleryDirectory { get; set; }
 		public bool EnableTranslucency { get; set; } = true;
 		public bool ExtendIntoWindowChrome { get; set; } = true;
-		public bool UseExternalRefresh { get; set; } = false;
+		public bool EnablePenumbraApi { get; set; } = false;
 		public bool EnableGameHotkeyHooks { get; set; } = false;
 		public bool EnableHotkeys { get; set; } = true;
 

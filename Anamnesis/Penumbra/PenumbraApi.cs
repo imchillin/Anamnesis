@@ -18,13 +18,19 @@ namespace Anamnesis.Penumbra
 
 		public static async Task Post(string route, object content)
 		{
-			await PostRequest(route, content);
+			await Request(route, "POST", content);
 		}
 
-		public static async Task<T> Post<T>(string route, object content)
+		public static async Task<TResult> Get<TResult>(string route)
+			where TResult : notnull
+		{
+			return await Request<TResult>(route, "GET");
+		}
+
+		public static async Task<T> Request<T>(string route, string method, object? content = null)
 			where T : notnull
 		{
-			WebResponse response = await PostRequest(route, content);
+			WebResponse response = await Request(route, method, content);
 
 			using StreamReader? sr = new StreamReader(response.GetResponseStream());
 			string json = sr.ReadToEnd();
@@ -32,23 +38,26 @@ namespace Anamnesis.Penumbra
 			return SerializerService.Deserialize<T>(json);
 		}
 
-		private static async Task<WebResponse> PostRequest(string route, object content)
+		private static async Task<WebResponse> Request(string route, string method, object? content = null)
 		{
 			if (!route.StartsWith('/'))
 				route = '/' + route;
 
-			string json = SerializerService.Serialize(content);
-
 			WebRequest request = WebRequest.Create(Url + route);
 			request.Timeout = TimeoutMs;
 			request.ContentType = "application/json; charset=utf-8";
-			request.Method = "POST";
+			request.Method = method;
 			UTF8Encoding encoding = new UTF8Encoding();
-			byte[] data = encoding.GetBytes(json);
-			request.ContentLength = data.Length;
-			Stream newStream = await request.GetRequestStreamAsync();
-			newStream.Write(data, 0, data.Length);
-			newStream.Close();
+
+			if (content != null)
+			{
+				string json = SerializerService.Serialize(content);
+				byte[] data = encoding.GetBytes(json);
+				request.ContentLength = data.Length;
+				Stream newStream = await request.GetRequestStreamAsync();
+				newStream.Write(data, 0, data.Length);
+				newStream.Close();
+			}
 
 			try
 			{
