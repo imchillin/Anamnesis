@@ -62,7 +62,7 @@ namespace Anamnesis.Memory
 			if (this.Address == address)
 				return;
 
-			Log.Verbose($"Changing addressof {this.GetType()} from: {this.Address} to {address}");
+			////Log.Verbose($"Changing addressof {this.GetType()} from: {this.Address} to {address}");
 			this.Address = address;
 
 			try
