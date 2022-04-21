@@ -32,6 +32,27 @@ namespace Anamnesis.Memory
 			}
 		}
 
+		[AlsoNotifyFor(nameof(CameraMemory.Angle), nameof(CameraMemory.Rotation))]
+		public Vector3D Euler
+		{
+			get
+			{
+				Vector3D camEuler = default;
+				camEuler.Y = (float)MathUtils.RadiansToDegrees((double)this.Angle.X);
+				camEuler.Z = (float)MathUtils.RadiansToDegrees((double)this.Angle.Y);
+				camEuler.X = (float)MathUtils.RadiansToDegrees((double)this.Rotation);
+				return camEuler;
+			}
+
+			set
+			{
+				this.Rotation = (float)MathUtils.DegreesToRadians(value.X);
+				var angleX = (float)MathUtils.DegreesToRadians(value.Y);
+				var angleY = (float)MathUtils.DegreesToRadians(value.Z);
+				this.Angle = new Vector2D(angleX, angleY);
+			}
+		}
+
 		public bool FreezeAngle
 		{
 			get => this.IsFrozen(nameof(CameraMemory.Angle));
