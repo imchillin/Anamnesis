@@ -7,7 +7,7 @@ namespace Scripts;
 
 public class CleanNpcNames : ScriptBase
 {
-	const string filePath = "../Anamnesis/Data/NpcNames.json";
+	const string filePath = "../../../../Anamnesis/Data/NpcNames.json";
 
 	public override string Name => "Clean NPC names";
 
@@ -31,18 +31,18 @@ public class CleanNpcNames : ScriptBase
 			string appearanceValue = appearance;
 			string nameValue = name;
 
-			if (appearanceValue.Length != 7)
+			if (appearanceValue.Length != 9)
 			{
 				string[] parts = appearanceValue.Split(':');
 				uint value = uint.Parse(parts[1]);
-				appearanceValue = parts[0] + ":" + value.ToString("D5");
+				appearanceValue = parts[0] + ":" + value.ToString("D7");
 			}
 
-			if (nameValue.Length != 7 && nameValue.StartsWith("B:"))
+			if (nameValue.Length != 9 && nameValue.StartsWith("B:"))
 			{
 				string[] parts = nameValue.Split(':');
 				uint value = uint.Parse(parts[1]);
-				nameValue = parts[0] + ":" + value.ToString("D5");
+				nameValue = parts[0] + ":" + value.ToString("D7");
 			}
 
 			results.Add(appearanceValue, nameValue);

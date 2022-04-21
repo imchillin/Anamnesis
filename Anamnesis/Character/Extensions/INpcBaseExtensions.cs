@@ -43,7 +43,7 @@ namespace Anamnesis.Character
 				throw new Exception($"Unknown Npc Type: {type}");
 			}
 
-			return $"{t}:{npc.RowId}";
+			return $"{t}:{npc.RowId.ToString("D7")}";
 		}
 
 		public static INpcBase FromStringKey(string stringKey)
