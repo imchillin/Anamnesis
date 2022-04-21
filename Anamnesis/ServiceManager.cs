@@ -71,7 +71,6 @@ namespace Anamnesis.Services
 			await Add<AnimationService>();
 			await Add<Keyboard.HotkeyService>();
 			await Add<HistoryService>();
-			await Add<Penumbra.PenumbraService>();
 
 			IsInitialized = true;
 

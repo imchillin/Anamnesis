@@ -14,7 +14,6 @@ namespace Anamnesis.Character.Pages
 	using Anamnesis.GameData;
 	using Anamnesis.Keyboard;
 	using Anamnesis.Memory;
-	using Anamnesis.Penumbra;
 	using Anamnesis.Services;
 	using Anamnesis.Styles;
 	using Anamnesis.Styles.Drawers;
@@ -40,7 +39,6 @@ namespace Anamnesis.Character.Pages
 		}
 
 		public ActorMemory? Actor { get; private set; }
-		public PenumbraService Penumbra => PenumbraService.Instance;
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{

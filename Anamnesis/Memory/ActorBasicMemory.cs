@@ -40,9 +40,6 @@ namespace Anamnesis.Memory
 		public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
 		public string NameHash => HashUtility.GetHashString(this.NameBytes.ToString(), true);
 
-		// For penumbra
-		public string? CharacterCollectionName { get; set; }
-
 		[AlsoNotifyFor(nameof(DisplayName))]
 		public string? Nickname { get; set; }
 
@@ -68,7 +65,7 @@ namespace Anamnesis.Memory
 
 				// If there is some sort of external refresh service
 				// assume we can always refresh.
-				if (SettingsService.Current.EnablePenumbraApi)
+				if (SettingsService.Current.UseExternalRefresh)
 					return true;
 
 				return this.IsOverworldActor;
