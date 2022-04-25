@@ -122,7 +122,8 @@
 				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
 						<XivToolsWpf:Header Key="Character_Actor_Header"
-											Icon="Horse" />
+											Icon="Horse"
+											Margin="0, 0, 6, 0"/>
 					</GroupBox.Header>
 
 					<Grid>
@@ -151,7 +152,7 @@
 								 Style="{StaticResource MaterialDesignTextBox}"
 								 Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}"/>
 						
-						<XivToolsWpf:TextBlock Key="Character_Actor_EntityType"
+						<!--<XivToolsWpf:TextBlock Key="Character_Actor_EntityType"
 											   Grid.Row="2"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
@@ -171,7 +172,7 @@
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
 							</ComboBox>
-						</Grid>
+						</Grid>-->
 
 						<XivToolsWpf:TextBlock Key="Character_Actor_Model"
 											   Grid.Row="3"
