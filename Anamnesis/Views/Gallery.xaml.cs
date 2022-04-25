@@ -168,7 +168,7 @@ namespace Anamnesis.Views
 				try
 				{
 					string url = entry.Thumbnail ?? entry.Url;
-					imagePath = FileService.CacheRemoteImage(url);
+					imagePath = await FileService.CacheRemoteImage(url);
 				}
 				catch (Exception ex)
 				{
