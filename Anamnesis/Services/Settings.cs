@@ -82,7 +82,7 @@ namespace Anamnesis.Services
 			public KeyCombination QuaternionEditor_RotateXMinusSlow { get; set; } = new(Key.D, ModifierKeys.Control);
 			public KeyCombination QuaternionEditor_RotateYPlusSlow { get; set; } = new(Key.Q, ModifierKeys.Control);
 			public KeyCombination QuaternionEditor_RotateYMinusSlow { get; set; } = new(Key.E, ModifierKeys.Control);
-			public KeyCombination AppearancePage_ClearEquipment { get; set; } = new(Key.C, ModifierKeys.Control | ModifierKeys.Shift);
+			public KeyCombination CharacterPage_ClearEquipment { get; set; } = new(Key.C, ModifierKeys.Control | ModifierKeys.Shift);
 			public KeyCombination TargetService_SelectPinned1 { get; set; } = new(Key.F1);
 			public KeyCombination TargetService_SelectPinned2 { get; set; } = new(Key.F2);
 			public KeyCombination TargetService_SelectPinned3 { get; set; } = new(Key.F3);

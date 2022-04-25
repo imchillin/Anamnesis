@@ -24,18 +24,18 @@ namespace Anamnesis.Character.Pages
 	/// Interaction logic for AppearancePage.xaml.
 	/// </summary>
 	[AddINotifyPropertyChangedInterface]
-	public partial class AppearancePage : UserControl
+	public partial class CharacterPage : UserControl
 	{
 		private static DirectoryInfo? lastLoadDir;
 		private static DirectoryInfo? lastSaveDir;
 
-		public AppearancePage()
+		public CharacterPage()
 		{
 			this.InitializeComponent();
 
 			this.ContentArea.DataContext = this;
 
-			HotkeyService.RegisterHotkeyHandler("AppearancePage.ClearEquipment", () => this.OnClearClicked());
+			HotkeyService.RegisterHotkeyHandler("CharacterPage.ClearEquipment", () => this.OnClearClicked());
 		}
 
 		public ActorMemory? Actor { get; private set; }

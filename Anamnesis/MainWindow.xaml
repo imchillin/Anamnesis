@@ -387,7 +387,7 @@
 								FontSize="18"/>
 						</TabItem.Header>
 
-						<characterPages:AppearancePage DataContext="{Binding TargetService.SelectedActor}" />
+						<characterPages:CharacterPage DataContext="{Binding TargetService.SelectedActor}" />
 					</TabItem>
 					<TabItem x:Name="ActionTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 						<TabItem.Header>
