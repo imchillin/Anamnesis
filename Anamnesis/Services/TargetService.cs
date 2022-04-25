@@ -39,6 +39,11 @@ namespace Anamnesis
 		[DependsOn(nameof(CurrentlyPinned))]
 		public ActorMemory? SelectedActor => this.CurrentlyPinned?.Memory;
 
+		public int PinnedActorCount { get; private set; }
+
+		[DependsOn(nameof(PinnedActorCount))]
+		public bool MoreThanFourPins => this.PinnedActorCount > 4;
+
 		public static async Task PinActor(ActorBasicMemory basicActor)
 		{
 			if (basicActor.Address == IntPtr.Zero)
@@ -74,6 +79,7 @@ namespace Anamnesis
 
 				await Dispatch.MainThread();
 				Instance.PinnedActors.Add(pined);
+				Instance.PinnedActorCount = Instance.PinnedActors.Count;
 				Instance.SelectActor(pined);
 				ActorPinned?.Invoke(pined);
 			}
@@ -105,6 +111,7 @@ namespace Anamnesis
 				}
 			}
 
+			Instance.PinnedActorCount = Instance.PinnedActors.Count;
 			ActorUnPinned?.Invoke(actor);
 		}
 
@@ -296,6 +303,7 @@ namespace Anamnesis
 			{
 				this.CurrentlyPinned = null;
 				this.PinnedActors.Clear();
+				Instance.PinnedActorCount = 0;
 			});
 		}
 

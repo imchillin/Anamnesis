@@ -163,7 +163,14 @@ namespace Anamnesis.GUI
 			this.ShowSettings = false;
 
 			if (actor == null)
+			{
 				this.Tabs.SelectedIndex = 0;
+			}
+			else
+			{
+				FrameworkElement? container = this.PinnedActorList.ItemContainerGenerator.ContainerFromItem(this.TargetService.CurrentlyPinned) as FrameworkElement;
+				container?.BringIntoView();
+			}
 		}
 
 		private async Task OnShowDrawer(UserControl view, DrawerDirection direction)
@@ -364,6 +371,12 @@ namespace Anamnesis.GUI
 		private void OnBackClicked(object sender, RoutedEventArgs e)
 		{
 			this.ShowSettings = false;
+		}
+
+		private void OnPinnedActorsPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			this.PinnedActorsList.ScrollToHorizontalOffset(this.PinnedActorsList.HorizontalOffset - (e.Delta / 5));
+			e.Handled = true;
 		}
 	}
 }
