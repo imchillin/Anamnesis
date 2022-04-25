@@ -1,70 +1,69 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Views
+namespace Anamnesis.Views;
+
+using System.Text;
+using System.Windows.Input;
+using Anamnesis.Keyboard;
+using XivToolsWpf.DependencyProperties;
+
+/// <summary>
+/// Interaction logic for HotkeyPrompt.xaml.
+/// </summary>
+public partial class HotkeyPrompt : System.Windows.Controls.TextBlock
 {
-	using System.Text;
-	using System.Windows.Input;
-	using Anamnesis.Keyboard;
-	using XivToolsWpf.DependencyProperties;
+	public static readonly IBind<string> FunctionDp = Binder.Register<string, HotkeyPrompt>(nameof(Function), OnKeyChanged, BindMode.OneWay);
 
-	/// <summary>
-	/// Interaction logic for HotkeyPrompt.xaml.
-	/// </summary>
-	public partial class HotkeyPrompt : System.Windows.Controls.TextBlock
+	public HotkeyPrompt()
 	{
-		public static readonly IBind<string> FunctionDp = Binder.Register<string, HotkeyPrompt>(nameof(Function), OnKeyChanged, BindMode.OneWay);
+		this.InitializeComponent();
+		this.LoadString();
+	}
 
-		public HotkeyPrompt()
+	public string? Function { get; set; }
+
+	public static void OnKeyChanged(HotkeyPrompt sender, string val)
+	{
+		sender.Function = val;
+		sender.LoadString();
+	}
+
+	private void LoadString()
+	{
+		this.Text = null;
+
+		if (string.IsNullOrEmpty(this.Function))
+			return;
+
+		if (!HotkeyService.Exists)
+			return;
+
+		KeyCombination? keys = HotkeyService.GetBind(this.Function);
+		if (keys == null)
+			return;
+
+		StringBuilder str = new StringBuilder();
+
+		if (keys.Modifiers.HasFlag(ModifierKeys.Control))
 		{
-			this.InitializeComponent();
-			this.LoadString();
+			str.Append("[CTRL] +");
 		}
 
-		public string? Function { get; set; }
-
-		public static void OnKeyChanged(HotkeyPrompt sender, string val)
+		if (keys.Modifiers.HasFlag(ModifierKeys.Alt))
 		{
-			sender.Function = val;
-			sender.LoadString();
+			str.Append("[ALT] +");
 		}
 
-		private void LoadString()
+		if (keys.Modifiers.HasFlag(ModifierKeys.Shift))
 		{
-			this.Text = null;
-
-			if (string.IsNullOrEmpty(this.Function))
-				return;
-
-			if (!HotkeyService.Exists)
-				return;
-
-			KeyCombination? keys = HotkeyService.GetBind(this.Function);
-			if (keys == null)
-				return;
-
-			StringBuilder str = new StringBuilder();
-
-			if (keys.Modifiers.HasFlag(ModifierKeys.Control))
-			{
-				str.Append("[CTRL] +");
-			}
-
-			if (keys.Modifiers.HasFlag(ModifierKeys.Alt))
-			{
-				str.Append("[ALT] +");
-			}
-
-			if (keys.Modifiers.HasFlag(ModifierKeys.Shift))
-			{
-				str.Append("[SHIFT] +");
-			}
-
-			str.Append('[');
-			str.Append(keys.Key);
-			str.Append(']');
-
-			this.Text = str.ToString();
+			str.Append("[SHIFT] +");
 		}
+
+		str.Append('[');
+		str.Append(keys.Key);
+		str.Append(']');
+
+		this.Text = str.ToString();
 	}
 }

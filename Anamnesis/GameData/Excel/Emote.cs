@@ -1,39 +1,38 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Excel
+namespace Anamnesis.GameData.Excel;
+
+using Anamnesis.GameData.Interfaces;
+using Anamnesis.GameData.Sheets;
+using Lumina.Data;
+using Lumina.Excel;
+
+using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+
+[Sheet("Emote", 0xf3afded2)]
+public class Emote : ExcelRow, IAnimation
 {
-	using Anamnesis.GameData.Interfaces;
-	using Anamnesis.GameData.Sheets;
-	using Lumina.Data;
-	using Lumina.Excel;
+	public string? DisplayName { get; private set; }
+	public ActionTimeline? Timeline { get; private set; }
+	public ImageReference? Icon { get; private set; }
 
-	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-	[Sheet("Emote", 0xf3afded2)]
-	public class Emote : ExcelRow, IAnimation
+	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 	{
-		public string? DisplayName { get; private set; }
-		public ActionTimeline? Timeline { get; private set; }
-		public ImageReference? Icon { get; private set; }
+		base.PopulateData(parser, gameData, language);
 
-		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-		{
-			base.PopulateData(parser, gameData, language);
+		this.DisplayName = parser.ReadString(0);
 
-			this.DisplayName = parser.ReadString(0);
+		ActionTimeline? a = parser.ReadRowReference<ushort, ActionTimeline>(1);
+		ActionTimeline? b = parser.ReadRowReference<ushort, ActionTimeline>(2);
+		ActionTimeline? c = parser.ReadRowReference<ushort, ActionTimeline>(3);
+		ActionTimeline? d = parser.ReadRowReference<ushort, ActionTimeline>(4);
+		ActionTimeline? e = parser.ReadRowReference<ushort, ActionTimeline>(5);
+		ActionTimeline? f = parser.ReadRowReference<ushort, ActionTimeline>(6);
+		ActionTimeline? g = parser.ReadRowReference<ushort, ActionTimeline>(7);
 
-			ActionTimeline? a = parser.ReadRowReference<ushort, ActionTimeline>(1);
-			ActionTimeline? b = parser.ReadRowReference<ushort, ActionTimeline>(2);
-			ActionTimeline? c = parser.ReadRowReference<ushort, ActionTimeline>(3);
-			ActionTimeline? d = parser.ReadRowReference<ushort, ActionTimeline>(4);
-			ActionTimeline? e = parser.ReadRowReference<ushort, ActionTimeline>(5);
-			ActionTimeline? f = parser.ReadRowReference<ushort, ActionTimeline>(6);
-			ActionTimeline? g = parser.ReadRowReference<ushort, ActionTimeline>(7);
+		this.Timeline = a;
 
-			this.Timeline = a;
-
-			this.Icon = parser.ReadImageReference<ushort>(20);
-		}
+		this.Icon = parser.ReadImageReference<ushort>(20);
 	}
 }

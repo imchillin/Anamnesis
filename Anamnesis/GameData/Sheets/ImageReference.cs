@@ -1,77 +1,75 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Sheets
+namespace Anamnesis.GameData.Sheets;
+
+using System;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Anamnesis.Services;
+using Lumina.Data.Files;
+using Serilog;
+
+public class ImageReference
 {
-	using System;
-	using System.Windows.Media;
-	using System.Windows.Media.Imaging;
-	using Anamnesis.Services;
-	using Lumina.Data.Files;
-	using Lumina.Extensions;
-	using Serilog;
+	public readonly uint ImageId;
 
-	public class ImageReference
+	private WeakReference<ImageSource>? cachedImage;
+
+	public ImageReference(uint imageId)
 	{
-		public readonly uint ImageId;
+		this.ImageId = imageId;
+	}
 
-		private WeakReference<ImageSource>? cachedImage;
+	public ImageReference(ushort imageId)
+	{
+		this.ImageId = imageId;
+	}
 
-		public ImageReference(uint imageId)
+	public ImageReference(int imageId)
+	{
+		this.ImageId = (uint)imageId;
+	}
+
+	public ImageSource? GetImageSource()
+	{
+		if (this.ImageId == 0 || GameDataService.LuminaData == null)
+			return null;
+
+		ImageSource? img;
+
+		if (this.cachedImage != null && this.cachedImage.TryGetTarget(out img))
 		{
-			this.ImageId = imageId;
+			return img;
 		}
 
-		public ImageReference(ushort imageId)
+		try
 		{
-			this.ImageId = imageId;
-		}
+			Log.Verbose($"Loading image {this.ImageId}");
 
-		public ImageReference(int imageId)
-		{
-			this.ImageId = (uint)imageId;
-		}
+			////TexFile? tex = GameDataService.LuminaData.GetIcon(this.ImageId);
+			////string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}.tex";
+			string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}_hr1.tex";
+			TexFile? tex = GameDataService.LuminaData.GetFile<TexFile>(path);
 
-		public ImageSource? GetImageSource()
-		{
-			if (this.ImageId == 0 || GameDataService.LuminaData == null)
+			if (tex == null)
 				return null;
 
-			ImageSource? img;
+			BitmapSource bmp = BitmapSource.Create(tex.Header.Width, tex.Header.Height, 96, 96, PixelFormats.Bgra32, null, tex.ImageData, tex.Header.Width * 4);
+			bmp.Freeze();
+			img = bmp;
 
-			if (this.cachedImage != null && this.cachedImage.TryGetTarget(out img))
-			{
-				return img;
-			}
+			if (this.cachedImage == null)
+				this.cachedImage = new WeakReference<ImageSource>(img);
 
-			try
-			{
-				Log.Verbose($"Loading image {this.ImageId}");
-
-				////TexFile? tex = GameDataService.LuminaData.GetIcon(this.ImageId);
-				////string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}.tex";
-				string path = $"ui/icon/{this.ImageId / 1000u * 1000:000000}/{this.ImageId:000000}_hr1.tex";
-				TexFile? tex = GameDataService.LuminaData.GetFile<TexFile>(path);
-
-				if (tex == null)
-					return null;
-
-				BitmapSource bmp = BitmapSource.Create(tex.Header.Width, tex.Header.Height, 96, 96, PixelFormats.Bgra32, null, tex.ImageData, tex.Header.Width * 4);
-				bmp.Freeze();
-				img = bmp;
-
-				if (this.cachedImage == null)
-					this.cachedImage = new WeakReference<ImageSource>(img);
-
-				this.cachedImage.SetTarget(img);
-				return img;
-			}
-			catch (Exception ex)
-			{
-				Log.Warning(ex, $"Failed to load Image: {this.ImageId} form lumina");
-			}
-
-			return null;
+			this.cachedImage.SetTarget(img);
+			return img;
 		}
+		catch (Exception ex)
+		{
+			Log.Warning(ex, $"Failed to load Image: {this.ImageId} form lumina");
+		}
+
+		return null;
 	}
 }

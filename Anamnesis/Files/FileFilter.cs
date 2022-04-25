@@ -1,40 +1,39 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Files
+namespace Anamnesis.Files;
+
+using System;
+using System.IO;
+
+public class FileFilter
 {
-	using System;
-	using System.IO;
+	public readonly string Extension;
+	public readonly string? Regex;
+	public readonly Type FileType;
+	public Func<FileSystemInfo, string>? GetNameCallback;
+	public Func<FileSystemInfo, string>? GetFullNameCallback;
 
-	public class FileFilter
+	public FileFilter(Type fileType, string extension, string? regex)
 	{
-		public readonly string Extension;
-		public readonly string? Regex;
-		public readonly Type FileType;
-		public Func<FileSystemInfo, string>? GetNameCallback;
-		public Func<FileSystemInfo, string>? GetFullNameCallback;
+		this.Extension = extension;
+		this.Regex = regex;
+		this.FileType = fileType;
+	}
 
-		public FileFilter(Type fileType, string extension, string? regex)
+	public bool Passes(FileInfo file)
+	{
+		if (file.Extension != this.Extension)
+			return false;
+
+		if (this.Regex != null)
 		{
-			this.Extension = extension;
-			this.Regex = regex;
-			this.FileType = fileType;
-		}
-
-		public bool Passes(FileInfo file)
-		{
-			if (file.Extension != this.Extension)
-				return false;
-
-			if (this.Regex != null)
+			if (!System.Text.RegularExpressions.Regex.IsMatch(file.FullName, this.Regex))
 			{
-				if (!System.Text.RegularExpressions.Regex.IsMatch(file.FullName, this.Regex))
-				{
-					return false;
-				}
+				return false;
 			}
-
-			return true;
 		}
+
+		return true;
 	}
 }

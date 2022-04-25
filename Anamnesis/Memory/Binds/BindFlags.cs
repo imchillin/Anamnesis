@@ -1,15 +1,14 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+public enum BindFlags
 {
-	public enum BindFlags
-	{
-		None = 0,
-		Pointer = 1,
-		ActorRefresh = 2,
-		DontCacheOffsets = 4,
-		OnlyInGPose = 8,
-		DontRecordHistory = 16,
-	}
+	None = 0,
+	Pointer = 1,
+	ActorRefresh = 2,
+	DontCacheOffsets = 4,
+	OnlyInGPose = 8,
+	DontRecordHistory = 16,
 }

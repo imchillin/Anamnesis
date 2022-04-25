@@ -1,53 +1,52 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Excel
+namespace Anamnesis.GameData.Excel;
+
+using Anamnesis.Memory;
+using Lumina.Data;
+using Lumina.Excel;
+using Lumina.Text;
+
+using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+
+[Sheet("Tribe", 0xe74759fb)]
+public class Tribe : ExcelRow
 {
-	using Anamnesis.Memory;
-	using Lumina.Data;
-	using Lumina.Excel;
-	using Lumina.Text;
+	public string Name => this.CustomizeTribe.ToString();
+	public ActorCustomizeMemory.Tribes CustomizeTribe => (ActorCustomizeMemory.Tribes)this.RowId;
 
-	using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+	public string Feminine { get; private set; } = string.Empty;
+	public string Masculine { get; private set; } = string.Empty;
 
-	[Sheet("Tribe", 0xe74759fb)]
-	public class Tribe : ExcelRow
+	public string DisplayName
 	{
-		public string Name => this.CustomizeTribe.ToString();
-		public ActorCustomizeMemory.Tribes CustomizeTribe => (ActorCustomizeMemory.Tribes)this.RowId;
-
-		public string Feminine { get; private set; } = string.Empty;
-		public string Masculine { get; private set; } = string.Empty;
-
-		public string DisplayName
+		get
 		{
-			get
-			{
-				// big old hack to keep miqo tribe names short for the UI
-				if (this.Feminine.StartsWith("Seeker"))
-					return "Seeker";
+			// big old hack to keep miqo tribe names short for the UI
+			if (this.Feminine.StartsWith("Seeker"))
+				return "Seeker";
 
-				if (this.Feminine.StartsWith("Keeper"))
-					return "Keeper";
+			if (this.Feminine.StartsWith("Keeper"))
+				return "Keeper";
 
-				return this.Feminine;
-			}
+			return this.Feminine;
 		}
+	}
 
-		public bool Equals(Tribe? other)
-		{
-			if (other is null)
-				return false;
+	public bool Equals(Tribe? other)
+	{
+		if (other is null)
+			return false;
 
-			return this.CustomizeTribe == other.CustomizeTribe;
-		}
+		return this.CustomizeTribe == other.CustomizeTribe;
+	}
 
-		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-		{
-			base.PopulateData(parser, gameData, language);
+	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
+	{
+		base.PopulateData(parser, gameData, language);
 
-			this.Masculine = parser.ReadColumn<SeString>(0) ?? string.Empty;
-			this.Feminine = parser.ReadColumn<SeString>(1) ?? string.Empty;
-		}
+		this.Masculine = parser.ReadColumn<SeString>(0) ?? string.Empty;
+		this.Feminine = parser.ReadColumn<SeString>(1) ?? string.Empty;
 	}
 }

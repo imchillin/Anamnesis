@@ -1,10 +1,9 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Files
+namespace Anamnesis.Files;
+
+public interface IUpgradeCharacterFile
 {
-	public interface IUpgradeCharacterFile
-	{
-		public CharacterFile Upgrade();
-	}
+	public CharacterFile Upgrade();
 }

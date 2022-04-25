@@ -1,18 +1,17 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.PoseModule.Views
-{
-	using System.Windows.Controls;
+namespace Anamnesis.PoseModule.Views;
 
-	/// <summary>
-	/// Interaction logic for CharacterPoseView.xaml.
-	/// </summary>
-	public partial class PoseGuiView : UserControl
+using System.Windows.Controls;
+
+/// <summary>
+/// Interaction logic for CharacterPoseView.xaml.
+/// </summary>
+public partial class PoseGuiView : UserControl
+{
+	public PoseGuiView()
 	{
-		public PoseGuiView()
-		{
-			this.InitializeComponent();
-		}
+		this.InitializeComponent();
 	}
 }

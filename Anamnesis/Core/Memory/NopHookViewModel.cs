@@ -1,62 +1,61 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+using System;
+
+public class NopHookViewModel
 {
-	using System;
+	private readonly IntPtr address;
+	private readonly byte[] originalValue;
+	private readonly byte[] nopValue;
+	private bool value;
 
-	public class NopHookViewModel
+	public NopHookViewModel(IntPtr address, int count)
 	{
-		private readonly IntPtr address;
-		private readonly byte[] originalValue;
-		private readonly byte[] nopValue;
-		private bool value;
+		this.address = address;
 
-		public NopHookViewModel(IntPtr address, int count)
+		this.originalValue = new byte[count];
+		this.nopValue = new byte[count];
+
+		MemoryService.Read(this.address, this.originalValue, this.originalValue.Length);
+
+		for (int i = 0; i < count; i++)
 		{
-			this.address = address;
+			this.nopValue[i] = 0x90;
+		}
+	}
 
-			this.originalValue = new byte[count];
-			this.nopValue = new byte[count];
-
-			MemoryService.Read(this.address, this.originalValue, this.originalValue.Length);
-
-			for (int i = 0; i < count; i++)
-			{
-				this.nopValue[i] = 0x90;
-			}
+	public bool Enabled
+	{
+		get
+		{
+			return this.value;
 		}
 
-		public bool Enabled
+		set
 		{
-			get
-			{
-				return this.value;
-			}
-
-			set
-			{
-				this.SetEnabled(value);
-			}
+			this.SetEnabled(value);
 		}
+	}
 
-		public void SetEnabled(bool enabled)
+	public void SetEnabled(bool enabled)
+	{
+		if (enabled == this.value)
+			return;
+
+		this.value = enabled;
+
+		if (enabled)
 		{
-			if (enabled == this.value)
-				return;
-
-			this.value = enabled;
-
-			if (enabled)
-			{
-				// Write Nop
-				MemoryService.Write(this.address, this.nopValue);
-			}
-			else
-			{
-				// Write the original value
-				MemoryService.Write(this.address, this.originalValue);
-			}
+			// Write Nop
+			MemoryService.Write(this.address, this.nopValue);
+		}
+		else
+		{
+			// Write the original value
+			MemoryService.Write(this.address, this.originalValue);
 		}
 	}
 }

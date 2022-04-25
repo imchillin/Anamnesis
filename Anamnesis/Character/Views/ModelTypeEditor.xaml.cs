@@ -1,18 +1,17 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Views
-{
-	using System.Windows.Controls;
+namespace Anamnesis.Character.Views;
 
-	/// <summary>
-	/// Interaction logic for ModelTypeEditor.xaml.
-	/// </summary>
-	public partial class ModelTypeEditor : UserControl
+using System.Windows.Controls;
+
+/// <summary>
+/// Interaction logic for ModelTypeEditor.xaml.
+/// </summary>
+public partial class ModelTypeEditor : UserControl
+{
+	public ModelTypeEditor()
 	{
-		public ModelTypeEditor()
-		{
-			this.InitializeComponent();
-		}
+		this.InitializeComponent();
 	}
 }

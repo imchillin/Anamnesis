@@ -1,31 +1,30 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Views
+namespace Anamnesis.GUI.Views;
+
+using System.Windows;
+using System.Windows.Controls;
+using Anamnesis.Memory;
+using Anamnesis.Styles;
+
+/// <summary>
+/// Interaction logic for ActorHeaderView.xaml.
+/// </summary>
+public partial class ActorHeaderView : UserControl
 {
-	using System.Windows;
-	using System.Windows.Controls;
-	using Anamnesis.Memory;
-	using Anamnesis.Styles;
-
-	/// <summary>
-	/// Interaction logic for ActorHeaderView.xaml.
-	/// </summary>
-	public partial class ActorHeaderView : UserControl
+	public ActorHeaderView()
 	{
-		public ActorHeaderView()
-		{
-			this.InitializeComponent();
-		}
+		this.InitializeComponent();
+	}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			ActorMemory? actor = this.DataContext as ActorMemory;
+	private void UserControl_Loaded(object sender, RoutedEventArgs e)
+	{
+		ActorMemory? actor = this.DataContext as ActorMemory;
 
-			if (actor == null)
-				return;
+		if (actor == null)
+			return;
 
-			this.Icon.Icon = actor.ObjectKind.GetIcon();
-		}
+		this.Icon.Icon = actor.ObjectKind.GetIcon();
 	}
 }

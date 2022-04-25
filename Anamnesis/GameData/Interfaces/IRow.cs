@@ -1,12 +1,11 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData
-{
-	using global::Anamnesis.Styles.Drawers;
+namespace Anamnesis.GameData;
 
-	public interface IRow : ISelectable
-	{
-		uint RowId { get; }
-	}
+using global::Anamnesis.Styles.Drawers;
+
+public interface IRow : ISelectable
+{
+	uint RowId { get; }
 }

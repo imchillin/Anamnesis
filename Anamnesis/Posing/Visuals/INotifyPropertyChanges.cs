@@ -1,9 +1,8 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.PoseModule
+namespace Anamnesis.PoseModule;
+
+internal interface INotifyPropertyChanges
 {
-	internal interface INotifyPropertyChanges
-	{
-	}
 }

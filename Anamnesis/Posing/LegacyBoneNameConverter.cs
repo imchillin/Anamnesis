@@ -1,14 +1,14 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Posing
-{
-	using System.Collections.Generic;
+namespace Anamnesis.Posing;
 
-	public static class LegacyBoneNameConverter
-	{
-		private static readonly Dictionary<string, string> ModernToLegacy = new Dictionary<string, string>();
-		private static readonly Dictionary<string, string> LegacyToModern = new Dictionary<string, string>()
+using System.Collections.Generic;
+
+public static class LegacyBoneNameConverter
+{
+	private static readonly Dictionary<string, string> ModernToLegacy = new Dictionary<string, string>();
+	private static readonly Dictionary<string, string> LegacyToModern = new Dictionary<string, string>()
 		{
 			// Body
 			{ "Root", "n_root" },
@@ -180,30 +180,29 @@ namespace Anamnesis.Posing
 			{ "HrothLipLower", "j_f_dlip" },
 		};
 
-		static LegacyBoneNameConverter()
+	static LegacyBoneNameConverter()
+	{
+		foreach ((string legacy, string modern) in LegacyToModern)
 		{
-			foreach ((string legacy, string modern) in LegacyToModern)
-			{
-				// Skip over duplicate modern keys, since Hroth and Viera both duplicate bones.
-				if (ModernToLegacy.ContainsKey(modern))
-					continue;
+			// Skip over duplicate modern keys, since Hroth and Viera both duplicate bones.
+			if (ModernToLegacy.ContainsKey(modern))
+				continue;
 
-				ModernToLegacy.Add(modern, legacy);
-			}
+			ModernToLegacy.Add(modern, legacy);
 		}
+	}
 
-		public static string? GetModernName(string legacyName)
-		{
-			string? name = null;
-			LegacyToModern.TryGetValue(legacyName, out name);
-			return name;
-		}
+	public static string? GetModernName(string legacyName)
+	{
+		string? name = null;
+		LegacyToModern.TryGetValue(legacyName, out name);
+		return name;
+	}
 
-		public static string? GetLegacyName(string modernName)
-		{
-			string? name = null;
-			ModernToLegacy.TryGetValue(modernName, out name);
-			return name;
-		}
+	public static string? GetLegacyName(string modernName)
+	{
+		string? name = null;
+		ModernToLegacy.TryGetValue(modernName, out name);
+		return name;
 	}
 }

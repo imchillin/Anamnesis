@@ -1,47 +1,46 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Styles
+namespace Anamnesis.Styles;
+
+using Anamnesis.Memory;
+using FontAwesome.Sharp;
+
+public static class ActorTypesExtensions
 {
-	using Anamnesis.Memory;
-	using FontAwesome.Sharp;
-
-	public static class ActorTypesExtensions
+	public static bool IsSupportedType(this ActorTypes actorType)
 	{
-		public static bool IsSupportedType(this ActorTypes actorType)
+		switch (actorType)
 		{
-			switch (actorType)
-			{
-				case ActorTypes.Player:
-				case ActorTypes.BattleNpc:
-				case ActorTypes.EventNpc:
-				case ActorTypes.Companion:
-				case ActorTypes.Mount:
-				case ActorTypes.Ornament:
-				case ActorTypes.Retainer:
-					return true;
-			}
-
-			return false;
+			case ActorTypes.Player:
+			case ActorTypes.BattleNpc:
+			case ActorTypes.EventNpc:
+			case ActorTypes.Companion:
+			case ActorTypes.Mount:
+			case ActorTypes.Ornament:
+			case ActorTypes.Retainer:
+				return true;
 		}
 
-		public static IconChar GetIcon(this ActorTypes type)
-		{
-			switch (type)
-			{
-				case ActorTypes.Player: return IconChar.UserAlt;
-				case ActorTypes.BattleNpc: return IconChar.UserShield;
-				case ActorTypes.EventNpc: return IconChar.UserNinja;
-				case ActorTypes.Treasure: return IconChar.Coins;
-				case ActorTypes.Aetheryte: return IconChar.Gem;
-				case ActorTypes.Companion: return IconChar.Cat;
-				case ActorTypes.Retainer: return IconChar.ConciergeBell;
-				case ActorTypes.Housing: return IconChar.Chair;
-				case ActorTypes.Mount: return IconChar.Horse;
-				case ActorTypes.Ornament: return IconChar.PiedPiperHat;
-			}
+		return false;
+	}
 
-			return IconChar.Question;
+	public static IconChar GetIcon(this ActorTypes type)
+	{
+		switch (type)
+		{
+			case ActorTypes.Player: return IconChar.UserAlt;
+			case ActorTypes.BattleNpc: return IconChar.UserShield;
+			case ActorTypes.EventNpc: return IconChar.UserNinja;
+			case ActorTypes.Treasure: return IconChar.Coins;
+			case ActorTypes.Aetheryte: return IconChar.Gem;
+			case ActorTypes.Companion: return IconChar.Cat;
+			case ActorTypes.Retainer: return IconChar.ConciergeBell;
+			case ActorTypes.Housing: return IconChar.Chair;
+			case ActorTypes.Mount: return IconChar.Horse;
+			case ActorTypes.Ornament: return IconChar.PiedPiperHat;
 		}
+
+		return IconChar.Question;
 	}
 }

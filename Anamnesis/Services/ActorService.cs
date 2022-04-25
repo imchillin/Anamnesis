@@ -1,160 +1,159 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis
+namespace Anamnesis;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Anamnesis.Core.Memory;
+using Anamnesis.Memory;
+using PropertyChanged;
+
+[AddINotifyPropertyChangedInterface]
+public class ActorService : ServiceBase<ActorService>
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Threading.Tasks;
-	using Anamnesis.Core.Memory;
-	using Anamnesis.Memory;
-	using PropertyChanged;
+	private const int TickDelay = 10;
+	private const int ActorTableSize = 424;
+	private const int GPoseIndexStart = 200;
+	private const int GPoseIndexEnd = 244;
+	private const int OverworldPlayerIndex = 0;
+	private const int GPosePlayerIndex = 201;
 
-	[AddINotifyPropertyChangedInterface]
-	public class ActorService : ServiceBase<ActorService>
+	private readonly IntPtr[] actorTable = new IntPtr[ActorTableSize];
+
+	public ReadOnlyCollection<IntPtr> ActorTable => Array.AsReadOnly(this.actorTable);
+
+	public int GetActorTableIndex(IntPtr pointer, bool refresh = false)
 	{
-		private const int TickDelay = 10;
-		private const int ActorTableSize = 424;
-		private const int GPoseIndexStart = 200;
-		private const int GPoseIndexEnd = 244;
-		private const int OverworldPlayerIndex = 0;
-		private const int GPosePlayerIndex = 201;
+		if (pointer == IntPtr.Zero)
+			return -1;
 
-		private readonly IntPtr[] actorTable = new IntPtr[ActorTableSize];
-
-		public ReadOnlyCollection<IntPtr> ActorTable => Array.AsReadOnly(this.actorTable);
-
-		public int GetActorTableIndex(IntPtr pointer, bool refresh = false)
-		{
-			if (pointer == IntPtr.Zero)
-				return -1;
-
-			if (refresh)
-				this.UpdateActorTable();
-
-			return Array.IndexOf(this.actorTable, pointer);
-		}
-
-		public bool IsActorInTable(IntPtr ptr, bool refresh = false)
-		{
-			return this.GetActorTableIndex(ptr, refresh) != -1;
-		}
-
-		public bool IsActorInTable(MemoryBase memory, bool refresh = false) => this.IsActorInTable(memory.Address, refresh);
-
-		public bool IsGPoseActor(int objectIndex) => objectIndex >= GPoseIndexStart && objectIndex < GPoseIndexEnd;
-
-		public bool IsGPoseActor(IntPtr actorAddress)
-		{
-			int objectIndex = this.GetActorTableIndex(actorAddress);
-
-			if (objectIndex == -1)
-				return false;
-
-			return this.IsGPoseActor(objectIndex);
-		}
-
-		public bool IsOverworldActor(int objectIndex) => !this.IsGPoseActor(objectIndex);
-		public bool IsOverworldActor(IntPtr actorAddress) => !this.IsGPoseActor(actorAddress);
-
-		public bool IsLocalOverworldPlayer(int objectIndex) => objectIndex == OverworldPlayerIndex;
-		public bool IsLocalOverworldPlayer(IntPtr actorAddress)
-		{
-			int objectIndex = this.GetActorTableIndex(actorAddress);
-
-			if (objectIndex == -1)
-				return false;
-
-			return this.IsLocalOverworldPlayer(objectIndex);
-		}
-
-		public bool IsLocalGPosePlayer(int objectIndex) => objectIndex == GPosePlayerIndex;
-		public bool IsLocalGPosePlayer(IntPtr actorAddress)
-		{
-			int objectIndex = this.GetActorTableIndex(actorAddress);
-
-			if (objectIndex == -1)
-				return false;
-
-			return this.IsLocalGPosePlayer(objectIndex);
-		}
-
-		public bool IsLocalPlayer(int objectIndex) => this.IsLocalOverworldPlayer(objectIndex) || this.IsLocalGPosePlayer(objectIndex);
-		public bool IsLocalPlayer(IntPtr actorAddress) => this.IsLocalOverworldPlayer(actorAddress) || this.IsLocalGPosePlayer(actorAddress);
-
-		public List<ActorBasicMemory> GetAllActors(bool refresh = false)
-		{
-			if (refresh)
-				this.UpdateActorTable();
-
-			List<ActorBasicMemory> results = new();
-
-			foreach(var ptr in this.actorTable)
-			{
-				if (ptr == IntPtr.Zero)
-					continue;
-
-				try
-				{
-					ActorBasicMemory actor = new();
-					actor.SetAddress(ptr);
-					results.Add(actor);
-				}
-				catch (Exception ex)
-				{
-					Log.Warning(ex, $"Failed to create Actor Basic View Model for address: {ptr}");
-				}
-			}
-
-			return results;
-		}
-
-		public void ForceRefresh()
-		{
-			this.UpdateActorTable();
-		}
-
-		public override async Task Initialize()
-		{
-			await base.Initialize();
-		}
-
-		public override Task Start()
-		{
+		if (refresh)
 			this.UpdateActorTable();
 
-			_ = Task.Run(this.TickTask);
-			return base.Start();
-		}
+		return Array.IndexOf(this.actorTable, pointer);
+	}
 
-		public override async Task Shutdown()
-		{
-			await base.Shutdown();
-		}
+	public bool IsActorInTable(IntPtr ptr, bool refresh = false)
+	{
+		return this.GetActorTableIndex(ptr, refresh) != -1;
+	}
 
-		private async Task TickTask()
+	public bool IsActorInTable(MemoryBase memory, bool refresh = false) => this.IsActorInTable(memory.Address, refresh);
+
+	public bool IsGPoseActor(int objectIndex) => objectIndex >= GPoseIndexStart && objectIndex < GPoseIndexEnd;
+
+	public bool IsGPoseActor(IntPtr actorAddress)
+	{
+		int objectIndex = this.GetActorTableIndex(actorAddress);
+
+		if (objectIndex == -1)
+			return false;
+
+		return this.IsGPoseActor(objectIndex);
+	}
+
+	public bool IsOverworldActor(int objectIndex) => !this.IsGPoseActor(objectIndex);
+	public bool IsOverworldActor(IntPtr actorAddress) => !this.IsGPoseActor(actorAddress);
+
+	public bool IsLocalOverworldPlayer(int objectIndex) => objectIndex == OverworldPlayerIndex;
+	public bool IsLocalOverworldPlayer(IntPtr actorAddress)
+	{
+		int objectIndex = this.GetActorTableIndex(actorAddress);
+
+		if (objectIndex == -1)
+			return false;
+
+		return this.IsLocalOverworldPlayer(objectIndex);
+	}
+
+	public bool IsLocalGPosePlayer(int objectIndex) => objectIndex == GPosePlayerIndex;
+	public bool IsLocalGPosePlayer(IntPtr actorAddress)
+	{
+		int objectIndex = this.GetActorTableIndex(actorAddress);
+
+		if (objectIndex == -1)
+			return false;
+
+		return this.IsLocalGPosePlayer(objectIndex);
+	}
+
+	public bool IsLocalPlayer(int objectIndex) => this.IsLocalOverworldPlayer(objectIndex) || this.IsLocalGPosePlayer(objectIndex);
+	public bool IsLocalPlayer(IntPtr actorAddress) => this.IsLocalOverworldPlayer(actorAddress) || this.IsLocalGPosePlayer(actorAddress);
+
+	public List<ActorBasicMemory> GetAllActors(bool refresh = false)
+	{
+		if (refresh)
+			this.UpdateActorTable();
+
+		List<ActorBasicMemory> results = new();
+
+		foreach (var ptr in this.actorTable)
 		{
-			while (this.IsAlive)
+			if (ptr == IntPtr.Zero)
+				continue;
+
+			try
 			{
-				await Task.Delay(TickDelay);
-
-				this.ForceRefresh();
+				ActorBasicMemory actor = new();
+				actor.SetAddress(ptr);
+				results.Add(actor);
+			}
+			catch (Exception ex)
+			{
+				Log.Warning(ex, $"Failed to create Actor Basic View Model for address: {ptr}");
 			}
 		}
 
-		private void UpdateActorTable()
-		{
-			lock(this.actorTable)
-			{
-				for (int i = 0; i < ActorTableSize; i++)
-				{
-					IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
-					this.actorTable[i] = ptr;
-				}
-			}
+		return results;
+	}
 
-			this.RaisePropertyChanged(nameof(this.ActorTable));
+	public void ForceRefresh()
+	{
+		this.UpdateActorTable();
+	}
+
+	public override async Task Initialize()
+	{
+		await base.Initialize();
+	}
+
+	public override Task Start()
+	{
+		this.UpdateActorTable();
+
+		_ = Task.Run(this.TickTask);
+		return base.Start();
+	}
+
+	public override async Task Shutdown()
+	{
+		await base.Shutdown();
+	}
+
+	private async Task TickTask()
+	{
+		while (this.IsAlive)
+		{
+			await Task.Delay(TickDelay);
+
+			this.ForceRefresh();
 		}
+	}
+
+	private void UpdateActorTable()
+	{
+		lock (this.actorTable)
+		{
+			for (int i = 0; i < ActorTableSize; i++)
+			{
+				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
+				this.actorTable[i] = ptr;
+			}
+		}
+
+		this.RaisePropertyChanged(nameof(this.ActorTable));
 	}
 }

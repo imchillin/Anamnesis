@@ -1,15 +1,14 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+using System;
+using System.Collections.Generic;
+
+public abstract class FixedArrayMemory<TValue> : InplaceFixedArrayMemory<TValue>, IEnumerable<TValue>
 {
-	using System;
-	using System.Collections.Generic;
+	[Bind(nameof(AddressOffset))] public override IntPtr ArrayAddress { get; set; }
 
-	public abstract class FixedArrayMemory<TValue> : InplaceFixedArrayMemory<TValue>, IEnumerable<TValue>
-	{
-		[Bind(nameof(AddressOffset))] public override IntPtr ArrayAddress { get; set; }
-
-		public virtual int AddressOffset => 0x008;
-	}
+	public virtual int AddressOffset => 0x008;
 }

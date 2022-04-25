@@ -1,60 +1,59 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Sheets
+namespace Anamnesis.GameData.Sheets;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Anamnesis.Files;
+
+public class EquipmentSheet : IEnumerable<Equipment>
 {
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using Anamnesis.Files;
+	private readonly Dictionary<uint, Equipment> rows;
 
-	public class EquipmentSheet : IEnumerable<Equipment>
+	public EquipmentSheet(string fileName)
 	{
-		private readonly Dictionary<uint, Equipment> rows;
-
-		public EquipmentSheet(string fileName)
+		try
 		{
-			try
-			{
-				this.rows = new();
-				uint index = 0;
-				var rows = EmbeddedFileUtility.Load<List<Equipment>>(fileName);
+			this.rows = new();
+			uint index = 0;
+			var rows = EmbeddedFileUtility.Load<List<Equipment>>(fileName);
 
-				foreach (Equipment equipment in rows)
-				{
-					this.rows.Add(index, equipment);
-					index++;
-				}
-			}
-			catch (Exception ex)
+			foreach (Equipment equipment in rows)
 			{
-				throw new Exception($"Failed to load json data: {fileName}", ex);
+				this.rows.Add(index, equipment);
+				index++;
 			}
 		}
-
-		public bool Contains(uint key)
+		catch (Exception ex)
 		{
-			return this.rows.ContainsKey(key);
+			throw new Exception($"Failed to load json data: {fileName}", ex);
 		}
+	}
 
-		public Equipment Get(uint key)
-		{
-			return this.rows[key];
-		}
+	public bool Contains(uint key)
+	{
+		return this.rows.ContainsKey(key);
+	}
 
-		public Equipment Get(byte key)
-		{
-			return this.rows[(uint)key];
-		}
+	public Equipment Get(uint key)
+	{
+		return this.rows[key];
+	}
 
-		public IEnumerator<Equipment> GetEnumerator()
-		{
-			return this.rows.Values.GetEnumerator();
-		}
+	public Equipment Get(byte key)
+	{
+		return this.rows[(uint)key];
+	}
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.rows.GetEnumerator();
-		}
+	public IEnumerator<Equipment> GetEnumerator()
+	{
+		return this.rows.Values.GetEnumerator();
+	}
+
+	IEnumerator IEnumerable.GetEnumerator()
+	{
+		return this.rows.GetEnumerator();
 	}
 }

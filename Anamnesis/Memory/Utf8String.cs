@@ -1,72 +1,71 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+using System;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+
+public struct Utf8String
 {
-	using System;
-	using System.Linq;
-	using System.Runtime.InteropServices;
-	using System.Text;
+	[MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+	public byte[]? Bytes;
 
-	public struct Utf8String
+	public static bool operator ==(Utf8String left, Utf8String right)
 	{
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-		public byte[]? Bytes;
+		return left.Equals(right);
+	}
 
-		public static bool operator ==(Utf8String left, Utf8String right)
+	public static bool operator !=(Utf8String left, Utf8String right)
+	{
+		return !(left == right);
+	}
+
+	public override string ToString()
+	{
+		if (this.Bytes == null)
+			return string.Empty;
+
+		int i;
+		for (i = 0; i < this.Bytes.Length; i++)
 		{
-			return left.Equals(right);
+			if (this.Bytes[i] == 0)
+				break;
 		}
 
-		public static bool operator !=(Utf8String left, Utf8String right)
-		{
-			return !(left == right);
-		}
+		return Encoding.UTF8.GetString(this.Bytes, 0, i);
+	}
 
-		public override string ToString()
+	public void FromString(string self)
+	{
+		byte[] bytes = Encoding.UTF8.GetBytes(self);
+
+		if (bytes.Length >= 30)
+			throw new Exception($"SeString value {self} excedes 30 byte limit");
+
+		this.Bytes = bytes;
+	}
+
+	public override bool Equals(object? obj)
+	{
+		if (obj is Utf8String other)
 		{
 			if (this.Bytes == null)
-				return string.Empty;
+				return other.Bytes == null;
 
-			int i;
-			for (i = 0; i < this.Bytes.Length; i++)
-			{
-				if (this.Bytes[i] == 0)
-					break;
-			}
+			if (other.Bytes == null)
+				return false;
 
-			return Encoding.UTF8.GetString(this.Bytes, 0, i);
+			return this.Bytes.SequenceEqual(other.Bytes);
 		}
 
-		public void FromString(string self)
-		{
-			byte[] bytes = Encoding.UTF8.GetBytes(self);
+		return base.Equals(obj);
+	}
 
-			if (bytes.Length >= 30)
-				throw new Exception($"SeString value {self} excedes 30 byte limit");
-
-			this.Bytes = bytes;
-		}
-
-		public override bool Equals(object? obj)
-		{
-			if (obj is Utf8String other)
-			{
-				if (this.Bytes == null)
-					return other.Bytes == null;
-
-				if (other.Bytes == null)
-					return false;
-
-				return this.Bytes.SequenceEqual(other.Bytes);
-			}
-
-			return base.Equals(obj);
-		}
-
-		public override int GetHashCode()
-		{
-			return HashCode.Combine(this.Bytes?.GetHashCode());
-		}
+	public override int GetHashCode()
+	{
+		return HashCode.Combine(this.Bytes?.GetHashCode());
 	}
 }

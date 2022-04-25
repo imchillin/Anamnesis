@@ -1,12 +1,11 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Keyboard
+namespace Anamnesis.Keyboard;
+
+public enum KeyboardKeyStates
 {
-	public enum KeyboardKeyStates
-	{
-		Pressed,
-		Down,
-		Released,
-	}
+	Pressed,
+	Down,
+	Released,
 }

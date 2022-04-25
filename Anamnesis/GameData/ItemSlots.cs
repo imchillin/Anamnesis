@@ -1,29 +1,24 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData
+namespace Anamnesis.GameData;
+public enum ItemSlots
 {
-	using System;
-	using Anamnesis.Memory;
+	MainHand,
 
-	public enum ItemSlots
-	{
-		MainHand,
+	Head,
+	Body,
+	Hands,
+	Waist,
+	Legs,
+	Feet,
 
-		Head,
-		Body,
-		Hands,
-		Waist,
-		Legs,
-		Feet,
+	OffHand,
+	Ears,
+	Neck,
+	Wrists,
+	RightRing,
+	LeftRing,
 
-		OffHand,
-		Ears,
-		Neck,
-		Wrists,
-		RightRing,
-		LeftRing,
-
-		SoulCrystal,
-	}
+	SoulCrystal,
 }
