@@ -172,7 +172,7 @@
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
 							</ComboBox>
-						</Grid>-->
+						</Grid>
 
 						<XivToolsWpf:TextBlock Key="Character_Actor_Model"
 											   Grid.Row="3"
@@ -182,8 +182,13 @@
 							  Grid.Column="1"
 							  Margin="0,2,0,0"
 							  IsEnabled="{Binding Actor.IsOverworldActor}">
-							<views:ModelTypeEditor DataContext="{Binding Actor}" />
-						</Grid>
+
+							<XivToolsWpf:NumberBox Value="{Binding Actor.ModelType}"
+							   Minimum="0"
+							   Maximum="10000"
+							   Buttons="True" />
+
+						</Grid>-->
 
 						<XivToolsWpf:TextBlock Key="Character_Actor_Alpha"
 											   Grid.Row="4"
@@ -270,6 +275,23 @@
 				<XivToolsWpf:InfoControl.ToolTip>
 					<XivToolsWpf:TextBlock Key="Warning_NpcFace" MaxWidth="256" TextWrapping="Wrap"/>
 				</XivToolsWpf:InfoControl.ToolTip>
+			</XivToolsWpf:InfoControl>
+
+			<XivToolsWpf:InfoControl Key="Warning_MinionGposeTitle">
+				<XivToolsWpf:InfoControl.ToolTip>
+					<XivToolsWpf:TextBlock Key="Warning_MinionGposeFace" MaxWidth="256" TextWrapping="Wrap"/>
+				</XivToolsWpf:InfoControl.ToolTip>
+
+				<XivToolsWpf:InfoControl.Resources>
+					<converters:MinionGposeWarningConverter x:Key="MinionGposeWarningConverter"/>
+				</XivToolsWpf:InfoControl.Resources>
+
+				<XivToolsWpf:InfoControl.Visibility>
+					<MultiBinding Converter="{StaticResource MinionGposeWarningConverter}">
+						<Binding Path="Actor.ObjectKind"/>
+						<Binding Path="Actor.ModelType"/>
+					</MultiBinding>
+				</XivToolsWpf:InfoControl.Visibility>
 			</XivToolsWpf:InfoControl>
 
 			<StackPanel Orientation="Vertical" Grid.Row="2">
