@@ -64,8 +64,11 @@ namespace Anamnesis.Styles.Drawers
 			ColorConverter colorConverter = new ColorConverter();
 			colors.Sort((a, b) =>
 			{
-				string aHex = colorConverter.ConvertToString(a.Color);
-				string bHex = colorConverter.ConvertToString(b.Color);
+				string? aHex = colorConverter.ConvertToString(a.Color);
+				string? bHex = colorConverter.ConvertToString(b.Color);
+
+				if (aHex == null || bHex == null)
+					throw new Exception("Failed to convert colors to hex");
 
 				return aHex.CompareTo(bHex);
 			});
