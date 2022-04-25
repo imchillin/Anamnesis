@@ -149,15 +149,9 @@ namespace Anamnesis.Character.Views
 			this.Selector.AddItem(ItemUtility.InvisibileBodyItem);
 			this.Selector.AddItem(ItemUtility.InvisibileHeadItem);
 
-			// Special case for hands to also list props
-			if (GameDataService.Props != null)
-				this.Selector.AddItems(GameDataService.Props);
-
-			if (GameDataService.Items != null)
-				this.Selector.AddItems(GameDataService.Items);
-
-			if (GameDataService.Perform != null)
-				this.Selector.AddItems(GameDataService.Perform);
+			this.Selector.AddItems(GameDataService.Equipment);
+			this.Selector.AddItems(GameDataService.Items);
+			this.Selector.AddItems(GameDataService.Perform);
 
 			return Task.CompletedTask;
 		}
@@ -256,7 +250,7 @@ namespace Anamnesis.Character.Views
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Premium) && itemCategory.HasFlag(ItemCategories.Premium);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Limited) && itemCategory.HasFlag(ItemCategories.Limited);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Deprecated) && itemCategory.HasFlag(ItemCategories.Deprecated);
-			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Props) && itemCategory.HasFlag(ItemCategories.Props);
+			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.CustomEquipment) && itemCategory.HasFlag(ItemCategories.CustomEquipment);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && itemCategory.HasFlag(ItemCategories.Performance);
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
 			categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;

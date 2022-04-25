@@ -27,9 +27,15 @@ while (selected == -1)
 	}
 	catch (Exception ex)
 	{
-		Console.ForegroundColor = ConsoleColor.Red;
-		Console.WriteLine(ex.Message);
-		Console.ForegroundColor = ConsoleColor.Gray;
-		Console.WriteLine(ex.StackTrace);
+		Exception? inner = ex;
+		while (inner != null)
+		{
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine(inner.Message);
+			Console.ForegroundColor = ConsoleColor.Gray;
+			Console.WriteLine(inner.StackTrace);
+
+			inner = inner.InnerException;
+		}
 	}
 }

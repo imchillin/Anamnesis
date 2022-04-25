@@ -52,11 +52,10 @@
 									  Grid.Row="3"
 									  Grid.Column="0"/>
 		
-		<local:ItemCategoryFilterItem Category="Props"
+		<local:ItemCategoryFilterItem Category="CustomEquipment"
 									  Value="{Binding Value}"
-									  Text="EquipmentSelector_Props"
-									  ToolText="EquipmentSelector_PropsTip"
-									  Visibility="{Binding IsWeaponSlot, Converter={StaticResource B2V}}"
+									  Text="EquipmentSelector_CustomEquipment"
+									  ToolText="EquipmentSelector_CustomEquipmentTip"
 									  Grid.Row="0"
 									  Grid.Column="1"/>
 

@@ -35,32 +35,30 @@ namespace Anamnesis.Services
 
 		public static ClientRegion Region { get; private set; }
 
-		#pragma warning disable CS8618
-		public static ExcelSheet<Race> Races { get; private set; }
-		public static ExcelSheet<Tribe> Tribes { get; private set; }
-		public static ExcelSheet<Item> Items { get; private set; }
-		public static ExcelSheet<Perform> Perform { get; private set; }
-		public static ExcelSheet<Stain> Dyes { get; private set; }
-		public static ExcelSheet<EventNpc> EventNPCs { get; private set; }
-		public static ExcelSheet<BattleNpc> BattleNPCs { get; private set; }
-		public static ExcelSheet<Mount> Mounts { get; private set; }
-		public static ExcelSheet<MountCustomize> MountCustomize { get; private set; }
-		public static ExcelSheet<Companion> Companions { get; private set; }
-		public static ExcelSheet<Territory> Territories { get; private set; }
-		public static ExcelSheet<Weather> Weathers { get; private set; }
-		public static ExcelSheet<CharaMakeCustomize> CharacterMakeCustomize { get; private set; }
-		public static ExcelSheet<CharaMakeType> CharacterMakeTypes { get; private set; }
-		public static ExcelSheet<ResidentNpc> ResidentNPCs { get; private set; }
-		public static ExcelSheet<WeatherRate> WeatherRates { get; private set; }
-		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; private set; }
-		public static ExcelSheet<BattleNpcName> BattleNpcNames { get; private set; }
-		public static ExcelSheet<GameData.Excel.Action> Actions { get; private set; }
-		public static ExcelSheet<ActionTimeline> ActionTimelines { get; private set; }
-		public static ExcelSheet<Emote> Emotes { get; private set; }
-		public static ExcelSheet<Ornament> Ornaments { get; private set; }
+		public static ExcelSheet<Race> Races { get; private set; } = null!;
+		public static ExcelSheet<Tribe> Tribes { get; private set; } = null!;
+		public static ExcelSheet<Item> Items { get; private set; } = null!;
+		public static ExcelSheet<Perform> Perform { get; private set; } = null!;
+		public static ExcelSheet<Stain> Dyes { get; private set; } = null!;
+		public static ExcelSheet<EventNpc> EventNPCs { get; private set; } = null!;
+		public static ExcelSheet<BattleNpc> BattleNPCs { get; private set; } = null!;
+		public static ExcelSheet<Mount> Mounts { get; private set; } = null!;
+		public static ExcelSheet<MountCustomize> MountCustomize { get; private set; } = null!;
+		public static ExcelSheet<Companion> Companions { get; private set; } = null!;
+		public static ExcelSheet<Territory> Territories { get; private set; } = null!;
+		public static ExcelSheet<Weather> Weathers { get; private set; } = null!;
+		public static ExcelSheet<CharaMakeCustomize> CharacterMakeCustomize { get; private set; } = null!;
+		public static ExcelSheet<CharaMakeType> CharacterMakeTypes { get; private set; } = null!;
+		public static ExcelSheet<ResidentNpc> ResidentNPCs { get; private set; } = null!;
+		public static ExcelSheet<WeatherRate> WeatherRates { get; private set; } = null!;
+		public static ExcelSheet<EquipRaceCategory> EquipRaceCategories { get; private set; } = null!;
+		public static ExcelSheet<BattleNpcName> BattleNpcNames { get; private set; } = null!;
+		public static ExcelSheet<GameData.Excel.Action> Actions { get; private set; } = null!;
+		public static ExcelSheet<ActionTimeline> ActionTimelines { get; private set; } = null!;
+		public static ExcelSheet<Emote> Emotes { get; private set; } = null!;
+		public static ExcelSheet<Ornament> Ornaments { get; private set; } = null!;
 
-		public static PropSheet Props { get; private set; }
-		#pragma warning restore CS8618
+		public static EquipmentSheet Equipment { get; private set; } = null!;
 
 		public static ExcelSheet<T> GetSheet<T>()
 			where T : Lumina.Excel.ExcelRow
@@ -159,7 +157,7 @@ namespace Anamnesis.Services
 			// these are json files that we write by hand
 			try
 			{
-				Props = new PropSheet("Data/Props.json");
+				Equipment = new EquipmentSheet("Data/Equipment.json");
 				itemCategories = EmbeddedFileUtility.Load<Dictionary<uint, ItemCategories>>("Data/ItemCategories.json");
 				npcNames = EmbeddedFileUtility.Load<Dictionary<string, string>>("Data/NpcNames.json");
 			}

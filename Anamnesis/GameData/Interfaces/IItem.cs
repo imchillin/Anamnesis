@@ -11,7 +11,7 @@ namespace Anamnesis.GameData
 		uint RowId { get; }
 
 		string Name { get; }
-		string Description { get; }
+		string? Description { get; }
 
 		ImageReference? Icon { get; }
 

@@ -1,0 +1,5057 @@
+[
+  {
+    "Name": "Gleaners Atire",
+    "Id": "9217, 1",
+    "Slot": "Equipment"
+  },
+  {
+    "Name": "Gleaners Atire (Backpack)",
+    "Id": "9217, 2",
+    "Slot": "Body"
+  },
+  {
+    "Name": "Forum Member\u0027s Atire",
+    "Id": "9214, 1",
+    "Slot": "Equipment"
+  },
+  {
+    "Name": "Gigantic Meol",
+    "Id": "9001, 269, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Il Mheg Looking Grass",
+    "Description": "Grass that reveals the pixies of Il Mheg",
+    "Id": "9001, 268, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Alcohol Mixer",
+    "Id": "9001, 267, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Ronkan Disc",
+    "Id": "9001, 265, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Green Gem",
+    "Id": "9001, 264, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Royal Bracelet",
+    "Id": "9001, 263, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Royal Crown",
+    "Id": "9001, 262, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hair Brush",
+    "Id": "9001, 261, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Paint Brush",
+    "Id": "9001, 260, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Basket of Fruits",
+    "Id": "9001, 259, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tankard of Ale",
+    "Id": "9001, 258, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Box of Hay",
+    "Id": "9001, 257, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Box of Potions",
+    "Id": "9001, 256, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Box of Crystals",
+    "Id": "9001, 255, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coin",
+    "Id": "9001, 254, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Shovel",
+    "Id": "9001, 253, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Meol",
+    "Id": "9001, 252, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fruit",
+    "Description": "Nectarine",
+    "Id": "9001, 251, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Grub",
+    "Id": "9001, 250, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Apple",
+    "Id": "9001, 249, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "DNC Soulstone",
+    "Id": "9001, 248, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gunblade Soulstone",
+    "Id": "9001, 247, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "BLU Soulstone",
+    "Id": "9001, 246, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Piece of Gaius\u0027 Helm",
+    "Id": "9001, 245, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hancock\u0027s Glasses",
+    "Id": "9001, 244, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing Staff",
+    "Id": "9001, 243, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sickle",
+    "Id": "9001, 242, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Target",
+    "Id": "9001, 228, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Japanese Fan",
+    "Id": "9001, 227, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Japanese Bell",
+    "Id": "9001, 226, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Zenos\u0027 Katana",
+    "Id": "9001, 225, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Necklace",
+    "Id": "9001, 224, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Corked Rose Alcohol Bottle",
+    "Id": "9001, 222, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Corked Alcohol Bottle",
+    "Id": "9001, 221, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sparrow Taiyaki",
+    "Id": "9001, 219, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bom Boko Taiyaki",
+    "Id": "9001, 218, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Odder Otter Taiyaki",
+    "Id": "9001, 217, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Fish",
+    "Description": "Tuna",
+    "Id": "9001, 216, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bamboo Blowgun",
+    "Id": "9001, 215, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Gem",
+    "Description": "Ruby, Jewel",
+    "Id": "9001, 211, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wooden Spoon",
+    "Id": "9001, 208, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Empty Bowl",
+    "Id": "9001, 207, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Poro Rogo Card",
+    "Id": "9001, 206, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large wooden Spike",
+    "Description": "Toothpick",
+    "Id": "9001, 205, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Scraper",
+    "Id": "9001, 203, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Yotsuyu\u0027s Mirror",
+    "Id": "9001, 202, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tomestone Phone",
+    "Id": "9001, 200, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lute",
+    "Id": "9001, 199, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Present with Hearts",
+    "Id": "9001, 198, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Gemstone",
+    "Description": "Jewel",
+    "Id": "9001, 197, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "SAM Soulstone",
+    "Description": "Samurai Soulstone",
+    "Id": "9001, 189, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "RDM Soulstone",
+    "Description": "Red Mage Soulstone",
+    "Id": "9001, 188, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Yasakani\uFFFDno\uFFFDMagatama",
+    "Id": "9001, 187, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Glass Gem",
+    "Id": "9001, 185, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Broken Garlean Sword",
+    "Id": "9001, 179, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Mask",
+    "Id": "9001, 175, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Card 1",
+    "Id": "9001, 173, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Card 2",
+    "Id": "9001, 172, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Card 3",
+    "Id": "9001, 171, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Pot",
+    "Description": "An unlidded red pot/vase",
+    "Id": "9001, 170, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Japanese Smoking Pipe",
+    "Id": "9001, 169, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Morin Khuur Base",
+    "Id": "9001, 161, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Morin Khuur Fiddle",
+    "Id": "9001, 160, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Urushi Jar",
+    "Id": "9001, 158, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stack of Bamboo",
+    "Id": "9001, 157, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stack of Logs",
+    "Id": "9001, 156, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stack of Wood",
+    "Id": "9001, 155, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bowl of Rice",
+    "Id": "9001, 153, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Chopsticks",
+    "Id": "9001, 152, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Brush",
+    "Id": "9001, 151, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Scroll",
+    "Id": "9001, 150, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Samurai Blade (no handle)",
+    "Id": "9001, 149, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Huge Rolled Tatami",
+    "Id": "9001, 147, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cup",
+    "Id": "9001, 145, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tea Cup",
+    "Id": "9001, 143, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sake Cup",
+    "Id": "9001, 144, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Eye of Nidhogg",
+    "Description": "Dead",
+    "Id": "9001, 132, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal",
+    "Id": "9001, 133, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bouquet of Flowers",
+    "Id": "9001, 134, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Charred Book",
+    "Id": "9001, 129, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Flask",
+    "Id": "9001, 128, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Purple Phial",
+    "Id": "9001, 127, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Phial",
+    "Id": "9001, 126, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Deep Blue Phial",
+    "Id": "9001, 125, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rolled Paper",
+    "Id": "9001, 120, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bouquet of White Flowers",
+    "Id": "9001, 117, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ravana\u0027s Sword",
+    "Id": "9001, 116, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "DRK Soulstone",
+    "Description": "Dark Knight Soulstone",
+    "Id": "9001, 115, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "AST Soulstone",
+    "Description": "Astrologian Soulstone",
+    "Id": "9001, 114, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "MCH Soulstone",
+    "Description": "Machinist Soulstone",
+    "Id": "9001, 113, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wrench",
+    "Description": "Spanner",
+    "Id": "9001, 112, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascalon",
+    "Description": "Knights of the Round Sword, eyeless",
+    "Id": "9001, 110, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascalon",
+    "Description": "Knights of the Round Sword with Nidhogg\u0027s eye",
+    "Id": "9001, 109, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Menu/Flier",
+    "Id": "9001, 107, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Goblet",
+    "Description": "Cup, Chalice",
+    "Id": "9001, 105, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "NIN Soulstone",
+    "Description": "Ninja Soulstone",
+    "Id": "9001, 103, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bouquet of Lillies",
+    "Id": "9001, 100, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bunch of Green Bananas",
+    "Id": "9001, 97, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Niddhog\u0027s Eye",
+    "Id": "9001, 86, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing Horn",
+    "Id": "9001, 85, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "SCH Soulstone",
+    "Description": "Scholar Soulstone",
+    "Id": "9001, 84, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "SMN Soulstone",
+    "Description": "Summoner Soulstone",
+    "Id": "9001, 83, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "BLM Soulstone",
+    "Description": "Black Mage Soulstone",
+    "Id": "9001, 82, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "WHM Soulstone",
+    "Description": "White Mage Soulstone",
+    "Id": "9001, 81, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "BRD Soulstone",
+    "Description": "Bard Soulstone",
+    "Id": "9001, 80, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "DRG Soulstone",
+    "Description": "Dragoon Soulstone",
+    "Id": "9001, 79, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "WAR Soulstone",
+    "Description": "Warrior Soulstone",
+    "Id": "9001, 78, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "MNK Soulstone",
+    "Description": "Monk Soulstone",
+    "Id": "9001, 77, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "PLD Soulstone",
+    "Description": "Paladin Soulstone",
+    "Id": "9001, 76, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Yellow Glowing Crystal",
+    "Id": "9001, 74, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Glowing Crystal",
+    "Id": "9001, 66, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hammer",
+    "Id": "9001, 63, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Burlap Sack Pile",
+    "Id": "9001, 60, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Colorful Present Stack",
+    "Id": "9001, 59, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stack of Posters",
+    "Id": "9001, 58, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Poster",
+    "Id": "9001, 57, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Baskets on a Stick",
+    "Id": "9001, 56, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Smoking Pipe",
+    "Id": "9001, 55, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Oar",
+    "Id": "9001, 54, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Axe",
+    "Id": "9001, 53, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Washcloth",
+    "Id": "9001, 52, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pitchfork",
+    "Id": "9001, 51, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pot",
+    "Id": "9001, 50, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Notepad",
+    "Id": "9001, 48, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Serving Tray",
+    "Id": "9001, 47, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Wooden Spoon",
+    "Id": "9001, 46, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crate",
+    "Id": "9001, 42, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Alchemical Phial",
+    "Id": "9001, 38, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Alchemical Tools",
+    "Id": "9001, 37, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mask",
+    "Id": "9001, 35, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Glowing Orb",
+    "Id": "9001, 31, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Feather Quill",
+    "Id": "9001, 30, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tankard",
+    "Id": "9001, 28, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Single Blue Flower",
+    "Id": "9001, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Watering Can",
+    "Id": "9001, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wine Cup",
+    "Id": "9001, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wine Bottle",
+    "Id": "9001, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rectangular Crate",
+    "Id": "9001, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Baby",
+    "Description": "This should not be classified as a weapon, SE",
+    "Id": "9001, 18, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Metal Cup",
+    "Id": "9001, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bowl/Wok",
+    "Id": "9001, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stone Tablet",
+    "Id": "9001, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Rock",
+    "Id": "9001, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Smelting Ladle",
+    "Id": "9001, 13, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hot Iron in Tongs",
+    "Id": "9001, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Spatula",
+    "Id": "9001, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cooking Whisk",
+    "Id": "9001, 10, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cooking Ladle",
+    "Id": "9001, 9, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Hammer",
+    "Id": "9001, 8, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Single White Flower",
+    "Id": "9001, 7, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Basket",
+    "Id": "9001, 6, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Basket with Flowers",
+    "Id": "9001, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Horn",
+    "Id": "9001, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Harp",
+    "Id": "9001, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Stick",
+    "Id": "9001, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Stick",
+    "Id": "9001, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fancy Fan",
+    "Id": "9032, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Metal Phial",
+    "Id": "9032, 22, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Conductor\u0027s Baton",
+    "Id": "9032, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Block of Wood",
+    "Id": "9032, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Koban",
+    "Id": "9032, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Pot",
+    "Id": "9032, 18, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Japanese Umbrella",
+    "Id": "9032, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pink Bento",
+    "Id": "9032, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Knocked Out Namazu",
+    "Id": "9032, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tall Lantern",
+    "Id": "9032, 13, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Small Red Lantern",
+    "Id": "9032, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Knife",
+    "Id": "9032, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fork",
+    "Id": "9032, 10, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Serving Tray with Glasses",
+    "Id": "9032, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Watering Can",
+    "Id": "9032, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Comb",
+    "Id": "9032, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Bomb",
+    "Id": "9030, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Hunk of Ore",
+    "Id": "9030, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cocoon",
+    "Id": "9030, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bag of Pumpkins",
+    "Id": "9030, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Pot",
+    "Id": "9030, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Easter Egg",
+    "Id": "9030, 6, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bombard",
+    "Id": "9030, 7, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pure Black Orb",
+    "Id": "9030, 8, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Realm Reborn Red",
+    "Id": "9030, 9, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Card Spread",
+    "Id": "9030, 10, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Small Ball",
+    "Id": "9030, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing Blue Orb",
+    "Id": "9030, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing Astrologian Card",
+    "Id": "9030, 13, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Egg",
+    "Id": "9030, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gnath Pot",
+    "Id": "9030, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pommander",
+    "Id": "9030, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Japanese Cask",
+    "Id": "9030, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Burlap Sack",
+    "Id": "9030, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rak\u0027Tika Owl Statue",
+    "Id": "9030, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Seed from Grand Cosmos",
+    "Id": "9030, 22, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Onigiri",
+    "Id": "9901, 32, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Some type of Nut",
+    "Id": "9901, 31, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Persimmon",
+    "Id": "9901, 30, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Salmon Sushi",
+    "Id": "9901, 29, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hanami Dango",
+    "Id": "9901, 28, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mitarashi Dango",
+    "Id": "9901, 27, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Onigiri",
+    "Id": "9901, 26, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Jack Cookie",
+    "Id": "9901, 25, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Potion",
+    "Id": "9901, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Yellow Potion",
+    "Id": "9901, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Potion 2",
+    "Id": "9901, 22, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cheese Slice",
+    "Id": "9901, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mushroom",
+    "Id": "9901, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fish",
+    "Id": "9901, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tropical Fish",
+    "Id": "9901, 18, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Meat Chunk",
+    "Id": "9901, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Apple",
+    "Id": "9901, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Carrot",
+    "Id": "9901, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pouch",
+    "Id": "9901, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Small Tankard",
+    "Id": "9901, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Egg Slice",
+    "Id": "9901, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Skewered Meat",
+    "Id": "9901, 10, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Salad",
+    "Id": "9901, 9, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Muffin",
+    "Id": "9901, 8, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fried Fish",
+    "Id": "9901, 7, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Skewer 2",
+    "Id": "9901, 6, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Chicken Wing",
+    "Id": "9901, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cake Slice",
+    "Id": "9901, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Chocolate Heart",
+    "Id": "9901, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Water Flask",
+    "Id": "9901, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bread Bun",
+    "Id": "9901, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Twin Adders Flag",
+    "Id": "9025, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Immortal Flames Flag",
+    "Id": "9024, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Maelstrom Flag",
+    "Id": "9023, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Thick Book 1",
+    "Id": "9002, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Thick Book 2",
+    "Id": "9002, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Thick Book 3",
+    "Id": "9002, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Thin Book",
+    "Id": "9002, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Palm Leaf",
+    "Description": "for Miqo\u0027te fan emote",
+    "Id": "9016, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Unknown Wooden Tool",
+    "Id": "9001, 241, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Metal Mug",
+    "Id": "9001, 239, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Glass Bottle",
+    "Id": "9001, 238, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Golden Key",
+    "Id": "9001, 237, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Ball",
+    "Id": "9001, 236, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sealed Envelope",
+    "Id": "9001, 235, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Potion",
+    "Id": "9001, 233, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Golden Pouch",
+    "Id": "9001, 231, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Katana",
+    "Id": "9001, 229, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Unlit Paper Lantern",
+    "Id": "9001, 220, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Minor Ascian Mask",
+    "Id": "9001, 214, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Short Wooden Pole",
+    "Id": "9001, 213, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rag",
+    "Id": "9001, 212, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Brown Pouch",
+    "Id": "9001, 209, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Rolled Papers",
+    "Id": "9001, 196, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Half of DRK Soulstone",
+    "Description": "Broken Dark Knight Soulstone",
+    "Id": "9001, 193, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Susano\u0027s Sword",
+    "Id": "9001, 186, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Garlean Sword Blade Fragment",
+    "Id": "9001, 180, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glasses",
+    "Id": "9001, 177, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Flintlock Pistol",
+    "Id": "9001, 176, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gladiator Sword",
+    "Id": "9001, 174, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Regulus Van Hydrus\u0027 Sword",
+    "Description": "Blade fragment",
+    "Id": "9001, 168, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Regulus Van Hydrus\u0027 Sword",
+    "Description": "Hilt fragment",
+    "Id": "9001, 167, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Zenos\u0027 Sword Carrier",
+    "Id": "9001, 164, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Missile",
+    "Id": "9001, 140, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Arrow",
+    "Id": "9001, 139, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Black Tipped Arrow",
+    "Id": "9001, 72, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Silver Tipped Arrow",
+    "Id": "9001, 71, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Arm Guard",
+    "Id": "9001, 138, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Silver Mask",
+    "Id": "9001, 135, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Kunai",
+    "Id": "9001, 130, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Decorated Flintlock",
+    "Id": "9001, 124, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Machinist Ammo Pack",
+    "Id": "9001, 111, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Raubahn\u0027s Left Arm",
+    "Description": "Sicko",
+    "Id": "9001, 106, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Calling Card",
+    "Description": "ARR Hildibrand questline",
+    "Id": "9001, 92, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Briefcase",
+    "Id": "9001, 91, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Skyworker\u0027s Goggles",
+    "Id": "9001, 64, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Shortened Arrow",
+    "Id": "9001, 45, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cymbal",
+    "Id": "9001, 27, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Horn",
+    "Id": "9001, 26, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Azem Stone",
+    "Description": "Azem\u0027s Memory Stone",
+    "Id": "9033, 15, 14",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elidibus Stone",
+    "Description": "Elidibus\u0027 Memory Stone",
+    "Id": "9033, 15, 13",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lahabrea Stone",
+    "Description": "Lahabrea\u0027s Memory Stone",
+    "Id": "9033, 15, 12",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Emmeroloth Stone",
+    "Description": "Emmeroloth\u0027s Memory Stone",
+    "Id": "9033, 15, 11",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Deudalaphon Stone",
+    "Description": "Deudalaphon\u0027s Memory Stone",
+    "Id": "9033, 15, 10",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Igeyorhm Stone",
+    "Description": "Igeyorrhm\u0027s Memory Stone",
+    "Id": "9033, 15, 9",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Nabriales Stone",
+    "Description": "Nabriales\u0027 Memory Stone",
+    "Id": "9033, 15, 8",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Halmarut Stone",
+    "Description": "Halmarut\u0027s Memory Stone",
+    "Id": "9033, 15, 7",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Altima Stone",
+    "Description": "Altima\u0027s Memory Stone",
+    "Id": "9033, 15, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fandaniel Stone",
+    "Description": "Fandaniel\u0027s Memory Stone",
+    "Id": "9033, 15, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pashtarot Stone",
+    "Description": "Pashtarot\u0027s Memory Stone",
+    "Id": "9033, 15, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Emet-Selch Stone",
+    "Description": "Emet-Selch\u0027s Memory Stone",
+    "Id": "9033, 15, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mitron Stone",
+    "Description": "Mitron\u0027s Memory Stone",
+    "Id": "9033, 15, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Loghrif Stone",
+    "Description": "Loghrif\u0027s Memory Stone",
+    "Id": "9033, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Auracite",
+    "Id": "9033, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Orb",
+    "Id": "9033, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing pendant",
+    "Id": "9033, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Auracite",
+    "Description": "Alternate version",
+    "Id": "9033, 7, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Allagan Cube",
+    "Description": "Used by Crystal Exarch",
+    "Id": "9033, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gae Bolg",
+    "Description": "Red, used in Starfire Dive",
+    "Id": "9033, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Empty",
+    "Id": "9033, 13, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Glowing blood",
+    "Id": "9033, 13, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Filled, glowing",
+    "Id": "9033, 13, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Filled, glowing",
+    "Id": "9033, 13, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Prototype",
+    "Id": "9033, 13, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Filled, not glowing",
+    "Id": "9033, 13, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal Focus",
+    "Description": "Not glowing",
+    "Id": "9033, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Snowball",
+    "Description": "Large",
+    "Id": "9033, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal Focus",
+    "Description": "Glowing",
+    "Id": "9033, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cockpit Chair",
+    "Description": "used by Weapon Bosses and G-Warrior",
+    "Id": "9033, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Icicle Necklace",
+    "Description": "From Eden raids, loose",
+    "Id": "9033, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Icicle Necklace",
+    "Description": "From Eden raids, coiled",
+    "Id": "9033, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Grey",
+    "Id": "9033, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Yellow-White",
+    "Id": "9033, 23, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Yellow",
+    "Id": "9033, 23, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Red",
+    "Id": "9033, 23, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Blue",
+    "Id": "9033, 23, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Green",
+    "Id": "9033, 23, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Purple",
+    "Id": "9033, 23, 7",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "White",
+    "Id": "9033, 23, 8",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Grey with leaves",
+    "Id": "9033, 23, 9",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "White-Yellow with leaves",
+    "Id": "9033, 23, 10",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Purple with leaves",
+    "Id": "9033, 23, 11",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wheelchair",
+    "Description": "Highlander Male only",
+    "Id": "9081, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gleaner\u0027s Backpack",
+    "Id": "9079, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Burger",
+    "Description": "Cat CAN has cheezburger!",
+    "Id": "9083, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Paper",
+    "Id": "9084, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "G-Warrior\u0027s Sword",
+    "Description": "Sword used by the G-warrior",
+    "Id": "201, 70, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Reaper Avatar",
+    "Id": "1911, 1, 0",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Cup",
+    "Id": "9001, 318, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Cup",
+    "Description": "Sharlayan logo",
+    "Id": "9001, 318, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Aetheryte Shard",
+    "Id": "9033, 26, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Opera binoculars",
+    "Id": "9035, 1, 0",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cannon ramrod",
+    "Id": "9035, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Chisel",
+    "Id": "5061, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Loom reed",
+    "Id": "9005, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Loom reed",
+    "Description": "Red teeth",
+    "Id": "9005, 2, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Loom reed",
+    "Description": "Wide teeth",
+    "Id": "9005, 2, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Galleas wheel",
+    "Id": "9004, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Galleas wheel",
+    "Description": "Rusted",
+    "Id": "9004, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Airship steering wheel",
+    "Description": "From the Enterprise",
+    "Id": "9004, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Written letter",
+    "Description": "Alphinaud\u0027s letter to the WoL",
+    "Id": "9003, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Kairos",
+    "Description": "WARNING: LARGE",
+    "Id": "9001, 342, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Seraph",
+    "Id": "9101, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lantern",
+    "Id": "9082, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Reaper hood",
+    "Id": "9080, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Dwarven Helm",
+    "Id": "9078, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal tear",
+    "Description": "WARNING: TINY",
+    "Id": "9072, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hraesvelgr",
+    "Description": "Cannot be posed",
+    "Id": "9071, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Broom",
+    "Id": "9069, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "9S\u0027 blindfold",
+    "Id": "9064, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pod 054",
+    "Description": "Cannot be posed",
+    "Id": "9061, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Meyhane Cup",
+    "Id": "9001, 321, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Eternity Ring",
+    "Id": "9001, 322, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Dragon Scale",
+    "Id": "9001, 323, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Biscuit",
+    "Id": "9001, 312, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Biscuit",
+    "Description": "Right half",
+    "Id": "9001, 312, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Biscuit",
+    "Description": "Left half",
+    "Id": "9001, 312, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lipstick",
+    "Description": "Pink",
+    "Id": "9001, 313, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lipstick",
+    "Description": "Red",
+    "Id": "9001, 313, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Test Tube",
+    "Description": "Red liquid",
+    "Id": "9001, 316, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Test Tube",
+    "Description": "Yellow liquid",
+    "Id": "9001, 316, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Test Tube",
+    "Description": "Blue liquid",
+    "Id": "9001, 316, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hannish Rotating Grinder Top",
+    "Id": "9006, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gold Saucer Hammer",
+    "Description": "Crystal Tower Striker",
+    "Id": "9032, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rectangular Crate",
+    "Id": "9032, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Baskets on a Stick",
+    "Description": "Carrying Pole/Shoulder Yoke",
+    "Id": "9032, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Baby",
+    "Id": "9032, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Paper bag",
+    "Id": "9032, 30, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hannish Fabric Rolls",
+    "Id": "9032, 31, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Nero\u0027s Hammer",
+    "Id": "8019, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaia\u0027s Hammer",
+    "Id": "8019, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Grynewaht\u0027s Hammer",
+    "Id": "8019, 3, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gyges the Great\u0027s Hammer",
+    "Id": "8019, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ouranos\u0027 Hammer",
+    "Id": "8019, 2, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hecantoncheir Warhammer",
+    "Id": "8019, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lyre",
+    "Id": "8017, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Judgement Day Carbine",
+    "Id": "2001, 86, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Aetheric Control Interface",
+    "Id": "9033, 25, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Warding Scale",
+    "Id": "9033, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Bomb",
+    "Description": "Unlit",
+    "Id": "9030, 1, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Black Variant",
+    "Id": "9030, 6, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Yellow Variant",
+    "Id": "9030, 6, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Blue Patterned Variant",
+    "Id": "9030, 6, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Blue Variant",
+    "Id": "9030, 14, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Green Variant",
+    "Id": "9030, 14, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crate of Rubble",
+    "Id": "9030, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stuffed Moogle",
+    "Id": "9030, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Present",
+    "Description": "Blue",
+    "Id": "9030, 25, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Present",
+    "Description": "Orange",
+    "Id": "9030, 25, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Present",
+    "Description": "Yellow",
+    "Id": "9030, 25, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Present",
+    "Description": "Pink",
+    "Id": "9030, 25, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaius\u0027 Gunblade",
+    "Id": "8003, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaius\u0027 Gunblade",
+    "Description": "Gold",
+    "Id": "8003, 1, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaius\u0027 Gunblade",
+    "Description": "Fire",
+    "Id": "8003, 1, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaius\u0027 Gunblade",
+    "Description": "Synthetic Auracite",
+    "Id": "8003, 1, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Imperial Grenade",
+    "Id": "9033, 22, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Remote Detonator",
+    "Id": "9033, 6, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Remote Detonator",
+    "Description": "Flat Switch",
+    "Id": "9033, 6, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Vundu Totem",
+    "Id": "9030, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Machinist Satellite Beam Turret",
+    "Id": "9102, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Transport Cart",
+    "Id": "9068, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Doman Suketa",
+    "Id": "9054, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tongue",
+    "Description": "Masculine Midlander/Viera only",
+    "Id": "9053, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal Exarch\u0027s Hood",
+    "Id": "9056, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal Exarch\u0027s Hood",
+    "Description": "Glowing",
+    "Id": "9056, 1, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Hood",
+    "Id": "9057, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Aether Compass",
+    "Id": "9044, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Torn Hraesvelgr\u0027s Wing",
+    "Description": "WARNING: LARGE",
+    "Id": "9045, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Basket with Flowers",
+    "Description": "Red and White variant",
+    "Id": "9001, 5, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Spyglass",
+    "Id": "9035, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Torn Forbidden Dissonance Wing",
+    "Description": "WARNING: LARGE",
+    "Id": "9045, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Card Spread",
+    "Description": "Triple Triad",
+    "Id": "9037, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Paper Pinwheel",
+    "Id": "9049, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Magitek Colossus Sword",
+    "Id": "8002, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Charibert\u0027s Widowbreaker",
+    "Id": "1001, 14, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Adelphel\u0027s Radiance",
+    "Id": "201, 55, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Adelphel\u0027s Knight\u0027s Shield",
+    "Id": "101, 31, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Charibert\u0027s Stampede",
+    "Id": "404, 1, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Frameworker\u0027s Sword",
+    "Description": "Blank version",
+    "Id": "201, 147, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Frameworker\u0027s Shield",
+    "Id": "101, 106, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Yuhelmeric\u0027s Sword",
+    "Id": "201, 7, 9",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Yuhelmeric\u0027s Shield",
+    "Id": "101, 4, 10",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Forgiven Dissonance\u0027s Sword",
+    "Id": "202, 1, 8",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Forgiven Dissonance\u0027s Shield",
+    "Id": "101, 5, 15",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Orange",
+    "Id": "9001, 326, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Red",
+    "Id": "9001, 326, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "White",
+    "Id": "9001, 326, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Black",
+    "Id": "9001, 326, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Yellow",
+    "Id": "9001, 326, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Blue",
+    "Id": "9001, 326, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Matoya\u0027s Staff",
+    "Id": "9039, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Imperial Handgun",
+    "Id": "9085, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gigantic Meol",
+    "Id": "9001, 269, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Il Mheg Looking Grass",
+    "Description": "Grass that reveals the pixies of Il Mheg",
+    "Id": "9001, 268, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Alcohol Mixer",
+    "Id": "9001, 267, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Ronkan Disc",
+    "Id": "9001, 265, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Green Gem",
+    "Id": "9001, 264, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Royal Bracelet",
+    "Id": "9001, 263, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Royal Crown",
+    "Id": "9001, 262, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hair Brush",
+    "Id": "9001, 261, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Paint Brush",
+    "Id": "9001, 260, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Basket of Fruits",
+    "Id": "9001, 259, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tankard of Ale",
+    "Id": "9001, 258, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Box of Hay",
+    "Id": "9001, 257, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Box of Potions",
+    "Id": "9001, 256, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Box of Crystals",
+    "Id": "9001, 255, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coin",
+    "Id": "9001, 254, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Shovel",
+    "Id": "9001, 253, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Meol",
+    "Id": "9001, 252, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fruit",
+    "Description": "Nectarine",
+    "Id": "9001, 251, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Grub",
+    "Id": "9001, 250, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Apple",
+    "Id": "9001, 249, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "DNC Soulstone",
+    "Id": "9001, 248, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gunblade Soulstone",
+    "Id": "9001, 247, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "BLU Soulstone",
+    "Id": "9001, 246, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Piece of Gaius\u0027 Helm",
+    "Id": "9001, 245, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hancock\u0027s Glasses",
+    "Id": "9001, 244, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing Staff",
+    "Id": "9001, 243, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sickle",
+    "Id": "9001, 242, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Target",
+    "Id": "9001, 228, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Japanese Fan",
+    "Id": "9001, 227, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Japanese Bell",
+    "Id": "9001, 226, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Zenos\u0027 Katana",
+    "Id": "9001, 225, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Necklace",
+    "Id": "9001, 224, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Corked Rose Alcohol Bottle",
+    "Id": "9001, 222, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Corked Alcohol Bottle",
+    "Id": "9001, 221, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sparrow Taiyaki",
+    "Id": "9001, 219, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bom Boko Taiyaki",
+    "Id": "9001, 218, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Odder Otter Taiyaki",
+    "Id": "9001, 217, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Fish",
+    "Description": "Tuna",
+    "Id": "9001, 216, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bamboo Blowgun",
+    "Id": "9001, 215, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Gem",
+    "Description": "Ruby, Jewel",
+    "Id": "9001, 211, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wooden Spoon",
+    "Id": "9001, 208, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Empty Bowl",
+    "Id": "9001, 207, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Poro Rogo Card",
+    "Id": "9001, 206, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large wooden Spike",
+    "Description": "Toothpick",
+    "Id": "9001, 205, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Scraper",
+    "Id": "9001, 203, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Yotsuyu\u0027s Mirror",
+    "Id": "9001, 202, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tomestone Phone",
+    "Id": "9001, 200, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lute",
+    "Id": "9001, 199, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Present with Hearts",
+    "Id": "9001, 198, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Gemstone",
+    "Description": "Jewel",
+    "Id": "9001, 197, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "SAM Soulstone",
+    "Description": "Samurai Soulstone",
+    "Id": "9001, 189, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "RDM Soulstone",
+    "Description": "Red Mage Soulstone",
+    "Id": "9001, 188, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Yasakani\uFFFDno\uFFFDMagatama",
+    "Id": "9001, 187, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Glass Gem",
+    "Id": "9001, 185, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Broken Garlean Sword",
+    "Id": "9001, 179, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Mask",
+    "Id": "9001, 175, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Card 1",
+    "Id": "9001, 173, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Card 2",
+    "Id": "9001, 172, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Card 3",
+    "Id": "9001, 171, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Pot",
+    "Description": "An unlidded red pot/vase",
+    "Id": "9001, 170, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Japanese Smoking Pipe",
+    "Id": "9001, 169, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Morin Khuur Base",
+    "Id": "9001, 161, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Morin Khuur Fiddle",
+    "Id": "9001, 160, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Urushi Jar",
+    "Id": "9001, 158, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stack of Bamboo",
+    "Id": "9001, 157, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stack of Logs",
+    "Id": "9001, 156, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stack of Wood",
+    "Id": "9001, 155, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bowl of Rice",
+    "Id": "9001, 153, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Chopsticks",
+    "Id": "9001, 152, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Brush",
+    "Id": "9001, 151, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hingan Scroll",
+    "Id": "9001, 150, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Samurai Blade (no handle)",
+    "Id": "9001, 149, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Huge Rolled Tatami",
+    "Id": "9001, 147, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cup",
+    "Id": "9001, 145, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tea Cup",
+    "Id": "9001, 143, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sake Cup",
+    "Id": "9001, 144, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Eye of Nidhogg",
+    "Description": "Dead",
+    "Id": "9001, 132, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal",
+    "Id": "9001, 133, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bouquet of Flowers",
+    "Id": "9001, 134, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Charred Book",
+    "Id": "9001, 129, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Flask",
+    "Id": "9001, 128, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Purple Phial",
+    "Id": "9001, 127, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Phial",
+    "Id": "9001, 126, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Deep Blue Phial",
+    "Id": "9001, 125, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rolled Paper",
+    "Id": "9001, 120, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bouquet of White Flowers",
+    "Id": "9001, 117, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ravana\u0027s Sword",
+    "Id": "9001, 116, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "DRK Soulstone",
+    "Description": "Dark Knight Soulstone",
+    "Id": "9001, 115, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "AST Soulstone",
+    "Description": "Astrologian Soulstone",
+    "Id": "9001, 114, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "MCH Soulstone",
+    "Description": "Machinist Soulstone",
+    "Id": "9001, 113, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wrench",
+    "Description": "Spanner",
+    "Id": "9001, 112, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascalon",
+    "Description": "Knights of the Round Sword, eyeless",
+    "Id": "9001, 110, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascalon",
+    "Description": "Knights of the Round Sword with Nidhogg\u0027s eye",
+    "Id": "9001, 109, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Menu/Flier",
+    "Id": "9001, 107, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Goblet",
+    "Description": "Cup, Chalice",
+    "Id": "9001, 105, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "NIN Soulstone",
+    "Description": "Ninja Soulstone",
+    "Id": "9001, 103, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bouquet of Lillies",
+    "Id": "9001, 100, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bunch of Green Bananas",
+    "Id": "9001, 97, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Niddhog\u0027s Eye",
+    "Id": "9001, 86, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing Horn",
+    "Id": "9001, 85, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "SCH Soulstone",
+    "Description": "Scholar Soulstone",
+    "Id": "9001, 84, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "SMN Soulstone",
+    "Description": "Summoner Soulstone",
+    "Id": "9001, 83, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "BLM Soulstone",
+    "Description": "Black Mage Soulstone",
+    "Id": "9001, 82, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "WHM Soulstone",
+    "Description": "White Mage Soulstone",
+    "Id": "9001, 81, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "BRD Soulstone",
+    "Description": "Bard Soulstone",
+    "Id": "9001, 80, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "DRG Soulstone",
+    "Description": "Dragoon Soulstone",
+    "Id": "9001, 79, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "WAR Soulstone",
+    "Description": "Warrior Soulstone",
+    "Id": "9001, 78, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "MNK Soulstone",
+    "Description": "Monk Soulstone",
+    "Id": "9001, 77, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "PLD Soulstone",
+    "Description": "Paladin Soulstone",
+    "Id": "9001, 76, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Yellow Glowing Crystal",
+    "Id": "9001, 74, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Glowing Crystal",
+    "Id": "9001, 66, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hammer",
+    "Id": "9001, 63, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Burlap Sack Pile",
+    "Id": "9001, 60, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Colorful Present Stack",
+    "Id": "9001, 59, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stack of Posters",
+    "Id": "9001, 58, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Poster",
+    "Id": "9001, 57, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Baskets on a Stick",
+    "Id": "9001, 56, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Smoking Pipe",
+    "Id": "9001, 55, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Oar",
+    "Id": "9001, 54, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Axe",
+    "Id": "9001, 53, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Washcloth",
+    "Id": "9001, 52, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pitchfork",
+    "Id": "9001, 51, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pot",
+    "Id": "9001, 50, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Notepad",
+    "Id": "9001, 48, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Serving Tray",
+    "Id": "9001, 47, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Wooden Spoon",
+    "Id": "9001, 46, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crate",
+    "Id": "9001, 42, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Alchemical Phial",
+    "Id": "9001, 38, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Alchemical Tools",
+    "Id": "9001, 37, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mask",
+    "Id": "9001, 35, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Glowing Orb",
+    "Id": "9001, 31, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Feather Quill",
+    "Id": "9001, 30, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tankard",
+    "Id": "9001, 28, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Single Blue Flower",
+    "Id": "9001, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Watering Can",
+    "Id": "9001, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wine Cup",
+    "Id": "9001, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wine Bottle",
+    "Id": "9001, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rectangular Crate",
+    "Id": "9001, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Baby",
+    "Description": "This should not be classified as a weapon, SE",
+    "Id": "9001, 18, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Metal Cup",
+    "Id": "9001, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bowl/Wok",
+    "Id": "9001, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stone Tablet",
+    "Id": "9001, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Rock",
+    "Id": "9001, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Smelting Ladle",
+    "Id": "9001, 13, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hot Iron in Tongs",
+    "Id": "9001, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Spatula",
+    "Id": "9001, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cooking Whisk",
+    "Id": "9001, 10, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cooking Ladle",
+    "Id": "9001, 9, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Hammer",
+    "Id": "9001, 8, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Single White Flower",
+    "Id": "9001, 7, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Basket",
+    "Id": "9001, 6, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Basket with Flowers",
+    "Id": "9001, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Horn",
+    "Id": "9001, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Harp",
+    "Id": "9001, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Stick",
+    "Id": "9001, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Stick",
+    "Id": "9001, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fancy Fan",
+    "Id": "9032, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Metal Phial",
+    "Id": "9032, 22, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Conductor\u0027s Baton",
+    "Id": "9032, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Block of Wood",
+    "Id": "9032, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Koban",
+    "Id": "9032, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Pot",
+    "Id": "9032, 18, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Red Japanese Umbrella",
+    "Id": "9032, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pink Bento",
+    "Id": "9032, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Knocked Out Namazu",
+    "Id": "9032, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tall Lantern",
+    "Id": "9032, 13, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Small Red Lantern",
+    "Id": "9032, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Knife",
+    "Id": "9032, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fork",
+    "Id": "9032, 10, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Serving Tray with Glasses",
+    "Id": "9032, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Watering Can",
+    "Id": "9032, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Comb",
+    "Id": "9032, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Bomb",
+    "Id": "9030, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Hunk of Ore",
+    "Id": "9030, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cocoon",
+    "Id": "9030, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bag of Pumpkins",
+    "Id": "9030, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Pot",
+    "Id": "9030, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Easter Egg",
+    "Id": "9030, 6, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bombard",
+    "Id": "9030, 7, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pure Black Orb",
+    "Id": "9030, 8, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Realm Reborn Red",
+    "Id": "9030, 9, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Card Spread",
+    "Id": "9030, 10, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Small Ball",
+    "Id": "9030, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing Blue Orb",
+    "Id": "9030, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing Astrologian Card",
+    "Id": "9030, 13, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Egg",
+    "Id": "9030, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gnath Pot",
+    "Id": "9030, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pommander",
+    "Id": "9030, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Japanese Cask",
+    "Id": "9030, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Burlap Sack",
+    "Id": "9030, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rak\u0027Tika Owl Statue",
+    "Id": "9030, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Seed from Grand Cosmos",
+    "Id": "9030, 22, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Onigiri",
+    "Id": "9901, 32, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Some type of Nut",
+    "Id": "9901, 31, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Persimmon",
+    "Id": "9901, 30, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Salmon Sushi",
+    "Id": "9901, 29, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hanami Dango",
+    "Id": "9901, 28, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mitarashi Dango",
+    "Id": "9901, 27, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Onigiri",
+    "Id": "9901, 26, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Jack Cookie",
+    "Id": "9901, 25, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Potion",
+    "Id": "9901, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Yellow Potion",
+    "Id": "9901, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Potion 2",
+    "Id": "9901, 22, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cheese Slice",
+    "Id": "9901, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mushroom",
+    "Id": "9901, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fish",
+    "Id": "9901, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tropical Fish",
+    "Id": "9901, 18, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Meat Chunk",
+    "Id": "9901, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Apple",
+    "Id": "9901, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Carrot",
+    "Id": "9901, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pouch",
+    "Id": "9901, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Small Tankard",
+    "Id": "9901, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Egg Slice",
+    "Id": "9901, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Skewered Meat",
+    "Id": "9901, 10, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Salad",
+    "Id": "9901, 9, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Muffin",
+    "Id": "9901, 8, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fried Fish",
+    "Id": "9901, 7, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Skewer 2",
+    "Id": "9901, 6, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Chicken Wing",
+    "Id": "9901, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cake Slice",
+    "Id": "9901, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Chocolate Heart",
+    "Id": "9901, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Water Flask",
+    "Id": "9901, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bread Bun",
+    "Id": "9901, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Twin Adders Flag",
+    "Id": "9025, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Immortal Flames Flag",
+    "Id": "9024, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Maelstrom Flag",
+    "Id": "9023, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Thick Book 1",
+    "Id": "9002, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Thick Book 2",
+    "Id": "9002, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Thick Book 3",
+    "Id": "9002, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Thin Book",
+    "Id": "9002, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Palm Leaf",
+    "Description": "for Miqo\u0027te fan emote",
+    "Id": "9016, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Unknown Wooden Tool",
+    "Id": "9001, 241, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Metal Mug",
+    "Id": "9001, 239, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Glass Bottle",
+    "Id": "9001, 238, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Golden Key",
+    "Id": "9001, 237, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Ball",
+    "Id": "9001, 236, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sealed Envelope",
+    "Id": "9001, 235, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Potion",
+    "Id": "9001, 233, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Golden Pouch",
+    "Id": "9001, 231, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Katana",
+    "Id": "9001, 229, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Unlit Paper Lantern",
+    "Id": "9001, 220, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Minor Ascian Mask",
+    "Id": "9001, 214, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Short Wooden Pole",
+    "Id": "9001, 213, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rag",
+    "Id": "9001, 212, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Brown Pouch",
+    "Id": "9001, 209, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Rolled Papers",
+    "Id": "9001, 196, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Half of DRK Soulstone",
+    "Description": "Broken Dark Knight Soulstone",
+    "Id": "9001, 193, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Susano\u0027s Sword",
+    "Id": "9001, 186, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Garlean Sword Blade Fragment",
+    "Id": "9001, 180, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glasses",
+    "Id": "9001, 177, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Flintlock Pistol",
+    "Id": "9001, 176, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gladiator Sword",
+    "Id": "9001, 174, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Regulus Van Hydrus\u0027 Sword",
+    "Description": "Blade fragment",
+    "Id": "9001, 168, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Regulus Van Hydrus\u0027 Sword",
+    "Description": "Hilt fragment",
+    "Id": "9001, 167, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Zenos\u0027 Sword Carrier",
+    "Id": "9001, 164, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Missile",
+    "Id": "9001, 140, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Arrow",
+    "Id": "9001, 139, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Black Tipped Arrow",
+    "Id": "9001, 72, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Silver Tipped Arrow",
+    "Id": "9001, 71, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Arm Guard",
+    "Id": "9001, 138, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Silver Mask",
+    "Id": "9001, 135, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Kunai",
+    "Id": "9001, 130, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Decorated Flintlock",
+    "Id": "9001, 124, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Machinist Ammo Pack",
+    "Id": "9001, 111, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Raubahn\u0027s Left Arm",
+    "Description": "Sicko",
+    "Id": "9001, 106, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Calling Card",
+    "Description": "ARR Hildibrand questline",
+    "Id": "9001, 92, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Briefcase",
+    "Id": "9001, 91, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Skyworker\u0027s Goggles",
+    "Id": "9001, 64, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Shortened Arrow",
+    "Id": "9001, 45, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cymbal",
+    "Id": "9001, 27, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Horn",
+    "Id": "9001, 26, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Azem Stone",
+    "Description": "Azem\u0027s Memory Stone",
+    "Id": "9033, 15, 14",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elidibus Stone",
+    "Description": "Elidibus\u0027 Memory Stone",
+    "Id": "9033, 15, 13",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lahabrea Stone",
+    "Description": "Lahabrea\u0027s Memory Stone",
+    "Id": "9033, 15, 12",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Emmeroloth Stone",
+    "Description": "Emmeroloth\u0027s Memory Stone",
+    "Id": "9033, 15, 11",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Deudalaphon Stone",
+    "Description": "Deudalaphon\u0027s Memory Stone",
+    "Id": "9033, 15, 10",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Igeyorhm Stone",
+    "Description": "Igeyorrhm\u0027s Memory Stone",
+    "Id": "9033, 15, 9",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Nabriales Stone",
+    "Description": "Nabriales\u0027 Memory Stone",
+    "Id": "9033, 15, 8",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Halmarut Stone",
+    "Description": "Halmarut\u0027s Memory Stone",
+    "Id": "9033, 15, 7",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Altima Stone",
+    "Description": "Altima\u0027s Memory Stone",
+    "Id": "9033, 15, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Fandaniel Stone",
+    "Description": "Fandaniel\u0027s Memory Stone",
+    "Id": "9033, 15, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pashtarot Stone",
+    "Description": "Pashtarot\u0027s Memory Stone",
+    "Id": "9033, 15, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Emet-Selch Stone",
+    "Description": "Emet-Selch\u0027s Memory Stone",
+    "Id": "9033, 15, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mitron Stone",
+    "Description": "Mitron\u0027s Memory Stone",
+    "Id": "9033, 15, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Loghrif Stone",
+    "Description": "Loghrif\u0027s Memory Stone",
+    "Id": "9033, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Auracite",
+    "Id": "9033, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Orb",
+    "Id": "9033, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Glowing pendant",
+    "Id": "9033, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Auracite",
+    "Description": "Alternate version",
+    "Id": "9033, 7, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Allagan Cube",
+    "Description": "Used by Crystal Exarch",
+    "Id": "9033, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gae Bolg",
+    "Description": "Red, used in Starfire Dive",
+    "Id": "9033, 12, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Empty",
+    "Id": "9033, 13, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Glowing blood",
+    "Id": "9033, 13, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Filled, glowing",
+    "Id": "9033, 13, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Filled, glowing",
+    "Id": "9033, 13, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Prototype",
+    "Id": "9033, 13, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Soul Vessel",
+    "Description": "Filled, not glowing",
+    "Id": "9033, 13, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal Focus",
+    "Description": "Not glowing",
+    "Id": "9033, 14, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Snowball",
+    "Description": "Large",
+    "Id": "9033, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal Focus",
+    "Description": "Glowing",
+    "Id": "9033, 17, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cockpit Chair",
+    "Description": "used by Weapon Bosses and G-Warrior",
+    "Id": "9033, 19, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Icicle Necklace",
+    "Description": "From Eden raids, loose",
+    "Id": "9033, 20, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Icicle Necklace",
+    "Description": "From Eden raids, coiled",
+    "Id": "9033, 21, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Grey",
+    "Id": "9033, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Yellow-White",
+    "Id": "9033, 23, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Yellow",
+    "Id": "9033, 23, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Red",
+    "Id": "9033, 23, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Blue",
+    "Id": "9033, 23, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Green",
+    "Id": "9033, 23, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Purple",
+    "Id": "9033, 23, 7",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "White",
+    "Id": "9033, 23, 8",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Grey with leaves",
+    "Id": "9033, 23, 9",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "White-Yellow with leaves",
+    "Id": "9033, 23, 10",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Elpis Flower",
+    "Description": "Purple with leaves",
+    "Id": "9033, 23, 11",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Wheelchair",
+    "Description": "Highlander Male only",
+    "Id": "9081, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gleaner\u0027s Backpack",
+    "Id": "9079, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Burger",
+    "Description": "Cat CAN has cheezburger!",
+    "Id": "9083, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Paper",
+    "Id": "9084, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "G-Warrior\u0027s Sword",
+    "Description": "Sword used by the G-warrior",
+    "Id": "201, 70, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Reaper Avatar",
+    "Id": "1911, 1, 0",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Cup",
+    "Id": "9001, 318, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Cup",
+    "Description": "Sharlayan logo",
+    "Id": "9001, 318, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Aetheryte Shard",
+    "Id": "9033, 26, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Opera binoculars",
+    "Id": "9035, 1, 0",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cannon ramrod",
+    "Id": "9035, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Chisel",
+    "Id": "5061, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Loom reed",
+    "Id": "9005, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Loom reed",
+    "Description": "Red teeth",
+    "Id": "9005, 2, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Loom reed",
+    "Description": "Wide teeth",
+    "Id": "9005, 2, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Galleas wheel",
+    "Id": "9004, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Galleas wheel",
+    "Description": "Rusted",
+    "Id": "9004, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Airship steering wheel",
+    "Description": "From the Enterprise",
+    "Id": "9004, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Written letter",
+    "Description": "Alphinaud\u0027s letter to the WoL",
+    "Id": "9003, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Kairos",
+    "Description": "WARNING: LARGE",
+    "Id": "9001, 342, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Seraph",
+    "Id": "9101, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lantern",
+    "Id": "9082, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Reaper hood",
+    "Id": "9080, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Dwarven Helm",
+    "Id": "9078, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal tear",
+    "Description": "WARNING: TINY",
+    "Id": "9072, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hraesvelgr",
+    "Description": "Cannot be posed",
+    "Id": "9071, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Broom",
+    "Id": "9069, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "9S\u0027 blindfold",
+    "Id": "9064, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pod 054",
+    "Description": "Cannot be posed",
+    "Id": "9061, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Meyhane Cup",
+    "Id": "9001, 321, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Eternity Ring",
+    "Id": "9001, 322, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Dragon Scale",
+    "Id": "9001, 323, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Biscuit",
+    "Id": "9001, 312, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Biscuit",
+    "Description": "Right half",
+    "Id": "9001, 312, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Coffee Biscuit",
+    "Description": "Left half",
+    "Id": "9001, 312, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lipstick",
+    "Description": "Pink",
+    "Id": "9001, 313, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lipstick",
+    "Description": "Red",
+    "Id": "9001, 313, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Test Tube",
+    "Description": "Red liquid",
+    "Id": "9001, 316, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Test Tube",
+    "Description": "Yellow liquid",
+    "Id": "9001, 316, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Test Tube",
+    "Description": "Blue liquid",
+    "Id": "9001, 316, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hannish Rotating Grinder Top",
+    "Id": "9006, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gold Saucer Hammer",
+    "Description": "Crystal Tower Striker",
+    "Id": "9032, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rectangular Crate",
+    "Id": "9032, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Baskets on a Stick",
+    "Description": "Carrying Pole/Shoulder Yoke",
+    "Id": "9032, 16, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Baby",
+    "Id": "9032, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Paper bag",
+    "Id": "9032, 30, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hannish Fabric Rolls",
+    "Id": "9032, 31, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Nero\u0027s Hammer",
+    "Id": "8019, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaia\u0027s Hammer",
+    "Id": "8019, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Grynewaht\u0027s Hammer",
+    "Id": "8019, 3, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gyges the Great\u0027s Hammer",
+    "Id": "8019, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ouranos\u0027 Hammer",
+    "Id": "8019, 2, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hecantoncheir Warhammer",
+    "Id": "8019, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lyre",
+    "Id": "8017, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Judgement Day Carbine",
+    "Id": "2001, 86, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Aetheric Control Interface",
+    "Id": "9033, 25, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Warding Scale",
+    "Id": "9033, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Big Bomb",
+    "Description": "Unlit",
+    "Id": "9030, 1, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Black Variant",
+    "Id": "9030, 6, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Yellow Variant",
+    "Id": "9030, 6, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Blue Patterned Variant",
+    "Id": "9030, 6, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Blue Variant",
+    "Id": "9030, 14, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Egg",
+    "Description": "Green Variant",
+    "Id": "9030, 14, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crate of Rubble",
+    "Id": "9030, 23, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Stuffed Moogle",
+    "Id": "9030, 24, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Present",
+    "Description": "Blue",
+    "Id": "9030, 25, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Present",
+    "Description": "Orange",
+    "Id": "9030, 25, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Present",
+    "Description": "Yellow",
+    "Id": "9030, 25, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Present",
+    "Description": "Pink",
+    "Id": "9030, 25, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaius\u0027 Gunblade",
+    "Id": "8003, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaius\u0027 Gunblade",
+    "Description": "Gold",
+    "Id": "8003, 1, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaius\u0027 Gunblade",
+    "Description": "Fire",
+    "Id": "8003, 1, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gaius\u0027 Gunblade",
+    "Description": "Synthetic Auracite",
+    "Id": "8003, 1, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Imperial Grenade",
+    "Id": "9033, 22, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Remote Detonator",
+    "Id": "9033, 6, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Remote Detonator",
+    "Description": "Flat Switch",
+    "Id": "9033, 6, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Vundu Totem",
+    "Id": "9030, 15, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Machinist Satellite Beam Turret",
+    "Id": "9102, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Transport Cart",
+    "Id": "9068, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Doman Suketa",
+    "Id": "9054, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tongue",
+    "Description": "Masculine Midlander/Viera only",
+    "Id": "9053, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal Exarch\u0027s Hood",
+    "Id": "9056, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Crystal Exarch\u0027s Hood",
+    "Description": "Glowing",
+    "Id": "9056, 1, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Hood",
+    "Id": "9057, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Aether Compass",
+    "Id": "9044, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Torn Hraesvelgr\u0027s Wing",
+    "Description": "WARNING: LARGE",
+    "Id": "9045, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Basket with Flowers",
+    "Description": "Red and White variant",
+    "Id": "9001, 5, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Spyglass",
+    "Id": "9035, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Torn Forbidden Dissonance Wing",
+    "Description": "WARNING: LARGE",
+    "Id": "9045, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Card Spread",
+    "Description": "Triple Triad",
+    "Id": "9037, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Paper Pinwheel",
+    "Id": "9049, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Magitek Colossus Sword",
+    "Id": "8002, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Charibert\u0027s Widowbreaker",
+    "Id": "1001, 14, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Adelphel\u0027s Radiance",
+    "Id": "201, 55, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Adelphel\u0027s Knight\u0027s Shield",
+    "Id": "101, 31, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Charibert\u0027s Stampede",
+    "Id": "404, 1, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Frameworker\u0027s Sword",
+    "Description": "Blank version",
+    "Id": "201, 147, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Frameworker\u0027s Shield",
+    "Id": "101, 106, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Yuhelmeric\u0027s Sword",
+    "Id": "201, 7, 9",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ser Yuhelmeric\u0027s Shield",
+    "Id": "101, 4, 10",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Forgiven Dissonance\u0027s Sword",
+    "Id": "202, 1, 8",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Forgiven Dissonance\u0027s Shield",
+    "Id": "101, 5, 15",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Orange",
+    "Id": "9001, 326, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Red",
+    "Id": "9001, 326, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "White",
+    "Id": "9001, 326, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Black",
+    "Id": "9001, 326, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Yellow",
+    "Id": "9001, 326, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Giant Carrot",
+    "Description": "Blue",
+    "Id": "9001, 326, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Matoya\u0027s Staff",
+    "Id": "9039, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Imperial Handgun",
+    "Id": "9085, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Regula van Hydrus\u0027 Sword",
+    "Id": "8003, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Emperor Varus\u0027 Sword",
+    "Id": "8003, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Aymeric\u0027s Sword",
+    "Id": "201, 11, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "High Houses Kite Shield",
+    "Id": "101, 9, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "House Dzemael Kite Shield",
+    "Id": "101, 9, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Temple Knights Kite Shield",
+    "Id": "101, 9, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "House Durendaire Kite Shield",
+    "Id": "101, 9, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "House Haillenarte Kite Shield",
+    "Id": "101, 9, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Gem",
+    "Id": "9001, 211, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Yellow Gem",
+    "Id": "9001, 211, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Loaf Bread Slice",
+    "Id": "9001, 299, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archon Loaf Bread Slice",
+    "Description": "Partially Eaten",
+    "Id": "9001, 299, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Reddish-Pink Ring",
+    "Id": "9001, 270, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hades Mask",
+    "Description": "WARNING: LARGE",
+    "Id": "9001, 276, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Reaper Soulstone",
+    "Id": "9001, 330, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sage Soulstone",
+    "Id": "9001, 331, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ancient Mask",
+    "Id": "9001, 341, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Vintage Wine Bottle",
+    "Id": "9001, 222, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Broken Omicron Leg",
+    "Id": "9001, 346, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cait Sith Wine",
+    "Id": "9001, 222, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Nero\u0027s Scanner",
+    "Id": "9001, 286, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Alisae\u0027s Clay Porxie",
+    "Id": "9001, 287, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Circlet",
+    "Id": "9001, 36, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Lump of Clay",
+    "Id": "9001, 288, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Worn out/Cracked wooden mask",
+    "Id": "9001, 34, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Pole",
+    "Description": "WARNING: VERY LARGE",
+    "Id": "9001, 62, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Maelstrom Decal",
+    "Id": "9001, 67, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Immortal Flames Decal",
+    "Id": "9001, 68, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Twin Adder Decal",
+    "Id": "9001, 69, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Garlean Decal",
+    "Id": "9001, 70, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Adventurers Guild Decal",
+    "Id": "9001, 73, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cid\u0027s Locket Necklace",
+    "Id": "9001, 297, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mask of Azuro",
+    "Id": "9001, 294, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Imperial Pot Helm",
+    "Id": "9001, 300, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gil Coin",
+    "Id": "9001, 303, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gil Coin",
+    "Description": "Right Half",
+    "Id": "9001, 303, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Gil Coin",
+    "Description": "Left Half",
+    "Id": "9001, 303, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Mitron\u0027s Mask",
+    "Id": "9001, 305, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Anogg\u0027s Turban",
+    "Id": "9001, 308, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Anogg\u0027s Left Glove",
+    "Id": "9001, 309, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Anogg\u0027s Right Glove",
+    "Id": "9001, 310, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Konogg\u0027s Turban",
+    "Description": "Featherless",
+    "Id": "9001, 314, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Konogg\u0027s Turban Feathers",
+    "Id": "9001, 315, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Count Edmont\u0027s Walking Stick",
+    "Id": "9039, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Open Book",
+    "Description": "Crystarium White Variant",
+    "Id": "9001, 317, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Open Book",
+    "Description": "Black Variant",
+    "Id": "9001, 317, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Arbert\u0027s Axe of Light",
+    "Id": "9001, 266, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "The Nullstone",
+    "Id": "9046, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sable Death Mask",
+    "Id": "9001, 240, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Broom",
+    "Id": "9047, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Bottle on a Rope",
+    "Id": "9048, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "G-Warrior Controller",
+    "Description": "Left",
+    "Id": "9067, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "G-Warrior Controller",
+    "Description": "Right",
+    "Id": "9066, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Broken Kickumbob Machine Part",
+    "Id": "9001, 290, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Rusty Whatsit Machine Part",
+    "Id": "9001, 292, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tarnished Thingamajig Machine Part",
+    "Id": "9001, 291, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Imperial Remote Switch",
+    "Id": "9033, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "White Auracite Shard",
+    "Id": "9033, 9, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Martyr\u0027s Mask",
+    "Description": "Black Mask",
+    "Id": "9001, 277, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Martyr\u0027s Mask",
+    "Description": "Six Eyes Red Mask",
+    "Id": "9001, 277, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Martyr\u0027s Mask",
+    "Description": "Purple Mask",
+    "Id": "9001, 277, 3",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Martyr\u0027s Mask",
+    "Description": "Striped Mask",
+    "Id": "9001, 277, 4",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Martyr\u0027s Mask",
+    "Description": "Red Mask",
+    "Id": "9001, 277, 5",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ascian Martyr\u0027s Mask",
+    "Description": "Feminine Red Mask",
+    "Id": "9001, 277, 6",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "G-Saviour Missile",
+    "Id": "9075, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "G-Saviour MIRV",
+    "Description": "WARNING: LARGE",
+    "Id": "9076, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "G-Saviour MIRV Warheads",
+    "Id": "9077, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Feather Qull Fan",
+    "Id": "8002, 13, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tonberry Knife",
+    "Id": "8002, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ferdiad Hollow\u0027s Scythe",
+    "Description": "WARNING: LARGE",
+    "Id": "8022, 5, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Scatach\u0027s Staff",
+    "Id": "8009, 3, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Connla Spear",
+    "Id": "8009, 4, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Juggling Items",
+    "Id": "9017, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Cooking Items",
+    "Id": "9017, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Small Log",
+    "Id": "9015, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Raubahn\u0027s Helmet",
+    "Id": "9014, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sylph Podling Cocoon",
+    "Id": "9030, 3, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Nanamo\u0027s Tiara",
+    "Id": "9031, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Aetherometer Goggles",
+    "Description": "Thancred",
+    "Id": "9020, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Aetherometer Goggles",
+    "Description": "Urianger",
+    "Id": "9020, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Aetherometer Goggles",
+    "Description": "Yda",
+    "Id": "9021, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Aetherometer Goggles",
+    "Description": "Papalymo",
+    "Id": "9022, 1 ,1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Sharlayan Aetherometer Goggles",
+    "Description": "Y\u0027shtola",
+    "Id": "9022, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Metal Bucket",
+    "Id": "9009, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Aesthetician Scissors",
+    "Description": "M Elezen and F Miqo only",
+    "Id": "9029, 1 ,1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Dotoli Ciloc\u0027s Fan",
+    "Id": "8029, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Zenos\u0027 Scythe",
+    "Id": "8038, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hypertuned Grynewaht\u0027s Chainsaw Sword",
+    "Id": "8028, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Zenos\u0027 Katana",
+    "Description": "Ame-no-Habakiri",
+    "Id": "8026, 2, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Zenos\u0027 Katana",
+    "Description": "Model for the Storm and the Swell",
+    "Id": "8026, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Zenos\u0027 Katana",
+    "Description": "The Storm Glowing Blade",
+    "Id": "8026, 1, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Tsukoyomi\u0027s Katana",
+    "Description": "Moonlit Blade",
+    "Id": "9001, 225, 2",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Machinist PvP LB Sniper Rifle",
+    "Id": "1915, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Shuriken",
+    "Id": "1901, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ninja Rabbit Medium",
+    "Id": "1902, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ninja Hellfrog",
+    "Id": "1903, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Ronkan Flute",
+    "Id": "1907, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Hand Net",
+    "Id": "1908, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Aetheromatic Auger",
+    "Description": "Diadem bazooka",
+    "Id": "1910, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Treasure Map",
+    "Id": "1916, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Machinist Weapon Launcher",
+    "Id": "1906, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Machinist Scattergun",
+    "Id": "1912, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Large Paint Brush",
+    "Id": "1904, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Archangel Wings",
+    "Id": "1913, 1, 1",
+    "Slot": "Weapons"
+  },
+  {
+    "Name": "Blue Signet Ring",
+    "Id": "9001, 272, 1",
+    "Slot": "Weapons"
+  }
+]

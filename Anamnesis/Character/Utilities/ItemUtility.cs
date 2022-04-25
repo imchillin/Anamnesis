@@ -105,9 +105,9 @@ namespace Anamnesis.Character.Utilities
 				}
 			}
 
-			if (GameDataService.Props != null)
+			if (GameDataService.Equipment != null)
 			{
-				foreach (IItem tItem in GameDataService.Props)
+				foreach (IItem tItem in GameDataService.Equipment)
 				{
 					if (tItem.ModelSet == modelSet && tItem.ModelBase == modelBase && tItem.ModelVariant == modelVariant)
 					{

@@ -15,9 +15,22 @@ namespace Anamnesis.Serialization.Converters
 		public static (ushort modelSet, ushort modelBase, ushort modelVariant) SplitString(string str)
 		{
 			string[] parts = str.Split(",", StringSplitOptions.RemoveEmptyEntries);
-			ushort modelSet = ushort.Parse(parts[0].Trim());
-			ushort modelBase = ushort.Parse(parts[1].Trim());
-			ushort modelVariant = ushort.Parse(parts[2].Trim());
+
+			ushort modelSet = 0;
+			ushort modelBase = 0;
+			ushort modelVariant = 0;
+
+			if (parts.Length == 3)
+			{
+				modelSet = ushort.Parse(parts[0].Trim());
+				modelBase = ushort.Parse(parts[1].Trim());
+				modelVariant = ushort.Parse(parts[2].Trim());
+			}
+			else
+			{
+				modelBase = ushort.Parse(parts[0].Trim());
+				modelVariant = ushort.Parse(parts[1].Trim());
+			}
 
 			return (modelSet, modelBase, modelVariant);
 		}
@@ -53,7 +66,14 @@ namespace Anamnesis.Serialization.Converters
 			}
 			else
 			{
-				writer.WriteStringValue($"{value.ModelSet}, {value.ModelBase}, {value.ModelVariant}");
+				if (value.IsWeapon)
+				{
+					writer.WriteStringValue($"{value.ModelSet}, {value.ModelBase}, {value.ModelVariant}");
+				}
+				else
+				{
+					writer.WriteStringValue($"{value.ModelBase}, {value.ModelVariant}");
+				}
 			}
 		}
 	}

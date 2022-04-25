@@ -25,6 +25,9 @@ namespace Anamnesis.Services
 
 		public static bool IsFavorite(IItem item)
 		{
+			if (!Exists)
+				return false;
+
 			if (Instance.Current == null)
 				return false;
 
