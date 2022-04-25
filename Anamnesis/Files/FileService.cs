@@ -8,6 +8,7 @@ namespace Anamnesis.Files
 	using System.Diagnostics;
 	using System.IO;
 	using System.Net;
+	using System.Net.Http;
 	using System.Text;
 	using System.Threading.Tasks;
 	using System.Windows;
@@ -348,7 +349,7 @@ namespace Anamnesis.Files
 		/// <summary>
 		/// Caches remote file, returns path to file if successful or file exists or original url if unsuccessful. Allows to custom file names to avoid overwrite.
 		/// </summary>
-		public static string CacheRemoteFile(string url, string? filePath)
+		public static async Task<string> CacheRemoteFile(string url, string? filePath)
 		{
 			string cacheDir = ParseToFilePath(CacheDirectory);
 
@@ -380,11 +381,11 @@ namespace Anamnesis.Files
 			{
 				try
 				{
-					using FileStream fileStream = new FileStream(localFile, FileMode.Create, FileAccess.Write);
-					HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-					HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+					using HttpClient client = new();
+					HttpResponseMessage result = await client.GetAsync(url);
+					Stream responseStream = await result.Content.ReadAsStreamAsync();
 
-					Stream responseStream = response.GetResponseStream();
+					using FileStream fileStream = new FileStream(localFile, FileMode.Create, FileAccess.Write);
 					responseStream.CopyTo(fileStream);
 
 					Log.Verbose($"Cached remote file: {url}. {fileStream.Position} bytes.");
@@ -402,12 +403,12 @@ namespace Anamnesis.Files
 		/// Caches remote image, returns path to image if successful or image exists or original url if unsuccessful.
 		/// Generates name based on hash of original url to avoid overwriting of images with same name.
 		/// </summary>
-		public static string CacheRemoteImage(string url)
+		public static async Task<string> CacheRemoteImage(string url)
 		{
 			Uri uri = new Uri(url);
 			string imagePath = "ImageCache/" + HashUtility.GetHashString(url) + Path.GetExtension(uri.Segments[uri.Segments.Length - 1]);
 
-			return CacheRemoteFile(url, imagePath);
+			return await CacheRemoteFile(url, imagePath);
 		}
 
 		private static string ToAnyFilter(params Type[] types)
