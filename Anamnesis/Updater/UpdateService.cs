@@ -159,16 +159,14 @@ namespace Anamnesis.Updater
 
 				// Download asset to temp file
 				string zipFilePath = Path.GetTempFileName();
-				using WebClient client = new();
-				if (updateProgress != null)
-				{
-					client.DownloadProgressChanged += (object sender, DownloadProgressChangedEventArgs e) =>
-					{
-						updateProgress.Invoke(e.ProgressPercentage / 100.0);
-					};
-				}
+				using HttpClient client = new HttpClient();
+				using HttpResponseMessage response = await client.GetAsync(asset.Url);
+				using Stream streamToReadFrom = await response.Content.ReadAsStreamAsync();
+				using FileStream fileStream = new FileStream(zipFilePath, FileMode.OpenOrCreate, FileAccess.Write);
+				await streamToReadFrom.CopyToAsync(fileStream);
 
-				await client.DownloadFileTaskAsync(asset.Url, zipFilePath);
+				// TODO: Progress bar
+				updateProgress?.Invoke(1.0);
 
 				if (!Directory.Exists(UpdateTempDir))
 					Directory.CreateDirectory(UpdateTempDir);
