@@ -18,7 +18,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{44B17F46-EF29-4BA1-9371-4103310DD2A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scripts", "Scripts\Scripts.csproj", "{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scripts", "Scripts\Scripts.csproj", "{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bootstrap", "Bootstrap\Bootstrap.csproj", "{DFB8A73B-0607-48DD-9B8B-C7B871F51EC5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04C21AF7-BD19-4180-A5E0-291E187C0936} = {04C21AF7-BD19-4180-A5E0-291E187C0936}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +65,14 @@ Global
 		{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}.Release|x64.ActiveCfg = Release|Any CPU
 		{C5DCA9DB-7B2B-4E92-B884-B8994D23CDB6}.Release|x64.Build.0 = Release|Any CPU
+		{DFB8A73B-0607-48DD-9B8B-C7B871F51EC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB8A73B-0607-48DD-9B8B-C7B871F51EC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB8A73B-0607-48DD-9B8B-C7B871F51EC5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DFB8A73B-0607-48DD-9B8B-C7B871F51EC5}.Debug|x64.Build.0 = Debug|Any CPU
+		{DFB8A73B-0607-48DD-9B8B-C7B871F51EC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB8A73B-0607-48DD-9B8B-C7B871F51EC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB8A73B-0607-48DD-9B8B-C7B871F51EC5}.Release|x64.ActiveCfg = Release|Any CPU
+		{DFB8A73B-0607-48DD-9B8B-C7B871F51EC5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

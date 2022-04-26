@@ -73,7 +73,7 @@ public partial class MainWindow : ChromedWindow
 #if DEBUG
 	public bool IsDebug => true;
 #else
-		public bool IsDebug => false;
+	public bool IsDebug => false;
 #endif
 
 	public bool ShowSettings

@@ -129,10 +129,12 @@ public partial class App : Application
 
 	private void CheckWorkingDirectory()
 	{
-		string currentDir = Directory.GetCurrentDirectory();
-		Log.Information($"Check Working Directory: \"{currentDir}\"");
+		string name = Process.GetCurrentProcess().ProcessName;
 
-		if (!File.Exists(currentDir + "/Anamnesis.exe"))
+		string currentDir = Directory.GetCurrentDirectory();
+		Log.Information($"Check Working Directory: \"{currentDir}\" for executable: {name}");
+
+		if (!File.Exists($"{currentDir}/{name}.exe"))
 		{
 			string? currentPath = AppContext.BaseDirectory;
 
@@ -146,7 +148,7 @@ public partial class App : Application
 
 			currentDir = Path.GetFullPath(newDir);
 
-			if (!File.Exists(currentDir + "/Anamnesis.exe"))
+			if (!File.Exists($"{currentDir}/{name}.exe"))
 				throw new Exception($"Incorrect new working directory: {currentDir}");
 
 			Directory.SetCurrentDirectory(currentDir);

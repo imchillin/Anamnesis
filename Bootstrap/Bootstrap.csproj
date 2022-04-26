@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+	<TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<AppendTargetFramework>False</AppendTargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>.\bin\</OutputPath>
+	<DocumentationFile>.\obj\Anamnesis.xml</DocumentationFile>
+	<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;IDE0025;SA1011;SA1134;</NoWarn>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<AssemblyName>Anamnesis</AssemblyName>
+	<ApplicationIcon>Anamnesis.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet publish ../Anamnesis/Anamnesis.csproj -p:PublishProfile=FolderProfile" />
+  </Target>
+
+  <ItemGroup>
+    <Content Include="Anamnesis.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\Anamnesis\bin\publish\Anamnesis.exe" Link="Anamnesis.exe" />
+  </ItemGroup>
+
+</Project>

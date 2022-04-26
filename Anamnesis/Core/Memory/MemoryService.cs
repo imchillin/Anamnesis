@@ -397,13 +397,13 @@ public class MemoryService : ServiceBase<MemoryService>
 
 		// if still no process, shutdown.
 #if !DEBUG
-			if (proc == null)
-			{
-				await Dispatch.MainThread();
-				App.Current.MainWindow.Close();
-				App.Current.Shutdown();
-				return;
-			}
+		if (proc == null)
+		{
+			await Dispatch.MainThread();
+			App.Current.MainWindow.Close();
+			App.Current.Shutdown();
+			return;
+		}
 #endif
 
 		if (proc != null)
