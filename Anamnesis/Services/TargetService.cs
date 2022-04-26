@@ -39,10 +39,15 @@ public class TargetService : ServiceBase<TargetService>
 	[DependsOn(nameof(CurrentlyPinned))]
 	public ActorMemory? SelectedActor => this.CurrentlyPinned?.Memory;
 
-	public static async Task PinActor(ActorBasicMemory basicActor)
-	{
-		if (basicActor.Address == IntPtr.Zero)
-			return;
+		public int PinnedActorCount { get; private set; }
+
+		[DependsOn(nameof(PinnedActorCount))]
+		public bool MoreThanFourPins => this.PinnedActorCount > 4;
+
+		public static async Task PinActor(ActorBasicMemory basicActor)
+		{
+			if (basicActor.Address == IntPtr.Zero)
+				return;
 
 		if (!basicActor.ObjectKind.IsSupportedType())
 		{
@@ -72,16 +77,17 @@ public class TargetService : ServiceBase<TargetService>
 
 			Log.Information($"Pinning actor: {pined}");
 
-			await Dispatch.MainThread();
-			Instance.PinnedActors.Add(pined);
-			Instance.SelectActor(pined);
-			ActorPinned?.Invoke(pined);
+				await Dispatch.MainThread();
+				Instance.PinnedActors.Add(pined);
+				Instance.PinnedActorCount = Instance.PinnedActors.Count;
+				Instance.SelectActor(pined);
+				ActorPinned?.Invoke(pined);
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to pin actor");
+			}
 		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Failed to pin actor");
-		}
-	}
 
 	public static async Task PinPlayerTargetedActor()
 	{
@@ -105,8 +111,9 @@ public class TargetService : ServiceBase<TargetService>
 			}
 		}
 
-		ActorUnPinned?.Invoke(actor);
-	}
+			Instance.PinnedActorCount = Instance.PinnedActors.Count;
+			ActorUnPinned?.Invoke(actor);
+		}
 
 	public static PinnedActor? GetPinned(ActorBasicMemory actor)
 	{
@@ -292,12 +299,13 @@ public class TargetService : ServiceBase<TargetService>
 		if (App.Current == null)
 			return;
 
-		App.Current.Dispatcher.Invoke(() =>
-		{
-			this.CurrentlyPinned = null;
-			this.PinnedActors.Clear();
-		});
-	}
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				this.CurrentlyPinned = null;
+				this.PinnedActors.Clear();
+				Instance.PinnedActorCount = 0;
+			});
+		}
 
 	public bool SelectActor(int index)
 	{

@@ -28,6 +28,86 @@
 	TextBlock.FontSize="12"
 	mc:Ignorable="d">
 
+	<XivToolsWpfWindows:ChromedWindow.Resources>
+		<ResourceDictionary>
+			<DataTemplate x:Key="PinnedActor">
+				<Grid Margin="3,0">
+					<ToggleButton Height="32"
+								  MinWidth="32"
+								  IsChecked="{Binding IsSelected}"
+								  PreviewMouseUp="OnActorPinPreviewMouseUp"
+								  Style="{DynamicResource TransparentIconToggleButton}"
+								  Margin="0, 0, -4, 0"
+								  Background="Red"
+								  HorizontalContentAlignment="Stretch">
+
+							<ToggleButton.ContextMenu>
+								<ContextMenu>
+									<MenuItem Click="OnUnpinActorClicked"
+											  Header="Unpin" />
+
+									<MenuItem Visibility="{Binding IsValid, Converter={StaticResource B2V}}" 
+											  Click="OnTargetActorClicked"
+											  Header="Target" />
+								</ContextMenu>
+							</ToggleButton.ContextMenu>
+
+						<Grid Margin="6,0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<Grid Margin="3, 0"
+								  Grid.Column="0">
+								<XivToolsWpf:IconBlock Margin="2,1,1,2"
+													   Icon="{Binding Icon}"
+													   Visibility="{Binding IsValid, Converter={StaticResource B2V}}"/>
+
+								<XivToolsWpf:IconBlock Margin="2,1,1,2"
+													   Icon="TimesCircle"
+													   Foreground="Red"
+													   Visibility="{Binding IsValid, Converter={StaticResource !B2V}}"/>
+							</Grid>
+
+							<XivToolsWpf:IconBlock FontSize="10"
+												   Grid.Column="1"
+												   Margin="3, 0, 3, 0"
+												   Icon="Camera"
+												   Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"/>
+
+							<TextBlock Margin="3,0,0,2"
+									   Grid.Column="2"
+									   HorizontalAlignment="Center"
+									   VerticalAlignment="Center"
+									   FontSize="14"
+									   FontWeight="SemiBold"
+									   Text="{Binding Initials}" />
+						</Grid>
+						
+						<ToggleButton.ToolTip>
+							<StackPanel>
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0} ({1})">
+											<Binding Path="DisplayName" />
+											<Binding Path="Kind" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+
+								<TextBlock Text="This actor could not be found" Visibility="{Binding IsValid, Converter={StaticResource !B2V}}" />
+
+							</StackPanel>
+						</ToggleButton.ToolTip>
+					</ToggleButton>
+					</Grid>
+
+				</DataTemplate>
+		</ResourceDictionary>
+	</XivToolsWpfWindows:ChromedWindow.Resources>
+
 	<FrameworkElement.CommandBindings>
 		<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
 	</FrameworkElement.CommandBindings>
@@ -54,55 +134,147 @@
 			<Border Background="{StaticResource MaterialDesignPaper}"
 					Margin="0, 1, 0, 0"
 					CornerRadius="0, 6, 0, 0"
-					   IsHitTestVisible="False"
-					   Visibility="{Binding SettingsService.Settings.EnableTranslucency, Converter={StaticResource !B2V}}"/>
+					IsHitTestVisible="False"
+					Visibility="{Binding SettingsService.Settings.EnableTranslucency, Converter={StaticResource !B2V}}"/>
+		</Grid>
 
-			<!--<StackPanel HorizontalAlignment="Left"
-						Orientation="Horizontal"
-						IsHitTestVisible="False">
+		<Grid
+			Width="900"
+			Height="536"
+			Grid.RowSpan="2">
 
-				<TextBlock Margin="12,0,3,0"
-						   VerticalAlignment="Center"
-						   Text="Anamnesis" />
+			<Grid.LayoutTransform>
+				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5" />
+			</Grid.LayoutTransform>
 
-				<TextBlock Margin="2,0,3,0"
-						   VerticalAlignment="Center"
-						   Opacity="0.5"
-						   Text="-" />
+			<Grid IsEnabled="{Binding GposeService.IsNotChangingState}" Margin="3,0,3,3">
 
-				<TextBlock Margin="3,0,3,0"
-						   VerticalAlignment="Center"
-						   Text="{Binding TargetService.SelectedActor.DisplayName}" />
-			</StackPanel>-->
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
 
-			<Grid HorizontalAlignment="Right">
+				<!-- title bar contents -->
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="150"/>
+					</Grid.ColumnDefinitions>
 
-				<StackPanel  Orientation="Horizontal" Margin="0, 2, 0, 0">
+					<!-- Pinned Actors -->
+					<Grid Margin="0, 0, 0, -4" IsEnabled="{Binding IsDrawerOpen, Converter={StaticResource !B}}" HorizontalAlignment="Left">
 
-					<!--<XivToolsWpf:IconBlock Margin="6,0,0,0"
-									   FontWeight="Light"
-									   Foreground="{Binding TitlebarForeground}"
-									   Icon="Sync"
-									   Visibility="{Binding TargetService.SelectedActor.IsRefreshing, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
-					<XivToolsWpf:IconBlock Margin="6,0,0,0"
-									   FontWeight="Light"
-									   Foreground="{Binding TitlebarForeground}"
-									   Icon="Hourglass"
-									   Visibility="{Binding TargetService.SelectedActor.PendingRefresh, Converter={StaticResource B2V}, FallbackValue=Collapsed}" />
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:IconBlock Margin="6,0,0,0"
-									   FontWeight="Light"
-									   Foreground="{Binding TitlebarForeground}"
-									   Icon="Undo"
-									   Visibility="{Binding TargetService.SelectedActor.History.CurrentChangeCount, Converter={StaticResource NotZeroToVisibility}, FallbackValue=Collapsed}" />-->
+						<!-- Settings tab -->
+						<ToggleButton Grid.Column="0"
+									  Margin="3, 3, 0, 0"
+									  BorderThickness="0"
+									  Height="32"
+									  Width="32"
+									  Style="{StaticResource TransparentIconToggleButton}"
+									  IsChecked="{Binding ShowSettings}"
+									  ToolTip="Settings">
+							<XivToolsWpf:IconBlock Icon="Cog"/>
+						</ToggleButton>
 
+						<!-- Actors dropdown -->
+						<ToggleButton x:Name="PopupButton"
+									  IsChecked="{Binding ElementName=Popup, Path=IsOpen}"
+									  Grid.Column="1"
+									  Margin="3, 3, 0, 0"
+									  Width="32"
+									  Visibility="{Binding TargetService.MoreThanFourPins, Converter={StaticResource B2V}}">
+
+							<XivToolsWpf:IconBlock Icon="ChevronDown"/>
+
+							<ToggleButton.Style>
+								<Style TargetType="ToggleButton" BasedOn="{StaticResource TransparentIconToggleButton}">
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding IsOpen, ElementName=Popup}" Value="True">
+											<Setter Property="IsEnabled" Value="False" />
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</ToggleButton.Style>
+						</ToggleButton>
+
+						<Popup x:Name="Popup" 
+							   StaysOpen="False"
+							   PlacementTarget="{Binding ElementName=PopupButton}" 
+							   Placement="Bottom"
+							   AllowsTransparency="True">
+
+							<Border Background="{StaticResource MaterialDesignPaper}" CornerRadius="6" Margin="10">
+								<Border.Effect>
+									<DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.5"/>
+								</Border.Effect>
+		
+									<ItemsControl ItemsSource="{Binding TargetService.PinnedActors}" 
+												  ItemTemplate="{StaticResource PinnedActor}"
+												  Margin="0, 4, 4, 4"/>
+
+							</Border>
+						</Popup>
+						
+
+						<!-- Actors -->
+						<ScrollViewer
+							HorizontalAlignment="Left"
+							HorizontalScrollBarVisibility="Hidden"
+							VerticalScrollBarVisibility="Disabled"
+							PreviewMouseWheel="OnPinnedActorsPreviewMouseWheel"
+							x:Name="PinnedActorsList"
+							Grid.Column="2">
+
+							<ItemsControl Margin="0,3,0,0"
+										  ItemsSource="{Binding TargetService.PinnedActors}"
+										  ItemTemplate="{StaticResource PinnedActor}"
+										  x:Name="PinnedActorList">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel Orientation="Horizontal"/>
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+							</ItemsControl>
+						</ScrollViewer>
+
+						<!-- Add Actor -->
+						<Button Click="OnAddActorClicked"
+								MinWidth="32"
+								Height="28"
+								Background="Transparent"
+								Margin="4,5,0,0"
+								VerticalAlignment="Top"
+								Foreground="{DynamicResource PrimaryHueMidBrush}"
+								Style="{DynamicResource TransparentButton}"
+								BorderThickness="0"
+								Grid.Column="3">
+							
+							<StackPanel Orientation="Horizontal" Margin="6,0,6,0">
+								<XivToolsWpf:TextBlock Key="Target_AddActor" Margin="0, 0, 6, 0" FontWeight="Bold" 
+															Visibility="{Binding TargetService.PinnedActors.Count, Converter={StaticResource IsZeroToVisibility}}"/>
+								<fa:IconBlock FontSize="12" Icon="Plus" />
+							</StackPanel>
+						</Button>
+					</Grid>
+
+					<!--Wiki Button -->
 					<Button Click="OnWikiClicked"
 							Background="Transparent"
 							Foreground="{Binding TitlebarForeground}"
 							Padding="0"
 							VerticalAlignment="Top"
-							Margin="25, -5, 22, 0"
-							BorderThickness="0">
+							Grid.Column="1"
+							BorderThickness="0"
+							Margin="12, 0">
 
 						<Border BorderThickness="1"
 								BorderBrush="{DynamicResource PrimaryHueMidBrush}"
@@ -139,11 +311,12 @@
 						</Button.ToolTip>
 					</Button>
 
-					<!--  Debugging toggles  -->
-					<StackPanel HorizontalAlignment="Right"
-								Orientation="Horizontal"
-								Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
+					<!-- Toggles -->
+					<StackPanel Orientation="Horizontal"
+								Grid.Column="2"
+								Margin="12, 0">
 
+						<!-- Verbose Logging -->
 						<ToggleButton Width="28"
 									  Margin="3,0,0,0"
 									  BorderThickness="0"
@@ -151,21 +324,23 @@
 									  Foreground="{Binding TitlebarForeground}"
 									  Background="{DynamicResource MaterialDesignCardBackground}"
 									  Style="{DynamicResource TransparentIconToggleButton}"
-									  ToolTip="Enable verbose logging">
+									  ToolTip="Enable verbose logging"
+									  Visibility="{Binding IsDebug, Converter={StaticResource B2V}}">
 							<XivToolsWpf:IconBlock FontSize="12"
 												   Icon="FileAlt" />
 						</ToggleButton>
-					</StackPanel>
 
-					<Button Width="28" Style="{StaticResource TransparentIconButton}" Click="OnAboutClick">
-						<Button.ToolTip>
-							<XivToolsWpf:TextBlock Key="About_Title"/>
-						</Button.ToolTip>
-						
-						<XivToolsWpf:IconBlock Icon="InfoCircle"/>
-					</Button>
+						<!-- About -->
+						<Button Width="28" Style="{StaticResource TransparentIconButton}" Click="OnAboutClick">
+							<Button.ToolTip>
+								<XivToolsWpf:TextBlock Key="About_Title"/>
+							</Button.ToolTip>
 
-					<ToggleButton Width="28"
+							<XivToolsWpf:IconBlock Icon="InfoCircle"/>
+						</Button>
+
+						<!-- Hotkey hooking -->
+						<ToggleButton Width="28"
 								  Margin="3,0,0,0"
 								  BorderThickness="0"
 								  IsChecked="{Binding SettingsService.Settings.EnableGameHotkeyHooks}"
@@ -173,15 +348,16 @@
 								  Background="{DynamicResource MaterialDesignCardBackground}"
 								  Style="{DynamicResource TransparentIconToggleButton}">
 
-						<ToggleButton.ToolTip>
-							<XivToolsWpf:TextBlock Key="Settings_GameHotkeysTooltip" />
-						</ToggleButton.ToolTip>
+							<ToggleButton.ToolTip>
+								<XivToolsWpf:TextBlock Key="Settings_GameHotkeysTooltip" />
+							</ToggleButton.ToolTip>
 
-						<XivToolsWpf:IconBlock FontSize="12"
+							<XivToolsWpf:IconBlock FontSize="12"
 											   Icon="Keyboard" />
-					</ToggleButton>
+						</ToggleButton>
 
-					<ToggleButton Width="28"
+						<!-- Always on top -->
+						<ToggleButton Width="28"
 								  Margin="3,0,0,0"
 								  BorderThickness="0"
 								  IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}"
@@ -189,156 +365,15 @@
 								  Background="{DynamicResource MaterialDesignCardBackground}"
 								  Style="{DynamicResource TransparentIconToggleButton}">
 
-						<ToggleButton.ToolTip>
-							<XivToolsWpf:TextBlock Key="Settings_AlwaysOnTop" />
-						</ToggleButton.ToolTip>
+							<ToggleButton.ToolTip>
+								<XivToolsWpf:TextBlock Key="Settings_AlwaysOnTop" />
+							</ToggleButton.ToolTip>
 
-						<XivToolsWpf:IconBlock FontSize="12"
+							<XivToolsWpf:IconBlock FontSize="12"
 											   Icon="ThumbTack" />
-					</ToggleButton>
-				</StackPanel>
-			</Grid>
-		</Grid>
+						</ToggleButton>
+					</StackPanel>
 
-		<Grid
-			Width="900"
-			Height="536"
-			Grid.RowSpan="2">
-
-			<Grid.LayoutTransform>
-				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5" />
-			</Grid.LayoutTransform>
-
-			<Grid IsEnabled="{Binding GposeService.IsNotChangingState}" Margin="3,0,3,3">
-
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-
-				<!-- Pinned Actors -->
-				<Grid Grid.ColumnSpan="2" Grid.Row="0" Margin="0, 0, 0, -4" IsEnabled="{Binding IsDrawerOpen, Converter={StaticResource !B}}">
-					<ScrollViewer
-						HorizontalAlignment="Left"
-						MaxWidth="528"
-						HorizontalScrollBarVisibility="Auto"
-						VerticalScrollBarVisibility="Disabled">
-
-						<ScrollViewer.Resources>
-							<system:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">
-								5
-							</system:Double>
-						</ScrollViewer.Resources>
-
-						<StackPanel Orientation="Horizontal">
-
-							<ToggleButton 
-								Margin="3, 3, 0, 0"
-						  		BorderThickness="0"
-								Height="32"
-								Width="32"
-								Style="{StaticResource TransparentIconToggleButton}"
-								IsChecked="{Binding ShowSettings}"
-								ToolTip="Settings">
-
-								<XivToolsWpf:IconBlock Icon="Cog"/>
-
-							</ToggleButton>
-
-							<ItemsControl Margin="0,3,0,0" ItemsSource="{Binding TargetService.PinnedActors}" >
-								<ItemsControl.ItemsPanel>
-									<ItemsPanelTemplate>
-										<StackPanel Orientation="Horizontal"/>
-									</ItemsPanelTemplate>
-								</ItemsControl.ItemsPanel>
-
-								<ItemsControl.ItemTemplate>
-									<DataTemplate>
-										<Grid Margin="3,0">
-											<ToggleButton Height="32"
-														  MinWidth="64"
-													  	  IsChecked="{Binding IsSelected}"
-														  PreviewMouseUp="OnActorPinPreviewMouseUp"
-														  Style="{DynamicResource TransparentIconToggleButton}"
-														  Margin="0, 0, -4, 0">
-
-												<ToggleButton.ContextMenu>
-													<ContextMenu>
-														<MenuItem Click="OnUnpinActorClicked" Header="Unpin" />
-
-														<MenuItem Visibility="{Binding IsValid, Converter={StaticResource B2V}}" 
-																  Click="OnTargetActorClicked"
-																  Header="Target" />
-													</ContextMenu>
-												</ToggleButton.ContextMenu>
-
-												<StackPanel Orientation="Horizontal">
-
-													<Grid Margin="3, 0">
-														<XivToolsWpf:IconBlock Margin="2,1,1,2"
-																	  Icon="{Binding Icon}"
-																	  Visibility="{Binding IsValid, Converter={StaticResource B2V}}"/>
-
-														<XivToolsWpf:IconBlock Margin="2,1,1,2"
-																	  Icon="TimesCircle"
-																	  Foreground="Red"
-																	  Visibility="{Binding IsValid, Converter={StaticResource !B2V}}"/>
-													</Grid>
-
-													<XivToolsWpf:IconBlock FontSize="10" Margin="3, 0, 3, 0" Icon="Camera"
-																  Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"/>
-
-													<TextBlock Margin="3,0,0,2"
-														HorizontalAlignment="Center"
-														VerticalAlignment="Center"
-														FontSize="14"
-														FontWeight="SemiBold"
-														Text="{Binding Initials}" />
-
-												</StackPanel>
-
-												<ToggleButton.ToolTip>
-													<StackPanel>
-														<TextBlock>
-															<TextBlock.Text>
-																<MultiBinding StringFormat="{}{0} ({1})">
-																	<Binding Path="DisplayName" />
-																	<Binding Path="Kind" />
-																</MultiBinding>
-															</TextBlock.Text>
-														</TextBlock>
-
-														<TextBlock Text="This actor could not be found" Visibility="{Binding IsValid, Converter={StaticResource !B2V}}" />
-
-													</StackPanel>
-												</ToggleButton.ToolTip>
-
-											</ToggleButton>
-										</Grid>
-
-									</DataTemplate>
-								</ItemsControl.ItemTemplate>
-							</ItemsControl>
-
-							<Button
-								Click="OnAddActorClicked"
-								MinWidth="32"
-								Height="28"
-								Background="Transparent"
-								Margin="4,5,0,0"
-								VerticalAlignment="Top"
-								Foreground="{DynamicResource PrimaryHueMidBrush}"
-								Style="{DynamicResource TransparentButton}"
-								BorderThickness="0">
-								<StackPanel Orientation="Horizontal" Margin="6,0,6,0">
-									<XivToolsWpf:TextBlock Key="Target_AddActor" Margin="0, 0, 6, 0" FontWeight="Bold" 
-														   Visibility="{Binding TargetService.PinnedActors.Count, Converter={StaticResource IsZeroToVisibility}}"/>
-									<fa:IconBlock FontSize="12" Icon="Plus" />
-								</StackPanel>
-							</Button>
-						</StackPanel>
-
-					</ScrollViewer>
 				</Grid>
 
 				<TabControl x:Name="Tabs" Grid.Row="1" Height="500" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
@@ -387,7 +422,7 @@
 								FontSize="18"/>
 						</TabItem.Header>
 
-						<characterPages:AppearancePage DataContext="{Binding TargetService.SelectedActor}" />
+						<characterPages:CharacterPage DataContext="{Binding TargetService.SelectedActor}" />
 					</TabItem>
 					<TabItem x:Name="ActionTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 						<TabItem.Header>

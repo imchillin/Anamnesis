@@ -20,23 +20,23 @@ using Anamnesis.Styles.Drawers;
 using PropertyChanged;
 using Serilog;
 
-/// <summary>
-/// Interaction logic for AppearancePage.xaml.
-/// </summary>
-[AddINotifyPropertyChangedInterface]
-public partial class AppearancePage : UserControl
-{
-	private static DirectoryInfo? lastLoadDir;
-	private static DirectoryInfo? lastSaveDir;
-
-	public AppearancePage()
+	/// <summary>
+	/// Interaction logic for AppearancePage.xaml.
+	/// </summary>
+	[AddINotifyPropertyChangedInterface]
+	public partial class CharacterPage : UserControl
 	{
-		this.InitializeComponent();
+		private static DirectoryInfo? lastLoadDir;
+		private static DirectoryInfo? lastSaveDir;
+
+		public CharacterPage()
+		{
+			this.InitializeComponent();
 
 		this.ContentArea.DataContext = this;
 
-		HotkeyService.RegisterHotkeyHandler("AppearancePage.ClearEquipment", () => this.OnClearClicked());
-	}
+			HotkeyService.RegisterHotkeyHandler("CharacterPage.ClearEquipment", () => this.OnClearClicked());
+		}
 
 	public ActorMemory? Actor { get; private set; }
 
