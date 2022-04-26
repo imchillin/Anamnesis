@@ -162,16 +162,16 @@ public partial class MainWindow : ChromedWindow
 	{
 		this.ShowSettings = false;
 
-			if (actor == null)
-			{
-				this.Tabs.SelectedIndex = 0;
-			}
-			else
-			{
-				FrameworkElement? container = this.PinnedActorList.ItemContainerGenerator.ContainerFromItem(this.TargetService.CurrentlyPinned) as FrameworkElement;
-				container?.BringIntoView();
-			}
+		if (actor == null)
+		{
+			this.Tabs.SelectedIndex = 0;
 		}
+		else
+		{
+			FrameworkElement? container = this.PinnedActorList.ItemContainerGenerator.ContainerFromItem(this.TargetService.CurrentlyPinned) as FrameworkElement;
+			container?.BringIntoView();
+		}
+	}
 
 	private async Task OnShowDrawer(UserControl view, DrawerDirection direction)
 	{
@@ -368,15 +368,14 @@ public partial class MainWindow : ChromedWindow
 		UrlUtility.Open("https://github.com/imchillin/Anamnesis/wiki");
 	}
 
-		private void OnBackClicked(object sender, RoutedEventArgs e)
-		{
-			this.ShowSettings = false;
-		}
+	private void OnBackClicked(object sender, RoutedEventArgs e)
+	{
+		this.ShowSettings = false;
+	}
 
-		private void OnPinnedActorsPreviewMouseWheel(object sender, MouseWheelEventArgs e)
-		{
-			this.PinnedActorsList.ScrollToHorizontalOffset(this.PinnedActorsList.HorizontalOffset - (e.Delta / 5));
-			e.Handled = true;
-		}
+	private void OnPinnedActorsPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+	{
+		this.PinnedActorsList.ScrollToHorizontalOffset(this.PinnedActorsList.HorizontalOffset - (e.Delta / 5));
+		e.Handled = true;
 	}
 }
