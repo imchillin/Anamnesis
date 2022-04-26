@@ -12,7 +12,7 @@ internal static class User32
 	{
 		uint v = (uint)type | (uint)icon;
 		int ret = MessageBox(IntPtr.Zero, text, caption, v);
-		return ret == 1;
+		return ret == 1 || ret == 6 || ret == 11;
 	}
 
 	[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
