@@ -91,9 +91,13 @@
 				<XivToolsWpf:TextBlock Key="About_Donate_Header"/>
 			</GroupBox.Header>
 
-			<TextBlock TextWrapping="Wrap" Margin="6,0,0,15" Style="{StaticResource Body}">This project is a labor of love. Please consider donating to the members of the dev team via Ko-fi to say thank you!<LineBreak />
-				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/aniki" FontSize="12">Yuki &amp; Ani-Ki's shared Ko-fi</Hyperlink>
-			</TextBlock>
+			<TextBlock TextWrapping="Wrap" Margin="6,0,0,7" Style="{StaticResource Body}">This project is a labor of love. Please consider donating to the members of the dev team to say thank you!<LineBreak />
+				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/aniki" FontSize="12">Yuki &amp; Ani-Ki's Ko-fi</Hyperlink>
+                <LineBreak />
+                <fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/Asgard" FontSize="12">Asgard's Ko-fi</Hyperlink>
+                <LineBreak />
+                <fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/peebsmiqo" FontSize="12">Peebs' Ko-fi</Hyperlink>
+            </TextBlock>
 		</GroupBox>
 
 		<GroupBox Grid.Row="4">
