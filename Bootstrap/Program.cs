@@ -2,10 +2,7 @@
 // Licensed under the MIT license.
 
 using System.Diagnostics;
-using System.Net;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using Bootstrap;
 
 const string ResourceName = "Bootstrap.Anamnesis.exe";
@@ -57,6 +54,7 @@ async Task<bool> CheckDotNet()
 		using FileStream fileStream = new FileStream(DotNetTempFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
 		// TODO: update progress somewhere somehow?
+		// https://docs.microsoft.com/en-us/windows/win32/controls/create-progress-bar-controls
 		await streamToReadFrom.CopyToAsync(fileStream);
 
 		// Check hash
