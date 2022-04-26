@@ -16,6 +16,6 @@ namespace Anamnesis
 		/// <summary>
 		/// The latest gamve version that the tool has been validated for.
 		/// </summary>
-		public static readonly string ValidatedGameVersion = "2022.04.07.0000.0000";
+		public static readonly string ValidatedGameVersion = "2022.04.20.0000.0000";
 	}
 }
