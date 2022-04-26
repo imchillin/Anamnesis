@@ -190,7 +190,18 @@ public class ActorMemory : ActorBasicMemory
 
 			if (SettingsService.Current.UseExternalRefresh)
 			{
-				await Penumbra.Penumbra.Redraw(this.Name);
+				if (this.ObjectKind == ActorTypes.Player)
+				{
+					this.ObjectKind = ActorTypes.BattleNpc;
+					await Penumbra.Penumbra.Redraw(this.Name);
+					await Task.Delay(200);
+					this.ObjectKind = ActorTypes.Player;
+				}
+				else
+				{
+					await Penumbra.Penumbra.Redraw(this.Name);
+				}
+
 				return;
 			}
 			else
