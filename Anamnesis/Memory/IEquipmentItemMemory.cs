@@ -1,16 +1,15 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+using System.ComponentModel;
+
+public interface IEquipmentItemMemory : INotifyPropertyChanged
 {
-	using System.ComponentModel;
+	ushort Base { get; set; }
+	byte Dye { get; set; }
+	ushort Set { get; set; }
 
-	public interface IEquipmentItemMemory : INotifyPropertyChanged
-	{
-		ushort Base { get; set; }
-		byte Dye { get; set; }
-		ushort Set { get; set; }
-
-		public void Clear(bool isPlayer);
-	}
+	public void Clear(bool isPlayer);
 }

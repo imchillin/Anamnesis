@@ -1,21 +1,20 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis
+namespace Anamnesis;
+
+using System;
+
+public static class VersionInfo
 {
-	using System;
+	/// <summary>
+	/// The time this version was published.
+	/// </summary>
+	// This is written to by the build server. do not change.
+	public static readonly DateTime Date = new DateTime(2000, 01, 01, 00, 00, 00, DateTimeKind.Utc);
 
-	public static class VersionInfo
-	{
-		/// <summary>
-		/// The time this version was published.
-		/// </summary>
-		// This is written to by the build server. do not change.
-		public static readonly DateTime Date = new DateTime(2000, 01, 01, 00, 00, 00, DateTimeKind.Utc);
-
-		/// <summary>
-		/// The latest gamve version that the tool has been validated for.
-		/// </summary>
-		public static readonly string ValidatedGameVersion = "2022.04.20.0000.0000";
-	}
+	/// <summary>
+	/// The latest gamve version that the tool has been validated for.
+	/// </summary>
+	public static readonly string ValidatedGameVersion = "2022.04.20.0000.0000";
 }

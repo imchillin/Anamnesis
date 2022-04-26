@@ -1,16 +1,15 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData
+namespace Anamnesis.GameData;
+
+using System.Collections.Generic;
+
+public interface ISheet<T> : IEnumerable<T>
+	where T : IRow
 {
-	using System.Collections.Generic;
+	bool Contains(uint key);
 
-	public interface ISheet<T> : IEnumerable<T>
-		where T : IRow
-	{
-		bool Contains(uint key);
-
-		T Get(uint key);
-		T Get(byte key);
-	}
+	T Get(uint key);
+	T Get(byte key);
 }

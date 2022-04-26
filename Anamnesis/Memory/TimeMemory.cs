@@ -1,59 +1,58 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+using System;
+
+using Anamnesis.Core.Memory;
+
+public class TimeMemory
 {
-	using System;
+	private readonly NopHookViewModel timeAsmHook;
 
-	using Anamnesis.Core.Memory;
+	private bool value;
 
-	public class TimeMemory
+	public TimeMemory()
 	{
-		private readonly NopHookViewModel timeAsmHook;
+		this.timeAsmHook = new NopHookViewModel(AddressService.TimeAsm, 0x07);
+	}
 
-		private bool value;
+	public long CurrentTime => MemoryService.Read<long>(AddressService.TimeReal);
 
-		public TimeMemory()
+	public bool Freeze
+	{
+		get
 		{
-			this.timeAsmHook = new NopHookViewModel(AddressService.TimeAsm, 0x07);
+			return this.value;
 		}
 
-		public long CurrentTime => MemoryService.Read<long>(AddressService.TimeReal);
-
-		public bool Freeze
+		set
 		{
-			get
-			{
-				return this.value;
-			}
-
-			set
-			{
-				this.value = value;
-				this.SetFrozen(value);
-			}
+			this.value = value;
+			this.SetFrozen(value);
 		}
+	}
 
-		public void SetFrozen(bool enabled)
+	public void SetFrozen(bool enabled)
+	{
+		this.value = enabled;
+
+		if (enabled)
 		{
-			this.value = enabled;
-
-			if (enabled)
-			{
-				// We disable the game code which updates Eorzea Time
-				this.timeAsmHook.Enabled = true;
-			}
-			else
-			{
-				// We write the Eorzea time update code back
-				this.timeAsmHook.Enabled = false;
-			}
+			// We disable the game code which updates Eorzea Time
+			this.timeAsmHook.Enabled = true;
 		}
-
-		public void SetTime(long newTime)
+		else
 		{
-			// As long as Eorzea Time updating is disabled we can just set it directly
-			MemoryService.Write(AddressService.TimeReal, BitConverter.GetBytes(newTime));
+			// We write the Eorzea time update code back
+			this.timeAsmHook.Enabled = false;
 		}
+	}
+
+	public void SetTime(long newTime)
+	{
+		// As long as Eorzea Time updating is disabled we can just set it directly
+		MemoryService.Write(AddressService.TimeReal, BitConverter.GetBytes(newTime));
 	}
 }

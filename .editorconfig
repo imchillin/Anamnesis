@@ -3,6 +3,7 @@
 [*.cs]
 indent_style = tab
 file_header_template = © Anamnesis.\nLicensed under the MIT license.
+csharp_style_namespace_declarations = file_scoped:warning
 
 dotnet_diagnostic.SA1000.severity = none
 dotnet_diagnostic.SA1027.severity = none

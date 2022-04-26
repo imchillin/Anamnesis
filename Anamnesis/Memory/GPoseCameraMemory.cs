@@ -1,10 +1,9 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+public class GPoseCameraMemory : MemoryBase
 {
-	public class GPoseCameraMemory : MemoryBase
-	{
-		[Bind(0x000)] public Vector Position { get; set; }
-	}
+	[Bind(0x000)] public Vector Position { get; set; }
 }

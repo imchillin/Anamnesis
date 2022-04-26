@@ -1,89 +1,88 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Views
+namespace Anamnesis.Character.Views;
+
+using System.Windows.Controls;
+using Anamnesis.GameData.Excel;
+using Anamnesis.GameData.Sheets;
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using PropertyChanged;
+
+/// <summary>
+/// Interaction logic for HairSelector.xaml.
+/// </summary>
+[AddINotifyPropertyChangedInterface]
+public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 {
-	using System.Windows.Controls;
-	using Anamnesis.GameData.Excel;
-	using Anamnesis.GameData.Sheets;
-	using Anamnesis.Memory;
-	using Anamnesis.Services;
-	using PropertyChanged;
+	private readonly ActorCustomizeMemory.Genders gender;
+	private readonly ActorCustomizeMemory.Tribes tribe;
+	private readonly CustomizeSheet.Features feature;
 
-	/// <summary>
-	/// Interaction logic for HairSelector.xaml.
-	/// </summary>
-	[AddINotifyPropertyChangedInterface]
-	public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
+	private byte selected;
+	private CharaMakeCustomize? selectedItem;
+
+	public CustomizeFeatureSelectorDrawer(CustomizeSheet.Features feature, ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Tribes tribe, byte value)
 	{
-		private readonly ActorCustomizeMemory.Genders gender;
-		private readonly ActorCustomizeMemory.Tribes tribe;
-		private readonly CustomizeSheet.Features feature;
+		this.InitializeComponent();
 
-		private byte selected;
-		private CharaMakeCustomize? selectedItem;
+		this.feature = feature;
+		this.gender = gender;
+		this.tribe = tribe;
 
-		public CustomizeFeatureSelectorDrawer(CustomizeSheet.Features feature, ActorCustomizeMemory.Genders gender, ActorCustomizeMemory.Tribes tribe, byte value)
+		this.ContentArea.DataContext = this;
+		this.List.ItemsSource = GameDataService.CharacterMakeCustomize?.GetFeatureOptions(feature, tribe, gender);
+
+		this.Selected = value;
+	}
+
+	public delegate void SelectorEvent(byte value);
+
+	public event DrawerEvent? Close;
+	public event SelectorEvent? SelectionChanged;
+
+	public byte Selected
+	{
+		get
 		{
-			this.InitializeComponent();
-
-			this.feature = feature;
-			this.gender = gender;
-			this.tribe = tribe;
-
-			this.ContentArea.DataContext = this;
-			this.List.ItemsSource = GameDataService.CharacterMakeCustomize?.GetFeatureOptions(feature, tribe, gender);
-
-			this.Selected = value;
+			return this.selected;
 		}
 
-		public delegate void SelectorEvent(byte value);
-
-		public event DrawerEvent? Close;
-		public event SelectorEvent? SelectionChanged;
-
-		public byte Selected
+		set
 		{
-			get
-			{
-				return this.selected;
-			}
+			this.selected = value;
 
-			set
-			{
-				this.selected = value;
+			if (!this.IsLoaded)
+				return;
 
-				if (!this.IsLoaded)
-					return;
+			this.SelectedItem = GameDataService.CharacterMakeCustomize?.GetFeature(this.feature, this.tribe, this.gender, value);
+			this.SelectionChanged?.Invoke(this.selected);
+		}
+	}
 
-				this.SelectedItem = GameDataService.CharacterMakeCustomize?.GetFeature(this.feature, this.tribe, this.gender, value);
-				this.SelectionChanged?.Invoke(this.selected);
-			}
+	public CharaMakeCustomize? SelectedItem
+	{
+		get
+		{
+			return this.selectedItem;
 		}
 
-		public CharaMakeCustomize? SelectedItem
+		set
 		{
-			get
-			{
-				return this.selectedItem;
-			}
+			if (this.selectedItem == value)
+				return;
 
-			set
-			{
-				if (this.selectedItem == value)
-					return;
+			this.selectedItem = value;
 
-				this.selectedItem = value;
+			if (value == null)
+				return;
 
-				if (value == null)
-					return;
-
-				this.Selected = value.FeatureId;
-			}
+			this.Selected = value.FeatureId;
 		}
+	}
 
-		public void OnClosed()
-		{
-		}
+	public void OnClosed()
+	{
 	}
 }

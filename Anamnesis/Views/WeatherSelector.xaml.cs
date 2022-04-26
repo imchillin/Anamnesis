@@ -1,94 +1,91 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Views
+namespace Anamnesis.Views;
+using System.Windows.Controls;
+using Anamnesis.GameData.Excel;
+using Anamnesis.Services;
+using Anamnesis.Styles.Drawers;
+using PropertyChanged;
+using XivToolsWpf;
+
+/// <summary>
+/// Interaction logic for WeatherSelector.xaml.
+/// </summary>
+[AddINotifyPropertyChangedInterface]
+public partial class WeatherSelector : UserControl, SelectorDrawer.ISelectorView
 {
-	using System;
-	using System.Windows.Controls;
-	using Anamnesis.GameData.Excel;
-	using Anamnesis.Services;
-	using Anamnesis.Styles.Drawers;
-	using PropertyChanged;
-	using XivToolsWpf;
+	private static bool natrualWeathers = true;
 
-	/// <summary>
-	/// Interaction logic for WeatherSelector.xaml.
-	/// </summary>
-	[AddINotifyPropertyChangedInterface]
-	public partial class WeatherSelector : UserControl, SelectorDrawer.ISelectorView
+	public WeatherSelector()
 	{
-		private static bool natrualWeathers = true;
+		this.InitializeComponent();
 
-		public WeatherSelector()
+		this.ContentArea.DataContext = this;
+
+		if (TerritoryService.Instance.CurrentTerritory == null)
+			return;
+
+		this.Selector.AddItems(GameDataService.Weathers);
+		this.Selector.FilterItems();
+	}
+
+	public event DrawerEvent? Close;
+	public event DrawerEvent? SelectionChanged;
+
+	public bool NaturalWeathers
+	{
+		get => natrualWeathers;
+		set
 		{
-			this.InitializeComponent();
-
-			this.ContentArea.DataContext = this;
-
-			if (TerritoryService.Instance.CurrentTerritory == null)
-				return;
-
-			this.Selector.AddItems(GameDataService.Weathers);
+			natrualWeathers = value;
 			this.Selector.FilterItems();
 		}
+	}
 
-		public event DrawerEvent? Close;
-		public event DrawerEvent? SelectionChanged;
+	SelectorDrawer SelectorDrawer.ISelectorView.Selector => this.Selector;
 
-		public bool NaturalWeathers
+	public void OnClosed()
+	{
+	}
+
+	private void OnClose()
+	{
+		this.Close?.Invoke();
+	}
+
+	private void OnSelectionChanged()
+	{
+		this.SelectionChanged?.Invoke();
+	}
+
+	private bool OnFilter(object obj, string[]? search = null)
+	{
+		if (obj is Weather weather)
 		{
-			get => natrualWeathers;
-			set
+			if (weather.RowId == 0)
+				return false;
+
+			if (TerritoryService.Instance.CurrentTerritory != null)
 			{
-				natrualWeathers = value;
-				this.Selector.FilterItems();
-			}
-		}
+				bool isNatural = TerritoryService.Instance.CurrentTerritory.Weathers.Contains(weather);
 
-		SelectorDrawer SelectorDrawer.ISelectorView.Selector => this.Selector;
-
-		public void OnClosed()
-		{
-		}
-
-		private void OnClose()
-		{
-			this.Close?.Invoke();
-		}
-
-		private void OnSelectionChanged()
-		{
-			this.SelectionChanged?.Invoke();
-		}
-
-		private bool OnFilter(object obj, string[]? search = null)
-		{
-			if (obj is Weather weather)
-			{
-				if (weather.RowId == 0)
-					return false;
-
-				if (TerritoryService.Instance.CurrentTerritory != null)
+				if (natrualWeathers && !isNatural)
 				{
-					bool isNatural = TerritoryService.Instance.CurrentTerritory.Weathers.Contains(weather);
-
-					if (natrualWeathers && !isNatural)
-					{
-						return false;
-					}
-				}
-
-				bool matches = SearchUtility.Matches(weather.Name, search);
-				matches |= SearchUtility.Matches(weather.Description, search);
-				matches |= SearchUtility.Matches(weather.WeatherId.ToString(), search);
-
-				if (!matches)
 					return false;
-
-				return true;
+				}
 			}
 
-			return false;
+			bool matches = SearchUtility.Matches(weather.Name, search);
+			matches |= SearchUtility.Matches(weather.Description, search);
+			matches |= SearchUtility.Matches(weather.WeatherId.ToString(), search);
+
+			if (!matches)
+				return false;
+
+			return true;
 		}
+
+		return false;
 	}
 }

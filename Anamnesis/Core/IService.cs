@@ -1,14 +1,13 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis
-{
-	using System.Threading.Tasks;
+namespace Anamnesis;
 
-	public interface IService
-	{
-		Task Initialize();
-		Task Start();
-		Task Shutdown();
-	}
+using System.Threading.Tasks;
+
+public interface IService
+{
+	Task Initialize();
+	Task Start();
+	Task Shutdown();
 }

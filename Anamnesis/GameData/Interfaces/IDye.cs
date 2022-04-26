@@ -1,17 +1,16 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData
+namespace Anamnesis.GameData;
+
+using System.Windows.Media;
+using Anamnesis.GameData.Sheets;
+
+public interface IDye : IRow
 {
-	using System.Windows.Media;
-	using Anamnesis.GameData.Sheets;
+	byte Id { get; }
+	ImageReference? Icon { get; }
+	Brush? Color { get; }
 
-	public interface IDye : IRow
-	{
-		byte Id { get; }
-		ImageReference? Icon { get; }
-		Brush? Color { get; }
-
-		bool IsFavorite { get; set; }
-	}
+	bool IsFavorite { get; set; }
 }

@@ -1,103 +1,102 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Views
+namespace Anamnesis.Character.Views;
+
+using System.Collections.Generic;
+using System.Windows.Controls;
+using Anamnesis.Character.Utilities;
+using Anamnesis.Services;
+using PropertyChanged;
+
+/// <summary>
+/// Interaction logic for FxivColorSelectorDrawer.xaml.
+/// </summary>
+[AddINotifyPropertyChangedInterface]
+public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 {
-	using System.Collections.Generic;
-	using System.Windows.Controls;
-	using Anamnesis.Character.Utilities;
-	using Anamnesis.Services;
-	using PropertyChanged;
+	private readonly List<Item> items = new List<Item>();
+	private Item? selectedItem;
 
-	/// <summary>
-	/// Interaction logic for FxivColorSelectorDrawer.xaml.
-	/// </summary>
-	[AddINotifyPropertyChangedInterface]
-	public partial class FxivColorSelectorDrawer : UserControl, IDrawer
+	public FxivColorSelectorDrawer(ColorData.Entry[] colors, int selectedIndex)
 	{
-		private readonly List<Item> items = new List<Item>();
-		private Item? selectedItem;
+		this.InitializeComponent();
 
-		public FxivColorSelectorDrawer(ColorData.Entry[] colors, int selectedIndex)
+		this.Selected = selectedIndex;
+		for (int i = 0; i < colors.Length; i++)
 		{
-			this.InitializeComponent();
+			if (colors[i].Skip)
+				continue;
 
-			this.Selected = selectedIndex;
-			for (int i = 0; i < colors.Length; i++)
+			Item item = new Item();
+			item.Entry = colors[i];
+			item.Index = i;
+			this.items.Add(item);
+
+			if (i == selectedIndex)
 			{
-				if (colors[i].Skip)
-					continue;
+				this.SelectedItem = item;
+			}
+		}
 
-				Item item = new Item();
-				item.Entry = colors[i];
-				item.Index = i;
-				this.items.Add(item);
+		this.List.ItemsSource = this.items;
 
-				if (i == selectedIndex)
+		this.ContentArea.DataContext = this;
+	}
+
+	public delegate void SelectorEvent(int value);
+
+	public event DrawerEvent? Close;
+	public event SelectorEvent? SelectionChanged;
+
+	public Item? SelectedItem
+	{
+		get
+		{
+			return this.selectedItem;
+		}
+
+		set
+		{
+			this.selectedItem = value;
+
+			if (value == null)
+				return;
+
+			this.SelectionChanged?.Invoke(value.Index);
+		}
+	}
+
+	public int Selected
+	{
+		get
+		{
+			if (this.selectedItem == null)
+				return 0;
+
+			return this.selectedItem.Index;
+		}
+
+		set
+		{
+			foreach (Item item in this.items)
+			{
+				if (item.Index == value)
 				{
 					this.SelectedItem = item;
-				}
-			}
-
-			this.List.ItemsSource = this.items;
-
-			this.ContentArea.DataContext = this;
-		}
-
-		public delegate void SelectorEvent(int value);
-
-		public event DrawerEvent? Close;
-		public event SelectorEvent? SelectionChanged;
-
-		public Item? SelectedItem
-		{
-			get
-			{
-				return this.selectedItem;
-			}
-
-			set
-			{
-				this.selectedItem = value;
-
-				if (value == null)
 					return;
-
-				this.SelectionChanged?.Invoke(value.Index);
-			}
-		}
-
-		public int Selected
-		{
-			get
-			{
-				if (this.selectedItem == null)
-					return 0;
-
-				return this.selectedItem.Index;
-			}
-
-			set
-			{
-				foreach (Item item in this.items)
-				{
-					if (item.Index == value)
-					{
-						this.SelectedItem = item;
-						return;
-					}
 				}
 			}
 		}
+	}
 
-		public void OnClosed()
-		{
-		}
+	public void OnClosed()
+	{
+	}
 
-		public class Item
-		{
-			public ColorData.Entry Entry { get; set; }
-			public int Index { get; set; }
-		}
+	public class Item
+	{
+		public ColorData.Entry Entry { get; set; }
+		public int Index { get; set; }
 	}
 }

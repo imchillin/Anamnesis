@@ -1,20 +1,19 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Views
-{
-	using System.Windows.Controls;
-	using PropertyChanged;
+namespace Anamnesis.Character.Views;
 
-	/// <summary>
-	/// Interaction logic for EquipmentView.xaml.
-	/// </summary>
-	[AddINotifyPropertyChangedInterface]
-	public partial class EquipmentEditor : UserControl
+using System.Windows.Controls;
+using PropertyChanged;
+
+/// <summary>
+/// Interaction logic for EquipmentView.xaml.
+/// </summary>
+[AddINotifyPropertyChangedInterface]
+public partial class EquipmentEditor : UserControl
+{
+	public EquipmentEditor()
 	{
-		public EquipmentEditor()
-		{
-			this.InitializeComponent();
-		}
+		this.InitializeComponent();
 	}
 }

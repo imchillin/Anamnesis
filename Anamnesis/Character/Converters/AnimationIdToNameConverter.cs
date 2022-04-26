@@ -1,38 +1,37 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Converters
+namespace Anamnesis.Character.Converters;
+
+using System;
+using System.Globalization;
+using System.Windows.Data;
+using Anamnesis.GameData.Excel;
+using Anamnesis.Services;
+
+[ValueConversion(typeof(uint), typeof(string))]
+public class AnimationIdToNameConverter : IValueConverter
 {
-	using System;
-	using System.Globalization;
-	using System.Windows.Data;
-	using Anamnesis.GameData.Excel;
-	using Anamnesis.Services;
-
-	[ValueConversion(typeof(uint), typeof(string))]
-	public class AnimationIdToNameConverter : IValueConverter
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		string animationName;
+
+		try
 		{
-			string animationName;
-
-			try
-			{
-				ushort animId = (ushort)value;
-				ActionTimeline timeline = GameDataService.ActionTimelines.Get(animId);
-				animationName = timeline.Key ?? LocalizationService.GetString("Character_Action_NoAnimation");
-			}
-			catch
-			{
-				animationName = LocalizationService.GetString("Character_Action_UnknownAnimation");
-			}
-
-			return animationName;
+			ushort animId = (ushort)value;
+			ActionTimeline timeline = GameDataService.ActionTimelines.Get(animId);
+			animationName = timeline.Key ?? LocalizationService.GetString("Character_Action_NoAnimation");
+		}
+		catch
+		{
+			animationName = LocalizationService.GetString("Character_Action_UnknownAnimation");
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
+		return animationName;
+	}
+
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+	{
+		throw new NotImplementedException();
 	}
 }

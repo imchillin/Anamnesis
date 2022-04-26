@@ -1,22 +1,21 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+public class WeaponSubModelMemory : MemoryBase
 {
-	public class WeaponSubModelMemory : MemoryBase
+	[Bind(0x070)] public Vector Scale { get; set; }
+	[Bind(0x258)] public Color Tint { get; set; }
+
+	public bool IsHidden
 	{
-		[Bind(0x070)] public Vector Scale { get; set; }
-		[Bind(0x258)] public Color Tint { get; set; }
+		get => this.Scale == Vector.Zero;
+		set => this.Scale = value ? Vector.Zero : Vector.One;
+	}
 
-		public bool IsHidden
-		{
-			get => this.Scale == Vector.Zero;
-			set => this.Scale = value ? Vector.Zero : Vector.One;
-		}
-
-		public void Hide()
-		{
-			this.IsHidden = true;
-		}
+	public void Hide()
+	{
+		this.IsHidden = true;
 	}
 }

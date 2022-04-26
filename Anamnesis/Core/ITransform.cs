@@ -1,17 +1,16 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+public interface ITransform
 {
-	public interface ITransform
-	{
-		bool CanTranslate { get; }
-		Vector Position { get; set; }
+	bool CanTranslate { get; }
+	Vector Position { get; set; }
 
-		bool CanRotate { get; }
-		public Quaternion Rotation { get; set; }
+	bool CanRotate { get; }
+	public Quaternion Rotation { get; set; }
 
-		bool CanScale { get; }
-		public Vector Scale { get; set; }
-	}
+	bool CanScale { get; }
+	public Vector Scale { get; set; }
 }

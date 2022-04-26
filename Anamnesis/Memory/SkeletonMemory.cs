@@ -1,12 +1,11 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+public class SkeletonMemory : ArrayMemory<PartialSkeletonMemory, short>
 {
-	public class SkeletonMemory : ArrayMemory<PartialSkeletonMemory, short>
-	{
-		public override int AddressOffset => 0x068;
-		public override int CountOffset => 0x050;
-		public override int ElementSize => 448;
-	}
+	public override int AddressOffset => 0x068;
+	public override int CountOffset => 0x050;
+	public override int ElementSize => 448;
 }

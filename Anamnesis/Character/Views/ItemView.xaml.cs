@@ -1,317 +1,314 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Views
+namespace Anamnesis.Character.Views;
+
+using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using Anamnesis.Character.Utilities;
+using Anamnesis.GameData;
+using Anamnesis.GameData.Excel;
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using Anamnesis.Styles.Drawers;
+using PropertyChanged;
+using Serilog;
+using XivToolsWpf;
+using XivToolsWpf.DependencyProperties;
+
+/// <summary>
+/// Interaction logic for ItemView.xaml.
+/// </summary>
+[AddINotifyPropertyChangedInterface]
+public partial class ItemView : UserControl
 {
-	using System;
-	using System.ComponentModel;
-	using System.Threading.Tasks;
-	using System.Windows;
-	using System.Windows.Controls;
-	using System.Windows.Input;
-	using System.Windows.Media;
-	using Anamnesis.Character.Utilities;
-	using Anamnesis.GameData;
-	using Anamnesis.GameData.Excel;
-	using Anamnesis.Memory;
-	using Anamnesis.Services;
-	using Anamnesis.Styles.Drawers;
-	using PropertyChanged;
-	using Serilog;
-	using XivToolsWpf;
-	using XivToolsWpf.DependencyProperties;
+	public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
+	public static readonly IBind<IEquipmentItemMemory?> ItemModelDp = Binder.Register<IEquipmentItemMemory?, ItemView>(nameof(ItemModel), OnItemModelChanged, BindMode.TwoWay);
+	public static readonly IBind<WeaponSubModelMemory?> WeaponExModelDp = Binder.Register<WeaponSubModelMemory?, ItemView>(nameof(ExtendedViewModel));
 
-	using Vector = Anamnesis.Memory.Vector;
+	private bool lockViewModel = false;
 
-	/// <summary>
-	/// Interaction logic for ItemView.xaml.
-	/// </summary>
-	[AddINotifyPropertyChangedInterface]
-	public partial class ItemView : UserControl
+	public ItemView()
 	{
-		public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
-		public static readonly IBind<IEquipmentItemMemory?> ItemModelDp = Binder.Register<IEquipmentItemMemory?, ItemView>(nameof(ItemModel), OnItemModelChanged, BindMode.TwoWay);
-		public static readonly IBind<WeaponSubModelMemory?> WeaponExModelDp = Binder.Register<WeaponSubModelMemory?, ItemView>(nameof(ExtendedViewModel));
+		this.InitializeComponent();
 
-		private bool lockViewModel = false;
+		if (DesignerProperties.GetIsInDesignMode(this))
+			return;
 
-		public ItemView()
+		this.ContentArea.DataContext = this;
+	}
+
+	public ItemSlots Slot
+	{
+		get => SlotDp.Get(this);
+		set => SlotDp.Set(this, value);
+	}
+
+	public IItem? Item { get; set; }
+	public IDye? Dye { get; set; }
+	public ImageSource? IconSource { get; set; }
+	public bool CanDye { get; set; }
+	public bool IsLoading { get; set; }
+
+	public IEquipmentItemMemory? ItemModel
+	{
+		get => ItemModelDp.Get(this);
+		set => ItemModelDp.Set(this, value);
+	}
+
+	public ActorMemory? Actor { get; private set; }
+
+	public WeaponSubModelMemory? ExtendedViewModel
+	{
+		get => WeaponExModelDp.Get(this);
+		set => WeaponExModelDp.Set(this, value);
+	}
+
+	public uint ItemKey
+	{
+		get
 		{
-			this.InitializeComponent();
-
-			if (DesignerProperties.GetIsInDesignMode(this))
-				return;
-
-			this.ContentArea.DataContext = this;
+			return this.Item?.RowId ?? 0;
 		}
-
-		public ItemSlots Slot
+		set
 		{
-			get => SlotDp.Get(this);
-			set => SlotDp.Set(this, value);
+			IItem? item = GameDataService.Items?.Get(value);
+			this.SetItem(item);
 		}
+	}
 
-		public IItem? Item { get; set; }
-		public IDye? Dye { get; set; }
-		public ImageSource? IconSource { get; set; }
-		public bool CanDye { get; set; }
-		public bool IsLoading { get; set; }
+	public string SlotName
+	{
+		get => LocalizationService.GetString("Character_Equipment_" + this.Slot);
+	}
 
-		public IEquipmentItemMemory? ItemModel
+	public bool IsWeapon
+	{
+		get
 		{
-			get => ItemModelDp.Get(this);
-			set => ItemModelDp.Set(this, value);
+			return this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
 		}
+	}
 
-		public ActorMemory? Actor { get; private set; }
-
-		public WeaponSubModelMemory? ExtendedViewModel
+	public bool IsHead
+	{
+		get
 		{
-			get => WeaponExModelDp.Get(this);
-			set => WeaponExModelDp.Set(this, value);
+			return this.Slot == ItemSlots.Head;
 		}
+	}
 
-		public uint ItemKey
+	public bool IsValidWeapon
+	{
+		get
 		{
-			get
-			{
-				return this.Item?.RowId ?? 0;
-			}
-			set
-			{
-				IItem? item = GameDataService.Items?.Get(value);
-				this.SetItem(item);
-			}
-		}
+			if (!this.IsWeapon)
+				return false;
 
-		public string SlotName
-		{
-			get => LocalizationService.GetString("Character_Equipment_" + this.Slot);
-		}
-
-		public bool IsWeapon
-		{
-			get
-			{
-				return this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
-			}
-		}
-
-		public bool IsHead
-		{
-			get
-			{
-				return this.Slot == ItemSlots.Head;
-			}
-		}
-
-		public bool IsValidWeapon
-		{
-			get
-			{
-				if (!this.IsWeapon)
-					return false;
-
-				if (this.Item == null)
-					return true;
-
-				if (this.Item.ModelSet == 0 && this.Item.SubModelSet == 0)
-					return false;
-
+			if (this.Item == null)
 				return true;
-			}
+
+			if (this.Item.ModelSet == 0 && this.Item.SubModelSet == 0)
+				return false;
+
+			return true;
 		}
+	}
 
-		private static void OnItemModelChanged(ItemView sender, IEquipmentItemMemory? value)
+	private static void OnItemModelChanged(ItemView sender, IEquipmentItemMemory? value)
+	{
+		if (sender.ItemModel != null)
+			sender.ItemModel.PropertyChanged -= sender.OnViewModelPropertyChanged;
+
+		if (sender.ItemModel == null)
+			return;
+
+		sender.IconSource = sender.Slot.GetIcon();
+		sender.ItemModel.PropertyChanged += sender.OnViewModelPropertyChanged;
+
+		sender.OnViewModelPropertyChanged(null, null);
+	}
+
+	private void OnClick(object sender, RoutedEventArgs e)
+	{
+		if (this.Actor?.CanRefresh != true)
+			return;
+
+		EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
+		SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
+	}
+
+	private void OnMouseUp(object sender, MouseButtonEventArgs e)
+	{
+		if (this.Actor?.CanRefresh != true)
+			return;
+
+		if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
 		{
-			if (sender.ItemModel != null)
-				sender.ItemModel.PropertyChanged -= sender.OnViewModelPropertyChanged;
-
-			if (sender.ItemModel == null)
-				return;
-
-			sender.IconSource = sender.Slot.GetIcon();
-			sender.ItemModel.PropertyChanged += sender.OnViewModelPropertyChanged;
-
-			sender.OnViewModelPropertyChanged(null, null);
+			this.ItemModel?.Clear(this.Actor.IsPlayer);
 		}
+	}
 
-		private void OnClick(object sender, RoutedEventArgs e)
+	private void SetItem(IItem? item, bool autoOffhand = false, bool forceMain = false, bool forceOff = false)
+	{
+		this.lockViewModel = true;
+
+		if (item != null)
 		{
-			if (this.Actor?.CanRefresh != true)
-				return;
+			bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
 
-			EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
-			SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
-		}
-
-		private void OnMouseUp(object sender, MouseButtonEventArgs e)
-		{
-			if (this.Actor?.CanRefresh != true)
-				return;
-
-			if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
+			if (item.HasSubModel)
 			{
-				this.ItemModel?.Clear(this.Actor.IsPlayer);
-			}
-		}
-
-		private void SetItem(IItem? item, bool autoOffhand = false, bool forceMain = false, bool forceOff = false)
-		{
-			this.lockViewModel = true;
-
-			if (item != null)
-			{
-				bool useSubModel = this.Slot == ItemSlots.OffHand && item.HasSubModel;
-
-				if (item.HasSubModel)
+				if (forceMain)
 				{
-					if (forceMain)
-					{
-						useSubModel = false;
-					}
-					else if (forceOff)
-					{
-						useSubModel = true;
-					}
+					useSubModel = false;
 				}
-
-				ushort modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
-				ushort modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
-				ushort modelVariant = useSubModel ? item.SubModelVariant : item.ModelVariant;
-
-				this.SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
-
-				if (autoOffhand && this.Slot == ItemSlots.MainHand
-					&& item is Item ivm
-					&& ivm.EquipSlot?.OffHand == -1)
+				else if (forceOff)
 				{
-					if (ivm.HasSubModel)
-					{
-						this.SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
-					}
-					else
-					{
-						this.SetModel(this.Actor?.OffHand, 0, 0, 0);
-					}
-				}
-
-				if (item == ItemUtility.NoneItem || item == ItemUtility.EmperorsNewFists)
-				{
-					this.Dye = ItemUtility.NoneDye;
+					useSubModel = true;
 				}
 			}
 
-			this.Item = item;
-			this.lockViewModel = false;
-		}
+			ushort modelSet = useSubModel ? item.SubModelSet : item.ModelSet;
+			ushort modelBase = useSubModel ? item.SubModelBase : item.ModelBase;
+			ushort modelVariant = useSubModel ? item.SubModelVariant : item.ModelVariant;
 
-		private void SetModel(IEquipmentItemMemory? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
-		{
-			if (itemModel is ItemMemory itemView)
+			this.SetModel(this.ItemModel, modelSet, modelBase, modelVariant);
+
+			if (autoOffhand && this.Slot == ItemSlots.MainHand
+				&& item is Item ivm
+				&& ivm.EquipSlot?.OffHand == -1)
 			{
-				itemView.Base = modelBase;
-				itemView.Variant = (byte)modelVariant;
-
-				if (modelBase == 0)
+				if (ivm.HasSubModel)
 				{
-					itemView.Dye = 0;
+					this.SetModel(this.Actor?.OffHand, ivm.SubModelSet, ivm.SubModelBase, ivm.SubModelVariant);
+				}
+				else
+				{
+					this.SetModel(this.Actor?.OffHand, 0, 0, 0);
 				}
 			}
-			else if (itemModel is WeaponMemory weaponView)
-			{
-				weaponView.Set = modelSet;
-				weaponView.Base = modelBase;
-				weaponView.Variant = modelVariant;
 
-				if (modelSet == 0)
-				{
-					weaponView.Dye = 0;
-				}
+			if (item == ItemUtility.NoneItem || item == ItemUtility.EmperorsNewFists)
+			{
+				this.Dye = ItemUtility.NoneDye;
 			}
 		}
 
-		private void OnDyeClick(object sender, RoutedEventArgs e)
+		this.Item = item;
+		this.lockViewModel = false;
+	}
+
+	private void SetModel(IEquipmentItemMemory? itemModel, ushort modelSet, ushort modelBase, ushort modelVariant)
+	{
+		if (itemModel is ItemMemory itemView)
 		{
-			if (!this.CanDye)
+			itemView.Base = modelBase;
+			itemView.Variant = (byte)modelVariant;
+
+			if (modelBase == 0)
+			{
+				itemView.Dye = 0;
+			}
+		}
+		else if (itemModel is WeaponMemory weaponView)
+		{
+			weaponView.Set = modelSet;
+			weaponView.Base = modelBase;
+			weaponView.Variant = modelVariant;
+
+			if (modelSet == 0)
+			{
+				weaponView.Dye = 0;
+			}
+		}
+	}
+
+	private void OnDyeClick(object sender, RoutedEventArgs e)
+	{
+		if (!this.CanDye)
+			return;
+
+		SelectorDrawer.Show<DyeSelector, IDye>(this.Dye, (v) =>
+		{
+			if (v == null)
 				return;
 
-			SelectorDrawer.Show<DyeSelector, IDye>(this.Dye, (v) =>
+			if (this.ItemModel is ItemMemory item)
 			{
-				if (v == null)
-					return;
+				item.Dye = v.Id;
+			}
+			else if (this.ItemModel is WeaponMemory weapon)
+			{
+				weapon.Dye = v.Id;
+			}
+		});
+	}
 
-				if (this.ItemModel is ItemMemory item)
-				{
-					item.Dye = v.Id;
-				}
-				else if (this.ItemModel is WeaponMemory weapon)
-				{
-					weapon.Dye = v.Id;
-				}
-			});
-		}
+	private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs? e)
+	{
+		if (this.lockViewModel)
+			return;
 
-		private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs? e)
+		Task.Run(async () =>
 		{
-			if (this.lockViewModel)
+			await Task.Yield();
+			await Dispatch.MainThread();
+			if (this.ItemModel == null || GameDataService.Dyes == null)
 				return;
 
-			Task.Run(async () =>
+			this.IsLoading = true;
+
+			try
 			{
-				await Task.Yield();
-				await Dispatch.MainThread();
-				if (this.ItemModel == null || GameDataService.Dyes == null)
-					return;
+				IEquipmentItemMemory? valueVm = this.ItemModel;
+				ItemSlots slots = this.Slot;
 
-				this.IsLoading = true;
+				await Dispatch.NonUiThread();
 
-				try
+				if (valueVm is ItemMemory itemVm)
 				{
-					IEquipmentItemMemory? valueVm = this.ItemModel;
-					ItemSlots slots = this.Slot;
+					IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant);
+					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
 
-					await Dispatch.NonUiThread();
+					await Dispatch.MainThread();
 
-					if (valueVm is ItemMemory itemVm)
-					{
-						IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant);
-						IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
-
-						await Dispatch.MainThread();
-
-						this.Item = item;
-						this.Dye = dye;
-					}
-					else if (valueVm is WeaponMemory weaponVm)
-					{
-						IItem? item = ItemUtility.GetItem(slots, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
-
-						if (weaponVm.Set == 0)
-							weaponVm.Dye = 0;
-
-						IDye? dye = GameDataService.Dyes.Get(weaponVm.Dye);
-
-						await Dispatch.MainThread();
-
-						this.Item = item;
-						this.Dye = dye;
-					}
-
-					this.CanDye = !this.IsWeapon || this.ItemModel?.Set != 0;
+					this.Item = item;
+					this.Dye = dye;
 				}
-				catch (Exception ex)
+				else if (valueVm is WeaponMemory weaponVm)
 				{
-					Log.Error(ex, "Failed to update item");
+					IItem? item = ItemUtility.GetItem(slots, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
+
+					if (weaponVm.Set == 0)
+						weaponVm.Dye = 0;
+
+					IDye? dye = GameDataService.Dyes.Get(weaponVm.Dye);
+
+					await Dispatch.MainThread();
+
+					this.Item = item;
+					this.Dye = dye;
 				}
 
-				this.IsLoading = false;
-			});
-		}
+				this.CanDye = !this.IsWeapon || this.ItemModel?.Set != 0;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to update item");
+			}
 
-		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			this.Actor = this.DataContext as ActorMemory;
-		}
+			this.IsLoading = false;
+		});
+	}
+
+	private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+	{
+		this.Actor = this.DataContext as ActorMemory;
 	}
 }

@@ -1,37 +1,36 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Memory
+namespace Anamnesis.Memory;
+
+using System;
+
+public abstract class BindInfo
 {
-	using System;
+	public readonly MemoryBase Memory;
 
-	public abstract class BindInfo
+	public BindInfo(MemoryBase memory)
 	{
-		public readonly MemoryBase Memory;
+		this.Memory = memory;
+	}
 
-		public BindInfo(MemoryBase memory)
-		{
-			this.Memory = memory;
-		}
+	public abstract string Name { get; }
+	public abstract string Path { get; }
+	public abstract Type Type { get; }
+	public abstract BindFlags Flags { get; }
 
-		public abstract string Name { get; }
-		public abstract string Path { get; }
-		public abstract Type Type { get; }
-		public abstract BindFlags Flags { get; }
+	public object? FreezeValue { get; set; }
+	public object? LastValue { get; set; }
+	public bool IsReading { get; set; } = false;
+	public bool IsWriting { get; set; } = false;
+	public IntPtr? LastFailureAddress { get; set; }
 
-		public object? FreezeValue { get; set; }
-		public object? LastValue { get; set; }
-		public bool IsReading { get; set; } = false;
-		public bool IsWriting { get; set; } = false;
-		public IntPtr? LastFailureAddress { get; set; }
+	public bool IsChildMemory => typeof(MemoryBase).IsAssignableFrom(this.Type);
 
-		public bool IsChildMemory => typeof(MemoryBase).IsAssignableFrom(this.Type);
+	public abstract IntPtr GetAddress();
 
-		public abstract IntPtr GetAddress();
-
-		public override string ToString()
-		{
-			return $"Bind: {this.Name} ({this.Type})";
-		}
+	public override string ToString()
+	{
+		return $"Bind: {this.Name} ({this.Type})";
 	}
 }

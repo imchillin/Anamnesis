@@ -1,18 +1,17 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Views
-{
-	using System.Windows.Controls;
+namespace Anamnesis.Views;
 
-	/// <summary>
-	/// Interaction logic for HistoryView.xaml.
-	/// </summary>
-	public partial class HistoryView : UserControl
+using System.Windows.Controls;
+
+/// <summary>
+/// Interaction logic for HistoryView.xaml.
+/// </summary>
+public partial class HistoryView : UserControl
+{
+	public HistoryView()
 	{
-		public HistoryView()
-		{
-			this.InitializeComponent();
-		}
+		this.InitializeComponent();
 	}
 }

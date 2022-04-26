@@ -1,100 +1,98 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Styles.Drawers
+namespace Anamnesis.Styles.Drawers;
+
+using System;
+using System.Collections.Generic;
+using System.Windows.Controls;
+using Anamnesis.Services;
+using XivToolsWpf;
+
+/// <summary>
+/// Interaction logic for GenericSelector.xaml.
+/// </summary>
+public partial class GenericSelector : UserControl, SelectorDrawer.ISelectorView
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Windows.Controls;
-	using Anamnesis;
-	using Anamnesis.Services;
-	using XivToolsWpf;
-
-	/// <summary>
-	/// Interaction logic for GenericSelector.xaml.
-	/// </summary>
-	public partial class GenericSelector : UserControl, SelectorDrawer.ISelectorView
+	public GenericSelector(IEnumerable<ISelectable> options)
 	{
-		public GenericSelector(IEnumerable<ISelectable> options)
-		{
-			this.InitializeComponent();
+		this.InitializeComponent();
 
-			this.Selector.AddItems(options);
-			this.Selector.FilterItems();
+		this.Selector.AddItems(options);
+		this.Selector.FilterItems();
+	}
+
+	public event DrawerEvent? Close;
+	public event DrawerEvent? SelectionChanged;
+
+	public ISelectable? Value
+	{
+		get
+		{
+			object? val = this.Selector.Value;
+
+			if (val is ISelectable itemVal)
+				return itemVal;
+
+			return null;
 		}
 
-		public event DrawerEvent? Close;
-		public event DrawerEvent? SelectionChanged;
-
-		public ISelectable? Value
+		set
 		{
-			get
-			{
-				object? val = this.Selector.Value;
-
-				if (val is ISelectable itemVal)
-					return itemVal;
-
-				return null;
-			}
-
-			set
-			{
-				this.Selector.Value = value;
-			}
-		}
-
-		SelectorDrawer SelectorDrawer.ISelectorView.Selector
-		{
-			get
-			{
-				return this.Selector;
-			}
-		}
-
-		public static void Show<T>(T? current, IEnumerable<T> options, Action<T> changed)
-			where T : class, ISelectable
-		{
-			GenericSelector selector = new GenericSelector(options);
-			SelectorDrawer.Show<ISelectable>(selector, current, (v) => changed.Invoke((T)v));
-		}
-
-		public void OnClosed()
-		{
-		}
-
-		private void OnClose()
-		{
-			this.Close?.Invoke();
-		}
-
-		private void OnSelectionChanged()
-		{
-			this.SelectionChanged?.Invoke();
-		}
-
-		#pragma warning disable SA1011
-		private bool OnFilter(object obj, string[]? search = null)
-		{
-			if (obj is ISelectable item)
-			{
-				if (string.IsNullOrEmpty(item.Name))
-					return false;
-
-				if (!SearchUtility.Matches(item.Name, search))
-					return false;
-
-				return true;
-			}
-
-			return false;
+			this.Selector.Value = value;
 		}
 	}
 
-	#pragma warning disable SA1201
-	public interface ISelectable
+	SelectorDrawer SelectorDrawer.ISelectorView.Selector
 	{
-		string Name { get; }
-		string? Description { get; }
+		get
+		{
+			return this.Selector;
+		}
 	}
+
+	public static void Show<T>(T? current, IEnumerable<T> options, Action<T> changed)
+		where T : class, ISelectable
+	{
+		GenericSelector selector = new GenericSelector(options);
+		SelectorDrawer.Show<ISelectable>(selector, current, (v) => changed.Invoke((T)v));
+	}
+
+	public void OnClosed()
+	{
+	}
+
+	private void OnClose()
+	{
+		this.Close?.Invoke();
+	}
+
+	private void OnSelectionChanged()
+	{
+		this.SelectionChanged?.Invoke();
+	}
+
+#pragma warning disable SA1011
+	private bool OnFilter(object obj, string[]? search = null)
+	{
+		if (obj is ISelectable item)
+		{
+			if (string.IsNullOrEmpty(item.Name))
+				return false;
+
+			if (!SearchUtility.Matches(item.Name, search))
+				return false;
+
+			return true;
+		}
+
+		return false;
+	}
+}
+
+#pragma warning disable SA1201
+public interface ISelectable
+{
+	string Name { get; }
+	string? Description { get; }
 }

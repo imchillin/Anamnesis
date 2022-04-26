@@ -1,43 +1,43 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Views
+namespace Anamnesis.Character.Views;
+
+using System.Windows;
+using System.Windows.Controls;
+using Anamnesis.Memory;
+
+/// <summary>
+/// Interaction logic for CharacterModelEditor.xaml.
+/// </summary>
+public partial class CharacterModelEditor : UserControl
 {
-	using System.Windows;
-	using System.Windows.Controls;
-	using Anamnesis.Memory;
+	private WetMode wetMode = WetMode.Off;
 
-	/// <summary>
-	/// Interaction logic for CharacterModelEditor.xaml.
-	/// </summary>
-	public partial class CharacterModelEditor : UserControl
+	public CharacterModelEditor()
 	{
-		private WetMode wetMode = WetMode.Off;
+		this.InitializeComponent();
+	}
 
-		public CharacterModelEditor()
+	public enum WetMode
+	{
+		Off,
+		Wet,
+		Drenched,
+	}
+
+	public ActorModelMemory? Model => (this.DataContext as ActorMemory)?.ModelObject;
+
+	private void OnModeToggleClicked(object sender, RoutedEventArgs e)
+	{
+		this.ModeToggle.IsChecked = false;
+
+		if (this.Model == null)
+			return;
+
+		switch (this.wetMode)
 		{
-			this.InitializeComponent();
-		}
-
-		public enum WetMode
-		{
-			Off,
-			Wet,
-			Drenched,
-		}
-
-		public ActorModelMemory? Model => (this.DataContext as ActorMemory)?.ModelObject;
-
-		private void OnModeToggleClicked(object sender, RoutedEventArgs e)
-		{
-			this.ModeToggle.IsChecked = false;
-
-			if (this.Model == null)
-				return;
-
-			switch (this.wetMode)
-			{
-				case WetMode.Off:
+			case WetMode.Off:
 				{
 					this.wetMode = WetMode.Wet;
 					this.ModeIcon.Icon = FontAwesome.Sharp.IconChar.Tint;
@@ -47,7 +47,7 @@ namespace Anamnesis.Character.Views
 					break;
 				}
 
-				case WetMode.Wet:
+			case WetMode.Wet:
 				{
 					this.wetMode = WetMode.Drenched;
 					this.ModeIcon.Icon = FontAwesome.Sharp.IconChar.Water;
@@ -57,7 +57,7 @@ namespace Anamnesis.Character.Views
 					break;
 				}
 
-				case WetMode.Drenched:
+			case WetMode.Drenched:
 				{
 					this.wetMode = WetMode.Off;
 					this.ModeIcon.Icon = FontAwesome.Sharp.IconChar.TintSlash;
@@ -68,7 +68,6 @@ namespace Anamnesis.Character.Views
 					this.ModeTooltip.Key = "Character_Model_WetNone";
 					break;
 				}
-			}
 		}
 	}
 }

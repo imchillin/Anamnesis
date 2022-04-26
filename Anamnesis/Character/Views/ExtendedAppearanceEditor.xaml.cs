@@ -1,18 +1,17 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Views
-{
-	using System.Windows.Controls;
+namespace Anamnesis.Character.Views;
 
-	/// <summary>
-	/// Interaction logic for ExtendedAppearanceEditor.xaml.
-	/// </summary>
-	public partial class ExtendedAppearanceEditor : UserControl
+using System.Windows.Controls;
+
+/// <summary>
+/// Interaction logic for ExtendedAppearanceEditor.xaml.
+/// </summary>
+public partial class ExtendedAppearanceEditor : UserControl
+{
+	public ExtendedAppearanceEditor()
 	{
-		public ExtendedAppearanceEditor()
-		{
-			this.InitializeComponent();
-		}
+		this.InitializeComponent();
 	}
 }

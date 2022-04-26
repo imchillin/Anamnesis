@@ -1,46 +1,45 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis
+namespace Anamnesis;
+
+using System.ComponentModel;
+using System.Windows.Input;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml.
+/// </summary>
+public partial class SplashWindow
 {
-	using System.ComponentModel;
-	using System.Windows.Input;
+	private static SplashWindow? instance;
 
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml.
-	/// </summary>
-	public partial class SplashWindow
+	public SplashWindow()
 	{
-		private static SplashWindow? instance;
+		this.InitializeComponent();
+		instance = this;
+	}
 
-		public SplashWindow()
-		{
-			this.InitializeComponent();
-			instance = this;
-		}
+	public static void HideWindow()
+	{
+		instance?.Hide();
+	}
 
-		public static void HideWindow()
-		{
-			instance?.Hide();
-		}
+	public static void ShowWindow()
+	{
+		instance?.Show();
+	}
 
-		public static void ShowWindow()
-		{
-			instance?.Show();
-		}
+	protected override void OnClosing(CancelEventArgs e)
+	{
+		base.OnClosing(e);
+		instance = null;
+	}
 
-		protected override void OnClosing(CancelEventArgs e)
+	private void OnMouseDown(object sender, MouseButtonEventArgs e)
+	{
+		if (e.ChangedButton == MouseButton.Left)
 		{
-			base.OnClosing(e);
-			instance = null;
-		}
-
-		private void OnMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton == MouseButton.Left)
-			{
-				this.DragMove();
-			}
+			this.DragMove();
 		}
 	}
 }

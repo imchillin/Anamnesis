@@ -1,188 +1,185 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Views
+namespace Anamnesis.Views;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using PropertyChanged;
+using XivToolsWpf;
+
+/// <summary>
+/// Interaction logic for TargetSelectorView.xaml.
+/// </summary>
+[AddINotifyPropertyChangedInterface]
+public partial class TargetSelectorView : UserControl, IDrawer, INotifyPropertyChanged
 {
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Threading.Tasks;
-	using System.Windows;
-	using System.Windows.Controls;
-	using Anamnesis.Memory;
-	using Anamnesis.Services;
-	using PropertyChanged;
-	using XivToolsWpf;
+	private static bool includePlayers = true;
+	private static bool includeCompanions = true;
+	private static bool includeNPCs = true;
+	private static bool includeMounts = true;
+	private static bool includeOrnaments = true;
+	private static bool includeOther = false;
+	private static bool includeHidden = false;
 
-	/// <summary>
-	/// Interaction logic for TargetSelectorView.xaml.
-	/// </summary>
-	[AddINotifyPropertyChangedInterface]
-	public partial class TargetSelectorView : UserControl, IDrawer, INotifyPropertyChanged
+	public TargetSelectorView()
 	{
-		private static bool includePlayers = true;
-		private static bool includeCompanions = true;
-		private static bool includeNPCs = true;
-		private static bool includeMounts = true;
-		private static bool includeOrnaments = true;
-		private static bool includeOther = false;
-		private static bool includeHidden = false;
+		this.InitializeComponent();
 
-		public TargetSelectorView()
+		this.ContentArea.DataContext = this;
+
+		this.PropertyChanged += this.OnSelfPropertyChanged;
+	}
+
+	public event DrawerEvent? Close;
+	public event PropertyChangedEventHandler? PropertyChanged;
+
+	public TargetService TargetService => TargetService.Instance;
+
+	public bool IncludePlayers
+	{
+		get => includePlayers;
+		set => includePlayers = value;
+	}
+
+	public bool IncludeCompanions
+	{
+		get => includeCompanions;
+		set => includeCompanions = value;
+	}
+
+	public bool IncludeNPCs
+	{
+		get => includeNPCs;
+		set => includeNPCs = value;
+	}
+
+	public bool IncludeMounts
+	{
+		get => includeMounts;
+		set => includeMounts = value;
+	}
+
+	public bool IncludeOrnaments
+	{
+		get => includeOrnaments;
+		set => includeOrnaments = value;
+	}
+
+	public bool IncludeOther
+	{
+		get => includeOther;
+		set => includeOther = value;
+	}
+
+	public bool IncludeHidden
+	{
+		get => includeHidden;
+		set => includeHidden = value;
+	}
+
+	public void OnClosed()
+	{
+	}
+
+	private async void OnAddPlayerTargetActorClicked(object sender, RoutedEventArgs e)
+	{
+		await TargetService.PinPlayerTargetedActor();
+		this.OnClose();
+	}
+
+	private void OnLoaded(object sender, RoutedEventArgs e)
+	{
+		this.Selector.AddItems(ActorService.Instance.GetAllActors());
+		this.Selector.FilterItems();
+	}
+
+	private void OnClose()
+	{
+		this.Close?.Invoke();
+
+		ActorBasicMemory? actor = this.Selector.Value as ActorBasicMemory;
+
+		if (actor == null)
+			return;
+
+		Task.Run(() => TargetService.PinActor(actor));
+	}
+
+	private int OnSort(object a, object b)
+	{
+		if (a is ActorBasicMemory actorA && b is ActorBasicMemory actorB)
 		{
-			this.InitializeComponent();
+			if (actorA.IsGPoseActor && !actorB.IsGPoseActor)
+				return -1;
 
-			this.ContentArea.DataContext = this;
+			if (!actorA.IsGPoseActor && actorB.IsGPoseActor)
+				return 1;
 
-			this.PropertyChanged += this.OnSelfPropertyChanged;
+			return actorA.DistanceFromPlayer.CompareTo(actorB.DistanceFromPlayer);
 		}
 
-		public event DrawerEvent? Close;
-		public event PropertyChangedEventHandler? PropertyChanged;
+		return 0;
+	}
 
-		public TargetService TargetService => TargetService.Instance;
-
-		public bool IncludePlayers
+	private bool OnFilter(object obj, string[]? search = null)
+	{
+		if (obj is ActorBasicMemory actor)
 		{
-			get => includePlayers;
-			set => includePlayers = value;
-		}
+			////if (GposeService.Instance.IsGpose != actor.IsGPoseActor)
+			////	return false;
 
-		public bool IncludeCompanions
-		{
-			get => includeCompanions;
-			set => includeCompanions = value;
-		}
+			if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Name, search))
+				return false;
 
-		public bool IncludeNPCs
-		{
-			get => includeNPCs;
-			set => includeNPCs = value;
-		}
+			if (TargetService.IsPinned(actor))
+				return false;
 
-		public bool IncludeMounts
-		{
-			get => includeMounts;
-			set => includeMounts = value;
-		}
+			if (!includeHidden && actor.IsHidden)
+				return false;
 
-		public bool IncludeOrnaments
-		{
-			get => includeOrnaments;
-			set => includeOrnaments = value;
-		}
+			if (!includePlayers && actor.ObjectKind == Memory.ActorTypes.Player)
+				return false;
 
-		public bool IncludeOther
-		{
-			get => includeOther;
-			set => includeOther = value;
-		}
+			if (!includeCompanions && actor.ObjectKind == Memory.ActorTypes.Companion)
+				return false;
 
-		public bool IncludeHidden
-		{
-			get => includeHidden;
-			set => includeHidden = value;
-		}
+			if (!includeMounts && actor.ObjectKind == Memory.ActorTypes.Mount)
+				return false;
 
-		public void OnClosed()
-		{
-		}
+			if (!includeOrnaments && actor.ObjectKind == Memory.ActorTypes.Ornament)
+				return false;
 
-		private async void OnAddPlayerTargetActorClicked(object sender, RoutedEventArgs e)
-		{
-			await TargetService.PinPlayerTargetedActor();
-			this.OnClose();
-		}
+			if (!includeNPCs && (actor.ObjectKind == Memory.ActorTypes.BattleNpc || actor.ObjectKind == Memory.ActorTypes.EventNpc))
+				return false;
 
-		private void OnLoaded(object sender, RoutedEventArgs e)
-		{
-			this.Selector.AddItems(ActorService.Instance.GetAllActors());
-			this.Selector.FilterItems();
-		}
-
-		private void OnClose()
-		{
-			this.Close?.Invoke();
-
-			ActorBasicMemory? actor = this.Selector.Value as ActorBasicMemory;
-
-			if (actor == null)
-				return;
-
-			Task.Run(() => TargetService.PinActor(actor));
-		}
-
-		private int OnSort(object a, object b)
-		{
-			if (a is ActorBasicMemory actorA && b is ActorBasicMemory actorB)
+			if (!includeOther
+				&& actor.ObjectKind != Memory.ActorTypes.Player
+				&& actor.ObjectKind != Memory.ActorTypes.Companion
+				&& actor.ObjectKind != Memory.ActorTypes.BattleNpc
+				&& actor.ObjectKind != Memory.ActorTypes.EventNpc
+				&& actor.ObjectKind != Memory.ActorTypes.Mount
+				&& actor.ObjectKind != Memory.ActorTypes.Ornament)
 			{
-				if (actorA.IsGPoseActor && !actorB.IsGPoseActor)
-					return -1;
-
-				if (!actorA.IsGPoseActor && actorB.IsGPoseActor)
-					return 1;
-
-				return actorA.DistanceFromPlayer.CompareTo(actorB.DistanceFromPlayer);
+				return false;
 			}
 
-			return 0;
+			return true;
 		}
 
-		private bool OnFilter(object obj, string[]? search = null)
-		{
-			if (obj is ActorBasicMemory actor)
-			{
-				////if (GposeService.Instance.IsGpose != actor.IsGPoseActor)
-				////	return false;
+		return false;
+	}
 
-				if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Name, search))
-					return false;
+	private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		this.Selector.FilterItems();
+	}
 
-				if (TargetService.IsPinned(actor))
-					return false;
-
-				if (!includeHidden && actor.IsHidden)
-					return false;
-
-				if (!includePlayers && actor.ObjectKind == Memory.ActorTypes.Player)
-					return false;
-
-				if (!includeCompanions && actor.ObjectKind == Memory.ActorTypes.Companion)
-					return false;
-
-				if (!includeMounts && actor.ObjectKind == Memory.ActorTypes.Mount)
-					return false;
-
-				if (!includeOrnaments && actor.ObjectKind == Memory.ActorTypes.Ornament)
-					return false;
-
-				if (!includeNPCs && (actor.ObjectKind == Memory.ActorTypes.BattleNpc || actor.ObjectKind == Memory.ActorTypes.EventNpc))
-					return false;
-
-				if (!includeOther
-					&& actor.ObjectKind != Memory.ActorTypes.Player
-					&& actor.ObjectKind != Memory.ActorTypes.Companion
-					&& actor.ObjectKind != Memory.ActorTypes.BattleNpc
-					&& actor.ObjectKind != Memory.ActorTypes.EventNpc
-					&& actor.ObjectKind != Memory.ActorTypes.Mount
-					&& actor.ObjectKind != Memory.ActorTypes.Ornament)
-				{
-					return false;
-				}
-
-				return true;
-			}
-
-			return false;
-		}
-
-		private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			this.Selector.FilterItems();
-		}
-
-		private void OnSelectionChanged()
-		{
-			this.OnClose();
-		}
+	private void OnSelectionChanged()
+	{
+		this.OnClose();
 	}
 }

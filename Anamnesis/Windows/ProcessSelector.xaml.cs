@@ -1,221 +1,218 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Windows
+namespace Anamnesis.GUI.Windows;
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using PropertyChanged;
+using XivToolsWpf;
+
+/// <summary>
+/// Interaction logic for ProcessSelector.xaml.
+/// </summary>
+[AddINotifyPropertyChangedInterface]
+public partial class ProcessSelector : UserControl
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Drawing;
-	using System.Threading.Tasks;
-	using System.Windows;
-	using System.Windows.Controls;
-	using System.Windows.Input;
-	using System.Windows.Interop;
-	using System.Windows.Media;
-	using System.Windows.Media.Imaging;
-	using Anamnesis.Memory;
-	using PropertyChanged;
-	using XivToolsWpf;
+	public Process? Selected;
 
-	/// <summary>
-	/// Interaction logic for ProcessSelector.xaml.
-	/// </summary>
-	[AddINotifyPropertyChangedInterface]
-	public partial class ProcessSelector : UserControl
+	private bool isAutomatic = true;
+	private Dialog? window;
+	private bool showAll;
+
+	public ProcessSelector()
 	{
-		public Process? Selected;
+		this.InitializeComponent();
 
-		private bool isAutomatic = true;
-		private Dialog? window;
-		private bool showAll;
+		this.ContentArea.DataContext = this;
 
-		public ProcessSelector()
+		this.OnRefreshClicked(null, null);
+
+		Task.Run(this.Scan);
+	}
+
+	public bool ShowAll
+	{
+		get => this.showAll;
+		set
 		{
-			this.InitializeComponent();
-
-			this.ContentArea.DataContext = this;
-
+			this.showAll = value;
 			this.OnRefreshClicked(null, null);
-
-			Task.Run(this.Scan);
 		}
+	}
 
-		public bool ShowAll
+	public static Process? FindProcess()
+	{
+		// early out
+		Process[] processes = GetTargetProcesses();
+		if (processes.Length == 1)
+			return processes[0];
+
+		Dialog dlg = new Dialog();
+		ProcessSelector proc = new ProcessSelector();
+		proc.window = dlg;
+		dlg.ContentArea.Content = proc;
+		dlg.ShowDialog();
+		return proc.Selected;
+	}
+
+	private static Process[] GetTargetProcesses()
+	{
+		Process[] processes = Process.GetProcesses();
+		List<Process> results = new List<Process>();
+		foreach (Process process in processes)
 		{
-			get => this.showAll;
-			set
+			if (IsTargetProcess(process.ProcessName))
 			{
-				this.showAll = value;
-				this.OnRefreshClicked(null, null);
+				results.Add(process);
 			}
 		}
 
-		public static Process? FindProcess()
-		{
-			// early out
-			Process[] processes = GetTargetProcesses();
-			if (processes.Length == 1)
-				return processes[0];
+		return results.ToArray();
+	}
 
-			Dialog dlg = new Dialog();
-			ProcessSelector proc = new ProcessSelector();
-			proc.window = dlg;
-			dlg.ContentArea.Content = proc;
-			dlg.ShowDialog();
-			return proc.Selected;
-		}
+	private static bool IsTargetProcess(string name)
+	{
+		return name.ToLower().Contains("ffxiv_dx11");
+	}
 
-		private static Process[] GetTargetProcesses()
+	private static ImageSource IconToImageSource(Icon icon)
+	{
+		return Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
+	}
+
+	private void OnRefreshClicked(object? sender, RoutedEventArgs? e)
+	{
+		List<Option> options = new List<Option>();
+		Process[] processes = Process.GetProcesses();
+		foreach (Process process in processes)
 		{
-			Process[] processes = Process.GetProcesses();
-			List<Process> results = new List<Process>();
-			foreach (Process process in processes)
+			if (this.ShowAll || IsTargetProcess(process.ProcessName))
 			{
-				if (IsTargetProcess(process.ProcessName))
-				{
-					results.Add(process);
-				}
+				options.Add(new Option(process));
 			}
-
-			return results.ToArray();
 		}
 
-		private static bool IsTargetProcess(string name)
-		{
-			return name.ToLower().Contains("ffxiv_dx11");
-		}
+		this.ProcessGrid.ItemsSource = options;
+	}
 
-		private static ImageSource IconToImageSource(Icon icon)
-		{
-			return Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
-		}
+	private void OnManualExpanded(object sender, RoutedEventArgs e)
+	{
+		this.isAutomatic = false;
+		this.OkButton.Visibility = Visibility.Visible;
+		this.AutoLabel.Visibility = Visibility.Collapsed;
+		this.ManualLabel.Visibility = Visibility.Visible;
+		this.ScanProgress.Visibility = Visibility.Collapsed;
+	}
 
-		private void OnRefreshClicked(object? sender, RoutedEventArgs? e)
-		{
-			List<Option> options = new List<Option>();
-			Process[] processes = Process.GetProcesses();
-			foreach (Process process in processes)
-			{
-				if (this.ShowAll || IsTargetProcess(process.ProcessName))
-				{
-					options.Add(new Option(process));
-				}
-			}
+	private void OnManualCollapsed(object sender, RoutedEventArgs e)
+	{
+		this.isAutomatic = true;
+		this.OkButton.Visibility = Visibility.Collapsed;
+		this.AutoLabel.Visibility = Visibility.Visible;
+		this.ManualLabel.Visibility = Visibility.Collapsed;
+		this.ScanProgress.Visibility = Visibility.Visible;
+	}
 
-			this.ProcessGrid.ItemsSource = options;
-		}
+	private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (this.isAutomatic)
+			return;
 
-		private void OnManualExpanded(object sender, RoutedEventArgs e)
-		{
-			this.isAutomatic = false;
-			this.OkButton.Visibility = Visibility.Visible;
-			this.AutoLabel.Visibility = Visibility.Collapsed;
-			this.ManualLabel.Visibility = Visibility.Visible;
-			this.ScanProgress.Visibility = Visibility.Collapsed;
-		}
+		this.OkButton.IsEnabled = this.ProcessGrid.SelectedValue is Option op && !op.Locked;
+	}
 
-		private void OnManualCollapsed(object sender, RoutedEventArgs e)
-		{
-			this.isAutomatic = true;
-			this.OkButton.Visibility = Visibility.Collapsed;
-			this.AutoLabel.Visibility = Visibility.Visible;
-			this.ManualLabel.Visibility = Visibility.Collapsed;
-			this.ScanProgress.Visibility = Visibility.Visible;
-		}
+	private void OnOkClicked(object sender, RoutedEventArgs e)
+	{
+		this.Selected = (this.ProcessGrid.SelectedValue as Option)?.Process;
+		this.window?.Close();
+	}
 
-		private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+	private void OnCancelClicked(object sender, RoutedEventArgs e)
+	{
+		this.Selected = null;
+		this.window?.Close();
+	}
+
+	private async Task Scan()
+	{
+		bool loaded = true;
+		while (loaded)
 		{
-			if (this.isAutomatic)
+			await Task.Delay(1000);
+
+			if (!this.isAutomatic)
+				continue;
+
+			if (Application.Current == null)
 				return;
 
-			this.OkButton.IsEnabled = this.ProcessGrid.SelectedValue is Option op && !op.Locked;
-		}
+			await Dispatch.MainThread();
+			loaded = this.IsLoaded;
 
-		private void OnOkClicked(object sender, RoutedEventArgs e)
-		{
-			this.Selected = (this.ProcessGrid.SelectedValue as Option)?.Process;
-			this.window?.Close();
-		}
+			if (!loaded)
+				return;
 
-		private void OnCancelClicked(object sender, RoutedEventArgs e)
-		{
-			this.Selected = null;
-			this.window?.Close();
-		}
+			Process[]? processes = GetTargetProcesses();
 
-		private async Task Scan()
-		{
-			bool loaded = true;
-			while (loaded)
+			if (processes.Length == 1)
 			{
-				await Task.Delay(1000);
-
-				if (!this.isAutomatic)
-					continue;
-
-				if (Application.Current == null)
-					return;
-
 				await Dispatch.MainThread();
-				loaded = this.IsLoaded;
-
-				if (!loaded)
-					return;
-
-				Process[]? processes = GetTargetProcesses();
-
-				if (processes.Length == 1)
-				{
-					await Dispatch.MainThread();
-					this.Selected = processes[0];
-					this.window?.Close();
-					return;
-				}
-				else if (processes.Length > 1)
-				{
-					this.ManualExpander.IsExpanded = true;
-				}
+				this.Selected = processes[0];
+				this.window?.Close();
+				return;
 			}
-		}
-
-		private class Option
-		{
-			public readonly Process Process;
-
-			public Option(Process process)
+			else if (processes.Length > 1)
 			{
-				this.Process = process;
-				this.Name = process.ProcessName;
-				this.Id = process.Id;
-
-				try
-				{
-					this.StartTime = process.StartTime;
-
-					if (process.MainModule?.FileName != null)
-					{
-						Icon? icon = Icon.ExtractAssociatedIcon(process.MainModule.FileName);
-						if (icon != null)
-						{
-							this.AppIcon = IconToImageSource(icon);
-						}
-					}
-
-					this.Path = process.MainModule?.FileName ?? process.Id.ToString();
-				}
-				catch (Exception)
-				{
-					this.Locked = true;
-				}
+				this.ManualExpander.IsExpanded = true;
 			}
-
-			public bool Locked { get; }
-			public string Name { get; }
-			public int Id { get; }
-			public DateTime? StartTime { get; }
-			public ImageSource? AppIcon { get; }
-			public string? Path { get; }
 		}
+	}
+
+	private class Option
+	{
+		public readonly Process Process;
+
+		public Option(Process process)
+		{
+			this.Process = process;
+			this.Name = process.ProcessName;
+			this.Id = process.Id;
+
+			try
+			{
+				this.StartTime = process.StartTime;
+
+				if (process.MainModule?.FileName != null)
+				{
+					Icon? icon = Icon.ExtractAssociatedIcon(process.MainModule.FileName);
+					if (icon != null)
+					{
+						this.AppIcon = IconToImageSource(icon);
+					}
+				}
+
+				this.Path = process.MainModule?.FileName ?? process.Id.ToString();
+			}
+			catch (Exception)
+			{
+				this.Locked = true;
+			}
+		}
+
+		public bool Locked { get; }
+		public string Name { get; }
+		public int Id { get; }
+		public DateTime? StartTime { get; }
+		public ImageSource? AppIcon { get; }
+		public string? Path { get; }
 	}
 }

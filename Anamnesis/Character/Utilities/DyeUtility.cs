@@ -1,12 +1,11 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Character.Utilities
-{
-	using Anamnesis.Character.Items;
+namespace Anamnesis.Character.Utilities;
 
-	public static class DyeUtility
-	{
-		public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
-	}
+using Anamnesis.Character.Items;
+
+public static class DyeUtility
+{
+	public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
 }
