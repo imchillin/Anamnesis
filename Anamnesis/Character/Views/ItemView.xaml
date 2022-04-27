@@ -53,7 +53,7 @@
 
 					<Grid Visibility="{Binding ItemModel, Converter={StaticResource NotNullToVisibilityConverter}}">
 						<Image Source="{Binding Item.Icon, Converter={StaticResource Img}}" Margin="2"/>
-						<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+						<Image Source="/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 					</Grid>
 
 					<Grid.ToolTip>
