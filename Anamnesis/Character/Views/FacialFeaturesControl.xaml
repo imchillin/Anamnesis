@@ -54,23 +54,34 @@
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Grid Margin="1" Cursor="Hand">
-						<Border>
-							<Grid
-								Width="26"
-								Height="26"
-								Margin="0">
-								<Image Source="/Assets/LegacyTattoo.png" />
-								<Image Source="{Binding Icon, Converter={StaticResource Img}}" />
-							</Grid>
-						</Border>
+					<Grid Cursor="Hand"
+						  Width="44"
+						  Height="44"
+						  Margin="-2">
+
+						<Grid Visibility="{Binding Selected, Converter={StaticResource B2V}}">
+							<Image Source="/Assets/LegacyTattoo.png"  Margin="2, 2, 2, 4"/>
+							<Image Source="{Binding Icon, Converter={StaticResource Img}}" Margin="3, 1, 3, 4"/>
+						</Grid>
+
+						<Grid Visibility="{Binding Selected, Converter={StaticResource !B2V}}" Opacity="0.5">
+							<Image Source="/Assets/LegacyTattoo.png"  Margin="2, 2, 2, 4"/>
+							<Image Source="{Binding Icon, Converter={StaticResource Img}}" Margin="3, 1, 3, 4"/>
+						</Grid>
+
+						<Image Source="/Assets/IconBorderSmall.png"/>
+						
 						<!--<TextBlock Text="{Binding Index}"/>-->
 						<Border
-							BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+							Background="{DynamicResource PrimaryHueMidBrush}"
+							BorderBrush="#CC000000"
 							BorderThickness="1"
-							CornerRadius="3"
+							CornerRadius="1"
 							SnapsToDevicePixels="True"
-							Visibility="{Binding Selected, Converter={StaticResource B2V}}" />
+							Visibility="{Binding Selected, Converter={StaticResource B2V}}"
+							Height="4"
+							Margin="6, 6"
+							VerticalAlignment="Bottom"/>
 
 					</Grid>
 				</DataTemplate>
