@@ -22,12 +22,15 @@ public static class ItemUtility
 
 	public static IItem EmperorsNewFists => GameDataService.Items.Get(13775);
 
+	public static ChocoboSkinItem YellowChocoboSkin => new(GameDataService.Mounts.Get(1), 1);
+	public static ChocoboSkinItem BlackChocoboSkin => new(GameDataService.Mounts.Get(1), 2);
+
 	/// <summary>
 	/// Searches the gamedata service item list for an item with the given model attributes.
 	/// </summary>
 	public static IItem GetItem(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant, bool isChocobo)
 	{
-		if (modelBase == 0 && modelVariant == 0)
+		if ((modelBase == 0 || modelBase == 1) && modelVariant == 0)
 			return NoneItem;
 
 		if (modelBase == NpcBodyItem.ModelBase)
@@ -81,7 +84,15 @@ public static class ItemUtility
 
 	private static IItem ChocoboItemSearch(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
 	{
-		if (GameDataService.Perform != null)
+		if (slot == ItemSlots.Legs)
+		{
+			if (YellowChocoboSkin.IsModel(modelSet, modelBase, modelVariant))
+				return YellowChocoboSkin;
+
+			if (BlackChocoboSkin.IsModel(modelSet, modelBase, modelVariant))
+				return BlackChocoboSkin;
+		}
+		else
 		{
 			foreach (BuddyEquip equip in GameDataService.BuddyEquips)
 			{
@@ -147,25 +158,19 @@ public static class ItemUtility
 			}
 		}
 
-		if (GameDataService.Equipment != null)
+		foreach (IItem tItem in GameDataService.Equipment)
 		{
-			foreach (IItem tItem in GameDataService.Equipment)
+			if (tItem.ModelSet == modelSet && tItem.ModelBase == modelBase && tItem.ModelVariant == modelVariant)
 			{
-				if (tItem.ModelSet == modelSet && tItem.ModelBase == modelBase && tItem.ModelVariant == modelVariant)
-				{
-					return tItem;
-				}
+				return tItem;
 			}
 		}
 
-		if (GameDataService.Perform != null)
+		foreach (IItem tItem in GameDataService.Perform)
 		{
-			foreach (IItem tItem in GameDataService.Perform)
+			if (tItem.ModelSet == modelSet && tItem.ModelBase == modelBase && tItem.ModelVariant == modelVariant)
 			{
-				if (tItem.ModelSet == modelSet && tItem.ModelBase == modelBase && tItem.ModelVariant == modelVariant)
-				{
-					return tItem;
-				}
+				return tItem;
 			}
 		}
 

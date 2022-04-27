@@ -69,7 +69,9 @@ public class ActorMemory : ActorBasicMemory
 	public bool PendingRefresh { get; set; } = false;
 
 	public bool IsPlayer => this.ModelObject != null && this.ModelObject.IsPlayer;
-	public bool IsChocobo => this.ModelObject != null && this.ModelObject.IsChocobo;
+
+	[DependsOn(nameof(ModelType))]
+	public bool IsChocobo => this.ModelType == 1;
 
 	[DependsOn(nameof(CharacterModeRaw))]
 	public CharacterModes CharacterMode

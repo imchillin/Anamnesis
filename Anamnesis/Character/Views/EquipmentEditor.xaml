@@ -22,18 +22,18 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<local:ItemView Grid.Row="0" Grid.Column="0" ItemModel="{Binding MainHand}" ExtendedViewModel="{Binding ModelObject.Weapons}"  Slot="MainHand" />
-		<local:ItemView Grid.Row="0" Grid.Column="1" ItemModel="{Binding OffHand}" ExtendedViewModel="{Binding ModelObject.Weapons.SubModel}" Slot="OffHand" />
-		<local:ItemView Grid.Row="1" Grid.Column="0" ItemModel="{Binding Equipment.Head}" Slot="Head" />
+		<local:ItemView Grid.Row="0" Grid.Column="0" ItemModel="{Binding MainHand}" ExtendedViewModel="{Binding ModelObject.Weapons}"  Slot="MainHand" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="0" Grid.Column="1" ItemModel="{Binding OffHand}" ExtendedViewModel="{Binding ModelObject.Weapons.SubModel}" Slot="OffHand" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="1" Grid.Column="0" ItemModel="{Binding Equipment.Head}" Slot="Head"/>
 		<local:ItemView Grid.Row="2" Grid.Column="0" ItemModel="{Binding Equipment.Chest}" Slot="Body" />
-		<local:ItemView Grid.Row="3" Grid.Column="0" ItemModel="{Binding Equipment.Arms}" Slot="Hands" />
+		<local:ItemView Grid.Row="3" Grid.Column="0" ItemModel="{Binding Equipment.Arms}" Slot="Hands" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 		<local:ItemView Grid.Row="4" Grid.Column="0" ItemModel="{Binding Equipment.Legs}" Slot="Legs"/>
 		<local:ItemView Grid.Row="5" Grid.Column="0" ItemModel="{Binding Equipment.Feet}" Slot="Feet" />
-		<local:ItemView Grid.Row="1" Grid.Column="1" ItemModel="{Binding Equipment.Ear}" Slot="Ears" />
-		<local:ItemView Grid.Row="2" Grid.Column="1" ItemModel="{Binding Equipment.Neck}" Slot="Neck" />
-		<local:ItemView Grid.Row="3" Grid.Column="1" ItemModel="{Binding Equipment.Wrist}" Slot="Wrists" />
-		<local:ItemView Grid.Row="4" Grid.Column="1" ItemModel="{Binding Equipment.RFinger}" Slot="RightRing" />
-		<local:ItemView Grid.Row="5" Grid.Column="1" ItemModel="{Binding Equipment.LFinger}" Slot="LeftRing" />
+		<local:ItemView Grid.Row="1" Grid.Column="1" ItemModel="{Binding Equipment.Ear}" Slot="Ears" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="2" Grid.Column="1" ItemModel="{Binding Equipment.Neck}" Slot="Neck" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="3" Grid.Column="1" ItemModel="{Binding Equipment.Wrist}" Slot="Wrists" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="4" Grid.Column="1" ItemModel="{Binding Equipment.RFinger}" Slot="RightRing" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="5" Grid.Column="1" ItemModel="{Binding Equipment.LFinger}" Slot="LeftRing" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 
 	</Grid>
 

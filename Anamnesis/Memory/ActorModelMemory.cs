@@ -79,19 +79,6 @@ public class ActorModelMemory : MemoryBase
 		}
 	}
 
-	public bool IsChocobo
-	{
-		get
-		{
-			if (this.Parent is ActorMemory actor)
-			{
-				return actor.ModelType == 1;
-			}
-
-			return false;
-		}
-	}
-
 	protected override bool CanRead(BindInfo bind)
 	{
 		if (bind.Name == nameof(ActorModelMemory.ExtendedAppearance))

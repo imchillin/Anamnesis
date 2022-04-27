@@ -145,6 +145,8 @@ public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorVi
 		if (this.actor?.IsChocobo == true)
 		{
 			this.Selector.AddItem(ItemUtility.NoneItem);
+			this.Selector.AddItem(ItemUtility.YellowChocoboSkin);
+			this.Selector.AddItem(ItemUtility.BlackChocoboSkin);
 
 			foreach (BuddyEquip buddyEquip in GameDataService.BuddyEquips)
 			{
