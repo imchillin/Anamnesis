@@ -62,6 +62,8 @@ async Task<bool> CheckDotNet()
 		Process p = new Process();
 		p.StartInfo.UseShellExecute = false;
 		p.StartInfo.RedirectStandardOutput = true;
+		p.StartInfo.CreateNoWindow = true;
+		p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 		p.StartInfo.FileName = "dotnet";
 		p.StartInfo.Arguments = " --list-runtimes";
 		p.Start();
