@@ -368,7 +368,7 @@
 				</Canvas>
 			</Grid>
 
-			<Grid Grid.Row="1" VerticalAlignment="Top" Margin="6,3">
+			<Grid Grid.Row="1" VerticalAlignment="Top" Margin="7, 4, 6, 3">
 				<ListBox
 					x:Name="ViewSelector"
 					SelectedIndex="0"
@@ -376,7 +376,7 @@
 					Style="{StaticResource MaterialDesignToolToggleListBox}">
 					<ListBoxItem
 								Margin="1"
-								Padding="8,4"
+								Padding="8,5"
 								Cursor="Hand"
 								ToolTip="GUI View"
 								Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
@@ -384,7 +384,7 @@
 					</ListBoxItem>
 					<ListBoxItem
 								Margin="1"
-								Padding="8,4"
+								Padding="8,5"
 								Cursor="Hand"
 								ToolTip="Matrix View"
 								Visibility="{Binding Skeleton.File.AllowPoseMatrix, Converter={StaticResource B2V}}">
@@ -393,7 +393,7 @@
 					<ListBoxItem
 								x:Name="View3dButton"
 								Margin="1"
-								Padding="8,4"
+								Padding="8,5"
 								Cursor="Hand"
 								ToolTip="3D View">
 						<XivToolsWpf:IconBlock Icon="Cube" FontSize="10"/>

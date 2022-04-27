@@ -41,31 +41,31 @@
 			<XivToolsWpf:TextBlock Key="Pose_GuiNotFlip" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="0, 3, 6, 0" Opacity="0.3"
 					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
 
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					    Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
 
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="16, 20, 16, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					    Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="16, 20, 16, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="16, 20, 16, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="16, 20, 16, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
 
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					    Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="32, 10, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
 					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
 
 			<!-- Body -->
