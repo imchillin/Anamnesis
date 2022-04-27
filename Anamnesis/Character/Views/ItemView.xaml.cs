@@ -143,7 +143,7 @@ public partial class ItemView : UserControl
 		SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
 	}
 
-	private void OnMouseUp(object sender, MouseButtonEventArgs e)
+	private void OnSlotMouseUp(object sender, MouseButtonEventArgs e)
 	{
 		if (this.Actor?.CanRefresh != true)
 			return;
@@ -151,6 +151,17 @@ public partial class ItemView : UserControl
 		if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
 		{
 			this.ItemModel?.Clear(this.Actor.IsPlayer);
+		}
+	}
+
+	private void OnDyeMouseUp(object sender, MouseButtonEventArgs e)
+	{
+		if (this.Actor?.CanRefresh != true || this.ItemModel == null)
+			return;
+
+		if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
+		{
+			this.ItemModel.Dye = 0;
 		}
 	}
 

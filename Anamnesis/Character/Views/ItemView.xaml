@@ -43,7 +43,7 @@
 			<Button 
 					Width="48" Height="48"
 					Click="OnClick"
-					MouseUp="OnMouseUp"
+					MouseUp="OnSlotMouseUp"
 					Grid.Row="0"
 					Grid.RowSpan="2"
 					Style="{DynamicResource TransparentButton}"
@@ -129,16 +129,16 @@
 				</ana:RgbColorControl>
 
 				<!-- Dye -->
-				<Button 
-							Margin="2, 4, 0, 0"
-							Grid.Column="0"
-							Grid.RowSpan="2"
-							Click="OnDyeClick"
-							Height="20"
-							Width="20"
-							VerticalAlignment="Top"
-							Style="{DynamicResource TransparentButton}"
-							IsEnabled="{Binding Actor.CanRefresh}">
+				<Button MouseUp="OnDyeMouseUp"
+						Margin="2, 4, 0, 0"
+						Grid.Column="0"
+						Grid.RowSpan="2"
+						Click="OnDyeClick"
+						Height="20"
+						Width="20"
+						VerticalAlignment="Top"
+						Style="{DynamicResource TransparentButton}"
+						IsEnabled="{Binding Actor.CanRefresh}">
 
 					<Button.ToolTip>
 						<XivToolsWpf:TextBlock Key="Character_Equipment_Dye"/>
