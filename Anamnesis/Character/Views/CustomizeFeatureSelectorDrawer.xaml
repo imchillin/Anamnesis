@@ -39,14 +39,16 @@
 
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Grid Width="54"
-						  Height="54">
+					<Grid Width="72"
+						  Height="72"
+						  Margin="-3">
 
-						<Image Source="{Binding Icon, Converter={StaticResource Img}}"/>
+						<Image Source="{Binding Icon, Converter={StaticResource Img}}" Margin="3, 1, 3, 5"/>
+						<Image Source="/Assets/IconBorder.png"/>
 						<Border x:Name="SelectedBorder"
 								BorderThickness="3"
 								BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-								Margin="0"
+								Margin="3, 1, 3, 5"
 								CornerRadius="3" />
 
 						<Grid>
@@ -68,6 +70,9 @@
 					<DataTemplate.Triggers>
 						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="False">
 							<Setter TargetName="SelectedBorder" Property="Visibility" Value="Collapsed"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+							<Setter TargetName="SelectedBorder" Property="Visibility" Value="Visible"/>
 						</DataTrigger>
 					</DataTemplate.Triggers>
 					

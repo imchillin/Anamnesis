@@ -53,10 +53,11 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 		{
 			this.selected = value;
 
+			this.SelectedItem = GameDataService.CharacterMakeCustomize?.GetFeature(this.feature, this.tribe, this.gender, value);
+
 			if (!this.IsLoaded)
 				return;
 
-			this.SelectedItem = GameDataService.CharacterMakeCustomize?.GetFeature(this.feature, this.tribe, this.gender, value);
 			this.SelectionChanged?.Invoke(this.selected);
 		}
 	}
