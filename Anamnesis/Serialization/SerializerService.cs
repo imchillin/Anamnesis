@@ -20,7 +20,7 @@ public class SerializerService : ServiceBase<SerializerService>
 		////Options.IgnoreNullValues = true;
 		Options.AllowTrailingCommas = true;
 		Options.ReadCommentHandling = JsonCommentHandling.Skip;
-		Options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+		Options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 
 		Options.Converters.Add(new JsonStringEnumConverter());
 		Options.Converters.Add(new Color4Converter());
@@ -33,6 +33,8 @@ public class SerializerService : ServiceBase<SerializerService>
 		Options.Converters.Add(new INpcBaseConverter());
 		Options.Converters.Add(new ImageReferenceConverter());
 		Options.Converters.Add(new KeyCombinationConverter());
+		Options.Converters.Add(new MediaColorConverter());
+		Options.Converters.Add(new PointConverter());
 	}
 
 	public static string Serialize(object obj)

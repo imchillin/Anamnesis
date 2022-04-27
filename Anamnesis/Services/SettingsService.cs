@@ -42,7 +42,7 @@ public class SettingsService : ServiceBase<SettingsService>
 	{
 		if (Current.OverrideSystemTheme)
 		{
-			Themes.ApplyCustomTheme(Current.ThemeLight, Current.ThemeColor);
+			Themes.ApplyCustomTheme(Current.ThemeLight, Current.ThemeTrimColor);
 		}
 		else
 		{
@@ -76,7 +76,7 @@ public class SettingsService : ServiceBase<SettingsService>
 				if (SystemParameters.WindowGlassColor == Colors.Black)
 				{
 					this.Settings.OverrideSystemTheme = true;
-					this.Settings.ThemeColor = Colors.Pink;
+					this.Settings.ThemeTrimColor = Colors.Pink;
 				}
 			}
 			catch (Exception ex)

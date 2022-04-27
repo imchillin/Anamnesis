@@ -50,7 +50,7 @@ public class Settings : INotifyPropertyChanged
 	public bool EnableHotkeys { get; set; } = true;
 
 	public bool OverrideSystemTheme { get; set; } = false;
-	public Color ThemeColor { get; set; } = Color.FromArgb(255, 247, 99, 12);
+	public Color ThemeTrimColor { get; set; } = Color.FromArgb(255, 247, 99, 12);
 	public bool ThemeLight { get; set; } = false;
 	public bool WrapRotationSliders { get; set; } = true;
 	public string? DefaultAuthor { get; set; }
