@@ -439,8 +439,8 @@ public class TargetService : ServiceBase<TargetService>
 
 			set
 			{
-				if (!GameService.Instance.IsSignedIn)
-					return;
+				////if (!GameService.Instance.IsSignedIn)
+				////	return;
 
 				if (value)
 				{

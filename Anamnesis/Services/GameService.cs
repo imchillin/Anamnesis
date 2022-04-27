@@ -57,10 +57,10 @@ public class GameService : ServiceBase<GameService>
 		{
 			this.IsSignedIn = GetIsSignedIn();
 
-			if (!this.IsSignedIn)
+			/*if (!this.IsSignedIn)
 			{
 				TargetService.Instance.ClearSelection();
-			}
+			}*/
 
 			/*else
 			{

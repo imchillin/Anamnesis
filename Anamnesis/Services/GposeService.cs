@@ -34,6 +34,10 @@ public class GposeService : ServiceBase<GposeService>
 		if (AddressService.GposeCheck == IntPtr.Zero)
 			return false;
 
+		// Character select screen counts as gpose.
+		if (!GameService.Instance.IsSignedIn)
+			return true;
+
 		byte check1 = MemoryService.Read<byte>(AddressService.GposeCheck);
 		byte check2 = MemoryService.Read<byte>(AddressService.GposeCheck2);
 		return check1 == 1 && check2 == 4;
