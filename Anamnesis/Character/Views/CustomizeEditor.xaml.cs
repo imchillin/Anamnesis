@@ -49,6 +49,7 @@ public partial class CustomizeEditor : UserControl
 	public bool HasFur { get; set; }
 	public bool HasTail { get; set; }
 	public bool HasEars { get; set; }
+	public bool HasEarsTail { get; set; }
 	public bool HasMuscles { get; set; }
 	public bool CanAge { get; set; }
 	public CharaMakeCustomize? Hair { get; set; }
@@ -171,6 +172,7 @@ public partial class CustomizeEditor : UserControl
 		this.HasFur = this.Customize.Race == AnAppearance.Races.Hrothgar;
 		this.HasTail = this.Customize.Race == AnAppearance.Races.Hrothgar || this.Customize.Race == AnAppearance.Races.Miqote || this.Customize.Race == AnAppearance.Races.AuRa;
 		this.HasEars = this.Customize.Race == AnAppearance.Races.Viera || this.Customize.Race == AnAppearance.Races.Lalafel || this.Customize.Race == AnAppearance.Races.Elezen;
+		this.HasEarsTail = this.HasTail | this.HasEars;
 		this.HasMuscles = !this.HasEars && !this.HasTail;
 		this.HasGender = this.Customize.Race != AnAppearance.Races.Hrothgar;
 
