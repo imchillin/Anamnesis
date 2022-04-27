@@ -39,13 +39,13 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid>
+	<Grid Width="168">
 		<ListBox
 			x:Name="FeaturesList"
 			ItemContainerStyle="{StaticResource ListBoxItemStyle}"
 			ScrollViewer.VerticalScrollBarVisibility="Hidden"
 			SelectionChanged="OnSelectionChanged"
-			Width="160"
+			
 			SelectionMode="Multiple">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
@@ -55,8 +55,8 @@
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid Cursor="Hand"
-						  Width="44"
-						  Height="44"
+						  Width="46"
+						  Height="46"
 						  Margin="-2">
 
 						<Grid Visibility="{Binding Selected, Converter={StaticResource B2V}}">

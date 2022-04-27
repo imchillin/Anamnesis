@@ -133,8 +133,6 @@
 
 				</Grid>
 				
-
-
 				<!-- Facial Features -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="5" Key="Character_Appearance_Features" Style="{StaticResource Label}"/>
 				<controls:FacialFeaturesControl Value="{Binding Customize.FacialFeatures}" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Head="{Binding Customize.Head}" Grid.Column="1" Grid.Row="5"/>
@@ -142,7 +140,7 @@
 				<!-- Face Paint  -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="6" Key="Character_Appearance_FacePaint" Style="{StaticResource Label}"/>
 
-				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 2, 0, 2">
+				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 2, 0, 0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
@@ -150,7 +148,7 @@
 
 
 					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnFacePaintClicked">
-						<Border Width="32" Height="32" Margin="2">
+						<Border Width="40" Height="40" Margin="2">
 							<Image Source="{Binding FacePaint.Icon, Converter={StaticResource Img}}" Visibility="{Binding FacePaint, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 						</Border>
 					</Button>
@@ -165,7 +163,7 @@
 				<!-- Hair -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="7" Key="Character_Appearance_Hair" Style="{StaticResource Label}"/>
 
-				<Grid Grid.Column="1" Grid.Row="7" Margin="0, 2, 0, 0">
+				<Grid Grid.Column="1" Grid.Row="7" Margin="0, 2, 0, 4">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
@@ -175,7 +173,7 @@
 					</Grid.ColumnDefinitions>
 
 					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked">
-						<Border Width="32" Height="32" Margin="2">
+						<Border Width="40" Height="40" Margin="2">
 							<Image Source="{Binding Hair.Icon, Converter={StaticResource Img}}" Visibility="{Binding Hair, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 						</Border>
 					</Button>
