@@ -5,8 +5,9 @@ using System.Diagnostics;
 using System.Reflection;
 using Bootstrap;
 
+const string ApplicationName = "Anamnesis";
 const string ResourceName = "Bootstrap.Anamnesis.exe";
-const string FileName = "AnamnesisLaunch.exe";
+const string FileName = "AnamnesisApp.exe";
 
 const string DotNetVersion = "6.0.4";
 const string DotNetTempFile = "windowsdesktop-runtime-6.0.4-win-x64.exe";
@@ -17,6 +18,9 @@ const string DotNetPromptText = $"The .Net {DotNetVersion} Desktop runtime is no
 
 try
 {
+	if (CheckRunning())
+		return;
+
 	if (await CheckDotNet())
 	{
 		await Launch();
@@ -24,19 +28,53 @@ try
 }
 catch (Exception ex)
 {
-	User32.MessageBox(ex.Message, "Anamnesis Bootstrap Error", User32.MessageBoxButtons.Ok, User32.MessageBoxIcon.Error);
+	User32.MessageBox(ex.Message, $"{ApplicationName} Bootstrap Error", User32.MessageBoxButtons.Ok, User32.MessageBoxIcon.Error);
 }
 finally
 {
-	if (File.Exists(FileName))
+	try
 	{
-		File.Delete(FileName);
+		if (File.Exists(FileName))
+		{
+			File.Delete(FileName);
+		}
 	}
+	catch (Exception)
+	{
+	}
+}
+
+bool CheckRunning()
+{
+	Process[] procs = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(FileName));
+	if (procs.Length == 0)
+		return false;
+
+	User32.MessageBox($"Multiple {ApplicationName} processes found. Please close all other instances.", $"{ApplicationName} is running", User32.MessageBoxButtons.Ok, User32.MessageBoxIcon.Information);
+	return true;
 }
 
 // Check dotnet is installed, and download it if not.
 async Task<bool> CheckDotNet()
 {
+	// Check current dotnet installed versions
+	{
+		Process p = new Process();
+		p.StartInfo.UseShellExecute = false;
+		p.StartInfo.RedirectStandardOutput = true;
+		p.StartInfo.FileName = "dotnet";
+		p.StartInfo.Arguments = " --list-runtimes";
+		p.Start();
+		
+		p.WaitForExit();
+		string output = p.StandardOutput.ReadToEnd();
+
+		if (output.Contains($"Microsoft.WindowsDesktop.App {DotNetVersion}"))
+		{
+			return true;
+		}
+	}
+
 	if (!User32.MessageBox(DotNetPromptText, $"Install .Net {DotNetVersion}", User32.MessageBoxButtons.YesNo, User32.MessageBoxIcon.Information))
 		return false;
 
