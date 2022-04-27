@@ -142,16 +142,35 @@ public partial class EquipmentSelector : UserControl, SelectorDrawer.ISelectorVi
 
 	private Task OnLoadItems()
 	{
-		if (!this.IsMainHandSlot)
+		if (this.actor?.IsChocobo == true)
+		{
 			this.Selector.AddItem(ItemUtility.NoneItem);
 
-		this.Selector.AddItem(ItemUtility.NpcBodyItem);
-		this.Selector.AddItem(ItemUtility.InvisibileBodyItem);
-		this.Selector.AddItem(ItemUtility.InvisibileHeadItem);
+			foreach (BuddyEquip buddyEquip in GameDataService.BuddyEquips)
+			{
+				if (buddyEquip.Head != null)
+					this.Selector.AddItem(buddyEquip.Head);
 
-		this.Selector.AddItems(GameDataService.Equipment);
-		this.Selector.AddItems(GameDataService.Items);
-		this.Selector.AddItems(GameDataService.Perform);
+				if (buddyEquip.Body != null)
+					this.Selector.AddItem(buddyEquip.Body);
+
+				if (buddyEquip.Feet != null)
+					this.Selector.AddItem(buddyEquip.Feet);
+			}
+		}
+		else
+		{
+			if (!this.IsMainHandSlot)
+				this.Selector.AddItem(ItemUtility.NoneItem);
+
+			this.Selector.AddItem(ItemUtility.NpcBodyItem);
+			this.Selector.AddItem(ItemUtility.InvisibileBodyItem);
+			this.Selector.AddItem(ItemUtility.InvisibileHeadItem);
+
+			this.Selector.AddItems(GameDataService.Equipment);
+			this.Selector.AddItems(GameDataService.Items);
+			this.Selector.AddItems(GameDataService.Perform);
+		}
 
 		return Task.CompletedTask;
 	}

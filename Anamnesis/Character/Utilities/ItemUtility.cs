@@ -6,6 +6,7 @@ namespace Anamnesis.Character.Utilities;
 using System.Collections.Concurrent;
 using Anamnesis.Character.Items;
 using Anamnesis.GameData;
+using Anamnesis.GameData.Excel;
 using Anamnesis.Services;
 
 public static class ItemUtility
@@ -17,13 +18,14 @@ public static class ItemUtility
 	public static readonly InvisibleHeadItem InvisibileHeadItem = new InvisibleHeadItem();
 
 	private static readonly ConcurrentDictionary<string, IItem> ItemLookup = new ConcurrentDictionary<string, IItem>();
+	private static readonly ConcurrentDictionary<string, IItem> ChocoboItemLookup = new ConcurrentDictionary<string, IItem>();
 
 	public static IItem EmperorsNewFists => GameDataService.Items.Get(13775);
 
 	/// <summary>
 	/// Searches the gamedata service item list for an item with the given model attributes.
 	/// </summary>
-	public static IItem GetItem(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
+	public static IItem GetItem(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant, bool isChocobo)
 	{
 		if (modelBase == 0 && modelVariant == 0)
 			return NoneItem;
@@ -32,13 +34,27 @@ public static class ItemUtility
 			return NpcBodyItem;
 
 		string lookupKey = slot + "_" + modelSet + "_" + modelBase + "_" + modelVariant;
-		if (!ItemLookup.ContainsKey(lookupKey))
-		{
-			IItem item = ItemSearch(slot, modelSet, modelBase, modelVariant);
-			ItemLookup.TryAdd(lookupKey, item);
-		}
 
-		return ItemLookup[lookupKey];
+		if (isChocobo)
+		{
+			if (!ChocoboItemLookup.ContainsKey(lookupKey))
+			{
+				IItem item = ChocoboItemSearch(slot, modelSet, modelBase, modelVariant);
+				ChocoboItemLookup.TryAdd(lookupKey, item);
+			}
+
+			return ChocoboItemLookup[lookupKey];
+		}
+		else
+		{
+			if (!ItemLookup.ContainsKey(lookupKey))
+			{
+				IItem item = ItemSearch(slot, modelSet, modelBase, modelVariant);
+				ItemLookup.TryAdd(lookupKey, item);
+			}
+
+			return ItemLookup[lookupKey];
+		}
 	}
 
 	public static IItem GetDummyItem(ushort modelSet, ushort modelBase, ushort modelVariant)
@@ -61,6 +77,32 @@ public static class ItemUtility
 	public static bool IsModel(this IItem item, ushort modelSet, ushort modelBase, ushort modelVariant)
 	{
 		return item.ModelSet == modelSet && item.ModelBase == modelBase && item.ModelVariant == modelVariant;
+	}
+
+	private static IItem ChocoboItemSearch(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)
+	{
+		if (GameDataService.Perform != null)
+		{
+			foreach (BuddyEquip equip in GameDataService.BuddyEquips)
+			{
+				if (equip.Head != null && equip.Head.Slot == slot && equip.Head.ModelSet == modelSet && equip.Head.ModelBase == modelBase && equip.Head.ModelVariant == modelVariant)
+				{
+					return equip.Head;
+				}
+
+				if (equip.Body != null && equip.Body.Slot == slot && equip.Body.ModelSet == modelSet && equip.Body.ModelBase == modelBase && equip.Body.ModelVariant == modelVariant)
+				{
+					return equip.Body;
+				}
+
+				if (equip.Feet != null && equip.Feet.Slot == slot && equip.Feet.ModelSet == modelSet && equip.Feet.ModelBase == modelBase && equip.Feet.ModelVariant == modelVariant)
+				{
+					return equip.Feet;
+				}
+			}
+		}
+
+		return new DummyItem(modelSet, modelBase, modelVariant);
 	}
 
 	private static IItem ItemSearch(ItemSlots slot, ushort modelSet, ushort modelBase, ushort modelVariant)

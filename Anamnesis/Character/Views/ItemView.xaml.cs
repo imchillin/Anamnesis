@@ -282,9 +282,12 @@ public partial class ItemView : UserControl
 
 				await Dispatch.NonUiThread();
 
+				if (this.Actor == null)
+					throw new Exception("No Actor in item view");
+
 				if (valueVm is ItemMemory itemVm)
 				{
-					IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant);
+					IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant, this.Actor.IsChocobo);
 					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
 
 					await Dispatch.MainThread();
@@ -294,7 +297,7 @@ public partial class ItemView : UserControl
 				}
 				else if (valueVm is WeaponMemory weaponVm)
 				{
-					IItem? item = ItemUtility.GetItem(slots, weaponVm.Set, weaponVm.Base, weaponVm.Variant);
+					IItem? item = ItemUtility.GetItem(slots, weaponVm.Set, weaponVm.Base, weaponVm.Variant, this.Actor.IsChocobo);
 
 					if (weaponVm.Set == 0)
 						weaponVm.Dye = 0;

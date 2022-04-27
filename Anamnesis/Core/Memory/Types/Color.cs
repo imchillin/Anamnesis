@@ -67,10 +67,6 @@ public struct Color : IEquatable<Color>
 
 	public override int GetHashCode()
 	{
-		int hashCode = -1520100960;
-		hashCode = (hashCode * -1521134295) + this.R.GetHashCode();
-		hashCode = (hashCode * -1521134295) + this.G.GetHashCode();
-		hashCode = (hashCode * -1521134295) + this.B.GetHashCode();
-		return hashCode;
+		return HashCode.Combine(this.R, this.G, this.B);
 	}
 }

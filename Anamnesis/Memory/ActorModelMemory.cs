@@ -67,7 +67,7 @@ public class ActorModelMemory : MemoryBase
 	{
 		get
 		{
-			if (!Enum.IsDefined(typeof(ActorModelMemory.DataPaths), this.DataPath))
+			if (!Enum.IsDefined(typeof(DataPaths), this.DataPath))
 				return false;
 
 			if (this.Parent is ActorMemory actor)
@@ -76,6 +76,19 @@ public class ActorModelMemory : MemoryBase
 			}
 
 			return true;
+		}
+	}
+
+	public bool IsChocobo
+	{
+		get
+		{
+			if (this.Parent is ActorMemory actor)
+			{
+				return actor.ModelType == 1;
+			}
+
+			return false;
 		}
 	}
 
