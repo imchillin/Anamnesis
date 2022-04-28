@@ -5,7 +5,7 @@ namespace Anamnesis.Files;
 
 using System;
 using System.Threading.Tasks;
-using Anamnesis.Character.Utilities;
+using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Serilog;

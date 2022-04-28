@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="Anamnesis.Actor.Views.SubActorEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Anamnesis.Actor.Views"
+			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 mc:Ignorable="d" 
+             Height="32" Width="32">
+	
+    <Grid x:Name="ContentArea">
+
+		<Border Background="Black" CornerRadius="3" Margin="1" Opacity="0.2"/>
+
+		<Button
+			Click="OnClick"
+			Grid.Row="0"
+			Grid.RowSpan="2"
+			Style="{DynamicResource TransparentButton}"
+			IsEnabled="{Binding SubActor, Converter={StaticResource NotNullToBoolConverter}}">
+
+			<Grid>
+				<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="2" Opacity="0.5"/>
+
+				<Grid Visibility="{Binding SubActor, Converter={StaticResource NotNullToVisibilityConverter}}">
+					<Grid>
+						<Image Source="{Binding Npc.Icon, Converter={StaticResource Img}}" Margin="2"/>
+						<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Npc.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+					</Grid>
+				</Grid>
+			</Grid>
+		</Button>
+		
+		<Grid.ToolTip>
+			<StackPanel>
+				<xivToolsWpf:TextBlock Key="{Binding TypeKey}" FontWeight="DemiBold"/>
+
+				<StackPanel Visibility="{Binding SubActor, Converter={StaticResource NotNullToVisibilityConverter}}">
+					<TextBlock Text="{Binding Npc.Name}"/>
+					<TextBlock Text="{Binding Npc.Description}" Visibility="{Binding Npc.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+				</StackPanel>
+			</StackPanel>
+		</Grid.ToolTip>
+
+	</Grid>
+</UserControl>

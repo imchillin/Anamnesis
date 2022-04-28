@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 namespace Lumina;
-using Anamnesis.Character.Utilities;
+using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Lumina.Excel.GeneratedSheets;
 using Serilog;

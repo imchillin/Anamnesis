@@ -6,7 +6,7 @@ namespace Anamnesis.Serialization.Converters;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Anamnesis.Character;
+using Anamnesis.Actor;
 using Anamnesis.GameData;
 
 public class INpcBaseConverter : JsonConverter<INpcBase>

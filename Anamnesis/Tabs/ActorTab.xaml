@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:Anamnesis.Tabs"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 xmlns:characterPages="clr-namespace:Anamnesis.Character.Pages"
-			 xmlns:posePages="clr-namespace:Anamnesis.PoseModule.Pages"
+			 xmlns:characterPages="clr-namespace:Anamnesis.Actor.Pages"
+			 xmlns:posePages="clr-namespace:Anamnesis.Actor.Pages"
 			 xmlns:views="clr-namespace:Anamnesis.Views"
 			 mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">

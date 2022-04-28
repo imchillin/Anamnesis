@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
 using Anamnesis.Files;
 using Anamnesis.Memory;
-using Anamnesis.PoseModule;
+using Anamnesis.Actor;
 using Anamnesis.Serialization;
 using Anamnesis.TexTools;
 using Serilog;

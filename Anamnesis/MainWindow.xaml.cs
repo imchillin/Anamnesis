@@ -15,7 +15,7 @@ using Anamnesis.GUI.Dialogs;
 using Anamnesis.GUI.Views;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
-using Anamnesis.PoseModule;
+using Anamnesis.Actor;
 using Anamnesis.Services;
 using Anamnesis.Updater;
 using Anamnesis.Utils;

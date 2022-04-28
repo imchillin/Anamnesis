@@ -4,7 +4,7 @@
 namespace Anamnesis.Memory;
 
 using System;
-using Anamnesis.Character.Utilities;
+using Anamnesis.Actor.Utilities;
 using PropertyChanged;
 
 public class WeaponMemory : MemoryBase, IEquipmentItemMemory
