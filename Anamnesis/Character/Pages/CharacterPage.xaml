@@ -241,11 +241,11 @@
 				</GroupBox>
 			</StackPanel>
 
-			<!--<StackPanel 
+			<StackPanel 
 				Grid.Row="1"
 				Margin="2, 2, 2, 0"
 				Orientation="Horizontal">
-				
+
 				<Button Click="OnFindNpcClicked"
 							Style="{StaticResource TransparentButton}"
 						Padding="6,3">
@@ -256,8 +256,8 @@
 
 					<XivToolsWpf:TextBlock Key="Character_SearchNpcAppearances" />
 				</Button>
-				
-			</StackPanel>-->
+
+			</StackPanel>
 
 			<XivToolsWpf:InfoControl Key="Warning_NpcFaceTitle">
 
