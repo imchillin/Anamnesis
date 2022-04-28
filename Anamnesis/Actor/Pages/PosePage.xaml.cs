@@ -180,7 +180,13 @@ public partial class PosePage : UserControl
 
 	private async void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 	{
-		this.Actor = this.DataContext as ActorMemory;
+		ActorMemory? newActor = this.DataContext as ActorMemory;
+
+		// don't do all this work unless we need to.
+		if (this.Actor == newActor)
+			return;
+
+		this.Actor = newActor;
 
 		this.ThreeDView.DataContext = null;
 		this.GuiView.DataContext = null;
