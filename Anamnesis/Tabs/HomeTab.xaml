@@ -221,63 +221,68 @@
 			</Grid>
 
 			<Grid VerticalAlignment="Bottom"
-					Margin="5, 100, 5, 5">
-				<Rectangle Fill="{DynamicResource MaterialDesignCardBackground}"
-							Stroke="{DynamicResource MaterialDesignPaper}"
-							RadiusX="4"
-							RadiusY="4"
-							Margin="0, 13, 0, 0" />
+				  Margin="3, 100, 0, 3">
+
+				<Border Style="{StaticResource Panel}"
+						Background="{StaticResource MaterialDesignToolBarBackground}"
+						Margin="0, 13, 0, 0" />
+
+				<Border Style="{StaticResource Panel}"
+						Margin="0, 13, 0, 0" />
+
+				<Border Style="{StaticResource Panel}"
+						Margin="1, 14, 1, 1"
+						Background="Transparent"
+						BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+						Visibility="{Binding TipService.Tip.CanClick, Converter={StaticResource B2V}}"/>
 
 				<Button Click="OnTipClicked"
 						Margin="0, 13, 0, 0"
 						Style="{StaticResource TransparentButton}"
+						BorderThickness="0"
 						Padding="0"
 						HorizontalContentAlignment="Stretch"
-						IsEnabled="{Binding TipService.Tip.CanClick}">
-					<Grid Margin="6">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition />
-						</Grid.RowDefinitions>
+						IsEnabled="{Binding TipService.Tip.CanClick}"/>
 
-						<XivToolsWpf:Header Icon="Question"
+				<Grid Margin="6, 20, 6, 6">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition />
+					</Grid.RowDefinitions>
+
+					<XivToolsWpf:Header Icon="Question"
 											Text="Did you know" />
-						<TextBlock Margin="3, 0, 3, 0"
+
+					<TextBlock Margin="3, 0, 3, 0"
 									Grid.Row="1"
 									TextWrapping="Wrap"
 									FontSize="14"
-									Text="{Binding TipService.Tip.Text}"
-									Foreground="{DynamicResource MaterialDesignBodyLight}" />
-					</Grid>
-				</Button>
+									Text="{Binding TipService.Tip.Text}"/>
+				</Grid>
 
 				<Path Fill="{DynamicResource MaterialDesignCardBackground}"
 						Stroke="{DynamicResource PrimaryHueMidBrush}"
 						Stretch="Fill"
 						HorizontalAlignment="Left"
 						VerticalAlignment="Top"
-						Margin="16, 0, 0, 0"
+						Margin="16, 0, -1, 0"
 						Width="15"
 						Height="15"
 						Grid.Row="1"
 						Data="M 0,1, 1,0, 2,1"
 						Visibility="{Binding TipService.Tip.CanClick, Converter={StaticResource B2V}}" />
+				
 				<Path Fill="{DynamicResource MaterialDesignCardBackground}"
 						Stroke="{DynamicResource MaterialDesignCardBackground}"
 						Stretch="Fill"
 						HorizontalAlignment="Left"
 						VerticalAlignment="Top"
-						Margin="16, 0, 0, 0"
+						Margin="16, 0, -1, 0"
 						Width="15"
 						Height="15"
 						Grid.Row="1"
 						Data="M 0,1, 1,0, 2,1"
 						Visibility="{Binding TipService.Tip.CanClick, Converter={StaticResource !B2V}}" />
-
-				<Grid.Effect>
-					<DropShadowEffect ShadowDepth="3"
-										Opacity="0.25" />
-				</Grid.Effect>
 			</Grid>
 
 		</Grid>
