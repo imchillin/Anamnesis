@@ -1,7 +1,7 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.PoseModule.Controls;
+namespace Anamnesis.Actor.Controls;
 
 using System.Windows.Controls;
 using Anamnesis.Memory;

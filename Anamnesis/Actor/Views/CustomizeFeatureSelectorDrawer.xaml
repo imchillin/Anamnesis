@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="Anamnesis.Actor.Views.CustomizeFeatureSelectorDrawer"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="450" Width="312">
+
+	<UserControl.Resources>
+		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
+			<Setter Property="Padding" Value="0"/>
+		</Style>
+	</UserControl.Resources>
+
+	<Grid Margin="6" x:Name="ContentArea">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<XivToolsWpf:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,0,3,6" Buttons="True"/>
+
+		<ListBox Grid.Row="1" Name="List" SelectedItem="{Binding SelectedItem}">
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel x:Name="wrapPanel"/>
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+
+			<ListBox.ItemContainerStyle>
+				<Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemStyle}">
+					<Setter Property="BorderThickness" Value="0"/>
+					<Setter Property="Margin" Value="1"/>
+				</Style>
+			</ListBox.ItemContainerStyle>
+
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid Width="72"
+						  Height="72"
+						  Margin="-3">
+
+						<Image Source="{Binding Icon, Converter={StaticResource Img}}" Margin="3, 1, 3, 5"/>
+						<Image Source="/Assets/IconBorder.png"/>
+						<Border x:Name="SelectedBorder"
+								Background="{DynamicResource PrimaryHueMidBrush}"
+								BorderBrush="#CC000000"
+								BorderThickness="2"
+								CornerRadius="1"
+								SnapsToDevicePixels="True"
+								Height="6"
+								Margin="8"
+								VerticalAlignment="Bottom"/>
+
+						<Grid>
+							<Grid.ToolTip>
+								<TextBlock Text="{Binding Name}" />
+							</Grid.ToolTip>
+
+							<Rectangle Fill="Transparent" />
+
+							<Image Source="{Binding ItemIcon, Converter={StaticResource Img}}"
+								   Margin="3"
+								   Width="16"
+								   Height="16"
+								   HorizontalAlignment="Right"
+								   VerticalAlignment="Bottom"/>
+						</Grid>
+					</Grid>
+
+					<DataTemplate.Triggers>
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="False">
+							<Setter TargetName="SelectedBorder" Property="Visibility" Value="Collapsed"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+							<Setter TargetName="SelectedBorder" Property="Visibility" Value="Visible"/>
+						</DataTrigger>
+					</DataTemplate.Triggers>
+					
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
+</UserControl>

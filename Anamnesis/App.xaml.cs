@@ -113,8 +113,14 @@ public partial class App : Application
 			await Dispatch.MainThread();
 
 			Window oldwindow = this.MainWindow;
+
+			Stopwatch sw2 = new();
+			sw2.Start();
+
 			this.MainWindow = new Anamnesis.GUI.MainWindow();
 			this.MainWindow.Show();
+			Log.Information($"Took {sw2.ElapsedMilliseconds}ms to show window");
+
 			oldwindow.Close();
 		}
 		catch (Exception ex)

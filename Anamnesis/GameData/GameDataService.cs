@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Anamnesis.Character;
+using Anamnesis.Actor;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;

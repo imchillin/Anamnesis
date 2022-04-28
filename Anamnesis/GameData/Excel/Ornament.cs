@@ -3,7 +3,7 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using Anamnesis.Character.Utilities;
+using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;

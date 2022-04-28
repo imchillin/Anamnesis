@@ -36,6 +36,8 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 		private set;
 	}
 
+	public virtual bool UseConcurrentInitilization => false;
+
 	protected static ILogger Log => Serilog.Log.ForContext<T>();
 
 	public virtual Task Initialize()

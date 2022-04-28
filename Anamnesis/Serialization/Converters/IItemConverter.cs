@@ -6,7 +6,7 @@ namespace Anamnesis.Serialization.Converters;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Anamnesis.Character.Utilities;
+using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Anamnesis.Services;
 

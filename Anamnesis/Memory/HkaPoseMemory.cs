@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Memory;
 
-using Anamnesis.PoseModule;
+using Anamnesis.Actor;
 using Anamnesis.Services;
 
 public class HkaPoseMemory : MemoryBase

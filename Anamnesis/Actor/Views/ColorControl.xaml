@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="Anamnesis.Actor.Views.ColorControl"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 mc:Ignorable="d"
+			 HorizontalAlignment="Left"
+			 SnapsToDevicePixels="True">
+
+	<Button Height="22" Width="22" Padding="0" Style="{DynamicResource TransparentButton}" Click="OnClick" VerticalAlignment="Center" Background="Transparent" x:Name="ContentArea">
+		<Button.ToolTip>
+			<xivToolsWpf:TextBlock Key="{Binding ToolTipKey}"/>
+		</Button.ToolTip>
+
+		<Border Height="20" Width="20" CornerRadius="2" BorderBrush="#22000000" BorderThickness="1" Margin="1">
+			<Border.Background>
+				<SolidColorBrush x:Name="PreviewColor" Color="{Binding WpfColor, FallbackValue=White}"/>
+			</Border.Background>
+
+			<!--<TextBlock Text="{Binding Value}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="10"/>-->
+		</Border>
+
+	</Button>
+
+</UserControl>

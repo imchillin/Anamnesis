@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Anamnesis.Actor.Views.EquipmentEditor"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
+			 mc:Ignorable="d"
+			 d:DesignHeight="600">
+
+	<Grid x:Name="ContentArea">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<local:ItemView Grid.Row="0" Grid.Column="0" ItemModel="{Binding MainHand}" ExtendedViewModel="{Binding ModelObject.Weapons}"  Slot="MainHand" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="0" Grid.Column="1" ItemModel="{Binding OffHand}" ExtendedViewModel="{Binding ModelObject.Weapons.SubModel}" Slot="OffHand" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="1" Grid.Column="0" ItemModel="{Binding Equipment.Head}" Slot="Head"/>
+		<local:ItemView Grid.Row="2" Grid.Column="0" ItemModel="{Binding Equipment.Chest}" Slot="Body" />
+		<local:ItemView Grid.Row="3" Grid.Column="0" ItemModel="{Binding Equipment.Arms}" Slot="Hands" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="4" Grid.Column="0" ItemModel="{Binding Equipment.Legs}" Slot="Legs"/>
+		<local:ItemView Grid.Row="5" Grid.Column="0" ItemModel="{Binding Equipment.Feet}" Slot="Feet" />
+		<local:ItemView Grid.Row="1" Grid.Column="1" ItemModel="{Binding Equipment.Ear}" Slot="Ears" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="2" Grid.Column="1" ItemModel="{Binding Equipment.Neck}" Slot="Neck" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="3" Grid.Column="1" ItemModel="{Binding Equipment.Wrist}" Slot="Wrists" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="4" Grid.Column="1" ItemModel="{Binding Equipment.RFinger}" Slot="RightRing" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="5" Grid.Column="1" ItemModel="{Binding Equipment.LFinger}" Slot="LeftRing" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+
+	</Grid>
+
+</UserControl>

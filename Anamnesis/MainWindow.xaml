@@ -2,19 +2,14 @@
 	x:Class="Anamnesis.GUI.MainWindow"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
-	xmlns:characterPages="clr-namespace:Anamnesis.Character.Pages"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 	xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
 	xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:posePages="clr-namespace:Anamnesis.PoseModule.Pages"
-	xmlns:services="clr-namespace:Anamnesis"
-	xmlns:views="clr-namespace:Anamnesis.Views"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	xmlns:XivToolsWpfWindows="clr-namespace:XivToolsWpf.Windows;assembly=XivToolsWpf"
-	xmlns:system="clr-namespace:System;assembly=System.Runtime" xmlns:views1="clr-namespace:Anamnesis.GUI.Views"
+	xmlns:tabs="clr-namespace:Anamnesis.Tabs"
 	Closing="Window_Closing"
 	Icon="/Assets/Anamnesis.ico"
 	Loaded="Window_Loaded"
@@ -105,6 +100,18 @@
 					</Grid>
 
 				</DataTemplate>
+
+			<Style x:Key="IconTab"
+				   TargetType="ToggleButton"
+				   BasedOn="{StaticResource TransparentIconToggleButton}">
+
+				<Setter Property="Margin" Value="0, 3, 0, 0"/>
+				<Setter Property="BorderThickness" Value="0"/>
+				<Setter Property="Height" Value="32"/>
+				<Setter Property="Width" Value="32"/>
+
+			</Style>
+			
 		</ResourceDictionary>
 	</XivToolsWpfWindows:ChromedWindow.Resources>
 
@@ -164,31 +171,37 @@
 					</Grid.ColumnDefinitions>
 
 					<!-- Pinned Actors -->
-					<Grid Margin="0, 0, 0, -4" IsEnabled="{Binding IsDrawerOpen, Converter={StaticResource !B}}" HorizontalAlignment="Left">
+					<Grid Margin="3, 0, 0, -4" IsEnabled="{Binding IsDrawerOpen, Converter={StaticResource !B}}" HorizontalAlignment="Left">
 
 						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
+						<!-- Home tab -->
+						<ToggleButton Grid.Column="0" Width="42" Style="{StaticResource IconTab}" IsChecked="{Binding ShowHome}">
+							<XivToolsWpf:IconBlock Icon="Home"/>
+						</ToggleButton>
+
 						<!-- Settings tab -->
-						<ToggleButton Grid.Column="0"
-									  Margin="3, 3, 0, 0"
-									  BorderThickness="0"
-									  Height="32"
-									  Width="32"
-									  Style="{StaticResource TransparentIconToggleButton}"
-									  IsChecked="{Binding ShowSettings}"
-									  ToolTip="Settings">
+						<ToggleButton Grid.Column="1" Style="{StaticResource IconTab}" IsChecked="{Binding ShowSettings}">
 							<XivToolsWpf:IconBlock Icon="Cog"/>
+						</ToggleButton>
+
+						<!-- Developer tab -->
+						<ToggleButton Grid.Column="2" Style="{StaticResource IconTab}" IsChecked="{Binding ShowDeveloper}"
+									  Visibility="{Binding SettingsService.Current.EnableDeveloperTab, Converter={StaticResource B2V}}">
+							<XivToolsWpf:IconBlock Icon="HatWizard"/>
 						</ToggleButton>
 
 						<!-- Actors dropdown -->
 						<ToggleButton x:Name="PopupButton"
 									  IsChecked="{Binding ElementName=Popup, Path=IsOpen}"
-									  Grid.Column="1"
+									  Grid.Column="3"
 									  Margin="3, 3, 0, 0"
 									  Width="32"
 									  Visibility="{Binding TargetService.MoreThanFourPins, Converter={StaticResource B2V}}">
@@ -232,7 +245,7 @@
 							VerticalScrollBarVisibility="Disabled"
 							PreviewMouseWheel="OnPinnedActorsPreviewMouseWheel"
 							x:Name="PinnedActorsList"
-							Grid.Column="2">
+							Grid.Column="4">
 
 							<ItemsControl Margin="0,3,0,0"
 										  ItemsSource="{Binding TargetService.PinnedActors}"
@@ -256,7 +269,7 @@
 								Foreground="{DynamicResource PrimaryHueMidBrush}"
 								Style="{DynamicResource TransparentButton}"
 								BorderThickness="0"
-								Grid.Column="3">
+								Grid.Column="5">
 							
 							<StackPanel Orientation="Horizontal" Margin="6,0,6,0">
 								<XivToolsWpf:TextBlock Key="Target_AddActor" Margin="0, 0, 6, 0" FontWeight="Bold" 
@@ -376,100 +389,18 @@
 
 				</Grid>
 
-				<TabControl x:Name="Tabs" Grid.Row="1" Height="500" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
-					<TabControl.Template>
-						<ControlTemplate TargetType="TabControl">
-
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition />
-								</Grid.ColumnDefinitions>
-
-								<StackPanel
-									Grid.Column="0"
-									Margin="3,1,0,0"
-									HorizontalAlignment="Left"
-									IsItemsHost="true"
-									Orientation="Vertical" />
-
-								<ContentPresenter
-									Grid.Column="1"
-									Margin="0,0,0,0"
-									ContentSource="SelectedContent" />
-
-							</Grid>
-						</ControlTemplate>
-					</TabControl.Template>
-
-					<TabItem x:Name="SceneTab">
-						<TabItem.Header>
-							<fa:IconImage
-								Foreground="{DynamicResource MaterialDesignBodyLight}"
-								Icon="HouseUser"
-								Width="22"/>
-						</TabItem.Header>
-
-						<views:SceneView />
-					</TabItem>
-
-					<TabItem x:Name="AppearanceTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
-						<TabItem.Header>
-							<XivToolsWpf:IconBlock
-								Foreground="{DynamicResource MaterialDesignBodyLight}"
-								Icon="UserEdit"
-								IsEnabled="{Binding GameService.IsSignedIn}"
-								FontSize="18"/>
-						</TabItem.Header>
-
-						<characterPages:CharacterPage DataContext="{Binding TargetService.SelectedActor}" />
-					</TabItem>
-					<TabItem x:Name="ActionTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
-						<TabItem.Header>
-							<XivToolsWpf:IconBlock
-								Foreground="{DynamicResource MaterialDesignBodyLight}"
-								Icon="Biking"
-								IsEnabled="{Binding GameService.IsSignedIn}"
-								FontSize="18"/>
-						</TabItem.Header>
-
-						<characterPages:ActionPage DataContext="{Binding TargetService.SelectedActor}" />
-					</TabItem>
-					<TabItem x:Name="PoseTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
-						<TabItem.Header>
-							<XivToolsWpf:IconBlock
-								Foreground="{DynamicResource MaterialDesignBodyLight}"
-								Icon="Running"
-								FontSize="20"/>
-						</TabItem.Header>
-
-						<posePages:PosePage DataContext="{Binding TargetService.SelectedActor}" />
-					</TabItem>
-				</TabControl>
-
-				<StackPanel Grid.Row="1" Width="48" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
-
-					<Button Height="30"
-						Margin="2"
-						BorderThickness="0"
-						Click="OnHistoryClick"
-						Style="{StaticResource TransparentButton}">
-
-						<Button.ToolTip>
-							<XivToolsWpf:TextBlock Key="System_History"/>
-						</Button.ToolTip>
-
-						<fa:IconBlock FontSize="12"
-								  Foreground="{DynamicResource MaterialDesignBody}"
-								  Icon="Undo"
-								  Opacity="0.5" />
-					</Button>
-				</StackPanel>
+				
 			</Grid>
 
-			<views1:SettingsView Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}"
-								 Height="500"
-								 Margin="3, 28, 3, 0"/>
+			<Grid Height="500"
+				  Margin="3, 28, 3, 0">
+
+				<tabs:HomeTab Visibility="{Binding ShowHome, Converter={StaticResource B2V}, FallbackValue=Visible}"/>
+				<tabs:SettingsTab Visibility="{Binding ShowSettings, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
+				<tabs:ActorTab Visibility="{Binding ShowActor, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
+				
+			</Grid>
+	
 
 			<!--<Grid Margin="48, 22, 1, 1" Visibility="{Binding TargetService.SelectedActor, Converter={StaticResource NullToVisibilityConverter}}">
 				<Rectangle Fill="{DynamicResource MaterialDesignPaper}" Opacity="0.9"/>

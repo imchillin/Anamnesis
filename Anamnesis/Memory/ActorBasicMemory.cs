@@ -5,7 +5,7 @@ namespace Anamnesis.Memory;
 
 using System;
 using System.Collections.Generic;
-using Anamnesis.PoseModule;
+using Anamnesis.Actor;
 using Anamnesis.Services;
 using Anamnesis.Styles;
 using Anamnesis.Utils;
