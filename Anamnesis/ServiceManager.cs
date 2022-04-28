@@ -37,19 +37,17 @@ public class ServiceManager
 			IService service = Activator.CreateInstance<T>();
 			Services.Add(service);
 
-			/*if (service.UseConcurrentInitilization)
+			if (service.UseConcurrentInitilization)
 			{
 				InitializingTasks.Add(Task.Run(async () =>
 				{
-					await Dispatch.NonUiThread();
 					await InitializeService(service);
 				}));
 			}
 			else
-			{*/
-			await Dispatch.MainThread();
-			await InitializeService(service);
-			////}
+			{
+				await InitializeService(service);
+			}
 		}
 		catch (Exception ex)
 		{
@@ -91,24 +89,37 @@ public class ServiceManager
 
 		IsInitialized = true;
 
+		Log.Information($"Services intialized in {StartupTimer.ElapsedMilliseconds}ms");
+
 		await this.StartServices();
+
+		StartupTimer.Restart();
 
 		CheckWindowsVersion();
 
 		StartupTimer.Stop();
-		Log.Information($"Services started in {StartupTimer.ElapsedMilliseconds}ms");
+		Log.Information($"took {StartupTimer.ElapsedMilliseconds}ms to check windows version");
 	}
 
 	public async Task StartServices()
 	{
+		StartupTimer.Restart();
+
 		await Dispatch.MainThread();
 
 		foreach (IService service in Services)
 		{
+			AddTimer.Restart();
 			await service.Start();
+			AddTimer.Stop();
+
+			Log.Information($"Started service: {service.GetType().Name} in {AddTimer.ElapsedMilliseconds}ms");
 		}
 
 		IsStarted = true;
+
+		StartupTimer.Stop();
+		Log.Information($"Services started in {StartupTimer.ElapsedMilliseconds}ms");
 	}
 
 	public async Task ShutdownServices()
@@ -146,6 +157,7 @@ public class ServiceManager
 	private static async Task InitializeService(IService service)
 	{
 		AddTimer.Restart();
+		await Dispatch.NonUiThread();
 		await service.Initialize();
 		AddTimer.Stop();
 
