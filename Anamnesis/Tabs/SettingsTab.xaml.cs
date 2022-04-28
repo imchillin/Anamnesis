@@ -1,7 +1,7 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GUI.Views;
+namespace Anamnesis.Tabs;
 
 using System;
 using System.Collections.Generic;
@@ -22,9 +22,9 @@ using PropertyChanged;
 /// Interaction logic for ThemeSettingsView.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class SettingsView : System.Windows.Controls.UserControl
+public partial class SettingsTab : System.Windows.Controls.UserControl
 {
-	public SettingsView()
+	public SettingsTab()
 	{
 		this.InitializeComponent();
 

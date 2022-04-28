@@ -22,6 +22,7 @@ using Anamnesis.Utils;
 using Anamnesis.Views;
 using Anamnesis.Windows;
 using PropertyChanged;
+using XivToolsWpf;
 using XivToolsWpf.Windows;
 
 /// <summary>
@@ -33,7 +34,7 @@ public partial class MainWindow : ChromedWindow
 	private static MainWindow? instance;
 	private MiniWindow? mini;
 	private bool hasSetPosition = false;
-	private bool showSettings;
+	private Tabs tab = Tabs.Home;
 
 	public MainWindow()
 	{
@@ -50,17 +51,32 @@ public partial class MainWindow : ChromedWindow
 		this.OnSettingsChanged();
 
 		GameService.Instance.PropertyChanged += this.OnGameServicePropertyChanged;
+	}
 
-		HotkeyService.RegisterHotkeyHandler("MainWindow.SceneTab", () => this.SceneTab.Focus());
-		HotkeyService.RegisterHotkeyHandler("MainWindow.AppearanceTab", () => this.AppearanceTab.Focus());
-		HotkeyService.RegisterHotkeyHandler("MainWindow.PoseTab", () => this.PoseTab.Focus());
-		HotkeyService.RegisterHotkeyHandler("MainWindow.ActionTab", () => this.ActionTab.Focus());
+	public enum Tabs
+	{
+		Home,
+		Settings,
+		Developer,
+		Actor,
 	}
 
 	public static new bool IsActive => instance?.GetIsActive() ?? false;
 
 	public bool IsClosing { get; private set; } = false;
 	public bool IsDrawerOpen { get; private set; } = false;
+
+	public Tabs Tab
+	{
+		get => this.tab;
+		set
+		{
+			if (value != Tabs.Actor)
+				this.TargetService.ClearSelection();
+
+			this.tab = value;
+		}
+	}
 
 	public GameService GameService => GameService.Instance;
 	public SettingsService SettingsService => SettingsService.Instance;
@@ -76,16 +92,18 @@ public partial class MainWindow : ChromedWindow
 	public bool IsDebug => false;
 #endif
 
+	[DependsOn(nameof(Tab))]
 	public bool ShowSettings
 	{
-		get => this.showSettings;
-		set
-		{
-			if (value)
-				this.TargetService.ClearSelection();
+		get => this.Tab == Tabs.Home;
+		set => this.Tab = Tabs.Home;
+	}
 
-			this.showSettings = value;
-		}
+	[DependsOn(nameof(Tab))]
+	public bool ShowActor
+	{
+		get => this.Tab == Tabs.Actor;
+		set => this.Tab = Tabs.Actor;
 	}
 
 	protected override void OnActivated(EventArgs e)
@@ -160,14 +178,9 @@ public partial class MainWindow : ChromedWindow
 
 	private void OnActorSelected(ActorMemory? actor)
 	{
-		this.ShowSettings = false;
-
-		if (actor == null)
+		if (actor != null)
 		{
-			this.Tabs.SelectedIndex = 0;
-		}
-		else
-		{
+			this.Tab = Tabs.Actor;
 			FrameworkElement? container = this.PinnedActorList.ItemContainerGenerator.ContainerFromItem(this.TargetService.CurrentlyPinned) as FrameworkElement;
 			container?.BringIntoView();
 		}
@@ -177,14 +190,14 @@ public partial class MainWindow : ChromedWindow
 	{
 		await Application.Current.Dispatcher.InvokeAsync(async () =>
 		{
-				// Close all current drawers.
-				this.DrawerHost.IsLeftDrawerOpen = false;
-				this.DrawerHost.IsTopDrawerOpen = false;
-				this.DrawerHost.IsRightDrawerOpen = false;
-				this.DrawerHost.IsBottomDrawerOpen = false;
+			// Close all current drawers.
+			this.DrawerHost.IsLeftDrawerOpen = false;
+			this.DrawerHost.IsTopDrawerOpen = false;
+			this.DrawerHost.IsRightDrawerOpen = false;
+			this.DrawerHost.IsBottomDrawerOpen = false;
 
-				// If this is a drawer view, bind to its events.
-				if (view is IDrawer drawer)
+			// If this is a drawer view, bind to its events.
+			if (view is IDrawer drawer)
 			{
 				drawer.Close += () => this.DrawerHost.IsLeftDrawerOpen = false;
 				drawer.Close += () => this.DrawerHost.IsTopDrawerOpen = false;
@@ -192,9 +205,9 @@ public partial class MainWindow : ChromedWindow
 				drawer.Close += () => this.DrawerHost.IsBottomDrawerOpen = false;
 			}
 
-				this.IsDrawerOpen = true;
+			this.IsDrawerOpen = true;
 
-				switch (direction)
+			switch (direction)
 			{
 				case DrawerDirection.Left:
 					{
@@ -225,23 +238,23 @@ public partial class MainWindow : ChromedWindow
 					}
 			}
 
-				// Wait while any of the drawer areas remain open
-				while (this.DrawerHost.IsLeftDrawerOpen
-				|| this.DrawerHost.IsRightDrawerOpen
-				|| this.DrawerHost.IsBottomDrawerOpen
-				|| this.DrawerHost.IsTopDrawerOpen)
+			// Wait while any of the drawer areas remain open
+			while (this.DrawerHost.IsLeftDrawerOpen
+			|| this.DrawerHost.IsRightDrawerOpen
+			|| this.DrawerHost.IsBottomDrawerOpen
+			|| this.DrawerHost.IsTopDrawerOpen)
 			{
 				await Task.Delay(250);
 			}
 
-				if (view is IDrawer drawer2)
+			if (view is IDrawer drawer2)
 			{
 				drawer2.OnClosed();
 			}
 
-				this.IsDrawerOpen = false;
+			this.IsDrawerOpen = false;
 
-				GC.Collect();
+			GC.Collect();
 		});
 	}
 
@@ -254,11 +267,6 @@ public partial class MainWindow : ChromedWindow
 		}
 
 		ViewService.ShowDrawer<AboutView>();
-	}
-
-	private void OnHistoryClick(object sender, RoutedEventArgs e)
-	{
-		ViewService.ShowDrawer<HistoryView>();
 	}
 
 	private void OnResizeDrag(object sender, DragDeltaEventArgs e)
@@ -303,11 +311,12 @@ public partial class MainWindow : ChromedWindow
 		}
 	}
 
-	private void OnGameServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
+	private async void OnGameServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
 		if (!GameService.Instance.IsSignedIn)
 		{
-			this.Dispatcher.Invoke(() => this.Tabs.SelectedIndex = 0);
+			await Dispatch.MainThread();
+			this.Tab = Tabs.Home;
 		}
 	}
 
@@ -354,7 +363,7 @@ public partial class MainWindow : ChromedWindow
 		if (SettingsService.Instance.FirstTimeUser)
 		{
 			this.Ftue.Visibility = Visibility.Visible;
-			this.ShowSettings = true;
+			this.Tab = Tabs.Settings;
 		}
 	}
 
@@ -366,11 +375,6 @@ public partial class MainWindow : ChromedWindow
 	private void OnWikiClicked(object sender, RoutedEventArgs e)
 	{
 		UrlUtility.Open("https://github.com/imchillin/Anamnesis/wiki");
-	}
-
-	private void OnBackClicked(object sender, RoutedEventArgs e)
-	{
-		this.ShowSettings = false;
 	}
 
 	private void OnPinnedActorsPreviewMouseWheel(object sender, MouseWheelEventArgs e)

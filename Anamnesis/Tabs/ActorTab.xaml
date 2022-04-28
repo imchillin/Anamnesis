@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="Anamnesis.Tabs.ActorTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Anamnesis.Tabs"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 xmlns:characterPages="clr-namespace:Anamnesis.Character.Pages"
+			 xmlns:posePages="clr-namespace:Anamnesis.PoseModule.Pages"
+			 xmlns:views="clr-namespace:Anamnesis.Views"
+			 mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+		<TabControl x:Name="Tabs" Grid.Row="1" Height="500" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
+			<TabControl.Template>
+				<ControlTemplate TargetType="TabControl">
+
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+
+						<StackPanel
+									Grid.Column="0"
+									Margin="3,1,0,0"
+									HorizontalAlignment="Left"
+									IsItemsHost="true"
+									Orientation="Vertical" />
+
+						<ContentPresenter
+									Grid.Column="1"
+									Margin="0,0,0,0"
+									ContentSource="SelectedContent" />
+
+					</Grid>
+				</ControlTemplate>
+			</TabControl.Template>
+
+			<TabItem x:Name="SceneTab">
+				<TabItem.Header>
+					<fa:IconImage
+								Foreground="{DynamicResource MaterialDesignBodyLight}"
+								Icon="HouseUser"
+								Width="22"/>
+				</TabItem.Header>
+
+				<views:SceneView />
+			</TabItem>
+
+			<TabItem x:Name="AppearanceTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+				<TabItem.Header>
+					<XivToolsWpf:IconBlock
+								Foreground="{DynamicResource MaterialDesignBodyLight}"
+								Icon="UserEdit"
+								IsEnabled="{Binding GameService.IsSignedIn}"
+								FontSize="18"/>
+				</TabItem.Header>
+
+				<characterPages:CharacterPage DataContext="{Binding TargetService.SelectedActor}" />
+			</TabItem>
+			<TabItem x:Name="ActionTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+				<TabItem.Header>
+					<XivToolsWpf:IconBlock
+								Foreground="{DynamicResource MaterialDesignBodyLight}"
+								Icon="Biking"
+								IsEnabled="{Binding GameService.IsSignedIn}"
+								FontSize="18"/>
+				</TabItem.Header>
+
+				<characterPages:ActionPage DataContext="{Binding TargetService.SelectedActor}" />
+			</TabItem>
+			<TabItem x:Name="PoseTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
+				<TabItem.Header>
+					<XivToolsWpf:IconBlock
+								Foreground="{DynamicResource MaterialDesignBodyLight}"
+								Icon="Running"
+								FontSize="20"/>
+				</TabItem.Header>
+
+				<posePages:PosePage DataContext="{Binding TargetService.SelectedActor}" />
+			</TabItem>
+		</TabControl>
+
+		<StackPanel Grid.Row="1" Width="48" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
+
+			<Button Height="30"
+						Margin="2"
+						BorderThickness="0"
+						Click="OnHistoryClick"
+						Style="{StaticResource TransparentButton}">
+
+				<Button.ToolTip>
+					<XivToolsWpf:TextBlock Key="System_History"/>
+				</Button.ToolTip>
+
+				<fa:IconBlock FontSize="12"
+								  Foreground="{DynamicResource MaterialDesignBody}"
+								  Icon="Undo"
+								  Opacity="0.5" />
+			</Button>
+		</StackPanel>
+	</Grid>
+</UserControl>
