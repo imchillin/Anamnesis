@@ -125,7 +125,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		{
 			if (animationId < GameDataService.ActionTimelines.RowCount)
 			{
-				MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.BaseAnimationOverride)), animationId, "Animation ID Override");
+				memory.Animation!.BaseOverride = (ushort)animationId;
 			}
 		}
 
@@ -142,7 +142,7 @@ public class AnimationService : ServiceBase<AnimationService>
 
 		if (interrupt)
 		{
-			MemoryService.Write<ushort>(memory.GetAddressOfProperty(nameof(ActorMemory.TargetAnimation)), 0, "Animation Interrupt");
+			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody] = 0;
 		}
 
 		memory.Tick();

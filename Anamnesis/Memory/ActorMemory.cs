@@ -50,6 +50,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x084E, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
 	[Bind(0x084F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x0860, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
+	[Bind(0x09A0)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x09A0)] public ushort TargetAnimation { get; set; }
 	[Bind(0x0A14)] public float BaseAnimationSpeedInternal { get; set; }
 	[Bind(0x0A18)] public float AnimationSpeedTrigger { get; set; }
