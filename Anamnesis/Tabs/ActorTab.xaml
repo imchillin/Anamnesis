@@ -22,9 +22,8 @@
 							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
 
-						<StackPanel
-									Grid.Column="0"
-									Margin="3,1,0,0"
+						<StackPanel Grid.Column="0"
+									Margin="3,8,0,0"
 									HorizontalAlignment="Left"
 									IsItemsHost="true"
 									Orientation="Vertical" />
@@ -37,17 +36,6 @@
 					</Grid>
 				</ControlTemplate>
 			</TabControl.Template>
-
-			<TabItem x:Name="SceneTab">
-				<TabItem.Header>
-					<fa:IconImage
-								Foreground="{DynamicResource MaterialDesignBodyLight}"
-								Icon="HouseUser"
-								Width="22"/>
-				</TabItem.Header>
-
-				<views:SceneView />
-			</TabItem>
 
 			<TabItem x:Name="AppearanceTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 				<TabItem.Header>

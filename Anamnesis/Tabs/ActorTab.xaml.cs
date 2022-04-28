@@ -18,7 +18,6 @@ public partial class ActorTab : UserControl
 	{
 		this.InitializeComponent();
 
-		HotkeyService.RegisterHotkeyHandler("MainWindow.SceneTab", () => this.SceneTab.Focus());
 		HotkeyService.RegisterHotkeyHandler("MainWindow.AppearanceTab", () => this.AppearanceTab.Focus());
 		HotkeyService.RegisterHotkeyHandler("MainWindow.PoseTab", () => this.PoseTab.Focus());
 		HotkeyService.RegisterHotkeyHandler("MainWindow.ActionTab", () => this.ActionTab.Focus());

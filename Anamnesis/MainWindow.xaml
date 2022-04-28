@@ -100,6 +100,18 @@
 					</Grid>
 
 				</DataTemplate>
+
+			<Style x:Key="IconTab"
+				   TargetType="ToggleButton"
+				   BasedOn="{StaticResource TransparentIconToggleButton}">
+
+				<Setter Property="Margin" Value="0, 3, 0, 0"/>
+				<Setter Property="BorderThickness" Value="0"/>
+				<Setter Property="Height" Value="32"/>
+				<Setter Property="Width" Value="32"/>
+
+			</Style>
+			
 		</ResourceDictionary>
 	</XivToolsWpfWindows:ChromedWindow.Resources>
 
@@ -159,31 +171,37 @@
 					</Grid.ColumnDefinitions>
 
 					<!-- Pinned Actors -->
-					<Grid Margin="0, 0, 0, -4" IsEnabled="{Binding IsDrawerOpen, Converter={StaticResource !B}}" HorizontalAlignment="Left">
+					<Grid Margin="3, 0, 0, -4" IsEnabled="{Binding IsDrawerOpen, Converter={StaticResource !B}}" HorizontalAlignment="Left">
 
 						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
+						<!-- Home tab -->
+						<ToggleButton Grid.Column="0" Width="42" Style="{StaticResource IconTab}" IsChecked="{Binding ShowHome}">
+							<XivToolsWpf:IconBlock Icon="Home"/>
+						</ToggleButton>
+
 						<!-- Settings tab -->
-						<ToggleButton Grid.Column="0"
-									  Margin="3, 3, 0, 0"
-									  BorderThickness="0"
-									  Height="32"
-									  Width="32"
-									  Style="{StaticResource TransparentIconToggleButton}"
-									  IsChecked="{Binding ShowSettings}"
-									  ToolTip="Settings">
+						<ToggleButton Grid.Column="1" Style="{StaticResource IconTab}" IsChecked="{Binding ShowSettings}">
 							<XivToolsWpf:IconBlock Icon="Cog"/>
+						</ToggleButton>
+
+						<!-- Developer tab -->
+						<ToggleButton Grid.Column="2" Style="{StaticResource IconTab}" IsChecked="{Binding ShowDeveloper}"
+									  Visibility="{Binding SettingsService.Current.EnableDeveloperTab, Converter={StaticResource B2V}}">
+							<XivToolsWpf:IconBlock Icon="HatWizard"/>
 						</ToggleButton>
 
 						<!-- Actors dropdown -->
 						<ToggleButton x:Name="PopupButton"
 									  IsChecked="{Binding ElementName=Popup, Path=IsOpen}"
-									  Grid.Column="1"
+									  Grid.Column="3"
 									  Margin="3, 3, 0, 0"
 									  Width="32"
 									  Visibility="{Binding TargetService.MoreThanFourPins, Converter={StaticResource B2V}}">
@@ -227,7 +245,7 @@
 							VerticalScrollBarVisibility="Disabled"
 							PreviewMouseWheel="OnPinnedActorsPreviewMouseWheel"
 							x:Name="PinnedActorsList"
-							Grid.Column="2">
+							Grid.Column="4">
 
 							<ItemsControl Margin="0,3,0,0"
 										  ItemsSource="{Binding TargetService.PinnedActors}"
@@ -251,7 +269,7 @@
 								Foreground="{DynamicResource PrimaryHueMidBrush}"
 								Style="{DynamicResource TransparentButton}"
 								BorderThickness="0"
-								Grid.Column="3">
+								Grid.Column="5">
 							
 							<StackPanel Orientation="Horizontal" Margin="6,0,6,0">
 								<XivToolsWpf:TextBlock Key="Target_AddActor" Margin="0, 0, 6, 0" FontWeight="Bold" 
@@ -376,9 +394,10 @@
 
 			<Grid Height="500"
 				  Margin="3, 28, 3, 0">
-				
-				<tabs:SettingsTab Visibility="{Binding ShowSettings, Converter={StaticResource B2V}}"/>
-				<tabs:ActorTab Visibility="{Binding ShowActor, Converter={StaticResource B2V}}"/>
+
+				<tabs:HomeTab Visibility="{Binding ShowHome, Converter={StaticResource B2V}, FallbackValue=Visible}"/>
+				<tabs:SettingsTab Visibility="{Binding ShowSettings, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
+				<tabs:ActorTab Visibility="{Binding ShowActor, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 				
 			</Grid>
 	

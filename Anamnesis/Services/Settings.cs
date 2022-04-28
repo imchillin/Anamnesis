@@ -48,6 +48,7 @@ public class Settings : INotifyPropertyChanged
 	public bool UseExternalRefresh { get; set; } = false;
 	public bool EnableGameHotkeyHooks { get; set; } = false;
 	public bool EnableHotkeys { get; set; } = true;
+	public bool EnableDeveloperTab { get; set; } = false;
 
 	public bool OverrideSystemTheme { get; set; } = false;
 	public Color ThemeTrimColor { get; set; } = Color.FromArgb(255, 247, 99, 12);
@@ -93,10 +94,9 @@ public class Settings : INotifyPropertyChanged
 		public KeyCombination TargetService_SelectPinned8 { get; set; } = new(Key.F8);
 		public KeyCombination TargetService_NextPinned { get; set; } = new(Key.Right, ModifierKeys.Control);
 		public KeyCombination TargetService_PrevPinned { get; set; } = new(Key.Left, ModifierKeys.Control);
-		public KeyCombination MainWindow_SceneTab { get; set; } = new(Key.D1);
-		public KeyCombination MainWindow_AppearanceTab { get; set; } = new(Key.D2);
-		public KeyCombination MainWindow_ActionTab { get; set; } = new(Key.D3);
-		public KeyCombination MainWindow_PoseTab { get; set; } = new(Key.D4);
+		public KeyCombination MainWindow_AppearanceTab { get; set; } = new(Key.D1);
+		public KeyCombination MainWindow_ActionTab { get; set; } = new(Key.D2);
+		public KeyCombination MainWindow_PoseTab { get; set; } = new(Key.D3);
 		public KeyCombination System_Undo { get; set; } = new(Key.Z, ModifierKeys.Control);
 		////public KeyCombinationSystem_Redo { get; set; } = new(Key.Y, ModifierKeys.Control);
 

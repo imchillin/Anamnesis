@@ -80,7 +80,7 @@ public class TargetService : ServiceBase<TargetService>
 			await Dispatch.MainThread();
 			Instance.PinnedActors.Add(pined);
 			Instance.PinnedActorCount = Instance.PinnedActors.Count;
-			Instance.SelectActor(pined);
+			////Instance.SelectActor(pined);
 			ActorPinned?.Invoke(pined);
 		}
 		catch (Exception ex)

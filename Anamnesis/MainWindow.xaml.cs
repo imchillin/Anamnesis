@@ -93,10 +93,17 @@ public partial class MainWindow : ChromedWindow
 #endif
 
 	[DependsOn(nameof(Tab))]
-	public bool ShowSettings
+	public bool ShowHome
 	{
 		get => this.Tab == Tabs.Home;
 		set => this.Tab = Tabs.Home;
+	}
+
+	[DependsOn(nameof(Tab))]
+	public bool ShowSettings
+	{
+		get => this.Tab == Tabs.Settings;
+		set => this.Tab = Tabs.Settings;
 	}
 
 	[DependsOn(nameof(Tab))]
@@ -104,6 +111,13 @@ public partial class MainWindow : ChromedWindow
 	{
 		get => this.Tab == Tabs.Actor;
 		set => this.Tab = Tabs.Actor;
+	}
+
+	[DependsOn(nameof(Tab))]
+	public bool ShowDeveloper
+	{
+		get => this.Tab == Tabs.Developer;
+		set => this.Tab = Tabs.Developer;
 	}
 
 	protected override void OnActivated(EventArgs e)

@@ -18,12 +18,12 @@ using Serilog;
 /// Interaction logic for SceneView.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class SceneView : UserControl
+public partial class CameraEditor : UserControl
 {
 	private static DirectoryInfo? lastLoadDir;
 	private static DirectoryInfo? lastSaveDir;
 
-	public SceneView()
+	public CameraEditor()
 	{
 		this.InitializeComponent();
 
@@ -36,24 +36,9 @@ public partial class SceneView : UserControl
 	public TerritoryService TerritoryService => TerritoryService.Instance;
 	public TimeService TimeService => TimeService.Instance;
 	public CameraService CameraService => CameraService.Instance;
-	public TipService TipService => TipService.Instance;
 	public SettingsService SettingsService => SettingsService.Instance;
 
-	private static ILogger Log => Serilog.Log.ForContext<SceneView>();
-
-	private void OnTipClicked(object sender, RoutedEventArgs e)
-	{
-		TipService.Instance.KnowMore();
-	}
-
-	private void OnWeatherClicked(object sender, RoutedEventArgs e)
-	{
-		WeatherSelector selector = new WeatherSelector();
-		SelectorDrawer.Show(selector, this.TerritoryService.CurrentWeather, (w) =>
-		{
-			this.TerritoryService.CurrentWeather = w;
-		});
-	}
+	private static ILogger Log => Serilog.Log.ForContext<CameraEditor>();
 
 	private async void OnLoadCamera(object sender, RoutedEventArgs e)
 	{
@@ -67,12 +52,12 @@ public partial class SceneView : UserControl
 		{
 			Shortcut[]? shortcuts = new[]
 			{
-					FileService.DefaultCameraDirectory,
+				FileService.DefaultCameraDirectory,
 			};
 
 			Type[] types = new[]
 			{
-						typeof(CameraShotFile),
+				typeof(CameraShotFile),
 			};
 
 			OpenResult result = await FileService.Open(lastLoadDir, shortcuts, types);
