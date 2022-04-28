@@ -16,10 +16,10 @@
 
 	<Grid x:Name="ContentArea">
 
-		<Grid VerticalAlignment="Top" Margin="100,0,0,0" Height="22">
+		<Grid VerticalAlignment="Top" Margin="100,0,0,0">
 			<CheckBox
 				x:Name="FlipSidesOption"
-				Margin="3,0,3,0"
+				Margin="3,4,3,0"
 				VerticalContentAlignment="Center"
 				IsChecked="{Binding FlipSides}">
 				

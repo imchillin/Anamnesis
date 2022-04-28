@@ -18,7 +18,7 @@
 	</UserControl.Resources>
 
 	<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-		<Grid x:Name="ContentArea">
+		<Grid x:Name="ContentArea" Margin="3">
 			<StackPanel>
 				<GroupBox>
 					<GroupBox.Header>

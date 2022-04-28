@@ -230,7 +230,7 @@
 			<Grid Grid.Row="0"
 				  Grid.ColumnSpan="2"
 				  VerticalAlignment="Stretch"
-				  Margin="3, 2, 0, 0">
+				  Margin="3, 3, 0, 3">
 
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
@@ -238,102 +238,103 @@
 				</Grid.ColumnDefinitions>
 
 				<!-- Pose Control -->
-				<Grid Height="35" Grid.Column="0">
-					<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+				<Border Grid.Column="0" Style="{StaticResource Panel}">
+					<Grid>
+						<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
 
-						<ToggleButton
-							Style="{StaticResource MaterialDesignSwitchToggleButton}"
-							IsEnabled="{Binding GposeService.IsGpose}" 
-							IsChecked="{Binding PoseService.IsEnabled}"
-							Height="28"
-							Margin="8,0,6,0">
-						</ToggleButton>
+							<ToggleButton
+								Style="{StaticResource MaterialDesignSwitchToggleButton}"
+								IsEnabled="{Binding GposeService.IsGpose}" 
+								IsChecked="{Binding PoseService.IsEnabled}"
+								Height="28"
+								Margin="8,0,6,0">
+							</ToggleButton>
 
-						<CheckBox
-							Margin="3,0,6,0"
-							VerticalContentAlignment="Center"
-							IsChecked="{Binding PoseService.FreezePhysics}"
-							IsEnabled="{Binding PoseService.IsEnabled}">
-							<XivToolsWpf:TextBlock Key="Pose_FreezePhysics" />
-						</CheckBox>
-
-						<CheckBox Margin="3,0,6,0"
-								  IsEnabled="{Binding GposeService.IsGpose}"
-								  IsChecked="{Binding PoseService.FreezeWorldPosition}"
-								  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
-
-							<ToggleButton.ToolTip>
-								<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>
-							</ToggleButton.ToolTip>
-							
-							<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositions" />
-						</CheckBox>
-
-						<CheckBox
-							Margin="3,0,6,0"
-							VerticalContentAlignment="Center"
-							IsChecked="{Binding PoseService.EnableParenting}"
-							IsEnabled="{Binding PoseService.IsEnabled}">
-							<XivToolsWpf:TextBlock Key="Pose_Parenting" />
-						</CheckBox>
-
-						<CheckBox
-							Margin="3,0,6,0"
-							VerticalContentAlignment="Center"
-							IsChecked="{Binding Skeleton.LinkEyes}"
-							IsEnabled="{Binding PoseService.IsEnabled}">
-							<XivToolsWpf:TextBlock Key="Pose_LinkEyes" />
-						</CheckBox>
-					</StackPanel>
-
-					<Border
-						Margin="3,3,0,3"
-						Padding="3"
-						HorizontalAlignment="Right"
-						Background="{DynamicResource AttentionToActionBrush}"
-						CornerRadius="6">
-						<StackPanel Orientation="Horizontal">
 							<CheckBox
-								Margin="3"
+								Margin="3,0,6,0"
 								VerticalContentAlignment="Center"
-								IsChecked="{Binding PoseService.FreezeRotation}"
+								IsChecked="{Binding PoseService.FreezePhysics}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<XivToolsWpf:TextBlock Key="Pose_EnableRotation" Margin="0,-2,0,2" />
+								<XivToolsWpf:TextBlock Key="Pose_FreezePhysics" />
+							</CheckBox>
 
-								<CheckBox.ToolTip>
-									<XivToolsWpf:TextBlock Key="Pose_EnableRotationTooltip" />
-								</CheckBox.ToolTip>
+							<CheckBox Margin="3,0,6,0"
+									  IsEnabled="{Binding GposeService.IsGpose}"
+									  IsChecked="{Binding PoseService.FreezeWorldPosition}"
+									  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+
+								<ToggleButton.ToolTip>
+									<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>
+								</ToggleButton.ToolTip>
+
+								<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositions" />
 							</CheckBox>
 
 							<CheckBox
-								Margin="3"
+								Margin="3,0,6,0"
 								VerticalContentAlignment="Center"
-								IsChecked="{Binding PoseService.FreezePositions}"
+								IsChecked="{Binding PoseService.EnableParenting}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<XivToolsWpf:TextBlock Key="Pose_EnablePosition" Margin="0,-2,0,2" />
-
-								<CheckBox.ToolTip>
-									<XivToolsWpf:TextBlock Key="Pose_EnablePositionTooltip" />
-								</CheckBox.ToolTip>
+								<XivToolsWpf:TextBlock Key="Pose_Parenting" />
 							</CheckBox>
 
 							<CheckBox
-								Margin="3"
+								Margin="3,0,6,0"
 								VerticalContentAlignment="Center"
-								IsChecked="{Binding PoseService.FreezeScale}"
+								IsChecked="{Binding Skeleton.LinkEyes}"
 								IsEnabled="{Binding PoseService.IsEnabled}">
-								<XivToolsWpf:TextBlock Key="Pose_EnableScale" Margin="0,-2,0,2" />
-
-								<CheckBox.ToolTip>
-									<XivToolsWpf:TextBlock Key="Pose_EnableScaleTooltip" />
-								</CheckBox.ToolTip>
+								<XivToolsWpf:TextBlock Key="Pose_LinkEyes" />
 							</CheckBox>
 						</StackPanel>
-					</Border>
 
-				</Grid>
+						<Border
+							Margin="2"
+							Padding="3"
+							HorizontalAlignment="Right"
+							Background="{DynamicResource AttentionToActionBrush}"
+							CornerRadius="6">
+							<StackPanel Orientation="Horizontal">
+								<CheckBox
+									Margin="3"
+									VerticalContentAlignment="Center"
+									IsChecked="{Binding PoseService.FreezeRotation}"
+									IsEnabled="{Binding PoseService.IsEnabled}">
+									<XivToolsWpf:TextBlock Key="Pose_EnableRotation" Margin="0,-2,0,2" />
 
+									<CheckBox.ToolTip>
+										<XivToolsWpf:TextBlock Key="Pose_EnableRotationTooltip" />
+									</CheckBox.ToolTip>
+								</CheckBox>
+
+								<CheckBox
+									Margin="3"
+									VerticalContentAlignment="Center"
+									IsChecked="{Binding PoseService.FreezePositions}"
+									IsEnabled="{Binding PoseService.IsEnabled}">
+									<XivToolsWpf:TextBlock Key="Pose_EnablePosition" Margin="0,-2,0,2" />
+
+									<CheckBox.ToolTip>
+										<XivToolsWpf:TextBlock Key="Pose_EnablePositionTooltip" />
+									</CheckBox.ToolTip>
+								</CheckBox>
+
+								<CheckBox
+									Margin="3"
+									VerticalContentAlignment="Center"
+									IsChecked="{Binding PoseService.FreezeScale}"
+									IsEnabled="{Binding PoseService.IsEnabled}">
+									<XivToolsWpf:TextBlock Key="Pose_EnableScale" Margin="0,-2,0,2" />
+
+									<CheckBox.ToolTip>
+										<XivToolsWpf:TextBlock Key="Pose_EnableScaleTooltip" />
+									</CheckBox.ToolTip>
+								</CheckBox>
+							</StackPanel>
+						</Border>
+					</Grid>
+				</Border>
 			</Grid>
+			
 			<!--  Content  -->
 			<Grid Grid.Row="1"
 					Margin="3"
@@ -349,7 +350,7 @@
 					<Grid DataContext="{Binding Skeleton}">
 						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed" />
 						<views:PoseGuiView x:Name="GuiView" Visibility="Visible" />
-						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" Margin="0, 28, 0, 0"/>
+						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" Margin="3, 28, 0, 3"/>
 					</Grid>
 				</Grid>
 
