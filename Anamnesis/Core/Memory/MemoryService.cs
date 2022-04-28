@@ -407,10 +407,7 @@ public class MemoryService : ServiceBase<MemoryService>
 #endif
 
 		if (proc != null)
-		{
 			await this.OpenProcess(proc);
-			await AddressService.Scan();
-		}
 
 		IsProcessAlive = true;
 	}

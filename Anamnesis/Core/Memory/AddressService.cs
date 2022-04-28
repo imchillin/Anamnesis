@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Anamnesis.Memory;
+using XivToolsWpf;
 
 #pragma warning disable SA1027, SA1025
 public class AddressService : ServiceBase<AddressService>
@@ -102,7 +103,15 @@ public class AddressService : ServiceBase<AddressService>
 		}
 	}
 
-	public static async Task Scan()
+	public override bool UseConcurrentInitilization => true;
+
+	public override async Task Initialize()
+	{
+		await base.Initialize();
+		await this.Scan();
+	}
+
+	private async Task Scan()
 	{
 		if (MemoryService.Process == null)
 			return;
@@ -110,35 +119,34 @@ public class AddressService : ServiceBase<AddressService>
 		if (MemoryService.Process.MainModule == null)
 			throw new Exception("Process has no main module");
 
-		Stopwatch sw = new Stopwatch();
-		sw.Start();
+		await Dispatch.NonUiThread();
 
 		List<Task> tasks = new List<Task>();
 
 		// Scan for all static addresses
 		// Some signatures taken from Dalamud: https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Game/ClientState/ClientStateAddressResolver.cs
-		tasks.Add(GetAddressFromSignature("ActorTable", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 0F B6 83", 0, (p) => { ActorTable = p; }));
-		tasks.Add(GetAddressFromTextSignature("SkeletonFreezeRotation", "41 0F 29 5C 12 10", (p) => { SkeletonFreezeRotation = p; }));    // SkeletonAddress
-		tasks.Add(GetAddressFromTextSignature("SkeletonFreezeRotation2", "43 0F 29 5C 18 10", (p) => { SkeletonFreezeRotation2 = p; }));   // SkeletonAddress2
-		tasks.Add(GetAddressFromTextSignature("SkeletonFreezeRotation3", "0F 29 5E 10 49 8B 73 28", (p) => { SkeletonFreezeRotation3 = p; })); // SkeletonAddress3
-		tasks.Add(GetAddressFromTextSignature("SkeletonFreezeScale", "41 0F 29 44 12 20", (p) => { SkeletonFreezeScale = p; }));   // SkeletonAddress4
-		tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition", "41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
-		tasks.Add(GetAddressFromTextSignature("SkeletonFreezeScale2", "43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
-		tasks.Add(GetAddressFromTextSignature("SkeletonFreezePosition2", "43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
-		tasks.Add(GetAddressFromTextSignature("WorldPositionFreeze", "F3 0F 11 78 ?? F3 0F 11 70 ?? F3 44 0F 11 40 ?? 48 83 48 ?? 02", (p) => { WorldPositionFreeze = p; }));
-		tasks.Add(GetAddressFromTextSignature("WorldRotationFreeze", "0F 11 40 ?? 48 8B 8B ?? ?? ?? ?? 0F B6 81 ?? ?? ?? ?? 24 0F 3C 03 75 ?? 48 8B 01 B2 01 FF 50 ?? 48 8B 83 ?? ?? ?? ??", (p) => { WorldRotationFreeze = p; }));
-		tasks.Add(GetAddressFromTextSignature("GPoseCameraTargetPositionFreeze", "F3 0F 11 89 ?? ?? ?? ?? 48 8B D9 F3 0F 11 91 ?? ?? ?? ??", (p) => { GPoseCameraTargetPositionFreeze = p; }));
-		tasks.Add(GetAddressFromTextSignature("AnimationSpeedPatch", "F3 0F 11 94 ?? ?? ?? ?? ?? 80 89 ?? ?? ?? ?? 01", (p) => { AnimationSpeedPatch = p; }));
-		tasks.Add(GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
-		tasks.Add(GetAddressFromSignature("Weather", "49 8B 9D ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));
-		tasks.Add(GetAddressFromSignature("GPoseFilters", "4C 8B 05 ?? ?? ?? ?? 41 8B 80 ?? ?? ?? ?? C1 E8 02", 0, (p) => { GPoseFilters = p; }));
-		tasks.Add(GetAddressFromSignature("GposeCheck", "48 8B 15 ?? ?? ?? ?? 48 89 6C 24", 0, (p) => { GposeCheck = p; }));
-		tasks.Add(GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
-		tasks.Add(GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
-		tasks.Add(GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
-		tasks.Add(GetAddressFromSignature("PlayerTargetSystem", "48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 0, (p) => { PlayerTargetSystem = p; }));
+		tasks.Add(this.GetAddressFromSignature("ActorTable", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 0F B6 83", 0, (p) => { ActorTable = p; }));
+		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezeRotation", "41 0F 29 5C 12 10", (p) => { SkeletonFreezeRotation = p; }));    // SkeletonAddress
+		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezeRotation2", "43 0F 29 5C 18 10", (p) => { SkeletonFreezeRotation2 = p; }));   // SkeletonAddress2
+		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezeRotation3", "0F 29 5E 10 49 8B 73 28", (p) => { SkeletonFreezeRotation3 = p; })); // SkeletonAddress3
+		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezeScale", "41 0F 29 44 12 20", (p) => { SkeletonFreezeScale = p; }));   // SkeletonAddress4
+		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezePosition", "41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
+		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezeScale2", "43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
+		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezePosition2", "43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
+		tasks.Add(this.GetAddressFromTextSignature("WorldPositionFreeze", "F3 0F 11 78 ?? F3 0F 11 70 ?? F3 44 0F 11 40 ?? 48 83 48 ?? 02", (p) => { WorldPositionFreeze = p; }));
+		tasks.Add(this.GetAddressFromTextSignature("WorldRotationFreeze", "0F 11 40 ?? 48 8B 8B ?? ?? ?? ?? 0F B6 81 ?? ?? ?? ?? 24 0F 3C 03 75 ?? 48 8B 01 B2 01 FF 50 ?? 48 8B 83 ?? ?? ?? ??", (p) => { WorldRotationFreeze = p; }));
+		tasks.Add(this.GetAddressFromTextSignature("GPoseCameraTargetPositionFreeze", "F3 0F 11 89 ?? ?? ?? ?? 48 8B D9 F3 0F 11 91 ?? ?? ?? ??", (p) => { GPoseCameraTargetPositionFreeze = p; }));
+		tasks.Add(this.GetAddressFromTextSignature("AnimationSpeedPatch", "F3 0F 11 94 ?? ?? ?? ?? ?? 80 89 ?? ?? ?? ?? 01", (p) => { AnimationSpeedPatch = p; }));
+		tasks.Add(this.GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
+		tasks.Add(this.GetAddressFromSignature("Weather", "49 8B 9D ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));
+		tasks.Add(this.GetAddressFromSignature("GPoseFilters", "4C 8B 05 ?? ?? ?? ?? 41 8B 80 ?? ?? ?? ?? C1 E8 02", 0, (p) => { GPoseFilters = p; }));
+		tasks.Add(this.GetAddressFromSignature("GposeCheck", "48 8B 15 ?? ?? ?? ?? 48 89 6C 24", 0, (p) => { GposeCheck = p; }));
+		tasks.Add(this.GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
+		tasks.Add(this.GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
+		tasks.Add(this.GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
+		tasks.Add(this.GetAddressFromSignature("PlayerTargetSystem", "48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 0, (p) => { PlayerTargetSystem = p; }));
 
-		tasks.Add(GetAddressFromTextSignature(
+		tasks.Add(this.GetAddressFromTextSignature(
 			"TimeAsm",
 			"48 89 5C 24 ?? 57 48 83 EC 20 48 8B F9 48 8B DA 48 81 C1 ?? ?? ?? ?? E8 ?? ?? ?? ?? 4C 8B 87",
 			(p) =>
@@ -146,7 +154,7 @@ public class AddressService : ServiceBase<AddressService>
 				TimeAsm = p + 0xE5;
 			}));
 
-		tasks.Add(GetAddressFromTextSignature(
+		tasks.Add(this.GetAddressFromTextSignature(
 			"Time",
 			"48 C7 05 ?? ?? ?? ?? 00 00 00 00 E8 ?? ?? ?? ?? 48 8D ?? ?? ?? 00 00 E8 ?? ?? ?? ?? 48 8D",
 			(p) =>
@@ -158,7 +166,7 @@ public class AddressService : ServiceBase<AddressService>
 					// For reference, gpose time is at frameworkPtr + 0x1798 if it's ever needed
 				}));
 
-		tasks.Add(GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
+		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
 		{
 			SkeletonFreezePhysics = p;  // PhysicsAddress
 			SkeletonFreezePhysics2 = p - 0x9;   // SkeletonAddress2
@@ -167,10 +175,10 @@ public class AddressService : ServiceBase<AddressService>
 
 		await Task.WhenAll(tasks.ToArray());
 
-		Log.Information($"Took {sw.ElapsedMilliseconds}ms to scan for {tasks.Count} addresses");
+		Log.Information($"Scanned for {tasks.Count} addresses");
 	}
 
-	private static Task GetAddressFromSignature(string name, string signature, int offset, Action<IntPtr> callback)
+	private Task GetAddressFromSignature(string name, string signature, int offset, Action<IntPtr> callback)
 	{
 		if (MemoryService.Scanner == null)
 			throw new Exception("No memory scanner");
@@ -189,7 +197,7 @@ public class AddressService : ServiceBase<AddressService>
 		});
 	}
 
-	private static Task GetAddressFromTextSignature(string name, string signature, Action<IntPtr> callback)
+	private Task GetAddressFromTextSignature(string name, string signature, Action<IntPtr> callback)
 	{
 		if (MemoryService.Scanner == null)
 			throw new Exception("No memory scanner");
@@ -208,7 +216,7 @@ public class AddressService : ServiceBase<AddressService>
 		});
 	}
 
-	private static Task GetBaseAddressFromSignature(string name, string signature, int skip, bool moduleBase, Action<IntPtr> callback)
+	private Task GetBaseAddressFromSignature(string name, string signature, int skip, bool moduleBase, Action<IntPtr> callback)
 	{
 		if (MemoryService.Scanner == null)
 			throw new Exception("No memory scanner");

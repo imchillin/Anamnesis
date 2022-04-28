@@ -14,10 +14,14 @@ using Anamnesis.Serialization;
 using Anamnesis.TexTools;
 using Serilog;
 using XivToolsWpf;
+using System.Diagnostics;
 
 public class ServiceManager
 {
+	private static readonly Stopwatch AddTimer = new();
+	private static readonly Stopwatch StartupTimer = new();
 	private static readonly List<IService> Services = new List<IService>();
+	private static readonly List<Task> InitializingTasks = new List<Task>();
 
 	public static bool IsInitialized { get; private set; } = false;
 	public static bool IsStarted { get; private set; } = false;
@@ -32,10 +36,20 @@ public class ServiceManager
 
 			IService service = Activator.CreateInstance<T>();
 			Services.Add(service);
-			await Dispatch.MainThread();
-			await service.Initialize();
 
-			Log.Information($"Initialized service: {typeof(T).Name}");
+			/*if (service.UseConcurrentInitilization)
+			{
+				InitializingTasks.Add(Task.Run(async () =>
+				{
+					await Dispatch.NonUiThread();
+					await InitializeService(service);
+				}));
+			}
+			else
+			{*/
+			await Dispatch.MainThread();
+			await InitializeService(service);
+			////}
 		}
 		catch (Exception ex)
 		{
@@ -45,6 +59,8 @@ public class ServiceManager
 
 	public async Task InitializeServices()
 	{
+		StartupTimer.Start();
+
 		await Add<LogService>();
 		await Add<SerializerService>();
 		await Add<SettingsService>();
@@ -70,11 +86,17 @@ public class ServiceManager
 		await Add<Keyboard.HotkeyService>();
 		await Add<HistoryService>();
 
+		// Wait for all concurrent initialization to complete
+		await Task.WhenAll(InitializingTasks);
+
 		IsInitialized = true;
 
 		await this.StartServices();
 
 		CheckWindowsVersion();
+
+		StartupTimer.Stop();
+		Log.Information($"Services started in {StartupTimer.ElapsedMilliseconds}ms");
 	}
 
 	public async Task StartServices()
@@ -119,5 +141,14 @@ public class ServiceManager
 		{
 			throw new Exception("Only Windows 10 or newer is supported");
 		}
+	}
+
+	private static async Task InitializeService(IService service)
+	{
+		AddTimer.Restart();
+		await service.Initialize();
+		AddTimer.Stop();
+
+		Log.Information($"Initialized service: {service.GetType().Name} in {AddTimer.ElapsedMilliseconds}ms");
 	}
 }
