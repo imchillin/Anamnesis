@@ -5,6 +5,7 @@ namespace Anamnesis.GameData.Excel;
 
 using Anamnesis.GameData.Interfaces;
 using Anamnesis.GameData.Sheets;
+using Anamnesis.Memory;
 using Lumina.Data;
 using Lumina.Excel;
 
@@ -16,12 +17,14 @@ public class ActionTimeline : ExcelRow, IAnimation
 	public ushort AnimationId => (ushort)this.RowId;
 	public byte Type { get; set; }
 	public string? Key { get; set; }
-	public byte ActionTimelineIDMode { get; set; }
+	public AnimationMemory.AnimationSlots Slot { get; set; }
 	public byte IsLoop { get; set; }
 
 	public string? DisplayName => this.Key;
 	public ActionTimeline? Timeline => this;
 	public ImageReference? Icon => null;
+
+	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Raw;
 
 	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 	{
@@ -29,7 +32,7 @@ public class ActionTimeline : ExcelRow, IAnimation
 
 		this.Type = parser.ReadColumn<byte>(0);
 		this.Key = parser.ReadString(6);
-		this.ActionTimelineIDMode = parser.ReadColumn<byte>(7);
+		this.Slot = (AnimationMemory.AnimationSlots)parser.ReadColumn<byte>(4);
 		this.IsLoop = parser.ReadColumn<byte>(16);
 	}
 }

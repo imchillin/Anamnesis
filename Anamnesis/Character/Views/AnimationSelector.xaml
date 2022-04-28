@@ -10,8 +10,66 @@
 			 d:DesignHeight="450">
 	<Grid Margin="0, 6, 0, 0">
 
-		<cm3Drawers:SelectorDrawer
-			Grid.Row="1"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid Margin="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <CheckBox Grid.Row="0"
+					  Grid.Column="0"
+					  Content="Emotes"
+					  IsChecked="{Binding Filter.IncludeEmotes}" />
+
+                <CheckBox Grid.Row="0"
+					  Grid.Column="1"
+					  Content="Actions"
+					  IsChecked="{Binding Filter.IncludeActions}" />
+
+                <CheckBox Grid.Row="0"
+					  Grid.Column="2"
+					  Content="Raw"
+					  IsChecked="{Binding Filter.IncludeRaw}" />
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid Margin="6" IsEnabled="{Binding Filter.SlotsLocked, Converter={StaticResource NotConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <CheckBox Grid.Row="0"
+					  Grid.Column="0"
+					  Content="Full Body"
+					  IsChecked="{Binding Filter.IncludeFullBody}" />
+
+                <CheckBox Grid.Row="0"
+					  Grid.Column="1"
+					  Content="Blendable"
+					  IsChecked="{Binding Filter.IncludeBlendable}" />
+            </Grid>
+        </Grid>
+
+        <cm3Drawers:SelectorDrawer
+			Grid.Row="2"
 			x:Name="Selector"
 			Close="OnClose" 
 			Sort="OnSort"
@@ -44,7 +102,19 @@
 
 
 						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DisplayName}" Foreground="{DynamicResource MaterialDesignBody}"/>
-						<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Timeline.RowId}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10"/>
+
+                        <Grid Grid.Row="1" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding Timeline.RowId}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Padding="0,0,5,0"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Timeline.Slot}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Padding="0,0,5,0"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Purpose}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10"/>
+                        </Grid>
+						
                         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Timeline.Key}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 					</Grid>
 				</DataTemplate>

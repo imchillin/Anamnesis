@@ -93,12 +93,19 @@ public partial class ActionPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
+		AnimationSelector animSelector = SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
 		{
 			if (animation == null || animation.Timeline == null)
 				return;
 
 			this.AnimationOverride.BaseAnimationId = animation.Timeline.AnimationId;
+		});
+
+		animSelector.ChangeFilter(new AnimationSelector.AnimationFilter()
+		{
+			SlotsLocked = true,
+			IncludeFullBody = true,
+			IncludeBlendable = false,
 		});
 	}
 
