@@ -85,7 +85,7 @@ public static class ColorData
 
 	public static Entry[] GetFacePaintColor()
 	{
-		return Span(512, 192);
+		return Span(512, 224);
 	}
 
 	public static Entry[] GetLipColors()
