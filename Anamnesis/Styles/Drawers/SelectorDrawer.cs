@@ -14,9 +14,10 @@ using XivToolsWpf.Selectors;
 
 public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChanged
 {
-	private Selector selector = null!;
+	private Selector? selector;
 	private Type? objectType;
 	private object? currentValue;
+	private bool searchEnabled;
 
 	public SelectorDrawer()
 		: base()
@@ -28,19 +29,38 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 	public event DrawerEvent? OnClosing;
 	public event Selector.SelectorSelectedEvent? SelectionChanged;
 
-	public bool SearchEnabled
-	{
-		get => this.selector.SearchEnabled;
-		set => this.selector.SearchEnabled = value;
-	}
+	public bool SelectorLoaded { get; private set; }
 
 	public object? Value
 	{
-		get => this.selector.Value;
-		set => this.selector.Value = value;
+		get => this.Selector.Value;
+		set => this.Selector.Value = value;
 	}
 
-	public IEnumerable<object> Entries => this.selector.Entries;
+	public bool SearchEnabled
+	{
+		get => this.selector?.SearchEnabled ?? this.searchEnabled;
+		set
+		{
+			if (this.selector != null)
+				this.selector.SearchEnabled = value;
+
+			this.searchEnabled = value;
+		}
+	}
+
+	public IEnumerable<object> Entries => this.Selector.Entries;
+
+	protected Selector Selector
+	{
+		get
+		{
+			if (this.selector == null)
+				throw new Exception("Attempt to access selector before drawer has loaded");
+
+			return this.selector;
+		}
+	}
 
 	public static TView Show<TView, TValue>(TValue? current, Action<TValue> changed)
 		where TView : SelectorDrawer
@@ -67,7 +87,7 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 		while (open)
 			await Task.Delay(100);
 
-		return view.selector.Value as TValue;
+		return view.Selector.Value as TValue;
 	}
 
 	public static void Show<TValue>(SelectorDrawer view, TValue? current, Action<TValue> changed)
@@ -77,7 +97,7 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 		view.currentValue = current;
 		view.SelectionChanged += (close) =>
 		{
-			object? v = view.selector.Value;
+			object? v = view.Selector.Value;
 			if (v is TValue tval)
 			{
 				changed?.Invoke(tval);
@@ -102,12 +122,12 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 	}
 
 	// forward selector APIs
-	public void AddItems(IEnumerable<object> items) => this.selector.AddItems(items);
-	public void AddItem(object item) => this.selector.AddItem(item);
-	public void ClearItems() => this.selector.ClearItems();
-	public void FilterItems() => this.selector.FilterItems();
-	public Task FilterItemsAsync() => this.selector.FilterItemsAsync();
-	public void RaiseSelectionChanged() => this.selector.RaiseSelectionChanged();
+	public void AddItems(IEnumerable<object> items) => this.Selector.AddItems(items);
+	public void AddItem(object item) => this.Selector.AddItem(item);
+	public void ClearItems() => this.Selector.ClearItems();
+	public void FilterItems() => this.Selector.FilterItems();
+	public Task FilterItemsAsync() => this.Selector.FilterItemsAsync();
+	public void RaiseSelectionChanged() => this.Selector.RaiseSelectionChanged();
 
 	protected abstract Task LoadItems();
 	protected abstract bool Filter(object item, string[]? search);
@@ -121,13 +141,15 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 			throw new Exception("Selector drawer missing selector component");
 
 		this.selector = selector;
-		this.selector.ObjectType = this.objectType;
-		this.selector.Value = this.currentValue;
+		this.Selector.ObjectType = this.objectType;
+		this.Selector.Value = this.currentValue;
 
-		this.selector.Filter += this.Filter;
-		this.selector.SelectionChanged += this.OnSelectionChanged;
-		this.selector.LoadItems += this.LoadItems;
-		this.selector.Sort += this.Compare;
+		this.Selector.Filter += this.Filter;
+		this.Selector.SelectionChanged += this.OnSelectionChanged;
+		this.Selector.LoadItems += this.LoadItems;
+		this.Selector.Sort += this.Compare;
+
+		this.SelectorLoaded = true;
 	}
 
 	private void OnSelectionChanged(bool close)

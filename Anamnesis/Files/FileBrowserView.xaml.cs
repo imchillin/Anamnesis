@@ -112,8 +112,6 @@ public partial class FileBrowserView : FileBrowserDrawer
 		}
 
 		////this.PropertyChanged?.Invoke(this, new(nameof(FileBrowserView.SortMode)));
-
-		Task.Run(this.UpdateEntries);
 	}
 
 	public enum Modes
@@ -148,7 +146,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 		set
 		{
 			sortMode = value;
-			Task.Run(this.UpdateEntries);
+			this.UpdateEntriesThreaded();
 		}
 	}
 
@@ -184,7 +182,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 		set
 		{
 			isFlattened = value;
-			Task.Run(this.UpdateEntries);
+			this.UpdateEntriesThreaded();
 		}
 	}
 
@@ -295,37 +293,51 @@ public partial class FileBrowserView : FileBrowserDrawer
 	private void OnCurrentDirChanged()
 	{
 		this.Selected = null;
+		this.UpdateEntriesThreaded();
+	}
+
+	private void UpdateEntriesThreaded()
+	{
 		Task.Run(this.UpdateEntries);
 	}
 
 	private async Task UpdateEntries()
 	{
-		lock (this)
+		try
 		{
+			while (!this.SelectorLoaded)
+				await Task.Delay(10);
+
+			while (this.updatingEntries)
+				await Task.Delay(10);
+
+			lock (this)
+			{
+				this.updatingEntries = true;
+				this.ClearItems();
+
+				try
+				{
+					List<EntryWrapper> results = new();
+					this.GetEntries(this.CurrentDir, ref results);
+					this.AddItems(results);
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed get file entries");
+				}
+			}
+
+			await this.FilterItemsAsync();
 		}
-
-		while (this.updatingEntries)
-			await Task.Delay(10);
-
-		lock (this)
+		catch (Exception ex)
 		{
-			this.updatingEntries = true;
-			this.ClearItems();
-
-			try
-			{
-				List<EntryWrapper> results = new();
-				this.GetEntries(this.CurrentDir, ref results);
-				this.AddItems(results);
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to update file list");
-			}
+			Log.Error(ex, "Failed to update file list");
 		}
-
-		await this.FilterItemsAsync();
-		this.updatingEntries = false;
+		finally
+		{
+			this.updatingEntries = false;
+		}
 	}
 
 	private void GetEntries(DirectoryInfo dir, ref List<EntryWrapper> results)
@@ -395,8 +407,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 			return;
 
 		this.CurrentDir = this.CurrentDir.Parent;
-
-		Task.Run(this.UpdateEntries);
+		this.UpdateEntriesThreaded();
 	}
 
 	private async void OnCreateFolderClicked(object? sender, RoutedEventArgs e)
@@ -480,8 +491,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 			return;
 
 		this.Selected.Entry.Delete();
-
-		_ = Task.Run(this.UpdateEntries);
+		this.UpdateEntriesThreaded();
 	}
 
 	private void OnEditClick(object sender, RoutedEventArgs e)
@@ -506,7 +516,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 
 	private void OnShowExtensionClicked(object sender, RoutedEventArgs e)
 	{
-		Task.Run(this.UpdateEntries);
+		this.UpdateEntriesThreaded();
 	}
 
 	private void Select(FileSystemInfo entry)
@@ -521,6 +531,11 @@ public partial class FileBrowserView : FileBrowserDrawer
 				this.selected = wrapper;
 			}
 		}
+	}
+
+	private void OnLoaded(object sender, RoutedEventArgs e)
+	{
+		this.UpdateEntriesThreaded();
 	}
 
 	[AddINotifyPropertyChangedInterface]
