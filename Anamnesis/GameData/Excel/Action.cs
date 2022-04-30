@@ -17,6 +17,7 @@ public class Action : ExcelRow, IAnimation
 	public string? DisplayName { get; set; }
 	public ImageReference? Icon { get; private set; }
 	public ActionTimeline? Timeline { get; private set; }
+	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Action;
 
 	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 	{

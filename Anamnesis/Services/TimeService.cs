@@ -24,13 +24,13 @@ public class TimeService : ServiceBase<TimeService>
 		set => this.timeMemory?.SetFrozen(value);
 	}
 
-	public override async Task Initialize()
+	public override Task Start()
 	{
-		await base.Initialize();
-
 		this.timeMemory = new TimeMemory();
 
 		_ = Task.Run(this.CheckTime);
+
+		return base.Start();
 	}
 
 	public override async Task Shutdown()
