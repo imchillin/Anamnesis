@@ -103,8 +103,6 @@ public class AddressService : ServiceBase<AddressService>
 		}
 	}
 
-	public override bool UseConcurrentInitilization => true;
-
 	public override async Task Initialize()
 	{
 		await base.Initialize();
