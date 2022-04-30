@@ -285,6 +285,17 @@ public partial class FileBrowserView : FileBrowserDrawer
 		return 0;
 	}
 
+	protected override void OnSelectionChanged(bool close)
+	{
+		this.Selected = this.Value as EntryWrapper;
+		base.OnSelectionChanged(close);
+
+		if (close)
+		{
+			this.OnSelectClicked();
+		}
+	}
+
 	private void OnBaseDirChanged()
 	{
 		this.CurrentDir = this.BaseDir.Directory;
@@ -385,11 +396,6 @@ public partial class FileBrowserView : FileBrowserDrawer
 		}
 	}
 
-	private void OnSelectionChanged()
-	{
-		this.Selected = this.Value as EntryWrapper;
-	}
-
 	private void OnShortcutClicked(object sender, RoutedEventArgs e)
 	{
 		if (sender is Button btn && btn.DataContext is Shortcut shortcut)
@@ -435,7 +441,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 		}
 	}
 
-	private void OnSelectClicked(object? sender, RoutedEventArgs? e)
+	private void OnSelectClicked(object? sender = null, RoutedEventArgs? e = null)
 	{
 		if (!this.CanSelect)
 			return;

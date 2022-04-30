@@ -102,11 +102,6 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 			{
 				changed?.Invoke(tval);
 			}
-
-			if (close)
-			{
-				((IDrawer)view).Close();
-			}
 		};
 
 		Task.Run(() => ViewService.ShowDrawer(view));
@@ -133,6 +128,16 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 	protected abstract bool Filter(object item, string[]? search);
 	protected abstract int Compare(object itemA, object itemB);
 
+	protected virtual void OnSelectionChanged(bool close)
+	{
+		this.SelectionChanged?.Invoke(close);
+
+		if (close)
+		{
+			this.Close();
+		}
+	}
+
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
 		var selector = this.FindChild<Selector>();
@@ -150,11 +155,6 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 		this.Selector.Sort += this.Compare;
 
 		this.SelectorLoaded = true;
-	}
-
-	private void OnSelectionChanged(bool close)
-	{
-		this.SelectionChanged?.Invoke(close);
 	}
 }
 
