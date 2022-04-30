@@ -101,7 +101,7 @@ namespace UpdateExtractor
 
 				Console.WriteLine("Restarting application");
 
-				string launch = destDir + "Anamnesis.exe";
+				string launch = destDir + "AnamnesisSetup.exe";
 				Console.WriteLine("    > " + launch);
 				ProcessStartInfo start = new ProcessStartInfo(launch);
 				Process.Start(start);

@@ -6,8 +6,9 @@ using System.Reflection;
 using Bootstrap;
 
 const string ApplicationName = "Anamnesis";
+const string BootstrapName = "Anamnesis Setup";
 const string ResourceName = "Bootstrap.Anamnesis.exe";
-const string FileName = "AnamnesisApp.exe";
+const string FileName = "Anamnesis.exe";
 
 const string DotNetVersion = "6.0.4";
 const string DotNetTempFile = "windowsdesktop-runtime-6.0.4-win-x64.exe";
@@ -15,6 +16,7 @@ const string DotNetDownloadUrl = "https://download.visualstudio.microsoft.com/do
 const string DotNetDownloadChecksum = "209e596edd7ab022241ab378e66703912974e7aa6168f287c9ce036fb31e58029ad304c8182b4b62a08e8d5ae4db74de277e298ced6d2746ef08da2352a2a252";
 
 const string DotNetPromptText = $"The .Net {DotNetVersion} Desktop runtime is not installed.\n\nInstall it now?";
+const string AlreadyExtracted = $"{ApplicationName} is already extracted. Do you want to overwrite it?";
 
 try
 {
@@ -23,25 +25,12 @@ try
 
 	if (await CheckDotNet())
 	{
-		await Launch();
+		Launch();
 	}
 }
 catch (Exception ex)
 {
-	User32.MessageBox(ex.Message, $"{ApplicationName} Bootstrap Error", User32.MessageBoxButtons.Ok, User32.MessageBoxIcon.Error);
-}
-finally
-{
-	try
-	{
-		if (File.Exists(FileName))
-		{
-			File.Delete(FileName);
-		}
-	}
-	catch (Exception)
-	{
-	}
+	User32.MessageBox(ex.Message, $"{BootstrapName} Error", User32.MessageBoxButtons.Ok, User32.MessageBoxIcon.Error);
 }
 
 bool CheckRunning()
@@ -122,29 +111,34 @@ async Task<bool> CheckDotNet()
 }
 
 // Launch Anamnesis
-async Task Launch()
+void Launch()
 {
 	if (File.Exists(FileName))
-		File.Delete(FileName);
-
-	Assembly assembly = Assembly.GetExecutingAssembly();
-	using (Stream? resourceStream = assembly.GetManifestResourceStream(ResourceName))
 	{
-		if (resourceStream == null)
-			throw new Exception($"Failed to load resource: {ResourceName}");
+		if (!User32.MessageBox(AlreadyExtracted, $"{BootstrapName}", User32.MessageBoxButtons.YesNo, User32.MessageBoxIcon.Information))
+			return;
 
-		using FileStream fileStream = new(FileName, FileMode.Create);
-		resourceStream.CopyTo(fileStream);
+		File.Delete(FileName);
+	}
+
+	if (!File.Exists(FileName))
+	{
+		Assembly assembly = Assembly.GetExecutingAssembly();
+		using (Stream? resourceStream = assembly.GetManifestResourceStream(ResourceName))
+		{
+			if (resourceStream == null)
+				throw new Exception($"Failed to load resource: {ResourceName}");
+
+			using FileStream fileStream = new(FileName, FileMode.Create);
+			resourceStream.CopyTo(fileStream);
+		}
 	}
 
 	ProcessStartInfo processStartInfo = new(FileName);
-	processStartInfo.ErrorDialog = false;
-	processStartInfo.UseShellExecute = true;
-	processStartInfo.Verb = "runas";
 	Process? process = Process.Start(processStartInfo);
 
 	if (process == null)
+	{
 		throw new Exception($"Failed to launch {FileName} process.");
-
-	await process.WaitForExitAsync();
+	}
 }
