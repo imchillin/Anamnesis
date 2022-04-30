@@ -11,6 +11,8 @@
 	<UserControl.Resources>
 		<Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
 			<Setter Property="Padding" Value="0"/>
+			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+			<Setter Property="VerticalContentAlignment" Value="Stretch"/>
 		</Style>
 	</UserControl.Resources>
 
@@ -19,20 +21,19 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
-			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 		<XivToolsWpf:NumberBox Grid.Row="0" Value="{Binding Selected}" Margin="3,6,3,0" Buttons="True"/>
 
-		<ListBox Grid.Row="2" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedItem}" Margin="3, 0, 2, 4">
+		<ListBox Grid.Row="1" Name="List" ItemContainerStyle="{StaticResource ListBoxItemStyle}" SelectedItem="{Binding SelectedItem}" Margin="3, 0, 2, 4">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
-					<WrapPanel x:Name="wrapPanel"/>
+					<UniformGrid x:Name="wrapPanel" Columns="8"/>
 				</ItemsPanelTemplate>
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Rectangle Width="18" Height="17" Margin="0">
+					<Rectangle Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 						<Rectangle.ToolTip>
 							<TextBlock Text="{Binding Entry.Hex}"/>
 						</Rectangle.ToolTip>
