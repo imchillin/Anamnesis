@@ -3,7 +3,7 @@
 
 namespace Anamnesis.GameData;
 
-using global::Anamnesis.Styles.Drawers;
+using XivToolsWpf.Selectors;
 
 public interface IRow : ISelectable
 {

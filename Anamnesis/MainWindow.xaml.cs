@@ -213,10 +213,10 @@ public partial class MainWindow : ChromedWindow
 			// If this is a drawer view, bind to its events.
 			if (view is IDrawer drawer)
 			{
-				drawer.Close += () => this.DrawerHost.IsLeftDrawerOpen = false;
-				drawer.Close += () => this.DrawerHost.IsTopDrawerOpen = false;
-				drawer.Close += () => this.DrawerHost.IsRightDrawerOpen = false;
-				drawer.Close += () => this.DrawerHost.IsBottomDrawerOpen = false;
+				drawer.OnClosing += () => this.DrawerHost.IsLeftDrawerOpen = false;
+				drawer.OnClosing += () => this.DrawerHost.IsTopDrawerOpen = false;
+				drawer.OnClosing += () => this.DrawerHost.IsRightDrawerOpen = false;
+				drawer.OnClosing += () => this.DrawerHost.IsBottomDrawerOpen = false;
 			}
 
 			this.IsDrawerOpen = true;

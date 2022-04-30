@@ -106,7 +106,7 @@ public static class NpcAppearanceSearch
 	{
 		foreach (BattleNpcName battleNpcName in GameDataService.BattleNpcNames)
 		{
-			if (battleNpcName.Singular.ToLower() == name.ToLower())
+			if (battleNpcName.Name.ToLower() == name.ToLower())
 			{
 				results.Add(battleNpcName);
 			}

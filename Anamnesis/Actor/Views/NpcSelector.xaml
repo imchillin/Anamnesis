@@ -1,11 +1,13 @@
-﻿<UserControl x:Class="Anamnesis.Actor.Views.NpcSelector"
+﻿<local:NpcSelectorDrawer x:Class="Anamnesis.Actor.Views.NpcSelector"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
+			 xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 xmlns:xivToolsWpfSelectors="clr-namespace:XivToolsWpf.Selectors;assembly=XivToolsWpf"
+			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
 			 mc:Ignorable="d"
 			 d:DesignHeight="450">
 	<Grid Margin="0, 6, 0, 0">
@@ -85,17 +87,11 @@
 
 		</Grid>
 
-		<cm3Drawers:SelectorDrawer
+		<xivToolsWpfSelectors:Selector
 			Grid.Row="2"
-			x:Name="Selector"
-			Close="OnClose" 
-			Filter="OnFilter"
-			Sort="OnSort"
-			LoadItems="OnLoadItems"
-			SelectionChanged="OnSelectionChanged"
 			Width="256">
 
-			<cm3Drawers:SelectorDrawer.ItemTemplate>
+			<xivToolsWpfSelectors:Selector.ItemTemplate>
 				<DataTemplate>
 					<Grid Width="223">
 						<Grid.ColumnDefinitions>
@@ -204,7 +200,7 @@
 						</ToggleButton>
 					</Grid>
 				</DataTemplate>
-			</cm3Drawers:SelectorDrawer.ItemTemplate>
-		</cm3Drawers:SelectorDrawer>
+			</xivToolsWpfSelectors:Selector.ItemTemplate>
+		</xivToolsWpfSelectors:Selector>
 	</Grid>
-</UserControl>
+</local:NpcSelectorDrawer>

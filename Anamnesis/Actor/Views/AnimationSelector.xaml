@@ -1,84 +1,81 @@
-﻿<UserControl x:Class="Anamnesis.Actor.Views.AnimationSelector"
+﻿<local:AnimationSelectorDrawer x:Class="Anamnesis.Actor.Views.AnimationSelector"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:cm3Drawers="clr-namespace:Anamnesis.Styles.Drawers"
+			 xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 xmlns:xivToolsWpfSelectors="clr-namespace:XivToolsWpf.Selectors;assembly=XivToolsWpf"
+			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
 			 mc:Ignorable="d"
 			 d:DesignHeight="450">
+
 	<Grid Margin="0, 6, 0, 0">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Grid Margin="6">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+		<Grid Grid.Row="0">
+			<Grid Margin="6">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition />
+				</Grid.RowDefinitions>
 
-                <CheckBox Grid.Row="0"
+				<CheckBox Grid.Row="0"
 					  Grid.Column="0"
 					  Content="Emotes"
 					  IsChecked="{Binding Filter.IncludeEmotes}" />
 
-                <CheckBox Grid.Row="0"
+				<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  Content="Actions"
 					  IsChecked="{Binding Filter.IncludeActions}" />
 
-                <CheckBox Grid.Row="0"
+				<CheckBox Grid.Row="0"
 					  Grid.Column="2"
 					  Content="Raw"
 					  IsChecked="{Binding Filter.IncludeRaw}" />
-            </Grid>
-        </Grid>
+			</Grid>
+		</Grid>
 
-        <Grid Grid.Row="1">
-            <Grid Margin="6" IsEnabled="{Binding Filter.SlotsLocked, Converter={StaticResource NotConverter}}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+		<Grid Grid.Row="1">
+			<Grid Margin="6" IsEnabled="{Binding Filter.SlotsLocked, Converter={StaticResource NotConverter}}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
 
-                <CheckBox Grid.Row="0"
+				<CheckBox Grid.Row="0"
 					  Grid.Column="0"
 					  Content="Full Body"
 					  IsChecked="{Binding Filter.IncludeFullBody}" />
 
-                <CheckBox Grid.Row="0"
+				<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  Content="Blendable"
 					  IsChecked="{Binding Filter.IncludeBlendable}" />
-            </Grid>
-        </Grid>
+			</Grid>
+		</Grid>
 
-        <cm3Drawers:SelectorDrawer
+		<xivToolsWpfSelectors:Selector
 			Grid.Row="2"
-			x:Name="Selector"
-			Close="OnClose" 
-			Sort="OnSort"
-			Filter="OnFilter"
-			LoadItems="OnLoadItems"
-			SelectionChanged="OnSelectionChanged"
 			Width="256">
 
-			<cm3Drawers:SelectorDrawer.ItemTemplate>
+			<xivToolsWpfSelectors:Selector.ItemTemplate>
 				<DataTemplate>
 					<Grid Width="223">
 						<Grid.ColumnDefinitions>
@@ -89,7 +86,7 @@
 						<Grid.RowDefinitions>
 							<RowDefinition/>
 							<RowDefinition/>
-                            <RowDefinition/>
+							<RowDefinition/>
 						</Grid.RowDefinitions>
 
 						<Border Width="32" Height="32" Background="#444444" Grid.RowSpan="2" CornerRadius="3" Margin="0, 0, 6, 0"
@@ -103,22 +100,22 @@
 
 						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DisplayName}" Foreground="{DynamicResource MaterialDesignBody}"/>
 
-                        <Grid Grid.Row="1" Grid.Column="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+						<Grid Grid.Row="1" Grid.Column="1">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" Text="{Binding Timeline.RowId}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Padding="0,0,5,0"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Timeline.Slot}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Padding="0,0,5,0"/>
-                            <TextBlock Grid.Column="2" Text="{Binding Purpose}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10"/>
-                        </Grid>
-						
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Timeline.Key}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+							<TextBlock Grid.Column="0" Text="{Binding Timeline.RowId}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Padding="0,0,5,0"/>
+							<TextBlock Grid.Column="1" Text="{Binding Timeline.Slot}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Padding="0,0,5,0"/>
+							<TextBlock Grid.Column="2" Text="{Binding Purpose}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10"/>
+						</Grid>
+
+						<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Timeline.Key}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="10" Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 					</Grid>
 				</DataTemplate>
-			</cm3Drawers:SelectorDrawer.ItemTemplate>
-		</cm3Drawers:SelectorDrawer>
+			</xivToolsWpfSelectors:Selector.ItemTemplate>
+		</xivToolsWpfSelectors:Selector>
 	</Grid>
-</UserControl>
+</local:AnimationSelectorDrawer>

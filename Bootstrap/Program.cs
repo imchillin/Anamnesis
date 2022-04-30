@@ -124,14 +124,12 @@ void Launch()
 	if (!File.Exists(FileName))
 	{
 		Assembly assembly = Assembly.GetExecutingAssembly();
-		using (Stream? resourceStream = assembly.GetManifestResourceStream(ResourceName))
-		{
-			if (resourceStream == null)
-				throw new Exception($"Failed to load resource: {ResourceName}");
+		using Stream? resourceStream = assembly.GetManifestResourceStream(ResourceName);
+		if (resourceStream == null)
+			throw new Exception($"Failed to load resource: {ResourceName}");
 
-			using FileStream fileStream = new(FileName, FileMode.Create);
-			resourceStream.CopyTo(fileStream);
-		}
+		using FileStream fileStream = new(FileName, FileMode.Create);
+		resourceStream.CopyTo(fileStream);
 	}
 
 	ProcessStartInfo processStartInfo = new(FileName);

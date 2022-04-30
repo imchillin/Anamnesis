@@ -397,6 +397,7 @@
 
 				<tabs:HomeTab Visibility="{Binding ShowHome, Converter={StaticResource B2V}, FallbackValue=Visible}"/>
 				<tabs:SettingsTab Visibility="{Binding ShowSettings, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
+				<tabs:DeveloperTab Visibility="{Binding ShowDeveloper, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 				<tabs:ActorTab Visibility="{Binding ShowActor, Converter={StaticResource B2V}, FallbackValue=Collapsed}"/>
 				
 			</Grid>

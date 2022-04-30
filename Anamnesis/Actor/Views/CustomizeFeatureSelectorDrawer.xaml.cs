@@ -39,7 +39,7 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 
 	public delegate void SelectorEvent(byte value);
 
-	public event DrawerEvent? Close;
+	public event DrawerEvent? OnClosing;
 	public event SelectorEvent? SelectionChanged;
 
 	public byte Selected
@@ -81,6 +81,11 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 
 			this.Selected = value.FeatureId;
 		}
+	}
+
+	public void Close()
+	{
+		this.OnClosing?.Invoke();
 	}
 
 	public void OnClosed()
