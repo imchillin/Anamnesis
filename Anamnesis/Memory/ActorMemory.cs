@@ -50,12 +50,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x084E, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
 	[Bind(0x084F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x0860, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
-	[Bind(0x09A0)] public ushort TargetAnimation { get; set; }
-	[Bind(0x0A14)] public float BaseAnimationSpeedInternal { get; set; }
-	[Bind(0x0A18)] public float AnimationSpeedTrigger { get; set; }
-	[Bind(0x0A30)] public float LipAnimationSpeedInternal { get; set; }
-	[Bind(0x0B8C)] public ushort BaseAnimationOverride { get; set; }
-	[Bind(0x0B8E)] public ushort LipAnimationOverride { get; set; }
+	[Bind(0x09A0)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x11E4)] public bool IsMotionEnabled { get; set; }
 	[Bind(0x19E0)] public float Transparency { get; set; }
 	[Bind(0x1ABC)] public byte CharacterModeRaw { get; set; }
@@ -123,28 +118,6 @@ public class ActorMemory : ActorBasicMemory
 
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
-
-	[DependsOn(nameof(BaseAnimationSpeedInternal))]
-	public float BaseAnimationSpeed
-	{
-		get => this.BaseAnimationSpeedInternal;
-		set
-		{
-			this.BaseAnimationSpeedInternal = value;
-			this.AnimationSpeedTrigger = value;
-		}
-	}
-
-	[DependsOn(nameof(LipAnimationSpeedInternal))]
-	public float LipAnimationSpeed
-	{
-		get => this.LipAnimationSpeedInternal;
-		set
-		{
-			this.LipAnimationSpeedInternal = value;
-			this.AnimationSpeedTrigger = (this.AnimationSpeedTrigger > this.BaseAnimationSpeedInternal) ? this.BaseAnimationSpeed : this.BaseAnimationSpeed + 0.001f;
-		}
-	}
 
 	/// <summary>
 	/// Refresh the actor to force the game to load any changed values for appearance.

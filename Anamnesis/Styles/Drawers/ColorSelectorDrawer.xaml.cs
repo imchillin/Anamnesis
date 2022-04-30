@@ -90,7 +90,7 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 	public delegate void ValueChangedEventHandler(Color4 value);
 
 	public event ValueChangedEventHandler? ValueChanged;
-	public event DrawerEvent? Close;
+	public event DrawerEvent? OnClosing;
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public Color4 Value
@@ -158,6 +158,11 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 	{
 		get => EnableAlphaDp.Get(this);
 		set => EnableAlphaDp.Set(this, value);
+	}
+
+	public void Close()
+	{
+		this.OnClosing?.Invoke();
 	}
 
 	public void OnClosed()

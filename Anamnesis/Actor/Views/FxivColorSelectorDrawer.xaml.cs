@@ -46,7 +46,7 @@ public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 
 	public delegate void SelectorEvent(int value);
 
-	public event DrawerEvent? Close;
+	public event DrawerEvent? OnClosing;
 	public event SelectorEvent? SelectionChanged;
 
 	public Item? SelectedItem
@@ -92,6 +92,11 @@ public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 
 	public void OnClosed()
 	{
+	}
+
+	public void Close()
+	{
+		this.OnClosing?.Invoke();
 	}
 
 	public class Item

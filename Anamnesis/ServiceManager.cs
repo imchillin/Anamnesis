@@ -21,7 +21,6 @@ public class ServiceManager
 	private static readonly Stopwatch AddTimer = new();
 	private static readonly Stopwatch StartupTimer = new();
 	private static readonly List<IService> Services = new List<IService>();
-	private static readonly List<Task> InitializingTasks = new List<Task>();
 
 	public static bool IsInitialized { get; private set; } = false;
 	public static bool IsStarted { get; private set; } = false;
@@ -36,18 +35,7 @@ public class ServiceManager
 
 			IService service = Activator.CreateInstance<T>();
 			Services.Add(service);
-
-			if (service.UseConcurrentInitilization)
-			{
-				InitializingTasks.Add(Task.Run(async () =>
-				{
-					await InitializeService(service);
-				}));
-			}
-			else
-			{
-				await InitializeService(service);
-			}
+			await InitializeService(service);
 		}
 		catch (Exception ex)
 		{
@@ -83,9 +71,6 @@ public class ServiceManager
 		await Add<AnimationService>();
 		await Add<Keyboard.HotkeyService>();
 		await Add<HistoryService>();
-
-		// Wait for all concurrent initialization to complete
-		await Task.WhenAll(InitializingTasks);
 
 		IsInitialized = true;
 

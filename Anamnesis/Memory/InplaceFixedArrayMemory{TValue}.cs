@@ -34,6 +34,12 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	public IEnumerator<TValue> GetEnumerator() => this.items.GetEnumerator();
 	IEnumerator IEnumerable.GetEnumerator() => this.items.GetEnumerator();
 
+	public override void SetAddress(IntPtr address)
+	{
+		base.SetAddress(address);
+		this.UpdateArray();
+	}
+
 	public override void Tick()
 	{
 		try

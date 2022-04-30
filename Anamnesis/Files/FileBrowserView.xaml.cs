@@ -16,15 +16,19 @@ using System.Windows.Input;
 using Anamnesis.Files;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Services;
+using Anamnesis.Styles.Drawers;
 using PropertyChanged;
 using Serilog;
 using XivToolsWpf;
 
+public abstract class FileBrowserDrawer : SelectorDrawer<FileBrowserView.EntryWrapper>
+{
+}
+
 /// <summary>
 /// Interaction logic for FileBrowserView.xaml.
 /// </summary>
-[AddINotifyPropertyChangedInterface]
-public partial class FileBrowserView : UserControl, IDrawer
+public partial class FileBrowserView : FileBrowserDrawer
 {
 	private static bool isFlattened;
 	private static Sort sortMode;
@@ -85,7 +89,7 @@ public partial class FileBrowserView : UserControl, IDrawer
 		this.mode = mode;
 		this.filters = filters;
 
-		this.Selector.SearchEnabled = mode == Modes.Load;
+		this.SearchEnabled = mode == Modes.Load;
 
 		this.ContentArea.DataContext = this;
 
@@ -111,8 +115,6 @@ public partial class FileBrowserView : UserControl, IDrawer
 
 		Task.Run(this.UpdateEntries);
 	}
-
-	public event DrawerEvent? Close;
 
 	public enum Modes
 	{
@@ -218,8 +220,71 @@ public partial class FileBrowserView : UserControl, IDrawer
 		}
 	}
 
-	public void OnClosed()
+	public override void OnClosed()
 	{
+		base.OnClosed();
+		this.IsOpen = false;
+
+		if (this.Selected == null)
+			return;
+
+		if (this.Selected.Entry is DirectoryInfo directory)
+		{
+			this.CurrentDir = directory;
+			return;
+		}
+		else if (this.Selected.Entry is FileInfo file)
+		{
+			this.OnSelectClicked(null, null);
+		}
+	}
+
+	protected override Task LoadItems()
+	{
+		return Task.CompletedTask;
+	}
+
+	protected override bool Filter(EntryWrapper item, string[]? search)
+	{
+		bool matches = false;
+
+		matches |= SearchUtility.Matches(item.Name, search);
+		matches |= SearchUtility.Matches(item.Directory, search);
+
+		return matches;
+	}
+
+	protected override int Compare(EntryWrapper itemA, EntryWrapper itemB)
+	{
+		// Directoreis alweays go to the top.
+		if (itemA.Entry is DirectoryInfo && itemB.Entry is FileInfo)
+			return -1;
+
+		if (itemA.Entry is FileInfo && itemB.Entry is DirectoryInfo)
+			return 1;
+
+		if (sortMode == Sort.None)
+		{
+			return 0;
+		}
+		else if (sortMode == Sort.AlphaNumeric)
+		{
+			if (itemA.Name == null || itemB.Name == null)
+				return 0;
+
+			return itemA.Name.CompareTo(itemB.Name);
+		}
+		else if (sortMode == Sort.Date)
+		{
+			if (itemA.DateModified == null || itemB.DateModified == null)
+				return 0;
+
+			DateTime dateA = (DateTime)itemA.DateModified;
+			DateTime dateB = (DateTime)itemB.DateModified;
+			return dateA.CompareTo(dateB);
+		}
+
+		return 0;
 	}
 
 	private void OnBaseDirChanged()
@@ -245,13 +310,13 @@ public partial class FileBrowserView : UserControl, IDrawer
 		lock (this)
 		{
 			this.updatingEntries = true;
-			this.Selector.ClearItems();
+			this.ClearItems();
 
 			try
 			{
 				List<EntryWrapper> results = new();
 				this.GetEntries(this.CurrentDir, ref results);
-				this.Selector.AddItems(results);
+				this.AddItems(results);
 			}
 			catch (Exception ex)
 			{
@@ -259,7 +324,7 @@ public partial class FileBrowserView : UserControl, IDrawer
 			}
 		}
 
-		await this.Selector.FilterItemsAsync();
+		await this.FilterItemsAsync();
 		this.updatingEntries = false;
 	}
 
@@ -308,85 +373,9 @@ public partial class FileBrowserView : UserControl, IDrawer
 		}
 	}
 
-	private void OnClose()
-	{
-		if (this.Selected == null)
-			return;
-
-		if (this.Selected.Entry is DirectoryInfo directory)
-		{
-			this.CurrentDir = directory;
-			return;
-		}
-		else if (this.Selected.Entry is FileInfo file)
-		{
-			this.OnSelectClicked(null, null);
-		}
-
-		////this.Close?.Invoke();
-	}
-
 	private void OnSelectionChanged()
 	{
-		this.Selected = this.Selector.Value as EntryWrapper;
-	}
-
-	private bool OnFilter(object obj, string[]? search = null)
-	{
-		if (obj is EntryWrapper item)
-		{
-			bool matches = false;
-
-			matches |= SearchUtility.Matches(item.Name, search);
-			matches |= SearchUtility.Matches(item.Directory, search);
-
-			return matches;
-		}
-
-		return false;
-	}
-
-	private int OnSort(object itemA, object itemB)
-	{
-		if (itemA is EntryWrapper entryA && itemB is EntryWrapper entryB)
-		{
-			return this.OnSort(entryA, entryB);
-		}
-
-		return 0;
-	}
-
-	private int OnSort(EntryWrapper a, EntryWrapper b)
-	{
-		// Directoreis alweays go to the top.
-		if (a.Entry is DirectoryInfo && b.Entry is FileInfo)
-			return -1;
-
-		if (a.Entry is FileInfo && b.Entry is DirectoryInfo)
-			return 1;
-
-		if (sortMode == Sort.None)
-		{
-			return 0;
-		}
-		else if (sortMode == Sort.AlphaNumeric)
-		{
-			if (a.Name == null || b.Name == null)
-				return 0;
-
-			return a.Name.CompareTo(b.Name);
-		}
-		else if (sortMode == Sort.Date)
-		{
-			if (a.DateModified == null || b.DateModified == null)
-				return 0;
-
-			DateTime dateA = (DateTime)a.DateModified;
-			DateTime dateB = (DateTime)b.DateModified;
-			return dateA.CompareTo(dateB);
-		}
-
-		return 0;
+		this.Selected = this.Value as EntryWrapper;
 	}
 
 	private void OnShortcutClicked(object sender, RoutedEventArgs e)
@@ -471,13 +460,13 @@ public partial class FileBrowserView : UserControl, IDrawer
 			return;
 		}
 
-		this.CloseDrawer();
+		this.Close();
 	}
 
 	private void OnBrowseClicked(object sender, RoutedEventArgs e)
 	{
 		this.UseFileBrowser = true;
-		this.CloseDrawer();
+		this.Close();
 	}
 
 	private async void OnDeleteClick(object sender, RoutedEventArgs e)
@@ -520,15 +509,9 @@ public partial class FileBrowserView : UserControl, IDrawer
 		Task.Run(this.UpdateEntries);
 	}
 
-	private void CloseDrawer()
-	{
-		this.IsOpen = false;
-		this.Close?.Invoke();
-	}
-
 	private void Select(FileSystemInfo entry)
 	{
-		foreach (EntryWrapper? wrapper in this.Selector.Entries)
+		foreach (EntryWrapper? wrapper in this.Entries)
 		{
 			if (wrapper == null)
 				continue;

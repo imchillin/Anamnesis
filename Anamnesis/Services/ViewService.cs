@@ -10,8 +10,6 @@ using System.Windows.Controls;
 using Anamnesis;
 using Anamnesis.GUI.Windows;
 
-#pragma warning disable SA1649
-
 public delegate void DrawerEvent();
 public delegate void DialogEvent();
 
@@ -25,7 +23,8 @@ public enum DrawerDirection
 
 public interface IDrawer
 {
-	event DrawerEvent Close;
+	event DrawerEvent OnClosing;
+	void Close();
 	void OnClosed();
 }
 

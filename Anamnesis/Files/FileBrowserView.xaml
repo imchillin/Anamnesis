@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Anamnesis.GUI.Views.FileBrowserView"
+﻿<local:FileBrowserDrawer x:Class="Anamnesis.GUI.Views.FileBrowserView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
@@ -9,6 +9,7 @@
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 xmlns:xivToolsWpfSelectors="clr-namespace:XivToolsWpf.Selectors;assembly=XivToolsWpf"
 			 Width="350"
 			 d:DesignHeight="450"
 			 mc:Ignorable="d">
@@ -162,20 +163,14 @@
 
 		</Grid>
 
-		<drawers:SelectorDrawer x:Name="Selector"
-								Grid.Row="2"
-								Grid.Column="1"
-								Close="OnClose"
-								Filter="OnFilter"
-								Sort="OnSort"
-								SelectionChanged="OnSelectionChanged">
-			<drawers:SelectorDrawer.ItemTemplate>
+		<xivToolsWpfSelectors:Selector Grid.Row="2" Grid.Column="1">
+			<xivToolsWpfSelectors:Selector.ItemTemplate>
 				<DataTemplate>
 					<Grid Margin="0,-4,0,-4">
 
 						<Grid.ToolTip>
 							<StackPanel Orientation="Horizontal">
-								
+
 								<Image MaxWidth="100" MaxHeight="200" Margin="0, 0, 6, 0" Source="{Binding File.ImageSource}"/>
 
 								<StackPanel Orientation="Vertical" Visibility="{Binding IsDirectory, Converter={StaticResource !B2V}}">
@@ -183,7 +178,7 @@
 									<XivToolsWpf:TextBlock Text="{Binding FileName}" FontWeight="Bold"/>
 
 									<XivToolsWpf:TextBlock Width="200" TextWrapping="Wrap" Text="{Binding File.Description}" Visibility="{Binding File.Description, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="0, 6"/>
-								
+
 									<StackPanel Orientation="Horizontal" Visibility="{Binding File.Author, Converter={StaticResource NotNullToVisibilityConverter}}">
 										<XivToolsWpf:TextBlock Key="FileMeta_Author" Margin="0, 0, 6, 0"/>
 										<XivToolsWpf:TextBlock Text="{Binding File.Author}"/>
@@ -193,7 +188,7 @@
 										<XivToolsWpf:TextBlock Key="FileMeta_Version" Margin="0, 0, 6, 0"/>
 										<XivToolsWpf:TextBlock Text="{Binding File.Version}"/>
 									</StackPanel>
-								
+
 								</StackPanel>
 							</StackPanel>
 						</Grid.ToolTip>
@@ -284,9 +279,9 @@
 
 					</Grid>
 				</DataTemplate>
-			</drawers:SelectorDrawer.ItemTemplate>
-		</drawers:SelectorDrawer>
-
+			</xivToolsWpfSelectors:Selector.ItemTemplate>
+		</xivToolsWpfSelectors:Selector>
+		
 		<!--<ListBox Grid.Row="2" ItemsSource="{Binding Entries}" SelectedItem="{Binding Selected}" MouseDoubleClick="OnMouseDoubleClick" HorizontalContentAlignment="Stretch">
 			<ListBox.ItemContainerStyle>
 				<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
@@ -366,4 +361,4 @@
 
 
 	</Grid>
-</UserControl>
+</local:FileBrowserDrawer>

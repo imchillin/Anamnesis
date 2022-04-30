@@ -48,8 +48,6 @@ public class LogService : IService
 		set => LogLevel.MinimumLevel = value ? LogEventLevel.Verbose : LogEventLevel.Debug;
 	}
 
-	public bool UseConcurrentInitilization => false;
-
 	public static void ShowLogs()
 	{
 		string? dir = Path.GetDirectoryName(FileService.StoreDirectory + LogfilePath);

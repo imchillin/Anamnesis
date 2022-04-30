@@ -396,7 +396,6 @@ public class MemoryService : ServiceBase<MemoryService>
 		await Dispatch.NonUiThread();
 
 		// if still no process, shutdown.
-#if !DEBUG
 		if (proc == null)
 		{
 			await Dispatch.MainThread();
@@ -404,7 +403,6 @@ public class MemoryService : ServiceBase<MemoryService>
 			App.Current.Shutdown();
 			return;
 		}
-#endif
 
 		if (proc != null)
 			await this.OpenProcess(proc);

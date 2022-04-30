@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="Anamnesis.Actor.Views.AnimationStatusControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Anamnesis.Actor.Views"
+             xmlns:converters="clr-namespace:Anamnesis.Actor.Converters"
+             xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="400">
+    
+    <UserControl.Resources>
+        <converters:AnimationIdToNameConverter x:Key="animToName"/>
+    </UserControl.Resources>
+    
+    <Grid x:Name="ContentArea">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70" />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <XivToolsWpf:TextBlock Text="{Binding Slot}"
+											   Grid.Row="0"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}"
+                                               HorizontalAlignment="Left"/>
+
+        <TextBox Grid.Row="0"
+								 Grid.Column="1"
+                                 Grid.ColumnSpan="2"
+								 Style="{StaticResource MaterialDesignTextBox}"
+                                 IsReadOnly="True"
+								 Text="{Binding Path=AnimationId, Converter={StaticResource animToName}}">
+            <TextBox.ToolTip>
+                <XivToolsWpf:TextBlock Key="Character_Action_AnimationName"/>
+            </TextBox.ToolTip>
+        </TextBox>
+
+        <TextBox Grid.Row="1"
+								 Grid.Column="1"
+								 Style="{StaticResource MaterialDesignTextBox}"
+                                 IsReadOnly="True"
+								 Text="{Binding Path=AnimationId}">
+            <TextBox.ToolTip>
+                <XivToolsWpf:TextBlock Key="Character_Action_AnimationId"/>
+            </TextBox.ToolTip>
+        </TextBox>
+
+        <TextBox Grid.Row="1"
+								 Grid.Column="2"
+								 Style="{StaticResource MaterialDesignTextBox}"
+                                 IsReadOnly="True"
+								 Text="{Binding Path=Speed}">
+            <TextBox.ToolTip>
+                <XivToolsWpf:TextBlock Key="Character_Action_AnimationSpeed"/>
+            </TextBox.ToolTip>
+        </TextBox>
+    </Grid>
+</UserControl>

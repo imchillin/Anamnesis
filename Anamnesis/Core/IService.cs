@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 public interface IService
 {
-	bool UseConcurrentInitilization { get; }
-
 	Task Initialize();
 	Task Start();
 	Task Shutdown();
