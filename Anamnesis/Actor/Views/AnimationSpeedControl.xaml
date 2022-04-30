@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="Anamnesis.Actor.Views.AnimationSpeedControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Anamnesis.Actor.Views"
+             xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="500">
+    <Grid x:Name="ContentArea">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <XivToolsWpf:TextBlock Text="{Binding SlotName}"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}"
+                               HorizontalAlignment="Left"/>
+
+        <XivToolsWpf:NumberBox Grid.Column="1" Value="{Binding Speed}" Buttons="True" Slider="Relative" TickFrequency="0.05" />
+
+        <Button Grid.Column="2" Style="{StaticResource TransparentButton}" Click="OnPause" IsEnabled="{Binding Speed, Converter={StaticResource NotZeroToBool}, Mode=OneWay}">
+            <XivToolsWpf:IconBlock Icon="Pause"/>
+        </Button>
+
+        <Button Grid.Column="3" Style="{StaticResource TransparentButton}" Click="OnResume">
+            <XivToolsWpf:IconBlock Icon="Undo"/>
+        </Button>
+
+    </Grid>
+</UserControl>

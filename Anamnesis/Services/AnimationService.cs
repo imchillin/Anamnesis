@@ -81,10 +81,10 @@ public class AnimationService : ServiceBase<AnimationService>
 
 		Task.Run(async () =>
 		{
-			var oldAnim = memory.BaseAnimationOverride;
-			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.BaseAnimationOverride)), animationId, "Blend Animation ID Override");
+			var oldAnim = memory.Animation!.BaseOverride;
+			memory.Animation!.BaseOverride = animationId;
 			await Task.Delay(66);
-			MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.BaseAnimationOverride)), oldAnim, "Blend Animation ID Override");
+			memory.Animation!.BaseOverride = oldAnim;
 			this.BlendLocked = false;
 		});
 	}
@@ -96,11 +96,11 @@ public class AnimationService : ServiceBase<AnimationService>
 
 		this.ApplyAnimation(memory, 0, true, ActorMemory.CharacterModes.Normal, 0);
 
-		MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.LipAnimationOverride)), 0, "Blend Animation ID Override");
+		AnimationMemory animation = memory.Animation!;
 
-		MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.BaseAnimationSpeedInternal)), 1.0f, "Animation Speed Reset");
-		MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.LipAnimationSpeedInternal)), 1.0f, "Animation Speed Reset");
-		MemoryService.Write(memory.GetAddressOfProperty(nameof(ActorMemory.AnimationSpeedTrigger)), 1.0f, "Animation Speed Reset");
+		animation.LipsOverride = 0;
+		animation.LinkSpeeds = true;
+		animation.Speeds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 1.0f;
 
 		this.overriddenActors.Remove(memory);
 	}
@@ -121,7 +121,7 @@ public class AnimationService : ServiceBase<AnimationService>
 
 	private void ApplyAnimation(ActorMemory memory, ushort? animationId, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
 	{
-		if (animationId != null && memory.BaseAnimationOverride != animationId)
+		if (animationId != null && memory.Animation!.BaseOverride != animationId)
 		{
 			if (animationId < GameDataService.ActionTimelines.RowCount)
 			{
@@ -142,7 +142,7 @@ public class AnimationService : ServiceBase<AnimationService>
 
 		if (interrupt)
 		{
-			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody] = 0;
+			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0;
 		}
 
 		memory.Tick();

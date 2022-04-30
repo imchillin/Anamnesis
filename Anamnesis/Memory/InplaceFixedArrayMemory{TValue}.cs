@@ -29,28 +29,22 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	public TValue this[int index]
 	{
 		get => this.items[index];
-		set
-		{
-			if (this.IsReading)
-				throw new Exception("Trying to write array while reading");
-
-			if (value == null)
-				throw new Exception("Trying to set array entry to null");
-
-			IntPtr ptr = this.ArrayAddress + (index * this.ElementSize);
-			MemoryService.Write(ptr, value, $"memory array: {this} {index} set");
-		}
 	}
 
 	public IEnumerator<TValue> GetEnumerator() => this.items.GetEnumerator();
 	IEnumerator IEnumerable.GetEnumerator() => this.items.GetEnumerator();
+
+	public override void SetAddress(IntPtr address)
+	{
+		base.SetAddress(address);
+		this.UpdateArray();
+	}
 
 	public override void Tick()
 	{
 		try
 		{
 			base.Tick();
-			this.UpdateArray();
 		}
 		catch (Exception ex)
 		{

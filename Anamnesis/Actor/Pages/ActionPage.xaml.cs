@@ -74,7 +74,7 @@ public partial class ActionPage : UserControl
 				if (actor.IsAnimationOverridden == true)
 				{
 					this.AnimationOverride = new();
-					this.AnimationOverride.BaseAnimationId = actor.BaseAnimationOverride;
+					this.AnimationOverride.BaseAnimationId = actor.Animation!.BaseOverride;
 					this.AnimationOverride.BlendAnimationId = 0;
 				}
 				else
@@ -158,38 +158,6 @@ public partial class ActionPage : UserControl
 			return;
 
 		this.AnimationService.ResetAnimationOverride(this.Actor);
-	}
-
-	private void OnPauseBase(object sender, RoutedEventArgs e)
-	{
-		if (this.Actor?.IsValid != true)
-			return;
-
-		this.Actor.BaseAnimationSpeed = 0.0f;
-	}
-
-	private void OnResumeBase(object sender, RoutedEventArgs e)
-	{
-		if (this.Actor?.IsValid != true)
-			return;
-
-		this.Actor.BaseAnimationSpeed = 1.0f;
-	}
-
-	private void OnPauseLips(object sender, RoutedEventArgs e)
-	{
-		if (this.Actor?.IsValid != true)
-			return;
-
-		this.Actor.LipAnimationSpeed = 0.0f;
-	}
-
-	private void OnResumeLips(object sender, RoutedEventArgs e)
-	{
-		if (this.Actor?.IsValid != true)
-			return;
-
-		this.Actor.LipAnimationSpeed = 1.0f;
 	}
 
 	[AddINotifyPropertyChangedInterface]
