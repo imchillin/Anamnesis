@@ -26,7 +26,7 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 	public event DrawerEvent? OnClosing;
-	public event SelectorSelectedEvent? SelectionChanged;
+	public event Selector.SelectorSelectedEvent? SelectionChanged;
 
 	public bool SearchEnabled
 	{
