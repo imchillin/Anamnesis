@@ -12,8 +12,9 @@ using System.Windows.Controls;
 using Anamnesis.Services;
 using XivToolsWpf.Selectors;
 
-public abstract class SelectorDrawer : UserControl, ISelectorView, IDrawer, INotifyPropertyChanged
+public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChanged
 {
+	private Selector selector = null!;
 	private Type? objectType;
 	private object? currentValue;
 
@@ -27,15 +28,19 @@ public abstract class SelectorDrawer : UserControl, ISelectorView, IDrawer, INot
 	public event DrawerEvent? OnClosing;
 	public event SelectorSelectedEvent? SelectionChanged;
 
-	public Selector Selector { get; private set; } = null!;
-
 	public bool SearchEnabled
 	{
-		get => this.Selector.SearchEnabled;
-		set => this.Selector.SearchEnabled = value;
+		get => this.selector.SearchEnabled;
+		set => this.selector.SearchEnabled = value;
 	}
 
-	public IEnumerable<object> Entries => this.Selector.Entries;
+	public object? Value
+	{
+		get => this.selector.Value;
+		set => this.selector.Value = value;
+	}
+
+	public IEnumerable<object> Entries => this.selector.Entries;
 
 	public static TView Show<TView, TValue>(TValue? current, Action<TValue> changed)
 		where TView : SelectorDrawer
@@ -62,7 +67,7 @@ public abstract class SelectorDrawer : UserControl, ISelectorView, IDrawer, INot
 		while (open)
 			await Task.Delay(100);
 
-		return view.Selector.Value as TValue;
+		return view.selector.Value as TValue;
 	}
 
 	public static void Show<TValue>(SelectorDrawer view, TValue? current, Action<TValue> changed)
@@ -72,7 +77,7 @@ public abstract class SelectorDrawer : UserControl, ISelectorView, IDrawer, INot
 		view.currentValue = current;
 		view.SelectionChanged += (close) =>
 		{
-			object? v = view.Selector.Value;
+			object? v = view.selector.Value;
 			if (v is TValue tval)
 			{
 				changed?.Invoke(tval);
@@ -97,12 +102,12 @@ public abstract class SelectorDrawer : UserControl, ISelectorView, IDrawer, INot
 	}
 
 	// forward selector APIs
-	public void AddItems(IEnumerable<object> items) => this.Selector.AddItems(items);
-	public void AddItem(object item) => this.Selector.AddItem(item);
-	public void ClearItems() => this.Selector.ClearItems();
-	public void FilterItems() => this.Selector.FilterItems();
-	public Task FilterItemsAsync() => this.Selector.FilterItemsAsync();
-	public void RaiseSelectionChanged() => this.Selector.RaiseSelectionChanged();
+	public void AddItems(IEnumerable<object> items) => this.selector.AddItems(items);
+	public void AddItem(object item) => this.selector.AddItem(item);
+	public void ClearItems() => this.selector.ClearItems();
+	public void FilterItems() => this.selector.FilterItems();
+	public Task FilterItemsAsync() => this.selector.FilterItemsAsync();
+	public void RaiseSelectionChanged() => this.selector.RaiseSelectionChanged();
 
 	protected abstract Task LoadItems();
 	protected abstract bool Filter(object item, string[]? search);
@@ -115,14 +120,14 @@ public abstract class SelectorDrawer : UserControl, ISelectorView, IDrawer, INot
 		if (selector == null)
 			throw new Exception("Selector drawer missing selector component");
 
-		this.Selector = selector;
-		this.Selector.ObjectType = this.objectType;
-		this.Selector.Value = this.currentValue;
+		this.selector = selector;
+		this.selector.ObjectType = this.objectType;
+		this.selector.Value = this.currentValue;
 
-		this.Selector.Filter += this.Filter;
-		this.Selector.SelectionChanged += this.OnSelectionChanged;
-		this.Selector.LoadItems += this.LoadItems;
-		this.Selector.Sort += this.Compare;
+		this.selector.Filter += this.Filter;
+		this.selector.SelectionChanged += this.OnSelectionChanged;
+		this.selector.LoadItems += this.LoadItems;
+		this.selector.Sort += this.Compare;
 	}
 
 	private void OnSelectionChanged(bool close)
@@ -131,12 +136,12 @@ public abstract class SelectorDrawer : UserControl, ISelectorView, IDrawer, INot
 	}
 }
 
-public abstract class SelectorDrawer<T> : SelectorDrawer, ISelectorView
+public abstract class SelectorDrawer<T> : SelectorDrawer
 {
-	public T? Value
+	public new T? Value
 	{
-		get => (T?)this.Selector.Value;
-		set => this.Selector.Value = value;
+		get => (T?)base.Value;
+		set => base.Value = value;
 	}
 
 	protected virtual bool Filter(T item, string[]? search)
