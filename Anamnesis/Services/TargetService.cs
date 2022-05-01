@@ -44,7 +44,7 @@ public class TargetService : ServiceBase<TargetService>
 	[DependsOn(nameof(PinnedActorCount))]
 	public bool MoreThanFourPins => this.PinnedActorCount > 4;
 
-	public static async Task PinActor(ActorBasicMemory basicActor)
+	public static async Task PinActor(ActorBasicMemory basicActor, bool select = false)
 	{
 		if (basicActor.Address == IntPtr.Zero)
 			return;
@@ -80,7 +80,10 @@ public class TargetService : ServiceBase<TargetService>
 			await Dispatch.MainThread();
 			Instance.PinnedActors.Add(pined);
 			Instance.PinnedActorCount = Instance.PinnedActors.Count;
-			////Instance.SelectActor(pined);
+
+			if (select)
+				Instance.SelectActor(pined);
+
 			ActorPinned?.Invoke(pined);
 		}
 		catch (Exception ex)
@@ -92,7 +95,7 @@ public class TargetService : ServiceBase<TargetService>
 	public static async Task PinPlayerTargetedActor()
 	{
 		Instance.UpdatePlayerTarget();
-		await PinActor(Instance.PlayerTarget);
+		await PinActor(Instance.PlayerTarget, true);
 	}
 
 	public static void UnpinActor(PinnedActor actor)
