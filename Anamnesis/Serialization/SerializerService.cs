@@ -17,10 +17,10 @@ namespace Anamnesis.Serialization
 		{
 			Options.WriteIndented = true;
 			Options.PropertyNameCaseInsensitive = false;
-			////Options.IgnoreNullValues = true;
+			Options.IgnoreNullValues = true;
 			Options.AllowTrailingCommas = true;
 			Options.ReadCommentHandling = JsonCommentHandling.Skip;
-			Options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+			////Options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 
 			Options.Converters.Add(new JsonStringEnumConverter());
 			Options.Converters.Add(new Color4Converter());
