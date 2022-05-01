@@ -18,7 +18,7 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		
-		<Grid Grid.Row="0" Margin="6" Visibility="{Binding Filter.TypesLocked, Converter={StaticResource !B2V}}">
+		<Grid Grid.Row="0" Margin="6" Visibility="{Binding CurrentFilter.TypesLocked, Converter={StaticResource !B2V}}">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
 				<RowDefinition/>
@@ -34,32 +34,32 @@
 			<CheckBox Grid.Row="0"
 					  Grid.Column="0"
 					  Content="Resident NPCs"
-					  IsChecked="{Binding Filter.IncludeResidentNpc}" />
+					  IsChecked="{Binding CurrentFilter.IncludeResidentNpc}" />
 
 			<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  Content="Battle NPCs"
-					  IsChecked="{Binding Filter.IncludeBattleNpc}" />
+					  IsChecked="{Binding CurrentFilter.IncludeBattleNpc}" />
 
 			<CheckBox Grid.Row="1"
 					  Grid.Column="0"
 					  Content="Event NPCs"
-					  IsChecked="{Binding Filter.IncludeEventNpc}" />
+					  IsChecked="{Binding CurrentFilter.IncludeEventNpc}" />
 
 			<CheckBox Grid.Row="1"
 					  Grid.Column="1"
 					  Content="Mounts"
-					  IsChecked="{Binding Filter.IncludeMount}" />
+					  IsChecked="{Binding CurrentFilter.IncludeMount}" />
 
 			<CheckBox Grid.Row="3"
 					  Grid.Column="0"
 					  Content="Minions"
-					  IsChecked="{Binding Filter.IncludeCompanion}" />
+					  IsChecked="{Binding CurrentFilter.IncludeCompanion}" />
 
 			<CheckBox Grid.Row="3"
 					  Grid.Column="1"
 					  Content="Ornaments"
-					  IsChecked="{Binding Filter.IncludeOrnament}" />
+					  IsChecked="{Binding CurrentFilter.IncludeOrnament}" />
 
 		</Grid>
 
@@ -77,13 +77,13 @@
 					  Grid.Column="0"
 					  IsThreeState="True"
 					  Content="Named"
-					  IsChecked="{Binding Filter.IncludeNamed}" />
+					  IsChecked="{Binding CurrentFilter.IncludeNamed}" />
 
 			<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  IsThreeState="True"
 					  Content="Modded"
-					  IsChecked="{Binding Filter.IncludeModded}"/>
+					  IsChecked="{Binding CurrentFilter.IncludeModded}"/>
 
 		</Grid>
 

@@ -165,6 +165,9 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 
 	private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
+		if (e.PropertyName == nameof(this.CurrentFilter))
+			return;
+
 		this.FilterItems();
 	}
 

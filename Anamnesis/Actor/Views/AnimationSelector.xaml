@@ -34,22 +34,22 @@
 				<CheckBox Grid.Row="0"
 					  Grid.Column="0"
 					  Content="Emotes"
-					  IsChecked="{Binding Filter.IncludeEmotes}" />
+					  IsChecked="{Binding CurrentFilter.IncludeEmotes}" />
 
 				<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  Content="Actions"
-					  IsChecked="{Binding Filter.IncludeActions}" />
+					  IsChecked="{Binding CurrentFilter.IncludeActions}" />
 
 				<CheckBox Grid.Row="0"
 					  Grid.Column="2"
 					  Content="Raw"
-					  IsChecked="{Binding Filter.IncludeRaw}" />
+					  IsChecked="{Binding CurrentFilter.IncludeRaw}" />
 			</Grid>
 		</Grid>
 
 		<Grid Grid.Row="1">
-			<Grid Margin="6" IsEnabled="{Binding Filter.SlotsLocked, Converter={StaticResource NotConverter}}">
+			<Grid Margin="6" IsEnabled="{Binding CurrentFilter.SlotsLocked, Converter={StaticResource NotConverter}}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
 					<ColumnDefinition />
@@ -62,12 +62,12 @@
 				<CheckBox Grid.Row="0"
 					  Grid.Column="0"
 					  Content="Full Body"
-					  IsChecked="{Binding Filter.IncludeFullBody}" />
+					  IsChecked="{Binding CurrentFilter.IncludeFullBody}" />
 
 				<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  Content="Blendable"
-					  IsChecked="{Binding Filter.IncludeBlendable}" />
+					  IsChecked="{Binding CurrentFilter.IncludeBlendable}" />
 			</Grid>
 		</Grid>
 
