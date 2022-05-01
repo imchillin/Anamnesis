@@ -10,6 +10,7 @@
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	xmlns:XivToolsWpfWindows="clr-namespace:XivToolsWpf.Windows;assembly=XivToolsWpf"
 	xmlns:tabs="clr-namespace:Anamnesis.Tabs"
+	xmlns:ana="clr-namespace:Anamnesis"
 	Closing="Window_Closing"
 	Icon="/Assets/Anamnesis.ico"
 	Loaded="Window_Loaded"
@@ -250,7 +251,8 @@
 							<ItemsControl Margin="0,3,0,0"
 										  ItemsSource="{Binding TargetService.PinnedActors}"
 										  ItemTemplate="{StaticResource PinnedActor}"
-										  x:Name="PinnedActorList">
+										  x:Name="PinnedActorList"
+										  ana:Behaviours.IsReorderable="True">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<StackPanel Orientation="Horizontal"/>

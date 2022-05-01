@@ -213,6 +213,9 @@ public partial class NpcSelector : NpcSelectorDrawer
 
 	private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
+		if (e.PropertyName == nameof(this.CurrentFilter))
+			return;
+
 		this.FilterItems();
 	}
 

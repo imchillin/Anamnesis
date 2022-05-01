@@ -79,16 +79,6 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		set => includeHidden = value;
 	}
 
-	/*private void OnClose()
-	{
-		ActorBasicMemory? actor = this.Selector.Value as ActorBasicMemory;
-
-		if (actor == null)
-			return;
-
-		Task.Run(() => TargetService.PinActor(actor));
-	}*/
-
 	protected override Task LoadItems()
 	{
 		this.AddItems(ActorService.Instance.GetAllActors());
@@ -147,6 +137,19 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		}
 
 		return true;
+	}
+
+	protected override void OnSelectionChanged(bool close)
+	{
+		base.OnSelectionChanged(close);
+
+		ActorBasicMemory? actor = this.Selector.Value as ActorBasicMemory;
+
+		if (actor == null)
+			return;
+
+		Task.Run(() => TargetService.PinActor(actor, true));
+		this.Close();
 	}
 
 	private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
