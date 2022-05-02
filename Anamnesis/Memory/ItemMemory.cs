@@ -13,6 +13,7 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 
 	// Item's dont have a 'Set' but the UI wants to bind to something, so...
 	public ushort Set { get; set; } = 0;
+	public bool WeaponHidden { get; set; } = false;
 
 	public void Clear(bool isPlayer)
 	{
