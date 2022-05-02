@@ -222,8 +222,6 @@ public class FileService : ServiceBase<FileService>
 			Log.Verbose(ex, $"Attempted to deserialize file: {info} as type: {fileType} failed.");
 			throw;
 		}
-
-		throw new Exception($"Unrecognised file: {info}");
 	}
 
 	public static FileBase? Load(FileInfo info, Type[] fileTypes)

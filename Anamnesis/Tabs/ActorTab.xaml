@@ -9,10 +9,49 @@
 			 xmlns:characterPages="clr-namespace:Anamnesis.Actor.Pages"
 			 xmlns:posePages="clr-namespace:Anamnesis.Actor.Pages"
 			 xmlns:views="clr-namespace:Anamnesis.Views"
+			 xmlns:ana="clr-namespace:Anamnesis"
 			 mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-		<TabControl x:Name="Tabs" Grid.Row="1" Height="500" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
+             d:DesignHeight="450" d:DesignWidth="800"
+			 Height="500">
+
+	<Grid x:Name="ContentArea">
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="48"/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		
+		<ItemsControl ItemsSource="{Binding Pages}"
+					  Grid.Column="0"
+					  Margin="3, 6, 3, 3">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<ToggleButton Style="{StaticResource TransparentIconToggleButton}"
+								  Height="40"
+								  IsChecked="{Binding IsActive}"
+								  Checked="OnTabSelected">
+						<XivToolsWpf:IconBlock Icon="{Binding Icon}" FontSize="16"/>
+					</ToggleButton>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+
+		<ItemsControl ItemsSource="{Binding Pages}"
+					  Grid.Column="1">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Grid Visibility="{Binding IsActive, Converter={StaticResource B2V}}">
+						<ContentPresenter Content="{Binding Content}"
+									  DataContext="{Binding DataContext}"/>
+					</Grid>
+
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+
+		<!--<TabControl x:Name="Tabs"
+					ItemsSource="{Binding Pages}">
+			
 			<TabControl.Template>
 				<ControlTemplate TargetType="TabControl">
 
@@ -26,7 +65,7 @@
 									Margin="3,8,0,0"
 									HorizontalAlignment="Left"
 									IsItemsHost="true"
-									Orientation="Vertical" />
+									Orientation="Vertical"/>
 
 						<ContentPresenter
 									Grid.Column="1"
@@ -36,6 +75,21 @@
 					</Grid>
 				</ControlTemplate>
 			</TabControl.Template>
+
+			<TabControl.ItemTemplate>
+				<DataTemplate>
+					<XivToolsWpf:IconBlock
+								Foreground="{DynamicResource MaterialDesignBodyLight}"
+								Icon="{Binding Icon}"
+								FontSize="18"/>
+				</DataTemplate>
+			</TabControl.ItemTemplate>
+
+			<TabControl.ContentTemplate>
+				<DataTemplate>
+					<ContentPresenter Content="{Binding Content}" DataContext="{Binding DataContext}"/>
+				</DataTemplate>
+			</TabControl.ContentTemplate>
 
 			<TabItem x:Name="AppearanceTab" IsEnabled="{Binding TargetService.SelectedActor, Converter={StaticResource NotNullToBoolConverter}}">
 				<TabItem.Header>
@@ -69,9 +123,10 @@
 
 				<posePages:PosePage DataContext="{Binding TargetService.SelectedActor}" />
 			</TabItem>
-		</TabControl>
 
-		<StackPanel Grid.Row="1" Width="48" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4" Visibility="{Binding ShowSettings, Converter={StaticResource !B2V}}">
+		</TabControl>-->
+
+		<StackPanel Grid.Row="1" Width="48" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4">
 
 			<Button Height="30"
 						Margin="2"
