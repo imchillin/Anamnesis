@@ -222,19 +222,6 @@ public partial class FileBrowserView : FileBrowserDrawer
 	{
 		base.OnClosed();
 		this.IsOpen = false;
-
-		if (this.Selected == null)
-			return;
-
-		if (this.Selected.Entry is DirectoryInfo directory)
-		{
-			this.CurrentDir = directory;
-			return;
-		}
-		else if (this.Selected.Entry is FileInfo file)
-		{
-			this.OnSelectClicked(null, null);
-		}
 	}
 
 	protected override Task LoadItems()
@@ -285,14 +272,22 @@ public partial class FileBrowserView : FileBrowserDrawer
 		return 0;
 	}
 
-	protected override void OnSelectionChanged(bool close)
+	protected override void OnSelectionChanged(bool doubleClicked)
 	{
 		this.Selected = this.Value as EntryWrapper;
-		base.OnSelectionChanged(close);
+		base.OnSelectionChanged(false);
 
-		if (close)
+		if (doubleClicked)
 		{
-			this.OnSelectClicked();
+			if (this.Selected?.Entry is DirectoryInfo directory)
+			{
+				this.CurrentDir = directory;
+				return;
+			}
+			else if (this.Selected?.Entry is FileInfo file)
+			{
+				this.OnSelectClicked();
+			}
 		}
 	}
 
