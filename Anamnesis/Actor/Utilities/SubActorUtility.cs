@@ -65,7 +65,7 @@ public class SubActorUtility
 		try
 		{
 			CharacterFile apFile = npc.ToFile();
-			await apFile.Apply(targetActor, CharacterFile.SaveModes.None);
+			await apFile.Apply(targetActor, CharacterFile.SaveModes.EquipmentGear);
 		}
 		catch (Exception ex)
 		{
