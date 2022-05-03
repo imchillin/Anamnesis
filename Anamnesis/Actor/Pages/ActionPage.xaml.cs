@@ -71,16 +71,9 @@ public partial class ActionPage : UserControl
 			}
 			else
 			{
-				if (actor.IsAnimationOverridden == true)
-				{
-					this.AnimationOverride = new();
-					this.AnimationOverride.BaseAnimationId = actor.Animation!.BaseOverride;
-					this.AnimationOverride.BlendAnimationId = 0;
-				}
-				else
-				{
-					this.AnimationOverride = new();
-				}
+				this.AnimationOverride = new();
+				this.AnimationOverride.BaseAnimationId = actor.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value;
+				this.AnimationOverride.BlendAnimationId = 0;
 			}
 		}
 	}
@@ -136,12 +129,12 @@ public partial class ActionPage : UserControl
 		this.AnimationService.DrawWeapon(this.Actor);
 	}
 
-	private void OnBlendAnimation(object sender, RoutedEventArgs e)
+	private async void OnBlendAnimation(object sender, RoutedEventArgs e)
 	{
 		if (this.Actor?.IsValid != true)
 			return;
 
-		this.AnimationService.BlendAnimation(this.Actor, this.AnimationOverride.BlendAnimationId);
+		await this.AnimationService.BlendAnimation(this.Actor, this.AnimationOverride.BlendAnimationId);
 	}
 
 	private void OnIdleOverrideAnimation(object sender, RoutedEventArgs e)
