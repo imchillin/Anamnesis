@@ -11,8 +11,7 @@
 			 xmlns:views="clr-namespace:Anamnesis.Views"
 			 xmlns:ana="clr-namespace:Anamnesis"
 			 mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-			 Height="500">
+             d:DesignHeight="450" d:DesignWidth="800">
 
 	<Grid x:Name="ContentArea">
 
@@ -20,10 +19,11 @@
 			<ColumnDefinition Width="48"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
-		
+
 		<ItemsControl ItemsSource="{Binding Pages}"
 					  Grid.Column="0"
 					  Margin="3, 6, 3, 3">
+			<!--Behaviours.IsReorderable="True"-->
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
 					<ToggleButton Style="{StaticResource TransparentIconToggleButton}"
@@ -42,7 +42,8 @@
 				<DataTemplate>
 					<Grid Visibility="{Binding IsActive, Converter={StaticResource B2V}}">
 						<ContentPresenter Content="{Binding Content}"
-									  DataContext="{Binding DataContext}"/>
+										  DataContext="{Binding DataContext}"
+										  Height="500"/>
 					</Grid>
 
 				</DataTemplate>
