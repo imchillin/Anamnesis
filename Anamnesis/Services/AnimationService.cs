@@ -34,8 +34,6 @@ public class AnimationService : ServiceBase<AnimationService>
 		}
 	}
 
-	public bool BlendLocked { get; private set; }
-
 	public override Task Start()
 	{
 		GposeService.GposeStateChanging += this.OnGposeStateChanging;
@@ -60,33 +58,41 @@ public class AnimationService : ServiceBase<AnimationService>
 		await base.Shutdown();
 	}
 
-	public void ApplyAnimationOverride(ActorMemory memory, ushort? animationId, bool interrupt)
+	public bool ApplyAnimationOverride(ActorMemory memory, ushort? animationId, bool interrupt)
 	{
 		if (!memory.IsValid)
-			return;
+			return false;
 
-		this.ApplyAnimation(memory, animationId, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
+		if (!memory.CanAnimate)
+			return false;
+
+		this.ApplyBaseAnimationInternal(memory, animationId, interrupt, ActorMemory.CharacterModes.AnimLock, 0);
 		this.overriddenActors.Add(memory);
+
+		return true;
 	}
 
-	public void BlendAnimation(ActorMemory memory, ushort animationId)
+	public async Task<bool> BlendAnimation(ActorMemory memory, ushort animationId)
 	{
-		if (this.BlendLocked)
-			return;
-
 		if (!memory.IsValid)
-			return;
+			return false;
 
-		this.BlendLocked = true;
+		if(memory.Animation!.BlendLocked)
+			return false;
 
-		Task.Run(async () =>
-		{
-			var oldAnim = memory.Animation!.BaseOverride;
-			memory.Animation!.BaseOverride = animationId;
-			await Task.Delay(66);
-			memory.Animation!.BaseOverride = oldAnim;
-			this.BlendLocked = false;
-		});
+		if (!memory.CanAnimate)
+			return false;
+
+		memory.Animation!.BlendLocked = true;
+
+		ushort oldAnim = memory.Animation!.BaseOverride;
+		memory.Animation!.BaseOverride = animationId;
+		await Task.Delay(66);
+		memory.Animation!.BaseOverride = oldAnim;
+
+		memory.Animation!.BlendLocked = false;
+
+		return true;
 	}
 
 	public void ResetAnimationOverride(ActorMemory memory)
@@ -94,7 +100,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		if (!memory.IsValid)
 			return;
 
-		this.ApplyAnimation(memory, 0, true, ActorMemory.CharacterModes.Normal, 0);
+		this.ApplyBaseAnimationInternal(memory, 0, true, ActorMemory.CharacterModes.Normal, 0);
 
 		AnimationMemory animation = memory.Animation!;
 
@@ -119,7 +125,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		}
 	}
 
-	private void ApplyAnimation(ActorMemory memory, ushort? animationId, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
+	private void ApplyBaseAnimationInternal(ActorMemory memory, ushort? animationId, bool interrupt, ActorMemory.CharacterModes? mode, byte? modeInput)
 	{
 		if (animationId != null && memory.Animation!.BaseOverride != animationId)
 		{

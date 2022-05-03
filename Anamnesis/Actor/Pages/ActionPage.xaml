@@ -10,7 +10,7 @@
 			 xmlns:ana="clr-namespace:Anamnesis.Views"
              xmlns:converters="clr-namespace:Anamnesis.Actor.Converters"
 			 xmlns:controls="clr-namespace:Anamnesis.Actor.Controls"
-			 d:DesignHeight="600"
+             d:DesignHeight="600"
 			 d:DesignWidth="1024"
 			 DataContextChanged="OnDataContextChanged"
 			 Loaded="OnLoaded"
@@ -163,12 +163,12 @@
                             </Button>
                         </Grid>
 
-                        <XivToolsWpf:InfoControl Visibility="{Binding Actor.CanAnimate, Converter={StaticResource !B2V}}" Grid.Row="3" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideBlocked" />
+                        <XivToolsWpf:InfoControl Visibility="{Binding Actor.CanAnimate, Converter={StaticResource !B2V}}" Grid.RowSpan="4" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideBlocked" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
 
-            <StackPanel Grid.Row="2" IsEnabled="{Binding Actor.CanAnimate}">
+            <StackPanel Grid.Row="2" IsEnabled="{Binding Actor.IsAnimationOverridden}">
                 <GroupBox Style="{StaticResource PanelGroupBox}">
                     <GroupBox.Header>
                         <XivToolsWpf:Header Key="Character_Action_AnimationBlending"
@@ -216,6 +216,8 @@
                         <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" IsEnabled="{Binding AnimationService.BlendLocked, Converter={StaticResource NotConverter}}" Style="{StaticResource TransparentButton}">
                             <XivToolsWpf:TextBlock Key="Character_Action_AnimationBlend"/>
                         </Button>
+
+                        <XivToolsWpf:InfoControl Visibility="{Binding Actor.IsAnimationOverridden, Converter={StaticResource !B2V}}" Grid.RowSpan="2" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideBlendBlocked" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -260,7 +262,7 @@
                         <views:AnimationSpeedControl Grid.Row="4" Grid.Column="1" Slot="Add" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[3].Value}" />
                         <views:AnimationSpeedControl Grid.Row="5" Grid.Column="1" Slot="Lips" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[7].Value}" />
 
-                        <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="7" Key="Character_Action_AnimationOverrideSpeedBlocked" />
+                        <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}"  Grid.RowSpan="7" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedBlocked" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -269,14 +271,9 @@
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
-               
-            </StackPanel>
-
-            <StackPanel Grid.Row="1">
                 <GroupBox Style="{StaticResource PanelGroupBox}">
                     <GroupBox.Header>
                         <XivToolsWpf:Header Key="Character_Action_AnimationStatus"
