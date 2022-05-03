@@ -27,15 +27,18 @@ public partial class ActorTab : UserControl
 
 		TargetService.ActorSelected += this.OnActorSelected;
 
+		this.Pages = new ObservableCollection<Page>(this.Tabs);
 		this.Pages[0].IsActive = true;
 	}
 
-	public ObservableCollection<Page> Pages { get; private set; } = new()
+	public ObservableCollection<Page> Tabs { get; private set; } = new()
 	{
 		new Page<CharacterPage>(IconChar.UserEdit, "MainWindow.AppearanceTab"),
 		new Page<ActionPage>(IconChar.Biking, "MainWindow.PoseTab"),
 		new Page<PosePage>(IconChar.Running, "MainWindow.ActionTab"),
 	};
+
+	public ObservableCollection<Page> Pages { get; private set; }
 
 	private void OnActorSelected(ActorMemory? actor)
 	{
