@@ -11,8 +11,7 @@
 			 xmlns:views="clr-namespace:Anamnesis.Views"
 			 xmlns:ana="clr-namespace:Anamnesis"
 			 mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-			 Height="500">
+             d:DesignHeight="450" d:DesignWidth="800">
 
 	<Grid x:Name="ContentArea">
 
@@ -20,29 +19,36 @@
 			<ColumnDefinition Width="48"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
-		
-		<ItemsControl ItemsSource="{Binding Pages}"
-					  Grid.Column="0"
-					  Margin="3, 6, 3, 3">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<ToggleButton Style="{StaticResource TransparentIconToggleButton}"
+
+		<ScrollViewer	HorizontalScrollBarVisibility="Disabled"
+						VerticalScrollBarVisibility="Hidden"
+						Grid.Column="0">
+			
+			<ItemsControl ItemsSource="{Binding Tabs}"
+					  Margin="3, 5, 3, 3"
+					  ana:Behaviours.IsReorderable="True">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<ToggleButton Style="{StaticResource TransparentIconToggleButton}"
 								  Height="40"
 								  IsChecked="{Binding IsActive}"
 								  Checked="OnTabSelected">
-						<XivToolsWpf:IconBlock Icon="{Binding Icon}" FontSize="16"/>
-					</ToggleButton>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
+							<XivToolsWpf:IconBlock Icon="{Binding Icon}" FontSize="16"/>
+						</ToggleButton>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
 
 		<ItemsControl ItemsSource="{Binding Pages}"
-					  Grid.Column="1">
+					  Grid.Column="1"
+					  Margin="-6, 0, 0, 0">
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
 					<Grid Visibility="{Binding IsActive, Converter={StaticResource B2V}}">
 						<ContentPresenter Content="{Binding Content}"
-									  DataContext="{Binding DataContext}"/>
+										  DataContext="{Binding DataContext}"
+										  Height="500"/>
 					</Grid>
 
 				</DataTemplate>

@@ -33,6 +33,8 @@ public class AnimationMemory : MemoryBase
 	[Bind(0x1EC)] public ushort BaseOverride { get; set; }
 	[Bind(0x1EE)] public ushort LipsOverride { get; set; }
 
+	public bool BlendLocked { get; set; } = false;
+
 	public bool LinkSpeeds
 	{
 		get

@@ -11,7 +11,9 @@ using Anamnesis.Views;
 using FontAwesome.Sharp;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -20,22 +22,87 @@ using System.Windows.Controls;
 /// </summary>
 public partial class ActorTab : UserControl
 {
+	private bool loading = true;
+
 	public ActorTab()
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 
 		TargetService.ActorSelected += this.OnActorSelected;
+		this.Tabs.CollectionChanged += this.OnTabsChanged;
 
-		this.Pages[0].IsActive = true;
+		this.AddPage<CharacterPage>("AppearanceTab", IconChar.UserEdit);
+		this.AddPage<ActionPage>("PoseTab", IconChar.Biking);
+		this.AddPage<PosePage>("ActionTab", IconChar.Running);
+
+		this.SortTabs();
+
+		this.Tabs[0].IsActive = true;
 	}
 
-	public ObservableCollection<Page> Pages { get; private set; } = new()
+	public ObservableCollection<Page> Tabs { get; private set; } = new();
+	public ObservableCollection<Page> Pages { get; private set; } = new();
+
+	private void AddPage<T>(string name, IconChar icon)
+		where T : UserControl
 	{
-		new Page<CharacterPage>(IconChar.UserEdit, "MainWindow.AppearanceTab"),
-		new Page<ActionPage>(IconChar.Biking, "MainWindow.PoseTab"),
-		new Page<PosePage>(IconChar.Running, "MainWindow.ActionTab"),
-	};
+		Page<T> page = new Page<T>(icon, name);
+		this.Tabs.Add(page);
+		this.Pages.Add(page);
+	}
+
+	private Page GetPage(string name)
+	{
+		foreach (Page page in this.Tabs)
+		{
+			if (page.Name == name)
+			{
+				return page;
+			}
+		}
+
+		throw new Exception($"No page found with name: {name}");
+	}
+
+	private void OnTabsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+	{
+		if (this.loading)
+			return;
+
+		foreach (Page page in this.Tabs)
+		{
+			if (!SettingsService.Current.ActorTabOrder.ContainsKey(page.Name))
+				SettingsService.Current.ActorTabOrder.Add(page.Name, 0);
+
+			SettingsService.Current.ActorTabOrder[page.Name] = this.Tabs.IndexOf(page);
+		}
+
+		SettingsService.Save();
+	}
+
+	private void SortTabs()
+	{
+		this.loading = true;
+
+		List<Page> pages = new List<Page>();
+		foreach ((string name, int index) in SettingsService.Current.ActorTabOrder)
+		{
+			Page page = this.GetPage(name);
+			page.Index = index;
+			pages.Add(page);
+		}
+
+		pages.Sort((a, b) => a.Index.CompareTo(b.Index));
+
+		this.Tabs.Clear();
+		foreach (Page page in pages)
+		{
+			this.Tabs.Add(page);
+		}
+
+		this.loading = false;
+	}
 
 	private void OnActorSelected(ActorMemory? actor)
 	{
@@ -66,12 +133,16 @@ public partial class ActorTab : UserControl
 	{
 		private UserControl? control;
 
-		public Page(IconChar icon, string hotkey)
+		public Page(IconChar icon, string name)
 		{
 			this.Icon = icon;
+			this.Name = name;
 
-			HotkeyService.RegisterHotkeyHandler(hotkey, () => this.IsActive = true);
+			HotkeyService.RegisterHotkeyHandler($"MainWindow.{name}", () => this.IsActive = true);
 		}
+
+		public string Name { get; private set; }
+		public int Index { get; set; }
 
 		[DependsOn(nameof(Page.IsActive))]
 		public UserControl? Content
@@ -100,8 +171,8 @@ public partial class ActorTab : UserControl
 	public class Page<T> : Page
 		where T : UserControl
 	{
-		public Page(IconChar icon, string hotkey)
-			: base(icon, hotkey)
+		public Page(IconChar icon, string name)
+			: base(icon, name)
 		{
 		}
 
