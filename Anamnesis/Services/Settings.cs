@@ -62,6 +62,8 @@ public class Settings : INotifyPropertyChanged
 
 	public Binds KeyboardBindings { get; set; } = new();
 
+	public Dictionary<string, int> ActorTabOrder { get; set; } = new();
+
 	[Serializable]
 	public class Binds
 	{
