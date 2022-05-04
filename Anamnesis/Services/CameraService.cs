@@ -73,14 +73,15 @@ public class CameraService : ServiceBase<CameraService>
 				{
 					this.DelimitCamera = false;
 					this.Camera.FreezeAngle = false;
-					continue;
+				}
+				else
+				{
+					this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
+					this.GPoseCamera.Tick();
 				}
 
 				this.Camera.SetAddress(AddressService.Camera);
-				this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
-
 				this.Camera.Tick();
-				this.GPoseCamera.Tick();
 			}
 			catch (Exception ex)
 			{
