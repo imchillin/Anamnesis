@@ -95,6 +95,15 @@ public partial class ActorTab : UserControl
 
 		pages.Sort((a, b) => a.Index.CompareTo(b.Index));
 
+		// Add any missing pages
+		foreach (Page page in this.Pages)
+		{
+			if (!pages.Contains(page))
+			{
+				pages.Add(page);
+			}
+		}
+
 		this.Tabs.Clear();
 		foreach (Page page in pages)
 		{
