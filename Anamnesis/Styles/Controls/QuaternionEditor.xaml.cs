@@ -491,7 +491,7 @@ public partial class QuaternionEditor : UserControl
 
 			this.cylinder = new Cylinder();
 			this.cylinder.Radius = 0.49;
-			this.cylinder.Length = 0.25;
+			this.cylinder.Length = 0.20;
 			this.cylinder.Transform = new RotateTransform3D(new AxisAngleRotation3D(axis, 90));
 			this.cylinder.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Transparent));
 			this.Children.Add(this.cylinder);
@@ -540,46 +540,81 @@ public partial class QuaternionEditor : UserControl
 
 		public Vector3D Drag(Point3D mousePosition)
 		{
-			Point3D? point = this.circle.NearestPoint2D(mousePosition);
+			bool useCircularDrag = true;
 
-			if (point == null)
-				return default;
-
-			point = this.circle.TransformToAncestor(this).Transform((Point3D)point);
-
-			if (this.lastPoint == null)
+			if (useCircularDrag)
 			{
-				this.lastPoint = point;
-				return default;
+				Point3D? point = this.circle.NearestPoint2D(mousePosition);
+
+				if (point == null)
+					return default;
+
+				point = this.circle.TransformToAncestor(this).Transform((Point3D)point);
+
+				if (this.lastPoint == null)
+				{
+					this.lastPoint = point;
+					return default;
+				}
+				else
+				{
+					Vector3D axis = new Vector3D(0, 1, 0);
+
+					Vector3D from = (Vector3D)this.lastPoint;
+					Vector3D to = (Vector3D)point;
+
+					this.lastPoint = null;
+
+					double angle = Vector3D.AngleBetween(from, to);
+
+					Vector3D cross = Vector3D.CrossProduct(from, to);
+					if (Vector3D.DotProduct(axis, cross) < 0)
+						angle = -angle;
+
+					// X rotation gizmo is always backwards...
+					if (this.Axis.X >= 1)
+						angle = -angle;
+
+					float speed = 2;
+
+					if (Keyboard.IsKeyDown(Key.LeftShift))
+						speed = 4;
+
+					if (Keyboard.IsKeyDown(Key.LeftCtrl))
+						speed = 0.5f;
+
+					return this.Axis * (angle * speed);
+				}
 			}
 			else
 			{
-				Vector3D axis = new Vector3D(0, 1, 0);
+				if (this.lastPoint == null)
+				{
+					this.lastPoint = mousePosition;
+					return default;
+				}
+				else
+				{
+					Vector3D delta = (Point3D)this.lastPoint - mousePosition;
+					this.lastPoint = mousePosition;
 
-				Vector3D from = (Vector3D)this.lastPoint;
-				Vector3D to = (Vector3D)point;
+					float speed = 0.5f;
 
-				this.lastPoint = null;
+					if (Keyboard.IsKeyDown(Key.LeftShift))
+						speed = 2;
 
-				double angle = Vector3D.AngleBetween(from, to);
+					if (Keyboard.IsKeyDown(Key.LeftCtrl))
+						speed = 0.25f;
 
-				Vector3D cross = Vector3D.CrossProduct(from, to);
-				if (Vector3D.DotProduct(axis, cross) < 0)
-					angle = -angle;
+					double distPos = Math.Max(delta.X, delta.Y);
+					double distNeg = Math.Min(delta.X, delta.Y);
 
-				// X rotation gizmo is always backwards...
-				if (this.Axis.X >= 1)
-					angle = -angle;
+					double dist = distNeg;
+					if (Math.Abs(distPos) > Math.Abs(distNeg))
+						dist = distPos;
 
-				float speed = 2;
-
-				if (Keyboard.IsKeyDown(Key.LeftShift))
-					speed = 4;
-
-				if (Keyboard.IsKeyDown(Key.LeftCtrl))
-					speed = 0.5f;
-
-				return this.Axis * (angle * speed);
+					return this.Axis * (-dist * speed);
+				}
 			}
 		}
 	}
