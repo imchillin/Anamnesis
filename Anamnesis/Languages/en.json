@@ -583,6 +583,7 @@
 	"Settings_Font_Default": "Default",
 	"Settings_OverlayWindow": "Mini window",
 	"Settings_WrapRotations": "Wrap rotation sliders",
+	"Settings_Developer": "Developer Mode",
 	"Settings_DefaultAuthor": "Default Author Name",
 	"Settings_PenumbraHeader": "Penumbra",
 	"Settings_UseExternalRefresh": "Use Penumbra Redraw",
