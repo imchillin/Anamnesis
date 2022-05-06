@@ -257,6 +257,7 @@
 	"Character_Action_AnimationOverrideBlendBlocked": "Animation Blending is only available once you have overidden the base animation in the Animation Override section above.",
 	"Character_Action_AnimationSpeedControl": "Animation Speed Control",
 	"Character_Action_AnimationBlending": "Animation Blending",
+	"Character_Action_ModelRow": "Model",
 	"Character_Action_GlobalSettings": "Global Settings",
 	"Character_Action_BaseAnimation": "Base",
 	"Character_Action_UnknownAnimation": "(unknown)",
