@@ -5,11 +5,13 @@ namespace Anamnesis.Actor.Views;
 
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
+using Anamnesis.Utils;
 using PropertyChanged;
 using XivToolsWpf;
 
@@ -217,6 +219,14 @@ public partial class NpcSelector : NpcSelectorDrawer
 			return;
 
 		this.FilterItems();
+	}
+
+	private async void OnCopyId(object sender, RoutedEventArgs e)
+	{
+		if (this.Value == null)
+			return;
+
+		await ClipboardUtility.CopyToClipboardAsync(this.Value.ToStringKey());
 	}
 
 	[AddINotifyPropertyChangedInterface]

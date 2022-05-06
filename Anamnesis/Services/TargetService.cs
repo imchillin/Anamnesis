@@ -92,10 +92,10 @@ public class TargetService : ServiceBase<TargetService>
 		}
 	}
 
-	public static async Task PinPlayerTargetedActor()
+	public static ActorBasicMemory GetTargetedActor()
 	{
 		Instance.UpdatePlayerTarget();
-		await PinActor(Instance.PlayerTarget, true);
+		return Instance.PlayerTarget;
 	}
 
 	public static void UnpinActor(PinnedActor actor)

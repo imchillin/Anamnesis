@@ -94,6 +94,13 @@
 			<xivToolsWpfSelectors:Selector.ItemTemplate>
 				<DataTemplate>
 					<Grid Width="223">
+
+						<Grid.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Copy Id" Click="OnCopyId"/>
+							</ContextMenu>
+						</Grid.ContextMenu>
+						
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition />

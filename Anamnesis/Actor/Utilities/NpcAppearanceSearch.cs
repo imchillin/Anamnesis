@@ -96,7 +96,7 @@ public static class NpcAppearanceSearch
 			messageBuilder.AppendLine();
 			messageBuilder.AppendLine("This NPCNames entry block has been copied to your clipboard.");
 
-			await ClipboardUtility.CopyToClipboard(jsonBuilder.ToString());
+			await ClipboardUtility.CopyToClipboardAsync(jsonBuilder.ToString());
 
 			await GenericDialog.ShowAsync(messageBuilder.ToString(), "NPC Appearance search", MessageBoxButton.OK);
 		}
