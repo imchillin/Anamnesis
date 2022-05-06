@@ -23,6 +23,7 @@ using Anamnesis.Windows;
 using PropertyChanged;
 using XivToolsWpf;
 using XivToolsWpf.Windows;
+using XivToolsWpf.Extensions;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml.
@@ -297,7 +298,10 @@ public partial class MainWindow : ChromedWindow
 
 	private void OnAddActorClicked(object sender, RoutedEventArgs e)
 	{
-		ViewService.ShowDrawer<TargetSelectorView>(DrawerDirection.Left);
+		TargetSelectorView.Show((a) =>
+		{
+			TargetService.PinActor(a, true).Run();
+		});
 	}
 
 	private void OnUnpinActorClicked(object sender, RoutedEventArgs e)

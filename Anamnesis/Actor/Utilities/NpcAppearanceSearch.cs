@@ -87,7 +87,7 @@ public static class NpcAppearanceSearch
 				}
 
 				jsonBuilder.Append(appearance.RowId.ToString("D7"));
-				jsonBuilder.Append("\": \"B:");
+				jsonBuilder.Append("\": \"N:");
 				jsonBuilder.Append(name.RowId.ToString("D7"));
 				jsonBuilder.AppendLine("\",");
 			}
@@ -96,7 +96,7 @@ public static class NpcAppearanceSearch
 			messageBuilder.AppendLine();
 			messageBuilder.AppendLine("This NPCNames entry block has been copied to your clipboard.");
 
-			await ClipboardUtility.CopyToClipboard(jsonBuilder.ToString());
+			await ClipboardUtility.CopyToClipboardAsync(jsonBuilder.ToString());
 
 			await GenericDialog.ShowAsync(messageBuilder.ToString(), "NPC Appearance search", MessageBoxButton.OK);
 		}

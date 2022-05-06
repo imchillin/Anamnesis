@@ -25,6 +25,13 @@
 						Style="{StaticResource TransparentButton}"
 						Height="32"
 						Click="OnNpcNameSearchClicked"/>
+
+				<Button Content="Search for NPC Data"
+						Click="OnFindNpcClicked"
+						Height="32"
+						Style="{StaticResource TransparentButton}"
+						Padding="6,3"/>
+
 			</StackPanel>
 			
 		</GroupBox>

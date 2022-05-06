@@ -15,9 +15,9 @@
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="256"/>
-			<ColumnDefinition/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 
 		<GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="0">
@@ -44,6 +44,7 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
 				<fa:IconBlock Grid.Column="0" HorizontalAlignment="Right" Icon="Language" FontSize="22"/>
@@ -57,22 +58,22 @@
 				</ComboBox>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_AlwaysOnTop" Style="{StaticResource Label}"/>
-				<CheckBox Grid.Column="1" Grid.Row="1" IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}" Margin="6"/>
+				<CheckBox Grid.Column="1" Grid.Row="1" IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}" Margin="6, 3"/>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_Overlay" Style="{StaticResource Label}"/>
-				<CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding SettingsService.Settings.OverlayWindow}" Margin="6"/>
+				<CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding SettingsService.Settings.OverlayWindow}" Margin="6, 3"/>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
-				<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="3" Margin="6"/>
+				<ComboBox x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Grid.Column="1" Grid.Row="3" Margin="6, 3"/>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="4" Key="Settings_Translucency" Style="{StaticResource Label}"/>
-				<CheckBox Grid.Column="1" Grid.Row="4" IsChecked="{Binding SettingsService.Settings.EnableTranslucency}" Margin="6"/>
+				<CheckBox Grid.Column="1" Grid.Row="4" IsChecked="{Binding SettingsService.Settings.EnableTranslucency}" Margin="6, 3"/>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
-				<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="5" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
+				<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6, 3" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="5" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Font" Style="{StaticResource Label}"/>
-				<!--<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="6" Margin="6"/>-->
+				<!--<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="6" Margin="6, 3"/>-->
 
 				<ComboBox Grid.Column="1" Grid.Row="6" Width="150" HorizontalAlignment="Left"
 						  SelectedItem="{Binding SelectedFont}"
@@ -86,9 +87,12 @@
 				</ComboBox>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="7" Key="Settings_WrapRotations" Style="{StaticResource Label}"/>
-				<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Grid.Row="7" Margin="6"/>
+				<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Grid.Row="7" Margin="6, 3"/>
 
-				<GroupBox Grid.Row="8" Grid.ColumnSpan="2">
+				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="8" Key="Settings_Developer" Style="{StaticResource Label}"/>
+				<CheckBox IsChecked="{Binding SettingsService.Settings.EnableDeveloperTab}" Grid.Column="1" Grid.Row="8" Margin="6, 3"/>
+				
+				<GroupBox Grid.Row="9" Grid.ColumnSpan="2">
 					<GroupBox.Header>
 						<XivToolsWPF:TextBlock Key="Settings_Theme"/>
 					</GroupBox.Header>
@@ -123,7 +127,7 @@
 				</GroupBox>
 
 				<!-- Gallery options -->
-				<GroupBox Grid.Row="9" Grid.ColumnSpan="2">
+				<GroupBox Grid.Row="10" Grid.ColumnSpan="2">
 					<GroupBox.Header>
 						<XivToolsWPF:TextBlock Key="Settings_GalleryHeader"/>
 					</GroupBox.Header>

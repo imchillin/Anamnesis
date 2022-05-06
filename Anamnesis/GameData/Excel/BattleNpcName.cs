@@ -14,7 +14,7 @@ using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 public class BattleNpcName : ExcelRow, ISelectable
 {
 	public string Name { get; private set; } = string.Empty;
-	public string? Description => $"B:{this.RowId.ToString("D7")}";
+	public string? Description => $"N:{this.RowId.ToString("D7")}";
 
 	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
 	{

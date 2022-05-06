@@ -137,9 +137,6 @@
 	"Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
 	"Character_Load_CMTool": "CMTool save",
 
-	"Character_SearchNpcAppearances": "Search for this NPC",
-	"Character_SearchNpcAppearancesTooltip": "Search for Battle and Event NPCs that use the selected appearance. Used to generate NPCNames list entries.",
-
 	"Character_Appearance_LoadNpc": "NPC",
 	"Character_Appearance_LoadObject": "Object",
 	"Character_Customize_Header": "Customize",
@@ -260,6 +257,7 @@
 	"Character_Action_AnimationOverrideBlendBlocked": "Animation Blending is only available once you have overidden the base animation in the Animation Override section above.",
 	"Character_Action_AnimationSpeedControl": "Animation Speed Control",
 	"Character_Action_AnimationBlending": "Animation Blending",
+	"Character_Action_ModelRow": "Model",
 	"Character_Action_GlobalSettings": "Global Settings",
 	"Character_Action_BaseAnimation": "Base",
 	"Character_Action_UnknownAnimation": "(unknown)",
@@ -583,6 +581,7 @@
 	"Settings_Font_Default": "Default",
 	"Settings_OverlayWindow": "Mini window",
 	"Settings_WrapRotations": "Wrap rotation sliders",
+	"Settings_Developer": "Developer Mode",
 	"Settings_DefaultAuthor": "Default Author Name",
 	"Settings_PenumbraHeader": "Penumbra",
 	"Settings_UseExternalRefresh": "Use Penumbra Redraw",

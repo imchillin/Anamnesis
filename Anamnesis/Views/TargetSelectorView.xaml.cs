@@ -2,10 +2,13 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Views;
+
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using Anamnesis.Memory;
+using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using XivToolsWpf;
 
@@ -79,6 +82,20 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		set => includeHidden = value;
 	}
 
+	public static void Show(Action<ActorBasicMemory> sectionChanged)
+	{
+		TargetSelectorView view = new TargetSelectorView();
+		view.SelectionChanged += (b) =>
+		{
+			if (view.Value == null)
+				return;
+
+			sectionChanged?.Invoke(view.Value);
+		};
+
+		ViewService.ShowDrawer(view, DrawerDirection.Left);
+	}
+
 	protected override Task LoadItems()
 	{
 		this.AddItems(ActorService.Instance.GetAllActors());
@@ -142,13 +159,6 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 	protected override void OnSelectionChanged(bool close)
 	{
 		base.OnSelectionChanged(close);
-
-		ActorBasicMemory? actor = this.Selector.Value as ActorBasicMemory;
-
-		if (actor == null)
-			return;
-
-		Task.Run(() => TargetService.PinActor(actor, true));
 		this.Close();
 	}
 
@@ -157,9 +167,9 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		this.FilterItems();
 	}
 
-	private async void OnAddPlayerTargetActorClicked(object sender, RoutedEventArgs e)
+	private void OnAddPlayerTargetActorClicked(object sender, RoutedEventArgs e)
 	{
-		await TargetService.PinPlayerTargetedActor();
-		this.Close();
+		this.Value = TargetService.GetTargetedActor();
+		this.OnSelectionChanged(true);
 	}
 }

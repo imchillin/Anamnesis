@@ -145,13 +145,13 @@
 											   Grid.Row="0"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
-						
+
 						<TextBox Grid.Row="0"
 								 Grid.Column="1"
 								 Grid.ColumnSpan="2"
 								 Style="{StaticResource MaterialDesignTextBox}"
 								 Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}"/>
-						
+
 						<!--<XivToolsWpf:TextBlock Key="Character_Actor_EntityType"
 											   Grid.Row="2"
 											   Grid.Column="0"
@@ -207,7 +207,7 @@
 											   Grid.Row="5"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
-						
+
 						<StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1" Margin="0, 6, 0, 0">
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Mount}" SubActorType="Mount" Margin="3,0"/>
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Companion}" SubActorType="Companion" Margin="3,0"/>
@@ -239,24 +239,6 @@
 					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}"/>
 
 				</GroupBox>
-			</StackPanel>
-
-			<StackPanel 
-				Grid.Row="1"
-				Margin="2, 2, 2, 0"
-				Orientation="Horizontal">
-
-				<Button Click="OnFindNpcClicked"
-							Style="{StaticResource TransparentButton}"
-						Padding="6,3">
-
-					<Button.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_SearchNpcAppearancesTooltip" />
-					</Button.ToolTip>
-
-					<XivToolsWpf:TextBlock Key="Character_SearchNpcAppearances" />
-				</Button>
-
 			</StackPanel>
 
 			<XivToolsWpf:InfoControl Key="Warning_NpcFaceTitle">

@@ -95,14 +95,6 @@ public partial class CharacterPage : UserControl
 		this.Actor.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
 	}
 
-	private void OnFindNpcClicked(object sender, RoutedEventArgs e)
-	{
-		if (this.Actor == null)
-			return;
-
-		NpcAppearanceSearch.Search(this.Actor);
-	}
-
 	private void OnRaceGearClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Actor == null)

@@ -69,12 +69,23 @@
 			                Tribe="{Binding Actor.Customize.Tribe}"
 			            />
 
-                        <XivToolsWpf:TextBlock Key="Character_Action_LipAnimation"
+                        <XivToolsWpf:TextBlock Key="Character_Action_ModelRow"
 											   Grid.Row="1"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
 
-                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.Animation.LipsOverride, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="DisplayName" />
+                        <XivToolsWpf:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding Actor.ModelType}"  Buttons="True"
+										   Minimum="0"
+										   TickFrequency="1" />
+
+                        <XivToolsWpf:TextBlock Key="Character_Action_LipAnimation"
+											   Grid.Row="2"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+
+                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.Animation.LipsOverride, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="DisplayName" />
+
+                        
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -235,7 +246,6 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <Grid.ColumnDefinitions>
@@ -255,14 +265,13 @@
                         </ToggleButton>
                         
                         
-                        <views:AnimationSpeedControl Grid.Row="0" Grid.Column="1" SlotNameOverride="All" IsEnabled="{Binding Actor.Animation.LinkSpeeds}" Speed="{Binding Actor.Animation.Speeds[0].Value}" />
-                        <views:AnimationSpeedControl Grid.Row="1" Grid.Column="1" Slot="FullBody" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[0].Value}" />
-                        <views:AnimationSpeedControl Grid.Row="2" Grid.Column="1" Slot="UpperBody" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[1].Value}" />
-                        <views:AnimationSpeedControl Grid.Row="3" Grid.Column="1" Slot="Facial" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[2].Value}" />
-                        <views:AnimationSpeedControl Grid.Row="4" Grid.Column="1" Slot="Add" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[3].Value}" />
-                        <views:AnimationSpeedControl Grid.Row="5" Grid.Column="1" Slot="Lips" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[7].Value}" />
+                        <views:AnimationSpeedControl Grid.Row="0" Grid.Column="1" Slot="FullBody" Speed="{Binding Actor.Animation.Speeds[0].Value}" />
+                        <views:AnimationSpeedControl Grid.Row="1" Grid.Column="1" Slot="UpperBody" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[1].Value}" />
+                        <views:AnimationSpeedControl Grid.Row="2" Grid.Column="1" Slot="Facial" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[2].Value}" />
+                        <views:AnimationSpeedControl Grid.Row="3" Grid.Column="1" Slot="Add" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[3].Value}" />
+                        <views:AnimationSpeedControl Grid.Row="4" Grid.Column="1" Slot="Lips" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[7].Value}" />
 
-                        <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}"  Grid.RowSpan="7" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedBlocked" />
+                        <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}"  Grid.RowSpan="6" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedBlocked" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
