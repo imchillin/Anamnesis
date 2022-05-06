@@ -87,7 +87,7 @@ public static class NpcAppearanceSearch
 				}
 
 				jsonBuilder.Append(appearance.RowId.ToString("D7"));
-				jsonBuilder.Append("\": \"B:");
+				jsonBuilder.Append("\": \"N:");
 				jsonBuilder.Append(name.RowId.ToString("D7"));
 				jsonBuilder.AppendLine("\",");
 			}

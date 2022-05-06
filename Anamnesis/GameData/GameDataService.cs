@@ -105,7 +105,7 @@ public class GameDataService : ServiceBase<GameDataService>
 			return null;
 
 		// Is this a BattleNpcName entry?
-		if (name.Contains("B:"))
+		if (name.Contains("N:"))
 		{
 			if (BattleNpcNames == null)
 				return name;

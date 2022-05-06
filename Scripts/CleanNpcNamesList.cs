@@ -38,7 +38,7 @@ public class CleanNpcNames : ScriptBase
 				appearanceValue = parts[0] + ":" + value.ToString("D7");
 			}
 
-			if (nameValue.Length != 9 && nameValue.StartsWith("B:"))
+			if (nameValue.Length != 9 && nameValue.StartsWith("N:"))
 			{
 				string[] parts = nameValue.Split(':');
 				uint value = uint.Parse(parts[1]);
