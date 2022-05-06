@@ -7,10 +7,16 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using XivToolsWpf;
+using XivToolsWpf.Extensions;
 
 public static class ClipboardUtility
 {
-	public static async Task CopyToClipboard(string text)
+	public static void CopyToClipboard(string text)
+	{
+		CopyToClipboardAsync(text).Run();
+	}
+
+	public static async Task CopyToClipboardAsync(string text)
 	{
 		int attempt = 3;
 		bool success = false;
