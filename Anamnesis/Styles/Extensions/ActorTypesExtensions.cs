@@ -38,7 +38,7 @@ public static class ActorTypesExtensions
 			case ActorTypes.Retainer: return IconChar.ConciergeBell;
 			case ActorTypes.Housing: return IconChar.Chair;
 			case ActorTypes.Mount: return IconChar.Horse;
-			case ActorTypes.Ornament: return IconChar.PiedPiperHat;
+			case ActorTypes.Ornament: return IconChar.HatCowboy;
 		}
 
 		return IconChar.Question;

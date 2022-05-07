@@ -63,6 +63,9 @@ public class ActorMemory : ActorBasicMemory
 	public bool IsRefreshing { get; set; } = false;
 	public bool PendingRefresh { get; set; } = false;
 
+	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
+	public bool CanRefresh => ActorService.Instance.CanRefreshActor(this);
+
 	public bool IsPlayer => this.ModelObject != null && this.ModelObject.IsPlayer;
 
 	[DependsOn(nameof(ModelType))]
@@ -160,55 +163,22 @@ public class ActorMemory : ActorBasicMemory
 
 		try
 		{
-			Log.Information($"Begining actor refresh for actor address: {this.Address}");
+			Log.Information($"Attempting actor refresh for actor address: {this.Address}");
 
 			this.IsRefreshing = true;
 
-			if (SettingsService.Current.UseExternalRefresh)
+			if(await ActorService.Instance.RefreshActor(this))
 			{
-				if (this.ObjectKind == ActorTypes.Player)
-				{
-					this.ObjectKind = ActorTypes.BattleNpc;
-					await Penumbra.Penumbra.Redraw(this.Name);
-					await Task.Delay(200);
-					this.ObjectKind = ActorTypes.Player;
-				}
-				else
-				{
-					await Penumbra.Penumbra.Redraw(this.Name);
-				}
-
-				return;
+				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}
 			else
 			{
-				await Task.Delay(16);
-
-				if (this.ObjectKind == ActorTypes.Player)
-				{
-					this.ObjectKind = ActorTypes.BattleNpc;
-					this.RenderMode = RenderModes.Unload;
-					await Task.Delay(75);
-					this.RenderMode = RenderModes.Draw;
-					await Task.Delay(75);
-					this.ObjectKind = ActorTypes.Player;
-					this.RenderMode = RenderModes.Draw;
-				}
-				else
-				{
-					this.RenderMode = RenderModes.Unload;
-					await Task.Delay(75);
-					this.RenderMode = RenderModes.Draw;
-				}
-
-				await Task.Delay(150);
+				Log.Information($"Could not refresh actor: {this.Address}");
 			}
-
-			Log.Information($"Completed actor refresh for actor address: {this.Address}");
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "Failed to refresh actor");
+			Log.Error(ex, $"Error refreshing actor: {this.Address}");
 		}
 		finally
 		{
@@ -219,6 +189,11 @@ public class ActorMemory : ActorBasicMemory
 		this.RaisePropertyChanged(nameof(this.IsPlayer));
 		await Task.Delay(150);
 		this.RaisePropertyChanged(nameof(this.IsPlayer));
+	}
+
+	public void RaiseRefreshChanged()
+	{
+		this.RaisePropertyChanged(nameof(this.CanRefresh));
 	}
 
 	protected override void HandlePropertyChanged(PropertyChange change)
