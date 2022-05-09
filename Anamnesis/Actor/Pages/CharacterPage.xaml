@@ -6,7 +6,6 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:views="clr-namespace:Anamnesis.Actor.Views"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 xmlns:anaMem="clr-namespace:Anamnesis.Memory"
 			 xmlns:ana="clr-namespace:Anamnesis.Views"
 			 xmlns:converters="clr-namespace:Anamnesis.Converters"
 			 d:DesignHeight="600"
