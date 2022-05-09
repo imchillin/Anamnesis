@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Anamnesis.Actor;
 using Anamnesis.Core.Memory;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
@@ -219,6 +220,10 @@ public class TargetService : ServiceBase<TargetService>
 		HotkeyService.RegisterHotkeyHandler("TargetService.NextPinned", () => this.NextPinned());
 		HotkeyService.RegisterHotkeyHandler("TargetService.PrevPinned", () => this.PrevPinned());
 
+		GposeService.GposeStateChanged += this.GposeService_GposeStateChanged;
+		PoseService.EnabledChanged += this.PoseService_EnabledChanged;
+		PoseService.FreezeWorldPositionsEnabledChanged += this.PoseService_EnabledChanged;
+
 #if DEBUG
 		if (MemoryService.Process == null)
 		{
@@ -259,6 +264,14 @@ public class TargetService : ServiceBase<TargetService>
 		}
 
 		_ = Task.Run(this.TickPinnedActors);
+	}
+
+	public override Task Shutdown()
+	{
+		GposeService.GposeStateChanged -= this.GposeService_GposeStateChanged;
+		PoseService.EnabledChanged -= this.PoseService_EnabledChanged;
+		PoseService.FreezeWorldPositionsEnabledChanged -= this.PoseService_EnabledChanged;
+		return base.Shutdown();
 	}
 
 	public void ClearSelection()
@@ -398,8 +411,24 @@ public class TargetService : ServiceBase<TargetService>
 			}
 
 			this.UpdatePlayerTarget();
+			this.PlayerTarget?.Tick();
 		}
 	}
+
+	private void RefreshActorRefreshStatus()
+	{
+		foreach(var pin in this.PinnedActors)
+		{
+			if(pin.Memory?.IsValid == true)
+			{
+				pin.Memory.RaiseRefreshChanged();
+			}
+		}
+	}
+
+	private void GposeService_GposeStateChanged(bool newState) => this.RefreshActorRefreshStatus();
+
+	private void PoseService_EnabledChanged(bool value) => this.RefreshActorRefreshStatus();
 
 	[AddINotifyPropertyChangedInterface]
 	public class PinnedActor : INotifyPropertyChanged
@@ -594,10 +623,6 @@ public class TargetService : ServiceBase<TargetService>
 						// Don't consider hidden actors for retargeting
 						if (actor.IsHidden)
 							continue;
-
-						// Don't consider overworld actors while we are in gpose
-						////if (isGPose && actor.IsOverworldActor)
-						////	continue;
 
 						// Is this actor memory already pinned to a differnet pin?
 						PinnedActor? pinned = TargetService.GetPinned(actor);

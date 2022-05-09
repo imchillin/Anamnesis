@@ -16,7 +16,7 @@ public class ActorBasicMemory : MemoryBase
 {
 	private ActorBasicMemory? owner;
 
-	public enum RenderModes : int
+	public enum RenderModes : uint
 	{
 		Draw = 0,
 		Unload = 2,
@@ -34,7 +34,8 @@ public class ActorBasicMemory : MemoryBase
 	[Bind(0x0104)] public RenderModes RenderMode { get; set; }
 
 	public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
-	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}";
+	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}_k{this.ObjectKind}";
+	public int Index => ActorService.Instance.GetActorTableIndex(this.Address);
 
 	public IconChar Icon => this.ObjectKind.GetIcon();
 	public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
@@ -51,26 +52,6 @@ public class ActorBasicMemory : MemoryBase
 
 	[DependsOn(nameof(RenderMode))]
 	public bool IsHidden => this.RenderMode != RenderModes.Draw;
-
-	[DependsOn(nameof(IsOverworldActor))]
-	public bool CanRefresh
-	{
-		get
-		{
-			if (PoseService.Instance.IsEnabled)
-				return false;
-
-			if (PoseService.Instance.FreezeWorldPosition)
-				return false;
-
-			// If there is some sort of external refresh service
-			// assume we can always refresh.
-			if (SettingsService.Current.UseExternalRefresh)
-				return true;
-
-			return this.IsOverworldActor;
-		}
-	}
 
 	/// <summary>
 	/// Gets the Nickname or if not set, the Name.
@@ -91,6 +72,12 @@ public class ActorBasicMemory : MemoryBase
 
 			return name;
 		}
+	}
+
+	public int ObjectKindInt
+	{
+		get => (int)this.ObjectKind;
+		set => this.ObjectKind = (ActorTypes)value;
 	}
 
 	[DependsOn(nameof(ObjectIndex), nameof(Address))]
