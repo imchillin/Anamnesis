@@ -18,7 +18,7 @@ public class NpcFaceGposeConverter : IMultiValueConverter
 
 		if (values[0] is ActorTypes type && values[1] is byte head && values[2] is ActorCustomizeMemory.Ages age)
 		{
-			if (type == ActorTypes.BattleNpc)
+			if (type != ActorTypes.Player)
 				return Visibility.Collapsed;
 
 			if (age != ActorCustomizeMemory.Ages.Normal)
