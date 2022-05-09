@@ -35,6 +35,7 @@ public class ActorBasicMemory : MemoryBase
 
 	public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
 	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}_k{this.ObjectKind}";
+	public int Index => ActorService.Instance.GetActorTableIndex(this.Address);
 
 	public IconChar Icon => this.ObjectKind.GetIcon();
 	public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
@@ -71,6 +72,12 @@ public class ActorBasicMemory : MemoryBase
 
 			return name;
 		}
+	}
+
+	public int ObjectKindInt
+	{
+		get => (int)this.ObjectKind;
+		set => this.ObjectKind = (ActorTypes)value;
 	}
 
 	[DependsOn(nameof(ObjectIndex), nameof(Address))]

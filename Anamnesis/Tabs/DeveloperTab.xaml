@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Anamnesis.Tabs"
 			 xmlns:controls="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			  xmlns:anaMem="clr-namespace:Anamnesis.Memory"
 			 mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -38,11 +40,32 @@
 
         <GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="1">
             <GroupBox.Header>
-                <controls:Header Icon="Running" Text="Actor"/>
-            </GroupBox.Header>
+				<StackPanel Orientation="Horizontal">
+					<controls:Header Icon="Running" Text="Actor - "/>
+					<XivToolsWpf:TextBlock Text="{Binding TargetService.PlayerTarget.DisplayName}"/>
+				</StackPanel>
+			</GroupBox.Header>
 
             <StackPanel>
-                <Button Content="Copy Actor Address"
+
+				<XivToolsWpf:TextBlock Text="{Binding TargetService.PlayerTarget.Index, StringFormat=Index: {0:D}}"/>
+
+				<ComboBox ItemsSource="{Binding Source={x:Static anaMem:ActorType.AllActorTypes}}" SelectedIndex="{Binding TargetService.PlayerTarget.ObjectKindInt}">
+					<ComboBox.ItemContainerStyle>
+						<Style TargetType="{x:Type ComboBoxItem}">
+							<Setter Property="IsEnabled" Value="{Binding IsSupportedType}"/>
+						</Style>
+					</ComboBox.ItemContainerStyle>
+
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Name}" />
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+
+				
+				<Button Content="Copy Actor Address"
                         IsEnabled="{Binding TargetService.PlayerTarget.IsValid}"
 						Style="{StaticResource TransparentButton}"
 						Height="32"

@@ -110,12 +110,6 @@ public class ActorMemory : ActorBasicMemory
 		}
 	}
 
-	public int ObjectKindInt
-	{
-		get => (int)this.ObjectKind;
-		set => this.ObjectKind = (ActorTypes)value;
-	}
-
 	[DependsOn(nameof(ObjectIndex), nameof(CharacterMode))]
 	public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.Instance.IsLocalOverworldPlayer(this.ObjectIndex);
 
