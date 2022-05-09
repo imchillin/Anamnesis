@@ -411,6 +411,7 @@ public class TargetService : ServiceBase<TargetService>
 			}
 
 			this.UpdatePlayerTarget();
+			this.PlayerTarget?.Tick();
 		}
 	}
 

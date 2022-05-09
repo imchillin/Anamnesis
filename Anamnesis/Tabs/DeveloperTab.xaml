@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:Anamnesis.Tabs"
 			 xmlns:controls="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			  xmlns:anaMem="clr-namespace:Anamnesis.Memory"
+			 xmlns:anaMem="clr-namespace:Anamnesis.Memory"
+			 xmlns:inspector="clr-namespace:Anamnesis.Inspector"
 			 mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -77,7 +78,9 @@
 						Height="32"
 						Click="OnCopyAssociatedAddressesClick"/>
 
-            </StackPanel>
+				<inspector:InspectorView Target="{Binding TargetService.PlayerTarget}" Height="350"/>
+
+			</StackPanel>
 
         </GroupBox>
 
