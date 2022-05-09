@@ -13,13 +13,16 @@ public class NpcFaceGposeConverter : IMultiValueConverter
 {
 	public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 	{
-		if (values.Length != 2)
+		if (values.Length != 3)
 			throw new ArgumentException();
 
-		if (values[0] is ActorTypes type && values[1] is byte head)
+		if (values[0] is ActorTypes type && values[1] is byte head && values[2] is ActorCustomizeMemory.Ages age)
 		{
 			if (type == ActorTypes.BattleNpc)
 				return Visibility.Collapsed;
+
+			if (age != ActorCustomizeMemory.Ages.Normal)
+				return Visibility.Visible;
 
 			if (head < 100)
 				return Visibility.Collapsed;

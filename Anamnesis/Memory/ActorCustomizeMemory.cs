@@ -73,6 +73,7 @@ public class ActorCustomizeMemory : MemoryBase
 
 		ap.Race = Races.Hyur;
 		ap.Gender = Genders.Feminine;
+
 		ap.Age = Ages.Normal;
 		ap.Tribe = Tribes.Midlander;
 

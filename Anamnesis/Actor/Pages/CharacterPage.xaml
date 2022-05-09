@@ -241,7 +241,7 @@
 				</GroupBox>
 			</StackPanel>
 
-			<XivToolsWpf:InfoControl Key="Warning_NpcFaceTitle">
+			<XivToolsWpf:InfoControl Key="Warning_NpcFaceTitle" Width="256">
 
 				<XivToolsWpf:InfoControl.Resources>
 					<converters:NpcFaceGposeConverter x:Key="NpcFaceConverter"/>
@@ -251,6 +251,7 @@
 					<MultiBinding Converter="{StaticResource NpcFaceConverter}">
 						<Binding Path="Actor.ObjectKind"/>
 						<Binding Path="Actor.Customize.Head"/>
+						<Binding Path="Actor.Customize.Age"/>
 					</MultiBinding>
 				</XivToolsWpf:InfoControl.Visibility>
 
@@ -259,7 +260,7 @@
 				</XivToolsWpf:InfoControl.ToolTip>
 			</XivToolsWpf:InfoControl>
 
-			<XivToolsWpf:InfoControl Key="Warning_MinionGposeTitle">
+			<XivToolsWpf:InfoControl Key="Warning_MinionGposeTitle" Width="256">
 				<XivToolsWpf:InfoControl.ToolTip>
 					<XivToolsWpf:TextBlock Key="Warning_MinionGposeFace" MaxWidth="256" TextWrapping="Wrap"/>
 				</XivToolsWpf:InfoControl.ToolTip>
