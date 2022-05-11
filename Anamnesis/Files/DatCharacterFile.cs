@@ -81,9 +81,85 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		return file;
 	}
 
+	public void WriteToFile(ActorMemory actor)
+	{
+		if (actor.Customize == null)
+			return;
+
+		// Appearance Data
+		byte[] saveData = new byte[]
+		{
+			(byte)actor.Customize.Race,
+			(byte)actor.Customize.Gender,
+			(byte)actor.Customize.Age,
+			actor.Customize.Height,
+			(byte)actor.Customize.Tribe,
+			actor.Customize.Head,
+			actor.Customize.Hair,
+			(byte)(actor.Customize.EnableHighlights ? 0x80 : 0x00),
+			actor.Customize.Skintone,
+			actor.Customize.REyeColor,
+			actor.Customize.HairTone,
+			actor.Customize.Highlights,
+			(byte)actor.Customize.FacialFeatures,
+			actor.Customize.FacialFeatureColor,
+			actor.Customize.Eyebrows,
+			actor.Customize.LEyeColor,
+			actor.Customize.Eyes,
+			actor.Customize.Nose,
+			actor.Customize.Jaw,
+			actor.Customize.Mouth,
+			actor.Customize.LipsToneFurPattern,
+			actor.Customize.EarMuscleTailSize,
+			actor.Customize.TailEarsType,
+			actor.Customize.Bust,
+			actor.Customize.FacePaint,
+			actor.Customize.FacePaintColor,
+			0x9e, // TODO: Default
+			0x00,
+
+			// Timestamp
+			0x00, 0x00, 0x00, 0x00,
+		};
+
+		// Timestamp
+		byte[] unixTime = BitConverter.GetBytes(DateTimeOffset.Now.ToUnixTimeSeconds());
+		if (!BitConverter.IsLittleEndian)
+			Array.Reverse(unixTime);
+		Array.Copy(unixTime, 0, saveData, 0x1C, 4);
+
+		// Checksum
+		int checksum = 0;
+		for (int i = 0; i < saveData.Length; i++)
+			checksum ^= saveData[i] << (i % 24);
+
+		byte[] chkDigest = BitConverter.GetBytes(checksum);
+		if (!BitConverter.IsLittleEndian)
+			Array.Reverse(chkDigest);
+
+		// Write Data
+		byte[] buffer = new byte[0xD4];
+
+		using (MemoryStream stream = new MemoryStream(buffer))
+		{
+			using (BinaryWriter writer = new BinaryWriter(stream))
+			{
+				// Save Data
+				writer.Write(0x2013FF14); // Magic
+				writer.Write(0x03);
+				writer.Seek(0x08, 0);
+				writer.Write(chkDigest);
+				writer.Seek(0x10, 0);
+				writer.Write(saveData);
+			}
+		}
+
+		this.Data = buffer;
+	}
+
 	public override void Serialize(Stream stream)
 	{
-		throw new NotSupportedException();
+		stream.Write(this.Data);
 	}
 
 	public override FileBase Deserialize(Stream stream)

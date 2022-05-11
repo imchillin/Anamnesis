@@ -287,6 +287,18 @@ public partial class CharacterPage : UserControl
 		}
 	}
 
+	private async void OnSaveDatClicked(object sender, RoutedEventArgs e)
+	{
+		try
+		{
+			await this.SaveDat();
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to save appearance");
+		}
+	}
+
 	private async Task Save(bool editMeta, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
 	{
 		if (this.Actor == null)
@@ -309,6 +321,25 @@ public partial class CharacterPage : UserControl
 		{
 			FileMetaEditor.Show(result.Path, file);
 		}
+	}
+
+	private async Task SaveDat()
+	{
+		if (this.Actor == null)
+			return;
+
+		SaveResult result = await FileService.Save<DatCharacterFile>(lastSaveDir, FileService.DefaultCharacterDirectory);
+
+		if (result.Path == null)
+			return;
+
+		DatCharacterFile file = new DatCharacterFile();
+		file.WriteToFile(this.Actor);
+
+		using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
+		file.Serialize(stream);
+
+		lastSaveDir = result.Directory;
 	}
 
 	private void OnActorChanged(ActorMemory? actor)
