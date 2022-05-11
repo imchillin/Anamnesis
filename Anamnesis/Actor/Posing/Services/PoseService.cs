@@ -35,6 +35,7 @@ public class PoseService : ServiceBase<PoseService>
 	public delegate void PoseEvent(bool value);
 
 	public static event PoseEvent? EnabledChanged;
+	public static event PoseEvent? FreezeWorldPositionsEnabledChanged;
 
 	public static string? SelectedBoneName { get; set; }
 
@@ -124,6 +125,7 @@ public class PoseService : ServiceBase<PoseService>
 			this.freezeGposeTargetPosition2?.SetEnabled(value);
 			this.RaisePropertyChanged(nameof(PoseService.FreezeWorldPosition));
 			this.RaisePropertyChanged(nameof(PoseService.WorldPositionNotFrozen));
+			FreezeWorldPositionsEnabledChanged?.Invoke(this.IsEnabled);
 		}
 	}
 

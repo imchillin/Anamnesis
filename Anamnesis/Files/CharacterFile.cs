@@ -241,18 +241,6 @@ public class CharacterFile : JsonFileBase
 		{
 			actor.EnableReading = false;
 
-			// If we are inside a house, and we target an event NPC,
-			// we should change them to a player for gposing.
-			Territory? territory = TerritoryService.Instance.CurrentTerritory;
-			if (TerritoryService.Exists && territory != null && territory.IsHouse)
-			{
-				if (actor.ObjectKind == ActorTypes.EventNpc)
-				{
-					actor.ObjectKind = ActorTypes.Player;
-					await actor.RefreshAsync();
-				}
-			}
-
 			if (!string.IsNullOrEmpty(this.Nickname))
 				actor.Nickname = this.Nickname;
 

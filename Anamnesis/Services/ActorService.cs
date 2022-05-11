@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Anamnesis.Actor;
+using Anamnesis.Actor.Refresh;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
@@ -23,7 +25,51 @@ public class ActorService : ServiceBase<ActorService>
 
 	private readonly IntPtr[] actorTable = new IntPtr[ActorTableSize];
 
+	private readonly List<IActorRefresher> actorRefreshers = new()
+	{
+		new PenumbraActorRefresher(),
+		new AnamnesisActorRefresher(),
+	};
+
 	public ReadOnlyCollection<IntPtr> ActorTable => Array.AsReadOnly(this.actorTable);
+
+	public bool CanRefreshActor(ActorMemory actor)
+	{
+		if (PoseService.Instance.IsEnabled)
+			return false;
+
+		if (PoseService.Instance.FreezeWorldPosition)
+			return false;
+
+		if (!actor.IsValid)
+			return false;
+
+		foreach (IActorRefresher actorRefresher in this.actorRefreshers)
+		{
+			if (actorRefresher.CanRefresh(actor))
+				return true;
+		}
+
+		return false;
+	}
+
+	public async Task<bool> RefreshActor(ActorMemory actor)
+	{
+		if(this.CanRefreshActor(actor))
+		{
+			foreach (IActorRefresher actorRefresher in this.actorRefreshers)
+			{
+				if (actorRefresher.CanRefresh(actor))
+				{
+					Log.Information($"Executing {actorRefresher.GetType().Name} refresh for actor address: {actor.Address}");
+					await actorRefresher.RefreshActor(actor);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 
 	public int GetActorTableIndex(IntPtr pointer, bool refresh = false)
 	{
