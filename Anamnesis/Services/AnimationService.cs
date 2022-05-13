@@ -28,9 +28,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		set
 		{
 			if (this.speedControlEnabled != value)
-			{
-				this.SetSpeedControlEnabled(value);
-			}
+				this.SetSpeedControlEnabled(value && GposeService.Instance.IsGpose);
 		}
 	}
 
@@ -171,7 +169,11 @@ public class AnimationService : ServiceBase<AnimationService>
 		this.speedControlEnabled = enabled;
 	}
 
-	private void OnGposeStateChanging(bool isGPose) => this.SpeedControlEnabled = isGPose;
+	private void OnGposeStateChanging(bool isGPose)
+	{
+		if (!isGPose)
+			this.SpeedControlEnabled = false;
+	}
 
 	private void ResetOverriddenActors()
 	{
