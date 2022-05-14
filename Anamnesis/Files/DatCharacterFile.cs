@@ -7,7 +7,10 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
+using Anamnesis.Services;
 using Serilog;
 
 public class DatCharacterFile : FileBase, IUpgradeCharacterFile
@@ -49,7 +52,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 	public CharacterFile Upgrade()
 	{
 		if (this.Data == null)
-			throw new Exception("Dat Appearance Fila has no data.");
+			throw new Exception("Dat Appearance File has no data.");
 
 		CharacterFile file = new CharacterFile();
 		file.Race = (ActorCustomizeMemory.Races)this.Data[0];
@@ -81,10 +84,57 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		return file;
 	}
 
+	public bool ValidateAllowedOptions(CharaMakeType makeType, ActorCustomizeMemory customize)
+	{
+		if (makeType == null || makeType.CustomizeRanges == null)
+			return false;
+
+		Dictionary<int, int> validate = new Dictionary<int, int>()
+		{
+			{ 5, customize.Head },
+			{ 14, customize.Eyebrows },
+			{ 16, customize.Eyes & ~0x80 },
+			{ 17, customize.Nose },
+			{ 18, customize.Jaw },
+			{ 19, customize.Lips },
+		};
+		if (makeType.CustomizeRanges.ContainsKey(22))
+			validate.Add(22, customize.TailEarsType);
+
+		foreach (var option in validate)
+		{
+			bool valid = makeType.CustomizeRanges[option.Key].InRange(option.Value);
+			if (!valid)
+				return false;
+		}
+
+		return true;
+	}
+
 	public void WriteToFile(ActorMemory actor)
 	{
 		if (actor.Customize == null)
 			return;
+
+		CharaMakeType? makeType = null;
+		if (GameDataService.CharacterMakeTypes != null)
+		{
+			foreach (CharaMakeType set in GameDataService.CharacterMakeTypes)
+			{
+				if (set.Tribe != actor.Customize.Tribe || set.Gender != actor.Customize.Gender)
+					continue;
+
+				makeType = set;
+				break;
+			}
+		}
+
+		if (makeType == null)
+			return;
+
+		bool validate = this.ValidateAllowedOptions(makeType, actor.Customize);
+		if (!validate)
+			throw new Exception("This character uses custom features that are not available in the character creator.");
 
 		// Appearance Data
 		byte[] saveData = new byte[]
@@ -115,20 +165,20 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			actor.Customize.Bust,
 			actor.Customize.FacePaint,
 			actor.Customize.FacePaintColor,
-			0x9e, // TODO: Default
+			makeType.DefaultVoice, // TODO: Default
 			0x00,
 
 			// Timestamp
 			0x00, 0x00, 0x00, 0x00,
 		};
 
-		// Timestamp
+		// Generate timestamp
 		byte[] unixTime = BitConverter.GetBytes(DateTimeOffset.Now.ToUnixTimeSeconds());
 		if (!BitConverter.IsLittleEndian)
 			Array.Reverse(unixTime);
 		Array.Copy(unixTime, 0, saveData, 0x1C, 4);
 
-		// Checksum
+		// Calculate checksum
 		int checksum = 0;
 		for (int i = 0; i < saveData.Length; i++)
 			checksum ^= saveData[i] << (i % 24);
