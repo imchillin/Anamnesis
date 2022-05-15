@@ -171,7 +171,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		if (customize.FacePaint != 0)
 		{
 			CharaMakeCustomize? facePaint = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.FacePaint, customize.Tribe, customize.Gender, customize.FacePaint);
-			useDefaultFacePaint = facePaint == null || facePaint.ItemIcon != null;
+			useDefaultFacePaint = facePaint == null || facePaint.IsPurchasable;
 		}
 
 		if (useDefaultHair || useDefaultFacePaint)
