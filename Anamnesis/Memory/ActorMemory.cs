@@ -53,6 +53,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x09A0)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x11E4)] public bool IsMotionEnabled { get; set; }
 	[Bind(0x19E0)] public float Transparency { get; set; }
+	[Bind(0x1ABA)] public byte Voice { get; set; }
 	[Bind(0x1ABC)] public byte CharacterModeRaw { get; set; }
 	[Bind(0x1ABD)] public byte CharacterModeInput { get; set; }
 	[Bind(0x1AE4)] public byte AttachmentPoint { get; set; }
@@ -66,7 +67,7 @@ public class ActorMemory : ActorBasicMemory
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
 	public bool CanRefresh => ActorService.Instance.CanRefreshActor(this);
 
-	public bool IsPlayer => this.ModelObject != null && this.ModelObject.IsPlayer;
+	public bool IsHuman => this.ModelObject != null && this.ModelObject.IsHuman;
 
 	[DependsOn(nameof(ModelType))]
 	public bool IsChocobo => this.ModelType == 1;
@@ -180,9 +181,9 @@ public class ActorMemory : ActorBasicMemory
 			this.WriteDelayedBinds();
 		}
 
-		this.RaisePropertyChanged(nameof(this.IsPlayer));
+		this.RaisePropertyChanged(nameof(this.IsHuman));
 		await Task.Delay(150);
-		this.RaisePropertyChanged(nameof(this.IsPlayer));
+		this.RaisePropertyChanged(nameof(this.IsHuman));
 	}
 
 	public void RaiseRefreshChanged()

@@ -84,8 +84,6 @@
 											   Style="{StaticResource Label}" />
 
                         <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.Animation.LipsOverride, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="DisplayName" />
-
-                        
                     </Grid>
                 </GroupBox>
             </StackPanel>

@@ -23,6 +23,7 @@ public class CharaMakeType : ExcelRow
 
 	public int[]? FacialFeatureOptions { get; private set; }
 	public List<ImageReference>? FacialFeatures { get; private set; }
+	public List<byte>? Voices { get; private set; }
 
 	public override void PopulateData(RowParser parser, LuminaData lumina, Language language)
 	{
@@ -40,6 +41,14 @@ public class CharaMakeType : ExcelRow
 		{
 			this.FacialFeatureOptions[i] = parser.ReadColumn<int>(3291 + i);
 			this.FacialFeatures.Add(new ImageReference(this.FacialFeatureOptions[i]));
+		}
+
+		this.Voices = new List<byte>();
+
+		for (int i = 0; i < 12; i++)
+		{
+			byte voice = parser.ReadColumn<byte>(3279 + i);
+			this.Voices.Add(voice);
 		}
 	}
 }
