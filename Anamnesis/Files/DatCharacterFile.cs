@@ -5,6 +5,7 @@ namespace Anamnesis.Files;
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
@@ -145,10 +146,33 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		}
 
 		CharaMakeCustomize? hair = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.Hair, customize.Tribe, customize.Gender, customize.Hair);
-		CharaMakeCustomize? facePaint = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.FacePaint, customize.Tribe, customize.Gender, customize.FacePaint);
 
-		bool useDefaultHair = hair == null || hair.ItemIcon != null;
-		bool useDefaultFacePaint = facePaint == null || facePaint.ItemIcon != null;
+		bool useDefaultHair = false;
+		bool useDefaultFacePaint = false;
+
+		if (hair != null)
+		{
+			bool isIncompatible = hair.FaceType != 0 && hair.FaceType != customize.Head;
+			if (isIncompatible)
+			{
+				GenericDialog.Show("This character uses a hairstyle that is not compatible with their face type.", "Failed to save appearance");
+				return;
+			}
+			else
+			{
+				useDefaultHair = hair.IsPurchasable;
+			}
+		}
+		else
+		{
+			useDefaultHair = true;
+		}
+
+		if (customize.FacePaint != 0)
+		{
+			CharaMakeCustomize? facePaint = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.FacePaint, customize.Tribe, customize.Gender, customize.FacePaint);
+			useDefaultFacePaint = facePaint == null || facePaint.ItemIcon != null;
+		}
 
 		if (useDefaultHair || useDefaultFacePaint)
 		{

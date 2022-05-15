@@ -57,9 +57,11 @@ public class CharaMakeType : ExcelRow
 
 			int customizeId = (int)parser.ReadColumn<uint>(171 + i);
 
+			int optionNum = parser.ReadColumn<byte>(87 + i);
+
 			CustomizeRange range = default(CustomizeRange);
 			range.Min = parser.ReadColumn<byte>(2999 + i);
-			range.Max = parser.ReadColumn<byte>(87 + i) - 1 + range.Min;
+			range.Max = optionNum - 1 + range.Min;
 			this.CustomizeRanges[customizeId] = range;
 		}
 	}
