@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Services;
+using Anamnesis.GUI.Dialogs;
 using Serilog;
 
 public class DatCharacterFile : FileBase, IUpgradeCharacterFile
@@ -134,7 +135,10 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 
 		bool validate = this.ValidateAllowedOptions(makeType, actor.Customize);
 		if (!validate)
-			throw new Exception("This character uses custom features that are not available in the character creator.");
+		{
+			GenericDialog.Show("This character uses custom features that are not available in the character creator.", "Failed to save appearance");
+			return;
+		}
 
 		// Appearance Data
 		byte[] saveData = new byte[]
@@ -165,7 +169,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			actor.Customize.Bust,
 			actor.Customize.FacePaint,
 			actor.Customize.FacePaintColor,
-			makeType.DefaultVoice, // TODO: Default
+			makeType.DefaultVoice,
 			0x00,
 
 			// Timestamp
