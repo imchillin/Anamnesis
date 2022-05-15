@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Anamnesis.GameData.Excel;
+using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.GUI.Dialogs;
@@ -117,12 +118,14 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		if (actor.Customize == null)
 			return;
 
+		ActorCustomizeMemory customize = actor.Customize;
+
 		CharaMakeType? makeType = null;
 		if (GameDataService.CharacterMakeTypes != null)
 		{
 			foreach (CharaMakeType set in GameDataService.CharacterMakeTypes)
 			{
-				if (set.Tribe != actor.Customize.Tribe || set.Gender != actor.Customize.Gender)
+				if (set.Tribe != customize.Tribe || set.Gender != customize.Gender)
 					continue;
 
 				makeType = set;
@@ -133,42 +136,54 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		if (makeType == null)
 			return;
 
-		bool validate = this.ValidateAllowedOptions(makeType, actor.Customize);
+		// Validate options
+		bool validate = this.ValidateAllowedOptions(makeType, customize);
 		if (!validate)
 		{
 			GenericDialog.Show("This character uses custom features that are not available in the character creator.", "Failed to save appearance");
 			return;
 		}
 
+		CharaMakeCustomize? hair = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.Hair, customize.Tribe, customize.Gender, customize.Hair);
+		CharaMakeCustomize? facePaint = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.FacePaint, customize.Tribe, customize.Gender, customize.FacePaint);
+
+		bool useDefaultHair = hair == null || hair.ItemIcon != null;
+		bool useDefaultFacePaint = facePaint == null || facePaint.ItemIcon != null;
+
+		if (useDefaultHair || useDefaultFacePaint)
+		{
+			GenericDialog.Show("Aesthetician-exclusive hairstyle or face paint has been reverted to its default value.", "Notice");
+		}
+
 		// Appearance Data
 		byte[] saveData = new byte[]
 		{
-			(byte)actor.Customize.Race,
-			(byte)actor.Customize.Gender,
-			(byte)actor.Customize.Age,
-			actor.Customize.Height,
-			(byte)actor.Customize.Tribe,
-			actor.Customize.Head,
-			actor.Customize.Hair,
-			(byte)(actor.Customize.EnableHighlights ? 0x80 : 0x00),
-			actor.Customize.Skintone,
-			actor.Customize.REyeColor,
-			actor.Customize.HairTone,
-			actor.Customize.Highlights,
-			(byte)actor.Customize.FacialFeatures,
-			actor.Customize.FacialFeatureColor,
-			actor.Customize.Eyebrows,
-			actor.Customize.LEyeColor,
-			actor.Customize.Eyes,
-			actor.Customize.Nose,
-			actor.Customize.Jaw,
-			actor.Customize.Mouth,
-			actor.Customize.LipsToneFurPattern,
-			actor.Customize.EarMuscleTailSize,
-			actor.Customize.TailEarsType,
-			actor.Customize.Bust,
-			actor.Customize.FacePaint,
-			actor.Customize.FacePaintColor,
+			(byte)customize.Race,
+			(byte)customize.Gender,
+			(byte)customize.Age,
+			customize.Height,
+			(byte)customize.Tribe,
+			customize.Head,
+			(byte)(useDefaultHair ? 0x01 : customize.Hair),
+			(byte)(customize.EnableHighlights ? 0x80 : 0x00),
+			customize.Skintone,
+			customize.REyeColor,
+			customize.HairTone,
+			customize.Highlights,
+			(byte)customize.FacialFeatures,
+			customize.FacialFeatureColor,
+			customize.Eyebrows,
+			customize.LEyeColor,
+			customize.Eyes,
+			customize.Nose,
+			customize.Jaw,
+			customize.Mouth,
+			customize.LipsToneFurPattern,
+			customize.EarMuscleTailSize,
+			customize.TailEarsType,
+			customize.Bust,
+			(byte)(useDefaultFacePaint ? 0x00 : customize.FacePaint),
+			customize.FacePaintColor,
 			makeType.DefaultVoice,
 			0x00,
 
@@ -200,11 +215,11 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			{
 				// Save Data
 				writer.Write(0x2013FF14); // Magic
-				writer.Write(0x03);
+				writer.Write(0x03);	 // Version
 				writer.Seek(0x08, 0);
-				writer.Write(chkDigest);
+				writer.Write(chkDigest); // Checksum
 				writer.Seek(0x10, 0);
-				writer.Write(saveData);
+				writer.Write(saveData); // Appearance + Timestamp
 			}
 		}
 
