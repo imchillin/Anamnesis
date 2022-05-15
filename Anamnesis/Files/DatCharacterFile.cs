@@ -5,7 +5,6 @@ namespace Anamnesis.Files;
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
@@ -145,13 +144,14 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			return;
 		}
 
-		CharaMakeCustomize? hair = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.Hair, customize.Tribe, customize.Gender, customize.Hair);
-
 		bool useDefaultHair = false;
 		bool useDefaultFacePaint = false;
 
+		CharaMakeCustomize? hair = GameDataService.CharacterMakeCustomize.GetFeature(CustomizeSheet.Features.Hair, customize.Tribe, customize.Gender, customize.Hair);
+
 		if (hair != null)
 		{
+			// Check hairstyle is compatible with their face type (for hrothgars)
 			bool isIncompatible = hair.FaceType != 0 && hair.FaceType != customize.Head;
 			if (isIncompatible)
 			{
