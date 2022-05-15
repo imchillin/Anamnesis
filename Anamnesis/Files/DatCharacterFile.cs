@@ -184,7 +184,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		{
 			(byte)customize.Race,
 			(byte)customize.Gender,
-			(byte)customize.Age,
+			0x01,
 			customize.Height,
 			(byte)customize.Tribe,
 			customize.Head,
