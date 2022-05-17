@@ -47,14 +47,14 @@ public class CharaMakeType : ExcelRow
 			this.FacialFeatureOptions[i] = parser.ReadColumn<int>(3291 + i);
 			this.FacialFeatures.Add(new ImageReference(this.FacialFeatureOptions[i]));
 		}
-    
-    this.Voices = new List<byte>();
+
+		this.Voices = new List<byte>();
 		for (int i = 0; i < 12; i++)
 		{
 			byte voice = parser.ReadColumn<byte>(3279 + i);
 			this.Voices.Add(voice);
-    }
-    
+		}
+
 		this.CustomizeRanges = new Dictionary<int, CustomizeRange>();
 		for (int i = 0; i < 28; i++)
 		{
