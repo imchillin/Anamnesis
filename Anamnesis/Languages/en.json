@@ -203,6 +203,7 @@
 	"Character_Actor_EntityType": "Type",
 	"Character_Actor_Nickname": "Nickname",
 	"Character_Actor_DataPath": "Data Path",
+	"Character_Actor_Voice": "Voice",
 
 	"Character_Model_Header": "Model",
 	"Character_Model_Height": "Height",

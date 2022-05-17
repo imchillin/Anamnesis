@@ -63,7 +63,7 @@ public class ActorModelMemory : MemoryBase
 		set => this.SetFrozen(nameof(ActorModelMemory.Drenched), value, value ? 5 : 0);
 	}
 
-	public bool IsPlayer
+	public bool IsHuman
 	{
 		get
 		{
@@ -84,7 +84,7 @@ public class ActorModelMemory : MemoryBase
 		if (bind.Name == nameof(ActorModelMemory.ExtendedAppearance))
 		{
 			// No extended appearance for anything that isn't a player!
-			if (!this.IsPlayer)
+			if (!this.IsHuman)
 			{
 				if (this.ExtendedAppearance != null)
 				{
