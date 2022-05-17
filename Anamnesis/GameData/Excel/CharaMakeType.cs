@@ -21,7 +21,6 @@ public class CharaMakeType : ExcelRow
 	public ActorCustomizeMemory.Races Race { get; private set; }
 	public ActorCustomizeMemory.Tribes Tribe { get; private set; }
 
-	public byte DefaultVoice { get; private set; }
 	public Dictionary<int, CustomizeRange>? CustomizeRanges { get; private set; }
 
 	public int[]? FacialFeatureOptions { get; private set; }
@@ -36,8 +35,6 @@ public class CharaMakeType : ExcelRow
 		this.Race = (ActorCustomizeMemory.Races)parser.ReadColumn<int>(0);
 		this.Tribe = (ActorCustomizeMemory.Tribes)parser.ReadColumn<int>(1);
 		this.Gender = (ActorCustomizeMemory.Genders)parser.ReadColumn<sbyte>(2);
-
-		this.DefaultVoice = parser.ReadColumn<byte>(3279);
 
 		this.FacialFeatureOptions = new int[7 * 8];
 		this.FacialFeatures = new List<ImageReference>();

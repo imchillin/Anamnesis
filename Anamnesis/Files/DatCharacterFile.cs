@@ -133,7 +133,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			}
 		}
 
-		if (makeType == null)
+		if (makeType == null || makeType.Voices == null)
 			return;
 
 		// Validate options
@@ -208,7 +208,7 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			customize.Bust,
 			(byte)(useDefaultFacePaint ? 0x00 : customize.FacePaint),
 			customize.FacePaintColor,
-			makeType.DefaultVoice,
+			makeType.Voices.Contains(actor.Voice) ? actor.Voice : makeType.Voices[0],
 			0x00,
 
 			// Timestamp
