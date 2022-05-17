@@ -153,7 +153,7 @@ public static class INpcBaseExtensions
 		file.FacePaintColor = (byte)appearance.FacePaintColor;
 
 		file.MainHand = WeaponFromItem(appearance.MainHand, appearance.DyeMainHand);
-		file.OffHand = WeaponFromItem(appearance.OffHand, appearance.DyeOffHand);
+		file.OffHand = WeaponFromItem(appearance.OffHand, appearance.DyeOffHand, true);
 
 		file.HeadGear = GearFromItem(appearance.Head, appearance.DyeHead);
 		file.Body = GearFromItem(appearance.Body, appearance.DyeBody);
@@ -169,7 +169,7 @@ public static class INpcBaseExtensions
 		return file;
 	}
 
-	private static CharacterFile.WeaponSave? WeaponFromItem(IItem? item, IDye? dye)
+	private static CharacterFile.WeaponSave? WeaponFromItem(IItem? item, IDye? dye, bool isOffHand = false)
 	{
 		if (item == null)
 			return null;
@@ -181,6 +181,13 @@ public static class INpcBaseExtensions
 		save.ModelSet = item.ModelSet;
 		save.ModelBase = item.ModelBase;
 		save.ModelVariant = item.ModelVariant;
+
+		if (isOffHand && item.HasSubModel)
+		{
+			save.ModelSet = item.SubModelSet;
+			save.ModelBase = item.SubModelBase;
+			save.ModelVariant = item.SubModelBase;
+		}
 
 		if (dye != null)
 			save.DyeId = dye.Id;
