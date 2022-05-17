@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
+using Anamnesis.Actor.Posing;
 using Anamnesis.Memory;
 using Anamnesis.Posing;
 using Anamnesis.Services;
@@ -49,7 +50,6 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		Toggle,
 	}
 
-	public bool LinkEyes { get; set; } = true;
 	public ActorMemory? Actor { get; private set; }
 	public int SelectedCount => this.SelectedBones.Count;
 	public bool CanEditBone => this.SelectedBones.Count == 1;
@@ -488,15 +488,36 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			if (!GposeService.Instance.IsGpose)
 				return;
 
-			// Map eyes together if they exist
-			BoneVisual3d? lEye = this.GetBone("EyeLeft");
-			BoneVisual3d? rEye = this.GetBone("EyeRight");
-			if (lEye != null && rEye != null)
+			// Create Bone links from the link database
+			foreach ((string name, BoneVisual3d bone) in this.Bones)
 			{
-				lEye.LinkedEye = rEye;
-				rEye.LinkedEye = lEye;
+				foreach (LinkedBones.LinkSet links in LinkedBones.Links)
+				{
+					if (this.Actor?.Customize?.Tribe != links.Tribe)
+						continue;
+
+					if (this.Actor?.Customize?.Gender != links.Gender)
+						continue;
+
+					if (!links.Contains(name))
+						continue;
+
+					foreach(string linkedBoneName in links.Bones)
+					{
+						if (linkedBoneName == name)
+							continue;
+
+						BoneVisual3d? linkedBone = this.GetBone(linkedBoneName);
+
+						if (linkedBone == null)
+							continue;
+
+						bone.LinkedBones.Add(linkedBone);
+					}
+				}
 			}
 
+			// Read the initial transforms of all bones.
 			foreach ((string name, BoneVisual3d bone) in this.Bones)
 			{
 				bone.ReadTransform();

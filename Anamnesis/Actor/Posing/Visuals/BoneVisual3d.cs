@@ -60,6 +60,10 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 
 	public bool IsEnabled { get; set; } = true;
 	public string BoneName { get; set; }
+	public List<BoneVisual3d> LinkedBones { get; set; } = new();
+	public int LinkedBonesCount => this.LinkedBones.Count;
+	public virtual string TooltipKey => "Pose_" + this.BoneName;
+	public bool IsTransformLocked { get; set; } = false;
 
 	public bool CanRotate => PoseService.Instance.FreezeRotation && !this.IsTransformLocked;
 	public CmQuaternion Rotation { get; set; }
@@ -68,11 +72,26 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 	public bool CanTranslate => PoseService.Instance.FreezePositions && !this.IsTransformLocked;
 	public CmVector Position { get; set; }
 
-	public BoneVisual3d? LinkedEye { get; set; }
+	public bool EnableLinkedBones
+	{
+		get
+		{
+			if (this.LinkedBonesCount <= 0)
+				return false;
 
-	public virtual string TooltipKey => "Pose_" + this.BoneName;
+			return SettingsService.Current.PosingBoneLinks.Get(this.BoneName, true);
+		}
 
-	public bool IsTransformLocked { get; set; } = false;
+		set
+		{
+			SettingsService.Current.PosingBoneLinks.Set(this.BoneName, value);
+
+			foreach (BoneVisual3d link in this.LinkedBones)
+			{
+				SettingsService.Current.PosingBoneLinks.Set(link.BoneName, value);
+			}
+		}
+	}
 
 	public string Tooltip
 	{
@@ -232,7 +251,7 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 		}
 	}
 
-	public virtual void WriteTransform(ModelVisual3D root, bool writeChildren = true)
+	public virtual void WriteTransform(ModelVisual3D root, bool writeChildren = true, bool writeLinked = true)
 	{
 		if (!this.IsEnabled)
 			return;
@@ -300,21 +319,13 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 
 		if (changed)
 		{
-			if (this.LinkedEye != null && this.Skeleton.LinkEyes)
+			if (writeLinked && this.EnableLinkedBones)
 			{
-				foreach (TransformMemory? transformMemory in this.LinkedEye.TransformMemories)
+				foreach (BoneVisual3d link in this.LinkedBones)
 				{
-					if (this.LinkedEye.CanRotate)
-					{
-						CmQuaternion newRot = rotation.ToCmQuaternion();
-						if (!transformMemory.Rotation.IsApproximately(newRot))
-						{
-							transformMemory.Rotation = rotation.ToCmQuaternion();
-						}
-					}
+					link.Rotation = this.Rotation;
+					link.WriteTransform(root, writeChildren, false);
 				}
-
-				this.LinkedEye.Rotation = this.Rotation;
 			}
 
 			if (writeChildren)

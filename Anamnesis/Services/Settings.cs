@@ -50,20 +50,16 @@ public class Settings : INotifyPropertyChanged
 	public bool EnableHotkeys { get; set; } = true;
 	public bool ForwardKeys { get; set; } = true;
 	public bool EnableDeveloperTab { get; set; } = false;
-
 	public bool OverrideSystemTheme { get; set; } = false;
 	public Color ThemeTrimColor { get; set; } = Color.FromArgb(255, 247, 99, 12);
 	public bool ThemeLight { get; set; } = false;
 	public bool WrapRotationSliders { get; set; } = true;
 	public string? DefaultAuthor { get; set; }
-
 	public DateTimeOffset LastUpdateCheck { get; set; } = DateTimeOffset.MinValue;
-
 	public string? DebugGamePath { get; set; }
-
 	public Binds KeyboardBindings { get; set; } = new();
-
 	public Dictionary<string, int> ActorTabOrder { get; set; } = new();
+	public Dictionary<string, bool> PosingBoneLinks { get; set; } = new();
 
 	public double WindowOpcaticy
 	{
