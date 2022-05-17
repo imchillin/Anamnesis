@@ -65,6 +65,17 @@ public class Settings : INotifyPropertyChanged
 
 	public Dictionary<string, int> ActorTabOrder { get; set; } = new();
 
+	public double WindowOpcaticy
+	{
+		get
+		{
+			if (!this.EnableTranslucency)
+				return 1.0;
+
+			return this.Opacity;
+		}
+	}
+
 	[Serializable]
 	public class Binds
 	{

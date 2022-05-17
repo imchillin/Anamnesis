@@ -68,7 +68,16 @@
 				<CheckBox Grid.Column="1" Grid.Row="4" IsChecked="{Binding SettingsService.Settings.EnableTranslucency}" Margin="6, 3"/>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
-				<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6, 3" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="5" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
+				<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}"
+									   Margin="6, 3"
+									   x:Name="TransparancySlider"
+									   Slider="Absolute"
+									   Grid.Column="1"
+									   Grid.Row="5"
+									   Minimum="0.1"
+									   Maximum="1"
+									   TickFrequency="0.1"
+									   IsEnabled="{Binding SettingsService.Settings.EnableTranslucency}"/>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Font" Style="{StaticResource Label}"/>
 				<!--<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="6" Margin="6, 3"/>-->

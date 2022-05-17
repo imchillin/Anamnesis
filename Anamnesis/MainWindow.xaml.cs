@@ -123,24 +123,13 @@ public partial class MainWindow : ChromedWindow
 	protected override void OnActivated(EventArgs e)
 	{
 		base.OnActivated(e);
-
-		if (SettingsService.Current.Opacity == 1.0)
-		{
-			this.Opacity = 1.0;
-			return;
-		}
-
 		this.Opacity = 1.0;
 	}
 
 	protected override void OnDeactivated(EventArgs e)
 	{
 		base.OnDeactivated(e);
-
-		if (SettingsService.Current.Opacity == 1.0)
-			return;
-
-		this.Opacity = SettingsService.Current.Opacity;
+		this.Opacity = SettingsService.Current.WindowOpcaticy;
 	}
 
 	private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
@@ -168,7 +157,7 @@ public partial class MainWindow : ChromedWindow
 			}
 		}
 
-		if (SettingsService.Current.Opacity < 1)
+		if (SettingsService.Current.WindowOpcaticy < 1)
 			this.TransprentWhenNotInFocus = true;
 
 		if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
