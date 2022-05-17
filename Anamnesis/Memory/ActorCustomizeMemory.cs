@@ -140,4 +140,17 @@ public class ActorCustomizeMemory : MemoryBase
 			this.LEyeColor = value;
 		}
 	}
+
+	public bool SmallIris
+	{
+		get => this.Eyes > 128;
+		set => this.Eyes = (byte)(this.EyeShape + (value ? 128 : 0));
+	}
+
+	[AlsoNotifyFor(nameof(Eyes))]
+	public byte EyeShape
+	{
+		get => (byte)(this.Eyes - (this.SmallIris ? 128 : 0));
+		set => this.Eyes = (byte)(value + (this.SmallIris ? 128 : 0));
+	}
 }
