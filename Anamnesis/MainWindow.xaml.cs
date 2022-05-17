@@ -148,6 +148,9 @@ public partial class MainWindow : ChromedWindow
 		this.WindowScale.ScaleX = SettingsService.Current.Scale;
 		this.WindowScale.ScaleY = SettingsService.Current.Scale;
 
+		this.TitlebarButtonsScale.ScaleX = 1 / SettingsService.Current.Scale;
+		this.TitlebarButtonsScale.ScaleY = 1 / SettingsService.Current.Scale;
+
 		if (SettingsService.Current.EnableTranslucency != this.EnableTranslucency ||
 			SettingsService.Current.ExtendIntoWindowChrome != this.ExtendIntoChrome)
 		{
@@ -291,7 +294,7 @@ public partial class MainWindow : ChromedWindow
 		double delta = Math.Max(e.HorizontalChange / 1024, e.VerticalChange / 576);
 		scale += delta;
 
-		scale = Math.Clamp(scale, 0.5, 2.0);
+		scale = Math.Clamp(scale, 0.75, 2.0);
 		this.WindowScale.ScaleX = scale;
 		this.WindowScale.ScaleY = scale;
 		SettingsService.Current.Scale = scale;
@@ -399,5 +402,13 @@ public partial class MainWindow : ChromedWindow
 	{
 		this.PinnedActorsList.ScrollToHorizontalOffset(this.PinnedActorsList.HorizontalOffset - (e.Delta / 5));
 		e.Handled = true;
+	}
+
+	private void OnTitlebarMouseDown(object sender, MouseButtonEventArgs e)
+	{
+		if (e.LeftButton != MouseButtonState.Pressed)
+			return;
+
+		this.DragMove();
 	}
 }
