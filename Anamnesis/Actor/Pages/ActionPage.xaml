@@ -84,8 +84,6 @@
 											   Style="{StaticResource Label}" />
 
                         <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding LipSyncTypes, Mode=OneTime}" SelectedValue="{Binding Actor.Animation.LipsOverride, Mode=TwoWay}" SelectedValuePath="AnimationId" DisplayMemberPath="DisplayName" />
-
-                        
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -233,12 +231,13 @@
                 </GroupBox>
             </StackPanel>
 
-            <StackPanel Grid.Row="3" IsEnabled="{Binding AnimationService.SpeedControlEnabled}">
+            <StackPanel Grid.Row="3" IsEnabled="{Binding GposeService.IsGpose}">
                 <GroupBox Style="{StaticResource PanelGroupBox}">
                     <GroupBox.Header>
-                        <XivToolsWpf:Header Key="Character_Action_AnimationSpeedControl" Icon="Icicles" Grid.Column="0"/>
+                        <XivToolsWpf:Header Key="Character_Action_AnimationSpeedControl" Icon="Stopwatch" Grid.Column="0" />
                     </GroupBox.Header>
-                    <Grid >
+
+                    <Grid IsEnabled="{Binding AnimationService.SpeedControlEnabled}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -250,9 +249,8 @@
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition />
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-
 
                         <ToggleButton Grid.Column="0" Grid.Row="0" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Actor.Animation.LinkSpeeds}">
                             <ToggleButton.ToolTip>
@@ -263,15 +261,16 @@
                                 <fa:IconBlock Icon="Link" FontSize="13"/>
                             </Grid>
                         </ToggleButton>
-                        
-                        
+
+
                         <views:AnimationSpeedControl Grid.Row="0" Grid.Column="1" Slot="FullBody" Speed="{Binding Actor.Animation.Speeds[0].Value}" />
                         <views:AnimationSpeedControl Grid.Row="1" Grid.Column="1" Slot="UpperBody" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[1].Value}" />
                         <views:AnimationSpeedControl Grid.Row="2" Grid.Column="1" Slot="Facial" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[2].Value}" />
                         <views:AnimationSpeedControl Grid.Row="3" Grid.Column="1" Slot="Add" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[3].Value}" />
                         <views:AnimationSpeedControl Grid.Row="4" Grid.Column="1" Slot="Lips" IsEnabled="{Binding Actor.Animation.LinkSpeeds, Converter={StaticResource NotConverter}}" Speed="{Binding Actor.Animation.Speeds[7].Value}" />
 
-                        <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}"  Grid.RowSpan="6" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedBlocked" />
+                        <XivToolsWpf:InfoControl Visibility="{Binding AnimationService.SpeedControlEnabled, Converter={StaticResource !B2V}}"  Grid.RowSpan="6" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedControlDisable" />
+                        <XivToolsWpf:InfoControl Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}"  Grid.RowSpan="6" Grid.ColumnSpan="2" Key="Character_Action_AnimationOverrideSpeedBlocked" />
                     </Grid>
                 </GroupBox>
             </StackPanel>
@@ -379,6 +378,7 @@
 
                     <Grid.RowDefinitions>
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositions"
@@ -394,6 +394,16 @@
                         </ToggleButton.ToolTip>
 
                         <fa:IconBlock Icon="LocationArrow" FontSize="10"/>
+                    </ToggleButton>
+
+                    <XivToolsWpf:TextBlock Key="Character_Action_GlobalSpeedControl"
+											   Grid.Row="1"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+
+                    <ToggleButton Grid.Row="1" Grid.Column="1" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding AnimationService.SpeedControlEnabled}" BorderThickness="1" Padding="0" Margin="0"
+							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+                        <fa:IconBlock Icon="Stopwatch" FontSize="10"/>
                     </ToggleButton>
 
                 </Grid>

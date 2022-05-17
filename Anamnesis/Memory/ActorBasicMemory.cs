@@ -74,11 +74,15 @@ public class ActorBasicMemory : MemoryBase
 		}
 	}
 
+	[DependsOn(nameof(ObjectKind))]
 	public int ObjectKindInt
 	{
 		get => (int)this.ObjectKind;
 		set => this.ObjectKind = (ActorTypes)value;
 	}
+
+	[DependsOn(nameof(ObjectKind))]
+	public bool IsPlayer => this.ObjectKind == ActorTypes.Player;
 
 	[DependsOn(nameof(ObjectIndex), nameof(Address))]
 	public bool IsValid
