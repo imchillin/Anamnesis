@@ -335,8 +335,12 @@
 						<MenuItem Header="Common_SaveFileMeta"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnSaveMetaClicked" />
-						
-					</MenuItem>
+
+                        <MenuItem Header="Common_SaveAsDat"
+                              Style="{StaticResource AnaMenuItem}"
+                              Click="OnSaveDatClicked" />
+
+                    </MenuItem>
 				</Menu>
 			</StackPanel>
 
