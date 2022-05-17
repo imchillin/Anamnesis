@@ -270,8 +270,8 @@
 
 			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto" ToolTip="Hello?"/>
+					<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableHotkeys_Tooltip"/>
+					<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableGameHotkeys_Tooltip"/>
 					<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableForwardKeys_Tooltip"/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
@@ -286,7 +286,7 @@
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_EnableGameHotkeys" Style="{StaticResource Label}"/>
 				<CheckBox IsChecked="{Binding SettingsService.Settings.EnableGameHotkeyHooks}" Grid.Column="1" Grid.Row="1" Margin="6"/>
-
+				
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_EnableForwardKeys" Style="{StaticResource Label}"/>
 				<CheckBox IsChecked="{Binding SettingsService.Settings.ForwardKeys}" Grid.Column="1" Grid.Row="2" Margin="6"/>
 
