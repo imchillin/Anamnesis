@@ -233,19 +233,16 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		// Write Data
 		byte[] buffer = new byte[0xD4];
 
-		using (MemoryStream stream = new MemoryStream(buffer))
-		{
-			using (BinaryWriter writer = new BinaryWriter(stream))
-			{
-				// Save Data
-				writer.Write(0x2013FF14); // Magic
-				writer.Write(0x03);	 // Version
-				writer.Seek(0x08, 0);
-				writer.Write(chkDigest); // Checksum
-				writer.Seek(0x10, 0);
-				writer.Write(saveData); // Appearance + Timestamp
-			}
-		}
+		using MemoryStream stream = new MemoryStream(buffer);
+		using BinaryWriter writer = new BinaryWriter(stream);
+
+		// Save Data
+		writer.Write(0x2013FF14); // Magic
+		writer.Write(0x03);  // Version
+		writer.Seek(0x08, 0);
+		writer.Write(chkDigest); // Checksum
+		writer.Seek(0x10, 0);
+		writer.Write(saveData); // Appearance + Timestamp
 
 		this.Data = buffer;
 	}
