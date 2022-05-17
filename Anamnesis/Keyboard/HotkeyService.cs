@@ -96,18 +96,18 @@ public class HotkeyService : ServiceBase<HotkeyService>
 	{
 		Task.Run(async () =>
 		{
-				// Slight delay before starting the keyboard binding service.
-				await Task.Delay(1000);
-				await Dispatch.MainThread();
+			// Slight delay before starting the keyboard binding service.
+			await Task.Delay(1000);
+			await Dispatch.MainThread();
 
-				Hook.OnKeyboardInput += this.OnKeyboardInput;
+			Hook.OnKeyboardInput += this.OnKeyboardInput;
 
-				foreach ((string function, KeyCombination key) in SettingsService.Current.KeyboardBindings.GetBinds())
+			foreach ((string function, KeyCombination key) in SettingsService.Current.KeyboardBindings.GetBinds())
 			{
 				RegisterHotkey(key.Key, key.Modifiers, function);
 			}
 
-				Hook.Start();
+			Hook.Start();
 		});
 
 		return base.Start();
@@ -127,22 +127,23 @@ public class HotkeyService : ServiceBase<HotkeyService>
 
 		bool handled = this.HandleKey(key, state, modifiers);
 
-		// was key pressed when we _had_ focus?
-
-		// Forward any unused keys to ffxiv if Anamnesis has focus
-		if (!handled && !(Keyboard.FocusedElement is TextBoxBase))
+		if (SettingsService.Current.ForwardKeys)
 		{
-			if (MainWindow.IsActive && state == KeyboardKeyStates.Pressed)
+			// Forward any unused keys to ffxiv if Anamnesis has focus
+			if (!handled && !(Keyboard.FocusedElement is TextBoxBase))
 			{
-				KeyDownSentToGame.Add(key);
+				if (MainWindow.IsActive && state == KeyboardKeyStates.Pressed)
+				{
+					KeyDownSentToGame.Add(key);
+					MemoryService.SendKey(key, state);
+				}
+			}
+
+			if (state == KeyboardKeyStates.Released && KeyDownSentToGame.Contains(key))
+			{
+				KeyDownSentToGame.Remove(key);
 				MemoryService.SendKey(key, state);
 			}
-		}
-
-		if (state == KeyboardKeyStates.Released && KeyDownSentToGame.Contains(key))
-		{
-			KeyDownSentToGame.Remove(key);
-			MemoryService.SendKey(key, state);
 		}
 
 		return handled;

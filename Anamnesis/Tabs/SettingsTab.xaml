@@ -274,6 +274,7 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 
@@ -288,7 +289,10 @@
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_EnableGameHotkeys" Style="{StaticResource Label}"/>
 				<CheckBox IsChecked="{Binding SettingsService.Settings.EnableGameHotkeyHooks}" Grid.Column="1" Grid.Row="1" Margin="6"/>
 
-				<ListBox x:Name="HotkeyList" Grid.Row="2" Grid.ColumnSpan="2">
+				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_EnableForwardKeys" Style="{StaticResource Label}"/>
+				<CheckBox IsChecked="{Binding SettingsService.Settings.ForwardKeys}" Grid.Column="1" Grid.Row="2" Margin="6"/>
+
+				<ListBox x:Name="HotkeyList" Grid.Row="3" Grid.ColumnSpan="2">
 			
 					<ListBox.ItemContainerStyle>
 						<Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">

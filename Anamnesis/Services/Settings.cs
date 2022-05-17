@@ -48,6 +48,7 @@ public class Settings : INotifyPropertyChanged
 	public bool UseExternalRefresh { get; set; } = false;
 	public bool EnableGameHotkeyHooks { get; set; } = false;
 	public bool EnableHotkeys { get; set; } = true;
+	public bool ForwardKeys { get; set; } = true;
 	public bool EnableDeveloperTab { get; set; } = false;
 
 	public bool OverrideSystemTheme { get; set; } = false;
