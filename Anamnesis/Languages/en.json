@@ -594,6 +594,7 @@
 	"Settings_EnableHotkeys": "Enable Hotkeys",
 	"Settings_EnableGameHotkeys": "Enable In-Game Hotkeys",
 	"Settings_EnableForwardKeys": "Forward keys",
+	"Settings_EnableForwardKeys_Tooltip": "Forward unused key events to FFXIV",
 	"About_Title": "About Anamnesis",
 	"About_Version_Header": "Version",
 	"About_OpenSource_Header": "Proudly Open Source",
