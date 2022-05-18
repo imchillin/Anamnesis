@@ -12,6 +12,7 @@ public interface IItem
 
 	string Name { get; }
 	string? Description { get; }
+	byte EquipLevel { get; }
 
 	ImageReference? Icon { get; }
 

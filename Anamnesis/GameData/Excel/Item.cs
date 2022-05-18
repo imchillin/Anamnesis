@@ -21,6 +21,7 @@ public class Item : ExcelRow, IItem
 	public string Name { get; private set; } = string.Empty;
 	public string Description { get; private set; } = string.Empty;
 	public ImageReference? Icon { get; private set; }
+	public byte EquipLevel { get; private set; }
 	public ushort ModelSet { get; private set; }
 	public ushort ModelBase { get; private set; }
 	public ushort ModelVariant { get; private set; }
@@ -60,8 +61,10 @@ public class Item : ExcelRow, IItem
 		this.Description = parser.ReadColumn<SeString>(8) ?? string.Empty;
 		this.Name = parser.ReadColumn<SeString>(9) ?? string.Empty;
 		this.Icon = parser.ReadImageReference<ushort>(10);
+		////ItemLevel? itemLevel = parser.ReadRowReference<ushort, ItemLevel>(11);
 
 		this.EquipSlot = parser.ReadRowReference<byte, EquipSlotCategory>(17);
+		this.EquipLevel = parser.ReadColumn<byte>(40);
 		this.EquipRestriction = parser.ReadRowReference<byte, EquipRaceCategory>(42);
 		this.EquipableClasses = parser.ReadRowReference<byte, ClassJobCategory>(43)?.ToFlags() ?? Classes.None;
 

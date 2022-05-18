@@ -23,6 +23,7 @@ public class InvisibleHeadItem : IItem
 	public bool IsWeapon => false;
 	public Mod? Mod => null;
 	public uint RowId => 0;
+	public byte EquipLevel => 0;
 
 	public bool IsFavorite
 	{

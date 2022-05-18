@@ -101,6 +101,8 @@
 	"EquipmentSelector_OwnedTip": "Premium or Limited Items marked as owned",
 	"EquipmentSelector_OwnedToggleTip": "Mark this premium or limited item as owned",
 
+	"EquipmentSelector_ItemId": "Item Id:",
+
 	"Home_Art": "Gallery",
 	"Home_Wiki": "Help",
 	"Home_None": "None",

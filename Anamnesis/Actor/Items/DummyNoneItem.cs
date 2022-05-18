@@ -24,6 +24,7 @@ public class DummyNoneItem : IItem
 	public ushort SubModelSet => 0;
 	public Classes EquipableClasses => Classes.All;
 	public Mod? Mod => null;
+	public byte EquipLevel => 0;
 
 	public bool IsFavorite
 	{

@@ -80,6 +80,7 @@ public class BuddyEquip : ExcelRow
 		public bool IsFavorite { get; set; }
 		public bool CanOwn => false;
 		public bool IsOwned { get; set; }
+		public byte EquipLevel => 0;
 
 		public bool FitsInSlot(ItemSlots slot)
 		{

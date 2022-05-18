@@ -23,6 +23,7 @@ public class NpcBodyItem : IItem
 	public ushort SubModelSet => 0;
 	public Classes EquipableClasses => Classes.All;
 	public Mod? Mod => TexToolsService.GetMod(this.Name);
+	public byte EquipLevel => 0;
 
 	public bool IsFavorite
 	{
