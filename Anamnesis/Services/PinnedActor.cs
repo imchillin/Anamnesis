@@ -20,6 +20,8 @@ using XivToolsWpf.Extensions;
 [AddINotifyPropertyChangedInterface]
 public class PinnedActor : INotifyPropertyChanged, IDisposable
 {
+	private bool wasPlayer = false;
+
 	public PinnedActor(ActorMemory memory)
 	{
 		this.Id = memory.Id;
@@ -365,6 +367,15 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 	private void OnRetargetedActor(IntPtr? oldPointer, IntPtr? newPointer)
 	{
+		if (GposeService.GetIsGPose() &&
+			this.wasPlayer &&
+			this.Memory != null &&
+			this.Memory.ObjectKind != ActorTypes.Player)
+		{
+			IntPtr objectKindAddress = this.Memory.GetAddressOfProperty(nameof(ActorBasicMemory.ObjectKind));
+			MemoryService.Write(objectKindAddress, ActorTypes.Player, "NPC face hack - entered gpose - gpose actor");
+		}
+
 		this.RestoreCharacterBackup().Run();
 		this.Retargeted?.Invoke(this);
 	}
@@ -374,6 +385,19 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (newState)
 		{
 			this.CreateCharacterBackup();
+
+			Task.Run(async () =>
+			{
+				if (this.Memory != null && this.Memory.ObjectKind == ActorTypes.Player)
+				{
+					this.wasPlayer = true;
+
+					IntPtr objectKindAddress = this.Memory.GetAddressOfProperty(nameof(ActorBasicMemory.ObjectKind));
+					MemoryService.Write(objectKindAddress, ActorTypes.BattleNpc, "NPC face hack - entering gpose - overworld actor");
+					await Task.Delay(1000);
+					MemoryService.Write(objectKindAddress, ActorTypes.Player, "NPC face hack - entered gpose - overworld actor");
+				}
+			});
 		}
 	}
 }

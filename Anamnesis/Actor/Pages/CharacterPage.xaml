@@ -138,7 +138,7 @@
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
-                            <RowDefinition />
+							<RowDefinition />
 						</Grid.RowDefinitions>
 
 						<XivToolsWpf:TextBlock Key="Character_Actor_Nickname"
@@ -164,16 +164,16 @@
 											   TickFrequency="0.1"
 											   Value="{Binding Actor.Transparency}" />
 
-                        <XivToolsWpf:TextBlock Key="Character_Actor_Voice"
+						<XivToolsWpf:TextBlock Key="Character_Actor_Voice"
 											   Grid.Row="5"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
-                        <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding VoiceEntries, Mode=OneTime}" SelectedValue="{Binding Actor.Voice, Mode=TwoWay}" IsEnabled="{Binding Actor.IsPlayer}" SelectedValuePath="VoiceId">
-                            <ComboBox.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.HeaderTemplate>
-                                        <DataTemplate>
-                                            <XivToolsWpf:TextBlock
+						<ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding VoiceEntries, Mode=OneTime}" SelectedValue="{Binding Actor.Voice, Mode=TwoWay}" IsEnabled="{Binding Actor.IsPlayer}" SelectedValuePath="VoiceId">
+							<ComboBox.GroupStyle>
+								<GroupStyle>
+									<GroupStyle.HeaderTemplate>
+										<DataTemplate>
+											<XivToolsWpf:TextBlock
 											   Style="{StaticResource Label}"
                                                HorizontalAlignment="Left"
                                                FontStyle="Italic"
@@ -183,19 +183,19 @@
                                                Text="{Binding Name}" 
                                                 />
 
-                                        </DataTemplate>
-                                    </GroupStyle.HeaderTemplate>
-                                </GroupStyle>
-                            </ComboBox.GroupStyle>
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding VoiceName}"/>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
+										</DataTemplate>
+									</GroupStyle.HeaderTemplate>
+								</GroupStyle>
+							</ComboBox.GroupStyle>
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding VoiceName}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
 
 
-                        <XivToolsWpf:TextBlock Key="SubActor_Title"
+						<XivToolsWpf:TextBlock Key="SubActor_Title"
 											   Grid.Row="6"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
@@ -232,25 +232,6 @@
 
 				</GroupBox>
 			</StackPanel>
-
-			<XivToolsWpf:InfoControl Key="Warning_NpcFaceTitle" Width="256">
-
-				<XivToolsWpf:InfoControl.Resources>
-					<converters:NpcFaceGposeConverter x:Key="NpcFaceConverter"/>
-				</XivToolsWpf:InfoControl.Resources>
-
-				<XivToolsWpf:InfoControl.Visibility>
-					<MultiBinding Converter="{StaticResource NpcFaceConverter}">
-						<Binding Path="Actor.ObjectKind"/>
-						<Binding Path="Actor.Customize.Head"/>
-						<Binding Path="Actor.Customize.Age"/>
-					</MultiBinding>
-				</XivToolsWpf:InfoControl.Visibility>
-
-				<XivToolsWpf:InfoControl.ToolTip>
-					<XivToolsWpf:TextBlock Key="Warning_NpcFace" MaxWidth="256" TextWrapping="Wrap"/>
-				</XivToolsWpf:InfoControl.ToolTip>
-			</XivToolsWpf:InfoControl>
 
 			<XivToolsWpf:InfoControl Key="Warning_MinionGposeTitle" Width="256">
 				<XivToolsWpf:InfoControl.ToolTip>
