@@ -299,7 +299,7 @@ public partial class MainWindow : ChromedWindow
 
 	private void OnUnpinActorClicked(object sender, RoutedEventArgs e)
 	{
-		if (sender is FrameworkElement el && el.DataContext is TargetService.PinnedActor actor)
+		if (sender is FrameworkElement el && el.DataContext is PinnedActor actor)
 		{
 			TargetService.UnpinActor(actor);
 		}
@@ -307,7 +307,7 @@ public partial class MainWindow : ChromedWindow
 
 	private void OnTargetActorClicked(object sender, RoutedEventArgs e)
 	{
-		if (sender is FrameworkElement el && el.DataContext is TargetService.PinnedActor actor)
+		if (sender is FrameworkElement el && el.DataContext is PinnedActor actor)
 		{
 			TargetService.SetPlayerTarget(actor);
 		}

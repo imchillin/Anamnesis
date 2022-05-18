@@ -216,7 +216,7 @@ public class CharacterFile : JsonFileBase
 		}
 	}
 
-	public async Task Apply(ActorMemory actor, SaveModes mode)
+	public async Task Apply(ActorMemory actor, SaveModes mode, bool allowRefresh = true)
 	{
 		if (this.Tribe == 0)
 			this.Tribe = ActorCustomizeMemory.Tribes.Midlander;
@@ -360,7 +360,10 @@ public class CharacterFile : JsonFileBase
 					actor.Customize.Bust = (byte)this.Bust;
 			}
 
-			await actor.RefreshAsync();
+			if (allowRefresh)
+			{
+				await actor.RefreshAsync();
+			}
 
 			// Setting customize values will reset the extended appearance, which me must read.
 			actor.EnableReading = true;

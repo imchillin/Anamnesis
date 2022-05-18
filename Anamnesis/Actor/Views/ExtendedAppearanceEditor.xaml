@@ -4,7 +4,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
-			 xmlns:anaConverters="clr-namespace:Anamnesis.Styles.Converters"
+			 xmlns:anaUtils="clr-namespace:Anamnesis"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
@@ -19,7 +19,9 @@
 
 		<ToggleButton Grid.Column="0" Style="{DynamicResource MaterialDesignActionToggleButton}" 
 					  Height="22" Width="22" Padding="0" Margin="0, 3, 6, 0"
-					  VerticalAlignment="Center" IsChecked="{Binding Freeze}">
+					  VerticalAlignment="Center" IsChecked="{Binding Freeze}"
+					  anaUtils:Behaviours.Tooltip="Character_ExAppearance_Freeze_Tooltip">
+			
 			<ToggleButton.Content>
 				<fa:IconBlock Icon="LockOpen" FontSize="12"/>
 			</ToggleButton.Content>

@@ -223,6 +223,7 @@
 	"Character_Model_BustScale": "Bust",
 
 	"Character_ExAppearance_Header": "Extended Appearance",
+	"Character_ExAppearance_Freeze_Tooltip": "Lock the extended appearance values so that refreshes will not reset them.",
 	"Character_ExAppearance_Skin": "Skin",
 	"Character_ExAppearance_Lips": "Lips",
 	"Character_ExAppearance_Eyes": "Eyes",

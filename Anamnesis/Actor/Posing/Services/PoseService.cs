@@ -159,7 +159,7 @@ public class PoseService : ServiceBase<PoseService>
 		this.freezeGposeTargetPosition1 = new NopHookViewModel(AddressService.GPoseCameraTargetPositionFreeze, 8);
 		this.freezeGposeTargetPosition2 = new NopHookViewModel(AddressService.GPoseCameraTargetPositionFreeze + 8 + 3, 16);
 
-		GposeService.GposeStateChanging += this.OnGposeStateChanging;
+		GposeService.GposeStateChanged += this.OnGposeStateChanged;
 
 		_ = Task.Run(ExtractStandardPoses);
 	}
@@ -261,7 +261,7 @@ public class PoseService : ServiceBase<PoseService>
 		}
 	}
 
-	private void OnGposeStateChanging(bool isGPose)
+	private void OnGposeStateChanged(bool isGPose)
 	{
 		if (!isGPose)
 		{
