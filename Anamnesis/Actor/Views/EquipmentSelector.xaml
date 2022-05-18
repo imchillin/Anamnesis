@@ -107,10 +107,46 @@
 
 				<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="Eraser" />
 			</Button>
-
-
-
 		</StackPanel>
+
+		<ComboBox Grid.Row="0"
+				  Grid.Column="1"
+				  Margin="6, 3, 6, 0"
+				  Height="22"
+				  HorizontalAlignment="Right"
+				  Style="{StaticResource MaterialDesignDataGridComboBox}"
+				  SelectedIndex="{Binding SortModeInt, Mode=TwoWay}">
+
+			<ComboBox.ToolTip>
+				<XivToolsWpf:TextBlock Key="FileBrowser_Sort" />
+			</ComboBox.ToolTip>
+
+			<ComboBoxItem>
+				<ComboBoxItem.ToolTip>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortAlpha" />
+				</ComboBoxItem.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="SortAlphaDown" FontSize="16"/>
+			</ComboBoxItem>
+
+			<ComboBoxItem>
+				<ComboBoxItem.ToolTip>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortRow" />
+				</ComboBoxItem.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="CalendarAlt" FontSize="16"/>
+			</ComboBoxItem>
+
+			<ComboBoxItem>
+				<ComboBoxItem.ToolTip>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortLevel" />
+				</ComboBoxItem.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="SortAmountDown" FontSize="16"/>
+			</ComboBoxItem>
+
+		</ComboBox>
+
 
 		<StackPanel Grid.Row="1"
 					Grid.Column="1"

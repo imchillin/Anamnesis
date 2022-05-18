@@ -100,8 +100,10 @@
 	"EquipmentSelector_Owned": "Owned",
 	"EquipmentSelector_OwnedTip": "Premium or Limited Items marked as owned",
 	"EquipmentSelector_OwnedToggleTip": "Mark this premium or limited item as owned",
-
 	"EquipmentSelector_ItemId": "Item Id:",
+	"EquipmentSelector_SortAlpha": "By Name (A to Z)",
+	"EquipmentSelector_SortRow": "By Row (Oldest to Newest)",
+	"EquipmentSelector_SortLevel": "By Level (Lowest to Highest)",
 
 	"Home_Art": "Gallery",
 	"Home_Wiki": "Help",

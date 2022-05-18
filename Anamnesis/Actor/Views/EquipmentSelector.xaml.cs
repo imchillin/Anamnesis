@@ -32,6 +32,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 	private static bool showFilters = false;
 	private static bool forceMainModel = false;
 	private static bool forceOffModel = false;
+	private static SortModes sortMode = SortModes.Row;
 
 	private readonly Memory.ActorMemory? actor;
 
@@ -48,6 +49,13 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		HotkeyService.RegisterHotkeyHandler("AppearancePage.ClearEquipment", this.ClearSlot);
 	}
 
+	public enum SortModes
+	{
+		Name,
+		Row,
+		Level,
+	}
+
 	public bool ShowFilters
 	{
 		get => showFilters;
@@ -59,6 +67,22 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 	public bool IsOffHandSlot => this.Slot == ItemSlots.OffHand;
 	public bool IsWeaponSlot => this.Slot == ItemSlots.MainHand || this.Slot == ItemSlots.OffHand;
 	public bool IsSmallclothesSlot => this.Slot > ItemSlots.Head && this.Slot <= ItemSlots.OffHand;
+
+	public SortModes SortMode
+	{
+		get => sortMode;
+		set
+		{
+			sortMode = value;
+			this.FilterItems();
+		}
+	}
+
+	public int SortModeInt
+	{
+		get => (int)this.SortMode;
+		set => this.SortMode = (SortModes)value;
+	}
 
 	public Classes ClassFilter
 	{
@@ -183,7 +207,14 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 			}
 		}
 
-		return itemA.RowId.CompareTo(itemB.RowId);
+		switch (this.SortMode)
+		{
+			case SortModes.Name: return itemA.Name.CompareTo(itemB.Name);
+			case SortModes.Row: return itemA.RowId.CompareTo(itemB.RowId);
+			case SortModes.Level: return itemA.EquipLevel.CompareTo(itemB.EquipLevel);
+		}
+
+		throw new NotImplementedException($"Sort mode {this.SortMode} not implemented");
 	}
 
 	protected override bool Filter(IItem item, string[]? search)
