@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory;
 
 using System;
+using System.ComponentModel;
 
 public class ActorModelMemory : MemoryBase
 {
@@ -97,5 +98,13 @@ public class ActorModelMemory : MemoryBase
 		}
 
 		return base.CanRead(bind);
+	}
+
+	protected override void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (this.Height <= 0)
+			this.Height = 0.1f;
+
+		base.OnSelfPropertyChanged(sender, e);
 	}
 }
