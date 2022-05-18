@@ -33,8 +33,8 @@ public partial class ActorTab : UserControl
 		this.Tabs.CollectionChanged += this.OnTabsChanged;
 
 		this.AddPage<CharacterPage>("AppearanceTab", IconChar.UserEdit);
-		this.AddPage<ActionPage>("PoseTab", IconChar.Biking);
-		this.AddPage<PosePage>("ActionTab", IconChar.Running);
+		this.AddPage<ActionPage>("ActionTab", IconChar.Biking);
+		this.AddPage<PosePage>("PoseTab", IconChar.Running);
 
 		this.SortTabs();
 
@@ -146,12 +146,16 @@ public partial class ActorTab : UserControl
 		{
 			this.Icon = icon;
 			this.Name = name;
+			this.DisplayNameKey = $"ActorTabs_{name}";
+			this.TooltipKey = $"ActorTabs_{name}_Tooltip";
 
 			HotkeyService.RegisterHotkeyHandler($"MainWindow.{name}", () => this.IsActive = true);
 		}
 
 		public string Name { get; private set; }
 		public int Index { get; set; }
+		public string DisplayNameKey { get; private set; }
+		public string TooltipKey { get; private set; }
 
 		[DependsOn(nameof(Page.IsActive))]
 		public UserControl? Content

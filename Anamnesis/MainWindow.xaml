@@ -187,7 +187,7 @@
 						</Grid.ColumnDefinitions>
 
 						<!-- Home tab -->
-						<ToggleButton Grid.Column="0" Width="42" Style="{StaticResource IconTab}" IsChecked="{Binding ShowHome}">
+						<ToggleButton Grid.Column="0" Style="{StaticResource IconTab}" IsChecked="{Binding ShowHome}">
 							<XivToolsWpf:IconBlock Icon="Home"/>
 						</ToggleButton>
 
