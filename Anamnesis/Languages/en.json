@@ -563,6 +563,8 @@
 	"Pose_n_f_ulip_r": "Lips Upper Right",
 	"Pose_j_f_dlip": "Lips Lower",
 	"Pose_j_ex_met_va": "Visor",
+	"Pose_mh_n_hara": "Main Hand",
+	"Pose_oh_n_hara": "Off Hand",
 
 	"Settings_Header": "Settings",
 	"Settings_InterfaceHeader": "Interface",

@@ -12,5 +12,7 @@ public interface ITransform
 	public Quaternion Rotation { get; set; }
 
 	bool CanScale { get; }
+	bool CanLinkScale { get; }
+	bool ScaleLinked { get; }
 	public Vector Scale { get; set; }
 }

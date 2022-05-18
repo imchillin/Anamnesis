@@ -12,6 +12,8 @@ public class TransformMemory : MemoryBase, ITransform
 	public bool CanTranslate => true;
 	public bool CanRotate => true;
 	public bool CanScale => true;
+	public bool CanLinkScale => true;
+	public bool ScaleLinked { get; set; } = true;
 
 	public Quaternion RootRotation => Quaternion.Identity;
 }

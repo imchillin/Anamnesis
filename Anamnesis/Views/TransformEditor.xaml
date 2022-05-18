@@ -35,7 +35,14 @@
 			<GroupBox.Header>
 				<XivToolsWpf:TextBlock Key="Pose_Scale"/>
 			</GroupBox.Header>
-			<controls:VectorEditor Value="{Binding Value.Scale}" Expanded="False" Minimum="-10" Maximum="10" TickFrequency="0.1" CanLink="True" Linked="True" UncapTextInput="True"/>
+			<controls:VectorEditor Value="{Binding Value.Scale}"
+								   Expanded="False"
+								   Minimum="-10"
+								   Maximum="10"
+								   TickFrequency="0.1"
+								   CanLink="{Binding Value.CanLinkScale}"
+								   Linked="{Binding Value.ScaleLinked}"
+								   UncapTextInput="True"/>
 		</GroupBox>
 
 	</Grid>

@@ -23,10 +23,11 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 {
 	public readonly List<TransformMemory> TransformMemories = new List<TransformMemory>();
 
+	private static bool scaleLinked = true;
+
 	private readonly QuaternionRotation3D rotation;
 	private readonly TranslateTransform3D position;
 	private BoneTargetVisual3d? target;
-
 	private BoneVisual3d? parent;
 	private Line? lineToParent;
 
@@ -71,6 +72,32 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 	public CmVector Scale { get; set; }
 	public bool CanTranslate => PoseService.Instance.FreezePositions && !this.IsTransformLocked;
 	public CmVector Position { get; set; }
+
+	public bool IsAttachmentBone
+	{
+		get
+		{
+			return this.BoneName == "n_buki_r" ||
+				this.BoneName == "n_buki_l" ||
+				this.BoneName == "j_buki_sebo_r" ||
+				this.BoneName == "j_buki_sebo_l";
+		}
+	}
+
+	public bool CanLinkScale => !this.IsAttachmentBone;
+
+	public bool ScaleLinked
+	{
+		get
+		{
+			if (this.IsAttachmentBone)
+				return true;
+
+			return scaleLinked;
+		}
+
+		set => scaleLinked = value;
+	}
 
 	public bool EnableLinkedBones
 	{

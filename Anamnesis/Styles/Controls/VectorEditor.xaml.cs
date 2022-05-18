@@ -25,7 +25,7 @@ public partial class VectorEditor : UserControl, INotifyPropertyChanged
 	public static readonly IBind<NumberBox.SliderModes> SlidersDp = Binder.Register<NumberBox.SliderModes, VectorEditor>(nameof(Sliders));
 	public static readonly IBind<double> MinDp = Binder.Register<double, VectorEditor>(nameof(Minimum));
 	public static readonly IBind<double> MaxDp = Binder.Register<double, VectorEditor>(nameof(Maximum), OnMaximumChanged);
-	public static readonly IBind<bool> CanLinkDp = Binder.Register<bool, VectorEditor>(nameof(CanLink));
+	public static readonly IBind<bool> CanLinkDp = Binder.Register<bool, VectorEditor>(nameof(CanLink), BindMode.OneWay);
 	public static readonly IBind<bool> LinkedDp = Binder.Register<bool, VectorEditor>(nameof(Linked));
 	public static readonly IBind<bool> UncapTextInputDp = Binder.Register<bool, VectorEditor>(nameof(UncapTextInput), BindMode.OneWay);
 
