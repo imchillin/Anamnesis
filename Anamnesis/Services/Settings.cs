@@ -56,7 +56,7 @@ public class Settings : INotifyPropertyChanged
 	public bool WrapRotationSliders { get; set; } = true;
 	public string? DefaultAuthor { get; set; }
 	public DateTimeOffset LastUpdateCheck { get; set; } = DateTimeOffset.MinValue;
-	public string? DebugGamePath { get; set; }
+	public string? GamePath { get; set; }
 	public Binds KeyboardBindings { get; set; } = new();
 	public Dictionary<string, int> ActorTabOrder { get; set; } = new();
 	public Dictionary<string, bool> PosingBoneLinks { get; set; } = new();
