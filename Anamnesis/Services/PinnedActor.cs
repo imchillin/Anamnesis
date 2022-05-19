@@ -182,7 +182,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			return;
 		}
 
-		await this.CharacterBackup.Apply(memory, CharacterFile.SaveModes.All, false);
+		await this.CharacterBackup.Apply(memory, CharacterFile.SaveModes.All, !GposeService.GetIsGPose());
 	}
 
 	private void SetInvalid()
@@ -376,7 +376,12 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			MemoryService.Write(objectKindAddress, ActorTypes.Player, "NPC face hack - entered gpose - gpose actor");
 		}
 
-		this.RestoreCharacterBackup().Run();
+		if (GposeService.GetIsGPose())
+		{
+			this.RestoreCharacterBackup().Run();
+			this.CharacterBackup = null;
+		}
+
 		this.Retargeted?.Invoke(this);
 	}
 
