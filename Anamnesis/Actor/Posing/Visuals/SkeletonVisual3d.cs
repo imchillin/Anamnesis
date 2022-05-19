@@ -494,10 +494,10 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			{
 				foreach (LinkedBones.LinkSet links in LinkedBones.Links)
 				{
-					if (this.Actor?.Customize?.Tribe != links.Tribe)
+					if (links.Tribe != null && this.Actor?.Customize?.Tribe != links.Tribe)
 						continue;
 
-					if (this.Actor?.Customize?.Gender != links.Gender)
+					if (links.Gender != null && this.Actor?.Customize?.Gender != links.Gender)
 						continue;
 
 					if (!links.Contains(name))
