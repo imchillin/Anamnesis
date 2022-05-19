@@ -250,7 +250,7 @@
 					<XivToolsWPF:Header Key="Settings_PenumbraHeader"
 										Icon="Question" />
 				</GroupBox.Header>
-			
+
 				<Grid Grid.Column="2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>

@@ -50,6 +50,7 @@ public class Settings : INotifyPropertyChanged
 	public bool EnableHotkeys { get; set; } = true;
 	public bool ForwardKeys { get; set; } = true;
 	public bool EnableDeveloperTab { get; set; } = false;
+	public bool ReapplyAppearance { get; set; } = false;
 	public bool OverrideSystemTheme { get; set; } = false;
 	public Color ThemeTrimColor { get; set; } = Color.FromArgb(255, 247, 99, 12);
 	public bool ThemeLight { get; set; } = false;

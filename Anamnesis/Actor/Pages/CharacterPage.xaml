@@ -7,6 +7,7 @@
 			 xmlns:views="clr-namespace:Anamnesis.Actor.Views"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 xmlns:ana="clr-namespace:Anamnesis.Views"
+			 xmlns:anaUtils="clr-namespace:Anamnesis"
 			 xmlns:converters="clr-namespace:Anamnesis.Converters"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
@@ -251,6 +252,20 @@
 			</XivToolsWpf:InfoControl>
 
 			<StackPanel Orientation="Vertical" Grid.Row="2">
+
+				<Button Margin="3"
+						HorizontalAlignment="Right"
+						Style="{StaticResource TransparentButton}"
+						Click="OnResetClicked"
+						IsEnabled="{Binding Actor.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"
+						anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip">
+					
+					<StackPanel Orientation="Horizontal" Margin="6">
+						<XivToolsWpf:IconBlock Icon="UndoAlt"/>
+						<XivToolsWpf:TextBlock Text="Reset" VerticalAlignment="Center" Margin="6, 0, 0, 0"/>
+					</StackPanel>
+				</Button>
+
 				<Menu Grid.Row="1"
 				  Margin="0,3, 3, 4"
 				  Style="{StaticResource AnaMenu}">

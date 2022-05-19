@@ -21,20 +21,31 @@ using XivToolsWpf.Extensions;
 public class PinnedActor : INotifyPropertyChanged, IDisposable
 {
 	private bool wasPlayer = false;
+	private bool isRestoringBackup = false;
 
 	public PinnedActor(ActorMemory memory)
 	{
 		this.Id = memory.Id;
 		this.IdNoAddress = memory.IdNoAddress;
 		this.Memory = memory;
+		this.Memory.Pinned = this;
 
 		this.UpdateActorInfo();
 
 		GposeService.GposeStateChanged += this.OnGposeStateChanged;
+
+		this.CreateCharacterBackup(BackupModes.Original);
+		this.CreateCharacterBackup(BackupModes.Gpose);
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 	public event PinnedEvent? Retargeted;
+
+	public enum BackupModes
+	{
+		Gpose,
+		Original,
+	}
 
 	public ActorMemory? Memory { get; private set; }
 	////public ActorViewModel? ViewModel { get; private set; }
@@ -55,7 +66,8 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public string? DisplayName => this.Memory == null ? this.Name : this.Memory.DisplayName;
 	public bool IsRetargeting { get; private set; } = false;
 
-	public CharacterFile? CharacterBackup { get; private set; }
+	public CharacterFile? GposeCharacterBackup { get; private set; }
+	public CharacterFile? OriginalCharacterBackup { get; private set; }
 
 	public bool IsSelected
 	{
@@ -87,7 +99,12 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public void Dispose()
 	{
 		GposeService.GposeStateChanged -= this.OnGposeStateChanged;
-		this.Memory = null;
+
+		if (this.Memory != null)
+		{
+			this.Memory.Pinned = null;
+			this.Memory = null;
+		}
 	}
 
 	public void SelectionChanged()
@@ -155,24 +172,47 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		}
 	}
 
-	public void CreateCharacterBackup()
+	public void CreateCharacterBackup(BackupModes mode)
 	{
-		if (this.CharacterBackup == null)
-			this.CharacterBackup = new();
+		if (this.isRestoringBackup)
+			return;
 
-		ActorMemory? memory = this.GetMemory();
-		if (memory == null)
+		if (this.Memory == null)
 		{
 			Log.Warning("Unable to create character backup, pinned actor has no memory");
 			return;
 		}
 
-		this.CharacterBackup.WriteToFile(memory, CharacterFile.SaveModes.All);
+		if (mode == BackupModes.Original)
+		{
+			if (this.OriginalCharacterBackup == null)
+				this.OriginalCharacterBackup = new();
+
+			this.OriginalCharacterBackup.WriteToFile(this.Memory, CharacterFile.SaveModes.All);
+		}
+		else if (mode == BackupModes.Gpose)
+		{
+			if (this.GposeCharacterBackup == null)
+				this.GposeCharacterBackup = new();
+
+			this.GposeCharacterBackup.WriteToFile(this.Memory, CharacterFile.SaveModes.All);
+		}
 	}
 
-	public async Task RestoreCharacterBackup()
+	public async Task RestoreCharacterBackup(BackupModes mode)
 	{
-		if (this.CharacterBackup == null)
+		CharacterFile? backup = null;
+
+		if (mode == BackupModes.Gpose)
+		{
+			backup = this.GposeCharacterBackup;
+		}
+		else if (mode == BackupModes.Original)
+		{
+			backup = this.OriginalCharacterBackup;
+		}
+
+		if (backup == null)
 			return;
 
 		ActorMemory? memory = this.GetMemory();
@@ -182,13 +222,25 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			return;
 		}
 
-		await this.CharacterBackup.Apply(memory, CharacterFile.SaveModes.All, !GposeService.GetIsGPose());
+		this.isRestoringBackup = true;
+
+		bool allowRefresh = !GposeService.GetIsGPose();
+		await backup.Apply(memory, CharacterFile.SaveModes.All, allowRefresh);
+
+		// If we were a player, really make sure we are again.
+		if (allowRefresh && backup.ObjectKind == ActorTypes.Player)
+		{
+			memory.ObjectKind = backup.ObjectKind;
+		}
+
+		this.isRestoringBackup = false;
 	}
 
 	private void SetInvalid()
 	{
 		if (this.Memory != null)
 		{
+			this.Memory.Pinned = null;
 			this.Memory.Dispose();
 			this.Memory = null;
 
@@ -266,6 +318,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 				// Reusing the old actor can cause issues so we always recreate when retargeting.
 				this.Memory = new ActorMemory();
 				this.Memory.SetAddress(newBasic.Address);
+				this.Memory.Pinned = this;
 
 				IntPtr? oldPointer = this.Pointer;
 
@@ -376,10 +429,16 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			MemoryService.Write(objectKindAddress, ActorTypes.Player, "NPC face hack - entered gpose - gpose actor");
 		}
 
-		if (GposeService.GetIsGPose())
+		// If we need to apply the appearance thanks to a GPose boundary changes?
+		if (SettingsService.Current.ReapplyAppearance || GposeService.GetIsGPose())
 		{
-			this.RestoreCharacterBackup().Run();
-			this.CharacterBackup = null;
+			this.RestoreCharacterBackup(BackupModes.Gpose).Run();
+
+			// clear the appearance once it has been applied
+			if (!SettingsService.Current.ReapplyAppearance)
+			{
+				this.GposeCharacterBackup = null;
+			}
 		}
 
 		this.Retargeted?.Invoke(this);
@@ -389,7 +448,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	{
 		if (newState)
 		{
-			this.CreateCharacterBackup();
+			this.CreateCharacterBackup(BackupModes.Gpose);
 
 			Task.Run(async () =>
 			{

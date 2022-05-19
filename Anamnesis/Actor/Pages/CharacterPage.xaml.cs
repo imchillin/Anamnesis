@@ -15,6 +15,7 @@ using Anamnesis.Actor.Views;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
+using Anamnesis.GUI.Dialogs;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
 using Anamnesis.Services;
@@ -178,6 +179,17 @@ public partial class CharacterPage : UserControl
 		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsHuman);
 		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
 		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
+	}
+
+	private async void OnResetClicked(object sender, RoutedEventArgs e)
+	{
+		if (this.Actor?.Pinned?.OriginalCharacterBackup == null)
+			return;
+
+		if (await GenericDialog.ShowLocalizedAsync("Character_Reset_Confirm", "Character_Reset", MessageBoxButton.YesNo) != true)
+			return;
+
+		await this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original);
 	}
 
 	private async void OnLoadClicked(object sender, RoutedEventArgs e)
