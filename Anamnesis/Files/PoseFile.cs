@@ -33,6 +33,24 @@ public class PoseFile : JsonFileBase
 
 	public Dictionary<string, Bone?>? Bones { get; set; }
 
+	public static bool CanBoneLoad(ActorMemory? actor, SkeletonVisual3d? skeleton, string boneName)
+	{
+		if (boneName == "n_root")
+			return false;
+
+		// Special case for elezen ears as they cannot use other races ear values.
+		if (actor?.Customize?.Race == ActorCustomizeMemory.Races.Elezen)
+		{
+			// append '_elezen' to both ear bones.
+			if (boneName == "j_mimi_l" || boneName == "j_mimi_r")
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, HashSet<string>? bones = null, bool editMeta = false)
 	{
 		if (actor == null || skeleton == null)
@@ -117,7 +135,7 @@ public class PoseFile : JsonFileBase
 		Dictionary<string, Quaternion> unPosedBoneRotations = new Dictionary<string, Quaternion>();
 		foreach ((string name, BoneVisual3d bone) in skeleton.Bones)
 		{
-			if (name == "n_root")
+			if (!CanBoneLoad(actor, skeleton, name))
 				continue;
 
 			unPosedBoneRotations.Add(name, bone.Rotation);
@@ -151,6 +169,10 @@ public class PoseFile : JsonFileBase
 				string? modernName = LegacyBoneNameConverter.GetModernName(name);
 				if (modernName != null)
 					boneName = modernName;
+
+				// Don't apply bones that cant be serialized.
+				if (!CanBoneLoad(actor, skeleton, boneName))
+					continue;
 
 				BoneVisual3d? bone = skeleton.GetBone(boneName);
 
