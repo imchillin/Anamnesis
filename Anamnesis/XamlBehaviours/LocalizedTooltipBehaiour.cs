@@ -30,6 +30,7 @@ public class LocalizedTooltipBehaiour : Behaviour
 		if (this.Host is FrameworkElement frameworkElement)
 		{
 			frameworkElement.ToolTip = text;
+			ToolTipService.SetShowOnDisabled(frameworkElement, true);
 		}
 		else if (this.Host is RowDefinition rowDefinition)
 		{
@@ -52,6 +53,7 @@ public class LocalizedTooltipBehaiour : Behaviour
 			if (targetRow == -1)
 				throw new Exception("Failed to locate row within grid");
 
+			// Add a backgroudn rect so the entire row has a tooltip
 			Rectangle rect = new();
 			rect.Fill = new SolidColorBrush(Colors.Transparent);
 			rect.ToolTip = text;
@@ -60,8 +62,26 @@ public class LocalizedTooltipBehaiour : Behaviour
 				Grid.SetColumnSpan(rect, columns);
 
 			Grid.SetRow(rect, targetRow);
+			grid.Children.Insert(0, rect);
 
-			grid.Children.Add(rect);
+			// now add the same tooltip to all elements in this row
+			foreach (object item in grid.Children)
+			{
+				if (item is not UIElement uiElement)
+					continue;
+
+				if (Grid.GetRow(uiElement) != targetRow)
+					continue;
+
+				if (uiElement is FrameworkElement control)
+				{
+					control.ToolTip = text;
+				}
+				else
+				{
+					uiElement.IsHitTestVisible = false;
+				}
+			}
 		}
 		else
 		{
