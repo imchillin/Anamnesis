@@ -94,6 +94,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	public bool IsCustomFace => this.Actor == null ? false : this.IsMiqote || this.IsHrothgar;
 	public bool IsMiqote => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote;
 	public bool IsViera => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Viera;
+	public bool IsElezen => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Elezen;
 	public bool IsHrothgar => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar;
 	public bool HasTailOrEars => this.IsViera || this.HasTail;
 
@@ -570,10 +571,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			for (int boneIndex = 0; boneIndex < count; boneIndex++)
 			{
 				string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
-				string name = originalName;
-
-				if (namePrefix != null)
-					name = namePrefix + name;
+				string name = this.ConvertBoneName(namePrefix, originalName);
 
 				TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
 
@@ -630,9 +628,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			{
 				int parentIndex = bestHkaPose.Skeleton.ParentIndices[boneIndex];
 				string boneName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
-
-				if (namePrefix != null)
-					boneName = namePrefix + boneName;
+				boneName = this.ConvertBoneName(namePrefix, boneName);
 
 				BoneVisual3d bone = this.Bones[boneName];
 
@@ -649,19 +645,24 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 					else
 					{
 						string parentBoneName = bestHkaPose.Skeleton.Bones[parentIndex].Name.ToString();
-
-						if (namePrefix != null)
-							parentBoneName = namePrefix + parentBoneName;
-
+						parentBoneName = this.ConvertBoneName(namePrefix, parentBoneName);
 						bone.Parent = this.Bones[parentBoneName];
 					}
 				}
 				catch (Exception ex)
 				{
-					Log.Error($"Failed to parent bone: {boneName}", ex);
+					Log.Error(ex, $"Failed to parent bone: {boneName}");
 				}
 			}
 		}
+	}
+
+	private string ConvertBoneName(string? prefix, string name)
+	{
+		if (prefix != null)
+			name = prefix + name;
+
+		return name;
 	}
 
 	private async void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs? e)
