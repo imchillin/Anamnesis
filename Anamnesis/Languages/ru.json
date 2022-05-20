@@ -35,7 +35,7 @@
 	"FileBrowser_Browse": "Указать путь к файлу",
 	"FileBrowser_ReplaceTitle": "Перезаписать файл",
 	"FileBrowser_ReplaceMessage": "Вы уверены, что хотите перезаписать этот файл: \"{0}\"?",
-	"FileBrowser_ExtensionShort": "Выйти",
+	"FileBrowser_ExtensionShort": "Расширения",
 
 	"FileBrowser_Sort": "Сортировка",
 	"FileBrowser_SortAlpha": "По имени (от A до Z)",
@@ -136,7 +136,7 @@
 	"Weather_Selector_Natural": "Только естественная",
 	"Weather_Selector_Natural_Tooltip": "Показывает только те погодные условия, которые обычно доступны в текущей локации",
 
-	"ActorTabs_AppearanceTab": "ПРСН",
+	"ActorTabs_AppearanceTab": "ПЕР",
 	"ActorTabs_AppearanceTab_Tooltip": "Персонаж - изменить внешний вид",
 	"ActorTabs_ActionTab": "ДЕЙСТВИЕ",
 	"ActorTabs_ActionTab_Tooltip": "Действие - воспроизведение анимаций",
@@ -269,7 +269,7 @@
 	"Character_Action_AnimationStatus": "Статус анимации",
 	"Character_Action_AnimationOverride": "Изменить анимации",
 	"Character_Action_AnimationOverrideBlocked": "Переопределение анимации доступно только для вашего персонажа и только в покое (idle). Пожалуйста остановите любые эмоции или действия, которые вы выполняете.",
-	"Character_Action_AnimationOverrideBlendBlocked": "Смешение анимаций доступно только после изменения базовой анимации в разделе 'Изменения анимации' ",
+	"Character_Action_AnimationOverrideBlendBlocked": "Смешение анимаций доступно только после изменения базовой анимации в разделе 'Изменить анимации' ",
 	"Character_Action_AnimationSpeedControl": "Управление скоростью анимации",
 	"Character_Action_AnimationBlending": "Смешение анимаций",
 	"Character_Action_ModelRow": "Модель",
