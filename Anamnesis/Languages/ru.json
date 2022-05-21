@@ -316,7 +316,7 @@
 	"Pose_Body": "Поза тела",
 	"Pose_BodyTooltip": "Загрузить позу для актёра, кроме выражения лица",
 	"Pose_Clear": "Очистить выбор",
-	"Pose_SelectChildren": "Выброть действия",
+	"Pose_SelectChildren": "Выбрать действия",
 	"Pose_Flip": "Отразить",
 	"Pose_Left": "L",
 	"Pose_Right": "R",
