@@ -37,7 +37,7 @@
 			DataHead="{Binding ModelObject.DataHead}"
 			DataPath="{Binding ModelObject.DataPath}"
 			Tribe="{Binding Customize.Tribe}"
-			IsEnabled="{Binding ModelObject.IsPlayer}"/>-->
+			IsEnabled="{Binding ModelObject.IsHuman}"/>-->
 
 		<!-- Height -->
 		<xtw:TextBlock Grid.Row="1" Key="Character_Model_Height" Style="{StaticResource Label}"/>
@@ -91,7 +91,7 @@
 		<ana:VectorEditor Grid.Row="4"
 						  Grid.Column="1"
 						  Value="{Binding ModelObject.Bust.Scale}" Expanded="False" CanLink="True" Minimum="0" Maximum="10"
-						  IsEnabled="{Binding ModelObject.IsPlayer}"/>
+						  IsEnabled="{Binding ModelObject.IsHuman}"/>
 
 	</Grid>
 </UserControl>

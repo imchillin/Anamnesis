@@ -123,30 +123,22 @@ public partial class MainWindow : ChromedWindow
 	protected override void OnActivated(EventArgs e)
 	{
 		base.OnActivated(e);
-
-		if (SettingsService.Current.Opacity == 1.0)
-		{
-			this.Opacity = 1.0;
-			return;
-		}
-
 		this.Opacity = 1.0;
 	}
 
 	protected override void OnDeactivated(EventArgs e)
 	{
 		base.OnDeactivated(e);
-
-		if (SettingsService.Current.Opacity == 1.0)
-			return;
-
-		this.Opacity = SettingsService.Current.Opacity;
+		this.Opacity = SettingsService.Current.WindowOpcaticy;
 	}
 
 	private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
 	{
 		this.WindowScale.ScaleX = SettingsService.Current.Scale;
 		this.WindowScale.ScaleY = SettingsService.Current.Scale;
+
+		this.TitlebarButtonsScale.ScaleX = 1 / SettingsService.Current.Scale;
+		this.TitlebarButtonsScale.ScaleY = 1 / SettingsService.Current.Scale;
 
 		if (SettingsService.Current.EnableTranslucency != this.EnableTranslucency ||
 			SettingsService.Current.ExtendIntoWindowChrome != this.ExtendIntoChrome)
@@ -158,13 +150,14 @@ public partial class MainWindow : ChromedWindow
 			if (this.IsLoaded)
 			{
 				App.Current.MainWindow = new MainWindow();
+				this.IsClosing = true; // Force the close
 				this.Close();
 				App.Current.MainWindow.Show();
 				return;
 			}
 		}
 
-		if (SettingsService.Current.Opacity < 1)
+		if (SettingsService.Current.WindowOpcaticy < 1)
 			this.TransprentWhenNotInFocus = true;
 
 		if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
@@ -290,7 +283,7 @@ public partial class MainWindow : ChromedWindow
 		double delta = Math.Max(e.HorizontalChange / 1024, e.VerticalChange / 576);
 		scale += delta;
 
-		scale = Math.Clamp(scale, 0.5, 2.0);
+		scale = Math.Clamp(scale, 0.75, 2.0);
 		this.WindowScale.ScaleX = scale;
 		this.WindowScale.ScaleY = scale;
 		SettingsService.Current.Scale = scale;
@@ -306,7 +299,7 @@ public partial class MainWindow : ChromedWindow
 
 	private void OnUnpinActorClicked(object sender, RoutedEventArgs e)
 	{
-		if (sender is FrameworkElement el && el.DataContext is TargetService.PinnedActor actor)
+		if (sender is FrameworkElement el && el.DataContext is PinnedActor actor)
 		{
 			TargetService.UnpinActor(actor);
 		}
@@ -314,7 +307,7 @@ public partial class MainWindow : ChromedWindow
 
 	private void OnTargetActorClicked(object sender, RoutedEventArgs e)
 	{
-		if (sender is FrameworkElement el && el.DataContext is TargetService.PinnedActor actor)
+		if (sender is FrameworkElement el && el.DataContext is PinnedActor actor)
 		{
 			TargetService.SetPlayerTarget(actor);
 		}
@@ -339,7 +332,7 @@ public partial class MainWindow : ChromedWindow
 
 	private async void Window_Closing(object sender, CancelEventArgs e)
 	{
-		if (PoseService.Exists && PoseService.Instance.IsEnabled)
+		if (PoseService.Exists && PoseService.Instance.IsEnabled && !this.IsClosing)
 		{
 			bool? result = await GenericDialog.ShowAsync(LocalizationService.GetString("Pose_WarningQuit"), LocalizationService.GetString("Common_Confirm"), MessageBoxButton.OKCancel);
 
@@ -398,5 +391,13 @@ public partial class MainWindow : ChromedWindow
 	{
 		this.PinnedActorsList.ScrollToHorizontalOffset(this.PinnedActorsList.HorizontalOffset - (e.Delta / 5));
 		e.Handled = true;
+	}
+
+	private void OnTitlebarMouseDown(object sender, MouseButtonEventArgs e)
+	{
+		if (e.LeftButton != MouseButtonState.Pressed)
+			return;
+
+		this.DragMove();
 	}
 }

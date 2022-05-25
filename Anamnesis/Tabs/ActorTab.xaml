@@ -16,7 +16,7 @@
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="48"/>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
@@ -30,10 +30,32 @@
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<ToggleButton Style="{StaticResource TransparentIconToggleButton}"
-								  Height="40"
 								  IsChecked="{Binding IsActive}"
-								  Checked="OnTabSelected">
-							<XivToolsWpf:IconBlock Icon="{Binding Icon}" FontSize="16"/>
+								  Checked="OnTabSelected"
+									  Height="48"
+									  Margin="0, 2">
+
+							<ToggleButton.ToolTip>
+								<XivToolsWpf:TextBlock Key="{Binding TooltipKey}"/>
+							</ToggleButton.ToolTip>
+
+							<Grid Margin="0, 0, 0, -6">
+
+								<Grid.RowDefinitions>
+									<RowDefinition/>
+									<RowDefinition Height="Auto"/>
+								</Grid.RowDefinitions>
+								
+								<XivToolsWpf:IconBlock Icon="{Binding Icon}" 
+													   FontSize="16"
+													   Grid.Row="0"/>
+
+								<XivToolsWpf:TextBlock Key="{Binding DisplayNameKey}"
+													   Grid.Row="1"
+													   FontSize="10"
+													   Visibility="{Binding IsActive, Converter={StaticResource B2V}}"/>
+							</Grid>
+							
 						</ToggleButton>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>

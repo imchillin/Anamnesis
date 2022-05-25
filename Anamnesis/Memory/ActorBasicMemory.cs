@@ -34,7 +34,7 @@ public class ActorBasicMemory : MemoryBase
 	[Bind(0x0104)] public RenderModes RenderMode { get; set; }
 
 	public string Id => $"n{this.NameHash}_d{this.DataId}_o{this.Address}";
-	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}_k{this.ObjectKind}";
+	public string IdNoAddress => $"n{this.NameHash}_d{this.DataId}"; ////_k{this.ObjectKind}";
 	public int Index => ActorService.Instance.GetActorTableIndex(this.Address);
 
 	public IconChar Icon => this.ObjectKind.GetIcon();
@@ -74,11 +74,15 @@ public class ActorBasicMemory : MemoryBase
 		}
 	}
 
+	[DependsOn(nameof(ObjectKind))]
 	public int ObjectKindInt
 	{
 		get => (int)this.ObjectKind;
 		set => this.ObjectKind = (ActorTypes)value;
 	}
+
+	[DependsOn(nameof(ObjectKind))]
+	public bool IsPlayer => this.ObjectKind == ActorTypes.Player;
 
 	[DependsOn(nameof(ObjectIndex), nameof(Address))]
 	public bool IsValid

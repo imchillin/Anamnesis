@@ -69,7 +69,7 @@ public class CameraService : ServiceBase<CameraService>
 					continue;
 				}
 
-				if (!GposeService.Instance.IsGpose || GposeService.Instance.IsChangingState)
+				if (!GposeService.Instance.IsGpose)
 				{
 					this.DelimitCamera = false;
 					this.Camera.FreezeAngle = false;

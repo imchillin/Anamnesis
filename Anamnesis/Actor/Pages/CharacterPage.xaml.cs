@@ -4,14 +4,18 @@
 namespace Anamnesis.Actor.Pages;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Actor.Views;
 using Anamnesis.Files;
 using Anamnesis.GameData;
+using Anamnesis.GameData.Excel;
+using Anamnesis.GUI.Dialogs;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
 using Anamnesis.Services;
@@ -36,9 +40,12 @@ public partial class CharacterPage : UserControl
 		this.ContentArea.DataContext = this;
 
 		HotkeyService.RegisterHotkeyHandler("CharacterPage.ClearEquipment", () => this.OnClearClicked());
+
+		this.VoiceEntries = this.GenerateVoiceList();
 	}
 
 	public ActorMemory? Actor { get; private set; }
+	public ListCollectionView VoiceEntries { get; private set; }
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
@@ -50,23 +57,56 @@ public partial class CharacterPage : UserControl
 		this.OnActorChanged(this.DataContext as ActorMemory);
 	}
 
+	private ListCollectionView GenerateVoiceList()
+	{
+		List<VoiceEntry> entries = new();
+		foreach (var makeType in GameDataService.CharacterMakeTypes)
+		{
+			if (makeType == null)
+				continue;
+
+			if (makeType.Tribe == 0)
+				continue;
+
+			Tribe? tribe = GameDataService.Tribes.GetRow((uint)makeType.Tribe);
+
+			if (tribe == null)
+				continue;
+
+			int voiceCount = makeType.Voices!.Count;
+			for (int i = 0; i < voiceCount; i++)
+			{
+				byte voiceId = makeType.Voices[i]!;
+				VoiceEntry entry = new();
+				entry.VoiceName = $"Voice #{i + 1} ({voiceId})";
+				entry.VoiceCategory = $"{makeType.Race}, {tribe.Masculine} ({makeType.Gender})";
+				entry.VoiceId = voiceId;
+				entries.Add(entry);
+			}
+		}
+
+		ListCollectionView voices = new ListCollectionView(entries);
+		voices.GroupDescriptions.Add(new PropertyGroupDescription("VoiceCategory"));
+		return voices;
+	}
+
 	private void OnClearClicked(object? sender = null, RoutedEventArgs? e = null)
 	{
 		if (this.Actor == null)
 			return;
 
-		this.Actor.MainHand?.Clear(this.Actor.IsPlayer);
-		this.Actor.OffHand?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Arms?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Chest?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Feet?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Head?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Legs?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsPlayer);
+		this.Actor.MainHand?.Clear(this.Actor.IsHuman);
+		this.Actor.OffHand?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Arms?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Chest?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Feet?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Head?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Legs?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
 
 		this.Actor?.ModelObject?.Weapons?.Hide();
 		this.Actor?.ModelObject?.Weapons?.SubModel?.Hide();
@@ -77,18 +117,18 @@ public partial class CharacterPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		if (!this.Actor.IsPlayer)
+		if (!this.Actor.IsHuman)
 		{
 			this.OnClearClicked(sender, e);
 			return;
 		}
 
-		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Head?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsPlayer);
+		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Head?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
 		this.Actor.Equipment?.Arms?.Equip(ItemUtility.NpcBodyItem);
 		this.Actor.Equipment?.Chest?.Equip(ItemUtility.NpcBodyItem);
 		this.Actor.Equipment?.Legs?.Equip(ItemUtility.NpcBodyItem);
@@ -133,12 +173,23 @@ public partial class CharacterPage : UserControl
 			this.Actor.Equipment?.Feet?.Equip(feet);
 		}
 
-		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Head?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsPlayer);
-		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsPlayer);
+		this.Actor.Equipment?.Ear?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Head?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.LFinger?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
+		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
+	}
+
+	private async void OnResetClicked(object sender, RoutedEventArgs e)
+	{
+		if (this.Actor?.Pinned?.OriginalCharacterBackup == null)
+			return;
+
+		if (await GenericDialog.ShowLocalizedAsync("Character_Reset_Confirm", "Character_Reset", MessageBoxButton.YesNo) != true)
+			return;
+
+		await this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original);
 	}
 
 	private async void OnLoadClicked(object sender, RoutedEventArgs e)
@@ -287,6 +338,18 @@ public partial class CharacterPage : UserControl
 		}
 	}
 
+	private async void OnSaveDatClicked(object sender, RoutedEventArgs e)
+	{
+		try
+		{
+			await this.SaveDat();
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to save appearance");
+		}
+	}
+
 	private async Task Save(bool editMeta, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)
 	{
 		if (this.Actor == null)
@@ -311,6 +374,25 @@ public partial class CharacterPage : UserControl
 		}
 	}
 
+	private async Task SaveDat()
+	{
+		if (this.Actor == null)
+			return;
+
+		SaveResult result = await FileService.Save<DatCharacterFile>(lastSaveDir, FileService.DefaultCharacterDirectory);
+
+		if (result.Path == null)
+			return;
+
+		DatCharacterFile file = new DatCharacterFile();
+		file.WriteToFile(this.Actor);
+
+		using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
+		file.Serialize(stream);
+
+		lastSaveDir = result.Directory;
+	}
+
 	private void OnActorChanged(ActorMemory? actor)
 	{
 		this.Actor = actor;
@@ -320,5 +402,12 @@ public partial class CharacterPage : UserControl
 			bool hasValidSelection = actor != null && actor.ObjectKind.IsSupportedType();
 			this.IsEnabled = hasValidSelection;
 		});
+	}
+
+	public class VoiceEntry
+	{
+		public byte VoiceId { get; set; }
+		public string VoiceName { get; set; } = string.Empty;
+		public string VoiceCategory { get; set; } = string.Empty;
 	}
 }

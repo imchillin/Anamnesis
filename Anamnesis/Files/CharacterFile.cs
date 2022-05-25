@@ -39,6 +39,7 @@ public class CharacterFile : JsonFileBase
 
 	public string? Nickname { get; set; } = null;
 	public uint ModelType { get; set; } = 0;
+	public ActorTypes ObjectKind { get; set; } = ActorTypes.None;
 
 	// appearance
 	public ActorCustomizeMemory.Races? Race { get; set; }
@@ -104,6 +105,7 @@ public class CharacterFile : JsonFileBase
 	{
 		this.Nickname = actor.Nickname;
 		this.ModelType = (uint)actor.ModelType;
+		this.ObjectKind = actor.ObjectKind;
 
 		if (actor.Customize == null)
 			return;
@@ -216,7 +218,7 @@ public class CharacterFile : JsonFileBase
 		}
 	}
 
-	public async Task Apply(ActorMemory actor, SaveModes mode)
+	public async Task Apply(ActorMemory actor, SaveModes mode, bool allowRefresh = true)
 	{
 		if (this.Tribe == 0)
 			this.Tribe = ActorCustomizeMemory.Tribes.Midlander;
@@ -245,6 +247,7 @@ public class CharacterFile : JsonFileBase
 				actor.Nickname = this.Nickname;
 
 			actor.ModelType = (int)this.ModelType;
+			////actor.ObjectKind = this.ObjectKind;
 
 			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode))
 			{
@@ -360,7 +363,10 @@ public class CharacterFile : JsonFileBase
 					actor.Customize.Bust = (byte)this.Bust;
 			}
 
-			await actor.RefreshAsync();
+			if (allowRefresh)
+			{
+				await actor.RefreshAsync();
+			}
 
 			// Setting customize values will reset the extended appearance, which me must read.
 			actor.EnableReading = true;

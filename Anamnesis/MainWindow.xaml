@@ -132,19 +132,6 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		
-		<!--  TitleBar  -->
-		<Grid VerticalAlignment="Top"
-			  Grid.Row="0"
-			  Margin="0,0,150,0"
-			  TextBlock.Foreground="{Binding TitlebarForeground}">
-
-			<Border Background="{StaticResource MaterialDesignPaper}"
-					Margin="0, 1, 0, 0"
-					CornerRadius="0, 6, 0, 0"
-					IsHitTestVisible="False"
-					Visibility="{Binding SettingsService.Settings.EnableTranslucency, Converter={StaticResource !B2V}}"/>
-		</Grid>
 
 		<Grid
 			Width="900"
@@ -168,8 +155,24 @@
 						<ColumnDefinition/>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="150"/>
+						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
+
+					<Rectangle Grid.Column="3" Width="138">
+						<Rectangle.LayoutTransform>
+							<ScaleTransform x:Name="TitlebarButtonsScale" ScaleX="0.5" ScaleY="0.5" />
+						</Rectangle.LayoutTransform>
+					</Rectangle>
+
+					<Border Background="{DynamicResource MaterialDesignPaper}"
+							Margin="0, 1, 0, -25"
+							CornerRadius="0, 4, 0, 0"
+							IsHitTestVisible="False"
+							Grid.ColumnSpan="3"
+							Visibility="{Binding SettingsService.Settings.EnableTranslucency, Converter={StaticResource !B2V}}"/>
+
+
+					<Rectangle Fill="Transparent"	Grid.ColumnSpan="3" MouseDown="OnTitlebarMouseDown"/>
 
 					<!-- Pinned Actors -->
 					<Grid Margin="3, 0, 0, -4" IsEnabled="{Binding IsDrawerOpen, Converter={StaticResource !B}}" HorizontalAlignment="Left">
@@ -184,7 +187,7 @@
 						</Grid.ColumnDefinitions>
 
 						<!-- Home tab -->
-						<ToggleButton Grid.Column="0" Width="42" Style="{StaticResource IconTab}" IsChecked="{Binding ShowHome}">
+						<ToggleButton Grid.Column="0" Style="{StaticResource IconTab}" IsChecked="{Binding ShowHome}">
 							<XivToolsWpf:IconBlock Icon="Home"/>
 						</ToggleButton>
 

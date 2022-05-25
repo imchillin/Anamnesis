@@ -74,52 +74,66 @@
 								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NullToVisibilityConverter}}" />
 						</Grid>
 
-						<Border
-							Grid.Row="1"
-							Grid.ColumnSpan="2"
-							Margin="3"
-							Background="{DynamicResource AttentionToActionBrush}"
-							CornerRadius="3"
-							IsEnabled="{Binding PoseService.IsEnabled}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition />
-								</Grid.ColumnDefinitions>
 
-								<Button
-									Grid.Column="0"
-									Margin="2"
-									Padding="6,3"
-									Click="OnClearClicked"
-									IsEnabled="{Binding Skeleton.HasSelection}"
-									Style="{StaticResource TransparentButton}">
-									<XivToolsWpf:TextBlock Key="Pose_Clear" />
-								</Button>
+						<WrapPanel Grid.Row="1"
+									   Grid.ColumnSpan="2"
+									   Orientation="Horizontal"
+									   IsEnabled="{Binding PoseService.IsEnabled}">
 
-								<Button
-									Grid.Column="1"
-									Margin="2"
+							<ToggleButton Margin="2, 0"
+										  Height="22"
+										  MinWidth="32"
+										  Style="{StaticResource TransparentIconToggleButton}"
+										  IsEnabled="{Binding Skeleton.CurrentBone.LinkedBonesCount, Converter={StaticResource NotZeroToBool}, FallbackValue=False}"
+										  IsChecked="{Binding Skeleton.CurrentBone.EnableLinkedBones}">
+								<StackPanel Orientation="Horizontal">
+									<XivToolsWpf:IconBlock Icon="Link" FontSize="11"/>
+									<XivToolsWpf:TextBlock Text="{Binding Skeleton.CurrentBone.LinkedBonesCount, FallbackValue=0}" Margin="4, 0, 0, 0"/>
+								</StackPanel>
+
+								<ToggleButton.ToolTip>
+									<StackPanel Orientation="Vertical" Width="256">
+										<XivToolsWpf:TextBlock Key="Pose_Linked" FontWeight="Bold"/>
+										
+										<ItemsControl ItemsSource="{Binding Skeleton.CurrentBone.LinkedBones}"
+													  Margin="10, 0, 0, 0">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate>
+													<StackPanel Orientation="Horizontal">
+														<XivToolsWpf:TextBlock Key="{Binding TooltipKey}"/>
+														<XivToolsWpf:TextBlock Text="{Binding BoneName, StringFormat=( {0:D} )}"
+																			   Margin="6, 0, 0, 0"/>
+													</StackPanel>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+										</ItemsControl>
+
+										<XivToolsWpf:TextBlock Key="Pose_Linked_Tooltip" TextWrapping="Wrap" Margin="0, 20, 0, 0"/>
+									</StackPanel>
+								</ToggleButton.ToolTip>
+								
+							</ToggleButton>
+
+							<Button Margin="2"
 									Padding="6,3"
+									MinWidth="48"
 									Click="OnSelectChildrenClicked"
 									IsEnabled="{Binding Skeleton.HasSelection}"
 									Style="{StaticResource TransparentButton}">
-									<XivToolsWpf:TextBlock Key="Pose_SelectChildren" />
-								</Button>
+								<XivToolsWpf:TextBlock Key="Pose_SelectChildren" />
+							</Button>
 
-								<Button
-									Grid.Column="2"
-									Grid.ColumnSpan="2"
-									Margin="2"
+							<Button Margin="2"
 									Padding="6,3"
+									MinWidth="48"
 									Click="OnFlipClicked"
 									Style="{StaticResource TransparentButton}">
-									<XivToolsWpf:TextBlock Key="Pose_Flip" />
-								</Button>
+								<XivToolsWpf:TextBlock Key="Pose_Flip" />
+							</Button>
 
-							</Grid>
-						</Border>
+
+
+						</WrapPanel>
 
 
 						<!--  bone transform  -->
@@ -278,13 +292,16 @@
 								<XivToolsWpf:TextBlock Key="Pose_Parenting" />
 							</CheckBox>
 
-							<CheckBox
-								Margin="3,0,6,0"
-								VerticalContentAlignment="Center"
-								IsChecked="{Binding Skeleton.LinkEyes}"
-								IsEnabled="{Binding PoseService.IsEnabled}">
-								<XivToolsWpf:TextBlock Key="Pose_LinkEyes" />
-							</CheckBox>
+							<Button
+									Margin="2"
+									Padding="6,3"
+									MinWidth="48"
+									Click="OnClearClicked"
+									IsEnabled="{Binding Skeleton.HasSelection}"
+									Style="{StaticResource TransparentButton}">
+								<XivToolsWpf:TextBlock Key="Pose_Clear" />
+							</Button>
+
 						</StackPanel>
 
 						<Border

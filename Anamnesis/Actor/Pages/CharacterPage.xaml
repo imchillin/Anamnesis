@@ -7,6 +7,7 @@
 			 xmlns:views="clr-namespace:Anamnesis.Actor.Views"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 xmlns:ana="clr-namespace:Anamnesis.Views"
+			 xmlns:anaUtils="clr-namespace:Anamnesis"
 			 xmlns:converters="clr-namespace:Anamnesis.Converters"
 			 d:DesignHeight="600"
 			 d:DesignWidth="1024"
@@ -57,7 +58,7 @@
 
 					<Button Click="OnRaceGearClicked"
 							Style="{StaticResource TransparentIconButton}"
-							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
+							Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
 
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_RaceGear" />
@@ -69,7 +70,7 @@
 
 					<Button Click="OnNpcSmallclothesClicked"
 							Style="{StaticResource TransparentIconButton}"
-							Visibility="{Binding Actor.IsPlayer, Converter={StaticResource B2V}}">
+							Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
 
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_NpcSmallclothes" />
@@ -138,6 +139,7 @@
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
+							<RowDefinition />
 						</Grid.RowDefinitions>
 
 						<XivToolsWpf:TextBlock Key="Character_Actor_Nickname"
@@ -151,44 +153,6 @@
 								 Style="{StaticResource MaterialDesignTextBox}"
 								 Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}"/>
 
-						<!--<XivToolsWpf:TextBlock Key="Character_Actor_EntityType"
-											   Grid.Row="2"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
-						<Grid Grid.Row="2"
-							  Grid.Column="1"
-							  Margin="0,2,0,0">
-							<ComboBox ItemsSource="{Binding Source={x:Static anaMem:ActorType.AllActorTypes}}" SelectedIndex="{Binding Actor.ObjectKindInt}">
-								<ComboBox.ItemContainerStyle>
-									<Style TargetType="{x:Type ComboBoxItem}">
-										<Setter Property="IsEnabled" Value="{Binding IsSupportedType}"/>
-									</Style>
-								</ComboBox.ItemContainerStyle>
-								
-								<ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding Name}" />
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							</ComboBox>
-						</Grid>
-
-						<XivToolsWpf:TextBlock Key="Character_Actor_Model"
-											   Grid.Row="3"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
-						<Grid Grid.Row="3"
-							  Grid.Column="1"
-							  Margin="0,2,0,0"
-							  IsEnabled="{Binding Actor.IsOverworldActor}">
-
-							<XivToolsWpf:NumberBox Value="{Binding Actor.ModelType}"
-							   Minimum="0"
-							   Maximum="10000"
-							   Buttons="True" />
-
-						</Grid>-->
-
 						<XivToolsWpf:TextBlock Key="Character_Actor_Alpha"
 											   Grid.Row="4"
 											   Grid.Column="0"
@@ -201,13 +165,43 @@
 											   TickFrequency="0.1"
 											   Value="{Binding Actor.Transparency}" />
 
-
-						<XivToolsWpf:TextBlock Key="SubActor_Title"
+						<XivToolsWpf:TextBlock Key="Character_Actor_Voice"
 											   Grid.Row="5"
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
+						<ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding VoiceEntries, Mode=OneTime}" SelectedValue="{Binding Actor.Voice, Mode=TwoWay}" IsEnabled="{Binding Actor.IsPlayer}" SelectedValuePath="VoiceId">
+							<ComboBox.GroupStyle>
+								<GroupStyle>
+									<GroupStyle.HeaderTemplate>
+										<DataTemplate>
+											<XivToolsWpf:TextBlock
+											   Style="{StaticResource Label}"
+                                               HorizontalAlignment="Left"
+                                               FontStyle="Italic"
+                                               FontWeight="Bold"
+                                               FontSize="13"
+                                               Padding="10,5"
+                                               Text="{Binding Name}" 
+                                                />
 
-						<StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1" Margin="0, 6, 0, 0">
+										</DataTemplate>
+									</GroupStyle.HeaderTemplate>
+								</GroupStyle>
+							</ComboBox.GroupStyle>
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding VoiceName}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+
+
+						<XivToolsWpf:TextBlock Key="SubActor_Title"
+											   Grid.Row="6"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+
+						<StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="1" Margin="0, 6, 0, 0">
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Mount}" SubActorType="Mount" Margin="3,0"/>
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Companion}" SubActorType="Companion" Margin="3,0"/>
 							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Ornament}" SubActorType="Ornament" Margin="3,0"/>
@@ -240,25 +234,6 @@
 				</GroupBox>
 			</StackPanel>
 
-			<XivToolsWpf:InfoControl Key="Warning_NpcFaceTitle" Width="256">
-
-				<XivToolsWpf:InfoControl.Resources>
-					<converters:NpcFaceGposeConverter x:Key="NpcFaceConverter"/>
-				</XivToolsWpf:InfoControl.Resources>
-
-				<XivToolsWpf:InfoControl.Visibility>
-					<MultiBinding Converter="{StaticResource NpcFaceConverter}">
-						<Binding Path="Actor.ObjectKind"/>
-						<Binding Path="Actor.Customize.Head"/>
-						<Binding Path="Actor.Customize.Age"/>
-					</MultiBinding>
-				</XivToolsWpf:InfoControl.Visibility>
-
-				<XivToolsWpf:InfoControl.ToolTip>
-					<XivToolsWpf:TextBlock Key="Warning_NpcFace" MaxWidth="256" TextWrapping="Wrap"/>
-				</XivToolsWpf:InfoControl.ToolTip>
-			</XivToolsWpf:InfoControl>
-
 			<XivToolsWpf:InfoControl Key="Warning_MinionGposeTitle" Width="256">
 				<XivToolsWpf:InfoControl.ToolTip>
 					<XivToolsWpf:TextBlock Key="Warning_MinionGposeFace" MaxWidth="256" TextWrapping="Wrap"/>
@@ -277,6 +252,20 @@
 			</XivToolsWpf:InfoControl>
 
 			<StackPanel Orientation="Vertical" Grid.Row="2">
+
+				<Button Margin="3"
+						HorizontalAlignment="Right"
+						Style="{StaticResource TransparentButton}"
+						Click="OnResetClicked"
+						IsEnabled="{Binding Actor.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"
+						anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip">
+					
+					<StackPanel Orientation="Horizontal" Margin="6">
+						<XivToolsWpf:IconBlock Icon="UndoAlt"/>
+						<XivToolsWpf:TextBlock Text="Reset" VerticalAlignment="Center" Margin="6, 0, 0, 0"/>
+					</StackPanel>
+				</Button>
+
 				<Menu Grid.Row="1"
 				  Margin="0,3, 3, 4"
 				  Style="{StaticResource AnaMenu}">
@@ -342,8 +331,12 @@
 						<MenuItem Header="Common_SaveFileMeta"
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnSaveMetaClicked" />
-						
-					</MenuItem>
+
+                        <MenuItem Header="Common_SaveAsDat"
+                              Style="{StaticResource AnaMenuItem}"
+                              Click="OnSaveDatClicked" />
+
+                    </MenuItem>
 				</Menu>
 			</StackPanel>
 

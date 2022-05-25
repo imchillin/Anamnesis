@@ -34,11 +34,11 @@ public class AnimationService : ServiceBase<AnimationService>
 
 	public override Task Start()
 	{
-		GposeService.GposeStateChanging += this.OnGposeStateChanging;
+		GposeService.GposeStateChanged += this.OnGposeStateChanged;
 
 		this.animationSpeedHook = new NopHookViewModel(AddressService.AnimationSpeedPatch, 0x9);
 
-		this.OnGposeStateChanging(GposeService.Instance.IsGpose);
+		this.OnGposeStateChanged(GposeService.Instance.IsGpose);
 
 		_ = Task.Run(this.CheckThread);
 
@@ -47,7 +47,7 @@ public class AnimationService : ServiceBase<AnimationService>
 
 	public override async Task Shutdown()
 	{
-		GposeService.GposeStateChanging -= this.OnGposeStateChanging;
+		GposeService.GposeStateChanged -= this.OnGposeStateChanged;
 
 		this.SpeedControlEnabled = false;
 
@@ -169,7 +169,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		this.speedControlEnabled = enabled;
 	}
 
-	private void OnGposeStateChanging(bool isGPose)
+	private void OnGposeStateChanged(bool isGPose)
 	{
 		if (!isGPose)
 			this.SpeedControlEnabled = false;

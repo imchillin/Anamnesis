@@ -29,6 +29,7 @@ public class Perform : ExcelRow, IItem
 	public ushort SubModelVariant => 0;
 	public Classes EquipableClasses => Classes.All;
 	public bool IsWeapon => true;
+	public byte EquipLevel => 0;
 
 	public bool IsFavorite
 	{

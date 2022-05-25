@@ -27,8 +27,7 @@ public partial class ActionPage : UserControl
 
 		this.ContentArea.DataContext = this;
 
-		// Grab "no animation" and all "speak/" animations, which are the only ones valid in this slot
-		this.LipSyncTypes = GameDataService.ActionTimelines.Where(x => x.AnimationId == 0 || (x.Key?.StartsWith("speak/") ?? false));
+		this.LipSyncTypes = this.GenerateLipList();
 	}
 
 	public GposeService GposeService => GposeService.Instance;
@@ -36,6 +35,7 @@ public partial class ActionPage : UserControl
 	public PoseService PoseService => PoseService.Instance;
 	public ActorMemory? Actor { get; private set; }
 	public IEnumerable<ActionTimeline> LipSyncTypes { get; private set; }
+
 	public UserAnimationOverride AnimationOverride { get; private set; } = new();
 
 	public ConditionalWeakTable<ActorMemory, UserAnimationOverride> UserAnimationOverrides { get; private set; } = new();
@@ -76,6 +76,13 @@ public partial class ActionPage : UserControl
 				this.AnimationOverride.BlendAnimationId = 0;
 			}
 		}
+	}
+
+	private IEnumerable<ActionTimeline> GenerateLipList()
+	{
+		// Grab "no animation" and all "speak/" animations, which are the only ones valid in this slot
+		IEnumerable<ActionTimeline> lips = GameDataService.ActionTimelines.Where(x => x.AnimationId == 0 || (x.Key?.StartsWith("speak/") ?? false));
+		return lips;
 	}
 
 	private void OnBaseAnimationSearchClicked(object sender, RoutedEventArgs e)

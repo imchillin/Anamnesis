@@ -16,18 +16,12 @@ public class GposeService : ServiceBase<GposeService>
 {
 	private bool initialized = false;
 
-	public static event GposeEvent? GposeStateChanging;
 	public static event GposeEvent? GposeStateChanged;
 
 	public bool IsGpose { get; private set; }
 
 	[DependsOn(nameof(IsGpose))]
 	public bool IsOverworld => !this.IsGpose;
-
-	public bool IsChangingState { get; private set; }
-
-	[AlsoNotifyFor(nameof(GposeService.IsChangingState))]
-	public bool IsNotChangingState { get => !this.IsChangingState; }
 
 	public static bool GetIsGPose()
 	{
@@ -40,6 +34,7 @@ public class GposeService : ServiceBase<GposeService>
 
 		byte check1 = MemoryService.Read<byte>(AddressService.GposeCheck);
 		byte check2 = MemoryService.Read<byte>(AddressService.GposeCheck2);
+
 		return check1 == 1 && check2 == 4;
 	}
 
@@ -65,15 +60,8 @@ public class GposeService : ServiceBase<GposeService>
 			if (newGpose != this.IsGpose)
 			{
 				this.IsGpose = newGpose;
-
-				GposeStateChanging?.Invoke(newGpose);
-				this.IsChangingState = true;
-				await Task.Delay(1000);
-				this.IsChangingState = false;
 				GposeStateChanged?.Invoke(newGpose);
 			}
-
-			this.IsChangingState = false;
 
 			// ~30 fps
 			await Task.Delay(32);

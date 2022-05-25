@@ -24,6 +24,7 @@ public class DummyItem : IItem
 	public ImageReference? Icon => null;
 	public Classes EquipableClasses => Classes.All;
 	public Mod? Mod => null;
+	public byte EquipLevel => 0;
 
 	public ushort ModelBase
 	{

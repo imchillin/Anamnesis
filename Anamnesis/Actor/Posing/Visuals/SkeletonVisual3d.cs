@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
+using Anamnesis.Actor.Posing;
 using Anamnesis.Memory;
 using Anamnesis.Posing;
 using Anamnesis.Services;
@@ -49,7 +50,6 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		Toggle,
 	}
 
-	public bool LinkEyes { get; set; } = true;
 	public ActorMemory? Actor { get; private set; }
 	public int SelectedCount => this.SelectedBones.Count;
 	public bool CanEditBone => this.SelectedBones.Count == 1;
@@ -94,6 +94,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	public bool IsCustomFace => this.Actor == null ? false : this.IsMiqote || this.IsHrothgar;
 	public bool IsMiqote => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote;
 	public bool IsViera => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Viera;
+	public bool IsElezen => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Elezen;
 	public bool IsHrothgar => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar;
 	public bool HasTailOrEars => this.IsViera || this.HasTail;
 
@@ -488,15 +489,36 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			if (!GposeService.Instance.IsGpose)
 				return;
 
-			// Map eyes together if they exist
-			BoneVisual3d? lEye = this.GetBone("EyeLeft");
-			BoneVisual3d? rEye = this.GetBone("EyeRight");
-			if (lEye != null && rEye != null)
+			// Create Bone links from the link database
+			foreach ((string name, BoneVisual3d bone) in this.Bones)
 			{
-				lEye.LinkedEye = rEye;
-				rEye.LinkedEye = lEye;
+				foreach (LinkedBones.LinkSet links in LinkedBones.Links)
+				{
+					if (links.Tribe != null && this.Actor?.Customize?.Tribe != links.Tribe)
+						continue;
+
+					if (links.Gender != null && this.Actor?.Customize?.Gender != links.Gender)
+						continue;
+
+					if (!links.Contains(name))
+						continue;
+
+					foreach(string linkedBoneName in links.Bones)
+					{
+						if (linkedBoneName == name)
+							continue;
+
+						BoneVisual3d? linkedBone = this.GetBone(linkedBoneName);
+
+						if (linkedBone == null)
+							continue;
+
+						bone.LinkedBones.Add(linkedBone);
+					}
+				}
 			}
 
+			// Read the initial transforms of all bones.
 			foreach ((string name, BoneVisual3d bone) in this.Bones)
 			{
 				bone.ReadTransform();
@@ -549,10 +571,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			for (int boneIndex = 0; boneIndex < count; boneIndex++)
 			{
 				string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
-				string name = originalName;
-
-				if (namePrefix != null)
-					name = namePrefix + name;
+				string name = this.ConvertBoneName(namePrefix, originalName);
 
 				TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
 
@@ -609,9 +628,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			{
 				int parentIndex = bestHkaPose.Skeleton.ParentIndices[boneIndex];
 				string boneName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
-
-				if (namePrefix != null)
-					boneName = namePrefix + boneName;
+				boneName = this.ConvertBoneName(namePrefix, boneName);
 
 				BoneVisual3d bone = this.Bones[boneName];
 
@@ -628,19 +645,24 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 					else
 					{
 						string parentBoneName = bestHkaPose.Skeleton.Bones[parentIndex].Name.ToString();
-
-						if (namePrefix != null)
-							parentBoneName = namePrefix + parentBoneName;
-
+						parentBoneName = this.ConvertBoneName(namePrefix, parentBoneName);
 						bone.Parent = this.Bones[parentBoneName];
 					}
 				}
 				catch (Exception ex)
 				{
-					Log.Error($"Failed to parent bone: {boneName}", ex);
+					Log.Error(ex, $"Failed to parent bone: {boneName}");
 				}
 			}
 		}
+	}
+
+	private string ConvertBoneName(string? prefix, string name)
+	{
+		if (prefix != null)
+			name = prefix + name;
+
+		return name;
 	}
 
 	private async void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs? e)

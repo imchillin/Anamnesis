@@ -31,10 +31,7 @@ public partial class SettingsTab : System.Windows.Controls.UserControl
 		this.ContentArea.DataContext = this;
 
 		List<double> sizes = new List<double>();
-		sizes.Add(0.5);
-		sizes.Add(0.6);
-		sizes.Add(0.8);
-		sizes.Add(0.9);
+		sizes.Add(0.75);
 		sizes.Add(1.0);
 		sizes.Add(1.25);
 		sizes.Add(1.5);

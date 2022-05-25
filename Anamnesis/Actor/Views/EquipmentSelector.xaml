@@ -107,10 +107,46 @@
 
 				<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}" Icon="Eraser" />
 			</Button>
-
-
-
 		</StackPanel>
+
+		<ComboBox Grid.Row="0"
+				  Grid.Column="1"
+				  Margin="6, 3, 6, 0"
+				  Height="22"
+				  HorizontalAlignment="Right"
+				  Style="{StaticResource MaterialDesignDataGridComboBox}"
+				  SelectedIndex="{Binding SortModeInt, Mode=TwoWay}">
+
+			<ComboBox.ToolTip>
+				<XivToolsWpf:TextBlock Key="FileBrowser_Sort" />
+			</ComboBox.ToolTip>
+
+			<ComboBoxItem>
+				<ComboBoxItem.ToolTip>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortAlpha" />
+				</ComboBoxItem.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="SortAlphaDown" FontSize="16"/>
+			</ComboBoxItem>
+
+			<ComboBoxItem>
+				<ComboBoxItem.ToolTip>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortRow" />
+				</ComboBoxItem.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="CalendarAlt" FontSize="16"/>
+			</ComboBoxItem>
+
+			<ComboBoxItem>
+				<ComboBoxItem.ToolTip>
+					<XivToolsWpf:TextBlock Key="EquipmentSelector_SortLevel" />
+				</ComboBoxItem.ToolTip>
+
+				<XivToolsWpf:IconBlock Icon="SortAmountDown" FontSize="16"/>
+			</ComboBoxItem>
+
+		</ComboBox>
+
 
 		<StackPanel Grid.Row="1"
 					Grid.Column="1"
@@ -142,11 +178,11 @@
 		<xivToolsWpfSelectors:Selector
 			Grid.Column="1"
 			Grid.Row="2"
-			Width="256">
+			Width="300">
 
 			<xivToolsWpfSelectors:Selector.ItemTemplate>
 				<DataTemplate>
-					<Grid Width="223" Height="32" Margin="0, -2">
+					<Grid Height="32" Margin="0, -2">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>
@@ -173,7 +209,8 @@
 								   Margin="6, 0, 0, 0"
 								   FontWeight="DemiBold"
 								   Foreground="{DynamicResource MaterialDesignBody}"
-								   TextWrapping="Wrap"
+								   TextWrapping="NoWrap"
+								   TextTrimming="CharacterEllipsis"
 								   Visibility="{Binding Description, Converter={StaticResource IsEmptyToVisibilityConverter}}"
 								   VerticalAlignment="Center"/>
 
@@ -188,13 +225,28 @@
 
 
 						<!--<fa:IconBlock Icon="pen" FontSize="8" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>-->
-						<TextBlock Grid.Row="1" Grid.Column="1"
+						<Grid Grid.Row="1" Grid.Column="1">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Grid.Column="0"
+								   Text="{Binding EquipLevel, StringFormat=Lv.{0:D}}"
+								   TextTrimming="CharacterEllipsis"
+								   Margin="6,0,0,0"
+								   TextAlignment="Left"
+								   Visibility="{Binding EquipLevel, Converter={StaticResource NotZeroToVisibilityConverter}}"/>
+
+							<TextBlock Grid.Column="1"
 								   Text="{Binding Description}"
 								   TextTrimming="CharacterEllipsis"
 								   Margin="6,0,0,0"
 								   TextAlignment="Left"
 								   Visibility="{Binding Description, Converter={StaticResource NotEmptyToVisibilityConverter}}"/>
-		
+							
+						</Grid>
+						
 
 						<Rectangle Grid.ColumnSpan="3" 
 									   Grid.RowSpan="2" 
@@ -217,13 +269,17 @@
 											<RowDefinition/>
 											<RowDefinition/>
 											<RowDefinition/>
+											<RowDefinition/>
 										</Grid.RowDefinitions>
 
-										<TextBlock Grid.Column="0" Grid.Row="0" Text="Item Id:" HorizontalAlignment="Right" Visibility="{Binding RowId, Converter={StaticResource NotZeroToVisibility}}" Margin="0, 0, 6, 0"/>
+										<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="EquipmentSelector_ItemId" HorizontalAlignment="Right" Visibility="{Binding RowId, Converter={StaticResource NotZeroToVisibility}}" Margin="0, 0, 6, 0"/>
 										<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding RowId}" Visibility="{Binding RowId, Converter={StaticResource NotZeroToVisibility}}"/>
 
-										<TextBlock Grid.Column="0" Grid.Row="1" Text="Model:" HorizontalAlignment="Right" Margin="0, 0, 6, 0"/>
-										<StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+										<TextBlock Grid.Column="0" Grid.Row="1" Text="Lv." HorizontalAlignment="Right" Visibility="{Binding EquipLevel, Converter={StaticResource NotZeroToVisibility}}" Margin="0, 0, 6, 0"/>
+										<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding EquipLevel}" Visibility="{Binding EquipLevel, Converter={StaticResource NotZeroToVisibility}}"/>
+										
+										<TextBlock Grid.Column="0" Grid.Row="2" Text="Model:" HorizontalAlignment="Right" Margin="0, 0, 6, 0"/>
+										<StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="2">
 											<TextBlock Text="{Binding ModelSet}" Visibility="{Binding ModelSet, Converter={StaticResource NotZeroToVisibility}}"/>
 											<TextBlock Text=", " Visibility="{Binding ModelSet, Converter={StaticResource NotZeroToVisibility}}"/>
 											<TextBlock Text="{Binding ModelBase}"/>

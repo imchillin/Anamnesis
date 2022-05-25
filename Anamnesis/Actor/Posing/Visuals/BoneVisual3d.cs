@@ -23,10 +23,11 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 {
 	public readonly List<TransformMemory> TransformMemories = new List<TransformMemory>();
 
+	private static bool scaleLinked = true;
+
 	private readonly QuaternionRotation3D rotation;
 	private readonly TranslateTransform3D position;
 	private BoneTargetVisual3d? target;
-
 	private BoneVisual3d? parent;
 	private Line? lineToParent;
 
@@ -60,6 +61,10 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 
 	public bool IsEnabled { get; set; } = true;
 	public string BoneName { get; set; }
+	public List<BoneVisual3d> LinkedBones { get; set; } = new();
+	public int LinkedBonesCount => this.LinkedBones.Count;
+	public virtual string TooltipKey => "Pose_" + this.BoneName;
+	public bool IsTransformLocked { get; set; } = false;
 
 	public bool CanRotate => PoseService.Instance.FreezeRotation && !this.IsTransformLocked;
 	public CmQuaternion Rotation { get; set; }
@@ -68,11 +73,52 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 	public bool CanTranslate => PoseService.Instance.FreezePositions && !this.IsTransformLocked;
 	public CmVector Position { get; set; }
 
-	public BoneVisual3d? LinkedEye { get; set; }
+	public bool IsAttachmentBone
+	{
+		get
+		{
+			return this.BoneName == "n_buki_r" ||
+				this.BoneName == "n_buki_l" ||
+				this.BoneName == "j_buki_sebo_r" ||
+				this.BoneName == "j_buki_sebo_l";
+		}
+	}
 
-	public virtual string TooltipKey => "Pose_" + this.BoneName;
+	public bool CanLinkScale => !this.IsAttachmentBone;
 
-	public bool IsTransformLocked { get; set; } = false;
+	public bool ScaleLinked
+	{
+		get
+		{
+			if (this.IsAttachmentBone)
+				return true;
+
+			return scaleLinked;
+		}
+
+		set => scaleLinked = value;
+	}
+
+	public bool EnableLinkedBones
+	{
+		get
+		{
+			if (this.LinkedBonesCount <= 0)
+				return false;
+
+			return SettingsService.Current.PosingBoneLinks.Get(this.BoneName, true);
+		}
+
+		set
+		{
+			SettingsService.Current.PosingBoneLinks.Set(this.BoneName, value);
+
+			foreach (BoneVisual3d link in this.LinkedBones)
+			{
+				SettingsService.Current.PosingBoneLinks.Set(link.BoneName, value);
+			}
+		}
+	}
 
 	public string Tooltip
 	{
@@ -232,7 +278,7 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 		}
 	}
 
-	public virtual void WriteTransform(ModelVisual3D root, bool writeChildren = true)
+	public virtual void WriteTransform(ModelVisual3D root, bool writeChildren = true, bool writeLinked = true)
 	{
 		if (!this.IsEnabled)
 			return;
@@ -300,21 +346,13 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 
 		if (changed)
 		{
-			if (this.LinkedEye != null && this.Skeleton.LinkEyes)
+			if (writeLinked && this.EnableLinkedBones)
 			{
-				foreach (TransformMemory? transformMemory in this.LinkedEye.TransformMemories)
+				foreach (BoneVisual3d link in this.LinkedBones)
 				{
-					if (this.LinkedEye.CanRotate)
-					{
-						CmQuaternion newRot = rotation.ToCmQuaternion();
-						if (!transformMemory.Rotation.IsApproximately(newRot))
-						{
-							transformMemory.Rotation = rotation.ToCmQuaternion();
-						}
-					}
+					link.Rotation = this.Rotation;
+					link.WriteTransform(root, writeChildren, false);
 				}
-
-				this.LinkedEye.Rotation = this.Rotation;
 			}
 
 			if (writeChildren)

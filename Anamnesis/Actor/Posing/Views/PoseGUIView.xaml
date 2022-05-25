@@ -167,6 +167,7 @@
 					<RowDefinition/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
 				<Grid Grid.Row="0" Visibility="{Binding IsViera, Converter={StaticResource B2V}}">
@@ -308,11 +309,11 @@
 				<!-- Head & Face -->
 				<Viewbox Grid.Row="1" Visibility="{Binding IsCustomFace, Converter={StaticResource !B2V}, FallbackValue=Hidden}" Height="220">
 					<Canvas Height="300" Width="300">
-						
-						
+
+
 						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.08" Stretch="Uniform" IsHitTestVisible="False"
 							   Source="../../../Assets/PoseCharacterFaceBackground.png" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-						
+
 						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.08" Stretch="Uniform" IsHitTestVisible="False"
 							   Source="../../../Assets/PoseCharacterVieraFaceBackground.png"  Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
 
@@ -350,8 +351,7 @@
 					</Canvas>
 				</Viewbox>
 
-
-				<Grid Grid.Row="2" Margin="0, -20, 0, 0" Height="160">
+				<Grid Grid.Row="3" Margin="0, -20, 0, 0" Height="160">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition/>

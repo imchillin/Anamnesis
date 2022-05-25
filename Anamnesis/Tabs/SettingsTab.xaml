@@ -3,10 +3,8 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:Anamnesis.GUI.Views"
-			 xmlns:materialDesignColors="clr-namespace:MaterialDesignColors;assembly=MaterialDesignColors"
 			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
-			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:ana="clr-namespace:Anamnesis"
 			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
 			 xmlns:XivToolsWPF="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
@@ -70,7 +68,16 @@
 				<CheckBox Grid.Column="1" Grid.Row="4" IsChecked="{Binding SettingsService.Settings.EnableTranslucency}" Margin="6, 3"/>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="5" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
-				<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}" Margin="6, 3" x:Name="TransparancySlider" Slider="Absolute" Grid.Column="1" Grid.Row="5" Minimum="0.1" Maximum="1" TickFrequency="0.1" IsEnabled="{Binding SettingsService.Settings.UseCustomBorder}"/>
+				<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}"
+									   Margin="6, 3"
+									   x:Name="TransparancySlider"
+									   Slider="Absolute"
+									   Grid.Column="1"
+									   Grid.Row="5"
+									   Minimum="0.1"
+									   Maximum="1"
+									   TickFrequency="0.1"
+									   IsEnabled="{Binding SettingsService.Settings.EnableTranslucency}"/>
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="6" Key="Settings_Font" Style="{StaticResource Label}"/>
 				<!--<CheckBox IsChecked="{Binding SettingsService.Settings.UseHyperlegibleFont}" Grid.Column="1" Grid.Row="6" Margin="6, 3"/>-->
@@ -243,7 +250,7 @@
 					<XivToolsWPF:Header Key="Settings_PenumbraHeader"
 										Icon="Question" />
 				</GroupBox.Header>
-			
+
 				<Grid Grid.Column="2">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
@@ -272,8 +279,9 @@
 
 			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableHotkeys_Tooltip"/>
+					<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableGameHotkeys_Tooltip"/>
+					<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableForwardKeys_Tooltip"/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 
@@ -287,8 +295,11 @@
 
 				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_EnableGameHotkeys" Style="{StaticResource Label}"/>
 				<CheckBox IsChecked="{Binding SettingsService.Settings.EnableGameHotkeyHooks}" Grid.Column="1" Grid.Row="1" Margin="6"/>
+				
+				<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_EnableForwardKeys" Style="{StaticResource Label}"/>
+				<CheckBox IsChecked="{Binding SettingsService.Settings.ForwardKeys}" Grid.Column="1" Grid.Row="2" Margin="6"/>
 
-				<ListBox x:Name="HotkeyList" Grid.Row="2" Grid.ColumnSpan="2">
+				<ListBox x:Name="HotkeyList" Grid.Row="3" Grid.ColumnSpan="2">
 			
 					<ListBox.ItemContainerStyle>
 						<Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">

@@ -35,16 +35,11 @@ public class MemoryService : ServiceBase<MemoryService>
 	{
 		get
 		{
+			if (SettingsService.Current.GamePath != null)
+				return SettingsService.Current.GamePath;
+
 			if (Process == null)
-			{
-#if DEBUG
-				if (SettingsService.Current.DebugGamePath != null)
-				{
-					return SettingsService.Current.DebugGamePath;
-				}
-#endif
 				throw new Exception("No game process");
-			}
 
 			if (Process.MainModule == null)
 				throw new Exception("Process has no main module");

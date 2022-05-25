@@ -4,6 +4,7 @@
 namespace Anamnesis.Actor;
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
@@ -158,7 +159,7 @@ public class PoseService : ServiceBase<PoseService>
 		this.freezeGposeTargetPosition1 = new NopHookViewModel(AddressService.GPoseCameraTargetPositionFreeze, 8);
 		this.freezeGposeTargetPosition2 = new NopHookViewModel(AddressService.GPoseCameraTargetPositionFreeze + 8 + 3, 16);
 
-		GposeService.GposeStateChanging += this.OnGposeStateChanging;
+		GposeService.GposeStateChanged += this.OnGposeStateChanged;
 
 		_ = Task.Run(ExtractStandardPoses);
 	}
@@ -200,20 +201,30 @@ public class PoseService : ServiceBase<PoseService>
 
 			if (standardPoseDir.Exists)
 			{
-				string verText = await File.ReadAllTextAsync(verFile);
-				DateTime standardPoseVersion = DateTime.Parse(verText);
-
-				if (standardPoseVersion == VersionInfo.Date)
+				if (File.Exists(verFile))
 				{
-					Log.Information($"Standard pose library up to date");
-					return;
+					try
+					{
+						string verText = await File.ReadAllTextAsync(verFile);
+						DateTime standardPoseVersion = DateTime.Parse(verText, CultureInfo.InvariantCulture);
+
+						if (standardPoseVersion == VersionInfo.Date)
+						{
+							Log.Information($"Standard pose library up to date");
+							return;
+						}
+					}
+					catch (Exception ex)
+					{
+						Log.Warning(ex, "Failed to read standard pose library version file");
+					}
 				}
 
 				standardPoseDir.Delete(true);
 			}
 
 			standardPoseDir.Create();
-			await File.WriteAllTextAsync(verFile, VersionInfo.Date.ToString());
+			await File.WriteAllTextAsync(verFile, VersionInfo.Date.ToString(CultureInfo.InvariantCulture));
 
 			string[] poses = EmbeddedFileUtility.GetAllFilesInDirectory("\\Data\\StandardPoses\\");
 			foreach (string posePath in poses)
@@ -250,7 +261,7 @@ public class PoseService : ServiceBase<PoseService>
 		}
 	}
 
-	private void OnGposeStateChanging(bool isGPose)
+	private void OnGposeStateChanged(bool isGPose)
 	{
 		if (!isGPose)
 		{

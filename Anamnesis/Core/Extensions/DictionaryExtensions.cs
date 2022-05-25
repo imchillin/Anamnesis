@@ -15,4 +15,22 @@ public static class DictionaryExtensions
 		key = self.Key;
 		value = self.Value;
 	}
+
+	public static void Set<TKey, TValue>(this Dictionary<TKey, TValue> self, TKey key, TValue value)
+		where TKey : notnull
+	{
+		if (!self.ContainsKey(key))
+			self.Add(key, value);
+
+		self[key] = value;
+	}
+
+	public static TValue Get<TKey, TValue>(this Dictionary<TKey, TValue> self, TKey key, TValue defaultValue)
+		where TKey : notnull
+	{
+		if (!self.ContainsKey(key))
+			return defaultValue;
+
+		return self[key];
+	}
 }

@@ -86,8 +86,21 @@
 
 				<!-- Skintone -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="2" Key="Character_Appearance_Skin" Style="{StaticResource Label}"/>
-				<controls:ColorControl Grid.Column="1" Grid.Row="2" Value="{Binding Customize.Skintone}" Type="Skin" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0, 2, 0, 0"/>
 
+				<Grid Grid.Column="1" Grid.Row="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<controls:ColorControl Grid.Column="0" Value="{Binding Customize.Skintone}" Type="Skin" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0, 2, 0, 0"/>
+
+					<XivToolsWpf:TextBlock Grid.Column="2" Key="Character_Appearance_Iris" Style="{StaticResource Label}"/>
+					<CheckBox Grid.Column="3" IsChecked="{Binding Customize.SmallIris}"/>
+				</Grid>
+			
 				<!-- Eyes -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="3" Key="Character_Appearance_Eyes" Style="{StaticResource Label}"/>
 				<Grid Grid.Column="1" Grid.Row="3">
@@ -95,21 +108,21 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
 						<ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.Eyes}" Minimum="1" Maximum="256" Buttons="True" Margin="2, 0, 6, 2"/>
+					<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.EyeShape}" Minimum="0" Maximum="256" Buttons="True" Margin="2, 0, 6, 2"/>
 
-                    <controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_EyeLeft" Value="{Binding Customize.MainEyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
+					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_EyeLeft" Value="{Binding Customize.MainEyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
 
-                    <ToggleButton Grid.Column="2" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Customize.LinkEyeColors}">
-                        <XivToolsWpf:IconBlock Icon="Link" FontSize="10"/>
-                    </ToggleButton>
-                    <Line StrokeThickness="1" X1="0" X2="3" Grid.Column="2" Stroke="White" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <Line StrokeThickness="1" X1="0" X2="3" Grid.Column="2" Stroke="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ToggleButton Grid.Column="2" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Customize.LinkEyeColors}">
+						<XivToolsWpf:IconBlock Icon="Link" FontSize="10"/>
+					</ToggleButton>
+					<Line StrokeThickness="1" X1="0" X2="3" Grid.Column="2" Stroke="White" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Line StrokeThickness="1" X1="0" X2="3" Grid.Column="2" Stroke="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
-                    <controls:ColorControl Grid.Column="3"
+					<controls:ColorControl Grid.Column="3"
                                            ToolTipKey="Character_Appearance_EyeRight"
                                            IsEnabled="{Binding Customize.LinkEyeColors, Converter={StaticResource !B}}"
                                            Value="{Binding Customize.REyeColor}"
@@ -117,7 +130,7 @@
                                            Gender="{Binding Customize.Gender}"
                                            Tribe="{Binding Customize.Tribe}"
                                            Margin="0"/>
-                </Grid>
+				</Grid>
 
 				<!-- Face Type -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="4" Key="Character_Appearance_Face" Style="{StaticResource Label}"/>

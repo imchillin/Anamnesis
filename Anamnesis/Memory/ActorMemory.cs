@@ -5,14 +5,19 @@ namespace Anamnesis.Memory;
 
 using System;
 using System.Threading.Tasks;
-using Anamnesis.Services;
+using Anamnesis.Utils;
 using PropertyChanged;
 
 public class ActorMemory : ActorBasicMemory
 {
-	private const short RefreshDelay = 250;
-	private short refreshDelay;
-	private Task? refreshTask;
+	private readonly FuncQueue refreshQueue;
+	private readonly FuncQueue backupQueue;
+
+	public ActorMemory()
+	{
+		this.refreshQueue = new(this.RefreshAsync, 250);
+		this.backupQueue = new(this.BackupAsync, 250);
+	}
 
 	public enum CharacterModes : byte
 	{
@@ -53,20 +58,23 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x09A0)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x11E4)] public bool IsMotionEnabled { get; set; }
 	[Bind(0x19E0)] public float Transparency { get; set; }
+	[Bind(0x1ABA)] public byte Voice { get; set; }
 	[Bind(0x1ABC)] public byte CharacterModeRaw { get; set; }
 	[Bind(0x1ABD)] public byte CharacterModeInput { get; set; }
 	[Bind(0x1AE4)] public byte AttachmentPoint { get; set; }
+
+	public PinnedActor? Pinned { get; set; }
 
 	public History History { get; private set; } = new();
 
 	public bool AutomaticRefreshEnabled { get; set; } = true;
 	public bool IsRefreshing { get; set; } = false;
-	public bool PendingRefresh { get; set; } = false;
+	public bool PendingRefresh => this.refreshQueue.Pending;
 
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
 	public bool CanRefresh => ActorService.Instance.CanRefreshActor(this);
 
-	public bool IsPlayer => this.ModelObject != null && this.ModelObject.IsPlayer;
+	public bool IsHuman => this.ModelObject != null && this.ModelObject.IsHuman;
 
 	[DependsOn(nameof(ModelType))]
 	public bool IsChocobo => this.ModelType == 1;
@@ -121,12 +129,7 @@ public class ActorMemory : ActorBasicMemory
 	/// </summary>
 	public void Refresh()
 	{
-		this.refreshDelay = RefreshDelay;
-
-		if (this.refreshTask == null || this.refreshTask.IsCompleted)
-		{
-			this.refreshTask = Task.Run(this.RefreshTask);
-		}
+		this.refreshQueue.Invoke();
 	}
 
 	public override void Tick()
@@ -180,9 +183,17 @@ public class ActorMemory : ActorBasicMemory
 			this.WriteDelayedBinds();
 		}
 
-		this.RaisePropertyChanged(nameof(this.IsPlayer));
+		this.RaisePropertyChanged(nameof(this.IsHuman));
 		await Task.Delay(150);
-		this.RaisePropertyChanged(nameof(this.IsPlayer));
+		this.RaisePropertyChanged(nameof(this.IsHuman));
+	}
+
+	public async Task BackupAsync()
+	{
+		while (this.IsRefreshing)
+			await Task.Delay(10);
+
+		this.Pinned?.CreateCharacterBackup(PinnedActor.BackupModes.Gpose);
 	}
 
 	public void RaiseRefreshChanged()
@@ -193,6 +204,9 @@ public class ActorMemory : ActorBasicMemory
 	protected override void HandlePropertyChanged(PropertyChange change)
 	{
 		this.History.Record(change);
+
+		if (change.Origin != PropertyChange.Origins.Game)
+			this.backupQueue.Invoke();
 
 		if (!this.AutomaticRefreshEnabled)
 			return;
@@ -231,27 +245,5 @@ public class ActorMemory : ActorBasicMemory
 		}
 
 		return base.CanWrite(bind);
-	}
-
-	private async Task RefreshTask()
-	{
-		// Double loops to handle case where a refresh delay was added
-		// while the refresh was running
-		while (this.refreshDelay > 0)
-		{
-			lock (this)
-				this.PendingRefresh = true;
-
-			while (this.refreshDelay > 0)
-			{
-				await Task.Delay(10);
-				this.refreshDelay -= 10;
-			}
-
-			lock (this)
-				this.PendingRefresh = false;
-
-			await this.RefreshAsync();
-		}
 	}
 }
