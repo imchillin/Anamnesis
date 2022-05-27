@@ -98,12 +98,12 @@ public partial class ActionPage : UserControl
 			this.AnimationOverride.BaseAnimationId = animation.Timeline.AnimationId;
 		});
 
-		animSelector.ChangeFilter(new AnimationSelector.AnimationFilter()
+		animSelector.LocalAnimationSlotFilter = new()
 		{
-			SlotsLocked = true,
-			IncludeFullBody = true,
 			IncludeBlendable = false,
-		});
+			IncludeFullBody = true,
+			SlotsLocked = true,
+		};
 	}
 
 	private void OnBlendAnimationSearchClicked(object sender, RoutedEventArgs e)
@@ -111,13 +111,20 @@ public partial class ActionPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
+		AnimationSelector animSelector = SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
 		{
 			if (animation == null || animation.Timeline == null)
 				return;
 
 			this.AnimationOverride.BlendAnimationId = animation.Timeline.AnimationId;
 		});
+
+		animSelector.LocalAnimationSlotFilter = new()
+		{
+			IncludeBlendable = true,
+			IncludeFullBody = true,
+			SlotsLocked = false,
+		};
 	}
 
 	private void OnApplyOverrideAnimation(object sender, RoutedEventArgs e)
