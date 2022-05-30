@@ -317,6 +317,7 @@
 	"Pose_BodyTooltip": "Loads a pose onto the entire actor except for the face",
 	"Pose_Clear": "Clear Selection",
 	"Pose_SelectChildren": "Select Children",
+	"Pose_SelectParent": "Select Parent",
 	"Pose_Flip": "Flip",
 	"Pose_Left": "L",
 	"Pose_Right": "R",
