@@ -28,24 +28,13 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 	{
 		this.InitializeComponent();
 		this.DataContext = this;
-		this.CurrentFilter = GlobalFilter;
-		this.CurrentFilter.PropertyChanged += this.OnSelfPropertyChanged;
+		GlobalAnimationTypeFilter.PropertyChanged += this.OnSelfPropertyChanged;
+		this.LocalAnimationSlotFilter.PropertyChanged += this.OnSelfPropertyChanged;
 		this.PropertyChanged += this.OnSelfPropertyChanged;
 	}
 
-	public AnimationFilter CurrentFilter { get; private set; }
-
-	private static AnimationFilter GlobalFilter { get; set; } = new()
-	{
-		SlotsLocked = false,
-	};
-
-	public void ChangeFilter(AnimationFilter filter)
-	{
-		this.CurrentFilter.PropertyChanged -= this.OnSelfPropertyChanged;
-		this.CurrentFilter = filter;
-		this.CurrentFilter.PropertyChanged += this.OnSelfPropertyChanged;
-	}
+	public static AnimationTypeFilter GlobalAnimationTypeFilter { get; set; } = new();
+	public AnimationSlotFilter LocalAnimationSlotFilter { get; set; } = new();
 
 	protected override Task LoadItems()
 	{
@@ -67,19 +56,19 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 		if (string.IsNullOrEmpty(animation.DisplayName) || animation.Timeline == null || string.IsNullOrEmpty(animation.Timeline.Key))
 			return false;
 
-		if (!this.CurrentFilter.IncludeEmotes && animation is EmoteEntry)
+		if (!GlobalAnimationTypeFilter.IncludeEmotes && animation is EmoteEntry)
 			return false;
 
-		if (!this.CurrentFilter.IncludeActions && animation is Action)
+		if (!GlobalAnimationTypeFilter.IncludeActions && animation is Action)
 			return false;
 
-		if (!this.CurrentFilter.IncludeRaw && animation is ActionTimeline)
+		if (!GlobalAnimationTypeFilter.IncludeRaw && animation is ActionTimeline)
 			return false;
 
-		if (!this.CurrentFilter.IncludeBlendable && animation.Timeline.Slot != Memory.AnimationMemory.AnimationSlots.FullBody)
+		if (!this.LocalAnimationSlotFilter.IncludeBlendable && animation.Timeline.Slot != Memory.AnimationMemory.AnimationSlots.FullBody)
 			return false;
 
-		if (!this.CurrentFilter.IncludeFullBody && animation.Timeline.Slot == Memory.AnimationMemory.AnimationSlots.FullBody)
+		if (!this.LocalAnimationSlotFilter.IncludeFullBody && animation.Timeline.Slot == Memory.AnimationMemory.AnimationSlots.FullBody)
 			return false;
 
 		bool matches = false;
@@ -165,7 +154,7 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 
 	private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName == nameof(this.CurrentFilter))
+		if (e.PropertyName == nameof(this.LocalAnimationSlotFilter))
 			return;
 
 		this.FilterItems();
@@ -191,15 +180,22 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 	}
 
 	[AddINotifyPropertyChangedInterface]
-	public class AnimationFilter : INotifyPropertyChanged
+	public class AnimationTypeFilter : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public bool IncludeEmotes { get; set; } = true;
 		public bool IncludeActions { get; set; } = true;
 		public bool IncludeRaw { get; set; } = true;
-		public bool IncludeFullBody { get; set; } = true;
+	}
+
+	[AddINotifyPropertyChangedInterface]
+	public class AnimationSlotFilter : INotifyPropertyChanged
+	{
+		public event PropertyChangedEventHandler? PropertyChanged;
+
 		public bool IncludeBlendable { get; set; } = true;
+		public bool IncludeFullBody { get; set; } = true;
 		public bool SlotsLocked { get; set; } = true;
 	}
 }

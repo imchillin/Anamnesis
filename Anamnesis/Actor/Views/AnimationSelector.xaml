@@ -34,22 +34,22 @@
 				<CheckBox Grid.Row="0"
 					  Grid.Column="0"
 					  Content="Emotes"
-					  IsChecked="{Binding CurrentFilter.IncludeEmotes}" />
+					  IsChecked="{Binding GlobalAnimationTypeFilter.IncludeEmotes}" />
 
 				<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  Content="Actions"
-					  IsChecked="{Binding CurrentFilter.IncludeActions}" />
+					  IsChecked="{Binding GlobalAnimationTypeFilter.IncludeActions}" />
 
 				<CheckBox Grid.Row="0"
 					  Grid.Column="2"
 					  Content="Raw"
-					  IsChecked="{Binding CurrentFilter.IncludeRaw}" />
+					  IsChecked="{Binding GlobalAnimationTypeFilter.IncludeRaw}" />
 			</Grid>
 		</Grid>
 
 		<Grid Grid.Row="1">
-			<Grid Margin="6" IsEnabled="{Binding CurrentFilter.SlotsLocked, Converter={StaticResource NotConverter}}">
+            <Grid Margin="6" IsEnabled="{Binding LocalAnimationSlotFilter.SlotsLocked, Converter={StaticResource NotConverter}}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
 					<ColumnDefinition />
@@ -62,12 +62,12 @@
 				<CheckBox Grid.Row="0"
 					  Grid.Column="0"
 					  Content="Full Body"
-					  IsChecked="{Binding CurrentFilter.IncludeFullBody}" />
+					  IsChecked="{Binding LocalAnimationSlotFilter.IncludeFullBody}" />
 
 				<CheckBox Grid.Row="0"
 					  Grid.Column="1"
 					  Content="Blendable"
-					  IsChecked="{Binding CurrentFilter.IncludeBlendable}" />
+					  IsChecked="{Binding LocalAnimationSlotFilter.IncludeBlendable}" />
 			</Grid>
 		</Grid>
 
