@@ -265,7 +265,7 @@
 
 	"Character_WarningGpose": "Appearance and Equipment can only be changed while not in Group Pose.",
 
-	"Character_Action_AnimationData": "Animation Data",
+	"Character_Action_AnimationData": "Actor Data",
 	"Character_Action_AnimationStatus": "Animation Status",
 	"Character_Action_AnimationOverride": "Animation Override",
 	"Character_Action_AnimationOverrideBlocked": "Animation Override is only available for your local overworld player when you are idle. Please stop any emotes or actions you are performing.",
