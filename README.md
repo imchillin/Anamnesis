@@ -53,7 +53,8 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 * **[ShadyWhite](https://github.com/ShadyWhite)** - *Chinese*
 * **[ajiiisai](https://github.com/ajiiisai)** - *Spanish*
 * **[ModernTiger](https://github.com/ModernTiger)** - *Korean*
-* **[RageShoTT](https://github.com/RageShoTT)** - Italian
+* **[RageShoTT](https://github.com/RageShoTT)** - *Italian*
+* **[Murakumo-JP](https://github.com/Murakumo-JP)** - *Russian*
 
 ## License
 
