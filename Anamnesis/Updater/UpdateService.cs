@@ -159,26 +159,35 @@ public class UpdateService : ServiceBase<UpdateService>
 
 			// Download asset to temp file
 			string zipFilePath = Path.GetTempFileName();
-			using HttpClient client = new HttpClient();
-			using HttpResponseMessage response = await client.GetAsync(asset.Url);
-			using Stream streamToReadFrom = await response.Content.ReadAsStreamAsync();
-			using FileStream fileStream = new FileStream(zipFilePath, FileMode.OpenOrCreate, FileAccess.Write);
-			await streamToReadFrom.CopyToAsync(fileStream);
+			{
+				using HttpClient client = new HttpClient();
+				using HttpResponseMessage response = await client.GetAsync(asset.Url);
+				using Stream streamToReadFrom = await response.Content.ReadAsStreamAsync();
+				using FileStream fileStream = new FileStream(zipFilePath, FileMode.OpenOrCreate, FileAccess.Write);
+				await streamToReadFrom.CopyToAsync(fileStream);
+			}
 
 			// TODO: Progress bar
 			updateProgress?.Invoke(1.0);
 
 			if (!Directory.Exists(UpdateTempDir))
+			{
 				Directory.CreateDirectory(UpdateTempDir);
+			}
 
-			using FileStream zipFile = new(zipFilePath, FileMode.Open);
-			using ZipArchive archive = new(zipFile, ZipArchiveMode.Read);
-			archive.ExtractToDirectory(UpdateTempDir, true);
-			archive.Dispose();
-			await zipFile.DisposeAsync();
+			{
+				using FileStream zipFile = new(zipFilePath, FileMode.Open);
+				using ZipArchive archive = new(zipFile, ZipArchiveMode.Read);
+				archive.ExtractToDirectory(UpdateTempDir, true);
+				archive.Dispose();
+				await zipFile.DisposeAsync();
+			}
 
-			// Remove temp file
-			File.Delete(zipFilePath);
+			if (File.Exists(zipFilePath))
+			{
+				// Remove temp file
+				File.Delete(zipFilePath);
+			}
 
 			// While testing, do not copy the update files over our working files.
 			if (Debugger.IsAttached)
