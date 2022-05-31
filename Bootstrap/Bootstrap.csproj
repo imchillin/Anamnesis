@@ -28,4 +28,8 @@
     <EmbeddedResource Include="..\Anamnesis\bin\publish\Anamnesis.exe" Link="Anamnesis.exe" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SemanticVersioning" Version="2.0.2" />
+  </ItemGroup>
+
 </Project>

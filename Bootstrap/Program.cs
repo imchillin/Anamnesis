@@ -10,10 +10,11 @@ const string BootstrapName = "Anamnesis Setup";
 const string ResourceName = "Bootstrap.Anamnesis.exe";
 const string FileName = "Anamnesis.exe";
 
-const string DotNetVersion = "6.0.4";
-const string DotNetTempFile = "windowsdesktop-runtime-6.0.4-win-x64.exe";
-const string DotNetDownloadUrl = "https://download.visualstudio.microsoft.com/download/pr/f13d7b5c-608f-432b-b7ec-8fe84f4030a1/5e06998f9ce23c620b9d6bac2dae6c1d/windowsdesktop-runtime-6.0.4-win-x64.exe";
-const string DotNetDownloadChecksum = "209e596edd7ab022241ab378e66703912974e7aa6168f287c9ce036fb31e58029ad304c8182b4b62a08e8d5ae4db74de277e298ced6d2746ef08da2352a2a252";
+const string DotNetMatchVersion = "^6.0.4"; 
+const string DotNetVersion = "6.0.5";
+const string DotNetTempFile = "windowsdesktop-runtime-6.0.5-win-x64.exe";
+const string DotNetDownloadUrl = "https://download.visualstudio.microsoft.com/download/pr/5681bdf9-0a48-45ac-b7bf-21b7b61657aa/bbdc43bc7bf0d15b97c1a98ae2e82ec0/windowsdesktop-runtime-6.0.5-win-x64.exe";
+const string DotNetDownloadChecksum = "5eb1537295cdb513197419c311777229fd43af6cea0ef6134f9990b32b8ac26aa51139f2c0b63d9cdfb6d753dd9db6f243b887ec511f15866157aa9e127b5cea";
 
 const string DotNetPromptText = $"The .Net {DotNetVersion} Desktop runtime is not installed.\n\nInstall it now?";
 const string AlreadyExtracted = $"{ApplicationName} is already extracted. Do you want to overwrite it?";
@@ -58,11 +59,21 @@ async Task<bool> CheckDotNet()
 		p.Start();
 		
 		p.WaitForExit();
-		string output = p.StandardOutput.ReadToEnd();
+		string? line;
 
-		if (output.Contains($"Microsoft.WindowsDesktop.App {DotNetVersion}"))
+		// Example: Microsoft.WindowsDesktop.App 6.0.5 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+		SemanticVersioning.Range matchRange = new(DotNetMatchVersion);
+		while ((line = p.StandardOutput.ReadLine()) != null)
 		{
-			return true;
+			if (line.Contains($"Microsoft.WindowsDesktop.App"))
+			{
+				string versionStr = line.Split(" ")[1];
+				SemanticVersioning.Version version = new(versionStr);
+				if(matchRange.IsSatisfied(version))
+				{
+					return true;
+				}
+			}
 		}
 	}
 
@@ -73,6 +84,7 @@ async Task<bool> CheckDotNet()
 	{
 		// Setup http client
 		HttpClient httpClient = new HttpClient();
+		httpClient.Timeout = TimeSpan.FromMinutes(60);
 
 		if (!httpClient.DefaultRequestHeaders.Contains("User-Agent"))
 			httpClient.DefaultRequestHeaders.Add("User-Agent", "AutoUpdater");
