@@ -86,7 +86,6 @@ public partial class App : Application
 			LogService.CreateLog();
 
 			this.CheckWorkingDirectory();
-			this.CleanupLauncher();
 			this.CheckForProcesses();
 
 			await Services.InitializeServices();
@@ -132,14 +131,6 @@ public partial class App : Application
 
 		sw.Stop();
 		Log.Information($"Started application in {sw.ElapsedMilliseconds}ms");
-	}
-
-	private void CleanupLauncher()
-	{
-		if (File.Exists("AnamnesisSetup.exe"))
-		{
-			File.Delete("AnamnesisSetup.exe");
-		}
 	}
 
 	private void CheckWorkingDirectory()
