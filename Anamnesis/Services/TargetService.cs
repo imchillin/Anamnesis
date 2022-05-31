@@ -202,6 +202,19 @@ public class TargetService : ServiceBase<TargetService>
 		{
 			// This section can only fail when FFXIV isn't running (fail to set address) so it should be safe to ignore
 		}
+
+		// Tick the actor if it still exists
+		if(this.PlayerTarget != null && this.PlayerTarget.Address != IntPtr.Zero)
+		{
+			try
+			{
+				this.PlayerTarget.Tick();
+			}
+			catch
+			{
+				// Should only fail to tick if the game isn't running
+			}
+		}
 	}
 
 	public override async Task Start()
@@ -394,7 +407,6 @@ public class TargetService : ServiceBase<TargetService>
 			}
 
 			this.UpdatePlayerTarget();
-			this.PlayerTarget?.Tick();
 		}
 	}
 
