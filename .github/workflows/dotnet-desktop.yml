@@ -38,13 +38,13 @@ jobs:
         replaced: '2000, 01, 01, 00, 00, 00'
         value: ${{ steps.build-time.outputs.formattedTime }}
 
-    - name: Install .NET Core
+    - name: Install .NET
       uses: actions/setup-dotnet@v1.8.2
       with:
         dotnet-version: 6.0.x
    
-    - name: Deploy Bootstrap
-      run: dotnet publish Bootstrap/Bootstrap.csproj /p:PublishProfile=".\Bootstrap\Properties\PublishProfiles\FolderProfile.pubxml"
+    - name: Deploy Anamnesis
+      run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml"
       
     - name: Deploy Update Extractor
       run: dotnet publish UpdateExtractor/UpdateExtractor.csproj /p:PublishProfile=".\UpdateExtractor\Properties\PublishProfiles\FolderProfile.pubxml"
