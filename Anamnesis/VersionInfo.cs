@@ -14,7 +14,7 @@ public static class VersionInfo
 	public static readonly DateTime Date = new DateTime(2000, 01, 01, 00, 00, 00, DateTimeKind.Utc);
 
 	/// <summary>
-	/// The latest gamve version that the tool has been validated for.
+	/// The latest game version that the tool has been validated for.
 	/// </summary>
-	public static readonly string ValidatedGameVersion = "2022.04.20.0000.0000";
+	public static readonly string ValidatedGameVersion = "2022.05.19.0000.0000";
 }

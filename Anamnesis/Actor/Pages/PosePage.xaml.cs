@@ -390,7 +390,7 @@ public partial class PosePage : UserControl
 		this.Skeleton.Select(bones, SkeletonVisual3d.SelectMode.Add);
 	}
 
-	private void OnFlipClicked(object sender, System.Windows.RoutedEventArgs e)
+	private void OnFlipClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Skeleton != null && !this.IsFlipping)
 		{
@@ -425,7 +425,15 @@ public partial class PosePage : UserControl
 		}
 	}
 
-	private void OnCanvasMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+	private void OnParentClicked(object sender, RoutedEventArgs e)
+	{
+		if (this.Skeleton?.CurrentBone?.Parent == null)
+			return;
+
+		this.Skeleton.Select(this.Skeleton.CurrentBone.Parent);
+	}
+
+	private void OnCanvasMouseDown(object sender, MouseButtonEventArgs e)
 	{
 		if (e.ChangedButton == MouseButton.Left)
 		{
