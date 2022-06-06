@@ -301,6 +301,7 @@
 	"Character_Action_GlobalFreezeWorldPositions": "Freeze Positions",
 	"Character_Action_GlobalFreezeWorldPositionsTooltip": "Freeze Actor/Camera World Positions",
 	"Character_Action_GlobalSpeedControl": "Speed Control",
+	"Character_Action_LinkSpeed": "Link speed control for all animation slots",
 	"Pose_WarningNotGPose": "Posing is only available while in Group Pose. Type /gpose in chat.",
 	"Pose_WarningNotFrozen": "Actor motion must be disabled in the Group Pose settings, or Freeze Positions must be enabled in the pose options.",
 	"Pose_WarningQuit": "Are you sure you want to quit? Current pose will be lost.",
