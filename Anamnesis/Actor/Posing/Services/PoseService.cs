@@ -187,6 +187,9 @@ public class PoseService : ServiceBase<PoseService>
 		this.FreezeScale = false;
 		this.EnableParenting = true;
 
+		if (enabled)
+			this.FreezeWorldPosition = true;
+
 		EnabledChanged?.Invoke(enabled);
 
 		this.RaisePropertyChanged(nameof(this.IsEnabled));

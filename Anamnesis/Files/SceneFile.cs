@@ -4,11 +4,13 @@
 namespace Anamnesis.Files;
 
 using Anamnesis.Actor;
+using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 [Serializable]
@@ -35,27 +37,61 @@ public class SceneFile : JsonFileBase
 	public byte DayOfMonth { get; set; }
 	public long TimeOfDay { get; set; }
 
-	public Vector RootPosition { get; set; }
-	public Quaternion RootRotation { get; set; }
-
 	public CameraShotFile? CameraShot { get; set; }
 
-	public List<ActorEntry>? ActorEntries { get; set; }
+	public string RootActorName { get; set; } = string.Empty;
+	public string TargetActorName { get; set; } = string.Empty;
+	public Dictionary<string, ActorEntry> ActorEntries { get; set; } = new();
 
 	public async Task Apply(Mode mode)
 	{
 		if (TargetService.Instance.PinnedActors.Where(i => !i.IsValid || i.Memory?.ModelObject == null).Any())
 			throw new Exception("All pinned actors must be valid and have a model");
 
-		List<ActorMemory> actors = TargetService.Instance.PinnedActors.Select(i => i.Memory!).ToList();
+		// First up, ensure we have the actors mapped
+		Dictionary<string, ActorMemory?> actors = new();
+		foreach((string name, ActorEntry entry) in this.ActorEntries)
+		{
+			actors.Add(name, GetPinnedActor(name));
+		}
 
-		if (actors.Count != this.ActorEntries!.Count)
-			throw new Exception($"Must have the same number of actors pinned: {this.ActorEntries.Count}");
+		// TODO: present a dialog allowing the user to set the nicknames of actors to
+		// the remainder in the usedNames array.
+		int missingCount = 0;
+		foreach ((string name, ActorMemory? memory) in actors)
+		{
+			if (memory == null)
+			{
+				missingCount++;
+			}
+		}
+
+		if (missingCount > 0)
+		{
+			if (await GenericDialog.ShowAsync($"{missingCount} actors not accounted for", "Warning", System.Windows.MessageBoxButton.OKCancel) != true)
+			{
+				return;
+			}
+		}
+
+		// Find the root actor
+		ActorMemory? rootActor = GetPinnedActor(this.RootActorName);
+		ActorEntry rootActorEntry = this.ActorEntries[this.RootActorName];
+
+		if (rootActor == null)
+			throw new Exception($"Failed to locate root actor: {this.RootActorName} in scene");
+
+		// Find the target actor
+		ActorMemory? targetActor = GetPinnedActor(this.TargetActorName);
+		ActorEntry taretActorEntry = this.ActorEntries[this.TargetActorName];
+
+		if (targetActor == null)
+			throw new Exception($"Failed to locate target actor: {this.TargetActorName} in scene");
+
+		TargetService.SetPlayerTarget(targetActor);
 
 		if (mode.HasFlag(Mode.Weather))
-		{
 			TerritoryService.Instance.CurrentWeatherId = this.Weather;
-		}
 
 		if (mode.HasFlag(Mode.Time))
 		{
@@ -66,40 +102,26 @@ public class SceneFile : JsonFileBase
 
 		if (mode.HasFlag(Mode.WorldPosition))
 		{
-			if (TerritoryService.Instance.CurrentTerritoryId == this.Territory)
-			{
-				actors[0]!.ModelObject!.Transform!.Position = this.RootPosition;
-				actors[0]!.ModelObject!.Transform!.Rotation = this.RootRotation;
-			}
-			else
-			{
+			if (TerritoryService.Instance.CurrentTerritoryId != this.Territory)
 				throw new Exception("Could not restore world positions as you are not in the correct territory");
-			}
+
+			rootActor.ModelObject!.Transform!.Position = rootActorEntry.Position;
+			rootActor.ModelObject!.Transform!.Rotation = rootActorEntry.Rotation;
 		}
 
-		if (mode.HasFlag(Mode.Camera))
-		{
-			ActorBasicMemory? targetActor = TargetService.Instance.PlayerTarget;
-			if (targetActor == null || !targetActor.IsValid)
-				return;
-
-			if(targetActor.Address == IntPtr.Zero || targetActor.Address != actors[0]!.Address)
-				throw new Exception("First pinned actor must be targeted by the camera to load camera angles");
-
-			this.CameraShot!.Apply(CameraService.Instance, actors[0]!);
-		}
-
-		Vector rootPosition = actors[0]!.ModelObject!.Transform!.Position;
-		Quaternion rootRotation = actors[0]!.ModelObject!.Transform!.Rotation;
+		Vector rootPosition = rootActor!.ModelObject!.Transform!.Position;
+		Quaternion rootRotation = rootActor!.ModelObject!.Transform!.Rotation;
 		Quaternion invertedRootRotation = rootRotation;
 		invertedRootRotation.Invert();
 
-		for (int i = 0; i < actors.Count; i++)
+		foreach ((string name, ActorMemory? actor) in actors)
 		{
-			ActorMemory actor = actors[i];
-			ActorEntry entry = this.ActorEntries[i];
+			if (actor == null)
+				continue;
 
-			if (mode.HasFlag(Mode.RelativePosition))
+			ActorEntry entry = this.ActorEntries[name];
+
+			if (name != this.RootActorName && mode.HasFlag(Mode.RelativePosition))
 			{
 				Vector rotatedRelativePosition = rootRotation * entry.Position;
 				Quaternion rotatedRotation = rootRotation * entry.Rotation;
@@ -108,12 +130,17 @@ public class SceneFile : JsonFileBase
 				actor.ModelObject!.Transform!.Rotation = rotatedRotation;
 			}
 
-			if(mode.HasFlag(Mode.Pose))
+			if (mode.HasFlag(Mode.Pose))
 			{
 				SkeletonVisual3d skeleton = new();
 				await skeleton.SetActor(actor);
 				await entry.Pose!.Apply(actor, skeleton, null, PoseFile.Mode.Rotation);
 			}
+		}
+
+		if (mode.HasFlag(Mode.Camera))
+		{
+			this.CameraShot!.Apply(CameraService.Instance, targetActor);
 		}
 	}
 
@@ -129,22 +156,24 @@ public class SceneFile : JsonFileBase
 
 		List<ActorMemory> actors = TargetService.Instance.PinnedActors.Select(i => i.Memory!).ToList();
 
-		this.RootPosition = actors[0]!.ModelObject!.Transform!.Position;
-		this.RootRotation = actors[0]!.ModelObject!.Transform!.Rotation;
+		ActorMemory rootActor = actors[0];
+		this.RootActorName = rootActor.DisplayName;
 
-		ActorBasicMemory? targetActor = TargetService.Instance.PlayerTarget;
-		if (targetActor == null || !targetActor.IsValid)
-			return;
+		Vector rootPosition = rootActor!.ModelObject!.Transform!.Position;
+		Quaternion rootRotation = rootActor!.ModelObject!.Transform!.Rotation;
 
-		if (targetActor.Address == IntPtr.Zero || targetActor.Address != actors[0]!.Address)
-			throw new Exception("First pinned actor must be targeted by the camera to save");
+		PinnedActor? targetActor = TargetService.GetPlayerTarget();
+		if (targetActor == null || !targetActor.IsValid || targetActor.Memory == null)
+			throw new Exception("Targeted actor must be pinned");
+
+		this.TargetActorName = TargetService.Instance.PlayerTarget.DisplayName;
 
 		this.CameraShot = new();
-		this.CameraShot.WriteToFile(CameraService.Instance, actors[0]);
+		this.CameraShot.WriteToFile(CameraService.Instance, targetActor.Memory);
 
 		this.ActorEntries = new();
 
-		Quaternion invertedRootRotation = this.RootRotation;
+		Quaternion invertedRootRotation = rootRotation;
 		invertedRootRotation.Invert();
 
 		foreach (ActorMemory actor in actors)
@@ -153,7 +182,7 @@ public class SceneFile : JsonFileBase
 			Vector actorScale = actor.ModelObject!.Transform!.Scale;
 			Quaternion actorRotation = actor.ModelObject!.Transform!.Rotation;
 
-			Vector relativePosition = actorPosition - this.RootPosition;
+			Vector relativePosition = actorPosition - rootPosition;
 
 			Vector rotatedRelativePosition = invertedRootRotation * relativePosition;
 			Quaternion rotatedRelativeRotation = actorRotation * invertedRootRotation;
@@ -166,24 +195,53 @@ public class SceneFile : JsonFileBase
 			await skeleton.SetActor(actor);
 			poseFile.WriteToFile(actor, skeleton, null);
 
-			ActorEntry entry = new ActorEntry
-			{
-				Position = rotatedRelativePosition,
-				Scale = actorScale,
-				Rotation = rotatedRelativeRotation,
-				Appearance = characterFile,
-				Pose = poseFile,
-			};
+			ActorEntry entry = new();
 
-			this.ActorEntries.Add(entry);
+			if (actor == rootActor)
+			{
+				entry.Position = rootPosition;
+				entry.Rotation = rootRotation;
+			}
+			else
+			{
+				entry.Position = rotatedRelativePosition;
+				entry.Rotation = rotatedRelativeRotation;
+			}
+
+			entry.Scale = actorScale;
+			entry.Appearance = characterFile;
+			entry.Pose = poseFile;
+
+			if (this.ActorEntries.ContainsKey(actor.DisplayName))
+				throw new Exception($"Duplicate actor name: {actor.DisplayName} in scene.");
+
+			this.ActorEntries.Add(actor.DisplayName, entry);
 		}
+	}
+
+	private static ActorMemory? GetPinnedActor(string name)
+	{
+		foreach (PinnedActor pinnedActor in TargetService.Instance.PinnedActors)
+		{
+			ActorMemory? actorMemory = pinnedActor.GetMemory();
+
+			if (actorMemory == null)
+				continue;
+
+			if (actorMemory.DisplayName == name)
+			{
+				return actorMemory;
+			}
+		}
+
+		return null;
 	}
 
 	public class ActorEntry
 	{
-		public Vector Position { get; init; }
-		public Vector Scale { get; init; }
-		public Quaternion Rotation { get; init; }
+		public Vector Position { get; set; }
+		public Vector Scale { get; set; }
+		public Quaternion Rotation { get; set; }
 		public CharacterFile? Appearance { get; set; }
 		public PoseFile? Pose { get; set; }
 	}
