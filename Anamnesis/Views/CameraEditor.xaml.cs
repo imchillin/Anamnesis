@@ -40,7 +40,7 @@ public partial class CameraEditor : UserControl
 
 	private static ILogger Log => Serilog.Log.ForContext<CameraEditor>();
 
-	private async void OnLoadCamera(object sender, RoutedEventArgs e)
+	private async void OnImportCamera(object sender, RoutedEventArgs e)
 	{
 		ActorBasicMemory? targetActor = this.TargetService.PlayerTarget;
 		if (targetActor == null || !targetActor.IsValid)
@@ -78,7 +78,7 @@ public partial class CameraEditor : UserControl
 		}
 	}
 
-	private async void OnSaveCamera(object sender, RoutedEventArgs e)
+	private async void OnExportCamera(object sender, RoutedEventArgs e)
 	{
 		ActorBasicMemory? targetActor = this.TargetService.PlayerTarget;
 		if (targetActor == null || !targetActor.IsValid)

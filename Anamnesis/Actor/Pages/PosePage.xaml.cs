@@ -223,27 +223,27 @@ public partial class PosePage : UserControl
 		}
 	}
 
-	private async void OnOpenClicked(object sender, RoutedEventArgs e)
+	private async void OnImportClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Open(false, PoseFile.Mode.Rotation);
+		await this.ImportPose(false, PoseFile.Mode.Rotation);
 	}
 
-	private async void OnOpenScaleClicked(object sender, RoutedEventArgs e)
+	private async void OnImportScaleClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Open(false, PoseFile.Mode.Scale);
+		await this.ImportPose(false, PoseFile.Mode.Scale);
 	}
 
-	private async void OnOpenSelectedClicked(object sender, RoutedEventArgs e)
+	private async void OnImportSelectedClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Open(true, PoseFile.Mode.Rotation);
+		await this.ImportPose(true, PoseFile.Mode.Rotation);
 	}
 
-	private async void OnOpenAllClicked(object sender, RoutedEventArgs e)
+	private async void OnImportAllClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Open(false, PoseFile.Mode.All);
+		await this.ImportPose(false, PoseFile.Mode.All);
 	}
 
-	private async void OnOpenBodyClicked(object sender, RoutedEventArgs e)
+	private async void OnImportBodyClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Skeleton == null)
 			return;
@@ -251,11 +251,11 @@ public partial class PosePage : UserControl
 		this.Skeleton.SelectHead();
 		this.Skeleton.InvertSelection();
 
-		await this.Open(true, PoseFile.Mode.Rotation);
+		await this.ImportPose(true, PoseFile.Mode.Rotation);
 		this.Skeleton.ClearSelection();
 	}
 
-	private async void OnOpenExpressionClicked(object sender, RoutedEventArgs e)
+	private async void OnImportExpressionClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Skeleton == null)
 			return;
@@ -271,11 +271,11 @@ public partial class PosePage : UserControl
 		}
 
 		this.Skeleton.SelectHead();
-		await this.Open(true, PoseFile.Mode.Rotation | PoseFile.Mode.Scale);
+		await this.ImportPose(true, PoseFile.Mode.Rotation | PoseFile.Mode.Scale);
 		this.Skeleton.ClearSelection();
 	}
 
-	private async Task Open(bool selectionOnly, PoseFile.Mode mode)
+	private async Task ImportPose(bool selectionOnly, PoseFile.Mode mode)
 	{
 		try
 		{
@@ -335,17 +335,17 @@ public partial class PosePage : UserControl
 		}
 	}
 
-	private async void OnSaveClicked(object sender, RoutedEventArgs e)
+	private async void OnExportClicked(object sender, RoutedEventArgs e)
 	{
 		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton);
 	}
 
-	private async void OnSaveMetaClicked(object sender, RoutedEventArgs e)
+	private async void OnExportMetaClicked(object sender, RoutedEventArgs e)
 	{
 		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, null, true);
 	}
 
-	private async void OnSaveSelectedClicked(object sender, RoutedEventArgs e)
+	private async void OnExportSelectedClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Skeleton == null)
 			return;

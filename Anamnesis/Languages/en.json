@@ -3,6 +3,8 @@
 
 	"Common_OpenFile": "Load",
 	"Common_SaveFile": "Save",
+	"Common_ImportFile": "Import",
+	"Common_ExportFile": "Export",
 	"Common_SaveFileMeta": "Save with metadata",
 	"Common_SaveAsDat": "Save as .dat file",
 	"Common_OpenDir": "Open",

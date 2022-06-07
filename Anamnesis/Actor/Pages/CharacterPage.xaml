@@ -270,71 +270,71 @@
 				  Margin="0,3, 3, 4"
 				  Style="{StaticResource AnaMenu}">
 
-					<MenuItem Header="Common_OpenFile"
-						  Icon="FolderOpen"
+					<MenuItem Header="Common_ImportFile"
+						  Icon="FileImport"
 						  Style="{StaticResource ButtonMenuItemLeft}"
-						  Click="OnLoadClicked" />
+						  Click="OnImportClicked" />
 
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
 						  Margin="-1,0,1,0">
 						<MenuItem Header="Character_Appearance_Header"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadAppearanceClicked" />
+							  Click="OnImportAppearanceClicked" />
 
 						<MenuItem Header="Character_Equipment_Header"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadEquipmentClicked" />
+							  Click="OnImportEquipmentClicked" />
 
 						<MenuItem Header="Character_Equipment_Gear"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadGearClicked" />
+							  Click="OnImportGearClicked" />
 
 						<MenuItem Header="Character_Equipment_Accessories"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadAccessoriesClicked" />
+							  Click="OnImportAccessoriesClicked" />
 
 						<MenuItem Header="Character_Equipment_Weapons"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadWeaponsClicked" />
+							  Click="OnImportWeaponsClicked" />
 
 					</MenuItem>
 
 					<MenuItem Header="Character_Appearance_LoadNpc"
 						  Icon="User"
 						  Style="{StaticResource ButtonMenuItemLeft}"
-						  Click="OnLoadNpcClicked"/>
+						  Click="OnImportNpcClicked"/>
 
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
 						  Margin="-1,0,1,0">
 
 						<MenuItem Header="Character_Appearance_Header"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadNpcAppearanceClicked" />
+							  Click="OnImportNpcAppearanceClicked" />
 
 						<MenuItem Header="Character_Equipment_Header"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadNpcEquipmentClicked" />
+							  Click="OnImportNpcEquipmentClicked" />
 
 						<MenuItem Header="Character_Equipment_Weapons"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnLoadNpcWeaponsClicked" />
+							  Click="OnImportNpcWeaponsClicked" />
 					</MenuItem>
 
-					<MenuItem Header="Common_SaveFile"
-						  Icon="Save"
+					<MenuItem Header="Common_ExportFile"
+						  Icon="FileExport"
 						  Style="{StaticResource ButtonMenuItemLeft}"
-						  Click="OnSaveClicked" />
+						  Click="OnExportClicked" />
 
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
 						  Margin="-1,0,0,0">
 						
 						<MenuItem Header="Common_SaveFileMeta"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnSaveMetaClicked" />
+							  Click="OnExportMetaClicked" />
 
                         <MenuItem Header="Common_SaveAsDat"
                               Style="{StaticResource AnaMenuItem}"
-                              Click="OnSaveDatClicked" />
+                              Click="OnExportDatClicked" />
 
                     </MenuItem>
 				</Menu>

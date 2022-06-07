@@ -161,8 +161,8 @@
 									TickFrequency="1" />
 
 			<Menu Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource AnaMenu}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-				<MenuItem Header="Common_OpenFile" Icon="FolderOpen" Click="OnLoadCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
-				<MenuItem Header="Common_SaveFile" Icon="Save" Click="OnSaveCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
+				<MenuItem Header="Common_ImportFile" Icon="FileImport" Click="OnImportCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
+				<MenuItem Header="Common_ExportFile" Icon="FileExport" Click="OnExportCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
 			</Menu>
 
 
