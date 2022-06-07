@@ -20,8 +20,10 @@ public class PoseFile : JsonFileBase
 		Rotation = 1,
 		Scale = 2,
 		Position = 4,
+		WorldRotation = 8,
+		WorldScale = 16,
 
-		All = Rotation | Scale | Position,
+		All = Rotation | Scale | Position | WorldRotation | WorldScale,
 	}
 
 	public override string FileExtension => ".pose";
@@ -118,10 +120,10 @@ public class PoseFile : JsonFileBase
 
 		if (bones == null)
 		{
-			if (mode.HasFlag(Mode.Scale) && this.Scale != null)
+			if (mode.HasFlag(Mode.WorldScale) && this.Scale != null)
 				actor.ModelObject.Transform.Scale = (Vector)this.Scale;
 
-			if (mode.HasFlag(Mode.Rotation) && this.Rotation != null)
+			if (mode.HasFlag(Mode.WorldRotation) && this.Rotation != null)
 				actor.ModelObject.Transform.Rotation = (Quaternion)this.Rotation;
 		}
 
