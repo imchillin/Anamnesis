@@ -253,21 +253,40 @@
 
 			<StackPanel Orientation="Vertical" Grid.Row="2">
 
-				<Button Margin="3"
-						HorizontalAlignment="Right"
-						Style="{StaticResource TransparentButton}"
-						Click="OnResetClicked"
-						IsEnabled="{Binding Actor.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"
-						anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip">
-					
-					<StackPanel Orientation="Horizontal" Margin="6">
-						<XivToolsWpf:IconBlock Icon="UndoAlt"/>
-						<XivToolsWpf:TextBlock Text="Reset" VerticalAlignment="Center" Margin="6, 0, 0, 0"/>
-					</StackPanel>
-				</Button>
+				<Menu Margin="0, 3, 3, 2"
+					  Style="{StaticResource AnaMenu}">
+					<MenuItem Header="Character_Appearance_LoadNpc"
+						  Icon="User"
+						  Style="{StaticResource ButtonMenuItemLeft}"
+						  Click="OnImportNpcClicked"/>
 
-				<Menu Grid.Row="1"
-				  Margin="0,3, 3, 4"
+					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
+						  Margin="-1,0,3,0">
+
+						<MenuItem Header="Character_Appearance_Header"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnImportNpcAppearanceClicked" />
+
+						<MenuItem Header="Character_Equipment_Header"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnImportNpcEquipmentClicked" />
+
+						<MenuItem Header="Character_Equipment_Weapons"
+							  Style="{StaticResource AnaMenuItem}"
+							  Click="OnImportNpcWeaponsClicked" />
+					</MenuItem>
+
+					<MenuItem Header="Character_Reset"
+							  Icon="UndoAlt"
+							  HorizontalAlignment="Right"
+							  Style="{StaticResource ButtonMenuItem}"
+							  Click="OnResetClicked"
+							  IsEnabled="{Binding Actor.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"
+							  anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip">
+					</MenuItem>
+				</Menu>
+
+				<Menu Margin="0,3, 3, 4"
 				  Style="{StaticResource AnaMenu}">
 
 					<MenuItem Header="Common_ImportFile"
@@ -297,27 +316,6 @@
 							  Style="{StaticResource AnaMenuItem}"
 							  Click="OnImportWeaponsClicked" />
 
-					</MenuItem>
-
-					<MenuItem Header="Character_Appearance_LoadNpc"
-						  Icon="User"
-						  Style="{StaticResource ButtonMenuItemLeft}"
-						  Click="OnImportNpcClicked"/>
-
-					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
-						  Margin="-1,0,1,0">
-
-						<MenuItem Header="Character_Appearance_Header"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportNpcAppearanceClicked" />
-
-						<MenuItem Header="Character_Equipment_Header"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportNpcEquipmentClicked" />
-
-						<MenuItem Header="Character_Equipment_Weapons"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportNpcWeaponsClicked" />
 					</MenuItem>
 
 					<MenuItem Header="Common_ExportFile"
