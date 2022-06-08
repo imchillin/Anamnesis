@@ -117,7 +117,7 @@ public partial class App : Application
 			Stopwatch sw2 = new();
 			sw2.Start();
 
-			this.MainWindow = new Anamnesis.GUI.MainWindow();
+			this.MainWindow = new Anamnesis.Windows.MainWindow();
 			this.MainWindow.Show();
 			Log.Information($"Took {sw2.ElapsedMilliseconds}ms to show window");
 

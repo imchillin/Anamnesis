@@ -32,7 +32,6 @@ using XivToolsWpf.Extensions;
 public partial class MainWindow : ChromedWindow
 {
 	private static MainWindow? instance;
-	private MiniWindow? mini;
 	private bool hasSetPosition = false;
 	private Tabs tab = Tabs.Home;
 
@@ -169,17 +168,6 @@ public partial class MainWindow : ChromedWindow
 				this.Left = SettingsService.Current.WindowPosition.X;
 				this.Top = SettingsService.Current.WindowPosition.Y;
 			}
-		}
-
-		if (this.mini != null && !SettingsService.Current.OverlayWindow)
-		{
-			this.mini.Close();
-			this.mini = null;
-		}
-		else if (this.mini == null && SettingsService.Current.OverlayWindow)
-		{
-			this.mini = new MiniWindow(this);
-			this.mini.Show();
 		}
 	}
 
@@ -344,7 +332,6 @@ public partial class MainWindow : ChromedWindow
 		}
 
 		this.IsClosing = true;
-		this.mini?.Close();
 
 		SettingsService.SettingsChanged -= this.OnSettingsChanged;
 		ViewService.ShowingDrawer -= this.OnShowDrawer;
@@ -368,8 +355,6 @@ public partial class MainWindow : ChromedWindow
 
 	private void Window_Loaded(object sender, RoutedEventArgs e)
 	{
-		this.mini?.Show();
-
 		if (SettingsService.Instance.FirstTimeUser)
 		{
 			this.Ftue.Visibility = Visibility.Visible;
