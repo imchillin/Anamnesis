@@ -4,12 +4,14 @@
 namespace Anamnesis.Windows;
 
 using Anamnesis.Memory;
+using Anamnesis.Panels;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 
-public partial class OverlayWindow : Window
+public partial class OverlayWindow : Window, IPanelGroupHost
 {
 	private readonly WindowInteropHelper windowInteropHelper;
 
@@ -18,6 +20,8 @@ public partial class OverlayWindow : Window
 		this.windowInteropHelper = new(this);
 		this.InitializeComponent();
 	}
+
+	public ContentPresenter PanelGroupArea => this.ContentArea;
 
 	[DllImport("user32.dll", SetLastError = true)]
 	private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
@@ -70,11 +74,6 @@ public partial class OverlayWindow : Window
 
 		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, w, h, /*SHOWWINDOW */ 0x0040);
 		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, 0, 0, /*NOSIZE*/ 0x0001);
-	}
-
-	private void Rectangle_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-	{
-		this.DragMove();
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

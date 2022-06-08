@@ -5,29 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Anamnesis.Windows"
         mc:Ignorable="d"
-        Height="450" Width="350"
 		WindowStyle="None"
 		AllowsTransparency="True"
 		Background="Transparent"
-		Loaded="OnWindowLoaded">
+		Loaded="OnWindowLoaded"
+		SizeToContent="WidthAndHeight">
 
-	<Grid>
-		<Border CornerRadius="6"
-			    Margin="6"
-			    Background="{DynamicResource MaterialDesignBackground}"
-				BorderThickness="1"
-				BorderBrush="#88000000"
-				Opacity="0.9"/>
+	<ContentPresenter x:Name="ContentArea"/>
 
-		<Border CornerRadius="6"
-			    Margin="6"
-			    Background="Transparent">
-
-			<Grid>
-				<Rectangle MouseDown="Rectangle_MouseDown" Fill="Transparent"/>
-				<TextBlock Text="Anamnesis! Hi!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
-			</Grid>
-
-		</Border>
-	</Grid>
 </Window>

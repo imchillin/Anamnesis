@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Windows;
 
+using Anamnesis.Panels;
 using XivToolsWpf.Windows;
 
 /// <summary>
@@ -14,9 +15,16 @@ public partial class MainWindow : ChromedWindow
 	{
 		this.InitializeComponent();
 
-		OverlayWindow wnd = new();
-		wnd.Show();
+		// if OverlayMode...
+		{
+			OverlayWindow wnd = new();
+			Navigation nav = new();
+			nav.Host = wnd;
+			wnd.ContentArea.Content = nav;
+			wnd.Show();
 
-		this.Close();
+			this.Close();
+		}
+		//// else...
 	}
 }
