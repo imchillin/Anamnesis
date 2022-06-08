@@ -1,18 +1,126 @@
 ﻿<local:PanelBase x:Class="Anamnesis.Panels.Navigation"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Anamnesis.Panels"
-             mc:Ignorable="d">
-	
-    <Grid>
+				 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+				 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+				 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+				 xmlns:local="clr-namespace:Anamnesis.Panels"
+				 xmlns:ana="clr-namespace:Anamnesis" 
+				 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+				 mc:Ignorable="d">
+
+	<local:PanelBase.Resources>
+		<ResourceDictionary>
+			<DataTemplate x:Key="PinnedActor">
+				<Grid Margin="3,0">
+					<ToggleButton Height="32"
+								  MinWidth="32"
+								  IsChecked="{Binding IsSelected}"
+								  PreviewMouseUp="OnActorPinPreviewMouseUp"
+								  Style="{DynamicResource TransparentIconToggleButton}"
+								  Margin="0, 0, -4, 0"
+								  Background="Red"
+								  HorizontalContentAlignment="Stretch">
+
+						<ToggleButton.ContextMenu>
+							<ContextMenu>
+								<MenuItem Click="OnUnpinActorClicked"
+											  Header="Unpin" />
+
+								<MenuItem Visibility="{Binding IsValid, Converter={StaticResource B2V}}" 
+											  Click="OnTargetActorClicked"
+											  Header="Target" />
+							</ContextMenu>
+						</ToggleButton.ContextMenu>
+
+						<Grid Margin="6,0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<Grid Margin="3, 0"
+								  Grid.Column="0">
+								<XivToolsWpf:IconBlock Margin="2,1,1,2"
+													   Icon="{Binding Icon}"
+													   Visibility="{Binding IsValid, Converter={StaticResource B2V}}"/>
+
+								<XivToolsWpf:IconBlock Margin="2,1,1,2"
+													   Icon="TimesCircle"
+													   Foreground="Red"
+													   Visibility="{Binding IsValid, Converter={StaticResource !B2V}}"/>
+							</Grid>
+
+							<XivToolsWpf:IconBlock FontSize="10"
+												   Grid.Column="1"
+												   Margin="3, 0, 3, 0"
+												   Icon="Camera"
+												   Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"/>
+
+							<TextBlock Margin="3,0,0,2"
+									   Grid.Column="2"
+									   HorizontalAlignment="Center"
+									   VerticalAlignment="Center"
+									   FontSize="14"
+									   FontWeight="SemiBold"
+									   Text="{Binding Initials}" />
+						</Grid>
+
+						<ToggleButton.ToolTip>
+							<StackPanel>
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0} ({1})">
+											<Binding Path="DisplayName" />
+											<Binding Path="Kind" />
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+
+								<TextBlock Text="This actor could not be found" Visibility="{Binding IsValid, Converter={StaticResource !B2V}}" />
+
+							</StackPanel>
+						</ToggleButton.ToolTip>
+					</ToggleButton>
+				</Grid>
+
+			</DataTemplate>
+
+			<Style x:Key="IconTab"
+				   TargetType="ToggleButton"
+				   BasedOn="{StaticResource TransparentIconToggleButton}">
+
+				<Setter Property="Margin" Value="0, 3, 0, 0"/>
+				<Setter Property="BorderThickness" Value="0"/>
+				<Setter Property="Height" Value="32"/>
+				<Setter Property="Width" Value="32"/>
+
+			</Style>
+
+		</ResourceDictionary>
+	</local:PanelBase.Resources>
+
+	<Grid x:Name="ContentArea">
+
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
 		
-		<Image HorizontalAlignment="Left"
+		<Image Grid.Row="0"
+			   HorizontalAlignment="Left"
 			   Source="/Assets/Anamnesis.png"
 			   Width="32"
 			   Height="32"
 			   MouseDown="OnIconMouseDown"/>
-		
+
+		<ItemsControl Grid.Row="1" 
+					  Margin="0,3,0,0"
+					 ItemsSource="{Binding TargetService.PinnedActors}"
+					 ItemTemplate="{StaticResource PinnedActor}"
+					 x:Name="PinnedActorList"
+					 ana:Behaviours.IsReorderable="True"/>
+
+
 	</Grid>
 </local:PanelBase>
