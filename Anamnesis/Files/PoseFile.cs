@@ -26,6 +26,13 @@ public class PoseFile : JsonFileBase
 		All = Rotation | Scale | Position | WorldRotation | WorldScale,
 	}
 
+	public enum BoneProcessingModes
+	{
+		Ignore,
+		KeepRelative,
+		FullLoad,
+	}
+
 	public override string FileExtension => ".pose";
 	public override string TypeName => "Anamnesis Pose";
 
@@ -35,10 +42,10 @@ public class PoseFile : JsonFileBase
 
 	public Dictionary<string, Bone?>? Bones { get; set; }
 
-	public static bool CanBoneLoad(ActorMemory? actor, SkeletonVisual3d? skeleton, string boneName)
+	public static BoneProcessingModes GetBoneMode(ActorMemory? actor, SkeletonVisual3d? skeleton, string boneName)
 	{
 		if (boneName == "n_root")
-			return false;
+			return BoneProcessingModes.Ignore;
 
 		// Special case for elezen ears as they cannot use other races ear values.
 		if (actor?.Customize?.Race == ActorCustomizeMemory.Races.Elezen)
@@ -46,11 +53,11 @@ public class PoseFile : JsonFileBase
 			// append '_elezen' to both ear bones.
 			if (boneName == "j_mimi_l" || boneName == "j_mimi_r")
 			{
-				return false;
+				return BoneProcessingModes.KeepRelative;
 			}
 		}
 
-		return true;
+		return BoneProcessingModes.FullLoad;
 	}
 
 	public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, HashSet<string>? bones = null, bool editMeta = false)
@@ -137,7 +144,7 @@ public class PoseFile : JsonFileBase
 		Dictionary<string, Quaternion> unPosedBoneRotations = new Dictionary<string, Quaternion>();
 		foreach ((string name, BoneVisual3d bone) in skeleton.Bones)
 		{
-			if (!CanBoneLoad(actor, skeleton, name))
+			if (GetBoneMode(actor, skeleton, name) == BoneProcessingModes.Ignore)
 				continue;
 
 			unPosedBoneRotations.Add(name, bone.Rotation);
@@ -173,7 +180,7 @@ public class PoseFile : JsonFileBase
 					boneName = modernName;
 
 				// Don't apply bones that cant be serialized.
-				if (!CanBoneLoad(actor, skeleton, boneName))
+				if (GetBoneMode(actor, skeleton, boneName) != BoneProcessingModes.FullLoad)
 					continue;
 
 				BoneVisual3d? bone = skeleton.GetBone(boneName);
