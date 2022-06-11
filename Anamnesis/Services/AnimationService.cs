@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Services;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -112,6 +113,24 @@ public class AnimationService : ServiceBase<AnimationService>
 	public void ApplyIdle(ActorMemory memory) => this.ApplyAnimationOverride(memory, IdleAnimationId, true);
 
 	public void DrawWeapon(ActorMemory memory) => this.ApplyAnimationOverride(memory, DrawWeaponAnimationId, true);
+
+	public void PausePinnedActors()
+	{
+		this.SpeedControlEnabled = true;
+
+		if(this.SpeedControlEnabled)
+		{
+			var actors = TargetService.Instance.PinnedActors;
+			foreach (var actor in actors)
+			{
+				if (actor.IsValid && actor.Memory != null && actor.Memory.Address != IntPtr.Zero && actor.Memory.IsValid)
+				{
+					actor.Memory.Animation!.LinkSpeeds = true;
+					actor.Memory.Animation!.Speeds![(int)AnimationMemory.AnimationSlots.FullBody]!.Value = 0.0f;
+				}
+			}
+		}
+	}
 
 	private async Task CheckThread()
 	{
