@@ -30,6 +30,7 @@ public partial class FacialFeaturesControl : UserControl
 	public FacialFeaturesControl()
 	{
 		this.InitializeComponent();
+
 		OnValueChanged(this, this.Value);
 	}
 
@@ -81,6 +82,11 @@ public partial class FacialFeaturesControl : UserControl
 		foreach (Option op in sender.features)
 		{
 			op.Selected = sender.Value.HasFlag(op.Value);
+
+			if (op.Selected)
+			{
+				sender.FeaturesList.SelectedItems.Add(op);
+			}
 		}
 
 		sender.locked = false;
