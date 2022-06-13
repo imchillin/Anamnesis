@@ -30,7 +30,6 @@ public partial class FacialFeaturesControl : UserControl
 	public FacialFeaturesControl()
 	{
 		this.InitializeComponent();
-
 		OnValueChanged(this, this.Value);
 	}
 
