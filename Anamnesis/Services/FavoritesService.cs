@@ -179,6 +179,9 @@ public class FavoritesService : ServiceBase<FavoritesService>
 			{
 				Log.Error(ex, LocalizationService.GetString("Error_FavoritesFail"));
 
+				if (File.Exists(FilePath))
+					File.Copy(FilePath, FilePath + ".old", true);
+
 				this.Current = new Favorites();
 				Save();
 			}
