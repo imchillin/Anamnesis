@@ -4,6 +4,7 @@
 namespace Anamnesis.Windows;
 
 using Anamnesis.Panels;
+using System.Windows;
 using XivToolsWpf.Windows;
 
 /// <summary>
@@ -14,16 +15,5 @@ public partial class MainWindow : ChromedWindow
 	public MainWindow()
 	{
 		this.InitializeComponent();
-
-		// if OverlayMode...
-		{
-			IPanelGroupHost wnd = new OverlayWindow();
-			NavigationPanel nav = new(wnd);
-			wnd.PanelGroupArea.Content = nav;
-			wnd.Show();
-
-			this.Close();
-		}
-		//// else...
 	}
 }

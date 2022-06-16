@@ -48,6 +48,7 @@ public class ServiceManager
 		StartupTimer.Start();
 
 		await Add<LogService>();
+		await Add<NavigationService>();
 		await Add<SerializerService>();
 		await Add<SettingsService>();
 		await Add<LocalizationService>();

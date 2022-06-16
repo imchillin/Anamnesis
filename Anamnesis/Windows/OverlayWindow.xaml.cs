@@ -94,7 +94,10 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 
 	private void OnTitleMouseDown(object sender, MouseButtonEventArgs e)
 	{
-		this.DragMove();
+		if (e.LeftButton == MouseButtonState.Pressed)
+		{
+			this.DragMove();
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

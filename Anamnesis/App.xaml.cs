@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Anamnesis.Panels;
 using Anamnesis.Services;
 using Anamnesis.Windows;
 using Serilog;
@@ -118,8 +119,21 @@ public partial class App : Application
 			Stopwatch sw2 = new();
 			sw2.Start();
 
-			this.MainWindow = new Anamnesis.Windows.MainWindow();
-			this.MainWindow.Show();
+			if (SettingsService.Current.OverlayWindow)
+			{
+				IPanelGroupHost wnd = new OverlayWindow();
+				NavigationPanel nav = new(wnd);
+				wnd.PanelGroupArea.Content = nav;
+				wnd.Show();
+
+				this.MainWindow = wnd as Window;
+			}
+			else
+			{
+				this.MainWindow = new Anamnesis.Windows.MainWindow();
+				this.MainWindow.Show();
+			}
+
 			Log.Information($"Took {sw2.ElapsedMilliseconds}ms to show window");
 
 			oldwindow.Close();

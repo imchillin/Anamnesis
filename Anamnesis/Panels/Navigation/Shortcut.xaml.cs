@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Panels.Navigation;
 
+using Anamnesis.Services;
 using FontAwesome.Sharp;
 using System;
 using System.Windows;
@@ -55,5 +56,6 @@ public partial class Shortcut : UserControl
 
 	private void OnClicked(object sender, RoutedEventArgs e)
 	{
+		NavigationService.Navigate(this.Uri);
 	}
 }
