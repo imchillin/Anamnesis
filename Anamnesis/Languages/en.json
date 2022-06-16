@@ -138,6 +138,8 @@
 	"Weather_Selector_Natural": "Natural Only",
 	"Weather_Selector_Natural_Tooltip": "Only show weathers that are normally available in the current territory",
 
+	"Naviagation_Weather": "Weather",
+	"Naviagation_Camera": "Camera",
 	"Naviagation_Actor_Appearance": "Appearance",
 	"Naviagation_Actor_Appearance_Tip": "Change appearance and Equipment",
 	"Naviagation_Actor_Action": "Action",

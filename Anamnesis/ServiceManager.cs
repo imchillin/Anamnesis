@@ -15,6 +15,7 @@ using Anamnesis.TexTools;
 using Serilog;
 using XivToolsWpf;
 using System.Diagnostics;
+using Anamnesis.Navigation;
 
 public class ServiceManager
 {

@@ -1,10 +1,11 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Panels;
+namespace Anamnesis.Navigation;
 
 using Anamnesis.Memory;
-using Anamnesis.Panels.Navigation;
+using Anamnesis.Panels;
+using Anamnesis.Navigation;
 using Anamnesis.Services;
 using Anamnesis.Updater;
 using Anamnesis.Views;

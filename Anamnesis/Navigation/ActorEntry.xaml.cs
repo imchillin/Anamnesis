@@ -1,8 +1,10 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Panels.Navigation;
+namespace Anamnesis.Navigation;
 
+using Anamnesis.Services;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -45,6 +47,10 @@ public partial class ActorEntry : UserControl
 		get => ShowTextDp.Get(this);
 		set => ShowTextDp.Set(this, value);
 	}
+
+	public NavigationService.Request AppearanceNav => new NavigationService.Request("Appearance", this.Actor?.Id);
+	public NavigationService.Request ActionNav => new NavigationService.Request("Action", this.Actor?.Id);
+	public NavigationService.Request PoseNav => new NavigationService.Request("Pose", this.Actor?.Id);
 
 	private static void OnIsExpandedChanged(ActorEntry sender, bool value)
 	{

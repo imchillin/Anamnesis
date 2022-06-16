@@ -1,16 +1,16 @@
-﻿<local:PanelBase
-	x:Class="Anamnesis.Panels.NavigationPanel"
+﻿<panels:PanelBase
+	x:Class="Anamnesis.Navigation.NavigationPanel"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	xmlns:ana="clr-namespace:Anamnesis"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:local="clr-namespace:Anamnesis.Panels"
+	xmlns:local="clr-namespace:Anamnesis.Navigation"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:navigation="clr-namespace:Anamnesis.Panels.Navigation"
+	xmlns:panels="clr-namespace:Anamnesis.Panels"
 	mc:Ignorable="d">
 
-	<local:PanelBase.Resources>
+	<panels:PanelBase.Resources>
 		<ResourceDictionary>
 
 
@@ -27,7 +27,7 @@
 			</Style>
 
 		</ResourceDictionary>
-	</local:PanelBase.Resources>
+	</panels:PanelBase.Resources>
 
 	<Grid x:Name="ContentArea">
 
@@ -61,20 +61,35 @@
 				</ToggleButton>
 			</ToolBar>
 
-			<ItemsControl
-				x:Name="PinnedActorList"
+			<StackPanel
 				Grid.Row="1"
-				Margin="6"
-				ana:Behaviours.IsReorderable="True"
-				ItemsSource="{Binding TargetService.PinnedActors}">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<navigation:ActorEntry
-							Expanded="OnActorEntryExpanded"
-							ShowText="{Binding Path=DataContext.Expanded, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
+				Margin="6">
+
+				<local:Shortcut
+					Destination="Weather"
+					Icon="Home"
+					LabelKey="Naviagation_Weather"
+					ShowText="{Binding Expanded}" />
+
+				<local:Shortcut
+					Destination="Camera"
+					Icon="Camera"
+					LabelKey="Naviagation_Camera"
+					ShowText="{Binding Expanded}" />
+
+				<ItemsControl
+					x:Name="PinnedActorList"
+					ana:Behaviours.IsReorderable="True"
+					ItemsSource="{Binding TargetService.PinnedActors}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<local:ActorEntry
+								Expanded="OnActorEntryExpanded"
+								ShowText="{Binding Path=DataContext.Expanded, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
 		</Grid>
 	</Grid>
-</local:PanelBase>
+</panels:PanelBase>
