@@ -91,5 +91,16 @@
 				</ItemsControl>
 			</StackPanel>
 		</Grid>
+
+		<Image
+			Grid.RowSpan="2"
+			Width="28"
+			Height="28"
+			Margin="-5,-32,0,0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			IsHitTestVisible="False"
+			Source="/Assets/Anamnesis.png" />
+
 	</Grid>
 </panels:PanelBase>

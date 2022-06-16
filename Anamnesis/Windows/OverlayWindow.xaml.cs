@@ -20,6 +20,9 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 {
 	private readonly WindowInteropHelper windowInteropHelper;
 
+	private int x;
+	private int y;
+
 	public OverlayWindow()
 	{
 		this.windowInteropHelper = new(this);
@@ -40,6 +43,30 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		}
 	}
 
+	public Rect Rect
+	{
+		get
+		{
+			if (MemoryService.Process != null)
+			{
+				GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect rect);
+
+				this.x = (int)(this.Left - rect.Left);
+				this.y = (int)(this.Top - rect.Top);
+			}
+
+			return new Rect(this.x, this.y, this.Width, this.Height);
+		}
+		set
+		{
+			this.x = (int)value.X;
+			this.y = (int)value.Y;
+			this.Width = value.Width;
+			this.Height = value.Height;
+			this.UpdatePosition();
+		}
+	}
+
 	[DllImport("user32.dll", SetLastError = true)]
 	private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
@@ -47,7 +74,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
 
 	[DllImport("user32.dll", SetLastError = true)]
-	private static extern bool GetWindowRect(IntPtr hwnd, out Rect rect);
+	private static extern bool GetWindowRect(IntPtr hwnd, out Win32Rect rect);
 
 	[DllImport("user32.dll")]
 	private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
@@ -63,7 +90,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 			return;
 		}
 
-		GetWindowRect(MemoryService.Process.MainWindowHandle, out Rect rect);
+		GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect rect);
 
 		this.Left = rect.Left + 20;
 		this.Top = rect.Top + 20;
@@ -86,11 +113,21 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		if (!this.IsActive)
 			return;
 
+		if (MemoryService.Process == null)
+			return;
+
 		int w = (int)this.Width - 1;
 		int h = (int)this.Height - 1;
 
+		GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect rect);
+		int gameWindowWidth = rect.Right - rect.Left;
+		int hameWindowHeight = rect.Bottom - rect.Top;
+
+		this.y = Math.Clamp(this.y, 0, hameWindowHeight);
+		this.x = Math.Clamp(this.x, 0, gameWindowWidth);
+
 		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, w, h, /*SHOWWINDOW */ 0x0040);
-		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, 0, 0, /*NOSIZE*/ 0x0001);
+		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, this.x, this.y, 0, 0, /*NOSIZE*/ 0x0001);
 	}
 
 	private void OnTitleMouseDown(object sender, MouseButtonEventArgs e)
@@ -118,7 +155,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct Rect
+	public struct Win32Rect
 	{
 		public int Left;        // x position of upper-left corner
 		public int Top;         // y position of upper-left corner

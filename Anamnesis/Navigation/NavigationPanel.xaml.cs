@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using XivToolsWpf.Extensions;
+using System;
 
 /// <summary>
 /// Interaction logic for Navigation.xaml.
@@ -21,16 +22,19 @@ using XivToolsWpf.Extensions;
 [AddINotifyPropertyChangedInterface]
 public partial class NavigationPanel : PanelBase
 {
+	public static NavigationPanel? Instance;
+
 	private bool expanded = true;
 
 	public NavigationPanel(IPanelGroupHost host)
 		: base(host)
 	{
+		if (Instance != null)
+			throw new Exception("Attempted to open more than one navigation panel");
+
 		this.InitializeComponent();
-
-		this.Title = "Anamnesis";
-
 		this.ContentArea.DataContext = this;
+		Instance = this;
 	}
 
 	public GameService GameService => GameService.Instance;
@@ -47,7 +51,7 @@ public partial class NavigationPanel : PanelBase
 		set
 		{
 			this.expanded = value;
-			this.Host.Title = value ? "Anamnesis" : string.Empty;
+			this.Host.Title = value ? "        Anamnesis" : string.Empty;
 		}
 	}
 
