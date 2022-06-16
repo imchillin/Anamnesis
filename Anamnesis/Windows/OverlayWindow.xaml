@@ -11,6 +11,8 @@
 	MouseEnter="OnMouseEnter"
 	MouseLeave="OnMouseLeave"
 	SizeToContent="WidthAndHeight"
+	TextBlock.FontSize="12"
+	TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 	WindowStyle="None"
 	mc:Ignorable="d">
 
