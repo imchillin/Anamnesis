@@ -51,8 +51,11 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 			{
 				GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect rect);
 
+				// TODO: get this from a windows api maybe?
+				int titleBarHeight = 22;
+
 				this.x = (int)(this.Left - rect.Left);
-				this.y = (int)(this.Top - rect.Top);
+				this.y = (int)(this.Top - (rect.Top + titleBarHeight));
 			}
 
 			return new Rect(this.x, this.y, this.Width, this.Height);

@@ -27,7 +27,7 @@ public class NavigationService : ServiceBase<NavigationService>
 
 			if (NavigationPanel.Instance != null)
 			{
-				panel.Host.Align(NavigationPanel.Instance.Host, HorizontalAlignment.Right, VerticalAlignment.Top);
+				panel.Host.Align(NavigationPanel.Instance.Host);
 			}
 		}
 		catch (Exception ex)
