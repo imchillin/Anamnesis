@@ -27,6 +27,8 @@ public partial class NavigationPanel : PanelBase
 	{
 		this.InitializeComponent();
 
+		this.Title = "Anamnesis";
+
 		this.ContentArea.DataContext = this;
 	}
 

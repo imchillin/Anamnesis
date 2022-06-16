@@ -14,5 +14,11 @@ public abstract class PanelBase : UserControl
 
 	public IPanelGroupHost Host { get; init; }
 
+	public string Title
+	{
+		get => this.Host.Title;
+		set => this.Host.Title = value;
+	}
+
 	protected void DragMove() => this.Host.DragMove();
 }

@@ -5,6 +5,7 @@ namespace Anamnesis.Windows;
 
 using Anamnesis.Memory;
 using Anamnesis.Panels;
+using Anamnesis.Services;
 using FontAwesome.Sharp;
 using PropertyChanged;
 using System;
@@ -97,6 +98,22 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		if (e.LeftButton == MouseButtonState.Pressed)
 		{
 			this.DragMove();
+		}
+	}
+
+	private void OnMouseEnter(object sender, MouseEventArgs e)
+	{
+		if (this.Opacity == 1.0)
+			return;
+
+		this.Animate(Window.OpacityProperty, 1.0, 100);
+	}
+
+	private void OnMouseLeave(object sender, MouseEventArgs e)
+	{
+		if (SettingsService.Current.Opacity != 1.0)
+		{
+			this.Animate(Window.OpacityProperty, SettingsService.Current.Opacity, 250);
 		}
 	}
 

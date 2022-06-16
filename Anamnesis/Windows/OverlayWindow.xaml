@@ -8,6 +8,8 @@
 	AllowsTransparency="True"
 	Background="Transparent"
 	Loaded="OnWindowLoaded"
+	MouseEnter="OnMouseEnter"
+	MouseLeave="OnMouseLeave"
 	SizeToContent="WidthAndHeight"
 	WindowStyle="None"
 	mc:Ignorable="d">
