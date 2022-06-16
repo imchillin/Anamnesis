@@ -5,12 +5,16 @@ namespace Anamnesis.Windows;
 
 using Anamnesis.Memory;
 using Anamnesis.Panels;
+using FontAwesome.Sharp;
+using PropertyChanged;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
 
+[AddINotifyPropertyChangedInterface]
 public partial class OverlayWindow : Window, IPanelGroupHost
 {
 	private readonly WindowInteropHelper windowInteropHelper;
@@ -19,9 +23,21 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	{
 		this.windowInteropHelper = new(this);
 		this.InitializeComponent();
+		this.ContentArea.DataContext = this;
 	}
 
-	public ContentPresenter PanelGroupArea => this.ContentArea;
+	public ContentPresenter PanelGroupArea => this.ContentPresenter;
+
+	public new IconChar Icon { get; set; }
+	public new string Title
+	{
+		get => base.Title;
+		set
+		{
+			base.Title = value;
+			this.TitleText.Text = value;
+		}
+	}
 
 	[DllImport("user32.dll", SetLastError = true)]
 	private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
@@ -74,6 +90,11 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 
 		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, w, h, /*SHOWWINDOW */ 0x0040);
 		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, 0, 0, /*NOSIZE*/ 0x0001);
+	}
+
+	private void OnTitleMouseDown(object sender, MouseButtonEventArgs e)
+	{
+		this.DragMove();
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

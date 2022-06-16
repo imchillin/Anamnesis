@@ -138,12 +138,12 @@
 	"Weather_Selector_Natural": "Natural Only",
 	"Weather_Selector_Natural_Tooltip": "Only show weathers that are normally available in the current territory",
 
-	"ActorTabs_AppearanceTab": "CHAR",
-	"ActorTabs_AppearanceTab_Tooltip": "Character - Change appearance",
-	"ActorTabs_ActionTab": "ACTION",
-	"ActorTabs_ActionTab_Tooltip": "Action - Play animations",
-	"ActorTabs_PoseTab": "POSE",
-	"ActorTabs_PoseTab_Tooltip": "Pose - Pose your actor",
+	"Naviagation_Actor_Appearance": "Appearance",
+	"Naviagation_Actor_Appearance_Tip": "Change appearance and Equipment",
+	"Naviagation_Actor_Action": "Action",
+	"Naviagation_Actor_Action_Tip": "Play animations",
+	"Naviagation_Actor_Pose": "Pose",
+	"Naviagation_Actor_Pose_Tip": "Pose your actor",
 
 	"Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
 	"Character_Load_CMTool": "CMTool save",

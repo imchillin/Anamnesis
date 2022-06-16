@@ -1,16 +1,77 @@
-﻿<Window x:Class="Anamnesis.Windows.OverlayWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Anamnesis.Windows"
-        mc:Ignorable="d"
-		WindowStyle="None"
-		AllowsTransparency="True"
-		Background="Transparent"
-		Loaded="OnWindowLoaded"
-		SizeToContent="WidthAndHeight">
+﻿<Window
+	x:Class="Anamnesis.Windows.OverlayWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:Anamnesis.Windows"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	AllowsTransparency="True"
+	Background="Transparent"
+	Loaded="OnWindowLoaded"
+	SizeToContent="WidthAndHeight"
+	WindowStyle="None"
+	mc:Ignorable="d">
 
-	<ContentPresenter x:Name="ContentArea"/>
+	<Grid x:Name="ContentArea">
+
+		<Border
+			Margin="6"
+			Background="{DynamicResource MaterialDesignBackground}"
+			CornerRadius="6">
+			<Border.BitmapEffect>
+				<DropShadowBitmapEffect ShadowDepth="0" />
+			</Border.BitmapEffect>
+		</Border>
+
+		<Grid
+			Grid.Row="1"
+			Margin="6">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Grid
+				Grid.Row="0"
+				Height="22"
+				Margin="6,0,6,3">
+
+				<TextBlock
+					x:Name="TitleText"
+					Margin="25,0,0,0"
+					VerticalAlignment="Center"
+					Foreground="{DynamicResource MaterialDesignToolForeground}"
+					Text="{Binding Title}" />
+
+				<Rectangle
+					Fill="Transparent"
+					MouseDown="OnTitleMouseDown" />
+
+				<Separator
+					Margin="3,0"
+					VerticalAlignment="Bottom"
+					Background="{DynamicResource MaterialDesignCardBackground}"
+					IsHitTestVisible="False" />
+			</Grid>
+
+			<ContentPresenter
+				x:Name="ContentPresenter"
+				Grid.Row="1" />
+
+		</Grid>
+
+		<Image
+			Grid.Row="0"
+			Width="28"
+			Height="28"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			IsHitTestVisible="False"
+			Source="/Assets/Anamnesis.png">
+			<Image.BitmapEffect>
+				<DropShadowBitmapEffect ShadowDepth="0" />
+			</Image.BitmapEffect>
+		</Image>
+	</Grid>
 
 </Window>

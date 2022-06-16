@@ -9,12 +9,13 @@ using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Anamnesis.Services;
 using Anamnesis.Windows;
 using Serilog;
 using XivToolsWpf;
-
+using XivToolsWpf.Extensions;
 using Application = System.Windows.Application;
 
 /// <summary>
@@ -80,8 +81,8 @@ public partial class App : Application
 
 		try
 		{
-			_ = Task.Run(this.PerformanceWatcher);
-			_ = Task.Run(this.MemoryWatcher);
+			this.PerformanceWatcher().Run();
+			this.MemoryWatcher().Run();
 
 			LogService.CreateLog();
 

@@ -273,7 +273,7 @@ public class TargetService : ServiceBase<TargetService>
 						continue;
 
 					await PinActor(actor);
-					break;
+					////break;
 				}
 			}
 			catch (Exception ex)

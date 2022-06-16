@@ -17,10 +17,9 @@ public partial class MainWindow : ChromedWindow
 
 		// if OverlayMode...
 		{
-			OverlayWindow wnd = new();
-			Navigation nav = new();
-			nav.Host = wnd;
-			wnd.ContentArea.Content = nav;
+			IPanelGroupHost wnd = new OverlayWindow();
+			NavigationPanel nav = new(wnd);
+			wnd.PanelGroupArea.Content = nav;
 			wnd.Show();
 
 			this.Close();

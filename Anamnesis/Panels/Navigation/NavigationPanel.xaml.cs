@@ -4,19 +4,26 @@
 namespace Anamnesis.Panels;
 
 using Anamnesis.Memory;
+using Anamnesis.Panels.Navigation;
 using Anamnesis.Services;
 using Anamnesis.Updater;
 using Anamnesis.Views;
+using PropertyChanged;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using XivToolsWpf.Extensions;
 
 /// <summary>
 /// Interaction logic for Navigation.xaml.
 /// </summary>
-public partial class Navigation : PanelBase
+[AddINotifyPropertyChangedInterface]
+public partial class NavigationPanel : PanelBase
 {
-	public Navigation()
+	private bool expanded = true;
+
+	public NavigationPanel(IPanelGroupHost host)
+		: base(host)
 	{
 		this.InitializeComponent();
 
@@ -31,6 +38,18 @@ public partial class Navigation : PanelBase
 	public LogService LogService => LogService.Instance;
 	public UpdateService UpdateService => UpdateService.Instance;
 
+	public bool Expanded
+	{
+		get => this.expanded;
+		set
+		{
+			this.expanded = value;
+			this.Host.Title = value ? "Anamnesis" : string.Empty;
+		}
+	}
+
+	public bool IsAccordian { get; set; } = true;
+
 	private void OnIconMouseDown(object sender, MouseButtonEventArgs e)
 	{
 		this.DragMove();
@@ -44,27 +63,23 @@ public partial class Navigation : PanelBase
 		});
 	}
 
-	private void OnUnpinActorClicked(object sender, RoutedEventArgs e)
+	private void OnActorEntryExpanded(object sender, RoutedEventArgs e)
 	{
-		if (sender is FrameworkElement el && el.DataContext is PinnedActor actor)
+		if (!this.IsAccordian)
 		{
-			TargetService.UnpinActor(actor);
 		}
-	}
-
-	private void OnTargetActorClicked(object sender, RoutedEventArgs e)
-	{
-		if (sender is FrameworkElement el && el.DataContext is PinnedActor actor)
+		else
 		{
-			TargetService.SetPlayerTarget(actor);
-		}
-	}
+			for (int i = 0; i < this.PinnedActorList.Items.Count; i++)
+			{
+				DependencyObject? container = this.PinnedActorList.ItemContainerGenerator.ContainerFromIndex(i);
+				ActorEntry? entry = container?.FindChild<ActorEntry>();
 
-	private void OnActorPinPreviewMouseUp(object sender, MouseButtonEventArgs e)
-	{
-		if (e.ChangedButton == MouseButton.Middle)
-		{
-			this.OnUnpinActorClicked(sender, new RoutedEventArgs());
+				if (entry == null)
+					continue;
+
+				entry.IsExpanded = sender == entry;
+			}
 		}
 	}
 }

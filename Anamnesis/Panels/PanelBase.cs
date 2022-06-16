@@ -7,7 +7,12 @@ using System.Windows.Controls;
 
 public abstract class PanelBase : UserControl
 {
-	public IPanelGroupHost? Host { get; set; }
+	public PanelBase(IPanelGroupHost host)
+	{
+		this.Host = host;
+	}
 
-	protected void DragMove() => this.Host?.DragMove();
+	public IPanelGroupHost Host { get; init; }
+
+	protected void DragMove() => this.Host.DragMove();
 }

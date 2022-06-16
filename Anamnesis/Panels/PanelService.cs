@@ -4,6 +4,7 @@
 namespace Anamnesis.Panels;
 
 using Anamnesis.Windows;
+using System;
 using System.Windows.Controls;
 
 public class PanelService
@@ -13,8 +14,11 @@ public class PanelService
 	{
 		IPanelGroupHost groupHost = CreateHost();
 
-		PanelBase panel = new T();
-		panel.Host = groupHost;
+		PanelBase? panel = Activator.CreateInstance(typeof(T), groupHost) as PanelBase;
+
+		if (panel == null)
+			throw new Exception($"Failed to create instance of panel: {typeof(T)}");
+
 		groupHost.PanelGroupArea.Content = panel;
 		groupHost.Show();
 

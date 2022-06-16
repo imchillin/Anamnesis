@@ -58,6 +58,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public IconChar Icon { get; private set; }
 	public int ModelType { get; private set; }
 	public string? Initials { get; private set; }
+	public string? CondensedName { get; private set; }
 	public bool IsValid { get; private set; }
 	public bool IsGPoseActor { get; private set; }
 	public bool IsHidden { get; private set; }
@@ -401,15 +402,30 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 			else
 			{
 				this.Initials = string.Empty;
+				this.CondensedName = string.Empty;
 
 				string[] parts = name.Split('(', StringSplitOptions.RemoveEmptyEntries);
 				parts = parts[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
-				foreach (string part in parts)
+
+				if (parts.Length > 0)
 				{
-					this.Initials += part[0] + ".";
+					this.CondensedName = parts[0] + " ";
+
+					if (parts.Length > 1)
+					{
+						this.CondensedName += " ";
+
+						for (int i = 0; i < parts.Length; i++)
+						{
+							if (i > 0)
+								this.CondensedName += parts[i][0] + ".";
+
+							this.Initials += parts[i][0] + ".";
+						}
+					}
 				}
 
-				this.Initials = this.Initials.Trim('.');
+				this.CondensedName = this.CondensedName.Trim('.');
 			}
 		}
 		catch (Exception)
