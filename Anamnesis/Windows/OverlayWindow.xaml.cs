@@ -9,17 +9,22 @@ using Anamnesis.Services;
 using FontAwesome.Sharp;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Animation;
+using XivToolsWpf;
 
 [AddINotifyPropertyChangedInterface]
 public partial class OverlayWindow : Window, IPanelGroupHost
 {
 	private readonly WindowInteropHelper windowInteropHelper;
+	private readonly List<OverlayWindow> children = new();
+	private OverlayWindow? parent;
 
 	private int x;
 	private int y;
@@ -88,6 +93,21 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		}
 	}
 
+	public IPanelGroupHost Host => this;
+
+	public void AddChild(IPanel panel)
+	{
+		if (panel.Host is OverlayWindow wnd)
+		{
+			wnd.parent = this;
+			this.children.Add(wnd);
+
+			return;
+		}
+
+		throw new NotSupportedException("Panel host must be an overlay window to be a child of another overlay window");
+	}
+
 	public new void Close()
 	{
 		// base.Close();
@@ -95,13 +115,40 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		sb?.Begin();
 	}
 
-	protected override void OnDeactivated(EventArgs e)
+	protected override async void OnDeactivated(EventArgs e)
 	{
 		base.OnDeactivated(e);
 
 		if (this.AutoClose && this.AllowAutoClose)
 		{
+			// If we have docked panels that are active,
+			// then we dont close yet.
+			foreach(IPanel docked in this.children)
+			{
+				if (docked.Host is OverlayWindow dockedWindow)
+				{
+					if (dockedWindow.IsVisible)
+					{
+						return;
+					}
+				}
+			}
+
 			this.Close();
+
+			if (this.parent != null)
+			{
+				this.parent.children.Remove(this);
+
+				// wait a moment to see if the parent is actually being focused
+				await Task.Delay(250);
+				await Dispatch.MainThread();
+
+				if (!this.parent.IsActive)
+				{
+					this.parent.OnDeactivated(e);
+				}
+			}
 		}
 	}
 

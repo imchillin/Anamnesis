@@ -70,7 +70,7 @@ public partial class Shortcut : UserControl
 
 	private void OnPopupClicked(object sender, RoutedEventArgs e)
 	{
-		NavigationService.Navigate(new(this.Destination, this.Context));
+		NavigationService.Navigate(new(this, this.Destination, this.Context));
 	}
 
 	private void OnClicked(object sender, RoutedEventArgs e)
@@ -78,7 +78,7 @@ public partial class Shortcut : UserControl
 		if (this.PopupButton.IsOpen)
 			return;
 
-		NavigationService.Navigate(new(this.Destination, this.Context));
+		NavigationService.Navigate(new(this, this.Destination, this.Context));
 	}
 
 	private void OnPopupMouseEnter(object sender, MouseEventArgs e)

@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Anamnesis.Panels;
 using Anamnesis.Services;
 using XivToolsWpf.Selectors;
 

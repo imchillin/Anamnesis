@@ -22,20 +22,14 @@ using System;
 [AddINotifyPropertyChangedInterface]
 public partial class NavigationPanel : PanelBase
 {
-	public static NavigationPanel? Instance;
-
 	private bool expanded = true;
 
 	public NavigationPanel(IPanelGroupHost host)
 		: base(host)
 	{
-		if (Instance != null)
-			throw new Exception("Attempted to open more than one navigation panel");
-
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 		this.NavigationContextMenu.DataContext = this;
-		Instance = this;
 	}
 
 	public GameService GameService => GameService.Instance;
@@ -58,7 +52,7 @@ public partial class NavigationPanel : PanelBase
 
 	public bool IsAccordian { get; set; } = true;
 
-	public Point GetPanelOpenPosition()
+	public override Point GetSubPanelDockOffset()
 	{
 		return new Point(this.Sidebar.ActualWidth, this.TopBar.ActualHeight);
 	}

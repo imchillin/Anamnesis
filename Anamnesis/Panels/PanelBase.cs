@@ -4,6 +4,7 @@
 namespace Anamnesis.Panels;
 
 using FontAwesome.Sharp;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,6 +16,7 @@ public abstract class PanelBase : UserControl, IPanel
 	}
 
 	public IPanelGroupHost Host { get; init; }
+	public Action<object?>? NavigationResultCallback { get; set; }
 
 	public string Title
 	{
@@ -47,4 +49,11 @@ public abstract class PanelBase : UserControl, IPanel
 	}
 
 	public void DragMove() => this.Host.DragMove();
+
+	public virtual Point GetSubPanelDockOffset()
+	{
+		return new(this.Rect.Width, 0);
+	}
+
+	public void SetParent(IPanel other) => other.Host.AddChild(this);
 }

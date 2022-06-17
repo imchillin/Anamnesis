@@ -12,6 +12,7 @@ public interface IPanelGroupHost : IPanel
 {
 	ContentPresenter PanelGroupArea { get; }
 	void Show();
+	void AddChild(IPanel panel);
 }
 
 public interface IPanel
@@ -22,5 +23,9 @@ public interface IPanel
 	bool ShowBackground { get; set; }
 	bool AllowAutoClose { get; set; }
 
+	IPanelGroupHost Host { get; }
+
 	void DragMove();
+
+	void SetParent(IPanel other) => other.Host.AddChild(this);
 }

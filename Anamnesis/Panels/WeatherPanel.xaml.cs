@@ -3,18 +3,21 @@
 
 namespace Anamnesis.Panels;
 
-using Anamnesis.Styles.Drawers;
-using Anamnesis.Views;
-using FontAwesome.Sharp;
+using Anamnesis.GameData.Excel;
+using Anamnesis.Navigation;
 using System.Windows;
 
 public partial class WeatherPanel : PanelBase
 {
+	private readonly NavigationService.Request selectWeather;
+
 	public WeatherPanel(IPanelGroupHost host)
 		: base(host)
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
+
+		this.selectWeather = new(this, "WeatherSelector");
 	}
 
 	public TimeService TimeService => TimeService.Instance;
@@ -22,9 +25,7 @@ public partial class WeatherPanel : PanelBase
 
 	private void OnWeatherClicked(object sender, RoutedEventArgs e)
 	{
-		WeatherSelector selector = new WeatherSelector();
-
-		SelectorDrawer.Show(selector, this.TerritoryService.CurrentWeather, (w) =>
+		this.selectWeather.Navigate<Weather>((w) =>
 		{
 			this.TerritoryService.CurrentWeather = w;
 		});

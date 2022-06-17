@@ -34,7 +34,7 @@ public class PanelService
 		return panel;
 	}
 
-	private static IPanelGroupHost CreateHost()
+	public static IPanelGroupHost CreateHost()
 	{
 		// TODO: if OverlayMode!
 		return new OverlayWindow();
