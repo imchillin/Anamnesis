@@ -60,36 +60,46 @@
 				</Border.BitmapEffect>
 			</Border>
 
-			<ToolBar
-				Grid.Row="0"
-				ToolBarTray.IsLocked="True">
+			<Grid Grid.Row="0">
 
-				<ToggleButton
-					IsChecked="{Binding IsAccordian}"
-					Style="{StaticResource TransparentIconToggleButton}">
-					<XivToolsWpf:IconBlock Icon="List" />
-				</ToggleButton>
+				<Button
+					Width="22"
+					HorizontalAlignment="Right"
+					Click="OnTitlebarContextButtonClicked"
+					Style="{StaticResource TransparentIconButton}">
+					<XivToolsWpf:IconBlock
+						Foreground="{DynamicResource MaterialDesignToolForeground}"
+						Icon="AngleDown" />
+				</Button>
 
-				<ToggleButton
-					Foreground="{StaticResource PrimaryHueMidBrush}"
-					IsChecked="{Binding Expanded}"
-					RenderTransformOrigin="0.5, 0.5"
-					Style="{StaticResource MaterialDesignExpanderToggleButton}">
-					<ToggleButton.RenderTransform>
-						<RotateTransform Angle="-90" />
-					</ToggleButton.RenderTransform>
-				</ToggleButton>
-			</ToolBar>
+				<Grid.ContextMenu>
+					<ContextMenu x:Name="NavigationContextMenu">
+						<MenuItem
+							Header="Navigation_Options_Accordion"
+							IsCheckable="True"
+							IsChecked="{Binding IsAccordian}"
+							Style="{StaticResource AnaMenuItem}" />
+
+						<MenuItem
+							Header="Navigation_Options_Expanded"
+							IsCheckable="True"
+							IsChecked="{Binding Expanded}"
+							Style="{StaticResource AnaMenuItem}" />
+
+					</ContextMenu>
+				</Grid.ContextMenu>
+			</Grid>
 
 			<StackPanel
 				Grid.Row="1"
-				Margin="6">
+				Margin="6,0">
 
 				<local:Shortcut
 					Destination="Weather"
-					Icon="Home"
+					Icon="CloudMoonRain"
 					LabelKey="Naviagation_Weather"
-					ShowText="{Binding Expanded}" />
+					ShowText="{Binding Expanded}"
+					ToolTipKey="Naviagation_Weather_Tip" />
 
 				<local:Shortcut
 					Destination="Camera"
@@ -109,6 +119,13 @@
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
+
+				<local:Shortcut
+					Destination="Weather"
+					Icon="Plus"
+					LabelKey="Naviagation_AddActor"
+					ShowText="{Binding Expanded}"
+					ToolTipKey="Naviagation_AddActor_Tip" />
 			</StackPanel>
 		</Grid>
 
@@ -141,12 +158,13 @@
 				<XivToolsWpf:IconBlock
 					Margin="6,3,0,0"
 					VerticalAlignment="Center"
+					ana:Behaviours.Tooltip="Scene_Unsaved"
 					FontSize="6"
 					Icon="ExclamationTriangle" />
 
 			</StackPanel>
 
-
+			<!--  Scene Options  -->
 			<ToolBar
 				Grid.Row="1"
 				Margin="-6,0,-12,0"
@@ -155,27 +173,21 @@
 				<Button
 					Width="28"
 					Height="28"
+					ana:Behaviours.Tooltip="Scene_Save"
 					Style="{StaticResource TransparentIconButton}">
 					<XivToolsWpf:IconBlock
 						FontSize="14"
 						Icon="Save" />
-
-					<Button.ToolTip>
-						<TextBlock Text="Save Scene [CTRL + S]" />
-					</Button.ToolTip>
 				</Button>
 
 				<Button
 					Width="28"
 					Height="28"
+					ana:Behaviours.Tooltip="Scene_Open"
 					Style="{StaticResource TransparentIconButton}">
 					<XivToolsWpf:IconBlock
 						FontSize="14"
 						Icon="FolderOpen" />
-
-					<Button.ToolTip>
-						<TextBlock Text="Open Scene [CTRL + O]" />
-					</Button.ToolTip>
 				</Button>
 
 				<Separator />
@@ -183,27 +195,21 @@
 				<Button
 					Width="28"
 					Height="28"
+					ana:Behaviours.Tooltip="Scene_Import"
 					Style="{StaticResource TransparentIconButton}">
 					<XivToolsWpf:IconBlock
 						FontSize="14"
 						Icon="FileImport" />
-
-					<Button.ToolTip>
-						<TextBlock Text="Import a pose, character, or camera shot" />
-					</Button.ToolTip>
 				</Button>
 
 				<Button
 					Width="28"
 					Height="28"
+					ana:Behaviours.Tooltip="Scene_Export"
 					Style="{StaticResource TransparentIconButton}">
 					<XivToolsWpf:IconBlock
 						FontSize="14"
 						Icon="FileExport" />
-
-					<Button.ToolTip>
-						<TextBlock Text="Export a pose, character, or camera shot" />
-					</Button.ToolTip>
 				</Button>
 
 			</ToolBar>

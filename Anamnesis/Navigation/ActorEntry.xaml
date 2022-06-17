@@ -68,8 +68,7 @@
 					Foreground="{StaticResource PrimaryHueMidBrush}"
 					IsChecked="{Binding IsExpanded}"
 					IsHitTestVisible="False"
-					Style="{StaticResource MaterialDesignExpandCollapseToggleStyle}"
-					Visibility="{Binding ShowText, Converter={StaticResource B2V}}" />
+					Style="{StaticResource MaterialDesignExpandCollapseToggleStyle}" />
 
 				<Grid
 					Grid.Column="1"
@@ -90,14 +89,14 @@
 
 				<XivToolsWpf:IconBlock
 					Grid.Column="2"
-					Margin="3,0,3,0"
+					Margin="3,0,6,0"
 					FontSize="10"
 					Icon="Camera"
 					Visibility="{Binding Actor.IsGPoseActor, Converter={StaticResource B2V}}" />
 
 				<TextBlock
 					Grid.Column="3"
-					Margin="3,0,0,2"
+					Margin="3,0,6,2"
 					FontSize="14"
 					FontWeight="SemiBold"
 					Foreground="{DynamicResource MaterialDesignToolForeground}"
@@ -106,7 +105,7 @@
 
 				<TextBlock
 					Grid.Column="3"
-					Margin="3,0,0,2"
+					Margin="3,0,6,2"
 					FontSize="14"
 					FontWeight="SemiBold"
 					Foreground="{DynamicResource MaterialDesignToolForeground}"
@@ -126,7 +125,7 @@
 		<StackPanel
 			x:Name="ExpanderContent"
 			Grid.Row="2"
-			Margin="0,2,0,0">
+			Margin="10,2,0,0">
 
 			<StackPanel.LayoutTransform>
 				<ScaleTransform x:Name="ContentScale" CenterY="0" ScaleY="1" />
@@ -163,7 +162,7 @@
 			<local:Shortcut
 				Context="{Binding Actor}"
 				Destination=" Appearance"
-				Icon="User"
+				Icon="IdCardAlt"
 				LabelKey="Naviagation_Actor_Appearance"
 				ShowText="{Binding ShowText}"
 				ToolTipKey="Naviagation_Actor_Appearance_Tip" />

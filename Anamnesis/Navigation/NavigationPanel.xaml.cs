@@ -34,6 +34,7 @@ public partial class NavigationPanel : PanelBase
 
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
+		this.NavigationContextMenu.DataContext = this;
 		Instance = this;
 	}
 
@@ -93,5 +94,10 @@ public partial class NavigationPanel : PanelBase
 				entry.IsExpanded = sender == entry;
 			}
 		}
+	}
+
+	private void OnTitlebarContextButtonClicked(object sender, RoutedEventArgs e)
+	{
+		this.NavigationContextMenu.IsOpen = true;
 	}
 }

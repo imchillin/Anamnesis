@@ -27,6 +27,7 @@
 
 			<XivToolsWpf:IconBlock
 				Grid.Column="0"
+				Width="20"
 				Height="16"
 				Icon="{Binding Icon}" />
 

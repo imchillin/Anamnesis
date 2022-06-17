@@ -15,9 +15,6 @@ public partial class WeatherPanel : PanelBase
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
-
-		this.Title = "Weather";
-		this.Host.Icon = IconChar.Globe;
 	}
 
 	public TimeService TimeService => TimeService.Instance;

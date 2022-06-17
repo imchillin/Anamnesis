@@ -45,7 +45,8 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		set
 		{
 			base.Title = value;
-			this.TitleText.Text = value;
+
+			this.TitleText.Text = LocalizationService.GetString(value, true);
 		}
 	}
 
