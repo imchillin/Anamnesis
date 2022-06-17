@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media.Animation;
 
 [AddINotifyPropertyChangedInterface]
 public partial class OverlayWindow : Window, IPanelGroupHost
@@ -85,6 +86,13 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		}
 	}
 
+	public new void Close()
+	{
+		// base.Close();
+		Storyboard? sb = this.Resources["CloseStoryboard"] as Storyboard;
+		sb?.Begin();
+	}
+
 	protected override void OnDeactivated(EventArgs e)
 	{
 		base.OnDeactivated(e);
@@ -135,6 +143,9 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 
 		this.UpdatePosition();
 		this.Activate();
+
+		Storyboard? sb = this.Resources["OpenStoryboard"] as Storyboard;
+		sb?.Begin();
 	}
 
 	private void UpdatePosition()
@@ -196,6 +207,11 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
 	{
 		this.Activate();
+	}
+
+	private void OnCloseStoryboardCompleted(object sender, EventArgs e)
+	{
+		base.Close();
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

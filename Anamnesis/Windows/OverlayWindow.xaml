@@ -6,17 +6,50 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:Anamnesis.Windows"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="Self"
 	AllowsTransparency="True"
 	Background="Transparent"
 	Loaded="OnWindowLoaded"
 	MouseEnter="OnMouseEnter"
 	MouseLeave="OnMouseLeave"
+	Opacity="0"
 	PreviewMouseDown="OnPreviewMouseDown"
 	SizeToContent="WidthAndHeight"
 	TextBlock.FontSize="12"
 	TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 	WindowStyle="None"
 	mc:Ignorable="d">
+
+	<Window.Resources>
+		<Storyboard x:Key="OpenStoryboard">
+			<DoubleAnimation
+				Storyboard.TargetName="Self"
+				Storyboard.TargetProperty="Opacity"
+				From="0"
+				To="1"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+		</Storyboard>
+
+		<Storyboard
+			x:Key="CloseStoryboard"
+			Completed="OnCloseStoryboardCompleted">
+			<DoubleAnimation
+				Storyboard.TargetName="Self"
+				Storyboard.TargetProperty="Opacity"
+				From="1"
+				To="0"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+		</Storyboard>
+	</Window.Resources>
+
 
 	<Grid x:Name="ContentArea">
 
