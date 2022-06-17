@@ -21,7 +21,8 @@
 		<Border
 			Margin="6"
 			Background="{DynamicResource MaterialDesignBackground}"
-			CornerRadius="6">
+			CornerRadius="6"
+			Visibility="{Binding ShowBackground, Converter={StaticResource B2V}}">
 			<Border.BitmapEffect>
 				<DropShadowBitmapEffect ShadowDepth="0" />
 			</Border.BitmapEffect>
@@ -38,7 +39,8 @@
 			<Grid
 				Grid.Row="0"
 				Height="22"
-				Margin="6,0,6,3">
+				Margin="6,0,6,3"
+				Visibility="{Binding ShowBackground, Converter={StaticResource B2V}}">
 
 				<TextBlock
 					x:Name="TitleText"

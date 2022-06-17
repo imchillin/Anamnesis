@@ -33,6 +33,8 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	public ContentPresenter PanelGroupArea => this.ContentPresenter;
 
 	public new IconChar Icon { get; set; }
+	public bool ShowBackground { get; set; }
+
 	public new string Title
 	{
 		get => base.Title;

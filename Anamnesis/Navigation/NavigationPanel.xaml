@@ -8,6 +8,7 @@
 	xmlns:local="clr-namespace:Anamnesis.Navigation"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:panels="clr-namespace:Anamnesis.Panels"
+	ShowBackground="False"
 	mc:Ignorable="d">
 
 	<panels:PanelBase.Resources>
@@ -36,13 +37,30 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 
-		<Grid>
+		<Grid
+			Grid.Row="1"
+			Margin="0,6,0,0"
+			HorizontalAlignment="Left">
+
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<ToolBar>
+			<Border
+				Grid.Row="0"
+				Grid.RowSpan="2"
+				Background="{DynamicResource MaterialDesignBackground}"
+				CornerRadius="6">
+
+				<Border.BitmapEffect>
+					<DropShadowBitmapEffect ShadowDepth="0" />
+				</Border.BitmapEffect>
+			</Border>
+
+			<ToolBar
+				Grid.Row="0"
+				ToolBarTray.IsLocked="True">
 
 				<ToggleButton
 					IsChecked="{Binding IsAccordian}"
@@ -92,14 +110,112 @@
 			</StackPanel>
 		</Grid>
 
+		<Border
+			Grid.Row="0"
+			Background="{DynamicResource MaterialDesignBackground}"
+			CornerRadius="6"
+			IsHitTestVisible="False">
+			<Border.BitmapEffect>
+				<DropShadowBitmapEffect ShadowDepth="0" />
+			</Border.BitmapEffect>
+		</Border>
+
+		<Grid
+			Grid.Row="0"
+			Margin="48,0,-0,0">
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<StackPanel
+				Grid.Row="0"
+				Margin="0,0,6,0"
+				Orientation="Horizontal">
+
+				<TextBlock Text="Untitled scene" />
+				<XivToolsWpf:IconBlock
+					Margin="6,3,0,0"
+					VerticalAlignment="Center"
+					FontSize="6"
+					Icon="ExclamationTriangle" />
+
+			</StackPanel>
+
+
+			<ToolBar
+				Grid.Row="1"
+				Margin="-6,0,-12,0"
+				Background="Transparent"
+				ToolBarTray.IsLocked="True">
+				<Button
+					Width="28"
+					Height="28"
+					Style="{StaticResource TransparentIconButton}">
+					<XivToolsWpf:IconBlock
+						FontSize="14"
+						Icon="Save" />
+
+					<Button.ToolTip>
+						<TextBlock Text="Save Scene [CTRL + S]" />
+					</Button.ToolTip>
+				</Button>
+
+				<Button
+					Width="28"
+					Height="28"
+					Style="{StaticResource TransparentIconButton}">
+					<XivToolsWpf:IconBlock
+						FontSize="14"
+						Icon="FolderOpen" />
+
+					<Button.ToolTip>
+						<TextBlock Text="Open Scene [CTRL + O]" />
+					</Button.ToolTip>
+				</Button>
+
+				<Separator />
+
+				<Button
+					Width="28"
+					Height="28"
+					Style="{StaticResource TransparentIconButton}">
+					<XivToolsWpf:IconBlock
+						FontSize="14"
+						Icon="FileImport" />
+
+					<Button.ToolTip>
+						<TextBlock Text="Import a pose, character, or camera shot" />
+					</Button.ToolTip>
+				</Button>
+
+				<Button
+					Width="28"
+					Height="28"
+					Style="{StaticResource TransparentIconButton}">
+					<XivToolsWpf:IconBlock
+						FontSize="14"
+						Icon="FileExport" />
+
+					<Button.ToolTip>
+						<TextBlock Text="Export a pose, character, or camera shot" />
+					</Button.ToolTip>
+				</Button>
+
+			</ToolBar>
+		</Grid>
+
+
+
 		<Image
 			Grid.RowSpan="2"
-			Width="28"
-			Height="28"
-			Margin="-5,-32,0,0"
+			Width="42"
+			Height="42"
+			Margin="-5,-4,0,0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
-			IsHitTestVisible="False"
+			MouseDown="OnIconMouseDown"
 			Source="/Assets/Anamnesis.png" />
 
 	</Grid>
