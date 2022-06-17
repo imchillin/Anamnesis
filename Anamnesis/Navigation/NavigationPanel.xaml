@@ -8,6 +8,7 @@
 	xmlns:local="clr-namespace:Anamnesis.Navigation"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:panels="clr-namespace:Anamnesis.Panels"
+	AllowAutoClose="False"
 	ShowBackground="False"
 	mc:Ignorable="d">
 

@@ -40,5 +40,11 @@ public abstract class PanelBase : UserControl, IPanel
 		set => this.Host.ShowBackground = value;
 	}
 
+	public bool AllowAutoClose
+	{
+		get => this.Host.AllowAutoClose;
+		set => this.Host.AllowAutoClose = value;
+	}
+
 	public void DragMove() => this.Host.DragMove();
 }

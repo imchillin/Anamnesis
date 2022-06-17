@@ -25,6 +25,7 @@ public interface IPanel
 	IconChar Icon { get; set; }
 	Rect Rect { get; set; }
 	bool ShowBackground { get; set; }
+	bool AllowAutoClose { get; set; }
 
 	void DragMove();
 

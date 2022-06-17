@@ -22,18 +22,21 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 
 	private int x;
 	private int y;
+	private IconChar icon;
 
 	public OverlayWindow()
 	{
 		this.windowInteropHelper = new(this);
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
+		this.WindowContextMenu.DataContext = this;
 	}
 
 	public ContentPresenter PanelGroupArea => this.ContentPresenter;
 
-	public new IconChar Icon { get; set; }
-	public bool ShowBackground { get; set; }
+	public bool ShowBackground { get; set; } = true;
+	public bool AutoClose { get; set; } = true;
+	public bool AllowAutoClose { get; set; } = true;
 
 	public new string Title
 	{
@@ -42,6 +45,16 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		{
 			base.Title = value;
 			this.TitleText.Text = value;
+		}
+	}
+
+	public new IconChar Icon
+	{
+		get => this.icon;
+		set
+		{
+			this.icon = value;
+			this.TitleIcon.Icon = value;
 		}
 	}
 
@@ -69,6 +82,16 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 			this.Width = value.Width;
 			this.Height = value.Height;
 			this.UpdatePosition();
+		}
+	}
+
+	protected override void OnDeactivated(EventArgs e)
+	{
+		base.OnDeactivated(e);
+
+		if (this.AutoClose && this.AllowAutoClose)
+		{
+			this.Close();
 		}
 	}
 
@@ -111,6 +134,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		SetWindowLong(this.windowInteropHelper.Handle, GWL_STYLE, style);
 
 		this.UpdatePosition();
+		this.Activate();
 	}
 
 	private void UpdatePosition()
@@ -143,6 +167,16 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		}
 	}
 
+	private void OnTitlebarContextButtonClicked(object sender, RoutedEventArgs e)
+	{
+		this.WindowContextMenu.IsOpen = true;
+	}
+
+	private void OnTitlebarCloseButtonClicked(object sender, RoutedEventArgs e)
+	{
+		this.Close();
+	}
+
 	private void OnMouseEnter(object sender, MouseEventArgs e)
 	{
 		if (this.Opacity == 1.0)
@@ -157,6 +191,11 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		{
 			this.Animate(Window.OpacityProperty, SettingsService.Current.Opacity, 250);
 		}
+	}
+
+	private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+	{
+		this.Activate();
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

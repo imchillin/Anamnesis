@@ -147,6 +147,9 @@
 	"Naviagation_Actor_Pose": "Pose",
 	"Naviagation_Actor_Pose_Tip": "Pose your actor",
 
+	"OverlayWindow_AutoClose": "Auto close",
+	"OverlayWindow_PopOut": "Pop-out",
+
 	"Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
 	"Character_Load_CMTool": "CMTool save",
 	"Character_Reset": "Reset",
