@@ -16,6 +16,7 @@
 		Margin="0,2"
 		HorizontalContentAlignment="Left"
 		Click="OnClicked"
+		MouseEnter="OnButtonMouseEnter"
 		Style="{StaticResource TransparentIconButton}">
 
 		<Grid Margin="0,3">
@@ -36,6 +37,83 @@
 				Grid.Column="1"
 				Margin="6,0,0,0"
 				Visibility="{Binding ShowText, Converter={StaticResource B2V}}" />
+
+			<Popup
+				x:Name="PopupButton"
+				AllowsTransparency="True"
+				Placement="Left"
+				PlacementRectangle="-3, -2, 0, 0"
+				PlacementTarget="{Binding ElementName=ButtonContent}">
+
+				<Popup.Resources>
+					<Storyboard x:Key="OpenStoryboard">
+						<DoubleAnimation
+							Storyboard.TargetName="PopupContent"
+							Storyboard.TargetProperty="Opacity"
+							From="0.01"
+							To="1"
+							Duration="00:00:00.2">
+							<DoubleAnimation.EasingFunction>
+								<SineEase EasingMode="EaseOut" />
+							</DoubleAnimation.EasingFunction>
+						</DoubleAnimation>
+					</Storyboard>
+
+					<Storyboard
+						x:Key="CloseStoryboard"
+						Completed="OnCloseStoryboardCompleted">
+						<DoubleAnimation
+							Storyboard.TargetName="PopupContent"
+							Storyboard.TargetProperty="Opacity"
+							From="1"
+							To="0.01"
+							Duration="00:00:00.2">
+							<DoubleAnimation.EasingFunction>
+								<SineEase EasingMode="EaseOut" />
+							</DoubleAnimation.EasingFunction>
+						</DoubleAnimation>
+					</Storyboard>
+				</Popup.Resources>
+
+				<Grid
+					x:Name="PopupContent"
+					MouseEnter="OnPopupMouseEnter"
+					MouseLeave="OnPopupMouseLeave"
+					Opacity="0.01">
+					<Border
+						Background="{DynamicResource MaterialDesignBackground}"
+						CornerRadius="0, 6, 6, 0"
+						SnapsToDevicePixels="True" />
+
+					<Button
+						Margin="3,2"
+						HorizontalContentAlignment="Left"
+						Click="OnPopupClicked"
+						Style="{StaticResource TransparentIconButton}">
+
+						<Grid Margin="0,3">
+
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+
+							<XivToolsWpf:IconBlock
+								Grid.Column="0"
+								Width="20"
+								Height="16"
+								Icon="{Binding Icon}" />
+
+							<XivToolsWpf:TextBlock
+								Key="{Binding LabelKey}"
+								Grid.Column="1"
+								Margin="6,0,0,0" />
+						</Grid>
+
+					</Button>
+				</Grid>
+
+			</Popup>
 
 			<Grid.ToolTip>
 				<XivToolsWpf:TextBlock Key="{Binding ToolTipKey}" />

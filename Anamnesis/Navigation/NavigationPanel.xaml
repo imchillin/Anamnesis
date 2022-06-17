@@ -105,7 +105,8 @@
 					Destination="Camera"
 					Icon="Camera"
 					LabelKey="Naviagation_Camera"
-					ShowText="{Binding Expanded}" />
+					ShowText="{Binding Expanded}"
+					ToolTipKey="Naviagation_Camera_Tip" />
 
 				<ItemsControl
 					x:Name="PinnedActorList"

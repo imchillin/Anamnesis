@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Anamnesis.Extensions;
 using XivToolsWpf.DependencyProperties;
 
 /// <summary>
@@ -57,14 +58,13 @@ public partial class ActorEntry : UserControl
 		if (value)
 		{
 			sender.Expanded?.Invoke(sender, new());
-			Storyboard? sb = sender.ExpanderContent.Resources["ExpandStoryboard"] as Storyboard;
-			sb?.Begin();
+			sender.ExpanderContent.Visibility = Visibility.Visible;
+			sender.ExpanderContent.BeginStoryboard("ExpandStoryboard");
 		}
 		else
 		{
 			sender.Collapsed?.Invoke(sender, new());
-			Storyboard? sb = sender.ExpanderContent.Resources["CollapseStoryboard"] as Storyboard;
-			sb?.Begin();
+			sender.ExpanderContent.BeginStoryboard("CollapseStoryboard");
 		}
 	}
 
@@ -90,5 +90,10 @@ public partial class ActorEntry : UserControl
 		{
 			this.OnUnpinActorClicked(sender, new RoutedEventArgs());
 		}
+	}
+
+	private void OnCollapseStoryboardCompleted(object sender, EventArgs e)
+	{
+		this.ExpanderContent.Visibility = Visibility.Collapsed;
 	}
 }
