@@ -39,6 +39,7 @@
 		</Grid.RowDefinitions>
 
 		<Grid
+			x:Name="Sidebar"
 			Grid.Row="1"
 			Margin="0,6,0,0"
 			HorizontalAlignment="Left">
@@ -122,6 +123,7 @@
 		</Border>
 
 		<Grid
+			x:Name="TopBar"
 			Grid.Row="0"
 			Margin="48,0,-0,0">
 

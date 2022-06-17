@@ -25,9 +25,17 @@ public class NavigationService : ServiceBase<NavigationService>
 
 			PanelBase panel = PanelService.Show(panelType);
 
+			// Move the panel to the target position next to the navigation menu
 			if (NavigationPanel.Instance != null)
 			{
-				panel.Host.Align(NavigationPanel.Instance.Host);
+				Rect panelRect = panel.Rect;
+				Rect navRect = NavigationPanel.Instance.Rect;
+				Point pos = NavigationPanel.Instance.GetPanelOpenPosition();
+
+				panelRect.X = navRect.X + pos.X + 6;
+				panelRect.Y = navRect.Y + pos.Y + 3;
+
+				panel.Host.Rect = panelRect;
 			}
 		}
 		catch (Exception ex)

@@ -57,6 +57,11 @@ public partial class NavigationPanel : PanelBase
 
 	public bool IsAccordian { get; set; } = true;
 
+	public Point GetPanelOpenPosition()
+	{
+		return new Point(this.Sidebar.ActualWidth, this.TopBar.ActualHeight);
+	}
+
 	private void OnIconMouseDown(object sender, MouseButtonEventArgs e)
 	{
 		this.DragMove();
