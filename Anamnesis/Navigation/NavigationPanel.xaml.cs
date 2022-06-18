@@ -54,7 +54,7 @@ public partial class NavigationPanel : PanelBase
 
 	public override Point GetSubPanelDockOffset()
 	{
-		return new Point(this.Sidebar.ActualWidth + 6, this.TopBar.ActualHeight + 3);
+		return new Point(this.BackgroundBorder.ActualWidth + 6, this.TopBar.ActualHeight + 3);
 	}
 
 	private void OnIconMouseDown(object sender, MouseButtonEventArgs e)

@@ -24,7 +24,8 @@ public partial class Shortcut : UserControl
 	public static readonly IBind<IconChar> IconDp = Binder.Register<IconChar, Shortcut>(nameof(Icon), BindMode.OneWay);
 	public static readonly IBind<string> DestinationDp = Binder.Register<string, Shortcut>(nameof(Destination), BindMode.OneWay);
 	public static readonly IBind<object> ContextDp = Binder.Register<object, Shortcut>(nameof(Context), BindMode.OneWay);
-	public static readonly IBind<bool> ShowTextDp = Binder.Register<bool, Shortcut>(nameof(ShowText), BindMode.OneWay);
+	public static readonly IBind<bool> ShowTextDp = Binder.Register<bool, Shortcut>(nameof(ShowText), OnShowTextChanged, BindMode.OneWay);
+	public static readonly IBind<Thickness> ContentPaddingDp = Binder.Register<Thickness, Shortcut>(nameof(ContentPadding));
 
 	public Shortcut()
 	{
@@ -68,36 +69,42 @@ public partial class Shortcut : UserControl
 		set => ShowTextDp.Set(this, value);
 	}
 
-	private void OnPopupClicked(object sender, RoutedEventArgs e)
+	public Thickness ContentPadding
 	{
-		NavigationService.Navigate(new(this, this.Destination, this.Context));
+		get => ContentPaddingDp.Get(this);
+		set => ContentPaddingDp.Set(this, value);
+	}
+
+	private static void OnShowTextChanged(Shortcut sender, bool value)
+	{
+		if (value)
+		{
+			sender.BeginStoryboard("ShowLabel");
+		}
+		else
+		{
+			sender.BeginStoryboard("HideLabel");
+		}
 	}
 
 	private void OnClicked(object sender, RoutedEventArgs e)
 	{
-		if (this.PopupButton.IsOpen)
-			return;
-
 		NavigationService.Navigate(new(this, this.Destination, this.Context));
 	}
 
-	private void OnPopupMouseEnter(object sender, MouseEventArgs e)
+	private void OnMouseEnter(object sender, MouseEventArgs e)
 	{
-		this.PopupButton.BeginStoryboard("OpenStoryboard");
+		if (!this.ShowText)
+		{
+			this.BeginStoryboard("ShowLabel");
+		}
 	}
 
-	private void OnPopupMouseLeave(object sender, MouseEventArgs e)
+	private void OnMouseLeave(object sender, MouseEventArgs e)
 	{
-		this.PopupButton.BeginStoryboard("CloseStoryboard");
-	}
-
-	private void OnButtonMouseEnter(object sender, MouseEventArgs e)
-	{
-		this.PopupButton.IsOpen = !this.ShowText;
-	}
-
-	private void OnCloseStoryboardCompleted(object sender, EventArgs e)
-	{
-		this.PopupButton.IsOpen = false;
+		if (!this.ShowText)
+		{
+			this.BeginStoryboard("HideLabel");
+		}
 	}
 }

@@ -47,6 +47,12 @@ public abstract class PanelBase : UserControl, IPanel
 		set => this.Host.AllowAutoClose = value;
 	}
 
+	public bool Topmost
+	{
+		get => this.Host.Topmost;
+		set => this.Host.Topmost = value;
+	}
+
 	public void DragMove() => this.Host.DragMove();
 
 	public virtual Point GetSubPanelDockOffset()

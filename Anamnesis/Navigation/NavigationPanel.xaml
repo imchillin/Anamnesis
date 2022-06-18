@@ -10,6 +10,7 @@
 	xmlns:panels="clr-namespace:Anamnesis.Panels"
 	AllowAutoClose="False"
 	ShowBackground="False"
+	Topmost="True"
 	mc:Ignorable="d">
 
 	<panels:PanelBase.Resources>
@@ -45,50 +46,69 @@
 			HorizontalAlignment="Left">
 
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
+				<RowDefinition Height="18" />
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
 			<Border
+				x:Name="BackgroundBorder"
 				Grid.Row="0"
 				Grid.RowSpan="2"
 				Background="{DynamicResource MaterialDesignBackground}"
 				CornerRadius="6">
 
+				<Border.Style>
+					<Style TargetType="Border">
+						<Style.Triggers>
+							<DataTrigger
+								Binding="{Binding Expanded}"
+								Value="False">
+								<Setter Property="HorizontalAlignment" Value="Left" />
+								<Setter Property="VerticalAlignment" Value="Stretch" />
+								<Setter Property="Width" Value="48" />
+
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</Border.Style>
+
 				<Border.BitmapEffect>
 					<DropShadowBitmapEffect ShadowDepth="0" />
 				</Border.BitmapEffect>
+
+				<Grid
+					Height="18"
+					VerticalAlignment="Top"
+					Background="Transparent">
+
+					<Button
+						Width="22"
+						HorizontalAlignment="Right"
+						Click="OnTitlebarContextButtonClicked"
+						Style="{StaticResource TransparentIconButton}">
+						<XivToolsWpf:IconBlock
+							Foreground="{DynamicResource MaterialDesignToolForeground}"
+							Icon="AngleDown" />
+					</Button>
+
+					<Grid.ContextMenu>
+						<ContextMenu x:Name="NavigationContextMenu">
+							<MenuItem
+								Header="Navigation_Options_Accordion"
+								IsCheckable="True"
+								IsChecked="{Binding IsAccordian}"
+								Style="{StaticResource AnaMenuItem}" />
+
+							<MenuItem
+								Header="Navigation_Options_Expanded"
+								IsCheckable="True"
+								IsChecked="{Binding Expanded}"
+								Style="{StaticResource AnaMenuItem}" />
+
+						</ContextMenu>
+					</Grid.ContextMenu>
+				</Grid>
 			</Border>
-
-			<Grid Grid.Row="0">
-
-				<Button
-					Width="22"
-					HorizontalAlignment="Right"
-					Click="OnTitlebarContextButtonClicked"
-					Style="{StaticResource TransparentIconButton}">
-					<XivToolsWpf:IconBlock
-						Foreground="{DynamicResource MaterialDesignToolForeground}"
-						Icon="AngleDown" />
-				</Button>
-
-				<Grid.ContextMenu>
-					<ContextMenu x:Name="NavigationContextMenu">
-						<MenuItem
-							Header="Navigation_Options_Accordion"
-							IsCheckable="True"
-							IsChecked="{Binding IsAccordian}"
-							Style="{StaticResource AnaMenuItem}" />
-
-						<MenuItem
-							Header="Navigation_Options_Expanded"
-							IsCheckable="True"
-							IsChecked="{Binding Expanded}"
-							Style="{StaticResource AnaMenuItem}" />
-
-					</ContextMenu>
-				</Grid.ContextMenu>
-			</Grid>
 
 			<StackPanel
 				Grid.Row="1"

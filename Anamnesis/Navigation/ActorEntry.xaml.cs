@@ -19,7 +19,7 @@ using XivToolsWpf.DependencyProperties;
 public partial class ActorEntry : UserControl
 {
 	public static readonly IBind<bool> IsExpandedDp = Binder.Register<bool, ActorEntry>(nameof(IsExpanded), OnIsExpandedChanged);
-	public static readonly IBind<bool> ShowTextDp = Binder.Register<bool, ActorEntry>(nameof(ShowText));
+	public static readonly IBind<bool> ShowTextDp = Binder.Register<bool, ActorEntry>(nameof(ShowText), OnShowTextChanged);
 
 	public static readonly RoutedEvent? CollapsedEvent;
 	public static readonly RoutedEvent? ExpandedEvent;
@@ -58,13 +58,27 @@ public partial class ActorEntry : UserControl
 		if (value)
 		{
 			sender.Expanded?.Invoke(sender, new());
+			sender.ExpanderContent.IsHitTestVisible = true;
 			sender.ExpanderContent.Visibility = Visibility.Visible;
 			sender.ExpanderContent.BeginStoryboard("ExpandStoryboard");
 		}
 		else
 		{
 			sender.Collapsed?.Invoke(sender, new());
+			sender.ExpanderContent.IsHitTestVisible = false;
 			sender.ExpanderContent.BeginStoryboard("CollapseStoryboard");
+		}
+	}
+
+	private static void OnShowTextChanged(ActorEntry sender, bool value)
+	{
+		if (value)
+		{
+			sender.BeginStoryboard("ShowLabel");
+		}
+		else
+		{
+			sender.BeginStoryboard("HideLabel");
 		}
 	}
 
@@ -95,5 +109,21 @@ public partial class ActorEntry : UserControl
 	private void OnCollapseStoryboardCompleted(object sender, EventArgs e)
 	{
 		this.ExpanderContent.Visibility = Visibility.Collapsed;
+	}
+
+	private void OnMouseEnter(object sender, MouseEventArgs e)
+	{
+		if (!this.ShowText)
+		{
+			this.BeginStoryboard("ShowLabel");
+		}
+	}
+
+	private void OnMouseLeave(object sender, MouseEventArgs e)
+	{
+		if (!this.ShowText)
+		{
+			this.BeginStoryboard("HideLabel");
+		}
 	}
 }

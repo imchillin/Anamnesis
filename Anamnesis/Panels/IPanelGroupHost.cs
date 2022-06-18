@@ -22,6 +22,7 @@ public interface IPanel
 	Rect Rect { get; set; }
 	bool ShowBackground { get; set; }
 	bool AllowAutoClose { get; set; }
+	bool Topmost { get; set; }
 
 	IPanelGroupHost Host { get; }
 

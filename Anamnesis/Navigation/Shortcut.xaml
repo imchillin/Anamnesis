@@ -11,114 +11,108 @@
 	d:DesignWidth="800"
 	mc:Ignorable="d">
 
-	<Button
-		x:Name="ButtonContent"
-		Margin="0,2"
-		HorizontalContentAlignment="Left"
-		Click="OnClicked"
-		MouseEnter="OnButtonMouseEnter"
-		Style="{StaticResource TransparentIconButton}">
+	<UserControl.Resources>
+		<Storyboard x:Key="ShowLabel">
+			<DoubleAnimation
+				Storyboard.TargetName="LabelText"
+				Storyboard.TargetProperty="Opacity"
+				From="0.01"
+				To="1"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
 
-		<Grid Margin="0,3">
+			<DoubleAnimation
+				Storyboard.TargetName="BackgroundBorder"
+				Storyboard.TargetProperty="Opacity"
+				From="0.01"
+				To="1"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+		</Storyboard>
 
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
+		<Storyboard x:Key="HideLabel">
+			<DoubleAnimation
+				Storyboard.TargetName="LabelText"
+				Storyboard.TargetProperty="Opacity"
+				From="1"
+				To="0"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
 
-			<XivToolsWpf:IconBlock
-				Grid.Column="0"
-				Width="20"
-				Height="16"
-				Icon="{Binding Icon}" />
+			<DoubleAnimation
+				Storyboard.TargetName="BackgroundBorder"
+				Storyboard.TargetProperty="Opacity"
+				From="1"
+				To="0"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+		</Storyboard>
+	</UserControl.Resources>
 
-			<XivToolsWpf:TextBlock
-				Key="{Binding LabelKey}"
-				Grid.Column="1"
-				Margin="6,0,0,0"
-				Visibility="{Binding ShowText, Converter={StaticResource B2V}}" />
+	<Grid
+		x:Name="ContentArea"
+		MouseEnter="OnMouseEnter"
+		MouseLeave="OnMouseLeave">
 
-			<Popup
-				x:Name="PopupButton"
-				AllowsTransparency="True"
-				Placement="Left"
-				PlacementRectangle="-3, -2, 0, 0"
-				PlacementTarget="{Binding ElementName=ButtonContent}">
+		<Border
+			x:Name="BackgroundBorder"
+			Background="{StaticResource MaterialDesignBackground}"
+			CornerRadius="6" />
 
-				<Popup.Resources>
-					<Storyboard x:Key="OpenStoryboard">
-						<DoubleAnimation
-							Storyboard.TargetName="PopupContent"
-							Storyboard.TargetProperty="Opacity"
-							From="0.01"
-							To="1"
-							Duration="00:00:00.2">
-							<DoubleAnimation.EasingFunction>
-								<SineEase EasingMode="EaseOut" />
-							</DoubleAnimation.EasingFunction>
-						</DoubleAnimation>
-					</Storyboard>
+		<Button
+			x:Name="ButtonContent"
+			Margin="0,2,2,2"
+			HorizontalContentAlignment="Left"
+			Click="OnClicked"
+			Style="{StaticResource TransparentIconButton}">
 
-					<Storyboard
-						x:Key="CloseStoryboard"
-						Completed="OnCloseStoryboardCompleted">
-						<DoubleAnimation
-							Storyboard.TargetName="PopupContent"
-							Storyboard.TargetProperty="Opacity"
-							From="1"
-							To="0.01"
-							Duration="00:00:00.2">
-							<DoubleAnimation.EasingFunction>
-								<SineEase EasingMode="EaseOut" />
-							</DoubleAnimation.EasingFunction>
-						</DoubleAnimation>
-					</Storyboard>
-				</Popup.Resources>
+			<Grid Margin="0,3">
 
-				<Grid
-					x:Name="PopupContent"
-					MouseEnter="OnPopupMouseEnter"
-					MouseLeave="OnPopupMouseLeave"
-					Opacity="0.01">
-					<Border
-						Background="{DynamicResource MaterialDesignBackground}"
-						CornerRadius="0, 6, 6, 0"
-						SnapsToDevicePixels="True" />
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
 
-					<Button
-						Margin="3,2"
-						HorizontalContentAlignment="Left"
-						Click="OnPopupClicked"
-						Style="{StaticResource TransparentIconButton}">
+				<Rectangle
+					Grid.Column="0"
+					Grid.ColumnSpan="2"
+					Width="40"
+					Margin="-6,-3,-3,-3"
+					HorizontalAlignment="Left"
+					Fill="Black"
+					Opacity="0.01"
+					Visibility="{Binding ShowText, Converter={StaticResource !B2V}}" />
 
-						<Grid Margin="0,3">
+				<XivToolsWpf:IconBlock
+					Grid.Column="0"
+					Width="20"
+					Height="16"
+					Margin="{Binding ContentPadding}"
+					Icon="{Binding Icon}" />
 
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="Auto" />
-							</Grid.ColumnDefinitions>
+				<XivToolsWpf:TextBlock
+					Key="{Binding LabelKey}"
+					x:Name="LabelText"
+					Grid.Column="1"
+					Margin="6,0,0,0" />
 
-							<XivToolsWpf:IconBlock
-								Grid.Column="0"
-								Width="20"
-								Height="16"
-								Icon="{Binding Icon}" />
-
-							<XivToolsWpf:TextBlock
-								Key="{Binding LabelKey}"
-								Grid.Column="1"
-								Margin="6,0,0,0" />
-						</Grid>
-
-					</Button>
-				</Grid>
-
-			</Popup>
-
-			<Grid.ToolTip>
-				<XivToolsWpf:TextBlock Key="{Binding ToolTipKey}" />
-			</Grid.ToolTip>
-		</Grid>
-	</Button>
+				<Grid.ToolTip>
+					<XivToolsWpf:TextBlock Key="{Binding ToolTipKey}" />
+				</Grid.ToolTip>
+			</Grid>
+		</Button>
+	</Grid>
 
 </UserControl>

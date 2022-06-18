@@ -36,6 +36,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 		this.WindowContextMenu.DataContext = this;
+		base.Topmost = false;
 	}
 
 	public ContentPresenter PanelGroupArea => this.ContentPresenter;
@@ -62,6 +63,16 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		{
 			this.icon = value;
 			this.TitleIcon.Icon = value;
+		}
+	}
+
+	public new bool Topmost
+	{
+		get => base.Topmost;
+		set
+		{
+			// nope!
+			base.Topmost = value;
 		}
 	}
 
