@@ -114,26 +114,48 @@ public class SceneFile : JsonFileBase
 		Quaternion invertedRootRotation = rootRotation;
 		invertedRootRotation.Invert();
 
+		// Adjust for waist
+		SkeletonVisual3d rootSkeleton = new();
+		await rootSkeleton.SetActor(rootActor);
+		Vector rootOriginalWaist = rootActorEntry.Pose?.Bones?["n_hara"]?.Position ?? Vector.Zero;
+		Vector rootCurrentWaist = rootSkeleton.GetBone("n_hara")?.Position ?? Vector.Zero;
+		Vector rootAdjustedWaist = rootRotation * (rootCurrentWaist - rootOriginalWaist);
+
+		if (mode.HasFlag(Mode.WorldPosition))
+		{
+			rootActor!.ModelObject!.Transform!.Position -= rootAdjustedWaist;
+		}
+
 		foreach ((string name, ActorMemory? actor) in actors)
 		{
 			if (actor == null)
 				continue;
 
+			SkeletonVisual3d skeleton = new();
+			await skeleton.SetActor(actor);
+
 			ActorEntry entry = this.ActorEntries[name];
 
 			if (name != this.RootActorName && mode.HasFlag(Mode.RelativePosition))
 			{
-				Vector rotatedRelativePosition = rootRotation * entry.Position;
 				Quaternion rotatedRotation = rootRotation * entry.Rotation;
+				Vector rotatedRelativePosition = rootRotation * entry.Position;
 
-				actor.ModelObject!.Transform!.Position = rootPosition + rotatedRelativePosition;
+				Vector originalWaist = entry.Pose?.Bones?["n_hara"]?.Position ?? Vector.Zero;
+				Vector currentWaist = rootSkeleton.GetBone("n_hara")?.Position ?? Vector.Zero;
+				Vector adjustedWaist = rotatedRotation * (currentWaist - originalWaist);
+
+				actor.ModelObject!.Transform!.Position = (rootPosition + rotatedRelativePosition) - adjustedWaist;
 				actor.ModelObject!.Transform!.Rotation = rotatedRotation;
+
+				if (!mode.HasFlag(Mode.WorldPosition))
+				{
+					actor.ModelObject!.Transform!.Position += rootAdjustedWaist;
+				}
 			}
 
 			if (mode.HasFlag(Mode.Pose))
 			{
-				SkeletonVisual3d skeleton = new();
-				await skeleton.SetActor(actor);
 				await entry.Pose!.Apply(actor, skeleton, null, PoseFile.Mode.Rotation);
 			}
 		}
@@ -185,7 +207,7 @@ public class SceneFile : JsonFileBase
 			Vector relativePosition = actorPosition - rootPosition;
 
 			Vector rotatedRelativePosition = invertedRootRotation * relativePosition;
-			Quaternion rotatedRelativeRotation = actorRotation * invertedRootRotation;
+			Quaternion rotatedRelativeRotation = invertedRootRotation * actorRotation;
 
 			CharacterFile characterFile = new();
 			characterFile.WriteToFile(actor, CharacterFile.SaveModes.All);
