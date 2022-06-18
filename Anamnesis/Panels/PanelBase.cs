@@ -7,9 +7,12 @@ using FontAwesome.Sharp;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using XivToolsWpf.DependencyProperties;
 
 public abstract class PanelBase : UserControl, IPanel
 {
+	public static readonly IBind<string?> TitleDp = Binder.Register<string?, PanelBase>(nameof(Title), OnTitleChanged, BindMode.OneWay);
+
 	public PanelBase(IPanelGroupHost host)
 	{
 		this.Host = host;
@@ -17,10 +20,22 @@ public abstract class PanelBase : UserControl, IPanel
 
 	public IPanelGroupHost Host { get; init; }
 
-	public string Title
+	public string? TitleKey
+	{
+		get => this.Host.TitleKey;
+		set => this.Host.TitleKey = value;
+	}
+
+	/*public string? Title
 	{
 		get => this.Host.Title;
 		set => this.Host.Title = value;
+	}*/
+
+	public string? Title
+	{
+		get => TitleDp.Get(this);
+		set => TitleDp.Set(this, value);
 	}
 
 	public IconChar Icon
@@ -63,4 +78,9 @@ public abstract class PanelBase : UserControl, IPanel
 	public void SetParent(IPanel other) => other.Host.AddChild(this);
 
 	public void Close() => this.Host.Close();
+
+	private static void OnTitleChanged(PanelBase sender, string? value)
+	{
+		sender.Host.Title = value;
+	}
 }

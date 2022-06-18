@@ -235,11 +235,11 @@
 			<local:Shortcut
 				ContentPadding="10,0,0,0"
 				Context="{Binding Actor}"
-				Destination=" Appearance"
+				Destination="CustomizeActor"
 				Icon="IdCardAlt"
-				LabelKey="Naviagation_Actor_Appearance"
+				LabelKey="Naviagation_Actor_Customize"
 				ShowText="{Binding ShowText}"
-				ToolTipKey="Naviagation_Actor_Appearance_Tip" />
+				ToolTipKey="Naviagation_Actor_Customize_Tip" />
 
 			<local:Shortcut
 				ContentPadding="10,0,0,0"

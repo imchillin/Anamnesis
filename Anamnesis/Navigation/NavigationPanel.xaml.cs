@@ -46,7 +46,7 @@ public partial class NavigationPanel : PanelBase
 		set
 		{
 			this.expanded = value;
-			this.Host.Title = value ? "        Anamnesis" : string.Empty;
+			this.Host.TitleKey = value ? "        Anamnesis" : string.Empty;
 		}
 	}
 

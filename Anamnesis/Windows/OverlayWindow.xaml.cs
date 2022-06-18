@@ -11,6 +11,7 @@ using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,6 +26,9 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	private readonly WindowInteropHelper windowInteropHelper;
 	private readonly List<OverlayWindow> children = new();
 	private OverlayWindow? parent;
+
+	private string? titleKey;
+	private string? titleText;
 
 	private int x;
 	private int y;
@@ -45,14 +49,23 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	public bool AutoClose { get; set; } = true;
 	public bool AllowAutoClose { get; set; } = true;
 
-	public new string Title
+	public string? TitleKey
 	{
-		get => base.Title;
+		get => this.titleKey;
 		set
 		{
-			base.Title = value;
+			this.titleKey = value;
+			this.UpdateTitle();
+		}
+	}
 
-			this.TitleText.Text = LocalizationService.GetString(value, true);
+	public new string? Title
+	{
+		get => this.titleText;
+		set
+		{
+			this.titleText = value;
+			this.UpdateTitle();
 		}
 	}
 
@@ -71,8 +84,8 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		get => base.Topmost;
 		set
 		{
-			// nope!
 			base.Topmost = value;
+			this.UpdatePosition();
 		}
 	}
 
@@ -178,6 +191,23 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	[DllImport("user32.dll", EntryPoint = "GetWindowLong")]
 	private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
+	private void UpdateTitle()
+	{
+		StringBuilder sb = new();
+
+		if (this.titleKey != null)
+			sb.Append(LocalizationService.GetString(this.titleKey, true));
+
+		if (this.titleKey != null && this.titleText != null)
+			sb.Append(" ");
+
+		if (this.titleText != null)
+			sb.Append(this.titleText);
+
+		base.Title = sb.ToString();
+		this.TitleText.Text = base.Title;
+	}
+
 	private void OnWindowLoaded(object sender, RoutedEventArgs e)
 	{
 		if (MemoryService.Process == null)
@@ -228,6 +258,11 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 
 		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, w, h, /*SHOWWINDOW */ 0x0040);
 		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, this.x, this.y, 0, 0, /*NOSIZE*/ 0x0001);
+
+		if (this.Topmost)
+		{
+			SetWindowPos(this.windowInteropHelper.Handle, (IntPtr)(-1), 0, 0, 0, 0, /*NOSIZE | NOMOVE*/ 0x0001 | 0x0003);
+		}
 	}
 
 	private void OnTitleMouseDown(object sender, MouseButtonEventArgs e)
@@ -267,6 +302,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
 	{
 		this.Activate();
+		////this.UpdatePosition();
 	}
 
 	private void OnCloseStoryboardCompleted(object sender, EventArgs e)

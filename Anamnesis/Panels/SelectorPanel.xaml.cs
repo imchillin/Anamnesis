@@ -48,7 +48,7 @@ public class WeatherSelectorPanel : TemplateSelectorPanel<WeatherSelector>
 	public WeatherSelectorPanel(IPanelGroupHost host)
 		: base(host)
 	{
-		this.Title = "Scene_World_Weather";
+		this.TitleKey = "Scene_World_Weather";
 		this.Icon = IconChar.CloudRain;
 	}
 

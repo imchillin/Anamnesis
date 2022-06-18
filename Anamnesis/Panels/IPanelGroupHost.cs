@@ -17,7 +17,8 @@ public interface IPanelGroupHost : IPanel
 
 public interface IPanel
 {
-	string Title { get; set; }
+	string? TitleKey { get; set; }
+	string? Title { get; set; }
 	IconChar Icon { get; set; }
 	Rect Rect { get; set; }
 	bool ShowBackground { get; set; }

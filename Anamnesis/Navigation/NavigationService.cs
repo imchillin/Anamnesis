@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Navigation;
 
+using Anamnesis.Actor.Panels;
 using Anamnesis.Panels;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ public class NavigationService : ServiceBase<NavigationService>
 		{ "Weather", typeof(WeatherPanel) },
 		{ "WeatherSelector", typeof(WeatherSelectorPanel) },
 		{ "PinActor", typeof(PinActorPanel) },
+		{ "CustomizeActor", typeof(CustomizePanel) },
 	};
 
 	/// <summary>
@@ -34,6 +36,7 @@ public class NavigationService : ServiceBase<NavigationService>
 			if (panel == null)
 				throw new Exception($"Failed to create instance of panel: {panelType}");
 
+			panel.DataContext = request.Context;
 			groupHost.PanelGroupArea.Content = panel;
 
 			// Move the panel to the target position next to the navigation menu
