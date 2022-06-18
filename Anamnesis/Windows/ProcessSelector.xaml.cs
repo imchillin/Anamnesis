@@ -185,6 +185,7 @@ public partial class ProcessSelector : UserControl
 		{
 			this.Process = process;
 			this.Name = process.ProcessName;
+			this.WindowTitle = process.MainWindowTitle;
 			this.Id = process.Id;
 
 			try
@@ -210,6 +211,7 @@ public partial class ProcessSelector : UserControl
 
 		public bool Locked { get; }
 		public string Name { get; }
+		public string WindowTitle { get; }
 		public int Id { get; }
 		public DateTime? StartTime { get; }
 		public ImageSource? AppIcon { get; }
