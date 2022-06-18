@@ -16,7 +16,6 @@ public abstract class PanelBase : UserControl, IPanel
 	}
 
 	public IPanelGroupHost Host { get; init; }
-	public Action<object?>? NavigationResultCallback { get; set; }
 
 	public string Title
 	{
@@ -56,4 +55,6 @@ public abstract class PanelBase : UserControl, IPanel
 	}
 
 	public void SetParent(IPanel other) => other.Host.AddChild(this);
+
+	public void Close() => this.Host.Close();
 }

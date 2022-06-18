@@ -26,6 +26,6 @@ public interface IPanel
 	IPanelGroupHost Host { get; }
 
 	void DragMove();
-
 	void SetParent(IPanel other) => other.Host.AddChild(this);
+	void Close();
 }

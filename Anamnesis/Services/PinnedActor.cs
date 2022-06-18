@@ -63,6 +63,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public bool IsGPoseActor { get; private set; }
 	public bool IsHidden { get; private set; }
 	public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
+	public bool IsTargeted { get; set; }
 
 	public string? DisplayName => this.Memory == null ? this.Name : this.Memory.DisplayName;
 	public bool IsRetargeting { get; private set; } = false;

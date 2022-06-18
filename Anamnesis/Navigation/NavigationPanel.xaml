@@ -122,7 +122,7 @@
 				</ItemsControl>
 
 				<local:Shortcut
-					Destination="Weather"
+					Destination="PinActor"
 					Icon="Plus"
 					LabelKey="Naviagation_AddActor"
 					ShowText="{Binding Expanded}"

@@ -70,18 +70,18 @@ public partial class ActorEntry : UserControl
 
 	private void OnUnpinActorClicked(object sender, RoutedEventArgs e)
 	{
-		if (sender is FrameworkElement el && el.DataContext is PinnedActor actor)
-		{
-			TargetService.UnpinActor(actor);
-		}
+		if (this.Actor == null)
+			return;
+
+		TargetService.UnpinActor(this.Actor);
 	}
 
 	private void OnTargetActorClicked(object sender, RoutedEventArgs e)
 	{
-		if (sender is FrameworkElement el && el.DataContext is PinnedActor actor)
-		{
-			TargetService.SetPlayerTarget(actor);
-		}
+		if (this.Actor == null)
+			return;
+
+		TargetService.SetPlayerTarget(this.Actor);
 	}
 
 	private void OnActorPinPreviewMouseUp(object sender, MouseButtonEventArgs e)

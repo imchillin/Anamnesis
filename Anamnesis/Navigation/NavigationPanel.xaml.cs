@@ -54,20 +54,12 @@ public partial class NavigationPanel : PanelBase
 
 	public override Point GetSubPanelDockOffset()
 	{
-		return new Point(this.Sidebar.ActualWidth, this.TopBar.ActualHeight);
+		return new Point(this.Sidebar.ActualWidth + 6, this.TopBar.ActualHeight + 3);
 	}
 
 	private void OnIconMouseDown(object sender, MouseButtonEventArgs e)
 	{
 		this.DragMove();
-	}
-
-	private void OnAddActorClicked(object sender, RoutedEventArgs e)
-	{
-		TargetSelectorView.Show((a) =>
-		{
-			TargetService.PinActor(a, true).Run();
-		});
 	}
 
 	private void OnActorEntryExpanded(object sender, RoutedEventArgs e)

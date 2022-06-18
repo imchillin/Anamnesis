@@ -203,6 +203,11 @@ public class TargetService : ServiceBase<TargetService>
 
 				this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
 				this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
+
+				foreach (PinnedActor pinnedActor in this.PinnedActors)
+				{
+					pinnedActor.IsTargeted = pinnedActor.Pointer == currentPlayerTargetPtr;
+				}
 			}
 		}
 		catch

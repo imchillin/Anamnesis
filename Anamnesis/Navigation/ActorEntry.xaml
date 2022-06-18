@@ -12,18 +12,7 @@
 
 	<Grid x:Name="ContentArea">
 
-		<Grid.ContextMenu>
-			<ContextMenu>
-				<MenuItem
-					Click="OnUnpinActorClicked"
-					Header="Unpin" />
 
-				<MenuItem
-					Click="OnTargetActorClicked"
-					Header="Target"
-					Visibility="{Binding Actor.IsValid, Converter={StaticResource B2V}}" />
-			</ContextMenu>
-		</Grid.ContextMenu>
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -35,13 +24,29 @@
 			HorizontalAlignment="Stretch"
 			HorizontalContentAlignment="Left"
 			IsChecked="{Binding IsExpanded}"
+			PreviewMouseUp="OnActorPinPreviewMouseUp"
 			Style="{StaticResource TransparentToggleButton}">
+
+			<ToggleButton.ContextMenu>
+				<ContextMenu>
+					<MenuItem
+						Click="OnUnpinActorClicked"
+						Header="Unpin" />
+
+					<MenuItem
+						Click="OnTargetActorClicked"
+						Header="Target"
+						Visibility="{Binding Actor.IsValid, Converter={StaticResource B2V}}" />
+				</ContextMenu>
+			</ToggleButton.ContextMenu>
+
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="10" />
 				</Grid.ColumnDefinitions>
 
 				<Grid.ToolTip>
@@ -111,6 +116,15 @@
 					Foreground="{DynamicResource MaterialDesignToolForeground}"
 					Text="{Binding Actor.Initials}"
 					Visibility="{Binding ShowText, Converter={StaticResource !B2V}}" />
+
+				<XivToolsWpf:IconBlock
+					Grid.Column="4"
+					Margin="3,0,0,0"
+					FontSize="8"
+					Foreground="{StaticResource PrimaryHueMidBrush}"
+					Icon="MousePointer"
+					Visibility="{Binding Actor.IsTargeted, Converter={StaticResource B2V}}" />
+
 			</Grid>
 		</ToggleButton>
 

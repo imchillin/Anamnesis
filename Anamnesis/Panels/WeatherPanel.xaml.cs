@@ -9,25 +9,18 @@ using System.Windows;
 
 public partial class WeatherPanel : PanelBase
 {
-	private readonly NavigationService.Request selectWeather;
-
 	public WeatherPanel(IPanelGroupHost host)
 		: base(host)
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
-
-		this.selectWeather = new(this, "WeatherSelector");
 	}
 
 	public TimeService TimeService => TimeService.Instance;
 	public TerritoryService TerritoryService => TerritoryService.Instance;
 
-	private void OnWeatherClicked(object sender, RoutedEventArgs e)
+	public override Point GetSubPanelDockOffset()
 	{
-		this.selectWeather.Navigate<Weather>((w) =>
-		{
-			this.TerritoryService.CurrentWeather = w;
-		});
+		return new(0, this.Rect.Height - 6);
 	}
 }

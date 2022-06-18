@@ -14,26 +14,8 @@ public class NavigationService : ServiceBase<NavigationService>
 	{
 		{ "Weather", typeof(WeatherPanel) },
 		{ "WeatherSelector", typeof(WeatherSelectorPanel) },
+		{ "PinActor", typeof(PinActorPanel) },
 	};
-
-	/// <summary>
-	/// Navigate to a panel, and recieve a callback of type T from the panel.
-	/// </summary>
-	public static void Navigate<T>(Request request, Action<T?> resultCallback)
-	{
-		PanelBase? panel = Navigate(request);
-
-		if (panel == null)
-			return;
-
-		panel.NavigationResultCallback = (result) =>
-		{
-			if (result is not T tResult)
-				throw new Exception($"navigation result: {result} was not expected type: {typeof(T)}");
-
-			resultCallback.Invoke(tResult);
-		};
-	}
 
 	/// <summary>
 	/// Navigate to a panel.
@@ -62,8 +44,8 @@ public class NavigationService : ServiceBase<NavigationService>
 				Rect navRect = originPanel.Rect;
 				Point pos = originPanel.GetSubPanelDockOffset();
 
-				panelRect.X = navRect.X + pos.X + 6;
-				panelRect.Y = navRect.Y + pos.Y + 3;
+				panelRect.X = navRect.X + pos.X;
+				panelRect.Y = navRect.Y + pos.Y;
 
 				panel.Rect = panelRect;
 				panel.SetParent(originPanel);
@@ -99,11 +81,6 @@ public class NavigationService : ServiceBase<NavigationService>
 			this.Destination = destination;
 			this.Context = context;
 		}
-
-		/// <summary>
-		/// Navigate to a panel, and recieve a callback of type T from the panel.
-		/// </summary>
-		public void Navigate<T>(Action<T?> resultCallback) => NavigationService.Navigate<T>(this, resultCallback);
 
 		/// <summary>
 		/// Navigate to a panel.
