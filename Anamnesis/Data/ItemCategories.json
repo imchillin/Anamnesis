@@ -3633,7 +3633,7 @@
   "3828": "Deprecated",
   // Aetherial Velveteen Dress Shoes
   "3832": "Deprecated",
-  // Aetherial Steelclad Boots
+  // Aetherial Steel-clad Boots
   "3834": "Deprecated",
   // Aetherial Steel Scale Greaves
   "3836": "Deprecated",
@@ -5657,46 +5657,6 @@
   "15281": "Limited",
   // Pack Wolf Boots
   "15282": "Limited",
-  // Diamond Lone Wolf Choker
-  "15283": "Limited",
-  // Diamond Lone Wolf Earrings
-  "15284": "Limited",
-  // Diamond Lone Wolf Bracelets
-  "15285": "Limited",
-  // Diamond Lone Wolf Ring
-  "15286": "Limited",
-  // Platinum Lone Wolf Choker
-  "15287": "Limited",
-  // Platinum Lone Wolf Earrings
-  "15288": "Limited",
-  // Platinum Lone Wolf Bracelets
-  "15289": "Limited",
-  // Platinum Lone Wolf Ring
-  "15290": "Limited",
-  // Gold Lone Wolf Choker
-  "15291": "Limited",
-  // Gold Lone Wolf Earrings
-  "15292": "Limited",
-  // Gold Lone Wolf Bracelets
-  "15293": "Limited",
-  // Gold Lone Wolf Ring
-  "15294": "Limited",
-  // Silver Lone Wolf Choker
-  "15295": "Limited",
-  // Silver Lone Wolf Earrings
-  "15296": "Limited",
-  // Silver Lone Wolf Bracelets
-  "15297": "Limited",
-  // Silver Lone Wolf Ring
-  "15298": "Limited",
-  // Bronze Lone Wolf Choker
-  "15299": "Limited",
-  // Bronze Lone Wolf Earrings
-  "15300": "Limited",
-  // Bronze Lone Wolf Bracelets
-  "15301": "Limited",
-  // Bronze Lone Wolf Ring
-  "15302": "Limited",
   // Legacy Warrior Coronet
   "15467": "Premium, Limited",
   // Legacy Warrior Mail
@@ -7067,38 +7027,6 @@
   "20980": "Limited",
   // Hellhound Sabatons
   "20981": "Limited",
-  // Hellhound War Pick
-  "20982": "Limited",
-  // Hellhound Knuckles
-  "20983": "Limited",
-  // Hellhound Battleaxe
-  "20984": "Limited",
-  // Hellhound Spear
-  "20985": "Limited",
-  // Hellhound Longbow
-  "20986": "Limited",
-  // Hellhound Sword Breakers
-  "20987": "Limited",
-  // Hellhound Faussar
-  "20988": "Limited",
-  // Hellhound Handgonne
-  "20989": "Limited",
-  // Hellhound Cane
-  "20990": "Limited",
-  // Hellhound Staff
-  "20991": "Limited",
-  // Hellhound Grimoire
-  "20992": "Limited",
-  // Hellhound Codex
-  "20993": "Limited",
-  // Hellhound Planisphere
-  "20994": "Limited",
-  // Hellhound Katana
-  "20995": "Limited",
-  // Hellhound Tuck
-  "20996": "Limited",
-  // Hellhound Shield
-  "20997": "Limited",
   // Werewolf Head
   "21017": "Premium, Limited",
   // Werewolf Body
@@ -7625,6 +7553,10 @@
   "24614": "Limited",
   // Mameshiba Neckerchief
   "24615": "Limited",
+  // Gown of Light
+  "24999": "Premium",
+  // Skirt of Light
+  "25000": "Premium",
   // Exclusive Eastern Journey Battle Staff
   "25055": "Premium",
   // Deepshadow Sword
@@ -8133,10 +8065,6 @@
   "30809": "Limited",
   // Glaives of the Dark Princess
   "30810": "Limited",
-  // Hellhound Gunblade
-  "31394": "Limited",
-  // Hellhound Chakrams
-  "31395": "Limited",
   // Bergsteiger's Hat
   "31408": "Premium",
   // Bergsteiger's Jacket
@@ -8306,7 +8234,7 @@
   // Cryptlurker's Ring of Casting
   "32497": "Deprecated",
   // Lovely Moogle Cap
-  "32803": "Limited",
+  "32803": "Premium, Limited",
   // Golden Tora Kabuto
   "32804": "Limited",
   // Silver Tora Kabuto
@@ -8352,9 +8280,9 @@
   // Great Serpent of Ringa
   "33650": "Premium",
   // Chicken Head
-  "33653": "Limited",
+  "33653": "Premium, Limited",
   // Chicken Suit
-  "33654": "Limited",
+  "33654": "Premium, Limited",
   // Resshi Hachigane
   "33663": "Premium",
   // Resshi Haori
@@ -8371,10 +8299,6 @@
   "33753": "Premium",
   // Death Scythe
   "35754": "Limited",
-  // Hellhound Scythe
-  "35755": "Limited",
-  // Hellhound Pendulums
-  "35773": "Limited",
   // Little Lady's Crown
   "35857": "Limited",
   // Clown's Hat
@@ -8397,4 +8321,86 @@
   "36338": "Premium",
   // Omega-F Earrings
   "36339": "Premium",
+  // Lyse's Leadership Attire
+  "36843": "Premium",
+  // Makai Vanguard's Monocle
+  "37442": "Limited",
+  // Makai Vanguard's Battlegarb
+  "37443": "Limited",
+  // Makai Vanguard's Fingerless Gloves
+  "37444": "Limited",
+  // Makai Vanguard's Leggings
+  "37445": "Limited",
+  // Makai Vanguard's Boots
+  "37446": "Limited",
+  // Makai Vanbreaker's Ribbon
+  "37447": "Limited",
+  // Makai Vanbreaker's Battledress
+  "37448": "Limited",
+  // Makai Vanbreaker's Fingerless Gloves
+  "37449": "Limited",
+  // Makai Vanbreaker's Quartertights
+  "37450": "Limited",
+  // Makai Vanbreaker's Longboots
+  "37451": "Limited",
+  // Makai Harbinger's Facemask
+  "37452": "Limited",
+  // Makai Harbinger's Battlegarb
+  "37453": "Limited",
+  // Makai Harbinger's Fingerless Gloves
+  "37454": "Limited",
+  // Makai Harbinger's Leggings
+  "37455": "Limited",
+  // Makai Harbinger's Boots
+  "37456": "Limited",
+  // Makai Harrower's Facemask
+  "37457": "Limited",
+  // Makai Harrower's Jerkin
+  "37458": "Limited",
+  // Makai Harrower's Fingerless Gloves
+  "37459": "Limited",
+  // Makai Harrower's Quartertights
+  "37460": "Limited",
+  // Makai Harrower's Longboots
+  "37461": "Limited",
+  // Common Makai Vanguard's Monocle
+  "37462": "Limited",
+  // Common Makai Vanguard's Battlegarb
+  "37463": "Limited",
+  // Common Makai Vanguard's Fingerless Gloves
+  "37464": "Limited",
+  // Common Makai Vanguard's Leggings
+  "37465": "Limited",
+  // Common Makai Vanguard's Boots
+  "37466": "Limited",
+  // Common Makai Vanbreaker's Ribbon
+  "37467": "Limited",
+  // Common Makai Vanbreaker's Battledress
+  "37468": "Limited",
+  // Common Makai Vanbreaker's Fingerless Gloves
+  "37469": "Limited",
+  // Common Makai Vanbreaker's Quartertights
+  "37470": "Limited",
+  // Common Makai Vanbreaker's Longboots
+  "37471": "Limited",
+  // Common Makai Harbinger's Facemask
+  "37472": "Limited",
+  // Common Makai Harbinger's Battlegarb
+  "37473": "Limited",
+  // Common Makai Harbinger's Fingerless Gloves
+  "37474": "Limited",
+  // Common Makai Harbinger's Leggings
+  "37475": "Limited",
+  // Common Makai Harbinger's Boots
+  "37476": "Limited",
+  // Common Makai Harrower's Facemask
+  "37477": "Limited",
+  // Common Makai Harrower's Jerkin
+  "37478": "Limited",
+  // Common Makai Harrower's Fingerless Gloves
+  "37479": "Limited",
+  // Common Makai Harrower's Quartertights
+  "37480": "Limited",
+  // Common Makai Harrower's Longboots
+  "37481": "Limited",
 }
