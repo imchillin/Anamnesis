@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Animation;
@@ -33,6 +34,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	private int x;
 	private int y;
 	private IconChar icon;
+	private bool canResize = true;
 
 	public OverlayWindow()
 	{
@@ -86,6 +88,16 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		{
 			base.Topmost = value;
 			this.UpdatePosition();
+		}
+	}
+
+	public bool CanResize
+	{
+		get => this.canResize;
+		set
+		{
+			this.canResize = value;
+			this.ResizeMode = this.canResize ? ResizeMode.CanResize : ResizeMode.NoResize;
 		}
 	}
 
@@ -147,7 +159,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		{
 			// If we have docked panels that are active,
 			// then we dont close yet.
-			foreach(IPanel docked in this.children)
+			foreach (IPanel docked in this.children)
 			{
 				if (docked.Host is OverlayWindow dockedWindow)
 				{

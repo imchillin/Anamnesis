@@ -26,12 +26,6 @@ public abstract class PanelBase : UserControl, IPanel
 		set => this.Host.TitleKey = value;
 	}
 
-	/*public string? Title
-	{
-		get => this.Host.Title;
-		set => this.Host.Title = value;
-	}*/
-
 	public string? Title
 	{
 		get => TitleDp.Get(this);
@@ -66,6 +60,12 @@ public abstract class PanelBase : UserControl, IPanel
 	{
 		get => this.Host.Topmost;
 		set => this.Host.Topmost = value;
+	}
+
+	public bool CanResize
+	{
+		get => this.Host.CanResize;
+		set => this.Host.CanResize = value;
 	}
 
 	public void DragMove() => this.Host.DragMove();

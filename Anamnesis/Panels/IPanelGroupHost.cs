@@ -24,6 +24,7 @@ public interface IPanel
 	bool ShowBackground { get; set; }
 	bool AllowAutoClose { get; set; }
 	bool Topmost { get; set; }
+	bool CanResize { get; set; }
 
 	IPanelGroupHost Host { get; }
 

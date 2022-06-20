@@ -6,6 +6,7 @@ namespace Anamnesis;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Anamnesis.Actor;
 using Anamnesis.Core.Memory;
@@ -75,6 +76,9 @@ public class TargetService : ServiceBase<TargetService>
 			PinnedActor pined = new PinnedActor(memory);
 
 			Log.Information($"Pinning actor: {pined}");
+
+			if (Debugger.IsAttached)
+				pined.GetMemory() !.Nickname = "Dev McEloper";
 
 			await Dispatch.MainThread();
 			Instance.PinnedActors.Add(pined);

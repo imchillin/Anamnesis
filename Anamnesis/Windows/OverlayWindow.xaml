@@ -6,7 +6,10 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:Anamnesis.Windows"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:sys="clr-namespace:System;assembly=netstandard"
 	x:Name="Self"
+	MinWidth="128"
+	MinHeight="128"
 	AllowsTransparency="True"
 	Background="Transparent"
 	Loaded="OnWindowLoaded"
@@ -14,6 +17,7 @@
 	MouseLeave="OnMouseLeave"
 	Opacity="0"
 	PreviewMouseDown="OnPreviewMouseDown"
+	ResizeMode="CanResizeWithGrip"
 	SizeToContent="WidthAndHeight"
 	TextBlock.FontSize="12"
 	TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
@@ -48,8 +52,15 @@
 				</DoubleAnimation.EasingFunction>
 			</DoubleAnimation>
 		</Storyboard>
-	</Window.Resources>
 
+		<Style TargetType="ResizeGrip">
+			<Style.Setters>
+				<Setter Property="Margin" Value="0,0,6,6" />
+				<Setter Property="Opacity" Value="0.5" />
+			</Style.Setters>
+		</Style>
+
+	</Window.Resources>
 
 	<Grid x:Name="ContentArea">
 
@@ -71,6 +82,7 @@
 				BorderThickness="1"
 				CornerRadius="6"
 				Visibility="{Binding IsActive, Converter={StaticResource B2V}}" />
+
 		</Grid>
 
 		<Grid
@@ -164,9 +176,13 @@
 				</Grid.ContextMenu>
 			</Grid>
 
-			<ContentPresenter
-				x:Name="ContentPresenter"
-				Grid.Row="1" />
+			<ScrollViewer
+				Grid.Row="1"
+				Margin="1"
+				HorizontalScrollBarVisibility="Auto"
+				VerticalScrollBarVisibility="Auto">
+				<ContentPresenter x:Name="ContentPresenter" />
+			</ScrollViewer>
 
 		</Grid>
 	</Grid>
