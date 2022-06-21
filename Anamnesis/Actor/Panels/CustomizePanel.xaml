@@ -1,4 +1,4 @@
-﻿<panels:PanelBase
+﻿<local:ActorPanelBase
 	x:Class="Anamnesis.Actor.Panels.CustomizePanel"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -19,4 +19,4 @@
 			DataContext="{Binding Actor}" />
 	</Grid>
 
-</panels:PanelBase>
+</local:ActorPanelBase>

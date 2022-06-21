@@ -235,11 +235,20 @@
 			<local:Shortcut
 				ContentPadding="10,0,0,0"
 				Context="{Binding Actor}"
-				Destination="CustomizeActor"
+				Destination="ActorCustomize"
 				Icon="IdCardAlt"
 				LabelKey="Naviagation_Actor_Customize"
 				ShowText="{Binding ShowText}"
 				ToolTipKey="Naviagation_Actor_Customize_Tip" />
+
+			<local:Shortcut
+				ContentPadding="10,0,0,0"
+				Context="{Binding Actor}"
+				Destination="ActorEquipment"
+				Icon="HatCowboy"
+				LabelKey="Naviagation_Actor_Equipment"
+				ShowText="{Binding ShowText}"
+				ToolTipKey="Naviagation_Actor_Equipment_Tip" />
 
 			<local:Shortcut
 				ContentPadding="10,0,0,0"

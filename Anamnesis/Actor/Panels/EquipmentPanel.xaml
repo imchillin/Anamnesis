@@ -1,0 +1,72 @@
+﻿<local:ActorPanelBase
+	x:Class="Anamnesis.Actor.Panels.EquipmentPanel"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:ana="clr-namespace:Anamnesis"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:Anamnesis.Actor.Panels"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:views="clr-namespace:Anamnesis.Actor.Views"
+	xmlns:views1="clr-namespace:Anamnesis.Views"
+	Title="{Binding DisplayName}"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	Icon="IdCardAlt"
+	TitleKey="Naviagation_Actor_Equipment"
+	mc:Ignorable="d">
+
+	<Grid x:Name="ContentArea">
+
+		<StackPanel
+			Height="20"
+			Margin="0,-18,-4,0"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Top"
+			IsEnabled="{Binding Actor.CanRefresh}"
+			Orientation="Horizontal">
+
+			<Button
+				ana:Behaviours.Tooltip="Character_Equipment_RaceGear"
+				Click="OnRaceGearClicked"
+				Style="{StaticResource TransparentIconButton}"
+				Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
+
+				<XivToolsWpf:IconBlock
+					Foreground="{DynamicResource MaterialDesignBodyLight}"
+					Icon="UserAstronaut" />
+			</Button>
+
+			<Button
+				ana:Behaviours.Tooltip="Character_Equipment_NpcSmallclothes"
+				Click="OnNpcSmallclothesClicked"
+				Style="{StaticResource TransparentIconButton}"
+				Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
+
+				<XivToolsWpf:IconBlock
+					Foreground="{DynamicResource MaterialDesignBodyLight}"
+					Icon="UserShield" />
+			</Button>
+
+			<Button
+				Click="OnClearClicked"
+				Style="{StaticResource TransparentIconButton}">
+
+				<Button.ToolTip>
+					<StackPanel>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_Clear" />
+						<views1:HotkeyPrompt Function="AppearancePage.ClearEquipment" />
+					</StackPanel>
+				</Button.ToolTip>
+
+				<XivToolsWpf:IconBlock
+					Foreground="{DynamicResource MaterialDesignBodyLight}"
+					Icon="Eraser" />
+			</Button>
+		</StackPanel>
+
+		<views:EquipmentEditor DataContext="{Binding Actor}" />
+
+
+	</Grid>
+</local:ActorPanelBase>
