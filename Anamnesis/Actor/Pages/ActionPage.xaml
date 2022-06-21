@@ -201,7 +201,7 @@
 
                         <ToggleButton Grid.Column="0" Grid.Row="0" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Actor.Animation.LinkSpeeds}">
                             <ToggleButton.ToolTip>
-                                <XivToolsWpf:TextBlock Key="Common_LinkVector"/>
+                                <XivToolsWpf:TextBlock Key="Character_Action_LinkSpeed"/>
                             </ToggleButton.ToolTip>
 
                             <Grid>

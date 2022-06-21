@@ -84,5 +84,46 @@
 
         </GroupBox>
 
+        <GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="2">
+            <GroupBox.Header>
+                <controls:Header Icon="Question" Text="Experimental"/>
+            </GroupBox.Header>
+            <StackPanel>
+                <GroupBox Style="{StaticResource PanelGroupBox}" Grid.Column="2" IsEnabled="{Binding GposeService.IsGpose}">
+                    <GroupBox.Header>
+                        <controls:Header Icon="CameraRetro" Text="Scenes"/>
+                    </GroupBox.Header>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Button Grid.Row="0" Click="OnSaveSceneClicked" Style="{StaticResource TransparentButton}" Content="Save Scene" />
+
+                        <Separator Grid.Row="1" />
+
+                        <Button Grid.Row="2" Click="OnLoadSceneClicked" Style="{StaticResource TransparentButton}" Content="Load Scene" />
+
+                        <StackPanel Grid.Row="3">
+                            <CheckBox IsChecked="{Binding SceneOptions.RelativePositions}" Content="Relative Positions" />
+                            <CheckBox IsChecked="{Binding SceneOptions.WorldPositions}" Content="World Positions" />
+                            <CheckBox IsChecked="{Binding SceneOptions.Poses}" Content="Poses" />
+                            <CheckBox IsChecked="{Binding SceneOptions.Camera}" Content="Camera" />
+                            <CheckBox IsChecked="{Binding SceneOptions.Time}" Content="Time" />
+                            <CheckBox IsChecked="{Binding SceneOptions.Weather}" Content="Weather" />
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </GroupBox>
+
     </Grid>
 </UserControl>

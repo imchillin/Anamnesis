@@ -194,11 +194,12 @@
 
 				<!-- save/load menu -->
 				<Menu Grid.Row="1" Margin="2, 2, 0, 4" IsEnabled="{Binding GposeService.IsGpose}" Style="{StaticResource AnaMenu}">
-					<MenuItem Header="Common_OpenFile"
-								Icon="FolderOpen"
+
+					<MenuItem Header="Common_ImportFile"
+								Icon="FileImport"
 								Style="{StaticResource ButtonMenuItemLeft}"
 								Width="76"
-								Click="OnOpenClicked">
+								Click="OnImportClicked">
 
 						<MenuItem.ToolTip>
 							<XivToolsWpf:TextBlock Key="Pose_LoadTip" />
@@ -209,7 +210,7 @@
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
 						<MenuItem Header="Pose_All"
 									Style="{StaticResource AnaMenuItem}"
-									Click="OnOpenAllClicked" >
+									Click="OnImportAllClicked" >
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_AllTooltip" />
 							</MenuItem.ToolTip>
@@ -217,7 +218,7 @@
 
 						<MenuItem Header="Pose_Body" 
 									Style="{StaticResource AnaMenuItem}" 
-									Click="OnOpenBodyClicked">
+									Click="OnImportBodyClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_BodyTooltip" />
 							</MenuItem.ToolTip>
@@ -225,25 +226,33 @@
 
 						<MenuItem Header="Pose_Expression" 
 									Style="{StaticResource AnaMenuItem}" 
-									Click="OnOpenExpressionClicked"/>
+									Click="OnImportExpressionClicked"/>
 
 						<MenuItem Header="Pose_ScalePack" 
 									Style="{StaticResource AnaMenuItem}" 
-									Click="OnOpenScaleClicked"/>
+									Click="OnImportScaleClicked"/>
 
 						<MenuItem Header="Pose_Selected"
 									Style="{StaticResource AnaMenuItem}"
-									Click="OnOpenSelectedClicked"
+									Click="OnImportSelectedClicked"
 									IsEnabled="{Binding Skeleton.HasSelection}" />
 					</MenuItem>
 
-					<MenuItem Header="Common_SaveFile" Icon="Save" Style="{StaticResource ButtonMenuItemLeft}" Width="76" Click="OnSaveClicked"/>
+					<MenuItem Header="Common_ExportFile"
+							  Icon="FileExport"
+							  Style="{StaticResource ButtonMenuItemLeft}"
+							  Width="76"
+							  Click="OnExportClicked"/>
+					
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
-						<MenuItem Header="Pose_Selected" Style="{StaticResource AnaMenuItem}" Click="OnSaveSelectedClicked" IsEnabled="{Binding Skeleton.HasSelection}"/>
+						<MenuItem Header="Pose_Selected"
+								  Style="{StaticResource AnaMenuItem}"
+								  Click="OnExportSelectedClicked"
+								  IsEnabled="{Binding Skeleton.HasSelection}"/>
 
 						<MenuItem Header="Common_SaveFileMeta"
 							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnSaveMetaClicked" />
+							  Click="OnExportMetaClicked" />
 					</MenuItem>
 				</Menu>
 			</Grid>

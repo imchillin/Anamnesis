@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 public static class Penumbra
 {
-	public static async Task Redraw(string targetName)
+	public static async Task Redraw(int targetIndex)
 	{
 		RedrawData data = new();
-		data.Name = targetName;
-		data.Type = RedrawData.RedrawType.WithSettings;
+		data.ObjectTableIndex = targetIndex;
+		data.Type = RedrawData.RedrawType.Redraw;
 
 		await PenumbraApi.Post("/redraw", data);
 
@@ -22,17 +22,12 @@ public static class Penumbra
 	{
 		public enum RedrawType
 		{
-			WithoutSettings,
-			WithSettings,
-			OnlyWithSettings,
-			Unload,
-			RedrawWithoutSettings,
-			RedrawWithSettings,
-			AfterGPoseWithSettings,
-			AfterGPoseWithoutSettings,
+			Redraw,
+			AfterGPose,
 		}
 
 		public string Name { get; set; } = string.Empty;
-		public RedrawType Type { get; set; } = RedrawType.WithSettings;
+		public int ObjectTableIndex { get; set; } = -1;
+		public RedrawType Type { get; set; } = RedrawType.Redraw;
 	}
 }

@@ -143,22 +143,29 @@ public class TargetService : ServiceBase<TargetService>
 	{
 		if (actor.IsValid)
 		{
-			IntPtr? ptr = actor.Pointer;
-			if (ptr != null && ptr != IntPtr.Zero)
+			SetPlayerTarget(actor.Pointer);
+		}
+	}
+
+	public static void SetPlayerTarget(ActorBasicMemory actor)
+	{
+		if (actor.IsValid)
+		{
+			SetPlayerTarget(actor.Address);
+		}
+	}
+
+	public static PinnedActor? GetPlayerTarget()
+	{
+		foreach (var pinned in Instance.PinnedActors)
+		{
+			if (pinned.Pointer == Instance.PlayerTarget.Address)
 			{
-				if (ActorService.Instance.IsActorInTable((IntPtr)ptr))
-				{
-					if (GposeService.Instance.IsGpose)
-					{
-						MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset), (IntPtr)ptr, "Update player target");
-					}
-					else
-					{
-						MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset), (IntPtr)ptr, "Update player target");
-					}
-				}
+				return pinned;
 			}
 		}
+
+		return null;
 	}
 
 	public void UpdatePlayerTarget()
@@ -201,6 +208,19 @@ public class TargetService : ServiceBase<TargetService>
 		catch
 		{
 			// This section can only fail when FFXIV isn't running (fail to set address) so it should be safe to ignore
+		}
+
+		// Tick the actor if it still exists
+		if(this.PlayerTarget != null && this.PlayerTarget.Address != IntPtr.Zero)
+		{
+			try
+			{
+				this.PlayerTarget.Tick();
+			}
+			catch
+			{
+				// Should only fail to tick if the game isn't running
+			}
 		}
 	}
 
@@ -382,6 +402,24 @@ public class TargetService : ServiceBase<TargetService>
 		});
 	}
 
+	private static void SetPlayerTarget(IntPtr? ptr)
+	{
+		if (ptr != null && ptr != IntPtr.Zero)
+		{
+			if (ActorService.Instance.IsActorInTable((IntPtr)ptr))
+			{
+				if (GposeService.Instance.IsGpose)
+				{
+					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, GPosePlayerTargetOffset), (IntPtr)ptr, "Update player target");
+				}
+				else
+				{
+					MemoryService.Write<IntPtr>(IntPtr.Add(AddressService.PlayerTargetSystem, OverworldPlayerTargetOffset), (IntPtr)ptr, "Update player target");
+				}
+			}
+		}
+	}
+
 	private async Task TickPinnedActors()
 	{
 		while (this.IsAlive)
@@ -394,7 +432,6 @@ public class TargetService : ServiceBase<TargetService>
 			}
 
 			this.UpdatePlayerTarget();
-			this.PlayerTarget?.Tick();
 		}
 	}
 

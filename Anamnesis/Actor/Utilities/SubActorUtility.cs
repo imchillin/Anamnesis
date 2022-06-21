@@ -199,11 +199,11 @@ public class SubActorUtility
 				switch (memory.Customize.Gender)
 				{
 					case ActorCustomizeMemory.Genders.Masculine:
-						mountScaleFactor = mountCustomize.HrothgarMaleScale;
+						mountScaleFactor = mountCustomize.VieraMaleScale;
 						break;
 
 					case ActorCustomizeMemory.Genders.Feminine:
-						mountScaleFactor = mountCustomize.HrothgarMaleScale;
+						mountScaleFactor = mountCustomize.VieraFemaleScale;
 						break;
 				}
 

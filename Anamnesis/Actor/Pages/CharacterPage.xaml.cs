@@ -192,57 +192,57 @@ public partial class CharacterPage : UserControl
 		await this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original);
 	}
 
-	private async void OnLoadClicked(object sender, RoutedEventArgs e)
+	private async void OnImportClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Load(CharacterFile.SaveModes.All);
+		await this.ImportCharacter(CharacterFile.SaveModes.All);
 	}
 
-	private async void OnLoadEquipmentClicked(object sender, RoutedEventArgs e)
+	private async void OnImportEquipmentClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Load(CharacterFile.SaveModes.Equipment);
+		await this.ImportCharacter(CharacterFile.SaveModes.Equipment);
 	}
 
-	private async void OnLoadGearClicked(object sender, RoutedEventArgs e)
+	private async void OnImportGearClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Load(CharacterFile.SaveModes.EquipmentGear);
+		await this.ImportCharacter(CharacterFile.SaveModes.EquipmentGear);
 	}
 
-	private async void OnLoadAccessoriesClicked(object sender, RoutedEventArgs e)
+	private async void OnImportAccessoriesClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Load(CharacterFile.SaveModes.EquipmentAccessories);
+		await this.ImportCharacter(CharacterFile.SaveModes.EquipmentAccessories);
 	}
 
-	private async void OnLoadAppearanceClicked(object sender, RoutedEventArgs e)
+	private async void OnImportAppearanceClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Load(CharacterFile.SaveModes.Appearance);
+		await this.ImportCharacter(CharacterFile.SaveModes.Appearance);
 	}
 
-	private async void OnLoadWeaponsClicked(object sender, RoutedEventArgs e)
+	private async void OnImportWeaponsClicked(object sender, RoutedEventArgs e)
 	{
-		await this.Load(CharacterFile.SaveModes.EquipmentWeapons);
+		await this.ImportCharacter(CharacterFile.SaveModes.EquipmentWeapons);
 	}
 
-	private void OnLoadNpcClicked(object sender, RoutedEventArgs e)
+	private void OnImportNpcClicked(object sender, RoutedEventArgs e)
 	{
-		this.LoadNpc(CharacterFile.SaveModes.All);
+		this.ImportNpc(CharacterFile.SaveModes.All);
 	}
 
-	private void OnLoadNpcEquipmentClicked(object sender, RoutedEventArgs e)
+	private void OnImportNpcEquipmentClicked(object sender, RoutedEventArgs e)
 	{
-		this.LoadNpc(CharacterFile.SaveModes.Equipment);
+		this.ImportNpc(CharacterFile.SaveModes.Equipment);
 	}
 
-	private void OnLoadNpcAppearanceClicked(object sender, RoutedEventArgs e)
+	private void OnImportNpcAppearanceClicked(object sender, RoutedEventArgs e)
 	{
-		this.LoadNpc(CharacterFile.SaveModes.Appearance);
+		this.ImportNpc(CharacterFile.SaveModes.Appearance);
 	}
 
-	private void OnLoadNpcWeaponsClicked(object sender, RoutedEventArgs e)
+	private void OnImportNpcWeaponsClicked(object sender, RoutedEventArgs e)
 	{
-		this.LoadNpc(CharacterFile.SaveModes.EquipmentWeapons);
+		this.ImportNpc(CharacterFile.SaveModes.EquipmentWeapons);
 	}
 
-	private void LoadNpc(CharacterFile.SaveModes mode)
+	private void ImportNpc(CharacterFile.SaveModes mode)
 	{
 		SelectorDrawer.Show<NpcSelector, INpcBase>(null, (npc) =>
 		{
@@ -269,7 +269,7 @@ public partial class CharacterPage : UserControl
 		}
 	}
 
-	private async Task Load(CharacterFile.SaveModes mode)
+	private async Task ImportCharacter(CharacterFile.SaveModes mode)
 	{
 		if (this.Actor == null)
 			return;
@@ -278,19 +278,19 @@ public partial class CharacterPage : UserControl
 		{
 			Shortcut[]? shortcuts = new[]
 			{
-					FileService.DefaultCharacterDirectory,
-					FileService.FFxivDatCharacterDirectory,
-					FileService.CMToolAppearanceSaveDir,
+				FileService.DefaultCharacterDirectory,
+				FileService.FFxivDatCharacterDirectory,
+				FileService.CMToolAppearanceSaveDir,
 			};
 
 			Type[] types = new[]
 			{
-					typeof(CmToolAppearanceFile),
-					typeof(CmToolAppearanceJsonFile),
-					typeof(CmToolGearsetFile),
-					typeof(CmToolLegacyAppearanceFile),
-					typeof(DatCharacterFile),
-					typeof(CharacterFile),
+				typeof(CmToolAppearanceFile),
+				typeof(CmToolAppearanceJsonFile),
+				typeof(CmToolGearsetFile),
+				typeof(CmToolLegacyAppearanceFile),
+				typeof(DatCharacterFile),
+				typeof(CharacterFile),
 			};
 
 			OpenResult result = await FileService.Open(lastLoadDir, shortcuts, types);
@@ -310,11 +310,11 @@ public partial class CharacterPage : UserControl
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "Failed to load appearance");
+			Log.Error(ex, "Failed to export character file");
 		}
 	}
 
-	private async void OnSaveClicked(object sender, RoutedEventArgs e)
+	private async void OnExportClicked(object sender, RoutedEventArgs e)
 	{
 		try
 		{
@@ -322,11 +322,11 @@ public partial class CharacterPage : UserControl
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "Failed to save appearance");
+			Log.Error(ex, "Failed to export character file");
 		}
 	}
 
-	private async void OnSaveMetaClicked(object sender, RoutedEventArgs e)
+	private async void OnExportMetaClicked(object sender, RoutedEventArgs e)
 	{
 		try
 		{
@@ -334,11 +334,11 @@ public partial class CharacterPage : UserControl
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "Failed to save appearance");
+			Log.Error(ex, "Failed to export character file");
 		}
 	}
 
-	private async void OnSaveDatClicked(object sender, RoutedEventArgs e)
+	private async void OnExportDatClicked(object sender, RoutedEventArgs e)
 	{
 		try
 		{
@@ -346,7 +346,7 @@ public partial class CharacterPage : UserControl
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "Failed to save appearance");
+			Log.Error(ex, "Failed to export character dat file");
 		}
 	}
 

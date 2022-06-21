@@ -58,8 +58,17 @@
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
-
-						<DataGridTextColumn Header="Process" Binding="{Binding Name}" Width="256"/>
+						<DataGridTemplateColumn Header="Process" Width="256">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<TextBlock Text="{Binding Name}"></TextBlock>
+										<TextBlock Text="  "></TextBlock>
+										<TextBlock Text="{Binding WindowTitle}"></TextBlock>
+									</StackPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
 						<DataGridTextColumn Header="Started" Binding="{Binding StartTime}"/>
 					</DataGrid.Columns>
 				</DataGrid>

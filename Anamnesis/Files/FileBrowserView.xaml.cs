@@ -491,7 +491,16 @@ public partial class FileBrowserView : FileBrowserDrawer
 		if (confirmed != true)
 			return;
 
-		this.Selected.Entry.Delete();
+		var entry = this.Selected.Entry;
+		if(entry is DirectoryInfo directory)
+		{
+			directory.Delete(true);
+		}
+		else
+		{
+			entry.Delete();
+		}
+
 		this.UpdateEntriesThreaded();
 	}
 

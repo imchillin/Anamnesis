@@ -20,10 +20,6 @@ public class PenumbraActorRefresher : IActorRefresher
 		if (GposeService.Instance.IsGpose && actor.IsOverworldActor)
 			return false;
 
-		// Only if the actor has a name
-		if (string.IsNullOrEmpty(actor.Name))
-			return false;
-
 		return true;
 	}
 
@@ -32,13 +28,13 @@ public class PenumbraActorRefresher : IActorRefresher
 		if (actor.ObjectKind == ActorTypes.Player)
 		{
 			actor.ObjectKind = ActorTypes.BattleNpc;
-			await Penumbra.Penumbra.Redraw(actor.Name);
+			await Penumbra.Penumbra.Redraw(actor.ObjectIndex);
 			await Task.Delay(200);
 			actor.ObjectKind = ActorTypes.Player;
 		}
 		else
 		{
-			await Penumbra.Penumbra.Redraw(actor.Name);
+			await Penumbra.Penumbra.Redraw(actor.ObjectIndex);
 		}
 	}
 }
