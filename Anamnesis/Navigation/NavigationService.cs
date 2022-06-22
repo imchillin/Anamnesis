@@ -16,6 +16,7 @@ public class NavigationService : ServiceBase<NavigationService>
 		{ "Weather", typeof(WeatherPanel) },
 		{ "WeatherSelector", typeof(WeatherSelectorPanel) },
 		{ "PinActor", typeof(PinActorPanel) },
+		{ "ActorInfo", typeof(ActorInfoPanel) },
 		{ "ActorCustomize", typeof(CustomizePanel) },
 		{ "ActorEquipment", typeof(EquipmentPanel) },
 	};

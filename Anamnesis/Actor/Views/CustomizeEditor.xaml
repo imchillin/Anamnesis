@@ -1,31 +1,32 @@
-﻿<UserControl x:Class="Anamnesis.Actor.Views.CustomizeEditor"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:Anamnesis.Actor.Pages"
-			 xmlns:converters="clr-namespace:Anamnesis.Actor.Converters"
-			 xmlns:controls="clr-namespace:Anamnesis.Actor.Views"
-			 xmlns:anaConverters="clr-namespace:Anamnesis.Styles.Converters"
-			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
-			 xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
-			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 mc:Ignorable="d" 
-			 TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
-			 Loaded="OnLoaded"
-			 DataContextChanged="OnDataContextChanged">
+﻿<UserControl
+	x:Class="Anamnesis.Actor.Views.CustomizeEditor"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
+	xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+	xmlns:anaConverters="clr-namespace:Anamnesis.Styles.Converters"
+	xmlns:controls="clr-namespace:Anamnesis.Actor.Views"
+	xmlns:converters="clr-namespace:Anamnesis.Actor.Converters"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:Anamnesis.Actor.Pages"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	DataContextChanged="OnDataContextChanged"
+	Loaded="OnLoaded"
+	TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
+	mc:Ignorable="d">
 
 	<UserControl.Resources>
 
-		<converters:MasculineGenderToVisibilityConverter x:Key="mGenderVis"/>
-		<converters:MasculineGenderToVisibilityConverter x:Key="fGenderVis"/>
+		<converters:MasculineGenderToVisibilityConverter x:Key="mGenderVis" />
+		<converters:MasculineGenderToVisibilityConverter x:Key="fGenderVis" />
 
-		<BooleanToVisibilityConverter x:Key="B2V"/>
+		<BooleanToVisibilityConverter x:Key="B2V" />
 		<XivToolsWpf.Converters:InvertedBoolToVisibilityConverter x:Key="!B2V" />
 
 		<DataTemplate x:Key="DisplayNameComboBox">
 			<Grid>
-				<TextBlock Text="{Binding DisplayName}"/>
+				<TextBlock Text="{Binding DisplayName}" />
 			</Grid>
 		</DataTemplate>
 	</UserControl.Resources>
@@ -36,244 +37,572 @@
 
 			<Grid Grid.Row="0">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition/>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
 				</Grid.RowDefinitions>
 
-				<!-- Race / Tribe / Gender / Age -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="Character_Appearance_Race" Style="{StaticResource Label}" Margin="0, 6, 6, 0"/>
-				<Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="0, 0, 0, 2">
+				<!--  Race / Tribe / Gender / Age  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_Race"
+					Grid.Row="0"
+					Grid.Column="0"
+					Margin="0,6,6,0"
+					Style="{StaticResource Label}" />
+				<Grid
+					Grid.Row="0"
+					Grid.RowSpan="2"
+					Grid.Column="1"
+					Margin="0,0,0,2">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition />
 					</Grid.ColumnDefinitions>
 
 					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition/>
+						<RowDefinition />
+						<RowDefinition />
 					</Grid.RowDefinitions>
 
-					<ComboBox x:Name="RaceComboBox" Grid.Column="0" Grid.Row="0" SelectionChanged="OnRaceChanged" ItemTemplate="{StaticResource DisplayNameComboBox}" Margin="0, 0, 3, 0"/>
-					<ComboBox x:Name="TribeComboBox" Grid.Column="1" Grid.Row="0" SelectionChanged="OnTribeChanged" ItemTemplate="{StaticResource DisplayNameComboBox}" Margin="3, 0, 0, 0"/>
+					<ComboBox
+						x:Name="RaceComboBox"
+						Grid.Row="0"
+						Grid.Column="0"
+						Margin="0,0,3,0"
+						ItemTemplate="{StaticResource DisplayNameComboBox}"
+						SelectionChanged="OnRaceChanged" />
+					<ComboBox
+						x:Name="TribeComboBox"
+						Grid.Row="0"
+						Grid.Column="1"
+						Margin="3,0,0,0"
+						ItemTemplate="{StaticResource DisplayNameComboBox}"
+						SelectionChanged="OnTribeChanged" />
 
-					<ComboBox x:Name="GenderComboBox" Grid.Column="0" Grid.Row="1" SelectionChanged="OnGenderChanged" SelectedItem="{Binding Customize.Gender, Mode=OneWay}" Visibility="{Binding HasGender, Converter={StaticResource B2V}}" Margin="0, 3, 3, 0"/>
-					<ComboBox x:Name="AgeComboBox" Grid.Column="1" Grid.Row="1" SelectedItem="{Binding Customize.Age}" Visibility="{Binding CanAge, Converter={StaticResource B2V}}" Margin="3, 3, 0, 0"/>
+					<ComboBox
+						x:Name="GenderComboBox"
+						Grid.Row="1"
+						Grid.Column="0"
+						Margin="0,3,3,0"
+						SelectedItem="{Binding Customize.Gender, Mode=OneWay}"
+						SelectionChanged="OnGenderChanged"
+						Visibility="{Binding HasGender, Converter={StaticResource B2V}}" />
+					<ComboBox
+						x:Name="AgeComboBox"
+						Grid.Row="1"
+						Grid.Column="1"
+						Margin="3,3,0,0"
+						SelectedItem="{Binding Customize.Age}"
+						Visibility="{Binding CanAge, Converter={StaticResource B2V}}" />
 
 				</Grid>
 
-				<!-- Skintone -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="2" Key="Character_Appearance_Skin" Style="{StaticResource Label}"/>
+				<!--  Skintone  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_Skin"
+					Grid.Row="2"
+					Grid.Column="0"
+					Style="{StaticResource Label}" />
 
-				<Grid Grid.Column="1" Grid.Row="2">
+				<Grid
+					Grid.Row="2"
+					Grid.Column="1">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<controls:ColorControl Grid.Column="0" Value="{Binding Customize.Skintone}" Type="Skin" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0, 2, 0, 0"/>
+					<controls:ColorControl
+						Grid.Column="0"
+						Margin="0,2,0,0"
+						Gender="{Binding Customize.Gender}"
+						Tribe="{Binding Customize.Tribe}"
+						Type="Skin"
+						Value="{Binding Customize.Skintone}" />
 
-					<XivToolsWpf:TextBlock Grid.Column="2" Key="Character_Appearance_Iris" Style="{StaticResource Label}"/>
-					<CheckBox Grid.Column="3" IsChecked="{Binding Customize.SmallIris}"/>
+					<XivToolsWpf:TextBlock
+						Key="Character_Appearance_Iris"
+						Grid.Column="2"
+						Style="{StaticResource Label}" />
+					<CheckBox
+						Grid.Column="3"
+						IsChecked="{Binding Customize.SmallIris}" />
 				</Grid>
-			
-				<!-- Eyes -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="3" Key="Character_Appearance_Eyes" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="3">
+
+				<!--  Eyes  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_Eyes"
+					Grid.Row="3"
+					Grid.Column="0"
+					Style="{StaticResource Label}" />
+				<Grid
+					Grid.Row="3"
+					Grid.Column="1">
 
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:NumberBox Grid.Column="0" ValueOffset="1" Value="{Binding Customize.EyeShape}" Minimum="0" Maximum="256" Buttons="True" Margin="2, 0, 6, 2"/>
+					<XivToolsWpf:NumberBox
+						Grid.Column="0"
+						Margin="2,0,6,2"
+						Buttons="True"
+						Maximum="256"
+						Minimum="0"
+						ValueOffset="1"
+						Value="{Binding Customize.EyeShape}" />
 
-					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_EyeLeft" Value="{Binding Customize.MainEyeColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="0"/>
+					<controls:ColorControl
+						Grid.Column="1"
+						Margin="0"
+						Gender="{Binding Customize.Gender}"
+						ToolTipKey="Character_Appearance_EyeLeft"
+						Tribe="{Binding Customize.Tribe}"
+						Type="Eyes"
+						Value="{Binding Customize.MainEyeColor}" />
 
-					<ToggleButton Grid.Column="2" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding Customize.LinkEyeColors}">
-						<XivToolsWpf:IconBlock Icon="Link" FontSize="10"/>
+					<ToggleButton
+						Grid.Column="2"
+						IsChecked="{Binding Customize.LinkEyeColors}"
+						Style="{StaticResource TransparentIconToggleButton}">
+						<XivToolsWpf:IconBlock
+							FontSize="10"
+							Icon="Link" />
 					</ToggleButton>
-					<Line StrokeThickness="1" X1="0" X2="3" Grid.Column="2" Stroke="White" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Line StrokeThickness="1" X1="0" X2="3" Grid.Column="2" Stroke="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<Line
+						Grid.Column="2"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						Stroke="White"
+						StrokeThickness="1"
+						X1="0"
+						X2="3" />
+					<Line
+						Grid.Column="2"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Center"
+						Stroke="White"
+						StrokeThickness="1"
+						X1="0"
+						X2="3" />
 
-					<controls:ColorControl Grid.Column="3"
-                                           ToolTipKey="Character_Appearance_EyeRight"
-                                           IsEnabled="{Binding Customize.LinkEyeColors, Converter={StaticResource !B}}"
-                                           Value="{Binding Customize.REyeColor}"
-                                           Type="Eyes"
-                                           Gender="{Binding Customize.Gender}"
-                                           Tribe="{Binding Customize.Tribe}"
-                                           Margin="0"/>
+					<controls:ColorControl
+						Grid.Column="3"
+						Margin="0"
+						Gender="{Binding Customize.Gender}"
+						IsEnabled="{Binding Customize.LinkEyeColors, Converter={StaticResource !B}}"
+						ToolTipKey="Character_Appearance_EyeRight"
+						Tribe="{Binding Customize.Tribe}"
+						Type="Eyes"
+						Value="{Binding Customize.REyeColor}" />
 				</Grid>
 
-				<!-- Face Type -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="4" Key="Character_Appearance_Face" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="4" Margin="0, 0, 0, 2">
+				<!--  Face Type  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_Face"
+					Grid.Row="4"
+					Grid.Column="0"
+					Style="{StaticResource Label}" />
+				<Grid
+					Grid.Row="4"
+					Grid.Column="1"
+					Margin="0,0,0,2">
 
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="78"/>
+						<ColumnDefinition />
+						<ColumnDefinition Width="78" />
 					</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:NumberBox Value="{Binding Customize.Head}" Grid.Column="0" Grid.Row="4" Minimum="1" Maximum="255" Margin="0, 0, 0, 2" Buttons="True"/>
-					<controls:ColorControl Grid.Column="1" ToolTipKey="Character_Appearance_FacialFeatureColor" Value="{Binding Customize.FacialFeatureColor}" Type="Eyes" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Margin="6,0,0,0" HorizontalAlignment="Left"/>
+					<XivToolsWpf:NumberBox
+						Grid.Row="4"
+						Grid.Column="0"
+						Margin="0,0,0,2"
+						Buttons="True"
+						Maximum="255"
+						Minimum="1"
+						Value="{Binding Customize.Head}" />
+					<controls:ColorControl
+						Grid.Column="1"
+						Margin="6,0,0,0"
+						HorizontalAlignment="Left"
+						Gender="{Binding Customize.Gender}"
+						ToolTipKey="Character_Appearance_FacialFeatureColor"
+						Tribe="{Binding Customize.Tribe}"
+						Type="Eyes"
+						Value="{Binding Customize.FacialFeatureColor}" />
 
 				</Grid>
-				
-				<!-- Facial Features -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="5" Key="Character_Appearance_Features" Style="{StaticResource Label}"/>
-				<controls:FacialFeaturesControl Value="{Binding Customize.FacialFeatures}" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Head="{Binding Customize.Head}" Grid.Column="1" Grid.Row="5"/>
 
-				<!-- Face Paint  -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="6" Key="Character_Appearance_FacePaint" Style="{StaticResource Label}"/>
+				<!--  Facial Features  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_Features"
+					Grid.Row="5"
+					Grid.Column="0"
+					Style="{StaticResource Label}" />
+				<controls:FacialFeaturesControl
+					Grid.Row="5"
+					Grid.Column="1"
+					Gender="{Binding Customize.Gender}"
+					Head="{Binding Customize.Head}"
+					Tribe="{Binding Customize.Tribe}"
+					Value="{Binding Customize.FacialFeatures}" />
 
-				<Grid Grid.Column="1" Grid.Row="6" Margin="0, 2, 0, 0">
+				<!--  Face Paint  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_FacePaint"
+					Grid.Row="6"
+					Grid.Column="0"
+					Style="{StaticResource Label}" />
+
+				<Grid
+					Grid.Row="6"
+					Grid.Column="1"
+					Margin="0,2,0,0">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
 
-					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnFacePaintClicked">
-						<Border Width="40" Height="40" Margin="2">
-							<Image Source="{Binding FacePaint.Icon, Converter={StaticResource Img}}" Visibility="{Binding FacePaint, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+					<Button
+						Grid.Column="0"
+						Padding="0"
+						Click="OnFacePaintClicked"
+						Style="{StaticResource TransparentButton}">
+						<Border
+							Width="40"
+							Height="40"
+							Margin="2">
+							<Image
+								Source="{Binding FacePaint.Icon, Converter={StaticResource Img}}"
+								Visibility="{Binding FacePaint, Converter={StaticResource NotNullToVisibilityConverter}}" />
 						</Border>
 					</Button>
 
 					<!--<cm3Controls:NumberBox Grid.Column="1" Value="{Binding Customize.FacePaint}" Minimum="0" Maximum="255" Buttons="True" Margin="0, 0, 12, 0" HorizontalAlignment="Center"/>-->
 
-					<controls:ColorControl Grid.Column="1" Value="{Binding Customize.FacePaintColor}" Type="FacePaint" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}"/>
+					<controls:ColorControl
+						Grid.Column="1"
+						Gender="{Binding Customize.Gender}"
+						Tribe="{Binding Customize.Tribe}"
+						Type="FacePaint"
+						Value="{Binding Customize.FacePaintColor}" />
 				</Grid>
 
-				
 
-				<!-- Hair -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="7" Key="Character_Appearance_Hair" Style="{StaticResource Label}"/>
 
-				<Grid Grid.Column="1" Grid.Row="7" Margin="0, 2, 0, 4">
+				<!--  Hair  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_Hair"
+					Grid.Row="7"
+					Grid.Column="0"
+					Style="{StaticResource Label}" />
+
+				<Grid
+					Grid.Row="7"
+					Grid.Column="1"
+					Margin="0,2,0,4">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<Button Grid.Column="0" Style="{StaticResource TransparentButton}" Padding="0" Click="OnHairClicked">
-						<Border Width="40" Height="40" Margin="2">
-							<Image Source="{Binding Hair.Icon, Converter={StaticResource Img}}" Visibility="{Binding Hair, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+					<Button
+						Grid.Column="0"
+						Padding="0"
+						Click="OnHairClicked"
+						Style="{StaticResource TransparentButton}">
+						<Border
+							Width="40"
+							Height="40"
+							Margin="2">
+							<Image
+								Source="{Binding Hair.Icon, Converter={StaticResource Img}}"
+								Visibility="{Binding Hair, Converter={StaticResource NotNullToVisibilityConverter}}" />
 						</Border>
 					</Button>
 
-					<controls:ColorControl Grid.Column="1" Value="{Binding Customize.HairTone}" Type="Hair" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" ToolTip="Hair Color"/>
+					<controls:ColorControl
+						Grid.Column="1"
+						Gender="{Binding Customize.Gender}"
+						ToolTip="Hair Color"
+						Tribe="{Binding Customize.Tribe}"
+						Type="Hair"
+						Value="{Binding Customize.HairTone}" />
 
-					<TextBlock Grid.Column="2" Text="Highlight:" Margin="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Label}"/>
-					<CheckBox Grid.Column="3" IsChecked="{Binding Customize.EnableHighlights}" ToolTip="Enable Highlights" HorizontalAlignment="Center"/>
-					<controls:ColorControl Grid.Column="4" Value="{Binding Customize.Highlights}" Type="HairHighlights" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" IsEnabled="{Binding Customize.EnableHighlights}" ToolTip="Highlight Color"/>
+					<TextBlock
+						Grid.Column="2"
+						Margin="2"
+						VerticalAlignment="Center"
+						Style="{StaticResource Label}"
+						Text="Highlight:"
+						TextAlignment="Right" />
+					<CheckBox
+						Grid.Column="3"
+						HorizontalAlignment="Center"
+						IsChecked="{Binding Customize.EnableHighlights}"
+						ToolTip="Enable Highlights" />
+					<controls:ColorControl
+						Grid.Column="4"
+						Gender="{Binding Customize.Gender}"
+						IsEnabled="{Binding Customize.EnableHighlights}"
+						ToolTip="Highlight Color"
+						Tribe="{Binding Customize.Tribe}"
+						Type="HairHighlights"
+						Value="{Binding Customize.Highlights}" />
 
 				</Grid>
-				
-				<!-- Mouth / Lips  -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="8" Key="Character_Appearance_Lips" Style="{StaticResource Label}"/>
-				<Grid Grid.Column="1" Grid.Row="8">
+
+				<!--  Mouth / Lips  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_Lips"
+					Grid.Row="8"
+					Grid.Column="0"
+					Style="{StaticResource Label}" />
+				<Grid
+					Grid.Row="8"
+					Grid.Column="1">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
-					<XivToolsWpf:NumberBox Grid.Column="0" Value="{Binding Customize.Lips}" Minimum="0" Maximum="4" Buttons="True" Margin="0, 0, 12, 0"  ValueOffset="1"/>
-					<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}"/>
-					<CheckBox Grid.Column="2" IsChecked="{Binding Customize.EnableLipColor}"/>
-					<controls:ColorControl Grid.Column="3" Value="{Binding Customize.LipsToneFurPattern}" IsEnabled="{Binding Customize.EnableLipColor}" Type="Lips" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}"/>
+					<XivToolsWpf:NumberBox
+						Grid.Column="0"
+						Margin="0,0,12,0"
+						Buttons="True"
+						Maximum="4"
+						Minimum="0"
+						ValueOffset="1"
+						Value="{Binding Customize.Lips}" />
+					<TextBlock
+						Grid.Column="1"
+						Style="{StaticResource Label}"
+						Text="Color:" />
+					<CheckBox
+						Grid.Column="2"
+						IsChecked="{Binding Customize.EnableLipColor}" />
+					<controls:ColorControl
+						Grid.Column="3"
+						Gender="{Binding Customize.Gender}"
+						IsEnabled="{Binding Customize.EnableLipColor}"
+						Tribe="{Binding Customize.Tribe}"
+						Type="Lips"
+						Value="{Binding Customize.LipsToneFurPattern}" />
 				</Grid>
 
-				<!-- Height -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="9" Key="Character_Appearance_Height" Style="{StaticResource Label}"/>
-				<controls:HeightEditor Height="24" Grid.Column="1" Grid.Row="9" Margin="0, 0, 0, 2"
-									   Value="{Binding Customize.Height}" Tribe="{Binding Customize.Tribe}" 
-									   Gender="{Binding Customize.Gender}" Age="{Binding Customize.Age}"/>
+				<!--  Height  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_Height"
+					Grid.Row="9"
+					Grid.Column="0"
+					Style="{StaticResource Label}" />
+				<controls:HeightEditor
+					Grid.Row="9"
+					Grid.Column="1"
+					Height="24"
+					Margin="0,0,0,2"
+					Age="{Binding Customize.Age}"
+					Gender="{Binding Customize.Gender}"
+					Tribe="{Binding Customize.Tribe}"
+					Value="{Binding Customize.Height}" />
 
-				<!-- Bust Size -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="10" Key="Character_Appearance_BustSize" Style="{StaticResource Label}"/>
-				<XivToolsWpf:NumberBox Value="{Binding Customize.Bust}" Grid.Column="1" Grid.Row="10" Slider="Absolute" Minimum="0" Maximum="100" Margin="0, 0, 0, 2"/>
+				<!--  Bust Size  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_BustSize"
+					Grid.Row="10"
+					Grid.Column="0"
+					Style="{StaticResource Label}" />
+				<XivToolsWpf:NumberBox
+					Grid.Row="10"
+					Grid.Column="1"
+					Margin="0,0,0,2"
+					Maximum="100"
+					Minimum="0"
+					Slider="Absolute"
+					Value="{Binding Customize.Bust}" />
 
-				<!-- Muscle / Ears / Tail Size -->
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_Muscle" Style="{StaticResource Label}" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"/>
-				<XivToolsWpf:NumberBox Value="{Binding Customize.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute"/>
+				<!--  Muscle / Ears / Tail Size  -->
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_Muscle"
+					Grid.Row="11"
+					Grid.Column="0"
+					Style="{StaticResource Label}"
+					Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}" />
+				<XivToolsWpf:NumberBox
+					Grid.Row="11"
+					Grid.Column="1"
+					Maximum="100"
+					Minimum="0"
+					Slider="Absolute"
+					Visibility="{Binding HasMuscles, Converter={StaticResource B2V}}"
+					Value="{Binding Customize.EarMuscleTailSize}" />
 
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_EarsSize" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-				<XivToolsWpf:NumberBox Value="{Binding Customize.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasEars, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute"/>
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_EarsSize"
+					Grid.Row="11"
+					Grid.Column="0"
+					Style="{StaticResource Label}"
+					Visibility="{Binding HasEars, Converter={StaticResource B2V}}" />
+				<XivToolsWpf:NumberBox
+					Grid.Row="11"
+					Grid.Column="1"
+					Maximum="100"
+					Minimum="0"
+					Slider="Absolute"
+					Visibility="{Binding HasEars, Converter={StaticResource B2V}}"
+					Value="{Binding Customize.EarMuscleTailSize}" />
 
-				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="11" Key="Character_Appearance_TailSize" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
-				<XivToolsWpf:NumberBox Value="{Binding Customize.EarMuscleTailSize}" Grid.Column="1" Grid.Row="11" Visibility="{Binding HasTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="100" Slider="Absolute"/>
+				<XivToolsWpf:TextBlock
+					Key="Character_Appearance_TailSize"
+					Grid.Row="11"
+					Grid.Column="0"
+					Style="{StaticResource Label}"
+					Visibility="{Binding HasTail, Converter={StaticResource B2V}}" />
+				<XivToolsWpf:NumberBox
+					Grid.Row="11"
+					Grid.Column="1"
+					Maximum="100"
+					Minimum="0"
+					Slider="Absolute"
+					Visibility="{Binding HasTail, Converter={StaticResource B2V}}"
+					Value="{Binding Customize.EarMuscleTailSize}" />
 
 
-				<Grid Grid.Row="13" Grid.ColumnSpan="2">
+				<Grid
+					Grid.Row="13"
+					Grid.ColumnSpan="2">
 					<Grid.RowDefinitions>
-						<RowDefinition/>
-						<RowDefinition/>
-						<RowDefinition/>
+						<RowDefinition />
+						<RowDefinition />
+						<RowDefinition />
 					</Grid.RowDefinitions>
 
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
+						<ColumnDefinition />
+						<ColumnDefinition />
+						<ColumnDefinition />
+						<ColumnDefinition />
 					</Grid.ColumnDefinitions>
-					
-					<!-- Jaw Type -->
-					<XivToolsWpf:TextBlock Grid.Row="0" Grid.Column="0" Key="Character_Appearance_Jaw" Style="{StaticResource Label}"/>
-					<XivToolsWpf:NumberBox Grid.Row="0" Value="{Binding Customize.Jaw}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" ValueOffset="1"/>
 
-					<!-- Eyebrows type -->
-					<XivToolsWpf:TextBlock Grid.Row="0" Grid.Column="2" Key="Character_Appearance_Eyebrows" Style="{StaticResource Label}"/>
-					<XivToolsWpf:NumberBox Grid.Row="0" Value="{Binding Customize.Eyebrows}" Grid.Column="3" Minimum="0" Maximum="255" Buttons="True" ValueOffset="1"/>
+					<!--  Jaw Type  -->
+					<XivToolsWpf:TextBlock
+						Key="Character_Appearance_Jaw"
+						Grid.Row="0"
+						Grid.Column="0"
+						Style="{StaticResource Label}" />
+					<XivToolsWpf:NumberBox
+						Grid.Row="0"
+						Grid.Column="1"
+						Buttons="True"
+						Maximum="255"
+						Minimum="0"
+						ValueOffset="1"
+						Value="{Binding Customize.Jaw}" />
 
-					<!-- Nose Type -->
-					<XivToolsWpf:TextBlock Grid.Row="1" Grid.Column="0" Key="Character_Appearance_Nose" Style="{StaticResource Label}"/>
-					<XivToolsWpf:NumberBox Grid.Row="1" Value="{Binding Customize.Nose}" Grid.Column="1" Minimum="0" Maximum="255" Buttons="True" ValueOffset="1"/>
+					<!--  Eyebrows type  -->
+					<XivToolsWpf:TextBlock
+						Key="Character_Appearance_Eyebrows"
+						Grid.Row="0"
+						Grid.Column="2"
+						Style="{StaticResource Label}" />
+					<XivToolsWpf:NumberBox
+						Grid.Row="0"
+						Grid.Column="3"
+						Buttons="True"
+						Maximum="255"
+						Minimum="0"
+						ValueOffset="1"
+						Value="{Binding Customize.Eyebrows}" />
 
-					<!-- Ear / Tail Type -->
-					<XivToolsWpf:TextBlock Grid.Row="1" Grid.Column="2" Key="Character_Appearance_Ears" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
-					<XivToolsWpf:TextBlock Grid.Row="1" Grid.Column="2" Key="Character_Appearance_Tail" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
-					<XivToolsWpf:NumberBox Grid.Row="1" Value="{Binding Customize.TailEarsType}" Grid.Column="3" Visibility="{Binding HasEarsTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
+					<!--  Nose Type  -->
+					<XivToolsWpf:TextBlock
+						Key="Character_Appearance_Nose"
+						Grid.Row="1"
+						Grid.Column="0"
+						Style="{StaticResource Label}" />
+					<XivToolsWpf:NumberBox
+						Grid.Row="1"
+						Grid.Column="1"
+						Buttons="True"
+						Maximum="255"
+						Minimum="0"
+						ValueOffset="1"
+						Value="{Binding Customize.Nose}" />
 
-					<!-- Fur pattern -->
-					<XivToolsWpf:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_Appearance_Fur" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
-					<XivToolsWpf:NumberBox Grid.Row="2" Value="{Binding Customize.LipsToneFurPattern}" Grid.Column="1" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
+					<!--  Ear / Tail Type  -->
+					<XivToolsWpf:TextBlock
+						Key="Character_Appearance_Ears"
+						Grid.Row="1"
+						Grid.Column="2"
+						Style="{StaticResource Label}"
+						Visibility="{Binding HasEars, Converter={StaticResource B2V}}" />
+					<XivToolsWpf:TextBlock
+						Key="Character_Appearance_Tail"
+						Grid.Row="1"
+						Grid.Column="2"
+						Style="{StaticResource Label}"
+						Visibility="{Binding HasTail, Converter={StaticResource B2V}}" />
+					<XivToolsWpf:NumberBox
+						Grid.Row="1"
+						Grid.Column="3"
+						Buttons="True"
+						Maximum="255"
+						Minimum="0"
+						Visibility="{Binding HasEarsTail, Converter={StaticResource B2V}}"
+						Value="{Binding Customize.TailEarsType}" />
+
+					<!--  Fur pattern  -->
+					<XivToolsWpf:TextBlock
+						Key="Character_Appearance_Fur"
+						Grid.Row="2"
+						Grid.Column="0"
+						Style="{StaticResource Label}"
+						Visibility="{Binding HasFur, Converter={StaticResource B2V}}" />
+					<XivToolsWpf:NumberBox
+						Grid.Row="2"
+						Grid.Column="1"
+						Buttons="True"
+						Maximum="255"
+						Minimum="0"
+						Visibility="{Binding HasFur, Converter={StaticResource B2V}}"
+						Value="{Binding Customize.LipsToneFurPattern}" />
 
 				</Grid>
-				
-			
+
+
 			</Grid>
 		</StackPanel>
 	</Grid>

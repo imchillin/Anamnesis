@@ -14,9 +14,44 @@
 	mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
 		<views:CustomizeEditor
+			Grid.Row="0"
 			Margin="6"
 			DataContext="{Binding Actor}" />
+
+		<GroupBox
+			Grid.Row="1"
+			Style="{StaticResource PanelGroupBox}"
+			Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
+			<GroupBox.Header>
+				<XivToolsWpf:Header
+					Key="Character_Model_Header"
+					Icon="GraduationCap" />
+			</GroupBox.Header>
+
+			<views:CharacterModelEditor DataContext="{Binding Actor}" />
+		</GroupBox>
+
+		<GroupBox
+			Grid.Row="2"
+			Style="{StaticResource PanelGroupBox}"
+			Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
+			<GroupBox.Header>
+				<XivToolsWpf:Header
+					Key="Character_ExAppearance_Header"
+					Icon="UserCog" />
+			</GroupBox.Header>
+
+			<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}" />
+
+		</GroupBox>
 	</Grid>
 
 </local:ActorPanelBase>

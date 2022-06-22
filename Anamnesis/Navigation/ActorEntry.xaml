@@ -235,6 +235,15 @@
 			<local:Shortcut
 				ContentPadding="10,0,0,0"
 				Context="{Binding Actor}"
+				Destination="ActorInfo"
+				Icon="Pen"
+				LabelKey="Naviagation_Actor_Info"
+				ShowText="{Binding ShowText}"
+				ToolTipKey="Naviagation_Actor_Info_Tip" />
+
+			<local:Shortcut
+				ContentPadding="10,0,0,0"
+				Context="{Binding Actor}"
 				Destination="ActorCustomize"
 				Icon="IdCardAlt"
 				LabelKey="Naviagation_Actor_Customize"

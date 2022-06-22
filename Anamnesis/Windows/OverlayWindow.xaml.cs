@@ -131,6 +131,14 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 
 	public IPanelGroupHost Host => this;
 
+	public new void Show()
+	{
+		double screenHeight = 720;
+		this.MaxHeight = screenHeight - this.x;
+
+		base.Show();
+	}
+
 	public void AddChild(IPanel panel)
 	{
 		if (panel.Host is OverlayWindow wnd)
