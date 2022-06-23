@@ -116,6 +116,13 @@
 				Margin="6,0">
 
 				<local:Shortcut
+					Destination="Settings"
+					Icon="Cogs"
+					LabelKey="Naviagation_Settings"
+					ShowText="{Binding Expanded}"
+					ToolTipKey="Naviagation_Settings_Tip" />
+
+				<local:Shortcut
 					Destination="Weather"
 					Icon="CloudMoonRain"
 					LabelKey="Naviagation_Weather"

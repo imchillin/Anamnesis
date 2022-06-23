@@ -148,6 +148,8 @@
 	"Navigation_Options_Expanded": "Show Labels",
 	"Naviagation_AddActor": "Add Actor",
 	"Naviagation_AddActor_Tip": "Add a new Actor to this scene",
+	"Naviagation_Settings": "Settings",
+	"Naviagation_Settings_Tip": "Adjust application settings",
 	"Naviagation_Weather": "Time & Weather",
 	"Naviagation_Weather_Tip": "Change Time and Weather",
 	"Naviagation_Camera": "Camera",

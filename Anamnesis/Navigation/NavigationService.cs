@@ -13,6 +13,7 @@ public class NavigationService : ServiceBase<NavigationService>
 {
 	private static readonly Dictionary<string, Type> Panels = new()
 	{
+		{ "Settings", typeof(SettingsPanel) },
 		{ "Weather", typeof(WeatherPanel) },
 		{ "WeatherSelector", typeof(WeatherSelectorPanel) },
 		{ "PinActor", typeof(PinActorPanel) },

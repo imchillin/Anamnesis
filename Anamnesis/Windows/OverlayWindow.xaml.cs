@@ -35,6 +35,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	private int y;
 	private IconChar icon;
 	private bool canResize = true;
+	private bool autoClose = true;
 
 	public OverlayWindow()
 	{
@@ -46,10 +47,24 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	}
 
 	public ContentPresenter PanelGroupArea => this.ContentPresenter;
-
 	public bool ShowBackground { get; set; } = true;
-	public bool AutoClose { get; set; } = true;
+
+	[AlsoNotifyFor(nameof(AutoClose))]
 	public bool AllowAutoClose { get; set; } = true;
+
+	[DependsOn(nameof(AllowAutoClose))]
+	public bool AutoClose
+	{
+		get
+		{
+			if (!this.AllowAutoClose)
+				return false;
+
+			return this.autoClose;
+		}
+
+		set => this.autoClose = value;
+	}
 
 	public string? TitleKey
 	{
