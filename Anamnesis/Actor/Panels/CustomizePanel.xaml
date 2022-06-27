@@ -8,7 +8,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:panels="clr-namespace:Anamnesis.Panels"
 	xmlns:views="clr-namespace:Anamnesis.Actor.Views"
-	Title="{Binding DisplayName}"
+	Title="{Binding Names.Text}"
 	Icon="IdCardAlt"
 	TitleKey="Naviagation_Actor_Customize"
 	mc:Ignorable="d">

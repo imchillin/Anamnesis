@@ -118,7 +118,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		////if (GposeService.Instance.IsGpose != actor.IsGPoseActor)
 		////	return false;
 
-		if (!SearchUtility.Matches(actor.DisplayName, search) && !SearchUtility.Matches(actor.Name, search))
+		if (!SearchUtility.Matches(actor.Names.FullName, search) && !SearchUtility.Matches(actor.Names.Nickname, search))
 			return false;
 
 		if (TargetService.IsPinned(actor))

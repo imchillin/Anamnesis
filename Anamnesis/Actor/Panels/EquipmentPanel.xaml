@@ -9,7 +9,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:views="clr-namespace:Anamnesis.Actor.Views"
 	xmlns:views1="clr-namespace:Anamnesis.Views"
-	Title="{Binding DisplayName}"
+	Title="{Binding Names.Text}"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	Icon="IdCardAlt"

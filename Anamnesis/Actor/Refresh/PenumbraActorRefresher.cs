@@ -21,7 +21,7 @@ public class PenumbraActorRefresher : IActorRefresher
 			return false;
 
 		// Only if the actor has a name
-		if (string.IsNullOrEmpty(actor.Name))
+		if (string.IsNullOrEmpty(actor.Names.FullName))
 			return false;
 
 		return true;
@@ -32,13 +32,13 @@ public class PenumbraActorRefresher : IActorRefresher
 		if (actor.ObjectKind == ActorTypes.Player)
 		{
 			actor.ObjectKind = ActorTypes.BattleNpc;
-			await Penumbra.Penumbra.Redraw(actor.Name);
+			await Penumbra.Penumbra.Redraw(actor.Names.FullName);
 			await Task.Delay(200);
 			actor.ObjectKind = ActorTypes.Player;
 		}
 		else
 		{
-			await Penumbra.Penumbra.Redraw(actor.Name);
+			await Penumbra.Penumbra.Redraw(actor.Names.FullName);
 		}
 	}
 }

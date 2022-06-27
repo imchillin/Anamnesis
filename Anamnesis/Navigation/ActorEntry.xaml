@@ -112,7 +112,7 @@
 						<TextBlock>
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{}{0} ({1})">
-									<Binding Path="Actor.DisplayName" />
+									<Binding Path="Actor.Names.Text" />
 									<Binding Path="Actor.Kind" />
 								</MultiBinding>
 							</TextBlock.Text>
@@ -163,7 +163,7 @@
 					FontSize="14"
 					FontWeight="SemiBold"
 					Foreground="{DynamicResource MaterialDesignToolForeground}"
-					Text="{Binding Actor.CondensedName}" />
+					Text="{Binding Actor.Names.Text}" />
 
 				<!--<TextBlock
 					Grid.Column="3"

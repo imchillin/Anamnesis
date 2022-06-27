@@ -157,7 +157,7 @@ public class SceneFile : JsonFileBase
 		List<ActorMemory> actors = TargetService.Instance.PinnedActors.Select(i => i.Memory!).ToList();
 
 		ActorMemory rootActor = actors[0];
-		this.RootActorName = rootActor.DisplayName;
+		this.RootActorName = rootActor.Names.Text;
 
 		Vector rootPosition = rootActor!.ModelObject!.Transform!.Position;
 		Quaternion rootRotation = rootActor!.ModelObject!.Transform!.Rotation;
@@ -166,7 +166,7 @@ public class SceneFile : JsonFileBase
 		if (targetActor == null || !targetActor.IsValid || targetActor.Memory == null)
 			throw new Exception("Targeted actor must be pinned");
 
-		this.TargetActorName = TargetService.Instance.PlayerTarget.DisplayName;
+		this.TargetActorName = TargetService.Instance.PlayerTarget.Names.Text;
 
 		this.CameraShot = new();
 		this.CameraShot.WriteToFile(CameraService.Instance, targetActor.Memory);
@@ -212,10 +212,10 @@ public class SceneFile : JsonFileBase
 			entry.Appearance = characterFile;
 			entry.Pose = poseFile;
 
-			if (this.ActorEntries.ContainsKey(actor.DisplayName))
-				throw new Exception($"Duplicate actor name: {actor.DisplayName} in scene.");
+			if (this.ActorEntries.ContainsKey(actor.Names.Text))
+				throw new Exception($"Duplicate actor name: {actor.Names.Text} in scene.");
 
-			this.ActorEntries.Add(actor.DisplayName, entry);
+			this.ActorEntries.Add(actor.Names.Text, entry);
 		}
 	}
 
@@ -228,7 +228,7 @@ public class SceneFile : JsonFileBase
 			if (actorMemory == null)
 				continue;
 
-			if (actorMemory.DisplayName == name)
+			if (actorMemory.Names.Text == name)
 			{
 				return actorMemory;
 			}

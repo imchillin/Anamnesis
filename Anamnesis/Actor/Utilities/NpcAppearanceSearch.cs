@@ -30,11 +30,11 @@ public static class NpcAppearanceSearch
 		using (WaitDialog dlg = await WaitDialog.ShowAsync("Please Wait...", "NPC Appearance search"))
 		{
 			await dlg.SetProgress(0.01);
-			SearchNames(actor.Name, ref names);
+			SearchNames(actor.Names.FullName, ref names);
 
 			await dlg.SetProgress(0.25);
-			if (actor.Nickname != null)
-				SearchNames(actor.Nickname, ref names);
+			if (actor.Names.Nickname != null)
+				SearchNames(actor.Names.Nickname, ref names);
 
 			await dlg.SetProgress(0.5);
 			Search(actor, GameDataService.BattleNPCs, ref appearances);
@@ -52,13 +52,13 @@ public static class NpcAppearanceSearch
 		}
 		else if (names.Count <= 0)
 		{
-			if (actor.Nickname != null)
+			if (actor.Names.Nickname != null)
 			{
-				GenericDialog.Show($"Name \"{actor.Name}\" or \"{actor.Nickname}\" not found", "NPC Appearance search");
+				GenericDialog.Show($"Name \"{actor.Names.FullName}\" or \"{actor.Names.Nickname}\" not found", "NPC Appearance search");
 			}
 			else
 			{
-				GenericDialog.Show($"Name \"{actor.Name}\" not found", "NPC Appearance search");
+				GenericDialog.Show($"Name \"{actor.Names.FullName}\" not found", "NPC Appearance search");
 			}
 		}
 		else

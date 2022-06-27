@@ -7,9 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Anamnesis.Actor;
 using Anamnesis.Core.Memory;
+using Anamnesis.Files;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
 using Anamnesis.Services;
@@ -78,7 +80,7 @@ public class TargetService : ServiceBase<TargetService>
 			Log.Information($"Pinning actor: {pined}");
 
 			if (Debugger.IsAttached)
-				pined.GetMemory() !.Nickname = "Dev McEloper";
+				pined.GetMemory() !.Names.Nickname = "Dev McEloper";
 
 			await Dispatch.MainThread();
 			Instance.PinnedActors.Add(pined);
@@ -275,7 +277,7 @@ public class TargetService : ServiceBase<TargetService>
 					if (actor.IsHidden)
 						continue;
 
-					if (string.IsNullOrEmpty(actor.Name))
+					if (string.IsNullOrEmpty(actor.Names.FullName))
 						continue;
 
 					if (actor.IsGPoseActor != isGpose)
