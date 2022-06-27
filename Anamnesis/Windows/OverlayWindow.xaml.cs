@@ -7,6 +7,7 @@ using Anamnesis.Memory;
 using Anamnesis.Panels;
 using Anamnesis.Services;
 using FontAwesome.Sharp;
+using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,8 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		this.ContentArea.DataContext = this;
 		this.WindowContextMenu.DataContext = this;
 		base.Topmost = false;
+
+		this.TitleColor = Application.Current.Resources.GetTheme().ToolForeground;
 	}
 
 	public ContentPresenter PanelGroupArea => this.ContentPresenter;
@@ -147,7 +150,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	}
 
 	public IPanelGroupHost Host => this;
-	public MediaColor TitleColor { get; set; }
+	public MediaColor? TitleColor { get; set; }
 
 	public new void Show()
 	{

@@ -56,7 +56,7 @@ public abstract class ActorPanelBase : PanelBase
 		if (this.Actor == null)
 			return;
 
-		this.Title = this.Actor.Names.Text;
+		this.Title = " - " + this.Actor.Names.Text;
 		this.TitleColor = this.Actor.Color;
 	}
 }

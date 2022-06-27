@@ -78,7 +78,7 @@
 
 			<Border
 				Background="{DynamicResource MaterialDesignBackground}"
-				BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+				BorderBrush="{Binding TitleColor, Converter={StaticResource ColorToBrush}}"
 				BorderThickness="1"
 				CornerRadius="6"
 				Visibility="{Binding IsActive, Converter={StaticResource B2V}}" />
@@ -130,10 +130,8 @@
 				<Separator
 					Margin="3,0"
 					VerticalAlignment="Bottom"
-					Background="{DynamicResource PrimaryHueMidBrush}"
-					IsHitTestVisible="False"
-					Opacity="0.5"
-					Visibility="{Binding IsActive, Converter={StaticResource B2V}}" />
+					Background="{Binding TitleColor, Converter={StaticResource ColorToBrush}, FallbackValue={StaticResource PrimaryHueMidBrush}}"
+					IsHitTestVisible="False" />
 
 				<StackPanel
 					HorizontalAlignment="Right"

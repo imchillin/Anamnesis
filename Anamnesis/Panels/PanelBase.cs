@@ -69,7 +69,7 @@ public abstract class PanelBase : UserControl, IPanel
 		set => this.Host.CanResize = value;
 	}
 
-	public Color TitleColor
+	public Color? TitleColor
 	{
 		get => this.Host.TitleColor;
 		set => this.Host.TitleColor = value;

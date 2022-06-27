@@ -21,7 +21,7 @@ public interface IPanel
 	string? TitleKey { get; set; }
 	string? Title { get; set; }
 	IconChar Icon { get; set; }
-	Color TitleColor { get; set; }
+	Color? TitleColor { get; set; }
 	Rect Rect { get; set; }
 	bool ShowBackground { get; set; }
 	bool AllowAutoClose { get; set; }
