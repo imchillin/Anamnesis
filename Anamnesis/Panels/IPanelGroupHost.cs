@@ -7,6 +7,7 @@ using FontAwesome.Sharp;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public interface IPanelGroupHost : IPanel
 {
@@ -20,6 +21,7 @@ public interface IPanel
 	string? TitleKey { get; set; }
 	string? Title { get; set; }
 	IconChar Icon { get; set; }
+	Color TitleColor { get; set; }
 	Rect Rect { get; set; }
 	bool ShowBackground { get; set; }
 	bool AllowAutoClose { get; set; }

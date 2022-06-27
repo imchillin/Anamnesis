@@ -8,7 +8,6 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:panels="clr-namespace:Anamnesis.Panels"
 	xmlns:views="clr-namespace:Anamnesis.Actor.Views"
-	Title="{Binding Names.Text}"
 	Width="256"
 	Icon="Pen"
 	TitleKey="Naviagation_Actor_Info"
@@ -43,7 +42,7 @@
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Style="{StaticResource MaterialDesignTextBox}"
-			Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}" />
+			Text="{Binding Actor.Names.Nickname, UpdateSourceTrigger=PropertyChanged}" />
 
 		<XivToolsWpf:TextBlock
 			Key="Character_Actor_Alpha"

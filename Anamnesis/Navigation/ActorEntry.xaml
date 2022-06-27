@@ -139,7 +139,7 @@
 					Margin="3,0,3,3">
 
 					<XivToolsWpf:IconBlock
-						Foreground="{DynamicResource MaterialDesignToolForeground}"
+						Foreground="{Binding Actor.Color, Converter={StaticResource ColorToBrush}}"
 						Icon="{Binding Actor.Icon}"
 						Visibility="{Binding Actor.IsValid, Converter={StaticResource B2V}}" />
 

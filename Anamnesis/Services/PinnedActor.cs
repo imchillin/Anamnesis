@@ -17,6 +17,8 @@ using PropertyChanged;
 using Serilog;
 using XivToolsWpf.Extensions;
 
+using MediaColor = System.Windows.Media.Color;
+
 [AddINotifyPropertyChangedInterface]
 public class PinnedActor : INotifyPropertyChanged, IDisposable
 {
@@ -56,6 +58,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public IntPtr? Pointer { get; private set; }
 	public ActorTypes Kind { get; private set; }
 	public IconChar Icon { get; private set; }
+	public MediaColor Color { get; private set; }
 	public int ModelType { get; private set; }
 	public Names Names { get; private set; }
 	public bool IsValid { get; private set; }
@@ -365,6 +368,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		this.Pointer = this.Memory.Address;
 		this.Kind = this.Memory.ObjectKind;
 		this.Icon = this.Memory.ObjectKind.GetIcon();
+		this.Color = this.Memory.Color;
 		this.ModelType = this.Memory.ModelType;
 		this.IsGPoseActor = this.Memory.IsGPoseActor;
 		this.IsHidden = this.Memory.IsHidden;
@@ -383,6 +387,10 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		{
 			this.Kind = this.Memory.ObjectKind;
 			this.Icon = this.Memory.ObjectKind.GetIcon();
+		}
+		else if (e.PropertyName == nameof(ActorMemory.Color))
+		{
+			this.Color = this.Memory.Color;
 		}
 	}
 

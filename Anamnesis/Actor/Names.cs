@@ -4,12 +4,14 @@
 namespace Anamnesis.Actor;
 
 using Anamnesis.Memory;
+using Anamnesis.Services;
 using PropertyChanged;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 [AddINotifyPropertyChangedInterface]
-public class Names
+public class Names : INotifyPropertyChanged
 {
 	private readonly ActorBasicMemory actor;
 	private string? nickname;
@@ -21,6 +23,8 @@ public class Names
 
 		this.Update();
 	}
+
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public enum DisplayModes
 	{
@@ -64,7 +68,7 @@ public class Names
 	}
 
 	// Should be a setting.
-	private DisplayModes DisplayMode => DisplayModes.SurnameAbreviated;
+	private DisplayModes DisplayMode => DisplayModes.FullName;
 
 	public void Update()
 	{
@@ -121,6 +125,27 @@ public class Names
 		this.Initials = this.Initials.Trim(' ').Trim('.');
 		this.SurnameAbreviated = this.SurnameAbreviated.Trim(' ').Trim('.');
 		this.ForenameAbreviated = this.ForenameAbreviated.Trim(' ').Trim('.');
+	}
+
+	public void GenerateRandomName()
+	{
+		List<string> keys = new();
+		LocalizationService.Locale? english = LocalizationService.GetLocale(LocalizationService.FallbackCulture);
+
+		if (english == null)
+			return;
+
+		foreach ((string pKey, string pValue) in english.Entries)
+		{
+			if (pValue.Contains(' '))
+				continue;
+
+			keys.Add(pKey);
+		}
+
+		string first = english.Entries[keys[Random.Shared.Next(keys.Count)]];
+		string last = english.Entries[keys[Random.Shared.Next(keys.Count)]];
+		this.Nickname = first + " " + last;
 	}
 
 	private void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)

@@ -107,7 +107,7 @@
 						x:Name="TitleIcon"
 						Margin="0,0,6,0"
 						VerticalAlignment="Center"
-						Foreground="{DynamicResource MaterialDesignToolForeground}" />
+						Foreground="{Binding TitleColor, Converter={StaticResource ColorToBrush}}" />
 
 					<TextBlock
 						x:Name="TitleText"

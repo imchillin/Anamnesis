@@ -21,6 +21,8 @@ using System.Windows.Interop;
 using System.Windows.Media.Animation;
 using XivToolsWpf;
 
+using MediaColor = System.Windows.Media.Color;
+
 [AddINotifyPropertyChangedInterface]
 public partial class OverlayWindow : Window, IPanelGroupHost
 {
@@ -145,6 +147,7 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 	}
 
 	public IPanelGroupHost Host => this;
+	public MediaColor TitleColor { get; set; }
 
 	public new void Show()
 	{

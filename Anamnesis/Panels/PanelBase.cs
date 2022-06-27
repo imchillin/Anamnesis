@@ -7,6 +7,7 @@ using FontAwesome.Sharp;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using XivToolsWpf.DependencyProperties;
 
 public abstract class PanelBase : UserControl, IPanel
@@ -66,6 +67,12 @@ public abstract class PanelBase : UserControl, IPanel
 	{
 		get => this.Host.CanResize;
 		set => this.Host.CanResize = value;
+	}
+
+	public Color TitleColor
+	{
+		get => this.Host.TitleColor;
+		set => this.Host.TitleColor = value;
 	}
 
 	public void DragMove() => this.Host.DragMove();

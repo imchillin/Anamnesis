@@ -12,6 +12,8 @@ using Anamnesis.Utils;
 using FontAwesome.Sharp;
 using PropertyChanged;
 
+using MediaColor = System.Windows.Media.Color;
+
 public class ActorBasicMemory : MemoryBase
 {
 	private ActorBasicMemory? owner;
@@ -56,6 +58,7 @@ public class ActorBasicMemory : MemoryBase
 	public bool IsHidden => this.RenderMode != RenderModes.Draw;
 
 	public Names Names { get; init; }
+	public MediaColor Color { get; set; }
 
 	[DependsOn(nameof(ObjectKind))]
 	public int ObjectKindInt
