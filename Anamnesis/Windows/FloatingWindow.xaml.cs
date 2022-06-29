@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Windows;
 
+using Anamnesis.Extensions;
 using Anamnesis.Memory;
 using Anamnesis.Panels;
 using Anamnesis.Services;
@@ -36,6 +37,7 @@ public partial class FloatingWindow : Window, IPanelGroupHost
 	private IconChar icon;
 	private bool canResize = true;
 	private bool autoClose = true;
+	private bool playOpenAnimation = true;
 
 	public FloatingWindow()
 	{
@@ -167,17 +169,24 @@ public partial class FloatingWindow : Window, IPanelGroupHost
 		if (this.PanelGroupArea.Content is PanelBase panel)
 			panel.Host = this;
 
+		this.playOpenAnimation = false;
+		this.Show();
+
 		this.TitleKey = copy.TitleKey;
 		this.Title = copy.Title;
 		this.Icon = copy.Icon;
 		this.TitleColor = copy.TitleColor;
-		this.Rect = copy.Rect;
 		this.ShowBackground = copy.ShowBackground;
 		this.AllowAutoClose = copy.AllowAutoClose;
 		this.Topmost = copy.Topmost;
 		this.CanResize = copy.CanResize;
 
-		this.Show();
+		if (copy is FloatingWindow wnd)
+		{
+			this.AutoClose = wnd.AutoClose;
+		}
+
+		this.Rect = copy.Rect;
 	}
 
 	public void AddChild(IPanel panel)
@@ -195,8 +204,7 @@ public partial class FloatingWindow : Window, IPanelGroupHost
 	public new void Close()
 	{
 		// base.Close();
-		Storyboard? sb = this.Resources["CloseStoryboard"] as Storyboard;
-		sb?.Begin();
+		this.BeginStoryboard("CloseStoryboard");
 	}
 
 	protected virtual void OnWindowLoaded()
@@ -268,8 +276,14 @@ public partial class FloatingWindow : Window, IPanelGroupHost
 
 		this.OnWindowLoaded();
 
-		Storyboard? sb = this.Resources["OpenStoryboard"] as Storyboard;
-		sb?.Begin();
+		if (this.playOpenAnimation)
+		{
+			this.BeginStoryboard("OpenStoryboard");
+		}
+		else
+		{
+			this.Opacity = 1.0;
+		}
 	}
 
 	private void OnTitleMouseDown(object sender, MouseButtonEventArgs e)
@@ -321,13 +335,13 @@ public partial class FloatingWindow : Window, IPanelGroupHost
 	{
 		FloatingWindow wnd = new();
 		wnd.Show(this);
-		this.Close();
+		base.Close();
 	}
 
 	private void OnPopInClicked(object sender, RoutedEventArgs e)
 	{
 		OverlayWindow wnd = new();
 		wnd.Show(this);
-		this.Close();
+		base.Close();
 	}
 }

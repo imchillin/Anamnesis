@@ -42,7 +42,9 @@ public class NavigationService : ServiceBase<NavigationService>
 			panel.DataContext = request.Context;
 			groupHost.PanelGroupArea.Content = panel;
 
-			// Move the panel to the target position next to the navigation menu
+			groupHost.Show();
+
+			// Move the panel to the target position next to the origin panel
 			PanelBase? originPanel = request.GetOriginPanel();
 			if (originPanel != null)
 			{
@@ -56,8 +58,6 @@ public class NavigationService : ServiceBase<NavigationService>
 				panel.Rect = panelRect;
 				panel.SetParent(originPanel);
 			}
-
-			groupHost.Show();
 
 			return panel;
 		}

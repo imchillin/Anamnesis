@@ -16,41 +16,37 @@ using System.Windows.Interop;
 public class OverlayWindow : FloatingWindow
 {
 	private readonly WindowInteropHelper windowInteropHelper;
-	private int x;
-	private int y;
+	private int x = 0;
+	private int y = 0;
 
 	public OverlayWindow()
 	{
 		this.windowInteropHelper = new(this);
 	}
 
-	/*public override Rect Rect
+	public override Rect Rect
 	{
-		get
-		{
-			if (MemoryService.Process != null)
-			{
-				GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect gameRect);
-				GetWindowRect(this.windowInteropHelper.Handle, out Win32Rect selfRect);
-
-				// TODO: get this from a windows api maybe?
-				int titleBarHeight = 22;
-
-				this.x = (int)(selfRect.Left - gameRect.Left);
-				this.y = (int)(selfRect.Top - (gameRect.Top + titleBarHeight));
-			}
-
-			return new Rect(this.x, this.y, this.Width, this.Height);
-		}
+		get => base.Rect;
 		set
 		{
-			this.x = (int)value.X;
-			this.y = (int)value.Y;
 			this.Width = value.Width;
 			this.Height = value.Height;
+
+			if (MemoryService.Process != null)
+			{
+				GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect gameWindowRect);
+				this.x = (int)value.Left - gameWindowRect.Left;
+				this.y = (int)value.Top - gameWindowRect.Top;
+
+				// Size of the window chrome.
+				// No idea how to get this correctly...
+				this.y -= 26;
+				this.x -= 2;
+			}
+
 			this.UpdatePosition();
 		}
-	}*/
+	}
 
 	public override Rect ScreenRect
 	{
@@ -87,6 +83,9 @@ public class OverlayWindow : FloatingWindow
 		style = (int)((style & ~WS_POPUP) | WS_CHILD);
 		SetWindowLong(this.windowInteropHelper.Handle, GWL_STYLE, style);
 
+		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, 128, 128, 0x0040);
+		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, 0, 0, 0x0001);
+
 		this.UpdatePosition();
 	}
 
@@ -103,19 +102,23 @@ public class OverlayWindow : FloatingWindow
 		int w = (int)this.Width - 1;
 		int h = (int)this.Height - 1;
 
-		GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect rect);
-		int gameWindowWidth = rect.Right - rect.Left;
-		int hameWindowHeight = rect.Bottom - rect.Top;
+		GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect gameWindowRect);
+		int gameWindowWidth = gameWindowRect.Right - gameWindowRect.Left;
+		int hameWindowHeight = gameWindowRect.Bottom - gameWindowRect.Top;
 
-		this.y = Math.Clamp(this.y, 0, hameWindowHeight);
-		this.x = Math.Clamp(this.x, 0, gameWindowWidth);
+		int x = Math.Clamp(this.x, 0, gameWindowWidth - w);
+		int y = Math.Clamp(this.y, 0, hameWindowHeight - h);
 
-		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, w, h, /*SHOWWINDOW */ 0x0040);
-		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, this.x, this.y, 0, 0, /*NOSIZE*/ 0x0001);
+		// SHOWWINDOW
+		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, w, h,  0x0040);
+
+		// NOSIZE
+		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, x, y, 0, 0,  0x0001);
 
 		if (this.Topmost)
 		{
-			SetWindowPos(this.windowInteropHelper.Handle, (IntPtr)(-1), 0, 0, 0, 0, /*NOSIZE | NOMOVE*/ 0x0001 | 0x0003);
+			// NOSIZE | NOMOVE
+			SetWindowPos(this.windowInteropHelper.Handle, (IntPtr)(-1), 0, 0, 0, 0,  0x0001 | 0x0003);
 		}
 	}
 
@@ -127,6 +130,9 @@ public class OverlayWindow : FloatingWindow
 
 	[DllImport("user32.dll", SetLastError = true)]
 	private static extern bool GetWindowRect(IntPtr hwnd, out Win32Rect rect);
+
+	[DllImport("user32.dll", SetLastError = true)]
+	private static extern bool GetClientRect(IntPtr hwnd, out Win32Rect rect);
 
 	[DllImport("user32.dll")]
 	private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
