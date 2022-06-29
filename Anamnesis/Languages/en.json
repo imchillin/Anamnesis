@@ -167,6 +167,7 @@
 
 	"OverlayWindow_AutoClose": "Auto close",
 	"OverlayWindow_PopOut": "Pop-out",
+	"OverlayWindow_PopIn": "Pop-in",
 
 	"Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
 	"Character_Load_CMTool": "CMTool save",

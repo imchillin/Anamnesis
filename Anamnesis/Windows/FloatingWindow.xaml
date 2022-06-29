@@ -1,5 +1,5 @@
 ﻿<Window
-	x:Class="Anamnesis.Windows.OverlayWindow"
+	x:Class="Anamnesis.Windows.FloatingWindow"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
@@ -167,8 +167,16 @@
 							Visibility="{Binding AllowAutoClose, Converter={StaticResource B2V}}" />
 
 						<MenuItem
+							Click="OnPopOutClicked"
 							Header="OverlayWindow_PopOut"
-							Style="{StaticResource AnaMenuItem}" />
+							Style="{StaticResource AnaMenuItem}"
+							Visibility="{Binding CanPopOut, Converter={StaticResource B2V}}" />
+
+						<MenuItem
+							Click="OnPopInClicked"
+							Header="OverlayWindow_PopIn"
+							Style="{StaticResource AnaMenuItem}"
+							Visibility="{Binding CanPopIn, Converter={StaticResource B2V}}" />
 
 					</ContextMenu>
 				</Grid.ContextMenu>

@@ -19,7 +19,7 @@ public abstract class PanelBase : UserControl, IPanel
 		this.Host = host;
 	}
 
-	public IPanelGroupHost Host { get; init; }
+	public IPanelGroupHost Host { get; set; }
 
 	public string? TitleKey
 	{

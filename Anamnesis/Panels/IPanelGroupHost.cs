@@ -4,7 +4,7 @@
 namespace Anamnesis.Panels;
 
 using FontAwesome.Sharp;
-using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -12,8 +12,15 @@ using System.Windows.Media;
 public interface IPanelGroupHost : IPanel
 {
 	ContentPresenter PanelGroupArea { get; }
+	IPanelGroupHost? ParentHost { get; set; }
+	bool IsVisible { get; }
+
+	IEnumerable<IPanelGroupHost> Children { get; }
+
 	void Show();
+	void Show(IPanelGroupHost copy);
 	void AddChild(IPanel panel);
+	void RemoveChild(IPanel panel);
 }
 
 public interface IPanel

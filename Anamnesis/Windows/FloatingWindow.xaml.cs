@@ -25,22 +25,19 @@ using XivToolsWpf;
 using MediaColor = System.Windows.Media.Color;
 
 [AddINotifyPropertyChangedInterface]
-public partial class OverlayWindow : Window, IPanelGroupHost
+public partial class FloatingWindow : Window, IPanelGroupHost
 {
 	private readonly WindowInteropHelper windowInteropHelper;
-	private readonly List<OverlayWindow> children = new();
-	private OverlayWindow? parent;
+	private readonly List<IPanelGroupHost> children = new();
 
 	private string? titleKey;
 	private string? titleText;
 
-	private int x;
-	private int y;
 	private IconChar icon;
 	private bool canResize = true;
 	private bool autoClose = true;
 
-	public OverlayWindow()
+	public FloatingWindow()
 	{
 		this.windowInteropHelper = new(this);
 		this.InitializeComponent();
@@ -51,8 +48,11 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		this.TitleColor = Application.Current.Resources.GetTheme().ToolForeground;
 	}
 
+	public IPanelGroupHost? ParentHost { get; set; }
 	public ContentPresenter PanelGroupArea => this.ContentPresenter;
 	public bool ShowBackground { get; set; } = true;
+
+	public IEnumerable<IPanelGroupHost> Children => this.children;
 
 	[AlsoNotifyFor(nameof(AutoClose))]
 	public bool AllowAutoClose { get; set; } = true;
@@ -121,56 +121,75 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		}
 	}
 
-	public Rect Rect
+	public virtual Rect Rect
 	{
 		get
 		{
-			if (MemoryService.Process != null)
-			{
-				GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect gameRect);
-				GetWindowRect(this.windowInteropHelper.Handle, out Win32Rect selfRect);
-
-				// TODO: get this from a windows api maybe?
-				int titleBarHeight = 22;
-
-				this.x = (int)(selfRect.Left - gameRect.Left);
-				this.y = (int)(selfRect.Top - (gameRect.Top + titleBarHeight));
-			}
-
-			return new Rect(this.x, this.y, this.Width, this.Height);
+			return new Rect(this.Left, this.Top, this.Width, this.Height);
 		}
 		set
 		{
-			this.x = (int)value.X;
-			this.y = (int)value.Y;
+			this.Left = (int)value.X;
+			this.Top = (int)value.Y;
 			this.Width = value.Width;
 			this.Height = value.Height;
 			this.UpdatePosition();
 		}
 	}
 
+	public virtual Rect ScreenRect
+	{
+		get
+		{
+			// We uuuuh... might need to know what screen we are on to begin with? idk.
+			return new Rect(0, 0, SystemParameters.WorkArea.Width, SystemParameters.WorkArea.Height);
+		}
+	}
+
 	public IPanelGroupHost Host => this;
 	public MediaColor? TitleColor { get; set; }
+	public virtual bool CanPopOut => false;
+	public virtual bool CanPopIn => true;
 
-	public new void Show()
+	public virtual new void Show()
 	{
-		double screenHeight = 720;
-		this.MaxHeight = screenHeight - this.x;
-
 		base.Show();
+
+		Rect screen = this.ScreenRect;
+		Rect pos = this.Rect;
+		this.MaxHeight = screen.Height - pos.Top;
+	}
+
+	public virtual void Show(IPanelGroupHost copy)
+	{
+		this.PanelGroupArea.Content = copy.PanelGroupArea.Content;
+
+		if (this.PanelGroupArea.Content is PanelBase panel)
+			panel.Host = this;
+
+		this.TitleKey = copy.TitleKey;
+		this.Title = copy.Title;
+		this.Icon = copy.Icon;
+		this.TitleColor = copy.TitleColor;
+		this.Rect = copy.Rect;
+		this.ShowBackground = copy.ShowBackground;
+		this.AllowAutoClose = copy.AllowAutoClose;
+		this.Topmost = copy.Topmost;
+		this.CanResize = copy.CanResize;
+
+		this.Show();
 	}
 
 	public void AddChild(IPanel panel)
 	{
-		if (panel.Host is OverlayWindow wnd)
-		{
-			wnd.parent = this;
-			this.children.Add(wnd);
+		panel.Host.ParentHost = this;
+		this.children.Add(panel.Host);
+	}
 
-			return;
-		}
-
-		throw new NotSupportedException("Panel host must be an overlay window to be a child of another overlay window");
+	public void RemoveChild(IPanel panel)
+	{
+		this.children.Remove(panel.Host);
+		panel.Host.ParentHost = null;
 	}
 
 	public new void Close()
@@ -178,6 +197,14 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		// base.Close();
 		Storyboard? sb = this.Resources["CloseStoryboard"] as Storyboard;
 		sb?.Begin();
+	}
+
+	protected virtual void OnWindowLoaded()
+	{
+	}
+
+	protected virtual void UpdatePosition()
+	{
 	}
 
 	protected override async void OnDeactivated(EventArgs e)
@@ -190,47 +217,32 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 			// then we dont close yet.
 			foreach (IPanel docked in this.children)
 			{
-				if (docked.Host is OverlayWindow dockedWindow)
+				if (docked.Host.IsVisible)
 				{
-					if (dockedWindow.IsVisible)
-					{
-						return;
-					}
+					return;
 				}
 			}
 
 			this.Close();
 
-			if (this.parent != null)
+			if (this.ParentHost != null)
 			{
-				this.parent.children.Remove(this);
+				this.ParentHost.RemoveChild(this);
 
 				// wait a moment to see if the parent is actually being focused
 				await Task.Delay(250);
 				await Dispatch.MainThread();
 
-				if (!this.parent.IsActive)
+				if (this.ParentHost is FloatingWindow wnd)
 				{
-					this.parent.OnDeactivated(e);
+					if (!wnd.IsActive)
+					{
+						wnd.OnDeactivated(e);
+					}
 				}
 			}
 		}
 	}
-
-	[DllImport("user32.dll", SetLastError = true)]
-	private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-
-	[DllImport("user32.dll", SetLastError = true)]
-	private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
-
-	[DllImport("user32.dll", SetLastError = true)]
-	private static extern bool GetWindowRect(IntPtr hwnd, out Win32Rect rect);
-
-	[DllImport("user32.dll")]
-	private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
-	[DllImport("user32.dll", EntryPoint = "GetWindowLong")]
-	private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
 	private void UpdateTitle()
 	{
@@ -251,59 +263,13 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 
 	private void OnWindowLoaded(object sender, RoutedEventArgs e)
 	{
-		if (MemoryService.Process == null)
-		{
-			this.Close();
-			return;
-		}
-
-		GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect rect);
-
-		this.Left = rect.Left + 20;
-		this.Top = rect.Top + 20;
-
-		SetParent(this.windowInteropHelper.Handle, MemoryService.Process.MainWindowHandle);
-
-		const uint WS_POPUP = 0x80000000;
-		const uint WS_CHILD = 0x40000000;
-		const int GWL_STYLE = -16;
-
-		int style = GetWindowLong(this.windowInteropHelper.Handle, GWL_STYLE);
-		style = (int)((style & ~WS_POPUP) | WS_CHILD);
-		SetWindowLong(this.windowInteropHelper.Handle, GWL_STYLE, style);
-
 		this.UpdatePosition();
 		this.Activate();
 
+		this.OnWindowLoaded();
+
 		Storyboard? sb = this.Resources["OpenStoryboard"] as Storyboard;
 		sb?.Begin();
-	}
-
-	private void UpdatePosition()
-	{
-		if (!this.IsActive)
-			return;
-
-		if (MemoryService.Process == null)
-			return;
-
-		int w = (int)this.Width - 1;
-		int h = (int)this.Height - 1;
-
-		GetWindowRect(MemoryService.Process.MainWindowHandle, out Win32Rect rect);
-		int gameWindowWidth = rect.Right - rect.Left;
-		int hameWindowHeight = rect.Bottom - rect.Top;
-
-		this.y = Math.Clamp(this.y, 0, hameWindowHeight);
-		this.x = Math.Clamp(this.x, 0, gameWindowWidth);
-
-		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, 0, 0, w, h, /*SHOWWINDOW */ 0x0040);
-		SetWindowPos(this.windowInteropHelper.Handle, IntPtr.Zero, this.x, this.y, 0, 0, /*NOSIZE*/ 0x0001);
-
-		if (this.Topmost)
-		{
-			SetWindowPos(this.windowInteropHelper.Handle, (IntPtr)(-1), 0, 0, 0, 0, /*NOSIZE | NOMOVE*/ 0x0001 | 0x0003);
-		}
 	}
 
 	private void OnTitleMouseDown(object sender, MouseButtonEventArgs e)
@@ -351,12 +317,17 @@ public partial class OverlayWindow : Window, IPanelGroupHost
 		base.Close();
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public struct Win32Rect
+	private void OnPopOutClicked(object sender, RoutedEventArgs e)
 	{
-		public int Left;        // x position of upper-left corner
-		public int Top;         // y position of upper-left corner
-		public int Right;       // x position of lower-right corner
-		public int Bottom;      // y position of lower-right corner
+		FloatingWindow wnd = new();
+		wnd.Show(this);
+		this.Close();
+	}
+
+	private void OnPopInClicked(object sender, RoutedEventArgs e)
+	{
+		OverlayWindow wnd = new();
+		wnd.Show(this);
+		this.Close();
 	}
 }
