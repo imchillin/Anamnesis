@@ -141,7 +141,7 @@
 				<ItemsControl
 					x:Name="PinnedActorList"
 					ana:Behaviours.IsReorderable="True"
-					ItemsSource="{Binding TargetService.PinnedActors}">
+					ItemsSource="{Binding Services.Target.PinnedActors}">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
 							<local:ActorEntry

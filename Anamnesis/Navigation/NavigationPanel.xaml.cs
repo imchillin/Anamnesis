@@ -32,14 +32,6 @@ public partial class NavigationPanel : PanelBase
 		this.NavigationContextMenu.DataContext = this;
 	}
 
-	public GameService GameService => GameService.Instance;
-	public SettingsService SettingsService => SettingsService.Instance;
-	public GposeService GposeService => GposeService.Instance;
-	public TargetService TargetService => TargetService.Instance;
-	public MemoryService MemoryService => MemoryService.Instance;
-	public LogService LogService => LogService.Instance;
-	public UpdateService UpdateService => UpdateService.Instance;
-
 	public bool Expanded
 	{
 		get => this.expanded;

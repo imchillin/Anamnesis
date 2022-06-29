@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Panels;
 
+using Anamnesis.Services;
 using FontAwesome.Sharp;
 using System;
 using System.Windows;
@@ -18,6 +19,8 @@ public abstract class PanelBase : UserControl, IPanel
 	{
 		this.Host = host;
 	}
+
+	public ServiceManager Services => App.Services;
 
 	public IPanelGroupHost Host { get; set; }
 

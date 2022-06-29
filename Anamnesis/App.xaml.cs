@@ -25,7 +25,7 @@ using Application = System.Windows.Application;
 /// </summary>
 public partial class App : Application
 {
-	private static readonly ServiceManager Services = new ServiceManager();
+	public static readonly ServiceManager Services = new ServiceManager();
 
 	protected override void OnStartup(StartupEventArgs e)
 	{
@@ -88,37 +88,15 @@ public partial class App : Application
 
 			LogService.CreateLog();
 
+			this.CheckWindowsVersion();
 			this.CheckWorkingDirectory();
 			this.CheckForProcesses();
 
-			await Services.InitializeServices();
-
+			await Services.InitializeCriticalServices();
 			SettingsService.ApplyTheme();
-
-			await Dispatch.MainThread();
-
-			// Wait for any child windows to close.
-			bool wait = true;
-			while (wait)
-			{
-				wait = false;
-
-				foreach (Window window in this.Windows)
-				{
-					if (window.Owner == this.MainWindow)
-					{
-						wait = true;
-						await Task.Delay(500);
-					}
-				}
-			}
-
 			await Dispatch.MainThread();
 
 			Window oldwindow = this.MainWindow;
-
-			Stopwatch sw2 = new();
-			sw2.Start();
 
 			if (SettingsService.Current.OverlayWindow)
 			{
@@ -135,9 +113,9 @@ public partial class App : Application
 				this.MainWindow.Show();
 			}
 
-			Log.Information($"Took {sw2.ElapsedMilliseconds}ms to show window");
-
 			oldwindow.Close();
+
+			await Services.InitializeServices();
 		}
 		catch (Exception ex)
 		{
@@ -147,6 +125,18 @@ public partial class App : Application
 
 		sw.Stop();
 		Log.Information($"Started application in {sw.ElapsedMilliseconds}ms");
+	}
+
+	private void CheckWindowsVersion()
+	{
+		OperatingSystem os = Environment.OSVersion;
+		if (os.Platform != PlatformID.Win32NT)
+			throw new Exception("Only Windows NT or later is supported");
+
+		if (os.Version.Major < 10)
+		{
+			throw new Exception("Only Windows 10 or newer is supported");
+		}
 	}
 
 	private void CheckWorkingDirectory()
