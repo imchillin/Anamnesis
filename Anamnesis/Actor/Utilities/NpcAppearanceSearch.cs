@@ -24,21 +24,13 @@ public static class NpcAppearanceSearch
 
 	public static async Task SearchAsync(ActorMemory actor)
 	{
-		List<ExcelRow> names = new();
 		List<INpcBase> appearances = new();
 
 		using (WaitDialog dlg = await WaitDialog.ShowAsync("Please Wait...", "NPC Appearance search"))
 		{
-			await dlg.SetProgress(0.01);
-			SearchNames(actor.Name, ref names);
-
-			await dlg.SetProgress(0.25);
-			if (actor.Nickname != null)
-				SearchNames(actor.Nickname, ref names);
-
-			await dlg.SetProgress(0.5);
+			await dlg.SetProgress(0.1);
 			Search(actor, GameDataService.BattleNPCs, ref appearances);
-			await dlg.SetProgress(0.75);
+			await dlg.SetProgress(0.5);
 			Search(actor, GameDataService.EventNPCs, ref appearances);
 			////await dlg.SetProgress(0.8);
 			////Search(actor, GameDataService.ResidentNPCs, ref appearances);
@@ -50,29 +42,15 @@ public static class NpcAppearanceSearch
 		{
 			GenericDialog.Show($"Appearance not found", "NPC Appearance search");
 		}
-		else if (names.Count <= 0)
-		{
-			if (actor.Nickname != null)
-			{
-				GenericDialog.Show($"Name \"{actor.Name}\" or \"{actor.Nickname}\" not found", "NPC Appearance search");
-			}
-			else
-			{
-				GenericDialog.Show($"Name \"{actor.Name}\" not found", "NPC Appearance search");
-			}
-		}
 		else
 		{
 			StringBuilder messageBuilder = new();
-			messageBuilder.AppendLine($"Found {appearances.Count} appearances with {names.Count} names");
+			messageBuilder.AppendLine($"Found {appearances.Count} appearances:");
 			messageBuilder.AppendLine();
 
 			StringBuilder jsonBuilder = new();
-			ExcelRow name = names[0];
 			foreach (INpcBase appearance in appearances)
 			{
-				jsonBuilder.Append('\"');
-
 				if (appearance is BattleNpc)
 				{
 					jsonBuilder.Append("B:");
@@ -86,15 +64,12 @@ public static class NpcAppearanceSearch
 					jsonBuilder.Append("R:");
 				}
 
-				jsonBuilder.Append(appearance.RowId.ToString("D7"));
-				jsonBuilder.Append("\": \"N:");
-				jsonBuilder.Append(name.RowId.ToString("D7"));
-				jsonBuilder.AppendLine("\",");
+				jsonBuilder.AppendLine(appearance.RowId.ToString("D7"));
 			}
 
 			messageBuilder.AppendLine(jsonBuilder.ToString());
 			messageBuilder.AppendLine();
-			messageBuilder.AppendLine("This NPCNames entry block has been copied to your clipboard.");
+			messageBuilder.AppendLine("This has been copied to your clipboard.");
 
 			await ClipboardUtility.CopyToClipboardAsync(jsonBuilder.ToString());
 
