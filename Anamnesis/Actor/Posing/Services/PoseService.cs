@@ -187,11 +187,11 @@ public class PoseService : ServiceBase<PoseService>
 		this.FreezeScale = false;
 		this.EnableParenting = true;
 
-		if (enabled)
+		/*if (enabled)
 		{
 			this.FreezeWorldPosition = true;
 			AnimationService.Instance.PausePinnedActors();
-		}
+		}*/
 
 		EnabledChanged?.Invoke(enabled);
 
