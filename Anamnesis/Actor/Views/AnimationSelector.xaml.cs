@@ -48,7 +48,7 @@ public partial class AnimationSelector : UserControl, INotifyPropertyChanged
 		return Task.CompletedTask;
 	}
 
-	private bool Filter(object item, string search)
+	private bool Filter(object item, string[]? search)
 	{
 		if (item is not IAnimation animation)
 			return false;
