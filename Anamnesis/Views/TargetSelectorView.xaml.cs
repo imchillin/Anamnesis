@@ -7,19 +7,14 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using Anamnesis.Memory;
-using Anamnesis.Services;
-using Anamnesis.Styles.Drawers;
 using XivToolsWpf;
-
-public abstract class TargetSelectorDrawer : SelectorDrawer<ActorBasicMemory>
-{
-}
 
 /// <summary>
 /// Interaction logic for TargetSelectorView.xaml.
 /// </summary>
-public partial class TargetSelectorView : TargetSelectorDrawer
+public partial class TargetSelectorView : UserControl, INotifyPropertyChanged
 {
 	private static bool includePlayers = true;
 	private static bool includeCompanions = true;
@@ -37,6 +32,8 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 		this.PropertyChanged += this.OnSelfPropertyChanged;
 	}
+
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public TargetService TargetService => TargetService.Instance;
 
@@ -82,28 +79,20 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		set => includeHidden = value;
 	}
 
-	public static void Show(Action<ActorBasicMemory> sectionChanged)
+	protected Task LoadItems()
 	{
-		TargetSelectorView view = new TargetSelectorView();
-		view.SelectionChanged += (b) =>
-		{
-			if (view.Value == null)
-				return;
-
-			sectionChanged?.Invoke(view.Value);
-		};
-
-		ViewService.ShowDrawer(view, DrawerDirection.Left);
-	}
-
-	protected override Task LoadItems()
-	{
-		this.AddItems(ActorService.Instance.GetAllActors());
+		this.Selector.AddItems(ActorService.Instance.GetAllActors());
 		return Task.CompletedTask;
 	}
 
-	protected override int Compare(ActorBasicMemory actorA, ActorBasicMemory actorB)
+	protected int Compare(object itemA, object itemB)
 	{
+		if (itemA is not ActorBasicMemory actorA)
+			return 0;
+
+		if (itemB is not ActorBasicMemory actorB)
+			return 0;
+
 		if (actorA.IsGPoseActor && !actorB.IsGPoseActor)
 			return -1;
 
@@ -113,8 +102,11 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		return actorA.DistanceFromPlayer.CompareTo(actorB.DistanceFromPlayer);
 	}
 
-	protected override bool Filter(ActorBasicMemory actor, string[]? search)
+	private bool FilterItems(object item, string search)
 	{
+		if (item is not ActorBasicMemory actor)
+			return false;
+
 		////if (GposeService.Instance.IsGpose != actor.IsGPoseActor)
 		////	return false;
 
@@ -156,20 +148,14 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		return true;
 	}
 
-	protected override void OnSelectionChanged(bool close)
-	{
-		base.OnSelectionChanged(close);
-		this.Close();
-	}
-
 	private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		this.FilterItems();
+		this.Selector.FilterItems();
 	}
 
 	private void OnAddPlayerTargetActorClicked(object sender, RoutedEventArgs e)
 	{
-		this.Value = TargetService.GetTargetedActor();
-		this.OnSelectionChanged(true);
+		this.Selector.Value = TargetService.GetTargetedActor();
+		this.Selector.RaiseSelectionChanged();
 	}
 }

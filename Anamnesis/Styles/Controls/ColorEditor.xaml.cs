@@ -119,11 +119,11 @@ public partial class ColorEditor : UserControl, INotifyPropertyChanged
 		this.Preview.Background = new SolidColorBrush(c);
 	}
 
-	private async void OnClick(object sender, RoutedEventArgs e)
+	private void OnClick(object sender, RoutedEventArgs e)
 	{
 		ColorSelectorDrawer selector = new ColorSelectorDrawer();
 		selector.Value = new Color4(this.Value);
-		await ViewService.ShowDrawer(selector);
-		this.Value = selector.Value.Color;
+		throw new NotImplementedException();
+		////this.Value = selector.Value.Color;
 	}
 }

@@ -137,7 +137,9 @@ public class FileService : ServiceBase<FileService>
 			{
 				List<FileFilter> filters = ToFileFilters(fileTypes);
 				FileBrowserView browser = new FileBrowserView(shortcuts, filters, defaultDirectory, null, FileBrowserView.Modes.Load);
-				await ViewService.ShowDrawer(browser);
+
+#pragma warning disable
+				throw new NotImplementedException();
 
 				while (browser.IsOpen)
 					await Task.Delay(10);
@@ -281,7 +283,9 @@ public class FileService : ServiceBase<FileService>
 					};
 
 				FileBrowserView browser = new FileBrowserView(directories, filters, defaultDirectory, typeName, FileBrowserView.Modes.Save);
-				await ViewService.ShowDrawer(browser);
+
+#pragma warning disable
+				throw new NotImplementedException();
 
 				while (browser.IsOpen)
 					await Task.Delay(10);

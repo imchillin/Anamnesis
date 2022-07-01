@@ -13,15 +13,13 @@ using XivToolsWpf;
 /// <summary>
 /// Interaction logic for GenericDialog.xaml.
 /// </summary>
-public partial class GenericDialog : UserControl, IDialog<bool?>
+public partial class GenericDialog : UserControl
 {
 	public GenericDialog()
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 	}
-
-	public event DialogEvent? Close;
 
 	public bool? Result { get; set; }
 	public string Message { get; set; } = string.Empty;
@@ -81,24 +79,25 @@ public partial class GenericDialog : UserControl, IDialog<bool?>
 				}
 		}
 
-		return await ViewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
+		////return await ViewService.ShowDialog<GenericDialog, bool?>(caption, dlg);
+		throw new NotImplementedException();
 	}
 
 	public void Cancel()
 	{
 		this.Result = null;
-		this.Close?.Invoke();
+		////this.Close?.Invoke();
 	}
 
 	private void OnLeftClick(object sender, RoutedEventArgs e)
 	{
 		this.Result = false;
-		this.Close?.Invoke();
+		////this.Close?.Invoke();
 	}
 
 	private void OnRightClick(object sender, RoutedEventArgs e)
 	{
 		this.Result = true;
-		this.Close?.Invoke();
+		////this.Close?.Invoke();
 	}
 }

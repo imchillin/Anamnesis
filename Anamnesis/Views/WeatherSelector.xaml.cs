@@ -7,18 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Services;
-using Anamnesis.Styles.Drawers;
-using PropertyChanged;
 using XivToolsWpf;
 
-public abstract class WeatherSelectorDrawer : SelectorDrawer<Weather>
-{
-}
-
-/// <summary>
-/// Interaction logic for WeatherSelector.xaml.
-/// </summary>
-public partial class WeatherSelector : WeatherSelectorDrawer
+public partial class WeatherSelector : UserControl
 {
 	private static bool natrualWeathers = true;
 
@@ -34,21 +25,21 @@ public partial class WeatherSelector : WeatherSelectorDrawer
 		set
 		{
 			natrualWeathers = value;
-			this.FilterItems();
+			this.Selector.FilterItems();
 		}
 	}
 
-	protected override Task LoadItems()
+	protected Task LoadItems()
 	{
 		if (TerritoryService.Instance.CurrentTerritory == null)
 			return Task.CompletedTask;
 
-		this.AddItems(GameDataService.Weathers);
+		this.Selector.AddItems(GameDataService.Weathers);
 
 		return Task.CompletedTask;
 	}
 
-	protected override bool Filter(Weather weather, string[]? search)
+	protected bool Filter(Weather weather, string[]? search)
 	{
 		if (weather.RowId == 0)
 			return false;

@@ -1,4 +1,4 @@
-﻿<local:TargetSelectorDrawer
+﻿<UserControl
 	x:Class="Anamnesis.Views.TargetSelectorView"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -86,7 +86,11 @@
 			</Button>
 		</Grid>
 
-		<xivToolsWpfSelectors:Selector Grid.Row="3">
+		<xivToolsWpfSelectors:Selector
+			x:Name="Selector"
+			Grid.Row="3"
+			LoadItems="LoadItems"
+			Sort="Compare">
 
 			<xivToolsWpfSelectors:Selector.ItemTemplate>
 				<DataTemplate>
@@ -160,4 +164,4 @@
 		</Grid>
 
 	</Grid>
-</local:TargetSelectorDrawer>
+</UserControl>

@@ -15,8 +15,6 @@ public class NavigationService : ServiceBase<NavigationService>
 	{
 		{ "Settings", typeof(SettingsPanel) },
 		{ "Weather", typeof(WeatherPanel) },
-		{ "WeatherSelector", typeof(WeatherSelectorPanel) },
-		{ "PinActor", typeof(PinActorPanel) },
 		{ "ActorInfo", typeof(ActorInfoPanel) },
 		{ "ActorCustomize", typeof(CustomizePanel) },
 		{ "ActorEquipment", typeof(EquipmentPanel) },
@@ -34,7 +32,16 @@ public class NavigationService : ServiceBase<NavigationService>
 				throw new Exception($"No panel type found for navigation: {request.Destination}");
 
 			IPanelGroupHost groupHost = PanelService.CreateHost();
-			PanelBase? panel = Activator.CreateInstance(panelType, groupHost) as PanelBase;
+			PanelBase? panel;
+
+			try
+			{
+				panel = Activator.CreateInstance(panelType, groupHost) as PanelBase;
+			}
+			catch (Exception)
+			{
+				panel = Activator.CreateInstance(panelType, groupHost, request.Context) as PanelBase;
+			}
 
 			if (panel == null)
 				throw new Exception($"Failed to create instance of panel: {panelType}");

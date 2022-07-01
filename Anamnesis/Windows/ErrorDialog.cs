@@ -31,7 +31,9 @@ public static class ErrorDialog
 		{
 			SplashWindow.HideWindow();
 
-			Dialog dlg = new Dialog();
+			throw new NotImplementedException();
+
+			/*Dialog dlg = new Dialog();
 			dlg.TitleText.Text = "Anamnesis v" + VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
 			XivToolsErrorDialog errorDialog = new XivToolsErrorDialog(dlg, ex, isCriticial);
 
@@ -47,7 +49,7 @@ public static class ErrorDialog
 			if (isCriticial)
 				Application.Current.Shutdown(2);
 
-			SplashWindow.ShowWindow();
+			SplashWindow.ShowWindow();*/
 		}
 		catch (Exception newEx)
 		{

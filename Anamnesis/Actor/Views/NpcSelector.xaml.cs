@@ -15,14 +15,7 @@ using Anamnesis.Utils;
 using PropertyChanged;
 using XivToolsWpf;
 
-public abstract class NpcSelectorDrawer : SelectorDrawer<INpcBase>
-{
-}
-
-/// <summary>
-/// Interaction logic for EquipmentSelector.xaml.
-/// </summary>
-public partial class NpcSelector : NpcSelectorDrawer
+public partial class NpcSelector : UserControl, INotifyPropertyChanged
 {
 	public NpcSelector()
 	{
@@ -33,6 +26,8 @@ public partial class NpcSelector : NpcSelectorDrawer
 		this.CurrentFilter.PropertyChanged += this.OnSelfPropertyChanged;
 		this.PropertyChanged += this.OnSelfPropertyChanged;
 	}
+
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public NpcFilter CurrentFilter { get; private set; }
 
@@ -54,30 +49,30 @@ public partial class NpcSelector : NpcSelectorDrawer
 		this.CurrentFilter.PropertyChanged += this.OnSelfPropertyChanged;
 	}
 
-	protected override Task LoadItems()
+	protected Task LoadItems()
 	{
 		if (GameDataService.ResidentNPCs != null)
-			this.AddItems(GameDataService.ResidentNPCs);
+			this.Selector.AddItems(GameDataService.ResidentNPCs);
 
 		if (GameDataService.BattleNPCs != null)
-			this.AddItems(GameDataService.BattleNPCs);
+			this.Selector.AddItems(GameDataService.BattleNPCs);
 
 		if (GameDataService.EventNPCs != null)
-			this.AddItems(GameDataService.EventNPCs);
+			this.Selector.AddItems(GameDataService.EventNPCs);
 
 		if (GameDataService.Mounts != null)
-			this.AddItems(GameDataService.Mounts);
+			this.Selector.AddItems(GameDataService.Mounts);
 
 		if (GameDataService.Companions != null)
-			this.AddItems(GameDataService.Companions);
+			this.Selector.AddItems(GameDataService.Companions);
 
 		if (GameDataService.Ornaments != null)
-			this.AddItems(GameDataService.Ornaments);
+			this.Selector.AddItems(GameDataService.Ornaments);
 
 		return Task.CompletedTask;
 	}
 
-	protected override int Compare(INpcBase itemA, INpcBase itemB)
+	protected int Compare(INpcBase itemA, INpcBase itemB)
 	{
 		// Faorites to the top
 		if (itemA.IsFavorite && !itemB.IsFavorite)
@@ -131,7 +126,7 @@ public partial class NpcSelector : NpcSelectorDrawer
 		return -itemB.RowId.CompareTo(itemA.RowId);
 	}
 
-	protected override bool Filter(INpcBase npc, string[]? search)
+	protected bool Filter(INpcBase npc, string[]? search)
 	{
 		if (this.CurrentFilter.IncludeNamed == true && !npc.HasName)
 			return false;
@@ -218,15 +213,18 @@ public partial class NpcSelector : NpcSelectorDrawer
 		if (e.PropertyName == nameof(this.CurrentFilter))
 			return;
 
-		this.FilterItems();
+		this.Selector.FilterItems();
 	}
 
 	private async void OnCopyId(object sender, RoutedEventArgs e)
 	{
-		if (this.Value == null)
+		if (this.Selector.Value == null)
 			return;
 
-		await ClipboardUtility.CopyToClipboardAsync(this.Value.ToStringKey());
+		if (this.Selector.Value is INpcBase npc)
+		{
+			await ClipboardUtility.CopyToClipboardAsync(npc.ToStringKey());
+		}
 	}
 
 	[AddINotifyPropertyChangedInterface]

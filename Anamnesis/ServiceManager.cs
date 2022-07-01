@@ -27,7 +27,6 @@ public class ServiceManager
 	public SerializerService Serializer { get; } = new();
 	public LocalizationService Localization { get; } = new();
 	public Updater.UpdateService Update { get; } = new();
-	public ViewService ViewService { get; } = new();
 	public MemoryService Memory { get; } = new();
 	public AddressService Address { get; } = new();
 	public ActorService Actor { get; } = new();
@@ -60,7 +59,6 @@ public class ServiceManager
 		await this.InitializeService(this.Navigation);
 		await this.InitializeService(this.Serializer);
 		await this.InitializeService(this.Update);
-		await this.InitializeService(this.ViewService);
 		await this.InitializeService(this.Address);
 		await this.InitializeService(this.Actor);
 		await this.InitializeService(this.Target);

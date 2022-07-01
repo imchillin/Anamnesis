@@ -91,9 +91,7 @@ public class UpdateService : ServiceBase<UpdateService>
 			{
 				await Dispatch.MainThread();
 
-				UpdateDialog dlg = new();
-				dlg.Changes = this.currentRelease.Changes;
-				await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
+				await UpdateDialog.Show(this.currentRelease.Changes);
 			}
 
 			SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;

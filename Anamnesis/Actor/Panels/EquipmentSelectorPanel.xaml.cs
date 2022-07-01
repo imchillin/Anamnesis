@@ -11,19 +11,14 @@ using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Keyboard;
+using Anamnesis.Memory;
+using Anamnesis.Panels;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using PropertyChanged;
 using XivToolsWpf;
 
-public abstract class EquipmentSelectorDrawer : SelectorDrawer<IItem>
-{
-}
-
-/// <summary>
-/// Interaction logic for EquipmentSelector.xaml.
-/// </summary>
-public partial class EquipmentSelector : EquipmentSelectorDrawer
+public partial class EquipmentSelectorPanel : PanelBase
 {
 	private static Classes classFilter = Classes.All;
 	private static ItemCategories categoryFilter = ItemCategories.All;
@@ -36,7 +31,8 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	private readonly Memory.ActorMemory? actor;
 
-	public EquipmentSelector(ItemSlots slot, Memory.ActorMemory? actor)
+	public EquipmentSelectorPanel(IPanelGroupHost host, ItemSlots slot, ActorMemory? actor)
+		: base(host)
 	{
 		this.Slot = slot;
 		this.actor = actor;
@@ -74,7 +70,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		set
 		{
 			sortMode = value;
-			this.FilterItems();
+			this.Selector.FilterItems();
 		}
 	}
 
@@ -91,7 +87,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		{
 			classFilter = value;
 			this.JobFilterText.Text = value.Describe();
-			this.FilterItems();
+			this.Selector.FilterItems();
 		}
 	}
 
@@ -101,7 +97,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		set
 		{
 			categoryFilter = value;
-			this.FilterItems();
+			this.Selector.FilterItems();
 		}
 	}
 
@@ -111,7 +107,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		set
 		{
 			showLocked = value;
-			this.FilterItems();
+			this.Selector.FilterItems();
 		}
 	}
 
@@ -127,7 +123,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		set
 		{
 			forceMainModel = value;
-			this.FilterItems();
+			this.Selector.FilterItems();
 		}
 	}
 
@@ -137,53 +133,48 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		set
 		{
 			forceOffModel = value;
-			this.FilterItems();
+			this.Selector.FilterItems();
 		}
 	}
 
-	public override void OnClosed()
-	{
-		HotkeyService.ClearHotkeyHandler("AppearancePage.ClearEquipment", this);
-	}
-
-	protected override Task LoadItems()
+	protected Task LoadItems()
 	{
 		if (this.actor?.IsChocobo == true)
 		{
-			this.AddItem(ItemUtility.NoneItem);
-			this.AddItem(ItemUtility.YellowChocoboSkin);
-			this.AddItem(ItemUtility.BlackChocoboSkin);
+			this.Selector.AddItem(ItemUtility.NoneItem);
+			this.Selector.AddItem(ItemUtility.YellowChocoboSkin);
+			this.Selector.AddItem(ItemUtility.BlackChocoboSkin);
 
 			foreach (BuddyEquip buddyEquip in GameDataService.BuddyEquips)
 			{
 				if (buddyEquip.Head != null)
-					this.AddItem(buddyEquip.Head);
+					this.Selector.AddItem(buddyEquip.Head);
 
 				if (buddyEquip.Body != null)
-					this.AddItem(buddyEquip.Body);
+					this.Selector.AddItem(buddyEquip.Body);
 
 				if (buddyEquip.Feet != null)
-					this.AddItem(buddyEquip.Feet);
+					this.Selector.AddItem(buddyEquip.Feet);
 			}
 		}
 		else
 		{
 			if (!this.IsMainHandSlot)
-				this.AddItem(ItemUtility.NoneItem);
+				this.Selector.AddItem(ItemUtility.NoneItem);
 
-			this.AddItem(ItemUtility.NpcBodyItem);
-			this.AddItem(ItemUtility.InvisibileBodyItem);
-			this.AddItem(ItemUtility.InvisibileHeadItem);
+			this.Selector.AddItem(ItemUtility.NpcBodyItem);
+			this.Selector.AddItem(ItemUtility.InvisibileBodyItem);
+			this.Selector.AddItem(ItemUtility.InvisibileHeadItem);
 
-			this.AddItems(GameDataService.Equipment);
-			this.AddItems(GameDataService.Items);
-			this.AddItems(GameDataService.Perform);
+			this.Selector.AddItems(GameDataService.Equipment);
+			this.Selector.AddItems(GameDataService.Items);
+			this.Selector.AddItems(GameDataService.Perform);
 		}
 
 		return Task.CompletedTask;
 	}
 
-	protected override int Compare(IItem itemA, IItem itemB)
+	protected int Compare(IItem itemA, IItem itemB)
 	{
 		if (itemA.IsFavorite && !itemB.IsFavorite)
 		{
@@ -217,7 +208,7 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		throw new NotImplementedException($"Sort mode {this.SortMode} not implemented");
 	}
 
-	protected override bool Filter(IItem item, string[]? search)
+	protected bool Filter(IItem item, string[]? search)
 	{
 		// skip items without names
 		if (string.IsNullOrEmpty(item.Name))
@@ -328,27 +319,27 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 	{
 		if (this.IsMainHandSlot)
 		{
-			this.Value = ItemUtility.EmperorsNewFists;
+			this.Selector.Value = ItemUtility.EmperorsNewFists;
 		}
 		else
 		{
-			this.Value = ItemUtility.NoneItem;
+			this.Selector.Value = ItemUtility.NoneItem;
 		}
 
-		this.RaiseSelectionChanged();
+		this.Selector.RaiseSelectionChanged();
 	}
 
 	private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.IsSmallclothesSlot)
 		{
-			this.Value = ItemUtility.NpcBodyItem;
+			this.Selector.Value = ItemUtility.NpcBodyItem;
 		}
 		else
 		{
-			this.Value = ItemUtility.NoneItem;
+			this.Selector.Value = ItemUtility.NoneItem;
 		}
 
-		this.RaiseSelectionChanged();
+		this.Selector.RaiseSelectionChanged();
 	}
 }
