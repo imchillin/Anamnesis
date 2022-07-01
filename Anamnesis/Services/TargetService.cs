@@ -103,7 +103,7 @@ public class TargetService : ServiceBase<TargetService>
 
 			Log.Information($"Pinning actor: {pined}");
 
-			if (Debugger.IsAttached)
+			if (Debugger.IsAttached && memory.IsPlayer)
 				memory.Names.GenerateRandomName();
 
 			lastUsedDefaultcolor++;

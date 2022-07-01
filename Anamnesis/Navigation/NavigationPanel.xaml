@@ -8,8 +8,8 @@
 	xmlns:local="clr-namespace:Anamnesis.Navigation"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:panels="clr-namespace:Anamnesis.Panels"
-	AllowAutoClose="False"
 	CanResize="False"
+	CloseMode="None"
 	ShowBackground="False"
 	Topmost="True"
 	mc:Ignorable="d">
@@ -152,7 +152,7 @@
 				</ItemsControl>
 
 				<local:Shortcut
-					Destination="PinActor"
+					Destination="AddActor"
 					Icon="Plus"
 					LabelKey="Naviagation_AddActor"
 					ShowText="{Binding Expanded}"

@@ -164,7 +164,7 @@
 							IsCheckable="True"
 							IsChecked="{Binding AutoClose}"
 							Style="{StaticResource AnaMenuItem}"
-							Visibility="{Binding AllowAutoClose, Converter={StaticResource B2V}}" />
+							Visibility="{Binding CanChangeAutoClose, Converter={StaticResource B2V}}" />
 
 						<MenuItem
 							Click="OnPopOutClicked"

@@ -6,12 +6,13 @@ namespace Anamnesis.Panels;
 using Anamnesis.Services;
 using FontAwesome.Sharp;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using XivToolsWpf.DependencyProperties;
 
-public abstract class PanelBase : UserControl, IPanel
+public abstract class PanelBase : UserControl, IPanel, INotifyPropertyChanged
 {
 	public static readonly IBind<string?> TitleDp = Binder.Register<string?, PanelBase>(nameof(Title), OnTitleChanged, BindMode.OneWay);
 
@@ -19,6 +20,8 @@ public abstract class PanelBase : UserControl, IPanel
 	{
 		this.Host = host;
 	}
+
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public ServiceManager Services => App.Services;
 
@@ -54,10 +57,10 @@ public abstract class PanelBase : UserControl, IPanel
 		set => this.Host.ShowBackground = value;
 	}
 
-	public bool AllowAutoClose
+	public CloseModes CloseMode
 	{
-		get => this.Host.AllowAutoClose;
-		set => this.Host.AllowAutoClose = value;
+		get => this.Host.CloseMode;
+		set => this.Host.CloseMode = value;
 	}
 
 	public bool Topmost

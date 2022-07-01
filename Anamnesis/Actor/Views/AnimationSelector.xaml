@@ -83,8 +83,7 @@
 			x:Name="Selector"
 			Grid.Row="2"
 			Width="256"
-			LoadItems="LoadItems"
-			Sort="Sort">
+			LoadItems="LoadItems">
 
 			<xivToolsWpfSelectors:Selector.ItemTemplate>
 				<DataTemplate>

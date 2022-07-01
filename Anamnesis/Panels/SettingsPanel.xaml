@@ -10,7 +10,7 @@
 	xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
-	AllowAutoClose="False"
+	CloseMode="Manual"
 	Icon="Cogs"
 	TitleKey="Naviagation_Settings"
 	mc:Ignorable="d">

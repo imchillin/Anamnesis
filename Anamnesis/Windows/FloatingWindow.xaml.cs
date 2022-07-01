@@ -56,15 +56,16 @@ public partial class FloatingWindow : Window, IPanelGroupHost
 
 	public IEnumerable<IPanelGroupHost> Children => this.children;
 
-	[AlsoNotifyFor(nameof(AutoClose))]
-	public bool AllowAutoClose { get; set; } = true;
+	[DependsOn(nameof(CloseMode))]
+	public bool CanChangeAutoClose => this.CloseMode == CloseModes.Both;
 
-	[DependsOn(nameof(AllowAutoClose))]
+	[DependsOn(nameof(CanChangeAutoClose))]
 	public bool AutoClose
 	{
 		get
 		{
-			if (!this.AllowAutoClose)
+			if (this.CloseMode == CloseModes.None ||
+				this.CloseMode == CloseModes.Manual)
 				return false;
 
 			return this.autoClose;
@@ -153,6 +154,8 @@ public partial class FloatingWindow : Window, IPanelGroupHost
 	public virtual bool CanPopOut => false;
 	public virtual bool CanPopIn => true;
 
+	public CloseModes CloseMode { get; set; } = CloseModes.Both;
+
 	public virtual new void Show()
 	{
 		base.Show();
@@ -177,9 +180,9 @@ public partial class FloatingWindow : Window, IPanelGroupHost
 		this.Icon = copy.Icon;
 		this.TitleColor = copy.TitleColor;
 		this.ShowBackground = copy.ShowBackground;
-		this.AllowAutoClose = copy.AllowAutoClose;
 		this.Topmost = copy.Topmost;
 		this.CanResize = copy.CanResize;
+		this.CloseMode = copy.CloseMode;
 
 		if (copy is FloatingWindow wnd)
 		{
@@ -219,7 +222,7 @@ public partial class FloatingWindow : Window, IPanelGroupHost
 	{
 		base.OnDeactivated(e);
 
-		if (this.AutoClose && this.AllowAutoClose)
+		if (this.CloseMode == CloseModes.AutoClose || (this.CloseMode == CloseModes.Both && this.autoClose))
 		{
 			// If we have docked panels that are active,
 			// then we dont close yet.
