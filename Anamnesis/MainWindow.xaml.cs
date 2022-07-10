@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using Anamnesis;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.GUI.Views;
@@ -118,6 +119,11 @@ public partial class MainWindow : ChromedWindow
 	{
 		get => this.Tab == Tabs.Developer;
 		set => this.Tab = Tabs.Developer;
+	}
+
+	public static DpiScale GetDpi()
+	{
+		return VisualTreeHelper.GetDpi(instance);
 	}
 
 	protected override void OnActivated(EventArgs e)
