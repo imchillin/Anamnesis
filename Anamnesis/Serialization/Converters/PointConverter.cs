@@ -32,6 +32,7 @@ public class PointConverter : JsonConverter<Point>
 
 	public override void Write(Utf8JsonWriter writer, Point value, JsonSerializerOptions options)
 	{
-		writer.WriteStringValue($"{value.X}, {value.Y}");
+		var formatString = string.Format(CultureInfo.InvariantCulture, "{0}, {1}", value.X, value.Y);
+		writer.WriteStringValue(formatString);
 	}
 }
