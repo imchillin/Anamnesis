@@ -13,6 +13,8 @@ public class NavigationService : ServiceBase<NavigationService>
 {
 	private static readonly Dictionary<string, Type> Panels = new()
 	{
+		{ "GenericDialog", typeof(GenericDialogPanel) },
+		{ "Exception", typeof(ExceptionPanel) },
 		{ "AddActor", typeof(AddActorPanel) },
 		{ "Settings", typeof(SettingsPanel) },
 		{ "Weather", typeof(WeatherPanel) },
@@ -24,7 +26,7 @@ public class NavigationService : ServiceBase<NavigationService>
 	/// <summary>
 	/// Navigate to a panel.
 	/// </summary>
-	public static PanelBase? Navigate(Request request)
+	public static PanelBase Navigate(Request request)
 	{
 		try
 		{
@@ -71,8 +73,7 @@ public class NavigationService : ServiceBase<NavigationService>
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, $"Failed to handle navigation request to Uri: \"{request}\"");
-			return null;
+			throw new Exception($"Failed to handle navigation request to Uri: \"{request}\"", ex);
 		}
 	}
 

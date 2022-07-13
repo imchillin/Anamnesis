@@ -50,8 +50,8 @@ public class ServiceManager
 	{
 		await this.InitializeService(this.Logs);
 		await this.InitializeService(this.Settings);
-		await this.InitializeService(this.Memory);
 		await this.InitializeService(this.Localization);
+		await this.InitializeService(this.Memory);
 	}
 
 	public async Task InitializeServices()

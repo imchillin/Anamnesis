@@ -15,12 +15,12 @@ using Anamnesis.Actor.Views;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles;
 using Anamnesis.Styles.Drawers;
+using Anamnesis.Windows;
 using PropertyChanged;
 using Serilog;
 

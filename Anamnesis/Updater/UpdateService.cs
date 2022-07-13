@@ -13,8 +13,8 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.Services;
+using Anamnesis.Windows;
 using XivToolsWpf;
 
 public class UpdateService : ServiceBase<UpdateService>

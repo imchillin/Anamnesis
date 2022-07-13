@@ -34,6 +34,7 @@ public interface IPanel
 	CloseModes CloseMode { get; set; }
 	bool Topmost { get; set; }
 	bool CanResize { get; set; }
+	bool IsOpen { get; }
 
 	IPanelGroupHost Host { get; }
 

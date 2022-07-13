@@ -4,8 +4,8 @@
 namespace Anamnesis.Files;
 
 using Anamnesis.Actor;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
+using Anamnesis.Windows;
 using Serilog;
 using System;
 using System.Collections.Generic;

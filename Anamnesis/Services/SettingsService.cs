@@ -12,8 +12,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Anamnesis;
 using Anamnesis.Files;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.Serialization;
+using Anamnesis.Windows;
 using XivToolsWpf;
 
 public class SettingsService : ServiceBase<SettingsService>

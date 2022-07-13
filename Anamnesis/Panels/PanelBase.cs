@@ -7,9 +7,11 @@ using Anamnesis.Services;
 using FontAwesome.Sharp;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using XivToolsWpf;
 using XivToolsWpf.DependencyProperties;
 
 public abstract class PanelBase : UserControl, IPanel, INotifyPropertyChanged
@@ -26,6 +28,8 @@ public abstract class PanelBase : UserControl, IPanel, INotifyPropertyChanged
 	public ServiceManager Services => App.Services;
 
 	public IPanelGroupHost Host { get; set; }
+
+	public bool IsOpen => this.Host.IsOpen;
 
 	public string? TitleKey
 	{
@@ -91,6 +95,16 @@ public abstract class PanelBase : UserControl, IPanel, INotifyPropertyChanged
 	public void SetParent(IPanel other) => other.Host.AddChild(this);
 
 	public void Close() => this.Host.Close();
+
+	public async Task WhileOpen()
+	{
+		await Dispatch.NonUiThread();
+
+		while (this.IsOpen)
+		{
+			await Task.Delay(500);
+		}
+	}
 
 	private static void OnTitleChanged(PanelBase sender, string? value)
 	{

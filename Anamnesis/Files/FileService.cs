@@ -14,10 +14,10 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Anamnesis;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.GUI.Views;
 using Anamnesis.Services;
 using Anamnesis.Utils;
+using Anamnesis.Windows;
 using Microsoft.Win32;
 using Serilog;
 

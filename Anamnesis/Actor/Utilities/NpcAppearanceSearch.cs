@@ -9,10 +9,10 @@ using System.Windows;
 using Anamnesis.Dialogs;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Utils;
+using Anamnesis.Windows;
 using Lumina.Excel;
 
 public static class NpcAppearanceSearch
