@@ -12,8 +12,8 @@ using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
 using Anamnesis.Services;
-using Anamnesis.GUI.Dialogs;
 using Serilog;
+using Anamnesis.Windows;
 
 public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 {

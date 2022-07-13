@@ -6,8 +6,7 @@ namespace Anamnesis.Windows;
 using System;
 using System.Runtime.ExceptionServices;
 using System.Windows;
-using Anamnesis.GUI.Windows;
-using Anamnesis.Services;
+using Anamnesis.Panels;
 using Serilog;
 using XivToolsWpf;
 
@@ -27,31 +26,26 @@ public static class ErrorDialog
 
 		await Dispatch.MainThread();
 
+		SplashWindow.HideWindow();
+
 		try
 		{
-			SplashWindow.HideWindow();
-
-			Dialog dlg = new Dialog();
-			dlg.TitleText.Text = "Anamnesis v" + VersionInfo.Date.ToString("yyyy-MM-dd HH:mm");
-			XivToolsErrorDialog errorDialog = new XivToolsErrorDialog(dlg, ex, isCriticial);
-
-			if (SettingsService.Exists && SettingsService.Instance.Settings != null)
-				dlg.Topmost = SettingsService.Current.AlwaysOnTop;
-
-			dlg.ContentArea.Content = errorDialog;
-			dlg.ShowDialog();
-
-			if (Application.Current == null)
-				return;
-
-			if (isCriticial)
-				Application.Current.Shutdown(2);
-
-			SplashWindow.ShowWindow();
+			await ExceptionPanel.Show(ex, isCriticial);
 		}
-		catch (Exception newEx)
+		catch(Exception ex2)
 		{
-			Log.Error(new ErrorException(newEx), "Failed to display error dialog");
+			Log.Error(new ErrorException(ex2), "Failed to display exception panel");
+
+			MessageBox.Show("An error was encountered when attempting to display the previous error", "Anamnesis Internal Error");
+			Application.Current.Shutdown(2);
 		}
+
+		if (Application.Current == null)
+			return;
+
+		if (isCriticial)
+			Application.Current.Shutdown(2);
+
+		SplashWindow.ShowWindow();
 	}
 }

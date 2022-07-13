@@ -6,15 +6,20 @@ namespace Anamnesis;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Anamnesis.Actor;
 using Anamnesis.Core.Memory;
+using Anamnesis.Files;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles;
 using PropertyChanged;
 using XivToolsWpf;
+
+using MediaColor = System.Windows.Media.Color;
 
 public delegate void SelectionEvent(ActorMemory? actor);
 public delegate void PinnedEvent(PinnedActor actor);
@@ -24,6 +29,28 @@ public class TargetService : ServiceBase<TargetService>
 {
 	public static readonly int OverworldPlayerTargetOffset = 0x80;
 	public static readonly int GPosePlayerTargetOffset = 0x98;
+
+	private static readonly List<MediaColor> DefaultColors = new()
+	{
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.Pink],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.Purple],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.Indigo],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.Blue],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.Teal],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.Green],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.Yellow],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.Orange],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.DeepOrange],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.Brown],
+		MaterialDesignColors.SwatchHelper.Lookup[MaterialDesignColors.MaterialDesignColor.BlueGrey],
+	};
+
+	private static int lastUsedDefaultcolor = 0;
+
+	static TargetService()
+	{
+		lastUsedDefaultcolor = Random.Shared.Next(0, DefaultColors.Count);
+	}
 
 	public static event SelectionEvent? ActorSelected;
 	public static event PinnedEvent? ActorPinned;
@@ -75,6 +102,14 @@ public class TargetService : ServiceBase<TargetService>
 			PinnedActor pined = new PinnedActor(memory);
 
 			Log.Information($"Pinning actor: {pined}");
+
+			if (Debugger.IsAttached && memory.IsPlayer)
+				memory.Names.GenerateRandomName();
+
+			lastUsedDefaultcolor++;
+			if (lastUsedDefaultcolor > DefaultColors.Count - 1)
+				lastUsedDefaultcolor = 0;
+			memory.Color = DefaultColors[lastUsedDefaultcolor];
 
 			await Dispatch.MainThread();
 			Instance.PinnedActors.Add(pined);
@@ -203,6 +238,11 @@ public class TargetService : ServiceBase<TargetService>
 
 				this.RaisePropertyChanged(nameof(TargetService.PlayerTarget));
 				this.RaisePropertyChanged(nameof(TargetService.IsPlayerTargetPinnable));
+
+				foreach (PinnedActor pinnedActor in this.PinnedActors)
+				{
+					pinnedActor.IsTargeted = pinnedActor.Pointer == currentPlayerTargetPtr;
+				}
 			}
 		}
 		catch
@@ -266,7 +306,7 @@ public class TargetService : ServiceBase<TargetService>
 					if (actor.IsHidden)
 						continue;
 
-					if (string.IsNullOrEmpty(actor.Name))
+					if (string.IsNullOrEmpty(actor.Names.FullName))
 						continue;
 
 					if (actor.IsGPoseActor != isGpose)

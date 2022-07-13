@@ -2,6 +2,9 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Updater;
+
+using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Anamnesis.Extensions;
@@ -12,7 +15,7 @@ using PropertyChanged;
 /// Interaction logic for UpdateDialog.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class UpdateDialog : UserControl, IDialog<bool?>
+public partial class UpdateDialog : UserControl
 {
 	public UpdateDialog()
 	{
@@ -20,16 +23,19 @@ public partial class UpdateDialog : UserControl, IDialog<bool?>
 		this.ContentArea.DataContext = this;
 	}
 
-	public event DialogEvent? Close;
-
 	public bool? Result { get; set; }
 	public string? Changes { get; set; }
 	public bool IsUpdating { get; set; }
 	public double Progress { get; set; }
 
+	public static Task Show(string? changes)
+	{
+		throw new NotImplementedException();
+	}
+
 	public void Cancel()
 	{
-		this.Close?.Invoke();
+		////this.Close?.Invoke();
 	}
 
 	private void OnSkipClicked(object sender, RoutedEventArgs e)
@@ -41,7 +47,7 @@ public partial class UpdateDialog : UserControl, IDialog<bool?>
 	{
 		this.IsUpdating = true;
 		await UpdateService.Instance.DoUpdate(this.UpdateProgress);
-		this.Close?.Invoke();
+		////this.Close?.Invoke();
 	}
 
 	private void UpdateProgress(double p)

@@ -14,15 +14,13 @@ using XivToolsWpf;
 /// Interaction logic for WaitDialog.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class WaitDialog : UserControl, IDialog, IDisposable
+public partial class WaitDialog : UserControl, IDisposable
 {
 	public WaitDialog()
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 	}
-
-	public event DialogEvent? Close;
 
 	public string Message { get; private set; } = string.Empty;
 	public double Progress { get; private set; } = 0;
@@ -34,13 +32,7 @@ public partial class WaitDialog : UserControl, IDialog, IDisposable
 		WaitDialog dlg = new();
 		dlg.Message = message;
 
-		_ = Task.Run(async () =>
-		{
-			await Dispatch.MainThread();
-			await ViewService.ShowDialog(caption, dlg);
-		});
-
-		return dlg;
+		throw new NotImplementedException();
 	}
 
 	public async Task SetProgress(double progress)
@@ -51,11 +43,11 @@ public partial class WaitDialog : UserControl, IDialog, IDisposable
 
 	public void Complete()
 	{
-		_ = Task.Run(async () =>
+		/*_ = Task.Run(async () =>
 		{
 			await Dispatch.MainThread();
 			this.Close?.Invoke();
-		});
+		});*/
 	}
 
 	public void Cancel()

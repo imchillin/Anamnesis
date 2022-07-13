@@ -12,8 +12,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Anamnesis;
 using Anamnesis.Files;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.Serialization;
+using Anamnesis.Windows;
 using XivToolsWpf;
 
 public class SettingsService : ServiceBase<SettingsService>
@@ -72,6 +72,9 @@ public class SettingsService : ServiceBase<SettingsService>
 
 				string json = File.ReadAllText(SettingsPath);
 				this.Settings = SerializerService.Deserialize<Settings>(json);
+
+				// TODO: allow this to be turned off once we he a non-overlay mode
+				this.Settings.OverlayWindow = true;
 
 				if (SystemParameters.WindowGlassColor == Colors.Black)
 				{

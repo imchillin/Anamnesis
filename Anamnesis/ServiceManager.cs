@@ -4,7 +4,6 @@
 namespace Anamnesis.Services;
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
 using Anamnesis.Files;
@@ -15,104 +14,91 @@ using Anamnesis.TexTools;
 using Serilog;
 using XivToolsWpf;
 using System.Diagnostics;
+using Anamnesis.Navigation;
+using System.Collections.Generic;
 
 public class ServiceManager
 {
-	private static readonly Stopwatch AddTimer = new();
-	private static readonly Stopwatch StartupTimer = new();
-	private static readonly List<IService> Services = new List<IService>();
+	private readonly List<IService> services = new();
 
-	public static bool IsInitialized { get; private set; } = false;
-	public static bool IsStarted { get; private set; } = false;
+	public LogService Logs { get; } = new();
+	public SettingsService Settings { get; } = new();
+	public NavigationService Navigation { get; } = new();
+	public SerializerService Serializer { get; } = new();
+	public LocalizationService Localization { get; } = new();
+	public Updater.UpdateService Update { get; } = new();
+	public MemoryService Memory { get; } = new();
+	public AddressService Address { get; } = new();
+	public ActorService Actor { get; } = new();
+	public TargetService Target { get; } = new();
+	public FileService FileService { get; } = new();
+	public TerritoryService Territory { get; } = new();
+	public GameService Game { get; } = new();
+	public TimeService Time { get; } = new();
+	public CameraService CameraService { get; } = new();
+	public GposeService Gpose { get; } = new();
+	public GameDataService GameData { get; } = new();
+	public PoseService Pose { get; } = new();
+	public TipService Tips { get; } = new();
+	public TexToolsService TexTools { get; } = new();
+	public FavoritesService Favorites { get; } = new();
+	public AnimationService Animation { get; } = new();
+	public Keyboard.HotkeyService Hotkeys { get; } = new();
+	public HistoryService History { get; } = new();
 
-	public static async Task Add<T>()
-		where T : IService, new()
+	public async Task InitializeCriticalServices()
 	{
-		try
-		{
-			if (IsStarted)
-				throw new Exception("Attempt to add service after services have started");
-
-			IService service = Activator.CreateInstance<T>();
-			Services.Add(service);
-			await InitializeService(service);
-		}
-		catch (Exception ex)
-		{
-			Log.Fatal(ex, $"{typeof(T).Name} Error: {ex.Message}");
-		}
+		await this.InitializeService(this.Logs);
+		await this.InitializeService(this.Settings);
+		await this.InitializeService(this.Localization);
+		await this.InitializeService(this.Memory);
 	}
 
 	public async Task InitializeServices()
 	{
-		StartupTimer.Start();
-
-		await Add<LogService>();
-		await Add<SerializerService>();
-		await Add<SettingsService>();
-		await Add<LocalizationService>();
-		await Add<Updater.UpdateService>();
-		await Add<ViewService>();
-		await Add<MemoryService>();
-		await Add<AddressService>();
-		await Add<ActorService>();
-		await Add<TargetService>();
-		await Add<FileService>();
-		await Add<TerritoryService>();
-		await Add<GameService>();
-		await Add<TimeService>();
-		await Add<CameraService>();
-		await Add<GposeService>();
-		await Add<GameDataService>();
-		await Add<PoseService>();
-		await Add<TipService>();
-		await Add<TexToolsService>();
-		await Add<FavoritesService>();
-		await Add<AnimationService>();
-		await Add<Keyboard.HotkeyService>();
-		await Add<HistoryService>();
-
-		IsInitialized = true;
-
-		Log.Information($"Services intialized in {StartupTimer.ElapsedMilliseconds}ms");
+		await this.InitializeService(this.Navigation);
+		await this.InitializeService(this.Serializer);
+		await this.InitializeService(this.Update);
+		await this.InitializeService(this.Address);
+		await this.InitializeService(this.Actor);
+		await this.InitializeService(this.Target);
+		await this.InitializeService(this.FileService);
+		await this.InitializeService(this.Territory);
+		await this.InitializeService(this.Game);
+		await this.InitializeService(this.Time);
+		await this.InitializeService(this.CameraService);
+		await this.InitializeService(this.Gpose);
+		await this.InitializeService(this.GameData);
+		await this.InitializeService(this.Pose);
+		await this.InitializeService(this.Tips);
+		await this.InitializeService(this.TexTools);
+		await this.InitializeService(this.Favorites);
+		await this.InitializeService(this.Animation);
+		await this.InitializeService(this.Hotkeys);
+		await this.InitializeService(this.History);
 
 		await this.StartServices();
-
-		StartupTimer.Restart();
-
-		CheckWindowsVersion();
-
-		StartupTimer.Stop();
-		Log.Information($"took {StartupTimer.ElapsedMilliseconds}ms to check windows version");
 	}
 
 	public async Task StartServices()
 	{
-		StartupTimer.Restart();
-
 		await Dispatch.MainThread();
 
-		foreach (IService service in Services)
+		foreach (IService service in this.services)
 		{
-			AddTimer.Restart();
+			Stopwatch sw = new();
+			sw.Start();
 			await service.Start();
-			AddTimer.Stop();
-
-			Log.Information($"Started service: {service.GetType().Name} in {AddTimer.ElapsedMilliseconds}ms");
+			Log.Information($"Started service: {service.GetType().Name} in {sw.ElapsedMilliseconds}ms");
 		}
-
-		IsStarted = true;
-
-		StartupTimer.Stop();
-		Log.Information($"Services started in {StartupTimer.ElapsedMilliseconds}ms");
 	}
 
 	public async Task ShutdownServices()
 	{
 		// shutdown services in reverse order
-		Services.Reverse();
+		this.services.Reverse();
 
-		foreach (IService service in Services)
+		foreach (IService service in this.services)
 		{
 			try
 			{
@@ -127,25 +113,13 @@ public class ServiceManager
 		}
 	}
 
-	private static void CheckWindowsVersion()
+	private async Task InitializeService(IService service)
 	{
-		OperatingSystem os = Environment.OSVersion;
-		if (os.Platform != PlatformID.Win32NT)
-			throw new Exception("Only Windows NT or later is supported");
-
-		if (os.Version.Major < 10)
-		{
-			throw new Exception("Only Windows 10 or newer is supported");
-		}
-	}
-
-	private static async Task InitializeService(IService service)
-	{
-		AddTimer.Restart();
+		Stopwatch sw = new();
+		sw.Start();
 		await Dispatch.NonUiThread();
 		await service.Initialize();
-		AddTimer.Stop();
-
-		Log.Information($"Initialized service: {service.GetType().Name} in {AddTimer.ElapsedMilliseconds}ms");
+		this.services.Add(service);
+		Log.Information($"Initialized service: {service.GetType().Name} in {sw.ElapsedMilliseconds}ms");
 	}
 }

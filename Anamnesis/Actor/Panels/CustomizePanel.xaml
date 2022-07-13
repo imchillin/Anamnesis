@@ -1,0 +1,56 @@
+﻿<local:ActorPanelBase
+	x:Class="Anamnesis.Actor.Panels.CustomizePanel"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:Anamnesis.Actor.Panels"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:panels="clr-namespace:Anamnesis.Panels"
+	xmlns:views="clr-namespace:Anamnesis.Actor.Views"
+	Icon="IdCardAlt"
+	TitleKey="Naviagation_Actor_Customize"
+	mc:Ignorable="d">
+
+	<Grid x:Name="ContentArea">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<views:CustomizeEditor
+			Grid.Row="0"
+			Margin="6"
+			DataContext="{Binding Actor}" />
+
+		<GroupBox
+			Grid.Row="1"
+			Style="{StaticResource PanelGroupBox}"
+			Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
+			<GroupBox.Header>
+				<XivToolsWpf:Header
+					Key="Character_Model_Header"
+					Icon="GraduationCap" />
+			</GroupBox.Header>
+
+			<views:CharacterModelEditor DataContext="{Binding Actor}" />
+		</GroupBox>
+
+		<GroupBox
+			Grid.Row="2"
+			Style="{StaticResource PanelGroupBox}"
+			Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
+			<GroupBox.Header>
+				<XivToolsWpf:Header
+					Key="Character_ExAppearance_Header"
+					Icon="UserCog" />
+			</GroupBox.Header>
+
+			<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}" />
+
+		</GroupBox>
+	</Grid>
+
+</local:ActorPanelBase>

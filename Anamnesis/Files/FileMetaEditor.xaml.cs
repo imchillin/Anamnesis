@@ -8,9 +8,9 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.GUI.Windows;
 using Anamnesis.Services;
+using Anamnesis.Windows;
 using Microsoft.Win32;
 using PropertyChanged;
 
@@ -20,15 +20,12 @@ using PropertyChanged;
 [AddINotifyPropertyChangedInterface]
 public partial class FileMetaEditor : UserControl
 {
-	private readonly Dialog dlg;
-
-	public FileMetaEditor(Dialog dlg, FileSystemInfo info, FileBase file)
+	public FileMetaEditor(FileSystemInfo info, FileBase file)
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 		this.Info = info;
 		this.File = file;
-		this.dlg = dlg;
 
 		if (file.Author == null)
 		{
@@ -47,11 +44,12 @@ public partial class FileMetaEditor : UserControl
 
 	public static void Show(FileSystemInfo info, FileBase file)
 	{
-		Dialog dlg = new Dialog();
+		throw new NotImplementedException();
+		/*Dialog dlg = new Dialog();
 		dlg.TitleText.Text = info.Name;
 		FileMetaEditor content = new FileMetaEditor(dlg, info, file);
 		dlg.ContentArea.Content = content;
-		dlg.ShowDialog();
+		dlg.ShowDialog();*/
 	}
 
 	private void OnImageBrowseClicked(object sender, RoutedEventArgs e)
@@ -106,6 +104,5 @@ public partial class FileMetaEditor : UserControl
 	{
 		using FileStream stream = new FileStream(this.Info.FullName, FileMode.Create);
 		this.File.Serialize(stream);
-		this.dlg.Close();
 	}
 }

@@ -13,8 +13,8 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.Services;
+using Anamnesis.Windows;
 using XivToolsWpf;
 
 public class UpdateService : ServiceBase<UpdateService>
@@ -91,9 +91,7 @@ public class UpdateService : ServiceBase<UpdateService>
 			{
 				await Dispatch.MainThread();
 
-				UpdateDialog dlg = new();
-				dlg.Changes = this.currentRelease.Changes;
-				await ViewService.ShowDialog<UpdateDialog, bool?>("Update", dlg);
+				await UpdateDialog.Show(this.currentRelease.Changes);
 			}
 
 			SettingsService.Current.LastUpdateCheck = DateTimeOffset.Now;

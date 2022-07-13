@@ -71,7 +71,7 @@ public class ActorMemory : ActorBasicMemory
 	public bool IsRefreshing { get; set; } = false;
 	public bool PendingRefresh => this.refreshQueue.Pending;
 
-	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
+	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Names), nameof(RenderMode))]
 	public bool CanRefresh => ActorService.Instance.CanRefreshActor(this);
 
 	public bool IsHuman => this.ModelObject != null && this.ModelObject.IsHuman;

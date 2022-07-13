@@ -17,6 +17,7 @@ using Anamnesis.Services;
 using Anamnesis.Styles;
 using Anamnesis.Styles.Drawers;
 using PropertyChanged;
+using System;
 
 [AddINotifyPropertyChangedInterface]
 public partial class ActionPage : UserControl
@@ -90,7 +91,8 @@ public partial class ActionPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		AnimationSelector animSelector = SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
+		throw new NotImplementedException();
+		/*AnimationSelector animSelector = SelectorControl.Show<AnimationSelector, IAnimation>(null, (animation) =>
 		{
 			if (animation == null || animation.Timeline == null)
 				return;
@@ -103,7 +105,7 @@ public partial class ActionPage : UserControl
 			IncludeBlendable = false,
 			IncludeFullBody = true,
 			SlotsLocked = true,
-		};
+		};*/
 	}
 
 	private void OnBlendAnimationSearchClicked(object sender, RoutedEventArgs e)
@@ -111,7 +113,9 @@ public partial class ActionPage : UserControl
 		if (this.Actor == null)
 			return;
 
-		AnimationSelector animSelector = SelectorDrawer.Show<AnimationSelector, IAnimation>(null, (animation) =>
+		throw new NotImplementedException();
+
+		/*AnimationSelector animSelector = SelectorControl.Show<AnimationSelector, IAnimation>(null, (animation) =>
 		{
 			if (animation == null || animation.Timeline == null)
 				return;
@@ -124,7 +128,7 @@ public partial class ActionPage : UserControl
 			IncludeBlendable = true,
 			IncludeFullBody = true,
 			SlotsLocked = false,
-		};
+		};*/
 	}
 
 	private void OnApplyOverrideAnimation(object sender, RoutedEventArgs e)

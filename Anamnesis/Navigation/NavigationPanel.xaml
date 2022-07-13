@@ -1,0 +1,263 @@
+﻿<panels:PanelBase
+	x:Class="Anamnesis.Navigation.NavigationPanel"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:ana="clr-namespace:Anamnesis"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:Anamnesis.Navigation"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:panels="clr-namespace:Anamnesis.Panels"
+	CanResize="False"
+	CloseMode="None"
+	ShowBackground="False"
+	Topmost="True"
+	mc:Ignorable="d">
+
+	<panels:PanelBase.Resources>
+		<ResourceDictionary>
+
+
+			<Style
+				x:Key="IconTab"
+				BasedOn="{StaticResource TransparentIconToggleButton}"
+				TargetType="ToggleButton">
+
+				<Setter Property="Margin" Value="0,3,0,0" />
+				<Setter Property="BorderThickness" Value="0" />
+				<Setter Property="Height" Value="32" />
+				<Setter Property="Width" Value="32" />
+
+			</Style>
+
+		</ResourceDictionary>
+	</panels:PanelBase.Resources>
+
+	<Grid
+		x:Name="ContentArea"
+		Margin="0,0,6,6">
+
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<Grid
+			x:Name="Sidebar"
+			Grid.Row="1"
+			Margin="6,6,0,0"
+			HorizontalAlignment="Left">
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="18" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Border
+				x:Name="BackgroundBorder"
+				Grid.Row="0"
+				Grid.RowSpan="2"
+				Background="{DynamicResource MaterialDesignBackground}"
+				CornerRadius="6">
+
+				<Border.Style>
+					<Style TargetType="Border">
+						<Style.Triggers>
+							<DataTrigger
+								Binding="{Binding Expanded}"
+								Value="False">
+								<Setter Property="HorizontalAlignment" Value="Left" />
+								<Setter Property="VerticalAlignment" Value="Stretch" />
+								<Setter Property="Width" Value="48" />
+
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</Border.Style>
+
+				<Border.BitmapEffect>
+					<DropShadowBitmapEffect ShadowDepth="0" />
+				</Border.BitmapEffect>
+
+				<Grid
+					Height="18"
+					VerticalAlignment="Top"
+					Background="Transparent">
+
+					<Button
+						Width="22"
+						HorizontalAlignment="Right"
+						Click="OnTitlebarContextButtonClicked"
+						Style="{StaticResource TransparentIconButton}">
+						<XivToolsWpf:IconBlock
+							Foreground="{DynamicResource MaterialDesignToolForeground}"
+							Icon="AngleDown" />
+					</Button>
+
+					<Grid.ContextMenu>
+						<ContextMenu x:Name="NavigationContextMenu">
+							<MenuItem
+								Header="Navigation_Options_Accordion"
+								IsCheckable="True"
+								IsChecked="{Binding IsAccordian}"
+								Style="{StaticResource AnaMenuItem}" />
+
+							<MenuItem
+								Header="Navigation_Options_Expanded"
+								IsCheckable="True"
+								IsChecked="{Binding Expanded}"
+								Style="{StaticResource AnaMenuItem}" />
+
+						</ContextMenu>
+					</Grid.ContextMenu>
+				</Grid>
+			</Border>
+
+			<StackPanel
+				Grid.Row="1"
+				Margin="6,0">
+
+				<local:Shortcut
+					Destination="Settings"
+					Icon="Cogs"
+					LabelKey="Naviagation_Settings"
+					ShowText="{Binding Expanded}"
+					ToolTipKey="Naviagation_Settings_Tip" />
+
+				<local:Shortcut
+					Destination="Weather"
+					Icon="CloudMoonRain"
+					LabelKey="Naviagation_Weather"
+					ShowText="{Binding Expanded}"
+					ToolTipKey="Naviagation_Weather_Tip" />
+
+				<local:Shortcut
+					Destination="Camera"
+					Icon="Camera"
+					LabelKey="Naviagation_Camera"
+					ShowText="{Binding Expanded}"
+					ToolTipKey="Naviagation_Camera_Tip" />
+
+				<ItemsControl
+					x:Name="PinnedActorList"
+					ana:Behaviours.IsReorderable="True"
+					ItemsSource="{Binding Services.Target.PinnedActors}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<local:ActorEntry
+								Expanded="OnActorEntryExpanded"
+								ShowText="{Binding Path=DataContext.Expanded, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+
+				<local:Shortcut
+					Destination="AddActor"
+					Icon="Plus"
+					LabelKey="Naviagation_AddActor"
+					ShowText="{Binding Expanded}"
+					ToolTipKey="Naviagation_AddActor_Tip" />
+			</StackPanel>
+		</Grid>
+
+		<Border
+			Grid.Row="0"
+			Margin="6,6,0,0"
+			Background="{DynamicResource MaterialDesignBackground}"
+			CornerRadius="6"
+			IsHitTestVisible="False">
+			<Border.BitmapEffect>
+				<DropShadowBitmapEffect ShadowDepth="0" />
+			</Border.BitmapEffect>
+		</Border>
+
+		<Grid
+			x:Name="TopBar"
+			Grid.Row="0"
+			Margin="48,8,0,0">
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<StackPanel
+				Grid.Row="0"
+				Margin="0,0,6,0"
+				Orientation="Horizontal">
+
+				<TextBlock Text="Untitled scene" />
+				<XivToolsWpf:IconBlock
+					Margin="6,3,0,0"
+					VerticalAlignment="Center"
+					ana:Behaviours.Tooltip="Scene_Unsaved"
+					FontSize="6"
+					Icon="ExclamationTriangle" />
+
+			</StackPanel>
+
+			<!--  Scene Options  -->
+			<ToolBar
+				Grid.Row="1"
+				Margin="-6,0,-12,0"
+				Background="Transparent"
+				ToolBarTray.IsLocked="True">
+				<Button
+					Width="28"
+					Height="28"
+					ana:Behaviours.Tooltip="Scene_Save"
+					Style="{StaticResource TransparentIconButton}">
+					<XivToolsWpf:IconBlock
+						FontSize="14"
+						Icon="Save" />
+				</Button>
+
+				<Button
+					Width="28"
+					Height="28"
+					ana:Behaviours.Tooltip="Scene_Open"
+					Style="{StaticResource TransparentIconButton}">
+					<XivToolsWpf:IconBlock
+						FontSize="14"
+						Icon="FolderOpen" />
+				</Button>
+
+				<Separator />
+
+				<Button
+					Width="28"
+					Height="28"
+					ana:Behaviours.Tooltip="Scene_Import"
+					Style="{StaticResource TransparentIconButton}">
+					<XivToolsWpf:IconBlock
+						FontSize="14"
+						Icon="FileImport" />
+				</Button>
+
+				<Button
+					Width="28"
+					Height="28"
+					ana:Behaviours.Tooltip="Scene_Export"
+					Style="{StaticResource TransparentIconButton}">
+					<XivToolsWpf:IconBlock
+						FontSize="14"
+						Icon="FileExport" />
+				</Button>
+
+			</ToolBar>
+		</Grid>
+
+
+
+		<Image
+			Grid.RowSpan="2"
+			Width="42"
+			Height="42"
+			Margin="0,0,0,0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			MouseDown="OnIconMouseDown"
+			Source="/Assets/Anamnesis.png" />
+
+	</Grid>
+</panels:PanelBase>
