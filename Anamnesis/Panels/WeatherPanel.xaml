@@ -1,0 +1,254 @@
+﻿<local:PanelBase
+	x:Class="Anamnesis.Panels.WeatherPanel"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:ana="clr-namespace:Anamnesis"
+	xmlns:controls="clr-namespace:Anamnesis.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:Anamnesis.Panels"
+	xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:xivToolsWpfSelectors="clr-namespace:XivToolsWpf.Selectors;assembly=XivToolsWpf"
+	Width="256"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	Icon="CloudMoonRain"
+	TitleKey="Naviagation_Weather"
+	mc:Ignorable="d">
+
+	<Grid
+		x:Name="ContentArea"
+		Margin="6,0,6,6">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<Grid
+			Grid.Row="0"
+			Grid.Column="0"
+			Grid.ColumnSpan="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<ToggleButton
+				Grid.RowSpan="2"
+				Grid.Column="0"
+				Width="22"
+				Height="22"
+				Margin="0,3,6,0"
+				Padding="0"
+				VerticalAlignment="Center"
+				IsChecked="{Binding Services.Time.Freeze}"
+				Style="{DynamicResource MaterialDesignActionToggleButton}">
+				<ToggleButton.Content>
+					<XivToolsWpf:IconBlock
+						FontSize="12"
+						Icon="LockOpen" />
+				</ToggleButton.Content>
+				<materialdesign:ToggleButtonAssist.OnContent>
+					<XivToolsWpf:IconBlock
+						FontSize="12"
+						Icon="Lock" />
+				</materialdesign:ToggleButtonAssist.OnContent>
+			</ToggleButton>
+
+			<XivToolsWpf:TextBlock
+				Key="Scene_World_Time"
+				Grid.Row="0"
+				Grid.Column="1"
+				Style="{StaticResource Label}" />
+			<XivToolsWpf:NumberBox
+				Grid.Column="2"
+				Margin="3"
+				IsEnabled="{Binding Services.Time.Freeze}"
+				Maximum="1440"
+				Minimum="0"
+				Slider="Absolute"
+				TickFrequency="30"
+				Value="{Binding Services.Time.TimeOfDay}" />
+			<TextBlock
+				Grid.Column="3"
+				Width="50"
+				Margin="3,3,0,3"
+				HorizontalAlignment="Right"
+				Text="{Binding Services.Time.TimeString}" />
+
+			<XivToolsWpf:TextBlock
+				Key="Scene_World_Day"
+				Grid.Row="1"
+				Grid.Column="1"
+				Style="{StaticResource Label}" />
+			<XivToolsWpf:NumberBox
+				Grid.Row="1"
+				Grid.Column="2"
+				Grid.ColumnSpan="2"
+				Buttons="True"
+				IsEnabled="{Binding Services.Time.Freeze}"
+				Maximum="32"
+				Minimum="1"
+				Slider="Absolute"
+				Value="{Binding Services.Time.DayOfMonth}" />
+		</Grid>
+
+		<XivToolsWpf:TextBlock
+			Key="Scene_World_Weather"
+			Grid.Row="1"
+			Style="{StaticResource Label}" />
+
+		<Grid
+			Grid.Row="1"
+			Grid.Column="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<Button
+				x:Name="WeatherButton"
+				Grid.RowSpan="2"
+				Grid.Column="0"
+				Width="32"
+				Height="32"
+				Click="OnWeatherClicked"
+				Style="{StaticResource TransparentButton}">
+
+				<Image
+					Grid.Column="0"
+					Width="22"
+					Height="22"
+					Source="{Binding Services.Territory.CurrentWeather.Icon, Converter={StaticResource Img}}" />
+			</Button>
+
+			<XivToolsWpf:NumberBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Maximum="256"
+				Minimum="0"
+				Value="{Binding Services.Territory.CurrentWeatherId}" />
+
+			<TextBlock
+				Grid.Row="1"
+				Grid.Column="1"
+				Margin="3,0,0,0"
+				FontSize="10"
+				Text="{Binding Services.Territory.CurrentWeather.Name}" />
+
+		</Grid>
+
+		<Popup
+			x:Name="WeatherSelectorPopup"
+			Width="200"
+			Height="450"
+			AllowsTransparency="True"
+			HorizontalOffset="160"
+			PlacementTarget="{Binding ElementName=WeatherButton}"
+			StaysOpen="False">
+			<Grid x:Name="WeatherSelectorContentArea">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+
+				<controls:PopupBackground Grid.RowSpan="2" />
+
+				<CheckBox
+					Grid.Row="0"
+					Margin="12,12,0,0"
+					ana:Behaviours.Tooltip="Weather_Selector_Natural_Tooltip"
+					IsChecked="{Binding Filter.NaturalWeathers}">
+					<XivToolsWpf:TextBlock Key="Weather_Selector_Natural" />
+				</CheckBox>
+
+				<xivToolsWpfSelectors:Selector
+					x:Name="WeatherSelector"
+					Grid.Row="1"
+					Margin="6"
+					Filter="{Binding Filter}"
+					LoadItems="LoadItems"
+					SelectionChanged="OnWeatherSelected">
+
+					<xivToolsWpfSelectors:Selector.ItemTemplate>
+						<DataTemplate>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+
+								<Image
+									Grid.RowSpan="2"
+									Grid.Column="0"
+									Width="32"
+									Height="32"
+									Source="{Binding Icon, Converter={StaticResource Img}}" />
+
+								<TextBlock
+									Grid.Row="0"
+									Grid.Column="1"
+									Margin="3,0,0,0"
+									VerticalAlignment="Center"
+									Foreground="{DynamicResource MaterialDesignBody}"
+									Text="{Binding Name}" />
+								<TextBlock
+									Grid.Row="1"
+									Grid.Column="1"
+									Margin="3,0,0,0"
+									VerticalAlignment="Center"
+									FontSize="12"
+									Foreground="{DynamicResource MaterialDesignBodyLight}"
+									Text="{Binding WeatherId}" />
+
+							</Grid>
+						</DataTemplate>
+					</xivToolsWpfSelectors:Selector.ItemTemplate>
+				</xivToolsWpfSelectors:Selector>
+
+			</Grid>
+		</Popup>
+
+		<!--<ComboBox Grid.Row="1" Grid.Column="1" SelectedItem="{Binding Services.Territory.CurrentWeather}" ItemsSource="{Binding Services.Territory.CurrentTerritory.Weathers}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="32"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<Image Grid.Column="0" Source="{Binding Icon, Converter={StaticResource Img}}" Width="22" Height="22"/>
+						<TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="{DynamicResource MaterialDesignBody}" VerticalAlignment="Center"/>
+
+					</Grid>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>-->
+
+	</Grid>
+
+</local:PanelBase>

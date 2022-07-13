@@ -122,6 +122,11 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 		Instance.LocaleChanged?.Invoke();
 	}
 
+	public static Locale? GetLocale(string locale)
+	{
+		return Locales[locale];
+	}
+
 	public static Dictionary<string, string> GetAvailableLocales()
 	{
 		Dictionary<string, string> results = new Dictionary<string, string>();
@@ -176,12 +181,11 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 	string ILocaleProvider.GetStringAllLanguages(string key) => GetStringAllLanguages(key);
 	string ILocaleProvider.GetString(string key, bool silent) => GetString(key, silent);
 
-	private class Locale
+	public class Locale
 	{
+		public readonly Dictionary<string, string> Entries = new();
 		public readonly string Culture;
 		public string Name;
-
-		private readonly Dictionary<string, string> values = new Dictionary<string, string>();
 
 		public Locale(string culture, string name)
 		{
@@ -191,20 +195,20 @@ public class LocalizationService : ServiceBase<LocalizationService>, ILocaleProv
 
 		public virtual void Add(string key, string value)
 		{
-			if (!this.values.ContainsKey(key))
-				this.values.Add(key, value);
+			if (!this.Entries.ContainsKey(key))
+				this.Entries.Add(key, value);
 
-			this.values[key] = value;
+			this.Entries[key] = value;
 		}
 
 		public virtual bool Get(string key, out string value)
 		{
 			value = string.Empty;
 
-			if (!this.values.ContainsKey(key))
+			if (!this.Entries.ContainsKey(key))
 				return false;
 
-			value = this.values[key];
+			value = this.Entries[key];
 			return true;
 		}
 	}

@@ -13,7 +13,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 using Anamnesis.Files;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using Anamnesis.Actor.Views;
 using Anamnesis.Services;
@@ -21,6 +20,7 @@ using PropertyChanged;
 using Serilog;
 using XivToolsWpf;
 using CmQuaternion = Anamnesis.Memory.Quaternion;
+using Anamnesis.Windows;
 
 /// <summary>
 /// Interaction logic for CharacterPoseView.xaml.

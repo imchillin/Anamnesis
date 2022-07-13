@@ -1,0 +1,118 @@
+﻿<UserControl
+	x:Class="Anamnesis.Navigation.Shortcut"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:ana="clr-namespace:Anamnesis"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:Anamnesis.Navigation"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<Storyboard x:Key="ShowLabel">
+			<DoubleAnimation
+				Storyboard.TargetName="LabelText"
+				Storyboard.TargetProperty="Opacity"
+				From="0.01"
+				To="1"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+
+			<DoubleAnimation
+				Storyboard.TargetName="BackgroundBorder"
+				Storyboard.TargetProperty="Opacity"
+				From="0.01"
+				To="1"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+		</Storyboard>
+
+		<Storyboard x:Key="HideLabel">
+			<DoubleAnimation
+				Storyboard.TargetName="LabelText"
+				Storyboard.TargetProperty="Opacity"
+				From="1"
+				To="0"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+
+			<DoubleAnimation
+				Storyboard.TargetName="BackgroundBorder"
+				Storyboard.TargetProperty="Opacity"
+				From="1"
+				To="0"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+		</Storyboard>
+	</UserControl.Resources>
+
+	<Grid
+		x:Name="ContentArea"
+		MouseEnter="OnMouseEnter"
+		MouseLeave="OnMouseLeave">
+
+		<Border
+			x:Name="BackgroundBorder"
+			Background="{StaticResource MaterialDesignBackground}"
+			CornerRadius="6" />
+
+		<Button
+			x:Name="ButtonContent"
+			Margin="0,2,2,2"
+			HorizontalContentAlignment="Left"
+			Click="OnClicked"
+			Style="{StaticResource TransparentIconButton}">
+
+			<Grid Margin="0,3">
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+
+				<Rectangle
+					Grid.Column="0"
+					Grid.ColumnSpan="2"
+					Width="40"
+					Margin="-6,-3,-3,-3"
+					HorizontalAlignment="Left"
+					Fill="Black"
+					Opacity="0.01"
+					Visibility="{Binding ShowText, Converter={StaticResource !B2V}}" />
+
+				<XivToolsWpf:IconBlock
+					Grid.Column="0"
+					Width="20"
+					Height="16"
+					Margin="{Binding ContentPadding}"
+					Icon="{Binding Icon}" />
+
+				<XivToolsWpf:TextBlock
+					Key="{Binding LabelKey}"
+					x:Name="LabelText"
+					Grid.Column="1"
+					Margin="6,0,0,0" />
+
+				<Grid.ToolTip>
+					<XivToolsWpf:TextBlock Key="{Binding ToolTipKey}" />
+				</Grid.ToolTip>
+			</Grid>
+		</Button>
+	</Grid>
+
+</UserControl>

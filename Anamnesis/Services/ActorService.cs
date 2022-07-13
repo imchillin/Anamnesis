@@ -6,6 +6,7 @@ namespace Anamnesis;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Anamnesis.Actor;
 using Anamnesis.Actor.Refresh;
@@ -145,6 +146,10 @@ public class ActorService : ServiceBase<ActorService>
 			{
 				ActorBasicMemory actor = new();
 				actor.SetAddress(ptr);
+
+				if (Debugger.IsAttached && actor.IsPlayer)
+					actor.Names.GenerateRandomName();
+
 				results.Add(actor);
 			}
 			catch (Exception ex)

@@ -158,12 +158,14 @@ public partial class SubActorEditor : UserControl
 		if (this.Actor == null)
 			return;
 
-		if (this.SubActorType == Types.Mount)
+		throw new NotImplementedException();
+
+		/*if (this.SubActorType == Types.Mount)
 		{
 			if (!this.Actor.IsMounted || this.Actor.Mount == null)
 				return;
 
-			NpcSelector view = SelectorDrawer.Show<NpcSelector, INpcBase>(null, this.Apply);
+			NpcSelector view = SelectorControl.Show<NpcSelector, INpcBase>(null, this.Apply);
 			view.ChangeFilter(MountFilter);
 		}
 		else if (this.SubActorType == Types.Companion)
@@ -171,7 +173,7 @@ public partial class SubActorEditor : UserControl
 			if (!this.Actor.HasCompanion || this.Actor.Companion == null)
 				return;
 
-			NpcSelector view = SelectorDrawer.Show<NpcSelector, INpcBase>(null, this.Apply);
+			NpcSelector view = SelectorControl.Show<NpcSelector, INpcBase>(null, this.Apply);
 			view.ChangeFilter(CompanionFilter);
 		}
 		else if (this.SubActorType == Types.Ornament)
@@ -179,9 +181,9 @@ public partial class SubActorEditor : UserControl
 			if (!this.Actor.IsUsingOrnament || this.Actor.Ornament == null)
 				return;
 
-			NpcSelector view = SelectorDrawer.Show<NpcSelector, INpcBase>(null, this.Apply);
+			NpcSelector view = SelectorControl.Show<NpcSelector, INpcBase>(null, this.Apply);
 			view.ChangeFilter(OrnamentFilter);
-		}
+		}*/
 	}
 
 	private async void Apply(INpcBase npc)

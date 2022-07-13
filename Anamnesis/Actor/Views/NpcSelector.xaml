@@ -1,93 +1,108 @@
-﻿<local:NpcSelectorDrawer x:Class="Anamnesis.Actor.Views.NpcSelector"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
-			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-			 xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 xmlns:xivToolsWpfSelectors="clr-namespace:XivToolsWpf.Selectors;assembly=XivToolsWpf"
-			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
-			 mc:Ignorable="d"
-			 d:DesignHeight="450">
-	<Grid Margin="0, 6, 0, 0">
+﻿<UserControl
+	x:Class="Anamnesis.Actor.Views.NpcSelector"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:drawers="clr-namespace:Anamnesis.Styles.Drawers"
+	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+	xmlns:local="clr-namespace:Anamnesis.Actor.Views"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:xivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:xivToolsWpfSelectors="clr-namespace:XivToolsWpf.Selectors;assembly=XivToolsWpf"
+	d:DesignHeight="450"
+	mc:Ignorable="d">
+	<Grid Margin="0,6,0,0">
 
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		
-		<Grid Grid.Row="0" Margin="6" Visibility="{Binding CurrentFilter.TypesLocked, Converter={StaticResource !B2V}}">
+
+		<Grid
+			Grid.Row="0"
+			Margin="6"
+			Visibility="{Binding CurrentFilter.TypesLocked, Converter={StaticResource !B2V}}">
 			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition/>
-				<RowDefinition/>
-				<RowDefinition/>
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
 			</Grid.RowDefinitions>
 
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition/>
-				<ColumnDefinition/>
+				<ColumnDefinition />
+				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
 
-			<CheckBox Grid.Row="0"
-					  Grid.Column="0"
-					  Content="Resident NPCs"
-					  IsChecked="{Binding CurrentFilter.IncludeResidentNpc}" />
+			<CheckBox
+				Grid.Row="0"
+				Grid.Column="0"
+				Content="Resident NPCs"
+				IsChecked="{Binding CurrentFilter.IncludeResidentNpc}" />
 
-			<CheckBox Grid.Row="0"
-					  Grid.Column="1"
-					  Content="Battle NPCs"
-					  IsChecked="{Binding CurrentFilter.IncludeBattleNpc}" />
+			<CheckBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Content="Battle NPCs"
+				IsChecked="{Binding CurrentFilter.IncludeBattleNpc}" />
 
-			<CheckBox Grid.Row="1"
-					  Grid.Column="0"
-					  Content="Event NPCs"
-					  IsChecked="{Binding CurrentFilter.IncludeEventNpc}" />
+			<CheckBox
+				Grid.Row="1"
+				Grid.Column="0"
+				Content="Event NPCs"
+				IsChecked="{Binding CurrentFilter.IncludeEventNpc}" />
 
-			<CheckBox Grid.Row="1"
-					  Grid.Column="1"
-					  Content="Mounts"
-					  IsChecked="{Binding CurrentFilter.IncludeMount}" />
+			<CheckBox
+				Grid.Row="1"
+				Grid.Column="1"
+				Content="Mounts"
+				IsChecked="{Binding CurrentFilter.IncludeMount}" />
 
-			<CheckBox Grid.Row="3"
-					  Grid.Column="0"
-					  Content="Minions"
-					  IsChecked="{Binding CurrentFilter.IncludeCompanion}" />
+			<CheckBox
+				Grid.Row="3"
+				Grid.Column="0"
+				Content="Minions"
+				IsChecked="{Binding CurrentFilter.IncludeCompanion}" />
 
-			<CheckBox Grid.Row="3"
-					  Grid.Column="1"
-					  Content="Ornaments"
-					  IsChecked="{Binding CurrentFilter.IncludeOrnament}" />
+			<CheckBox
+				Grid.Row="3"
+				Grid.Column="1"
+				Content="Ornaments"
+				IsChecked="{Binding CurrentFilter.IncludeOrnament}" />
 
 		</Grid>
 
-		<Grid Grid.Row="1" Margin="6">
+		<Grid
+			Grid.Row="1"
+			Margin="6">
 			<Grid.RowDefinitions>
-				<RowDefinition/>
+				<RowDefinition />
 			</Grid.RowDefinitions>
 
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition/>
-				<ColumnDefinition/>
+				<ColumnDefinition />
+				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
 
-			<CheckBox Grid.Row="0"
-					  Grid.Column="0"
-					  IsThreeState="True"
-					  Content="Named"
-					  IsChecked="{Binding CurrentFilter.IncludeNamed}" />
+			<CheckBox
+				Grid.Row="0"
+				Grid.Column="0"
+				Content="Named"
+				IsChecked="{Binding CurrentFilter.IncludeNamed}"
+				IsThreeState="True" />
 
-			<CheckBox Grid.Row="0"
-					  Grid.Column="1"
-					  IsThreeState="True"
-					  Content="Modded"
-					  IsChecked="{Binding CurrentFilter.IncludeModded}"/>
+			<CheckBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Content="Modded"
+				IsChecked="{Binding CurrentFilter.IncludeModded}"
+				IsThreeState="True" />
 
 		</Grid>
 
 		<xivToolsWpfSelectors:Selector
+			x:Name="Selector"
 			Grid.Row="2"
 			Width="256">
 
@@ -97,112 +112,155 @@
 
 						<Grid.ContextMenu>
 							<ContextMenu>
-								<MenuItem Header="Copy Id" Click="OnCopyId"/>
+								<MenuItem
+									Click="OnCopyId"
+									Header="Copy Id" />
 							</ContextMenu>
 						</Grid.ContextMenu>
-						
+
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition />
-							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
 
 						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition/>
+							<RowDefinition />
+							<RowDefinition />
 						</Grid.RowDefinitions>
 
-						<Border Width="32"
-								Height="32"
-								Background="#444444"
-								Grid.RowSpan="2"
-								CornerRadius="3"
-								Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
+						<Border
+							Grid.RowSpan="2"
+							Width="32"
+							Height="32"
+							Background="#444444"
+							CornerRadius="3"
+							Visibility="{Binding Icon, Converter={StaticResource NotNullToVisibilityConverter}}">
 							<Grid>
-								<Image Source="{Binding Icon, Converter={StaticResource Img}}"
-									   Margin="1" />
-								<Image Source="/Assets/IconBorderSmall.png"
-									   Margin="-2, 0, -2, -4" />
+								<Image
+									Margin="1"
+									Source="{Binding Icon, Converter={StaticResource Img}}" />
+								<Image
+									Margin="-2,0,-2,-4"
+									Source="/Assets/IconBorderSmall.png" />
 							</Grid>
 						</Border>
 
-						<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="6, 0, 0, 0" FontWeight="DemiBold" Foreground="{DynamicResource MaterialDesignBody}"/>
+						<TextBlock
+							Grid.Row="0"
+							Grid.Column="1"
+							Margin="6,0,0,0"
+							FontWeight="DemiBold"
+							Foreground="{DynamicResource MaterialDesignBody}"
+							Text="{Binding Name}" />
 
-						<StackPanel Orientation="Horizontal"
-									Grid.Row="1"
-									Grid.Column="1"
-									Margin="3, 0, 0, 0"
-									Visibility="{Binding ModelCharaRow, Converter={StaticResource NotZeroToVisibility}}">
+						<StackPanel
+							Grid.Row="1"
+							Grid.Column="1"
+							Margin="3,0,0,0"
+							Orientation="Horizontal"
+							Visibility="{Binding ModelCharaRow, Converter={StaticResource NotZeroToVisibility}}">
 
-							<xivToolsWpf:TextBlock Key="Character_Actor_Model"
-												   Style="{StaticResource Label}"
-												   Opacity="0.5"
-												   Margin="2, 0, 0, 0"/>
+							<xivToolsWpf:TextBlock
+								Key="Character_Actor_Model"
+								Margin="2,0,0,0"
+								Opacity="0.5"
+								Style="{StaticResource Label}" />
 
-							<xivToolsWpf:TextBlock Text=": #"
-												   Style="{StaticResource Label}"
-												   Opacity="0.5"
-												   Margin="0"/>
+							<xivToolsWpf:TextBlock
+								Margin="0"
+								Opacity="0.5"
+								Style="{StaticResource Label}"
+								Text=": #" />
 
-							<TextBlock Text="{Binding ModelCharaRow}"
-									   Style="{StaticResource Label}"
-									   Opacity="0.5"
-									   Margin="0"/>
-							
-							<fa:IconBlock Icon="pen" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+							<TextBlock
+								Margin="0"
+								Opacity="0.5"
+								Style="{StaticResource Label}"
+								Text="{Binding ModelCharaRow}" />
+
+							<fa:IconBlock
+								Icon="pen"
+								Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" />
 						</StackPanel>
 
-						<Rectangle Grid.Column="1"
-								   Grid.ColumnSpan="2" 
-								   Grid.RowSpan="2" 
-								   Fill="Transparent" >
+						<Rectangle
+							Grid.RowSpan="2"
+							Grid.Column="1"
+							Grid.ColumnSpan="2"
+							Fill="Transparent">
 							<ToolTipService.ToolTip>
 								<StackPanel Orientation="Vertical">
-									<TextBlock Text="{Binding Name}"
-											   FontWeight="Bold"
-											   Visibility="{Binding HasName, Converter={StaticResource B2V}}" />
-									
-									<TextBlock Text="{Binding Description}" Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+									<TextBlock
+										FontWeight="Bold"
+										Text="{Binding Name}"
+										Visibility="{Binding HasName, Converter={StaticResource B2V}}" />
+
+									<TextBlock
+										Text="{Binding Description}"
+										Visibility="{Binding Description, Converter={StaticResource NotNullToVisibilityConverter}}" />
 
 									<StackPanel Orientation="Horizontal">
 										<xivToolsWpf:TextBlock Text="{Binding TypeName}" />
-										<xivToolsWpf:TextBlock Text=": #" Margin="0" />
+										<xivToolsWpf:TextBlock
+											Margin="0"
+											Text=": #" />
 										<TextBlock Text="{Binding RowId}" />
 									</StackPanel>
 
 									<StackPanel Orientation="Horizontal">
-										<xivToolsWpf:TextBlock Key="Character_Actor_Model"/>
-										<xivToolsWpf:TextBlock Text=": #" Margin="0" />
-										<TextBlock Text="{Binding ModelCharaRow}" Margin="0" />
+										<xivToolsWpf:TextBlock Key="Character_Actor_Model" />
+										<xivToolsWpf:TextBlock
+											Margin="0"
+											Text=": #" />
+										<TextBlock
+											Margin="0"
+											Text="{Binding ModelCharaRow}" />
 									</StackPanel>
 
-									<Grid Grid.Column="1" Grid.Row="2" Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}" Margin="3, 0, 0, 0">
+									<Grid
+										Grid.Row="2"
+										Grid.Column="1"
+										Margin="3,0,0,0"
+										Visibility="{Binding Mod, Converter={StaticResource NotNullToVisibilityConverter}}">
 										<Grid.ColumnDefinitions>
-											<ColumnDefinition Width="Auto"/>
-											<ColumnDefinition/>
+											<ColumnDefinition Width="Auto" />
+											<ColumnDefinition />
 										</Grid.ColumnDefinitions>
 
-										<TextBlock Grid.Column="0" Text="Modded: " HorizontalAlignment="Left" />
-										<TextBlock Grid.Column="1" Text="{Binding Mod.ModPack.Name}" HorizontalAlignment="Left" />
+										<TextBlock
+											Grid.Column="0"
+											HorizontalAlignment="Left"
+											Text="Modded: " />
+										<TextBlock
+											Grid.Column="1"
+											HorizontalAlignment="Left"
+											Text="{Binding Mod.ModPack.Name}" />
 									</Grid>
 								</StackPanel>
 							</ToolTipService.ToolTip>
 						</Rectangle>
-						
-						<ToggleButton Grid.Row="0"
-									  Grid.Column="2"
-									  Grid.RowSpan="2"
-									  Style="{StaticResource InvisibleToggleButton}"
-									  Visibility="{Binding CanFavorite, Converter={StaticResource B2V}}"
-									  IsChecked="{Binding IsFavorite}" 
-									  Margin="6,0,0,0"
-									  Padding="0"
-									  VerticalAlignment="Center">
+
+						<ToggleButton
+							Grid.Row="0"
+							Grid.RowSpan="2"
+							Grid.Column="2"
+							Margin="6,0,0,0"
+							Padding="0"
+							VerticalAlignment="Center"
+							IsChecked="{Binding IsFavorite}"
+							Style="{StaticResource InvisibleToggleButton}"
+							Visibility="{Binding CanFavorite, Converter={StaticResource B2V}}">
 							<Grid VerticalAlignment="Center">
-								<fa:IconBlock Icon="Star" FontSize="13" Opacity="0.25"
-												   Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}"/>
-								<xivToolsWpf:IconBlock Icon="Star" FontSize="13"
-										  Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}"/>
+								<fa:IconBlock
+									FontSize="13"
+									Icon="Star"
+									Opacity="0.25"
+									Visibility="{Binding IsFavorite, Converter={StaticResource !B2V}}" />
+								<xivToolsWpf:IconBlock
+									FontSize="13"
+									Icon="Star"
+									Visibility="{Binding IsFavorite, Converter={StaticResource B2V}}" />
 							</Grid>
 						</ToggleButton>
 					</Grid>
@@ -210,4 +268,4 @@
 			</xivToolsWpfSelectors:Selector.ItemTemplate>
 		</xivToolsWpfSelectors:Selector>
 	</Grid>
-</local:NpcSelectorDrawer>
+</UserControl>

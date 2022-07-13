@@ -22,7 +22,7 @@ using WpfColor = System.Windows.Media.Color;
 /// Interaction logic for ColorSelectorDrawer.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyPropertyChanged
+public partial class ColorSelectorDrawer : UserControl, INotifyPropertyChanged
 {
 	public static readonly IBind<Color4> ValueDp = Binder.Register<Color4, ColorSelectorDrawer>(nameof(Value), OnValueChanged);
 	public static readonly IBind<WpfColor> WpfColorDp = Binder.Register<WpfColor, ColorSelectorDrawer>(nameof(WpfColor), OnWpfColorChanged);
@@ -90,7 +90,6 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 	public delegate void ValueChangedEventHandler(Color4 value);
 
 	public event ValueChangedEventHandler? ValueChanged;
-	public event DrawerEvent? OnClosing;
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public Color4 Value
@@ -162,7 +161,6 @@ public partial class ColorSelectorDrawer : UserControl, IDrawer, INotifyProperty
 
 	public void Close()
 	{
-		this.OnClosing?.Invoke();
 	}
 
 	public void OnClosed()

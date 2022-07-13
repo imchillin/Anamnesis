@@ -11,7 +11,7 @@ public class DummyActor : ActorMemory
 	{
 		this.Address = (IntPtr)id;
 		this.ObjectKind = ActorTypes.Player;
-		this.Nickname = "Dummy Actor " + id;
+		this.Names.Nickname = "Dummy Actor " + id;
 	}
 
 	public override bool IsGPoseActor => false;

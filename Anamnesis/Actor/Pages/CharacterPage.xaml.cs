@@ -15,12 +15,12 @@ using Anamnesis.Actor.Views;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles;
 using Anamnesis.Styles.Drawers;
+using Anamnesis.Windows;
 using PropertyChanged;
 using Serilog;
 
@@ -244,13 +244,14 @@ public partial class CharacterPage : UserControl
 
 	private void ImportNpc(CharacterFile.SaveModes mode)
 	{
-		SelectorDrawer.Show<NpcSelector, INpcBase>(null, (npc) =>
+		throw new NotImplementedException();
+		/*SelectorControl.Show<NpcSelector, INpcBase>(null, (npc) =>
 		{
 			if (npc == null)
 				return;
 
 			Task.Run(() => this.ApplyNpc(npc, mode));
-		});
+		});*/
 	}
 
 	private async Task ApplyNpc(INpcBase? npc, CharacterFile.SaveModes mode = CharacterFile.SaveModes.All)

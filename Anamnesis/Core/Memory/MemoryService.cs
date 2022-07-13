@@ -13,10 +13,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Anamnesis.Core.Memory;
-using Anamnesis.GUI.Dialogs;
 using Anamnesis.GUI.Windows;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
+using Anamnesis.Windows;
 using PropertyChanged;
 using XivToolsWpf;
 

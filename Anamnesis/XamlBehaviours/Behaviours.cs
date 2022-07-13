@@ -3,6 +3,7 @@
 
 namespace Anamnesis;
 
+using Anamnesis.Navigation;
 using Anamnesis.XamlBehaviours;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,5 +20,13 @@ public static class Behaviours
 	public static void SetTooltip(DependencyObject host, string key)
 	{
 		host.AttachHandler<LocalizedTooltipBehaiour>(true, key);
+	}
+
+	public static void SetNavigation(Button host, string destination)
+	{
+		host.Click += (s, e) =>
+		{
+			NavigationService.Navigate(new(host, destination));
+		};
 	}
 }

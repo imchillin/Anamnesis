@@ -1,0 +1,282 @@
+﻿<UserControl
+	x:Class="Anamnesis.Navigation.ActorEntry"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:Anamnesis.Navigation"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<Storyboard x:Key="ShowLabel">
+			<DoubleAnimation
+				Storyboard.TargetName="LabelText"
+				Storyboard.TargetProperty="Opacity"
+				From="0.01"
+				To="1"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+
+			<DoubleAnimation
+				Storyboard.TargetName="BackgroundBorder"
+				Storyboard.TargetProperty="Opacity"
+				From="0.01"
+				To="1"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+		</Storyboard>
+
+		<Storyboard x:Key="HideLabel">
+			<DoubleAnimation
+				Storyboard.TargetName="LabelText"
+				Storyboard.TargetProperty="Opacity"
+				From="1"
+				To="0"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+
+			<DoubleAnimation
+				Storyboard.TargetName="BackgroundBorder"
+				Storyboard.TargetProperty="Opacity"
+				From="1"
+				To="0"
+				Duration="00:00:00.2">
+				<DoubleAnimation.EasingFunction>
+					<SineEase EasingMode="EaseOut" />
+				</DoubleAnimation.EasingFunction>
+			</DoubleAnimation>
+		</Storyboard>
+	</UserControl.Resources>
+
+	<Grid
+		x:Name="ContentArea"
+		MouseEnter="OnMouseEnter"
+		MouseLeave="OnMouseLeave">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<Border
+			x:Name="BackgroundBorder"
+			Grid.Row="0"
+			Grid.RowSpan="1"
+			Background="{StaticResource MaterialDesignBackground}"
+			CornerRadius="6" />
+
+		<ToggleButton
+			HorizontalAlignment="Stretch"
+			HorizontalContentAlignment="Left"
+			IsChecked="{Binding IsExpanded}"
+			PreviewMouseUp="OnActorPinPreviewMouseUp"
+			Style="{StaticResource TransparentToggleButton}">
+
+			<ToggleButton.ContextMenu>
+				<ContextMenu>
+					<MenuItem
+						Click="OnUnpinActorClicked"
+						Header="Unpin" />
+
+					<MenuItem
+						Click="OnTargetActorClicked"
+						Header="Target"
+						Visibility="{Binding Actor.IsValid, Converter={StaticResource B2V}}" />
+				</ContextMenu>
+			</ToggleButton.ContextMenu>
+
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="10" />
+				</Grid.ColumnDefinitions>
+
+				<Grid.ToolTip>
+					<StackPanel>
+						<TextBlock>
+							<TextBlock.Text>
+								<MultiBinding StringFormat="{}{0} ({1})">
+									<Binding Path="Actor.Names.Text" />
+									<Binding Path="Actor.Kind" />
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
+
+						<TextBlock
+							Text="This actor could not be found"
+							Visibility="{Binding Actor.IsValid, Converter={StaticResource !B2V}}" />
+
+					</StackPanel>
+				</Grid.ToolTip>
+
+				<ToggleButton
+					Grid.Column="0"
+					HorizontalAlignment="Left"
+					Foreground="{StaticResource PrimaryHueMidBrush}"
+					IsChecked="{Binding IsExpanded}"
+					IsHitTestVisible="False"
+					Style="{StaticResource MaterialDesignExpandCollapseToggleStyle}" />
+
+				<Grid
+					Grid.Column="1"
+					Height="18"
+					Margin="3,0,3,3">
+
+					<XivToolsWpf:IconBlock
+						Foreground="{Binding Actor.Color, Converter={StaticResource ColorToBrush}}"
+						Icon="{Binding Actor.Icon}"
+						Visibility="{Binding Actor.IsValid, Converter={StaticResource B2V}}" />
+
+					<XivToolsWpf:IconBlock
+						Foreground="Red"
+						Icon="TimesCircle"
+						Visibility="{Binding Actor.IsValid, Converter={StaticResource !B2V}}" />
+				</Grid>
+
+				<XivToolsWpf:IconBlock
+					Grid.Column="2"
+					Margin="3,0,6,0"
+					FontSize="10"
+					Icon="Camera"
+					Visibility="{Binding Actor.IsGPoseActor, Converter={StaticResource B2V}}" />
+
+				<TextBlock
+					x:Name="LabelText"
+					Grid.Column="3"
+					Margin="3,0,6,2"
+					FontSize="14"
+					FontWeight="SemiBold"
+					Foreground="{DynamicResource MaterialDesignToolForeground}"
+					Text="{Binding Actor.Names.Text}" />
+
+				<!--<TextBlock
+					Grid.Column="3"
+					Margin="3,0,6,2"
+					FontSize="14"
+					FontWeight="SemiBold"
+					Foreground="{DynamicResource MaterialDesignToolForeground}"
+					Text="{Binding Actor.Initials}"
+					Visibility="{Binding ShowText, Converter={StaticResource !B2V}}" />-->
+
+				<XivToolsWpf:IconBlock
+					Grid.Column="4"
+					Margin="3,0,0,0"
+					FontSize="8"
+					Foreground="{StaticResource PrimaryHueMidBrush}"
+					Icon="MousePointer"
+					Visibility="{Binding Actor.IsTargeted, Converter={StaticResource B2V}}" />
+
+			</Grid>
+		</ToggleButton>
+
+
+		<!--<Line
+			Grid.Row="1"
+			HorizontalAlignment="Left"
+			Stroke="{DynamicResource MaterialDesignToolForeground}"
+			X1="0"
+			X2="{Binding ActualWidth, ElementName=ActorHeader}" />-->
+
+		<StackPanel
+			x:Name="ExpanderContent"
+			Grid.Row="2"
+			Margin="0,2,0,0">
+
+			<StackPanel.LayoutTransform>
+				<ScaleTransform x:Name="ContentScale" CenterY="0" ScaleY="1" />
+			</StackPanel.LayoutTransform>
+
+			<StackPanel.Resources>
+				<Storyboard x:Key="ExpandStoryboard">
+					<DoubleAnimation
+						Storyboard.TargetName="ContentScale"
+						Storyboard.TargetProperty="ScaleY"
+						From="0"
+						To="1"
+						Duration="00:00:00.2">
+						<DoubleAnimation.EasingFunction>
+							<SineEase EasingMode="EaseOut" />
+						</DoubleAnimation.EasingFunction>
+					</DoubleAnimation>
+				</Storyboard>
+
+				<Storyboard
+					x:Key="CollapseStoryboard"
+					Completed="OnCollapseStoryboardCompleted">
+					<DoubleAnimation
+						Storyboard.TargetName="ContentScale"
+						Storyboard.TargetProperty="ScaleY"
+						From="1"
+						To="0"
+						Duration="00:00:00.2">
+						<DoubleAnimation.EasingFunction>
+							<SineEase EasingMode="EaseOut" />
+						</DoubleAnimation.EasingFunction>
+					</DoubleAnimation>
+				</Storyboard>
+			</StackPanel.Resources>
+
+			<local:Shortcut
+				ContentPadding="10,0,0,0"
+				Context="{Binding Actor}"
+				Destination="ActorInfo"
+				Icon="Pen"
+				LabelKey="Naviagation_Actor_Info"
+				ShowText="{Binding ShowText}"
+				ToolTipKey="Naviagation_Actor_Info_Tip" />
+
+			<local:Shortcut
+				ContentPadding="10,0,0,0"
+				Context="{Binding Actor}"
+				Destination="ActorCustomize"
+				Icon="IdCardAlt"
+				LabelKey="Naviagation_Actor_Customize"
+				ShowText="{Binding ShowText}"
+				ToolTipKey="Naviagation_Actor_Customize_Tip" />
+
+			<local:Shortcut
+				ContentPadding="10,0,0,0"
+				Context="{Binding Actor}"
+				Destination="ActorEquipment"
+				Icon="HatCowboy"
+				LabelKey="Naviagation_Actor_Equipment"
+				ShowText="{Binding ShowText}"
+				ToolTipKey="Naviagation_Actor_Equipment_Tip" />
+
+			<local:Shortcut
+				ContentPadding="10,0,0,0"
+				Context="{Binding Actor}"
+				Destination="Action"
+				Icon="Biking"
+				LabelKey="Naviagation_Actor_Action"
+				ShowText="{Binding ShowText}"
+				ToolTipKey="Naviagation_Actor_Action_Tip" />
+
+			<local:Shortcut
+				ContentPadding="10,0,0,0"
+				Context="{Binding Actor}"
+				Destination="Pose"
+				Icon="Running"
+				LabelKey="Naviagation_Actor_Pose"
+				ShowText="{Binding ShowText}"
+				ToolTipKey="Naviagation_Actor_Pose_Tip" />
+
+		</StackPanel>
+	</Grid>
+</UserControl>
