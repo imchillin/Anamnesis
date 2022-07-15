@@ -15,10 +15,14 @@ using PropertyChanged;
 using XivToolsWpf;
 using XivToolsWpf.Selectors;
 
+public abstract class AnimationSelectorDrawer : SelectorDrawer<IAnimation>
+{
+}
+
 /// <summary>
 /// Interaction logic for EquipmentSelector.xaml.
 /// </summary>
-public partial class AnimationSelector : UserControl, INotifyPropertyChanged
+public partial class AnimationSelector : AnimationSelectorDrawer
 {
 	public AnimationSelector()
 	{
@@ -29,30 +33,25 @@ public partial class AnimationSelector : UserControl, INotifyPropertyChanged
 		this.PropertyChanged += this.OnSelfPropertyChanged;
 	}
 
-	public event PropertyChangedEventHandler? PropertyChanged;
-
 	public static AnimationTypeFilter GlobalAnimationTypeFilter { get; set; } = new();
 	public AnimationSlotFilter LocalAnimationSlotFilter { get; set; } = new();
 
-	protected Task LoadItems()
+	protected override Task LoadItems()
 	{
 		if (GameDataService.Emotes != null)
 			this.LoadEmotes();
 
 		if (GameDataService.ActionTimelines != null)
-			this.Selector.AddItems(GameDataService.Actions);
+			this.AddItems(GameDataService.Actions);
 
 		if (GameDataService.ActionTimelines != null)
-			this.Selector.AddItems(GameDataService.ActionTimelines);
+			this.AddItems(GameDataService.ActionTimelines);
 
 		return Task.CompletedTask;
 	}
 
-	private bool Filter(object item, string[]? search)
+	protected override bool Filter(IAnimation animation, string[]? search = null)
 	{
-		if (item is not IAnimation animation)
-			return false;
-
 		// Filter out any that are clearly invalid
 		if (string.IsNullOrEmpty(animation.DisplayName) || animation.Timeline == null || string.IsNullOrEmpty(animation.Timeline.Key))
 			return false;
@@ -84,14 +83,8 @@ public partial class AnimationSelector : UserControl, INotifyPropertyChanged
 		return matches;
 	}
 
-	private int Sort(object itemA, object itemB)
+	protected override int Compare(IAnimation animA, IAnimation animB)
 	{
-		if (itemA is not IAnimation animA)
-			return 0;
-
-		if (itemB is not IAnimation animB)
-			return 0;
-
 		// Emotes and Actions to the top
 		if (animA is EmoteEntry && animB is not EmoteEntry)
 			return -1;
@@ -131,30 +124,30 @@ public partial class AnimationSelector : UserControl, INotifyPropertyChanged
 				continue;
 
 			// Add the loop
-			this.Selector.AddItem(new EmoteEntry(emote.DisplayName, emote.LoopTimeline, IAnimation.AnimationPurpose.Standard, emote.Icon));
+			this.AddItem(new EmoteEntry(emote.DisplayName, emote.LoopTimeline, IAnimation.AnimationPurpose.Standard, emote.Icon));
 
 			// Check for an intro animation
 			if (emote.IntroTimeline != null && emote.IntroTimeline != emote.LoopTimeline)
 			{
-				this.Selector.AddItem(new EmoteEntry(emote.DisplayName, emote.IntroTimeline, IAnimation.AnimationPurpose.Intro, emote.Icon));
+				this.AddItem(new EmoteEntry(emote.DisplayName, emote.IntroTimeline, IAnimation.AnimationPurpose.Intro, emote.Icon));
 			}
 
 			// Check for an upper body variant
 			if (emote.UpperBodyTimeline != null && emote.UpperBodyTimeline != emote.LoopTimeline)
 			{
-				this.Selector.AddItem(new EmoteEntry(emote.DisplayName, emote.UpperBodyTimeline, IAnimation.AnimationPurpose.Blend, emote.Icon));
+				this.AddItem(new EmoteEntry(emote.DisplayName, emote.UpperBodyTimeline, IAnimation.AnimationPurpose.Blend, emote.Icon));
 			}
 
 			// Check for a ground specific animation
 			if (emote.GroundTimeline != null && emote.GroundTimeline != emote.LoopTimeline && emote.GroundTimeline != emote.UpperBodyTimeline)
 			{
-				this.Selector.AddItem(new EmoteEntry(emote.DisplayName, emote.GroundTimeline, IAnimation.AnimationPurpose.Ground, emote.Icon));
+				this.AddItem(new EmoteEntry(emote.DisplayName, emote.GroundTimeline, IAnimation.AnimationPurpose.Ground, emote.Icon));
 			}
 
 			// Check for a chair specific animation
 			if (emote.ChairTimeline != null && emote.ChairTimeline != emote.LoopTimeline && emote.ChairTimeline != emote.UpperBodyTimeline)
 			{
-				this.Selector.AddItem(new EmoteEntry(emote.DisplayName, emote.ChairTimeline, IAnimation.AnimationPurpose.Chair, emote.Icon));
+				this.AddItem(new EmoteEntry(emote.DisplayName, emote.ChairTimeline, IAnimation.AnimationPurpose.Chair, emote.Icon));
 			}
 		}
 	}
@@ -164,7 +157,7 @@ public partial class AnimationSelector : UserControl, INotifyPropertyChanged
 		if (e.PropertyName == nameof(this.LocalAnimationSlotFilter))
 			return;
 
-		this.Selector.FilterItems();
+		this.FilterItems();
 	}
 
 	public class EmoteEntry : IAnimation

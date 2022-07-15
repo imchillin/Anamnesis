@@ -1,226 +1,158 @@
-﻿<UserControl
-	x:Class="Anamnesis.Actor.Views.ItemView"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-	xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	Margin="0"
-	d:DesignWidth="300"
-	DataContextChanged="OnDataContextChanged"
-	mc:Ignorable="d">
+﻿<UserControl x:Class="Anamnesis.Actor.Views.ItemView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
+			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 mc:Ignorable="d"
+			 Margin="0"
+			 d:DesignWidth="300"
+             DataContextChanged="OnDataContextChanged">
 
-	<GroupBox
-		x:Name="ContentArea"
-		Margin="3,0">
+	<GroupBox Margin="3, 0" x:Name="ContentArea">
 		<GroupBox.Header>
-			<Grid Width="180">
+			<Grid MaxWidth="150">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition />
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
-
-				<TextBlock
-					Grid.Column="0"
-					FontWeight="Light"
-					Foreground="{DynamicResource MaterialDesignBodyLight}"
-					Text="{Binding SlotName}" />
-				<TextBlock
-					Grid.Column="1"
-					Margin="0"
-					Text=":" />
-				<TextBlock
-					Grid.Column="2"
-					Margin="4,0,0,0"
-					Text="{Binding Item.Name}"
-					TextTrimming="CharacterEllipsis"
-					TextWrapping="NoWrap" />
+				
+				<TextBlock Grid.Column="0" Text="{Binding SlotName}" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+				<TextBlock Grid.Column="1" Text=":" Margin="0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+				<TextBlock Grid.Column="2" Text="{Binding Item.Name}" Margin="4, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
 			</Grid>
 		</GroupBox.Header>
 
-		<Grid Margin="0,2,0,0">
+		<Grid Margin="0, 2, 0, 0">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition />
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-			<Button
-				Grid.Row="0"
-				Grid.RowSpan="2"
-				Width="48"
-				Height="48"
-				Click="OnClick"
-				IsEnabled="{Binding Actor.CanRefresh}"
-				MouseUp="OnSlotMouseUp"
-				Style="{DynamicResource TransparentButton}">
+			<Button 
+					Width="48" Height="48"
+					Click="OnClick"
+					MouseUp="OnSlotMouseUp"
+					Grid.Row="0"
+					Grid.RowSpan="2"
+					Style="{DynamicResource TransparentButton}"
+					IsEnabled="{Binding Actor.CanRefresh}">
 				<Grid>
-					<Image
-						x:Name="SlotIcon"
-						Margin="6"
-						Opacity="0.3"
-						Source="{Binding IconSource}" />
+					<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="6" Opacity="0.3"/>
 
 					<Grid Visibility="{Binding ItemModel, Converter={StaticResource NotNullToVisibilityConverter}}">
-						<Image
-							Margin="2"
-							Source="{Binding Item.Icon, Converter={StaticResource Img}}" />
-						<Image
-							Margin="2"
-							Source="/Assets/IconOverlay.png"
-							Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityConverter}}" />
+						<Image Source="{Binding Item.Icon, Converter={StaticResource Img}}" Margin="2"/>
+						<Image Source="/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Item.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 					</Grid>
 
 					<Grid.ToolTip>
 						<StackPanel>
-							<TextBlock
-								FontWeight="DemiBold"
-								Text="{Binding Item.Name}" />
-							<TextBlock
-								Text="{Binding Item.Description}"
-								Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+							<TextBlock Text="{Binding Item.Name}" FontWeight="DemiBold"/>
+							<TextBlock Text="{Binding Item.Description}" Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
 						</StackPanel>
 					</Grid.ToolTip>
 
 				</Grid>
 			</Button>
 
-			<ProgressBar
-				Grid.Row="0"
-				Grid.RowSpan="2"
-				IsIndeterminate="True"
-				Style="{StaticResource MaterialDesignCircularProgressBar}"
-				Visibility="{Binding IsLoading, Converter={StaticResource B2V}}" />
+			<ProgressBar IsIndeterminate="True" Style="{StaticResource MaterialDesignCircularProgressBar}" Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsLoading, Converter={StaticResource B2V}}"/>
 
-			<XivToolsWpf:MultiNumberBox
-				Grid.Row="0"
-				Grid.Column="1"
-				Margin="3,0,0,0"
-				IsEnabled="{Binding Actor.CanRefresh}"
-				Minimum="0"
-				X="{Binding ItemModel.Set}"
-				Y="{Binding ItemModel.Base}"
-				Z="{Binding ItemModel.Variant}" />
+            <StackPanel Grid.Row="0" Grid.Column="1" Margin="3,0,0,0" Orientation="Horizontal" IsEnabled="{Binding Actor.CanRefresh}">
+				<!--<XivToolsWpf:NumberBox Width="38" Value="{Binding ItemKey}" FontSize="12" FontWeight="Light" Margin="0, 0, 6, 0" ToolTip="Character_Equipment_ItemId"/>-->
 
-			<StackPanel
-				Grid.Row="1"
-				Grid.Column="1"
-				Grid.ColumnSpan="2"
-				Margin="2,0,0,0"
-				Orientation="Horizontal"
-				Visibility="{Binding CanDye, Converter={StaticResource B2V}}">
+				<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Set}" FontSize="12" FontWeight="Light"
+								ToolTip="Character_Equipment_ItemSet"
+								Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}"/>
 
-				<!--  Weapon Visibility  -->
-				<ToggleButton
-					Grid.Column="0"
-					Height="20"
-					Margin="0"
-					Padding="0"
-					BorderThickness="1"
-					IsChecked="{Binding ItemModel.WeaponHidden}"
-					Style="{StaticResource TransparentIconToggleButton}"
-					Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+				<TextBlock Text="," Style="{StaticResource Label}" Margin="2, 2, 4, 0" Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}"/>
+				<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Base}" FontSize="12" FontWeight="Light" 
+									   ToolTip="Character_Equipment_ItemBase"/>
+
+				<TextBlock Text="," Style="{StaticResource Label}" Margin="2, 2, 4, 0" />
+				<XivToolsWpf:NumberBox Width="28" Value="{Binding ItemModel.Variant}" FontSize="12" FontWeight="Light" 
+									   ToolTip="Character_Equipment_ItemVariant"/>
+			</StackPanel>
+
+			<StackPanel Grid.Row="1"
+						Grid.Column="1"
+						Grid.ColumnSpan="2"
+						Margin="2, 0, 0, 0"
+						Orientation="Horizontal"
+						Visibility="{Binding CanDye, Converter={StaticResource B2V}}">
+
+				<!-- Weapon Visibility -->
+				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsChecked="{Binding ItemModel.WeaponHidden}" BorderThickness="1" Padding="0" Margin="0"
+							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
 					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponToggle" />
+						<XivToolsWpf:TextBlock Key="Character_Equipment_WeaponToggle"/>
 					</ToggleButton.ToolTip>
 
-					<fa:IconBlock
-						FontSize="10"
-						Icon="EyeSlash" />
+					<fa:IconBlock Icon="EyeSlash" FontSize="10"/>
 				</ToggleButton>
 
-				<!--  Head/Hat Visbility and Visor  -->
-				<ToggleButton
-					Grid.Column="0"
-					Height="20"
-					Margin="0"
-					Padding="0"
-					BorderThickness="1"
-					IsChecked="{Binding Actor.HatHidden}"
-					IsEnabled="{Binding Actor.CanRefresh}"
-					Style="{StaticResource TransparentIconToggleButton}"
-					Visibility="{Binding IsHead, Converter={StaticResource B2V}}">
+				<!-- Head/Hat Visbility and Visor -->
+				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding Actor.CanRefresh}" Visibility="{Binding IsHead, Converter={StaticResource B2V}}" IsChecked="{Binding Actor.HatHidden}" BorderThickness="1" Padding="0" Margin="0">
 					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_HatToggle" />
+						<XivToolsWpf:TextBlock Key="Character_Equipment_HatToggle"/>
 					</ToggleButton.ToolTip>
 
-					<fa:IconBlock
-						FontSize="10"
-						Icon="EyeSlash" />
+					<fa:IconBlock Icon="EyeSlash" FontSize="10"/>
 				</ToggleButton>
 
-				<ToggleButton
-					Grid.Column="0"
-					Height="20"
-					Margin="0"
-					Padding="0"
-					BorderThickness="1"
-					IsChecked="{Binding Actor.VisorToggled}"
-					IsEnabled="{Binding Actor.CanRefresh}"
-					Style="{StaticResource TransparentIconToggleButton}"
-					Visibility="{Binding IsHead, Converter={StaticResource B2V}}">
+				<ToggleButton Grid.Column="0" Height="20" Style="{StaticResource TransparentIconToggleButton}"  IsEnabled="{Binding Actor.CanRefresh}" Visibility="{Binding IsHead, Converter={StaticResource B2V}}" IsChecked="{Binding Actor.VisorToggled}" BorderThickness="1" Padding="0" Margin="0">
 					<ToggleButton.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_VisorToggle" />
+						<XivToolsWpf:TextBlock Key="Character_Equipment_VisorToggle"/>
 					</ToggleButton.ToolTip>
 
-					<fa:IconBlock
-						FontSize="10"
-						Icon="Mask" />
+					<fa:IconBlock Icon="Mask" FontSize="10"/>
 				</ToggleButton>
 
-				<!--  Weapon Tint  -->
-				<ana:RgbColorControl
-					Margin="2,0,0,0"
-					Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}"
-					Value="{Binding ExtendedViewModel.Tint}">
+				<!-- Weapon Tint -->
+				<ana:RgbColorControl Margin="2, 2, 0, 0" 
+				                     Value="{Binding ExtendedViewModel.Tint}" 
+				                     Visibility="{Binding IsWeapon, Converter={StaticResource B2V}}">
 					<ana:RgbColorControl.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_Tint" />
+						<XivToolsWpf:TextBlock Key="Character_Equipment_Tint"/>
 					</ana:RgbColorControl.ToolTip>
-
+					
 				</ana:RgbColorControl>
 
-				<!--  Dye  -->
-				<Button
-					Grid.RowSpan="2"
-					Grid.Column="0"
-					Width="20"
-					Height="20"
-					Margin="2,4,0,0"
-					VerticalAlignment="Top"
-					Click="OnDyeClick"
-					IsEnabled="{Binding Actor.CanRefresh}"
-					MouseUp="OnDyeMouseUp"
-					Style="{DynamicResource TransparentButton}">
+				<!-- Dye -->
+				<Button MouseUp="OnDyeMouseUp"
+						Margin="2, 4, 0, 0"
+						Grid.Column="0"
+						Grid.RowSpan="2"
+						Click="OnDyeClick"
+						Height="20"
+						Width="20"
+						VerticalAlignment="Top"
+						Style="{DynamicResource TransparentButton}"
+						IsEnabled="{Binding Actor.CanRefresh}">
 
 					<Button.ToolTip>
-						<XivToolsWpf:TextBlock Key="Character_Equipment_Dye" />
+						<XivToolsWpf:TextBlock Key="Character_Equipment_Dye"/>
 					</Button.ToolTip>
 
 					<Grid>
 						<Grid Visibility="{Binding ItemModel, Converter={StaticResource NotNullToVisibilityConverter}}">
-							<Image
-								Margin="2"
-								Source="{Binding Dye.Icon, Converter={StaticResource Img}}" />
-							<Image
-								Margin="2"
-								Source="/AppearanceModule;component/Assets/IconOverlay.png"
-								Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}" />
+							<Image Source="{Binding Dye.Icon, Converter={StaticResource Img}}" Margin="2"/>
+							<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
 							<Grid.ToolTip>
 								<StackPanel>
-									<TextBlock
-										FontWeight="DemiBold"
-										Text="{Binding Dye.Name}" />
-									<TextBlock
-										Text="{Binding Dye.Description}"
-										Visibility="{Binding Dye.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+									<TextBlock Text="{Binding Dye.Name}" FontWeight="DemiBold"/>
+									<TextBlock Text="{Binding Dye.Description}" Visibility="{Binding Dye.Description, Converter={StaticResource StringHasContentToVisibility}}" />
 								</StackPanel>
 							</Grid.ToolTip>
 						</Grid>
@@ -232,19 +164,9 @@
 			</StackPanel>
 
 
-			<!--<Grid
-				Grid.Row="2"
-				Grid.ColumnSpan="2"
-				Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
-
-				<views:MultiNumberBox
-					Maximum="10"
-					Minimum="-10"
-					TickFrequency="0.1"
-					X="{Binding ExtendedViewModel.Scale.X}"
-					Y="{Binding ExtendedViewModel.Scale.Y}"
-					Z="{Binding ExtendedViewModel.Scale.Z}" />
-			</Grid>-->
+			<Grid Grid.Row="2" Grid.ColumnSpan="2" Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+				<ana:VectorEditor Grid.Column="2" Value="{Binding ExtendedViewModel.Scale}" CanLink="True" Linked="True" Sliders="None" TickFrequency="0.1" Minimum="-10" Maximum="10"/>
+			</Grid>
 
 		</Grid>
 	</GroupBox>

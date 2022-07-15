@@ -103,7 +103,7 @@ public class CharacterFile : JsonFileBase
 
 	public void WriteToFile(ActorMemory actor, SaveModes mode)
 	{
-		this.Nickname = actor.Names.Nickname;
+		this.Nickname = actor.Nickname;
 		this.ModelType = (uint)actor.ModelType;
 		this.ObjectKind = actor.ObjectKind;
 
@@ -244,7 +244,7 @@ public class CharacterFile : JsonFileBase
 			actor.EnableReading = false;
 
 			if (!string.IsNullOrEmpty(this.Nickname))
-				actor.Names.Nickname = this.Nickname;
+				actor.Nickname = this.Nickname;
 
 			actor.ModelType = (int)this.ModelType;
 			////actor.ObjectKind = this.ObjectKind;

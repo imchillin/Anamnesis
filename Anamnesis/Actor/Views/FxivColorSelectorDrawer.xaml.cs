@@ -13,7 +13,7 @@ using PropertyChanged;
 /// Interaction logic for FxivColorSelectorDrawer.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class FxivColorSelectorDrawer : UserControl
+public partial class FxivColorSelectorDrawer : UserControl, IDrawer
 {
 	private readonly List<Item> items = new List<Item>();
 	private Item? selectedItem;
@@ -46,6 +46,7 @@ public partial class FxivColorSelectorDrawer : UserControl
 
 	public delegate void SelectorEvent(int value);
 
+	public event DrawerEvent? OnClosing;
 	public event SelectorEvent? SelectionChanged;
 
 	public Item? SelectedItem
@@ -95,6 +96,7 @@ public partial class FxivColorSelectorDrawer : UserControl
 
 	public void Close()
 	{
+		this.OnClosing?.Invoke();
 	}
 
 	public class Item

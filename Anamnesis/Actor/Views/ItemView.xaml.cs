@@ -14,8 +14,6 @@ using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
-using Anamnesis.Navigation;
-using Anamnesis.Panels;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using PropertyChanged;
@@ -29,7 +27,7 @@ using XivToolsWpf.DependencyProperties;
 [AddINotifyPropertyChangedInterface]
 public partial class ItemView : UserControl
 {
-	public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>(nameof(Slot), BindMode.OneWay);
+	public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
 	public static readonly IBind<IEquipmentItemMemory?> ItemModelDp = Binder.Register<IEquipmentItemMemory?, ItemView>(nameof(ItemModel), OnItemModelChanged, BindMode.TwoWay);
 	public static readonly IBind<WeaponSubModelMemory?> WeaponExModelDp = Binder.Register<WeaponSubModelMemory?, ItemView>(nameof(ExtendedViewModel));
 
@@ -141,10 +139,8 @@ public partial class ItemView : UserControl
 		if (this.Actor?.CanRefresh != true)
 			return;
 
-		NavigationService.Navigate(new NavigationService.Request(this, "ActorEquipmentSelector", this));
-
-		////EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
-		////SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
+		EquipmentSelector selector = new EquipmentSelector(this.Slot, this.Actor);
+		SelectorDrawer.Show(selector, this.Item, (i) => this.SetItem(i, selector.AutoOffhand, selector.ForceMainModel, selector.ForceOffModel));
 	}
 
 	private void OnSlotMouseUp(object sender, MouseButtonEventArgs e)
@@ -249,8 +245,7 @@ public partial class ItemView : UserControl
 		if (!this.CanDye)
 			return;
 
-		throw new NotImplementedException();
-		/*SelectorControl.Show<DyeSelector, IDye>(this.Dye, (v) =>
+		SelectorDrawer.Show<DyeSelector, IDye>(this.Dye, (v) =>
 		{
 			if (v == null)
 				return;
@@ -263,7 +258,7 @@ public partial class ItemView : UserControl
 			{
 				weapon.Dye = v.Id;
 			}
-		});*/
+		});
 	}
 
 	private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs? e)

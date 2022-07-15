@@ -12,16 +12,9 @@ using Anamnesis.Utils;
 using FontAwesome.Sharp;
 using PropertyChanged;
 
-using MediaColor = System.Windows.Media.Color;
-
 public class ActorBasicMemory : MemoryBase
 {
 	private ActorBasicMemory? owner;
-
-	public ActorBasicMemory()
-	{
-		this.Names = new Names(this);
-	}
 
 	public enum RenderModes : uint
 	{
@@ -48,6 +41,9 @@ public class ActorBasicMemory : MemoryBase
 	public double DistanceFromPlayer => Math.Sqrt(((int)this.DistanceFromPlayerX ^ 2) + ((int)this.DistanceFromPlayerY ^ 2));
 	public string NameHash => HashUtility.GetHashString(this.NameBytes.ToString(), true);
 
+	[AlsoNotifyFor(nameof(DisplayName))]
+	public string? Nickname { get; set; }
+
 	[DependsOn(nameof(ObjectIndex))]
 	public virtual bool IsGPoseActor => this.ObjectIndex >= 200 && this.ObjectIndex < 244;
 
@@ -57,8 +53,26 @@ public class ActorBasicMemory : MemoryBase
 	[DependsOn(nameof(RenderMode))]
 	public bool IsHidden => this.RenderMode != RenderModes.Draw;
 
-	public Names Names { get; init; }
-	public MediaColor Color { get; set; }
+	/// <summary>
+	/// Gets the Nickname or if not set, the Name.
+	/// </summary>
+	public string DisplayName => this.Nickname ?? this.Name;
+
+	public string Name
+	{
+		get
+		{
+			string name = this.NameBytes.ToString();
+
+			// Geting owner now can be expensive, so disable this for now.
+			/*ActorBasicMemory? owner = this.GetOwner();
+
+			if (owner != null)
+				name += $" ({owner.DisplayName})";*/
+
+			return name;
+		}
+	}
 
 	[DependsOn(nameof(ObjectKind))]
 	public int ObjectKindInt

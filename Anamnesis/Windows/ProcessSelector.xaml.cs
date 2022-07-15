@@ -25,6 +25,7 @@ public partial class ProcessSelector : UserControl
 	public Process? Selected;
 
 	private bool isAutomatic = true;
+	private Dialog? window;
 	private bool showAll;
 
 	public ProcessSelector()
@@ -55,13 +56,12 @@ public partial class ProcessSelector : UserControl
 		if (processes.Length == 1)
 			return processes[0];
 
-		throw new NotImplementedException();
-		/*Dialog dlg = new Dialog();
+		Dialog dlg = new Dialog();
 		ProcessSelector proc = new ProcessSelector();
 		proc.window = dlg;
 		dlg.ContentArea.Content = proc;
 		dlg.ShowDialog();
-		return proc.Selected;*/
+		return proc.Selected;
 	}
 
 	private static Process[] GetTargetProcesses()
@@ -133,11 +133,13 @@ public partial class ProcessSelector : UserControl
 	private void OnOkClicked(object sender, RoutedEventArgs e)
 	{
 		this.Selected = (this.ProcessGrid.SelectedValue as Option)?.Process;
+		this.window?.Close();
 	}
 
 	private void OnCancelClicked(object sender, RoutedEventArgs e)
 	{
 		this.Selected = null;
+		this.window?.Close();
 	}
 
 	private async Task Scan()
@@ -165,6 +167,7 @@ public partial class ProcessSelector : UserControl
 			{
 				await Dispatch.MainThread();
 				this.Selected = processes[0];
+				this.window?.Close();
 				return;
 			}
 			else if (processes.Length > 1)

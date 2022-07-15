@@ -17,8 +17,6 @@ using PropertyChanged;
 using Serilog;
 using XivToolsWpf.Extensions;
 
-using MediaColor = System.Windows.Media.Color;
-
 [AddINotifyPropertyChangedInterface]
 public class PinnedActor : INotifyPropertyChanged, IDisposable
 {
@@ -31,7 +29,6 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		this.IdNoAddress = memory.IdNoAddress;
 		this.Memory = memory;
 		this.Memory.Pinned = this;
-		this.Names = memory.Names;
 
 		this.UpdateActorInfo();
 
@@ -53,20 +50,20 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 	public ActorMemory? Memory { get; private set; }
 	////public ActorViewModel? ViewModel { get; private set; }
 
+	public string? Name { get; private set; }
 	public string Id { get; private set; }
 	public string IdNoAddress { get; private set; }
 	public IntPtr? Pointer { get; private set; }
 	public ActorTypes Kind { get; private set; }
 	public IconChar Icon { get; private set; }
-	public MediaColor Color { get; private set; }
 	public int ModelType { get; private set; }
-	public Names Names { get; private set; }
+	public string? Initials { get; private set; }
 	public bool IsValid { get; private set; }
 	public bool IsGPoseActor { get; private set; }
 	public bool IsHidden { get; private set; }
 	public bool IsPinned => TargetService.Instance.PinnedActors.Contains(this);
-	public bool IsTargeted { get; set; }
 
+	public string? DisplayName => this.Memory == null ? this.Name : this.Memory.DisplayName;
 	public bool IsRetargeting { get; private set; } = false;
 
 	public CharacterFile? GposeCharacterBackup { get; private set; }
@@ -123,7 +120,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 	public override int GetHashCode()
 	{
-		return HashCode.Combine(this.Pointer, this.Names.FullName);
+		return HashCode.Combine(this.Pointer, this.Name);
 	}
 
 	public void Tick()
@@ -363,17 +360,16 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 		this.Id = this.Memory.Id;
 		this.IdNoAddress = this.Memory.IdNoAddress;
-		this.Names = this.Memory.Names;
+		this.Name = this.Memory.Name;
 		this.Memory.PropertyChanged += this.OnViewModelPropertyChanged;
 		this.Pointer = this.Memory.Address;
 		this.Kind = this.Memory.ObjectKind;
 		this.Icon = this.Memory.ObjectKind.GetIcon();
-		this.Color = this.Memory.Color;
 		this.ModelType = this.Memory.ModelType;
 		this.IsGPoseActor = this.Memory.IsGPoseActor;
 		this.IsHidden = this.Memory.IsHidden;
 
-		this.Names.Update();
+		this.UpdateInitials(this.DisplayName);
 
 		this.IsValid = true;
 	}
@@ -383,14 +379,42 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		if (this.Memory == null)
 			return;
 
-		if (e.PropertyName == nameof(ActorMemory.ObjectKind))
+		if (e.PropertyName == nameof(ActorMemory.DisplayName) || e.PropertyName == nameof(ActorMemory.ObjectKind))
 		{
+			this.UpdateInitials(this.Memory.DisplayName);
 			this.Kind = this.Memory.ObjectKind;
 			this.Icon = this.Memory.ObjectKind.GetIcon();
 		}
-		else if (e.PropertyName == nameof(ActorMemory.Color))
+	}
+
+	private void UpdateInitials(string? name)
+	{
+		if (string.IsNullOrWhiteSpace(name))
+			return;
+
+		try
 		{
-			this.Color = this.Memory.Color;
+			if (name.Length <= 4)
+			{
+				this.Initials = name;
+			}
+			else
+			{
+				this.Initials = string.Empty;
+
+				string[] parts = name.Split('(', StringSplitOptions.RemoveEmptyEntries);
+				parts = parts[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+				foreach (string part in parts)
+				{
+					this.Initials += part[0] + ".";
+				}
+
+				this.Initials = this.Initials.Trim('.');
+			}
+		}
+		catch (Exception)
+		{
+			this.Initials = name[0] + "?";
 		}
 	}
 

@@ -47,7 +47,7 @@ public partial class RgbColorControl : UserControl
 		return v;
 	}
 
-	private void OnClick(object sender, RoutedEventArgs e)
+	private async void OnClick(object sender, RoutedEventArgs e)
 	{
 		ColorSelectorDrawer selector = new ColorSelectorDrawer();
 		selector.EnableAlpha = false;
@@ -62,7 +62,7 @@ public partial class RgbColorControl : UserControl
 			this.Value = v.Color;
 		};
 
-		throw new NotImplementedException();
+		await ViewService.ShowDrawer(selector);
 	}
 
 	private void UpdatePreview()

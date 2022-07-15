@@ -14,7 +14,7 @@ using PropertyChanged;
 /// Interaction logic for HairSelector.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class CustomizeFeatureSelectorDrawer : UserControl
+public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 {
 	private readonly ActorCustomizeMemory.Genders gender;
 	private readonly ActorCustomizeMemory.Tribes tribe;
@@ -39,6 +39,7 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl
 
 	public delegate void SelectorEvent(byte value);
 
+	public event DrawerEvent? OnClosing;
 	public event SelectorEvent? SelectionChanged;
 
 	public byte Selected
@@ -84,6 +85,7 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl
 
 	public void Close()
 	{
+		this.OnClosing?.Invoke();
 	}
 
 	public void OnClosed()

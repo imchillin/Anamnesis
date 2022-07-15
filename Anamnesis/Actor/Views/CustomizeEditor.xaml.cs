@@ -212,7 +212,7 @@ public partial class CustomizeEditor : UserControl
 		this.UpdateRaceAndTribe();
 	}
 
-	private void OnHairClicked(object sender, RoutedEventArgs e)
+	private async void OnHairClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Customize == null)
 			return;
@@ -223,10 +223,10 @@ public partial class CustomizeEditor : UserControl
 			this.Customize.Hair = v;
 		};
 
-		throw new NotImplementedException();
+		await ViewService.ShowDrawer(selector);
 	}
 
-	private void OnFacePaintClicked(object sender, RoutedEventArgs e)
+	private async void OnFacePaintClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Customize == null)
 			return;
@@ -237,7 +237,7 @@ public partial class CustomizeEditor : UserControl
 			this.Customize.FacePaint = v;
 		};
 
-		throw new NotImplementedException();
+		await ViewService.ShowDrawer(selector);
 	}
 
 	private void OnRaceChanged(object sender, SelectionChangedEventArgs e)

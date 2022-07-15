@@ -32,7 +32,6 @@ public static class GenericSelectorUtil
 			selected.Invoke(tVal);
 		};
 
-		////await ViewService.ShowDrawer(sel);
-		throw new NotImplementedException();
+		await ViewService.ShowDrawer(sel);
 	}
 }

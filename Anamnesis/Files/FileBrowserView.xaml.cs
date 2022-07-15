@@ -14,14 +14,21 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Anamnesis.Files;
+using Anamnesis.GUI.Dialogs;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
-using Anamnesis.Windows;
 using PropertyChanged;
 using Serilog;
 using XivToolsWpf;
 
-public partial class FileBrowserView : UserControl
+public abstract class FileBrowserDrawer : SelectorDrawer<FileBrowserView.EntryWrapper>
+{
+}
+
+/// <summary>
+/// Interaction logic for FileBrowserView.xaml.
+/// </summary>
+public partial class FileBrowserView : FileBrowserDrawer
 {
 	private static bool isFlattened;
 	private static Sort sortMode;
@@ -82,7 +89,7 @@ public partial class FileBrowserView : UserControl
 		this.mode = mode;
 		this.filters = filters;
 
-		this.Selector.SearchEnabled = mode == Modes.Load;
+		this.SearchEnabled = mode == Modes.Load;
 
 		this.ContentArea.DataContext = this;
 
@@ -211,12 +218,18 @@ public partial class FileBrowserView : UserControl
 		}
 	}
 
-	public void OnClosed()
+	public override void OnClosed()
 	{
+		base.OnClosed();
 		this.IsOpen = false;
 	}
 
-	protected bool Filter(EntryWrapper item, string[]? search)
+	protected override Task LoadItems()
+	{
+		return Task.CompletedTask;
+	}
+
+	protected override bool Filter(EntryWrapper item, string[]? search)
 	{
 		bool matches = false;
 
@@ -226,7 +239,7 @@ public partial class FileBrowserView : UserControl
 		return matches;
 	}
 
-	protected int Compare(EntryWrapper itemA, EntryWrapper itemB)
+	protected override int Compare(EntryWrapper itemA, EntryWrapper itemB)
 	{
 		// Directoreis alweays go to the top.
 		if (itemA.Entry is DirectoryInfo && itemB.Entry is FileInfo)
@@ -259,9 +272,10 @@ public partial class FileBrowserView : UserControl
 		return 0;
 	}
 
-	protected void OnSelectionChanged(bool doubleClicked)
+	protected override void OnSelectionChanged(bool doubleClicked)
 	{
-		this.Selected = this.Selector.Value as EntryWrapper;
+		this.Selected = this.Value as EntryWrapper;
+		base.OnSelectionChanged(false);
 
 		if (doubleClicked)
 		{
@@ -297,7 +311,7 @@ public partial class FileBrowserView : UserControl
 	{
 		try
 		{
-			while (!this.Selector.IsLoaded)
+			while (!this.SelectorLoaded)
 				await Task.Delay(10);
 
 			while (this.updatingEntries)
@@ -306,13 +320,13 @@ public partial class FileBrowserView : UserControl
 			lock (this)
 			{
 				this.updatingEntries = true;
-				this.Selector.ClearItems();
+				this.ClearItems();
 
 				try
 				{
 					List<EntryWrapper> results = new();
 					this.GetEntries(this.CurrentDir, ref results);
-					this.Selector.AddItems(results);
+					this.AddItems(results);
 				}
 				catch (Exception ex)
 				{
@@ -320,7 +334,7 @@ public partial class FileBrowserView : UserControl
 				}
 			}
 
-			await this.Selector.FilterItemsAsync();
+			await this.FilterItemsAsync();
 		}
 		catch (Exception ex)
 		{
@@ -458,13 +472,13 @@ public partial class FileBrowserView : UserControl
 			return;
 		}
 
-		////this.Close();
+		this.Close();
 	}
 
 	private void OnBrowseClicked(object sender, RoutedEventArgs e)
 	{
 		this.UseFileBrowser = true;
-		////this.Close();
+		this.Close();
 	}
 
 	private async void OnDeleteClick(object sender, RoutedEventArgs e)
@@ -517,7 +531,7 @@ public partial class FileBrowserView : UserControl
 
 	private void Select(FileSystemInfo entry)
 	{
-		foreach (EntryWrapper? wrapper in this.Selector.Entries)
+		foreach (EntryWrapper? wrapper in this.Entries)
 		{
 			if (wrapper == null)
 				continue;

@@ -104,7 +104,7 @@ public partial class ColorControl : UserControl
 		sender.PreviewColor.Color = sender.WpfColor;
 	}
 
-	private void OnClick(object sender, RoutedEventArgs e)
+	private async void OnClick(object sender, RoutedEventArgs e)
 	{
 		if (this.colors == null)
 			return;
@@ -119,7 +119,7 @@ public partial class ColorControl : UserControl
 			this.Value = (byte)v;
 		};
 
-		throw new NotImplementedException();
+		await ViewService.ShowDrawer(selector);
 	}
 
 	private ColorData.Entry[]? GetColors()

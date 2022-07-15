@@ -9,15 +9,12 @@ using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
-using Anamnesis.Navigation;
-using Anamnesis.Panels;
 using Anamnesis.Services;
 using Anamnesis.Windows;
 using Serilog;
 using XivToolsWpf;
-using XivToolsWpf.Extensions;
+
 using Application = System.Windows.Application;
 
 /// <summary>
@@ -25,7 +22,7 @@ using Application = System.Windows.Application;
 /// </summary>
 public partial class App : Application
 {
-	public static readonly ServiceManager Services = new ServiceManager();
+	private static readonly ServiceManager Services = new ServiceManager();
 
 	protected override void OnStartup(StartupEventArgs e)
 	{
@@ -83,39 +80,48 @@ public partial class App : Application
 
 		try
 		{
-			this.PerformanceWatcher().Run();
-			this.MemoryWatcher().Run();
+			_ = Task.Run(this.PerformanceWatcher);
+			_ = Task.Run(this.MemoryWatcher);
 
 			LogService.CreateLog();
 
-			this.CheckWindowsVersion();
 			this.CheckWorkingDirectory();
 			this.CheckForProcesses();
 
-			await Services.InitializeCriticalServices();
+			await Services.InitializeServices();
+
 			SettingsService.ApplyTheme();
+
+			await Dispatch.MainThread();
+
+			// Wait for any child windows to close.
+			bool wait = true;
+			while (wait)
+			{
+				wait = false;
+
+				foreach (Window window in this.Windows)
+				{
+					if (window.Owner == this.MainWindow)
+					{
+						wait = true;
+						await Task.Delay(500);
+					}
+				}
+			}
+
 			await Dispatch.MainThread();
 
 			Window oldwindow = this.MainWindow;
 
-			if (SettingsService.Current.OverlayWindow)
-			{
-				IPanelGroupHost wnd = new OverlayWindow();
-				NavigationPanel nav = new(wnd);
-				wnd.PanelGroupArea.Content = nav;
-				wnd.Show();
+			Stopwatch sw2 = new();
+			sw2.Start();
 
-				this.MainWindow = wnd as Window;
-			}
-			else
-			{
-				this.MainWindow = new Anamnesis.Windows.MainWindow();
-				this.MainWindow.Show();
-			}
+			this.MainWindow = new Anamnesis.GUI.MainWindow();
+			this.MainWindow.Show();
+			Log.Information($"Took {sw2.ElapsedMilliseconds}ms to show window");
 
 			oldwindow.Close();
-
-			await Services.InitializeServices();
 		}
 		catch (Exception ex)
 		{
@@ -125,18 +131,6 @@ public partial class App : Application
 
 		sw.Stop();
 		Log.Information($"Started application in {sw.ElapsedMilliseconds}ms");
-	}
-
-	private void CheckWindowsVersion()
-	{
-		OperatingSystem os = Environment.OSVersion;
-		if (os.Platform != PlatformID.Win32NT)
-			throw new Exception("Only Windows NT or later is supported");
-
-		if (os.Version.Major < 10)
-		{
-			throw new Exception("Only Windows 10 or newer is supported");
-		}
 	}
 
 	private void CheckWorkingDirectory()

@@ -44,7 +44,7 @@ public partial class DeveloperTab : UserControl
 
 	private void OnFindNpcClicked(object sender, RoutedEventArgs e)
 	{
-		/*TargetSelectorView.Show((a) =>
+		TargetSelectorView.Show((a) =>
 		{
 			ActorMemory memory = new();
 
@@ -54,7 +54,7 @@ public partial class DeveloperTab : UserControl
 			memory.SetAddress(a.Address);
 
 			NpcAppearanceSearch.Search(memory);
-		});*/
+		});
 	}
 
 	private void OnCopyActorAddressClicked(object sender, RoutedEventArgs e)

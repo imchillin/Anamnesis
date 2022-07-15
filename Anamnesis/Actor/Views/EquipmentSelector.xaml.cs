@@ -11,14 +11,19 @@ using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Keyboard;
-using Anamnesis.Memory;
-using Anamnesis.Panels;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using PropertyChanged;
 using XivToolsWpf;
 
-public partial class EquipmentSelectorPanel : PanelBase
+public abstract class EquipmentSelectorDrawer : SelectorDrawer<IItem>
+{
+}
+
+/// <summary>
+/// Interaction logic for EquipmentSelector.xaml.
+/// </summary>
+public partial class EquipmentSelector : EquipmentSelectorDrawer
 {
 	private static Classes classFilter = Classes.All;
 	private static ItemCategories categoryFilter = ItemCategories.All;
@@ -31,8 +36,7 @@ public partial class EquipmentSelectorPanel : PanelBase
 
 	private readonly Memory.ActorMemory? actor;
 
-	public EquipmentSelectorPanel(IPanelGroupHost host, ItemSlots slot, ActorMemory? actor)
-		: base(host)
+	public EquipmentSelector(ItemSlots slot, Memory.ActorMemory? actor)
 	{
 		this.Slot = slot;
 		this.actor = actor;
@@ -70,7 +74,7 @@ public partial class EquipmentSelectorPanel : PanelBase
 		set
 		{
 			sortMode = value;
-			this.Selector.FilterItems();
+			this.FilterItems();
 		}
 	}
 
@@ -87,7 +91,7 @@ public partial class EquipmentSelectorPanel : PanelBase
 		{
 			classFilter = value;
 			this.JobFilterText.Text = value.Describe();
-			this.Selector.FilterItems();
+			this.FilterItems();
 		}
 	}
 
@@ -97,7 +101,7 @@ public partial class EquipmentSelectorPanel : PanelBase
 		set
 		{
 			categoryFilter = value;
-			this.Selector.FilterItems();
+			this.FilterItems();
 		}
 	}
 
@@ -107,7 +111,7 @@ public partial class EquipmentSelectorPanel : PanelBase
 		set
 		{
 			showLocked = value;
-			this.Selector.FilterItems();
+			this.FilterItems();
 		}
 	}
 
@@ -123,7 +127,7 @@ public partial class EquipmentSelectorPanel : PanelBase
 		set
 		{
 			forceMainModel = value;
-			this.Selector.FilterItems();
+			this.FilterItems();
 		}
 	}
 
@@ -133,48 +137,53 @@ public partial class EquipmentSelectorPanel : PanelBase
 		set
 		{
 			forceOffModel = value;
-			this.Selector.FilterItems();
+			this.FilterItems();
 		}
 	}
 
-	protected Task LoadItems()
+	public override void OnClosed()
+	{
+		HotkeyService.ClearHotkeyHandler("AppearancePage.ClearEquipment", this);
+	}
+
+	protected override Task LoadItems()
 	{
 		if (this.actor?.IsChocobo == true)
 		{
-			this.Selector.AddItem(ItemUtility.NoneItem);
-			this.Selector.AddItem(ItemUtility.YellowChocoboSkin);
-			this.Selector.AddItem(ItemUtility.BlackChocoboSkin);
+			this.AddItem(ItemUtility.NoneItem);
+			this.AddItem(ItemUtility.YellowChocoboSkin);
+			this.AddItem(ItemUtility.BlackChocoboSkin);
 
 			foreach (BuddyEquip buddyEquip in GameDataService.BuddyEquips)
 			{
 				if (buddyEquip.Head != null)
-					this.Selector.AddItem(buddyEquip.Head);
+					this.AddItem(buddyEquip.Head);
 
 				if (buddyEquip.Body != null)
-					this.Selector.AddItem(buddyEquip.Body);
+					this.AddItem(buddyEquip.Body);
 
 				if (buddyEquip.Feet != null)
-					this.Selector.AddItem(buddyEquip.Feet);
+					this.AddItem(buddyEquip.Feet);
 			}
 		}
 		else
 		{
 			if (!this.IsMainHandSlot)
-				this.Selector.AddItem(ItemUtility.NoneItem);
+				this.AddItem(ItemUtility.NoneItem);
 
-			this.Selector.AddItem(ItemUtility.NpcBodyItem);
-			this.Selector.AddItem(ItemUtility.InvisibileBodyItem);
-			this.Selector.AddItem(ItemUtility.InvisibileHeadItem);
+			this.AddItem(ItemUtility.NpcBodyItem);
+			this.AddItem(ItemUtility.InvisibileBodyItem);
+			this.AddItem(ItemUtility.InvisibileHeadItem);
 
-			this.Selector.AddItems(GameDataService.Equipment);
-			this.Selector.AddItems(GameDataService.Items);
-			this.Selector.AddItems(GameDataService.Perform);
+			this.AddItems(GameDataService.Equipment);
+			this.AddItems(GameDataService.Items);
+			this.AddItems(GameDataService.Perform);
 		}
 
 		return Task.CompletedTask;
 	}
 
-	protected int Compare(IItem itemA, IItem itemB)
+	protected override int Compare(IItem itemA, IItem itemB)
 	{
 		if (itemA.IsFavorite && !itemB.IsFavorite)
 		{
@@ -208,7 +217,7 @@ public partial class EquipmentSelectorPanel : PanelBase
 		throw new NotImplementedException($"Sort mode {this.SortMode} not implemented");
 	}
 
-	protected bool Filter(IItem item, string[]? search)
+	protected override bool Filter(IItem item, string[]? search)
 	{
 		// skip items without names
 		if (string.IsNullOrEmpty(item.Name))
@@ -319,27 +328,27 @@ public partial class EquipmentSelectorPanel : PanelBase
 	{
 		if (this.IsMainHandSlot)
 		{
-			this.Selector.Value = ItemUtility.EmperorsNewFists;
+			this.Value = ItemUtility.EmperorsNewFists;
 		}
 		else
 		{
-			this.Selector.Value = ItemUtility.NoneItem;
+			this.Value = ItemUtility.NoneItem;
 		}
 
-		this.Selector.RaiseSelectionChanged();
+		this.RaiseSelectionChanged();
 	}
 
 	private void OnNpcSmallclothesClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.IsSmallclothesSlot)
 		{
-			this.Selector.Value = ItemUtility.NpcBodyItem;
+			this.Value = ItemUtility.NpcBodyItem;
 		}
 		else
 		{
-			this.Selector.Value = ItemUtility.NoneItem;
+			this.Value = ItemUtility.NoneItem;
 		}
 
-		this.Selector.RaiseSelectionChanged();
+		this.RaiseSelectionChanged();
 	}
 }

@@ -4,16 +4,20 @@
 namespace Anamnesis.Actor.Views;
 
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Anamnesis.Services;
+using Anamnesis.Styles.Drawers;
 using XivToolsWpf;
+
+public abstract class DyeSelectorDrawer : SelectorDrawer<IDye>
+{
+}
 
 /// <summary>
 /// Interaction logic for EquipmentSelector.xaml.
 /// </summary>
-public partial class DyeSelector : UserControl
+public partial class DyeSelector : DyeSelectorDrawer
 {
 	public DyeSelector()
 	{
@@ -21,17 +25,17 @@ public partial class DyeSelector : UserControl
 		this.DataContext = this;
 	}
 
-	protected Task LoadItems()
+	protected override Task LoadItems()
 	{
-		this.Selector.AddItem(DyeUtility.NoneDye);
+		this.AddItem(DyeUtility.NoneDye);
 
 		if (GameDataService.Dyes != null)
-			this.Selector.AddItems(GameDataService.Dyes);
+			this.AddItems(GameDataService.Dyes);
 
 		return Task.CompletedTask;
 	}
 
-	protected bool Filter(IDye dye, string[]? search)
+	protected override bool Filter(IDye dye, string[]? search)
 	{
 		// skip items without names
 		if (string.IsNullOrEmpty(dye.Name))
@@ -43,7 +47,7 @@ public partial class DyeSelector : UserControl
 		return true;
 	}
 
-	protected int Compare(IDye dyeA, IDye dyeB)
+	protected override int Compare(IDye dyeA, IDye dyeB)
 	{
 		if (dyeA == DyeUtility.NoneDye && dyeB != DyeUtility.NoneDye)
 			return -1;

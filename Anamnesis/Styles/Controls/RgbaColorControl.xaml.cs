@@ -45,7 +45,7 @@ public partial class RgbaColorControl : UserControl
 		return v;
 	}
 
-	private void OnClick(object sender, RoutedEventArgs e)
+	private async void OnClick(object sender, RoutedEventArgs e)
 	{
 		ColorSelectorDrawer selector = new ColorSelectorDrawer();
 		selector.EnableAlpha = true;
@@ -56,7 +56,7 @@ public partial class RgbaColorControl : UserControl
 			this.Value = v;
 		};
 
-		throw new NotImplementedException();
+		await ViewService.ShowDrawer(selector);
 	}
 
 	private void UpdatePreview()

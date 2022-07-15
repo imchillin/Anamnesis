@@ -119,12 +119,6 @@ public class HotkeyService : ServiceBase<HotkeyService>
 		return base.Shutdown();
 	}
 
-	private bool AnamnesisWindowIsActive()
-	{
-		// TODO!
-		return false;
-	}
-
 	private bool OnKeyboardInput(Key key, KeyboardKeyStates state, ModifierKeys modifiers)
 	{
 		// Do not intercept or forward these keys.
@@ -138,7 +132,7 @@ public class HotkeyService : ServiceBase<HotkeyService>
 			// Forward any unused keys to ffxiv if Anamnesis has focus
 			if (!handled && !(Keyboard.FocusedElement is TextBoxBase))
 			{
-				if (this.AnamnesisWindowIsActive() && state == KeyboardKeyStates.Pressed)
+				if (MainWindow.IsActive && state == KeyboardKeyStates.Pressed)
 				{
 					KeyDownSentToGame.Add(key);
 					MemoryService.SendKey(key, state);
@@ -161,7 +155,7 @@ public class HotkeyService : ServiceBase<HotkeyService>
 			return false;
 
 		// Only process the hotkeys if we have focus but not to a text box.
-		bool processInputs = this.AnamnesisWindowIsActive() && !(Keyboard.FocusedElement is TextBoxBase);
+		bool processInputs = MainWindow.IsActive && !(Keyboard.FocusedElement is TextBoxBase);
 
 		// Or if FFXIV has focus, the hooks are enabled, and the user is in gpose.
 		if (MemoryService.DoesProcessHaveFocus && SettingsService.Current.EnableGameHotkeyHooks && GposeService.Instance.IsGpose)
