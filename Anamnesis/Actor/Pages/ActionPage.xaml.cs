@@ -167,6 +167,34 @@ public partial class ActionPage : UserControl
 		this.AnimationService.ResetAnimationOverride(this.Actor);
 	}
 
+	private void OnResumeAll(object sender, RoutedEventArgs e)
+	{
+		AnimationService.Instance.SpeedControlEnabled = true;
+
+		foreach(var target in TargetService.Instance.PinnedActors)
+		{
+			if(target.IsValid && target.Memory != null && target.Memory.IsValid)
+			{
+				target.Memory.Animation!.LinkSpeeds = true;
+				target.Memory.Animation!.Speeds![0]!.Value = 1.0f;
+			}
+		}
+	}
+
+	private void OnPauseAll(object sender, RoutedEventArgs e)
+	{
+		AnimationService.Instance.SpeedControlEnabled = true;
+
+		foreach (var target in TargetService.Instance.PinnedActors)
+		{
+			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
+			{
+				target.Memory.Animation!.LinkSpeeds = true;
+				target.Memory.Animation!.Speeds![0]!.Value = 0.0f;
+			}
+		}
+	}
+
 	[AddINotifyPropertyChangedInterface]
 	public class UserAnimationOverride
 	{
