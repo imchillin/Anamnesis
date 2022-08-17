@@ -53,6 +53,6 @@ public class TimeMemory
 	public void SetTime(long newTime)
 	{
 		// As long as Eorzea Time updating is disabled we can just set it directly
-		MemoryService.Write(AddressService.TimeReal, BitConverter.GetBytes(newTime));
+		MemoryService.Write(AddressService.TimeReal, BitConverter.GetBytes(newTime), false);
 	}
 }
