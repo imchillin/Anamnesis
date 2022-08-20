@@ -18,6 +18,7 @@ using PropertyChanged;
 using Serilog;
 using XivToolsWpf;
 using System.Linq;
+using System.IO.Enumeration;
 
 using AnQuaternion = Anamnesis.Memory.Quaternion;
 
@@ -68,7 +69,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 
 	public string BoneSearch { get; set; } = string.Empty;
 
-	public IEnumerable<BoneVisual3d> BoneSearchResult => string.IsNullOrWhiteSpace(this.BoneSearch) ? this.AllBones : this.AllBones.Where(b => b.BoneName.Contains(this.BoneSearch, StringComparison.InvariantCultureIgnoreCase) || b.Tooltip.Contains(this.BoneSearch, StringComparison.InvariantCultureIgnoreCase));
+	public IEnumerable<BoneVisual3d> BoneSearchResult => string.IsNullOrWhiteSpace(this.BoneSearch) ? this.AllBones : this.AllBones.Where(b => FileSystemName.MatchesSimpleExpression($"*{this.BoneSearch}*", b.BoneName) || FileSystemName.MatchesSimpleExpression($"*{this.BoneSearch}*", b.Tooltip));
 
 	public bool FlipSides
 	{
