@@ -55,9 +55,13 @@
 				</Viewport3D>
 			</Grid>
 
-			<StackPanel Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical">
-				<TextBox Text="{Binding Skeleton.BoneSearch, UpdateSourceTrigger=PropertyChanged}" Margin="6" Style="{StaticResource MaterialDesignTextBox}"/>
-				<ScrollViewer HorizontalScrollBarVisibility="Disabled">
+			<Grid Grid.Column="1" Grid.RowSpan="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<TextBox Grid.Row="0" Text="{Binding Skeleton.BoneSearch, UpdateSourceTrigger=PropertyChanged}" Margin="6" Style="{StaticResource MaterialDesignTextBox}"/>
+				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
 					<ItemsControl ItemsSource="{Binding Skeleton.BoneSearchResult}">
 						<ItemsControl.ItemTemplate>
 							<DataTemplate>
@@ -80,8 +84,8 @@
 						</ItemsControl.ItemTemplate>
 					</ItemsControl>
 				</ScrollViewer>
-			</StackPanel>
 
+			</Grid>
 		</Grid>
 	</Grid>
 </UserControl>
