@@ -1,8 +1,10 @@
 {
 	"Language": "Deutsch",
-	
+
 	"Common_OpenFile": "Laden",
 	"Common_SaveFile": "Speichern",
+	"Common_ImportFile": "Importieren",
+	"Common_ExportFile": "Exportieren",
 	"Common_SaveFileMeta": "Mit Metadata speichern",
 	"Common_SaveAsDat": "Als .dat Datei speichern",
 	"Common_OpenDir": "Öffnen",
@@ -14,7 +16,7 @@
 	"Common_LinkVector": "X, Y, und Z Achsen gleichzeitig nutzen ",
 	"Common_Confirm": "Bestätigen",
 	"Common_Filters": "Filter",
-	
+
 	"ProcessSelector_AllWarning": "Bitte den Final Fantasy XIV DirectX 11 Prozess auswählen. Das Auswählen anderer Prozesse kann diese und Anamnesis zum Absturz bringen.",
 	"ProcessSelector_NotFound": "Final Fantasy XIV Prozess (ffxiv_dx11) nicht gefunden.",
 	"ProcessSelector_NotFound2": "Bitte versicherer, dass das Spiel im DirectX 11 Modus läuft.",
@@ -23,7 +25,7 @@
 	"Error_FavoritesFail": "Laden von Favoriten fehlgeschlagen. Deine Favoriten wurden zurückgesetzt.",
 	"Error_WrongVersionTitle": "Spielversion hat sich geändert",
 	"Error_WrongVersion": "Anamnesis wurde nicht mit dieser Version des Spiels getestet. Dies kann Probleme verursachen.\n\nSiehe nach, ob es ein Update für Anamnesis gibt, welches mit dieser Spieleversion kompatibel ist. Falls kein Update vorhanden ist und es keine Meldungen zu Problemen gibt, einfach auf 'OK' klicken zum fortfahren.",
-	
+
 	"Warning_MinionGposeTitle": "Begleitern nicht GPose-Kompatibel.",
 	"Warning_MinionGposeFace": "Der ausgewählte Actor ist ein Begleiter.\nSein Aussehen wird sich zu einem gültigen Begleiter-Aussehen zurücksetzen, sobald du in GPose bist.",
 
@@ -63,7 +65,7 @@
 	"Target_Other": "Andere",
 	"Target_Hidden": "Versteckte anzeigen",
 	"Target_Gpose": "(GPose)",
-	
+
 	"SubActor_Title": "Weitere\nCharaktere",
 	"SubActor_Mount": "Reittier",
 	"SubActor_Companion": "Begleiter",
@@ -77,7 +79,7 @@
 	"EquipmentSelector_ForceMainModelTooltip": "Hauptwaffe anstelle der Nebenhandwaffe nutzen.",
 	"EquipmentSelector_ForceOffModel": "Nebenhandwaffe erzwingen",
 	"EquipmentSelector_ForceOffModelTooltip": "Nebenhandwaffe anstatt der Hauptwaffe nutzen.",
-	
+
 	"EquipmentSelector_FilterOther": "Andere",
 	"EquipmentSelector_Categories": "Kategorien",	  
 	"EquipmentSelector_Standard": "Standard-Gegenstände",
@@ -88,8 +90,8 @@
 	"EquipmentSelector_LimitedTip": "Limitierte Gegenstände (Events etc)",
 	"EquipmentSelector_Deprecated": "Veraltete Gegenstände",
 	"EquipmentSelector_DeprecatedTip": "Veraltete Gegenstände, welche nicht mehr verfügbar sind",
-	"EquipmentSelector_Props": "Requisiten",
-	"EquipmentSelector_PropsTip": "Verschiede Modelle, die in Zwischensequenzen etc. vorkommen.",
+	"EquipmentSelector_CustomEquipment": "Requisiten",
+	"EquipmentSelector_CustomEquipmentTip": "Verschiede Modelle, die in Zwischensequenzen etc. vorkommen.",
 	"EquipmentSelector_Performance": "Musikinstrumente",
 	"EquipmentSelector_PerformanceTip": "Instrumente des Barden",
 	"EquipmentSelector_Modded": "Modifiziertes",
@@ -294,12 +296,14 @@
 	"Character_Action_AnimationPause": "Pausieren",
 	"Character_Action_AnimationUnpause": "Weiter",
 	"Character_Action_AnimationBlend": "Blend (Mischen)",
-	"Character_Action_AnimationBlendWarning": "Animation Blending ist ein fortgeschrittenes Feature um dafür vorgesehen Animationen zu vermischen. Es kann ebenfalls benutzt werden, um einmalig ablaufende Animationen anzuwenden.",
 	"Character_Action_AnimationOverrideSpeedBlocked": "Nur in GPose verfügbar.",
+	"Character_Action_AnimationOverrideSpeedControlDisable": "Nur verfügbar wenn Geschwindigkeitseinstellung aktiviert ist",
 	"Character_Action_AnimationOverrideGposeFrozen": "Character durch GPose gesperrt",
 	"Character_Action_GlobalFreezeWorldPositions": "Positionen sperren",
 	"Character_Action_GlobalFreezeWorldPositionsTooltip": "Charakter/Kamera-Koordinaten sperren",
 	"Character_Action_GlobalSpeedControl": "Geschwindigkeitseinstellung",
+	"Character_Action_GlobalAllActorSpeedControl": "Einstellungen aller Actor",
+	"Character_Action_LinkSpeed": "Einheitliche Geschwindigkeit für alle Animation Slots",
 	"Pose_WarningNotGPose": "Posing ist nur in GPose möglich. Gehe in GPose mit /gpose.",
 	"Pose_WarningNotFrozen": "Posing funktionert nur mit eingefrorenen Charakteren. Friere den Charakter im GPose Fenster ein.",
 	"Pose_WarningQuit": "Willst du Anamnesis wirklich beenden? Die derzeitige Pose geht verloren.",
@@ -316,6 +320,7 @@
 	"Pose_BodyTooltip": "Pose nur für den Körper des Characters laden.",
 	"Pose_Clear": "Deselektieren",
 	"Pose_SelectChildren": "Unterg. auswählen",
+	"Pose_SelectParent": "Übergeordneten\nauswählen",
 	"Pose_Flip": "Spiegeln",
 	"Pose_Left": "L",
 	"Pose_Right": "R",
