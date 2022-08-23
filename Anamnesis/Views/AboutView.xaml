@@ -92,7 +92,7 @@
 			</GroupBox.Header>
 
 			<TextBlock TextWrapping="Wrap" Margin="6,0,0,7" Style="{StaticResource Body}">This project is a labor of love. Please consider donating to the members of the dev team to say thank you!<LineBreak />
-				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/xivtools" FontSize="12">XIV Tools Ko-fi</Hyperlink>
+				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/xivtools" FontSize="12">XIV Tools Ko-fi (Yuki)</Hyperlink>
                 <LineBreak />
                 <fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/Asgard" FontSize="12">Asgard's Ko-fi</Hyperlink>
                 <LineBreak />
