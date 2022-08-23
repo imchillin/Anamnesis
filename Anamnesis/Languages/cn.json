@@ -29,6 +29,9 @@
 	"Warning_MinionGposeTitle": "宠物不兼容集体动作模式",
 	"Warning_MinionGposeFace": "选定的角色是一个宠物。\n进入集体动作模式时会重置为有效的宠物选项。",
 
+	"Warning_MinionGposeTitle": "宠物与GPose不兼容。",
+	"Warning_MinionGposeFace": "选择的演员是一个宠物。\n进入GPose时，外观将重置为有效的宠物选项。",
+	
 	"FileBrowser_GoUp": "返回上一级",
 	"FileBrowser_Flatten": "平铺文件",
 	"FileBrowser_CreateFolder": "新建文件夹",
@@ -154,7 +157,7 @@
 	"Character_Appearance_LoadNpc": "导入 NPC",
 	"Character_Appearance_LoadObject": "Object",
 	"Character_Customize_Header": "自定义",
-	"Character_Appearance_Header": "外貌",
+	"Character_Appearance_Header": "外观",
 	"Character_Appearance_Body": "身体",
 	"Character_Appearance_Race": "种族",
 	"Character_Appearance_Skin": "肤色",
@@ -293,7 +296,7 @@
 	"Character_Action_AnimationReset": "重置",
 	"Character_Action_AnimationApply": "应用",
 	"Character_Action_AnimationDrawWeapon": "拔出武器",
-	"Character_Action_AnimationIdle": "空闲",
+	"Character_Action_AnimationIdle": "闲置状态",
 	"Character_Action_AnimationPause": "暂停",
 	"Character_Action_AnimationUnpause": "恢复",
 	"Character_Action_AnimationBlend": "混合",
@@ -635,6 +638,7 @@
 
 	"DevBuild_Title": "开发版本",
 	"DevBuild_Body": "这是 Anamnesis 的实验性开发版本，不受官方支持。这些版本可能包含严重的问题，除非你知道自己在做什么，否则应避免使用。\n\n你想继续使用此版本吗？\n选择否将为你提供支持的最新版本更新。",
+
 	"Item_Unknown": "未知",
 	"Item_None": "无",
 	"Item_NoneDesc": "无",
@@ -648,7 +652,7 @@
 	"Help_Title": "帮助",
 	"Help_Tip": "访问 Wiki",
 
-	"HotkeyCategory_QuaternionEditor": "转换",
+	"HotkeyCategory_QuaternionEditor": "变形",
 	"Hotkey_RotateZPlus": "旋转 Z+",
 	"Hotkey_RotateZMinus": "旋转 Z-",
 	"Hotkey_RotateXPlus": "旋转 X+",
