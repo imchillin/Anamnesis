@@ -55,31 +55,37 @@
 				</Viewport3D>
 			</Grid>
 
+			<Grid Grid.Column="1" Grid.RowSpan="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<TextBox Grid.Row="0" Text="{Binding Skeleton.BoneSearch, UpdateSourceTrigger=PropertyChanged}" Margin="6" Style="{StaticResource MaterialDesignTextBox}"/>
+				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+					<ItemsControl ItemsSource="{Binding Skeleton.BoneSearchResult}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="32" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
 
-			<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" Grid.RowSpan="2">
-				<ItemsControl ItemsSource="{Binding Skeleton.AllBones}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="32" />
-									<ColumnDefinition />
-								</Grid.ColumnDefinitions>
+									<views:BoneView Grid.Column="0" />
 
-								<views:BoneView Grid.Column="0" />
+									<XivToolsWpf:TextBlock
+											Grid.Column="1"
+											VerticalAlignment="Center"
+											FontSize="11"
+											FontWeight="Light"
+											Text="{Binding Tooltip}" />
+								</Grid>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
 
-								<XivToolsWpf:TextBlock
-										Grid.Column="1"
-										VerticalAlignment="Center"
-										FontSize="11"
-										FontWeight="Light"
-										Text="{Binding Tooltip}" />
-							</Grid>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</ScrollViewer>
-
+			</Grid>
 		</Grid>
 	</Grid>
 </UserControl>

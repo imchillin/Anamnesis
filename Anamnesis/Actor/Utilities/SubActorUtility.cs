@@ -50,7 +50,7 @@ public class SubActorUtility
 	{
 		if (memory.IsUsingOrnament == true && memory.Ornament != null)
 		{
-			memory.CharacterModeInput = (byte)ornament.RowId;
+			memory.OrnamentId = (ushort)ornament.RowId;
 			memory.Ornament.AttachmentPoint = (byte)ornament.AttachPoint;
 			await Apply(ornament, memory.Ornament);
 		}

@@ -23,6 +23,8 @@ using XivToolsWpf;
 [AddINotifyPropertyChangedInterface]
 public class MemoryService : ServiceBase<MemoryService>
 {
+	private const uint VirtualProtectReadWriteExecute = 0x40;
+
 	private readonly Dictionary<string, IntPtr> modules = new Dictionary<string, IntPtr>();
 
 	public static IntPtr Handle { get; private set; }
@@ -221,7 +223,7 @@ public class MemoryService : ServiceBase<MemoryService>
 		}
 
 		Log.Verbose($"Writing: {buffer.Length} bytes to {address} for type {type.Name} for reason: {purpose}");
-		WriteProcessMemory(Handle, address, buffer, buffer.Length, out _);
+		Write(address, buffer, false);
 	}
 
 	public static bool Read(UIntPtr address, byte[] buffer, UIntPtr size)
@@ -237,8 +239,11 @@ public class MemoryService : ServiceBase<MemoryService>
 		return ReadProcessMemory(Handle, address, buffer, size, out _);
 	}
 
-	public static bool Write(IntPtr address, byte[] buffer)
+	public static bool Write(IntPtr address, byte[] buffer, bool writingCode)
 	{
+		if(writingCode)
+			VirtualProtectEx(Handle, address, buffer.Length, VirtualProtectReadWriteExecute, out _);
+
 		return WriteProcessMemory(Handle, address, buffer, buffer.Length, out _);
 	}
 
@@ -356,6 +361,9 @@ public class MemoryService : ServiceBase<MemoryService>
 
 	[DllImport("kernel32.dll")]
 	private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int dwSize, out IntPtr lpNumberOfBytesWritten);
+
+	[DllImport("kernel32.dll")]
+	private static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, uint flNewProtect, out uint lpflOldProtect);
 
 	[DllImport("kernel32.dll", SetLastError = true)]
 	private static extern IntPtr GetCurrentProcess();

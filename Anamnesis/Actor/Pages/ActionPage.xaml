@@ -401,6 +401,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositions"
@@ -427,6 +428,23 @@
 							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
                         <fa:IconBlock Icon="Stopwatch" FontSize="10"/>
                     </ToggleButton>
+
+                    <XivToolsWpf:TextBlock Key="Character_Action_GlobalAllActorSpeedControl"
+											   Grid.Row="2"
+											   Grid.Column="0"
+											   Style="{StaticResource Label}" />
+
+                    <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" IsEnabled="{Binding GposeService.IsGpose}">
+                        <Button Style="{StaticResource TransparentButton}" Click="OnResumeAll">
+                            <XivToolsWpf:IconBlock Icon="Play"/>
+                        </Button>
+
+                        <Separator Opacity="0" Width="5"/>
+
+                        <Button Style="{StaticResource TransparentButton}" Click="OnPauseAll">
+                            <XivToolsWpf:IconBlock Icon="Pause"/>
+                        </Button>
+                    </StackPanel>
 
                 </Grid>
             </GroupBox>
