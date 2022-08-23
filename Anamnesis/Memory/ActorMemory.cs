@@ -55,7 +55,8 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x085E, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
 	[Bind(0x085F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x0870, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
-	[Bind(0x09B0)] public AnimationMemory? Animation { get; set; }
+	[Bind(0x0878)] public ushort OrnamentId { get; set; }
+	[Bind(0x09C0)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x11F4)] public bool IsMotionEnabled { get; set; }
 	[Bind(0x19F0)] public float Transparency { get; set; }
 	[Bind(0x1ACA)] public byte Voice { get; set; }
@@ -92,11 +93,11 @@ public class ActorMemory : ActorBasicMemory
 		}
 	}
 
-	[DependsOn(nameof(CharacterMode), nameof(CharacterModeInput), nameof(MountId), nameof(Mount))]
-	public bool IsMounted => this.CharacterMode == CharacterModes.HasAttachment && this.CharacterModeInput == 0 && this.MountId != 0 && this.Mount != null;
+	[DependsOn(nameof(MountId), nameof(Mount))]
+	public bool IsMounted => this.MountId != 0 && this.Mount != null;
 
-	[DependsOn(nameof(CharacterMode), nameof(CharacterModeInput), nameof(Ornament))]
-	public bool IsUsingOrnament => this.CharacterMode == CharacterModes.HasAttachment && this.CharacterModeInput != 0 && this.Ornament != null;
+	[DependsOn(nameof(OrnamentId), nameof(Ornament))]
+	public bool IsUsingOrnament => this.Ornament != null && this.OrnamentId != 0;
 
 	[DependsOn(nameof(Companion))]
 	public bool HasCompanion => this.Companion != null;
