@@ -121,7 +121,7 @@ public partial class SubActorEditor : UserControl
 		}
 		else if (sender.SubActorType == Types.Ornament)
 		{
-			sender.Npc = GameDataService.Ornaments.GetRow(sender.Actor.CharacterModeInput);
+			sender.Npc = GameDataService.Ornaments.GetRow(sender.Actor.OrnamentId);
 		}
 	}
 
@@ -145,7 +145,7 @@ public partial class SubActorEditor : UserControl
 	private async void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName == nameof(ActorMemory.MountId)
-			|| e.PropertyName == nameof(ActorMemory.CharacterModeInput)
+			|| e.PropertyName == nameof(ActorMemory.OrnamentId)
 			|| e.PropertyName == nameof(ActorMemory.DataId))
 		{
 			await Dispatch.MainThread();
