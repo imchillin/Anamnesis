@@ -12,7 +12,7 @@ using Lumina.Excel;
 
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("Ornament", 0x72256cce)]
+[Sheet("Ornament", 0x3d312c8f)]
 public class Ornament : ExcelRow, INpcBase
 {
 	private string? name;
@@ -42,8 +42,8 @@ public class Ornament : ExcelRow, INpcBase
 
 		this.ModelCharaRow = (uint)parser.ReadColumn<ushort>(0);
 		this.AttachPoint = parser.ReadColumn<byte>(1);
-		this.Icon = parser.ReadImageReference<ushort>(7);
-		this.name = parser.ReadString(9);
+		this.Icon = parser.ReadImageReference<ushort>(6);
+		this.name = parser.ReadString(8);
 	}
 
 	public INpcAppearance? GetAppearance()
