@@ -24,7 +24,7 @@ public class ActorMemory : ActorBasicMemory
 		None = 0,
 		Normal = 1,
 		EmoteLoop = 3,
-		HasAttachment = 4,
+		Mounted = 4,
 		AnimLock = 8,
 		Carrying = 9,
 		InPositionLoop = 11,
@@ -60,8 +60,8 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x11F4)] public bool IsMotionEnabled { get; set; }
 	[Bind(0x19F0)] public float Transparency { get; set; }
 	[Bind(0x1ACA)] public byte Voice { get; set; }
-	[Bind(0x1ACC)] public byte CharacterModeRaw { get; set; }
-	[Bind(0x1ACD)] public byte CharacterModeInput { get; set; }
+	[Bind(0x1AD4)] public byte CharacterModeRaw { get; set; }
+	[Bind(0x1AD5)] public byte CharacterModeInput { get; set; }
 	[Bind(0x1AF4)] public byte AttachmentPoint { get; set; }
 
 	public PinnedActor? Pinned { get; set; }
