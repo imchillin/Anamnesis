@@ -46,7 +46,7 @@ public class ActorModelMemory : MemoryBase
 	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose)] public SkeletonMemory? Skeleton { get; set; }
 	[Bind(0x148, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
 	[Bind(0x248, 0x040, 0x020, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearance { get; set; }
-	[Bind(0x26C)] public float Height { get; set; }
+	[Bind(0x270)] public float Height { get; set; }
 	[Bind(0x2B0)] public float Wetness { get; set; }
 	[Bind(0x2BC)] public float Drenched { get; set; }
 	[Bind(0x938)] public short DataPath { get; set; }
