@@ -92,6 +92,9 @@
 	  <None Update="Download dotNet desktop runtime.URL">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Update="Install .NET Desktop Runtime.bat">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
