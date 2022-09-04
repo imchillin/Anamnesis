@@ -305,7 +305,7 @@
 	"Character_Action_GlobalSpeedControl": "Contrôle de vitesse",
 	"Character_Action_GlobalAllActorSpeedControl": "Controle de tout les acteurs",
 	"Character_Action_LinkSpeed": "Lier la vitesse de contrôle à toutes les animations",
-	"Pose_WarningNotGPose": "Le posing n'est disponible qu'en pose de groupe. Tapez /gpose dans le chat."",
+	"Pose_WarningNotGPose": "Le posing n'est disponible qu'en pose de groupe. Tapez /gpose dans le chat.",
 	"Pose_WarningNotFrozen": "Les mouvements des personnages doivent-être désactivés dans le menu de pose de groupe.",
 	"Pose_WarningQuit": "Etes-vous sur de vouloir quitter ? La pose actuelle sera perdue",
 	"Pose_WarningExpresionPositions": "Vous essayez de charger une expression alors que l'animation est désactivée, cela peux avoir des effets indésirables. Continuer?",
@@ -643,7 +643,7 @@
 	"Item_InvisibleBody": "Invisible",
 	"Item_InvisibleBodyDesc": "Vous rend invisible (Sauf la tête)",
 	"Item_InvisibleHead": "Invisible",
-	"Item_InvisibleHeadDesc": "Rend votre tête invisible"
+	"Item_InvisibleHeadDesc": "Rend votre tête invisible",
 	
 	"Help_Title": "Aide",
 	"Help_Tip": "Visiter le Wiki",
