@@ -124,12 +124,29 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 	{
 		get
 		{
+			string? customName = CustomBoneNameService.GetBoneName(this.BoneName);
+
+			if (!string.IsNullOrEmpty(customName))
+				return customName;
+
 			string str = LocalizationService.GetString(this.TooltipKey, true);
 
 			if (string.IsNullOrEmpty(str))
 				return this.BoneName;
 
 			return str;
+		}
+
+		set
+		{
+			if (string.IsNullOrEmpty(value) || LocalizationService.GetString(this.TooltipKey, true) == value)
+			{
+				CustomBoneNameService.SetBoneName(this.BoneName, null);
+			}
+			else
+			{
+				CustomBoneNameService.SetBoneName(this.BoneName, value);
+			}
 		}
 	}
 

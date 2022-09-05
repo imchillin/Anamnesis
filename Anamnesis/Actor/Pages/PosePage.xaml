@@ -57,9 +57,15 @@
 
 						<Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="8, 4, 6, 3">
 
-							<XivToolsWpf:TextBlock Style="{StaticResource Header}"
-													Text="{Binding Skeleton.CurrentBone.Tooltip}"
-													FontWeight="Bold"/>
+							<TextBox
+								Text="{Binding Skeleton.CurrentBone.Tooltip, UpdateSourceTrigger=PropertyChanged}"
+								Margin="0"
+							    Padding="1"
+							    FontSize="10"
+							    FontWeight="Bold"
+								BorderBrush="Transparent"
+								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"
+							    Style="{StaticResource MaterialDesignTextBox}"/>
 
 							<XivToolsWpf:TextBlock Style="{StaticResource Header}"
 													Text="{Binding Skeleton.CurrentBone.BoneName}" 

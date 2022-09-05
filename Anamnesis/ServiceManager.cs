@@ -71,6 +71,7 @@ public class ServiceManager
 		await Add<AnimationService>();
 		await Add<Keyboard.HotkeyService>();
 		await Add<HistoryService>();
+		await Add<CustomBoneNameService>();
 
 		IsInitialized = true;
 
