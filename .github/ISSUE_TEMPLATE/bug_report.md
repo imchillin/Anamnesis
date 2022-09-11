@@ -17,6 +17,10 @@ Steps to reproduce the behaviour:
 3. Scroll down to '....'
 4. See error
 
+**Repeatability**
+How often does the bug occur:
+Bug occured .../... attempts
+
 **Expected behaviour**
 A clear and concise description of what you expected to happen.
 
