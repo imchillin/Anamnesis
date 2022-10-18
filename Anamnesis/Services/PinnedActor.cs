@@ -20,7 +20,7 @@ using XivToolsWpf.Extensions;
 [AddINotifyPropertyChangedInterface]
 public class PinnedActor : INotifyPropertyChanged, IDisposable
 {
-	private bool wasPlayer = false;
+	////private bool wasPlayer = false;
 	private bool isRestoringBackup = false;
 
 	public PinnedActor(ActorMemory memory)
@@ -420,14 +420,14 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 	private void OnRetargetedActor(IntPtr? oldPointer, IntPtr? newPointer)
 	{
-		if (GposeService.GetIsGPose() &&
+		/*if (GposeService.GetIsGPose() &&
 			this.wasPlayer &&
 			this.Memory != null &&
 			this.Memory.ObjectKind != ActorTypes.Player)
 		{
 			IntPtr objectKindAddress = this.Memory.GetAddressOfProperty(nameof(ActorBasicMemory.ObjectKind));
 			MemoryService.Write(objectKindAddress, ActorTypes.Player, "NPC face hack - entered gpose - gpose actor");
-		}
+		}*/
 
 		// If we need to apply the appearance thanks to a GPose boundary changes?
 		if (SettingsService.Current.ReapplyAppearance || GposeService.GetIsGPose())
@@ -450,7 +450,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		{
 			this.CreateCharacterBackup(BackupModes.Gpose);
 
-			Task.Run(async () =>
+			/*Task.Run(async () =>
 			{
 				if (this.Memory != null && this.Memory.ObjectKind == ActorTypes.Player)
 				{
@@ -461,7 +461,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 					await Task.Delay(1000);
 					MemoryService.Write(objectKindAddress, ActorTypes.Player, "NPC face hack - entered gpose - overworld actor");
 				}
-			});
+			});*/
 		}
 	}
 }
