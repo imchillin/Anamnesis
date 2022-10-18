@@ -16,5 +16,5 @@ public static class VersionInfo
 	/// <summary>
 	/// The latest game version that the tool has been validated for.
 	/// </summary>
-	public static readonly string ValidatedGameVersion = "2022.08.25.0000.0000";
+	public static readonly string ValidatedGameVersion = "2022.09.07.0000.0000";
 }
