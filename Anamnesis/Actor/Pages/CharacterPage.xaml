@@ -4,6 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 	xmlns:ana="clr-namespace:Anamnesis.Views"
+    xmlns:anaControls="clr-namespace:Anamnesis.Styles.Controls"
 	xmlns:anaUtils="clr-namespace:Anamnesis"
 	xmlns:converters="clr-namespace:Anamnesis.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -156,6 +157,7 @@
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
+                            <RowDefinition />
 						</Grid.RowDefinitions>
 
 						<XivToolsWpf:TextBlock
@@ -185,13 +187,20 @@
 							TickFrequency="0.1"
 							Value="{Binding Actor.Transparency}" />
 
-						<XivToolsWpf:TextBlock
-							Key="Character_Actor_Voice"
+                        <XivToolsWpf:TextBlock
+							Key="Character_Equipment_Tint"
 							Grid.Row="5"
 							Grid.Column="0"
 							Style="{StaticResource Label}" />
+                        <anaControls:RgbColorControl Grid.Row="5" Grid.Column="2" Value="{Binding Actor.ModelObject.Tint}"/>
+
+                        <XivToolsWpf:TextBlock
+							Key="Character_Actor_Voice"
+							Grid.Row="6"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
 						<ComboBox
-							Grid.Row="5"
+							Grid.Row="6"
 							Grid.Column="1"
 							IsEnabled="{Binding Actor.IsPlayer}"
 							ItemsSource="{Binding VoiceEntries, Mode=OneTime}"
@@ -224,12 +233,12 @@
 
 						<XivToolsWpf:TextBlock
 							Key="SubActor_Title"
-							Grid.Row="6"
+							Grid.Row="7"
 							Grid.Column="0"
 							Style="{StaticResource Label}" />
 
 						<StackPanel
-							Grid.Row="6"
+							Grid.Row="7"
 							Grid.Column="1"
 							Margin="0,6,0,0"
 							Orientation="Horizontal">

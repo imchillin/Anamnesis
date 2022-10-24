@@ -46,6 +46,7 @@ public class ActorModelMemory : MemoryBase
 	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose)] public SkeletonMemory? Skeleton { get; set; }
 	[Bind(0x148, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
 	[Bind(0x248, 0x040, 0x020, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearance { get; set; }
+	[Bind(0x260)] public Color Tint { get; set; }
 	[Bind(0x274)] public float Height { get; set; }
 	[Bind(0x2B0)] public float Wetness { get; set; }
 	[Bind(0x2BC)] public float Drenched { get; set; }
@@ -102,8 +103,10 @@ public class ActorModelMemory : MemoryBase
 
 	protected override void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (this.Height <= 0)
+		if(e.PropertyName == nameof(this.Height) && this.Height <= 0)
+		{
 			this.Height = 0.1f;
+		}
 
 		base.OnSelfPropertyChanged(sender, e);
 	}
