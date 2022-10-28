@@ -27,10 +27,7 @@
 	"Error_WrongVersion": "Anamnesis 尚未对此游戏版本进行验证，这可能会导致问题。\n\n如果最近发布了游戏补丁，请检查 Anamnesis 更新。如果没有更新，或没有关于 Anamnesis 无法运行的报告，那么可以点击“确定”继续。",
 
 	"Warning_MinionGposeTitle": "宠物不兼容集体动作模式",
-	"Warning_MinionGposeFace": "选定的角色是一个宠物。\n进入集体动作模式时会重置为有效的宠物选项。",
-
-	"Warning_MinionGposeTitle": "宠物与GPose不兼容。",
-	"Warning_MinionGposeFace": "选择的演员是一个宠物。\n进入GPose时，外观将重置为有效的宠物选项。",
+	"Warning_MinionGposeFace": "选定的角色是一个宠物。\n进入集体动作模式时，外观会重置为有效的宠物选项。",
 	
 	"FileBrowser_GoUp": "返回上一级",
 	"FileBrowser_Flatten": "平铺文件",
