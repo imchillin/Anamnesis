@@ -1,112 +1,128 @@
-﻿<UserControl x:Class="Anamnesis.Actor.Pages.CharacterPage"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:views="clr-namespace:Anamnesis.Actor.Views"
-			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 xmlns:ana="clr-namespace:Anamnesis.Views"
-			 xmlns:anaUtils="clr-namespace:Anamnesis"
-			 xmlns:converters="clr-namespace:Anamnesis.Converters"
-			 d:DesignHeight="600"
-			 d:DesignWidth="1024"
-			 DataContextChanged="OnDataContextChanged"
-			 Loaded="OnLoaded"
-			 mc:Ignorable="d">
+﻿<UserControl
+	x:Class="Anamnesis.Actor.Pages.CharacterPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:ana="clr-namespace:Anamnesis.Views"
+    xmlns:anaControls="clr-namespace:Anamnesis.Styles.Controls"
+	xmlns:anaUtils="clr-namespace:Anamnesis"
+	xmlns:converters="clr-namespace:Anamnesis.Converters"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:views="clr-namespace:Anamnesis.Actor.Views"
+	d:DesignHeight="600"
+	d:DesignWidth="1024"
+	DataContextChanged="OnDataContextChanged"
+	Loaded="OnLoaded"
+	mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition />
-			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 
-		<Grid Grid.RowSpan="2"
-			  Grid.Column="0"
-			  IsEnabled="{Binding Actor.CanRefresh}">
+		<Grid
+			Grid.RowSpan="2"
+			Grid.Column="0"
+			IsEnabled="{Binding Actor.CanRefresh}">
 
-			<GroupBox Padding="3,0,3,0"
-					  Style="{StaticResource PanelGroupBox}">
+			<GroupBox
+				Padding="3,0,3,0"
+				Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
-					<XivToolsWpf:Header Key="Character_Customize_Header"
-										Icon="ConciergeBell" />
+					<XivToolsWpf:Header
+						Key="Character_Customize_Header"
+						Icon="ConciergeBell" />
 				</GroupBox.Header>
-				
+
 				<views:CustomizeEditor DataContext="{Binding Actor}" />
 			</GroupBox>
 
 		</Grid>
 
-		<GroupBox Grid.Row="0"
-				  Grid.Column="1"
-				  Style="{StaticResource PanelGroupBox}">
+		<GroupBox
+			Grid.Row="0"
+			Grid.Column="1"
+			Style="{StaticResource PanelGroupBox}">
 			<GroupBox.Header>
-				<XivToolsWpf:Header Key="Character_Equipment_Header"
-									Icon="ChessQueen" />
+				<XivToolsWpf:Header
+					Key="Character_Equipment_Header"
+					Icon="ChessQueen" />
 			</GroupBox.Header>
 
 			<Grid>
 
-				<StackPanel Height="20"
-							Margin="0,-18,-4,0"
-							HorizontalAlignment="Right"
-							VerticalAlignment="Top"
-							Orientation="Horizontal"
-							IsEnabled="{Binding Actor.CanRefresh}">
+				<StackPanel
+					Height="20"
+					Margin="0,-18,-4,0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+					IsEnabled="{Binding Actor.CanRefresh}"
+					Orientation="Horizontal">
 
-					<Button Click="OnRaceGearClicked"
-							Style="{StaticResource TransparentIconButton}"
-							Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
+					<Button
+						Click="OnRaceGearClicked"
+						Style="{StaticResource TransparentIconButton}"
+						Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
 
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_RaceGear" />
 						</Button.ToolTip>
 
-						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
-									  Icon="UserAstronaut" />
+						<fa:IconBlock
+							Foreground="{DynamicResource MaterialDesignBodyLight}"
+							Icon="UserAstronaut" />
 					</Button>
 
-					<Button Click="OnNpcSmallclothesClicked"
-							Style="{StaticResource TransparentIconButton}"
-							Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
+					<Button
+						Click="OnNpcSmallclothesClicked"
+						Style="{StaticResource TransparentIconButton}"
+						Visibility="{Binding Actor.IsHuman, Converter={StaticResource B2V}}">
 
 						<Button.ToolTip>
 							<XivToolsWpf:TextBlock Key="Character_Equipment_NpcSmallclothes" />
 						</Button.ToolTip>
 
-						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
-									  Icon="UserShield" />
+						<fa:IconBlock
+							Foreground="{DynamicResource MaterialDesignBodyLight}"
+							Icon="UserShield" />
 					</Button>
 
-					<Button Click="OnClearClicked"
-							Style="{StaticResource TransparentIconButton}">
+					<Button
+						Click="OnClearClicked"
+						Style="{StaticResource TransparentIconButton}">
 
 						<Button.ToolTip>
 							<StackPanel>
 								<XivToolsWpf:TextBlock Key="Character_Equipment_Clear" />
-								<ana:HotkeyPrompt Function="AppearancePage.ClearEquipment"/>
+								<ana:HotkeyPrompt Function="AppearancePage.ClearEquipment" />
 							</StackPanel>
 						</Button.ToolTip>
 
-						<fa:IconBlock Foreground="{DynamicResource MaterialDesignBodyLight}"
-									  Icon="Eraser" />
+						<fa:IconBlock
+							Foreground="{DynamicResource MaterialDesignBodyLight}"
+							Icon="Eraser" />
 					</Button>
 				</StackPanel>
 
-				<views:EquipmentEditor DataContext="{Binding Actor}"
-									   Margin="0, 0, 0, -10"/>
+				<views:EquipmentEditor
+					Margin="0,0,0,-10"
+					DataContext="{Binding Actor}" />
 
 
 			</Grid>
 		</GroupBox>
 
-		<XivToolsWpf:InfoControl Grid.Column="0"
-								 Grid.ColumnSpan="2"
-								 Margin="12"
-								 Visibility="{Binding Actor.CanRefresh, Converter={StaticResource !B2V}}"
-								 Key="Character_WarningGpose"/>
+		<XivToolsWpf:InfoControl
+			Key="Character_WarningGpose"
+			Grid.Column="0"
+			Grid.ColumnSpan="2"
+			Margin="12"
+			Visibility="{Binding Actor.CanRefresh, Converter={StaticResource !B2V}}" />
 
 		<Grid Grid.Column="2">
 
@@ -121,9 +137,10 @@
 
 				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
-						<XivToolsWpf:Header Key="Character_Actor_Header"
-											Icon="Horse"
-											Margin="0, 0, 6, 0"/>
+						<XivToolsWpf:Header
+							Key="Character_Actor_Header"
+							Margin="0,0,6,0"
+							Icon="Horse" />
 					</GroupBox.Header>
 
 					<Grid>
@@ -140,49 +157,67 @@
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
+                            <RowDefinition />
 						</Grid.RowDefinitions>
 
-						<XivToolsWpf:TextBlock Key="Character_Actor_Nickname"
-											   Grid.Row="0"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
+						<XivToolsWpf:TextBlock
+							Key="Character_Actor_Nickname"
+							Grid.Row="0"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
 
-						<TextBox Grid.Row="0"
-								 Grid.Column="1"
-								 Grid.ColumnSpan="2"
-								 Style="{StaticResource MaterialDesignTextBox}"
-								 Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}"/>
+						<TextBox
+							Grid.Row="0"
+							Grid.Column="1"
+							Grid.ColumnSpan="2"
+							Style="{StaticResource MaterialDesignTextBox}"
+							Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}" />
 
-						<XivToolsWpf:TextBlock Key="Character_Actor_Alpha"
-											   Grid.Row="4"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
-						<XivToolsWpf:NumberBox Grid.Row="4"
-											   Grid.Column="1"
-											   Maximum="1"
-											   Minimum="0.01"
-											   Slider="Absolute"
-											   TickFrequency="0.1"
-											   Value="{Binding Actor.Transparency}" />
+						<XivToolsWpf:TextBlock
+							Key="Character_Actor_Alpha"
+							Grid.Row="4"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
+						<XivToolsWpf:NumberBox
+							Grid.Row="4"
+							Grid.Column="1"
+							Maximum="1"
+							Minimum="0.01"
+							Slider="Absolute"
+							TickFrequency="0.1"
+							Value="{Binding Actor.Transparency}" />
 
-						<XivToolsWpf:TextBlock Key="Character_Actor_Voice"
-											   Grid.Row="5"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
-						<ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding VoiceEntries, Mode=OneTime}" SelectedValue="{Binding Actor.Voice, Mode=TwoWay}" IsEnabled="{Binding Actor.IsPlayer}" SelectedValuePath="VoiceId">
+                        <XivToolsWpf:TextBlock
+							Key="Character_Equipment_Tint"
+							Grid.Row="5"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
+                        <anaControls:RgbColorControl Grid.Row="5" Grid.Column="2" Value="{Binding Actor.ModelObject.Tint}"/>
+
+                        <XivToolsWpf:TextBlock
+							Key="Character_Actor_Voice"
+							Grid.Row="6"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
+						<ComboBox
+							Grid.Row="6"
+							Grid.Column="1"
+							IsEnabled="{Binding Actor.IsPlayer}"
+							ItemsSource="{Binding VoiceEntries, Mode=OneTime}"
+							SelectedValue="{Binding Actor.Voice, Mode=TwoWay}"
+							SelectedValuePath="VoiceId">
 							<ComboBox.GroupStyle>
 								<GroupStyle>
 									<GroupStyle.HeaderTemplate>
 										<DataTemplate>
 											<XivToolsWpf:TextBlock
-											   Style="{StaticResource Label}"
-                                               HorizontalAlignment="Left"
-                                               FontStyle="Italic"
-                                               FontWeight="Bold"
-                                               FontSize="13"
-                                               Padding="10,5"
-                                               Text="{Binding Name}" 
-                                                />
+												Padding="10,5"
+												HorizontalAlignment="Left"
+												FontSize="13"
+												FontStyle="Italic"
+												FontWeight="Bold"
+												Style="{StaticResource Label}"
+												Text="{Binding Name}" />
 
 										</DataTemplate>
 									</GroupStyle.HeaderTemplate>
@@ -190,21 +225,38 @@
 							</ComboBox.GroupStyle>
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
-									<TextBlock Text="{Binding VoiceName}"/>
+									<TextBlock Text="{Binding VoiceName}" />
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
 						</ComboBox>
 
 
-						<XivToolsWpf:TextBlock Key="SubActor_Title"
-											   Grid.Row="6"
-											   Grid.Column="0"
-											   Style="{StaticResource Label}" />
+						<XivToolsWpf:TextBlock
+							Key="SubActor_Title"
+							Grid.Row="7"
+							Grid.Column="0"
+							Style="{StaticResource Label}" />
 
-						<StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="1" Margin="0, 6, 0, 0">
-							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Mount}" SubActorType="Mount" Margin="3,0"/>
-							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Companion}" SubActorType="Companion" Margin="3,0"/>
-							<views:SubActorEditor Actor="{Binding Actor}" SubActor="{Binding Actor.Ornament}" SubActorType="Ornament" Margin="3,0"/>
+						<StackPanel
+							Grid.Row="7"
+							Grid.Column="1"
+							Margin="0,6,0,0"
+							Orientation="Horizontal">
+							<views:SubActorEditor
+								Margin="3,0"
+								Actor="{Binding Actor}"
+								SubActor="{Binding Actor.Mount}"
+								SubActorType="Mount" />
+							<views:SubActorEditor
+								Margin="3,0"
+								Actor="{Binding Actor}"
+								SubActor="{Binding Actor.Companion}"
+								SubActorType="Companion" />
+							<views:SubActorEditor
+								Margin="3,0"
+								Actor="{Binding Actor}"
+								SubActor="{Binding Actor.Ornament}"
+								SubActorType="Ornament" />
 						</StackPanel>
 
 
@@ -212,133 +264,210 @@
 
 				</GroupBox>
 
-				<GroupBox Style="{StaticResource PanelGroupBox}"
-						  Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
+				<GroupBox
+					Style="{StaticResource PanelGroupBox}"
+					Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
 					<GroupBox.Header>
-						<XivToolsWpf:Header Key="Character_Model_Header"
-												Icon="GraduationCap" />
+						<XivToolsWpf:Header
+							Key="Character_Model_Header"
+							Icon="GraduationCap" />
 					</GroupBox.Header>
 
-					<views:CharacterModelEditor DataContext="{Binding Actor}"/>
+					<views:CharacterModelEditor DataContext="{Binding Actor}" />
 				</GroupBox>
 
-				<GroupBox Style="{StaticResource PanelGroupBox}"
-						  Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
+				<GroupBox
+					Style="{StaticResource PanelGroupBox}"
+					Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
 					<GroupBox.Header>
-						<XivToolsWpf:Header Key="Character_ExAppearance_Header"
-											Icon="UserCog" />
+						<XivToolsWpf:Header
+							Key="Character_ExAppearance_Header"
+							Icon="UserCog" />
 					</GroupBox.Header>
 
-					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}"/>
+					<views:ExtendedAppearanceEditor DataContext="{Binding Actor.ModelObject.ExtendedAppearance}" />
 
 				</GroupBox>
 			</StackPanel>
 
-			<XivToolsWpf:InfoControl Key="Warning_MinionGposeTitle" Width="256">
+			<Grid
+				MaxWidth="256"
+				VerticalAlignment="Bottom">
+				<Grid.Resources>
+					<converters:NpcFaceWarningConverter x:Key="NpcFaceWarningConverter" />
+				</Grid.Resources>
+
+				<Grid.Visibility>
+					<MultiBinding Converter="{StaticResource NpcFaceWarningConverter}">
+						<Binding Path="Actor.ObjectKind" />
+						<Binding Path="Actor.Customize.Head" />
+					</MultiBinding>
+				</Grid.Visibility>
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+
+				<XivToolsWpf:IconBlock
+					Margin="6,0,3,0"
+					FontSize="16"
+					Foreground="Orange"
+					Icon="ExclamationTriangle" />
+
+				<TextBlock
+					Grid.Column="1"
+					Width="160"
+					Margin="6,3"
+					HorizontalAlignment="Left"
+					TextWrapping="Wrap">
+					Player Characters are not NPC-face compatible.
+				</TextBlock>
+
+				<TextBlock
+					Grid.Column="1"
+					Margin="128,3,0,3"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Bottom">
+					<Hyperlink
+						FontSize="12"
+						NavigateUri="https://github.com/imchillin/Anamnesis/wiki/FAQ#what-does-player-characters-are-not-npc-face-compatible-mean"
+						RequestNavigate="OnNavigate">
+						See More
+					</Hyperlink>
+				</TextBlock>
+			</Grid>
+
+			<XivToolsWpf:InfoControl
+				Key="Warning_MinionGposeTitle"
+				Width="256">
 				<XivToolsWpf:InfoControl.ToolTip>
-					<XivToolsWpf:TextBlock Key="Warning_MinionGposeFace" MaxWidth="256" TextWrapping="Wrap"/>
+					<XivToolsWpf:TextBlock
+						Key="Warning_MinionGposeFace"
+						MaxWidth="256"
+						TextWrapping="Wrap" />
 				</XivToolsWpf:InfoControl.ToolTip>
 
 				<XivToolsWpf:InfoControl.Resources>
-					<converters:MinionGposeWarningConverter x:Key="MinionGposeWarningConverter"/>
+					<converters:MinionGposeWarningConverter x:Key="MinionGposeWarningConverter" />
 				</XivToolsWpf:InfoControl.Resources>
 
 				<XivToolsWpf:InfoControl.Visibility>
 					<MultiBinding Converter="{StaticResource MinionGposeWarningConverter}">
-						<Binding Path="Actor.ObjectKind"/>
-						<Binding Path="Actor.ModelType"/>
+						<Binding Path="Actor.ObjectKind" />
+						<Binding Path="Actor.ModelType" />
 					</MultiBinding>
 				</XivToolsWpf:InfoControl.Visibility>
 			</XivToolsWpf:InfoControl>
 
-			<StackPanel Orientation="Vertical" Grid.Row="2">
+			<StackPanel
+				Grid.Row="2"
+				Orientation="Vertical">
 
-				<Menu Margin="0, 3, 3, 2"
-					  Style="{StaticResource AnaMenu}">
-					<MenuItem Header="Character_Appearance_LoadNpc"
-						  Icon="User"
-						  Style="{StaticResource ButtonMenuItemLeft}"
-						  Click="OnImportNpcClicked"/>
+				<Menu
+					Margin="0,3,3,2"
+					Style="{StaticResource AnaMenu}">
+					<MenuItem
+						Click="OnImportNpcClicked"
+						Header="Character_Appearance_LoadNpc"
+						Icon="User"
+						Style="{StaticResource ButtonMenuItemLeft}" />
 
-					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
-						  Margin="-1,0,3,0">
+					<MenuItem
+						Margin="-1,0,3,0"
+						Style="{StaticResource ButtonMenuItemRight}">
 
-						<MenuItem Header="Character_Appearance_Header"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportNpcAppearanceClicked" />
+						<MenuItem
+							Click="OnImportNpcAppearanceClicked"
+							Header="Character_Appearance_Header"
+							Style="{StaticResource AnaMenuItem}" />
 
-						<MenuItem Header="Character_Equipment_Header"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportNpcEquipmentClicked" />
+						<MenuItem
+							Click="OnImportNpcEquipmentClicked"
+							Header="Character_Equipment_Header"
+							Style="{StaticResource AnaMenuItem}" />
 
-						<MenuItem Header="Character_Equipment_Weapons"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportNpcWeaponsClicked" />
+						<MenuItem
+							Click="OnImportNpcWeaponsClicked"
+							Header="Character_Equipment_Weapons"
+							Style="{StaticResource AnaMenuItem}" />
 					</MenuItem>
 
-					<MenuItem Header="Character_Reset"
-							  Icon="UndoAlt"
-							  HorizontalAlignment="Right"
-							  Style="{StaticResource ButtonMenuItem}"
-							  Click="OnResetClicked"
-							  IsEnabled="{Binding Actor.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"
-							  anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip">
-					</MenuItem>
+					<MenuItem
+						HorizontalAlignment="Right"
+						anaUtils:Behaviours.Tooltip="Character_Reset_Tooltip"
+						Click="OnResetClicked"
+						Header="Character_Reset"
+						Icon="UndoAlt"
+						IsEnabled="{Binding Actor.Pinned.OriginalCharacterBackup, Converter={StaticResource NotNullToBoolConverter}}"
+						Style="{StaticResource ButtonMenuItem}" />
 				</Menu>
 
-				<Menu Margin="0,3, 3, 4"
-				  Style="{StaticResource AnaMenu}">
+				<Menu
+					Margin="0,3,3,4"
+					Style="{StaticResource AnaMenu}">
 
-					<MenuItem Header="Common_ImportFile"
-						  Icon="FileImport"
-						  Style="{StaticResource ButtonMenuItemLeft}"
-						  Click="OnImportClicked" />
+					<MenuItem
+						Click="OnImportClicked"
+						Header="Common_ImportFile"
+						Icon="FileImport"
+						Style="{StaticResource ButtonMenuItemLeft}" />
 
-					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
-						  Margin="-1,0,1,0">
-						<MenuItem Header="Character_Appearance_Header"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportAppearanceClicked" />
+					<MenuItem
+						Margin="-1,0,1,0"
+						Style="{StaticResource ButtonMenuItemRight}">
+						<MenuItem
+							Click="OnImportAppearanceClicked"
+							Header="Character_Appearance_Header"
+							Style="{StaticResource AnaMenuItem}" />
 
-						<MenuItem Header="Character_Equipment_Header"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportEquipmentClicked" />
+						<MenuItem
+							Click="OnImportEquipmentClicked"
+							Header="Character_Equipment_Header"
+							Style="{StaticResource AnaMenuItem}" />
 
-						<MenuItem Header="Character_Equipment_Gear"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportGearClicked" />
+						<MenuItem
+							Click="OnImportGearClicked"
+							Header="Character_Equipment_Gear"
+							Style="{StaticResource AnaMenuItem}" />
 
-						<MenuItem Header="Character_Equipment_Accessories"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportAccessoriesClicked" />
+						<MenuItem
+							Click="OnImportAccessoriesClicked"
+							Header="Character_Equipment_Accessories"
+							Style="{StaticResource AnaMenuItem}" />
 
-						<MenuItem Header="Character_Equipment_Weapons"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnImportWeaponsClicked" />
+						<MenuItem
+							Click="OnImportWeaponsClicked"
+							Header="Character_Equipment_Weapons"
+							Style="{StaticResource AnaMenuItem}" />
 
 					</MenuItem>
 
-					<MenuItem Header="Common_ExportFile"
-						  Icon="FileExport"
-						  Style="{StaticResource ButtonMenuItemLeft}"
-						  Click="OnExportClicked" />
+					<MenuItem
+						Click="OnExportClicked"
+						Header="Common_ExportFile"
+						Icon="FileExport"
+						Style="{StaticResource ButtonMenuItemLeft}" />
 
-					<MenuItem Style="{StaticResource ButtonMenuItemRight}"
-						  Margin="-1,0,0,0">
-						
-						<MenuItem Header="Common_SaveFileMeta"
-							  Style="{StaticResource AnaMenuItem}"
-							  Click="OnExportMetaClicked" />
+					<MenuItem
+						Margin="-1,0,0,0"
+						Style="{StaticResource ButtonMenuItemRight}">
 
-                        <MenuItem Header="Common_SaveAsDat"
-                              Style="{StaticResource AnaMenuItem}"
-                              Click="OnExportDatClicked" />
+						<MenuItem
+							Click="OnExportMetaClicked"
+							Header="Common_SaveFileMeta"
+							Style="{StaticResource AnaMenuItem}" />
 
-                    </MenuItem>
+						<MenuItem
+							Click="OnExportDatClicked"
+							Header="Common_SaveAsDat"
+							Style="{StaticResource AnaMenuItem}" />
+
+					</MenuItem>
 				</Menu>
 			</StackPanel>
 
-			
+
 
 		</Grid>
 	</Grid>

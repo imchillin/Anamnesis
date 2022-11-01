@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Navigation;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Actor.Views;
 using Anamnesis.Files;
@@ -402,6 +403,11 @@ public partial class CharacterPage : UserControl
 			bool hasValidSelection = actor != null && actor.ObjectKind.IsSupportedType();
 			this.IsEnabled = hasValidSelection;
 		});
+	}
+
+	private void OnNavigate(object sender, RequestNavigateEventArgs e)
+	{
+		UrlUtility.Open(e.Uri.AbsoluteUri);
 	}
 
 	public class VoiceEntry

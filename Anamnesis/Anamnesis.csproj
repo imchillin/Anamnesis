@@ -97,6 +97,8 @@
 	  </None>
 	</ItemGroup>
 
+	<ProjectExtensions><VisualStudio><UserProperties languages_4en_1json__JsonSchema="Warning_MinionGposeTitle" /></VisualStudio></ProjectExtensions>
+
 </Project>
 
 
