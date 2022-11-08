@@ -9,8 +9,6 @@ Anamnesis is a standalone tool that is used to modify certain clientside-only va
 
 Anamnesis is the successor to [Concept Matrix (CMTool)](https://github.com/imchillin/CMTool).
 
-As of April 16th 2021, this project remains a work in progress and is not currently in a state to replace CMTool. Please do not download the code expecting it to work like CMTool.
-
 We actively encourage people to contribute to the project with their forks to improve the tool overall. With this said, we are **not** supporting builds done via forks and, if you've received a release of the tool from any repo that isn't [imchillin/Anamnesis](https://github.com/imchillin/Anamnesis), you are encouraged to bring the issue up with the person who packaged the build, as it will inevitably contain code we're unfamiliar with.
 
 ## Getting Started
@@ -36,6 +34,7 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 
 ## God Tier Contributing Developers
 
+* **[chirpcodes](https://github.com/chirpcodes)**
 * **[HoloWise](https://github.com/HoloWise)**
 * **[SoyaX](https://github.com/SoyaX)**
 * **[Reyli](https://github.com/Reyli)**
