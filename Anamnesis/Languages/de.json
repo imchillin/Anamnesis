@@ -81,7 +81,7 @@
 	"EquipmentSelector_ForceOffModelTooltip": "Nebenhandwaffe anstatt der Hauptwaffe nutzen.",
 
 	"EquipmentSelector_FilterOther": "Andere",
-	"EquipmentSelector_Categories": "Kategorien",	  
+	"EquipmentSelector_Categories": "Kategorien",
 	"EquipmentSelector_Standard": "Standard-Gegenstände",
 	"EquipmentSelector_StandardTip": "Gegenstände, die man durch normales spielen bekommt",
 	"EquipmentSelector_Premium": "Premium-Gegenstände",
@@ -307,7 +307,7 @@
 	"Pose_WarningNotGPose": "Posing ist nur in GPose möglich. Gehe in GPose mit /gpose.",
 	"Pose_WarningNotFrozen": "Posing funktionert nur mit eingefrorenen Charakteren. Friere den Charakter im GPose Fenster ein.",
 	"Pose_WarningQuit": "Willst du Anamnesis wirklich beenden? Die derzeitige Pose geht verloren.",
-	"Pose_WarningExpresionPositions": "Gesichtsausdrücke zu laden, während Positionen festgestellt sind, kann zu ungewollten Resultaten führen. Bist du dir sicher?",				 
+	"Pose_WarningExpresionPositions": "Gesichtsausdrücke zu laden, während Positionen festgestellt sind, kann zu ungewollten Resultaten führen. Bist du dir sicher?",
 	"Pose_NoSkeleton": "Kein Skelett für diese Ansicht vorhanden.",
 	"Pose_NoModel": "Dieser Charakter hat kein Model.",
 	"Pose_NotEnabled": "Posing-Modus muss aktiv sein.",
@@ -572,7 +572,9 @@
 	"Pose_j_ex_met_va": "Visier",
 	"Pose_mh_n_hara": "Haupfwaffe",
 	"Pose_oh_n_hara": "Nebenhandwaffe",
-	
+	"Pose_j_half_l": "Linke Hälfte",
+	"Pose_j_half_r": "Rechte Hälfte",
+
 	"Settings_Header": "Einstellungen",
 	"Settings_InterfaceHeader": "Interface",
 	"Settings_FilesHeader": "Dateien",
