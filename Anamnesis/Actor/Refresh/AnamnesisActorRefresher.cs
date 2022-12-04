@@ -22,22 +22,9 @@ public class AnamnesisActorRefresher : IActorRefresher
 	{
 		await Task.Delay(16);
 
-		if (actor.ObjectKind == ActorTypes.Player)
-		{
-			actor.ObjectKind = ActorTypes.BattleNpc;
-			actor.RenderMode = RenderModes.Unload;
-			await Task.Delay(75);
-			actor.RenderMode = RenderModes.Draw;
-			await Task.Delay(75);
-			actor.ObjectKind = ActorTypes.Player;
-			actor.RenderMode = RenderModes.Draw;
-		}
-		else
-		{
-			actor.RenderMode = RenderModes.Unload;
-			await Task.Delay(75);
-			actor.RenderMode = RenderModes.Draw;
-		}
+		actor.RenderMode = RenderModes.Unload;
+		await Task.Delay(75);
+		actor.RenderMode = RenderModes.Draw;
 
 		await Task.Delay(150);
 	}
