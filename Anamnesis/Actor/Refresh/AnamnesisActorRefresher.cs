@@ -21,12 +21,9 @@ public class AnamnesisActorRefresher : IActorRefresher
 
 	public async Task RefreshActor(ActorMemory actor)
 	{
-		if (SettingsService.Current.EnableNpcHack)
+		await Task.Delay(16);
+		if (SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player)
 		{
-			await Task.Delay(16);
-
-			if (actor.ObjectKind == ActorTypes.Player)
-			{
 				actor.ObjectKind = ActorTypes.BattleNpc;
 				actor.RenderMode = RenderModes.Unload;
 				await Task.Delay(75);
@@ -34,25 +31,13 @@ public class AnamnesisActorRefresher : IActorRefresher
 				await Task.Delay(75);
 				actor.ObjectKind = ActorTypes.Player;
 				actor.RenderMode = RenderModes.Draw;
-			}
-			else
-			{
-				actor.RenderMode = RenderModes.Unload;
-				await Task.Delay(75);
-				actor.RenderMode = RenderModes.Draw;
-			}
-
-			await Task.Delay(150);
 		}
 		else
 		{
-			await Task.Delay(16);
-
 			actor.RenderMode = RenderModes.Unload;
 			await Task.Delay(75);
 			actor.RenderMode = RenderModes.Draw;
-
-			await Task.Delay(150);
 		}
+		await Task.Delay(150);
 	}
 }
