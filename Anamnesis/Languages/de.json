@@ -613,7 +613,7 @@
 	"Settings_UseExternalRefresh": "Penumbra Redraw benutzen",
 	"Settings_UseExternalRefreshWarning": "Benötigt aktivierte Penumbra HTTP API.",
 	"Settings_EnableNpcHack": "Aktiviere NPC Gesichter auf PCs",
-	"Settings_EnableNpcHackWarning": "Mit dieser Option kannst du NPC Gesichter ausserhalb von GPose auf deinem Character nutzen, jedoch werden Penumbra Kollektionen nicht in GPose übertragen. Beachte das NPC Gesichter innerhalb GPose auch hiermit nicht möglich sind.",
+	"Settings_EnableNpcHackWarning": "NPC Gesichter werden nur ausserhalb von GPose funktionieren. Penumbra Kollektionen funktionieren hiermit nicht mehr. Funktioniert nur ohne Penumbra API",
 	"Settings_GameHotkeysTooltip": "Hotkeys verwenden wenn FFXIV im Fokus ist und man in GPose ist.\nDies verhindert, das FFXIV folgende Hotkeys registriert.",
 	"Settings_EnableHotkeys": "Hotkeys aktivieren",
 	"Settings_EnableHotkeys_Tooltip": "Auf Tastendrücke reagieren und Hotkeys ausführen",
