@@ -25,7 +25,7 @@ public class PenumbraActorRefresher : IActorRefresher
 
 	public async Task RefreshActor(ActorMemory actor)
 	{
-		if (actor.ObjectKind == ActorTypes.Player)
+		if (SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player)
 		{
 			actor.ObjectKind = ActorTypes.BattleNpc;
 			await Penumbra.Penumbra.Redraw(actor.ObjectIndex);
