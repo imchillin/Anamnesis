@@ -38,6 +38,7 @@ public class AnamnesisActorRefresher : IActorRefresher
 			await Task.Delay(75);
 			actor.RenderMode = RenderModes.Draw;
 		}
+
 		await Task.Delay(150);
 	}
 }
