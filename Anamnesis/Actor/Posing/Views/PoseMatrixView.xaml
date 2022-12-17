@@ -569,24 +569,12 @@
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_Calves" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="7" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="CalfLeft" Label="L"/>
-							<local:BoneView BoneName="CalfRight" Label="R"/>
-						</StackPanel>
+                        <StackPanel Grid.Column="7" Grid.Row="0" Orientation="Horizontal" >
+                            <local:BoneView BoneName="CalfLeft" Label="L"/>
+                            <local:BoneView BoneName="CalfRight" Label="R"/>
+                        </StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="8" Grid.Row="0" Key="Pose_Feet" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="9" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="FootLeft" Label="L"/>
-							<local:BoneView BoneName="FootRight" Label="R"/>
-						</StackPanel>
-
-						<XivToolsWpf:TextBlock Grid.Column="10" Grid.Row="0" Key="Pose_Toes" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="11" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="ToesLeft" Label="L"/>
-							<local:BoneView BoneName="ToesRight" Label="R"/>
-						</StackPanel>
-
-						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Sheathes" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Sheathes" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
 							<local:BoneView BoneName="SheatheLeft" Label="L"/>
 							<local:BoneView BoneName="SheatheRight" Label="R"/>
