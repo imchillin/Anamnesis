@@ -357,6 +357,7 @@
 	"Pose_Matrix_OtherCategory": "Other",
 	"Pose_Matrix_LeftFootCategory": "Left Foot",
 	"Pose_Matrix_RightFootCategory": "Right Foot",
+	"Pose_Matrix_GenitalCategory": "Genitals", 
 
 	"Pose_CharacterRoot": "Character",
 	"Pose_Head": "Head",
@@ -429,6 +430,13 @@
 	"Pose_OtherUnknown": "Unknown",
 	"Pose_IVCS_Breasts": "IVCS Breasts",
 	"Pose_IVCS_Biceps": "IVCS Biceps",
+	"Pose_Scrotum": "Scrotum",
+	"Pose_Penis": "Penis",
+	"Pose_Vagina": "Vagina",
+	"Pose_Clitoris": "Clitoris",
+	"Pose_Labia": "Labia",
+	"Pose_Anus": "Anus",
+	"Pose_Buttocks": "Buttocks",
 
 	"Pose_n_root": "Root",
 	"Pose_n_hara": "Abdomen",
