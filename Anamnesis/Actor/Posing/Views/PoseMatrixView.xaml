@@ -636,9 +636,95 @@
                             <local:BoneView BoneName="iv_asi_oya_b_l" Label="2"/>
                         </StackPanel>
 
+                        <XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_IndexToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="7" Grid.Row="0">
+                            <local:BoneView BoneName="iv_asi_hito_a_l" Label="1"/>
+                            <local:BoneView BoneName="iv_asi_hito_b_l" Label="2"/>
+                        </StackPanel>
+
+                        <XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_MiddleToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+                            <local:BoneView BoneName="iv_asi_naka_a_l" Label="1"/>
+                            <local:BoneView BoneName="iv_asi_naka_b_l" Label="2"/>
+                        </StackPanel>
+
+                        <XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_ForeToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
+                            <local:BoneView BoneName="iv_asi_kusu_a_l" Label="1"/>
+                            <local:BoneView BoneName="iv_asi_kusu_b_l" Label="2"/>
+                        </StackPanel>
+
+                        <XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_PinkyToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="1">
+                            <local:BoneView BoneName="iv_asi_ko_a_l" Label="1"/>
+                            <local:BoneView BoneName="iv_asi_ko_b_l" Label="2"/>
+                        </StackPanel>
+
                     </Grid>
                 </GroupBox>
-                
+
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+                            <XivToolsWpf:TextBlock Key="Pose_Matrix_RightFootCategory"/>
+                        </Button>
+                    </GroupBox.Header>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_Foot" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <local:BoneView Grid.Column="1" Grid.Row="0" BoneName="FootRight"/>
+
+                        <XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Toes" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <local:BoneView Grid.Column="3" Grid.Row="0" BoneName="ToesRight"/>
+
+                        <XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_BigToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="0">
+                            <local:BoneView BoneName="iv_asi_oya_a_r" Label="1"/>
+                            <local:BoneView BoneName="iv_asi_oya_b_r" Label="2"/>
+                        </StackPanel>
+
+                        <XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_IndexToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="7" Grid.Row="0">
+                            <local:BoneView BoneName="iv_asi_hito_a_r" Label="1"/>
+                            <local:BoneView BoneName="iv_asi_hito_b_r" Label="2"/>
+                        </StackPanel>
+
+                        <XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_MiddleToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+                            <local:BoneView BoneName="iv_asi_naka_a_r" Label="1"/>
+                            <local:BoneView BoneName="iv_asi_naka_b_r" Label="2"/>
+                        </StackPanel>
+
+                        <XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_ForeToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
+                            <local:BoneView BoneName="iv_asi_kusu_a_r" Label="1"/>
+                            <local:BoneView BoneName="iv_asi_kusu_b_r" Label="2"/>
+                        </StackPanel>
+
+                        <XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_PinkyToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="1">
+                            <local:BoneView BoneName="iv_asi_ko_a_r" Label="1"/>
+                            <local:BoneView BoneName="iv_asi_ko_b_r" Label="2"/>
+                        </StackPanel>
+
+                    </Grid>
+                </GroupBox>
+
                 <GroupBox>
 					<GroupBox.Header>
 						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
