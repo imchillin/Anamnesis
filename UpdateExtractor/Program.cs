@@ -18,7 +18,7 @@ namespace UpdateExtractor
 			try
 			{
 				if (args.Length != 2)
-					throw new Exception("Invalid arguments. Update Extractor must be run with the following arguments: 1) destination directory, 2) name of orignal process.");
+					throw new Exception("Invalid arguments. Update Extractor must be run with the following arguments: 1) destination directory, 2) name of original process.");
 
 				string? destDir = args[0];
 				processName = args[1];
