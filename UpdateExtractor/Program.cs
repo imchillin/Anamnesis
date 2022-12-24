@@ -41,7 +41,7 @@ namespace UpdateExtractor
 
 				Console.WriteLine(" done.");
 
-				string sourceDir = Path.GetTempPath() + "/AnamnesisUpdateLatest/";
+				string sourceDir = Path.GetTempPath() + "/AnamnesisIVCSUpdateLatest/";
 
 				if (!Directory.Exists(sourceDir))
 					throw new Exception("Unable to determine current process path");
