@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -461,7 +462,18 @@ public partial class FileBrowserView : FileBrowserDrawer
 				}
 			}
 
-			string ext = this.filters.First().Extension;
+			string ext;
+			string pattern = $"{this.filters.First().Extension}$";
+			string name = this.selected?.Name ?? string.Empty;
+
+			if ((SettingsService.Current.ShowFileExtensions || this.ShowExtensions) && Regex.IsMatch(name, pattern))
+			{
+				ext = string.Empty;
+			}
+			else
+			{
+				ext = this.filters.First().Extension;
+			}
 
 			this.FinalSelection = new FileInfo(this.CurrentDir.FullName + "\\" + this.FileName + ext);
 		}
