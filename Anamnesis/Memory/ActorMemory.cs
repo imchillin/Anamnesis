@@ -56,7 +56,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x085F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x0870, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 	[Bind(0x0878)] public ushort OrnamentId { get; set; }
-	[Bind(0x09C0)] public AnimationMemory? Animation { get; set; }
+	[Bind(0x08E0)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x11F4)] public bool IsMotionEnabled { get; set; }
 	[Bind(0x19F8)] public float Transparency { get; set; }
 	[Bind(0x1AD2)] public byte Voice { get; set; }
