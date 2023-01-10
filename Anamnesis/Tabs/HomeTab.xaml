@@ -98,7 +98,7 @@
 											   Key="Scene_World_Time"
 											   Style="{StaticResource Label}" />
 						<XivToolsWpf:NumberBox Minimum="0"
-											   Maximum="1440"
+											   Maximum="1439"
 											   Grid.Column="2"
 											   Value="{Binding TimeService.TimeOfDay}"
 											   Margin="3"
@@ -123,7 +123,7 @@
 											   Buttons="True"
 											   Slider="Absolute"
 											   Minimum="1"
-											   Maximum="32" />
+											   Maximum="31" />
 					</Grid>
 
 					<XivToolsWpf:TextBlock Grid.Row="1"

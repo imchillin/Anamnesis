@@ -13,20 +13,24 @@ using PropertyChanged;
 [AddINotifyPropertyChangedInterface]
 public class TimeService : ServiceBase<TimeService>
 {
-	private TimeMemory? timeMemory;
+	private FrameworkMemory? frameworkMemory;
+	private NopHookViewModel? timeAsmHook;
 	public string TimeString { get; private set; } = "00:00";
 	public long TimeOfDay { get; set; }
 	public byte DayOfMonth { get; set; }
 
 	public bool Freeze
 	{
-		get => this.timeMemory?.Freeze ?? false;
-		set => this.timeMemory?.SetFrozen(value);
+		get => this.timeAsmHook?.Enabled ?? false;
+		set => this.timeAsmHook?.SetEnabled(value);
 	}
 
 	public override Task Start()
 	{
-		this.timeMemory = new TimeMemory();
+		this.timeAsmHook = new NopHookViewModel(AddressService.TimeAsm, 0x07);
+
+		this.frameworkMemory = new FrameworkMemory();
+		this.frameworkMemory.SetAddress(AddressService.Framework);
 
 		_ = Task.Run(this.CheckTime);
 
@@ -48,7 +52,7 @@ public class TimeService : ServiceBase<TimeService>
 
 			try
 			{
-				if (!MemoryService.IsProcessAlive || !GameService.Instance.IsSignedIn || AddressService.TimeReal == IntPtr.Zero)
+				if (!MemoryService.IsProcessAlive || !GameService.Instance.IsSignedIn || this.frameworkMemory == null)
 				{
 					if (this.Freeze)
 						this.Freeze = false;
@@ -56,21 +60,25 @@ public class TimeService : ServiceBase<TimeService>
 					continue;
 				}
 
+				this.frameworkMemory.Tick();
+
 				if (this.Freeze)
 				{
 					long newTime = (long)((this.TimeOfDay * 60) + (86400 * (this.DayOfMonth - 1)));
-					this.timeMemory?.SetTime(newTime);
+
+					this.frameworkMemory.EorzeaTime = newTime;
+
+					if(this.frameworkMemory.IsTimeOverridden)
+						this.frameworkMemory.OverrideEorzeaTime = newTime;
 				}
-				else
-				{
-					long timeVal = this.timeMemory!.CurrentTime % 2764800;
-					long secondInDay = timeVal % 86400;
-					this.TimeOfDay = (long)(secondInDay / 60f);
-					this.DayOfMonth = (byte)(Math.Floor(timeVal / 86400f) + 1);
-				}
+
+				long currentTime = this.frameworkMemory.IsTimeOverridden ? this.frameworkMemory.OverrideEorzeaTime : this.frameworkMemory.EorzeaTime;
+				long timeVal = currentTime % 2764800;
+				long secondInDay = timeVal % 86400;
+				this.TimeOfDay = (long)(secondInDay / 60f);
+				this.DayOfMonth = (byte)(Math.Floor(timeVal / 86400f) + 1);
 
 				var displayTime = TimeSpan.FromMinutes(this.TimeOfDay);
-
 				this.TimeString = string.Format("{0:D2}:{1:D2}", displayTime.Hours, displayTime.Minutes);
 			}
 			catch (Exception ex)

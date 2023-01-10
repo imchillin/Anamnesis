@@ -37,7 +37,7 @@ public class AddressService : ServiceBase<AddressService>
 	public static IntPtr Territory { get; private set; }
 	public static IntPtr GPose { get; private set; }
 	public static IntPtr TimeAsm { get; private set; }
-	public static IntPtr TimeReal { get; set; }
+	public static IntPtr Framework { get; set; }
 	public static IntPtr PlayerTargetSystem { get; set; }
 	public static IntPtr AnimationSpeedPatch { get; set; }
 
@@ -153,15 +153,13 @@ public class AddressService : ServiceBase<AddressService>
 			}));
 
 		tasks.Add(this.GetAddressFromTextSignature(
-			"Time",
+			"Framework",
 			"48 C7 05 ?? ?? ?? ?? 00 00 00 00 E8 ?? ?? ?? ?? 48 8D ?? ?? ?? 00 00 E8 ?? ?? ?? ?? 48 8D",
 			(p) =>
 			{
 				int frameworkOffset = MemoryService.Read<int>(p + 3);
 				IntPtr frameworkPtr = MemoryService.ReadPtr(p + 11 + frameworkOffset);
-				TimeReal = frameworkPtr + 0x1770;
-
-					// For reference, gpose time is at frameworkPtr + 0x1798 if it's ever needed
+				Framework = frameworkPtr;
 				}));
 
 		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
