@@ -5,5 +5,5 @@ namespace Anamnesis.Memory;
 
 public class GPoseCameraMemory : MemoryBase
 {
-	[Bind(0x000)] public Vector Position { get; set; }
+	[Bind(0x10)] public Vector Position { get; set; }
 }
