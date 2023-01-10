@@ -41,8 +41,8 @@ public class ActorMemory : ActorBasicMemory
 	}
 
 	[Bind(0x008D)] public byte SubKind { get; set; }
-	[Bind(0x00B4)] public float Scale { get; set; }
-	[Bind(0x00F0, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
+	[Bind(0x00C4)] public float Scale { get; set; }
+	[Bind(0x0100, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 	[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
 	[Bind(0x01E0)] public byte ClassJob { get; set; }
 	[Bind(0x0660, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
@@ -56,13 +56,13 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x085F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x0870, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 	[Bind(0x0878)] public ushort OrnamentId { get; set; }
-	[Bind(0x09C0)] public AnimationMemory? Animation { get; set; }
-	[Bind(0x11F4)] public bool IsMotionEnabled { get; set; }
-	[Bind(0x19F8)] public float Transparency { get; set; }
-	[Bind(0x1AD2)] public byte Voice { get; set; }
-	[Bind(0x1AD4)] public byte CharacterModeRaw { get; set; }
-	[Bind(0x1AD5)] public byte CharacterModeInput { get; set; }
-	[Bind(0x1B04)] public byte AttachmentPoint { get; set; }
+	[Bind(0x0900)] public AnimationMemory? Animation { get; set; }
+	[Bind(0x1214)] public bool IsMotionEnabled { get; set; }
+	[Bind(0x1A18)] public float Transparency { get; set; }
+	[Bind(0x1AFE)] public byte Voice { get; set; }
+	[Bind(0x1B00)] public byte CharacterModeRaw { get; set; }
+	[Bind(0x1B01)] public byte CharacterModeInput { get; set; }
+	[Bind(0x1B20)] public byte AttachmentPoint { get; set; }
 
 	public PinnedActor? Pinned { get; set; }
 
