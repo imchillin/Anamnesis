@@ -62,7 +62,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x1AFE)] public byte Voice { get; set; }
 	[Bind(0x1B00)] public byte CharacterModeRaw { get; set; }
 	[Bind(0x1B01)] public byte CharacterModeInput { get; set; }
-	[Bind(0x1B20)] public byte AttachmentPoint { get; set; }
+	[Bind(0x1B24)] public byte AttachmentPoint { get; set; }
 
 	public PinnedActor? Pinned { get; set; }
 
