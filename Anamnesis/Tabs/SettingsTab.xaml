@@ -274,15 +274,6 @@
                         <CheckBox.Style>
                             <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
                                 <Setter Property="IsChecked" Value="{Binding SettingsService.Settings.EnableNpcHack}"></Setter>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=Settings_UseExternalRefresh,Path=IsChecked}" Value="True">
-                                        <Setter Property="IsChecked" Value="False"/>
-                                        <Setter Property="IsEnabled" Value="False"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding ElementName=Settings_UseExternalRefresh,Path=IsChecked}" Value="False">
-                                        <Setter Property="IsEnabled" Value="True"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
                             </Style>
                         </CheckBox.Style>
                     </CheckBox>
