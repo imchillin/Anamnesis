@@ -612,7 +612,7 @@
 	"Settings_UseExternalRefresh": "Use Penumbra Redraw",
 	"Settings_UseExternalRefreshWarning": "Requires the Penumbra HTTP API to be enabled in Penumbra. This option is found under the Advanced section of the Settings tab of the plugin. .",
 	"Settings_EnableNpcHack": "Enable NPC Faces on PC",
-	"Settings_EnableNpcHackWarning": "NPC Faces will only work outside of GPose. This will break Penumbra Collections. Currently only works with the API turned off.",
+	"Settings_EnableNpcHackWarning": "NPC Faces will only work outside of GPose. This will break Penumbra Collections.",
 	"Settings_GameHotkeysTooltip": "Enable the use of hotkeys even when FFXIV has focus while in GPose.\nThis will prevent FFXIV from recieving the used keys.",
 	"Settings_EnableHotkeys": "Enable Hotkeys",
 	"Settings_EnableHotkeys_Tooltip": "Enable listening for keys and performing actions",
