@@ -22,11 +22,11 @@
 				Margin="3,4,3,0"
 				VerticalContentAlignment="Center"
 				IsChecked="{Binding FlipSides}">
-				
+
 				<XivToolsWpf:TextBlock Key="Pose_FlipSides" />
 			</CheckBox>
 		</Grid>
-		
+
 		<Grid ClipToBounds="True">
 
 			<Grid.ColumnDefinitions>
@@ -80,14 +80,23 @@
 					<local:BoneView Canvas.Left="118" Canvas.Top="145" BoneName="SpineB"/>
 					<local:BoneView Canvas.Left="118" Canvas.Top="180" BoneName="SpineA"/>
 					<local:BoneView Canvas.Left="118" Canvas.Top="210" BoneName="Waist"/>
+					<local:BoneView Canvas.Left="118" Canvas.Top="233" BoneName="iv_koumon"/>
+					<local:BoneView Canvas.Left="95" Canvas.Top="220" BoneName="iv_koumon_l" FlippedBoneName="iv_koumon_r"/>
+					<local:BoneView Canvas.Left="140" Canvas.Top="220" BoneName="iv_koumon_r" FlippedBoneName="iv_koumon_l"/>
+					<local:BoneView Canvas.Left="81" Canvas.Top="237" BoneName="iv_shiri_l" FlippedBoneName="iv_shiri_r"/>
+					<local:BoneView Canvas.Left="152" Canvas.Top="237" BoneName="iv_shiri_r" FlippedBoneName="iv_shiri_l"/>
 					<local:BoneView Canvas.Left="98" Canvas.Top="93" BoneName="ClavicleLeft" FlippedBoneName="ClavicleRight"/>
 					<local:BoneView Canvas.Left="138" Canvas.Top="93" BoneName="ClavicleRight" FlippedBoneName="ClavicleLeft"/>
 					<local:BoneView Canvas.Left="73" Canvas.Top="87" BoneName="ShoulderLeft" FlippedBoneName="ShoulderRight"/>
 					<local:BoneView Canvas.Left="165" Canvas.Top="87" BoneName="ShoulderRight" FlippedBoneName="ShoulderLeft"/>
 					<local:BoneView Canvas.Left="102" Canvas.Top="120" BoneName="BreastLeft" FlippedBoneName="BreastRight"/>
+					<local:BoneView Canvas.Left="95" Canvas.Top="142" BoneName="iv_c_mune_l" FlippedBoneName="iv_c_mune_r"/>
 					<local:BoneView Canvas.Left="135" Canvas.Top="120" BoneName="BreastRight" FlippedBoneName="BreastLeft"/>
+					<local:BoneView Canvas.Left="140" Canvas.Top="142" BoneName="iv_c_mune_r" FlippedBoneName="iv_c_mune_l"/>
 					<local:BoneView Canvas.Left="78" Canvas.Top="107" BoneName="ArmLeft" FlippedBoneName="ArmRight"/>
+					<local:BoneView Canvas.Left="55" Canvas.Top="127" BoneName="iv_nitoukin_l" FlippedBoneName="iv_nitoukin_r"/>
 					<local:BoneView Canvas.Left="158" Canvas.Top="107" BoneName="ArmRight" FlippedBoneName="ArmLeft"/>
+					<local:BoneView Canvas.Left="179" Canvas.Top="127" BoneName="iv_nitoukin_r" FlippedBoneName="iv_nitoukin_l"/>
 					<local:BoneView Canvas.Left="75" Canvas.Top="160" BoneName="ElbowLeft" FlippedBoneName="ElbowRight"/>
 					<local:BoneView Canvas.Left="160" Canvas.Top="160" BoneName="ElbowRight" FlippedBoneName="ElbowLeft"/>
 					<local:BoneView Canvas.Left="55" Canvas.Top="160" BoneName="ForearmLeft" FlippedBoneName="ForearmRight"/>
@@ -104,6 +113,34 @@
 					<local:BoneView Canvas.Left="156" Canvas.Top="460" BoneName="FootRight" FlippedBoneName="FootLeft"/>
 					<local:BoneView Canvas.Left="73" Canvas.Top="480" BoneName="ToesLeft" FlippedBoneName="ToesRight"/>
 					<local:BoneView Canvas.Left="164" Canvas.Top="480" BoneName="ToesRight" FlippedBoneName="ToesLeft"/>
+
+				</Canvas>
+			</Viewbox>
+
+			<!-- IVCS Penis -->
+			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256">
+				<Canvas Height="512" Width="256">
+
+					<local:BoneView Canvas.Left="39" Canvas.Top="320" BoneName="iv_ochinko_f"/>
+					<local:BoneView Canvas.Left="39" Canvas.Top="342" BoneName="iv_ochinko_e"/>
+					<local:BoneView Canvas.Left="39" Canvas.Top="364" BoneName="iv_ochinko_d"/>
+					<local:BoneView Canvas.Left="39" Canvas.Top="385" BoneName="iv_ochinko_c"/>
+					<local:BoneView Canvas.Left="39" Canvas.Top="407" BoneName="iv_ochinko_b"/>
+					<local:BoneView Canvas.Left="39" Canvas.Top="428" BoneName="iv_ochinko_a"/>
+					<local:BoneView Canvas.Left="30" Canvas.Top="449" BoneName="iv_kougan_l" FlippedBoneName="iv_kougan_r"/>
+					<local:BoneView Canvas.Left="50" Canvas.Top="449" BoneName="iv_kougan_r" FlippedBoneName="iv_kougan_l"/>
+
+				</Canvas>
+			</Viewbox>
+
+			<!-- IVCS Vagina -->
+			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256">
+				<Canvas Height="512" Width="256">
+
+					<local:BoneView Canvas.Left="200" Canvas.Top="320" BoneName="iv_kuritto"/>
+					<local:BoneView Canvas.Left="200" Canvas.Top="342" BoneName="iv_omanko"/>
+					<local:BoneView Canvas.Left="180" Canvas.Top="342" BoneName="iv_inshin_l" FlippedBoneName="iv_inshin_r"/>
+					<local:BoneView Canvas.Left="220" Canvas.Top="342" BoneName="iv_inshin_r" FlippedBoneName="iv_inshin_l"/>
 
 				</Canvas>
 			</Viewbox>
@@ -145,7 +182,7 @@
 					<local:BoneView Canvas.Left="146" Canvas.Top="150" BoneName="HolsterRight" FlippedBoneName="HolsterLeft"/>
 					<local:BoneView Canvas.Left="90" Canvas.Top="184" BoneName="SheatheLeft" FlippedBoneName="SheatheRight"/>
 					<local:BoneView Canvas.Left="149" Canvas.Top="184" BoneName="SheatheRight" FlippedBoneName="SheatheLeft"/>
-					
+
 					<local:BoneView Canvas.Left="105" Canvas.Top="110" BoneName="ScabbardLeft" FlippedBoneName="ScabbardRight"/>
 					<local:BoneView Canvas.Left="135" Canvas.Top="110" BoneName="ScabbardRight" FlippedBoneName="ScabbardLeft"/>
 
@@ -185,17 +222,17 @@
 							<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="VieraEar02BLeft" FlippedBoneName="VieraEar02BRight" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar02ARight" FlippedBoneName="VieraEar02ALeft" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="VieraEar02BRight" FlippedBoneName="VieraEar02BLeft" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-							
+
 							<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar03ALeft" FlippedBoneName="VieraEar03ARight" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="VieraEar03BLeft" FlippedBoneName="VieraEar03BRight" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar03ARight" FlippedBoneName="VieraEar03ALeft" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="VieraEar03BRight" FlippedBoneName="VieraEar03BLeft" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-							
+
 							<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar04ALeft" FlippedBoneName="VieraEar04ARight" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="VieraEar04BLeft" FlippedBoneName="VieraEar04BRight" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar04ARight" FlippedBoneName="VieraEar04ALeft" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="VieraEar04BRight" FlippedBoneName="VieraEar04BLeft" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
-							
+
 							<local:BoneView Canvas.Left="115" Canvas.Top="110" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
 							<local:BoneView Canvas.Left="115" Canvas.Top="140" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
 							<local:BoneView Canvas.Left="5" Canvas.Top="110" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
@@ -219,7 +256,7 @@
 							<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="VieraEar02BLeft" FlippedBoneName="VieraEar02BRight" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="VieraEar02ARight" FlippedBoneName="VieraEar02ALeft" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
 							<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="VieraEar02BRight" FlippedBoneName="VieraEar02BLeft" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-							
+
 							<local:BoneView Canvas.Left="160" Canvas.Top="64" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
 							<local:BoneView Canvas.Left="160" Canvas.Top="90" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
 							<local:BoneView Canvas.Left="63" Canvas.Top="64" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
@@ -376,6 +413,11 @@
 							<local:BoneView Canvas.Left="92" Canvas.Top="84" BoneName="PinkyALeft" FlippedBoneName="PinkyARight"/>
 							<local:BoneView Canvas.Left="95" Canvas.Top="55" BoneName="PinkyBLeft" FlippedBoneName="PinkyBRight"/>
 							<local:BoneView Canvas.Left="60" Canvas.Top="115" BoneName="WeaponLeft" FlippedBoneName="WeaponRight"/>
+							<local:BoneView Canvas.Left="34" Canvas.Top="20" BoneName="iv_hito_c_l" FlippedBoneName="iv_hito_c_r"/>
+							<local:BoneView Canvas.Left="53" Canvas.Top="13" BoneName="iv_naka_c_l" FlippedBoneName="iv_naka_c_r"/>
+							<local:BoneView Canvas.Left="74" Canvas.Top="20" BoneName="iv_kusu_c_l" FlippedBoneName="iv_kusu_c_r"/>
+							<local:BoneView Canvas.Left="95" Canvas.Top="30" BoneName="iv_ko_c_l" FlippedBoneName="iv_ko_c_r"/>
+
 						</Canvas>
 					</Viewbox>
 
@@ -405,6 +447,10 @@
 							<local:BoneView Canvas.Left="16" Canvas.Top="84" BoneName="PinkyARight" FlippedBoneName="PinkyALeft"/>
 							<local:BoneView Canvas.Left="13" Canvas.Top="55" BoneName="PinkyBRight" FlippedBoneName="PinkyBLeft"/>
 							<local:BoneView Canvas.Left="48" Canvas.Top="115" BoneName="WeaponRight" FlippedBoneName="WeaponLeft"/>
+							<local:BoneView Canvas.Left="74" Canvas.Top="19" BoneName="iv_hito_c_r" FlippedBoneName="iv_hito_c_l"/>
+							<local:BoneView Canvas.Left="55" Canvas.Top="14" BoneName="iv_naka_c_r" FlippedBoneName="iv_naka_c_l"/>
+							<local:BoneView Canvas.Left="33" Canvas.Top="20" BoneName="iv_kusu_c_r" FlippedBoneName="iv_kusu_c_l"/>
+							<local:BoneView Canvas.Left="10" Canvas.Top="32" BoneName="iv_ko_c_r" FlippedBoneName="iv_ko_c_l"/>
 
 						</Canvas>
 					</Viewbox>
@@ -426,7 +472,7 @@
 					</Grid>
 				</Grid>
 
-				
+
 			</Grid>
 		</Grid>
 	</Grid>
