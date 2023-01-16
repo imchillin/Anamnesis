@@ -92,11 +92,7 @@
 			</GroupBox.Header>
 
 			<TextBlock TextWrapping="Wrap" Margin="6,0,0,7" Style="{StaticResource Body}">This project is a labor of love. Please consider donating to the members of the dev team to say thank you!<LineBreak />
-				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/xivtools" FontSize="12">XIV Tools Ko-fi (Yuki)</Hyperlink>
-                <LineBreak />
-                <fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/Asgard" FontSize="12">Asgard's Ko-fi</Hyperlink>
-                <LineBreak />
-                <fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/peebsmiqo" FontSize="12">Peebs' Ko-fi</Hyperlink>
+				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/xivtools" FontSize="12">Yuki</Hyperlink> | <fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/Asgard" FontSize="12">Asgard</Hyperlink> | <fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/peebsmiqo" FontSize="12">Peebs</Hyperlink> | <fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/ani_ki" FontSize="12">Ani</Hyperlink> | <fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/chirpxiv" FontSize="12">chirp</Hyperlink>
             </TextBlock>
 		</GroupBox>
 
