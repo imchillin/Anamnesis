@@ -3,7 +3,6 @@
 
 namespace Anamnesis.Actor.Refresh;
 
-using System;
 using System.Threading.Tasks;
 using Anamnesis.Memory;
 using Anamnesis.Services;
