@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Actor.Refresh;
 
+using System;
 using System.Threading.Tasks;
 using Anamnesis.Memory;
 using Anamnesis.Services;
@@ -28,9 +29,15 @@ public class PenumbraActorRefresher : IActorRefresher
 		if (SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player)
 		{
 			actor.ObjectKind = ActorTypes.BattleNpc;
-			await Penumbra.Penumbra.Redraw(actor.ObjectIndex);
-			await Task.Delay(200);
-			actor.ObjectKind = ActorTypes.Player;
+			try
+			{
+				await Penumbra.Penumbra.Redraw(actor.ObjectIndex);
+				await Task.Delay(200);
+			}
+			finally
+			{
+				actor.ObjectKind = ActorTypes.Player;
+			}
 		}
 		else
 		{
