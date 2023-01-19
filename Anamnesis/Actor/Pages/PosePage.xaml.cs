@@ -186,7 +186,32 @@ public partial class PosePage : UserControl
 		if (this.Actor == newActor)
 			return;
 
+		if (this.Actor?.ModelObject != null)
+		{
+			this.Actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
+		}
+
+		if (newActor?.ModelObject != null)
+		{
+			newActor.ModelObject.PropertyChanged += this.OnModelObjectChanged;
+		}
+
 		this.Actor = newActor;
+
+		await this.Refresh();
+	}
+
+	private async void OnModelObjectChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName == nameof(ActorModelMemory.Skeleton))
+		{
+			await this.Refresh();
+		}
+	}
+
+	private async Task Refresh()
+	{
+		await Dispatch.MainThread();
 
 		this.ThreeDView.DataContext = null;
 		this.GuiView.DataContext = null;
