@@ -247,7 +247,7 @@
 
 			<GroupBox Style="{StaticResource PanelGroupBox}">
 				<GroupBox.Header>
-					<XivToolsWPF:Header Key="Settings_PenumbraHeader"
+					<XivToolsWPF:Header Key="Settings_ExternalHeader"
 										Icon="Question" />
 				</GroupBox.Header>
 
@@ -262,15 +262,18 @@
 						<RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-					<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_UseExternalRefresh" Style="{StaticResource Label}"/>
+                    <XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_UseExternalRefresh" Style="{StaticResource Label}"/>
                     <CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="0" Margin="6" x:Name="Settings_UseExternalRefresh"/>
+                    <XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_UseExternalRefreshBrio" Style="{StaticResource Label}"/>
+                    <CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefreshBrio}" Grid.Column="1" Grid.Row="1" Margin="6" x:Name="Settings_UseExternalRefreshBrio"/>
 
-					<XivToolsWPF:InfoControl Grid.Row="1" Key="Settings_UseExternalRefreshWarning" Width="237" Grid.ColumnSpan="2"/>
+                    <XivToolsWPF:InfoControl Grid.Row="2" Key="Settings_UseExternalRefreshWarning" Width="237" Grid.ColumnSpan="2"/>
 
-                    <XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_EnableNpcHack" Style="{StaticResource Label}"/>
-                    <CheckBox Grid.Column="1" Grid.Row="2" Margin="6">
+                    <XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_EnableNpcHack" Style="{StaticResource Label}"/>
+                    <CheckBox Grid.Column="1" Grid.Row="3" Margin="6">
                         <CheckBox.Style>
                             <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
                                 <Setter Property="IsChecked" Value="{Binding SettingsService.Settings.EnableNpcHack}"></Setter>
@@ -278,7 +281,7 @@
                         </CheckBox.Style>
                     </CheckBox>
                     
-                    <XivToolsWPF:InfoControl Grid.Row="3" Key="Settings_EnableNpcHackWarning" Width="237" Grid.ColumnSpan="2"/>
+                    <XivToolsWPF:InfoControl Grid.Row="4" Key="Settings_EnableNpcHackWarning" Width="237" Grid.ColumnSpan="2"/>
                 </Grid>
 			</GroupBox>
 

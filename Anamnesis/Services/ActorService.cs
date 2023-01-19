@@ -27,6 +27,7 @@ public class ActorService : ServiceBase<ActorService>
 
 	private readonly List<IActorRefresher> actorRefreshers = new()
 	{
+		new BrioActorRefresher(),
 		new PenumbraActorRefresher(),
 		new AnamnesisActorRefresher(),
 	};
@@ -36,9 +37,6 @@ public class ActorService : ServiceBase<ActorService>
 	public bool CanRefreshActor(ActorMemory actor)
 	{
 		if (PoseService.Instance.IsEnabled)
-			return false;
-
-		if (PoseService.Instance.FreezeWorldPosition)
 			return false;
 
 		if (!actor.IsValid)
