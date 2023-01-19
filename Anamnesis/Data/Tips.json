@@ -1,6 +1,7 @@
 [
 	{
-		"Text": "You can download many poses from various mod archives"
+		"Text": "You can download many poses from various mod archives, like The Glamour Dresser and Aether Link, or check out the Directory in our Discord server for pose-related servers!",
+		"Url": "https://discord.gg/KvGJCCnG8t"
 	},
 	{
 		"Text": "Tips on the Home Tab will give you tips."
@@ -70,7 +71,7 @@
 		"Text": "Going in first-person mode allows you to capture perfect shots where normally the camera would block due to collision!"
 	},
 	{
-		"Text": "When using the Pose tab, if you don't have a bone selected you can use the Transform function to change your actor's scale and position."
+		"Text": "When using the Pose tab, if you don't have a bone selected, you can use the Transform function to change your actor's scale and position."
 	},
 	{
 		"Text": "Remember to unfreeze time in the GPose menu before trying to change it via Anamnesis."
@@ -105,6 +106,12 @@
 		"Url": "https://discord.gg/KvGJCCnG8t"
 	},
 	{
-		"Text": "Hold shift while Anamnesis is starting to reset your settings"
+		"Text": "Hold shift while Anamnesis is starting to reset your settings."
+	},
+	{
+		"Text": "Do you use Penumbra, Glamourer, or Brio? Anamnesis has interoperability with these tools!"
+	},
+	{
+		"Text": "Anamnesis works well when used in tandem with Ktisis!"
 	}
 ]
