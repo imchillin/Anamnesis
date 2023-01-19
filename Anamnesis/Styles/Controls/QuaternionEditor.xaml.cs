@@ -580,7 +580,13 @@ public partial class QuaternionEditor : UserControl
 					if (Keyboard.IsKeyDown(Key.LeftShift))
 						speed = 4;
 
+					if (Keyboard.IsKeyDown(Key.RightShift))
+						speed = 4;
+
 					if (Keyboard.IsKeyDown(Key.LeftCtrl))
+						speed = 0.5f;
+
+					if (Keyboard.IsKeyDown(Key.RightCtrl))
 						speed = 0.5f;
 
 					return this.Axis * (angle * speed);
