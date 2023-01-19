@@ -46,6 +46,7 @@ public class Settings : INotifyPropertyChanged
 	public bool EnableTranslucency { get; set; } = true;
 	public bool ExtendIntoWindowChrome { get; set; } = true;
 	public bool UseExternalRefresh { get; set; } = false;
+	public bool UseExternalRefreshBrio { get; set; } = false;
 	public bool EnableNpcHack { get; set; } = false;
 	public bool EnableGameHotkeyHooks { get; set; } = false;
 	public bool EnableHotkeys { get; set; } = true;

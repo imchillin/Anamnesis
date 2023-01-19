@@ -455,6 +455,9 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		if (actor.ModelObject?.Transform != null)
 			actor.ModelObject.Transform.PropertyChanged += this.OnTransformPropertyChanged;
 
+		if (actor.ModelObject?.Skeleton != null)
+			actor.ModelObject.Skeleton.PropertyChanged += this.Sync;
+
 		this.Clear();
 
 		await Dispatch.MainThread();
@@ -669,6 +672,11 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			name = prefix + name;
 
 		return name;
+	}
+
+	private async void Sync(object? sender, PropertyChangedEventArgs? e)
+	{
+		await Dispatch.MainThread();
 	}
 
 	private async void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs? e)
