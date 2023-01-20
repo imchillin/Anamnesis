@@ -17,23 +17,13 @@ internal static class BrioApi
 	private const string Url = "http://localhost:42428/brio";
 	private const int TimeoutMs = 500;
 
-	public static async Task Post(string route, object content)
+	public static async Task<string> Post(string route, object content)
 	{
-		await PostRequest(route, content);
+		var response = await PostRequest(route, content);
+		return response;
 	}
 
-	public static async Task<T> Post<T>(string route, object content)
-		where T : notnull
-	{
-		HttpResponseMessage response = await PostRequest(route, content);
-
-		using StreamReader? sr = new StreamReader(await response.Content.ReadAsStreamAsync());
-		string json = sr.ReadToEnd();
-
-		return SerializerService.Deserialize<T>(json);
-	}
-
-	private static async Task<HttpResponseMessage> PostRequest(string route, object content)
+	private static async Task<string> PostRequest(string route, object content)
 	{
 		if (!route.StartsWith('/'))
 			route = '/' + route;
@@ -49,8 +39,11 @@ internal static class BrioApi
 			byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
 			using var response = await client.PostAsync(Url + route, byteContent);
+			using var responseContent = await response.Content.ReadAsStreamAsync();
+			using StreamReader? sr = new StreamReader(responseContent);
+			string body = sr.ReadToEnd();
 
-			return response;
+			return body;
 		}
 		catch (Exception ex)
 		{

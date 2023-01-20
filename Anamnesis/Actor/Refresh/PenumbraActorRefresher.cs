@@ -16,6 +16,9 @@ public class PenumbraActorRefresher : IActorRefresher
 		if (!SettingsService.Current.UseExternalRefresh)
 			return false;
 
+		if (PoseService.Instance.IsEnabled)
+			return false;
+
 		// Penumbra can't refresh world frozen actors
 		if (PoseService.Instance.FreezeWorldPosition)
 			return false;

@@ -17,6 +17,14 @@ public static class Brio
 		await Task.Delay(500);
 	}
 
+	public static async Task<int> Spawn()
+	{
+		var resultRaw = await BrioApi.Post("/spawn", 0);
+		var resultId = int.Parse(resultRaw);
+		await Task.Delay(500);
+		return resultId;
+	}
+
 	public class RedrawData
 	{
 		public int ObjectIndex { get; set; } = -1;

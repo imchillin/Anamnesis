@@ -36,9 +36,6 @@ public class ActorService : ServiceBase<ActorService>
 
 	public bool CanRefreshActor(ActorMemory actor)
 	{
-		if (PoseService.Instance.IsEnabled)
-			return false;
-
 		if (!actor.IsValid)
 			return false;
 

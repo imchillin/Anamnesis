@@ -14,91 +14,111 @@
 	d:DesignWidth="800"
 	mc:Ignorable="d">
 
-	<Grid x:Name="ContentArea">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto"/>
-			<RowDefinition />
-			<RowDefinition Height="Auto"/>
+    <Grid x:Name="ContentArea">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
 
-		</Grid.RowDefinitions>
+        </Grid.RowDefinitions>
 
-		<StackPanel
+        <StackPanel
 			Grid.Row="0"
 			Margin="4,6,4,0"
 			Orientation="Horizontal">
-			<CheckBox Margin="6,0" IsChecked="{Binding IncludePlayers}">
-				<XivToolsWpf:TextBlock Key="Target_Players" />
-			</CheckBox>
-			<CheckBox Margin="6,0" IsChecked="{Binding IncludeCompanions}">
-				<XivToolsWpf:TextBlock Key="Target_Companions" />
-			</CheckBox>
-			<CheckBox Margin="6,0" IsChecked="{Binding IncludeNPCs}">
-				<XivToolsWpf:TextBlock Key="Target_Npc" />
-			</CheckBox>
-		</StackPanel>
+            <CheckBox Margin="6,0" IsChecked="{Binding IncludePlayers}">
+                <XivToolsWpf:TextBlock Key="Target_Players" />
+            </CheckBox>
+            <CheckBox Margin="6,0" IsChecked="{Binding IncludeCompanions}">
+                <XivToolsWpf:TextBlock Key="Target_Companions" />
+            </CheckBox>
+            <CheckBox Margin="6,0" IsChecked="{Binding IncludeNPCs}">
+                <XivToolsWpf:TextBlock Key="Target_Npc" />
+            </CheckBox>
+        </StackPanel>
 
-		<StackPanel
+        <StackPanel
 			Grid.Row="1"
 			Margin="4,6,4,0"
 			Orientation="Horizontal">
-			<CheckBox Margin="6,0" IsChecked="{Binding IncludeMounts}">
-				<XivToolsWpf:TextBlock Key="Target_Mounts" />
-			</CheckBox>
-			<CheckBox Margin="6,0" IsChecked="{Binding IncludeOrnaments}">
-				<XivToolsWpf:TextBlock Key="Target_Ornaments" />
-			</CheckBox>
-			<CheckBox Margin="6,0" IsChecked="{Binding IncludeOther}">
-				<XivToolsWpf:TextBlock Key="Target_Other" />
-			</CheckBox>
-		</StackPanel>
+            <CheckBox Margin="6,0" IsChecked="{Binding IncludeMounts}">
+                <XivToolsWpf:TextBlock Key="Target_Mounts" />
+            </CheckBox>
+            <CheckBox Margin="6,0" IsChecked="{Binding IncludeOrnaments}">
+                <XivToolsWpf:TextBlock Key="Target_Ornaments" />
+            </CheckBox>
+            <CheckBox Margin="6,0" IsChecked="{Binding IncludeOther}">
+                <XivToolsWpf:TextBlock Key="Target_Other" />
+            </CheckBox>
+        </StackPanel>
 
-		<Grid Grid.Row="2">
-
-			<Button Click="OnAddPlayerTargetActorClicked"
+        <Grid Grid.Row="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto"  />
+                </Grid.ColumnDefinitions>
+                <Button 
+                    Grid.Column="0"
+                    Click="OnAddPlayerTargetActorClicked"
 					IsEnabled="{Binding TargetService.IsPlayerTargetPinnable}"
 					Height="28"
 					Margin="6"
 					Style="{DynamicResource TransparentButton}">
 
-				<StackPanel Orientation="Horizontal">
-					<fa:IconBlock FontSize="12" Icon="Bullseye" Margin="0, 0, 6, 0"/>
-					<TextBlock Text="{Binding TargetService.PlayerTarget.Name}" />
-				</StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock FontSize="12" Icon="Bullseye" Margin="0, 0, 6, 0"/>
+                        <TextBlock Text="{Binding TargetService.PlayerTarget.Name}" />
+                    </StackPanel>
+                </Button>
+                <Button 
+                 Grid.Column="1"
+                Click="OnCreateActorClicked"
+                 Visibility="{Binding SettingsService.Current.UseExternalRefreshBrio, Converter={StaticResource B2V}}"
+					IsEnabled="{Binding GPoseService.IsGpose}"
+					Height="28"
+					Margin="6"
+					Style="{DynamicResource TransparentButton}">
 
-			</Button>
-		</Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock FontSize="12" Icon="Plus" Margin="6, 0, 6, 0"/>
+                        <XivToolsWpf:TextBlock Key="Target_SpawnActor" Margin="0, 0, 6, 0"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Grid>
 
-		<xivToolsWpfSelectors:Selector Grid.Row="3">
+        <xivToolsWpfSelectors:Selector Grid.Row="3">
 
-			<xivToolsWpfSelectors:Selector.ItemTemplate>
-				<DataTemplate>
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="32" />
-							<ColumnDefinition />
-							<ColumnDefinition Width="48" />
-						</Grid.ColumnDefinitions>
+            <xivToolsWpfSelectors:Selector.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="48" />
+                        </Grid.ColumnDefinitions>
 
-						<fa:IconBlock Grid.Column="0" Icon="{Binding Icon}" />
+                        <fa:IconBlock Grid.Column="0" Icon="{Binding Icon}" />
 
-						<StackPanel Orientation="Horizontal" Grid.Column="1">
-							<TextBlock
+                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                            <TextBlock
 								Margin="6,0,0,0"
 								FontWeight="DemiBold"
 								Foreground="{DynamicResource MaterialDesignBody}"
 								Text="{Binding DisplayName}" />
 
-							<XivToolsWpf:TextBlock
+                            <XivToolsWpf:TextBlock
 								Margin="6,0,0,0"
 								FontWeight="Light"
 								Foreground="{DynamicResource MaterialDesignBody}"
 								Visibility="{Binding IsGPoseActor, Converter={StaticResource B2V}}"
 								Key="Target_Gpose" />
-						</StackPanel>
+                        </StackPanel>
 
-						<TextBlock
+                        <TextBlock
 							Grid.Column="2"
 							Margin="6,0,0,0"
 							HorizontalAlignment="Right"
@@ -106,31 +126,31 @@
 							Foreground="{DynamicResource MaterialDesignBody}"
 							Text="{Binding DistanceFromPlayer, StringFormat={}{0:#0} ym}" />
 
-						<Grid.ToolTip>
-							<TextBlock>
-								<TextBlock.Text>
-									<MultiBinding StringFormat="{}{0} ({1})">
-										<Binding Path="DisplayName" />
-										<Binding Path="ObjectKind" />
-									</MultiBinding>
-								</TextBlock.Text>
-							</TextBlock>
-						</Grid.ToolTip>
+                        <Grid.ToolTip>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} ({1})">
+                                        <Binding Path="DisplayName" />
+                                        <Binding Path="ObjectKind" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </Grid.ToolTip>
 
-					</Grid>
-				</DataTemplate>
-			</xivToolsWpfSelectors:Selector.ItemTemplate>
-		</xivToolsWpfSelectors:Selector>
+                    </Grid>
+                </DataTemplate>
+            </xivToolsWpfSelectors:Selector.ItemTemplate>
+        </xivToolsWpfSelectors:Selector>
 
-		<Grid Grid.Row="4" Margin="10,6,2,6" HorizontalAlignment="Right">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
+        <Grid Grid.Row="4" Margin="10,6,2,6" HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-			<XivToolsWpf:TextBlock Key="Target_Hidden" Grid.Column="0" />
-			<CheckBox IsChecked="{Binding IncludeHidden}" Grid.Column="1" />
-		</Grid>
+            <XivToolsWpf:TextBlock Key="Target_Hidden" Grid.Column="0" />
+            <CheckBox IsChecked="{Binding IncludeHidden}" Grid.Column="1" />
+        </Grid>
 
-	</Grid>
+    </Grid>
 </local:TargetSelectorDrawer>

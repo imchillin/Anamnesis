@@ -5,8 +5,13 @@ namespace Anamnesis.Views;
 
 using System;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Anamnesis.Actor;
+using Anamnesis.Brio;
+using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
@@ -39,6 +44,8 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 	}
 
 	public TargetService TargetService => TargetService.Instance;
+	public GposeService GPoseService => GposeService.Instance;
+	public SettingsService SettingsService => SettingsService.Instance;
 
 	public bool IncludePlayers
 	{
@@ -171,5 +178,41 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 	{
 		this.Value = TargetService.GetTargetedActor();
 		this.OnSelectionChanged(true);
+	}
+
+	private async void OnCreateActorClicked(object sender, RoutedEventArgs e)
+	{
+		var nextActorId = await Brio.Spawn();
+		if(nextActorId != -1)
+		{
+			var actors = ActorService.Instance.GetAllActors(true);
+			var newActor = actors.SingleOrDefault(i => i.ObjectIndex == nextActorId);
+			if(newActor != null)
+			{
+				if (PoseService.Instance.IsEnabled)
+				{
+					// We try and load the A-Pose if it's available
+					var path = FileService.ParseToFilePath(FileService.StandardPoseDirectory.Path);
+					path = path + Path.Combine("Unisex", "A-Pose.pose");
+
+					if (File.Exists(path))
+					{
+						PoseFile? poseFile = new PoseFile().Deserialize(File.OpenRead(path)) as PoseFile;
+						if (poseFile == null)
+							return;
+
+						SkeletonVisual3d skeletonVisual3D = new();
+						ActorMemory fullActor = new ActorMemory();
+						fullActor.SetAddress(newActor.Address);
+						fullActor.Tick();
+						await skeletonVisual3D.SetActor(fullActor);
+						await poseFile.Apply(fullActor, skeletonVisual3D, null, PoseFile.Mode.Rotation);
+				}
+				}
+
+				this.Value = newActor;
+				this.OnSelectionChanged(true);
+			}
+		}
 	}
 }

@@ -12,6 +12,9 @@ public class AnamnesisActorRefresher : IActorRefresher
 {
 	public bool CanRefresh(ActorMemory actor)
 	{
+		if (PoseService.Instance.IsEnabled)
+			return false;
+
 		// Ana can't refresh gpose actors
 		if (actor.IsGPoseActor)
 			return false;

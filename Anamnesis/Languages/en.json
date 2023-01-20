@@ -65,6 +65,7 @@
 	"Target_Other": "Others",
 	"Target_Hidden": "Show Hidden/Unloaded",
 	"Target_Gpose": "(GPose)",
+	"Target_SpawnActor": "Spawn",
 
 	"SubActor_Title": "Sub Actors",
 	"SubActor_Mount": "Mount",
@@ -677,7 +678,7 @@
 	"Settings_DefaultAuthor": "Default Author Name",
 	"Settings_ExternalHeader": "External Services",
 	"Settings_UseExternalRefresh": "Use Penumbra Redraw",
-	"Settings_UseExternalRefreshBrio": "Use Brio Redraw",
+	"Settings_UseExternalRefreshBrio": "Enable Brio Integration",
 	"Settings_UseExternalRefreshWarning": "Requires the HTTP API to be enabled in Penumbra/Brio. This option is found under the Advanced/Integrations section of the Settings tab of the plugins.",
 	"Settings_EnableNpcHack": "Enable NPC Faces on PC",
 	"Settings_EnableNpcHackWarning": "This will break Penumbra Collections.",
