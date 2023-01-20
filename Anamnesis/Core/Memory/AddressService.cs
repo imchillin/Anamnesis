@@ -144,13 +144,7 @@ public class AddressService : ServiceBase<AddressService>
 		tasks.Add(this.GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
 		tasks.Add(this.GetAddressFromSignature("PlayerTargetSystem", "48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 0, (p) => { PlayerTargetSystem = p; }));
 
-		tasks.Add(this.GetAddressFromTextSignature(
-			"TimeAsm",
-			"48 89 5C 24 ?? 57 48 83 EC 20 48 8B F9 48 8B DA 48 81 C1 ?? ?? ?? ?? E8 ?? ?? ?? ?? 4C 8B 87",
-			(p) =>
-			{
-				TimeAsm = p + 0xE5;
-			}));
+		tasks.Add(this.GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p));
 
 		tasks.Add(this.GetAddressFromTextSignature(
 			"Framework",
