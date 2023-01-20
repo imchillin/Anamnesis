@@ -326,7 +326,10 @@ public partial class MainWindow : ChromedWindow
 			if (!actor.IsValid || actor.Memory == null)
 				return;
 
-			await Brio.Brio.Despawn(actor.Memory.ObjectIndex);
+			if(await Brio.Brio.Despawn(actor.Memory.ObjectIndex))
+			{
+				TargetService.UnpinActor(actor);
+			}
 		}
 	}
 
