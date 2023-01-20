@@ -4,11 +4,11 @@
 namespace Anamnesis.Actor.Refresh;
 
 using System.Threading.Tasks;
+using Anamnesis.Brio;
 using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using XivToolsWpf;
-using static Anamnesis.Memory.ActorBasicMemory;
 
 public class BrioActorRefresher : IActorRefresher
 {
@@ -24,8 +24,19 @@ public class BrioActorRefresher : IActorRefresher
 	public async Task RefreshActor(ActorMemory actor)
 	{
 		await Dispatch.MainThread();
-
 		bool isPosing = PoseService.Instance.IsEnabled;
+
+		RedrawType redrawType = RedrawType.AllowFull | RedrawType.PreservePosition | RedrawType.AllowOptimized;
+
+		if(actor.IsWeaponDirty && !isPosing)
+		{
+			redrawType |= RedrawType.RedrawWeaponsOnOptimized;
+		}
+
+		if (actor.IsWeaponDirty && isPosing)
+		{
+			redrawType &= ~RedrawType.AllowOptimized;
+		}
 
 		if (isPosing)
 		{
@@ -36,25 +47,27 @@ public class BrioActorRefresher : IActorRefresher
 			poseFile.WriteToFile(actor, skeletonVisual3D, null);
 
 			// Redraw
-			await Brio.Brio.Redraw(actor.ObjectIndex);
-
-			// TODO: It's probably best to find some way to detect when it's safe
-			// this is a good first attempt though.
-			new Task(async () =>
+			var result = await Brio.Redraw(actor.ObjectIndex, redrawType);
+			if(result == "\"Full\"")
 			{
-				await Task.Delay(500);
-				await Dispatch.MainThread();
+				// TODO: It's probably best to find some way to detect when it's safe
+				// this is a good first attempt though.
+				new Task(async () =>
+				{
+					await Task.Delay(500);
+					await Dispatch.MainThread();
 
-				// Restore current pose
-				skeletonVisual3D = new SkeletonVisual3d();
-				await skeletonVisual3D.SetActor(actor);
-				await poseFile.Apply(actor, skeletonVisual3D, null, PoseFile.Mode.All);
-			}).Start();
+					// Restore current pose
+					skeletonVisual3D = new SkeletonVisual3d();
+					await skeletonVisual3D.SetActor(actor);
+					await poseFile.Apply(actor, skeletonVisual3D, null, PoseFile.Mode.All);
+				}).Start();
+			}
 		}
 		else
 		{
 			// Outside of pose mode we can just refresh
-			await Brio.Brio.Redraw(actor.ObjectIndex);
+			await Brio.Redraw(actor.ObjectIndex, redrawType);
 		}
 	}
 }

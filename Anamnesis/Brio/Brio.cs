@@ -3,18 +3,22 @@
 
 namespace Anamnesis.Brio;
 
+using System;
 using System.Threading.Tasks;
 
 public static class Brio
 {
-	public static async Task Redraw(int targetIndex)
+	public static async Task<string> Redraw(int targetIndex, RedrawType redrawType)
 	{
 		RedrawData data = new();
 		data.ObjectIndex = targetIndex;
+		data.RedrawType = redrawType;
 
-		await BrioApi.Post("/redraw", data);
+		var result = await BrioApi.Post("/redraw", data);
 
 		await Task.Delay(500);
+
+		return result;
 	}
 
 	public static async Task<int> Spawn()
@@ -24,9 +28,22 @@ public static class Brio
 		await Task.Delay(500);
 		return resultId;
 	}
+}
 
-	public class RedrawData
-	{
-		public int ObjectIndex { get; set; } = -1;
-	}
+[Flags]
+public enum RedrawType
+{
+	None = 0,
+	AllowOptimized = 1,
+	AllowFull = 2,
+	RedrawWeaponsOnOptimized = 4,
+	PreservePosition = 8,
+
+	All = AllowOptimized | AllowFull | RedrawWeaponsOnOptimized | PreservePosition,
+}
+
+public class RedrawData
+{
+	public int ObjectIndex { get; set; } = -1;
+	public RedrawType? RedrawType { get; set; } = Anamnesis.Brio.RedrawType.All;
 }
