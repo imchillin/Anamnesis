@@ -26,7 +26,7 @@ public class BrioActorRefresher : IActorRefresher
 		await Dispatch.MainThread();
 		bool isPosing = PoseService.Instance.IsEnabled;
 
-		RedrawType redrawType = RedrawType.AllowFull | RedrawType.PreservePosition | RedrawType.AllowOptimized;
+		RedrawType redrawType = RedrawType.AllowFull | RedrawType.PreservePosition | RedrawType.AllowOptimized | RedrawType.ForceAllowNPCAppearance;
 
 		if(actor.IsWeaponDirty)
 		{

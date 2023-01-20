@@ -50,8 +50,9 @@ public enum RedrawType
 	AllowFull = 2,
 	ForceRedrawWeaponsOnOptimized = 4,
 	PreservePosition = 8,
+	ForceAllowNPCAppearance = 16,
 
-	All = AllowOptimized | AllowFull | ForceRedrawWeaponsOnOptimized | PreservePosition,
+	All = AllowOptimized | AllowFull | ForceRedrawWeaponsOnOptimized | PreservePosition | ForceAllowNPCAppearance,
 }
 
 [Flags]
