@@ -319,6 +319,20 @@ public partial class MainWindow : ChromedWindow
 		}
 	}
 
+	private async void OnDespawnActorClicked(object sender, RoutedEventArgs e)
+	{
+		if (sender is FrameworkElement el && el.DataContext is PinnedActor actor)
+		{
+			if (!actor.IsValid || actor.Memory == null)
+				return;
+
+			if(await Brio.Brio.Despawn(actor.Memory.ObjectIndex))
+			{
+				TargetService.UnpinActor(actor);
+			}
+		}
+	}
+
 	private void OnActorPinPreviewMouseUp(object sender, MouseButtonEventArgs e)
 	{
 		if (e.ChangedButton == MouseButton.Middle)
