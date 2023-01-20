@@ -28,7 +28,7 @@ public class BrioActorRefresher : IActorRefresher
 
 		RedrawType redrawType = RedrawType.AllowFull | RedrawType.PreservePosition | RedrawType.AllowOptimized;
 
-		if(actor.IsWeaponDirty && !isPosing)
+		if(actor.IsWeaponDirty)
 		{
 			redrawType |= RedrawType.ForceRedrawWeaponsOnOptimized;
 		}

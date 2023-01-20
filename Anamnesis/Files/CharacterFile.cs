@@ -253,6 +253,7 @@ public class CharacterFile : JsonFileBase
 			{
 				this.MainHand?.Write(actor.MainHand, true);
 				this.OffHand?.Write(actor.OffHand, false);
+				actor.IsWeaponDirty = true;
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentGear, mode))
