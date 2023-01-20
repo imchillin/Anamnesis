@@ -70,6 +70,7 @@ public class ActorMemory : ActorBasicMemory
 
 	public bool AutomaticRefreshEnabled { get; set; } = true;
 	public bool IsRefreshing { get; set; } = false;
+	public bool IsWeaponDirty { get; set; } = false;
 	public bool PendingRefresh => this.refreshQueue.Pending;
 
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
@@ -181,6 +182,7 @@ public class ActorMemory : ActorBasicMemory
 		finally
 		{
 			this.IsRefreshing = false;
+			this.IsWeaponDirty = false;
 			this.WriteDelayedBinds();
 		}
 
@@ -223,6 +225,9 @@ public class ActorMemory : ActorBasicMemory
 
 		if (change.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh) && change.Origin != PropertyChange.Origins.Game)
 		{
+			if (change.OriginBind.Flags.HasFlag(BindFlags.WeaponRefresh))
+				this.IsWeaponDirty = true;
+
 			this.Refresh();
 		}
 	}

@@ -11,4 +11,5 @@ public enum BindFlags
 	DontCacheOffsets = 4,
 	OnlyInGPose = 8,
 	DontRecordHistory = 16,
+	WeaponRefresh = 32,
 }
