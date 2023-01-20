@@ -182,7 +182,11 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 	private async void OnCreateActorClicked(object sender, RoutedEventArgs e)
 	{
-		var nextActorId = await Brio.Spawn();
+		SpawnOptions options = SpawnOptions.None;
+		if (PoseService.Instance.IsEnabled || PoseService.Instance.FreezeWorldPosition)
+			options |= SpawnOptions.ApplyModelPosition;
+
+		var nextActorId = await Brio.Spawn(options);
 		if(nextActorId != -1)
 		{
 			var actors = ActorService.Instance.GetAllActors(true);
