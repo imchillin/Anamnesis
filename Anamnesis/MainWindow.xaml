@@ -45,7 +45,12 @@
 									<MenuItem Visibility="{Binding IsValid, Converter={StaticResource B2V}}" 
 											  Click="OnTargetActorClicked"
 											  Header="Target" />
-								</ContextMenu>
+
+                                <MenuItem Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=SettingsService.Settings.UseExternalRefreshBrio, Converter={StaticResource B2V}}" 
+											  IsEnabled="{Binding IsGPoseActor}"
+											  Click="OnDespawnActorClicked"
+											  Header="Despawn" />
+                            </ContextMenu>
 							</ToggleButton.ContextMenu>
 
 						<Grid Margin="6,0">
