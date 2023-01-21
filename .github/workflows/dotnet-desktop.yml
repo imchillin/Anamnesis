@@ -52,7 +52,7 @@ jobs:
     - name: Zip Release
       uses: TheDoctor0/zip-release@0.6.0
       with:
-        filename: '../Anamnesis-IVCS.zip'
+        filename: '../Anamnesis.zip'
         directory: './publish/'
         exclusions: '*.pdb* *.xml*'
         
@@ -60,7 +60,7 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         allowUpdates: true
-        artifacts: "Anamnesis-IVCS.zip"
+        artifacts: "Anamnesis.zip"
         name: ${{ steps.version-date.outputs.formattedTime }}
         tag: v${{ steps.version-date.outputs.formattedTime }}
         #body: ${{ steps.Changelog.outputs.changelog }}
