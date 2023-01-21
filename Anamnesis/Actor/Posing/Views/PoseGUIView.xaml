@@ -80,16 +80,19 @@
 					<local:BoneView Canvas.Left="118" Canvas.Top="145" BoneName="SpineB"/>
 					<local:BoneView Canvas.Left="118" Canvas.Top="180" BoneName="SpineA"/>
 					<local:BoneView Canvas.Left="118" Canvas.Top="210" BoneName="Waist"/>
+
 					<local:BoneView Canvas.Left="118" Canvas.Top="233" BoneName="iv_koumon"/>
 					<local:BoneView Canvas.Left="95" Canvas.Top="220" BoneName="iv_koumon_l" FlippedBoneName="iv_koumon_r"/>
 					<local:BoneView Canvas.Left="140" Canvas.Top="220" BoneName="iv_koumon_r" FlippedBoneName="iv_koumon_l"/>
 					<local:BoneView Canvas.Left="81" Canvas.Top="237" BoneName="iv_shiri_l" FlippedBoneName="iv_shiri_r"/>
 					<local:BoneView Canvas.Left="152" Canvas.Top="237" BoneName="iv_shiri_r" FlippedBoneName="iv_shiri_l"/>
+
 					<local:BoneView Canvas.Left="98" Canvas.Top="93" BoneName="ClavicleLeft" FlippedBoneName="ClavicleRight"/>
 					<local:BoneView Canvas.Left="138" Canvas.Top="93" BoneName="ClavicleRight" FlippedBoneName="ClavicleLeft"/>
 					<local:BoneView Canvas.Left="73" Canvas.Top="87" BoneName="ShoulderLeft" FlippedBoneName="ShoulderRight"/>
 					<local:BoneView Canvas.Left="165" Canvas.Top="87" BoneName="ShoulderRight" FlippedBoneName="ShoulderLeft"/>
 					<local:BoneView Canvas.Left="102" Canvas.Top="120" BoneName="BreastLeft" FlippedBoneName="BreastRight"/>
+
 					<local:BoneView Canvas.Left="95" Canvas.Top="142" BoneName="iv_c_mune_l" FlippedBoneName="iv_c_mune_r"/>
 					<local:BoneView Canvas.Left="135" Canvas.Top="120" BoneName="BreastRight" FlippedBoneName="BreastLeft"/>
 					<local:BoneView Canvas.Left="140" Canvas.Top="142" BoneName="iv_c_mune_r" FlippedBoneName="iv_c_mune_l"/>
@@ -97,6 +100,7 @@
 					<local:BoneView Canvas.Left="55" Canvas.Top="127" BoneName="iv_nitoukin_l" FlippedBoneName="iv_nitoukin_r"/>
 					<local:BoneView Canvas.Left="158" Canvas.Top="107" BoneName="ArmRight" FlippedBoneName="ArmLeft"/>
 					<local:BoneView Canvas.Left="179" Canvas.Top="127" BoneName="iv_nitoukin_r" FlippedBoneName="iv_nitoukin_l"/>
+
 					<local:BoneView Canvas.Left="75" Canvas.Top="160" BoneName="ElbowLeft" FlippedBoneName="ElbowRight"/>
 					<local:BoneView Canvas.Left="160" Canvas.Top="160" BoneName="ElbowRight" FlippedBoneName="ElbowLeft"/>
 					<local:BoneView Canvas.Left="55" Canvas.Top="160" BoneName="ForearmLeft" FlippedBoneName="ForearmRight"/>
