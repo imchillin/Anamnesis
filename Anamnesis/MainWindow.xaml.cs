@@ -25,6 +25,7 @@ using PropertyChanged;
 using XivToolsWpf;
 using XivToolsWpf.Windows;
 using XivToolsWpf.Extensions;
+using Serilog;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml.
@@ -326,9 +327,16 @@ public partial class MainWindow : ChromedWindow
 			if (!actor.IsValid || actor.Memory == null)
 				return;
 
-			if(await Brio.Brio.Despawn(actor.Memory.ObjectIndex))
+			try
 			{
-				TargetService.UnpinActor(actor);
+				if (await Brio.Brio.Despawn(actor.Memory.ObjectIndex))
+				{
+					TargetService.UnpinActor(actor);
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Error("Failed to despawn actor", ex);
 			}
 		}
 	}

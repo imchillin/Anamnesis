@@ -15,6 +15,7 @@ using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
+using Serilog;
 using XivToolsWpf;
 
 public abstract class TargetSelectorDrawer : SelectorDrawer<ActorBasicMemory>
@@ -186,37 +187,48 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 		if (PoseService.Instance.IsEnabled || PoseService.Instance.FreezeWorldPosition)
 			options |= SpawnOptions.ApplyModelPosition;
 
-		var nextActorId = await Brio.Spawn(options);
-		if(nextActorId != -1)
+		try
 		{
-			var actors = ActorService.Instance.GetAllActors(true);
-			var newActor = actors.SingleOrDefault(i => i.ObjectIndex == nextActorId);
-			if(newActor != null)
+			var nextActorId = await Brio.Spawn(options);
+			if (nextActorId != -1)
 			{
-				if (PoseService.Instance.IsEnabled)
+				var actors = ActorService.Instance.GetAllActors(true);
+				var newActor = actors.SingleOrDefault(i => i.ObjectIndex == nextActorId);
+				if (newActor != null)
 				{
-					// We try and load the A-Pose if it's available
-					var path = FileService.ParseToFilePath(FileService.StandardPoseDirectory.Path);
-					path = path + Path.Combine("Unisex", "A-Pose.pose");
-
-					if (File.Exists(path))
+					if (PoseService.Instance.IsEnabled)
 					{
-						PoseFile? poseFile = new PoseFile().Deserialize(File.OpenRead(path)) as PoseFile;
-						if (poseFile == null)
-							return;
+						// We try and load the A-Pose if it's available
+						var path = FileService.ParseToFilePath(FileService.StandardPoseDirectory.Path);
+						path = path + Path.Combine("Unisex", "A-Pose.pose");
 
-						SkeletonVisual3d skeletonVisual3D = new();
-						ActorMemory fullActor = new ActorMemory();
-						fullActor.SetAddress(newActor.Address);
-						fullActor.Tick();
-						await skeletonVisual3D.SetActor(fullActor);
-						await poseFile.Apply(fullActor, skeletonVisual3D, null, PoseFile.Mode.Rotation);
-				}
-				}
+						if (File.Exists(path))
+						{
+							PoseFile? poseFile = new PoseFile().Deserialize(File.OpenRead(path)) as PoseFile;
+							if (poseFile == null)
+								return;
 
-				this.Value = newActor;
-				this.OnSelectionChanged(true);
+							SkeletonVisual3d skeletonVisual3D = new();
+							ActorMemory fullActor = new ActorMemory();
+							fullActor.SetAddress(newActor.Address);
+							fullActor.Tick();
+							await skeletonVisual3D.SetActor(fullActor);
+							await poseFile.Apply(fullActor, skeletonVisual3D, null, PoseFile.Mode.Rotation);
+						}
+					}
+
+					this.Value = newActor;
+					this.OnSelectionChanged(true);
+				}
 			}
+			else
+			{
+				throw new Exception("Brio could not spawn actor");
+			}
+		}
+		catch(Exception ex)
+		{
+			Log.Error("Failed to spawn actor", ex);
 		}
 	}
 }
