@@ -367,80 +367,7 @@
 					</Grid>
 				</GroupBox>
 
-				<GroupBox>
-					<GroupBox.Header>
-						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
-							<XivToolsWpf:TextBlock Key="Pose_Matrix_GenitalCategory"/>
-						</Button>
-					</GroupBox.Header>
-
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
-
-						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition/>
-							<RowDefinition/>
-						</Grid.RowDefinitions>
-
-						<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_Penis" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="iv_ochinko_a" Label="1"/>
-							<local:BoneView BoneName="iv_ochinko_b" Label="2"/>
-							<local:BoneView BoneName="iv_ochinko_c" Label="3"/>
-							<local:BoneView BoneName="iv_ochinko_d" Label="4"/>
-							<local:BoneView BoneName="iv_ochinko_e" Label="5"/>
-							<local:BoneView BoneName="iv_ochinko_f" Label="6"/>
-						</StackPanel>
-
-						<XivToolsWpf:TextBlock Grid.Column="3" Key="Pose_Scrotum" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="4" Grid.Row="0" Orientation="Horizontal" >
-							<local:BoneView BoneName="iv_kougan_l" Label="L"/>
-							<local:BoneView BoneName="iv_kougan_r" Label="R"/>
-						</StackPanel>
-
-						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Vagina" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
-							<local:BoneView BoneName="iv_omanko"/>
-						</StackPanel>
-
-						<XivToolsWpf:TextBlock Grid.Column="3" Grid.Row="1" Key="Pose_Clitoris" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="4" Grid.Row="1" Orientation="Horizontal" >
-							<local:BoneView BoneName="iv_kuritto"/>
-						</StackPanel>
-
-						<XivToolsWpf:TextBlock Grid.Column="7" Grid.Row="1" Key="Pose_Labia" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="8" Grid.Row="1" Orientation="Horizontal" >
-							<local:BoneView BoneName="iv_inshin_l" Label="L"/>
-							<local:BoneView BoneName="iv_inshin_r" Label="R"/>
-						</StackPanel>
-
-						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="2" Key="Pose_Anus" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" >
-							<local:BoneView BoneName="iv_koumon"/>
-							<local:BoneView BoneName="iv_koumon_l" Label="L"/>
-							<local:BoneView BoneName="iv_koumon_r" Label="R"/>
-						</StackPanel>
-
-						<XivToolsWpf:TextBlock Grid.Column="3" Grid.Row="2" Key="Pose_Buttocks" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="4" Grid.Row="2" Orientation="Horizontal" >
-							<local:BoneView BoneName="iv_shiri_l" Label="L"/>
-							<local:BoneView BoneName="iv_shiri_r" Label="R"/>
-						</StackPanel>
-
-					</Grid>
-
-				</GroupBox>
+				
 
 				<GroupBox>
 					<GroupBox.Header>
@@ -999,6 +926,80 @@
 							</ItemsControl>
 						</Grid>
 					</Grid>
+				</GroupBox>
+				<GroupBox>
+					<GroupBox.Header>
+						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
+							<XivToolsWpf:TextBlock Key="Pose_Matrix_GenitalCategory"/>
+						</Button>
+					</GroupBox.Header>
+
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_Penis" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" >
+							<local:BoneView BoneName="iv_ochinko_a" Label="1"/>
+							<local:BoneView BoneName="iv_ochinko_b" Label="2"/>
+							<local:BoneView BoneName="iv_ochinko_c" Label="3"/>
+							<local:BoneView BoneName="iv_ochinko_d" Label="4"/>
+							<local:BoneView BoneName="iv_ochinko_e" Label="5"/>
+							<local:BoneView BoneName="iv_ochinko_f" Label="6"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="3" Key="Pose_Scrotum" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="4" Grid.Row="0" Orientation="Horizontal" >
+							<local:BoneView BoneName="iv_kougan_l" Label="L"/>
+							<local:BoneView BoneName="iv_kougan_r" Label="R"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Vagina" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
+							<local:BoneView BoneName="iv_omanko"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="3" Grid.Row="1" Key="Pose_Clitoris" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="4" Grid.Row="1" Orientation="Horizontal" >
+							<local:BoneView BoneName="iv_kuritto"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="7" Grid.Row="1" Key="Pose_Labia" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="8" Grid.Row="1" Orientation="Horizontal" >
+							<local:BoneView BoneName="iv_inshin_l" Label="L"/>
+							<local:BoneView BoneName="iv_inshin_r" Label="R"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="2" Key="Pose_Anus" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" >
+							<local:BoneView BoneName="iv_koumon"/>
+							<local:BoneView BoneName="iv_koumon_l" Label="L"/>
+							<local:BoneView BoneName="iv_koumon_r" Label="R"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="3" Grid.Row="2" Key="Pose_Buttocks" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="4" Grid.Row="2" Orientation="Horizontal" >
+							<local:BoneView BoneName="iv_shiri_l" Label="L"/>
+							<local:BoneView BoneName="iv_shiri_r" Label="R"/>
+						</StackPanel>
+
+					</Grid>
+
 				</GroupBox>
 
 			</StackPanel>
