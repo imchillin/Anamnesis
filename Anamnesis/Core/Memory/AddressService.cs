@@ -40,6 +40,8 @@ public class AddressService : ServiceBase<AddressService>
 	public static IntPtr Framework { get; set; }
 	public static IntPtr PlayerTargetSystem { get; set; }
 	public static IntPtr AnimationSpeedPatch { get; set; }
+	public static IntPtr CameraAngleXFreeze { get; set; }
+	public static IntPtr CameraAngleYFreeze { get; set; }
 
 	public static IntPtr Camera
 	{
@@ -143,6 +145,8 @@ public class AddressService : ServiceBase<AddressService>
 		tasks.Add(this.GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
 		tasks.Add(this.GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
 		tasks.Add(this.GetAddressFromSignature("PlayerTargetSystem", "48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 0, (p) => { PlayerTargetSystem = p; }));
+		tasks.Add(this.GetAddressFromTextSignature("CameraAngleXFreeze", "F3 0F 11 83 30 01 00 00 48 83 C4 20 5B C3", (p) => { CameraAngleXFreeze = p; }));
+		tasks.Add(this.GetAddressFromTextSignature("CameraAngleYFreeze", "89 83 34 01 00 00 F3 0F 10 83 40 01 00 00", (p) => { CameraAngleYFreeze = p; }));
 
 		tasks.Add(this.GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p));
 
