@@ -80,7 +80,7 @@
 									Width="22"
 									Padding="0"
 									Margin="0"
-									IsChecked="{Binding CameraService.Camera.FreezeAngle}">
+									IsChecked="{Binding CameraService.FreezeAngle}">
 					
 					<ToggleButton.Content>
 						<fa:IconBlock Icon="LockOpen"
