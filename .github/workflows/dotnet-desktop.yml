@@ -31,12 +31,11 @@ jobs:
     - name: Checkout Submodules
       uses: snickerbockers/submodules-init@v4
       
-    - name: Write Version file
-      uses: visiosto/replace-value@v1.0.0
+    - name: ReplaceAll String Values Action
+      uses: prabhakarareddygaddam-mcd/replace-action@1.0.0
       with:
-        file: './Anamnesis/VersionInfo.cs'
-        replaced: '2000, 01, 01, 00, 00, 00'
-        value: ${{ steps.build-time.outputs.formattedTime }}
+       files:  './Anamnesis/VersionInfo.cs'
+       replacements: '2000, 01, 01, 00, 00, 00=${{ steps.build-time.outputs.formattedTime }}'
 
     - name: Install .NET
       uses: actions/setup-dotnet@v1.8.2
