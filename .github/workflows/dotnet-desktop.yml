@@ -30,12 +30,13 @@ jobs:
         
     - name: Checkout Submodules
       uses: snickerbockers/submodules-init@v4
-      
-    - name: ReplaceAll String Values Action
-      uses: prabhakarareddygaddam-mcd/replace-action@1.0.0
+       
+    - name: REplace version info
+      uses: Nambers/ReplaceStringInFile@v1.3
       with:
-       files:  './Anamnesis/VersionInfo.cs'
-       replacements: '2000, 01, 01, 00, 00, 00=${{ steps.build-time.outputs.formattedTime }}'
+       path: './Anamnesis/VersionInfo.cs'
+       oldString: '2000, 01, 01, 00, 00, 00'
+       newString: ${{ steps.build-time.outputs.formattedTime }}
 
     - name: Install .NET
       uses: actions/setup-dotnet@v1.8.2
