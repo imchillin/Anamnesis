@@ -14,8 +14,6 @@ public delegate void GposeEvent(bool newState);
 [AddINotifyPropertyChangedInterface]
 public class GposeService : ServiceBase<GposeService>
 {
-	private NopHookViewModel? freezePosition;
-
 	private bool initialized = false;
 
 	public static event GposeEvent? GposeStateChanged;
@@ -42,8 +40,6 @@ public class GposeService : ServiceBase<GposeService>
 
 	public override Task Start()
 	{
-		this.freezePosition = new NopHookViewModel(AddressService.GPoseCameraPositionFreeze, 5);
-
 		Task.Run(this.CheckThread);
 		return base.Start();
 	}
@@ -58,14 +54,12 @@ public class GposeService : ServiceBase<GposeService>
 			{
 				this.initialized = true;
 				this.IsGpose = newGpose;
-				this.freezePosition?.SetEnabled(newGpose);
 				continue;
 			}
 
 			if (newGpose != this.IsGpose)
 			{
 				this.IsGpose = newGpose;
-				this.freezePosition?.SetEnabled(newGpose);
 				GposeStateChanged?.Invoke(newGpose);
 			}
 
