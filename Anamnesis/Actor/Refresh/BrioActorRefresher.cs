@@ -33,7 +33,7 @@ public class BrioActorRefresher : IActorRefresher
 			redrawType |= RedrawType.ForceRedrawWeaponsOnOptimized;
 		}
 
-		if (actor.IsWeaponDirty && isPosing)
+		if (actor.IsOverworldActor || (actor.IsWeaponDirty && isPosing))
 		{
 			redrawType &= ~RedrawType.AllowOptimized;
 		}
