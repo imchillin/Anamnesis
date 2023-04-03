@@ -321,7 +321,7 @@
 					Margin="6,3"
 					HorizontalAlignment="Left"
 					TextWrapping="Wrap">
-					Player Characters are not NPC-face compatible.
+					Player Characters are not NPC-face or child race compatible.
 				</TextBlock>
 
 				<TextBlock
