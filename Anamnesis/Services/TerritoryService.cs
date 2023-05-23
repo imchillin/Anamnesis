@@ -37,7 +37,7 @@ public class TerritoryService : ServiceBase<TerritoryService>
 				return;
 
 			this.currentWeatherId = value;
-			this.CurrentWeather = GameDataService.Weathers.GetOrDefault(value);
+			this.CurrentWeather = GameDataService.Weathers?.GetOrDefault(value);
 		}
 	}
 
