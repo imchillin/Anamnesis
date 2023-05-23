@@ -172,7 +172,7 @@ public class ExcelSheet<T> : Lumina.Excel.ExcelSheet<T>, IEnumerable<T>, IEnumer
 			segment.File = file;
 
 			// convert big endian to little endian on le systems
-			this.ProcessDataEndianness(segment.File);
+			////this.ProcessDataEndianness(segment.File);
 
 			this.DataPages.Add(segment);
 		}
