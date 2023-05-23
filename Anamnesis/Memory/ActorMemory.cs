@@ -59,10 +59,10 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x0930)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x1244)] public bool IsMotionEnabled { get; set; }
 	[Bind(0x1A48)] public float Transparency { get; set; }
-	[Bind(0x1B2E)] public byte Voice { get; set; }
-	[Bind(0x1B30)] public byte CharacterModeRaw { get; set; }
-	[Bind(0x1B31)] public byte CharacterModeInput { get; set; }
-	[Bind(0x1B54)] public byte AttachmentPoint { get; set; }
+	[Bind(0x1B24)] public byte Voice { get; set; }
+	[Bind(0x1B26)] public byte CharacterModeRaw { get; set; }
+	[Bind(0x1B27)] public byte CharacterModeInput { get; set; }
+	[Bind(0x1B44)] public byte AttachmentPoint { get; set; }
 
 	public PinnedActor? Pinned { get; set; }
 
