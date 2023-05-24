@@ -45,24 +45,24 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x0100, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 	[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
 	[Bind(0x01E0)] public byte ClassJob { get; set; }
-	[Bind(0x0660, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
-	[Bind(0x0668)] public ushort MountId { get; set; }
-	[Bind(0x06C0, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
-	[Bind(0x06E0)] public WeaponMemory? MainHand { get; set; }
-	[Bind(0x0748)] public WeaponMemory? OffHand { get; set; }
-	[Bind(0x0818)] public ActorEquipmentMemory? Equipment { get; set; }
-	[Bind(0x0840)] public ActorCustomizeMemory? Customize { get; set; }
-	[Bind(0x085E, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x085F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
-	[Bind(0x0870, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
-	[Bind(0x0878)] public ushort OrnamentId { get; set; }
-	[Bind(0x0900)] public AnimationMemory? Animation { get; set; }
-	[Bind(0x1214)] public bool IsMotionEnabled { get; set; }
-	[Bind(0x1A18)] public float Transparency { get; set; }
-	[Bind(0x1AFE)] public byte Voice { get; set; }
-	[Bind(0x1B00)] public byte CharacterModeRaw { get; set; }
-	[Bind(0x1B01)] public byte CharacterModeInput { get; set; }
-	[Bind(0x1B24)] public byte AttachmentPoint { get; set; }
+	[Bind(0x0670, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
+	[Bind(0x0678)] public ushort MountId { get; set; }
+	[Bind(0x06D8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
+	[Bind(0x06F8)] public WeaponMemory? MainHand { get; set; }
+	[Bind(0x0760)] public WeaponMemory? OffHand { get; set; }
+	[Bind(0x0830)] public ActorEquipmentMemory? Equipment { get; set; }
+	[Bind(0x0858)] public ActorCustomizeMemory? Customize { get; set; }
+	[Bind(0x0876, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
+	[Bind(0x0877, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+	[Bind(0x0888, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
+	[Bind(0x0890)] public ushort OrnamentId { get; set; }
+	[Bind(0x0930)] public AnimationMemory? Animation { get; set; }
+	[Bind(0x1244)] public bool IsMotionEnabled { get; set; }
+	[Bind(0x1A48)] public float Transparency { get; set; }
+	[Bind(0x1B24)] public byte Voice { get; set; }
+	[Bind(0x1B26)] public byte CharacterModeRaw { get; set; }
+	[Bind(0x1B27)] public byte CharacterModeInput { get; set; }
+	[Bind(0x1B44)] public byte AttachmentPoint { get; set; }
 
 	public PinnedActor? Pinned { get; set; }
 

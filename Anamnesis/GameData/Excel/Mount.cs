@@ -12,7 +12,7 @@ using Lumina.Excel;
 
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("Mount", 0x8885ae41)]
+[Sheet("Mount", 0x33b2e4b2)]
 public class Mount : ExcelRow, INpcBase
 {
 	private string? name;
