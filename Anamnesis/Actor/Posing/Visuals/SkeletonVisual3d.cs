@@ -109,6 +109,8 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	public bool IsEars03 => this.IsViera && this.Actor?.Customize?.TailEarsType == 3;
 	public bool IsEars04 => this.IsViera && this.Actor?.Customize?.TailEarsType == 4;
 
+	public bool IsIVCS { get; private set; }
+
 	public bool IsVieraEarsFlop
 	{
 		get
@@ -533,6 +535,17 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			foreach ((string name, BoneVisual3d bone) in this.Bones)
 			{
 				bone.ReadTransform();
+			}
+
+			// check for ivcs bones
+			this.IsIVCS = false;
+			foreach ((string name, BoneVisual3d bone) in this.Bones)
+			{
+				if (name.StartsWith("iv_"))
+				{
+					this.IsIVCS = true;
+					break;
+				}
 			}
 		}
 		catch (Exception)

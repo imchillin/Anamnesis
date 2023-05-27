@@ -352,14 +352,14 @@
 							<local:BoneView BoneName="WristRight" Label="R"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="3" Key="Pose_IVCS_Breasts" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="5" Grid.Row="3" Orientation="Horizontal" >
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="3" Key="Pose_IVCS_Breasts" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Grid.Column="5" Grid.Row="3" Orientation="Horizontal" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_c_mune_l" Label="L"/>
 							<local:BoneView BoneName="iv_c_mune_r" Label="R"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="3" Key="Pose_IVCS_Biceps" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Grid.Column="7" Grid.Row="3" Orientation="Horizontal" >
+						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="3" Key="Pose_IVCS_Biceps" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Grid.Column="7" Grid.Row="3" Orientation="Horizontal" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_nitoukin_l" Label="L"/>
 							<local:BoneView BoneName="iv_nitoukin_r" Label="R"/>
 						</StackPanel>
@@ -420,28 +420,28 @@
 						<StackPanel Grid.Column="7" Grid.Row="0" Orientation="Horizontal" >
 							<local:BoneView BoneName="IndexALeft" Label="1"/>
 							<local:BoneView BoneName="IndexBLeft" Label="2"/>
-							<local:BoneView BoneName="iv_hito_c_l" Label="3"/>
+							<local:BoneView BoneName="iv_hito_c_l" Label="3" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Middle" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
 							<local:BoneView BoneName="MiddleALeft" Label="1"/>
 							<local:BoneView BoneName="MiddleBLeft" Label="2"/>
-							<local:BoneView BoneName="iv_naka_c_l" Label="3"/>
+							<local:BoneView BoneName="iv_naka_c_l" Label="3" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_Ring" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" >
 							<local:BoneView BoneName="RingALeft" Label="1"/>
 							<local:BoneView BoneName="RingBLeft" Label="2"/>
-							<local:BoneView BoneName="iv_kusu_c_l" Label="3"/>
+							<local:BoneView BoneName="iv_kusu_c_l" Label="3" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_Pinky" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal" >
 							<local:BoneView BoneName="PinkyALeft" Label="1"/>
 							<local:BoneView BoneName="PinkyBLeft" Label="2"/>
-							<local:BoneView BoneName="iv_ko_c_l" Label="3"/>
+							<local:BoneView BoneName="iv_ko_c_l" Label="3" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 					</Grid>
@@ -497,28 +497,28 @@
 						<StackPanel Grid.Column="7" Grid.Row="0" Orientation="Horizontal" >
 							<local:BoneView BoneName="IndexARight" Label="1"/>
 							<local:BoneView BoneName="IndexBRight" Label="2"/>
-							<local:BoneView BoneName="iv_hito_c_r" Label="3"/>
+							<local:BoneView BoneName="iv_hito_c_r" Label="3" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Middle" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
 							<local:BoneView BoneName="MiddleARight" Label="1"/>
 							<local:BoneView BoneName="MiddleBRight" Label="2"/>
-							<local:BoneView BoneName="iv_naka_c_r" Label="3"/>
+							<local:BoneView BoneName="iv_naka_c_r" Label="3" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_Ring" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" >
 							<local:BoneView BoneName="RingARight" Label="1"/>
 							<local:BoneView BoneName="RingBRight" Label="2"/>
-							<local:BoneView BoneName="iv_kusu_c_r" Label="3"/>
+							<local:BoneView BoneName="iv_kusu_c_r" Label="3" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_Pinky" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal" >
 							<local:BoneView BoneName="PinkyARight" Label="1"/>
 							<local:BoneView BoneName="PinkyBRight" Label="2"/>
-							<local:BoneView BoneName="iv_ko_c_r" Label="3"/>
+							<local:BoneView BoneName="iv_ko_c_r" Label="3" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 						</StackPanel>
 
 					</Grid>
@@ -633,32 +633,32 @@
 						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Toes" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<local:BoneView Grid.Column="3" Grid.Row="0" BoneName="ToesLeft"/>
 
-						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_BigToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="0">
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_BigToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_oya_a_l" Label="1"/>
 							<local:BoneView BoneName="iv_asi_oya_b_l" Label="2"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_IndexToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="7" Grid.Row="0">
+						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_IndexToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="7" Grid.Row="0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_hito_a_l" Label="1"/>
 							<local:BoneView BoneName="iv_asi_hito_b_l" Label="2"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_MiddleToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_MiddleToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_naka_a_l" Label="1"/>
 							<local:BoneView BoneName="iv_asi_naka_b_l" Label="2"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_ForeToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_ForeToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_kusu_a_l" Label="1"/>
 							<local:BoneView BoneName="iv_asi_kusu_b_l" Label="2"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_PinkyToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="1">
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_PinkyToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="1" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_ko_a_l" Label="1"/>
 							<local:BoneView BoneName="iv_asi_ko_b_l" Label="2"/>
 						</StackPanel>
@@ -695,32 +695,32 @@
 						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Toes" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<local:BoneView Grid.Column="3" Grid.Row="0" BoneName="ToesRight"/>
 
-						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_BigToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="0">
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_BigToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_oya_a_r" Label="1"/>
 							<local:BoneView BoneName="iv_asi_oya_b_r" Label="2"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_IndexToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="7" Grid.Row="0">
+						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_IndexToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="7" Grid.Row="0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_hito_a_r" Label="1"/>
 							<local:BoneView BoneName="iv_asi_hito_b_r" Label="2"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_MiddleToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_MiddleToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_naka_a_r" Label="1"/>
 							<local:BoneView BoneName="iv_asi_naka_b_r" Label="2"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_ForeToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_ForeToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_kusu_a_r" Label="1"/>
 							<local:BoneView BoneName="iv_asi_kusu_b_r" Label="2"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_PinkyToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="1">
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_PinkyToe" Style="{DynamicResource Label}" Margin="16, 0, 3, 0" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.Row="1" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="iv_asi_ko_a_r" Label="1"/>
 							<local:BoneView BoneName="iv_asi_ko_b_r" Label="2"/>
 						</StackPanel>
@@ -927,7 +927,7 @@
 						</Grid>
 					</Grid>
 				</GroupBox>
-				<GroupBox>
+				<GroupBox Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 					<GroupBox.Header>
 						<Button Style="{StaticResource LinkButton}" Click="OnGroupClicked">
 							<XivToolsWpf:TextBlock Key="Pose_Matrix_GenitalCategory"/>

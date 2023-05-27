@@ -80,23 +80,23 @@
 					<local:BoneView Canvas.Left="118" Canvas.Top="145" BoneName="SpineB"/>
 					<local:BoneView Canvas.Left="118" Canvas.Top="180" BoneName="SpineA"/>
 					<local:BoneView Canvas.Left="118" Canvas.Top="210" BoneName="Waist"/>
-					<local:BoneView Canvas.Left="118" Canvas.Top="233" BoneName="iv_koumon"/>
-					<local:BoneView Canvas.Left="95" Canvas.Top="220" BoneName="iv_koumon_l" FlippedBoneName="iv_koumon_r"/>
-					<local:BoneView Canvas.Left="140" Canvas.Top="220" BoneName="iv_koumon_r" FlippedBoneName="iv_koumon_l"/>
-					<local:BoneView Canvas.Left="81" Canvas.Top="237" BoneName="iv_shiri_l" FlippedBoneName="iv_shiri_r"/>
-					<local:BoneView Canvas.Left="152" Canvas.Top="237" BoneName="iv_shiri_r" FlippedBoneName="iv_shiri_l"/>
+					<local:BoneView Canvas.Left="118" Canvas.Top="233" BoneName="iv_koumon" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="95" Canvas.Top="220" BoneName="iv_koumon_l" FlippedBoneName="iv_koumon_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="140" Canvas.Top="220" BoneName="iv_koumon_r" FlippedBoneName="iv_koumon_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="81" Canvas.Top="237" BoneName="iv_shiri_l" FlippedBoneName="iv_shiri_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="152" Canvas.Top="237" BoneName="iv_shiri_r" FlippedBoneName="iv_shiri_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 					<local:BoneView Canvas.Left="98" Canvas.Top="93" BoneName="ClavicleLeft" FlippedBoneName="ClavicleRight"/>
 					<local:BoneView Canvas.Left="138" Canvas.Top="93" BoneName="ClavicleRight" FlippedBoneName="ClavicleLeft"/>
 					<local:BoneView Canvas.Left="73" Canvas.Top="87" BoneName="ShoulderLeft" FlippedBoneName="ShoulderRight"/>
 					<local:BoneView Canvas.Left="165" Canvas.Top="87" BoneName="ShoulderRight" FlippedBoneName="ShoulderLeft"/>
 					<local:BoneView Canvas.Left="102" Canvas.Top="120" BoneName="BreastLeft" FlippedBoneName="BreastRight"/>
-					<local:BoneView Canvas.Left="95" Canvas.Top="142" BoneName="iv_c_mune_l" FlippedBoneName="iv_c_mune_r"/>
+					<local:BoneView Canvas.Left="95" Canvas.Top="142" BoneName="iv_c_mune_l" FlippedBoneName="iv_c_mune_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 					<local:BoneView Canvas.Left="135" Canvas.Top="120" BoneName="BreastRight" FlippedBoneName="BreastLeft"/>
-					<local:BoneView Canvas.Left="140" Canvas.Top="142" BoneName="iv_c_mune_r" FlippedBoneName="iv_c_mune_l"/>
+					<local:BoneView Canvas.Left="140" Canvas.Top="142" BoneName="iv_c_mune_r" FlippedBoneName="iv_c_mune_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 					<local:BoneView Canvas.Left="78" Canvas.Top="107" BoneName="ArmLeft" FlippedBoneName="ArmRight"/>
-					<local:BoneView Canvas.Left="55" Canvas.Top="127" BoneName="iv_nitoukin_l" FlippedBoneName="iv_nitoukin_r"/>
+					<local:BoneView Canvas.Left="55" Canvas.Top="127" BoneName="iv_nitoukin_l" FlippedBoneName="iv_nitoukin_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 					<local:BoneView Canvas.Left="158" Canvas.Top="107" BoneName="ArmRight" FlippedBoneName="ArmLeft"/>
-					<local:BoneView Canvas.Left="179" Canvas.Top="127" BoneName="iv_nitoukin_r" FlippedBoneName="iv_nitoukin_l"/>
+					<local:BoneView Canvas.Left="179" Canvas.Top="127" BoneName="iv_nitoukin_r" FlippedBoneName="iv_nitoukin_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 					<local:BoneView Canvas.Left="75" Canvas.Top="160" BoneName="ElbowLeft" FlippedBoneName="ElbowRight"/>
 					<local:BoneView Canvas.Left="160" Canvas.Top="160" BoneName="ElbowRight" FlippedBoneName="ElbowLeft"/>
 					<local:BoneView Canvas.Left="55" Canvas.Top="160" BoneName="ForearmLeft" FlippedBoneName="ForearmRight"/>
@@ -118,7 +118,7 @@
 			</Viewbox>
 
 			<!-- IVCS Penis -->
-			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256">
+			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 				<Canvas Height="512" Width="256">
 
 					<local:BoneView Canvas.Left="39" Canvas.Top="320" BoneName="iv_ochinko_f"/>
@@ -134,7 +134,7 @@
 			</Viewbox>
 
 			<!-- IVCS Vagina -->
-			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256">
+			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
 				<Canvas Height="512" Width="256">
 
 					<local:BoneView Canvas.Left="200" Canvas.Top="320" BoneName="iv_kuritto"/>
@@ -413,10 +413,10 @@
 							<local:BoneView Canvas.Left="92" Canvas.Top="84" BoneName="PinkyALeft" FlippedBoneName="PinkyARight"/>
 							<local:BoneView Canvas.Left="95" Canvas.Top="55" BoneName="PinkyBLeft" FlippedBoneName="PinkyBRight"/>
 							<local:BoneView Canvas.Left="60" Canvas.Top="115" BoneName="WeaponLeft" FlippedBoneName="WeaponRight"/>
-							<local:BoneView Canvas.Left="34" Canvas.Top="20" BoneName="iv_hito_c_l" FlippedBoneName="iv_hito_c_r"/>
-							<local:BoneView Canvas.Left="53" Canvas.Top="13" BoneName="iv_naka_c_l" FlippedBoneName="iv_naka_c_r"/>
-							<local:BoneView Canvas.Left="74" Canvas.Top="20" BoneName="iv_kusu_c_l" FlippedBoneName="iv_kusu_c_r"/>
-							<local:BoneView Canvas.Left="95" Canvas.Top="30" BoneName="iv_ko_c_l" FlippedBoneName="iv_ko_c_r"/>
+							<local:BoneView Canvas.Left="34" Canvas.Top="20" BoneName="iv_hito_c_l" FlippedBoneName="iv_hito_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+							<local:BoneView Canvas.Left="53" Canvas.Top="13" BoneName="iv_naka_c_l" FlippedBoneName="iv_naka_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+							<local:BoneView Canvas.Left="74" Canvas.Top="20" BoneName="iv_kusu_c_l" FlippedBoneName="iv_kusu_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+							<local:BoneView Canvas.Left="95" Canvas.Top="30" BoneName="iv_ko_c_l" FlippedBoneName="iv_ko_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
 						</Canvas>
 					</Viewbox>
@@ -447,10 +447,10 @@
 							<local:BoneView Canvas.Left="16" Canvas.Top="84" BoneName="PinkyARight" FlippedBoneName="PinkyALeft"/>
 							<local:BoneView Canvas.Left="13" Canvas.Top="55" BoneName="PinkyBRight" FlippedBoneName="PinkyBLeft"/>
 							<local:BoneView Canvas.Left="48" Canvas.Top="115" BoneName="WeaponRight" FlippedBoneName="WeaponLeft"/>
-							<local:BoneView Canvas.Left="74" Canvas.Top="19" BoneName="iv_hito_c_r" FlippedBoneName="iv_hito_c_l"/>
-							<local:BoneView Canvas.Left="55" Canvas.Top="14" BoneName="iv_naka_c_r" FlippedBoneName="iv_naka_c_l"/>
-							<local:BoneView Canvas.Left="33" Canvas.Top="20" BoneName="iv_kusu_c_r" FlippedBoneName="iv_kusu_c_l"/>
-							<local:BoneView Canvas.Left="10" Canvas.Top="32" BoneName="iv_ko_c_r" FlippedBoneName="iv_ko_c_l"/>
+							<local:BoneView Canvas.Left="74" Canvas.Top="19" BoneName="iv_hito_c_r" FlippedBoneName="iv_hito_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+							<local:BoneView Canvas.Left="55" Canvas.Top="14" BoneName="iv_naka_c_r" FlippedBoneName="iv_naka_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+							<local:BoneView Canvas.Left="33" Canvas.Top="20" BoneName="iv_kusu_c_r" FlippedBoneName="iv_kusu_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+							<local:BoneView Canvas.Left="10" Canvas.Top="32" BoneName="iv_ko_c_r" FlippedBoneName="iv_ko_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
 						</Canvas>
 					</Viewbox>
