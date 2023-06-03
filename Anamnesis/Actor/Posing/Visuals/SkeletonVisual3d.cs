@@ -95,7 +95,8 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 
 	public bool HasTail => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote
 		|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.AuRa
-		|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar;
+		|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar
+		|| this.IsIVCS;
 
 	public bool IsCustomFace => this.Actor == null ? false : this.IsMiqote || this.IsHrothgar;
 	public bool IsMiqote => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote;
