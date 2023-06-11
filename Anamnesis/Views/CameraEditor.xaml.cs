@@ -99,4 +99,19 @@ public partial class CameraEditor : UserControl
 		using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
 		file.Serialize(stream);
 	}
+
+	private void OnTargetActor(object sender, RoutedEventArgs e)
+	{
+		ActorBasicMemory? targetActor = this.TargetService.PlayerTarget;
+		if (targetActor == null || !targetActor.IsValid)
+			return;
+
+		ActorMemory actorMemory = new ActorMemory();
+		actorMemory.SetAddress(targetActor.Address);
+
+		if (actorMemory?.ModelObject?.Transform == null)
+			return;
+
+		this.CameraService.GPoseCamera.Position = actorMemory.ModelObject.Transform.Position;
+	}
 }

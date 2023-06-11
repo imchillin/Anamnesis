@@ -1,25 +1,28 @@
-﻿<UserControl x:Class="Anamnesis.Views.CameraEditor"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:local="clr-namespace:Anamnesis.Views"
-			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-			 xmlns:cm3="clr-namespace:Anamnesis.Styles.Controls"
-			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
-			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 mc:Ignorable="d"
-			 d:DesignHeight="450"
-			 d:DesignWidth="800">
+﻿<UserControl
+	x:Class="Anamnesis.Views.CameraEditor"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+	xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+	xmlns:cm3="clr-namespace:Anamnesis.Styles.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+	xmlns:local="clr-namespace:Anamnesis.Views"
+	xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	mc:Ignorable="d">
 
-	<GroupBox x:Name="ContentArea"
-				Style="{StaticResource PanelGroupBox}"
-				IsEnabled="{Binding GposeService.IsGpose}"
-				Visibility="{Binding DataContext, Converter={StaticResource NotNullToVisibilityConverter}}">
+	<GroupBox
+		x:Name="ContentArea"
+		IsEnabled="{Binding GposeService.IsGpose}"
+		Style="{StaticResource PanelGroupBox}"
+		Visibility="{Binding DataContext, Converter={StaticResource NotNullToVisibilityConverter}}">
 		<GroupBox.Header>
-			<XivToolsWpf:Header Icon="Camera"
-									Key="Scene_Camera_Header" />
+			<XivToolsWpf:Header
+				Key="Scene_Camera_Header"
+				Icon="Camera" />
 		</GroupBox.Header>
 
 		<Grid>
@@ -40,136 +43,193 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<XivToolsWpf:TextBlock Grid.Row="0"
-									Key="Scene_Camera_Delimit"
-									Style="{StaticResource Label}" />
-			
-			<CheckBox Grid.Row="0"
-					  Grid.Column="1"
-				  	IsChecked="{Binding CameraService.DelimitCamera}" />
+			<XivToolsWpf:TextBlock
+				Key="Scene_Camera_Delimit"
+				Grid.Row="0"
+				Style="{StaticResource Label}" />
 
-			<XivToolsWpf:TextBlock Grid.Row="1"
-									Grid.Column="0"
-									Key="Scene_Camera_Position"
-									Style="{StaticResource Label}" />
-			
-			<Grid Grid.Row="1" Grid.Column="1">
+			<CheckBox
+				Grid.Row="0"
+				Grid.Column="1"
+				IsChecked="{Binding CameraService.DelimitCamera}" />
 
-				<cm3:VectorEditor TickFrequency="0.05"
-									Value="{Binding CameraService.GPoseCamera.Position}"
-									Expanded="True"
-									Sliders="Relative"
-									Minimum="-4096"
-									Maximum="4096" />
-			</Grid>
+			<XivToolsWpf:TextBlock
+				Key="Scene_Camera_Position"
+				Grid.Row="1"
+				Grid.Column="0"
+				Style="{StaticResource Label}" />
 
-			<XivToolsWpf:TextBlock Grid.Row="2"
-									Grid.Column="0"
-									Key="Scene_Camera_Angle"
-									Style="{StaticResource Label}" />
-			<Grid Grid.Row="2"
-						Grid.Column="1">
+			<Grid
+				Grid.Row="1"
+				Grid.Column="1">
+
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 
-				<ToggleButton Grid.Column="0"
-									Style="{DynamicResource MaterialDesignActionToggleButton}"
-									Height="22"
-									Width="22"
-									Padding="0"
-									Margin="0"
-									IsChecked="{Binding CameraService.Camera.FreezeAngle}">
-					
+				<Button
+					Grid.Column="0"
+					Width="22"
+					Height="22"
+					HorizontalAlignment="Left"
+					Click="OnTargetActor"
+					Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+					ToolTip="Move the camera to the position of the targeted actor">
+					<XivToolsWpf:IconBlock Icon="User" />
+				</Button>
+
+				<cm3:VectorEditor
+					Grid.Column="1"
+					Expanded="True"
+					Maximum="4096"
+					Minimum="-4096"
+					Sliders="Relative"
+					TickFrequency="0.05"
+					Value="{Binding CameraService.GPoseCamera.Position}" />
+			</Grid>
+
+			<XivToolsWpf:TextBlock
+				Key="Scene_Camera_Angle"
+				Grid.Row="2"
+				Grid.Column="0"
+				Style="{StaticResource Label}" />
+			<Grid
+				Grid.Row="2"
+				Grid.Column="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+
+				<ToggleButton
+					Grid.Column="0"
+					Width="22"
+					Height="22"
+					Margin="0"
+					Padding="0"
+					IsChecked="{Binding CameraService.Camera.FreezeAngle}"
+					Style="{DynamicResource MaterialDesignActionToggleButton}">
+
 					<ToggleButton.Content>
-						<fa:IconBlock Icon="LockOpen"
-											FontSize="12" />
+						<fa:IconBlock
+							FontSize="12"
+							Icon="LockOpen" />
 					</ToggleButton.Content>
-					
+
 					<materialdesign:ToggleButtonAssist.OnContent>
-						<fa:IconBlock Icon="Lock"
-											FontSize="12" />
+						<fa:IconBlock
+							FontSize="12"
+							Icon="Lock" />
 					</materialdesign:ToggleButtonAssist.OnContent>
 				</ToggleButton>
 
-				<cm3:Vector2DEditor Grid.Column="1"
-									Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}"
-									Minimum="-180"
-									Maximum="180"
-									Expanded="True"
-									Wrap="True"
-									TickFrequency="1" />
+				<cm3:Vector2DEditor
+					Grid.Column="1"
+					Expanded="True"
+					Maximum="180"
+					Minimum="-180"
+					TickFrequency="1"
+					Wrap="True"
+					Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}" />
 			</Grid>
 
 
-			<XivToolsWpf:TextBlock Grid.Row="3"
-									Grid.Column="0"
-									Key="Scene_Camera_Rotation"
-									Style="{StaticResource Label}" />
-			
-			<XivToolsWpf:NumberBox Grid.Row="3"
-									Grid.Column="1"
-									Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}"
-									Buttons="True"
-									Slider="Absolute"
-									Minimum="-180"
-									Maximum="180"
-									Wrap="True"
-									TickFrequency="1" />
+			<XivToolsWpf:TextBlock
+				Key="Scene_Camera_Rotation"
+				Grid.Row="3"
+				Grid.Column="0"
+				Style="{StaticResource Label}" />
 
-			<XivToolsWpf:TextBlock Grid.Row="4"
-									Grid.Column="0"
-									Key="Scene_Camera_Pan"
-									Style="{StaticResource Label}" />
-			
-			<ana:Vector2DEditor Grid.Row="4"
-								Grid.Column="1"
-								Value="{Binding CameraService.Camera.Pan, Converter={StaticResource Vec2DRad2Deg}}"
-								Minimum="-180"
-								Maximum="180"
-								Expanded="True"
-								Wrap="True"
-								TickFrequency="1" />
+			<XivToolsWpf:NumberBox
+				Grid.Row="3"
+				Grid.Column="1"
+				Buttons="True"
+				Maximum="180"
+				Minimum="-180"
+				Slider="Absolute"
+				TickFrequency="1"
+				Wrap="True"
+				Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}" />
 
-			<XivToolsWpf:TextBlock Grid.Row="5"
-									Grid.Column="0"
-									Key="Scene_Camera_Zoom"
-									Style="{StaticResource Label}" />
-			
-			<XivToolsWpf:NumberBox Grid.Row="5"
-									Grid.Column="1"
-									Value="{Binding CameraService.Camera.Zoom}"
-									Buttons="True"
-									Slider="Absolute"
-									Minimum="{Binding CameraService.Camera.MinZoom}"
-									Maximum="{Binding CameraService.Camera.MaxZoom}"
-									TickFrequency="1" />
+			<XivToolsWpf:TextBlock
+				Key="Scene_Camera_Pan"
+				Grid.Row="4"
+				Grid.Column="0"
+				Style="{StaticResource Label}" />
 
-			<XivToolsWpf:TextBlock Grid.Row="6"
-									Grid.Column="0"
-									Key="Scene_Camera_FoV"
-									Style="{StaticResource Label}" />
-			
-			<XivToolsWpf:NumberBox Grid.Row="6"
-									Grid.Column="1"
-									Value="{Binding CameraService.Camera.FieldOfView, Converter={StaticResource Rad2Deg}}"
-									Buttons="True"
-									Slider="Absolute"
-									Minimum="-40"
-									Maximum="100"
-									TickFrequency="1" />
+			<ana:Vector2DEditor
+				Grid.Row="4"
+				Grid.Column="1"
+				Expanded="True"
+				Maximum="180"
+				Minimum="-180"
+				TickFrequency="1"
+				Wrap="True"
+				Value="{Binding CameraService.Camera.Pan, Converter={StaticResource Vec2DRad2Deg}}" />
 
-			<Menu Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource AnaMenu}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-				<MenuItem Header="Common_ImportFile" Icon="FileImport" Click="OnImportCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
-				<MenuItem Header="Common_ExportFile" Icon="FileExport" Click="OnExportCamera" Style="{StaticResource ButtonMenuItem}" Margin="1" MinWidth="75"/>
+			<XivToolsWpf:TextBlock
+				Key="Scene_Camera_Zoom"
+				Grid.Row="5"
+				Grid.Column="0"
+				Style="{StaticResource Label}" />
+
+			<XivToolsWpf:NumberBox
+				Grid.Row="5"
+				Grid.Column="1"
+				Buttons="True"
+				Maximum="{Binding CameraService.Camera.MaxZoom}"
+				Minimum="{Binding CameraService.Camera.MinZoom}"
+				Slider="Absolute"
+				TickFrequency="1"
+				Value="{Binding CameraService.Camera.Zoom}" />
+
+			<XivToolsWpf:TextBlock
+				Key="Scene_Camera_FoV"
+				Grid.Row="6"
+				Grid.Column="0"
+				Style="{StaticResource Label}" />
+
+			<XivToolsWpf:NumberBox
+				Grid.Row="6"
+				Grid.Column="1"
+				Buttons="True"
+				Maximum="100"
+				Minimum="-40"
+				Slider="Absolute"
+				TickFrequency="1"
+				Value="{Binding CameraService.Camera.FieldOfView, Converter={StaticResource Rad2Deg}}" />
+
+
+			<Menu
+				Grid.Row="8"
+				Grid.Column="0"
+				Grid.ColumnSpan="2"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Bottom"
+				Style="{StaticResource AnaMenu}">
+				<MenuItem
+					MinWidth="75"
+					Margin="1"
+					Click="OnImportCamera"
+					Header="Common_ImportFile"
+					Icon="FileImport"
+					Style="{StaticResource ButtonMenuItem}" />
+				<MenuItem
+					MinWidth="75"
+					Margin="1"
+					Click="OnExportCamera"
+					Header="Common_ExportFile"
+					Icon="FileExport"
+					Style="{StaticResource ButtonMenuItem}" />
 			</Menu>
 
 
-			<XivToolsWpf:InfoControl Grid.RowSpan="10"
-									 Grid.ColumnSpan="2"
-									 Key="Scene_Camera_GPoseWarn"
-									 Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" />
+			<XivToolsWpf:InfoControl
+				Key="Scene_Camera_GPoseWarn"
+				Grid.RowSpan="10"
+				Grid.ColumnSpan="2"
+				Visibility="{Binding GposeService.IsGpose, Converter={StaticResource !B2V}}" />
 
 		</Grid>
 	</GroupBox>
