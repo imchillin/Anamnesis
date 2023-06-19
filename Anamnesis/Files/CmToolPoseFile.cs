@@ -12,8 +12,8 @@ using Anamnesis.Memory;
 
 public class CmToolPoseFile : JsonFileBase
 {
-	public override string FileExtension => ".cmp";
-	public override string TypeName => "CMTool pose";
+	[JsonIgnore] public override string FileExtension => ".cmp";
+	[JsonIgnore] public override string TypeName => "CMTool pose";
 
 	/*public string Description { get; set; }
 	public string DateCreated { get; set; }
