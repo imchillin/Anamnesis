@@ -134,19 +134,19 @@ public static class INpcBaseExtensions
 		file.Mouth = (byte)appearance.Mouth;
 		file.LipsToneFurPattern = (byte)appearance.LipColor;
 
-		if (appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Miqote ||
-			appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.AuRa ||
-			appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Viera ||
-			appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Hrothgar)
+		// Hyurs and Roegadyn get muscle sliders, while everyone else
+		// Gets custom tails or ears.
+		if (appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Hyur ||
+			appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Roegadyn)
+		{
+			file.Bust = (byte)appearance.ExtraFeature1;
+			file.EarMuscleTailSize = (byte)appearance.BustOrTone1;
+		}
+		else
 		{
 			file.EarMuscleTailSize = (byte)appearance.ExtraFeature1;
 			file.TailEarsType = (byte)appearance.ExtraFeature2OrBust;
 			file.Bust = (byte)appearance.BustOrTone1;
-		}
-		else
-		{
-			file.Bust = (byte)appearance.ExtraFeature1;
-			file.EarMuscleTailSize = (byte)appearance.BustOrTone1;
 		}
 
 		file.FacePaint = (byte)appearance.FacePaint;
