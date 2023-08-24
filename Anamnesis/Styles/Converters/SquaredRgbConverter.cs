@@ -16,11 +16,11 @@ public class SquaredRgbConverter : IValueConverter
 	{
 		if (value is Color rgb)
 		{
-			return new Color(MathF.Sqrt(rgb.R), MathF.Sqrt(rgb.G), MathF.Sqrt(rgb.B));
+			return new Color(SqrtOrNegative(rgb.R), SqrtOrNegative(rgb.G), SqrtOrNegative(rgb.B));
 		}
 		else if (value is Color4 rgba)
 		{
-			return new Color4(MathF.Sqrt(rgba.R), MathF.Sqrt(rgba.G), MathF.Sqrt(rgba.B), rgba.A);
+			return new Color4(SqrtOrNegative(rgba.R), SqrtOrNegative(rgba.G), SqrtOrNegative(rgba.B), rgba.A);
 		}
 		else
 		{
@@ -32,15 +32,35 @@ public class SquaredRgbConverter : IValueConverter
 	{
 		if (value is Color rgb)
 		{
-			return new Color(rgb.R * rgb.R, rgb.G * rgb.G, rgb.B * rgb.B);
+			return new Color(SqrOrNegative(rgb.R), SqrOrNegative(rgb.G), SqrOrNegative(rgb.B));
 		}
 		else if (value is Color4 rgba)
 		{
-			return new Color4(rgba.R * rgba.R, rgba.G * rgba.G, rgba.B * rgba.B, rgba.A);
+			return new Color4(SqrOrNegative(rgba.R), SqrOrNegative(rgba.G), SqrOrNegative(rgba.B), rgba.A);
 		}
 		else
 		{
 			return value;
 		}
+	}
+
+	private static float SqrtOrNegative(float val)
+	{
+		if (val > 0)
+		{
+			return MathF.Sqrt(val);
+		}
+
+		return val;
+	}
+
+	private static float SqrOrNegative(float val)
+	{
+		if (val > 0)
+		{
+			return val * val;
+		}
+
+		return val;
 	}
 }
