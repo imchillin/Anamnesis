@@ -34,7 +34,7 @@ Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesi
 
 ## God Tier Contributing Developers
 
-* **[chirpcodes](https://github.com/chirpcodes)**
+* **[chirpxiv](https://github.com/chirpxiv)**
 * **[HoloWise](https://github.com/HoloWise)**
 * **[SoyaX](https://github.com/SoyaX)**
 * **[Reyli](https://github.com/Reyli)**
