@@ -48,12 +48,12 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x0670, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
 	[Bind(0x0678)] public ushort MountId { get; set; }
 	[Bind(0x06D8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
-	[Bind(0x06F8)] public WeaponMemory? MainHand { get; set; }
-	[Bind(0x0760)] public WeaponMemory? OffHand { get; set; }
-	[Bind(0x0830)] public ActorEquipmentMemory? Equipment { get; set; }
-	[Bind(0x0858)] public ActorCustomizeMemory? Customize { get; set; }
-	[Bind(0x0876, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x0877, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+	[Bind(0x0708)] public WeaponMemory? MainHand { get; set; }
+	[Bind(0x0778)] public WeaponMemory? OffHand { get; set; }
+	[Bind(0x0858)] public ActorEquipmentMemory? Equipment { get; set; }
+	[Bind(0x0880)] public ActorCustomizeMemory? Customize { get; set; }
+	[Bind(0x089E, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
+	[Bind(0x089F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x0888, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 	[Bind(0x0890)] public ushort OrnamentId { get; set; }
 	[Bind(0x0930)] public AnimationMemory? Animation { get; set; }
