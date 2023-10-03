@@ -36,8 +36,8 @@ public class ActorMemory : ActorBasicMemory
 	{
 		None = 0,
 		WeaponsVisible = 1 << 0,
-		WeaponsDrawn = 1 << 1,
-		VisorToggled = 1 << 3,
+		WeaponsDrawn = 1 << 2,
+		VisorToggled = 1 << 4,
 	}
 
 	[Bind(0x008D)] public byte SubKind { get; set; }
