@@ -58,7 +58,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x08B8)] public ushort OrnamentId { get; set; }
 	[Bind(0x0980)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x1294)] public bool IsMotionEnabled { get; set; }
-	[Bind(0x1B28)] public float Transparency { get; set; }
+	[Bind(0x1B2C)] public float Transparency { get; set; }
 	[Bind(0x13C0)] public byte Voice { get; set; }
 	[Bind(0x1BB6)] public byte CharacterModeRaw { get; set; }
 	[Bind(0x1BB7)] public byte CharacterModeInput { get; set; }
