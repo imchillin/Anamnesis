@@ -11,7 +11,7 @@ using Lumina.Excel;
 
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("ClassJobCategory", 2091841742u)]
+[Sheet("ClassJobCategory", 0x65bbdb12)]
 public class ClassJobCategory : ExcelRow
 {
 	public string? Name { get; set; }
