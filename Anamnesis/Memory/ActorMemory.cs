@@ -43,8 +43,8 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x008D)] public byte SubKind { get; set; }
 	[Bind(0x00C4)] public float Scale { get; set; }
 	[Bind(0x0100, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
-	[Bind(0x01B4, BindFlags.ActorRefresh)] public int ModelType { get; set; }
-	[Bind(0x01E0)] public byte ClassJob { get; set; }
+	[Bind(0x01AC, BindFlags.ActorRefresh)] public int ModelType { get; set; }
+	[Bind(0x01D8)] public byte ClassJob { get; set; }
 	[Bind(0x0680, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
 	[Bind(0x0688)] public ushort MountId { get; set; }
 	[Bind(0x06D8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
