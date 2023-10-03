@@ -47,7 +47,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x01D8)] public byte ClassJob { get; set; }
 	[Bind(0x0680, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
 	[Bind(0x0688)] public ushort MountId { get; set; }
-	[Bind(0x06D8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
+	[Bind(0x06E8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
 	[Bind(0x0708)] public WeaponMemory? MainHand { get; set; }
 	[Bind(0x0778)] public WeaponMemory? OffHand { get; set; }
 	[Bind(0x0858)] public ActorEquipmentMemory? Equipment { get; set; }
