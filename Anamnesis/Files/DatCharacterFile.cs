@@ -14,6 +14,7 @@ using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.GUI.Dialogs;
 using Serilog;
+using static Anamnesis.Actor.Views.SubActorEditor;
 
 public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 {
@@ -32,13 +33,22 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 		{
 			string slotNumber = fileName.Replace("FFXIV_CHARA_", string.Empty);
 
-			FileStream stream = new FileStream(file.FullName, FileMode.Open);
+			FileStream stream = new(file.FullName, FileMode.Open);
 			stream.Seek(0x30, SeekOrigin.Begin);
-			using BinaryReader reader = new BinaryReader(stream);
+			StringBuilder nameBuilder = new();
+			using BinaryReader reader = new(stream);
 
-			byte[] bytes = reader.ReadBytes(164);
-			string desc = Encoding.ASCII.GetString(bytes);
-			Regex.Replace(desc, @"(?![ -~]|\r|\n).", string.Empty);
+			for (int i = 0; i < 164; i++)
+			{
+				byte currentByte = reader.ReadByte();
+
+				if (currentByte == 0x00)
+                    break;
+
+				nameBuilder.Append((char)currentByte);
+			}
+
+			string desc = nameBuilder.ToString();
 			string name = desc.Substring(0, Math.Min(desc.Length, 50));
 
 			return $"{slotNumber} - {name}";
