@@ -14,7 +14,6 @@ using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.GUI.Dialogs;
 using Serilog;
-using static Anamnesis.Actor.Views.SubActorEditor;
 
 public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 {
