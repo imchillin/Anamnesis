@@ -38,7 +38,9 @@ public class DatCharacterFile : FileBase, IUpgradeCharacterFile
 			StringBuilder nameBuilder = new();
 			using BinaryReader reader = new(stream);
 
-			for (int i = 0; i < 164; i++)
+			int descriptionLength = 164;
+
+			for (int i = 0; i < descriptionLength; i++)
 			{
 				byte currentByte = reader.ReadByte();
 
