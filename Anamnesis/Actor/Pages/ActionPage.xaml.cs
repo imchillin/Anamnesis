@@ -17,6 +17,7 @@ using Anamnesis.Services;
 using Anamnesis.Styles;
 using Anamnesis.Styles.Drawers;
 using PropertyChanged;
+using Anamnesis.Keyboard;
 
 [AddINotifyPropertyChangedInterface]
 public partial class ActionPage : UserControl
@@ -28,6 +29,9 @@ public partial class ActionPage : UserControl
 		this.ContentArea.DataContext = this;
 
 		this.LipSyncTypes = this.GenerateLipList();
+
+		HotkeyService.RegisterHotkeyHandler("ActionPage.ResumeAll", () => this.OnResumeAll());
+		HotkeyService.RegisterHotkeyHandler("ActionPage.PauseAll", () => this.OnPauseAll());
 	}
 
 	public GposeService GposeService => GposeService.Instance;
@@ -167,13 +171,18 @@ public partial class ActionPage : UserControl
 		this.AnimationService.ResetAnimationOverride(this.Actor);
 	}
 
-	private void OnResumeAll(object sender, RoutedEventArgs e)
+	private void OnResumeAll(object sender, RoutedEventArgs e) => this.OnResumeAll();
+
+	private void OnResumeAll()
 	{
+		if (!GposeService.Instance.IsGpose)
+			return;
+
 		AnimationService.Instance.SpeedControlEnabled = true;
 
-		foreach(var target in TargetService.Instance.PinnedActors)
+		foreach (var target in TargetService.Instance.PinnedActors)
 		{
-			if(target.IsValid && target.Memory != null && target.Memory.IsValid)
+			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
 			{
 				target.Memory.Animation!.LinkSpeeds = true;
 				target.Memory.Animation!.Speeds![0]!.Value = 1.0f;
@@ -181,8 +190,13 @@ public partial class ActionPage : UserControl
 		}
 	}
 
-	private void OnPauseAll(object sender, RoutedEventArgs e)
+	private void OnPauseAll(object sender, RoutedEventArgs e) => this.OnPauseAll();
+
+	private void OnPauseAll()
 	{
+		if (!GposeService.Instance.IsGpose)
+			return;
+
 		AnimationService.Instance.SpeedControlEnabled = true;
 
 		foreach (var target in TargetService.Instance.PinnedActors)
