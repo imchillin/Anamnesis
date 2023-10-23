@@ -437,12 +437,18 @@
                     <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" IsEnabled="{Binding GposeService.IsGpose}">
                         <Button Style="{StaticResource TransparentButton}" Click="OnResumeAll">
                             <XivToolsWpf:IconBlock Icon="Play"/>
+                            <Button.ToolTip>
+                                <ana:HotkeyPrompt Function="ActionPage.ResumeAll" />
+                            </Button.ToolTip>
                         </Button>
 
                         <Separator Opacity="0" Width="5"/>
 
                         <Button Style="{StaticResource TransparentButton}" Click="OnPauseAll">
                             <XivToolsWpf:IconBlock Icon="Pause"/>
+                            <Button.ToolTip>
+                                <ana:HotkeyPrompt Function="ActionPage.PauseAll" />
+                            </Button.ToolTip>
                         </Button>
                     </StackPanel>
 

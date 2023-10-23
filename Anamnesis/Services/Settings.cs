@@ -111,6 +111,9 @@ public class Settings : INotifyPropertyChanged
 		public KeyCombination MainWindow_ActionTab { get; set; } = new(Key.D2);
 		public KeyCombination MainWindow_PoseTab { get; set; } = new(Key.D3);
 		public KeyCombination System_Undo { get; set; } = new(Key.Z, ModifierKeys.Control);
+		public KeyCombination ActionPage_ResumeAll { get; set; } = new(Key.P, ModifierKeys.Control | ModifierKeys.Shift);
+		public KeyCombination ActionPage_PauseAll { get; set; } = new(Key.S, ModifierKeys.Control | ModifierKeys.Shift);
+
 		////public KeyCombinationSystem_Redo { get; set; } = new(Key.Y, ModifierKeys.Control);
 
 		public Dictionary<string, KeyCombination> GetBinds()

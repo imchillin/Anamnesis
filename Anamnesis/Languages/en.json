@@ -759,6 +759,10 @@
 	"Hotkey_PoseTab": "View Pose Tab",
 	"Hotkey_ActionTab": "View Action Tab",
 
+	"HotkeyCategory_ActionPage": "Animation",
+	"Hotkey_PauseAll": "Pause All",
+	"Hotkey_ResumeAll": "Play All",
+
 	"HotkeyCategory_System": "System",
 	"Hotkey_Undo": "Undo",
 	"Hotkey_Redo": "Redo",
