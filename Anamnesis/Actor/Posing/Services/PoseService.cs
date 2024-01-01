@@ -28,8 +28,7 @@ public class PoseService : ServiceBase<PoseService>
 	private NopHookViewModel? freezePhysics3;
 	private NopHookViewModel? freezeWorldPosition;
 	private NopHookViewModel? freezeWorldRotation;
-	private NopHookViewModel? freezeGposeTargetPosition1;
-	private NopHookViewModel? freezeGposeTargetPosition2;
+	private NopHookViewModel? freezeGposeTargetPosition;
 
 	private bool isEnabled;
 
@@ -122,8 +121,7 @@ public class PoseService : ServiceBase<PoseService>
 		{
 			this.freezeWorldPosition?.SetEnabled(value);
 			this.freezeWorldRotation?.SetEnabled(value);
-			this.freezeGposeTargetPosition1?.SetEnabled(value);
-			this.freezeGposeTargetPosition2?.SetEnabled(value);
+			this.freezeGposeTargetPosition?.SetEnabled(value);
 			this.RaisePropertyChanged(nameof(PoseService.FreezeWorldPosition));
 			this.RaisePropertyChanged(nameof(PoseService.WorldPositionNotFrozen));
 			FreezeWorldPositionsEnabledChanged?.Invoke(this.IsEnabled);
@@ -150,14 +148,7 @@ public class PoseService : ServiceBase<PoseService>
 		this.freezePhysics3 = new NopHookViewModel(AddressService.SkeletonFreezePhysics3, 4);
 		this.freezeWorldPosition = new NopHookViewModel(AddressService.WorldPositionFreeze, 16);
 		this.freezeWorldRotation = new NopHookViewModel(AddressService.WorldRotationFreeze, 4);
-
-		// We need to keep the MOV in the middle here otherwise we invalidate the ptr, but we patch the rest:
-		//     MOVSS dword ptr[RCX + 0xa0],XMM1
-		//     MOV RBX,RCX
-		//     MOVSS dword ptr[RCX + 0xa4],XMM2
-		//     MOVSS dword ptr[RCX + 0xa8],XMM3
-		this.freezeGposeTargetPosition1 = new NopHookViewModel(AddressService.GPoseCameraTargetPositionFreeze, 8);
-		this.freezeGposeTargetPosition2 = new NopHookViewModel(AddressService.GPoseCameraTargetPositionFreeze + 8 + 3, 16);
+		this.freezeGposeTargetPosition = new NopHookViewModel(AddressService.GPoseCameraTargetPositionFreeze, 5);
 
 		GposeService.GposeStateChanged += this.OnGposeStateChanged;
 
