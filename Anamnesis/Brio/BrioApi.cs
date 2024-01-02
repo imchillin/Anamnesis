@@ -15,7 +15,7 @@ using Serilog;
 internal static class BrioApi
 {
 	private const string Url = "http://localhost:42428/brio";
-	private const int TimeoutMs = 500;
+	private const int TimeoutMs = 1500;
 
 	public static async Task<string> Post(string route, object content)
 	{
