@@ -20,9 +20,10 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 	[Bind(0x002, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public ushort Base { get; set; }
 	[Bind(0x004, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public ushort Variant { get; set; }
 	[Bind(0x006, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public byte Dye { get; set; }
+	[Bind(0x007, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public byte Dye2 { get; set; }
 	[Bind(0x008, BindFlags.Pointer)] public WeaponModelMemory? Model { get; set; }
-	[Bind(0x040)] public bool IsSheathed { get; set; }
-	[Bind(0x060)] public WeaponFlagDefs WeaponFlags { get; set; }
+	[Bind(0x042)] public bool IsSheathed { get; set; }
+	[Bind(0x062)] public WeaponFlagDefs WeaponFlags { get; set; }
 
 	[DependsOn(nameof(WeaponFlags), nameof(IsSheathed))]
 	public bool WeaponHidden
@@ -84,5 +85,6 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 		this.Base = useEmperorsFists ? ItemUtility.EmperorsNewFists.ModelBase : (ushort)0;
 		this.Variant = useEmperorsFists ? ItemUtility.EmperorsNewFists.ModelVariant : (ushort)0;
 		this.Dye = 0;
+		this.Dye2 = 0;
 	}
 }

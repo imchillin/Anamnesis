@@ -63,10 +63,10 @@ public class ClassJobCategory : ExcelRow
 		this.ClassJobs.Add(Classes.BlueMage, parser.ReadColumn<bool>(37));
 		this.ClassJobs.Add(Classes.Gunbreaker, parser.ReadColumn<bool>(38));
 		this.ClassJobs.Add(Classes.Dancer, parser.ReadColumn<bool>(39));
-
-		// might be backwards:
 		this.ClassJobs.Add(Classes.Reaper, parser.ReadColumn<bool>(40));
 		this.ClassJobs.Add(Classes.Sage, parser.ReadColumn<bool>(41));
+		this.ClassJobs.Add(Classes.Viper, parser.ReadColumn<bool>(42));
+		this.ClassJobs.Add(Classes.Pictomancer, parser.ReadColumn<bool>(43));
 	}
 
 	public bool Contains(Classes classJob)

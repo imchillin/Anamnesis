@@ -7,7 +7,7 @@ using Lumina.Excel;
 
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("MountCustomize", 0x859ade0f)]
+[Sheet("MountCustomize", 0xdde90e69)]
 public class MountCustomize : ExcelRow
 {
 	public ushort HyurMidlanderMaleScale { get; set; }
@@ -25,6 +25,7 @@ public class MountCustomize : ExcelRow
 	public ushort AuRaMaleScale { get; set; }
 	public ushort AuRaFemaleScale { get; set; }
 	public ushort HrothgarMaleScale { get; set; }
+	public ushort HrothgarFemaleScale { get; set; }
 	public ushort VieraMaleScale { get; set; }
 	public ushort VieraFemaleScale { get; set; }
 
@@ -47,7 +48,8 @@ public class MountCustomize : ExcelRow
 		this.AuRaMaleScale = parser.ReadColumn<ushort>(13);
 		this.AuRaFemaleScale = parser.ReadColumn<ushort>(14);
 		this.HrothgarMaleScale = parser.ReadColumn<ushort>(15);
-		this.VieraMaleScale = parser.ReadColumn<ushort>(16);
-		this.VieraFemaleScale = parser.ReadColumn<ushort>(17);
+		this.HrothgarFemaleScale = parser.ReadColumn<ushort>(16);
+		this.VieraMaleScale = parser.ReadColumn<ushort>(17);
+		this.VieraFemaleScale = parser.ReadColumn<ushort>(18);
 	}
 }

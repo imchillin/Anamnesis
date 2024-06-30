@@ -11,7 +11,7 @@ using Lumina.Excel;
 
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("Action", 0xfedb4d9a)]
+[Sheet("Action", 0x7df0878f)]
 public class Action : ExcelRow, IAnimation
 {
 	public string? DisplayName { get; set; }

@@ -174,7 +174,9 @@ public partial class CustomizeEditor : UserControl
 		this.HasEars = this.Customize.Race == AnAppearance.Races.Viera || this.Customize.Race == AnAppearance.Races.Lalafel || this.Customize.Race == AnAppearance.Races.Elezen;
 		this.HasEarsTail = this.HasTail | this.HasEars;
 		this.HasMuscles = !this.HasEars && !this.HasTail;
-		this.HasGender = this.Customize.Race != AnAppearance.Races.Hrothgar;
+
+		// currently, all races have both genders
+		this.HasGender = true;
 
 		bool canAge = this.Customize.Tribe == AnAppearance.Tribes.Midlander;
 		canAge |= this.Customize.Race == AnAppearance.Races.Miqote && this.Customize.Gender == AnAppearance.Genders.Feminine;
@@ -251,10 +253,7 @@ public partial class CustomizeEditor : UserControl
 		if (race == this.Race)
 			return;
 
-		if (race.CustomizeRace == AnAppearance.Races.Hrothgar)
-			this.Customize.Gender = AnAppearance.Genders.Masculine;
-
-		// reset age when chaing race
+		// reset age when changing race
 		this.Customize.Age = AnAppearance.Ages.Normal;
 
 		if (this.Race == race)

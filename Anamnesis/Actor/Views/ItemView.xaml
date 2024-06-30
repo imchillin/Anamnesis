@@ -158,6 +158,37 @@
 						</Grid>
 					</Grid>
 				</Button>
+				
+				<!-- Dye -->
+				<Button MouseUp="OnDye2MouseUp"
+				        Margin="2, 4, 0, 0"
+				        Grid.Column="0"
+				        Grid.RowSpan="2"
+				        Click="OnDye2Click"
+				        Height="20"
+				        Width="20"
+				        VerticalAlignment="Top"
+				        Style="{DynamicResource TransparentButton}"
+				        IsEnabled="{Binding Actor.CanRefresh}">
+
+					<Button.ToolTip>
+						<XivToolsWpf:TextBlock Key="Character_Equipment_Dye"/>
+					</Button.ToolTip>
+
+					<Grid>
+						<Grid Visibility="{Binding ItemModel, Converter={StaticResource NotNullToVisibilityConverter}}">
+							<Image Source="{Binding Dye2.Icon, Converter={StaticResource Img}}" Margin="2"/>
+							<Image Source="/AppearanceModule;component/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Dye2.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+
+							<Grid.ToolTip>
+								<StackPanel>
+									<TextBlock Text="{Binding Dye2.Name}" FontWeight="DemiBold"/>
+									<TextBlock Text="{Binding Dye2.Description}" Visibility="{Binding Dye2.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+								</StackPanel>
+							</Grid.ToolTip>
+						</Grid>
+					</Grid>
+				</Button>
 
 				<!--<TextBlock Text="{Binding Dye.Name}" Margin="6, 2, 0, 0" Visibility="{Binding Dye.Icon, Converter={StaticResource NotNullToVisibilityConverter}}" Style="{StaticResource Label}"/>-->
 
