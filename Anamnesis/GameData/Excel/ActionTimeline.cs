@@ -33,6 +33,6 @@ public class ActionTimeline : ExcelRow, IAnimation
 		this.Type = parser.ReadColumn<byte>(0);
 		this.Key = parser.ReadString(6);
 		this.Slot = (AnimationMemory.AnimationSlots)parser.ReadColumn<byte>(4);
-		this.IsLoop = parser.ReadColumn<byte>(16);
+		this.IsLoop = parser.ReadColumn<byte>(18);
 	}
 }
