@@ -44,18 +44,19 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x00C4)] public float Scale { get; set; }
 	[Bind(0x0100, BindFlags.Pointer)] public ActorModelMemory? ModelObject { get; set; }
 	[Bind(0x01AC, BindFlags.ActorRefresh)] public int ModelType { get; set; }
-	[Bind(0x01D8)] public byte ClassJob { get; set; }
-	[Bind(0x0680, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
-	[Bind(0x0688)] public ushort MountId { get; set; }
+	[Bind(0x01DA)] public byte ClassJob { get; set; }
+	[Bind(0x0690, BindFlags.Pointer)] public ActorMemory? Mount { get; set; }
+	[Bind(0x0698)] public ushort MountId { get; set; }
 	[Bind(0x06E8, BindFlags.Pointer)] public ActorMemory? Companion { get; set; }
-	[Bind(0x0708)] public WeaponMemory? MainHand { get; set; }
-	[Bind(0x0778)] public WeaponMemory? OffHand { get; set; }
-	[Bind(0x0858)] public ActorEquipmentMemory? Equipment { get; set; }
-	[Bind(0x0880)] public ActorCustomizeMemory? Customize { get; set; }
-	[Bind(0x089E, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x089F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
-	[Bind(0x08B0, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
-	[Bind(0x08B8)] public ushort OrnamentId { get; set; }
+	[Bind(0x0718)] public WeaponMemory? MainHand { get; set; }
+	[Bind(0x0788)] public WeaponMemory? OffHand { get; set; }
+	[Bind(0x0868)] public ActorEquipmentMemory? Equipment { get; set; }
+	[Bind(0x08B8)] public ActorCustomizeMemory? Customize { get; set; }
+	[Bind(0x08D6, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
+	[Bind(0x08D7, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+	[Bind(0x08D8)] public ushort FacewearId { get; set; }
+	[Bind(0x08F9, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
+	[Bind(0x0901)] public ushort OrnamentId { get; set; }
 	[Bind(0x0980)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x1294)] public bool IsMotionEnabled { get; set; }
 	[Bind(0x1B2C)] public float Transparency { get; set; }
@@ -99,6 +100,9 @@ public class ActorMemory : ActorBasicMemory
 
 	[DependsOn(nameof(OrnamentId), nameof(Ornament))]
 	public bool IsUsingOrnament => this.Ornament != null && this.OrnamentId != 0;
+
+	[DependsOn(nameof(FacewearId))]
+	public bool IsUsingFacewear => this.FacewearId != 0;
 
 	[DependsOn(nameof(Companion))]
 	public bool HasCompanion => this.Companion != null;
