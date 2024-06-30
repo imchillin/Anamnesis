@@ -55,11 +55,13 @@ public enum Classes : long
 	WhiteMage = 1L << 38,
 	Reaper = 1L << 39,
 	Sage = 1L << 40,
+	Viper = 1L << 41,
+	Pictomancer = 1L << 42,
 
 	All = Alchemist | Arcanist | Archer | Armorer | Astrologian | Bard | BlackMage | Blacksmith | BlueMage | Botanist
 		| Carpenter | Conjurer | Culinarian | Dancer | DarkKnight | Dragoon | Fisher | Gladiator | Goldsmith | Gunbreaker
 		| Lancer | Leatherworker | Machinist | Marauder | Miner | Monk | Ninja | Paladin | Pugilist | RedMage | Rogue
-		| Samurai | Scholar | Summoner | Thaumaturge | Warrior | Weaver | WhiteMage | Reaper | Sage,
+		| Samurai | Scholar | Summoner | Thaumaturge | Warrior | Weaver | WhiteMage | Reaper | Sage | Viper | Pictomancer,
 }
 
 public static class ClassesExtensions
@@ -108,6 +110,8 @@ public static class ClassesExtensions
 			case Classes.WhiteMage: return "White Mage";
 			case Classes.Reaper: return "Reaper";
 			case Classes.Sage: return "Sage";
+			case Classes.Viper: return "Viper";
+			case Classes.Pictomancer: return "Pictomancer";
 		}
 
 		throw new Exception($"No name for class/job: {job}");
@@ -160,6 +164,8 @@ public static class ClassesExtensions
 			case Classes.WhiteMage: return Roles.Healers;
 			case Classes.Reaper: return Roles.Damage;
 			case Classes.Sage: return Roles.Healers;
+			case Classes.Viper: return Roles.Damage;
+			case Classes.Pictomancer: return Roles.Damage;
 		}
 
 		throw new Exception($"No role for class/job: {job}");
@@ -202,6 +208,7 @@ public static class ClassesExtensions
 			case Classes.Monk: return 062020;
 			case Classes.Ninja: return 062030;
 			case Classes.Paladin: return 062019;
+			case Classes.Pictomancer: return 062042;
 			case Classes.Pugilist: return 062002;
 			case Classes.Reaper: return 062039;
 			case Classes.RedMage: return 062035;
@@ -211,6 +218,7 @@ public static class ClassesExtensions
 			case Classes.Scholar: return 062028;
 			case Classes.Summoner: return 062027;
 			case Classes.Thaumaturge: return 062007;
+			case Classes.Viper: return 062041;
 			case Classes.Warrior: return 062021;
 			case Classes.Weaver: return 062013;
 			case Classes.WhiteMage: return 062024;
