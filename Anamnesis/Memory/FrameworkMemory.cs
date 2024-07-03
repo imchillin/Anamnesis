@@ -5,12 +5,12 @@ namespace Anamnesis.Memory;
 
 public class FrameworkMemory : MemoryBase
 {
-	[Bind(0x1770)]
+	[Bind(0x1778)]
 	public long EorzeaTime { get; set; }
 
-	[Bind(0x1798)]
+	[Bind(0x17A0)]
 	public long OverrideEorzeaTime { get; set; }
 
-	[Bind(0x17A0)]
+	[Bind(0x17A8)]
 	public bool IsTimeOverridden { get; set; }
 }
