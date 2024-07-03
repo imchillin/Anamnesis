@@ -10,6 +10,7 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 	[Bind(0x000, BindFlags.ActorRefresh)] public ushort Base { get; set; }
 	[Bind(0x002, BindFlags.ActorRefresh)] public byte Variant { get; set; }
 	[Bind(0x003, BindFlags.ActorRefresh)] public byte Dye { get; set; }
+	[Bind(0x004, BindFlags.ActorRefresh)] public byte Dye2 { get; set; }
 
 	// Item's dont have a 'Set' but the UI wants to bind to something, so...
 	public ushort Set { get; set; } = 0;
