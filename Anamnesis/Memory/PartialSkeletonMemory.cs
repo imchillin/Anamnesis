@@ -4,8 +4,8 @@
 namespace Anamnesis.Memory;
 public class PartialSkeletonMemory : MemoryBase
 {
-	[Bind(0x12C)] public short ConnectedBoneIndex { get; set; }
-	[Bind(0x12E)] public short ConnectedParentBoneIndex { get; set; }
+	[Bind(0x120)] public short ConnectedParentBoneIndex { get; set; }
+	[Bind(0x122)] public short ConnectedBoneIndex { get; set; }
 
 	[Bind(0x140, BindFlags.Pointer)] public HkaPoseMemory? Pose1 { get; set; }
 	[Bind(0x148, BindFlags.Pointer)] public HkaPoseMemory? Pose2 { get; set; }
