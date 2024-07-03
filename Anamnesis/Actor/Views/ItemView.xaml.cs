@@ -51,6 +51,7 @@ public partial class ItemView : UserControl
 
 	public IItem? Item { get; set; }
 	public IDye? Dye { get; set; }
+	public IDye? Dye2 { get; set; }
 	public ImageSource? IconSource { get; set; }
 	public bool CanDye { get; set; }
 	public bool IsLoading { get; set; }
@@ -208,6 +209,7 @@ public partial class ItemView : UserControl
 			if (item == ItemUtility.NoneItem || item == ItemUtility.EmperorsNewFists)
 			{
 				this.Dye = ItemUtility.NoneDye;
+				this.Dye2 = ItemUtility.NoneDye;
 			}
 		}
 
@@ -261,6 +263,27 @@ public partial class ItemView : UserControl
 		});
 	}
 
+	private void OnDyeClick2(object sender, RoutedEventArgs e)
+	{
+		if (!this.CanDye)
+			return;
+
+		SelectorDrawer.Show<DyeSelector, IDye>(this.Dye2, (v) =>
+		{
+			if (v == null)
+				return;
+
+			if (this.ItemModel is ItemMemory item)
+			{
+				item.Dye2 = v.Id;
+			}
+			else if (this.ItemModel is WeaponMemory weapon)
+			{
+				weapon.Dye2 = v.Id;
+			}
+		});
+	}
+
 	private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs? e)
 	{
 		if (this.lockViewModel)
@@ -289,11 +312,13 @@ public partial class ItemView : UserControl
 				{
 					IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant, this.Actor.IsChocobo);
 					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
+					IDye? dye2 = GameDataService.Dyes.Get(itemVm.Dye2);
 
 					await Dispatch.MainThread();
 
 					this.Item = item;
 					this.Dye = dye;
+					this.Dye2 = dye2;
 				}
 				else if (valueVm is WeaponMemory weaponVm)
 				{
@@ -303,11 +328,13 @@ public partial class ItemView : UserControl
 						weaponVm.Dye = 0;
 
 					IDye? dye = GameDataService.Dyes.Get(weaponVm.Dye);
+					IDye? dye2 = GameDataService.Dyes.Get(weaponVm.Dye2);
 
 					await Dispatch.MainThread();
 
 					this.Item = item;
 					this.Dye = dye;
+					this.Dye2 = dye2;
 				}
 
 				this.CanDye = !this.IsWeapon || this.ItemModel?.Set != 0;

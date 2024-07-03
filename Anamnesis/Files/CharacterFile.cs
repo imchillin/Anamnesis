@@ -434,6 +434,7 @@ public class CharacterFile : JsonFileBase
 			this.ModelBase = from.Base;
 			this.ModelVariant = from.Variant;
 			this.DyeId = from.Dye;
+			this.DyeId2 = from.Dye2;
 		}
 
 		public Color Color { get; set; }
@@ -442,6 +443,7 @@ public class CharacterFile : JsonFileBase
 		public ushort ModelBase { get; set; }
 		public ushort ModelVariant { get; set; }
 		public byte DyeId { get; set; }
+		public byte DyeId2 { get; set; }
 
 		public void Write(WeaponMemory? vm, bool isMainHand)
 		{
@@ -456,6 +458,7 @@ public class CharacterFile : JsonFileBase
 				vm.Base = this.ModelBase;
 				vm.Variant = this.ModelVariant;
 				vm.Dye = this.DyeId;
+				vm.Dye2 = this.DyeId2;
 			}
 			else
 			{
@@ -473,6 +476,7 @@ public class CharacterFile : JsonFileBase
 				}
 
 				vm.Dye = ItemUtility.NoneDye.Id;
+				vm.Dye2 = ItemUtility.NoneDye.Id;
 			}
 		}
 	}
@@ -489,11 +493,13 @@ public class CharacterFile : JsonFileBase
 			this.ModelBase = from.Base;
 			this.ModelVariant = from.Variant;
 			this.DyeId = from.Dye;
+			this.DyeId2 = from.Dye2;
 		}
 
 		public ushort ModelBase { get; set; }
 		public byte ModelVariant { get; set; }
 		public byte DyeId { get; set; }
+		public byte DyeId2 { get; set; }
 
 		public void Write(ItemMemory? vm)
 		{
@@ -503,6 +509,7 @@ public class CharacterFile : JsonFileBase
 			vm.Base = this.ModelBase;
 			vm.Variant = this.ModelVariant;
 			vm.Dye = this.DyeId;
+			vm.Dye2 = this.DyeId2;
 		}
 	}
 }
