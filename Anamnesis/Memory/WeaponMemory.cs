@@ -21,7 +21,7 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 	[Bind(0x004, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public ushort Variant { get; set; }
 	[Bind(0x006, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public byte Dye { get; set; }
 	[Bind(0x007, BindFlags.ActorRefresh | BindFlags.WeaponRefresh)] public byte Dye2 { get; set; }
-	[Bind(0x008, BindFlags.Pointer)] public WeaponModelMemory? Model { get; set; }
+	[Bind(0x018, BindFlags.Pointer)] public WeaponModelMemory? Model { get; set; }
 	[Bind(0x040)] public bool IsSheathed { get; set; }
 	[Bind(0x060)] public WeaponFlagDefs WeaponFlags { get; set; }
 
