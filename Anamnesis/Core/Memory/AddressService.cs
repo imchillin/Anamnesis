@@ -131,18 +131,18 @@ public class AddressService : ServiceBase<AddressService>
 		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezePosition", "41 0F 29 24 12", (p) => { SkeletonFreezePosition = p; }));   // SkeletonAddress5
 		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezeScale2", "43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
 		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezePosition2", "43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
-		tasks.Add(this.GetAddressFromTextSignature("WorldPositionFreeze", "F3 0F 11 78 ?? F3 0F 11 70 ?? F3 44 0F 11 40 ?? 48 83 48 ?? 02", (p) => { WorldPositionFreeze = p; }));
+		tasks.Add(this.GetAddressFromTextSignature("WorldPositionFreeze", "F3 0F 11 ?? ?? F3 0F 11 ?? ?? F3 44 0F 11 ?? ?? 48 8B 8B ?? 01", (p) => { WorldPositionFreeze = p; }));
 		tasks.Add(this.GetAddressFromTextSignature("WorldRotationFreeze", "0F 11 40 ?? 48 8B 8B ?? ?? ?? ?? 0F B6 81 ?? ?? ?? ?? 24 0F 3C 03 75 ?? 48 8B 01 B2 01 FF 50 ?? 48 8B 83 ?? ?? ?? ??", (p) => { WorldRotationFreeze = p; }));
 		tasks.Add(this.GetAddressFromTextSignature("GPoseCameraTargetPositionFreeze", "F3 0F 10 0E E8 ?? ?? ?? ?? 4C 8B 74 24", (p) => { GPoseCameraTargetPositionFreeze = p + 4; }));
 		tasks.Add(this.GetAddressFromTextSignature("AnimationSpeedPatch", "F3 0F 11 94 ?? ?? ?? ?? ?? 80 89 ?? ?? ?? ?? 01", (p) => { AnimationSpeedPatch = p; }));
 		tasks.Add(this.GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
-		tasks.Add(this.GetAddressFromSignature("Weather", "49 8B 9D ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));
-		tasks.Add(this.GetAddressFromSignature("GPoseFilters", "4C 8B 05 ?? ?? ?? ?? 41 8B 80 ?? ?? ?? ?? C1 E8 02", 0, (p) => { GPoseFilters = p; }));
-		tasks.Add(this.GetAddressFromSignature("GposeCheck", "48 8B 15 ?? ?? ?? ?? 48 89 6C 24", 0, (p) => { GposeCheck = p; }));
+		tasks.Add(this.GetAddressFromSignature("Weather", "48 8B 9F ?? ?? ?? ?? 48 8D 0D", 0, (p) => { Weather = p + 0x8; }));
+		tasks.Add(this.GetAddressFromSignature("GPoseFilters", "48 85 D2 4C 8B 05 ?? ?? ?? ??", 0, (p) => { GPoseFilters = p; }));
+		tasks.Add(this.GetAddressFromSignature("GposeCheck", "0F 84 ?? ?? ?? ?? 8B 15 ?? ?? ?? ?? 48 89 6C 24 ??", 0, (p) => { GposeCheck = p; }));
 		tasks.Add(this.GetAddressFromSignature("GposeCheck2", "8D 48 FF 48 8D 05 ?? ?? ?? ?? 8B 0C 88 48 8B 02 83 F9 04 49 8B CA", 0, (p) => { GposeCheck2 = p; }));
-		tasks.Add(this.GetAddressFromSignature("GPose", "48 39 0D ?? ?? ?? ?? 75 28", 0, (p) => { GPose = p + 0x20; }));
+		tasks.Add(this.GetAddressFromSignature("GPose", "74 35 48 39 0D ?? ?? ?? ??", 0, (p) => { GPose = p + 0x20; }));
 		tasks.Add(this.GetAddressFromSignature("Camera", "48 8D 35 ?? ?? ?? ?? 48 8B 09", 0, (p) => { cameraManager = p; })); // CameraAddress
-		tasks.Add(this.GetAddressFromSignature("PlayerTargetSystem", "48 8B 05 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? FF 50 ?? 48 85 DB", 0, (p) => { PlayerTargetSystem = p; }));
+		tasks.Add(this.GetAddressFromSignature("PlayerTargetSystem", "48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 3B C3 74 08", 0, (p) => { PlayerTargetSystem = p; }));
 
 		tasks.Add(this.GetAddressFromTextSignature("TimeAsm", "48 89 87 ?? ?? ?? ?? 48 69 C0", (p) => TimeAsm = p));
 
@@ -156,7 +156,7 @@ public class AddressService : ServiceBase<AddressService>
 				Framework = frameworkPtr;
 				}));
 
-		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 29 48 10 41 0F 28 44 24 20 0F 29 40 20 48 8B 46", (p) =>
+		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezePhysics (1/2/3)", "0F 11 48 10 41 0F 10 44 24 ?? 0F 11 40 20 48 8B 46 28", (p) =>
 		{
 			SkeletonFreezePhysics = p;  // PhysicsAddress
 			SkeletonFreezePhysics2 = p - 0x9;   // SkeletonAddress2
