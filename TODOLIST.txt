@@ -1,0 +1,4 @@
+- hrothgar (m/f) section has cut-off text
+- update to dotnet 8
+- after dotnet 8, import clientstruct
+- fix missing signatures
