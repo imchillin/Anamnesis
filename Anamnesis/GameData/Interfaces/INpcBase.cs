@@ -54,26 +54,38 @@ public interface INpcAppearance
 
 	IItem? MainHand { get; }
 	IDye? DyeMainHand { get; }
+	IDye? Dye2MainHand { get; }
 	IItem? OffHand { get; }
 	IDye? DyeOffHand { get; }
+	IDye? Dye2OffHand { get; }
 	IItem? Head { get; }
 	IDye? DyeHead { get; }
+	IDye? Dye2Head { get; }
 	IItem? Body { get; }
 	IDye? DyeBody { get; }
+	IDye? Dye2Body { get; }
 	IItem? Legs { get; }
 	IDye? DyeLegs { get; }
+	IDye? Dye2Legs { get; }
 	IItem? Feet { get; }
 	IDye? DyeFeet { get; }
+	IDye? Dye2Feet { get; }
 	IItem? Hands { get; }
 	IDye? DyeHands { get; }
+	IDye? Dye2Hands { get; }
 	IItem? Wrists { get; }
 	IDye? DyeWrists { get; }
+	IDye? Dye2Wrists { get; }
 	IItem? Neck { get; }
 	IDye? DyeNeck { get; }
+	IDye? Dye2Neck { get; }
 	IItem? Ears { get; }
 	IDye? DyeEars { get; }
+	IDye? Dye2Ears { get; }
 	IItem? LeftRing { get; }
 	IDye? DyeLeftRing { get; }
+	IDye? Dye2LeftRing { get; }
 	IItem? RightRing { get; }
 	IDye? DyeRightRing { get; }
+	IDye? Dye2RightRing { get; }
 }

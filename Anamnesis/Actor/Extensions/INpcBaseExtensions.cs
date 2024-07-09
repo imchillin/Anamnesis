@@ -152,24 +152,24 @@ public static class INpcBaseExtensions
 		file.FacePaint = (byte)appearance.FacePaint;
 		file.FacePaintColor = (byte)appearance.FacePaintColor;
 
-		file.MainHand = WeaponFromItem(appearance.MainHand, appearance.DyeMainHand);
-		file.OffHand = WeaponFromItem(appearance.OffHand, appearance.DyeOffHand, true);
+		file.MainHand = WeaponFromItem(appearance.MainHand, appearance.DyeMainHand, appearance.Dye2MainHand);
+		file.OffHand = WeaponFromItem(appearance.OffHand, appearance.DyeOffHand, appearance.Dye2OffHand, true);
 
-		file.HeadGear = GearFromItem(appearance.Head, appearance.DyeHead);
-		file.Body = GearFromItem(appearance.Body, appearance.DyeBody);
-		file.Hands = GearFromItem(appearance.Hands, appearance.DyeHands);
-		file.Legs = GearFromItem(appearance.Legs, appearance.DyeLegs);
-		file.Feet = GearFromItem(appearance.Feet, appearance.DyeFeet);
-		file.Ears = GearFromItem(appearance.Ears, appearance.DyeEars);
-		file.Neck = GearFromItem(appearance.Neck, appearance.DyeNeck);
-		file.Wrists = GearFromItem(appearance.Wrists, appearance.DyeWrists);
-		file.LeftRing = GearFromItem(appearance.LeftRing, appearance.DyeLeftRing);
-		file.RightRing = GearFromItem(appearance.RightRing, appearance.DyeRightRing);
+		file.HeadGear = GearFromItem(appearance.Head, appearance.DyeHead, appearance.Dye2Head);
+		file.Body = GearFromItem(appearance.Body, appearance.DyeBody, appearance.Dye2Body);
+		file.Hands = GearFromItem(appearance.Hands, appearance.DyeHands, appearance.Dye2Hands);
+		file.Legs = GearFromItem(appearance.Legs, appearance.DyeLegs, appearance.Dye2Legs);
+		file.Feet = GearFromItem(appearance.Feet, appearance.DyeFeet, appearance.Dye2Feet);
+		file.Ears = GearFromItem(appearance.Ears, appearance.DyeEars, appearance.Dye2Ears);
+		file.Neck = GearFromItem(appearance.Neck, appearance.DyeNeck, appearance.Dye2Neck);
+		file.Wrists = GearFromItem(appearance.Wrists, appearance.DyeWrists, appearance.Dye2Wrists);
+		file.LeftRing = GearFromItem(appearance.LeftRing, appearance.DyeLeftRing, appearance.Dye2LeftRing);
+		file.RightRing = GearFromItem(appearance.RightRing, appearance.DyeRightRing, appearance.Dye2RightRing);
 
 		return file;
 	}
 
-	private static CharacterFile.WeaponSave? WeaponFromItem(IItem? item, IDye? dye, bool isOffHand = false)
+	private static CharacterFile.WeaponSave? WeaponFromItem(IItem? item, IDye? dye, IDye? dye2, bool isOffHand = false)
 	{
 		if (item == null)
 			return null;
@@ -191,11 +191,13 @@ public static class INpcBaseExtensions
 
 		if (dye != null)
 			save.DyeId = dye.Id;
+		if (dye2 != null)
+			save.DyeId2 = dye2.Id;
 
 		return save;
 	}
 
-	private static CharacterFile.ItemSave? GearFromItem(IItem? item, IDye? dye)
+	private static CharacterFile.ItemSave? GearFromItem(IItem? item, IDye? dye, IDye? dye2)
 	{
 		if (item == null)
 			return null;
@@ -207,6 +209,8 @@ public static class INpcBaseExtensions
 
 		if (dye != null)
 			save.DyeId = dye.Id;
+		if (dye2 != null)
+			save.DyeId2 = dye2.Id;
 
 		return save;
 	}

@@ -10,7 +10,7 @@ using Lumina.Excel;
 
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("ENpcBase", 0x927347d8)]
+[Sheet("ENpcBase", 0x464052cd)]
 public class EventNpcAppearance : ExcelRow, INpcAppearance
 {
 	public uint ModelCharaRow { get; private set; }
@@ -44,28 +44,40 @@ public class EventNpcAppearance : ExcelRow, INpcAppearance
 
 	public IItem? MainHand { get; private set; }
 	public IDye? DyeMainHand { get; private set; }
+	public IDye? Dye2MainHand { get; private set; }
 	public IItem? OffHand { get; private set; }
 	public IDye? DyeOffHand { get; private set; }
+	public IDye? Dye2OffHand { get; private set; }
 	public IItem? Head { get; private set; }
 	public IDye? DyeHead { get; private set; }
+	public IDye? Dye2Head { get; private set; }
 	public IItem? Body { get; private set; }
 	public IDye? DyeBody { get; private set; }
-	public IItem? Legs { get; private set; }
-	public IDye? DyeLegs { get; private set; }
-	public IItem? Feet { get; private set; }
-	public IDye? DyeFeet { get; private set; }
+	public IDye? Dye2Body { get; private set; }
 	public IItem? Hands { get; private set; }
 	public IDye? DyeHands { get; private set; }
-	public IItem? Wrists { get; private set; }
-	public IDye? DyeWrists { get; private set; }
-	public IItem? Neck { get; private set; }
-	public IDye? DyeNeck { get; private set; }
+	public IDye? Dye2Hands { get; private set; }
+	public IItem? Legs { get; private set; }
+	public IDye? DyeLegs { get; private set; }
+	public IDye? Dye2Legs { get; private set; }
+	public IItem? Feet { get; private set; }
+	public IDye? DyeFeet { get; private set; }
+	public IDye? Dye2Feet { get; private set; }
 	public IItem? Ears { get; private set; }
 	public IDye? DyeEars { get; private set; }
+	public IDye? Dye2Ears { get; private set; }
+	public IItem? Neck { get; private set; }
+	public IDye? DyeNeck { get; private set; }
+	public IDye? Dye2Neck { get; private set; }
+	public IItem? Wrists { get; private set; }
+	public IDye? DyeWrists { get; private set; }
+	public IDye? Dye2Wrists { get; private set; }
 	public IItem? LeftRing { get; private set; }
 	public IDye? DyeLeftRing { get; private set; }
+	public IDye? Dye2LeftRing { get; private set; }
 	public IItem? RightRing { get; private set; }
 	public IDye? DyeRightRing { get; private set; }
+	public IDye? Dye2RightRing { get; private set; }
 
 	public override void PopulateData(RowParser parser, GameData gameData, Language language)
 	{
@@ -109,28 +121,40 @@ public class EventNpcAppearance : ExcelRow, INpcAppearance
 
 		this.MainHand = LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, parser.ReadColumn<ulong>(65));
 		this.DyeMainHand = parser.ReadRowReference<byte, Stain>(66);
-		this.OffHand = LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, parser.ReadColumn<ulong>(67));
-		this.DyeOffHand = parser.ReadRowReference<byte, Stain>(68);
-		this.Head = this.GetItem(ItemSlots.Head, parser.ReadColumn<uint>(69), npcEquip?.ModelHead);
-		this.DyeHead = parser.ReadRowReference<byte, Stain>(70);
-		this.Body = this.GetItem(ItemSlots.Body, parser.ReadColumn<uint>(72), npcEquip?.ModelBody);
-		this.DyeBody = parser.ReadRowReference<byte, Stain>(73);
-		this.Hands = this.GetItem(ItemSlots.Hands, parser.ReadColumn<uint>(74), npcEquip?.ModelHands);
-		this.DyeHands = parser.ReadRowReference<byte, Stain>(75);
-		this.Legs = this.GetItem(ItemSlots.Legs, parser.ReadColumn<uint>(76), npcEquip?.ModelLegs);
-		this.DyeLegs = parser.ReadRowReference<byte, Stain>(77);
-		this.Feet = this.GetItem(ItemSlots.Feet, parser.ReadColumn<uint>(78), npcEquip?.ModelFeet);
-		this.DyeFeet = parser.ReadRowReference<byte, Stain>(79);
-		this.Ears = this.GetItem(ItemSlots.Ears, parser.ReadColumn<uint>(80), npcEquip?.ModelEars);
-		this.DyeEars = parser.ReadRowReference<byte, Stain>(81);
-		this.Neck = this.GetItem(ItemSlots.Neck, parser.ReadColumn<uint>(82), npcEquip?.ModelNeck);
-		this.DyeNeck = parser.ReadRowReference<byte, Stain>(83);
-		this.Wrists = this.GetItem(ItemSlots.Wrists, parser.ReadColumn<uint>(84), npcEquip?.ModelWrists);
-		this.DyeWrists = parser.ReadRowReference<byte, Stain>(85);
-		this.LeftRing = this.GetItem(ItemSlots.LeftRing, parser.ReadColumn<uint>(86), npcEquip?.ModelLeftRing);
-		this.DyeLeftRing = parser.ReadRowReference<byte, Stain>(87);
-		this.RightRing = this.GetItem(ItemSlots.RightRing, parser.ReadColumn<uint>(88), npcEquip?.ModelRightRing);
-		this.DyeRightRing = parser.ReadRowReference<byte, Stain>(89);
+		this.Dye2MainHand = parser.ReadRowReference<byte, Stain>(67);
+		this.OffHand = LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, parser.ReadColumn<ulong>(68));
+		this.DyeOffHand = parser.ReadRowReference<byte, Stain>(69);
+		this.Dye2OffHand = parser.ReadRowReference<byte, Stain>(70);
+		this.Head = this.GetItem(ItemSlots.Head, parser.ReadColumn<uint>(71), npcEquip?.ModelHead);
+		this.DyeHead = parser.ReadRowReference<byte, Stain>(72);
+		this.Dye2Head = parser.ReadRowReference<byte, Stain>(73);
+		this.Body = this.GetItem(ItemSlots.Body, parser.ReadColumn<uint>(75), npcEquip?.ModelBody);
+		this.DyeBody = parser.ReadRowReference<byte, Stain>(76);
+		this.Dye2Body = parser.ReadRowReference<byte, Stain>(77);
+		this.Hands = this.GetItem(ItemSlots.Hands, parser.ReadColumn<uint>(78), npcEquip?.ModelHands);
+		this.DyeHands = parser.ReadRowReference<byte, Stain>(79);
+		this.Dye2Hands = parser.ReadRowReference<byte, Stain>(80);
+		this.Legs = this.GetItem(ItemSlots.Legs, parser.ReadColumn<uint>(81), npcEquip?.ModelLegs);
+		this.DyeLegs = parser.ReadRowReference<byte, Stain>(82);
+		this.Dye2Legs = parser.ReadRowReference<byte, Stain>(83);
+		this.Feet = this.GetItem(ItemSlots.Feet, parser.ReadColumn<uint>(84), npcEquip?.ModelFeet);
+		this.DyeFeet = parser.ReadRowReference<byte, Stain>(85);
+		this.Dye2Feet = parser.ReadRowReference<byte, Stain>(86);
+		this.Ears = this.GetItem(ItemSlots.Ears, parser.ReadColumn<uint>(87), npcEquip?.ModelEars);
+		this.DyeEars = parser.ReadRowReference<byte, Stain>(88);
+		this.Dye2Ears = parser.ReadRowReference<byte, Stain>(89);
+		this.Neck = this.GetItem(ItemSlots.Neck, parser.ReadColumn<uint>(90), npcEquip?.ModelNeck);
+		this.DyeNeck = parser.ReadRowReference<byte, Stain>(91);
+		this.Dye2Neck = parser.ReadRowReference<byte, Stain>(92);
+		this.Wrists = this.GetItem(ItemSlots.Wrists, parser.ReadColumn<uint>(93), npcEquip?.ModelWrists);
+		this.DyeWrists = parser.ReadRowReference<byte, Stain>(94);
+		this.Dye2Wrists = parser.ReadRowReference<byte, Stain>(95);
+		this.LeftRing = this.GetItem(ItemSlots.LeftRing, parser.ReadColumn<uint>(96), npcEquip?.ModelLeftRing);
+		this.DyeLeftRing = parser.ReadRowReference<byte, Stain>(97);
+		this.Dye2LeftRing = parser.ReadRowReference<byte, Stain>(98);
+		this.RightRing = this.GetItem(ItemSlots.RightRing, parser.ReadColumn<uint>(99), npcEquip?.ModelRightRing);
+		this.DyeRightRing = parser.ReadRowReference<byte, Stain>(100);
+		this.Dye2RightRing = parser.ReadRowReference<byte, Stain>(101);
 	}
 
 	protected IItem GetItem(ItemSlots slot, uint baseVal, uint? equipVal)

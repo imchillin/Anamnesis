@@ -129,5 +129,17 @@ public class Mount : ExcelRow, INpcBase
 		public IDye DyeLeftRing => DyeUtility.NoneDye;
 		public IItem RightRing => ItemUtility.NoneItem;
 		public IDye DyeRightRing => DyeUtility.NoneDye;
+		public IDye Dye2MainHand => DyeUtility.NoneDye;
+		public IDye Dye2OffHand => DyeUtility.NoneDye;
+		public IDye Dye2Head => DyeUtility.NoneDye;
+		public IDye Dye2Body => DyeUtility.NoneDye;
+		public IDye Dye2Legs => DyeUtility.NoneDye;
+		public IDye Dye2Feet => DyeUtility.NoneDye;
+		public IDye Dye2Hands => DyeUtility.NoneDye;
+		public IDye Dye2Wrists => DyeUtility.NoneDye;
+		public IDye Dye2Neck => DyeUtility.NoneDye;
+		public IDye Dye2Ears => DyeUtility.NoneDye;
+		public IDye Dye2LeftRing => DyeUtility.NoneDye;
+		public IDye Dye2RightRing => DyeUtility.NoneDye;
 	}
 }

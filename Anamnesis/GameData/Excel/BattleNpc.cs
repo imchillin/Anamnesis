@@ -107,28 +107,40 @@ public class BattleNpc : ExcelRow, INpcBase
 			{
 				this.MainHand = LuminaExtensions.GetWeaponItem(ItemSlots.MainHand, npcEquip.ModelMainHand);
 				this.DyeMainHand = GameDataService.Dyes.Get(npcEquip.DyeMainHand.Row);
+				this.Dye2MainHand = GameDataService.Dyes.Get(npcEquip.Dye2MainHand.Row);
 				this.OffHand = LuminaExtensions.GetWeaponItem(ItemSlots.OffHand, npcEquip.ModelOffHand);
 				this.DyeOffHand = GameDataService.Dyes.Get(npcEquip.DyeOffHand.Row);
+				this.Dye2OffHand = GameDataService.Dyes.Get(npcEquip.Dye2OffHand.Row);
 				this.Head = LuminaExtensions.GetGearItem(ItemSlots.Head, npcEquip.ModelHead);
 				this.DyeHead = GameDataService.Dyes.Get(npcEquip.DyeHead.Row);
+				this.Dye2Head = GameDataService.Dyes.Get(npcEquip.Dye2Head.Row);
 				this.Body = LuminaExtensions.GetGearItem(ItemSlots.Body, npcEquip.ModelBody);
 				this.DyeBody = GameDataService.Dyes.Get(npcEquip.DyeBody.Row);
+				this.Dye2Body = GameDataService.Dyes.Get(npcEquip.Dye2Body.Row);
 				this.Hands = LuminaExtensions.GetGearItem(ItemSlots.Hands, npcEquip.ModelHead);
 				this.DyeHands = GameDataService.Dyes.Get(npcEquip.DyeHands.Row);
+				this.Dye2Hands = GameDataService.Dyes.Get(npcEquip.Dye2Hands.Row);
 				this.Legs = LuminaExtensions.GetGearItem(ItemSlots.Legs, npcEquip.ModelLegs);
 				this.DyeLegs = GameDataService.Dyes.Get(npcEquip.DyeLegs.Row);
+				this.Dye2Legs = GameDataService.Dyes.Get(npcEquip.Dye2Legs.Row);
 				this.Feet = LuminaExtensions.GetGearItem(ItemSlots.Feet, npcEquip.ModelFeet);
 				this.DyeFeet = GameDataService.Dyes.Get(npcEquip.DyeFeet.Row);
+				this.Dye2Feet = GameDataService.Dyes.Get(npcEquip.Dye2Feet.Row);
 				this.Ears = LuminaExtensions.GetGearItem(ItemSlots.Ears, npcEquip.ModelEars);
 				this.DyeEars = GameDataService.Dyes.Get(npcEquip.DyeEars.Row);
+				this.Dye2Ears = GameDataService.Dyes.Get(npcEquip.Dye2Ears.Row);
 				this.Neck = LuminaExtensions.GetGearItem(ItemSlots.Neck, npcEquip.ModelNeck);
 				this.DyeNeck = GameDataService.Dyes.Get(npcEquip.DyeNeck.Row);
+				this.Dye2Neck = GameDataService.Dyes.Get(npcEquip.Dye2Neck.Row);
 				this.Wrists = LuminaExtensions.GetGearItem(ItemSlots.Wrists, npcEquip.ModelWrists);
 				this.DyeWrists = GameDataService.Dyes.Get(npcEquip.DyeWrists.Row);
+				this.Dye2Wrists = GameDataService.Dyes.Get(npcEquip.Dye2Wrists.Row);
 				this.LeftRing = LuminaExtensions.GetGearItem(ItemSlots.LeftRing, npcEquip.ModelLeftRing);
 				this.DyeLeftRing = GameDataService.Dyes.Get(npcEquip.DyeLeftRing.Row);
+				this.Dye2LeftRing = GameDataService.Dyes.Get(npcEquip.Dye2LeftRing.Row);
 				this.RightRing = LuminaExtensions.GetGearItem(ItemSlots.RightRing, npcEquip.ModelRightRing);
 				this.DyeRightRing = GameDataService.Dyes.Get(npcEquip.DyeRightRing.Row);
+				this.Dye2RightRing = GameDataService.Dyes.Get(npcEquip.Dye2RightRing.Row);
 			}
 		}
 
@@ -163,27 +175,39 @@ public class BattleNpc : ExcelRow, INpcBase
 
 		public IItem? MainHand { get; private set; }
 		public IDye? DyeMainHand { get; private set; }
+		public IDye? Dye2MainHand { get; private set; }
 		public IItem? OffHand { get; private set; }
 		public IDye? DyeOffHand { get; private set; }
+		public IDye? Dye2OffHand { get; private set; }
 		public IItem? Head { get; private set; }
 		public IDye? DyeHead { get; private set; }
+		public IDye? Dye2Head { get; private set; }
 		public IItem? Body { get; private set; }
 		public IDye? DyeBody { get; private set; }
+		public IDye? Dye2Body { get; private set; }
 		public IItem? Legs { get; private set; }
 		public IDye? DyeLegs { get; private set; }
+		public IDye? Dye2Legs { get; private set; }
 		public IItem? Feet { get; private set; }
 		public IDye? DyeFeet { get; private set; }
+		public IDye? Dye2Feet { get; private set; }
 		public IItem? Hands { get; private set; }
 		public IDye? DyeHands { get; private set; }
+		public IDye? Dye2Hands { get; private set; }
 		public IItem? Wrists { get; private set; }
 		public IDye? DyeWrists { get; private set; }
+		public IDye? Dye2Wrists { get; private set; }
 		public IItem? Neck { get; private set; }
 		public IDye? DyeNeck { get; private set; }
+		public IDye? Dye2Neck { get; private set; }
 		public IItem? Ears { get; private set; }
 		public IDye? DyeEars { get; private set; }
+		public IDye? Dye2Ears { get; private set; }
 		public IItem? LeftRing { get; private set; }
 		public IDye? DyeLeftRing { get; private set; }
+		public IDye? Dye2LeftRing { get; private set; }
 		public IItem? RightRing { get; private set; }
 		public IDye? DyeRightRing { get; private set; }
+		public IDye? Dye2RightRing { get; private set; }
 	}
 }
