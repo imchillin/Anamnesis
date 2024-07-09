@@ -70,7 +70,9 @@
 			<local:ClassFilterItem Class="Summoner" Value="{Binding Value}"/>
 			<local:ClassFilterItem Class="Thaumaturge" Value="{Binding Value}"/>
 			<local:ClassFilterItem Class="Reaper" Value="{Binding Value}"/>
-		</WrapPanel>
+            <local:ClassFilterItem Class="Viper" Value="{Binding Value}"/>
+            <local:ClassFilterItem Class="Pictomancer" Value="{Binding Value}"/>
+        </WrapPanel>
 
 		<!-- Gatherers -->
 		<local:RoleFilterItem Grid.Column="0" Grid.Row="3" Role="Gatherers" Value="{Binding Value}"/>
