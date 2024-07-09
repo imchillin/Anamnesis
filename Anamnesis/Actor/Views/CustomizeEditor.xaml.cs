@@ -174,7 +174,7 @@ public partial class CustomizeEditor : UserControl
 		this.HasEars = this.Customize.Race == AnAppearance.Races.Viera || this.Customize.Race == AnAppearance.Races.Lalafel || this.Customize.Race == AnAppearance.Races.Elezen;
 		this.HasEarsTail = this.HasTail | this.HasEars;
 		this.HasMuscles = !this.HasEars && !this.HasTail;
-		this.HasGender = this.Customize.Race != AnAppearance.Races.Hrothgar;
+		this.HasGender = true;
 
 		bool canAge = this.Customize.Tribe == AnAppearance.Tribes.Midlander;
 		canAge |= this.Customize.Race == AnAppearance.Races.Miqote && this.Customize.Gender == AnAppearance.Genders.Feminine;
