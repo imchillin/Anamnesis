@@ -588,7 +588,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			int count = bestHkaPose.Transforms.Count;
 
 			// Load all bones first
-			for (int boneIndex = 0; boneIndex < count; boneIndex++)
+			for (int boneIndex = partialSkeletonIndex == 0 ? 0 : 1; boneIndex < count; boneIndex++)
 			{
 				string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
 				string name = this.ConvertBoneName(namePrefix, originalName);
