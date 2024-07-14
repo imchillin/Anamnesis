@@ -9,7 +9,7 @@
 			 xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" Width="750">
+			 d:DesignHeight="450" d:DesignWidth="800">
 
 
 	<UserControl.Resources>
