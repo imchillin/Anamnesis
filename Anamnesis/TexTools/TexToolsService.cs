@@ -44,7 +44,7 @@ public class TexToolsService : ServiceBase<TexToolsService>
 
 		try
 		{
-			string filePath = MemoryService.GamePath + "\\game\\XivMods.json";
+			string filePath = MemoryService.GamePath + "\\aFileThatDefinitelyDoesNotExistEverAgain.json";   // If this ever gets fixed again, change string to: \\game\\XivMods.json
 			if (!File.Exists(filePath))
 				return;
 
