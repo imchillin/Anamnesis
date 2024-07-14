@@ -9,7 +9,7 @@
 			 xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800">
+			 d:DesignHeight="450" Width="1427">
 
 
 	<UserControl.Resources>
@@ -35,13 +35,14 @@
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
 						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
 							<RowDefinition/>
 							<RowDefinition/>
 							<RowDefinition/>
@@ -50,46 +51,198 @@
 						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="0" Key="Pose_Head" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<local:BoneView Grid.Column="1" Grid.Row="0" BoneName="Head"/>
 
-						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Nose" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<local:BoneView Grid.Column="3" Grid.Row="0" BoneName="Nose"/>
-
-						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_Bridge" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<local:BoneView Grid.Column="5" Grid.Row="0" BoneName="Bridge"/>
-
-						<XivToolsWpf:TextBlock Grid.Column="6" Grid.Row="0" Key="Pose_Ears" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="7" Grid.Row="0">
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="0" Key="Pose_Ears" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="0">
 							<local:BoneView BoneName="EarLeft" Label="L"/>
 							<local:BoneView BoneName="EarRight" Label="R"/>
 						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="8" Key="Pose_VieraEars" Style="{DynamicResource Label}" Visibility="{Binding IsViera, Converter={StaticResource B2V}}" Margin="16, 0, 3, 0"/>
-						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars01, Converter={StaticResource B2V}}">
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="0" Key="Pose_VieraEars" Style="{DynamicResource Label}" Visibility="{Binding IsViera, Converter={StaticResource B2V}}" Margin="16, 0, 3, 0"/>
+						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars01, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="VieraEar01ALeft" Label="L1"/>
 							<local:BoneView BoneName="VieraEar01BLeft" Label="L2"/>
 							<local:BoneView BoneName="VieraEar01ARight" Label="R1"/>
 							<local:BoneView BoneName="VieraEar01BRight" Label="R2"/>
 						</StackPanel>
-						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}">
+						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="VieraEar02ALeft" Label="L1"/>
 							<local:BoneView BoneName="VieraEar02BLeft" Label="L2"/>
 							<local:BoneView BoneName="VieraEar02ARight" Label="R1"/>
 							<local:BoneView BoneName="VieraEar02BRight" Label="R2"/>
 						</StackPanel>
-						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}">
+						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="VieraEar03ALeft" Label="L1"/>
 							<local:BoneView BoneName="VieraEar03BLeft" Label="L2"/>
 							<local:BoneView BoneName="VieraEar03ARight" Label="R1"/>
 							<local:BoneView BoneName="VieraEar03BRight" Label="R2"/>
 						</StackPanel>
-						<StackPanel Orientation="Horizontal" Grid.Column="9" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}">
+						<StackPanel Orientation="Horizontal" Grid.Column="5" Grid.ColumnSpan="4" Grid.Row="0" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}">
 							<local:BoneView BoneName="VieraEar04ALeft" Label="L1"/>
 							<local:BoneView BoneName="VieraEar04BLeft" Label="L2"/>
 							<local:BoneView BoneName="VieraEar04ARight" Label="R1"/>
 							<local:BoneView BoneName="VieraEar04BRight" Label="R2"/>
 						</StackPanel>
 
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Jaw" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_ago" Label="1"/>
+							<local:BoneView BoneName="j_f_dago" Label="2"/>
+						</StackPanel>
 
-						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Eyes" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="1" Key="Pose_Eyelids" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_umab_l" Label="L1"/>
+							<local:BoneView BoneName="j_f_umab_r" Label="R1"/>
+							<local:BoneView BoneName="j_f_dmab_l" Label="L2"/>
+							<local:BoneView BoneName="j_f_dmab_r" Label="R2"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="1" Key="Pose_Eyes" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="5" Grid.Row="1" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_eye_l" Label="L"/>
+							<local:BoneView BoneName="j_f_eye_r" Label="R"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="2" Key="Pose_Eyebrows" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_mayu_l" Label="L1"/>
+							<local:BoneView BoneName="j_f_mayu_r" Label="R1"/>
+							<local:BoneView BoneName="j_f_miken_l" Label="L2"/>
+							<local:BoneView BoneName="j_f_miken_r" Label="R2"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="2" Key="Pose_Cheeks" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="3" Grid.Row="2" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_hoho_l" Label="L1"/>
+							<local:BoneView BoneName="j_f_hoho_r" Label="R1"/>
+							<local:BoneView BoneName="j_f_shoho_l" Label="L2"/>
+							<local:BoneView BoneName="j_f_shoho_r" Label="R2"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="6" Key="Pose_CheekboneSides" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="5" Grid.Row="6" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_dhoho_l" Label="L"/>
+							<local:BoneView BoneName="j_f_dhoho_r" Label="R"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="7" Key="Pose_FrontalCheekbones" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="5" Grid.Row="7" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_dmemoto_l" Label="L"/>
+							<local:BoneView BoneName="j_f_dmemoto_r" Label="R"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="3" Key="Pose_Nose" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="3" Grid.Row="3" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_uhana" Label="C"/>
+							<local:BoneView BoneName="j_f_hana_l" Label="L"/>
+							<local:BoneView BoneName="j_f_hana_r" Label="R"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="3" Key="Pose_NoseBridge" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="5" Grid.Row="3" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_memoto" Label="C"/>
+							<local:BoneView BoneName="j_f_dmiken_l" Label="L"/>
+							<local:BoneView BoneName="j_f_dmiken_r" Label="R"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="7" Key="Pose_Lips" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="3" Grid.Row="7" Orientation="Vertical">
+							<StackPanel Orientation="Horizontal">
+								<local:BoneView BoneName="j_f_lip_l" Label="L"/>
+								<local:BoneView BoneName="j_f_lip_r" Label="R"/>
+							</StackPanel>
+							<StackPanel Orientation="Horizontal">
+								<local:BoneView BoneName="j_f_ulip_a" Label="U1"/>
+								<local:BoneView BoneName="j_f_ulip_b" Label="U2"/>
+								<local:BoneView BoneName="j_f_dlip_a" Label="L1"/>
+								<local:BoneView BoneName="j_f_dlip_b" Label="L2"/>
+							</StackPanel>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="4" Key="Pose_LipCorners" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="3" Grid.Row="4" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_uslip_l" Label="UL"/>
+							<local:BoneView BoneName="j_f_uslip_r" Label="UR"/>
+							<local:BoneView BoneName="j_f_dslip_l" Label="LL"/>
+							<local:BoneView BoneName="j_f_dslip_r" Label="LR"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="5" Key="Pose_LeftUpperLip" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_ulip_01_l" Label="IL"/>
+							<local:BoneView BoneName="j_f_ulip_02_l" Label="IL2"/>
+							<local:BoneView BoneName="j_f_umlip_01_l" Label="OL"/>
+							<local:BoneView BoneName="j_f_umlip_02_l" Label="OL2"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="5" Key="Pose_RightUpperLip" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="3" Grid.Row="5" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_ulip_01_r" Label="IR"/>
+							<local:BoneView BoneName="j_f_ulip_02_r" Label="IR2"/>
+							<local:BoneView BoneName="j_f_umlip_01_r" Label="OR"/>
+							<local:BoneView BoneName="j_f_umlip_02_r" Label="OR2"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="6" Key="Pose_LeftLowerLip" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="6" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_dlip_01_l" Label="IL"/>
+							<local:BoneView BoneName="j_f_dlip_02_l" Label="IL2"/>
+							<local:BoneView BoneName="j_f_dmlip_01_l" Label="OL"/>
+							<local:BoneView BoneName="j_f_dmlip_02_l" Label="OL2"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="6" Key="Pose_RightLowerLip" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="3" Grid.Row="6" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_dlip_01_r" Label="IR"/>
+							<local:BoneView BoneName="j_f_dlip_02_r" Label="IR2"/>
+							<local:BoneView BoneName="j_f_dmlip_01_r" Label="OR"/>
+							<local:BoneView BoneName="j_f_dmlip_02_r" Label="OR2"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="4" Key="Pose_Teeth" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="5" Grid.Row="4" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_hagukiup" Label="U"/>
+							<local:BoneView BoneName="j_f_hagukidn" Label="L"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="5" Key="Pose_Tongue" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="5" Grid.Row="5" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_bero_01" Label="1"/>
+							<local:BoneView BoneName="j_f_bero_02" Label="2"/>
+							<local:BoneView BoneName="j_f_bero_03" Label="3"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="2" Key="Pose_EyeSocket" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="5" Grid.Row="2" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_mab_l" Label="L"/>
+							<local:BoneView BoneName="j_f_mab_r" Label="R"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="7" Key="Pose_Eyelids" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="7" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_mabup_01_l" Label="UL"/>
+							<local:BoneView BoneName="j_f_mabdn_01_l" Label="LL"/>
+							<local:BoneView BoneName="j_f_mabup_01_r" Label="UR"/>
+							<local:BoneView BoneName="j_f_mabdn_01_r" Label="LR"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="3" Key="Pose_RightEyeCorner" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_mabup_02out_r" Label="OU"/>
+							<local:BoneView BoneName="j_f_mabdn_02out_r" Label="OL"/>
+							<local:BoneView BoneName="j_f_mabup_03in_r" Label="IU"/>
+							<local:BoneView BoneName="j_f_mabdn_03in_r" Label="IL"/>
+						</StackPanel>
+
+						<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="4" Key="Pose_LeftEyeCorner" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
+						<StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal">
+							<local:BoneView BoneName="j_f_mabup_02out_l" Label="OU"/>
+							<local:BoneView BoneName="j_f_mabdn_02out_l" Label="OL"/>
+							<local:BoneView BoneName="j_f_mabup_03in_l" Label="IU"/>
+							<local:BoneView BoneName="j_f_mabdn_03in_l" Label="IL"/>
+						</StackPanel>
+
+						<!--<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="1" Key="Pose_Eyes" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" >
 							<local:BoneView BoneName="EyeLeft" Label="L"/>
 							<local:BoneView BoneName="EyeRight" Label="R"/>
@@ -128,8 +281,8 @@
 
 						<XivToolsWpf:TextBlock Grid.Column="2" Grid.Row="2" Key="Pose_Jaw" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 						<StackPanel Grid.Column="3" Grid.Row="2" Orientation="Horizontal">
-							<local:BoneView BoneName="Jaw"/>
-							<local:BoneView BoneName="HrothJawUpper" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
+							<local:BoneView BoneName="j_ago" Label="1"/>
+							<local:BoneView BoneName="j_f_dago" Label="2"/>
 						</StackPanel>
 
 						<XivToolsWpf:TextBlock Grid.Column="4" Grid.Row="2" Key="Pose_Mouth" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
@@ -154,7 +307,7 @@
 							<local:BoneView BoneName="LipLowerA" Label="1" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
 							<local:BoneView BoneName="LipLowerB" Label="2" Visibility="{Binding IsHrothgar, Converter={StaticResource !B2V}}"/>
 							<local:BoneView BoneName="HrothLipLower" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}}"/>
-						</StackPanel>
+						</StackPanel>-->
 
 					</Grid>
 				</GroupBox>
@@ -367,7 +520,7 @@
 					</Grid>
 				</GroupBox>
 
-				
+
 
 				<GroupBox>
 					<GroupBox.Header>
