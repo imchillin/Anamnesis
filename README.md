@@ -14,8 +14,8 @@ We actively encourage people to contribute to the project with their forks to im
 ## Getting Started
 
 ### Prerequisites
-- [.NET 6.0 Desktop Runtime x64](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.6-windows-x64-installer) installed on your computer. Anamnesis will only work with 64-bit versions of Windows. Support will not be added for x86/32-bit versions of Windows (As Patch 6.15 Final Fantasy XIV [doesn't support 32 bit OS anymore](https://na.finalfantasyxiv.com/lodestone/news/detail/73031a839564edaca5f4bce18043b9b0e339b52a))
-- Windows 10 or 11 (there are no plans to add support for older versions of Windows that [Microsoft is not in turn supporting](https://www.microsoft.com/en-au/windows/windows-7-end-of-life-support-information), or other operating systems).
+- [.NET 6.0 Desktop Runtime x64](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.25-windows-x64-installer) installed on your computer. Anamnesis will only work with 64-bit versions of Windows. Support will not be added for 32-bit versions of Windows (As Patch 6.15 Final Fantasy XIV [doesn't support 32 bit OS anymore](https://na.finalfantasyxiv.com/lodestone/news/detail/73031a839564edaca5f4bce18043b9b0e339b52a))
+- Windows 10 or 11 (there are no plans to add support for older versions of Windows that [Microsoft or is not in turn supporting](https://www.microsoft.com/en-au/windows/windows-7-end-of-life-support-information), or other operating systems).
 
 ### Installation
 
@@ -23,29 +23,37 @@ Download the latest build from [the releases page](https://github.com/imchillin/
 
 ### Usage
 
-Make sure to check out the included [wiki](https://github.com/imchillin/Anamnesis/wiki) for guides and tutorials. If you have any questions that weren’t answered there, join us on [Discord](https://discord.gg/KvGJCCnG8t) and ask for help there.
+You can check the official Wiki over at [xivmodding.com](https://xivmodding.com/books/anamnesis). Though largely outdated, there is also the Github hosted [wiki](https://github.com/imchillin/Anamnesis/wiki). If you have any questions that weren’t answered in those two, join us on [Discord](https://discord.gg/KvGJCCnG8t) and ask for help there.
 
-## Authors
+## Credits
+
+### Maintainer
+
+* **[chirpxiv](https://github.com/chirpxiv)** - *Main Maintainer*
+
+### Original Authors
+
+Ex Developers that have since moved on to different projects.
 
 * **[Yuki](https://github.com/Yuki-Walsh)** - *Main development*
 * **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
 * **[Peebs-miqo](https://github.com/Peebs-miqo)** - *Wiki and tip curating* 
 * **[AsgardXIV](https://github.com/AsgardXIV)** - *Animation god*
 
-## God Tier Contributing Developers
+### God Tier Contributing Developers
 
-* **[chirpxiv](https://github.com/chirpxiv)**
 * **[HoloWise](https://github.com/HoloWise)**
 * **[SoyaX](https://github.com/SoyaX)**
 * **[Reyli](https://github.com/Reyli)**
 
-## Community Developers
+### Community Developers
 
 * **[JKAnderson](https://github.com/JKAnderson)**
 * **[ajiiisai](https://github.com/ajiiisai)**
 * **[goaaats](https://github.com/goaaats)**
 
-## Translations
+### Translations
+
 * **[Maxunit](https://github.com/Maxunit)** - *German* 
 * **[Arianishka](https://github.com/Arianishka)** - *French*
 * **[wozaiha](https://github.com/wozaiha)** - *Chinese*
