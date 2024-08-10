@@ -166,6 +166,17 @@ public partial class ItemView : UserControl
 		}
 	}
 
+	private void OnDyeMouseUp2(object sender, MouseButtonEventArgs e)
+	{
+		if (this.Actor?.CanRefresh != true || this.ItemModel == null)
+			return;
+
+		if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
+		{
+			this.ItemModel.Dye2 = 0;
+		}
+	}
+
 	private void SetItem(IItem? item, bool autoOffhand = false, bool forceMain = false, bool forceOff = false)
 	{
 		this.lockViewModel = true;
