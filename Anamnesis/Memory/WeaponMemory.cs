@@ -85,5 +85,6 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 		this.Base = useEmperorsFists ? ItemUtility.EmperorsNewFists.ModelBase : (ushort)0;
 		this.Variant = useEmperorsFists ? ItemUtility.EmperorsNewFists.ModelVariant : (ushort)0;
 		this.Dye = 0;
+		this.Dye2 = 0;
 	}
 }

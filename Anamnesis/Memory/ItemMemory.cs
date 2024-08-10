@@ -21,6 +21,7 @@ public class ItemMemory : MemoryBase, IEquipmentItemMemory
 		this.Base = (ushort)(isPlayer ? 0 : 1);
 		this.Variant = 0;
 		this.Dye = 0;
+		this.Dye2 = 0;
 	}
 
 	public void Equip(IItem item)
