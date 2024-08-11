@@ -6,11 +6,11 @@ namespace Anamnesis.Actor.Views;
 using System.Windows.Controls;
 
 /// <summary>
-/// Interaction logic for CharacterPoseView.xaml.
+/// Interaction logic for PoseBodyGuiView.xaml.
 /// </summary>
-public partial class PoseGuiView : UserControl
+public partial class PoseBodyGuiView : UserControl
 {
-	public PoseGuiView()
+	public PoseBodyGuiView()
 	{
 		this.InitializeComponent();
 	}

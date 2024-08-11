@@ -391,7 +391,7 @@
 					MouseUp="OnCanvasMouseUp">
 					<Grid DataContext="{Binding Skeleton}">
 						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed" />
-						<views:PoseGuiView x:Name="GuiView" Visibility="Visible" />
+						<views:PoseBodyGuiView x:Name="GuiView" Visibility="Visible" />
 						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" Margin="3, 28, 0, 3"/>
 					</Grid>
 				</Grid>
@@ -423,7 +423,7 @@
 								Cursor="Hand"
 								ToolTip="GUI View"
 								Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
-						<XivToolsWpf:IconBlock Icon="ProjectDiagram" FontSize="10"/>
+						<XivToolsWpf:IconBlock Icon="StreetView" FontSize="10"/>
 					</ListBoxItem>
 					<ListBoxItem
 								Margin="1"
