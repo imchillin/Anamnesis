@@ -3,23 +3,22 @@
 
 namespace Anamnesis.Actor;
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media.Media3D;
 using Anamnesis.Actor.Posing;
 using Anamnesis.Memory;
 using Anamnesis.Posing;
 using Anamnesis.Services;
 using PropertyChanged;
 using Serilog;
-using XivToolsWpf;
-using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO.Enumeration;
-
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Media3D;
+using XivToolsWpf;
 using AnQuaternion = Anamnesis.Memory.Quaternion;
 
 [AddINotifyPropertyChangedInterface]
@@ -98,7 +97,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar
 		|| this.IsIVCS;
 
-	public bool IsCustomFace => this.Actor == null ? false : this.IsMiqote || this.IsHrothgar;
+	public bool IsStandardFace => this.Actor == null ? true : !this.IsMiqote && !this.IsHrothgar && !this.IsViera;
 	public bool IsMiqote => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote;
 	public bool IsViera => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Viera;
 	public bool IsElezen => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Elezen;
@@ -512,7 +511,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 					if (!links.Contains(name))
 						continue;
 
-					foreach(string linkedBoneName in links.Bones)
+					foreach (string linkedBoneName in links.Bones)
 					{
 						if (linkedBoneName == name)
 							continue;

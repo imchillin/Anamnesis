@@ -6,474 +6,695 @@
 			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
 			 xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 mc:Ignorable="d" 
+			 mc:Ignorable="d"
 			 d:DesignHeight="512" d:DesignWidth="1024">
 
-	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="B2V"/>
-		<XivToolsWpf.Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
-	</UserControl.Resources>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="B2V"/>
+        <XivToolsWpf.Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
 
-	<Grid x:Name="ContentArea">
+        <!-- Standard Head & Face (Hyur, Elezen, Au'Ra, Lalafell, Roegadyn) -->
+        <DataTemplate x:Key="StandardFaceTemplate">
+            <Viewbox>
+                <Canvas Height="300" Width="300">
+                    <Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.15" Stretch="Uniform"
+						   Source="pack://application:,,,/Assets/Pose/CharFHyurFaceBackground.png" IsHitTestVisible="False"/>
 
-		<Grid VerticalAlignment="Top" Margin="100,0,0,0">
-			<CheckBox
+                    <!-- Jaw -->
+                    <local:BoneView Canvas.Left="146" Canvas.Top="288" BoneName="j_f_ago"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyes -->
+                    <local:BoneView Canvas.Left="105" Canvas.Top="170" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="185" Canvas.Top="170" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyebrows -->
+                    <local:BoneView Canvas.Left="105" Canvas.Top="145" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="185" Canvas.Top="145" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Cheeks -->
+                    <local:BoneView Canvas.Left="105" Canvas.Top="210" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="185" Canvas.Top="210" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Ears -->
+                    <local:BoneView Canvas.Left="65" Canvas.Top="200" BoneName="j_mimi_l" FlippedBoneName="j_mimi_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="225" Canvas.Top="200" BoneName="j_mimi_r" FlippedBoneName="j_mimi_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Earrings -->
+                    <local:BoneView Canvas.Left="65" Canvas.Top="220" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="225" Canvas.Top="220" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="65" Canvas.Top="240" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="225" Canvas.Top="240" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+
+        <!-- Hrothgar Head & Face -->
+        <DataTemplate x:Key="HrothgarFaceTemplate">
+            <Viewbox>
+                <Canvas Width="300" Height="300">
+                    <Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.15" Stretch="Uniform"
+                           Source="pack://application:,,,/Assets/Pose/CharMHrothFaceBackground.png" IsHitTestVisible="False"/>
+
+                    <!-- Jaw -->
+                    <local:BoneView Canvas.Left="140" Canvas.Top="288" BoneName="j_f_ago"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyes -->
+                    <local:BoneView Canvas.Left="95" Canvas.Top="150" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="185" Canvas.Top="150" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Whiskers -->
+                    <local:BoneView Canvas.Left="50" Canvas.Top="195" BoneName="j_f_hige_l" FlippedBoneName="j_f_hige_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="230" Canvas.Top="195" BoneName="j_f_hige_r" FlippedBoneName="j_f_hige_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyebrows -->
+                    <local:BoneView Canvas.Left="95" Canvas.Top="125" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="185" Canvas.Top="125" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Cheeks -->
+                    <local:BoneView Canvas.Left="95" Canvas.Top="185" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="185" Canvas.Top="185" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Ears -->
+                    <local:BoneView Canvas.Left="50" Canvas.Top="95" BoneName="j_mimi_l" FlippedBoneName="j_mimi_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="230" Canvas.Top="95" BoneName="j_mimi_r" FlippedBoneName="j_mimi_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Earrings -->
+                    <local:BoneView Canvas.Left="30" Canvas.Top="120" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="250" Canvas.Top="120" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="30" Canvas.Top="145" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="250" Canvas.Top="145" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+
+        <!-- Miqote Head & Face -->
+        <DataTemplate x:Key="MiqoteFaceTemplate">
+            <Viewbox>
+                <Canvas Height="300" Width="300">
+                    <Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.15" Stretch="Uniform"
+                           Source="pack://application:,,,/Assets/Pose/CharFMiqoFaceBackground.png" IsHitTestVisible="False"/>
+
+                    <!-- Jaw -->
+                    <local:BoneView Canvas.Left="140" Canvas.Top="250" BoneName="j_f_ago"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyes -->
+                    <local:BoneView Canvas.Left="104" Canvas.Top="156" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="176" Canvas.Top="156" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyebrows -->
+                    <local:BoneView Canvas.Left="104" Canvas.Top="136" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="176" Canvas.Top="136" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Cheeks -->
+                    <local:BoneView Canvas.Left="104" Canvas.Top="196" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="176" Canvas.Top="196" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Ears -->
+                    <local:BoneView Canvas.Left="45" Canvas.Top="55" BoneName="j_mimi_l" FlippedBoneName="j_mimi_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="235" Canvas.Top="55" BoneName="j_mimi_r" FlippedBoneName="j_mimi_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Earrings -->
+                    <local:BoneView Canvas.Left="25" Canvas.Top="85" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="255" Canvas.Top="85" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="25" Canvas.Top="115" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="255" Canvas.Top="115" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+
+        <!-- Viera (Floppy) Head & Face -->
+        <DataTemplate x:Key="VieraFloppyFaceTemplate">
+            <Viewbox>
+                <Canvas Height="300" Width="300">
+                    <Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.15" Stretch="Uniform"
+                           Source="pack://application:,,,/Assets/Pose/CharFVieraFloppyFaceBackground.png" IsHitTestVisible="False"/>
+
+                    <!-- Jaw -->
+                    <local:BoneView Canvas.Left="140" Canvas.Top="240" BoneName="j_f_ago"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyes -->
+                    <local:BoneView Canvas.Left="110" Canvas.Top="165" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="170" Canvas.Top="165" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyebrows -->
+                    <local:BoneView Canvas.Left="110" Canvas.Top="145" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="170" Canvas.Top="145" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Cheeks -->
+                    <local:BoneView Canvas.Left="110" Canvas.Top="195" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="170" Canvas.Top="195" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Ears[M, 02] -->
+                    <local:BoneView Canvas.Left="108" Canvas.Top="70" BoneName="j_zerb_a_l" FlippedBoneName="j_zerb_a_r"
+                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="172" Canvas.Top="70" BoneName="j_zerb_a_r" FlippedBoneName="j_zerb_a_l"
+                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="90" Canvas.Top="25" BoneName="j_zerb_b_l" FlippedBoneName="j_zerb_b_r"
+                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="185" Canvas.Top="25" BoneName="j_zerb_b_r" FlippedBoneName="j_zerb_b_l"
+                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Ears[F, 03] -->
+                    <local:BoneView Canvas.Left="108" Canvas.Top="70" BoneName="j_zerc_a_l" FlippedBoneName="j_zerc_a_r"
+                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="172" Canvas.Top="70" BoneName="j_zerc_a_r" FlippedBoneName="j_zerc_a_l"
+                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="90" Canvas.Top="25" BoneName="j_zerc_b_l" FlippedBoneName="j_zerc_b_r"
+                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="185" Canvas.Top="25" BoneName="j_zerc_b_r" FlippedBoneName="j_zerc_b_l"
+                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Earrings -->
+                    <local:BoneView Canvas.Left="80" Canvas.Top="80" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="200" Canvas.Top="80" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="80" Canvas.Top="105" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="200" Canvas.Top="105" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        
+        <!-- Viera (Straight-ear) Head & Face -->
+        <DataTemplate x:Key="VieraStraightFaceTemplate">
+            <Viewbox>
+                <Canvas Height="300" Width="300">
+                    <Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.15" Stretch="Uniform"
+                           Source="pack://application:,,,/Assets/Pose/CharFVieraFaceBackground.png" IsHitTestVisible="False"/>
+
+                    <!-- Jaw -->
+                    <local:BoneView Canvas.Left="140" Canvas.Top="250" BoneName="j_f_ago"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyes -->
+                    <local:BoneView Canvas.Left="110" Canvas.Top="170" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="170" Canvas.Top="170" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Eyebrows -->
+                    <local:BoneView Canvas.Left="110" Canvas.Top="145" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="170" Canvas.Top="145" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Cheeks -->
+                    <local:BoneView Canvas.Left="110" Canvas.Top="200" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="170" Canvas.Top="200" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Ears[01] -->
+                    <local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zera_a_l" FlippedBoneName="j_zera_a_r"
+                                    Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zera_a_r" FlippedBoneName="j_zera_a_l"
+                                    Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zera_b_l" FlippedBoneName="j_zera_b_r"
+                                    Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zera_b_r" FlippedBoneName="j_zera_b_l"
+                                    Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Ears[02] -->
+                    <local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zerb_a_l" FlippedBoneName="j_zerb_a_r"
+                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zerb_a_r" FlippedBoneName="j_zerb_a_l"
+                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zerb_b_l" FlippedBoneName="j_zerb_b_r"
+                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zerb_b_r" FlippedBoneName="j_zerb_b_l"
+                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Ears[03] -->
+                    <local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zerc_a_l" FlippedBoneName="j_zerc_a_r"
+                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zerc_a_r" FlippedBoneName="j_zerc_a_l"
+                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zerc_b_l" FlippedBoneName="j_zerc_b_r"
+                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zerc_b_r" FlippedBoneName="j_zerc_b_l"
+                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Ears[04] -->
+                    <local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zerd_a_l" FlippedBoneName="j_zerd_a_r"
+                                    Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zerd_a_r" FlippedBoneName="j_zerd_a_l"
+                                    Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zerd_b_l" FlippedBoneName="j_zerd_b_r"
+                                    Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zerd_b_r" FlippedBoneName="j_zerd_b_l"
+                                    Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+
+                    <!-- Earrings -->
+                    <local:BoneView Canvas.Left="75" Canvas.Top="90" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="200" Canvas.Top="90" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="75" Canvas.Top="115" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <local:BoneView Canvas.Left="200" Canvas.Top="115" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"
+                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid x:Name="ContentArea">
+
+        <Grid VerticalAlignment="Top" Margin="100,0,0,0">
+            <CheckBox
 				x:Name="FlipSidesOption"
 				Margin="3,4,3,0"
 				VerticalContentAlignment="Center"
 				IsChecked="{Binding FlipSides}">
 
-				<XivToolsWpf:TextBlock Key="Pose_FlipSides" />
-			</CheckBox>
-		</Grid>
+                <XivToolsWpf:TextBlock Key="Pose_FlipSides" />
+            </CheckBox>
+        </Grid>
 
-		<Grid ClipToBounds="True">
+        <Grid ClipToBounds="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
-
-			<XivToolsWpf:TextBlock Key="Pose_GuiFlip" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="0, 3, 6, 0" Opacity="0.3"
+            <!-- Orientation (Guide) -->
+            <XivToolsWpf:TextBlock Key="Pose_GuiFlip" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="0, 3, 6, 0" Opacity="0.3"
 					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
 
-			<XivToolsWpf:TextBlock Key="Pose_GuiNotFlip" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="0, 3, 6, 0" Opacity="0.3"
+            <XivToolsWpf:TextBlock Key="Pose_GuiNotFlip" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="0, 3, 6, 0" Opacity="0.3"
 					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
 
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <!-- Orientation (Body) -->
+            <XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="25, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					    Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="25, 20, 25, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Left" FontSize="48" Margin="25, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Right" FontSize="48" Margin="25, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
 
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="16, 20, 16, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <!-- Orientation (Clothes) -->
+            <XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="35, 20, 43, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					    Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="16, 20, 16, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="35, 20, 37, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="16, 20, 16, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="1" HorizontalAlignment="Left" FontSize="48" Margin="35, 20, 43, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="16, 20, 16, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="1" HorizontalAlignment="Right" FontSize="48" Margin="35, 20, 43, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
 
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <!-- Orientation (Head) -->
+            <XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="-5, 135, 23, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					    Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="-5, 135, 18, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
-			<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="2" HorizontalAlignment="Left" FontSize="48" Margin="-5, 135, 18, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					    Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
-			<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="32, 20, 32, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.15"
+            <XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="2" HorizontalAlignment="Right" FontSize="48" Margin="-5, 135, 23, 0" Foreground="Gray" FontWeight="Bold" Opacity="0.5"
 					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
 
-			<!-- Body -->
-			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256">
-				<Canvas Height="512" Width="256">
+            <!-- Body -->
+            <Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256">
+                <Canvas Height="512" Width="256">
+                    <Image Canvas.Left="8" Canvas.Top="25" Width="240" Height="480" Source="pack://application:,,,/Assets/Pose/CharFBodyBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
-					<Image Canvas.Left="0" Canvas.Top="0" Width="256" Height="512" Source="../../../Assets/PoseCharacterBodyBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+                    <!-- Head -->
+                    <local:BoneView Canvas.Left="117" Canvas.Top="55" BoneName="j_kao"/>
+                    <local:BoneView Canvas.Left="117" Canvas.Top="85" BoneName="j_kubi"/>
 
-					<local:BoneView Canvas.Left="118" Canvas.Top="50" BoneName="Head"/>
-					<local:BoneView Canvas.Left="118" Canvas.Top="75" BoneName="Neck"/>
-					<local:BoneView Canvas.Left="118" Canvas.Top="100" BoneName="SpineC"/>
-					<local:BoneView Canvas.Left="118" Canvas.Top="145" BoneName="SpineB"/>
-					<local:BoneView Canvas.Left="118" Canvas.Top="180" BoneName="SpineA"/>
-					<local:BoneView Canvas.Left="118" Canvas.Top="210" BoneName="Waist"/>
-					<local:BoneView Canvas.Left="118" Canvas.Top="233" BoneName="iv_koumon" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-					<local:BoneView Canvas.Left="95" Canvas.Top="220" BoneName="iv_koumon_l" FlippedBoneName="iv_koumon_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-					<local:BoneView Canvas.Left="140" Canvas.Top="220" BoneName="iv_koumon_r" FlippedBoneName="iv_koumon_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-					<local:BoneView Canvas.Left="81" Canvas.Top="237" BoneName="iv_shiri_l" FlippedBoneName="iv_shiri_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-					<local:BoneView Canvas.Left="152" Canvas.Top="237" BoneName="iv_shiri_r" FlippedBoneName="iv_shiri_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-					<local:BoneView Canvas.Left="98" Canvas.Top="93" BoneName="ClavicleLeft" FlippedBoneName="ClavicleRight"/>
-					<local:BoneView Canvas.Left="138" Canvas.Top="93" BoneName="ClavicleRight" FlippedBoneName="ClavicleLeft"/>
-					<local:BoneView Canvas.Left="73" Canvas.Top="87" BoneName="ShoulderLeft" FlippedBoneName="ShoulderRight"/>
-					<local:BoneView Canvas.Left="165" Canvas.Top="87" BoneName="ShoulderRight" FlippedBoneName="ShoulderLeft"/>
-					<local:BoneView Canvas.Left="102" Canvas.Top="120" BoneName="BreastLeft" FlippedBoneName="BreastRight"/>
-					<local:BoneView Canvas.Left="95" Canvas.Top="142" BoneName="iv_c_mune_l" FlippedBoneName="iv_c_mune_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-					<local:BoneView Canvas.Left="135" Canvas.Top="120" BoneName="BreastRight" FlippedBoneName="BreastLeft"/>
-					<local:BoneView Canvas.Left="140" Canvas.Top="142" BoneName="iv_c_mune_r" FlippedBoneName="iv_c_mune_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-					<local:BoneView Canvas.Left="78" Canvas.Top="107" BoneName="ArmLeft" FlippedBoneName="ArmRight"/>
-					<local:BoneView Canvas.Left="55" Canvas.Top="127" BoneName="iv_nitoukin_l" FlippedBoneName="iv_nitoukin_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-					<local:BoneView Canvas.Left="158" Canvas.Top="107" BoneName="ArmRight" FlippedBoneName="ArmLeft"/>
-					<local:BoneView Canvas.Left="179" Canvas.Top="127" BoneName="iv_nitoukin_r" FlippedBoneName="iv_nitoukin_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-					<local:BoneView Canvas.Left="75" Canvas.Top="160" BoneName="ElbowLeft" FlippedBoneName="ElbowRight"/>
-					<local:BoneView Canvas.Left="160" Canvas.Top="160" BoneName="ElbowRight" FlippedBoneName="ElbowLeft"/>
-					<local:BoneView Canvas.Left="55" Canvas.Top="160" BoneName="ForearmLeft" FlippedBoneName="ForearmRight"/>
-					<local:BoneView Canvas.Left="182" Canvas.Top="160" BoneName="ForearmRight" FlippedBoneName="ForearmLeft"/>
-					<local:BoneView Canvas.Left="48" Canvas.Top="230" BoneName="WristLeft" FlippedBoneName="WristRight"/>
-					<local:BoneView Canvas.Left="188" Canvas.Top="230" BoneName="WristRight" FlippedBoneName="WristLeft"/>
-					<local:BoneView Canvas.Left="94" Canvas.Top="255" BoneName="LegLeft" FlippedBoneName="LegRight"/>
-					<local:BoneView Canvas.Left="143" Canvas.Top="255" BoneName="LegRight" FlippedBoneName="LegLeft"/>
-					<local:BoneView Canvas.Left="90" Canvas.Top="320" BoneName="KneeLeft" FlippedBoneName="KneeRight"/>
-					<local:BoneView Canvas.Left="143" Canvas.Top="320" BoneName="KneeRight" FlippedBoneName="KneeLeft"/>
-					<local:BoneView Canvas.Left="86" Canvas.Top="343" BoneName="CalfLeft" FlippedBoneName="CalfRight"/>
-					<local:BoneView Canvas.Left="148" Canvas.Top="343" BoneName="CalfRight" FlippedBoneName="CalfLeft"/>
-					<local:BoneView Canvas.Left="80" Canvas.Top="460" BoneName="FootLeft" FlippedBoneName="FootRight"/>
-					<local:BoneView Canvas.Left="156" Canvas.Top="460" BoneName="FootRight" FlippedBoneName="FootLeft"/>
-					<local:BoneView Canvas.Left="73" Canvas.Top="480" BoneName="ToesLeft" FlippedBoneName="ToesRight"/>
-					<local:BoneView Canvas.Left="164" Canvas.Top="480" BoneName="ToesRight" FlippedBoneName="ToesLeft"/>
+                    <!-- Torso -->
+                    <local:BoneView Canvas.Left="117" Canvas.Top="115" BoneName="j_sebo_c"/>
+                    <local:BoneView Canvas.Left="98" Canvas.Top="138" BoneName="j_mune_l" FlippedBoneName="j_mune_r"/>
+                    <local:BoneView Canvas.Left="136" Canvas.Top="138" BoneName="j_mune_r" FlippedBoneName="j_mune_l"/>
+                    <local:BoneView Canvas.Left="117" Canvas.Top="160" BoneName="j_sebo_b"/>
+                    <local:BoneView Canvas.Left="117" Canvas.Top="185" BoneName="j_sebo_a"/>
+                    <local:BoneView Canvas.Left="117" Canvas.Top="210" BoneName="j_kosi"/>
 
-				</Canvas>
-			</Viewbox>
+                    <!-- Arms -->
+                    <local:BoneView Canvas.Left="90" Canvas.Top="110" BoneName="j_sako_l" FlippedBoneName="j_sako_r"/>
+                    <local:BoneView Canvas.Left="145" Canvas.Top="110" BoneName="j_sako_r" FlippedBoneName="j_sako_l"/>
+                    <local:BoneView Canvas.Left="58" Canvas.Top="120" BoneName="n_hkata_l" FlippedBoneName="n_hkata_r"/>
+                    <local:BoneView Canvas.Left="176" Canvas.Top="120" BoneName="n_hkata_r" FlippedBoneName="n_hkata_l"/>
+                    <local:BoneView Canvas.Left="75" Canvas.Top="130" BoneName="j_ude_a_l" FlippedBoneName="j_ude_a_r"/>
+                    <local:BoneView Canvas.Left="159" Canvas.Top="130" BoneName="j_ude_a_r" FlippedBoneName="j_ude_a_l"/>
+                    <local:BoneView Canvas.Left="48" Canvas.Top="160" BoneName="n_hhiji_l" FlippedBoneName="n_hhiji_r"/>
+                    <local:BoneView Canvas.Left="188" Canvas.Top="160" BoneName="n_hhiji_r" FlippedBoneName="n_hhiji_l"/>
+                    <local:BoneView Canvas.Left="65" Canvas.Top="170" BoneName="j_ude_b_l" FlippedBoneName="j_ude_b_r"/>
+                    <local:BoneView Canvas.Left="170" Canvas.Top="170" BoneName="j_ude_b_r" FlippedBoneName="j_ude_b_l"/>
+                    <local:BoneView Canvas.Left="45" Canvas.Top="235" BoneName="n_hte_l" FlippedBoneName="n_hte_r"/>
+                    <local:BoneView Canvas.Left="190" Canvas.Top="235" BoneName="n_hte_r" FlippedBoneName="n_hte_l"/>
+                    
+                    <!-- Legs -->
+                    <local:BoneView Canvas.Left="90" Canvas.Top="270" BoneName="j_asi_a_l" FlippedBoneName="j_asi_a_r"/>
+                    <local:BoneView Canvas.Left="145" Canvas.Top="270" BoneName="j_asi_a_r" FlippedBoneName="j_asi_a_l"/>
+                    <local:BoneView Canvas.Left="84" Canvas.Top="350" BoneName="j_asi_b_l" FlippedBoneName="j_asi_b_r"/>
+                    <local:BoneView Canvas.Left="150" Canvas.Top="350" BoneName="j_asi_b_r" FlippedBoneName="j_asi_b_l"/>
+                    <local:BoneView Canvas.Left="79" Canvas.Top="380" BoneName="j_asi_c_l" FlippedBoneName="j_asi_c_r"/>
+                    <local:BoneView Canvas.Left="155" Canvas.Top="380" BoneName="j_asi_c_r" FlippedBoneName="j_asi_c_l"/>
+                    <local:BoneView Canvas.Left="74" Canvas.Top="455" BoneName="j_asi_d_l" FlippedBoneName="j_asi_d_r"/>
+                    <local:BoneView Canvas.Left="161" Canvas.Top="455" BoneName="j_asi_d_r" FlippedBoneName="j_asi_d_l"/>
+                    <local:BoneView Canvas.Left="70" Canvas.Top="480" BoneName="j_asi_e_l" FlippedBoneName="j_asi_e_r"/>
+                    <local:BoneView Canvas.Left="164" Canvas.Top="480" BoneName="j_asi_e_r" FlippedBoneName="j_asi_e_l"/>
 
-			<!-- IVCS Penis -->
-			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
-				<Canvas Height="512" Width="256">
+                    <!-- IVCS Anus -->
+                    <local:BoneView Canvas.Left="117" Canvas.Top="235" BoneName="iv_koumon" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+                    <local:BoneView Canvas.Left="98" Canvas.Top="225" BoneName="iv_koumon_l" FlippedBoneName="iv_koumon_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+                    <local:BoneView Canvas.Left="135" Canvas.Top="225" BoneName="iv_koumon_r" FlippedBoneName="iv_koumon_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
-					<local:BoneView Canvas.Left="39" Canvas.Top="320" BoneName="iv_ochinko_f"/>
-					<local:BoneView Canvas.Left="39" Canvas.Top="342" BoneName="iv_ochinko_e"/>
-					<local:BoneView Canvas.Left="39" Canvas.Top="364" BoneName="iv_ochinko_d"/>
-					<local:BoneView Canvas.Left="39" Canvas.Top="385" BoneName="iv_ochinko_c"/>
-					<local:BoneView Canvas.Left="39" Canvas.Top="407" BoneName="iv_ochinko_b"/>
-					<local:BoneView Canvas.Left="39" Canvas.Top="428" BoneName="iv_ochinko_a"/>
-					<local:BoneView Canvas.Left="30" Canvas.Top="449" BoneName="iv_kougan_l" FlippedBoneName="iv_kougan_r"/>
-					<local:BoneView Canvas.Left="50" Canvas.Top="449" BoneName="iv_kougan_r" FlippedBoneName="iv_kougan_l"/>
+                    <!-- IVCS Buttocks -->
+                    <local:BoneView Canvas.Left="90" Canvas.Top="248" BoneName="iv_shiri_l" FlippedBoneName="iv_shiri_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+                    <local:BoneView Canvas.Left="144" Canvas.Top="248" BoneName="iv_shiri_r" FlippedBoneName="iv_shiri_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
-				</Canvas>
-			</Viewbox>
+                    <!-- IVCS Breasts -->
+                    <local:BoneView Canvas.Left="98" Canvas.Top="160" BoneName="iv_c_mune_l" FlippedBoneName="iv_c_mune_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+                    <local:BoneView Canvas.Left="136" Canvas.Top="160" BoneName="iv_c_mune_r" FlippedBoneName="iv_c_mune_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
-			<!-- IVCS Vagina -->
-			<Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
-				<Canvas Height="512" Width="256">
+                    <!-- IVCS Biceps -->
+                    <local:BoneView Canvas.Left="70" Canvas.Top="150" BoneName="iv_nitoukin_l" FlippedBoneName="iv_nitoukin_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+                    <local:BoneView Canvas.Left="163" Canvas.Top="150" BoneName="iv_nitoukin_r" FlippedBoneName="iv_nitoukin_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+                </Canvas>
+            </Viewbox>
 
-					<local:BoneView Canvas.Left="200" Canvas.Top="320" BoneName="iv_kuritto"/>
-					<local:BoneView Canvas.Left="200" Canvas.Top="342" BoneName="iv_omanko"/>
-					<local:BoneView Canvas.Left="180" Canvas.Top="342" BoneName="iv_inshin_l" FlippedBoneName="iv_inshin_r"/>
-					<local:BoneView Canvas.Left="220" Canvas.Top="342" BoneName="iv_inshin_r" FlippedBoneName="iv_inshin_l"/>
+            <!-- IVCS Penis -->
+            <Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
+                <Canvas Height="512" Width="256">
+                    <local:BoneView Canvas.Left="25" Canvas.Top="320" BoneName="iv_ochinko_f"/>
+                    <local:BoneView Canvas.Left="25" Canvas.Top="342" BoneName="iv_ochinko_e"/>
+                    <local:BoneView Canvas.Left="25" Canvas.Top="364" BoneName="iv_ochinko_d"/>
+                    <local:BoneView Canvas.Left="25" Canvas.Top="385" BoneName="iv_ochinko_c"/>
+                    <local:BoneView Canvas.Left="25" Canvas.Top="407" BoneName="iv_ochinko_b"/>
+                    <local:BoneView Canvas.Left="25" Canvas.Top="428" BoneName="iv_ochinko_a"/>
+                    <local:BoneView Canvas.Left="15" Canvas.Top="449" BoneName="iv_kougan_l" FlippedBoneName="iv_kougan_r"/>
+                    <local:BoneView Canvas.Left="35" Canvas.Top="449" BoneName="iv_kougan_r" FlippedBoneName="iv_kougan_l"/>
+                </Canvas>
+            </Viewbox>
 
-				</Canvas>
-			</Viewbox>
+            <!-- IVCS Vagina -->
+            <Viewbox Grid.Column="0" Margin="-30, 0, -30, 0" Width="256" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}">
+                <Canvas Height="512" Width="256">
+                    <local:BoneView Canvas.Left="210" Canvas.Top="320" BoneName="iv_kuritto"/>
+                    <local:BoneView Canvas.Left="210" Canvas.Top="342" BoneName="iv_omanko"/>
+                    <local:BoneView Canvas.Left="190" Canvas.Top="342" BoneName="iv_inshin_l" FlippedBoneName="iv_inshin_r"/>
+                    <local:BoneView Canvas.Left="230" Canvas.Top="342" BoneName="iv_inshin_r" FlippedBoneName="iv_inshin_l"/>
+                </Canvas>
+            </Viewbox>
 
-			<!-- Clothes -->
-			<Viewbox Grid.Column="1" Margin="-20, 0, -20, 0" Width="256">
-				<Canvas Height="512" Width="256">
-					<Image Canvas.Left="0" Canvas.Top="0" Width="256" Height="512" Source="../../../Assets/PoseCharacterClothesBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+            <!-- Clothes -->
+            <Viewbox Grid.Column="1" Margin="-20, 0, -20, 0" Width="256">
+                <Canvas Height="512" Width="256">
+                    <Image Canvas.Left="8" Canvas.Top="25" Width="240" Height="480" Source="pack://application:,,,/Assets/Pose/CharFClothesBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
-					<local:BoneView Canvas.Left="120" Canvas.Top="202" BoneName="Waist"/>
-					<local:BoneView  Canvas.Left="70" Canvas.Top="110" BoneName="PauldronLeft" FlippedBoneName="PauldronRight"/>
-					<local:BoneView  Canvas.Left="170" Canvas.Top="110" BoneName="PauldronRight" FlippedBoneName="PauldronLeft"/>
-					<local:BoneView  Canvas.Left="140" Canvas.Top="230" BoneName="ClothFrontARight" FlippedBoneName="ClothFrontALeft"/>
-					<local:BoneView  Canvas.Left="165" Canvas.Top="307" BoneName="ClothFrontBRight" FlippedBoneName="ClothFrontBLeft"/>
-					<local:BoneView  Canvas.Left="176" Canvas.Top="404" BoneName="ClothFrontCRight" FlippedBoneName="ClothFrontCLeft"/>
-					<local:BoneView  Canvas.Left="100" Canvas.Top="230" BoneName="ClothFrontALeft" FlippedBoneName="ClothFrontARight"/>
-					<local:BoneView  Canvas.Left="74" Canvas.Top="307" BoneName="ClothFrontBLeft" FlippedBoneName="ClothFrontBRight"/>
-					<local:BoneView  Canvas.Left="64" Canvas.Top="404" BoneName="ClothFrontCLeft" FlippedBoneName="ClothFrontCRight"/>
-					<local:BoneView  Canvas.Left="160" Canvas.Top="230" BoneName="ClothSideARight" FlippedBoneName="ClothSideALeft"/>
-					<local:BoneView  Canvas.Left="194" Canvas.Top="292" BoneName="ClothSideBRight" FlippedBoneName="ClothSideBLeft"/>
-					<local:BoneView  Canvas.Left="214" Canvas.Top="389" BoneName="ClothSideCRight" FlippedBoneName="ClothSideCLeft"/>
-					<local:BoneView  Canvas.Left="80" Canvas.Top="230" BoneName="ClothSideALeft" FlippedBoneName="ClothSideARight"/>
-					<local:BoneView  Canvas.Left="46" Canvas.Top="292" BoneName="ClothSideBLeft" FlippedBoneName="ClothSideBRight"/>
-					<local:BoneView  Canvas.Left="26" Canvas.Top="389" BoneName="ClothSideCLeft" FlippedBoneName="ClothSideCRight"/>
-					<local:BoneView  Canvas.Left="130" Canvas.Top="250" BoneName="ClothBackARight" FlippedBoneName="ClothBackALeft"/>
-					<local:BoneView  Canvas.Left="130" Canvas.Top="307" BoneName="ClothBackBRight" FlippedBoneName="ClothBackBLeft"/>
-					<local:BoneView  Canvas.Left="130" Canvas.Top="422" BoneName="ClothBackCRight" FlippedBoneName="ClothBackCLeft"/>
-					<local:BoneView  Canvas.Left="110" Canvas.Top="250" BoneName="ClothBackALeft" FlippedBoneName="ClothBackARight"/>
-					<local:BoneView  Canvas.Left="110" Canvas.Top="307" BoneName="ClothBackBLeft" FlippedBoneName="ClothBackBRight"/>
-					<local:BoneView  Canvas.Left="110" Canvas.Top="422" BoneName="ClothBackCLeft" FlippedBoneName="ClothBackCRight"/>
+                    <local:BoneView Canvas.Left="117" Canvas.Top="202" BoneName="j_kosi"/>
 
-					<local:BoneView  Canvas.Left="120" Canvas.Top="34" BoneName="j_ex_met_va"/>
-					<local:BoneView  Canvas.Left="120" Canvas.Top="54" BoneName="HairA"/>
-					<local:BoneView  Canvas.Left="120" Canvas.Top="83" BoneName="HairB"/>
-					<local:BoneView  Canvas.Left="100" Canvas.Top="54" BoneName="HairFrontLeft" FlippedBoneName="HairFrontRight"/>
-					<local:BoneView  Canvas.Left="140" Canvas.Top="54" BoneName="HairFrontRight" FlippedBoneName="HairFrontLeft"/>
+                    <!-- Visor -->
+                    <local:BoneView Canvas.Left="117" Canvas.Top="30" BoneName="j_ex_met_va"/>
+                    
+                    <!-- Hair -->
+                    <local:BoneView Canvas.Left="117" Canvas.Top="54" BoneName="j_kami_a"/>
+                    <local:BoneView Canvas.Left="117" Canvas.Top="83" BoneName="j_kami_b"/>
+                    <local:BoneView Canvas.Left="93" Canvas.Top="54" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
+                    <local:BoneView Canvas.Left="140" Canvas.Top="54" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
 
-					<local:BoneView Canvas.Left="90" Canvas.Top="150" BoneName="HolsterLeft" FlippedBoneName="HolsterRight"/>
-					<local:BoneView Canvas.Left="146" Canvas.Top="150" BoneName="HolsterRight" FlippedBoneName="HolsterLeft"/>
-					<local:BoneView Canvas.Left="90" Canvas.Top="184" BoneName="SheatheLeft" FlippedBoneName="SheatheRight"/>
-					<local:BoneView Canvas.Left="149" Canvas.Top="184" BoneName="SheatheRight" FlippedBoneName="SheatheLeft"/>
+                    <!-- Pauldrons -->
+                    <local:BoneView Canvas.Left="75" Canvas.Top="110" BoneName="n_kataarmor_l" FlippedBoneName="n_kataarmor_r"/>
+                    <local:BoneView Canvas.Left="160" Canvas.Top="110" BoneName="n_kataarmor_r" FlippedBoneName="n_kataarmor_l"/>
 
-					<local:BoneView Canvas.Left="105" Canvas.Top="110" BoneName="ScabbardLeft" FlippedBoneName="ScabbardRight"/>
-					<local:BoneView Canvas.Left="135" Canvas.Top="110" BoneName="ScabbardRight" FlippedBoneName="ScabbardLeft"/>
+                    <!-- Scabbard (e.g. Weapons on the back) -->
+                    <local:BoneView Canvas.Left="102" Canvas.Top="110" BoneName="j_buki_sebo_l" FlippedBoneName="j_buki_sebo_r"/>
+                    <local:BoneView Canvas.Left="132" Canvas.Top="110" BoneName="j_buki_sebo_r" FlippedBoneName="j_buki_sebo_l"/>
 
-					<local:BoneView Canvas.Left="90" Canvas.Top="346" BoneName="PoleynLeft" FlippedBoneName="PoleynRight"/>
-					<local:BoneView Canvas.Left="149" Canvas.Top="346" BoneName="PoleynRight" FlippedBoneName="PoleynLeft"/>
+                    <!-- Clothing -->
+                    <local:BoneView Canvas.Left="148" Canvas.Top="255" BoneName="j_sk_f_a_r" FlippedBoneName="j_sk_f_a_l"/>
+                    <local:BoneView Canvas.Left="165" Canvas.Top="320" BoneName="j_sk_f_b_r" FlippedBoneName="j_sk_f_b_l"/>
+                    <local:BoneView Canvas.Left="176" Canvas.Top="410" BoneName="j_sk_f_c_r" FlippedBoneName="j_sk_f_c_l"/>
 
-					<local:BoneView Canvas.Left="57" Canvas.Top="170" BoneName="CouterLeft" FlippedBoneName="CouterRight"/>
-					<local:BoneView Canvas.Left="183" Canvas.Top="170" BoneName="CouterRight" FlippedBoneName="CouterLeft"/>
+                    <local:BoneView Canvas.Left="86" Canvas.Top="255" BoneName="j_sk_f_a_l" FlippedBoneName="j_sk_f_a_r"/>
+                    <local:BoneView Canvas.Left="74" Canvas.Top="320" BoneName="j_sk_f_b_l" FlippedBoneName="j_sk_f_b_r"/>
+                    <local:BoneView Canvas.Left="64" Canvas.Top="410" BoneName="j_sk_f_c_l" FlippedBoneName="j_sk_f_c_r"/>
 
-					<local:BoneView Canvas.Left="45" Canvas.Top="210" BoneName="ShieldLeft" FlippedBoneName="ShieldRight"/>
-					<local:BoneView Canvas.Left="192" Canvas.Top="210" BoneName="ShieldRight" FlippedBoneName="ShieldLeft"/>
+                    <local:BoneView Canvas.Left="169" Canvas.Top="260" BoneName="j_sk_s_a_r" FlippedBoneName="j_sk_s_a_l"/>
+                    <local:BoneView Canvas.Left="188" Canvas.Top="340" BoneName="j_sk_s_b_r" FlippedBoneName="j_sk_s_b_l"/>
+                    <local:BoneView Canvas.Left="205" Canvas.Top="420" BoneName="j_sk_s_c_r" FlippedBoneName="j_sk_s_c_l"/>
 
-				</Canvas>
-			</Viewbox>
+                    <local:BoneView Canvas.Left="65" Canvas.Top="260" BoneName="j_sk_s_a_l" FlippedBoneName="j_sk_s_a_r"/>
+                    <local:BoneView Canvas.Left="47" Canvas.Top="340" BoneName="j_sk_s_b_l" FlippedBoneName="j_sk_s_b_r"/>
+                    <local:BoneView Canvas.Left="30" Canvas.Top="420" BoneName="j_sk_s_c_l" FlippedBoneName="j_sk_s_c_r"/>
 
-			<Grid Grid.Column="2">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
+                    <local:BoneView Canvas.Left="127" Canvas.Top="250" BoneName="j_sk_b_a_r" FlippedBoneName="j_sk_b_a_l"/>
+                    <local:BoneView Canvas.Left="127" Canvas.Top="310" BoneName="j_sk_b_b_r" FlippedBoneName="j_sk_b_b_l"/>
+                    <local:BoneView Canvas.Left="127" Canvas.Top="400" BoneName="j_sk_b_c_r" FlippedBoneName="j_sk_b_c_l"/>
 
-				<Grid Grid.Row="0" Visibility="{Binding IsViera, Converter={StaticResource B2V}}">
-					<!-- Viera Ears -->
-					<Viewbox Visibility="{Binding IsVieraEarsFlop, Converter={StaticResource !B2V}, FallbackValue=Collapsed}" Height="120" Margin="0, -20, 0, -20">
-						<Canvas Width="138" Height="196">
-							<Image Canvas.Left="3" Canvas.Top="0" Width="145" Height="250" Source="../../../Assets/PoseCharacterVieraEarsStraightBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+                    <local:BoneView Canvas.Left="107" Canvas.Top="250" BoneName="j_sk_b_a_l" FlippedBoneName="j_sk_b_a_r"/>
+                    <local:BoneView Canvas.Left="107" Canvas.Top="310" BoneName="j_sk_b_b_l" FlippedBoneName="j_sk_b_b_r"/>
+                    <local:BoneView Canvas.Left="107" Canvas.Top="400" BoneName="j_sk_b_c_l" FlippedBoneName="j_sk_b_c_r"/>
 
-							<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar01ALeft" FlippedBoneName="VieraEar01ARight" Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="VieraEar01BLeft" FlippedBoneName="VieraEar01BRight" Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar01ARight" FlippedBoneName="VieraEar01ALeft" Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="VieraEar01BRight" FlippedBoneName="VieraEar01BLeft" Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
+                    <!-- Couter (Elbows) -->
+                    <local:BoneView Canvas.Left="59" Canvas.Top="185" BoneName="n_hijisoubi_l" FlippedBoneName="n_hijisoubi_r"/>
+                    <local:BoneView Canvas.Left="175" Canvas.Top="185" BoneName="n_hijisoubi_r" FlippedBoneName="n_hijisoubi_l"/>
 
-							<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar02ALeft" FlippedBoneName="VieraEar02ARight" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="VieraEar02BLeft" FlippedBoneName="VieraEar02BRight" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar02ARight" FlippedBoneName="VieraEar02ALeft" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="VieraEar02BRight" FlippedBoneName="VieraEar02BLeft" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+                    <!-- Holster (e.g. Machinist holster) -->
+                    <local:BoneView Canvas.Left="95" Canvas.Top="180" BoneName="j_buki2_kosi_l" FlippedBoneName="j_buki2_kosi_r"/>
+                    <local:BoneView Canvas.Left="139" Canvas.Top="180" BoneName="j_buki2_kosi_r" FlippedBoneName="j_buki2_kosi_l"/>
 
-							<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar03ALeft" FlippedBoneName="VieraEar03ARight" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="VieraEar03BLeft" FlippedBoneName="VieraEar03BRight" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar03ARight" FlippedBoneName="VieraEar03ALeft" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="VieraEar03BRight" FlippedBoneName="VieraEar03BLeft" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+                    <!-- Sheathe (e.g. Samurai sword sheathe) -->
+                    <local:BoneView Canvas.Left="85" Canvas.Top="200" BoneName="j_buki_kosi_l" FlippedBoneName="j_buki_kosi_r"/>
+                    <local:BoneView Canvas.Left="150" Canvas.Top="200" BoneName="j_buki_kosi_r" FlippedBoneName="j_buki_kosi_l"/>
 
-							<local:BoneView Canvas.Left="37" Canvas.Top="154" BoneName="VieraEar04ALeft" FlippedBoneName="VieraEar04ARight" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="22" Canvas.Top="75" BoneName="VieraEar04BLeft" FlippedBoneName="VieraEar04BRight" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="86" Canvas.Top="154" BoneName="VieraEar04ARight" FlippedBoneName="VieraEar04ALeft" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="96" Canvas.Top="75" BoneName="VieraEar04BRight" FlippedBoneName="VieraEar04BLeft" Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
+                    <!-- Shield -->
+                    <local:BoneView Canvas.Left="45" Canvas.Top="230" BoneName="n_buki_tate_l" FlippedBoneName="n_buki_tate_r"/>
+                    <local:BoneView Canvas.Left="188" Canvas.Top="230" BoneName="n_buki_tate_r" FlippedBoneName="n_buki_tate_l"/>
 
-							<local:BoneView Canvas.Left="115" Canvas.Top="110" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
-							<local:BoneView Canvas.Left="115" Canvas.Top="140" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
-							<local:BoneView Canvas.Left="5" Canvas.Top="110" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
-							<local:BoneView Canvas.Left="5" Canvas.Top="140" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
-						</Canvas>
-					</Viewbox>
+                    <!-- Poleyn (Kneecaps) -->
+                    <local:BoneView Canvas.Left="82" Canvas.Top="360" BoneName="n_hizasoubi_l" FlippedBoneName="n_hizasoubi_r"/>
+                    <local:BoneView Canvas.Left="153" Canvas.Top="360" BoneName="n_hizasoubi_r" FlippedBoneName="n_hizasoubi_l"/>
+                </Canvas>
+            </Viewbox>
 
-					<!-- Floppy Viera -->
-					<Viewbox Visibility="{Binding IsVieraEarsFlop, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Height="100">
-						<Canvas Width="163" Height="142" Margin="-60, 20, 30, -20">
-							<Image Canvas.Left="0" Canvas.Top="0" Width="256" Height="122" Source="../../../Assets/PoseCharacterVieraEarsFlopBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-							<!-- Feminine ears are ear 03 -->
-							<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="VieraEar03ALeft" FlippedBoneName="VieraEar03ARight" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="VieraEar03BLeft" FlippedBoneName="VieraEar03BRight" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="VieraEar03ARight" FlippedBoneName="VieraEar03ALeft" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="VieraEar03BRight" FlippedBoneName="VieraEar03BLeft" Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+                <!-- Head & Face -->
+                <ContentControl Grid.Row="0" Margin="-20, 0, 10, 0">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsStandardFace}" Value="True">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource StandardFaceTemplate}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsHrothgar}" Value="True">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource HrothgarFaceTemplate}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsMiqote}" Value="True">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource MiqoteFaceTemplate}"/>
+                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsViera}" Value="True"/>
+                                        <Condition Binding="{Binding IsVieraEarsFlop}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="ContentTemplate" Value="{StaticResource VieraFloppyFaceTemplate}"/>
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsViera}" Value="True"/>
+                                        <Condition Binding="{Binding IsVieraEarsFlop}" Value="False"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="ContentTemplate" Value="{StaticResource VieraStraightFaceTemplate}"/>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
 
-							<!-- Masculine ears are ear 02 -->
-							<local:BoneView Canvas.Left="90" Canvas.Top="58" BoneName="VieraEar02ALeft" FlippedBoneName="VieraEar02ARight" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="43" Canvas.Top="48" BoneName="VieraEar02BLeft" FlippedBoneName="VieraEar02BRight" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="135" Canvas.Top="58" BoneName="VieraEar02ARight" FlippedBoneName="VieraEar02ALeft" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="187" Canvas.Top="48" BoneName="VieraEar02BRight" FlippedBoneName="VieraEar02BLeft" Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+                <Grid Grid.Row="1" Height="160" Margin="-20, 0, 10, 20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-							<local:BoneView Canvas.Left="160" Canvas.Top="64" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
-							<local:BoneView Canvas.Left="160" Canvas.Top="90" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
-							<local:BoneView Canvas.Left="63" Canvas.Top="64" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
-							<local:BoneView Canvas.Left="63" Canvas.Top="90" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
-						</Canvas>
-					</Viewbox>
-				</Grid>
+                    <!-- Left Hand -->
+                    <Viewbox Grid.Column="0">
+                        <Canvas Height="200" Width="128">
+                            <Image Canvas.Left="0" Canvas.Top="0" Width="128" Height="200" Source="pack://application:,,,/Assets/Pose/CharHandBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
-				<!-- Hroth Face-->
-				<Viewbox Grid.Row="1" Visibility="{Binding IsHrothgar, Converter={StaticResource B2V}, FallbackValue=Collapsed}" Margin="0, 0, -20, -50">
-					<Canvas Width="330" Height="380" >
-						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Source="../../../Assets/PoseCharacterHrothFaceBackground.png" Opacity="0.09" Stretch="Uniform" IsHitTestVisible="False"/>
+                            <!-- Wrist -->
+                            <local:BoneView Canvas.Left="60" Canvas.Top="175" BoneName="n_hte_l" FlippedBoneName="n_hte_r"/>    
+                            
+                            <!-- Hand -->
+                            <local:BoneView Canvas.Left="60" Canvas.Top="145" BoneName="j_te_l" FlippedBoneName="j_te_r"/>
 
-						<local:BoneView Canvas.Left="72" Canvas.Top="180" BoneName="HrothWhiskersLeft" FlippedBoneName="HrothWhiskersRight"/>
-						<local:BoneView Canvas.Left="209" Canvas.Top="180" BoneName="HrothWhiskersRight" FlippedBoneName="HrothWhiskersLeft"/>
-						<local:BoneView Canvas.Left="49" Canvas.Top="90" BoneName="EyebrowLeft" FlippedBoneName="EyebrowRight"/>
-						<local:BoneView Canvas.Left="232" Canvas.Top="90" BoneName="EyebrowRight" FlippedBoneName="EyebrowLeft"/>
-						<local:BoneView Canvas.Left="140" Canvas.Top="120" BoneName="Bridge"/>
-						<local:BoneView Canvas.Left="109" Canvas.Top="105" BoneName="BrowLeft" FlippedBoneName="BrowRight"/>
-						<local:BoneView Canvas.Left="170" Canvas.Top="105" BoneName="BrowRight" FlippedBoneName="BrowLeft"/>
-						<local:BoneView Canvas.Left="140" Canvas.Top="200" BoneName="HrothJawUpper"/>
-						<local:BoneView Canvas.Left="140" Canvas.Top="220" BoneName="HrothLipUpper"/>
-						<local:BoneView Canvas.Left="77" Canvas.Top="110" BoneName="EyelidUpperLeft" FlippedBoneName="EyelidUpperRight"/>
-						<local:BoneView Canvas.Left="202" Canvas.Top="110" BoneName="EyelidUpperRight" FlippedBoneName="EyelidUpperLeft"/>
-						<local:BoneView Canvas.Left="80" Canvas.Top="230" BoneName="HrothLipsLeft" FlippedBoneName="HrothLipsRight"/>
-						<local:BoneView Canvas.Left="200" Canvas.Top="230" BoneName="HrothLipsRight" FlippedBoneName="HrothLipsLeft"/>
-						<local:BoneView Canvas.Left="80" Canvas.Top="210" BoneName="HrothLipUpperLeft" FlippedBoneName="HrothLipUpperRight"/>
-						<local:BoneView Canvas.Left="200" Canvas.Top="210" BoneName="HrothLipUpperRight" FlippedBoneName="HrothLipUpperLeft"/>
-						<local:BoneView Canvas.Left="140" Canvas.Top="242" BoneName="HrothLipLower"/>
-						<local:BoneView Canvas.Left="140" Canvas.Top="175" BoneName="Nose"/>
-						<local:BoneView Canvas.Left="140" Canvas.Top="275" BoneName="Jaw"/>
-						<local:BoneView Canvas.Left="190" Canvas.Top="125" BoneName="EyeRight" FlippedBoneName="EyeLeft"/>
-						<local:BoneView Canvas.Left="90" Canvas.Top="125" BoneName="EyeLeft" FlippedBoneName="EyeRight"/>
-						<local:BoneView Canvas.Left="75" Canvas.Top="140" BoneName="EyelidLowerLeft" FlippedBoneName="EyelidLowerRight"/>
-						<local:BoneView Canvas.Left="205" Canvas.Top="140" BoneName="EyelidLowerRight" FlippedBoneName="EyelidLowerLeft"/>
+                            <!-- Thumb -->
+                            <local:BoneView Canvas.Left="30" Canvas.Top="108" BoneName="j_oya_a_l" FlippedBoneName="j_oya_a_r"/>
+                            <local:BoneView Canvas.Left="5" Canvas.Top="85" BoneName="j_oya_b_l" FlippedBoneName="j_oya_b_r"/>
 
-						<!--<local:BoneView Canvas.Left="232" Canvas.Top="45" BoneName="EarRight" FlippedBoneName="EarLeft"/>-->
-						<local:BoneView Canvas.Left="250" Canvas.Top="60" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
-						<local:BoneView Canvas.Left="250" Canvas.Top="85" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
-						<!--<local:BoneView Canvas.Left="50" Canvas.Top="45" BoneName="EarLeft" FlippedBoneName="EarRight"/>-->
-						<local:BoneView Canvas.Left="30" Canvas.Top="60" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
-						<local:BoneView Canvas.Left="30" Canvas.Top="85" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
-					</Canvas>
-				</Viewbox>
+                            <!-- Index finger -->
+                            <local:BoneView Canvas.Left="43" Canvas.Top="65" BoneName="j_hito_a_l" FlippedBoneName="j_hito_a_r"/>
+                            <local:BoneView Canvas.Left="39" Canvas.Top="38" BoneName="j_hito_b_l" FlippedBoneName="j_hito_b_r"/>
+                            <local:BoneView Canvas.Left="34" Canvas.Top="10" BoneName="iv_hito_c_l" FlippedBoneName="iv_hito_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
-				<!-- Miqo Head & Face -->
-				<Viewbox Grid.Row="1" Visibility="{Binding IsMiqote, Converter={StaticResource B2V}, FallbackValue=Visible}" Height="260" Margin="-20,0,0,0">
-					<Canvas Height="300" Width="300">
-						<Image Canvas.Left="2" Canvas.Top="0" Width="300" Height="300" Source="../../../Assets/PoseCharacterMiqoFaceBackground.png" Opacity="0.09" Stretch="Uniform" IsHitTestVisible="False"/>
+                            <!-- Middle finger -->
+                            <local:BoneView Canvas.Left="62" Canvas.Top="64" BoneName="j_naka_a_l" FlippedBoneName="j_naka_a_r"/>
+                            <local:BoneView Canvas.Left="62" Canvas.Top="37" BoneName="j_naka_b_l" FlippedBoneName="j_naka_b_r"/>
+                            <local:BoneView Canvas.Left="61" Canvas.Top="8" BoneName="iv_naka_c_l" FlippedBoneName="iv_naka_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
-						<local:BoneView Canvas.Left="141" Canvas.Top="290" BoneName="Jaw"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="180" BoneName="Nose"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="160" BoneName="Bridge"/>
+                            <!-- Ring finger -->
+                            <local:BoneView Canvas.Left="80" Canvas.Top="66" BoneName="j_kusu_a_l" FlippedBoneName="j_kusu_a_r"/>
+                            <local:BoneView Canvas.Left="85" Canvas.Top="40" BoneName="j_kusu_b_l" FlippedBoneName="j_kusu_b_r"/>
+                            <local:BoneView Canvas.Left="85" Canvas.Top="15" BoneName="iv_kusu_c_l" FlippedBoneName="iv_kusu_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+                            
+                            <!-- Pinky -->
+                            <local:BoneView Canvas.Left="98" Canvas.Top="70" BoneName="j_ko_a_l" FlippedBoneName="j_ko_a_r"/>
+                            <local:BoneView Canvas.Left="103" Canvas.Top="50" BoneName="j_ko_b_l" FlippedBoneName="j_ko_b_r"/>
+                            <local:BoneView Canvas.Left="106" Canvas.Top="30" BoneName="iv_ko_c_l" FlippedBoneName="iv_ko_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+                            
+                            <!-- Weapon -->
+                            <local:BoneView Canvas.Left="65" Canvas.Top="105" BoneName="n_buki_l" FlippedBoneName="n_buki_r"/>
+                        </Canvas>
+                    </Viewbox>
 
-						<local:BoneView Canvas.Left="141" Canvas.Top="268" BoneName="LipLowerB"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="248" BoneName="LipLowerA"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="220" BoneName="LipUpperA"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="200" BoneName="LipUpperB"/>
+                    <!-- Right Hand -->
+                    <Viewbox Grid.Column="1">
+                        <Canvas Height="200" Width="128">
+                            <Image Canvas.Left="0" Canvas.Top="0" Width="128" Height="200" Source="pack://application:,,,/Assets/Pose/CharHandBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False">
+                                <Image.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="-1"/>
+                                        <TranslateTransform X="118"/>
+                                    </TransformGroup>
+                                </Image.RenderTransform>
+                            </Image>
 
-						<local:BoneView Canvas.Left="110" Canvas.Top="105" BoneName="BrowLeft" FlippedBoneName="BrowRight"/>
-						<local:BoneView Canvas.Left="90" Canvas.Top="140" BoneName="EyeLeft" FlippedBoneName="EyeRight"/>
-						<local:BoneView Canvas.Left="90" Canvas.Top="160" BoneName="EyelidLowerLeft" FlippedBoneName="EyelidLowerRight"/>
-						<local:BoneView Canvas.Left="90" Canvas.Top="120" BoneName="EyelidUpperLeft" FlippedBoneName="EyelidUpperRight"/>
-						<local:BoneView Canvas.Left="70" Canvas.Top="100" BoneName="EyebrowLeft" FlippedBoneName="EyebrowRight"/>
-						<local:BoneView Canvas.Left="50" Canvas.Top="55" BoneName="EarLeft" FlippedBoneName="EarRight"/>
-						<local:BoneView Canvas.Left="105" Canvas.Top="180" BoneName="CheekLeft" FlippedBoneName="CheekRight"/>
-						<local:BoneView Canvas.Left="103" Canvas.Top="232" BoneName="LipsLeft" FlippedBoneName="LipsRight"/>
-						<local:BoneView Canvas.Left="32" Canvas.Top="100" BoneName="EarringALeft" FlippedBoneName="EarringARight"/>
-						<local:BoneView Canvas.Left="32" Canvas.Top="130" BoneName="EarringBLeft" FlippedBoneName="EarringBRight"/>
+                            <!-- Wrist -->
+                            <local:BoneView Canvas.Left="42" Canvas.Top="175" BoneName="n_hte_r" FlippedBoneName="n_hte_l"/>
 
-						<local:BoneView Canvas.Left="174" Canvas.Top="105" BoneName="BrowRight" FlippedBoneName="BrowLeft"/>
-						<local:BoneView Canvas.Left="191" Canvas.Top="140" BoneName="EyeRight" FlippedBoneName="EyeLeft"/>
-						<local:BoneView Canvas.Left="191" Canvas.Top="160" BoneName="EyelidLowerRight" FlippedBoneName="EyelidLowerLeft"/>
-						<local:BoneView Canvas.Left="191" Canvas.Top="120" BoneName="EyelidUpperRight" FlippedBoneName="EyelidUpperLeft"/>
-						<local:BoneView Canvas.Left="220" Canvas.Top="100" BoneName="EyebrowRight" FlippedBoneName="EyebrowLeft"/>
-						<local:BoneView Canvas.Left="232" Canvas.Top="55" BoneName="EarRight" FlippedBoneName="EarLeft"/>
-						<local:BoneView Canvas.Left="176" Canvas.Top="180" BoneName="CheekRight" FlippedBoneName="CheekLeft"/>
-						<local:BoneView Canvas.Left="180" Canvas.Top="232" BoneName="LipsRight" FlippedBoneName="LipsLeft"/>
-						<local:BoneView Canvas.Left="250" Canvas.Top="100" BoneName="EarringARight" FlippedBoneName="EarringALeft"/>
-						<local:BoneView Canvas.Left="250" Canvas.Top="130" BoneName="EarringBRight" FlippedBoneName="EarringBLeft"/>
+                            <!-- Hand -->
+                            <local:BoneView Canvas.Left="42" Canvas.Top="145" BoneName="j_te_r" FlippedBoneName="j_te_l"/>
+                            
+                            <!-- Thumb -->
+                            <local:BoneView Canvas.Left="75" Canvas.Top="108" BoneName="j_oya_a_r" FlippedBoneName="j_oya_a_l"/>
+                            <local:BoneView Canvas.Left="98" Canvas.Top="85" BoneName="j_oya_b_r" FlippedBoneName="j_oya_b_l"/>
+                            
+                            <!-- Index finger -->
+                            <local:BoneView Canvas.Left="61" Canvas.Top="65" BoneName="j_hito_a_r" FlippedBoneName="j_hito_a_l"/>
+                            <local:BoneView Canvas.Left="65" Canvas.Top="38" BoneName="j_hito_b_r" FlippedBoneName="j_hito_b_l"/>
+                            <local:BoneView Canvas.Left="69" Canvas.Top="10" BoneName="iv_hito_c_r" FlippedBoneName="iv_hito_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
-					</Canvas>
-				</Viewbox>
+                            <!-- Middle finger -->
+                            <local:BoneView Canvas.Left="42" Canvas.Top="64" BoneName="j_naka_a_r" FlippedBoneName="j_naka_a_l"/>
+                            <local:BoneView Canvas.Left="42" Canvas.Top="37" BoneName="j_naka_b_r" FlippedBoneName="j_naka_b_l"/>
+                            <local:BoneView Canvas.Left="43" Canvas.Top="8" BoneName="iv_naka_c_r" FlippedBoneName="iv_naka_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
+                            
+                            <!-- Ring finger -->
+                            <local:BoneView Canvas.Left="24" Canvas.Top="66" BoneName="j_kusu_a_r" FlippedBoneName="j_kusu_a_l"/>
+                            <local:BoneView Canvas.Left="19" Canvas.Top="40" BoneName="j_kusu_b_r" FlippedBoneName="j_kusu_b_l"/>
+                            <local:BoneView Canvas.Left="19" Canvas.Top="15" BoneName="iv_kusu_c_r" FlippedBoneName="iv_kusu_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
+                            <!-- Pinky -->
+                            <local:BoneView Canvas.Left="6" Canvas.Top="70" BoneName="j_ko_a_r" FlippedBoneName="j_ko_a_l"/>
+                            <local:BoneView Canvas.Left="1" Canvas.Top="50" BoneName="j_ko_b_r" FlippedBoneName="j_ko_b_l"/>
+                            <local:BoneView Canvas.Left="-2" Canvas.Top="30" BoneName="iv_ko_c_r" FlippedBoneName="iv_ko_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
 
+                            <!-- Weapon -->
+                            <local:BoneView Canvas.Left="37" Canvas.Top="105" BoneName="n_buki_r" FlippedBoneName="n_buki_l"/>
+                        </Canvas>
+                    </Viewbox>
 
-				<!-- Head & Face -->
-				<Viewbox Grid.Row="1" Visibility="{Binding IsCustomFace, Converter={StaticResource !B2V}, FallbackValue=Hidden}" Height="220">
-					<Canvas Height="300" Width="300">
+                    <Grid Grid.Column="2" Height="90" Visibility="{Binding HasTailOrEars, Converter={StaticResource B2V}, FallbackValue=Visible}">
+                        <!-- Tail -->
+                        <Viewbox Visibility="{Binding HasTail, Converter={StaticResource B2V}, FallbackValue=Visible}" Width="85" Margin="-20, -30, -10, -30">
+                            <Canvas Height="200" Width="128">
+                                <Image Canvas.Left="0" Canvas.Top="0" Width="128" Height="200" Source="pack://application:,,,/Assets/Pose/CharTailBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
 
-
-						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.08" Stretch="Uniform" IsHitTestVisible="False"
-							   Source="../../../Assets/PoseCharacterFaceBackground.png" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-
-						<Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.08" Stretch="Uniform" IsHitTestVisible="False"
-							   Source="../../../Assets/PoseCharacterVieraFaceBackground.png"  Visibility="{Binding IsViera, Converter={StaticResource B2V}}"/>
-
-						<local:BoneView Canvas.Left="141" Canvas.Top="278" BoneName="Jaw"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="135" BoneName="Nose"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="100" BoneName="Bridge"/>
-
-						<local:BoneView Canvas.Left="141" Canvas.Top="248" BoneName="LipLowerB"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="225" BoneName="LipLowerA"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="186" BoneName="LipUpperA"/>
-						<local:BoneView Canvas.Left="141" Canvas.Top="163" BoneName="LipUpperB"/>
-
-						<local:BoneView Canvas.Left="103" Canvas.Top="33" BoneName="BrowLeft" FlippedBoneName="BrowRight"/>
-						<local:BoneView Canvas.Left="74" Canvas.Top="77" BoneName="EyeLeft" FlippedBoneName="EyeRight"/>
-						<local:BoneView Canvas.Left="68" Canvas.Top="96" BoneName="EyelidLowerLeft" FlippedBoneName="EyelidLowerRight"/>
-						<local:BoneView Canvas.Left="68" Canvas.Top="59" BoneName="EyelidUpperLeft" FlippedBoneName="EyelidUpperRight"/>
-						<local:BoneView Canvas.Left="52" Canvas.Top="24" BoneName="EyebrowLeft" FlippedBoneName="EyebrowRight"/>
-						<local:BoneView Canvas.Left="15" Canvas.Top="96" BoneName="EarLeft" FlippedBoneName="EarRight" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-						<local:BoneView Canvas.Left="68" Canvas.Top="150" BoneName="CheekLeft" FlippedBoneName="CheekRight"/>
-						<local:BoneView Canvas.Left="103" Canvas.Top="208" BoneName="LipsLeft" FlippedBoneName="LipsRight"/>
-						<local:BoneView Canvas.Left="20" Canvas.Top="150" BoneName="EarringALeft" FlippedBoneName="EarringARight" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-						<local:BoneView Canvas.Left="20" Canvas.Top="178" BoneName="EarringBLeft" FlippedBoneName="EarringBRight" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-
-						<local:BoneView Canvas.Left="183" Canvas.Top="33" BoneName="BrowRight" FlippedBoneName="BrowLeft"/>
-						<local:BoneView Canvas.Left="211" Canvas.Top="77" BoneName="EyeRight" FlippedBoneName="EyeLeft"/>
-						<local:BoneView Canvas.Left="215" Canvas.Top="95" BoneName="EyelidLowerRight" FlippedBoneName="EyelidLowerLeft"/>
-						<local:BoneView Canvas.Left="215" Canvas.Top="59" BoneName="EyelidUpperRight" FlippedBoneName="EyelidUpperLeft"/>
-						<local:BoneView Canvas.Left="231" Canvas.Top="24" BoneName="EyebrowRight" FlippedBoneName="EyebrowLeft"/>
-						<local:BoneView Canvas.Left="267" Canvas.Top="96" BoneName="EarRight" FlippedBoneName="EarLeft" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-						<local:BoneView Canvas.Left="215" Canvas.Top="150" BoneName="CheekRight" FlippedBoneName="CheekLeft"/>
-						<local:BoneView Canvas.Left="180" Canvas.Top="208" BoneName="LipsRight" FlippedBoneName="LipsLeft"/>
-						<local:BoneView Canvas.Left="263" Canvas.Top="150" BoneName="EarringARight" FlippedBoneName="EarringALeft" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-						<local:BoneView Canvas.Left="263" Canvas.Top="178" BoneName="EarringBRight" FlippedBoneName="EarringBLeft" Visibility="{Binding IsViera, Converter={StaticResource !B2V}}"/>
-
-					</Canvas>
-				</Viewbox>
-
-				<Grid Grid.Row="3" Margin="0, -20, 0, 0" Height="160">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-						<ColumnDefinition Width="Auto"/>
-					</Grid.ColumnDefinitions>
-
-					<!-- Left Hand -->
-					<Viewbox Grid.Column="0">
-						<Canvas Height="200" Width="128">
-							<Image Canvas.Left="0" Canvas.Top="0" Width="128" Height="200" Source="../../../Assets/PoseCharacterHandBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
-
-							<local:BoneView Canvas.Left="45" Canvas.Top="170" BoneName="WristLeft" FlippedBoneName="WristRight"/>
-							<local:BoneView Canvas.Left="55" Canvas.Top="145" BoneName="HandLeft" FlippedBoneName="HandRight"/>
-							<local:BoneView Canvas.Left="28" Canvas.Top="115" BoneName="ThumbALeft" FlippedBoneName="ThumbARight"/>
-							<local:BoneView Canvas.Left="15" Canvas.Top="85" BoneName="ThumbBLeft" FlippedBoneName="ThumbBRight"/>
-							<local:BoneView Canvas.Left="40" Canvas.Top="75" BoneName="IndexALeft" FlippedBoneName="IndexARight"/>
-							<local:BoneView Canvas.Left="37" Canvas.Top="45" BoneName="IndexBLeft" FlippedBoneName="IndexBRight"/>
-							<local:BoneView Canvas.Left="57" Canvas.Top="77" BoneName="MiddleALeft" FlippedBoneName="MiddleARight"/>
-							<local:BoneView Canvas.Left="55" Canvas.Top="40" BoneName="MiddleBLeft" FlippedBoneName="MiddleBRight"/>
-							<local:BoneView Canvas.Left="75" Canvas.Top="79" BoneName="RingALeft" FlippedBoneName="RingARight"/>
-							<local:BoneView Canvas.Left="75" Canvas.Top="47" BoneName="RingBLeft" FlippedBoneName="RingBRight"/>
-							<local:BoneView Canvas.Left="92" Canvas.Top="84" BoneName="PinkyALeft" FlippedBoneName="PinkyARight"/>
-							<local:BoneView Canvas.Left="95" Canvas.Top="55" BoneName="PinkyBLeft" FlippedBoneName="PinkyBRight"/>
-							<local:BoneView Canvas.Left="60" Canvas.Top="115" BoneName="WeaponLeft" FlippedBoneName="WeaponRight"/>
-							<local:BoneView Canvas.Left="34" Canvas.Top="20" BoneName="iv_hito_c_l" FlippedBoneName="iv_hito_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="53" Canvas.Top="13" BoneName="iv_naka_c_l" FlippedBoneName="iv_naka_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="74" Canvas.Top="20" BoneName="iv_kusu_c_l" FlippedBoneName="iv_kusu_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="95" Canvas.Top="30" BoneName="iv_ko_c_l" FlippedBoneName="iv_ko_c_r" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-
-						</Canvas>
-					</Viewbox>
-
-					<!-- Right Hand -->
-					<Viewbox Grid.Column="1">
-						<Canvas Height="200" Width="128">
-
-							<Image Canvas.Left="0" Canvas.Top="0" Width="128" Height="200" Source="../../../Assets/PoseCharacterHandBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False">
-								<Image.RenderTransform>
-									<TransformGroup>
-										<ScaleTransform ScaleX="-1"/>
-										<TranslateTransform X="118"/>
-									</TransformGroup>
-								</Image.RenderTransform>
-							</Image>
-
-							<local:BoneView Canvas.Left="63" Canvas.Top="170" BoneName="WristRight" FlippedBoneName="WristLeft"/>
-							<local:BoneView Canvas.Left="53" Canvas.Top="145" BoneName="HandRight" FlippedBoneName="HandLeft"/>
-							<local:BoneView Canvas.Left="80" Canvas.Top="115" BoneName="ThumbARight" FlippedBoneName="ThumbALeft"/>
-							<local:BoneView Canvas.Left="93" Canvas.Top="85" BoneName="ThumbBRight" FlippedBoneName="ThumbBLeft"/>
-							<local:BoneView Canvas.Left="68" Canvas.Top="75" BoneName="IndexARight" FlippedBoneName="IndexALeft"/>
-							<local:BoneView Canvas.Left="71" Canvas.Top="45" BoneName="IndexBRight" FlippedBoneName="IndexBLeft"/>
-							<local:BoneView Canvas.Left="51" Canvas.Top="77" BoneName="MiddleARight" FlippedBoneName="MiddleALeft"/>
-							<local:BoneView Canvas.Left="53" Canvas.Top="40" BoneName="MiddleBRight" FlippedBoneName="MiddleBLeft"/>
-							<local:BoneView Canvas.Left="33" Canvas.Top="79" BoneName="RingARight" FlippedBoneName="RingALeft"/>
-							<local:BoneView Canvas.Left="33" Canvas.Top="47" BoneName="RingBRight" FlippedBoneName="RingBLeft"/>
-							<local:BoneView Canvas.Left="16" Canvas.Top="84" BoneName="PinkyARight" FlippedBoneName="PinkyALeft"/>
-							<local:BoneView Canvas.Left="13" Canvas.Top="55" BoneName="PinkyBRight" FlippedBoneName="PinkyBLeft"/>
-							<local:BoneView Canvas.Left="48" Canvas.Top="115" BoneName="WeaponRight" FlippedBoneName="WeaponLeft"/>
-							<local:BoneView Canvas.Left="74" Canvas.Top="19" BoneName="iv_hito_c_r" FlippedBoneName="iv_hito_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="55" Canvas.Top="14" BoneName="iv_naka_c_r" FlippedBoneName="iv_naka_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="33" Canvas.Top="20" BoneName="iv_kusu_c_r" FlippedBoneName="iv_kusu_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-							<local:BoneView Canvas.Left="10" Canvas.Top="32" BoneName="iv_ko_c_r" FlippedBoneName="iv_ko_c_l" Visibility="{Binding IsIVCS, Converter={StaticResource B2V}}"/>
-
-						</Canvas>
-					</Viewbox>
-
-					<Grid Grid.Column="2" Height="90" Visibility="{Binding HasTailOrEars, Converter={StaticResource B2V}, FallbackValue=Visible}">
-
-						<!-- Tail -->
-						<Viewbox Visibility="{Binding HasTail, Converter={StaticResource B2V}, FallbackValue=Visible}" Width="85" Margin="-20, -30, -10, -30">
-							<Canvas Height="200" Width="128">
-								<Image Canvas.Left="0" Canvas.Top="0" Width="128" Height="200" Source="../../../Assets/PoseCharacterTailBackground.png" Opacity="0.15" Stretch="Uniform" IsHitTestVisible="False"/>
-
-								<local:BoneView Canvas.Left="46" Canvas.Top="4" BoneName="TailA"/>
-								<local:BoneView Canvas.Left="73" Canvas.Top="28" BoneName="TailB"/>
-								<local:BoneView Canvas.Left="65" Canvas.Top="80" BoneName="TailC"/>
-								<local:BoneView Canvas.Left="55" Canvas.Top="128" BoneName="TailD"/>
-								<local:BoneView Canvas.Left="65" Canvas.Top="168" BoneName="TailE"/>
-							</Canvas>
-						</Viewbox>
-					</Grid>
-				</Grid>
-
-
-			</Grid>
-		</Grid>
-	</Grid>
+                                <local:BoneView Canvas.Left="28" Canvas.Top="16" BoneName="n_sippo_a"/>
+                                <local:BoneView Canvas.Left="64" Canvas.Top="48" BoneName="n_sippo_b"/>
+                                <local:BoneView Canvas.Left="76" Canvas.Top="92" BoneName="n_sippo_c"/>
+                                <local:BoneView Canvas.Left="68" Canvas.Top="138" BoneName="n_sippo_d"/>
+                                <local:BoneView Canvas.Left="84" Canvas.Top="176" BoneName="n_sippo_e"/>
+                            </Canvas>
+                        </Viewbox>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
 </UserControl>

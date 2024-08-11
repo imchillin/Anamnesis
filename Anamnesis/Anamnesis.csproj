@@ -55,11 +55,32 @@
 		<Resource Include="Assets\Roles\*.*" />
 		<Resource Include="Assets\Shortcuts\*.*" />
 		<Resource Include="Assets\Slots\*.*" />
+		<Resource Include="Assets\Pose\CharFBodyBackground.png" />
+		<Resource Include="Assets\Pose\CharFClothesBackground.png" />
+		<Resource Include="Assets\Pose\CharFHyurFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharFMiqoFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharFVieraFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharFVieraFloppyFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharHandBackground.png" />
+		<Resource Include="Assets\Pose\CharMHrothFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharTailBackground.png" />
 		<Resource Include="FodyWeavers.xml" />
 
 		<EmbeddedResource Include="Languages\*.*" />
 		<EmbeddedResource Include="Data\**\*.*" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Pose\CharFBodyBackground.png" />
+    <None Remove="Assets\Pose\CharFClothesBackground.png" />
+    <None Remove="Assets\Pose\CharFHyurFaceBackground.png" />
+    <None Remove="Assets\Pose\CharFMiqoFaceBackground.png" />
+    <None Remove="Assets\Pose\CharFVieraFaceBackground.png" />
+    <None Remove="Assets\Pose\CharFVieraFloppyFaceBackground.png" />
+    <None Remove="Assets\Pose\CharHandBackground.png" />
+    <None Remove="Assets\Pose\CharMHrothFaceBackground.png" />
+    <None Remove="Assets\Pose\CharTailBackground.png" />
+  </ItemGroup>
 
 	<ItemGroup>
 	  <Content Include="$(AppData)\Anamnesis\Settings.json" Link="Settings.json" />
@@ -79,6 +100,14 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
