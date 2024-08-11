@@ -158,7 +158,7 @@
 						</Grid>
 					</Grid>
 				</Button>
-				<Button MouseUp="OnDyeMouseUp2"
+				<Button MouseUp="OnDye2MouseUp"
 				        Margin="2, 4, 0, 0"
 				        Grid.Column="0"
 				        Grid.RowSpan="2"

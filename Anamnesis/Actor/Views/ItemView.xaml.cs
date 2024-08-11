@@ -166,7 +166,7 @@ public partial class ItemView : UserControl
 		}
 	}
 
-	private void OnDyeMouseUp2(object sender, MouseButtonEventArgs e)
+	private void OnDye2MouseUp(object sender, MouseButtonEventArgs e)
 	{
 		if (this.Actor?.CanRefresh != true || this.ItemModel == null)
 			return;
