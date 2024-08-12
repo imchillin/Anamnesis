@@ -160,11 +160,19 @@ public partial class BoneView : UserControl, IBone
 				if (childView.Visibility != Visibility.Visible)
 					continue;
 
+				var scale = 1.0;
+
+				// Determine line stroke thickness (if placed inside a Viewbox element)
+				if (this.Parent is Canvas cvs && cvs.Parent is Viewbox vbox)
+				{
+					scale = vbox.ActualWidth / cvs.ActualWidth;
+				}
+
 				if (this.Parent is Canvas c1 && childView.Parent is Canvas c2 && c1 == c2)
 				{
 					Line line = new Line();
 					line.SnapsToDevicePixels = true;
-					line.StrokeThickness = 1;
+					line.StrokeThickness = 1 / scale;
 					line.Stroke = Brushes.Gray;
 					line.IsHitTestVisible = false;
 
@@ -299,14 +307,21 @@ public partial class BoneView : UserControl, IBone
 		bool parentHovered = this.skeleton.GetIsBoneParentsHovered(this.Bone);
 
 		Color color = parentHovered ? theme.PrimaryMid.Color : theme.BodyLight;
-		int thickness = parentSelected || selected || parentHovered ? 2 : 1;
+		double thickness = parentSelected || selected || parentHovered ? 2 : 1;
+
+		// Scale thickness based on viewbox scale (if applicable)
+		if (this.Parent is Canvas cvs && cvs.Parent is Viewbox vbox)
+		{
+			var scale = vbox.ActualWidth / cvs.ActualWidth;
+			thickness /= scale;
+		}
 
 		this.ForegroundElipse.Visibility = (selected || hovered) ? Visibility.Visible : Visibility.Hidden;
 		this.BackgroundElipse.Stroke = new SolidColorBrush(theme.PrimaryMid.Color);
 		this.SetState(new SolidColorBrush(color), thickness);
 	}
 
-	private void SetState(Brush stroke, int thickness)
+	private void SetState(Brush stroke, double thickness)
 	{
 		this.BackgroundElipse.StrokeThickness = thickness;
 
