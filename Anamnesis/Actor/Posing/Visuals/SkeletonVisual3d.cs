@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Enumeration;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -34,6 +35,15 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	private readonly List<BoneVisual3d> topBones = new List<BoneVisual3d>();
 	private readonly List<BoneVisual3d> mainHandBones = new List<BoneVisual3d>();
 	private readonly List<BoneVisual3d> offHandBones = new List<BoneVisual3d>();
+
+	private readonly Dictionary<string, string> hairNameToSuffixMap = new()
+	{
+		{ "j_kami_f_l", "l" },	// Hair, Front Left
+		{ "j_kami_f_r", "r" },	// Hair, Front Right
+		{ "j_kami_a", "a" },	// Hair, Back Up
+		{ "j_kami_b", "b" },	// Hair, Back Down
+		{ "HairFront", "f" },	// Hair, Front (Custom Bone Name)
+	};
 
 	public SkeletonVisual3d()
 	{
@@ -348,8 +358,16 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			name = modernName;
 
 		BoneVisual3d? bone;
-		this.Bones.TryGetValue(name, out bone);
 
+		// Attempt to find hairstyle-specific bones. If not found, default to the standard hair bones.
+		if (this.hairNameToSuffixMap.TryGetValue(name, out string? suffix))
+		{
+			bone = this.FindHairBoneByPattern(suffix);
+			if (bone != null)
+				return bone;
+		}
+
+		this.Bones.TryGetValue(name, out bone);
 		return bone;
 	}
 
@@ -697,6 +715,20 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	private void RaisePropertyChanged(string propertyName)
 	{
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+
+	private BoneVisual3d? FindHairBoneByPattern(string suffix)
+	{
+		string pattern = $@"j_ex_h\d{{4}}_ke_{suffix}";
+		Regex regex = new Regex(pattern);
+
+		foreach (var (boneName, bone) in this.Bones)
+		{
+			if (regex.IsMatch(boneName))
+				return bone;
+		}
+
+		return null;
 	}
 }
 
