@@ -116,7 +116,7 @@ public partial class BoneView : UserControl, IBone
 
 	private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
-		bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonVisual3d.FlipSides);
+		bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonVisual3d.FlipSides) || e.PropertyName == nameof(SkeletonVisual3d.AllBones);
 
 		if (refreshBone && this.DataContext is SkeletonVisual3d)
 			this.SetBone(this.CurrentBoneName);

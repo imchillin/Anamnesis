@@ -308,6 +308,11 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasHover));
 	}
 
+	public void NotifySkeletonChanged()
+	{
+		this.RaisePropertyChanged(nameof(SkeletonVisual3d.AllBones));
+	}
+
 	public bool GetIsBoneHovered(BoneVisual3d bone)
 	{
 		return this.HoverBones.Contains(bone);
