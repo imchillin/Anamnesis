@@ -156,7 +156,7 @@ public class SceneFile : JsonFileBase
 
 			if (mode.HasFlag(Mode.Pose))
 			{
-				await entry.Pose!.Apply(actor, skeleton, null, PoseFile.Mode.Rotation);
+				await entry.Pose!.Apply(actor, skeleton, null, PoseFile.Mode.Rotation, true);
 			}
 		}
 
