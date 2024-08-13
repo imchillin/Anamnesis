@@ -391,7 +391,8 @@
 					MouseUp="OnCanvasMouseUp">
 					<Grid DataContext="{Binding Skeleton}">
 						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed" />
-						<views:PoseBodyGuiView x:Name="GuiView" Visibility="Visible" />
+						<views:PoseBodyGuiView x:Name="BodyGuiView" Visibility="Visible" />
+                        <views:PoseFaceGuiView x:Name="FaceGuiView" Visibility="Collapsed" />
 						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" Margin="3, 28, 0, 3"/>
 					</Grid>
 				</Grid>
@@ -417,28 +418,29 @@
 					SelectedIndex="0"
 					SelectionChanged="OnViewChanged"
 					Style="{StaticResource MaterialDesignToolToggleListBox}">
-					<ListBoxItem
-								Margin="1"
-								Padding="8,5"
-								Cursor="Hand"
-								ToolTip="GUI View"
-								Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
+					<ListBoxItem Margin="1"
+                                 Padding="8,5"
+                                 Cursor="Hand"
+                                 ToolTip="Body GUI View">
 						<XivToolsWpf:IconBlock Icon="StreetView" FontSize="10"/>
 					</ListBoxItem>
-					<ListBoxItem
-								Margin="1"
-								Padding="8,5"
-								Cursor="Hand"
-								ToolTip="Matrix View"
-								Visibility="{Binding Skeleton.File.AllowPoseMatrix, Converter={StaticResource B2V}}">
+                    <ListBoxItem Margin="1"
+                                 Padding="8,5"
+                                 Cursor="Hand"
+                                 ToolTip="Face GUI View">
+                        <XivToolsWpf:IconBlock Icon="GrinAlt" FontSize="10"/>
+                    </ListBoxItem>
+                    <ListBoxItem Margin="1"
+                                 Padding="8,5"
+                                 Cursor="Hand"
+                                 ToolTip="Matrix View">
 						<XivToolsWpf:IconBlock Icon="BorderAll" FontSize="10"/>
 					</ListBoxItem>
-					<ListBoxItem
-								x:Name="View3dButton"
-								Margin="1"
-								Padding="8,5"
-								Cursor="Hand"
-								ToolTip="3D View">
+					<ListBoxItem x:Name="View3dButton"
+                                 Margin="1"
+                                 Padding="8,5"
+                                 Cursor="Hand"
+                                 ToolTip="3D View">
 						<XivToolsWpf:IconBlock Icon="Cube" FontSize="10"/>
 					</ListBoxItem>
 				</ListBox>

@@ -1,0 +1,641 @@
+﻿<UserControl x:Class="Anamnesis.Actor.Views.PoseFaceGuiView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
+			 xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
+			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 mc:Ignorable="d"
+			 d:DesignHeight="512" d:DesignWidth="1024">
+
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="B2V"/>
+		<XivToolsWpf.Converters:InvertedBoolToVisibilityConverter x:Key="!B2V"/>
+
+		<!-- Standard Head & Face (Hyur, Elezen, Au'Ra, Lalafell, Roegadyn) -->
+		<DataTemplate x:Key="StandardFaceTemplate">
+			<Viewbox>
+				<Canvas Height="600" Width="600"  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+					<Image Canvas.Left="0" Canvas.Top="0" Width="600" Height="600" Opacity="0.3" Stretch="Uniform"
+						   Source="pack://application:,,,/Assets/Pose/CharFHyurFaceExBackground.png" IsHitTestVisible="False"/>
+
+					<!-- Ears -->
+					<local:BoneView Canvas.Left="130" Canvas.Top="360" BoneName="j_mimi_l" FlippedBoneName="j_mimi_r"/>
+					<local:BoneView Canvas.Left="470" Canvas.Top="360" BoneName="j_mimi_r" FlippedBoneName="j_mimi_l"/>
+
+					<!-- Earrings -->
+					<local:BoneView Canvas.Left="130" Canvas.Top="396" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"/>
+					<local:BoneView Canvas.Left="470" Canvas.Top="396" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
+					<local:BoneView Canvas.Left="130" Canvas.Top="430" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
+					<local:BoneView Canvas.Left="470" Canvas.Top="430" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"/>
+
+					<!-- Eyebrows -->
+					<local:BoneView Canvas.Left="170" Canvas.Top="250" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"/>
+					<local:BoneView Canvas.Left="435" Canvas.Top="250" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"/>
+					<local:BoneView Canvas.Left="212" Canvas.Top="240" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
+					<local:BoneView Canvas.Left="394" Canvas.Top="240" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
+					<local:BoneView Canvas.Left="250" Canvas.Top="250" BoneName="j_f_miken_01_l" FlippedBoneName="j_f_miken_01_r"/>
+					<local:BoneView Canvas.Left="355" Canvas.Top="250" BoneName="j_f_miken_01_r" FlippedBoneName="j_f_miken_01_l"/>
+
+					<!-- Nose Bridge -->
+					<local:BoneView Canvas.Left="280" Canvas.Top="270" BoneName="j_f_miken_02_l" FlippedBoneName="j_f_miken_02_r"/>
+					<local:BoneView Canvas.Left="330" Canvas.Top="270" BoneName="j_f_miken_02_r" FlippedBoneName="j_f_miken_02_l"/>
+					<local:BoneView Canvas.Left="290" Canvas.Top="300" BoneName="j_f_dmiken_l" FlippedBoneName="j_f_dmiken_r"/>
+					<local:BoneView Canvas.Left="320" Canvas.Top="300" BoneName="j_f_dmiken_r" FlippedBoneName="j_f_dmiken_l"/>
+
+					<!-- Eyes -->
+					<local:BoneView Canvas.Left="224" Canvas.Top="295" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"/>
+					<local:BoneView Canvas.Left="382" Canvas.Top="295" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"/>
+
+					<!--- Upper Eyelids -->
+					<local:BoneView Canvas.Left="262" Canvas.Top="292" BoneName="j_f_mabup_03in_l" FlippedBoneName="j_f_mabup_03in_r"/>
+					<local:BoneView Canvas.Left="348" Canvas.Top="292" BoneName="j_f_mabup_03in_r" FlippedBoneName="j_f_mabup_03in_l"/>
+					<local:BoneView Canvas.Left="224" Canvas.Top="275" BoneName="j_f_mabup_01_l" FlippedBoneName="j_f_mabup_01_r"/>
+					<local:BoneView Canvas.Left="382" Canvas.Top="275" BoneName="j_f_mabup_01_r" FlippedBoneName="j_f_mabup_01_l"/>
+					<local:BoneView Canvas.Left="176" Canvas.Top="288" BoneName="j_f_mabup_02out_l" FlippedBoneName="j_f_mabup_02out_r"/>
+					<local:BoneView Canvas.Left="430" Canvas.Top="288" BoneName="j_f_mabup_02out_r" FlippedBoneName="j_f_mabup_02out_l"/>
+
+					<!--- Lower Eyelids -->
+					<local:BoneView Canvas.Left="262" Canvas.Top="310" BoneName="j_f_mabdn_03in_l" FlippedBoneName="j_f_mabdn_03in_r"/>
+					<local:BoneView Canvas.Left="348" Canvas.Top="310" BoneName="j_f_mabdn_03in_r" FlippedBoneName="j_f_mabdn_03in_l"/>
+					<local:BoneView Canvas.Left="224" Canvas.Top="320" BoneName="j_f_mabdn_01_l" FlippedBoneName="j_f_mabdn_01_r"/>
+					<local:BoneView Canvas.Left="382" Canvas.Top="320" BoneName="j_f_mabdn_01_r" FlippedBoneName="j_f_mabdn_01_l"/>
+					<local:BoneView Canvas.Left="176" Canvas.Top="306" BoneName="j_f_mabdn_02out_l" FlippedBoneName="j_f_mabdn_02out_r"/>
+					<local:BoneView Canvas.Left="430" Canvas.Top="306" BoneName="j_f_mabdn_02out_r" FlippedBoneName="j_f_mabdn_02out_l"/>
+
+					<!-- Nose -->
+					<local:BoneView Canvas.Left="305" Canvas.Top="340" BoneName="j_f_uhana"/>
+					<local:BoneView Canvas.Left="285" Canvas.Top="390" BoneName="j_f_hana_l" FlippedBoneName="j_f_hana_r"/>
+					<local:BoneView Canvas.Left="325" Canvas.Top="390" BoneName="j_f_hana_r" FlippedBoneName="j_f_hana_l"/>
+
+
+					<!-- Teeth -->
+					<local:BoneView Canvas.Left="305" Canvas.Top="430" BoneName="j_f_hagukiup"/>
+					<local:BoneView Canvas.Left="305" Canvas.Top="465" BoneName="j_f_hagukidn"/>
+
+					<!-- Jaw -->
+					<local:BoneView Canvas.Left="305" Canvas.Top="508" BoneName="j_f_ago"/>
+
+					<!-- Chin -->
+					<local:BoneView Canvas.Left="305" Canvas.Top="538" BoneName="j_f_dago"/>
+
+					<!-- Cheekbones -->
+					<local:BoneView Canvas.Left="260" Canvas.Top="350" BoneName="j_f_dmemoto_l" FlippedBoneName="j_f_dmemoto_r"/>
+					<local:BoneView Canvas.Left="350" Canvas.Top="350" BoneName="j_f_dmemoto_r" FlippedBoneName="j_f_dmemoto_l"/>
+
+					<!-- Inner cheeks -->
+					<local:BoneView Canvas.Left="220" Canvas.Top="380" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"/>
+					<local:BoneView Canvas.Left="386" Canvas.Top="380" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"/>
+					<local:BoneView Canvas.Left="220" Canvas.Top="430" BoneName="j_f_shoho_l" FlippedBoneName="j_f_shoho_r"/>
+					<local:BoneView Canvas.Left="386" Canvas.Top="430" BoneName="j_f_shoho_r" FlippedBoneName="j_f_shoho_l"/>
+
+					<!-- Outer cheeks -->
+					<local:BoneView Canvas.Left="170" Canvas.Top="420" BoneName="j_f_dhoho_l" FlippedBoneName="j_f_dhoho_r"/>
+					<local:BoneView Canvas.Left="438" Canvas.Top="420" BoneName="j_f_dhoho_r" FlippedBoneName="j_f_dhoho_l"/>
+
+					<!-- Hair -->
+					<local:BoneView Canvas.Left="305" Canvas.Top="120" BoneName="HairFront"/>
+					<local:BoneView Canvas.Left="60" Canvas.Top="350" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
+					<local:BoneView Canvas.Left="540" Canvas.Top="350" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+				</Canvas>
+			</Viewbox>
+		</DataTemplate>
+
+		<!-- Hrothgar Head & Face -->
+		<DataTemplate x:Key="HrothgarFaceTemplate">
+			<Viewbox>
+				<Canvas Width="600" Height="600" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+					<Image Canvas.Left="0" Canvas.Top="0" Width="600" Height="600" Opacity="0.3" Stretch="Uniform"
+						   Source="pack://application:,,,/Assets/Pose/CharMHrothFaceExBackground.png" IsHitTestVisible="False"/>
+
+					<!-- Ears -->
+					<local:BoneView Canvas.Left="110" Canvas.Top="130" BoneName="j_mimi_l" FlippedBoneName="j_mimi_r"/>
+					<local:BoneView Canvas.Left="460" Canvas.Top="130" BoneName="j_mimi_r" FlippedBoneName="j_mimi_l"/>
+
+					<!-- Earrings -->
+					<local:BoneView Canvas.Left="70" Canvas.Top="160" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"/>
+					<local:BoneView Canvas.Left="500" Canvas.Top="160" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
+					<local:BoneView Canvas.Left="70" Canvas.Top="200" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
+					<local:BoneView Canvas.Left="500" Canvas.Top="200" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"/>
+
+					<!-- Eyebrows -->
+					<local:BoneView Canvas.Left="150" Canvas.Top="230" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"/>
+					<local:BoneView Canvas.Left="420" Canvas.Top="230" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"/>
+					<local:BoneView Canvas.Left="185" Canvas.Top="235" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
+					<local:BoneView Canvas.Left="385" Canvas.Top="235" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
+					<local:BoneView Canvas.Left="220" Canvas.Top="240" BoneName="j_f_miken_01_l" FlippedBoneName="j_f_miken_01_r"/>
+					<local:BoneView Canvas.Left="350" Canvas.Top="240" BoneName="j_f_miken_01_r" FlippedBoneName="j_f_miken_01_l"/>
+
+					<!-- Nose Bridge -->
+					<local:BoneView Canvas.Left="255" Canvas.Top="260" BoneName="j_f_miken_02_l" FlippedBoneName="j_f_miken_02_r"/>
+					<local:BoneView Canvas.Left="315" Canvas.Top="260" BoneName="j_f_miken_02_r" FlippedBoneName="j_f_miken_02_l"/>
+					<local:BoneView Canvas.Left="270" Canvas.Top="290" BoneName="j_f_dmiken_l" FlippedBoneName="j_f_dmiken_r"/>
+					<local:BoneView Canvas.Left="300" Canvas.Top="290" BoneName="j_f_dmiken_r" FlippedBoneName="j_f_dmiken_l"/>
+
+					<!-- Eyes -->
+					<local:BoneView Canvas.Left="200" Canvas.Top="284" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"/>
+					<local:BoneView Canvas.Left="370" Canvas.Top="284" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"/>
+
+					<!--- Upper Eyelids -->
+					<local:BoneView Canvas.Left="240" Canvas.Top="290" BoneName="j_f_mabup_03in_l" FlippedBoneName="j_f_mabup_03in_r"/>
+					<local:BoneView Canvas.Left="330" Canvas.Top="290" BoneName="j_f_mabup_03in_r" FlippedBoneName="j_f_mabup_03in_l"/>
+					<local:BoneView Canvas.Left="200" Canvas.Top="265" BoneName="j_f_mabup_01_l" FlippedBoneName="j_f_mabup_01_r"/>
+					<local:BoneView Canvas.Left="370" Canvas.Top="265" BoneName="j_f_mabup_01_r" FlippedBoneName="j_f_mabup_01_l"/>
+					<local:BoneView Canvas.Left="156" Canvas.Top="260" BoneName="j_f_mabup_02out_l" FlippedBoneName="j_f_mabup_02out_r"/>
+					<local:BoneView Canvas.Left="416" Canvas.Top="260" BoneName="j_f_mabup_02out_r" FlippedBoneName="j_f_mabup_02out_l"/>
+
+					<!--- Lower Eyelids -->
+					<local:BoneView Canvas.Left="230" Canvas.Top="305" BoneName="j_f_mabdn_03in_l" FlippedBoneName="j_f_mabdn_03in_r"/>
+					<local:BoneView Canvas.Left="340" Canvas.Top="305" BoneName="j_f_mabdn_03in_r" FlippedBoneName="j_f_mabdn_03in_l"/>
+					<local:BoneView Canvas.Left="190" Canvas.Top="305" BoneName="j_f_mabdn_01_l" FlippedBoneName="j_f_mabdn_01_r"/>
+					<local:BoneView Canvas.Left="380" Canvas.Top="305" BoneName="j_f_mabdn_01_r" FlippedBoneName="j_f_mabdn_01_l"/>
+					<local:BoneView Canvas.Left="156" Canvas.Top="280" BoneName="j_f_mabdn_02out_l" FlippedBoneName="j_f_mabdn_02out_r"/>
+					<local:BoneView Canvas.Left="416" Canvas.Top="280" BoneName="j_f_mabdn_02out_r" FlippedBoneName="j_f_mabdn_02out_l"/>
+
+					<!-- Nose -->
+					<local:BoneView Canvas.Left="285" Canvas.Top="320" BoneName="j_f_uhana"/>
+					<local:BoneView Canvas.Left="260" Canvas.Top="370" BoneName="j_f_hana_l" FlippedBoneName="j_f_hana_r"/>
+					<local:BoneView Canvas.Left="310" Canvas.Top="370" BoneName="j_f_hana_r" FlippedBoneName="j_f_hana_l"/>
+
+					<!-- Teeth -->
+					<local:BoneView Canvas.Left="285" Canvas.Top="430" BoneName="j_f_hagukiup"/>
+					<local:BoneView Canvas.Left="285" Canvas.Top="460" BoneName="j_f_hagukidn"/>
+
+					<!-- Jaw -->
+					<local:BoneView Canvas.Left="285" Canvas.Top="504" BoneName="j_f_ago"/>
+
+					<!-- Chin -->
+					<local:BoneView Canvas.Left="285" Canvas.Top="538" BoneName="j_f_dago"/>
+
+					<!-- Cheekbones -->
+					<local:BoneView Canvas.Left="210" Canvas.Top="340" BoneName="j_f_dmemoto_l" FlippedBoneName="j_f_dmemoto_r"/>
+					<local:BoneView Canvas.Left="360" Canvas.Top="340" BoneName="j_f_dmemoto_r" FlippedBoneName="j_f_dmemoto_l"/>
+
+					<!-- Inner cheeks -->
+					<local:BoneView Canvas.Left="170" Canvas.Top="340" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="340" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"/>
+					<local:BoneView Canvas.Left="170" Canvas.Top="395" BoneName="j_f_shoho_l" FlippedBoneName="j_f_shoho_r"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="395" BoneName="j_f_shoho_r" FlippedBoneName="j_f_shoho_l"/>
+
+					<!-- Outer cheeks -->
+					<local:BoneView Canvas.Left="135" Canvas.Top="420" BoneName="j_f_dhoho_l" FlippedBoneName="j_f_dhoho_r"/>
+					<local:BoneView Canvas.Left="440" Canvas.Top="420" BoneName="j_f_dhoho_r" FlippedBoneName="j_f_dhoho_l"/>
+
+					<!-- Hair -->
+					<local:BoneView Canvas.Left="285" Canvas.Top="150" BoneName="HairFront"/>
+					<local:BoneView Canvas.Left="104" Canvas.Top="300" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
+					<local:BoneView Canvas.Left="466" Canvas.Top="300" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+
+					<!-- Whiskers -->
+					<local:BoneView Canvas.Left="120" Canvas.Top="366" BoneName="j_f_hige_l" FlippedBoneName="j_f_hige_r"/>
+					<local:BoneView Canvas.Left="450" Canvas.Top="366" BoneName="j_f_hige_r" FlippedBoneName="j_f_hige_l"/>
+				</Canvas>
+			</Viewbox>
+		</DataTemplate>
+
+		<!-- Miqote Head & Face -->
+		<DataTemplate x:Key="MiqoteFaceTemplate">
+			<Viewbox>
+				<Canvas Height="600" Width="600" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+					<Image Canvas.Left="0" Canvas.Top="0" Width="600" Height="600" Opacity="0.3" Stretch="Uniform"
+						   Source="pack://application:,,,/Assets/Pose/CharFMiqoFaceExBackground.png" IsHitTestVisible="False"/>
+
+					<!-- Ears -->
+					<local:BoneView Canvas.Left="70" Canvas.Top="88" BoneName="j_mimi_l" FlippedBoneName="j_mimi_r"/>
+					<local:BoneView Canvas.Left="520" Canvas.Top="88" BoneName="j_mimi_r" FlippedBoneName="j_mimi_l"/>
+
+					<!-- Earrings -->
+					<local:BoneView Canvas.Left="35" Canvas.Top="115" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"/>
+					<local:BoneView Canvas.Left="555" Canvas.Top="115" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
+					<local:BoneView Canvas.Left="35" Canvas.Top="155" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
+					<local:BoneView Canvas.Left="555" Canvas.Top="155" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"/>
+
+					<!-- Eyebrows -->
+					<local:BoneView Canvas.Left="180" Canvas.Top="280" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"/>
+					<local:BoneView Canvas.Left="425" Canvas.Top="280" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"/>
+					<local:BoneView Canvas.Left="210" Canvas.Top="270" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
+					<local:BoneView Canvas.Left="395" Canvas.Top="270" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
+					<local:BoneView Canvas.Left="250" Canvas.Top="280" BoneName="j_f_miken_01_l" FlippedBoneName="j_f_miken_01_r"/>
+					<local:BoneView Canvas.Left="355" Canvas.Top="280" BoneName="j_f_miken_01_r" FlippedBoneName="j_f_miken_01_l"/>
+
+					<!-- Nose Bridge -->
+					<local:BoneView Canvas.Left="280" Canvas.Top="294" BoneName="j_f_miken_02_l" FlippedBoneName="j_f_miken_02_r"/>
+					<local:BoneView Canvas.Left="320" Canvas.Top="294" BoneName="j_f_miken_02_r" FlippedBoneName="j_f_miken_02_l"/>
+					<local:BoneView Canvas.Left="290" Canvas.Top="320" BoneName="j_f_dmiken_l" FlippedBoneName="j_f_dmiken_r"/>
+					<local:BoneView Canvas.Left="310" Canvas.Top="320" BoneName="j_f_dmiken_r" FlippedBoneName="j_f_dmiken_l"/>
+
+					<!-- Eyes -->
+					<local:BoneView Canvas.Left="218" Canvas.Top="322" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"/>
+					<local:BoneView Canvas.Left="380" Canvas.Top="322" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"/>
+
+					<!--- Upper Eyelids -->
+					<local:BoneView Canvas.Left="250" Canvas.Top="320" BoneName="j_f_mabup_03in_l" FlippedBoneName="j_f_mabup_03in_r"/>
+					<local:BoneView Canvas.Left="348" Canvas.Top="320" BoneName="j_f_mabup_03in_r" FlippedBoneName="j_f_mabup_03in_l"/>
+					<local:BoneView Canvas.Left="220" Canvas.Top="302" BoneName="j_f_mabup_01_l" FlippedBoneName="j_f_mabup_01_r"/>
+					<local:BoneView Canvas.Left="378" Canvas.Top="302" BoneName="j_f_mabup_01_r" FlippedBoneName="j_f_mabup_01_l"/>
+					<local:BoneView Canvas.Left="174" Canvas.Top="314" BoneName="j_f_mabup_02out_l" FlippedBoneName="j_f_mabup_02out_r"/>
+					<local:BoneView Canvas.Left="422" Canvas.Top="314" BoneName="j_f_mabup_02out_r" FlippedBoneName="j_f_mabup_02out_l"/>
+
+					<!--- Lower Eyelids -->
+					<local:BoneView Canvas.Left="250" Canvas.Top="340" BoneName="j_f_mabdn_03in_l" FlippedBoneName="j_f_mabdn_03in_r"/>
+					<local:BoneView Canvas.Left="348" Canvas.Top="340" BoneName="j_f_mabdn_03in_r" FlippedBoneName="j_f_mabdn_03in_l"/>
+					<local:BoneView Canvas.Left="212" Canvas.Top="344" BoneName="j_f_mabdn_01_l" FlippedBoneName="j_f_mabdn_01_r"/>
+					<local:BoneView Canvas.Left="386" Canvas.Top="344" BoneName="j_f_mabdn_01_r" FlippedBoneName="j_f_mabdn_01_l"/>
+					<local:BoneView Canvas.Left="174" Canvas.Top="334" BoneName="j_f_mabdn_02out_l" FlippedBoneName="j_f_mabdn_02out_r"/>
+					<local:BoneView Canvas.Left="424" Canvas.Top="334" BoneName="j_f_mabdn_02out_r" FlippedBoneName="j_f_mabdn_02out_l"/>
+
+					<!-- Nose -->
+					<local:BoneView Canvas.Left="300" Canvas.Top="350" BoneName="j_f_uhana"/>
+					<local:BoneView Canvas.Left="284" Canvas.Top="404" BoneName="j_f_hana_l" FlippedBoneName="j_f_hana_r"/>
+					<local:BoneView Canvas.Left="316" Canvas.Top="404" BoneName="j_f_hana_r" FlippedBoneName="j_f_hana_l"/>
+
+
+					<!-- Teeth -->
+					<local:BoneView Canvas.Left="300" Canvas.Top="444" BoneName="j_f_hagukiup"/>
+					<local:BoneView Canvas.Left="300" Canvas.Top="474" BoneName="j_f_hagukidn"/>
+
+					<!-- Jaw -->
+					<local:BoneView Canvas.Left="300" Canvas.Top="502" BoneName="j_f_ago"/>
+
+					<!-- Chin -->
+					<local:BoneView Canvas.Left="300" Canvas.Top="538" BoneName="j_f_dago"/>
+
+					<!-- Cheekbones -->
+					<local:BoneView Canvas.Left="260" Canvas.Top="370" BoneName="j_f_dmemoto_l" FlippedBoneName="j_f_dmemoto_r"/>
+					<local:BoneView Canvas.Left="340" Canvas.Top="370" BoneName="j_f_dmemoto_r" FlippedBoneName="j_f_dmemoto_l"/>
+
+					<!-- Inner cheeks -->
+					<local:BoneView Canvas.Left="210" Canvas.Top="380" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"/>
+					<local:BoneView Canvas.Left="390" Canvas.Top="380" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"/>
+					<local:BoneView Canvas.Left="210" Canvas.Top="440" BoneName="j_f_shoho_l" FlippedBoneName="j_f_shoho_r"/>
+					<local:BoneView Canvas.Left="390" Canvas.Top="440" BoneName="j_f_shoho_r" FlippedBoneName="j_f_shoho_l"/>
+
+					<!-- Outer cheeks -->
+					<local:BoneView Canvas.Left="160" Canvas.Top="410" BoneName="j_f_dhoho_l" FlippedBoneName="j_f_dhoho_r"/>
+					<local:BoneView Canvas.Left="440" Canvas.Top="410" BoneName="j_f_dhoho_r" FlippedBoneName="j_f_dhoho_l"/>
+
+					<!-- Hair -->
+					<local:BoneView Canvas.Left="300" Canvas.Top="150" BoneName="HairFront"/>
+					<local:BoneView Canvas.Left="100" Canvas.Top="400" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
+					<local:BoneView Canvas.Left="500" Canvas.Top="400" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+				</Canvas>
+			</Viewbox>
+		</DataTemplate>
+
+		<!-- Viera (Floppy) Head & Face -->
+		<DataTemplate x:Key="VieraFloppyFaceTemplate">
+			<Viewbox>
+				<Canvas Height="600" Width="600" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+					<Image Canvas.Left="0" Canvas.Top="0" Width="600" Height="600" Opacity="0.3" Stretch="Uniform"
+						   Source="pack://application:,,,/Assets/Pose/CharFVieraFloppyFaceExBackground.png" IsHitTestVisible="False"/>
+
+					<!-- Ears[M, 02] -->
+					<local:BoneView Canvas.Left="210" Canvas.Top="150" BoneName="j_zerb_a_l" FlippedBoneName="j_zerb_a_r"
+										 Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="364" Canvas.Top="150" BoneName="j_zerb_a_r" FlippedBoneName="j_zerb_a_l"
+										 Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="176" Canvas.Top="30" BoneName="j_zerb_b_l" FlippedBoneName="j_zerb_b_r"
+										 Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="30" BoneName="j_zerb_b_r" FlippedBoneName="j_zerb_b_l"
+										 Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+
+					<!-- Ears[F, 03] -->
+					<local:BoneView Canvas.Left="210" Canvas.Top="150" BoneName="j_zerc_a_l" FlippedBoneName="j_zerc_a_r"
+										 Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="364" Canvas.Top="150" BoneName="j_zerc_a_r" FlippedBoneName="j_zerc_a_l"
+										 Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="176" Canvas.Top="30" BoneName="j_zerc_b_l" FlippedBoneName="j_zerc_b_r"
+										 Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="30" BoneName="j_zerc_b_r" FlippedBoneName="j_zerc_b_l"
+										 Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+
+					<!-- Earrings -->
+					<local:BoneView Canvas.Left="140" Canvas.Top="100" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"/>
+					<local:BoneView Canvas.Left="434" Canvas.Top="100" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
+					<local:BoneView Canvas.Left="140" Canvas.Top="150" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
+					<local:BoneView Canvas.Left="434" Canvas.Top="150" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"/>
+
+					<!-- Eyebrows -->
+					<local:BoneView Canvas.Left="180" Canvas.Top="320" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="320" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"/>
+					<local:BoneView Canvas.Left="216" Canvas.Top="310" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
+					<local:BoneView Canvas.Left="368" Canvas.Top="310" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
+					<local:BoneView Canvas.Left="246" Canvas.Top="320" BoneName="j_f_miken_01_l" FlippedBoneName="j_f_miken_01_r"/>
+					<local:BoneView Canvas.Left="338" Canvas.Top="320" BoneName="j_f_miken_01_r" FlippedBoneName="j_f_miken_01_l"/>
+
+					<!-- Nose Bridge -->
+					<local:BoneView Canvas.Left="272" Canvas.Top="335" BoneName="j_f_miken_02_l" FlippedBoneName="j_f_miken_02_r"/>
+					<local:BoneView Canvas.Left="312" Canvas.Top="335" BoneName="j_f_miken_02_r" FlippedBoneName="j_f_miken_02_l"/>
+					<local:BoneView Canvas.Left="282" Canvas.Top="355" BoneName="j_f_dmiken_l" FlippedBoneName="j_f_dmiken_r"/>
+					<local:BoneView Canvas.Left="302" Canvas.Top="355" BoneName="j_f_dmiken_r" FlippedBoneName="j_f_dmiken_l"/>
+
+					<!-- Eyes -->
+					<local:BoneView Canvas.Left="226" Canvas.Top="370" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"/>
+					<local:BoneView Canvas.Left="354" Canvas.Top="370" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"/>
+
+					<!--- Upper Eyelids -->
+					<local:BoneView Canvas.Left="258" Canvas.Top="370" BoneName="j_f_mabup_03in_l" FlippedBoneName="j_f_mabup_03in_r"/>
+					<local:BoneView Canvas.Left="324" Canvas.Top="370" BoneName="j_f_mabup_03in_r" FlippedBoneName="j_f_mabup_03in_l"/>
+					<local:BoneView Canvas.Left="226" Canvas.Top="350" BoneName="j_f_mabup_01_l" FlippedBoneName="j_f_mabup_01_r"/>
+					<local:BoneView Canvas.Left="354" Canvas.Top="350" BoneName="j_f_mabup_01_r" FlippedBoneName="j_f_mabup_01_l"/>
+					<local:BoneView Canvas.Left="188" Canvas.Top="355" BoneName="j_f_mabup_02out_l" FlippedBoneName="j_f_mabup_02out_r"/>
+					<local:BoneView Canvas.Left="392 " Canvas.Top="355" BoneName="j_f_mabup_02out_r" FlippedBoneName="j_f_mabup_02out_l"/>
+
+					<!--- Lower Eyelids -->
+					<local:BoneView Canvas.Left="258" Canvas.Top="388" BoneName="j_f_mabdn_03in_l" FlippedBoneName="j_f_mabdn_03in_r"/>
+					<local:BoneView Canvas.Left="324" Canvas.Top="388" BoneName="j_f_mabdn_03in_r" FlippedBoneName="j_f_mabdn_03in_l"/>
+					<local:BoneView Canvas.Left="226" Canvas.Top="390" BoneName="j_f_mabdn_01_l" FlippedBoneName="j_f_mabdn_01_r"/>
+					<local:BoneView Canvas.Left="354" Canvas.Top="390" BoneName="j_f_mabdn_01_r" FlippedBoneName="j_f_mabdn_01_l"/>
+					<local:BoneView Canvas.Left="188" Canvas.Top="374" BoneName="j_f_mabdn_02out_l" FlippedBoneName="j_f_mabdn_02out_r"/>
+					<local:BoneView Canvas.Left="392" Canvas.Top="374" BoneName="j_f_mabdn_02out_r" FlippedBoneName="j_f_mabdn_02out_l"/>
+
+					<!-- Nose -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="390" BoneName="j_f_uhana"/>
+					<local:BoneView Canvas.Left="272" Canvas.Top="430" BoneName="j_f_hana_l" FlippedBoneName="j_f_hana_r"/>
+					<local:BoneView Canvas.Left="312" Canvas.Top="430" BoneName="j_f_hana_r" FlippedBoneName="j_f_hana_l"/>
+
+					<!-- Teeth -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="470" BoneName="j_f_hagukiup"/>
+					<local:BoneView Canvas.Left="292" Canvas.Top="494" BoneName="j_f_hagukidn"/>
+
+					<!-- Jaw -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="520" BoneName="j_f_ago"/>
+
+					<!-- Chin -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="546" BoneName="j_f_dago"/>
+
+					<!-- Cheekbones -->
+					<local:BoneView Canvas.Left="242" Canvas.Top="414" BoneName="j_f_dmemoto_l" FlippedBoneName="j_f_dmemoto_r"/>
+					<local:BoneView Canvas.Left="342" Canvas.Top="414" BoneName="j_f_dmemoto_r" FlippedBoneName="j_f_dmemoto_l"/>
+
+					<!-- Inner cheeks -->
+					<local:BoneView Canvas.Left="210" Canvas.Top="430" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"/>
+					<local:BoneView Canvas.Left="372" Canvas.Top="430" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"/>
+					<local:BoneView Canvas.Left="230" Canvas.Top="470" BoneName="j_f_shoho_l" FlippedBoneName="j_f_shoho_r"/>
+					<local:BoneView Canvas.Left="354" Canvas.Top="470" BoneName="j_f_shoho_r" FlippedBoneName="j_f_shoho_l"/>
+
+					<!-- Outer cheeks -->
+					<local:BoneView Canvas.Left="186" Canvas.Top="468" BoneName="j_f_dhoho_l" FlippedBoneName="j_f_dhoho_r"/>
+					<local:BoneView Canvas.Left="396" Canvas.Top="468" BoneName="j_f_dhoho_r" FlippedBoneName="j_f_dhoho_l"/>
+
+					<!-- Hair -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="200" BoneName="HairFront"/>
+					<local:BoneView Canvas.Left="132" Canvas.Top="500" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
+					<local:BoneView Canvas.Left="450" Canvas.Top="500" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+				</Canvas>
+			</Viewbox>
+		</DataTemplate>
+
+		<!-- Viera (Straight-ear) Head & Face -->
+		<DataTemplate x:Key="VieraStraightFaceTemplate">
+			<Viewbox>
+				<Canvas Height="600" Width="600" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+					<Image Canvas.Left="0" Canvas.Top="0" Width="600" Height="600" Opacity="0.3" Stretch="Uniform"
+						   Source="pack://application:,,,/Assets/Pose/CharFVieraFaceExBackground.png" IsHitTestVisible="False"/>
+
+					<!-- Ears[01] -->
+					<local:BoneView Canvas.Left="180" Canvas.Top="140" BoneName="j_zera_a_l" FlippedBoneName="j_zera_a_r"
+							Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="140" BoneName="j_zera_a_r" FlippedBoneName="j_zera_a_l"
+							Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="160" Canvas.Top="40" BoneName="j_zera_b_l" FlippedBoneName="j_zera_b_r"
+							Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="420" Canvas.Top="40" BoneName="j_zera_b_r" FlippedBoneName="j_zera_b_l"
+							Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
+
+					<!-- Ears[02] -->
+					<local:BoneView Canvas.Left="180" Canvas.Top="140" BoneName="j_zerb_a_l" FlippedBoneName="j_zerb_a_r"
+							Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="140" BoneName="j_zerb_a_r" FlippedBoneName="j_zerb_a_l"
+							Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="160" Canvas.Top="40" BoneName="j_zerb_b_l" FlippedBoneName="j_zerb_b_r"
+							Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="420" Canvas.Top="40" BoneName="j_zerb_b_r" FlippedBoneName="j_zerb_b_l"
+							Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+
+					<!-- Ears[03] -->
+					<local:BoneView Canvas.Left="180" Canvas.Top="140" BoneName="j_zerc_a_l" FlippedBoneName="j_zerc_a_r"
+							Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="140" BoneName="j_zerc_a_r" FlippedBoneName="j_zerc_a_l"
+							Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="160" Canvas.Top="40" BoneName="j_zerc_b_l" FlippedBoneName="j_zerc_b_r"
+							Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="420" Canvas.Top="40" BoneName="j_zerc_b_r" FlippedBoneName="j_zerc_b_l"
+							Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+
+					<!-- Ears[04] -->
+					<local:BoneView Canvas.Left="180" Canvas.Top="140" BoneName="j_zerd_a_l" FlippedBoneName="j_zerd_a_r"
+							Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="140" BoneName="j_zerd_a_r" FlippedBoneName="j_zerd_a_l"
+							Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="160" Canvas.Top="40" BoneName="j_zerd_b_l" FlippedBoneName="j_zerd_b_r"
+							Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
+					<local:BoneView Canvas.Left="420" Canvas.Top="40" BoneName="j_zerd_b_r" FlippedBoneName="j_zerd_b_l"
+							Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
+
+					<!-- Earrings -->
+					<local:BoneView Canvas.Left="130" Canvas.Top="100" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"/>
+					<local:BoneView Canvas.Left="450" Canvas.Top="100" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
+					<local:BoneView Canvas.Left="130" Canvas.Top="150" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
+					<local:BoneView Canvas.Left="450" Canvas.Top="150" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"/>
+
+					<!-- Eyebrows -->
+					<local:BoneView Canvas.Left="180" Canvas.Top="320" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"/>
+					<local:BoneView Canvas.Left="400" Canvas.Top="320" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"/>
+					<local:BoneView Canvas.Left="216" Canvas.Top="315" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
+					<local:BoneView Canvas.Left="368" Canvas.Top="315" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
+					<local:BoneView Canvas.Left="246" Canvas.Top="320" BoneName="j_f_miken_01_l" FlippedBoneName="j_f_miken_01_r"/>
+					<local:BoneView Canvas.Left="338" Canvas.Top="320" BoneName="j_f_miken_01_r" FlippedBoneName="j_f_miken_01_l"/>
+
+					<!-- Nose Bridge -->
+					<local:BoneView Canvas.Left="272" Canvas.Top="335" BoneName="j_f_miken_02_l" FlippedBoneName="j_f_miken_02_r"/>
+					<local:BoneView Canvas.Left="312" Canvas.Top="335" BoneName="j_f_miken_02_r" FlippedBoneName="j_f_miken_02_l"/>
+					<local:BoneView Canvas.Left="282" Canvas.Top="355" BoneName="j_f_dmiken_l" FlippedBoneName="j_f_dmiken_r"/>
+					<local:BoneView Canvas.Left="302" Canvas.Top="355" BoneName="j_f_dmiken_r" FlippedBoneName="j_f_dmiken_l"/>
+
+					<!-- Eyes -->
+					<local:BoneView Canvas.Left="226" Canvas.Top="370" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"/>
+					<local:BoneView Canvas.Left="354" Canvas.Top="370" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"/>
+
+					<!--- Upper Eyelids -->
+					<local:BoneView Canvas.Left="258" Canvas.Top="370" BoneName="j_f_mabup_03in_l" FlippedBoneName="j_f_mabup_03in_r"/>
+					<local:BoneView Canvas.Left="324" Canvas.Top="370" BoneName="j_f_mabup_03in_r" FlippedBoneName="j_f_mabup_03in_l"/>
+					<local:BoneView Canvas.Left="226" Canvas.Top="350" BoneName="j_f_mabup_01_l" FlippedBoneName="j_f_mabup_01_r"/>
+					<local:BoneView Canvas.Left="354" Canvas.Top="350" BoneName="j_f_mabup_01_r" FlippedBoneName="j_f_mabup_01_l"/>
+					<local:BoneView Canvas.Left="188" Canvas.Top="355" BoneName="j_f_mabup_02out_l" FlippedBoneName="j_f_mabup_02out_r"/>
+					<local:BoneView Canvas.Left="392 " Canvas.Top="355" BoneName="j_f_mabup_02out_r" FlippedBoneName="j_f_mabup_02out_l"/>
+
+					<!--- Lower Eyelids -->
+					<local:BoneView Canvas.Left="258" Canvas.Top="388" BoneName="j_f_mabdn_03in_l" FlippedBoneName="j_f_mabdn_03in_r"/>
+					<local:BoneView Canvas.Left="324" Canvas.Top="388" BoneName="j_f_mabdn_03in_r" FlippedBoneName="j_f_mabdn_03in_l"/>
+					<local:BoneView Canvas.Left="226" Canvas.Top="390" BoneName="j_f_mabdn_01_l" FlippedBoneName="j_f_mabdn_01_r"/>
+					<local:BoneView Canvas.Left="354" Canvas.Top="390" BoneName="j_f_mabdn_01_r" FlippedBoneName="j_f_mabdn_01_l"/>
+					<local:BoneView Canvas.Left="188" Canvas.Top="374" BoneName="j_f_mabdn_02out_l" FlippedBoneName="j_f_mabdn_02out_r"/>
+					<local:BoneView Canvas.Left="392" Canvas.Top="374" BoneName="j_f_mabdn_02out_r" FlippedBoneName="j_f_mabdn_02out_l"/>
+
+					<!-- Nose -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="390" BoneName="j_f_uhana"/>
+					<local:BoneView Canvas.Left="272" Canvas.Top="430" BoneName="j_f_hana_l" FlippedBoneName="j_f_hana_r"/>
+					<local:BoneView Canvas.Left="312" Canvas.Top="430" BoneName="j_f_hana_r" FlippedBoneName="j_f_hana_l"/>
+
+					<!-- Teeth -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="470" BoneName="j_f_hagukiup"/>
+					<local:BoneView Canvas.Left="292" Canvas.Top="494" BoneName="j_f_hagukidn"/>
+
+					<!-- Jaw -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="520" BoneName="j_f_ago"/>
+
+					<!-- Chin -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="546" BoneName="j_f_dago"/>
+
+					<!-- Cheekbones -->
+					<local:BoneView Canvas.Left="242" Canvas.Top="414" BoneName="j_f_dmemoto_l" FlippedBoneName="j_f_dmemoto_r"/>
+					<local:BoneView Canvas.Left="342" Canvas.Top="414" BoneName="j_f_dmemoto_r" FlippedBoneName="j_f_dmemoto_l"/>
+
+					<!-- Inner cheeks -->
+					<local:BoneView Canvas.Left="210" Canvas.Top="430" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"/>
+					<local:BoneView Canvas.Left="372" Canvas.Top="430" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"/>
+					<local:BoneView Canvas.Left="230" Canvas.Top="470" BoneName="j_f_shoho_l" FlippedBoneName="j_f_shoho_r"/>
+					<local:BoneView Canvas.Left="354" Canvas.Top="470" BoneName="j_f_shoho_r" FlippedBoneName="j_f_shoho_l"/>
+
+					<!-- Outer cheeks -->
+					<local:BoneView Canvas.Left="186" Canvas.Top="468" BoneName="j_f_dhoho_l" FlippedBoneName="j_f_dhoho_r"/>
+					<local:BoneView Canvas.Left="396" Canvas.Top="468" BoneName="j_f_dhoho_r" FlippedBoneName="j_f_dhoho_l"/>
+
+					<!-- Hair -->
+					<local:BoneView Canvas.Left="292" Canvas.Top="200" BoneName="HairFront"/>
+					<local:BoneView Canvas.Left="132" Canvas.Top="500" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
+					<local:BoneView Canvas.Left="450" Canvas.Top="500" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+				</Canvas>
+			</Viewbox>
+		</DataTemplate>
+
+		<local:FaceTemplateSelector x:Key="FaceTemplateSelector"
+									StandardFaceTemplate="{StaticResource StandardFaceTemplate}"
+									HrothgarFaceTemplate="{StaticResource HrothgarFaceTemplate}"
+									MiqoteFaceTemplate="{StaticResource MiqoteFaceTemplate}"
+									VieraFloppyFaceTemplate="{StaticResource VieraFloppyFaceTemplate}"
+									VieraStraightFaceTemplate="{StaticResource VieraStraightFaceTemplate}" />
+	</UserControl.Resources>
+
+	<Grid x:Name="ContentArea">
+		<Grid VerticalAlignment="Top" Margin="125,0,0,0">
+			<CheckBox
+				x:Name="FlipSidesOption"
+				Margin="3,4,3,0"
+				VerticalContentAlignment="Center"
+				IsChecked="{Binding FlipSides}">
+
+				<XivToolsWpf:TextBlock Key="Pose_FlipSides" />
+			</CheckBox>
+		</Grid>
+
+		<Grid ClipToBounds="True">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Orientation (Guide) -->
+			<XivToolsWpf:TextBlock Key="Pose_GuiFlip" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0, 3, 6, 0" Opacity="0.3"
+						Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
+
+			<XivToolsWpf:TextBlock Key="Pose_GuiNotFlip" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0, 3, 6, 0" Opacity="0.3"
+					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
+
+			<!-- Line Guide (Mouth) -->
+			<Canvas Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
+				<Line x:Name="MouthGuideLine" X1="225" Y1="360" X2="435" Y2="340" Stroke="Gray" Opacity="0" StrokeThickness="2"/>
+				<Ellipse x:Name="MouthGuideEllipse" Canvas.Left="220" Canvas.Top="355" Width="10" Height="10" Fill="Gray" Opacity="0"/>
+			</Canvas>
+
+			<Grid Grid.Column="0" Margin="0, 25, 0, 0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<!-- Orientation (Face) -->
+				<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="48" Margin="25, 20, 32, 0" Foreground="White" FontWeight="Bold" Opacity="0.5"
+						Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
+				<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="48" Margin="25, 20, 25, 0" Foreground="White" FontWeight="Bold" Opacity="0.5"
+					   Visibility="{Binding FlipSides, Converter={StaticResource !B2V}, FallbackValue=Visible}" />
+				<XivToolsWpf:TextBlock Key="Pose_Right" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="48" Margin="25, 20, 32, 0" Foreground="White" FontWeight="Bold" Opacity="0.5"
+						Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
+				<XivToolsWpf:TextBlock Key="Pose_Left" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="48" Margin="25, 20, 32, 0" Foreground="White" FontWeight="Bold" Opacity="0.5"
+					   Visibility="{Binding FlipSides, Converter={StaticResource B2V}, FallbackValue=Hidden}" />
+
+				<!-- Face -->
+				<ContentControl Grid.Column="0" ContentTemplateSelector="{StaticResource FaceTemplateSelector}" Content="{Binding}" />
+
+				<Grid Grid.Column="1" Margin="0, 20, 20, 0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1*"/>
+						<RowDefinition Height="1.5*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Tongue -->
+					<Viewbox Grid.Row="0">
+						<Canvas Height="200" Width="200">
+							<Image Canvas.Left="0" Canvas.Top="15" Height="170" Width="200" Opacity="0.3" Stretch="Uniform"
+								   Source="pack://application:,,,/Assets/Pose/CharTongueBackground.png" IsHitTestVisible="False"/>
+
+							<!-- Jaw -->
+							<local:BoneView Canvas.Left="87" Canvas.Top="5" BoneName="j_f_ago"/>
+
+							<!-- Tongue -->
+							<local:BoneView Canvas.Left="87" Canvas.Top="50" BoneName="j_f_bero_01"/>
+							<local:BoneView Canvas.Left="87" Canvas.Top="85" BoneName="j_f_bero_02"/>
+							<local:BoneView Canvas.Left="87" Canvas.Top="120" BoneName="j_f_bero_03"/>
+						</Canvas>
+					</Viewbox>
+
+					<!-- Mouth -->
+					<Viewbox Grid.Row="1" Margin="0, 0, 0, 20">
+						<Canvas Height="300" Width="220" MouseEnter="MouthSelector_MouseEnter" MouseLeave="MouthSelector_MouseLeave">
+							<Border x:Name="MouthSelectorBorder" Canvas.Left="2" Canvas.Top="60" BorderThickness="3" Padding="5">
+								<Border.BorderBrush>
+									<SolidColorBrush Color="Gray" Opacity="0.5"/>
+								</Border.BorderBrush>
+								<Image Height="146" Width="200" Opacity="0.3" Stretch="Uniform"
+									   Source="pack://application:,,,/Assets/Pose/CharFMiqoMouthBackground.png" IsHitTestVisible="True"/>
+							</Border>
+
+							<!-- Upper Mouth Corners -->
+							<local:BoneView Canvas.Left="25" Canvas.Top="115" BoneName="j_f_uslip_l" FlippedBoneName="j_f_uslip_r"/>
+							<local:BoneView Canvas.Left="175" Canvas.Top="115" BoneName="j_f_uslip_r" FlippedBoneName="j_f_uslip_l"/>
+
+							<!-- Lower Mouth Corners-->
+							<local:BoneView Canvas.Left="25" Canvas.Top="145" BoneName="j_f_dslip_l" FlippedBoneName="j_f_dslip_r"/>
+							<local:BoneView Canvas.Left="175" Canvas.Top="145" BoneName="j_f_dslip_r" FlippedBoneName="j_f_dslip_l"/>
+
+							<!-- Upper lip -->
+							<local:BoneView Canvas.Left="58" Canvas.Top="115" BoneName="j_f_umlip_02_l" FlippedBoneName="j_f_umlip_02_r"/>
+							<local:BoneView Canvas.Left="142" Canvas.Top="115" BoneName="j_f_umlip_02_r" FlippedBoneName="j_f_umlip_02_l"/>
+							<local:BoneView Canvas.Left="85" Canvas.Top="115" BoneName="j_f_ulip_02_l" FlippedBoneName="j_f_ulip_02_r"/>
+							<local:BoneView Canvas.Left="115" Canvas.Top="115" BoneName="j_f_ulip_02_r" FlippedBoneName="j_f_ulip_02_l"/>
+
+							<local:BoneView Canvas.Left="58" Canvas.Top="90" BoneName="j_f_umlip_01_l" FlippedBoneName="j_f_umlip_01_r"/>
+							<local:BoneView Canvas.Left="142" Canvas.Top="90" BoneName="j_f_umlip_01_r" FlippedBoneName="j_f_umlip_01_l"/>
+							<local:BoneView Canvas.Left="85" Canvas.Top="90" BoneName="j_f_ulip_01_l" FlippedBoneName="j_f_ulip_01_r"/>
+							<local:BoneView Canvas.Left="115" Canvas.Top="90" BoneName="j_f_ulip_01_r" FlippedBoneName="j_f_ulip_01_l"/>
+
+							<!-- Lower lip -->
+							<local:BoneView Canvas.Left="58" Canvas.Top="145" BoneName="j_f_dmlip_02_l" FlippedBoneName="j_f_dmlip_02_r"/>
+							<local:BoneView Canvas.Left="142" Canvas.Top="145" BoneName="j_f_dmlip_02_r" FlippedBoneName="j_f_dmlip_02_l"/>
+							<local:BoneView Canvas.Left="85" Canvas.Top="145" BoneName="j_f_dlip_02_l" FlippedBoneName="j_f_dlip_02_r"/>
+							<local:BoneView Canvas.Left="115" Canvas.Top="145" BoneName="j_f_dlip_02_r" FlippedBoneName="j_f_dlip_02_l"/>
+
+
+							<local:BoneView Canvas.Left="58" Canvas.Top="170" BoneName="j_f_dmlip_01_l" FlippedBoneName="j_f_dmlip_01_r"/>
+							<local:BoneView Canvas.Left="142" Canvas.Top="170" BoneName="j_f_dmlip_01_r" FlippedBoneName="j_f_dmlip_01_l"/>
+							<local:BoneView Canvas.Left="85" Canvas.Top="170" BoneName="j_f_dlip_01_l" FlippedBoneName="j_f_dlip_01_r"/>
+							<local:BoneView Canvas.Left="115" Canvas.Top="170" BoneName="j_f_dlip_01_r" FlippedBoneName="j_f_dlip_01_l"/>
+						</Canvas>
+					</Viewbox>
+				</Grid>
+			</Grid>
+		</Grid>
+	</Grid>
+</UserControl>
