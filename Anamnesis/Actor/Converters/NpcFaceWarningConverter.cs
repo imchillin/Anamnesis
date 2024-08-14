@@ -13,15 +13,22 @@ public class NpcFaceWarningConverter : IMultiValueConverter
 {
 	public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 	{
-		if (values.Length != 2)
+		if (values.Length != 4)
 			throw new ArgumentException();
 
-		if (values[0] is ActorTypes type && values[1] is byte head)
+		if (values[0] is ActorTypes type && values[1] is byte head && values[2] is ActorCustomizeMemory.Races race && values[3] is ActorCustomizeMemory.Genders gender)
 		{
+			bool isHrothF = race == ActorCustomizeMemory.Races.Hrothgar && gender == ActorCustomizeMemory.Genders.Feminine;
+
 			if (type == ActorTypes.BattleNpc || type == ActorTypes.EventNpc)
 				return Visibility.Collapsed;
 
-			if (head > 5)
+			// For all except Fem Hrothgar, >4 is an NPC face.
+			if (head > 4 && !isHrothF)
+				return Visibility.Visible;
+
+			// For Fem Hrothgar only, between 5 and 8 are player faces.
+			if ((head < 5 || head > 8) && isHrothF)
 				return Visibility.Visible;
 
 			return Visibility.Collapsed;
