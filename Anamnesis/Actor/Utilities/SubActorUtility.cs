@@ -191,6 +191,9 @@ public class SubActorUtility
 					case ActorCustomizeMemory.Genders.Masculine:
 						mountScaleFactor = mountCustomize.HrothgarMaleScale;
 						break;
+					case ActorCustomizeMemory.Genders.Feminine:
+						mountScaleFactor = mountCustomize.HrothgarFemaleScale;
+						break;
 				}
 
 				break;
