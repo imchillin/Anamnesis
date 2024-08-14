@@ -33,7 +33,7 @@ You can check the official Wiki over at [xivmodding.com](https://xivmodding.com/
 
 ### Original Authors
 
-Ex Developers that have since moved on to different projects.
+Developers that have since moved on to different projects.
 
 * **[Yuki](https://github.com/Yuki-Walsh)** - *Main development*
 * **[Ani-ki](https://github.com/Ani-ki)** - *Project management, code contributions and wiki curating* 
