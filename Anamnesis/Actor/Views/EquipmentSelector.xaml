@@ -12,6 +12,13 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="450">
 
+	<UserControl.Resources>
+		<Style x:Key="SelectorItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+			<Setter Property="VerticalContentAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Resources>
+
 	<Grid x:Name="ContentArea">
 
 		<Grid.ColumnDefinitions>
@@ -178,11 +185,12 @@
 		<xivToolsWpfSelectors:Selector
 			Grid.Column="1"
 			Grid.Row="2"
-			Width="300">
+			Width="300"
+			ListBoxItemStyle="{StaticResource SelectorItemStyle}">
 
 			<xivToolsWpfSelectors:Selector.ItemTemplate>
 				<DataTemplate>
-					<Grid Height="32" Margin="0, -2">
+					<Grid Height="32">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition/>

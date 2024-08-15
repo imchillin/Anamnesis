@@ -3,25 +3,21 @@
 
 namespace Anamnesis.Services;
 
-using System;
-using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
+using System;
+using System.Threading.Tasks;
 
 public delegate void GposeEvent(bool newState);
 
 [AddINotifyPropertyChangedInterface]
 public class GposeService : ServiceBase<GposeService>
 {
-	private bool initialized = false;
-
 	public static event GposeEvent? GposeStateChanged;
 
+	public bool Initialized { get; private set; } = false;
 	public bool IsGpose { get; private set; }
-
-	[DependsOn(nameof(IsGpose))]
-	public bool IsOverworld => !this.IsGpose;
 
 	public static bool GetIsGPose()
 	{
@@ -50,9 +46,9 @@ public class GposeService : ServiceBase<GposeService>
 		{
 			bool newGpose = GetIsGPose();
 
-			if (!this.initialized)
+			if (!this.Initialized)
 			{
-				this.initialized = true;
+				this.Initialized = true;
 				this.IsGpose = newGpose;
 				continue;
 			}

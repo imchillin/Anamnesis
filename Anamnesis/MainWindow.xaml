@@ -46,11 +46,11 @@
 											  Click="OnTargetActorClicked"
 											  Header="Target" />
 
-                                <MenuItem Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=SettingsService.Settings.UseExternalRefreshBrio, Converter={StaticResource B2V}}" 
+								<MenuItem Visibility="{Binding DataContext.SettingsService.Settings.UseExternalRefreshBrio, Source={x:Reference PinnedActorList}, Converter={StaticResource B2V}}" 
 											  IsEnabled="{Binding IsGPoseActor}"
 											  Click="OnDespawnActorClicked"
 											  Header="Despawn" />
-                            </ContextMenu>
+								</ContextMenu>
 							</ToggleButton.ContextMenu>
 
 						<Grid Margin="6,0">
@@ -147,7 +147,7 @@
 				<ScaleTransform x:Name="WindowScale" ScaleX="0.5" ScaleY="0.5" />
 			</Grid.LayoutTransform>
 
-			<Grid IsEnabled="{Binding GposeService.IsNotChangingState}" Margin="3,0,3,3">
+			<Grid IsEnabled="{Binding GposeService.Initialized}" Margin="3,0,3,3">
 
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>

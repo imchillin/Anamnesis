@@ -351,10 +351,7 @@
 									  ItemsSource="{Binding HairBones}">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
-									<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
-											   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
-											   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
-											   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+									<WrapPanel/>
 								</ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>
 
@@ -943,10 +940,7 @@
 										  ItemsSource="{Binding MetBones}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
-										<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
-												   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
-												   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
-												   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+										<WrapPanel/>
 									</ItemsPanelTemplate>
 								</ItemsControl.ItemsPanel>
 
@@ -968,10 +962,7 @@
 							<ItemsControl Grid.Column="1" ItemsSource="{Binding TopBones}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
-										<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
-												   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
-												   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
-												   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+										<WrapPanel/>
 									</ItemsPanelTemplate>
 								</ItemsControl.ItemsPanel>
 
@@ -1014,10 +1005,7 @@
 										  ItemsSource="{Binding MainHandBones}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
-										<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
-												   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
-												   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
-												   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+										<WrapPanel/>
 									</ItemsPanelTemplate>
 								</ItemsControl.ItemsPanel>
 
@@ -1039,10 +1027,7 @@
 							<ItemsControl Grid.Column="1" ItemsSource="{Binding OffHandBones}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
-										<WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
-												   ItemWidth="{Binding (ListView.View).ItemWidth, RelativeSource={RelativeSource AncestorType=ListView}}"
-												   MinWidth="{Binding ItemWidth, RelativeSource={RelativeSource Self}}"
-												   ItemHeight="{Binding (ListView.View).ItemHeight, RelativeSource={RelativeSource AncestorType=ListView}}" />
+										<WrapPanel/>
 									</ItemsPanelTemplate>
 								</ItemsControl.ItemsPanel>
 
