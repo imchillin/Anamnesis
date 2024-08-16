@@ -3,19 +3,19 @@
 
 namespace Anamnesis.Actor;
 
-using System;
-using System.Collections.Generic;
-using System.Windows.Media.Media3D;
-using Anamnesis.Memory;
 using Anamnesis.Actor.Extensions;
+using Anamnesis.Memory;
 using Anamnesis.Posing.Visuals;
 using Anamnesis.Services;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
-using XivToolsWpf.Meida3D;
-
-using CmQuaternion = Anamnesis.Memory.Quaternion;
-using CmVector = Anamnesis.Memory.Vector;
+using System;
+using System.Collections.Generic;
+using System.Windows.Media.Media3D;
+using XivToolsWpf.Math3D;
+using XivToolsWpf.Math3D.Extensions;
+using CmQuaternion = System.Numerics.Quaternion;
+using CmVector = System.Numerics.Vector3;
 using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
 [AddINotifyPropertyChangedInterface]
@@ -264,8 +264,8 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 		}
 
 		// Store the new parent-relative transform info
-		this.Position = position.ToCmVector();
-		this.Rotation = rotation.ToCmQuaternion();
+		this.Position = position.FromMedia3DPoint();
+		this.Rotation = rotation.FromMedia3DQuaternion();
 
 		// Set the Media3D hierarchy transforms
 		this.rotation.Quaternion = rotation;
@@ -352,7 +352,7 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 
 			if (this.CanRotate)
 			{
-				CmQuaternion newRot = rotation.ToCmQuaternion();
+				CmQuaternion newRot = rotation.FromMedia3DQuaternion();
 				if (!transformMemory.Rotation.IsApproximately(newRot))
 				{
 					transformMemory.Rotation = newRot;

@@ -5,10 +5,10 @@ namespace Anamnesis.Styles.Converters;
 
 using System;
 using System.Globalization;
+using System.Numerics;
 using System.Windows.Data;
-using Anamnesis.Memory;
 
-[ValueConversion(typeof(Vector2D), typeof(Vector2D))]
+[ValueConversion(typeof(Vector2), typeof(Vector2))]
 public class Vector2DRadiansToDegreesConverter : IValueConverter
 {
 	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -16,13 +16,13 @@ public class Vector2DRadiansToDegreesConverter : IValueConverter
 		float x = 0;
 		float y = 0;
 
-		if (value is Vector2D vec)
+		if (value is Vector2 vec)
 		{
 			x = vec.X * (180 / MathF.PI);
 			y = vec.Y * (180 / MathF.PI);
 		}
 
-		return new Vector2D(x, y);
+		return new Vector2(x, y);
 	}
 
 	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -30,12 +30,12 @@ public class Vector2DRadiansToDegreesConverter : IValueConverter
 		float x = 0;
 		float y = 0;
 
-		if (value is Vector2D vec)
+		if (value is Vector2 vec)
 		{
 			x = vec.X * (MathF.PI / 180);
 			y = vec.Y * (MathF.PI / 180);
 		}
 
-		return new Vector2D(x, y);
+		return new Vector2(x, y);
 	}
 }

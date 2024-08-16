@@ -3,10 +3,11 @@
 
 namespace Anamnesis.Memory;
 
-using System;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using PropertyChanged;
+using System;
+using System.Numerics;
 
 public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 {
@@ -28,7 +29,7 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 	[DependsOn(nameof(WeaponFlags), nameof(IsSheathed))]
 	public bool WeaponHidden
 	{
-		get => (this.IsSheathed && this.WeaponFlags.HasFlag(WeaponFlagDefs.WeaponHidden)) || (!this.IsSheathed && this.Model?.Transform?.Scale == Vector.Zero);
+		get => (this.IsSheathed && this.WeaponFlags.HasFlag(WeaponFlagDefs.WeaponHidden)) || (!this.IsSheathed && this.Model?.Transform?.Scale == Vector3.Zero);
 		set
 		{
 			if (value)
@@ -47,13 +48,13 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 			// so fall back to setting the weapons scale to 0.
 			if (!this.IsSheathed)
 			{
-				this.Model.Transform.Scale = value ? Vector.Zero : Vector.One;
+				this.Model.Transform.Scale = value ? Vector3.Zero : Vector3.One;
 			}
 
 			// Special handling for a weapon with 0 scale that has been sheathed attempting to un-hide
-			else if (!value && this.Model.Transform.Scale == Vector.Zero)
+			else if (!value && this.Model.Transform.Scale == Vector3.Zero)
 			{
-				this.Model.Transform.Scale = Vector.One;
+				this.Model.Transform.Scale = Vector3.One;
 			}
 		}
 	}

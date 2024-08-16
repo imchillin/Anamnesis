@@ -3,6 +3,10 @@
 
 namespace Anamnesis.Styles.Controls;
 
+using Anamnesis.Keyboard;
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using PropertyChanged;
 using System;
 using System.Threading;
 using System.Windows;
@@ -10,18 +14,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using Anamnesis.Keyboard;
-using Anamnesis.Memory;
-using Anamnesis.Services;
-using PropertyChanged;
 using XivToolsWpf.DependencyProperties;
-using XivToolsWpf.Meida3D;
-using XivToolsWpf.Meida3D.Lines;
-
-using CmQuaternion = Anamnesis.Memory.Quaternion;
+using XivToolsWpf.Math3D;
+using XivToolsWpf.Math3D.Extensions;
+using CmQuaternion = System.Numerics.Quaternion;
+using CmVector = System.Numerics.Vector3;
 using Color = System.Windows.Media.Color;
 using Quaternion = System.Windows.Media.Media3D.Quaternion;
-using Vector = Anamnesis.Memory.Vector;
 
 /// <summary>
 /// Interaction logic for QuaternionEditor.xaml.
@@ -33,14 +32,14 @@ public partial class QuaternionEditor : UserControl
 	public static readonly IBind<CmQuaternion?> RootRotationdp = Binder.Register<CmQuaternion?, QuaternionEditor>(nameof(RootRotation), OnRootRotationChanged);
 	public static readonly IBind<double> TickDp = Binder.Register<double, QuaternionEditor>(nameof(TickFrequency));
 
-	public static readonly IBind<Quaternion> ValueQuatDp = Binder.Register<Quaternion, QuaternionEditor>(nameof(ValueQuat), OnValueQuatChanged);
-	public static readonly IBind<Vector> EulerDp = Binder.Register<Vector, QuaternionEditor>(nameof(Euler), OnEulerChanged);
+	public static readonly IBind<CmQuaternion> ValueQuatDp = Binder.Register<CmQuaternion, QuaternionEditor>(nameof(ValueQuat), OnValueQuatChanged);
+	public static readonly IBind<CmVector> EulerDp = Binder.Register<CmVector, QuaternionEditor>(nameof(Euler), OnEulerChanged);
 
 	////private Vector3D euler;
 	private readonly RotationGizmo rotationGizmo;
 	private bool lockdp = false;
 
-	private Quaternion worldSpaceDelta;
+	private CmQuaternion worldSpaceDelta;
 	private bool worldSpace;
 
 	public QuaternionEditor()
@@ -95,13 +94,13 @@ public partial class QuaternionEditor : UserControl
 		set => RootRotationdp.Set(this, value);
 	}
 
-	public Quaternion ValueQuat
+	public CmQuaternion ValueQuat
 	{
 		get => ValueQuatDp.Get(this);
 		set => ValueQuatDp.Set(this, value);
 	}
 
-	public Vector Euler
+	public CmVector Euler
 	{
 		get => EulerDp.Get(this);
 		set => EulerDp.Set(this, value);
@@ -109,15 +108,15 @@ public partial class QuaternionEditor : UserControl
 
 	public Settings Settings => SettingsService.Current;
 
-	public Quaternion Root
+	public CmQuaternion Root
 	{
 		get
 		{
 			if (this.RootRotation == null)
-				return Quaternion.Identity;
+				return CmQuaternion.Identity;
 
 			CmQuaternion root = (CmQuaternion)this.RootRotation;
-			return new Quaternion(root.X, root.Y, root.Z, root.W);
+			return new CmQuaternion(root.X, root.Y, root.Z, root.W);
 		}
 	}
 
@@ -138,7 +137,7 @@ public partial class QuaternionEditor : UserControl
 			}
 			else
 			{
-				this.ValueQuat = Quaternion.Identity;
+				this.ValueQuat = CmQuaternion.Identity;
 				this.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(Quaternion.Identity));
 			}
 		}
@@ -146,7 +145,7 @@ public partial class QuaternionEditor : UserControl
 
 	private static void OnValueChanged(QuaternionEditor sender, CmQuaternion value)
 	{
-		Quaternion valueQuat = new Quaternion(value.X, value.Y, value.Z, value.W);
+		CmQuaternion valueQuat = new CmQuaternion(value.X, value.Y, value.Z, value.W);
 
 		if (sender.RootRotation != null)
 			valueQuat = sender.Root * valueQuat;
@@ -154,9 +153,9 @@ public partial class QuaternionEditor : UserControl
 		sender.worldSpaceDelta = valueQuat;
 
 		if (sender.WorldSpace)
-			valueQuat = Quaternion.Identity;
+			valueQuat = CmQuaternion.Identity;
 
-		sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(valueQuat));
+		sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(valueQuat.ToMedia3DQuaternion()));
 		sender.ValueQuat = valueQuat;
 
 		if (sender.lockdp)
@@ -174,14 +173,14 @@ public partial class QuaternionEditor : UserControl
 		OnValueChanged(sender, sender.Value);
 	}
 
-	private static void OnValueQuatChanged(QuaternionEditor sender, Quaternion value)
+	private static void OnValueQuatChanged(QuaternionEditor sender, CmQuaternion value)
 	{
-		Quaternion newrot = value;
+		Quaternion newrot = value.ToMedia3DQuaternion();
 		sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(newrot));
 
 		if (sender.WorldSpace)
 		{
-			newrot *= sender.worldSpaceDelta;
+			newrot *= sender.worldSpaceDelta.ToMedia3DQuaternion();
 			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(Quaternion.Identity));
 		}
 
@@ -192,7 +191,7 @@ public partial class QuaternionEditor : UserControl
 
 		if (sender.RootRotation != null)
 		{
-			Quaternion rootInv = sender.Root;
+			Quaternion rootInv = sender.Root.ToMedia3DQuaternion();
 			rootInv.Invert();
 			newrot = rootInv * newrot;
 		}
@@ -204,22 +203,22 @@ public partial class QuaternionEditor : UserControl
 		sender.lockdp = false;
 	}
 
-	private static void OnEulerChanged(QuaternionEditor sender, Vector val)
+	private static void OnEulerChanged(QuaternionEditor sender, CmVector val)
 	{
 		if (sender.lockdp)
 			return;
 
 		sender.lockdp = true;
-		sender.Value = CmQuaternion.FromEuler(sender.Euler);
+		sender.Value = QuaternionExtensions.FromEuler(sender.Euler);
 		sender.lockdp = false;
 	}
 
-	private static string? GetAxisName(Vector3D? axis)
+	private static string? GetAxisName(CmVector? axis)
 	{
 		if (axis == null)
 			return null;
 
-		Vector3D v = (Vector3D)axis;
+		CmVector v = (CmVector)axis;
 
 		if (v.X > v.Y && v.X > v.Z)
 			return "X";
@@ -302,7 +301,7 @@ public partial class QuaternionEditor : UserControl
 		if (!this.IsVisible)
 			return false;
 
-		Vector euler = this.Euler;
+		CmVector euler = this.Euler;
 		euler.X = Float.Wrap(euler.X + (float)x, 0, 360);
 		euler.Y = Float.Wrap(euler.Y + (float)y, 0, 360);
 		euler.Z = Float.Wrap(euler.Z + (float)z, 0, 360);
@@ -324,7 +323,7 @@ public partial class QuaternionEditor : UserControl
 
 					if (CameraService.Instance.Camera != null)
 					{
-						this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(CameraService.Instance.Camera.Rotation3d));
+						this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(CameraService.Instance.Camera.Rotation3d.ToMedia3DQuaternion()));
 					}
 				});
 			}
@@ -360,9 +359,9 @@ public partial class QuaternionEditor : UserControl
 			sphere.Material = new DiffuseMaterial(new SolidColorBrush(c));
 			this.Children.Add(sphere);
 
-			this.Children.Add(new AxisGizmo(Colors.Blue, new Vector3D(1, 0, 0)));
-			this.Children.Add(new AxisGizmo(Colors.Green, new Vector3D(0, 1, 0)));
-			this.Children.Add(new AxisGizmo(Colors.Red, new Vector3D(0, 0, 1)));
+			this.Children.Add(new AxisGizmo(Colors.Blue, new CmVector(1, 0, 0)));
+			this.Children.Add(new AxisGizmo(Colors.Green, new CmVector(0, 1, 0)));
+			this.Children.Add(new AxisGizmo(Colors.Red, new CmVector(0, 0, 1)));
 		}
 
 		public AxisGizmo? Locked
@@ -446,7 +445,7 @@ public partial class QuaternionEditor : UserControl
 			if (this.Active == null)
 				return;
 
-			Vector3D angleDelta = this.Active.Drag(mousePosition);
+			CmVector angleDelta = this.Active.Drag(mousePosition);
 			this.ApplyDelta(angleDelta);
 		}
 
@@ -455,27 +454,27 @@ public partial class QuaternionEditor : UserControl
 			if (this.Active == null)
 				return;
 
-			Vector3D angleDelta = this.Active.Axis * delta;
+			CmVector angleDelta = VectorExtensions.Multiply(this.Active.Axis, (float)delta);
 			this.ApplyDelta(angleDelta);
 		}
 
-		private void ApplyDelta(Vector3D angleEuler)
+		private void ApplyDelta(CmVector angleEuler)
 		{
-			Quaternion angle = angleEuler.ToQuaternion();
+			CmQuaternion angle = QuaternionExtensions.FromEuler(angleEuler);
 			this.target.ValueQuat *= angle;
 		}
 	}
 
 	private class AxisGizmo : ModelVisual3D
 	{
-		public readonly Vector3D Axis;
+		public readonly CmVector Axis;
 		private readonly Circle circle;
 		private readonly Cylinder cylinder;
 		private Color color;
 
 		private Point3D? lastPoint;
 
-		public AxisGizmo(Color color, Vector3D axis)
+		public AxisGizmo(Color color, CmVector axis)
 		{
 			this.Axis = axis;
 			this.color = color;
@@ -486,13 +485,13 @@ public partial class QuaternionEditor : UserControl
 			this.circle.Thickness = 1;
 			this.circle.Color = color;
 			this.circle.Radius = 0.5;
-			this.circle.Transform = new RotateTransform3D(new AxisAngleRotation3D(axis, 90));
+			this.circle.Transform = new RotateTransform3D(new AxisAngleRotation3D(axis.ToMedia3DVector(), 90));
 			this.Children.Add(this.circle);
 
 			this.cylinder = new Cylinder();
 			this.cylinder.Radius = 0.49;
 			this.cylinder.Length = 0.20;
-			this.cylinder.Transform = new RotateTransform3D(new AxisAngleRotation3D(axis, 90));
+			this.cylinder.Transform = new RotateTransform3D(new AxisAngleRotation3D(axis.ToMedia3DVector(), 90));
 			this.cylinder.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Transparent));
 			this.Children.Add(this.cylinder);
 		}
@@ -538,7 +537,7 @@ public partial class QuaternionEditor : UserControl
 			this.lastPoint = null;
 		}
 
-		public Vector3D Drag(Point3D mousePosition)
+		public CmVector Drag(Point3D mousePosition)
 		{
 			bool useCircularDrag = true;
 
@@ -577,19 +576,13 @@ public partial class QuaternionEditor : UserControl
 
 					float speed = 2;
 
-					if (Keyboard.IsKeyDown(Key.LeftShift))
+					if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
 						speed = 4;
 
-					if (Keyboard.IsKeyDown(Key.RightShift))
-						speed = 4;
-
-					if (Keyboard.IsKeyDown(Key.LeftCtrl))
+					if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
 						speed = 0.5f;
 
-					if (Keyboard.IsKeyDown(Key.RightCtrl))
-						speed = 0.5f;
-
-					return this.Axis * (angle * speed);
+					return VectorExtensions.Multiply(this.Axis, (float)(angle * speed));
 				}
 			}
 			else
@@ -619,7 +612,7 @@ public partial class QuaternionEditor : UserControl
 					if (Math.Abs(distPos) > Math.Abs(distNeg))
 						dist = distPos;
 
-					return this.Axis * (-dist * speed);
+					return VectorExtensions.Multiply(this.Axis, (float)(-dist * speed));
 				}
 			}
 		}

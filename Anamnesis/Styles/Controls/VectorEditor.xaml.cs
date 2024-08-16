@@ -3,14 +3,14 @@
 
 namespace Anamnesis.Styles.Controls;
 
+using PropertyChanged;
 using System;
 using System.ComponentModel;
+using System.Numerics;
 using System.Windows.Controls;
-using PropertyChanged;
 using XivToolsWpf.Controls;
 using XivToolsWpf.DependencyProperties;
-
-using Vector = Anamnesis.Memory.Vector;
+using XivToolsWpf.Math3D.Extensions;
 
 /// <summary>
 /// Interaction logic for Vector3DEditor.xaml.
@@ -19,7 +19,7 @@ using Vector = Anamnesis.Memory.Vector;
 public partial class VectorEditor : UserControl, INotifyPropertyChanged
 {
 	public static readonly IBind<bool> ExpandedDp = Binder.Register<bool, VectorEditor>(nameof(Expanded));
-	public static readonly IBind<Vector> ValueDp = Binder.Register<Vector, VectorEditor>(nameof(Value), OnValueChanged);
+	public static readonly IBind<Vector3> ValueDp = Binder.Register<Vector3, VectorEditor>(nameof(Value), OnValueChanged);
 	public static readonly IBind<double> TickFrequencyDp = Binder.Register<double, VectorEditor>(nameof(TickFrequency));
 	public static readonly IBind<bool> WrapDp = Binder.Register<bool, VectorEditor>(nameof(Wrap));
 	public static readonly IBind<NumberBox.SliderModes> SlidersDp = Binder.Register<NumberBox.SliderModes, VectorEditor>(nameof(Sliders));
@@ -65,7 +65,7 @@ public partial class VectorEditor : UserControl, INotifyPropertyChanged
 		set => SlidersDp.Set(this, value);
 	}
 
-	public Vector Value
+	public Vector3 Value
 	{
 		get => ValueDp.Get(this);
 		set => ValueDp.Set(this, value);
@@ -112,7 +112,7 @@ public partial class VectorEditor : UserControl, INotifyPropertyChanged
 
 		set
 		{
-			this.Value = new Vector(value, this.Y, this.Z);
+			this.Value = new Vector3(value, this.Y, this.Z);
 		}
 	}
 
@@ -127,7 +127,7 @@ public partial class VectorEditor : UserControl, INotifyPropertyChanged
 
 		set
 		{
-			this.Value = new Vector(this.X, value, this.Z);
+			this.Value = new Vector3(this.X, value, this.Z);
 		}
 	}
 
@@ -142,22 +142,22 @@ public partial class VectorEditor : UserControl, INotifyPropertyChanged
 
 		set
 		{
-			this.Value = new Vector(this.X, this.Y, value);
+			this.Value = new Vector3(this.X, this.Y, value);
 		}
 	}
 
-	private static void OnValueChanged(VectorEditor sender, Vector oldValue, Vector newValue)
+	private static void OnValueChanged(VectorEditor sender, Vector3 oldValue, Vector3 newValue)
 	{
 		if (sender.Linked && !sender.lockChangedEvent)
 		{
 			sender.lockChangedEvent = true;
-			Vector deltaV = newValue - oldValue;
+			Vector3 deltaV = newValue - oldValue;
 			float delta = Math.Max(deltaV.X, Math.Max(deltaV.Y, deltaV.Z));
 
 			if (delta == 0)
 				delta = Math.Min(deltaV.X, Math.Min(deltaV.Y, deltaV.Z));
 
-			sender.Value = oldValue + delta;
+			sender.Value = VectorExtensions.Add(oldValue, delta);
 			sender.lockChangedEvent = false;
 		}
 
