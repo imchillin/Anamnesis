@@ -96,8 +96,8 @@
 
 					<!-- Hair -->
 					<local:BoneView Canvas.Left="305" Canvas.Top="120" BoneName="HairFront"/>
-					<local:BoneView Canvas.Left="60" Canvas.Top="350" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
-					<local:BoneView Canvas.Left="540" Canvas.Top="350" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+					<local:BoneView Canvas.Left="60" Canvas.Top="350" BoneName="HairAutoFrontLeft" FlippedBoneName="HairAutoFrontRight"/>
+					<local:BoneView Canvas.Left="540" Canvas.Top="350" BoneName="HairAutoFrontRight" FlippedBoneName="HairAutoFrontLeft"/>
 				</Canvas>
 			</Viewbox>
 		</DataTemplate>
@@ -184,8 +184,8 @@
 
 					<!-- Hair -->
 					<local:BoneView Canvas.Left="285" Canvas.Top="150" BoneName="HairFront"/>
-					<local:BoneView Canvas.Left="104" Canvas.Top="300" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
-					<local:BoneView Canvas.Left="466" Canvas.Top="300" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+					<local:BoneView Canvas.Left="104" Canvas.Top="300" BoneName="HairAutoFrontLeft" FlippedBoneName="HairAutoFrontRight"/>
+					<local:BoneView Canvas.Left="466" Canvas.Top="300" BoneName="HairAutoFrontRight" FlippedBoneName="HairAutoFrontLeft"/>
 
 					<!-- Whiskers -->
 					<local:BoneView Canvas.Left="120" Canvas.Top="366" BoneName="j_f_hige_l" FlippedBoneName="j_f_hige_r"/>
@@ -277,8 +277,8 @@
 
 					<!-- Hair -->
 					<local:BoneView Canvas.Left="300" Canvas.Top="150" BoneName="HairFront"/>
-					<local:BoneView Canvas.Left="100" Canvas.Top="400" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
-					<local:BoneView Canvas.Left="500" Canvas.Top="400" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+					<local:BoneView Canvas.Left="100" Canvas.Top="400" BoneName="HairAutoFrontLeft" FlippedBoneName="HairAutoFrontRight"/>
+					<local:BoneView Canvas.Left="500" Canvas.Top="400" BoneName="HairAutoFrontRight" FlippedBoneName="HairAutoFrontLeft"/>
 				</Canvas>
 			</Viewbox>
 		</DataTemplate>
@@ -381,8 +381,8 @@
 
 					<!-- Hair -->
 					<local:BoneView Canvas.Left="292" Canvas.Top="200" BoneName="HairFront"/>
-					<local:BoneView Canvas.Left="132" Canvas.Top="500" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
-					<local:BoneView Canvas.Left="450" Canvas.Top="500" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+					<local:BoneView Canvas.Left="132" Canvas.Top="500" BoneName="HairAutoFrontLeft" FlippedBoneName="HairAutoFrontRight"/>
+					<local:BoneView Canvas.Left="450" Canvas.Top="500" BoneName="HairAutoFrontRight" FlippedBoneName="HairAutoFrontLeft"/>
 				</Canvas>
 			</Viewbox>
 		</DataTemplate>
@@ -505,8 +505,8 @@
 
 					<!-- Hair -->
 					<local:BoneView Canvas.Left="292" Canvas.Top="200" BoneName="HairFront"/>
-					<local:BoneView Canvas.Left="132" Canvas.Top="500" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
-					<local:BoneView Canvas.Left="450" Canvas.Top="500" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+					<local:BoneView Canvas.Left="132" Canvas.Top="500" BoneName="HairAutoFrontLeft" FlippedBoneName="HairAutoFrontRight"/>
+					<local:BoneView Canvas.Left="450" Canvas.Top="500" BoneName="HairAutoFrontRight" FlippedBoneName="HairAutoFrontLeft"/>
 				</Canvas>
 			</Viewbox>
 		</DataTemplate>

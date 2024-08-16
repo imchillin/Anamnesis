@@ -398,10 +398,10 @@
                     <local:BoneView Canvas.Left="117" Canvas.Top="30" BoneName="j_ex_met_va"/>
                     
                     <!-- Hair -->
-                    <local:BoneView Canvas.Left="117" Canvas.Top="54" BoneName="j_kami_a"/>
-                    <local:BoneView Canvas.Left="117" Canvas.Top="83" BoneName="j_kami_b"/>
-                    <local:BoneView Canvas.Left="93" Canvas.Top="54" BoneName="j_kami_f_l" FlippedBoneName="j_kami_f_r"/>
-                    <local:BoneView Canvas.Left="140" Canvas.Top="54" BoneName="j_kami_f_r" FlippedBoneName="j_kami_f_l"/>
+                    <local:BoneView Canvas.Left="117" Canvas.Top="54" BoneName="HairAutoA"/>
+                    <local:BoneView Canvas.Left="117" Canvas.Top="83" BoneName="HairAutoB"/>
+                    <local:BoneView Canvas.Left="93" Canvas.Top="54" BoneName="HairAutoFrontLeft" FlippedBoneName="HairAutoFrontRight"/>
+                    <local:BoneView Canvas.Left="140" Canvas.Top="54" BoneName="HairAutoFrontRight" FlippedBoneName="HairAutoFrontLeft"/>
 
                     <!-- Pauldrons -->
                     <local:BoneView Canvas.Left="75" Canvas.Top="110" BoneName="n_kataarmor_l" FlippedBoneName="n_kataarmor_r"/>

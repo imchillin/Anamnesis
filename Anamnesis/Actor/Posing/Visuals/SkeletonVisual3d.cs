@@ -36,13 +36,13 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	private readonly List<BoneVisual3d> mainHandBones = new List<BoneVisual3d>();
 	private readonly List<BoneVisual3d> offHandBones = new List<BoneVisual3d>();
 
-	private readonly Dictionary<string, string> hairNameToSuffixMap = new()
+	private readonly Dictionary<string, Tuple<string, string>> hairNameToSuffixMap = new()
 	{
-		{ "j_kami_f_l", "l" },	// Hair, Front Left
-		{ "j_kami_f_r", "r" },	// Hair, Front Right
-		{ "j_kami_a", "a" },	// Hair, Back Up
-		{ "j_kami_b", "b" },	// Hair, Back Down
-		{ "HairFront", "f" },	// Hair, Front (Custom Bone Name)
+		{ "HairAutoFrontLeft", new("l", "j_kami_f_l") },	// Hair, Front Left
+		{ "HairAutoFrontRight", new("r", "j_kami_f_r") },	// Hair, Front Right
+		{ "HairAutoA", new("a", "j_kami_a") },				// Hair, Back Up
+		{ "HairAutoB", new("b", "j_kami_b") },				// Hair, Back Down
+		{ "HairFront", new("f", string.Empty) },			// Hair, Front (Custom Bone Name)
 	};
 
 	public SkeletonVisual3d()
@@ -365,11 +365,13 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		BoneVisual3d? bone;
 
 		// Attempt to find hairstyle-specific bones. If not found, default to the standard hair bones.
-		if (this.hairNameToSuffixMap.TryGetValue(name, out string? suffix))
+		if (this.hairNameToSuffixMap.TryGetValue(name, out Tuple<string, string>? suffixAndDefault))
 		{
-			bone = this.FindHairBoneByPattern(suffix);
+			bone = this.FindHairBoneByPattern(suffixAndDefault.Item1);
 			if (bone != null)
 				return bone;
+			else
+				name = suffixAndDefault.Item2; // If not found, default to the standard hair bones.
 		}
 
 		this.Bones.TryGetValue(name, out bone);
