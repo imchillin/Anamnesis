@@ -60,7 +60,7 @@ public class BrioActorRefresher : IActorRefresher
 					// Restore current pose
 					skeletonVisual3D = new SkeletonVisual3d();
 					await skeletonVisual3D.SetActor(actor);
-					await poseFile.Apply(actor, skeletonVisual3D, null, PoseFile.Mode.All);
+					await poseFile.Apply(actor, skeletonVisual3D, null, PoseFile.Mode.All, true);
 				}).Start();
 			}
 		}
