@@ -210,9 +210,15 @@
 					</Grid.ColumnDefinitions>
 
 					<XivToolsWpf:NumberBox Grid.Column="0" Value="{Binding Customize.Lips}" Minimum="0" Maximum="4" Buttons="True" Margin="0, 0, 12, 0"  ValueOffset="1"/>
-					<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}"/>
-					<CheckBox Grid.Column="2" IsChecked="{Binding Customize.EnableLipColor}"/>
-					<controls:ColorControl Grid.Column="3" Value="{Binding Customize.LipsToneFurPattern}" IsEnabled="{Binding Customize.EnableLipColor}" Type="Lips" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}"/>
+
+					<!-- Lip Color -->
+					<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}" Visibility="{Binding HasntFur, Converter={StaticResource B2V}}"/>
+					<CheckBox Grid.Column="2" IsChecked="{Binding Customize.EnableLipColor}" Visibility="{Binding HasntFur, Converter={StaticResource B2V}}"/>
+					<controls:ColorControl Grid.Column="3" Value="{Binding Customize.LipsToneFurPattern}" Visibility="{Binding HasntFur, Converter={StaticResource B2V}}" IsEnabled="{Binding Customize.EnableLipColor}" Type="Lips" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}"/>
+
+					<!-- Fur pattern -->
+					<XivToolsWpf:TextBlock Grid.Column="1" Key="Character_Appearance_Fur" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" TextAlignment="Center"/>
+					<XivToolsWpf:NumberBox Grid.Column="2" Value="{Binding Customize.LipsToneFurPattern}" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True" HorizontalAlignment="Center"/>
 				</Grid>
 
 				<!-- Height -->
@@ -266,11 +272,6 @@
 					<XivToolsWpf:TextBlock Grid.Row="1" Grid.Column="2" Key="Character_Appearance_Ears" Style="{StaticResource Label}" Visibility="{Binding HasEars, Converter={StaticResource B2V}}"/>
 					<XivToolsWpf:TextBlock Grid.Row="1" Grid.Column="2" Key="Character_Appearance_Tail" Style="{StaticResource Label}" Visibility="{Binding HasTail, Converter={StaticResource B2V}}"/>
 					<XivToolsWpf:NumberBox Grid.Row="1" Value="{Binding Customize.TailEarsType}" Grid.Column="3" Visibility="{Binding HasEarsTail, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
-
-					<!-- Fur pattern -->
-					<XivToolsWpf:TextBlock Grid.Row="2" Grid.Column="0" Key="Character_Appearance_Fur" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}}"/>
-					<XivToolsWpf:NumberBox Grid.Row="2" Value="{Binding Customize.LipsToneFurPattern}" Grid.Column="1" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" Minimum="0" Maximum="255" Buttons="True"/>
-
 				</Grid>
 				
 			
