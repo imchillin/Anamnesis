@@ -3,10 +3,10 @@
 
 namespace Anamnesis.Memory;
 
-using System;
-using System.Threading.Tasks;
 using Anamnesis.Utils;
 using PropertyChanged;
+using System;
+using System.Threading.Tasks;
 
 public class ActorMemory : ActorBasicMemory
 {
@@ -57,7 +57,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x08F8, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 	[Bind(0x0900)] public ushort OrnamentId { get; set; }
 	[Bind(0x09C0)] public AnimationMemory? Animation { get; set; }
-	[Bind(0x12D4)] public bool IsMotionEnabled { get; set; }
+	[Bind(0x1ABC)] public bool IsMotionDisabled { get; set; }
 	[Bind(0x19D0)] public byte Voice { get; set; }
 	[Bind(0x21C8)] public float Transparency { get; set; }
 	[Bind(0x226C)] public byte CharacterModeRaw { get; set; }
@@ -120,6 +120,13 @@ public class ActorMemory : ActorBasicMemory
 		}
 	}
 
+	[DependsOn(nameof(IsMotionDisabled))]
+	public bool IsMotionEnabled
+	{
+		get => !this.IsMotionDisabled;
+		set => this.IsMotionDisabled = !value;
+	}
+
 	[DependsOn(nameof(ObjectIndex), nameof(CharacterMode))]
 	public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.Instance.IsLocalOverworldPlayer(this.ObjectIndex);
 
@@ -166,7 +173,7 @@ public class ActorMemory : ActorBasicMemory
 
 			this.IsRefreshing = true;
 
-			if(await ActorService.Instance.RefreshActor(this))
+			if (await ActorService.Instance.RefreshActor(this))
 			{
 				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}
