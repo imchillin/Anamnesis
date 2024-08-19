@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
+using Anamnesis.GameData.Interfaces;
 using Anamnesis.Memory;
 using Anamnesis.Serialization;
 using PropertyChanged;
@@ -119,6 +120,37 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		Save();
 	}
 
+	public static bool IsFavorite(IGlasses glasses)
+	{
+		if (Instance.Current == null)
+			return false;
+
+		return Instance.Current.Glasses.Contains(glasses);
+	}
+
+	public static void SetFavorite(IGlasses glasses, bool favorite)
+	{
+		if (Instance.Current == null)
+			return;
+
+		bool isFavorite = IsFavorite(glasses);
+
+		if (favorite == isFavorite)
+			return;
+
+		if (favorite)
+		{
+			Instance.Current.Glasses.Add(glasses);
+		}
+		else
+		{
+			Instance.Current.Glasses.Remove(glasses);
+		}
+
+		Instance.RaisePropertyChanged(nameof(Favorites.Glasses));
+		Save();
+	}
+
 	public static bool IsFavorite(INpcBase item)
 	{
 		if (Instance.Current == null)
@@ -196,5 +228,6 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		public List<Color4> Colors { get; set; } = new List<Color4>();
 		public List<INpcBase> Models { get; set; } = new List<INpcBase>();
 		public List<IItem> Owned { get; set; } = new List<IItem>();
+		public List<IGlasses> Glasses { get; set; } = new List<IGlasses>();
 	}
 }
