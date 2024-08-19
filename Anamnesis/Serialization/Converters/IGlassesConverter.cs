@@ -3,16 +3,15 @@
 
 namespace Anamnesis.Serialization.Converters;
 
-using Anamnesis.GameData;
 using Anamnesis.Services;
 using System.Text.Json;
 using System;
 using System.Text.Json.Serialization;
-using Anamnesis.GameData.Interfaces;
+using Anamnesis.GameData.Excel;
 
-internal class IGlassesConverter : JsonConverter<IGlasses>
+internal class IGlassesConverter : JsonConverter<Glasses>
 {
-	public override IGlasses Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+	public override Glasses Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
 		string? str = reader.GetString();
 
@@ -23,7 +22,7 @@ internal class IGlassesConverter : JsonConverter<IGlasses>
 		return GameDataService.Glasses.Get(glassesID);
 	}
 
-	public override void Write(Utf8JsonWriter writer, IGlasses value, JsonSerializerOptions options)
+	public override void Write(Utf8JsonWriter writer, Glasses value, JsonSerializerOptions options)
 	{
 		writer.WriteStringValue($"{value.RowId}");
 	}

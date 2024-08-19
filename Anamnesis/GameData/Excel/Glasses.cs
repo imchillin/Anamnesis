@@ -12,7 +12,7 @@ using Lumina.Excel;
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
 [Sheet("Glasses")]
-public class Glasses : ExcelRow, IGlasses
+public class Glasses : ExcelRow
 {
 	public ushort GlassesId => (ushort)this.RowId;
 	public string Name { get; private set; } = string.Empty;

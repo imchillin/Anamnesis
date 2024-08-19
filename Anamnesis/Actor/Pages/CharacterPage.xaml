@@ -144,104 +144,110 @@
 					</GroupBox.Header>
 
 					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
-
 						<Grid.RowDefinitions>
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-                            <RowDefinition />
 						</Grid.RowDefinitions>
 
-						<XivToolsWpf:TextBlock
-							Key="Character_Actor_Nickname"
-							Grid.Row="0"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
+						<Grid Grid.Row="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
 
-						<TextBox
-							Grid.Row="0"
-							Grid.Column="1"
-							Grid.ColumnSpan="2"
-							Style="{StaticResource MaterialDesignTextBox}"
-							Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}" />
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
 
-						<XivToolsWpf:TextBlock
-							Key="Character_Actor_Alpha"
-							Grid.Row="4"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-						<XivToolsWpf:NumberBox
-							Grid.Row="4"
-							Grid.Column="1"
-							Maximum="1"
-							Minimum="0.01"
-							Slider="Absolute"
-							TickFrequency="0.1"
-							Value="{Binding Actor.Transparency}" />
+							<XivToolsWpf:TextBlock
+								Key="Character_Actor_Nickname"
+								Grid.Row="0"
+								Grid.Column="0"
+								Style="{StaticResource Label}" />
 
-                        <XivToolsWpf:TextBlock
-							Key="Character_Equipment_Tint"
-							Grid.Row="5"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-                        <anaControls:RgbColorControl Grid.Row="5" Grid.Column="2" Value="{Binding Actor.ModelObject.Tint}"/>
+							<TextBox
+								Grid.Row="0"
+								Grid.Column="1"
+								Grid.ColumnSpan="2"
+								Style="{StaticResource MaterialDesignTextBox}"
+								Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <XivToolsWpf:TextBlock
-							Key="Character_Actor_Voice"
-							Grid.Row="6"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-						<ComboBox
-							Grid.Row="6"
-							Grid.Column="1"
-							IsEnabled="{Binding Actor.IsPlayer}"
-							ItemsSource="{Binding VoiceEntries, Mode=OneTime}"
-							SelectedValue="{Binding Actor.Voice, Mode=TwoWay}"
-							SelectedValuePath="VoiceId">
-							<ComboBox.GroupStyle>
-								<GroupStyle>
-									<GroupStyle.HeaderTemplate>
-										<DataTemplate>
-											<XivToolsWpf:TextBlock
-												Padding="10,5"
-												HorizontalAlignment="Left"
-												FontSize="13"
-												FontStyle="Italic"
-												FontWeight="Bold"
-												Style="{StaticResource Label}"
-												Text="{Binding Name}" />
+							<XivToolsWpf:TextBlock
+								Key="Character_Actor_Alpha"
+								Grid.Row="4"
+								Grid.Column="0"
+								Style="{StaticResource Label}" />
+							<XivToolsWpf:NumberBox
+								Grid.Row="4"
+								Grid.Column="1"
+								Maximum="1"
+								Minimum="0.01"
+								Slider="Absolute"
+								TickFrequency="0.1"
+								Value="{Binding Actor.Transparency}" />
 
-										</DataTemplate>
-									</GroupStyle.HeaderTemplate>
-								</GroupStyle>
-							</ComboBox.GroupStyle>
-							<ComboBox.ItemTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding VoiceName}" />
-								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>
+							<XivToolsWpf:TextBlock
+								Key="Character_Equipment_Tint"
+								Grid.Row="5"
+								Grid.Column="0"
+								Style="{StaticResource Label}" />
+							<anaControls:RgbColorControl Grid.Row="5" Grid.Column="2" Value="{Binding Actor.ModelObject.Tint}"/>
 
+							<XivToolsWpf:TextBlock
+								Key="Character_Actor_Voice"
+								Grid.Row="6"
+								Grid.Column="0"
+								Style="{StaticResource Label}" />
+							<ComboBox
+								Grid.Row="6"
+								Grid.Column="1"
+								IsEnabled="{Binding Actor.IsPlayer}"
+								ItemsSource="{Binding VoiceEntries, Mode=OneTime}"
+								SelectedValue="{Binding Actor.Voice, Mode=TwoWay}"
+								SelectedValuePath="VoiceId">
+								<ComboBox.GroupStyle>
+									<GroupStyle>
+										<GroupStyle.HeaderTemplate>
+											<DataTemplate>
+												<XivToolsWpf:TextBlock
+													Padding="10,5"
+													HorizontalAlignment="Left"
+													FontSize="13"
+													FontStyle="Italic"
+													FontWeight="Bold"
+													Style="{StaticResource Label}"
+													Text="{Binding Name}" />
 
-						<XivToolsWpf:TextBlock
+											</DataTemplate>
+										</GroupStyle.HeaderTemplate>
+									</GroupStyle>
+								</ComboBox.GroupStyle>
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding VoiceName}" />
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+						</Grid>
+						<XivToolsWpf:Header
+							Grid.Row="1"
 							Key="SubActor_Title"
-							Grid.Row="7"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-
+							Margin="0,0,6,0"
+							Icon="Horse" />
 						<StackPanel
-							Grid.Row="7"
-							Grid.Column="1"
+							Grid.Row="2"
+							Grid.Column="0"
 							Margin="0,6,0,0"
-							Orientation="Horizontal">
+							Orientation="Horizontal"
+							HorizontalAlignment="Center">
 							<views:SubActorEditor
 								Margin="3,0"
 								Actor="{Binding Actor}"
@@ -257,11 +263,13 @@
 								Actor="{Binding Actor}"
 								SubActor="{Binding Actor.Ornament}"
 								SubActorType="Ornament" />
+							<views:GlassesItemView Grid.Column="0" 
+								Margin="3,0"
+							   DataContext="{Binding Actor}"  
+							   GlassesModel="{Binding Glasses}" 
+							   IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 						</StackPanel>
-
-
 					</Grid>
-
 				</GroupBox>
 
 				<GroupBox

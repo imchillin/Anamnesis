@@ -16,7 +16,7 @@
 	"Common_LinkVector": "Lie les axes X, Y, et Z ensemble",
 	"Common_Confirm": "Confirmer",
 	"Common_Filters": "Filtrer",
-	
+
 	"ProcessSelector_AllWarning": "Sélectioner un processus autre que DirectX 11 Final Fantasy XIV peux provoquer un crash d'Anamesis et du processus selectionné",
 	"ProcessSelector_NotFound": "Processus Final Fantasy XIV (ffxiv_dx11) Introuvable.",
 	"ProcessSelector_NotFound2": "Merci de vérifier que le jeu est en cour et sous DirectX 11",
@@ -28,7 +28,7 @@
 
 	"Warning_MinionGposeTitle": "Mascotte non compatible avec le GPose.",
 	"Warning_MinionGposeFace": "L'acteur sélectioné est une mascotte..\n Son apparence d'origine se reinitialisera lors du Gpose.",
-	
+
 	"FileBrowser_GoUp": "Remonter",
 	"FileBrowser_Flatten": "Hiérarchie aplatie",
 	"FileBrowser_CreateFolder": "Créer un dossier",
@@ -42,12 +42,12 @@
 	"FileBrowser_Sort": "Mode tri",
 	"FileBrowser_SortAlpha": "Par nom (A à Z)",
 	"FileBrowser_SortDate": "Par date(Récent à ancien)",
-	
+
 	"FileMeta_Author": "Auteur:",
 	"FileMeta_Version": "Version:",
 	"FileMeta_Description": "Description:",
 	"FileMeta_ImageFromClip": "Coller une image du presse-papier",
-	
+
 	"Shortcut_AnamnesisPose": "Poses Anamnesis",
 	"Shortcut_AnamnesisCharacter": "Personnage Anamnesis ",
 	"Shortcut_AnamnesisScenes": "Scenes Anamnesis",
@@ -55,7 +55,7 @@
 	"Shortcut_CMToolPose": "Poses CMTool ",
 	"Shortcut_FfxivAppearance": "Apparence sauvegaardée FFXIV",
 	"Shortcut_Desktop": "Bureau",
-	
+
 	"Target_AddActor": "Ajouter acteur",
 	"Target_Players": "Joueur",
 	"Target_Companions": "Companions",
@@ -65,12 +65,12 @@
 	"Target_Other": "Autres",
 	"Target_Hidden": "Montrer cacher/non chargé",
 	"Target_Gpose": "(GPose)",
-	
-	"SubActor_Title": "Sous acteurs",
+
+	"SubActor_Title": "Sous acteurs et des Lunettes",
 	"SubActor_Mount": "Monture",
 	"SubActor_Companion": "Mascotte",
 	"SubActor_Ornament": "Accesoires",
-	
+
 	"EquipmentSelector_Classes": "Classes / Jobs",
 	"EquipmentSelector_ShowLocked": "Montrer les jobjets race/gender-locked",
 	"EquipmentSelector_AutoOffhand": "Auto-equip main gauche",
@@ -79,7 +79,7 @@
 	"EquipmentSelector_ForceMainModelTooltip": "Utiliser le modèle principal pour le modèle en main gauche.",
 	"EquipmentSelector_ForceOffModel": "Forcer le modèle main gauche.",
 	"EquipmentSelector_ForceOffModelTooltip": "Utiliser le modèle main gauche au lieu du model main droite.",
-	
+
 	"EquipmentSelector_FilterOther": "Autre",
 	"EquipmentSelector_Categories": "Categories",
 	"EquipmentSelector_Standard": "Objet Standard",
@@ -117,7 +117,7 @@
 	"Scene_World_Time": "Temps",
 	"Scene_World_Day": "Jour",
 	"Scene_World_Weather": "Météo",
-	
+
 	"System_History": "Historique",
 
 	"Scene_Camera_Header": "Camera",
@@ -235,7 +235,7 @@
 	"Character_ExAppearance_Eyes": "Yeux",
 	"Character_ExAppearance_Hair": "Cheveux",
 	"Character_ExAppearance_Muscle": "Muscles",
-	
+
 	"Character_Data_MidlanderMasculine": "Midlander Masculin",
 	"Character_Data_MidlanderMasculineChild": "Midlander Masculin enfant",
 	"Character_Data_MidlanderFeminine": "Midlander Feminin",
@@ -262,7 +262,7 @@
 	"Character_Data_VieraFeminine": "Viera Feminin",
 	"Character_Data_PadjalMasculine": "Padjal Masculin",
 	"Character_Data_PadjalFeminine": "Padjal Feminin",
-	
+
 	"Character_ExWeapons_Header": "Armes étendue",
 
 	"Character_WarningGpose": "Appearance et Equipments modifiable hors Gpose uniquement ",
@@ -419,7 +419,7 @@
 	"Pose_OtherAbdomen": "Abdomen",
 	"Pose_OtherThrow": "Centre",
 	"Pose_OtherUnknown": "Inconnu",
-	
+
 	"Pose_n_root": "Racine",
 	"Pose_n_hara": "Abdomen",
 	"Pose_n_throw": "Centre",
@@ -628,7 +628,7 @@
 	"About_CheckForUpdates": "Mettre a jour",
 	"About_Debug_OpenLogs": "Logs",
 	"About_Debug_OpenSettings": "Parametres",
-	
+
 	"Update_Title": "Update",
 	"Update_NoUpdate": "No updates found",
 
@@ -644,7 +644,7 @@
 	"Item_InvisibleBodyDesc": "Vous rend invisible (Sauf la tête)",
 	"Item_InvisibleHead": "Invisible",
 	"Item_InvisibleHeadDesc": "Rend votre tête invisible",
-	
+
 	"Help_Title": "Aide",
 	"Help_Tip": "Visiter le Wiki",
 

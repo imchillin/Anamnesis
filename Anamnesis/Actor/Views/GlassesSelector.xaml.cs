@@ -4,14 +4,13 @@
 namespace Anamnesis.Actor.Views;
 
 using System.Threading.Tasks;
-using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
-using Anamnesis.GameData.Interfaces;
+using Anamnesis.GameData.Excel;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using XivToolsWpf;
 
-public abstract class GlassesSelectorDrawer : SelectorDrawer<IGlasses>
+public abstract class GlassesSelectorDrawer : SelectorDrawer<Glasses>
 {
 }
 
@@ -34,7 +33,7 @@ public partial class GlassesSelector : GlassesSelectorDrawer
 		return Task.CompletedTask;
 	}
 
-	protected override bool Filter(IGlasses glasses, string[]? search)
+	protected override bool Filter(Glasses glasses, string[]? search)
 	{
 		// skip items without names
 		if (string.IsNullOrEmpty(glasses.Name))
@@ -46,7 +45,7 @@ public partial class GlassesSelector : GlassesSelectorDrawer
 		return true;
 	}
 
-	protected override int Compare(IGlasses glassesA, IGlasses glassesB)
+	protected override int Compare(Glasses glassesA, Glasses glassesB)
 	{
 		if (glassesA.IsFavorite && !glassesB.IsFavorite)
 			return -1;
