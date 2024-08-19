@@ -52,8 +52,8 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x0788)] public WeaponMemory? OffHand { get; set; }
 	[Bind(0x0868)] public ActorEquipmentMemory? Equipment { get; set; }
 	[Bind(0x08B8)] public ActorCustomizeMemory? Customize { get; set; }
-	[Bind(0x089E, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x089F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+	[Bind(0x08D6, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
+	[Bind(0x08D7, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x08F8, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 	[Bind(0x0900)] public ushort OrnamentId { get; set; }
 	[Bind(0x09C0)] public AnimationMemory? Animation { get; set; }
