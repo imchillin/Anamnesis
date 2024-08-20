@@ -309,6 +309,8 @@
 					<MultiBinding Converter="{StaticResource NpcFaceWarningConverter}">
 						<Binding Path="Actor.ObjectKind" />
 						<Binding Path="Actor.Customize.Head" />
+						<Binding Path="Actor.Customize.Race" />
+						<Binding Path="Actor.Customize.Gender" />
 					</MultiBinding>
 				</Grid.Visibility>
 

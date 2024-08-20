@@ -122,9 +122,18 @@ public partial class FacialFeaturesControl : UserControl
 			return;
 
 		this.features.Clear();
+
+		// Add an offset for Fem Hrothgar to show the facial features icons properly.
+		// Fem Hrothgar is defined as being either Helions or TheLost tribe AND Feminine gender.
+		int hrothFOffset = 0;
+		if((this.Tribe == ActorCustomizeMemory.Tribes.Helions || this.Tribe == ActorCustomizeMemory.Tribes.TheLost) && this.Gender == ActorCustomizeMemory.Genders.Feminine)
+		{
+			hrothFOffset = 4;
+		}
+
 		for (byte i = 0; i < 7; i++)
 		{
-			int id = (this.Head - 1) + (8 * i);
+			int id = (this.Head - (1 + hrothFOffset)) + (8 * i);
 
 			if (id < 0 || id >= facialFeatures.Length)
 				continue;

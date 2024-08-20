@@ -105,7 +105,7 @@ public class PoseFile : JsonFileBase
 		}
 	}
 
-	public async Task Apply(ActorMemory actor, SkeletonVisual3d skeleton, HashSet<string>? bones, Mode mode)
+	public async Task Apply(ActorMemory actor, SkeletonVisual3d skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
 	{
 		if (actor == null)
 			throw new ArgumentNullException(nameof(actor));
@@ -154,15 +154,19 @@ public class PoseFile : JsonFileBase
 		// Since all facial bones are parented to the head, if we load the head rotation from
 		// the pose that matches the expression, it wont break.
 		// We then just set the head back to where it should be afterwards.
+		// We can skip this if we actually intend to pose the head
+		// in the case of posing by selected bones or by body.
 		BoneVisual3d? headBone = skeleton.GetBone("j_kao");
 		Quaternion? originalHeadRotation = null;
-		if (bones != null && bones.Contains("j_kao"))
+		Vector? originalHeadPosition = null;
+		if (doFacialExpressionHack && bones != null && bones.Contains("j_kao"))
 		{
 			if (headBone == null)
 				throw new Exception("Unable to find head (j_kao) bone.");
 
 			headBone.Tick();
 			originalHeadRotation = headBone?.Rotation;
+			originalHeadPosition = headBone?.Position;
 		}
 
 		// Apply all transforms a few times to ensure parent-inherited values are caluclated correctly, and to ensure
@@ -223,9 +227,10 @@ public class PoseFile : JsonFileBase
 		}
 
 		// Restore the head bone rotation if we were only loading an expression
-		if (headBone != null && originalHeadRotation != null)
+		if (headBone != null && originalHeadRotation != null && originalHeadPosition != null)
 		{
 			headBone.Rotation = (Quaternion)originalHeadRotation;
+			headBone.Position = (Vector)originalHeadPosition;
 			headBone.WriteTransform(skeleton, true);
 		}
 

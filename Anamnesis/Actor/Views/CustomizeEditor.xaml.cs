@@ -47,6 +47,7 @@ public partial class CustomizeEditor : UserControl
 
 	public bool HasGender { get; set; }
 	public bool HasFur { get; set; }
+	public bool HasntFur { get; set; }
 	public bool HasTail { get; set; }
 	public bool HasEars { get; set; }
 	public bool HasEarsTail { get; set; }
@@ -170,6 +171,7 @@ public partial class CustomizeEditor : UserControl
 		this.TribeComboBox.SelectedItem = this.Tribe;
 
 		this.HasFur = this.Customize.Race == AnAppearance.Races.Hrothgar;
+		this.HasntFur = !this.HasFur;
 		this.HasTail = this.Customize.Race == AnAppearance.Races.Hrothgar || this.Customize.Race == AnAppearance.Races.Miqote || this.Customize.Race == AnAppearance.Races.AuRa;
 		this.HasEars = this.Customize.Race == AnAppearance.Races.Viera || this.Customize.Race == AnAppearance.Races.Lalafel || this.Customize.Race == AnAppearance.Races.Elezen;
 		this.HasEarsTail = this.HasTail | this.HasEars;

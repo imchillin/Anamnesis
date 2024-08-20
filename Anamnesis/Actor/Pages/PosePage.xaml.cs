@@ -250,22 +250,22 @@ public partial class PosePage : UserControl
 
 	private async void OnImportClicked(object sender, RoutedEventArgs e)
 	{
-		await this.ImportPose(false, PoseFile.Mode.Rotation);
+		await this.ImportPose(false, PoseFile.Mode.Rotation, true);
 	}
 
 	private async void OnImportScaleClicked(object sender, RoutedEventArgs e)
 	{
-		await this.ImportPose(false, PoseFile.Mode.Scale);
+		await this.ImportPose(false, PoseFile.Mode.Scale, true);
 	}
 
 	private async void OnImportSelectedClicked(object sender, RoutedEventArgs e)
 	{
-		await this.ImportPose(true, PoseFile.Mode.Rotation);
+		await this.ImportPose(true, PoseFile.Mode.Rotation, false);
 	}
 
 	private async void OnImportAllClicked(object sender, RoutedEventArgs e)
 	{
-		await this.ImportPose(false, PoseFile.Mode.All);
+		await this.ImportPose(false, PoseFile.Mode.All, true);
 	}
 
 	private async void OnImportBodyClicked(object sender, RoutedEventArgs e)
@@ -273,10 +273,9 @@ public partial class PosePage : UserControl
 		if (this.Skeleton == null)
 			return;
 
-		this.Skeleton.SelectHead();
-		this.Skeleton.InvertSelection();
+		this.Skeleton.SelectBody();
 
-		await this.ImportPose(true, PoseFile.Mode.Rotation);
+		await this.ImportPose(true, PoseFile.Mode.Rotation, false);
 		this.Skeleton.ClearSelection();
 	}
 
@@ -296,11 +295,14 @@ public partial class PosePage : UserControl
 		}
 
 		this.Skeleton.SelectHead();
-		await this.ImportPose(true, PoseFile.Mode.Rotation | PoseFile.Mode.Scale);
+		await this.ImportPose(true, PoseFile.Mode.Rotation | PoseFile.Mode.Scale | PoseFile.Mode.Position, true);
 		this.Skeleton.ClearSelection();
 	}
 
-	private async Task ImportPose(bool selectionOnly, PoseFile.Mode mode)
+	// We want to skip doing the "Facial Expression Hack" if we're posing by selected bones or by body.
+	// Otherwise, the head won't pose as intended and will return to its original position.
+	// Not quite !selectedOnly, due to posing by expression actually needing the hack.
+	private async Task ImportPose(bool selectionOnly, PoseFile.Mode mode, bool doFacialExpressionHack)
 	{
 		try
 		{
@@ -351,7 +353,7 @@ public partial class PosePage : UserControl
 					}
 				}
 
-				await poseFile.Apply(this.Actor, this.Skeleton, bones, mode);
+				await poseFile.Apply(this.Actor, this.Skeleton, bones, mode, doFacialExpressionHack);
 			}
 		}
 		catch (Exception ex)

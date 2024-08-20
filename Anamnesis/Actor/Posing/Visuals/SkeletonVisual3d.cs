@@ -354,6 +354,18 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		return bone;
 	}
 
+	public void SelectBody()
+	{
+		this.SelectHead();
+		this.InvertSelection();
+
+		List<BoneVisual3d> additionalBones = new List<BoneVisual3d>();
+		BoneVisual3d? headBone = this.GetBone("j_kao");
+		if (headBone != null)
+			additionalBones.Add(headBone);
+		this.Select(additionalBones, SkeletonVisual3d.SelectMode.Add);
+	}
+
 	public void SelectHead()
 	{
 		this.ClearSelection();
