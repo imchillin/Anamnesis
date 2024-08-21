@@ -4,6 +4,7 @@
 namespace Anamnesis.Actor;
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Windows.Media.Imaging;
 using Anamnesis.GameData;
 
@@ -24,18 +25,28 @@ public static class ItemSlotsExtensions
 
 	public static BitmapImage GetIcon(this ItemSlots self)
 	{
+		return GetIconAssetFromUri(new Uri("pack://application:,,,/Anamnesis;component/Assets/Slots/" + self.ToString() + ".png"));
+	}
+
+	public static BitmapImage GetGlassesIcon()
+	{
+		return GetIconAssetFromUri(new Uri("pack://application:,,,/Anamnesis;component/Assets/Slots/Glasses.png"));
+	}
+
+	public static BitmapImage GetIconAssetFromUri(Uri uri)
+	{
 		try
 		{
 			BitmapImage logo = new BitmapImage();
 			logo.BeginInit();
 			logo.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-			logo.UriSource = new Uri("pack://application:,,,/Anamnesis;component/Assets/Slots/" + self.ToString() + ".png");
+			logo.UriSource = uri;
 			logo.EndInit();
 			return logo;
 		}
 		catch (Exception ex)
 		{
-			throw new Exception($"Failed to get icon for slot: {self}", ex);
+			throw new Exception($"Failed to get icon for glasses", ex);
 		}
 	}
 }

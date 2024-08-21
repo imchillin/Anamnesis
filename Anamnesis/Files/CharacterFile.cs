@@ -375,11 +375,8 @@ public class CharacterFile : JsonFileBase
 					actor.Customize.Bust = (byte)this.Bust;
 			}
 
-			Log.Information("what is allowRefresh: " + allowRefresh);
-
 			if (allowRefresh)
 			{
-				Log.Information("trying to refresh 1");
 				await actor.RefreshAsync();
 			}
 

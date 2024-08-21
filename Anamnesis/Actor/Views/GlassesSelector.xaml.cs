@@ -4,6 +4,7 @@
 namespace Anamnesis.Actor.Views;
 
 using System.Threading.Tasks;
+using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Services;
@@ -47,6 +48,12 @@ public partial class GlassesSelector : GlassesSelectorDrawer
 
 	protected override int Compare(Glasses glassesA, Glasses glassesB)
 	{
+		if (glassesA.GlassesId == 0 && glassesB.GlassesId != 0)
+			return -1;
+
+		if (glassesA.GlassesId != 0 && glassesB.GlassesId == 0)
+			return 1;
+
 		if (glassesA.IsFavorite && !glassesB.IsFavorite)
 			return -1;
 

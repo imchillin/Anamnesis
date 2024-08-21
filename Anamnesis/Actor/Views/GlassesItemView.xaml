@@ -19,21 +19,20 @@
 			MouseUp="OnSlotMouseUp"
 			Style="{DynamicResource TransparentButton}"
 			IsEnabled="{Binding Actor.CanRefresh}">
-			<Grid>
-				<Image x:Name="Icon" Source="{Binding IconSource}" Margin="6" Opacity="0.3"/>
-
-				<Grid Visibility="{Binding Glasses, Converter={StaticResource NotNullToVisibilityConverter}}">
-					<Image Source="{Binding Glasses.Icon, Converter={StaticResource Img}}" Margin="2"/>
+			<Grid Background="Transparent">
+				<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="2" Opacity="0.5"/>
+				<Grid>
+					<Image Source="{Binding Glasses.Icon, Converter={StaticResource Img}}" Margin="2"  Visibility="{Binding Glasses.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 					<Image Source="/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Glasses.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 				</Grid>
-
-				<Grid.ToolTip>
-					<StackPanel>
-						<TextBlock Text="{Binding Glasses.Name}" FontWeight="DemiBold"/>
-						<TextBlock Text="{Binding Glasses.Description}" Visibility="{Binding Glasses.Description, Converter={StaticResource StringHasContentToVisibility}}" />
-					</StackPanel>
-				</Grid.ToolTip>
 			</Grid>
+
+			<Button.ToolTip>
+				<StackPanel>
+					<TextBlock Text="{Binding Glasses.Name}" FontWeight="DemiBold"/>
+					<TextBlock Text="{Binding Glasses.Description}" Visibility="{Binding Glasses.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+				</StackPanel>
+			</Button.ToolTip>
 		</Button>
 
 		<ProgressBar IsIndeterminate="True" Style="{StaticResource MaterialDesignCircularProgressBar}" Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsLoading, Converter={StaticResource B2V}}"/>

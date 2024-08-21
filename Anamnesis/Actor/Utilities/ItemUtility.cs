@@ -14,6 +14,8 @@ public static class ItemUtility
 	public static readonly DummyNoneItem NoneItem = new DummyNoneItem();
 	public static readonly DummyNoneDye NoneDye = new DummyNoneDye();
 	public static readonly NpcBodyItem NpcBodyItem = new NpcBodyItem();
+	public static readonly EmperorsEquipItem EmperorsBodyItem = new EmperorsEquipItem();
+	public static readonly EmperorsAccessoryItem EmperorsAccessoryItem = new EmperorsAccessoryItem();
 	public static readonly InvisibleBodyItem InvisibileBodyItem = new InvisibleBodyItem();
 	public static readonly InvisibleHeadItem InvisibileHeadItem = new InvisibleHeadItem();
 

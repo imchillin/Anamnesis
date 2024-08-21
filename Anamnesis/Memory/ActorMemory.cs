@@ -152,19 +152,15 @@ public class ActorMemory : ActorBasicMemory
 	/// </summary>
 	public async Task RefreshAsync()
 	{
-		Log.Information("trying to refresh 2");
 		if (this.IsRefreshing)
 			return;
 
-		Log.Information("trying to refresh 3");
 		if (!this.CanRefresh)
 			return;
 
-		Log.Information("trying to refresh 4");
 		if (this.Address == IntPtr.Zero)
 			return;
 
-		Log.Information("trying to refresh 5");
 		try
 		{
 			Log.Information($"Attempting actor refresh for actor address: {this.Address}");

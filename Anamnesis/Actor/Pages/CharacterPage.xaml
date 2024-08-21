@@ -25,6 +25,7 @@
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 
+		<!-- Customize Editor - Actor Appearance Settings -->
 		<Grid
 			Grid.RowSpan="2"
 			Grid.Column="0"
@@ -44,6 +45,7 @@
 
 		</Grid>
 
+		<!-- Equipment Editor - Actor Gear and Accessories Settings -->
 		<GroupBox
 			Grid.Row="0"
 			Grid.Column="1"
@@ -107,16 +109,28 @@
 							Foreground="{DynamicResource MaterialDesignBodyLight}"
 							Icon="Eraser" />
 					</Button>
+
+					<Button
+						Click="OnEmperorsNewGearClicked"
+						Style="{StaticResource TransparentIconButton}">
+
+						<Button.ToolTip>
+							<StackPanel>
+								<XivToolsWpf:TextBlock Key="Character_Equipment_Emperors" />
+							</StackPanel>
+						</Button.ToolTip>
+
+						<fa:IconBlock
+							Foreground="{DynamicResource MaterialDesignBodyLight}"
+							Icon="Crown" />
+					</Button>
 				</StackPanel>
 
-				<views:EquipmentEditor
-					Margin="0,0,0,-10"
-					DataContext="{Binding Actor}" />
-
-
+				<views:EquipmentEditor Margin="0,0,0,-10" DataContext="{Binding Actor}" />
 			</Grid>
 		</GroupBox>
 
+		<!-- Warning for making sure the actor can be edited. (Out of GPOSE when not using Brio or Penumbra integrations) -->
 		<XivToolsWpf:InfoControl
 			Key="Character_WarningGpose"
 			Grid.Column="0"
@@ -124,8 +138,8 @@
 			Margin="12"
 			Visibility="{Binding Actor.CanRefresh, Converter={StaticResource !B2V}}" />
 
+		<!-- Other Actor Settings - Incl Subactor (Mount/Minion/FashAcc), Facewear, Extended Appearance -->
 		<Grid Grid.Column="2">
-
 			<Grid.RowDefinitions>
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
@@ -134,13 +148,12 @@
 			</Grid.RowDefinitions>
 
 			<StackPanel>
-
 				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
 						<XivToolsWpf:Header
 							Key="Character_Actor_Header"
 							Margin="0,0,6,0"
-							Icon="Horse" />
+							Icon="User" />
 					</GroupBox.Header>
 
 					<Grid>
@@ -237,6 +250,8 @@
 								</ComboBox.ItemTemplate>
 							</ComboBox>
 						</Grid>
+
+						<!-- Subactor and Facewear Settings -->
 						<XivToolsWpf:Header
 							Grid.Row="1"
 							Key="SubActor_Title"
@@ -272,6 +287,7 @@
 					</Grid>
 				</GroupBox>
 
+				<!-- Actor Height and Some Model Settings -->
 				<GroupBox
 					Style="{StaticResource PanelGroupBox}"
 					Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
@@ -284,6 +300,7 @@
 					<views:CharacterModelEditor DataContext="{Binding Actor}" />
 				</GroupBox>
 
+				<!-- Extended Appearance Settings -->
 				<GroupBox
 					Style="{StaticResource PanelGroupBox}"
 					Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
@@ -370,6 +387,7 @@
 				</XivToolsWpf:InfoControl.Visibility>
 			</XivToolsWpf:InfoControl>
 
+			<!-- Import Menus and Reset Button -->
 			<StackPanel
 				Grid.Row="2"
 				Orientation="Vertical">
@@ -476,9 +494,6 @@
 					</MenuItem>
 				</Menu>
 			</StackPanel>
-
-
-
 		</Grid>
 	</Grid>
 </UserControl>
