@@ -3,12 +3,10 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using Anamnesis.GameData.Interfaces;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Lumina.Data;
 using Lumina.Excel;
-
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
 [Sheet("Glasses")]
@@ -21,8 +19,8 @@ public class Glasses : ExcelRow
 
 	public bool IsFavorite
 	{
-		get => FavoritesService.IsFavorite(this);
-		set => FavoritesService.SetFavorite(this, value);
+		get => FavoritesService.IsFavorite<Glasses>(this);
+		set => FavoritesService.SetFavorite<Glasses>(this, nameof(FavoritesService.Favorites.Glasses), value);
 	}
 
 	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
@@ -30,8 +28,8 @@ public class Glasses : ExcelRow
 		base.PopulateData(parser, gameData, language);
 		if(this.RowId == 0)
 		{
-			this.Name = "None";
-			this.Description = "Just your beautiful face!";
+			this.Name = LocalizationService.GetString("Facewear_None_Name");
+			this.Description = LocalizationService.GetString("Facewear_None_Desc");
 		}
 		else
 		{

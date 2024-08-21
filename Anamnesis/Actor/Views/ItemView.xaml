@@ -28,7 +28,7 @@
 					<TextBlock.ToolTip>
 						<StackPanel>
 							<TextBlock Text="{Binding Item.Name}" FontWeight="DemiBold"/>
-							<TextBlock Text="{Binding Item.Description}" Visibility="{Binding Glasses.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+							<TextBlock Text="{Binding Item.Description}" Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
 						</StackPanel>
 					</TextBlock.ToolTip>
 				</TextBlock>

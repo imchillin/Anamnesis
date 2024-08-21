@@ -108,7 +108,7 @@ public partial class CharacterPage : UserControl
 		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsHuman);
 		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
 		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
-		this.Actor.Glasses?.Clear(this.Actor.IsHuman);
+		this.Actor.Glasses?.Clear();
 
 		this.Actor?.ModelObject?.Weapons?.Hide();
 		this.Actor?.ModelObject?.Weapons?.SubModel?.Hide();
@@ -137,7 +137,7 @@ public partial class CharacterPage : UserControl
 		this.Actor.Equipment?.Chest?.Equip(ItemUtility.NpcBodyItem);
 		this.Actor.Equipment?.Legs?.Equip(ItemUtility.NpcBodyItem);
 		this.Actor.Equipment?.Feet?.Equip(ItemUtility.NpcBodyItem);
-		this.Actor.Glasses?.Clear(this.Actor.IsHuman);
+		this.Actor.Glasses?.Clear();
 	}
 
 	private void OnEmperorsNewGearClicked(object sender, RoutedEventArgs e)
@@ -163,7 +163,7 @@ public partial class CharacterPage : UserControl
 		this.Actor.Equipment?.Arms?.Equip(ItemUtility.EmperorsBodyItem);
 		this.Actor.Equipment?.Legs?.Equip(ItemUtility.EmperorsBodyItem);
 		this.Actor.Equipment?.Feet?.Equip(ItemUtility.EmperorsBodyItem);
-		this.Actor.Glasses?.Clear(this.Actor.IsHuman);
+		this.Actor.Glasses?.Clear();
 	}
 
 	private void OnRaceGearClicked(object sender, RoutedEventArgs e)
@@ -210,7 +210,7 @@ public partial class CharacterPage : UserControl
 		this.Actor.Equipment?.Neck?.Clear(this.Actor.IsHuman);
 		this.Actor.Equipment?.RFinger?.Clear(this.Actor.IsHuman);
 		this.Actor.Equipment?.Wrist?.Clear(this.Actor.IsHuman);
-		this.Actor.Glasses?.Clear(this.Actor.IsHuman);
+		this.Actor.Glasses?.Clear();
 	}
 
 	private async void OnResetClicked(object sender, RoutedEventArgs e)

@@ -28,8 +28,8 @@ public class EmperorsAccessoryItem : IItem
 
 	public bool IsFavorite
 	{
-		get => FavoritesService.IsFavorite(this);
-		set => FavoritesService.SetFavorite(this, value);
+		get => FavoritesService.IsFavorite<IItem>(this);
+		set => FavoritesService.SetFavorite<IItem>(this, nameof(FavoritesService.Favorites.Items), value);
 	}
 
 	public bool CanOwn => false;

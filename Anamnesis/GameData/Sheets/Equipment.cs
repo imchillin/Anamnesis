@@ -53,8 +53,8 @@ public class Equipment : IItem
 	[JsonIgnore]
 	public bool IsFavorite
 	{
-		get => FavoritesService.IsFavorite(this);
-		set => FavoritesService.SetFavorite(this, value);
+		get => FavoritesService.IsFavorite<IItem>(this);
+		set => FavoritesService.SetFavorite<IItem>(this, nameof(FavoritesService.Favorites.Items), value);
 	}
 
 	[JsonIgnore] public bool CanOwn => false;

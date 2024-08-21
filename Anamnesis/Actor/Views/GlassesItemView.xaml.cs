@@ -61,7 +61,7 @@ public partial class GlassesItemView : UserControl
 		if (sender.GlassesModel == null)
 			return;
 
-		sender.IconSource = ItemSlotsExtensions.GetGlassesIcon();
+		sender.IconSource = ItemSlots.Glasses.GetIcon();
 		sender.GlassesModel.PropertyChanged += sender.OnViewModelPropertyChanged;
 
 		sender.OnViewModelPropertyChanged(null, null);
@@ -89,7 +89,7 @@ public partial class GlassesItemView : UserControl
 
 		if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
 		{
-			this.GlassesModel?.Clear(this.Actor.IsHuman);
+			this.GlassesModel?.Clear();
 		}
 	}
 

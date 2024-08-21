@@ -24,6 +24,6 @@ internal class IGlassesConverter : JsonConverter<Glasses>
 
 	public override void Write(Utf8JsonWriter writer, Glasses value, JsonSerializerOptions options)
 	{
-		writer.WriteStringValue($"{value.RowId}");
+		writer.WriteStringValue($"{value.GlassesId}");
 	}
 }

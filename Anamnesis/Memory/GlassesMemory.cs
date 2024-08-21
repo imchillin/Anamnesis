@@ -9,7 +9,7 @@ public class GlassesMemory : MemoryBase, INotifyPropertyChanged
 {
 	[Bind(0x000, BindFlags.ActorRefresh)] public ushort GlassesId { get; set; }
 
-	public void Clear(bool isPlayer)
+	public void Clear()
 	{
 		this.GlassesId = 0;
 	}
