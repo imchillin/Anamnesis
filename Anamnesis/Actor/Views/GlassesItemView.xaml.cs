@@ -118,7 +118,6 @@ public partial class GlassesItemView : UserControl
 				await Dispatch.MainThread();
 
 				this.Glasses = GameDataService.Glasses.Get(valueVm.GlassesId);
-				Log.Information("name: " + this.Glasses.Name + " is " + this.Glasses.Description);
 			}
 			catch (Exception ex)
 			{
