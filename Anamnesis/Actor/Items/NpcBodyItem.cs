@@ -38,6 +38,6 @@ public class NpcBodyItem : IItem
 
 	public bool FitsInSlot(ItemSlots slot)
 	{
-		return slot == ItemSlots.Head || slot == ItemSlots.Body || slot == ItemSlots.Feet || slot == ItemSlots.Hands || slot == ItemSlots.Legs;
+		return slot == ItemSlots.Body || slot == ItemSlots.Feet || slot == ItemSlots.Hands || slot == ItemSlots.Legs;
 	}
 }

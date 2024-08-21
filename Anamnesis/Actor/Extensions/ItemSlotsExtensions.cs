@@ -4,7 +4,6 @@
 namespace Anamnesis.Actor;
 
 using System;
-using System.Runtime.CompilerServices;
 using System.Windows.Media.Imaging;
 using Anamnesis.GameData;
 
@@ -46,7 +45,7 @@ public static class ItemSlotsExtensions
 		}
 		catch (Exception ex)
 		{
-			throw new Exception($"Failed to get icon for glasses", ex);
+			throw new Exception($"Failed to get icon for {uri.OriginalString}", ex);
 		}
 	}
 }
