@@ -3,23 +3,23 @@
 
 namespace Anamnesis.Actor;
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media.Media3D;
 using Anamnesis.Actor.Posing;
 using Anamnesis.Memory;
 using Anamnesis.Posing;
 using Anamnesis.Services;
 using PropertyChanged;
 using Serilog;
-using XivToolsWpf;
-using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO.Enumeration;
-
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Media3D;
+using XivToolsWpf;
 using AnQuaternion = Anamnesis.Memory.Quaternion;
 
 [AddINotifyPropertyChangedInterface]
@@ -35,6 +35,15 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	private readonly List<BoneVisual3d> topBones = new List<BoneVisual3d>();
 	private readonly List<BoneVisual3d> mainHandBones = new List<BoneVisual3d>();
 	private readonly List<BoneVisual3d> offHandBones = new List<BoneVisual3d>();
+
+	private readonly Dictionary<string, Tuple<string, string>> hairNameToSuffixMap = new()
+	{
+		{ "HairAutoFrontLeft", new("l", "j_kami_f_l") },	// Hair, Front Left
+		{ "HairAutoFrontRight", new("r", "j_kami_f_r") },	// Hair, Front Right
+		{ "HairAutoA", new("a", "j_kami_a") },				// Hair, Back Up
+		{ "HairAutoB", new("b", "j_kami_b") },				// Hair, Back Down
+		{ "HairFront", new("f", string.Empty) },			// Hair, Front (Custom Bone Name)
+	};
 
 	public SkeletonVisual3d()
 	{
@@ -98,7 +107,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		|| this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Hrothgar
 		|| this.IsIVCS;
 
-	public bool IsCustomFace => this.Actor == null ? false : this.IsMiqote || this.IsHrothgar;
+	public bool IsStandardFace => this.Actor == null ? true : !this.IsMiqote && !this.IsHrothgar && !this.IsViera;
 	public bool IsMiqote => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Miqote;
 	public bool IsViera => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Viera;
 	public bool IsElezen => this.Actor?.Customize?.Race == ActorCustomizeMemory.Races.Elezen;
@@ -299,6 +308,11 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasHover));
 	}
 
+	public void NotifySkeletonChanged()
+	{
+		this.RaisePropertyChanged(nameof(SkeletonVisual3d.AllBones));
+	}
+
 	public bool GetIsBoneHovered(BoneVisual3d bone)
 	{
 		return this.HoverBones.Contains(bone);
@@ -349,8 +363,18 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			name = modernName;
 
 		BoneVisual3d? bone;
-		this.Bones.TryGetValue(name, out bone);
 
+		// Attempt to find hairstyle-specific bones. If not found, default to the standard hair bones.
+		if (this.hairNameToSuffixMap.TryGetValue(name, out Tuple<string, string>? suffixAndDefault))
+		{
+			bone = this.FindHairBoneByPattern(suffixAndDefault.Item1);
+			if (bone != null)
+				return bone;
+			else
+				name = suffixAndDefault.Item2; // If not found, default to the standard hair bones.
+		}
+
+		this.Bones.TryGetValue(name, out bone);
 		return bone;
 	}
 
@@ -524,7 +548,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 					if (!links.Contains(name))
 						continue;
 
-					foreach(string linkedBoneName in links.Bones)
+					foreach (string linkedBoneName in links.Bones)
 					{
 						if (linkedBoneName == name)
 							continue;
@@ -710,6 +734,20 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	private void RaisePropertyChanged(string propertyName)
 	{
 		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+
+	private BoneVisual3d? FindHairBoneByPattern(string suffix)
+	{
+		string pattern = $@"j_ex_h\d{{4}}_ke_{suffix}";
+		Regex regex = new Regex(pattern);
+
+		foreach (var (boneName, bone) in this.Bones)
+		{
+			if (regex.IsMatch(boneName))
+				return bone;
+		}
+
+		return null;
 	}
 }
 
