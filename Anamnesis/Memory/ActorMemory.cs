@@ -3,10 +3,10 @@
 
 namespace Anamnesis.Memory;
 
-using System;
-using System.Threading.Tasks;
 using Anamnesis.Utils;
 using PropertyChanged;
+using System;
+using System.Threading.Tasks;
 
 public class ActorMemory : ActorBasicMemory
 {
@@ -52,13 +52,13 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x0788)] public WeaponMemory? OffHand { get; set; }
 	[Bind(0x0868)] public ActorEquipmentMemory? Equipment { get; set; }
 	[Bind(0x08B8)] public ActorCustomizeMemory? Customize { get; set; }
-	[Bind(0x089E, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
-	[Bind(0x089F, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
+	[Bind(0x08D6, BindFlags.ActorRefresh)] public bool HatHidden { get; set; }
+	[Bind(0x08D7, BindFlags.ActorRefresh)] public CharacterFlagDefs CharacterFlags { get; set; }
 	[Bind(0x08D8)] public GlassesMemory? Glasses { get; set; }
 	[Bind(0x08F8, BindFlags.Pointer)] public ActorMemory? Ornament { get; set; }
 	[Bind(0x0900)] public ushort OrnamentId { get; set; }
 	[Bind(0x09C0)] public AnimationMemory? Animation { get; set; }
-	[Bind(0x12D4)] public bool IsMotionEnabled { get; set; }
+	[Bind(0x1ABC)] public bool IsMotionDisabled { get; set; }
 	[Bind(0x19D0)] public byte Voice { get; set; }
 	[Bind(0x21C8)] public float Transparency { get; set; }
 	[Bind(0x226C)] public byte CharacterModeRaw { get; set; }
@@ -121,6 +121,13 @@ public class ActorMemory : ActorBasicMemory
 		}
 	}
 
+	[DependsOn(nameof(IsMotionDisabled))]
+	public bool IsMotionEnabled
+	{
+		get => !this.IsMotionDisabled;
+		set => this.IsMotionDisabled = !value;
+	}
+
 	[DependsOn(nameof(ObjectIndex), nameof(CharacterMode))]
 	public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.Instance.IsLocalOverworldPlayer(this.ObjectIndex);
 
@@ -167,7 +174,7 @@ public class ActorMemory : ActorBasicMemory
 
 			this.IsRefreshing = true;
 
-			if(await ActorService.Instance.RefreshActor(this))
+			if (await ActorService.Instance.RefreshActor(this))
 			{
 				Log.Information($"Completed actor refresh for actor address: {this.Address}");
 			}

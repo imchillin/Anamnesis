@@ -3,6 +3,9 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.Actor.Pages;
+using MaterialDesignThemes.Wpf;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,9 +14,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Anamnesis.Actor.Pages;
-using MaterialDesignThemes.Wpf;
-using Serilog;
 using XivToolsWpf.DependencyProperties;
 
 public partial class BoneView : UserControl, IBone
@@ -116,7 +116,7 @@ public partial class BoneView : UserControl, IBone
 
 	private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
-		bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonVisual3d.FlipSides);
+		bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonVisual3d.FlipSides) || e.PropertyName == nameof(SkeletonVisual3d.AllBones);
 
 		if (refreshBone && this.DataContext is SkeletonVisual3d)
 			this.SetBone(this.CurrentBoneName);
@@ -160,18 +160,37 @@ public partial class BoneView : UserControl, IBone
 				if (childView.Visibility != Visibility.Visible)
 					continue;
 
+				var scale = 1.0;
+
+				// Determine line stroke thickness (if placed inside a Viewbox element)
+				if (this.Parent is Canvas cvs && cvs.Parent is Viewbox vbox)
+				{
+					scale = vbox.ActualWidth / cvs.ActualWidth;
+				}
+
 				if (this.Parent is Canvas c1 && childView.Parent is Canvas c2 && c1 == c2)
 				{
 					Line line = new Line();
 					line.SnapsToDevicePixels = true;
-					line.StrokeThickness = 1;
+					line.StrokeThickness = 1 / scale;
 					line.Stroke = Brushes.Gray;
 					line.IsHitTestVisible = false;
 
-					line.X1 = Canvas.GetLeft(this) + (this.Width / 2);
-					line.Y1 = Canvas.GetTop(this) + (this.Height / 2);
-					line.X2 = Canvas.GetLeft(childView) + (childView.Width / 2);
-					line.Y2 = Canvas.GetTop(childView) + (childView.Height / 2);
+					// Note: Canvas.GetLeft and Canvas.GetTop return the element corner, including margin, padding, and border.
+					// Adjust for these properties in coordinate calculations.
+					double parentWidth = this.ActualWidth + this.Margin.Left + this.Margin.Right + this.Padding.Left + this.Padding.Right +
+						this.BorderThickness.Right;
+					double parentHeight = this.ActualHeight + this.Margin.Top + this.Margin.Bottom + this.Padding.Top + this.Padding.Bottom +
+						this.BorderThickness.Bottom;
+					double childWidth = childView.ActualWidth + childView.Margin.Left + childView.Margin.Right + childView.Padding.Left + childView.Padding.Right +
+						childView.BorderThickness.Right;
+					double childHeight = childView.ActualHeight + childView.Margin.Top + childView.Margin.Bottom + childView.Padding.Top + childView.Padding.Bottom +
+						childView.BorderThickness.Bottom;
+
+					line.X1 = Canvas.GetLeft(this) + (parentWidth / 2);
+					line.Y1 = Canvas.GetTop(this) + (parentHeight / 2);
+					line.X2 = Canvas.GetLeft(childView) + (childWidth / 2);
+					line.Y2 = Canvas.GetTop(childView) + (childHeight / 2);
 
 					c1.Children.Insert(0, line);
 					this.linesToChildren.Add(line);
@@ -180,7 +199,6 @@ public partial class BoneView : UserControl, IBone
 					Line line2 = new Line();
 					line2.StrokeThickness = 25;
 					line2.Stroke = Brushes.Transparent;
-					////line2.Opacity = 0.1f;
 
 					line2.MouseEnter += childView.OnMouseEnter;
 					line2.MouseLeave += childView.OnMouseLeave;
@@ -289,14 +307,21 @@ public partial class BoneView : UserControl, IBone
 		bool parentHovered = this.skeleton.GetIsBoneParentsHovered(this.Bone);
 
 		Color color = parentHovered ? theme.PrimaryMid.Color : theme.BodyLight;
-		int thickenss = parentSelected || selected || parentHovered ? 2 : 1;
+		double thickness = parentSelected || selected || parentHovered ? 2 : 1;
+
+		// Scale thickness based on viewbox scale (if applicable)
+		if (this.Parent is Canvas cvs && cvs.Parent is Viewbox vbox)
+		{
+			var scale = vbox.ActualWidth / cvs.ActualWidth;
+			thickness /= scale;
+		}
 
 		this.ForegroundElipse.Visibility = (selected || hovered) ? Visibility.Visible : Visibility.Hidden;
 		this.BackgroundElipse.Stroke = new SolidColorBrush(theme.PrimaryMid.Color);
-		this.SetState(new SolidColorBrush(color), thickenss);
+		this.SetState(new SolidColorBrush(color), thickness);
 	}
 
-	private void SetState(Brush stroke, int thickness)
+	private void SetState(Brush stroke, double thickness)
 	{
 		this.BackgroundElipse.StrokeThickness = thickness;
 

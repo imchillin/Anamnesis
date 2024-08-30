@@ -55,6 +55,22 @@
 		<Resource Include="Assets\Roles\*.*" />
 		<Resource Include="Assets\Shortcuts\*.*" />
 		<Resource Include="Assets\Slots\*.*" />
+		<Resource Include="Assets\Pose\CharFBodyBackground.png" />
+		<Resource Include="Assets\Pose\CharFClothesBackground.png" />
+		<Resource Include="Assets\Pose\CharFHyurFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharFHyurFaceExBackground.png" />
+		<Resource Include="Assets\Pose\CharFMiqoFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharFMiqoFaceExBackground.png" />
+		<Resource Include="Assets\Pose\CharFMiqoMouthBackground.png" />
+		<Resource Include="Assets\Pose\CharFVieraFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharFVieraFaceExBackground.png" />
+		<Resource Include="Assets\Pose\CharFVieraFloppyFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharFVieraFloppyFaceExBackground.png" />
+		<Resource Include="Assets\Pose\CharHandBackground.png" />
+		<Resource Include="Assets\Pose\CharMHrothFaceBackground.png" />
+		<Resource Include="Assets\Pose\CharMHrothFaceExBackground.png" />
+		<Resource Include="Assets\Pose\CharTailBackground.png" />
+		<Resource Include="Assets\Pose\CharTongueBackground.png" />
 		<Resource Include="FodyWeavers.xml" />
 
 		<EmbeddedResource Include="Languages\*.*" />
@@ -62,7 +78,26 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="$(AppData)\Anamnesis\Settings.json" Link="Settings.json" />
+		<None Remove="Assets\Pose\CharFBodyBackground.png" />
+		<None Remove="Assets\Pose\CharFClothesBackground.png" />
+		<None Remove="Assets\Pose\CharFHyurFaceBackground.png" />
+		<None Remove="Assets\Pose\CharFHyurFaceExBackground.png" />
+		<None Remove="Assets\Pose\CharFMiqoFaceBackground.png" />
+		<None Remove="Assets\Pose\CharFMiqoFaceExBackground.png" />
+		<None Remove="Assets\Pose\CharFMiqoMouthBackground.png" />
+		<None Remove="Assets\Pose\CharFVieraFaceBackground.png" />
+		<None Remove="Assets\Pose\CharFVieraFaceExBackground.png" />
+		<None Remove="Assets\Pose\CharFVieraFloppyFaceBackground.png" />
+		<None Remove="Assets\Pose\CharFVieraFloppyFaceExBackground.png" />
+		<None Remove="Assets\Pose\CharHandBackground.png" />
+		<None Remove="Assets\Pose\CharMHrothFaceBackground.png" />
+		<None Remove="Assets\Pose\CharMHrothFaceExBackground.png" />
+		<None Remove="Assets\Pose\CharTailBackground.png" />
+		<None Remove="Assets\Pose\CharTongueBackground.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="$(AppData)\Anamnesis\Settings.json" Link="Settings.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -78,7 +113,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
+		<ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -89,12 +132,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Download dotNet desktop runtime.URL">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Install .NET Desktop Runtime.bat">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+		<None Update="Download dotNet desktop runtime.URL">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Install .NET Desktop Runtime.bat">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties languages_4en_1json__JsonSchema="Warning_MinionGposeTitle" /></VisualStudio></ProjectExtensions>

@@ -3,6 +3,13 @@
 
 namespace Anamnesis.Actor.Pages;
 
+using Anamnesis.Actor.Views;
+using Anamnesis.Files;
+using Anamnesis.GUI.Dialogs;
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using PropertyChanged;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,13 +19,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
-using Anamnesis.Files;
-using Anamnesis.GUI.Dialogs;
-using Anamnesis.Memory;
-using Anamnesis.Actor.Views;
-using Anamnesis.Services;
-using PropertyChanged;
-using Serilog;
 using XivToolsWpf;
 using CmQuaternion = Anamnesis.Memory.Quaternion;
 
@@ -214,7 +214,8 @@ public partial class PosePage : UserControl
 		await Dispatch.MainThread();
 
 		this.ThreeDView.DataContext = null;
-		this.GuiView.DataContext = null;
+		this.BodyGuiView.DataContext = null;
+		this.FaceGuiView.DataContext = null;
 		this.MatrixView.DataContext = null;
 
 		this.BoneViews.Clear();
@@ -234,7 +235,8 @@ public partial class PosePage : UserControl
 			await this.Skeleton.SetActor(this.Actor);
 
 			this.ThreeDView.DataContext = this.Skeleton;
-			this.GuiView.DataContext = this.Skeleton;
+			this.BodyGuiView.DataContext = this.Skeleton;
+			this.FaceGuiView.DataContext = this.Skeleton;
 			this.MatrixView.DataContext = this.Skeleton;
 
 			if (this.writeSkeletonTask == null || this.writeSkeletonTask.IsCompleted)
@@ -390,12 +392,13 @@ public partial class PosePage : UserControl
 	{
 		int selected = this.ViewSelector.SelectedIndex;
 
-		if (this.GuiView == null)
+		if (this.BodyGuiView == null)
 			return;
 
-		this.GuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Collapsed;
-		this.MatrixView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Collapsed;
-		this.ThreeDView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
+		this.BodyGuiView.Visibility = selected == 0 ? Visibility.Visible : Visibility.Collapsed;
+		this.FaceGuiView.Visibility = selected == 1 ? Visibility.Visible : Visibility.Collapsed;
+		this.MatrixView.Visibility = selected == 2 ? Visibility.Visible : Visibility.Collapsed;
+		this.ThreeDView.Visibility = selected == 3 ? Visibility.Visible : Visibility.Collapsed;
 	}
 
 	private void OnClearClicked(object? sender, RoutedEventArgs? e)

@@ -20,7 +20,6 @@
 	mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
-
 		<Grid IsEnabled="{Binding Skeleton, Converter={StaticResource NotNullToBoolConverter}}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
@@ -33,7 +32,7 @@
 			</Grid.RowDefinitions>
 
 			<!--  Sidebar  -->
-            <Grid Grid.RowSpan="2" Grid.Column="2">
+			<Grid Grid.RowSpan="2" Grid.Column="2">
 				<Grid.RowDefinitions>
 					<RowDefinition />
 					<RowDefinition Height="Auto" />
@@ -60,12 +59,12 @@
 							<TextBox
 								Text="{Binding Skeleton.CurrentBone.Tooltip, UpdateSourceTrigger=PropertyChanged}"
 								Margin="0"
-							    Padding="1"
-							    FontSize="10"
-							    FontWeight="Bold"
+								Padding="1"
+								FontSize="10"
+								FontWeight="Bold"
 								BorderBrush="Transparent"
 								Visibility="{Binding Skeleton.CurrentBone, Converter={StaticResource NotNullToVisibilityConverter}}"
-							    Style="{StaticResource MaterialDesignTextBox}"/>
+								Style="{StaticResource MaterialDesignTextBox}"/>
 
 							<XivToolsWpf:TextBlock Style="{StaticResource Header}"
 													Text="{Binding Skeleton.CurrentBone.BoneName}" 
@@ -381,7 +380,6 @@
 			<Grid Grid.Row="1"
 					Margin="3"
 					IsEnabled="{Binding PoseService.IsEnabled}">
-
 				<Grid
 					x:Name="MouseCanvas"
 					Grid.Row="1"
@@ -391,7 +389,8 @@
 					MouseUp="OnCanvasMouseUp">
 					<Grid DataContext="{Binding Skeleton}">
 						<views:Pose3DView x:Name="ThreeDView" Visibility="Collapsed" />
-						<views:PoseGuiView x:Name="GuiView" Visibility="Visible" />
+						<views:PoseBodyGuiView x:Name="BodyGuiView" Visibility="Visible" />
+						<views:PoseFaceGuiView x:Name="FaceGuiView" Visibility="Collapsed" />
 						<views:PoseMatrixView x:Name="MatrixView" Visibility="Collapsed" Margin="3, 28, 0, 3"/>
 					</Grid>
 				</Grid>
@@ -417,28 +416,29 @@
 					SelectedIndex="0"
 					SelectionChanged="OnViewChanged"
 					Style="{StaticResource MaterialDesignToolToggleListBox}">
-					<ListBoxItem
-								Margin="1"
-								Padding="8,5"
-								Cursor="Hand"
-								ToolTip="GUI View"
-								Visibility="{Binding Skeleton.File.AllowPoseGui, Converter={StaticResource B2V}}">
-						<XivToolsWpf:IconBlock Icon="ProjectDiagram" FontSize="10"/>
+					<ListBoxItem Margin="1"
+								 Padding="8,5"
+								 Cursor="Hand"
+								 ToolTip="Body GUI View">
+						<XivToolsWpf:IconBlock Icon="StreetView" FontSize="10"/>
 					</ListBoxItem>
-					<ListBoxItem
-								Margin="1"
-								Padding="8,5"
-								Cursor="Hand"
-								ToolTip="Matrix View"
-								Visibility="{Binding Skeleton.File.AllowPoseMatrix, Converter={StaticResource B2V}}">
+					<ListBoxItem Margin="1"
+								 Padding="8,5"
+								 Cursor="Hand"
+								 ToolTip="Face GUI View">
+						<XivToolsWpf:IconBlock Icon="GrinAlt" FontSize="10"/>
+					</ListBoxItem>
+					<ListBoxItem Margin="1"
+								 Padding="8,5"
+								 Cursor="Hand"
+								 ToolTip="Matrix View">
 						<XivToolsWpf:IconBlock Icon="BorderAll" FontSize="10"/>
 					</ListBoxItem>
-					<ListBoxItem
-								x:Name="View3dButton"
-								Margin="1"
-								Padding="8,5"
-								Cursor="Hand"
-								ToolTip="3D View">
+					<ListBoxItem x:Name="View3dButton"
+								 Margin="1"
+								 Padding="8,5"
+								 Cursor="Hand"
+								 ToolTip="3D View">
 						<XivToolsWpf:IconBlock Icon="Cube" FontSize="10"/>
 					</ListBoxItem>
 				</ListBox>
@@ -470,6 +470,5 @@
 				<XivToolsWpf:InfoControl IsError="True" Key="Pose_NoModel" VerticalAlignment="Bottom" Margin="12"/>
 			</Grid>
 		</Grid>
-
 	</Grid>
 </UserControl>
