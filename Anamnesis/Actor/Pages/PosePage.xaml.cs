@@ -253,6 +253,7 @@ public partial class PosePage : UserControl
 	private async void OnImportClicked(object sender, RoutedEventArgs e)
 	{
 		await this.ImportPose(false, PoseFile.Mode.Rotation, true);
+		this.Skeleton?.ClearSelection();
 	}
 
 	private async void OnImportScaleClicked(object sender, RoutedEventArgs e)
@@ -342,6 +343,15 @@ public partial class PosePage : UserControl
 			if (result.File is PoseFile poseFile)
 			{
 				HashSet<string>? bones = null;
+
+				// If we are loading a pre-DT pose file, let's not load the face.
+				// This acts as if we were loading by body pose.
+				if (poseFile.IsAPreDTPoseFile())
+				{
+					this.Skeleton.SelectBody();
+					selectionOnly = true;
+				}
+
 				if (selectionOnly)
 				{
 					bones = new HashSet<string>();
