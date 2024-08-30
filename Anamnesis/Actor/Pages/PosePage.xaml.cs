@@ -344,9 +344,9 @@ public partial class PosePage : UserControl
 			{
 				HashSet<string>? bones = null;
 
-				// If we are loading a pre-DT pose file, let's not load the face.
-				// This acts as if we were loading by body pose.
-				if (poseFile.IsAPreDTPoseFile())
+				// If we are loading the rotation of all bones in a pre-DT pose file, let's not load the face bones.
+				// This acts as if we were loading by body pose, which loads the rotations of just the body bones.
+				if (poseFile.IsAPreDTPoseFile() && !selectionOnly && mode == PoseFile.Mode.Rotation)
 				{
 					this.Skeleton.SelectBody();
 					selectionOnly = true;
