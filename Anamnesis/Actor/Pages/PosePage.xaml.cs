@@ -349,7 +349,7 @@ public partial class PosePage : UserControl
 
 				// If we are loading the rotation of all bones in a pre-DT pose file, let's not load the face bones.
 				// This acts as if we were loading by body pose, which loads the rotations of just the body bones.
-				if (poseFile.IsAPreDTPoseFile() && !selectionOnly && mode == PoseFile.Mode.Rotation)
+				if (poseFile.IsPreDTPoseFile() && !selectionOnly && mode == PoseFile.Mode.Rotation)
 				{
 					this.Skeleton.SelectBody();
 					selectionOnly = true;
@@ -358,7 +358,7 @@ public partial class PosePage : UserControl
 				// If we are loading an expression, which is done via selected bones and all three pose modes, we
 				// should warn the user if they are loading from a pre-DT pose file.
 				// Cancel will restore scale and position pose modes.
-				if (poseFile.IsAPreDTPoseFile() && selectionOnly && mode == (PoseFile.Mode.Rotation | PoseFile.Mode.Scale | PoseFile.Mode.Position))
+				if (poseFile.IsPreDTPoseFile() && selectionOnly && mode == (PoseFile.Mode.Rotation | PoseFile.Mode.Scale | PoseFile.Mode.Position))
 				{
 					bool? dialogResult = await GenericDialog.ShowLocalizedAsync("Pose_WarningExpresionOld", "Common_Confirm", MessageBoxButton.OKCancel);
 
