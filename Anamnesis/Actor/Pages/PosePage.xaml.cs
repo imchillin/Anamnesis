@@ -312,6 +312,9 @@ public partial class PosePage : UserControl
 			if (this.Actor == null || this.Skeleton == null)
 				return;
 
+			bool initialFreezeScale = PoseService.Instance.FreezeScale;
+			bool initialFreezePosition = PoseService.Instance.FreezePositions;
+
 			PoseService.Instance.SetEnabled(true);
 			PoseService.Instance.FreezeScale |= mode.HasFlag(PoseFile.Mode.Scale);
 			PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
@@ -350,6 +353,21 @@ public partial class PosePage : UserControl
 				{
 					this.Skeleton.SelectBody();
 					selectionOnly = true;
+				}
+
+				// If we are loading an expression, which is done via selected bones and all three pose modes, we
+				// should warn the user if they are loading from a pre-DT pose file.
+				// Cancel will restore scale and position pose modes.
+				if (poseFile.IsAPreDTPoseFile() && selectionOnly && mode == (PoseFile.Mode.Rotation | PoseFile.Mode.Scale | PoseFile.Mode.Position))
+				{
+					bool? dialogResult = await GenericDialog.ShowLocalizedAsync("Pose_WarningExpresionOld", "Common_Confirm", MessageBoxButton.OKCancel);
+
+					if (dialogResult != true)
+					{
+						PoseService.Instance.FreezeScale = initialFreezeScale;
+						PoseService.Instance.FreezePositions = initialFreezePosition;
+						return;
+					}
 				}
 
 				if (selectionOnly)

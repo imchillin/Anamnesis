@@ -310,6 +310,7 @@
 	"Pose_WarningNotFrozen": "Actor motion must be disabled in the Group Pose settings, or Freeze Positions must be enabled in the pose options.",
 	"Pose_WarningQuit": "Are you sure you want to quit? Current pose will be lost.",
 	"Pose_WarningExpresionPositions": "You are attempting to load an expression while Position [P] mode is active; this may have undesired results. Continue?",
+	"Pose_WarningExpresionOld": "You are attempting to load an expression from a pose file that was saved prior to DT; this will have undesired results. Continue?",
 	"Pose_NoSkeleton": "No Skeleton is bound to this view.",
 	"Pose_NoModel": "This actor does not have a model.",
 	"Pose_NotEnabled": "Posing mode must be enabled.",
