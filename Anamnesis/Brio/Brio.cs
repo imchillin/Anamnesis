@@ -3,71 +3,47 @@
 
 namespace Anamnesis.Brio;
 
-using System;
 using System.Threading.Tasks;
 
 public static class Brio
 {
-	public static async Task<string> Redraw(int targetIndex, RedrawType redrawType)
+	public static async Task<string> Redraw(int targetIndex)
 	{
-		RedrawData data = new();
-		data.ObjectIndex = targetIndex;
-		data.RedrawType = redrawType;
+		RedrawData data = new() { ObjectIndex = targetIndex };
 		var result = await BrioApi.Post("/redraw", data);
 		return result;
 	}
 
-	public static async Task<int> Spawn(SpawnOptions options)
+	public static async Task<int> Spawn()
 	{
-		SpawnRequest data = new();
-		data.SpawnOptions = options;
-		var resultRaw = await BrioApi.Post("/spawn", data);
+		var resultRaw = await BrioApi.Post("/spawn");
 		var resultId = int.Parse(resultRaw);
 		return resultId;
 	}
 
 	public static async Task<bool> Despawn(int actorIndex)
 	{
-		DespawnData data = new();
-		data.ObjectIndex = actorIndex;
+		DespawnData data = new() { ObjectIndex = actorIndex };
 		var resultRaw = await BrioApi.Post("/despawn", data);
 		var result = bool.Parse(resultRaw);
 		return result;
 	}
 }
 
-[Flags]
-public enum RedrawType
+public enum RedrawResult
 {
-	None = 0,
-	AllowOptimized = 1,
-	AllowFull = 2,
-	ForceRedrawWeaponsOnOptimized = 4,
-	PreservePosition = 8,
-	ForceAllowNPCAppearance = 16,
-
-	All = AllowOptimized | AllowFull | ForceRedrawWeaponsOnOptimized | PreservePosition | ForceAllowNPCAppearance,
-}
-
-[Flags]
-public enum SpawnOptions
-{
-	None = 0,
-	ApplyModelPosition = 1,
+	NoChange,
+	Optimized,
+	Full,
+	Failed,
 }
 
 public class RedrawData
 {
-	public int ObjectIndex { get; set; } = -1;
-	public RedrawType? RedrawType { get; set; } = Anamnesis.Brio.RedrawType.All;
+	public int ObjectIndex { get; set; }
 }
 
 public class DespawnData
 {
 	public int ObjectIndex { get; set; } = -1;
-}
-
-public class SpawnRequest
-{
-	public SpawnOptions SpawnOptions { get; set; }
 }

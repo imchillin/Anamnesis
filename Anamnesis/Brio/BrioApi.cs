@@ -17,31 +17,41 @@ internal static class BrioApi
 	private const string Url = "http://localhost:42428/brio";
 	private const int TimeoutMs = 10000;
 
-	public static async Task<string> Post(string route, object content)
+	private static readonly HttpClient Client = new()
+	{
+		Timeout = TimeSpan.FromMilliseconds(TimeoutMs),
+	};
+
+	public static async Task<string> Post(string route, object? content = null)
 	{
 		var response = await PostRequest(route, content);
 		return response;
 	}
 
-	private static async Task<string> PostRequest(string route, object content)
+	private static async Task<string> PostRequest(string route, object? content)
 	{
 		if (!route.StartsWith('/'))
 			route = '/' + route;
 
 		try
 		{
-			string json = SerializerService.Serialize(content);
+			HttpContent? httpContent = null;
+			if (content != null)
+			{
+				string json = SerializerService.Serialize(content);
 
-			using HttpClient client = new HttpClient();
-			client.Timeout = TimeSpan.FromMilliseconds(TimeoutMs);
-			var buffer = Encoding.UTF8.GetBytes(json);
-			var byteContent = new ByteArrayContent(buffer);
-			byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+				var buffer = Encoding.UTF8.GetBytes(json);
+				var byteContent = new ByteArrayContent(buffer);
+				byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+				httpContent = byteContent;
+			}
 
-			using var response = await client.PostAsync(Url + route, byteContent);
+			using var response = await Client.PostAsync(Url + route, httpContent);
+			response.EnsureSuccessStatusCode();
+
 			using var responseContent = await response.Content.ReadAsStreamAsync();
-			using StreamReader? sr = new StreamReader(responseContent);
-			string body = sr.ReadToEnd();
+			using var sr = new StreamReader(responseContent);
+			string body = await sr.ReadToEndAsync();
 
 			return body;
 		}

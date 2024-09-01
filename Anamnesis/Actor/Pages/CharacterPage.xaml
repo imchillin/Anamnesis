@@ -130,13 +130,32 @@
 			</Grid>
 		</GroupBox>
 
-		<!-- Warning for making sure the actor can be edited. (Out of GPOSE when not using Brio or Penumbra integrations) -->
+		<!-- Warning messages indicating that the actor's appearance cannot be edited. -->
+		<XivToolsWpf:InfoControl
+			Key="Character_WarningGposeWorldPosFrozen"
+			Grid.Column="0"
+			Grid.ColumnSpan="2"
+			Margin="12">
+			<XivToolsWpf:InfoControl.Visibility>
+				<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
+					<Binding Path="Actor.CanRefresh" Converter="{StaticResource !B}"/>
+					<Binding Path="PoseService.FreezeWorldPosition"/>
+				</MultiBinding>
+			</XivToolsWpf:InfoControl.Visibility>
+		</XivToolsWpf:InfoControl>
+
 		<XivToolsWpf:InfoControl
 			Key="Character_WarningGpose"
 			Grid.Column="0"
 			Grid.ColumnSpan="2"
-			Margin="12"
-			Visibility="{Binding Actor.CanRefresh, Converter={StaticResource !B2V}}" />
+			Margin="12">	
+			<XivToolsWpf:InfoControl.Visibility>
+				<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
+					<Binding Path="Actor.CanRefresh" Converter="{StaticResource !B}"/>
+					<Binding Path="PoseService.WorldPositionNotFrozen"/>
+				</MultiBinding>
+			</XivToolsWpf:InfoControl.Visibility>
+		</XivToolsWpf:InfoControl>
 
 		<!-- Other Actor Settings - Incl Subactor (Mount/Minion/FashAcc), Facewear, Extended Appearance -->
 		<Grid Grid.Column="2">

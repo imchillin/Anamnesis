@@ -272,6 +272,7 @@
   "Character_ExWeapons_Header": "Extended Weapons",
 
   "Character_WarningGpose": "Appearance and Equipment can only be changed while not in Group Pose.",
+  "Character_WarningGposeWorldPosFrozen": "Appearance and Equipment can only be changed while world positions are not frozen.",
 
   "Character_Action_AnimationData": "Actor Data",
   "Character_Action_AnimationStatus": "Animation Status",
