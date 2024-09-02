@@ -355,18 +355,46 @@ public partial class PosePage : UserControl
 					selectionOnly = true;
 				}
 
-				// If we are loading an expression, which is done via selected bones and all three pose modes, we
-				// should warn the user if they are loading from a pre-DT pose file.
-				// Cancel will restore scale and position pose modes.
-				if (poseFile.IsPreDTPoseFile() && selectionOnly && mode == (PoseFile.Mode.Rotation | PoseFile.Mode.Scale | PoseFile.Mode.Position))
+				// If we are loading an expression, which is done via selected bones and all three pose modes, we should warn the user if:
+				// We are loading a pre-DT pose file on to a DT-updated face, OR
+				// We are loading a DT pose file on to a non-updated face.
+				// Our entry point is loading by expression, which is done via selected bones and all three pose modes.
+				if (selectionOnly && mode == (PoseFile.Mode.Rotation | PoseFile.Mode.Scale | PoseFile.Mode.Position))
 				{
-					bool? dialogResult = await GenericDialog.ShowLocalizedAsync("Pose_WarningExpresionOld", "Common_Confirm", MessageBoxButton.OKCancel);
+					string dialogMsgKey = "Pose_WarningExpresionOldOnNew";
+					bool doPreDtExpressionPoseModeOnOK = false;
+					bool showDialog = true;
 
-					if (dialogResult != true)
+					if (poseFile.IsPreDTPoseFile() && !this.Skeleton.HasPreDTFace)
 					{
-						PoseService.Instance.FreezeScale = initialFreezeScale;
+						doPreDtExpressionPoseModeOnOK = true;
+					}
+					else if (!poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace)
+					{
+						dialogMsgKey = "Pose_WarningExpresionNewOnOld";
+					}
+					else if (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace)
+					{
+						showDialog = false;
+						doPreDtExpressionPoseModeOnOK = true;
+					}
+
+					if(showDialog)
+					{
+						bool? dialogResult = await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Confirm", MessageBoxButton.OKCancel);
+						if (dialogResult != true)
+						{
+							PoseService.Instance.FreezeScale = initialFreezeScale;
+							PoseService.Instance.FreezePositions = initialFreezePosition;
+							return;
+						}
+					}
+
+					// Prior to DT, we loaded expressions via Rotation and Scale only.
+					if (doPreDtExpressionPoseModeOnOK)
+					{
 						PoseService.Instance.FreezePositions = initialFreezePosition;
-						return;
+						mode = PoseFile.Mode.Rotation | PoseFile.Mode.Scale;
 					}
 				}
 
