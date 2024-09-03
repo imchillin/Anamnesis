@@ -312,7 +312,7 @@ public class CharacterFile : JsonFileBase
 						this.Legs?.Write(actor.Equipment?.Legs);
 						break;
 					case ItemSlots.Feet:
-						this.Legs?.Write(actor.Equipment?.Feet);
+						this.Feet?.Write(actor.Equipment?.Feet);
 						break;
 					case ItemSlots.Ears:
 						this.Ears?.Write(actor.Equipment?.Ear);
