@@ -135,6 +135,62 @@ public partial class ItemView : UserControl
 		sender.OnViewModelPropertyChanged(null, null);
 	}
 
+	private void OnOpenInConsoleGamesWikiClicked(object sender, RoutedEventArgs e)
+	{
+		this.OpenItemInFanSiteUrl("https://ffxiv.consolegameswiki.com/wiki/" + this.Item?.Name.Replace(" ", "_"));
+	}
+
+	private void OnOpenInGamerEscapeClicked(object sender, RoutedEventArgs e)
+	{
+		this.OpenItemInFanSiteUrl("https://ffxiv.gamerescape.com/wiki/" + this.Item?.Name.Replace(" ", "_"));
+	}
+
+	private void OnOpenInGarlandToolsClicked(object sender, RoutedEventArgs e)
+	{
+		this.OpenItemInFanSiteUrl("https://www.garlandtools.org/db/#item/" + this.Item?.RowId);
+	}
+
+	private void OpenItemInFanSiteUrl(string url)
+	{
+		if (this.Item == null)
+			return;
+
+		if (this.Item.ModelBase == 0)
+			return;
+
+		UrlUtility.Open(url);
+	}
+
+	private void OnCopyItemNameClicked(object sender, RoutedEventArgs e)
+	{
+		if (this.Item == null)
+			return;
+
+		if (this.Item.ModelBase == 0)
+			return;
+
+		Clipboard.SetText(this.Item.Name);
+	}
+
+	private async void OnResetSlotClicked(object sender, RoutedEventArgs e)
+	{
+		if (this.Actor == null)
+			return;
+
+		if (this.Actor.Pinned == null)
+			return;
+
+		await this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original, this.Slot);
+	}
+
+	private void OnClearSlotClicked(object sender, RoutedEventArgs e)
+	{
+		if (this.Actor?.CanRefresh != true)
+			return;
+
+		this.ItemModel?.Clear(this.Actor.IsHuman);
+	}
+
 	private void OnClick(object sender, RoutedEventArgs e)
 	{
 		if (this.Actor?.CanRefresh != true)

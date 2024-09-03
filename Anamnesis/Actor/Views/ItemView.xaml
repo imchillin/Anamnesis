@@ -69,6 +69,65 @@
 							<TextBlock Text="{Binding Item.Description}" Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
 						</StackPanel>
 					</Grid.ToolTip>
+					<Grid.ContextMenu>
+						<ContextMenu>
+							<!-- Console Games Wiki -->
+							<MenuItem Click="OnOpenInConsoleGamesWikiClicked">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Site_OpenInConsoleGamesWiki"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<Image Source="/Anamnesis;component/Assets/Sites/consolegameswiki.png"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<!-- Gamer Escape -->
+							<MenuItem Click="OnOpenInGamerEscapeClicked">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Site_OpenInGamerEscape"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<Image Source="/Anamnesis;component/Assets/Sites/gamerescape.png"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<!-- Garland Tools -->
+							<MenuItem Click="OnOpenInGarlandToolsClicked">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Site_OpenInGarlandTools"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<Image Source="/Anamnesis;component/Assets/Sites/garlandtools.png"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<Separator/>
+							<!-- Copy Item Name -->
+							<MenuItem Click="OnCopyItemNameClicked">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Item_CopyName"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<Image Source="{Binding Item.Icon, Converter={StaticResource Img}}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<!-- Reset Slot -->
+							<MenuItem Click="OnResetSlotClicked">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Item_ResetSlot"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<fa:IconImage Icon="UndoAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<!-- Clear Slot -->
+							<MenuItem Click="OnClearSlotClicked">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Item_ClearSlot"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+						</ContextMenu>
+					</Grid.ContextMenu>
 
 				</Grid>
 			</Button>

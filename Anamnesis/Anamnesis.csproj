@@ -71,6 +71,9 @@
 		<Resource Include="Assets\Pose\CharMHrothFaceExBackground.png" />
 		<Resource Include="Assets\Pose\CharTailBackground.png" />
 		<Resource Include="Assets\Pose\CharTongueBackground.png" />
+		<Resource Include="Assets\Sites\consolegameswiki.png" />
+		<Resource Include="Assets\Sites\gamerescape.png" />
+		<Resource Include="Assets\Sites\garlandtools.png" />
 		<Resource Include="FodyWeavers.xml" />
 
 		<EmbeddedResource Include="Languages\*.*" />
@@ -94,6 +97,9 @@
 		<None Remove="Assets\Pose\CharMHrothFaceExBackground.png" />
 		<None Remove="Assets\Pose\CharTailBackground.png" />
 		<None Remove="Assets\Pose\CharTongueBackground.png" />
+		<None Remove="Assets\Sites\consolegameswiki.png" />
+		<None Remove="Assets\Sites\gamerescape.png" />
+		<None Remove="Assets\Sites\garlandtools.png" />
 	</ItemGroup>
 
 	<ItemGroup>

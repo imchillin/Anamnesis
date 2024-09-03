@@ -6,6 +6,7 @@ namespace Anamnesis.Files;
 using System;
 using System.Threading.Tasks;
 using Anamnesis.Actor.Utilities;
+using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Serilog;
@@ -25,6 +26,7 @@ public class CharacterFile : JsonFileBase
 		AppearanceFace = 16,
 		AppearanceBody = 32,
 		AppearanceExtended = 64,
+		EquipmentSlot = 128,
 
 		Equipment = EquipmentGear | EquipmentAccessories,
 		Appearance = AppearanceHair | AppearanceFace | AppearanceBody | AppearanceExtended,
@@ -225,7 +227,7 @@ public class CharacterFile : JsonFileBase
 		}
 	}
 
-	public async Task Apply(ActorMemory actor, SaveModes mode, bool allowRefresh = true)
+	public async Task Apply(ActorMemory actor, SaveModes mode, bool allowRefresh = true, ItemSlots? slot = null)
 	{
 		if (this.Tribe == 0)
 			this.Tribe = ActorCustomizeMemory.Tribes.Midlander;
@@ -283,6 +285,54 @@ public class CharacterFile : JsonFileBase
 				this.Wrists?.Write(actor.Equipment?.Wrist);
 				this.RightRing?.Write(actor.Equipment?.RFinger);
 				this.LeftRing?.Write(actor.Equipment?.LFinger);
+			}
+
+			if (mode == SaveModes.EquipmentSlot && slot != null)
+			{
+				switch (slot)
+				{
+					case ItemSlots.MainHand:
+						this.MainHand?.Write(actor.MainHand, true);
+						actor.IsWeaponDirty = true;
+						break;
+					case ItemSlots.OffHand:
+						this.OffHand?.Write(actor.OffHand, false);
+						actor.IsWeaponDirty = true;
+						break;
+					case ItemSlots.Head:
+						this.HeadGear?.Write(actor.Equipment?.Head);
+						break;
+					case ItemSlots.Body:
+						this.Body?.Write(actor.Equipment?.Chest);
+						break;
+					case ItemSlots.Hands:
+						this.Hands?.Write(actor.Equipment?.Arms);
+						break;
+					case ItemSlots.Legs:
+						this.Legs?.Write(actor.Equipment?.Legs);
+						break;
+					case ItemSlots.Feet:
+						this.Legs?.Write(actor.Equipment?.Feet);
+						break;
+					case ItemSlots.Ears:
+						this.Ears?.Write(actor.Equipment?.Ear);
+						break;
+					case ItemSlots.Neck:
+						this.Neck?.Write(actor.Equipment?.Neck);
+						break;
+					case ItemSlots.Wrists:
+						this.Wrists?.Write(actor.Equipment?.Wrist);
+						break;
+					case ItemSlots.LeftRing:
+						this.LeftRing?.Write(actor.Equipment?.LFinger);
+						break;
+					case ItemSlots.RightRing:
+						this.RightRing?.Write(actor.Equipment?.RFinger);
+						break;
+					case ItemSlots.Glasses:
+						this.Glasses?.Write(actor.Glasses);
+						break;
+				}
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceHair, mode))
