@@ -169,7 +169,7 @@
                         </Grid>
 
 
-                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" IsEnabled="{Binding AnimationService.BlendLocked, Converter={StaticResource NotConverter}}" Style="{StaticResource TransparentButton}">
+						<Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="OnBlendAnimation" IsEnabled="{Binding Actor.Animation.BlendLocked, Converter={StaticResource NotConverter}}" Style="{StaticResource TransparentButton}">
                             <XivToolsWpf:TextBlock Key="Character_Action_AnimationBlend"/>
                         </Button>
 
@@ -409,8 +409,7 @@
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
 
-                    <ToggleButton Grid.Row="0" Grid.Column="1" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding PoseService.FreezeWorldPosition}" BorderThickness="1" Padding="0" Margin="0"
-							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+                    <ToggleButton Grid.Row="0" Grid.Column="1" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding PoseService.FreezeWorldPosition}" BorderThickness="1" Padding="0" Margin="0">
 
                         <ToggleButton.ToolTip>
                             <XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>
@@ -424,8 +423,7 @@
 											   Grid.Column="0"
 											   Style="{StaticResource Label}" />
 
-                    <ToggleButton Grid.Row="1" Grid.Column="1" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding AnimationService.SpeedControlEnabled}" BorderThickness="1" Padding="0" Margin="0"
-							  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+                    <ToggleButton Grid.Row="1" Grid.Column="1" Height="20" Style="{StaticResource TransparentIconToggleButton}" IsEnabled="{Binding GposeService.IsGpose}" IsChecked="{Binding AnimationService.SpeedControlEnabled}" BorderThickness="1" Padding="0" Margin="0">
                         <fa:IconBlock Icon="Stopwatch" FontSize="10"/>
                     </ToggleButton>
 
