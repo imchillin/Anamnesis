@@ -253,6 +253,35 @@ public class PoseFile : JsonFileBase
 		PoseService.Instance.CanEdit = true;
 	}
 
+	public bool IsPreDTPoseFile()
+	{
+		if (this.Bones == null)
+			return false;
+
+		// Check to see if we have *any* face bones at all.
+		// If not, then the file is backwards compatibile.
+		bool hasFaceBones = false;
+		foreach((string name, Bone? bone) in this.Bones)
+		{
+			if (name.StartsWith("j_f_"))
+			{
+				hasFaceBones = true;
+				break;
+			}
+		}
+
+		if(!hasFaceBones)
+			return false;
+
+		// Looking for the tongue-A bone, a new bone common to all races and genders added in DT.
+		// If we dont have it, we are assumed to be a pre-DT pose file.
+		// This doesn't account for users manually editing the JSON.
+		if (!this.Bones.ContainsKey("j_f_bero_01"))
+			return true;
+
+		return false;
+	}
+
 	[Serializable]
 	public class Bone
 	{

@@ -143,6 +143,20 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		}
 	}
 
+	public bool HasPreDTFace
+	{
+		get
+		{
+			// We can determine if we have a DT-updated face if we have a tongue bone.
+			// EW faces don't have this bone, where as all updated faces in DT have it.
+			// It would be better to enumerate all of the faces and be more specific.
+			BoneVisual3d? tongueABone = this.GetBone("j_f_bero_01");
+			if (tongueABone == null)
+				return true;
+			return false;
+		}
+	}
+
 	public AnQuaternion RootRotation
 	{
 		get

@@ -253,6 +253,7 @@ public partial class PosePage : UserControl
 	private async void OnImportClicked(object sender, RoutedEventArgs e)
 	{
 		await this.ImportPose(false, PoseFile.Mode.Rotation, true);
+		this.Skeleton?.ClearSelection();
 	}
 
 	private async void OnImportScaleClicked(object sender, RoutedEventArgs e)
@@ -311,6 +312,9 @@ public partial class PosePage : UserControl
 			if (this.Actor == null || this.Skeleton == null)
 				return;
 
+			bool initialFreezeScale = PoseService.Instance.FreezeScale;
+			bool initialFreezePosition = PoseService.Instance.FreezePositions;
+
 			PoseService.Instance.SetEnabled(true);
 			PoseService.Instance.FreezeScale |= mode.HasFlag(PoseFile.Mode.Scale);
 			PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
@@ -342,6 +346,58 @@ public partial class PosePage : UserControl
 			if (result.File is PoseFile poseFile)
 			{
 				HashSet<string>? bones = null;
+
+				// If we are loading the rotation of all bones in a pre-DT pose file, let's not load the face bones.
+				// This acts as if we were loading by body pose, which loads the rotations of just the body bones.
+				if (poseFile.IsPreDTPoseFile() && !selectionOnly && mode == PoseFile.Mode.Rotation)
+				{
+					this.Skeleton.SelectBody();
+					selectionOnly = true;
+				}
+
+				// If we are loading an expression, which is done via selected bones and all three pose modes, we should warn the user if:
+				// We are loading a pre-DT pose file on to a DT-updated face, OR
+				// We are loading a DT pose file on to a non-updated face.
+				// Our entry point is loading by expression, which is done via selected bones and all three pose modes.
+				if (selectionOnly && mode == (PoseFile.Mode.Rotation | PoseFile.Mode.Scale | PoseFile.Mode.Position))
+				{
+					string dialogMsgKey = "Pose_WarningExpresionOldOnNew";
+					bool doPreDtExpressionPoseModeOnOK = false;
+					bool showDialog = true;
+
+					if (poseFile.IsPreDTPoseFile() && !this.Skeleton.HasPreDTFace)
+					{
+						doPreDtExpressionPoseModeOnOK = true;
+					}
+					else if (!poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace)
+					{
+						dialogMsgKey = "Pose_WarningExpresionNewOnOld";
+					}
+					else if (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace)
+					{
+						showDialog = false;
+						doPreDtExpressionPoseModeOnOK = true;
+					}
+
+					if(showDialog)
+					{
+						bool? dialogResult = await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Confirm", MessageBoxButton.OKCancel);
+						if (dialogResult != true)
+						{
+							PoseService.Instance.FreezeScale = initialFreezeScale;
+							PoseService.Instance.FreezePositions = initialFreezePosition;
+							return;
+						}
+					}
+
+					// Prior to DT, we loaded expressions via Rotation and Scale only.
+					if (doPreDtExpressionPoseModeOnOK)
+					{
+						PoseService.Instance.FreezePositions = initialFreezePosition;
+						mode = PoseFile.Mode.Rotation | PoseFile.Mode.Scale;
+					}
+				}
+
 				if (selectionOnly)
 				{
 					bones = new HashSet<string>();
