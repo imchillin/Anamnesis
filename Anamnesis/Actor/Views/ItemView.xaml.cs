@@ -145,6 +145,7 @@ public partial class ItemView : UserControl
 			bool isNormalCategory = this.Item.Category.HasFlag(ItemCategories.None) ||
 									this.Item.Category.HasFlag(ItemCategories.Standard) ||
 									this.Item.Category.HasFlag(ItemCategories.Premium) ||
+									this.Item.Category.HasFlag(ItemCategories.Limited) ||
 									this.Item.Category.HasFlag(ItemCategories.Deprecated);
 			if (!isNormalCategory)
 				return false;
