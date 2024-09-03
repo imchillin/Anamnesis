@@ -34,7 +34,5 @@
 		<local:ItemView Grid.Row="3" Grid.Column="1" ItemModel="{Binding Equipment.Wrist}" Slot="Wrists" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 		<local:ItemView Grid.Row="4" Grid.Column="1" ItemModel="{Binding Equipment.RFinger}" Slot="RightRing" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 		<local:ItemView Grid.Row="5" Grid.Column="1" ItemModel="{Binding Equipment.LFinger}" Slot="LeftRing" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
-
 	</Grid>
-
 </UserControl>

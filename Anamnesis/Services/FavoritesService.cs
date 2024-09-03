@@ -23,40 +23,6 @@ public class FavoritesService : ServiceBase<FavoritesService>
 
 	public Favorites? Current { get; set; }
 
-	public static bool IsFavorite(IItem item)
-	{
-		if (!Exists)
-			return false;
-
-		if (Instance.Current == null)
-			return false;
-
-		return Instance.Current.Items.Contains(item);
-	}
-
-	public static void SetFavorite(IItem item, bool favorite)
-	{
-		if (Instance.Current == null)
-			return;
-
-		bool isFavorite = IsFavorite(item);
-
-		if (favorite == isFavorite)
-			return;
-
-		if (favorite)
-		{
-			Instance.Current.Items.Add(item);
-		}
-		else
-		{
-			Instance.Current.Items.Remove(item);
-		}
-
-		Instance.RaisePropertyChanged(nameof(Favorites.Items));
-		Save();
-	}
-
 	public static bool IsOwned(Item item)
 	{
 		if (Instance.Current == null)
@@ -88,65 +54,38 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		Save();
 	}
 
-	public static bool IsFavorite(IDye item)
+	public static bool IsFavorite<T>(T item)
 	{
-		if (Instance.Current == null)
+		List<T>? curInstCollection = GetInstanceCollection(item);
+
+		if (curInstCollection == null)
 			return false;
 
-		return Instance.Current.Dyes.Contains(item);
+		return curInstCollection.Contains(item);
 	}
 
-	public static void SetFavorite(IDye item, bool favorite)
+	public static void SetFavorite<T>(T item, string favsCollection, bool favorite)
 	{
-		if (Instance.Current == null)
+		List<T>? curInstCollection = GetInstanceCollection<T>(item);
+
+		if (curInstCollection == null)
 			return;
 
-		bool isFavorite = IsFavorite(item);
+		bool isFavorite = IsFavorite<T>(item);
 
 		if (favorite == isFavorite)
 			return;
 
 		if (favorite)
 		{
-			Instance.Current.Dyes.Add(item);
+			curInstCollection.Add(item);
 		}
 		else
 		{
-			Instance.Current.Dyes.Remove(item);
+			curInstCollection.Remove(item);
 		}
 
-		Instance.RaisePropertyChanged(nameof(Favorites.Items));
-		Save();
-	}
-
-	public static bool IsFavorite(INpcBase item)
-	{
-		if (Instance.Current == null)
-			return false;
-
-		return Instance.Current.Models.Contains(item);
-	}
-
-	public static void SetFavorite(INpcBase item, bool favorite)
-	{
-		if (Instance.Current == null)
-			return;
-
-		bool isFavorite = IsFavorite(item);
-
-		if (favorite == isFavorite)
-			return;
-
-		if (favorite)
-		{
-			Instance.Current.Models.Add(item);
-		}
-		else
-		{
-			Instance.Current.Models.Remove(item);
-		}
-
-		Instance.RaisePropertyChanged(nameof(Favorites.Items));
+		Instance.RaisePropertyChanged(favsCollection);
 		Save();
 	}
 
@@ -188,6 +127,33 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		}
 	}
 
+	private static List<T>? GetInstanceCollection<T>(T item)
+	{
+		if (Instance.Current == null)
+			return null;
+
+		if (item is Glasses)
+		{
+			return Instance.Current.Glasses as List<T>;
+		}
+		else if (item is IDye)
+		{
+			return Instance.Current.Dyes as List<T>;
+		}
+		else if (item is INpcBase)
+		{
+			return Instance.Current.Models as List<T>;
+		}
+		else if (item is IItem)
+		{
+			return Instance.Current.Items as List<T>;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	[Serializable]
 	public class Favorites
 	{
@@ -196,5 +162,6 @@ public class FavoritesService : ServiceBase<FavoritesService>
 		public List<Color4> Colors { get; set; } = new List<Color4>();
 		public List<INpcBase> Models { get; set; } = new List<INpcBase>();
 		public List<IItem> Owned { get; set; } = new List<IItem>();
+		public List<Glasses> Glasses { get; set; } = new List<Glasses>();
 	}
 }

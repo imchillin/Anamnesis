@@ -29,8 +29,8 @@ public class ResidentNpc : ExcelRow, INpcBase
 
 	public bool IsFavorite
 	{
-		get => FavoritesService.IsFavorite(this);
-		set => FavoritesService.SetFavorite(this, value);
+		get => FavoritesService.IsFavorite<INpcBase>(this);
+		set => FavoritesService.SetFavorite<INpcBase>(this, nameof(FavoritesService.Favorites.Models), value);
 	}
 
 	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)

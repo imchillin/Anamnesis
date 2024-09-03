@@ -37,6 +37,10 @@ public static class INpcBaseExtensions
 		{
 			t = 'M';
 		}
+		else if (type == typeof(Ornament))
+		{
+			t = 'O';
+		}
 		else
 		{
 			throw new Exception($"Unknown Npc Type: {type}");
@@ -65,6 +69,7 @@ public static class INpcBaseExtensions
 				'E' => GameDataService.EventNPCs.Get(key),
 				'C' => GameDataService.Companions.Get(key),
 				'M' => GameDataService.Mounts.Get(key),
+				'O' => GameDataService.Ornaments.Get(key),
 				_ => throw new Exception($"Unrecognized Npc type key: {t}"),
 			};
 		}

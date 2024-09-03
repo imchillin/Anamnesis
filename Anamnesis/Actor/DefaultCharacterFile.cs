@@ -38,6 +38,7 @@ public static class DefaultCharacterFile
 		Bust = 50,
 		FacePaint = 0,
 		FacePaintColor = 0,
+		Glasses = new CharacterFile.GlassesSave(),
 		MainHand = new CharacterFile.WeaponSave()
 		{
 			Color = Color.Black,

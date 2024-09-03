@@ -85,6 +85,9 @@ public class CharacterFile : JsonFileBase
 	public ItemSave? LeftRing { get; set; }
 	public ItemSave? RightRing { get; set; }
 
+	// glasses
+	public GlassesSave? Glasses { get; set; }
+
 	// extended appearance
 	// NOTE: extended weapon values are stored in the WeaponSave
 	public Color? SkinColor { get; set; }
@@ -141,6 +144,10 @@ public class CharacterFile : JsonFileBase
 
 			if (actor.Equipment?.Feet != null)
 				this.Feet = new ItemSave(actor.Equipment.Feet);
+
+			// glasses - technically on the left side
+			if (actor.Glasses != null)
+				this.Glasses = new GlassesSave(actor.Glasses);
 		}
 
 		if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
@@ -235,6 +242,9 @@ public class CharacterFile : JsonFileBase
 		if (actor.Customize == null)
 			return;
 
+		if (this.Glasses == null)
+			this.Glasses = new GlassesSave();
+
 		Log.Information("Reading appearance from file");
 
 		actor.AutomaticRefreshEnabled = false;
@@ -263,6 +273,7 @@ public class CharacterFile : JsonFileBase
 				this.Hands?.Write(actor.Equipment?.Arms);
 				this.Legs?.Write(actor.Equipment?.Legs);
 				this.Feet?.Write(actor.Equipment?.Feet);
+				this.Glasses?.Write(actor.Glasses);
 			}
 
 			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode))
@@ -510,6 +521,29 @@ public class CharacterFile : JsonFileBase
 			vm.Variant = this.ModelVariant;
 			vm.Dye = this.DyeId;
 			vm.Dye2 = this.DyeId2;
+		}
+	}
+
+	[Serializable]
+	public class GlassesSave
+	{
+		public GlassesSave()
+		{
+			this.GlassesId = 0;
+		}
+
+		public GlassesSave(GlassesMemory from)
+		{
+			this.GlassesId = from.GlassesId;
+		}
+
+		public ushort GlassesId { get; set; }
+
+		public void Write(GlassesMemory? glasses)
+		{
+			if (glasses == null)
+				return;
+			glasses.GlassesId = this.GlassesId;
 		}
 	}
 }

@@ -20,5 +20,7 @@ public enum ItemSlots
 	RightRing,
 	LeftRing,
 
+	Glasses,
+
 	SoulCrystal,
 }

@@ -35,7 +35,7 @@ public static class ItemSlotsExtensions
 		}
 		catch (Exception ex)
 		{
-			throw new Exception($"Failed to get icon for slot: {self}", ex);
+			throw new Exception($"Failed to get icon for slot {self}", ex);
 		}
 	}
 }

@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="Anamnesis.Actor.Views.GlassesItemView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 mc:Ignorable="d"
+			 Margin="0"
+			 Height="32" Width="32"
+             DataContextChanged="OnDataContextChanged">
+
+	<Grid x:Name="ContentArea">
+		<Button 
+			Click="OnClick"
+			MouseUp="OnSlotMouseUp"
+			Style="{DynamicResource TransparentButton}"
+			IsEnabled="{Binding Actor.CanRefresh}">
+			<Grid Background="Transparent">
+				<Image x:Name="SlotIcon" Source="{Binding IconSource}" Margin="2" Opacity="0.5"/>
+				<Grid>
+					<Image Source="{Binding Glasses.Icon, Converter={StaticResource Img}}" Margin="2"  Visibility="{Binding Glasses.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+					<Image Source="/Assets/IconOverlay.png" Margin="2" Visibility="{Binding Glasses.Icon, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+				</Grid>
+			</Grid>
+
+			<Button.ToolTip>
+				<StackPanel>
+					<TextBlock Text="{Binding Glasses.Name}" FontWeight="DemiBold"/>
+					<TextBlock Text="{Binding Glasses.Description}" Visibility="{Binding Glasses.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+				</StackPanel>
+			</Button.ToolTip>
+		</Button>
+
+		<ProgressBar IsIndeterminate="True" Style="{StaticResource MaterialDesignCircularProgressBar}" Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsLoading, Converter={StaticResource B2V}}"/>
+	</Grid>
+</UserControl>

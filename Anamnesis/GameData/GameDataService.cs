@@ -58,6 +58,7 @@ public class GameDataService : ServiceBase<GameDataService>
 	public static ExcelSheet<Emote> Emotes { get; private set; } = null!;
 	public static ExcelSheet<Ornament> Ornaments { get; private set; } = null!;
 	public static ExcelSheet<BuddyEquip> BuddyEquips { get; private set; } = null!;
+	public static ExcelSheet<Glasses> Glasses { get; private set; } = null!;
 
 	public static EquipmentSheet Equipment { get; private set; } = null!;
 
@@ -197,6 +198,7 @@ public class GameDataService : ServiceBase<GameDataService>
 			Emotes = GetSheet<Emote>();
 			Ornaments = GetSheet<Ornament>();
 			BuddyEquips = GetSheet<BuddyEquip>();
+			Glasses = GetSheet<Glasses>();
 		}
 		catch (Exception ex)
 		{

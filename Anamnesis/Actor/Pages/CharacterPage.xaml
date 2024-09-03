@@ -25,6 +25,7 @@
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 
+		<!-- Customize Editor - Actor Appearance Settings -->
 		<Grid
 			Grid.RowSpan="2"
 			Grid.Column="0"
@@ -44,6 +45,7 @@
 
 		</Grid>
 
+		<!-- Equipment Editor - Actor Gear and Accessories Settings -->
 		<GroupBox
 			Grid.Row="0"
 			Grid.Column="1"
@@ -107,16 +109,28 @@
 							Foreground="{DynamicResource MaterialDesignBodyLight}"
 							Icon="Eraser" />
 					</Button>
+
+					<Button
+						Click="OnEmperorsNewGearClicked"
+						Style="{StaticResource TransparentIconButton}">
+
+						<Button.ToolTip>
+							<StackPanel>
+								<XivToolsWpf:TextBlock Key="Character_Equipment_Emperors" />
+							</StackPanel>
+						</Button.ToolTip>
+
+						<fa:IconBlock
+							Foreground="{DynamicResource MaterialDesignBodyLight}"
+							Icon="UserNinja" />
+					</Button>
 				</StackPanel>
 
-				<views:EquipmentEditor
-					Margin="0,0,0,-10"
-					DataContext="{Binding Actor}" />
-
-
+				<views:EquipmentEditor Margin="0,0,0,-10" DataContext="{Binding Actor}" />
 			</Grid>
 		</GroupBox>
 
+		<!-- Warning for making sure the actor can be edited. (Out of GPOSE when not using Brio or Penumbra integrations) -->
 		<XivToolsWpf:InfoControl
 			Key="Character_WarningGpose"
 			Grid.Column="0"
@@ -124,8 +138,8 @@
 			Margin="12"
 			Visibility="{Binding Actor.CanRefresh, Converter={StaticResource !B2V}}" />
 
+		<!-- Other Actor Settings - Incl Subactor (Mount/Minion/FashAcc), Facewear, Extended Appearance -->
 		<Grid Grid.Column="2">
-
 			<Grid.RowDefinitions>
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
@@ -134,114 +148,121 @@
 			</Grid.RowDefinitions>
 
 			<StackPanel>
-
 				<GroupBox Style="{StaticResource PanelGroupBox}">
 					<GroupBox.Header>
 						<XivToolsWpf:Header
 							Key="Character_Actor_Header"
 							Margin="0,0,6,0"
-							Icon="Horse" />
+							Icon="User" />
 					</GroupBox.Header>
 
 					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
-
 						<Grid.RowDefinitions>
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-                            <RowDefinition />
 						</Grid.RowDefinitions>
 
-						<XivToolsWpf:TextBlock
-							Key="Character_Actor_Nickname"
-							Grid.Row="0"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
+						<Grid Grid.Row="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
 
-						<TextBox
-							Grid.Row="0"
-							Grid.Column="1"
-							Grid.ColumnSpan="2"
-							Style="{StaticResource MaterialDesignTextBox}"
-							Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}" />
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
 
-						<XivToolsWpf:TextBlock
-							Key="Character_Actor_Alpha"
-							Grid.Row="4"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-						<XivToolsWpf:NumberBox
-							Grid.Row="4"
-							Grid.Column="1"
-							Maximum="1"
-							Minimum="0.01"
-							Slider="Absolute"
-							TickFrequency="0.1"
-							Value="{Binding Actor.Transparency}" />
+							<XivToolsWpf:TextBlock
+								Key="Character_Actor_Nickname"
+								Grid.Row="0"
+								Grid.Column="0"
+								Style="{StaticResource Label}" />
 
-                        <XivToolsWpf:TextBlock
-							Key="Character_Equipment_Tint"
-							Grid.Row="5"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-                        <anaControls:RgbColorControl Grid.Row="5" Grid.Column="2" Value="{Binding Actor.ModelObject.Tint}"/>
+							<TextBox
+								Grid.Row="0"
+								Grid.Column="1"
+								Grid.ColumnSpan="2"
+								Style="{StaticResource MaterialDesignTextBox}"
+								Text="{Binding Actor.Nickname, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <XivToolsWpf:TextBlock
-							Key="Character_Actor_Voice"
-							Grid.Row="6"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-						<ComboBox
-							Grid.Row="6"
-							Grid.Column="1"
-							IsEnabled="{Binding Actor.IsPlayer}"
-							ItemsSource="{Binding VoiceEntries, Mode=OneTime}"
-							SelectedValue="{Binding Actor.Voice, Mode=TwoWay}"
-							SelectedValuePath="VoiceId">
-							<ComboBox.GroupStyle>
-								<GroupStyle>
-									<GroupStyle.HeaderTemplate>
-										<DataTemplate>
-											<XivToolsWpf:TextBlock
-												Padding="10,5"
-												HorizontalAlignment="Left"
-												FontSize="13"
-												FontStyle="Italic"
-												FontWeight="Bold"
-												Style="{StaticResource Label}"
-												Text="{Binding Name}" />
+							<XivToolsWpf:TextBlock
+								Key="Character_Actor_Alpha"
+								Grid.Row="4"
+								Grid.Column="0"
+								Style="{StaticResource Label}" />
+							<XivToolsWpf:NumberBox
+								Grid.Row="4"
+								Grid.Column="1"
+								Maximum="1"
+								Minimum="0.01"
+								Slider="Absolute"
+								TickFrequency="0.1"
+								Value="{Binding Actor.Transparency}" />
 
-										</DataTemplate>
-									</GroupStyle.HeaderTemplate>
-								</GroupStyle>
-							</ComboBox.GroupStyle>
-							<ComboBox.ItemTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding VoiceName}" />
-								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>
+							<XivToolsWpf:TextBlock
+								Key="Character_Equipment_Tint"
+								Grid.Row="5"
+								Grid.Column="0"
+								Style="{StaticResource Label}" />
+							<anaControls:RgbColorControl Grid.Row="5" Grid.Column="2" Value="{Binding Actor.ModelObject.Tint}"/>
 
+							<XivToolsWpf:TextBlock
+								Key="Character_Actor_Voice"
+								Grid.Row="6"
+								Grid.Column="0"
+								Style="{StaticResource Label}" />
+							<ComboBox
+								Grid.Row="6"
+								Grid.Column="1"
+								IsEnabled="{Binding Actor.IsPlayer}"
+								ItemsSource="{Binding VoiceEntries, Mode=OneTime}"
+								SelectedValue="{Binding Actor.Voice, Mode=TwoWay}"
+								SelectedValuePath="VoiceId">
+								<ComboBox.GroupStyle>
+									<GroupStyle>
+										<GroupStyle.HeaderTemplate>
+											<DataTemplate>
+												<XivToolsWpf:TextBlock
+													Padding="10,5"
+													HorizontalAlignment="Left"
+													FontSize="13"
+													FontStyle="Italic"
+													FontWeight="Bold"
+													Style="{StaticResource Label}"
+													Text="{Binding Name}" />
 
-						<XivToolsWpf:TextBlock
+											</DataTemplate>
+										</GroupStyle.HeaderTemplate>
+									</GroupStyle>
+								</ComboBox.GroupStyle>
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding VoiceName}" />
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+						</Grid>
+
+						<!-- Subactor and Facewear Settings -->
+						<XivToolsWpf:Header
+							Grid.Row="1"
 							Key="SubActor_Title"
-							Grid.Row="7"
-							Grid.Column="0"
-							Style="{StaticResource Label}" />
-
+							Margin="0,0,6,0"
+							Icon="Horse" />
 						<StackPanel
-							Grid.Row="7"
-							Grid.Column="1"
+							Grid.Row="2"
+							Grid.Column="0"
 							Margin="0,6,0,0"
-							Orientation="Horizontal">
+							Orientation="Horizontal"
+							HorizontalAlignment="Center">
 							<views:SubActorEditor
 								Margin="3,0"
 								Actor="{Binding Actor}"
@@ -257,13 +278,16 @@
 								Actor="{Binding Actor}"
 								SubActor="{Binding Actor.Ornament}"
 								SubActorType="Ornament" />
+							<views:GlassesItemView Grid.Column="0" 
+								Margin="3,0"
+							   DataContext="{Binding Actor}"  
+							   GlassesModel="{Binding Glasses}" 
+							   IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 						</StackPanel>
-
-
 					</Grid>
-
 				</GroupBox>
 
+				<!-- Actor Height and Some Model Settings -->
 				<GroupBox
 					Style="{StaticResource PanelGroupBox}"
 					Visibility="{Binding Actor.ModelObject, Converter={StaticResource NotNullToVisibilityConverter}}">
@@ -276,6 +300,7 @@
 					<views:CharacterModelEditor DataContext="{Binding Actor}" />
 				</GroupBox>
 
+				<!-- Extended Appearance Settings -->
 				<GroupBox
 					Style="{StaticResource PanelGroupBox}"
 					Visibility="{Binding Actor.ModelObject.ExtendedAppearance, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
@@ -362,6 +387,7 @@
 				</XivToolsWpf:InfoControl.Visibility>
 			</XivToolsWpf:InfoControl>
 
+			<!-- Import Menus and Reset Button -->
 			<StackPanel
 				Grid.Row="2"
 				Orientation="Vertical">
@@ -468,9 +494,6 @@
 					</MenuItem>
 				</Menu>
 			</StackPanel>
-
-
-
 		</Grid>
 	</Grid>
 </UserControl>

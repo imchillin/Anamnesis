@@ -34,6 +34,8 @@
 	"Target_ConvertHousingNpcToPlayerMessage": "El actor: \"{0}\" parece ser un PNJ humanoide. ¿Quiere cambiarlo por un jugador? Esto es obligadorio para algunos vendedores dentro de casa, pero no todos.",
 	"Target_ConvertCarbuncleToPlayerMessage": "El actor: \"{0}\" parece ser un Acompañante o Mascota. ¿Quiere cambiarlos a un actor editable para permitir posar y cambios de apariencia?",
 
+	"SubActor_Title": "Sub Actores y Lentes",
+
 	"EquipmentSelector_Classes": "Clases / Trabajos",
 	"EquipmentSelector_All": "Todo",
 	"EquipmentSelector_Props": "Props",

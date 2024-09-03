@@ -24,7 +24,14 @@
 				
 				<TextBlock Grid.Column="0" Text="{Binding SlotName}" FontWeight="Light" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
 				<TextBlock Grid.Column="1" Text=":" Margin="0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
-				<TextBlock Grid.Column="2" Text="{Binding Item.Name}" Margin="4, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+				<TextBlock Grid.Column="2" Text="{Binding Item.Name}" Margin="4, 0, 0, 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis">
+					<TextBlock.ToolTip>
+						<StackPanel>
+							<TextBlock Text="{Binding Item.Name}" FontWeight="DemiBold"/>
+							<TextBlock Text="{Binding Item.Description}" Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
+						</StackPanel>
+					</TextBlock.ToolTip>
+				</TextBlock>
 			</Grid>
 		</GroupBox.Header>
 

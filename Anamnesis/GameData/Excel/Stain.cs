@@ -28,8 +28,8 @@ public class Stain : ExcelRow, IDye
 
 	public bool IsFavorite
 	{
-		get => FavoritesService.IsFavorite(this);
-		set => FavoritesService.SetFavorite(this, value);
+		get => FavoritesService.IsFavorite<IDye>(this);
+		set => FavoritesService.SetFavorite<IDye>(this, nameof(FavoritesService.Favorites.Dyes), value);
 	}
 
 	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
