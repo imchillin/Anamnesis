@@ -5,6 +5,7 @@ namespace Anamnesis.Actor.Views;
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -115,6 +116,37 @@ public partial class ItemView : UserControl
 				return true;
 
 			if (this.Item.ModelSet == 0 && this.Item.SubModelSet == 0)
+				return false;
+
+			return true;
+		}
+	}
+
+	public bool IsValidItemForFanSite
+	{
+		get
+		{
+			// Invalid if Item is null.
+			if (this.Item == null)
+				return false;
+
+			// Invalid if we're naked in some way other than Emperor's.
+			ushort[] invalidItems = { 0, 9901, 9903 };
+			if(invalidItems.Contains(this.Item.ModelBase))
+				return false;
+
+			// Invalid if row Id is 0, which would be the case if we have a
+			// set/subset combo which doesn't match an actual item.
+			if(this.Item.RowId == 0)
+				return false;
+
+			// Most items will have the None category. Shop items will be premium, and old items will be deprecated.
+			// If we aren't one of these, then invalid. CustomEquipment is for things like Forum Attire.
+			bool isNormalCategory = this.Item.Category.HasFlag(ItemCategories.None) ||
+									this.Item.Category.HasFlag(ItemCategories.Standard) ||
+									this.Item.Category.HasFlag(ItemCategories.Premium) ||
+									this.Item.Category.HasFlag(ItemCategories.Deprecated);
+			if (!isNormalCategory)
 				return false;
 
 			return true;

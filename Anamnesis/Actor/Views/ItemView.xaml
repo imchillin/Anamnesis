@@ -72,33 +72,33 @@
 					<Grid.ContextMenu>
 						<ContextMenu>
 							<!-- Console Games Wiki -->
-							<MenuItem Click="OnOpenInConsoleGamesWikiClicked">
+							<MenuItem Click="OnOpenInConsoleGamesWikiClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}">
 								<MenuItem.Header>
 									<XivToolsWpf:TextBlock Key="Site_OpenInConsoleGamesWiki"/>
 								</MenuItem.Header>
 								<MenuItem.Icon>
-									<Image Source="/Anamnesis;component/Assets/Sites/consolegameswiki.png"/>
+									<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 								</MenuItem.Icon>
 							</MenuItem>
 							<!-- Gamer Escape -->
-							<MenuItem Click="OnOpenInGamerEscapeClicked">
+							<MenuItem Click="OnOpenInGamerEscapeClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}">
 								<MenuItem.Header>
 									<XivToolsWpf:TextBlock Key="Site_OpenInGamerEscape"/>
 								</MenuItem.Header>
 								<MenuItem.Icon>
-									<Image Source="/Anamnesis;component/Assets/Sites/gamerescape.png"/>
+									<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 								</MenuItem.Icon>
 							</MenuItem>
 							<!-- Garland Tools -->
-							<MenuItem Click="OnOpenInGarlandToolsClicked">
+							<MenuItem Click="OnOpenInGarlandToolsClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}">
 								<MenuItem.Header>
 									<XivToolsWpf:TextBlock Key="Site_OpenInGarlandTools"/>
 								</MenuItem.Header>
 								<MenuItem.Icon>
-									<Image Source="/Anamnesis;component/Assets/Sites/garlandtools.png"/>
+									<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
 								</MenuItem.Icon>
 							</MenuItem>
-							<Separator/>
+							<Separator  Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}"/>
 							<!-- Copy Item Name -->
 							<MenuItem Click="OnCopyItemNameClicked">
 								<MenuItem.Header>
