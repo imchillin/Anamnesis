@@ -367,16 +367,24 @@ public partial class PosePage : UserControl
 
 					if (poseFile.IsPreDTPoseFile() && !this.Skeleton.HasPreDTFace)
 					{
+						// Old pose, and new face. Warn, load as EW expression if OK.
 						doPreDtExpressionPoseModeOnOK = true;
 					}
 					else if (!poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace)
 					{
+						// New pose and old face. Warn, load as DT expression if OK.
 						dialogMsgKey = "Pose_WarningExpresionNewOnOld";
 					}
 					else if (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace)
 					{
+						// Old pose and old face. Don't warn, load as EW expression.
 						showDialog = false;
 						doPreDtExpressionPoseModeOnOK = true;
+					}
+					else
+					{
+						// New pose and new face. Don't warn. Everything is OK.
+						showDialog = false;
 					}
 
 					if(showDialog)
