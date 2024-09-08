@@ -36,7 +36,7 @@ public class CameraShotFile : JsonFileBase
 			actorEuler.Z = 0;
 
 			// First we use the 0 rotation position and rotate it around the actor by it's current rotation in local space
-			Vector3 rotatedRelativePosition = QuaternionExtensions.Multiply(QuaternionExtensions.FromEuler(actorEuler), this.Position);
+			Vector3 rotatedRelativePosition = Vector3.Transform(this.Position, QuaternionExtensions.FromEuler(actorEuler));
 
 			// Adjust camera position to world space
 			camService.GPoseCamera.Position = actor.ModelObject.Transform.Position + rotatedRelativePosition;
@@ -64,9 +64,8 @@ public class CameraShotFile : JsonFileBase
 			Vector3 localRelativePositon = camService.GPoseCamera.Position - actor.ModelObject.Transform.Position;
 
 			// Now we calculate what the position would be if the actor had a 0 rotation
-			Quaternion invertedActorRotation = QuaternionExtensions.FromEuler(actorEuler);
-			invertedActorRotation.Invert();
-			Vector3 rotatedRelativePosition = QuaternionExtensions.Multiply(invertedActorRotation, localRelativePositon);
+			Quaternion invertedActorRotation = Quaternion.Inverse(QuaternionExtensions.FromEuler(actorEuler));
+			Vector3 rotatedRelativePosition = Vector3.Transform(localRelativePositon, invertedActorRotation);
 			this.Position = rotatedRelativePosition;
 
 			// We save the angle of the camera as an offset from the angle of the actor

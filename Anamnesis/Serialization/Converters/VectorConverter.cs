@@ -23,6 +23,6 @@ public class VectorConverter : JsonConverter<Vector3>
 
 	public override void Write(Utf8JsonWriter writer, Vector3 value, JsonSerializerOptions options)
 	{
-		writer.WriteStringValue(value.ToString());
+		writer.WriteStringValue(value.ToInvariantString());
 	}
 }

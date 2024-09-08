@@ -23,6 +23,6 @@ public class QuaternionConverter : JsonConverter<Quaternion>
 
 	public override void Write(Utf8JsonWriter writer, Quaternion value, JsonSerializerOptions options)
 	{
-		writer.WriteStringValue(value.ToString());
+		writer.WriteStringValue(value.ToInvariantString());
 	}
 }

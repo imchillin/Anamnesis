@@ -454,7 +454,7 @@ public partial class QuaternionEditor : UserControl
 			if (this.Active == null)
 				return;
 
-			CmVector angleDelta = VectorExtensions.Multiply(this.Active.Axis, (float)delta);
+			CmVector angleDelta = CmVector.Multiply(this.Active.Axis, (float)delta);
 			this.ApplyDelta(angleDelta);
 		}
 
@@ -582,7 +582,7 @@ public partial class QuaternionEditor : UserControl
 					if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
 						speed = 0.5f;
 
-					return VectorExtensions.Multiply(this.Axis, (float)(angle * speed));
+					return CmVector.Multiply(this.Axis, (float)(angle * speed));
 				}
 			}
 			else
@@ -612,7 +612,7 @@ public partial class QuaternionEditor : UserControl
 					if (Math.Abs(distPos) > Math.Abs(distNeg))
 						dist = distPos;
 
-					return VectorExtensions.Multiply(this.Axis, (float)(-dist * speed));
+					return CmVector.Multiply(this.Axis, (float)(-dist * speed));
 				}
 			}
 		}
