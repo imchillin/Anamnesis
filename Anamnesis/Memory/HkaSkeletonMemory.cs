@@ -7,9 +7,9 @@ using System;
 
 public class HkaSkeletonMemory : MemoryBase
 {
-	[Bind(0x010, BindFlags.Pointer)] public Utf8String Name { get; set; }
-	[Bind(0x018)] public ParentingArrayMemory? ParentIndices { get; set; }
-	[Bind(0x028)] public BoneArrayMemory? Bones { get; set; }
+	[Bind(0x010, BindFlags.Pointer | BindFlags.DontCacheOffsets)] public Utf8String Name { get; set; }
+	[Bind(0x018, BindFlags.DontCacheOffsets)] public ParentingArrayMemory? ParentIndices { get; set; }
+	[Bind(0x028, BindFlags.DontCacheOffsets)] public BoneArrayMemory? Bones { get; set; }
 
 	public class ParentingArrayMemory : HkaArrayMemory<short>
 	{
@@ -29,7 +29,7 @@ public class HkaSkeletonMemory : MemoryBase
 
 	public class HkaBone : MemoryBase
 	{
-		[Bind(0x000, BindFlags.Pointer)] public Utf8String Name { get; set; }
+		[Bind(0x000, BindFlags.Pointer | BindFlags.DontCacheOffsets)] public Utf8String Name { get; set; }
 
 		public override void SetAddress(IntPtr address)
 		{

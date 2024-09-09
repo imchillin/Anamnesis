@@ -8,8 +8,8 @@ using Anamnesis.Services;
 
 public class HkaPoseMemory : MemoryBase
 {
-	[Bind(0x000, BindFlags.Pointer)] public HkaSkeletonMemory? Skeleton { get; set; }
-	[Bind(0x010)] public TransformArrayMemory? Transforms { get; set; }
+	[Bind(0x000, BindFlags.Pointer | BindFlags.DontCacheOffsets)] public HkaSkeletonMemory? Skeleton { get; set; }
+	[Bind(0x010, BindFlags.DontCacheOffsets)] public TransformArrayMemory? Transforms { get; set; }
 
 	protected override void HandlePropertyChanged(PropertyChange change)
 	{
