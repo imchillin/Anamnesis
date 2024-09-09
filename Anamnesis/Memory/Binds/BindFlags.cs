@@ -3,6 +3,9 @@
 
 namespace Anamnesis.Memory;
 
+/// <summary>
+/// Flags used to specify binding behaviors in memory operations.
+/// </summary>
 public enum BindFlags
 {
 	None = 0,
