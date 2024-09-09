@@ -502,7 +502,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	public async Task SetActor(ActorMemory actor)
 	{
 		if (this.Actor != null && this.Actor.ModelObject?.Transform != null)
-			this.Actor.ModelObject.Transform.PropertyChanged += this.OnTransformPropertyChanged;
+			this.Actor.ModelObject.Transform.PropertyChanged -= this.OnTransformPropertyChanged;
 
 		this.Actor = actor;
 
@@ -584,12 +584,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 				bone.ReadTransform();
 			}
 
-			foreach ((string name, BoneVisual3d bone) in this.Bones)
-			{
-				bone.ReadTransform();
-			}
-
-			// check for ivcs bones
+			// Check for ivcs bones
 			this.IsIVCS = false;
 			foreach ((string name, BoneVisual3d bone) in this.Bones)
 			{
