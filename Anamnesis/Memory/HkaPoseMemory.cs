@@ -9,7 +9,7 @@ using Anamnesis.Services;
 public class HkaPoseMemory : MemoryBase
 {
 	[Bind(0x000, BindFlags.Pointer | BindFlags.DontCacheOffsets)] public HkaSkeletonMemory? Skeleton { get; set; }
-	[Bind(0x010, BindFlags.DontCacheOffsets)] public TransformArrayMemory? Transforms { get; set; }
+	[Bind(0x018, BindFlags.DontCacheOffsets)] public TransformArrayMemory? Transforms { get; set; }
 
 	protected override void HandlePropertyChanged(PropertyChange change)
 	{
@@ -31,8 +31,8 @@ public class HkaPoseMemory : MemoryBase
 
 	public class TransformArrayMemory : ArrayMemory<TransformMemory, int>
 	{
-		public override int CountOffset => 0x000;
-		public override int AddressOffset => 0x008;
+		public override int AddressOffset => 0x000;
+		public override int CountOffset => 0x008;
 		public override int ElementSize => 0x030;
 	}
 }

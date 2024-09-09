@@ -9,7 +9,7 @@ using PropertyChanged;
 [AddINotifyPropertyChangedInterface]
 public class AnimationMemory : MemoryBase
 {
-	public const int AnimationSlotCount = 13;
+	public const int AnimationSlotCount = 14;
 
 	private bool linkSpeeds = true;
 
@@ -30,8 +30,8 @@ public class AnimationMemory : MemoryBase
 	[Bind(0x0E0)] public AnimationIdArrayMemory? AnimationIds { get; set; }
 	[Bind(0x154)] public AnimationSpeedArrayMemory? Speeds { get; set; }
 	[Bind(0x1E2)] public byte SpeedTrigger { get; set; }
-	[Bind(0x2D0)] public ushort BaseOverride { get; set; }
-	[Bind(0x2D2)] public ushort LipsOverride { get; set; }
+	[Bind(0x2E0)] public ushort BaseOverride { get; set; }
+	[Bind(0x2E2)] public ushort LipsOverride { get; set; }
 
 	public bool BlendLocked { get; set; } = false;
 

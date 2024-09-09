@@ -2,9 +2,6 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Memory;
-
-using System;
-
 public class HkaSkeletonMemory : MemoryBase
 {
 	[Bind(0x010, BindFlags.Pointer | BindFlags.DontCacheOffsets)] public Utf8String Name { get; set; }
@@ -13,12 +10,12 @@ public class HkaSkeletonMemory : MemoryBase
 
 	public class ParentingArrayMemory : HkaArrayMemory<short>
 	{
-		public override int ElementSize => 2;
+		public override int ElementSize => 0x002;
 	}
 
 	public class BoneArrayMemory : HkaArrayMemory<HkaBone>
 	{
-		public override int ElementSize => 16;
+		public override int ElementSize => 0x010;
 	}
 
 	public abstract class HkaArrayMemory<T> : ArrayMemory<T, int>
@@ -30,10 +27,5 @@ public class HkaSkeletonMemory : MemoryBase
 	public class HkaBone : MemoryBase
 	{
 		[Bind(0x000, BindFlags.Pointer | BindFlags.DontCacheOffsets)] public Utf8String Name { get; set; }
-
-		public override void SetAddress(IntPtr address)
-		{
-			base.SetAddress(address);
-		}
 	}
 }
