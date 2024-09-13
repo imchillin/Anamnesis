@@ -165,7 +165,7 @@ public class PoseFile : JsonFileBase
 			if (headBone == null)
 				throw new Exception("Unable to find head (j_kao) bone.");
 
-			headBone.Tick();
+			headBone.Synchronize();
 			originalHeadRotation = headBone?.Rotation;
 			originalHeadPosition = headBone?.Position;
 		}
@@ -249,7 +249,7 @@ public class PoseFile : JsonFileBase
 
 		await Task.Delay(100);
 
-		skeletonMem.Tick();
+		skeletonMem.Synchronize();
 
 		PoseService.Instance.CanEdit = true;
 	}

@@ -370,7 +370,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			return null;
 
 		// only show actors that have atleast one partial skeleton
-		if (this.Actor.ModelObject.Skeleton.Count <= 0)
+		if (this.Actor.ModelObject.Skeleton.Length <= 0)
 			return null;
 
 		string? modernName = LegacyBoneNameConverter.GetModernName(name);
@@ -475,7 +475,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			if (this.GetIsBoneSelected(bone))
 				continue;
 
-			bone.Tick();
+			bone.Synchronize();
 			bone.ReadTransform();
 		}
 	}
@@ -619,7 +619,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 
 	private void AddBones(SkeletonMemory skeleton, string? namePrefix = null)
 	{
-		for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeleton.ItemCount; partialSkeletonIndex++)
+		for (int partialSkeletonIndex = 0; partialSkeletonIndex < skeleton.Length; partialSkeletonIndex++)
 		{
 			PartialSkeletonMemory partialSkeleton = skeleton[partialSkeletonIndex];
 
@@ -631,7 +631,7 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 				continue;
 			}
 
-			int count = bestHkaPose.Transforms.Count;
+			int count = bestHkaPose.Transforms.Length;
 
 			// Load all bones first
 			for (int boneIndex = partialSkeletonIndex == 0 ? 0 : 1; boneIndex < count; boneIndex++)

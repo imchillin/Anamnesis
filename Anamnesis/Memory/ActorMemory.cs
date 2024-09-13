@@ -6,12 +6,14 @@ namespace Anamnesis.Memory;
 using Anamnesis.Utils;
 using PropertyChanged;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 public class ActorMemory : ActorBasicMemory
 {
 	private readonly FuncQueue refreshQueue;
 	private readonly FuncQueue backupQueue;
+	private int isRefreshing = 0;
 
 	public ActorMemory()
 	{
@@ -70,7 +72,12 @@ public class ActorMemory : ActorBasicMemory
 	public History History { get; private set; } = new();
 
 	public bool AutomaticRefreshEnabled { get; set; } = true;
-	public bool IsRefreshing { get; set; } = false;
+	public bool IsRefreshing
+	{
+		get => Interlocked.CompareExchange(ref this.isRefreshing, 0, 0) == 1;
+		set => Interlocked.Exchange(ref this.isRefreshing, value ? 1 : 0);
+	}
+
 	public bool IsWeaponDirty { get; set; } = false;
 	public bool PendingRefresh => this.refreshQueue.Pending;
 
@@ -142,7 +149,7 @@ public class ActorMemory : ActorBasicMemory
 		this.refreshQueue.Invoke();
 	}
 
-	public override void Tick()
+	public override void Synchronize()
 	{
 		this.History.Tick();
 
@@ -151,7 +158,7 @@ public class ActorMemory : ActorBasicMemory
 		if (this.IsRefreshing || this.PendingRefresh)
 			return;
 
-		base.Tick();
+		base.Synchronize();
 	}
 
 	/// <summary>

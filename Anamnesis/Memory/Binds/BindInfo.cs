@@ -92,11 +92,6 @@ public abstract class BindInfo
 	public IntPtr? LastFailureAddress { get; set; }
 
 	/// <summary>
-	/// Gets a value indicating whether this bind is for child memory.
-	/// </summary>
-	public bool IsChildMemory => typeof(MemoryBase).IsAssignableFrom(this.Type);
-
-	/// <summary>
 	/// Gets the address of the bind.
 	/// </summary>
 	/// <returns>The address of the bind.</returns>

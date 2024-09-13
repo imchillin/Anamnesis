@@ -3,11 +3,11 @@
 
 namespace Anamnesis;
 
-using System;
-using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using Anamnesis.Services;
+using System;
+using System.Threading.Tasks;
 
 public class CameraService : ServiceBase<CameraService>
 {
@@ -76,12 +76,14 @@ public class CameraService : ServiceBase<CameraService>
 				}
 				else
 				{
+					// Ensure the gpose camera is synced by calling Synchronize after SetAddress
 					this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
-					this.GPoseCamera.Tick();
+					this.GPoseCamera.Synchronize();
 				}
 
+				// Ensure the camera is synced by calling Synchronize after SetAddress
 				this.Camera.SetAddress(AddressService.Camera);
-				this.Camera.Tick();
+				this.Camera.Synchronize();
 			}
 			catch (Exception ex)
 			{

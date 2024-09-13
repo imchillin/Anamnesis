@@ -434,7 +434,8 @@ public class CharacterFile : JsonFileBase
 
 			// Setting customize values will reset the extended appearance, which me must read.
 			actor.EnableReading = true;
-			actor.Tick();
+			actor.Synchronize();
+			actor.EnableReading = false;
 		}
 
 		Log.Verbose("Begin reading Extended Appearance from file");

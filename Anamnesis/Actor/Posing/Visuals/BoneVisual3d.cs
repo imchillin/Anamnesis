@@ -224,11 +224,11 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 		this.parent = null;
 	}
 
-	public virtual void Tick()
+	public virtual void Synchronize()
 	{
 		foreach (TransformMemory transformMemory in this.TransformMemories)
 		{
-			transformMemory.Tick();
+			transformMemory.Synchronize();
 		}
 	}
 

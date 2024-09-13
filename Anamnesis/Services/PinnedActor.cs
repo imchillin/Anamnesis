@@ -163,7 +163,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			try
 			{
-				this.Memory.Tick();
+				this.Memory.Synchronize();
 			}
 			catch (Exception ex)
 			{
