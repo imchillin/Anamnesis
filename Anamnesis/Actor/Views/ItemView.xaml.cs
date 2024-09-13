@@ -17,6 +17,7 @@ using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
+using Anamnesis.Utils;
 using PropertyChanged;
 using Serilog;
 using XivToolsWpf;
@@ -153,6 +154,20 @@ public partial class ItemView : UserControl
 		}
 	}
 
+	public bool IsValidItemForCopy
+	{
+		get
+		{
+			if (this.Item == null)
+				return false;
+
+			if(this.Item.ModelBase == 0)
+				return false;
+
+			return true;
+		}
+	}
+
 	private static void OnItemModelChanged(ItemView sender, IEquipmentItemMemory? value)
 	{
 		if (sender.ItemModel != null)
@@ -193,7 +208,7 @@ public partial class ItemView : UserControl
 		UrlUtility.Open(url);
 	}
 
-	private void OnCopyItemNameClicked(object sender, RoutedEventArgs e)
+	private async void OnCopyItemNameClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Item == null)
 			return;
@@ -201,7 +216,14 @@ public partial class ItemView : UserControl
 		if (this.Item.ModelBase == 0)
 			return;
 
-		Clipboard.SetText(this.Item.Name);
+		try
+		{
+			await ClipboardUtility.CopyToClipboardAsync(this.Item.Name);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Error copying item name to clipboard after 3 attempts.");
+		}
 	}
 
 	private async void OnResetSlotClicked(object sender, RoutedEventArgs e)

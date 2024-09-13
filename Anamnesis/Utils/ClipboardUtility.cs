@@ -37,6 +37,6 @@ public static class ClipboardUtility
 				await Task.Delay(1);
 			}
 		}
-		while (attempt > 0 && !success);
+		while (--attempt > 0 && !success);
 	}
 }

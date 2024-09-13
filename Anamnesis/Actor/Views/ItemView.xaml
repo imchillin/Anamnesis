@@ -100,7 +100,7 @@
 							</MenuItem>
 							<Separator  Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}"/>
 							<!-- Copy Item Name -->
-							<MenuItem Click="OnCopyItemNameClicked">
+							<MenuItem Click="OnCopyItemNameClicked" Visibility="{Binding IsValidItemForCopy, Converter={StaticResource B2V}}">
 								<MenuItem.Header>
 									<XivToolsWpf:TextBlock Key="Item_CopyName"/>
 								</MenuItem.Header>
