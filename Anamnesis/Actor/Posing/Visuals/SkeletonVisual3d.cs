@@ -20,7 +20,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 using XivToolsWpf;
-using AnQuaternion = Anamnesis.Memory.Quaternion;
+using XivToolsWpf.Math3D.Extensions;
+using AnQuaternion = System.Numerics.Quaternion;
 
 [AddINotifyPropertyChangedInterface]
 public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged

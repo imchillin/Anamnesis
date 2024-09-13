@@ -298,8 +298,7 @@
 
 							<CheckBox Margin="3,0,6,0"
 									  IsEnabled="{Binding GposeService.IsGpose}"
-									  IsChecked="{Binding PoseService.FreezeWorldPosition}"
-									  Visibility="{Binding IsValidWeapon, Converter={StaticResource B2V}}">
+									  IsChecked="{Binding PoseService.FreezeWorldPosition}">
 
 								<ToggleButton.ToolTip>
 									<XivToolsWpf:TextBlock Key="Character_Action_GlobalFreezeWorldPositionsTooltip"/>

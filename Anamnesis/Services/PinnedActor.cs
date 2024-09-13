@@ -3,10 +3,6 @@
 
 namespace Anamnesis;
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Anamnesis.Actor;
 using Anamnesis.Files;
 using Anamnesis.GameData;
@@ -16,6 +12,10 @@ using Anamnesis.Styles;
 using FontAwesome.Sharp;
 using PropertyChanged;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using XivToolsWpf.Extensions;
 
 [AddINotifyPropertyChangedInterface]
@@ -147,7 +147,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 				return;
 			}
 
-			if (this.IsGPoseActor && GposeService.Instance.IsOverworld)
+			if (this.IsGPoseActor && !GposeService.Instance.IsGpose)
 			{
 				Log.Information($"Actor: {this} was a gpose actor and we are now in the overworld");
 				this.Retarget();

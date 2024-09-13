@@ -3,11 +3,13 @@
 
 namespace Anamnesis.Memory;
 
+using System.Numerics;
+
 public class TransformMemory : MemoryBase, ITransform
 {
-	[Bind(0x000)] public Vector Position { get; set; }
+	[Bind(0x000)] public Vector3 Position { get; set; }
 	[Bind(0x010)] public Quaternion Rotation { get; set; }
-	[Bind(0x020)] public Vector Scale { get; set; }
+	[Bind(0x020)] public Vector3 Scale { get; set; }
 
 	public bool CanTranslate => true;
 	public bool CanRotate => true;

@@ -3,10 +3,11 @@
 
 namespace Anamnesis.Files;
 
-using System;
-using System.IO;
 using Anamnesis.Memory;
 using Anamnesis.Serialization;
+using System;
+using System.IO;
+using System.Numerics;
 using static Anamnesis.Memory.ActorCustomizeMemory;
 
 public class CmToolLegacyAppearanceFile : JsonFileBase, IUpgradeCharacterFile
@@ -265,12 +266,12 @@ public class CmToolLegacyAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 		return c;
 	}
 
-	private Vector? GetVector(CmToolAppearanceFile.Entry? x, CmToolAppearanceFile.Entry? y, CmToolAppearanceFile.Entry? z)
+	private Vector3? GetVector(CmToolAppearanceFile.Entry? x, CmToolAppearanceFile.Entry? y, CmToolAppearanceFile.Entry? z)
 	{
 		if (x == null || y == null || z == null)
 			return null;
 
-		Vector v = default;
+		Vector3 v = default;
 		v.X = (float)x.value;
 		v.Y = (float)y.value;
 		v.Z = (float)z.value;

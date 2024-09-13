@@ -3,14 +3,15 @@
 
 namespace Anamnesis.Files;
 
+using Anamnesis.Actor;
+using Anamnesis.Memory;
+using Anamnesis.Posing;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Threading.Tasks;
-using Anamnesis.Memory;
-using Anamnesis.Actor;
-using Anamnesis.Posing;
-using Serilog;
 
 public class PoseFile : JsonFileBase
 {
@@ -36,9 +37,9 @@ public class PoseFile : JsonFileBase
 	public override string FileExtension => ".pose";
 	public override string TypeName => "Anamnesis Pose";
 
-	public Vector? Position { get; set; }
+	public Vector3? Position { get; set; }
 	public Quaternion? Rotation { get; set; }
-	public Vector? Scale { get; set; }
+	public Vector3? Scale { get; set; }
 
 	public Dictionary<string, Bone?>? Bones { get; set; }
 
@@ -128,7 +129,7 @@ public class PoseFile : JsonFileBase
 		if (bones == null)
 		{
 			if (mode.HasFlag(Mode.WorldScale) && this.Scale != null)
-				actor.ModelObject.Transform.Scale = (Vector)this.Scale;
+				actor.ModelObject.Transform.Scale = (Vector3)this.Scale;
 
 			if (mode.HasFlag(Mode.WorldRotation) && this.Rotation != null)
 				actor.ModelObject.Transform.Rotation = (Quaternion)this.Rotation;
@@ -158,7 +159,7 @@ public class PoseFile : JsonFileBase
 		// in the case of posing by selected bones or by body.
 		BoneVisual3d? headBone = skeleton.GetBone("j_kao");
 		Quaternion? originalHeadRotation = null;
-		Vector? originalHeadPosition = null;
+		Vector3? originalHeadPosition = null;
 		if (doFacialExpressionHack && bones != null && bones.Contains("j_kao"))
 		{
 			if (headBone == null)
@@ -205,7 +206,7 @@ public class PoseFile : JsonFileBase
 				{
 					if (savedBone.Position != null && mode.HasFlag(Mode.Position) && bone.CanTranslate)
 					{
-						transformMemory.Position = (Vector)savedBone.Position;
+						transformMemory.Position = (Vector3)savedBone.Position;
 					}
 
 					if (savedBone.Rotation != null && mode.HasFlag(Mode.Rotation) && bone.CanRotate)
@@ -215,7 +216,7 @@ public class PoseFile : JsonFileBase
 
 					if (savedBone.Scale != null && mode.HasFlag(Mode.Scale) && bone.CanScale)
 					{
-						transformMemory.Scale = (Vector)savedBone.Scale;
+						transformMemory.Scale = (Vector3)savedBone.Scale;
 					}
 				}
 
@@ -230,7 +231,7 @@ public class PoseFile : JsonFileBase
 		if (headBone != null && originalHeadRotation != null && originalHeadPosition != null)
 		{
 			headBone.Rotation = (Quaternion)originalHeadRotation;
-			headBone.Position = (Vector)originalHeadPosition;
+			headBone.Position = (Vector3)originalHeadPosition;
 			headBone.WriteTransform(skeleton, true);
 		}
 
@@ -261,7 +262,7 @@ public class PoseFile : JsonFileBase
 		// Check to see if we have *any* face bones at all.
 		// If not, then the file is backwards compatibile.
 		bool hasFaceBones = false;
-		foreach((string name, Bone? bone) in this.Bones)
+		foreach ((string name, Bone? bone) in this.Bones)
 		{
 			if (name.StartsWith("j_f_"))
 			{
@@ -270,7 +271,7 @@ public class PoseFile : JsonFileBase
 			}
 		}
 
-		if(!hasFaceBones)
+		if (!hasFaceBones)
 			return false;
 
 		// Looking for the tongue-A bone, a new bone common to all races and genders added in DT.
@@ -296,8 +297,8 @@ public class PoseFile : JsonFileBase
 			this.Scale = boneVisual.TransformMemory.Scale;
 		}
 
-		public Vector? Position { get; set; }
+		public Vector3? Position { get; set; }
 		public Quaternion? Rotation { get; set; }
-		public Vector? Scale { get; set; }
+		public Vector3? Scale { get; set; }
 	}
 }

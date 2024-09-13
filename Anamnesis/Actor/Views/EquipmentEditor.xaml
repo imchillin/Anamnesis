@@ -4,8 +4,13 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
+			 xmlns:converters="clr-namespace:Anamnesis.Actor.Converters"
 			 mc:Ignorable="d"
 			 d:DesignHeight="600">
+
+	<UserControl.Resources>
+		<converters:ExtendedWeaponToSubModelConverter x:Key="ExtendedWeaponToSubModelConverter"/>
+	</UserControl.Resources>
 
 	<Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
@@ -22,7 +27,7 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 
-		<local:ItemView Grid.Row="0" Grid.Column="0" ItemModel="{Binding MainHand}" ExtendedViewModel="{Binding ModelObject.Weapons}"  Slot="MainHand" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
+		<local:ItemView Grid.Row="0" Grid.Column="0" ItemModel="{Binding MainHand}" ExtendedViewModel="{Binding ModelObject.Weapons, Converter={StaticResource ExtendedWeaponToSubModelConverter}}" Slot="MainHand" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 		<local:ItemView Grid.Row="0" Grid.Column="1" ItemModel="{Binding OffHand}" ExtendedViewModel="{Binding ModelObject.Weapons.SubModel}" Slot="OffHand" IsEnabled="{Binding IsChocobo, Converter={StaticResource !B}}"/>
 		<local:ItemView Grid.Row="1" Grid.Column="0" ItemModel="{Binding Equipment.Head}" Slot="Head"/>
 		<local:ItemView Grid.Row="2" Grid.Column="0" ItemModel="{Binding Equipment.Chest}" Slot="Body" />
