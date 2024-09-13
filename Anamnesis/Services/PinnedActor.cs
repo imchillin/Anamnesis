@@ -5,6 +5,7 @@ namespace Anamnesis;
 
 using Anamnesis.Actor;
 using Anamnesis.Files;
+using Anamnesis.GameData;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles;
@@ -199,7 +200,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		}
 	}
 
-	public async Task RestoreCharacterBackup(BackupModes mode)
+	public async Task RestoreCharacterBackup(BackupModes mode, ItemSlots? slot = null)
 	{
 		CharacterFile? backup = null;
 
@@ -225,7 +226,15 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		this.isRestoringBackup = true;
 
 		bool allowRefresh = !GposeService.GetIsGPose();
-		await backup.Apply(memory, CharacterFile.SaveModes.All, allowRefresh);
+
+		if(slot == null)
+		{
+			await backup.Apply(memory, CharacterFile.SaveModes.All, allowRefresh);
+		}
+		else
+		{
+			await backup.Apply(memory, CharacterFile.SaveModes.EquipmentSlot, allowRefresh, slot);
+		}
 
 		// If we were a player, really make sure we are again.
 		if (allowRefresh && backup.ObjectKind == ActorTypes.Player)

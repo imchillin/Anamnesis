@@ -808,6 +808,14 @@
 	"Item_InvisibleHead": "Invisible",
 	"Item_InvisibleHeadDesc": "Turns your head invisible",
 
+	"Item_CopyName": "Copy Item Name to Clipboard",
+	"Item_ResetSlot": "Reset Slot",
+	"Item_ClearSlot": "Clear Slot",
+
+	"Site_OpenInConsoleGamesWiki": "Open in Console Games Wiki",
+	"Site_OpenInGamerEscape": "Open in Gamer Escape",
+	"Site_OpenInGarlandTools": "Open in Garland Tools",
+
 	"Help_Title": "Help",
 	"Help_Tip": "Visit the Wiki",
 

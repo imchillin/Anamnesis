@@ -69,6 +69,65 @@
 							<TextBlock Text="{Binding Item.Description}" Visibility="{Binding Item.Description, Converter={StaticResource StringHasContentToVisibility}}" />
 						</StackPanel>
 					</Grid.ToolTip>
+					<Grid.ContextMenu>
+						<ContextMenu>
+							<!-- Console Games Wiki -->
+							<MenuItem Click="OnOpenInConsoleGamesWikiClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Site_OpenInConsoleGamesWiki"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<!-- Gamer Escape -->
+							<MenuItem Click="OnOpenInGamerEscapeClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Site_OpenInGamerEscape"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<!-- Garland Tools -->
+							<MenuItem Click="OnOpenInGarlandToolsClicked" Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Site_OpenInGarlandTools"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<fa:IconImage Icon="ExternalLinkAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<Separator  Visibility="{Binding IsValidItemForFanSite, Converter={StaticResource B2V}}"/>
+							<!-- Copy Item Name -->
+							<MenuItem Click="OnCopyItemNameClicked" Visibility="{Binding IsValidItemForCopy, Converter={StaticResource B2V}}">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Item_CopyName"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<Image Source="{Binding Item.Icon, Converter={StaticResource Img}}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<!-- Reset Slot -->
+							<MenuItem Click="OnResetSlotClicked">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Item_ResetSlot"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<fa:IconImage Icon="UndoAlt" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<!-- Clear Slot -->
+							<MenuItem Click="OnClearSlotClicked">
+								<MenuItem.Header>
+									<XivToolsWpf:TextBlock Key="Item_ClearSlot"/>
+								</MenuItem.Header>
+								<MenuItem.Icon>
+									<fa:IconImage Icon="Circle" Foreground="{StaticResource PrimaryHueMidBrush}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+						</ContextMenu>
+					</Grid.ContextMenu>
 
 				</Grid>
 			</Button>

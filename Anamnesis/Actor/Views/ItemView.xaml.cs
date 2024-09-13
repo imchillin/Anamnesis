@@ -5,6 +5,7 @@ namespace Anamnesis.Actor.Views;
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
+using Anamnesis.Utils;
 using PropertyChanged;
 using Serilog;
 using XivToolsWpf;
@@ -121,6 +123,51 @@ public partial class ItemView : UserControl
 		}
 	}
 
+	public bool IsValidItemForFanSite
+	{
+		get
+		{
+			// Invalid if Item is null.
+			if (this.Item == null)
+				return false;
+
+			// Invalid if we're naked in some way other than Emperor's.
+			ushort[] invalidItems = { 0, 9901, 9903 };
+			if(invalidItems.Contains(this.Item.ModelBase))
+				return false;
+
+			// Invalid if row Id is 0, which would be the case if we have a
+			// set/subset combo which doesn't match an actual item.
+			if(this.Item.RowId == 0)
+				return false;
+
+			// Most items will have the None category. Shop items will be premium, and old items will be deprecated.
+			// If we aren't one of these, then invalid. CustomEquipment is for things like Forum Attire.
+			bool isNormalCategory = this.Item.Category.HasFlag(ItemCategories.None) ||
+									this.Item.Category.HasFlag(ItemCategories.Standard) ||
+									this.Item.Category.HasFlag(ItemCategories.Premium) ||
+									this.Item.Category.HasFlag(ItemCategories.Limited);
+			if (!isNormalCategory)
+				return false;
+
+			return true;
+		}
+	}
+
+	public bool IsValidItemForCopy
+	{
+		get
+		{
+			if (this.Item == null)
+				return false;
+
+			if(this.Item.ModelBase == 0)
+				return false;
+
+			return true;
+		}
+	}
+
 	private static void OnItemModelChanged(ItemView sender, IEquipmentItemMemory? value)
 	{
 		if (sender.ItemModel != null)
@@ -133,6 +180,69 @@ public partial class ItemView : UserControl
 		sender.ItemModel.PropertyChanged += sender.OnViewModelPropertyChanged;
 
 		sender.OnViewModelPropertyChanged(null, null);
+	}
+
+	private void OnOpenInConsoleGamesWikiClicked(object sender, RoutedEventArgs e)
+	{
+		this.OpenItemInFanSiteUrl("https://ffxiv.consolegameswiki.com/wiki/" + this.Item?.Name.Replace(" ", "_"));
+	}
+
+	private void OnOpenInGamerEscapeClicked(object sender, RoutedEventArgs e)
+	{
+		this.OpenItemInFanSiteUrl("https://ffxiv.gamerescape.com/wiki/" + this.Item?.Name.Replace(" ", "_"));
+	}
+
+	private void OnOpenInGarlandToolsClicked(object sender, RoutedEventArgs e)
+	{
+		this.OpenItemInFanSiteUrl("https://www.garlandtools.org/db/#item/" + this.Item?.RowId);
+	}
+
+	private void OpenItemInFanSiteUrl(string url)
+	{
+		if (this.Item == null)
+			return;
+
+		if (this.Item.ModelBase == 0)
+			return;
+
+		UrlUtility.Open(url);
+	}
+
+	private async void OnCopyItemNameClicked(object sender, RoutedEventArgs e)
+	{
+		if (this.Item == null)
+			return;
+
+		if (this.Item.ModelBase == 0)
+			return;
+
+		try
+		{
+			await ClipboardUtility.CopyToClipboardAsync(this.Item.Name);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Error copying item name to clipboard after 3 attempts.");
+		}
+	}
+
+	private async void OnResetSlotClicked(object sender, RoutedEventArgs e)
+	{
+		if (this.Actor == null)
+			return;
+
+		if (this.Actor.Pinned == null)
+			return;
+
+		await this.Actor.Pinned.RestoreCharacterBackup(PinnedActor.BackupModes.Original, this.Slot);
+	}
+
+	private void OnClearSlotClicked(object sender, RoutedEventArgs e)
+	{
+		if (this.Actor?.CanRefresh != true)
+			return;
+
+		this.ItemModel?.Clear(this.Actor.IsHuman);
 	}
 
 	private void OnClick(object sender, RoutedEventArgs e)
