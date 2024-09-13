@@ -3,12 +3,12 @@
 
 namespace Anamnesis.Posing.Visuals;
 
+using Anamnesis.Actor;
+using Anamnesis.Actor.Views;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using Anamnesis.Actor;
-using Anamnesis.Actor.Views;
-using XivToolsWpf.Meida3D;
+using XivToolsWpf.Math3D;
 
 public class BoneTargetVisual3d : ModelVisual3D, IDisposable
 {

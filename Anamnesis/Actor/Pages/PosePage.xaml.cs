@@ -20,7 +20,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 using XivToolsWpf;
-using CmQuaternion = Anamnesis.Memory.Quaternion;
+using XivToolsWpf.Math3D.Extensions;
+using CmQuaternion = System.Numerics.Quaternion;
 
 /// <summary>
 /// Interaction logic for CharacterPoseView.xaml.

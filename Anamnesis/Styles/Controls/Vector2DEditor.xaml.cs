@@ -3,10 +3,10 @@
 
 namespace Anamnesis.Styles.Controls;
 
-using System.ComponentModel;
-using System.Windows.Controls;
-using Anamnesis.Memory;
 using PropertyChanged;
+using System.ComponentModel;
+using System.Numerics;
+using System.Windows.Controls;
 using XivToolsWpf.DependencyProperties;
 
 /// <summary>
@@ -15,7 +15,7 @@ using XivToolsWpf.DependencyProperties;
 public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 {
 	public static readonly IBind<bool> ExpandedDp = Binder.Register<bool, Vector2DEditor>(nameof(Expanded));
-	public static readonly IBind<Vector2D> ValueDp = Binder.Register<Vector2D, Vector2DEditor>(nameof(Value), OnValueChanged);
+	public static readonly IBind<Vector2> ValueDp = Binder.Register<Vector2, Vector2DEditor>(nameof(Value), OnValueChanged);
 	public static readonly IBind<double> TickFrequencyDp = Binder.Register<double, Vector2DEditor>(nameof(TickFrequency));
 	public static readonly IBind<bool> WrapDp = Binder.Register<bool, Vector2DEditor>(nameof(Wrap));
 
@@ -37,7 +37,7 @@ public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 		set => ExpandedDp.Set(this, value);
 	}
 
-	public Vector2D Value
+	public Vector2 Value
 	{
 		get => ValueDp.Get(this);
 		set => ValueDp.Set(this, value);
@@ -66,7 +66,7 @@ public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 
 		set
 		{
-			this.Value = new Vector2D(value, this.Y);
+			this.Value = new Vector2(value, this.Y);
 		}
 	}
 
@@ -81,11 +81,11 @@ public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 
 		set
 		{
-			this.Value = new Vector2D(this.X, value);
+			this.Value = new Vector2(this.X, value);
 		}
 	}
 
-	private static void OnValueChanged(Vector2DEditor sender, Vector2D value)
+	private static void OnValueChanged(Vector2DEditor sender, Vector2 value)
 	{
 		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditor.X)));
 		sender.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(Vector2DEditor.Y)));

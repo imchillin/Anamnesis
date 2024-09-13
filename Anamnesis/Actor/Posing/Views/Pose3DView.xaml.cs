@@ -3,6 +3,8 @@
 
 namespace Anamnesis.Actor.Views;
 
+using PropertyChanged;
+using Serilog;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -10,9 +12,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
-using PropertyChanged;
-using Serilog;
 using XivToolsWpf;
+using XivToolsWpf.Math3D.Extensions;
 using Colors = System.Windows.Media.Colors;
 
 /// <summary>
@@ -36,7 +37,7 @@ public partial class Pose3DView : UserControl
 
 		this.CameraRotaion = new RotateTransform3D();
 		QuaternionRotation3D camRot = new QuaternionRotation3D();
-		camRot.Quaternion = CameraService.Instance.Camera?.Rotation3d ?? Quaternion.Identity;
+		camRot.Quaternion = CameraService.Instance.Camera?.Rotation3d.ToMedia3DQuaternion() ?? Quaternion.Identity;
 		this.CameraRotaion.Rotation = camRot;
 		this.CameraPosition = new TranslateTransform3D();
 		Transform3DGroup transformGroup = new Transform3DGroup();
@@ -184,7 +185,7 @@ public partial class Pose3DView : UserControl
 				this.Skeleton.ReadTranforms();
 
 				// TODO: allow the user to rotate camera with the mouse instead
-				this.CameraRotation = CameraService.Instance.Camera.Rotation3d;
+				this.CameraRotation = CameraService.Instance.Camera.Rotation3d.ToMedia3DQuaternion();
 
 				// Apply camera rotation
 				QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotaion.Rotation;

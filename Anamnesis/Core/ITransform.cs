@@ -3,10 +3,12 @@
 
 namespace Anamnesis.Memory;
 
+using System.Numerics;
+
 public interface ITransform
 {
 	bool CanTranslate { get; }
-	Vector Position { get; set; }
+	Vector3 Position { get; set; }
 
 	bool CanRotate { get; }
 	public Quaternion Rotation { get; set; }
@@ -14,5 +16,5 @@ public interface ITransform
 	bool CanScale { get; }
 	bool CanLinkScale { get; }
 	bool ScaleLinked { get; }
-	public Vector Scale { get; set; }
+	public Vector3 Scale { get; set; }
 }

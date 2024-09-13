@@ -6,11 +6,10 @@ namespace Anamnesis.Files;
 using Anamnesis.Actor;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
+using System.Numerics;
 using System.Threading.Tasks;
 
 [Serializable]
@@ -50,7 +49,7 @@ public class SceneFile : JsonFileBase
 
 		// First up, ensure we have the actors mapped
 		Dictionary<string, ActorMemory?> actors = new();
-		foreach((string name, ActorEntry entry) in this.ActorEntries)
+		foreach ((string name, ActorEntry entry) in this.ActorEntries)
 		{
 			actors.Add(name, GetPinnedActor(name));
 		}
@@ -109,17 +108,16 @@ public class SceneFile : JsonFileBase
 			rootActor.ModelObject!.Transform!.Rotation = rootActorEntry.Rotation;
 		}
 
-		Vector rootPosition = rootActor!.ModelObject!.Transform!.Position;
-		Quaternion rootRotation = rootActor!.ModelObject!.Transform!.Rotation;
-		Quaternion invertedRootRotation = rootRotation;
-		invertedRootRotation.Invert();
+		Vector3 rootPosition = rootActor!.ModelObject!.Transform!.Position;
+		Quaternion rootRotation = new Quaternion(0, 0, 0, 1) * rootActorEntry.Rotation;
+		rootActor.ModelObject!.Transform!.Rotation = rootRotation;
 
 		// Adjust for waist
 		SkeletonVisual3d rootSkeleton = new();
 		await rootSkeleton.SetActor(rootActor);
-		Vector rootOriginalWaist = rootActorEntry.Pose?.Bones?["n_hara"]?.Position ?? Vector.Zero;
-		Vector rootCurrentWaist = rootSkeleton.GetBone("n_hara")?.Position ?? Vector.Zero;
-		Vector rootAdjustedWaist = rootRotation * (rootCurrentWaist - rootOriginalWaist);
+		Vector3 rootOriginalWaist = rootActorEntry.Pose?.Bones?["n_hara"]?.Position ?? Vector3.Zero;
+		Vector3 rootCurrentWaist = rootSkeleton.GetBone("n_hara")?.Position ?? Vector3.Zero;
+		Vector3 rootAdjustedWaist = Vector3.Transform(rootCurrentWaist - rootOriginalWaist, rootRotation);
 
 		if (mode.HasFlag(Mode.WorldPosition))
 		{
@@ -136,16 +134,16 @@ public class SceneFile : JsonFileBase
 
 			ActorEntry entry = this.ActorEntries[name];
 
-			if (name != this.RootActorName && mode.HasFlag(Mode.RelativePosition))
+			if (actor != rootActor && mode.HasFlag(Mode.RelativePosition))
 			{
 				Quaternion rotatedRotation = rootRotation * entry.Rotation;
-				Vector rotatedRelativePosition = rootRotation * entry.Position;
 
-				Vector originalWaist = entry.Pose?.Bones?["n_hara"]?.Position ?? Vector.Zero;
-				Vector currentWaist = rootSkeleton.GetBone("n_hara")?.Position ?? Vector.Zero;
-				Vector adjustedWaist = rotatedRotation * (currentWaist - originalWaist);
+				Vector3 originalWaist = entry.Pose?.Bones?["n_hara"]?.Position ?? Vector3.Zero;
+				Vector3 currentWaist = rootSkeleton.GetBone("n_hara")?.Position ?? Vector3.Zero;
+				Vector3 adjustedWaist = Vector3.Transform(currentWaist - originalWaist, rotatedRotation);
 
-				actor.ModelObject!.Transform!.Position = (rootPosition + rotatedRelativePosition) - adjustedWaist;
+				Vector3 rotatedRelativePosition = Vector3.Transform(entry.Position, rootRotation);
+				actor.ModelObject!.Transform!.Position = rootPosition + rotatedRelativePosition - adjustedWaist;
 				actor.ModelObject!.Transform!.Rotation = rotatedRotation;
 
 				if (!mode.HasFlag(Mode.WorldPosition))
@@ -173,16 +171,16 @@ public class SceneFile : JsonFileBase
 		this.DayOfMonth = TimeService.Instance.DayOfMonth;
 		this.TimeOfDay = TimeService.Instance.TimeOfDay;
 
-		if(TargetService.Instance.PinnedActors.Where(i => !i.IsValid || i.Memory?.ModelObject == null).Any())
+		if (TargetService.Instance.PinnedActors.Where(i => !i.IsValid || i.Memory?.ModelObject == null).Any())
 			throw new Exception("All pinned actors must be valid and have a model");
 
 		List<ActorMemory> actors = TargetService.Instance.PinnedActors.Select(i => i.Memory!).ToList();
 
+		if (actors.Count == 0)
+			throw new Exception("No pinned actors found");
+
 		ActorMemory rootActor = actors[0];
 		this.RootActorName = rootActor.DisplayName;
-
-		Vector rootPosition = rootActor!.ModelObject!.Transform!.Position;
-		Quaternion rootRotation = rootActor!.ModelObject!.Transform!.Rotation;
 
 		PinnedActor? targetActor = TargetService.GetPlayerTarget();
 		if (targetActor == null || !targetActor.IsValid || targetActor.Memory == null)
@@ -195,18 +193,19 @@ public class SceneFile : JsonFileBase
 
 		this.ActorEntries = new();
 
-		Quaternion invertedRootRotation = rootRotation;
-		invertedRootRotation.Invert();
+		Vector3 rootPosition = rootActor!.ModelObject!.Transform!.Position;
+		Quaternion rootRotation = rootActor!.ModelObject!.Transform!.Rotation;
+		Quaternion invertedRootRotation = Quaternion.Inverse(rootRotation);
 
 		foreach (ActorMemory actor in actors)
 		{
-			Vector actorPosition = actor.ModelObject!.Transform!.Position;
-			Vector actorScale = actor.ModelObject!.Transform!.Scale;
+			Vector3 actorPosition = actor.ModelObject!.Transform!.Position;
+			Vector3 actorScale = actor.ModelObject!.Transform!.Scale;
 			Quaternion actorRotation = actor.ModelObject!.Transform!.Rotation;
 
-			Vector relativePosition = actorPosition - rootPosition;
+			Vector3 relativePosition = actorPosition - rootPosition;
 
-			Vector rotatedRelativePosition = invertedRootRotation * relativePosition;
+			Vector3 rotatedRelativePosition = Vector3.Transform(relativePosition, invertedRootRotation);
 			Quaternion rotatedRelativeRotation = invertedRootRotation * actorRotation;
 
 			CharacterFile characterFile = new();
@@ -261,8 +260,8 @@ public class SceneFile : JsonFileBase
 
 	public class ActorEntry
 	{
-		public Vector Position { get; set; }
-		public Vector Scale { get; set; }
+		public Vector3 Position { get; set; }
+		public Vector3 Scale { get; set; }
 		public Quaternion Rotation { get; set; }
 		public CharacterFile? Appearance { get; set; }
 		public PoseFile? Pose { get; set; }

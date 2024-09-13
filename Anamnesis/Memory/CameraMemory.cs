@@ -3,9 +3,10 @@
 
 namespace Anamnesis.Memory;
 
-using System.Windows.Media.Media3D;
 using PropertyChanged;
-using XivToolsWpf.Meida3D;
+using System.Numerics;
+using XivToolsWpf.Math3D;
+using XivToolsWpf.Math3D.Extensions;
 
 public class CameraMemory : MemoryBase
 {
@@ -13,31 +14,31 @@ public class CameraMemory : MemoryBase
 	[Bind(0x118)] public float MinZoom { get; set; }
 	[Bind(0x11C)] public float MaxZoom { get; set; }
 	[Bind(0x12C)] public float FieldOfView { get; set; }
-	[Bind(0x130)] public Vector2D Angle { get; set; }
+	[Bind(0x130)] public Vector2 Angle { get; set; }
 	[Bind(0x14C)] public float YMin { get; set; }
 	[Bind(0x148)] public float YMax { get; set; }
-	[Bind(0x150)] public Vector2D Pan { get; set; }
+	[Bind(0x150)] public Vector2 Pan { get; set; }
 	[Bind(0x160)] public float Rotation { get; set; }
 
 	[AlsoNotifyFor(nameof(CameraMemory.Angle), nameof(CameraMemory.Rotation))]
-	public System.Windows.Media.Media3D.Quaternion Rotation3d
+	public Quaternion Rotation3d
 	{
 		get
 		{
-			Vector3D camEuler = default;
+			Vector3 camEuler = default;
 			camEuler.Y = (float)MathUtils.RadiansToDegrees((double)this.Angle.X) - 180;
 			camEuler.Z = (float)-MathUtils.RadiansToDegrees((double)this.Angle.Y);
 			camEuler.X = (float)MathUtils.RadiansToDegrees((double)this.Rotation);
-			return camEuler.ToQuaternion();
+			return QuaternionExtensions.FromEuler(camEuler);
 		}
 	}
 
 	[AlsoNotifyFor(nameof(CameraMemory.Angle), nameof(CameraMemory.Rotation))]
-	public Vector3D Euler
+	public Vector3 Euler
 	{
 		get
 		{
-			Vector3D camEuler = default;
+			Vector3 camEuler = default;
 			camEuler.Y = (float)MathUtils.RadiansToDegrees((double)this.Angle.X);
 			camEuler.Z = (float)MathUtils.RadiansToDegrees((double)this.Angle.Y);
 			camEuler.X = (float)MathUtils.RadiansToDegrees((double)this.Rotation);
@@ -49,7 +50,7 @@ public class CameraMemory : MemoryBase
 			this.Rotation = (float)MathUtils.DegreesToRadians(value.X);
 			var angleX = (float)MathUtils.DegreesToRadians(value.Y);
 			var angleY = (float)MathUtils.DegreesToRadians(value.Z);
-			this.Angle = new Vector2D(angleX, angleY);
+			this.Angle = new Vector2(angleX, angleY);
 		}
 	}
 

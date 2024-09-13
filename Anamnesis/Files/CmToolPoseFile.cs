@@ -3,12 +3,13 @@
 
 namespace Anamnesis.Files;
 
+using Anamnesis.Memory;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Numerics;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Anamnesis.Memory;
 
 public class CmToolPoseFile : JsonFileBase
 {
@@ -518,7 +519,7 @@ public class CmToolPoseFile : JsonFileBase
 		{
 			byte[] data = StringToByteArray(scale);
 
-			Vector value = default;
+			Vector3 value = default;
 			value.X = BitConverter.ToSingle(data, 0);
 			value.Y = BitConverter.ToSingle(data, 4);
 			value.Z = BitConverter.ToSingle(data, 8);

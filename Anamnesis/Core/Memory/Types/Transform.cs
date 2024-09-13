@@ -3,17 +3,18 @@
 
 namespace Anamnesis.Memory;
 
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Explicit)]
 public struct Transform
 {
 	[FieldOffset(0x00)]
-	public Vector Position;
+	public Vector3 Position;
 
 	[FieldOffset(0x10)]
 	public Quaternion Rotation;
 
 	[FieldOffset(0x20)]
-	public Vector Scale;
+	public Vector3 Scale;
 }

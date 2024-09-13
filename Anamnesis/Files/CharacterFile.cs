@@ -3,12 +3,13 @@
 
 namespace Anamnesis.Files;
 
-using System;
-using System.Threading.Tasks;
 using Anamnesis.Actor.Utilities;
-using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Serilog;
+using System;
+using System.Numerics;
+using System.Threading.Tasks;
+using XivToolsWpf.Math3D.Extensions;
 
 [Serializable]
 public class CharacterFile : JsonFileBase
@@ -99,7 +100,7 @@ public class CharacterFile : JsonFileBase
 	public Color? HairGloss { get; set; }
 	public Color? HairHighlight { get; set; }
 	public Color4? MouthColor { get; set; }
-	public Vector? BustScale { get; set; }
+	public Vector3? BustScale { get; set; }
 	public float? Transparency { get; set; }
 	public float? MuscleTone { get; set; }
 	public float? HeightMultiplier { get; set; }
@@ -414,7 +415,7 @@ public class CharacterFile : JsonFileBase
 				if (Float.IsValid(this.HeightMultiplier))
 					actor.ModelObject.Height = this.HeightMultiplier ?? actor.ModelObject.Height;
 
-				if (actor.ModelObject.Bust?.Scale != null && Vector.IsValid(this.BustScale))
+				if (actor.ModelObject.Bust?.Scale != null && this.BustScale.IsValid())
 				{
 					actor.ModelObject.Bust.Scale = this.BustScale ?? actor.ModelObject.Bust.Scale;
 				}
@@ -449,7 +450,7 @@ public class CharacterFile : JsonFileBase
 		}
 
 		public Color Color { get; set; }
-		public Vector Scale { get; set; }
+		public Vector3 Scale { get; set; }
 		public ushort ModelSet { get; set; }
 		public ushort ModelBase { get; set; }
 		public ushort ModelVariant { get; set; }

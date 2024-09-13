@@ -3,9 +3,10 @@
 
 namespace Anamnesis.Files;
 
+using Anamnesis.Memory;
 using System;
 using System.Globalization;
-using Anamnesis.Memory;
+using System.Numerics;
 
 #pragma warning disable IDE1006, SA1300
 public class CmToolAppearanceFile : JsonFileBase, IUpgradeCharacterFile
@@ -180,7 +181,7 @@ public class CmToolAppearanceFile : JsonFileBase, IUpgradeCharacterFile
 			item.ModelBase = this.Item2;
 			item.ModelVariant = (byte)this.Item3;
 			item.DyeId = (byte)this.Item4;
-			item.Scale = Vector.One;
+			item.Scale = Vector3.One;
 			item.Color = Color.White;
 			return item;
 		}

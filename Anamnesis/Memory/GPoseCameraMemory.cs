@@ -3,7 +3,9 @@
 
 namespace Anamnesis.Memory;
 
+using System.Numerics;
+
 public class GPoseCameraMemory : MemoryBase
 {
-	[Bind(0x10)] public Vector Position { get; set; }
+	[Bind(0x10)] public Vector3 Position { get; set; }
 }
