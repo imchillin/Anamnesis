@@ -3,18 +3,17 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.GameData.Excel;
+using Anamnesis.GameData.Sheets;
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Anamnesis.GameData.Excel;
-using Anamnesis.GameData.Sheets;
-using Anamnesis.Memory;
-using Anamnesis.Services;
-using PropertyChanged;
-
 using AnAppearance = Anamnesis.Memory.ActorCustomizeMemory;
 
 /// <summary>
@@ -249,18 +248,11 @@ public partial class CustomizeEditor : UserControl
 		if (race == null || this.Customize == null)
 			return;
 
-		// did we change?
 		if (race == this.Race)
 			return;
 
-		if (race.CustomizeRace == AnAppearance.Races.Hrothgar)
-			this.Customize.Gender = AnAppearance.Genders.Masculine;
-
 		// reset age when chaing race
 		this.Customize.Age = AnAppearance.Ages.Normal;
-
-		if (this.Race == race)
-			return;
 
 		this.appearanceLocked = true;
 
