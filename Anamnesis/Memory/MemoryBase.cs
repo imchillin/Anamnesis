@@ -345,6 +345,10 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		{
 			this.ReleaseLocks();
 		}
+
+		// Sync object immediately after writing to memory to
+		// ensure that the latest state is propagated to the application.
+		this.Synchronize();
 	}
 
 	/// <summary>
