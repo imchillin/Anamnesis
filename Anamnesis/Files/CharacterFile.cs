@@ -5,7 +5,6 @@ namespace Anamnesis.Files;
 
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
-using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Serilog;
 using System;
@@ -229,7 +228,7 @@ public class CharacterFile : JsonFileBase
 		}
 	}
 
-	public async Task Apply(ActorMemory actor, SaveModes mode, bool allowRefresh = true, ItemSlots? slot = null)
+	public async Task Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
 	{
 		if (this.Tribe == 0)
 			this.Tribe = ActorCustomizeMemory.Tribes.Midlander;
@@ -427,10 +426,7 @@ public class CharacterFile : JsonFileBase
 					actor.Customize.Bust = (byte)this.Bust;
 			}
 
-			if (allowRefresh)
-			{
-				await actor.RefreshAsync();
-			}
+			await actor.RefreshAsync();
 
 			// Setting customize values will reset the extended appearance, which me must read.
 			actor.EnableReading = true;
