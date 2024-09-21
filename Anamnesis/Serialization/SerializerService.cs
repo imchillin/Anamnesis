@@ -3,11 +3,11 @@
 
 namespace Anamnesis.Serialization;
 
+using Anamnesis.Serialization.Converters;
 using System;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Anamnesis.Serialization.Converters;
 
 public class SerializerService : ServiceBase<SerializerService>
 {
@@ -26,7 +26,8 @@ public class SerializerService : ServiceBase<SerializerService>
 		Options.Converters.Add(new Color4Converter());
 		Options.Converters.Add(new ColorConverter());
 		Options.Converters.Add(new QuaternionConverter());
-		Options.Converters.Add(new VectorConverter());
+		Options.Converters.Add(new Vector2Converter());
+		Options.Converters.Add(new Vector3Converter());
 		Options.Converters.Add(new IItemConverter());
 		Options.Converters.Add(new IDyeConverter());
 		Options.Converters.Add(new ItemCategoriesConverter());
