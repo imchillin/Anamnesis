@@ -13,6 +13,11 @@ public class AnimationMemory : MemoryBase
 
 	private bool linkSpeeds = true;
 
+	public AnimationMemory()
+	{
+		this.PropertyChanged += this.HandlePropertyChanged;
+	}
+
 	public enum AnimationSlots : int
 	{
 		FullBody = 0,
@@ -48,21 +53,25 @@ public class AnimationMemory : MemoryBase
 		}
 	}
 
-	protected override void HandlePropertyChanged(PropertyChange change)
+	private void HandlePropertyChanged(object? sender, MemObjPropertyChangedEventArgs e)
 	{
 		// Update all speeds if linked
-		if (this.LinkSpeeds && AnimationService.Instance.SpeedControlEnabled && change.Origin == PropertyChange.Origins.User && change.TopPropertyName == nameof(this.Speeds) && change.BindPath[1].Name == "0")
+		if (this.LinkSpeeds && AnimationService.Instance.SpeedControlEnabled &&
+			e.Context.Origin == PropertyChange.Origins.User &&
+			e.Context.TopPropertyName == nameof(this.Speeds) &&
+			e.Context.BindPath[1].Name == "0" &&
+			e.Context.OriginBind.LastValue != null)
 		{
-			this.ApplyAnimationLink((float)change.NewValue!);
+			this.ApplyAnimationLink((float)e.Context.OriginBind.LastValue);
 		}
 
 		// We need to flip a flag (the engine will flip it back) to apply it
-		if (AnimationService.Instance.SpeedControlEnabled && change.Origin == PropertyChange.Origins.User && change.TopPropertyName == nameof(this.Speeds))
+		if (AnimationService.Instance.SpeedControlEnabled &&
+			e.Context.Origin == PropertyChange.Origins.User &&
+			e.Context.TopPropertyName == nameof(this.Speeds))
 		{
 			this.SpeedTrigger = 1;
 		}
-
-		base.HandlePropertyChanged(change);
 	}
 
 	private void ApplyAnimationLink(float value)

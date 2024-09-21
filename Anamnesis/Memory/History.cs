@@ -3,13 +3,13 @@
 
 namespace Anamnesis.Memory;
 
+using PropertyChanged;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
-using PropertyChanged;
-using Serilog;
 using XivToolsWpf;
 
 [AddINotifyPropertyChangedInterface]
@@ -137,7 +137,7 @@ public class History
 				PropertyChange change = this.changes[i];
 				if (change.OriginBind is PropertyBindInfo propertyBind)
 				{
-					propertyBind.Property.SetValue(propertyBind.Memory, change.OldValue);
+					// propertyBind.Property.SetValue(propertyBind.Memory, change.OldValue);
 				}
 			}
 		}
@@ -193,7 +193,8 @@ public class History
 				else
 				{
 					PropertyChange existingChange = flattenedChanges[change.OriginBind];
-					existingChange.NewValue = change.NewValue;
+
+					// existingChange.NewValue = change.NewValue;
 					flattenedChanges[change.OriginBind] = existingChange;
 				}
 			}

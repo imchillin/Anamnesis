@@ -388,7 +388,7 @@ public partial class PosePage : UserControl
 						showDialog = false;
 					}
 
-					if(showDialog)
+					if (showDialog)
 					{
 						bool? dialogResult = await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Confirm", MessageBoxButton.OKCancel);
 						if (dialogResult != true)

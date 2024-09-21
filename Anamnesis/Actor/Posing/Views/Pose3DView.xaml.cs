@@ -182,7 +182,8 @@ public partial class Pose3DView : UserControl
 				if (this.Skeleton == null || CameraService.Instance.Camera == null)
 					continue;
 
-				this.Skeleton.ReadTranforms();
+				// TODO: Determine if this is actually the fix or not
+				// this.Skeleton.ReadTranforms(); <- Potential cause of all the positioning issues?
 
 				// TODO: allow the user to rotate camera with the mouse instead
 				this.CameraRotation = CameraService.Instance.Camera.Rotation3d.ToMedia3DQuaternion();

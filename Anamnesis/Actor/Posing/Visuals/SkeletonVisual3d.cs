@@ -172,7 +172,6 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	{
 		this.ClearSelection();
 		this.ClearBones();
-		this.HoverBones.Clear();
 		this.Children.Clear();
 	}
 

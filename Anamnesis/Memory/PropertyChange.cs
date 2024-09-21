@@ -11,22 +11,15 @@ public struct PropertyChange
 	public readonly List<BindInfo> BindPath;
 	public readonly Origins Origin;
 
-	public object? OldValue;
-	public object? NewValue;
 	public string? Name;
 
 	private string path;
 
-	public PropertyChange(BindInfo bind, object? oldValue, object? newValue, Origins origin)
+	public PropertyChange(BindInfo bind, Origins origin)
 	{
-		this.BindPath = new();
-		this.BindPath.Add(bind);
-
-		this.OldValue = oldValue;
-		this.NewValue = newValue;
+		this.BindPath = new() { bind };
 
 		this.path = bind.Path;
-
 		this.Origin = origin;
 		this.Name = null;
 	}
@@ -36,11 +29,7 @@ public struct PropertyChange
 		this.BindPath = new();
 		this.BindPath.AddRange(other.BindPath);
 
-		this.OldValue = other.OldValue;
-		this.NewValue = other.NewValue;
-
 		this.path = other.path;
-
 		this.Origin = other.Origin;
 		this.Name = other.Name;
 	}
@@ -53,11 +42,10 @@ public struct PropertyChange
 	}
 
 	public readonly BindInfo OriginBind => this.BindPath[0];
+	public readonly string TerminalPropertyName => this.BindPath[0].Name;
+	public readonly string TopPropertyName => this.BindPath.Last().Name;
 
-	public string TerminalPropertyName => this.BindPath[0].Name;
-	public string TopPropertyName => this.BindPath.Last().Name;
-
-	public bool ShouldRecord()
+	public readonly bool ShouldRecord()
 	{
 		// Don't record changes that originate anywhere other than the user interface.
 		if (this.Origin != Origins.User)
@@ -76,10 +64,5 @@ public struct PropertyChange
 	{
 		this.BindPath.Add(bind);
 		this.path = bind.Path + this.path;
-	}
-
-	public override string ToString()
-	{
-		return $"{this.path}: {this.OldValue} -> {this.NewValue}";
 	}
 }

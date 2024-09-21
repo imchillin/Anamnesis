@@ -230,6 +230,11 @@ public class CharacterFile : JsonFileBase
 
 	public async Task Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
 	{
+		await Task.Run(() => this.ApplyInternal(actor, mode, slot));
+	}
+
+	public void ApplyInternal(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
+	{
 		if (this.Tribe == 0)
 			this.Tribe = ActorCustomizeMemory.Tribes.Midlander;
 
@@ -249,8 +254,6 @@ public class CharacterFile : JsonFileBase
 			this.Glasses = new GlassesSave();
 
 		Log.Information("Reading appearance from file");
-
-		actor.AutomaticRefreshEnabled = false;
 
 		if (actor.CanRefresh)
 		{
@@ -426,8 +429,6 @@ public class CharacterFile : JsonFileBase
 					actor.Customize.Bust = (byte)this.Bust;
 			}
 
-			await actor.RefreshAsync();
-
 			// Setting customize values will reset the extended appearance, which me must read.
 			actor.EnableReading = true;
 			actor.Synchronize();
@@ -470,7 +471,6 @@ public class CharacterFile : JsonFileBase
 			}
 		}
 
-		actor.AutomaticRefreshEnabled = true;
 		actor.EnableReading = true;
 
 		Log.Information("Finished reading appearance from file");

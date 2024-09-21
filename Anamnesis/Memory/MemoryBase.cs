@@ -11,7 +11,19 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
+
+public class MemObjPropertyChangedEventArgs : PropertyChangedEventArgs
+{
+	public MemObjPropertyChangedEventArgs(string propertyName, PropertyChange context)
+		: base(propertyName)
+	{
+		this.Context = context;
+	}
+
+	public PropertyChange Context { get; }
+}
 
 /// <summary>
 /// Represents the base class for memory operations, providing mechanisms for reading
@@ -21,6 +33,15 @@ using System.Threading;
 [AddINotifyPropertyChangedInterface]
 public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 {
+	/// <summary>
+	/// A thread-local variable that determines whether property notifications should be suppressed.
+	/// </summary>
+	/// <remarks>
+	/// This is intended to be used to update properties while synchronization is taking place on
+	/// a thread, without supressing property notifications for the rest of the application.
+	/// </remarks>
+	protected readonly ThreadLocal<bool> suppressPropNotifications = new(() => false);
+
 	/// <summary>List of child memory objects.</summary>
 	protected readonly List<MemoryBase> Children = new();
 
@@ -57,7 +78,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			this.Binds.Add(property.Name, new PropertyBindInfo(this, property, attribute));
 		}
 
-		this.PropertyChanged += this.OnSelfPropertyChanged;
+		this.InternalPropertyChanged += this.OnSelfPropertyChanged;
 	}
 
 	/// <summary>
@@ -71,8 +92,22 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		this.Dispose(false);
 	}
 
+	public event EventHandler<MemObjPropertyChangedEventArgs>? PropertyChanged;
+
 	/// <summary>Event triggered when a property value changes.</summary>
-	public event PropertyChangedEventHandler? PropertyChanged;
+	/// <remarks>
+	/// This should be used only internally to handle property changes.
+	/// Changed properties need to be written to memory before we notify
+	/// the rest of the application.
+	/// </remarks>
+	protected event PropertyChangedEventHandler? InternalPropertyChanged;
+
+	// Explicit interface implementation to keep the event protected/private.
+	event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged
+	{
+		add { this.InternalPropertyChanged += value; }
+		remove { this.InternalPropertyChanged -= value; }
+	}
 
 	/// <summary>Gets or sets the object's memory address.</summary>
 	public IntPtr Address { get; set; } = IntPtr.Zero;
@@ -114,6 +149,26 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	{
 		get => Interlocked.CompareExchange(ref this.isSynchronizing, 0, 0) == 1;
 		set => Interlocked.Exchange(ref this.isSynchronizing, value ? 1 : 0);
+	}
+
+	/// <summary>Raises the property changed event.</summary>
+	/// <param name="propertyName">The name of the property.</param>
+	/// <remarks>
+	/// This is a custom event invoker that is used by Fody to notify of property changes.
+	/// It can still be used to raise property changed events manually in cases where the property
+	/// does not normally (e.g. the property has DoNotNotify attribute).
+	/// </remarks>
+	public void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+	{
+		if (!this.Binds.TryGetValue(propertyName, out PropertyBindInfo? bind))
+			return;
+
+		// Suppress property notifications
+		// Ignore property changes which arise from sync with game memory and not from Anamnesis
+		if (this.suppressPropNotifications.Value)
+			return;
+
+		this.InternalPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 
 	/// <summary>
@@ -298,33 +353,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		return this.EnableWriting;
 	}
 
-	/// <summary>
-	/// Handles the memory object's property changes.
-	/// </summary>
-	/// <param name="bind">The bind information.</param>
-	/// <param name="oldValue">The old value.</param>
-	/// <param name="newValue">The new value.</param>
-	/// <param name="origin">The origin of the change.</param>
-	protected void OnPropertyChanged(BindInfo bind, object? oldValue, object? newValue, PropertyChange.Origins origin)
-	{
-		PropertyChange change = new(bind, oldValue, newValue, origin);
-		this.HandlePropertyChanged(change);
-	}
-
-	/// <summary>Handles property changes.</summary>
-	/// <param name="change">The property change information.</param>
-	protected virtual void HandlePropertyChanged(PropertyChange change)
-	{
-		if (this.Parent == null)
-			return;
-
-		if (this.ParentBind == null)
-			throw new Exception("Parent was not null, but parent bind was!");
-
-		change.AddPath(this.ParentBind);
-		this.Parent.HandlePropertyChanged(change);
-	}
-
 	/// <summary>Writes delayed binds to memory.</summary>
 	/// <remarks>
 	/// Used to write binds that could not be written immediately due to
@@ -364,52 +392,50 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (!this.Binds.TryGetValue(e.PropertyName, out PropertyBindInfo? bind))
 			return;
 
-		// Ignore property changes during memory reads, as these are from the game's memory
-		// and not from Anamnesis
-		if (bind.IsReading)
+		object? currentValue = bind.Property.GetValue(this);
+		if (currentValue == null || bind.Flags.HasFlag(BindFlags.Pointer))
 			return;
 
-		object? val = bind.Property.GetValue(this);
-		if (val == null || bind.Flags.HasFlag(BindFlags.Pointer))
-			return;
-
+		// TODO: Figure out if this is correct. I haven't tested freeze values
 		if (bind.FreezeValue != null)
-			bind.FreezeValue = bind.Property.GetValue(this);
+			bind.FreezeValue = currentValue;
+
+		// If the value hasn't changed, we don't need to write it to memory
+		if (bind.LastValue == currentValue)
+			return;
 
 		if (!this.CanWrite(bind) || this.IsSynchronizing)
 		{
 			// If this bind couldn't be written right now, add it to the delayed bind list
 			// to attempt to write later.
-			this.delayedBinds.Add(bind);
+			lock (this.delayedBinds)
+			{
+				this.delayedBinds.Add(bind);
+			}
+
+			Log.Verbose("Added delayed bind: " + bind.Name); // TODO: Delete later
 			return;
 		}
-
-		object? oldVal = bind.LastValue;
 
 		this.ClaimLocks();
 		try
 		{
 			this.WriteToMemory(bind);
+			Log.Verbose("Wrote bind: " + bind.Name);  // TODO: Delete later
 		}
 		finally
 		{
 			this.ReleaseLocks();
 		}
 
+		bind.LastValue = currentValue;
+
+		// Propagate the property changed event to the rest of the application after write to memory
 		if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
 		{
 			var origin = HistoryService.IsRestoring ? PropertyChange.Origins.History : PropertyChange.Origins.User;
-			this.OnPropertyChanged(bind, oldVal, bind.LastValue, origin);
+			this.PropagatePropertyChanged(bind.Name, new PropertyChange(bind, origin));
 		}
-
-		bind.LastValue = val;
-	}
-
-	/// <summary>Raises the property changed event.</summary>
-	/// <param name="propertyName">The name of the property.</param>
-	protected virtual void RaisePropertyChanged(string propertyName)
-	{
-		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 
 	/// <summary>
@@ -503,18 +529,16 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				{
 					if (bindAddress == IntPtr.Zero)
 					{
-						bind.Property.SetValue(this, null);
+						this.SetValueWithoutNotification(bind, null);
 						bind.LastValue = null;
 						memory.ReleaseLocks();
 						memory.Dispose();
 						this.Children.Remove(memory);
-
-						this.OnPropertyChanged(bind, bind.Property.GetValue(this), null, PropertyChange.Origins.Game);
 					}
 					else
 					{
 						memory.Address = bindAddress;
-						bind.Property.SetValue(this, memory);
+						this.SetValueWithoutNotification(bind, memory);
 						bind.LastValue = memory;
 
 						if (isNew)
@@ -524,8 +548,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 							memory.ClaimLocks();
 							this.Children.Add(memory);
 						}
-
-						this.OnPropertyChanged(bind, bind.Property.GetValue(this), memory, PropertyChange.Origins.Game);
 					}
 				}
 				catch (Exception ex)
@@ -540,11 +562,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 					return;
 
 				object memValue = MemoryService.Read(bindAddress, bind.Type);
-				object? currentValue = bind.Property.GetValue(this) ??
-					throw new Exception($"Failed to get bind value: {bind.Name} from memory: {this.GetType()}");
 
-				// Has this bind changed
-				if (currentValue.Equals(memValue))
+				// We're only interested in binds that have changed
+				if (bind.LastValue != null && bind.LastValue.Equals(memValue))
 					return;
 
 				if (bind.FreezeValue != null)
@@ -555,12 +575,12 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 					bind.IsReading = true;
 				}
 
-				bind.Property.SetValue(this, memValue);
+				this.SetValueWithoutNotification(bind, memValue);
 				bind.LastValue = memValue;
-				this.OnPropertyChanged(bind, bind.Property.GetValue(this), memValue, PropertyChange.Origins.Game);
 			}
 
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(bind.Property.Name));
+			// Notify the application of the property change
+			this.PropagatePropertyChanged(bind.Name, new PropertyChange(bind, PropertyChange.Origins.Game));
 		}
 		catch (Exception)
 		{
@@ -656,6 +676,10 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 			child.SynchronizeInternal();
 		}
+
+		// Write delayed binds to memory after synchronization.
+		// This ensures that writes are not blocked by ongoing reads.
+		this.WriteDelayedBindsInternal();
 	}
 
 	/// <summary>
@@ -667,38 +691,63 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	private void WriteDelayedBindsInternal()
 	{
 		var remainingBinds = new List<PropertyBindInfo>();
-		foreach (PropertyBindInfo bind in this.delayedBinds.Cast<PropertyBindInfo>())
+		lock (this.delayedBinds)
 		{
-			// If we still cant write this bind, just skip it.
-			if (!this.CanWrite(bind))
+			foreach (PropertyBindInfo bind in this.delayedBinds.Cast<PropertyBindInfo>())
 			{
-				remainingBinds.Add(bind);
-				continue;
+				// If we still cant write this bind, just skip it.
+				if (!this.CanWrite(bind))
+				{
+					remainingBinds.Add(bind);
+					continue;
+				}
+
+				object? oldVal = bind.LastValue;
+
+				this.WriteToMemory(bind);
+
+				// Propagte property changed event to the rest of the application after writing to memory
+				if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
+				{
+					var origin = HistoryService.IsRestoring ? PropertyChange.Origins.History : PropertyChange.Origins.User;
+					this.PropagatePropertyChanged(bind.Name, new PropertyChange(bind, origin));
+				}
 			}
 
-			object? oldVal = bind.LastValue;
-
-			this.WriteToMemory(bind);
-
-			if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
+			this.delayedBinds.Clear();
+			foreach (var bind in remainingBinds)
 			{
-				var origin = HistoryService.IsRestoring ? PropertyChange.Origins.History : PropertyChange.Origins.User;
-				this.OnPropertyChanged(bind, oldVal, bind.LastValue, origin);
+				this.delayedBinds.Add(bind);
 			}
-		}
 
-		this.delayedBinds.Clear();
-		foreach (var bind in remainingBinds)
-		{
-			this.delayedBinds.Add(bind);
+			if (this.delayedBinds.Count > 0)
+				Log.Warning("Failed to write all delayed binds, remaining: " + this.delayedBinds.Count);
 		}
-
-		if (this.delayedBinds.Count > 0)
-			Log.Warning("Failed to write all delayed binds, remaining: " + this.delayedBinds.Count);
 
 		foreach (MemoryBase? child in this.Children)
 		{
 			child.WriteDelayedBindsInternal();
 		}
+	}
+
+	private void SetValueWithoutNotification(PropertyBindInfo bind, object? value)
+	{
+		this.suppressPropNotifications.Value = true;
+		bind.Property.SetValue(this, value);
+		this.suppressPropNotifications.Value = false;
+	}
+
+	private void PropagatePropertyChanged(string propertyName, PropertyChange context)
+	{
+		this.PropertyChanged?.Invoke(this, new MemObjPropertyChangedEventArgs(propertyName, context));
+
+		if (this.Parent == null)
+			return;
+
+		if (this.ParentBind == null)
+			throw new Exception("Parent was not null, but parent bind was!");
+
+		context.AddPath(this.ParentBind);
+		this.Parent.PropagatePropertyChanged(propertyName, context);
 	}
 }

@@ -5,7 +5,6 @@ namespace Anamnesis.Brio;
 
 using System;
 using System.Threading.Tasks;
-using static Anamnesis.Penumbra.Penumbra.RedrawData;
 
 public static class Brio
 {
@@ -17,7 +16,7 @@ public static class Brio
 
 		var result = await BrioApi.Post("/redraw", data);
 
-		await Task.Delay(500);
+		/* await Task.Delay(500); */
 
 		return result;
 	}
@@ -28,7 +27,7 @@ public static class Brio
 		data.SpawnOptions = options;
 		var resultRaw = await BrioApi.Post("/spawn", data);
 		var resultId = int.Parse(resultRaw);
-		await Task.Delay(500);
+		/* await Task.Delay(500); */
 		return resultId;
 	}
 

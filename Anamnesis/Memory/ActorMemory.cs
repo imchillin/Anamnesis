@@ -11,14 +11,19 @@ using System.Threading.Tasks;
 
 public class ActorMemory : ActorBasicMemory
 {
-	private readonly FuncQueue refreshQueue;
+	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
 	private int isRefreshing = 0;
 
 	public ActorMemory()
 	{
-		this.refreshQueue = new(this.RefreshAsync, 250);
 		this.backupQueue = new(this.BackupAsync, 250);
+
+		this.PropertyChanged += this.HandlePropertyChanged;
+
+		// Initialize the debounce timer
+		this.refreshDebounceTimer = new(200) { AutoReset = false };
+		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
 	public enum CharacterModes : byte
@@ -79,7 +84,6 @@ public class ActorMemory : ActorBasicMemory
 	}
 
 	public bool IsWeaponDirty { get; set; } = false;
-	public bool PendingRefresh => this.refreshQueue.Pending;
 
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
 	public bool CanRefresh => ActorService.Instance.CanRefreshActor(this);
@@ -141,30 +145,21 @@ public class ActorMemory : ActorBasicMemory
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
 
-	/// <summary>
-	/// Refresh the actor to force the game to load any changed values for appearance.
-	/// </summary>
-	public void Refresh()
-	{
-		this.refreshQueue.Invoke();
-	}
-
 	public override void Synchronize()
 	{
 		this.History.Tick();
 
-		// Since writing is immadiate from poperties, we don't want to tick (read) anything
-		// during a refresh.
-		if (this.IsRefreshing || this.PendingRefresh)
+		// Don't synchronize the actor during a refresh.
+		if (this.IsRefreshing)
 			return;
 
 		base.Synchronize();
 	}
 
 	/// <summary>
-	/// Refresh the actor to force the game to load any changed values for appearance.
+	/// Asynchronously refresh the actor to force the game to reflect appearance changes.
 	/// </summary>
-	public async Task RefreshAsync()
+	public async Task Refresh()
 	{
 		if (this.IsRefreshing)
 			return;
@@ -198,11 +193,8 @@ public class ActorMemory : ActorBasicMemory
 		{
 			this.IsRefreshing = false;
 			this.IsWeaponDirty = false;
-			this.WriteDelayedBinds();
 		}
 
-		this.RaisePropertyChanged(nameof(this.IsHuman));
-		await Task.Delay(150);
 		this.RaisePropertyChanged(nameof(this.IsHuman));
 	}
 
@@ -219,52 +211,22 @@ public class ActorMemory : ActorBasicMemory
 		this.RaisePropertyChanged(nameof(this.CanRefresh));
 	}
 
-	protected override void HandlePropertyChanged(PropertyChange change)
+	private void HandlePropertyChanged(object? sender, MemObjPropertyChangedEventArgs e)
 	{
-		this.History.Record(change);
-
-		if (change.Origin != PropertyChange.Origins.Game)
+		if (e.Context.Origin != PropertyChange.Origins.Game)
 			this.backupQueue.Invoke();
 
 		if (!this.AutomaticRefreshEnabled)
 			return;
 
-		if (this.IsRefreshing)
+		if (e.Context.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh) && e.Context.Origin != PropertyChange.Origins.Game)
 		{
-			// dont refresh because of a refresh!
-			if (change.TerminalPropertyName == nameof(this.ObjectKind) || change.TerminalPropertyName == nameof(this.RenderMode))
-			{
-				return;
-			}
-		}
-
-		if (change.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh) && change.Origin != PropertyChange.Origins.Game)
-		{
-			if (change.OriginBind.Flags.HasFlag(BindFlags.WeaponRefresh))
+			if (e.Context.OriginBind.Flags.HasFlag(BindFlags.WeaponRefresh))
 				this.IsWeaponDirty = true;
 
-			this.Refresh();
+			// Restart the debounce timer if it's already running, otherwise start it.
+			this.refreshDebounceTimer.Stop();
+			this.refreshDebounceTimer.Start();
 		}
-	}
-
-	protected override bool CanWrite(BindInfo bind)
-	{
-		if (this.IsRefreshing)
-		{
-			if (bind.Memory != this)
-			{
-				Log.Warning("Skipping Bind " + bind);
-
-				// Do not allow writing of any properties form sub-memory while we are refreshing
-				return false;
-			}
-			else
-			{
-				// do not allow writing of any properties except the ones needed for refresh during a refresh.
-				return bind.Name == nameof(this.ObjectKind) || bind.Name == nameof(this.RenderMode);
-			}
-		}
-
-		return base.CanWrite(bind);
 	}
 }

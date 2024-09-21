@@ -1,3 +1,4 @@
 ﻿<Weavers GenerateXsd="false">
 	<PropertyChanged InjectOnPropertyNameChanged="false"/>
+	<PropertyChanged EventInvokerName="RaisePropertyChanged" FilterType="Anamnesis.Memory.MemoryBase"/>
 </Weavers>

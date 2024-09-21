@@ -27,39 +27,30 @@ public abstract class BindInfo
 		this.Memory = memory ?? throw new ArgumentNullException(nameof(memory));
 	}
 
-	/// <summary>
-	/// Gets the memory base instance.
-	/// </summary>
+	/// <summary>Gets the memory base instance.</summary>
 	public MemoryBase Memory { get; }
 
-	/// <summary>
-	/// Gets the name of the bind.
-	/// </summary>
+	/// <summary>Gets the name of the bind.</summary>
 	public abstract string Name { get; }
 
-	/// <summary>
-	/// Gets the path of the bind.
-	/// </summary>
+	/// <summary>Gets the path of the bind.</summary>
 	public abstract string Path { get; }
 
-	/// <summary>
-	/// Gets the type of the bind.
-	/// </summary>
+	/// <summary>Gets the type of the bind.</summary>
 	public abstract Type Type { get; }
 
-	/// <summary>
-	/// Gets the bind flags.
-	/// </summary>
+	/// <summary>Gets the bind flags.</summary>
 	public abstract BindFlags Flags { get; }
 
-	/// <summary>
-	/// Gets or sets the freeze value.
-	/// </summary>
+	/// <summary>Gets or sets the freeze value.</summary>
 	public object? FreezeValue { get; set; }
 
-	/// <summary>
-	/// Gets or sets the last value.
-	/// </summary>
+	/// <summary>Gets or sets the last value.</summary>
+	/// <remarks>
+	/// The last value represents the currently recognized value in game memory.
+	/// It differs from the property's current value, which is used to represent
+	/// the value to be written to game memory.
+	/// </remarks>
 	public object? LastValue { get; set; }
 
 	/// <summary>
@@ -86,14 +77,10 @@ public abstract class BindInfo
 		set => Interlocked.Exchange(ref this.isWriting, value ? 1 : 0);
 	}
 
-	/// <summary>
-	/// Gets or sets the last failure address.
-	/// </summary>
+	/// <summary>Gets or sets the last failure address.</summary>
 	public IntPtr? LastFailureAddress { get; set; }
 
-	/// <summary>
-	/// Gets the address of the bind.
-	/// </summary>
+	/// <summary>Gets the address of the bind.</summary>
 	/// <returns>The address of the bind.</returns>
 	public abstract IntPtr GetAddress();
 
