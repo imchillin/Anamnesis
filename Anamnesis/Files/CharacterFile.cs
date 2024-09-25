@@ -589,6 +589,11 @@ public class CharacterFile : JsonFileBase
 			this.GlassesId = from.GlassesId;
 		}
 
+		public GlassesSave(ushort glassesId)
+		{
+			this.GlassesId = glassesId;
+		}
+
 		public ushort GlassesId { get; set; }
 
 		public void Write(GlassesMemory? glasses)
