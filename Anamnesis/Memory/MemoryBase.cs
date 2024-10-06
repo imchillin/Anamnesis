@@ -396,7 +396,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (currentValue == null || bind.Flags.HasFlag(BindFlags.Pointer))
 			return;
 
-		// TODO: Figure out if this is correct. I haven't tested freeze values
+		// Frozen binds should not be updated when prompted by the application (i.e. the user)
 		if (bind.FreezeValue != null)
 			bind.FreezeValue = currentValue;
 
@@ -413,7 +413,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				this.delayedBinds.Add(bind);
 			}
 
-			Log.Verbose("Added delayed bind: " + bind.Name); // TODO: Delete later
 			return;
 		}
 
@@ -421,7 +420,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		try
 		{
 			this.WriteToMemory(bind);
-			Log.Verbose("Wrote bind: " + bind.Name);  // TODO: Delete later
 		}
 		finally
 		{
@@ -574,6 +572,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				if (bind.LastValue != null && bind.LastValue.Equals(memValue))
 					return;
 
+				// If the bind is frozen, overwrite the memory value with the frozen value.
+				// Note: A write is still necessary in case the bind address has changed
+				// or the user has changed the value.
 				if (bind.FreezeValue != null)
 				{
 					memValue = bind.FreezeValue;
