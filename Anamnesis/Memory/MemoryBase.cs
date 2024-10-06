@@ -525,6 +525,13 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 				if (memory.Address == bindAddress)
 					return;
 
+				// Invalidate all delayed binds if they were created prior to the memory address change
+				// Note: This is only relevant to MemoryBase objects as they are reference type objects
+				lock (this.delayedBinds)
+				{
+					this.delayedBinds.RemoveWhere(b => b == bind);
+				}
+
 				try
 				{
 					if (bindAddress == IntPtr.Zero)
