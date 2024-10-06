@@ -11,6 +11,7 @@ using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Windows.Media.Media3D;
 using XivToolsWpf.Math3D;
 using XivToolsWpf.Math3D.Extensions;
@@ -21,13 +22,13 @@ using Quaternion = System.Windows.Media.Media3D.Quaternion;
 [AddINotifyPropertyChangedInterface]
 public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 {
-	public readonly List<TransformMemory> TransformMemories = new List<TransformMemory>();
+	public readonly List<TransformMemory> TransformMemories = new();
 
 	private static bool scaleLinked = true;
 
 	private readonly QuaternionRotation3D rotation;
 	private readonly TranslateTransform3D position;
-	private BoneTargetVisual3d? target;
+	private BoneTargetVisual3d? targetVisual;
 	private BoneVisual3d? parent;
 	private Line? lineToParent;
 
@@ -37,21 +38,20 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 
 		this.rotation = new QuaternionRotation3D();
 
-		RotateTransform3D rot = new RotateTransform3D();
-		rot.Rotation = this.rotation;
+		RotateTransform3D rot = new() { Rotation = this.rotation };
 		this.position = new TranslateTransform3D();
 
-		Transform3DGroup transformGroup = new Transform3DGroup();
+		Transform3DGroup transformGroup = new();
 		transformGroup.Children.Add(rot);
 		transformGroup.Children.Add(this.position);
 
 		this.Transform = transformGroup;
 
-		PaletteHelper ph = new PaletteHelper();
+		PaletteHelper ph = new();
 		ITheme t = ph.GetTheme();
 
-		this.target = new BoneTargetVisual3d(this);
-		this.Children.Add(this.target);
+		this.targetVisual = new BoneTargetVisual3d(this);
+		this.Children.Add(this.targetVisual);
 
 		this.BoneName = name;
 	}
@@ -209,8 +209,8 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 	public void Dispose()
 	{
 		this.Children.Clear();
-		this.target?.Dispose();
-		this.target = null;
+		this.targetVisual?.Dispose();
+		this.targetVisual = null;
 
 		this.parent?.Children.Remove(this);
 
@@ -227,60 +227,93 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 	public virtual void Synchronize()
 	{
 		foreach (TransformMemory transformMemory in this.TransformMemories)
-		{
 			transformMemory.Synchronize();
-		}
+
+		this.ReadTransform();
 	}
 
-	public virtual void ReadTransform(bool readChildren = false)
+	public virtual void ReadTransform(bool readChildren = false, Dictionary<string, Transform>? snapshot = null)
 	{
 		if (!this.IsEnabled)
 			return;
 
-		this.Position = this.TransformMemory.Position;
-		this.Rotation = this.TransformMemory.Rotation;
-		this.Scale = this.TransformMemory.Scale;
+		Transform newTransform;
 
-		// Convert the character-relative transform into a parent-relative transform
-		Point3D position = this.Position.ToMedia3DPoint();
-		Quaternion rotation = this.Rotation.ToMedia3DQuaternion();
-
-		if (this.Parent != null)
+		// Use the snapshot if provided
+		if (snapshot != null && snapshot.TryGetValue(this.BoneName, out var transform))
 		{
-			TransformMemory parentTransform = this.Parent.TransformMemory;
-			Point3D parentPosition = parentTransform.Position.ToMedia3DPoint();
-			Quaternion parentRot = parentTransform.Rotation.ToMedia3DQuaternion();
-			parentRot.Invert();
-
-			// relative position
-			position = (Point3D)(position - parentPosition);
-
-			// relative rotation
-			rotation = parentRot * rotation;
-
-			// unrotate bones, since we will transform them ourselves.
-			RotateTransform3D rotTrans = new RotateTransform3D(new QuaternionRotation3D(parentRot));
-			position = rotTrans.Transform(position);
+			newTransform = transform;
+		}
+		else
+		{
+			newTransform = new Transform
+			{
+				Position = this.TransformMemory.Position,
+				Rotation = this.TransformMemory.Rotation,
+				Scale = this.TransformMemory.Scale,
+			};
 		}
 
-		// Store the new parent-relative transform info
-		this.Position = position.FromMedia3DPoint();
-		this.Rotation = rotation.FromMedia3DQuaternion();
-
-		// Set the Media3D hierarchy transforms
-		this.rotation.Quaternion = rotation;
-		this.position.OffsetX = position.X;
-		this.position.OffsetY = position.Y;
-		this.position.OffsetZ = position.Z;
-
-		// Draw a line for visualization
-		if (this.Parent != null && this.lineToParent != null)
+		// Convert the character-relative transform into a parent-relative transform
+		if (this.Parent != null)
 		{
-			Point3D p = this.lineToParent.Points[1];
-			p.X = position.X;
-			p.Y = position.Y;
-			p.Z = position.Z;
-			this.lineToParent.Points[1] = p;
+			Transform parentTransform;
+			if (snapshot != null && snapshot.TryGetValue(this.Parent.BoneName, out var parentSnapshot))
+			{
+				parentTransform = parentSnapshot;
+			}
+			else
+			{
+				parentTransform = new Transform
+				{
+					Position = this.Parent.TransformMemory.Position,
+					Rotation = this.Parent.TransformMemory.Rotation,
+					Scale = this.Parent.TransformMemory.Scale,
+				};
+			}
+
+			CmVector parentPosition = parentTransform.Position;
+			CmQuaternion parentRot = CmQuaternion.Normalize(parentTransform.Rotation);
+			parentRot = CmQuaternion.Inverse(parentRot);
+
+			// Relative position
+			newTransform.Position -= parentPosition;
+
+			// Unrotate bones, since we will transform them ourselves.
+			Matrix4x4 rotMatrix = Matrix4x4.CreateFromQuaternion(parentRot);
+			newTransform.Position = CmVector.Transform(newTransform.Position, rotMatrix);
+
+			// Relative rotation
+			newTransform.Rotation = CmQuaternion.Normalize(CmQuaternion.Multiply(parentRot, newTransform.Rotation));
+		}
+
+		// Check if there are actual changes before updating
+		bool positionChanged = !this.Position.IsApproximately(newTransform.Position);
+		bool rotationChanged = !this.Rotation.IsApproximately(newTransform.Rotation);
+		bool scaleChanged = !this.Scale.IsApproximately(newTransform.Scale);
+
+		if (positionChanged || rotationChanged || scaleChanged)
+		{
+			// Apply the updates in a single step
+			this.Position = newTransform.Position;
+			this.Rotation = newTransform.Rotation;
+			this.Scale = newTransform.Scale;
+
+			// Set the Media3D hierarchy transforms
+			this.rotation.Quaternion = newTransform.Rotation.ToMedia3DQuaternion();
+			this.position.OffsetX = newTransform.Position.X;
+			this.position.OffsetY = newTransform.Position.Y;
+			this.position.OffsetZ = newTransform.Position.Z;
+
+			// Draw a line for visualization
+			if (this.Parent != null && this.lineToParent != null)
+			{
+				var endPoint = this.lineToParent.Points[1];
+				endPoint.X = newTransform.Position.X;
+				endPoint.Y = newTransform.Position.Y;
+				endPoint.Z = newTransform.Position.Z;
+				this.lineToParent.Points[1] = endPoint;
+			}
 		}
 
 		if (readChildren)
@@ -289,7 +322,7 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 			{
 				if (child is BoneVisual3d childBone)
 				{
-					childBone.ReadTransform(true);
+					childBone.ReadTransform(true, snapshot);
 				}
 			}
 		}

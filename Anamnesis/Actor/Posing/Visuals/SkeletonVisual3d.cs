@@ -26,16 +26,17 @@ using AnQuaternion = System.Numerics.Quaternion;
 [AddINotifyPropertyChangedInterface]
 public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 {
-	public readonly Dictionary<string, BoneVisual3d> Bones = new Dictionary<string, BoneVisual3d>();
-	public readonly List<BoneVisual3d> SelectedBones = new List<BoneVisual3d>();
-	public readonly HashSet<BoneVisual3d> HoverBones = new HashSet<BoneVisual3d>();
+	public readonly Dictionary<string, BoneVisual3d> Bones = new();
+	public readonly List<BoneVisual3d> SelectedBones = new();
+	public readonly HashSet<BoneVisual3d> HoverBones = new();
 
 	private readonly QuaternionRotation3D rootRotation;
-	private readonly List<BoneVisual3d> hairBones = new List<BoneVisual3d>();
-	private readonly List<BoneVisual3d> metBones = new List<BoneVisual3d>();
-	private readonly List<BoneVisual3d> topBones = new List<BoneVisual3d>();
-	private readonly List<BoneVisual3d> mainHandBones = new List<BoneVisual3d>();
-	private readonly List<BoneVisual3d> offHandBones = new List<BoneVisual3d>();
+	private readonly List<BoneVisual3d> rootBones = new();
+	private readonly List<BoneVisual3d> hairBones = new();
+	private readonly List<BoneVisual3d> metBones = new();
+	private readonly List<BoneVisual3d> topBones = new();
+	private readonly List<BoneVisual3d> mainHandBones = new();
+	private readonly List<BoneVisual3d> offHandBones = new();
 
 	private readonly Dictionary<string, Tuple<string, string>> hairNameToSuffixMap = new()
 	{
@@ -283,6 +284,9 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 
 	public void ClearSelection()
 	{
+		if (this.SelectedBones.Count == 0)
+			return;
+
 		this.SelectedBones.Clear();
 
 		Application.Current?.Dispatcher.Invoke(() =>
@@ -461,21 +465,25 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		this.Select(selection);
 	}
 
-	public void ReadTranforms()
+	public void ReadTransforms()
 	{
-		if (this.Bones == null)
+		if (this.Bones == null || this.Actor?.ModelObject?.Skeleton == null)
 			return;
 
 		if (!GposeService.GetIsGPose())
 			return;
 
-		foreach ((string name, BoneVisual3d bone) in this.Bones)
-		{
-			if (this.GetIsBoneSelected(bone))
-				continue;
+		// Clear bone selection.
+		// This method should only be called while the user cannot interact with the bones.
+		this.ClearSelection();
 
-			bone.Synchronize();
-			bone.ReadTransform();
+		// Take a snapshot of the current transforms
+		var snapshot = this.TakeSnapshot();
+
+		// Read skeleton transforms, starting from the root bones
+		foreach (var rootBone in this.rootBones)
+		{
+			rootBone.ReadTransform(true, snapshot);
 		}
 	}
 
@@ -719,6 +727,10 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 					Log.Error(ex, $"Failed to parent bone: {boneName}");
 				}
 			}
+
+			// Find all root bones (bones without parents)
+			this.rootBones.Clear();
+			this.rootBones.AddRange(this.Bones.Values.Where(bone => bone.Parent == null));
 		}
 	}
 
@@ -757,6 +769,30 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		}
 
 		return null;
+	}
+
+	private Dictionary<string, Transform> TakeSnapshot()
+	{
+		var snapshot = new Dictionary<string, Transform>();
+
+		if (this.Actor?.ModelObject?.Skeleton == null)
+			return snapshot;
+
+		this.Actor.ModelObject.Skeleton.EnableReading = false;
+
+		foreach (var bone in this.AllBones)
+		{
+			snapshot[bone.BoneName] = new Transform
+			{
+				Position = bone.TransformMemory.Position,
+				Rotation = bone.TransformMemory.Rotation,
+				Scale = bone.TransformMemory.Scale,
+			};
+		}
+
+		this.Actor.ModelObject.Skeleton.EnableReading = true;
+
+		return snapshot;
 	}
 }
 

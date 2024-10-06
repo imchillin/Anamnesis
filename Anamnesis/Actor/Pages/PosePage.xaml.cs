@@ -35,6 +35,7 @@ public partial class PosePage : UserControl
 
 	private static DirectoryInfo? lastLoadDir;
 	private static DirectoryInfo? lastSaveDir;
+	private readonly System.Timers.Timer refreshDebounceTimer;
 
 	private bool isLeftMouseButtonDownOnWindow;
 	private bool isDragging;
@@ -49,6 +50,10 @@ public partial class PosePage : UserControl
 		this.ContentArea.DataContext = this;
 
 		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
+
+		// Initialize the debounce timer
+		this.refreshDebounceTimer = new(200) { AutoReset = false };
+		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
 	public SettingsService SettingsService => SettingsService.Instance;
@@ -160,7 +165,7 @@ public partial class PosePage : UserControl
 			////	this.Skeleton.CurrentBone = null;
 
 			this.Skeleton?.Reselect();
-			this.Skeleton?.ReadTranforms();
+			this.Skeleton?.ReadTransforms();
 		});
 	}
 
@@ -174,7 +179,7 @@ public partial class PosePage : UserControl
 		{
 			Application.Current?.Dispatcher.Invoke(() =>
 			{
-				this.Skeleton?.ReadTranforms();
+				this.Skeleton?.ReadTransforms();
 			});
 		}
 	}
@@ -183,7 +188,7 @@ public partial class PosePage : UserControl
 	{
 		ActorMemory? newActor = this.DataContext as ActorMemory;
 
-		// don't do all this work unless we need to.
+		// Don't do all this work unless we need to.
 		if (this.Actor == newActor)
 			return;
 
@@ -202,11 +207,13 @@ public partial class PosePage : UserControl
 		await this.Refresh();
 	}
 
-	private async void OnModelObjectChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+	private void OnModelObjectChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName == nameof(ActorModelMemory.Skeleton))
 		{
-			await this.Refresh();
+			// Restart the debounce timer if it's already running, otherwise start it.
+			this.refreshDebounceTimer.Stop();
+			this.refreshDebounceTimer.Start();
 		}
 	}
 
