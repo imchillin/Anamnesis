@@ -8,8 +8,11 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using XivToolsWpf;
 
 [AddINotifyPropertyChangedInterface]
@@ -17,7 +20,7 @@ public class History
 {
 	private const int MaxHistory = 1024 * 1024; // a lot.
 
-	private static readonly TimeSpan TimeTillCommit = TimeSpan.FromMilliseconds(1000);
+	private static readonly TimeSpan TimeTillCommit = TimeSpan.FromMilliseconds(200);
 
 	private readonly Stack<HistoryEntry> history = new();
 	private HistoryEntry current = new();
@@ -35,12 +38,16 @@ public class History
 	/// <summary>
 	/// Tick must be called periodically to push changes to the history stack when they are old enough.
 	/// </summary>
-	public void Tick()
+	public async void Tick()
 	{
 		if (!this.current.HasChanges)
 			return;
 
-		if (DateTime.Now - this.lastChangeTime > TimeTillCommit)
+		await Dispatch.MainThread();
+
+		// Commit as soon as the timer is up and the mouse is not being held down
+		// The mouse button state check is necessary in case the user is still interacting with the UI
+		if (DateTime.Now - this.lastChangeTime > TimeTillCommit && Mouse.LeftButton != MouseButtonState.Pressed)
 		{
 			this.Commit();
 		}
@@ -77,7 +84,7 @@ public class History
 		if (!this.current.HasChanges)
 			return;
 
-		Log.Verbose($"Comitting change set:\n{this.current}");
+		Log.Verbose($"Committing change set:\n{this.current}");
 
 		HistoryEntry oldEntry = this.current;
 		oldEntry.Name = oldEntry.GetName();
@@ -137,14 +144,29 @@ public class History
 				PropertyChange change = this.changes[i];
 				if (change.OriginBind is PropertyBindInfo propertyBind)
 				{
-					// propertyBind.Property.SetValue(propertyBind.Memory, change.OldValue);
+					propertyBind.Property.SetValue(propertyBind.Memory, change.OldValue);
 				}
 			}
 		}
 
 		public void Record(PropertyChange change)
 		{
-			// Record the change into the history list
+			// Keep only the latest change for each bind to minimize stored changes and recovery steps
+			PropertyChange? existingChange = this.changes.FirstOrDefault(c => c.Path == change.Path);
+			if (existingChange.HasValue)
+			{
+				// Validate the existing change's OldValue
+				if (this.IsValidOldValue(existingChange.Value.OldValue))
+				{
+					// Transfer the old value of the existing change to the new change if it is valid
+					change.OldValue = existingChange.Value.OldValue;
+				}
+
+				// Remove the existing change
+				this.changes.Remove(existingChange.Value);
+			}
+
+			// Add the latest change into the history entry's changes list
 			this.changes.Add(change);
 
 			// Sanity check history depth
@@ -194,7 +216,7 @@ public class History
 				{
 					PropertyChange existingChange = flattenedChanges[change.OriginBind];
 
-					// existingChange.NewValue = change.NewValue;
+					existingChange.NewValue = change.NewValue;
 					flattenedChanges[change.OriginBind] = existingChange;
 				}
 			}
@@ -208,6 +230,24 @@ public class History
 			}
 
 			return builder.ToString();
+		}
+
+		private bool IsValidOldValue(object? oldValue)
+		{
+			if (oldValue is Vector3 vector)
+			{
+				return !float.IsNaN(vector.X) && !float.IsNaN(vector.Y) && !float.IsNaN(vector.Z);
+			}
+			else if (oldValue is Quaternion quaternion)
+			{
+				return !float.IsNaN(quaternion.X) && !float.IsNaN(quaternion.Y) && !float.IsNaN(quaternion.Z) && !float.IsNaN(quaternion.W);
+			}
+			else if (oldValue == null)
+			{
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

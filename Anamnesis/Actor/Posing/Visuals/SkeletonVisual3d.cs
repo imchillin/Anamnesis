@@ -465,6 +465,30 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		this.Select(selection);
 	}
 
+	public Dictionary<string, Transform> TakeSnapshot()
+	{
+		var snapshot = new Dictionary<string, Transform>();
+
+		if (this.Actor?.ModelObject?.Skeleton == null)
+			return snapshot;
+
+		this.Actor.ModelObject.Skeleton.EnableReading = false;
+
+		foreach (var bone in this.AllBones)
+		{
+			snapshot[bone.BoneName] = new Transform
+			{
+				Position = bone.TransformMemory.Position,
+				Rotation = bone.TransformMemory.Rotation,
+				Scale = bone.TransformMemory.Scale,
+			};
+		}
+
+		this.Actor.ModelObject.Skeleton.EnableReading = true;
+
+		return snapshot;
+	}
+
 	public void ReadTransforms()
 	{
 		if (this.Bones == null || this.Actor?.ModelObject?.Skeleton == null)
@@ -610,16 +634,24 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 
 	public void WriteSkeleton()
 	{
+		if (this.Actor == null || this.Actor.ModelObject?.Skeleton == null)
+			return;
+
 		if (this.CurrentBone != null && PoseService.Instance.IsEnabled)
 		{
-			try
+			lock (HistoryService.Instance.LockObject)
 			{
-				this.CurrentBone.WriteTransform(this);
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, $"Failed to write bone transform: {this.CurrentBone.BoneName}");
-				this.ClearSelection();
+				try
+				{
+					this.Actor.PauseSynchronization = true;
+					this.CurrentBone.WriteTransform(this);
+					this.Actor.PauseSynchronization = false;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, $"Failed to write bone transform: {this.CurrentBone.BoneName}");
+					this.ClearSelection();
+				}
 			}
 		}
 	}
@@ -769,30 +801,6 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		}
 
 		return null;
-	}
-
-	private Dictionary<string, Transform> TakeSnapshot()
-	{
-		var snapshot = new Dictionary<string, Transform>();
-
-		if (this.Actor?.ModelObject?.Skeleton == null)
-			return snapshot;
-
-		this.Actor.ModelObject.Skeleton.EnableReading = false;
-
-		foreach (var bone in this.AllBones)
-		{
-			snapshot[bone.BoneName] = new Transform
-			{
-				Position = bone.TransformMemory.Position,
-				Rotation = bone.TransformMemory.Rotation,
-				Scale = bone.TransformMemory.Scale,
-			};
-		}
-
-		this.Actor.ModelObject.Skeleton.EnableReading = true;
-
-		return snapshot;
 	}
 }
 

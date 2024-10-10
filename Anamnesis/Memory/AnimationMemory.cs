@@ -5,6 +5,7 @@ namespace Anamnesis.Memory;
 
 using Anamnesis.Services;
 using PropertyChanged;
+using System.ComponentModel;
 
 [AddINotifyPropertyChangedInterface]
 public class AnimationMemory : MemoryBase
@@ -53,22 +54,27 @@ public class AnimationMemory : MemoryBase
 		}
 	}
 
-	private void HandlePropertyChanged(object? sender, MemObjPropertyChangedEventArgs e)
+	private void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
+		if (e is not MemObjPropertyChangedEventArgs memObjEventArgs)
+			return;
+
+		var change = memObjEventArgs.Context;
+
 		// Update all speeds if linked
 		if (this.LinkSpeeds && AnimationService.Instance.SpeedControlEnabled &&
-			e.Context.Origin == PropertyChange.Origins.User &&
-			e.Context.TopPropertyName == nameof(this.Speeds) &&
-			e.Context.BindPath[1].Name == "0" &&
-			e.Context.OriginBind.LastValue != null)
+			change.Origin == PropertyChange.Origins.User &&
+			change.TopPropertyName == nameof(this.Speeds) &&
+			change.BindPath[1].Name == "0" &&
+			change.OriginBind.LastValue != null)
 		{
-			this.ApplyAnimationLink((float)e.Context.OriginBind.LastValue);
+			this.ApplyAnimationLink((float)change.OriginBind.LastValue);
 		}
 
 		// We need to flip a flag (the engine will flip it back) to apply it
 		if (AnimationService.Instance.SpeedControlEnabled &&
-			e.Context.Origin == PropertyChange.Origins.User &&
-			e.Context.TopPropertyName == nameof(this.Speeds))
+			change.Origin == PropertyChange.Origins.User &&
+			change.TopPropertyName == nameof(this.Speeds))
 		{
 			this.SpeedTrigger = 1;
 		}

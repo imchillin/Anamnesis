@@ -60,6 +60,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 	private int enableReading = 1;
 	private int enableWriting = 1;
+	private int pauseSynchronization = 0;
 	private int isSynchronizing = 0;
 	private bool disposed = false;
 
@@ -77,8 +78,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 			this.Binds.Add(property.Name, new PropertyBindInfo(this, property, attribute));
 		}
-
-		this.InternalPropertyChanged += this.OnSelfPropertyChanged;
 	}
 
 	/// <summary>
@@ -92,22 +91,12 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		this.Dispose(false);
 	}
 
-	public event EventHandler<MemObjPropertyChangedEventArgs>? PropertyChanged;
-
 	/// <summary>Event triggered when a property value changes.</summary>
 	/// <remarks>
-	/// This should be used only internally to handle property changes.
-	/// Changed properties need to be written to memory before we notify
-	/// the rest of the application.
+	/// It is important that the property change event is handled internally
+	/// before it is invoked to notify the rest of the application.
 	/// </remarks>
-	protected event PropertyChangedEventHandler? InternalPropertyChanged;
-
-	// Explicit interface implementation to keep the event protected/private.
-	event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged
-	{
-		add { this.InternalPropertyChanged += value; }
-		remove { this.InternalPropertyChanged -= value; }
-	}
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	/// <summary>Gets or sets the object's memory address.</summary>
 	public IntPtr Address { get; set; } = IntPtr.Zero;
@@ -136,6 +125,13 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		set => Interlocked.Exchange(ref this.enableWriting, value ? 1 : 0);
 	}
 
+	[DoNotNotify]
+	public bool PauseSynchronization
+	{
+		get => Interlocked.CompareExchange(ref this.pauseSynchronization, 0, 0) == 1;
+		set => Interlocked.Exchange(ref this.pauseSynchronization, value ? 1 : 0);
+	}
+
 	/// <summary>
 	/// Gets the logger instance for the <see cref="MemoryBase"/> class.
 	/// </summary>
@@ -155,20 +151,25 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <param name="propertyName">The name of the property.</param>
 	/// <remarks>
 	/// This is a custom event invoker that is used by Fody to notify of property changes.
-	/// It can still be used to raise property changed events manually in cases where the property
-	/// does not normally (e.g. the property has DoNotNotify attribute).
+	/// It can  be used to manually raise property changed events in cases where the property
+	/// does not normally (e.g. the property has DoNotNotify attribute) or is not bound to a
+	/// memory address.
 	/// </remarks>
-	public void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+	public void OnPropertyChanged([CallerMemberName] string propertyName = "")
 	{
 		if (!this.Binds.TryGetValue(propertyName, out PropertyBindInfo? bind))
+		{
+			// If the bind is not found, assume it is not bound to a memory address.
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 			return;
+		}
 
 		// Suppress property notifications
 		// Ignore property changes which arise from sync with game memory and not from Anamnesis
 		if (this.suppressPropNotifications.Value)
 			return;
 
-		this.InternalPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		this.OnSelfPropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 	}
 
 	/// <summary>
@@ -214,6 +215,10 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (this.IsSynchronizing)
 			return;
 
+		// If synchronization is paused, cancel request.
+		if (this.PauseSynchronization)
+			return;
+
 		this.ClaimLocks();
 		this.SetIsSynchronizing(true);
 		try
@@ -229,6 +234,32 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			this.SetIsSynchronizing(false);
 			this.ReleaseLocks();
 		}
+	}
+
+	/// <summary>Writes delayed binds to memory.</summary>
+	/// <remarks>
+	/// Used to write binds that could not be written immediately due to
+	/// ongoing memory reads.
+	/// </remarks>
+	public virtual void WriteDelayedBinds()
+	{
+		this.ClaimLocks();
+		try
+		{
+			this.WriteDelayedBindsInternal();
+		}
+		catch (Exception ex)
+		{
+			throw new Exception($"Failed to write delayed binds for {this.GetType().Name}", ex);
+		}
+		finally
+		{
+			this.ReleaseLocks();
+		}
+
+		// Sync object immediately after writing to memory to
+		// ensure that the latest state is propagated to the application.
+		this.Synchronize();
 	}
 
 	/// <summary>Gets the address of a property by its name.</summary>
@@ -353,32 +384,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		return this.EnableWriting;
 	}
 
-	/// <summary>Writes delayed binds to memory.</summary>
-	/// <remarks>
-	/// Used to write binds that could not be written immediately due to
-	/// ongoing memory reads.
-	/// </remarks>
-	protected virtual void WriteDelayedBinds()
-	{
-		this.ClaimLocks();
-		try
-		{
-			this.WriteDelayedBindsInternal();
-		}
-		catch (Exception ex)
-		{
-			throw new Exception($"Failed to write delayed binds for {this.GetType().Name}", ex);
-		}
-		finally
-		{
-			this.ReleaseLocks();
-		}
-
-		// Sync object immediately after writing to memory to
-		// ensure that the latest state is propagated to the application.
-		this.Synchronize();
-	}
-
 	/// <summary>
 	/// Handles property changes for the current object.
 	/// </summary>
@@ -390,7 +395,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			return;
 
 		if (!this.Binds.TryGetValue(e.PropertyName, out PropertyBindInfo? bind))
+		{
+			// If the bind is not found, assume it is not bound to a memory address.
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(e.PropertyName));
 			return;
+		}
 
 		object? currentValue = bind.Property.GetValue(this);
 		if (currentValue == null || bind.Flags.HasFlag(BindFlags.Pointer))
@@ -416,6 +425,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			return;
 		}
 
+		object? oldValue = bind.LastValue;
 		this.ClaimLocks();
 		try
 		{
@@ -429,11 +439,14 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		bind.LastValue = currentValue;
 
 		// Propagate the property changed event to the rest of the application after write to memory
-		if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
+		var origin = PropertyChange.Origins.User;
+		if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
 		{
-			var origin = HistoryService.IsRestoring ? PropertyChange.Origins.History : PropertyChange.Origins.User;
-			this.PropagatePropertyChanged(bind.Name, new PropertyChange(bind, origin));
+			origin = PropertyChange.Origins.History;
 		}
+
+		var change = new PropertyChange(bind, oldValue, bind.LastValue, origin);
+		this.PropagatePropertyChanged(bind.Name, change);
 	}
 
 	/// <summary>
@@ -492,6 +505,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			return;
 
 		bind.IsReading = true;
+		object? oldValue = bind.LastValue;
 
 		try
 		{
@@ -588,7 +602,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			}
 
 			// Notify the application of the property change
-			this.PropagatePropertyChanged(bind.Name, new PropertyChange(bind, PropertyChange.Origins.Game));
+			this.PropagatePropertyChanged(bind.Name, new PropertyChange(bind, oldValue, bind.LastValue, PropertyChange.Origins.Game));
 		}
 		catch (Exception)
 		{
@@ -710,16 +724,20 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 					continue;
 				}
 
-				object? oldVal = bind.LastValue;
+				// Store the old value before it is overwritten by the new value in WriteToMemory
+				object? oldValue = bind.LastValue;
 
 				this.WriteToMemory(bind);
 
 				// Propagte property changed event to the rest of the application after writing to memory
-				if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory))
+				var origin = PropertyChange.Origins.User;
+				if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
 				{
-					var origin = HistoryService.IsRestoring ? PropertyChange.Origins.History : PropertyChange.Origins.User;
-					this.PropagatePropertyChanged(bind.Name, new PropertyChange(bind, origin));
+					origin = PropertyChange.Origins.History;
 				}
+
+				var change = new PropertyChange(bind, oldValue, bind.LastValue, origin);
+				this.PropagatePropertyChanged(bind.Name, change);
 			}
 
 			this.delayedBinds.Clear();

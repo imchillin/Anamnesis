@@ -3,14 +3,18 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Actor;
+using Anamnesis.Services;
 using Anamnesis.Utils;
 using PropertyChanged;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 public class ActorMemory : ActorBasicMemory
 {
+	private static readonly int RefreshDebounceTimeout = 200;
 	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
 	private int isRefreshing = 0;
@@ -22,7 +26,7 @@ public class ActorMemory : ActorBasicMemory
 		this.PropertyChanged += this.HandlePropertyChanged;
 
 		// Initialize the debounce timer
-		this.refreshDebounceTimer = new(200) { AutoReset = false };
+		this.refreshDebounceTimer = new(RefreshDebounceTimeout) { AutoReset = false };
 		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
@@ -195,7 +199,7 @@ public class ActorMemory : ActorBasicMemory
 			this.IsWeaponDirty = false;
 		}
 
-		this.RaisePropertyChanged(nameof(this.IsHuman));
+		this.OnPropertyChanged(nameof(this.IsHuman));
 	}
 
 	public async Task BackupAsync()
@@ -208,23 +212,47 @@ public class ActorMemory : ActorBasicMemory
 
 	public void RaiseRefreshChanged()
 	{
-		this.RaisePropertyChanged(nameof(this.CanRefresh));
+		this.OnPropertyChanged(nameof(this.CanRefresh));
 	}
 
-	private void HandlePropertyChanged(object? sender, MemObjPropertyChangedEventArgs e)
+	private void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (e.Context.Origin != PropertyChange.Origins.Game)
-			this.backupQueue.Invoke();
-
-		if (!this.AutomaticRefreshEnabled)
+		if (e is not MemObjPropertyChangedEventArgs memObjEventArgs)
 			return;
 
-		if (e.Context.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh) && e.Context.Origin != PropertyChange.Origins.Game)
+		var change = memObjEventArgs.Context;
+
+		// Do not not refresh the actor if the change originated from the game
+		if (change.Origin == PropertyChange.Origins.Game)
+			return;
+
+		// Only record changes that originate from the user
+		if (!change.OriginBind.Flags.HasFlag(BindFlags.DontRecordHistory))
 		{
-			if (e.Context.OriginBind.Flags.HasFlag(BindFlags.WeaponRefresh))
+			if (change.Origin == PropertyChange.Origins.User)
+			{
+				// Big hack to keep bone change history names short.
+				if (change.OriginBind.Memory.ParentBind?.Type == typeof(TransformMemory))
+				{
+					change.Name = (PoseService.SelectedBoneName == null) ?
+						LocalizationService.GetStringFormatted("History_ChangeBone", "??") :
+						LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBoneName);
+				}
+
+				this.History.Record(change);
+			}
+		}
+
+		// Create backup
+		this.backupQueue.Invoke();
+
+		// Refresh the actor
+		if (this.AutomaticRefreshEnabled && change.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh))
+		{
+			if (change.OriginBind.Flags.HasFlag(BindFlags.WeaponRefresh))
 				this.IsWeaponDirty = true;
 
-			// Restart the debounce timer if it's already running, otherwise start it.
+			// Restart the debounce timer if it's already running, otherwise start it
 			this.refreshDebounceTimer.Stop();
 			this.refreshDebounceTimer.Start();
 		}
