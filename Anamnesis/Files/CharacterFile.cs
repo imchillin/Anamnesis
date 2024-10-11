@@ -257,7 +257,7 @@ public class CharacterFile : JsonFileBase
 
 		if (actor.CanRefresh)
 		{
-			actor.EnableReading = false;
+			actor.PauseSynchronization = true;
 
 			if (!string.IsNullOrEmpty(this.Nickname))
 				actor.Nickname = this.Nickname;
@@ -430,9 +430,9 @@ public class CharacterFile : JsonFileBase
 			}
 
 			// Setting customize values will reset the extended appearance, which me must read.
-			actor.EnableReading = true;
+			actor.PauseSynchronization = false;
 			actor.Synchronize();
-			actor.EnableReading = false;
+			actor.PauseSynchronization = true;
 		}
 
 		Log.Verbose("Begin reading Extended Appearance from file");
@@ -471,7 +471,7 @@ public class CharacterFile : JsonFileBase
 			}
 		}
 
-		actor.EnableReading = true;
+		actor.PauseSynchronization = false;
 
 		Log.Information("Finished reading appearance from file");
 	}

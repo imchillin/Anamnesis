@@ -12,7 +12,6 @@ using PropertyChanged;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -156,11 +155,6 @@ public partial class PosePage : UserControl
 
 		PoseService.EnabledChanged += this.OnPoseServiceEnabledChanged;
 		this.PoseService.PropertyChanged += this.PoseService_PropertyChanged;
-
-		if (this.Actor != null)
-		{
-			this.Actor.PropertyChanged += this.OnActorPropertyChanged;
-		}
 	}
 
 	private void PoseService_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -173,16 +167,6 @@ public partial class PosePage : UserControl
 			this.Skeleton?.Reselect();
 			this.Skeleton?.ReadTransforms();
 		});
-	}
-
-	private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-	{
-		if (e.PropertyName == nameof(PosePage.TargetService.SelectedActor.IsMotionEnabled) ||
-			e.PropertyName == nameof(PosePage.PoseService.WorldPositionNotFrozen))
-		{
-			// Log or set a breakpoint here to verify the update
-			Log.Information($"Property changed: {e.PropertyName}");
-		}
 	}
 
 	private void OnPoseServiceEnabledChanged(bool value)
@@ -211,13 +195,11 @@ public partial class PosePage : UserControl
 		if (this.Actor?.ModelObject != null)
 		{
 			this.Actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
-			this.Actor.ModelObject.PropertyChanged -= this.OnActorPropertyChanged;
 		}
 
 		if (newActor?.ModelObject != null)
 		{
 			newActor.ModelObject.PropertyChanged += this.OnModelObjectChanged;
-			newActor.ModelObject.PropertyChanged += this.OnActorPropertyChanged;
 		}
 
 		this.Actor = newActor;
@@ -232,17 +214,6 @@ public partial class PosePage : UserControl
 			// Restart the debounce timer if it's already running, otherwise start it.
 			this.refreshDebounceTimer.Stop();
 			this.refreshDebounceTimer.Start();
-		}
-	}
-
-	private void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
-	{
-		if (e.PropertyName == nameof(ActorMemory.IsMotionEnabled))
-		{
-			if (sender is ActorMemory actorMemory)
-			{
-				Log.Information($"IsMotionEnabled changed to: {actorMemory.IsMotionEnabled}");
-			}
 		}
 	}
 

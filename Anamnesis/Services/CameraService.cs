@@ -76,14 +76,19 @@ public class CameraService : ServiceBase<CameraService>
 				}
 				else
 				{
-					// Ensure the gpose camera is synced by calling Synchronize after SetAddress
-					this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
-					this.GPoseCamera.Synchronize();
+					// SetAddress will synchronize if addresses are different
+					// so we don't need to call Synchronize() again.
+					if (this.GPoseCamera.Address == AddressService.GPoseCamera)
+						this.GPoseCamera.Synchronize();
+					else
+						this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
 				}
 
-				// Ensure the camera is synced by calling Synchronize after SetAddress
-				this.Camera.SetAddress(AddressService.Camera);
-				this.Camera.Synchronize();
+				// Same as above
+				if (this.Camera.Address == AddressService.Camera)
+					this.Camera.Synchronize();
+				else
+					this.Camera.SetAddress(AddressService.Camera);
 			}
 			catch (Exception ex)
 			{

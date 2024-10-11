@@ -14,14 +14,24 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
+/// <summary>
+/// Provides data for the PropertyChanged event, including additional change context information
+/// of type <see cref="PropertyChange"/>.
+/// </summary>
 public class MemObjPropertyChangedEventArgs : PropertyChangedEventArgs
 {
+	/// <summary>
+	/// Initializes a new instance of the <see cref="MemObjPropertyChangedEventArgs"/> class.
+	/// </summary>
+	/// <param name="propertyName">The name of the property that changed.</param>
+	/// <param name="context">The context of the property change.</param>
 	public MemObjPropertyChangedEventArgs(string propertyName, PropertyChange context)
 		: base(propertyName)
 	{
 		this.Context = context;
 	}
 
+	/// <summary>Gets the context of the property change.</summary>
 	public PropertyChange Context { get; }
 }
 
@@ -125,6 +135,11 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		set => Interlocked.Exchange(ref this.enableWriting, value ? 1 : 0);
 	}
 
+	/// <summary>Gets or sets a value indicating whether synchronization is paused.</summary>
+	/// <remarks>
+	/// Use this property if you want to pause synchronization of the object's memory state.
+	/// Unlike <see cref="EnableReading"/>, this property does not claim the memory objects' locks.
+	/// </remarks>
 	[DoNotNotify]
 	public bool PauseSynchronization
 	{
@@ -756,6 +771,16 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		}
 	}
 
+	/// <summary>
+	/// Sets the value of the specified property bind without triggering property change notifications.
+	/// </summary>
+	/// <param name="bind">The property bind information.</param>
+	/// <param name="value">The value to set.</param>
+	/// <remarks>
+	/// This is used in <see cref="ReadFromMemory(PropertyBindInfo)"/> to ensure that memory changes
+	/// that originate from the game do not get processed via the OnSelfPropertyChanged, which is
+	/// intended to be called only for user-initiated changes (incl. history).
+	/// </remarks>
 	private void SetValueWithoutNotification(PropertyBindInfo bind, object? value)
 	{
 		this.suppressPropNotifications.Value = true;
@@ -763,6 +788,12 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		this.suppressPropNotifications.Value = false;
 	}
 
+	/// <summary>
+	/// Recursively propagates the property changed event all ancestors of the current object.
+	/// </summary>
+	/// <param name="propertyName">The name of the property that changed.</param>
+	/// <param name="context">The context of the property change.</param>
+	/// <exception cref="Exception">Thrown when the parent is not null but the parent bind is null.</exception>
 	private void PropagatePropertyChanged(string propertyName, PropertyChange context)
 	{
 		this.PropertyChanged?.Invoke(this, new MemObjPropertyChangedEventArgs(propertyName, context));

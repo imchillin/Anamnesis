@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 public class HistoryService : ServiceBase<HistoryService>
 {
 	/// <summary>Lock object for thread synchronization.</summary>
+	/// <remarks>
+	/// Use this object to ensure that any code dependent on the <see cref="IsRestoring"/>
+	/// property does not run while history is being restored.
+	/// </remarks>
 	public readonly object LockObject = new();
 	private int isRestoring = 0;
 	public delegate void HistoryAppliedEvent();
@@ -45,11 +49,11 @@ public class HistoryService : ServiceBase<HistoryService>
 	{
 		ActorMemory? actor = TargetService.Instance.SelectedActor;
 
-		if (actor == null)
+		if (actor is null)
 			return;
 
-		// It's only necessary to gate the IsRestoring property when it's being set to true
-		// to ensure we're not changing state while a dependent method is mid-execution.
+		// Lock the object to prevent any dependent operations from
+		// running while we are restoring history.
 		lock (this.LockObject)
 		{
 			this.IsRestoring = true;

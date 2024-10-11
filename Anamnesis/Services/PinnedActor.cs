@@ -224,15 +224,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		}
 
 		this.isRestoringBackup = true;
-
-		if (slot == null)
-		{
-			await backup.Apply(memory, CharacterFile.SaveModes.All);
-		}
-		else
-		{
-			await backup.Apply(memory, CharacterFile.SaveModes.EquipmentSlot, slot);
-		}
+		await backup.Apply(memory, slot == null ? CharacterFile.SaveModes.All : CharacterFile.SaveModes.EquipmentSlot, slot);
 
 		// If we were a player, really make sure we are again.
 		if (backup.ObjectKind == ActorTypes.Player)

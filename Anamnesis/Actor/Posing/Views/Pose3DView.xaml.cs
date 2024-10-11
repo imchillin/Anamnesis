@@ -194,7 +194,7 @@ public partial class Pose3DView : UserControl
 					continue;
 
 				// Update the skeleton's transforms until either the motion is disabled
-				// or the pose is toggled on
+				// or the world position is frozen
 				if (this.Skeleton.Actor.IsMotionEnabled && PoseService.Instance.WorldPositionNotFrozen)
 				{
 					this.Skeleton.ReadTransforms();

@@ -13,11 +13,7 @@ public static class Brio
 		RedrawData data = new();
 		data.ObjectIndex = targetIndex;
 		data.RedrawType = redrawType;
-
 		var result = await BrioApi.Post("/redraw", data);
-
-		/* await Task.Delay(500); */
-
 		return result;
 	}
 
@@ -27,7 +23,6 @@ public static class Brio
 		data.SpawnOptions = options;
 		var resultRaw = await BrioApi.Post("/spawn", data);
 		var resultId = int.Parse(resultRaw);
-		/* await Task.Delay(500); */
 		return resultId;
 	}
 

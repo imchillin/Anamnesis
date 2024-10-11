@@ -6,41 +6,63 @@ namespace Anamnesis.Memory;
 using System.Collections.Generic;
 using System.Linq;
 
+/// <summary>
+/// Represents a change in a property, including its old and new values, the
+/// origin of the change, and the path of the property.
+/// </summary>
 public struct PropertyChange
 {
+	/// <summary>Gets the bind path associated with the property change.</summary>
 	public readonly List<BindInfo> BindPath;
+
+	/// <summary>Gets the origin of the property change.</summary>
 	public readonly Origins Origin;
 
-	// NOTE: OldValue and NewValue can store reference types. If that is the case,
-	// they will point to the same object in memory. This is fine, as we are only
-	// interested in the values they point to, not the references themselves.
-	// Use with caution.
+	/// <summary>Gets or sets the old value of the property.</summary>
+	/// <remarks>
+	/// This property can store reference types. If that is the case, they will point to
+	/// the same object in memory as <see cref="NewValue"/>. For the intended purpose
+	/// of this property, this is okay, as we are only interested in the values they
+	/// point to, not the references themselves. Nevertheless, USE WITH CAUTION.
+	/// </remarks>
 	public object? OldValue;
+
+	/// <summary>Gets or sets the new value of the property.</summary>
+	/// <remarks>
+	/// This property can store reference types. If that is the case, they will point to
+	/// the same object in memory as <see cref="OldValue"/>. For the intended purpose
+	/// of this property, this is okay, as we are only interested in the values they
+	/// point to, not the references themselves. Nevertheless, USE WITH CAUTION.
+	/// </remarks>
 	public object? NewValue;
+
+	/// <summary>Gets or sets the name of the property.</summary>
 	public string? Name;
 
+	/// <summary>The full path of the property change.</summary>
 	private string path;
 
-	public PropertyChange(BindInfo? bind, object? oldValue, object? newValue, Origins origin)
+	/// <summary>
+	/// Initializes a new instance of the <see cref="PropertyChange"/> struct.
+	/// </summary>
+	/// <param name="bind">The bind information associated with the property change.</param>
+	/// <param name="oldValue">The old value of the property.</param>
+	/// <param name="newValue">The new value of the property.</param>
+	/// <param name="origin">The origin of the property change.</param>
+	public PropertyChange(BindInfo bind, object? oldValue, object? newValue, Origins origin)
 	{
-		// If a bind is not provided, then this change is not associated with a bind.
-		if (bind != null)
-		{
-			this.BindPath = new() { bind };
-			this.path = bind.Path;
-		}
-		else
-		{
-			this.BindPath = new();
-			this.path = string.Empty;
-		}
-
+		this.BindPath = new() { bind };
+		this.path = bind.Path;
 		this.OldValue = oldValue;
 		this.NewValue = newValue;
 		this.Origin = origin;
 		this.Name = null;
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="PropertyChange"/> struct by copying another instance.
+	/// </summary>
+	/// <param name="other">The other instance to copy.</param>
 	public PropertyChange(PropertyChange other)
 	{
 		this.BindPath = new();
@@ -52,6 +74,7 @@ public struct PropertyChange
 		this.Name = other.Name;
 	}
 
+	/// <summary>The possible origins of a property change.</summary>
 	public enum Origins
 	{
 		User,
@@ -59,11 +82,19 @@ public struct PropertyChange
 		Game,
 	}
 
+	/// <summary>Gets the full path of the property change.</summary>
 	public readonly string Path => this.path;
+
+	/// <summary>Gets the bind information of the origin property bind.</summary>
 	public readonly BindInfo OriginBind => this.BindPath[0];
-	public readonly string TerminalPropertyName => this.BindPath[0].Name;
+
+	/// <summary>Gets the name of the top property in the bind path.</summary>
 	public readonly string TopPropertyName => this.BindPath.Last().Name;
 
+	/// <summary>
+	/// Determines whether the property change should be recorded.
+	/// </summary>
+	/// <returns>True if the change should be recorded; otherwise, false.</returns>
 	public readonly bool ShouldRecord()
 	{
 		// Don't record changes that originate anywhere other than the user interface.
@@ -79,12 +110,20 @@ public struct PropertyChange
 		return true;
 	}
 
+	/// <summary>
+	/// Adds a bind to the property change, appended to the end of the bind path.
+	/// </summary>
+	/// <param name="bind">The bind information to add.</param>
 	public void AddPath(BindInfo bind)
 	{
 		this.BindPath.Add(bind);
-		this.path = bind.Path + this.path;
+		this.path += bind.Path;
 	}
 
+	/// <summary>
+	/// Returns a string that represents the current object.
+	/// </summary>
+	/// <returns>A string that represents the current object.</returns>
 	public override readonly string ToString()
 	{
 		return $"{this.path}: {this.OldValue} -> {this.NewValue}";
