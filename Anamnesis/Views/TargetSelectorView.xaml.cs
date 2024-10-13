@@ -3,12 +3,6 @@
 
 namespace Anamnesis.Views;
 
-using System;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 using Anamnesis.Actor;
 using Anamnesis.Brio;
 using Anamnesis.Files;
@@ -16,6 +10,12 @@ using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using Serilog;
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using XivToolsWpf;
 
 public abstract class TargetSelectorDrawer : SelectorDrawer<ActorBasicMemory>
@@ -200,18 +200,17 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 					{
 						// We try and load the A-Pose if it's available
 						var path = FileService.ParseToFilePath(FileService.StandardPoseDirectory.Path);
-						path = path + Path.Combine("Unisex", "A-Pose.pose");
+						path += Path.Combine("Unisex", "A-Pose.pose");
 
 						if (File.Exists(path))
 						{
-							PoseFile? poseFile = new PoseFile().Deserialize(File.OpenRead(path)) as PoseFile;
-							if (poseFile == null)
+							if (new PoseFile().Deserialize(File.OpenRead(path)) is not PoseFile poseFile)
 								return;
 
 							SkeletonVisual3d skeletonVisual3D = new();
-							ActorMemory fullActor = new ActorMemory();
+							ActorMemory fullActor = new();
 							fullActor.SetAddress(newActor.Address);
-							fullActor.Tick();
+							fullActor.Synchronize();
 							await skeletonVisual3D.SetActor(fullActor);
 							await poseFile.Apply(fullActor, skeletonVisual3D, null, PoseFile.Mode.Rotation, true);
 						}
@@ -226,7 +225,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 				throw new Exception("Brio could not spawn actor");
 			}
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
 			Log.Error("Failed to spawn actor", ex);
 		}

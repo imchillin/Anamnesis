@@ -3,9 +3,17 @@
 
 namespace Anamnesis.Memory;
 
-public class SkeletonMemory : ArrayMemory<PartialSkeletonMemory, short>
+/// <summary>
+/// Represents the object's skeleton, composed of an array of <see cref="PartialSkeletonMemory"/> elements.
+/// </summary>
+public class SkeletonMemory : ArrayMemory<PartialSkeletonMemory, ushort>
 {
+	/// <inheritdoc/>
 	public override int AddressOffset => 0x068;
-	public override int CountOffset => 0x050;
+
+	/// <inheritdoc/>
+	public override int LengthOffset => 0x050;
+
+	/// <inheritdoc/>
 	public override int ElementSize => 0x220;
 }

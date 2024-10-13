@@ -43,7 +43,7 @@ public class ActorModelMemory : MemoryBase
 
 	[Bind(0x030, BindFlags.Pointer)] public ExtendedWeaponMemory? Weapons { get; set; }
 	[Bind(0x050)] public TransformMemory? Transform { get; set; }
-	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose)] public SkeletonMemory? Skeleton { get; set; }
+	[Bind(0x0A0, BindFlags.Pointer | BindFlags.OnlyInGPose | BindFlags.DontCacheOffsets)] public SkeletonMemory? Skeleton { get; set; }
 	[Bind(0x148, BindFlags.Pointer)] public BustMemory? Bust { get; set; }
 	[Bind(0x290)] public Color Tint { get; set; }
 	[Bind(0x2A4)] public float Height { get; set; }
@@ -103,7 +103,7 @@ public class ActorModelMemory : MemoryBase
 
 	protected override void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if(e.PropertyName == nameof(this.Height) && this.Height <= 0)
+		if (e.PropertyName == nameof(this.Height) && this.Height <= 0)
 		{
 			this.Height = 0.1f;
 		}

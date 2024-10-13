@@ -212,9 +212,9 @@
 					<XivToolsWpf:NumberBox Grid.Column="0" Value="{Binding Customize.Lips}" Minimum="0" Maximum="4" Buttons="True" Margin="0, 0, 12, 0"  ValueOffset="1"/>
 
 					<!-- Lip Color -->
-					<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}" Visibility="{Binding HasntFur, Converter={StaticResource B2V}}"/>
-					<CheckBox Grid.Column="2" IsChecked="{Binding Customize.EnableLipColor}" Visibility="{Binding HasntFur, Converter={StaticResource B2V}}"/>
-					<controls:ColorControl Grid.Column="3" Value="{Binding Customize.LipsToneFurPattern}" Visibility="{Binding HasntFur, Converter={StaticResource B2V}}" IsEnabled="{Binding Customize.EnableLipColor}" Type="Lips" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}"/>
+					<TextBlock Text="Color:" Grid.Column="1" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}"/>
+					<CheckBox Grid.Column="2" IsChecked="{Binding Customize.EnableLipColor}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}"/>
+					<controls:ColorControl Grid.Column="3" Value="{Binding Customize.LipsToneFurPattern}" Visibility="{Binding HasFur, Converter={StaticResource !B2V}}" IsEnabled="{Binding Customize.EnableLipColor}" Type="Lips" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}"/>
 
 					<!-- Fur pattern -->
 					<XivToolsWpf:TextBlock Grid.Column="1" Key="Character_Appearance_Fur" Style="{StaticResource Label}" Visibility="{Binding HasFur, Converter={StaticResource B2V}}" TextAlignment="Center"/>

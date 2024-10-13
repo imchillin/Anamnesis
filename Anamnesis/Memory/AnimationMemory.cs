@@ -5,13 +5,19 @@ namespace Anamnesis.Memory;
 
 using Anamnesis.Services;
 using PropertyChanged;
+using System.ComponentModel;
 
 [AddINotifyPropertyChangedInterface]
 public class AnimationMemory : MemoryBase
 {
-	public const int AnimationSlotCount = 13;
+	public const int AnimationSlotCount = 14;
 
 	private bool linkSpeeds = true;
+
+	public AnimationMemory()
+	{
+		this.PropertyChanged += this.HandlePropertyChanged;
+	}
 
 	public enum AnimationSlots : int
 	{
@@ -44,44 +50,53 @@ public class AnimationMemory : MemoryBase
 		set
 		{
 			this.linkSpeeds = value;
-			this.ApplyAnimationLink(this.Speeds![0].Value);
+			this.ApplyAnimationLink(this.Speeds![0]);
 		}
 	}
 
-	protected override void HandlePropertyChanged(PropertyChange change)
+	private void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
+		if (e is not MemObjPropertyChangedEventArgs memObjEventArgs)
+			return;
+
+		var change = memObjEventArgs.Context;
+
 		// Update all speeds if linked
-		if (this.LinkSpeeds && AnimationService.Instance.SpeedControlEnabled && change.Origin == PropertyChange.Origins.User && change.TopPropertyName == nameof(this.Speeds) && change.BindPath[1].Name == "0")
+		if (this.LinkSpeeds && AnimationService.Instance.SpeedControlEnabled &&
+			change.Origin == PropertyChange.Origins.User &&
+			change.TopPropertyName == nameof(this.Speeds) &&
+			change.BindPath[1].Name == "0" &&
+			change.OriginBind.LastValue != null)
 		{
-			this.ApplyAnimationLink((float)change.NewValue!);
+			this.ApplyAnimationLink((float)change.OriginBind.LastValue);
 		}
 
 		// We need to flip a flag (the engine will flip it back) to apply it
-		if (AnimationService.Instance.SpeedControlEnabled && change.Origin == PropertyChange.Origins.User && change.TopPropertyName == nameof(this.Speeds))
+		if (AnimationService.Instance.SpeedControlEnabled &&
+			change.Origin == PropertyChange.Origins.User &&
+			change.TopPropertyName == nameof(this.Speeds))
 		{
 			this.SpeedTrigger = 1;
 		}
-
-		base.HandlePropertyChanged(change);
 	}
 
 	private void ApplyAnimationLink(float value)
 	{
 		for (int i = 1; i < AnimationSlotCount; i++)
 		{
-			this.Speeds![i].Value = value;
+			this.Speeds![i] = value;
 		}
 	}
 
-	public class AnimationIdArrayMemory : InplaceFixedArrayMemory<ValueMemory<ushort>>
+	public class AnimationIdArrayMemory : InplaceFixedArrayMemory<ushort>
 	{
 		public override int ElementSize => sizeof(ushort);
-		public override int Count => AnimationSlotCount;
+		public override int Length => AnimationSlotCount;
 	}
 
-	public class AnimationSpeedArrayMemory : InplaceFixedArrayMemory<ValueMemory<float>>
+	public class AnimationSpeedArrayMemory : InplaceFixedArrayMemory<float>
 	{
 		public override int ElementSize => sizeof(float);
-		public override int Count => AnimationSlotCount;
+		public override int Length => AnimationSlotCount;
 	}
 }

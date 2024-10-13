@@ -3,17 +3,29 @@
 
 namespace Anamnesis.Services;
 
-using System.Threading.Tasks;
 using Anamnesis.Keyboard;
 using Anamnesis.Memory;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class HistoryService : ServiceBase<HistoryService>
 {
+	/// <summary>Lock object for thread synchronization.</summary>
+	/// <remarks>
+	/// Use this object to ensure that any code dependent on the <see cref="IsRestoring"/>
+	/// property does not run while history is being restored.
+	/// </remarks>
+	public readonly object LockObject = new();
+	private int isRestoring = 0;
 	public delegate void HistoryAppliedEvent();
 
 	public static event HistoryAppliedEvent? OnHistoryApplied;
 
-	public static bool IsRestoring { get; private set; } = false;
+	public bool IsRestoring
+	{
+		get => Interlocked.CompareExchange(ref this.isRestoring, 0, 0) == 1;
+		private set => Interlocked.Exchange(ref this.isRestoring, value ? 1 : 0);
+	}
 
 	public override Task Initialize()
 	{
@@ -37,21 +49,30 @@ public class HistoryService : ServiceBase<HistoryService>
 	{
 		ActorMemory? actor = TargetService.Instance.SelectedActor;
 
-		if (actor == null)
+		if (actor is null)
 			return;
 
-		IsRestoring = true;
-
-		if (forward)
+		// Lock the object to prevent any dependent operations from
+		// running while we are restoring history.
+		lock (this.LockObject)
 		{
-			actor.History.StepForward();
-		}
-		else
-		{
-			actor.History.StepBack();
-		}
+			this.IsRestoring = true;
 
-		OnHistoryApplied?.Invoke();
-		IsRestoring = false;
+			actor.PauseSynchronization = true;
+
+			if (forward)
+			{
+				actor.History.StepForward();
+			}
+			else
+			{
+				actor.History.StepBack();
+			}
+
+			actor.WriteDelayedBinds();
+			OnHistoryApplied?.Invoke();
+			actor.PauseSynchronization = false;
+			this.IsRestoring = false;
+		}
 	}
 }
