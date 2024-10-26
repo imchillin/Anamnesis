@@ -3,14 +3,6 @@
 
 namespace Anamnesis.Actor.Pages;
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Navigation;
 using Anamnesis.Actor.Utilities;
 using Anamnesis.Actor.Views;
 using Anamnesis.Files;
@@ -24,6 +16,14 @@ using Anamnesis.Styles;
 using Anamnesis.Styles.Drawers;
 using PropertyChanged;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Navigation;
 
 /// <summary>
 /// Interaction logic for AppearancePage.xaml.

@@ -378,7 +378,9 @@ public partial class PosePage : UserControl
 
 			// Display a warning if there is a face bones mismatch.
 			// We should not load expressions if the face bones are mismatched.
-			if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly)
+			// We skip this step for non-humanoid actors
+			if (this.Actor.Customize!.Age != ActorCustomizeMemory.Ages.None
+				&& importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly)
 			{
 				mismatchedFaceBones = poseFile.IsPreDTPoseFile() != this.Skeleton.HasPreDTFace;
 				if (mismatchedFaceBones)
@@ -411,6 +413,8 @@ public partial class PosePage : UserControl
 				this.Skeleton.SelectBody();
 				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
 
+				// Don't import body with positions unless it's "Full Transform".
+				// Otherwise, the body will be deformed if the pose file was created for another race.
 				bool doLegacyImport = importOption == PoseImportOptions.Character && mode.HasFlag(PoseFile.Mode.Position);
 				if (doLegacyImport)
 				{
@@ -448,7 +452,8 @@ public partial class PosePage : UserControl
 				this.Skeleton.ClearSelection();
 
 				// Pre-DT faces need to be imported without positions.
-				bool doLegacyImport = poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace && mode.HasFlag(PoseFile.Mode.Position);
+				bool doLegacyImport = this.Actor.Customize!.Age == ActorCustomizeMemory.Ages.None
+									|| (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace && mode.HasFlag(PoseFile.Mode.Position));
 				if (doLegacyImport)
 				{
 					mode &= ~PoseFile.Mode.Position;
