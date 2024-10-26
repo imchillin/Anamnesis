@@ -308,7 +308,6 @@
 	"Pose_WarningNotGPose": "Le posing n'est disponible qu'en pose de groupe. Tapez /gpose dans le chat.",
 	"Pose_WarningNotFrozen": "Les mouvements des personnages doivent-être désactivés dans le menu de pose de groupe.",
 	"Pose_WarningQuit": "Etes-vous sur de vouloir quitter ? La pose actuelle sera perdue",
-	"Pose_WarningExpresionPositions": "Vous essayez de charger une expression alors que l'animation est désactivée, cela peux avoir des effets indésirables. Continuer?",
 	"Pose_NoSkeleton": "Aucun Squelette lié à cette vue",
 	"Pose_NoModel": "Cet actor n'as pas de model.",
 	"Pose_NotEnabled": "Le mode pose dois etre activé.",
@@ -333,8 +332,6 @@
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Taille",
 	"Pose_Position": "Position",
-	"Pose_All": "Transformation complète (Advancé)",
-	"Pose_AllTooltip": "Charger Rotation,taille et position en même temps (advancé)",
 	"Pose_Linked": "Os liés",
 	"Pose_Linked_Tooltip": "Les os liés bougerons en même temps que l'os selectioné",
 

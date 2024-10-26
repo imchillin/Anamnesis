@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,7 +32,20 @@ public partial class PosePage : UserControl
 {
 	public const double DragThreshold = 20;
 
-	public HashSet<BoneView> BoneViews = new HashSet<BoneView>();
+	public HashSet<BoneView> BoneViews = new();
+
+	private static readonly Type[] PoseFileTypes = new[]
+	{
+		typeof(PoseFile),
+		typeof(CmToolPoseFile),
+	};
+
+	private static readonly Shortcut[] PoseDirShortcuts = new[]
+	{
+		FileService.DefaultPoseDirectory,
+		FileService.StandardPoseDirectory,
+		FileService.CMToolPoseSaveDir,
+	};
 
 	private static DirectoryInfo? lastLoadDir;
 	private static DirectoryInfo? lastSaveDir;
@@ -42,6 +56,10 @@ public partial class PosePage : UserControl
 	private Point origMouseDownPoint;
 
 	private Task? writeSkeletonTask;
+
+	private bool importPoseRotation = true;
+	private bool importPosePosition = true;
+	private bool importPoseScale = true;
 
 	public PosePage()
 	{
@@ -56,6 +74,15 @@ public partial class PosePage : UserControl
 		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
+	private enum PoseImportOptions
+	{
+		Character,      // (Default option) Imports full pose without positions to avoid deformations due to race bone position differences.
+		FullTransform,  // Imports full pose with all transforms.
+		BodyOnly,       // Imports only the body part of the pose.
+		ExpressionOnly, // Imports only the facial expression part of the pose.
+		SelectedBones,  // Imports only the selected bones.
+	}
+
 	public SettingsService SettingsService => SettingsService.Instance;
 	public GposeService GposeService => GposeService.Instance;
 	public PoseService PoseService => PoseService.Instance;
@@ -64,6 +91,48 @@ public partial class PosePage : UserControl
 	public bool IsFlipping { get; private set; }
 	public ActorMemory? Actor { get; private set; }
 	public SkeletonVisual3d? Skeleton { get; private set; }
+
+	public bool ImportPoseRotation
+	{
+		get => this.importPoseRotation;
+		set
+		{
+			// Don't disable if it's the only one enabled
+			// We want to have at least one option enabled at all times
+			if (!value && !this.importPosePosition && !this.importPoseScale)
+				return;
+
+			this.importPoseRotation = value;
+		}
+	}
+
+	public bool ImportPosePosition
+	{
+		get => this.importPosePosition;
+		set
+		{
+			// Don't disable if it's the only one enabled
+			// We want to have at least one option enabled at all times
+			if (!value && !this.importPoseRotation && !this.importPoseScale)
+				return;
+
+			this.importPosePosition = value;
+		}
+	}
+
+	public bool ImportPoseScale
+	{
+		get => this.importPoseScale;
+		set
+		{
+			// Don't disable if it's the only one enabled
+			// We want to have at least one option enabled at all times
+			if (!value && !this.importPoseRotation && !this.importPosePosition)
+				return;
+
+			this.importPoseScale = value;
+		}
+	}
 
 	private static ILogger Log => Serilog.Log.ForContext<PosePage>();
 
@@ -260,89 +329,39 @@ public partial class PosePage : UserControl
 
 	private async void OnImportClicked(object sender, RoutedEventArgs e)
 	{
-		await this.ImportPose(false, PoseFile.Mode.Rotation, true);
+		await this.ImportPose(PoseImportOptions.Character, PoseFile.Mode.All);
 		this.Skeleton?.ClearSelection();
 	}
 
-	private async void OnImportScaleClicked(object sender, RoutedEventArgs e)
+	private async void OnImportFullCharClicked(object sender, RoutedEventArgs e)
 	{
-		await this.ImportPose(false, PoseFile.Mode.Scale, true);
-	}
-
-	private async void OnImportSelectedClicked(object sender, RoutedEventArgs e)
-	{
-		await this.ImportPose(true, PoseFile.Mode.Rotation, false);
-	}
-
-	private async void OnImportAllClicked(object sender, RoutedEventArgs e)
-	{
-		await this.ImportPose(false, PoseFile.Mode.All, true);
+		await this.HandleSecondaryOptionImport(PoseImportOptions.FullTransform);
 	}
 
 	private async void OnImportBodyClicked(object sender, RoutedEventArgs e)
 	{
-		if (this.Skeleton == null)
-			return;
-
-		this.Skeleton.SelectBody();
-
-		await this.ImportPose(true, PoseFile.Mode.Rotation, false);
-		this.Skeleton.ClearSelection();
+		await this.HandleSecondaryOptionImport(PoseImportOptions.BodyOnly);
 	}
 
 	private async void OnImportExpressionClicked(object sender, RoutedEventArgs e)
 	{
-		if (this.Skeleton == null)
-			return;
-
-		if (this.PoseService.FreezePositions)
-		{
-			bool? result = await GenericDialog.ShowLocalizedAsync("Pose_WarningExpresionPositions", "Common_Confirm", MessageBoxButton.OKCancel);
-
-			if (result != true)
-			{
-				return;
-			}
-		}
-
-		this.Skeleton.SelectHead();
-		await this.ImportPose(true, PoseFile.Mode.Rotation | PoseFile.Mode.Scale | PoseFile.Mode.Position, true);
-		this.Skeleton.ClearSelection();
+		await this.HandleSecondaryOptionImport(PoseImportOptions.ExpressionOnly);
 	}
 
-	// We want to skip doing the "Facial Expression Hack" if we're posing by selected bones or by body.
-	// Otherwise, the head won't pose as intended and will return to its original position.
-	// Not quite !selectedOnly, due to posing by expression actually needing the hack.
-	private async Task ImportPose(bool selectionOnly, PoseFile.Mode mode, bool doFacialExpressionHack)
+	private async void OnImportSelectedBonesClicked(object sender, RoutedEventArgs e)
 	{
+		await this.HandleSecondaryOptionImport(PoseImportOptions.SelectedBones);
+	}
+
+	private async Task ImportPose(PoseImportOptions importOption, PoseFile.Mode mode)
+	{
+		if (this.Actor == null || this.Skeleton == null)
+			return;
+
 		try
 		{
-			if (this.Actor == null || this.Skeleton == null)
-				return;
-
-			bool initialFreezeScale = PoseService.Instance.FreezeScale;
-			bool initialFreezePosition = PoseService.Instance.FreezePositions;
-
-			PoseService.Instance.SetEnabled(true);
-			PoseService.Instance.FreezeScale |= mode.HasFlag(PoseFile.Mode.Scale);
-			PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
-			PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
-
-			Type[] types = new[]
-			{
-					typeof(PoseFile),
-					typeof(CmToolPoseFile),
-			};
-
-			Shortcut[] shortcuts = new[]
-			{
-					FileService.DefaultPoseDirectory,
-					FileService.StandardPoseDirectory,
-					FileService.CMToolPoseSaveDir,
-			};
-
-			OpenResult result = await FileService.Open(lastLoadDir, shortcuts, types);
-
+			// Open and load pose file
+			OpenResult result = await FileService.Open(lastLoadDir, PoseDirShortcuts, PoseFileTypes);
 			if (result.File == null)
 				return;
 
@@ -351,83 +370,121 @@ public partial class PosePage : UserControl
 			if (result.File is CmToolPoseFile legacyFile)
 				result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? ActorCustomizeMemory.Races.Hyur);
 
-			if (result.File is PoseFile poseFile)
+			if (result.File is not PoseFile poseFile)
+				return;
+
+			Dictionary<string, Vector3> bonePositions = new();
+			bool mismatchedFaceBones = false;
+
+			// Display a warning if there is a face bones mismatch.
+			// We should not load expressions if the face bones are mismatched.
+			if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly)
 			{
-				HashSet<string>? bones = null;
-
-				// If we are loading the rotation of all bones in a pre-DT pose file, let's not load the face bones.
-				// This acts as if we were loading by body pose, which loads the rotations of just the body bones.
-				if (poseFile.IsPreDTPoseFile() && !selectionOnly && mode == PoseFile.Mode.Rotation)
+				mismatchedFaceBones = poseFile.IsPreDTPoseFile() != this.Skeleton.HasPreDTFace;
+				if (mismatchedFaceBones)
 				{
-					this.Skeleton.SelectBody();
-					selectionOnly = true;
+					string dialogMsgKey = poseFile.IsPreDTPoseFile() ? "Pose_WarningExpresionOldOnNew" : "Pose_WarningExpresionNewOnOld";
+					await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Attention", MessageBoxButton.OK);
+				}
+			}
+
+			// Exit early if bones are mismatched and we're only importing expressions
+			if (mismatchedFaceBones && importOption == PoseImportOptions.ExpressionOnly)
+				return;
+
+			// Positions are not frozen yet, that will happen during face import
+			PoseService.Instance.SetEnabled(true);
+			PoseService.Instance.FreezeScale |= mode.HasFlag(PoseFile.Mode.Scale);
+			PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
+
+			if (importOption == PoseImportOptions.SelectedBones)
+			{
+				// Don't unselected bones after import. Let the user decide what to do with the selection.
+				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+				await poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
+				return;
+			}
+
+			// Step 1: Import body part of the pose
+			if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.BodyOnly)
+			{
+				this.Skeleton.SelectBody();
+				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+
+				bool doLegacyImport = importOption == PoseImportOptions.Character && mode.HasFlag(PoseFile.Mode.Position);
+				if (doLegacyImport)
+				{
+					mode &= ~PoseFile.Mode.Position;
 				}
 
-				// If we are loading an expression, which is done via selected bones and all three pose modes, we should warn the user if:
-				// We are loading a pre-DT pose file on to a DT-updated face, OR
-				// We are loading a DT pose file on to a non-updated face.
-				// Our entry point is loading by expression, which is done via selected bones and all three pose modes.
-				if (selectionOnly && mode == (PoseFile.Mode.Rotation | PoseFile.Mode.Scale | PoseFile.Mode.Position))
+				PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
+				await Task.Delay(50);
+
+				// Don't apply the facial expression hack for the body import step.
+				// Otherwise, the head won't pose as intended and will return to its original position.
+				await poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
+
+				// Re-enable positions if they were disabled.
+				if (doLegacyImport)
 				{
-					string dialogMsgKey = "Pose_WarningExpresionOldOnNew";
-					bool doPreDtExpressionPoseModeOnOK = false;
-					bool showDialog = true;
-
-					if (poseFile.IsPreDTPoseFile() && !this.Skeleton.HasPreDTFace)
-					{
-						// Old pose, and new face. Warn, load as EW expression if OK.
-						doPreDtExpressionPoseModeOnOK = true;
-					}
-					else if (!poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace)
-					{
-						// New pose and old face. Warn, load as DT expression if OK.
-						dialogMsgKey = "Pose_WarningExpresionNewOnOld";
-					}
-					else if (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace)
-					{
-						// Old pose and old face. Don't warn, load as EW expression.
-						showDialog = false;
-						doPreDtExpressionPoseModeOnOK = true;
-					}
-					else
-					{
-						// New pose and new face. Don't warn. Everything is OK.
-						showDialog = false;
-					}
-
-					if (showDialog)
-					{
-						bool? dialogResult = await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Confirm", MessageBoxButton.OKCancel);
-						if (dialogResult != true)
-						{
-							PoseService.Instance.FreezeScale = initialFreezeScale;
-							PoseService.Instance.FreezePositions = initialFreezePosition;
-							return;
-						}
-					}
-
-					// Prior to DT, we loaded expressions via Rotation and Scale only.
-					if (doPreDtExpressionPoseModeOnOK)
-					{
-						PoseService.Instance.FreezePositions = initialFreezePosition;
-						mode = PoseFile.Mode.Rotation | PoseFile.Mode.Scale;
-					}
+					mode |= PoseFile.Mode.Position;
+					PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
 				}
 
-				if (selectionOnly)
-				{
-					bones = new HashSet<string>();
+				// Store updated bone positions as they will get reset by the expression import
+				bonePositions = this.Skeleton.SelectedBones.Select(bone => (bone.BoneName, bone.Position)).ToDictionary(t => t.BoneName, t => t.Position);
+				this.Skeleton.ClearSelection();
+			}
 
-					foreach ((string name, BoneVisual3d visual) in this.Skeleton.Bones)
-					{
-						if (this.Skeleton.GetIsBoneSelected(visual))
-						{
-							bones.Add(name);
-						}
-					}
+			// Body pose is loaded. Exit early if we're only importing the body.
+			if (importOption == PoseImportOptions.BodyOnly)
+				return;
+
+			// Step 2: Import the facial expression
+			if (!mismatchedFaceBones && (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly))
+			{
+				this.Skeleton.SelectHead();
+				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+				this.Skeleton.ClearSelection();
+
+				// Pre-DT faces need to be imported without positions.
+				bool doLegacyImport = poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace && mode.HasFlag(PoseFile.Mode.Position);
+				if (doLegacyImport)
+				{
+					mode &= ~PoseFile.Mode.Position;
 				}
 
-				await poseFile.Apply(this.Actor, this.Skeleton, bones, mode, doFacialExpressionHack);
+				PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
+				await Task.Delay(50);
+
+				// Apply facial expression hack for the expression import
+				await poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, true);
+
+				// Re-enable positions if they were disabled.
+				if (doLegacyImport)
+				{
+					mode |= PoseFile.Mode.Position;
+					PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
+				}
+			}
+
+			// Expression is loaded. Exit early if we're only importing expressions.
+			if (importOption == PoseImportOptions.ExpressionOnly)
+				return;
+
+			// Step 3: Restore body bone positions
+			if (importOption == PoseImportOptions.FullTransform && mode.HasFlag(PoseFile.Mode.Position))
+			{
+				foreach ((string name, Vector3 position) in bonePositions)
+				{
+					BoneVisual3d? bone = this.Skeleton.GetBone(name);
+
+					if (bone == null)
+						continue;
+
+					bone.Position = position;
+					bone.WriteTransform(this.Skeleton, false);
+				}
 			}
 		}
 		catch (Exception ex)
@@ -687,5 +744,31 @@ public partial class PosePage : UserControl
 			// up to 60 times a second
 			await Task.Delay(16);
 		}
+	}
+
+	private async Task HandleSecondaryOptionImport(PoseImportOptions importOption)
+	{
+		if (this.Skeleton == null)
+			return;
+
+		// Don't do anything if no import mode is selected.
+		var importMode = this.GetSecondaryImportOptionMode();
+		if (importMode == PoseFile.Mode.None)
+			return;
+
+		await this.ImportPose(importOption, importMode);
+	}
+
+	private PoseFile.Mode GetSecondaryImportOptionMode()
+	{
+		PoseFile.Mode mode = PoseFile.Mode.None;
+		if (this.ImportPoseRotation)
+			mode |= PoseFile.Mode.Rotation;
+		if (this.ImportPosePosition)
+			mode |= PoseFile.Mode.Position;
+		if (this.ImportPoseScale)
+			mode |= PoseFile.Mode.Scale;
+
+		return mode;
 	}
 }

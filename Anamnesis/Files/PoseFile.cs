@@ -18,6 +18,7 @@ public class PoseFile : JsonFileBase
 	[Flags]
 	public enum Mode
 	{
+		None = 0,
 		Rotation = 1,
 		Scale = 2,
 		Position = 4,
@@ -139,6 +140,7 @@ public class PoseFile : JsonFileBase
 
 		PoseService.Instance.SetEnabled(true);
 		PoseService.Instance.CanEdit = false;
+		skeletonMem.PauseSynchronization = true;
 		await Task.Delay(100);
 
 		// Create a back up of the relative rotations of every bones
@@ -249,6 +251,7 @@ public class PoseFile : JsonFileBase
 
 		await Task.Delay(100);
 
+		skeletonMem.PauseSynchronization = false;
 		skeletonMem.Synchronize();
 
 		PoseService.Instance.CanEdit = true;

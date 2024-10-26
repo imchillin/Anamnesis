@@ -310,7 +310,6 @@
 	"Pose_WarningNotGPose": "仅在集体动作中可以修改动作造型。在聊天框中输入 /gpose 进入。",
 	"Pose_WarningNotFrozen": "仅能修改被冻结的角色，请在集体动作中冻结该角色。",
 	"Pose_WarningQuit": "确定退出？当前的动作造型将会丢失。",
-	"Pose_WarningExpresionPositions": "试图在位置被冻结时加载表情，这可能会产生非预期的结果。是否继续？",
 	"Pose_NoSkeleton": "无对应的骨骼。",
 	"Pose_NoModel": "该角色没有模型。",
 	"Pose_NotEnabled": "必须启用动作模式。",
@@ -335,8 +334,6 @@
 	"Pose_Rotation": "旋转",
 	"Pose_Scale": "比例",
 	"Pose_Position": "位置",
-	"Pose_All": "完全变形 (高级)",
-	"Pose_AllTooltip": "同时加载旋转、比例和位置 (高级)",
 	"Pose_Linked": "链接骨骼",
 	"Pose_Linked_Tooltip": "已链接的骨骼会随着当前骨骼移动",
 
