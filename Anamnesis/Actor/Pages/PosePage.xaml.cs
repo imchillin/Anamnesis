@@ -367,8 +367,12 @@ public partial class PosePage : UserControl
 
 			lastLoadDir = result.Directory;
 
+			bool isLegacyFile = false;
 			if (result.File is CmToolPoseFile legacyFile)
+			{
+				isLegacyFile = true;
 				result.File = legacyFile.Upgrade(this.Actor.Customize?.Race ?? ActorCustomizeMemory.Races.Hyur);
+			}
 
 			if (result.File is not PoseFile poseFile)
 				return;
@@ -382,10 +386,12 @@ public partial class PosePage : UserControl
 			if (this.Actor.Customize!.Age != ActorCustomizeMemory.Ages.None
 				&& importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly)
 			{
-				mismatchedFaceBones = poseFile.IsPreDTPoseFile() != this.Skeleton.HasPreDTFace;
+				mismatchedFaceBones = isLegacyFile || poseFile.IsPreDTPoseFile() != this.Skeleton.HasPreDTFace;
 				if (mismatchedFaceBones)
 				{
-					string dialogMsgKey = poseFile.IsPreDTPoseFile() ? "Pose_WarningExpresionOldOnNew" : "Pose_WarningExpresionNewOnOld";
+					string dialogMsgKey = isLegacyFile || poseFile.IsPreDTPoseFile()
+						? "Pose_WarningExpresionOldOnNew"
+						: "Pose_WarningExpresionNewOnOld";
 					await GenericDialog.ShowLocalizedAsync(dialogMsgKey, "Common_Attention", MessageBoxButton.OK);
 				}
 			}
@@ -394,13 +400,15 @@ public partial class PosePage : UserControl
 			if (mismatchedFaceBones && importOption == PoseImportOptions.ExpressionOnly)
 				return;
 
-			// Positions are not frozen yet, that will happen during face import
+			// Positions are not frozen yet, that will happen at the appropriate moment
 			PoseService.Instance.SetEnabled(true);
 			PoseService.Instance.FreezeScale |= mode.HasFlag(PoseFile.Mode.Scale);
 			PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
 
 			if (importOption == PoseImportOptions.SelectedBones)
 			{
+				PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
+
 				// Don't unselected bones after import. Let the user decide what to do with the selection.
 				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
 				await poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
