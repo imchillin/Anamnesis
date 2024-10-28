@@ -16,11 +16,13 @@ public class DummyActor : ActorMemory
 
 	public override bool IsGPoseActor => false;
 
-	public override void Tick()
+	public override void Synchronize()
 	{
+		// Do nothing
 	}
 
 	public override void SetAddress(IntPtr address)
 	{
+		// Do nothing
 	}
 }

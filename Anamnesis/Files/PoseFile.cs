@@ -18,6 +18,7 @@ public class PoseFile : JsonFileBase
 	[Flags]
 	public enum Mode
 	{
+		None = 0,
 		Rotation = 1,
 		Scale = 2,
 		Position = 4,
@@ -139,6 +140,7 @@ public class PoseFile : JsonFileBase
 
 		PoseService.Instance.SetEnabled(true);
 		PoseService.Instance.CanEdit = false;
+		skeletonMem.PauseSynchronization = true;
 		await Task.Delay(100);
 
 		// Create a back up of the relative rotations of every bones
@@ -165,7 +167,7 @@ public class PoseFile : JsonFileBase
 			if (headBone == null)
 				throw new Exception("Unable to find head (j_kao) bone.");
 
-			headBone.Tick();
+			headBone.Synchronize();
 			originalHeadRotation = headBone?.Rotation;
 			originalHeadPosition = headBone?.Position;
 		}
@@ -249,7 +251,8 @@ public class PoseFile : JsonFileBase
 
 		await Task.Delay(100);
 
-		skeletonMem.Tick();
+		skeletonMem.PauseSynchronization = false;
+		skeletonMem.Synchronize();
 
 		PoseService.Instance.CanEdit = true;
 	}

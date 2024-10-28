@@ -217,7 +217,6 @@
 	"Pose_WarningNotGPose": "Pengaturan Pose hanya bisa diakses ketika didalam mode Group Pose. Ketik /gpose di chat.",
 	"Pose_WarningNotFrozen": "Pergerakan Aktor harus di nonaktifkan didalam pengaturan Group Pose.",
 	"Pose_WarningQuit": "Apakah anda yakin ingin keluar? Pose saat ini akan hilang.",
-	"Pose_WarningExpresionPositions": "Anda sedang mencoba untuk memuat ekspresi wajah ketika posisi sedang terhenti, ini mungkin akan menyebabkan hasil yang tidak diinginkan. Lanjutkan?",
 	"Pose_NoSkeleton": "Tidak ada kerangka yang tersambung pada tampilan ini.",
 	"Pose_NoModel": "Aktor ini tidak memiliki model.",
 	"Pose_NothingSelected": "Karakter - Tidak ada yang terpilih",
@@ -237,9 +236,6 @@
 	"Pose_Rotation": "Rotasi",
 	"Pose_Scale": "Skala",
 	"Pose_Position": "Posisi",
-	"Pose_All": "Load Transformasi Penuh",
-	"Pose_AllTooltip": "Load Rotasi, Skala, dan Posisi pada waktu bersamaan (Khusus User Lanjutan)",
-
 	"Pose_EnableRotation": "R",
 	"Pose_EnableRotationTooltip": "Izinkan pengeditan rotasi",
 	"Pose_EnableScale": "S",

@@ -3,20 +3,31 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Actor;
+using Anamnesis.Services;
 using Anamnesis.Utils;
 using PropertyChanged;
 using System;
+using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 public class ActorMemory : ActorBasicMemory
 {
-	private readonly FuncQueue refreshQueue;
+	private static readonly int RefreshDebounceTimeout = 200;
+	private readonly System.Timers.Timer refreshDebounceTimer;
 	private readonly FuncQueue backupQueue;
+	private int isRefreshing = 0;
 
 	public ActorMemory()
 	{
-		this.refreshQueue = new(this.RefreshAsync, 250);
 		this.backupQueue = new(this.BackupAsync, 250);
+
+		this.PropertyChanged += this.HandlePropertyChanged;
+
+		// Initialize the debounce timer
+		this.refreshDebounceTimer = new(RefreshDebounceTimeout) { AutoReset = false };
+		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
 	public enum CharacterModes : byte
@@ -70,9 +81,13 @@ public class ActorMemory : ActorBasicMemory
 	public History History { get; private set; } = new();
 
 	public bool AutomaticRefreshEnabled { get; set; } = true;
-	public bool IsRefreshing { get; set; } = false;
+	public bool IsRefreshing
+	{
+		get => Interlocked.CompareExchange(ref this.isRefreshing, 0, 0) == 1;
+		set => Interlocked.Exchange(ref this.isRefreshing, value ? 1 : 0);
+	}
+
 	public bool IsWeaponDirty { get; set; } = false;
-	public bool PendingRefresh => this.refreshQueue.Pending;
 
 	[DependsOn(nameof(IsValid), nameof(IsOverworldActor), nameof(Name), nameof(RenderMode))]
 	public bool CanRefresh => ActorService.Instance.CanRefreshActor(this);
@@ -134,30 +149,21 @@ public class ActorMemory : ActorBasicMemory
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
 
-	/// <summary>
-	/// Refresh the actor to force the game to load any changed values for appearance.
-	/// </summary>
-	public void Refresh()
-	{
-		this.refreshQueue.Invoke();
-	}
-
-	public override void Tick()
+	public override void Synchronize()
 	{
 		this.History.Tick();
 
-		// Since writing is immadiate from poperties, we don't want to tick (read) anything
-		// during a refresh.
-		if (this.IsRefreshing || this.PendingRefresh)
+		// Don't synchronize the actor during a refresh.
+		if (this.IsRefreshing)
 			return;
 
-		base.Tick();
+		base.Synchronize();
 	}
 
 	/// <summary>
-	/// Refresh the actor to force the game to load any changed values for appearance.
+	/// Asynchronously refresh the actor to force the game to reflect appearance changes.
 	/// </summary>
-	public async Task RefreshAsync()
+	public async Task Refresh()
 	{
 		if (this.IsRefreshing)
 			return;
@@ -191,12 +197,9 @@ public class ActorMemory : ActorBasicMemory
 		{
 			this.IsRefreshing = false;
 			this.IsWeaponDirty = false;
-			this.WriteDelayedBinds();
 		}
 
-		this.RaisePropertyChanged(nameof(this.IsHuman));
-		await Task.Delay(150);
-		this.RaisePropertyChanged(nameof(this.IsHuman));
+		this.OnPropertyChanged(nameof(this.IsHuman));
 	}
 
 	public async Task BackupAsync()
@@ -209,55 +212,49 @@ public class ActorMemory : ActorBasicMemory
 
 	public void RaiseRefreshChanged()
 	{
-		this.RaisePropertyChanged(nameof(this.CanRefresh));
+		this.OnPropertyChanged(nameof(this.CanRefresh));
 	}
 
-	protected override void HandlePropertyChanged(PropertyChange change)
+	private void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		this.History.Record(change);
-
-		if (change.Origin != PropertyChange.Origins.Game)
-			this.backupQueue.Invoke();
-
-		if (!this.AutomaticRefreshEnabled)
+		if (e is not MemObjPropertyChangedEventArgs memObjEventArgs)
 			return;
 
-		if (this.IsRefreshing)
+		var change = memObjEventArgs.Context;
+
+		// Do not not refresh the actor if the change originated from the game
+		if (change.Origin == PropertyChange.Origins.Game)
+			return;
+
+		// Only record changes that originate from the user
+		if (!change.OriginBind.Flags.HasFlag(BindFlags.DontRecordHistory))
 		{
-			// dont refresh because of a refresh!
-			if (change.TerminalPropertyName == nameof(this.ObjectKind) || change.TerminalPropertyName == nameof(this.RenderMode))
+			if (change.Origin == PropertyChange.Origins.User)
 			{
-				return;
+				// Big hack to keep bone change history names short.
+				if (change.OriginBind.Memory.ParentBind?.Type == typeof(TransformMemory))
+				{
+					change.Name = (PoseService.SelectedBoneName == null) ?
+						LocalizationService.GetStringFormatted("History_ChangeBone", "??") :
+						LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBoneName);
+				}
+
+				this.History.Record(change);
 			}
 		}
 
-		if (change.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh) && change.Origin != PropertyChange.Origins.Game)
+		// Create backup
+		this.backupQueue.Invoke();
+
+		// Refresh the actor
+		if (this.AutomaticRefreshEnabled && change.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh))
 		{
 			if (change.OriginBind.Flags.HasFlag(BindFlags.WeaponRefresh))
 				this.IsWeaponDirty = true;
 
-			this.Refresh();
+			// Restart the debounce timer if it's already running, otherwise start it
+			this.refreshDebounceTimer.Stop();
+			this.refreshDebounceTimer.Start();
 		}
-	}
-
-	protected override bool CanWrite(BindInfo bind)
-	{
-		if (this.IsRefreshing)
-		{
-			if (bind.Memory != this)
-			{
-				Log.Warning("Skipping Bind " + bind);
-
-				// Do not allow writing of any properties form sub-memory while we are refreshing
-				return false;
-			}
-			else
-			{
-				// do not allow writing of any properties except the ones needed for refresh during a refresh.
-				return bind.Name == nameof(this.ObjectKind) || bind.Name == nameof(this.RenderMode);
-			}
-		}
-
-		return base.CanWrite(bind);
 	}
 }

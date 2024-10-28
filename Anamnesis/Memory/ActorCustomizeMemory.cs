@@ -3,8 +3,8 @@
 
 namespace Anamnesis.Memory;
 
-using System;
 using PropertyChanged;
+using System;
 
 public class ActorCustomizeMemory : MemoryBase
 {
@@ -48,6 +48,7 @@ public class ActorCustomizeMemory : MemoryBase
 
 	public enum Ages : byte
 	{
+		None = 0, // Non-humanoid actors have this value
 		Normal = 1,
 		Old = 3,
 		Young = 4,

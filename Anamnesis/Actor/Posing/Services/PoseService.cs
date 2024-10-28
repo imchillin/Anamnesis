@@ -3,15 +3,15 @@
 
 namespace Anamnesis.Actor;
 
-using System;
-using System.Globalization;
-using System.IO;
-using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
 using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 
 [AddINotifyPropertyChangedInterface]
 public class PoseService : ServiceBase<PoseService>
@@ -174,8 +174,8 @@ public class PoseService : ServiceBase<PoseService>
 		this.isEnabled = enabled;
 		this.FreezePhysics = enabled;
 		this.FreezeRotation = enabled;
-		this.FreezePositions = false;
-		this.FreezeScale = false;
+		this.FreezePositions = enabled;
+		this.FreezeScale = enabled;
 		this.EnableParenting = true;
 
 		/*if (enabled)

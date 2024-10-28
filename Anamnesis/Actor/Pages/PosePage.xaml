@@ -213,34 +213,73 @@
 					</MenuItem>
 
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
-						<MenuItem Header="Pose_All"
-									Style="{StaticResource AnaMenuItem}"
-									Click="OnImportAllClicked" >
+						<!-- Import modes (for the popup import options) -->
+						<MenuItem Style="{StaticResource AnamMenuItemHeader}">
+							<MenuItem.Header>
+								<ContentControl>
+									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent">
+										<CheckBox Margin="3" VerticalContentAlignment="Center"
+												   IsChecked="{Binding ImportPoseRotation, Mode=TwoWay}">
+											<XivToolsWpf:TextBlock Key="Pose_EnableRotation" Margin="0,-2,0,2" />
+											<CheckBox.ToolTip>
+												<XivToolsWpf:TextBlock Key="Pose_ImportRotationImportTooltip" />
+											</CheckBox.ToolTip>
+										</CheckBox>
+										<CheckBox Margin="3" VerticalContentAlignment="Center"
+												  IsChecked="{Binding ImportPosePosition, Mode=TwoWay}">
+											<XivToolsWpf:TextBlock Key="Pose_EnablePosition" Margin="0,-2,0,2" />
+											<CheckBox.ToolTip>
+												<XivToolsWpf:TextBlock Key="Pose_ImportPositionImportTooltip" />
+											</CheckBox.ToolTip>
+										</CheckBox>
+										<CheckBox Margin="3" VerticalContentAlignment="Center"
+												  IsChecked="{Binding ImportPoseScale, Mode=TwoWay}">
+											<XivToolsWpf:TextBlock Key="Pose_EnableScale" Margin="0,-2,0,2" />
+											<CheckBox.ToolTip>
+												<XivToolsWpf:TextBlock Key="Pose_ImportScaleImportTooltip" />
+											</CheckBox.ToolTip>
+										</CheckBox>
+									</StackPanel>
+								</ContentControl>
+							</MenuItem.Header>
+						</MenuItem>
+
+						<!-- (Import) Full Chracter -->
+						<MenuItem Header="Pose_FullChar" 
+								  Style="{StaticResource AnaMenuItem}" 
+								  Click="OnImportFullCharClicked">
 							<MenuItem.ToolTip>
-								<XivToolsWpf:TextBlock Key="Pose_AllTooltip" />
+								<XivToolsWpf:TextBlock Key="Pose_FullCharTooltip"/>
 							</MenuItem.ToolTip>
 						</MenuItem>
 
+						<!-- (Import) Body Only -->
 						<MenuItem Header="Pose_Body" 
-									Style="{StaticResource AnaMenuItem}" 
-									Click="OnImportBodyClicked">
+								  Style="{StaticResource AnaMenuItem}" 
+								  Click="OnImportBodyClicked">
 							<MenuItem.ToolTip>
 								<XivToolsWpf:TextBlock Key="Pose_BodyTooltip" />
 							</MenuItem.ToolTip>
 						</MenuItem>
 
+						<!-- (Import) Face Only -->
 						<MenuItem Header="Pose_Expression" 
-									Style="{StaticResource AnaMenuItem}" 
-									Click="OnImportExpressionClicked"/>
+								  Style="{StaticResource AnaMenuItem}" 
+								  Click="OnImportExpressionClicked">
+							<MenuItem.ToolTip>
+								<XivToolsWpf:TextBlock Key="Pose_ExpressionTooltip" />
+							</MenuItem.ToolTip>
+						</MenuItem>
 
-						<MenuItem Header="Pose_ScalePack" 
-									Style="{StaticResource AnaMenuItem}" 
-									Click="OnImportScaleClicked"/>
-
+						<!-- (Import) Selected Bones -->
 						<MenuItem Header="Pose_Selected"
-									Style="{StaticResource AnaMenuItem}"
-									Click="OnImportSelectedClicked"
-									IsEnabled="{Binding Skeleton.HasSelection}" />
+								  Style="{StaticResource AnaMenuItem}"
+								  Click="OnImportSelectedBonesClicked"
+								  IsEnabled="{Binding Skeleton.HasSelection}">
+							<MenuItem.ToolTip>
+								<XivToolsWpf:TextBlock Key="Pose_SelectedTooltip" />
+							</MenuItem.ToolTip>
+						</MenuItem>
 					</MenuItem>
 
 					<MenuItem Header="Common_ExportFile"

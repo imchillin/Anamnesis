@@ -3,12 +3,12 @@
 
 namespace Anamnesis;
 
-using System;
-using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using System;
+using System.Threading.Tasks;
 
 [AddINotifyPropertyChangedInterface]
 public class TimeService : ServiceBase<TimeService>
@@ -60,7 +60,7 @@ public class TimeService : ServiceBase<TimeService>
 					continue;
 				}
 
-				this.frameworkMemory.Tick();
+				this.frameworkMemory.Synchronize();
 
 				if (this.Freeze)
 				{
@@ -68,7 +68,7 @@ public class TimeService : ServiceBase<TimeService>
 
 					this.frameworkMemory.EorzeaTime = newTime;
 
-					if(this.frameworkMemory.IsTimeOverridden)
+					if (this.frameworkMemory.IsTimeOverridden)
 						this.frameworkMemory.OverrideEorzeaTime = newTime;
 				}
 

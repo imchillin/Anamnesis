@@ -163,7 +163,7 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 
 			try
 			{
-				this.Memory.Tick();
+				this.Memory.Synchronize();
 			}
 			catch (Exception ex)
 			{
@@ -224,20 +224,10 @@ public class PinnedActor : INotifyPropertyChanged, IDisposable
 		}
 
 		this.isRestoringBackup = true;
-
-		bool allowRefresh = !GposeService.GetIsGPose();
-
-		if(slot == null)
-		{
-			await backup.Apply(memory, CharacterFile.SaveModes.All, allowRefresh);
-		}
-		else
-		{
-			await backup.Apply(memory, CharacterFile.SaveModes.EquipmentSlot, allowRefresh, slot);
-		}
+		await backup.Apply(memory, slot == null ? CharacterFile.SaveModes.All : CharacterFile.SaveModes.EquipmentSlot, slot);
 
 		// If we were a player, really make sure we are again.
-		if (allowRefresh && backup.ObjectKind == ActorTypes.Player)
+		if (backup.ObjectKind == ActorTypes.Player)
 		{
 			memory.ObjectKind = backup.ObjectKind;
 		}

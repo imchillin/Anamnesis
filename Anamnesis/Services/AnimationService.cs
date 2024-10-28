@@ -3,13 +3,13 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Core.Memory;
+using Anamnesis.Memory;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Anamnesis.Core.Memory;
-using Anamnesis.Memory;
-using PropertyChanged;
 
 [AddINotifyPropertyChangedInterface]
 public class AnimationService : ServiceBase<AnimationService>
@@ -76,7 +76,7 @@ public class AnimationService : ServiceBase<AnimationService>
 		if (!memory.IsValid)
 			return false;
 
-		if(memory.Animation!.BlendLocked)
+		if (memory.Animation!.BlendLocked)
 			return false;
 
 		if (!memory.CanAnimate)
@@ -105,7 +105,7 @@ public class AnimationService : ServiceBase<AnimationService>
 
 		animation.LipsOverride = 0;
 		animation.LinkSpeeds = true;
-		animation.Speeds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 1.0f;
+		animation.Speeds![(int)AnimationMemory.AnimationSlots.FullBody] = 1.0f;
 
 		this.overriddenActors.Remove(memory);
 	}
@@ -118,7 +118,7 @@ public class AnimationService : ServiceBase<AnimationService>
 	{
 		this.SpeedControlEnabled = true;
 
-		if(this.SpeedControlEnabled)
+		if (this.SpeedControlEnabled)
 		{
 			var actors = TargetService.Instance.PinnedActors;
 			foreach (var actor in actors)
@@ -126,7 +126,7 @@ public class AnimationService : ServiceBase<AnimationService>
 				if (actor.IsValid && actor.Memory != null && actor.Memory.Address != IntPtr.Zero && actor.Memory.IsValid)
 				{
 					actor.Memory.Animation!.LinkSpeeds = true;
-					actor.Memory.Animation!.Speeds![(int)AnimationMemory.AnimationSlots.FullBody]!.Value = 0.0f;
+					actor.Memory.Animation!.Speeds![(int)AnimationMemory.AnimationSlots.FullBody] = 0.0f;
 				}
 			}
 		}
@@ -165,10 +165,10 @@ public class AnimationService : ServiceBase<AnimationService>
 
 		if (interrupt)
 		{
-			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0;
+			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody] = 0;
 		}
 
-		memory.Tick();
+		memory.Synchronize();
 	}
 
 	private void SetSpeedControlEnabled(bool enabled)

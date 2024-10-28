@@ -3,14 +3,14 @@
 
 namespace Anamnesis.Actor.Utilities;
 
-using System;
-using System.Threading.Tasks;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Serilog;
+using System;
+using System.Threading.Tasks;
 
 public class SubActorUtility
 {
@@ -25,7 +25,7 @@ public class SubActorUtility
 
 			await Apply(mount, memory.Mount);
 
-			await memory.RefreshAsync();
+			await memory.Refresh();
 		}
 		else
 		{

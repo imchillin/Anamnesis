@@ -3,10 +3,6 @@
 
 namespace Anamnesis;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using Anamnesis.Actor;
 using Anamnesis.Core.Memory;
 using Anamnesis.Keyboard;
@@ -14,6 +10,10 @@ using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Styles;
 using PropertyChanged;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using XivToolsWpf;
 
 public delegate void SelectionEvent(ActorMemory? actor);
@@ -211,11 +211,11 @@ public class TargetService : ServiceBase<TargetService>
 		}
 
 		// Tick the actor if it still exists
-		if(this.PlayerTarget != null && this.PlayerTarget.Address != IntPtr.Zero)
+		if (this.PlayerTarget != null && this.PlayerTarget.Address != IntPtr.Zero)
 		{
 			try
 			{
-				this.PlayerTarget.Tick();
+				this.PlayerTarget.Synchronize();
 			}
 			catch
 			{

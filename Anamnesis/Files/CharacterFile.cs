@@ -5,7 +5,6 @@ namespace Anamnesis.Files;
 
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
-using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Serilog;
 using System;
@@ -229,7 +228,12 @@ public class CharacterFile : JsonFileBase
 		}
 	}
 
-	public async Task Apply(ActorMemory actor, SaveModes mode, bool allowRefresh = true, ItemSlots? slot = null)
+	public async Task Apply(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
+	{
+		await Task.Run(() => this.ApplyInternal(actor, mode, slot));
+	}
+
+	public void ApplyInternal(ActorMemory actor, SaveModes mode, ItemSlots? slot = null)
 	{
 		if (this.Tribe == 0)
 			this.Tribe = ActorCustomizeMemory.Tribes.Midlander;
@@ -251,11 +255,9 @@ public class CharacterFile : JsonFileBase
 
 		Log.Information("Reading appearance from file");
 
-		actor.AutomaticRefreshEnabled = false;
-
 		if (actor.CanRefresh)
 		{
-			actor.EnableReading = false;
+			actor.PauseSynchronization = true;
 
 			if (!string.IsNullOrEmpty(this.Nickname))
 				actor.Nickname = this.Nickname;
@@ -427,14 +429,10 @@ public class CharacterFile : JsonFileBase
 					actor.Customize.Bust = (byte)this.Bust;
 			}
 
-			if (allowRefresh)
-			{
-				await actor.RefreshAsync();
-			}
-
 			// Setting customize values will reset the extended appearance, which me must read.
-			actor.EnableReading = true;
-			actor.Tick();
+			actor.PauseSynchronization = false;
+			actor.Synchronize();
+			actor.PauseSynchronization = true;
 		}
 
 		Log.Verbose("Begin reading Extended Appearance from file");
@@ -473,8 +471,7 @@ public class CharacterFile : JsonFileBase
 			}
 		}
 
-		actor.AutomaticRefreshEnabled = true;
-		actor.EnableReading = true;
+		actor.PauseSynchronization = false;
 
 		Log.Information("Finished reading appearance from file");
 	}

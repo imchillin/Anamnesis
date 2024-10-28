@@ -3,19 +3,19 @@
 
 namespace Anamnesis.Brio;
 
+using Anamnesis.Serialization;
+using Serilog;
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Anamnesis.Serialization;
-using Serilog;
 
 internal static class BrioApi
 {
 	private const string Url = "http://localhost:42428/brio";
-	private const int TimeoutMs = 1500;
+	private const int TimeoutMs = 10000;
 
 	public static async Task<string> Post(string route, object content)
 	{

@@ -3,10 +3,12 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.Services;
 using PropertyChanged;
 using Serilog;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,6 +28,7 @@ public partial class Pose3DView : UserControl
 	public readonly RotateTransform3D CameraRotaion;
 	public readonly TranslateTransform3D CameraPosition;
 
+	private CancellationTokenSource? camUpdateCancelTokenSrc;
 	private bool cameraIsTicking = false;
 
 	public Pose3DView()
@@ -51,8 +54,6 @@ public partial class Pose3DView : UserControl
 		{
 			CameraService.Instance.Camera.PropertyChanged += this.OnCameraChanged;
 		}
-
-		Task.Run(this.UpdateCamera);
 	}
 
 	public SkeletonVisual3d? Skeleton { get; set; }
@@ -68,6 +69,7 @@ public partial class Pose3DView : UserControl
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
+		this.camUpdateCancelTokenSrc?.Cancel();
 		this.SkeletonRoot.Children.Clear();
 	}
 
@@ -166,23 +168,37 @@ public partial class Pose3DView : UserControl
 			return;
 
 		this.cameraIsTicking = true;
+		this.camUpdateCancelTokenSrc = new CancellationTokenSource();
+		var token = this.camUpdateCancelTokenSrc.Token;
 
 		await Dispatch.MainThread();
 
 		while (this.IsLoaded)
 		{
 			if (!this.IsVisible)
-				await Task.Delay(100);
+			{
+				await Task.Delay(100, token);
+				continue;
+			}
 
-			await Task.Delay(33);
+			await Task.Delay(33, token);
 			await Dispatch.MainThread();
 
 			try
 			{
-				if (this.Skeleton == null || CameraService.Instance.Camera == null)
+				// If we're not in GPose, skip the update
+				if (!GposeService.GetIsGPose())
 					continue;
 
-				this.Skeleton.ReadTranforms();
+				if (this.Skeleton == null || this.Skeleton.Actor == null || CameraService.Instance.Camera == null)
+					continue;
+
+				// Update the skeleton's transforms until either the motion is disabled
+				// or the world position is frozen
+				if (this.Skeleton.Actor.IsMotionEnabled && PoseService.Instance.WorldPositionNotFrozen)
+				{
+					this.Skeleton.ReadTransforms();
+				}
 
 				// TODO: allow the user to rotate camera with the mouse instead
 				this.CameraRotation = CameraService.Instance.Camera.Rotation3d.ToMedia3DQuaternion();

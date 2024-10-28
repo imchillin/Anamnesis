@@ -301,7 +301,6 @@
 	"Pose_WarningNotGPose": "Posare è disponibile solo in Group pose. Digita /gpose in chat",
 	"Pose_WarningNotFrozen": "Il movimento dell'attore deve essere disabilitato nelle impostazioni della Group pose, oppure le posizioni dell'attore devono essere bloccate nel controllo dell'animazione.",
 	"Pose_WarningQuit": "Sei sicuro di voler uscire? La posa corrente verrà persa.",
-	"Pose_WarningExpresionPositions": "Stai provando a caricare un espressione mentre le posizioni sono bloccate, questo potrebbe causare effetti indesiderati. Continuare?",
 	"Pose_NoSkeleton": "Nessuno scheletro è vincolato a questa vista.",
 	"Pose_NoModel": "Questo attore non ha un modello.",
 	"Pose_NotEnabled": "La modalità posa deve essere abilitata.",
@@ -325,8 +324,6 @@
 	"Pose_Rotation": "Rotazione",
 	"Pose_Scale": "Scala",
 	"Pose_Position": "Posizione",
-	"Pose_All": "Trasformazioni complete (Avanzato)",
-	"Pose_AllTooltip": "Carica contemporaneamente Rotazione, Scala e Posizionamento (Avanzato)",
 	"Pose_Linked": "Collega elementi",
 	"Pose_Linked_Tooltip": "Gli elementi colelgati si muoveranno in relazione all elemento attuale",
 

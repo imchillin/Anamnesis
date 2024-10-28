@@ -3,19 +3,19 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.GameData.Excel;
+using Anamnesis.GameData.Sheets;
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Anamnesis.GameData.Excel;
-using Anamnesis.GameData.Sheets;
-using Anamnesis.Memory;
-using Anamnesis.Services;
-using PropertyChanged;
-
-using AnAppearance = Anamnesis.Memory.ActorCustomizeMemory;
+using System.Windows.Threading;
+using static Anamnesis.Memory.ActorCustomizeMemory;
 
 /// <summary>
 /// Interaction logic for AppearancePage.xaml.
@@ -23,7 +23,7 @@ using AnAppearance = Anamnesis.Memory.ActorCustomizeMemory;
 [AddINotifyPropertyChangedInterface]
 public partial class CustomizeEditor : UserControl
 {
-	private bool appearanceLocked = false;
+	private readonly DispatcherTimer debounceTimer;
 
 	public CustomizeEditor()
 	{
@@ -33,7 +33,7 @@ public partial class CustomizeEditor : UserControl
 		this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(ActorCustomizeMemory.Genders));
 		this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(ActorCustomizeMemory.Ages));
 
-		List<Race> races = new List<Race>();
+		List<Race> races = new();
 		foreach (Race race in GameDataService.Races)
 		{
 			if (race.RowId == 0)
@@ -43,11 +43,19 @@ public partial class CustomizeEditor : UserControl
 		}
 
 		this.RaceComboBox.ItemsSource = races;
+
+		this.debounceTimer = new DispatcherTimer
+		{
+			Interval = TimeSpan.FromMilliseconds(200),
+		};
+		this.debounceTimer.Tick += this.DebounceTimer_Tick;
 	}
 
 	public bool HasGender { get; set; }
-	public bool HasFur { get; set; }
-	public bool HasntFur { get; set; }
+
+	[DependsOn(nameof(Customize))]
+	public bool HasFur => this.Customize != null && this.Customize.Race == Races.Hrothgar;
+
 	public bool HasTail { get; set; }
 	public bool HasEars { get; set; }
 	public bool HasEarsTail { get; set; }
@@ -57,20 +65,24 @@ public partial class CustomizeEditor : UserControl
 	public CharaMakeCustomize? FacePaint { get; set; }
 	public Race? Race { get; set; }
 	public Tribe? Tribe { get; set; }
+	public ActorMemory? Actor { get; private set; }
+	public ActorCustomizeMemory? Customize { get; private set; }
 
-	public double HeightCm { get; set; }
-	public string? HeightFeet { get; set; }
-
-	public ActorMemory? Actor
+	private static int GetTribeIndex(Race? race, Tribe? tribe)
 	{
-		get;
-		private set;
-	}
+		if (race == null || tribe == null)
+			return -1;
 
-	public ActorCustomizeMemory? Customize
-	{
-		get;
-		private set;
+		Tribe[] tribes = race.Tribes;
+		for (int i = 0; i < tribes.Length; i++)
+		{
+			if (tribes[i] == tribe)
+			{
+				return i;
+			}
+		}
+
+		return -1;
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
@@ -100,17 +112,20 @@ public partial class CustomizeEditor : UserControl
 		this.Customize = actor.Customize;
 		this.Customize.PropertyChanged += this.OnAppearancePropertyChanged;
 
-		Application.Current.Dispatcher.Invoke(() =>
-		{
-			this.UpdateRaceAndTribe();
-		});
+		Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
+	}
+
+	private void DebounceTimer_Tick(object? sender, EventArgs e)
+	{
+		this.debounceTimer.Stop();
+
+		// Based on one or multiple property updates, reflect the changes
+		// in the rest of the customize editor components.
+		this.UpdateRaceAndTribe();
 	}
 
 	private void OnAppearancePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		if (this.appearanceLocked)
-			return;
-
 		if (e.PropertyName == nameof(ActorCustomizeMemory.Race) ||
 			e.PropertyName == nameof(ActorCustomizeMemory.Tribe) ||
 			e.PropertyName == nameof(ActorCustomizeMemory.Hair) ||
@@ -119,7 +134,11 @@ public partial class CustomizeEditor : UserControl
 			if (Application.Current == null)
 				return;
 
-			Application.Current.Dispatcher.Invoke(this.UpdateRaceAndTribe);
+			// Restart the debounce timer if it's already running, otherwise start it.
+			// Note: A debounce timer is used here to ensure that the update is called
+			// only once after all properties have been updated.
+			this.debounceTimer.Stop();
+			this.debounceTimer.Start();
 		}
 	}
 
@@ -140,7 +159,7 @@ public partial class CustomizeEditor : UserControl
 			return;
 		}
 
-		if (this.Customize.Race == 0 || this.Customize.Race > AnAppearance.Races.Viera)
+		if (this.Customize.Race == 0 || this.Customize.Race > Races.Viera)
 		{
 			this.IsEnabled = false;
 			return;
@@ -157,11 +176,15 @@ public partial class CustomizeEditor : UserControl
 
 		this.IsEnabled = true;
 
+		// Unsubscribe from events to avoid the callbacks from being called
+		this.RaceComboBox.SelectionChanged -= this.OnRaceChanged;
+		this.TribeComboBox.SelectionChanged -= this.OnTribeChanged;
+
 		this.RaceComboBox.SelectedItem = this.Race;
 		this.TribeComboBox.ItemsSource = this.Race.Tribes;
 
-		if (!Enum.IsDefined<ActorCustomizeMemory.Tribes>((ActorCustomizeMemory.Tribes)this.Customize.Tribe))
-			this.Customize.Tribe = ActorCustomizeMemory.Tribes.Midlander;
+		if (!Enum.IsDefined<Tribes>((Tribes)this.Customize.Tribe))
+			this.Customize.Tribe = Tribes.Midlander;
 
 		this.Tribe = GameDataService.Tribes.Get((uint)this.Customize.Tribe);
 
@@ -170,18 +193,20 @@ public partial class CustomizeEditor : UserControl
 
 		this.TribeComboBox.SelectedItem = this.Tribe;
 
-		this.HasFur = this.Customize.Race == AnAppearance.Races.Hrothgar;
-		this.HasntFur = !this.HasFur;
-		this.HasTail = this.Customize.Race == AnAppearance.Races.Hrothgar || this.Customize.Race == AnAppearance.Races.Miqote || this.Customize.Race == AnAppearance.Races.AuRa;
-		this.HasEars = this.Customize.Race == AnAppearance.Races.Viera || this.Customize.Race == AnAppearance.Races.Lalafel || this.Customize.Race == AnAppearance.Races.Elezen;
+		// Re-subscribe to selection changed events
+		this.RaceComboBox.SelectionChanged += this.OnRaceChanged;
+		this.TribeComboBox.SelectionChanged += this.OnTribeChanged;
+
+		this.HasTail = this.Customize.Race == Races.Hrothgar || this.Customize.Race == Races.Miqote || this.Customize.Race == Races.AuRa;
+		this.HasEars = this.Customize.Race == Races.Viera || this.Customize.Race == Races.Lalafel || this.Customize.Race == Races.Elezen;
 		this.HasEarsTail = this.HasTail | this.HasEars;
 		this.HasMuscles = !this.HasEars && !this.HasTail;
 		this.HasGender = true;
 
-		bool canAge = this.Customize.Tribe == AnAppearance.Tribes.Midlander;
-		canAge |= this.Customize.Race == AnAppearance.Races.Miqote && this.Customize.Gender == AnAppearance.Genders.Feminine;
-		canAge |= this.Customize.Race == AnAppearance.Races.Elezen;
-		canAge |= this.Customize.Race == AnAppearance.Races.AuRa;
+		bool canAge = this.Customize.Tribe == Tribes.Midlander;
+		canAge |= this.Customize.Race == Races.Miqote && this.Customize.Gender == Genders.Feminine;
+		canAge |= this.Customize.Race == Races.Elezen;
+		canAge |= this.Customize.Race == Races.AuRa;
 		this.CanAge = canAge;
 
 		if (this.Customize.Tribe > 0)
@@ -195,23 +220,17 @@ public partial class CustomizeEditor : UserControl
 
 	private void OnGenderChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (this.Customize == null)
-			return;
-
-		AnAppearance.Genders? gender = this.GenderComboBox.SelectedItem as AnAppearance.Genders?;
-
-		if (gender == null)
+		Genders? gender = this.GenderComboBox.SelectedItem as Genders?;
+		if (gender == null || this.Customize == null)
 			return;
 
 		// Do not change to masculine gender when a young miqo or aura as it will crash the game
-		if (this.Customize.Age == AnAppearance.Ages.Young && (this.Customize.Race == AnAppearance.Races.Miqote))
+		if (this.Customize.Age == Ages.Young && (this.Customize.Race == Races.Miqote))
 		{
-			this.Customize.Age = AnAppearance.Ages.Normal;
+			this.Customize.Age = Ages.Normal;
 		}
 
-		this.Customize.Gender = (AnAppearance.Genders)gender;
-
-		this.UpdateRaceAndTribe();
+		this.Customize.Gender = (Genders)gender;
 	}
 
 	private async void OnHairClicked(object sender, RoutedEventArgs e)
@@ -219,11 +238,8 @@ public partial class CustomizeEditor : UserControl
 		if (this.Customize == null)
 			return;
 
-		CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(CustomizeSheet.Features.Hair, this.Customize.Gender, this.Customize.Tribe, this.Customize.Hair);
-		selector.SelectionChanged += (v) =>
-		{
-			this.Customize.Hair = v;
-		};
+		CustomizeFeatureSelectorDrawer selector = new(CustomizeSheet.Features.Hair, this.Customize.Gender, this.Customize.Tribe, this.Customize.Hair);
+		selector.SelectionChanged += (v) => { this.Customize.Hair = v; };
 
 		await ViewService.ShowDrawer(selector);
 	}
@@ -233,11 +249,8 @@ public partial class CustomizeEditor : UserControl
 		if (this.Customize == null)
 			return;
 
-		CustomizeFeatureSelectorDrawer selector = new CustomizeFeatureSelectorDrawer(CustomizeSheet.Features.FacePaint, this.Customize.Gender, this.Customize.Tribe, this.Customize.FacePaint);
-		selector.SelectionChanged += (v) =>
-		{
-			this.Customize.FacePaint = v;
-		};
+		CustomizeFeatureSelectorDrawer selector = new(CustomizeSheet.Features.FacePaint, this.Customize.Gender, this.Customize.Tribe, this.Customize.FacePaint);
+		selector.SelectionChanged += (v) => { this.Customize.FacePaint = v; };
 
 		await ViewService.ShowDrawer(selector);
 	}
@@ -245,26 +258,16 @@ public partial class CustomizeEditor : UserControl
 	private void OnRaceChanged(object sender, SelectionChangedEventArgs e)
 	{
 		Race? race = this.RaceComboBox.SelectedItem as Race;
-
-		if (race == null || this.Customize == null)
+		if (race == null || this.Customize == null || this.Race == race)
 			return;
 
-		// did we change?
-		if (race == this.Race)
-			return;
+		// Unsubscribe to avoid the callback from being called
+		this.TribeComboBox.SelectionChanged -= this.OnTribeChanged;
 
-		if (race.CustomizeRace == AnAppearance.Races.Hrothgar)
-			this.Customize.Gender = AnAppearance.Genders.Masculine;
+		// Reset age when changing race
+		this.Customize.Age = Ages.Normal;
 
-		// reset age when chaing race
-		this.Customize.Age = AnAppearance.Ages.Normal;
-
-		if (this.Race == race)
-			return;
-
-		this.appearanceLocked = true;
-
-		int oldTribeIndex = this.GetTribeIndex(this.Race, this.Tribe);
+		int oldTribeIndex = GetTribeIndex(this.Race, this.Tribe);
 
 		this.Race = race;
 
@@ -281,47 +284,23 @@ public partial class CustomizeEditor : UserControl
 
 		this.TribeComboBox.SelectedItem = this.Tribe;
 
+		// Re-subscribe to tribe changed event
+		this.TribeComboBox.SelectionChanged += this.OnTribeChanged;
+
 		this.Customize.Race = this.Race.CustomizeRace;
 		this.Customize.Tribe = this.Tribe.CustomizeTribe;
-
-		this.UpdateRaceAndTribe();
-
-		this.appearanceLocked = false;
 	}
 
 	private void OnTribeChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (this.Customize == null)
-			return;
-
 		Tribe? tribe = this.TribeComboBox.SelectedItem as Tribe;
-
-		if (tribe == null || this.Tribe == tribe)
+		if (tribe == null || this.Customize == null || this.Tribe == tribe)
 			return;
 
-		// reset age when chaing tribe
-		this.Customize.Age = AnAppearance.Ages.Normal;
+		// Reset age when changing tribe
+		this.Customize.Age = Ages.Normal;
 
 		this.Tribe = tribe;
 		this.Customize.Tribe = this.Tribe.CustomizeTribe;
-
-		this.UpdateRaceAndTribe();
-	}
-
-	private int GetTribeIndex(Race? race, Tribe? tribe)
-	{
-		if (race == null || tribe == null)
-			return -1;
-
-		Tribe[] tribes = race.Tribes;
-		for (int i = 0; i < tribes.Length; i++)
-		{
-			if (tribes[i] == tribe)
-			{
-				return i;
-			}
-		}
-
-		return -1;
 	}
 }

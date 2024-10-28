@@ -307,7 +307,6 @@
 	"Pose_WarningNotGPose": "Posing ist nur in GPose möglich. Gehe in GPose mit /gpose.",
 	"Pose_WarningNotFrozen": "Posing funktionert nur mit eingefrorenen Charakteren. Friere den Charakter im GPose Fenster ein.",
 	"Pose_WarningQuit": "Willst du Anamnesis wirklich beenden? Die derzeitige Pose geht verloren.",
-	"Pose_WarningExpresionPositions": "Gesichtsausdrücke zu laden, während Positionen festgestellt sind, kann zu ungewollten Resultaten führen. Bist du dir sicher?",
 	"Pose_NoSkeleton": "Kein Skelett für diese Ansicht vorhanden.",
 	"Pose_NoModel": "Dieser Charakter hat kein Model.",
 	"Pose_NotEnabled": "Posing-Modus muss aktiv sein.",
@@ -332,8 +331,6 @@
 	"Pose_Rotation": "Rotation",
 	"Pose_Scale": "Skalierung",
 	"Pose_Position": "Position",
-	"Pose_All": "Alle (Position, Rotation, Skalierung)",
-	"Pose_AllTooltip": "Lädt Rotation, Skalierung und Position gleichzeitig (Fortgeschritten)",
 	"Pose_Linked": "Verknüpfte Knochen",
 	"Pose_Linked_Tooltip": "Verknüpfte Knochen bewegen sich relativ zum derzeitigen Knochen",
 

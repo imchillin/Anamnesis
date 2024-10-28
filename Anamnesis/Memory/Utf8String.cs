@@ -10,7 +10,7 @@ using System.Text;
 
 public struct Utf8String
 {
-	[MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+	[MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x40)]
 	public byte[]? Bytes;
 
 	public static bool operator ==(Utf8String left, Utf8String right)
@@ -42,7 +42,7 @@ public struct Utf8String
 	{
 		byte[] bytes = Encoding.UTF8.GetBytes(self);
 
-		if (bytes.Length >= 30)
+		if (bytes.Length >= 0x040)
 			throw new Exception($"SeString value {self} excedes 30 byte limit");
 
 		this.Bytes = bytes;

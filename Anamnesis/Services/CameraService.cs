@@ -3,11 +3,11 @@
 
 namespace Anamnesis;
 
-using System;
-using System.Threading.Tasks;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using Anamnesis.Services;
+using System;
+using System.Threading.Tasks;
 
 public class CameraService : ServiceBase<CameraService>
 {
@@ -76,12 +76,19 @@ public class CameraService : ServiceBase<CameraService>
 				}
 				else
 				{
-					this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
-					this.GPoseCamera.Tick();
+					// SetAddress will synchronize if addresses are different
+					// so we don't need to call Synchronize() again.
+					if (this.GPoseCamera.Address == AddressService.GPoseCamera)
+						this.GPoseCamera.Synchronize();
+					else
+						this.GPoseCamera.SetAddress(AddressService.GPoseCamera);
 				}
 
-				this.Camera.SetAddress(AddressService.Camera);
-				this.Camera.Tick();
+				// Same as above
+				if (this.Camera.Address == AddressService.Camera)
+					this.Camera.Synchronize();
+				else
+					this.Camera.SetAddress(AddressService.Camera);
 			}
 			catch (Exception ex)
 			{
