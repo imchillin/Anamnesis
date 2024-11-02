@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XivToolsWpf;
@@ -25,6 +26,7 @@ public class History
 	private readonly Stack<HistoryEntry> history = new();
 	private HistoryEntry current = new();
 	private DateTime lastChangeTime = DateTime.Now;
+	private int autoCommitEnabled = 1;
 
 	public History()
 	{
@@ -36,11 +38,24 @@ public class History
 	public ObservableCollection<HistoryEntry> Entries { get; private set; } = new();
 
 	/// <summary>
+	/// Gets or sets a value indicating whether auto commit is enabled.
+	/// </summary>
+	/// <remarks>
+	/// When enabled, changes are automatically committed after a certain amount
+	/// of time has passed since the first change was recorded.
+	/// </remarks>
+	public bool AutoCommitEnabled
+	{
+		get => Interlocked.CompareExchange(ref this.autoCommitEnabled, 0, 0) == 1;
+		set => Interlocked.Exchange(ref this.autoCommitEnabled, value ? 1 : 0);
+	}
+
+	/// <summary>
 	/// Tick must be called periodically to push changes to the history stack when they are old enough.
 	/// </summary>
 	public async void Tick()
 	{
-		if (!this.current.HasChanges)
+		if (!this.current.HasChanges || !this.AutoCommitEnabled)
 			return;
 
 		await Dispatch.MainThread();
@@ -116,8 +131,7 @@ public class History
 		if (change.Name == null)
 			change.Name = change.ToString();
 
-		Log.Verbose($"Recording Change: {change}");
-
+		// Log.Verbose($"Recording Change: {change}");
 		this.lastChangeTime = DateTime.Now;
 		this.current.Record(change);
 
@@ -156,7 +170,7 @@ public class History
 			if (existingChange.HasValue)
 			{
 				// Validate the existing change's OldValue
-				if (this.IsValidOldValue(existingChange.Value.OldValue))
+				if (IsValidOldValue(existingChange.Value.OldValue))
 				{
 					// Transfer the old value of the existing change to the new change if it is valid
 					change.OldValue = existingChange.Value.OldValue;
@@ -232,22 +246,16 @@ public class History
 			return builder.ToString();
 		}
 
-		private bool IsValidOldValue(object? oldValue)
+		private static bool IsValidOldValue(object? oldValue)
 		{
-			if (oldValue is Vector3 vector)
+			return oldValue switch
 			{
-				return !float.IsNaN(vector.X) && !float.IsNaN(vector.Y) && !float.IsNaN(vector.Z);
-			}
-			else if (oldValue is Quaternion quaternion)
-			{
-				return !float.IsNaN(quaternion.X) && !float.IsNaN(quaternion.Y) && !float.IsNaN(quaternion.Z) && !float.IsNaN(quaternion.W);
-			}
-			else if (oldValue == null)
-			{
-				return false;
-			}
-
-			return true;
+				Vector2 vector => !float.IsNaN(vector.X) && !float.IsNaN(vector.Y),
+				Vector3 vector => !float.IsNaN(vector.X) && !float.IsNaN(vector.Y) && !float.IsNaN(vector.Z),
+				Quaternion quaternion => !float.IsNaN(quaternion.X) && !float.IsNaN(quaternion.Y) && !float.IsNaN(quaternion.Z) && !float.IsNaN(quaternion.W),
+				null => false,
+				_ => true
+			};
 		}
 	}
 }

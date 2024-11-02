@@ -358,6 +358,8 @@ public partial class PosePage : UserControl
 		if (this.Actor == null || this.Skeleton == null)
 			return;
 
+		bool originalAutoCommitEnabled = this.Actor.History.AutoCommitEnabled;
+
 		try
 		{
 			// Open and load pose file
@@ -379,6 +381,11 @@ public partial class PosePage : UserControl
 
 			Dictionary<string, Vector3> bonePositions = new();
 			bool mismatchedFaceBones = false;
+
+			// Disable auto-commit at the beginning
+			// Commit any changes if they are present to avoid falsely grouping actions
+			this.Actor.History.AutoCommitEnabled = false;
+			this.Actor.History.Commit();
 
 			// Display a warning if there is a face bones mismatch.
 			// We should not load expressions if the face bones are mismatched.
@@ -430,7 +437,6 @@ public partial class PosePage : UserControl
 				}
 
 				PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
-				await Task.Delay(50);
 
 				// Don't apply the facial expression hack for the body import step.
 				// Otherwise, the head won't pose as intended and will return to its original position.
@@ -468,7 +474,6 @@ public partial class PosePage : UserControl
 				}
 
 				PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
-				await Task.Delay(50);
 
 				// Apply facial expression hack for the expression import
 				await poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, true);
@@ -503,6 +508,12 @@ public partial class PosePage : UserControl
 		catch (Exception ex)
 		{
 			Log.Error(ex, "Failed to load pose file");
+		}
+		finally
+		{
+			// Re-enable auto-commit and commit changes
+			this.Actor.History.Commit();
+			this.Actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
 		}
 	}
 
