@@ -379,7 +379,8 @@ public partial class PosePage : UserControl
 			if (result.File is not PoseFile poseFile)
 				return;
 
-			Dictionary<string, Vector3> bonePositions = new();
+			Dictionary<BoneVisual3d, Vector3> bodyPositions = new();
+			Dictionary<BoneVisual3d, Vector3> facePositions = new();
 			bool mismatchedFaceBones = false;
 
 			// Disable auto-commit at the beginning
@@ -411,22 +412,29 @@ public partial class PosePage : UserControl
 			PoseService.Instance.SetEnabled(true);
 			PoseService.Instance.FreezeScale |= mode.HasFlag(PoseFile.Mode.Scale);
 			PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
+			PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
 
 			if (importOption == PoseImportOptions.SelectedBones)
 			{
-				PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
-
 				// Don't unselected bones after import. Let the user decide what to do with the selection.
 				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
-				await poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
+				poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
 				return;
 			}
+
+			// Backup face bone positions before importing the body pose.
+			// "Freeze Position" toggle resets them, so restore after import. Relevant only when pose service is enabled.
+			this.Skeleton.SelectHead();
+			facePositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone, bone => bone.Position);
+			this.Skeleton.ClearSelection();
 
 			// Step 1: Import body part of the pose
 			if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.BodyOnly)
 			{
 				this.Skeleton.SelectBody();
 				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+				bodyPositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone, bone => bone.Position);
+				this.Skeleton.ClearSelection();
 
 				// Don't import body with positions unless it's "Full Transform".
 				// Otherwise, the body will be deformed if the pose file was created for another race.
@@ -436,27 +444,21 @@ public partial class PosePage : UserControl
 					mode &= ~PoseFile.Mode.Position;
 				}
 
-				PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
-
 				// Don't apply the facial expression hack for the body import step.
 				// Otherwise, the head won't pose as intended and will return to its original position.
-				await poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
+				poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
 
 				// Re-enable positions if they were disabled.
 				if (doLegacyImport)
 				{
 					mode |= PoseFile.Mode.Position;
-					PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
+					foreach ((BoneVisual3d bone, Vector3 position) in bodyPositions)
+					{
+						bone.Position = position;
+						bone.WriteTransform(this.Skeleton, false);
+					}
 				}
-
-				// Store updated bone positions as they will get reset by the expression import
-				bonePositions = this.Skeleton.SelectedBones.Select(bone => (bone.BoneName, bone.Position)).ToDictionary(t => t.BoneName, t => t.Position);
-				this.Skeleton.ClearSelection();
 			}
-
-			// Body pose is loaded. Exit early if we're only importing the body.
-			if (importOption == PoseImportOptions.BodyOnly)
-				return;
 
 			// Step 2: Import the facial expression
 			if (!mismatchedFaceBones && (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly))
@@ -473,33 +475,26 @@ public partial class PosePage : UserControl
 					mode &= ~PoseFile.Mode.Position;
 				}
 
-				PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
-
 				// Apply facial expression hack for the expression import
-				await poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, true);
+				poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, true);
 
 				// Re-enable positions if they were disabled.
 				if (doLegacyImport)
 				{
 					mode |= PoseFile.Mode.Position;
-					PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
+					foreach ((BoneVisual3d bone, Vector3 position) in facePositions)
+					{
+						bone.Position = position;
+						bone.WriteTransform(this.Skeleton, false);
+					}
 				}
 			}
 
-			// Expression is loaded. Exit early if we're only importing expressions.
-			if (importOption == PoseImportOptions.ExpressionOnly)
-				return;
-
-			// Step 3: Restore body bone positions
-			if (importOption == PoseImportOptions.FullTransform && mode.HasFlag(PoseFile.Mode.Position))
+			// Step 3: Restore face bone positions if face bones were mismatched
+			if (mismatchedFaceBones)
 			{
-				foreach ((string name, Vector3 position) in bonePositions)
+				foreach ((BoneVisual3d bone, Vector3 position) in facePositions)
 				{
-					BoneVisual3d? bone = this.Skeleton.GetBone(name);
-
-					if (bone == null)
-						continue;
-
 					bone.Position = position;
 					bone.WriteTransform(this.Skeleton, false);
 				}
@@ -511,6 +506,9 @@ public partial class PosePage : UserControl
 		}
 		finally
 		{
+			// Update the skeleton after applying the pose
+			this.Skeleton.ReadTransforms();
+
 			// Re-enable auto-commit and commit changes
 			this.Actor.History.Commit();
 			this.Actor.History.AutoCommitEnabled = originalAutoCommitEnabled;

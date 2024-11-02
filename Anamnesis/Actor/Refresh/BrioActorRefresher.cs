@@ -3,11 +3,11 @@
 
 namespace Anamnesis.Actor.Refresh;
 
-using System.Threading.Tasks;
 using Anamnesis.Brio;
 using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
+using System.Threading.Tasks;
 using XivToolsWpf;
 
 public class BrioActorRefresher : IActorRefresher
@@ -28,7 +28,7 @@ public class BrioActorRefresher : IActorRefresher
 
 		RedrawType redrawType = RedrawType.AllowFull | RedrawType.PreservePosition | RedrawType.AllowOptimized | RedrawType.ForceAllowNPCAppearance;
 
-		if(actor.IsWeaponDirty)
+		if (actor.IsWeaponDirty)
 		{
 			redrawType |= RedrawType.ForceRedrawWeaponsOnOptimized;
 		}
@@ -48,7 +48,7 @@ public class BrioActorRefresher : IActorRefresher
 
 			// Redraw
 			var result = await Brio.Redraw(actor.ObjectIndex, redrawType);
-			if(result == "\"Full\"")
+			if (result == "\"Full\"")
 			{
 				// TODO: It's probably best to find some way to detect when it's safe
 				// this is a good first attempt though.
@@ -60,7 +60,7 @@ public class BrioActorRefresher : IActorRefresher
 					// Restore current pose
 					skeletonVisual3D = new SkeletonVisual3d();
 					await skeletonVisual3D.SetActor(actor);
-					await poseFile.Apply(actor, skeletonVisual3D, null, PoseFile.Mode.All, true);
+					poseFile.Apply(actor, skeletonVisual3D, null, PoseFile.Mode.All, true);
 				}).Start();
 			}
 		}

@@ -46,20 +46,7 @@ public class PoseFile : JsonFileBase
 
 	public static BoneProcessingModes GetBoneMode(ActorMemory? actor, SkeletonVisual3d? skeleton, string boneName)
 	{
-		if (boneName == "n_root")
-			return BoneProcessingModes.Ignore;
-
-		// Special case for elezen ears as they cannot use other races ear values.
-		if (actor?.Customize?.Race == ActorCustomizeMemory.Races.Elezen)
-		{
-			// append '_elezen' to both ear bones.
-			if (boneName == "j_mimi_l" || boneName == "j_mimi_r")
-			{
-				return BoneProcessingModes.KeepRelative;
-			}
-		}
-
-		return BoneProcessingModes.FullLoad;
+		return boneName != "n_root" ? BoneProcessingModes.FullLoad : BoneProcessingModes.Ignore;
 	}
 
 	public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, HashSet<string>? bones = null, bool editMeta = false)
@@ -107,7 +94,7 @@ public class PoseFile : JsonFileBase
 		}
 	}
 
-	public async Task Apply(ActorMemory actor, SkeletonVisual3d skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
+	public void Apply(ActorMemory actor, SkeletonVisual3d skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
 	{
 		if (actor == null)
 			throw new ArgumentNullException(nameof(actor));
@@ -298,8 +285,6 @@ public class PoseFile : JsonFileBase
 				bone.ReadTransform();
 				bone.WriteTransform(skeleton, false);
 			}
-
-			await Task.Delay(10);
 		}
 
 		// Restore the head bone rotation if we were only loading an expression
@@ -322,9 +307,6 @@ public class PoseFile : JsonFileBase
 			bone.Scale = transform.Scale;
 			bone.WriteTransform(skeleton, false);
 		}
-
-		// Give enough time for the game to process the bone transform updates.
-		await Task.Delay(100);
 
 		skeletonMem.PauseSynchronization = false;
 		skeletonMem.WriteDelayedBinds();

@@ -212,7 +212,7 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 							fullActor.SetAddress(newActor.Address);
 							fullActor.Synchronize();
 							await skeletonVisual3D.SetActor(fullActor);
-							await poseFile.Apply(fullActor, skeletonVisual3D, null, PoseFile.Mode.Rotation, true);
+							poseFile.Apply(fullActor, skeletonVisual3D, null, PoseFile.Mode.Rotation, true);
 						}
 					}
 
