@@ -20,16 +20,9 @@
                     <Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.15" Stretch="Uniform"
 						   Source="pack://application:,,,/Assets/Pose/CharFHyurFaceBackground.png" IsHitTestVisible="False"/>
 
-                    <!-- Jaw -->
-                    <local:BoneView Canvas.Left="146" Canvas.Top="288" BoneName="j_f_ago"/>
-
                     <!-- Eyes -->
                     <local:BoneView Canvas.Left="105" Canvas.Top="170" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"/>
                     <local:BoneView Canvas.Left="185" Canvas.Top="170" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"/>
-
-                    <!-- Eyebrows -->
-                    <local:BoneView Canvas.Left="105" Canvas.Top="145" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
-                    <local:BoneView Canvas.Left="185" Canvas.Top="145" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
 
                     <!-- Cheeks -->
                     <local:BoneView Canvas.Left="105" Canvas.Top="210" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"/>
@@ -44,7 +37,29 @@
                     <local:BoneView Canvas.Left="225" Canvas.Top="220" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
                     <local:BoneView Canvas.Left="65" Canvas.Top="240" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
                     <local:BoneView Canvas.Left="225" Canvas.Top="240" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"/>
-                </Canvas>
+
+					<!-- Legacy bones -->
+					<Canvas Visibility="{Binding HasPreDTFace, Converter={StaticResource B2V}}">
+						<!-- Eyebrows -->
+						<local:BoneView Canvas.Left="85" Canvas.Top="145" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"/>
+						<local:BoneView Canvas.Left="205" Canvas.Top="145" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"/>
+						<local:BoneView Canvas.Left="130" Canvas.Top="150" BoneName="j_f_miken_l" FlippedBoneName="j_f_miken_r"/>
+						<local:BoneView Canvas.Left="160" Canvas.Top="150" BoneName="j_f_miken_r" FlippedBoneName="j_f_miken_l"/>
+
+						<!-- Jaw -->
+						<local:BoneView Canvas.Left="146" Canvas.Top="288" BoneName="j_ago"/>
+					</Canvas>
+
+					<!-- Modern bones -->
+					<Canvas Visibility="{Binding HasPreDTFace, Converter={StaticResource !B2V}}">
+						<!-- Eyebrows -->
+						<local:BoneView Canvas.Left="105" Canvas.Top="145" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
+						<local:BoneView Canvas.Left="185" Canvas.Top="145" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
+
+						<!-- Jaw -->
+						<local:BoneView Canvas.Left="146" Canvas.Top="288" BoneName="j_f_ago"/>
+					</Canvas>
+				</Canvas>
             </Viewbox>
         </DataTemplate>
 
@@ -94,16 +109,9 @@
                     <Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.15" Stretch="Uniform"
                            Source="pack://application:,,,/Assets/Pose/CharFMiqoFaceBackground.png" IsHitTestVisible="False"/>
 
-                    <!-- Jaw -->
-                    <local:BoneView Canvas.Left="140" Canvas.Top="250" BoneName="j_f_ago"/>
-
                     <!-- Eyes -->
                     <local:BoneView Canvas.Left="104" Canvas.Top="156" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"/>
                     <local:BoneView Canvas.Left="176" Canvas.Top="156" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"/>
-
-                    <!-- Eyebrows -->
-                    <local:BoneView Canvas.Left="104" Canvas.Top="136" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
-                    <local:BoneView Canvas.Left="176" Canvas.Top="136" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
 
                     <!-- Cheeks -->
                     <local:BoneView Canvas.Left="104" Canvas.Top="196" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"/>
@@ -118,7 +126,29 @@
                     <local:BoneView Canvas.Left="255" Canvas.Top="85" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
                     <local:BoneView Canvas.Left="25" Canvas.Top="115" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
                     <local:BoneView Canvas.Left="255" Canvas.Top="115" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"/>
-                </Canvas>
+
+					<!-- Legacy bones -->
+					<Canvas Visibility="{Binding HasPreDTFace, Converter={StaticResource B2V}}">
+						<!-- Eyebrows -->
+						<local:BoneView Canvas.Left="86" Canvas.Top="130" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"/>
+						<local:BoneView Canvas.Left="194" Canvas.Top="130" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"/>
+						<local:BoneView Canvas.Left="125" Canvas.Top="135" BoneName="j_f_miken_l" FlippedBoneName="j_f_miken_r"/>
+						<local:BoneView Canvas.Left="155" Canvas.Top="135" BoneName="j_f_miken_r" FlippedBoneName="j_f_miken_l"/>
+
+						<!-- Jaw -->
+						<local:BoneView Canvas.Left="140" Canvas.Top="250" BoneName="j_ago"/>
+					</Canvas>
+
+					<!-- Modern bones -->
+					<Canvas Visibility="{Binding HasPreDTFace, Converter={StaticResource !B2V}}">
+						<!-- Eyebrows -->
+						<local:BoneView Canvas.Left="104" Canvas.Top="136" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
+						<local:BoneView Canvas.Left="176" Canvas.Top="136" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
+
+						<!-- Jaw -->
+						<local:BoneView Canvas.Left="140" Canvas.Top="250" BoneName="j_f_ago"/>
+					</Canvas>
+				</Canvas>
             </Viewbox>
         </DataTemplate>
 
