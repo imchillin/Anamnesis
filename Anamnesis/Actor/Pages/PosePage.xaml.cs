@@ -150,6 +150,44 @@ public partial class PosePage : UserControl
 		return results;
 	}
 
+	private void FlipBone(BoneVisual3d? targetBone, bool shouldFlip = true)
+	{
+		if (this.Skeleton == null)
+			throw new Exception("Skeleton is null");
+
+		if (targetBone == null)
+			throw new ArgumentException("The target bone cannot be null");
+
+		// Save the positions of the target bone and its children
+		// The transform memory is used to retrieve the parent-relative position of the bone
+		Dictionary<BoneVisual3d, Vector3> bonePositions = new()
+		{
+			{ targetBone, targetBone.Position },
+		};
+
+		if (PoseService.Instance.EnableParenting)
+		{
+			List<BoneVisual3d> boneChildren = new();
+			targetBone.GetChildren(ref boneChildren);
+			foreach (BoneVisual3d childBone in boneChildren)
+			{
+				bonePositions.Add(childBone, childBone.Position);
+			}
+		}
+
+		this.FlipBoneInternal(targetBone, shouldFlip);
+
+		// Restore positions after flipping
+		foreach ((BoneVisual3d bone, Vector3 parentRelPos) in bonePositions)
+		{
+			foreach (TransformMemory transformMemory in bone.TransformMemories)
+			{
+				bone.Position = parentRelPos;
+				bone.WriteTransform(this.Skeleton, false);
+			}
+		}
+	}
+
 	/* Basic Idea:
 	 * get mirrored quat of targetBone
 	 * check if its a 'left' bone
@@ -161,58 +199,62 @@ public partial class PosePage : UserControl
 	 *          - store the quat on the target bone
 	 *  - recursively flip on all child bones
 	 */
-
-	// TODO: This doesn't seem to be working correctly after the skeleton upgrade. not sure why...
-	private void FlipBone(BoneVisual3d? targetBone, bool shouldFlip = true)
+	private void FlipBoneInternal(BoneVisual3d? targetBone, bool shouldFlip = true)
 	{
-		if (targetBone != null)
-		{
-			CmQuaternion newRotation = targetBone.TransformMemory.Rotation.Mirror(); // character-relative transform
-			if (shouldFlip && targetBone.BoneName.EndsWith("_l"))
-			{
-				string rightBoneString = targetBone.BoneName.Substring(0, targetBone.BoneName.Length - 2) + "_r"; // removes the "_l" and replaces it with "_r"
-				/*	Useful debug lines to make sure the correct bones are grabbed...
-				 *	Log.Information("flipping: " + targetBone.BoneName);
-				 *	Log.Information("right flip target: " + rightBoneString); */
-				BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(rightBoneString);
-				if (rightBone != null)
-				{
-					CmQuaternion rightRot = rightBone.TransformMemory.Rotation.Mirror();
-					foreach (TransformMemory transformMemory in targetBone.TransformMemories)
-					{
-						transformMemory.Rotation = rightRot;
-					}
+		if (targetBone == null)
+			throw new ArgumentException("The target bone cannot be null");
 
-					foreach (TransformMemory transformMemory in rightBone.TransformMemories)
-					{
-						transformMemory.Rotation = newRotation;
-					}
-				}
-				else
-				{
-					Log.Warning("could not find right bone of: " + targetBone.BoneName);
-				}
-			}
-			else if (shouldFlip && targetBone.BoneName.EndsWith("_r"))
+		CmQuaternion newRotation = targetBone!.TransformMemory.Rotation.Mirror(); // character-relative transform
+		if (shouldFlip && targetBone.BoneName.EndsWith("_l"))
+		{
+			string rightBoneString = targetBone.BoneName.Substring(0, targetBone.BoneName.Length - 2) + "_r"; // removes the "_l" and replaces it with "_r"
+			/*	Useful debug lines to make sure the correct bones are grabbed...
+				*	Log.Information("flipping: " + targetBone.BoneName);
+				*	Log.Information("right flip target: " + rightBoneString); */
+			BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(rightBoneString);
+			if (rightBone != null)
 			{
-				// do nothing so it doesn't revert...
-			}
-			else
-			{
+				CmQuaternion rightRot = rightBone.TransformMemory.Rotation.Mirror();
 				foreach (TransformMemory transformMemory in targetBone.TransformMemories)
+				{
+					transformMemory.Rotation = rightRot;
+				}
+
+				targetBone.ReadTransform();
+
+				foreach (TransformMemory transformMemory in rightBone.TransformMemories)
 				{
 					transformMemory.Rotation = newRotation;
 				}
+
+				rightBone.ReadTransform();
+			}
+			else
+			{
+				Log.Warning("could not find right bone of: " + targetBone.BoneName);
+			}
+		}
+		else if (shouldFlip && targetBone.BoneName.EndsWith("_r"))
+		{
+			// do nothing so it doesn't revert...
+		}
+		else
+		{
+			foreach (TransformMemory transformMemory in targetBone.TransformMemories)
+			{
+				transformMemory.Rotation = newRotation;
 			}
 
-			if (PoseService.Instance.EnableParenting)
+			targetBone.ReadTransform();
+		}
+
+		if (PoseService.Instance.EnableParenting)
+		{
+			foreach (Visual3D? child in targetBone.Children)
 			{
-				foreach (Visual3D? child in targetBone.Children)
+				if (child is BoneVisual3d childBone)
 				{
-					if (child is BoneVisual3d childBone)
-					{
-						this.FlipBone(childBone, shouldFlip);
-					}
+					this.FlipBoneInternal(childBone, shouldFlip);
 				}
 			}
 		}
@@ -575,9 +617,31 @@ public partial class PosePage : UserControl
 
 	private void OnFlipClicked(object sender, RoutedEventArgs e)
 	{
-		if (this.Skeleton != null && !this.IsFlipping)
+		if (this.Actor == null)
+			throw new ArgumentNullException(nameof(this.Actor));
+
+		if (this.Actor.ModelObject == null || this.Actor.ModelObject.Transform == null)
+			throw new Exception("Actor has no model");
+
+		if (this.Actor.ModelObject.Skeleton == null)
+			throw new Exception("Actor model has no skeleton. Are you trying to load a pose outside of GPose?");
+
+		if (this.Skeleton == null || this.IsFlipping)
+			return;
+
+		SkeletonMemory skeletonMem = this.Actor.ModelObject.Skeleton;
+		skeletonMem.PauseSynchronization = true;
+
+		bool originalAutoCommitEnabled = this.Actor.History.AutoCommitEnabled;
+
+		try
 		{
-			// if no bone selected, flip both lumbar and waist bones
+			// Disable auto-commit at the beginning
+			// Commit any changes if they are present to avoid falsely grouping actions
+			this.Actor.History.AutoCommitEnabled = false;
+			this.Actor.History.Commit();
+
+			// If no bone selected, flip both lumbar and waist bones
 			this.IsFlipping = true;
 			if (this.Skeleton.CurrentBone == null)
 			{
@@ -590,7 +654,7 @@ public partial class PosePage : UserControl
 			}
 			else
 			{
-				// if targeted bone is a limb don't switch the respective left and right sides
+				// If targeted bone is a limb don't switch the respective left and right sides
 				BoneVisual3d targetBone = this.Skeleton.CurrentBone;
 				if (targetBone.BoneName.EndsWith("_l") || targetBone.BoneName.EndsWith("_r"))
 				{
@@ -605,6 +669,15 @@ public partial class PosePage : UserControl
 			}
 
 			this.IsFlipping = false;
+
+			skeletonMem.PauseSynchronization = false;
+			skeletonMem.WriteDelayedBinds();
+		}
+		finally
+		{
+			// Re-enable auto-commit and commit changes
+			this.Actor.History.Commit();
+			this.Actor.History.AutoCommitEnabled = originalAutoCommitEnabled;
 		}
 	}
 
