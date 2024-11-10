@@ -121,6 +121,29 @@ public struct PropertyChange
 	}
 
 	/// <summary>
+	/// Adds all ancestor binds of the parent bind to the property change.
+	/// </summary>
+	/// <remarks>
+	/// Use this method only if the change's bind path is not already configured.
+	/// </remarks>
+	public void ConfigureBindPath()
+	{
+		var parentBind = this.BindPath[0].Memory.ParentBind;
+		if (parentBind == null)
+			return;
+
+		this.AddPath(parentBind);
+		var memParent = parentBind.Memory.Parent;
+		while (memParent != null)
+		{
+			if (memParent.ParentBind != null)
+				this.AddPath(memParent.ParentBind);
+
+			memParent = memParent.Parent;
+		}
+	}
+
+	/// <summary>
 	/// Returns a string that represents the current object.
 	/// </summary>
 	/// <returns>A string that represents the current object.</returns>

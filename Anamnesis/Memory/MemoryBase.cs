@@ -43,6 +43,9 @@ public class MemObjPropertyChangedEventArgs : PropertyChangedEventArgs
 [AddINotifyPropertyChangedInterface]
 public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 {
+	/// <summary>Dictionary of the object's property bindings.</summary>
+	public readonly Dictionary<string, PropertyBindInfo> Binds = new();
+
 	/// <summary>
 	/// A thread-local variable that determines whether property notifications should be suppressed.
 	/// </summary>
@@ -54,9 +57,6 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 	/// <summary>List of child memory objects.</summary>
 	protected readonly List<MemoryBase> Children = new();
-
-	/// <summary>Dictionary of the object's property bindings.</summary>
-	protected readonly Dictionary<string, PropertyBindInfo> Binds = new();
 
 	/// <summary>Set of delayed binds to be written later.</summary>
 	/// <remarks>
