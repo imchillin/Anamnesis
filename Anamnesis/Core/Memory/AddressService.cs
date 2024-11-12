@@ -132,7 +132,7 @@ public class AddressService : ServiceBase<AddressService>
 		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezeScale2", "43 0F 29 44 18 20", (p) => { SkeletonFreezeScale2 = p; }));  // SkeletonAddress6
 		tasks.Add(this.GetAddressFromTextSignature("SkeletonFreezePosition2", "43 0f 29 24 18", (p) => { SkeletonFreezePosition2 = p; }));  // SkeletonAddress7
 		tasks.Add(this.GetAddressFromTextSignature("WorldPositionFreeze", "F3 0F 11 ?? ?? F3 0F 11 ?? ?? F3 44 0F 11 ?? ?? 48 8B 8B ?? 01", (p) => { WorldPositionFreeze = p; }));
-		tasks.Add(this.GetAddressFromTextSignature("WorldRotationFreeze", "0F 11 40 ?? 48 8B 8B ?? ?? ?? ?? 0F B6 81 ?? ?? ?? ?? 24 0F 3C 03 75 ?? 48 8B 01 B2 01 FF 50 ?? 48 8B 83 ?? ?? ?? ??", (p) => { WorldRotationFreeze = p; }));
+		tasks.Add(this.GetAddressFromTextSignature("WorldRotationFreeze", "0F 11 40 60 48 8B 8B 00 01 00 00 0F B6 81 89 00 00 00 24 0F 3C 03 75 08 48 8B 01 B2 01 FF 50 38 ?? ?? ?? ?? E0", (p) => { WorldRotationFreeze = p; }));
 		tasks.Add(this.GetAddressFromTextSignature("GPoseCameraTargetPositionFreeze", "F3 0F 10 0E E8 ?? ?? ?? ?? 4C 8B 74 24", (p) => { GPoseCameraTargetPositionFreeze = p + 4; }));
 		tasks.Add(this.GetAddressFromTextSignature("AnimationSpeedPatch", "F3 0F 11 94 ?? ?? ?? ?? ?? 80 89 ?? ?? ?? ?? 01", (p) => { AnimationSpeedPatch = p; }));
 		tasks.Add(this.GetAddressFromSignature("Territory", "8B 1D ?? ?? ?? ?? 0F 45 D8 39 1D", 2, (p) => { Territory = p; }));
