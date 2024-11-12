@@ -49,9 +49,9 @@ public class ActorModelMemory : MemoryBase
 	[Bind(0x2A4)] public float Height { get; set; }
 	[Bind(0x2E0)] public float Wetness { get; set; }
 	[Bind(0x2EC)] public float Drenched { get; set; }
-	[Bind(0xA50)] public short DataPath { get; set; }
-	[Bind(0xA54)] public byte DataHead { get; set; }
-	[Bind(0xBA0, 0x028, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearance { get; set; }
+	[Bind(0xA90)] public short DataPath { get; set; }
+	[Bind(0xA94)] public byte DataHead { get; set; }
+	[Bind(0xBE0, 0x028, BindFlags.Pointer)] public ExtendedAppearanceMemory? ExtendedAppearance { get; set; }
 
 	public bool LockWetness
 	{
