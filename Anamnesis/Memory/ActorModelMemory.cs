@@ -34,7 +34,7 @@ public class ActorModelMemory : MemoryBase
 		AuRaMasculine = 1301,
 		AuRaFeminine = 1401,
 		HrothgarMasculine = 1501,
-		////HrothgarFeminine = 1601,
+		HrothgarFeminine = 1601,
 		VieraMasculine = 1701,
 		VieraFeminine = 1801,
 		PadjalMasculine = 9104,
