@@ -155,7 +155,7 @@ public class SceneFile : JsonFileBase
 			if (mode.HasFlag(Mode.Pose))
 			{
 				// TODO: This should follow the same approach as the pose page imports
-				await entry.Pose!.Apply(actor, skeleton, null, PoseFile.Mode.Rotation, true);
+				entry.Pose!.Apply(actor, skeleton, null, PoseFile.Mode.Rotation, true);
 			}
 		}
 

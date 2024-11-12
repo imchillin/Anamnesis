@@ -290,33 +290,25 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 				newTransform.Rotation = CmQuaternion.Normalize(CmQuaternion.Multiply(parentRot, newTransform.Rotation));
 			}
 
-			// Check if there are actual changes before updating
-			bool positionChanged = !this.Position.IsApproximately(newTransform.Position);
-			bool rotationChanged = !this.Rotation.IsApproximately(newTransform.Rotation);
-			bool scaleChanged = !this.Scale.IsApproximately(newTransform.Scale);
+			// Apply the updates in a single step
+			this.Position = newTransform.Position;
+			this.Rotation = newTransform.Rotation;
+			this.Scale = newTransform.Scale;
 
-			if (positionChanged || rotationChanged || scaleChanged)
+			// Set the Media3D hierarchy transforms
+			this.rotation.Quaternion = newTransform.Rotation.ToMedia3DQuaternion();
+			this.position.OffsetX = newTransform.Position.X;
+			this.position.OffsetY = newTransform.Position.Y;
+			this.position.OffsetZ = newTransform.Position.Z;
+
+			// Draw a line for visualization
+			if (this.Parent != null && this.lineToParent != null)
 			{
-				// Apply the updates in a single step
-				this.Position = newTransform.Position;
-				this.Rotation = newTransform.Rotation;
-				this.Scale = newTransform.Scale;
-
-				// Set the Media3D hierarchy transforms
-				this.rotation.Quaternion = newTransform.Rotation.ToMedia3DQuaternion();
-				this.position.OffsetX = newTransform.Position.X;
-				this.position.OffsetY = newTransform.Position.Y;
-				this.position.OffsetZ = newTransform.Position.Z;
-
-				// Draw a line for visualization
-				if (this.Parent != null && this.lineToParent != null)
-				{
-					var endPoint = this.lineToParent.Points[1];
-					endPoint.X = newTransform.Position.X;
-					endPoint.Y = newTransform.Position.Y;
-					endPoint.Z = newTransform.Position.Z;
-					this.lineToParent.Points[1] = endPoint;
-				}
+				var endPoint = this.lineToParent.Points[1];
+				endPoint.X = newTransform.Position.X;
+				endPoint.Y = newTransform.Position.Y;
+				endPoint.Z = newTransform.Position.Z;
+				this.lineToParent.Points[1] = endPoint;
 			}
 
 			if (readChildren)
