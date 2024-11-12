@@ -331,13 +331,10 @@ public class PoseFile : JsonFileBase
 			}
 		}
 
-		if (!hasFaceBones)
-			return false;
-
 		// Looking for the tongue-A bone, a new bone common to all races and genders added in DT.
 		// If we dont have it, we are assumed to be a pre-DT pose file.
 		// This doesn't account for users manually editing the JSON.
-		if (!this.Bones.ContainsKey("j_f_bero_01"))
+		if (!hasFaceBones || !this.Bones.ContainsKey("j_f_bero_01"))
 			return true;
 
 		return false;

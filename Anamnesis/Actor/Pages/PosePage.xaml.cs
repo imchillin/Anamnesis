@@ -412,7 +412,7 @@ public partial class PosePage : UserControl
 			PoseService.Instance.SetEnabled(true);
 			PoseService.Instance.FreezeScale |= mode.HasFlag(PoseFile.Mode.Scale);
 			PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
-			PoseService.Instance.FreezePositions = mode.HasFlag(PoseFile.Mode.Position);
+			PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
 
 			if (importOption == PoseImportOptions.SelectedBones)
 			{
