@@ -105,7 +105,7 @@ public class AnimationService : ServiceBase<AnimationService>
 
 		animation.LipsOverride = 0;
 		animation.LinkSpeeds = true;
-		animation.Speeds![(int)AnimationMemory.AnimationSlots.FullBody] = 1.0f;
+		animation.Speeds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 1.0f;
 
 		this.overriddenActors.Remove(memory);
 	}
@@ -126,7 +126,7 @@ public class AnimationService : ServiceBase<AnimationService>
 				if (actor.IsValid && actor.Memory != null && actor.Memory.Address != IntPtr.Zero && actor.Memory.IsValid)
 				{
 					actor.Memory.Animation!.LinkSpeeds = true;
-					actor.Memory.Animation!.Speeds![(int)AnimationMemory.AnimationSlots.FullBody] = 0.0f;
+					actor.Memory.Animation!.Speeds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0.0f;
 				}
 			}
 		}
@@ -165,7 +165,7 @@ public class AnimationService : ServiceBase<AnimationService>
 
 		if (interrupt)
 		{
-			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody] = 0;
+			memory.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value = 0;
 		}
 
 		memory.Synchronize();

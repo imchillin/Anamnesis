@@ -50,7 +50,7 @@ public class AnimationMemory : MemoryBase
 		set
 		{
 			this.linkSpeeds = value;
-			this.ApplyAnimationLink(this.Speeds![0]);
+			this.ApplyAnimationLink(this.Speeds![0].Value);
 		}
 	}
 
@@ -84,17 +84,17 @@ public class AnimationMemory : MemoryBase
 	{
 		for (int i = 1; i < AnimationSlotCount; i++)
 		{
-			this.Speeds![i] = value;
+			this.Speeds![i].Value = value;
 		}
 	}
 
-	public class AnimationIdArrayMemory : InplaceFixedArrayMemory<ushort>
+	public class AnimationIdArrayMemory : InplaceFixedArrayMemory<ValueMemory<ushort>>
 	{
 		public override int ElementSize => sizeof(ushort);
 		public override int Length => AnimationSlotCount;
 	}
 
-	public class AnimationSpeedArrayMemory : InplaceFixedArrayMemory<float>
+	public class AnimationSpeedArrayMemory : InplaceFixedArrayMemory<ValueMemory<float>>
 	{
 		public override int ElementSize => sizeof(float);
 		public override int Length => AnimationSlotCount;

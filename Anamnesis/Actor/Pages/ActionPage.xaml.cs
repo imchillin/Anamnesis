@@ -76,7 +76,7 @@ public partial class ActionPage : UserControl
 			else
 			{
 				this.AnimationOverride = new();
-				this.AnimationOverride.BaseAnimationId = actor.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody];
+				this.AnimationOverride.BaseAnimationId = actor.Animation!.AnimationIds![(int)AnimationMemory.AnimationSlots.FullBody].Value;
 				this.AnimationOverride.BlendAnimationId = 0;
 			}
 		}
@@ -185,7 +185,7 @@ public partial class ActionPage : UserControl
 			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
 			{
 				target.Memory.Animation!.LinkSpeeds = true;
-				target.Memory.Animation!.Speeds![0] = 1.0f;
+				target.Memory.Animation!.Speeds![0].Value = 1.0f;
 			}
 		}
 	}
@@ -204,7 +204,7 @@ public partial class ActionPage : UserControl
 			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
 			{
 				target.Memory.Animation!.LinkSpeeds = true;
-				target.Memory.Animation!.Speeds![0] = 0.0f;
+				target.Memory.Animation!.Speeds![0].Value = 0.0f;
 			}
 		}
 	}
