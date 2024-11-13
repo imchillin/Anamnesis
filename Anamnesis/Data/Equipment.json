@@ -5445,16 +5445,16 @@
     "Description": "Rock"
   },
   {
-    "Name": "Spiked Halo?",
+    "Name": "Spiked Halo",
     "Id": "9001, 136, 1",
     "Slot": "Weapons",
-    "Description": "Spiked Halo?"
+    "Description": "Sophia Sarcophagus Halo"
   },
   {
-    "Name": "Piece of armor or sarcophagus?",
+    "Name": "Sophias Sarcophagus",
     "Id": "9001, 137, 1",
     "Slot": "Weapons",
-    "Description": "Piece of armor or sarcophagus?"
+    "Description": "Contains Sophia in her Intro"
   },
   {
     "Name": "Sake cup, filled",
