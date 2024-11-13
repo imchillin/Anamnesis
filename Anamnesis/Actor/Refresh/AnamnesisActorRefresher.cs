@@ -3,9 +3,9 @@
 
 namespace Anamnesis.Actor.Refresh;
 
-using System.Threading.Tasks;
 using Anamnesis.Memory;
 using Anamnesis.Services;
+using System.Threading.Tasks;
 using static Anamnesis.Memory.ActorBasicMemory;
 
 public class AnamnesisActorRefresher : IActorRefresher
@@ -28,7 +28,6 @@ public class AnamnesisActorRefresher : IActorRefresher
 
 	public async Task RefreshActor(ActorMemory actor)
 	{
-		await Task.Delay(16);
 		if (SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player)
 		{
 			actor.ObjectKind = ActorTypes.BattleNpc;
@@ -45,7 +44,5 @@ public class AnamnesisActorRefresher : IActorRefresher
 			await Task.Delay(75);
 			actor.RenderMode = RenderModes.Draw;
 		}
-
-		await Task.Delay(150);
 	}
 }
