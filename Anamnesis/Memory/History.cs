@@ -144,8 +144,28 @@ public class History
 
 		private readonly List<PropertyChange> changes = new();
 
-		public bool HasChanges => this.changes.Count > 0;
-		public int Count => this.changes.Count;
+		public bool HasChanges
+		{
+			get
+			{
+				lock (this.changes)
+				{
+					return this.changes.Count > 0;
+				}
+			}
+		}
+
+		public int Count
+		{
+			get
+			{
+				lock (this.changes)
+				{
+					return this.changes.Count;
+				}
+			}
+		}
+
 		public string Name { get; set; } = string.Empty;
 		public string ChangeList => this.GetChangeList();
 
@@ -153,53 +173,62 @@ public class History
 		{
 			Log.Verbose($"Restoring change set:\n{this}");
 
-			for (int i = this.changes.Count - 1; i >= 0; i--)
+			lock (this.changes)
 			{
-				PropertyChange change = this.changes[i];
-				if (change.OriginBind is PropertyBindInfo propertyBind)
+				for (int i = this.changes.Count - 1; i >= 0; i--)
 				{
-					propertyBind.Property.SetValue(propertyBind.Memory, change.OldValue);
+					PropertyChange change = this.changes[i];
+					if (change.OriginBind is PropertyBindInfo propertyBind)
+					{
+						propertyBind.Property.SetValue(propertyBind.Memory, change.OldValue);
+					}
 				}
 			}
 		}
 
 		public void Record(PropertyChange change)
 		{
-			// Keep only the latest change for each bind to minimize stored changes and recovery steps
-			PropertyChange? existingChange = this.changes.FirstOrDefault(c => c.Path == change.Path);
-			if (existingChange.HasValue)
+			lock (this.changes)
 			{
-				// Validate the existing change's OldValue
-				if (IsValidOldValue(existingChange.Value.OldValue))
+				// Keep only the latest change for each bind to minimize stored changes and recovery steps
+				PropertyChange? existingChange = this.changes.FirstOrDefault(c => c.Path == change.Path);
+				if (existingChange.HasValue)
 				{
-					// Transfer the old value of the existing change to the new change if it is valid
-					change.OldValue = existingChange.Value.OldValue;
+					// Validate the existing change's OldValue
+					if (IsValidOldValue(existingChange.Value.OldValue))
+					{
+						// Transfer the old value of the existing change to the new change if it is valid
+						change.OldValue = existingChange.Value.OldValue;
+					}
+
+					// Remove the existing change
+					this.changes.Remove(existingChange.Value);
 				}
 
-				// Remove the existing change
-				this.changes.Remove(existingChange.Value);
-			}
+				// Add the latest change into the history entry's changes list
+				this.changes.Add(change);
 
-			// Add the latest change into the history entry's changes list
-			this.changes.Add(change);
-
-			// Sanity check history depth
-			if (this.changes.Count > MaxChanges)
-			{
-				Log.Warning($"Change depth exceded max: {MaxChanges}. Flushing");
-				this.changes.Clear();
+				// Sanity check history depth
+				if (this.changes.Count > MaxChanges)
+				{
+					Log.Warning($"Change depth exceded max: {MaxChanges}. Flushing");
+					this.changes.Clear();
+				}
 			}
 		}
 
 		public string GetName()
 		{
 			HashSet<string> names = new();
-			foreach (PropertyChange change in this.changes)
+			lock (this.changes)
 			{
-				if (change.Name == null)
-					continue;
+				foreach (PropertyChange change in this.changes)
+				{
+					if (change.Name == null)
+						continue;
 
-				names.Add(change.Name);
+					names.Add(change.Name);
+				}
 			}
 
 			StringBuilder builder = new();
@@ -220,18 +249,21 @@ public class History
 
 			// Flatten the changes to repeated changes to the same value dont show up
 			Dictionary<BindInfo, PropertyChange> flattenedChanges = new();
-			foreach (PropertyChange change in this.changes)
+			lock (this.changes)
 			{
-				if (!flattenedChanges.ContainsKey(change.OriginBind))
+				foreach (PropertyChange change in this.changes)
 				{
-					flattenedChanges.Add(change.OriginBind, new(change));
-				}
-				else
-				{
-					PropertyChange existingChange = flattenedChanges[change.OriginBind];
+					if (!flattenedChanges.ContainsKey(change.OriginBind))
+					{
+						flattenedChanges.Add(change.OriginBind, new(change));
+					}
+					else
+					{
+						PropertyChange existingChange = flattenedChanges[change.OriginBind];
 
-					existingChange.NewValue = change.NewValue;
-					flattenedChanges[change.OriginBind] = existingChange;
+						existingChange.NewValue = change.NewValue;
+						flattenedChanges[change.OriginBind] = existingChange;
+					}
 				}
 			}
 

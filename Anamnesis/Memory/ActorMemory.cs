@@ -249,6 +249,10 @@ public class ActorMemory : ActorBasicMemory
 		// Refresh the actor
 		if (this.AutomaticRefreshEnabled && change.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh))
 		{
+			// Don't refresh because of a refresh
+			if (this.IsRefreshing && (change.OriginBind.Name == nameof(this.ObjectKind) || change.OriginBind.Name == nameof(this.RenderMode)))
+				return;
+
 			if (change.OriginBind.Flags.HasFlag(BindFlags.WeaponRefresh))
 				this.IsWeaponDirty = true;
 

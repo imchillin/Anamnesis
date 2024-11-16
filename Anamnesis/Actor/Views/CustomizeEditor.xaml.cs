@@ -31,7 +31,10 @@ public partial class CustomizeEditor : UserControl
 		this.ContentArea.DataContext = this;
 
 		this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(ActorCustomizeMemory.Genders));
-		this.AgeComboBox.ItemsSource = Enum.GetValues(typeof(ActorCustomizeMemory.Ages));
+		this.AgeComboBox.ItemsSource =
+			Enum.GetValues(typeof(ActorCustomizeMemory.Ages))
+				.Cast<ActorCustomizeMemory.Ages>()
+				.Where(age => age != ActorCustomizeMemory.Ages.None);
 
 		List<Race> races = new();
 		foreach (Race race in GameDataService.Races)
