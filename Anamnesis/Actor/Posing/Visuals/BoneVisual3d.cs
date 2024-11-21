@@ -354,25 +354,23 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 				throw new Exception($"Failed to transform bone: {this.BoneName} to root", ex);
 			}
 
-			Quaternion rotation = transform.Matrix.ToQuaternion();
+			var matrix = transform.Matrix;
+			Quaternion rotation = matrix.ToQuaternion();
 			rotation.Invert();
 
-			CmVector position = default;
-			position.X = (float)transform.Matrix.OffsetX;
-			position.Y = (float)transform.Matrix.OffsetY;
-			position.Z = (float)transform.Matrix.OffsetZ;
+			var position = new CmVector((float)matrix.OffsetX, (float)matrix.OffsetY, (float)matrix.OffsetZ);
 
 			// and push those values to the game memory
 			bool changed = false;
 			foreach (TransformMemory transformMemory in this.TransformMemories)
 			{
-				if (this.CanTranslate && !transformMemory.Position.IsApproximately(position))
+				if (this.CanTranslate)
 				{
 					transformMemory.Position = position;
 					changed = true;
 				}
 
-				if (this.CanScale && !transformMemory.Scale.IsApproximately(this.Scale))
+				if (this.CanScale)
 				{
 					transformMemory.Scale = this.Scale;
 					changed = true;
@@ -381,11 +379,8 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 				if (this.CanRotate)
 				{
 					CmQuaternion newRot = rotation.FromMedia3DQuaternion();
-					if (!transformMemory.Rotation.IsApproximately(newRot))
-					{
-						transformMemory.Rotation = newRot;
-						changed = true;
-					}
+					transformMemory.Rotation = newRot;
+					changed = true;
 				}
 			}
 
