@@ -3,21 +3,20 @@
 
 namespace Anamnesis;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using Anamnesis.Actor;
 using Anamnesis.Actor.Refresh;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 [AddINotifyPropertyChangedInterface]
 public class ActorService : ServiceBase<ActorService>
 {
 	private const int TickDelay = 10;
-	private const int ActorTableSize = 424;
+	private const int ActorTableSize = 819;
 	private const int GPoseIndexStart = 200;
 	private const int GPoseIndexEnd = 244;
 	private const int OverworldPlayerIndex = 0;
@@ -50,7 +49,7 @@ public class ActorService : ServiceBase<ActorService>
 
 	public async Task<bool> RefreshActor(ActorMemory actor)
 	{
-		if(this.CanRefreshActor(actor))
+		if (this.CanRefreshActor(actor))
 		{
 			foreach (IActorRefresher actorRefresher in this.actorRefreshers)
 			{
