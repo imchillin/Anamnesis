@@ -497,13 +497,17 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		if (!GposeService.GetIsGPose())
 			return;
 
-		// Take a snapshot of the current transforms
-		var snapshot = this.TakeSnapshot();
-
-		// Read skeleton transforms, starting from the root bones
-		foreach (var rootBone in this.rootBones)
+		// If history is restoring, wait until it's done.
+		lock (HistoryService.Instance.LockObject)
 		{
-			rootBone.ReadTransform(true, snapshot);
+			// Take a snapshot of the current transforms
+			var snapshot = this.TakeSnapshot();
+
+			// Read skeleton transforms, starting from the root bones
+			foreach (var rootBone in this.rootBones)
+			{
+				rootBone.ReadTransform(true, snapshot);
+			}
 		}
 	}
 

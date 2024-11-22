@@ -24,6 +24,7 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 {
 	public readonly List<TransformMemory> TransformMemories = new();
 
+	private const float EqualityTolerance = 0.00001f;
 	private static bool scaleLinked = true;
 
 	private readonly object transformLock = new();
@@ -364,13 +365,13 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 			bool changed = false;
 			foreach (TransformMemory transformMemory in this.TransformMemories)
 			{
-				if (this.CanTranslate)
+				if (this.CanTranslate && !transformMemory.Position.IsApproximately(position, EqualityTolerance))
 				{
 					transformMemory.Position = position;
 					changed = true;
 				}
 
-				if (this.CanScale)
+				if (this.CanScale && !transformMemory.Scale.IsApproximately(this.Scale, EqualityTolerance))
 				{
 					transformMemory.Scale = this.Scale;
 					changed = true;
@@ -379,8 +380,11 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 				if (this.CanRotate)
 				{
 					CmQuaternion newRot = rotation.FromMedia3DQuaternion();
-					transformMemory.Rotation = newRot;
-					changed = true;
+					if (!transformMemory.Rotation.IsApproximately(newRot, EqualityTolerance))
+					{
+						transformMemory.Rotation = newRot;
+						changed = true;
+					}
 				}
 			}
 

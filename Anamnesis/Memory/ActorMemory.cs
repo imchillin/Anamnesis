@@ -227,7 +227,7 @@ public class ActorMemory : ActorBasicMemory
 			return;
 
 		// Only record changes that originate from the user
-		if (!change.OriginBind.Flags.HasFlag(BindFlags.DontRecordHistory))
+		if (!change.OriginBind.Flags.HasFlag(BindFlags.DontRecordHistory) && !HistoryService.Instance.IsRestoring)
 		{
 			if (change.Origin == PropertyChange.Origins.User)
 			{
