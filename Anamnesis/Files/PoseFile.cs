@@ -10,6 +10,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -129,17 +130,17 @@ public class PoseFile : JsonFileBase
 		PoseService.Instance.CanEdit = false;
 		skeletonMem.PauseSynchronization = true;
 
-		// Create a backup of all bone transforms
-		// Keep in mind that unposed bone transforms is a collection of character-relative transforms.
-		// Meanwhile, posed bone positions is a collection of parent-relative positions.
-		Dictionary<string, Transform> unposedBoneTransforms = new();
-		Dictionary<string, Vector3> posedBonePositions = new();
-		foreach ((string name, BoneVisual3d bone) in skeleton.Bones)
+		// Create a backup of all bone transforms.
+		// Note: Unposed bone transforms are parent-relative, while the restore bone position list is character-relative.
+		Dictionary<BoneVisual3d, Transform> unposedBoneTransforms = new();
+		Dictionary<BoneVisual3d, Vector3> posedBonePos = new();
+		List<BoneVisual3d> bonePosRestore = new();
+		foreach (var bone in skeleton.Bones.Values)
 		{
-			if (GetBoneMode(actor, skeleton, name) == BoneProcessingModes.Ignore)
+			if (GetBoneMode(actor, skeleton, bone.BoneName) == BoneProcessingModes.Ignore)
 				continue;
 
-			unposedBoneTransforms[bone.BoneName] = new Transform
+			unposedBoneTransforms[bone] = new Transform
 			{
 				Position = bone.Position,
 				Rotation = bone.Rotation,
@@ -158,10 +159,7 @@ public class PoseFile : JsonFileBase
 		Vector3? originalHeadPosition = null;
 		if (doFacialExpressionHack && bones != null && bones.Contains("j_kao"))
 		{
-			if (headBone == null)
-				throw new Exception("Unable to find head (j_kao) bone.");
-
-			headBone.Synchronize();
+			headBone = skeleton.GetBone("j_kao") ?? throw new Exception("Unable to find head bone (j_kao).");
 			originalHeadRotation = headBone?.Rotation;
 			originalHeadPosition = headBone?.Position;
 		}
@@ -189,51 +187,30 @@ public class PoseFile : JsonFileBase
 			if (bones != null && !bones.Contains(boneName))
 				continue;
 
-			unposedBoneTransforms.Remove(boneName);
+			unposedBoneTransforms.Remove(bone);
+			posedBonePos.TryAdd(bone, bone.Position);
 
-			foreach (TransformMemory transformMemory in bone.TransformMemories)
+			if (savedBone.Position != null && !mode.HasFlag(Mode.Position))
 			{
-				if (savedBone.Position != null && !mode.HasFlag(Mode.Position))
-				{
-					posedBonePositions.TryAdd(boneName, transformMemory.Position);
-				}
+				bonePosRestore.Add(bone);
 			}
 		}
 
-		// Add unposed bone transform positions to posedBonePositions
+		// Add unposed bones to the restore position bones list.
 		// This is necessary to recover the positions of bones that are not explicitly
 		// written to while "Freeze Position" is enabled.
-		if (!mode.HasFlag(Mode.Position))
-		{
-			foreach (var unposedBone in unposedBoneTransforms)
-			{
-				if (!posedBonePositions.ContainsKey(unposedBone.Key))
-				{
-					BoneVisual3d? bone = skeleton.GetBone(unposedBone.Key);
-					if (bone == null)
-						continue;
-
-					// Position is retrieved from the memory, not the bone itself
-					posedBonePositions.Add(unposedBone.Key, bone.TransformMemory.Position);
-				}
-			}
-		}
+		bonePosRestore.AddRange(unposedBoneTransforms.Keys.Where(unposedBone => !bonePosRestore.Contains(unposedBone)));
 
 		// Record position changes if bones are posed without position to preserve positions.
-		foreach ((string name, Vector3 pos) in posedBonePositions)
+		foreach (var bone in bonePosRestore)
 		{
-			BoneVisual3d? bone = skeleton.GetBone(name);
-
-			if (bone == null)
-				continue;
-
 			if (!bone.TransformMemory.Binds.TryGetValue("Position", out PropertyBindInfo? bindInfo))
 			{
-				Log.Error($"Failed to find position bind for bone: {name}");
+				Log.Error($"Failed to find position bind for bone: {bone.BoneName}");
 				continue;
 			}
 
-			PropertyChange change = new(bindInfo, pos, pos, PropertyChange.Origins.User);
+			PropertyChange change = new(bindInfo, bone.TransformMemory.Position, bone.TransformMemory.Position, PropertyChange.Origins.User);
 			change.ConfigureBindPath();
 			actor.History.Record(change);
 		}
@@ -283,7 +260,6 @@ public class PoseFile : JsonFileBase
 				}
 
 				bone.ReadTransform();
-				bone.WriteTransform(skeleton, false);
 			}
 		}
 
@@ -295,17 +271,30 @@ public class PoseFile : JsonFileBase
 			headBone.WriteTransform(skeleton, true);
 		}
 
-		// Restore the relative rotations of any bones that we did not explicitly write to.
-		foreach ((string name, Transform transform) in unposedBoneTransforms)
+		// If we are not loading the position of bones, restore the positions of all bones that were not explicitly written to.
+		if (!mode.HasFlag(Mode.Position))
 		{
-			BoneVisual3d? bone = skeleton.GetBone(name);
-			if (bone == null)
-				continue;
+			var sortedBones = SkeletonVisual3d.SortBonesByHierarchy(posedBonePos.Keys);
 
-			bone.Rotation = transform.Rotation;
-			bone.Position = transform.Position;
-			bone.Scale = transform.Scale;
-			bone.WriteTransform(skeleton, false);
+			foreach (var bone in sortedBones)
+			{
+				bone.Position = posedBonePos[bone];
+				bone.WriteTransform(skeleton, true);
+			}
+		}
+
+		// Restore the transforms of any bones that we did not explicitly write to.
+		if (unposedBoneTransforms.Count > 0)
+		{
+			var sortedBones = SkeletonVisual3d.SortBonesByHierarchy(unposedBoneTransforms.Keys);
+
+			foreach (var bone in sortedBones)
+			{
+				bone.Rotation = unposedBoneTransforms[bone].Rotation;
+				bone.Position = unposedBoneTransforms[bone].Position;
+				bone.Scale = unposedBoneTransforms[bone].Scale;
+				bone.WriteTransform(skeleton, false);
+			}
 		}
 
 		skeletonMem.PauseSynchronization = false;

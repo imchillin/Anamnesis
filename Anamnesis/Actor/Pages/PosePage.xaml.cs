@@ -178,14 +178,7 @@ public partial class PosePage : UserControl
 		this.FlipBoneInternal(targetBone, shouldFlip);
 
 		// Restore positions after flipping
-		foreach ((BoneVisual3d bone, Vector3 parentRelPos) in bonePositions)
-		{
-			foreach (TransformMemory transformMemory in bone.TransformMemories)
-			{
-				bone.Position = parentRelPos;
-				bone.WriteTransform(this.Skeleton, false);
-			}
-		}
+		this.RestoreBonePositions(bonePositions);
 	}
 
 	/* Basic Idea:
@@ -418,7 +411,6 @@ public partial class PosePage : UserControl
 			if (result.File is not PoseFile poseFile)
 				return;
 
-			Dictionary<BoneVisual3d, Vector3> bodyPositions = new();
 			Dictionary<BoneVisual3d, Vector3> facePositions = new();
 			bool mismatchedFaceBones = false;
 
@@ -456,22 +448,8 @@ public partial class PosePage : UserControl
 			if (importOption == PoseImportOptions.SelectedBones)
 			{
 				// Don't unselected bones after import. Let the user decide what to do with the selection.
-				bodyPositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone, bone => bone.Position);
 				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
 				poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
-
-				if (!mode.HasFlag(PoseFile.Mode.Position))
-				{
-					// Sort the selected bones based on their hierarchy
-					var sortedBones = SkeletonVisual3d.SortBonesByHierarchy(bodyPositions.Keys.ToList());
-
-					foreach (var bone in sortedBones)
-					{
-						bone.Position = bodyPositions[bone];
-						bone.WriteTransform(this.Skeleton, false);
-					}
-				}
-
 				return;
 			}
 
@@ -486,10 +464,9 @@ public partial class PosePage : UserControl
 			{
 				this.Skeleton.SelectBody();
 				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
-				bodyPositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone, bone => bone.Position);
 				this.Skeleton.ClearSelection();
 
-				// Don't import body with positions unless it's "Full Transform".
+				// Don't import body with positions during default pose import.
 				// Otherwise, the body will be deformed if the pose file was created for another race.
 				bool doLegacyImport = importOption == PoseImportOptions.Character && mode.HasFlag(PoseFile.Mode.Position);
 				if (doLegacyImport)
@@ -505,11 +482,6 @@ public partial class PosePage : UserControl
 				if (doLegacyImport)
 				{
 					mode |= PoseFile.Mode.Position;
-					foreach ((BoneVisual3d bone, Vector3 position) in bodyPositions)
-					{
-						bone.Position = position;
-						bone.WriteTransform(this.Skeleton, false);
-					}
 				}
 			}
 
@@ -535,22 +507,14 @@ public partial class PosePage : UserControl
 				if (doLegacyImport)
 				{
 					mode |= PoseFile.Mode.Position;
-					foreach ((BoneVisual3d bone, Vector3 position) in facePositions)
-					{
-						bone.Position = position;
-						bone.WriteTransform(this.Skeleton, false);
-					}
 				}
 			}
 
 			// Step 3: Restore face bone positions if face bones were mismatched
+			// This is necessary as .Apply will not be called for the face bones
 			if (mismatchedFaceBones)
 			{
-				foreach ((BoneVisual3d bone, Vector3 position) in facePositions)
-				{
-					bone.Position = position;
-					bone.WriteTransform(this.Skeleton, false);
-				}
+				this.RestoreBonePositions(facePositions);
 			}
 		}
 		catch (Exception ex)
@@ -876,5 +840,20 @@ public partial class PosePage : UserControl
 			mode |= PoseFile.Mode.Scale;
 
 		return mode;
+	}
+
+	private void RestoreBonePositions(Dictionary<BoneVisual3d, Vector3> bonePositions)
+	{
+		if (this.Skeleton == null || bonePositions.Count == 0)
+			return;
+
+		// Sort the selected bones based on their hierarchy
+		var sortedBones = SkeletonVisual3d.SortBonesByHierarchy(bonePositions.Keys.ToList());
+
+		foreach (var bone in sortedBones)
+		{
+			bone.Position = bonePositions[bone];
+			bone.WriteTransform(this.Skeleton, false);
+		}
 	}
 }
