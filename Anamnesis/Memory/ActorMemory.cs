@@ -69,7 +69,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x08F8)] public ushort OrnamentId { get; set; }
 	[Bind(0x09C0)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x1AB8, BindFlags.ActorRefresh)] public int ModelType { get; set; }
-	[Bind(0x1AC4)] public bool IsMotionDisabled { get; set; }
+	[Bind(0x1B24)] public bool IsMotionDisabled { get; set; }
 	[Bind(0x19D8)] public byte Voice { get; set; }
 	[Bind(0x226C)] public float Transparency { get; set; }
 	[Bind(0x22DC)] public byte CharacterModeRaw { get; set; }
@@ -227,7 +227,7 @@ public class ActorMemory : ActorBasicMemory
 			return;
 
 		// Only record changes that originate from the user
-		if (!change.OriginBind.Flags.HasFlag(BindFlags.DontRecordHistory))
+		if (!change.OriginBind.Flags.HasFlag(BindFlags.DontRecordHistory) && !HistoryService.Instance.IsRestoring)
 		{
 			if (change.Origin == PropertyChange.Origins.User)
 			{

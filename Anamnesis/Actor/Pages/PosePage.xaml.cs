@@ -272,9 +272,6 @@ public partial class PosePage : UserControl
 	{
 		Application.Current?.Dispatcher.Invoke(() =>
 		{
-			////if (this.Skeleton != null && !this.PoseService.CanEdit)
-			////	this.Skeleton.CurrentBone = null;
-
 			this.Skeleton?.Reselect();
 			this.Skeleton?.ReadTransforms();
 		});
