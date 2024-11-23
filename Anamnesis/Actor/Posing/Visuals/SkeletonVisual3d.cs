@@ -169,6 +169,23 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 
 	private static ILogger Log => Serilog.Log.ForContext<SkeletonVisual3d>();
 
+	public static List<BoneVisual3d> SortBonesByHierarchy(IEnumerable<BoneVisual3d> bones)
+	{
+		return bones.OrderBy(bone => GetBoneDepth(bone)).ToList();
+	}
+
+	public static int GetBoneDepth(BoneVisual3d bone)
+	{
+		int depth = 0;
+		while (bone.Parent != null)
+		{
+			depth++;
+			bone = bone.Parent;
+		}
+
+		return depth;
+	}
+
 	public void Clear()
 	{
 		this.ClearSelection();

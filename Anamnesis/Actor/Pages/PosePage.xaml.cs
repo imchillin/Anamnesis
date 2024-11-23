@@ -456,8 +456,22 @@ public partial class PosePage : UserControl
 			if (importOption == PoseImportOptions.SelectedBones)
 			{
 				// Don't unselected bones after import. Let the user decide what to do with the selection.
+				bodyPositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone, bone => bone.Position);
 				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
 				poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
+
+				if (!mode.HasFlag(PoseFile.Mode.Position))
+				{
+					// Sort the selected bones based on their hierarchy
+					var sortedBones = SkeletonVisual3d.SortBonesByHierarchy(bodyPositions.Keys.ToList());
+
+					foreach (var bone in sortedBones)
+					{
+						bone.Position = bodyPositions[bone];
+						bone.WriteTransform(this.Skeleton, false);
+					}
+				}
+
 				return;
 			}
 
