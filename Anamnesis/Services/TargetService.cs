@@ -13,6 +13,7 @@ using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using XivToolsWpf;
 
@@ -120,7 +121,7 @@ public class TargetService : ServiceBase<TargetService>
 
 	public static PinnedActor? GetPinned(ActorBasicMemory actor)
 	{
-		foreach (PinnedActor pinned in TargetService.Instance.PinnedActors)
+		foreach (PinnedActor pinned in TargetService.Instance.PinnedActors.ToList())
 		{
 			if (pinned.Memory == null)
 				continue;
