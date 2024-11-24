@@ -30,6 +30,8 @@ public class ActorMemory : ActorBasicMemory
 		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
 
+	public event EventHandler? Refreshed;
+
 	public enum CharacterModes : byte
 	{
 		None = 0,
@@ -200,6 +202,7 @@ public class ActorMemory : ActorBasicMemory
 		}
 
 		this.OnPropertyChanged(nameof(this.IsHuman));
+		this.OnRefreshed();
 	}
 
 	public async Task BackupAsync()
@@ -213,6 +216,11 @@ public class ActorMemory : ActorBasicMemory
 	public void RaiseRefreshChanged()
 	{
 		this.OnPropertyChanged(nameof(this.CanRefresh));
+	}
+
+	protected virtual void OnRefreshed()
+	{
+		this.Refreshed?.Invoke(this, EventArgs.Empty);
 	}
 
 	private void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)

@@ -20,16 +20,9 @@
                     <Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.15" Stretch="Uniform"
 						   Source="pack://application:,,,/Assets/Pose/CharFHyurFaceBackground.png" IsHitTestVisible="False"/>
 
-                    <!-- Jaw -->
-                    <local:BoneView Canvas.Left="146" Canvas.Top="288" BoneName="j_f_ago"/>
-
                     <!-- Eyes -->
                     <local:BoneView Canvas.Left="105" Canvas.Top="170" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"/>
                     <local:BoneView Canvas.Left="185" Canvas.Top="170" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"/>
-
-                    <!-- Eyebrows -->
-                    <local:BoneView Canvas.Left="105" Canvas.Top="145" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
-                    <local:BoneView Canvas.Left="185" Canvas.Top="145" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
 
                     <!-- Cheeks -->
                     <local:BoneView Canvas.Left="105" Canvas.Top="210" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"/>
@@ -44,7 +37,29 @@
                     <local:BoneView Canvas.Left="225" Canvas.Top="220" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
                     <local:BoneView Canvas.Left="65" Canvas.Top="240" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
                     <local:BoneView Canvas.Left="225" Canvas.Top="240" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"/>
-                </Canvas>
+
+					<!-- Legacy bones -->
+					<Canvas Visibility="{Binding HasPreDTFace, Converter={StaticResource B2V}}">
+						<!-- Eyebrows -->
+						<local:BoneView Canvas.Left="85" Canvas.Top="145" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"/>
+						<local:BoneView Canvas.Left="205" Canvas.Top="145" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"/>
+						<local:BoneView Canvas.Left="130" Canvas.Top="150" BoneName="j_f_miken_l" FlippedBoneName="j_f_miken_r"/>
+						<local:BoneView Canvas.Left="160" Canvas.Top="150" BoneName="j_f_miken_r" FlippedBoneName="j_f_miken_l"/>
+
+						<!-- Jaw -->
+						<local:BoneView Canvas.Left="146" Canvas.Top="288" BoneName="j_ago"/>
+					</Canvas>
+
+					<!-- Modern bones -->
+					<Canvas Visibility="{Binding HasPreDTFace, Converter={StaticResource !B2V}}">
+						<!-- Eyebrows -->
+						<local:BoneView Canvas.Left="105" Canvas.Top="145" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
+						<local:BoneView Canvas.Left="185" Canvas.Top="145" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
+
+						<!-- Jaw -->
+						<local:BoneView Canvas.Left="146" Canvas.Top="288" BoneName="j_f_ago"/>
+					</Canvas>
+				</Canvas>
             </Viewbox>
         </DataTemplate>
 
@@ -94,16 +109,9 @@
                     <Image Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Opacity="0.15" Stretch="Uniform"
                            Source="pack://application:,,,/Assets/Pose/CharFMiqoFaceBackground.png" IsHitTestVisible="False"/>
 
-                    <!-- Jaw -->
-                    <local:BoneView Canvas.Left="140" Canvas.Top="250" BoneName="j_f_ago"/>
-
                     <!-- Eyes -->
                     <local:BoneView Canvas.Left="104" Canvas.Top="156" BoneName="j_f_eye_l" FlippedBoneName="j_f_eye_r"/>
                     <local:BoneView Canvas.Left="176" Canvas.Top="156" BoneName="j_f_eye_r" FlippedBoneName="j_f_eye_l"/>
-
-                    <!-- Eyebrows -->
-                    <local:BoneView Canvas.Left="104" Canvas.Top="136" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
-                    <local:BoneView Canvas.Left="176" Canvas.Top="136" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
 
                     <!-- Cheeks -->
                     <local:BoneView Canvas.Left="104" Canvas.Top="196" BoneName="j_f_hoho_l" FlippedBoneName="j_f_hoho_r"/>
@@ -118,7 +126,29 @@
                     <local:BoneView Canvas.Left="255" Canvas.Top="85" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
                     <local:BoneView Canvas.Left="25" Canvas.Top="115" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
                     <local:BoneView Canvas.Left="255" Canvas.Top="115" BoneName="n_ear_b_r" FlippedBoneName="n_ear_b_l"/>
-                </Canvas>
+
+					<!-- Legacy bones -->
+					<Canvas Visibility="{Binding HasPreDTFace, Converter={StaticResource B2V}}">
+						<!-- Eyebrows -->
+						<local:BoneView Canvas.Left="86" Canvas.Top="130" BoneName="j_f_mayu_l" FlippedBoneName="j_f_mayu_r"/>
+						<local:BoneView Canvas.Left="194" Canvas.Top="130" BoneName="j_f_mayu_r" FlippedBoneName="j_f_mayu_l"/>
+						<local:BoneView Canvas.Left="125" Canvas.Top="135" BoneName="j_f_miken_l" FlippedBoneName="j_f_miken_r"/>
+						<local:BoneView Canvas.Left="155" Canvas.Top="135" BoneName="j_f_miken_r" FlippedBoneName="j_f_miken_l"/>
+
+						<!-- Jaw -->
+						<local:BoneView Canvas.Left="140" Canvas.Top="250" BoneName="j_ago"/>
+					</Canvas>
+
+					<!-- Modern bones -->
+					<Canvas Visibility="{Binding HasPreDTFace, Converter={StaticResource !B2V}}">
+						<!-- Eyebrows -->
+						<local:BoneView Canvas.Left="104" Canvas.Top="136" BoneName="j_f_mmayu_l" FlippedBoneName="j_f_mmayu_r"/>
+						<local:BoneView Canvas.Left="176" Canvas.Top="136" BoneName="j_f_mmayu_r" FlippedBoneName="j_f_mmayu_l"/>
+
+						<!-- Jaw -->
+						<local:BoneView Canvas.Left="140" Canvas.Top="250" BoneName="j_f_ago"/>
+					</Canvas>
+				</Canvas>
             </Viewbox>
         </DataTemplate>
 
@@ -145,26 +175,22 @@
                     <local:BoneView Canvas.Left="170" Canvas.Top="195" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"/>
 
                     <!-- Ears[M, 02] -->
-                    <local:BoneView Canvas.Left="108" Canvas.Top="70" BoneName="j_zerb_a_l" FlippedBoneName="j_zerb_a_r"
-                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="172" Canvas.Top="70" BoneName="j_zerb_a_r" FlippedBoneName="j_zerb_a_l"
-                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="90" Canvas.Top="25" BoneName="j_zerb_b_l" FlippedBoneName="j_zerb_b_r"
-                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="185" Canvas.Top="25" BoneName="j_zerb_b_r" FlippedBoneName="j_zerb_b_l"
-                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+					<Canvas Visibility="{Binding IsEars02, Converter={StaticResource B2V}}">
+						<local:BoneView Canvas.Left="108" Canvas.Top="70" BoneName="j_zerb_a_l" FlippedBoneName="j_zerb_a_r"/>
+						<local:BoneView Canvas.Left="172" Canvas.Top="70" BoneName="j_zerb_a_r" FlippedBoneName="j_zerb_a_l"/>
+						<local:BoneView Canvas.Left="90" Canvas.Top="25" BoneName="j_zerb_b_l" FlippedBoneName="j_zerb_b_r"/>
+						<local:BoneView Canvas.Left="185" Canvas.Top="25" BoneName="j_zerb_b_r" FlippedBoneName="j_zerb_b_l"/>
+					</Canvas>
 
-                    <!-- Ears[F, 03] -->
-                    <local:BoneView Canvas.Left="108" Canvas.Top="70" BoneName="j_zerc_a_l" FlippedBoneName="j_zerc_a_r"
-                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="172" Canvas.Top="70" BoneName="j_zerc_a_r" FlippedBoneName="j_zerc_a_l"
-                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="90" Canvas.Top="25" BoneName="j_zerc_b_l" FlippedBoneName="j_zerc_b_r"
-                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="185" Canvas.Top="25" BoneName="j_zerc_b_r" FlippedBoneName="j_zerc_b_l"
-                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+					<!-- Ears[F, 03] -->
+					<Canvas Visibility="{Binding IsEars03, Converter={StaticResource B2V}}">
+						<local:BoneView Canvas.Left="108" Canvas.Top="70" BoneName="j_zerc_a_l" FlippedBoneName="j_zerc_a_r"/>
+						<local:BoneView Canvas.Left="172" Canvas.Top="70" BoneName="j_zerc_a_r" FlippedBoneName="j_zerc_a_l"/>
+						<local:BoneView Canvas.Left="90" Canvas.Top="25" BoneName="j_zerc_b_l" FlippedBoneName="j_zerc_b_r"/>
+						<local:BoneView Canvas.Left="185" Canvas.Top="25" BoneName="j_zerc_b_r" FlippedBoneName="j_zerc_b_l"/>
+					</Canvas>
 
-                    <!-- Earrings -->
+					<!-- Earrings -->
                     <local:BoneView Canvas.Left="80" Canvas.Top="80" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"/>
                     <local:BoneView Canvas.Left="200" Canvas.Top="80" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
                     <local:BoneView Canvas.Left="80" Canvas.Top="105" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>
@@ -196,46 +222,38 @@
                     <local:BoneView Canvas.Left="170" Canvas.Top="200" BoneName="j_f_hoho_r" FlippedBoneName="j_f_hoho_l"/>
 
                     <!-- Ears[01] -->
-                    <local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zera_a_l" FlippedBoneName="j_zera_a_r"
-                                    Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zera_a_r" FlippedBoneName="j_zera_a_l"
-                                    Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zera_b_l" FlippedBoneName="j_zera_b_r"
-                                    Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zera_b_r" FlippedBoneName="j_zera_b_l"
-                                    Visibility="{Binding IsEars01, Converter={StaticResource B2V}}"/>
+					<Canvas Visibility="{Binding IsEars01, Converter={StaticResource B2V}}">
+						<local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zera_a_l" FlippedBoneName="j_zera_a_r"/>
+						<local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zera_a_r" FlippedBoneName="j_zera_a_l"/>
+						<local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zera_b_l" FlippedBoneName="j_zera_b_r"/>
+						<local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zera_b_r" FlippedBoneName="j_zera_b_l"/>
+					</Canvas>
 
-                    <!-- Ears[02] -->
-                    <local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zerb_a_l" FlippedBoneName="j_zerb_a_r"
-                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zerb_a_r" FlippedBoneName="j_zerb_a_l"
-                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zerb_b_l" FlippedBoneName="j_zerb_b_r"
-                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zerb_b_r" FlippedBoneName="j_zerb_b_l"
-                                    Visibility="{Binding IsEars02, Converter={StaticResource B2V}}"/>
+					<!-- Ears[02] -->
+					<Canvas Visibility="{Binding IsEars02, Converter={StaticResource B2V}}">
+						<local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zerb_a_l" FlippedBoneName="j_zerb_a_r"/>
+						<local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zerb_a_r" FlippedBoneName="j_zerb_a_l"/>
+						<local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zerb_b_l" FlippedBoneName="j_zerb_b_r"/>
+						<local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zerb_b_r" FlippedBoneName="j_zerb_b_l"/>
+					</Canvas>
 
-                    <!-- Ears[03] -->
-                    <local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zerc_a_l" FlippedBoneName="j_zerc_a_r"
-                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zerc_a_r" FlippedBoneName="j_zerc_a_l"
-                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zerc_b_l" FlippedBoneName="j_zerc_b_r"
-                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zerc_b_r" FlippedBoneName="j_zerc_b_l"
-                                    Visibility="{Binding IsEars03, Converter={StaticResource B2V}}"/>
+					<!-- Ears[03] -->
+					<Canvas Visibility="{Binding IsEars03, Converter={StaticResource B2V}}">
+						<local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zerc_a_l" FlippedBoneName="j_zerc_a_r"/>
+						<local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zerc_a_r" FlippedBoneName="j_zerc_a_l"/>
+						<local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zerc_b_l" FlippedBoneName="j_zerc_b_r"/>
+						<local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zerc_b_r" FlippedBoneName="j_zerc_b_l"/>
+					</Canvas>
 
-                    <!-- Ears[04] -->
-                    <local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zerd_a_l" FlippedBoneName="j_zerd_a_r"
-                                    Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zerd_a_r" FlippedBoneName="j_zerd_a_l"
-                                    Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zerd_b_l" FlippedBoneName="j_zerd_b_r"
-                                    Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
-                    <local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zerd_b_r" FlippedBoneName="j_zerd_b_l"
-                                    Visibility="{Binding IsEars04, Converter={StaticResource B2V}}"/>
+					<!-- Ears[04] -->
+					<Canvas Visibility="{Binding IsEars04, Converter={StaticResource B2V}}">
+						<local:BoneView Canvas.Left="100" Canvas.Top="70" BoneName="j_zerd_a_l" FlippedBoneName="j_zerd_a_r"/>
+						<local:BoneView Canvas.Left="175" Canvas.Top="70" BoneName="j_zerd_a_r" FlippedBoneName="j_zerd_a_l"/>
+						<local:BoneView Canvas.Left="85" Canvas.Top="20" BoneName="j_zerd_b_l" FlippedBoneName="j_zerd_b_r"/>
+						<local:BoneView Canvas.Left="190" Canvas.Top="20" BoneName="j_zerd_b_r" FlippedBoneName="j_zerd_b_l"/>
+					</Canvas>
 
-                    <!-- Earrings -->
+					<!-- Earrings -->
                     <local:BoneView Canvas.Left="75" Canvas.Top="90" BoneName="n_ear_a_l" FlippedBoneName="n_ear_a_r"/>
                     <local:BoneView Canvas.Left="200" Canvas.Top="90" BoneName="n_ear_a_r" FlippedBoneName="n_ear_a_l"/>
                     <local:BoneView Canvas.Left="75" Canvas.Top="115" BoneName="n_ear_b_l" FlippedBoneName="n_ear_b_r"/>

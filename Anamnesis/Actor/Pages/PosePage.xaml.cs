@@ -295,17 +295,25 @@ public partial class PosePage : UserControl
 
 		if (this.Actor?.ModelObject != null)
 		{
+			this.Actor.Refreshed -= this.OnActorRefreshed;
 			this.Actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
 		}
 
 		if (newActor?.ModelObject != null)
 		{
+			newActor.Refreshed += this.OnActorRefreshed;
 			newActor.ModelObject.PropertyChanged += this.OnModelObjectChanged;
 		}
 
 		this.Actor = newActor;
 
 		await this.Refresh();
+	}
+
+	private void OnActorRefreshed(object? sender, EventArgs e)
+	{
+		this.refreshDebounceTimer.Stop();
+		this.refreshDebounceTimer.Start();
 	}
 
 	private void OnModelObjectChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
