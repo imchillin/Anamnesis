@@ -18,7 +18,7 @@ public class ActorService : ServiceBase<ActorService>
 	private const int TickDelay = 10;
 	private const int ActorTableSize = 819;
 	private const int GPoseIndexStart = 200;
-	private const int GPoseIndexEnd = 244;
+	private const int GPoseIndexEnd = 440;
 	private const int OverworldPlayerIndex = 0;
 	private const int GPosePlayerIndex = 201;
 
