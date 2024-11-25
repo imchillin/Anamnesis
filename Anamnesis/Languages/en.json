@@ -320,7 +320,7 @@
   "Pose_NoModel": "This actor does not have a model.",
   "Pose_NotEnabled": "Posing mode must be enabled.",
   "Pose_NothingSelected": "Character - Nothing Selected",
-  "Pose_LoadTip": "Load a pose from a file",
+  "Pose_LoadTip": "Load a pose from a file (Hold Shift to use pose file scaling)",
   "Pose_FullChar": "Full Character",
   "Pose_FullCharTooltip": "Loads a pose onto the entire actor",
   "Pose_Selected": "Selected Bones",

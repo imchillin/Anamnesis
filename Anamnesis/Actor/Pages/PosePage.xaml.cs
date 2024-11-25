@@ -369,7 +369,9 @@ public partial class PosePage : UserControl
 
 	private async void OnImportClicked(object sender, RoutedEventArgs e)
 	{
-		await this.ImportPose(PoseImportOptions.Character, PoseFile.Mode.All);
+		bool isShiftPressed = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+		PoseFile.Mode mode = isShiftPressed ? PoseFile.Mode.All : (PoseFile.Mode.All & ~PoseFile.Mode.Scale);
+		await this.ImportPose(PoseImportOptions.Character, mode);
 		this.Skeleton?.ClearSelection();
 	}
 
