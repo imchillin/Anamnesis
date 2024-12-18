@@ -271,6 +271,15 @@
 							</MenuItem.ToolTip>
 						</MenuItem>
 
+						<!-- (Import) Weapons Only -->
+						<MenuItem Header="Pose_WeaponsOnly"
+								  Style="{StaticResource AnaMenuItem}"
+								  Click="OnImportWeaponsClicked">
+							<MenuItem.ToolTip>
+								<XivToolsWpf:TextBlock Key="Pose_WeaponsOnlyTooltip" />
+							</MenuItem.ToolTip>
+						</MenuItem>
+
 						<!-- (Import) Selected Bones -->
 						<MenuItem Header="Pose_Selected"
 								  Style="{StaticResource AnaMenuItem}"
