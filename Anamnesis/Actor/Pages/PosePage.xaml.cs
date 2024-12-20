@@ -310,8 +310,9 @@ public partial class PosePage : UserControl
 		await this.Refresh();
 	}
 
-	private void OnActorRefreshed(object? sender, EventArgs e)
+	private void OnActorRefreshed(object? sender, EventArgs? e)
 	{
+		// Restart the debounce timer if it's already running, otherwise start it.
 		this.refreshDebounceTimer.Stop();
 		this.refreshDebounceTimer.Start();
 	}
@@ -320,9 +321,7 @@ public partial class PosePage : UserControl
 	{
 		if (e.PropertyName == nameof(ActorModelMemory.Skeleton))
 		{
-			// Restart the debounce timer if it's already running, otherwise start it.
-			this.refreshDebounceTimer.Stop();
-			this.refreshDebounceTimer.Start();
+			this.OnActorRefreshed(null, default);
 		}
 	}
 
@@ -346,10 +345,9 @@ public partial class PosePage : UserControl
 
 		try
 		{
-			if (this.Skeleton == null)
-				this.Skeleton = new SkeletonVisual3d();
-
-			await this.Skeleton.SetActor(this.Actor);
+			SkeletonVisual3d newSkeleton = this.Skeleton ?? new SkeletonVisual3d();
+			await newSkeleton.SetActor(this.Actor);
+			this.Skeleton = newSkeleton;
 
 			this.ThreeDView.DataContext = this.Skeleton;
 			this.BodyGuiView.DataContext = this.Skeleton;
