@@ -47,6 +47,7 @@ public partial class CharacterPage : UserControl
 
 	public ActorMemory? Actor { get; private set; }
 	public ListCollectionView VoiceEntries { get; private set; }
+	public PoseService PoseService => PoseService.Instance;
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
