@@ -35,6 +35,15 @@ public class HistoryService : ServiceBase<HistoryService>
 		return base.Initialize();
 	}
 
+	public void SetContext(HistoryContext context)
+	{
+		ActorMemory? actor = TargetService.Instance.SelectedActor;
+		if (actor is null)
+			return;
+
+		actor.History.CurrentContext = context;
+	}
+
 	private void StepBack()
 	{
 		this.Step(false);

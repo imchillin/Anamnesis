@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.GUI.Dialogs;
 using PropertyChanged;
 using Serilog;
 using System;
@@ -12,8 +13,17 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading;
+using System.Windows;
 using System.Windows.Input;
 using XivToolsWpf;
+
+/// <summary>History change contexts.</summary>
+public enum HistoryContext
+{
+	Appearance, // Appearance & Equipment
+	Posing,     // Posing
+	Other,      // Everything else (Default)
+}
 
 /// <summary>A history manager.</summary>
 [AddINotifyPropertyChangedInterface]
@@ -36,6 +46,9 @@ public class History
 	{
 		this.history.Add(new());
 	}
+
+	/// <summary>Gets or sets the current context.</summary>
+	public HistoryContext CurrentContext { get; set; } = HistoryContext.Other;
 
 	/// <summary>Gets the count of history entries.</summary>
 	/// <remarks>Undone entries not been overwritten by a new change are counted.</remarks>
@@ -83,11 +96,18 @@ public class History
 		if (this.currentIndex >= this.history.Count - 1)
 			return;
 
+		var nextEntry = this.history[this.currentIndex + 1];
+		if (nextEntry.Context != this.CurrentContext)
+		{
+			if (await GenericDialog.ShowLocalizedAsync("History_Context_Change_Confirm", "History_Context_Change", MessageBoxButton.YesNo) != true)
+				return;
+		}
+
 		this.currentIndex++;
-		this.history[this.currentIndex].Redo();
+		nextEntry.Redo();
 
 		await Dispatch.MainThread();
-		this.Entries.Add(this.history[this.currentIndex]);
+		this.Entries.Add(nextEntry);
 
 		Log.Verbose($"Step Forward: {this.currentIndex}");
 	}
@@ -95,17 +115,24 @@ public class History
 	/// <summary>Steps back in the history.</summary>
 	public async void StepBack()
 	{
-		// Ensure any pending changes are comitted to be undone.
+		// Ensure any pending changes are committed to be undone.
 		if (this.current.HasChanges)
 			this.Commit();
 
 		if (this.currentIndex <= 0)
 			return;
 
-		this.history[this.currentIndex].Undo();
+		var currentEntry = this.history[this.currentIndex];
+		if (currentEntry.Context != this.CurrentContext)
+		{
+			if (await GenericDialog.ShowLocalizedAsync("History_Context_Change_Confirm", "History_Context_Change", MessageBoxButton.YesNo) != true)
+				return;
+		}
+
+		currentEntry.Undo();
 
 		await Dispatch.MainThread();
-		this.Entries.Remove(this.history[this.currentIndex]);
+		this.Entries.Remove(currentEntry);
 
 		this.currentIndex--;
 
@@ -122,6 +149,7 @@ public class History
 
 		HistoryEntry oldEntry = this.current;
 		oldEntry.Name = oldEntry.GetName();
+		oldEntry.Context = this.CurrentContext;
 
 		// Remove any redo history
 		if (this.currentIndex < this.history.Count - 1)
@@ -190,6 +218,9 @@ public class History
 
 		/// <summary>Gets or sets the name of the entry.</summary>
 		public string Name { get; set; } = string.Empty;
+
+		/// <summary>Gets or sets the context of the entry.</summary>
+		public HistoryContext Context { get; set; } = HistoryContext.Other;
 
 		/// <summary>Gets the list of changes as a string.</summary>
 		public string ChangeList => this.GetChangeList();
