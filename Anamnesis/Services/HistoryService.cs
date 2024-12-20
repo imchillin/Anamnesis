@@ -30,7 +30,7 @@ public class HistoryService : ServiceBase<HistoryService>
 	public override Task Initialize()
 	{
 		HotkeyService.RegisterHotkeyHandler("System.Undo", this.StepBack);
-		////HotkeyService.RegisterHotkeyHandler("System.Redo", this.StepForward);
+		HotkeyService.RegisterHotkeyHandler("System.Redo", this.StepForward);
 
 		return base.Initialize();
 	}

@@ -23,17 +23,20 @@ public class History
 
 	private static readonly TimeSpan TimeTillCommit = TimeSpan.FromMilliseconds(200);
 
-	private readonly Stack<HistoryEntry> history = new();
+	private readonly List<HistoryEntry> history = new();
+	private int currentIndex = 0;
 	private HistoryEntry current = new();
 	private DateTime lastChangeTime = DateTime.Now;
 	private int autoCommitEnabled = 1;
 
 	public History()
 	{
-		this.history.Push(new());
+		this.history.Add(new());
 	}
 
-	public int Count { get; private set; }
+	public int Count => this.history.Count;
+
+	// TODO: Remove. Seems to be unused.
 	public int CurrentChangeCount { get; private set; }
 	public ObservableCollection<HistoryEntry> Entries { get; private set; } = new();
 
@@ -70,7 +73,20 @@ public class History
 
 	public void StepForward()
 	{
-		throw new NotImplementedException();
+		if (this.currentIndex >= this.history.Count - 1)
+			return;
+
+		this.currentIndex++;
+		HistoryEntry restore = this.history[this.currentIndex];
+		restore.Redo();
+
+		Task.Run(async () =>
+		{
+			await Dispatch.MainThread();
+			this.Entries.Add(restore);
+		});
+
+		Log.Verbose($"Step Forward: {this.currentIndex}");
 	}
 
 	public void StepBack()
@@ -79,11 +95,11 @@ public class History
 		if (this.current.HasChanges)
 			this.Commit();
 
-		if (this.history.Count <= 0)
+		if (this.currentIndex <= 0)
 			return;
 
-		HistoryEntry restore = this.history.Pop();
-		restore.Restore();
+		HistoryEntry restore = this.history[this.currentIndex];
+		restore.Undo();
 
 		Task.Run(async () =>
 		{
@@ -91,7 +107,9 @@ public class History
 			this.Entries.Remove(restore);
 		});
 
-		this.Count = this.history.Count;
+		this.currentIndex--;
+
+		Log.Verbose($"Step Back: {this.currentIndex}");
 	}
 
 	public void Commit()
@@ -103,7 +121,15 @@ public class History
 
 		HistoryEntry oldEntry = this.current;
 		oldEntry.Name = oldEntry.GetName();
-		this.history.Push(oldEntry);
+
+		// Remove any redo history
+		if (this.currentIndex < this.history.Count - 1)
+		{
+			this.history.RemoveRange(this.currentIndex + 1, this.history.Count - this.currentIndex - 1);
+		}
+
+		this.history.Add(oldEntry);
+		this.currentIndex = this.history.Count - 1;
 
 		Task.Run(async () =>
 		{
@@ -115,11 +141,10 @@ public class History
 		{
 			Log.Warning($"History depth exceded max: {MaxHistory}. Flushing");
 			this.history.Clear();
+			this.currentIndex = -1;
 		}
 
 		this.current = new();
-
-		this.Count = this.history.Count;
 		this.CurrentChangeCount = 0;
 	}
 
@@ -169,18 +194,36 @@ public class History
 		public string Name { get; set; } = string.Empty;
 		public string ChangeList => this.GetChangeList();
 
-		public void Restore()
+		public void Undo()
 		{
 			Log.Verbose($"Restoring change set:\n{this}");
 
 			lock (this.changes)
 			{
+				// Apply changes in reverse order for undo
 				for (int i = this.changes.Count - 1; i >= 0; i--)
 				{
 					PropertyChange change = this.changes[i];
 					if (change.OriginBind is PropertyBindInfo propertyBind)
 					{
 						propertyBind.Property.SetValue(propertyBind.Memory, change.OldValue);
+					}
+				}
+			}
+		}
+
+		public void Redo()
+		{
+			Log.Verbose($"Applying back change set:\n{this}");
+
+			lock (this.changes)
+			{
+				// Apply changes in recorded order for redo
+				foreach (PropertyChange change in this.changes)
+				{
+					if (change.OriginBind is PropertyBindInfo propertyBind)
+					{
+						propertyBind.Property.SetValue(propertyBind.Memory, change.NewValue);
 					}
 				}
 			}
