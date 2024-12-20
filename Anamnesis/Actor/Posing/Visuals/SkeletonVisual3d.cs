@@ -445,6 +445,20 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 		this.Select(headBones, SkeletonVisual3d.SelectMode.Add);
 	}
 
+	public void SelectWeapons()
+	{
+		this.ClearSelection();
+		var bonesToSelect = this.mainHandBones.Concat(this.offHandBones).ToList();
+
+		if (this.GetBone("n_buki_l") is BoneVisual3d boneLeft)
+			bonesToSelect.Add(boneLeft);
+
+		if (this.GetBone("n_buki_r") is BoneVisual3d boneRight)
+			bonesToSelect.Add(boneRight);
+
+		this.Select(bonesToSelect, SkeletonVisual3d.SelectMode.Add);
+	}
+
 	public void InvertSelection()
 	{
 		foreach ((string name, BoneVisual3d bone) in this.Bones)

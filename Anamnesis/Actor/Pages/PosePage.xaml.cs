@@ -81,6 +81,7 @@ public partial class PosePage : UserControl
 		BodyOnly,       // Imports only the body part of the pose.
 		ExpressionOnly, // Imports only the facial expression part of the pose.
 		SelectedBones,  // Imports only the selected bones.
+		WeaponsOnly,    // Imports only the weapons (main hand and off-hand).
 	}
 
 	public SettingsService SettingsService => SettingsService.Instance;
@@ -393,6 +394,11 @@ public partial class PosePage : UserControl
 		await this.HandleSecondaryOptionImport(PoseImportOptions.SelectedBones);
 	}
 
+	private async void OnImportWeaponsClicked(object sender, RoutedEventArgs e)
+	{
+		await this.HandleSecondaryOptionImport(PoseImportOptions.WeaponsOnly);
+	}
+
 	private async Task ImportPose(PoseImportOptions importOption, PoseFile.Mode mode)
 	{
 		if (this.Actor == null || this.Skeleton == null)
@@ -458,6 +464,15 @@ public partial class PosePage : UserControl
 				// Don't unselected bones after import. Let the user decide what to do with the selection.
 				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
 				poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
+				return;
+			}
+
+			if (importOption == PoseImportOptions.WeaponsOnly)
+			{
+				this.Skeleton.SelectWeapons();
+				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+				poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
+				this.Skeleton.ClearSelection();
 				return;
 			}
 
