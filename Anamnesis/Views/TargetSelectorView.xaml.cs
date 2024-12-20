@@ -216,6 +216,9 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 						}
 					}
 
+					// Wait for actor's model object to become available
+					await Task.Delay(300);
+
 					this.Value = newActor;
 					this.OnSelectionChanged(true);
 				}

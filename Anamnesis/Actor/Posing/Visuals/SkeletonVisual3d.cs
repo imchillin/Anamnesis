@@ -149,6 +149,10 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 	{
 		get
 		{
+			// If the skeleton is not initialized, we can't determine if it's a pre-DT face.
+			if (this.Bones.Count == 0)
+				return false;
+
 			// We can determine if we have a DT-updated face if we have a tongue bone.
 			// EW faces don't have this bone, where as all updated faces in DT have it.
 			// It would be better to enumerate all of the faces and be more specific.
@@ -585,18 +589,6 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 			if (this.Actor.OffHand?.Model?.Skeleton != null)
 				this.AddBones(this.Actor.OffHand.Model.Skeleton, "oh_");
 
-			this.RaisePropertyChanged(nameof(SkeletonVisual3d.AllBones));
-			this.RaisePropertyChanged(nameof(SkeletonVisual3d.HairBones));
-			this.RaisePropertyChanged(nameof(SkeletonVisual3d.MetBones));
-			this.RaisePropertyChanged(nameof(SkeletonVisual3d.TopBones));
-			this.RaisePropertyChanged(nameof(SkeletonVisual3d.MainHandBones));
-			this.RaisePropertyChanged(nameof(SkeletonVisual3d.OffHandBones));
-			this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasEquipmentBones));
-			this.RaisePropertyChanged(nameof(SkeletonVisual3d.HasWeaponBones));
-
-			if (!GposeService.Instance.IsGpose)
-				return;
-
 			// Create Bone links from the link database
 			foreach ((string name, BoneVisual3d bone) in this.Bones)
 			{
@@ -642,6 +634,10 @@ public class SkeletonVisual3d : ModelVisual3D, INotifyPropertyChanged
 					break;
 				}
 			}
+
+			// Notify that the skeleton has changed.
+			// All properties that depend on the skeleton are prompted to update.
+			this.RaisePropertyChanged(string.Empty);
 		}
 		catch (Exception)
 		{
