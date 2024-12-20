@@ -12,10 +12,10 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using XivToolsWpf;
 
+/// <summary>A history manager.</summary>
 [AddINotifyPropertyChangedInterface]
 public class History
 {
@@ -29,20 +29,26 @@ public class History
 	private DateTime lastChangeTime = DateTime.Now;
 	private int autoCommitEnabled = 1;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="History"/> class.
+	/// </summary>
 	public History()
 	{
 		this.history.Add(new());
 	}
 
+	/// <summary>Gets the count of history entries.</summary>
+	/// <remarks>Undone entries not been overwritten by a new change are counted.</remarks>
 	public int Count => this.history.Count;
 
-	// TODO: Remove. Seems to be unused.
-	public int CurrentChangeCount { get; private set; }
+	/// <summary>Gets the collection of active history entries.</summary>
+	/// <remarks>
+	/// Undoing a change will remove the entry from this collection.
+	/// Similarly, redoing a change will add the entry back.
+	/// </remarks>
 	public ObservableCollection<HistoryEntry> Entries { get; private set; } = new();
 
-	/// <summary>
-	/// Gets or sets a value indicating whether auto commit is enabled.
-	/// </summary>
+	/// <summary>Gets or sets a value indicating whether auto commit is enabled.</summary>
 	/// <remarks>
 	/// When enabled, changes are automatically committed after a certain amount
 	/// of time has passed since the first change was recorded.
@@ -71,25 +77,23 @@ public class History
 		}
 	}
 
-	public void StepForward()
+	/// <summary>Steps forward in the history.</summary>
+	public async void StepForward()
 	{
 		if (this.currentIndex >= this.history.Count - 1)
 			return;
 
 		this.currentIndex++;
-		HistoryEntry restore = this.history[this.currentIndex];
-		restore.Redo();
+		this.history[this.currentIndex].Redo();
 
-		Task.Run(async () =>
-		{
-			await Dispatch.MainThread();
-			this.Entries.Add(restore);
-		});
+		await Dispatch.MainThread();
+		this.Entries.Add(this.history[this.currentIndex]);
 
 		Log.Verbose($"Step Forward: {this.currentIndex}");
 	}
 
-	public void StepBack()
+	/// <summary>Steps back in the history.</summary>
+	public async void StepBack()
 	{
 		// Ensure any pending changes are comitted to be undone.
 		if (this.current.HasChanges)
@@ -98,21 +102,18 @@ public class History
 		if (this.currentIndex <= 0)
 			return;
 
-		HistoryEntry restore = this.history[this.currentIndex];
-		restore.Undo();
+		this.history[this.currentIndex].Undo();
 
-		Task.Run(async () =>
-		{
-			await Dispatch.MainThread();
-			this.Entries.Remove(restore);
-		});
+		await Dispatch.MainThread();
+		this.Entries.Remove(this.history[this.currentIndex]);
 
 		this.currentIndex--;
 
 		Log.Verbose($"Step Back: {this.currentIndex}");
 	}
 
-	public void Commit()
+	/// <summary>Commits the set of current changes to history.</summary>
+	public async void Commit()
 	{
 		if (!this.current.HasChanges)
 			return;
@@ -131,11 +132,8 @@ public class History
 		this.history.Add(oldEntry);
 		this.currentIndex = this.history.Count - 1;
 
-		Task.Run(async () =>
-		{
-			await Dispatch.MainThread();
-			this.Entries.Add(oldEntry);
-		});
+		await Dispatch.MainThread();
+		this.Entries.Add(oldEntry);
 
 		if (this.history.Count > MaxHistory)
 		{
@@ -145,30 +143,28 @@ public class History
 		}
 
 		this.current = new();
-		this.CurrentChangeCount = 0;
 	}
 
+	/// <summary>Records a change to the latest history entry.</summary>
+	/// <param name="change">The property change to record.</param>
 	public void Record(PropertyChange change)
 	{
 		if (!change.ShouldRecord())
 			return;
 
-		if (change.Name == null)
-			change.Name = change.ToString();
-
-		// Log.Verbose($"Recording Change: {change}");
+		change.Name ??= change.ToString();
 		this.lastChangeTime = DateTime.Now;
 		this.current.Record(change);
-
-		this.CurrentChangeCount = this.current.Count;
 	}
 
+	/// <summary>Represents a history entry.</summary>
 	public class HistoryEntry
 	{
 		private const int MaxChanges = 1024;
 
 		private readonly List<PropertyChange> changes = new();
 
+		/// <summary>Gets a value indicating whether the entry has changes.</summary>
 		public bool HasChanges
 		{
 			get
@@ -180,6 +176,7 @@ public class History
 			}
 		}
 
+		/// <summary>Gets the count of changes in the entry.</summary>
 		public int Count
 		{
 			get
@@ -191,9 +188,13 @@ public class History
 			}
 		}
 
+		/// <summary>Gets or sets the name of the entry.</summary>
 		public string Name { get; set; } = string.Empty;
+
+		/// <summary>Gets the list of changes as a string.</summary>
 		public string ChangeList => this.GetChangeList();
 
+		/// <summary>Undoes the changes in the entry.</summary>
 		public void Undo()
 		{
 			Log.Verbose($"Restoring change set:\n{this}");
@@ -212,6 +213,7 @@ public class History
 			}
 		}
 
+		/// <summary>Redoes the changes in the entry.</summary>
 		public void Redo()
 		{
 			Log.Verbose($"Applying back change set:\n{this}");
@@ -229,6 +231,8 @@ public class History
 			}
 		}
 
+		/// <summary>Records a property change in the entry.</summary>
+		/// <param name="change">The property change to record.</param>
 		public void Record(PropertyChange change)
 		{
 			lock (this.changes)
@@ -260,6 +264,8 @@ public class History
 			}
 		}
 
+		/// <summary>Gets the name of the entry.</summary>
+		/// <returns>The name of the entry.</returns>
 		public string GetName()
 		{
 			HashSet<string> names = new();
@@ -286,11 +292,13 @@ public class History
 			return builder.ToString();
 		}
 
+		/// <summary>Gets the list of changes as a string.</summary>
+		/// <returns>The list of changes in string form.</returns>
 		public string GetChangeList()
 		{
 			StringBuilder builder = new();
 
-			// Flatten the changes to repeated changes to the same value dont show up
+			// Flatten the changes so repeated changes to the same value dont show up
 			Dictionary<BindInfo, PropertyChange> flattenedChanges = new();
 			lock (this.changes)
 			{
@@ -321,6 +329,9 @@ public class History
 			return builder.ToString();
 		}
 
+		/// <summary>Determines whether the old value is valid.</summary>
+		/// <param name="oldValue">The old value to validate.</param>
+		/// <returns>True if the old value is valid; otherwise, false.</returns>
 		private static bool IsValidOldValue(object? oldValue)
 		{
 			return oldValue switch
