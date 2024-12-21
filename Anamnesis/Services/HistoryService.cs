@@ -44,14 +44,27 @@ public class HistoryService : ServiceBase<HistoryService>
 		return base.Initialize();
 	}
 
-	private void StepBack()
+	public void StepBack()
 	{
 		this.Step(false);
 	}
 
-	private void StepForward()
+	public void StepForward()
 	{
 		this.Step(true);
+	}
+
+	public void Clear()
+	{
+		ActorMemory? actor = TargetService.Instance.SelectedActor;
+
+		if (actor is null)
+			return;
+
+		lock (this.LockObject)
+		{
+			actor.History.Clear();
+		}
 	}
 
 	private void Step(bool forward)

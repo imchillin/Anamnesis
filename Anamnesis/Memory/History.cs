@@ -9,8 +9,10 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -27,7 +29,7 @@ public enum HistoryContext
 
 /// <summary>A history manager.</summary>
 [AddINotifyPropertyChangedInterface]
-public class History
+public class History : INotifyPropertyChanged
 {
 	private const int MaxHistory = 1024 * 1024; // a lot.
 
@@ -45,18 +47,22 @@ public class History
 	public History()
 	{
 		this.readOnlyHistory = new ReadOnlyObservableCollection<HistoryEntry>(this.history);
-		this.history.Add(new());
+		this.history.CollectionChanged += this.OnHistoryCollectionChanged;
 	}
+
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	/// <summary>Gets or sets the current context.</summary>
 	public HistoryContext CurrentContext { get; set; } = HistoryContext.Other;
 
-	/// <summary>Gets the count of history entries.</summary>
-	/// <remarks>Undone entries not been overwritten by a new change are counted.</remarks>
-	public int Count => this.history.Count;
-
 	/// <summary>Gets the current index in the history log.</summary>
-	public int CurrentIndex { get; private set; } = 0;
+	public int CurrentIndex { get; private set; } = -1;
+
+	/// <summary>
+	/// Gets a value indicating whether the history log has any entries.
+	/// </summary>
+	[DependsOn(nameof(this.Entries))]
+	public bool HasEntries => this.Entries.Count > 0;
 
 	/// <summary>Gets the collection of active history entries.</summary>
 	/// <remarks>
@@ -74,6 +80,14 @@ public class History
 		get => Interlocked.CompareExchange(ref this.autoCommitEnabled, 0, 0) == 1;
 		set => Interlocked.Exchange(ref this.autoCommitEnabled, value ? 1 : 0);
 	}
+
+	/// <summary>Gets a value indicating whether undo is possible.</summary>
+	[DependsOn(nameof(CurrentIndex))]
+	public bool CanUndo => this.CurrentIndex >= 0;
+
+	/// <summary>Gets a value indicating whether redo is possible.</summary>
+	[DependsOn(nameof(CurrentIndex), nameof(this.Entries))]
+	public bool CanRedo => this.CurrentIndex < this.Entries.Count - 1;
 
 	/// <summary>
 	/// Tick must be called periodically to push changes to the history stack when they are old enough.
@@ -96,7 +110,7 @@ public class History
 	/// <summary>Steps forward in the history.</summary>
 	public async void StepForward()
 	{
-		if (this.CurrentIndex >= this.history.Count - 1)
+		if (!this.CanRedo)
 			return;
 
 		var nextEntry = this.history[this.CurrentIndex + 1];
@@ -119,7 +133,7 @@ public class History
 		if (this.current.HasChanges)
 			this.Commit();
 
-		if (this.CurrentIndex <= 0)
+		if (!this.CanUndo)
 			return;
 
 		var currentEntry = this.history[this.CurrentIndex];
@@ -181,6 +195,25 @@ public class History
 		change.Name ??= change.ToString();
 		this.lastChangeTime = DateTime.Now;
 		this.current.Record(change);
+	}
+
+	/// <summary>Clears the history log and resets the current index.</summary>
+	public void Clear()
+	{
+		this.history.Clear();
+		this.CurrentIndex = -1;
+		this.current = new();
+		this.OnPropertyChanged(nameof(this.HasEntries));
+	}
+
+	protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+	{
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+
+	private void OnHistoryCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	{
+		this.OnPropertyChanged(nameof(this.Entries));
 	}
 
 	/// <summary>Represents a history entry.</summary>

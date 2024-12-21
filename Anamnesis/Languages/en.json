@@ -879,5 +879,6 @@
   "Hotkey_Undo": "Undo",
   "Hotkey_Redo": "Redo",
 
-  "History_ChangeBone": "Change Bone: \"{0}\""
+  "History_ChangeBone": "Change Bone: \"{0}\"",
+  "History_ClearHistory": "Clear History",
 }
