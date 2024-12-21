@@ -44,6 +44,16 @@ public partial class ActorTab : UserControl
 	public ObservableCollection<Page> Tabs { get; private set; } = new();
 	public ObservableCollection<Page> Pages { get; private set; } = new();
 
+	private static HistoryContext GetHistoryContextForTab(Page? page)
+	{
+		return page?.Name switch
+		{
+			"AppearanceTab" => HistoryContext.Appearance,
+			"PoseTab" => HistoryContext.Posing,
+			_ => HistoryContext.Other,
+		};
+	}
+
 	private void AddPage<T>(string name, IconChar icon)
 		where T : UserControl
 	{
@@ -130,6 +140,10 @@ public partial class ActorTab : UserControl
 		{
 			page.IsActive = senderElement.DataContext == page;
 		}
+
+		// Set the history context based on the selected tab
+		HistoryContext context = GetHistoryContextForTab(senderElement.DataContext as Page);
+		HistoryService.SetContext(context);
 	}
 
 	private void OnHistoryClick(object sender, RoutedEventArgs e)

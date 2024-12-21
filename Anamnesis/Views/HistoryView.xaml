@@ -2,35 +2,83 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Anamnesis.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:converters="clr-namespace:Anamnesis.Styles.Converters"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+			 xmlns:anaUtils="clr-namespace:Anamnesis"
 			 mc:Ignorable="d" 
              Width="256">
 
-	<GroupBox x:Name="ContentArea" Style="{StaticResource Cm3GroupBox}">
-		<GroupBox.Header>
-			<StackPanel Orientation="Horizontal">
-				<XivToolsWpf:Header Icon="Undo" Key="System_History" />
-				<TextBlock Text="(" Margin="6,0,2,0"/>
-				<TextBlock Text="{Binding TargetService.SelectedActor.DisplayName}"/>
-				<TextBlock Text=")" Margin="2,0,0,0"/>
-			</StackPanel>
-		</GroupBox.Header>
+	<UserControl.Resources>
+		<converters:HistoryIndexToOpacityConverter x:Key="HIndexToOpacity"/>
+	</UserControl.Resources>
 
-		<ItemsControl ItemsSource="{Binding TargetService.SelectedActor.History.Entries}">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<Grid>
+	<Grid x:Name="ContentArea">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="0">
+			<Button Margin="0"
+				Padding="6,3"
+				Click="OnUndoClicked"
+				Style="{StaticResource TransparentIconButton}"
+				IsEnabled="{Binding TargetService.SelectedActor.History.CanUndo}"
+				anaUtils:Behaviours.Tooltip="Hotkey_Undo">
+				<XivToolsWpf:IconBlock Icon="Undo" />
+			</Button>
+			<Button Margin="0"
+				Padding="6,3"
+				Click="OnRedoClicked"
+				Style="{StaticResource TransparentIconButton}"
+				IsEnabled="{Binding TargetService.SelectedActor.History.CanRedo}"
+				anaUtils:Behaviours.Tooltip="Hotkey_Redo">
+				<XivToolsWpf:IconBlock Icon="Redo" />
+			</Button>
+			<Button Margin="0"
+				Padding="6,3"
+				Click="OnClearClicked"
+				Style="{StaticResource TransparentIconButton}"
+				IsEnabled="{Binding TargetService.SelectedActor.History.HasEntries}"
+				anaUtils:Behaviours.Tooltip="History_ClearHistory">
+			<XivToolsWpf:IconBlock Icon="TrashAlt" />
+			</Button>
+		</StackPanel>
+		<GroupBox Grid.Row="1" Style="{StaticResource Cm3GroupBox}">
+			<GroupBox.Header>
+				<StackPanel Orientation="Horizontal">
+					<XivToolsWpf:Header Icon="Undo" Key="System_History" />
+					<TextBlock Text="(" Margin="6,0,2,0"/>
+					<TextBlock Text="{Binding TargetService.SelectedActor.DisplayName}"/>
+					<TextBlock Text=")" Margin="2,0,0,0"/>
+				</StackPanel>
+			</GroupBox.Header>
 
-						<!--<Grid.ToolTip>
-							<TextBlock Text="{Binding Count}"/>
-						</Grid.ToolTip>-->
-
-						<TextBlock Text="{Binding Name}"/>
-					</Grid>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
-	</GroupBox>
+			<ItemsControl ItemsSource="{Binding TargetService.SelectedActor.History.Entries}" Margin="5, 5, 0, 0">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Grid>
+							<Grid.Style>
+								<Style TargetType="Grid">
+									<Style.Triggers>
+										<DataTrigger Value="True">
+											<DataTrigger.Binding>
+												<MultiBinding Converter="{StaticResource HIndexToOpacity}">
+													<Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="DataContext.TargetService.SelectedActor.History.CurrentIndex" />
+													<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" />
+													<Binding Path="." />
+												</MultiBinding>
+											</DataTrigger.Binding>
+											<Setter Property="Opacity" Value="0.5" />
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</Grid.Style>
+							<TextBlock Text="{Binding Name}"/>
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</GroupBox>
+	</Grid>
 </UserControl>

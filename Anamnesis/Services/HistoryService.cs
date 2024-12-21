@@ -27,22 +27,44 @@ public class HistoryService : ServiceBase<HistoryService>
 		private set => Interlocked.Exchange(ref this.isRestoring, value ? 1 : 0);
 	}
 
+	public static void SetContext(HistoryContext context)
+	{
+		ActorMemory? actor = TargetService.Instance.SelectedActor;
+		if (actor is null)
+			return;
+
+		actor.History.CurrentContext = context;
+	}
+
 	public override Task Initialize()
 	{
 		HotkeyService.RegisterHotkeyHandler("System.Undo", this.StepBack);
-		////HotkeyService.RegisterHotkeyHandler("System.Redo", this.StepForward);
+		HotkeyService.RegisterHotkeyHandler("System.Redo", this.StepForward);
 
 		return base.Initialize();
 	}
 
-	private void StepBack()
+	public void StepBack()
 	{
 		this.Step(false);
 	}
 
-	private void StepForward()
+	public void StepForward()
 	{
 		this.Step(true);
+	}
+
+	public void Clear()
+	{
+		ActorMemory? actor = TargetService.Instance.SelectedActor;
+
+		if (actor is null)
+			return;
+
+		lock (this.LockObject)
+		{
+			actor.History.Clear();
+		}
 	}
 
 	private void Step(bool forward)

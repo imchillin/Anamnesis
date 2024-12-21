@@ -150,6 +150,9 @@
   "ActorTabs_PoseTab": "POSE",
   "ActorTabs_PoseTab_Tooltip": "Pose - Pose your actor",
 
+  "History_Context_Change": "Warning: Different History Context",
+  "History_Context_Change_Confirm": "The next change in history has a different context (e.g. from posing to appearance). This might cause unexpected results. Proceed?",
+
   "Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
   "Character_Load_CMTool": "CMTool save",
   "Character_Reset": "Reset",
@@ -876,5 +879,6 @@
   "Hotkey_Undo": "Undo",
   "Hotkey_Redo": "Redo",
 
-  "History_ChangeBone": "Change Bone: \"{0}\""
+  "History_ChangeBone": "Change Bone: \"{0}\"",
+  "History_ClearHistory": "Clear History",
 }
