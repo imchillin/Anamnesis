@@ -480,7 +480,7 @@
 									  ItemsSource="{Binding HairBones}">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
-									<WrapPanel/>
+									<WrapPanel Width="220"/>
 								</ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>
 
@@ -1069,7 +1069,7 @@
 										  ItemsSource="{Binding MetBones}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
-										<WrapPanel/>
+										<WrapPanel Width="500"/>
 									</ItemsPanelTemplate>
 								</ItemsControl.ItemsPanel>
 
@@ -1091,7 +1091,7 @@
 							<ItemsControl Grid.Column="1" ItemsSource="{Binding TopBones}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
-										<WrapPanel/>
+										<WrapPanel Width="500"/>
 									</ItemsPanelTemplate>
 								</ItemsControl.ItemsPanel>
 
@@ -1134,7 +1134,7 @@
 										  ItemsSource="{Binding MainHandBones}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
-										<WrapPanel/>
+										<WrapPanel Width="500"/>
 									</ItemsPanelTemplate>
 								</ItemsControl.ItemsPanel>
 
@@ -1156,7 +1156,7 @@
 							<ItemsControl Grid.Column="1" ItemsSource="{Binding OffHandBones}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
-										<WrapPanel/>
+										<WrapPanel Width="500"/>
 									</ItemsPanelTemplate>
 								</ItemsControl.ItemsPanel>
 
