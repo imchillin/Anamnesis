@@ -143,7 +143,7 @@ public partial class ActorTab : UserControl
 
 		// Set the history context based on the selected tab
 		HistoryContext context = GetHistoryContextForTab(senderElement.DataContext as Page);
-		HistoryService.Instance.SetContext(context);
+		HistoryService.SetContext(context);
 	}
 
 	private void OnHistoryClick(object sender, RoutedEventArgs e)

@@ -2,11 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Anamnesis.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:converters="clr-namespace:Anamnesis.Styles.Converters"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
              Width="256">
+
+	<UserControl.Resources>
+		<converters:HistoryIndexToOpacityConverter x:Key="HIndexToOpacity"/>
+	</UserControl.Resources>
 
 	<GroupBox x:Name="ContentArea" Style="{StaticResource Cm3GroupBox}">
 		<GroupBox.Header>
@@ -22,11 +26,22 @@
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
 					<Grid>
-
-						<!--<Grid.ToolTip>
-							<TextBlock Text="{Binding Count}"/>
-						</Grid.ToolTip>-->
-
+						<Grid.Style>
+							<Style TargetType="Grid">
+								<Style.Triggers>
+									<DataTrigger Value="True">
+										<DataTrigger.Binding>
+											<MultiBinding Converter="{StaticResource HIndexToOpacity}">
+												<Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="DataContext.TargetService.SelectedActor.History.CurrentIndex" />
+												<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" />
+												<Binding Path="." />
+											</MultiBinding>
+										</DataTrigger.Binding>
+										<Setter Property="Opacity" Value="0.5" />
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</Grid.Style>
 						<TextBlock Text="{Binding Name}"/>
 					</Grid>
 				</DataTemplate>

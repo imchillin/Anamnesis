@@ -33,8 +33,8 @@ public class History
 
 	private static readonly TimeSpan TimeTillCommit = TimeSpan.FromMilliseconds(200);
 
-	private readonly List<HistoryEntry> history = new();
-	private int currentIndex = 0;
+	private readonly ObservableCollection<HistoryEntry> history = new();
+	private readonly ReadOnlyObservableCollection<HistoryEntry> readOnlyHistory;
 	private HistoryEntry current = new();
 	private DateTime lastChangeTime = DateTime.Now;
 	private int autoCommitEnabled = 1;
@@ -44,6 +44,7 @@ public class History
 	/// </summary>
 	public History()
 	{
+		this.readOnlyHistory = new ReadOnlyObservableCollection<HistoryEntry>(this.history);
 		this.history.Add(new());
 	}
 
@@ -54,12 +55,14 @@ public class History
 	/// <remarks>Undone entries not been overwritten by a new change are counted.</remarks>
 	public int Count => this.history.Count;
 
+	/// <summary>Gets the current index in the history log.</summary>
+	public int CurrentIndex { get; private set; } = 0;
+
 	/// <summary>Gets the collection of active history entries.</summary>
 	/// <remarks>
-	/// Undoing a change will remove the entry from this collection.
-	/// Similarly, redoing a change will add the entry back.
+	/// Undone changes are included in the collection until they are overwritten by a new change.
 	/// </remarks>
-	public ObservableCollection<HistoryEntry> Entries { get; private set; } = new();
+	public ReadOnlyObservableCollection<HistoryEntry> Entries => this.readOnlyHistory;
 
 	/// <summary>Gets or sets a value indicating whether auto commit is enabled.</summary>
 	/// <remarks>
@@ -93,23 +96,20 @@ public class History
 	/// <summary>Steps forward in the history.</summary>
 	public async void StepForward()
 	{
-		if (this.currentIndex >= this.history.Count - 1)
+		if (this.CurrentIndex >= this.history.Count - 1)
 			return;
 
-		var nextEntry = this.history[this.currentIndex + 1];
+		var nextEntry = this.history[this.CurrentIndex + 1];
 		if (nextEntry.Context != this.CurrentContext)
 		{
 			if (await GenericDialog.ShowLocalizedAsync("History_Context_Change_Confirm", "History_Context_Change", MessageBoxButton.YesNo) != true)
 				return;
 		}
 
-		this.currentIndex++;
+		this.CurrentIndex++;
 		nextEntry.Redo();
 
-		await Dispatch.MainThread();
-		this.Entries.Add(nextEntry);
-
-		Log.Verbose($"Step Forward: {this.currentIndex}");
+		Log.Verbose($"Step Forward: {this.CurrentIndex}");
 	}
 
 	/// <summary>Steps back in the history.</summary>
@@ -119,10 +119,10 @@ public class History
 		if (this.current.HasChanges)
 			this.Commit();
 
-		if (this.currentIndex <= 0)
+		if (this.CurrentIndex <= 0)
 			return;
 
-		var currentEntry = this.history[this.currentIndex];
+		var currentEntry = this.history[this.CurrentIndex];
 		if (currentEntry.Context != this.CurrentContext)
 		{
 			if (await GenericDialog.ShowLocalizedAsync("History_Context_Change_Confirm", "History_Context_Change", MessageBoxButton.YesNo) != true)
@@ -130,13 +130,9 @@ public class History
 		}
 
 		currentEntry.Undo();
+		this.CurrentIndex--;
 
-		await Dispatch.MainThread();
-		this.Entries.Remove(currentEntry);
-
-		this.currentIndex--;
-
-		Log.Verbose($"Step Back: {this.currentIndex}");
+		Log.Verbose($"Step Back: {this.CurrentIndex}");
 	}
 
 	/// <summary>Commits the set of current changes to history.</summary>
@@ -151,23 +147,25 @@ public class History
 		oldEntry.Name = oldEntry.GetName();
 		oldEntry.Context = this.CurrentContext;
 
+		await Dispatch.MainThread();
+
 		// Remove any redo history
-		if (this.currentIndex < this.history.Count - 1)
+		if (this.CurrentIndex < this.history.Count - 1)
 		{
-			this.history.RemoveRange(this.currentIndex + 1, this.history.Count - this.currentIndex - 1);
+			while (this.history.Count > this.CurrentIndex + 1)
+			{
+				this.history.RemoveAt(this.CurrentIndex + 1);
+			}
 		}
 
 		this.history.Add(oldEntry);
-		this.currentIndex = this.history.Count - 1;
-
-		await Dispatch.MainThread();
-		this.Entries.Add(oldEntry);
+		this.CurrentIndex = this.history.Count - 1;
 
 		if (this.history.Count > MaxHistory)
 		{
 			Log.Warning($"History depth exceded max: {MaxHistory}. Flushing");
 			this.history.Clear();
-			this.currentIndex = -1;
+			this.CurrentIndex = -1;
 		}
 
 		this.current = new();
