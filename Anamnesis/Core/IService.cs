@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 public interface IService
 {
+	public bool IsAlive { get; }
+
 	Task Initialize();
 	Task Start();
 	Task Shutdown();

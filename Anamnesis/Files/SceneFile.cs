@@ -239,7 +239,7 @@ public class SceneFile : JsonFileBase
 
 	private static ActorMemory? GetPinnedActor(string name)
 	{
-		foreach (PinnedActor pinnedActor in TargetService.Instance.PinnedActors)
+		foreach (PinnedActor pinnedActor in TargetService.Instance.PinnedActors.ToList())
 		{
 			ActorMemory? actorMemory = pinnedActor.GetMemory();
 

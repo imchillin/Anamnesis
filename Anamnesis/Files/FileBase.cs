@@ -3,13 +3,13 @@
 
 namespace Anamnesis.Files;
 
+using Anamnesis.Serialization;
+using Anamnesis.Serialization.Converters;
+using Anamnesis.Services;
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
 using System.Windows.Media.Imaging;
-using Anamnesis.Serialization;
-using Anamnesis.Serialization.Converters;
-using Anamnesis.Services;
 
 [Serializable]
 public abstract class FileBase
