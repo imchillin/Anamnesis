@@ -64,7 +64,7 @@ public class Settings : INotifyPropertyChanged
 	public Dictionary<string, int> ActorTabOrder { get; set; } = new();
 	public Dictionary<string, bool> PosingBoneLinks { get; set; } = new();
 
-	public double WindowOpcaticy
+	public double WindowOpacity
 	{
 		get
 		{

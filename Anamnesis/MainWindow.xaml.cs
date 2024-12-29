@@ -3,6 +3,18 @@
 
 namespace Anamnesis.GUI;
 
+using Anamnesis;
+using Anamnesis.Actor;
+using Anamnesis.GUI.Dialogs;
+using Anamnesis.GUI.Views;
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using Anamnesis.Updater;
+using Anamnesis.Utils;
+using Anamnesis.Views;
+using Anamnesis.Windows;
+using PropertyChanged;
+using Serilog;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -11,21 +23,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using Anamnesis;
-using Anamnesis.GUI.Dialogs;
-using Anamnesis.GUI.Views;
-using Anamnesis.Memory;
-using Anamnesis.Actor;
-using Anamnesis.Services;
-using Anamnesis.Updater;
-using Anamnesis.Utils;
-using Anamnesis.Views;
-using Anamnesis.Windows;
-using PropertyChanged;
 using XivToolsWpf;
-using XivToolsWpf.Windows;
 using XivToolsWpf.Extensions;
-using Serilog;
+using XivToolsWpf.Windows;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml.
@@ -136,7 +136,7 @@ public partial class MainWindow : ChromedWindow
 	protected override void OnDeactivated(EventArgs e)
 	{
 		base.OnDeactivated(e);
-		this.Opacity = SettingsService.Current.WindowOpcaticy;
+		this.Opacity = SettingsService.Current.WindowOpacity;
 	}
 
 	private void OnSettingsChanged(object? sender = null, PropertyChangedEventArgs? args = null)
@@ -164,7 +164,7 @@ public partial class MainWindow : ChromedWindow
 			}
 		}
 
-		if (SettingsService.Current.WindowOpcaticy < 1)
+		if (SettingsService.Current.WindowOpacity < 1)
 			this.TransprentWhenNotInFocus = true;
 
 		if (!this.hasSetPosition && SettingsService.Current.WindowPosition.X != 0)
@@ -334,7 +334,7 @@ public partial class MainWindow : ChromedWindow
 					TargetService.UnpinActor(actor);
 				}
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Log.Error("Failed to despawn actor", ex);
 			}
