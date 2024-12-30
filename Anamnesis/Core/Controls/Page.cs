@@ -29,7 +29,7 @@ public abstract class Page
 	public string DisplayNameKey { get; private set; }
 	public string TooltipKey { get; private set; }
 
-	[DependsOn(nameof(Page.IsActive))]
+	[DependsOn(nameof(this.IsActive))]
 	public UserControl? Content
 	{
 		get

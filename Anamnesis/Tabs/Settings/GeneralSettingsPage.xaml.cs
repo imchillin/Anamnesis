@@ -16,12 +16,41 @@ using System.Windows.Forms;
 /// Interaction logic for GeneralSettingsPage.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class GeneralSettingsPage : System.Windows.Controls.UserControl
+public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, ISettingSection
 {
 	public GeneralSettingsPage()
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
+
+		// Initialize setting categories
+		this.SettingCategories = new()
+		{
+			{ "Interface", new SettingCategory("Interface", this.InterfaceGroupBox) },
+			{ "Files", new SettingCategory("Files", this.FilesGroupBox) },
+			{ "Directories", new SettingCategory("Directories", this.DirectoriesGroupBox) },
+		};
+
+		// Set up interface category settings
+		this.SettingCategories["Interface"].Settings.Add(new Setting("Settings_Language", this.General_Interface_Language));
+		this.SettingCategories["Interface"].Settings.Add(new Setting("Settings_AlwaysOnTop", this.General_Interface_AlwaysOnTop));
+		this.SettingCategories["Interface"].Settings.Add(new Setting("Settings_Overlay", this.General_Interface_MiniMode));
+		this.SettingCategories["Interface"].Settings.Add(new Setting("Settings_WindowSize", this.General_Interface_WindowSize));
+		this.SettingCategories["Interface"].Settings.Add(new Setting("Settings_Translucency", this.General_Interface_EnableTranslucency));
+		this.SettingCategories["Interface"].Settings.Add(new Setting("Settings_WindowOpacity", this.General_Interface_WindowOpacity));
+		this.SettingCategories["Interface"].Settings.Add(new Setting("Settings_Font", this.General_Interface_Font));
+		this.SettingCategories["Interface"].Settings.Add(new Setting("Settings_Developer", this.General_Interface_Developer));
+
+		// Set up files category settings
+		this.SettingCategories["Files"].Settings.Add(new Setting("Settings_DefaultAuthor", this.General_Files_DefaultAuthor));
+		this.SettingCategories["Files"].Settings.Add(new Setting("Settings_ShowFileExtensions", this.General_Files_ShowFileExtensions));
+		this.SettingCategories["Files"].Settings.Add(new Setting("Settings_UseWindowsExplorer", this.General_Files_UseWindowsExplorer));
+
+		// Set up directories category settings
+		this.SettingCategories["Directories"].Settings.Add(new Setting("Settings_Dir_Characters", this.General_Directories_Char));
+		this.SettingCategories["Directories"].Settings.Add(new Setting("Settings_Dir_Poses", this.General_Directories_Poses));
+		this.SettingCategories["Directories"].Settings.Add(new Setting("Settings_Dir_CameraShots", this.General_Directories_CamShots));
+		/* this.SettingCategories["Directories"].Settings.Add(new Setting("Settings_Dir_Scenes", this.General_Directories_Scenes)); */
 
 		// Set up window size options
 		this.SizeSelector.ItemsSource = new List<double>() { 0.75, 1.0, 1.25, 1.5, 1.75, 2.0 };
@@ -39,6 +68,8 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl
 	}
 
 	public static SettingsService SettingsService => SettingsService.Instance;
+	public static int LabelColumnWidth => 150;
+	public Dictionary<string, SettingCategory> SettingCategories { get; }
 	public IEnumerable<FontOption> Fonts { get; }
 
 	[DependsOn(nameof(this.Fonts))]

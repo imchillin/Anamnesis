@@ -16,12 +16,28 @@ using System.Windows.Input;
 /// <summary>
 /// Interaction logic for InputSettingsPage.xaml.
 /// </summary>
-public partial class InputSettingsPage : UserControl
+public partial class InputSettingsPage : UserControl, ISettingSection
 {
 	public InputSettingsPage()
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
+
+		// Initialize setting categories
+		this.SettingCategories = new()
+		{
+			{ "Input", new SettingCategory("Input", this.InputGroupBox) },
+			{ "Hotkeys", new SettingCategory("Hotkeys", this.HotkeysGroupBox) },
+		};
+
+		// Set up input category settings
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_WrapRotations", this.Input_Input_WrapRotations));
+
+		// Set up hotkeys category settings
+		this.SettingCategories["Hotkeys"].Settings.Add(new Setting("Settings_EnableHotkeys", this.Input_Hotkeys_EnableHotkeys));
+		this.SettingCategories["Hotkeys"].Settings.Add(new Setting("Settings_EnableGameHotkeys", this.Input_Hotkeys_EnableGameHotkeys));
+		this.SettingCategories["Hotkeys"].Settings.Add(new Setting("Settings_EnableForwardKeys", this.Input_Hotkeys_EnableForwardKeys));
+		this.SettingCategories["Hotkeys"].Settings.Add(new Setting("Settings_KeysHeader", this.Input_Hotkeys_List));
 
 		// Set up hotkey options
 		this.Hotkeys = SettingsService.Current.KeyboardBindings.GetBinds()
@@ -36,6 +52,8 @@ public partial class InputSettingsPage : UserControl
 	}
 
 	public static SettingsService SettingsService => SettingsService.Instance;
+	public static int LabelColumnWidth => 150;
+	public Dictionary<string, SettingCategory> SettingCategories { get; }
 	public IEnumerable<HotkeyOption> Hotkeys { get; }
 
 	public class HotkeyOption

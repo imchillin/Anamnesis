@@ -12,63 +12,81 @@
 			<XivToolsWPF:Header Key="SettingsPages_Input" Icon="Keyboard"/>
 		</GroupBox.Header>
 
-		<ScrollViewer VerticalScrollBarVisibility="Auto">
-			<Grid HorizontalAlignment="Center" Width="450">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
+		<Grid HorizontalAlignment="Left" Width="450" Margin="10, 4, 0, 0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
 
-				<!-- Input -->
-				<GroupBox Grid.Row="0" Margin="0, 0, 0, 10">
-					<GroupBox.Header>
-						<XivToolsWPF:Header Key="Settings_InterfaceHeader" Icon="SlidersH"/>
-					</GroupBox.Header>
+			<!-- Input -->
+			<GroupBox x:Name="InputGroupBox" Grid.Row="0" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_InputHeader" Icon="SlidersH"/>
+				</GroupBox.Header>
 
-					<Grid>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="Input_Input_WrapRotations" Grid.Row="0">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
-
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-						</Grid.RowDefinitions>
-
-						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_WrapRotations" Style="{StaticResource Label}"/>
-						<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Grid.Row="0" Margin="6, 3"/>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_WrapRotations" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Margin="6, 3"/>
 					</Grid>
-				</GroupBox>
+				</Grid>
+			</GroupBox>
 
-				<!-- Hotkeys -->
-				<GroupBox Grid.Row="1">
-					<GroupBox.Header>
-						<XivToolsWPF:Header Key="Settings_KeysHeader" Icon="Keyboard" />
-					</GroupBox.Header>
+			<!-- Hotkeys -->
+			<GroupBox x:Name="HotkeysGroupBox" Grid.Row="1" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_KeysHeader" Icon="Keyboard" />
+				</GroupBox.Header>
 
-					<Grid>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableHotkeys_Tooltip"/>
+						<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableGameHotkeys_Tooltip"/>
+						<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableForwardKeys_Tooltip"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="Input_Hotkeys_EnableHotkeys" Grid.Row="0">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_EnableHotkeys" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.EnableHotkeys}" Grid.Column="1" Margin="6"/>
+					</Grid>
 
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableHotkeys_Tooltip"/>
-							<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableGameHotkeys_Tooltip"/>
-							<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableForwardKeys_Tooltip"/>
-							<RowDefinition/>
-						</Grid.RowDefinitions>
+					<Grid x:Name="Input_Hotkeys_EnableGameHotkeys" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_EnableGameHotkeys" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.EnableGameHotkeyHooks}" Grid.Column="1" Margin="6"/>
+					</Grid>
 
-						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_EnableHotkeys" Style="{StaticResource Label}"/>
-						<CheckBox IsChecked="{Binding SettingsService.Settings.EnableHotkeys}" Grid.Column="1" Grid.Row="0" Margin="6"/>
+					<Grid x:Name="Input_Hotkeys_EnableForwardKeys" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_EnableForwardKeys" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.ForwardKeys}" Grid.Column="1" Margin="6"/>
+					</Grid>
 
-						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_EnableGameHotkeys" Style="{StaticResource Label}"/>
-						<CheckBox IsChecked="{Binding SettingsService.Settings.EnableGameHotkeyHooks}" Grid.Column="1" Grid.Row="1" Margin="6"/>
-
-						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_EnableForwardKeys" Style="{StaticResource Label}"/>
-						<CheckBox IsChecked="{Binding SettingsService.Settings.ForwardKeys}" Grid.Column="1" Grid.Row="2" Margin="6"/>
-
-						<ListBox x:Name="HotkeyList" Grid.Row="3" Grid.ColumnSpan="2" IsHitTestVisible="False">
+					<Grid x:Name="Input_Hotkeys_List" Grid.Row="3">
+						<ListBox x:Name="HotkeyList" IsHitTestVisible="False">
 							<ListBox.ItemContainerStyle>
 								<Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
 									<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -115,8 +133,8 @@
 							</ListBox.ItemTemplate>
 						</ListBox>
 					</Grid>
-				</GroupBox>
-			</Grid>
-		</ScrollViewer>
+				</Grid>
+			</GroupBox>
+		</Grid>
 	</GroupBox>
 </UserControl>

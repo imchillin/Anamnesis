@@ -11,42 +11,65 @@
 			<XivToolsWPF:Header Key="SettingsPages_Connections" Icon="NetworkWired"/>
 		</GroupBox.Header>
 
-		<ScrollViewer VerticalScrollBarVisibility="Auto">
-			<Grid HorizontalAlignment="Center" Width="450">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
+		<Grid HorizontalAlignment="Left" Width="450" Margin="10, 4, 0, 0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
 
-				<!-- External Services -->
-				<GroupBox Grid.Row="0" Margin="0, 0, 0, 10">
-					<GroupBox.Header>
-						<XivToolsWPF:Header Key="Settings_ExternalHeader" Icon="Link"/>
-					</GroupBox.Header>
+			<!-- External Services -->
+			<GroupBox x:Name="ExternalServicesGroupBox" Grid.Row="0" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_ExternalHeader" Icon="Link"/>
+				</GroupBox.Header>
 
-					<Grid>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="Connections_External_UseExternalRefreshBrio" Grid.Row="0">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_UseExternalRefreshBrio" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefreshBrio}" Grid.Column="1" Grid.Row="0" Margin="6" x:Name="Settings_UseExternalRefreshBrio"/>
+					</Grid>
+
+					<Grid x:Name="Connections_External_UseExternalRefresh" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Row="0" Grid.Column="0" Key="Settings_UseExternalRefresh" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Row="0" Grid.Column="1" Margin="6" x:Name="Settings_UseExternalRefresh"/>
+
+						<XivToolsWPF:InfoControl Grid.Row="1" Key="Settings_UseExternalRefreshWarning" Grid.ColumnSpan="2"/>
+					</Grid>
+
+
+					<Grid x:Name="Connections_External_EnableNpcHack" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
-						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_UseExternalRefreshBrio" Style="{StaticResource Label}"/>
-						<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefreshBrio}" Grid.Column="1" Grid.Row="0" Margin="6" x:Name="Settings_UseExternalRefreshBrio"/>
-						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_UseExternalRefresh" Style="{StaticResource Label}"/>
-						<CheckBox IsChecked="{Binding SettingsService.Settings.UseExternalRefresh}" Grid.Column="1" Grid.Row="1" Margin="6" x:Name="Settings_UseExternalRefresh"/>
-
-
-						<XivToolsWPF:InfoControl Grid.Row="2" Key="Settings_UseExternalRefreshWarning" Grid.ColumnSpan="2"/>
-
-						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="3" Key="Settings_EnableNpcHack" Style="{StaticResource Label}"/>
-						<CheckBox Grid.Column="1" Grid.Row="3" Margin="6">
+						<XivToolsWPF:TextBlock Grid.Row="0" Grid.Column="0" Key="Settings_EnableNpcHack" Style="{StaticResource Label}"/>
+						<CheckBox Grid.Row="0" Grid.Column="1" Margin="6">
 							<CheckBox.Style>
 								<Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
 									<Setter Property="IsChecked" Value="{Binding SettingsService.Settings.EnableNpcHack}"/>
@@ -54,10 +77,10 @@
 							</CheckBox.Style>
 						</CheckBox>
 
-						<XivToolsWPF:InfoControl Grid.Row="4" Key="Settings_EnableNpcHackWarning" Grid.ColumnSpan="2"/>
+						<XivToolsWPF:InfoControl Grid.Row="1" Key="Settings_EnableNpcHackWarning" Grid.ColumnSpan="2"/>
 					</Grid>
-				</GroupBox>
-			</Grid>
-		</ScrollViewer>
+				</Grid>
+			</GroupBox>
+		</Grid>
 	</GroupBox>
 </UserControl>

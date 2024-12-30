@@ -12,68 +12,87 @@
 			<XivToolsWPF:Header Key="SettingsPages_Personalization" Icon="Palette"/>
 		</GroupBox.Header>
 
-		<ScrollViewer VerticalScrollBarVisibility="Auto">
-			<Grid HorizontalAlignment="Center" Width="450">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
+		<Grid HorizontalAlignment="Left" Width="450" Margin="10, 4, 0, 0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
 
-				<!-- Theme -->
-				<GroupBox Grid.Row="0" Margin="0, 0, 0, 10">
-					<GroupBox.Header>
-						<XivToolsWPF:Header Key="Settings_Theme" Icon="PaintBrush"/>
-					</GroupBox.Header>
+			<!-- Theme -->
+			<GroupBox x:Name="ThemeGroupBox" Grid.Row="0" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_Theme" Icon="PaintBrush"/>
+				</GroupBox.Header>
 
-					<Grid>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="Personalization_Theme_Override" Grid.Row="0">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition/>
-							<RowDefinition Height="Auto"/>
-						</Grid.RowDefinitions>
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Theme_Override" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.OverrideSystemTheme}" Grid.Column="1" Margin="6"/>
+					</Grid>
 
-						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_Theme_Override" Style="{StaticResource Label}"/>
-						<CheckBox IsChecked="{Binding SettingsService.Settings.OverrideSystemTheme}" Grid.Column="1" Grid.Row="0" Margin="6"/>
-
-						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="1" Key="Settings_Theme_Light" Style="{StaticResource Label}"
+					<Grid x:Name="Personalization_Theme_Light" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Theme_Light" Style="{StaticResource Label}"
 											   IsEnabled="{Binding SettingsService.Current.OverrideSystemTheme}"/>
-						<CheckBox IsChecked="{Binding SettingsService.Settings.ThemeLight}" Grid.Column="1" Grid.Row="1" Margin="6"
+						<CheckBox IsChecked="{Binding SettingsService.Settings.ThemeLight}" Grid.Column="1" Margin="6"
 								  IsEnabled="{Binding SettingsService.Current.OverrideSystemTheme}"/>
+					</Grid>
 
-						<XivToolsWPF:TextBlock Grid.Row="2" Grid.Column="0" Key="Settings_Theme_Color" Style="{StaticResource Label}"
+					<Grid x:Name="Personalization_Theme_Color" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Theme_Color" Style="{StaticResource Label}"
 											   IsEnabled="{Binding SettingsService.Current.OverrideSystemTheme}"/>
-						<wpf:ColorPicker Color="{Binding SettingsService.Settings.ThemeTrimColor}" Grid.Row="2" Grid.Column="1"
+						<wpf:ColorPicker Color="{Binding SettingsService.Settings.ThemeTrimColor}" Grid.Column="1"
 										 IsEnabled="{Binding SettingsService.Current.OverrideSystemTheme}"/>
 					</Grid>
-				</GroupBox>
-				
-				<!-- Gallery -->
-				<GroupBox Grid.Row="1">
-					<GroupBox.Header>
-						<XivToolsWPF:Header Key="Settings_GalleryHeader" Icon="Image"/>
-					</GroupBox.Header>
+				</Grid>
+			</GroupBox>
 
-					<Grid>
+			<!-- Gallery -->
+			<GroupBox x:Name="GalleryGroupBox" Grid.Row="1" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_GalleryHeader" Icon="Image"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="Personalization_Gallery_Mode" Grid.Row="0">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 
 						<Grid.RowDefinitions>
-							<RowDefinition/>
-							<RowDefinition/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
 						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="0" Key="Settings_Gallery" Style="{StaticResource Label}"/>
-						<ComboBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Margin="1" x:Name="GalleryCombobox" SelectionChanged="OnGalleryChanged"
-								  HorizontalAlignment="Left" Width="200">
+						<ComboBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Margin="1" x:Name="GalleryCombobox"
+								  SelectionChanged="OnGalleryChanged" HorizontalAlignment="Left" Width="200">
 							<ComboBoxItem>
 								<XivToolsWPF:TextBlock Key="Settings_Gallery_None"/>
 							</ComboBoxItem>
@@ -88,8 +107,8 @@
 						<TextBox Grid.Row="1" Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.GalleryDirectory}" IsEnabled="False"/>
 						<Button Grid.Row="1" Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseGallery"/>
 					</Grid>
-				</GroupBox>
-			</Grid>
-		</ScrollViewer>
+				</Grid>
+			</GroupBox>
+		</Grid>
 	</GroupBox>
 </UserControl>

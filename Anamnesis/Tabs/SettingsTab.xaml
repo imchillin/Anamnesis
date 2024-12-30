@@ -3,22 +3,58 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d"
 			 d:DesignHeight="450" d:DesignWidth="800">
 
 	<Grid x:Name="ContentArea">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 
+		<!-- Search TextBox -->
+		<Grid Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Margin="0, 6, 0, 0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<Border Grid.Column="1" CornerRadius="6" BorderThickness="0" Background="{DynamicResource MaterialDesignBackground}" Padding="4" Margin="6, 0, 6, 0">
+				<Grid>
+					<XivToolsWpf:IconBlock Icon="Search" FontSize="13" HorizontalAlignment="Left" Margin="6" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+					<TextBox MinWidth="200"
+							 Style="{StaticResource MaterialDesignTextBox}"
+							 VerticalAlignment="Center"
+							 md:HintAssist.Hint="Type to search..."
+							 md:TextFieldAssist.DecorationVisibility="Hidden"
+							 BorderThickness="0"
+							 Padding="26, 3, 0, 3"
+							 Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"/>
+					<Button Style="{StaticResource TransparentIconButton}" HorizontalAlignment="Right" Click="OnSearchClearClicked"
+							Visibility="{Binding SearchQuery, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+						<md:PackIcon Kind="Close" FontSize="13" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+					</Button>
+				</Grid>
+			</Border>
+		</Grid>
+
+		<!-- Sidebar -->
 		<ScrollViewer HorizontalScrollBarVisibility="Disabled"
 					  VerticalScrollBarVisibility="Hidden"
 					  Grid.Column="0"
+					  Grid.Row="0"
+					  Grid.RowSpan="2"
 					  HorizontalContentAlignment="Left"
 					  Width="150">
-			<ListBox ItemsSource="{Binding Pages}"
+			<ListBox x:Name="SettingsSidebar"
+					 ItemsSource="{Binding Pages}"
 					 Margin="3, 5, 3, 3"
 					 HorizontalContentAlignment="Left"
 					 SelectedItem="{Binding SelectedPage, Mode=TwoWay}"
@@ -46,14 +82,17 @@
 			</ListBox>
 		</ScrollViewer>
 
-		<ItemsControl ItemsSource="{Binding Pages}" Grid.Column="1" Margin="-4, 0, 0, 0">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<Grid Visibility="{Binding IsActive, Converter={StaticResource B2V}}">
-						<ContentPresenter Content="{Binding Content}" DataContext="{Binding DataContext}" Height="500"/>
-					</Grid>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
+		<!-- Content -->
+		<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="2, 2, 2, 4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+			<ItemsControl ItemsSource="{Binding Pages}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Grid Visibility="{Binding IsActive, Converter={StaticResource B2V}}">
+							<ContentPresenter Content="{Binding Content}" DataContext="{Binding DataContext}"/>
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
 	</Grid>
 </UserControl>
