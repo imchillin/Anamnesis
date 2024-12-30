@@ -43,7 +43,7 @@ public partial class ActorTab : UserControl
 	public ObservableCollection<Core.Page> Tabs { get; private set; } = new();
 	public ObservableCollection<Core.Page> Pages { get; private set; } = new();
 
-	private static HistoryContext GetHistoryContextForTab(Page? page)
+	private static HistoryContext GetHistoryContextForTab(Core.Page? page)
 	{
 		return page?.Name switch
 		{
@@ -141,7 +141,7 @@ public partial class ActorTab : UserControl
 		}
 
 		// Set the history context based on the selected tab
-		HistoryContext context = GetHistoryContextForTab(senderElement.DataContext as Page);
+		HistoryContext context = GetHistoryContextForTab(senderElement.DataContext as Core.Page);
 		HistoryService.SetContext(context);
 	}
 
