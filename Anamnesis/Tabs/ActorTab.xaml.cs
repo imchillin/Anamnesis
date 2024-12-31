@@ -4,12 +4,11 @@
 namespace Anamnesis.Tabs;
 
 using Anamnesis.Actor.Pages;
-using Anamnesis.Keyboard;
+using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using Anamnesis.Views;
 using FontAwesome.Sharp;
-using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,10 +40,10 @@ public partial class ActorTab : UserControl
 		this.Tabs[0].IsActive = true;
 	}
 
-	public ObservableCollection<Page> Tabs { get; private set; } = new();
-	public ObservableCollection<Page> Pages { get; private set; } = new();
+	public ObservableCollection<Core.Page> Tabs { get; private set; } = new();
+	public ObservableCollection<Core.Page> Pages { get; private set; } = new();
 
-	private static HistoryContext GetHistoryContextForTab(Page? page)
+	private static HistoryContext GetHistoryContextForTab(Core.Page? page)
 	{
 		return page?.Name switch
 		{
@@ -57,18 +56,18 @@ public partial class ActorTab : UserControl
 	private void AddPage<T>(string name, IconChar icon)
 		where T : UserControl
 	{
-		Page<T> page = new Page<T>(icon, name);
+		Page<T> page = new Page<T>(icon, "ActorTabs", name);
 		this.Tabs.Add(page);
 		this.Pages.Add(page);
 	}
 
-	private Page GetPage(string name)
+	private Core.Page GetTab(string name)
 	{
-		foreach (Page page in this.Tabs)
+		foreach (Core.Page tab in this.Tabs)
 		{
-			if (page.Name == name)
+			if (tab.Name == name)
 			{
-				return page;
+				return tab;
 			}
 		}
 
@@ -80,12 +79,12 @@ public partial class ActorTab : UserControl
 		if (this.loading)
 			return;
 
-		foreach (Page page in this.Tabs)
+		foreach (var tab in this.Tabs)
 		{
-			if (!SettingsService.Current.ActorTabOrder.ContainsKey(page.Name))
-				SettingsService.Current.ActorTabOrder.Add(page.Name, 0);
+			if (!SettingsService.Current.ActorTabOrder.ContainsKey(tab.Name))
+				SettingsService.Current.ActorTabOrder.Add(tab.Name, 0);
 
-			SettingsService.Current.ActorTabOrder[page.Name] = this.Tabs.IndexOf(page);
+			SettingsService.Current.ActorTabOrder[tab.Name] = this.Tabs.IndexOf(tab);
 		}
 
 		SettingsService.Save();
@@ -95,18 +94,18 @@ public partial class ActorTab : UserControl
 	{
 		this.loading = true;
 
-		List<Page> pages = new List<Page>();
+		List<Core.Page> pages = new();
 		foreach ((string name, int index) in SettingsService.Current.ActorTabOrder)
 		{
-			Page page = this.GetPage(name);
-			page.Index = index;
-			pages.Add(page);
+			var tab = this.GetTab(name);
+			tab.Index = index;
+			pages.Add(tab);
 		}
 
 		pages.Sort((a, b) => a.Index.CompareTo(b.Index));
 
 		// Add any missing pages
-		foreach (Page page in this.Pages)
+		foreach (var page in this.Pages)
 		{
 			if (!pages.Contains(page))
 			{
@@ -115,7 +114,7 @@ public partial class ActorTab : UserControl
 		}
 
 		this.Tabs.Clear();
-		foreach (Page page in pages)
+		foreach (var page in pages)
 		{
 			this.Tabs.Add(page);
 		}
@@ -125,7 +124,7 @@ public partial class ActorTab : UserControl
 
 	private void OnActorSelected(ActorMemory? actor)
 	{
-		foreach (Page page in this.Pages)
+		foreach (var page in this.Pages)
 		{
 			page.DataContext = actor;
 		}
@@ -136,81 +135,18 @@ public partial class ActorTab : UserControl
 		if (sender is not FrameworkElement senderElement)
 			return;
 
-		foreach (Page page in this.Pages)
+		foreach (var page in this.Pages)
 		{
 			page.IsActive = senderElement.DataContext == page;
 		}
 
 		// Set the history context based on the selected tab
-		HistoryContext context = GetHistoryContextForTab(senderElement.DataContext as Page);
+		HistoryContext context = GetHistoryContextForTab(senderElement.DataContext as Core.Page);
 		HistoryService.SetContext(context);
 	}
 
 	private void OnHistoryClick(object sender, RoutedEventArgs e)
 	{
 		ViewService.ShowDrawer<HistoryView>();
-	}
-
-	[AddINotifyPropertyChangedInterface]
-	public abstract class Page
-	{
-		private UserControl? control;
-
-		public Page(IconChar icon, string name)
-		{
-			this.Icon = icon;
-			this.Name = name;
-			this.DisplayNameKey = $"ActorTabs_{name}";
-			this.TooltipKey = $"ActorTabs_{name}_Tooltip";
-
-			HotkeyService.RegisterHotkeyHandler($"MainWindow.{name}", () => this.IsActive = true);
-		}
-
-		public string Name { get; private set; }
-		public int Index { get; set; }
-		public string DisplayNameKey { get; private set; }
-		public string TooltipKey { get; private set; }
-
-		[DependsOn(nameof(Page.IsActive))]
-		public UserControl? Content
-		{
-			get
-			{
-				if (this.control == null)
-				{
-					if (!this.IsActive)
-						return null;
-
-					this.control = this.CreateContent();
-				}
-
-				return this.control;
-			}
-		}
-
-		public IconChar Icon { get; private set; }
-		public bool IsActive { get; set; }
-		public object? DataContext { get; set; }
-
-		protected abstract UserControl CreateContent();
-	}
-
-	public class Page<T> : Page
-		where T : UserControl
-	{
-		public Page(IconChar icon, string name)
-			: base(icon, name)
-		{
-		}
-
-		protected override UserControl CreateContent()
-		{
-			UserControl? control = Activator.CreateInstance<T>();
-
-			if (control == null)
-				throw new Exception($"Failed to create page content: {typeof(T)}");
-
-			return control;
-		}
 	}
 }

@@ -1,0 +1,255 @@
+﻿<UserControl x:Class="Anamnesis.Tabs.Settings.GeneralSettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+			 xmlns:XivToolsWPF="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+             mc:Ignorable="d"
+             d:DesignHeight="450">
+	<GroupBox x:Name="ContentArea" Style="{StaticResource PanelGroupBox}">
+		<GroupBox.Header>
+			<XivToolsWPF:Header Key="SettingsPages_General" Icon="Cog"/>
+		</GroupBox.Header>
+		
+		<Grid HorizontalAlignment="Left" Width="450" Margin="10, 4, 0, 0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<!-- Interface -->
+			<GroupBox x:Name="InterfaceGroupBox" Grid.Row="0" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_InterfaceHeader" Icon="IdCard"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="General_Interface_Language" Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<fa:IconBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Icon="Language" FontSize="19" Margin="0, 0, 5, 0"/>
+						<XivToolsWPF:TextBlock Margin="10,0,35,0" Grid.Column="0" Key="Settings_Language" Style="{StaticResource Label}"/>
+						<ComboBox Margin="6" Grid.Column="1" SelectedValue="{Binding SelectedLanguage}" ItemsSource="{Binding Languages, Mode=OneTime}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Display}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Grid>
+
+					<Grid x:Name="General_Interface_AlwaysOnTop" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_AlwaysOnTop" Style="{StaticResource Label}"/>
+						<CheckBox Grid.Column="1" IsChecked="{Binding SettingsService.Settings.AlwaysOnTop}" Margin="6, 3"/>
+					</Grid>
+
+					<Grid x:Name="General_Interface_MiniMode" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Overlay" Style="{StaticResource Label}"/>
+						<CheckBox Grid.Column="1" IsChecked="{Binding SettingsService.Settings.OverlayWindow}" Margin="6, 3"/>
+					</Grid>
+
+					<Grid x:Name="General_Interface_WindowSize" Grid.Row="3">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_WindowSize" Style="{StaticResource Label}"/>
+						<ComboBox Grid.Column="1" x:Name="SizeSelector" SelectedValue="{Binding SettingsService.Settings.Scale}" Margin="6, 3"/>
+					</Grid>
+
+					<Grid x:Name="General_Interface_EnableTranslucency" Grid.Row="4">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Translucency" Style="{StaticResource Label}"/>
+						<CheckBox Grid.Column="1" IsChecked="{Binding SettingsService.Settings.EnableTranslucency}" Margin="6, 3"/>
+					</Grid>
+
+					<Grid x:Name="General_Interface_WindowOpacity" Grid.Row="5">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_WindowOpacity" Style="{StaticResource Label}"/>
+						<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.Opacity}"
+											   Margin="6, 3"
+											   x:Name="TransparancySlider"
+											   Slider="Absolute"
+											   Grid.Column="1"
+											   Minimum="0.1"
+											   Maximum="1"
+											   TickFrequency="0.1"
+											   IsEnabled="{Binding SettingsService.Settings.EnableTranslucency}"/>
+					</Grid>
+
+					<Grid x:Name="General_Interface_Font" Grid.Row="6">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Font" Style="{StaticResource Label}"/>
+						<ComboBox Grid.Column="1" Width="150" HorizontalAlignment="Left" Margin="8, 0, 0, 0"
+								  SelectedItem="{Binding SelectedFont}" ItemsSource="{Binding Fonts}" SelectedValuePath="Font">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<XivToolsWPF:TextBlock Key="{Binding Key}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Grid>
+
+					<Grid x:Name="General_Interface_Developer" Grid.Row="7">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Developer" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.EnableDeveloperTab}" Grid.Column="1" Margin="6, 3"/>
+					</Grid>
+				</Grid>
+			</GroupBox>
+
+			<!-- Files -->
+			<GroupBox x:Name="FilesGroupBox" Grid.Row="1" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_FilesHeader" Icon="File"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="General_Files_DefaultAuthor" Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_DefaultAuthor" Style="{StaticResource Label}"/>
+						<TextBox Text="{Binding SettingsService.Settings.DefaultAuthor}" Grid.Column="1" Margin="8, 0, 0, 6" Style="{StaticResource MaterialDesignTextBox}"/>
+					</Grid>
+
+					<Grid x:Name="General_Files_ShowFileExtensions" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_ShowFileExtensions" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.ShowFileExtensions}" Grid.Column="1" Margin="6, 3"/>
+					</Grid>
+
+					<Grid x:Name="General_Files_UseWindowsExplorer" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Grid.Row="2" Key="Settings_UseWindowsExplorer" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.UseWindowsExplorer}" Grid.Column="1" Grid.Row="2" Margin="6, 3"/>
+					</Grid>
+				</Grid>
+			</GroupBox>
+
+			<!-- Directories -->
+			<GroupBox x:Name="DirectoriesGroupBox" Grid.Row="2" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_Directories" Icon="Folder"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="General_Directories_Char" Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Dir_Characters" Style="{StaticResource Label}"/>
+						<TextBox Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultCharacterDirectory}" IsEnabled="False"/>
+						<Button Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseCharacter"/>
+					</Grid>
+
+					<Grid x:Name="General_Directories_Poses" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Dir_Poses" Style="{StaticResource Label}"/>
+						<TextBox Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultPoseDirectory}" IsEnabled="False"/>
+						<Button Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowsePose"/>
+					</Grid>
+
+					<Grid x:Name="General_Directories_CamShots" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_Dir_CameraShots" Style="{StaticResource Label}"/>
+						<TextBox Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultCameraShotDirectory}" IsEnabled="False"/>
+						<Button Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseCamera"/>
+					</Grid>
+
+					<!-- <Grid x:Name="General_Directories_Scenes" Grid.Row="3">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						
+						<ana:TextBlock Grid.Column="0" Key="Settings_Dir_Scenes" Style="{StaticResource Label}"/>
+						<TextBox Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultSceneDirectory}" IsEnabled="False"/>
+						<Button Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseScene"/>
+					</Grid> -->
+				</Grid>
+			</GroupBox>
+		</Grid>
+	</GroupBox>
+</UserControl>

@@ -1,0 +1,140 @@
+﻿<UserControl x:Class="Anamnesis.Tabs.Settings.InputSettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:ana="clr-namespace:Anamnesis"
+			 xmlns:XivToolsWPF="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="450">
+	<GroupBox x:Name="ContentArea" Style="{StaticResource PanelGroupBox}">
+		<GroupBox.Header>
+			<XivToolsWPF:Header Key="SettingsPages_Input" Icon="Keyboard"/>
+		</GroupBox.Header>
+
+		<Grid HorizontalAlignment="Left" Width="450" Margin="10, 4, 0, 0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<!-- Input -->
+			<GroupBox x:Name="InputGroupBox" Grid.Row="0" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_InputHeader" Icon="SlidersH"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="Input_Input_WrapRotations" Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_WrapRotations" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Margin="6, 3"/>
+					</Grid>
+				</Grid>
+			</GroupBox>
+
+			<!-- Hotkeys -->
+			<GroupBox x:Name="HotkeysGroupBox" Grid.Row="1" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_KeysHeader" Icon="Keyboard" />
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableHotkeys_Tooltip"/>
+						<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableGameHotkeys_Tooltip"/>
+						<RowDefinition Height="Auto" ana:Behaviours.Tooltip="Settings_EnableForwardKeys_Tooltip"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="Input_Hotkeys_EnableHotkeys" Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_EnableHotkeys" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.EnableHotkeys}" Grid.Column="1" Margin="6"/>
+					</Grid>
+
+					<Grid x:Name="Input_Hotkeys_EnableGameHotkeys" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_EnableGameHotkeys" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.EnableGameHotkeyHooks}" Grid.Column="1" Margin="6"/>
+					</Grid>
+
+					<Grid x:Name="Input_Hotkeys_EnableForwardKeys" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+						
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_EnableForwardKeys" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.ForwardKeys}" Grid.Column="1" Margin="6"/>
+					</Grid>
+
+					<Grid x:Name="Input_Hotkeys_List" Grid.Row="3">
+						<ListBox x:Name="HotkeyList" IsHitTestVisible="False">
+							<ListBox.ItemContainerStyle>
+								<Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+									<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								</Style>
+							</ListBox.ItemContainerStyle>
+
+							<ListBox.GroupStyle>
+								<GroupStyle >
+									<GroupStyle.ContainerStyle>
+										<Style TargetType="{x:Type GroupItem}">
+											<Setter Property="Template">
+												<Setter.Value>
+													<ControlTemplate>
+														<GroupBox Header="{Binding Name}" Margin="3, 6, 3, 0">
+															<ItemsPresenter Margin="6,0,0,0"/>
+														</GroupBox>
+													</ControlTemplate>
+												</Setter.Value>
+											</Setter>
+										</Style>
+									</GroupStyle.ContainerStyle>
+								</GroupStyle>
+							</ListBox.GroupStyle>
+
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<Grid>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition/>
+											<ColumnDefinition Width="100"/>
+										</Grid.ColumnDefinitions>
+
+										<TextBlock Grid.Column="0" Text="{Binding Name}"/>
+
+										<StackPanel Orientation="Horizontal" Grid.Column="1" >
+											<StackPanel Orientation="Horizontal" Visibility="{Binding ModifierName, Converter={StaticResource NotNullToVisibilityConverter}}">
+												<TextBlock Text="{Binding ModifierName}"/>
+												<TextBlock Text=" + "/>
+											</StackPanel>
+											<TextBlock Text="{Binding KeyName}"/>
+										</StackPanel>
+									</Grid>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</Grid>
+				</Grid>
+			</GroupBox>
+		</Grid>
+	</GroupBox>
+</UserControl>
