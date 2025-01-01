@@ -150,6 +150,9 @@
   "ActorTabs_PoseTab": "POSE",
   "ActorTabs_PoseTab_Tooltip": "Pose - Pose your actor",
 
+  "History_Context_Change": "Warning: Different History Context",
+  "History_Context_Change_Confirm": "The next change in history has a different context (e.g. from posing to appearance). This might cause unexpected results. Proceed?",
+
   "Character_Load_FfxivDat": "FFXIV Saved Appearance Data",
   "Character_Load_CMTool": "CMTool save",
   "Character_Reset": "Reset",
@@ -272,6 +275,7 @@
   "Character_ExWeapons_Header": "Extended Weapons",
 
   "Character_WarningGpose": "Appearance and Equipment can only be changed while not in Group Pose.",
+  "Character_WarningGposeWorldPosFrozen": "Appearance and Equipment can only be changed while world positions are not frozen.",
 
   "Character_Action_AnimationData": "Actor Data",
   "Character_Action_AnimationStatus": "Animation Status",
@@ -320,13 +324,15 @@
   "Pose_NoModel": "This actor does not have a model.",
   "Pose_NotEnabled": "Posing mode must be enabled.",
   "Pose_NothingSelected": "Character - Nothing Selected",
-  "Pose_LoadTip": "Load a pose from a file",
+  "Pose_LoadTip": "Load a pose from a file (Hold Shift to use pose file scaling)",
   "Pose_FullChar": "Full Character",
   "Pose_FullCharTooltip": "Loads a pose onto the entire actor",
   "Pose_Selected": "Selected Bones",
   "Pose_SelectedTooltip": "Loads a pose onto the actor's selected bones",
   "Pose_Expression": "Expression Only",
   "Pose_ExpressionTooltip": "Loads a pose onto the actor's face",
+  "Pose_WeaponsOnly": "Weapons Only",
+  "Pose_WeaponsOnlyTooltip": "Loads a pose onto the actor's main hand and off-hand",
   "Pose_ScalePack": "Body Scale",
   "Pose_Body": "Body Only",
   "Pose_BodyTooltip": "Loads a pose onto the entire actor, excluding the face",
@@ -738,8 +744,18 @@
   "Pose_iv_asi_kusu_a_r": "IVCS Fore Toe A Right",
   "Pose_iv_asi_kusu_b_r": "IVCS Fore Toe B Right",
 
+  "SettingsPages_General": "General",
+  "SettingsPages_General_Tooltip": "General application settings",
+  "SettingsPages_Personalization": "Personalization",
+  "SettingsPages_Personalization_Tooltip": "Application personalization",
+  "SettingsPages_Input": "Input & Hotkeys",
+  "SettingsPages_Input_Tooltip": "Input-related settings",
+  "SettingsPages_Connections": "Connections",
+  "SettingsPages_Connections_Tooltip": "Manage connections with external services",
+
   "Settings_Header": "Settings",
   "Settings_InterfaceHeader": "Interface",
+  "Settings_InputHeader": "Input",
   "Settings_FilesHeader": "Files",
   "Settings_KeysHeader": "Hotkeys",
   "Settings_Language": "Language",
@@ -775,7 +791,7 @@
   "Settings_ExternalHeader": "External Services",
   "Settings_UseExternalRefresh": "Use Penumbra Redraw",
   "Settings_UseExternalRefreshBrio": "Enable Brio Integration",
-  "Settings_UseExternalRefreshWarning": "Requires the HTTP API to be enabled in Penumbra/Brio. This option is found under the Advanced/Integrations section of the Settings tab of the plugins.",
+  "Settings_UseExternalRefreshWarning": "Requires HTTP API to be enabled in Penumbra/Brio. This option can be found under the Advanced/Integrations section of the plugins' settings.",
   "Settings_EnableNpcHack": "Enable NPC Faces on PC",
   "Settings_EnableNpcHackWarning": "This will break Penumbra Collections.",
   "Settings_GameHotkeysTooltip": "Enable the use of hotkeys even when FFXIV has focus while in GPose.\nThis will prevent FFXIV from recieving the used keys.",
@@ -873,5 +889,6 @@
   "Hotkey_Undo": "Undo",
   "Hotkey_Redo": "Redo",
 
-  "History_ChangeBone": "Change Bone: \"{0}\""
+  "History_ChangeBone": "Change Bone: \"{0}\"",
+  "History_ClearHistory": "Clear History",
 }

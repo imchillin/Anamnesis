@@ -3,312 +3,197 @@
 
 namespace Anamnesis.Tabs;
 
+using Anamnesis.Core;
+using Anamnesis.Services;
+using Anamnesis.Tabs.Settings;
+using FontAwesome.Sharp;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Forms;
 using System.Windows.Input;
-using Anamnesis.Files;
-using Anamnesis.Keyboard;
-using Anamnesis.Services;
-using PropertyChanged;
 
 /// <summary>
-/// Interaction logic for ThemeSettingsView.xaml.
+/// Interaction logic for SettingsTab.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
 public partial class SettingsTab : System.Windows.Controls.UserControl
 {
+	private string searchQuery = string.Empty;
+
 	public SettingsTab()
 	{
 		this.InitializeComponent();
 
 		this.ContentArea.DataContext = this;
 
-		List<double> sizes = new List<double>();
-		sizes.Add(0.75);
-		sizes.Add(1.0);
-		sizes.Add(1.25);
-		sizes.Add(1.5);
-		sizes.Add(1.75);
-		sizes.Add(2.0);
-		this.SizeSelector.ItemsSource = sizes;
-
-		List<FontOption> fonts = new();
-		foreach (Settings.Fonts font in Enum.GetValues<Settings.Fonts>())
+		// Set up settings pages
+		this.Pages = new ObservableCollection<SettingsPage>
 		{
-			fonts.Add(new FontOption(font));
+			new SettingsPage<GeneralSettingsPage>(IconChar.Cog, "SettingsPages", "General"),
+			new SettingsPage<InputSettingsPage>(IconChar.Keyboard, "SettingsPages", "Input"),
+			new SettingsPage<PersonalizationSettingsPage>(IconChar.Palette, "SettingsPages", "Personalization"),
+			new SettingsPage<ConnectionsSettingsPage>(IconChar.NetworkWired, "SettingsPages", "Connections"),
+		};
+
+		// Force initialization of all pages
+		// This is done to ensure that all settings are configured before the user interacts with them
+		foreach (var page in this.Pages)
+		{
+			page.IsActive = true;
+			var content = page.Content;
+			page.IsActive = false;
 		}
 
-		this.Fonts = fonts;
-
-		List<LanguageOption> languages = new();
-		foreach ((string key, string name) in LocalizationService.GetAvailableLocales())
-		{
-			languages.Add(new LanguageOption(key, name));
-		}
-
-		this.Languages = languages;
-
-		List<HotkeyOption> hotkeys = new();
-		foreach ((string function, KeyCombination keys) in SettingsService.Current.KeyboardBindings.GetBinds())
-		{
-			hotkeys.Add(new HotkeyOption(function, keys));
-		}
-
-		this.Hotkeys = hotkeys;
-
-		ICollectionView view = CollectionViewSource.GetDefaultView(this.Hotkeys);
-		view.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
-		view.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
-		view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-		this.HotkeyList.ItemsSource = view;
-
-		if (!SettingsService.Current.ShowGallery)
-		{
-			this.GalleryCombobox.SelectedIndex = 0;
-		}
-		else if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
-		{
-			this.GalleryCombobox.SelectedIndex = 1;
-		}
-		else
-		{
-			this.GalleryCombobox.SelectedIndex = 2;
-		}
+		// Set the first page as active
+		this.SelectedPage = this.Pages[0];
+		this.Pages[0].IsActive = true;
 	}
 
-	public SettingsService SettingsService => SettingsService.Instance;
+	public static SettingsService SettingsService => SettingsService.Instance;
+	public ObservableCollection<SettingsPage> Pages { get; private set; }
 
-	public IEnumerable<FontOption> Fonts { get; }
-	public IEnumerable<LanguageOption> Languages { get; }
-	public IEnumerable<HotkeyOption> Hotkeys { get; }
+	[DependsOn(nameof(this.Pages))]
+	public SettingsPage SelectedPage { get; set; }
 
-	public FontOption SelectedFont
+	public string SearchQuery
 	{
-		get
-		{
-			foreach (FontOption font in this.Fonts)
-			{
-				if (font.Font == SettingsService.Current.Font)
-				{
-					return font;
-				}
-			}
-
-			return this.Fonts.First();
-		}
-
+		get => this.searchQuery;
 		set
 		{
-			SettingsService.Current.Font = value.Font;
+			this.searchQuery = value;
+			this.FilterSettings();
 		}
 	}
 
-	public LanguageOption SelectedLanguage
+	public void OnSearchClearClicked(object sender, RoutedEventArgs e)
 	{
-		get
+		this.SearchQuery = string.Empty;
+	}
+
+	private void SelectPage(object sender, MouseButtonEventArgs e)
+	{
+		if (sender is not FrameworkElement senderElement)
+			return;
+
+		if (senderElement.DataContext is not SettingsPage selectedPage)
+			return;
+
+		this.SelectedPage = selectedPage;
+		foreach (var page in this.Pages)
 		{
-			foreach (LanguageOption language in this.Languages)
+			page.IsActive = page == selectedPage;
+		}
+	}
+
+	private void FilterSettings()
+	{
+		// Disable the settings sidebar if the search query is not empty
+		this.SettingsSidebar.IsEnabled = this.SearchQuery.Length == 0;
+
+		foreach (var page in this.Pages)
+		{
+			page.FilterContent(this.SearchQuery);
+			page.IsActive = string.IsNullOrEmpty(this.SearchQuery) ? page == this.SelectedPage : page.HasVisibleSettings;
+		}
+	}
+
+	[AddINotifyPropertyChangedInterface]
+	public abstract class SettingsPage : Page
+	{
+		public SettingsPage(IconChar icon, string context, string name)
+			: base(icon, context, name)
+		{
+		}
+
+		public abstract Dictionary<string, SettingCategory> SettingCategories { get; }
+		public bool HasVisibleSettings => this.SettingCategories.Any(category => category.Value.Element.Visibility == Visibility.Visible);
+
+		public abstract void FilterContent(string query);
+	}
+
+	public class SettingsPage<T> : SettingsPage
+		where T : System.Windows.Controls.UserControl, ISettingSection
+	{
+		private T? content;
+
+		public SettingsPage(IconChar icon, string context, string name)
+			: base(icon, context, name)
+		{
+		}
+
+		public override Dictionary<string, SettingCategory> SettingCategories => this.content?.SettingCategories ?? new Dictionary<string, SettingCategory>();
+
+		public override void FilterContent(string query)
+		{
+			if (this.Content is not ISettingSection filterableContent)
+				return;
+
+			foreach (var category in this.SettingCategories)
 			{
-				if (language.Key == SettingsService.Current.Language)
-				{
-					return language;
-				}
-			}
-
-			return this.Languages.First();
-		}
-
-		set
-		{
-			SettingsService.Current.Language = value.Key;
-			LocalizationService.SetLocale(value.Key);
-		}
-	}
-
-	private void OnBrowseCharacter(object sender, RoutedEventArgs e)
-	{
-		FolderBrowserDialog dlg = new FolderBrowserDialog();
-		dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.DefaultCharacterDirectory);
-		DialogResult result = dlg.ShowDialog();
-
-		if (result != DialogResult.OK)
-			return;
-
-		SettingsService.Current.DefaultCharacterDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
-	}
-
-	private void OnBrowsePose(object sender, RoutedEventArgs e)
-	{
-		FolderBrowserDialog dlg = new FolderBrowserDialog();
-		dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.DefaultPoseDirectory);
-		DialogResult result = dlg.ShowDialog();
-
-		if (result != DialogResult.OK)
-			return;
-
-		SettingsService.Current.DefaultPoseDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
-	}
-
-	private void OnBrowseCamera(object sender, RoutedEventArgs e)
-	{
-		FolderBrowserDialog dlg = new FolderBrowserDialog();
-		dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.DefaultCameraShotDirectory);
-		DialogResult result = dlg.ShowDialog();
-
-		if (result != DialogResult.OK)
-			return;
-
-		SettingsService.Current.DefaultCameraShotDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
-	}
-
-	private void OnBrowseScene(object sender, RoutedEventArgs e)
-	{
-		FolderBrowserDialog dlg = new FolderBrowserDialog();
-		dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.DefaultSceneDirectory);
-		DialogResult result = dlg.ShowDialog();
-
-		if (result != DialogResult.OK)
-			return;
-
-		SettingsService.Current.DefaultSceneDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
-	}
-
-	private void OnBrowseGallery(object sender, RoutedEventArgs e)
-	{
-		FolderBrowserDialog dlg = new FolderBrowserDialog();
-
-		if (SettingsService.Current.GalleryDirectory != null)
-			dlg.SelectedPath = FileService.ParseToFilePath(SettingsService.Current.GalleryDirectory);
-
-		DialogResult result = dlg.ShowDialog();
-
-		if (result != DialogResult.OK)
-			return;
-
-		SettingsService.Current.GalleryDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
-	}
-
-	private void OnGalleryChanged(object sender, SelectionChangedEventArgs e)
-	{
-		// 0 - none
-		// 1 - Curated
-		// 2 - Local
-		if (this.GalleryCombobox.SelectedIndex != 2)
-			SettingsService.Current.GalleryDirectory = null;
-
-		SettingsService.Current.ShowGallery = this.GalleryCombobox.SelectedIndex != 0;
-	}
-
-	public class FontOption
-	{
-		public FontOption(Settings.Fonts font)
-		{
-			this.Key = "Settings_Font_" + font.ToString();
-			this.Font = font;
-		}
-
-		public string Key { get; }
-		public Settings.Fonts Font { get; }
-	}
-
-	public class LanguageOption
-	{
-		public LanguageOption(string key, string display)
-		{
-			this.Key = key;
-			this.Display = display;
-		}
-
-		public string Key { get; }
-		public string Display { get; }
-	}
-
-	public class HotkeyOption
-	{
-		private readonly KeyCombination keys;
-		private readonly string function;
-
-		public HotkeyOption(string function, KeyCombination keys)
-		{
-			this.keys = keys;
-			this.function = function;
-
-			string[] parts = this.function.Split('.');
-			if (parts.Length == 2)
-			{
-				this.Category = LocalizationService.GetString("HotkeyCategory_" + parts[0], true);
-				if (this.Category == string.Empty)
-					this.Category = parts[0];
-
-				this.Name = LocalizationService.GetString("Hotkey_" + parts[1], true);
-				if (this.Name == string.Empty)
-					this.Name = parts[1];
-			}
-			else
-			{
-				this.Category = string.Empty;
-				this.Name = LocalizationService.GetString("Hotkey_" + function, true);
-				if (this.Name == string.Empty)
-					this.Name = function;
+				category.Value.UpdateVisibility(query);
 			}
 		}
 
-		public string Category { get; }
-		public string Name { get; }
-
-		public string KeyName => this.keys.Key.ToString();
-		public string? ModifierName
+		protected override System.Windows.Controls.UserControl CreateContent()
 		{
-			get
-			{
-				if (this.keys.Modifiers == ModifierKeys.None)
-					return null;
-
-				StringBuilder builder = new StringBuilder();
-				bool hasContent = false;
-
-				if (this.keys.Modifiers.HasFlag(ModifierKeys.Control))
-				{
-					builder.Append("Ctrl");
-					hasContent = true;
-				}
-
-				if (this.keys.Modifiers.HasFlag(ModifierKeys.Shift))
-				{
-					if (hasContent)
-						builder.Append(", ");
-
-					builder.Append("Shift");
-					hasContent = true;
-				}
-
-				if (this.keys.Modifiers.HasFlag(ModifierKeys.Alt))
-				{
-					if (hasContent)
-						builder.Append(", ");
-
-					builder.Append("Alt");
-					hasContent = true;
-				}
-
-				if (this.keys.Modifiers.HasFlag(ModifierKeys.Windows))
-				{
-					if (hasContent)
-						builder.Append(", ");
-
-					builder.Append("Win");
-					hasContent = true;
-				}
-
-				return builder.ToString();
-			}
+			this.content ??= Activator.CreateInstance<T>();
+			Debug.Assert(this.content != null, $"Failed to create page content: {typeof(T)}");
+			return this.content;
 		}
 	}
+}
+
+public class Setting
+{
+	public Setting(string key, UIElement element)
+	{
+		this.Key = key;
+		this.Element = element;
+		this.Text = LocalizationService.GetString(key) ?? key;
+	}
+
+	public string Key { get; }
+	public string Text { get; }
+	public UIElement Element { get; }
+}
+
+public class SettingCategory
+{
+	public SettingCategory(string key, UIElement element)
+	{
+		this.Key = key;
+		this.Element = element;
+		this.Settings = new List<Setting>();
+	}
+
+	public string Key { get; }
+	public UIElement Element { get; }
+	public List<Setting> Settings { get; set; }
+
+	public void UpdateVisibility(string query)
+	{
+		// If the query is empty, reset visibility of all settings
+		if (query.Length == 0)
+		{
+			this.Element.Visibility = Visibility.Visible;
+			this.Settings.ForEach(setting => setting.Element.Visibility = Visibility.Visible);
+			return;
+		}
+
+		// Check if the category header or any setting label matches the query
+		bool categoryMatches = this.Key.Contains(query, StringComparison.OrdinalIgnoreCase);
+		bool anyVisible = this.Settings.Any(setting => categoryMatches || setting.Text.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+		this.Element.Visibility = anyVisible ? Visibility.Visible : Visibility.Collapsed;
+		this.Settings.ForEach(setting => setting.Element.Visibility = categoryMatches || setting.Text.Contains(query, StringComparison.OrdinalIgnoreCase) ? Visibility.Visible : Visibility.Collapsed);
+	}
+}
+
+public interface ISettingSection
+{
+	Dictionary<string, SettingCategory> SettingCategories { get; }
 }

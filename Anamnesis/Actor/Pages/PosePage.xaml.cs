@@ -81,6 +81,7 @@ public partial class PosePage : UserControl
 		BodyOnly,       // Imports only the body part of the pose.
 		ExpressionOnly, // Imports only the facial expression part of the pose.
 		SelectedBones,  // Imports only the selected bones.
+		WeaponsOnly,    // Imports only the weapons (main hand and off-hand).
 	}
 
 	public SettingsService SettingsService => SettingsService.Instance;
@@ -295,11 +296,13 @@ public partial class PosePage : UserControl
 
 		if (this.Actor?.ModelObject != null)
 		{
+			this.Actor.Refreshed -= this.OnActorRefreshed;
 			this.Actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
 		}
 
 		if (newActor?.ModelObject != null)
 		{
+			newActor.Refreshed += this.OnActorRefreshed;
 			newActor.ModelObject.PropertyChanged += this.OnModelObjectChanged;
 		}
 
@@ -308,13 +311,18 @@ public partial class PosePage : UserControl
 		await this.Refresh();
 	}
 
+	private void OnActorRefreshed(object? sender, EventArgs? e)
+	{
+		// Restart the debounce timer if it's already running, otherwise start it.
+		this.refreshDebounceTimer.Stop();
+		this.refreshDebounceTimer.Start();
+	}
+
 	private void OnModelObjectChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName == nameof(ActorModelMemory.Skeleton))
 		{
-			// Restart the debounce timer if it's already running, otherwise start it.
-			this.refreshDebounceTimer.Stop();
-			this.refreshDebounceTimer.Start();
+			this.OnActorRefreshed(null, default);
 		}
 	}
 
@@ -338,10 +346,9 @@ public partial class PosePage : UserControl
 
 		try
 		{
-			if (this.Skeleton == null)
-				this.Skeleton = new SkeletonVisual3d();
-
-			await this.Skeleton.SetActor(this.Actor);
+			SkeletonVisual3d newSkeleton = this.Skeleton ?? new SkeletonVisual3d();
+			await newSkeleton.SetActor(this.Actor);
+			this.Skeleton = newSkeleton;
 
 			this.ThreeDView.DataContext = this.Skeleton;
 			this.BodyGuiView.DataContext = this.Skeleton;
@@ -361,7 +368,9 @@ public partial class PosePage : UserControl
 
 	private async void OnImportClicked(object sender, RoutedEventArgs e)
 	{
-		await this.ImportPose(PoseImportOptions.Character, PoseFile.Mode.All);
+		bool isShiftPressed = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+		PoseFile.Mode mode = isShiftPressed ? PoseFile.Mode.All : (PoseFile.Mode.All & ~PoseFile.Mode.Scale);
+		await this.ImportPose(PoseImportOptions.Character, mode);
 		this.Skeleton?.ClearSelection();
 	}
 
@@ -383,6 +392,11 @@ public partial class PosePage : UserControl
 	private async void OnImportSelectedBonesClicked(object sender, RoutedEventArgs e)
 	{
 		await this.HandleSecondaryOptionImport(PoseImportOptions.SelectedBones);
+	}
+
+	private async void OnImportWeaponsClicked(object sender, RoutedEventArgs e)
+	{
+		await this.HandleSecondaryOptionImport(PoseImportOptions.WeaponsOnly);
 	}
 
 	private async Task ImportPose(PoseImportOptions importOption, PoseFile.Mode mode)
@@ -450,6 +464,15 @@ public partial class PosePage : UserControl
 				// Don't unselected bones after import. Let the user decide what to do with the selection.
 				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
 				poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
+				return;
+			}
+
+			if (importOption == PoseImportOptions.WeaponsOnly)
+			{
+				this.Skeleton.SelectWeapons();
+				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+				poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
+				this.Skeleton.ClearSelection();
 				return;
 			}
 

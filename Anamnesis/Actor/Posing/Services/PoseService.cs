@@ -175,7 +175,7 @@ public class PoseService : ServiceBase<PoseService>
 		this.FreezePhysics = enabled;
 		this.FreezeRotation = enabled;
 		this.FreezePositions = enabled;
-		this.FreezeScale = enabled;
+		this.FreezeScale = false;
 		this.EnableParenting = true;
 
 		/*if (enabled)

@@ -183,13 +183,9 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 
 	private async void OnCreateActorClicked(object sender, RoutedEventArgs e)
 	{
-		SpawnOptions options = SpawnOptions.None;
-		if (PoseService.Instance.IsEnabled || PoseService.Instance.FreezeWorldPosition)
-			options |= SpawnOptions.ApplyModelPosition;
-
 		try
 		{
-			var nextActorId = await Brio.Spawn(options);
+			var nextActorId = await Brio.Spawn();
 			if (nextActorId != -1)
 			{
 				var actors = ActorService.Instance.GetAllActors(true);
@@ -215,6 +211,9 @@ public partial class TargetSelectorView : TargetSelectorDrawer
 							poseFile.Apply(fullActor, skeletonVisual3D, null, PoseFile.Mode.Rotation, true);
 						}
 					}
+
+					// Wait for actor's model object to become available
+					await Task.Delay(300);
 
 					this.Value = newActor;
 					this.OnSelectionChanged(true);

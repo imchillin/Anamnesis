@@ -7,7 +7,6 @@ using PropertyChanged;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 /// <summary>
 /// Represents an inplace fixed-length array in memory.
@@ -154,14 +153,6 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 				Log.Warning(ex, "Failed to read array object from memory");
 			}
 		}
-	}
-
-	/// <summary>Called when a property of the object changes.</summary>
-	/// <param name="sender">The sender of the event.</param>
-	/// <param name="e">The event arguments.</param>
-	protected override void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e)
-	{
-		this.Synchronize();
 	}
 
 	/// <summary>

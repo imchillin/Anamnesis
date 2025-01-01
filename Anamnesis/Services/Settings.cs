@@ -3,6 +3,8 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Keyboard;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,8 +12,6 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Anamnesis.Keyboard;
-using PropertyChanged;
 
 [Serializable]
 [AddINotifyPropertyChangedInterface]
@@ -64,7 +64,7 @@ public class Settings : INotifyPropertyChanged
 	public Dictionary<string, int> ActorTabOrder { get; set; } = new();
 	public Dictionary<string, bool> PosingBoneLinks { get; set; } = new();
 
-	public double WindowOpcaticy
+	public double WindowOpacity
 	{
 		get
 		{
@@ -111,10 +111,9 @@ public class Settings : INotifyPropertyChanged
 		public KeyCombination MainWindow_ActionTab { get; set; } = new(Key.D2);
 		public KeyCombination MainWindow_PoseTab { get; set; } = new(Key.D3);
 		public KeyCombination System_Undo { get; set; } = new(Key.Z, ModifierKeys.Control);
+		public KeyCombination System_Redo { get; set; } = new(Key.Y, ModifierKeys.Control);
 		public KeyCombination ActionPage_ResumeAll { get; set; } = new(Key.P, ModifierKeys.Control | ModifierKeys.Shift);
 		public KeyCombination ActionPage_PauseAll { get; set; } = new(Key.S, ModifierKeys.Control | ModifierKeys.Shift);
-
-		////public KeyCombinationSystem_Redo { get; set; } = new(Key.Y, ModifierKeys.Control);
 
 		public Dictionary<string, KeyCombination> GetBinds()
 		{
