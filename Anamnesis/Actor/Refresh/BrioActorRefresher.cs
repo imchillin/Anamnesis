@@ -4,6 +4,7 @@
 namespace Anamnesis.Actor.Refresh;
 
 using Anamnesis.Brio;
+using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.Memory;
 using Anamnesis.Services;
@@ -34,10 +35,9 @@ public class BrioActorRefresher : IActorRefresher
 		if (PoseService.Instance.IsEnabled)
 		{
 			// Save the current pose
-			PoseFile poseFile = new PoseFile();
-			SkeletonVisual3d skeletonVisual3D = new SkeletonVisual3d();
-			await skeletonVisual3D.SetActor(actor);
-			poseFile.WriteToFile(actor, skeletonVisual3D, null);
+			var poseFile = new PoseFile();
+			var skeleton = new Skeleton(actor);
+			poseFile.WriteToFile(actor, skeleton, null);
 
 			// Redraw
 			var result = await Brio.Redraw(actor.ObjectIndex);
@@ -50,9 +50,8 @@ public class BrioActorRefresher : IActorRefresher
 					await Dispatch.MainThread();
 
 					// Restore current pose
-					skeletonVisual3D = new SkeletonVisual3d();
-					await skeletonVisual3D.SetActor(actor);
-					poseFile.Apply(actor, skeletonVisual3D, null, PoseFile.Mode.All, true);
+					skeleton = new Skeleton(actor);
+					poseFile.Apply(actor, skeleton, null, PoseFile.Mode.All, true);
 				}).Start();
 			}
 		}

@@ -1,163 +1,87 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Actor;
+namespace Anamnesis.Actor.Posing.Visuals;
 
-using Anamnesis.Actor.Extensions;
-using Anamnesis.Memory;
-using Anamnesis.Posing.Visuals;
-using Anamnesis.Services;
 using MaterialDesignThemes.Wpf;
-using PropertyChanged;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using XivToolsWpf.Math3D;
 using XivToolsWpf.Math3D.Extensions;
-using CmQuaternion = System.Numerics.Quaternion;
-using CmVector = System.Numerics.Vector3;
-using Quaternion = System.Windows.Media.Media3D.Quaternion;
 
-[AddINotifyPropertyChangedInterface]
-public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
+/// <summary>
+/// Represents a 3D visual representation of a bone.
+/// The bone is part of a <see cref="SkeletonVisual3D"/>.
+/// </summary>
+public class BoneVisual3D : ModelVisual3D, IDisposable
 {
-	public readonly List<TransformMemory> TransformMemories = new();
+	private static readonly double SphereRadius = 0.015;
+	private static readonly Material SelectedMaterial = CreateMaterial(Colors.Orange);
+	private static readonly Material HoveredMaterial = CreateMaterial(Colors.DarkOrange);
+	private static readonly Material NormalMaterial = CreateMaterial(Colors.White, 128);
 
-	private const float EqualityTolerance = 0.00001f;
-	private static bool scaleLinked = true;
-
-	private readonly object transformLock = new();
-	private readonly QuaternionRotation3D rotation;
-	private readonly TranslateTransform3D position;
-	private BoneTargetVisual3d? targetVisual;
-	private BoneVisual3d? parent;
+	private readonly Sphere sphere;
+	private BoneVisual3D? parent;
 	private Line? lineToParent;
+	private Vector3? lastPosition;
+	private System.Numerics.Quaternion? lastRotation;
 
-	public BoneVisual3d(SkeletonVisual3d skeleton, string name)
+	/// <summary>
+	/// Initializes a new instance of the <see cref="BoneVisual3D"/> class.
+	/// </summary>
+	/// <param name="skeleton">The skeleton visual to which this bone belongs.</param>
+	/// <param name="bone">The bone entity to visualize.</param>
+	public BoneVisual3D(SkeletonVisual3D skeleton, BoneEntity bone)
 	{
 		this.Skeleton = skeleton;
+		this.Bone = bone;
 
-		this.rotation = new QuaternionRotation3D();
+		this.Rotation = new QuaternionRotation3D(bone.Rotation.ToMedia3DQuaternion());
 
-		RotateTransform3D rot = new() { Rotation = this.rotation };
-		this.position = new TranslateTransform3D();
+		RotateTransform3D rot = new() { Rotation = this.Rotation };
+		this.Position = new TranslateTransform3D(bone.Position.ToMedia3DVector());
 
 		Transform3DGroup transformGroup = new();
 		transformGroup.Children.Add(rot);
-		transformGroup.Children.Add(this.position);
+		transformGroup.Children.Add(this.Position);
 
 		this.Transform = transformGroup;
 
 		PaletteHelper ph = new();
 		ITheme t = ph.GetTheme();
 
-		this.targetVisual = new BoneTargetVisual3d(this);
-		this.Children.Add(this.targetVisual);
+		this.Initialize(bone);
 
-		this.BoneName = name;
+		this.sphere = new Sphere
+		{
+			Radius = SphereRadius,
+			Material = NormalMaterial,
+			Transform = new PrsTransform().Transform,
+		};
+		this.Children.Add(this.sphere);
 	}
 
-	public SkeletonVisual3d Skeleton { get; private set; }
-	public TransformMemory TransformMemory => this.TransformMemories[0];
+	/// <summary>Gets the rotation of the bone.</summary>
+	/// <remarks>The rotation is parent-relative.</remarks>
+	public QuaternionRotation3D Rotation { get; private set; }
 
-	public bool IsEnabled { get; set; } = true;
-	public string BoneName { get; set; }
-	public List<BoneVisual3d> LinkedBones { get; set; } = new();
-	public int LinkedBonesCount => this.LinkedBones.Count;
-	public virtual string TooltipKey => "Pose_" + this.BoneName;
-	public bool IsTransformLocked { get; set; } = false;
+	/// <summary>Gets the position of the bone.</summary>
+	/// <remarks>The position is parent-relative.</remarks>
+	public TranslateTransform3D Position { get; private set; }
 
-	public bool CanRotate => PoseService.Instance.FreezeRotation && !this.IsTransformLocked;
-	public CmQuaternion Rotation { get; set; }
-	public bool CanScale => PoseService.Instance.FreezeScale && !this.IsTransformLocked;
-	public CmVector Scale { get; set; }
-	public bool CanTranslate => PoseService.Instance.FreezePositions && !this.IsTransformLocked;
-	public CmVector Position { get; set; }
+	/// <summary>Gets the skeleton visual to which this bone belongs.</summary>
+	public SkeletonVisual3D Skeleton { get; private set; }
 
-	public bool IsAttachmentBone
+	/// <summary>Gets the bone entity being visualized.</summary>
+	public BoneEntity Bone { get; private set; }
+
+	/// <summary>Gets or sets the parent bone visual.</summary>
+	public BoneVisual3D? Parent
 	{
-		get
-		{
-			return this.BoneName == "n_buki_r" ||
-				this.BoneName == "n_buki_l" ||
-				this.BoneName == "j_buki_sebo_r" ||
-				this.BoneName == "j_buki_sebo_l";
-		}
-	}
-
-	public bool CanLinkScale => !this.IsAttachmentBone;
-
-	public bool ScaleLinked
-	{
-		get
-		{
-			if (this.IsAttachmentBone)
-				return true;
-
-			return scaleLinked;
-		}
-
-		set => scaleLinked = value;
-	}
-
-	public bool EnableLinkedBones
-	{
-		get
-		{
-			if (this.LinkedBonesCount <= 0)
-				return false;
-
-			return SettingsService.Current.PosingBoneLinks.Get(this.BoneName, true);
-		}
-
-		set
-		{
-			SettingsService.Current.PosingBoneLinks.Set(this.BoneName, value);
-
-			foreach (BoneVisual3d link in this.LinkedBones)
-			{
-				SettingsService.Current.PosingBoneLinks.Set(link.BoneName, value);
-			}
-		}
-	}
-
-	public string Tooltip
-	{
-		get
-		{
-			string? customName = CustomBoneNameService.GetBoneName(this.BoneName);
-
-			if (!string.IsNullOrEmpty(customName))
-				return customName;
-
-			string str = LocalizationService.GetString(this.TooltipKey, true);
-
-			if (string.IsNullOrEmpty(str))
-				return this.BoneName;
-
-			return str;
-		}
-
-		set
-		{
-			if (string.IsNullOrEmpty(value) || LocalizationService.GetString(this.TooltipKey, true) == value)
-			{
-				CustomBoneNameService.SetBoneName(this.BoneName, null);
-			}
-			else
-			{
-				CustomBoneNameService.SetBoneName(this.BoneName, value);
-			}
-		}
-	}
-
-	public BoneVisual3d? Parent
-	{
-		get
-		{
-			return this.parent;
-		}
+		get => this.parent;
 
 		set
 		{
@@ -167,25 +91,19 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 				this.parent.Children.Remove(this.lineToParent);
 			}
 
-			if (this.Skeleton.Children.Contains(this))
-				this.Skeleton.Children.Remove(this);
-
 			this.parent = value;
 
 			if (this.parent != null)
 			{
-				if (this.lineToParent == null)
+				this.lineToParent ??= new Line
 				{
-					this.lineToParent = new Line();
-					System.Windows.Media.Color c = default;
-					c.R = 128;
-					c.G = 128;
-					c.B = 128;
-					c.A = 255;
-					this.lineToParent.Color = c;
-					this.lineToParent.Points.Add(new Point3D(0, 0, 0));
-					this.lineToParent.Points.Add(new Point3D(0, 0, 0));
-				}
+					Color = Color.FromArgb(255, 128, 128, 128),
+					Points = new Point3DCollection
+					{
+						new Point3D(0, 0, 0),
+						new Point3D(0, 0, 0),
+					},
+				};
 
 				this.parent.Children.Add(this);
 				this.parent.Children.Add(this.lineToParent);
@@ -193,263 +111,139 @@ public class BoneVisual3d : ModelVisual3D, ITransform, IBone, IDisposable
 		}
 	}
 
-	public CmQuaternion RootRotation
-	{
-		get
-		{
-			CmQuaternion rot = this.Skeleton.RootRotation;
-
-			if (this.Parent == null)
-				return rot;
-
-			return rot * this.Parent.TransformMemory.Rotation;
-		}
-	}
-
-	public BoneVisual3d? Visual => this;
-
+	/// <summary>Disposes the bone visual and its children.</summary>
 	public void Dispose()
 	{
+		this.Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
+	/// <summary>Updates the visual representation of the bone.</summary>
+	/// <remarks>
+	/// Use this method to update the bone's position and rotation in the visual tree.
+	/// </remarks>
+	public void Update()
+	{
+		if (this.Bone == null)
+			return;
+
+		var currentPosition = this.Bone.Position;
+		var currentRotation = this.Bone.Rotation;
+		bool positionChanged = currentPosition != this.lastPosition;
+		bool rotationChanged = currentRotation != this.lastRotation;
+
+		if (positionChanged)
+		{
+			this.lastPosition = currentPosition;
+			this.Position.OffsetX = currentPosition.X;
+			this.Position.OffsetY = currentPosition.Y;
+			this.Position.OffsetZ = currentPosition.Z;
+		}
+
+		if (rotationChanged)
+		{
+			this.lastRotation = currentRotation;
+			this.Rotation.Quaternion = currentRotation.ToMedia3DQuaternion();
+		}
+
+		if (positionChanged || rotationChanged)
+		{
+			// Redraw the line connecting this bone to its parent
+			this.RedrawLineToParent();
+		}
+
+		// Handle child bones
+		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
+		{
+			bone.Update();
+		}
+	}
+
+	/// <summary>
+	/// Updates the material of the bone based on its selection and hover state.
+	/// </summary>
+	internal void UpdateMaterial()
+	{
+		if (this.Bone.IsHovered)
+			this.sphere.Material = HoveredMaterial;
+		else if (this.Bone.IsSelected)
+			this.sphere.Material = SelectedMaterial;
+		else
+			this.sphere.Material = NormalMaterial;
+
+		// Handle child bones
+		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
+		{
+			bone.UpdateMaterial();
+		}
+	}
+
+	/// <summary>
+	/// Disposes the bone visual and its children.
+	/// </summary>
+	/// <param name="disposing">True if the object is being disposed; otherwise, false.</param>
+	protected virtual void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			this.Children.Clear();
+
+			if (this.sphere != null)
+			{
+				this.sphere.Children.Clear();
+				this.sphere.Content = null;
+			}
+
+			this.parent?.Children.Remove(this);
+
+			if (this.lineToParent != null)
+			{
+				this.parent?.Children.Remove(this.lineToParent);
+				this.lineToParent.Dispose();
+				this.lineToParent = null;
+			}
+
+			this.parent = null;
+		}
+	}
+
+	/// <summary>
+	/// Creates a material with the specified color and alpha value.
+	/// </summary>
+	/// <param name="color">The color of the material.</param>
+	/// <param name="alpha">The alpha value of the material.</param>
+	/// <returns>The created material.</returns>
+	private static Material CreateMaterial(Color color, byte alpha = 255)
+	{
+		color.A = alpha;
+		return new DiffuseMaterial(new SolidColorBrush(color));
+	}
+
+	/// <summary>Initializes the visual representation of the bone.</summary>
+	/// <param name="bone">The bone entity to initialize.</param>
+	private void Initialize(BoneEntity bone)
+	{
 		this.Children.Clear();
-		this.targetVisual?.Dispose();
-		this.targetVisual = null;
 
-		this.parent?.Children.Remove(this);
-
-		if (this.lineToParent != null)
+		foreach (var childBone in bone.Children.OfType<BoneEntity>())
 		{
-			this.parent?.Children.Remove(this.lineToParent);
-			this.lineToParent.Dispose();
-			this.lineToParent = null;
+			var childVisual = new BoneVisual3D(this.Skeleton, childBone)
+			{
+				Parent = this,
+			};
 		}
-
-		this.parent = null;
 	}
 
-	public virtual void Synchronize()
+	/// <summary>Redraws the line connecting this bone to its parent.</summary>
+	private void RedrawLineToParent()
 	{
-		foreach (TransformMemory transformMemory in this.TransformMemories)
-			transformMemory.Synchronize();
-
-		this.ReadTransform();
-	}
-
-	public virtual void ReadTransform(bool readChildren = false, Dictionary<string, Transform>? snapshot = null)
-	{
-		if (!this.IsEnabled)
+		if (this.Parent == null || this.lineToParent == null)
 			return;
 
-		lock (this.transformLock)
-		{
-			Transform newTransform;
-
-			// Use the snapshot if provided
-			if (snapshot != null && snapshot.TryGetValue(this.BoneName, out var transform))
-			{
-				newTransform = transform;
-			}
-			else
-			{
-				newTransform = new Transform
-				{
-					Position = this.TransformMemory.Position,
-					Rotation = this.TransformMemory.Rotation,
-					Scale = this.TransformMemory.Scale,
-				};
-			}
-
-			// Convert the character-relative transform into a parent-relative transform
-			if (this.Parent != null)
-			{
-				Transform parentTransform;
-				if (snapshot != null && snapshot.TryGetValue(this.Parent.BoneName, out var parentSnapshot))
-				{
-					parentTransform = parentSnapshot;
-				}
-				else
-				{
-					parentTransform = new Transform
-					{
-						Position = this.Parent.TransformMemory.Position,
-						Rotation = this.Parent.TransformMemory.Rotation,
-						Scale = this.Parent.TransformMemory.Scale,
-					};
-				}
-
-				CmVector parentPosition = parentTransform.Position;
-				CmQuaternion parentRot = CmQuaternion.Normalize(parentTransform.Rotation);
-				parentRot = CmQuaternion.Inverse(parentRot);
-
-				// Relative position
-				newTransform.Position -= parentPosition;
-
-				// Unrotate bones, since we will transform them ourselves.
-				Matrix4x4 rotMatrix = Matrix4x4.CreateFromQuaternion(parentRot);
-				newTransform.Position = CmVector.Transform(newTransform.Position, rotMatrix);
-
-				// Relative rotation
-				newTransform.Rotation = CmQuaternion.Normalize(CmQuaternion.Multiply(parentRot, newTransform.Rotation));
-			}
-
-			// Apply the updates in a single step
-			this.Position = newTransform.Position;
-			this.Rotation = newTransform.Rotation;
-			this.Scale = newTransform.Scale;
-
-			// Set the Media3D hierarchy transforms
-			this.rotation.Quaternion = newTransform.Rotation.ToMedia3DQuaternion();
-			this.position.OffsetX = newTransform.Position.X;
-			this.position.OffsetY = newTransform.Position.Y;
-			this.position.OffsetZ = newTransform.Position.Z;
-
-			// Draw a line for visualization
-			if (this.Parent != null && this.lineToParent != null)
-			{
-				var endPoint = this.lineToParent.Points[1];
-				endPoint.X = newTransform.Position.X;
-				endPoint.Y = newTransform.Position.Y;
-				endPoint.Z = newTransform.Position.Z;
-				this.lineToParent.Points[1] = endPoint;
-			}
-
-			if (readChildren)
-			{
-				foreach (Visual3D child in this.Children)
-				{
-					if (child is BoneVisual3d childBone)
-					{
-						childBone.ReadTransform(true, snapshot);
-					}
-				}
-			}
-		}
-	}
-
-	public virtual void WriteTransform(ModelVisual3D root, bool writeChildren = true, bool writeLinked = true)
-	{
-		if (!this.IsEnabled)
-			return;
-
-		lock (this.transformLock)
-		{
-			foreach (TransformMemory transformMemory in this.TransformMemories)
-			{
-				transformMemory.EnableReading = false;
-			}
-
-			// Apply the current values to the visual tree
-			this.rotation.Quaternion = this.Rotation.ToMedia3DQuaternion();
-			this.position.OffsetX = this.Position.X;
-			this.position.OffsetY = this.Position.Y;
-			this.position.OffsetZ = this.Position.Z;
-
-			// convert the values in the tree to character-relative space
-			MatrixTransform3D transform;
-
-			try
-			{
-				transform = (MatrixTransform3D)this.TransformToAncestor(root);
-			}
-			catch (Exception ex)
-			{
-				throw new Exception($"Failed to transform bone: {this.BoneName} to root", ex);
-			}
-
-			var matrix = transform.Matrix;
-			Quaternion rotation = matrix.ToQuaternion();
-			rotation.Invert();
-
-			var position = new CmVector((float)matrix.OffsetX, (float)matrix.OffsetY, (float)matrix.OffsetZ);
-
-			// and push those values to the game memory
-			bool changed = false;
-			foreach (TransformMemory transformMemory in this.TransformMemories)
-			{
-				if (this.CanTranslate && !transformMemory.Position.IsApproximately(position, EqualityTolerance))
-				{
-					transformMemory.Position = position;
-					changed = true;
-				}
-
-				if (this.CanScale && !transformMemory.Scale.IsApproximately(this.Scale, EqualityTolerance))
-				{
-					transformMemory.Scale = this.Scale;
-					changed = true;
-				}
-
-				if (this.CanRotate)
-				{
-					CmQuaternion newRot = rotation.FromMedia3DQuaternion();
-					if (!transformMemory.Rotation.IsApproximately(newRot, EqualityTolerance))
-					{
-						transformMemory.Rotation = newRot;
-						changed = true;
-					}
-				}
-			}
-
-			if (changed)
-			{
-				if (writeLinked && this.EnableLinkedBones)
-				{
-					foreach (BoneVisual3d link in this.LinkedBones)
-					{
-						link.Rotation = this.Rotation;
-						link.WriteTransform(root, writeChildren, false);
-					}
-				}
-
-				if (writeChildren)
-				{
-					foreach (Visual3D child in this.Children)
-					{
-						if (child is BoneVisual3d childBone)
-						{
-							if (PoseService.Instance.EnableParenting)
-							{
-								childBone.WriteTransform(root);
-							}
-							else
-							{
-								childBone.ReadTransform(true);
-							}
-						}
-					}
-				}
-			}
-
-			foreach (TransformMemory transformMemory in this.TransformMemories)
-			{
-				transformMemory.EnableReading = true;
-			}
-		}
-	}
-
-	public void GetChildren(ref List<BoneVisual3d> bones)
-	{
-		foreach (Visual3D? child in this.Children)
-		{
-			if (child is BoneVisual3d childBoneVisual)
-			{
-				bones.Add(childBoneVisual);
-				childBoneVisual.GetChildren(ref bones);
-			}
-		}
-	}
-
-	public bool HasParent(BoneVisual3d target)
-	{
-		if (this.parent == null)
-			return false;
-
-		if (this.parent == target)
-			return true;
-
-		return this.parent.HasParent(target);
-	}
-
-	public override string ToString()
-	{
-		return base.ToString() + "(" + this.BoneName + ")";
+		var endPoint = this.lineToParent.Points[1];
+		endPoint.X = this.Position.OffsetX;
+		endPoint.Y = this.Position.OffsetY;
+		endPoint.Z = this.Position.OffsetZ;
+		this.lineToParent.Points[1] = endPoint;
 	}
 }

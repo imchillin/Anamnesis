@@ -242,9 +242,9 @@ public class ActorMemory : ActorBasicMemory
 				// Big hack to keep bone change history names short.
 				if (change.OriginBind.Memory.ParentBind?.Type == typeof(TransformMemory))
 				{
-					change.Name = (PoseService.SelectedBoneName == null) ?
+					change.Name = (PoseService.SelectedBonesText == null) ?
 						LocalizationService.GetStringFormatted("History_ChangeBone", "??") :
-						LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBoneName);
+						LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBonesText);
 				}
 
 				this.History.Record(change);

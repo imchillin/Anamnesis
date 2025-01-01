@@ -477,7 +477,7 @@
 						<XivToolsWpf:TextBlock Grid.Column="6" Key="Pose_Unique" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
 
 						<ItemsControl Grid.Column="7"
-									  ItemsSource="{Binding HairBones}">
+									  ItemsSource="{Binding HairBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}}">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<WrapPanel Width="220"/>
@@ -1053,7 +1053,7 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<Grid Grid.Row="0" Visibility="{Binding MetBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+						<Grid Grid.Row="0" Visibility="{Binding MetBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}, Converter={StaticResource NotEmptyToVisibilityConverter}}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="72" />
 								<ColumnDefinition />
@@ -1066,7 +1066,7 @@
 
 							<ItemsControl Grid.Column="1"
 										  Grid.Row="0"
-										  ItemsSource="{Binding MetBones}">
+										  ItemsSource="{Binding MetBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<WrapPanel Width="500"/>
@@ -1081,14 +1081,14 @@
 							</ItemsControl>
 						</Grid>
 
-						<Grid Grid.Row="1" Visibility="{Binding TopBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+						<Grid Grid.Row="1" Visibility="{Binding TopBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}, Converter={StaticResource NotEmptyToVisibilityConverter}}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="72" />
 								<ColumnDefinition />
 							</Grid.ColumnDefinitions>
 
 							<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_EqTop" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-							<ItemsControl Grid.Column="1" ItemsSource="{Binding TopBones}">
+							<ItemsControl Grid.Column="1" ItemsSource="{Binding TopBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<WrapPanel Width="500"/>
@@ -1118,7 +1118,7 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<Grid Grid.Row="0" Visibility="{Binding MainHandBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+						<Grid Grid.Row="0" Visibility="{Binding MainHandBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}, Converter={StaticResource NotEmptyToVisibilityConverter}}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition />
@@ -1131,7 +1131,7 @@
 
 							<ItemsControl Grid.Column="1"
 										  Grid.Row="0"
-										  ItemsSource="{Binding MainHandBones}">
+										  ItemsSource="{Binding MainHandBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<WrapPanel Width="500"/>
@@ -1146,14 +1146,14 @@
 							</ItemsControl>
 						</Grid>
 
-						<Grid Grid.Row="1" Visibility="{Binding OffHandBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
+						<Grid Grid.Row="1" Visibility="{Binding OffHandBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}, Converter={StaticResource NotEmptyToVisibilityConverter}}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition />
 							</Grid.ColumnDefinitions>
 
 							<XivToolsWpf:TextBlock Grid.Column="0" Key="Pose_WeaponOffHand" Style="{DynamicResource Label}" Margin="16, 0, 3, 0"/>
-							<ItemsControl Grid.Column="1" ItemsSource="{Binding OffHandBones}">
+							<ItemsControl Grid.Column="1" ItemsSource="{Binding OffHandBones, RelativeSource={RelativeSource AncestorType={x:Type local:PoseMatrixView}}}">
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<WrapPanel Width="500"/>

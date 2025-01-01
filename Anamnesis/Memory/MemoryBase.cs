@@ -469,8 +469,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </summary>
 	protected void ClaimLocks()
 	{
-		// Monitor.Enter(this.lockObject);
-		if (!Monitor.TryEnter(this.lockObject, 1000))
+		if (!Monitor.TryEnter(this.lockObject, 5000))
 			throw new Exception("Failed to claim lock on memory object. Possible deadlock?");
 
 		foreach (MemoryBase child in this.Children)

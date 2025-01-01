@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.Actor.Posing;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -116,12 +117,8 @@ public class FaceTemplateSelector : DataTemplateSelector
 
 	public override DataTemplate? SelectTemplate(object item, DependencyObject container)
 	{
-		var skeleton = item as SkeletonVisual3d;
-
-		if (skeleton is null)
+		if (item is not SkeletonEntity skeleton)
 			return null;
-
-		this.OnContentTemplateChanged(skeleton);
 
 		string templateName = "StandardFaceTemplate";
 		if (skeleton.IsHrothgar)
@@ -150,10 +147,5 @@ public class FaceTemplateSelector : DataTemplateSelector
 			"VieraStraightFaceTemplate" => this.VieraStraightFaceTemplate,
 			_ => this.StandardFaceTemplate,
 		};
-	}
-
-	private void OnContentTemplateChanged(SkeletonVisual3d skeleton)
-	{
-		skeleton.NotifySkeletonChanged();
 	}
 }

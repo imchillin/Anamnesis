@@ -4,6 +4,8 @@
 namespace Anamnesis.Actor.Views;
 
 using Anamnesis.Actor.Pages;
+using Anamnesis.Actor.Posing;
+using Anamnesis.Core;
 using MaterialDesignThemes.Wpf;
 using Serilog;
 using System;
@@ -16,7 +18,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using XivToolsWpf.DependencyProperties;
 
-public partial class BoneView : UserControl, IBone
+public partial class BoneView : UserControl
 {
 	public static readonly IBind<string> LabelDp = Binder.Register<string, BoneView>(nameof(Label));
 	public static readonly IBind<string> NameDp = Binder.Register<string, BoneView>(nameof(BoneName));
@@ -25,7 +27,7 @@ public partial class BoneView : UserControl, IBone
 	private readonly List<Line> linesToChildren = new List<Line>();
 	private readonly List<Line> mouseLinesToChildren = new List<Line>();
 
-	private SkeletonVisual3d? skeleton;
+	private SkeletonEntity? skeleton;
 
 	public BoneView()
 	{
@@ -36,7 +38,7 @@ public partial class BoneView : UserControl, IBone
 		this.IsEnabledChanged += this.OnIsEnabledChanged;
 	}
 
-	public BoneVisual3d? Bone { get; private set; }
+	public BoneEntity? Bone { get; private set; }
 
 	public string Label
 	{
@@ -55,8 +57,6 @@ public partial class BoneView : UserControl, IBone
 		get => FlippedNameDp.Get(this);
 		set => FlippedNameDp.Set(this, value);
 	}
-
-	public BoneVisual3d? Visual => this.Bone;
 
 	public string CurrentBoneName
 	{
@@ -89,13 +89,13 @@ public partial class BoneView : UserControl, IBone
 			if (this.skeleton != null)
 				this.skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
 
-			if (this.DataContext is SkeletonVisual3d viewModel)
+			if (this.DataContext is SkeletonEntity viewModel)
 			{
 				this.skeleton = viewModel;
 				this.SetBone(this.CurrentBoneName);
 				this.skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 			}
-			else if (this.DataContext is BoneVisual3d bone)
+			else if (this.DataContext is BoneEntity bone)
 			{
 				this.skeleton = bone.Skeleton;
 				this.SetBone(bone);
@@ -116,12 +116,14 @@ public partial class BoneView : UserControl, IBone
 
 	private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
-		bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonVisual3d.FlipSides) || e.PropertyName == nameof(SkeletonVisual3d.AllBones);
+		Application.Current.Dispatcher.Invoke(() =>
+		{
+			bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonEntity.FlipSides) || e.PropertyName == nameof(SkeletonEntity.Bones);
+			if (refreshBone && this.DataContext is SkeletonEntity)
+				this.SetBone(this.CurrentBoneName);
 
-		if (refreshBone && this.DataContext is SkeletonVisual3d)
-			this.SetBone(this.CurrentBoneName);
-
-		this.UpdateState();
+			this.UpdateState();
+		});
 	}
 
 	private void DrawSkeleton()
@@ -150,7 +152,7 @@ public partial class BoneView : UserControl, IBone
 		if (page == null)
 			return;
 
-		BoneVisual3d? parent = this.Bone?.Parent;
+		Bone? parent = this.Bone?.Parent;
 		if (parent != null)
 		{
 			List<BoneView> parentViews = page.GetBoneViews(parent);
@@ -221,11 +223,10 @@ public partial class BoneView : UserControl, IBone
 		this.SetBone(this.skeleton?.GetBone(name));
 	}
 
-	private void SetBone(BoneVisual3d? bone)
+	private void SetBone(BoneEntity? bone)
 	{
 		PosePage? page = this.FindParent<PosePage>();
-		if (page != null)
-			page.BoneViews.Add(this);
+		page?.BoneViews.Add(this);
 
 		this.Bone = bone;
 
@@ -272,7 +273,7 @@ public partial class BoneView : UserControl, IBone
 		if (this.skeleton == null || this.Bone == null)
 			return;
 
-		this.skeleton.Select(this);
+		this.skeleton.Select(this.Bone);
 	}
 
 	private void UpdateState()
@@ -287,7 +288,7 @@ public partial class BoneView : UserControl, IBone
 		this.ErrorEllipse.Visibility = Visibility.Collapsed;
 		this.BackgroundElipse.Visibility = Visibility.Visible;
 
-		PaletteHelper ph = new PaletteHelper();
+		PaletteHelper ph = new();
 		ITheme theme = ph.GetTheme();
 
 		if (!this.IsEnabled || this.skeleton == null)
@@ -301,10 +302,10 @@ public partial class BoneView : UserControl, IBone
 		this.BackgroundElipse.Opacity = 1;
 		this.BackgroundElipse.StrokeThickness = 1;
 
-		bool hovered = this.skeleton.GetIsBoneHovered(this.Bone);
-		bool selected = this.skeleton.GetIsBoneSelected(this.Bone);
-		bool parentSelected = this.skeleton.GetIsBoneParentsSelected(this.Bone);
-		bool parentHovered = this.skeleton.GetIsBoneParentsHovered(this.Bone);
+		bool hovered = this.Bone.IsHovered;
+		bool selected = this.Bone.IsSelected;
+		bool parentSelected = this.Bone.IsAncestorSelected();
+		bool parentHovered = this.Bone.IsAncestorHovered();
 
 		Color color = parentHovered ? theme.PrimaryMid.Color : theme.BodyLight;
 		double thickness = parentSelected || selected || parentHovered ? 2 : 1;

@@ -60,9 +60,9 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
-				<TextBox Grid.Row="0" Text="{Binding Skeleton.BoneSearch, UpdateSourceTrigger=PropertyChanged}" Margin="6" Style="{StaticResource MaterialDesignTextBox}"/>
+				<TextBox Grid.Row="0" Text="{Binding BoneSearch, UpdateSourceTrigger=PropertyChanged}" Margin="6" Style="{StaticResource MaterialDesignTextBox}"/>
 				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
-					<ItemsControl ItemsSource="{Binding Skeleton.BoneSearchResult}">
+					<ItemsControl ItemsSource="{Binding BoneSearchResult}">
 						<ItemsControl.ItemTemplate>
 							<DataTemplate>
 								<Grid>

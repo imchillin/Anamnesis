@@ -3,20 +3,25 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.Actor.Posing;
+using Anamnesis.Actor.Posing.Visuals;
 using Anamnesis.Services;
 using PropertyChanged;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO.Enumeration;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using XivToolsWpf;
 using XivToolsWpf.Math3D.Extensions;
-using Colors = System.Windows.Media.Colors;
 
 /// <summary>
 /// Interaction logic for CharacterPoseView.xaml.
@@ -56,10 +61,25 @@ public partial class Pose3DView : UserControl
 		}
 	}
 
-	public SkeletonVisual3d? Skeleton { get; set; }
+	public SkeletonEntity? Skeleton { get; set; }
+	public SkeletonVisual3D? Visual { get; set; }
 
 	public double CameraDistance { get; set; }
 	public Quaternion CameraRotation { get; set; }
+
+	public string BoneSearch { get; set; } = string.Empty;
+	public IEnumerable<BoneEntity> BoneSearchResult
+	{
+		get
+		{
+			if (this.Skeleton == null)
+				return Array.Empty<BoneEntity>();
+
+			return string.IsNullOrWhiteSpace(this.BoneSearch)
+				? this.Skeleton.Bones.Values.OfType<BoneEntity>()
+				: this.Skeleton.Bones.Values.OfType<BoneEntity>().Where(b => FileSystemName.MatchesSimpleExpression($"*{this.BoneSearch}*", b.Name) || FileSystemName.MatchesSimpleExpression($"*{this.BoneSearch}*", b.Tooltip));
+		}
+	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
@@ -75,15 +95,17 @@ public partial class Pose3DView : UserControl
 
 	private void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 	{
-		this.Skeleton = this.DataContext as SkeletonVisual3d;
+		this.Skeleton = this.DataContext as SkeletonEntity;
 
 		if (this.Skeleton == null)
 			return;
 
 		this.SkeletonRoot.Children.Clear();
 
-		if (!this.SkeletonRoot.Children.Contains(this.Skeleton))
-			this.SkeletonRoot.Children.Add(this.Skeleton);
+		this.Visual = new SkeletonVisual3D(this.Skeleton);
+
+		if (!this.SkeletonRoot.Children.Contains(this.Visual))
+			this.SkeletonRoot.Children.Add(this.Visual);
 
 		this.SkeletonRoot.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
 
@@ -92,20 +114,16 @@ public partial class Pose3DView : UserControl
 
 	private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		SkeletonVisual3d? vm = this.DataContext as SkeletonVisual3d;
-
-		if (vm == null)
+		if (this.DataContext is not SkeletonEntity vm)
 			return;
 
 		if (e.AddedItems == null || e.AddedItems.Count <= 0)
 			return;
 
-		BoneVisual3d? selected = e.AddedItems[0] as BoneVisual3d;
-
-		if (selected == null)
+		if (e.AddedItems[0] is not BoneEntity selected)
 			return;
 
-		vm.Hover(selected, true);
+		this.Skeleton?.Hover(selected, true);
 		vm.Select(selected);
 	}
 
@@ -123,31 +141,25 @@ public partial class Pose3DView : UserControl
 	private void FrameSkeleton()
 	{
 		// position camera at average center position of skeleton
-		if (this.Skeleton == null || this.Skeleton.Bones == null || this.Skeleton.Bones.Count <= 0)
+		if (this.Skeleton == null || this.Skeleton.Bones == null || this.Skeleton.Bones.IsEmpty)
 			return;
 
 		Rect3D bounds = default;
-
 		Vector3D? pos = null;
-		foreach (BoneVisual3d visual in this.Skeleton.Bones.Values)
-		{
-			if (pos == null)
-			{
-				pos = visual.Position.ToMedia3DVector();
-			}
-			else
-			{
-				pos = pos + visual.Position.ToMedia3DVector();
-			}
 
-			Point3D point = visual.Position.ToMedia3DPoint();
+		foreach (var bone in this.Skeleton.Bones.Values.OfType<BoneEntity>())
+		{
+			var bonePos = new Vector3D(bone.Position.X, bone.Position.Y, bone.Position.Z);
+			pos = pos == null ? bonePos : pos + bonePos;
+
+			var point = new Point3D(bone.Position.X, bone.Position.Y, bone.Position.Z);
 			bounds.Union(point);
 		}
 
 		if (pos == null)
 			return;
 
-		pos = pos / this.Skeleton.Bones.Count;
+		pos /= this.Skeleton.Bones.Count;
 
 		this.CameraDistance = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
 	}
@@ -193,11 +205,8 @@ public partial class Pose3DView : UserControl
 				if (this.Skeleton == null || this.Skeleton.Actor == null || CameraService.Instance.Camera == null)
 					continue;
 
-				// Update skeleton transforms until pose service is enabled
-				if (!PoseService.Instance.IsEnabled)
-				{
-					this.Skeleton.ReadTransforms();
-				}
+				// Update visual skeleton
+				this.Visual?.Update();
 
 				// TODO: allow the user to rotate camera with the mouse instead
 				this.CameraRotation = CameraService.Instance.Camera.Rotation3d.ToMedia3DQuaternion();

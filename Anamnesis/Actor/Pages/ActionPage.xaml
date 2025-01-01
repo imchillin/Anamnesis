@@ -460,15 +460,25 @@
 										Icon="User" />
 				</GroupBox.Header>
 
-				<controls:TransformEditor Value="{Binding Actor.ModelObject.Transform}">
-					<controls:TransformEditor.CanTranslate>
-						<MultiBinding Converter="{StaticResource AnyBoolIsFalseToBool}">
-							<Binding Path="Actor.IsMotionEnabled"/>
-							<Binding Path="PoseService.WorldPositionNotFrozen"/>
-							<Binding Path="GposeService.IsGpose"/>
-						</MultiBinding>
-					</controls:TransformEditor.CanTranslate>
-				</controls:TransformEditor>
+				<Grid>
+					<controls:TransformEditor Value="{Binding Actor.ModelObject.Transform}" IsEnabled="{Binding GposeService.IsGpose}">
+						<controls:TransformEditor.CanTranslateProperty>
+							<MultiBinding Converter="{StaticResource MultiBoolOr}">
+								<Binding Path="Actor.IsMotionDisabled"/>
+								<Binding Path="PoseService.FreezeWorldPosition"/>
+							</MultiBinding>
+						</controls:TransformEditor.CanTranslateProperty>
+					</controls:TransformEditor>
+
+					<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,0,45">
+						<XivToolsWpf:InfoControl.Visibility>
+							<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
+								<Binding Path="Actor.IsMotionEnabled"/>
+								<Binding Path="PoseService.WorldPositionNotFrozen"/>
+							</MultiBinding>
+						</XivToolsWpf:InfoControl.Visibility>
+					</XivToolsWpf:InfoControl>
+				</Grid>
 			</GroupBox>
 		</Grid>
     </Grid>

@@ -353,6 +353,9 @@
   "Pose_Linked": "Linked Bones",
   "Pose_Linked_Tooltip": "Linked bones will be moved in relation to the current bone",
 
+  "Pose_SelectedBones_TooltipTrimmed": " and {0} more bone(s) selected",
+  "Pose_SelectedBones_MultiSelected": "Selected Bones: {0}",
+
   "Pose_EnableRotation": "R",
   "Pose_EnableRotationTooltip": "Enable editing rotation",
   "Pose_EnableScale": "S",

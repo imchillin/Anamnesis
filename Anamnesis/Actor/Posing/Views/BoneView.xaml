@@ -21,7 +21,7 @@
 		<Grid.ToolTip>
 			<StackPanel>
 				<XivToolsWpf:TextBlock Text="{Binding Bone.Tooltip}" FontWeight="Bold" />
-				<XivToolsWpf:TextBlock Text="{Binding Bone.BoneName}" />
+				<XivToolsWpf:TextBlock Text="{Binding Bone.Name}" />
 			</StackPanel>
 		</Grid.ToolTip>
 
