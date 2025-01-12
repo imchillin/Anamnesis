@@ -303,6 +303,10 @@ public class SkeletonEntity : Skeleton
 		this.selectedBonesCache = null;
 		this.RaisePropertyChanged(nameof(this.HasSelection));
 		this.RaisePropertyChanged(nameof(this.SelectedBones));
+		this.RaisePropertyChanged(nameof(this.SelectedLinkedCount));
+		this.RaisePropertyChanged(nameof(this.SelectedEnableLinkedBones));
+		this.RaisePropertyChanged(nameof(this.SelectedLinkedBones));
+		this.RaisePropertyChanged(nameof(this.SelectedBonesParents));
 	}
 
 	/// <summary>Invalidates the hovered bones cache.</summary>

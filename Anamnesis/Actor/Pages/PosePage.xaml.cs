@@ -223,7 +223,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		CmQuaternion newRotation = targetBone.TransformMemory.Rotation.Mirror(); // character-relative transform
 		if (shouldFlip && targetBone.Name.EndsWith("_l"))
 		{
-			string rightBoneString = targetBone.Name.Substring(0, targetBone.Name.Length - 2) + "_r"; // removes the "_l" and replaces it with "_r"
+			string rightBoneString = string.Concat(targetBone.Name.AsSpan(0, targetBone.Name.Length - 2), "_r"); // removes the "_l" and replaces it with "_r"
 			/*	Useful debug lines to make sure the correct bones are grabbed...
 				*	Log.Information("flipping: " + targetBone.BoneName);
 				*	Log.Information("right flip target: " + rightBoneString); */
@@ -646,7 +646,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.Skeleton?.ClearSelection();
 	}
 
-	// TODO: Test if this works the same way as the original implementation
 	private void OnSelectChildrenClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Skeleton == null)
@@ -661,7 +660,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.Skeleton.Select(bones, SkeletonEntity.SelectMode.Add);
 	}
 
-	// TODO: Check if this works the same way as the original implementation
 	private void OnFlipClicked(object sender, RoutedEventArgs e)
 	{
 		if (this.Actor == null)
@@ -733,7 +731,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		}
 	}
 
-	// TODO: Make sure this supports multiple selected bones
 	private void OnParentClicked(object sender, RoutedEventArgs e)
 	{
 		// If any of the selected bones have no parent, don't do anything
@@ -783,7 +780,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			this.DragSelectionBorder.Width = maxx - minx;
 			this.DragSelectionBorder.Height = maxy - miny;
 
-			List<BoneView> bones = new List<BoneView>();
+			var bones = new List<BoneView>();
 
 			foreach (BoneView bone in this.BoneViews)
 			{
@@ -837,7 +834,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				double maxx = minx + this.DragSelectionBorder.Width;
 				double maxy = miny + this.DragSelectionBorder.Height;
 
-				List<BoneView> toSelect = new List<BoneView>();
+				var toSelect = new List<BoneView>();
 
 				foreach (BoneView bone in this.BoneViews)
 				{

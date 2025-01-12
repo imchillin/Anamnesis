@@ -5,11 +5,11 @@ namespace Anamnesis.Actor.Views;
 
 using Anamnesis.Actor.Pages;
 using Anamnesis.Actor.Posing;
-using Anamnesis.Core;
 using MaterialDesignThemes.Wpf;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,8 +24,8 @@ public partial class BoneView : UserControl
 	public static readonly IBind<string> NameDp = Binder.Register<string, BoneView>(nameof(BoneName));
 	public static readonly IBind<string> FlippedNameDp = Binder.Register<string, BoneView>(nameof(FlippedBoneName));
 
-	private readonly List<Line> linesToChildren = new List<Line>();
-	private readonly List<Line> mouseLinesToChildren = new List<Line>();
+	private readonly List<Line> linesToChildren = new();
+	private readonly List<Line> mouseLinesToChildren = new();
 
 	private SkeletonEntity? skeleton;
 
@@ -149,74 +149,65 @@ public partial class BoneView : UserControl
 		this.linesToChildren.Clear();
 
 		PosePage? page = this.FindParent<PosePage>();
-		if (page == null)
+		if (page == null || this.Bone?.Parent == null)
 			return;
 
-		Bone? parent = this.Bone?.Parent;
-		if (parent != null)
+		foreach (BoneView childView in page.GetBoneViews(this.Bone.Parent))
 		{
-			List<BoneView> parentViews = page.GetBoneViews(parent);
+			if (childView.Visibility != Visibility.Visible)
+				continue;
 
-			foreach (BoneView childView in parentViews)
+			var scale = 1.0;
+
+			// Determine line stroke thickness (if placed inside a Viewbox element)
+			if (this.Parent is Canvas cvs && cvs.Parent is Viewbox vbox)
 			{
-				if (childView.Visibility != Visibility.Visible)
-					continue;
+				scale = vbox.ActualWidth / cvs.ActualWidth;
+			}
 
-				var scale = 1.0;
-
-				// Determine line stroke thickness (if placed inside a Viewbox element)
-				if (this.Parent is Canvas cvs && cvs.Parent is Viewbox vbox)
+			if (this.Parent is Canvas c1 && childView.Parent is Canvas c2 && c1 == c2)
+			{
+				Line line = new()
 				{
-					scale = vbox.ActualWidth / cvs.ActualWidth;
-				}
+					SnapsToDevicePixels = true,
+					StrokeThickness = 1 / scale,
+					Stroke = Brushes.Gray,
+					IsHitTestVisible = false,
+					X1 = this.GetCenterX(),
+					Y1 = this.GetCenterY(),
+					X2 = childView.GetCenterX(),
+					Y2 = childView.GetCenterY(),
+				};
 
-				if (this.Parent is Canvas c1 && childView.Parent is Canvas c2 && c1 == c2)
+				c1.Children.Insert(0, line);
+				this.linesToChildren.Add(line);
+
+				// A transparent line to make mouse operations easier
+				var line2 = new Line
 				{
-					Line line = new Line();
-					line.SnapsToDevicePixels = true;
-					line.StrokeThickness = 1 / scale;
-					line.Stroke = Brushes.Gray;
-					line.IsHitTestVisible = false;
+					StrokeThickness = 25,
+					Stroke = Brushes.Transparent,
+					X1 = line.X1,
+					Y1 = line.Y1,
+					X2 = line.X2,
+					Y2 = line.Y2,
+				};
 
-					// Note: Canvas.GetLeft and Canvas.GetTop return the element corner, including margin, padding, and border.
-					// Adjust for these properties in coordinate calculations.
-					double parentWidth = this.ActualWidth + this.Margin.Left + this.Margin.Right + this.Padding.Left + this.Padding.Right +
-						this.BorderThickness.Right;
-					double parentHeight = this.ActualHeight + this.Margin.Top + this.Margin.Bottom + this.Padding.Top + this.Padding.Bottom +
-						this.BorderThickness.Bottom;
-					double childWidth = childView.ActualWidth + childView.Margin.Left + childView.Margin.Right + childView.Padding.Left + childView.Padding.Right +
-						childView.BorderThickness.Right;
-					double childHeight = childView.ActualHeight + childView.Margin.Top + childView.Margin.Bottom + childView.Padding.Top + childView.Padding.Bottom +
-						childView.BorderThickness.Bottom;
+				line2.MouseEnter += childView.OnMouseEnter;
+				line2.MouseLeave += childView.OnMouseLeave;
+				line2.MouseUp += childView.OnMouseUp;
 
-					line.X1 = Canvas.GetLeft(this) + (parentWidth / 2);
-					line.Y1 = Canvas.GetTop(this) + (parentHeight / 2);
-					line.X2 = Canvas.GetLeft(childView) + (childWidth / 2);
-					line.Y2 = Canvas.GetTop(childView) + (childHeight / 2);
-
-					c1.Children.Insert(0, line);
-					this.linesToChildren.Add(line);
-
-					// A transparent line to make mouse operations easier
-					Line line2 = new Line();
-					line2.StrokeThickness = 25;
-					line2.Stroke = Brushes.Transparent;
-
-					line2.MouseEnter += childView.OnMouseEnter;
-					line2.MouseLeave += childView.OnMouseLeave;
-					line2.MouseUp += childView.OnMouseUp;
-
-					line2.X1 = line.X1;
-					line2.Y1 = line.Y1;
-					line2.X2 = line.X2;
-					line2.Y2 = line.Y2;
-
-					c1.Children.Insert(0, line2);
-					this.mouseLinesToChildren.Add(line2);
-				}
+				c1.Children.Insert(0, line2);
+				this.mouseLinesToChildren.Add(line2);
 			}
 		}
 	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private double GetCenterX() => Canvas.GetLeft(this) + ((this.ActualWidth + this.Margin.Left + this.Margin.Right + this.Padding.Left + this.Padding.Right + this.BorderThickness.Right) / 2);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private double GetCenterY() => Canvas.GetTop(this) + ((this.ActualHeight + this.Margin.Top + this.Margin.Bottom + this.Padding.Top + this.Padding.Bottom + this.BorderThickness.Bottom) / 2);
 
 	private void SetBone(string name)
 	{
@@ -229,11 +220,10 @@ public partial class BoneView : UserControl
 		page?.BoneViews.Add(this);
 
 		this.Bone = bone;
+		this.IsEnabled = bone != null;
 
 		if (this.Bone != null)
 		{
-			this.IsEnabled = true;
-
 			// Wait for all bone views to load, then draw the skeleton
 			Application.Current.Dispatcher.InvokeAsync(async () =>
 			{
@@ -244,7 +234,6 @@ public partial class BoneView : UserControl
 		}
 		else
 		{
-			this.IsEnabled = false;
 			this.UpdateState();
 		}
 	}
@@ -313,8 +302,7 @@ public partial class BoneView : UserControl
 		// Scale thickness based on viewbox scale (if applicable)
 		if (this.Parent is Canvas cvs && cvs.Parent is Viewbox vbox)
 		{
-			var scale = vbox.ActualWidth / cvs.ActualWidth;
-			thickness /= scale;
+			thickness /= vbox.ActualWidth / cvs.ActualWidth;
 		}
 
 		this.ForegroundElipse.Visibility = (selected || hovered) ? Visibility.Visible : Visibility.Hidden;
