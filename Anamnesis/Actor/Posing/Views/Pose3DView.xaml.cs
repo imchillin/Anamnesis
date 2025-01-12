@@ -37,6 +37,9 @@ public partial class Pose3DView : UserControl
 	private CancellationTokenSource? camUpdateCancelTokenSrc;
 	private bool cameraIsTicking = false;
 
+	private Point lastMousePosition;
+	private bool isPanning = false;
+
 	public Pose3DView()
 	{
 		this.InitializeComponent();
@@ -142,19 +145,55 @@ public partial class Pose3DView : UserControl
 		this.CameraDistance = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
 	}
 
-	private void OnViewportMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+	private void OnViewportMouseDown(object sender, MouseButtonEventArgs e)
 	{
-		Point mousePosition = e.GetPosition(this.Viewport);
-		HitTestResult hitResult = VisualTreeHelper.HitTest(this.Viewport, mousePosition);
-
-		if (hitResult is RayHitTestResult rayHitResult)
+		if (e.ChangedButton == MouseButton.Left)
 		{
-			BoneVisual3D? boneVisual = FindBoneVisual(rayHitResult.VisualHit);
-			if (boneVisual != null)
+			Point mousePosition = e.GetPosition(this.Viewport);
+			HitTestResult hitResult = VisualTreeHelper.HitTest(this.Viewport, mousePosition);
+
+			if (hitResult is RayHitTestResult rayHitResult)
 			{
-				this.Skeleton?.Select(boneVisual.Bone);
-				e.Handled = true;
+				BoneVisual3D? boneVisual = FindBoneVisual(rayHitResult.VisualHit);
+				if (boneVisual != null)
+				{
+					this.Skeleton?.Select(boneVisual.Bone);
+					e.Handled = true;
+				}
 			}
+		}
+		else if (e.ChangedButton == MouseButton.Middle && Keyboard.IsKeyDown(Key.LeftShift))
+		{
+			this.isPanning = true;
+			this.lastMousePosition = e.GetPosition(this.Viewport);
+			this.Viewport.CaptureMouse();
+			e.Handled = true;
+		}
+	}
+
+	private void OnViewportMouseMove(object sender, MouseEventArgs e)
+	{
+		if (this.isPanning)
+		{
+			Point currentMousePosition = e.GetPosition(this.Viewport);
+			Vector delta = Point.Subtract(currentMousePosition, this.lastMousePosition);
+
+			double panSpeed = 0.005;
+			this.CameraPosition.OffsetX -= delta.X * panSpeed;
+			this.CameraPosition.OffsetY += delta.Y * panSpeed;
+
+			this.lastMousePosition = currentMousePosition;
+			e.Handled = true;
+		}
+	}
+
+	private void OnViewportMouseUp(object sender, MouseButtonEventArgs e)
+	{
+		if (e.ChangedButton == MouseButton.Middle)
+		{
+			this.isPanning = false;
+			this.Viewport.ReleaseMouseCapture();
+			e.Handled = true;
 		}
 	}
 
@@ -162,6 +201,7 @@ public partial class Pose3DView : UserControl
 	{
 		this.CameraDistance -= e.Delta / 120;
 		this.CameraDistance = Math.Clamp(this.CameraDistance, 0, 300);
+		e.Handled = true;
 	}
 
 	private async Task UpdateCamera()

@@ -757,7 +757,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private void OnCanvasMouseMove(object sender, MouseEventArgs e)
 	{
-		if (this.Skeleton == null)
+		if (e.Handled || this.Skeleton == null)
 			return;
 
 		Point curMouseDownPoint = e.GetPosition(this.SelectionCanvas);
@@ -822,7 +822,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private void OnCanvasMouseUp(object sender, MouseButtonEventArgs e)
 	{
-		if (!this.isLeftMouseButtonDownOnWindow)
+		if (e.Handled || !this.isLeftMouseButtonDownOnWindow)
 			return;
 
 		this.isLeftMouseButtonDownOnWindow = false;
