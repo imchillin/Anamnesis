@@ -21,7 +21,6 @@
 			</Grid.ColumnDefinitions>
 
 			<Grid Grid.Column="0"
-				  MouseWheel="OnViewportMouseWheel"
 				  Background="Transparent">
 
 				<StackPanel IsEnabled="True"
@@ -36,7 +35,9 @@
 							Style="{StaticResource TransparentButton}" />
 				</StackPanel>
 
-				<Viewport3D x:Name="Viewport">
+				<Viewport3D x:Name="Viewport"
+							MouseWheel="OnViewportMouseWheel"
+							MouseLeftButtonDown="OnViewportMouseLeftButtonDown">
 					<ModelVisual3D>
 						<ModelVisual3D.Content>
 							<Model3DGroup>

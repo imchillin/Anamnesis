@@ -745,6 +745,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private void OnCanvasMouseDown(object sender, MouseButtonEventArgs e)
 	{
+		if (e.Handled)
+			return;
+
 		if (e.ChangedButton == MouseButton.Left)
 		{
 			this.isLeftMouseButtonDownOnWindow = true;

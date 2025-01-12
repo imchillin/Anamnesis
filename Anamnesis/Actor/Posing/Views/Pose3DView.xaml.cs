@@ -79,6 +79,19 @@ public partial class Pose3DView : UserControl
 		}
 	}
 
+	private static BoneVisual3D? FindBoneVisual(DependencyObject visual)
+	{
+		while (visual != null)
+		{
+			if (visual is BoneVisual3D boneVisual)
+				return boneVisual;
+
+			visual = VisualTreeHelper.GetParent(visual);
+		}
+
+		return null;
+	}
+
 	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
 		this.OnDataContextChanged(null, default);
@@ -127,6 +140,22 @@ public partial class Pose3DView : UserControl
 		}
 
 		this.CameraDistance = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
+	}
+
+	private void OnViewportMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+	{
+		Point mousePosition = e.GetPosition(this.Viewport);
+		HitTestResult hitResult = VisualTreeHelper.HitTest(this.Viewport, mousePosition);
+
+		if (hitResult is RayHitTestResult rayHitResult)
+		{
+			BoneVisual3D? boneVisual = FindBoneVisual(rayHitResult.VisualHit);
+			if (boneVisual != null)
+			{
+				this.Skeleton?.Select(boneVisual.Bone);
+				e.Handled = true;
+			}
+		}
 	}
 
 	private void OnViewportMouseWheel(object sender, MouseWheelEventArgs e)
