@@ -34,9 +34,21 @@
 
 					<Button Padding="6,2"
 							Margin="3"
-							Click="OnFrameClicked"
+							Click="OnResetCameraButtonClicked"
 							Content="Reset Camera"
 							Style="{StaticResource TransparentButton}" />
+
+					<CheckBox x:Name="FollowInGameCameraCheckbox"
+							  Margin="5,0,3,0"
+							  VerticalContentAlignment="Center"
+							  IsChecked="{Binding SyncWithGameCamera}">
+
+						<XivToolsWpf:TextBlock Key="Pose_SyncWithGameCamera" Margin="0, 0, 0, 3" />
+
+						<CheckBox.ToolTip>
+							<XivToolsWpf:TextBlock Key="Pose_SyncWithGameCamera_Tooltip" />
+						</CheckBox.ToolTip>
+					</CheckBox>
 				</StackPanel>
 
 				<Viewport3D x:Name="Viewport">

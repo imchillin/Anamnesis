@@ -352,6 +352,8 @@
   "Pose_Position": "Position",
   "Pose_Linked": "Linked Bones",
   "Pose_Linked_Tooltip": "Linked bones will be moved in relation to the current bone",
+  "Pose_SyncWithGameCamera": "Camera Sync",
+  "Pose_SyncWithGameCamera_Tooltip": "Synchronize with the in-game camera",
 
   "Pose_SelectedBones_TooltipTrimmed": " and {0} more bone(s) selected",
   "Pose_SelectedBones_MultiSelected": "Selected Bones: {0}",

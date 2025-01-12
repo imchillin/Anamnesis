@@ -22,7 +22,13 @@ using System.Windows.Media.Media3D;
 using XivToolsWpf;
 using XivToolsWpf.Math3D.Extensions;
 
-// TODO: Allow the user to rotate camera with the mouse
+public enum CameraInteractionMode
+{
+	None,
+	Panning,
+	Rotating,
+	Selection,
+}
 
 /// <summary>
 /// Interaction logic for Pose3DView.xaml.
@@ -38,7 +44,8 @@ public partial class Pose3DView : UserControl
 	private bool cameraIsTicking = false;
 
 	private Point lastMousePosition;
-	private bool isPanning = false;
+
+	private CameraInteractionMode interactionMode = CameraInteractionMode.None;
 
 	public Pose3DView()
 	{
@@ -81,6 +88,8 @@ public partial class Pose3DView : UserControl
 				: this.Skeleton.Bones.Values.OfType<BoneEntity>().Where(b => FileSystemName.MatchesSimpleExpression($"*{this.BoneSearch}*", b.Name) || FileSystemName.MatchesSimpleExpression($"*{this.BoneSearch}*", b.Tooltip));
 		}
 	}
+
+	public bool SyncWithGameCamera { get; set; } = true;
 
 	private static BoneVisual3D? FindBoneVisual(DependencyObject visual)
 	{
@@ -125,7 +134,7 @@ public partial class Pose3DView : UserControl
 		this.FrameSkeleton();
 	}
 
-	private void OnFrameClicked(object sender, RoutedEventArgs e)
+	private void OnResetCameraButtonClicked(object sender, RoutedEventArgs e)
 	{
 		this.FrameSkeleton();
 	}
@@ -143,6 +152,14 @@ public partial class Pose3DView : UserControl
 		}
 
 		this.CameraDistance = Math.Max(Math.Max(bounds.SizeX, bounds.SizeY), bounds.SizeZ);
+
+		if (this.Visual != null)
+		{
+			foreach (BoneVisual3D bone in this.Visual.Children.OfType<BoneVisual3D>())
+			{
+				bone.OnCameraUpdated(this);
+			}
+		}
 	}
 
 	private void OnViewportMouseDown(object sender, MouseButtonEventArgs e)
@@ -162,9 +179,17 @@ public partial class Pose3DView : UserControl
 				}
 			}
 		}
-		else if (e.ChangedButton == MouseButton.Middle && Keyboard.IsKeyDown(Key.LeftShift))
+		else if (e.ChangedButton == MouseButton.Middle)
 		{
-			this.isPanning = true;
+			if (Keyboard.IsKeyDown(Key.LeftShift))
+			{
+				this.interactionMode = CameraInteractionMode.Panning;
+			}
+			else
+			{
+				this.interactionMode = CameraInteractionMode.Rotating;
+			}
+
 			this.lastMousePosition = e.GetPosition(this.Viewport);
 			this.Viewport.CaptureMouse();
 			e.Handled = true;
@@ -173,7 +198,7 @@ public partial class Pose3DView : UserControl
 
 	private void OnViewportMouseMove(object sender, MouseEventArgs e)
 	{
-		if (this.isPanning)
+		if (this.interactionMode == CameraInteractionMode.Panning)
 		{
 			Point currentMousePosition = e.GetPosition(this.Viewport);
 			Vector delta = Point.Subtract(currentMousePosition, this.lastMousePosition);
@@ -185,13 +210,31 @@ public partial class Pose3DView : UserControl
 			this.lastMousePosition = currentMousePosition;
 			e.Handled = true;
 		}
+		else if (this.interactionMode == CameraInteractionMode.Rotating && !this.SyncWithGameCamera)
+		{
+			Point currentMousePosition = e.GetPosition(this.Viewport);
+			Vector delta = Point.Subtract(currentMousePosition, this.lastMousePosition);
+
+			double rotationSpeed = 0.5;
+			QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotation.Rotation;
+			Quaternion q = rot.Quaternion;
+
+			q *= new Quaternion(new Vector3D(0, 1, 0), -delta.X * rotationSpeed);
+			q *= new Quaternion(new Vector3D(1, 0, 0), delta.Y * rotationSpeed);
+
+			rot.Quaternion = q;
+			this.CameraRotation.Rotation = rot;
+
+			this.lastMousePosition = currentMousePosition;
+			e.Handled = true;
+		}
 	}
 
 	private void OnViewportMouseUp(object sender, MouseButtonEventArgs e)
 	{
 		if (e.ChangedButton == MouseButton.Middle)
 		{
-			this.isPanning = false;
+			this.interactionMode = CameraInteractionMode.None;
 			this.Viewport.ReleaseMouseCapture();
 			e.Handled = true;
 		}
@@ -199,8 +242,18 @@ public partial class Pose3DView : UserControl
 
 	private void OnViewportMouseWheel(object sender, MouseWheelEventArgs e)
 	{
-		this.CameraDistance -= e.Delta / 120;
+		double zoomSpeed = 0.2;
+		this.CameraDistance -= e.Delta / 120 * zoomSpeed;
 		this.CameraDistance = Math.Clamp(this.CameraDistance, 0, 300);
+
+		if (this.Visual != null)
+		{
+			foreach (BoneVisual3D bone in this.Visual.Children.OfType<BoneVisual3D>())
+			{
+				bone.OnCameraUpdated(this);
+			}
+		}
+
 		e.Handled = true;
 	}
 
@@ -237,9 +290,12 @@ public partial class Pose3DView : UserControl
 				this.Visual?.Update();
 
 				// Apply camera rotation
-				QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotation.Rotation;
-				rot.Quaternion = CameraService.Instance.Camera.Rotation3d.ToMedia3DQuaternion();
-				this.CameraRotation.Rotation = rot;
+				if (this.SyncWithGameCamera)
+				{
+					QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotation.Rotation;
+					rot.Quaternion = CameraService.Instance.Camera.Rotation3d.ToMedia3DQuaternion();
+					this.CameraRotation.Rotation = rot;
+				}
 
 				// Apply camera position
 				Point3D pos = this.Camera.Position;

@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Actor.Posing.Visuals;
 
+using Anamnesis.Actor.Views;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Linq;
@@ -22,6 +23,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	private static readonly Material SelectedMaterial = CreateMaterial(Colors.Orange);
 	private static readonly Material HoveredMaterial = CreateMaterial(Colors.DarkOrange);
 	private static readonly Material NormalMaterial = CreateMaterial(Colors.White, 128);
+	private readonly PrsTransform sphereTransform = new();
 
 	private readonly Sphere sphere;
 	private BoneVisual3D? parent;
@@ -59,7 +61,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 		{
 			Radius = SphereRadius,
 			Material = NormalMaterial,
-			Transform = new PrsTransform().Transform,
+			Transform = this.sphereTransform.Transform,
 		};
 		this.Children.Add(this.sphere);
 	}
@@ -156,6 +158,19 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
 		{
 			bone.Update();
+		}
+	}
+
+	public virtual void OnCameraUpdated(Pose3DView owner)
+	{
+		double scale = Math.Clamp(owner.CameraDistance * 0.5, 0.2, 1);
+		this.sphereTransform.UniformScale = scale;
+		this.sphere.Transform = this.sphereTransform.Transform;
+
+		// Handle child bones
+		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
+		{
+			bone.OnCameraUpdated(owner);
 		}
 	}
 

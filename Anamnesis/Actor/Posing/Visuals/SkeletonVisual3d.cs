@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Actor.Posing.Visuals;
 
+using Anamnesis.Actor.Views;
 using Anamnesis.Memory;
 using System.ComponentModel;
 using System.Linq;
@@ -68,6 +69,18 @@ public class SkeletonVisual3D : ModelVisual3D
 		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
 		{
 			bone.Update();
+		}
+	}
+
+	/// <summary>
+	/// Updates the camera view of the skeleton.
+	/// </summary>
+	/// <param name="owner">The owner of the viewport.</param>
+	public void OnCameraUpdated(Pose3DView owner)
+	{
+		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
+		{
+			bone.OnCameraUpdated(owner);
 		}
 	}
 
