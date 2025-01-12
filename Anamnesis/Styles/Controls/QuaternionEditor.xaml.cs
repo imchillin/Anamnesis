@@ -8,7 +8,7 @@ using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
 using System;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -316,16 +316,25 @@ public partial class QuaternionEditor : UserControl
 		return true;
 	}
 
-	private void WatchCamera()
+	private async Task WatchCamera()
 	{
 		bool vis = true;
 		while (vis && Application.Current != null)
 		{
-			try
+			if (Application.Current.Dispatcher.CheckAccess())
+			{
+				vis = this.IsVisible;
+
+				if (CameraService.Instance.Camera != null)
+				{
+					this.Viewport.Camera.Transform = new RotateTransform3D(new QuaternionRotation3D(CameraService.Instance.Camera.Rotation3d.ToMedia3DQuaternion()));
+				}
+			}
+			else
 			{
 				Application.Current.Dispatcher.Invoke(() =>
 				{
-					vis = this.IsVisible; ////&& this.IsEnabled;
+					vis = this.IsVisible;
 
 					if (CameraService.Instance.Camera != null)
 					{
@@ -333,11 +342,8 @@ public partial class QuaternionEditor : UserControl
 					}
 				});
 			}
-			catch (Exception)
-			{
-			}
 
-			Thread.Sleep(16);
+			await Task.Delay(16);
 		}
 	}
 
@@ -346,7 +352,7 @@ public partial class QuaternionEditor : UserControl
 		if (this.IsVisible)
 		{
 			// Watch camera thread
-			new Thread(new ThreadStart(this.WatchCamera)).Start();
+			Task.Run(() => this.WatchCamera());
 		}
 	}
 

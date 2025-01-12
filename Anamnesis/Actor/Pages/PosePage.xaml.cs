@@ -59,8 +59,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	private bool isDragging;
 	private Point origMouseDownPoint;
 
-	private Task? readSkeletonTask;
-	private Task? writeSkeletonTask;
+	private Task? skeletonUpdateThread;
 
 	private bool importPoseRotation = true;
 	private bool importPosePosition = true;
@@ -381,14 +380,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			this.MatrixView.DataContext = this.Skeleton;
 
 			// Start the skeleton read/write tasks
-			if (this.readSkeletonTask == null || this.readSkeletonTask.IsCompleted)
+			if (this.skeletonUpdateThread == null || this.skeletonUpdateThread.IsCompleted || this.skeletonUpdateThread.IsFaulted)
 			{
-				this.readSkeletonTask = Task.Run(this.ReadSkeletonThread);
-			}
-
-			if (this.writeSkeletonTask == null || this.writeSkeletonTask.IsCompleted)
-			{
-				this.writeSkeletonTask = Task.Run(this.WriteSkeletonThread);
+				this.skeletonUpdateThread = Task.Run(this.SkeletonUpdateThread);
 			}
 		}
 		catch (Exception ex)
@@ -881,7 +875,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.Skeleton.ReadTransforms();
 	}
 
-	private async Task ReadSkeletonThread()
+	private async Task SkeletonUpdateThread()
 	{
 		while (this.Skeleton != null)
 		{
@@ -889,25 +883,15 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 				return;
 
 			// Only update transforms while the pose service is disabled
-			if (PoseService.Instance.IsEnabled)
+			if (!PoseService.Instance.IsEnabled)
 			{
-				await Task.Delay(100);
-				continue;
+				this.Skeleton.ReadTransforms();
+			}
+			else
+			{
+				this.Skeleton.WriteSkeleton();
 			}
 
-			this.Skeleton.ReadTransforms();
-			await Task.Delay(16); // Up to 60 times a second
-		}
-	}
-
-	private async Task WriteSkeletonThread()
-	{
-		while (this.Skeleton != null)
-		{
-			if (this.Skeleton == null)
-				return;
-
-			this.Skeleton.WriteSkeleton();
 			await Task.Delay(16); // Up to 60 times a second
 		}
 	}

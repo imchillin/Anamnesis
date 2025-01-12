@@ -124,6 +124,7 @@ public partial class Pose3DView : UserControl
 		this.Skeleton = skeleton;
 		this.SkeletonRoot.Children.Clear();
 
+		// TODO: Find a better way to handle this. It is too resource intensive to create a new visual every time the skeleton changes.
 		this.Visual = new SkeletonVisual3D(this.Skeleton);
 
 		if (!this.SkeletonRoot.Children.Contains(this.Visual))

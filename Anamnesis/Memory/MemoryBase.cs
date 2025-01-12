@@ -7,6 +7,7 @@ using Anamnesis.Services;
 using PropertyChanged;
 using Serilog;
 using System;
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +15,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 
 /// <summary>
 /// Provides data for the PropertyChanged event, including additional change context information
@@ -298,6 +298,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <remarks>
 	/// The lock claim covers the memory object and all its descendants.
 	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static void ClaimLocksOn(MemoryBase memory)
 	{
 		memory.ClaimLocks();
@@ -308,6 +309,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <remarks>
 	/// The lock release covers the memory object and all its descendants.
 	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static void ReleaseLocksOn(MemoryBase memory)
 	{
 		memory.ReleaseLocks();
@@ -726,7 +728,9 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </remarks>
 	private void WriteDelayedBindsInternal()
 	{
-		var remainingBinds = new List<BindInfo>();
+		var remainingBinds = ArrayPool<BindInfo>.Shared.Rent(this.delayedBinds.Count);
+		int remainingCount = 0;
+
 		while (this.delayedBinds.TryDequeue(out BindInfo? bind))
 		{
 			if (bind is not PropertyBindInfo propertyBind)
@@ -735,7 +739,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			// If we still cant write this bind, just skip it.
 			if (!this.CanWrite(propertyBind))
 			{
-				remainingBinds.Add(propertyBind);
+				remainingBinds[remainingCount++] = propertyBind;
 				continue;
 			}
 
@@ -755,17 +759,20 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 			this.PropagatePropertyChanged(propertyBind.Name, change);
 		}
 
-		// Re-enqueue remaining binds
-		foreach (var bind in remainingBinds)
+		for (int i = 0; i < remainingCount; i++)
 		{
-			this.delayedBinds.Enqueue(bind);
+			this.delayedBinds.Enqueue(remainingBinds[i]);
 		}
+
+		ArrayPool<BindInfo>.Shared.Return(remainingBinds, clearArray: true);
 
 		if (!this.delayedBinds.IsEmpty)
 			Log.Warning("Failed to write all delayed binds, remaining: " + this.delayedBinds.Count);
 
-		// Process child memory objects in parallel
-		Parallel.ForEach(this.Children, child => child.WriteDelayedBindsInternal());
+		foreach (var child in this.Children)
+		{
+			child.WriteDelayedBindsInternal();
+		}
 	}
 
 	/// <summary>
