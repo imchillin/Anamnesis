@@ -7,12 +7,14 @@ using Anamnesis.Services;
 using PropertyChanged;
 using Serilog;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Provides data for the PropertyChanged event, including additional change context information
@@ -58,15 +60,15 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>List of child memory objects.</summary>
 	protected readonly List<MemoryBase> Children = new();
 
-	/// <summary>Set of delayed binds to be written later.</summary>
+	/// <summary>Lock object for thread synchronization.</summary>
+	private readonly object lockObject = new();
+
+	/// <summary>A collection of delayed binds to be written later.</summary>
 	/// <remarks>
 	/// Stores binds that could not be written to memory immediately
 	/// due to ongoing memory reads.
 	/// </remarks>
-	private readonly HashSet<BindInfo> delayedBinds = new();
-
-	/// <summary>Lock object for thread synchronization.</summary>
-	private readonly object lockObject = new();
+	private ConcurrentQueue<BindInfo> delayedBinds = new();
 
 	private int enableReading = 1;
 	private int enableWriting = 1;
@@ -432,11 +434,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		{
 			// If this bind couldn't be written right now, add it to the delayed bind list
 			// to attempt to write later.
-			lock (this.delayedBinds)
-			{
-				this.delayedBinds.Add(bind);
-			}
-
+			this.delayedBinds.Enqueue(bind);
 			return;
 		}
 
@@ -553,10 +551,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 				// Invalidate all delayed binds if they were created prior to the memory address change
 				// Note: This is only relevant to MemoryBase objects as they are reference type objects
-				lock (this.delayedBinds)
-				{
-					this.delayedBinds.RemoveWhere(b => b == bind);
-				}
+				this.delayedBinds = new ConcurrentQueue<BindInfo>(this.delayedBinds.Where(b => b != bind));
 
 				try
 				{
@@ -726,48 +721,46 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// </remarks>
 	private void WriteDelayedBindsInternal()
 	{
-		var remainingBinds = new List<PropertyBindInfo>();
-		lock (this.delayedBinds)
+		var remainingBinds = new List<BindInfo>();
+		while (this.delayedBinds.TryDequeue(out BindInfo? bind))
 		{
-			foreach (PropertyBindInfo bind in this.delayedBinds.Cast<PropertyBindInfo>())
+			if (bind is not PropertyBindInfo propertyBind)
+				continue;
+
+			// If we still cant write this bind, just skip it.
+			if (!this.CanWrite(propertyBind))
 			{
-				// If we still cant write this bind, just skip it.
-				if (!this.CanWrite(bind))
-				{
-					remainingBinds.Add(bind);
-					continue;
-				}
-
-				// Store the old value before it is overwritten by the new value in WriteToMemory
-				object? oldValue = bind.LastValue;
-
-				this.WriteToMemory(bind);
-
-				// Propagte property changed event to the rest of the application after writing to memory
-				var origin = PropertyChange.Origins.User;
-				if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
-				{
-					origin = PropertyChange.Origins.History;
-				}
-
-				var change = new PropertyChange(bind, oldValue, bind.LastValue, origin);
-				this.PropagatePropertyChanged(bind.Name, change);
+				remainingBinds.Add(propertyBind);
+				continue;
 			}
 
-			this.delayedBinds.Clear();
-			foreach (var bind in remainingBinds)
+			// Store the old value before it is overwritten by the new value in WriteToMemory
+			object? oldValue = propertyBind.LastValue;
+
+			this.WriteToMemory(propertyBind);
+
+			// Propagate property changed event to the rest of the application after writing to memory
+			var origin = PropertyChange.Origins.User;
+			if (!propertyBind.Flags.HasFlag(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
 			{
-				this.delayedBinds.Add(bind);
+				origin = PropertyChange.Origins.History;
 			}
 
-			if (this.delayedBinds.Count > 0)
-				Log.Warning("Failed to write all delayed binds, remaining: " + this.delayedBinds.Count);
+			var change = new PropertyChange(propertyBind, oldValue, propertyBind.LastValue, origin);
+			this.PropagatePropertyChanged(propertyBind.Name, change);
 		}
 
-		foreach (MemoryBase? child in this.Children)
+		// Re-enqueue remaining binds
+		foreach (var bind in remainingBinds)
 		{
-			child.WriteDelayedBindsInternal();
+			this.delayedBinds.Enqueue(bind);
 		}
+
+		if (!this.delayedBinds.IsEmpty)
+			Log.Warning("Failed to write all delayed binds, remaining: " + this.delayedBinds.Count);
+
+		// Process child memory objects in parallel
+		Parallel.ForEach(this.Children, child => child.WriteDelayedBindsInternal());
 	}
 
 	/// <summary>
