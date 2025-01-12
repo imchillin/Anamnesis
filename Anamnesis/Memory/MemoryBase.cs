@@ -382,6 +382,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>Determines if a bind can be read from.</summary>
 	/// <param name="bind">The bind information.</param>
 	/// <returns>True if the bind can be read; otherwise, false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected virtual bool CanRead(BindInfo bind)
 	{
 		if (this.Parent != null)
@@ -393,6 +394,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>Determines if a bind can be written to.</summary>
 	/// <param name="bind">The bind information.</param>
 	/// <returns>True if the bind can be written; otherwise, false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected virtual bool CanWrite(BindInfo bind)
 	{
 		if (this.Parent != null)
@@ -465,6 +467,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>
 	/// Claims locks for the current object and its descendants.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected void ClaimLocks()
 	{
 		if (!Monitor.TryEnter(this.lockObject, 5000))
@@ -479,6 +482,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <summary>
 	/// Releases locks for the current object and its descendants.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected void ReleaseLocks()
 	{
 		foreach (MemoryBase child in this.Children)
@@ -493,6 +497,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// Sets the synchronization state for the current object and its descendants.
 	/// </summary>
 	/// <param name="value">The synchronization state.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected void SetIsSynchronizing(bool value)
 	{
 		this.IsSynchronizing = value;
@@ -773,6 +778,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// that originate from the game do not get processed via the OnSelfPropertyChanged, which is
 	/// intended to be called only for user-initiated changes (incl. history).
 	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void SetValueWithoutNotification(PropertyBindInfo bind, object? value)
 	{
 		this.suppressPropNotifications.Value = true;
@@ -786,6 +792,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// <param name="propertyName">The name of the property that changed.</param>
 	/// <param name="context">The context of the property change.</param>
 	/// <exception cref="Exception">Thrown when the parent is not null but the parent bind is null.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void PropagatePropertyChanged(string propertyName, PropertyChange context)
 	{
 		this.PropertyChanged?.Invoke(this, new MemObjPropertyChangedEventArgs(propertyName, context));
