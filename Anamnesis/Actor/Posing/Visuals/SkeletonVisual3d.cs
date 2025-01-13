@@ -5,6 +5,7 @@ namespace Anamnesis.Actor.Posing.Visuals;
 
 using Anamnesis.Actor.Views;
 using Anamnesis.Memory;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media.Media3D;
@@ -15,10 +16,11 @@ using XivToolsWpf.Math3D.Extensions;
 /// Represents a 3D visual representation of a skeleton.
 /// The visual skeleton is comprised of a collection of <see cref="BoneVisual3D"/> objects.
 /// </summary>
-public class SkeletonVisual3D : ModelVisual3D
+public class SkeletonVisual3D : ModelVisual3D, IDisposable
 {
 	/// <summary>The root rotation of the skeleton.</summary>
 	private readonly RotateTransform3D rotateTransform;
+	private bool disposed = false;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SkeletonVisual3D"/> class.
@@ -59,6 +61,15 @@ public class SkeletonVisual3D : ModelVisual3D
 	/// <summary>Gets the skeleton entity being visualized.</summary>
 	public SkeletonEntity Skeleton { get; private set; }
 
+	/// <summary>
+	/// Disposes the resources used by the <see cref="SkeletonVisual3D"/> class.
+	/// </summary>
+	public void Dispose()
+	{
+		this.Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
 	/// <summary>Updates the visual representation of the skeleton.</summary>
 	/// <remarks>
 	/// Use this method if you want to update the positions and rotations
@@ -81,6 +92,38 @@ public class SkeletonVisual3D : ModelVisual3D
 		foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
 		{
 			bone.OnCameraUpdated(owner);
+		}
+	}
+
+	/// <summary>
+	/// Disposes the resources used by the <see cref="SkeletonVisual3D"/> class.
+	/// </summary>
+	/// <param name="disposing">True if managed resources should be disposed; otherwise, false.</param>
+	protected virtual void Dispose(bool disposing)
+	{
+		if (!this.disposed)
+		{
+			if (disposing)
+			{
+				// Dispose managed resources
+				if (this.Skeleton.Actor.ModelObject?.Transform != null)
+				{
+					this.Skeleton.Actor.ModelObject.Transform.PropertyChanged -= this.OnTransformPropertyChanged;
+				}
+
+				this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+
+				foreach (var child in this.Children.OfType<IDisposable>())
+				{
+					child.Dispose();
+				}
+
+				this.Children.Clear();
+			}
+
+			/* Dispose unmanaged resources here if any */
+
+			this.disposed = true;
 		}
 	}
 

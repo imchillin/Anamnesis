@@ -116,14 +116,17 @@ public partial class BoneView : UserControl
 
 	private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
 	{
-		Application.Current.Dispatcher.Invoke(() =>
+		bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonEntity.FlipSides) || e.PropertyName == nameof(SkeletonEntity.Bones);
+		if (refreshBone && this.DataContext is SkeletonEntity)
 		{
-			bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonEntity.FlipSides) || e.PropertyName == nameof(SkeletonEntity.Bones);
-			if (refreshBone && this.DataContext is SkeletonEntity)
-				this.SetBone(this.CurrentBoneName);
+			this.SetBone(this.CurrentBoneName);
+			return; // SetBone will update the state
+		}
 
+		if (e.PropertyName == nameof(SkeletonEntity.SelectedBones) || e.PropertyName == nameof(SkeletonEntity.HoveredBones))
+		{
 			this.UpdateState();
-		});
+		}
 	}
 
 	private void DrawSkeleton()
@@ -256,10 +259,7 @@ public partial class BoneView : UserControl
 
 	private void OnMouseUp(object sender, MouseButtonEventArgs e)
 	{
-		if (!this.IsEnabled)
-			return;
-
-		if (this.skeleton == null || this.Bone == null)
+		if (!this.IsEnabled || this.skeleton == null || this.Bone == null)
 			return;
 
 		this.skeleton.Select(this.Bone);

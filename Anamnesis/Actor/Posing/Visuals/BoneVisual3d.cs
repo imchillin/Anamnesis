@@ -23,6 +23,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	private static readonly Material SelectedMaterial = CreateMaterial(Colors.Orange);
 	private static readonly Material HoveredMaterial = CreateMaterial(Colors.DarkOrange);
 	private static readonly Material NormalMaterial = CreateMaterial(Colors.White, 128);
+	private static readonly Sphere PrecomputedSphere = CreatePrecomputedSphere();
 	private readonly PrsTransform sphereTransform = new();
 
 	private readonly Sphere sphere;
@@ -57,12 +58,11 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 
 		this.Initialize(bone);
 
-		this.sphere = new Sphere
+		this.sphere = new Sphere(PrecomputedSphere)
 		{
-			Radius = SphereRadius,
-			Material = NormalMaterial,
 			Transform = this.sphereTransform.Transform,
 		};
+
 		this.Children.Add(this.sphere);
 	}
 
@@ -220,6 +220,21 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 
 			this.parent = null;
 		}
+	}
+
+	/// <summary>
+	/// Creates a precomputed sphere instance.
+	/// </summary>
+	/// <returns>The precomputed sphere.</returns>
+	private static Sphere CreatePrecomputedSphere()
+	{
+		var sphere = new Sphere
+		{
+			Radius = SphereRadius,
+			Material = NormalMaterial,
+		};
+
+		return sphere;
 	}
 
 	/// <summary>
