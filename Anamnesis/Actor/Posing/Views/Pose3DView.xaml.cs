@@ -204,8 +204,15 @@ public partial class Pose3DView : UserControl
 			Vector delta = Point.Subtract(currentMousePosition, this.lastMousePosition);
 
 			double panSpeed = 0.005;
-			this.CameraPosition.OffsetX -= delta.X * panSpeed;
-			this.CameraPosition.OffsetY += delta.Y * panSpeed;
+
+			// Transform the delta vector by the camera's rotation
+			Vector3D panVector = new(delta.X * panSpeed, delta.Y * panSpeed, 0);
+			Matrix3D rotationMatrix = this.CameraRotation.Value;
+			Vector3D transformedPanVector = rotationMatrix.Transform(panVector);
+
+			this.CameraPosition.OffsetX += transformedPanVector.X;
+			this.CameraPosition.OffsetY += transformedPanVector.Y;
+			this.CameraPosition.OffsetZ += transformedPanVector.Z;
 
 			this.lastMousePosition = currentMousePosition;
 			e.Handled = true;
