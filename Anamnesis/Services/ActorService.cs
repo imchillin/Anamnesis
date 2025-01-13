@@ -8,10 +8,15 @@ using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
 using PropertyChanged;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>Service for managing and refreshing actors.</summary>
 [AddINotifyPropertyChangedInterface]
 public class ActorService : ServiceBase<ActorService>
 {
@@ -23,6 +28,7 @@ public class ActorService : ServiceBase<ActorService>
 	private const int GPosePlayerIndex = 201;
 
 	private readonly IntPtr[] actorTable = new IntPtr[ActorTableSize];
+	private readonly ReaderWriterLockSlim actorTableLock = new();
 
 	private readonly List<IActorRefresher> actorRefreshers = new()
 	{
@@ -31,8 +37,57 @@ public class ActorService : ServiceBase<ActorService>
 		new AnamnesisActorRefresher(),
 	};
 
-	public ReadOnlyCollection<IntPtr> ActorTable => Array.AsReadOnly(this.actorTable);
+	/// <summary>Gets the actor table as a read-only collection.</summary>
+	public ReadOnlyCollection<IntPtr> ActorTable
+	{
+		get
+		{
+			this.actorTableLock.EnterReadLock();
+			try
+			{
+				return Array.AsReadOnly(this.actorTable);
+			}
+			finally
+			{
+				this.actorTableLock.ExitReadLock();
+			}
+		}
+	}
 
+	/// <summary>Determines if the actor is in GPose.</summary>
+	/// <param name="objectIndex">The index of the actor.</param>
+	/// <returns>True if the actor is in GPose, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool IsGPoseActor(int objectIndex) => objectIndex >= GPoseIndexStart && objectIndex < GPoseIndexEnd;
+
+	/// <summary>Determines if the actor is in the overworld.</summary>
+	/// <param name="objectIndex">The index of the actor.</param>
+	/// <returns>True if the actor is in the overworld, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool IsOverworldActor(int objectIndex) => !IsGPoseActor(objectIndex);
+
+	/// <summary>Determines if the actor is the local overworld player.</summary>
+	/// <param name="objectIndex">The index of the actor.</param>
+	/// <returns>True if the actor is the local overworld player, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool IsLocalOverworldPlayer(int objectIndex) => objectIndex == OverworldPlayerIndex;
+
+	/// <summary>Determines if the actor is the local GPose player.</summary>
+	/// <param name="objectIndex">The index of the actor.</param>
+	/// <returns>True if the actor is the local GPose player, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool IsLocalGPosePlayer(int objectIndex) => objectIndex == GPosePlayerIndex;
+
+	/// <summary>Determines if the actor is the local player.</summary>
+	/// <param name="objectIndex">The index of the actor.</param>
+	/// <returns>True if the actor is the local player, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool IsLocalPlayer(int objectIndex) => IsLocalOverworldPlayer(objectIndex) || IsLocalGPosePlayer(objectIndex);
+
+	/// <summary>Determines if the actor can be refreshed.</summary>
+	/// <param name="actor">The actor to check.</param>
+	/// <returns>True if the actor can be refreshed, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool CanRefreshActor(ActorMemory actor)
 	{
 		if (!actor.IsValid)
@@ -47,6 +102,9 @@ public class ActorService : ServiceBase<ActorService>
 		return false;
 	}
 
+	/// <summary>Refreshes the specified actor.</summary>
+	/// <param name="actor">The actor to refresh.</param>
+	/// <returns>True if the actor was refreshed, otherwise false.</returns>
 	public async Task<bool> RefreshActor(ActorMemory actor)
 	{
 		if (this.CanRefreshActor(actor))
@@ -65,6 +123,11 @@ public class ActorService : ServiceBase<ActorService>
 		return false;
 	}
 
+	/// <summary>Gets the index of the actor in the actor table.</summary>
+	/// <param name="pointer">The pointer to the actor.</param>
+	/// <param name="refresh">Whether to refresh the actor table.</param>
+	/// <returns>The index of the actor in the actor table, or -1 if not found.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public int GetActorTableIndex(IntPtr pointer, bool refresh = false)
 	{
 		if (pointer == IntPtr.Zero)
@@ -73,18 +136,38 @@ public class ActorService : ServiceBase<ActorService>
 		if (refresh)
 			this.UpdateActorTable();
 
-		return Array.IndexOf(this.actorTable, pointer);
+		this.actorTableLock.EnterReadLock();
+		try
+		{
+			return Array.IndexOf(this.actorTable, pointer);
+		}
+		finally
+		{
+			this.actorTableLock.ExitReadLock();
+		}
 	}
 
+	/// <summary>Determines if the actor is in the actor table.</summary>
+	/// <param name="ptr">The pointer to the actor.</param>
+	/// <param name="refresh">Whether to refresh the actor table.</param>
+	/// <returns>True if the actor is in the actor table, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsActorInTable(IntPtr ptr, bool refresh = false)
 	{
 		return this.GetActorTableIndex(ptr, refresh) != -1;
 	}
 
+	/// <summary>Determines if the actor is in the actor table.</summary>
+	/// <param name="memory">The memory of the actor.</param>
+	/// <param name="refresh">Whether to refresh the actor table.</param>
+	/// <returns>True if the actor is in the actor table, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsActorInTable(MemoryBase memory, bool refresh = false) => this.IsActorInTable(memory.Address, refresh);
 
-	public bool IsGPoseActor(int objectIndex) => objectIndex >= GPoseIndexStart && objectIndex < GPoseIndexEnd;
-
+	/// <summary>Determines if the actor is in GPose.</summary>
+	/// <param name="actorAddress">The address of the actor.</param>
+	/// <returns>True if the actor is in GPose, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsGPoseActor(IntPtr actorAddress)
 	{
 		int objectIndex = this.GetActorTableIndex(actorAddress);
@@ -92,13 +175,19 @@ public class ActorService : ServiceBase<ActorService>
 		if (objectIndex == -1)
 			return false;
 
-		return this.IsGPoseActor(objectIndex);
+		return IsGPoseActor(objectIndex);
 	}
 
-	public bool IsOverworldActor(int objectIndex) => !this.IsGPoseActor(objectIndex);
+	/// <summary>Determines if the actor is in the overworld.</summary>
+	/// <param name="actorAddress">The address of the actor.</param>
+	/// <returns>True if the actor is in the overworld, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsOverworldActor(IntPtr actorAddress) => !this.IsGPoseActor(actorAddress);
 
-	public bool IsLocalOverworldPlayer(int objectIndex) => objectIndex == OverworldPlayerIndex;
+	/// <summary>Determines if the actor is the local overworld player.</summary>
+	/// <param name="actorAddress">The address of the actor.</param>
+	/// <returns>True if the actor is the local overworld player, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalOverworldPlayer(IntPtr actorAddress)
 	{
 		int objectIndex = this.GetActorTableIndex(actorAddress);
@@ -106,10 +195,13 @@ public class ActorService : ServiceBase<ActorService>
 		if (objectIndex == -1)
 			return false;
 
-		return this.IsLocalOverworldPlayer(objectIndex);
+		return IsLocalOverworldPlayer(objectIndex);
 	}
 
-	public bool IsLocalGPosePlayer(int objectIndex) => objectIndex == GPosePlayerIndex;
+	/// <summary>Determines if the actor is the local GPose player.</summary>
+	/// <param name="actorAddress">The address of the actor.</param>
+	/// <returns>True if the actor is the local GPose player, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalGPosePlayer(IntPtr actorAddress)
 	{
 		int objectIndex = this.GetActorTableIndex(actorAddress);
@@ -117,12 +209,18 @@ public class ActorService : ServiceBase<ActorService>
 		if (objectIndex == -1)
 			return false;
 
-		return this.IsLocalGPosePlayer(objectIndex);
+		return IsLocalGPosePlayer(objectIndex);
 	}
 
-	public bool IsLocalPlayer(int objectIndex) => this.IsLocalOverworldPlayer(objectIndex) || this.IsLocalGPosePlayer(objectIndex);
+	/// <summary>Determines if the actor is the local player.</summary>
+	/// <param name="actorAddress">The address of the actor.</param>
+	/// <returns>True if the actor is the local player, otherwise false.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool IsLocalPlayer(IntPtr actorAddress) => this.IsLocalOverworldPlayer(actorAddress) || this.IsLocalGPosePlayer(actorAddress);
 
+	/// <summary>Gets all actors from actor table.</summary>
+	/// <param name="refresh">Whether to refresh the actor table.</param>
+	/// <returns>A list of all actors.</returns>
 	public List<ActorBasicMemory> GetAllActors(bool refresh = false)
 	{
 		if (refresh)
@@ -130,36 +228,47 @@ public class ActorService : ServiceBase<ActorService>
 
 		List<ActorBasicMemory> results = new();
 
-		foreach (var ptr in this.actorTable)
+		this.actorTableLock.EnterReadLock();
+		try
 		{
-			if (ptr == IntPtr.Zero)
-				continue;
+			foreach (var ptr in this.actorTable)
+			{
+				if (ptr == IntPtr.Zero)
+					continue;
 
-			try
-			{
-				ActorBasicMemory actor = new();
-				actor.SetAddress(ptr);
-				results.Add(actor);
+				try
+				{
+					ActorBasicMemory actor = new();
+					actor.SetAddress(ptr);
+					results.Add(actor);
+				}
+				catch (Exception ex)
+				{
+					Log.Warning(ex, $"Failed to create Actor Basic View Model for address: {ptr}");
+				}
 			}
-			catch (Exception ex)
-			{
-				Log.Warning(ex, $"Failed to create Actor Basic View Model for address: {ptr}");
-			}
+		}
+		finally
+		{
+			this.actorTableLock.ExitReadLock();
 		}
 
 		return results;
 	}
 
+	/// <summary>Forces a refresh of the actor table.</summary>
 	public void ForceRefresh()
 	{
 		this.UpdateActorTable();
 	}
 
+	/// <inheritdoc/>
 	public override async Task Initialize()
 	{
 		await base.Initialize();
 	}
 
+	/// <inheritdoc/>
 	public override Task Start()
 	{
 		this.UpdateActorTable();
@@ -168,11 +277,13 @@ public class ActorService : ServiceBase<ActorService>
 		return base.Start();
 	}
 
+	/// <inheritdoc/>
 	public override async Task Shutdown()
 	{
 		await base.Shutdown();
 	}
 
+	/// <summary>Periodically refreshes the actor table.</summary>
 	private async Task TickTask()
 	{
 		while (this.IsAlive)
@@ -183,17 +294,44 @@ public class ActorService : ServiceBase<ActorService>
 		}
 	}
 
+	/// <summary>Updates the actor table by reading from memory.</summary>
 	private void UpdateActorTable()
 	{
-		lock (this.actorTable)
+		int tableSizeInBytes = ActorTableSize * IntPtr.Size;
+		byte[] buffer = ArrayPool<byte>.Shared.Rent(tableSizeInBytes);
+
+		try
 		{
-			for (int i = 0; i < ActorTableSize; i++)
+			if (!MemoryService.Read(AddressService.ActorTable, buffer.AsSpan(0, tableSizeInBytes)))
+				throw new Exception("Failed to read actor table from memory.");
+
+			bool hasChanged = false;
+
+			this.actorTableLock.EnterWriteLock();
+			try
 			{
-				IntPtr ptr = MemoryService.ReadPtr(AddressService.ActorTable + (i * 8));
-				this.actorTable[i] = ptr;
+				Span<IntPtr> currentSpan = this.actorTable.AsSpan();
+				Span<IntPtr> newSpan = MemoryMarshal.Cast<byte, IntPtr>(buffer.AsSpan(0, tableSizeInBytes));
+
+				if (!currentSpan.SequenceEqual(newSpan))
+				{
+					hasChanged = true;
+					newSpan.CopyTo(currentSpan);
+				}
+			}
+			finally
+			{
+				this.actorTableLock.ExitWriteLock();
+			}
+
+			if (hasChanged)
+			{
+				this.RaisePropertyChanged(nameof(this.ActorTable));
 			}
 		}
-
-		this.RaisePropertyChanged(nameof(this.ActorTable));
+		finally
+		{
+			ArrayPool<byte>.Shared.Return(buffer);
+		}
 	}
 }

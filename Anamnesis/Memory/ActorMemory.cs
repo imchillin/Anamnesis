@@ -146,7 +146,7 @@ public class ActorMemory : ActorBasicMemory
 	}
 
 	[DependsOn(nameof(ObjectIndex), nameof(CharacterMode))]
-	public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.Instance.IsLocalOverworldPlayer(this.ObjectIndex);
+	public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.IsLocalOverworldPlayer(this.ObjectIndex);
 
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
