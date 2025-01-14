@@ -120,17 +120,23 @@ public partial class Pose3DView : UserControl
 		if (this.DataContext is not SkeletonEntity skeleton)
 			return;
 
-		this.Skeleton = skeleton;
+		// Clear the existing children and dispose of the current visual
 		this.SkeletonRoot.Children.Clear();
+		if (this.Visual != null)
+		{
+			this.Visual.Dispose();
+			this.Visual = null;
+		}
 
-		this.Visual?.Dispose();
+		// Set the new skeleton and create a new visual
+		this.Skeleton = skeleton;
 		this.Visual = new SkeletonVisual3D(this.Skeleton);
 
-		if (!this.SkeletonRoot.Children.Contains(this.Visual))
-			this.SkeletonRoot.Children.Add(this.Visual);
-
+		// Add the new visual to the SkeletonRoot
+		this.SkeletonRoot.Children.Add(this.Visual);
 		this.SkeletonRoot.Children.Add(new ModelVisual3D() { Content = new AmbientLight(Colors.White) });
 
+		// Frame the skeleton into view
 		this.FrameSkeleton();
 	}
 

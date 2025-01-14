@@ -337,5 +337,35 @@ public partial class BoneView : UserControl
 			return;
 
 		page.BoneViews.Remove(this);
+
+		if (this.skeleton != null)
+		{
+			this.skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+		}
+
+		foreach (Line line in this.mouseLinesToChildren)
+		{
+			if (line.Parent is Panel parentPanel)
+			{
+				parentPanel.Children.Remove(line);
+			}
+
+			line.MouseEnter -= this.OnMouseEnter;
+			line.MouseLeave -= this.OnMouseLeave;
+			line.MouseUp -= this.OnMouseUp;
+		}
+
+		foreach (Line line in this.linesToChildren)
+		{
+			if (line.Parent is Panel parentPanel)
+			{
+				parentPanel.Children.Remove(line);
+			}
+		}
+
+		this.mouseLinesToChildren.Clear();
+		this.linesToChildren.Clear();
+
+		this.IsEnabledChanged -= this.OnIsEnabledChanged;
 	}
 }

@@ -42,19 +42,6 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Finalizes an instance of the <see cref="SkeletonVisual3D"/> class.
-	/// </summary>
-	~SkeletonVisual3D()
-	{
-		if (this.Skeleton.Actor.ModelObject?.Transform != null)
-		{
-			this.Skeleton.Actor.ModelObject.Transform.PropertyChanged -= this.OnTransformPropertyChanged;
-		}
-
-		this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
-	}
-
 	/// <summary>Gets the root rotation of the skeleton.</summary>
 	public QuaternionRotation3D RootRotation { get; private set; }
 

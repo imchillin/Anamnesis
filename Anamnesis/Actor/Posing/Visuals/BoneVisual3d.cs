@@ -201,15 +201,14 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 	{
 		if (disposing)
 		{
-			this.Children.Clear();
-
-			if (this.sphere != null)
+			foreach (BoneVisual3D child in this.Children.OfType<BoneVisual3D>().ToList())
 			{
-				this.sphere.Children.Clear();
-				this.sphere.Content = null;
+				child.Dispose();
 			}
 
-			this.parent?.Children.Remove(this);
+			this.Children.Clear();
+
+			this.sphere?.Dispose();
 
 			if (this.lineToParent != null)
 			{
@@ -218,6 +217,7 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 				this.lineToParent = null;
 			}
 
+			this.parent?.Children.Remove(this);
 			this.parent = null;
 		}
 	}
