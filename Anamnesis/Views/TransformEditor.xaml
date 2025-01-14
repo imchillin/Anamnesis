@@ -6,7 +6,10 @@
 			 xmlns:controls="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="200">
+			 d:DesignHeight="450"
+			 d:DesignWidth="200"
+			 Loaded="OnLoaded"
+			 Unloaded="OnUnloaded">
 
 	<Grid x:Name="ContentArea" Margin="3" IsEnabled="{Binding SelectedBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
 		<Grid.RowDefinitions>

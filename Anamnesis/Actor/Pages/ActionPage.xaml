@@ -461,13 +461,13 @@
 				</GroupBox.Header>
 
 				<Grid>
-					<controls:TransformEditor Value="{Binding Actor.ModelObject.Transform}" IsEnabled="{Binding GposeService.IsGpose}">
-						<controls:TransformEditor.CanTranslateProperty>
+					<controls:TransformEditor ActorTransform="{Binding Actor.ModelObject.Transform}" IsEnabled="{Binding GposeService.IsGpose}">
+						<controls:TransformEditor.CanTranslateOverride>
 							<MultiBinding Converter="{StaticResource MultiBoolOr}">
 								<Binding Path="Actor.IsMotionDisabled"/>
 								<Binding Path="PoseService.FreezeWorldPosition"/>
 							</MultiBinding>
-						</controls:TransformEditor.CanTranslateProperty>
+						</controls:TransformEditor.CanTranslateOverride>
 					</controls:TransformEditor>
 
 					<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,0,45">
