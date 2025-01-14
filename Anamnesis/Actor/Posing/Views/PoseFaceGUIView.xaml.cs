@@ -31,14 +31,16 @@ public partial class PoseFaceGuiView : UserControl
 	private readonly Border? mouthSelectorBorder;
 	private readonly Line? mouthGuideLine;
 	private readonly Ellipse? mouthGuideEllipse;
+	private readonly FaceTemplateSelector? templateSelector;
 
 	public PoseFaceGuiView()
 	{
 		this.InitializeComponent();
 
-		if (this.Resources["FaceTemplateSelector"] is FaceTemplateSelector templateSelector)
+		if (this.Resources["FaceTemplateSelector"] is FaceTemplateSelector selector)
 		{
-			templateSelector.TemplateChanged += this.OnTemplateChanged;
+			this.templateSelector = selector;
+			this.templateSelector.TemplateChanged += this.OnTemplateChanged;
 		}
 
 		// Load components.
@@ -50,6 +52,14 @@ public partial class PoseFaceGuiView : UserControl
 
 		this.mouthSelectorBorder = this.FindName("MouthSelectorBorder") as Border;
 		Debug.Assert(this.mouthSelectorBorder != null, "Failed to find MouthSelectorBorder.");
+	}
+
+	private void OnUnloaded(object sender, RoutedEventArgs e)
+	{
+		if (this.templateSelector != null)
+		{
+			this.templateSelector.TemplateChanged -= this.OnTemplateChanged;
+		}
 	}
 
 	private void OnTemplateChanged(object? sender, string templateName)

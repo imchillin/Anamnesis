@@ -75,8 +75,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.ContentArea.DataContext = this;
 
-		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
-
 		// Initialize the debounce timer
 		this.refreshDebounceTimer = new(200) { AutoReset = false };
 		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
@@ -276,11 +274,33 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 	{
 		this.OnDataContextChanged(null, default);
 
+		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
 		PoseService.EnabledChanged += this.OnPoseServiceEnabledChanged;
-		this.PoseService.PropertyChanged += this.PoseService_PropertyChanged;
+		this.PoseService.PropertyChanged += this.OnPoseServicePropertyChanged;
 	}
 
-	private void PoseService_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+	private void OnUnloaded(object sender, RoutedEventArgs e)
+	{
+		PoseService.EnabledChanged -= this.OnPoseServiceEnabledChanged;
+		this.PoseService.PropertyChanged -= this.OnPoseServicePropertyChanged;
+		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
+
+		if (this.Actor?.ModelObject != null)
+		{
+			this.Actor.Refreshed -= this.OnActorRefreshed;
+			this.Actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
+		}
+
+		if (this.Skeleton != null)
+		{
+			this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+		}
+
+		this.Skeleton?.Clear();
+		this.Skeleton = null;
+	}
+
+	private void OnPoseServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
 		// Don't refresh the skeleton if the selected bones text changes to prevent a loop
 		if (e.PropertyName == nameof(PoseService.SelectedBonesText))

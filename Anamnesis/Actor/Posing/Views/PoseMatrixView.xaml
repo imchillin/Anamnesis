@@ -8,8 +8,11 @@
 			 xmlns:local="clr-namespace:Anamnesis.Actor.Views"
 			 xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 mc:Ignorable="d" 
-			 d:DesignHeight="450" d:DesignWidth="800">
+			 mc:Ignorable="d"
+			 Loaded="OnLoaded"
+			 Unloaded="OnUnloaded"
+			 d:DesignHeight="450"
+			 d:DesignWidth="800">
 
 
 	<UserControl.Resources>

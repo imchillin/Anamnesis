@@ -12,6 +12,7 @@
 	d:DesignWidth="1024"
 	DataContextChanged="OnDataContextChanged"
 	Loaded="OnLoaded"
+	Unloaded="OnUnloaded"
 	mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">

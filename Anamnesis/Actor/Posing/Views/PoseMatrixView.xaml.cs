@@ -18,8 +18,6 @@ public partial class PoseMatrixView : UserControl
 	public PoseMatrixView()
 	{
 		this.InitializeComponent();
-
-		this.DataContextChanged += this.OnDataContextChanged;
 	}
 
 	public SkeletonEntity? Skeleton { get; private set; }
@@ -54,5 +52,15 @@ public partial class PoseMatrixView : UserControl
 				.ToList();
 			this.Skeleton.Select(bones);
 		}
+	}
+
+	private void OnLoaded(object sender, RoutedEventArgs e)
+	{
+		this.DataContextChanged += this.OnDataContextChanged;
+	}
+
+	private void OnUnloaded(object sender, RoutedEventArgs e)
+	{
+		this.DataContextChanged -= this.OnDataContextChanged;
 	}
 }

@@ -7,7 +7,9 @@
 			 xmlns:XivToolsWpf.Converters="clr-namespace:XivToolsWpf.Converters;assembly=XivToolsWpf"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 mc:Ignorable="d"
-			 d:DesignHeight="512" d:DesignWidth="1024">
+			 Unloaded="OnUnloaded"
+			 d:DesignHeight="512"
+			 d:DesignWidth="1024">
 
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="B2V"/>
