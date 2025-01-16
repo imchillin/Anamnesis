@@ -26,8 +26,6 @@ using XivToolsWpf;
 using XivToolsWpf.Math3D.Extensions;
 using CmQuaternion = System.Numerics.Quaternion;
 
-// TODO: Improve HistoryView display of multi-bone selection changes
-
 /// <summary>
 /// Interaction logic for CharacterPoseView.xaml.
 /// </summary>
@@ -958,7 +956,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.selectedBonesTooltipCache = count switch
 		{
-			0 => string.Empty,
+			0 => (this.TargetService.SelectedActor != null) ? this.TargetService.SelectedActor.DisplayName : string.Empty,
 			1 => selectedBones.First().Tooltip,
 			<= 3 => string.Join(", ", selectedBones.Select(b => b.Tooltip)),
 			_ => string.Join(", ", selectedBones.Take(3).Select(b => b.Tooltip)) + LocalizationService.GetStringFormatted("Pose_SelectedBones_TooltipTrimmed", (count - 3).ToString())

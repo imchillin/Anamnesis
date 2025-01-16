@@ -120,7 +120,7 @@ public struct PropertyChange
 	public void AddPath(BindInfo bind)
 	{
 		this.BindPath.Add(bind);
-		this.path += bind.Path;
+		this.path = bind.Path + this.path;
 	}
 
 	/// <summary>

@@ -202,6 +202,7 @@ public partial class BoneView : UserControl
 		if (this.Bone == null)
 		{
 			this.ErrorEllipse.Visibility = Visibility.Visible;
+			this.ForegroundElipse.Visibility = Visibility.Hidden;
 			this.BackgroundElipse.Visibility = Visibility.Collapsed;
 			return;
 		}
@@ -215,6 +216,7 @@ public partial class BoneView : UserControl
 		if (!this.IsEnabled || this.skeleton == null)
 		{
 			this.SetState(new SolidColorBrush(Colors.Transparent), 1);
+			this.ForegroundElipse.Visibility = Visibility.Hidden;
 			this.BackgroundElipse.Opacity = 0.5;
 			this.BackgroundElipse.StrokeThickness = 0;
 			return;

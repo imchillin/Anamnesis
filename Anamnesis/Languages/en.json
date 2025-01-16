@@ -355,7 +355,7 @@
   "Pose_SyncWithGameCamera": "Camera Sync",
   "Pose_SyncWithGameCamera_Tooltip": "Synchronize with the in-game camera",
 
-  "Pose_SelectedBones_TooltipTrimmed": " and {0} more bone(s) selected",
+  "Pose_SelectedBones_TooltipTrimmed": " and {0} more bone(s)",
   "Pose_SelectedBones_MultiSelected": "Selected Bones: {0}",
 
   "Pose_EnableRotation": "R",
@@ -895,6 +895,6 @@
   "Hotkey_Undo": "Undo",
   "Hotkey_Redo": "Redo",
 
-  "History_ChangeBone": "Change Bone: \"{0}\"",
+  "History_ChangeBone": "Change Bone: {0}",
   "History_ClearHistory": "Clear History"
 }

@@ -243,7 +243,7 @@ public class ActorMemory : ActorBasicMemory
 				if (change.OriginBind.Memory.ParentBind?.Type == typeof(TransformMemory))
 				{
 					change.Name = (PoseService.SelectedBonesText == null) ?
-						LocalizationService.GetStringFormatted("History_ChangeBone", "??") :
+						LocalizationService.GetStringFormatted("History_ChangeBone", LocalizationService.GetString("Pose_OtherUnknown")) :
 						LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBonesText);
 				}
 

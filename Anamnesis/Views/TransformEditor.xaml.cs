@@ -231,7 +231,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 				if (this.Skeleton.SelectedBones?.Count() == 1)
 					return this.Skeleton.SelectedBones.First().RootRotation;
 				else if (this.Skeleton.SelectedBones?.Count() > 1)
-					return Quaternion.Multiply(this.Skeleton.RootRotation, Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathF.PI / 2));
+					return Quaternion.Multiply(this.Skeleton.RootRotation, Quaternion.Multiply(Quaternion.CreateFromAxisAngle(-Vector3.UnitX, MathF.PI / 2), Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathF.PI / 2)));
 			}
 
 			return Quaternion.Identity;
