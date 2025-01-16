@@ -17,7 +17,9 @@ using System.Windows.Media;
 [AddINotifyPropertyChangedInterface]
 public class Settings : INotifyPropertyChanged
 {
-	private int autoSaveInterval = 10000;
+	private const int MinAutoSaveIntervalMinutes = 1;
+	private int autoSaveIntervalMinutes = 5;
+	private bool enableAutoSave = true;
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -69,23 +71,39 @@ public class Settings : INotifyPropertyChanged
 	public double ViewportPanSpeed { get; set; } = 1;
 	public double ViewportZoomSpeed { get; set; } = 1;
 	public double ViewportRotationSpeed { get; set; } = 1;
-	public int MaxAutoSaveCount { get; set; } = 12;
-	public int AutoSaveInterval
+	public bool EnableAutoSave
 	{
 		get
 		{
-			return this.autoSaveInterval;
+			return this.enableAutoSave;
 		}
 		set
 		{
-			if (value == this.autoSaveInterval)
+			if (value == this.enableAutoSave)
 				return;
 
-			// Limit the minimum value to 1000ms
-			if (value < 1000)
-				value = 1000;
+			this.enableAutoSave = value;
+			AutoSaveService.Instance?.RestartUpdateTask();
+		}
+	}
 
-			this.autoSaveInterval = value;
+	public int AutoSaveFileCount { get; set; } = 12;
+	public int AutoSaveIntervalMinutes
+	{
+		get
+		{
+			return Math.Max(this.autoSaveIntervalMinutes, MinAutoSaveIntervalMinutes);
+		}
+		set
+		{
+			if (value == this.autoSaveIntervalMinutes)
+				return;
+
+			// Limit the minimum value
+			if (value < MinAutoSaveIntervalMinutes)
+				value = MinAutoSaveIntervalMinutes;
+
+			this.autoSaveIntervalMinutes = value;
 			AutoSaveService.Instance?.RestartUpdateTask();
 		}
 	}

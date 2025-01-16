@@ -16,11 +16,12 @@ using System.Threading;
 using System.Threading.Tasks;
 
 /// <summary>
-/// A auto-save service that performs a set of backup actions every <see cref="Settings.AutoSaveInterval"/> milliseconds.
+/// A auto-save service that performs a set of backup actions every <see cref="Settings.AutoSaveIntervalMinutes"/> minutes.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
 public class AutoSaveService : ServiceBase<AutoSaveService>
 {
+	private const int MinuteToMilliseconds = 60 * 1000;
 	private static readonly int MaxStartAttempts = 10; // Maximum number of attempts to start the service
 	private CancellationTokenSource? cancellationTokenSource;
 
@@ -48,12 +49,19 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 	public void RestartUpdateTask()
 	{
 		this.cancellationTokenSource?.Cancel();
+
+		if (!SettingsService.Current.EnableAutoSave)
+		{
+			Log.Verbose("Auto-save is disabled. Update task will not be started.");
+			return;
+		}
+
 		this.cancellationTokenSource = new CancellationTokenSource();
 		_ = Task.Run(() => Update(this.cancellationTokenSource.Token));
 	}
 
 	/// <summary>
-	/// The update task that will be executed every <see cref="Settings.AutoSaveInterval"/> milliseconds.
+	/// The update task that will be executed every <see cref="Settings.AutoSaveIntervalMinutes"/> minutes.
 	/// </summary>
 	/// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the task.</param>
 	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
@@ -63,7 +71,7 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 		{
 			try
 			{
-				await Task.Delay(SettingsService.Current.AutoSaveInterval, cancellationToken);
+				await Task.Delay(SettingsService.Current.AutoSaveIntervalMinutes * MinuteToMilliseconds, cancellationToken);
 				PerformAutoSave();
 			}
 			catch (TaskCanceledException)
@@ -91,13 +99,17 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 
 		// If the number of auto-save directories exceeds the maximum, delete the oldest
 		var autoSaveDirectories = Directory.GetDirectories(baseDir, "Autosave_*");
-		if (autoSaveDirectories.Length > SettingsService.Current.MaxAutoSaveCount)
+		if (autoSaveDirectories.Length > SettingsService.Current.AutoSaveFileCount)
 		{
 			// Order directories by creation time
 			Array.Sort(autoSaveDirectories, (x, y) => Directory.GetCreationTime(x).CompareTo(Directory.GetCreationTime(y)));
 
-			// Delete the oldest directory
-			Directory.Delete(autoSaveDirectories[0], true);
+			// Delete the oldest directories until the count is within the limit
+			int directoriesToDelete = autoSaveDirectories.Length - SettingsService.Current.AutoSaveFileCount + 1;
+			for (int i = 0; i < directoriesToDelete; i++)
+			{
+				Directory.Delete(autoSaveDirectories[i], true);
+			}
 		}
 
 		// Perform the actual save operation (implement the actual save logic here)
