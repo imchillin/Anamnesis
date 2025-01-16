@@ -16,6 +16,7 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
 			<!-- Input -->
@@ -40,9 +41,75 @@
 					</Grid>
 				</Grid>
 			</GroupBox>
+			
+			<!-- 3D Posing Viewport -->
+			<GroupBox x:Name="PoseViewportGroupBox" Grid.Row="1" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_3DSkeletonViewport" Icon="Cube"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="Input_3DViewport_PanSpeed" Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_ViewportPanSpeed" Style="{StaticResource Label}"/>
+						<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.ViewportPanSpeed}"
+											   Margin="6, 3"
+											   x:Name="ViewportPanSpeedSlider"
+											   Slider="Absolute"
+											   Grid.Column="1"
+											   Minimum="0.1"
+											   Maximum="2"
+											   TickFrequency="0.1"/>
+					</Grid>
+
+					<Grid x:Name="Input_3DViewport_RotationSpeed" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_ViewportRotationSpeed" Style="{StaticResource Label}"/>
+						<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.ViewportRotationSpeed}"
+											   Margin="6, 3"
+											   x:Name="ViewportRotationSpeedSlider"
+											   Slider="Absolute"
+											   Grid.Column="1"
+											   Minimum="0.1"
+											   Maximum="2"
+											   TickFrequency="0.1"/>
+					</Grid>
+
+					<Grid x:Name="Input_3DViewport_ZoomSpeed" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_ViewportZoomSpeed" Style="{StaticResource Label}"/>
+						<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.ViewportZoomSpeed}"
+											   Margin="6, 3"
+											   x:Name="ViewportZoomSpeedSlider"
+											   Slider="Absolute"
+											   Grid.Column="1"
+											   Minimum="0.1"
+											   Maximum="2"
+											   TickFrequency="0.1"/>
+					</Grid>
+				</Grid>
+			</GroupBox>
 
 			<!-- Hotkeys -->
-			<GroupBox x:Name="HotkeysGroupBox" Grid.Row="1" Margin="0, 0, 0, 10">
+			<GroupBox x:Name="HotkeysGroupBox" Grid.Row="2" Margin="0, 0, 0, 10">
 				<GroupBox.Header>
 					<XivToolsWPF:Header Key="Settings_KeysHeader" Icon="Keyboard" />
 				</GroupBox.Header>

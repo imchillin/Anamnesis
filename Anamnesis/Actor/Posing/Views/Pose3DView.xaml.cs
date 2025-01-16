@@ -209,10 +209,11 @@ public partial class Pose3DView : UserControl
 			Point currentMousePosition = e.GetPosition(this.Viewport);
 			Vector delta = Point.Subtract(currentMousePosition, this.lastMousePosition);
 
-			double panSpeed = 0.005;
+			double panSpeedFactor = 0.005;
+			double effectivePanSpeed = SettingsService.Current.ViewportPanSpeed * panSpeedFactor;
 
 			// Transform the delta vector by the camera's rotation
-			Vector3D panVector = new(delta.X * panSpeed, delta.Y * panSpeed, 0);
+			Vector3D panVector = new(delta.X * effectivePanSpeed, delta.Y * effectivePanSpeed, 0);
 			Matrix3D rotationMatrix = this.CameraRotation.Value;
 			Vector3D transformedPanVector = rotationMatrix.Transform(panVector);
 
@@ -228,12 +229,13 @@ public partial class Pose3DView : UserControl
 			Point currentMousePosition = e.GetPosition(this.Viewport);
 			Vector delta = Point.Subtract(currentMousePosition, this.lastMousePosition);
 
-			double rotationSpeed = 0.5;
+			double rotationSpeedFactor = 0.5;
+			double effectiveRotationSpeed = SettingsService.Current.ViewportRotationSpeed * rotationSpeedFactor;
 			QuaternionRotation3D rot = (QuaternionRotation3D)this.CameraRotation.Rotation;
 			Quaternion q = rot.Quaternion;
 
-			q *= new Quaternion(new Vector3D(0, 1, 0), -delta.X * rotationSpeed);
-			q *= new Quaternion(new Vector3D(1, 0, 0), delta.Y * rotationSpeed);
+			q *= new Quaternion(new Vector3D(0, 1, 0), -delta.X * effectiveRotationSpeed);
+			q *= new Quaternion(new Vector3D(1, 0, 0), delta.Y * effectiveRotationSpeed);
 
 			rot.Quaternion = q;
 			this.CameraRotation.Rotation = rot;
@@ -255,8 +257,10 @@ public partial class Pose3DView : UserControl
 
 	private void OnViewportMouseWheel(object sender, MouseWheelEventArgs e)
 	{
-		double zoomSpeed = 0.2;
-		this.CameraDistance -= e.Delta / 120 * zoomSpeed;
+		double zoomSpeedFactor = 0.2;
+		double effectiveZoomSpeed = SettingsService.Current.ViewportZoomSpeed * zoomSpeedFactor;
+
+		this.CameraDistance -= e.Delta / 120 * effectiveZoomSpeed;
 		this.CameraDistance = Math.Clamp(this.CameraDistance, 0, 300);
 
 		if (this.Visual != null)
