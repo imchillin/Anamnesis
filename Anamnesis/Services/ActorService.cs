@@ -6,6 +6,7 @@ namespace Anamnesis;
 using Anamnesis.Actor.Refresh;
 using Anamnesis.Core.Memory;
 using Anamnesis.Memory;
+using Anamnesis.Services;
 using PropertyChanged;
 using System;
 using System.Buffers;
@@ -297,6 +298,9 @@ public class ActorService : ServiceBase<ActorService>
 	/// <summary>Updates the actor table by reading from memory.</summary>
 	private void UpdateActorTable()
 	{
+		if (!GameService.Ready)
+			return;
+
 		int tableSizeInBytes = ActorTableSize * IntPtr.Size;
 		byte[] buffer = ArrayPool<byte>.Shared.Rent(tableSizeInBytes);
 

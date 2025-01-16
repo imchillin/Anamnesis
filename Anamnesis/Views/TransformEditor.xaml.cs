@@ -8,6 +8,7 @@ using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -225,8 +226,13 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	{
 		get
 		{
-			if (this.Skeleton != null && this.Skeleton.SelectedBones?.Count() == 1)
-				return this.Skeleton.SelectedBones.First().RootRotation;
+			if (this.Skeleton != null)
+			{
+				if (this.Skeleton.SelectedBones?.Count() == 1)
+					return this.Skeleton.SelectedBones.First().RootRotation;
+				else if (this.Skeleton.SelectedBones?.Count() > 1)
+					return Quaternion.Multiply(this.Skeleton.RootRotation, Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathF.PI / 2));
+			}
 
 			return Quaternion.Identity;
 		}
@@ -404,8 +410,11 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	{
 		if (e.PropertyName == nameof(SkeletonEntity.SelectedBones))
 		{
-			this.SetInitialValues();
-			this.RaisePropertyChanged(string.Empty);
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				this.SetInitialValues();
+				this.RaisePropertyChanged(string.Empty);
+			});
 		}
 	}
 
