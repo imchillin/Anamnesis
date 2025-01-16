@@ -114,7 +114,7 @@ public class SkeletonEntity : Skeleton
 					var selectedBones = this.SelectedBones.ToList();
 
 					// Filter out bones that are descendants of other selected bones
-					var ancestorBones = selectedBones.Where(b => !selectedBones.Any(other => other != b && other.HasAncestor(b))).ToList();
+					var ancestorBones = selectedBones.Where(bone => !selectedBones.Any(otherBone => bone.HasAncestor(otherBone))).ToList();
 
 					// Write transforms for all ancestor bones
 					Parallel.ForEach(ancestorBones, bone => bone.WriteTransform());
