@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 /// <summary>
 /// Interaction logic for PoseFaceGuiView.xaml.
@@ -148,6 +149,8 @@ public class FaceTemplateSelector : DataTemplateSelector
 		}
 
 		this.TemplateChanged?.Invoke(this, templateName);
+
+		Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () => BoneViewManager.Instance.Refresh());
 
 		return templateName switch
 		{

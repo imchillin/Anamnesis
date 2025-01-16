@@ -3,25 +3,34 @@
 
 namespace Anamnesis.Actor.Views;
 
-using Anamnesis.Actor.Pages;
 using Anamnesis.Actor.Posing;
 using MaterialDesignThemes.Wpf;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using XivToolsWpf;
 using XivToolsWpf.DependencyProperties;
 
+/// <summary>
+/// Interaction logic for BoneView.xaml.
+/// Represents a 2D bone selector for a <see cref="Core.Bone"/> in the actor skeleton,
+/// providing mechanisms for displaying and interacting with it.
+/// </summary>
 public partial class BoneView : UserControl
 {
+	/// <summary>Dependency property for the label of the bone view.</summary>
 	public static readonly IBind<string> LabelDp = Binder.Register<string, BoneView>(nameof(Label));
+
+	/// <summary>Dependency property for the name of the bone.</summary>
 	public static readonly IBind<string> NameDp = Binder.Register<string, BoneView>(nameof(BoneName));
+
+	/// <summary>Dependency property for the flipped name of the bone.</summary>
 	public static readonly IBind<string> FlippedNameDp = Binder.Register<string, BoneView>(nameof(FlippedBoneName));
 
 	private readonly List<Line> linesToChildren = new();
@@ -29,37 +38,49 @@ public partial class BoneView : UserControl
 
 	private SkeletonEntity? skeleton;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="BoneView"/> class.
+	/// </summary>
 	public BoneView()
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
-		this.BindDataContext();
+
+		BoneViewManager.Instance.AddBoneView(this);
 
 		this.IsEnabledChanged += this.OnIsEnabledChanged;
 	}
 
+	/// <summary>Gets the bone associated with this view.</summary>
 	public BoneEntity? Bone { get; private set; }
 
+	/// <summary>Gets or sets the label of the bone view.</summary>
 	public string Label
 	{
 		get => LabelDp.Get(this);
 		set => LabelDp.Set(this, value);
 	}
 
+	/// <summary>Gets or sets the name of the bone.</summary>
 	public string BoneName
 	{
 		get => NameDp.Get(this);
 		set => NameDp.Set(this, value);
 	}
 
+	/// <summary>Gets or sets the flipped name of the bone.</summary>
 	public string FlippedBoneName
 	{
 		get => FlippedNameDp.Get(this);
 		set => FlippedNameDp.Set(this, value);
 	}
 
+	/// <summary>
+	/// Gets the current name of the bone, considering whether the skeleton is flipped.
+	/// </summary>
 	public string CurrentBoneName
 	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
 			if (this.skeleton == null)
@@ -72,64 +93,23 @@ public partial class BoneView : UserControl
 		}
 	}
 
-	private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+	/// <summary>Sets the bone by name.</summary>
+	/// <param name="name">The name of the bone to set.</param>
+	public void SetBone(string name) => this.SetBone(this.skeleton?.GetBone(name));
+
+	/// <summary>Sets the bone.</summary>
+	/// <param name="bone">The bone to set.</param>
+	public void SetBone(BoneEntity? bone)
 	{
-		this.BindDataContext();
+		this.Bone = bone;
+		this.IsEnabled = bone != null;
+		BoneViewManager.Instance.AddBoneView(this);
 	}
 
-	private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
-	{
-		this.UpdateState();
-	}
-
-	private void BindDataContext()
-	{
-		try
-		{
-			if (this.skeleton != null)
-				this.skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
-
-			if (this.DataContext is SkeletonEntity viewModel)
-			{
-				this.skeleton = viewModel;
-				this.SetBone(this.CurrentBoneName);
-				this.skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
-			}
-			else if (this.DataContext is BoneEntity bone)
-			{
-				this.skeleton = bone.Skeleton;
-				this.SetBone(bone);
-				this.skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
-			}
-			else
-			{
-				this.IsEnabled = false;
-			}
-		}
-		catch (Exception ex)
-		{
-			this.IsEnabled = false;
-			this.ToolTip = ex.Message;
-			Log.Error(ex, "Failed to bind bone view");
-		}
-	}
-
-	private void OnSkeletonPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-	{
-		bool refreshBone = this.Bone == null || e.PropertyName == nameof(SkeletonEntity.FlipSides) || e.PropertyName == nameof(SkeletonEntity.Bones);
-		if (refreshBone && this.DataContext is SkeletonEntity)
-		{
-			this.SetBone(this.CurrentBoneName);
-			return; // SetBone will update the state
-		}
-
-		if (e.PropertyName == nameof(SkeletonEntity.SelectedBones) || e.PropertyName == nameof(SkeletonEntity.HoveredBones))
-		{
-			this.UpdateState();
-		}
-	}
-
-	private void DrawSkeleton()
+	/// <summary>
+	/// Redraws the skeleton, updating the lines connecting <see cref="BoneView"/> instances.
+	/// </summary>
+	public void RedrawSkeleton()
 	{
 		foreach (Line line in this.linesToChildren)
 		{
@@ -151,11 +131,10 @@ public partial class BoneView : UserControl
 
 		this.linesToChildren.Clear();
 
-		PosePage? page = this.FindParent<PosePage>();
-		if (page == null || this.Bone?.Parent == null)
+		if (!this.IsEnabled || this.Bone?.Parent == null)
 			return;
 
-		foreach (BoneView childView in page.GetBoneViews(this.Bone.Parent))
+		foreach (BoneView childView in BoneViewManager.Instance.GetBoneViews(this.Bone.Parent))
 		{
 			if (childView.Visibility != Visibility.Visible)
 				continue;
@@ -168,6 +147,14 @@ public partial class BoneView : UserControl
 				scale = vbox.ActualWidth / cvs.ActualWidth;
 			}
 
+			double x1 = this.GetCenterX();
+			double y1 = this.GetCenterY();
+			double x2 = childView.GetCenterX();
+			double y2 = childView.GetCenterY();
+
+			if (double.IsNaN(x1) || double.IsNaN(y1) || double.IsNaN(x2) || double.IsNaN(y2))
+				continue;
+
 			if (this.Parent is Canvas c1 && childView.Parent is Canvas c2 && c1 == c2)
 			{
 				Line line = new()
@@ -176,10 +163,10 @@ public partial class BoneView : UserControl
 					StrokeThickness = 1 / scale,
 					Stroke = Brushes.Gray,
 					IsHitTestVisible = false,
-					X1 = this.GetCenterX(),
-					Y1 = this.GetCenterY(),
-					X2 = childView.GetCenterX(),
-					Y2 = childView.GetCenterY(),
+					X1 = x1,
+					Y1 = y1,
+					X2 = x2,
+					Y2 = y2,
 				};
 
 				c1.Children.Insert(0, line);
@@ -190,10 +177,10 @@ public partial class BoneView : UserControl
 				{
 					StrokeThickness = 25,
 					Stroke = Brushes.Transparent,
-					X1 = line.X1,
-					Y1 = line.Y1,
-					X2 = line.X2,
-					Y2 = line.Y2,
+					X1 = x1,
+					Y1 = y1,
+					X2 = x2,
+					Y2 = y2,
 				};
 
 				line2.MouseEnter += childView.OnMouseEnter;
@@ -206,66 +193,11 @@ public partial class BoneView : UserControl
 		}
 	}
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private double GetCenterX() => Canvas.GetLeft(this) + ((this.ActualWidth + this.Margin.Left + this.Margin.Right + this.Padding.Left + this.Padding.Right + this.BorderThickness.Right) / 2);
-
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private double GetCenterY() => Canvas.GetTop(this) + ((this.ActualHeight + this.Margin.Top + this.Margin.Bottom + this.Padding.Top + this.Padding.Bottom + this.BorderThickness.Bottom) / 2);
-
-	private void SetBone(string name)
-	{
-		this.SetBone(this.skeleton?.GetBone(name));
-	}
-
-	private void SetBone(BoneEntity? bone)
-	{
-		PosePage? page = this.FindParent<PosePage>();
-		page?.BoneViews.Add(this);
-
-		this.Bone = bone;
-		this.IsEnabled = bone != null;
-
-		if (this.Bone != null)
-		{
-			// Wait for all bone views to load, then draw the skeleton
-			Application.Current.Dispatcher.InvokeAsync(async () =>
-			{
-				await Task.Delay(1);
-				this.DrawSkeleton();
-				this.UpdateState();
-			});
-		}
-		else
-		{
-			this.UpdateState();
-		}
-	}
-
-	private void OnMouseEnter(object sender, MouseEventArgs e)
-	{
-		if (!this.IsEnabled || this.skeleton == null || this.Bone == null)
-			return;
-
-		this.skeleton.Hover(this.Bone, true);
-	}
-
-	private void OnMouseLeave(object sender, MouseEventArgs e)
-	{
-		if (!this.IsEnabled || this.skeleton == null || this.Bone == null)
-			return;
-
-		this.skeleton.Hover(this.Bone, false);
-	}
-
-	private void OnMouseUp(object sender, MouseButtonEventArgs e)
-	{
-		if (!this.IsEnabled || this.skeleton == null || this.Bone == null)
-			return;
-
-		this.skeleton.Select(this.Bone);
-	}
-
-	private void UpdateState()
+	/// <summary>
+	/// Updates the state of the bone view, including visual appearance based on
+	/// selection and hover states.
+	/// </summary>
+	public void UpdateState()
 	{
 		if (this.Bone == null)
 		{
@@ -310,6 +242,94 @@ public partial class BoneView : UserControl
 		this.SetState(new SolidColorBrush(color), thickness);
 	}
 
+	/// <summary>Handles the data context changed event.</summary>
+	/// <param name="sender">The sender of the event.</param>
+	/// <param name="e">The event data.</param>
+	private async void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+	{
+		await Dispatch.MainThread();
+
+		try
+		{
+			if (this.DataContext is SkeletonEntity viewModel)
+			{
+				this.skeleton = viewModel;
+				this.SetBone(this.CurrentBoneName);
+			}
+			else if (this.DataContext is BoneEntity bone)
+			{
+				this.skeleton = bone.Skeleton;
+				this.SetBone(bone);
+			}
+			else
+			{
+				this.IsEnabled = false;
+			}
+		}
+		catch (Exception ex)
+		{
+			this.IsEnabled = false;
+			this.ToolTip = ex.Message;
+			Log.Error(ex, "Failed to bind bone view");
+		}
+	}
+
+	/// <summary>Handles the IsEnabledChanged event.</summary>
+	/// <param name="sender">The sender of the event.</param>
+	/// <param name="e">The event data.</param>
+	private async void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+	{
+		await Dispatch.MainThread();
+
+		this.UpdateState();
+	}
+
+	/// <summary>Gets the center X coordinate of the bone view.</summary>
+	/// <returns>The center X coordinate.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private double GetCenterX() => Canvas.GetLeft(this) + ((this.ActualWidth + this.Margin.Left + this.Margin.Right + this.Padding.Left + this.Padding.Right + this.BorderThickness.Right) / 2);
+
+	/// <summary>Gets the center Y coordinate of the bone view.</summary>
+	/// <returns>The center Y coordinate.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private double GetCenterY() => Canvas.GetTop(this) + ((this.ActualHeight + this.Margin.Top + this.Margin.Bottom + this.Padding.Top + this.Padding.Bottom + this.BorderThickness.Bottom) / 2);
+
+	/// <summary>Handles the MouseEnter event.</summary>
+	/// <param name="sender">The sender of the event.</param>
+	/// <param name="e">The event data.</param>
+	private void OnMouseEnter(object sender, MouseEventArgs e)
+	{
+		if (!this.IsEnabled || this.skeleton == null || this.Bone == null)
+			return;
+
+		this.skeleton.Hover(this.Bone, true);
+	}
+
+	/// <summary>Handles the MouseLeave event.</summary>
+	/// <param name="sender">The sender of the event.</param>
+	/// <param name="e">The event data.</param>
+	private void OnMouseLeave(object sender, MouseEventArgs e)
+	{
+		if (!this.IsEnabled || this.skeleton == null || this.Bone == null)
+			return;
+
+		this.skeleton.Hover(this.Bone, false);
+	}
+
+	/// <summary>Handles the MouseUp event.</summary>
+	/// <param name="sender">The sender of the event.</param>
+	/// <param name="e">The event data.</param>
+	private void OnMouseUp(object sender, MouseButtonEventArgs e)
+	{
+		if (!this.IsEnabled || this.skeleton == null || this.Bone == null)
+			return;
+
+		this.skeleton.Select(this.Bone);
+	}
+
+	/// <summary>Sets the state of the bone view.</summary>
+	/// <param name="stroke">The stroke brush.</param>
+	/// <param name="thickness">The stroke thickness.</param>
 	private void SetState(Brush stroke, double thickness)
 	{
 		this.BackgroundElipse.StrokeThickness = thickness;
@@ -321,28 +341,11 @@ public partial class BoneView : UserControl
 		}
 	}
 
-	private void OnLoaded(object sender, RoutedEventArgs e)
-	{
-		PosePage? page = this.FindParent<PosePage>();
-		if (page == null)
-			return;
-
-		page.BoneViews.Add(this);
-	}
-
+	/// <summary>Handles the Unloaded event.</summary>
+	/// <param name="sender">The sender of the event.</param>
+	/// <param name="e">The event data.</param>
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
-		PosePage? page = this.FindParent<PosePage>();
-		if (page == null)
-			return;
-
-		page.BoneViews.Remove(this);
-
-		if (this.skeleton != null)
-		{
-			this.skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
-		}
-
 		foreach (Line line in this.mouseLinesToChildren)
 		{
 			if (line.Parent is Panel parentPanel)

@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.Actor.Posing;
+
 using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;

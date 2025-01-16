@@ -36,8 +36,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 {
 	public const double DragThreshold = 20;
 
-	public HashSet<BoneView> BoneViews = new();
-
 	private static readonly Type[] PoseFileTypes = new[]
 	{
 		typeof(PoseFile),
@@ -169,8 +167,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private static ILogger Log => Serilog.Log.ForContext<PosePage>();
 
-	public List<BoneView> GetBoneViews(Bone bone) => this.BoneViews.Where(bv => bv.Bone == bone).ToList();
-
 	private void FlipBone(Bone? targetBone, bool shouldFlip = true)
 	{
 		if (this.Skeleton == null)
@@ -275,13 +271,11 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.OnDataContextChanged(null, default);
 
 		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
-		PoseService.EnabledChanged += this.OnPoseServiceEnabledChanged;
 		this.PoseService.PropertyChanged += this.OnPoseServicePropertyChanged;
 	}
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
-		PoseService.EnabledChanged -= this.OnPoseServiceEnabledChanged;
 		this.PoseService.PropertyChanged -= this.OnPoseServicePropertyChanged;
 		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
 
@@ -308,20 +302,13 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 		this.Skeleton?.Reselect();
 		this.Skeleton?.ReadTransforms();
-	}
 
-	private void OnPoseServiceEnabledChanged(bool value)
-	{
-		if (!value)
+		if (e.PropertyName == nameof(this.PoseService.IsEnabled))
 		{
-			this.OnClearClicked(null, null);
-		}
-		else
-		{
-			Application.Current?.Dispatcher.Invoke(() =>
-			{
-				this.Skeleton?.ReadTransforms();
-			});
+			if (!this.PoseService.IsEnabled)
+				this.OnClearClicked(null, null);
+
+			BoneViewManager.Instance.Refresh();
 		}
 	}
 
@@ -374,8 +361,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 		this.FaceGuiView.DataContext = null;
 		this.MatrixView.DataContext = null;
 
-		this.BoneViews.Clear();
-
 		if (this.Actor == null || this.Actor.ModelObject == null)
 		{
 			this.Skeleton?.Clear();
@@ -391,6 +376,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			}
 
 			this.Skeleton = new SkeletonEntity(this.Actor);
+			BoneViewManager.Instance.SetSkeleton(this.Skeleton);
 
 			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 
@@ -799,7 +785,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 			var bones = new List<BoneView>();
 
-			foreach (BoneView bone in this.BoneViews)
+			foreach (BoneView bone in BoneViewManager.Instance.BoneViews)
 			{
 				if (bone.Bone == null)
 					continue;
@@ -853,7 +839,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 				var toSelect = new List<BoneView>();
 
-				foreach (BoneView bone in this.BoneViews)
+				foreach (BoneView bone in BoneViewManager.Instance.BoneViews)
 				{
 					if (bone.Bone == null)
 						continue;

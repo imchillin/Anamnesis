@@ -4,7 +4,6 @@
 namespace Anamnesis.Actor.Posing;
 
 using Anamnesis.Actor;
-
 using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
