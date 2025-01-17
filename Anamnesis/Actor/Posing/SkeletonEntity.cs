@@ -12,7 +12,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
@@ -97,6 +97,7 @@ public class SkeletonEntity : Skeleton
 	public override BoneEntity? GetBone(string name) => base.GetBone(name) as BoneEntity;
 
 	/// <summary>Writes the transforms of the selected bones to the skeleton.</summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void WriteSkeleton()
 	{
 		if (this.Actor == null || this.Actor.ModelObject?.Skeleton == null)
@@ -111,13 +112,33 @@ public class SkeletonEntity : Skeleton
 					this.Actor.PauseSynchronization = true;
 
 					// Get all selected bones
-					var selectedBones = this.SelectedBones.ToList();
+					var selectedBones = this.selectedBonesCache ??= this.Bones.Values.OfType<BoneEntity>().Where(b => b.IsSelected).ToList();
 
 					// Filter out bones that are descendants of other selected bones
-					var ancestorBones = selectedBones.Where(bone => !selectedBones.Any(otherBone => bone.HasAncestor(otherBone))).ToList();
+					HashSet<BoneEntity> ancestorBones = new();
+					bool isAncestor;
+
+					foreach (var bone in selectedBones)
+					{
+						isAncestor = false;
+						foreach (var otherBone in selectedBones)
+						{
+							if (bone != otherBone && bone.HasAncestor(otherBone))
+							{
+								isAncestor = true;
+								break;
+							}
+						}
+
+						if (!isAncestor)
+						{
+							ancestorBones.Add(bone);
+						}
+					}
 
 					// Write transforms for all ancestor bones
-					Parallel.ForEach(ancestorBones, bone => bone.WriteTransform());
+					foreach (var bone in ancestorBones)
+						bone.WriteTransform();
 
 					this.Actor.PauseSynchronization = false;
 				}

@@ -133,10 +133,10 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 	/// <param name="e">The event data.</param>
 	private async void OnSkeletonPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		await Dispatch.MainThread();
-
 		if (e.PropertyName == nameof(SkeletonEntity.SelectedBones) || e.PropertyName == nameof(SkeletonEntity.HoveredBones))
 		{
+			await Dispatch.MainThread();
+
 			foreach (BoneVisual3D bone in this.Children.OfType<BoneVisual3D>())
 			{
 				bone.UpdateMaterial();
@@ -149,10 +149,10 @@ public class SkeletonVisual3D : ModelVisual3D, IDisposable
 	/// <param name="e">The event arguments.</param>
 	private async void OnTransformPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		await Dispatch.MainThread();
-
 		if (e.PropertyName == nameof(TransformMemory.Rotation))
 		{
+			await Dispatch.MainThread();
+
 			this.RootRotation.Quaternion = this.Skeleton.RootRotation.ToMedia3DQuaternion();
 			this.rotateTransform.Rotation = this.RootRotation;
 		}

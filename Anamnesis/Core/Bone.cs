@@ -238,64 +238,72 @@ public class Bone : ITransform, INotifyPropertyChanged
 		if (this.TransformMemories.Count == 0)
 			return;
 
-		// Use snapshot if available, otherwise use values from memory
-		// Note: Values are expected to be in model space
-		Transform localTransform;
-		if (snapshot != null && snapshot.TryGetValue(this.Name, out var transform))
-		{
-			localTransform = transform;
-		}
-		else
-		{
-			var transformMemory = this.TransformMemory!;
-			localTransform = new Transform
-			{
-				Position = transformMemory.Position,
-				Rotation = transformMemory.Rotation,
-				Scale = transformMemory.Scale,
-			};
-		}
+		Stack<Bone> bonesToProcess = new();
+		bonesToProcess.Push(this);
 
-		// Convert the character-relative transform into a parent-relative transform
-		if (this.Parent != null)
+		while (bonesToProcess.Count > 0)
 		{
-			Transform parentTransform;
-			if (snapshot != null && snapshot.TryGetValue(this.Parent.Name, out var parentSnapshot))
+			Bone currentBone = bonesToProcess.Pop();
+
+			// Use snapshot if available, otherwise use values from memory
+			// Note: Values are expected to be in model space
+			Transform localTransform;
+			if (snapshot != null && snapshot.TryGetValue(currentBone.Name, out var transform))
 			{
-				parentTransform = parentSnapshot;
+				localTransform = transform;
 			}
 			else
 			{
-				var parentTransformMemory = this.Parent.TransformMemory!;
-				parentTransform = new Transform
+				var transformMemory = currentBone.TransformMemories[0];
+				localTransform = new Transform
 				{
-					Position = parentTransformMemory.Position,
-					Rotation = parentTransformMemory.Rotation,
-					Scale = parentTransformMemory.Scale,
+					Position = transformMemory.Position,
+					Rotation = transformMemory.Rotation,
+					Scale = transformMemory.Scale,
 				};
 			}
 
-			localTransform = ModelToLocalSpace(localTransform, parentTransform);
-		}
-
-		this.transformLock.EnterReadLock();
-		try
-		{
-			this.Position = localTransform.Position;
-			this.Rotation = localTransform.Rotation;
-			this.Scale = localTransform.Scale;
-			this.hasInitialReading = true;
-		}
-		finally
-		{
-			this.transformLock.ExitReadLock();
-		}
-
-		if (readChildren)
-		{
-			foreach (var child in this.Children)
+			// Convert the character-relative transform into a parent-relative transform
+			if (currentBone.Parent != null)
 			{
-				child.ReadTransform(true, snapshot);
+				Transform parentTransform;
+				if (snapshot != null && snapshot.TryGetValue(currentBone.Parent.Name, out var parentSnapshot))
+				{
+					parentTransform = parentSnapshot;
+				}
+				else
+				{
+					var parentTransformMemory = currentBone.Parent.TransformMemories[0];
+					parentTransform = new Transform
+					{
+						Position = parentTransformMemory.Position,
+						Rotation = parentTransformMemory.Rotation,
+						Scale = parentTransformMemory.Scale,
+					};
+				}
+
+				localTransform = ModelToLocalSpace(localTransform, parentTransform);
+			}
+
+			currentBone.transformLock.EnterReadLock();
+			try
+			{
+				currentBone.Position = localTransform.Position;
+				currentBone.Rotation = localTransform.Rotation;
+				currentBone.Scale = localTransform.Scale;
+				currentBone.hasInitialReading = true;
+			}
+			finally
+			{
+				currentBone.transformLock.ExitReadLock();
+			}
+
+			if (readChildren)
+			{
+				foreach (var child in currentBone.Children)
+				{
+					bonesToProcess.Push(child);
+				}
 			}
 		}
 	}
@@ -314,88 +322,93 @@ public class Bone : ITransform, INotifyPropertyChanged
 			this.ReadTransform();
 		}
 
-		Transform modelTransform = new()
-		{
-			Position = this.Position,
-			Rotation = this.Rotation,
-			Scale = this.Scale,
-		};
+		Stack<(Bone bone, bool writeLinked)> bonesToProcess = new();
+		bonesToProcess.Push((this, writeLinked));
 
-		if (this.Parent != null)
+		while (bonesToProcess.Count > 0)
 		{
-			var parentTransformMemory = this.Parent.TransformMemory!;
-			Transform parentTransform = new()
+			var (currentBone, currentWriteLinked) = bonesToProcess.Pop();
+
+			Transform modelTransform = new()
 			{
-				Position = parentTransformMemory.Position,
-				Rotation = parentTransformMemory.Rotation,
-				Scale = parentTransformMemory.Scale,
+				Position = currentBone.Position,
+				Rotation = currentBone.Rotation,
+				Scale = currentBone.Scale,
 			};
 
-			modelTransform = Bone.LocalToModelSpace(modelTransform, parentTransform);
-		}
-
-		this.transformLock.EnterWriteLock();
-		try
-		{
-			foreach (TransformMemory transformMemory in this.TransformMemories)
+			if (currentBone.Parent != null)
 			{
-				transformMemory.EnableReading = false;
+				var parentTransformMemory = currentBone.Parent.TransformMemory!;
+				Transform parentTransform = new()
+				{
+					Position = parentTransformMemory.Position,
+					Rotation = parentTransformMemory.Rotation,
+					Scale = parentTransformMemory.Scale,
+				};
+
+				modelTransform = Bone.LocalToModelSpace(modelTransform, parentTransform);
 			}
 
-			bool changed = false;
-
-			foreach (TransformMemory transformMemory in this.TransformMemories)
+			currentBone.transformLock.EnterWriteLock();
+			try
 			{
-				if (this.CanTranslate && !transformMemory.Position.IsApproximately(modelTransform.Position, EqualityTolerance))
+				foreach (TransformMemory transformMemory in currentBone.TransformMemories)
 				{
-					transformMemory.Position = modelTransform.Position;
-					changed = true;
+					transformMemory.EnableReading = false;
 				}
 
-				if (this.CanScale && !transformMemory.Scale.IsApproximately(modelTransform.Scale, EqualityTolerance))
-				{
-					transformMemory.Scale = modelTransform.Scale;
-					changed = true;
-				}
+				bool changed = false;
 
-				if (this.CanRotate && !transformMemory.Rotation.IsApproximately(modelTransform.Rotation, EqualityTolerance))
+				foreach (TransformMemory transformMemory in currentBone.TransformMemories)
 				{
-					transformMemory.Rotation = modelTransform.Rotation;
-					changed = true;
-				}
-			}
-
-			if (changed)
-			{
-				if (writeLinked && this.EnableLinkedBones)
-				{
-					foreach (var link in this.LinkedBones)
+					if (currentBone.CanTranslate && !transformMemory.Position.IsApproximately(modelTransform.Position, EqualityTolerance))
 					{
-						link.Rotation = this.Rotation;
-						link.WriteTransform(writeChildren, false);
+						transformMemory.Position = modelTransform.Position;
+						changed = true;
+					}
+
+					if (currentBone.CanScale && !transformMemory.Scale.IsApproximately(modelTransform.Scale, EqualityTolerance))
+					{
+						transformMemory.Scale = modelTransform.Scale;
+						changed = true;
+					}
+
+					if (currentBone.CanRotate && !transformMemory.Rotation.IsApproximately(modelTransform.Rotation, EqualityTolerance))
+					{
+						transformMemory.Rotation = modelTransform.Rotation;
+						changed = true;
 					}
 				}
 
-				if (writeChildren)
+				if (changed)
 				{
-					foreach (var child in this.Children)
+					if (currentWriteLinked && currentBone.EnableLinkedBones)
 					{
-						if (PoseService.Instance.EnableParenting)
-							child.WriteTransform();
-						else
-							child.ReadTransform(true);
+						foreach (var link in currentBone.LinkedBones)
+						{
+							link.Rotation = currentBone.Rotation;
+							bonesToProcess.Push((link, false));
+						}
+					}
+
+					if (writeChildren && PoseService.Instance.EnableParenting)
+					{
+						foreach (var child in currentBone.Children)
+						{
+							bonesToProcess.Push((child, currentWriteLinked));
+						}
 					}
 				}
-			}
 
-			foreach (TransformMemory transformMemory in this.TransformMemories)
-			{
-				transformMemory.EnableReading = true;
+				foreach (TransformMemory transformMemory in currentBone.TransformMemories)
+				{
+					transformMemory.EnableReading = true;
+				}
 			}
-		}
-		finally
-		{
-			this.transformLock.ExitWriteLock();
+			finally
+			{
+				currentBone.transformLock.ExitWriteLock();
+			}
 		}
 	}
 
@@ -422,7 +435,18 @@ public class Bone : ITransform, INotifyPropertyChanged
 	/// <summary>Determines whether the bone has the specified target bone as an ancestor.</summary>
 	/// <param name="target">The target bone to check.</param>
 	/// <returns>True if the target bone is an ancestor of this bone; otherwise, false.</returns>
-	public bool HasAncestor(Bone target) => this.Parent != null && (this.Parent == target || this.Parent.HasAncestor(target));
+	public bool HasAncestor(Bone target)
+	{
+		Bone? current = this.Parent;
+		while (current != null)
+		{
+			if (current == target)
+				return true;
+			current = current.Parent;
+		}
+
+		return false;
+	}
 
 	/// <summary>Returns a string that represents the current object.</summary>
 	/// <returns>A string that represents the current object.</returns>

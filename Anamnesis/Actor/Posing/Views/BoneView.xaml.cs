@@ -348,6 +348,8 @@ public partial class BoneView : UserControl
 	/// <param name="e">The event data.</param>
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
+		BoneViewManager.Instance.RemoveBoneView(this);
+
 		foreach (Line line in this.mouseLinesToChildren)
 		{
 			if (line.Parent is Panel parentPanel)

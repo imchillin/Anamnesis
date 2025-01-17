@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,7 +37,7 @@ public class MemoryService : ServiceBase<MemoryService>
 	/// <summary>
 	/// The number of milliseconds to wait between read attempts.
 	/// </summary>
-	private const int TimeBetweenReadAttempts = 20;
+	private const int TimeBetweenReadAttempts = 10;
 
 	/// <summary>
 	/// The interval in milliseconds to wait for process refresh checks.
@@ -159,18 +160,17 @@ public class MemoryService : ServiceBase<MemoryService>
 			throw new Exception("Invalid address");
 
 		int attempt = 0;
+		int size = Marshal.SizeOf<T>();
+		byte[] buffer = new byte[size];
+
 		while (attempt < MaxReadAttempts)
 		{
-			int size = Marshal.SizeOf<T>();
-			IntPtr mem = Marshal.AllocHGlobal(size);
-			ReadProcessMemory(Handle, address, mem, size, out _);
-			T? val = Marshal.PtrToStructure<T>(mem);
-			Marshal.FreeHGlobal(mem);
+			if (ReadProcessMemory(Handle, address, buffer, size, out _))
+			{
+				return MemoryMarshal.Read<T>(buffer);
+			}
+
 			attempt++;
-
-			if (val != null)
-				return (T)val;
-
 			Thread.Sleep(TimeBetweenReadAttempts);
 		}
 
@@ -197,29 +197,35 @@ public class MemoryService : ServiceBase<MemoryService>
 		if (type == typeof(bool))
 			readType = typeof(OneByteBool);
 
-		for (int attempt = 0; attempt < MaxReadAttempts; attempt++)
+		int size = Marshal.SizeOf(readType);
+		IntPtr mem = Marshal.AllocHGlobal(size);
+
+		try
 		{
-			int size = Marshal.SizeOf(readType);
-			IntPtr mem = Marshal.AllocHGlobal(size);
-
-			if (ReadProcessMemory(Handle, address, mem, size, out _))
+			for (int attempt = 0; attempt < MaxReadAttempts; attempt++)
 			{
-				object? val = Marshal.PtrToStructure(mem, readType);
-				Marshal.FreeHGlobal(mem);
+				if (ReadProcessMemory(Handle, address, mem, size, out _))
+				{
+					object? val = Marshal.PtrToStructure(mem, readType);
 
-				if (val == null)
-					continue;
+					if (val == null)
+						continue;
 
-				if (type.IsEnum)
-					val = Enum.ToObject(type, val);
+					if (type.IsEnum)
+						return Enum.ToObject(type, val);
 
-				if (val is OneByteBool obb)
-					return obb.Value;
+					if (val is OneByteBool obb)
+						return obb.Value;
 
-				return val;
+					return val;
+				}
+
+				Thread.Sleep(TimeBetweenReadAttempts);
 			}
-
-			Thread.Sleep(TimeBetweenReadAttempts);
+		}
+		finally
+		{
+			Marshal.FreeHGlobal(mem);
 		}
 
 		throw new Exception($"Failed to read memory {type} from address {address}");
@@ -334,6 +340,27 @@ public class MemoryService : ServiceBase<MemoryService>
 	}
 
 	/// <summary>
+	/// Writes a span buffer to a specified memory address.
+	/// </summary>
+	/// <param name="address">The memory address to write to.</param>
+	/// <param name="buffer">The span buffer to write.</param>
+	/// <param name="writingCode">Indicates whether the write operation involves writing executable code.</param>
+	/// <returns>True if the write operation was successful, otherwise False.</returns>
+	public static bool Write(IntPtr address, Span<byte> buffer, bool writingCode)
+	{
+		if (writingCode)
+			VirtualProtectEx(Handle, address, buffer.Length, VirtualProtectReadWriteExecute, out _);
+
+		unsafe
+		{
+			fixed (byte* ptr = buffer)
+			{
+				return WriteProcessMemory(Handle, address, (IntPtr)ptr, buffer.Length, out _);
+			}
+		}
+	}
+
+	/// <summary>
 	/// Writes a value of a specified type to a given memory address.
 	/// </summary>
 	/// <typeparam name="T">The type of the value to write. Must be a struct.</typeparam>
@@ -373,52 +400,66 @@ public class MemoryService : ServiceBase<MemoryService>
 			return false;
 
 		if (type.IsEnum)
-			type = type.GetEnumUnderlyingType();
+			type = Enum.GetUnderlyingType(type);
 
 		byte[] buffer;
 
-		if (type == typeof(bool))
+		unsafe
 		{
-			buffer = new[] { (byte)((bool)value == true ? 1 : 0) };
-		}
-		else if (type == typeof(byte))
-		{
-			buffer = new[] { (byte)value };
-		}
-		else if (type == typeof(int))
-		{
-			buffer = BitConverter.GetBytes((int)value);
-		}
-		else if (type == typeof(uint))
-		{
-			buffer = BitConverter.GetBytes((uint)value);
-		}
-		else if (type == typeof(short))
-		{
-			buffer = BitConverter.GetBytes((short)value);
-		}
-		else if (type == typeof(ushort))
-		{
-			buffer = BitConverter.GetBytes((ushort)value);
-		}
-		else
-		{
-			try
+			if (type == typeof(bool))
+			{
+				buffer = new[] { (byte)((bool)value == true ? 1 : 0) };
+			}
+			else if (type == typeof(byte))
+			{
+				buffer = new[] { (byte)value };
+			}
+			else
 			{
 				int size = Marshal.SizeOf(type);
 				buffer = new byte[size];
-				IntPtr mem = Marshal.AllocHGlobal(size);
-				Marshal.StructureToPtr(value, mem, false);
-				Marshal.Copy(mem, buffer, 0, size);
-				Marshal.FreeHGlobal(mem);
-			}
-			catch (Exception ex)
-			{
-				throw new Exception($"Failed to marshal type: {type} to memory", ex);
+				fixed (byte* ptr = buffer)
+				{
+					if (type == typeof(short))
+					{
+						*(short*)ptr = (short)value;
+					}
+					else if (type == typeof(ushort))
+					{
+						*(ushort*)ptr = (ushort)value;
+					}
+					else if (type == typeof(int))
+					{
+						*(int*)ptr = (int)value;
+					}
+					else if (type == typeof(uint))
+					{
+						*(uint*)ptr = (uint)value;
+					}
+					else if (type == typeof(long))
+					{
+						*(long*)ptr = (long)value;
+					}
+					else if (type == typeof(ulong))
+					{
+						*(ulong*)ptr = (ulong)value;
+					}
+					else if (type == typeof(float))
+					{
+						*(float*)ptr = (float)value;
+					}
+					else if (type == typeof(double))
+					{
+						*(double*)ptr = (double)value;
+					}
+					else
+					{
+						buffer = MarshalToByteArray(value, type);
+					}
+				}
 			}
 		}
 
-		// Log.Verbose($"Writing: {buffer.Length} bytes to {address} for type {type.Name} for reason: {reason}");
 		return Write(address, buffer, false);
 	}
 
@@ -527,6 +568,36 @@ public class MemoryService : ServiceBase<MemoryService>
 		}
 
 		Scanner = new SignatureScanner(process.MainModule);
+	}
+
+	/// <summary>
+	/// Converts a value of a specified type to a byte array using marshaling.
+	/// </summary>
+	/// <param name="value">The value to marshal.</param>
+	/// <param name="type">The type of the value to marshal.</param>
+	/// <returns>A byte array containing the marshaled value.</returns>
+	/// <exception cref="Exception"> Thrown if the marshaling operation fails.</exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static byte[] MarshalToByteArray(object value, Type type)
+	{
+		int size = Marshal.SizeOf(type);
+		byte[] buffer = new byte[size];
+		IntPtr mem = Marshal.AllocHGlobal(size);
+		try
+		{
+			Marshal.StructureToPtr(value, mem, false);
+			Marshal.Copy(mem, buffer, 0, size);
+		}
+		catch (Exception ex)
+		{
+			throw new Exception($"Failed to marshal type: {type} to memory", ex);
+		}
+		finally
+		{
+			Marshal.FreeHGlobal(mem);
+		}
+
+		return buffer;
 	}
 
 	[DllImport("kernel32.dll", SetLastError = true)]

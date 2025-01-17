@@ -112,10 +112,10 @@ public class BoneViewManager : IDisposable
 	{
 		Debug.Assert(this.skeleton != null, "Skeleton should not be null. Possible event handler leak");
 
-		await Dispatch.MainThread();
-
 		if (e.PropertyName == nameof(SkeletonEntity.FlipSides) || e.PropertyName == nameof(SkeletonEntity.Bones))
 		{
+			await Dispatch.MainThread();
+
 			foreach (var boneView in this.boneViews)
 			{
 				// Bones that haven't loaded in yet won't have a name. Skip them.
@@ -123,6 +123,7 @@ public class BoneViewManager : IDisposable
 					continue;
 
 				boneView.SetBone(boneView.CurrentBoneName);
+				boneView.UpdateState();
 			}
 
 			return;
@@ -130,6 +131,8 @@ public class BoneViewManager : IDisposable
 
 		if (e.PropertyName == nameof(SkeletonEntity.SelectedBones) || e.PropertyName == nameof(SkeletonEntity.HoveredBones))
 		{
+			await Dispatch.MainThread();
+
 			foreach (var boneView in this.boneViews)
 			{
 				boneView.UpdateState();
