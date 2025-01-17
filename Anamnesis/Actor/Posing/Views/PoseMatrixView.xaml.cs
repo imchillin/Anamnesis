@@ -4,6 +4,7 @@
 namespace Anamnesis.Actor.Views;
 
 using Anamnesis.Actor.Posing;
+using PropertyChanged;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -13,18 +14,30 @@ using System.Windows.Input;
 /// <summary>
 /// Interaction logic for PoseMatrixPage.xaml.
 /// </summary>
+[AddINotifyPropertyChangedInterface]
 public partial class PoseMatrixView : UserControl
 {
 	public PoseMatrixView()
 	{
 		this.InitializeComponent();
+		this.DataContextChanged += this.OnDataContextChanged;
 	}
 
 	public SkeletonEntity? Skeleton { get; private set; }
+
+	[DependsOn(nameof(this.Skeleton))]
 	public IEnumerable<BoneEntity> HairBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.Hair) ?? Enumerable.Empty<BoneEntity>();
+
+	[DependsOn(nameof(this.Skeleton))]
 	public IEnumerable<BoneEntity> MetBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.Met) ?? Enumerable.Empty<BoneEntity>();
+
+	[DependsOn(nameof(this.Skeleton))]
 	public IEnumerable<BoneEntity> TopBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.Top) ?? Enumerable.Empty<BoneEntity>();
+
+	[DependsOn(nameof(this.Skeleton))]
 	public IEnumerable<BoneEntity> MainHandBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.MainHand) ?? Enumerable.Empty<BoneEntity>();
+
+	[DependsOn(nameof(this.Skeleton))]
 	public IEnumerable<BoneEntity> OffHandBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.OffHand) ?? Enumerable.Empty<BoneEntity>();
 
 	public void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
@@ -52,11 +65,6 @@ public partial class PoseMatrixView : UserControl
 				.ToList();
 			this.Skeleton.Select(bones);
 		}
-	}
-
-	private void OnLoaded(object sender, RoutedEventArgs e)
-	{
-		this.DataContextChanged += this.OnDataContextChanged;
 	}
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)

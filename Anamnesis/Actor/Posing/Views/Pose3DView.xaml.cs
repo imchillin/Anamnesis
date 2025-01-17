@@ -81,15 +81,41 @@ public partial class Pose3DView : UserControl
 		get
 		{
 			if (this.Skeleton == null)
-				return Array.Empty<BoneEntity>();
+				return Enumerable.Empty<BoneEntity>();
 
-			return string.IsNullOrWhiteSpace(this.BoneSearch)
-				? this.Skeleton.Bones.Values.OfType<BoneEntity>()
-				: this.Skeleton.Bones.Values.OfType<BoneEntity>().Where(b => FileSystemName.MatchesSimpleExpression($"*{this.BoneSearch}*", b.Name) || FileSystemName.MatchesSimpleExpression($"*{this.BoneSearch}*", b.Tooltip));
+			var bones = TraverseSkeleton(this.Skeleton);
+
+			if (string.IsNullOrWhiteSpace(this.BoneSearch))
+				return bones;
+
+			string searchPattern = $"*{this.BoneSearch}*";
+			return bones.Where(b => FileSystemName.MatchesSimpleExpression(searchPattern, b.Name) || FileSystemName.MatchesSimpleExpression(searchPattern, b.Tooltip));
 		}
 	}
 
 	public bool SyncWithGameCamera { get; set; } = true;
+
+	private static IEnumerable<BoneEntity> TraverseSkeleton(SkeletonEntity skeleton)
+	{
+		if (skeleton.Bones == null || skeleton.Bones.IsEmpty)
+			return Enumerable.Empty<BoneEntity>();
+
+		Stack<BoneEntity> stack = new(skeleton.Bones.Values.OfType<BoneEntity>().Where(b => b.Parent == null).OrderBy(b => b.Name));
+		List<BoneEntity> result = new(stack.Count);
+
+		while (stack.Count > 0)
+		{
+			BoneEntity current = stack.Pop();
+			result.Add(current);
+
+			foreach (var child in current.Children.OfType<BoneEntity>().OrderBy(b => b.Name))
+			{
+				stack.Push(child);
+			}
+		}
+
+		return result;
+	}
 
 	private static BoneVisual3D? FindBoneVisual(DependencyObject visual)
 	{
