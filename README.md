@@ -1,7 +1,6 @@
 
 # [![Anamnesis](ArtSource/DownloadButton.png "Download Releases")](https://github.com/imchillin/Anamnesis/releases)
 
-
 # Anamnesis
 ![Anamnesis](Anamnesis/Assets/Anamnesis.png "Anamnesis")
 
@@ -29,7 +28,8 @@ You can check the official Wiki over at [xivmodding.com](https://xivmodding.com/
 
 ### Maintainer
 
-* **[chirpxiv](https://github.com/chirpxiv)** - *Main Maintainer*
+* **[chirpxiv](https://github.com/chirpxiv)** - *Updates and Maintenance*
+* **[ergoxiv](https://github.com/ergoxiv)** - *Features, QoL, etc.*
 
 ### Original Authors
 
@@ -53,6 +53,8 @@ Developers that have since moved on to different projects.
 * **[goaaats](https://github.com/goaaats)**
 
 ### Translations
+
+[![Crowdin](https://badges.crowdin.net/anamnesis/localized.svg)](https://crowdin.com/project/anamnesis)
 
 * **[Maxunit](https://github.com/Maxunit)** - *German* 
 * **[Arianishka](https://github.com/Arianishka)** - *French*
