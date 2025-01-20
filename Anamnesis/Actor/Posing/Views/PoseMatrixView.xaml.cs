@@ -17,6 +17,12 @@ using System.Windows.Input;
 [AddINotifyPropertyChangedInterface]
 public partial class PoseMatrixView : UserControl
 {
+	private IEnumerable<BoneEntity>? hairBonesCache;
+	private IEnumerable<BoneEntity>? metBonesCache;
+	private IEnumerable<BoneEntity>? topBonesCache;
+	private IEnumerable<BoneEntity>? mainHandBonesCache;
+	private IEnumerable<BoneEntity>? offHandBonesCache;
+
 	public PoseMatrixView()
 	{
 		this.InitializeComponent();
@@ -26,25 +32,26 @@ public partial class PoseMatrixView : UserControl
 	public SkeletonEntity? Skeleton { get; private set; }
 
 	[DependsOn(nameof(this.Skeleton))]
-	public IEnumerable<BoneEntity> HairBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.Hair) ?? Enumerable.Empty<BoneEntity>();
+	public IEnumerable<BoneEntity> HairBones => this.hairBonesCache ??= this.GetBonesByCategory(BoneCategory.Hair);
 
 	[DependsOn(nameof(this.Skeleton))]
-	public IEnumerable<BoneEntity> MetBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.Met) ?? Enumerable.Empty<BoneEntity>();
+	public IEnumerable<BoneEntity> MetBones => this.metBonesCache ??= this.GetBonesByCategory(BoneCategory.Met);
 
 	[DependsOn(nameof(this.Skeleton))]
-	public IEnumerable<BoneEntity> TopBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.Top) ?? Enumerable.Empty<BoneEntity>();
+	public IEnumerable<BoneEntity> TopBones => this.topBonesCache ??= this.GetBonesByCategory(BoneCategory.Top);
 
 	[DependsOn(nameof(this.Skeleton))]
-	public IEnumerable<BoneEntity> MainHandBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.MainHand) ?? Enumerable.Empty<BoneEntity>();
+	public IEnumerable<BoneEntity> MainHandBones => this.mainHandBonesCache ??= this.GetBonesByCategory(BoneCategory.MainHand);
 
 	[DependsOn(nameof(this.Skeleton))]
-	public IEnumerable<BoneEntity> OffHandBones => this.Skeleton?.Bones.Values.OfType<BoneEntity>().Where(b => b.Category == BoneCategory.OffHand) ?? Enumerable.Empty<BoneEntity>();
+	public IEnumerable<BoneEntity> OffHandBones => this.offHandBonesCache ??= this.GetBonesByCategory(BoneCategory.OffHand);
 
 	public void OnDataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
 	{
 		if (this.DataContext is not SkeletonEntity skeleton)
 			return;
 
+		this.InvalidateCaches();
 		this.Skeleton = skeleton;
 	}
 
@@ -70,5 +77,21 @@ public partial class PoseMatrixView : UserControl
 	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
 		this.DataContextChanged -= this.OnDataContextChanged;
+	}
+
+	private IEnumerable<BoneEntity> GetBonesByCategory(BoneCategory category)
+	{
+		return this.Skeleton != null
+			? SkeletonEntity.TraverseSkeleton(this.Skeleton).Where(b => b.Category == category)
+			: Enumerable.Empty<BoneEntity>();
+	}
+
+	private void InvalidateCaches()
+	{
+		this.hairBonesCache = null;
+		this.metBonesCache = null;
+		this.topBonesCache = null;
+		this.mainHandBonesCache = null;
+		this.offHandBonesCache = null;
 	}
 }

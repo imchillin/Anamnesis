@@ -8,7 +8,6 @@ using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -20,7 +19,7 @@ using XivToolsWpf.Math3D.Extensions;
 /// synchronizing with memory, and handling linked bones.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public class Bone : ITransform, INotifyPropertyChanged
+public class Bone : ITransform
 {
 	protected const float EqualityTolerance = 0.00001f;
 	protected readonly ReaderWriterLockSlim transformLock = new();
@@ -48,9 +47,6 @@ public class Bone : ITransform, INotifyPropertyChanged
 		this.Rotation = this.TransformMemory?.Rotation ?? Quaternion.Identity;
 		this.Scale = this.TransformMemory?.Scale ?? Vector3.Zero;
 	}
-
-	/// <inheritdoc/>
-	public event PropertyChangedEventHandler? PropertyChanged;
 
 	/// <summary>Gets or sets the skeleton to which this bone belongs.</summary>
 	public Skeleton Skeleton { get; protected set; }
@@ -313,21 +309,22 @@ public class Bone : ITransform, INotifyPropertyChanged
 	/// <param name="writeLinked">Whether to write the transforms of linked bones.</param>
 	public virtual void WriteTransform(bool writeChildren = true, bool writeLinked = true)
 	{
-		if (this.TransformMemories.Count == 0)
-			return;
-
-		// Carry out initial transform if it hasn't been done yet
-		if (!this.hasInitialReading)
-		{
-			this.ReadTransform();
-		}
-
 		Stack<(Bone bone, bool writeLinked)> bonesToProcess = new();
 		bonesToProcess.Push((this, writeLinked));
 
 		while (bonesToProcess.Count > 0)
 		{
 			var (currentBone, currentWriteLinked) = bonesToProcess.Pop();
+			var transformMemories = currentBone.TransformMemories;
+
+			if (transformMemories.Count == 0)
+				throw new System.InvalidOperationException($"Bone \"{currentBone.Name}\" does not have any transform memories.");
+
+			// Carry out initial transform if it hasn't been done yet
+			if (!currentBone.hasInitialReading)
+			{
+				currentBone.ReadTransform();
+			}
 
 			Transform modelTransform = new()
 			{
@@ -346,20 +343,20 @@ public class Bone : ITransform, INotifyPropertyChanged
 					Scale = parentTransformMemory.Scale,
 				};
 
-				modelTransform = Bone.LocalToModelSpace(modelTransform, parentTransform);
+				modelTransform = LocalToModelSpace(modelTransform, parentTransform);
 			}
 
 			currentBone.transformLock.EnterWriteLock();
 			try
 			{
-				foreach (TransformMemory transformMemory in currentBone.TransformMemories)
+				foreach (TransformMemory transformMemory in transformMemories)
 				{
 					transformMemory.EnableReading = false;
 				}
 
 				bool changed = false;
 
-				foreach (TransformMemory transformMemory in currentBone.TransformMemories)
+				foreach (TransformMemory transformMemory in transformMemories)
 				{
 					if (currentBone.CanTranslate && !transformMemory.Position.IsApproximately(modelTransform.Position, EqualityTolerance))
 					{
@@ -386,7 +383,9 @@ public class Bone : ITransform, INotifyPropertyChanged
 					{
 						foreach (var link in currentBone.LinkedBones)
 						{
+							// TODO: Figure out how to sync linked bone positions
 							link.Rotation = currentBone.Rotation;
+							link.Scale = currentBone.Scale;
 							bonesToProcess.Push((link, false));
 						}
 					}
@@ -400,7 +399,7 @@ public class Bone : ITransform, INotifyPropertyChanged
 					}
 				}
 
-				foreach (TransformMemory transformMemory in currentBone.TransformMemories)
+				foreach (TransformMemory transformMemory in transformMemories)
 				{
 					transformMemory.EnableReading = true;
 				}

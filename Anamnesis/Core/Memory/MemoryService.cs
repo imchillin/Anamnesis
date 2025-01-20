@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -157,24 +156,30 @@ public class MemoryService : ServiceBase<MemoryService>
 		where T : struct
 	{
 		if (address == IntPtr.Zero)
-			throw new Exception("Invalid address");
+			throw new ArgumentException("Invalid address", nameof(address));
 
 		int attempt = 0;
 		int size = Marshal.SizeOf<T>();
-		byte[] buffer = new byte[size];
+		Span<byte> buffer = stackalloc byte[size];
 
 		while (attempt < MaxReadAttempts)
 		{
-			if (ReadProcessMemory(Handle, address, buffer, size, out _))
+			unsafe
 			{
-				return MemoryMarshal.Read<T>(buffer);
+				fixed (byte* ptr = buffer)
+				{
+					if (ReadProcessMemory(Handle, address, (IntPtr)ptr, size, out _))
+					{
+						return MemoryMarshal.Read<T>(buffer);
+					}
+				}
 			}
 
 			attempt++;
 			Thread.Sleep(TimeBetweenReadAttempts);
 		}
 
-		throw new Exception($"Failed to read memory {typeof(T)} from address {address}");
+		throw new InvalidOperationException($"Failed to read memory {typeof(T)} from address {address}");
 	}
 
 	/// <summary>
@@ -187,7 +192,7 @@ public class MemoryService : ServiceBase<MemoryService>
 	public static object Read(IntPtr address, Type type)
 	{
 		if (address == IntPtr.Zero)
-			throw new Exception("Invalid address");
+			throw new ArgumentException("Invalid address", nameof(address));
 
 		Type readType = type;
 
@@ -197,38 +202,39 @@ public class MemoryService : ServiceBase<MemoryService>
 		if (type == typeof(bool))
 			readType = typeof(OneByteBool);
 
+		int attempt = 0;
 		int size = Marshal.SizeOf(readType);
-		IntPtr mem = Marshal.AllocHGlobal(size);
+		Span<byte> buffer = stackalloc byte[size];
 
-		try
+		while (attempt < MaxReadAttempts)
 		{
-			for (int attempt = 0; attempt < MaxReadAttempts; attempt++)
+			unsafe
 			{
-				if (ReadProcessMemory(Handle, address, mem, size, out _))
+				fixed (byte* ptr = buffer)
 				{
-					object? val = Marshal.PtrToStructure(mem, readType);
+					if (ReadProcessMemory(Handle, address, (IntPtr)ptr, size, out _))
+					{
+						object? val = Marshal.PtrToStructure((IntPtr)ptr, readType);
 
-					if (val == null)
-						continue;
+						if (val == null)
+							continue;
 
-					if (type.IsEnum)
-						return Enum.ToObject(type, val);
+						if (type.IsEnum)
+							return Enum.ToObject(type, val);
 
-					if (val is OneByteBool obb)
-						return obb.Value;
+						if (val is OneByteBool obb)
+							return obb.Value;
 
-					return val;
+						return val;
+					}
 				}
-
-				Thread.Sleep(TimeBetweenReadAttempts);
 			}
-		}
-		finally
-		{
-			Marshal.FreeHGlobal(mem);
+
+			attempt++;
+			Thread.Sleep(TimeBetweenReadAttempts);
 		}
 
-		throw new Exception($"Failed to read memory {type} from address {address}");
+		throw new InvalidOperationException($"Failed to read memory {type} from address {address}");
 	}
 
 	/// <summary>
@@ -577,7 +583,6 @@ public class MemoryService : ServiceBase<MemoryService>
 	/// <param name="type">The type of the value to marshal.</param>
 	/// <returns>A byte array containing the marshaled value.</returns>
 	/// <exception cref="Exception"> Thrown if the marshaling operation fails.</exception>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static byte[] MarshalToByteArray(object value, Type type)
 	{
 		int size = Marshal.SizeOf(type);

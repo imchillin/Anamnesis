@@ -16,7 +16,6 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 /// <summary>
 /// Represents a skeleton of hierarchically-parented bones of an actor that can be posed.
@@ -187,8 +186,17 @@ public class Skeleton : INotifyPropertyChanged
 		{
 			// Take a snapshot of the current transforms and update bone transforms.
 			var snapshot = this.TakeSnapshot();
-			var rootBones = this.Bones.Values.Where(b => b.Parent == null).ToList();
-			Parallel.ForEach(rootBones, rootBone => rootBone.ReadTransform(true, snapshot));
+			var rootBones = new List<Bone>();
+			foreach (var bone in this.Bones.Values)
+			{
+				if (bone.Parent == null)
+					rootBones.Add(bone);
+			}
+
+			foreach (var rootBone in rootBones)
+			{
+				rootBone.ReadTransform(true, snapshot);
+			}
 		}
 	}
 
@@ -217,14 +225,15 @@ public class Skeleton : INotifyPropertyChanged
 
 		foreach (var (name, bone) in this.Bones)
 		{
-			if (bone.TransformMemory == null)
+			var transform = bone.TransformMemory;
+			if (transform == null)
 				continue;
 
 			snapshot[name] = new Transform
 			{
-				Position = bone.TransformMemory.Position,
-				Rotation = bone.TransformMemory.Rotation,
-				Scale = bone.TransformMemory.Scale,
+				Position = transform.Position,
+				Rotation = transform.Rotation,
+				Scale = transform.Scale,
 			};
 		}
 
@@ -282,10 +291,19 @@ public class Skeleton : INotifyPropertyChanged
 			}
 		}
 
-		// Read the initial transforms of all bones in parallel.
+		// Read the initial transforms of all bones
 		var snapshot = this.TakeSnapshot();
-		var rootBones = this.Bones.Values.Where(b => b.Parent == null).ToList();
-		Parallel.ForEach(rootBones, rootBone => rootBone.ReadTransform(true, snapshot));
+		var rootBones = new List<Bone>();
+		foreach (var bone in this.Bones.Values)
+		{
+			if (bone.Parent == null)
+				rootBones.Add(bone);
+		}
+
+		foreach (var rootBone in rootBones)
+		{
+			rootBone.ReadTransform(true, snapshot);
+		}
 
 		// Check for IVCS bones
 		this.IsIVCS = this.Bones.Keys.Any(name => name.StartsWith("iv_"));

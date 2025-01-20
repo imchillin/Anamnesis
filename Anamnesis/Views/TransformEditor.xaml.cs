@@ -8,6 +8,7 @@ using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -96,6 +97,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	public bool ScaleLinked => this.ActorTransform?.ScaleLinked ?? (this.Skeleton != null && this.Skeleton.SelectedBones != null && this.Skeleton.SelectedBones.All(b => b.ScaleLinked));
 
 	/// <summary>Gets or sets the position.</summary>
+	[DoNotSetChanged]
 	public Vector3 Position
 	{
 		get
@@ -159,6 +161,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	}
 
 	/// <summary>Gets or sets the rotation.</summary>
+	[DoNotSetChanged]
 	public Quaternion Rotation
 	{
 		get
@@ -239,6 +242,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	}
 
 	/// <summary>Gets or sets the scale.</summary>
+	[DoNotSetChanged]
 	public Vector3 Scale
 	{
 		get
@@ -357,6 +361,8 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 			sender.SetInitialValues();
 			sender.RaisePropertyChanged(string.Empty);
 		}
+
+		Log.Verbose("[TransformEditor] Skeleton was updated");
 	}
 
 	/// <summary>Handles changes to the actor transform dependency property.</summary>
@@ -381,7 +387,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	/// </remarks>
 	private void SetInitialValues()
 	{
-		if (this.Skeleton == null || this.Skeleton.SelectedBones == null || !this.Skeleton.SelectedBones.Any())
+		if (this.Skeleton == null || this.Skeleton.SelectedBones == null)
 			return;
 
 		this.initialPositions.Clear();

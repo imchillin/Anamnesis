@@ -294,13 +294,6 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 	private void OnPoseServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
-		// Don't refresh the skeleton if the selected bones text changes to prevent a loop
-		if (e.PropertyName == nameof(PoseService.SelectedBonesText))
-			return;
-
-		this.Skeleton?.Reselect();
-		this.Skeleton?.ReadTransforms();
-
 		if (e.PropertyName == nameof(this.PoseService.IsEnabled))
 		{
 			if (!this.PoseService.IsEnabled)

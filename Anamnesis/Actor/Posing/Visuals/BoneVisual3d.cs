@@ -19,6 +19,7 @@ using XivToolsWpf.Math3D.Extensions;
 /// </summary>
 public class BoneVisual3D : ModelVisual3D, IDisposable
 {
+	protected const float EqualityTolerance = 0.00001f;
 	private static readonly double SphereRadius = 0.015;
 	private static readonly Material SelectedMaterial = CreateMaterial(Colors.Orange);
 	private static readonly Material HoveredMaterial = CreateMaterial(Colors.DarkOrange);
@@ -131,8 +132,8 @@ public class BoneVisual3D : ModelVisual3D, IDisposable
 
 		var currentPosition = this.Bone.Position;
 		var currentRotation = this.Bone.Rotation;
-		bool positionChanged = currentPosition != this.lastPosition;
-		bool rotationChanged = currentRotation != this.lastRotation;
+		bool positionChanged = !(this.lastPosition?.IsApproximately(currentPosition, EqualityTolerance) ?? false);
+		bool rotationChanged = !(this.lastRotation?.IsApproximately(currentRotation, EqualityTolerance) ?? false);
 
 		if (positionChanged)
 		{

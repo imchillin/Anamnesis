@@ -93,6 +93,33 @@ public class SkeletonEntity : Skeleton
 		}
 	}
 
+	/// <summary>
+	/// Returns a list of bones in the skeleton in a depth-first order.
+	/// </summary>
+	/// <param name="skeleton">The skeleton to traverse.</param>
+	/// <returns>A list of bones in the skeleton in a depth-first order.</returns>
+	public static IEnumerable<BoneEntity> TraverseSkeleton(SkeletonEntity skeleton)
+	{
+		if (skeleton.Bones == null || skeleton.Bones.IsEmpty)
+			return Enumerable.Empty<BoneEntity>();
+
+		Stack<BoneEntity> stack = new(skeleton.Bones.Values.OfType<BoneEntity>().Where(b => b.Parent == null).OrderBy(b => b.Name));
+		List<BoneEntity> result = new(stack.Count);
+
+		while (stack.Count > 0)
+		{
+			BoneEntity current = stack.Pop();
+			result.Add(current);
+
+			foreach (var child in current.Children.OfType<BoneEntity>().OrderBy(b => b.Name))
+			{
+				stack.Push(child);
+			}
+		}
+
+		return result;
+	}
+
 	/// <inheritdoc/>
 	public override BoneEntity? GetBone(string name) => base.GetBone(name) as BoneEntity;
 
@@ -139,13 +166,15 @@ public class SkeletonEntity : Skeleton
 					// Write transforms for all ancestor bones
 					foreach (var bone in ancestorBones)
 						bone.WriteTransform();
-
-					this.Actor.PauseSynchronization = false;
 				}
 				catch (Exception ex)
 				{
 					Log.Error(ex, "Failed to write bone transforms");
 					this.ClearSelection();
+				}
+				finally
+				{
+					this.Actor.PauseSynchronization = false;
 				}
 			}
 		}

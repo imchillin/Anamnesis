@@ -331,6 +331,7 @@ public class ActorService : ServiceBase<ActorService>
 			if (hasChanged)
 			{
 				this.RaisePropertyChanged(nameof(this.ActorTable));
+				Log.Verbose("[ActorService] Actor table updated.");
 			}
 		}
 		finally

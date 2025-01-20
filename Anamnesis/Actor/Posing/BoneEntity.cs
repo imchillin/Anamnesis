@@ -7,6 +7,7 @@ using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using System;
 using System.Collections.Generic;
 
 public enum BoneCategory
@@ -45,9 +46,9 @@ public class BoneEntity : Bone
 	/// </remarks>
 	public BoneCategory Category => this.Name switch
 	{
-		_ when this.Name.StartsWith("mh_") => BoneCategory.MainHand,
-		_ when this.Name.StartsWith("oh_") => BoneCategory.OffHand,
-		_ when this.Name.Equals("j_ago") || this.Name.Equals("j_kao") => BoneCategory.Body,
+		_ when this.Name.StartsWith("mh_", StringComparison.Ordinal) => BoneCategory.MainHand,
+		_ when this.Name.StartsWith("oh_", StringComparison.Ordinal) => BoneCategory.OffHand,
+		_ when this.Name.Equals("j_ago", StringComparison.Ordinal) || this.Name.Equals("j_kao", StringComparison.Ordinal) => BoneCategory.Body,
 		_ => this.PartialSkeletonIndex switch
 		{
 			0 => BoneCategory.Body,
