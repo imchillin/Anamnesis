@@ -203,7 +203,7 @@
 					<MenuItem Header="Common_ImportFile"
 								Icon="FileImport"
 								Style="{StaticResource ButtonMenuItemLeft}"
-								Width="76"
+								Width="74"
 								Click="OnImportClicked">
 
 						<MenuItem.ToolTip>
@@ -294,7 +294,7 @@
 					<MenuItem Header="Common_ExportFile"
 							  Icon="FileExport"
 							  Style="{StaticResource ButtonMenuItemLeft}"
-							  Width="76"
+							  Width="74"
 							  Click="OnExportClicked"/>
 					
 					<MenuItem Style="{StaticResource ButtonMenuItemRight}">
