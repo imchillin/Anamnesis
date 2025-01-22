@@ -181,7 +181,7 @@ public partial class QuaternionEditor : UserControl
 
 	private static void OnValueQuatChanged(QuaternionEditor sender, CmQuaternion value)
 	{
-		if (!sender.isInitialized || sender.lockdp)
+		if (!sender.isInitialized)
 			return;
 
 		Quaternion newrot = value.ToMedia3DQuaternion();
@@ -192,6 +192,9 @@ public partial class QuaternionEditor : UserControl
 			newrot *= sender.worldSpaceDelta.ToMedia3DQuaternion();
 			sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(Quaternion.Identity));
 		}
+
+		if (sender.lockdp)
+			return;
 
 		sender.lockdp = true;
 
@@ -215,7 +218,21 @@ public partial class QuaternionEditor : UserControl
 			return;
 
 		sender.lockdp = true;
-		sender.Value = QuaternionExtensions.FromEuler(sender.Euler);
+
+		var value = QuaternionExtensions.FromEuler(sender.Euler);
+		sender.Value = value;
+
+		if (sender.RootRotation != null)
+			value = sender.Root * value;
+
+		sender.worldSpaceDelta = value;
+
+		if (sender.WorldSpace)
+			value = CmQuaternion.Identity;
+
+		sender.rotationGizmo.Transform = new RotateTransform3D(new QuaternionRotation3D(value.ToMedia3DQuaternion()));
+		sender.ValueQuat = value;
+
 		sender.lockdp = false;
 	}
 

@@ -97,7 +97,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	public bool ScaleLinked => this.ActorTransform?.ScaleLinked ?? (this.Skeleton != null && this.Skeleton.SelectedBones != null && this.Skeleton.SelectedBones.All(b => b.ScaleLinked));
 
 	/// <summary>Gets or sets the position.</summary>
-	[DoNotSetChanged]
+	[DoNotNotify]
 	public Vector3 Position
 	{
 		get
@@ -161,7 +161,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	}
 
 	/// <summary>Gets or sets the rotation.</summary>
-	[DoNotSetChanged]
+	[DoNotNotify]
 	public Quaternion Rotation
 	{
 		get
@@ -242,7 +242,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	}
 
 	/// <summary>Gets or sets the scale.</summary>
-	[DoNotSetChanged]
+	[DoNotNotify]
 	public Vector3 Scale
 	{
 		get
