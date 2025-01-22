@@ -759,6 +759,7 @@
   "Settings_FilesHeader": "Files",
   "Settings_KeysHeader": "Hotkeys",
   "Settings_Language": "Language",
+  "Settings_CrowdinTooltip": "Anamnesis is translated by the community via Crowdin. If you'd like to help, please visit the project page.",
   "Settings_AlwaysOnTop": "Always on top",
   "Settings_Overlay": "Mini mode",
   "Settings_Translucency": "Window Translucency",
@@ -890,5 +891,5 @@
   "Hotkey_Redo": "Redo",
 
   "History_ChangeBone": "Change Bone: \"{0}\"",
-  "History_ClearHistory": "Clear History",
+  "History_ClearHistory": "Clear History"
 }
