@@ -334,7 +334,7 @@ public class Skeleton : INotifyPropertyChanged
 			int count = bestHkaPose.Transforms.Length;
 
 			// Load all bones first
-			for (int boneIndex = partialSkeletonIndex == 0 ? 0 : 1; boneIndex < count; boneIndex++)
+			for (int boneIndex = 0; boneIndex < count; boneIndex++)
 			{
 				string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
 				string name = ConvertBoneName(namePrefix, originalName);
