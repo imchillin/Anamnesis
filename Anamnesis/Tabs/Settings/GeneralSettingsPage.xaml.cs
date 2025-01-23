@@ -8,9 +8,11 @@ using Anamnesis.Services;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Navigation;
 
 /// <summary>
 /// Interaction logic for GeneralSettingsPage.xaml.
@@ -145,6 +147,12 @@ public partial class GeneralSettingsPage : System.Windows.Controls.UserControl, 
 			return;
 
 		SettingsService.Current.DefaultSceneDirectory = FileService.ParseFromFilePath(dlg.SelectedPath);
+	}
+
+	private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
+	{
+		Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+		e.Handled = true;
 	}
 
 	public class FontOption

@@ -41,6 +41,7 @@
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
+							<ColumnDefinition Width="20"/>
 						</Grid.ColumnDefinitions>
 
 						<fa:IconBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Icon="Language" FontSize="19" Margin="0, 0, 5, 0"/>
@@ -52,6 +53,15 @@
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
 						</ComboBox>
+
+						<TextBlock Grid.Column="2" VerticalAlignment="Center">
+							<Hyperlink NavigateUri="https://crowdin.com/project/anamnesis" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">
+								<fa:IconBlock Icon="InfoCircle" FontSize="13"/>
+							</Hyperlink>
+							<TextBlock.ToolTip>
+								<XivToolsWPF:TextBlock Key="Settings_CrowdinTooltip"/>
+							</TextBlock.ToolTip>
+						</TextBlock>
 					</Grid>
 
 					<Grid x:Name="General_Interface_AlwaysOnTop" Grid.Row="1">
