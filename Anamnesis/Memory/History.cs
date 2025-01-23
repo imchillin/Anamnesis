@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -295,23 +294,30 @@ public class History : INotifyPropertyChanged
 
 		/// <summary>Records a property change in the entry.</summary>
 		/// <param name="change">The property change to record.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Record(PropertyChange change)
 		{
+			if (!change.ShouldRecord())
+				return;
+
 			lock (this.changes)
 			{
 				// Keep only the latest change for each bind to minimize stored changes and recovery steps
-				PropertyChange? existingChange = this.changes.FirstOrDefault(c => c.Path == change.Path);
-				if (existingChange.HasValue)
+				for (int i = 0; i < this.changes.Count; i++)
 				{
-					// Validate the existing change's OldValue
-					if (IsValidOldValue(existingChange.Value.OldValue))
+					if (this.changes[i].Path == change.Path)
 					{
-						// Transfer the old value of the existing change to the new change if it is valid
-						change.OldValue = existingChange.Value.OldValue;
-					}
+						// Validate the existing change's OldValue
+						if (IsValidOldValue(this.changes[i].OldValue))
+						{
+							// Transfer the old value of the existing change to the new change if it is valid
+							change.OldValue = this.changes[i].OldValue;
+						}
 
-					// Remove the existing change
-					this.changes.Remove(existingChange.Value);
+						// Remove the existing change
+						this.changes.RemoveAt(i);
+						break;
+					}
 				}
 
 				// Add the latest change into the history entry's changes list

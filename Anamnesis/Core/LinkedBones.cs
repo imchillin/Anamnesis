@@ -1,7 +1,7 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.Actor.Posing;
+namespace Anamnesis.Core;
 
 using Anamnesis.Memory;
 using System.Collections.Generic;

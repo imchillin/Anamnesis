@@ -3,7 +3,9 @@
 
 namespace Anamnesis.Actor.Pages;
 
+using Anamnesis.Actor.Posing;
 using Anamnesis.Actor.Views;
+using Anamnesis.Core;
 using Anamnesis.Files;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
@@ -12,6 +14,7 @@ using PropertyChanged;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -19,7 +22,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Media3D;
 using XivToolsWpf;
 using XivToolsWpf.Math3D.Extensions;
 using CmQuaternion = System.Numerics.Quaternion;
@@ -28,11 +30,9 @@ using CmQuaternion = System.Numerics.Quaternion;
 /// Interaction logic for CharacterPoseView.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class PosePage : UserControl
+public partial class PosePage : UserControl, INotifyPropertyChanged
 {
 	public const double DragThreshold = 20;
-
-	public HashSet<BoneView> BoneViews = new();
 
 	private static readonly Type[] PoseFileTypes = new[]
 	{
@@ -55,11 +55,15 @@ public partial class PosePage : UserControl
 	private bool isDragging;
 	private Point origMouseDownPoint;
 
-	private Task? writeSkeletonTask;
+	private Task? skeletonUpdateThread;
 
 	private bool importPoseRotation = true;
 	private bool importPosePosition = true;
 	private bool importPoseScale = true;
+
+	private string? selectedBonesTooltipCache;
+	private string? selectedBoneNameCache;
+	private string? selectedBoneTextCache;
 
 	public PosePage()
 	{
@@ -67,12 +71,12 @@ public partial class PosePage : UserControl
 
 		this.ContentArea.DataContext = this;
 
-		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
-
 		// Initialize the debounce timer
 		this.refreshDebounceTimer = new(200) { AutoReset = false };
 		this.refreshDebounceTimer.Elapsed += async (s, e) => { await this.Refresh(); };
 	}
+
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	private enum PoseImportOptions
 	{
@@ -91,7 +95,31 @@ public partial class PosePage : UserControl
 
 	public bool IsFlipping { get; private set; }
 	public ActorMemory? Actor { get; private set; }
-	public SkeletonVisual3d? Skeleton { get; private set; }
+	public SkeletonEntity? Skeleton { get; private set; }
+
+	public bool IsSingleBoneSelected => this.Skeleton?.SelectedBones.Count() == 1;
+	public bool IsMultipleBonesSelected => this.Skeleton?.SelectedBones.Count() > 1;
+
+	public string SelectedBonesText
+	{
+		get => this.selectedBoneTextCache ?? string.Empty;
+		set
+		{
+			if (this.Skeleton == null)
+				return;
+
+			// Setter only handles renaming tooltips for single bone selections
+			// Ignore everything else
+			var selectedBones = this.Skeleton.SelectedBones.ToList();
+			if (selectedBones.Count == 1)
+			{
+				selectedBones.First().Tooltip = value;
+			}
+		}
+	}
+
+	public string SelectedBoneName => this.selectedBoneNameCache ?? string.Empty;
+	public string SelectedBonesTooltip => this.selectedBonesTooltipCache ?? string.Empty;
 
 	public bool ImportPoseRotation
 	{
@@ -137,21 +165,7 @@ public partial class PosePage : UserControl
 
 	private static ILogger Log => Serilog.Log.ForContext<PosePage>();
 
-	public List<BoneView> GetBoneViews(BoneVisual3d bone)
-	{
-		List<BoneView> results = new List<BoneView>();
-		foreach (BoneView boneView in this.BoneViews)
-		{
-			if (boneView.Bone == bone)
-			{
-				results.Add(boneView);
-			}
-		}
-
-		return results;
-	}
-
-	private void FlipBone(BoneVisual3d? targetBone, bool shouldFlip = true)
+	private void FlipBone(Bone? targetBone, bool shouldFlip = true)
 	{
 		if (this.Skeleton == null)
 			throw new Exception("Skeleton is null");
@@ -161,16 +175,15 @@ public partial class PosePage : UserControl
 
 		// Save the positions of the target bone and its children
 		// The transform memory is used to retrieve the parent-relative position of the bone
-		Dictionary<BoneVisual3d, Vector3> bonePositions = new()
+		Dictionary<Bone, Vector3> bonePositions = new()
 		{
 			{ targetBone, targetBone.Position },
 		};
 
 		if (PoseService.Instance.EnableParenting)
 		{
-			List<BoneVisual3d> boneChildren = new();
-			targetBone.GetChildren(ref boneChildren);
-			foreach (BoneVisual3d childBone in boneChildren)
+			List<Bone> boneChildren = targetBone.GetDescendants();
+			foreach (var childBone in boneChildren)
 			{
 				bonePositions.Add(childBone, childBone.Position);
 			}
@@ -193,20 +206,20 @@ public partial class PosePage : UserControl
 	 *          - store the quat on the target bone
 	 *  - recursively flip on all child bones
 	 */
-	private void FlipBoneInternal(BoneVisual3d? targetBone, bool shouldFlip = true)
+	private void FlipBoneInternal(Bone? targetBone, bool shouldFlip = true)
 	{
-		if (targetBone == null)
-			throw new ArgumentException("The target bone cannot be null");
+		if (targetBone == null || targetBone.TransformMemory == null)
+			throw new ArgumentException("The target bone and its transform memory cannot be null");
 
-		CmQuaternion newRotation = targetBone!.TransformMemory.Rotation.Mirror(); // character-relative transform
-		if (shouldFlip && targetBone.BoneName.EndsWith("_l"))
+		CmQuaternion newRotation = targetBone.TransformMemory.Rotation.Mirror(); // character-relative transform
+		if (shouldFlip && targetBone.Name.EndsWith("_l"))
 		{
-			string rightBoneString = targetBone.BoneName.Substring(0, targetBone.BoneName.Length - 2) + "_r"; // removes the "_l" and replaces it with "_r"
+			string rightBoneString = string.Concat(targetBone.Name.AsSpan(0, targetBone.Name.Length - 2), "_r"); // removes the "_l" and replaces it with "_r"
 			/*	Useful debug lines to make sure the correct bones are grabbed...
 				*	Log.Information("flipping: " + targetBone.BoneName);
 				*	Log.Information("right flip target: " + rightBoneString); */
-			BoneVisual3d? rightBone = targetBone.Skeleton.GetBone(rightBoneString);
-			if (rightBone != null)
+			Bone? rightBone = targetBone.Skeleton.GetBone(rightBoneString);
+			if (rightBone != null && rightBone.TransformMemory != null)
 			{
 				CmQuaternion rightRot = rightBone.TransformMemory.Rotation.Mirror();
 				foreach (TransformMemory transformMemory in targetBone.TransformMemories)
@@ -225,10 +238,10 @@ public partial class PosePage : UserControl
 			}
 			else
 			{
-				Log.Warning("could not find right bone of: " + targetBone.BoneName);
+				Log.Warning("could not find right bone of: " + targetBone.Name);
 			}
 		}
-		else if (shouldFlip && targetBone.BoneName.EndsWith("_r"))
+		else if (shouldFlip && targetBone.Name.EndsWith("_r"))
 		{
 			// do nothing so it doesn't revert...
 		}
@@ -244,12 +257,9 @@ public partial class PosePage : UserControl
 
 		if (PoseService.Instance.EnableParenting)
 		{
-			foreach (Visual3D? child in targetBone.Children)
+			foreach (var child in targetBone.Children)
 			{
-				if (child is BoneVisual3d childBone)
-				{
-					this.FlipBoneInternal(childBone, shouldFlip);
-				}
+				this.FlipBoneInternal(child, shouldFlip);
 			}
 		}
 	}
@@ -258,31 +268,45 @@ public partial class PosePage : UserControl
 	{
 		this.OnDataContextChanged(null, default);
 
-		PoseService.EnabledChanged += this.OnPoseServiceEnabledChanged;
-		this.PoseService.PropertyChanged += this.PoseService_PropertyChanged;
+		HistoryService.OnHistoryApplied += this.OnHistoryApplied;
+		this.PoseService.PropertyChanged += this.OnPoseServicePropertyChanged;
 	}
 
-	private void PoseService_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+	private void OnUnloaded(object sender, RoutedEventArgs e)
 	{
-		Application.Current?.Dispatcher.Invoke(() =>
-		{
-			this.Skeleton?.Reselect();
-			this.Skeleton?.ReadTransforms();
-		});
-	}
+		this.PoseService.PropertyChanged -= this.OnPoseServicePropertyChanged;
+		HistoryService.OnHistoryApplied -= this.OnHistoryApplied;
 
-	private void OnPoseServiceEnabledChanged(bool value)
-	{
-		if (!value)
+		if (this.Actor?.ModelObject != null)
 		{
-			this.OnClearClicked(null, null);
+			this.Actor.Refreshed -= this.OnActorRefreshed;
+			this.Actor.ModelObject.PropertyChanged -= this.OnModelObjectChanged;
 		}
-		else
+
+		if (this.Skeleton != null)
 		{
-			Application.Current?.Dispatcher.Invoke(() =>
-			{
-				this.Skeleton?.ReadTransforms();
-			});
+			this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+		}
+
+		this.Skeleton?.Clear();
+		this.Skeleton = null;
+	}
+
+	private void OnPoseServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		// Don't refresh the skeleton if the selected bones text changes to prevent a loop
+		if (e.PropertyName == nameof(PoseService.SelectedBonesText))
+			return;
+
+		this.Skeleton?.Reselect();
+		this.Skeleton?.ReadTransforms();
+
+		if (e.PropertyName == nameof(this.PoseService.IsEnabled))
+		{
+			if (!this.PoseService.IsEnabled)
+				this.OnClearClicked(null, null);
+
+			BoneViewManager.Instance.Refresh();
 		}
 	}
 
@@ -335,8 +359,6 @@ public partial class PosePage : UserControl
 		this.FaceGuiView.DataContext = null;
 		this.MatrixView.DataContext = null;
 
-		this.BoneViews.Clear();
-
 		if (this.Actor == null || this.Actor.ModelObject == null)
 		{
 			this.Skeleton?.Clear();
@@ -346,23 +368,42 @@ public partial class PosePage : UserControl
 
 		try
 		{
-			SkeletonVisual3d newSkeleton = this.Skeleton ?? new SkeletonVisual3d();
-			await newSkeleton.SetActor(this.Actor);
-			this.Skeleton = newSkeleton;
+			if (this.Skeleton != null)
+			{
+				this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+			}
+
+			this.Skeleton = new SkeletonEntity(this.Actor);
+			BoneViewManager.Instance.SetSkeleton(this.Skeleton);
+
+			this.Skeleton.PropertyChanged += this.OnSkeletonPropertyChanged;
 
 			this.ThreeDView.DataContext = this.Skeleton;
 			this.BodyGuiView.DataContext = this.Skeleton;
 			this.FaceGuiView.DataContext = this.Skeleton;
 			this.MatrixView.DataContext = this.Skeleton;
 
-			if (this.writeSkeletonTask == null || this.writeSkeletonTask.IsCompleted)
+			// Start the skeleton read/write tasks
+			if (this.skeletonUpdateThread == null || this.skeletonUpdateThread.IsCompleted || this.skeletonUpdateThread.IsFaulted)
 			{
-				this.writeSkeletonTask = Task.Run(this.WriteSkeletonThread);
+				this.skeletonUpdateThread = Task.Run(this.SkeletonUpdateThread);
 			}
 		}
 		catch (Exception ex)
 		{
 			Log.Error(ex, "Failed to bind skeleton to view");
+		}
+	}
+
+	private void OnSkeletonPropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName == nameof(SkeletonEntity.SelectedBones))
+		{
+			this.RaisePropertyChanged(nameof(this.IsSingleBoneSelected));
+			this.RaisePropertyChanged(nameof(this.IsMultipleBonesSelected));
+
+			this.UpdateSelectedBonesCache(); // Update selected bones text cache
+			PoseService.SelectedBonesText = this.SelectedBonesTooltip;
 		}
 	}
 
@@ -425,7 +466,7 @@ public partial class PosePage : UserControl
 			if (result.File is not PoseFile poseFile)
 				return;
 
-			Dictionary<BoneVisual3d, Vector3> facePositions = new();
+			Dictionary<Bone, Vector3> facePositions = new();
 			bool mismatchedFaceBones = false;
 
 			// Disable auto-commit at the beginning
@@ -462,7 +503,7 @@ public partial class PosePage : UserControl
 			if (importOption == PoseImportOptions.SelectedBones)
 			{
 				// Don't unselected bones after import. Let the user decide what to do with the selection.
-				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
 				poseFile.Apply(this.Actor, this.Skeleton, selectedBones, mode, false);
 				return;
 			}
@@ -470,7 +511,7 @@ public partial class PosePage : UserControl
 			if (importOption == PoseImportOptions.WeaponsOnly)
 			{
 				this.Skeleton.SelectWeapons();
-				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
 				poseFile.Apply(this.Actor, this.Skeleton, selectedBoneNames, mode, false);
 				this.Skeleton.ClearSelection();
 				return;
@@ -479,14 +520,14 @@ public partial class PosePage : UserControl
 			// Backup face bone positions before importing the body pose.
 			// "Freeze Position" toggle resets them, so restore after import. Relevant only when pose service is enabled.
 			this.Skeleton.SelectHead();
-			facePositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone, bone => bone.Position);
+			facePositions = this.Skeleton.SelectedBones.ToDictionary(bone => bone as Bone, bone => bone.Position);
 			this.Skeleton.ClearSelection();
 
 			// Step 1: Import body part of the pose
 			if (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.BodyOnly)
 			{
 				this.Skeleton.SelectBody();
-				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+				var selectedBoneNames = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
 				this.Skeleton.ClearSelection();
 
 				// Don't import body with positions during default pose import.
@@ -512,7 +553,7 @@ public partial class PosePage : UserControl
 			if (!mismatchedFaceBones && (importOption is PoseImportOptions.Character or PoseImportOptions.FullTransform or PoseImportOptions.ExpressionOnly))
 			{
 				this.Skeleton.SelectHead();
-				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.BoneName).ToHashSet();
+				var selectedBones = this.Skeleton.SelectedBones.Select(bone => bone.Name).ToHashSet();
 				this.Skeleton.ClearSelection();
 
 				// Pre-DT faces need to be imported without positions.
@@ -557,11 +598,17 @@ public partial class PosePage : UserControl
 
 	private async void OnExportClicked(object sender, RoutedEventArgs e)
 	{
+		if (this.Actor == null || this.Skeleton == null)
+			return;
+
 		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton);
 	}
 
 	private async void OnExportMetaClicked(object sender, RoutedEventArgs e)
 	{
+		if (this.Actor == null || this.Skeleton == null)
+			return;
+
 		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, null, true);
 	}
 
@@ -570,10 +617,10 @@ public partial class PosePage : UserControl
 		if (this.Skeleton == null)
 			return;
 
-		HashSet<string> bones = new HashSet<string>();
-		foreach (BoneVisual3d bone in this.Skeleton.SelectedBones)
+		var bones = new HashSet<string>();
+		foreach (Bone bone in this.Skeleton.SelectedBones)
 		{
-			bones.Add(bone.BoneName);
+			bones.Add(bone.Name);
 		}
 
 		lastSaveDir = await PoseFile.Save(lastSaveDir, this.Actor, this.Skeleton, bones);
@@ -602,13 +649,13 @@ public partial class PosePage : UserControl
 		if (this.Skeleton == null)
 			return;
 
-		List<BoneVisual3d> bones = new List<BoneVisual3d>();
-		foreach (BoneVisual3d bone in this.Skeleton.SelectedBones)
+		var bones = new List<BoneEntity>();
+		foreach (Bone bone in this.Skeleton.SelectedBones)
 		{
-			bone.GetChildren(ref bones);
+			bones.AddRange(bone.GetDescendants().Cast<BoneEntity>());
 		}
 
-		this.Skeleton.Select(bones, SkeletonVisual3d.SelectMode.Add);
+		this.Skeleton.Select(bones, SkeletonEntity.SelectMode.Add);
 	}
 
 	private void OnFlipClicked(object sender, RoutedEventArgs e)
@@ -639,10 +686,10 @@ public partial class PosePage : UserControl
 
 			// If no bone selected, flip both lumbar and waist bones
 			this.IsFlipping = true;
-			if (this.Skeleton.CurrentBone == null)
+			if (!this.Skeleton.HasSelection)
 			{
-				BoneVisual3d? waistBone = this.Skeleton.GetBone("Waist");
-				BoneVisual3d? lumbarBone = this.Skeleton.GetBone("SpineA");
+				Bone? waistBone = this.Skeleton.GetBone("Waist");
+				Bone? lumbarBone = this.Skeleton.GetBone("SpineA");
 				this.FlipBone(waistBone);
 				this.FlipBone(lumbarBone);
 				waistBone?.ReadTransform(true);
@@ -651,17 +698,22 @@ public partial class PosePage : UserControl
 			else
 			{
 				// If targeted bone is a limb don't switch the respective left and right sides
-				BoneVisual3d targetBone = this.Skeleton.CurrentBone;
-				if (targetBone.BoneName.EndsWith("_l") || targetBone.BoneName.EndsWith("_r"))
+				if (this.Skeleton.SelectedBones.Any(b => b.Name.EndsWith("_l") || b.Name.EndsWith("_r")) == false)
 				{
-					this.FlipBone(targetBone, false);
+					foreach (Bone bone in this.Skeleton.SelectedBones)
+					{
+						this.FlipBone(bone);
+						bone.ReadTransform(true);
+					}
 				}
 				else
 				{
-					this.FlipBone(targetBone);
+					foreach (Bone bone in this.Skeleton.SelectedBones)
+					{
+						this.FlipBone(bone, false);
+						bone.ReadTransform(true);
+					}
 				}
-
-				targetBone.ReadTransform(true);
 			}
 
 			this.IsFlipping = false;
@@ -679,14 +731,21 @@ public partial class PosePage : UserControl
 
 	private void OnParentClicked(object sender, RoutedEventArgs e)
 	{
-		if (this.Skeleton?.CurrentBone?.Parent == null)
+		// If any of the selected bones have no parent, don't do anything
+		if (this.Skeleton == null || this.Skeleton.SelectedBones.Any(b => b.Parent == null) == true)
 			return;
 
-		this.Skeleton.Select(this.Skeleton.CurrentBone.Parent);
+		// Select the parents of the selected bones.
+		// If the selected bone has no parent, reselect the root bone.
+		var selectedBonesParents = this.Skeleton.SelectedBones.Select(b => b.Parent ?? b).Distinct().ToList();
+		this.Skeleton.Select(selectedBonesParents);
 	}
 
 	private void OnCanvasMouseDown(object sender, MouseButtonEventArgs e)
 	{
+		if (e.Handled)
+			return;
+
 		if (e.ChangedButton == MouseButton.Left)
 		{
 			this.isLeftMouseButtonDownOnWindow = true;
@@ -696,7 +755,7 @@ public partial class PosePage : UserControl
 
 	private void OnCanvasMouseMove(object sender, MouseEventArgs e)
 	{
-		if (this.Skeleton == null)
+		if (e.Handled || this.Skeleton == null)
 			return;
 
 		Point curMouseDownPoint = e.GetPosition(this.SelectionCanvas);
@@ -722,9 +781,9 @@ public partial class PosePage : UserControl
 			this.DragSelectionBorder.Width = maxx - minx;
 			this.DragSelectionBorder.Height = maxy - miny;
 
-			List<BoneView> bones = new List<BoneView>();
+			var bones = new List<BoneView>();
 
-			foreach (BoneView bone in this.BoneViews)
+			foreach (BoneView bone in BoneViewManager.Instance.BoneViews)
 			{
 				if (bone.Bone == null)
 					continue;
@@ -738,15 +797,13 @@ public partial class PosePage : UserControl
 				Point relativePoint = bone.TransformToAncestor(this.MouseCanvas).Transform(new Point(0, 0));
 				if (relativePoint.X > minx && relativePoint.X < maxx && relativePoint.Y > miny && relativePoint.Y < maxy)
 				{
-					this.Skeleton.Hover(bone.Bone, true, false);
+					this.Skeleton.Hover(bone.Bone, true);
 				}
 				else
 				{
 					this.Skeleton.Hover(bone.Bone, false);
 				}
 			}
-
-			this.Skeleton.NotifyHover();
 		}
 		else if (this.isLeftMouseButtonDownOnWindow)
 		{
@@ -761,9 +818,9 @@ public partial class PosePage : UserControl
 		}
 	}
 
-	private void OnCanvasMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+	private void OnCanvasMouseUp(object sender, MouseButtonEventArgs e)
 	{
-		if (!this.isLeftMouseButtonDownOnWindow)
+		if (e.Handled || !this.isLeftMouseButtonDownOnWindow)
 			return;
 
 		this.isLeftMouseButtonDownOnWindow = false;
@@ -778,9 +835,9 @@ public partial class PosePage : UserControl
 				double maxx = minx + this.DragSelectionBorder.Width;
 				double maxy = miny + this.DragSelectionBorder.Height;
 
-				List<BoneView> toSelect = new List<BoneView>();
+				var toSelect = new List<BoneView>();
 
-				foreach (BoneView bone in this.BoneViews)
+				foreach (BoneView bone in BoneViewManager.Instance.BoneViews)
 				{
 					if (bone.Bone == null)
 						continue;
@@ -797,7 +854,7 @@ public partial class PosePage : UserControl
 					}
 				}
 
-				this.Skeleton.Select(toSelect);
+				this.Skeleton.Select(toSelect.Where(b => b.Bone != null).Select(b => b.Bone!).ToList());
 			}
 
 			this.DragSelectionBorder.Visibility = Visibility.Collapsed;
@@ -807,35 +864,39 @@ public partial class PosePage : UserControl
 		{
 			if (this.Skeleton != null && !this.Skeleton.HasHover)
 			{
-				this.Skeleton.Select(Enumerable.Empty<IBone>());
+				this.Skeleton.Select(Enumerable.Empty<BoneEntity>());
 			}
 		}
 
 		this.MouseCanvas.ReleaseMouseCapture();
 	}
 
-	private async void OnHistoryApplied()
+	private void OnHistoryApplied()
 	{
 		if (this.Skeleton == null || this.Skeleton.Actor == null)
 			return;
 
-		await Dispatch.MainThread();
 		this.Skeleton.ReadTransforms();
 	}
 
-	private async Task WriteSkeletonThread()
+	private async Task SkeletonUpdateThread()
 	{
-		while (Application.Current != null && this.Skeleton != null)
+		while (this.Skeleton != null)
 		{
-			await Dispatch.MainThread();
-
 			if (this.Skeleton == null)
 				return;
 
-			this.Skeleton.WriteSkeleton();
+			// Only update transforms while the pose service is disabled
+			if (!PoseService.Instance.IsEnabled)
+			{
+				this.Skeleton.ReadTransforms();
+			}
+			else
+			{
+				this.Skeleton.WriteSkeleton();
+			}
 
-			// up to 60 times a second
-			await Task.Delay(16);
+			await Task.Delay(16); // Up to 60 times a second
 		}
 	}
 
@@ -865,18 +926,47 @@ public partial class PosePage : UserControl
 		return mode;
 	}
 
-	private void RestoreBonePositions(Dictionary<BoneVisual3d, Vector3> bonePositions)
+	private void RestoreBonePositions(Dictionary<Bone, Vector3> bonePositions)
 	{
 		if (this.Skeleton == null || bonePositions.Count == 0)
 			return;
 
 		// Sort the selected bones based on their hierarchy
-		var sortedBones = SkeletonVisual3d.SortBonesByHierarchy(bonePositions.Keys.ToList());
+		var sortedBones = Bone.SortBonesByHierarchy(bonePositions.Keys.ToList());
 
 		foreach (var bone in sortedBones)
 		{
 			bone.Position = bonePositions[bone];
-			bone.WriteTransform(this.Skeleton, false);
+			bone.WriteTransform(false);
 		}
+	}
+
+	private void RaisePropertyChanged(string propertyName)
+	{
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+
+	private void UpdateSelectedBonesCache()
+	{
+		if (this.Skeleton == null)
+			return;
+
+		var selectedBones = this.Skeleton.SelectedBones.ToList();
+		int count = selectedBones.Count;
+
+		this.selectedBonesTooltipCache = count switch
+		{
+			0 => (this.TargetService.SelectedActor != null) ? this.TargetService.SelectedActor.DisplayName : string.Empty,
+			1 => selectedBones.First().Tooltip,
+			<= 3 => string.Join(", ", selectedBones.Select(b => b.Tooltip)),
+			_ => string.Join(", ", selectedBones.Take(3).Select(b => b.Tooltip)) + LocalizationService.GetStringFormatted("Pose_SelectedBones_TooltipTrimmed", (count - 3).ToString())
+		};
+
+		this.selectedBoneNameCache = count == 1 ? selectedBones.First().Name : string.Empty;
+		this.selectedBoneTextCache = count == 1 ? selectedBones.First().Tooltip : LocalizationService.GetStringFormatted("Pose_SelectedBones_MultiSelected", count.ToString());
+
+		this.RaisePropertyChanged(nameof(this.SelectedBonesTooltip));
+		this.RaisePropertyChanged(nameof(this.SelectedBoneName));
+		this.RaisePropertyChanged(nameof(this.SelectedBonesText));
 	}
 }

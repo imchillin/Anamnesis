@@ -3,7 +3,7 @@
 
 namespace Anamnesis.Files;
 
-using Anamnesis.Actor;
+using Anamnesis.Core;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using System;
@@ -113,8 +113,7 @@ public class SceneFile : JsonFileBase
 		rootActor.ModelObject!.Transform!.Rotation = rootRotation;
 
 		// Adjust for waist
-		SkeletonVisual3d rootSkeleton = new();
-		await rootSkeleton.SetActor(rootActor);
+		var rootSkeleton = new Skeleton(rootActor);
 		Vector3 rootOriginalWaist = rootActorEntry.Pose?.Bones?["n_hara"]?.Position ?? Vector3.Zero;
 		Vector3 rootCurrentWaist = rootSkeleton.GetBone("n_hara")?.Position ?? Vector3.Zero;
 		Vector3 rootAdjustedWaist = Vector3.Transform(rootCurrentWaist - rootOriginalWaist, rootRotation);
@@ -129,9 +128,7 @@ public class SceneFile : JsonFileBase
 			if (actor == null)
 				continue;
 
-			SkeletonVisual3d skeleton = new();
-			await skeleton.SetActor(actor);
-
+			var skeleton = new Skeleton(actor);
 			ActorEntry entry = this.ActorEntries[name];
 
 			if (actor != rootActor && mode.HasFlag(Mode.RelativePosition))
@@ -165,7 +162,7 @@ public class SceneFile : JsonFileBase
 		}
 	}
 
-	public async Task WriteToFile()
+	public void WriteToFile()
 	{
 		this.Territory = TerritoryService.Instance.CurrentTerritoryId;
 		this.Weather = TerritoryService.Instance.CurrentWeatherId;
@@ -213,8 +210,7 @@ public class SceneFile : JsonFileBase
 			characterFile.WriteToFile(actor, CharacterFile.SaveModes.All);
 
 			PoseFile poseFile = new();
-			SkeletonVisual3d skeleton = new();
-			await skeleton.SetActor(actor);
+			var skeleton = new Skeleton(actor);
 			poseFile.WriteToFile(actor, skeleton, null);
 
 			ActorEntry entry = new();

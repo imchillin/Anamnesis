@@ -63,6 +63,9 @@ public class Settings : INotifyPropertyChanged
 	public Binds KeyboardBindings { get; set; } = new();
 	public Dictionary<string, int> ActorTabOrder { get; set; } = new();
 	public Dictionary<string, bool> PosingBoneLinks { get; set; } = new();
+	public double ViewportPanSpeed { get; set; } = 1;
+	public double ViewportZoomSpeed { get; set; } = 1;
+	public double ViewportRotationSpeed { get; set; } = 1;
 
 	public double WindowOpacity
 	{

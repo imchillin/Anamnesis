@@ -352,6 +352,11 @@
   "Pose_Position": "Position",
   "Pose_Linked": "Linked Bones",
   "Pose_Linked_Tooltip": "Linked bones will be moved in relation to the current bone",
+  "Pose_SyncWithGameCamera": "Camera Sync",
+  "Pose_SyncWithGameCamera_Tooltip": "Synchronize with the in-game camera",
+
+  "Pose_SelectedBones_TooltipTrimmed": " and {0} more bone(s)",
+  "Pose_SelectedBones_MultiSelected": "Selected Bones: {0}",
 
   "Pose_EnableRotation": "R",
   "Pose_EnableRotationTooltip": "Enable editing rotation",
@@ -802,6 +807,10 @@
   "Settings_EnableGameHotkeys_Tooltip": "Listen for hotkeys even when FFXIV has focus",
   "Settings_EnableForwardKeys": "Forward keys",
   "Settings_EnableForwardKeys_Tooltip": "Forward unused key events to FFXIV",
+  "Settings_3DSkeletonViewport": "3D Skeleton Viewport",
+  "Settings_ViewportPanSpeed": "Pan Speed",
+  "Settings_ViewportZoomSpeed": "Zoom Speed",
+  "Settings_ViewportRotationSpeed": "Rotation Speed",
   "About_Title": "About Anamnesis",
   "About_Version_Header": "Version",
   "About_OpenSource_Header": "Proudly Open Source",
@@ -890,6 +899,6 @@
   "Hotkey_Undo": "Undo",
   "Hotkey_Redo": "Redo",
 
-  "History_ChangeBone": "Change Bone: \"{0}\"",
+  "History_ChangeBone": "Change Bone: {0}",
   "History_ClearHistory": "Clear History"
 }

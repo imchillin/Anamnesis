@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Actor.Views;
 
+using Anamnesis.Actor.Posing;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 /// <summary>
 /// Interaction logic for PoseFaceGuiView.xaml.
@@ -30,14 +32,16 @@ public partial class PoseFaceGuiView : UserControl
 	private readonly Border? mouthSelectorBorder;
 	private readonly Line? mouthGuideLine;
 	private readonly Ellipse? mouthGuideEllipse;
+	private readonly FaceTemplateSelector? templateSelector;
 
 	public PoseFaceGuiView()
 	{
 		this.InitializeComponent();
 
-		if (this.Resources["FaceTemplateSelector"] is FaceTemplateSelector templateSelector)
+		if (this.Resources["FaceTemplateSelector"] is FaceTemplateSelector selector)
 		{
-			templateSelector.TemplateChanged += this.OnTemplateChanged;
+			this.templateSelector = selector;
+			this.templateSelector.TemplateChanged += this.OnTemplateChanged;
 		}
 
 		// Load components.
@@ -49,6 +53,14 @@ public partial class PoseFaceGuiView : UserControl
 
 		this.mouthSelectorBorder = this.FindName("MouthSelectorBorder") as Border;
 		Debug.Assert(this.mouthSelectorBorder != null, "Failed to find MouthSelectorBorder.");
+	}
+
+	private void OnUnloaded(object sender, RoutedEventArgs e)
+	{
+		if (this.templateSelector != null)
+		{
+			this.templateSelector.TemplateChanged -= this.OnTemplateChanged;
+		}
 	}
 
 	private void OnTemplateChanged(object? sender, string templateName)
@@ -116,12 +128,8 @@ public class FaceTemplateSelector : DataTemplateSelector
 
 	public override DataTemplate? SelectTemplate(object item, DependencyObject container)
 	{
-		var skeleton = item as SkeletonVisual3d;
-
-		if (skeleton is null)
+		if (item is not SkeletonEntity skeleton)
 			return null;
-
-		this.OnContentTemplateChanged(skeleton);
 
 		string templateName = "StandardFaceTemplate";
 		if (skeleton.IsHrothgar)
@@ -142,6 +150,8 @@ public class FaceTemplateSelector : DataTemplateSelector
 
 		this.TemplateChanged?.Invoke(this, templateName);
 
+		Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () => BoneViewManager.Instance.Refresh());
+
 		return templateName switch
 		{
 			"HrothgarFaceTemplate" => this.HrothgarFaceTemplate,
@@ -150,10 +160,5 @@ public class FaceTemplateSelector : DataTemplateSelector
 			"VieraStraightFaceTemplate" => this.VieraStraightFaceTemplate,
 			_ => this.StandardFaceTemplate,
 		};
-	}
-
-	private void OnContentTemplateChanged(SkeletonVisual3d skeleton)
-	{
-		skeleton.NotifySkeletonChanged();
 	}
 }

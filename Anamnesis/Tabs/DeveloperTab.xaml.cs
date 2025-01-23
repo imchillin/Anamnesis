@@ -117,7 +117,7 @@ public partial class DeveloperTab : UserControl
 				return;
 
 			SceneFile file = new();
-			await file.WriteToFile();
+			file.WriteToFile();
 
 			using FileStream stream = new FileStream(result.Path.FullName, FileMode.Create);
 			file.Serialize(stream);
