@@ -1,6 +1,8 @@
 MIT License
 
-Copyright (c) 2020 W & A Walsh
+Copyright (c) 2020–2023 W & A Walsh;
+Copyright (c) 2023–2025 Aetherworks Group;
+For individual Copyright Holders visit: https://github.com/imchillin/Anamnesis/graphs/contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
