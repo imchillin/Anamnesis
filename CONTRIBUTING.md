@@ -17,21 +17,20 @@ Thank you for taking the time to contribute to the project! We welcome any reaso
 
 
 ## Can I have a TL;DR? I only want to ask something.
-Our [Wiki](https://github.com/imchillin/Anamnesis/wiki) is our primary knowledge base, and should always be checked before approaching the team for assistance. This wiki is updated frequently.
 
-> **Please do not open issues/tickets to ask questions. If you have a question that cannot be answered by reading through the documentation provided, [please contact a developer directly on Discord](https://discord.gg/KvGJCCnG8t).** 
+> **Please do not open issues/tickets to ask questions. [Please contact us via our Discord](https://discord.gg/KvGJCCnG8t).** 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<sup>↑ _[back to top](#table-of-contents)</sup>_
 
 ## How can I contribute to Anamnesis?
-Anamnesis is currently in open beta, so there are various ways you can contribute to the project:
+There are various ways you can contribute to the project:
 
 ### Reporting bugs
 Bugs are an inevitability of any project, but proper reporting and rigorous testing help to resolve bugs quickly and efficiently. However, not every issue you encounter is a bug, so it's best practice to make sure that your reports are as informative and accurate as possible, and ensure that you've eliminated user error as a cause.
 
 #### Before submitting a bug report
 - Check the [wiki](https://github.com/imchillin/Anamnesis/wiki), especially the [Troubleshooting](https://github.com/imchillin/Anamnesis/wiki/Troubleshooting) and [FAQ](https://github.com/imchillin/Anamnesis/wiki/FAQ) pages. Many issues are simply a matter of not fully understanding the tool or how it works, and can be easily resolved with a bit of light reading.
-- Check the [issue list](https://github.com/imchillin/Anamnesis/issues?q=is%3Aissu). A bug you've experienced may have already been reported, and duplicate issues tend to impede development. If the issue already exists, add to the existing issue to keep things tidy. Make sure to check closed issues as well, as your issue may have been resolved but has not been released.
+- Check the [issue list](https://github.com/imchillin/Anamnesis/issues). A bug you've experienced may have already been reported, and duplicate issues tend to impede development. If the issue already exists, add to the existing issue to keep things tidy. Make sure to check closed issues as well, as your issue may have been resolved but has not been released.
 
 #### Submitting a bug report
 - Click on the Issues tab, then click on the New Issue button
@@ -50,13 +49,15 @@ Bugs are an inevitability of any project, but proper reporting and rigorous test
 ### Suggesting enhancements to existing features, within reason
 
 #### Before making a feature request
-Please take into consideration that there are features that the developers cannot/will not add into the tool for various reasons including but not limited to ethical concerns regarding unfair gameplay advantages and game engine limitations. You are encouraged to [read this list of features](https://github.com/imchillin/Anamnesis/wiki/Before-Making-a-Suggestion), as well the [known list of limitations](https://github.com/imchillin/Anamnesis/wiki/What-is-Anamnesis%3F#limitations). If a feature request cannot be feasibly taken on board because of these issues and/or limitations, you will be informed in the request, but it will be closed.
-
+Please take into consideration that there are features that the developers cannot/will not add into the tool for various reasons including but not limited to ethical concerns regarding unfair gameplay advantages and game engine limitations.
 Beyond this, please also take into consideration that the developers work on Anamnesis in their free time, with no financial incentive, so feature requests will be placed into a priority list, or may not be added at all. However, if you are moderately proficient in C# programming, you may want to consider contributing code to add these features yourself.
 
 > **Checking the Issues list is also imperative, as features are listed here with the `Enhancement` label. If someone has already made the same or a similar request, please add your support to the existing request.**
 
+[Please contact us via our Discord](https://discord.gg/KvGJCCnG8t) to discuss ideas for Features there first. Only once you have received the go ahead from there, continue here.
+
 #### Submitting a feature request
+
 - Click on the Issues tab, then click on the New Issue button
 - Click on `Get Started` in the `Feature request` section
 - Add a clear and descriptive title for the request
@@ -69,7 +70,7 @@ Beyond this, please also take into consideration that the developers work on Ana
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<sup>↑ _[back to top](#table-of-contents)</sup>_
 
 ### Code contributions and pull requests
-You may wish to contribute to the project in a more developmental capacity. Please feel free to [discuss any potential updates](https://discord.gg/KvGJCCnG8t) you wish to make to the tool prior to submitting a pull request with the developers.
+You may wish to contribute to the project in a more developmental capacity. Please [discuss any potential updates](https://discord.gg/KvGJCCnG8t) you wish to make to the tool prior to submitting a pull request with the developers.
 
 If you are simply using Anamnesis for its intended purpose and have no plans to develop for the project, this section is unlikely to be of use to you.
 
@@ -78,11 +79,9 @@ The following is a list of requirements for getting Anamnesis set up on your mac
 - Knowledge of C#
 - Visual Studio 2019 or newer with .NET Desktop Development workload
 
-It is recommended that you use [Github Desktop](https://desktop.github.com/) to facilitate smooth pull requests.
+It is recommended that you use [Github Desktop](https://desktop.github.com/) or similar to facilitate smooth pull requests.
 
-Once you have forked the repo and pulled the source code:
-1. Run `UpdateSubmodules.bat`
-2. Open `Anamnesis.sln` as a solution in Visual Studio 
+Once you have forked the repo and pulled the source code, simply open `Anamnesis.sln` as a solution in Visual Studio 
 
 #### Submitting a pull request
 A template has been provided for submitting pull requests. It would be greatly appreciated if you complete this template.
