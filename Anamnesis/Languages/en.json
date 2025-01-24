@@ -827,6 +827,9 @@
   "DevBuild_Title": "Development Build",
   "DevBuild_Body": "This is an experimental development build of Anamnesis and is not officially supported. These builds are likely to contain serious issues and should be avoided unless you know what you are doing.\n\nWould you like to continue using this build?\nSelecting no will offer you an update to the latest supported build.",
 
+  "DotNetPrompt_Title": "Install .NET 9",
+  "DotNetPrompt_Body": "In the upcoming version of Anamnesis, .NET 9 will be required.\nWould you like to install it now?\n\nClicking \"Yes\" will start the download process for you. Otherwise, you will be prompted again on next application launch.",
+
   "Item_Unknown": "Unknown",
   "Item_None": "None",
   "Item_NoneDesc": "Nothing",
