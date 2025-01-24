@@ -51,6 +51,7 @@
 
   "Shortcut_AnamnesisPose": "Anamnesis Poses",
   "Shortcut_AnamnesisCharacter": "Anamnesis Characters",
+  "Shortcut_AnamnesisCamera": "Anamnesis Camera Shots",
   "Shortcut_AnamnesisScenes": "Anamnesis Scenes",
   "Shortcut_BuiltInPose": "Built In Poses",
   "Shortcut_CMToolPose": "CMTool Poses",
@@ -757,6 +758,8 @@
   "SettingsPages_Input_Tooltip": "Input-related settings",
   "SettingsPages_Connections": "Connections",
   "SettingsPages_Connections_Tooltip": "Manage connections with external services",
+  "SettingsPages_BackupAndRecovery": "Backup & Recovery",
+  "SettingsPages_BackupAndRecovery_Tooltip": "Backup and recovery settings",
 
   "Settings_Header": "Settings",
   "Settings_InterfaceHeader": "Interface",
@@ -811,6 +814,11 @@
   "Settings_ViewportPanSpeed": "Pan Speed",
   "Settings_ViewportZoomSpeed": "Zoom Speed",
   "Settings_ViewportRotationSpeed": "Rotation Speed",
+  "Settings_Backup": "Backup",
+  "Settings_EnableAutoSave": "Enable Auto Save",
+  "Settings_AutoSaveInterval": "Interval (minutes)",
+  "Settings_AutoSaveDirectory": "Auto Save Directory",
+  "Settings_AutoSaveSaveLast": "Keep Latest Entries",
   "About_Title": "About Anamnesis",
   "About_Version_Header": "Version",
   "About_OpenSource_Header": "Proudly Open Source",

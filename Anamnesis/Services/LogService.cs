@@ -3,17 +3,17 @@
 
 namespace Anamnesis.Services;
 
+using Anamnesis.Files;
+using Anamnesis.Windows;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Anamnesis.Files;
-using Anamnesis.Windows;
-using Serilog;
-using Serilog.Core;
-using Serilog.Events;
 
 public class LogService : IService
 {
@@ -41,6 +41,8 @@ public class LogService : IService
 			return instance;
 		}
 	}
+
+	public bool IsAlive => true;
 
 	public bool VerboseLogging
 	{

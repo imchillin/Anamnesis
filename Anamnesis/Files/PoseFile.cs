@@ -85,14 +85,14 @@ public class PoseFile : JsonFileBase
 		this.Position = actor.ModelObject.Transform.Position;
 		this.Scale = actor.ModelObject.Transform.Scale;
 
-		this.Bones = new Dictionary<string, Bone?>();
+		this.Bones = new Dictionary<string, Bone?>(skeleton.Bones.Count, StringComparer.Ordinal);
 
 		foreach (Core.Bone bone in skeleton.Bones.Values)
 		{
 			if (bones != null && !bones.Contains(bone.Name))
 				continue;
 
-			this.Bones.Add(bone.Name, new Bone(bone));
+			this.Bones[bone.Name] = new Bone(bone);
 		}
 	}
 

@@ -17,6 +17,10 @@ using System.Windows.Media;
 [AddINotifyPropertyChangedInterface]
 public class Settings : INotifyPropertyChanged
 {
+	private const int MinAutoSaveIntervalMinutes = 1;
+	private int autoSaveIntervalMinutes = 5;
+	private bool enableAutoSave = true;
+
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public enum Fonts
@@ -38,6 +42,7 @@ public class Settings : INotifyPropertyChanged
 	public string DefaultCharacterDirectory { get; set; } = "%MyDocuments%/Anamnesis/Characters/";
 	public string DefaultCameraShotDirectory { get; set; } = "%MyDocuments%/Anamnesis/CameraShots/";
 	public string DefaultSceneDirectory { get; set; } = "%MyDocuments%/Anamnesis/Scenes/";
+	public string DefaultAutoSaveDirectory { get; set; } = "%MyDocuments%/Anamnesis/AutoSave/";
 	public bool ShowAdvancedOptions { get; set; } = true;
 	public bool FlipPoseGuiSides { get; set; } = false;
 	public Fonts Font { get; set; } = Fonts.Default;
@@ -66,6 +71,42 @@ public class Settings : INotifyPropertyChanged
 	public double ViewportPanSpeed { get; set; } = 1;
 	public double ViewportZoomSpeed { get; set; } = 1;
 	public double ViewportRotationSpeed { get; set; } = 1;
+	public bool EnableAutoSave
+	{
+		get
+		{
+			return this.enableAutoSave;
+		}
+		set
+		{
+			if (value == this.enableAutoSave)
+				return;
+
+			this.enableAutoSave = value;
+			AutoSaveService.Instance?.RestartUpdateTask();
+		}
+	}
+
+	public int AutoSaveFileCount { get; set; } = 12;
+	public int AutoSaveIntervalMinutes
+	{
+		get
+		{
+			return Math.Max(this.autoSaveIntervalMinutes, MinAutoSaveIntervalMinutes);
+		}
+		set
+		{
+			if (value == this.autoSaveIntervalMinutes)
+				return;
+
+			// Limit the minimum value
+			if (value < MinAutoSaveIntervalMinutes)
+				value = MinAutoSaveIntervalMinutes;
+
+			this.autoSaveIntervalMinutes = value;
+			AutoSaveService.Instance?.RestartUpdateTask();
+		}
+	}
 
 	public double WindowOpacity
 	{

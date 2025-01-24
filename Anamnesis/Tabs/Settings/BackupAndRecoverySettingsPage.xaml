@@ -1,0 +1,94 @@
+﻿<UserControl x:Class="Anamnesis.Tabs.Settings.BackupAndRecoverySettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:XivToolsWPF="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+             mc:Ignorable="d"
+             d:DesignHeight="450">
+	<GroupBox x:Name="ContentArea" Style="{StaticResource PanelGroupBox}">
+		<GroupBox.Header>
+			<XivToolsWPF:Header Key="SettingsPages_BackupAndRecovery" Icon="Database"/>
+		</GroupBox.Header>
+
+		<Grid HorizontalAlignment="Left" Width="450" Margin="10, 4, 0, 0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<!-- Backup -->
+			<GroupBox x:Name="BackupGroupBox" Grid.Row="0" Margin="0, 0, 0, 10">
+				<GroupBox.Header>
+					<XivToolsWPF:Header Key="Settings_Backup" Icon="Save"/>
+				</GroupBox.Header>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Grid x:Name="BnR_Backup_EnableAutoSave" Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_EnableAutoSave" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.EnableAutoSave}" Grid.Column="1" Margin="6" x:Name="Settings_EnableAutoSave"/>
+					</Grid>
+
+					<Grid x:Name="BnR_Backup_AutoSaveDirectory" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_AutoSaveDirectory" Style="{StaticResource Label}"/>
+						<TextBox Grid.Column="1" Margin="3, 0, 0, 0" Style="{StaticResource MaterialDesignTextBox}" Text="{Binding SettingsService.Settings.DefaultAutoSaveDirectory}" IsEnabled="False"/>
+						<Button Grid.Column="2" Margin="6, 3, 0, 0" Style="{StaticResource TransparentButton}" Content="..." Click="OnBrowseAutoSave"/>
+					</Grid>
+
+					<Grid x:Name="BnR_Backup_AutoSaveInterval" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_AutoSaveInterval" Style="{StaticResource Label}"/>
+						<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.AutoSaveIntervalMinutes}"
+									   Margin="6, 3"
+									   x:Name="AutoSaveIntervalSlider"
+									   Slider="Absolute"
+									   Grid.Column="1"
+									   Minimum="1"
+									   Maximum="60"
+									   TickFrequency="1"
+									   IsEnabled="{Binding SettingsService.Settings.EnableAutoSave}"/>
+					</Grid>
+
+					<Grid x:Name="BnR_Backup_AutoSaveSaveLast" Grid.Row="3">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_AutoSaveSaveLast" Style="{StaticResource Label}"/>
+						<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.AutoSaveFileCount}"
+							   Margin="6, 3"
+							   x:Name="AutoSaveFileCountSlider"
+							   Slider="Absolute"
+							   Grid.Column="1"
+							   Minimum="1"
+							   Maximum="100"
+							   TickFrequency="1"
+							   IsEnabled="{Binding SettingsService.Settings.EnableAutoSave}"/>
+					</Grid>
+				</Grid>
+			</GroupBox>
+		</Grid>
+	</GroupBox>
+</UserControl>

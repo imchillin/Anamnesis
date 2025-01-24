@@ -3,6 +3,13 @@
 
 namespace Anamnesis.Files;
 
+using Anamnesis;
+using Anamnesis.GUI.Dialogs;
+using Anamnesis.GUI.Views;
+using Anamnesis.Services;
+using Anamnesis.Utils;
+using Microsoft.Win32;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,13 +20,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Anamnesis;
-using Anamnesis.GUI.Dialogs;
-using Anamnesis.GUI.Views;
-using Anamnesis.Services;
-using Anamnesis.Utils;
-using Microsoft.Win32;
-using Serilog;
 
 public class FileService : ServiceBase<FileService>
 {
@@ -47,7 +47,7 @@ public class FileService : ServiceBase<FileService>
 	public static Shortcut DefaultCameraDirectory => new Shortcut(
 		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultCameraShotDirectory)),
 		"Shortcuts/Anamnesis.png",
-		"Shortcut_AnamnesisScenes");
+		"Shortcut_AnamnesisCamera");
 
 	public static Shortcut DefaultSceneDirectory => new Shortcut(
 		new DirectoryInfo(ParseToFilePath(SettingsService.Current.DefaultSceneDirectory)),

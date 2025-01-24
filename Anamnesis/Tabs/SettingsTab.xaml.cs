@@ -37,6 +37,7 @@ public partial class SettingsTab : System.Windows.Controls.UserControl
 			new SettingsPage<InputSettingsPage>(IconChar.Keyboard, "SettingsPages", "Input"),
 			new SettingsPage<PersonalizationSettingsPage>(IconChar.Palette, "SettingsPages", "Personalization"),
 			new SettingsPage<ConnectionsSettingsPage>(IconChar.NetworkWired, "SettingsPages", "Connections"),
+			new SettingsPage<BackupAndRecoverySettingsPage>(IconChar.Database, "SettingsPages", "BackupAndRecovery"),
 		};
 
 		// Force initialization of all pages
