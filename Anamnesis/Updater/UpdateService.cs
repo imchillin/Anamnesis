@@ -3,6 +3,8 @@
 
 namespace Anamnesis.Updater;
 
+using Anamnesis.GUI.Dialogs;
+using Anamnesis.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,9 +14,8 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Anamnesis.GUI.Dialogs;
-using Anamnesis.Services;
 using XivToolsWpf;
 
 public class UpdateService : ServiceBase<UpdateService>
@@ -31,6 +32,29 @@ public class UpdateService : ServiceBase<UpdateService>
 		await base.Initialize();
 
 		bool skipTimeCheck = false;
+
+		// Prompt user to install .NET 9 (transition period)
+		if (!IsDotNet9Installed())
+		{
+			// Prompt the user to install .NET 9
+			var userResponse = await GenericDialog.ShowLocalizedAsync("DotNetPrompt_Body", "DotNetPrompt_Title", System.Windows.MessageBoxButton.YesNo);
+			if (userResponse == true)
+			{
+				try
+				{
+					// Open the .NET 9 runtime installer download page
+					Process.Start(new ProcessStartInfo
+					{
+						FileName = "https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.1-windows-x64-installer",
+						UseShellExecute = true,
+					});
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Failed to open .NET 9 runtime installer download page");
+				}
+			}
+		}
 
 		// Determine if this is a dev build
 		if (VersionInfo.Date.Year <= 2000)
@@ -220,6 +244,37 @@ public class UpdateService : ServiceBase<UpdateService>
 		{
 			Log.Error(ex, "Failed to perform update");
 		}
+	}
+
+	private static bool IsDotNet9Installed()
+	{
+		List<string> versions = new();
+
+		ProcessStartInfo startInfo = new()
+		{
+			FileName = "dotnet",
+			Arguments = "--list-runtimes",
+			RedirectStandardOutput = true,
+			UseShellExecute = false,
+			CreateNoWindow = true,
+		};
+
+		using Process? process = Process.Start(startInfo);
+
+		if (process == null)
+			return false;
+
+		while (!process.StandardOutput.EndOfStream)
+		{
+			string? line = process.StandardOutput.ReadLine();
+			if (line == null)
+				continue;
+
+			if (Regex.IsMatch(line, @"Microsoft\.NETCore\.App 9\.\d+\.\d+"))
+				return true;
+		}
+
+		return false;
 	}
 
 	public class Release
