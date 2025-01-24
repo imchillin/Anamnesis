@@ -6,6 +6,7 @@ namespace Anamnesis;
 using Anamnesis.Actor;
 using Anamnesis.Core;
 using Anamnesis.Files;
+using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
 using System;
@@ -93,80 +94,15 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 		string dirName = $"Autosave_{DateTime.Now:yyyyMMdd_HHmmss}";
 		string dirPath = Path.Combine(baseDir, dirName);
 
-		// Create the directory if it does not exist
-		if (!Directory.Exists(dirPath))
-			Directory.CreateDirectory(dirPath);
-
-		// If the number of auto-save directories exceeds the maximum, delete the oldest
-		var autoSaveDirectories = Directory.GetDirectories(baseDir, "Autosave_*");
-		if (autoSaveDirectories.Length > SettingsService.Current.AutoSaveFileCount)
+		try
 		{
-			// Order directories by creation time
-			Array.Sort(autoSaveDirectories, (x, y) => Directory.GetCreationTime(x).CompareTo(Directory.GetCreationTime(y)));
+			// Perform the actual save operation (implement the actual save logic here)
+			Log.Verbose($"Performing auto-save to directory: {dirPath}");
 
-			// Delete the oldest directories until the count is within the limit
-			int directoriesToDelete = autoSaveDirectories.Length - SettingsService.Current.AutoSaveFileCount + 1;
-			for (int i = 0; i < directoriesToDelete; i++)
-			{
-				Directory.Delete(autoSaveDirectories[i], true);
-			}
-		}
-
-		// Perform the actual save operation (implement the actual save logic here)
-		Log.Verbose($"Performing auto-save to directory: {dirPath}");
-
-		// Save all pinned actors' appearance/equipment
-		string charDirPath = Path.Combine(dirPath, "Characters");
-		if (!Directory.Exists(charDirPath))
-			Directory.CreateDirectory(charDirPath);
-
-		foreach (var pinnedActor in TargetService.Instance.PinnedActors.ToList())
-		{
-			var actor = pinnedActor.Memory;
-			if (actor == null)
-				continue;
-
-			CharacterFile file = new();
-			string fullFilePath = Path.Combine(charDirPath, $"{actor.Name}{file.FileExtension}");
-			if (fullFilePath.Any(c => invalidPathChars.Contains(c)))
-			{
-				Log.Error($"Invalid character file path: {fullFilePath}");
-				break;
-			}
-
-			file.WriteToFile(actor, CharacterFile.SaveModes.All);
-			using FileStream stream = new(fullFilePath, FileMode.Create);
-			file.Serialize(stream);
-		}
-
-		if (GposeService.Instance.IsGpose)
-		{
-			var selectedActor = TargetService.Instance.SelectedActor;
-			if (selectedActor != null)
-			{
-				// Save the current camera configuration
-				string camShotsDir = Path.Combine(dirPath, "CameraShots");
-				if (!Directory.Exists(camShotsDir))
-					Directory.CreateDirectory(camShotsDir);
-
-				CameraShotFile file = new();
-				string fullFilePath = Path.Combine(camShotsDir, $"Camera{file.FileExtension}");
-				if (fullFilePath.Any(c => invalidPathChars.Contains(c)))
-					Log.Error($"Invalid camera shot file path: {fullFilePath}");
-
-				file.WriteToFile(CameraService.Instance, selectedActor);
-				using FileStream stream = new(fullFilePath, FileMode.Create);
-				file.Serialize(stream);
-			}
-
-			// Save all pinned actors' pose configuration
-			// Do not save poses if the pose service is disabled
-			if (!PoseService.Instance.IsEnabled)
-				return;
-
-			string posesDir = Path.Combine(dirPath, "Poses");
-			if (!Directory.Exists(posesDir))
-				Directory.CreateDirectory(posesDir);
+			// Save all pinned actors' appearance/equipment
+			string charDirPath = Path.Combine(dirPath, "Characters");
+			if (!Directory.Exists(charDirPath))
+				Directory.CreateDirectory(charDirPath);
 
 			foreach (var pinnedActor in TargetService.Instance.PinnedActors.ToList())
 			{
@@ -174,19 +110,92 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 				if (actor == null)
 					continue;
 
-				var skeleton = new Skeleton(actor);
-
-				PoseFile file = new();
-				string fullFilePath = Path.Combine(posesDir, $"{actor.Name}{file.FileExtension}");
+				CharacterFile file = new();
+				string fullFilePath = Path.Combine(charDirPath, $"{actor.Name}{file.FileExtension}");
 				if (fullFilePath.Any(c => invalidPathChars.Contains(c)))
 				{
-					Log.Error($"Invalid pose file path: {fullFilePath}");
+					Log.Error($"Invalid character file path: {fullFilePath}");
 					break;
 				}
 
-				file.WriteToFile(actor, skeleton, null);
+				file.WriteToFile(actor, CharacterFile.SaveModes.All);
 				using FileStream stream = new(fullFilePath, FileMode.Create);
 				file.Serialize(stream);
+			}
+
+			if (GposeService.Instance.IsGpose)
+			{
+				ActorMemory? actorMemory = null;
+				ActorBasicMemory? targetActor = TargetService.Instance.PlayerTarget;
+				if (targetActor != null && targetActor.IsValid)
+				{
+					actorMemory = new ActorMemory();
+					actorMemory.SetAddress(targetActor.Address);
+				}
+
+				if (actorMemory != null)
+				{
+					// Save the current camera configuration
+					string camShotsDir = Path.Combine(dirPath, "CameraShots");
+					if (!Directory.Exists(camShotsDir))
+						Directory.CreateDirectory(camShotsDir);
+
+					CameraShotFile file = new();
+					string fullFilePath = Path.Combine(camShotsDir, $"Camera{file.FileExtension}");
+					if (fullFilePath.Any(c => invalidPathChars.Contains(c)))
+						Log.Error($"Invalid camera shot file path: {fullFilePath}");
+
+					file.WriteToFile(CameraService.Instance, actorMemory);
+					using FileStream stream = new(fullFilePath, FileMode.Create);
+					file.Serialize(stream);
+				}
+
+				// Save all pinned actors' pose configuration
+				// Do not save poses if the pose service is disabled
+				if (!PoseService.Instance.IsEnabled)
+					return;
+
+				string posesDir = Path.Combine(dirPath, "Poses");
+				if (!Directory.Exists(posesDir))
+					Directory.CreateDirectory(posesDir);
+
+				foreach (var pinnedActor in TargetService.Instance.PinnedActors.ToList())
+				{
+					var actor = pinnedActor.Memory;
+					if (actor == null)
+						continue;
+
+					var skeleton = new Skeleton(actor);
+
+					PoseFile file = new();
+					string fullFilePath = Path.Combine(posesDir, $"{actor.Name}{file.FileExtension}");
+					if (fullFilePath.Any(c => invalidPathChars.Contains(c)))
+					{
+						Log.Error($"Invalid pose file path: {fullFilePath}");
+						break;
+					}
+
+					file.WriteToFile(actor, skeleton, null);
+					using FileStream stream = new(fullFilePath, FileMode.Create);
+					file.Serialize(stream);
+				}
+			}
+		}
+		finally
+		{
+			// If the number of auto-save directories exceeds the maximum, delete the oldest
+			var autoSaveDirectories = Directory.GetDirectories(baseDir, "Autosave_*");
+			if (autoSaveDirectories.Length > SettingsService.Current.AutoSaveFileCount)
+			{
+				// Order directories by creation time
+				Array.Sort(autoSaveDirectories, (x, y) => Directory.GetCreationTime(x).CompareTo(Directory.GetCreationTime(y)));
+
+				// Delete the oldest directories until the count is within the limit
+				int directoriesToDelete = autoSaveDirectories.Length - SettingsService.Current.AutoSaveFileCount;
+				for (int i = 0; i < directoriesToDelete; i++)
+				{
+					Directory.Delete(autoSaveDirectories[i], true);
+				}
 			}
 		}
 	}
