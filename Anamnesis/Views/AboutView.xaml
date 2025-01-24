@@ -50,7 +50,7 @@
 				<XivToolsWpf:TextBlock Key="About_OpenSource_Header"/>
 			</GroupBox.Header>
 
-			<TextBlock TextWrapping="Wrap" Margin="6,0,0,10" Style="{StaticResource Body}">Anamnesis is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
+			<TextBlock TextWrapping="Wrap" Margin="6,0,0,2" Style="{StaticResource Body}">Anamnesis is proudly Free and Open Source Software. Please feel free to leave the team a Star on 
 				<fa:IconBlock Icon="Github"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/Anamnesis" FontSize="12">GitHub</Hyperlink>.
 					<LineBreak />
 					Anamnesis is built with the following projects:
@@ -81,9 +81,9 @@
 				<XivToolsWpf:TextBlock Key="About_Contact_Header"/>
 			</GroupBox.Header>
 
-			<TextBlock TextWrapping="Wrap" Margin="6,0,0,10" Style="{StaticResource Body}">Want to follow development, ask a question, look for help, raise a bug, or just say hi? Visit us on
-				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discord.gg/KvGJCCnG8t" FontSize="12">Discord</Hyperlink>, or follow the XIV Tools 
-				<fa:IconBlock Icon="Twitter"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://twitter.com/XIV_Tools" FontSize="12">Twitter</Hyperlink>!</TextBlock>
+			<TextBlock TextWrapping="Wrap" Margin="6,0,0,2" Style="{StaticResource Body}">Want to follow development, ask a question, look for help, raise a bug, or just say hi? Visit us on
+				<fa:IconBlock Icon="Discord"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://discord.gg/KvGJCCnG8t" FontSize="12">Discord</Hyperlink>, or follow the Aetherworks 
+				<fa:IconBlock Icon="Bluesky"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://bsky.app/profile/xt.xivmodding.com" FontSize="12">Bluesky</Hyperlink> account!</TextBlock>
 		</GroupBox>
 		
 		<GroupBox Grid.Row="3">
@@ -92,8 +92,9 @@
 			</GroupBox.Header>
 
 			<TextBlock TextWrapping="Wrap" Margin="6,0,0,7" Style="{StaticResource Body}">
-				This project is a labor of love. Please consider donating to the Maintainer to say thank you!<LineBreak />
+				This project is a labor of love. Please consider donating to the maintainers to say thank you!<LineBreak />
 				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/chirpxiv" FontSize="12">chirp</Hyperlink><LineBreak />
+				<fa:IconBlock Icon="Coffee"/> <Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://ko-fi.com/ergo_ffxiv" FontSize="12">Ergo</Hyperlink><LineBreak />
 				We would also like to Thank all Contributors from the Past. You can find them on
 				<Hyperlink RequestNavigate="OnNavigate" NavigateUri="https://github.com/imchillin/Anamnesis" FontSize="12">github</Hyperlink>.
             </TextBlock>

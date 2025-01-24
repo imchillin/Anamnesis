@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 public static class LegacyBoneNameConverter
 {
-	private static readonly Dictionary<string, string> ModernToLegacy = new Dictionary<string, string>();
-	private static readonly Dictionary<string, string> LegacyToModern = new Dictionary<string, string>()
+	private static readonly Dictionary<string, string> ModernToLegacy = new();
+	private static readonly Dictionary<string, string> LegacyToModern = new()
 		{
 			// Body
 			{ "Root", "n_root" },
@@ -194,15 +194,13 @@ public static class LegacyBoneNameConverter
 
 	public static string? GetModernName(string legacyName)
 	{
-		string? name = null;
-		LegacyToModern.TryGetValue(legacyName, out name);
+		LegacyToModern.TryGetValue(legacyName, out string? name);
 		return name;
 	}
 
 	public static string? GetLegacyName(string modernName)
 	{
-		string? name = null;
-		ModernToLegacy.TryGetValue(modernName, out name);
+		ModernToLegacy.TryGetValue(modernName, out string? name);
 		return name;
 	}
 }

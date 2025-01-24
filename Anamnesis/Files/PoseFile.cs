@@ -4,6 +4,7 @@
 namespace Anamnesis.Files;
 
 using Anamnesis.Actor;
+using Anamnesis.Core;
 using Anamnesis.Memory;
 using Anamnesis.Posing;
 using Serilog;
@@ -45,12 +46,12 @@ public class PoseFile : JsonFileBase
 
 	public Dictionary<string, Bone?>? Bones { get; set; }
 
-	public static BoneProcessingModes GetBoneMode(ActorMemory? actor, SkeletonVisual3d? skeleton, string boneName)
+	public static BoneProcessingModes GetBoneMode(ActorMemory? actor, Skeleton? skeleton, string boneName)
 	{
 		return boneName != "n_root" ? BoneProcessingModes.FullLoad : BoneProcessingModes.Ignore;
 	}
 
-	public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, SkeletonVisual3d? skeleton, HashSet<string>? bones = null, bool editMeta = false)
+	public static async Task<DirectoryInfo?> Save(DirectoryInfo? dir, ActorMemory? actor, Skeleton? skeleton, HashSet<string>? bones = null, bool editMeta = false)
 	{
 		if (actor == null || skeleton == null)
 			return null;
@@ -72,7 +73,7 @@ public class PoseFile : JsonFileBase
 		return result.Directory;
 	}
 
-	public void WriteToFile(ActorMemory actor, SkeletonVisual3d skeleton, HashSet<string>? bones)
+	public void WriteToFile(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones)
 	{
 		if (actor.ModelObject == null || actor.ModelObject.Transform == null)
 			throw new Exception("No model in actor");
@@ -84,18 +85,18 @@ public class PoseFile : JsonFileBase
 		this.Position = actor.ModelObject.Transform.Position;
 		this.Scale = actor.ModelObject.Transform.Scale;
 
-		this.Bones = new Dictionary<string, Bone?>();
+		this.Bones = new Dictionary<string, Bone?>(skeleton.Bones.Count, StringComparer.Ordinal);
 
-		foreach (BoneVisual3d bone in skeleton.Bones.Values)
+		foreach (Core.Bone bone in skeleton.Bones.Values)
 		{
-			if (bones != null && !bones.Contains(bone.BoneName))
+			if (bones != null && !bones.Contains(bone.Name))
 				continue;
 
-			this.Bones.Add(bone.BoneName, new Bone(bone));
+			this.Bones[bone.Name] = new Bone(bone);
 		}
 	}
 
-	public void Apply(ActorMemory actor, SkeletonVisual3d skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
+	public void Apply(ActorMemory actor, Skeleton skeleton, HashSet<string>? bones, Mode mode, bool doFacialExpressionHack)
 	{
 		if (actor == null)
 			throw new ArgumentNullException(nameof(actor));
@@ -132,12 +133,12 @@ public class PoseFile : JsonFileBase
 
 		// Create a backup of all bone transforms.
 		// Note: Unposed bone transforms are parent-relative, while the restore bone position list is character-relative.
-		Dictionary<BoneVisual3d, Transform> unposedBoneTransforms = new();
-		Dictionary<BoneVisual3d, Vector3> posedBonePos = new();
-		List<BoneVisual3d> bonePosRestore = new();
+		Dictionary<Core.Bone, Transform> unposedBoneTransforms = new();
+		Dictionary<Core.Bone, Vector3> posedBonePos = new();
+		List<Core.Bone> bonePosRestore = new();
 		foreach (var bone in skeleton.Bones.Values)
 		{
-			if (GetBoneMode(actor, skeleton, bone.BoneName) == BoneProcessingModes.Ignore)
+			if (GetBoneMode(actor, skeleton, bone.Name) == BoneProcessingModes.Ignore)
 				continue;
 
 			unposedBoneTransforms[bone] = new Transform
@@ -154,7 +155,7 @@ public class PoseFile : JsonFileBase
 		// We then just set the head back to where it should be afterwards.
 		// We can skip this if we actually intend to pose the head
 		// in the case of posing by selected bones or by body.
-		BoneVisual3d? headBone = skeleton.GetBone("j_kao");
+		Core.Bone? headBone = skeleton.GetBone("j_kao");
 		Quaternion? originalHeadRotation = null;
 		Vector3? originalHeadPosition = null;
 		if (doFacialExpressionHack && bones != null && bones.Contains("j_kao"))
@@ -176,7 +177,7 @@ public class PoseFile : JsonFileBase
 			if (GetBoneMode(actor, skeleton, boneName) != BoneProcessingModes.FullLoad)
 				continue;
 
-			BoneVisual3d? bone = skeleton.GetBone(boneName);
+			Core.Bone? bone = skeleton.GetBone(boneName);
 
 			if (bone == null)
 			{
@@ -204,9 +205,14 @@ public class PoseFile : JsonFileBase
 		// Record position changes if bones are posed without position to preserve positions.
 		foreach (var bone in bonePosRestore)
 		{
-			if (!bone.TransformMemory.Binds.TryGetValue("Position", out PropertyBindInfo? bindInfo))
+			if (bone.TransformMemory == null)
 			{
-				Log.Error($"Failed to find position bind for bone: {bone.BoneName}");
+				Log.Error($"Bone {bone.Name} has no transform memory");
+			}
+
+			if (!bone.TransformMemory!.Binds.TryGetValue("Position", out PropertyBindInfo? bindInfo))
+			{
+				Log.Error($"Failed to find position bind for bone: {bone.Name}");
 				continue;
 			}
 
@@ -230,7 +236,7 @@ public class PoseFile : JsonFileBase
 				if (GetBoneMode(actor, skeleton, boneName) != BoneProcessingModes.FullLoad)
 					continue;
 
-				BoneVisual3d? bone = skeleton.GetBone(boneName);
+				Core.Bone? bone = skeleton.GetBone(boneName);
 
 				if (bone == null)
 				{
@@ -268,32 +274,32 @@ public class PoseFile : JsonFileBase
 		{
 			headBone.Rotation = (Quaternion)originalHeadRotation;
 			headBone.Position = (Vector3)originalHeadPosition;
-			headBone.WriteTransform(skeleton, true);
+			headBone.WriteTransform(true);
 		}
 
 		// If we are not loading the position of bones, restore the positions of all bones that were not explicitly written to.
 		if (!mode.HasFlag(Mode.Position))
 		{
-			var sortedBones = SkeletonVisual3d.SortBonesByHierarchy(posedBonePos.Keys);
+			var sortedBones = Core.Bone.SortBonesByHierarchy(posedBonePos.Keys);
 
 			foreach (var bone in sortedBones)
 			{
 				bone.Position = posedBonePos[bone];
-				bone.WriteTransform(skeleton, true);
+				bone.WriteTransform(true);
 			}
 		}
 
 		// Restore the transforms of any bones that we did not explicitly write to.
 		if (unposedBoneTransforms.Count > 0)
 		{
-			var sortedBones = SkeletonVisual3d.SortBonesByHierarchy(unposedBoneTransforms.Keys);
+			var sortedBones = Core.Bone.SortBonesByHierarchy(unposedBoneTransforms.Keys);
 
 			foreach (var bone in sortedBones)
 			{
 				bone.Rotation = unposedBoneTransforms[bone].Rotation;
 				bone.Position = unposedBoneTransforms[bone].Position;
 				bone.Scale = unposedBoneTransforms[bone].Scale;
-				bone.WriteTransform(skeleton, false);
+				bone.WriteTransform(false);
 			}
 		}
 
@@ -336,11 +342,14 @@ public class PoseFile : JsonFileBase
 		{
 		}
 
-		public Bone(BoneVisual3d boneVisual)
+		public Bone(Core.Bone bone)
 		{
-			this.Position = boneVisual.TransformMemory.Position;
-			this.Rotation = boneVisual.TransformMemory.Rotation;
-			this.Scale = boneVisual.TransformMemory.Scale;
+			if (bone.TransformMemory != null)
+			{
+				this.Position = bone.TransformMemory.Position;
+				this.Rotation = bone.TransformMemory.Rotation;
+				this.Scale = bone.TransformMemory.Scale;
+			}
 		}
 
 		public Vector3? Position { get; set; }

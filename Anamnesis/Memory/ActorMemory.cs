@@ -146,7 +146,7 @@ public class ActorMemory : ActorBasicMemory
 	}
 
 	[DependsOn(nameof(ObjectIndex), nameof(CharacterMode))]
-	public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.Instance.IsLocalOverworldPlayer(this.ObjectIndex);
+	public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.IsLocalOverworldPlayer(this.ObjectIndex);
 
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
@@ -242,9 +242,9 @@ public class ActorMemory : ActorBasicMemory
 				// Big hack to keep bone change history names short.
 				if (change.OriginBind.Memory.ParentBind?.Type == typeof(TransformMemory))
 				{
-					change.Name = (PoseService.SelectedBoneName == null) ?
-						LocalizationService.GetStringFormatted("History_ChangeBone", "??") :
-						LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBoneName);
+					change.Name = (PoseService.SelectedBonesText == null) ?
+						LocalizationService.GetStringFormatted("History_ChangeBone", LocalizationService.GetString("Pose_OtherUnknown")) :
+						LocalizationService.GetStringFormatted("History_ChangeBone", PoseService.SelectedBonesText);
 				}
 
 				this.History.Record(change);

@@ -158,7 +158,7 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	/// <summary>
 	/// Represents binding information for an array element.
 	/// </summary>
-	public class ArrayBindInfo : BindInfo
+	public sealed class ArrayBindInfo : BindInfo
 	{
 		/// <summary>Gets the index of the array element.</summary>
 		public readonly int Index;

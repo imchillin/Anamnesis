@@ -180,7 +180,7 @@ public partial class ActionPage : UserControl
 
 		AnimationService.Instance.SpeedControlEnabled = true;
 
-		foreach (var target in TargetService.Instance.PinnedActors)
+		foreach (var target in TargetService.Instance.PinnedActors.ToList())
 		{
 			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
 			{
@@ -199,7 +199,7 @@ public partial class ActionPage : UserControl
 
 		AnimationService.Instance.SpeedControlEnabled = true;
 
-		foreach (var target in TargetService.Instance.PinnedActors)
+		foreach (var target in TargetService.Instance.PinnedActors.ToList())
 		{
 			if (target.IsValid && target.Memory != null && target.Memory.IsValid)
 			{

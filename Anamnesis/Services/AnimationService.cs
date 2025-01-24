@@ -120,7 +120,7 @@ public class AnimationService : ServiceBase<AnimationService>
 
 		if (this.SpeedControlEnabled)
 		{
-			var actors = TargetService.Instance.PinnedActors;
+			var actors = TargetService.Instance.PinnedActors.ToList();
 			foreach (var actor in actors)
 			{
 				if (actor.IsValid && actor.Memory != null && actor.Memory.Address != IntPtr.Zero && actor.Memory.IsValid)

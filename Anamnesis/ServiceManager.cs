@@ -3,18 +3,18 @@
 
 namespace Anamnesis.Services;
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Anamnesis.Actor;
 using Anamnesis.Core.Memory;
 using Anamnesis.Files;
 using Anamnesis.Memory;
-using Anamnesis.Actor;
 using Anamnesis.Serialization;
 using Anamnesis.TexTools;
 using Serilog;
-using XivToolsWpf;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using XivToolsWpf;
 
 public class ServiceManager
 {
@@ -72,6 +72,7 @@ public class ServiceManager
 		await Add<Keyboard.HotkeyService>();
 		await Add<HistoryService>();
 		await Add<CustomBoneNameService>();
+		await Add<AutoSaveService>();
 
 		IsInitialized = true;
 

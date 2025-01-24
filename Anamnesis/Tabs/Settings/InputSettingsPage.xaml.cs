@@ -27,11 +27,17 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 		this.SettingCategories = new()
 		{
 			{ "Input", new SettingCategory("Input", this.InputGroupBox) },
+			{ "3D Skeleton Viewport", new SettingCategory("3D Skeleton Viewport", this.PoseViewportGroupBox) },
 			{ "Hotkeys", new SettingCategory("Hotkeys", this.HotkeysGroupBox) },
 		};
 
 		// Set up input category settings
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_WrapRotations", this.Input_Input_WrapRotations));
+
+		// Set up 3D skeleton viewport category settings
+		this.SettingCategories["3D Skeleton Viewport"].Settings.Add(new Setting("Settings_ViewportPanSpeed", this.Input_3DViewport_PanSpeed));
+		this.SettingCategories["3D Skeleton Viewport"].Settings.Add(new Setting("Settings_ViewportRotationSpeed", this.Input_3DViewport_RotationSpeed));
+		this.SettingCategories["3D Skeleton Viewport"].Settings.Add(new Setting("Settings_ViewportZoomSpeed", this.Input_3DViewport_ZoomSpeed));
 
 		// Set up hotkeys category settings
 		this.SettingCategories["Hotkeys"].Settings.Add(new Setting("Settings_EnableHotkeys", this.Input_Hotkeys_EnableHotkeys));

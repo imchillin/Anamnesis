@@ -37,7 +37,7 @@ public class PoseService : ServiceBase<PoseService>
 	public static event PoseEvent? EnabledChanged;
 	public static event PoseEvent? FreezeWorldPositionsEnabledChanged;
 
-	public static string? SelectedBoneName { get; set; }
+	public static string? SelectedBonesText { get; set; }
 
 	public bool IsEnabled
 	{

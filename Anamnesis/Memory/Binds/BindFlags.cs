@@ -6,7 +6,7 @@ namespace Anamnesis.Memory;
 /// <summary>
 /// Flags used to specify binding behaviors in memory operations.
 /// </summary>
-public enum BindFlags
+public enum BindFlags : byte
 {
 	None = 0,
 	Pointer = 1,
