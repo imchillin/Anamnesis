@@ -92,7 +92,7 @@
 										  MinWidth="32"
 										  Style="{StaticResource TransparentIconToggleButton}"
 										  IsEnabled="{Binding Skeleton.SelectedLinkedCount, Mode=OneWay, Converter={StaticResource NotZeroToBool}, FallbackValue=False}"
-										  IsChecked="{Binding Skeleton.SelectedEnableLinkedBones, Mode=OneWay}">
+										  IsChecked="{Binding Skeleton.SelectedEnableLinkedBones}">
 								<StackPanel Orientation="Horizontal">
 									<XivToolsWpf:IconBlock Icon="Link" FontSize="11"/>
 									<XivToolsWpf:TextBlock Text="{Binding Skeleton.SelectedLinkedCount, Mode=OneWay, FallbackValue=0}" Margin="4, 0, 0, 0"/>
