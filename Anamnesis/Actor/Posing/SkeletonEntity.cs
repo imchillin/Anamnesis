@@ -69,12 +69,28 @@ public class SkeletonEntity : Skeleton
 	public IEnumerable<BoneEntity> HoveredBones => this.hoveredBonesCache ??= this.Bones.Values.OfType<BoneEntity>().Where(b => b.IsHovered).ToList();
 
 	/// <summary>Gets the count of selected linked bones.</summary>
+	[DependsOn(nameof(SelectedBones), nameof(SelectedEnableLinkedBones))]
 	public int SelectedLinkedCount => this.SelectedBones.SelectMany(bone => bone.LinkedBones).Distinct().Count();
 
-	/// <summary>Gets a value indicating whether all selected bones have linked bones enabled.</summary>
-	public bool SelectedEnableLinkedBones => this.SelectedBones.All(b => b.EnableLinkedBones);
+	/// <summary>Gets or sets a value indicating whether to enable linked bones for all selected bones.</summary>
+	public bool SelectedEnableLinkedBones
+	{
+		get => this.SelectedBones.Any() && this.SelectedBones.All(b => b.EnableLinkedBones);
+		set
+		{
+			var selectedBones = this.SelectedBones.Where(b => b.LinkedBones.Count != 0).ToList();
+			if (selectedBones.Any(b => b.EnableLinkedBones != value))
+			{
+				foreach (var bone in selectedBones)
+					bone.EnableLinkedBones = value;
+
+				this.RaisePropertyChanged(nameof(this.SelectedEnableLinkedBones));
+			}
+		}
+	}
 
 	/// <summary>Gets the selected linked bones.</summary>
+	[DependsOn(nameof(SelectedBones), nameof(SelectedEnableLinkedBones))]
 	public IEnumerable<BoneEntity> SelectedLinkedBones => this.SelectedBones.SelectMany(bone => bone.LinkedBones.OfType<BoneEntity>()).Distinct();
 
 	/// <summary>Gets the parents of the selected bones.</summary>
