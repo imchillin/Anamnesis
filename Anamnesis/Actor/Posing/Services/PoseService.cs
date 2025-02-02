@@ -16,19 +16,22 @@ using System.Threading.Tasks;
 [AddINotifyPropertyChangedInterface]
 public class PoseService : ServiceBase<PoseService>
 {
-	private NopHook? freezeRot1;
-	private NopHook? freezeRot2;
-	private NopHook? freezeRot3;
-	private NopHook? freezeScale1;
-	private NopHook? freezePosition;
-	private NopHook? freezePosition2;
-	private NopHook? freeseScale2;
-	private NopHook? freezePhysics1;
-	private NopHook? freezePhysics2;
-	private NopHook? freezePhysics3;
+	private NopHook? freezeRot1;                // SyncModelSpace
+	private NopHook? freezeRot2;                // CalculateBoneModelSpace
+	private NopHook? freezeRot3;                // hkaLookAtIkSolve
+	private NopHook? freezeScale1;              // SyncModelSpace
+	private NopHook? freeseScale2;              // CalculateBoneModelSpace
+	private NopHook? freezePosition;            // SyncModelSpace
+	private NopHook? freezePosition2;           // CalculateBoneModelSpace
+	private NopHook? freezePhysics1;            // Rotation
+	private NopHook? freezePhysics2;            // Position
+	private NopHook? freezePhysics3;            // Scale
 	private NopHook? freezeWorldPosition;
 	private NopHook? freezeWorldRotation;
 	private NopHook? freezeGposeTargetPosition;
+	private NopHook? kineDriverPosition;
+	private NopHook? kineDriverRotation;
+	private NopHook? kineDriverScale;
 
 	private bool isEnabled;
 
@@ -63,8 +66,16 @@ public class PoseService : ServiceBase<PoseService>
 		}
 		set
 		{
-			this.freezePhysics1?.SetEnabled(value);
-			this.freezePhysics2?.SetEnabled(value);
+			if (value)
+			{
+				this.freezePhysics2?.SetEnabled(value);
+				this.freezePhysics1?.SetEnabled(value);
+			}
+			else
+			{
+				this.freezePhysics1?.SetEnabled(value);
+				this.freezePhysics2?.SetEnabled(value);
+			}
 		}
 	}
 
@@ -76,8 +87,18 @@ public class PoseService : ServiceBase<PoseService>
 		}
 		set
 		{
-			this.freezePosition?.SetEnabled(value);
-			this.freezePosition2?.SetEnabled(value);
+			if (value)
+			{
+				this.freezePosition?.SetEnabled(value);
+				this.freezePosition2?.SetEnabled(value);
+				this.kineDriverPosition?.SetEnabled(value);
+			}
+			else
+			{
+				this.kineDriverPosition?.SetEnabled(value);
+				this.freezePosition2?.SetEnabled(value);
+				this.freezePosition?.SetEnabled(value);
+			}
 		}
 	}
 
@@ -89,9 +110,20 @@ public class PoseService : ServiceBase<PoseService>
 		}
 		set
 		{
-			this.freezeScale1?.SetEnabled(value);
-			this.freezePhysics3?.SetEnabled(value);
-			this.freeseScale2?.SetEnabled(value);
+			if (value)
+			{
+				this.freezePhysics3?.SetEnabled(value);
+				this.freeseScale2?.SetEnabled(value);
+				this.freezeScale1?.SetEnabled(value);
+				this.kineDriverScale?.SetEnabled(value);
+			}
+			else
+			{
+				this.kineDriverScale?.SetEnabled(value);
+				this.freezeScale1?.SetEnabled(value);
+				this.freeseScale2?.SetEnabled(value);
+				this.freezePhysics3?.SetEnabled(value);
+			}
 		}
 	}
 
@@ -103,9 +135,20 @@ public class PoseService : ServiceBase<PoseService>
 		}
 		set
 		{
-			this.freezeRot1?.SetEnabled(value);
-			this.freezeRot2?.SetEnabled(value);
-			this.freezeRot3?.SetEnabled(value);
+			if (value)
+			{
+				this.freezeRot2?.SetEnabled(value);
+				this.freezeRot1?.SetEnabled(value);
+				this.freezeRot3?.SetEnabled(value);
+				this.kineDriverRotation?.SetEnabled(value);
+			}
+			else
+			{
+				this.kineDriverRotation?.SetEnabled(value);
+				this.freezeRot3?.SetEnabled(value);
+				this.freezeRot1?.SetEnabled(value);
+				this.freezeRot2?.SetEnabled(value);
+			}
 		}
 	}
 
@@ -149,6 +192,9 @@ public class PoseService : ServiceBase<PoseService>
 		this.freezeWorldPosition = new NopHook(AddressService.WorldPositionFreeze, 16);
 		this.freezeWorldRotation = new NopHook(AddressService.WorldRotationFreeze, 4);
 		this.freezeGposeTargetPosition = new NopHook(AddressService.GPoseCameraTargetPositionFreeze, 5);
+		this.kineDriverPosition = new NopHook(AddressService.KineDriverPosition, 5);
+		this.kineDriverRotation = new NopHook(AddressService.KineDriverRotation, 6);
+		this.kineDriverScale = new NopHook(AddressService.KineDriverScale, 6);
 
 		GposeService.GposeStateChanged += this.OnGposeStateChanged;
 
@@ -172,9 +218,9 @@ public class PoseService : ServiceBase<PoseService>
 			return;
 
 		this.isEnabled = enabled;
-		this.FreezePhysics = enabled;
 		this.FreezeRotation = enabled;
 		this.FreezePositions = enabled;
+		this.FreezePhysics = enabled;
 		this.FreezeScale = false;
 		this.EnableParenting = true;
 
