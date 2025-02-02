@@ -1,5 +1,5 @@
 
-# [![Anamnesis](ArtSource/DownloadButton.png "Download Releases")](https://github.com/imchillin/Anamnesis/releases)
+# [![Anamnesis](ArtSource/DownloadButton.png "Download Releases")](https://github.com/imchillin/Anamnesis/releases/latest)
 
 # Anamnesis
 ![Anamnesis](Anamnesis/Assets/Anamnesis.png "Anamnesis")
