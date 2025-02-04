@@ -20,7 +20,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using XivToolsWpf;
 
-#pragma warning disable SA1010
 [AddINotifyPropertyChangedInterface]
 public partial class MemoryService : ServiceBase<MemoryService>
 {

@@ -15,7 +15,7 @@ public class HistoryService : ServiceBase<HistoryService>
 	/// Use this object to ensure that any code dependent on the <see cref="IsRestoring"/>
 	/// property does not run while history is being restored.
 	/// </remarks>
-	public readonly object LockObject = new();
+	public readonly Lock LockObject = new();
 	private int isRestoring = 0;
 	public delegate void HistoryAppliedEvent();
 
