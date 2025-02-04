@@ -4,10 +4,11 @@
 namespace Anamnesis.Memory;
 
 using System;
+using System.Threading;
 
 public class NopHook : IDisposable
 {
-	private readonly object lockObject = new();
+	private readonly Lock lockObject = new();
 	private readonly IntPtr address;
 	private readonly byte[] originalValue;
 	private readonly byte[] nopValue;
@@ -67,12 +68,12 @@ public class NopHook : IDisposable
 			if (enabled)
 			{
 				// Write Nop
-				MemoryService.Write(this.address, this.nopValue, true);
+				MemoryService.WriteExecutable(this.address, this.nopValue);
 			}
 			else
 			{
 				// Write the original value
-				MemoryService.Write(this.address, this.originalValue, true);
+				MemoryService.WriteExecutable(this.address, this.originalValue);
 			}
 		}
 	}
@@ -88,7 +89,7 @@ public class NopHook : IDisposable
 					// Restore the original value if it was NOPed
 					if (this.enabled)
 					{
-						MemoryService.Write(this.address, this.originalValue, true);
+						MemoryService.WriteExecutable(this.address, this.originalValue);
 					}
 
 					// Unregister events
