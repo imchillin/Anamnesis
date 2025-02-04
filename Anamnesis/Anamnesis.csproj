@@ -32,6 +32,10 @@
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
     <PackageReference Include="Lumina" Version="4.1.0" />
     <PackageReference Include="Lumina.Excel" Version="7.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0">
       <PrivateAssets>All</PrivateAssets>
       <IncludeAssets>
@@ -42,10 +46,6 @@
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
 	<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
