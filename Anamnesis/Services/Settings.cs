@@ -113,6 +113,7 @@ public class Settings : INotifyPropertyChanged
 			AutoSaveService.Instance?.RestartUpdateTask();
 		}
 	}
+	public bool AutoSaveOnlyInGpose { get; set; } = true;
 
 	public GizmoDragModes GizmoDragMode { get; set; } = GizmoDragModes.Linear;
 

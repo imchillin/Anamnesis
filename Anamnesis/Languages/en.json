@@ -819,6 +819,7 @@
   "Settings_AutoSaveInterval": "Interval (minutes)",
   "Settings_AutoSaveDirectory": "Auto Save Directory",
   "Settings_AutoSaveSaveLast": "Keep Latest Entries",
+  "Settings_AutoSaveOnlyInGpose": "Save Only in GPose",
   "Settings_GizmoDragMode": "Gizmo Drag Mode",
   "Settings_GizmoDragMode_Linear": "Linear",
   "Settings_GizmoDragMode_Circular": "Circular",
