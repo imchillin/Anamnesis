@@ -153,7 +153,7 @@ public partial class QuaternionEditor : UserControl
 
 		sender.lockdp = true;
 
-		CmQuaternion valueQuat = new CmQuaternion(value.X, value.Y, value.Z, value.W);
+		var valueQuat = new CmQuaternion(value.X, value.Y, value.Z, value.W);
 
 		if (sender.RootRotation != null)
 			valueQuat = sender.Root * valueQuat;
@@ -285,7 +285,7 @@ public partial class QuaternionEditor : UserControl
 		}
 		else
 		{
-			Point3D mousePos3D = new Point3D(mousePosition.X, mousePosition.Y, 0);
+			var mousePos3D = new Point3D(mousePosition.X, mousePosition.Y, 0);
 			this.rotationGizmo.Drag(mousePos3D);
 		}
 	}
@@ -366,11 +366,11 @@ public partial class QuaternionEditor : UserControl
 
 	private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
-		if (this.IsVisible)
-		{
-			// Watch camera thread
-			Task.Run(() => this.WatchCamera());
-		}
+		if (!this.IsVisible)
+			return;
+
+		// Watch camera thread
+		Task.Run(this.WatchCamera);
 	}
 
 	private class RotationGizmo : ModelVisual3D
@@ -381,11 +381,11 @@ public partial class QuaternionEditor : UserControl
 		{
 			this.target = target;
 
-			Sphere sphere = new Sphere();
-			sphere.Radius = 0.48;
-			Color c = Colors.Black;
-			c.A = 128;
-			sphere.Material = new DiffuseMaterial(new SolidColorBrush(c));
+			var sphere = new Sphere
+			{
+				Radius = 0.48,
+				Material = new DiffuseMaterial(new SolidColorBrush(Color.FromArgb(128, 0, 0, 0))),
+			};
 			this.Children.Add(sphere);
 
 			this.Children.Add(new AxisGizmo(Colors.Blue, new CmVector(1, 0, 0)));
@@ -490,7 +490,10 @@ public partial class QuaternionEditor : UserControl
 		private void ApplyDelta(CmVector angleEuler)
 		{
 			CmQuaternion angle = QuaternionExtensions.FromEuler(angleEuler);
-			this.target.ValueQuat *= angle;
+			CmQuaternion targetQuat = this.target.ValueQuat * angle;
+			CmQuaternion interpolatedQuat = CmQuaternion.Slerp(this.target.ValueQuat, targetQuat, 0.6f);
+
+			this.target.ValueQuat = interpolatedQuat;
 		}
 	}
 
@@ -508,20 +511,25 @@ public partial class QuaternionEditor : UserControl
 			this.Axis = axis;
 			this.color = color;
 
-			Vector3D rotationAxis = new Vector3D(axis.Z, 0, axis.X);
+			var rotationAxis = new Vector3D(axis.Z, 0, axis.X);
 
-			this.circle = new Circle();
-			this.circle.Thickness = 1;
-			this.circle.Color = color;
-			this.circle.Radius = 0.5;
-			this.circle.Transform = new RotateTransform3D(new AxisAngleRotation3D(axis.ToMedia3DVector(), 90));
+			this.circle = new Circle
+			{
+				Thickness = 1,
+				Color = color,
+				Radius = 0.5,
+
+				Transform = new RotateTransform3D(new AxisAngleRotation3D(axis.ToMedia3DVector(), 90)),
+			};
 			this.Children.Add(this.circle);
 
-			this.cylinder = new Cylinder();
-			this.cylinder.Radius = 0.49;
-			this.cylinder.Length = 0.20;
-			this.cylinder.Transform = new RotateTransform3D(new AxisAngleRotation3D(axis.ToMedia3DVector(), 90));
-			this.cylinder.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Transparent));
+			this.cylinder = new Cylinder
+			{
+				Radius = 0.48,
+				Length = 0.20,
+				Transform = new RotateTransform3D(new AxisAngleRotation3D(axis.ToMedia3DVector(), 90)),
+				Material = new DiffuseMaterial(new SolidColorBrush(Colors.Transparent)),
+			};
 			this.Children.Add(this.cylinder);
 		}
 
@@ -561,16 +569,9 @@ public partial class QuaternionEditor : UserControl
 			}
 		}
 
-		public void StartDrag()
-		{
-			this.lastPoint = null;
-		}
-
 		public CmVector Drag(Point3D mousePosition)
 		{
-			bool useCircularDrag = true;
-
-			if (useCircularDrag)
+			if (SettingsService.Current.GizmoDragMode == Settings.GizmoDragModes.Circular)
 			{
 				Point3D? point = this.circle.NearestPoint2D(mousePosition);
 
@@ -586,7 +587,7 @@ public partial class QuaternionEditor : UserControl
 				}
 				else
 				{
-					Vector3D axis = new Vector3D(0, 1, 0);
+					Vector3D axis = new(0, 1, 0);
 
 					Vector3D from = (Vector3D)this.lastPoint;
 					Vector3D to = (Vector3D)point;

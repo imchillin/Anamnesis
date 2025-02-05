@@ -18,7 +18,7 @@
 
 		<Grid MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseLeave="OnViewportMouseLeave" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportMouseWheel">
 			<Rectangle Fill="Transparent"/>
-			<Viewport3D x:Name="Viewport"/>
+			<Viewport3D x:Name="Viewport" SnapsToDevicePixels="False"/>
 		</Grid>
 
 		<StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" ToolTip="Right-Click an axis to lock rotation to it"
