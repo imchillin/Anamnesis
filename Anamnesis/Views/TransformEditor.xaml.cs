@@ -37,9 +37,9 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	/// </remarks>
 	public static readonly IBind<bool?> CanTranslateOverrideDp = Binder.Register<bool?, TransformEditor>(nameof(CanTranslateOverride), OnCanTranslateChanged, BindMode.OneWay);
 
-	private readonly Dictionary<string, Vector3> initialPositions = new();
-	private readonly Dictionary<string, Quaternion> initialRotations = new();
-	private readonly Dictionary<string, Vector3> initialScales = new();
+	private readonly Dictionary<string, Vector3> initialPositions = [];
+	private readonly Dictionary<string, Quaternion> initialRotations = [];
+	private readonly Dictionary<string, Vector3> initialScales = [];
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TransformEditor"/> class.

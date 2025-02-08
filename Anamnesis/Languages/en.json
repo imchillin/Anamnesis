@@ -915,5 +915,8 @@
   "Hotkey_Redo": "Redo",
 
   "History_ChangeBone": "Change Bone: {0}",
-  "History_ClearHistory": "Clear History"
+  "History_ClearHistory": "Clear History",
+
+  "SliderInputBox_DecreaseButton": "Decrease the value by one step",
+  "SliderInputBox_IncreaseButton": "Increase the value by one step"
 }

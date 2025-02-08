@@ -12,7 +12,7 @@
 
 	<Grid x:Name="ContentArea">
 		<Grid.RowDefinitions>
-			<RowDefinition/>
+			<RowDefinition MinHeight="140" Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
@@ -21,7 +21,7 @@
 			<Viewport3D x:Name="Viewport" SnapsToDevicePixels="False"/>
 		</Grid>
 
-		<StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" ToolTip="Right-Click an axis to lock rotation to it"
+		<StackPanel Grid.Row="0" HorizontalAlignment="Left" ToolTip="Right-Click an axis to lock rotation to it"
 					Orientation="Horizontal"
 					VerticalAlignment="Top">
 			<ToggleButton  
@@ -58,6 +58,6 @@
 			</materialDesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<cm3:VectorEditor Grid.Row="1" Value="{Binding Euler}" Expanded="True" Minimum="0" Maximum="360" TickFrequency="{Binding TickFrequency}" Wrap="{Binding Settings.WrapRotationSliders}"/>
+		<cm3:VectorEditorNew Grid.Row="1" VerticalAlignment="Top" Value="{Binding Euler}" LayoutStyle="Inline" Minimum="0" Maximum="360" DefaultValue="0" TickFrequency="{Binding TickFrequency}" Suffix="°" EnableStepButtons="False" DecimalPlaces="3" ColorMode="Rotation" OverflowBehavior="Loop"/>
 	</Grid>
 </UserControl>

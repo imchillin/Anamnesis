@@ -30,7 +30,7 @@ public partial class QuaternionEditor : UserControl
 {
 	public static readonly IBind<CmQuaternion> ValueDp = Binder.Register<CmQuaternion, QuaternionEditor>(nameof(Value), OnValueChanged);
 	public static readonly IBind<CmQuaternion?> RootRotationDp = Binder.Register<CmQuaternion?, QuaternionEditor>(nameof(RootRotation), OnRootRotationChanged);
-	public static readonly IBind<double> TickDp = Binder.Register<double, QuaternionEditor>(nameof(TickFrequency));
+	public static readonly IBind<decimal> TickDp = Binder.Register<decimal, QuaternionEditor>(nameof(TickFrequency));
 
 	public static readonly IBind<CmQuaternion> ValueQuatDp = Binder.Register<CmQuaternion, QuaternionEditor>(nameof(ValueQuat), OnValueQuatChanged);
 	public static readonly IBind<CmVector> EulerDp = Binder.Register<CmVector, QuaternionEditor>(nameof(Euler), OnEulerChanged);
@@ -67,7 +67,7 @@ public partial class QuaternionEditor : UserControl
 		HotkeyService.RegisterHotkeyHandler("QuaternionEditor.RotateZPlusSlow", (k) => this.Rotate(k, 0, 0, 0.1));
 		HotkeyService.RegisterHotkeyHandler("QuaternionEditor.RotateZMinusSlow", (k) => this.Rotate(k, 0, 0, -0.1));
 
-		this.TickFrequency = 0.5;
+		this.TickFrequency = 0.5m;
 
 		this.rotationGizmo = new RotationGizmo(this);
 		this.Viewport.Children.Add(this.rotationGizmo);
@@ -79,7 +79,7 @@ public partial class QuaternionEditor : UserControl
 		this.isInitialized = true;
 	}
 
-	public double TickFrequency
+	public decimal TickFrequency
 	{
 		get => TickDp.Get(this);
 		set => TickDp.Set(this, value);
@@ -300,7 +300,7 @@ public partial class QuaternionEditor : UserControl
 
 	private void OnViewportMouseWheel(object sender, MouseWheelEventArgs e)
 	{
-		double delta = e.Delta > 0 ? this.TickFrequency : -this.TickFrequency;
+		double delta = e.Delta > 0 ? (double)this.TickFrequency : -(double)this.TickFrequency;
 
 		if (Keyboard.IsKeyDown(Key.LeftShift))
 			delta *= 10;
@@ -388,9 +388,9 @@ public partial class QuaternionEditor : UserControl
 			};
 			this.Children.Add(sphere);
 
-			this.Children.Add(new AxisGizmo(Colors.Blue, new CmVector(1, 0, 0)));
-			this.Children.Add(new AxisGizmo(Colors.Green, new CmVector(0, 1, 0)));
-			this.Children.Add(new AxisGizmo(Colors.Red, new CmVector(0, 0, 1)));
+			this.Children.Add(new AxisGizmo((Color)ColorConverter.ConvertFromString("#1c59ff"), new CmVector(1, 0, 0)));
+			this.Children.Add(new AxisGizmo((Color)ColorConverter.ConvertFromString("#94e800"), new CmVector(0, 1, 0)));
+			this.Children.Add(new AxisGizmo((Color)ColorConverter.ConvertFromString("#ff0d3e"), new CmVector(0, 0, 1)));
 		}
 
 		public AxisGizmo? Locked

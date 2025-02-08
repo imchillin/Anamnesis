@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Anamnesis.Tabs"
+			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
 			 xmlns:views="clr-namespace:Anamnesis.Views"
 			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
 			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -97,33 +98,21 @@
 											   Grid.Column="1"
 											   Key="Scene_World_Time"
 											   Style="{StaticResource Label}" />
-						<XivToolsWpf:NumberBox Minimum="0"
-											   Maximum="1439"
-											   Grid.Column="2"
-											   Value="{Binding TimeService.TimeOfDay}"
-											   Margin="3"
-											   Slider="Absolute"
-											   IsEnabled="{Binding TimeService.Freeze}"
-											   TickFrequency="30" />
+
+						<ana:SliderInputBox Grid.Column="2" Margin="0, 0, 5, 0" Value="{Binding TimeService.TimeOfDay}" IsEnabled="{Binding TimeService.Freeze}" Minimum="0" Maximum="1439" TickFrequency="1" EnableStepButtons="True" OverflowBehavior="Loop"/>
+
 						<TextBlock Grid.Column="3"
 								   Text="{Binding TimeService.TimeString}"
-								   Margin="3, 3, 0, 3"
-								   Width="50"
-								   HorizontalAlignment="Right" />
+								   Margin="5, 4, 0, 0"
+								   Width="40"
+								   HorizontalAlignment="Right"/>
 
 						<XivToolsWpf:TextBlock Grid.Row="1"
 											   Grid.Column="1"
 											   Key="Scene_World_Day"
 											   Style="{StaticResource Label}" />
-						<XivToolsWpf:NumberBox Grid.Row="1"
-											   Grid.Column="2"
-											   Grid.ColumnSpan="2"
-											   Value="{Binding TimeService.DayOfMonth}"
-											   IsEnabled="{Binding TimeService.Freeze}"
-											   Buttons="True"
-											   Slider="Absolute"
-											   Minimum="1"
-											   Maximum="31" />
+
+						<ana:SliderInputBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Minimum="1" Maximum="31" TickFrequency="1" EnableStepButtons="True" OverflowBehavior="Clamp"/>
 					</Grid>
 
 					<XivToolsWpf:TextBlock Grid.Row="1"
