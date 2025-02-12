@@ -408,6 +408,25 @@ public class FileService : ServiceBase<FileService>
 		return await CacheRemoteFile(url, imagePath);
 	}
 
+	/// <summary>
+	/// Recursively sets the attributes of all files and sub-directories in the directory to FileAttributes.Normal.
+	/// </summary>
+	/// <param name="directory">The directory to process.</param>
+	public static void SetAttributesNormal(DirectoryInfo directory)
+	{
+		directory.Attributes = FileAttributes.Normal;
+
+		foreach (var subDirectory in directory.GetDirectories())
+		{
+			SetAttributesNormal(subDirectory);
+		}
+
+		foreach (var file in directory.GetFiles())
+		{
+			file.Attributes = FileAttributes.Normal;
+		}
+	}
+
 	private static string ToAnyFilter(params Type[] types)
 	{
 		StringBuilder builder = new StringBuilder();

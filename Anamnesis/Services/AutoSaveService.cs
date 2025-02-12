@@ -200,6 +200,10 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 				int directoriesToDelete = autoSaveDirectories.Length - SettingsService.Current.AutoSaveFileCount;
 				for (int i = 0; i < directoriesToDelete; i++)
 				{
+					// Ensure all subdirectories and files are not read-only
+					var dirInfo = new DirectoryInfo(autoSaveDirectories[i]);
+					FileService.SetAttributesNormal(dirInfo);
+
 					Directory.Delete(autoSaveDirectories[i], true);
 				}
 			}
