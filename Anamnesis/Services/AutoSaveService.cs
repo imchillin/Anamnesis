@@ -96,6 +96,12 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 
 		try
 		{
+			if (SettingsService.Current.AutoSaveOnlyInGpose && !GposeService.Instance.IsGpose)
+			{
+				Log.Verbose("Skipping auto-save due to backup settings.");
+				return;
+			}
+
 			// Perform the actual save operation (implement the actual save logic here)
 			Log.Verbose($"Performing auto-save to directory: {dirPath}");
 

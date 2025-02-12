@@ -64,7 +64,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	protected BindInfo? parentBind;
 
 	/// <summary>Lock object for thread synchronization.</summary>
-	private readonly object lockObject = new();
+	private readonly Lock lockObject = new();
 
 	/// <summary>A collection of delayed binds to be written later.</summary>
 	/// <remarks>
@@ -505,7 +505,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		while (queue.Count > 0)
 		{
 			MemoryBase current = queue.Dequeue();
-			if (!Monitor.TryEnter(current.lockObject, 5000))
+			if (!current.lockObject.TryEnter(5000))
 				throw new Exception("Failed to claim lock on memory object. Possible deadlock?");
 
 			foreach (MemoryBase child in current.Children)
@@ -526,7 +526,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		while (stack.Count > 0)
 		{
 			MemoryBase current = stack.Pop();
-			Monitor.Exit(current.lockObject);
+			current.lockObject.Exit();
 
 			foreach (MemoryBase child in current.Children)
 			{
