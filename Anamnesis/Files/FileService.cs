@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -79,7 +80,7 @@ public class FileService : ServiceBase<FileService>
 	/// </summary>
 	public static string ParseToFilePath(string path)
 	{
-		foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues(typeof(Environment.SpecialFolder)))
+		foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues<Environment.SpecialFolder>().Select(v => (Environment.SpecialFolder?)v))
 		{
 			if (specialFolder == null)
 				continue;
@@ -102,7 +103,7 @@ public class FileService : ServiceBase<FileService>
 		// Special case for "AppData" instead of "ApplicationData"
 		path = path.Replace(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $"%AppData%");
 
-		foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues(typeof(Environment.SpecialFolder)))
+		foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues<Environment.SpecialFolder>().Select(v => (Environment.SpecialFolder?)v))
 		{
 			if (specialFolder == null)
 				continue;

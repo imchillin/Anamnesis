@@ -3,12 +3,12 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using System;
-using System.Collections.Generic;
 using Anamnesis.GameData.Sheets;
 using Lumina.Data;
 using Lumina.Excel;
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
 [Sheet("ClassJobCategory", 0x65bbdb12)]
@@ -71,8 +71,8 @@ public class ClassJobCategory : ExcelRow
 
 	public bool Contains(Classes classJob)
 	{
-		if (this.ClassJobs.ContainsKey(classJob))
-			return this.ClassJobs[classJob];
+		if (this.ClassJobs.TryGetValue(classJob, out bool value))
+			return value;
 
 		return false;
 	}
@@ -81,7 +81,7 @@ public class ClassJobCategory : ExcelRow
 	{
 		Classes classes = Classes.None;
 
-		foreach (Classes? job in Enum.GetValues(typeof(Classes)))
+		foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
 		{
 			if (job == null || job == Classes.None || job == Classes.All)
 				continue;

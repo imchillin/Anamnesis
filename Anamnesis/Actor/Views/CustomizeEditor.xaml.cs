@@ -30,9 +30,9 @@ public partial class CustomizeEditor : UserControl
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 
-		this.GenderComboBox.ItemsSource = Enum.GetValues(typeof(ActorCustomizeMemory.Genders));
+		this.GenderComboBox.ItemsSource = Enum.GetValues<Genders>();
 		this.AgeComboBox.ItemsSource =
-			Enum.GetValues(typeof(ActorCustomizeMemory.Ages))
+			Enum.GetValues<Ages>()
 				.Cast<ActorCustomizeMemory.Ages>()
 				.Where(age => age != ActorCustomizeMemory.Ages.None);
 

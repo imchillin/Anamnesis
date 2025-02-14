@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Core.Extensions;
 using Anamnesis.Services;
 using PropertyChanged;
 using Serilog;
@@ -11,7 +12,6 @@ using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -72,6 +72,14 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 	/// due to ongoing memory reads.
 	/// </remarks>
 	private ConcurrentQueue<BindInfo> delayedBinds = new();
+
+	/// <summary>
+	/// A temporary queue that's used to filter out invalidated delayed binds.
+	/// </summary>
+	/// <remarks>
+	/// This is a member variable to avoid creating a new queue on every synchronization.
+	/// </remarks>
+	private readonly ConcurrentQueue<BindInfo> transientQueue = new();
 
 	private int enableReading = 1;
 	private int enableWriting = 1;
@@ -448,7 +456,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		}
 
 		object? currentValue = bind.Property.GetValue(this);
-		if (currentValue == null || bind.Flags.HasFlag(BindFlags.Pointer))
+		if (currentValue == null || bind.Flags.HasFlagUnsafe(BindFlags.Pointer))
 			return;
 
 		// Frozen binds should not be updated when prompted by the application (i.e. the user)
@@ -485,7 +493,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 		// Propagate the property changed event to the rest of the application after write to memory
 		var origin = PropertyChange.Origins.User;
-		if (!bind.Flags.HasFlag(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
+		if (!bind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
 		{
 			origin = PropertyChange.Origins.History;
 		}
@@ -566,7 +574,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 		if (bind.IsWriting)
 			throw new Exception("Cannot read memory while we're writing to it");
 
-		if (bind.Flags.HasFlag(BindFlags.OnlyInGPose) && !GposeService.Instance.IsGpose)
+		if (bind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && !GposeService.Instance.IsGpose)
 			return;
 
 		bind.IsReading = true;
@@ -604,7 +612,17 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 				// Invalidate all delayed binds if they were created prior to the memory address change
 				// Note: This is only relevant to MemoryBase objects as they are reference type objects
-				this.delayedBinds = new ConcurrentQueue<BindInfo>(this.delayedBinds.Where(b => b != bind));
+
+				// Filter out the invalidated delayed binds
+				this.transientQueue.Clear();
+				while (this.delayedBinds.TryDequeue(out BindInfo? delayedBind))
+				{
+					if (delayedBind != bind)
+						this.transientQueue.Enqueue(delayedBind);
+				}
+
+				// Replace the delayed binds queue
+				this.delayedBinds = this.transientQueue;
 
 				try
 				{
@@ -686,7 +704,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 		try
 		{
-			if (bind.Flags.HasFlag(BindFlags.Pointer))
+			if (bind.Flags.HasFlagUnsafe(BindFlags.Pointer))
 				throw new NotSupportedException("Attempt to write a pointer value to memory.");
 
 			IntPtr bindAddress = bind.GetAddress();
@@ -758,7 +776,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 						continue;
 
 					// If the child is a bind but only applies in gpose and we are not in gpose, then skip it.
-					if (child.parentBind.Flags.HasFlag(BindFlags.OnlyInGPose) && !GposeService.Instance.IsGpose)
+					if (child.parentBind.Flags.HasFlagUnsafe(BindFlags.OnlyInGPose) && !GposeService.Instance.IsGpose)
 						continue;
 
 					stack.Push(child);
@@ -810,7 +828,7 @@ public abstract class MemoryBase : INotifyPropertyChanged, IDisposable
 
 					// Propagate property changed event to the rest of the application after writing to memory
 					var origin = PropertyChange.Origins.User;
-					if (!propertyBind.Flags.HasFlag(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
+					if (!propertyBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && HistoryService.Instance.IsRestoring)
 					{
 						origin = PropertyChange.Origins.History;
 					}

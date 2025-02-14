@@ -4,6 +4,7 @@
 namespace Anamnesis.Files;
 
 using Anamnesis.Core;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
 using System;
@@ -89,17 +90,17 @@ public class SceneFile : JsonFileBase
 
 		TargetService.SetPlayerTarget(targetActor);
 
-		if (mode.HasFlag(Mode.Weather))
+		if (mode.HasFlagUnsafe(Mode.Weather))
 			TerritoryService.Instance.CurrentWeatherId = this.Weather;
 
-		if (mode.HasFlag(Mode.Time))
+		if (mode.HasFlagUnsafe(Mode.Time))
 		{
 			TimeService.Instance.Freeze = true;
 			TimeService.Instance.DayOfMonth = this.DayOfMonth;
 			TimeService.Instance.TimeOfDay = this.TimeOfDay;
 		}
 
-		if (mode.HasFlag(Mode.WorldPosition))
+		if (mode.HasFlagUnsafe(Mode.WorldPosition))
 		{
 			if (TerritoryService.Instance.CurrentTerritoryId != this.Territory)
 				throw new Exception("Could not restore world positions as you are not in the correct territory");
@@ -118,7 +119,7 @@ public class SceneFile : JsonFileBase
 		Vector3 rootCurrentWaist = rootSkeleton.GetBone("n_hara")?.Position ?? Vector3.Zero;
 		Vector3 rootAdjustedWaist = Vector3.Transform(rootCurrentWaist - rootOriginalWaist, rootRotation);
 
-		if (mode.HasFlag(Mode.WorldPosition))
+		if (mode.HasFlagUnsafe(Mode.WorldPosition))
 		{
 			rootActor!.ModelObject!.Transform!.Position -= rootAdjustedWaist;
 		}
@@ -131,7 +132,7 @@ public class SceneFile : JsonFileBase
 			var skeleton = new Skeleton(actor);
 			ActorEntry entry = this.ActorEntries[name];
 
-			if (actor != rootActor && mode.HasFlag(Mode.RelativePosition))
+			if (actor != rootActor && mode.HasFlagUnsafe(Mode.RelativePosition))
 			{
 				Quaternion rotatedRotation = rootRotation * entry.Rotation;
 
@@ -143,20 +144,20 @@ public class SceneFile : JsonFileBase
 				actor.ModelObject!.Transform!.Position = rootPosition + rotatedRelativePosition - adjustedWaist;
 				actor.ModelObject!.Transform!.Rotation = rotatedRotation;
 
-				if (!mode.HasFlag(Mode.WorldPosition))
+				if (!mode.HasFlagUnsafe(Mode.WorldPosition))
 				{
 					actor.ModelObject!.Transform!.Position += rootAdjustedWaist;
 				}
 			}
 
-			if (mode.HasFlag(Mode.Pose))
+			if (mode.HasFlagUnsafe(Mode.Pose))
 			{
 				// TODO: This should follow the same approach as the pose page imports
 				entry.Pose!.Apply(actor, skeleton, null, PoseFile.Mode.Rotation, true);
 			}
 		}
 
-		if (mode.HasFlag(Mode.Camera))
+		if (mode.HasFlagUnsafe(Mode.Camera))
 		{
 			this.CameraShot!.Apply(CameraService.Instance, targetActor);
 		}

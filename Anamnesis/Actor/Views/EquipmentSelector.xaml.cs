@@ -3,17 +3,17 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using Anamnesis.Actor.Utilities;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
-using PropertyChanged;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using XivToolsWpf;
 
 public abstract class EquipmentSelectorDrawer : SelectorDrawer<IItem>
@@ -143,6 +143,8 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	public override void OnClosed()
 	{
+		base.OnClosed();
+
 		HotkeyService.ClearHotkeyHandler("AppearancePage.ClearEquipment", this);
 	}
 
@@ -251,12 +253,12 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 
 	private bool HasClass(Classes a, Classes b)
 	{
-		foreach (Classes? job in Enum.GetValues(typeof(Classes)))
+		foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
 		{
 			if (job == null || job == Classes.None)
 				continue;
 
-			if (a.HasFlag(job) && b.HasFlag(job))
+			if (a.HasFlagUnsafe(job.Value) && b.HasFlagUnsafe(job.Value))
 			{
 				return true;
 			}
@@ -270,17 +272,17 @@ public partial class EquipmentSelector : EquipmentSelectorDrawer
 		ItemCategories itemCategory = item.Category;
 
 		// Include none category
-		bool categoryFiltered = this.CategoryFilter.HasFlag(ItemCategories.Standard) && itemCategory == ItemCategories.None;
+		bool categoryFiltered = this.CategoryFilter.HasFlagUnsafe(ItemCategories.Standard) && itemCategory == ItemCategories.None;
 
-		categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Standard) && itemCategory.HasFlag(ItemCategories.Standard);
-		categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Premium) && itemCategory.HasFlag(ItemCategories.Premium);
-		categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Limited) && itemCategory.HasFlag(ItemCategories.Limited);
-		categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Deprecated) && itemCategory.HasFlag(ItemCategories.Deprecated);
-		categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.CustomEquipment) && itemCategory.HasFlag(ItemCategories.CustomEquipment);
-		categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Performance) && itemCategory.HasFlag(ItemCategories.Performance);
-		categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Modded) && item.Mod != null;
-		categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Favorites) && item.IsFavorite;
-		categoryFiltered |= this.CategoryFilter.HasFlag(ItemCategories.Owned) && item.IsOwned;
+		categoryFiltered |= this.CategoryFilter.HasFlagUnsafe(ItemCategories.Standard) && itemCategory.HasFlagUnsafe(ItemCategories.Standard);
+		categoryFiltered |= this.CategoryFilter.HasFlagUnsafe(ItemCategories.Premium) && itemCategory.HasFlagUnsafe(ItemCategories.Premium);
+		categoryFiltered |= this.CategoryFilter.HasFlagUnsafe(ItemCategories.Limited) && itemCategory.HasFlagUnsafe(ItemCategories.Limited);
+		categoryFiltered |= this.CategoryFilter.HasFlagUnsafe(ItemCategories.Deprecated) && itemCategory.HasFlagUnsafe(ItemCategories.Deprecated);
+		categoryFiltered |= this.CategoryFilter.HasFlagUnsafe(ItemCategories.CustomEquipment) && itemCategory.HasFlagUnsafe(ItemCategories.CustomEquipment);
+		categoryFiltered |= this.CategoryFilter.HasFlagUnsafe(ItemCategories.Performance) && itemCategory.HasFlagUnsafe(ItemCategories.Performance);
+		categoryFiltered |= this.CategoryFilter.HasFlagUnsafe(ItemCategories.Modded) && item.Mod != null;
+		categoryFiltered |= this.CategoryFilter.HasFlagUnsafe(ItemCategories.Favorites) && item.IsFavorite;
+		categoryFiltered |= this.CategoryFilter.HasFlagUnsafe(ItemCategories.Owned) && item.IsOwned;
 		return categoryFiltered;
 	}
 

@@ -2,9 +2,9 @@
 // Licensed under the MIT license.
 namespace Anamnesis.Memory;
 
+using Anamnesis.Styles;
 using System;
 using System.Collections.Generic;
-using Anamnesis.Styles;
 
 public enum ActorTypes : byte
 {
@@ -40,11 +40,11 @@ public class ActorType
 	{
 		get
 		{
-			List<ActorType> actorTypes = new();
+			List<ActorType> actorTypes = [];
 
-			foreach (ActorTypes value in Enum.GetValues(typeof(ActorTypes)))
+			foreach (ActorTypes value in Enum.GetValues<ActorTypes>())
 			{
-				var name = Enum.GetName(typeof(ActorTypes), value);
+				var name = Enum.GetName(value);
 				actorTypes.Add(new ActorType(name!, value));
 			}
 

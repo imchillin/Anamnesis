@@ -3,15 +3,8 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using Anamnesis.Actor.Utilities;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
@@ -20,6 +13,14 @@ using Anamnesis.Styles.Drawers;
 using Anamnesis.Utils;
 using PropertyChanged;
 using Serilog;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using XivToolsWpf;
 using XivToolsWpf.DependencyProperties;
 
@@ -133,20 +134,20 @@ public partial class ItemView : UserControl
 
 			// Invalid if we're naked in some way other than Emperor's.
 			ushort[] invalidItems = { 0, 9901, 9903 };
-			if(invalidItems.Contains(this.Item.ModelBase))
+			if (invalidItems.Contains(this.Item.ModelBase))
 				return false;
 
 			// Invalid if row Id is 0, which would be the case if we have a
 			// set/subset combo which doesn't match an actual item.
-			if(this.Item.RowId == 0)
+			if (this.Item.RowId == 0)
 				return false;
 
 			// Most items will have the None category. Shop items will be premium, and old items will be deprecated.
 			// If we aren't one of these, then invalid. CustomEquipment is for things like Forum Attire.
-			bool isNormalCategory = this.Item.Category.HasFlag(ItemCategories.None) ||
-									this.Item.Category.HasFlag(ItemCategories.Standard) ||
-									this.Item.Category.HasFlag(ItemCategories.Premium) ||
-									this.Item.Category.HasFlag(ItemCategories.Limited);
+			bool isNormalCategory = this.Item.Category.HasFlagUnsafe(ItemCategories.None) ||
+									this.Item.Category.HasFlagUnsafe(ItemCategories.Standard) ||
+									this.Item.Category.HasFlagUnsafe(ItemCategories.Premium) ||
+									this.Item.Category.HasFlagUnsafe(ItemCategories.Limited);
 			if (!isNormalCategory)
 				return false;
 
@@ -161,7 +162,7 @@ public partial class ItemView : UserControl
 			if (this.Item == null)
 				return false;
 
-			if(this.Item.ModelBase == 0)
+			if (this.Item.ModelBase == 0)
 				return false;
 
 			return true;

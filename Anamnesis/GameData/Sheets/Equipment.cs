@@ -3,11 +3,12 @@
 
 namespace Anamnesis.GameData;
 
-using System.Text.Json.Serialization;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Serialization.Converters;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
+using System.Text.Json.Serialization;
 
 public class Equipment : IItem
 {
@@ -66,13 +67,13 @@ public class Equipment : IItem
 	{
 		return slot switch
 		{
-			ItemSlots.MainHand => this.Slot.HasFlag(FitsSlots.MainHand),
-			ItemSlots.Head => this.Slot.HasFlag(FitsSlots.Head),
-			ItemSlots.Body => this.Slot.HasFlag(FitsSlots.Body),
-			ItemSlots.Hands => this.Slot.HasFlag(FitsSlots.Hands),
-			ItemSlots.Legs => this.Slot.HasFlag(FitsSlots.Legs),
-			ItemSlots.Feet => this.Slot.HasFlag(FitsSlots.Feet),
-			ItemSlots.OffHand => this.Slot.HasFlag(FitsSlots.OffHand),
+			ItemSlots.MainHand => this.Slot.HasFlagUnsafe(FitsSlots.MainHand),
+			ItemSlots.Head => this.Slot.HasFlagUnsafe(FitsSlots.Head),
+			ItemSlots.Body => this.Slot.HasFlagUnsafe(FitsSlots.Body),
+			ItemSlots.Hands => this.Slot.HasFlagUnsafe(FitsSlots.Hands),
+			ItemSlots.Legs => this.Slot.HasFlagUnsafe(FitsSlots.Legs),
+			ItemSlots.Feet => this.Slot.HasFlagUnsafe(FitsSlots.Feet),
+			ItemSlots.OffHand => this.Slot.HasFlagUnsafe(FitsSlots.OffHand),
 
 			_ => false,
 		};
