@@ -461,6 +461,10 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 		}
 	}
 
+	/// <summary>
+	/// Handles changes to the selected actor.
+	/// </summary>
+	/// <param name="actor">The new selected actor.</param>
 	private void OnSelectedActorChanged(ActorMemory? actor)
 	{
 		// We already track skeleton changes so this is only used to keep track of actor property changes
@@ -479,6 +483,11 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 		this.RaisePropertyChanged(string.Empty);
 	}
 
+	/// <summary>
+	/// Handles property changes for the selectod actor's properties.
+	/// </summary>
+	/// <param name="sender"> The sender.</param>
+	/// <param name="e"> The event arguments.</param>
 	private void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName == nameof(ActorMemory.IsMotionDisabled))
