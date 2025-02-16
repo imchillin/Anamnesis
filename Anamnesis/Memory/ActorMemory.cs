@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory;
 
 using Anamnesis.Actor;
+using Anamnesis.Core.Extensions;
 using Anamnesis.Services;
 using Anamnesis.Utils;
 using PropertyChanged;
@@ -124,7 +125,7 @@ public class ActorMemory : ActorBasicMemory
 	[DependsOn(nameof(CharacterFlags))]
 	public bool VisorToggled
 	{
-		get => this.CharacterFlags.HasFlag(CharacterFlagDefs.VisorToggled);
+		get => this.CharacterFlags.HasFlagUnsafe(CharacterFlagDefs.VisorToggled);
 		set
 		{
 			if (value)
@@ -146,7 +147,7 @@ public class ActorMemory : ActorBasicMemory
 	}
 
 	[DependsOn(nameof(ObjectIndex), nameof(CharacterMode))]
-	public bool CanAnimate => (this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock) || !ActorService.IsLocalOverworldPlayer(this.ObjectIndex);
+	public bool CanAnimate => this.CharacterMode == CharacterModes.Normal || this.CharacterMode == CharacterModes.AnimLock || !ActorService.IsLocalOverworldPlayer(this.ObjectIndex);
 
 	[DependsOn(nameof(CharacterMode))]
 	public bool IsAnimationOverridden => this.CharacterMode == CharacterModes.AnimLock;
@@ -235,7 +236,7 @@ public class ActorMemory : ActorBasicMemory
 			return;
 
 		// Only record changes that originate from the user
-		if (!change.OriginBind.Flags.HasFlag(BindFlags.DontRecordHistory) && !HistoryService.Instance.IsRestoring)
+		if (!change.OriginBind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory) && !HistoryService.Instance.IsRestoring)
 		{
 			if (change.Origin == PropertyChange.Origins.User)
 			{
@@ -255,13 +256,13 @@ public class ActorMemory : ActorBasicMemory
 		this.backupQueue.Invoke();
 
 		// Refresh the actor
-		if (this.AutomaticRefreshEnabled && change.OriginBind.Flags.HasFlag(BindFlags.ActorRefresh))
+		if (this.AutomaticRefreshEnabled && change.OriginBind.Flags.HasFlagUnsafe(BindFlags.ActorRefresh))
 		{
 			// Don't refresh because of a refresh
 			if (this.IsRefreshing && (change.OriginBind.Name == nameof(this.ObjectKind) || change.OriginBind.Name == nameof(this.RenderMode)))
 				return;
 
-			if (change.OriginBind.Flags.HasFlag(BindFlags.WeaponRefresh))
+			if (change.OriginBind.Flags.HasFlagUnsafe(BindFlags.WeaponRefresh))
 				this.IsWeaponDirty = true;
 
 			// Restart the debounce timer if it's already running, otherwise start it

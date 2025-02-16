@@ -10,11 +10,11 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using XivToolsWpf.Behaviours;
 
-public class LocalizedTooltipBehaiour : Behaviour
+public class LocalizedTooltipBehaviour : Behaviour
 {
 	public readonly string Key;
 
-	public LocalizedTooltipBehaiour(DependencyObject host, string key)
+	public LocalizedTooltipBehaviour(DependencyObject host, string key)
 		: base(host, key)
 	{
 		this.Key = key;

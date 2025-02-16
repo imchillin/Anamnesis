@@ -6,6 +6,7 @@ namespace Anamnesis.Actor.Pages;
 using Anamnesis.Actor.Posing;
 using Anamnesis.Actor.Views;
 using Anamnesis.Core;
+using Anamnesis.Core.Extensions;
 using Anamnesis.Files;
 using Anamnesis.GUI.Dialogs;
 using Anamnesis.Memory;
@@ -496,9 +497,9 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 			// Positions are not frozen yet, that will happen at the appropriate moment
 			PoseService.Instance.SetEnabled(true);
-			PoseService.Instance.FreezeScale |= mode.HasFlag(PoseFile.Mode.Scale);
-			PoseService.Instance.FreezeRotation |= mode.HasFlag(PoseFile.Mode.Rotation);
-			PoseService.Instance.FreezePositions |= mode.HasFlag(PoseFile.Mode.Position);
+			PoseService.Instance.FreezeScale |= mode.HasFlagUnsafe(PoseFile.Mode.Scale);
+			PoseService.Instance.FreezeRotation |= mode.HasFlagUnsafe(PoseFile.Mode.Rotation);
+			PoseService.Instance.FreezePositions |= mode.HasFlagUnsafe(PoseFile.Mode.Position);
 
 			if (importOption == PoseImportOptions.SelectedBones)
 			{
@@ -532,7 +533,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 				// Don't import body with positions during default pose import.
 				// Otherwise, the body will be deformed if the pose file was created for another race.
-				bool doLegacyImport = importOption == PoseImportOptions.Character && mode.HasFlag(PoseFile.Mode.Position);
+				bool doLegacyImport = importOption == PoseImportOptions.Character && mode.HasFlagUnsafe(PoseFile.Mode.Position);
 				if (doLegacyImport)
 				{
 					mode &= ~PoseFile.Mode.Position;
@@ -558,7 +559,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 
 				// Pre-DT faces need to be imported without positions.
 				bool doLegacyImport = this.Actor.Customize!.Age == ActorCustomizeMemory.Ages.None
-									|| (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace && mode.HasFlag(PoseFile.Mode.Position));
+									|| (poseFile.IsPreDTPoseFile() && this.Skeleton.HasPreDTFace && mode.HasFlagUnsafe(PoseFile.Mode.Position));
 				if (doLegacyImport)
 				{
 					mode &= ~PoseFile.Mode.Position;

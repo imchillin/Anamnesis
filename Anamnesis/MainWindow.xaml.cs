@@ -213,10 +213,10 @@ public partial class MainWindow : ChromedWindow
 			// If this is a drawer view, bind to its events.
 			if (view is IDrawer drawer)
 			{
-				drawer.OnClosing += () => this.DrawerHost.IsLeftDrawerOpen = false;
-				drawer.OnClosing += () => this.DrawerHost.IsTopDrawerOpen = false;
-				drawer.OnClosing += () => this.DrawerHost.IsRightDrawerOpen = false;
-				drawer.OnClosing += () => this.DrawerHost.IsBottomDrawerOpen = false;
+				drawer.OnClosing += this.OnLeftDrawerClosing;
+				drawer.OnClosing += this.OnTopDrawerClosing;
+				drawer.OnClosing += this.OnRightDrawerClosing;
+				drawer.OnClosing += this.OnBottomDrawerClosing;
 			}
 
 			this.IsDrawerOpen = true;
@@ -263,6 +263,11 @@ public partial class MainWindow : ChromedWindow
 
 			if (view is IDrawer drawer2)
 			{
+				drawer2.OnClosing -= this.OnLeftDrawerClosing;
+				drawer2.OnClosing -= this.OnTopDrawerClosing;
+				drawer2.OnClosing -= this.OnRightDrawerClosing;
+				drawer2.OnClosing -= this.OnBottomDrawerClosing;
+
 				drawer2.OnClosed();
 			}
 
@@ -427,5 +432,25 @@ public partial class MainWindow : ChromedWindow
 			return;
 
 		this.DragMove();
+	}
+
+	private void OnLeftDrawerClosing()
+	{
+		this.DrawerHost.IsLeftDrawerOpen = false;
+	}
+
+	private void OnTopDrawerClosing()
+	{
+		this.DrawerHost.IsTopDrawerOpen = false;
+	}
+
+	private void OnRightDrawerClosing()
+	{
+		this.DrawerHost.IsRightDrawerOpen = false;
+	}
+
+	private void OnBottomDrawerClosing()
+	{
+		this.DrawerHost.IsBottomDrawerOpen = false;
 	}
 }

@@ -3,10 +3,11 @@
 
 namespace Anamnesis.Styles.Controls;
 
-using System.ComponentModel;
-using System.Windows.Controls;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using PropertyChanged;
+using System.ComponentModel;
+using System.Windows.Controls;
 using XivToolsWpf.DependencyProperties;
 
 /// <summary>
@@ -43,7 +44,7 @@ public partial class ItemCategoryFilterItem : UserControl, INotifyPropertyChange
 
 	public bool IsSelected
 	{
-		get => this.Value.HasFlag(this.Category);
+		get => this.Value.HasFlagUnsafe(this.Category);
 		set => this.Value = this.Value.SetFlag(this.Category, value);
 	}
 

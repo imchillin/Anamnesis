@@ -41,6 +41,19 @@ public class Skeleton : INotifyPropertyChanged
 		{ "HairFront", new("f", string.Empty) },			// Hair, Front (Custom Bone Name)
 	};
 
+	/// <summary>
+	/// A snapshot of the transforms of all bones in the skeleton.
+	/// </summary>
+	/// <remarks>
+	/// The object is defined as a field to avoid the memory (de)allocation every time a snapshot is taken.
+	/// </remarks>
+	private readonly Dictionary<string, Transform> snapshot = [];
+
+	/// <summary>
+	/// A lock object used to synchronize access to the snapshot dictionary.
+	/// </summary>
+	private readonly object snapshotLock = new();
+
 	/// <summary>Initializes a new instance of the <see cref="Skeleton"/> class.</summary>
 	/// <param name="actor">The actor memory associated with this skeleton.</param>
 	public Skeleton(ActorMemory actor)
@@ -216,30 +229,33 @@ public class Skeleton : INotifyPropertyChanged
 	/// <returns>A dictionary containing the transforms of all bones.</returns>
 	protected Dictionary<string, Transform> TakeSnapshot()
 	{
-		var snapshot = new Dictionary<string, Transform>();
-
-		if (this.Actor?.ModelObject?.Skeleton == null)
-			return snapshot;
-
-		this.Actor.ModelObject.Skeleton.EnableReading = false;
-
-		foreach (var (name, bone) in this.Bones)
+		lock (this.snapshotLock)
 		{
-			var transform = bone.TransformMemory;
-			if (transform == null)
-				continue;
+			this.snapshot.Clear();
 
-			snapshot[name] = new Transform
+			if (this.Actor?.ModelObject?.Skeleton == null)
+				return this.snapshot;
+
+			this.Actor.ModelObject.Skeleton.EnableReading = false;
+
+			foreach (var (name, bone) in this.Bones)
 			{
-				Position = transform.Position,
-				Rotation = transform.Rotation,
-				Scale = transform.Scale,
-			};
+				var transform = bone.TransformMemory;
+				if (transform == null)
+					continue;
+
+				this.snapshot[name] = new Transform
+				{
+					Position = transform.Position,
+					Rotation = transform.Rotation,
+					Scale = transform.Scale,
+				};
+			}
+
+			this.Actor.ModelObject.Skeleton.EnableReading = true;
+
+			return this.snapshot;
 		}
-
-		this.Actor.ModelObject.Skeleton.EnableReading = true;
-
-		return snapshot;
 	}
 
 	/// <summary>Sets the actor memory for the skeleton and initializes all bones.</summary>

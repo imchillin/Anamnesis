@@ -189,9 +189,9 @@ public partial class VectorEditorNew : UserControl, INotifyPropertyChanged
 		{
 			ColorModeDp.Set(this, value);
 
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(XColor)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(YColor)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ZColor)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.XColor)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.YColor)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ZColor)));
 		}
 	}
 

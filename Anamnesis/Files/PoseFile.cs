@@ -5,6 +5,7 @@ namespace Anamnesis.Files;
 
 using Anamnesis.Actor;
 using Anamnesis.Core;
+using Anamnesis.Core.Extensions;
 using Anamnesis.Memory;
 using Anamnesis.Posing;
 using Serilog;
@@ -118,10 +119,10 @@ public class PoseFile : JsonFileBase
 
 		if (bones == null)
 		{
-			if (mode.HasFlag(Mode.WorldScale) && this.Scale.HasValue)
+			if (mode.HasFlagUnsafe(Mode.WorldScale) && this.Scale.HasValue)
 				actor.ModelObject.Transform.Scale = this.Scale.Value;
 
-			if (mode.HasFlag(Mode.WorldRotation) && this.Rotation.HasValue)
+			if (mode.HasFlagUnsafe(Mode.WorldRotation) && this.Rotation.HasValue)
 				actor.ModelObject.Transform.Rotation = this.Rotation.Value;
 		}
 
@@ -191,7 +192,7 @@ public class PoseFile : JsonFileBase
 			unposedBoneTransforms.Remove(bone);
 			posedBonePos.TryAdd(bone, bone.Position);
 
-			if (savedBone.Position != null && !mode.HasFlag(Mode.Position))
+			if (savedBone.Position != null && !mode.HasFlagUnsafe(Mode.Position))
 			{
 				bonePosRestore.Add(bone);
 			}
@@ -249,17 +250,17 @@ public class PoseFile : JsonFileBase
 
 				foreach (TransformMemory transformMemory in bone.TransformMemories)
 				{
-					if (savedBone.Position != null && mode.HasFlag(Mode.Position) && bone.CanTranslate)
+					if (savedBone.Position != null && mode.HasFlagUnsafe(Mode.Position) && bone.CanTranslate)
 					{
 						transformMemory.Position = (Vector3)savedBone.Position;
 					}
 
-					if (savedBone.Rotation != null && mode.HasFlag(Mode.Rotation) && bone.CanRotate)
+					if (savedBone.Rotation != null && mode.HasFlagUnsafe(Mode.Rotation) && bone.CanRotate)
 					{
 						transformMemory.Rotation = (Quaternion)savedBone.Rotation;
 					}
 
-					if (savedBone.Scale != null && mode.HasFlag(Mode.Scale) && bone.CanScale)
+					if (savedBone.Scale != null && mode.HasFlagUnsafe(Mode.Scale) && bone.CanScale)
 					{
 						transformMemory.Scale = (Vector3)savedBone.Scale;
 					}
@@ -278,7 +279,7 @@ public class PoseFile : JsonFileBase
 		}
 
 		// If we are not loading the position of bones, restore the positions of all bones that were not explicitly written to.
-		if (!mode.HasFlag(Mode.Position))
+		if (!mode.HasFlagUnsafe(Mode.Position))
 		{
 			var sortedBones = Core.Bone.SortBonesByHierarchy(posedBonePos.Keys);
 

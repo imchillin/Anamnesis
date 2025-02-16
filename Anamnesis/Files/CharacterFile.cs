@@ -4,6 +4,7 @@
 namespace Anamnesis.Files;
 
 using Anamnesis.Actor.Utilities;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using Anamnesis.Memory;
 using Serilog;
@@ -478,7 +479,7 @@ public class CharacterFile : JsonFileBase
 
 	private bool IncludeSection(SaveModes section, SaveModes mode)
 	{
-		return this.SaveMode.HasFlag(section) && mode.HasFlag(section);
+		return this.SaveMode.HasFlagUnsafe(section) && mode.HasFlagUnsafe(section);
 	}
 
 	[Serializable]

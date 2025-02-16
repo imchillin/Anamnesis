@@ -94,7 +94,7 @@ public partial class SliderInputBox : UserControl
 	/// </summary>
 	public SliderInputBox()
 	{
-		InitializeComponent();
+		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
 
 		// Default property configuration
@@ -106,7 +106,7 @@ public partial class SliderInputBox : UserControl
 		this.InputField.IsReadOnly = true;
 		this.InputField.IsReadOnlyCaretVisible = false;
 
-		this.OnPropertyChanged(nameof(Label));
+		this.OnPropertyChanged(nameof(this.Label));
 	}
 
 	/// <summary>Defines the overflow behavior modes.</summary>
@@ -153,7 +153,7 @@ public partial class SliderInputBox : UserControl
 	/// <summary>Gets the label text combining the value and suffix.</summary>
 
 	[DependsOn(nameof(Value), nameof(Suffix))]
-	public string Label => $"{FormatValue(Value)} {Suffix}";
+	public string Label => $"{this.FormatValue(this.Value)} {this.Suffix}";
 
 
 	/// <summary>Gets or sets the suffix text.</summary>
@@ -176,7 +176,7 @@ public partial class SliderInputBox : UserControl
 		set
 		{
 			this.InputField.IsReadOnly = !value;
-			this.ContentArea.Background = new SolidColorBrush((Color)FindResource(value || !this.IsMouseHovered ? NORMAL_BG_KEY : HOVER_BG_KEY));
+			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(value || !this.IsMouseHovered ? NORMAL_BG_KEY : HOVER_BG_KEY));
 		}
 	}
 
@@ -382,20 +382,21 @@ public partial class SliderInputBox : UserControl
 			{
 				// Set the cursor clipping
 				this.SetCursorClip(true);
-			}
 
-			e.Handled = true;
-			return;
+				e.Handled = true;
+				return;
+			}
 		}
 		else if (e.MiddleButton == MouseButtonState.Pressed && this.DefaultValue != null)
 		{
-			this.Value = (decimal)this.DefaultValue;
+			if (!this.IsInputFieldActive)
+			{
+				this.Value = (decimal)this.DefaultValue;
 
-			e.Handled = true;
-			return;
+				e.Handled = true;
+				return;
+			}
 		}
-
-		base.OnPreviewMouseDown(e);
 	}
 
 	/// <summary>Handles the preview mouse move event.</summary>
@@ -413,7 +414,7 @@ public partial class SliderInputBox : UserControl
 				if (!this.isDragging)
 				{
 					Mouse.OverrideCursor = Cursors.None;
-					this.ContentArea.Background = new SolidColorBrush((Color)FindResource(DRAG_BG_KEY));
+					this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(DRAG_BG_KEY));
 				}
 
 
@@ -455,7 +456,7 @@ public partial class SliderInputBox : UserControl
 		else
 		{
 			Mouse.OverrideCursor = this.IsMouseHovered ? Cursors.SizeWE : null;
-			this.ContentArea.Background = new SolidColorBrush((Color)FindResource(this.IsMouseHovered ? HOVER_BG_KEY : NORMAL_BG_KEY));
+			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(this.IsMouseHovered ? HOVER_BG_KEY : NORMAL_BG_KEY));
 		}
 
 		this.isDragging = false;
@@ -473,7 +474,7 @@ public partial class SliderInputBox : UserControl
 		this.IsMouseHovered = true;
 		if (this.IsMouseHovered && !this.IsInputFieldActive)
 		{
-			this.ContentArea.Background = new SolidColorBrush((Color)FindResource(HOVER_BG_KEY));
+			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(HOVER_BG_KEY));
 		}
 	}
 
@@ -486,7 +487,7 @@ public partial class SliderInputBox : UserControl
 		this.IsMouseHovered = false;
 		if (!this.IsInputFieldActive)
 		{
-			this.ContentArea.Background = new SolidColorBrush((Color)FindResource(NORMAL_BG_KEY));
+			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(NORMAL_BG_KEY));
 		}
 	}
 
@@ -653,9 +654,9 @@ public partial class SliderInputBox : UserControl
 	private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
 		if ((bool)e.NewValue)
-			this.ContentArea.Background = new SolidColorBrush((Color)FindResource(this.IsMouseHovered ? HOVER_BG_KEY : NORMAL_BG_KEY));
+			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(this.IsMouseHovered ? HOVER_BG_KEY : NORMAL_BG_KEY));
 		else
-			this.ContentArea.Background = new SolidColorBrush((Color)FindResource(DISABLED_BG_KEY));
+			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(DISABLED_BG_KEY));
 	}
 
 	/// <summary>

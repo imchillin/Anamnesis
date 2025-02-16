@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Tabs.Settings;
 
+using Anamnesis.Core.Extensions;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
 using PropertyChanged;
@@ -120,16 +121,16 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 		{
 			var builder = new StringBuilder();
 
-			if (this.keys.Modifiers.HasFlag(ModifierKeys.Control))
+			if (this.keys.Modifiers.HasFlagUnsafe(ModifierKeys.Control))
 				builder.Append("Ctrl + ");
 
-			if (this.keys.Modifiers.HasFlag(ModifierKeys.Shift))
+			if (this.keys.Modifiers.HasFlagUnsafe(ModifierKeys.Shift))
 				builder.Append("Shift + ");
 
-			if (this.keys.Modifiers.HasFlag(ModifierKeys.Alt))
+			if (this.keys.Modifiers.HasFlagUnsafe(ModifierKeys.Alt))
 				builder.Append("Alt + ");
 
-			if (this.keys.Modifiers.HasFlag(ModifierKeys.Windows))
+			if (this.keys.Modifiers.HasFlagUnsafe(ModifierKeys.Windows))
 				builder.Append("Win + ");
 
 			return builder.ToString().TrimEnd('+', ' ');
