@@ -41,7 +41,7 @@ jobs:
     - name: Install .NET
       uses: actions/setup-dotnet@v1.8.2
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 9.0.x
    
     - name: Deploy Anamnesis
       run: dotnet publish Anamnesis/Anamnesis.csproj /p:PublishProfile=".\Anamnesis\Properties\PublishProfiles\FolderProfile.pubxml"
