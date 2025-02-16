@@ -390,11 +390,18 @@ public class Bone : ITransform
 						}
 					}
 
-					if (writeChildren && PoseService.Instance.EnableParenting)
+					if (writeChildren)
 					{
 						foreach (var child in currentBone.Children)
 						{
-							bonesToProcess.Push((child, currentWriteLinked));
+							if (PoseService.Instance.EnableParenting)
+							{
+								bonesToProcess.Push((child, currentWriteLinked));
+							}
+							else
+							{
+								child.ReadTransform(true);
+							}
 						}
 					}
 				}

@@ -59,30 +59,16 @@ public partial class Vector2DEditor : UserControl, INotifyPropertyChanged
 	[DependsOn(nameof(Vector2DEditor.Value))]
 	public float X
 	{
-		get
-		{
-			return this.Value.X;
-		}
-
-		set
-		{
-			this.Value = new Vector2(value, this.Y);
-		}
+		get => this.Value.X;
+		set => this.Value = new Vector2(value, this.Y);
 	}
 
 	[AlsoNotifyFor(nameof(Vector2DEditor.Value))]
 	[DependsOn(nameof(Vector2DEditor.Value))]
 	public float Y
 	{
-		get
-		{
-			return this.Value.Y;
-		}
-
-		set
-		{
-			this.Value = new Vector2(this.X, value);
-		}
+		get => this.Value.Y;
+		set => this.Value = new Vector2(this.X, value);
 	}
 
 	private static void OnValueChanged(Vector2DEditor sender, Vector2 value)

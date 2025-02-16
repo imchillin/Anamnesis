@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Core.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -105,7 +106,7 @@ public struct PropertyChange
 
 		foreach (BindInfo bind in this.BindPath)
 		{
-			if (bind.Flags.HasFlag(BindFlags.DontRecordHistory))
+			if (bind.Flags.HasFlagUnsafe(BindFlags.DontRecordHistory))
 				return false;
 		}
 

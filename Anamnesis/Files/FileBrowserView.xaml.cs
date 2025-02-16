@@ -3,6 +3,12 @@
 
 namespace Anamnesis.GUI.Views;
 
+using Anamnesis.Files;
+using Anamnesis.GUI.Dialogs;
+using Anamnesis.Services;
+using Anamnesis.Styles.Drawers;
+using PropertyChanged;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,12 +20,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Anamnesis.Files;
-using Anamnesis.GUI.Dialogs;
-using Anamnesis.Services;
-using Anamnesis.Styles.Drawers;
-using PropertyChanged;
-using Serilog;
 using XivToolsWpf;
 
 public abstract class FileBrowserDrawer : SelectorDrawer<FileBrowserView.EntryWrapper>
@@ -504,7 +504,7 @@ public partial class FileBrowserView : FileBrowserDrawer
 			return;
 
 		var entry = this.Selected.Entry;
-		if(entry is DirectoryInfo directory)
+		if (entry is DirectoryInfo directory)
 		{
 			directory.Delete(true);
 		}
@@ -672,7 +672,9 @@ public partial class FileBrowserView : FileBrowserDrawer
 						if (this.Entry is FileInfo file)
 						{
 							string? extension = Path.GetExtension(this.Entry.FullName);
-							newPath += extension;
+							if (!newPath.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
+								newPath += extension;
+
 							file.MoveTo(newPath);
 						}
 						else if (this.Entry is DirectoryInfo dir)

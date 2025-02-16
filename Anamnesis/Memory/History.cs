@@ -372,14 +372,12 @@ public class History : INotifyPropertyChanged
 			{
 				foreach (PropertyChange change in this.changes)
 				{
-					if (!flattenedChanges.ContainsKey(change.OriginBind))
+					if (!flattenedChanges.TryGetValue(change.OriginBind, out PropertyChange existingChange))
 					{
 						flattenedChanges.Add(change.OriginBind, new(change));
 					}
 					else
 					{
-						PropertyChange existingChange = flattenedChanges[change.OriginBind];
-
 						existingChange.NewValue = change.NewValue;
 						flattenedChanges[change.OriginBind] = existingChange;
 					}

@@ -3,13 +3,13 @@
 
 namespace Anamnesis.Styles.Drawers;
 
+using Anamnesis.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Anamnesis.Services;
 using XivToolsWpf.Selectors;
 
 public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChanged
@@ -114,6 +114,15 @@ public abstract class SelectorDrawer : UserControl, IDrawer, INotifyPropertyChan
 
 	public virtual void OnClosed()
 	{
+		if (this.SelectorLoaded)
+		{
+			this.Selector.Filter -= this.Filter;
+			this.Selector.SelectionChanged -= this.OnSelectionChanged;
+			this.Selector.LoadItems -= this.LoadItems;
+			this.Selector.Sort -= this.Compare;
+		}
+
+		this.Selector.ClearItems();
 	}
 
 	// forward selector APIs
@@ -176,7 +185,7 @@ public abstract class SelectorDrawer<T> : SelectorDrawer
 		return 0;
 	}
 
-	protected override sealed bool Filter(object item, string[]? search)
+	protected sealed override bool Filter(object item, string[]? search)
 	{
 		if (item is T tItem)
 			return this.Filter(tItem, search);
@@ -184,7 +193,7 @@ public abstract class SelectorDrawer<T> : SelectorDrawer
 		return false;
 	}
 
-	protected override sealed int Compare(object itemA, object itemB)
+	protected sealed override int Compare(object itemA, object itemB)
 	{
 		if (itemA == itemB)
 			return 0;

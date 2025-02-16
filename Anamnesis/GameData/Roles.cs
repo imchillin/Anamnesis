@@ -5,6 +5,7 @@ namespace Anamnesis.GameData;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 #pragma warning disable SA1649
 
@@ -25,9 +26,9 @@ public static class RolesExtensions
 	{
 		if (classLookup == null)
 		{
-			classLookup = new Dictionary<Roles, List<Classes>>();
+			classLookup = [];
 
-			foreach (Classes? job in Enum.GetValues(typeof(Classes)))
+			foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
 			{
 				if (job == null || job == Classes.None)
 					continue;

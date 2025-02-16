@@ -20,7 +20,7 @@ public class AnimationService : ServiceBase<AnimationService>
 
 	private readonly HashSet<ActorMemory> overriddenActors = new();
 
-	private NopHookViewModel? animationSpeedHook;
+	private NopHook? animationSpeedHook;
 	private bool speedControlEnabled = false;
 
 	public bool SpeedControlEnabled
@@ -37,7 +37,7 @@ public class AnimationService : ServiceBase<AnimationService>
 	{
 		GposeService.GposeStateChanged += this.OnGposeStateChanged;
 
-		this.animationSpeedHook = new NopHookViewModel(AddressService.AnimationSpeedPatch, 0x9);
+		this.animationSpeedHook = new NopHook(AddressService.AnimationSpeedPatch, 0x9);
 
 		this.OnGposeStateChanged(GposeService.Instance.IsGpose);
 

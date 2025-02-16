@@ -18,6 +18,6 @@ public static class Behaviours
 
 	public static void SetTooltip(DependencyObject host, string key)
 	{
-		host.AttachHandler<LocalizedTooltipBehaiour>(true, key);
+		host.AttachHandler<LocalizedTooltipBehaviour>(true, key);
 	}
 }

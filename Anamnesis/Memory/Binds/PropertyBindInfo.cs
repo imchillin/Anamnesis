@@ -3,6 +3,7 @@
 
 namespace Anamnesis.Memory;
 
+using Anamnesis.Core.Extensions;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -46,7 +47,7 @@ public class PropertyBindInfo : BindInfo
 		if (this.cachedOffsets == null || this.cachedOffsets.Length == 0)
 			throw new NullReferenceException("Cached offsets are not initialized.");
 
-		if (this.cachedOffsets.Length > 1 && !this.flags.HasFlag(BindFlags.Pointer))
+		if (this.cachedOffsets.Length > 1 && !this.flags.HasFlagUnsafe(BindFlags.Pointer))
 			throw new InvalidOperationException("Bind address has multiple offsets but is not a pointer. This is not supported.");
 	}
 
@@ -77,7 +78,7 @@ public class PropertyBindInfo : BindInfo
 	{
 		IntPtr bindAddress = this.Memory.Address + this.cachedOffsets[0];
 
-		if (this.flags.HasFlag(BindFlags.Pointer))
+		if (this.flags.HasFlagUnsafe(BindFlags.Pointer))
 		{
 			bindAddress = MemoryService.Read<IntPtr>(bindAddress);
 

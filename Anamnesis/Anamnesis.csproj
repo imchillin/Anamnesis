@@ -1,155 +1,139 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <UseWPF>true</UseWPF>
+    <AppendTargetFramework>False</AppendTargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <RootNamespace>Anamnesis</RootNamespace>
+    <ApplicationIcon>Anamnesis.ico</ApplicationIcon>
+    <OutputPath>.\bin\</OutputPath>
+    <DocumentationFile>.\obj\Anamnesis.xml</DocumentationFile>
+    <NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;IDE0025;SA1011;SA1134;</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Nullable>enable</Nullable>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <TrimMode>CopyUsed</TrimMode>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <Version>1.0.1.0</Version>
+    <FileVersion>1.0.1.0</FileVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Fody" Version="6.9.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+    <PackageReference Include="Lumina" Version="4.1.0" />
+    <PackageReference Include="Lumina.Excel" Version="7.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0">
+      <PrivateAssets>All</PrivateAssets>
+      <IncludeAssets>
+      </IncludeAssets>
+      <ExcludeAssets>
+      </ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog" Version="4.2.0" />
+    <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+	<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\*.*" />
+    <Resource Include="Assets\Classes\*.*" />
+    <Resource Include="Assets\Fonts\*.*" />
+    <Resource Include="Assets\Roles\*.*" />
+    <Resource Include="Assets\Shortcuts\*.*" />
+    <Resource Include="Assets\Slots\*.*" />
+    <Resource Include="Assets\Pose\CharFBodyBackground.png" />
+    <Resource Include="Assets\Pose\CharFClothesBackground.png" />
+    <Resource Include="Assets\Pose\CharFHyurFaceBackground.png" />
+    <Resource Include="Assets\Pose\CharFHyurFaceExBackground.png" />
+    <Resource Include="Assets\Pose\CharFMiqoFaceBackground.png" />
+    <Resource Include="Assets\Pose\CharFMiqoFaceExBackground.png" />
+    <Resource Include="Assets\Pose\CharFMiqoMouthBackground.png" />
+    <Resource Include="Assets\Pose\CharFVieraFaceBackground.png" />
+    <Resource Include="Assets\Pose\CharFVieraFaceExBackground.png" />
+    <Resource Include="Assets\Pose\CharFVieraFloppyFaceBackground.png" />
+    <Resource Include="Assets\Pose\CharFVieraFloppyFaceExBackground.png" />
+    <Resource Include="Assets\Pose\CharHandBackground.png" />
+    <Resource Include="Assets\Pose\CharMHrothFaceBackground.png" />
+    <Resource Include="Assets\Pose\CharMHrothFaceExBackground.png" />
+    <Resource Include="Assets\Pose\CharTailBackground.png" />
+    <Resource Include="Assets\Pose\CharTongueBackground.png" />
+    <Resource Include="FodyWeavers.xml" />
 
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
-		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
-		<UseWPF>true</UseWPF>
-		<AppendTargetFramework>False</AppendTargetFramework>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<RootNamespace>Anamnesis</RootNamespace>
-		<ApplicationIcon>Anamnesis.ico</ApplicationIcon>
-		<OutputPath>.\bin\</OutputPath>
-		<DocumentationFile>.\obj\Anamnesis.xml</DocumentationFile>
-		<NoWarn>1701;1702;SA1503;CS1591;SA1401;SA1516;CS0067;IDE0027;IDE0025;SA1011;SA1134;</NoWarn>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<Nullable>enable</Nullable>
-		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-		<TrimMode>CopyUsed</TrimMode>
-		<AssemblyVersion>1.0.1.0</AssemblyVersion>
-		<Version>1.0.1.0</Version>
-		<FileVersion>1.0.1.0</FileVersion>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<PlatformTarget>x64</PlatformTarget>
-		<Platforms>x64</Platforms>
-		<PublishTrimmed>false</PublishTrimmed>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Fody" Version="6.6.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
-		<PackageReference Include="Lumina" Version="4.1.0" />
-		<PackageReference Include="Lumina.Excel" Version="7.0.0" />
-		<PackageReference Include="PropertyChanged.Fody" Version="3.4.0">
-			<PrivateAssets>All</PrivateAssets>
-			<IncludeAssets></IncludeAssets>
-			<ExcludeAssets></ExcludeAssets>
-		</PackageReference>
-		<PackageReference Include="Serilog" Version="2.10.0" />
-		<PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
-		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="Assets\*.*" />
-		<Resource Include="Assets\Classes\*.*" />
-		<Resource Include="Assets\Fonts\*.*" />
-		<Resource Include="Assets\Roles\*.*" />
-		<Resource Include="Assets\Shortcuts\*.*" />
-		<Resource Include="Assets\Slots\*.*" />
-		<Resource Include="Assets\Pose\CharFBodyBackground.png" />
-		<Resource Include="Assets\Pose\CharFClothesBackground.png" />
-		<Resource Include="Assets\Pose\CharFHyurFaceBackground.png" />
-		<Resource Include="Assets\Pose\CharFHyurFaceExBackground.png" />
-		<Resource Include="Assets\Pose\CharFMiqoFaceBackground.png" />
-		<Resource Include="Assets\Pose\CharFMiqoFaceExBackground.png" />
-		<Resource Include="Assets\Pose\CharFMiqoMouthBackground.png" />
-		<Resource Include="Assets\Pose\CharFVieraFaceBackground.png" />
-		<Resource Include="Assets\Pose\CharFVieraFaceExBackground.png" />
-		<Resource Include="Assets\Pose\CharFVieraFloppyFaceBackground.png" />
-		<Resource Include="Assets\Pose\CharFVieraFloppyFaceExBackground.png" />
-		<Resource Include="Assets\Pose\CharHandBackground.png" />
-		<Resource Include="Assets\Pose\CharMHrothFaceBackground.png" />
-		<Resource Include="Assets\Pose\CharMHrothFaceExBackground.png" />
-		<Resource Include="Assets\Pose\CharTailBackground.png" />
-		<Resource Include="Assets\Pose\CharTongueBackground.png" />
-		<Resource Include="FodyWeavers.xml" />
-
-		<EmbeddedResource Include="Languages\*.*" />
-		<EmbeddedResource Include="Data\**\*.*" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Remove="Assets\Pose\CharFBodyBackground.png" />
-		<None Remove="Assets\Pose\CharFClothesBackground.png" />
-		<None Remove="Assets\Pose\CharFHyurFaceBackground.png" />
-		<None Remove="Assets\Pose\CharFHyurFaceExBackground.png" />
-		<None Remove="Assets\Pose\CharFMiqoFaceBackground.png" />
-		<None Remove="Assets\Pose\CharFMiqoFaceExBackground.png" />
-		<None Remove="Assets\Pose\CharFMiqoMouthBackground.png" />
-		<None Remove="Assets\Pose\CharFVieraFaceBackground.png" />
-		<None Remove="Assets\Pose\CharFVieraFaceExBackground.png" />
-		<None Remove="Assets\Pose\CharFVieraFloppyFaceBackground.png" />
-		<None Remove="Assets\Pose\CharFVieraFloppyFaceExBackground.png" />
-		<None Remove="Assets\Pose\CharHandBackground.png" />
-		<None Remove="Assets\Pose\CharMHrothFaceBackground.png" />
-		<None Remove="Assets\Pose\CharMHrothFaceExBackground.png" />
-		<None Remove="Assets\Pose\CharTailBackground.png" />
-		<None Remove="Assets\Pose\CharTongueBackground.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="$(AppData)\Anamnesis\Settings.json" Link="Settings.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ApplicationDefinition Update="App.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
-		</ApplicationDefinition>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Actor\Posing\Templates\" />
-		<Folder Include="Properties\" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Update="Resources.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Resources.resx</DependentUpon>
-		</Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Update="Resources.resx">
-			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
-			<Generator>ResXFileCodeGenerator</Generator>
-		</EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="Download dotNet desktop runtime.URL">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Install .NET Desktop Runtime.bat">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
-	<ProjectExtensions><VisualStudio><UserProperties languages_4en_1json__JsonSchema="Warning_MinionGposeTitle" /></VisualStudio></ProjectExtensions>
-
+    <EmbeddedResource Include="Languages\*.*" />
+    <EmbeddedResource Include="Data\**\*.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\Pose\CharFBodyBackground.png" />
+    <None Remove="Assets\Pose\CharFClothesBackground.png" />
+    <None Remove="Assets\Pose\CharFHyurFaceBackground.png" />
+    <None Remove="Assets\Pose\CharFHyurFaceExBackground.png" />
+    <None Remove="Assets\Pose\CharFMiqoFaceBackground.png" />
+    <None Remove="Assets\Pose\CharFMiqoFaceExBackground.png" />
+    <None Remove="Assets\Pose\CharFMiqoMouthBackground.png" />
+    <None Remove="Assets\Pose\CharFVieraFaceBackground.png" />
+    <None Remove="Assets\Pose\CharFVieraFaceExBackground.png" />
+    <None Remove="Assets\Pose\CharFVieraFloppyFaceBackground.png" />
+    <None Remove="Assets\Pose\CharFVieraFloppyFaceExBackground.png" />
+    <None Remove="Assets\Pose\CharHandBackground.png" />
+    <None Remove="Assets\Pose\CharMHrothFaceBackground.png" />
+    <None Remove="Assets\Pose\CharMHrothFaceExBackground.png" />
+    <None Remove="Assets\Pose\CharTailBackground.png" />
+    <None Remove="Assets\Pose\CharTongueBackground.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(AppData)\Anamnesis\Settings.json" Link="Settings.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Actor\Posing\Templates\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lib\XivToolsWpf\XivToolsWpf.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Download dotNet desktop runtime.URL">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Install .NET Desktop Runtime.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties languages_4en_1json__JsonSchema="Warning_MinionGposeTitle" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
-
-
-
-
-
-
-
-
-

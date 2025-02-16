@@ -3,7 +3,7 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using System;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
@@ -12,7 +12,8 @@ using Lumina.Data;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 using Lumina.Text;
-
+using System;
+using System.Linq;
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
 [Sheet("Item", 0xe9a33c9d)]
@@ -43,7 +44,7 @@ public class Item : ExcelRow, IItem
 		set => FavoritesService.SetFavorite<IItem>(this, nameof(FavoritesService.Favorites.Items), value);
 	}
 
-	public bool CanOwn => this.Category.HasFlag(ItemCategories.Premium) || this.Category.HasFlag(ItemCategories.Limited);
+	public bool CanOwn => this.Category.HasFlagUnsafe(ItemCategories.Premium) || this.Category.HasFlagUnsafe(ItemCategories.Limited);
 	public bool IsOwned
 	{
 		get => FavoritesService.IsOwned(this);
@@ -103,7 +104,7 @@ public class Item : ExcelRow, IItem
 	{
 		Classes classes = Classes.None;
 
-		foreach (Classes? job in Enum.GetValues(typeof(Classes)))
+		foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
 		{
 			if (job == null || job == Classes.None || job == Classes.All)
 				continue;

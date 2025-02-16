@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 public class TimeService : ServiceBase<TimeService>
 {
 	private FrameworkMemory? frameworkMemory;
-	private NopHookViewModel? timeAsmHook;
+	private NopHook? timeAsmHook;
 	public string TimeString { get; private set; } = "00:00";
 	public long TimeOfDay { get; set; }
 	public byte DayOfMonth { get; set; }
@@ -27,7 +27,7 @@ public class TimeService : ServiceBase<TimeService>
 
 	public override Task Start()
 	{
-		this.timeAsmHook = new NopHookViewModel(AddressService.TimeAsm, 0x07);
+		this.timeAsmHook = new NopHook(AddressService.TimeAsm, 0x07);
 
 		this.frameworkMemory = new FrameworkMemory();
 		this.frameworkMemory.SetAddress(AddressService.Framework);

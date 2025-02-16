@@ -30,6 +30,7 @@ public partial class BackupAndRecoverySettingsPage : System.Windows.Controls.Use
 		this.SettingCategories["Backup"].Settings.Add(new Setting("Settings_AutoSaveDirectory", this.BnR_Backup_AutoSaveDirectory));
 		this.SettingCategories["Backup"].Settings.Add(new Setting("Settings_AutoSaveInterval", this.BnR_Backup_AutoSaveInterval));
 		this.SettingCategories["Backup"].Settings.Add(new Setting("Settings_AutoSaveSaveLast", this.BnR_Backup_AutoSaveSaveLast));
+		this.SettingCategories["Backup"].Settings.Add(new Setting("Settings_AutoSaveOnlyInGpose", this.BnR_Backup_AutoSaveOnlyInGpose));
 	}
 
 	public static SettingsService SettingsService => SettingsService.Instance;

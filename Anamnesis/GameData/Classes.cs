@@ -3,10 +3,12 @@
 
 namespace Anamnesis.GameData;
 
+using Anamnesis.Core.Extensions;
+using Anamnesis.GameData.Sheets;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Anamnesis.GameData.Sheets;
 
 #pragma warning disable SA1649
 
@@ -246,7 +248,7 @@ public static class ClassesExtensions
 			if (onlyJobs && !job.IsJob())
 				continue;
 
-			if (!self.HasFlag(job))
+			if (!self.HasFlagUnsafe(job))
 			{
 				return false;
 			}
@@ -289,8 +291,8 @@ public static class ClassesExtensions
 		if (self == Classes.None)
 			return "None";
 
-		List<Classes> selected = new List<Classes>();
-		foreach (Classes? job in Enum.GetValues(typeof(Classes)))
+		List<Classes> selected = new();
+		foreach (Classes? job in Enum.GetValues<Classes>().Select(v => (Classes?)v))
 		{
 			if (job == null)
 				continue;
@@ -303,7 +305,7 @@ public static class ClassesExtensions
 			if (onlyJobs && !cls.IsJob())
 				continue;
 
-			if (self.HasFlag(cls))
+			if (self.HasFlagUnsafe(cls))
 			{
 				selected.Add(cls);
 			}
@@ -324,8 +326,8 @@ public static class ClassesExtensions
 		}
 
 		// Get all the roles that are entirely included
-		HashSet<Roles> entireRoles = new HashSet<Roles>();
-		foreach (Roles? role in Enum.GetValues(typeof(Roles)))
+		HashSet<Roles> entireRoles = new();
+		foreach (Roles? role in Enum.GetValues<Roles>().Select(v => (Roles?)v))
 		{
 			if (role == null)
 				continue;
@@ -337,7 +339,7 @@ public static class ClassesExtensions
 		}
 
 		// check if there are any extra classes that werent part of the enire role
-		foreach (Roles? role in Enum.GetValues(typeof(Roles)))
+		foreach (Roles? role in Enum.GetValues<Roles>().Select(v => (Roles?)v))
 		{
 			if (role == null)
 				continue;
@@ -350,7 +352,7 @@ public static class ClassesExtensions
 				if (onlyJobs && !job.IsJob())
 					continue;
 
-				if (self.HasFlag(job))
+				if (self.HasFlagUnsafe(job))
 				{
 					return "Mixed";
 				}

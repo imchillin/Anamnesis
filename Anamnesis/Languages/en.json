@@ -819,6 +819,10 @@
   "Settings_AutoSaveInterval": "Interval (minutes)",
   "Settings_AutoSaveDirectory": "Auto Save Directory",
   "Settings_AutoSaveSaveLast": "Keep Latest Entries",
+  "Settings_AutoSaveOnlyInGpose": "Save Only in GPose",
+  "Settings_GizmoDragMode": "Gizmo Drag Mode",
+  "Settings_GizmoDragMode_Linear": "Linear",
+  "Settings_GizmoDragMode_Circular": "Circular",
   "About_Title": "About Anamnesis",
   "About_Version_Header": "Version",
   "About_OpenSource_Header": "Proudly Open Source",
@@ -911,5 +915,8 @@
   "Hotkey_Redo": "Redo",
 
   "History_ChangeBone": "Change Bone: {0}",
-  "History_ClearHistory": "Clear History"
+  "History_ClearHistory": "Clear History",
+
+  "SliderInputBox_DecreaseButton": "Decrease the value by one step",
+  "SliderInputBox_IncreaseButton": "Increase the value by one step"
 }
