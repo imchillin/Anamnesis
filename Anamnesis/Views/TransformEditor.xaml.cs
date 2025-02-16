@@ -41,6 +41,8 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	private readonly Dictionary<string, Quaternion> initialRotations = [];
 	private readonly Dictionary<string, Vector3> initialScales = [];
 
+	private ActorMemory? currentActor;
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TransformEditor"/> class.
 	/// </summary>
@@ -48,6 +50,14 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	{
 		this.InitializeComponent();
 		this.ContentArea.DataContext = this;
+
+		if (TargetService.Instance.SelectedActor != null)
+		{
+			this.currentActor = TargetService.Instance.SelectedActor;
+			this.currentActor.PropertyChanged += this.OnActorPropertyChanged;
+		}
+
+		TargetService.ActorSelected += this.OnSelectedActorChanged;
 	}
 
 	/// <inheritdoc/>
@@ -75,7 +85,7 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 	}
 
 	/// <summary>Gets the selected actor.</summary>
-	public ActorMemory? SelectedActor => TargetService.Instance.SelectedActor;
+	public ActorMemory? SelectedActor => this.currentActor;
 
 	/// <summary>Gets all selected bones for linked skeleton.</summary>
 	/// <remarks>If the skeleton is not set, an empty collection is returned.</remarks>
@@ -448,6 +458,41 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 		if (this.Skeleton != null)
 		{
 			this.Skeleton.PropertyChanged -= this.OnSkeletonPropertyChanged;
+		}
+	}
+
+	/// <summary>
+	/// Handles changes to the selected actor.
+	/// </summary>
+	/// <param name="actor">The new selected actor.</param>
+	private void OnSelectedActorChanged(ActorMemory? actor)
+	{
+		// We already track skeleton changes so this is only used to keep track of actor property changes
+		if (this.currentActor != null)
+		{
+			this.currentActor.PropertyChanged -= this.OnActorPropertyChanged;
+		}
+
+		this.currentActor = actor;
+		if (this.currentActor != null)
+		{
+			this.currentActor.PropertyChanged += this.OnActorPropertyChanged;
+		}
+
+		// Raise property changed for the entire TransformEditor
+		this.RaisePropertyChanged(string.Empty);
+	}
+
+	/// <summary>
+	/// Handles property changes for the selectod actor's properties.
+	/// </summary>
+	/// <param name="sender"> The sender.</param>
+	/// <param name="e"> The event arguments.</param>
+	private void OnActorPropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName == nameof(ActorMemory.IsMotionDisabled))
+		{
+			this.RaisePropertyChanged(nameof(this.CanTranslate));
 		}
 	}
 }
