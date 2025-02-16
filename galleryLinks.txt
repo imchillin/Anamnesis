@@ -1,4 +1,1 @@
-https://cdn.stoia.red/images/Stoia-Gpose-1efc14439d687c46a.png
-https://cdn.stoia.red/images/Stoia-Gpose-2ebc67e029fc0d6f1.png
-https://cdn.stoia.red/images/Stoia-Gpose-39a5b68ba08e0ce09.png
-https://cdn.stoia.red/images/Stoia-Gpose-48a9464fc83c89c54.png
+https://github.com/imchillin/Anamnesis/blob/b7a0a74425c77649824721bd3efcd41d4bd894b5/Anamnesis/New%20Project.png
