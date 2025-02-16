@@ -28,6 +28,7 @@
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
 					<Grid x:Name="BnR_Backup_EnableAutoSave" Grid.Row="0">
@@ -86,6 +87,16 @@
 							   Maximum="100"
 							   TickFrequency="1"
 							   IsEnabled="{Binding SettingsService.Settings.EnableAutoSave}"/>
+					</Grid>
+
+					<Grid x:Name="BnR_Backup_AutoSaveOnlyInGpose" Grid.Row="4">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_AutoSaveOnlyInGpose" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.AutoSaveOnlyInGpose}" Grid.Column="1" Margin="6" x:Name="Settings_AutoSaveOnlyInGpose"/>
 					</Grid>
 				</Grid>
 			</GroupBox>

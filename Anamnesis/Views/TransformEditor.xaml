@@ -13,34 +13,27 @@
 
 	<Grid x:Name="ContentArea" Margin="3" IsEnabled="{Binding SelectedBones, Converter={StaticResource NotEmptyToVisibilityConverter}}">
 		<Grid.RowDefinitions>
-			<RowDefinition/>
+			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<controls:QuaternionEditor Grid.Row="0" Margin="0,3,0,0" Value="{Binding Rotation}" RootRotation="{Binding RootRotation, Mode=OneWay}" IsEnabled="{Binding CanRotate}"/>
+		<controls:QuaternionEditor Grid.Row="0" Margin="0,3,0,3" Value="{Binding Rotation}" RootRotation="{Binding RootRotation, Mode=OneWay}" IsEnabled="{Binding CanRotate}"/>
 
 		<GroupBox Grid.Row="1" IsEnabled="{Binding CanTranslate}">
 			<GroupBox.Header>
 				<XivToolsWpf:TextBlock Key="Pose_Position"/>
 			</GroupBox.Header>
 			
-			<controls:VectorEditor Value="{Binding Position}" Expanded="True" Minimum="-4096" Maximum="4096" Sliders="Relative" TickFrequency="0.01"/>
+			<controls:VectorEditorNew Value="{Binding Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.01" DecimalPlaces="3" Margin="-9, 3, -2, 0"/>
 		</GroupBox>
 
 		<GroupBox Grid.Row="2" IsEnabled="{Binding CanScale}">
 			<GroupBox.Header>
 				<XivToolsWpf:TextBlock Key="Pose_Scale"/>
 			</GroupBox.Header>
-			<controls:VectorEditor Value="{Binding Scale}"
-								   Expanded="False"
-								   Minimum="-10"
-								   Maximum="10"
-								   TickFrequency="0.1"
-								   CanLink="{Binding CanLinkScale, Mode=OneWay}"
-								   Linked="{Binding ScaleLinked, Mode=OneWay}"
-								   UncapTextInput="True"/>
+			
+			<controls:VectorEditorNew Value="{Binding Scale}" LayoutStyle="Compact" Minimum="0" Maximum="10" DefaultValue="1" TickFrequency="0.01" DecimalPlaces="2" EnableStepButtons="True" CanLink="{Binding CanLinkScale, Mode=OneWay}" Linked="{Binding ScaleLinked, Mode=OneWay}" Margin="-3, 3, -2, 0"/>
 		</GroupBox>
-
 	</Grid>
 </UserControl>

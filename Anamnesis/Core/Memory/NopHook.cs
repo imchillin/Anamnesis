@@ -4,17 +4,18 @@
 namespace Anamnesis.Memory;
 
 using System;
+using System.Threading;
 
-public class NopHookViewModel : IDisposable
+public class NopHook : IDisposable
 {
-	private readonly object lockObject = new();
+	private readonly Lock lockObject = new();
 	private readonly IntPtr address;
 	private readonly byte[] originalValue;
 	private readonly byte[] nopValue;
 	private bool enabled;
 	private bool disposed = false;
 
-	public NopHookViewModel(IntPtr address, int count)
+	public NopHook(IntPtr address, int count)
 	{
 		this.address = address;
 
@@ -28,8 +29,9 @@ public class NopHookViewModel : IDisposable
 			this.nopValue[i] = 0x90;
 		}
 
-		// Register for process exit event
+		// Register events to handle normal process termination and fatal exceptions
 		AppDomain.CurrentDomain.ProcessExit += this.OnProcessExit;
+		AppDomain.CurrentDomain.UnhandledException += this.OnUnhandledException;
 	}
 
 	public bool Enabled
@@ -66,12 +68,12 @@ public class NopHookViewModel : IDisposable
 			if (enabled)
 			{
 				// Write Nop
-				MemoryService.Write(this.address, this.nopValue, true);
+				MemoryService.WriteExecutable(this.address, this.nopValue);
 			}
 			else
 			{
 				// Write the original value
-				MemoryService.Write(this.address, this.originalValue, true);
+				MemoryService.WriteExecutable(this.address, this.originalValue);
 			}
 		}
 	}
@@ -87,11 +89,12 @@ public class NopHookViewModel : IDisposable
 					// Restore the original value if it was NOPed
 					if (this.enabled)
 					{
-						MemoryService.Write(this.address, this.originalValue, true);
+						MemoryService.WriteExecutable(this.address, this.originalValue);
 					}
 
-					// Unregister from process exit event
+					// Unregister events
 					AppDomain.CurrentDomain.ProcessExit -= this.OnProcessExit;
+					AppDomain.CurrentDomain.UnhandledException -= this.OnUnhandledException;
 				}
 
 				this.disposed = true;
@@ -102,6 +105,12 @@ public class NopHookViewModel : IDisposable
 	private void OnProcessExit(object? sender, EventArgs e)
 	{
 		// Call Dispose explicitly in case the GC hasn't called it yet
+		this.Dispose();
+	}
+
+	private void OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)
+	{
+		// Call Dispose explicitly when an unhandled exception occurs to restore the original memory state
 		this.Dispose();
 	}
 }

@@ -29,6 +29,12 @@ public class Settings : INotifyPropertyChanged
 		Hyperlegible,
 	}
 
+	public enum GizmoDragModes
+	{
+		Linear,
+		Circular,
+	}
+
 	public string Language { get; set; } = "EN";
 	public bool AlwaysOnTop { get; set; } = true;
 	public bool OverlayWindow { get; set; } = false;
@@ -107,6 +113,9 @@ public class Settings : INotifyPropertyChanged
 			AutoSaveService.Instance?.RestartUpdateTask();
 		}
 	}
+	public bool AutoSaveOnlyInGpose { get; set; } = true;
+
+	public GizmoDragModes GizmoDragMode { get; set; } = GizmoDragModes.Linear;
 
 	public double WindowOpacity
 	{

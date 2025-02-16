@@ -3,9 +3,10 @@
 
 namespace Anamnesis.Views;
 
+using Anamnesis.Core.Extensions;
+using Anamnesis.Keyboard;
 using System.Text;
 using System.Windows.Input;
-using Anamnesis.Keyboard;
 using XivToolsWpf.DependencyProperties;
 
 /// <summary>
@@ -45,17 +46,17 @@ public partial class HotkeyPrompt : System.Windows.Controls.TextBlock
 
 		StringBuilder str = new StringBuilder();
 
-		if (keys.Modifiers.HasFlag(ModifierKeys.Control))
+		if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Control))
 		{
 			str.Append("[CTRL] +");
 		}
 
-		if (keys.Modifiers.HasFlag(ModifierKeys.Alt))
+		if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Alt))
 		{
 			str.Append("[ALT] +");
 		}
 
-		if (keys.Modifiers.HasFlag(ModifierKeys.Shift))
+		if (keys.Modifiers.HasFlagUnsafe(ModifierKeys.Shift))
 		{
 			str.Append("[SHIFT] +");
 		}

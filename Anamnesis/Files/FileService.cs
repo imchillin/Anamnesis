@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -79,7 +80,7 @@ public class FileService : ServiceBase<FileService>
 	/// </summary>
 	public static string ParseToFilePath(string path)
 	{
-		foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues(typeof(Environment.SpecialFolder)))
+		foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues<Environment.SpecialFolder>().Select(v => (Environment.SpecialFolder?)v))
 		{
 			if (specialFolder == null)
 				continue;
@@ -102,7 +103,7 @@ public class FileService : ServiceBase<FileService>
 		// Special case for "AppData" instead of "ApplicationData"
 		path = path.Replace(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $"%AppData%");
 
-		foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues(typeof(Environment.SpecialFolder)))
+		foreach (Environment.SpecialFolder? specialFolder in Enum.GetValues<Environment.SpecialFolder>().Select(v => (Environment.SpecialFolder?)v))
 		{
 			if (specialFolder == null)
 				continue;
@@ -406,6 +407,25 @@ public class FileService : ServiceBase<FileService>
 		string imagePath = "ImageCache/" + HashUtility.GetHashString(url) + Path.GetExtension(uri.Segments[uri.Segments.Length - 1]);
 
 		return await CacheRemoteFile(url, imagePath);
+	}
+
+	/// <summary>
+	/// Recursively sets the attributes of all files and sub-directories in the directory to FileAttributes.Normal.
+	/// </summary>
+	/// <param name="directory">The directory to process.</param>
+	public static void SetAttributesNormal(DirectoryInfo directory)
+	{
+		directory.Attributes = FileAttributes.Normal;
+
+		foreach (var subDirectory in directory.GetDirectories())
+		{
+			SetAttributesNormal(subDirectory);
+		}
+
+		foreach (var file in directory.GetFiles())
+		{
+			file.Attributes = FileAttributes.Normal;
+		}
 	}
 
 	private static string ToAnyFilter(params Type[] types)

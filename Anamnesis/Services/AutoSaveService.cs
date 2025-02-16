@@ -96,6 +96,12 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 
 		try
 		{
+			if (SettingsService.Current.AutoSaveOnlyInGpose && !GposeService.Instance.IsGpose)
+			{
+				Log.Verbose("Skipping auto-save due to backup settings.");
+				return;
+			}
+
 			// Perform the actual save operation (implement the actual save logic here)
 			Log.Verbose($"Performing auto-save to directory: {dirPath}");
 
@@ -194,6 +200,10 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 				int directoriesToDelete = autoSaveDirectories.Length - SettingsService.Current.AutoSaveFileCount;
 				for (int i = 0; i < directoriesToDelete; i++)
 				{
+					// Ensure all subdirectories and files are not read-only
+					var dirInfo = new DirectoryInfo(autoSaveDirectories[i]);
+					FileService.SetAttributesNormal(dirInfo);
+
 					Directory.Delete(autoSaveDirectories[i], true);
 				}
 			}

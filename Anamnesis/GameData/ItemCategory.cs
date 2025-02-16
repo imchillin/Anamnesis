@@ -26,15 +26,5 @@ public enum ItemCategories
 #pragma warning disable SA1649
 public static class ItemCategoriesExtensions
 {
-	public static ItemCategories SetFlag(this ItemCategories a, ItemCategories b, bool enabled)
-	{
-		if (enabled)
-		{
-			return a | b;
-		}
-		else
-		{
-			return a & ~b;
-		}
-	}
+	public static ItemCategories SetFlag(this ItemCategories a, ItemCategories b, bool enabled) => enabled ? a | b : a & ~b;
 }

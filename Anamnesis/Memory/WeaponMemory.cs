@@ -4,6 +4,7 @@
 namespace Anamnesis.Memory;
 
 using Anamnesis.Actor.Utilities;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData;
 using PropertyChanged;
 using System;
@@ -29,7 +30,7 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 	[DependsOn(nameof(WeaponFlags), nameof(IsSheathed))]
 	public bool WeaponHidden
 	{
-		get => (this.IsSheathed && this.WeaponFlags.HasFlag(WeaponFlagDefs.WeaponHidden)) || (!this.IsSheathed && this.Model?.Transform?.Scale == Vector3.Zero);
+		get => (this.IsSheathed && this.WeaponFlags.HasFlagUnsafe(WeaponFlagDefs.WeaponHidden)) || (!this.IsSheathed && this.Model?.Transform?.Scale == Vector3.Zero);
 		set
 		{
 			if (value)
@@ -70,8 +71,8 @@ public class WeaponMemory : MemoryBase, IEquipmentItemMemory
 				IItem? mainHandItem = ItemUtility.GetItem(ItemSlots.MainHand, actor.MainHand.Set, actor.MainHand.Base, actor.MainHand.Variant, actor.IsChocobo);
 
 				if (mainHandItem != null &&
-					(mainHandItem.EquipableClasses.HasFlag(Classes.Pugilist) ||
-					mainHandItem.EquipableClasses.HasFlag(Classes.Monk)))
+					(mainHandItem.EquipableClasses.HasFlagUnsafe(Classes.Pugilist) ||
+					mainHandItem.EquipableClasses.HasFlagUnsafe(Classes.Monk)))
 				{
 					useEmperorsFists = true;
 				}

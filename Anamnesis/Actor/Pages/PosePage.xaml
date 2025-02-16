@@ -92,7 +92,7 @@
 										  MinWidth="32"
 										  Style="{StaticResource TransparentIconToggleButton}"
 										  IsEnabled="{Binding Skeleton.SelectedLinkedCount, Mode=OneWay, Converter={StaticResource NotZeroToBool}, FallbackValue=False}"
-										  IsChecked="{Binding Skeleton.SelectedEnableLinkedBones, Mode=OneWay}">
+										  IsChecked="{Binding Skeleton.SelectedEnableLinkedBones}">
 								<StackPanel Orientation="Horizontal">
 									<XivToolsWpf:IconBlock Icon="Link" FontSize="11"/>
 									<XivToolsWpf:TextBlock Text="{Binding Skeleton.SelectedLinkedCount, Mode=OneWay, FallbackValue=0}" Margin="4, 0, 0, 0"/>
@@ -157,7 +157,7 @@
 						<Grid Grid.Row="2" Grid.ColumnSpan="2" IsEnabled="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}">
 							<controls:TransformEditor Skeleton="{Binding Skeleton, Mode=OneWay}"/>
 
-							<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,0,45">
+							<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,0,55">
 								<XivToolsWpf:InfoControl.Visibility>
 									<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
 										<Binding Path="TargetService.SelectedActor.IsMotionEnabled"/>

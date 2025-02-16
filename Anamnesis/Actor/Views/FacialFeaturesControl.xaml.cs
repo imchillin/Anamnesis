@@ -3,14 +3,15 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System;
-using System.Collections.Generic;
-using System.Windows.Controls;
+using Anamnesis.Core.Extensions;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using System;
+using System.Collections.Generic;
+using System.Windows.Controls;
 using XivToolsWpf.DependencyProperties;
 
 /// <summary>
@@ -80,7 +81,7 @@ public partial class FacialFeaturesControl : UserControl
 		sender.locked = true;
 		foreach (Option op in sender.features)
 		{
-			op.Selected = sender.Value.HasFlag(op.Value);
+			op.Selected = sender.Value.HasFlagUnsafe(op.Value);
 
 			if (op.Selected)
 			{
@@ -135,7 +136,7 @@ public partial class FacialFeaturesControl : UserControl
 
 		for (byte i = 0; i < 7; i++)
 		{
-			int id = (this.Head - (1 + hrothOffset)) + (8 * i);
+			int id = this.Head - (1 + hrothOffset) + (8 * i);
 
 			if (id < 0 || id >= facialFeatures.Length)
 				continue;

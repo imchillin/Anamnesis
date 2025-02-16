@@ -3,8 +3,11 @@
 
 namespace Anamnesis.Tabs.Settings;
 
+using Anamnesis.Core.Extensions;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
+using PropertyChanged;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -32,6 +35,7 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 		};
 
 		// Set up input category settings
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_GizmoDragMode", this.Input_Input_GizmoDragMode));
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_WrapRotations", this.Input_Input_WrapRotations));
 
 		// Set up 3D skeleton viewport category settings
@@ -50,6 +54,12 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 			.Select(bind => new HotkeyOption(bind.Key, bind.Value))
 			.ToList();
 
+		// Set up gizmo drag mode options
+		this.GizmoDragModes = Enum.GetValues<Settings.GizmoDragModes>()
+			.Cast<Settings.GizmoDragModes>()
+			.Select(mode => new GizmoDragModeOption(mode))
+			.ToList();
+
 		ICollectionView view = CollectionViewSource.GetDefaultView(this.Hotkeys);
 		view.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
 		view.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
@@ -61,6 +71,15 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 	public static int LabelColumnWidth => 150;
 	public Dictionary<string, SettingCategory> SettingCategories { get; }
 	public IEnumerable<HotkeyOption> Hotkeys { get; }
+
+	public IEnumerable<GizmoDragModeOption> GizmoDragModes { get; }
+
+	[DependsOn(nameof(this.GizmoDragModes))]
+	public GizmoDragModeOption SelectedGizmoDragMode
+	{
+		get => this.GizmoDragModes.FirstOrDefault(mode => mode.Mode == SettingsService.Current.GizmoDragMode) ?? this.GizmoDragModes.First();
+		set => SettingsService.Current.GizmoDragMode = value.Mode;
+	}
 
 	public class HotkeyOption
 	{
@@ -102,19 +121,25 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 		{
 			var builder = new StringBuilder();
 
-			if (this.keys.Modifiers.HasFlag(ModifierKeys.Control))
+			if (this.keys.Modifiers.HasFlagUnsafe(ModifierKeys.Control))
 				builder.Append("Ctrl + ");
 
-			if (this.keys.Modifiers.HasFlag(ModifierKeys.Shift))
+			if (this.keys.Modifiers.HasFlagUnsafe(ModifierKeys.Shift))
 				builder.Append("Shift + ");
 
-			if (this.keys.Modifiers.HasFlag(ModifierKeys.Alt))
+			if (this.keys.Modifiers.HasFlagUnsafe(ModifierKeys.Alt))
 				builder.Append("Alt + ");
 
-			if (this.keys.Modifiers.HasFlag(ModifierKeys.Windows))
+			if (this.keys.Modifiers.HasFlagUnsafe(ModifierKeys.Windows))
 				builder.Append("Win + ");
 
 			return builder.ToString().TrimEnd('+', ' ');
 		}
+	}
+
+	public class GizmoDragModeOption(Settings.GizmoDragModes mode)
+	{
+		public string Key { get; } = "Settings_GizmoDragMode_" + mode.ToString();
+		public Settings.GizmoDragModes Mode { get; } = mode;
 	}
 }
