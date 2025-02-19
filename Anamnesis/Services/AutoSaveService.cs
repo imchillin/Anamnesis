@@ -168,7 +168,7 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 				foreach (var pinnedActor in TargetService.Instance.PinnedActors.ToList())
 				{
 					var actor = pinnedActor.Memory;
-					if (actor == null)
+					if (actor == null || actor.ModelObject == null || actor.ModelObject.Skeleton == null)
 						continue;
 
 					var skeleton = new Skeleton(actor);
