@@ -81,7 +81,7 @@ public class SettingsService : ServiceBase<SettingsService>
 			}
 			catch (Exception ex)
 			{
-				Log.Warning(ex, "Failed to load settings");
+				Log.Warning(ex, $"Failed to load settings:\n{ex.StackTrace}");
 				await GenericDialog.ShowAsync("Failed to load Settings. Your settings have been reset.", "Error", MessageBoxButton.OK);
 				this.FirstTimeUser = true;
 				this.Settings = new Settings();

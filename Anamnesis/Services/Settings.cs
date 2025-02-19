@@ -89,7 +89,11 @@ public class Settings : INotifyPropertyChanged
 				return;
 
 			this.enableAutoSave = value;
-			AutoSaveService.Instance?.RestartUpdateTask();
+
+			if (AutoSaveService.Exists)
+			{
+				AutoSaveService.Instance?.RestartUpdateTask();
+			}
 		}
 	}
 
@@ -110,7 +114,11 @@ public class Settings : INotifyPropertyChanged
 				value = MinAutoSaveIntervalMinutes;
 
 			this.autoSaveIntervalMinutes = value;
-			AutoSaveService.Instance?.RestartUpdateTask();
+
+			if (AutoSaveService.Exists)
+			{
+				AutoSaveService.Instance?.RestartUpdateTask();
+			}
 		}
 	}
 	public bool AutoSaveOnlyInGpose { get; set; } = true;
