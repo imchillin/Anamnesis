@@ -53,7 +53,7 @@
 					<XivToolsWpf:IconBlock Icon="User"/>
 				</Button>
 
-				<cm3:VectorEditorNew Grid.Column="1" Value="{Binding CameraService.GPoseCamera.Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.05" DecimalPlaces="2" LayoutStyle="Standard" EnableStepButtons="True"/>
+				<cm3:VectorEditorNew Grid.Column="1" Value="{Binding CameraService.GPoseCamera.Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.05" DecimalPlaces="2" LayoutStyle="Standard" EnableStepButtons="True" SliderMode="Relative"/>
 			</Grid>
 
 			<XivToolsWpf:TextBlock Key="Scene_Camera_Angle" Grid.Row="2" Grid.Column="0" Style="{StaticResource Label}"/>

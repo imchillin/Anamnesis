@@ -4,6 +4,7 @@
 namespace Anamnesis.Services;
 
 using Anamnesis.Keyboard;
+using Anamnesis.Styles.Controls;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -124,6 +125,10 @@ public class Settings : INotifyPropertyChanged
 	public bool AutoSaveOnlyInGpose { get; set; } = true;
 
 	public GizmoDragModes GizmoDragMode { get; set; } = GizmoDragModes.Linear;
+
+	public decimal SliderSensitivity { get; set; } = 1;
+
+	public SliderInputBox.SliderTypes TimeAndWeatherSliderMode { get; set; } = SliderInputBox.SliderTypes.Modern;
 
 	public double WindowOpacity
 	{

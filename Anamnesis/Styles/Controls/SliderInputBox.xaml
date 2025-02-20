@@ -33,6 +33,12 @@
 		<Color x:Key="HoverBackgroundColor">#aa888888</Color>
 	</UserControl.Resources>
 
+	<UserControl.ContextMenu>
+		<ContextMenu>
+			<MenuItem Header="Edit" Click="OnPromptInputFieldClick"/>
+		</ContextMenu>
+	</UserControl.ContextMenu>
+
 	<Border x:Name="ContentArea" MouseEnter="OnMouseEnter" MouseLeave="OnMouseLeave" Style="{StaticResource SliderInputBoxStyle}" BorderBrush="{Binding BorderColor, Converter={StaticResource NullableStrToBrushConverter}}">
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -42,7 +48,7 @@
 			</Grid.ColumnDefinitions>
 
 			<!-- Decrease button -->
-			<Button x:Name="DecreaseButton" Grid.Column="0" Style="{StaticResource TransparentIconButton}" Click="OnDecreaseButtonClicked" Visibility="{Binding ShowStepButtons, Converter={StaticResource B2V}}">
+			<Button x:Name="DecreaseButton" Grid.Column="0" Style="{StaticResource TransparentIconButton}" Click="OnDecreaseButtonClicked" PreviewMouseDown="OnDecreaseButtonPreviewMouseDown" PreviewMouseUp="OnDecreaseButtonPreviewMouseUp" Visibility="{Binding ShowStepButtons, Converter={StaticResource B2V}}">
 				<Button.ToolTip>
 					<XivToolsWpf:TextBlock Key="SliderInputBox_DecreaseButton" />
 				</Button.ToolTip>
@@ -51,7 +57,7 @@
 			</Button>
 
 			<!-- Input control -->
-			<Grid x:Name="InputArea" Grid.Column="1" Background="Transparent" PreviewMouseDown="OnPreviewMouseDown" PreviewMouseMove="OnPreviewMouseMove" PreviewMouseLeftButtonUp="OnPreviewMouseLeftButtonUp" PreviewMouseWheel="OnMouseWheel" MouseEnter="OnInputAreaMouseEnter" MouseLeave="OnInputAreaMouseLeave">
+			<Grid x:Name="InputArea" Grid.Column="1" Background="Transparent" PreviewMouseDown="OnPreviewMouseDown" PreviewMouseMove="OnPreviewMouseMove" PreviewMouseLeftButtonUp="OnPreviewMouseLeftButtonUp" PreviewMouseWheel="OnMouseWheel" MouseEnter="OnInputAreaMouseEnter" MouseLeave="OnInputAreaMouseLeave" Panel.ZIndex="2">
 				<Grid Visibility="{Binding IsInputFieldActive, Converter={StaticResource !B2V}}">
 					<Label Grid.Column="1" Content="{Binding Label}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="11" IsHitTestVisible="False"/>
 				</Grid>
@@ -61,8 +67,15 @@
 				</Grid>
 			</Grid>
 
+			<!-- Visualization -->
+			<Grid Grid.Column="1" Background="Transparent" Margin="2, 0" IsHitTestVisible="False">
+				<Grid Margin="0, 2">
+					<Border x:Name="TickRectangle" Width="10" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Black" Opacity="0.5" CornerRadius="2" Panel.ZIndex="1"/>
+				</Grid>
+			</Grid>
+
 			<!-- Increase button -->
-			<Button x:Name="IncreaseButton" Grid.Column="2" Style="{StaticResource TransparentIconButton}" Click="OnIncreaseButtonClicked" Visibility="{Binding ShowStepButtons, Converter={StaticResource B2V}}">
+			<Button x:Name="IncreaseButton" Grid.Column="2" Style="{StaticResource TransparentIconButton}" Click="OnIncreaseButtonClicked"  PreviewMouseDown="OnIncreaseButtonPreviewMouseDown" PreviewMouseUp="OnIncreaseButtonPreviewMouseUp" Visibility="{Binding ShowStepButtons, Converter={StaticResource B2V}}">
 				<Button.ToolTip>
 					<XivToolsWpf:TextBlock Key="SliderInputBox_IncreaseButton" />
 				</Button.ToolTip>

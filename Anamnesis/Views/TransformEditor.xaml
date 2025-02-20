@@ -25,7 +25,7 @@
 				<XivToolsWpf:TextBlock Key="Pose_Position"/>
 			</GroupBox.Header>
 			
-			<controls:VectorEditorNew Value="{Binding Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.01" DecimalPlaces="3" Margin="-9, 3, -2, 0"/>
+			<controls:VectorEditorNew Value="{Binding Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.01" DecimalPlaces="3" Margin="-9, 3, -2, 0" SliderMode="Relative"/>
 		</GroupBox>
 
 		<GroupBox Grid.Row="2" IsEnabled="{Binding CanScale}">
