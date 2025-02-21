@@ -58,6 +58,6 @@
 			</materialDesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<cm3:VectorEditorNew Grid.Row="1" VerticalAlignment="Top" Value="{Binding Euler}" LayoutStyle="Inline" Minimum="0" Maximum="360" DefaultValue="0" TickFrequency="{Binding TickFrequency}" Suffix="°" EnableStepButtons="False" DecimalPlaces="3" ColorMode="Rotation" OverflowBehavior="Loop"/>
+		<cm3:VectorEditorNew Grid.Row="1" VerticalAlignment="Top" Value="{Binding Euler}" LayoutStyle="Inline" Minimum="0" Maximum="360" DefaultValue="0" TickFrequency="{Binding TickFrequency}" Suffix="°" EnableStepButtons="False" DecimalPlaces="3" ColorMode="Rotation" OverflowBehavior="{Binding RotationOverflowBehavior, Mode=OneWay}"/>
 	</Grid>
 </UserControl>

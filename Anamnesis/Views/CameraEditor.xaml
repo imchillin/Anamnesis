@@ -81,7 +81,7 @@
 
 			<XivToolsWpf:TextBlock Key="Scene_Camera_Rotation" Grid.Row="3" Grid.Column="0" Style="{StaticResource Label}"/>
 
-			<cm3:SliderInputBox Grid.Row="3" Grid.Column="1" Margin="0, 0, 0, 2" Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}" Minimum="-180" Maximum="180" TickFrequency="0.1" DefaultValue="0" DecimalPlaces="2" EnableStepButtons="True" OverflowBehavior="Loop"/>
+			<cm3:SliderInputBox Grid.Row="3" Grid.Column="1" Margin="0, 0, 0, 2" Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}" Minimum="-180" Maximum="180" TickFrequency="0.1" DefaultValue="0" DecimalPlaces="2" EnableStepButtons="True" OverflowBehavior="{Binding RotationOverflowBehavior, Mode=OneWay}"/>
 
 			<XivToolsWpf:TextBlock Key="Scene_Camera_Pan" Grid.Row="4" Grid.Column="0" Style="{StaticResource Label}"/>
 

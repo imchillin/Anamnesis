@@ -8,6 +8,7 @@ using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,7 @@ using System.Windows.Media.Media3D;
 using XivToolsWpf.DependencyProperties;
 using XivToolsWpf.Math3D;
 using XivToolsWpf.Math3D.Extensions;
+using static Anamnesis.Styles.Controls.SliderInputBox;
 using CmQuaternion = System.Numerics.Quaternion;
 using CmVector = System.Numerics.Vector3;
 using Color = System.Windows.Media.Color;
@@ -26,7 +28,7 @@ using Quaternion = System.Windows.Media.Media3D.Quaternion;
 /// Interaction logic for QuaternionEditor.xaml.
 /// </summary>
 [AddINotifyPropertyChangedInterface]
-public partial class QuaternionEditor : UserControl
+public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 {
 	public static readonly IBind<CmQuaternion> ValueDp = Binder.Register<CmQuaternion, QuaternionEditor>(nameof(Value), OnValueChanged);
 	public static readonly IBind<CmQuaternion?> RootRotationDp = Binder.Register<CmQuaternion?, QuaternionEditor>(nameof(RootRotation), OnRootRotationChanged);
@@ -77,7 +79,12 @@ public partial class QuaternionEditor : UserControl
 		this.worldSpace = false;
 
 		this.isInitialized = true;
+
+		SettingsService.SettingsChanged += this.OnSettingsChanged;
 	}
+
+	/// <inheritdoc/>
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public decimal TickFrequency
 	{
@@ -108,6 +115,8 @@ public partial class QuaternionEditor : UserControl
 		get => EulerDp.Get(this);
 		set => EulerDp.Set(this, value);
 	}
+
+	public OverflowModes RotationOverflowBehavior => this.Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
 
 	public Settings Settings => SettingsService.Current;
 
@@ -371,6 +380,14 @@ public partial class QuaternionEditor : UserControl
 
 		// Watch camera thread
 		Task.Run(this.WatchCamera);
+	}
+
+	/// <summary>Handles changes to the settings.</summary>
+	/// <param name="sender">The sender.</param>
+	/// <param name="e">The event arguments.</param>
+	private void OnSettingsChanged(object? sender, EventArgs e)
+	{
+		this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.RotationOverflowBehavior)));
 	}
 
 	private class RotationGizmo : ModelVisual3D

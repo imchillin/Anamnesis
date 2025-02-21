@@ -3,16 +3,16 @@
 
 namespace Anamnesis.Views;
 
+using Anamnesis.Files;
+using Anamnesis.Memory;
+using Anamnesis.Services;
+using PropertyChanged;
+using Serilog;
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using Anamnesis.Files;
-using Anamnesis.Memory;
-using Anamnesis.Services;
-using Anamnesis.Styles.Drawers;
-using PropertyChanged;
-using Serilog;
+using static Anamnesis.Styles.Controls.SliderInputBox;
 
 /// <summary>
 /// Interaction logic for SceneView.xaml.
@@ -28,6 +28,8 @@ public partial class CameraEditor : UserControl
 		this.InitializeComponent();
 
 		this.ContentArea.DataContext = this;
+
+		SettingsService.SettingsChanged += this.OnSettingsChanged;
 	}
 
 	public GameService GameService => GameService.Instance;
@@ -37,6 +39,8 @@ public partial class CameraEditor : UserControl
 	public TimeService TimeService => TimeService.Instance;
 	public CameraService CameraService => CameraService.Instance;
 	public SettingsService SettingsService => SettingsService.Instance;
+
+	public OverflowModes RotationOverflowBehavior => SettingsService.Current.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
 
 	private static ILogger Log => Serilog.Log.ForContext<CameraEditor>();
 
@@ -113,5 +117,10 @@ public partial class CameraEditor : UserControl
 			return;
 
 		this.CameraService.GPoseCamera.Position = actorMemory.ModelObject.Transform.Position;
+	}
+
+	private void OnSettingsChanged(object? sender, EventArgs e)
+	{
+		this.OnPropertyChanged(nameof(this.RotationOverflowBehavior));
 	}
 }
