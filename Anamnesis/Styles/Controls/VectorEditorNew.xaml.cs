@@ -64,7 +64,7 @@ public partial class VectorEditorNew : UserControl, INotifyPropertyChanged
 
 	/// <summary>Dependency property for the visibility of the tick visualizer.</summary>
 	/// <remarks>Applies only to the standard slider mode.</remarks>
-	public static readonly IBind<bool> ShowTickVisualizerDp = Binder.Register<bool, VectorEditorNew>(nameof(ShowTickVisualizer), BindMode.OneWay);
+	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, VectorEditorNew>(nameof(ShowSliderThumb), BindMode.OneWay);
 
 	private bool lockChangedEvent = false;
 
@@ -85,7 +85,7 @@ public partial class VectorEditorNew : UserControl, INotifyPropertyChanged
 		this.OverflowBehavior = SliderInputBox.OverflowModes.Clamp;
 		this.SliderMode = SliderInputBox.SliderModes.Absolute;
 		this.SliderType = SliderInputBox.SliderTypes.Modern;
-		this.ShowTickVisualizer = false;
+		this.ShowSliderThumb = false;
 	}
 
 	/// <inheritdoc/>
@@ -251,10 +251,10 @@ public partial class VectorEditorNew : UserControl, INotifyPropertyChanged
 	}
 
 	/// <summary>Gets or sets a value indicating whether the tick visualizer is shown.</summary>
-	public bool ShowTickVisualizer
+	public bool ShowSliderThumb
 	{
-		get => ShowTickVisualizerDp.Get(this);
-		set => ShowTickVisualizerDp.Set(this, value);
+		get => ShowSliderThumbDp.Get(this);
+		set => ShowSliderThumbDp.Set(this, value);
 	}
 
 	/// <summary>Gets the X-axis color based on the color mode.</summary>

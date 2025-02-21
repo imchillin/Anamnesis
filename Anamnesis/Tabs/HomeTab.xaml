@@ -4,11 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Anamnesis.Tabs"
-			 xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
-			 xmlns:views="clr-namespace:Anamnesis.Views"
-			 xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-			 xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-			 mc:Ignorable="d" 
+             xmlns:ana="clr-namespace:Anamnesis.Styles.Controls"
+             xmlns:views="clr-namespace:Anamnesis.Views"
+             xmlns:XivToolsWpf="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+             xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 	
 	<Grid x:Name="ContentArea">
@@ -99,7 +99,9 @@
 											   Key="Scene_World_Time"
 											   Style="{StaticResource Label}" />
 
-						<ana:SliderInputBox Grid.Column="2" Margin="0, 0, 5, 0" Value="{Binding TimeService.TimeOfDay}" IsEnabled="{Binding TimeService.Freeze}" Minimum="0" Maximum="1439" TickFrequency="1" EnableStepButtons="True" OverflowBehavior="Loop" SliderType="Classic"/>
+						<ana:SliderInputBox Grid.Column="2" Margin="0, 0, 5, 0" Value="{Binding TimeService.TimeOfDay}" IsEnabled="{Binding TimeService.Freeze}" Minimum="0" Maximum="1439"
+											TickFrequency="1" EnableStepButtons="True" OverflowBehavior="Loop" SliderType="{Binding Settings.TimeAndWeatherSliderType, Mode=OneWay}"
+											ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 
 						<TextBlock Grid.Column="3"
 								   Text="{Binding TimeService.TimeString}"
@@ -112,7 +114,9 @@
 											   Key="Scene_World_Day"
 											   Style="{StaticResource Label}" />
 
-						<ana:SliderInputBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Minimum="1" Maximum="31" TickFrequency="1" EnableStepButtons="True" OverflowBehavior="Clamp" SliderType="Classic"/>
+						<ana:SliderInputBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding TimeService.DayOfMonth}" IsEnabled="{Binding TimeService.Freeze}" Minimum="1" Maximum="31"
+											TickFrequency="1" EnableStepButtons="True" OverflowBehavior="Clamp" SliderType="{Binding Settings.TimeAndWeatherSliderType, Mode=OneWay}"
+											ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 					</Grid>
 
 					<XivToolsWpf:TextBlock Grid.Row="1"

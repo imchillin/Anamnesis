@@ -20,6 +20,7 @@ public partial class HomeTab : UserControl
 		this.ContentArea.DataContext = this;
 	}
 
+	public static Services.Settings Settings => SettingsService.Current;
 	public TipService TipService => TipService.Instance;
 	public GameService GameService => GameService.Instance;
 	public TargetService TargetService => TargetService.Instance;

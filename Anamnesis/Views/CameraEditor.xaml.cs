@@ -32,6 +32,7 @@ public partial class CameraEditor : UserControl
 		SettingsService.SettingsChanged += this.OnSettingsChanged;
 	}
 
+	public static Settings Settings => SettingsService.Current;
 	public GameService GameService => GameService.Instance;
 	public TargetService TargetService => TargetService.Instance;
 	public GposeService GposeService => GposeService.Instance;
@@ -40,7 +41,7 @@ public partial class CameraEditor : UserControl
 	public CameraService CameraService => CameraService.Instance;
 	public SettingsService SettingsService => SettingsService.Instance;
 
-	public OverflowModes RotationOverflowBehavior => SettingsService.Current.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
+	public OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
 
 	private static ILogger Log => Serilog.Log.ForContext<CameraEditor>();
 

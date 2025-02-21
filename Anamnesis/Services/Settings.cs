@@ -126,9 +126,14 @@ public class Settings : INotifyPropertyChanged
 
 	public GizmoDragModes GizmoDragMode { get; set; } = GizmoDragModes.Linear;
 
-	public decimal SliderSensitivity { get; set; } = 1;
+	public double SliderSensitivity { get; set; } = 1;
 
-	public SliderInputBox.SliderTypes TimeAndWeatherSliderMode { get; set; } = SliderInputBox.SliderTypes.Modern;
+	public SliderInputBox.SliderTypes TimeAndWeatherSliderType { get; set; } = SliderInputBox.SliderTypes.Classic;
+	public SliderInputBox.SliderTypes CameraSliderType { get; set; } = SliderInputBox.SliderTypes.Modern;
+	public SliderInputBox.SliderTypes BoneRotationSliderType { get; set; } = SliderInputBox.SliderTypes.Modern;
+	public SliderInputBox.SliderTypes BonePositionSliderType { get; set; } = SliderInputBox.SliderTypes.Modern;
+	public SliderInputBox.SliderTypes BoneScaleSliderType { get; set; } = SliderInputBox.SliderTypes.Modern;
+	public bool ShowSliderThumb { get; set; } = false;
 
 	public double WindowOpacity
 	{

@@ -116,9 +116,9 @@ public partial class QuaternionEditor : UserControl, INotifyPropertyChanged
 		set => EulerDp.Set(this, value);
 	}
 
-	public OverflowModes RotationOverflowBehavior => this.Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
+	public OverflowModes RotationOverflowBehavior => Settings.WrapRotationSliders ? OverflowModes.Loop : OverflowModes.Clamp;
 
-	public Settings Settings => SettingsService.Current;
+	public static Settings Settings => SettingsService.Current;
 
 	public CmQuaternion Root
 	{

@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:ana="clr-namespace:Anamnesis"
-			 xmlns:XivToolsWPF="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
-             mc:Ignorable="d" 
-             d:DesignHeight="450">
+             xmlns:ana="clr-namespace:Anamnesis"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+             xmlns:XivToolsWPF="clr-namespace:XivToolsWpf.Controls;assembly=XivToolsWpf"
+             mc:Ignorable="d">
 	<GroupBox x:Name="ContentArea" Style="{StaticResource PanelGroupBox}">
 		<GroupBox.Header>
 			<XivToolsWPF:Header Key="SettingsPages_Input" Icon="Keyboard"/>
@@ -27,6 +27,13 @@
 
 				<Grid>
 					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
@@ -56,6 +63,127 @@
 						
 						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_WrapRotations" Style="{StaticResource Label}"/>
 						<CheckBox IsChecked="{Binding SettingsService.Settings.WrapRotationSliders}" Grid.Column="1" Margin="6, 3"/>
+					</Grid>
+
+					<Grid x:Name="Input_Input_SliderSensitivity" Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_SliderSensitivity" Style="{StaticResource Label}"/>
+						<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.SliderSensitivity}"
+									   Margin="6, 3"
+									   x:Name="SliderSensitivitySlider"
+									   Slider="Absolute"
+									   Grid.Column="1"
+									   Minimum="0.01"
+									   Maximum="10"
+									   TickFrequency="0.01"/>
+					</Grid>
+
+					<Grid x:Name="Input_Input_ShowSliderThumb" Grid.Row="3">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_ShowSliderThumb" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.ShowSliderThumb}" Grid.Column="1" Margin="6, 3"/>
+
+						<TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 0, 6, 0">
+							<fa:IconBlock Icon="InfoCircle" FontSize="13"/>
+
+							<TextBlock.ToolTip>
+								<XivToolsWPF:TextBlock Key="Settings_ShowSliderThumb_Tooltip"/>
+							</TextBlock.ToolTip>
+						</TextBlock>
+					</Grid>
+
+					<Grid x:Name="Input_Input_TimeAndWeatherSliderType" Grid.Row="4">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_TimeAndWeatherSliderType" Style="{StaticResource Label}"/>
+						<ComboBox Grid.Column="1" Width="150" HorizontalAlignment="Left" Margin="8, 0, 0, 0"
+								  SelectedItem="{Binding SelectedTimeAndWeatherSliderType}" ItemsSource="{Binding SliderTypes}" SelectedValuePath="Type">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<XivToolsWPF:TextBlock Key="{Binding Key}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Grid>
+
+					<Grid x:Name="Input_Input_CameraSliderType" Grid.Row="5">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_CameraSliderType" Style="{StaticResource Label}"/>
+						<ComboBox Grid.Column="1" Width="150" HorizontalAlignment="Left" Margin="8, 0, 0, 0"
+								  SelectedItem="{Binding SelectedCameraSliderType}" ItemsSource="{Binding SliderTypes}" SelectedValuePath="Type">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<XivToolsWPF:TextBlock Key="{Binding Key}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Grid>
+
+					<Grid x:Name="Input_Input_BoneRotationSliderType" Grid.Row="6">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_BoneRotationSliderType" Style="{StaticResource Label}"/>
+						<ComboBox Grid.Column="1" Width="150" HorizontalAlignment="Left" Margin="8, 0, 0, 0"
+								  SelectedItem="{Binding SelectedBoneRotationSliderType}" ItemsSource="{Binding SliderTypes}" SelectedValuePath="Type">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<XivToolsWPF:TextBlock Key="{Binding Key}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Grid>
+
+					<Grid x:Name="Input_Input_BonePositionSliderType" Grid.Row="7">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_BonePositionSliderType" Style="{StaticResource Label}"/>
+						<ComboBox Grid.Column="1" Width="150" HorizontalAlignment="Left" Margin="8, 0, 0, 0"
+								  SelectedItem="{Binding SelectedBonePositionSliderType}" ItemsSource="{Binding SliderTypes}" SelectedValuePath="Type">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<XivToolsWPF:TextBlock Key="{Binding Key}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Grid>
+
+					<Grid x:Name="Input_Input_BoneScaleSliderType" Grid.Row="8">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_BoneScaleSliderType" Style="{StaticResource Label}"/>
+						<ComboBox Grid.Column="1" Width="150" HorizontalAlignment="Left" Margin="8, 0, 0, 0"
+								  SelectedItem="{Binding SelectedBoneScaleSliderType}" ItemsSource="{Binding SliderTypes}" SelectedValuePath="Type">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<XivToolsWPF:TextBlock Key="{Binding Key}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
 					</Grid>
 				</Grid>
 			</GroupBox>

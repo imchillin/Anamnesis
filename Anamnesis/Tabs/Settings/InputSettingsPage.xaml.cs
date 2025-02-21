@@ -6,6 +6,7 @@ namespace Anamnesis.Tabs.Settings;
 using Anamnesis.Core.Extensions;
 using Anamnesis.Keyboard;
 using Anamnesis.Services;
+using Anamnesis.Styles.Controls;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,8 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 		// Set up input category settings
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_GizmoDragMode", this.Input_Input_GizmoDragMode));
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_WrapRotations", this.Input_Input_WrapRotations));
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_SliderSensitivity", this.Input_Input_SliderSensitivity));
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_ShowSliderThumb", this.Input_Input_ShowSliderThumb));
 
 		// Set up 3D skeleton viewport category settings
 		this.SettingCategories["3D Skeleton Viewport"].Settings.Add(new Setting("Settings_ViewportPanSpeed", this.Input_3DViewport_PanSpeed));
@@ -60,6 +63,12 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 			.Select(mode => new GizmoDragModeOption(mode))
 			.ToList();
 
+		// Set up slider type options
+		this.SliderTypes = Enum.GetValues<SliderInputBox.SliderTypes>()
+			.Cast<SliderInputBox.SliderTypes>()
+			.Select(type => new SliderType(type))
+			.ToList();
+
 		ICollectionView view = CollectionViewSource.GetDefaultView(this.Hotkeys);
 		view.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
 		view.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
@@ -71,14 +80,50 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 	public static int LabelColumnWidth => 150;
 	public Dictionary<string, SettingCategory> SettingCategories { get; }
 	public IEnumerable<HotkeyOption> Hotkeys { get; }
-
 	public IEnumerable<GizmoDragModeOption> GizmoDragModes { get; }
+	public IEnumerable<SliderType> SliderTypes { get; }
+
 
 	[DependsOn(nameof(this.GizmoDragModes))]
 	public GizmoDragModeOption SelectedGizmoDragMode
 	{
 		get => this.GizmoDragModes.FirstOrDefault(mode => mode.Mode == SettingsService.Current.GizmoDragMode) ?? this.GizmoDragModes.First();
 		set => SettingsService.Current.GizmoDragMode = value.Mode;
+	}
+
+	[DependsOn(nameof(this.SliderTypes))]
+	public SliderType SelectedTimeAndWeatherSliderType
+	{
+		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.TimeAndWeatherSliderType) ?? this.SliderTypes.First();
+		set => SettingsService.Current.TimeAndWeatherSliderType = value.Type;
+	}
+
+	[DependsOn(nameof(this.SliderTypes))]
+	public SliderType SelectedCameraSliderType
+	{
+		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.CameraSliderType) ?? this.SliderTypes.First();
+		set => SettingsService.Current.CameraSliderType = value.Type;
+	}
+
+	[DependsOn(nameof(this.SliderTypes))]
+	public SliderType SelectedBoneRotationSliderType
+	{
+		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.BoneRotationSliderType) ?? this.SliderTypes.First();
+		set => SettingsService.Current.BoneRotationSliderType = value.Type;
+	}
+
+	[DependsOn(nameof(this.SliderTypes))]
+	public SliderType SelectedBonePositionSliderType
+	{
+		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.BonePositionSliderType) ?? this.SliderTypes.First();
+		set => SettingsService.Current.BonePositionSliderType = value.Type;
+	}
+
+	[DependsOn(nameof(this.SliderTypes))]
+	public SliderType SelectedBoneScaleSliderType
+	{
+		get => this.SliderTypes.FirstOrDefault(type => type.Type == SettingsService.Current.BoneScaleSliderType) ?? this.SliderTypes.First();
+		set => SettingsService.Current.BoneScaleSliderType = value.Type;
 	}
 
 	public class HotkeyOption
@@ -141,5 +186,11 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 	{
 		public string Key { get; } = "Settings_GizmoDragMode_" + mode.ToString();
 		public Settings.GizmoDragModes Mode { get; } = mode;
+	}
+
+	public class SliderType(SliderInputBox.SliderTypes type)
+	{
+		public string Key { get; } = "Settings_SliderType_" + type.ToString();
+		public SliderInputBox.SliderTypes Type { get; } = type;
 	}
 }

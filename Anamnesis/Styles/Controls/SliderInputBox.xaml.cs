@@ -10,7 +10,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,6 +17,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using XivToolsWpf.DependencyProperties;
+using DrawPoint = System.Drawing.Point;
+using WindowsCursor = System.Windows.Forms.Cursor;
 
 /// <summary>
 /// Represents an interactive input box that allows the user to slide horizontally to change the value.
@@ -97,11 +98,11 @@ public partial class SliderInputBox : UserControl
 	public static readonly IBind<bool> EnableStepButtonsDp = Binder.Register<bool, SliderInputBox>(nameof(EnableStepButtons), BindMode.OneWay);
 
 	/// <summary>Dependency property for the slider type.</summary>
-	public static readonly IBind<SliderTypes> SliderTypeDp = Binder.Register<SliderTypes, SliderInputBox>(nameof(SliderType), BindMode.OneWay);
+	public static readonly IBind<SliderTypes> SliderTypeDp = Binder.Register<SliderTypes, SliderInputBox>(nameof(SliderType), OnSliderTypeChanged, BindMode.OneWay);
 
 	/// <summary>Dependency property for the visibility of the tick visualizer.</summary>
 	/// <remarks>Applies only to the standard slider mode.</remarks>
-	public static readonly IBind<bool> ShowTickVisualizerDp = Binder.Register<bool, SliderInputBox>(nameof(ShowTickVisualizer), OnShowTickVisualizerChanged, BindMode.OneWay);
+	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, SliderInputBox>(nameof(ShowSliderThumb), OnShowSliderThumbChanged, BindMode.OneWay);
 
 	/// <summary>Timer for the initial delay before the increase button starts repeating.</summary>
 	private readonly DispatcherTimer increaseButtonInitialDelayTimer;
@@ -147,7 +148,7 @@ public partial class SliderInputBox : UserControl
 		this.Suffix = string.Empty;
 		this.BorderColor = "#00000000";
 		this.SliderType = SliderTypes.Modern;
-		this.ShowTickVisualizer = false;
+		this.ShowSliderThumb = false;
 		this.TickRectangle.Visibility = Visibility.Collapsed;
 		this.SliderMode = SliderModes.Absolute;
 
@@ -394,7 +395,7 @@ public partial class SliderInputBox : UserControl
 	/// <summary>
 	/// Gets a value indicating whether to show the decrease and increase buttons.
 	/// </summary>
-	[DependsOn(nameof(IsMouseHovered), nameof(IsInputFieldActive))]
+	[DependsOn(nameof(IsMouseHovered), nameof(IsInputFieldActive), nameof(SliderType))]
 	public bool ShowStepButtons => this.EnableStepButtons && (this.IsMouseHovered || this.SliderType == SliderTypes.Classic) && !this.IsInputFieldActive;
 
 
@@ -402,15 +403,20 @@ public partial class SliderInputBox : UserControl
 	public SliderTypes SliderType
 	{
 		get => SliderTypeDp.Get(this);
-		set => SliderTypeDp.Set(this, value);
+		set
+		{
+			this.isInternalSet = true;
+			SliderTypeDp.Set(this, value);
+			this.isInternalSet = false;
+		}
 	}
 
 	/// <summary>Gets or sets a value indicating whether to show the tick visualizer.</summary>
 	/// <remarks>Applies only to the standard slider mode.</remarks>
-	public bool ShowTickVisualizer
+	public bool ShowSliderThumb
 	{
-		get => ShowTickVisualizerDp.Get(this);
-		set => ShowTickVisualizerDp.Set(this, value);
+		get => ShowSliderThumbDp.Get(this);
+		set => ShowSliderThumbDp.Set(this, value);
 	}
 
 	/// <summary>Handles changes to the slider value.</summary>
@@ -488,11 +494,26 @@ public partial class SliderInputBox : UserControl
 	}
 
 	/// <summary>
+	/// Handles changes to the slider type.
+	/// </summary>
+	/// <param name="sender">The sender.</param>
+	/// <param name="value">The new value.</param>
+	private static void OnSliderTypeChanged(SliderInputBox sender, SliderTypes value)
+	{
+		if (sender.isInternalSet)
+			return;
+
+		sender.UpdateTickPosition();
+		sender.SliderType = value;
+		sender.OnPropertyChanged(nameof(ShowStepButtons));
+	}
+
+	/// <summary>
 	/// Handles changes to the show tick visualizer property.
 	/// </summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="value">The new value.</param>
-	private static void OnShowTickVisualizerChanged(SliderInputBox sender, bool value)
+	private static void OnShowSliderThumbChanged(SliderInputBox sender, bool value)
 	{
 		if (sender.isInternalSet)
 			return;
@@ -540,7 +561,7 @@ public partial class SliderInputBox : UserControl
 						{
 							// Else, calculate the new value based on the tick position
 							double relativePosition = (this.startPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - (this.TickRectangle.Width / 2)) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - this.TickRectangle.Width);
-							decimal newValue = ((decimal)relativePosition * (this.Maximum ?? 0 - this.Minimum ?? 0)) + this.Minimum ?? 0;
+							decimal newValue = ((decimal)relativePosition * ((this.Maximum ?? 0) - (this.Minimum ?? 0))) + (this.Minimum ?? 0);
 
 							this.Value = this.Validate(newValue);
 							this.UpdateTickPosition();
@@ -588,15 +609,18 @@ public partial class SliderInputBox : UserControl
 				{
 					// Calculate the new value based on the tick position
 					double relativePosition = (currentPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - (this.TickRectangle.Width / 2)) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - this.TickRectangle.Width);
-					decimal newValue = ((decimal)relativePosition * (this.Maximum ?? 0 - this.Minimum ?? 0)) + (this.Minimum ?? 0);
+					decimal newValue = ((decimal)relativePosition * ((this.Maximum ?? 0) - (this.Minimum ?? 0))) + (this.Minimum ?? 0);
 
 					this.Value = this.Validate(newValue);
+
+					// Handle cursor overflow for classic slider type
+					this.HandleCursorOverflow();
 				}
 				else if (this.SliderMode == SliderModes.Relative)
 				{
 					if (diff.Length >= (double)DRAG_MIN_DISTANCE)
 					{
-						decimal delta = (decimal)diff.X * this.TickFrequency * SettingsService.Current.SliderSensitivity;
+						decimal delta = (decimal)diff.X * this.TickFrequency * (decimal)SettingsService.Current.SliderSensitivity;
 
 						if (Keyboard.IsKeyDown(Key.LeftShift))
 							delta *= KEY_MODIFIER_MULTIPLIER;
@@ -621,7 +645,7 @@ public partial class SliderInputBox : UserControl
 					this.isDragging = true;
 
 					// Adjust the value based on horizontal movement
-					decimal delta = (decimal)diff.X * this.TickFrequency * SettingsService.Current.SliderSensitivity;
+					decimal delta = (decimal)diff.X * this.TickFrequency * (decimal)SettingsService.Current.SliderSensitivity;
 
 					if (Keyboard.IsKeyDown(Key.LeftShift))
 						delta *= KEY_MODIFIER_MULTIPLIER;
@@ -632,7 +656,7 @@ public partial class SliderInputBox : UserControl
 					this.Value += delta;
 
 					// Restore the cursor position
-					SetCursorPos((int)this.originalMousePosition.X, (int)this.originalMousePosition.Y);
+					WindowsCursor.Position = new DrawPoint((int)this.originalMousePosition.X, (int)this.originalMousePosition.Y);
 				}
 			}
 		}
@@ -765,17 +789,6 @@ public partial class SliderInputBox : UserControl
 		this.decreaseButtonInitialDelayTimer.Start();
 	}
 
-	/// <summary>
-	/// Handles the preview mouse up event for the decrease button.
-	/// </summary>
-	/// <param name="sender">The sender.</param>
-	/// <param name="e">The event arguments.</param>
-	private void OnDecreaseButtonPreviewMouseUp(object sender, MouseButtonEventArgs e)
-	{
-		this.decreaseButtonInitialDelayTimer.Stop();
-		this.decreaseButtonRepeatTimer.Stop();
-	}
-
 	/// <summary>Handles the increase button click event.</summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="e">The event arguments.</param>
@@ -798,14 +811,16 @@ public partial class SliderInputBox : UserControl
 	}
 
 	/// <summary>
-	/// Handles the preview mouse up event for the increase button.
+	/// Handles the preview mouse up event for the UserControl.
 	/// </summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="e">The event arguments.</param>
-	private void OnIncreaseButtonPreviewMouseUp(object sender, MouseButtonEventArgs e)
+	private void OnPreviewMouseUp(object sender, MouseButtonEventArgs e)
 	{
 		this.increaseButtonInitialDelayTimer.Stop();
 		this.increaseButtonRepeatTimer.Stop();
+		this.decreaseButtonInitialDelayTimer.Stop();
+		this.decreaseButtonRepeatTimer.Stop();
 	}
 
 	/// <summary>Handles the mouse enter event for the input area.</summary>
@@ -967,8 +982,8 @@ public partial class SliderInputBox : UserControl
 	/// </summary>
 	private void UpdateTickPosition()
 	{
-		// Update visibility based on the ShowTickVisualizer property and IsClassicSliderMode
-		this.TickRectangle.Visibility = this.ShowTickVisualizer || this.SliderType == SliderTypes.Classic ? Visibility.Visible : Visibility.Collapsed;
+		// Update visibility based on the slider thumb property and IsClassicSliderMode
+		this.TickRectangle.Visibility = this.ShowSliderThumb || this.SliderType == SliderTypes.Classic ? Visibility.Visible : Visibility.Collapsed;
 
 		// Update the tick position based on the value
 		// Skip update if component is hidden
@@ -980,6 +995,28 @@ public partial class SliderInputBox : UserControl
 			double tickPosition = ((double)relativeValue * (this.InputArea.ActualWidth - this.TickRectangle.Width - (2 * TICK_VISUAL_OFFSET))) + halfTickWidth;
 
 			this.TickRectangle.Margin = new Thickness(tickPosition - halfTickWidth, 0, 0, 0);
+		}
+	}
+
+	/// <summary>
+	/// Handles the cursor overflow behavior for the classic slider type.
+	/// </summary>
+	private void HandleCursorOverflow()
+	{
+		if (this.SliderType == SliderTypes.Classic && this.OverflowBehavior == OverflowModes.Loop)
+		{
+			Point rightEdge = this.InputArea.PointToScreen(new Point(this.InputArea.ActualWidth - TICK_VISUAL_OFFSET, this.InputArea.ActualHeight / 2));
+			Point leftEdge = this.InputArea.PointToScreen(new Point(TICK_VISUAL_OFFSET, this.InputArea.ActualHeight / 2));
+
+			if (WindowsCursor.Position.X > rightEdge.X)
+			{
+				WindowsCursor.Position = new DrawPoint((int)leftEdge.X, (int)leftEdge.Y);
+			}
+
+			if (WindowsCursor.Position.X < leftEdge.X)
+			{
+				WindowsCursor.Position = new DrawPoint((int)rightEdge.X, (int)rightEdge.Y);
+			}
 		}
 	}
 
@@ -1052,8 +1089,4 @@ public partial class SliderInputBox : UserControl
 		FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), null);
 		Keyboard.ClearFocus();
 	}
-
-	[LibraryImport("user32.dll")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool SetCursorPos(int X, int Y);
 }

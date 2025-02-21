@@ -24,7 +24,7 @@
 		<StackPanel Grid.Row="0" HorizontalAlignment="Left" ToolTip="Right-Click an axis to lock rotation to it"
 					Orientation="Horizontal"
 					VerticalAlignment="Top">
-			<ToggleButton  
+			<ToggleButton 
 				IsEnabled="False"
 				Style="{StaticResource MaterialDesignActionToggleButton}"
 				Background="Transparent"
@@ -58,6 +58,8 @@
 			</materialDesign:ToggleButtonAssist.OnContent>
 		</ToggleButton>
 
-		<cm3:VectorEditorNew Grid.Row="1" VerticalAlignment="Top" Value="{Binding Euler}" LayoutStyle="Inline" Minimum="0" Maximum="360" DefaultValue="0" TickFrequency="{Binding TickFrequency}" Suffix="°" EnableStepButtons="False" DecimalPlaces="3" ColorMode="Rotation" OverflowBehavior="{Binding RotationOverflowBehavior, Mode=OneWay}"/>
+		<cm3:VectorEditorNew Grid.Row="1" VerticalAlignment="Top" Value="{Binding Euler}" LayoutStyle="Inline" Minimum="0" Maximum="360" DefaultValue="0" TickFrequency="{Binding TickFrequency, Mode=OneWay}"
+							 Suffix="°" EnableStepButtons="False" DecimalPlaces="3" ColorMode="Rotation" OverflowBehavior="{Binding RotationOverflowBehavior, Mode=OneWay}"
+							 SliderType="{Binding Settings.BoneRotationSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 	</Grid>
 </UserControl>
