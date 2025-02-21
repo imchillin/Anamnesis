@@ -25,7 +25,8 @@
 		<Style x:Key="SliderInputBoxStyle" TargetType="Border">
 			<Setter Property="Background" Value="#aa666666"/>
 			<Setter Property="CornerRadius" Value="4"/>
-			<Setter Property="BorderThickness" Value="1.5"/>
+			<Setter Property="Margin" Value="0, 1, 1, 1"/>
+			<Setter Property="BorderThickness" Value="3, 0, 0, 0"/>
 		</Style>
 
 		<Color x:Key="DisabledBackgroundColor">#44666666</Color>

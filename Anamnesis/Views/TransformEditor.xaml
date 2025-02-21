@@ -18,14 +18,14 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<controls:QuaternionEditor Grid.Row="0" Margin="0,3,0,3" Value="{Binding Rotation}" RootRotation="{Binding RootRotation, Mode=OneWay}" IsEnabled="{Binding CanRotate}"/>
+		<controls:QuaternionEditor Grid.Row="0" Margin="0, 0, 0, -3" Value="{Binding Rotation}" RootRotation="{Binding RootRotation, Mode=OneWay}" IsEnabled="{Binding CanRotate}"/>
 
 		<GroupBox Grid.Row="1" IsEnabled="{Binding CanTranslate}">
 			<GroupBox.Header>
 				<XivToolsWpf:TextBlock Key="Pose_Position"/>
 			</GroupBox.Header>
 			
-			<controls:VectorEditorNew Value="{Binding Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.01" DecimalPlaces="3" Margin="-9, 3, -2, 0" SliderMode="Relative"
+			<controls:VectorEditorNew Value="{Binding Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.01" DecimalPlaces="3" Margin="-9, 3, -2, -2" SliderMode="Relative"
 									  SliderType="{Binding Settings.BonePositionSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 		</GroupBox>
 
