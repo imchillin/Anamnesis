@@ -40,6 +40,11 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_WrapRotations", this.Input_Input_WrapRotations));
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_SliderSensitivity", this.Input_Input_SliderSensitivity));
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_ShowSliderThumb", this.Input_Input_ShowSliderThumb));
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_TimeAndWeatherSliderType", this.Input_Input_TimeAndWeatherSliderType));
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_CameraSliderType", this.Input_Input_CameraSliderType));
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_BoneRotationSliderType", this.Input_Input_BoneRotationSliderType));
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_BonePositionSliderType", this.Input_Input_BonePositionSliderType));
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_BoneScaleSliderType", this.Input_Input_BoneScaleSliderType));
 
 		// Set up 3D skeleton viewport category settings
 		this.SettingCategories["3D Skeleton Viewport"].Settings.Add(new Setting("Settings_ViewportPanSpeed", this.Input_3DViewport_PanSpeed));
