@@ -863,9 +863,6 @@ public partial class SliderInputBox : UserControl
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void OnMouseWheel(object sender, MouseWheelEventArgs e)
 	{
-		if (this.IsInputFieldActive)
-			return;
-
 		this.TickValue(e.Delta > 0);
 		e.Handled = true;
 	}
