@@ -127,6 +127,8 @@ public class Settings : INotifyPropertyChanged
 	public GizmoDragModes GizmoDragMode { get; set; } = GizmoDragModes.Linear;
 
 	public double SliderSensitivity { get; set; } = 1;
+	public double SliderPrecision { get; set; } = 3;
+	public bool SliderKeepInputOpenOnCommit { get; set; } = false;
 
 	public SliderInputBox.SliderTypes TimeAndWeatherSliderType { get; set; } = SliderInputBox.SliderTypes.Classic;
 	public SliderInputBox.SliderTypes CameraSliderType { get; set; } = SliderInputBox.SliderTypes.Modern;

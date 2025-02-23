@@ -54,7 +54,7 @@
 				</Button>
 
 				<cm3:VectorEditorNew Grid.Column="1" Value="{Binding CameraService.GPoseCamera.Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.05"
-									 DecimalPlaces="2" LayoutStyle="Standard" EnableStepButtons="True" SliderMode="Relative"
+									 DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" LayoutStyle="Standard" EnableStepButtons="True" SliderMode="Relative"
 									 SliderType="{Binding Settings.CameraSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 			</Grid>
 
@@ -79,32 +79,32 @@
 				</ToggleButton>
 
 				<cm3:Vector2DEditorNew Grid.Column="1" Value="{Binding CameraService.Camera.Angle, Converter={StaticResource Vec2DRad2Deg}}" LayoutStyle="Standard" Minimum="-180" Maximum="180" DefaultValue="0"
-									   TickFrequency="0.1" DecimalPlaces="2" EnableStepButtons="True" OverflowBehavior="Loop"
+									   TickFrequency="0.1" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" OverflowBehavior="Loop"
 									   SliderType="{Binding Settings.CameraSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 			</Grid>
 
 			<XivToolsWpf:TextBlock Key="Scene_Camera_Rotation" Grid.Row="3" Grid.Column="0" Style="{StaticResource Label}"/>
 
 			<cm3:SliderInputBox Grid.Row="3" Grid.Column="1" Margin="0, 0, 0, 2" Value="{Binding CameraService.Camera.Rotation, Converter={StaticResource Rad2Deg}}" Minimum="-180" Maximum="180" TickFrequency="0.1"
-								DefaultValue="0" DecimalPlaces="2" EnableStepButtons="True" OverflowBehavior="{Binding RotationOverflowBehavior, Mode=OneWay}"
+								DefaultValue="0" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" OverflowBehavior="{Binding RotationOverflowBehavior, Mode=OneWay}"
 								SliderType="{Binding Settings.CameraSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 
 			<XivToolsWpf:TextBlock Key="Scene_Camera_Pan" Grid.Row="4" Grid.Column="0" Style="{StaticResource Label}"/>
 
 			<cm3:Vector2DEditorNew Grid.Row="4" Grid.Column="1" Value="{Binding CameraService.Camera.Pan, Converter={StaticResource Vec2DRad2Deg}}" LayoutStyle="Standard" Minimum="-180" Maximum="180" DefaultValue="0"
-								   TickFrequency="0.1" DecimalPlaces="2" EnableStepButtons="True" OverflowBehavior="Loop"
+								   TickFrequency="0.1" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" OverflowBehavior="Loop"
 								   SliderType="{Binding Settings.CameraSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 
 			<XivToolsWpf:TextBlock Key="Scene_Camera_Zoom" Grid.Row="5" Grid.Column="0" Style="{StaticResource Label}"/>
 
 			<cm3:SliderInputBox Grid.Row="5" Grid.Column="1" Margin="0, 0, 0, 2" Value="{Binding CameraService.Camera.Zoom}" Minimum="{Binding CameraService.Camera.MinZoom}" Maximum="{Binding CameraService.Camera.MaxZoom}"
-								TickFrequency="0.01" DefaultValue="{Binding CameraService.Camera.MinZoom}" DecimalPlaces="2" EnableStepButtons="True" OverflowBehavior="Clamp"
+								TickFrequency="0.01" DefaultValue="{Binding CameraService.Camera.MinZoom}" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" OverflowBehavior="Clamp"
 								SliderType="{Binding Settings.CameraSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 
 			<XivToolsWpf:TextBlock Key="Scene_Camera_FoV" Grid.Row="6" Grid.Column="0" Style="{StaticResource Label}"/>
 
 			<cm3:SliderInputBox Grid.Row="6" Grid.Column="1" Value="{Binding CameraService.Camera.FieldOfView, Converter={StaticResource Rad2Deg}}" Minimum="-40" Maximum="100" TickFrequency="0.1"
-								DefaultValue="0" DecimalPlaces="2" EnableStepButtons="True" OverflowBehavior="Clamp"
+								DefaultValue="0" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" OverflowBehavior="Clamp"
 								SliderType="{Binding Settings.CameraSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 
 			<Menu Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right"

@@ -36,6 +36,8 @@
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
 					<Grid x:Name="Input_Input_GizmoDragMode" Grid.Row="0">
@@ -82,7 +84,43 @@
 									   TickFrequency="0.01"/>
 					</Grid>
 
-					<Grid x:Name="Input_Input_ShowSliderThumb" Grid.Row="3">
+					<Grid x:Name="Input_Input_SliderPrecision" Grid.Row="3">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_SliderPrecision" Style="{StaticResource Label}"/>
+						<XivToolsWPF:NumberBox Value="{Binding SettingsService.Settings.SliderPrecision}"
+							   Margin="6, 3"
+							   x:Name="SliderPrecisionSlider"
+							   Slider="Absolute"
+							   Grid.Column="1"
+							   Minimum="0"
+							   Maximum="6"
+							   TickFrequency="1"/>
+					</Grid>
+
+					<Grid x:Name="Input_Input_SliderKeepOpenOnCommit" Grid.Row="4">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<XivToolsWPF:TextBlock Grid.Column="0" Key="Settings_SliderKeepOpenOnCommit" Style="{StaticResource Label}"/>
+						<CheckBox IsChecked="{Binding SettingsService.Settings.SliderKeepInputOpenOnCommit}" Grid.Column="1" Margin="6, 3"/>
+
+						<TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 0, 6, 0">
+							<fa:IconBlock Icon="InfoCircle" FontSize="13"/>
+
+							<TextBlock.ToolTip>
+								<XivToolsWPF:TextBlock Key="Settings_SliderKeepOpenOnCommit_Tooltip"/>
+							</TextBlock.ToolTip>
+						</TextBlock>
+					</Grid>
+
+					<Grid x:Name="Input_Input_ShowSliderThumb" Grid.Row="5">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
@@ -101,7 +139,7 @@
 						</TextBlock>
 					</Grid>
 
-					<Grid x:Name="Input_Input_TimeAndWeatherSliderType" Grid.Row="4">
+					<Grid x:Name="Input_Input_TimeAndWeatherSliderType" Grid.Row="6">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
@@ -118,7 +156,7 @@
 						</ComboBox>
 					</Grid>
 
-					<Grid x:Name="Input_Input_CameraSliderType" Grid.Row="5">
+					<Grid x:Name="Input_Input_CameraSliderType" Grid.Row="7">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
@@ -135,7 +173,7 @@
 						</ComboBox>
 					</Grid>
 
-					<Grid x:Name="Input_Input_BoneRotationSliderType" Grid.Row="6">
+					<Grid x:Name="Input_Input_BoneRotationSliderType" Grid.Row="8">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
@@ -152,7 +190,7 @@
 						</ComboBox>
 					</Grid>
 
-					<Grid x:Name="Input_Input_BonePositionSliderType" Grid.Row="7">
+					<Grid x:Name="Input_Input_BonePositionSliderType" Grid.Row="9">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>
@@ -169,7 +207,7 @@
 						</ComboBox>
 					</Grid>
 
-					<Grid x:Name="Input_Input_BoneScaleSliderType" Grid.Row="8">
+					<Grid x:Name="Input_Input_BoneScaleSliderType" Grid.Row="10">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="{Binding LabelColumnWidth}"/>
 							<ColumnDefinition/>

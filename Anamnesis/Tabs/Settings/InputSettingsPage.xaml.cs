@@ -39,6 +39,8 @@ public partial class InputSettingsPage : UserControl, ISettingSection
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_GizmoDragMode", this.Input_Input_GizmoDragMode));
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_WrapRotations", this.Input_Input_WrapRotations));
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_SliderSensitivity", this.Input_Input_SliderSensitivity));
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_SliderPrecision", this.Input_Input_SliderPrecision));
+		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_SliderKeepOpenOnCommit", this.Input_Input_SliderKeepOpenOnCommit));
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_ShowSliderThumb", this.Input_Input_ShowSliderThumb));
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_TimeAndWeatherSliderType", this.Input_Input_TimeAndWeatherSliderType));
 		this.SettingCategories["Input"].Settings.Add(new Setting("Settings_CameraSliderType", this.Input_Input_CameraSliderType));

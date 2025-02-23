@@ -77,7 +77,7 @@ public partial class SliderInputBox : UserControl
 	public static readonly IBind<decimal?> MaxDp = Binder.Register<decimal?, SliderInputBox>(nameof(Maximum), OnMaximumChanged, BindMode.TwoWay);
 
 	/// <summary>Dependency property for the number of decimal places.</summary>
-	public static readonly IBind<int?> DecimalPlacesDp = Binder.Register<int?, SliderInputBox>(nameof(DecimalPlaces), BindMode.OneWay);
+	public static readonly IBind<int?> DecimalPlacesDp = Binder.Register<int?, SliderInputBox>(nameof(DecimalPlaces), OnDecimalPlacesChanged, BindMode.OneWay);
 
 	/// <summary>Dependency property for the slider mode.</summary>
 	public static readonly IBind<SliderModes> SliderModeDp = Binder.Register<SliderModes, SliderInputBox>(nameof(SliderMode), BindMode.OneWay);
@@ -225,7 +225,7 @@ public partial class SliderInputBox : UserControl
 	/// <summary>Gets or sets the slider value.</summary>
 	public decimal Value
 	{
-		get => ValueDp.Get(this);
+		get => this.RoundValue(ValueDp.Get(this));
 		set
 		{
 			// Don't allow the value to be set if the control is locked
@@ -251,8 +251,7 @@ public partial class SliderInputBox : UserControl
 	}
 
 	/// <summary>Gets the label text combining the value and suffix.</summary>
-
-	[DependsOn(nameof(Value), nameof(Suffix))]
+	[DependsOn(nameof(Value), nameof(Suffix), nameof(DecimalPlaces))]
 	public string Label => $"{this.FormatValue(this.Value)} {this.Suffix}";
 
 
@@ -325,7 +324,9 @@ public partial class SliderInputBox : UserControl
 		set
 		{
 			Debug.Assert(value >= 0, "You cannot set a negative number to the decimal places property");
+			this.isInternalSet = true;
 			DecimalPlacesDp.Set(this, value);
+			this.isInternalSet = false;
 			this.Value = Math.Round(this.Value, value ?? INT_ROUNDING);
 		}
 	}
@@ -478,6 +479,16 @@ public partial class SliderInputBox : UserControl
 		}
 
 		sender.Maximum = value;
+	}
+
+	private static void OnDecimalPlacesChanged(SliderInputBox sender, int? value)
+	{
+		if (sender.isInternalSet)
+			return;
+
+		Debug.Assert(value >= 0, "You cannot set a negative number to the decimal places property");
+		sender.DecimalPlaces = value;
+		sender.OnPropertyChanged(nameof(Label));
 	}
 
 	/// <summary>
@@ -739,13 +750,18 @@ public partial class SliderInputBox : UserControl
 	{
 		base.OnPreviewKeyDown(e);
 
-		if (this.IsInputFieldActive && e.Key == Key.Enter)
+		if (this.IsInputFieldActive && (e.Key == Key.Enter || e.Key == Key.Escape))
 		{
+			// Commit the changes
 			this.ParseInputField();
 
-			// Commit the changes
-			Keyboard.ClearFocus();
-			this.IsInputFieldActive = false;
+			// Close the input field
+			if (e.Key == Key.Escape || !SettingsService.Current.SliderKeepInputOpenOnCommit)
+			{
+				Keyboard.ClearFocus();
+				this.IsInputFieldActive = false;
+			}
+
 			e.Handled = true;
 		}
 
@@ -927,6 +943,13 @@ public partial class SliderInputBox : UserControl
 			this.TickValue(false);
 		}
 	}
+
+	/// <summary>
+	/// Rounds the value to the specified number of decimal places.
+	/// </summary>
+	/// <param name="val">The value to round.</param>
+	/// <returns>The rounded value.</returns>
+	private decimal RoundValue(decimal val) => Math.Round(val, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
 
 	/// <summary>
 	/// Validates and adjusts the new value based on the overflow behavior and decimal places.
