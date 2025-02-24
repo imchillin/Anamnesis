@@ -83,7 +83,7 @@ public partial class SliderInputBox : UserControl
 	public static readonly IBind<SliderModes> SliderModeDp = Binder.Register<SliderModes, SliderInputBox>(nameof(SliderMode), BindMode.OneWay);
 
 	/// <summary>Dependency property for the overflow behavior.</summary>
-	public static readonly IBind<OverflowModes> OverflowDp = Binder.Register<OverflowModes, SliderInputBox>(nameof(OverflowBehavior), BindMode.OneWay);
+	public static readonly IBind<OverflowModes> OverflowDp = Binder.Register<OverflowModes, SliderInputBox>(nameof(OverflowBehavior), OnOverflowBehaviorChanged, BindMode.OneWay);
 
 	/// <summary>Dependency property for the locked state.</summary>
 	public static readonly IBind<bool> LockedDp = Binder.Register<bool, SliderInputBox>(nameof(Locked), BindMode.OneWay);
@@ -349,21 +349,10 @@ public partial class SliderInputBox : UserControl
 		get => OverflowDp.Get(this);
 		set
 		{
-			if (value == OverflowModes.Clamp)
-			{
-				if (this.Minimum != null)
-					this.DecreaseButton.IsEnabled = this.Value > this.Minimum;
-
-				if (this.Maximum != null)
-					this.IncreaseButton.IsEnabled = this.Value < this.Maximum;
-			}
-			else
-			{
-				this.DecreaseButton.IsEnabled = true;
-				this.IncreaseButton.IsEnabled = true;
-			}
-
+			this.isInternalSet = true;
 			OverflowDp.Set(this, value);
+			this.RefreshStepButtonState();
+			this.isInternalSet = false;
 		}
 	}
 
@@ -396,8 +385,8 @@ public partial class SliderInputBox : UserControl
 	/// <summary>
 	/// Gets a value indicating whether to show the decrease and increase buttons.
 	/// </summary>
-	[DependsOn(nameof(IsMouseHovered), nameof(IsInputFieldActive), nameof(SliderType))]
-	public bool ShowStepButtons => this.EnableStepButtons && (this.IsMouseHovered || this.SliderType == SliderTypes.Classic) && !this.IsInputFieldActive;
+	[DependsOn(nameof(IsMouseHovered), nameof(IsInputFieldActive), nameof(SliderType), nameof(ShowSliderThumb))]
+	public bool ShowStepButtons => this.EnableStepButtons && (this.IsMouseHovered || this.ShowSliderThumb || this.SliderType == SliderTypes.Classic) && !this.IsInputFieldActive;
 
 
 	/// <summary>Gets or sets a value indicating whether the control is in Classic slider mode.</summary>
@@ -491,6 +480,15 @@ public partial class SliderInputBox : UserControl
 		sender.OnPropertyChanged(nameof(Label));
 	}
 
+	private static void OnOverflowBehaviorChanged(SliderInputBox sender, OverflowModes value)
+	{
+		if (sender.isInternalSet)
+			return;
+
+		sender.OverflowBehavior = value;
+		sender.RefreshStepButtonState();
+	}
+
 	/// <summary>
 	/// Handles changes to the suffix text.
 	/// </summary>
@@ -514,9 +512,8 @@ public partial class SliderInputBox : UserControl
 		if (sender.isInternalSet)
 			return;
 
-		sender.UpdateTickPosition();
-		sender.SliderType = value;
 		sender.OnPropertyChanged(nameof(ShowStepButtons));
+		sender.UpdateTickPosition();
 	}
 
 	/// <summary>
@@ -529,6 +526,7 @@ public partial class SliderInputBox : UserControl
 		if (sender.isInternalSet)
 			return;
 
+		sender.OnPropertyChanged(nameof(ShowStepButtons));
 		sender.UpdateTickPosition();
 	}
 
@@ -558,7 +556,7 @@ public partial class SliderInputBox : UserControl
 				if (this.SliderType == SliderTypes.Classic)
 				{
 					// Open the input field if the control key is held down
-					if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+					if (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt))
 					{
 						this.IsInputFieldActive = true;
 						this.InputField.Focus();
@@ -574,7 +572,7 @@ public partial class SliderInputBox : UserControl
 							double relativePosition = (this.startPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - (this.TickRectangle.Width / 2)) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - this.TickRectangle.Width);
 							decimal newValue = ((decimal)relativePosition * ((this.Maximum ?? 0) - (this.Minimum ?? 0))) + (this.Minimum ?? 0);
 
-							this.Value = this.Validate(newValue);
+							this.Value = newValue;
 							this.UpdateTickPosition();
 						}
 						else if (this.SliderMode == SliderModes.Relative)
@@ -622,7 +620,7 @@ public partial class SliderInputBox : UserControl
 					double relativePosition = (currentPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - (this.TickRectangle.Width / 2)) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - this.TickRectangle.Width);
 					decimal newValue = ((decimal)relativePosition * ((this.Maximum ?? 0) - (this.Minimum ?? 0))) + (this.Minimum ?? 0);
 
-					this.Value = this.Validate(newValue);
+					this.Value = newValue;
 
 					// Handle cursor overflow for classic slider type
 					this.HandleCursorOverflow();
@@ -639,7 +637,7 @@ public partial class SliderInputBox : UserControl
 						if (Keyboard.IsKeyDown(Key.LeftCtrl))
 							delta /= KEY_MODIFIER_MULTIPLIER;
 
-						this.Value = this.Validate((decimal)this.relativeSliderStart + delta);
+						this.Value = (decimal)this.relativeSliderStart + delta;
 					}
 				}
 			}
@@ -954,17 +952,11 @@ public partial class SliderInputBox : UserControl
 	/// <summary>
 	/// Validates and adjusts the new value based on the overflow behavior and decimal places.
 	/// </summary>
-	/// <param name="newVal">The new value to validate.</param>
+	/// <param name="val">The new value to validate.</param>
 	/// <returns>The validated value.</returns>
-	private decimal Validate(decimal newVal)
+	private decimal Validate(decimal val)
 	{
-		decimal val = this.Value;
-
-		// Round the value to the specified number of decimal places
-		val = Math.Round(newVal, this.DecimalPlaces ?? INT_ROUNDING, MidpointRounding.AwayFromZero);
-
-		// Note: Classic mode sliders do not support looping
-		if (this.OverflowBehavior == OverflowModes.Clamp || this.SliderType == SliderTypes.Classic)
+		if (this.OverflowBehavior == OverflowModes.Clamp)
 		{
 			decimal min = this.Minimum ?? decimal.MinValue;
 			decimal max = this.Maximum ?? decimal.MaxValue;
@@ -1025,8 +1017,8 @@ public partial class SliderInputBox : UserControl
 	{
 		if (this.SliderType == SliderTypes.Classic && this.OverflowBehavior == OverflowModes.Loop)
 		{
-			Point rightEdge = this.InputArea.PointToScreen(new Point(this.InputArea.ActualWidth - TICK_VISUAL_OFFSET, this.InputArea.ActualHeight / 2));
-			Point leftEdge = this.InputArea.PointToScreen(new Point(TICK_VISUAL_OFFSET, this.InputArea.ActualHeight / 2));
+			Point rightEdge = this.PointToScreen(new Point(this.DecreaseButton.ActualWidth + this.InputArea.ActualWidth - TICK_VISUAL_OFFSET - (this.TickRectangle.Width / 2) - 0.25, this.InputArea.ActualHeight / 2));
+			Point leftEdge = this.PointToScreen(new Point(this.DecreaseButton.ActualWidth + TICK_VISUAL_OFFSET + (this.TickRectangle.Width / 2) + 0.25, this.InputArea.ActualHeight / 2));
 
 			if (WindowsCursor.Position.X > rightEdge.X)
 			{
@@ -1065,6 +1057,25 @@ public partial class SliderInputBox : UserControl
 		}
 
 		this.InputField.Text = this.Value.ToString(CultureInfo.InvariantCulture);
+	}
+
+	/// <summary>
+	/// Enables or disables the step buttons based on the overflow behavior.
+	/// </summary>
+	private void RefreshStepButtonState()
+	{
+		if (this.OverflowBehavior == OverflowModes.Clamp)
+		{
+			if (this.Minimum != null)
+				this.DecreaseButton.IsEnabled = this.Value > this.Minimum;
+			if (this.Maximum != null)
+				this.IncreaseButton.IsEnabled = this.Value < this.Maximum;
+		}
+		else
+		{
+			this.DecreaseButton.IsEnabled = true;
+			this.IncreaseButton.IsEnabled = true;
+		}
 	}
 
 	/// <summary>

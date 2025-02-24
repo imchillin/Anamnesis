@@ -65,7 +65,7 @@
 				</Grid>
 
 				<Grid Visibility="{Binding IsInputFieldActive, Converter={StaticResource B2V}}">
-					<TextBox x:Name="InputField" Grid.Column="2" Grid.Row="0" Text="{Binding Value, Mode=TwoWay}" Margin="2" Style="{StaticResource SliderInputFieldStyle}" LostFocus="OnLostFocus"/>
+					<TextBox x:Name="InputField" Grid.Column="2" Grid.Row="0" Text="{Binding Value, Mode=TwoWay}" Margin="2.5, 2.5" Style="{StaticResource SliderInputFieldStyle}" LostFocus="OnLostFocus"/>
 				</Grid>
 			</Grid>
 
