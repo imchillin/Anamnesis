@@ -3,11 +3,13 @@
 
 namespace Anamnesis;
 
+using Anamnesis.Memory.Exceptions;
 using PropertyChanged;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,8 +25,10 @@ public abstract class ServiceBase<T> : IService, INotifyPropertyChanged
 	{
 		get
 		{
+			Debug.Assert(instance != null, $"Service {typeof(T)} was accessed before it was initialized.");
+
 			if (instance == null)
-				throw new Exception($"No service found: {typeof(T)}");
+				throw new ServiceNotFoundException(typeof(T));
 
 			return instance;
 		}

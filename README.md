@@ -13,7 +13,7 @@ We actively encourage people to contribute to the project with their forks to im
 ## Getting Started
 
 ### Prerequisites
-- [.NET 9.0 Desktop Runtime x64](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.1-windows-x64-installer) installed on your computer. Anamnesis will only work with 64-bit versions of Windows. Support will not be added for 32-bit versions of Windows (As Patch 6.15 Final Fantasy XIV [doesn't support 32 bit OS anymore](https://na.finalfantasyxiv.com/lodestone/news/detail/73031a839564edaca5f4bce18043b9b0e339b52a))
+- [.NET 9.0 Desktop Runtime x64](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-9.0.2-windows-x64-installer) installed on your computer. Anamnesis will only work with 64-bit versions of Windows. Support will not be added for 32-bit versions of Windows (As Patch 6.15 Final Fantasy XIV [doesn't support 32 bit OS anymore](https://na.finalfantasyxiv.com/lodestone/news/detail/73031a839564edaca5f4bce18043b9b0e339b52a))
 - Windows 10 or 11 (there are no plans to add support for older versions of Windows that [Microsoft or is not in turn supporting](https://www.microsoft.com/en-au/windows/windows-7-end-of-life-support-information), or other operating systems).
 
 ### Installation

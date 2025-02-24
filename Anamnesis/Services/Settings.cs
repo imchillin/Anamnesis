@@ -4,6 +4,7 @@
 namespace Anamnesis.Services;
 
 using Anamnesis.Keyboard;
+using Anamnesis.Styles.Controls;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -89,7 +90,11 @@ public class Settings : INotifyPropertyChanged
 				return;
 
 			this.enableAutoSave = value;
-			AutoSaveService.Instance?.RestartUpdateTask();
+
+			if (AutoSaveService.Exists)
+			{
+				AutoSaveService.Instance?.RestartUpdateTask();
+			}
 		}
 	}
 
@@ -110,12 +115,27 @@ public class Settings : INotifyPropertyChanged
 				value = MinAutoSaveIntervalMinutes;
 
 			this.autoSaveIntervalMinutes = value;
-			AutoSaveService.Instance?.RestartUpdateTask();
+
+			if (AutoSaveService.Exists)
+			{
+				AutoSaveService.Instance?.RestartUpdateTask();
+			}
 		}
 	}
 	public bool AutoSaveOnlyInGpose { get; set; } = true;
 
 	public GizmoDragModes GizmoDragMode { get; set; } = GizmoDragModes.Linear;
+
+	public double SliderSensitivity { get; set; } = 1;
+	public double SliderPrecision { get; set; } = 3;
+	public bool SliderKeepInputOpenOnCommit { get; set; } = false;
+
+	public SliderInputBox.SliderTypes TimeAndWeatherSliderType { get; set; } = SliderInputBox.SliderTypes.Classic;
+	public SliderInputBox.SliderTypes CameraSliderType { get; set; } = SliderInputBox.SliderTypes.Modern;
+	public SliderInputBox.SliderTypes BoneRotationSliderType { get; set; } = SliderInputBox.SliderTypes.Modern;
+	public SliderInputBox.SliderTypes BonePositionSliderType { get; set; } = SliderInputBox.SliderTypes.Modern;
+	public SliderInputBox.SliderTypes BoneScaleSliderType { get; set; } = SliderInputBox.SliderTypes.Modern;
+	public bool ShowSliderThumb { get; set; } = false;
 
 	public double WindowOpacity
 	{

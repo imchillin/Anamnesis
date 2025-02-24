@@ -56,6 +56,16 @@ public partial class VectorEditorNew : UserControl, INotifyPropertyChanged
 	/// <summary>Gets or sets the overflow behavior.</summary>
 	public static readonly IBind<SliderInputBox.OverflowModes> OverflowModeDp = Binder.Register<SliderInputBox.OverflowModes, VectorEditorNew>(nameof(OverflowBehavior));
 
+	/// <summary>Dependency property for the slider mode.</summary>
+	public static readonly IBind<SliderInputBox.SliderModes> SliderModeDp = Binder.Register<SliderInputBox.SliderModes, VectorEditorNew>(nameof(SliderMode), BindMode.OneWay);
+
+	/// <summary>Dependency property for the classic slider mode.</summary>
+	public static readonly IBind<SliderInputBox.SliderTypes> SliderTypeDp = Binder.Register<SliderInputBox.SliderTypes, VectorEditorNew>(nameof(SliderType), BindMode.OneWay);
+
+	/// <summary>Dependency property for the visibility of the tick visualizer.</summary>
+	/// <remarks>Applies only to the standard slider mode.</remarks>
+	public static readonly IBind<bool> ShowSliderThumbDp = Binder.Register<bool, VectorEditorNew>(nameof(ShowSliderThumb), BindMode.OneWay);
+
 	private bool lockChangedEvent = false;
 
 	/// <summary>
@@ -73,6 +83,9 @@ public partial class VectorEditorNew : UserControl, INotifyPropertyChanged
 		this.EnableStepButtons = true;
 		this.DecimalPlaces = 0;
 		this.OverflowBehavior = SliderInputBox.OverflowModes.Clamp;
+		this.SliderMode = SliderInputBox.SliderModes.Absolute;
+		this.SliderType = SliderInputBox.SliderTypes.Modern;
+		this.ShowSliderThumb = false;
 	}
 
 	/// <inheritdoc/>
@@ -221,6 +234,27 @@ public partial class VectorEditorNew : UserControl, INotifyPropertyChanged
 	{
 		get => OverflowModeDp.Get(this);
 		set => OverflowModeDp.Set(this, value);
+	}
+
+	/// <summary>Gets or sets the slider mode.</summary>
+	public SliderInputBox.SliderModes SliderMode
+	{
+		get => SliderModeDp.Get(this);
+		set => SliderModeDp.Set(this, value);
+	}
+
+	/// <summary>Gets or sets a value indicating whether the classic slider mode is enabled.</summary>
+	public SliderInputBox.SliderTypes SliderType
+	{
+		get => SliderTypeDp.Get(this);
+		set => SliderTypeDp.Set(this, value);
+	}
+
+	/// <summary>Gets or sets a value indicating whether the tick visualizer is shown.</summary>
+	public bool ShowSliderThumb
+	{
+		get => ShowSliderThumbDp.Get(this);
+		set => ShowSliderThumbDp.Set(this, value);
 	}
 
 	/// <summary>Gets the X-axis color based on the color mode.</summary>
