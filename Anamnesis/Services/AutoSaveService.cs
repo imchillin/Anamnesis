@@ -189,8 +189,13 @@ public class AutoSaveService : ServiceBase<AutoSaveService>
 		}
 		finally
 		{
+			var autoSaveDirectories = Array.Empty<string>();
+			if (Directory.Exists(baseDir))
+			{
+				autoSaveDirectories = Directory.GetDirectories(baseDir, "Autosave_*");
+			}
+
 			// If the number of auto-save directories exceeds the maximum, delete the oldest
-			var autoSaveDirectories = Directory.GetDirectories(baseDir, "Autosave_*");
 			if (autoSaveDirectories.Length > SettingsService.Current.AutoSaveFileCount)
 			{
 				// Order directories by creation time

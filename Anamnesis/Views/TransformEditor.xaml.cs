@@ -84,6 +84,8 @@ public partial class TransformEditor : UserControl, INotifyPropertyChanged
 		set => CanTranslateOverrideDp.Set(this, value);
 	}
 
+	public static Settings Settings => SettingsService.Current;
+
 	/// <summary>Gets the selected actor.</summary>
 	public ActorMemory? SelectedActor => this.currentActor;
 

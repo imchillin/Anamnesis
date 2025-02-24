@@ -823,6 +823,19 @@
   "Settings_GizmoDragMode": "Gizmo Drag Mode",
   "Settings_GizmoDragMode_Linear": "Linear",
   "Settings_GizmoDragMode_Circular": "Circular",
+  "Settings_SliderSensitivity": "Slider Sensitivity",
+  "Settings_SliderPrecision": "Slider Precision",
+  "Settings_SliderKeepOpenOnCommit": "Keep Input Open (Slider)",
+  "Settings_SliderKeepOpenOnCommit_Tooltip": "When enabled, the slider input remains open after committing changes.",
+  "Settings_SliderType_Modern": "Modern",
+  "Settings_SliderType_Classic": "Classic",
+  "Settings_ShowSliderThumb": "Show Slider Thumb",
+  "Settings_ShowSliderThumb_Tooltip": "This applies only to modern style sliders",
+  "Settings_TimeAndWeatherSliderType": "Time/Weather Slider Type",
+  "Settings_CameraSliderType": "Camera Slider Type",
+  "Settings_BoneRotationSliderType": "Bone Rotation Slider Type",
+  "Settings_BonePositionSliderType": "Bone Position Slider Type",
+  "Settings_BoneScaleSliderType": "Bone Scale Slider Type",
   "About_Title": "About Anamnesis",
   "About_Version_Header": "Version",
   "About_OpenSource_Header": "Proudly Open Source",
@@ -918,5 +931,6 @@
   "History_ClearHistory": "Clear History",
 
   "SliderInputBox_DecreaseButton": "Decrease the value by one step",
-  "SliderInputBox_IncreaseButton": "Increase the value by one step"
+  "SliderInputBox_IncreaseButton": "Increase the value by one step",
+  "SliderInputBox_Edit_Header": "Edit (Alt + Click)"
 }

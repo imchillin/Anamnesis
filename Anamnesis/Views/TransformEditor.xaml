@@ -18,22 +18,25 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<controls:QuaternionEditor Grid.Row="0" Margin="0,3,0,3" Value="{Binding Rotation}" RootRotation="{Binding RootRotation, Mode=OneWay}" IsEnabled="{Binding CanRotate}"/>
+		<controls:QuaternionEditor Grid.Row="0" Margin="0, 0, 0, -3" Value="{Binding Rotation}" RootRotation="{Binding RootRotation, Mode=OneWay}" IsEnabled="{Binding CanRotate}"/>
 
 		<GroupBox Grid.Row="1" IsEnabled="{Binding CanTranslate}">
 			<GroupBox.Header>
 				<XivToolsWpf:TextBlock Key="Pose_Position"/>
 			</GroupBox.Header>
-			
-			<controls:VectorEditorNew Value="{Binding Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.01" DecimalPlaces="3" Margin="-9, 3, -2, 0"/>
+
+			<controls:VectorEditorNew Value="{Binding Position}" Minimum="-4096" Maximum="4096" TickFrequency="0.01" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" Margin="-9, 3, -2, -2" SliderMode="Relative"
+									  SliderType="{Binding Settings.BonePositionSliderType, Mode=OneWay}" ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 		</GroupBox>
 
 		<GroupBox Grid.Row="2" IsEnabled="{Binding CanScale}">
 			<GroupBox.Header>
 				<XivToolsWpf:TextBlock Key="Pose_Scale"/>
 			</GroupBox.Header>
-			
-			<controls:VectorEditorNew Value="{Binding Scale}" LayoutStyle="Compact" Minimum="0" Maximum="10" DefaultValue="1" TickFrequency="0.01" DecimalPlaces="2" EnableStepButtons="True" CanLink="{Binding CanLinkScale, Mode=OneWay}" Linked="{Binding ScaleLinked, Mode=OneWay}" Margin="-3, 3, -2, 0"/>
+
+			<controls:VectorEditorNew Value="{Binding Scale}" LayoutStyle="Compact" Minimum="0" Maximum="10" DefaultValue="1" TickFrequency="0.01" DecimalPlaces="{Binding Settings.SliderPrecision, Mode=OneWay}" EnableStepButtons="True" SliderMode="Relative"
+									  CanLink="{Binding CanLinkScale, Mode=OneWay}" Linked="{Binding ScaleLinked, Mode=OneWay}" SliderType="{Binding Settings.BoneScaleSliderType, Mode=OneWay}" Margin="-3, 3, -2, 0"
+									  ShowSliderThumb="{Binding Settings.ShowSliderThumb, Mode=OneWay}"/>
 		</GroupBox>
 	</Grid>
 </UserControl>
