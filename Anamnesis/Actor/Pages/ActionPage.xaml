@@ -470,7 +470,7 @@
 						</controls:TransformEditor.CanTranslateOverride>
 					</controls:TransformEditor>
 
-					<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,-2,55">
+					<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,-2,46">
 						<XivToolsWpf:InfoControl.Visibility>
 							<MultiBinding Converter="{StaticResource MultiBoolAndToVisibility}">
 								<Binding Path="Actor.IsMotionEnabled"/>
