@@ -8,6 +8,8 @@ using System;
 
 public class ActorCustomizeMemory : MemoryBase
 {
+	private bool linkEyeColors;
+
 	public enum Genders : byte
 	{
 		Masculine = 0,
@@ -127,7 +129,18 @@ public class ActorCustomizeMemory : MemoryBase
 	}
 
 	[AlsoNotifyFor(nameof(LEyeColor), nameof(REyeColor))]
-	public bool LinkEyeColors { get; set; }
+	public bool LinkEyeColors
+	{
+		get => this.linkEyeColors;
+		set
+		{
+			this.linkEyeColors = value;
+
+			// Synchronize the eye colors
+			if (value)
+				this.REyeColor = this.LEyeColor;
+		}
+	}
 
 	[AlsoNotifyFor(nameof(LEyeColor))]
 	public byte MainEyeColor
