@@ -530,6 +530,23 @@ public partial class SliderInputBox : UserControl
 		sender.UpdateTickPosition();
 	}
 
+	/// <summary>
+	/// Applies the key modifier to the provided value.
+	/// </summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static decimal ApplyKeyModifiers(decimal value)
+	{
+		if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+			value *= KEY_MODIFIER_MULTIPLIER;
+
+		if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+			value /= KEY_MODIFIER_MULTIPLIER;
+
+		return value;
+	}
+
 	/// <summary>Handles the control's loaded event.</summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="e">The event arguments.</param>
@@ -630,14 +647,7 @@ public partial class SliderInputBox : UserControl
 					if (diff.Length >= (double)DRAG_MIN_DISTANCE)
 					{
 						decimal delta = (decimal)diff.X * this.TickFrequency * (decimal)SettingsService.Current.SliderSensitivity;
-
-						if (Keyboard.IsKeyDown(Key.LeftShift))
-							delta *= KEY_MODIFIER_MULTIPLIER;
-
-						if (Keyboard.IsKeyDown(Key.LeftCtrl))
-							delta /= KEY_MODIFIER_MULTIPLIER;
-
-						this.Value = (decimal)this.relativeSliderStart + delta;
+						this.Value = (decimal)this.relativeSliderStart + ApplyKeyModifiers(delta);
 					}
 				}
 			}
@@ -655,14 +665,7 @@ public partial class SliderInputBox : UserControl
 
 					// Adjust the value based on horizontal movement
 					decimal delta = (decimal)diff.X * this.TickFrequency * (decimal)SettingsService.Current.SliderSensitivity;
-
-					if (Keyboard.IsKeyDown(Key.LeftShift))
-						delta *= KEY_MODIFIER_MULTIPLIER;
-
-					if (Keyboard.IsKeyDown(Key.LeftCtrl))
-						delta /= KEY_MODIFIER_MULTIPLIER;
-
-					this.Value += delta;
+					this.Value += ApplyKeyModifiers(delta);
 
 					// Restore the cursor position
 					WindowsCursor.Position = new DrawPoint((int)this.originalMousePosition.X, (int)this.originalMousePosition.Y);
@@ -898,15 +901,7 @@ public partial class SliderInputBox : UserControl
 	/// <param name="increase">If set to <c>true</c> increases the value; otherwise, decreases it.</param>
 	private void TickValue(bool increase)
 	{
-		decimal delta = increase ? this.TickFrequency : -this.TickFrequency;
-
-		if (Keyboard.IsKeyDown(Key.LeftShift))
-			delta *= KEY_MODIFIER_MULTIPLIER;
-
-		if (Keyboard.IsKeyDown(Key.LeftCtrl))
-			delta /= KEY_MODIFIER_MULTIPLIER;
-
-		this.Value += delta;
+		this.Value += ApplyKeyModifiers(increase ? this.TickFrequency : -this.TickFrequency);
 	}
 
 	/// <summary>
