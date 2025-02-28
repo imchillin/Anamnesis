@@ -688,11 +688,11 @@ public partial class SliderInputBox : UserControl
 				this.InputField.SelectAll();
 			}
 
-			Mouse.OverrideCursor = this.IsMouseHovered && this.SliderType == SliderTypes.Modern ? Cursors.SizeWE : null;
+			this.UpdateMouseCursor();
 		}
 		else
 		{
-			Mouse.OverrideCursor = this.IsMouseHovered && this.SliderType == SliderTypes.Modern ? Cursors.SizeWE : null;
+			this.UpdateMouseCursor();
 			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(this.IsMouseHovered ? HOVER_BG_KEY : NORMAL_BG_KEY));
 		}
 
@@ -741,7 +741,7 @@ public partial class SliderInputBox : UserControl
 		this.IsInputFieldActive = false;
 
 		// Ensure that we clean up the cursor state changes if the mouse leaves the control
-		Mouse.OverrideCursor = this.IsMouseHovered && this.SliderType == SliderTypes.Modern ? Cursors.SizeWE : null;
+		this.UpdateMouseCursor();
 	}
 
 	/// <summary>Handles the preview key down event.</summary>
@@ -845,7 +845,8 @@ public partial class SliderInputBox : UserControl
 	/// <param name="e">The event arguments.</param>
 	private void OnInputAreaMouseEnter(object sender, MouseEventArgs e)
 	{
-		if (!this.IsInputFieldActive && this.SliderType == SliderTypes.Modern)
+		if (!this.IsInputFieldActive &&
+			(this.SliderType == SliderTypes.Modern || (this.SliderType == SliderTypes.Classic && this.SliderMode == SliderModes.Relative)))
 		{
 			Mouse.OverrideCursor = Cursors.SizeWE;
 		}
@@ -1071,6 +1072,15 @@ public partial class SliderInputBox : UserControl
 			this.DecreaseButton.IsEnabled = true;
 			this.IncreaseButton.IsEnabled = true;
 		}
+	}
+
+	/// <summary>
+	/// Refreshes the mouse cursor based on the current state.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void UpdateMouseCursor()
+	{
+		Mouse.OverrideCursor = (this.IsMouseHovered && (this.SliderType == SliderTypes.Modern || (this.SliderType == SliderTypes.Classic && this.SliderMode == SliderModes.Relative))) ? Cursors.SizeWE : null;
 	}
 
 	/// <summary>
