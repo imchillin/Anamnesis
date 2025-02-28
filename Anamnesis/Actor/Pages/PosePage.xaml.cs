@@ -689,12 +689,15 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			this.IsFlipping = true;
 			if (!this.Skeleton.HasSelection)
 			{
-				Bone? waistBone = this.Skeleton.GetBone("Waist");
-				Bone? lumbarBone = this.Skeleton.GetBone("SpineA");
-				this.FlipBone(waistBone);
-				this.FlipBone(lumbarBone);
-				waistBone?.ReadTransform(true);
-				lumbarBone?.ReadTransform(true);
+				if (this.Skeleton.GetBone("n_hara") is Bone abdomenBone)
+				{
+					this.FlipBone(abdomenBone);
+					abdomenBone.ReadTransform(true);
+				}
+				else
+				{
+					Log.Warning("Could not find abdomen bone");
+				}
 			}
 			else
 			{
