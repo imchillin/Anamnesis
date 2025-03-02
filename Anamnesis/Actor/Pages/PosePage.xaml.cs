@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using XivToolsWpf;
 using XivToolsWpf.Math3D.Extensions;
 using CmQuaternion = System.Numerics.Quaternion;
@@ -307,7 +308,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			if (!this.PoseService.IsEnabled)
 				this.OnClearClicked(null, null);
 
-			BoneViewManager.Instance.Refresh();
+			Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, BoneViewManager.Instance.Refresh);
 		}
 	}
 
@@ -689,12 +690,15 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			this.IsFlipping = true;
 			if (!this.Skeleton.HasSelection)
 			{
-				Bone? waistBone = this.Skeleton.GetBone("Waist");
-				Bone? lumbarBone = this.Skeleton.GetBone("SpineA");
-				this.FlipBone(waistBone);
-				this.FlipBone(lumbarBone);
-				waistBone?.ReadTransform(true);
-				lumbarBone?.ReadTransform(true);
+				if (this.Skeleton.GetBone("n_hara") is Bone abdomenBone)
+				{
+					this.FlipBone(abdomenBone);
+					abdomenBone.ReadTransform(true);
+				}
+				else
+				{
+					Log.Warning("Could not find abdomen bone");
+				}
 			}
 			else
 			{

@@ -20,4 +20,19 @@ public static class UrlUtility
 			Log.Error(ex, "Failed to navigate to url");
 		}
 	}
+
+	/// <summary>
+	/// Checks if a path is a URL.
+	/// </summary>
+	/// <param name="path">Path to check.</param>
+	/// <returns>true if its a URL matching UriSchemeHttp or UriSchemeHttps, false otherwise.</returns>
+	public static bool IsUrl(string path) {
+		if (Uri.TryCreate(path, UriKind.Absolute, out Uri? uriResult))
+		{
+			return uriResult?.Scheme == Uri.UriSchemeHttp || uriResult?.Scheme == Uri.UriSchemeHttps;
+		}
+
+		return false;
+	}
+
 }

@@ -61,6 +61,12 @@ public partial class SliderInputBox : UserControl
 	/// <summary>Constant for floating-point number rounding to a whole number.</summary>
 	const int INT_ROUNDING = 0;
 
+	/// <summary>The width of the slider thumb rectangle.</summary>
+	const double TICK_RECT_WIDTH = 10.0;
+
+	/// <summary>The half-width of the slider thumb rectangle.</summary>
+	const double TICK_RECT_HALF_WIDTH = TICK_RECT_WIDTH / 2;
+
 	/// <summary>Dependency property for the slider value.</summary>
 	public static readonly IBind<decimal> ValueDp = Binder.Register<decimal, SliderInputBox>(nameof(Value), OnValueChanged, BindMode.TwoWay);
 
@@ -221,6 +227,9 @@ public partial class SliderInputBox : UserControl
 		/// </summary>
 		Classic
 	}
+
+	/// <summary>Gets the width of the tick rectangle.</summary>
+	public static double TickRectangleWidth => TICK_RECT_WIDTH;
 
 	/// <summary>Gets or sets the slider value.</summary>
 	public decimal Value
@@ -388,7 +397,6 @@ public partial class SliderInputBox : UserControl
 	[DependsOn(nameof(IsMouseHovered), nameof(IsInputFieldActive), nameof(SliderType), nameof(ShowSliderThumb))]
 	public bool ShowStepButtons => this.EnableStepButtons && (this.IsMouseHovered || this.ShowSliderThumb || this.SliderType == SliderTypes.Classic) && !this.IsInputFieldActive;
 
-
 	/// <summary>Gets or sets a value indicating whether the control is in Classic slider mode.</summary>
 	public SliderTypes SliderType
 	{
@@ -418,9 +426,7 @@ public partial class SliderInputBox : UserControl
 			return;
 
 		sender.Value = sender.Validate(val);
-
 		sender.UpdateTickPosition();
-
 		sender.OnPropertyChanged(nameof(Label));
 	}
 
@@ -451,6 +457,7 @@ public partial class SliderInputBox : UserControl
 		}
 
 		sender.Minimum = value;
+		sender.UpdateTickPosition();
 	}
 
 	/// <summary>Handles changes to the maximum value.</summary>
@@ -468,6 +475,7 @@ public partial class SliderInputBox : UserControl
 		}
 
 		sender.Maximum = value;
+		sender.UpdateTickPosition();
 	}
 
 	private static void OnDecimalPlacesChanged(SliderInputBox sender, int? value)
@@ -530,6 +538,23 @@ public partial class SliderInputBox : UserControl
 		sender.UpdateTickPosition();
 	}
 
+	/// <summary>
+	/// Applies the key modifier to the provided value.
+	/// </summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static decimal ApplyKeyModifiers(decimal value)
+	{
+		if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+			value *= KEY_MODIFIER_MULTIPLIER;
+
+		if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+			value /= KEY_MODIFIER_MULTIPLIER;
+
+		return value;
+	}
+
 	/// <summary>Handles the control's loaded event.</summary>
 	/// <param name="sender">The sender.</param>
 	/// <param name="e">The event arguments.</param>
@@ -569,7 +594,7 @@ public partial class SliderInputBox : UserControl
 						if (this.SliderMode == SliderModes.Absolute)
 						{
 							// Else, calculate the new value based on the tick position
-							double relativePosition = (this.startPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - (this.TickRectangle.Width / 2)) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - this.TickRectangle.Width);
+							double relativePosition = (this.startPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
 							decimal newValue = ((decimal)relativePosition * ((this.Maximum ?? 0) - (this.Minimum ?? 0))) + (this.Minimum ?? 0);
 
 							this.Value = newValue;
@@ -617,7 +642,7 @@ public partial class SliderInputBox : UserControl
 				if (this.SliderMode == SliderModes.Absolute)
 				{
 					// Calculate the new value based on the tick position
-					double relativePosition = (currentPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - (this.TickRectangle.Width / 2)) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - this.TickRectangle.Width);
+					double relativePosition = (currentPoint.X - this.DecreaseButton.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH) / (this.InputArea.ActualWidth - (2 * TICK_VISUAL_OFFSET) - TICK_RECT_WIDTH);
 					decimal newValue = ((decimal)relativePosition * ((this.Maximum ?? 0) - (this.Minimum ?? 0))) + (this.Minimum ?? 0);
 
 					this.Value = newValue;
@@ -630,14 +655,7 @@ public partial class SliderInputBox : UserControl
 					if (diff.Length >= (double)DRAG_MIN_DISTANCE)
 					{
 						decimal delta = (decimal)diff.X * this.TickFrequency * (decimal)SettingsService.Current.SliderSensitivity;
-
-						if (Keyboard.IsKeyDown(Key.LeftShift))
-							delta *= KEY_MODIFIER_MULTIPLIER;
-
-						if (Keyboard.IsKeyDown(Key.LeftCtrl))
-							delta /= KEY_MODIFIER_MULTIPLIER;
-
-						this.Value = (decimal)this.relativeSliderStart + delta;
+						this.Value = (decimal)this.relativeSliderStart + ApplyKeyModifiers(delta);
 					}
 				}
 			}
@@ -655,14 +673,7 @@ public partial class SliderInputBox : UserControl
 
 					// Adjust the value based on horizontal movement
 					decimal delta = (decimal)diff.X * this.TickFrequency * (decimal)SettingsService.Current.SliderSensitivity;
-
-					if (Keyboard.IsKeyDown(Key.LeftShift))
-						delta *= KEY_MODIFIER_MULTIPLIER;
-
-					if (Keyboard.IsKeyDown(Key.LeftCtrl))
-						delta /= KEY_MODIFIER_MULTIPLIER;
-
-					this.Value += delta;
+					this.Value += ApplyKeyModifiers(delta);
 
 					// Restore the cursor position
 					WindowsCursor.Position = new DrawPoint((int)this.originalMousePosition.X, (int)this.originalMousePosition.Y);
@@ -685,11 +696,11 @@ public partial class SliderInputBox : UserControl
 				this.InputField.SelectAll();
 			}
 
-			Mouse.OverrideCursor = this.IsMouseHovered && this.SliderType == SliderTypes.Modern ? Cursors.SizeWE : null;
+			this.UpdateMouseCursor();
 		}
 		else
 		{
-			Mouse.OverrideCursor = this.IsMouseHovered && this.SliderType == SliderTypes.Modern ? Cursors.SizeWE : null;
+			this.UpdateMouseCursor();
 			this.ContentArea.Background = new SolidColorBrush((Color)this.FindResource(this.IsMouseHovered ? HOVER_BG_KEY : NORMAL_BG_KEY));
 		}
 
@@ -738,7 +749,7 @@ public partial class SliderInputBox : UserControl
 		this.IsInputFieldActive = false;
 
 		// Ensure that we clean up the cursor state changes if the mouse leaves the control
-		Mouse.OverrideCursor = this.IsMouseHovered && this.SliderType == SliderTypes.Modern ? Cursors.SizeWE : null;
+		this.UpdateMouseCursor();
 	}
 
 	/// <summary>Handles the preview key down event.</summary>
@@ -842,7 +853,8 @@ public partial class SliderInputBox : UserControl
 	/// <param name="e">The event arguments.</param>
 	private void OnInputAreaMouseEnter(object sender, MouseEventArgs e)
 	{
-		if (!this.IsInputFieldActive && this.SliderType == SliderTypes.Modern)
+		if (!this.IsInputFieldActive &&
+			(this.SliderType == SliderTypes.Modern || (this.SliderType == SliderTypes.Classic && this.SliderMode == SliderModes.Relative)))
 		{
 			Mouse.OverrideCursor = Cursors.SizeWE;
 		}
@@ -898,15 +910,7 @@ public partial class SliderInputBox : UserControl
 	/// <param name="increase">If set to <c>true</c> increases the value; otherwise, decreases it.</param>
 	private void TickValue(bool increase)
 	{
-		decimal delta = increase ? this.TickFrequency : -this.TickFrequency;
-
-		if (Keyboard.IsKeyDown(Key.LeftShift))
-			delta *= KEY_MODIFIER_MULTIPLIER;
-
-		if (Keyboard.IsKeyDown(Key.LeftCtrl))
-			delta /= KEY_MODIFIER_MULTIPLIER;
-
-		this.Value += delta;
+		this.Value += ApplyKeyModifiers(increase ? this.TickFrequency : -this.TickFrequency);
 	}
 
 	/// <summary>
@@ -1003,10 +1007,9 @@ public partial class SliderInputBox : UserControl
 		{
 			decimal range = (decimal)(this.Maximum - this.Minimum);
 			decimal relativeValue = (decimal)((this.Value - this.Minimum) / range);
-			double halfTickWidth = this.TickRectangle.Width / 2;
-			double tickPosition = ((double)relativeValue * (this.InputArea.ActualWidth - this.TickRectangle.Width - (2 * TICK_VISUAL_OFFSET))) + halfTickWidth;
+			double tickPosition = ((double)relativeValue * (this.InputArea.ActualWidth - TICK_RECT_WIDTH - (2 * TICK_VISUAL_OFFSET))) + TICK_RECT_HALF_WIDTH;
 
-			this.TickRectangle.Margin = new Thickness(tickPosition - halfTickWidth, 0, 0, 0);
+			this.TickRectangle.Margin = new Thickness(tickPosition - TICK_RECT_HALF_WIDTH, 0, 0, 0);
 		}
 	}
 
@@ -1017,8 +1020,8 @@ public partial class SliderInputBox : UserControl
 	{
 		if (this.SliderType == SliderTypes.Classic && this.OverflowBehavior == OverflowModes.Loop)
 		{
-			Point rightEdge = this.PointToScreen(new Point(this.DecreaseButton.ActualWidth + this.InputArea.ActualWidth - TICK_VISUAL_OFFSET - (this.TickRectangle.Width / 2) - 0.25, this.InputArea.ActualHeight / 2));
-			Point leftEdge = this.PointToScreen(new Point(this.DecreaseButton.ActualWidth + TICK_VISUAL_OFFSET + (this.TickRectangle.Width / 2) + 0.25, this.InputArea.ActualHeight / 2));
+			Point rightEdge = this.PointToScreen(new Point(this.DecreaseButton.ActualWidth + this.InputArea.ActualWidth - TICK_VISUAL_OFFSET - TICK_RECT_HALF_WIDTH - 0.25, this.InputArea.ActualHeight / 2));
+			Point leftEdge = this.PointToScreen(new Point(this.DecreaseButton.ActualWidth + TICK_VISUAL_OFFSET + TICK_RECT_HALF_WIDTH + 0.25, this.InputArea.ActualHeight / 2));
 
 			if (WindowsCursor.Position.X > rightEdge.X)
 			{
@@ -1079,6 +1082,15 @@ public partial class SliderInputBox : UserControl
 	}
 
 	/// <summary>
+	/// Refreshes the mouse cursor based on the current state.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void UpdateMouseCursor()
+	{
+		Mouse.OverrideCursor = (this.IsMouseHovered && (this.SliderType == SliderTypes.Modern || (this.SliderType == SliderTypes.Classic && this.SliderMode == SliderModes.Relative))) ? Cursors.SizeWE : null;
+	}
+
+	/// <summary>
 	/// Handles the context menu opening event to open the input field.
 	/// </summary>
 	/// <param name="sender">The sender.</param>
@@ -1088,6 +1100,17 @@ public partial class SliderInputBox : UserControl
 		this.IsInputFieldActive = true;
 		this.InputField.Focus();
 		this.InputField.SelectAll();
+	}
+
+	/// <summary>
+	/// Handles the input field size changed event to update the tick position.
+	/// </summary>
+	/// <param name="sender">The sender.</param>
+	/// <param name="e">The event arguments.</param>
+	private void OnInputFieldSizeChanged(object sender, SizeChangedEventArgs e)
+	{
+		// Wait for the layout to fully load before updating the tick position
+		this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(this.UpdateTickPosition));
 	}
 
 	/// <summary>
