@@ -383,7 +383,8 @@ public class FileService : ServiceBase<FileService>
 				using HttpClient client = new();
 				HttpResponseMessage result = await client.GetAsync(url);
 
-				if (!result.IsSuccessStatusCode) {
+				if (!result.IsSuccessStatusCode)
+				{
 					Log.Verbose($"Failed to cache data from url: {url}. Status code: {result.StatusCode}");
 					return url;
 				}
@@ -424,17 +425,23 @@ public class FileService : ServiceBase<FileService>
 	public static async Task<bool> VerifyImageIntegrity(string path)
 	{
 
-		if (!File.Exists(path)) {
+		if (!File.Exists(path))
+		{
 			return false;
 		}
 
-		try {
+		try
+		{
 			byte[] imageData = await File.ReadAllBytesAsync(path);
 			using var ms = new MemoryStream(imageData);
+
 			// 'validateImageData' will ensure the image data is properly validated.
 			using var img = Image.FromStream(ms, useEmbeddedColorManagement: false, validateImageData: true);
+
 			return true;
-		} catch {
+		}
+		catch
+		{
 			// If an exception is thrown, the file is either not an image or is corrupted.
 			return false;
 		}

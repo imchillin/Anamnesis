@@ -194,8 +194,6 @@ public partial class Gallery : UserControl
 			}
 		}
 
-
-
 		await Dispatch.MainThread();
 
 		if (!valid)
