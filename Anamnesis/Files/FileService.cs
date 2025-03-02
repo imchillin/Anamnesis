@@ -424,7 +424,6 @@ public class FileService : ServiceBase<FileService>
 	/// <returns>true if the image is Valid. false if not.</returns>
 	public static async Task<bool> VerifyImageIntegrity(string path)
 	{
-
 		if (!File.Exists(path))
 		{
 			return false;
@@ -445,7 +444,6 @@ public class FileService : ServiceBase<FileService>
 			// If an exception is thrown, the file is either not an image or is corrupted.
 			return false;
 		}
-
 	}
 
 	/// <summary>

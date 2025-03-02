@@ -178,8 +178,13 @@ public partial class Gallery : UserControl
 				if (!UrlUtility.IsUrl(imagePath) && !FileService.VerifyImageIntegrity(imagePath).Result)
 				{
 					Log.Warning($"Failed to Verify Gallery Image, attempting to delete: {imagePath}");
+
 					if (File.Exists(imagePath))
+					{
+						File.SetAttributes(imagePath, FileAttributes.Normal);
 						File.Delete(imagePath);
+					}
+
 					valid = false;
 				}
 				else
