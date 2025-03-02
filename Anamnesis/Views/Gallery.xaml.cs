@@ -159,15 +159,33 @@ public partial class Gallery : UserControl
 
 		await Dispatch.NonUiThread();
 
-		string imagePath = entry.Url;
+		string imagePath = entry.Thumbnail ?? entry.Url;
 		valid = true;
 
 		if (string.IsNullOrEmpty(SettingsService.Current.GalleryDirectory))
 		{
 			try
 			{
-				string url = entry.Thumbnail ?? entry.Url;
-				imagePath = await FileService.CacheRemoteImage(url);
+				imagePath = await FileService.CacheRemoteImage(imagePath);
+
+				// If CacheRemoteImage returned the Thumbnail URL, that means it was present but the download failed. Attempt to download full URL.
+				if (imagePath.Equals(entry.Thumbnail))
+				{
+					Log.Verbose("Failed to load Image from Thumbnail, attemtping full URL.");
+					imagePath = await FileService.CacheRemoteImage(entry.Url);
+				}
+
+				if (!UrlUtility.IsUrl(imagePath) && !FileService.VerifyImageIntegrity(imagePath).Result)
+				{
+					Log.Warning($"Failed to Verify Gallery Image, attempting to delete: {imagePath}");
+					if (File.Exists(imagePath))
+						File.Delete(imagePath);
+					valid = false;
+				}
+				else
+				{
+					Log.Verbose($"Successfully Loaded Valid Image {imagePath}");
+				}
 			}
 			catch (Exception ex)
 			{
@@ -175,6 +193,8 @@ public partial class Gallery : UserControl
 				valid = false;
 			}
 		}
+
+
 
 		await Dispatch.MainThread();
 

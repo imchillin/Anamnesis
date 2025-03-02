@@ -13,6 +13,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -381,6 +382,12 @@ public class FileService : ServiceBase<FileService>
 			{
 				using HttpClient client = new();
 				HttpResponseMessage result = await client.GetAsync(url);
+
+				if (!result.IsSuccessStatusCode) {
+					Log.Verbose($"Failed to cache data from url: {url}. Status code: {result.StatusCode}");
+					return url;
+				}
+
 				Stream responseStream = await result.Content.ReadAsStreamAsync();
 
 				using FileStream fileStream = new FileStream(localFile, FileMode.Create, FileAccess.Write);
@@ -403,10 +410,35 @@ public class FileService : ServiceBase<FileService>
 	/// </summary>
 	public static async Task<string> CacheRemoteImage(string url)
 	{
-		Uri uri = new Uri(url);
+		Uri uri = new(url);
 		string imagePath = "ImageCache/" + HashUtility.GetHashString(url) + Path.GetExtension(uri.Segments[uri.Segments.Length - 1]);
 
 		return await CacheRemoteFile(url, imagePath);
+	}
+
+	/// <summary>
+	/// Verifies the integrity of an image file.
+	/// </summary>
+	/// <param name="path">The Path to the Image to be tested.</param>
+	/// <returns>true if the image is Valid. false if not.</returns>
+	public static async Task<bool> VerifyImageIntegrity(string path)
+	{
+
+		if (!File.Exists(path)) {
+			return false;
+		}
+
+		try {
+			byte[] imageData = await File.ReadAllBytesAsync(path);
+			using var ms = new MemoryStream(imageData);
+			// 'validateImageData' will ensure the image data is properly validated.
+			using var img = Image.FromStream(ms, useEmbeddedColorManagement: false, validateImageData: true);
+			return true;
+		} catch {
+			// If an exception is thrown, the file is either not an image or is corrupted.
+			return false;
+		}
+
 	}
 
 	/// <summary>
