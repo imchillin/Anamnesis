@@ -3,15 +3,15 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using System.Collections.Generic;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Lumina.Data;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
+using System.Collections.Generic;
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("TerritoryType", 0x5baa595e)]
+[Sheet("TerritoryType", 0x77b34bbb)]
 public class Territory : ExcelRow
 {
 	private static readonly HashSet<uint> HousingTerritories = new()

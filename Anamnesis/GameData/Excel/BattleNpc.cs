@@ -3,7 +3,6 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using System;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
@@ -11,10 +10,10 @@ using Lumina;
 using Lumina.Data;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
-
+using System;
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("BNpcBase", 0xb8cbad27)]
+[Sheet("BNpcBase", 0xd5d82616)]
 public class BattleNpc : ExcelRow, INpcBase
 {
 	private string? name;
