@@ -154,7 +154,7 @@
 
 
 						<!-- Transform editor -->
-						<Grid Grid.Row="2" Grid.ColumnSpan="2" IsEnabled="{Binding GposeService.IsGpose, Converter={StaticResource B2V}}">
+						<Grid Grid.Row="2" Grid.ColumnSpan="2" IsEnabled="{Binding GposeService.IsGpose}">
 							<controls:TransformEditor Skeleton="{Binding Skeleton, Mode=OneWay}"/>
 
 							<XivToolsWpf:InfoControl Key="Pose_WarningNotFrozen" Margin="0,0,0,46">

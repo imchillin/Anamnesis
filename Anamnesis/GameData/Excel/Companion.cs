@@ -11,7 +11,7 @@ using Lumina.Excel;
 
 using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("Companion", 0x776048c3)]
+[Sheet("Companion", 0xeaeebef0)]
 public class Companion : ExcelRow, INpcBase
 {
 	private string? name;
@@ -40,7 +40,7 @@ public class Companion : ExcelRow, INpcBase
 		this.name = parser.ReadString(0);
 		this.ModelCharaRow = (uint)parser.ReadColumn<ushort>(8);
 		////Scale = parser.ReadColumn<byte>(9);
-		this.Icon = parser.ReadImageReference<ushort>(26);
+		this.Icon = parser.ReadImageReference<ushort>(28);
 	}
 
 	public INpcAppearance? GetAppearance()
