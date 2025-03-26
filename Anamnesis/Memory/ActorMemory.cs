@@ -73,7 +73,7 @@ public class ActorMemory : ActorBasicMemory
 	[Bind(0x09B0)] public AnimationMemory? Animation { get; set; }
 	[Bind(0x19C8)] public byte Voice { get; set; }
 	[Bind(0x1AA8, BindFlags.ActorRefresh)] public int ModelType { get; set; }
-	[Bind(0x1B14)] public bool IsMotionDisabled { get; set; } // TODO: Incorrect?
+	[Bind(0x1B14)] public bool IsMotionDisabled { get; set; }
 	[Bind(0x2258)] public float Transparency { get; set; }
 	[Bind(0x22CC)] public byte CharacterModeRaw { get; set; }
 	[Bind(0x22CD)] public byte CharacterModeInput { get; set; }

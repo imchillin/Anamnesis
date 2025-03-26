@@ -15,5 +15,5 @@ public class SkeletonMemory : ArrayMemory<PartialSkeletonMemory, ushort>
 	public override int LengthOffset => 0x050;
 
 	/// <inheritdoc/>
-	public override int ElementSize => 0x220;
+	public override int ElementSize => 0x230;
 }
