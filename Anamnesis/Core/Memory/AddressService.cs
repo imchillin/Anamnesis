@@ -104,7 +104,7 @@ public class AddressService : ServiceBase<AddressService>
 				throw new Exception("Failed to read gpose address");
 
 			// CMTools CamX offset
-			address += 0xA0;
+			address += 0x90;
 			return address;
 		}
 	}
