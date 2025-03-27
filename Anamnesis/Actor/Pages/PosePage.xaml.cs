@@ -308,7 +308,7 @@ public partial class PosePage : UserControl, INotifyPropertyChanged
 			if (!this.PoseService.IsEnabled)
 				this.OnClearClicked(null, null);
 
-			Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, BoneViewManager.Instance.Refresh);
+			Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, BoneViewManager.Instance.Refresh);
 		}
 	}
 
