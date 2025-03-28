@@ -33,7 +33,7 @@ public class Glasses : ExcelRow
 		}
 		else
 		{
-			this.Name = parser.ReadString(13) ?? $"Glasses #{this.RowId}";
+			this.Name = parser.ReadString(13) ?? string.Empty;
 			this.Description = parser.ReadString(12) ?? string.Empty;
 			this.Icon = parser.ReadImageReference<int>(2);
 		}
