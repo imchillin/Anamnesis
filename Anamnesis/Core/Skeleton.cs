@@ -16,6 +16,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Represents a skeleton of hierarchically-parented bones of an actor that can be posed.
@@ -40,6 +41,11 @@ public class Skeleton : INotifyPropertyChanged
 		{ "HairAutoB", new("b", "j_kami_b") },				// Hair, Back Down
 		{ "HairFront", new("f", string.Empty) },			// Hair, Front (Custom Bone Name)
 	};
+
+	/// <summary>
+	/// Maximum number of attempts to retry accessing bone array memory.
+	/// </summary>
+	private const uint MaxReadRetryAttempts = 5;
 
 	/// <summary>
 	/// A snapshot of the transforms of all bones in the skeleton.
@@ -348,30 +354,49 @@ public class Skeleton : INotifyPropertyChanged
 			}
 
 			int count = bestHkaPose.Transforms.Length;
+			int retryCount = 0;
 
 			// Load all bones first
 			for (int boneIndex = 0; boneIndex < count; boneIndex++)
 			{
-				string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
-				string name = ConvertBoneName(namePrefix, originalName);
-				TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
-
-				if (!this.Bones.TryGetValue(name, out var currentBone))
+				while (retryCount < MaxReadRetryAttempts)
 				{
-					currentBone = this.CreateBone(this, new List<TransformMemory> { transform }, name, partialSkeletonIndex);
-					if (currentBone == null)
-						throw new Exception($"Failed to create bone: {name}");
+					try
+					{
+						string originalName = bestHkaPose.Skeleton.Bones[boneIndex].Name.ToString();
+						string name = ConvertBoneName(namePrefix, originalName);
+						TransformMemory? transform = bestHkaPose.Transforms[boneIndex];
 
-					this.Bones[name] = currentBone;
-				}
-				else
-				{
-					currentBone.TransformMemories.Add(transform);
-				}
+						if (!this.Bones.TryGetValue(name, out var currentBone))
+						{
+							currentBone = this.CreateBone(this, [transform], name, partialSkeletonIndex);
+							if (currentBone == null)
+								throw new Exception($"Failed to create bone: {name}");
 
-				// Do not allow modification of the root bone, things get weird.
-				if (originalName == "n_root")
-					currentBone.IsTransformLocked = true;
+							this.Bones[name] = currentBone;
+						}
+						else
+						{
+							currentBone.TransformMemories.Add(transform);
+						}
+
+						// Do not allow modification of the root bone, things get weird.
+						if (originalName == "n_root")
+							currentBone.IsTransformLocked = true;
+
+						break; // Exit the retry loop if successful
+					}
+					catch (ArgumentOutOfRangeException ex)
+					{
+						Log.Warning(ex, $"Failed to locate bone at index {boneIndex}. Retrying... ({retryCount + 1}/{MaxReadRetryAttempts})");
+
+						retryCount++;
+						if (retryCount >= MaxReadRetryAttempts)
+							throw; // Rethrow the exception if max retries reached
+
+						Task.Delay(10).Wait(); // Wait 10ms between retries
+					}
+				}
 			}
 
 			// Set parents now all the bones are loaded

@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 
 public static class Penumbra
 {
-	public static async Task Redraw(int targetIndex)
+	public static async Task Redraw(string name, int targetIndex)
 	{
-		RedrawData data = new();
-		data.ObjectTableIndex = targetIndex;
-		data.Type = RedrawData.RedrawType.Redraw;
+		RedrawData data = new()
+		{
+			Name = name,
+			ObjectTableIndex = targetIndex,
+			Type = RedrawData.RedrawType.Redraw
+		};
 
 		await PenumbraApi.Post("/redraw", data);
-
-		await Task.Delay(500);
 	}
 
 	public class RedrawData

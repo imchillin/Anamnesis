@@ -45,8 +45,20 @@ public abstract class InplaceFixedArrayMemory<TValue> : MemoryBase, IEnumerable<
 	[DoNotNotify]
 	public TValue this[int index]
 	{
-		get => this.items[index];
-		set => this.items[index] = value;
+		get
+		{
+			if (index < 0 || index >= this.items.Count)
+				throw new ArgumentOutOfRangeException(nameof(index), "Index was out of range. Must be non-negative and less than the size of the collection.");
+
+			return this.items[index];
+		}
+		set
+		{
+			if (index < 0 || index >= this.items.Count)
+				throw new ArgumentOutOfRangeException(nameof(index), "Index was out of range. Must be non-negative and less than the size of the collection.");
+
+			this.items[index] = value;
+		}
 	}
 
 	/// <summary>
