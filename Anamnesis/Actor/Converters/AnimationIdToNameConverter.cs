@@ -3,11 +3,11 @@
 
 namespace Anamnesis.Actor.Converters;
 
+using Anamnesis.GameData.Excel;
+using Anamnesis.Services;
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using Anamnesis.GameData.Excel;
-using Anamnesis.Services;
 
 [ValueConversion(typeof(uint), typeof(string))]
 public class AnimationIdToNameConverter : IValueConverter
@@ -19,7 +19,7 @@ public class AnimationIdToNameConverter : IValueConverter
 		try
 		{
 			ushort animId = (ushort)value;
-			ActionTimeline timeline = GameDataService.ActionTimelines.Get(animId);
+			ActionTimeline timeline = GameDataService.ActionTimelines.GetRow(animId);
 			animationName = timeline.Key ?? LocalizationService.GetString("Character_Action_NoAnimation");
 		}
 		catch

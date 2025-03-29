@@ -2,30 +2,94 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
+
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
-using Lumina.Data;
 using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("Companion", 0xeaeebef0)]
-public class Companion : ExcelRow, INpcBase
+[Sheet("Companion", 0xEAEEBEF0)]
+public readonly struct Companion(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Companion>, INpcBase
 {
-	private string? name;
-	private CompanionAppearance? appearance;
+	public uint RowId => row;
 
-	public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
-	public string Description { get; private set; } = string.Empty;
-	public uint ModelCharaRow { get; private set; }
+	public string Name => page.ReadString(offset, offset).ToString() ?? $"{this.TypeName} #{this.RowId}";
+	public string Description => string.Empty;
+	public uint ModelCharaRow => this.Model.RowId;
+	public readonly RowRef<ModelChara> Model => new(page.Module, (uint)page.ReadUInt16(offset + 16), page.Language);
 
-	public ImageReference? Icon { get; private set; }
+	public ImageReference? Icon => new(page.ReadUInt16(offset + 28));
 	public Mod? Mod => null;
 	public bool CanFavorite => true;
-	public bool HasName => this.name != null;
+	public bool HasName => page.ReadString(offset, offset).ToString() != null;
 	public string TypeName => "Minion";
+
+	public byte FacePaintColor => 0;
+	public byte FacePaint => 0;
+	public byte ExtraFeature2OrBust => 0;
+	public byte ExtraFeature1 => 0;
+	public RowRef<Race> Race => GameDataService.CreateRef<Race>(1);
+	public byte Gender => 0;
+	public byte BodyType => 0;
+	public byte Height => 0;
+	public RowRef<Tribe> Tribe => GameDataService.CreateRef<Tribe>(1);
+	public byte Face => 0;
+	public byte HairStyle => 0;
+	public bool EnableHairHighlight => false;
+	public byte SkinColor => 0;
+	public byte EyeHeterochromia => 0;
+	public byte HairHighlightColor => 0;
+	public byte FacialFeature => 0;
+	public byte FacialFeatureColor => 0;
+	public byte Eyebrows => 0;
+	public byte EyeColor => 0;
+	public byte EyeShape => 0;
+	public byte Nose => 0;
+	public byte Jaw => 0;
+	public byte Mouth => 0;
+	public byte LipColor => 0;
+	public byte BustOrTone1 => 0;
+	public byte HairColor => 0;
+
+	public IItem MainHand => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeMainHand => default;
+	public IItem OffHand => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeOffHand => default;
+	public IItem Head => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeHead => default;
+	public IItem Body => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeBody => default;
+	public IItem Legs => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeLegs => default;
+	public IItem Feet => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeFeet => default;
+	public IItem Hands => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeHands => default;
+	public IItem Wrists => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeWrists => default;
+	public IItem Neck => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeNeck => default;
+	public IItem Ears => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeEars => default;
+	public IItem LeftRing => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeLeftRing => default;
+	public IItem RightRing => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeRightRing => default;
+	public RowRef<Stain> Dye2MainHand => default;
+	public RowRef<Stain> Dye2OffHand => default;
+	public RowRef<Stain> Dye2Head => default;
+	public RowRef<Stain> Dye2Body => default;
+	public RowRef<Stain> Dye2Legs => default;
+	public RowRef<Stain> Dye2Feet => default;
+	public RowRef<Stain> Dye2Hands => default;
+	public RowRef<Stain> Dye2Wrists => default;
+	public RowRef<Stain> Dye2Neck => default;
+	public RowRef<Stain> Dye2Ears => default;
+	public RowRef<Stain> Dye2LeftRing => default;
+	public RowRef<Stain> Dye2RightRing => default;
 
 	public bool IsFavorite
 	{
@@ -33,95 +97,6 @@ public class Companion : ExcelRow, INpcBase
 		set => FavoritesService.SetFavorite<INpcBase>(this, nameof(FavoritesService.Favorites.Models), value);
 	}
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-
-		this.name = parser.ReadString(0);
-		this.ModelCharaRow = (uint)parser.ReadColumn<ushort>(8);
-		////Scale = parser.ReadColumn<byte>(9);
-		this.Icon = parser.ReadImageReference<ushort>(28);
-	}
-
-	public INpcAppearance? GetAppearance()
-	{
-		if (this.appearance == null)
-			this.appearance = new CompanionAppearance(this);
-
-		return this.appearance;
-	}
-
-	public class CompanionAppearance : INpcAppearance
-	{
-		public CompanionAppearance(Companion companion)
-		{
-			this.ModelCharaRow = companion.ModelCharaRow;
-		}
-
-		public uint ModelCharaRow { get; private set; }
-
-		public int FacePaintColor => 0;
-		public int FacePaint => 0;
-		public int ExtraFeature2OrBust => 0;
-		public int ExtraFeature1 => 0;
-		public Race? Race => GameDataService.Races.Get(1);
-		public int Gender => 0;
-		public int BodyType => 0;
-		public int Height => 0;
-		public Tribe? Tribe => GameDataService.Tribes.Get(1);
-		public int Face => 0;
-		public int HairStyle => 0;
-		public bool EnableHairHighlight => false;
-		public int SkinColor => 0;
-		public int EyeHeterochromia => 0;
-		public int HairHighlightColor => 0;
-		public int FacialFeature => 0;
-		public int FacialFeatureColor => 0;
-		public int Eyebrows => 0;
-		public int EyeColor => 0;
-		public int EyeShape => 0;
-		public int Nose => 0;
-		public int Jaw => 0;
-		public int Mouth => 0;
-		public int LipColor => 0;
-		public int BustOrTone1 => 0;
-		public int HairColor => 0;
-
-		public IItem MainHand => ItemUtility.NoneItem;
-		public IDye DyeMainHand => DyeUtility.NoneDye;
-		public IItem OffHand => ItemUtility.NoneItem;
-		public IDye DyeOffHand => DyeUtility.NoneDye;
-		public IItem Head => ItemUtility.NoneItem;
-		public IDye DyeHead => DyeUtility.NoneDye;
-		public IItem Body => ItemUtility.NoneItem;
-		public IDye DyeBody => DyeUtility.NoneDye;
-		public IItem Legs => ItemUtility.NoneItem;
-		public IDye DyeLegs => DyeUtility.NoneDye;
-		public IItem Feet => ItemUtility.NoneItem;
-		public IDye DyeFeet => DyeUtility.NoneDye;
-		public IItem Hands => ItemUtility.NoneItem;
-		public IDye DyeHands => DyeUtility.NoneDye;
-		public IItem Wrists => ItemUtility.NoneItem;
-		public IDye DyeWrists => DyeUtility.NoneDye;
-		public IItem Neck => ItemUtility.NoneItem;
-		public IDye DyeNeck => DyeUtility.NoneDye;
-		public IItem Ears => ItemUtility.NoneItem;
-		public IDye DyeEars => DyeUtility.NoneDye;
-		public IItem LeftRing => ItemUtility.NoneItem;
-		public IDye DyeLeftRing => DyeUtility.NoneDye;
-		public IItem RightRing => ItemUtility.NoneItem;
-		public IDye DyeRightRing => DyeUtility.NoneDye;
-		public IDye Dye2MainHand => DyeUtility.NoneDye;
-		public IDye Dye2OffHand => DyeUtility.NoneDye;
-		public IDye Dye2Head => DyeUtility.NoneDye;
-		public IDye Dye2Body => DyeUtility.NoneDye;
-		public IDye Dye2Legs => DyeUtility.NoneDye;
-		public IDye Dye2Feet => DyeUtility.NoneDye;
-		public IDye Dye2Hands => DyeUtility.NoneDye;
-		public IDye Dye2Wrists => DyeUtility.NoneDye;
-		public IDye Dye2Neck => DyeUtility.NoneDye;
-		public IDye Dye2Ears => DyeUtility.NoneDye;
-		public IDye Dye2LeftRing => DyeUtility.NoneDye;
-		public IDye Dye2RightRing => DyeUtility.NoneDye;
-	}
+	static Companion IExcelRow<Companion>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

@@ -11,11 +11,14 @@ public class InvisibleHeadItem : IItem
 {
 	public string Name => LocalizationService.GetString("Item_InvisibleHead");
 	public string Description => LocalizationService.GetString("Item_InvisibleHeadDesc");
-	public ImageReference? Icon => GameDataService.Items.Get(10032)?.Icon;
+	public ImageReference? Icon => GameDataService.Items.GetRow(10032).Icon;
+
+	public ulong Model => ((ulong)254 << 16) | 6121;
 	public ushort ModelSet => 0;
 	public ushort ModelBase => 6121;
 	public ushort ModelVariant => 254;
 	public bool HasSubModel => false;
+	public ulong SubModel => 0;
 	public ushort SubModelSet => 0;
 	public ushort SubModelBase => 0;
 	public ushort SubModelVariant => 0;

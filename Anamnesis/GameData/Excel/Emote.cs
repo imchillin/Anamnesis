@@ -3,39 +3,25 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using Anamnesis.GameData.Interfaces;
 using Anamnesis.GameData.Sheets;
-using Lumina.Data;
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("Emote", 0xf3afded2)]
-public class Emote : ExcelRow
+[Sheet("Emote", 0xF3AFDED2)]
+public readonly unsafe struct Emote(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Emote>
 {
-	public string? DisplayName { get; private set; }
-	public ActionTimeline? LoopTimeline { get; private set; }
-	public ActionTimeline? IntroTimeline { get; private set; }
-	public ActionTimeline? GroundTimeline { get; private set; }
-	public ActionTimeline? ChairTimeline { get; private set; }
-	public ActionTimeline? UpperBodyTimeline { get; private set; }
+	public uint RowId => row;
 
-	public ImageReference? Icon { get; private set; }
+	public readonly string Name => page.ReadString(offset, offset).ToString();
+	public ActionTimeline? LoopTimeline => this.ActionTimeline[0].Value;
+	public ActionTimeline? IntroTimeline => this.ActionTimeline[1].Value;
+	public ActionTimeline? GroundTimeline => this.ActionTimeline[2].Value;
+	public ActionTimeline? ChairTimeline => this.ActionTimeline[3].Value;
+	public ActionTimeline? UpperBodyTimeline => this.ActionTimeline[4].Value;
+	public ImageReference? Icon => new(page.ReadUInt16(offset + 28));
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-
-		this.DisplayName = parser.ReadString(0);
-
-		this.LoopTimeline = parser.ReadRowReference<ushort, ActionTimeline>(1);
-		this.IntroTimeline = parser.ReadRowReference<ushort, ActionTimeline>(2);
-		this.GroundTimeline = parser.ReadRowReference<ushort, ActionTimeline>(3);
-		this.ChairTimeline = parser.ReadRowReference<ushort, ActionTimeline>(4);
-		this.UpperBodyTimeline = parser.ReadRowReference<ushort, ActionTimeline>(5);
-		ActionTimeline? f = parser.ReadRowReference<ushort, ActionTimeline>(6);
-		ActionTimeline? g = parser.ReadRowReference<ushort, ActionTimeline>(7);
-
-		this.Icon = parser.ReadImageReference<ushort>(20);
-	}
+	public readonly Collection<RowRef<ActionTimeline>> ActionTimeline => new(page, offset, offset, &ActionTimelineCtor, 7);
+	static Emote IExcelRow<Emote>.Create(ExcelPage page, uint offset, uint row) =>
+new(page, offset, row);
+	private static RowRef<ActionTimeline> ActionTimelineCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => new(page.Module, (uint)page.ReadUInt16(offset + 12 + (i * 2)), page.Language);
 }

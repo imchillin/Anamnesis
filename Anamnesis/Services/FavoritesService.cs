@@ -3,16 +3,16 @@
 
 namespace Anamnesis.Services;
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using Anamnesis.Files;
 using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Serialization;
 using PropertyChanged;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 [AddINotifyPropertyChangedInterface]
 public class FavoritesService : ServiceBase<FavoritesService>
@@ -157,11 +157,11 @@ public class FavoritesService : ServiceBase<FavoritesService>
 	[Serializable]
 	public class Favorites
 	{
-		public List<IItem> Items { get; set; } = new List<IItem>();
-		public List<IDye> Dyes { get; set; } = new List<IDye>();
-		public List<Color4> Colors { get; set; } = new List<Color4>();
-		public List<INpcBase> Models { get; set; } = new List<INpcBase>();
-		public List<IItem> Owned { get; set; } = new List<IItem>();
-		public List<Glasses> Glasses { get; set; } = new List<Glasses>();
+		public List<Item> Items { get; set; } = [];
+		public List<IDye> Dyes { get; set; } = [];
+		public List<Color4> Colors { get; set; } = [];
+		public List<INpcBase> Models { get; set; } = [];
+		public List<Item> Owned { get; set; } = [];
+		public List<Glasses> Glasses { get; set; } = [];
 	}
 }

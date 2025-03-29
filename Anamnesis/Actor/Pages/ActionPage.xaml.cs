@@ -85,7 +85,7 @@ public partial class ActionPage : UserControl
 	private IEnumerable<ActionTimeline> GenerateLipList()
 	{
 		// Grab "no animation" and all "speak/" animations, which are the only ones valid in this slot
-		IEnumerable<ActionTimeline> lips = GameDataService.ActionTimelines.Where(x => x.AnimationId == 0 || (x.Key?.StartsWith("speak/") ?? false));
+		IEnumerable<ActionTimeline> lips = (IEnumerable<ActionTimeline>)GameDataService.ActionTimelines.Where(x => x.RowId == 0 || (x.Key?.StartsWith("speak/") ?? false));
 		return lips;
 	}
 
@@ -99,7 +99,7 @@ public partial class ActionPage : UserControl
 			if (animation == null || animation.Timeline == null)
 				return;
 
-			this.AnimationOverride.BaseAnimationId = animation.Timeline.AnimationId;
+			this.AnimationOverride.BaseAnimationId = (ushort)animation.Timeline.Value.RowId;
 		});
 
 		animSelector.LocalAnimationSlotFilter = new()
@@ -120,7 +120,7 @@ public partial class ActionPage : UserControl
 			if (animation == null || animation.Timeline == null)
 				return;
 
-			this.AnimationOverride.BlendAnimationId = animation.Timeline.AnimationId;
+			this.AnimationOverride.BlendAnimationId = (ushort)animation.Timeline.Value.RowId;
 		});
 
 		animSelector.LocalAnimationSlotFilter = new()

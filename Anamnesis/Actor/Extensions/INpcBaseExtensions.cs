@@ -8,6 +8,7 @@ using Anamnesis.GameData;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
 using Anamnesis.Services;
+using Lumina.Excel;
 using System;
 using System.Numerics;
 
@@ -56,7 +57,7 @@ public static class INpcBaseExtensions
 		if (parts.Length <= 1)
 		{
 			uint key = uint.Parse(stringKey);
-			return GameDataService.ResidentNPCs.Get(key);
+			return GameDataService.ResidentNPCs.GetRow(key);
 		}
 		else if (parts.Length == 2)
 		{
@@ -65,12 +66,12 @@ public static class INpcBaseExtensions
 
 			return t switch
 			{
-				'R' => GameDataService.ResidentNPCs.Get(key),
-				'B' => GameDataService.BattleNPCs.Get(key),
-				'E' => GameDataService.EventNPCs.Get(key),
-				'C' => GameDataService.Companions.Get(key),
-				'M' => GameDataService.Mounts.Get(key),
-				'O' => GameDataService.Ornaments.Get(key),
+				'R' => GameDataService.ResidentNPCs.GetRow(key),
+				'B' => GameDataService.BattleNPCs.GetRow(key),
+				'E' => GameDataService.EventNPCs.GetRow(key),
+				'C' => GameDataService.Companions.GetRow(key),
+				'M' => GameDataService.Mounts.GetRow(key),
+				'O' => GameDataService.Ornaments.GetRow(key),
 				_ => throw new Exception($"Unrecognized Npc type key: {t}"),
 			};
 		}
@@ -82,111 +83,91 @@ public static class INpcBaseExtensions
 
 	public static CharacterFile ToFile(this INpcBase npc)
 	{
-		INpcAppearance? appearance = npc.GetAppearance();
+		ArgumentNullException.ThrowIfNull(npc);
 
-		if (appearance == null)
-			throw new Exception($"No NPc appearance for npc: {npc}");
+		ActorCustomizeMemory.Races? race = npc.Race.Value.CustomizeRace;
+		ActorCustomizeMemory.Tribes? tribe = npc.Tribe.Value.CustomizeTribe;
 
-		return appearance.ToFile();
-	}
+		race ??= ActorCustomizeMemory.Races.Hyur;
+		tribe ??= ActorCustomizeMemory.Tribes.Midlander;
 
-	private static CharacterFile ToFile(this INpcAppearance appearance)
-	{
-		if (appearance == null)
-			throw new ArgumentNullException(nameof(appearance));
-
-		ActorCustomizeMemory.Races? race = appearance.Race?.CustomizeRace;
-		ActorCustomizeMemory.Tribes? tribe = appearance.Tribe?.CustomizeTribe;
-
-		if (race == null)
-			race = ActorCustomizeMemory.Races.Hyur;
-
-		if (tribe == null)
-			tribe = ActorCustomizeMemory.Tribes.Midlander;
-
-		CharacterFile file = new CharacterFile();
-		file.SaveMode = CharacterFile.SaveModes.All;
-		file.ModelType = appearance.ModelCharaRow;
-		file.Race = race;
-		file.Tribe = tribe;
-		file.Gender = (ActorCustomizeMemory.Genders)appearance.Gender;
-		file.Age = (ActorCustomizeMemory.Ages)appearance.BodyType;
-		file.Height = (byte)Math.Min(appearance.Height, 100);
-		file.Head = (byte)appearance.Face;
-		file.Hair = (byte)appearance.HairStyle;
-		file.EnableHighlights = appearance.EnableHairHighlight;
-		file.Skintone = (byte)appearance.SkinColor;
-
-		// not sure anyone has -1 as an eye value, but juuust in case.
-		if (appearance.EyeHeterochromia == -1)
+		CharacterFile file = new()
 		{
-			file.REyeColor = (byte)appearance.EyeColor;
-			file.LEyeColor = (byte)appearance.EyeColor;
-		}
-		else
-		{
-			file.REyeColor = (byte)appearance.EyeHeterochromia;
-			file.LEyeColor = (byte)appearance.EyeColor;
-		}
-
-		file.HairTone = (byte)appearance.HairColor;
-		file.Highlights = (byte)appearance.HairHighlightColor;
-		file.FacialFeatures = (ActorCustomizeMemory.FacialFeature)appearance.FacialFeature;
-		file.LimbalEyes = (byte)appearance.FacialFeatureColor;
-		file.Eyebrows = (byte)appearance.Eyebrows;
-		file.Eyes = (byte)appearance.EyeShape;
-		file.Nose = (byte)appearance.Nose;
-		file.Jaw = (byte)appearance.Jaw;
-		file.Mouth = (byte)appearance.Mouth;
-		file.LipsToneFurPattern = (byte)appearance.LipColor;
+			SaveMode = CharacterFile.SaveModes.All,
+			ModelType = npc.ModelCharaRow,
+			Race = race,
+			Tribe = tribe,
+			Gender = (ActorCustomizeMemory.Genders)npc.Gender,
+			Age = (ActorCustomizeMemory.Ages)npc.BodyType,
+			Height = Math.Min(npc.Height, (byte)100),
+			Head = npc.Face,
+			Hair = npc.HairStyle,
+			EnableHighlights = npc.EnableHairHighlight,
+			Skintone = npc.SkinColor,
+			REyeColor = npc.EyeHeterochromia,
+			LEyeColor = npc.EyeColor,
+			HairTone = npc.HairColor,
+			Highlights = npc.HairHighlightColor,
+			FacialFeatures = (ActorCustomizeMemory.FacialFeature)npc.FacialFeature,
+			LimbalEyes = npc.FacialFeatureColor,
+			Eyebrows = npc.Eyebrows,
+			Eyes = npc.EyeShape,
+			Nose = npc.Nose,
+			Jaw = npc.Jaw,
+			Mouth = npc.Mouth,
+			LipsToneFurPattern = npc.LipColor,
+		};
 
 		// Hyurs and Roegadyn get muscle sliders, while everyone else
 		// Gets custom tails or ears.
-		if (appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Hyur ||
-			appearance.Race?.CustomizeRace == ActorCustomizeMemory.Races.Roegadyn)
+		if (npc.Race.Value.CustomizeRace == ActorCustomizeMemory.Races.Hyur ||
+			npc.Race.Value.CustomizeRace == ActorCustomizeMemory.Races.Roegadyn)
 		{
-			file.Bust = (byte)appearance.ExtraFeature1;
-			file.EarMuscleTailSize = (byte)appearance.BustOrTone1;
+			file.Bust = npc.ExtraFeature1;
+			file.EarMuscleTailSize = npc.BustOrTone1;
 		}
 		else
 		{
-			file.EarMuscleTailSize = (byte)appearance.ExtraFeature1;
-			file.TailEarsType = (byte)appearance.ExtraFeature2OrBust;
-			file.Bust = (byte)appearance.BustOrTone1;
+			file.EarMuscleTailSize = npc.ExtraFeature1;
+			file.TailEarsType = npc.ExtraFeature2OrBust;
+			file.Bust = npc.BustOrTone1;
 		}
 
-		file.FacePaint = (byte)appearance.FacePaint;
-		file.FacePaintColor = (byte)appearance.FacePaintColor;
+		file.FacePaint = npc.FacePaint;
+		file.FacePaintColor = npc.FacePaintColor;
 
-		file.MainHand = WeaponFromItem(appearance.MainHand, appearance.DyeMainHand, appearance.Dye2MainHand);
-		file.OffHand = WeaponFromItem(appearance.OffHand, appearance.DyeOffHand, appearance.Dye2OffHand, true);
+		file.MainHand = WeaponFromItem(npc.MainHand, npc.DyeMainHand, npc.Dye2MainHand);
+		file.OffHand = WeaponFromItem(npc.OffHand, npc.DyeOffHand, npc.Dye2OffHand, true);
 
-		file.HeadGear = GearFromItem(appearance.Head, appearance.DyeHead, appearance.Dye2Head);
-		file.Body = GearFromItem(appearance.Body, appearance.DyeBody, appearance.Dye2Body);
-		file.Hands = GearFromItem(appearance.Hands, appearance.DyeHands, appearance.Dye2Hands);
-		file.Legs = GearFromItem(appearance.Legs, appearance.DyeLegs, appearance.Dye2Legs);
-		file.Feet = GearFromItem(appearance.Feet, appearance.DyeFeet, appearance.Dye2Feet);
-		file.Ears = GearFromItem(appearance.Ears, appearance.DyeEars, appearance.Dye2Ears);
-		file.Neck = GearFromItem(appearance.Neck, appearance.DyeNeck, appearance.Dye2Neck);
-		file.Wrists = GearFromItem(appearance.Wrists, appearance.DyeWrists, appearance.Dye2Wrists);
-		file.LeftRing = GearFromItem(appearance.LeftRing, appearance.DyeLeftRing, appearance.Dye2LeftRing);
-		file.RightRing = GearFromItem(appearance.RightRing, appearance.DyeRightRing, appearance.Dye2RightRing);
+		file.HeadGear = GearFromItem(npc.Head, npc.DyeHead, npc.Dye2Head);
+		file.Body = GearFromItem(npc.Body, npc.DyeBody, npc.Dye2Body);
+		file.Hands = GearFromItem(npc.Hands, npc.DyeHands, npc.Dye2Hands);
+		file.Legs = GearFromItem(npc.Legs, npc.DyeLegs, npc.Dye2Legs);
+		file.Feet = GearFromItem(npc.Feet, npc.DyeFeet, npc.Dye2Feet);
+		file.Ears = GearFromItem(npc.Ears, npc.DyeEars, npc.Dye2Ears);
+		file.Neck = GearFromItem(npc.Neck, npc.DyeNeck, npc.Dye2Neck);
+		file.Wrists = GearFromItem(npc.Wrists, npc.DyeWrists, npc.Dye2Wrists);
+		file.LeftRing = GearFromItem(npc.LeftRing, npc.DyeLeftRing, npc.Dye2LeftRing);
+		file.RightRing = GearFromItem(npc.RightRing, npc.DyeRightRing, npc.Dye2RightRing);
 
 		return file;
 	}
 
-	private static CharacterFile.WeaponSave? WeaponFromItem(IItem? item, IDye? dye, IDye? dye2, bool isOffHand = false)
+	private static CharacterFile.WeaponSave? WeaponFromItem(IItem? item, RowRef<Stain> dye, RowRef<Stain> dye2, bool isOffHand = false)
 	{
 		if (item == null)
 			return null;
 
-		CharacterFile.WeaponSave save = new CharacterFile.WeaponSave();
-
-		save.Color = Color.White;
-		save.Scale = Vector3.One;
-		save.ModelSet = item.ModelSet;
-		save.ModelBase = item.ModelBase;
-		save.ModelVariant = item.ModelVariant;
+		CharacterFile.WeaponSave save = new()
+		{
+			Color = Color.White,
+			Scale = Vector3.One,
+			ModelSet = item.ModelSet,
+			ModelBase = item.ModelBase,
+			ModelVariant = item.ModelVariant,
+			DyeId = (byte)dye.Value.RowId,
+			DyeId2 = (byte)dye2.Value.RowId,
+		};
 
 		if (isOffHand && item.HasSubModel)
 		{
@@ -195,28 +176,21 @@ public static class INpcBaseExtensions
 			save.ModelVariant = item.SubModelBase;
 		}
 
-		if (dye != null)
-			save.DyeId = dye.Id;
-		if (dye2 != null)
-			save.DyeId2 = dye2.Id;
-
 		return save;
 	}
 
-	private static CharacterFile.ItemSave? GearFromItem(IItem? item, IDye? dye, IDye? dye2)
+	private static CharacterFile.ItemSave? GearFromItem(IItem? item, RowRef<Stain> dye, RowRef<Stain> dye2)
 	{
 		if (item == null)
 			return null;
 
-		CharacterFile.ItemSave save = new CharacterFile.ItemSave();
-
-		save.ModelBase = item.ModelBase;
-		save.ModelVariant = (byte)item.ModelVariant;
-
-		if (dye != null)
-			save.DyeId = dye.Id;
-		if (dye2 != null)
-			save.DyeId2 = dye2.Id;
+		CharacterFile.ItemSave save = new()
+		{
+			ModelBase = item.ModelBase,
+			ModelVariant = (byte)item.ModelVariant,
+			DyeId = (byte)dye.Value.RowId,
+			DyeId2 = (byte)dye2.Value.RowId,
+		};
 
 		return save;
 	}

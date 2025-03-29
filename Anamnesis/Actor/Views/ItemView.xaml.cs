@@ -30,7 +30,7 @@ using XivToolsWpf.DependencyProperties;
 [AddINotifyPropertyChangedInterface]
 public partial class ItemView : UserControl
 {
-	public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>("Slot");
+	public static readonly IBind<ItemSlots> SlotDp = Binder.Register<ItemSlots, ItemView>(nameof(Slot));
 	public static readonly IBind<IEquipmentItemMemory?> ItemModelDp = Binder.Register<IEquipmentItemMemory?, ItemView>(nameof(ItemModel), OnItemModelChanged, BindMode.TwoWay);
 	public static readonly IBind<WeaponSubModelMemory?> WeaponExModelDp = Binder.Register<WeaponSubModelMemory?, ItemView>(nameof(ExtendedViewModel));
 
@@ -81,7 +81,7 @@ public partial class ItemView : UserControl
 		}
 		set
 		{
-			IItem? item = GameDataService.Items?.Get(value);
+			IItem? item = GameDataService.Items?.GetRow(value);
 			this.SetItem(item);
 		}
 	}
@@ -185,12 +185,12 @@ public partial class ItemView : UserControl
 
 	private void OnOpenInConsoleGamesWikiClicked(object sender, RoutedEventArgs e)
 	{
-		this.OpenItemInFanSiteUrl("https://ffxiv.consolegameswiki.com/wiki/" + this.Item?.Name.Replace(" ", "_"));
+		this.OpenItemInFanSiteUrl("https://ffxiv.consolegameswiki.com/wiki/" + this.Item?.Name.ToString().Replace(" ", "_"));
 	}
 
 	private void OnOpenInGamerEscapeClicked(object sender, RoutedEventArgs e)
 	{
-		this.OpenItemInFanSiteUrl("https://ffxiv.gamerescape.com/wiki/" + this.Item?.Name.Replace(" ", "_"));
+		this.OpenItemInFanSiteUrl("https://ffxiv.gamerescape.com/wiki/" + this.Item?.Name.ToString().Replace(" ", "_"));
 	}
 
 	private void OnOpenInGarlandToolsClicked(object sender, RoutedEventArgs e)
@@ -219,7 +219,7 @@ public partial class ItemView : UserControl
 
 		try
 		{
-			await ClipboardUtility.CopyToClipboardAsync(this.Item.Name);
+			await ClipboardUtility.CopyToClipboardAsync(this.Item.Name.ToString());
 		}
 		catch (Exception ex)
 		{
@@ -316,7 +316,7 @@ public partial class ItemView : UserControl
 
 			if (autoOffhand && this.Slot == ItemSlots.MainHand
 				&& item is Item ivm
-				&& ivm.EquipSlot?.OffHand == -1)
+				&& ivm.EquipSlotCategory.Value.OffHand == -1)
 			{
 				if (ivm.HasSubModel)
 				{
@@ -433,8 +433,8 @@ public partial class ItemView : UserControl
 				if (valueVm is ItemMemory itemVm)
 				{
 					IItem? item = ItemUtility.GetItem(slots, 0, itemVm.Base, itemVm.Variant, this.Actor.IsChocobo);
-					IDye? dye = GameDataService.Dyes.Get(itemVm.Dye);
-					IDye? dye2 = GameDataService.Dyes.Get(itemVm.Dye2);
+					IDye? dye = GameDataService.Dyes.GetRow(itemVm.Dye);
+					IDye? dye2 = GameDataService.Dyes.GetRow(itemVm.Dye2);
 
 					await Dispatch.MainThread();
 
@@ -449,8 +449,8 @@ public partial class ItemView : UserControl
 					if (weaponVm.Set == 0)
 						weaponVm.Dye = 0;
 
-					IDye? dye = GameDataService.Dyes.Get(weaponVm.Dye);
-					IDye? dye2 = GameDataService.Dyes.Get(weaponVm.Dye2);
+					IDye? dye = GameDataService.Dyes.GetRow(weaponVm.Dye);
+					IDye? dye2 = GameDataService.Dyes.GetRow(weaponVm.Dye2);
 
 					await Dispatch.MainThread();
 

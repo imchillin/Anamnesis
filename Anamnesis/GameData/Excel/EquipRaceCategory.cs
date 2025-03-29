@@ -4,39 +4,27 @@
 namespace Anamnesis.GameData.Excel;
 
 using Anamnesis.Memory;
-using Lumina.Data;
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("EquipRaceCategory", 0xf914b198)]
-public class EquipRaceCategory : ExcelRow
+[Sheet("EquipRaceCategory", 0xF914B198)]
+public readonly struct EquipRaceCategory(ExcelPage page, uint offset, uint row)
+	: IExcelRow<EquipRaceCategory>
 {
-	public bool Hyur { get; private set; }
-	public bool Elezen { get; private set; }
-	public bool Lalafell { get; private set; }
-	public bool Miqote { get; private set; }
-	public bool Roegadyn { get; private set; }
-	public bool AuRa { get; private set; }
-	public bool Hrothgar { get; private set; }
-	public bool Viera { get; private set; }
-	public bool Male { get; private set; }
-	public bool Female { get; private set; }
+	public uint RowId => row;
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-		this.Hyur = parser.ReadColumn<bool>(0);
-		this.Elezen = parser.ReadColumn<bool>(1);
-		this.Lalafell = parser.ReadColumn<bool>(2);
-		this.Miqote = parser.ReadColumn<bool>(3);
-		this.Roegadyn = parser.ReadColumn<bool>(4);
-		this.AuRa = parser.ReadColumn<bool>(5);
-		this.Hrothgar = parser.ReadColumn<bool>(6);
-		this.Viera = parser.ReadColumn<bool>(7);
-		this.Male = parser.ReadColumn<bool>(8);
-		this.Female = parser.ReadColumn<bool>(9);
-	}
+	public readonly bool Hyur => page.ReadBool(offset);
+	public readonly bool Elezen => page.ReadBool(offset + 1);
+	public readonly bool Lalafell => page.ReadBool(offset + 2);
+	public readonly bool Miqote => page.ReadBool(offset + 3);
+	public readonly bool Roegadyn => page.ReadBool(offset + 4);
+	public readonly bool AuRa => page.ReadBool(offset + 5);
+	public bool Hrothgar => page.ReadBool(offset + 6);
+	public bool Viera => page.ReadBool(offset + 7);
+	public readonly bool Male => page.ReadPackedBool(offset + 8, 0);
+	public readonly bool Female => page.ReadPackedBool(offset + 8, 1);
+
+	static EquipRaceCategory IExcelRow<EquipRaceCategory>.Create(ExcelPage page, uint offset, uint row) =>
+	   new(page, offset, row);
 
 	public bool CanEquip(ActorCustomizeMemory.Races race, ActorCustomizeMemory.Genders gender)
 	{

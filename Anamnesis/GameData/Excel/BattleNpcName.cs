@@ -3,23 +3,18 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using Anamnesis.GameData.Sheets;
-using Lumina.Data;
 using Lumina.Excel;
 using XivToolsWpf.Selectors;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("BNpcName", 0x77a72da0)]
-public class BattleNpcName : ExcelRow, ISelectable
+[Sheet("BNpcName", 0x77A72DA0)]
+public readonly struct BattleNpcName(ExcelPage page, uint offset, uint row)
+	: IExcelRow<BattleNpcName>, ISelectable
 {
-	public string Name { get; private set; } = string.Empty;
-	public string? Description => $"N:{this.RowId.ToString("D7")}";
+	public uint RowId => row;
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
+	public string Name => page.ReadString(offset, offset).ToString() ?? string.Empty;
+	public string? Description => $"N:{this.RowId:D7}";
 
-		this.Name = parser.ReadString(0) ?? string.Empty;
-	}
+	static BattleNpcName IExcelRow<BattleNpcName>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

@@ -2,39 +2,48 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
+
 using Anamnesis.GameData.Sheets;
-using Lumina.Data;
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("CharaMakeCustomize", 0xc30e9b73)]
-public class CharaMakeCustomize : ExcelRow
+/// <summary>Represents a character customization option in the game data.</summary>
+[Sheet("CharaMakeCustomize", 0xC30E9B73)]
+public readonly struct CharaMakeCustomize(ExcelPage page, uint offset, uint row)
+	: IExcelRow<CharaMakeCustomize>
 {
-	public string Name { get; set; } = string.Empty;
-	public ImageReference? Icon { get; private set; }
-	public ImageReference? ItemIcon { get; private set; }
-	public byte FeatureId { get; private set; }
-	public bool IsPurchasable { get; private set; }
-	public byte FaceType { get; private set; }
+	private readonly ImageReference icon = new(page.ReadUInt32(offset));
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-		this.FeatureId = parser.ReadColumn<byte>(0);
-		this.Icon = parser.ReadImageReference<uint>(1);
-		this.IsPurchasable = parser.ReadColumn<bool>(3);
-		this.FaceType = parser.ReadColumn<byte>(6);
+	/// <summary>Gets the row ID.</summary>
+	public uint RowId => row;
 
-		Item? item = parser.ReadRowReference<uint, Item>(5);
-		if (item != null && item.RowId != 0)
-		{
-			this.Name = item.Name;
-			this.ItemIcon = item.Icon;
-		}
-		else
-		{
-			this.Name = $"Feature #{this.RowId}";
-		}
-	}
+	/// <summary>Gets the name of the customization option.</summary>
+	public string Name => this.HintItem.Value.RowId != 0 ? this.HintItem.Value.Name.ToString() : $"Feature #{this.RowId}";
+
+	/// <summary>Gets the hint item associated with the customization option.</summary>
+	public readonly RowRef<Item> HintItem => new(page.Module, page.ReadUInt32(offset + 8), page.Language);
+
+	/// <summary>Gets the icon of the customization option.</summary>
+	public ImageReference? Icon => this.icon;
+
+	/// <summary>Gets the icon of the hint item if available.</summary>
+	public ImageReference? ItemIcon => this.HintItem.Value.RowId != 0 ? this.HintItem.Value.Icon : null;
+
+	/// <summary>Gets the feature ID of the customization option.</summary>
+	public readonly byte FeatureId => page.ReadUInt8(offset + 14);
+
+	/// <summary>Gets the face type of the customization option.</summary>
+	public readonly byte FaceType => page.ReadUInt8(offset + 15);
+
+	/// <summary>Gets a value indicating whether the customization option is purchasable.</summary>
+	public readonly bool IsPurchasable => page.ReadPackedBool(offset + 16, 0);
+
+	/// <summary>
+	/// Creates a new instance of the <see cref="CharaMakeCustomize"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="CharaMakeCustomize"/> struct.</returns>
+	static CharaMakeCustomize IExcelRow<CharaMakeCustomize>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

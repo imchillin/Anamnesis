@@ -8,35 +8,40 @@ using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
 using Lumina;
-using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
-using Lumina.Text;
+using Lumina.Excel.Sheets;
 using System;
 using System.Linq;
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+using System.Runtime.CompilerServices;
 
-[Sheet("Item", 0xe9a33c9d)]
-public class Item : ExcelRow, IItem
+[Sheet("Item", 0xE9A33C9D)]
+public readonly unsafe struct Item(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Item>, IItem
 {
-	public string Name { get; private set; } = string.Empty;
-	public string Description { get; private set; } = string.Empty;
-	public ImageReference? Icon { get; private set; }
-	public byte EquipLevel { get; private set; }
-	public ushort ModelSet { get; private set; }
-	public ushort ModelBase { get; private set; }
-	public ushort ModelVariant { get; private set; }
-	public ushort SubModelSet { get; private set; }
-	public ushort SubModelBase { get; private set; }
-	public ushort SubModelVariant { get; private set; }
-	public Classes EquipableClasses { get; private set; } = Classes.None;
-	public EquipSlotCategory? EquipSlot { get; private set; }
-	public EquipRaceCategory? EquipRestriction { get; private set; }
+	private readonly ImageReference icon = new(page.ReadUInt16(offset + 136));
 
-	public bool IsWeapon { get; private set; }
+	public uint RowId => row;
+
+	public readonly string Name => page.ReadString(offset + 12, offset).ToString() ?? string.Empty;
+	public string Description => page.ReadString(offset + 8, offset).ToString() ?? string.Empty;
+	public ImageReference Icon => this.icon;
+	public readonly byte EquipLevel => page.ReadUInt8(offset + 78);
+
+	public ushort ModelSet => this.IsWeapon ? page.ReadWeaponSet(offset + 24) : page.ReadSet(offset + 24);
+	public ushort ModelBase => this.IsWeapon ? page.ReadWeaponBase(offset + 24) : page.ReadBase(offset + 24);
+	public ushort ModelVariant => this.IsWeapon ? page.ReadWeaponVariant(offset + 24) : page.ReadVariant(offset + 24);
+	public ushort SubModelSet => this.IsWeapon ? page.ReadWeaponSet(offset + 32) : page.ReadSet(offset + 32);
+	public ushort SubModelBase => this.IsWeapon ? page.ReadWeaponBase(offset + 32) : page.ReadBase(offset + 32);
+	public ushort SubModelVariant => this.IsWeapon ? page.ReadWeaponVariant(offset + 32) : page.ReadVariant(offset + 32);
+	public Classes EquipableClasses => this.ClassJobCategory.Value.ToFlags();
+	public readonly RowRef<EquipSlotCategory> EquipSlotCategory => new(page.Module, (uint)page.ReadUInt8(offset + 154), page.Language);
+	public RowRef<EquipRaceCategory> EquipRestriction => new(page.Module, (uint)page.ReadUInt8(offset + 80), page.Language);
+	public readonly RowRef<ClassJobCategory> ClassJobCategory => new(page.Module, (uint)page.ReadUInt8(offset + 81), page.Language);
+
+	public bool IsWeapon => this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
 	public bool HasSubModel => this.SubModelSet != 0;
 
-	public Mod? Mod { get; private set; }
+	public Mod? Mod => TexToolsService.GetMod(this);
 
 	public bool IsFavorite
 	{
@@ -51,54 +56,13 @@ public class Item : ExcelRow, IItem
 		set => FavoritesService.SetOwned(this, value);
 	}
 
-	public ItemCategories Category { get; private set; }
+	public ItemCategories Category => GameDataService.GetCategory(this);
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
+	static Item IExcelRow<Item>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 
-		this.Category = GameDataService.GetCategory(this);
-
-		this.Description = parser.ReadColumn<SeString>(8) ?? string.Empty;
-		this.Name = parser.ReadColumn<SeString>(9) ?? string.Empty;
-		this.Icon = parser.ReadImageReference<ushort>(10);
-		////ItemLevel? itemLevel = parser.ReadRowReference<ushort, ItemLevel>(11);
-
-		this.EquipSlot = parser.ReadRowReference<byte, EquipSlotCategory>(17);
-		this.EquipLevel = parser.ReadColumn<byte>(40);
-		this.EquipRestriction = parser.ReadRowReference<byte, EquipRaceCategory>(42);
-		this.EquipableClasses = parser.ReadRowReference<byte, ClassJobCategory>(43)?.ToFlags() ?? Classes.None;
-
-		this.IsWeapon = this.FitsInSlot(ItemSlots.MainHand) || this.FitsInSlot(ItemSlots.OffHand);
-
-		if (this.IsWeapon)
-		{
-			this.ModelSet = parser.ReadWeaponSet(47);
-			this.ModelBase = parser.ReadWeaponBase(47);
-			this.ModelVariant = parser.ReadWeaponVariant(47);
-
-			this.SubModelSet = parser.ReadWeaponSet(48);
-			this.SubModelBase = parser.ReadWeaponBase(48);
-			this.SubModelVariant = parser.ReadWeaponVariant(48);
-		}
-		else
-		{
-			this.ModelSet = parser.ReadSet(47);
-			this.ModelBase = parser.ReadBase(47);
-			this.ModelVariant = parser.ReadVariant(47);
-
-			this.SubModelSet = parser.ReadSet(48);
-			this.SubModelBase = parser.ReadBase(48);
-			this.SubModelVariant = parser.ReadVariant(48);
-		}
-
-		this.Mod = TexToolsService.GetMod(this);
-	}
-
-	public bool FitsInSlot(ItemSlots slot)
-	{
-		return this.EquipSlot?.Contains(slot) ?? false;
-	}
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool FitsInSlot(ItemSlots slot) => this.EquipSlotCategory.Value.Contains(slot);
 
 	private static Classes ToFlags(ClassJobCategory self)
 	{

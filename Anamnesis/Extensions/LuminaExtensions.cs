@@ -2,9 +2,9 @@
 // Licensed under the MIT license.
 
 namespace Lumina;
+
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData;
-using Lumina.Excel.GeneratedSheets;
 using Serilog;
 
 public static class LuminaExtensions
@@ -67,26 +67,25 @@ public static class LuminaExtensions
 		}
 	}
 
-	public static bool Contains(this EquipSlotCategory self, ItemSlots slot)
+	public static bool Contains(this Excel.Sheets.EquipSlotCategory self, ItemSlots slot)
 	{
-		switch (slot)
+		return slot switch
 		{
-			case ItemSlots.MainHand: return self.MainHand == 1;
-			case ItemSlots.Head: return self.Head == 1;
-			case ItemSlots.Body: return self.Body == 1;
-			case ItemSlots.Hands: return self.Gloves == 1;
-			case ItemSlots.Waist: return self.Waist == 1;
-			case ItemSlots.Legs: return self.Legs == 1;
-			case ItemSlots.Feet: return self.Feet == 1;
-			case ItemSlots.OffHand: return self.OffHand == 1;
-			case ItemSlots.Ears: return self.Ears == 1;
-			case ItemSlots.Neck: return self.Neck == 1;
-			case ItemSlots.Wrists: return self.Wrists == 1;
-			case ItemSlots.RightRing: return self.FingerR == 1;
-			case ItemSlots.LeftRing: return self.FingerL == 1;
-			case ItemSlots.SoulCrystal: return self.SoulCrystal == 1;
-		}
-
-		return false;
+			ItemSlots.MainHand => self.MainHand == 1,
+			ItemSlots.Head => self.Head == 1,
+			ItemSlots.Body => self.Body == 1,
+			ItemSlots.Hands => self.Gloves == 1,
+			ItemSlots.Waist => self.Waist == 1,
+			ItemSlots.Legs => self.Legs == 1,
+			ItemSlots.Feet => self.Feet == 1,
+			ItemSlots.OffHand => self.OffHand == 1,
+			ItemSlots.Ears => self.Ears == 1,
+			ItemSlots.Neck => self.Neck == 1,
+			ItemSlots.Wrists => self.Wrists == 1,
+			ItemSlots.RightRing => self.FingerR == 1,
+			ItemSlots.LeftRing => self.FingerL == 1,
+			ItemSlots.SoulCrystal => self.SoulCrystal == 1,
+			_ => false,
+		};
 	}
 }

@@ -3,11 +3,11 @@
 
 namespace Anamnesis.Serialization.Converters;
 
+using Anamnesis.GameData;
+using Anamnesis.Services;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Anamnesis.GameData;
-using Anamnesis.Services;
 
 public class IDyeConverter : JsonConverter<IDye>
 {
@@ -19,7 +19,7 @@ public class IDyeConverter : JsonConverter<IDye>
 			throw new Exception($"Invalid serialized item value");
 
 		uint dyeID = uint.Parse(str);
-		return GameDataService.Dyes.Get(dyeID);
+		return GameDataService.Dyes.GetRow(dyeID);
 	}
 
 	public override void Write(Utf8JsonWriter writer, IDye value, JsonSerializerOptions options)

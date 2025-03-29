@@ -3,12 +3,12 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System.Windows.Controls;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Memory;
 using Anamnesis.Services;
 using PropertyChanged;
+using System.Windows.Controls;
 
 /// <summary>
 /// Interaction logic for HairSelector.xaml.
@@ -71,7 +71,7 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 
 		set
 		{
-			if (this.selectedItem == value)
+			if (!this.selectedItem.HasValue)
 				return;
 
 			this.selectedItem = value;
@@ -79,7 +79,7 @@ public partial class CustomizeFeatureSelectorDrawer : UserControl, IDrawer
 			if (value == null)
 				return;
 
-			this.Selected = value.FeatureId;
+			this.Selected = value.Value.FeatureId;
 		}
 	}
 

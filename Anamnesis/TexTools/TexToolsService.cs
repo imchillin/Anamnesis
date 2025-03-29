@@ -3,12 +3,12 @@
 
 namespace Anamnesis.TexTools;
 
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Anamnesis.GameData;
 using Anamnesis.Memory;
 using Anamnesis.Serialization;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 public class TexToolsService : ServiceBase<TexToolsService>
 {
@@ -16,7 +16,7 @@ public class TexToolsService : ServiceBase<TexToolsService>
 
 	public static Mod? GetMod(IItem item)
 	{
-		return GetMod(item.Name);
+		return GetMod(item.Name.ToString());
 	}
 
 	public static Mod? GetMod(string itemName)

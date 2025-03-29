@@ -21,10 +21,12 @@ public class ChocoboSkinItem : IItem
 	public string? Description { get; private set; }
 	public ImageReference? Icon { get; private set; }
 
+	public ulong Model => ((ulong)this.ModelVariant << 16) | this.ModelBase;
 	public ushort ModelSet => 0;
 	public ushort ModelBase => 1;
 	public ushort ModelVariant { get; private set; }
 	public bool HasSubModel => false;
+	public ulong SubModel => 0;
 	public ushort SubModelSet => 0;
 	public ushort SubModelBase => 0;
 	public ushort SubModelVariant => 0;

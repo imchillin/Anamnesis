@@ -6,31 +6,20 @@ namespace Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Interfaces;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
-using Lumina.Data;
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("Action", 0xf87a2103)]
-public class Action : ExcelRow, IAnimation
+[Sheet("Action", 0xF87A2103)]
+public readonly struct Action(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Action>, IAnimation
 {
-	public string? DisplayName { get; set; }
-	public ImageReference? Icon { get; private set; }
-	public ActionTimeline? Timeline { get; private set; }
+	public uint RowId => row;
+
+	public readonly string Name => page.ReadString(offset, offset).ToString();
+	public ImageReference? Icon => new(page.ReadUInt16(offset + 8));
+	public ActionTimeline? Timeline => this.ActionTimelineHit.RowId >= 0 ? GameDataService.ActionTimelines.GetRow(this.ActionTimelineHit.RowId) : null;
+	public readonly RowRef<ActionTimeline> ActionTimelineHit => new(page.Module, page.ReadUInt16(offset + 12), page.Language);
 	public IAnimation.AnimationPurpose Purpose => IAnimation.AnimationPurpose.Action;
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-
-		this.DisplayName = parser.ReadString(0);
-		this.Icon = parser.ReadImageReference<ushort>(2);
-
-		short animationRow = parser.ReadColumn<short>(7);
-
-		if (animationRow >= 0)
-		{
-			this.Timeline = GameDataService.ActionTimelines.Get((uint)animationRow);
-		}
-	}
+	static Action IExcelRow<Action>.Create(ExcelPage page, uint offset, uint row) =>
+	   new(page, offset, row);
 }

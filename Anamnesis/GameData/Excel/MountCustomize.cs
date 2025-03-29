@@ -2,54 +2,34 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
-using Lumina.Data;
+
 using Lumina.Excel;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("MountCustomize", 0x525def92)]
-public class MountCustomize : ExcelRow
+[Sheet("MountCustomize", 0x525DEF92)]
+public readonly struct MountCustomize(ExcelPage page, uint offset, uint row)
+	: IExcelRow<MountCustomize>
 {
-	public ushort HyurMidlanderMaleScale { get; set; }
-	public ushort HyurMidlanderFemaleScale { get; set; }
-	public ushort HyurHighlanderMaleScale { get; set; }
-	public ushort HyurHighlanderFemaleScale { get; set; }
-	public ushort ElezenMaleScale { get; set; }
-	public ushort ElezenFemaleScale { get; set; }
-	public ushort LalaMaleScale { get; set; }
-	public ushort LalaFemaleScale { get; set; }
-	public ushort MiqoMaleScale { get; set; }
-	public ushort MiqoFemaleScale { get; set; }
-	public ushort RoeMaleScale { get; set; }
-	public ushort RoeFemaleScale { get; set; }
-	public ushort AuRaMaleScale { get; set; }
-	public ushort AuRaFemaleScale { get; set; }
-	public ushort HrothgarMaleScale { get; set; }
-	public ushort HrothgarFemaleScale { get; set; }
-	public ushort VieraMaleScale { get; set; }
-	public ushort VieraFemaleScale { get; set; }
+	public uint RowId => row;
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
+	public readonly ushort HyurMidlanderMaleScale => page.ReadUInt16(offset);
+	public readonly ushort HyurMidlanderFemaleScale => page.ReadUInt16(offset + 2);
+	public readonly ushort HyurHighlanderMaleScale => page.ReadUInt16(offset + 4);
+	public readonly ushort HyurHighlanderFemaleScale => page.ReadUInt16(offset + 6);
+	public readonly ushort ElezenMaleScale => page.ReadUInt16(offset + 8);
+	public readonly ushort ElezenFemaleScale => page.ReadUInt16(offset + 10);
+	public readonly ushort LalaMaleScale => page.ReadUInt16(offset + 12);
+	public readonly ushort LalaFemaleScale => page.ReadUInt16(offset + 14);
+	public readonly ushort MiqoMaleScale => page.ReadUInt16(offset + 16);
+	public readonly ushort MiqoFemaleScale => page.ReadUInt16(offset + 18);
+	public readonly ushort RoeMaleScale => page.ReadUInt16(offset + 20);
+	public readonly ushort RoeFemaleScale => page.ReadUInt16(offset + 22);
+	public readonly ushort AuRaMaleScale => page.ReadUInt16(offset + 24);
+	public readonly ushort AuRaFemaleScale => page.ReadUInt16(offset + 26);
+	public readonly ushort HrothgarMaleScale => page.ReadUInt16(offset + 28);
+	public readonly ushort HrothgarFemaleScale => page.ReadUInt16(offset + 30);
+	public readonly ushort VieraMaleScale => page.ReadUInt16(offset + 32);
+	public readonly ushort VieraFemaleScale => page.ReadUInt16(offset + 34);
 
-		this.HyurMidlanderMaleScale = parser.ReadColumn<ushort>(1);
-		this.HyurMidlanderFemaleScale = parser.ReadColumn<ushort>(2);
-		this.HyurHighlanderMaleScale = parser.ReadColumn<ushort>(3);
-		this.HyurHighlanderFemaleScale = parser.ReadColumn<ushort>(4);
-		this.ElezenMaleScale = parser.ReadColumn<ushort>(5);
-		this.ElezenFemaleScale = parser.ReadColumn<ushort>(6);
-		this.LalaMaleScale = parser.ReadColumn<ushort>(7);
-		this.LalaFemaleScale = parser.ReadColumn<ushort>(8);
-		this.MiqoMaleScale = parser.ReadColumn<ushort>(9);
-		this.MiqoFemaleScale = parser.ReadColumn<ushort>(10);
-		this.RoeMaleScale = parser.ReadColumn<ushort>(11);
-		this.RoeFemaleScale = parser.ReadColumn<ushort>(12);
-		this.AuRaMaleScale = parser.ReadColumn<ushort>(13);
-		this.AuRaFemaleScale = parser.ReadColumn<ushort>(14);
-		this.HrothgarMaleScale = parser.ReadColumn<ushort>(15);
-		this.HrothgarFemaleScale = parser.ReadColumn<ushort>(16);
-		this.VieraMaleScale = parser.ReadColumn<ushort>(17);
-		this.VieraFemaleScale = parser.ReadColumn<ushort>(18);
-	}
+	static MountCustomize IExcelRow<MountCustomize>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

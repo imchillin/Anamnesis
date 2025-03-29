@@ -1,41 +1,49 @@
 ﻿// © Anamnesis.
 // Licensed under the MIT license.
 
-namespace Anamnesis.GameData.Excel;
-
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
-using Lumina.Data;
 using Lumina.Excel;
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
 
-[Sheet("Glasses")]
-public class Glasses : ExcelRow
+/// <summary>Represents a row in the "Glasses" Excel sheet.</summary>
+[Sheet("Glasses", 0x2FAAC2C1)]
+public readonly struct Glasses(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Glasses>
 {
-	public ushort GlassesId => (ushort)this.RowId;
-	public string Name { get; private set; } = string.Empty;
-	public string Description { get; private set; } = string.Empty;
-	public ImageReference? Icon { get; private set; }
+	private readonly ImageReference icon = new(page.ReadInt32(offset + 28));
 
+	/// <summary>Gets the row ID.</summary>
+	public uint RowId => row;
+
+	/// <summary>Gets the name of the glasses.</summary>
+	public readonly string Name => this.RowId != 0
+		? page.ReadString(offset + 12, offset).ToString() ?? $"Glasses #{this.RowId}"
+		: LocalizationService.GetString("Facewear_None_Name");
+
+	/// <summary>Gets the description of the glasses.</summary>
+	public readonly string Description => this.RowId != 0
+		? page.ReadString(offset + 8, offset).ToString() ?? string.Empty
+		: LocalizationService.GetString("Facewear_None_Desc");
+
+	/// <summary>Gets the icon reference for the glasses.</summary>
+	public ImageReference Icon => this.icon;
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the glasses are marked as favorite.
+	/// </summary>
 	public bool IsFavorite
 	{
-		get => FavoritesService.IsFavorite<Glasses>(this);
-		set => FavoritesService.SetFavorite<Glasses>(this, nameof(FavoritesService.Favorites.Glasses), value);
+		get => FavoritesService.IsFavorite(this);
+		set => FavoritesService.SetFavorite(this, nameof(FavoritesService.Favorites.Glasses), value);
 	}
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-		if(this.RowId == 0)
-		{
-			this.Name = LocalizationService.GetString("Facewear_None_Name");
-			this.Description = LocalizationService.GetString("Facewear_None_Desc");
-		}
-		else
-		{
-			this.Name = parser.ReadString(13) ?? string.Empty;
-			this.Description = parser.ReadString(12) ?? string.Empty;
-			this.Icon = parser.ReadImageReference<int>(2);
-		}
-	}
+	/// <summary>
+	/// Creates a new instance of the <see cref="Glasses"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row ID.</param>
+	/// <returns>A new instance of the <see cref="Glasses"/> struct.</returns>
+	static Glasses IExcelRow<Glasses>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

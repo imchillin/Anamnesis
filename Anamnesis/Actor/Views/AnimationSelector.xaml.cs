@@ -3,17 +3,15 @@
 
 namespace Anamnesis.Actor.Views;
 
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Interfaces;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.Styles.Drawers;
 using PropertyChanged;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using XivToolsWpf;
-using XivToolsWpf.Selectors;
 
 public abstract class AnimationSelectorDrawer : SelectorDrawer<IAnimation>
 {
@@ -42,10 +40,10 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 			this.LoadEmotes();
 
 		if (GameDataService.ActionTimelines != null)
-			this.AddItems(GameDataService.Actions);
+			this.AddItems(GameDataService.Actions.ToEnumerable());
 
 		if (GameDataService.ActionTimelines != null)
-			this.AddItems(GameDataService.ActionTimelines);
+			this.AddItems(GameDataService.ActionTimelines.ToEnumerable());
 
 		return Task.CompletedTask;
 	}
@@ -53,7 +51,7 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 	protected override bool Filter(IAnimation animation, string[]? search = null)
 	{
 		// Filter out any that are clearly invalid
-		if (string.IsNullOrEmpty(animation.DisplayName) || animation.Timeline == null || string.IsNullOrEmpty(animation.Timeline.Key))
+		if (string.IsNullOrEmpty(animation.Name) || animation.Timeline == null || string.IsNullOrEmpty(animation.Timeline.Value.Key))
 			return false;
 
 		if (!GlobalAnimationTypeFilter.IncludeEmotes && animation is EmoteEntry)
@@ -65,19 +63,19 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 		if (!GlobalAnimationTypeFilter.IncludeRaw && animation is ActionTimeline)
 			return false;
 
-		if (!this.LocalAnimationSlotFilter.IncludeBlendable && animation.Timeline.Slot != Memory.AnimationMemory.AnimationSlots.FullBody)
+		if (!this.LocalAnimationSlotFilter.IncludeBlendable && animation.Timeline.Value.Slot != Memory.AnimationMemory.AnimationSlots.FullBody)
 			return false;
 
-		if (!this.LocalAnimationSlotFilter.IncludeFullBody && animation.Timeline.Slot == Memory.AnimationMemory.AnimationSlots.FullBody)
+		if (!this.LocalAnimationSlotFilter.IncludeFullBody && animation.Timeline.Value.Slot == Memory.AnimationMemory.AnimationSlots.FullBody)
 			return false;
 
 		bool matches = false;
-		matches |= SearchUtility.Matches(animation.DisplayName, search);
+		matches |= SearchUtility.Matches(animation.Name, search);
 
 		if (animation.Timeline != null)
 		{
-			matches |= SearchUtility.Matches(animation.Timeline.Key, search);
-			matches |= SearchUtility.Matches(animation.Timeline.AnimationId.ToString(), search);
+			matches |= SearchUtility.Matches(animation.Timeline.Value.Key, search);
+			matches |= SearchUtility.Matches(animation.Timeline.Value.RowId.ToString(), search);
 		}
 
 		return matches;
@@ -98,13 +96,13 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 		if (animA is not Action && animB is Action)
 			return 1;
 
-		if (animA.DisplayName == null)
+		if (animA.Name == null)
 			return 1;
 
-		if (animB.DisplayName == null)
+		if (animB.Name == null)
 			return -1;
 
-		return -animB.DisplayName.CompareTo(animA.DisplayName);
+		return -animB.Name.CompareTo(animA.Name);
 	}
 
 	private void LoadEmotes()
@@ -114,40 +112,37 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 
 		foreach (var emote in GameDataService.Emotes)
 		{
-			if (emote == null)
-				continue;
-
-			if (emote.DisplayName == null)
+			if (emote.Name == null)
 				continue;
 
 			if (emote.LoopTimeline == null)
 				continue;
 
 			// Add the loop
-			this.AddItem(new EmoteEntry(emote.DisplayName, emote.LoopTimeline, IAnimation.AnimationPurpose.Standard, emote.Icon));
+			this.AddItem(new EmoteEntry(emote.Name, emote.LoopTimeline.Value, IAnimation.AnimationPurpose.Standard, emote.Icon));
 
 			// Check for an intro animation
-			if (emote.IntroTimeline != null && emote.IntroTimeline != emote.LoopTimeline)
+			if (emote.IntroTimeline != null && emote.IntroTimeline.Value.RowId != emote.LoopTimeline.Value.RowId)
 			{
-				this.AddItem(new EmoteEntry(emote.DisplayName, emote.IntroTimeline, IAnimation.AnimationPurpose.Intro, emote.Icon));
+				this.AddItem(new EmoteEntry(emote.Name, (ActionTimeline)emote.IntroTimeline, IAnimation.AnimationPurpose.Intro, emote.Icon));
 			}
 
 			// Check for an upper body variant
-			if (emote.UpperBodyTimeline != null && emote.UpperBodyTimeline != emote.LoopTimeline)
+			if (emote.UpperBodyTimeline != null && emote.UpperBodyTimeline.Value.RowId != emote.LoopTimeline.Value.RowId)
 			{
-				this.AddItem(new EmoteEntry(emote.DisplayName, emote.UpperBodyTimeline, IAnimation.AnimationPurpose.Blend, emote.Icon));
+				this.AddItem(new EmoteEntry(emote.Name, (ActionTimeline)emote.UpperBodyTimeline, IAnimation.AnimationPurpose.Blend, emote.Icon));
 			}
 
 			// Check for a ground specific animation
-			if (emote.GroundTimeline != null && emote.GroundTimeline != emote.LoopTimeline && emote.GroundTimeline != emote.UpperBodyTimeline)
+			if (emote.GroundTimeline != null && emote.UpperBodyTimeline != null && emote.GroundTimeline.Value.RowId != emote.LoopTimeline.Value.RowId && emote.GroundTimeline.Value.RowId != emote.UpperBodyTimeline.Value.RowId)
 			{
-				this.AddItem(new EmoteEntry(emote.DisplayName, emote.GroundTimeline, IAnimation.AnimationPurpose.Ground, emote.Icon));
+				this.AddItem(new EmoteEntry(emote.Name, (ActionTimeline)emote.GroundTimeline, IAnimation.AnimationPurpose.Ground, emote.Icon));
 			}
 
 			// Check for a chair specific animation
-			if (emote.ChairTimeline != null && emote.ChairTimeline != emote.LoopTimeline && emote.ChairTimeline != emote.UpperBodyTimeline)
+			if (emote.ChairTimeline != null && emote.UpperBodyTimeline != null && emote.ChairTimeline.Value.RowId != emote.LoopTimeline.Value.RowId && emote.ChairTimeline.Value.RowId != emote.UpperBodyTimeline.Value.RowId)
 			{
-				this.AddItem(new EmoteEntry(emote.DisplayName, emote.ChairTimeline, IAnimation.AnimationPurpose.Chair, emote.Icon));
+				this.AddItem(new EmoteEntry(emote.Name, (ActionTimeline)emote.ChairTimeline, IAnimation.AnimationPurpose.Chair, emote.Icon));
 			}
 		}
 	}
@@ -164,19 +159,19 @@ public partial class AnimationSelector : AnimationSelectorDrawer
 	{
 		public EmoteEntry(string displayName, ActionTimeline timeline, IAnimation.AnimationPurpose purpose, ImageReference? icon)
 		{
-			this.DisplayName = displayName;
+			this.Name = displayName;
 			this.Purpose = purpose;
 			this.Timeline = timeline;
 			this.Icon = icon;
 		}
 
-		public string DisplayName { get; private set; }
+		public string Name { get; private set; }
 
 		public IAnimation.AnimationPurpose Purpose { get; private set; }
 
 		public ImageReference? Icon { get; private set; }
 
-		public ActionTimeline Timeline { get; private set; }
+		public ActionTimeline? Timeline { get; private set; }
 	}
 
 	[AddINotifyPropertyChangedInterface]

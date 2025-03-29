@@ -3,10 +3,11 @@
 
 namespace Anamnesis.GameData.Sheets;
 
-using System;
-using System.Collections.Generic;
 using Anamnesis.GameData.Excel;
 using Anamnesis.Memory;
+using Lumina.Excel;
+using System;
+using System.Collections.Generic;
 
 public static class CustomizeSheet
 {
@@ -26,10 +27,10 @@ public static class CustomizeSheet
 		{
 			CharaMakeCustomize? feature = self.FindFeatureById(fromIndex, count, (byte)i);
 
-			if (feature == null)
+			if (!feature.HasValue)
 				continue;
 
-			results.Add(feature);
+			results.Add(feature.Value);
 		}
 
 		return results;
@@ -116,9 +117,9 @@ public static class CustomizeSheet
 	{
 		for (uint i = from; i < from + length; i++)
 		{
-			CharaMakeCustomize feature = self.Get(i);
+			CharaMakeCustomize feature = self.GetRow(i);
 
-			if (feature == null)
+			if (feature.Equals(default(CharaMakeCustomize)))
 				continue;
 
 			if (feature.FeatureId == value)

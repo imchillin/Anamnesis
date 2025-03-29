@@ -6,6 +6,7 @@ namespace Anamnesis.GameData.Interfaces;
 using Anamnesis.GameData.Excel;
 using Anamnesis.GameData.Sheets;
 
+// TODO: Add XML docs
 public interface IAnimation
 {
 	public enum AnimationPurpose
@@ -20,7 +21,7 @@ public interface IAnimation
 		Blend,
 	}
 
-	public string? DisplayName { get; }
+	public string? Name { get; }
 	public ImageReference? Icon { get; }
 	public ActionTimeline? Timeline { get; }
 	public AnimationPurpose Purpose { get; }

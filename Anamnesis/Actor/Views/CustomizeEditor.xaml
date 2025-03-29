@@ -148,7 +148,7 @@
 				
 				<!-- Facial Features -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="5" Key="Character_Appearance_Features" Style="{StaticResource Label}"/>
-				<controls:FacialFeaturesControl Value="{Binding Customize.FacialFeatures}" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Head="{Binding Customize.Head}" Grid.Column="1" Grid.Row="5"/>
+				<controls:FacialFeaturesControl Value="{Binding Customize.FacialFeatures}" Gender="{Binding Customize.Gender}" Tribe="{Binding Customize.Tribe}" Face="{Binding Customize.Head}" Grid.Column="1" Grid.Row="5"/>
 
 				<!-- Face Paint  -->
 				<XivToolsWpf:TextBlock Grid.Column="0" Grid.Row="6" Key="Character_Appearance_FacePaint" Style="{StaticResource Label}"/>

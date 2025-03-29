@@ -4,10 +4,10 @@
 namespace Anamnesis.Serialization.Converters;
 
 using Anamnesis.Services;
-using System.Text.Json;
-using System;
-using System.Text.Json.Serialization;
 using Serilog;
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using static Anamnesis.Files.CharacterFile;
 
 internal class GlassesSaveConverter : JsonConverter<GlassesSave>
@@ -33,12 +33,13 @@ internal class GlassesSaveConverter : JsonConverter<GlassesSave>
 				}
 			}
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
 			Log.Error(ex, "Error reading glasses from file.");
 		}
 
-		return new GlassesSave(GameDataService.Glasses.Get((byte)glassesId).GlassesId);
+		// TODO: Update GlassesSave to accept a uint
+		return new GlassesSave((ushort)GameDataService.Glasses.GetRow((byte)glassesId).RowId);
 	}
 
 	public override void Write(Utf8JsonWriter writer, GlassesSave value, JsonSerializerOptions options)

@@ -5,71 +5,82 @@ namespace Anamnesis.GameData.Excel;
 
 using Anamnesis.GameData.Sheets;
 using Anamnesis.TexTools;
-using Lumina;
-using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Text;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("BuddyEquip", columnHash: 0xb429792a)]
-public class BuddyEquip : ExcelRow
+[Sheet("BuddyEquip", 0xB429792A)]
+public readonly struct BuddyEquip(ExcelPage page, uint offset, uint row)
+	: IExcelRow<BuddyEquip>
 {
-	public BuddyItem? Head { get; private set; }
-	public BuddyItem? Body { get; private set; }
-	public BuddyItem? Feet { get; private set; }
+	public uint RowId => row;
 
-	public override void PopulateData(RowParser parser, GameData gameData, Language language)
+	public readonly string Name => page.ReadString(offset + 8, offset).ToString();
+	public BuddyItem? Head
 	{
-		base.PopulateData(parser, gameData, language);
-
-		string name = parser.ReadColumn<SeString>(8) ?? string.Empty;
-
-		int h = parser.ReadColumn<int>(9);
-		ushort headBase = (ushort)h;
-		ushort headVariant = (ushort)(h >> 16);
-		ushort headIcon = parser.ReadColumn<ushort>(13);
-		if (headBase != 0 || headVariant != 0)
-			this.Head = new(name, ItemSlots.Head, headBase, headVariant, headIcon);
-
-		int b = parser.ReadColumn<int>(10);
-		ushort bodyBase = (ushort)b;
-		ushort bodyVariant = (ushort)(b >> 16);
-		ushort bodyIcon = parser.ReadColumn<ushort>(14);
-		if (bodyBase != 0 || bodyVariant != 0)
-			this.Body = new(name, ItemSlots.Body, bodyBase, bodyVariant, bodyIcon);
-
-		int l = parser.ReadColumn<int>(11);
-		ushort legsBase = (ushort)l;
-		ushort legsVariant = (ushort)(l >> 16);
-		ushort legsIcon = parser.ReadColumn<ushort>(15);
-		if (legsBase != 0 || legsVariant != 0)
+		get
 		{
-			this.Feet = new(name, ItemSlots.Feet, legsBase, legsVariant, legsIcon);
+			int headData = page.ReadInt32(offset + 20);
+			ushort headBase = (ushort)headData;
+			ushort headVariant = (ushort)(headData >> 16);
+			ushort headIcon = page.ReadUInt16(offset + 32);
+
+			if (headBase == 0 && headVariant == 0)
+				return null;
+
+			return new(this.Name, ItemSlots.Head, headBase, headVariant, headIcon);
 		}
 	}
 
-	public class BuddyItem : IItem
+	public BuddyItem? Body
 	{
-		public BuddyItem(string name, ItemSlots slot, ushort modelBase, ushort modelVariant, ushort icon)
+		get
 		{
-			this.Name = name;
-			this.Slot = slot;
-			this.ModelBase = modelBase;
-			this.ModelVariant = modelVariant;
-			this.Icon = new(icon);
-		}
+			int bodyData = page.ReadInt32(offset + 24);
+			ushort bodyBase = (ushort)bodyData;
+			ushort bodyVariant = (ushort)(bodyData >> 16);
+			ushort bodyIcon = page.ReadUInt16(offset + 34);
 
-		public string Name { get; private set; } = string.Empty;
-		public ItemSlots Slot { get; private set; }
-		public ushort ModelBase { get; private set; }
-		public ushort ModelVariant { get; private set; }
-		public ImageReference? Icon { get; private set; }
+			if (bodyBase == 0 && bodyVariant == 0)
+				return null;
+
+			return new(this.Name, ItemSlots.Body, bodyBase, bodyVariant, bodyIcon);
+		}
+	}
+
+	public BuddyItem? Feet
+	{
+		get
+		{
+			int legsData = page.ReadInt32(offset + 28);
+			ushort legsBase = (ushort)legsData;
+			ushort legsVariant = (ushort)(legsData >> 16);
+			ushort legsIcon = page.ReadUInt16(offset + 36);
+
+			if (legsBase != 0 || legsVariant != 0)
+				return new(this.Name, ItemSlots.Feet, legsBase, legsVariant, legsIcon);
+
+			return null;
+		}
+	}
+
+	static BuddyEquip IExcelRow<BuddyEquip>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
+
+	public class BuddyItem(string name, ItemSlots slot, ushort modelBase, ushort modelVariant, ushort icon)
+		: IItem
+	{
+		public string Name { get; private set; } = name;
+		public ItemSlots Slot { get; private set; } = slot;
+		public ushort ModelBase { get; private set; } = modelBase;
+		public ushort ModelVariant { get; private set; } = modelVariant;
+		public ImageReference? Icon { get; private set; } = new(icon);
 
 		public uint RowId => 0;
 		public string? Description => null;
 		public bool HasSubModel => false;
+
+		public ulong Model => 0;
 		public ushort ModelSet => 0;
+		public ulong SubModel => 0;
 		public ushort SubModelSet => 0;
 		public ushort SubModelBase => 0;
 		public ushort SubModelVariant => 0;

@@ -24,10 +24,10 @@
 			</GroupBox.Header>
 			
 			<StackPanel>
-				<Button Content="Search Battle Npc Names"
+				<!-- <Button Content="Search Battle Npc Names"
 						Style="{StaticResource TransparentButton}"
 						Height="32"
-						Click="OnNpcNameSearchClicked"/>
+						Click="OnNpcNameSearchClicked"/> -->
 
 				<Button Content="Search for NPC Data"
 						Click="OnFindNpcClicked"

@@ -2,38 +2,104 @@
 // Licensed under the MIT license.
 
 namespace Anamnesis.GameData.Excel;
+
 using Anamnesis.Actor.Utilities;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
 using Anamnesis.TexTools;
 using Lumina;
-using Lumina.Data;
 using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
-
-[Sheet("Mount", 0x5b89058f)]
-public class Mount : ExcelRow, INpcBase
+[Sheet("Mount", 0x5B89058F)]
+public readonly struct Mount(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Mount>, INpcBase
 {
-	private string? name;
+	private readonly ImageReference icon = new(page.ReadUInt16(offset + 52));
 
-	private int equipHead;
-	private int equipBody;
-	private int equipLeg;
-	private int equipFoot;
+	public uint RowId => row;
 
-	private MountAppearance? appearance;
+	public readonly int EquipHead => page.ReadInt32(offset + 32);
+	public readonly int EquipBody => page.ReadInt32(offset + 36);
+	public readonly int EquipLeg => page.ReadInt32(offset + 40);
+	public readonly int EquipFoot => page.ReadInt32(offset + 44);
 
-	public string Name => this.name ?? $"{this.TypeName} #{this.RowId}";
-	public string Description { get; private set; } = string.Empty;
-	public uint ModelCharaRow { get; private set; }
-	public byte MountCustomizeRow { get; private set; }
+	public string Name => page.ReadString(offset, offset).ToString() ?? $"{this.TypeName} #{this.RowId}";
+	public string Description => string.Empty;
+	public uint ModelCharaRow => this.ModelChara.RowId;
+	public readonly RowRef<ModelChara> ModelChara => new(page.Module, (uint)page.ReadInt32(offset + 28), page.Language);
+	public uint MountCustomizeRow => this.MountCustomize.RowId;
+	public readonly RowRef<MountCustomize> MountCustomize => new(page.Module, (uint)page.ReadUInt8(offset + 70), page.Language);
 
-	public ImageReference? Icon { get; private set; }
+	public ImageReference? Icon => this.icon;
 	public Mod? Mod => null;
 	public bool CanFavorite => true;
-	public bool HasName => this.name != null;
+	public bool HasName => page.ReadString(offset, offset).ToString() != null;
 	public string TypeName => "Mount";
+
+	public byte FacePaintColor => 0;
+	public byte FacePaint => 0;
+	public byte ExtraFeature2OrBust => 0;
+	public byte ExtraFeature1 => 0;
+	public RowRef<Race> Race => default;
+	public byte Gender => 0;
+	public byte BodyType => 0;
+	public byte Height => 0;
+	public RowRef<Tribe> Tribe => default;
+	public byte Face => 0;
+	public byte HairStyle => 0;
+	public bool EnableHairHighlight => false;
+	public byte SkinColor => 0;
+	public byte EyeHeterochromia => 0;
+	public byte HairHighlightColor => 0;
+	public byte FacialFeature => 0;
+	public byte FacialFeatureColor => 0;
+	public byte Eyebrows => 0;
+	public byte EyeColor => 0;
+	public byte EyeShape => 0;
+	public byte Nose => 0;
+	public byte Jaw => 0;
+	public byte Mouth => 0;
+	public byte LipColor => 0;
+	public byte BustOrTone1 => 0;
+	public byte HairColor => 0;
+
+	public IItem MainHand => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeMainHand => default;
+	public IItem OffHand => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeOffHand => default;
+	public IItem Head => LuminaExtensions.GetGearItem(ItemSlots.Head, (uint)this.EquipHead);
+	public RowRef<Stain> DyeHead => default;
+	public IItem Body => LuminaExtensions.GetGearItem(ItemSlots.Body, (uint)this.EquipBody);
+	public RowRef<Stain> DyeBody => default;
+	public IItem Legs => LuminaExtensions.GetGearItem(ItemSlots.Legs, (uint)this.EquipLeg);
+	public RowRef<Stain> DyeLegs => default;
+	public IItem Feet => LuminaExtensions.GetGearItem(ItemSlots.Feet, (uint)this.EquipFoot);
+	public RowRef<Stain> DyeFeet => default;
+	public IItem Hands => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeHands => default;
+	public IItem Wrists => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeWrists => default;
+	public IItem Neck => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeNeck => default;
+	public IItem Ears => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeEars => default;
+	public IItem LeftRing => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeLeftRing => default;
+	public IItem RightRing => ItemUtility.NoneItem;
+	public RowRef<Stain> DyeRightRing => default;
+	public RowRef<Stain> Dye2MainHand => default;
+	public RowRef<Stain> Dye2OffHand => default;
+	public RowRef<Stain> Dye2Head => default;
+	public RowRef<Stain> Dye2Body => default;
+	public RowRef<Stain> Dye2Legs => default;
+	public RowRef<Stain> Dye2Feet => default;
+	public RowRef<Stain> Dye2Hands => default;
+	public RowRef<Stain> Dye2Wrists => default;
+	public RowRef<Stain> Dye2Neck => default;
+	public RowRef<Stain> Dye2Ears => default;
+	public RowRef<Stain> Dye2LeftRing => default;
+	public RowRef<Stain> Dye2RightRing => default;
 
 	public bool IsFavorite
 	{
@@ -41,105 +107,6 @@ public class Mount : ExcelRow, INpcBase
 		set => FavoritesService.SetFavorite<INpcBase>(this, nameof(FavoritesService.Favorites.Models), value);
 	}
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-
-		this.name = parser.ReadString(0);
-		this.ModelCharaRow = (uint)parser.ReadColumn<int>(8);
-		this.MountCustomizeRow = parser.ReadColumn<byte>(16);
-
-		this.equipHead = parser.ReadColumn<int>(25);
-		this.equipBody = parser.ReadColumn<int>(26);
-		this.equipLeg = parser.ReadColumn<int>(27);
-		this.equipFoot = parser.ReadColumn<int>(28);
-
-		this.Icon = parser.ReadImageReference<ushort>(30);
-	}
-
-	public INpcAppearance? GetAppearance()
-	{
-		if (this.appearance == null)
-			this.appearance = new MountAppearance(this);
-
-		return this.appearance;
-	}
-
-	public class MountAppearance : INpcAppearance
-	{
-		public MountAppearance(Mount mount)
-		{
-			this.ModelCharaRow = mount.ModelCharaRow;
-
-			this.Head = LuminaExtensions.GetGearItem(ItemSlots.Head, (uint)mount.equipHead);
-			this.Body = LuminaExtensions.GetGearItem(ItemSlots.Body, (uint)mount.equipBody);
-			this.Legs = LuminaExtensions.GetGearItem(ItemSlots.Legs, (uint)mount.equipLeg);
-			this.Feet = LuminaExtensions.GetGearItem(ItemSlots.Feet, (uint)mount.equipFoot);
-		}
-
-		public uint ModelCharaRow { get; private set; }
-		public int FacePaintColor => 0;
-		public int FacePaint => 0;
-		public int ExtraFeature2OrBust => 0;
-		public int ExtraFeature1 => 0;
-		public Race? Race => null;
-		public int Gender => 0;
-		public int BodyType => 0;
-		public int Height => 0;
-		public Tribe? Tribe => null;
-		public int Face => 0;
-		public int HairStyle => 0;
-		public bool EnableHairHighlight => false;
-		public int SkinColor => 0;
-		public int EyeHeterochromia => 0;
-		public int HairHighlightColor => 0;
-		public int FacialFeature => 0;
-		public int FacialFeatureColor => 0;
-		public int Eyebrows => 0;
-		public int EyeColor => 0;
-		public int EyeShape => 0;
-		public int Nose => 0;
-		public int Jaw => 0;
-		public int Mouth => 0;
-		public int LipColor => 0;
-		public int BustOrTone1 => 0;
-		public int HairColor => 0;
-
-		public IItem MainHand => ItemUtility.NoneItem;
-		public IDye DyeMainHand => DyeUtility.NoneDye;
-		public IItem OffHand => ItemUtility.NoneItem;
-		public IDye DyeOffHand => DyeUtility.NoneDye;
-		public IItem Head { get; private set; }
-		public IDye DyeHead => DyeUtility.NoneDye;
-		public IItem Body { get; private set; }
-		public IDye DyeBody => DyeUtility.NoneDye;
-		public IItem Legs { get; private set; }
-		public IDye DyeLegs => DyeUtility.NoneDye;
-		public IItem Feet { get; private set; }
-		public IDye DyeFeet => DyeUtility.NoneDye;
-		public IItem Hands => ItemUtility.NoneItem;
-		public IDye DyeHands => DyeUtility.NoneDye;
-		public IItem Wrists => ItemUtility.NoneItem;
-		public IDye DyeWrists => DyeUtility.NoneDye;
-		public IItem Neck => ItemUtility.NoneItem;
-		public IDye DyeNeck => DyeUtility.NoneDye;
-		public IItem Ears => ItemUtility.NoneItem;
-		public IDye DyeEars => DyeUtility.NoneDye;
-		public IItem LeftRing => ItemUtility.NoneItem;
-		public IDye DyeLeftRing => DyeUtility.NoneDye;
-		public IItem RightRing => ItemUtility.NoneItem;
-		public IDye DyeRightRing => DyeUtility.NoneDye;
-		public IDye Dye2MainHand => DyeUtility.NoneDye;
-		public IDye Dye2OffHand => DyeUtility.NoneDye;
-		public IDye Dye2Head => DyeUtility.NoneDye;
-		public IDye Dye2Body => DyeUtility.NoneDye;
-		public IDye Dye2Legs => DyeUtility.NoneDye;
-		public IDye Dye2Feet => DyeUtility.NoneDye;
-		public IDye Dye2Hands => DyeUtility.NoneDye;
-		public IDye Dye2Wrists => DyeUtility.NoneDye;
-		public IDye Dye2Neck => DyeUtility.NoneDye;
-		public IDye Dye2Ears => DyeUtility.NoneDye;
-		public IDye Dye2LeftRing => DyeUtility.NoneDye;
-		public IDye Dye2RightRing => DyeUtility.NoneDye;
-	}
+	static Mount IExcelRow<Mount>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

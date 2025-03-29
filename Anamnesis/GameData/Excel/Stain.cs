@@ -3,178 +3,131 @@
 
 namespace Anamnesis.GameData.Excel;
 
-using System;
-using System.Windows.Media;
 using Anamnesis.GameData.Sheets;
 using Anamnesis.Services;
-using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Text;
-
-using ExcelRow = Anamnesis.GameData.Sheets.ExcelRow;
+using System;
+using System.Collections.Generic;
+using System.Windows.Media;
 using MediaColor = System.Windows.Media.Color;
 
-[Sheet("Stain", 0x97c471bd)]
-public class Stain : ExcelRow, IDye
+/// <summary>
+/// Represents a Stain in the game data, which includes information about dyes and their associated items.
+/// </summary>
+[Sheet("Stain", 0x97C471BD)]
+public readonly struct Stain(ExcelPage page, uint offset, uint row)
+	: IExcelRow<Stain>, IDye
 {
+	/// <summary>Maps dye IDs to item keys.</summary>
+	private static readonly Dictionary<uint, uint> DyeToItemKeyMap = new()
+	{
+		{ 1, 5729 }, { 2, 5730 }, { 3, 5731 }, { 4, 5732 }, { 5, 5733 },
+		{ 6, 5734 }, { 7, 5735 }, { 8, 5736 }, { 9, 5737 }, { 10, 5738 },
+		{ 11, 5739 }, { 12, 5740 }, { 13, 5741 }, { 14, 5742 }, { 15, 5743 },
+		{ 16, 5744 }, { 17, 5745 }, { 18, 5746 }, { 19, 5747 }, { 20, 5748 },
+		{ 21, 5749 }, { 22, 5750 }, { 23, 5751 }, { 24, 5752 }, { 25, 5753 },
+		{ 26, 5754 }, { 27, 5755 }, { 28, 5756 }, { 29, 5757 }, { 30, 5758 },
+		{ 31, 5759 }, { 32, 5760 }, { 33, 5761 }, { 34, 5762 }, { 35, 5763 },
+		{ 36, 5764 }, { 37, 5765 }, { 38, 5766 }, { 39, 5767 }, { 40, 5768 },
+		{ 41, 5769 }, { 42, 5770 }, { 43, 5771 }, { 44, 5772 }, { 45, 5773 },
+		{ 46, 5774 }, { 47, 5775 }, { 48, 5776 }, { 49, 5777 }, { 50, 5778 },
+		{ 51, 5779 }, { 52, 5780 }, { 53, 5781 }, { 54, 5782 }, { 55, 5783 },
+		{ 56, 5784 }, { 57, 5785 }, { 58, 5786 }, { 59, 5787 }, { 60, 5788 },
+		{ 61, 5789 }, { 62, 5790 }, { 63, 5791 }, { 64, 5792 }, { 65, 5793 },
+		{ 66, 5794 }, { 67, 5795 }, { 68, 5796 }, { 69, 5797 }, { 70, 5798 },
+		{ 71, 5799 }, { 72, 5800 }, { 73, 5801 }, { 74, 5802 }, { 75, 5803 },
+		{ 76, 5804 }, { 77, 5805 }, { 78, 5806 }, { 79, 5807 }, { 80, 5808 },
+		{ 81, 5809 }, { 82, 5810 }, { 83, 5811 }, { 84, 5812 }, { 85, 5813 },
+		{ 86, 30116 }, { 87, 30117 }, { 88, 30118 }, { 89, 30119 }, { 90, 30120 },
+		{ 91, 30121 }, { 92, 30122 }, { 93, 30123 }, { 94, 30124 }, { 101, 8732 },
+		{ 102, 8733 }, { 103, 8734 }, { 104, 8735 }, { 105, 8736 }, { 106, 8737 },
+		{ 107, 8738 }, { 108, 8739 }, { 109, 8740 }, { 110, 8741 }, { 111, 8742 },
+		{ 112, 8743 }, { 113, 8744 }, { 114, 8745 }, { 115, 8746 }, { 116, 8747 },
+		{ 117, 8748 }, { 118, 8749 }, { 119, 8750 }, { 120, 8751 },
+	};
+
+	/// <summary>Gets the row ID.</summary>
+	public uint RowId => row;
+
+	/// <summary>Gets the row ID as a byte type.</summary>
 	public byte Id => (byte)this.RowId;
-	public string Name { get; private set; } = string.Empty;
-	public byte Shade { get; private set; }
-	public Brush? Color { get; private set; }
 
-	public string Description { get; private set; } = string.Empty;
-	public ImageReference? Icon { get; private set; } = null;
-	public Item? Item { get; private set; } = null;
+	/// <summary>Gets the stain's name.</summary>
+	public string Name => page.ReadString(offset, offset).ToString() ?? string.Empty;
 
+	/// <summary>Gets the stain's description.</summary>
+	/// <remarks>
+	/// Stains do not have descriptions. An empty string is returned.
+	/// </remarks>
+	public string Description => string.Empty;
+
+	/// <summary>Gets the stain's shade.</summary>
+	public readonly byte Shade => page.ReadUInt8(offset + 12);
+
+	/// <summary>
+	/// Gets the color of the stain as a <see cref="Brush"/>.
+	/// </summary>
+	public Brush? Color
+	{
+		get
+		{
+			// 0xAARRGGBB (RGBA)
+			byte[] colorBytes = BitConverter.GetBytes(page.ReadUInt32(offset + 8));
+			SolidColorBrush color = BitConverter.IsLittleEndian
+				? new(MediaColor.FromRgb(colorBytes[2], colorBytes[1], colorBytes[0]))
+				: new(MediaColor.FromRgb(colorBytes[1], colorBytes[2], colorBytes[3]));
+
+			color.Freeze();
+			return color;
+		}
+	}
+
+	/// <summary>Gets the icon associated with the stain.</summary>
+	public ImageReference? Icon
+	{
+		get
+		{
+			if (this.RowId == 0)
+				return null;
+
+			if (!DyeToItemKeyMap.TryGetValue(this.RowId, out uint itemKey) || itemKey == 0)
+				return null;
+
+			return this.Item?.Icon;
+		}
+	}
+
+	/// <summary>Gets the item associated with the stain.</summary>
+	public Item? Item
+	{
+		get
+		{
+			if (this.RowId == 0)
+				return null;
+
+			if (!DyeToItemKeyMap.TryGetValue(this.RowId, out uint itemKey) || itemKey == 0)
+				return null;
+
+			return GameDataService.Items.GetRow(itemKey);
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the stain is favorited.
+	/// </summary>
 	public bool IsFavorite
 	{
 		get => FavoritesService.IsFavorite<IDye>(this);
 		set => FavoritesService.SetFavorite<IDye>(this, nameof(FavoritesService.Favorites.Dyes), value);
 	}
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language)
-	{
-		base.PopulateData(parser, gameData, language);
-
-		byte[] colorBytes = BitConverter.GetBytes(parser.ReadColumn<uint>(0));
-		this.Color = new SolidColorBrush(MediaColor.FromRgb(colorBytes[2], colorBytes[1], colorBytes[0]));
-		this.Color.Freeze();
-
-		this.Shade = parser.ReadColumn<byte>(1);
-		this.Name = parser.ReadColumn<SeString>(3) ?? string.Empty;
-
-		if (this.RowId == 0)
-			return;
-
-		uint itemKey = DyeToItemKey(this.RowId);
-
-		if (itemKey != 0)
-		{
-			this.Item = GameDataService.Items.Get(itemKey);
-			this.Icon = this.Item.Icon;
-		}
-	}
-
-	private static uint DyeToItemKey(uint dyeKey)
-	{
-		switch (dyeKey)
-		{
-			case 1: return 5729;
-			case 2: return 5730;
-			case 3: return 5731;
-			case 4: return 5732;
-			case 5: return 5733;
-			case 6: return 5734;
-			case 7: return 5735;
-			case 8: return 5736;
-			case 9: return 5737;
-			case 10: return 5738;
-			case 11: return 5739;
-			case 12: return 5740;
-			case 13: return 5741;
-			case 14: return 5742;
-			case 15: return 5743;
-			case 16: return 5744;
-			case 17: return 5745;
-			case 18: return 5746;
-			case 19: return 5747;
-			case 20: return 5748;
-			case 21: return 5749;
-			case 22: return 5750;
-			case 23: return 5751;
-			case 24: return 5752;
-			case 25: return 5753;
-			case 26: return 5754;
-			case 27: return 5755;
-			case 28: return 5756;
-			case 29: return 5757;
-			case 30: return 5758;
-			case 31: return 5759;
-			case 32: return 5760;
-			case 33: return 5761;
-			case 34: return 5762;
-			case 35: return 5763;
-			case 36: return 5764;
-			case 37: return 5765;
-			case 38: return 5766;
-			case 39: return 5767;
-			case 40: return 5768;
-			case 41: return 5769;
-			case 42: return 5770;
-			case 43: return 5771;
-			case 44: return 5772;
-			case 45: return 5773;
-			case 46: return 5774;
-			case 47: return 5775;
-			case 48: return 5776;
-			case 49: return 5777;
-			case 50: return 5778;
-			case 51: return 5779;
-			case 52: return 5780;
-			case 53: return 5781;
-			case 54: return 5782;
-			case 55: return 5783;
-			case 56: return 5784;
-			case 57: return 5785;
-			case 58: return 5786;
-			case 59: return 5787;
-			case 60: return 5788;
-			case 61: return 5789;
-			case 62: return 5790;
-			case 63: return 5791;
-			case 64: return 5792;
-			case 65: return 5793;
-			case 66: return 5794;
-			case 67: return 5795;
-			case 68: return 5796;
-			case 69: return 5797;
-			case 70: return 5798;
-			case 71: return 5799;
-			case 72: return 5800;
-			case 73: return 5801;
-			case 74: return 5802;
-			case 75: return 5803;
-			case 76: return 5804;
-			case 77: return 5805;
-			case 78: return 5806;
-			case 79: return 5807;
-			case 80: return 5808;
-			case 81: return 5809;
-			case 82: return 5810;
-			case 83: return 5811;
-			case 84: return 5812;
-			case 85: return 5813;
-			case 86: return 30116;
-			case 87: return 30117;
-			case 88: return 30118;
-			case 89: return 30119;
-			case 90: return 30120;
-			case 91: return 30121;
-			case 92: return 30122;
-			case 93: return 30123;
-			case 94: return 30124;
-			case 101: return 8732;
-			case 102: return 8733;
-			case 103: return 8734;
-			case 104: return 8735;
-			case 105: return 8736;
-			case 106: return 8737;
-			case 107: return 8738;
-			case 108: return 8739;
-			case 109: return 8740;
-			case 110: return 8741;
-			case 111: return 8742;
-			case 112: return 8743;
-			case 113: return 8744;
-			case 114: return 8745;
-			case 115: return 8746;
-			case 116: return 8747;
-			case 117: return 8748;
-			case 118: return 8749;
-			case 119: return 8750;
-			case 120: return 8751;
-		}
-
-		return 0;
-	}
+	/// <summary>
+	/// Creates a new instance of the <see cref="Stain"/> struct.
+	/// </summary>
+	/// <param name="page">The Excel page.</param>
+	/// <param name="offset">The offset within the page.</param>
+	/// <param name="row">The row number.</param>
+	/// <returns>A new instance of the <see cref="Stain"/> struct.</returns>
+	static Stain IExcelRow<Stain>.Create(ExcelPage page, uint offset, uint row) =>
+		new(page, offset, row);
 }

@@ -26,6 +26,7 @@ public class DummyItem : IItem
 	public Mod? Mod => null;
 	public byte EquipLevel => 0;
 
+	public ulong Model => (ulong)this.ModelSet | ((ulong)this.ModelBase << 16) | ((ulong)this.ModelVariant << 32);
 	public ushort ModelBase
 	{
 		get;
@@ -44,6 +45,7 @@ public class DummyItem : IItem
 		private set;
 	}
 
+	public ulong SubModel => (ulong)this.SubModelSet | ((ulong)this.SubModelBase << 16) | ((ulong)this.SubModelVariant << 32);
 	public ushort SubModelBase { get; }
 	public ushort SubModelVariant { get; }
 	public ushort SubModelSet { get; }
