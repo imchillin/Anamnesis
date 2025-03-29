@@ -38,6 +38,7 @@ public class SerializerService : ServiceBase<SerializerService>
 		Options.Converters.Add(new PointConverter());
 		Options.Converters.Add(new VersionConverter());
 		Options.Converters.Add(new GlassesSaveConverter());
+		Options.Converters.Add(new GlassesConverter());
 	}
 
 	public static string Serialize(object obj)
