@@ -32,6 +32,8 @@ public class BrioActorRefresher : IActorRefresher
 	{
 		await Dispatch.MainThread();
 
+		bool doNpcHack = SettingsService.Current.EnableNpcHack && actor.ObjectKind == ActorTypes.Player;
+
 		if (PoseService.Instance.IsEnabled)
 		{
 			// Save the current pose
@@ -40,25 +42,48 @@ public class BrioActorRefresher : IActorRefresher
 			poseFile.WriteToFile(actor, skeleton, null);
 
 			// Redraw
-			var result = await Brio.Redraw(actor.ObjectIndex);
+			if (doNpcHack)
+				actor.ObjectKind = ActorTypes.BattleNpc;
 
-			if (result == "\"Full\"")
+			try
 			{
-				new Task(async () =>
-				{
-					await Task.Delay(500);
-					await Dispatch.MainThread();
+				var result = await Brio.Redraw(actor.ObjectIndex);
 
-					// Restore current pose
-					skeleton = new Skeleton(actor);
-					poseFile.Apply(actor, skeleton, null, PoseFile.Mode.All, true);
-				}).Start();
+				if (result == "\"Full\"")
+				{
+					new Task(async () =>
+					{
+						await Task.Delay(500);
+						await Dispatch.MainThread();
+
+						// Restore current pose
+						skeleton = new Skeleton(actor);
+						poseFile.Apply(actor, skeleton, null, PoseFile.Mode.All, true);
+					}).Start();
+				}
+			}
+			finally
+			{
+				if (doNpcHack)
+					actor.ObjectKind = ActorTypes.Player;
 			}
 		}
 		else
 		{
+
 			// Outside of pose mode we can just refresh
-			await Brio.Redraw(actor.ObjectIndex);
+			if (doNpcHack)
+				actor.ObjectKind = ActorTypes.BattleNpc;
+
+			try
+			{
+				await Brio.Redraw(actor.ObjectIndex);
+			}
+			finally
+			{
+				if (doNpcHack)
+					actor.ObjectKind = ActorTypes.Player;
+			}
 		}
 	}
 }

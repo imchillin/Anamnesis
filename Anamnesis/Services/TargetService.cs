@@ -210,6 +210,25 @@ public class TargetService : ServiceBase<TargetService>
 		{
 			// This section can only fail when FFXIV isn't running (fail to set address) so it should be safe to ignore
 		}
+
+		// Tick the actor if it still exists
+		if (this.PlayerTarget != null && this.PlayerTarget.Address != IntPtr.Zero)
+		{
+			try
+			{
+				var pinnedActor = this.PinnedActors.FirstOrDefault(pinned => pinned.Memory?.Address == this.PlayerTarget.Address);
+
+				// If the player target is pinned, synchronize through the pinned actor class. Otherwise synchronize directly.
+				if (pinnedActor != null)
+					pinnedActor.Tick();
+				else
+					this.PlayerTarget.Synchronize();
+			}
+			catch
+			{
+				// Should only fail to tick if the game isn't running
+			}
+		}
 	}
 
 	public override async Task Start()
@@ -416,6 +435,10 @@ public class TargetService : ServiceBase<TargetService>
 
 			for (int i = this.PinnedActors.Count - 1; i >= 0; i--)
 			{
+				// Skip the player target as it is already updated in the preceding function call
+				if (this.PinnedActors[i].Memory?.Address == this.PlayerTarget.Address)
+					continue;
+
 				this.PinnedActors[i].Tick();
 			}
 
